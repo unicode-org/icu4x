@@ -5,20 +5,18 @@
 //! `icu_provider_blob` contains [`BlobDataProvider`], a [`BufferProvider`] implementation that
 //! supports loading data from a single serialized blob.
 //!
-//! To build blob data, use the `--format blob2` option of [`icu_provider_export`]:
+//! To build blob data, use the `--format blob` option of [`icu_provider_export`]:
 //!
 //! ```bash
-//! $ icu4x-datagen --markers all --locales full --format blob2 --out data.postcard
+//! $ icu4x-datagen --markers all --locales full --format blob --out data.postcard
 //! ```
-//!
-//! You can also use `--format blob` if you need to support ICU4X versions prior to 1.4.
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [`BufferProvider`]: icu_provider::buf::BufferProvider
 //! [`icu_provider_export`]: ../icu_provider_export/index.html
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(not(any(test, feature = "export")), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -28,11 +26,13 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
 
+#[cfg(feature = "alloc")]
 extern crate alloc;
 
 mod blob_data_provider;

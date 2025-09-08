@@ -37,6 +37,14 @@
 //! assert_eq!(loc.extensions.unicode.keywords.get(&key), Some(&value));
 //! ```
 //!
+//! # Syntactic vs Semantic Extension Handling
+//!
+//! This module is useful when you need to work with Locale extensions at a syntactic level,
+//! perhaps for parsing or generating locale identifiers that include any syntactically valid
+//! extensions.
+//! For handling and validating known CLDR values with semantic meaning, see the
+//! [`crate::preferences::extensions`] module.
+//!
 //! [`LanguageIdentifier`]: super::LanguageIdentifier
 //! [`Locale`]: super::Locale
 //! [`subtags`]: super::subtags
@@ -56,9 +64,11 @@ use private::{Private, PRIVATE_EXT_CHAR};
 use transform::{Transform, TRANSFORM_EXT_CHAR};
 use unicode::{Unicode, UNICODE_EXT_CHAR};
 
+#[cfg(feature = "alloc")]
 use alloc::vec::Vec;
 
 use crate::parser::ParseError;
+#[cfg(feature = "alloc")]
 use crate::parser::SubtagIterator;
 use crate::subtags;
 
@@ -77,6 +87,7 @@ pub enum ExtensionType {
 }
 
 impl ExtensionType {
+    #[allow(dead_code)]
     pub(crate) const fn try_from_byte_slice(key: &[u8]) -> Result<Self, ParseError> {
         if let [b] = key {
             Self::try_from_byte(*b)
@@ -118,7 +129,13 @@ pub struct Extensions {
     /// A sequence of any other extensions that are present in the locale identifier but are not formally
     /// [defined](https://unicode.org/reports/tr35/) and represented explicitly as [`Unicode`], [`Transform`],
     /// and [`Private`] are.
+    #[cfg(feature = "alloc")]
     pub other: Vec<Other>,
+    /// A sequence of any other extensions that are present in the locale identifier but are not formally
+    /// [defined](https://unicode.org/reports/tr35/) and represented explicitly as [`Unicode`], [`Transform`],
+    /// and [`Private`] are.
+    #[cfg(not(feature = "alloc"))]
+    pub other: &'static [Other],
 }
 
 impl Extensions {
@@ -137,7 +154,10 @@ impl Extensions {
             unicode: Unicode::new(),
             transform: Transform::new(),
             private: Private::new(),
+            #[cfg(feature = "alloc")]
             other: Vec::new(),
+            #[cfg(not(feature = "alloc"))]
+            other: &[],
         }
     }
 
@@ -149,7 +169,10 @@ impl Extensions {
             unicode,
             transform: Transform::new(),
             private: Private::new(),
+            #[cfg(feature = "alloc")]
             other: Vec::new(),
+            #[cfg(not(feature = "alloc"))]
+            other: &[],
         }
     }
 
@@ -171,7 +194,7 @@ impl Extensions {
             && self.other.is_empty()
     }
 
-    #[allow(clippy::type_complexity)]
+    #[expect(clippy::type_complexity)]
     pub(crate) fn as_tuple(
         &self,
     ) -> (
@@ -242,10 +265,12 @@ impl Extensions {
         if !predicate(ExtensionType::Private) {
             self.private.clear();
         }
+        #[cfg(feature = "alloc")]
         self.other
             .retain(|o| predicate(ExtensionType::Other(o.get_ext_byte())));
     }
 
+    #[cfg(feature = "alloc")]
     pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         let mut unicode = None;
         let mut transform = None;
@@ -256,26 +281,31 @@ impl Extensions {
             if subtag.is_empty() {
                 return Err(ParseError::InvalidExtension);
             }
-            match subtag.first().map(|b| ExtensionType::try_from_byte(*b)) {
-                Some(Ok(ExtensionType::Unicode)) => {
+
+            let &[subtag] = subtag else {
+                return Err(ParseError::InvalidExtension);
+            };
+
+            match ExtensionType::try_from_byte(subtag) {
+                Ok(ExtensionType::Unicode) => {
                     if unicode.is_some() {
                         return Err(ParseError::DuplicatedExtension);
                     }
                     unicode = Some(Unicode::try_from_iter(iter)?);
                 }
-                Some(Ok(ExtensionType::Transform)) => {
+                Ok(ExtensionType::Transform) => {
                     if transform.is_some() {
                         return Err(ParseError::DuplicatedExtension);
                     }
                     transform = Some(Transform::try_from_iter(iter)?);
                 }
-                Some(Ok(ExtensionType::Private)) => {
+                Ok(ExtensionType::Private) => {
                     if private.is_some() {
                         return Err(ParseError::DuplicatedExtension);
                     }
                     private = Some(Private::try_from_iter(iter)?);
                 }
-                Some(Ok(ExtensionType::Other(ext))) => {
+                Ok(ExtensionType::Other(ext)) => {
                     if other.iter().any(|o: &Other| o.get_ext_byte() == ext) {
                         return Err(ParseError::DuplicatedExtension);
                     }
@@ -330,6 +360,7 @@ impl Extensions {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl_writeable_for_each_subtag_str_no_test!(Extensions);
 
 #[test]

@@ -18,8 +18,6 @@ version.workspace = true
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
 
 [package.metadata.docs.rs]
 all-features = true
@@ -27,12 +25,12 @@ all-features = true
 [dependencies]
 databake = { workspace = true, optional = true, features = ["derive"] }
 displaydoc = { workspace = true }
-icu_locale_core = { workspace = true, features = ["zerovec"] }
-icu_provider = { workspace = true, features = ["macros"] }
+icu_locale_core = { workspace = true, features = ["alloc", "zerovec"] }
+icu_provider = { workspace = true }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
-potential_utf = { workspace = true, features = ["zerovec"] }
-zerovec = { workspace = true,  features = ["yoke"] }
+potential_utf = { workspace = true, features = ["alloc", "zerovec"] }
+zerovec = { workspace = true,  features = ["alloc", "yoke"] }
 
 icu_collections = { workspace = true }
 
@@ -52,11 +50,9 @@ bench = false  # This option is required for Benchmark CI
 
 [features]
 default = ["compiled_data"]
-std = []
-bench = ["serde"]
 serde = ["dep:serde", "icu_locale_core/serde", "tinystr/serde", "zerovec/serde", "icu_provider/serde", "potential_utf/serde", "icu_collections/serde"]
-datagen = ["serde", "dep:databake", "zerovec/databake", "icu_locale_core/databake", "tinystr/databake", "icu_collections/databake"]
-compiled_data = ["dep:icu_locale_data"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "icu_locale_core/databake", "tinystr/databake", "icu_collections/databake", "icu_provider/export"]
+compiled_data = ["dep:icu_locale_data", "icu_provider/baked"]
 
 [[bench]]
 name = "locale_canonicalizer"

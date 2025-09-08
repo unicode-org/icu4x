@@ -25,15 +25,15 @@ litemap = { workspace = true, features = ["alloc"] }
 tinystr = { workspace = true, features = ["alloc"] }
 writeable = { workspace = true }
 
-databake = { workspace = true, features = ["derive"], optional = true}
+databake = { workspace = true, features = ["derive"], optional = true }
 serde = { workspace = true, features = ["alloc", "derive"], optional = true }
 zerovec = { workspace = true, optional = true }
 
 [dev-dependencies]
 iai = { workspace = true }
 icu = { path = "../../components/icu", default-features = false }
-icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
-litemap = { path = "../../utils/litemap", features = ["testing"]}
+icu_provider = { path = "../../provider/core" }
+litemap = { workspace = true, features = ["testing"] }
 postcard = { workspace = true, features = ["use-std"] }
 potential_utf = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
@@ -44,23 +44,17 @@ serde_json = { workspace = true }
 criterion = { workspace = true }
 
 [features]
-std = []
-databake = ["dep:databake"]
-serde = ["dep:serde", "tinystr/serde"]
+databake = ["dep:databake", "alloc"]
+serde = ["dep:serde", "tinystr/serde", "alloc"]
 zerovec = ["dep:zerovec", "tinystr/zerovec"]
-bench = ["serde"]
+alloc = []
 
 [lib]
-bench = false  # This option is required for Benchmark CI
-
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
+bench = false # This option is required for Benchmark CI
 
 [[bench]]
 name = "subtags"
 harness = false
-required-features = ["bench"]
 
 [[bench]]
 name = "langid"
@@ -73,12 +67,3 @@ harness = false
 [[bench]]
 name = "iai_langid"
 harness = false
-required-features = ["bench"]
-
-[[example]]
-name = "filter_langids"
-test = true
-
-[[example]]
-name = "syntatically_canonicalize_locales"
-test = true

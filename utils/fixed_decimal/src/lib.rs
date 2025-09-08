@@ -4,16 +4,16 @@
 
 //! `fixed_decimal` is a utility crate of the [`ICU4X`] project.
 //!
-//! It includes [`FixedDecimal`], a core API for representing numbers in a human-readable form
-//! appropriate for formatting and plural rule selection. It is optimized for operations involving
-//! the individual digits of a number.
+//! This crate provides [`Decimal`] and [`UnsignedDecimal`], essential APIs for representing numbers in a human-readable format.
+//! These types are particularly useful for formatting and plural rule selection, and are optimized for operations on individual digits.
 //!
 //! # Examples
 //!
 //! ```
-//! use fixed_decimal::FixedDecimal;
+//! use fixed_decimal::Decimal;
 //!
-//! let dec = FixedDecimal::from(250).multiplied_pow10(-2);
+//! let mut dec = Decimal::from(250);
+//! dec.multiply_pow10(-2);
 //! assert_eq!("2.50", format!("{}", dec));
 //!
 //! #[derive(Debug, PartialEq)]
@@ -37,7 +37,7 @@
 //! [`ICU4X`]: ../icu/index.html
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(not(any(test, doc)), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -47,6 +47,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]
@@ -55,40 +56,54 @@ mod compact;
 mod decimal;
 mod integer;
 mod ops;
+mod rounding;
 mod scientific;
+mod signed_decimal;
 mod uint_iterator;
+mod variations;
 
 #[cfg(feature = "ryu")]
-pub use decimal::FloatPrecision;
+pub use rounding::FloatPrecision;
 
+// use variations::Signed;
+// use variations::WithInfinity;
+// use variations::WithNaN;
 #[cfg(feature = "ryu")]
 #[doc(no_inline)]
 pub use FloatPrecision as DoublePrecision;
 
 pub use compact::CompactDecimal;
-pub use decimal::FixedDecimal;
-pub use decimal::RoundingIncrement;
-pub use decimal::RoundingMode;
-pub use decimal::Sign;
-pub use decimal::SignDisplay;
+pub use decimal::UnsignedDecimal;
 use displaydoc::Display;
 pub use integer::FixedInteger;
+pub use rounding::RoundingIncrement;
+pub use rounding::SignedRoundingMode;
+pub use rounding::UnsignedRoundingMode;
 pub use scientific::ScientificDecimal;
+pub use signed_decimal::Decimal;
+pub use variations::Sign;
+pub use variations::SignDisplay;
+pub use variations::Signed;
 
-/// The magnitude or number of digits exceeds the limit of the [`FixedDecimal`]. The highest
+pub(crate) use rounding::IncrementLike;
+pub(crate) use rounding::NoIncrement;
+
+/// The magnitude or number of digits exceeds the limit of the [`UnsignedDecimal`] or [`Decimal`].
+///
+/// The highest
 /// magnitude of the most significant digit is [`i16::MAX`], and the lowest magnitude of the
 /// least significant digit is [`i16::MIN`].
 ///
-/// This error is also returned when constructing a [`FixedInteger`] from a [`FixedDecimal`] with a
+/// This error is also returned when constructing a [`FixedInteger`] from a [`Decimal`] with a
 /// fractional part.
 ///
 /// # Examples
 ///
 /// ```
-/// use fixed_decimal::FixedDecimal;
+/// use fixed_decimal::Decimal;
 /// use fixed_decimal::LimitError;
 ///
-/// let mut dec1 = FixedDecimal::from(123);
+/// let mut dec1 = Decimal::from(123);
 /// dec1.multiply_pow10(i16::MAX);
 /// assert!(dec1.is_zero());
 /// ```
@@ -115,5 +130,9 @@ pub enum ParseError {
     Syntax,
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for ParseError {}
+impl core::error::Error for ParseError {}
+
+// TODO(#5065): implement these while `WithCompactExponent` and `WithScientificExponent` are implemented.
+// pub type FixedDecimalOrInfinity = WithInfinity<UnsignedDecimal>;
+// pub type DecimalOrInfinity = Signed<FixedDecimalOrInfinity>;
+// pub type DecimalOrInfinityOrNan = WithNaN<DecimalOrInfinity>;

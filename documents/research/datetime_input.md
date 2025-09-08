@@ -65,7 +65,7 @@ pub struct NaiveDateTime {
 }
 ```
 
-The big advantage of this data structure is that it is calendar system agnostic: Gregorian, Hebrew, Japanese, and Islamic dates can all be expressed in this data structure.
+The big advantage of this data structure is that it is calendar system agnostic: Gregorian, Hebrew, Japanese, and Hijri dates can all be expressed in this data structure.
 
 However, it has obvious flaws:
 

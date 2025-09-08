@@ -5,13 +5,18 @@
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 
 /// An object that accepts characters and/or strings
-/// to be used with [`CaseMapCloser::add_string_case_closure_to()`]
-/// and [`CaseMapCloser::add_case_closure_to()`]. Usually this object
+/// to be used with [`CaseMapCloserBorrowed::add_string_case_closure_to()`]
+/// and [`CaseMapCloserBorrowed::add_case_closure_to()`].
+///
+/// Usually this object
 /// will be some kind of set over codepoints and strings, or something that
 /// can be built into one.
 ///
-/// [`CaseMapCloser::add_string_case_closure_to()`]: crate::CaseMapCloser::add_string_case_closure_to
-/// [`CaseMapCloser::add_case_closure_to()`]: crate::CaseMapCloser::add_case_closure_to
+/// An implementation is provided for [`CodePointInversionListBuilder`], but users are encouraged
+/// to implement this trait on their own collections as needed.
+///
+/// [`CaseMapCloserBorrowed::add_string_case_closure_to()`]: crate::CaseMapCloserBorrowed::add_string_case_closure_to
+/// [`CaseMapCloserBorrowed::add_case_closure_to()`]: crate::CaseMapCloserBorrowed::add_case_closure_to
 pub trait ClosureSink {
     /// Add a character to the set
     fn add_char(&mut self, c: char);

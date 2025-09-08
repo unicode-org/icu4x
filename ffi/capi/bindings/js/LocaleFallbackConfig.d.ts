@@ -2,14 +2,27 @@
 import type { LocaleFallbackPriority } from "./LocaleFallbackPriority"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
+export type LocaleFallbackConfig_obj = {
+    priority: LocaleFallbackPriority;
+};
 
-/** Collection of configurations for the ICU4X fallback algorithm.
-*
-*See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
-*/
+
+
+/**
+ * Collection of configurations for the ICU4X fallback algorithm.
+ *
+ * See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/2.0.0/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
+ */
 export class LocaleFallbackConfig {
+    get priority(): LocaleFallbackPriority;
+    set priority(value: LocaleFallbackPriority);
+    /** @internal */
+    static fromFields(structObj : LocaleFallbackConfig_obj) : LocaleFallbackConfig;
 
-    get priority() : LocaleFallbackPriority;
-    set priority(value: LocaleFallbackPriority); 
-    constructor(priority: LocaleFallbackPriority);
+    /**
+    * Create `LocaleFallbackConfig` from an object that contains all of `LocaleFallbackConfig`s fields.
+    * Optional fields do not need to be included in the provided object.
+    */
+    constructor(structObj: LocaleFallbackConfig_obj);
+
 }

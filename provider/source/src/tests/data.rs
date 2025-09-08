@@ -7,7 +7,7 @@
 use crate::{AbstractFs, CldrCache, SerdeCache, SourceDataProvider, TzdbCache};
 use std::sync::{Arc, OnceLock};
 impl SourceDataProvider {
-    // This is equivalent to `new_latest_tested` for the files defined in `tools/testdata-scripts/globs.rs.data`.
+    // This is equivalent to `new` for the files defined in `tools/testdata-scripts/globs.rs.data`.
     pub fn new_testing() -> Self {
         // Singleton so that all instantiations share the same cache.
         static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();
@@ -240,6 +240,7 @@ impl SourceDataProvider {
                         ("cldr-core/supplemental/units.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/units.json").as_slice()),
                         ("cldr-core/supplemental/likelySubtags.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/likelySubtags.json").as_slice()),
                         ("cldr-core/supplemental/metaZones.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/metaZones.json").as_slice()),
+                        ("cldr-core/supplemental/primaryZones.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/primaryZones.json").as_slice()),
                         ("cldr-core/supplemental/windowsZones.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/windowsZones.json").as_slice()),
                         ("cldr-core/supplemental/numberingSystems.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/numberingSystems.json").as_slice()),
                         ("cldr-core/supplemental/ordinals.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/ordinals.json").as_slice()),
@@ -497,34 +498,20 @@ impl SourceDataProvider {
                         ("cldr-person-names-full/main/th/personNames.json", include_bytes!("../../tests/data/cldr/cldr-person-names-full/main/th/personNames.json").as_slice()),
                         ("cldr-person-names-full/main/tr/personNames.json", include_bytes!("../../tests/data/cldr/cldr-person-names-full/main/tr/personNames.json").as_slice()),
                         ("cldr-person-names-full/main/und/personNames.json", include_bytes!("../../tests/data/cldr/cldr-person-names-full/main/und/personNames.json").as_slice()),
-                        ("cldr-transforms-full/main/Any-Publishing/metadata.json", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Any-Publishing/metadata.json").as_slice()),
-                        ("cldr-transforms-full/main/Any-Publishing/source.txt", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Any-Publishing/source.txt").as_slice()),
-                        ("cldr-transforms-full/main/Bengali-Arabic/metadata.json", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Bengali-Arabic/metadata.json").as_slice()),
-                        ("cldr-transforms-full/main/Bengali-Arabic/source.txt", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Bengali-Arabic/source.txt").as_slice()),
-                        ("cldr-transforms-full/main/Bengali-InterIndic/metadata.json", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Bengali-InterIndic/metadata.json").as_slice()),
-                        ("cldr-transforms-full/main/Bengali-InterIndic/source.txt", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Bengali-InterIndic/source.txt").as_slice()),
-                        ("cldr-transforms-full/main/InterIndic-Arabic/metadata.json", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/InterIndic-Arabic/metadata.json").as_slice()),
-                        ("cldr-transforms-full/main/InterIndic-Arabic/source.txt", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/InterIndic-Arabic/source.txt").as_slice()),
-                        ("cldr-transforms-full/main/Latin-ASCII/metadata.json", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Latin-ASCII/metadata.json").as_slice()),
-                        ("cldr-transforms-full/main/Latin-ASCII/source.txt", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Latin-ASCII/source.txt").as_slice()),
-                        ("cldr-transforms-full/main/Test-Test-CursorFilters/metadata.json", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Test-Test-CursorFilters/metadata.json").as_slice()),
-                        ("cldr-transforms-full/main/Test-Test-CursorFilters/source.txt", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Test-Test-CursorFilters/source.txt").as_slice()),
-                        ("cldr-transforms-full/main/Test-Test-EmptyMatches/metadata.json", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Test-Test-EmptyMatches/metadata.json").as_slice()),
-                        ("cldr-transforms-full/main/Test-Test-EmptyMatches/source.txt", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Test-Test-EmptyMatches/source.txt").as_slice()),
-                        ("cldr-transforms-full/main/Test-Test-HexRustWrapper/metadata.json", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Test-Test-HexRustWrapper/metadata.json").as_slice()),
-                        ("cldr-transforms-full/main/Test-Test-HexRustWrapper/source.txt", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Test-Test-HexRustWrapper/source.txt").as_slice()),
-                        ("cldr-transforms-full/main/Test-Test-HexUnicodeWrapper/metadata.json", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Test-Test-HexUnicodeWrapper/metadata.json").as_slice()),
-                        ("cldr-transforms-full/main/Test-Test-HexUnicodeWrapper/source.txt", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Test-Test-HexUnicodeWrapper/source.txt").as_slice()),
-                        ("cldr-transforms-full/main/Test-Test-NielsFunctionalityTest/metadata.json", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Test-Test-NielsFunctionalityTest/metadata.json").as_slice()),
-                        ("cldr-transforms-full/main/Test-Test-NielsFunctionalityTest/source.txt", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Test-Test-NielsFunctionalityTest/source.txt").as_slice()),
-                        ("cldr-transforms-full/main/Test-Test-RecursiveSuiteA/metadata.json", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Test-Test-RecursiveSuiteA/metadata.json").as_slice()),
-                        ("cldr-transforms-full/main/Test-Test-RecursiveSuiteA/source.txt", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Test-Test-RecursiveSuiteA/source.txt").as_slice()),
-                        ("cldr-transforms-full/main/Test-Test-RecursiveSuiteRoot/metadata.json", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Test-Test-RecursiveSuiteRoot/metadata.json").as_slice()),
-                        ("cldr-transforms-full/main/Test-Test-RecursiveSuiteRoot/source.txt", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/Test-Test-RecursiveSuiteRoot/source.txt").as_slice()),
-                        ("cldr-transforms-full/main/de-ASCII/metadata.json", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/de-ASCII/metadata.json").as_slice()),
-                        ("cldr-transforms-full/main/de-ASCII/source.txt", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/de-ASCII/source.txt").as_slice()),
-                        ("cldr-transforms-full/main/el-el_Latn-BGN/metadata.json", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/el-el_Latn-BGN/metadata.json").as_slice()),
-                        ("cldr-transforms-full/main/el-el_Latn-BGN/source.txt", include_bytes!("../../tests/data/cldr/cldr-transforms-full/main/el-el_Latn-BGN/source.txt").as_slice())
+                        ("cldr-transforms/transforms/Any-Publishing.json", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/Any-Publishing.json").as_slice()),
+                        ("cldr-transforms/transforms/Any-Publishing.txt", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/Any-Publishing.txt").as_slice()),
+                        ("cldr-transforms/transforms/Bengali-Arabic.json", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/Bengali-Arabic.json").as_slice()),
+                        ("cldr-transforms/transforms/Bengali-Arabic.txt", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/Bengali-Arabic.txt").as_slice()),
+                        ("cldr-transforms/transforms/Bengali-InterIndic.json", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/Bengali-InterIndic.json").as_slice()),
+                        ("cldr-transforms/transforms/Bengali-InterIndic.txt", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/Bengali-InterIndic.txt").as_slice()),
+                        ("cldr-transforms/transforms/de-ASCII.json", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/de-ASCII.json").as_slice()),
+                        ("cldr-transforms/transforms/de-ASCII.txt", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/de-ASCII.txt").as_slice()),
+                        ("cldr-transforms/transforms/Greek-Latin-BGN.json", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/Greek-Latin-BGN.json").as_slice()),
+                        ("cldr-transforms/transforms/Greek-Latin-BGN.txt", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/Greek-Latin-BGN.txt").as_slice()),
+                        ("cldr-transforms/transforms/InterIndic-Arabic.json", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/InterIndic-Arabic.json").as_slice()),
+                        ("cldr-transforms/transforms/InterIndic-Arabic.txt", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/InterIndic-Arabic.txt").as_slice()),
+                        ("cldr-transforms/transforms/Latin-ASCII.json", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/Latin-ASCII.json").as_slice()),
+                        ("cldr-transforms/transforms/Latin-ASCII.txt", include_bytes!("../../tests/data/cldr/cldr-transforms/transforms/Latin-ASCII.txt").as_slice())
                     ].into_iter().collect(),
                 ))))),
                 icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::Memory(
@@ -579,8 +566,6 @@ impl SourceDataProvider {
                         ("collation/implicithan/root_emoji_meta.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/root_emoji_meta.toml").as_slice()),
                         ("collation/implicithan/root_eor_data.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/root_eor_data.toml").as_slice()),
                         ("collation/implicithan/root_eor_meta.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/root_eor_meta.toml").as_slice()),
-                        ("collation/implicithan/zh_big5han_data.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/zh_big5han_data.toml").as_slice()),
-                        ("collation/implicithan/zh_gb2312han_data.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/zh_gb2312han_data.toml").as_slice()),
                         ("collation/implicithan/zh_pinyin_data.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/zh_pinyin_data.toml").as_slice()),
                         ("collation/implicithan/zh_stroke_data.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/zh_stroke_data.toml").as_slice()),
                         ("collation/implicithan/zh_unihan_data.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/zh_unihan_data.toml").as_slice()),
@@ -645,6 +630,7 @@ impl SourceDataProvider {
                         ("uprops/small/IDS.toml", include_bytes!("../../tests/data/icuexport/uprops/small/IDS.toml").as_slice()),
                         ("uprops/small/IDSB.toml", include_bytes!("../../tests/data/icuexport/uprops/small/IDSB.toml").as_slice()),
                         ("uprops/small/IDST.toml", include_bytes!("../../tests/data/icuexport/uprops/small/IDST.toml").as_slice()),
+                        ("uprops/small/InCB.toml", include_bytes!("../../tests/data/icuexport/uprops/small/InCB.toml").as_slice()),
                         ("uprops/small/InSC.toml", include_bytes!("../../tests/data/icuexport/uprops/small/InSC.toml").as_slice()),
                         ("uprops/small/Join_C.toml", include_bytes!("../../tests/data/icuexport/uprops/small/Join_C.toml").as_slice()),
                         ("uprops/small/jt.toml", include_bytes!("../../tests/data/icuexport/uprops/small/jt.toml").as_slice()),
@@ -674,6 +660,7 @@ impl SourceDataProvider {
                         ("uprops/small/Term.toml", include_bytes!("../../tests/data/icuexport/uprops/small/Term.toml").as_slice()),
                         ("uprops/small/UIdeo.toml", include_bytes!("../../tests/data/icuexport/uprops/small/UIdeo.toml").as_slice()),
                         ("uprops/small/Upper.toml", include_bytes!("../../tests/data/icuexport/uprops/small/Upper.toml").as_slice()),
+                        ("uprops/small/vo.toml", include_bytes!("../../tests/data/icuexport/uprops/small/vo.toml").as_slice()),
                         ("uprops/small/VS.toml", include_bytes!("../../tests/data/icuexport/uprops/small/VS.toml").as_slice()),
                         ("uprops/small/WB.toml", include_bytes!("../../tests/data/icuexport/uprops/small/WB.toml").as_slice()),
                         ("uprops/small/WSpace.toml", include_bytes!("../../tests/data/icuexport/uprops/small/WSpace.toml").as_slice()),
@@ -693,17 +680,20 @@ impl SourceDataProvider {
                 )))),
                 tzdb_paths: Some(Arc::new(TzdbCache { root: AbstractFs::Memory(
                     [
-                        ("tz-tag/africa", include_bytes!("../../tests/data/tzdb/africa").as_slice()),
-                        ("tz-tag/antarctica", include_bytes!("../../tests/data/tzdb/antarctica").as_slice()),
-                        ("tz-tag/asia", include_bytes!("../../tests/data/tzdb/asia").as_slice()),
-                        ("tz-tag/australasia", include_bytes!("../../tests/data/tzdb/australasia").as_slice()),
-                        ("tz-tag/backward", include_bytes!("../../tests/data/tzdb/backward").as_slice()),
-                        ("tz-tag/etcetera", include_bytes!("../../tests/data/tzdb/etcetera").as_slice()),
-                        ("tz-tag/europe", include_bytes!("../../tests/data/tzdb/europe").as_slice()),
-                        ("tz-tag/northamerica", include_bytes!("../../tests/data/tzdb/northamerica").as_slice()),
-                        ("tz-tag/southamerica", include_bytes!("../../tests/data/tzdb/southamerica").as_slice())
+                        ("africa", include_bytes!("../../tests/data/tzdb/africa").as_slice()),
+                        ("antarctica", include_bytes!("../../tests/data/tzdb/antarctica").as_slice()),
+                        ("asia", include_bytes!("../../tests/data/tzdb/asia").as_slice()),
+                        ("australasia", include_bytes!("../../tests/data/tzdb/australasia").as_slice()),
+                        ("backward", include_bytes!("../../tests/data/tzdb/backward").as_slice()),
+                        ("etcetera", include_bytes!("../../tests/data/tzdb/etcetera").as_slice()),
+                        ("europe", include_bytes!("../../tests/data/tzdb/europe").as_slice()),
+                        ("factory", include_bytes!("../../tests/data/tzdb/factory").as_slice()),
+                        ("northamerica", include_bytes!("../../tests/data/tzdb/northamerica").as_slice()),
+                        ("rearguard.zi", include_bytes!("../../tests/data/tzdb/rearguard.zi").as_slice()),
+                        ("southamerica", include_bytes!("../../tests/data/tzdb/southamerica").as_slice()),
+                        ("vanguard.zi", include_bytes!("../../tests/data/tzdb/vanguard.zi").as_slice())
                     ].into_iter().collect(),
-                ), cache: Default::default() })),
+                ), transitions: Default::default() })),
                 ..SourceDataProvider::new_custom()
             })
             .clone()

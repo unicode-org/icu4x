@@ -17,7 +17,6 @@
 
 int32_t icu4x_SentenceBreakIteratorLatin1_next_mv1(SentenceBreakIteratorLatin1* self);
 
-
 void icu4x_SentenceBreakIteratorLatin1_destroy_mv1(SentenceBreakIteratorLatin1* self);
 
 

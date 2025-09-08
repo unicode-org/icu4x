@@ -155,7 +155,7 @@ pub struct LstmDataFloat32<'data> {
 
 impl<'data> LstmDataFloat32<'data> {
     #[doc(hidden)] // databake
-    #[allow(clippy::too_many_arguments)] // constructor
+    #[expect(clippy::too_many_arguments)] // constructor
     pub const fn from_parts_unchecked(
         model: ModelType,
         dic: ZeroMap<'data, PotentialUtf8, u16>,
@@ -186,7 +186,7 @@ impl<'data> LstmDataFloat32<'data> {
 
     #[cfg(any(feature = "serde", feature = "datagen"))]
     /// Creates a LstmDataFloat32 with the given data. Fails if the matrix dimensions are inconsistent.
-    #[allow(clippy::too_many_arguments)] // constructor
+    #[expect(clippy::too_many_arguments)] // constructor
     pub fn try_from_parts(
         model: ModelType,
         dic: ZeroMap<'data, PotentialUtf8, u16>,
@@ -355,21 +355,21 @@ impl databake::BakeSize for LstmDataFloat32<'_> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(
-    LstmForWordLineAutoV1Marker,
-    "segmenter/lstm/wl_auto@1",
-    attributes_domain = "segmenter"
-))]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 #[non_exhaustive]
-pub enum LstmDataV1<'data> {
+pub enum LstmData<'data> {
     /// The data as matrices of zerovec f32 values.
     Float32(#[cfg_attr(feature = "serde", serde(borrow))] LstmDataFloat32<'data>),
     // new variants should go BELOW existing ones
     // Serde serializes based on variant name and index in the enum
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
+
+icu_provider::data_struct!(
+    LstmData<'_>,
+    #[cfg(feature = "datagen")]
+);

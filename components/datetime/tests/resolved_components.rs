@@ -2,64 +2,56 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::{DateTime, Gregorian};
+use icu_calendar::{Date, Gregorian};
 use icu_datetime::{
-    neo::{NeoOptions, TypedNeoFormatter},
-    neo_skeleton::{
-        Alignment, EraDisplay, FractionalSecondDigits, NeoDateComponents, NeoDateTimeComponents,
-        NeoDayComponents, NeoSkeletonLength, NeoTimeComponents,
-    },
-    options::{components, preferences},
+    fieldsets::{self, enums::*},
+    options::{Alignment, SubsecondDigits, TimePrecision, YearStyle},
+    provider::fields::components,
+    FixedCalendarDateTimeFormatter,
 };
-use icu_locale_core::locale;
 use icu_locale_core::Locale;
+use icu_locale_core::{locale, preferences::extensions::unicode::keywords::HourCycle};
+use icu_time::{DateTime, Time};
 
 fn assert_resolved_components(
-    field_set: NeoDateTimeComponents,
-    options: NeoOptions<NeoDateTimeComponents>,
+    skeleton: CompositeDateTimeFieldSet,
     bag: &components::Bag,
     locale: Locale,
 ) {
-    let dtf = TypedNeoFormatter::<Gregorian, _>::try_new_with_components(
-        &locale.into(),
-        field_set,
-        options,
-    )
-    .unwrap();
-    let datetime = DateTime::local_unix_epoch().to_calendar(Gregorian);
+    let dtf =
+        FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(locale.into(), skeleton).unwrap();
+    let datetime = DateTime {
+        date: Date::try_new_gregorian(2024, 1, 1).unwrap(),
+        time: Time::start_of_day(),
+    };
     let resolved_pattern = dtf.format(&datetime).pattern();
     assert_eq!(components::Bag::from(&resolved_pattern), *bag);
 }
 
 #[test]
 fn test_length_date() {
-    let field_set = NeoDateTimeComponents::Date(NeoDateComponents::Day(NeoDayComponents::Auto));
-    let length = NeoSkeletonLength::Medium;
+    let skeleton = CompositeDateTimeFieldSet::Date(DateFieldSet::YMD(fieldsets::YMD::medium()));
 
     let mut components_bag = components::Bag::default();
     components_bag.year = Some(components::Year::Numeric);
     components_bag.month = Some(components::Month::Short);
     components_bag.day = Some(components::Day::NumericDayOfMonth);
 
-    assert_resolved_components(field_set, length.into(), &components_bag, locale!("en"));
+    assert_resolved_components(skeleton, &components_bag, locale!("en"));
 }
 
 #[test]
 fn test_length_time() {
-    let field_set = NeoDateTimeComponents::Time(NeoTimeComponents::Auto);
-    let length = NeoSkeletonLength::Medium;
+    let skeleton = CompositeDateTimeFieldSet::Time(TimeFieldSet::T(fieldsets::T::medium()));
 
     let mut components_bag = components::Bag::default();
     components_bag.hour = Some(components::Numeric::Numeric);
     components_bag.minute = Some(components::Numeric::TwoDigit);
     components_bag.second = Some(components::Numeric::TwoDigit);
-    components_bag.preferences = Some(preferences::Bag::from_hour_cycle(
-        preferences::HourCycle::H12,
-    ));
+    components_bag.hour_cycle = Some(HourCycle::H12);
 
     assert_resolved_components(
-        field_set,
-        length.into(),
+        skeleton,
         &components_bag,
         "en-u-hc-h12".parse::<Locale>().unwrap(),
     );
@@ -67,36 +59,31 @@ fn test_length_time() {
 
 #[test]
 fn test_length_time_preferences() {
-    let field_set = NeoDateTimeComponents::Time(NeoTimeComponents::Auto);
-    let mut options = NeoOptions::from(NeoSkeletonLength::Medium);
-    options.alignment = Some(Alignment::Column);
+    let skeleton = CompositeDateTimeFieldSet::Time(TimeFieldSet::T(
+        fieldsets::T::medium().with_alignment(Alignment::Column),
+    ));
 
     let mut components_bag = components::Bag::default();
     components_bag.hour = Some(components::Numeric::TwoDigit);
     components_bag.minute = Some(components::Numeric::TwoDigit);
     components_bag.second = Some(components::Numeric::TwoDigit);
-    components_bag.preferences = Some(preferences::Bag::from_hour_cycle(
-        preferences::HourCycle::H24,
-    ));
+    components_bag.hour_cycle = Some(HourCycle::H23);
 
     assert_resolved_components(
-        field_set,
-        options,
+        skeleton,
         &components_bag,
-        "en-u-hc-h24".parse::<Locale>().unwrap(),
+        "en-u-hc-h23".parse::<Locale>().unwrap(),
     );
 }
 
 #[test]
 fn test_date_and_time() {
-    let field_set = NeoDateTimeComponents::DateTime(
-        NeoDayComponents::EraYearMonthDayWeekday,
-        NeoTimeComponents::Auto,
-    );
-    let mut options = NeoOptions::from(NeoSkeletonLength::Medium);
-    options.era_display = Some(EraDisplay::Always);
-    options.fractional_second_digits = Some(FractionalSecondDigits::F4);
-    options.alignment = Some(Alignment::Column);
+    let skeleton = CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::YMDET(
+        fieldsets::YMDET::medium()
+            .with_year_style(YearStyle::WithEra)
+            .with_alignment(Alignment::Column)
+            .with_time_precision(TimePrecision::Subsecond(SubsecondDigits::S4)),
+    ));
 
     let mut input_bag = components::Bag::default();
     input_bag.era = Some(components::Text::Short);
@@ -107,17 +94,14 @@ fn test_date_and_time() {
     input_bag.hour = Some(components::Numeric::TwoDigit);
     input_bag.minute = Some(components::Numeric::TwoDigit);
     input_bag.second = Some(components::Numeric::TwoDigit);
-    input_bag.fractional_second = Some(FractionalSecondDigits::F4);
-    input_bag.preferences = None;
+    input_bag.subsecond = Some(SubsecondDigits::S4);
+    input_bag.hour_cycle = None;
     let mut output_bag = input_bag; // make a copy
     output_bag.month = Some(components::Month::Short);
-    output_bag.preferences = Some(preferences::Bag::from_hour_cycle(
-        preferences::HourCycle::H23,
-    ));
+    output_bag.hour_cycle = Some(HourCycle::H23);
 
     assert_resolved_components(
-        field_set,
-        options,
+        skeleton,
         &output_bag,
         "en-u-hc-h23".parse::<Locale>().unwrap(),
     );

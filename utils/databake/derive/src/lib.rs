@@ -11,7 +11,7 @@ use syn::{
     parse::{Parse, ParseStream},
     parse_macro_input,
     punctuated::Punctuated,
-    DeriveInput, Ident, Path, PathSegment, Token,
+    Data, DeriveInput, Ident, Path, PathSegment, Token, Visibility,
 };
 use synstructure::{AddBounds, Structure};
 
@@ -68,7 +68,12 @@ fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
             quote! { let #ident =  #ident.bake(env); }
         });
 
-        let constructor = vi.construct(|_, i| {
+        let constructor = vi.construct(|f, i| {
+            assert!(
+                f.vis == syn::parse_str::<Visibility>("pub").unwrap()
+                    || matches!(input.data, Data::Enum(_)),
+                "deriving Bake requires public fields"
+            );
             let ident = &vi.bindings()[i].binding;
             quote! { # #ident }
         });
@@ -101,6 +106,7 @@ fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 env.insert(#crate_name);
                 match self {
                     #bake_body
+                    &_ => unreachable!() // ZST references aren't uninhabited
                 }
             }
         }
@@ -108,6 +114,7 @@ fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
             fn borrows_size(&self) -> usize {
                 match self {
                     #borrows_size_body
+                    &_ => unreachable!() // ZST references aren't uninhabited
                 }
             }
         }

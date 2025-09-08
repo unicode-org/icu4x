@@ -4,18 +4,34 @@
 
 //! Experimental.
 
-use fixed_decimal::FixedDecimal;
-use icu_decimal::options::FixedDecimalFormatterOptions;
-use icu_decimal::FixedDecimalFormatter;
-use icu_provider::{
-    DataError, DataIdentifierBorrowed, DataLocale, DataPayload, DataProvider, DataRequest,
-};
+use fixed_decimal::Decimal;
+use icu_decimal::options::DecimalFormatterOptions;
+use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
+use icu_locale_core::preferences::{define_preferences, prefs_convert};
 
-use super::super::provider::percent::PercentEssentialsV1Marker;
+use icu_provider::prelude::*;
+
+use super::super::provider::percent::PercentEssentialsV1;
 use super::format::FormattedPercent;
 use super::options::PercentFormatterOptions;
 
 extern crate alloc;
+
+define_preferences!(
+    /// The preferences for percent formatting.
+    [Copy]
+    PercentFormatterPreferences,
+    {
+        /// The user's preferred numbering system.
+        ///
+        /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
+        numbering_system: super::super::preferences::NumberingSystem
+    }
+);
+
+prefs_convert!(PercentFormatterPreferences, DecimalFormatterPreferences, {
+    numbering_system
+});
 
 /// A formatter for percent values.
 ///
@@ -23,21 +39,20 @@ extern crate alloc;
 ///   1. Rendering in the locale's percent system.
 pub struct PercentFormatter<R> {
     /// Essential data for the percent formatter.
-    essential: DataPayload<PercentEssentialsV1Marker>,
+    essential: DataPayload<PercentEssentialsV1>,
 
     /// Options bag for the percent formatter to determine the behavior of the formatter.
     options: PercentFormatterOptions,
 
     /// A fixed decimal formatter used to format the percent value.
-    fixed_decimal_formatter: R,
+    decimal_formatter: R,
 }
 
-impl PercentFormatter<FixedDecimalFormatter> {
-    icu_provider::gen_any_buffer_data_constructors!(
-        (locale, options: PercentFormatterOptions) -> error: DataError,
+impl PercentFormatter<DecimalFormatter> {
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: PercentFormatterPreferences, options: PercentFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
-            try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
             Self
@@ -51,67 +66,62 @@ impl PercentFormatter<FixedDecimalFormatter> {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
-        locale: &DataLocale,
+        prefs: PercentFormatterPreferences,
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError> {
-        let fixed_decimal_formatter =
-            FixedDecimalFormatter::try_new(locale, FixedDecimalFormatterOptions::default())?;
+        let decimal_formatter =
+            DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
 
-        PercentFormatter::try_new_with_fixed_decimal_formatter(
-            locale,
-            fixed_decimal_formatter,
-            options,
-        )
+        PercentFormatter::try_new_with_decimal_formatter(prefs, decimal_formatter, options)
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
+        prefs: PercentFormatterPreferences,
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::percent::PercentEssentialsV1Marker>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>,
+            + DataProvider<super::super::provider::percent::PercentEssentialsV1>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
-        let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
+        let decimal_formatter = DecimalFormatter::try_new_unstable(
             provider,
-            locale,
-            FixedDecimalFormatterOptions::default(),
+            (&prefs).into(),
+            DecimalFormatterOptions::default(),
         )?;
 
-        PercentFormatter::try_new_with_fixed_decimal_formatter_unstable(
+        PercentFormatter::try_new_with_decimal_formatter_unstable(
             provider,
-            locale,
-            fixed_decimal_formatter,
+            prefs,
+            decimal_formatter,
             options,
         )
     }
 
-    /// Formats a [`FixedDecimal`] value for the given percent code.
+    /// Formats a [`Decimal`] value for the given percent code.
     ///
     /// # Examples
     /// ```
-    /// use icu::experimental::dimension::percent::formatter::{
-    ///     PercentFormatter,
-    /// };
+    /// use icu::experimental::dimension::percent::formatter::PercentFormatter;
     /// use icu::locale::locale;
     /// use writeable::Writeable;
     ///
     /// let locale = locale!("en-US").into();
-    /// let fmt = PercentFormatter::try_new(&locale, Default::default()).unwrap();
+    /// let fmt = PercentFormatter::try_new(locale, Default::default()).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// let formatted_percent = fmt.format(&value);
     /// let mut sink = String::new();
     /// formatted_percent.write_to(&mut sink).unwrap();
     /// assert_eq!(sink.as_str(), "12,345.67%");
     /// ```
-    pub fn format<'l>(&'l self, value: &'l FixedDecimal) -> FormattedPercent<'l> {
+    pub fn format<'l>(&'l self, value: &'l Decimal) -> FormattedPercent<'l> {
         FormattedPercent {
             value,
             essential: self.essential.get(),
-            fixed_decimal_formatter: &self.fixed_decimal_formatter,
+            decimal_formatter: &self.decimal_formatter,
             options: &self.options,
         }
     }
@@ -119,7 +129,7 @@ impl PercentFormatter<FixedDecimalFormatter> {
 
 impl<R> PercentFormatter<R>
 where
-    R: AsRef<FixedDecimalFormatter>,
+    R: AsRef<DecimalFormatter>,
 {
     /// Creates a new [`PercentFormatter`] from compiled locale data, an options bag and fixed decimal formatter.
     ///
@@ -127,14 +137,15 @@ where
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_fixed_decimal_formatter(
-        locale: &DataLocale,
-        fixed_decimal_formatter: R,
+    pub fn try_new_with_decimal_formatter(
+        prefs: PercentFormatterPreferences,
+        decimal_formatter: R,
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError> {
+        let locale = PercentEssentialsV1::make_locale(prefs.locale_preferences);
         let essential = crate::provider::Baked
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })?
             .payload;
@@ -142,20 +153,21 @@ where
         Ok(Self {
             essential,
             options,
-            fixed_decimal_formatter,
+            decimal_formatter,
         })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_with_fixed_decimal_formatter_unstable(
-        provider: &(impl DataProvider<PercentEssentialsV1Marker> + ?Sized),
-        locale: &DataLocale,
-        fixed_decimal_formatter: R,
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    pub fn try_new_with_decimal_formatter_unstable(
+        provider: &(impl DataProvider<PercentEssentialsV1> + ?Sized),
+        prefs: PercentFormatterPreferences,
+        decimal_formatter: R,
         options: PercentFormatterOptions,
     ) -> Result<Self, DataError> {
+        let locale = PercentEssentialsV1::make_locale(prefs.locale_preferences);
         let essential = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(locale),
+                id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })?
             .payload;
@@ -163,7 +175,7 @@ where
         Ok(Self {
             essential,
             options,
-            fixed_decimal_formatter,
+            decimal_formatter,
         })
     }
 }

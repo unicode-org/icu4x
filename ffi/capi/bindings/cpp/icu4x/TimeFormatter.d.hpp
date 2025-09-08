@@ -6,24 +6,24 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
-namespace capi { struct DateTime; }
-class DateTime;
-namespace capi { struct IsoDateTime; }
-class IsoDateTime;
 namespace capi { struct Locale; }
 class Locale;
 namespace capi { struct Time; }
 class Time;
 namespace capi { struct TimeFormatter; }
 class TimeFormatter;
+class DateTimeAlignment;
+class DateTimeFormatterLoadError;
 class DateTimeLength;
-class Error;
+class TimePrecision;
 }
 
 
@@ -34,16 +34,36 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `NoCalendarFormatter`](https://docs.rs/icu/2.0.0/icu/datetime/type.NoCalendarFormatter.html) for more information.
+ */
 class TimeFormatter {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::Error> create_with_length(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length);
+  /**
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/type.NoCalendarFormatter.html#method.try_new) for more information.
+   *
+   * See the [Rust documentation for `T`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.T.html) for more information.
+   *
+   * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.T.html#method.for_length)
+   */
+  inline static diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError> create(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
 
-  inline std::string format_time(const icu4x::Time& value) const;
+  /**
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/type.NoCalendarFormatter.html#method.try_new) for more information.
+   *
+   * See the [Rust documentation for `T`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.T.html) for more information.
+   *
+   * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.T.html#method.for_length)
+   */
+  inline static diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError> create_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
 
-  inline std::string format_datetime(const icu4x::DateTime& value) const;
-
-  inline std::string format_iso_datetime(const icu4x::IsoDateTime& value) const;
+  /**
+   * See the [Rust documentation for `format`](https://docs.rs/icu/2.0.0/icu/datetime/type.NoCalendarFormatter.html#method.format) for more information.
+   */
+  inline std::string format(const icu4x::Time& time) const;
+  template<typename W>
+  inline void format_write(const icu4x::Time& time, W& writeable_output) const;
 
   inline const icu4x::capi::TimeFormatter* AsFFI() const;
   inline icu4x::capi::TimeFormatter* AsFFI();

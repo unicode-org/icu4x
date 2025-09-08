@@ -7,8 +7,9 @@ use crate::CodePointTrieBuilderData;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_collections::codepointtrie::CodePointTrieHeader;
 use icu_collections::codepointtrie::TrieValue;
-use wasmi::{Config, Engine, Extern, Func, Instance, Linker, Module, Store, Value};
+use wasmi::{Config, Engine, Extern, Func, Instance, Linker, Module, Store, Val};
 use zerovec::ZeroSlice;
+use zerovec::ZeroVec;
 
 const UCPTRIE_WRAP_WAT: &str = include_str!("../cpp/ucptrie_wrap.wat");
 
@@ -18,14 +19,14 @@ pub(crate) struct WasmWrap {
 }
 
 #[derive(Debug)]
-pub(crate) struct Wasmi32Ptr(Value);
+pub(crate) struct Wasmi32Ptr(Val);
 
 impl Wasmi32Ptr {
     pub(crate) fn as_usize(&self) -> usize {
-        let Value::I32(value) = self.0 else {
+        let Val::I32(val) = self.0 else {
             unreachable!()
         };
-        value.try_into().unwrap()
+        val.try_into().unwrap()
     }
 }
 
@@ -35,7 +36,7 @@ impl WasmWrap {
         let config = Config::default();
         let engine = Engine::new(&config);
         let wasm_bytes = wat::parse_str(UCPTRIE_WRAP_WAT).unwrap();
-        let module = Module::new(&engine, &mut &wasm_bytes[..]).unwrap();
+        let module = Module::new(&engine, &wasm_bytes[..]).unwrap();
         let linker = <Linker<()>>::new(&engine);
         let mut store = Store::new(&engine, ());
 
@@ -64,15 +65,15 @@ impl WasmWrap {
             .unwrap()
     }
 
-    fn call_return_void(&mut self, name: &str, args: &[Value]) {
+    fn call_return_void(&mut self, name: &str, args: &[Val]) {
         let mut result = [];
         self.get_export(name)
             .call(&mut self.store, args, &mut result)
             .unwrap();
     }
 
-    fn call_return_value(&mut self, name: &str, args: &[Value]) -> Value {
-        let mut result = [Value::I32(0)];
+    fn call_return_value(&mut self, name: &str, args: &[Val]) -> Val {
+        let mut result = [Val::I32(0)];
         self.get_export(name)
             .call(&mut self.store, args, &mut result)
             .unwrap();
@@ -80,10 +81,10 @@ impl WasmWrap {
         result
     }
 
-    fn call_return_i32(&mut self, name: &str, args: &[Value]) -> i32 {
+    fn call_return_i32(&mut self, name: &str, args: &[Val]) -> i32 {
         let result = self.call_return_value(name, args);
-        let Value::I32(result) = result else {
-            panic!("Could not unpack Value into i32: {result:?}");
+        let Val::I32(result) = result else {
+            panic!("Could not unpack Val into i32: {result:?}");
         };
         result
     }
@@ -94,7 +95,7 @@ impl WasmWrap {
     }
 
     pub(crate) fn read_uerrorcode(&mut self, ptr: &Wasmi32Ptr) -> u32 {
-        let result = self.call_return_i32("read_uerrorcode", &[ptr.0.clone()]);
+        let result = self.call_return_i32("read_uerrorcode", core::slice::from_ref(&ptr.0));
         result.try_into().unwrap()
     }
 
@@ -107,8 +108,8 @@ impl WasmWrap {
         let umutablecptrie_ptr = self.call_return_value(
             "umutablecptrie_open",
             &[
-                Value::I32(default_value),
-                Value::I32(error_value),
+                Val::I32(default_value),
+                Val::I32(error_value),
                 error_code_ptr.0.clone(),
             ],
         );
@@ -119,15 +120,15 @@ impl WasmWrap {
         &mut self,
         trie_ptr: &Wasmi32Ptr,
         cp: u32,
-        value: u32,
+        Val: u32,
         error_code_ptr: &Wasmi32Ptr,
     ) {
         self.call_return_void(
             "umutablecptrie_set",
             &[
                 trie_ptr.0.clone(),
-                Value::I32(cp as i32),
-                Value::I32(value as i32),
+                Val::I32(cp as i32),
+                Val::I32(Val as i32),
                 error_code_ptr.0.clone(),
             ],
         );
@@ -144,8 +145,8 @@ impl WasmWrap {
             "umutablecptrie_buildImmutable",
             &[
                 trie_ptr.0.clone(),
-                Value::I32(trie_type as i32),
-                Value::I32(width as i32),
+                Val::I32(trie_type as i32),
+                Val::I32(width as i32),
                 error_code_ptr.0.clone(),
             ],
         );
@@ -153,55 +154,62 @@ impl WasmWrap {
     }
 
     pub(crate) fn ucptrie_close(&mut self, ptr: &Wasmi32Ptr) {
-        self.call_return_void("ucptrie_close", &[ptr.0.clone()]);
+        self.call_return_void("ucptrie_close", core::slice::from_ref(&ptr.0));
     }
 
     pub(crate) fn umutablecptrie_close(&mut self, ptr: &Wasmi32Ptr) {
-        self.call_return_void("umutablecptrie_close", &[ptr.0.clone()]);
+        self.call_return_void("umutablecptrie_close", core::slice::from_ref(&ptr.0));
     }
 
     pub(crate) fn read_ucptrie_highStart(&mut self, ptr: &Wasmi32Ptr) -> u32 {
-        let result = self.call_return_i32("read_ucptrie_highStart", &[ptr.0.clone()]);
+        let result = self.call_return_i32("read_ucptrie_highStart", core::slice::from_ref(&ptr.0));
         result.try_into().unwrap()
     }
 
     pub(crate) fn read_ucptrie_shifted12HighStart(&mut self, ptr: &Wasmi32Ptr) -> u16 {
-        let result = self.call_return_i32("read_ucptrie_shifted12HighStart", &[ptr.0.clone()]);
+        let result = self.call_return_i32(
+            "read_ucptrie_shifted12HighStart",
+            core::slice::from_ref(&ptr.0),
+        );
         result.try_into().unwrap()
     }
 
     pub(crate) fn read_ucptrie_index3NullOffset(&mut self, ptr: &Wasmi32Ptr) -> u16 {
-        let result = self.call_return_i32("read_ucptrie_index3NullOffset", &[ptr.0.clone()]);
+        let result = self.call_return_i32(
+            "read_ucptrie_index3NullOffset",
+            core::slice::from_ref(&ptr.0),
+        );
         result.try_into().unwrap()
     }
 
     pub(crate) fn read_ucptrie_dataNullOffset(&mut self, ptr: &Wasmi32Ptr) -> u32 {
-        let result = self.call_return_i32("read_ucptrie_dataNullOffset", &[ptr.0.clone()]);
+        let result =
+            self.call_return_i32("read_ucptrie_dataNullOffset", core::slice::from_ref(&ptr.0));
         result.try_into().unwrap()
     }
 
     pub(crate) fn read_ucptrie_nullValue(&mut self, ptr: &Wasmi32Ptr) -> u32 {
-        let result = self.call_return_i32("read_ucptrie_nullValue", &[ptr.0.clone()]);
+        let result = self.call_return_i32("read_ucptrie_nullValue", core::slice::from_ref(&ptr.0));
         result.try_into().unwrap()
     }
 
     pub(crate) fn get_index_ptr(&mut self, ptr: &Wasmi32Ptr) -> Wasmi32Ptr {
-        let result = self.call_return_value("get_index_ptr", &[ptr.0.clone()]);
+        let result = self.call_return_value("get_index_ptr", core::slice::from_ref(&ptr.0));
         Wasmi32Ptr(result)
     }
 
     pub(crate) fn get_index_length(&mut self, ptr: &Wasmi32Ptr) -> usize {
-        let result = self.call_return_i32("get_index_length", &[ptr.0.clone()]);
+        let result = self.call_return_i32("get_index_length", core::slice::from_ref(&ptr.0));
         result.try_into().unwrap()
     }
 
     pub(crate) fn get_data_ptr(&mut self, ptr: &Wasmi32Ptr) -> Wasmi32Ptr {
-        let result = self.call_return_value("get_data_ptr", &[ptr.0.clone()]);
+        let result = self.call_return_value("get_data_ptr", core::slice::from_ref(&ptr.0));
         Wasmi32Ptr(result)
     }
 
     pub(crate) fn get_data_length(&mut self, ptr: &Wasmi32Ptr) -> usize {
-        let result = self.call_return_i32("get_data_length", &[ptr.0.clone()]);
+        let result = self.call_return_i32("get_data_length", core::slice::from_ref(&ptr.0));
         result.try_into().unwrap()
     }
 }
@@ -210,21 +218,21 @@ pub(crate) fn run_wasmi_ucptrie_wrap<T>(
     builder: &CodePointTrieBuilder<T>,
 ) -> CodePointTrie<'static, T>
 where
-    T: TrieValue + Into<u32>,
+    T: TrieValue,
 {
     let mut wasm = WasmWrap::create();
 
     let error_code_ptr = wasm.create_uerrorcode();
     let trie_ptr = wasm.umutablecptrie_open(
-        builder.default_value.into() as i32,
-        builder.error_value.into() as i32,
+        builder.default_value.to_u32() as i32,
+        builder.error_value.to_u32() as i32,
         &error_code_ptr,
     );
 
     let CodePointTrieBuilderData::ValuesByCodePoint(values) = builder.data;
     for (cp, value) in values.iter().enumerate() {
-        let num: u32 = (*value).into();
-        if num != builder.default_value.into() {
+        let num = value.to_u32();
+        if num != builder.default_value.to_u32() {
             wasm.umutablecptrie_set(&trie_ptr, cp as u32, num, &error_code_ptr);
         }
     }
@@ -250,22 +258,35 @@ where
     let data_ptr = wasm.get_data_ptr(&ucptrie_ptr);
     let data_length = wasm.get_data_length(&ucptrie_ptr);
 
-    let index_slice = ZeroSlice::<u16>::parse_byte_slice(
+    let index = ZeroSlice::<u16>::parse_bytes(
         wasm.get_bytes_at_ptr(&index_ptr, index_length * core::mem::size_of::<u16>()),
     )
-    .unwrap();
+    .unwrap()
+    .as_zerovec()
+    .into_owned();
 
-    let data_slice = ZeroSlice::<T>::parse_byte_slice(
-        wasm.get_bytes_at_ptr(&data_ptr, data_length * core::mem::size_of::<T::ULE>()),
-    )
-    .unwrap();
+    let data = if core::mem::size_of::<T::ULE>() == 3 {
+        // need to reallocate 32-bit trie as 24-bit zerovec
+        ZeroVec::<T>::parse_bytes(
+            &wasm
+                .get_bytes_at_ptr(&data_ptr, data_length * 4)
+                .iter()
+                .enumerate()
+                .filter(|(i, _)| i % 4 != 3)
+                .map(|(_, b)| *b)
+                .collect::<Vec<_>>(),
+        )
+        .unwrap()
+        .into_owned()
+    } else {
+        ZeroVec::<T>::parse_bytes(
+            wasm.get_bytes_at_ptr(&data_ptr, data_length * core::mem::size_of::<T::ULE>()),
+        )
+        .unwrap()
+        .into_owned()
+    };
 
-    let built_trie = CodePointTrie::try_new(
-        header,
-        index_slice.as_zerovec().into_owned(),
-        data_slice.as_zerovec().into_owned(),
-    )
-    .expect("Failed to construct");
+    let built_trie = CodePointTrie::try_new(header, index, data).expect("Failed to construct");
 
     wasm.ucptrie_close(&ucptrie_ptr);
     wasm.umutablecptrie_close(&trie_ptr);

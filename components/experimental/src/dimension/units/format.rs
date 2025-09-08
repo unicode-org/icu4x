@@ -4,32 +4,32 @@
 
 //! Experimental.
 
-use crate::dimension::provider::units::UnitsDisplayNameV1;
-use fixed_decimal::FixedDecimal;
-use icu_decimal::FixedDecimalFormatter;
+use crate::dimension::provider::units::display_name::UnitsDisplayName;
+use fixed_decimal::Decimal;
+use icu_decimal::DecimalFormatter;
 use icu_plurals::PluralRules;
 use writeable::{impl_display_with_writeable, Writeable};
 
 pub struct FormattedUnit<'l> {
-    pub(crate) value: &'l FixedDecimal,
+    pub(crate) value: &'l Decimal,
     // TODO: review using options and essentials.
     // pub(crate) _options: &'l UnitsFormatterOptions,
-    // pub(crate) essential: &'l UnitsEssentialsV1<'l>,
-    pub(crate) display_name: &'l UnitsDisplayNameV1<'l>,
-    pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
+    // pub(crate) essential: &'l UnitsEssentials<'l>,
+    pub(crate) display_name: &'l UnitsDisplayName<'l>,
+    pub(crate) decimal_formatter: &'l DecimalFormatter,
     pub(crate) plural_rules: &'l PluralRules,
 }
 
-impl<'l> Writeable for FormattedUnit<'l> {
-    fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
+impl Writeable for FormattedUnit<'_> {
+    fn write_to_parts<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
-        W: core::fmt::Write + ?Sized,
+        W: writeable::PartsWrite + ?Sized,
     {
         self.display_name
             .patterns
             .get(self.value.into(), self.plural_rules)
-            .interpolate((self.fixed_decimal_formatter.format(self.value),))
-            .write_to(sink)
+            .interpolate((self.decimal_formatter.format(self.value),))
+            .write_to_parts(sink)
     }
 }
 
@@ -91,7 +91,7 @@ fn test_basic() {
     ];
 
     for (locale, unit, value, options, expected) in test_cases {
-        let fmt = UnitsFormatter::try_new(&locale.into(), unit, options).unwrap();
+        let fmt = UnitsFormatter::try_new(locale.into(), unit, options).unwrap();
         let value = value.parse().unwrap();
         assert_writeable_eq!(fmt.format_fixed_decimal(&value), expected);
     }

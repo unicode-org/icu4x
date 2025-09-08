@@ -3,17 +3,28 @@ import type { LeadingAdjustment } from "./LeadingAdjustment"
 import type { TrailingCase } from "./TrailingCase"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
+export type TitlecaseOptions_obj = {
+    leadingAdjustment?: LeadingAdjustment | null;
+    trailingCase?: TrailingCase | null;
+};
 
-/** See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html) for more information.
-*/
+
+
+/**
+ * See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/2.0.0/icu/casemap/options/struct.TitlecaseOptions.html) for more information.
+ */
 export class TitlecaseOptions {
+    get leadingAdjustment(): LeadingAdjustment | null;
+    set leadingAdjustment(value: LeadingAdjustment | null);
+    get trailingCase(): TrailingCase | null;
+    set trailingCase(value: TrailingCase | null);
+    /** @internal */
+    static fromFields(structObj : TitlecaseOptions_obj) : TitlecaseOptions;
 
-    get leadingAdjustment() : LeadingAdjustment | null;
-    set leadingAdjustment(value: LeadingAdjustment | null); 
 
-    get trailingCase() : TrailingCase | null;
-    set trailingCase(value: TrailingCase | null); 
-    constructor(leadingAdjustment: LeadingAdjustment | null, trailingCase: TrailingCase | null);
 
-    static defaultOptions(): TitlecaseOptions;
+    /**
+     * See the [Rust documentation for `default`](https://docs.rs/icu/2.0.0/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
+     */
+    constructor();
 }

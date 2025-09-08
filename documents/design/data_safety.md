@@ -39,6 +39,8 @@ Additional points:
 1. As a rule of thumb, validation that requires a single linear pass over the data with no memory allocations is fine, similar to UTF-8 validation, but validation that requires memory allocations, runs in superlinear time, or pulls in large amounts of code or dependencies is discouraged.
 2. If performing binary search on a vector from data, it is not necessary to validate that the vector is sorted. The binary search will fail to find elements in an unsorted vector, but it won't panic, so this is consistent with GIGO.
 3. The best data structs are those that don't need to be validated. See the below example on how to write data structs without internal invariants.
+4. Formatters that are fallible only in the case of invalid data, such as DateTimeFormatter, should implement `Writeable` with GIGO behavior if necessary. If the failure mode can happen with default data and valid inputs, prefer `TryWriteable`.
+5. These principles about invalid data could also apply to trait impls that do not follow trait invariants.
 
 ## Example
 

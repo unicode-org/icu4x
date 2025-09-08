@@ -165,7 +165,7 @@ pub struct NonExceptionData {
 
 impl CaseMapData {
     #[inline]
-    pub(crate) fn case_type(&self) -> Option<CaseType> {
+    pub(crate) fn case_type(self) -> Option<CaseType> {
         match self.kind {
             CaseMapDataKind::Exception(case_type, ..) => case_type,
             CaseMapDataKind::Delta(_, case_type, _) => Some(case_type),
@@ -174,7 +174,7 @@ impl CaseMapData {
     }
 
     #[inline]
-    pub(crate) fn is_upper_or_title(&self) -> bool {
+    pub(crate) fn is_upper_or_title(self) -> bool {
         match self.case_type() {
             None | Some(CaseType::Lower) => false,
             Some(CaseType::Upper) | Some(CaseType::Title) => true,
@@ -182,7 +182,7 @@ impl CaseMapData {
     }
 
     #[inline]
-    pub(crate) fn is_relevant_to(&self, kind: MappingKind) -> bool {
+    pub(crate) fn is_relevant_to(self, kind: MappingKind) -> bool {
         match kind {
             MappingKind::Lower | MappingKind::Fold => self.is_upper_or_title(),
             MappingKind::Upper | MappingKind::Title => self.case_type() == Some(CaseType::Lower),
@@ -190,12 +190,12 @@ impl CaseMapData {
     }
 
     #[inline]
-    pub(crate) fn is_ignorable(&self) -> bool {
+    pub(crate) fn is_ignorable(self) -> bool {
         self.ignoreable
     }
 
     #[inline]
-    pub(crate) fn has_exception(&self) -> bool {
+    pub(crate) fn has_exception(self) -> bool {
         matches!(self.kind, CaseMapDataKind::Exception(..))
     }
 
@@ -203,7 +203,7 @@ impl CaseMapData {
     // only in the non-exception case
     // This is not currently exposed.
     #[inline]
-    pub(crate) fn is_sensitive(&self) -> bool {
+    pub(crate) fn is_sensitive(self) -> bool {
         match self.kind {
             CaseMapDataKind::Exception(..) => false,
             CaseMapDataKind::Delta(ned, ..) => ned.sensitive,
@@ -212,7 +212,7 @@ impl CaseMapData {
     }
 
     #[inline]
-    pub(crate) fn dot_type(&self) -> DotType {
+    pub(crate) fn dot_type(self) -> DotType {
         match self.kind {
             CaseMapDataKind::Exception(..) => DotType::NoDot,
             CaseMapDataKind::Delta(ned, ..) => ned.dot_type,
@@ -225,7 +225,7 @@ impl CaseMapData {
     //
     // Returns 0 for uncased types
     #[inline]
-    pub(crate) fn delta(&self) -> i16 {
+    pub(crate) fn delta(self) -> i16 {
         debug_assert!(!self.has_exception());
         match self.kind {
             CaseMapDataKind::Exception(..) => 0,
@@ -237,7 +237,7 @@ impl CaseMapData {
     // The index of the exception data for this codepoint in the exception
     // table. This should only be called for codepoints with exception data.
     #[inline]
-    pub(crate) fn exception_index(&self) -> u16 {
+    pub(crate) fn exception_index(self) -> u16 {
         debug_assert!(self.has_exception());
         if let CaseMapDataKind::Exception(_, i) = self.kind {
             i
@@ -271,7 +271,7 @@ impl CaseMapData {
     #[cfg(any(feature = "datagen", test))]
     pub(crate) fn try_from_icu_integer(int: u16) -> Result<Self, UleError> {
         let raw = int.to_unaligned();
-        CaseMapDataULE::validate_byte_slice(raw.as_bytes())?;
+        CaseMapDataULE::validate_bytes(raw.as_bytes())?;
 
         let this = Self::from_unaligned(CaseMapDataULE(raw));
         Ok(this)
@@ -357,17 +357,17 @@ impl CaseMapDataULE {
 /// 1. The type *must not* include any uninitialized or padding bytes: repr(transparent)
 ///    wrapper around ULE type
 /// 2. The type must have an alignment of 1 byte: repr(transparent) wrapper around ULE type
-/// 3. The impl of [`ULE::validate_byte_slice()`] *must* return an error if the given byte slice
+/// 3. The impl of [`ULE::validate_bytes()`] *must* return an error if the given byte slice
 ///    would not represent a valid slice of this type: It does
-/// 4. The impl of [`ULE::validate_byte_slice()`] *must* return an error if the given byte slice
+/// 4. The impl of [`ULE::validate_bytes()`] *must* return an error if the given byte slice
 ///    cannot be used in its entirety (if its length is not a multiple of `size_of::<Self>()`):
 ///    it does, due to the RawBytesULE parse call
 /// 5. All other methods *must* be left with their default impl, or else implemented according to
 ///    their respective safety guidelines: They have been
 /// 6. The equality invariant is satisfied
 unsafe impl ULE for CaseMapDataULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
-        let sixteens = RawBytesULE::<2>::parse_byte_slice(bytes)?;
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
+        let sixteens = RawBytesULE::<2>::parse_bytes_to_slice(bytes)?;
 
         for sixteen in sixteens {
             let sixteen = sixteen.as_unsigned_int();

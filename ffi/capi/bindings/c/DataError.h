@@ -19,5 +19,4 @@
 
 
 
-
 #endif // DataError_H

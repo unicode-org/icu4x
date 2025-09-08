@@ -22,17 +22,6 @@ pub enum EitherProvider<P0, P1> {
     B(P1),
 }
 
-impl<P0: AnyProvider, P1: AnyProvider> AnyProvider for EitherProvider<P0, P1> {
-    #[inline]
-    fn load_any(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<AnyResponse, DataError> {
-        use EitherProvider::*;
-        match self {
-            A(p) => p.load_any(marker, req),
-            B(p) => p.load_any(marker, req),
-        }
-    }
-}
-
 impl<M: DynamicDataMarker, P0: DynamicDataProvider<M>, P1: DynamicDataProvider<M>>
     DynamicDataProvider<M> for EitherProvider<P0, P1>
 {
@@ -103,7 +92,7 @@ impl<
     fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    ) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
         use EitherProvider::*;
         match self {
             A(p) => p.iter_ids_for_marker(marker),
@@ -116,7 +105,7 @@ impl<M: DataMarker, P0: IterableDataProvider<M>, P1: IterableDataProvider<M>>
     IterableDataProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
-    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
         use EitherProvider::*;
         match self {
             A(p) => p.iter_ids(),
@@ -131,7 +120,7 @@ where
     P0: ExportableProvider,
     P1: ExportableProvider,
 {
-    fn supported_markers(&self) -> std::collections::HashSet<DataMarkerInfo> {
+    fn supported_markers(&self) -> alloc::collections::BTreeSet<DataMarkerInfo> {
         use EitherProvider::*;
         match self {
             A(p) => p.supported_markers(),

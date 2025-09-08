@@ -8,14 +8,21 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use diplomat_runtime::{DiplomatStr16Slice, DiplomatStrSlice};
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use icu_list::{options::ListFormatterOptions, ListFormatterPreferences};
 
-    use crate::{errors::ffi::DataError, locale_core::ffi::Locale, provider::ffi::DataProvider};
+    #[cfg(feature = "buffer_provider")]
+    use crate::unstable::provider::ffi::DataProvider;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::unstable::{errors::ffi::DataError, locale_core::ffi::Locale};
 
     use writeable::Writeable;
 
-    #[diplomat::rust_link(icu::list::ListLength, Enum)]
-    #[diplomat::enum_convert(icu_list::ListLength, needs_wildcard)]
+    #[diplomat::rust_link(icu::list::options::ListLength, Enum)]
+    #[diplomat::enum_convert(icu_list::options::ListLength, needs_wildcard)]
+    #[non_exhaustive]
     pub enum ListLength {
+        #[diplomat::attr(auto, default)]
         Wide,
         Short,
         Narrow,
@@ -25,60 +32,122 @@ pub mod ffi {
     pub struct ListFormatter(pub icu_list::ListFormatter);
 
     impl ListFormatter {
-        /// Construct a new ListFormatter instance for And patterns
-        #[diplomat::rust_link(icu::list::ListFormatter::try_new_and_with_length, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "and_with_length")]
+        /// Construct a new ListFormatter instance for And patterns from compiled data.
+        #[diplomat::rust_link(icu::list::ListFormatter::try_new_and, FnInStruct)]
+        #[diplomat::rust_link(icu::list::options::ListFormatterOptions, Struct, hidden)]
+        #[diplomat::rust_link(
+            icu::list::options::ListFormatterOptions::with_length,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::list::options::ListFormatterOptions::default,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "and_with_length")]
+        #[cfg(feature = "compiled_data")]
         #[diplomat::demo(default_constructor)]
         pub fn create_and_with_length(
+            locale: &Locale,
+            length: ListLength,
+        ) -> Result<Box<ListFormatter>, DataError> {
+            let prefs = ListFormatterPreferences::from(&locale.0);
+            let options = ListFormatterOptions::default().with_length(length.into());
+            Ok(Box::new(ListFormatter(
+                icu_list::ListFormatter::try_new_and(prefs, options)?,
+            )))
+        }
+
+        /// Construct a new ListFormatter instance for And patterns
+        #[diplomat::rust_link(icu::list::ListFormatter::try_new_and, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "and_with_length_and_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_and_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
             length: ListLength,
         ) -> Result<Box<ListFormatter>, DataError> {
-            let locale = locale.to_datalocale();
-            Ok(Box::new(ListFormatter(call_constructor!(
-                icu_list::ListFormatter::try_new_and_with_length,
-                icu_list::ListFormatter::try_new_and_with_length_with_any_provider,
-                icu_list::ListFormatter::try_new_and_with_length_with_buffer_provider,
-                provider,
-                &locale,
-                length.into()
-            )?)))
+            let prefs = ListFormatterPreferences::from(&locale.0);
+            let options = ListFormatterOptions::default().with_length(length.into());
+            Ok(Box::new(ListFormatter(
+                icu_list::ListFormatter::try_new_and_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?,
+            )))
         }
-        /// Construct a new ListFormatter instance for And patterns
-        #[diplomat::rust_link(icu::list::ListFormatter::try_new_or_with_length, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "or_with_length")]
+
+        /// Construct a new ListFormatter instance for And patterns from compiled data.
+        #[diplomat::rust_link(icu::list::ListFormatter::try_new_or, FnInStruct)]
+        #[diplomat::rust_link(icu::list::options::ListFormatterOptions, Struct, hidden)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "or_with_length")]
+        #[cfg(feature = "compiled_data")]
         pub fn create_or_with_length(
-            provider: &DataProvider,
             locale: &Locale,
             length: ListLength,
         ) -> Result<Box<ListFormatter>, DataError> {
-            let locale = locale.to_datalocale();
-            Ok(Box::new(ListFormatter(call_constructor!(
-                icu_list::ListFormatter::try_new_or_with_length,
-                icu_list::ListFormatter::try_new_or_with_length_with_any_provider,
-                icu_list::ListFormatter::try_new_or_with_length_with_buffer_provider,
-                provider,
-                &locale,
-                length.into()
-            )?)))
+            let prefs = ListFormatterPreferences::from(&locale.0);
+            let options = ListFormatterOptions::default().with_length(length.into());
+            Ok(Box::new(ListFormatter(
+                icu_list::ListFormatter::try_new_or(prefs, options)?,
+            )))
         }
+
         /// Construct a new ListFormatter instance for And patterns
-        #[diplomat::rust_link(icu::list::ListFormatter::try_new_unit_with_length, FnInStruct)]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "unit_with_length")]
-        pub fn create_unit_with_length(
+        #[diplomat::rust_link(icu::list::ListFormatter::try_new_or, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "or_with_length_and_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_or_with_length_and_provider(
             provider: &DataProvider,
             locale: &Locale,
             length: ListLength,
         ) -> Result<Box<ListFormatter>, DataError> {
-            let locale = locale.to_datalocale();
-            Ok(Box::new(ListFormatter(call_constructor!(
-                icu_list::ListFormatter::try_new_unit_with_length,
-                icu_list::ListFormatter::try_new_unit_with_length_with_any_provider,
-                icu_list::ListFormatter::try_new_unit_with_length_with_buffer_provider,
-                provider,
-                &locale,
-                length.into()
-            )?)))
+            let prefs = ListFormatterPreferences::from(&locale.0);
+            let options = ListFormatterOptions::default().with_length(length.into());
+            Ok(Box::new(ListFormatter(
+                icu_list::ListFormatter::try_new_or_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?,
+            )))
+        }
+
+        /// Construct a new ListFormatter instance for And patterns from compiled data.
+        #[diplomat::rust_link(icu::list::ListFormatter::try_new_unit, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "unit_with_length")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_unit_with_length(
+            locale: &Locale,
+            length: ListLength,
+        ) -> Result<Box<ListFormatter>, DataError> {
+            let prefs = ListFormatterPreferences::from(&locale.0);
+            let options = ListFormatterOptions::default().with_length(length.into());
+            Ok(Box::new(ListFormatter(
+                icu_list::ListFormatter::try_new_unit(prefs, options)?,
+            )))
+        }
+
+        /// Construct a new ListFormatter instance for And patterns
+        #[diplomat::rust_link(icu::list::ListFormatter::try_new_unit, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "unit_with_length_and_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_unit_with_length_and_provider(
+            provider: &DataProvider,
+            locale: &Locale,
+            length: ListLength,
+        ) -> Result<Box<ListFormatter>, DataError> {
+            let prefs = ListFormatterPreferences::from(&locale.0);
+            let options = ListFormatterOptions::default().with_length(length.into());
+            Ok(Box::new(ListFormatter(
+                icu_list::ListFormatter::try_new_unit_with_buffer_provider(
+                    provider.get()?,
+                    prefs,
+                    options,
+                )?,
+            )))
         }
 
         #[diplomat::rust_link(icu::list::ListFormatter::format, FnInStruct)]

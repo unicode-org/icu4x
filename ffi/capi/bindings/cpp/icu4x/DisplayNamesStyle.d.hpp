@@ -6,7 +6,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -18,12 +20,17 @@ namespace capi {
       DisplayNamesStyle_Long = 2,
       DisplayNamesStyle_Menu = 3,
     };
-    
+
     typedef struct DisplayNamesStyle_option {union { DisplayNamesStyle ok; }; bool is_ok; } DisplayNamesStyle_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
+/**
+ * 🚧 This API is experimental and may experience breaking changes outside major releases.
+ *
+ * See the [Rust documentation for `Style`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/enum.Style.html) for more information.
+ */
 class DisplayNamesStyle {
 public:
   enum Value {
@@ -33,7 +40,8 @@ public:
     Menu = 3,
   };
 
-  DisplayNamesStyle() = default;
+  DisplayNamesStyle(): value(Value::Narrow) {}
+
   // Implicit conversions between enum and ::Value
   constexpr DisplayNamesStyle(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

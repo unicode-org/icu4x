@@ -5,7 +5,7 @@
 use std::collections::HashSet;
 
 use crate::SourceDataProvider;
-use icu::properties::provider::bidi::BidiAuxiliaryPropertiesV1Marker;
+use icu::properties::provider::PropertyEnumBidiMirroringGlyphV1;
 use icu_provider::prelude::*;
 
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
@@ -28,21 +28,21 @@ impl SourceDataProvider {
 
 // implement data provider 2 different ways, based on whether or not
 // features exist that enable the use of CPT Builder (ex: `use_wasm` or `use_icu4c`)
-impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for SourceDataProvider {
+impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<BidiAuxiliaryPropertiesV1Marker>, DataError> {
+    ) -> Result<DataResponse<PropertyEnumBidiMirroringGlyphV1>, DataError> {
         use icu::collections::codepointinvlist::CodePointInversionListBuilder;
         use icu::collections::codepointtrie::CodePointTrie;
         use icu::collections::codepointtrie::TrieType;
-        use icu::properties::provider::bidi::{
-            BidiAuxiliaryPropertiesV1, MirroredPairedBracketData,
-        };
+        use icu::properties::props::BidiMirroringGlyph;
+        use icu::properties::props::BidiPairedBracketType;
         use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
+        use icu_collections::codepointtrie::TrieValue;
 
-        self.check_req::<BidiAuxiliaryPropertiesV1Marker>(req)?;
+        self.check_req::<PropertyEnumBidiMirroringGlyphV1>(req)?;
 
         // Bidi_M / Bidi_Mirrored
         let bidi_m_data = self.get_binary_prop_for_code_point_set("Bidi_M")?;
@@ -64,37 +64,42 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for SourceDataProvider {
             DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
         })?;
 
-        // Create the equivalent of CPT<MirroredPairedBracketData>, but since the
-        // trie's value type's ULE serializes to 24 bits, which CPT builder cannot handle, widen
-        // to 32 bits using u32.
-        let trie_vals_structured_iter =
-            (0..=(char::MAX as u32)).map(|cp| MirroredPairedBracketData {
-                mirroring_glyph: bmg_trie.get32(cp),
-                mirrored: bidi_m_cpinvlist.contains32(cp),
-                paired_bracket_type: bpt_trie.get32(cp),
-            });
-        let trie_vals_ule_iter = trie_vals_structured_iter.map(u32::from);
-        let trie_vals_vec: Vec<u32> = trie_vals_ule_iter.collect();
-        let trie_data = CodePointTrieBuilderData::ValuesByCodePoint(&trie_vals_vec);
-        let default_val: u32 = MirroredPairedBracketData::default().into();
+        let trie_vals = (0..=(char::MAX as u32)).map(|cp| {
+            let mut r = BidiMirroringGlyph::default();
+            r.mirrored = bidi_m_cpinvlist.contains32(cp);
+            r.mirroring_glyph = r
+                .mirrored
+                .then_some(bmg_trie.get32(cp))
+                .filter(|&cp| cp as u32 != 0);
+            r.paired_bracket_type = match bpt_trie.get32(cp) {
+                1 => BidiPairedBracketType::Open,
+                2 => BidiPairedBracketType::Close,
+                _ => BidiPairedBracketType::None,
+            };
+            if r.mirrored && r.mirroring_glyph.is_none() {
+                log::trace!(
+                    "Missing mirroring glyph: U+{cp:X}: {}",
+                    char::try_from_u32(cp).unwrap()
+                );
+            }
+            r
+        });
 
-        // Create CPT<u32> using the builder, then use CPT method to map the CPT's
-        // values from u32 to MirroredPairedBracketData
-        let trie: CodePointTrie<u32> = CodePointTrieBuilder {
-            data: trie_data,
-            default_value: default_val,
-            error_value: default_val,
-            trie_type: TrieType::Small,
-        }
-        .build();
-        let trie_mpbd = trie
-            .try_alloc_map_value(MirroredPairedBracketData::try_from)
-            .map_err(|_| DataError::custom("Cannot parse MirroredPairedBracketData from u32"))?;
-
-        let data_struct = BidiAuxiliaryPropertiesV1 { trie: trie_mpbd };
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(data_struct),
+            payload: DataPayload::from_owned(
+                icu::properties::provider::PropertyCodePointMap::CodePointTrie(
+                    CodePointTrieBuilder {
+                        data: CodePointTrieBuilderData::ValuesByCodePoint(
+                            &trie_vals.collect::<Vec<_>>(),
+                        ),
+                        default_value: BidiMirroringGlyph::default(),
+                        error_value: BidiMirroringGlyph::default(),
+                        trie_type: TrieType::Small,
+                    }
+                    .build(),
+                ),
+            ),
         })
     }
 
@@ -102,15 +107,15 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<BidiAuxiliaryPropertiesV1Marker>, DataError> {
-        self.check_req::<BidiAuxiliaryPropertiesV1Marker>(req)?;
+    ) -> Result<DataResponse<PropertyEnumBidiMirroringGlyphV1>, DataError> {
+        self.check_req::<PropertyEnumBidiMirroringGlyphV1>(req)?;
         return Err(DataError::custom(
             "icu_provider_source must be built with use_icu4c or use_wasm to build Bidi auxiliary properties data",
         ));
     }
 }
 
-impl crate::IterableDataProviderCached<BidiAuxiliaryPropertiesV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -119,26 +124,30 @@ impl crate::IterableDataProviderCached<BidiAuxiliaryPropertiesV1Marker> for Sour
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu::properties::bidi::BidiPairingProperties;
+    use icu::properties::props::{BidiMirroringGlyph, BidiPairedBracketType};
 
     #[test]
     fn test_bidi_data_provider() {
         let provider = SourceDataProvider::new_testing();
 
         let bidi_data =
-            icu::properties::bidi::BidiAuxiliaryProperties::try_new_unstable(&provider).unwrap();
+            icu::properties::CodePointMapData::<BidiMirroringGlyph>::try_new_unstable(&provider)
+                .unwrap();
         let bidi_data = bidi_data.as_borrowed();
 
-        let close_paren = bidi_data.get32_mirroring_props(')' as u32);
+        let close_paren = bidi_data.get(')');
         assert_eq!(close_paren.mirroring_glyph, Some('('));
         assert!(close_paren.mirrored);
-        let close_angle_bracket = bidi_data.get32_mirroring_props('>' as u32);
+        let close_angle_bracket = bidi_data.get('>');
         assert_eq!(close_angle_bracket.mirroring_glyph, Some('<'));
         assert!(close_angle_bracket.mirrored);
 
-        let open_paren = bidi_data.get32_pairing_props('(' as u32);
-        assert_eq!(open_paren, BidiPairingProperties::Open(')'));
-        let open_angle_bracket = bidi_data.get32_pairing_props('<' as u32);
-        assert_eq!(open_angle_bracket, BidiPairingProperties::None);
+        let open_paren = bidi_data.get('(');
+        assert_eq!(open_paren.paired_bracket_type, BidiPairedBracketType::Open);
+        let open_angle_bracket = bidi_data.get('<');
+        assert_eq!(
+            open_angle_bracket.paired_bracket_type,
+            BidiPairedBracketType::None
+        );
     }
 }

@@ -1,0 +1,9 @@
+{
+  "_visibility": "external",
+  "_backwardAliasBcp47": "und-t-s0-publish",
+  "_aliasBcp47": "und-t-d0-publish",
+  "_source": "Any",
+  "_direction": "both",
+  "_target": "Publishing",
+  "_rulesFile": "Any-Publishing.txt"
+}

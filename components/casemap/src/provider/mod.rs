@@ -50,15 +50,31 @@ const _: () = {
         pub use icu_collections as collections;
     }
     make_provider!(Baked);
-    impl_case_map_v1_marker!(Baked);
-    impl_case_map_unfold_v1_marker!(Baked);
+    impl_case_map_v1!(Baked);
+    impl_case_map_unfold_v1!(Baked);
 };
+
+icu_provider::data_marker!(
+    /// Marker for casemapping data.
+    CaseMapV1,
+    "case/map/v1",
+    CaseMap<'static>,
+    is_singleton = true
+);
+
+icu_provider::data_marker!(
+    /// Reverse case mapping data.
+    CaseMapUnfoldV1,
+    "case/map/unfold/v1",
+    CaseMapUnfold<'static>,
+    is_singleton = true
+);
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
-pub const MARKERS: &[DataMarkerInfo] = &[CaseMapUnfoldV1Marker::INFO, CaseMapV1Marker::INFO];
+pub const MARKERS: &[DataMarkerInfo] = &[CaseMapUnfoldV1::INFO, CaseMapV1::INFO];
 
-pub use self::unfold::{CaseMapUnfoldV1, CaseMapUnfoldV1Marker};
+pub use self::unfold::CaseMapUnfold;
 
 /// This type contains all of the casemapping data
 ///
@@ -71,22 +87,26 @@ pub use self::unfold::{CaseMapUnfoldV1, CaseMapUnfoldV1Marker};
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(CaseMapV1Marker, "props/casemap@1", singleton))]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_casemap::provider))]
 #[yoke(prove_covariance_manually)]
 /// CaseMapper provides low-level access to the data necessary to
 /// convert characters and strings to upper, lower, or title case.
-pub struct CaseMapV1<'data> {
+pub struct CaseMap<'data> {
     /// Case mapping data
     pub trie: CodePointTrie<'data, CaseMapData>,
     /// Exceptions to the case mapping data
     pub exceptions: CaseMapExceptions<'data>,
 }
 
+icu_provider::data_struct!(
+    CaseMap<'_>,
+    #[cfg(feature = "datagen")]
+);
+
 #[cfg(feature = "serde")]
-impl<'de> serde::Deserialize<'de> for CaseMapV1<'de> {
+impl<'de> serde::Deserialize<'de> for CaseMap<'de> {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         #[derive(serde::Deserialize)]
         pub struct Raw<'data> {
@@ -103,8 +123,8 @@ impl<'de> serde::Deserialize<'de> for CaseMapV1<'de> {
     }
 }
 
-impl<'data> CaseMapV1<'data> {
-    /// Creates a new CaseMapV1 using data exported by the
+impl CaseMap<'_> {
+    /// Creates a new CaseMap using data exported by the
     // `icuexportdata` tool in ICU4C. Validates that the data is
     // consistent.
     #[cfg(feature = "datagen")]
@@ -121,7 +141,7 @@ impl<'data> CaseMapV1<'data> {
 
         let trie_index = ZeroVec::alloc_from_slice(trie_index);
 
-        #[allow(clippy::unwrap_used)] // datagen only
+        #[expect(clippy::unwrap_used)] // datagen only
         let trie_data = trie_data
             .iter()
             .map(|&i| {

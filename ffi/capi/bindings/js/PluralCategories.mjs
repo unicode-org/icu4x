@@ -2,59 +2,105 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-export class PluralCategories {
 
+
+export class PluralCategories {
     #zero;
-    get zero()  {
+    get zero() {
         return this.#zero;
     }
-    
-
     #one;
-    get one()  {
+    get one() {
         return this.#one;
     }
-    
-
     #two;
-    get two()  {
+    get two() {
         return this.#two;
     }
-    
-
     #few;
-    get few()  {
+    get few() {
         return this.#few;
     }
-    
-
     #many;
-    get many()  {
+    get many() {
         return this.#many;
     }
-    
-
     #other;
-    get other()  {
+    get other() {
         return this.#other;
     }
-    
-    constructor() {
-        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
-            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
-        } else {
-            console.error("PluralCategories is an out struct and can only be created internally.");
+    #internalConstructor(structObj, internalConstructor) {
+        if (typeof structObj !== "object") {
+            throw new Error("PluralCategories's constructor takes an object of PluralCategories's fields.");
         }
+
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("PluralCategories is an out struct and can only be created internally.");
+        }
+        if ("zero" in structObj) {
+            this.#zero = structObj.zero;
+        } else {
+            throw new Error("Missing required field zero.");
+        }
+
+        if ("one" in structObj) {
+            this.#one = structObj.one;
+        } else {
+            throw new Error("Missing required field one.");
+        }
+
+        if ("two" in structObj) {
+            this.#two = structObj.two;
+        } else {
+            throw new Error("Missing required field two.");
+        }
+
+        if ("few" in structObj) {
+            this.#few = structObj.few;
+        } else {
+            throw new Error("Missing required field few.");
+        }
+
+        if ("many" in structObj) {
+            this.#many = structObj.many;
+        } else {
+            throw new Error("Missing required field many.");
+        }
+
+        if ("other" in structObj) {
+            this.#other = structObj.other;
+        } else {
+            throw new Error("Missing required field other.");
+        }
+
+        return this;
     }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
-    
     _intoFFI(
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [this.#zero, this.#one, this.#two, this.#few, this.#many, this.#other]
+        let buffer = diplomatRuntime.DiplomatBuf.struct(wasm, 6, 1);
+
+        this._writeToArrayBuffer(wasm.memory.buffer, buffer.ptr, functionCleanupArena, appendArrayMap);
+
+        functionCleanupArena.alloc(buffer);
+
+        return buffer.ptr;
+    }
+
+    static _fromSuppliedValue(internalConstructor, obj) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("_fromSuppliedValue cannot be called externally.");
+        }
+
+        if (obj instanceof PluralCategories) {
+            return obj;
+        }
+
+        return PluralCategories.fromFields(obj);
     }
 
     _writeToArrayBuffer(
@@ -76,18 +122,29 @@ export class PluralCategories {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    #fromFFI(ptr) {
+    static _fromFFI(internalConstructor, ptr) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("PluralCategories._fromFFI is not meant to be called externally. Please use the default constructor.");
+        }
+        let structObj = {};
         const zeroDeref = (new Uint8Array(wasm.memory.buffer, ptr, 1))[0] === 1;
-        this.#zero = zeroDeref;
+        structObj.zero = zeroDeref;
         const oneDeref = (new Uint8Array(wasm.memory.buffer, ptr + 1, 1))[0] === 1;
-        this.#one = oneDeref;
+        structObj.one = oneDeref;
         const twoDeref = (new Uint8Array(wasm.memory.buffer, ptr + 2, 1))[0] === 1;
-        this.#two = twoDeref;
+        structObj.two = twoDeref;
         const fewDeref = (new Uint8Array(wasm.memory.buffer, ptr + 3, 1))[0] === 1;
-        this.#few = fewDeref;
+        structObj.few = fewDeref;
         const manyDeref = (new Uint8Array(wasm.memory.buffer, ptr + 4, 1))[0] === 1;
-        this.#many = manyDeref;
+        structObj.many = manyDeref;
         const otherDeref = (new Uint8Array(wasm.memory.buffer, ptr + 5, 1))[0] === 1;
-        this.#other = otherDeref;
+        structObj.other = otherDeref;
+
+        return new PluralCategories(structObj, internalConstructor);
+    }
+
+
+    constructor(structObj, internalConstructor) {
+        return this.#internalConstructor(...arguments)
     }
 }

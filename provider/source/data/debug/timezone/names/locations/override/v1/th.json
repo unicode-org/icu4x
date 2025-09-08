@@ -1,0 +1,41 @@
+{
+  "locations": {},
+  "pattern_generic": [
+    {
+      "Literal": "เวลา"
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "pattern_standard": [
+    {
+      "Literal": "เวลามาตรฐาน"
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "pattern_daylight": [
+    {
+      "Literal": "เวลาออมแสง"
+    },
+    {
+      "Placeholder": "Singleton"
+    }
+  ],
+  "pattern_partial_location": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Literal": " ("
+    },
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": ")"
+    }
+  ]
+}

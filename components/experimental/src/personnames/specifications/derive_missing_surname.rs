@@ -11,7 +11,7 @@ pub fn derive_missing_surname(
     requested_name_field: &NameField,
     requires_given_name: bool,
 ) -> Option<NameField> {
-    return match requested_name_field.kind {
+    match requested_name_field.kind {
         NameFieldKind::Surname | NameFieldKind::Given => {
             let has_surname = available_name_field
                 .iter()
@@ -25,10 +25,10 @@ pub fn derive_missing_surname(
                 }
                 return None;
             }
-            return Some(*requested_name_field);
+            Some(*requested_name_field)
         }
         _ => Some(*requested_name_field),
-    };
+    }
 }
 
 #[cfg(test)]

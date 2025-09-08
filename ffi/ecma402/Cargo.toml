@@ -5,7 +5,7 @@
 [package]
 name = "icu4x_ecma402"
 description = "ECMA-402 API functionality backed by the ICU4X library"
-version = "0.8.2"
+version = "0.9.0"
 
 authors.workspace = true
 categories.workspace = true
@@ -20,8 +20,8 @@ rust-version.workspace = true
 all-features = true
 
 [dependencies]
-ecma402_traits = "4"
+ecma402_traits = "5"
 fixed_decimal = { workspace = true, features = ["ryu"] }
-icu = { workspace = true, features = ["std", "compiled_data", "experimental"] }
+icu = { workspace = true, features = ["compiled_data", "experimental"] }
 icu_provider = { workspace = true }
 writeable = { workspace = true }

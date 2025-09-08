@@ -7,11 +7,9 @@
 //! Spec reference: <https://unicode.org/reports/tr35/tr35-numbers.html#Number_Format_Patterns>
 
 use displaydoc::Display;
-use icu::decimal::provider::AffixesV1;
 #[cfg(feature = "experimental")]
 use icu_pattern::{DoublePlaceholderKey, PatternItemCow};
 use itertools::Itertools;
-use std::borrow::Cow;
 use std::str::FromStr;
 
 #[derive(Display, Debug, PartialEq)]
@@ -21,8 +19,6 @@ pub(crate) enum Error {
     #[displaydoc("Unknown decimal body: {0}")]
     UnknownPatternBody(String),
 }
-
-impl std::error::Error for Error {}
 
 /// Representation of a UTS-35 number subpattern (part of a number pattern between ';'s).
 #[derive(Debug, PartialEq)]
@@ -38,7 +34,7 @@ pub(crate) struct DecimalSubPattern {
 impl FromStr for DecimalSubPattern {
     type Err = Error;
 
-    #[allow(clippy::many_single_char_names)]
+    #[expect(clippy::many_single_char_names)]
     fn from_str(subpattern: &str) -> Result<Self, Self::Err> {
         // Split the subpattern into prefix, body, and suffix.
         // TODO(#567): Handle quoted literals in prefix and suffix.
@@ -82,7 +78,8 @@ impl FromStr for DecimalSubPattern {
 
 impl DecimalSubPattern {
     #[cfg(feature = "experimental")]
-    pub(crate) fn to_pattern_items(&self) -> Vec<PatternItemCow<DoublePlaceholderKey>> {
+    pub(crate) fn to_pattern_items(&self) -> Vec<PatternItemCow<'_, DoublePlaceholderKey>> {
+        use std::borrow::Cow;
         vec![
             PatternItemCow::Literal(Cow::Borrowed(&self.prefix)),
             PatternItemCow::Placeholder(DoublePlaceholderKey::Place0),
@@ -117,17 +114,18 @@ impl FromStr for DecimalPattern {
 }
 
 impl DecimalPattern {
-    pub(crate) fn localize_sign(&self, sign_str: &str) -> AffixesV1<'static> {
+    // Returns affixes in the form (prefix, suffix)
+    pub(crate) fn localize_sign(&self, sign_str: &str) -> (String, String) {
         // UTS 35: the absence of a negative pattern means a single prefixed sign
         let signed_affixes = self
             .negative
             .as_ref()
             .map(|subpattern| (subpattern.prefix.as_str(), subpattern.suffix.as_str()))
             .unwrap_or_else(|| ("-", ""));
-        AffixesV1 {
-            prefix: Cow::Owned(signed_affixes.0.replace('-', sign_str)),
-            suffix: Cow::Owned(signed_affixes.1.replace('-', sign_str)),
-        }
+        (
+            signed_affixes.0.replace('-', sign_str),
+            signed_affixes.1.replace('-', sign_str),
+        )
     }
 }
 

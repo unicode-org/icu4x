@@ -8,18 +8,19 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_PluralCategory_get_for_cldr_string_mv1_result {union {icu4x::capi::PluralCategory ok; }; bool is_ok;} icu4x_PluralCategory_get_for_cldr_string_mv1_result;
     icu4x_PluralCategory_get_for_cldr_string_mv1_result icu4x_PluralCategory_get_for_cldr_string_mv1(diplomat::capi::DiplomatStringView s);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -38,7 +39,7 @@ inline icu4x::PluralCategory icu4x::PluralCategory::FromFFI(icu4x::capi::PluralC
     case icu4x::capi::PluralCategory_Other:
       return static_cast<icu4x::PluralCategory::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

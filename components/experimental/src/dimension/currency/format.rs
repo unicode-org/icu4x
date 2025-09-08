@@ -2,28 +2,28 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::Decimal;
 
-use icu_decimal::FixedDecimalFormatter;
+use icu_decimal::DecimalFormatter;
 use writeable::Writeable;
 
 use crate::dimension::currency::options::CurrencyFormatterOptions;
 use crate::dimension::currency::options::Width;
 use crate::dimension::currency::CurrencyCode;
-use crate::dimension::provider::currency;
-use crate::dimension::provider::currency::CurrencyEssentialsV1;
+use crate::dimension::provider::currency::essentials;
+use crate::dimension::provider::currency::essentials::CurrencyEssentials;
 
 pub struct FormattedCurrency<'l> {
-    pub(crate) value: &'l FixedDecimal,
+    pub(crate) value: &'l Decimal,
     pub(crate) currency_code: CurrencyCode,
     pub(crate) options: &'l CurrencyFormatterOptions,
-    pub(crate) essential: &'l CurrencyEssentialsV1<'l>,
-    pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
+    pub(crate) essential: &'l CurrencyEssentials<'l>,
+    pub(crate) decimal_formatter: &'l DecimalFormatter,
 }
 
 writeable::impl_display_with_writeable!(FormattedCurrency<'_>);
 
-impl<'l> Writeable for FormattedCurrency<'l> {
+impl Writeable for FormattedCurrency<'_> {
     fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
         W: core::fmt::Write + ?Sized,
@@ -39,12 +39,12 @@ impl<'l> Writeable for FormattedCurrency<'l> {
             Width::Narrow => config.narrow_placeholder_value,
         };
         let currency_sign_value = match placeholder_index {
-            Some(currency::PlaceholderValue::Index(index)) => self
+            Some(essentials::PlaceholderValue::Index(index)) => self
                 .essential
                 .placeholders
                 .get(index.into())
                 .ok_or(core::fmt::Error)?,
-            Some(currency::PlaceholderValue::ISO) | None => self.currency_code.0.as_str(),
+            Some(essentials::PlaceholderValue::ISO) | None => self.currency_code.0.as_str(),
         };
 
         let pattern_selection = match self.options.width {
@@ -52,8 +52,8 @@ impl<'l> Writeable for FormattedCurrency<'l> {
             Width::Narrow => config.narrow_pattern_selection,
         };
         let pattern = match pattern_selection {
-            currency::PatternSelection::Standard => self.essential.standard_pattern.as_ref(),
-            currency::PatternSelection::StandardAlphaNextToNumber => self
+            essentials::PatternSelection::Standard => self.essential.standard_pattern.as_ref(),
+            essentials::PatternSelection::StandardAlphaNextToNumber => self
                 .essential
                 .standard_alpha_next_to_number_pattern
                 .as_ref(),
@@ -62,7 +62,7 @@ impl<'l> Writeable for FormattedCurrency<'l> {
 
         pattern
             .interpolate((
-                self.fixed_decimal_formatter.format(self.value),
+                self.decimal_formatter.format(self.value),
                 currency_sign_value,
             ))
             .write_to(sink)?;
@@ -84,7 +84,7 @@ mod tests {
     pub fn test_en_us() {
         let locale = locale!("en-US").into();
         let currency_code = CurrencyCode(tinystr!(3, "USD"));
-        let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
+        let fmt = CurrencyFormatter::try_new(locale, Default::default()).unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -101,7 +101,7 @@ mod tests {
     pub fn test_fr_fr() {
         let locale = locale!("fr-FR").into();
         let currency_code = CurrencyCode(tinystr!(3, "EUR"));
-        let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
+        let fmt = CurrencyFormatter::try_new(locale, Default::default()).unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
@@ -118,19 +118,18 @@ mod tests {
     pub fn test_ar_eg() {
         let locale = locale!("ar-EG").into();
         let currency_code = CurrencyCode(tinystr!(3, "EGP"));
-        let fmt = CurrencyFormatter::try_new(&locale, Default::default()).unwrap();
+        let fmt = CurrencyFormatter::try_new(locale, Default::default()).unwrap();
 
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
-        assert_writeable_eq!(formatted_currency, "\u{200f}١٢٬٣٤٥٫٦٧\u{a0}ج.م.\u{200f}");
+        // TODO(#6064)
+        assert_writeable_eq!(formatted_currency, "ج.م.\u{200f}\u{a0}١٢٬٣٤٥٫٦٧");
 
         // Negative case
         let negative_value = "-12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
-        assert_writeable_eq!(
-            formatted_currency,
-            "\u{200f}\u{61c}-١٢٬٣٤٥٫٦٧\u{a0}ج.م.\u{200f}"
-        );
+        // TODO(#6064)
+        assert_writeable_eq!(formatted_currency, "ج.م.\u{200f}\u{a0}\u{61c}-١٢٬٣٤٥٫٦٧");
     }
 }

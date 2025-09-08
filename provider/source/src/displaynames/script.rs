@@ -11,12 +11,9 @@ use icu::locale::{subtags::Script, ParseError};
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
 
-impl DataProvider<ScriptDisplayNamesV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<ScriptDisplayNamesV1Marker>, DataError> {
-        self.check_req::<ScriptDisplayNamesV1Marker>(req)?;
+impl DataProvider<ScriptDisplayNamesV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<ScriptDisplayNamesV1>, DataError> {
+        self.check_req::<ScriptDisplayNamesV1>(req)?;
 
         let data: &cldr_serde::displaynames::script::Resource = self
             .cldr()?
@@ -25,14 +22,14 @@ impl DataProvider<ScriptDisplayNamesV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(ScriptDisplayNamesV1::try_from(data).map_err(
-                |e| DataError::custom("data for ScriptDisplayNames").with_display_context(&e),
-            )?),
+            payload: DataPayload::from_owned(ScriptDisplayNames::try_from(data).map_err(|e| {
+                DataError::custom("data for ScriptDisplayNames").with_display_context(&e)
+            })?),
         })
     }
 }
 
-impl IterableDataProviderCached<ScriptDisplayNamesV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<ScriptDisplayNamesV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
@@ -52,12 +49,12 @@ impl IterableDataProviderCached<ScriptDisplayNamesV1Marker> for SourceDataProvid
 }
 
 /// Substring used to denote alternative display names data variants for a given script. For example: "BA-alt-short", "TL-alt-variant".
-/// TODO(#3316): Distinguish stand-alone ("Traditional Han") from default ("Traditional")
+// TODO(#3316): Distinguish stand-alone ("Traditional Han") from default ("Traditional")
 const ALT_SUBSTRING: &str = "-alt-";
 /// Substring used to denote short display names data variants for a given script. For example: "az-alt-short".
 const ALT_SHORT_SUBSTRING: &str = "-alt-short";
 
-impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNamesV1<'static> {
+impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames<'static> {
     type Error = ParseError;
 
     fn try_from(other: &cldr_serde::displaynames::script::Resource) -> Result<Self, Self::Error> {
@@ -65,13 +62,10 @@ impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames
         let mut short_names = BTreeMap::new();
         for entry in other.main.value.localedisplaynames.scripts.iter() {
             if let Some(script) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
-                short_names.insert(
-                    Script::try_from_str(script)?.into_tinystr(),
-                    entry.1.as_str(),
-                );
+                short_names.insert(Script::try_from_str(script)?.to_tinystr(), entry.1.as_str());
             } else if !entry.0.contains(ALT_SUBSTRING) {
                 names.insert(
-                    Script::try_from_str(entry.0)?.into_tinystr(),
+                    Script::try_from_str(entry.0)?.to_tinystr(),
                     entry.1.as_str(),
                 );
             }
@@ -101,7 +95,7 @@ mod tests {
     fn test_basic_script_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<ScriptDisplayNamesV1Marker> = provider
+        let data: DataPayload<ScriptDisplayNamesV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()
@@ -112,7 +106,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .names
-                .get(&script!("Cans").into_tinystr().to_unvalidated())
+                .get(&script!("Cans").to_tinystr().to_unvalidated())
                 .unwrap(),
             "Unified Canadian Aboriginal Syllabics"
         );
@@ -122,7 +116,7 @@ mod tests {
     fn test_basic_script_short_display_names() {
         let provider = SourceDataProvider::new_testing();
 
-        let data: DataPayload<ScriptDisplayNamesV1Marker> = provider
+        let data: DataPayload<ScriptDisplayNamesV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en-001").into()),
                 ..Default::default()
@@ -133,7 +127,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .short_names
-                .get(&script!("Cans").into_tinystr().to_unvalidated())
+                .get(&script!("Cans").to_tinystr().to_unvalidated())
                 .unwrap(),
             "UCAS"
         );

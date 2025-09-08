@@ -7,7 +7,7 @@
 //!
 //! For command-line usage, see the [`icu4x-datagen` binary](https://crates.io/crate/icu4x-datagen).
 //!
-//! Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/tutorials/data_management.md).
+//! Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/tutorials/data-management.md).
 //!
 //! # Examples
 //!
@@ -17,17 +17,21 @@
 //! use icu_provider_source::SourceDataProvider;
 //! use std::fs::File;
 //!
-//! let provider = SourceDataProvider::new_latest_tested();
+//! let provider = SourceDataProvider::new();
 //!
-//! ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::None.into(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
-//!     .with_markers([icu::list::provider::AndListV2Marker::INFO])
-//!     .export(
-//!         &provider,
-//!         BlobExporter::new_v2_with_sink(Box::new(
-//!             File::create("data.postcard").unwrap(),
-//!         )),
-//!     )
-//!     .unwrap();
+//! ExportDriver::new(
+//!     [DataLocaleFamily::FULL],
+//!     DeduplicationStrategy::None.into(),
+//!     LocaleFallbacker::try_new_unstable(&provider).unwrap(),
+//! )
+//! .with_markers([icu::list::provider::ListAndV1::INFO])
+//! .export(
+//!     &provider,
+//!     BlobExporter::new_with_sink(Box::new(
+//!         File::create("data.postcard").unwrap(),
+//!     )),
+//! )
+//! .unwrap();
 //! ```
 //!
 //! # Cargo features
@@ -50,7 +54,7 @@
         // clippy::expect_used,
         // clippy::panic,
         clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
+        clippy::exhaustive_enums, clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]
@@ -58,6 +62,7 @@
 
 mod export_impl;
 mod locale_family;
+use icu_provider::export::ExporterCloseMetadata;
 pub use locale_family::*;
 
 #[cfg(feature = "baked_exporter")]
@@ -80,7 +85,10 @@ pub mod prelude {
 }
 
 use icu_locale::LocaleFallbacker;
+use icu_provider::export::DataExporter;
+use icu_provider::export::ExportableProvider;
 use icu_provider::prelude::*;
+use std::collections::BTreeSet;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::hash::Hash;
@@ -98,21 +106,25 @@ use std::sync::Arc;
 /// use icu_provider_export::prelude::*;
 /// use icu_provider_source::SourceDataProvider;
 ///
-/// let provider = SourceDataProvider::new_latest_tested();
+/// let provider = SourceDataProvider::new();
 ///
-/// ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::None.into(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
-///     .with_markers([icu::list::provider::AndListV2Marker::INFO])
-///     .export(
-///         &provider,
-///         BlobExporter::new_with_sink(Box::new(&mut Vec::new())),
-///     )
-///     .unwrap();
+/// ExportDriver::new(
+///     [DataLocaleFamily::FULL],
+///     DeduplicationStrategy::None.into(),
+///     LocaleFallbacker::try_new_unstable(&provider).unwrap(),
+/// )
+/// .with_markers([icu::list::provider::ListAndV1::INFO])
+/// .export(
+///     &provider,
+///     BlobExporter::new_with_sink(Box::new(&mut Vec::new())),
+/// )
+/// .unwrap();
 /// ```
 #[derive(Clone)]
 pub struct ExportDriver {
-    markers: Option<HashSet<DataMarkerInfo>>,
+    markers: Option<BTreeSet<DataMarkerInfo>>,
     requested_families: HashMap<DataLocale, DataLocaleFamilyAnnotations>,
-    #[allow(clippy::type_complexity)] // sigh
+    #[expect(clippy::type_complexity)] // sigh
     attributes_filters:
         HashMap<String, Arc<Box<dyn Fn(&DataMarkerAttributes) -> bool + Send + Sync + 'static>>>,
     fallbacker: LocaleFallbacker,
@@ -174,7 +186,10 @@ impl ExportDriver {
         .with_additional_collations([])
     }
 
-    /// TODO
+    /// Adds a filter on a [`DataMarkerAttributes`].
+    ///
+    /// These are keyed by a `domain`, which is [`DataMarkerInfo::attributes_domain`] and
+    /// can thus apply to multiple data markers at once.
     pub fn with_marker_attributes_filter(
         mut self,
         domain: &str,
@@ -197,8 +212,7 @@ impl ExportDriver {
 
     /// This option is only relevant if using `icu::collator`.
     ///
-    /// By default, the collations `big5han`, `gb2312`, and those starting with `search`
-    /// are excluded. This method can be used to reennable them.
+    /// By default, collations starting with `search` are excluded. This method can be used to reennable them.
     ///
     /// The special string `"search*"` causes all search collation tables to be included.
     pub fn with_additional_collations(
@@ -209,11 +223,8 @@ impl ExportDriver {
         self.with_marker_attributes_filter("collator", move |attrs| {
             attrs.is_empty()
                 || set.contains(attrs.as_str())
-                || if attrs.as_str().starts_with("search") {
-                    set.contains("search*")
-                } else {
-                    !["big5han", "gb2312"].contains(&attrs.as_str())
-                }
+                || !attrs.as_str().starts_with("search")
+                || set.contains("search*")
         })
     }
 
@@ -263,6 +274,30 @@ impl ExportDriver {
         let set = models.into_iter().collect::<HashSet<_>>();
         self.with_marker_attributes_filter("segmenter", move |attrs| set.contains(attrs.as_str()))
     }
+
+    /// Exports data from the given provider to the given exporter.
+    ///
+    /// See
+    /// [`make_exportable_provider!`](icu_provider::export::make_exportable_provider),
+    /// [`BlobExporter`](icu_provider_blob::export),
+    /// [`FileSystemExporter`](icu_provider_fs::export),
+    /// and [`BakedExporter`](icu_provider_baked::export).
+    pub fn export(
+        self,
+        provider: &impl ExportableProvider,
+        mut sink: impl DataExporter,
+    ) -> Result<ExportMetadata, DataError> {
+        // Avoids multiple monomorphizations
+        self.export_dyn(provider, &mut sink)
+    }
+}
+
+#[non_exhaustive]
+#[derive(Debug)]
+/// Contains information about a successful export.
+pub struct ExportMetadata {
+    /// The metadata coming from the [`DataExporter`].
+    pub exporter: ExporterCloseMetadata,
 }
 
 /// Options bag configuring locale inclusion and behavior when runtime fallback is disabled.

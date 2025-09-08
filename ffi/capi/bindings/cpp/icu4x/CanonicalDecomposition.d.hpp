@@ -6,7 +6,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -26,11 +28,35 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * The raw (non-recursive) canonical decomposition operation.
+ *
+ * Callers should generally use DecomposingNormalizer unless they specifically need raw composition operations
+ *
+ * See the [Rust documentation for `CanonicalDecomposition`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalDecomposition.html) for more information.
+ */
 class CanonicalDecomposition {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CanonicalDecomposition>, icu4x::DataError> create(const icu4x::DataProvider& provider);
+  /**
+   * Construct a new CanonicalDecomposition instance for NFC using compiled data.
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
+   */
+  inline static std::unique_ptr<icu4x::CanonicalDecomposition> create();
 
+  /**
+   * Construct a new CanonicalDecomposition instance for NFC using a particular data source.
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
+   */
+  inline static diplomat::result<std::unique_ptr<icu4x::CanonicalDecomposition>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
+
+  /**
+   * Performs non-recursive canonical decomposition (including for Hangul).
+   *
+   * See the [Rust documentation for `decompose`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalDecompositionBorrowed.html#method.decompose) for more information.
+   */
   inline icu4x::Decomposed decompose(char32_t c) const;
 
   inline const icu4x::capi::CanonicalDecomposition* AsFFI() const;

@@ -1,0 +1,49 @@
+{
+  "defaults": [
+    [
+      [
+        3,
+        "Standard"
+      ],
+      "CAT"
+    ],
+    [
+      [
+        4,
+        "Standard"
+      ],
+      "EAT"
+    ],
+    [
+      [
+        5,
+        "Standard"
+      ],
+      "SAST"
+    ],
+    [
+      [
+        6,
+        "Standard"
+      ],
+      "WAT"
+    ],
+    [
+      [
+        53,
+        "Standard"
+      ],
+      "GMT"
+    ]
+  ],
+  "overrides": [
+    [
+      [
+        "utc",
+        "Standard"
+      ],
+      "UTC"
+    ]
+  ],
+  "use_standard": []
+}

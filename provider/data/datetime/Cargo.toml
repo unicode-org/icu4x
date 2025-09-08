@@ -6,7 +6,7 @@
 name = "icu_datetime_data"
 description = "Data for the icu_datetime crate"
 license = "Unicode-3.0"
-version.workspace = true
+version = "2.0.2"
 
 authors.workspace = true
 categories.workspace = true
@@ -17,13 +17,11 @@ repository.workspace = true
 rust-version.workspace = true
 
 [package.metadata.sources]
-cldr = { tagged = "46.0.0-ALPHA0" }
-icuexport = { tagged = "icu4x/2024-05-16/75.x" }
+cldr = { tagged = "47.0.0" }
+icuexport = { tagged = "icu4x/2025-05-21/77.x" }
 segmenter_lstm = { tagged = "v0.1.0" }
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_custom_data)'] }
 
 [dependencies]
-icu_provider_baked = { workspace = true }
-icu_locale = { workspace = true, features = ["compiled_data"] }

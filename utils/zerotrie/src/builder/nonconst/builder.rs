@@ -42,7 +42,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                 if old_front & 0b11100000 == 0b10100000 {
                     // Extend an existing span
                     // Unwrap OK: there is a varint at this location in the buffer
-                    #[allow(clippy::unwrap_used)]
+                    #[expect(clippy::unwrap_used)]
                     let old_span_size =
                         varint::try_read_varint_meta3_from_tstore(old_front, &mut self.data)
                             .unwrap();
@@ -103,7 +103,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             .iter()
             .map(|(k, v)| (k.as_ref(), *v))
             .collect::<Vec<(&[u8], usize)>>();
-        items.sort_by(|a, b| cmp_keys_values(&options, *a, *b));
+        items.sort_by(|a, b| cmp_keys_values(options, *a, *b));
         let ascii_str_slice = items.as_slice();
         let byte_str_slice = ByteStr::from_byte_slice_with_value(ascii_str_slice);
         Self::from_sorted_tuple_slice_impl(byte_str_slice, options)
@@ -123,7 +123,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         if matches!(options.case_sensitivity, CaseSensitivity::IgnoreCase) {
             // We need to re-sort the items with our custom comparator.
             items.to_mut().sort_by(|a, b| {
-                cmp_keys_values(&options, (a.0.as_bytes(), a.1), (b.0.as_bytes(), b.1))
+                cmp_keys_values(options, (a.0.as_bytes(), a.1), (b.0.as_bytes(), b.1))
             });
         }
         Self::from_sorted_tuple_slice_impl(&items, options)
@@ -134,9 +134,10 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         items: &[(&ByteStr, usize)],
         options: ZeroTrieBuilderOptions,
     ) -> Result<Self, ZeroTrieBuildError> {
+        #[allow(clippy::indexing_slicing)] // a debug assertion only
         for ab in items.windows(2) {
             debug_assert!(cmp_keys_values(
-                &options,
+                options,
                 (ab[0].0.as_bytes(), ab[0].1),
                 (ab[1].0.as_bytes(), ab[1].1)
             )
@@ -153,7 +154,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
     }
 
     /// The actual builder algorithm. For an explanation, see [`crate::builder`].
-    #[allow(clippy::unwrap_used)] // lots of indexing, but all indexes should be in range
+    #[expect(clippy::unwrap_used)] // lots of indexing, but all indexes should be in range
     fn create(&mut self, all_items: &[(&ByteStr, usize)]) -> Result<usize, ZeroTrieBuildError> {
         let mut prefix_len = match all_items.last() {
             Some(x) => x.0.len(),
@@ -225,7 +226,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                     break;
                 }
                 if candidate.len() == prefix_len {
-                    panic!("A shorter string should be earlier in the sequence");
+                    unreachable!("A shorter string should be earlier in the sequence");
                 }
                 let candidate = candidate.byte_at_or_panic(prefix_len);
                 if candidate != ascii_j {
@@ -245,8 +246,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                 }
                 debug_assert!(
                     i == new_i || i == new_i + 1,
-                    "only the exact prefix string can be picked up at this level: {}",
-                    key_ascii
+                    "only the exact prefix string can be picked up at this level: {key_ascii}"
                 );
                 i = new_i;
                 debug_assert_eq!(j, new_j);
@@ -302,6 +302,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                 for c in original_keys.as_const_slice().as_slice() {
                     if c.is_ascii_alphabetic() {
                         let i = (c.to_ascii_lowercase() - b'a') as usize;
+                        #[allow(clippy::indexing_slicing)] // 26 letters
                         if seen_ascii_alpha[i] {
                             return Err(ZeroTrieBuildError::MixedCase);
                         } else {
@@ -328,6 +329,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                         let b_idx = phf_vec.keys().iter().position(|x| x == &b.ascii).unwrap();
                         if a_idx > b_idx {
                             // std::println!("{a:?} <=> {b:?} ({phf_vec:?})");
+                            // This method call won't panic because the ranges are valid.
                             self.data.atbs_swap_ranges(
                                 start,
                                 start + a.local_length,
@@ -403,7 +405,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
 }
 
 fn cmp_keys_values(
-    options: &ZeroTrieBuilderOptions,
+    options: ZeroTrieBuilderOptions,
     a: (&[u8], usize),
     b: (&[u8], usize),
 ) -> Ordering {

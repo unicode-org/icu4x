@@ -6,52 +6,90 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
-*/
-export class DisplayNamesOptions {
 
+/**
+ * 🚧 This API is experimental and may experience breaking changes outside major releases.
+ *
+ * See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.DisplayNamesOptions.html) for more information.
+ */
+export class DisplayNamesOptions {
     #style;
-    get style()  {
+    get style() {
         return this.#style;
     }
-    set style(value) {
+    set style(value){
         this.#style = value;
     }
-
     #fallback;
-    get fallback()  {
+    get fallback() {
         return this.#fallback;
     }
-    set fallback(value) {
+    set fallback(value){
         this.#fallback = value;
     }
-
     #languageDisplay;
-    get languageDisplay()  {
+    get languageDisplay() {
         return this.#languageDisplay;
     }
-    set languageDisplay(value) {
+    set languageDisplay(value){
         this.#languageDisplay = value;
     }
-    constructor() {
-        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
-            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
-        } else {
-            
-            this.#style = arguments[0];
-            this.#fallback = arguments[1];
-            this.#languageDisplay = arguments[2];
+    /** @internal */
+    static fromFields(structObj) {
+        return new DisplayNamesOptions(structObj);
+    }
+
+    #internalConstructor(structObj) {
+        if (typeof structObj !== "object") {
+            throw new Error("DisplayNamesOptions's constructor takes an object of DisplayNamesOptions's fields.");
         }
+
+        if ("style" in structObj) {
+            this.#style = structObj.style;
+        } else {
+            this.#style = null;
+        }
+
+        if ("fallback" in structObj) {
+            this.#fallback = structObj.fallback;
+        } else {
+            this.#fallback = null;
+        }
+
+        if ("languageDisplay" in structObj) {
+            this.#languageDisplay = structObj.languageDisplay;
+        } else {
+            this.#languageDisplay = null;
+        }
+
+        return this;
     }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
-    
     _intoFFI(
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [...diplomatRuntime.optionToArgsForCalling(this.#style, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#fallback, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#languageDisplay, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)])]
+        let buffer = diplomatRuntime.DiplomatBuf.struct(wasm, 24, 4);
+
+        this._writeToArrayBuffer(wasm.memory.buffer, buffer.ptr, functionCleanupArena, appendArrayMap);
+
+        functionCleanupArena.alloc(buffer);
+
+        return buffer.ptr;
+    }
+
+    static _fromSuppliedValue(internalConstructor, obj) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("_fromSuppliedValue cannot be called externally.");
+        }
+
+        if (obj instanceof DisplayNamesOptions) {
+            return obj;
+        }
+
+        return DisplayNamesOptions.fromFields(obj);
     }
 
     _writeToArrayBuffer(
@@ -70,12 +108,23 @@ export class DisplayNamesOptions {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    #fromFFI(ptr) {
+    static _fromFFI(internalConstructor, ptr) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("DisplayNamesOptions._fromFFI is not meant to be called externally. Please use the default constructor.");
+        }
+        let structObj = {};
         const styleDeref = ptr;
-        this.#style = diplomatRuntime.readOption(wasm, styleDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new DisplayNamesStyle(diplomatRuntime.internalConstructor, deref) });
+        structObj.style = diplomatRuntime.readOption(wasm, styleDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new DisplayNamesStyle(diplomatRuntime.internalConstructor, deref) });
         const fallbackDeref = ptr + 8;
-        this.#fallback = diplomatRuntime.readOption(wasm, fallbackDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new DisplayNamesFallback(diplomatRuntime.internalConstructor, deref) });
+        structObj.fallback = diplomatRuntime.readOption(wasm, fallbackDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new DisplayNamesFallback(diplomatRuntime.internalConstructor, deref) });
         const languageDisplayDeref = ptr + 16;
-        this.#languageDisplay = diplomatRuntime.readOption(wasm, languageDisplayDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new LanguageDisplay(diplomatRuntime.internalConstructor, deref) });
+        structObj.languageDisplay = diplomatRuntime.readOption(wasm, languageDisplayDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new LanguageDisplay(diplomatRuntime.internalConstructor, deref) });
+
+        return new DisplayNamesOptions(structObj);
+    }
+
+
+    constructor(structObj) {
+        return this.#internalConstructor(...arguments)
     }
 }

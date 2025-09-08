@@ -30,8 +30,8 @@ pub fn make_ule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2 {
     let name = &input.ident;
 
     let ule_stuff = match input.data {
-        Data::Struct(ref s) => make_ule_struct_impl(name, &ule_name, &input, s, attrs),
-        Data::Enum(ref e) => make_ule_enum_impl(name, &ule_name, &input, e, attrs),
+        Data::Struct(ref s) => make_ule_struct_impl(name, &ule_name, &input, s, &attrs),
+        Data::Enum(ref e) => make_ule_enum_impl(name, &ule_name, &input, e, &attrs),
         _ => {
             return Error::new(input.span(), "#[make_ule] must be applied to a struct")
                 .to_compile_error();
@@ -80,7 +80,7 @@ fn make_ule_enum_impl(
     ule_name: &Ident,
     input: &DeriveInput,
     enu: &DataEnum,
-    attrs: ZeroVecAttrs,
+    attrs: &ZeroVecAttrs,
 ) -> TokenStream2 {
     // We could support more int reprs in the future if needed
     if !utils::ReprInfo::compute(&input.attrs).u8 {
@@ -191,9 +191,9 @@ fn make_ule_enum_impl(
     //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant
     //  2. ULE type is aligned to 1 byte.
     //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
-    //  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
+    //  3. The impl of validate_bytes() returns an error if any byte is not valid.
     //     (Guarantees that the byte is in range of the corresponding enum.)
-    //  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
+    //  4. The impl of validate_bytes() returns an error if there are extra bytes.
     //     (This does not happen since we are backed by 1 byte.)
     //  5. The other ULE methods use the default impl.
     //  6. ULE type byte equality is semantic equality
@@ -206,7 +206,7 @@ fn make_ule_enum_impl(
 
         unsafe impl zerovec::ule::ULE for #ule_name {
             #[inline]
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
+            fn validate_bytes(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
                 for byte in bytes {
                     if *byte < #min || *byte > #max {
                         return Err(zerovec::ule::UleError::parse::<Self>())
@@ -264,7 +264,7 @@ fn make_ule_struct_impl(
     ule_name: &Ident,
     input: &DeriveInput,
     struc: &DataStruct,
-    attrs: ZeroVecAttrs,
+    attrs: &ZeroVecAttrs,
 ) -> TokenStream2 {
     if struc.fields.iter().next().is_none() {
         return Error::new(
@@ -348,10 +348,10 @@ fn make_ule_struct_impl(
 
     let maybe_hash = if attrs.hash {
         quote!(
-            #[allow(clippy::derive_hash_xor_eq)]
+            #[expect(clippy::derive_hash_xor_eq)]
             impl core::hash::Hash for #ule_name {
                 fn hash<H>(&self, state: &mut H) where H: core::hash::Hasher {
-                    state.write(<#ule_name as zerovec::ule::ULE>::as_byte_slice(&[*self]));
+                    state.write(<#ule_name as zerovec::ule::ULE>::slice_as_bytes(&[*self]));
                 }
             }
         )

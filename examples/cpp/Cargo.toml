@@ -1,0 +1,13 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "unused"
+
+[lib]
+path = "unused"
+
+[dependencies]
+icu_capi = { version = "2.0.0", features = ["provider_fs", "experimental"] }
+icu_provider = { version = "2.0.0", features = ["deserialize_json"] }

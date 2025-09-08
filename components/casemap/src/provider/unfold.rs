@@ -18,20 +18,24 @@ use zerovec::ZeroMap;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(CaseMapUnfoldV1Marker, "props/casemap_unfold@1", singleton))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_casemap::provider))]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[yoke(prove_covariance_manually)]
-pub struct CaseMapUnfoldV1<'data> {
+pub struct CaseMapUnfold<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     /// The actual map. Maps from strings to a list of codepoints, stored as a contiguous UTF-8 string
     pub map: ZeroMap<'data, PotentialUtf8, str>,
 }
 
-impl<'data> CaseMapUnfoldV1<'data> {
-    /// Creates a new CaseMapUnfoldV1 using data exported by the `icuexportdata` tool in ICU4C.
+icu_provider::data_struct!(
+    CaseMapUnfold<'_>,
+    #[cfg(feature = "datagen")]
+);
+
+impl CaseMapUnfold<'_> {
+    /// Creates a new CaseMapUnfold using data exported by the `icuexportdata` tool in ICU4C.
     ///
     /// Unfold data is exported by ICU as an array of 16-bit values, representing a short
     /// header followed by a two-column key/value table. The header indicates:
@@ -47,7 +51,7 @@ impl<'data> CaseMapUnfoldV1<'data> {
     /// Rust strings are UTF8 by default. To avoid the cost of converting from UTF16 on access,
     /// we convert the ICU data into a more convenient format during construction.
     #[cfg(feature = "datagen")]
-    #[allow(clippy::indexing_slicing)] // panics are ok in datagen
+    #[expect(clippy::indexing_slicing)] // panics are ok in datagen
     pub fn try_from_icu(raw: &[u16]) -> Result<Self, DataError> {
         const ROWS_INDEX: usize = 0;
         const ROW_WIDTH_INDEX: usize = 1;

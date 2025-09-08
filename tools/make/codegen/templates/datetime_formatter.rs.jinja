@@ -1,0 +1,224 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+// {{ crate::capi_datetime::GENERATED_BY }}
+
+{%- let flavor = flavor %}
+
+#[rustfmt::skip]
+#[diplomat::bridge]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
+#[diplomat::attr(auto, namespace = "icu4x")]
+pub mod ffi {
+    use alloc::boxed::Box;
+    {%- if flavor.has_date() %}
+    use icu_calendar::Gregorian;
+    {%- endif %}
+    use writeable::Writeable;
+
+    #[allow(unused_imports)]
+    use crate::datetime_helpers::map_or_default;
+
+    #[allow(unused_imports)]
+    use crate::unstable::{
+        date::ffi::{Date, IsoDate},
+        datetime::ffi::DateTime,
+        datetime_options::ffi::{DateTimeAlignment, DateTimeLength, TimePrecision, YearStyle},
+        errors::ffi::DateTimeFormatterLoadError,
+        errors::ffi::DateTimeMismatchedCalendarError,
+        locale_core::ffi::Locale,
+        time::ffi::Time,
+    };
+
+    #[cfg(feature = "buffer_provider")]
+    use crate::unstable::provider::ffi::DataProvider;
+
+    {%- for formatter_kind in flavor.formatter_kinds() %}
+    {%- let ffi_type %}
+    {%- if formatter_kind.is_gregorian %}
+        {%- let ffi_type = format!("{}FormatterGregorian", {{ flavor.camel() }}) %}
+    {%- else %}
+        {%- let ffi_type = format!("{}Formatter", {{ flavor.camel() }}) %}
+    {%- endif %}
+
+    #[diplomat::opaque]
+    #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rustlink() }}, {{ formatter_kind.rustlink_doctype() }})]
+    pub struct {{ ffi_type }}(
+        pub  icu_datetime::{{ formatter_kind.rust_type() }}<
+            {%- if formatter_kind.is_fixed_calendar %}
+            {%- if formatter_kind.is_gregorian %}
+            Gregorian,
+            {%- else %}
+            (),
+            {%- endif %}
+            {%- endif %}
+            icu_datetime::fieldsets::enums::{{ flavor.field_set() }},
+        >,
+    );
+
+    impl {{ ffi_type }} {
+        {%- for variant in variants %}
+        {%- for ctor in ConstructorType::VALUES %}
+        {%- let named_constructor %}
+        {%- let named_constructor_full %}
+        {%- if ctor.is_with_provider() %}
+            {%- if variant.is_only_constructor() %}
+                {%- let named_constructor = "with_provider".to_string() %}
+                {%- let named_constructor_full = "create_with_provider".to_string() %}
+            {%- else %}
+                {%- let named_constructor = format!("{}_with_provider", variant.name_lower()) %}
+                {%- let named_constructor_full = format!("create_{}_with_provider", variant.name_lower()) %}
+            {%- endif %}
+        {%- else %}
+            {%- if variant.is_only_constructor() %}
+                {%- let named_constructor = "".to_string() %}
+                {%- let named_constructor_full = "create".to_string() %}
+            {%- else %}
+                {%- let named_constructor = format!("{}", variant.name_lower()) %}
+                {%- let named_constructor_full = format!("create_{}", variant.name_lower()) %}
+            {%- endif %}
+        {%- endif %}
+        {%- if named_constructor == "" %}
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
+        {%- else %}
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ named_constructor }}")]
+        {%- endif %}
+        #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rustlink() }}::try_new, {{ formatter_kind.rustlink_doctype_fn() }})]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}, Struct)]
+        {%- if flavor.is_time_only() %}
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::hmss, FnInStruct, hidden)]
+        {%- endif %}
+        {%- if flavor.has_time() %}
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_time_precision, FnInStruct, compact)]
+        {%- endif %}
+        {%- if variant.consumed_options.alignment %}
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_alignment, FnInStruct, compact)]
+        {%- endif %}
+        {%- if variant.consumed_options.year_style %}
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_year_style, FnInStruct, compact)]
+        {%- endif %}
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_length, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::short, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::medium, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::long, FnInStruct, hidden)]
+        {%- if variant.supports_time() %}
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_time_hmss, FnInStruct, hidden)]
+        {%- endif %}
+        {%- if variant.supports_zone() %}
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
+        {%- endif %}
+        {%- if variant.is_demo_constructor() && !ctor.is_with_provider() %}
+        #[diplomat::demo(default_constructor)]
+        {%- endif %}
+        #[cfg(feature = "{{ ctor.cargo_feature() }}")]
+        pub fn {{ named_constructor_full }}(
+            {%- if ctor.is_with_provider() %}
+            provider: &DataProvider,
+            {%- endif %}
+            locale: &Locale,
+            length: Option<DateTimeLength>,
+            {%- if flavor.has_time() %}
+            time_precision: Option<TimePrecision>,
+            {%- endif %}
+            {%- if variant.consumed_options.alignment %}
+            alignment: Option<DateTimeAlignment>,
+            {%- endif %}
+            {%- if variant.consumed_options.year_style %}
+            year_style: Option<YearStyle>,
+            {%- endif %}
+        ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
+            let prefs = (&locale.0).into();
+            {%- if !variant.consumed_options.alignment && !variant.consumed_options.year_style %}
+            #[allow(unused_mut)]
+            {%- endif %}
+            let mut options = icu_datetime::fieldsets::{{ variant.name_upper() }}::for_length(map_or_default(length));
+            {%- if flavor.has_time() %}
+            options.time_precision = time_precision.map(Into::into);
+            {%- endif %}
+            {%- if variant.consumed_options.alignment %}
+            options.alignment = alignment.map(Into::into);
+            {%- endif %}
+            {%- if variant.consumed_options.year_style %}
+            options.year_style = year_style.map(Into::into);
+            {%- endif %}
+            Ok(Box::new(Self(
+                icu_datetime
+                    ::{{ formatter_kind.rust_type() }}
+                    ::try_new{{ ctor.suffix_rust() }}(
+                        {%- if ctor.is_with_provider() %}
+                        provider.get()?,
+                        {%- endif %}
+                        prefs,
+                        options
+                    )?
+                .cast_into_fset(),
+            )))
+        }
+        {% endfor %}
+        {%- endfor %}
+        #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rustlink() }}::format, {{ formatter_kind.rustlink_doctype_fn() }})]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
+        pub fn format{% if flavor.has_date() %}_iso{% endif %}(
+            &self,
+            {%- if flavor.has_date() %}
+            iso_date: &IsoDate,
+            {%- endif %}
+            {%- if flavor.has_time() %}
+            time: &Time,
+            {%- endif %}
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) {
+            {%- if flavor.has_date() %}
+            let date = iso_date.0{% if formatter_kind.is_gregorian %}.to_calendar(Gregorian){% endif %};
+            {%- if flavor.has_time() %}
+            let value = icu_time::DateTime {
+                date,
+                time: time.0,
+            };
+            {%- else %}
+            let value = date;
+            {%- endif %}
+            {%- else %}
+            let value = time.0;
+            {%- endif %}
+            let _infallible = self.0.format(&value).write_to(write);
+        }
+        {% if !formatter_kind.is_fixed_calendar %}
+        #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rustlink() }}::format_same_calendar, {{ formatter_kind.rustlink_doctype_fn() }})]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
+        #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
+        #[diplomat::attr(demo_gen, disable)] // confusing, as Date is constructed from ISO
+        pub fn format_same_calendar(
+            &self,
+            {%- if flavor.has_date() %}
+            date: &Date,
+            {%- endif %}
+            {%- if flavor.has_time() %}
+            time: &Time,
+            {%- endif %}
+            write: &mut diplomat_runtime::DiplomatWrite,
+        ) -> Result<(), DateTimeMismatchedCalendarError> {
+            let date = date.0.as_borrowed();
+            {%- if flavor.has_time() %}
+            let value = icu_time::DateTime {
+                date,
+                time: time.0,
+            };
+            {%- else %}
+            let value = date;
+            {%- endif %}
+            let _infallible = self.0.format_same_calendar(&value)?.write_to(write);
+            Ok(())
+        }
+        {%- endif %}
+    }
+    {% endfor %}
+}

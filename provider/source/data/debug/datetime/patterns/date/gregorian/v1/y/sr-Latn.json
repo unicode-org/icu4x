@@ -1,0 +1,16 @@
+{
+  "has_explicit_short": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    1,
+    3,
+    3,
+    3
+  ],
+  "elements": [
+    "y.",
+    "yy.",
+    "y. GGG"
+  ]
+}

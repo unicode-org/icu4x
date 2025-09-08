@@ -17,6 +17,7 @@ include = [
     "LICENSE",
     "README.md",
 ]
+version = "2.0.2"
 
 authors.workspace = true
 categories.workspace = true
@@ -24,7 +25,6 @@ edition.workspace = true
 homepage.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -33,6 +33,8 @@ all-features = true
 
 # ICU components
 icu = { workspace = true, features = ["datagen"] }
+
+icu_time = { workspace = true, features = ["ixdtf"] }
 
 # ICU infrastructure
 calendrical_calculations = { workspace = true }
@@ -47,12 +49,13 @@ tinystr = { workspace = true, features = ["alloc", "serde", "zerovec"] }
 potential_utf = { workspace = true }
 writeable = { workspace = true }
 zerotrie = { workspace = true, features = ["alloc"] }
-zerovec = { workspace = true, features = ["serde", "yoke"] }
+zerovec = { workspace = true, features = ["serde", "yoke", "alloc"] }
 
 # External dependencies
 displaydoc = { workspace = true }
 either = { workspace = true }
 elsa = { workspace = true }
+flate2 = { workspace = true }
 itertools = { workspace = true }
 log = { workspace = true }
 ndarray = { workspace = true }
@@ -61,6 +64,7 @@ serde = { workspace = true, features = ["derive", "alloc"] }
 serde_json = { workspace = true }
 serde-aux = { workspace = true }
 toml = { workspace = true }
+tar = { workspace = true }
 twox-hash = { workspace = true }
 zip = { workspace = true, features = ["deflate"] }
 

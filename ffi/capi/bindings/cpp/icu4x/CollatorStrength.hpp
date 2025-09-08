@@ -8,15 +8,16 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -34,7 +35,7 @@ inline icu4x::CollatorStrength icu4x::CollatorStrength::FromFFI(icu4x::capi::Col
     case icu4x::capi::CollatorStrength_Identical:
       return static_cast<icu4x::CollatorStrength::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_CollatorStrength_HPP

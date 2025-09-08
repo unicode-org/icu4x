@@ -107,8 +107,10 @@ impl<R: Rng> TestDataGenerator<R> {
 
     /// Returns a BIES vector weighted at the given cell (b, i, e, s)
     fn bies_vector_for_char(&mut self, ch: char, noise: f32) -> BiesVector<f32> {
-        let cell = if self.rng.gen::<f32>() < noise {
-            Uniform::new(0, 4).sample(&mut self.rng)
+        let cell = if self.rng.random::<f32>() < noise {
+            Uniform::new(0, 4)
+                .expect("Uniform out of bounds")
+                .sample(&mut self.rng)
         } else {
             match ch {
                 'b' => 0,
@@ -123,7 +125,9 @@ impl<R: Rng> TestDataGenerator<R> {
 
     /// Returns a random BIES vector.
     fn rand_bies_vector(&mut self) -> BiesVector<f32> {
-        let cell = Uniform::new(0, 4).sample(&mut self.rng);
+        let cell = Uniform::new(0, 4)
+            .expect("Uniform out of bounds")
+            .sample(&mut self.rng);
         self.bies_vector_for_cell(cell)
     }
 
@@ -146,7 +150,7 @@ impl<R: Rng> TestDataGenerator<R> {
     /// Returns a random instance of Breakpoints with the given concentration (higher = more breakpoints)
     fn rand_breakpoints(&mut self, len: usize, concentr: f32) -> Breakpoints {
         let breakpoints = (1..len - 1)
-            .filter(|_| self.rng.gen::<f32>() < concentr)
+            .filter(|_| self.rng.random::<f32>() < concentr)
             .collect();
         Breakpoints {
             breakpoints,
@@ -161,7 +165,7 @@ impl<R: Rng> TestDataGenerator<R> {
     ) -> Vec<usize> {
         let mut breakpoints = vec![];
         for i in 1..true_breakpoints.length {
-            if true_breakpoints.breakpoints.contains(&i) || self.rng.gen::<f32>() < concentr {
+            if true_breakpoints.breakpoints.contains(&i) || self.rng.random::<f32>() < concentr {
                 breakpoints.push(i);
             }
         }

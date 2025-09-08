@@ -18,10 +18,16 @@ use core::fmt;
 ///
 /// assert_eq!(PotentialCodePoint::from_u24(0x68).try_to_char(), Ok('h'));
 /// assert_eq!(PotentialCodePoint::from_char('i').try_to_char(), Ok('i'));
-/// assert_eq!(PotentialCodePoint::from_u24(0x1F44B).try_to_char(), Ok('👋'));
+/// assert_eq!(
+///     PotentialCodePoint::from_u24(0x1F44B).try_to_char(),
+///     Ok('👋')
+/// );
 ///
 /// assert!(PotentialCodePoint::from_u24(0xDE01).try_to_char().is_err());
-/// assert_eq!(PotentialCodePoint::from_u24(0xDE01).to_char_lossy(), char::REPLACEMENT_CHARACTER);
+/// assert_eq!(
+///     PotentialCodePoint::from_u24(0xDE01).to_char_lossy(),
+///     char::REPLACEMENT_CHARACTER
+/// );
 /// ```
 #[repr(transparent)]
 #[allow(clippy::exhaustive_structs)] // transparent newtype
@@ -68,10 +74,7 @@ impl PotentialCodePoint {
     /// ```
     #[inline]
     pub fn try_to_char(self) -> Result<char, core::char::CharTryFromError> {
-        let [u0, u1, u2] = self.0;
-        #[cfg(test)]
-        dbg!([u0, u1, u2]);
-        char::try_from(u32::from_le_bytes([u0, u1, u2, 0]))
+        char::try_from(u32::from(self))
     }
 
     /// Convert a [`PotentialCodePoint`] to a `char', returning [`char::REPLACEMENT_CHARACTER`]
@@ -108,8 +111,16 @@ impl PotentialCodePoint {
     /// ```
     #[inline]
     pub unsafe fn to_char_unchecked(self) -> char {
-        let [u0, u1, u2] = self.0;
-        char::from_u32_unchecked(u32::from_le_bytes([u0, u1, u2, 0]))
+        char::from_u32_unchecked(u32::from(self))
+    }
+
+    /// For converting to the ULE type in a const context
+    ///
+    /// Can be removed once const traits are a thing
+    #[inline]
+    #[cfg(feature = "zerovec")]
+    pub const fn to_unaligned(self) -> zerovec::ule::RawBytesULE<3> {
+        zerovec::ule::RawBytesULE(self.0)
     }
 }
 
@@ -151,14 +162,54 @@ impl PartialOrd for PotentialCodePoint {
     }
 }
 
+impl PartialEq<char> for PotentialCodePoint {
+    fn eq(&self, other: &char) -> bool {
+        self.eq(&Self::from_char(*other))
+    }
+}
+
+impl PartialOrd<char> for PotentialCodePoint {
+    fn partial_cmp(&self, other: &char) -> Option<Ordering> {
+        self.partial_cmp(&Self::from_char(*other))
+    }
+}
+
+impl PartialEq<PotentialCodePoint> for char {
+    fn eq(&self, other: &PotentialCodePoint) -> bool {
+        PotentialCodePoint::from_char(*self).eq(other)
+    }
+}
+
+impl PartialOrd<PotentialCodePoint> for char {
+    fn partial_cmp(&self, other: &PotentialCodePoint) -> Option<Ordering> {
+        PotentialCodePoint::from_char(*self).partial_cmp(other)
+    }
+}
+
 impl Ord for PotentialCodePoint {
     // custom implementation, as derived Ord would compare lexicographically
     fn cmp(&self, other: &Self) -> Ordering {
-        let [a0, a1, a2] = self.0;
-        let a = u32::from_le_bytes([a0, a1, a2, 0]);
-        let [b0, b1, b2] = other.0;
-        let b = u32::from_le_bytes([b0, b1, b2, 0]);
+        let a = u32::from(*self);
+        let b = u32::from(*other);
         a.cmp(&b)
+    }
+}
+
+impl From<PotentialCodePoint> for u32 {
+    fn from(x: PotentialCodePoint) -> Self {
+        let [a0, a1, a2] = x.0;
+        u32::from_le_bytes([a0, a1, a2, 0])
+    }
+}
+
+impl TryFrom<u32> for PotentialCodePoint {
+    type Error = ();
+    fn try_from(x: u32) -> Result<Self, ()> {
+        let [u0, u1, u2, u3] = x.to_le_bytes();
+        if u3 != 0 {
+            return Err(());
+        }
+        Ok(Self([u0, u1, u2]))
     }
 }
 

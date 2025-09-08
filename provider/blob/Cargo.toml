@@ -21,11 +21,11 @@ all-features = true
 
 [dependencies]
 icu_provider = { workspace = true, features = ["deserialize_postcard_1", "serde"] }
-postcard = { workspace = true, features = ["alloc"] }
-serde = { workspace = true, features = ["alloc"] }
+postcard = { workspace = true }
+serde = { workspace = true }
 writeable = {workspace = true }
 zerovec = { workspace = true, features = ["serde", "yoke"] }
-zerotrie = { workspace = true, features = ["serde", "zerovec", "alloc"] }
+zerotrie = { workspace = true, features = ["serde", "zerovec"] }
 
 log = { workspace = true, optional = true }
 
@@ -34,7 +34,7 @@ databake = { path = "../../utils/databake" }
 icu_provider_export = { path = "../../provider/export" }
 icu_locale = { path = "../../components/locale", default-features = false, features = ["compiled_data"] }
 icu_locale_core = { path = "../../components/locale_core", default-features = false, features = ["serde"] }
-icu_provider = { path = "../../provider/core", features = ["macros"] }
+icu_provider = { path = "../../provider/core", features = ["alloc"] }
 icu_provider_adapters = { path = "../../provider/adapters", default-features = false }
 twox-hash = { workspace = true }
 
@@ -42,13 +42,12 @@ twox-hash = { workspace = true }
 criterion = { workspace = true }
 
 [features]
-bench = []
-std = ["icu_provider/std"]
 export = [
     "icu_provider/export",
     "log",
-    "std",
+    "alloc",
 ]
+alloc = ["icu_provider/alloc", "postcard/alloc", "zerotrie/alloc", "serde/alloc"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI

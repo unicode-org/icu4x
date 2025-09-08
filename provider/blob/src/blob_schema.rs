@@ -2,15 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::boxed::Box;
-use alloc::collections::BTreeSet;
 use core::fmt::Write;
-use icu_provider::{marker::DataMarkerPathHash, prelude::*};
+use icu_provider::{marker::DataMarkerIdHash, prelude::*};
 use serde::Deserialize;
 use writeable::Writeable;
 use zerotrie::ZeroTrieSimpleAscii;
-use zerovec::maps::{ZeroMap2dBorrowed, ZeroMapKV};
-use zerovec::vecs::{Index16, Index32, VarZeroSlice, VarZeroVec, VarZeroVecFormat, ZeroSlice};
+use zerovec::vecs::{Index16, Index32, VarZeroSlice, VarZeroVecFormat, ZeroSlice};
 
 /// A versioned Serde schema for ICU4X data blobs.
 #[derive(serde::Deserialize, yoke::Yokeable)]
@@ -18,16 +15,18 @@ use zerovec::vecs::{Index16, Index32, VarZeroSlice, VarZeroVec, VarZeroVecFormat
 #[cfg_attr(feature = "export", derive(serde::Serialize))]
 #[derive(Debug, Clone)]
 pub(crate) enum BlobSchema<'data> {
+    V001(NeverSchema),
+    V002(NeverSchema),
+    V002Bigger(NeverSchema),
     #[serde(borrow)]
-    V001(BlobSchemaV1<'data>),
+    V003(BlobSchemaV1<'data, Index16>),
     #[serde(borrow)]
-    V002(BlobSchemaV2<'data, Index16>),
-    #[serde(borrow)]
-    V002Bigger(BlobSchemaV2<'data, Index32>),
+    V003Bigger(BlobSchemaV1<'data, Index32>),
 }
 
 // This is a valid separator as `DataLocale` will never produce it.
 pub(crate) const REQUEST_SEPARATOR: char = '\x1E';
+pub(crate) const CHECKSUM_KEY: &[u8] = b"\0c";
 
 impl<'data> BlobSchema<'data> {
     pub fn deserialize_and_check<D: serde::Deserializer<'data>>(
@@ -39,149 +38,58 @@ impl<'data> BlobSchema<'data> {
         Ok(blob)
     }
 
-    pub fn load(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<&'data [u8], DataError> {
-        match self {
-            BlobSchema::V001(s) => s.load(marker, req),
-            BlobSchema::V002(s) => s.load(marker, req),
-            BlobSchema::V002Bigger(s) => s.load(marker, req),
-        }
-    }
-
-    pub fn iter_ids(
+    pub fn load(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+        req: DataRequest,
+    ) -> Result<(&'data [u8], Option<u64>), DataError> {
         match self {
-            BlobSchema::V001(s) => s.iter_ids(marker),
-            BlobSchema::V002(s) => s.iter_ids(marker),
-            BlobSchema::V002Bigger(s) => s.iter_ids(marker),
-        }
-    }
-
-    #[cfg(debug_assertions)]
-    fn check_invariants(&self) {
-        match self {
-            BlobSchema::V001(s) => s.check_invariants(),
-            BlobSchema::V002(s) => s.check_invariants(),
-            BlobSchema::V002Bigger(s) => s.check_invariants(),
-        }
-    }
-}
-
-/// Version 1 of the ICU4X data blob schema.
-#[derive(Clone, Copy, Debug, serde::Deserialize, yoke::Yokeable)]
-#[yoke(prove_covariance_manually)]
-#[cfg_attr(feature = "export", derive(serde::Serialize))]
-pub(crate) struct BlobSchemaV1<'data> {
-    /// Map from marker hash and locale to buffer index.
-    /// Weak invariant: the `usize` values are valid indices into `self.buffers`
-    /// Weak invariant: there is at least one value for every integer in 0..self.buffers.len()
-    #[serde(borrow)]
-    pub markers: ZeroMap2dBorrowed<'data, DataMarkerPathHash, Index32U8, usize>,
-    /// Vector of buffers
-    #[serde(borrow)]
-    pub buffers: &'data VarZeroSlice<[u8], Index32>,
-}
-
-impl Default for BlobSchemaV1<'_> {
-    fn default() -> Self {
-        Self {
-            markers: ZeroMap2dBorrowed::new(),
-            buffers: VarZeroSlice::new_empty(),
-        }
-    }
-}
-
-impl<'data> BlobSchemaV1<'data> {
-    pub fn load(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<&'data [u8], DataError> {
-        let idx = self
-            .markers
-            .get0(&marker.path.hashed())
-            .ok_or(DataErrorKind::MarkerNotFound)
-            .and_then(|cursor| {
-                if marker.is_singleton && !req.id.locale.is_default() {
-                    return Err(DataErrorKind::InvalidRequest);
-                }
-                cursor
-                    .get1_copied_by(|k| {
-                        struct Comparator<'a>(&'a DataLocale, &'a DataMarkerAttributes);
-                        impl writeable::Writeable for Comparator<'_> {
-                            fn write_to<W: core::fmt::Write + ?Sized>(
-                                &self,
-                                sink: &mut W,
-                            ) -> core::fmt::Result {
-                                self.0.write_to(sink)?;
-                                if !self.1.is_empty() {
-                                    sink.write_char(REQUEST_SEPARATOR)?;
-                                    sink.write_str(self.1)?;
-                                }
-                                Ok(())
-                            }
-                        }
-                        Comparator(req.id.locale, req.id.marker_attributes)
-                            .writeable_cmp_bytes(&k.0)
-                            .reverse()
-                    })
-                    .ok_or(DataErrorKind::IdentifierNotFound)
-            })
-            .map_err(|kind| kind.with_req(marker, req))?;
-        self.buffers
-            .get(idx)
-            .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(marker, req))
-    }
-
-    pub fn iter_ids(
-        &self,
-        marker: DataMarkerInfo,
-    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
-        Ok(self
-            .markers
-            .get0(&marker.path.hashed())
-            .ok_or_else(|| DataErrorKind::MarkerNotFound.with_marker(marker))?
-            .iter1_copied()
-            .filter_map(|(s, _)| core::str::from_utf8(&s.0).ok())
-            .filter_map(|s| {
-                #[allow(unused_imports)]
-                use alloc::borrow::ToOwned;
-                if let Some((locale, attrs)) = s.split_once(REQUEST_SEPARATOR) {
-                    Some(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_str(attrs).ok()?.to_owned(),
-                        locale.parse().ok()?,
-                    ))
-                } else {
-                    Some(DataIdentifierCow::from_locale(s.parse().ok()?))
-                }
-            })
-            .collect())
-    }
-
-    /// Verifies the weak invariants using debug assertions
-    #[cfg(debug_assertions)]
-    fn check_invariants(&self) {
-        if self.markers.is_empty() && self.buffers.is_empty() {
-            return;
-        }
-        // Note: We could check that every index occurs at least once, but that's a more expensive
-        // operation, so we will just check for the min and max index.
-        let mut seen_min = false;
-        let mut seen_max = self.buffers.is_empty();
-        for cursor in self.markers.iter0() {
-            for (locale, idx) in cursor.iter1_copied() {
-                debug_assert!(idx < self.buffers.len() || locale == Index32U8::SENTINEL);
-                if idx == 0 {
-                    seen_min = true;
-                }
-                if idx + 1 == self.buffers.len() {
-                    seen_max = true;
-                }
+            BlobSchema::V001(..) | BlobSchema::V002(..) | BlobSchema::V002Bigger(..) => {
+                unreachable!("Unreachable blob schema")
             }
+            BlobSchema::V003(s) => s.load(marker, req),
+            BlobSchema::V003Bigger(s) => s.load(marker, req),
         }
-        debug_assert!(seen_min);
-        debug_assert!(seen_max);
+    }
+
+    #[cfg(feature = "alloc")]
+    pub fn iter_ids(
+        &self,
+        marker: DataMarkerInfo,
+    ) -> Result<alloc::collections::BTreeSet<DataIdentifierCow<'_>>, DataError> {
+        match self {
+            BlobSchema::V001(..) | BlobSchema::V002(..) | BlobSchema::V002Bigger(..) => {
+                unreachable!("Unreachable blob schema")
+            }
+            BlobSchema::V003(s) => s.iter_ids(marker),
+            BlobSchema::V003Bigger(s) => s.iter_ids(marker),
+        }
+    }
+
+    #[cfg(debug_assertions)]
+    fn check_invariants(&self) {
+        match self {
+            BlobSchema::V001(..) | BlobSchema::V002(..) | BlobSchema::V002Bigger(..) => (),
+            BlobSchema::V003(s) => s.check_invariants(),
+            BlobSchema::V003Bigger(s) => s.check_invariants(),
+        }
     }
 }
 
-/// Version 2 of the ICU4X data blob schema.
+#[cfg_attr(feature = "export", derive(serde::Serialize))]
+#[derive(Debug, Clone, yoke::Yokeable)]
+pub enum NeverSchema {}
+
+impl<'de> serde::Deserialize<'de> for NeverSchema {
+    fn deserialize<D>(_: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        use serde::de::Error;
+        Err(D::Error::custom("Attempted to read 1.0 blob format from ICU4X 2.0: please run ICU4X 2.0 datagen to generate a new file."))
+    }
+}
+/// Version 3 of the ICU4X data blob schema.
 ///
 /// This itself has two modes, using [`Index16`] or [`Index32`] buffers for the locales array.
 ///
@@ -190,11 +98,11 @@ impl<'data> BlobSchemaV1<'data> {
 #[yoke(prove_covariance_manually)]
 #[cfg_attr(feature = "export", derive(serde::Serialize))]
 #[serde(bound = "")] // Override the autogenerated `LocaleVecFormat: Serialize/Deserialize` bound
-pub(crate) struct BlobSchemaV2<'data, LocaleVecFormat: VarZeroVecFormat> {
+pub(crate) struct BlobSchemaV1<'data, LocaleVecFormat: VarZeroVecFormat> {
     /// Map from marker hash to locale trie.
     /// Weak invariant: should be sorted.
     #[serde(borrow)]
-    pub markers: &'data ZeroSlice<DataMarkerPathHash>,
+    pub markers: &'data ZeroSlice<DataMarkerIdHash>,
     /// Map from locale to buffer index.
     /// Weak invariant: the `usize` values are valid indices into `self.buffers`
     /// Weak invariant: there is at least one value for every integer in 0..self.buffers.len()
@@ -207,7 +115,7 @@ pub(crate) struct BlobSchemaV2<'data, LocaleVecFormat: VarZeroVecFormat> {
     pub buffers: &'data VarZeroSlice<[u8], Index32>,
 }
 
-impl<LocaleVecFormat: VarZeroVecFormat> Default for BlobSchemaV2<'_, LocaleVecFormat> {
+impl<LocaleVecFormat: VarZeroVecFormat> Default for BlobSchemaV1<'_, LocaleVecFormat> {
     fn default() -> Self {
         Self {
             markers: ZeroSlice::new_empty(),
@@ -217,16 +125,20 @@ impl<LocaleVecFormat: VarZeroVecFormat> Default for BlobSchemaV2<'_, LocaleVecFo
     }
 }
 
-impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecFormat> {
-    pub fn load(&self, marker: DataMarkerInfo, req: DataRequest) -> Result<&'data [u8], DataError> {
-        let marker_index = self
-            .markers
-            .binary_search(&marker.path.hashed())
-            .ok()
-            .ok_or_else(|| DataErrorKind::MarkerNotFound.with_req(marker, req))?;
-        if marker.is_singleton && !req.id.locale.is_default() {
+impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV1<'data, LocaleVecFormat> {
+    pub fn load(
+        &self,
+        marker: DataMarkerInfo,
+        req: DataRequest,
+    ) -> Result<(&'data [u8], Option<u64>), DataError> {
+        if marker.is_singleton && !req.id.locale.is_unknown() {
             return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
         }
+        let marker_index = self
+            .markers
+            .binary_search(&marker.id.hashed())
+            .ok()
+            .ok_or_else(|| DataErrorKind::MarkerNotFound.with_req(marker, req))?;
         let zerotrie = self
             .locales
             .get(marker_index)
@@ -255,16 +167,29 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
             .buffers
             .get(blob_index)
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(marker, req))?;
-        Ok(buffer)
+        Ok((
+            buffer,
+            marker
+                .has_checksum
+                .then(|| self.get_checksum(zerotrie))
+                .flatten(),
+        ))
     }
 
+    fn get_checksum(&self, zerotrie: &[u8]) -> Option<u64> {
+        ZeroTrieSimpleAscii::from_store(zerotrie)
+            .get(CHECKSUM_KEY)
+            .and_then(|cs| Some(u64::from_le_bytes(self.buffers.get(cs)?.try_into().ok()?)))
+    }
+
+    #[cfg(feature = "alloc")]
     pub fn iter_ids(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    ) -> Result<alloc::collections::BTreeSet<DataIdentifierCow<'_>>, DataError> {
         let marker_index = self
             .markers
-            .binary_search(&marker.path.hashed())
+            .binary_search(&marker.id.hashed())
             .ok()
             .ok_or_else(|| DataErrorKind::MarkerNotFound.with_marker(marker))?;
         let zerotrie = self
@@ -281,6 +206,8 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
                         DataMarkerAttributes::try_from_str(attrs).ok()?.to_owned(),
                         locale.parse().ok()?,
                     ))
+                } else if s.as_bytes() == CHECKSUM_KEY {
+                    None
                 } else {
                     Some(DataIdentifierCow::from_locale(s.parse().ok()?))
                 }
@@ -313,37 +240,4 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV2<'data, LocaleVecForm
         debug_assert!(seen_min);
         debug_assert!(seen_max);
     }
-}
-
-/// This type lets us use a u32-index-format VarZeroVec with the ZeroMap2dBorrowed.
-///
-/// Eventually we will have a FormatSelector type that lets us do `ZeroMap<FormatSelector<K, Index32>, V>`
-/// (https://github.com/unicode-org/icu4x/issues/2312)
-///
-/// IndexU32Borrowed isn't actually important; it's just more convenient to use make_varule to get the
-/// full suite of traits instead of `#[derive(VarULE)]`. (With `#[derive(VarULE)]` we would have to manually
-/// define a Serialize implementation, and that would be gnarly)
-/// https://github.com/unicode-org/icu4x/issues/2310 tracks being able to do this with derive(ULE)
-#[zerovec::make_varule(Index32U8)]
-#[zerovec::derive(Debug)]
-#[zerovec::skip_derive(ZeroMapKV)]
-#[derive(Eq, PartialEq, Ord, PartialOrd, Debug, serde::Deserialize)]
-#[zerovec::derive(Deserialize)]
-#[cfg_attr(feature = "export", derive(serde::Serialize))]
-#[cfg_attr(feature = "export", zerovec::derive(Serialize))]
-pub(crate) struct Index32U8Borrowed<'a>(
-    #[cfg_attr(feature = "export", serde(borrow))] pub &'a [u8],
-);
-
-impl<'a> ZeroMapKV<'a> for Index32U8 {
-    type Container = VarZeroVec<'a, Index32U8, Index32>;
-    type Slice = VarZeroSlice<Index32U8, Index32>;
-    type GetType = Index32U8;
-    type OwnedType = Box<Index32U8>;
-}
-
-impl Index32U8 {
-    // Safety: Index32U8 is a transparent DST wrapper around `[u8]`, so a transmute is fine
-    #[allow(dead_code)]
-    pub(crate) const SENTINEL: &'static Self = unsafe { &*(&[] as *const [u8] as *const Self) };
 }

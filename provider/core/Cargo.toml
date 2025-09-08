@@ -28,9 +28,7 @@ tinystr = { workspace = true }
 yoke = { workspace = true, features = ["alloc", "derive"] }
 zerofrom = { workspace = true, features = ["alloc", "derive"] }
 zerovec = { workspace = true, features = ["derive"]}
-
-# macros
-icu_provider_macros = { workspace = true, optional = true }
+zerotrie = { workspace = true, optional = true }
 
 # log
 log = { workspace = true, optional = true }
@@ -55,10 +53,9 @@ icu_provider_adapters = { path = "../adapters", default-features = false }
 criterion = { workspace = true }
 
 [features]
-bench = []
-std = ["icu_locale_core/std"]
+std = ["alloc"]
+alloc = ["icu_locale_core/alloc", "zerovec/alloc", "zerotrie/alloc"]
 sync = []
-macros = ["dep:icu_provider_macros"]
 # Enable logging of additional context of data errors
 logging = ["dep:log"]
 
@@ -70,8 +67,11 @@ deserialize_json = ["serde", "dep:serde_json"]
 deserialize_bincode_1 = ["serde", "dep:bincode", "std"]
 deserialize_postcard_1 = ["serde", "dep:postcard"]
 
+# Dependencies for baked provider scaffolding
+baked = ["zerotrie"]
+
 # Dependencies for running data generation
-export = ["serde", "dep:erased-serde", "dep:databake", "std", "sync", "dep:postcard"]
+export = ["serde", "dep:erased-serde", "dep:databake", "std", "sync", "dep:postcard", "zerovec/databake"]
 
 [package.metadata.cargo-all-features]
 denylist = ["macros"]

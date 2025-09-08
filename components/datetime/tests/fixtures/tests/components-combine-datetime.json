@@ -14,15 +14,15 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute"],
-                    "length": "medium"
-                },
-                "preferences": { "hourCycle": "h12" }
+                    "dateFields": "YMDE",
+                    "length": "medium",
+                    "timePrecision": "minute"
+                }
             }
         },
         "output": {
             "values": {
-                "en": {
+                "en-u-hc-h12": {
                     "formatted": "Tue, Jan 7, 2020, 8:25\u202fAM",
                     "pattern": "E, MMM d, y, h:mm\u202fa"
                 }
@@ -44,15 +44,15 @@
                     "minute": "numeric"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "hour", "minute"],
-                    "length": "long"
-                },
-                "preferences": { "hourCycle": "h12" }
+                    "dateFields": "YMDE",
+                    "length": "long",
+                    "timePrecision": "minute"
+                }
             }
         },
         "output": {
             "values": {
-                "en": {
+                "en-u-hc-h12": {
                     "formatted": "Tuesday, January 7, 2020, 8:25\u202fAM",
                     "pattern": "EEEE, MMMM d, y, h:mm\u202fa"
                 }

@@ -19,5 +19,4 @@
 
 
 
-
 #endif // LocaleDirection_H

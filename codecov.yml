@@ -6,7 +6,6 @@ ignore:
   - "/*"
   - "C:/*"
   - "../*"
-  - "components/locale_core/macros"
   - "**/tests/**/*"
   - "**/benches/**/*"
   - "**/examples/**/*"

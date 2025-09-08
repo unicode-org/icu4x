@@ -1,0 +1,41 @@
+{
+  "defaults": {
+    "3": "Orta Afrika Saati",
+    "4": "Doğu Afrika Saati",
+    "5": "Güney Afrika Standart Saati",
+    "6": "Batı Afrika Saati",
+    "29": "Brunei Darü’s-Selam Saati",
+    "32": "Chamorro Saati",
+    "37": "Cocos Adaları Saati",
+    "43": "Doğu Timor Saati",
+    "52": "Fransız Güney ve Antarktika Saati",
+    "53": "Greenwich Ortalama Saati",
+    "57": "Gilbert Adaları Saati",
+    "61": "Körfez Saati",
+    "66": "Hindistan Standart Saati",
+    "67": "Hint Okyanusu Saati",
+    "68": "Hindiçin Saati",
+    "69": "Orta Endonezya Saati",
+    "70": "Doğu Endonezya Saati",
+    "71": "Batı Endonezya Saati",
+    "77": "Kazakistan Saati",
+    "78": "Doğu Kazakistan Saati",
+    "79": "Batı Kazakistan Saati",
+    "84": "Line Adaları Saati",
+    "87": "Malezya Saati",
+    "90": "Marshall Adaları Saati",
+    "96": "Myanmar Saati",
+    "109": "Papua Yeni Gine Saati",
+    "113": "Phoenix Adaları Saati",
+    "115": "Pitcairn Saati",
+    "116": "Ponape Saati",
+    "117": "Pyongyang Saati",
+    "124": "Singapur Standart Saati",
+    "126": "Güney Georgia Saati",
+    "146": "Wake Adası Saati",
+    "150": "Yukon Saati"
+  },
+  "overrides": {
+    "utc": "Eş Güdümlü Evrensel Zaman"
+  }
+}

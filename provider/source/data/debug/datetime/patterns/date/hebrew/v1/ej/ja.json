@@ -1,0 +1,19 @@
+{
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    3,
+    4,
+    4,
+    5,
+    6,
+    6
+  ],
+  "elements": [
+    "EEEE H時",
+    "EEE H時",
+    "H:m (EEEE)",
+    "H:mm (E)",
+    "H:m:s (EEEE)",
+    "H:mm:ss (E)"
+  ]
+}

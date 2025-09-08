@@ -1,0 +1,17 @@
+{
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    3,
+    4,
+    4
+  ],
+  "elements": [
+    "y年M月d日",
+    "y/MM/dd",
+    "GGGy年M月d日",
+    "GGGy/MM/dd"
+  ]
+}

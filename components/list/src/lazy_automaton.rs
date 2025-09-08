@@ -56,8 +56,8 @@ impl<T: AsRef<[u8]>> LazyAutomaton for DFA<T> {
 #[test]
 fn test() {
     use crate::provider::SerdeDFA;
-    use alloc::borrow::Cow;
     use regex_automata::Input;
+    use std::borrow::Cow;
 
     let matcher = SerdeDFA::new(Cow::Borrowed("^11(000)*$")).unwrap();
 

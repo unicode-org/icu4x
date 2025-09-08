@@ -11,7 +11,7 @@
 //! crate will eventually stabilize and move to their own top-level components.
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(not(any(test, doc)), no_std)]
 // No boilerplate, each module has their own
 #![allow(clippy::module_inception)]
 
@@ -39,54 +39,56 @@ pub mod provider {
         use icu_experimental_data::*;
         pub mod icu {
             pub use crate as experimental;
-            pub use icu_experimental_data::icu_locale as locale;
+            pub use icu_collections as collections;
+            pub use icu_locale as locale;
             pub use icu_plurals as plurals;
         }
         make_provider!(Baked);
 
-        impl_long_compact_decimal_format_data_v1_marker!(Baked);
-        impl_short_compact_decimal_format_data_v1_marker!(Baked);
-        impl_short_currency_compact_v1_marker!(Baked);
-        impl_currency_essentials_v1_marker!(Baked);
-        impl_currency_displayname_v1_marker!(Baked);
-        impl_currency_patterns_data_v1_marker!(Baked);
-        impl_currency_extended_data_v1_marker!(Baked);
-        impl_units_display_name_v1_marker!(Baked);
-        impl_units_essentials_v1_marker!(Baked);
-        impl_language_display_names_v1_marker!(Baked);
-        impl_digital_duration_data_v1_marker!(Baked);
-        impl_locale_display_names_v1_marker!(Baked);
-        impl_region_display_names_v1_marker!(Baked);
-        impl_script_display_names_v1_marker!(Baked);
-        impl_variant_display_names_v1_marker!(Baked);
-        impl_percent_essentials_v1_marker!(Baked);
-        impl_person_names_format_v1_marker!(Baked);
-        impl_long_day_relative_time_format_data_v1_marker!(Baked);
-        impl_long_hour_relative_time_format_data_v1_marker!(Baked);
-        impl_long_minute_relative_time_format_data_v1_marker!(Baked);
-        impl_long_month_relative_time_format_data_v1_marker!(Baked);
-        impl_long_quarter_relative_time_format_data_v1_marker!(Baked);
-        impl_long_second_relative_time_format_data_v1_marker!(Baked);
-        impl_long_week_relative_time_format_data_v1_marker!(Baked);
-        impl_long_year_relative_time_format_data_v1_marker!(Baked);
-        impl_narrow_day_relative_time_format_data_v1_marker!(Baked);
-        impl_narrow_hour_relative_time_format_data_v1_marker!(Baked);
-        impl_narrow_minute_relative_time_format_data_v1_marker!(Baked);
-        impl_narrow_month_relative_time_format_data_v1_marker!(Baked);
-        impl_narrow_quarter_relative_time_format_data_v1_marker!(Baked);
-        impl_narrow_second_relative_time_format_data_v1_marker!(Baked);
-        impl_narrow_week_relative_time_format_data_v1_marker!(Baked);
-        impl_narrow_year_relative_time_format_data_v1_marker!(Baked);
-        impl_short_day_relative_time_format_data_v1_marker!(Baked);
-        impl_short_hour_relative_time_format_data_v1_marker!(Baked);
-        impl_short_minute_relative_time_format_data_v1_marker!(Baked);
-        impl_short_month_relative_time_format_data_v1_marker!(Baked);
-        impl_short_quarter_relative_time_format_data_v1_marker!(Baked);
-        impl_short_second_relative_time_format_data_v1_marker!(Baked);
-        impl_short_week_relative_time_format_data_v1_marker!(Baked);
-        impl_short_year_relative_time_format_data_v1_marker!(Baked);
-        impl_units_info_v1_marker!(Baked);
-        impl_units_trie_v1_marker!(Baked);
+        impl_long_compact_decimal_format_data_v1!(Baked);
+        impl_short_compact_decimal_format_data_v1!(Baked);
+        impl_short_currency_compact_v1!(Baked);
+        impl_currency_essentials_v1!(Baked);
+        impl_currency_displayname_v1!(Baked);
+        impl_currency_patterns_data_v1!(Baked);
+        impl_currency_extended_data_v1!(Baked);
+        impl_units_display_name_v1!(Baked);
+        impl_units_essentials_v1!(Baked);
+        impl_language_display_names_v1!(Baked);
+        impl_digital_duration_data_v1!(Baked);
+        impl_locale_display_names_v1!(Baked);
+        impl_region_display_names_v1!(Baked);
+        impl_script_display_names_v1!(Baked);
+        impl_variant_display_names_v1!(Baked);
+        impl_percent_essentials_v1!(Baked);
+        impl_person_names_format_v1!(Baked);
+        impl_long_day_relative_v1!(Baked);
+        impl_long_hour_relative_v1!(Baked);
+        impl_long_minute_relative_v1!(Baked);
+        impl_long_month_relative_v1!(Baked);
+        impl_long_quarter_relative_v1!(Baked);
+        impl_long_second_relative_v1!(Baked);
+        impl_long_week_relative_v1!(Baked);
+        impl_long_year_relative_v1!(Baked);
+        impl_narrow_day_relative_v1!(Baked);
+        impl_narrow_hour_relative_v1!(Baked);
+        impl_narrow_minute_relative_v1!(Baked);
+        impl_narrow_month_relative_v1!(Baked);
+        impl_narrow_quarter_relative_v1!(Baked);
+        impl_narrow_second_relative_v1!(Baked);
+        impl_narrow_week_relative_v1!(Baked);
+        impl_narrow_year_relative_v1!(Baked);
+        impl_short_day_relative_v1!(Baked);
+        impl_short_hour_relative_v1!(Baked);
+        impl_short_minute_relative_v1!(Baked);
+        impl_short_month_relative_v1!(Baked);
+        impl_short_quarter_relative_v1!(Baked);
+        impl_short_second_relative_v1!(Baked);
+        impl_short_week_relative_v1!(Baked);
+        impl_short_year_relative_v1!(Baked);
+        impl_transliterator_rules_v1!(Baked);
+        impl_units_info_v1!(Baked);
+        impl_unit_ids_v1!(Baked);
     };
 
     #[cfg(feature = "datagen")]
@@ -95,50 +97,51 @@ pub mod provider {
     #[cfg(feature = "datagen")]
     /// The latest minimum set of keys required by this component.
     pub const MARKERS: &[DataMarkerInfo] = &[
-        super::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker::INFO,
-        super::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::INFO,
-        super::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker::INFO,
-        super::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::INFO,
-        super::dimension::provider::currency_compact::ShortCurrencyCompactV1Marker::INFO,
-        super::dimension::provider::currency_displayname::CurrencyDisplaynameV1Marker::INFO,
-        super::dimension::provider::currency::CurrencyEssentialsV1Marker::INFO,
-        super::dimension::provider::currency_patterns::CurrencyPatternsDataV1Marker::INFO,
-        super::dimension::provider::extended_currency::CurrencyExtendedDataV1Marker::INFO,
-        super::dimension::provider::percent::PercentEssentialsV1Marker::INFO,
-        super::dimension::provider::units_essentials::UnitsEssentialsV1Marker::INFO,
-        super::dimension::provider::units::UnitsDisplayNameV1Marker::INFO,
-        super::displaynames::provider::LanguageDisplayNamesV1Marker::INFO,
-        super::duration::provider::DigitalDurationDataV1Marker::INFO,
-        super::displaynames::provider::LocaleDisplayNamesV1Marker::INFO,
-        super::displaynames::provider::RegionDisplayNamesV1Marker::INFO,
-        super::displaynames::provider::ScriptDisplayNamesV1Marker::INFO,
-        super::displaynames::provider::VariantDisplayNamesV1Marker::INFO,
-        super::measure::provider::trie::UnitsTrieV1Marker::INFO,
-        super::personnames::provider::PersonNamesFormatV1Marker::INFO,
-        super::relativetime::provider::LongDayRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::LongHourRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::LongMinuteRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::LongQuarterRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::LongSecondRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::LongWeekRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::LongYearRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::NarrowDayRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::NarrowHourRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::NarrowMinuteRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::NarrowQuarterRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::NarrowSecondRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::NarrowWeekRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::ShortDayRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::ShortHourRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::ShortMinuteRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::ShortMonthRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::ShortQuarterRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker::INFO,
-        super::relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker::INFO,
-        super::units::provider::UnitsInfoV1Marker::INFO,
+        super::compactdecimal::provider::LongCompactDecimalFormatDataV1::INFO,
+        super::compactdecimal::provider::ShortCompactDecimalFormatDataV1::INFO,
+        super::compactdecimal::provider::LongCompactDecimalFormatDataV1::INFO,
+        super::compactdecimal::provider::ShortCompactDecimalFormatDataV1::INFO,
+        super::dimension::provider::currency::compact::ShortCurrencyCompactV1::INFO,
+        super::dimension::provider::currency::displayname::CurrencyDisplaynameV1::INFO,
+        super::dimension::provider::currency::essentials::CurrencyEssentialsV1::INFO,
+        super::dimension::provider::currency::patterns::CurrencyPatternsDataV1::INFO,
+        super::dimension::provider::currency::extended::CurrencyExtendedDataV1::INFO,
+        super::dimension::provider::percent::PercentEssentialsV1::INFO,
+        super::dimension::provider::units::essentials::UnitsEssentialsV1::INFO,
+        super::dimension::provider::units::display_name::UnitsDisplayNameV1::INFO,
+        super::displaynames::provider::LanguageDisplayNamesV1::INFO,
+        super::duration::provider::DigitalDurationDataV1::INFO,
+        super::displaynames::provider::LocaleDisplayNamesV1::INFO,
+        super::displaynames::provider::RegionDisplayNamesV1::INFO,
+        super::displaynames::provider::ScriptDisplayNamesV1::INFO,
+        super::displaynames::provider::VariantDisplayNamesV1::INFO,
+        super::measure::provider::UnitIdsV1::INFO,
+        super::personnames::provider::PersonNamesFormatV1::INFO,
+        super::relativetime::provider::LongDayRelativeV1::INFO,
+        super::relativetime::provider::LongHourRelativeV1::INFO,
+        super::relativetime::provider::LongMinuteRelativeV1::INFO,
+        super::relativetime::provider::LongMonthRelativeV1::INFO,
+        super::relativetime::provider::LongQuarterRelativeV1::INFO,
+        super::relativetime::provider::LongSecondRelativeV1::INFO,
+        super::relativetime::provider::LongWeekRelativeV1::INFO,
+        super::relativetime::provider::LongYearRelativeV1::INFO,
+        super::relativetime::provider::NarrowDayRelativeV1::INFO,
+        super::relativetime::provider::NarrowHourRelativeV1::INFO,
+        super::relativetime::provider::NarrowMinuteRelativeV1::INFO,
+        super::relativetime::provider::NarrowMonthRelativeV1::INFO,
+        super::relativetime::provider::NarrowQuarterRelativeV1::INFO,
+        super::relativetime::provider::NarrowSecondRelativeV1::INFO,
+        super::relativetime::provider::NarrowWeekRelativeV1::INFO,
+        super::relativetime::provider::NarrowYearRelativeV1::INFO,
+        super::relativetime::provider::ShortDayRelativeV1::INFO,
+        super::relativetime::provider::ShortHourRelativeV1::INFO,
+        super::relativetime::provider::ShortMinuteRelativeV1::INFO,
+        super::relativetime::provider::ShortMonthRelativeV1::INFO,
+        super::relativetime::provider::ShortQuarterRelativeV1::INFO,
+        super::relativetime::provider::ShortSecondRelativeV1::INFO,
+        super::relativetime::provider::ShortWeekRelativeV1::INFO,
+        super::relativetime::provider::ShortYearRelativeV1::INFO,
+        super::transliterate::provider::TransliteratorRulesV1::INFO,
+        super::units::provider::UnitsInfoV1::INFO,
     ];
 }

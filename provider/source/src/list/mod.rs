@@ -12,7 +12,7 @@ use std::borrow::Cow;
 use std::collections::HashSet;
 use std::sync::OnceLock;
 
-fn load<M: DataMarker<DataStruct = ListFormatterPatternsV2<'static>>>(
+fn load<M: DataMarker<DataStruct = ListFormatterPatterns<'static>>>(
     selff: &SourceDataProvider,
     req: DataRequest,
 ) -> Result<DataResponse<M>, DataError> {
@@ -23,34 +23,34 @@ fn load<M: DataMarker<DataStruct = ListFormatterPatternsV2<'static>>>(
 
     let data = &resource.main.value.list_patterns;
 
-    let patterns = if M::INFO == AndListV2Marker::INFO {
+    let patterns = if M::INFO == ListAndV1::INFO {
         match req.id.marker_attributes.as_str() {
-            ListFormatterPatternsV2::SHORT_STR => &data.standard_short,
-            ListFormatterPatternsV2::NARROW_STR => &data.standard_narrow,
-            ListFormatterPatternsV2::WIDE_STR => &data.standard,
+            ListFormatterPatterns::SHORT_STR => &data.standard_short,
+            ListFormatterPatterns::NARROW_STR => &data.standard_narrow,
+            ListFormatterPatterns::WIDE_STR => &data.standard,
             _ => return Err(DataErrorKind::IdentifierNotFound.with_req(M::INFO, req)),
         }
-    } else if M::INFO == OrListV2Marker::INFO {
+    } else if M::INFO == ListOrV1::INFO {
         match req.id.marker_attributes.as_str() {
-            ListFormatterPatternsV2::SHORT_STR => &data.or_short,
-            ListFormatterPatternsV2::NARROW_STR => &data.or_narrow,
-            ListFormatterPatternsV2::WIDE_STR => &data.or,
+            ListFormatterPatterns::SHORT_STR => &data.or_short,
+            ListFormatterPatterns::NARROW_STR => &data.or_narrow,
+            ListFormatterPatterns::WIDE_STR => &data.or,
             _ => return Err(DataErrorKind::IdentifierNotFound.with_req(M::INFO, req)),
         }
-    } else if M::INFO == UnitListV2Marker::INFO {
+    } else if M::INFO == ListUnitV1::INFO {
         match req.id.marker_attributes.as_str() {
-            ListFormatterPatternsV2::SHORT_STR => &data.unit_short,
-            ListFormatterPatternsV2::NARROW_STR => &data.unit_narrow,
-            ListFormatterPatternsV2::WIDE_STR => &data.unit,
+            ListFormatterPatterns::SHORT_STR => &data.unit_short,
+            ListFormatterPatterns::NARROW_STR => &data.unit_narrow,
+            ListFormatterPatterns::WIDE_STR => &data.unit,
             _ => return Err(DataErrorKind::IdentifierNotFound.with_req(M::INFO, req)),
         }
     } else {
         return Err(DataError::custom(
-            "Unknown marker for ListFormatterPatternsV2",
+            "Unknown marker for ListFormatterPatterns",
         ));
     };
 
-    let mut patterns = ListFormatterPatternsV2::try_new(
+    let mut patterns = ListFormatterPatterns::try_new(
         &patterns.start,
         &patterns.middle,
         &patterns.end,
@@ -58,7 +58,7 @@ fn load<M: DataMarker<DataStruct = ListFormatterPatternsV2<'static>>>(
     )?;
 
     if req.id.locale.language == language!("es") {
-        if M::INFO == AndListV2Marker::INFO || M::INFO == UnitListV2Marker::INFO {
+        if M::INFO == ListAndV1::INFO || M::INFO == ListUnitV1::INFO {
             // Replace " y " with " e " before /i/ sounds.
             // https://unicode.org/reports/tr35/tr35-general.html#:~:text=important.%20For%20example%3A-,Spanish,AND,-Use%20%E2%80%98e%E2%80%99%20instead
 
@@ -84,7 +84,7 @@ fn load<M: DataMarker<DataStruct = ListFormatterPatternsV2<'static>>>(
                     pair.special_case = Some(i_sound_becomes_e.clone());
                 }
             }
-        } else if M::INFO == OrListV2Marker::INFO {
+        } else if M::INFO == ListOrV1::INFO {
             // Replace " o " with " u " before /o/ sound.
             // https://unicode.org/reports/tr35/tr35-general.html#:~:text=agua%20e%20hielo-,OR,-Use%20%E2%80%98u%E2%80%99%20instead
 
@@ -175,9 +175,9 @@ macro_rules! implement {
                     .list_locales()?
                     .flat_map(|l| {
                         [
-                            ListFormatterPatternsV2::SHORT,
-                            ListFormatterPatternsV2::NARROW,
-                            ListFormatterPatternsV2::WIDE,
+                            ListFormatterPatterns::SHORT,
+                            ListFormatterPatterns::NARROW,
+                            ListFormatterPatterns::WIDE,
                         ]
                         .into_iter()
                         .map(move |a| DataIdentifierCow::from_borrowed_and_owned(a, l.clone()))
@@ -188,6 +188,6 @@ macro_rules! implement {
     };
 }
 
-implement!(AndListV2Marker);
-implement!(OrListV2Marker);
-implement!(UnitListV2Marker);
+implement!(ListAndV1);
+implement!(ListOrV1);
+implement!(ListUnitV1);

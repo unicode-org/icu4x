@@ -14,17 +14,18 @@ icu_provider_export = { workspace = true, features = ["blob_exporter"] }
 icu_provider_source = { workspace = true, features = ["networking"] }
 icu_provider = { workspace = true, features = ["deserialize_json"] }
 icu_provider_adapters = { workspace = true, features = ["serde", "export"] }
-icu_provider_blob = { workspace = true }
+icu_provider_blob = { workspace = true, features = ["alloc"] }
 icu_provider_fs = { workspace = true }
 
 databake = { workspace = true, features = ["derive"] }
 litemap = { workspace = true }
 tinystr = { workspace = true, features = ["alloc"] }
 writeable = { workspace = true }
+zerovec = { workspace = true }
 
 displaydoc = { workspace = true }
 itertools = { workspace = true }
-lru = "0.8.1"
+lru = "0.13.0"
 serde = { workspace = true, features = ["derive", "alloc", "std"] }
 serde-aux = { workspace = true }
 time = { version = "0.3", features = ["local-offset"] }

@@ -2,9 +2,11 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
-/** See the [Rust documentation for `WordType`](https://docs.rs/icu/latest/icu/segmenter/enum.WordType.html) for more information.
-*/
+
+
+/**
+ * See the [Rust documentation for `WordType`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.WordType.html) for more information.
+ */
 export class SegmenterWordType {
     #value = undefined;
 
@@ -14,13 +16,17 @@ export class SegmenterWordType {
         ["Letter", 2]
     ]);
 
-    constructor(value) {
+    static getAllEntries() {
+        return SegmenterWordType.#values.entries();
+    }
+
+    #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
             // instances of this type, otherwise the enums are treated as singletons.
             if (arguments[1] === diplomatRuntime.internalConstructor ) {
                 this.#value = arguments[2];
-                return;
+                return this;
             }
             return SegmenterWordType.#objectValues[arguments[1]];
         }
@@ -32,18 +38,24 @@ export class SegmenterWordType {
         let intVal = SegmenterWordType.#values.get(value);
 
         // Nullish check, checks for null or undefined
-        if (intVal == null) {
+        if (intVal != null) {
             return SegmenterWordType.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a SegmenterWordType and does not correspond to any of its enumerator values.");
     }
 
-    get value() {
+    /** @internal */
+    static fromValue(value) {
+        return new SegmenterWordType(value);
+    }
+
+    get value(){
         return [...SegmenterWordType.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    /** @internal */
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -56,13 +68,23 @@ export class SegmenterWordType {
     static Number = SegmenterWordType.#objectValues[1];
     static Letter = SegmenterWordType.#objectValues[2];
 
+
+    /**
+     * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
+     */
     get isWordLike() {
+
         const result = wasm.icu4x_SegmenterWordType_is_word_like_mv1(this.ffiValue);
-    
+
         try {
             return result;
         }
-        
-        finally {}
+
+        finally {
+        }
+    }
+
+    constructor(value) {
+        return this.#internalConstructor(...arguments)
     }
 }

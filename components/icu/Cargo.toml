@@ -20,20 +20,21 @@ version.workspace = true
 all-features = true
 
 [dependencies]
-icu_calendar = { workspace = true }
+icu_calendar = { workspace = true, features = ["alloc"] }
 icu_casemap = { workspace = true }
 icu_collator = { workspace = true }
 icu_collections = { workspace = true }
 icu_datetime = { workspace = true }
-icu_decimal = { workspace = true }
-icu_list = { workspace = true }
+icu_decimal = { workspace = true, features = ["alloc"]  }
+icu_list = { workspace = true, features = ["alloc"] }
 icu_locale = { workspace = true }
 icu_normalizer = { workspace = true }
 icu_plurals = { workspace = true }
-icu_properties = { workspace = true }
+icu_properties = { workspace = true, features = ["alloc"] }
 icu_segmenter = { workspace = true }
-icu_timezone = { workspace = true }
+icu_time = { workspace = true, features = ["alloc"] }
 icu_experimental = { workspace = true, optional = true }
+icu_pattern = { workspace = true, optional = true }
 
 # For markers_from_bin
 icu_provider_registry = { workspace = true, optional = true }
@@ -45,8 +46,12 @@ icu_provider = { workspace = true }
 [dev-dependencies]
 icu_datetime = { path = "../../components/datetime", features = ["serde"] }
 icu_provider_adapters = { path = "../../provider/adapters", features = ["serde"] }
-icu_provider_blob = { path = "../../provider/blob" }
+icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
+icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }
 writeable = { path = "../../utils/writeable" }
+jiff = { version = "0.2", default-features = false, features = ["tzdb-bundle-always", "std"] }
+chrono = { version = "0.4", default-features = false }
+chrono-tz = { version = "0.10", default-features = false }
 
 [features]
 default = [
@@ -61,24 +66,9 @@ default = [
     "icu_plurals/default",
     "icu_properties/default",
     "icu_segmenter/default",
-    "icu_timezone/default",
+    "icu_time/default",
     "icu_experimental?/default",
-]
-std = [
-    "icu_calendar/std",
-    "icu_casemap/std",
-    "icu_collator/std",
-    "icu_collections/std",
-    "icu_datetime/std",
-    "icu_decimal/std",
-    "icu_list/std",
-    "icu_locale/std",
-    "icu_normalizer/std",
-    "icu_plurals/std",
-    "icu_properties/std",
-    "icu_segmenter/std",
-    "icu_timezone/std",
-    "icu_experimental?/std",
+    "icu_pattern?/default",
 ]
 serde = [
     "icu_calendar/serde",
@@ -93,8 +83,9 @@ serde = [
     "icu_plurals/serde",
     "icu_properties/serde",
     "icu_segmenter/serde",
-    "icu_timezone/serde",
+    "icu_time/serde",
     "icu_experimental?/serde",
+    "icu_pattern?/serde",
 ]
 compiled_data = [
     "icu_calendar/compiled_data",
@@ -108,11 +99,10 @@ compiled_data = [
     "icu_plurals/compiled_data",
     "icu_properties/compiled_data",
     "icu_segmenter/compiled_data",
-    "icu_timezone/compiled_data",
+    "icu_time/compiled_data",
     "icu_experimental?/compiled_data",
 ]
 datagen = [
-    "std",
     "dep:icu_provider_registry",
     "dep:memchr",
     "icu_calendar/datagen",
@@ -126,22 +116,17 @@ datagen = [
     "icu_plurals/datagen",
     "icu_properties/datagen",
     "icu_segmenter/datagen",
-    "icu_timezone/datagen",
+    "icu_time/datagen",
     "icu_experimental?/datagen",
 ]
 serde_human = [
     "icu_list/serde_human"
 ]
-icu_datetime_experimental = [
-    "icu_datetime/experimental",
-]
-icu_plurals_experimental = [
-    "icu_plurals/experimental"
-]
 experimental = [
-    "icu_datetime_experimental",
-    "icu_plurals_experimental",
+    "icu_datetime/experimental",
+    "icu_plurals/experimental",
     "dep:icu_experimental",
+    "dep:icu_pattern",
 ]
 sync = ["icu_provider/sync"]
 logging = ["icu_provider/logging", "icu_datetime/logging"]
@@ -153,3 +138,37 @@ skip_feature_sets = [[]]
 [[example]]
 name = "tui"
 required-features = ["serde"]
+
+[[example]]
+name = "chrono_jiff"
+
+[[example]]
+name = "iso_date_manipulations"
+
+[[example]]
+name = "work_log"
+required-features = ["compiled_data"]
+
+[[example]]
+name = "code_line_diff"
+required-features = ["serde"]
+
+[[example]]
+name = "and_list"
+
+[[example]]
+name = "filter_langids"
+test = true
+
+[[example]]
+name = "syntatically_canonicalize_locales"
+test = true
+
+[[example]]
+name = "unread_emails"
+required-features = ["serde"]
+
+[[example]]
+name = "elevator_floors"
+required-features = ["serde"]
+

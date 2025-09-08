@@ -1920,14 +1920,8 @@
             "unitPattern-count-other": "{0} ربع غالون إمبراطوري"
           },
           "speed-light-speed": {
-            "gender": "feminine",
-            "displayName": "سرعة الضوء",
-            "unitPattern-count-zero": "سرعة الضوء {0}",
-            "unitPattern-count-one": "سرعة الضوء {0}",
-            "unitPattern-count-two": "سرعة الضوء {0}",
-            "unitPattern-count-few": "سرعة الضوء {0}",
-            "unitPattern-count-many": "سرعة الضوء {0}",
-            "unitPattern-count-other": "سرعة الضوء {0}"
+            "displayName": "light",
+            "unitPattern-count-other": "{0} light"
           },
           "concentr-portion-per-1e9": {
             "gender": "masculine",
@@ -3734,13 +3728,8 @@
             "unitPattern-count-other": "{0} ربع غالون إمبراطوري"
           },
           "speed-light-speed": {
-            "displayName": "سرعة الضوء",
-            "unitPattern-count-zero": "سرعة الضوء {0}",
-            "unitPattern-count-one": "سرعة الضوء {0}",
-            "unitPattern-count-two": "سرعة الضوء {0}",
-            "unitPattern-count-few": "سرعة الضوء {0}",
-            "unitPattern-count-many": "سرعة الضوء {0}",
-            "unitPattern-count-other": "سرعة الضوء {0}"
+            "displayName": "light",
+            "unitPattern-count-other": "{0} light"
           },
           "concentr-portion-per-1e9": {
             "displayName": "جزء/مليار",
@@ -5550,13 +5539,8 @@
             "unitPattern-count-other": "{0} ربع غالون إمبراطوري"
           },
           "speed-light-speed": {
-            "displayName": "سرعة الضوء",
-            "unitPattern-count-zero": "سرعة الضوء {0}",
-            "unitPattern-count-one": "سرعة الضوء {0}",
-            "unitPattern-count-two": "سرعة الضوء {0}",
-            "unitPattern-count-few": "سرعة الضوء {0}",
-            "unitPattern-count-many": "سرعة الضوء {0}",
-            "unitPattern-count-other": "سرعة الضوء {0}"
+            "displayName": "light",
+            "unitPattern-count-other": "{0} light"
           },
           "concentr-portion-per-1e9": {
             "displayName": "جزء/مليار",

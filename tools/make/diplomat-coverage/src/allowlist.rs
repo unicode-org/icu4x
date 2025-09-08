@@ -19,6 +19,7 @@ lazy_static::lazy_static! {
         "Borrow",
         "BorrowMut",
         "Clone",
+        "CloneToUninit",
         "Copy",
         "Debug",
         "Default", // We expose this when we see fit
@@ -46,6 +47,7 @@ lazy_static::lazy_static! {
         "Sync",
         "ToOwned",
         "ToString", // We expose this when we see fit
+        "TrieValue",
         "TryFrom", // We expose this when we see fit
         "TryInto", // We expose this when we see fit
         "Unpin",
@@ -65,9 +67,7 @@ lazy_static::lazy_static! {
         // provider stuff not relevant to FFI
         "DynamicDataMarker",
         "DataMarker",
-        "AsDowncastingAnyProvider",
         "AsDeserializingBufferProvider",
-        "AsDynamicDataProviderAnyMarkerWrap",
         "IterableDynamicDataProvider",
         "IterableDataProvider",
         "ForkByErrorPredicate",
@@ -77,18 +77,20 @@ lazy_static::lazy_static! {
         "DataProvider",
         "DynamicDataProvider",
         "BufferProvider",
-        "AnyProvider",
 
         // We might expose these if someone asks for it
         "DryDataProvider",
         "DynamicDryDataProvider",
+        "ExportableProvider",
 
         // internal trait, all methods replicated on Date
         "Calendar",
         // Rust-specific conversion trait
         "AsCalendar",
         "IntoAnyCalendar",
-        "NeoGetField",
+        "GetField",
+        "IntoOption",
+        "DateTimeNamesFrom",
     ].into_iter().collect();
 
     pub static ref IGNORED_ASSOCIATED_ITEMS: HashMap<&'static str, &'static [&'static str]> = [
@@ -98,11 +100,14 @@ lazy_static::lazy_static! {
     // Ignore if this is a substring of any path
     // keep this small
     pub static ref IGNORED_SUBSTRINGS: &'static [&'static str] = &[
-        // compiled data constructors cover these
-        "_with_any_provider",
         // TODO-2.0 remove this
         "_with_buffer_provider",
         "_unstable",
+        // Not planned for 2.0 but would be nice to return 'static refs
+        // with Diplomat support.
+        // Borrowed <-> owned converters
+        "static_to_owned",
+        "as_borrowed",
     ];
     // Paths which are not checked for FFI coverage. Naming a type or module here
     // will include all type methods and module contents.
@@ -114,163 +119,108 @@ lazy_static::lazy_static! {
         // https://github.com/unicode-org/icu4x/issues/2492
         // =========================
 
-        // Largely for use by datetimeformat, not generally useful
-        "icu::calendar::AnyCalendar::convert_any_date",
-        "icu::calendar::AnyCalendar::convert_any_datetime",
-        "icu::calendar::Date::formattable_year",
-
         // Individual calendars: Currently the main entry point is AnyCalendar
         // We have chosen to not do individual calendars (except Iso) over FFI
         // since Diplomat can't do generics. We also support Gregorian *formatter*
         // but we don't need a separate Gregorian Date.
-        "icu::calendar::buddhist",
-        "icu::calendar::chinese",
-        "icu::calendar::coptic",
-        "icu::calendar::dangi",
-        "icu::calendar::dangi",
-        "icu::calendar::ethiopian",
-        "icu::calendar::hebrew",
-        "icu::calendar::indian",
-        "icu::calendar::islamic",
-        "icu::calendar::japanese",
-        "icu::calendar::julian",
-        "icu::calendar::persian",
-        "icu::calendar::roc",
-        "icu::calendar::any_calendar::IntoAnyCalendar",
-        "icu::calendar::Date::try_new_buddhist_date",
-        "icu::calendar::Date::try_new_chinese_date_with_calendar",
-        "icu::calendar::Date::try_new_coptic_date",
-        "icu::calendar::Date::try_new_dangi_date",
-        "icu::calendar::Date::try_new_dangi_date_with_calendar",
-        "icu::calendar::Date::try_new_ethiopian_date",
-        "icu::calendar::Date::try_new_gregorian_date",
-        "icu::calendar::Date::try_new_hebrew_date",
-        "icu::calendar::Date::try_new_hebrew_date_with_calendar",
-        "icu::calendar::Date::try_new_indian_date",
-        "icu::calendar::Date::try_new_islamic_civil_date_with_calendar",
-        "icu::calendar::Date::try_new_islamic_tabular_date_with_calendar",
-        "icu::calendar::Date::try_new_japanese_date",
-        "icu::calendar::Date::try_new_japanese_extended_date",
-        "icu::calendar::Date::try_new_julian_date",
-        "icu::calendar::Date::try_new_observational_islamic_date",
-        "icu::calendar::Date::try_new_persian_date",
-        "icu::calendar::Date::try_new_roc_date",
-        "icu::calendar::Date::try_new_ummalqura_date",
-        "icu::calendar::DateTime::try_new_buddhist_datetime",
-        "icu::calendar::DateTime::try_new_chinese_datetime_with_calendar",
-        "icu::calendar::DateTime::try_new_coptic_datetime",
-        "icu::calendar::DateTime::try_new_dangi_datetime",
-        "icu::calendar::DateTime::try_new_dangi_datetime_with_calendar",
-        "icu::calendar::DateTime::try_new_ethiopian_datetime",
-        "icu::calendar::DateTime::try_new_gregorian_datetime",
-        "icu::calendar::DateTime::try_new_hebrew_datetime",
-        "icu::calendar::DateTime::try_new_hebrew_datetime_with_calendar",
-        "icu::calendar::DateTime::try_new_indian_datetime",
-        "icu::calendar::DateTime::try_new_islamic_civil_datetime_with_calendar",
-        "icu::calendar::DateTime::try_new_islamic_tabular_datetime_with_calendar",
-        "icu::calendar::DateTime::try_new_japanese_datetime",
-        "icu::calendar::DateTime::try_new_japanese_extended_datetime",
-        "icu::calendar::DateTime::try_new_julian_datetime",
-        "icu::calendar::DateTime::try_new_observational_islamic_datetime",
-        "icu::calendar::DateTime::try_new_persian_datetime",
-        "icu::calendar::DateTime::try_new_roc_datetime",
-        "icu::calendar::DateTime::try_new_ummalqura_datetime",
+        "icu::calendar::cal",
+        "icu::calendar::IntoAnyCalendar",
+        "icu::calendar::Date::try_new_buddhist",
+        "icu::calendar::Date::try_new_chinese_with_calendar",
+        "icu::calendar::Date::try_new_coptic",
+        "icu::calendar::Date::try_new_dangi",
+        "icu::calendar::Date::try_new_dangi_with_calendar",
+        "icu::calendar::Date::try_new_ethiopian",
+        "icu::calendar::Date::try_new_gregorian",
+        "icu::calendar::Date::try_new_hebrew",
+        "icu::calendar::Date::try_new_hebrew_with_calendar",
+        "icu::calendar::Date::try_new_indian",
+        "icu::calendar::Date::try_new_hijri_civil_with_calendar",
+        "icu::calendar::Date::try_new_hijri_tabular_with_calendar",
+        "icu::calendar::Date::try_new_japanese_with_calendar",
+        "icu::calendar::Date::try_new_japanese_extended_with_calendar",
+        "icu::calendar::Date::try_new_julian",
+        "icu::calendar::Date::try_new_simulated_hijri_with_calendar",
+        "icu::calendar::Date::try_new_persian",
+        "icu::calendar::Date::try_new_roc",
+        "icu::calendar::Date::try_new_ummalqura",
+        "icu::datetime::DateTimeFormatter::calendar",
 
-        // Calendar structs mostly for internal use but which might expose
+        // Not planned for 2.0: Calendar structs mostly for internal use but which might expose
         // useful information to clients.
-        "icu::calendar::types::MonthInfo",
-        "icu::calendar::types::FormattableYear",
-        "icu::calendar::types::FormattableYearKind",
-        "icu::calendar::types::DayOfYearInfo",
+        "icu::calendar::types::RataDie",
 
-        // Not yet fully exposed over FFI, Temporal doesn't yet want this.
-        "icu::calendar::types::CyclicYear",
-        "icu::calendar::types::YearInfo::cyclic",
-        "icu::calendar::types::YearInfo::related_iso",
+        // Not planned for 2.0: Temporal doesn't yet want this.
+        "icu::calendar::types::YearAmbiguity",
 
-        // Punted post 1.0: not strongly needed yet and don't want to lock in a solution
-        // Potential solutions:
-        // - borrow and clone (cheap as long it's not json)
-        // - introduce a DTFBorrowed type in Rust and FFI (bunch of work, annoying)
-        // - introduce a DateDataBundle and TimeDataBundle struct to FFI that contains
-        //   basically just DateFormat or TimeFormat but it is explicitly an Option that
-        //   can be destructively passed to these constructors via &mut self. All future
-        //   specialized constructors show up on this type instead.
-        "icu::datetime::DateTimeFormatter::try_from_date_and_time",
-        "icu::datetime::TypedDateTimeFormatter::try_from_date_and_time",
+        // Not planned for 2.0: datetime dynamic field sets (and builder) need FFI design work,
+        // and all functionality is available via static field sets
+        // <https://github.com/unicode-org/icu4x/issues/6445>
+        "icu::datetime::fieldsets::builder",
+        "icu::datetime::fieldsets::enums",
+        "icu::datetime::DateTimeFormatter::to_field_set_builder",
+        "icu::datetime::FixedCalendarDateTimeFormatter::to_field_set_builder",
+        "icu::datetime::NoCalendarFormatter::to_field_set_builder",
+        "icu::datetime::fieldsets::Combo::into_enums",
 
-        // experimental
-        "icu::datetime::DateTimeFormatter::resolve_components",
-        "icu::datetime::TypedDateTimeFormatter::resolve_components",
+        // Not planned for 2.0: Unchecked formatting. FFI always uses the concrete Date, Time,
+        // and TimeZoneInfo types. A composite formatter might need a format_unchecked-type
+        // of function.
+        "icu::datetime::unchecked",
+        "icu::datetime::FixedCalendarDateTimeFormatter::format_unchecked",
+        "icu::datetime::DateTimeFormatter::format_unchecked",
+        "icu::datetime::NoCalendarFormatter::format_unchecked",
+        "icu::datetime::FormattedDateTimeUnchecked",
 
-        // Experimental API mostly used for provider, components bags, and patterns,
-        // may in the future be exposed for options
-        "icu::datetime::fields",
-
-        // experimental
-        "icu::datetime::neo",
-        "icu::datetime::neo_marker",
-        "icu::datetime::neo_pattern",
-        "icu::datetime::neo_skeleton",
-        "icu::datetime::options::components",
-        "icu::datetime::options::preferences",
-        "icu::datetime::DateTimeFormatter::try_new_experimental",
-        "icu::datetime::DateTimeWriteError",
-        "icu::datetime::LoadError",
-        "icu::datetime::SingleLoadError",
-        "icu::datetime::FormattedDateTimePattern",
-        "icu::datetime::TypedDateTimeNames",
-        "icu::datetime::TypedDateTimeFormatter::try_new_experimental",
-        "icu::datetime::TypedZonedDateTimeFormatter::try_new_experimental",
-        "icu::datetime::ZonedDateTimeFormatter::try_new_experimental",
-
-        // experimental
-        "icu::experimental",
-
-        // Experimental and unused decimal types
-        "fixed_decimal::CompactDecimal",
-        "fixed_decimal::FixedInteger",
-        "fixed_decimal::ScientificDecimal",
-
-        // Don't want parts for 2.0, would need to introduce diplomat writeable with parts
+        // Not planned for 2.0: Would need to introduce diplomat writeable with parts
         "icu::list::parts",
+        "icu::datetime::parts",
+        "icu::decimal::parts",
 
-        // Not planned until someone needs them
+        // Not planned for 2.0: Until someone needs them
         "icu::locale::extensions",
         "icu::locale::subtags",
+
+        // Not planned for 2.0: FFI uses locales, not preference bags. FFI could in the future gain a preferences bag API as well
+        "icu::locale::preferences::extensions::unicode::keywords",
+        "icu::locale::preferences::extensions::unicode::errors::PreferencesParseError",
+        "icu::calendar::CalendarPreferences",
+        "icu::calendar::any_calendar::CalendarPreferences",
+        "icu::calendar::week::WeekPreferences",
+        "icu::collator::CollatorPreferences",
+        "icu::datetime::DateTimeFormatterPreferences",
+        "icu::decimal::DecimalFormatterPreferences",
+        "icu::list::ListFormatterPreferences",
+        "icu::locale::preferences::LocalePreferences",
+        "icu::plurals::PluralRulesPreferences",
+        "icu::locale::preferences::PreferenceKey",
+        // And the preference enums
+        "icu::calendar::preferences",
+        "icu::collator::preferences",
+        "icu::datetime::preferences",
+        "icu::decimal::preferences",
+
 
         // TODO-2.0: decide later when we have figured out prefs/ctors and have APIs using this
         "icu::locale::LanguageIdentifier",
 
         // Doesn't make sense to expose through `icu_normalizer`
         "icu::normalizer::uts46::Uts46Mapper",
+        "icu::normalizer::uts46::Uts46MapperBorrowed",
 
-        // Do not want for 2.0: we need DiplomatWriteable16
-        "icu::normalizer::ComposingNormalizer::normalize_utf16",
-        "icu::normalizer::ComposingNormalizer::normalize_utf16_to",
-        "icu::normalizer::DecomposingNormalizer::normalize_utf16",
-        "icu::normalizer::DecomposingNormalizer::normalize_utf16_to",
+        // Not planned for 2.0: we need DiplomatWriteable16
+        "icu::normalizer::ComposingNormalizerBorrowed::normalize_utf16",
+        "icu::normalizer::ComposingNormalizerBorrowed::normalize_utf16_to",
+        "icu::normalizer::DecomposingNormalizerBorrowed::normalize_utf16",
+        "icu::normalizer::DecomposingNormalizerBorrowed::normalize_utf16_to",
 
-        // Do not want for 2.0:
+        // Not planned for 2.0
         // Can't be exposed till diplomat has input iterators, as well as
         // safety for borrowing input iterators into return types
-        "icu::normalizer::ComposingNormalizer::normalize_iter",
-        "icu::normalizer::DecomposingNormalizer::normalize_iter",
+        "icu::normalizer::ComposingNormalizerBorrowed::normalize_iter",
+        "icu::normalizer::DecomposingNormalizerBorrowed::normalize_iter",
         "icu::normalizer::Composition",
         "icu::normalizer::Decomposition",
-
-        // experimental
-        "icu::plurals::rules",
-
-        // Experimental
-        "icu::plurals::PluralRulesWithRanges",
-        "icu::plurals::PluralRulesWithRanges::categories",
-        "icu::plurals::PluralRulesWithRanges::category_for",
-        "icu::plurals::PluralRulesWithRanges::category_for_range",
-        "icu::plurals::PluralRulesWithRanges::resolve_range",
-        "icu::plurals::PluralRulesWithRanges::try_new",
-        "icu::plurals::PluralRulesWithRanges::try_new_cardinal",
-        "icu::plurals::PluralRulesWithRanges::try_new_ordinal",
 
         // Not planned for 2.0
         // We aren't exposing these collections directly, we instead expose them in a domain specific
@@ -280,9 +230,9 @@ lazy_static::lazy_static! {
         "icu::properties::CodePointMapData::from_code_point_trie",
         "icu::properties::CodePointMapData::to_code_point_trie",
         "icu::properties::CodePointMapDataBorrowed::iter_ranges",
-        "icu::properties::UnicodeSetData::as_code_point_inversion_list_string_list",
-        "icu::properties::UnicodeSetData::from_code_point_inversion_list_string_list",
-        "icu::properties::UnicodeSetData::to_code_point_inversion_list_string_list",
+        "icu::properties::EmojiSetData::as_code_point_inversion_list_string_list",
+        "icu::properties::EmojiSetData::from_code_point_inversion_list_string_list",
+        "icu::properties::EmojiSetData::to_code_point_inversion_list_string_list",
 
         // We do not plan to have FFI for this in 2.0
         "icu_provider_adapters::empty::EmptyDataProvider",
@@ -301,43 +251,52 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::fork::ForkByErrorProvider",
         "icu_provider_adapters::fork::predicates::ForkByErrorPredicate",
 
-        // Not planned for 2.0 but would be nice to return 'static refs
-        // with Diplomat support.
-        // Borrowed <-> owned converters
-        "icu::collator::Collator::as_borrowed",
-        "icu::collator::CollatorBorrowed::static_to_owned",
-        "icu::locale::exemplar_chars::ExemplarCharacters::as_borrowed",
-        "icu::locale::exemplar_chars::ExemplarCharactersBorrowed::static_to_owned",
-        "icu::locale::fallback::LocaleFallbacker::as_borrowed",
-        "icu::locale::fallback::LocaleFallbackerBorrowed::static_to_owned",
-        "icu::normalizer::ComposingNormalizer::as_borrowed",
-        "icu::normalizer::ComposingNormalizerBorrowed::static_to_owned",
-        "icu::normalizer::DecomposingNormalizer::as_borrowed",
-        "icu::normalizer::DecomposingNormalizerBorrowed::static_to_owned",
-        "icu::normalizer::properties::CanonicalCombiningClassMap::as_borrowed",
-        "icu::normalizer::properties::CanonicalCombiningClassMapBorrowed::static_to_owned",
-        "icu::normalizer::properties::CanonicalComposition::as_borrowed",
-        "icu::normalizer::properties::CanonicalCompositionBorrowed::static_to_owned",
-        "icu::normalizer::properties::CanonicalDecomposition::as_borrowed",
-        "icu::normalizer::properties::CanonicalDecompositionBorrowed::static_to_owned",
-        "icu::normalizer::uts46::Uts46Mapper::as_borrowed",
-        "icu::normalizer::uts46::Uts46MapperBorrowed::static_to_owned",
-        "icu::properties::bidi_data::BidiAuxiliaryProperties::as_borrowed",
-        "icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::static_to_owned",
-        "icu::properties::CodePointMapData::as_borrowed",
-        "icu::properties::CodePointMapDataBorrowed::static_to_owned",
-        "icu::properties::CodePointSetData::as_borrowed",
-        "icu::properties::CodePointSetDataBorrowed::static_to_owned",
-        "icu::properties::PropertyNames::as_borrowed",
-        "icu::properties::PropertyNamesBorrowed::static_to_owned",
-        "icu::properties::PropertyParser::as_borrowed",
-        "icu::properties::PropertyParserBorrowed::static_to_owned",
-        "icu::properties::script::ScriptMapper::as_borrowed",
-        "icu::properties::script::ScriptMapperBorrowed::static_to_owned",
-        "icu::properties::script::ScriptWithExtensions::as_borrowed",
-        "icu::properties::script::ScriptWithExtensionsBorrowed::static_to_owned",
-        "icu::properties::UnicodeSetData::as_borrowed",
-        "icu::properties::UnicodeSetDataBorrowed::static_to_owned",
+        // Not planned for 2.0
+        // We will revisit these APIs when Duration Formatter needs them. We may need to rename things
+        "fixed_decimal::Signed",
+        "fixed_decimal::Decimal::new",
+        "fixed_decimal::UnsignedDecimal",
+        "fixed_decimal::UnsignedRoundingMode",
+
+        // Not planned for 2.0
+        // DateTimePattern and related low-level APIs
+        "icu::datetime::pattern",
+        "icu::datetime::FormattedDateTime::pattern",
+        "icu::datetime::FormattedDateTimeUnchecked::pattern",
+
+        // Not planned for 2.0
+        // DateTimeFormatter conversion functions that involve moving opaques
+        "icu::datetime::DateTimeFormatter::try_into_typed_formatter",
+        "icu::datetime::FixedCalendarDateTimeFormatter::into_formatter",
+        "icu::datetime::NoCalendarFormatter::into_formatter",
+
+        // Not planned for 2.0
+        // Serde-specific
+        "icu::datetime::fieldsets::serde",
+
+        // Stuff that is experimental
+        //
+        // We should occasionally review these
+        // =========================
+
+        "icu::experimental",
+
+        "icu::pattern",
+
+        "fixed_decimal::CompactDecimal",
+        "fixed_decimal::FixedInteger",
+        "fixed_decimal::ScientificDecimal",
+
+        "icu::plurals::RawPluralOperands",
+
+        "icu::plurals::PluralRulesWithRanges",
+        "icu::plurals::PluralRulesWithRanges::categories",
+        "icu::plurals::PluralRulesWithRanges::category_for",
+        "icu::plurals::PluralRulesWithRanges::category_for_range",
+        "icu::plurals::PluralRulesWithRanges::resolve_range",
+        "icu::plurals::PluralRulesWithRanges::try_new",
+        "icu::plurals::PluralRulesWithRanges::try_new_cardinal",
+        "icu::plurals::PluralRulesWithRanges::try_new_ordinal",
 
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
@@ -346,6 +305,11 @@ lazy_static::lazy_static! {
 
         // Datagen
         "icu::markers_for_bin",
+
+        // Scaffolding modules
+        "icu::datetime::scaffold",
+        "icu::time::scaffold",
+        "icu::segmenter::scaffold",
 
         // Provider modules
         // We could potentially expose them later, but it's hard to expose them
@@ -361,51 +325,65 @@ lazy_static::lazy_static! {
         "icu::plurals::provider",
         "icu::properties::provider",
         "icu::segmenter::provider",
-        "icu::timezone::provider",
+        "icu::time::provider",
         "icu::transliterate::provider",
 
         // ULE types that are not in provider modules
         "icu::collections::codepointinvlist::CodePointInversionListULE",
         "icu::plurals::PluralCategoryULE",
+        "icu::time::types::TimeZoneVariantULE",
 
         // Reexported
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
         "icu::casemap::titlecase::TitlecaseMapper",
-        "icu::calendar::types::Time",
+        "icu::casemap::titlecase::TitlecaseMapperBorrowed",
+        "icu::time::zone::IanaParser",
+        "icu::time::zone::IanaParserBorrowed",
+        "icu::time::zone::WindowsParser",
+        "icu::time::zone::WindowsParserBorrowed",
+        "icu::time::zone::TimeZoneInfo",
+        "icu::time::zone::TimeZone",
+        "icu::segmenter::grapheme::GraphemeClusterSegmenter",
+        "icu::segmenter::grapheme::GraphemeClusterSegmenterBorrowed",
+        "icu::segmenter::line::LineSegmenter",
+        "icu::segmenter::line::LineSegmenterBorrowed",
+        "icu::segmenter::line::LineBreakOptions",
+        "icu::segmenter::line::LineBreakStrictness",
+        "icu::segmenter::line::LineBreakWordOption",
+        "icu::segmenter::sentence::SentenceSegmenter",
+        "icu::segmenter::sentence::SentenceSegmenterBorrowed",
+        "icu::segmenter::sentence::SentenceBreakInvariantOptions",
+        "icu::segmenter::sentence::SentenceBreakOptions",
+        "icu::segmenter::word::WordSegmenter",
+        "icu::segmenter::word::WordSegmenterBorrowed",
+        "icu::segmenter::word::WordBreakInvariantOptions",
+        "icu::segmenter::word::WordBreakOptions",
+        "icu::segmenter::word::WordType",
+        "icu::segmenter::word::WordBreakType",
+        "icu::segmenter::line::LineBreakType",
 
-
-        // TODO-2.0 these errors will have changed
-        "fixed_decimal::Error",
-        "icu::calendar::Error",
-        "icu::collator::Error",
-        "icu::collections::codepointinvlist::Error",
-        "icu::compactdecimal::Error",
-        "icu::datetime::Error",
-        "icu::decimal::Error",
-        "icu::list::Error",
-        "icu::locale::Error",
-        "icu::locale::Error",
-        "icu::normalizer::Error",
-        "icu::plurals::Error",
-        "icu::properties::Error",
-        "icu::relativetime::Error",
-        "icu::segmenter::Error",
-        "icu::timezone::Error",
-        "icu::transliterator::Error",
+        // Reexported input modules
+        "icu::datetime::input",
+        "icu::decimal::input",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
 
-        // Rust-specific calendar wrapper stuff
+        // Rust-specific calendar and field set wrapper stuff
         "icu::calendar::AsCalendar",
         "icu::calendar::Ref",
         "icu::datetime::CldrCalendar",
+        "icu::datetime::DateTimeFormatter::cast_into_fset",
+        "icu::datetime::FixedCalendarDateTimeFormatter::cast_into_fset",
+        "icu::datetime::NoCalendarFormatter::cast_into_fset",
         // TODO-2.0: needs investigation
-        "icu::calendar::Date::wrap_calendar_in_rc",
-        "icu::calendar::Date::wrap_calendar_in_arc",
-        "icu::calendar::DateTime::wrap_calendar_in_rc",
-        "icu::calendar::DateTime::wrap_calendar_in_arc",
+        "icu::calendar::Date::into_ref_counted",
+        "icu::calendar::Date::into_atomic_ref_counted",
+        "icu::calendar::Date::as_borrowed",
+
+        // Generic type, primarily exists for use by ICU4X data struct internals.
+        "icu::plurals::PluralElements",
 
         // Individual markerlike calendar types and inner types
         // inner types are only public for associated type reasons, and the markerlike
@@ -413,49 +391,37 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::from_raw",
         "icu::calendar::Date::inner",
         "icu::calendar::Iso",
-        "icu::calendar::iso::Iso",
-        "icu::calendar::iso::IsoDateInner",
+        "icu::calendar::cal::Iso",
+        "icu::calendar::cal::IsoDateInner",
         "icu::calendar::Gregorian",
-        "icu::calendar::gregorian::Gregorian",
-        "icu::calendar::gregorian::GregorianDateInner",
+        "icu::calendar::cal::Gregorian",
+        "icu::calendar::cal::GregorianDateInner",
         "icu::calendar::any_calendar::AnyDateInner",
-        "icu::datetime::NeverCalendar",
 
         // Options bags which are expanded in FFI to regular functions
         // TODO-2.0: investigate flattening on the rust side too
         "icu::datetime::DateTimeFormatterOptions",
         "icu::datetime::options::DateTimeFormatterOptions",
         "icu::datetime::options::length::Bag",
-        "icu::decimal::options::FixedDecimalFormatterOptions",
-
-        // Constructing an error is not useful over FFI because it gets turned into
-        // a flat ICU4XError anyway
-        "icu::calendar::CalendarError::unknown_any_calendar_kind",
+        "icu::decimal::options::DecimalFormatterOptions",
 
         // FFI largely deals with primitives rather than Rust's nice wrapper types
         // (which are hard to do in a zero-cost way over FFI)
-        "icu::calendar::types::MonthCode",
         "icu::calendar::types::DayOfMonth",
-        "icu::calendar::types::WeekOfMonth",
-        "icu::calendar::types::WeekOfYear",
         "icu::calendar::types::DayOfWeekInMonth",
-        "icu::calendar::types::IsoHour",
-        "icu::calendar::types::IsoMinute",
-        "icu::calendar::types::IsoSecond",
-        "icu::calendar::types::NanoSecond",
-        "icu::calendar::types::IsoWeekday",
-        "icu::calendar::types::Era",
-
-        // Rusty input trait
-        "icu::datetime::input",
+        "icu::calendar::types::DayOfYear",
+        "icu::calendar::types::Weekday",
+        "icu::calendar::types::MonthCode",
+        "icu::calendar::types::WeekOfMonth",
+        "icu::calendar::types::IsoWeekOfYear",
+        "icu::time::Hour",
+        "icu::time::Minute",
+        "icu::time::Second",
+        "icu::time::Nanosecond",
 
         // Convenience iterator for Rust. Useful but would require
         // allocations over FFI, so not worth it.
         "icu::plurals::PluralCategory::all",
-
-        // locale_core comparison iteration
-        "icu::locale::Locale::strict_cmp_iter",
-        "icu::locale::SubtagOrderingResult",
 
         // Some of the provider adapter types are Rust-specific and not relevant to FFI
         "icu_provider_adapters::either::EitherProvider",
@@ -464,13 +430,16 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::fallback::LocaleFallbackProvider::inner",
         "icu_provider_adapters::fallback::LocaleFallbackProvider::into_inner",
         "icu_provider_adapters::fallback::LocaleFallbackProvider::inner_mut",
+        "icu_provider_adapters::fork::ForkByMarkerProvider::inner",
+        "icu_provider_adapters::fork::ForkByMarkerProvider::inner_mut",
+        "icu_provider_adapters::fork::ForkByMarkerProvider::into_inner",
 
         // The polymorphic ICU4XDataProvider type makes the MultiFork providers less relevant.
         "icu_provider_adapters::fork::MultiForkByErrorProvider",
         "icu_provider_adapters::fork::MultiForkByMarkerProvider",
 
         // Specialized constructor for separately constructed instances
-        "icu::timezone::TimeZoneIdMapperWithFastCanonicalization::try_new_with_mapper",
+        "icu::time::IanaParserExtended::try_new_with_mapper",
 
         // macros
         "icu::locale::langid",

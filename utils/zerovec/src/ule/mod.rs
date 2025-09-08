@@ -20,19 +20,21 @@ mod niche;
 mod option;
 mod plain;
 mod slices;
+#[cfg(test)]
+pub mod test_utils;
 
 pub mod tuple;
+pub mod tuplevar;
 pub mod vartuple;
 pub use chars::CharULE;
-pub use encode::{encode_varule_to_box, EncodeAsVarULE};
+#[cfg(feature = "alloc")]
+pub use encode::encode_varule_to_box;
+pub use encode::EncodeAsVarULE;
 pub use multi::MultiFieldsULE;
 pub use niche::{NicheBytes, NichedOption, NichedOptionULE};
 pub use option::{OptionULE, OptionVarULE};
 pub use plain::RawBytesULE;
 
-use alloc::alloc::Layout;
-use alloc::borrow::ToOwned;
-use alloc::boxed::Box;
 use core::{any, fmt, mem, slice};
 
 /// Fixed-width, byte-aligned data that can be cast to and from a little-endian byte slice.
@@ -49,10 +51,10 @@ use core::{any, fmt, mem, slice};
 /// Safety checklist for `ULE`:
 ///
 /// 1. The type *must not* include any uninitialized or padding bytes.
-/// 2. The type must have an alignment of 1 byte.
-/// 3. The impl of [`ULE::validate_byte_slice()`] *must* return an error if the given byte slice
+/// 2. The type must have an alignment of 1 byte, or it is a ZST that is safe to construct.
+/// 3. The impl of [`ULE::validate_bytes()`] *must* return an error if the given byte slice
 ///    would not represent a valid slice of this type.
-/// 4. The impl of [`ULE::validate_byte_slice()`] *must* return an error if the given byte slice
+/// 4. The impl of [`ULE::validate_bytes()`] *must* return an error if the given byte slice
 ///    cannot be used in its entirety (if its length is not a multiple of `size_of::<Self>()`).
 /// 5. All other methods *must* be left with their default impl, or else implemented according to
 ///    their respective safety guidelines.
@@ -64,10 +66,10 @@ use core::{any, fmt, mem, slice};
 /// # Equality invariant
 ///
 /// A non-safety invariant is that if `Self` implements `PartialEq`, the it *must* be logically
-/// equivalent to byte equality on [`Self::as_byte_slice()`].
+/// equivalent to byte equality on [`Self::slice_as_bytes()`].
 ///
 /// It may be necessary to introduce a "canonical form" of the ULE if logical equality does not
-/// equal byte equality. In such a case, [`Self::validate_byte_slice()`] should return an error
+/// equal byte equality. In such a case, [`Self::validate_bytes()`] should return an error
 /// for any values that are not in canonical form. For example, the decimal strings "1.23e4" and
 /// "12.3e3" are logically equal, but not byte-for-byte equal, so we could define a canonical form
 /// where only a single digit is allowed before `.`.
@@ -84,26 +86,26 @@ where
     /// If `Self` is not well-defined for all possible bit values, the bytes should be validated.
     /// If the bytes can be transmuted, *in their entirety*, to a valid slice of `Self`, then `Ok`
     /// should be returned; otherwise, `Err` should be returned.
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError>;
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError>;
 
     /// Parses a byte slice, `&[u8]`, and return it as `&[Self]` with the same lifetime.
     ///
     /// If `Self` is not well-defined for all possible bit values, the bytes should be validated,
-    /// and an error should be returned in the same cases as [`Self::validate_byte_slice()`].
+    /// and an error should be returned in the same cases as [`Self::validate_bytes()`].
     ///
-    /// The default implementation executes [`Self::validate_byte_slice()`] followed by
-    /// [`Self::from_byte_slice_unchecked`].
+    /// The default implementation executes [`Self::validate_bytes()`] followed by
+    /// [`Self::slice_from_bytes_unchecked`].
     ///
     /// Note: The following equality should hold: `bytes.len() % size_of::<Self>() == 0`. This
     /// means that the returned slice can span the entire byte slice.
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&[Self], UleError> {
-        Self::validate_byte_slice(bytes)?;
+    fn parse_bytes_to_slice(bytes: &[u8]) -> Result<&[Self], UleError> {
+        Self::validate_bytes(bytes)?;
         debug_assert_eq!(bytes.len() % mem::size_of::<Self>(), 0);
-        Ok(unsafe { Self::from_byte_slice_unchecked(bytes) })
+        Ok(unsafe { Self::slice_from_bytes_unchecked(bytes) })
     }
 
     /// Takes a byte slice, `&[u8]`, and return it as `&[Self]` with the same lifetime, assuming
-    /// that this byte slice has previously been run through [`Self::parse_byte_slice()`] with
+    /// that this byte slice has previously been run through [`Self::parse_bytes_to_slice()`] with
     /// success.
     ///
     /// The default implementation performs a pointer cast to the same region of memory.
@@ -113,7 +115,7 @@ where
     /// ## Callers
     ///
     /// Callers of this method must take care to ensure that `bytes` was previously passed through
-    /// [`Self::validate_byte_slice()`] with success (and was not changed since then).
+    /// [`Self::validate_bytes()`] with success (and was not changed since then).
     ///
     /// ## Implementors
     ///
@@ -124,10 +126,10 @@ where
     ///
     /// Safety checklist:
     ///
-    /// 1. This method *must* return the same result as [`Self::parse_byte_slice()`].
+    /// 1. This method *must* return the same result as [`Self::parse_bytes_to_slice()`].
     /// 2. This method *must* return a slice to the same region of memory as the argument.
     #[inline]
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &[Self] {
+    unsafe fn slice_from_bytes_unchecked(bytes: &[u8]) -> &[Self] {
         let data = bytes.as_ptr();
         let len = bytes.len() / mem::size_of::<Self>();
         debug_assert_eq!(bytes.len() % mem::size_of::<Self>(), 0);
@@ -145,8 +147,7 @@ where
     ///
     /// Keep in mind that `&[Self]` and `&[u8]` may have different lengths.
     #[inline]
-    #[allow(clippy::wrong_self_convention)] // https://github.com/rust-lang/rust-clippy/issues/7219
-    fn as_byte_slice(slice: &[Self]) -> &[u8] {
+    fn slice_as_bytes(slice: &[Self]) -> &[u8] {
         unsafe {
             slice::from_raw_parts(slice as *const [Self] as *const u8, mem::size_of_val(slice))
         }
@@ -186,8 +187,10 @@ pub trait AsULE: Copy {
     fn from_unaligned(unaligned: Self::ULE) -> Self;
 }
 
-/// An [`EqULE`] type is one whose byte sequence equals the byte sequence of its ULE type on
-/// little-endian platforms. This enables certain performance optimizations, such as
+/// A type whose byte sequence equals the byte sequence of its ULE type on
+/// little-endian platforms.
+///
+/// This enables certain performance optimizations, such as
 /// [`ZeroVec::try_from_slice`](crate::ZeroVec::try_from_slice).
 ///
 /// # Implementation safety
@@ -258,11 +261,11 @@ where
 ///
 /// 1. The type *must not* include any uninitialized or padding bytes.
 /// 2. The type must have an alignment of 1 byte.
-/// 3. The impl of [`VarULE::validate_byte_slice()`] *must* return an error if the given byte slice
+/// 3. The impl of [`VarULE::validate_bytes()`] *must* return an error if the given byte slice
 ///    would not represent a valid slice of this type.
-/// 4. The impl of [`VarULE::validate_byte_slice()`] *must* return an error if the given byte slice
+/// 4. The impl of [`VarULE::validate_bytes()`] *must* return an error if the given byte slice
 ///    cannot be used in its entirety.
-/// 5. The impl of [`VarULE::from_byte_slice_unchecked()`] must produce a reference to the same
+/// 5. The impl of [`VarULE::from_bytes_unchecked()`] must produce a reference to the same
 ///    underlying data assuming that the given bytes previously passed validation.
 /// 6. All other methods *must* be left with their default impl, or else implemented according to
 ///    their respective safety guidelines.
@@ -274,10 +277,10 @@ where
 /// # Equality invariant
 ///
 /// A non-safety invariant is that if `Self` implements `PartialEq`, the it *must* be logically
-/// equivalent to byte equality on [`Self::as_byte_slice()`].
+/// equivalent to byte equality on [`Self::as_bytes()`].
 ///
 /// It may be necessary to introduce a "canonical form" of the ULE if logical equality does not
-/// equal byte equality. In such a case, [`Self::validate_byte_slice()`] should return an error
+/// equal byte equality. In such a case, [`Self::validate_bytes()`] should return an error
 /// for any values that are not in canonical form. For example, the decimal strings "1.23e4" and
 /// "12.3e3" are logically equal, but not byte-for-byte equal, so we could define a canonical form
 /// where only a single digit is allowed before `.`.
@@ -296,28 +299,28 @@ pub unsafe trait VarULE: 'static {
     /// If `Self` is not well-defined for all possible bit values, the bytes should be validated.
     /// If the bytes can be transmuted, *in their entirety*, to a valid `&Self`, then `Ok` should
     /// be returned; otherwise, `Self::Error` should be returned.
-    fn validate_byte_slice(_bytes: &[u8]) -> Result<(), UleError>;
+    fn validate_bytes(_bytes: &[u8]) -> Result<(), UleError>;
 
     /// Parses a byte slice, `&[u8]`, and return it as `&Self` with the same lifetime.
     ///
     /// If `Self` is not well-defined for all possible bit values, the bytes should be validated,
-    /// and an error should be returned in the same cases as [`Self::validate_byte_slice()`].
+    /// and an error should be returned in the same cases as [`Self::validate_bytes()`].
     ///
-    /// The default implementation executes [`Self::validate_byte_slice()`] followed by
-    /// [`Self::from_byte_slice_unchecked`].
+    /// The default implementation executes [`Self::validate_bytes()`] followed by
+    /// [`Self::from_bytes_unchecked`].
     ///
     /// Note: The following equality should hold: `size_of_val(result) == size_of_val(bytes)`,
     /// where `result` is the successful return value of the method. This means that the return
     /// value spans the entire byte slice.
-    fn parse_byte_slice(bytes: &[u8]) -> Result<&Self, UleError> {
-        Self::validate_byte_slice(bytes)?;
-        let result = unsafe { Self::from_byte_slice_unchecked(bytes) };
+    fn parse_bytes(bytes: &[u8]) -> Result<&Self, UleError> {
+        Self::validate_bytes(bytes)?;
+        let result = unsafe { Self::from_bytes_unchecked(bytes) };
         debug_assert_eq!(mem::size_of_val(result), mem::size_of_val(bytes));
         Ok(result)
     }
 
     /// Takes a byte slice, `&[u8]`, and return it as `&Self` with the same lifetime, assuming
-    /// that this byte slice has previously been run through [`Self::parse_byte_slice()`] with
+    /// that this byte slice has previously been run through [`Self::parse_bytes()`] with
     /// success.
     ///
     /// # Safety
@@ -325,7 +328,7 @@ pub unsafe trait VarULE: 'static {
     /// ## Callers
     ///
     /// Callers of this method must take care to ensure that `bytes` was previously passed through
-    /// [`Self::validate_byte_slice()`] with success (and was not changed since then).
+    /// [`Self::validate_bytes()`] with success (and was not changed since then).
     ///
     /// ## Implementors
     ///
@@ -334,9 +337,9 @@ pub unsafe trait VarULE: 'static {
     ///
     /// Safety checklist:
     ///
-    /// 1. This method *must* return the same result as [`Self::parse_byte_slice()`].
+    /// 1. This method *must* return the same result as [`Self::parse_bytes()`].
     /// 2. This method *must* return a slice to the same region of memory as the argument.
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self;
+    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self;
 
     /// Given `&Self`, returns a `&[u8]` with the same lifetime.
     ///
@@ -347,19 +350,22 @@ pub unsafe trait VarULE: 'static {
     /// Implementations of this method should call potentially unsafe functions to cast the
     /// pointer to the correct type.
     #[inline]
-    fn as_byte_slice(&self) -> &[u8] {
+    fn as_bytes(&self) -> &[u8] {
         unsafe { slice::from_raw_parts(self as *const Self as *const u8, mem::size_of_val(self)) }
     }
 
     /// Allocate on the heap as a `Box<T>`
     #[inline]
-    fn to_boxed(&self) -> Box<Self> {
-        let bytesvec = self.as_byte_slice().to_owned().into_boxed_slice();
+    #[cfg(feature = "alloc")]
+    fn to_boxed(&self) -> alloc::boxed::Box<Self> {
+        use alloc::borrow::ToOwned;
+        use alloc::boxed::Box;
+        use core::alloc::Layout;
+        let bytesvec = self.as_bytes().to_owned().into_boxed_slice();
         let bytesvec = mem::ManuallyDrop::new(bytesvec);
         unsafe {
             // Get the pointer representation
-            let ptr: *mut Self =
-                Self::from_byte_slice_unchecked(&bytesvec) as *const Self as *mut Self;
+            let ptr: *mut Self = Self::from_bytes_unchecked(&bytesvec) as *const Self as *mut Self;
             assert_eq!(Layout::for_value(&*ptr), Layout::for_value(&**bytesvec));
             // Transmute the pointer to an owned pointer
             Box::from_raw(ptr)
@@ -441,5 +447,4 @@ impl UleError {
     }
 }
 
-#[cfg(feature = "std")]
-impl ::std::error::Error for UleError {}
+impl core::error::Error for UleError {}

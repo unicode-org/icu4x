@@ -15,7 +15,7 @@ pub use self::serde::*;
 ///
 /// The data is expected to be deserialized before it can be used; see
 /// [`DataPayload::into_deserialized`].
-#[allow(clippy::exhaustive_structs)] // marker type
+#[non_exhaustive]
 #[derive(Debug)]
 pub struct BufferMarker;
 
@@ -51,24 +51,29 @@ impl DynamicDataMarker for BufferMarker {
 ///
 /// // Deserializing manually
 /// assert_eq!(
-///     serde_json::from_slice::<HelloWorldV1>(
+///     serde_json::from_slice::<HelloWorld>(
 ///         buffer_provider
-///             .load_data(HelloWorldV1Marker::INFO, DataRequest {
-///                 id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
-///                 ..Default::default()
-///             })
+///             .load_data(
+///                 HelloWorldV1::INFO,
+///                 DataRequest {
+///                     id: DataIdentifierBorrowed::for_locale(
+///                         &langid!("de").into()
+///                     ),
+///                     ..Default::default()
+///                 }
+///             )
 ///             .expect("load should succeed")
 ///             .payload
 ///             .get()
 ///     )
 ///     .expect("should deserialize"),
-///     HelloWorldV1 {
+///     HelloWorld {
 ///         message: Cow::Borrowed("Hallo Welt"),
 ///     },
 /// );
 ///
 /// // Deserialize automatically
-/// let deserializing_provider: &dyn DataProvider<HelloWorldV1Marker> =
+/// let deserializing_provider: &dyn DataProvider<HelloWorldV1> =
 ///     &buffer_provider.as_deserializing();
 ///
 /// assert_eq!(
@@ -80,7 +85,7 @@ impl DynamicDataMarker for BufferMarker {
 ///         .expect("load should succeed")
 ///         .payload
 ///         .get(),
-///     &HelloWorldV1 {
+///     &HelloWorld {
 ///         message: Cow::Borrowed("Hallo Welt"),
 ///     },
 /// );

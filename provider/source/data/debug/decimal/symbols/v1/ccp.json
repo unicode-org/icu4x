@@ -1,0 +1,16 @@
+{
+  "strings": {
+    "minus_sign_prefix": "-",
+    "minus_sign_suffix": "",
+    "plus_sign_prefix": "+",
+    "plus_sign_suffix": "",
+    "decimal_separator": ".",
+    "grouping_separator": ",",
+    "numsys": "cakm"
+  },
+  "grouping_sizes": {
+    "primary": 3,
+    "secondary": 2,
+    "min_grouping": 1
+  }
+}

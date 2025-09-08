@@ -92,23 +92,20 @@ The following example shows all the pieces that make up the data pipeline for `D
 ```rust
 use std::borrow::Cow;
 use icu_provider::prelude::*;
-use icu::decimal::provider::{ AffixesV1, GroupingSizesV1 };
+use icu::decimal::provider::GroupingSizes;
 
-/// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
-#[icu_provider::data_struct(DecimalSymbolsV1Marker = "decimal/symbols@1")]
-#[derive(Debug, PartialEq, Clone)]
+icu_provider::data_marker!(
+    /// Data marker for decimal symbols
+    DecimalSymbolsV1,
+    "decimal/symbols/v1",
+    DecimalSymbols<'static>,
+);
+
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct DecimalSymbolsV1<'data> {
-    /// Prefix and suffix to apply when a negative sign is needed.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub minus_sign_affixes: AffixesV1<'data>,
-
-    /// Prefix and suffix to apply when a plus sign is needed.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub plus_sign_affixes: AffixesV1<'data>,
-
+pub struct DecimalSymbols<'data> {
     /// Character used to separate the integer and fraction parts of the number.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub decimal_separator: Cow<'data, str>,
@@ -118,7 +115,7 @@ pub struct DecimalSymbolsV1<'data> {
     pub grouping_separator: Cow<'data, str>,
 
     /// Settings used to determine where to place groups in the integer part of the number.
-    pub grouping_sizes: GroupingSizesV1,
+    pub grouping_sizes: GroupingSizes,
 
     /// Digit characters for the current numbering system. In most systems, these digits are
     /// contiguous, but in some systems, such as *hanidec*, they are not contiguous.
@@ -171,11 +168,11 @@ The above example is an abridged definition of the Serde structure corresponding
 [*provider/core/src/data_provider.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/core/src/data_provider.rs)
 
 ```rust,compile_fail
-impl DataProvider<FooV1Marker> for SourceDataProvider {
+impl DataProvider<FooV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<FooV1Marker>, DataError> {
+    ) -> Result<DataResponse<FooV1>, DataError> {
         // Use the data inside self and emit it as an ICU4X data struct.
         // This is the core transform operation. This step could take a lot of
         // work, such as pre-parsing patterns, re-organizing the data, etc.
@@ -183,7 +180,7 @@ impl DataProvider<FooV1Marker> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<FooV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<FooV1> for SourceDataProvider {
     fn iter_locales_cached(
         &self,
     ) -> Result<HashSet<DataLocale>, DataError> {
@@ -197,7 +194,7 @@ impl IterableDataProviderCached<FooV1Marker> for SourceDataProvider {
 ```rust,compile_fail
 registry!(
     // ...
-    icu::foo::provider::FooV1Marker = "foo/bar@1",
+    icu::foo::provider::FooV1 = "foo/bar@1",
     // ...
 )
 ```

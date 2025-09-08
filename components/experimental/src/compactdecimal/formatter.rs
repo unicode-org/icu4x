@@ -2,23 +2,43 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::options::CompactDecimalFormatterOptions;
 use crate::compactdecimal::{
     format::FormattedCompactDecimal,
+    options::CompactDecimalFormatterOptions,
     provider::{
-        Count, ErasedCompactDecimalFormatDataV1Marker, LongCompactDecimalFormatDataV1Marker,
-        PatternULE, ShortCompactDecimalFormatDataV1Marker,
+        CompactDecimalPatternData, Count, LongCompactDecimalFormatDataV1, PatternULE,
+        ShortCompactDecimalFormatDataV1,
     },
     ExponentError,
 };
 use alloc::borrow::Cow;
 use core::convert::TryFrom;
-use fixed_decimal::{CompactDecimal, FixedDecimal};
-use icu_decimal::FixedDecimalFormatter;
-use icu_plurals::PluralRules;
-use icu_provider::prelude::*;
+use fixed_decimal::{CompactDecimal, Decimal};
+use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
+use icu_locale_core::preferences::{define_preferences, prefs_convert};
+use icu_plurals::{PluralRules, PluralRulesPreferences};
 use icu_provider::DataError;
+use icu_provider::{marker::ErasedMarker, prelude::*};
 use zerovec::maps::ZeroMap2dCursor;
+
+define_preferences!(
+    /// The preferences for compact decimal formatting.
+    [Copy]
+    CompactDecimalFormatterPreferences,
+    {
+        /// The user's preferred numbering system.
+        ///
+        /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
+        numbering_system: super::preferences::NumberingSystem
+    }
+);
+
+prefs_convert!(
+    CompactDecimalFormatterPreferences,
+    DecimalFormatterPreferences,
+    { numbering_system }
+);
+prefs_convert!(CompactDecimalFormatterPreferences, PluralRulesPreferences);
 
 /// A formatter that renders locale-sensitive compact numbers.
 ///
@@ -30,14 +50,14 @@ use zerovec::maps::ZeroMap2dCursor;
 /// use writeable::assert_writeable_eq;
 ///
 /// let short_french = CompactDecimalFormatter::try_new_short(
-///    &locale!("fr").into(),
+///    locale!("fr").into(),
 ///    Default::default(),
 /// ).unwrap();
 ///
 /// let [long_french, long_japanese, long_bangla] = [locale!("fr"), locale!("ja"), locale!("bn")]
 ///     .map(|locale| {
 ///         CompactDecimalFormatter::try_new_long(
-///             &locale.into(),
+///             locale.into(),
 ///             Default::default(),
 ///         )
 ///         .unwrap()
@@ -58,8 +78,8 @@ use zerovec::maps::ZeroMap2dCursor;
 #[derive(Debug)]
 pub struct CompactDecimalFormatter {
     pub(crate) plural_rules: PluralRules,
-    pub(crate) fixed_decimal_formatter: FixedDecimalFormatter,
-    pub(crate) compact_data: DataPayload<ErasedCompactDecimalFormatDataV1Marker>,
+    pub(crate) decimal_formatter: DecimalFormatter,
+    pub(crate) compact_data: DataPayload<ErasedMarker<CompactDecimalPatternData<'static>>>,
 }
 
 impl CompactDecimalFormatter {
@@ -78,25 +98,26 @@ impl CompactDecimalFormatter {
     /// use icu::locale::locale;
     ///
     /// CompactDecimalFormatter::try_new_short(
-    ///     &locale!("sv").into(),
+    ///     locale!("sv").into(),
     ///     Default::default(),
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_short(
-        locale: &DataLocale,
+        prefs: CompactDecimalFormatterPreferences,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, DataError> {
+        let locale = ShortCompactDecimalFormatDataV1::make_locale(prefs.locale_preferences);
         Ok(Self {
-            fixed_decimal_formatter: FixedDecimalFormatter::try_new(
-                locale,
-                options.fixed_decimal_formatter_options,
+            decimal_formatter: DecimalFormatter::try_new(
+                (&prefs).into(),
+                options.decimal_formatter_options,
             )?,
-            plural_rules: PluralRules::try_new_cardinal(locale)?,
-            compact_data: DataProvider::<ShortCompactDecimalFormatDataV1Marker>::load(
+            plural_rules: PluralRules::try_new_cardinal((&prefs).into())?,
+            compact_data: DataProvider::<ShortCompactDecimalFormatDataV1>::load(
                 &crate::provider::Baked,
                 DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(locale),
+                    id: DataIdentifierBorrowed::for_locale(&locale),
                     ..Default::default()
                 },
             )?
@@ -105,40 +126,41 @@ impl CompactDecimalFormatter {
         })
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
-        (locale, options: CompactDecimalFormatterOptions) -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: CompactDecimalFormatterPreferences, options: CompactDecimalFormatterOptions) -> error: DataError,
         functions: [
             try_new_short: skip,
-            try_new_short_with_any_provider,
             try_new_short_with_buffer_provider,
             try_new_short_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_short)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_short)]
     pub fn try_new_short_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
+        prefs: CompactDecimalFormatterPreferences,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<ShortCompactDecimalFormatDataV1Marker>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>
-            + DataProvider<icu_plurals::provider::CardinalV1Marker>
+        D: DataProvider<ShortCompactDecimalFormatDataV1>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1>
+            + DataProvider<icu_plurals::provider::PluralsCardinalV1>
             + ?Sized,
     {
+        let locale = ShortCompactDecimalFormatDataV1::make_locale(prefs.locale_preferences);
         Ok(Self {
-            fixed_decimal_formatter: FixedDecimalFormatter::try_new_unstable(
+            decimal_formatter: DecimalFormatter::try_new_unstable(
                 provider,
-                locale,
-                options.fixed_decimal_formatter_options,
+                (&prefs).into(),
+                options.decimal_formatter_options,
             )?,
-            plural_rules: PluralRules::try_new_cardinal_unstable(provider, locale)?,
-            compact_data: DataProvider::<ShortCompactDecimalFormatDataV1Marker>::load(
+            plural_rules: PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?,
+            compact_data: DataProvider::<ShortCompactDecimalFormatDataV1>::load(
                 provider,
                 DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(locale),
+                    id: DataIdentifierBorrowed::for_locale(&locale),
                     ..Default::default()
                 },
             )?
@@ -162,25 +184,26 @@ impl CompactDecimalFormatter {
     /// use icu::locale::locale;
     ///
     /// CompactDecimalFormatter::try_new_long(
-    ///     &locale!("sv").into(),
+    ///     locale!("sv").into(),
     ///     Default::default(),
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_long(
-        locale: &DataLocale,
+        prefs: CompactDecimalFormatterPreferences,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, DataError> {
+        let locale = LongCompactDecimalFormatDataV1::make_locale(prefs.locale_preferences);
         Ok(Self {
-            fixed_decimal_formatter: FixedDecimalFormatter::try_new(
-                locale,
-                options.fixed_decimal_formatter_options,
+            decimal_formatter: DecimalFormatter::try_new(
+                (&prefs).into(),
+                options.decimal_formatter_options,
             )?,
-            plural_rules: PluralRules::try_new_cardinal(locale)?,
-            compact_data: DataProvider::<LongCompactDecimalFormatDataV1Marker>::load(
+            plural_rules: PluralRules::try_new_cardinal((&prefs).into())?,
+            compact_data: DataProvider::<LongCompactDecimalFormatDataV1>::load(
                 &crate::provider::Baked,
                 DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(locale),
+                    id: DataIdentifierBorrowed::for_locale(&locale),
                     ..Default::default()
                 },
             )?
@@ -189,40 +212,41 @@ impl CompactDecimalFormatter {
         })
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
-        (locale, options: CompactDecimalFormatterOptions) -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: CompactDecimalFormatterPreferences, options: CompactDecimalFormatterOptions) -> error: DataError,
         functions: [
             try_new_long: skip,
-            try_new_long_with_any_provider,
             try_new_long_with_buffer_provider,
             try_new_long_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_long)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_long)]
     pub fn try_new_long_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
+        prefs: CompactDecimalFormatterPreferences,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LongCompactDecimalFormatDataV1Marker>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>
-            + DataProvider<icu_plurals::provider::CardinalV1Marker>
+        D: DataProvider<LongCompactDecimalFormatDataV1>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1>
+            + DataProvider<icu_plurals::provider::PluralsCardinalV1>
             + ?Sized,
     {
+        let locale = LongCompactDecimalFormatDataV1::make_locale(prefs.locale_preferences);
         Ok(Self {
-            fixed_decimal_formatter: FixedDecimalFormatter::try_new_unstable(
+            decimal_formatter: DecimalFormatter::try_new_unstable(
                 provider,
-                locale,
-                options.fixed_decimal_formatter_options,
+                (&prefs).into(),
+                options.decimal_formatter_options,
             )?,
-            plural_rules: PluralRules::try_new_cardinal_unstable(provider, locale)?,
-            compact_data: DataProvider::<LongCompactDecimalFormatDataV1Marker>::load(
+            plural_rules: PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?,
+            compact_data: DataProvider::<LongCompactDecimalFormatDataV1>::load(
                 provider,
                 DataRequest {
-                    id: DataIdentifierBorrowed::for_locale(locale),
+                    id: DataIdentifierBorrowed::for_locale(&locale),
                     ..Default::default()
                 },
             )?
@@ -246,7 +270,7 @@ impl CompactDecimalFormatter {
     /// use writeable::assert_writeable_eq;
     ///
     /// let short_english = CompactDecimalFormatter::try_new_short(
-    ///     &locale!("en").into(),
+    ///     locale!("en").into(),
     ///     Default::default(),
     /// )
     /// .unwrap();
@@ -269,7 +293,7 @@ impl CompactDecimalFormatter {
     /// # use writeable::assert_writeable_eq;
     /// #
     /// # let short_english = CompactDecimalFormatter::try_new_short(
-    /// #    &locale!("en").into(),
+    /// #    locale!("en").into(),
     /// #    Default::default(),
     /// # ).unwrap();
     /// assert_writeable_eq!(short_english.format_i64(999_499), "999K");
@@ -280,8 +304,8 @@ impl CompactDecimalFormatter {
     /// assert_writeable_eq!(short_english.format_i64(-1_172_700), "-1.2M");
     /// ```
     pub fn format_i64(&self, value: i64) -> FormattedCompactDecimal<'_> {
-        let unrounded = FixedDecimal::from(value);
-        self.format_fixed_decimal(unrounded)
+        let unrounded = Decimal::from(value);
+        self.format_fixed_decimal(&unrounded)
     }
 
     /// Formats a floating-point number in compact decimal notation using the default
@@ -301,7 +325,7 @@ impl CompactDecimalFormatter {
     /// use writeable::assert_writeable_eq;
     ///
     /// let short_english = CompactDecimalFormatter::try_new_short(
-    ///     &locale!("en").into(),
+    ///     locale!("en").into(),
     ///     Default::default(),
     /// )
     /// .unwrap();
@@ -324,7 +348,7 @@ impl CompactDecimalFormatter {
     /// # use writeable::assert_writeable_eq;
     /// #
     /// # let short_english = CompactDecimalFormatter::try_new_short(
-    /// #    &locale!("en").into(),
+    /// #    locale!("en").into(),
     /// #    Default::default(),
     /// # ).unwrap();
     /// assert_writeable_eq!(short_english.format_f64(999_499.99).unwrap(), "999K");
@@ -342,68 +366,68 @@ impl CompactDecimalFormatter {
         &self,
         value: f64,
     ) -> Result<FormattedCompactDecimal<'_>, fixed_decimal::LimitError> {
-        use fixed_decimal::FloatPrecision::Floating;
+        use fixed_decimal::FloatPrecision::RoundTrip;
         // NOTE: This first gets the shortest representation of the f64, which
         // manifests as double rounding.
-        let partly_rounded = FixedDecimal::try_from_f64(value, Floating)?;
-        Ok(self.format_fixed_decimal(partly_rounded))
+        let partly_rounded = Decimal::try_from_f64(value, RoundTrip)?;
+        Ok(self.format_fixed_decimal(&partly_rounded))
     }
 
-    /// Formats a [`FixedDecimal`] by automatically scaling and rounding it.
+    /// Formats a [`Decimal`] by automatically scaling and rounding it.
     ///
     /// The result may have a fractional digit only if it is compact and its
     /// significand is less than 10. Trailing fractional 0s are omitted.
     ///
-    /// Because the FixedDecimal is mutated before formatting, this function
+    /// Because the Decimal is mutated before formatting, this function
     /// takes ownership of it.
     ///
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::Decimal;
     /// use icu::experimental::compactdecimal::CompactDecimalFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let short_english = CompactDecimalFormatter::try_new_short(
-    ///     &locale!("en").into(),
+    ///     locale!("en").into(),
     ///     Default::default(),
     /// )
     /// .unwrap();
     ///
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(0)),
+    ///     short_english.format_fixed_decimal(&Decimal::from(0)),
     ///     "0"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(2)),
+    ///     short_english.format_fixed_decimal(&Decimal::from(2)),
     ///     "2"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(843)),
+    ///     short_english.format_fixed_decimal(&Decimal::from(843)),
     ///     "843"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(2207)),
+    ///     short_english.format_fixed_decimal(&Decimal::from(2207)),
     ///     "2.2K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(15127)),
+    ///     short_english.format_fixed_decimal(&Decimal::from(15127)),
     ///     "15K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(3010349)),
+    ///     short_english.format_fixed_decimal(&Decimal::from(3010349)),
     ///     "3M"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(-13132)),
+    ///     short_english.format_fixed_decimal(&Decimal::from(-13132)),
     ///     "-13K"
     /// );
     ///
-    /// // The sign display on the FixedDecimal is respected:
+    /// // The sign display on the Decimal is respected:
     /// assert_writeable_eq!(
     ///     short_english.format_fixed_decimal(
-    ///         FixedDecimal::from(2500)
+    ///         &Decimal::from(2500)
     ///             .with_sign_display(fixed_decimal::SignDisplay::ExceptZero)
     ///     ),
     ///     "+2.5K"
@@ -419,40 +443,41 @@ impl CompactDecimalFormatter {
     /// # use writeable::assert_writeable_eq;
     /// #
     /// # let short_english = CompactDecimalFormatter::try_new_short(
-    /// #    &locale!("en").into(),
+    /// #    locale!("en").into(),
     /// #    Default::default(),
     /// # ).unwrap();
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal("999499.99".parse().unwrap()),
+    ///     short_english.format_fixed_decimal(&"999499.99".parse().unwrap()),
     ///     "999K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal("999500.00".parse().unwrap()),
+    ///     short_english.format_fixed_decimal(&"999500.00".parse().unwrap()),
     ///     "1M"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal("1650".parse().unwrap()),
+    ///     short_english.format_fixed_decimal(&"1650".parse().unwrap()),
     ///     "1.6K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal("1750".parse().unwrap()),
+    ///     short_english.format_fixed_decimal(&"1750".parse().unwrap()),
     ///     "1.8K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal("1950".parse().unwrap()),
+    ///     short_english.format_fixed_decimal(&"1950".parse().unwrap()),
     ///     "2K"
     /// );
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal("-1172700".parse().unwrap()),
+    ///     short_english.format_fixed_decimal(&"-1172700".parse().unwrap()),
     ///     "-1.2M"
     /// );
     /// ```
-    pub fn format_fixed_decimal(&self, value: FixedDecimal) -> FormattedCompactDecimal<'_> {
-        let log10_type = value.nonzero_magnitude_start();
+    pub fn format_fixed_decimal(&self, value: &Decimal) -> FormattedCompactDecimal<'_> {
+        let log10_type = value.absolute.nonzero_magnitude_start();
         let (mut plural_map, mut exponent) = self.plural_map_and_exponent_for_magnitude(log10_type);
-        let mut significand = value.multiplied_pow10(-i16::from(exponent));
+        let mut significand = value.clone();
+        significand.multiply_pow10(-i16::from(exponent));
         // If we have just one digit before the decimal point…
-        if significand.nonzero_magnitude_start() == 0 {
+        if significand.absolute.nonzero_magnitude_start() == 0 {
             // …round to one fractional digit…
             significand.round(-1);
         } else {
@@ -460,7 +485,8 @@ impl CompactDecimalFormatter {
             // so round to eliminate the fractional part.
             significand.round(0);
         }
-        let rounded_magnitude = significand.nonzero_magnitude_start() + i16::from(exponent);
+        let rounded_magnitude =
+            significand.absolute.nonzero_magnitude_start() + i16::from(exponent);
         if rounded_magnitude > log10_type {
             // We got bumped up a magnitude by rounding.
             // This means that `significand` is a power of 10.
@@ -469,14 +495,14 @@ impl CompactDecimalFormatter {
             // to avoid iterating twice (we only need to look at the next key),
             // but this obscures the logic and the map is tiny.
             (plural_map, exponent) = self.plural_map_and_exponent_for_magnitude(rounded_magnitude);
-            significand =
-                significand.multiplied_pow10(i16::from(old_exponent) - i16::from(exponent));
+            significand = significand.clone();
+            significand.multiply_pow10(i16::from(old_exponent) - i16::from(exponent));
             // There is no need to perform any rounding: `significand`, being
             // a power of 10, is as round as it gets, and since `exponent` can
             // only have become larger, it is already the correct rounding of
             // `unrounded` to the precision we want to show.
         }
-        significand.trim_end();
+        significand.absolute.trim_end();
         FormattedCompactDecimal {
             formatter: self,
             plural_map,
@@ -494,7 +520,7 @@ impl CompactDecimalFormatter {
     ///
     /// Since the caller specifies the exact digits that are displayed, this
     /// allows for arbitrarily complex rounding rules.
-    /// However, contrary to [`FixedDecimalFormatter::format()`], this operation
+    /// However, contrary to [`DecimalFormatter::format()`], this operation
     /// can fail, because the given [`CompactDecimal`] can be inconsistent with
     /// the locale data; for instance, if the locale uses lakhs and crores and
     /// millions are requested, or vice versa, this function returns an error.
@@ -515,15 +541,15 @@ impl CompactDecimalFormatter {
     /// use fixed_decimal::CompactDecimal;
     ///
     /// # let short_french = CompactDecimalFormatter::try_new_short(
-    /// #    &locale!("fr").into(),
+    /// #    locale!("fr").into(),
     /// #    Default::default(),
     /// # ).unwrap();
     /// # let long_french = CompactDecimalFormatter::try_new_long(
-    /// #    &locale!("fr").into(),
+    /// #    locale!("fr").into(),
     /// #    Default::default()
     /// # ).unwrap();
     /// # let long_bangla = CompactDecimalFormatter::try_new_long(
-    /// #    &locale!("bn").into(),
+    /// #    locale!("bn").into(),
     /// #    Default::default()
     /// # ).unwrap();
     /// #
@@ -589,7 +615,7 @@ impl CompactDecimalFormatter {
         value: &'l CompactDecimal,
     ) -> Result<FormattedCompactDecimal<'l>, ExponentError> {
         let log10_type =
-            value.significand().nonzero_magnitude_start() + i16::from(value.exponent());
+            value.significand().absolute.nonzero_magnitude_start() + i16::from(value.exponent());
 
         let (plural_map, expected_exponent) =
             self.plural_map_and_exponent_for_magnitude(log10_type);
@@ -622,7 +648,7 @@ impl CompactDecimalFormatter {
     ///     locale!("bn").into(),
     /// ]
     /// .map(|locale| {
-    ///     CompactDecimalFormatter::try_new_long(&locale, Default::default())
+    ///     CompactDecimalFormatter::try_new_long(locale, Default::default())
     ///         .unwrap()
     /// });
     /// /// French uses millions.
@@ -640,7 +666,7 @@ impl CompactDecimalFormatter {
     fn plural_map_and_exponent_for_magnitude(
         &self,
         magnitude: i16,
-    ) -> (Option<ZeroMap2dCursor<i8, Count, PatternULE>>, u8) {
+    ) -> (Option<ZeroMap2dCursor<'_, '_, i8, Count, PatternULE>>, u8) {
         let plural_map = self
             .compact_data
             .get()
@@ -718,9 +744,9 @@ mod tests {
         ];
         for case in cases {
             let formatter = if case.short {
-                CompactDecimalFormatter::try_new_short(&locale!("en").into(), case.options.clone())
+                CompactDecimalFormatter::try_new_short(locale!("en").into(), case.options.clone())
             } else {
-                CompactDecimalFormatter::try_new_long(&locale!("en").into(), case.options.clone())
+                CompactDecimalFormatter::try_new_long(locale!("en").into(), case.options.clone())
             }
             .unwrap();
             let result1T = formatter.format_i64(1_000_000_000_000_000);

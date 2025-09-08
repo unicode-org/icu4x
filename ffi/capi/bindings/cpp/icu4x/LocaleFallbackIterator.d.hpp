@@ -6,7 +6,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -22,6 +24,11 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * An iterator over the locale under fallback.
+ *
+ * See the [Rust documentation for `LocaleFallbackIterator`](https://docs.rs/icu/2.0.0/icu/locale/fallback/struct.LocaleFallbackIterator.html) for more information.
+ */
 class LocaleFallbackIterator {
 public:
 

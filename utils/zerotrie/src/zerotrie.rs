@@ -119,6 +119,15 @@ pub struct ZeroTrieSimpleAscii<Store: ?Sized> {
     pub store: Store,
 }
 
+impl<Store: ?Sized> ZeroTrieSimpleAscii<Store> {
+    fn transparent_ref_from_store(s: &Store) -> &Self {
+        unsafe {
+            // Safety: Self is transparent over Store
+            core::mem::transmute(s)
+        }
+    }
+}
+
 impl<Store> ZeroTrieSimpleAscii<Store> {
     /// Wrap this specific ZeroTrie variant into a ZeroTrie.
     #[inline]
@@ -177,6 +186,15 @@ pub struct ZeroAsciiIgnoreCaseTrie<Store: ?Sized> {
     pub store: Store,
 }
 
+impl<Store: ?Sized> ZeroAsciiIgnoreCaseTrie<Store> {
+    fn transparent_ref_from_store(s: &Store) -> &Self {
+        unsafe {
+            // Safety: Self is transparent over Store
+            core::mem::transmute(s)
+        }
+    }
+}
+
 // Note: ZeroAsciiIgnoreCaseTrie is not a variant of ZeroTrie so there is no `into_zerotrie`
 
 /// A data structure that compactly maps from byte strings to integers.
@@ -213,6 +231,15 @@ pub struct ZeroTriePerfectHash<Store: ?Sized> {
     pub store: Store,
 }
 
+impl<Store: ?Sized> ZeroTriePerfectHash<Store> {
+    fn transparent_ref_from_store(s: &Store) -> &Self {
+        unsafe {
+            // Safety: Self is transparent over Store
+            core::mem::transmute(s)
+        }
+    }
+}
+
 impl<Store> ZeroTriePerfectHash<Store> {
     /// Wrap this specific ZeroTrie variant into a ZeroTrie.
     #[inline]
@@ -232,6 +259,15 @@ impl<Store> ZeroTriePerfectHash<Store> {
 pub struct ZeroTrieExtendedCapacity<Store: ?Sized> {
     #[doc(hidden)] // for databake, but there are no invariants
     pub store: Store,
+}
+
+impl<Store: ?Sized> ZeroTrieExtendedCapacity<Store> {
+    fn transparent_ref_from_store(s: &Store) -> &Self {
+        unsafe {
+            // Safety: Self is transparent over Store
+            core::mem::transmute(s)
+        }
+    }
 }
 
 impl<Store> ZeroTrieExtendedCapacity<Store> {
@@ -254,7 +290,7 @@ macro_rules! impl_zerotrie_subtype {
             }
             /// Takes the byte store from this trie.
             #[inline]
-            pub fn take_store(self) -> Store {
+            pub fn into_store(self) -> Store {
                 self.store
             }
             /// Converts this trie's store to a different store implementing the `From` trait.
@@ -281,8 +317,9 @@ macro_rules! impl_zerotrie_subtype {
         Store: AsRef<[u8]> + ?Sized,
         {
             /// Queries the trie for a string.
+            // Note: We do not need the Borrow trait's guarantees, so we use
+            // the more general AsRef trait.
             pub fn get<K>(&self, key: K) -> Option<usize> where K: AsRef<[u8]> {
-                // TODO: Should this be AsRef or Borrow?
                 reader::get_parameterized::<Self>(self.store.as_ref(), key.as_ref())
             }
             /// Returns `true` if the trie is empty.
@@ -376,7 +413,6 @@ macro_rules! impl_zerotrie_subtype {
             /// assert_eq!(it.next(), None);
             /// ```
             #[inline]
-            #[allow(clippy::type_complexity)]
             pub fn iter(&self) -> $iter_ty {
                  $iter_fn(self.as_bytes())
             }
@@ -387,8 +423,7 @@ macro_rules! impl_zerotrie_subtype {
             /// If the bytes are not a valid trie, unexpected behavior may occur.
             #[inline]
             pub fn from_bytes(trie: &[u8]) -> &Self {
-                // Safety: Self is repr(transparent) over [u8]
-                unsafe { core::mem::transmute(trie) }
+                Self::transparent_ref_from_store(trie)
             }
         }
         #[cfg(feature = "alloc")]
@@ -598,19 +633,29 @@ macro_rules! impl_zerotrie_subtype {
             }
         }
         // TODO(#2778): Auto-derive these impls based on the repr(transparent).
-        // Safety: $name is repr(transparent) over S, a VarULE
+        //
+        // Safety (based on the safety checklist on the VarULE trait):
+        //  1. `$name` does not include any uninitialized or padding bytes as it is `repr(transparent)`
+        //     over a `VarULE` type, `Store`, as evidenced by the existence of `transparent_ref_from_store()`
+        //  2. `$name` is aligned to 1 byte for the same reason
+        //  3. The impl of `validate_bytes()` returns an error if any byte is not valid (passed down to `VarULE` impl of `Store`)
+        //  4. The impl of `validate_bytes()` returns an error if the slice cannot be used in its entirety (passed down to `VarULE` impl of `Store`)
+        //  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
+        //  6. `parse_bytes()` is left to its default impl
+        //  7. byte equality is semantic equality
         #[cfg(feature = "zerovec")]
         unsafe impl<Store> zerovec::ule::VarULE for $name<Store>
         where
             Store: zerovec::ule::VarULE,
         {
             #[inline]
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
-                Store::validate_byte_slice(bytes)
+            fn validate_bytes(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
+                Store::validate_bytes(bytes)
             }
             #[inline]
-            unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-                core::mem::transmute(Store::from_byte_slice_unchecked(bytes))
+            unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
+                // Safety: we can pass down the validity invariant to Store
+                Self::transparent_ref_from_store(Store::from_bytes_unchecked(bytes))
             }
         }
         #[cfg(feature = "zerofrom")]
@@ -640,14 +685,14 @@ impl_zerotrie_subtype!(
     ZeroTrieSimpleAscii,
     String,
     reader::get_iter_ascii_or_panic,
-    ZeroTrieStringIterator,
+    ZeroTrieStringIterator<'_>,
     string_to_box_u8
 );
 impl_zerotrie_subtype!(
     ZeroAsciiIgnoreCaseTrie,
     String,
     reader::get_iter_ascii_or_panic,
-    ZeroTrieStringIterator,
+    ZeroTrieStringIterator<'_>,
     string_to_box_u8
 );
 impl_zerotrie_subtype!(
@@ -757,8 +802,8 @@ macro_rules! impl_dispatch {
 
 impl<Store> ZeroTrie<Store> {
     /// Takes the byte store from this trie.
-    pub fn take_store(self) -> Store {
-        impl_dispatch!(self, take_store())
+    pub fn into_store(self) -> Store {
+        impl_dispatch!(self, into_store())
     }
     /// Converts this trie's store to a different store implementing the `From` trait.
     ///
@@ -841,7 +886,7 @@ where
         let mut items: Vec<(&[u8], usize)> = items.iter().map(|(k, v)| (k.as_ref(), *v)).collect();
         items.sort();
         let byte_str_slice = ByteStr::from_byte_slice_with_value(&items);
-        #[allow(clippy::unwrap_used)] // FromIterator is panicky
+        #[expect(clippy::unwrap_used)] // FromIterator is panicky
         Self::try_from_tuple_slice(byte_str_slice).unwrap()
     }
 }

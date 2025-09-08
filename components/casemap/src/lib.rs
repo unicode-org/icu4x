@@ -28,7 +28,7 @@
 //! [`ICU4X`]: ../icu/index.html
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(not(any(test, doc)), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -38,6 +38,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]
@@ -51,14 +52,19 @@ mod casemapper;
 mod closer;
 pub mod provider;
 mod set;
-pub mod titlecase;
+pub(crate) mod titlecase;
 
 #[doc(hidden)] // testing
-#[allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
+#[expect(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 pub mod greek_to_me;
 mod internals;
 
-pub use casemapper::CaseMapper;
-pub use closer::CaseMapCloser;
+pub use casemapper::{CaseMapper, CaseMapperBorrowed};
+pub use closer::{CaseMapCloser, CaseMapCloserBorrowed};
 pub use set::ClosureSink;
-pub use titlecase::TitlecaseMapper;
+pub use titlecase::{TitlecaseMapper, TitlecaseMapperBorrowed};
+
+/// Options used by types in this crate
+pub mod options {
+    pub use crate::titlecase::{LeadingAdjustment, TitlecaseOptions, TrailingCase};
+}

@@ -4,9 +4,13 @@
 
 //! Options for [`CurrencyFormatter`](crate::dimension::currency::formatter::CurrencyFormatter).
 
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 /// A collection of configuration options that determine the formatting behavior of
 /// [`CurrencyFormatter`](crate::dimension::currency::formatter::CurrencyFormatter).
-#[derive(Copy, Debug, Eq, PartialEq, Clone, Default)]
+#[derive(Copy, Debug, Eq, PartialEq, Clone, Default, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
 pub struct CurrencyFormatterOptions {
     /// The width of the currency format.
@@ -19,12 +23,14 @@ impl From<Width> for CurrencyFormatterOptions {
     }
 }
 
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
 pub enum Width {
     /// Format the currency with the standard (short) currency symbol.
     ///
     /// For example, 1 USD formats as "$1.00" in en-US and "US$1" in most other locales.
+    #[cfg_attr(feature = "serde", serde(rename = "short"))]
     Short,
 
     /// Format the currency with the narrow currency symbol.
@@ -33,6 +39,7 @@ pub enum Width {
     /// currency is being represented.
     ///
     /// For example, 1 USD formats as "$1.00" in most locales.
+    #[cfg_attr(feature = "serde", serde(rename = "narrow"))]
     Narrow,
 }
 

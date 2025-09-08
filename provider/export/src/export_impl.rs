@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{DataLocaleFamilyAnnotations, DeduplicationStrategy, ExportDriver};
+use crate::{DataLocaleFamilyAnnotations, DeduplicationStrategy, ExportDriver, ExportMetadata};
 use icu_locale::fallback::LocaleFallbackIterator;
 use icu_locale::LocaleFallbacker;
 use icu_provider::export::*;
@@ -27,27 +27,11 @@ impl<T: IntoIterator> IntoParallelIterator for T {}
 use rayon::prelude::*;
 
 impl ExportDriver {
-    /// Exports data from the given provider to the given exporter.
-    ///
-    /// See
-    /// [`make_exportable_provider!`](icu_provider::export::make_exportable_provider),
-    /// [`BlobExporter`](icu_provider_blob::export),
-    /// [`FileSystemExporter`](icu_provider_fs::export),
-    /// and [`BakedExporter`](icu_provider_baked::export).
-    pub fn export(
-        self,
-        provider: &impl ExportableProvider,
-        mut sink: impl DataExporter,
-    ) -> Result<(), DataError> {
-        self.export_dyn(provider, &mut sink)
-    }
-
-    // Avoids multiple monomorphizations
-    fn export_dyn(
+    pub(crate) fn export_dyn(
         self,
         provider: &dyn ExportableProvider,
         sink: &mut dyn DataExporter,
-    ) -> Result<(), DataError> {
+    ) -> Result<ExportMetadata, DataError> {
         let Self {
             markers,
             requested_families,
@@ -88,15 +72,8 @@ impl ExportDriver {
             }
         );
 
-        let mut flush_metadata = FlushMetadata::default();
-        flush_metadata.supports_dry_provider = matches!(
-            deduplication_strategy,
-            DeduplicationStrategy::RetainBaseLanguages | DeduplicationStrategy::None
-        );
-        let flush_metadata = flush_metadata;
-
         let load_with_fallback = |marker, id: DataIdentifierBorrowed<'_>| {
-            log::trace!("Generating marker/locale: {marker:?}/{}", id.locale);
+            log::trace!("Generating marker/locale: {marker:?}/{id}");
             let mut metadata = DataRequestMetadata::default();
             metadata.silent = true;
             // Lazy-compute the fallback iterator so that we don't always require CLDR data
@@ -109,22 +86,19 @@ impl ExportDriver {
                     ),
                     metadata,
                 };
-                match provider.load_data(marker, req) {
-                    Ok(data_response) => {
+                match provider.load_data(marker, req).allow_identifier_not_found() {
+                    Ok(Some(data_response)) => {
                         if let Some(iter) = locale_iter.as_ref() {
-                            if iter.get().is_default() && !id.locale.is_default() {
-                                log::debug!("Falling back to und: {marker:?}/{}", id.locale);
+                            if iter.get().is_unknown() && !id.locale.is_unknown() {
+                                log::debug!("Falling back to und: {marker:?}/{id}");
                             }
                         }
-                        return Some(Ok(data_response.payload));
+                        return Some(Ok(data_response));
                     }
-                    Err(DataError {
-                        kind: DataErrorKind::IdentifierNotFound,
-                        ..
-                    }) => {
+                    Ok(None) => {
                         if let Some(iter) = locale_iter.as_mut() {
-                            if iter.get().is_default() {
-                                log::debug!("Could not find data for: {marker:?}/{}", id.locale);
+                            if iter.get().is_unknown() {
+                                log::debug!("Could not find data for: {marker:?}/{id}");
                                 return None;
                             }
                             iter.step();
@@ -132,7 +106,7 @@ impl ExportDriver {
                             locale_iter = Some(
                                 fallbacker
                                     .for_config(marker.fallback_config)
-                                    .fallback_for(id.locale.clone()),
+                                    .fallback_for(*id.locale),
                             )
                         }
                     }
@@ -145,23 +119,34 @@ impl ExportDriver {
             log::trace!("Generating marker {marker:?}");
             let instant1 = Instant::now();
 
+            let mut flush_metadata = FlushMetadata::default();
+            flush_metadata.supports_dry_provider = matches!(
+                deduplication_strategy,
+                DeduplicationStrategy::RetainBaseLanguages | DeduplicationStrategy::None
+            );
+
             if marker.is_singleton {
                 let supported = provider.iter_ids_for_marker(marker)?;
-                if supported.len() != 1 || !supported.first().unwrap().is_default() {
+                if supported.len() != 1 || !supported.first().unwrap().is_unknown() {
                     return Err(DataError::custom(
                         "Invalid supported locales for singleton marker",
                     )
                     .with_marker(marker));
                 }
 
-                let payload = provider
+                let response = provider
                     .load_data(marker, Default::default())
-                    .map_err(|e| e.with_req(marker, Default::default()))?
-                    .payload;
+                    .map_err(|e| e.with_req(marker, Default::default()))?;
 
                 let transform_duration = instant1.elapsed();
 
-                sink.flush_singleton(marker, &payload, flush_metadata)
+                if marker.has_checksum {
+                    flush_metadata.checksum = response.metadata.checksum;
+                } else if response.metadata.checksum.is_some() {
+                    log::warn!("{marker:?} returns a checksum, but it's not configured to");
+                }
+
+                sink.flush_singleton(marker, &response.payload, flush_metadata)
                     .map_err(|e| e.with_req(marker, Default::default()))?;
 
                 let final_duration = instant1.elapsed();
@@ -189,41 +174,51 @@ impl ExportDriver {
                 &fallbacker,
             )?;
 
-            let (slowest_duration, slowest_locale) = match deduplication_strategy {
-                DeduplicationStrategy::Maximal => {
-                    let payloads = locales_to_export
-                        .into_par_iter()
-                        .filter_map(|id| {
-                            let instant2 = Instant::now();
-                            load_with_fallback(marker, id.as_borrowed())
-                                .map(|r| r.map(|payload| (id, (payload, instant2.elapsed()))))
-                        })
-                        .collect::<Result<HashMap<_, _>, _>>()?;
-                    deduplicate_payloads::<true>(marker, &payloads, &fallbacker, sink)?
+            let responses = locales_to_export
+                .into_par_iter()
+                .filter_map(|id| {
+                    let instant2 = Instant::now();
+                    load_with_fallback(marker, id.as_borrowed())
+                        .map(|r| r.map(move |payload| (id, (payload, instant2.elapsed()))))
+                })
+                .collect::<Result<HashMap<_, _>, _>>()?;
+
+            if marker.has_checksum {
+                flush_metadata.checksum =
+                    responses
+                        .iter()
+                        .try_fold(None, |acc, (id, (response, _))| {
+                            match (acc, response.metadata.checksum) {
+                                (Some(a), Some(b)) if a != b => {
+                                    Err(DataError::custom("Mismatched checksums").with_req(
+                                        marker,
+                                        DataRequest {
+                                            id: id.as_borrowed(),
+                                            ..Default::default()
+                                        },
+                                    ))
+                                }
+                                (a, b) => Ok(a.or(b)),
+                            }
+                        })?;
+            } else if responses.iter().any(|r| r.1 .0.metadata.checksum.is_some()) {
+                log::warn!("{marker:?} returns a checksum, but it's not configured to");
+            }
+
+            let (slowest_duration, slowest_id) = match deduplication_strategy {
+                DeduplicationStrategy::Maximal | DeduplicationStrategy::RetainBaseLanguages => {
+                    deduplicate_responses(
+                        deduplication_strategy == DeduplicationStrategy::Maximal,
+                        marker,
+                        responses,
+                        &fallbacker,
+                        sink,
+                    )?
                 }
-                DeduplicationStrategy::RetainBaseLanguages => {
-                    let payloads = locales_to_export
-                        .into_par_iter()
-                        .filter_map(|id| {
-                            let instant2 = Instant::now();
-                            load_with_fallback(marker, id.as_borrowed())
-                                .map(|r| r.map(|payload| (id, (payload, instant2.elapsed()))))
-                        })
-                        .collect::<Result<HashMap<_, _>, _>>()?;
-                    deduplicate_payloads::<false>(marker, &payloads, &fallbacker, sink)?
-                }
-                DeduplicationStrategy::None => locales_to_export
-                    .into_par_iter()
-                    .filter_map(|id| {
-                        let instant2 = Instant::now();
-                        let result = load_with_fallback(marker, id.as_borrowed())?;
-                        let result = result
-                            .and_then(|payload| {
-                                sink.put_payload(marker, id.as_borrowed(), &payload)
-                            })
-                            // Note: in Hybrid mode the elapsed time includes sink.put_payload.
-                            // In Runtime mode the elapsed time is only load_with_fallback.
-                            .map(|_| (instant2.elapsed(), id.locale.write_to_string().into_owned()))
+                DeduplicationStrategy::None => responses
+                    .into_iter()
+                    .map(|(id, (response, time))| {
+                        sink.put_payload(marker, id.as_borrowed(), &response.payload)
                             .map_err(|e| {
                                 e.with_req(
                                     marker,
@@ -232,8 +227,8 @@ impl ExportDriver {
                                         ..Default::default()
                                     },
                                 )
-                            });
-                        Some(result)
+                            })
+                            .map(|()| (time, id))
                     })
                     .collect::<Result<Vec<_>, DataError>>()?
                     .into_iter()
@@ -252,8 +247,10 @@ impl ExportDriver {
             if final_duration > Duration::new(0, 500_000_000) {
                 // Print durations if the marker took longer than 500 ms
                 log::info!(
-                    "Generated marker {marker:?} ({}, '{slowest_locale}' in {}, flushed in {})",
+                    "Generated marker {marker:?} ({}, '{}/{}' in {}, flushed in {})",
                     DisplayDuration(final_duration),
+                    slowest_id.locale,
+                    slowest_id.marker_attributes.as_str(),
                     DisplayDuration(slowest_duration),
                     DisplayDuration(flush_duration)
                 );
@@ -263,13 +260,15 @@ impl ExportDriver {
             Ok(())
         })?;
 
-        sink.close()
+        let exporter = sink.close()?;
+
+        Ok(ExportMetadata { exporter })
     }
 }
 
 /// Selects the maximal set of locales to export based on a [`DataMarkerInfo`] and this datagen
 /// provider's options bag. The locales may be later optionally deduplicated for fallback.
-#[allow(clippy::type_complexity)] // sigh
+#[expect(clippy::type_complexity)] // sigh
 fn select_locales_for_marker<'a>(
     provider: &'a dyn ExportableProvider,
     marker: DataMarkerInfo,
@@ -287,10 +286,7 @@ fn select_locales_for_marker<'a>(
         .iter_ids_for_marker(marker)
         .map_err(|e| e.with_marker(marker))?
     {
-        supported_map
-            .entry(id.locale.clone().into_owned())
-            .or_default()
-            .insert(id);
+        supported_map.entry(id.locale).or_default().insert(id);
     }
 
     if !marker.attributes_domain.is_empty() {
@@ -326,11 +322,11 @@ fn select_locales_for_marker<'a>(
                 .unwrap_or_default();
             if include_full && !selected_locales.contains(current_locale) {
                 log::trace!("Including {current_locale}: full locale family: {marker:?}");
-                selected_locales.insert(current_locale.clone());
+                selected_locales.insert(*current_locale);
             }
-            if current_locale.language.is_default() && !current_locale.is_default() {
+            if current_locale.language.is_unknown() && !current_locale.is_unknown() {
                 log::trace!("Including {current_locale}: und variant: {marker:?}");
-                selected_locales.insert(current_locale.clone());
+                selected_locales.insert(*current_locale);
             }
             let include_ancestors = requested_families
                 .get(current_locale)
@@ -339,7 +335,7 @@ fn select_locales_for_marker<'a>(
                 .unwrap_or(false);
             let mut iter = fallbacker
                 .for_config(marker.fallback_config)
-                .fallback_for(current_locale.clone());
+                .fallback_for(*current_locale);
             loop {
                 // Inherit aux keys and extension keywords from parent locales
                 let parent_locale = iter.get();
@@ -353,26 +349,26 @@ fn select_locales_for_marker<'a>(
                     log::trace!(
                         "Including {current_locale}: descendant of {parent_locale}: {marker:?}"
                     );
-                    selected_locales.insert(current_locale.clone());
+                    selected_locales.insert(*current_locale);
                 }
                 if include_ancestors && !selected_locales.contains(parent_locale) {
                     log::trace!(
                         "Including {parent_locale}: ancestor of {current_locale}: {marker:?}"
                     );
-                    selected_locales.insert(parent_locale.clone());
+                    selected_locales.insert(*parent_locale);
                 }
                 if let Some(parent_ids) = maybe_parent_ids {
                     for morphed_id in parent_ids.iter() {
                         // Special case: don't pull extensions or aux keys up from the root.
-                        if morphed_id.locale.is_default() && !morphed_id.is_default() {
+                        if morphed_id.locale.is_unknown() && !morphed_id.is_unknown() {
                             continue;
                         }
                         let mut morphed_id = morphed_id.clone();
-                        *morphed_id.locale.to_mut() = current_locale.clone();
+                        morphed_id.locale = *current_locale;
                         expansion.insert(morphed_id);
                     }
                 }
-                if iter.get().is_default() {
+                if iter.get().is_unknown() {
                     break;
                 }
                 iter.step();
@@ -389,18 +385,65 @@ fn select_locales_for_marker<'a>(
     Ok(selected_locales)
 }
 
-fn deduplicate_payloads<const MAXIMAL: bool>(
+fn deduplicate_responses<'a>(
+    maximal: bool,
     marker: DataMarkerInfo,
-    payloads: &HashMap<DataIdentifierCow, (DataPayload<ExportMarker>, Duration)>,
+    responses: HashMap<DataIdentifierCow<'a>, (DataResponse<ExportMarker>, Duration)>,
     fallbacker: &LocaleFallbacker,
     sink: &dyn DataExporter,
-) -> Result<Option<(Duration, String)>, DataError> {
+) -> Result<Option<(Duration, DataIdentifierCow<'a>)>, DataError> {
     let fallbacker_with_config = fallbacker.for_config(marker.fallback_config);
-    payloads.iter().try_for_each(|(id, (payload, _duration))| {
-        // Always export `und`. This prevents calling `step` on an empty locale.
-        if id.locale.is_default() {
-            return sink
-                .put_payload(marker, id.as_borrowed(), payload)
+    responses
+        .iter()
+        .try_for_each(|(id, (response, _duration))| {
+            // Always export `und`. This prevents calling `step` on an empty locale.
+            if id.locale.is_unknown() {
+                return sink
+                    .put_payload(marker, id.as_borrowed(), &response.payload)
+                    .map_err(|e| {
+                        e.with_req(
+                            marker,
+                            DataRequest {
+                                id: id.as_borrowed(),
+                                ..Default::default()
+                            },
+                        )
+                    });
+            }
+            let mut iter = fallbacker_with_config.fallback_for(id.locale);
+            loop {
+                if !maximal {
+                    // To retain base languages, preemptively step to the
+                    // parent locale. This should retain the locale if
+                    // the next parent is `und`.
+                    iter.step();
+                }
+                if iter.get().is_unknown() {
+                    break;
+                }
+                if maximal {
+                    iter.step();
+                }
+
+                if let Some((inherited_response, _duration)) = responses.get(
+                    &DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                        &id.marker_attributes,
+                        iter.get(),
+                    )
+                    .as_cow(),
+                ) {
+                    if inherited_response.payload == response.payload {
+                        // Found a match: don't need to write anything
+                        log::trace!("Deduplicating {id} (inherits from {})", iter.get());
+                        return Ok(());
+                    } else {
+                        // Not a match: we must include this
+                        break;
+                    }
+                }
+            }
+            // Did not find a match: export this payload
+            sink.put_payload(marker, id.as_borrowed(), &response.payload)
                 .map_err(|e| {
                     e.with_req(
                         marker,
@@ -409,67 +452,13 @@ fn deduplicate_payloads<const MAXIMAL: bool>(
                             ..Default::default()
                         },
                     )
-                });
-        }
-        let mut iter = fallbacker_with_config.fallback_for(id.locale.clone().into_owned());
-        loop {
-            if !MAXIMAL {
-                // To retain base languages, preemptively step to the
-                // parent locale. This should retain the locale if
-                // the next parent is `und`.
-                iter.step();
-            }
-            if iter.get().is_default() {
-                break;
-            }
-            if MAXIMAL {
-                iter.step();
-            }
-
-            if let Some((inherited_payload, _duration)) = payloads.get(
-                &DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    &id.marker_attributes,
-                    iter.get(),
-                )
-                .as_cow(),
-            ) {
-                if inherited_payload == payload {
-                    // Found a match: don't need to write anything
-                    log::trace!(
-                        "Deduplicating {:?}/{} (inherits from {})",
-                        id.locale,
-                        id.marker_attributes.as_str(),
-                        iter.get()
-                    );
-                    return Ok(());
-                } else {
-                    // Not a match: we must include this
-                    break;
-                }
-            }
-        }
-        // Did not find a match: export this payload
-        sink.put_payload(marker, id.as_borrowed(), payload)
-            .map_err(|e| {
-                e.with_req(
-                    marker,
-                    DataRequest {
-                        id: id.as_borrowed(),
-                        ..Default::default()
-                    },
-                )
-            })
-    })?;
+                })
+        })?;
 
     // Slowest locale calculation:
-    Ok(payloads
-        .iter()
-        .map(|(id, (_payload, duration))| {
-            (
-                *duration,
-                id.locale.write_to_string().into_owned() + "/" + id.marker_attributes.as_str(),
-            )
-        })
+    Ok(responses
+        .into_iter()
+        .map(|(id, (_response, duration))| (duration, id))
         .max())
 }
 
@@ -485,7 +474,7 @@ impl fmt::Display for DisplayDuration {
         } else if nanos > 1_000 {
             write!(f, "{:.3}µs", (nanos as f64) / 1e3)
         } else {
-            write!(f, "{}ns", nanos)
+            write!(f, "{nanos}ns")
         }
     }
 }
@@ -498,18 +487,18 @@ fn test_collation_filtering() {
 
     struct Provider;
 
-    impl DataProvider<icu::collator::provider::CollationTailoringV1Marker> for Provider {
+    impl DataProvider<icu::collator::provider::CollationTailoringV1> for Provider {
         fn load(
             &self,
             _req: DataRequest,
-        ) -> Result<DataResponse<icu::collator::provider::CollationTailoringV1Marker>, DataError>
+        ) -> Result<DataResponse<icu::collator::provider::CollationTailoringV1>, DataError>
         {
             unreachable!()
         }
     }
 
-    impl IterableDataProvider<icu::collator::provider::CollationTailoringV1Marker> for Provider {
-        fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    impl IterableDataProvider<icu::collator::provider::CollationTailoringV1> for Provider {
+        fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
             Ok(BTreeSet::from_iter(
                 [
                     (locale!("ko"), "search"),
@@ -520,8 +509,6 @@ fn test_collation_filtering() {
                     (locale!("und"), "eor"),
                     (locale!("und"), "search"),
                     (locale!("und"), ""),
-                    (locale!("zh"), "big5han"),
-                    (locale!("zh"), "gb2312"),
                     (locale!("zh"), "stroke"),
                     (locale!("zh"), "unihan"),
                     (locale!("zh"), "zhuyin"),
@@ -538,9 +525,10 @@ fn test_collation_filtering() {
         }
     }
 
+    extern crate alloc;
     icu_provider::export::make_exportable_provider!(
         Provider,
-        [icu::collator::provider::CollationTailoringV1Marker,]
+        [icu::collator::provider::CollationTailoringV1,]
     );
 
     #[derive(Debug)]
@@ -556,19 +544,9 @@ fn test_collation_filtering() {
             expected: &["", "stroke", "unihan", "zhuyin"],
         },
         TestCase {
-            include_collations: &["gb2312"],
+            include_collations: &["search*"],
             language: locale!("zh").into(),
-            expected: &["", "gb2312", "stroke", "unihan", "zhuyin"],
-        },
-        TestCase {
-            include_collations: &["big5han"],
-            language: locale!("zh").into(),
-            expected: &["", "big5han", "stroke", "unihan", "zhuyin"],
-        },
-        TestCase {
-            include_collations: &["gb2312", "search*"],
-            language: locale!("zh").into(),
-            expected: &["", "gb2312", "stroke", "unihan", "zhuyin"],
+            expected: &["", "stroke", "unihan", "zhuyin"],
         },
         TestCase {
             include_collations: &[],
@@ -591,7 +569,7 @@ fn test_collation_filtering() {
             expected: &["", "search", "searchjl", "unihan"],
         },
         TestCase {
-            include_collations: &["search*", "big5han"],
+            include_collations: &["search*"],
             language: locale!("ko").into(),
             expected: &["", "search", "searchjl", "unihan"],
         },
@@ -603,14 +581,14 @@ fn test_collation_filtering() {
     ];
     for cas in cases {
         let driver = ExportDriver::new(
-            [DataLocaleFamily::single(cas.language.clone())],
+            [DataLocaleFamily::single(cas.language)],
             DeduplicationStrategy::None.into(),
             LocaleFallbacker::new_without_data(),
         )
         .with_additional_collations(cas.include_collations.iter().copied().map(String::from));
         let resolved_locales = select_locales_for_marker(
             &Provider,
-            icu::collator::provider::CollationTailoringV1Marker::INFO,
+            icu::collator::provider::CollationTailoringV1::INFO,
             &driver.requested_families,
             &driver.attributes_filters,
             false,

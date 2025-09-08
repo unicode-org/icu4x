@@ -4,7 +4,9 @@
 
 [package]
 name = "env_preferences"
-version.workspace = true
+version = "0.1.0"
+publish = false
+
 rust-version.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -16,10 +18,12 @@ include.workspace = true
 
 [dependencies]
 core-foundation-sys = "0.8.6"
+displaydoc = { workspace = true }
+icu_locale_core = { workspace = true, features = ["alloc"] }
 libc = "0.2.155"
 
 [dependencies.windows]
-version = "0.56.0"
+version = "0.60.0"
 features = [
     "System",
     "Foundation",
@@ -28,8 +32,8 @@ features = [
     "Globalization",
     "Globalization_DateTimeFormatting",
     "Win32",
-    "Win32_Globalization"
+    "Win32_Globalization",
 ]
 
 [dev-dependencies]
-icu_locale = { path = "../../components/locale" }
+windows-core = "0.60.1"

@@ -19,13 +19,18 @@
 //! let mut loc: Locale = "en-US-a-foo-faa".parse().expect("Parsing failed.");
 //! ```
 
+#[cfg(feature = "alloc")]
 use core::str::FromStr;
 
+#[cfg(feature = "alloc")]
 use super::ExtensionType;
+#[cfg(feature = "alloc")]
 use crate::parser::ParseError;
+#[cfg(feature = "alloc")]
 use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
 use crate::subtags::Subtag;
+#[cfg(feature = "alloc")]
 use alloc::vec::Vec;
 
 /// A list of [`Other Use Extensions`] as defined in [`Unicode Locale
@@ -51,6 +56,7 @@ use alloc::vec::Vec;
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/#Unicode_locale_identifier
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
 pub struct Other {
+    // Safety invariant: must be ASCII
     ext: u8,
     keys: ShortBoxSlice<Subtag>,
 }
@@ -59,11 +65,13 @@ impl Other {
     /// A constructor which takes a str slice, parses it and
     /// produces a well-formed [`Other`].
     #[inline]
+    #[cfg(feature = "alloc")]
     pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
         Self::try_from_utf8(s.as_bytes())
     }
 
     /// See [`Self::try_from_str`]
+    #[cfg(feature = "alloc")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
         let mut iter = SubtagIterator::new(code_units);
 
@@ -93,15 +101,19 @@ impl Other {
     /// let other = Other::from_vec_unchecked(b'a', vec![subtag1, subtag2]);
     /// assert_eq!(&other.to_string(), "a-foo-bar");
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn from_vec_unchecked(ext: u8, keys: Vec<Subtag>) -> Self {
         Self::from_short_slice_unchecked(ext, keys.into())
     }
 
+    #[allow(dead_code)]
     pub(crate) fn from_short_slice_unchecked(ext: u8, keys: ShortBoxSlice<Subtag>) -> Self {
         assert!(ext.is_ascii_alphabetic());
+        // Safety invariant upheld here: ext checked as ASCII above
         Self { ext, keys }
     }
 
+    #[cfg(feature = "alloc")]
     pub(crate) fn try_from_iter(ext: u8, iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         debug_assert!(matches!(
             ExtensionType::try_from_byte(ext),
@@ -139,6 +151,7 @@ impl Other {
     /// ```
     pub fn get_ext_str(&self) -> &str {
         debug_assert!(self.ext.is_ascii_alphabetic());
+        // Safety: from safety invariant on self.ext (that it is ASCII)
         unsafe { core::str::from_utf8_unchecked(core::slice::from_ref(&self.ext)) }
     }
 
@@ -187,6 +200,7 @@ impl Other {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl FromStr for Other {
     type Err = ParseError;
 
@@ -223,7 +237,8 @@ impl writeable::Writeable for Other {
         result
     }
 
-    fn write_to_string(&self) -> alloc::borrow::Cow<str> {
+    #[cfg(feature = "alloc")]
+    fn write_to_string(&self) -> alloc::borrow::Cow<'_, str> {
         if self.keys.is_empty() {
             return alloc::borrow::Cow::Borrowed("");
         }

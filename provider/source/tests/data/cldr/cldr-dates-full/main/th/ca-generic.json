@@ -357,7 +357,7 @@
                 "GyMMMd": "d MMM G y",
                 "GyMMMEd": "E d MMM G y",
                 "GyMMMEEEEd": "EEEEที่ d MMM G y",
-                "h": "h a",
+                "h": "h a",
                 "H": "HH",
                 "hm": "h:mm a",
                 "Hm": "HH:mm",
@@ -401,11 +401,11 @@
               "intervalFormats": {
                 "intervalFormatFallback": "{0} - {1}",
                 "Bh": {
-                  "B": "h B – h B",
+                  "B": "h B – h B",
                   "h": "h – h B"
                 },
                 "Bhm": {
-                  "B": "h:mm B – h:mm B",
+                  "B": "h:mm B – h:mm B",
                   "h": "h:mm – h:mm B",
                   "m": "h:mm – h:mm B"
                 },
@@ -413,7 +413,7 @@
                   "d": "d–d"
                 },
                 "Gy": {
-                  "G": "G y – G y",
+                  "G": "G y – G y",
                   "y": "G y–y"
                 },
                 "GyM": {
@@ -451,14 +451,14 @@
                   "y": "E d MMM G y – E d MMM y"
                 },
                 "h": {
-                  "a": "h a – h a",
-                  "h": "h–h a"
+                  "a": "h a – h a",
+                  "h": "h–h a"
                 },
                 "H": {
                   "H": "H–H"
                 },
                 "hm": {
-                  "a": "h:mm a – h:mm a",
+                  "a": "h:mm a – h:mm a",
                   "h": "h:mm–h:mm a",
                   "m": "h:mm–h:mm a"
                 },
@@ -467,7 +467,7 @@
                   "m": "HH:mm–HH:mm"
                 },
                 "hmv": {
-                  "a": "h:mm a – h:mm a v",
+                  "a": "h:mm a – h:mm a v",
                   "h": "h:mm–h:mm a v",
                   "m": "h:mm–h:mm a v"
                 },
@@ -476,8 +476,8 @@
                   "m": "H:mm–H:mm v"
                 },
                 "hv": {
-                  "a": "h a – h a v",
-                  "h": "h–h a v"
+                  "a": "h a – h a v",
+                  "h": "h–h a v"
                 },
                 "Hv": {
                   "H": "H–H v"
@@ -554,6 +554,558 @@
               "standard": {
                 "full": "{1} เวลา {0}",
                 "long": "{1} เวลา {0}",
+                "medium": "{1} {0}",
+                "short": "{1} {0}"
+              }
+            }
+          },
+          "iso8601": {
+            "months": {
+              "format": {
+                "abbreviated": {
+                  "1": "ม.ค.",
+                  "2": "ก.พ.",
+                  "3": "มี.ค.",
+                  "4": "เม.ย.",
+                  "5": "พ.ค.",
+                  "6": "มิ.ย.",
+                  "7": "ก.ค.",
+                  "8": "ส.ค.",
+                  "9": "ก.ย.",
+                  "10": "ต.ค.",
+                  "11": "พ.ย.",
+                  "12": "ธ.ค."
+                },
+                "narrow": {
+                  "1": "ม.ค.",
+                  "2": "ก.พ.",
+                  "3": "มี.ค.",
+                  "4": "เม.ย.",
+                  "5": "พ.ค.",
+                  "6": "มิ.ย.",
+                  "7": "ก.ค.",
+                  "8": "ส.ค.",
+                  "9": "ก.ย.",
+                  "10": "ต.ค.",
+                  "11": "พ.ย.",
+                  "12": "ธ.ค."
+                },
+                "wide": {
+                  "1": "มกราคม",
+                  "2": "กุมภาพันธ์",
+                  "3": "มีนาคม",
+                  "4": "เมษายน",
+                  "5": "พฤษภาคม",
+                  "6": "มิถุนายน",
+                  "7": "กรกฎาคม",
+                  "8": "สิงหาคม",
+                  "9": "กันยายน",
+                  "10": "ตุลาคม",
+                  "11": "พฤศจิกายน",
+                  "12": "ธันวาคม"
+                }
+              },
+              "stand-alone": {
+                "abbreviated": {
+                  "1": "ม.ค.",
+                  "2": "ก.พ.",
+                  "3": "มี.ค.",
+                  "4": "เม.ย.",
+                  "5": "พ.ค.",
+                  "6": "มิ.ย.",
+                  "7": "ก.ค.",
+                  "8": "ส.ค.",
+                  "9": "ก.ย.",
+                  "10": "ต.ค.",
+                  "11": "พ.ย.",
+                  "12": "ธ.ค."
+                },
+                "narrow": {
+                  "1": "ม.ค.",
+                  "2": "ก.พ.",
+                  "3": "มี.ค.",
+                  "4": "เม.ย.",
+                  "5": "พ.ค.",
+                  "6": "มิ.ย.",
+                  "7": "ก.ค.",
+                  "8": "ส.ค.",
+                  "9": "ก.ย.",
+                  "10": "ต.ค.",
+                  "11": "พ.ย.",
+                  "12": "ธ.ค."
+                },
+                "wide": {
+                  "1": "มกราคม",
+                  "2": "กุมภาพันธ์",
+                  "3": "มีนาคม",
+                  "4": "เมษายน",
+                  "5": "พฤษภาคม",
+                  "6": "มิถุนายน",
+                  "7": "กรกฎาคม",
+                  "8": "สิงหาคม",
+                  "9": "กันยายน",
+                  "10": "ตุลาคม",
+                  "11": "พฤศจิกายน",
+                  "12": "ธันวาคม"
+                }
+              }
+            },
+            "days": {
+              "format": {
+                "abbreviated": {
+                  "sun": "อา.",
+                  "mon": "จ.",
+                  "tue": "อ.",
+                  "wed": "พ.",
+                  "thu": "พฤ.",
+                  "fri": "ศ.",
+                  "sat": "ส."
+                },
+                "narrow": {
+                  "sun": "อา",
+                  "mon": "จ",
+                  "tue": "อ",
+                  "wed": "พ",
+                  "thu": "พฤ",
+                  "fri": "ศ",
+                  "sat": "ส"
+                },
+                "short": {
+                  "sun": "อา.",
+                  "mon": "จ.",
+                  "tue": "อ.",
+                  "wed": "พ.",
+                  "thu": "พฤ.",
+                  "fri": "ศ.",
+                  "sat": "ส."
+                },
+                "wide": {
+                  "sun": "วันอาทิตย์",
+                  "mon": "วันจันทร์",
+                  "tue": "วันอังคาร",
+                  "wed": "วันพุธ",
+                  "thu": "วันพฤหัสบดี",
+                  "fri": "วันศุกร์",
+                  "sat": "วันเสาร์"
+                }
+              },
+              "stand-alone": {
+                "abbreviated": {
+                  "sun": "อา.",
+                  "mon": "จ.",
+                  "tue": "อ.",
+                  "wed": "พ.",
+                  "thu": "พฤ.",
+                  "fri": "ศ.",
+                  "sat": "ส."
+                },
+                "narrow": {
+                  "sun": "อา",
+                  "mon": "จ",
+                  "tue": "อ",
+                  "wed": "พ",
+                  "thu": "พฤ",
+                  "fri": "ศ",
+                  "sat": "ส"
+                },
+                "short": {
+                  "sun": "อา.",
+                  "mon": "จ.",
+                  "tue": "อ.",
+                  "wed": "พ.",
+                  "thu": "พฤ.",
+                  "fri": "ศ.",
+                  "sat": "ส."
+                },
+                "wide": {
+                  "sun": "วันอาทิตย์",
+                  "mon": "วันจันทร์",
+                  "tue": "วันอังคาร",
+                  "wed": "วันพุธ",
+                  "thu": "วันพฤหัสบดี",
+                  "fri": "วันศุกร์",
+                  "sat": "วันเสาร์"
+                }
+              }
+            },
+            "quarters": {
+              "format": {
+                "abbreviated": {
+                  "1": "ไตรมาส 1",
+                  "2": "ไตรมาส 2",
+                  "3": "ไตรมาส 3",
+                  "4": "ไตรมาส 4"
+                },
+                "narrow": {
+                  "1": "1",
+                  "2": "2",
+                  "3": "3",
+                  "4": "4"
+                },
+                "wide": {
+                  "1": "ไตรมาส 1",
+                  "2": "ไตรมาส 2",
+                  "3": "ไตรมาส 3",
+                  "4": "ไตรมาส 4"
+                }
+              },
+              "stand-alone": {
+                "abbreviated": {
+                  "1": "ไตรมาส 1",
+                  "2": "ไตรมาส 2",
+                  "3": "ไตรมาส 3",
+                  "4": "ไตรมาส 4"
+                },
+                "narrow": {
+                  "1": "1",
+                  "2": "2",
+                  "3": "3",
+                  "4": "4"
+                },
+                "wide": {
+                  "1": "ไตรมาส 1",
+                  "2": "ไตรมาส 2",
+                  "3": "ไตรมาส 3",
+                  "4": "ไตรมาส 4"
+                }
+              }
+            },
+            "dayPeriods": {
+              "format": {
+                "abbreviated": {
+                  "midnight": "เที่ยงคืน",
+                  "am": "AM",
+                  "noon": "เที่ยง",
+                  "pm": "PM",
+                  "morning1": "ในตอนเช้า",
+                  "afternoon1": "ในตอนบ่าย",
+                  "afternoon2": "บ่าย",
+                  "evening1": "ในตอนเย็น",
+                  "evening2": "ค่ำ",
+                  "night1": "กลางคืน"
+                },
+                "narrow": {
+                  "midnight": "เที่ยงคืน",
+                  "am": "a",
+                  "noon": "เที่ยง",
+                  "pm": "p",
+                  "morning1": "เช้า",
+                  "afternoon1": "เที่ยง",
+                  "afternoon2": "บ่าย",
+                  "evening1": "เย็น",
+                  "evening2": "ค่ำ",
+                  "night1": "กลางคืน"
+                },
+                "wide": {
+                  "midnight": "เที่ยงคืน",
+                  "am": "ก่อนเที่ยง",
+                  "noon": "เที่ยง",
+                  "pm": "หลังเที่ยง",
+                  "morning1": "ในตอนเช้า",
+                  "afternoon1": "ในตอนบ่าย",
+                  "afternoon2": "บ่าย",
+                  "evening1": "ในตอนเย็น",
+                  "evening2": "ค่ำ",
+                  "night1": "กลางคืน"
+                }
+              },
+              "stand-alone": {
+                "abbreviated": {
+                  "midnight": "เที่ยงคืน",
+                  "am": "ก่อนเที่ยง",
+                  "noon": "เที่ยง",
+                  "pm": "หลังเที่ยง",
+                  "morning1": "ตอนเช้า",
+                  "afternoon1": "ตอนบ่าย",
+                  "afternoon2": "บ่าย",
+                  "evening1": "ตอนเย็น",
+                  "evening2": "ค่ำ",
+                  "night1": "กลางคืน"
+                },
+                "narrow": {
+                  "midnight": "เที่ยงคืน",
+                  "am": "ก่อนเที่ยง",
+                  "noon": "เที่ยง",
+                  "pm": "หลังเที่ยง",
+                  "morning1": "เช้า",
+                  "afternoon1": "ช่วงเที่ยง",
+                  "afternoon2": "บ่าย",
+                  "evening1": "เย็น",
+                  "evening2": "ค่ำ",
+                  "night1": "กลางคืน"
+                },
+                "wide": {
+                  "midnight": "เที่ยงคืน",
+                  "am": "ก่อนเที่ยง",
+                  "noon": "เที่ยง",
+                  "pm": "หลังเที่ยง",
+                  "morning1": "ในตอนเช้า",
+                  "afternoon1": "ในตอนบ่าย",
+                  "afternoon2": "บ่าย",
+                  "evening1": "ในตอนเย็น",
+                  "evening2": "ค่ำ",
+                  "night1": "กลางคืน"
+                }
+              }
+            },
+            "eras": {
+              "eraNames": {
+                "0": "ปีก่อนคริสตกาล",
+                "0-alt-variant": "ก่อนสามัญศักราช",
+                "1": "คริสต์ศักราช",
+                "1-alt-variant": "สามัญศักราช"
+              },
+              "eraAbbr": {
+                "0": "ก่อน ค.ศ.",
+                "0-alt-variant": "ก่อน ส.ศ.",
+                "1": "ค.ศ.",
+                "1-alt-variant": "ส.ศ."
+              },
+              "eraNarrow": {
+                "0": "ก่อน ค.ศ.",
+                "0-alt-variant": "ก.ส.ศ.",
+                "1": "ค.ศ.",
+                "1-alt-variant": "ส.ศ."
+              }
+            },
+            "dateFormats": {
+              "full": "y MMMM d, EEEE",
+              "long": "y MMMM d",
+              "medium": "y MMM d",
+              "short": "y-MM-dd"
+            },
+            "dateSkeletons": {
+              "full": "yMMMMEEEEd",
+              "long": "yMMMMd",
+              "medium": "yMMMd",
+              "short": "yMMdd"
+            },
+            "timeFormats": {
+              "full": "HH:mm:ss zzzz",
+              "long": "HH:mm:ss z",
+              "medium": "HH:mm:ss",
+              "short": "HH:mm"
+            },
+            "timeSkeletons": {
+              "full": "HHmmsszzzz",
+              "long": "HHmmssz",
+              "medium": "HHmmss",
+              "short": "HHmm"
+            },
+            "dateTimeFormats": {
+              "full": "{1} {0}",
+              "long": "{1} {0}",
+              "medium": "{1} {0}",
+              "short": "{1} {0}",
+              "availableFormats": {
+                "Bh": "h B",
+                "Bhm": "h:mm B",
+                "Bhms": "h:mm:ss B",
+                "d": "d",
+                "E": "ccc",
+                "EBhm": "E h:mm B",
+                "EBhms": "E h:mm:ss B",
+                "Ed": "d, E",
+                "Ehm": "E h:mm a",
+                "EHm": "E HH:mm",
+                "Ehms": "E h:mm:ss a",
+                "EHms": "E HH:mm:ss",
+                "Gy": "G y",
+                "GyMd": "G y-MM-dd",
+                "GyMMM": "G y MMM",
+                "GyMMMd": "G y MMM d",
+                "GyMMMEd": "G y MMM d, E",
+                "h": "h a",
+                "H": "HH",
+                "hm": "h:mm a",
+                "Hm": "HH:mm",
+                "hms": "h:mm:ss a",
+                "Hms": "HH:mm:ss",
+                "hmsv": "h:mm:ss a v",
+                "Hmsv": "HH:mm:ss v",
+                "hmv": "h:mm a v",
+                "Hmv": "HH:mm v",
+                "M": "L",
+                "Md": "MM-dd",
+                "MEd": "MM-dd, E",
+                "MMM": "LLL",
+                "MMMd": "MMM d",
+                "MMMEd": "MMM d",
+                "MMMMd": "MMMM d",
+                "MMMMW-count-other": "MMMM 'week' W",
+                "ms": "mm:ss",
+                "y": "y",
+                "yM": "y-MM",
+                "yMd": "y-MM-dd",
+                "yMEd": "y-MM-dd, E",
+                "yMMM": "y MMM",
+                "yMMMd": "y MMM d",
+                "yMMMEd": "y MMM d, E",
+                "yMMMM": "y MMMM",
+                "yQQQ": "y QQQ",
+                "yQQQQ": "y QQQQ",
+                "yw-count-other": "Y 'week' w"
+              },
+              "appendItems": {
+                "Day": "{0} ({2}: {1})",
+                "Day-Of-Week": "{0} {1}",
+                "Era": "{1} {0}",
+                "Hour": "{0} ({2}: {1})",
+                "Minute": "{0} ({2}: {1})",
+                "Month": "{0} ({2}: {1})",
+                "Quarter": "{0} ({2}: {1})",
+                "Second": "{0} ({2}: {1})",
+                "Timezone": "{0} {1}",
+                "Week": "{0} ({2}: {1})",
+                "Year": "{1} {0}"
+              },
+              "intervalFormats": {
+                "intervalFormatFallback": "{0} – {1}",
+                "Bh": {
+                  "B": "h B – h B",
+                  "h": "h–h B"
+                },
+                "Bhm": {
+                  "B": "h:mm B – h:mm B",
+                  "h": "h:mm–h:mm B",
+                  "m": "h:mm–h:mm B"
+                },
+                "d": {
+                  "d": "d–d"
+                },
+                "Gy": {
+                  "G": "G y – G y",
+                  "y": "y–y"
+                },
+                "GyM": {
+                  "G": "G y-MM – G y-MM",
+                  "M": "G y-MM – y-MM",
+                  "y": "G y-MM – y-MM"
+                },
+                "GyMd": {
+                  "d": "G y-MM-dd – y-MM-dd",
+                  "G": "G y-MM-dd – G y-MM-dd",
+                  "M": "G y-MM-dd – y-MM-dd",
+                  "y": "G y-MM-dd – y-MM-dd"
+                },
+                "GyMEd": {
+                  "d": "G y-MM-dd, E – y-MM-dd, E",
+                  "G": "G y-MM-dd, E – G y-MM-dd, E",
+                  "M": "G y-MM-dd, E – y-MM-dd, E",
+                  "y": "G y-MM-dd, E – y-MM-dd, E"
+                },
+                "GyMMM": {
+                  "G": "G y MMM – G y MMM",
+                  "M": "G y MMM–MMM",
+                  "y": "G y MMM – y MMM"
+                },
+                "GyMMMd": {
+                  "d": "G y MMM d–d",
+                  "G": "G y MMM d – G y MMM d",
+                  "M": "G y MMM d – MMM d",
+                  "y": "G y MMM d – y MMM d"
+                },
+                "GyMMMEd": {
+                  "d": "G y MMM d, E – MMM d, E",
+                  "G": "G y MMM d, E – G y MMM d, E",
+                  "M": "G y MMM d, E – MMM d, E",
+                  "y": "G y MMM d, E – y MMM d, E"
+                },
+                "h": {
+                  "a": "h a – h a",
+                  "h": "h–h a"
+                },
+                "H": {
+                  "H": "HH–HH"
+                },
+                "hm": {
+                  "a": "h:mm a – h:mm a",
+                  "h": "h:mm–h:mm a",
+                  "m": "h:mm–h:mm a"
+                },
+                "Hm": {
+                  "H": "HH:mm–HH:mm",
+                  "m": "HH:mm–HH:mm"
+                },
+                "hmv": {
+                  "a": "h:mm a – h:mm a v",
+                  "h": "h:mm–h:mm a v",
+                  "m": "h:mm–h:mm a v"
+                },
+                "Hmv": {
+                  "H": "HH:mm–HH:mm v",
+                  "m": "HH:mm–HH:mm v"
+                },
+                "hv": {
+                  "a": "h a – h a v",
+                  "h": "h–h a v"
+                },
+                "Hv": {
+                  "H": "HH–HH v"
+                },
+                "M": {
+                  "M": "MM–MM"
+                },
+                "Md": {
+                  "d": "MM-dd – MM-dd",
+                  "M": "MM-dd – MM-dd"
+                },
+                "MEd": {
+                  "d": "MM-dd, E – MM-dd, E",
+                  "M": "MM-dd, E – MM-dd, E"
+                },
+                "MMM": {
+                  "M": "LLL–LLL"
+                },
+                "MMMd": {
+                  "d": "MMM d–d",
+                  "M": "MMM d – MMM d"
+                },
+                "MMMEd": {
+                  "d": "MMM d, E – MMM d, E",
+                  "M": "MMM d, E – MMM d, E"
+                },
+                "y": {
+                  "y": "y–y"
+                },
+                "yM": {
+                  "M": "y-MM – y-MM",
+                  "y": "y-MM – y-MM"
+                },
+                "yMd": {
+                  "d": "y-MM-dd – y-MM-dd",
+                  "M": "y-MM-dd – y-MM-dd",
+                  "y": "y-MM-dd – y-MM-dd"
+                },
+                "yMEd": {
+                  "d": "y-MM-dd, E – y-MM-dd, E",
+                  "M": "y-MM-dd, E – y-MM-dd, E",
+                  "y": "y-MM-dd, E – y-MM-dd, E"
+                },
+                "yMMM": {
+                  "M": "y MMM–MMM",
+                  "y": "y MMM – y MMM"
+                },
+                "yMMMd": {
+                  "d": "y MMM d–d",
+                  "M": "y MMM d – MMM d",
+                  "y": "y MMM d – y MMM d"
+                },
+                "yMMMEd": {
+                  "d": "y MMM d, E – MMM d, E",
+                  "M": "y MMM d, E – MMM d, E",
+                  "y": "y MMM d, E – y MMM d, E"
+                },
+                "yMMMM": {
+                  "M": "y MMMM–MMMM",
+                  "y": "y MMMM – y MMMM"
+                }
+              }
+            },
+            "dateTimeFormats-atTime": {
+              "standard": {
+                "full": "{1} {0}",
+                "long": "{1} {0}",
                 "medium": "{1} {0}",
                 "short": "{1} {0}"
               }

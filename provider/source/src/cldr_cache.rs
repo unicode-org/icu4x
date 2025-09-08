@@ -4,35 +4,37 @@
 
 #![allow(dead_code)] // features
 
+use crate::cldr_serde::eras::EraData;
+use crate::datetime::DatagenCalendar;
 use crate::source::SerdeCache;
 use crate::CoverageLevel;
 use icu::locale::provider::{
-    LikelySubtagsExtendedV1Marker, LikelySubtagsForLanguageV1Marker,
-    LikelySubtagsForScriptRegionV1Marker,
+    LocaleLikelySubtagsExtendedV1, LocaleLikelySubtagsLanguageV1, LocaleLikelySubtagsScriptRegionV1,
 };
 use icu::locale::LocaleExpander;
 use icu_provider::prelude::*;
 use icu_provider::DataError;
-use icu_provider_adapters::fixed::FixedProvider;
-use icu_provider_adapters::fork::ForkByMarkerProvider;
-use icu_provider_adapters::make_forking_provider;
-use std::collections::BTreeSet;
+use std::collections::BTreeMap;
 use std::collections::HashSet;
 use std::fmt::Debug;
 use std::str::FromStr;
 use std::sync::OnceLock;
+use writeable::Writeable;
 
 #[derive(Debug)]
 pub(crate) struct CldrCache {
     pub(crate) serde_cache: SerdeCache,
     dir_suffix: OnceLock<Result<&'static str, DataError>>,
     extended_locale_expander: OnceLock<Result<LocaleExpander, DataError>>,
-    modern_japanese_eras: OnceLock<Result<BTreeSet<String>, DataError>>,
+    #[expect(clippy::type_complexity)]
+    pub(crate) calendar_eras:
+        OnceLock<Result<BTreeMap<DatagenCalendar, Vec<(usize, EraData)>>, DataError>>,
     #[cfg(feature = "experimental")]
     // used by transforms/mod.rs
     pub(crate) transforms: OnceLock<
         Result<std::sync::Mutex<icu::experimental::transliterate::RuleCollection>, DataError>,
     >,
+    pub(crate) tz_caches: crate::time_zones::Caches,
 }
 
 impl CldrCache {
@@ -41,9 +43,10 @@ impl CldrCache {
             serde_cache,
             dir_suffix: Default::default(),
             extended_locale_expander: Default::default(),
-            modern_japanese_eras: Default::default(),
+            calendar_eras: Default::default(),
             #[cfg(feature = "experimental")]
             transforms: Default::default(),
+            tz_caches: Default::default(),
         }
     }
 
@@ -91,7 +94,7 @@ impl CldrCache {
         levels: impl IntoIterator<Item = CoverageLevel>,
     ) -> Result<Vec<DataLocale>, DataError> {
         let levels = levels.into_iter().collect::<HashSet<_>>();
-        Ok(self
+        let mut locales: Vec<DataLocale> = self
             .serde_cache
             .read_and_parse_json::<crate::cldr_serde::coverage_levels::Resource>(
                 "cldr-core/coverageLevels.json",
@@ -103,7 +106,12 @@ impl CldrCache {
             .map(Into::into)
             // `und` needs to be part of every set
             .chain([Default::default()])
-            .collect())
+            .collect();
+        locales.sort_by(|a, b| {
+            let b = b.write_to_string();
+            a.strict_cmp(b.as_bytes())
+        });
+        Ok(locales)
     }
 
     pub(crate) fn dir_suffix(&self) -> Result<&'static str, DataError> {
@@ -116,57 +124,62 @@ impl CldrCache {
         })
     }
 
-    fn extended_locale_expander(&self) -> Result<&LocaleExpander, DataError> {
+    pub(crate) fn extended_locale_expander(&self) -> Result<&LocaleExpander, DataError> {
         use super::locale::likely_subtags::*;
         self.extended_locale_expander
             .get_or_init(|| {
-                let common_data =
-                    transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_common());
-                let extended_data =
-                    transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_extended());
-                let provider = make_forking_provider!(
-                    ForkByMarkerProvider::new,
-                    [
-                        FixedProvider::<LikelySubtagsForLanguageV1Marker>::from_owned(
-                            common_data.as_langs(),
-                        ),
-                        FixedProvider::<LikelySubtagsForScriptRegionV1Marker>::from_owned(
-                            common_data.as_script_region(),
-                        ),
-                        FixedProvider::<LikelySubtagsExtendedV1Marker>::from_owned(
-                            extended_data.as_extended()
-                        ),
-                    ]
-                );
-                LocaleExpander::try_new_extended_unstable(&provider.as_downcasting()).map_err(|e| {
-                    DataError::custom("creating LocaleExpander in CldrCache")
-                        .with_display_context(&e)
-                })
-            })
-            .as_ref()
-            .map_err(|&e| e)
-    }
-
-    /// Get the list of eras in the japanese calendar considered "modern" (post-Meiji, inclusive)
-    ///
-    /// These will be in CLDR era index form; these are usually numbers
-    pub(crate) fn modern_japanese_eras(&self) -> Result<&BTreeSet<String>, DataError> {
-        self.modern_japanese_eras
-            .get_or_init(|| {
-                let era_dates: &super::cldr_serde::japanese::Resource = self
-                    .core()
-                    .read_and_parse("supplemental/calendarData.json")?;
-                let mut set = BTreeSet::<String>::new();
-                for (era_index, date) in era_dates.supplemental.calendar_data.japanese.eras.iter() {
-                    let Some(start_date) = date.start.as_ref() else {
-                        continue;
-                    };
-
-                    if start_date.year >= 1868 {
-                        set.insert(era_index.into());
+                use icu_provider::prelude::*;
+                struct Provider {
+                    common: TransformResult,
+                    extended: TransformResult,
+                }
+                impl DataProvider<LocaleLikelySubtagsLanguageV1> for Provider {
+                    fn load(
+                        &self,
+                        _req: DataRequest,
+                    ) -> Result<DataResponse<LocaleLikelySubtagsLanguageV1>, DataError>
+                    {
+                        Ok(DataResponse {
+                            payload: DataPayload::from_owned(self.common.as_langs()),
+                            metadata: Default::default(),
+                        })
                     }
                 }
-                Ok(set)
+                impl DataProvider<LocaleLikelySubtagsScriptRegionV1> for Provider {
+                    fn load(
+                        &self,
+                        _req: DataRequest,
+                    ) -> Result<DataResponse<LocaleLikelySubtagsScriptRegionV1>, DataError>
+                    {
+                        Ok(DataResponse {
+                            payload: DataPayload::from_owned(self.common.as_script_region()),
+                            metadata: Default::default(),
+                        })
+                    }
+                }
+                impl DataProvider<LocaleLikelySubtagsExtendedV1> for Provider {
+                    fn load(
+                        &self,
+                        _req: DataRequest,
+                    ) -> Result<DataResponse<LocaleLikelySubtagsExtendedV1>, DataError>
+                    {
+                        Ok(DataResponse {
+                            payload: DataPayload::from_owned(self.extended.as_extended()),
+                            metadata: Default::default(),
+                        })
+                    }
+                }
+                let common =
+                    transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_common());
+                let extended =
+                    transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_extended());
+
+                LocaleExpander::try_new_extended_unstable(&Provider { common, extended }).map_err(
+                    |e| {
+                        DataError::custom("creating LocaleExpander in CldrCache")
+                            .with_display_context(&e)
+                    },
+                )
             })
             .as_ref()
             .map_err(|&e| e)
@@ -175,7 +188,7 @@ impl CldrCache {
     /// CLDR sometimes stores locales with default scripts.
     /// Add in the likely script here to make that data reachable.
     fn add_script_extended(&self, locale: &DataLocale) -> Result<Option<DataLocale>, DataError> {
-        if locale.language.is_default() || locale.script.is_some() {
+        if locale.language.is_unknown() || locale.script.is_some() {
             return Ok(None);
         }
         let mut new_langid =
@@ -195,7 +208,7 @@ impl CldrCache {
     /// if the script is the default for the language.
     /// Perform that normalization mapping here.
     fn remove_script_extended(&self, locale: &DataLocale) -> Result<Option<DataLocale>, DataError> {
-        if locale.language.is_default() || locale.script.is_none() {
+        if locale.language.is_unknown() || locale.script.is_none() {
             return Ok(None);
         }
         let mut langid =

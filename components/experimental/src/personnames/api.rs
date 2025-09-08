@@ -49,6 +49,8 @@ pub enum PersonNamesFormatterError {
     Pattern(icu_pattern::Error),
 }
 
+impl core::error::Error for PersonNamesFormatterError {}
+
 impl From<DataError> for PersonNamesFormatterError {
     fn from(e: DataError) -> Self {
         PersonNamesFormatterError::Data(e)
@@ -325,7 +327,7 @@ pub enum FormattingFormality {
 /// Person name formatter options.
 #[derive(Clone, Eq, PartialEq, Debug)]
 pub struct PersonNamesFormatterOptions {
-    /// TODO: the target locale should be maximized when passed into the formatter.
+    // TODO: the target locale should be maximized when passed into the formatter.
     pub target_locale: Locale,
     pub order: FormattingOrder,
     pub length: FormattingLength,
@@ -343,9 +345,9 @@ impl PersonNamesFormatterOptions {
         usage: FormattingUsage,
         formality: FormattingFormality,
     ) -> Self {
-        let lc = icu_locale::LocaleExpander::new();
+        let lc = icu_locale::LocaleExpander::new_extended();
         let mut final_locale = target_locale.clone();
-        lc.maximize(&mut final_locale);
+        lc.maximize(&mut final_locale.id);
         Self {
             target_locale: final_locale,
             order,

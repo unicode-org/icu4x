@@ -2,29 +2,28 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::extensions::{self, Extensions};
-use crate::parser::errors::ParseError;
-use crate::parser::{parse_language_identifier_from_iter, ParserMode, SubtagIterator};
-use crate::{
-    subtags::{self, Subtag},
-    Locale,
-};
+use crate::extensions;
+use crate::parser::{ParseError, ParserMode, SubtagIterator};
+use crate::subtags::{self, Subtag};
+#[cfg(feature = "alloc")]
+use crate::Locale;
 
 use super::parse_locale_with_single_variant_single_keyword_unicode_extension_from_iter;
 
+#[cfg(feature = "alloc")]
 pub fn parse_locale(t: &[u8]) -> Result<Locale, ParseError> {
     let mut iter = SubtagIterator::new(t);
 
-    let id = parse_language_identifier_from_iter(&mut iter, ParserMode::Locale)?;
+    let id = super::parse_language_identifier_from_iter(&mut iter, ParserMode::Locale)?;
     let extensions = if iter.peek().is_some() {
-        Extensions::try_from_iter(&mut iter)?
+        extensions::Extensions::try_from_iter(&mut iter)?
     } else {
-        Extensions::default()
+        extensions::Extensions::default()
     };
     Ok(Locale { id, extensions })
 }
 
-#[allow(clippy::type_complexity)]
+#[expect(clippy::type_complexity)]
 pub const fn parse_locale_with_single_variant_single_keyword_unicode_keyword_extension(
     t: &[u8],
     mode: ParserMode,

@@ -6,7 +6,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -29,17 +31,54 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
+ *
+ * See the [Rust documentation for `ScriptWithExtensions`](https://docs.rs/icu/2.0.0/icu/properties/script/struct.ScriptWithExtensions.html) for more information.
+ */
 class ScriptWithExtensions {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::ScriptWithExtensions>, icu4x::DataError> create(const icu4x::DataProvider& provider);
+  /**
+   * Create a map for the `Script`/`Script_Extensions` properties, using compiled data.
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/properties/script/struct.ScriptWithExtensions.html#method.new) for more information.
+   */
+  inline static std::unique_ptr<icu4x::ScriptWithExtensions> create();
 
-  inline uint16_t get_script_val(uint32_t code_point) const;
+  /**
+   * Create a map for the `Script`/`Script_Extensions` properties, using compiled data.
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/properties/script/struct.ScriptWithExtensions.html#method.new) for more information.
+   */
+  inline static diplomat::result<std::unique_ptr<icu4x::ScriptWithExtensions>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
-  inline bool has_script(uint32_t code_point, uint16_t script) const;
+  /**
+   * Get the Script property value for a code point
+   *
+   * See the [Rust documentation for `get_script_val`](https://docs.rs/icu/2.0.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
+   */
+  inline uint16_t get_script_val(char32_t ch) const;
 
+  /**
+   * Check if the Script_Extensions property of the given code point covers the given script
+   *
+   * See the [Rust documentation for `has_script`](https://docs.rs/icu/2.0.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
+   */
+  inline bool has_script(char32_t ch, uint16_t script) const;
+
+  /**
+   * Borrow this object for a slightly faster variant with more operations
+   *
+   * See the [Rust documentation for `as_borrowed`](https://docs.rs/icu/2.0.0/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed) for more information.
+   */
   inline std::unique_ptr<icu4x::ScriptWithExtensionsBorrowed> as_borrowed() const;
 
+  /**
+   * Get a list of ranges of code points that contain this script in their Script_Extensions values
+   *
+   * See the [Rust documentation for `get_script_extensions_ranges`](https://docs.rs/icu/2.0.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges) for more information.
+   */
   inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_script(uint16_t script) const;
 
   inline const icu4x::capi::ScriptWithExtensions* AsFFI() const;

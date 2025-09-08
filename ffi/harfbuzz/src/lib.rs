@@ -4,7 +4,7 @@
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(not(any(test, doc)), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -14,6 +14,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]
@@ -23,7 +24,7 @@
 //!
 //! # Examples
 //!
-//! See `tutorials/rust/harfbuzz` in the ICU4X repo for an example.
+//! See `examples/cargo/harfbuzz` in the ICU4X repo for an example.
 //!
 //! If you wish to load data dynamically, you can individually load [`GeneralCategoryData`], [`CombiningClassData`],
 //! [`MirroringData`], [`ScriptData`], [`ComposeData`], [`DecomposeData`] and set them as the relevant funcs.
@@ -40,17 +41,14 @@ use icu_normalizer::properties::CanonicalDecomposition;
 use icu_normalizer::properties::CanonicalDecompositionBorrowed;
 use icu_normalizer::properties::Decomposed;
 use icu_normalizer::provider::{
-    CanonicalCompositionsV1Marker, CanonicalDecompositionDataV1Marker,
-    CanonicalDecompositionTablesV1Marker, NonRecursiveDecompositionSupplementV1Marker,
+    NormalizerNfcV1, NormalizerNfdDataV1, NormalizerNfdSupplementV1, NormalizerNfdTablesV1,
 };
-use icu_properties::bidi::BidiAuxiliaryProperties;
-use icu_properties::props::{GeneralCategory, Script};
+use icu_properties::props::{BidiMirroringGlyph, GeneralCategory, Script};
 use icu_properties::provider::{
-    BidiAuxiliaryPropertiesV1Marker, GeneralCategoryV1Marker, ScriptV1Marker,
-    ScriptValueToShortNameV1Marker,
+    PropertyEnumBidiMirroringGlyphV1, PropertyEnumGeneralCategoryV1, PropertyEnumScriptV1,
+    PropertyNameShortScriptV1,
 };
-use icu_properties::script::ScriptMapper;
-use icu_properties::CodePointMapData;
+use icu_properties::{CodePointMapData, PropertyNamesShort};
 use icu_provider::prelude::*;
 
 use harfbuzz_traits::{
@@ -86,7 +84,7 @@ impl GeneralCategoryFunc for AllUnicodeFuncs {
 impl CombiningClassFunc for AllUnicodeFuncs {
     #[inline]
     fn combining_class(&self, ch: char) -> u8 {
-        CanonicalCombiningClassMapBorrowed::new().get(ch).0
+        CanonicalCombiningClassMapBorrowed::new().get_u8(ch)
     }
 }
 
@@ -94,8 +92,8 @@ impl CombiningClassFunc for AllUnicodeFuncs {
 impl MirroringFunc for AllUnicodeFuncs {
     #[inline]
     fn mirroring(&self, ch: char) -> char {
-        BidiAuxiliaryProperties::new()
-            .get32_mirroring_props(ch.into())
+        CodePointMapData::<BidiMirroringGlyph>::new()
+            .get(ch)
             .mirroring_glyph
             .unwrap_or(ch)
     }
@@ -106,8 +104,8 @@ impl ScriptFunc for AllUnicodeFuncs {
     #[inline]
     fn script(&self, ch: char) -> [u8; 4] {
         let script = CodePointMapData::<Script>::new().get(ch);
-        ScriptMapper::new()
-            .get(script)
+        PropertyNamesShort::<Script>::new()
+            .get_locale_script(script)
             .unwrap_or(icu_locale_core::subtags::script!("Zzzz"))
             .into_raw()
     }
@@ -144,21 +142,15 @@ impl GeneralCategoryData {
     /// Construct a new [`GeneralCategoryData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<GeneralCategoryV1Marker> + ?Sized,
+        D: DataProvider<PropertyEnumGeneralCategoryV1> + ?Sized,
     {
         let gc = CodePointMapData::<GeneralCategory>::try_new_unstable(provider)?;
 
         Ok(Self { gc })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl icu_provider::any::AnyProvider + ?Sized),
-    ) -> Result<Self, DataError> {
-        Self::try_new_unstable(&provider.as_downcasting())
-    }
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
@@ -222,21 +214,15 @@ impl CombiningClassData {
     /// Construct a new [`CombiningClassData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalDecompositionDataV1Marker> + ?Sized,
+        D: DataProvider<NormalizerNfdDataV1> + ?Sized,
     {
         let ccc = CanonicalCombiningClassMap::try_new_unstable(provider)?;
 
         Ok(Self { ccc })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl icu_provider::any::AnyProvider + ?Sized),
-    ) -> Result<Self, DataError> {
-        Self::try_new_unstable(&provider.as_downcasting())
-    }
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
@@ -247,7 +233,7 @@ impl CombiningClassData {
 impl CombiningClassFunc for CombiningClassData {
     #[inline]
     fn combining_class(&self, ch: char) -> u8 {
-        self.ccc.as_borrowed().get(ch).0
+        self.ccc.as_borrowed().get_u8(ch)
     }
 }
 
@@ -256,28 +242,22 @@ impl CombiningClassFunc for CombiningClassData {
 /// Can be passed to the `harfbuzz` crate's `AllUnicodeFuncsBuilder`.
 #[derive(Debug)]
 pub struct MirroringData {
-    bidi: BidiAuxiliaryProperties,
+    bidi: CodePointMapData<BidiMirroringGlyph>,
 }
 
 impl MirroringData {
     /// Construct a new [`MirroringData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<BidiAuxiliaryPropertiesV1Marker> + ?Sized,
+        D: DataProvider<PropertyEnumBidiMirroringGlyphV1> + ?Sized,
     {
-        let bidi = BidiAuxiliaryProperties::try_new_unstable(provider)?;
+        let bidi = CodePointMapData::try_new_unstable(provider)?;
 
         Ok(Self { bidi })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl icu_provider::any::AnyProvider + ?Sized),
-    ) -> Result<Self, DataError> {
-        Self::try_new_unstable(&provider.as_downcasting())
-    }
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
@@ -290,7 +270,7 @@ impl MirroringFunc for MirroringData {
     fn mirroring(&self, ch: char) -> char {
         self.bidi
             .as_borrowed()
-            .get32_mirroring_props(ch.into())
+            .get(ch)
             .mirroring_glyph
             .unwrap_or(ch)
     }
@@ -302,31 +282,25 @@ impl MirroringFunc for MirroringData {
 #[derive(Debug)]
 pub struct ScriptData {
     script: CodePointMapData<Script>,
-    script_mapper: ScriptMapper,
+    script_names: PropertyNamesShort<Script>,
 }
 
 impl ScriptData {
     /// Construct a new [`ScriptData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<ScriptValueToShortNameV1Marker> + DataProvider<ScriptV1Marker> + ?Sized,
+        D: DataProvider<PropertyEnumScriptV1> + DataProvider<PropertyNameShortScriptV1> + ?Sized,
     {
         let script_set = CodePointMapData::<Script>::try_new_unstable(provider)?;
-        let script_mapper = ScriptMapper::try_new_unstable(provider)?;
+        let script_names = PropertyNamesShort::try_new_unstable(provider)?;
         Ok(Self {
             script: script_set,
-            script_mapper,
+            script_names,
         })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl icu_provider::any::AnyProvider + ?Sized),
-    ) -> Result<Self, DataError> {
-        Self::try_new_unstable(&provider.as_downcasting())
-    }
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
@@ -338,9 +312,9 @@ impl ScriptFunc for ScriptData {
     #[inline]
     fn script(&self, ch: char) -> [u8; 4] {
         let script = self.script.as_borrowed().get(ch);
-        self.script_mapper
+        self.script_names
             .as_borrowed()
-            .get(script)
+            .get_locale_script(script)
             .unwrap_or(icu_locale_core::subtags::script!("Zzzz"))
             .into_raw()
     }
@@ -358,21 +332,15 @@ impl ComposeData {
     /// Construct a new [`ComposeData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalCompositionsV1Marker> + ?Sized,
+        D: DataProvider<NormalizerNfcV1> + ?Sized,
     {
         let comp = CanonicalComposition::try_new_unstable(provider)?;
 
         Ok(Self { comp })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl icu_provider::any::AnyProvider + ?Sized),
-    ) -> Result<Self, DataError> {
-        Self::try_new_unstable(&provider.as_downcasting())
-    }
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
@@ -399,9 +367,9 @@ impl DecomposeData {
     /// Construct a new [`DecomposeData`] from a data provider.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<NonRecursiveDecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
+        D: DataProvider<NormalizerNfdDataV1>
+            + DataProvider<NormalizerNfdSupplementV1>
+            + DataProvider<NormalizerNfdTablesV1>
             + ?Sized,
     {
         let decomp = CanonicalDecomposition::try_new_unstable(provider)?;
@@ -409,14 +377,8 @@ impl DecomposeData {
         Ok(Self { decomp })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl icu_provider::any::AnyProvider + ?Sized),
-    ) -> Result<Self, DataError> {
-        Self::try_new_unstable(&provider.as_downcasting())
-    }
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::try_new_unstable)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {

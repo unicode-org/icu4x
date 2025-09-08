@@ -20,7 +20,7 @@ exit_on_error true
 
 # 100 KiB, working around a bug in older rustc
 # https://github.com/unicode-org/icu4x/issues/2753
-set_env RUSTFLAGS "-Clink-args=-zstack-size=100000"
+set_env RUSTFLAGS "-Clink-args=-zstack-size=100000 --cfg getrandom_backend=\"wasm_js\" -Zwasm-c-abi=spec"
 command = set "build -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --target wasm32-unknown-unknown --profile=release-opt-size --examples --workspace --features serde --exclude icu_provider_export --exclude icu_capi"
 exec --fail-on-error cargo +${PINNED_CI_NIGHTLY} %{command}
 # Re-run the build command only to generate the JSON output

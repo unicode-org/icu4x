@@ -6,7 +6,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -17,9 +19,18 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `LineBreakIterator`](https://docs.rs/icu/2.0.0/icu/segmenter/iterators/struct.LineBreakIterator.html) for more information.
+ */
 class LineBreakIteratorUtf16 {
 public:
 
+  /**
+   * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
+   * out of range of a 32-bit signed integer.
+   *
+   * See the [Rust documentation for `next`](https://docs.rs/icu/2.0.0/icu/segmenter/iterators/struct.LineBreakIterator.html#method.next) for more information.
+   */
   inline int32_t next();
 
   inline const icu4x::capi::LineBreakIteratorUtf16* AsFFI() const;

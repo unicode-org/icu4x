@@ -22,5 +22,4 @@ icu4x_PluralCategory_get_for_cldr_string_mv1_result icu4x_PluralCategory_get_for
 
 
 
-
 #endif // PluralCategory_H

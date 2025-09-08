@@ -25,12 +25,12 @@ script = '''
 exit_on_error true
 
 # Check files matching these patterns.
-glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml" "./**/*.rst" "./**/*.bat" "./**/*.c" "./**/*.cpp"
+glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml" "./**/*.rst" "./**/*.bat" "./**/*.c" "./**/*.cpp" "./**/*.hpp" "./**/*.h" "./**/*.mjs" "./**/*.ts" "./**/*.*.dart"
 
 files = exec --fail-on-error git ls-files --cached --others --exclude-standard
 
 # Skip the files matching these patterns.
-glob_skip_pattern_array = array "**/target/**/*" "**/node_modules/**/*" "**/data/**/*" "tutorials/gn/vendor/**/*" "tutorials/gn/third_party_tools/**/*" "ffi/capi/tests/tinyc/*/baked_data/**/*"
+glob_skip_pattern_array = array "ffi/capi/bindings/**/*" "ffi/npm/lib/**/*" "ffi/dart/lib/src/**/*" "tools/web-demo/gen/**/*" "**/target/**/*" "**/node_modules/**/*" "**/data/**/*" "examples/gn/vendor/**/*" "examples/gn/third_party_tools/**/*" "ffi/capi/tests/tinyc/*/baked_data/**/*"
 
 blank_line = set ""
 
@@ -138,7 +138,7 @@ script = '''
 exit_on_error true
 
 glob_pattern = set "./**/Cargo.toml"
-glob_skip_pattern = array "tutorials/gn/**/*" "ffi/capi/tests/**/*" "tools/**/*" "**/fuzz/*" "**/target/**/*" "tutorials/**/*"
+glob_skip_pattern = array "ffi/capi/tests/**/*" "tools/**/*" "**/fuzz/*" "**/target/**/*" "examples/**/*"
 
 cargo_list = exec cargo --list
 if not contains ${cargo_list.stdout} "rdme"
@@ -208,7 +208,7 @@ exit_on_error true
 
 glob_pattern = set "./**/Cargo.toml"
 license = canonicalize LICENSE
-skip_path_prefixes = array "tutorials/gn/vendor/" "tutorials/gn/third_party_tools/" "tutorials/" "utils/calendrical_calculations" "tools/make"
+skip_path_prefixes = array "examples/" "utils/calendrical_calculations" "tools/make"
 
 handle = glob_array ${glob_pattern}
 for path in ${handle}
@@ -236,7 +236,7 @@ exit_on_error true
 glob_pattern = set "./**/Cargo.toml"
 license = canonicalize LICENSE
 license_text = readfile ${license}
-skip_path_prefixes = array "tutorials/gn/vendor/" "tutorials/gn/third_party_tools/" "tutorials/" "utils/calendrical_calculations" "tools/make"
+skip_path_prefixes = array "examples/" "utils/calendrical_calculations" "tools/make"
 
 handle = glob_array ${glob_pattern}
 for path in ${handle}
@@ -265,3 +265,35 @@ description = "Run the dependency checker"
 category = "ICU4X Development"
 command = "cargo"
 args = ["run", "--manifest-path", "tools/make/depcheck/Cargo.toml"]
+
+[tasks.codegen]
+description = "Run the codegen tool"
+category = "ICU4X Development"
+command = "cargo"
+args = ["run", "--manifest-path", "tools/make/codegen/Cargo.toml"]
+
+[tasks.codegen-check]
+description = "Check that the codegen is in sync with the output."
+category = "ICU4X Development"
+dependencies = [
+    "codegen"
+]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+output = exec git status --porcelain=v1
+output_length = length ${output.stdout}
+if greater_than ${output_length} 0
+    msg = array "" ""
+    array_push ${msg} "A generated code file is out-of-sync with its template"
+    array_push ${msg} ""
+    array_push ${msg} "If you modified a template file, please run `cargo make codegen`. If you edited an"
+    array_push ${msg} "output file directly, please update the corresponding template file."
+    array_push ${msg} ""
+    array_push ${msg} "The modified files were:"
+    array_push ${msg} "${output.stdout}"
+    msg = array_join ${msg} "\n"
+    trigger_error ${msg}
+end
+'''

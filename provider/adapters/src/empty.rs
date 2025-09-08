@@ -18,14 +18,14 @@ use icu_provider::prelude::*;
 /// # Examples
 ///
 /// ```
-/// use icu_provider::hello_world::HelloWorldV1Marker;
+/// use icu_provider::hello_world::HelloWorldV1;
 /// use icu_provider::prelude::*;
 /// use icu_provider_adapters::empty::EmptyDataProvider;
 ///
 /// let provider = EmptyDataProvider::new();
 ///
 /// assert!(matches!(
-///     provider.load_any(HelloWorldV1Marker::INFO, Default::default()),
+///     DataProvider::<HelloWorldV1>::load(&provider, Default::default()),
 ///     Err(DataError {
 ///         kind: DataErrorKind::MarkerNotFound,
 ///         ..
@@ -57,16 +57,6 @@ impl EmptyDataProvider {
     }
 }
 
-impl AnyProvider for EmptyDataProvider {
-    fn load_any(
-        &self,
-        marker: DataMarkerInfo,
-        base_req: DataRequest,
-    ) -> Result<AnyResponse, DataError> {
-        Err(self.error_kind.with_req(marker, base_req))
-    }
-}
-
 impl<M> DynamicDataProvider<M> for EmptyDataProvider
 where
     M: DynamicDataMarker,
@@ -93,7 +83,7 @@ impl<M> IterableDataProvider<M> for EmptyDataProvider
 where
     M: DataMarker,
 {
-    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
         Ok(Default::default())
     }
 }
@@ -105,14 +95,14 @@ where
     fn iter_ids_for_marker(
         &self,
         _: DataMarkerInfo,
-    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    ) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
         Ok(Default::default())
     }
 }
 
 #[cfg(feature = "export")]
 impl ExportableProvider for EmptyDataProvider {
-    fn supported_markers(&self) -> std::collections::HashSet<DataMarkerInfo> {
+    fn supported_markers(&self) -> alloc::collections::BTreeSet<DataMarkerInfo> {
         Default::default()
     }
 }

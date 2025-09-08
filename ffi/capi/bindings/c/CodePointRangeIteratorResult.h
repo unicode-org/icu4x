@@ -19,5 +19,4 @@
 
 
 
-
 #endif // CodePointRangeIteratorResult_H

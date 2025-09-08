@@ -15,7 +15,7 @@
         clippy::expect_used,
         clippy::panic,
         clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
+        clippy::exhaustive_enums, clippy::trivially_copy_pass_by_ref,
         // missing_debug_implementations // TBD before stabilization
     )
 )]
@@ -25,6 +25,7 @@ mod displaynames;
 mod options;
 pub mod provider;
 
+pub use displaynames::DisplayNamesPreferences;
 pub use displaynames::LanguageDisplayNames;
 pub use displaynames::LocaleDisplayNamesFormatter;
 pub use displaynames::RegionDisplayNames;

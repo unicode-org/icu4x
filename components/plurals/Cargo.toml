@@ -22,17 +22,18 @@ all-features = true
 [dependencies]
 displaydoc = { workspace = true }
 fixed_decimal = { workspace = true }
-icu_provider = { workspace = true, features = ["macros"] }
-zerovec = { workspace = true, features = ["yoke"] }
+icu_provider = { workspace = true, features = ["alloc"] }
+zerovec = { workspace = true, features = ["alloc", "yoke"] }
 
 databake = { workspace = true, features = ["derive"], optional = true}
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 
 icu_plurals_data = { workspace = true, optional = true }
+icu_normalizer_data = { workspace = true, optional = true }
+icu_locale = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
-icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_locale_core = { path = "../../components/locale_core" }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
@@ -43,19 +44,13 @@ criterion = { workspace = true }
 
 [features]
 default = ["compiled_data"]
-std = ["fixed_decimal/std", "icu_locale_core/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_locale_core/serde", "icu_provider/serde"]
-datagen = ["std", "serde", "zerovec/databake", "dep:databake"]
+datagen = ["serde", "zerovec/databake", "dep:databake", "icu_provider/export"]
 experimental = []
-bench = ["serde", "datagen"]
-compiled_data = ["dep:icu_plurals_data"]
+compiled_data = ["dep:icu_plurals_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI
-
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
 
 [[bench]]
 name = "operands"
@@ -77,16 +72,8 @@ required-features = ["serde"]
 
 [[test]]
 name = "operands"
-required-features = ["serde", "std", "experimental"]
+required-features = ["serde", "experimental"]
 
 [[test]]
 name = "rules"
 required-features = ["experimental"]
-
-[[example]]
-name = "unread_emails"
-required-features = ["serde"]
-
-[[example]]
-name = "elevator_floors"
-required-features = ["serde"]

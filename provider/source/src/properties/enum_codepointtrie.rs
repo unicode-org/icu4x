@@ -9,6 +9,7 @@ use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 use std::convert::TryFrom;
+use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ule::NichedOption;
 
 impl SourceDataProvider {
@@ -48,32 +49,23 @@ impl SourceDataProvider {
 fn get_prop_values_map<F>(
     values: &[super::uprops_serde::PropertyValue],
     transform_u32: F,
-) -> Result<PropertyValueNameToEnumMapV1<'static>, DataError>
+) -> Result<PropertyValueNameToEnumMap<'static>, DataError>
 where
     F: Fn(u32) -> Result<u16, DataError>,
 {
     let mut map = BTreeMap::new();
     for value in values {
-        let discr = transform_u32(value.discr)?;
-        map.insert(
-            NormalizedPropertyNameStr::boxed_from_bytes(value.long.as_bytes()),
-            discr,
-        );
+        let discr = transform_u32(value.discr)? as usize;
+        map.insert(value.long.as_bytes(), discr);
         if let Some(ref short) = value.short {
-            map.insert(
-                NormalizedPropertyNameStr::boxed_from_bytes(short.as_bytes()),
-                discr,
-            );
+            map.insert(short.as_bytes(), discr);
         }
         for alias in &value.aliases {
-            map.insert(
-                NormalizedPropertyNameStr::boxed_from_bytes(alias.as_bytes()),
-                discr,
-            );
+            map.insert(alias.as_bytes(), discr);
         }
     }
-    Ok(PropertyValueNameToEnumMapV1 {
-        map: map.into_iter().collect(),
+    Ok(PropertyValueNameToEnumMap {
+        map: ZeroTrieSimpleAscii::from_iter(map).convert_store(),
     })
 }
 
@@ -152,14 +144,14 @@ fn load_values_to_names_sparse<M>(
     is_short: bool,
 ) -> Result<DataResponse<M>, DataError>
 where
-    M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameSparseMapV1<'static>>,
+    M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameSparseMap<'static>>,
 {
     let data = p.get_enumerated_prop(prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
                                         Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
     let map = load_values_to_names(data, is_short)?;
     let map = map.into_iter().collect();
-    let data_struct = PropertyEnumToValueNameSparseMapV1 { map };
+    let data_struct = PropertyEnumToValueNameSparseMap { map };
     Ok(DataResponse {
         metadata: Default::default(),
         payload: DataPayload::from_owned(data_struct),
@@ -173,7 +165,7 @@ fn load_values_to_names_linear<M>(
     is_short: bool,
 ) -> Result<DataResponse<M>, DataError>
 where
-    M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameLinearMapV1<'static>>,
+    M: DynamicDataMarker<DataStruct = PropertyEnumToValueNameLinearMap<'static>>,
 {
     let data = p.get_enumerated_prop(prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
@@ -181,7 +173,7 @@ where
     let map = load_values_to_names(data, is_short)?;
     let vec = map_to_vec(&map, prop_name)?;
     let varzerovec = (&vec).into();
-    let data_struct = PropertyEnumToValueNameLinearMapV1 { map: varzerovec };
+    let data_struct = PropertyEnumToValueNameLinearMap { map: varzerovec };
     Ok(DataResponse {
         metadata: Default::default(),
         payload: DataPayload::from_owned(data_struct),
@@ -195,7 +187,7 @@ fn load_values_to_names_linear4<M>(
     is_short: bool,
 ) -> Result<DataResponse<M>, DataError>
 where
-    M: DynamicDataMarker<DataStruct = PropertyScriptToIcuScriptMapV1<'static>>,
+    M: DynamicDataMarker<DataStruct = PropertyScriptToIcuScriptMap<'static>>,
 {
     let data = p.get_enumerated_prop(prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
@@ -215,7 +207,7 @@ where
 
     let vec = vec.map_err(|_| DataError::custom("Found invalid script tag"))?;
     let zerovec = vec.into_iter().map(NichedOption).collect();
-    let data_struct = PropertyScriptToIcuScriptMapV1 { map: zerovec };
+    let data_struct = PropertyScriptToIcuScriptMap { map: zerovec };
     Ok(DataResponse {
         metadata: Default::default(),
         payload: DataPayload::from_owned(data_struct),
@@ -242,7 +234,7 @@ macro_rules! expand {
                     let code_point_trie = CodePointTrie::try_from(source_cpt_data).map_err(|e| {
                         DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
                     })?;
-                    let data_struct = PropertyCodePointMapV1::CodePointTrie(code_point_trie);
+                    let data_struct = PropertyCodePointMap::CodePointTrie(code_point_trie);
                     Ok(DataResponse {
                         metadata: Default::default(),
                         payload: DataPayload::from_owned(data_struct),
@@ -381,15 +373,15 @@ macro_rules! expand {
 }
 
 // Special handling for GeneralCategoryMask
-impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for SourceDataProvider {
+impl DataProvider<PropertyNameParseGeneralCategoryMaskV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<GeneralCategoryMaskNameToValueV1Marker>, DataError> {
+    ) -> Result<DataResponse<PropertyNameParseGeneralCategoryMaskV1>, DataError> {
         use icu::properties::props::GeneralCategoryGroup;
         use zerovec::ule::AsULE;
 
-        self.check_req::<GeneralCategoryMaskNameToValueV1Marker>(req)?;
+        self.check_req::<PropertyNameParseGeneralCategoryMaskV1>(req)?;
 
         let data = self.get_mask_prop("gcm")?;
         let data_struct = get_prop_values_map(&data.values, |v| {
@@ -410,7 +402,7 @@ impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for SourceDataProvider
     }
 }
 
-impl crate::IterableDataProviderCached<GeneralCategoryMaskNameToValueV1Marker>
+impl crate::IterableDataProviderCached<PropertyNameParseGeneralCategoryMaskV1>
     for SourceDataProvider
 {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
@@ -419,114 +411,150 @@ impl crate::IterableDataProviderCached<GeneralCategoryMaskNameToValueV1Marker>
     }
 }
 
+// Special handling for IndicConjunctBreak
+impl DataProvider<PropertyEnumIndicConjunctBreakV1> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<PropertyEnumIndicConjunctBreakV1>, DataError> {
+        self.check_req::<PropertyEnumIndicConjunctBreakV1>(req)?;
+        let source_cpt_data = &self.get_enumerated_prop("InCB")?.code_point_trie;
+
+        let code_point_trie = CodePointTrie::try_from(source_cpt_data).map_err(|e| {
+            DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
+        })?;
+        let data_struct = PropertyCodePointMap::CodePointTrie(code_point_trie);
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(data_struct),
+        })
+    }
+}
+
+impl crate::IterableDataProviderCached<PropertyEnumIndicConjunctBreakV1> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        self.get_enumerated_prop("InCB")?;
+        Ok(HashSet::from_iter([Default::default()]))
+    }
+}
+
 expand!(
     (
-        CanonicalCombiningClassV1Marker,
-        CanonicalCombiningClassNameToValueV1Marker,
+        PropertyEnumCanonicalCombiningClassV1,
+        PropertyNameParseCanonicalCombiningClassV1,
         (
-            sparse: CanonicalCombiningClassValueToShortNameV1Marker,
-            CanonicalCombiningClassValueToLongNameV1Marker
+            sparse: PropertyNameShortCanonicalCombiningClassV1,
+            PropertyNameLongCanonicalCombiningClassV1
         ),
         "ccc"
     ),
     (
-        GeneralCategoryV1Marker,
-        GeneralCategoryNameToValueV1Marker,
+        PropertyEnumGeneralCategoryV1,
+        PropertyNameParseGeneralCategoryV1,
         (
-            linear: GeneralCategoryValueToShortNameV1Marker,
-            GeneralCategoryValueToLongNameV1Marker
+            linear: PropertyNameShortGeneralCategoryV1,
+            PropertyNameLongGeneralCategoryV1
         ),
         "gc"
     ),
     (
-        BidiClassV1Marker,
-        BidiClassNameToValueV1Marker,
+        PropertyEnumBidiClassV1,
+        PropertyNameParseBidiClassV1,
         (
-            linear: BidiClassValueToShortNameV1Marker,
-            BidiClassValueToLongNameV1Marker
+            linear: PropertyNameShortBidiClassV1,
+            PropertyNameLongBidiClassV1
         ),
         "bc"
     ),
     (
-        ScriptV1Marker,
-        ScriptNameToValueV1Marker,
+        PropertyEnumScriptV1,
+        PropertyNameParseScriptV1,
         (
-            linear4: ScriptValueToShortNameV1Marker,
-            ScriptValueToLongNameV1Marker
+            linear4: PropertyNameShortScriptV1,
+            PropertyNameLongScriptV1
         ),
         "sc"
     ),
     (
-        HangulSyllableTypeV1Marker,
-        HangulSyllableTypeNameToValueV1Marker,
+        PropertyEnumHangulSyllableTypeV1,
+        PropertyNameParseHangulSyllableTypeV1,
         (
-            linear: HangulSyllableTypeValueToShortNameV1Marker,
-            HangulSyllableTypeValueToLongNameV1Marker
+            linear: PropertyNameShortHangulSyllableTypeV1,
+            PropertyNameLongHangulSyllableTypeV1
         ),
         "hst"
     ),
     (
-        EastAsianWidthV1Marker,
-        EastAsianWidthNameToValueV1Marker,
+        PropertyEnumEastAsianWidthV1,
+        PropertyNameParseEastAsianWidthV1,
         (
-            linear: EastAsianWidthValueToShortNameV1Marker,
-            EastAsianWidthValueToLongNameV1Marker
+            linear: PropertyNameShortEastAsianWidthV1,
+            PropertyNameLongEastAsianWidthV1
         ),
         "ea"
     ),
     (
-        IndicSyllabicCategoryV1Marker,
-        IndicSyllabicCategoryNameToValueV1Marker,
+        PropertyEnumIndicSyllabicCategoryV1,
+        PropertyNameParseIndicSyllabicCategoryV1,
         (
-            linear: IndicSyllabicCategoryValueToShortNameV1Marker,
-            IndicSyllabicCategoryValueToLongNameV1Marker
+            linear: PropertyNameShortIndicSyllabicCategoryV1,
+            PropertyNameLongIndicSyllabicCategoryV1
         ),
         "InSC"
     ),
     (
-        LineBreakV1Marker,
-        LineBreakNameToValueV1Marker,
+        PropertyEnumLineBreakV1,
+        PropertyNameParseLineBreakV1,
         (
-            linear: LineBreakValueToShortNameV1Marker,
-            LineBreakValueToLongNameV1Marker
+            linear: PropertyNameShortLineBreakV1,
+            PropertyNameLongLineBreakV1
         ),
         "lb"
     ),
     (
-        GraphemeClusterBreakV1Marker,
-        GraphemeClusterBreakNameToValueV1Marker,
+        PropertyEnumGraphemeClusterBreakV1,
+        PropertyNameParseGraphemeClusterBreakV1,
         (
-            linear: GraphemeClusterBreakValueToShortNameV1Marker,
-            GraphemeClusterBreakValueToLongNameV1Marker
+            linear: PropertyNameShortGraphemeClusterBreakV1,
+            PropertyNameLongGraphemeClusterBreakV1
         ),
         "GCB"
     ),
     (
-        WordBreakV1Marker,
-        WordBreakNameToValueV1Marker,
+        PropertyEnumWordBreakV1,
+        PropertyNameParseWordBreakV1,
         (
-            linear: WordBreakValueToShortNameV1Marker,
-            WordBreakValueToLongNameV1Marker
+            linear: PropertyNameShortWordBreakV1,
+            PropertyNameLongWordBreakV1
         ),
         "WB"
     ),
     (
-        SentenceBreakV1Marker,
-        SentenceBreakNameToValueV1Marker,
+        PropertyEnumSentenceBreakV1,
+        PropertyNameParseSentenceBreakV1,
         (
-            linear: SentenceBreakValueToShortNameV1Marker,
-            SentenceBreakValueToLongNameV1Marker
+            linear: PropertyNameShortSentenceBreakV1,
+            PropertyNameLongSentenceBreakV1
         ),
         "SB"
     ),
     (
-        JoiningTypeV1Marker,
-        JoiningTypeNameToValueV1Marker,
+        PropertyEnumJoiningTypeV1,
+        PropertyNameParseJoiningTypeV1,
         (
-            linear: JoiningTypeValueToShortNameV1Marker,
-            JoiningTypeValueToLongNameV1Marker
+            linear: PropertyNameShortJoiningTypeV1,
+            PropertyNameLongJoiningTypeV1
         ),
         "jt"
+    ),
+    (
+        PropertyEnumVerticalOrientationV1,
+        PropertyNameParseVerticalOrientationV1,
+        (
+            linear: PropertyNameShortVerticalOrientationV1,
+            PropertyNameLongVerticalOrientationV1
+        ),
+        "vo"
     ),
 );
 

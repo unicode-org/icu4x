@@ -6,7 +6,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -17,12 +19,15 @@ namespace capi {
       ListLength_Short = 1,
       ListLength_Narrow = 2,
     };
-    
+
     typedef struct ListLength_option {union { ListLength ok; }; bool is_ok; } ListLength_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `ListLength`](https://docs.rs/icu/2.0.0/icu/list/options/enum.ListLength.html) for more information.
+ */
 class ListLength {
 public:
   enum Value {
@@ -31,7 +36,8 @@ public:
     Narrow = 2,
   };
 
-  ListLength() = default;
+  ListLength(): value(Value::Wide) {}
+
   // Implicit conversions between enum and ::Value
   constexpr ListLength(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

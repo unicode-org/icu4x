@@ -8,13 +8,12 @@
 //! This is meant to be used as a building block of an UTS 46
 //! implementation, such as the `idna` crate.
 
-use crate::CanonicalCompositionsV1Marker;
-use crate::CanonicalDecompositionDataV1Marker;
-use crate::CanonicalDecompositionTablesV1Marker;
-use crate::CompatibilityDecompositionTablesV1Marker;
 use crate::ComposingNormalizer;
 use crate::ComposingNormalizerBorrowed;
-use crate::Uts46DecompositionSupplementV1Marker;
+use crate::NormalizerNfcV1;
+use crate::NormalizerNfdTablesV1;
+use crate::NormalizerNfkdTablesV1;
+use crate::NormalizerUts46DataV1;
 use icu_provider::DataError;
 use icu_provider::DataProvider;
 
@@ -62,7 +61,7 @@ impl Uts46MapperBorrowed<'static> {
     }
 }
 
-impl<'a> Uts46MapperBorrowed<'a> {
+impl Uts46MapperBorrowed<'_> {
     /// Returns an iterator adaptor that turns an `Iterator` over `char`
     /// into an iterator yielding a `char` sequence that gets the following
     /// operations from the "Map" and "Normalize" steps of the "Processing"
@@ -155,21 +154,20 @@ impl Uts46Mapper {
 
     /// Construct with compiled data.
     #[cfg(feature = "compiled_data")]
-    #[allow(clippy::new_ret_no_self)]
+    #[expect(clippy::new_ret_no_self)]
     pub const fn new() -> Uts46MapperBorrowed<'static> {
         Uts46MapperBorrowed::new()
     }
 
     /// Construct with provider.
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<Uts46DecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            // UTS 46 tables merged into CompatibilityDecompositionTablesV1Marker
-            + DataProvider<CanonicalCompositionsV1Marker>
+        D: DataProvider<NormalizerUts46DataV1>
+            + DataProvider<NormalizerNfdTablesV1>
+            + DataProvider<NormalizerNfkdTablesV1>
+            // UTS 46 tables merged into NormalizerNfkdTablesV1
+            + DataProvider<NormalizerNfcV1>
             + ?Sized,
     {
         let normalizer = ComposingNormalizer::try_new_uts46_unstable(provider)?;

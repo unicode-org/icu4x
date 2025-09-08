@@ -10,7 +10,7 @@ use alloc::string::ToString;
 use core::fmt::{self, Display, Formatter};
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_locale_core::Locale;
-use zerovec::VarZeroVec;
+use zerovec::{vecs::Index32, VarZeroVec};
 
 type Result<T> = core::result::Result<T, CompileError>;
 
@@ -19,7 +19,7 @@ macro_rules! impl_insert {
         fn $fn_name(&mut self, elt: $elt_type) -> char {
             // pass 1 is responsible for this
             debug_assert!(self.$field.current < self.$($next_field)*);
-            #[allow(clippy::unwrap_used)] // the whole PUP (15) consists of valid chars
+            // the whole PUP (15) consists of valid chars
             let standin = char::try_from(self.$field.current).unwrap();
             self.$field.vec.push(elt);
             self.$field.current += 1;
@@ -159,12 +159,12 @@ impl MutVarTable {
             (0, 0) => ds::VarTable::RESERVED_PURE_CURSOR,
             (left, 0) => {
                 debug_assert!(left <= self.counts.max_left_placeholders);
-                #[allow(clippy::unwrap_used)] // constructor checks this via num_totals
+                #[expect(clippy::unwrap_used)] // constructor checks this via num_totals
                 char::try_from(self.left_placeholder_base + left - 1).unwrap()
             }
             (0, right) => {
                 debug_assert!(right <= self.counts.max_right_placeholders);
-                #[allow(clippy::unwrap_used)] // constructor checks this via num_totals
+                #[expect(clippy::unwrap_used)] // constructor checks this via num_totals
                 char::try_from(self.right_placeholder_base + right - 1).unwrap()
             }
             _ => {
@@ -179,7 +179,7 @@ impl MutVarTable {
         // -1 because backrefs are 1-indexed
         let standin = self.backref_base + backref_num - 1;
         debug_assert!(standin <= ds::VarTable::MAX_DYNAMIC as u32);
-        #[allow(clippy::unwrap_used)] // constructor checks this via num_totals
+        #[expect(clippy::unwrap_used)] // constructor checks this via num_totals
         char::try_from(standin).unwrap()
     }
 
@@ -219,11 +219,11 @@ enum LiteralOrStandin<'a> {
 }
 
 // gives us `to_string` and makes clippy happy
-impl<'a> Display for LiteralOrStandin<'a> {
+impl Display for LiteralOrStandin<'_> {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match *self {
-            LiteralOrStandin::Literal(s) => write!(f, "{}", s),
-            LiteralOrStandin::Standin(c) => write!(f, "{}", c),
+            LiteralOrStandin::Literal(s) => write!(f, "{s}"),
+            LiteralOrStandin::Standin(c) => write!(f, "{c}"),
         }
     }
 }
@@ -253,7 +253,8 @@ impl<'a, 'p> Pass2<'a, 'p> {
             curr_segment: 0,
         };
         let mut compiled_transform_groups: Vec<VarZeroVec<'static, ds::SimpleIdULE>> = Vec::new();
-        let mut compiled_conversion_groups: Vec<VarZeroVec<'static, ds::RuleULE>> = Vec::new();
+        let mut compiled_conversion_groups: Vec<VarZeroVec<'static, ds::RuleULE, Index32>> =
+            Vec::new();
 
         for (transform_group, conversion_group) in pass1.groups {
             let compiled_transform_group: Vec<_> = transform_group
@@ -301,7 +302,6 @@ impl<'a, 'p> Pass2<'a, 'p> {
             return c;
         }
         // the first pass ensures that all variables are defined
-        #[allow(clippy::indexing_slicing)]
         let definition = self.var_definitions[var];
         let compiled = self.compile_section(definition, parse::ElementLocation::VariableDefinition);
         let standin = self.var_table.insert_compound(compiled);
@@ -389,13 +389,30 @@ impl<'a, 'p> Pass2<'a, 'p> {
     }
 
     fn compile_single_id(&self, id: parse::SingleId) -> ds::SimpleId<'static> {
-        let mut unparsed = id.basic_id.to_string();
-        let string = if let Some(bcp47_id) = self.id_mapping.get(&unparsed) {
+        let unparsed = id.basic_id.to_string();
+
+        let string = if matches!(
+            unparsed.as_str(),
+            "any-nfc"
+                | "any-nfkc"
+                | "any-nfd"
+                | "any-nfkd"
+                | "any-null"
+                | "any-remove"
+                | "any-lower"
+                | "any-upper"
+                | "any-hex/unicode"
+                | "any-hex/rust"
+                | "any-hex/xml"
+                | "any-hex/perl"
+                | "any-hex/plain"
+        ) {
+            unparsed
+        } else if let Some(bcp47_id) = self.id_mapping.get(&unparsed) {
             bcp47_id.to_string()
         } else {
-            // Non-BCP47 ids get prefixed with `x-`.
-            unparsed.replace_range(0..0, "x-");
-            unparsed
+            icu_provider::log::warn!("Reference to unknown transliterator: {unparsed}");
+            format!("x-{unparsed}")
         };
         ds::SimpleId {
             id: string.into(),

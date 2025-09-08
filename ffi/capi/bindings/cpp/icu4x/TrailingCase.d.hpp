@@ -6,7 +6,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -16,12 +18,15 @@ namespace capi {
       TrailingCase_Lower = 0,
       TrailingCase_Unchanged = 1,
     };
-    
+
     typedef struct TrailingCase_option {union { TrailingCase ok; }; bool is_ok; } TrailingCase_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `TrailingCase`](https://docs.rs/icu/2.0.0/icu/casemap/options/enum.TrailingCase.html) for more information.
+ */
 class TrailingCase {
 public:
   enum Value {
@@ -29,7 +34,8 @@ public:
     Unchanged = 1,
   };
 
-  TrailingCase() = default;
+  TrailingCase(): value(Value::Lower) {}
+
   // Implicit conversions between enum and ::Value
   constexpr TrailingCase(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

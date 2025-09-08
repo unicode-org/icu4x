@@ -4,16 +4,16 @@
 
 `fixed_decimal` is a utility crate of the [`ICU4X`] project.
 
-It includes [`FixedDecimal`], a core API for representing numbers in a human-readable form
-appropriate for formatting and plural rule selection. It is optimized for operations involving
-the individual digits of a number.
+This crate provides [`Decimal`] and [`UnsignedDecimal`], essential APIs for representing numbers in a human-readable format.
+These types are particularly useful for formatting and plural rule selection, and are optimized for operations on individual digits.
 
 ## Examples
 
 ```rust
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::Decimal;
 
-let dec = FixedDecimal::from(250).multiplied_pow10(-2);
+let mut dec = Decimal::from(250);
+dec.multiply_pow10(-2);
 assert_eq!("2.50", format!("{}", dec));
 
 #[derive(Debug, PartialEq)]

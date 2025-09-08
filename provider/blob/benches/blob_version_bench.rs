@@ -9,43 +9,23 @@ use icu_provider::hello_world::*;
 use icu_provider::prelude::*;
 use icu_provider_blob::BlobDataProvider;
 
-const BLOB_V1: &[u8] = include_bytes!("../tests/data/v1.postcard");
-const BLOB_V2: &[u8] = include_bytes!("../tests/data/v2.postcard");
+const BLOB_V3: &[u8] = include_bytes!("../tests/data/v3.postcard");
 
 fn blob_version_bench(c: &mut Criterion) {
-    c.bench_function("provider/construct/v1", |b| {
-        b.iter(|| BlobDataProvider::try_new_from_static_blob(black_box(BLOB_V1)).unwrap());
-    });
-    c.bench_function("provider/construct/v2", |b| {
-        b.iter(|| BlobDataProvider::try_new_from_static_blob(black_box(BLOB_V1)).unwrap());
+    c.bench_function("provider/construct/v3", |b| {
+        b.iter(|| BlobDataProvider::try_new_from_static_blob(black_box(BLOB_V3)).unwrap());
     });
 
     let hello_world_provider = HelloWorldProvider;
     let locales = hello_world_provider.iter_ids().unwrap();
 
-    c.bench_function("provider/read/v1", |b| {
-        let provider = BlobDataProvider::try_new_from_static_blob(black_box(BLOB_V1)).unwrap();
+    c.bench_function("provider/read/v3", |b| {
+        let provider = BlobDataProvider::try_new_from_static_blob(black_box(BLOB_V3)).unwrap();
         b.iter(|| {
             for id in black_box(&locales).iter() {
                 black_box(&provider)
                     .load_data(
-                        HelloWorldV1Marker::INFO,
-                        DataRequest {
-                            id: id.as_borrowed(),
-                            ..Default::default()
-                        },
-                    )
-                    .unwrap();
-            }
-        });
-    });
-    c.bench_function("provider/read/v2", |b| {
-        let provider = BlobDataProvider::try_new_from_static_blob(black_box(BLOB_V2)).unwrap();
-        b.iter(|| {
-            for id in black_box(&locales).iter() {
-                black_box(&provider)
-                    .load_data(
-                        HelloWorldV1Marker::INFO,
+                        HelloWorldV1::INFO,
                         DataRequest {
                             id: id.as_borrowed(),
                             ..Default::default()

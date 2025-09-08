@@ -8,16 +8,13 @@ use crate::SourceDataProvider;
 
 use std::collections::HashSet;
 
-use icu::experimental::dimension::provider::currency_patterns::*;
+use icu::experimental::dimension::provider::currency::patterns::*;
 use icu::plurals::PluralElements;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
 
-impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<CurrencyPatternsDataV1Marker>, DataError> {
+impl DataProvider<CurrencyPatternsDataV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencyPatternsDataV1>, DataError> {
         let numbers_resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
@@ -55,7 +52,7 @@ impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(CurrencyPatternsDataV1 {
+            payload: DataPayload::from_owned(CurrencyPatternsData {
                 // TODO(#5334):
                 //      Before graduating the currency crate,
                 //      Check that the .json data files are completed and no need to fallback chain up to the root.
@@ -79,7 +76,7 @@ impl DataProvider<CurrencyPatternsDataV1Marker> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<CurrencyPatternsDataV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<CurrencyPatternsDataV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
@@ -96,7 +93,7 @@ fn test_basic() {
     use writeable::assert_writeable_eq;
 
     let provider = SourceDataProvider::new_testing();
-    let en: DataPayload<CurrencyPatternsDataV1Marker> = provider
+    let en: DataPayload<CurrencyPatternsDataV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("USD"),
@@ -107,7 +104,7 @@ fn test_basic() {
         .unwrap()
         .payload;
     let plural_rules =
-        icu::plurals::PluralRules::try_new_cardinal_unstable(&provider, &langid!("en").into())
+        icu::plurals::PluralRules::try_new_cardinal_unstable(&provider, langid!("en").into())
             .unwrap();
     let patterns_en = &en.get().patterns;
     assert_writeable_eq!(
@@ -129,7 +126,7 @@ fn test_basic() {
         "2 USD"
     );
 
-    let ar: DataPayload<CurrencyPatternsDataV1Marker> = provider
+    let ar: DataPayload<CurrencyPatternsDataV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("USD"),
@@ -160,7 +157,7 @@ fn test_basic() {
         "2 USD"
     );
 
-    let jp: DataPayload<CurrencyPatternsDataV1Marker> = provider
+    let jp: DataPayload<CurrencyPatternsDataV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("USD"),

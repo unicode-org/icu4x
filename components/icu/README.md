@@ -28,14 +28,12 @@ provide data explicitly using [`DataProvider`]s.
 Compiled data is exposed through idiomatic Rust constructors like `new` or `try_new`:
 
 ```rust
-use icu::datetime::{NeoFormatter, NeoSkeletonLength, neo_marker::NeoAutoDateMarker};
+use icu::datetime::{fieldsets::YMD, DateTimeFormatter};
 use icu::locale::locale;
 
-let dtf = NeoFormatter::<NeoAutoDateMarker>::try_new(
-    &locale!("es-US").into(),
-    NeoSkeletonLength::Medium.into(),
-)
-.expect("compiled data should include 'es-US'");
+let dtf =
+    DateTimeFormatter::try_new(locale!("es-US").into(), YMD::medium())
+        .expect("compiled data should include 'es-US'");
 ```
 
 Clients using compiled data benefit from simple code and optimal zero-cost data loading. Additionally,
@@ -51,9 +49,9 @@ Powerful data management is possible with [`DataProvider`]s, which are passed to
 special constructors:
 
 ```rust
-use icu::datetime::{NeoFormatter, NeoSkeletonLength, neo_marker::NeoAutoDateMarker};
-use icu::locale::locale;
+use icu::datetime::{fieldsets::YMD, DateTimeFormatter};
 use icu::locale::fallback::LocaleFallbacker;
+use icu::locale::locale;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -63,14 +61,14 @@ let provider = BlobDataProvider::try_new_from_blob(data)
     .expect("data should be valid");
 
 let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider)
-        .expect("provider should include fallback data");
+    .expect("provider should include fallback data");
 
 let provider = LocaleFallbackProvider::new(provider, fallbacker);
 
-let dtf = NeoFormatter::<NeoAutoDateMarker>::try_new_with_buffer_provider(
+let dtf = DateTimeFormatter::try_new_with_buffer_provider(
     &provider,
-    &locale!("es-US").into(),
-    NeoSkeletonLength::Medium.into(),
+    locale!("es-US").into(),
+    YMD::medium(),
 )
 .expect("data should include 'es-US', 'es', or 'und'");
 ```
@@ -101,18 +99,12 @@ ICU4X components share a set of common Cargo features that control whether core 
 functionality are compiled. These features are:
 
 - `compiled_data` (default): Whether to include compiled data. Without this flag, only constructors with
-   explicit `provider` arguments are available.
-- `std`: Whether to include `std` support. Without this Cargo feature, `icu` is `#[no_std]`-compatible.
-- `sync`: makes most ICU4X objects implement `Send + Sync`. Has a small performance impact when used with non-static data.
+  explicit `provider` arguments are available.
+- `datagen`: Whether to implement functionality that is only required during data generation.
 - `logging`: Enables logging through the `log` crate.
 - `serde`: Activates `serde` implementations for core library types, such as `Locale`, as well
-   as `*_with_buffer_provider` constructors for explicit data management.
-
-The following Cargo features are only available on the individual crates, but not on this meta-crate:
-
-- `datagen`: Whether to implement functionality that is only required during data generation.
-- `bench`: Whether to enable exhaustive benchmarks. This can be enabled on individual crates
-  when running `cargo bench`.
+  as `*_with_buffer_provider` constructors for runtime data management.
+- `sync`: makes most ICU4X objects implement `Send + Sync`. Has a small performance impact when used with runtime data.
 
 ## Experimental modules
 
@@ -125,7 +117,8 @@ are on track to be eventually stabilized into this crate.
 [`FsDataProvider`]: https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html
 [`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html
 [`icu_provider_adapters`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/
-[data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/data_provider.md#loading-additional-data-at-runtime
+[`icu4x-datagen`]: https://crates.io/crates/icu4x-datagen
+[data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/data-provider-runtime.md#loading-additional-data-at-runtime
 
 <!-- cargo-rdme end -->
 

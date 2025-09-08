@@ -8,13 +8,13 @@ use crate::cldr_serde::{
 };
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
-use icu::calendar::provider::{WeekDataV2, WeekDataV2Marker, WeekdaySet};
+use icu::calendar::provider::{CalendarWeekV1, WeekData, WeekdaySet};
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
-impl DataProvider<WeekDataV2Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<WeekDataV2Marker>, DataError> {
-        self.check_req::<WeekDataV2Marker>(req)?;
+impl DataProvider<CalendarWeekV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CalendarWeekV1>, DataError> {
+        self.check_req::<CalendarWeekV1>(req)?;
         let territory = req
             .id
             .locale
@@ -28,7 +28,7 @@ impl DataProvider<WeekDataV2Marker> for SourceDataProvider {
             .read_and_parse("supplemental/weekData.json")?;
         let week_data = &week_data.supplemental.week_data;
 
-        let first_weekday: icu::calendar::types::IsoWeekday = week_data
+        let first_weekday: icu::calendar::types::Weekday = week_data
             .first_day
             .get(&territory)
             .or_else(|| week_data.first_day.get(&DEFAULT_TERRITORY))
@@ -36,15 +36,6 @@ impl DataProvider<WeekDataV2Marker> for SourceDataProvider {
                 "Missing default entry for firstDay in weekData.json",
             ))?
             .into();
-
-        let min_week_days: u8 = week_data
-            .min_days
-            .get(&territory)
-            .or_else(|| week_data.min_days.get(&DEFAULT_TERRITORY))
-            .ok_or(DataError::custom(
-                "Missing default entry for minDays in weekData.json",
-            ))?
-            .0;
 
         let weekend = {
             let weekend_start = week_data
@@ -67,16 +58,15 @@ impl DataProvider<WeekDataV2Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(WeekDataV2 {
+            payload: DataPayload::from_owned(WeekData {
                 first_weekday,
-                min_week_days,
                 weekend,
             }),
         })
     }
 }
 
-impl IterableDataProviderCached<WeekDataV2Marker> for SourceDataProvider {
+impl IterableDataProviderCached<CalendarWeekV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let week_data: &cldr_serde::week_data::Resource = self
             .cldr()?
@@ -87,6 +77,8 @@ impl IterableDataProviderCached<WeekDataV2Marker> for SourceDataProvider {
             .min_days
             .keys()
             .chain(week_data.first_day.keys())
+            .chain(week_data.weekend_end.keys())
+            .chain(week_data.weekend_start.keys())
             .filter_map(|t| match t {
                 &DEFAULT_TERRITORY => Some(None),
                 Territory::Region(r) => Some(Some(*r)),
@@ -104,57 +96,50 @@ impl IterableDataProviderCached<WeekDataV2Marker> for SourceDataProvider {
 #[test]
 fn test_basic_cldr_week_data_v2() {
     use icu::calendar::provider::WeekdaySet;
-    use icu::calendar::types::IsoWeekday::*;
+    use icu::calendar::types::Weekday::*;
     use icu::locale::langid;
 
     let provider = SourceDataProvider::new_testing();
 
-    let default_week_data: DataResponse<WeekDataV2Marker> =
+    let default_week_data: DataResponse<CalendarWeekV1> =
         provider.load(Default::default()).unwrap();
-    assert_eq!(1, default_week_data.payload.get().min_week_days);
     assert_eq!(Monday, default_week_data.payload.get().first_weekday);
     assert_eq!(
         WeekdaySet::new(&[Saturday, Sunday]),
         default_week_data.payload.get().weekend
     );
 
-    let fr_week_data: DataResponse<WeekDataV2Marker> = provider
+    let fr_week_data: DataResponse<CalendarWeekV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("und-FR").into()).as_borrowed(),
             ..Default::default()
         })
         .unwrap();
-    assert_eq!(4, fr_week_data.payload.get().min_week_days);
     assert_eq!(Monday, fr_week_data.payload.get().first_weekday);
     assert_eq!(
         WeekdaySet::new(&[Saturday, Sunday]),
         fr_week_data.payload.get().weekend
     );
 
-    let iq_week_data: DataResponse<WeekDataV2Marker> = provider
+    let iq_week_data: DataResponse<CalendarWeekV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("und-IQ").into()).as_borrowed(),
             ..Default::default()
         })
         .unwrap();
     // Only first_weekday is defined for IQ, min_week_days uses the default.
-    assert_eq!(
-        default_week_data.payload.get().min_week_days,
-        iq_week_data.payload.get().min_week_days
-    );
     assert_eq!(Saturday, iq_week_data.payload.get().first_weekday);
     assert_eq!(
         WeekdaySet::new(&[Friday, Saturday]),
         iq_week_data.payload.get().weekend
     );
 
-    let gg_week_data: DataResponse<WeekDataV2Marker> = provider
+    let gg_week_data: DataResponse<CalendarWeekV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("und-GG").into()).as_borrowed(),
             ..Default::default()
         })
         .unwrap();
-    assert_eq!(4, gg_week_data.payload.get().min_week_days);
     // Only min_week_days is defined for GG, first_weekday uses the default.
     assert_eq!(
         default_week_data.payload.get().first_weekday,
@@ -165,16 +150,12 @@ fn test_basic_cldr_week_data_v2() {
         gg_week_data.payload.get().weekend
     );
 
-    let ir_week_data: DataResponse<WeekDataV2Marker> = provider
+    let ir_week_data: DataResponse<CalendarWeekV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("und-IR").into()).as_borrowed(),
             ..Default::default()
         })
         .unwrap();
-    assert_eq!(
-        default_week_data.payload.get().min_week_days,
-        ir_week_data.payload.get().min_week_days
-    );
     assert_eq!(Saturday, ir_week_data.payload.get().first_weekday);
     assert_eq!(
         WeekdaySet::new(&[Friday]),

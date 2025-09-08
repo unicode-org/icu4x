@@ -1,0 +1,7 @@
+{
+  "_visibility": "internal",
+  "_source": "Bengali",
+  "_direction": "forward",
+  "_target": "InterIndic",
+  "_rulesFile": "Bengali-InterIndic.txt"
+}

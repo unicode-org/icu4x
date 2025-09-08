@@ -1,0 +1,24 @@
+{
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"clean": "rm -r public/dist/*",
+		"build": "webpack"
+	},
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"icu": "file:../../ffi/npm",
+		"js-beautify": "^1.15.4",
+		"prismjs": "^1.30.0"
+	},
+	"devDependencies": {
+		"bootstrap": "^5.3.3",
+		"css-loader": "^7.1.2",
+		"mini-css-extract-plugin": "^2.9.0",
+		"sass": "^1.77.8",
+		"sass-loader": "^16.0.0",
+		"webpack": "^5.94.0",
+		"webpack-cli": "^5.1.4"
+	}
+}

@@ -8,8 +8,8 @@ use super::validated_options::Unit;
 use core::fmt;
 use core::fmt::Write;
 use either::Either;
-use fixed_decimal::{FixedDecimal, SignDisplay};
-use icu_decimal::FormattedFixedDecimal;
+use fixed_decimal::{Decimal, SignDisplay, UnsignedDecimal};
+use icu_decimal::FormattedDecimal;
 use smallvec::SmallVec;
 use writeable::{adapters::WithPart, PartsWrite, Writeable};
 
@@ -69,17 +69,17 @@ pub struct FormattedDuration<'l> {
 }
 
 /// Exists to allow creating lists of heterogeneous [`Writeable`]s to pass to [`ListFormatter`].
-/// The (Unit, FixedDecimal) pair is used to crerate [`FormattedUnit`]s.
-type HeterogenousToFormatter = Either<DigitalDuration, (Unit, FixedDecimal)>;
+/// The (Unit, Decimal) pair is used to crerate [`FormattedUnit`]s.
+type HeterogenousToFormatter = Either<DigitalDuration, (Unit, Decimal)>;
 
 /// Describes a formatted duration.
 #[derive(Default)]
 struct DigitalDuration {
-    hours: Option<FixedDecimal>,
+    hours: Option<Decimal>,
     add_hour_minute_separator: bool,
-    minutes: Option<FixedDecimal>,
+    minutes: Option<Decimal>,
     add_minute_second_separator: bool,
-    seconds: Option<FixedDecimal>,
+    seconds: Option<Decimal>,
 }
 
 impl DigitalDuration {
@@ -97,11 +97,11 @@ impl DigitalDuration {
 
 struct FormattedDigitalDuration<'l> {
     fmt: &'l DurationFormatter,
-    hours: Option<FormattedFixedDecimal<'l>>,
+    hours: Option<FormattedDecimal<'l>>,
     add_hour_minute_separator: bool,
-    minutes: Option<FormattedFixedDecimal<'l>>,
+    minutes: Option<FormattedDecimal<'l>>,
     add_minute_second_separator: bool,
-    seconds: Option<FormattedFixedDecimal<'l>>,
+    seconds: Option<FormattedDecimal<'l>>,
 }
 
 impl Writeable for FormattedDigitalDuration<'_> {
@@ -130,7 +130,7 @@ impl Writeable for FormattedDigitalDuration<'_> {
     }
 }
 
-impl<'a> FormattedDuration<'a> {
+impl FormattedDuration<'_> {
     /// Section 1.1.9
     /// Formats numeric hours to [`DigitalDurationFormatter`]. Requires hours formatting style to be either Numeric or TwoDigit.
     fn format_numeric_hours(
@@ -150,15 +150,15 @@ impl<'a> FormattedDuration<'a> {
         // 5. Let numberingSystem be durationFormat.[[NumberingSystem]].
         // 6. Perform ! CreateDataPropertyOrThrow(nfOpts, "numberingSystem", numberingSystem).
 
-        let mut fd = FixedDecimal::from(self.duration.hours);
+        let mut fd = Decimal::from(self.duration.hours);
 
-        // Since we construct the FixedDecimal from an unsigned hours value, we need to set the sign manually.
+        // Since we construct the Decimal from an unsigned hours value, we need to set the sign manually.
         fd.set_sign(self.duration.get_sign());
 
         // 7. If hoursStyle is "2-digit", then
         if self.fmt.options.hour == FieldStyle::TwoDigit {
             // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumIntegerDigits", 2𝔽).
-            fd.pad_start(2);
+            fd.absolute.pad_start(2);
         }
 
         // 8. If signDisplayed is false, then
@@ -196,15 +196,15 @@ impl<'a> FormattedDuration<'a> {
         // 5. Let nfOpts be OrdinaryObjectCreate(null).
         // 6. Let numberingSystem be durationFormat.[[NumberingSystem]].
         // 7. Perform ! CreateDataPropertyOrThrow(nfOpts, "numberingSystem", numberingSystem).
-        let mut fd = FixedDecimal::from(self.duration.minutes);
+        let mut fd = Decimal::from(self.duration.minutes);
 
-        // Since we construct the FixedDecimal from an unsigned minutes value, we need to set the sign manually.
+        // Since we construct the Decimal from an unsigned minutes value, we need to set the sign manually.
         fd.set_sign(self.duration.get_sign());
 
         // 8. If minutesStyle is "2-digit", then
         if self.fmt.options.minute == FieldStyle::TwoDigit {
             // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumIntegerDigits", 2𝔽).
-            fd.pad_start(2);
+            fd.absolute.pad_start(2);
         }
 
         // 9. If signDisplayed is false, then
@@ -228,9 +228,9 @@ impl<'a> FormattedDuration<'a> {
     /// then adds the first non-fractional unit and returns it.
     ///
     /// Divergence from standard: adds the first non-fractional unit as well.
-    fn add_fractional_digits(&self) -> FixedDecimal {
+    fn add_fractional_digits(&self) -> Decimal {
         let mut prev_val = self.duration.nanoseconds;
-        let mut prev_formatted = FixedDecimal::from(prev_val % 1000);
+        let mut prev_formatted = Decimal::from(prev_val % 1000);
         for (style, val) in [
             (self.fmt.options.microsecond, self.duration.microseconds),
             (self.fmt.options.millisecond, self.duration.milliseconds),
@@ -238,14 +238,18 @@ impl<'a> FormattedDuration<'a> {
         ] {
             if style == FieldStyle::Fractional {
                 let val = val + prev_val / 1000;
-                prev_formatted = FixedDecimal::from(val % 1000)
-                    .concatenated_end(prev_formatted.multiplied_pow10(-3))
+                prev_formatted.absolute = UnsignedDecimal::from(val % 1000)
+                    .concatenated_end(prev_formatted.absolute.multiplied_pow10(-3))
                     .unwrap();
+
                 prev_val = val;
             } else {
-                return FixedDecimal::from(val)
-                    .concatenated_end(prev_formatted.multiplied_pow10(-3))
-                    .unwrap();
+                return Decimal::new(
+                    prev_formatted.sign,
+                    UnsignedDecimal::from(val)
+                        .concatenated_end(prev_formatted.absolute.multiplied_pow10(-3))
+                        .unwrap(),
+                );
             }
         }
 
@@ -256,7 +260,7 @@ impl<'a> FormattedDuration<'a> {
     /// Formats numeric seconds to sink. Requires seconds formatting style to be either Numeric or TwoDigit.
     fn format_numeric_seconds(
         &self,
-        mut second_fd: FixedDecimal,
+        mut second_fd: Decimal,
         formatted_digital_duration: &mut DigitalDuration,
         sign_displayed: &mut bool,
     ) {
@@ -276,7 +280,7 @@ impl<'a> FormattedDuration<'a> {
             formatted_digital_duration.add_minute_second_separator = true;
         }
 
-        // Since we construct the FixedDecimal from an unsigned seconds value, we need to set the sign manually.
+        // Since we construct the Decimal from an unsigned seconds value, we need to set the sign manually.
         second_fd.set_sign(self.duration.get_sign());
 
         // 5. Let nfOpts be OrdinaryObjectCreate(null).
@@ -286,7 +290,7 @@ impl<'a> FormattedDuration<'a> {
         // 8. If secondsStyle is "2-digit", then
         if self.fmt.options.second == FieldStyle::TwoDigit {
             // a. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumIntegerDigits", 2𝔽).
-            second_fd.pad_start(2);
+            second_fd.absolute.pad_start(2);
         }
 
         // 9. If signDisplayed is false, then
@@ -303,7 +307,7 @@ impl<'a> FormattedDuration<'a> {
                 // a. Let maximumFractionDigits be 9𝔽.
                 // b. Let minimumFractionDigits be +0𝔽.
                 second_fd.trunc(-9);
-                second_fd.pad_end(0);
+                second_fd.absolute.pad_end(0);
             }
             // 12. Else,
             FractionalDigits::Fixed(i) => {
@@ -311,7 +315,7 @@ impl<'a> FormattedDuration<'a> {
                 // a. Let maximumFractionDigits be durationFormat.[[FractionalDigits]].
                 second_fd.trunc(-i);
                 // b. Let minimumFractionDigits be durationFormat.[[FractionalDigits]].
-                second_fd.pad_end(-i);
+                second_fd.absolute.pad_end(-i);
             } // 13. Perform ! CreateDataPropertyOrThrow(nfOpts, "maximumFractionDigits", maximumFractionDigits).
               // 14. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumFractionDigits", minimumFractionDigits).
               // 15. Perform ! CreateDataPropertyOrThrow(nfOpts, "roundingMode", "trunc").
@@ -352,7 +356,7 @@ impl<'a> FormattedDuration<'a> {
 				// a. Set secondsValue to secondsValue + AddFractionalDigits(durationFormat, duration).
 				self.add_fractional_digits()
 			} else {
-				FixedDecimal::from(self.duration.seconds)
+				Decimal::from(self.duration.seconds)
 			};
 
         // 9. Let secondsDisplay be durationFormat.[[SecondsDisplay]].
@@ -485,7 +489,7 @@ impl<'a> FormattedDuration<'a> {
             }
             // f. Else,
             else {
-                let mut formatted_value = FixedDecimal::from(value);
+                let mut formatted_value = Decimal::from(value);
                 formatted_value.set_sign(self.duration.get_sign());
 
                 // i. Let nfOpts be OrdinaryObjectCreate(null).
@@ -501,7 +505,7 @@ impl<'a> FormattedDuration<'a> {
                                 // i. Let maximumFractionDigits be 9𝔽.
                                 formatted_value.trunc(-9);
                                 // ii. Let minimumFractionDigits be +0𝔽.
-                                formatted_value.pad_end(0);
+                                formatted_value.absolute.pad_end(0);
                             }
                             // c. Else,
                             FractionalDigits::Fixed(i) => {
@@ -509,7 +513,7 @@ impl<'a> FormattedDuration<'a> {
                                 // i. Let maximumFractionDigits be durationFormat.[[FractionalDigits]].
                                 formatted_value.trunc(-i);
                                 // ii. Let minimumFractionDigits be durationFormat.[[FractionalDigits]].
-                                formatted_value.pad_end(-i);
+                                formatted_value.absolute.pad_end(-i);
                             }
                         } // d. Perform ! CreateDataPropertyOrThrow(nfOpts, "maximumFractionDigits", maximumFractionDigits).
                           // e. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumFractionDigits", minimumFractionDigits).
@@ -640,7 +644,7 @@ mod tests {
         };
 
         let options = ValidatedDurationFormatterOptions::validate(options).unwrap();
-        let formatter = DurationFormatter::try_new(&locale!("und").into(), options).unwrap();
+        let formatter = DurationFormatter::try_new(locale!("und").into(), options).unwrap();
         let formatted = formatter.format(&duration);
         assert_eq!(formatted.write_to_string().into_owned(), "12:01:32.13");
     }
@@ -668,7 +672,7 @@ mod tests {
         };
 
         let options = ValidatedDurationFormatterOptions::validate(options).unwrap();
-        let formatter = DurationFormatter::try_new(&locale!("en").into(), options).unwrap();
+        let formatter = DurationFormatter::try_new(locale!("en").into(), options).unwrap();
         let formatted = formatter.format(&duration);
         assert_eq!(
             formatted.write_to_string().into_owned(),
@@ -698,7 +702,7 @@ mod tests {
         };
 
         let options = ValidatedDurationFormatterOptions::validate(options).unwrap();
-        let formatter = DurationFormatter::try_new(&locale!("en").into(), options).unwrap();
+        let formatter = DurationFormatter::try_new(locale!("en").into(), options).unwrap();
         let formatted = formatter.format(&duration);
         assert_writeable_parts_eq!(
             &formatted,
@@ -706,19 +710,28 @@ mod tests {
             [
                 (0, 6, parts::YEAR),
                 (0, 6, icu_list::parts::ELEMENT),
+                (0, 1, icu_decimal::parts::MINUS_SIGN),
+                (1, 2, icu_decimal::parts::INTEGER),
                 (6, 8, icu_list::parts::LITERAL),
                 (8, 14, parts::MONTH),
                 (8, 14, icu_list::parts::ELEMENT),
+                (8, 9, icu_decimal::parts::INTEGER),
                 (14, 16, icu_list::parts::LITERAL),
                 (16, 21, parts::WEEK),
                 (16, 21, icu_list::parts::ELEMENT),
+                (16, 17, icu_decimal::parts::INTEGER),
                 (21, 23, icu_list::parts::LITERAL),
                 (23, 37, icu_list::parts::ELEMENT),
+                (23, 25, icu_decimal::parts::INTEGER),
                 (23, 25, parts::HOUR),
                 (25, 26, parts::LITERAL),
+                (26, 28, icu_decimal::parts::INTEGER),
                 (26, 28, parts::MINUTE),
                 (28, 29, parts::LITERAL),
-                (29, 37, parts::SECOND)
+                (29, 37, parts::SECOND),
+                (29, 31, icu_decimal::parts::INTEGER),
+                (31, 32, icu_decimal::parts::DECIMAL),
+                (32, 37, icu_decimal::parts::FRACTION),
             ]
         );
     }
@@ -741,7 +754,7 @@ mod tests {
         };
 
         let options = ValidatedDurationFormatterOptions::validate(options).unwrap();
-        let formatter = DurationFormatter::try_new(&locale!("en").into(), options).unwrap();
+        let formatter = DurationFormatter::try_new(locale!("en").into(), options).unwrap();
 
         assert_eq!(
             formatter

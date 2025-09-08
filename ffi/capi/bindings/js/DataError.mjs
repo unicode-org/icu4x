@@ -2,9 +2,11 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
-/** Additional information: [1](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [2](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html)
-*/
+
+
+/**
+ * Additional information: [1](https://docs.rs/icu_provider/2.0.0/icu_provider/struct.DataError.html), [2](https://docs.rs/icu_provider/2.0.0/icu_provider/enum.DataErrorKind.html)
+ */
 export class DataError {
     #value = undefined;
 
@@ -20,13 +22,17 @@ export class DataError {
         ["Io", 8]
     ]);
 
-    constructor(value) {
+    static getAllEntries() {
+        return DataError.#values.entries();
+    }
+
+    #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
             // instances of this type, otherwise the enums are treated as singletons.
             if (arguments[1] === diplomatRuntime.internalConstructor ) {
                 this.#value = arguments[2];
-                return;
+                return this;
             }
             return DataError.#objectValues[arguments[1]];
         }
@@ -38,18 +44,24 @@ export class DataError {
         let intVal = DataError.#values.get(value);
 
         // Nullish check, checks for null or undefined
-        if (intVal == null) {
+        if (intVal != null) {
             return DataError.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a DataError and does not correspond to any of its enumerator values.");
     }
 
-    get value() {
+    /** @internal */
+    static fromValue(value) {
+        return new DataError(value);
+    }
+
+    get value(){
         return [...DataError.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    /** @internal */
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -73,4 +85,9 @@ export class DataError {
     static Deserialize = DataError.#objectValues[6];
     static Custom = DataError.#objectValues[7];
     static Io = DataError.#objectValues[8];
+
+
+    constructor(value) {
+        return this.#internalConstructor(...arguments)
+    }
 }

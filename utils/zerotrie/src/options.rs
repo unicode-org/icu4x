@@ -103,7 +103,7 @@ pub(crate) struct ZeroTrieBuilderOptions {
 
 impl ZeroTrieBuilderOptions {
     #[cfg(feature = "serde")]
-    const fn to_u8_flags(self) -> u8 {
+    pub(crate) const fn to_u8_flags(self) -> u8 {
         self.phf_mode.to_u8_flag()
             | self.ascii_mode.to_u8_flag()
             | self.capacity_mode.to_u8_flag()
@@ -170,11 +170,6 @@ impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTriePerfectHash<S> {
     };
 }
 
-impl<S: ?Sized> crate::ZeroTriePerfectHash<S> {
-    #[cfg(feature = "serde")]
-    pub(crate) const FLAGS: u8 = Self::OPTIONS.to_u8_flags();
-}
-
 /// No limited capacity assertion.
 impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTrieExtendedCapacity<S> {
     const OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
@@ -184,9 +179,4 @@ impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTrieExtendedCapacity<S> {
         case_sensitivity: CaseSensitivity::Sensitive,
         lookup_strictness: LookupStrictness::Normal,
     };
-}
-
-impl<S: ?Sized> crate::ZeroTrieExtendedCapacity<S> {
-    #[cfg(feature = "serde")]
-    pub(crate) const FLAGS: u8 = Self::OPTIONS.to_u8_flags();
 }

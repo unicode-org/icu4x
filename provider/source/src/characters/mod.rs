@@ -51,14 +51,14 @@ macro_rules! exemplar_chars_impls {
     };
 }
 
-exemplar_chars_impls!(ExemplarCharactersMainV1Marker, main);
-exemplar_chars_impls!(ExemplarCharactersAuxiliaryV1Marker, auxiliary);
-exemplar_chars_impls!(ExemplarCharactersPunctuationV1Marker, punctuation);
-exemplar_chars_impls!(ExemplarCharactersNumbersV1Marker, numbers);
-exemplar_chars_impls!(ExemplarCharactersIndexV1Marker, index);
+exemplar_chars_impls!(LocaleExemplarCharactersMainV1, main);
+exemplar_chars_impls!(LocaleExemplarCharactersAuxiliaryV1, auxiliary);
+exemplar_chars_impls!(LocaleExemplarCharactersPunctuationV1, punctuation);
+exemplar_chars_impls!(LocaleExemplarCharactersNumbersV1, numbers);
+exemplar_chars_impls!(LocaleExemplarCharactersIndexV1, index);
 
-fn string_to_prop_unicodeset(s: &str) -> ExemplarCharactersV1<'static> {
-    ExemplarCharactersV1(CodePointInversionListAndStringList::from_iter(
+fn string_to_prop_unicodeset(s: &str) -> ExemplarCharactersData<'static> {
+    ExemplarCharactersData(CodePointInversionListAndStringList::from_iter(
         parse_exemplar_char_string(s)
             .iter()
             .map(Deref::deref)

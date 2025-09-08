@@ -7,7 +7,9 @@ use alloc::borrow::{Cow, ToOwned};
 use core::{marker::PhantomData, mem};
 
 /// The `Yokeable<'a>` trait is implemented on the `'static` version of any zero-copy type; for
-/// example, `Cow<'static, T>` implements `Yokeable<'a>` (for all `'a`). One can use
+/// example, `Cow<'static, T>` implements `Yokeable<'a>` (for all `'a`).
+///
+/// One can use
 /// `Yokeable::Output` on this trait to obtain the "lifetime'd" value of the `Cow<'static, T>`,
 /// e.g. `<Cow<'static, T> as Yokeable<'a>'>::Output` is `Cow<'a, T>`.
 ///
@@ -40,12 +42,6 @@ use core::{marker::PhantomData, mem};
 ///
 /// There are further constraints on implementation safety on individual methods.
 ///
-/// # Trait bounds
-///
-/// [Compiler bug #85636](https://github.com/rust-lang/rust/issues/85636) makes it tricky to add
-/// trait bounds on `Yokeable::Output`. For more information and for workarounds, see
-/// [`crate::trait_hack`].
-///
 /// # Implementation example
 ///
 /// Implementing this trait manually is unsafe. Where possible, you should use the safe
@@ -75,16 +71,7 @@ use core::{marker::PhantomData, mem};
 ///     }
 ///
 ///     unsafe fn make(from: Bar<'a>) -> Self {
-///         // We're just doing mem::transmute() here, however Rust is
-///         // not smart enough to realize that Bar<'a> and Bar<'static> are of
-///         // the same size, so instead we use transmute_copy
-///
-///         // This assert will be optimized out, but is included for additional
-///         // peace of mind as we are using transmute_copy
-///         debug_assert!(mem::size_of::<Bar<'a>>() == mem::size_of::<Self>());
-///         let ptr: *const Self = (&from as *const Self::Output).cast();
-///         mem::forget(from);
-///         ptr::read(ptr)
+///         unsafe { mem::transmute(from) }
 ///     }
 ///
 ///     fn transform_mut<F>(&'a mut self, f: F)

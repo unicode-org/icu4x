@@ -4,7 +4,7 @@
 
 mod fixtures;
 
-use icu_plurals::rules::{
+use icu_plurals::provider::rules::{
     reference::test_condition,
     reference::{parse, parse_condition, serialize, Lexer},
 };

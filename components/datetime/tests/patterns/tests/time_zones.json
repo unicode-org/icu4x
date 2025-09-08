@@ -2,928 +2,388 @@
   {
     "locale": "en",
     "datetime": "2021-07-11T12:00:00.000-07:00[America/Los_Angeles]",
-    "expectations": [
-      {
-        "patterns": [
-          "z",
-          "zz",
-          "zzz"
-        ],
-        "configs": [
-          "SpecificNonLocationShort"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["PDT"]
-      },
-      {
-        "patterns": [
-          "zzzz"
-        ],
-        "configs": [
-          "SpecificNonLocationLong"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Pacific Daylight Time"]
-      },
-      {
-        "patterns": [
-          "Z",
-          "ZZ",
-          "ZZZ"
-        ],
-        "configs": [
+    "expectations": {
+      "z": "PDT",
+      "zzzz": "Pacific Daylight Time",
 
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["-0700"]
-      },
-      {
-        "patterns": [
-          "O",
-          "OOOO",
-          "ZZZZ"
-        ],
-        "configs": [
-          "LocalizedOffset"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT-07:00"]
-      },
-      {
-        "patterns": [
-          "ZZZZZ"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "UtcExtended",
-              "Required",
-              "Optional"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["-07:00"]
-      },
-      {
-        "patterns": [
-          "v"
-        ],
-        "configs": [
-          "GenericNonLocationShort"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["PT"]
-      },
-      {
-        "patterns": [
-          "vvvv"
-        ],
-        "configs": [
-          "GenericNonLocationLong"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Pacific Time"]
-      },
-      {
-        "patterns": [
-          "VVV"
-        ],
-        "configs": [],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Los Angeles"]
-      },
-      {
-        "patterns": [
-          "VVVV"
-        ],
-        "configs": [
-          "GenericLocation"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Los Angeles Time"]
-      },
-      {
-        "patterns": [
-          "x",
-          "X"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "Basic",
-              "Optional",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["-07"]
-      },
-      {
-        "patterns": [
-          "xx",
-          "XX",
-          "xxxx",
-          "XXXX"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "Basic",
-              "Required",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["-0700"]
-      },
-      {
-        "patterns": [
-          "xxx",
-          "XXX",
-          "xxxxx",
-          "XXXXX"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "Extended",
-              "Required",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["-07:00"]
-      }
-    ]
+      "v": "PT",
+      "vvvv": "Pacific Time",
+
+      "VVV": "Los Angeles",
+      "VVVV": "Los Angeles Time",
+
+      "O": "GMT-7",
+      "OOOO": "GMT-07:00",
+
+      "x": "-07",
+      "X": "-07",
+
+      "xx": "-0700",
+      "XX": "-0700",
+
+      "xxx": "-07:00",
+      "XXX": "-07:00",
+
+      "xxxx": "-0700",
+      "XXXX": "-0700",
+
+      "xxxxx": "-07:00",
+      "XXXXX": "-07:00"
+    }
+  },
+  {
+    "locale": "fr",
+    "datetime": "2021-07-11T12:00:00.000+01:00[Africa/Algiers]",
+    "expectations": {
+      "z": "UTC+1",
+      "zzzz": "heure normale d’Europe centrale",
+
+      "v": "heure : Algérie",
+      "vvvv": "heure d’Europe centrale (Algérie)"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2021-07-11T12:00:00.000-06:00[America/Regina]",
+    "expectations": {
+      "z": "CST",
+      "zzzz": "Central Standard Time",
+
+      "v": "CT (Regina)",
+      "vvvv": "Central Time (Regina)"
+    }
   },
   {
     "locale": "en",
     "datetime": "2021-07-11T12:00:00.000+01:00[Europe/London]",
-    "expectations": [
-      {
-        "patterns": [],
-        "configs": [
-          "SpecificNonLocationShort"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT+01:00"]
-      },
-      {
-        "patterns": [],
-        "configs": [
-          "SpecificNonLocationLong"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["British Summer Time"]
-      },
-      {
-        "patterns": [],
-        "configs": [
-          "LocalizedOffset"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT+01:00"]
-      },
-      {
-        "patterns": [],
-        "configs": [
-          {
-            "Iso8601": [
-              "UtcExtended",
-              "Required",
-              "Optional"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+01:00"]
-      },
-      {
-        "patterns": [],
-        "configs": [
-          "GenericNonLocationShort"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT"]
-      },
-      {
-        "patterns": [],
-        "configs": [
-          "GenericNonLocationLong"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Greenwich Mean Time"]
-      },
-      {
-        "patterns": [],
-        "configs": [
-          "GenericLocation"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["London Time"]
-      },
-      {
-        "patterns": [],
-        "configs": [
-          {
-            "Iso8601": [
-              "Basic",
-              "Optional",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+01"]
-      },
-      {
-        "patterns": [],
-        "configs": [
-          {
-            "Iso8601": [
-              "Basic",
-              "Required",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+0100"]
-      },
-      {
-        "patterns": [],
-        "configs": [
-          {
-            "Iso8601": [
-              "Extended",
-              "Required",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+01:00"]
-      }
-    ]
+    "expectations": {
+      "z": "GMT+1",
+      "zzzz": "British Summer Time",
+
+      "v": "UK Time",
+      "vvvv": "UK Time",
+
+      "VVV": "London",
+      "VVVV": "UK Time",
+
+      "O": "GMT+1",
+      "OOOO": "GMT+01:00"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2021-07-11T12:00:00.000+00:00[Europe/London]",
+    "expectations": {
+      "z": "GMT",
+      "zzzz": "Greenwich Mean Time",
+
+      "v": "UK Time",
+      "vvvv": "UK Time",
+
+      "VVV": "London",
+      "VVVV": "UK Time",
+
+      "O": "GMT+0",
+      "OOOO": "GMT+00:00"
+    }
   },
   {
     "locale": "en",
     "datetime": "2021-07-11T12:00:00.000+01:00[Europe/Dublin]",
-    "expectations": [
-      {
-        "patterns": [],
-        "configs": [
-          "SpecificNonLocationShort"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT+01:00"]
-      },
-      {
-        "patterns": [],
-        "configs": [
-          "SpecificNonLocationLong"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Irish Standard Time"]
-      },
-      {
-        "patterns": [],
-        "configs": [
-          "LocalizedOffset"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT+01:00"]
-      },
-      {
-        "patterns": [],
-        "configs": [
-          {
-            "Iso8601": [
-              "UtcExtended",
-              "Required",
-              "Optional"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+01:00"]
-      },
-      {
-        "patterns": [],
-        "configs": [
-          "GenericNonLocationShort"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT"]
-      },
-      {
-        "patterns": [],
-        "configs": [
-          "GenericNonLocationLong"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Greenwich Mean Time"]
-      },
-      {
-        "patterns": [],
-        "configs": [
-          "GenericLocation"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Dublin Time"]
-      },
-      {
-        "patterns": [],
-        "configs": [
-          {
-            "Iso8601": [
-              "Basic",
-              "Optional",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+01"]
-      },
-      {
-        "patterns": [],
-        "configs": [
-          {
-            "Iso8601": [
-              "Basic",
-              "Required",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+0100"]
-      },
-      {
-        "patterns": [],
-        "configs": [
-          {
-            "Iso8601": [
-              "Extended",
-              "Required",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+01:00"]
-      }
-    ]
+    "expectations": {
+      "z": "GMT+1",
+      "zzzz": "Irish Standard Time",
+
+      "v": "Ireland Time",
+      "vvvv": "Ireland Time",
+
+      "VVV": "Dublin",
+      "VVVV": "Ireland Time",
+
+      "O": "GMT+1",
+      "OOOO": "GMT+01:00"
+    }
   },
   {
     "locale": "ja",
     "datetime": "2021-01-11T12:00:00.000+09:00[Asia/Tokyo]",
-    "expectations": [
-      {
-        "patterns": [
-          "z",
-          "zz",
-          "zzz"
-        ],
-        "configs": [
-          "SpecificNonLocationShort"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["JST"]
-      },
-      {
-        "patterns": [
-          "zzzz"
-        ],
-        "configs": [
-          "SpecificNonLocationLong"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["日本標準時"]
-      },
-      {
-        "patterns": [
-          "Z",
-          "ZZ",
-          "ZZZ"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "Basic",
-              "Required",
-              "Optional"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+0900"]
-      },
-      {
-        "patterns": [
-          "O",
-          "OOOO",
-          "ZZZZ"
-        ],
-        "configs": [
-          "LocalizedOffset"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT+09:00"]
-      },
-      {
-        "patterns": [
-          "ZZZZZ"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "UtcExtended",
-              "Required",
-              "Optional"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+09:00"]
-      },
-      {
-        "patterns": [
-          "v"
-        ],
-        "configs": [
-          "GenericNonLocationShort"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["JST"]
-      },
-      {
-        "patterns": [
-          "vvvv"
-        ],
-        "configs": [
-          "GenericNonLocationLong"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["日本時間"]
-      },
-      {
-        "patterns": [
-          "VVV"
-        ],
-        "configs": [],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["東京"]
-      },
-      {
-        "patterns": [
-          "VVVV"
-        ],
-        "configs": [
-          "GenericLocation"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["東京時間"]
-      },
-      {
-        "patterns": [
-          "x",
-          "X"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "UtcBasic",
-              "Optional",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+09"]
-      },
-      {
-        "patterns": [
-          "xx",
-          "XX",
-          "xxxx",
-          "XXXX"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "UtcBasic",
-              "Required",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+0900"]
-      },
-      {
-        "patterns": [
-          "xxx",
-          "XXX",
-          "xxxxx",
-          "XXXXX"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "UtcExtended",
-              "Required",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+09:00"]
-      }
-    ]
+    "expectations": {
+      "z": "JST",
+      "zzzz": "日本標準時",
+
+      "v": "JST",
+      "vvvv": "日本時間",
+
+      "VVV": "東京",
+      "VVVV": "日本時間",
+
+      "O": "GMT+9",
+      "OOOO": "GMT+09:00"
+    }
   },
   {
     "locale": "ru",
-    "datetime": "2021-01-11T12:00:00.000Z[Antarctica/Troll]",
-    "expectations": [
-      {
-        "patterns": [
-          "z",
-          "zz",
-          "zzz"
-        ],
-        "configs": [
-          "SpecificNonLocationShort"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT"]
-      },
-      {
-        "patterns": [
-          "zzzz"
-        ],
-        "configs": [
-          "SpecificNonLocationLong"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Среднее время по Гринвичу"]
-      },
-      {
-        "patterns": [
-          "Z",
-          "ZZ",
-          "ZZZ"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "Basic",
-              "Required",
-              "Optional"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+0000"]
-      },
-      {
-        "patterns": [
-          "O",
-          "OOOO",
-          "ZZZZ"
-        ],
-        "configs": [
-          "LocalizedOffset"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT"]
-      },
-      {
-        "patterns": [
-          "ZZZZZ"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "UtcExtended",
-              "Required",
-              "Optional"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Z"]
-      },
-      {
-        "patterns": [
-          "v"
-        ],
-        "configs": [
-          "GenericNonLocationShort"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Тролль"]
-      },
-      {
-        "patterns": [
-          "vvvv"
-        ],
-        "configs": [
-          "GenericNonLocationLong"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Среднее время по Гринвичу"]
-      },
-      {
-        "patterns": [
-          "VVV"
-        ],
-        "configs": [],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Тролль"]
-      },
-      {
-        "patterns": [
-          "VVVV"
-        ],
-        "configs": [
-          "GenericLocation"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Тролль"]
-      },
-      {
-        "patterns": [
-          "X"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "UtcBasic",
-              "Optional",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Z"]
-      },
-      {
-        "patterns": [
-          "x"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "Basic",
-              "Optional",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+00"]
-      },
-      {
-        "patterns": [
-          "XX",
-          "XXXX"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "UtcBasic",
-              "Required",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Z"]
-      },
-      {
-        "patterns": [
-          "xx",
-          "xxxx"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "Basic",
-              "Required",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+0000"]
-      },
-      {
-        "patterns": [
-          "XXX",
-          "XXXXX"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "UtcExtended",
-              "Required",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Z"]
-      },
-      {
-        "patterns": [
-          "xxx",
-          "xxxxx"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "Extended",
-              "Required",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+00:00"]
-      }
-    ]
+    "datetime": "2021-01-11T12:00:00.000+00:00[Antarctica/Troll]",
+    "expectations": {
+      "z": "GMT+0",
+      "zzzz": "Среднее время по Гринвичу",
+
+      "v": "Тролль",
+      "vvvv": "Тролль",
+
+      "VVV": "Тролль",
+      "VVVV": "Тролль",
+
+      "O": "GMT+0",
+      "OOOO": "GMT+00:00",
+
+      "X": "Z"
+    }
   },
   {
     "locale": "sr-Cyrl",
     "datetime": "2021-01-11T12:00:00.000+05:45[Asia/Kathmandu]",
-    "expectations": [
-      {
-        "patterns": [
-          "z",
-          "zz",
-          "zzz"
-        ],
-        "configs": [
-          "SpecificNonLocationShort"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT+05:45"]
-      },
-      {
-        "patterns": [
-          "zzzz"
-        ],
-        "configs": [
-          "SpecificNonLocationLong"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Непал време"]
-      },
-      {
-        "patterns": [
-          "Z",
-          "ZZ",
-          "ZZZ"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "Basic",
-              "Required",
-              "Optional"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+0545"]
-      },
-      {
-        "patterns": [
-          "O",
-          "OOOO",
-          "ZZZZ"
-        ],
-        "configs": [
-          "LocalizedOffset"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["GMT+05:45"]
-      },
-      {
-        "patterns": [
-          "ZZZZZ"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "UtcExtended",
-              "Required",
-              "Optional"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+05:45"]
-      },
-      {
-        "patterns": [
-          "v"
-        ],
-        "configs": [
-          "GenericNonLocationShort"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Катманду"]
-      },
-      {
-        "patterns": [
-          "vvvv"
-        ],
-        "configs": [
-          "GenericNonLocationLong"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Непал време"]
-      },
-      {
-        "patterns": [
-          "VVV"
-        ],
-        "configs": [],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Катманду"]
-      },
-      {
-        "patterns": [
-          "VVVV"
-        ],
-        "configs": [
-          "GenericLocation"
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["Катманду"]
-      },
-      {
-        "patterns": [
-          "x",
-          "X"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "UtcBasic",
-              "Optional",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+0545"]
-      },
-      {
-        "patterns": [
-          "xx",
-          "XX",
-          "xxxx",
-          "XXXX"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "UtcBasic",
-              "Required",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+0545"]
-      },
-      {
-        "patterns": [
-          "xxx",
-          "XXX",
-          "xxxxx",
-          "XXXXX"
-        ],
-        "configs": [
-          {
-            "Iso8601": [
-              "UtcExtended",
-              "Required",
-              "Never"
-            ]
-          }
-        ],
-        "fallback_formats": ["LocalizedOffset"],
-        "expected": ["+05:45"]
-      }
-    ]
+    "expectations": {
+      "z": "GMT+5.45",
+      "zzzz": "Непал време",
+
+      "v": "Непал",
+      "vvvv": "Непал време",
+
+      "VVV": "Катманду",
+      "VVVV": "Непал",
+
+      "O": "GMT+5.45",
+      "OOOO": "GMT+05.45"
+    }
+  },
+  {
+    "locale": "bn",
+    "datetime": "2021-01-11T12:00:00.000+05:45[Asia/Kathmandu]",
+    "expectations": {
+      "O": "GMT +৫:৪৫",
+      "OOOO": "GMT +০৫:৪৫",
+      "xxxx": "+0545"
+    }
+  },
+  {
+    "locale": "he",
+    "datetime": "2021-01-11T12:00:00.000+03:00[Asia/Jerusalem]",
+    "expectations": {
+      "z": "GMT\u200e+3\u200e",
+      "zzzz": "שעון ישראל (קיץ)",
+
+      "v": "שעון ישראל",
+      "vvvv": "שעון ישראל",
+
+      "VVV": "ירושלים",
+      "VVVV": "שעון ישראל",
+
+      "O": "GMT\u200e+3\u200e",
+      "OOOO": "GMT\u200e+03:00\u200e"
+    }
+  },{
+    "locale": "en-GB",
+    "datetime": "2021-07-11T12:00:00.000+01[Africa/Casablanca]",
+    "expectations": {
+      "z": "GMT+1",
+      "zzzz": "GMT+01:00",
+
+      "v": "Morocco Time",
+      "vvvv": "Morocco Time"
+    }
+  },
+  {
+    "locale": "en-GB",
+    "datetime": "2021-07-11T12:00:00.000+00[Africa/Casablanca]",
+    "expectations": {
+      "z": "GMT+0",
+      "zzzz": "GMT+00:00",
+
+      "v": "Morocco Time",
+      "vvvv": "Morocco Time"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2008-02-21T12:00:00.000-04:00[America/Argentina/San_Luis]",
+    "expectations": {
+      "z": "GMT-4",
+      "zzzz": "GMT-04:00",
+
+      "v": "San Luis Time",
+      "vvvv": "San Luis Time",
+
+      "VVV": "San Luis",
+      "VVVV": "San Luis Time",
+
+      "O": "GMT-4",
+      "OOOO": "GMT-04:00",
+
+      "xxxx": "-0400",
+      "XXXXX": "-04:00"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2016-09-06T23:59:59.999999999+03[Europe/Istanbul]",
+    "expectations": {
+      "zzzz": "Eastern European Summer Time"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2016-09-07T00:00:00+03[Europe/Istanbul]",
+    "expectations": {
+      "zzzz": "Türkiye Standard Time"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2013-08-15T12:00:00+01[Africa/Windhoek]",
+    "expectations": {
+      "vvvv": "Namibia Time",
+      "zzzz": "West Africa Time"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2013-09-15T12:00:00+02[Africa/Windhoek]",
+    "expectations": {
+      "vvvv": "Namibia Time",
+      "zzzz": "GMT+02:00"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2013-09-15T12:00:00-03[America/Punta_Arenas]",
+    "expectations": {
+      "vvvv": "Chile Time",
+      "zzzz": "Chile Summer Time"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2013-09-15T12:00:00-03[America/Santiago]",
+    "expectations": {
+      "vvvv": "Chile Time",
+      "zzzz": "Chile Summer Time"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2018-09-15T12:00:00-03[America/Punta_Arenas]",
+    "expectations": {
+      "vvvv": "Punta Arenas Time",
+      "zzzz": "GMT-03:00"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2018-09-15T12:00:00-04[America/Santiago]",
+    "expectations": {
+      "vvvv": "Chile Time",
+      "zzzz": "Chile Standard Time"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2021-07-11T12:00:00.000-07:00[Etc/Unknown]",
+    "expectations": {
+      "z": "GMT-7",
+      "zzzz": "GMT-07:00",
+
+      "v": "GMT-7",
+      "vvvv": "GMT-07:00",
+
+      "VVV": "Unknown City",
+      "VVVV": "GMT-07:00",
+
+      "O": "GMT-7",
+      "OOOO": "GMT-07:00",
+
+      "xxxx": "-0700",
+      "XXXXX": "-07:00"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2021-07-11T12:00:00.000-07:00",
+    "expectations": {
+      "z": "GMT-7",
+      "zzzz": "GMT-07:00",
+
+      "v": "GMT-7",
+      "vvvv": "GMT-07:00",
+
+      "VVV": "Unknown City",
+      "VVVV": "GMT-07:00",
+
+      "O": "GMT-7",
+      "OOOO": "GMT-07:00",
+
+      "xxxx": "-0700",
+      "XXXXX": "-07:00"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2021-07-11T12:00:00.000[Etc/Unknown]",
+    "expectations": {
+      "z": "GMT+?",
+      "zzzz": "GMT+?",
+
+      "v": "GMT+?",
+      "vvvv": "GMT+?",
+
+      "VVV": "Unknown City",
+      "VVVV": "GMT+?",
+
+      "O": "GMT+?",
+      "OOOO": "GMT+?",
+
+      "xxxx": "+?",
+      "XXXXX": "+?"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2021-07-11T12:00:00.000Z",
+    "expectations": {
+      "z": "UTC",
+      "zzzz": "Coordinated Universal Time",
+
+      "v": "UTC",
+      "vvvv": "Coordinated Universal Time",
+
+      "VVV": "Unknown City",
+      "VVVV": "GMT+00:00",
+
+      "O": "GMT+0",
+      "OOOO": "GMT+00:00",
+
+      "xxxx": "+0000",
+      "XXXXX": "Z"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2021-07-11T12:00:00.000[Etc/GMT]",
+    "expectations": {
+      "z": "GMT",
+      "zzzz": "Greenwich Mean Time",
+
+      "v": "GMT",
+      "vvvv": "Greenwich Mean Time",
+
+      "VVV": "Unknown City",
+      "VVVV": "GMT+00:00",
+
+      "O": "GMT+0",
+      "OOOO": "GMT+00:00",
+
+      "xxxx": "+0000",
+      "XXXXX": "Z"
+    }
   }
 ]

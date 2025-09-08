@@ -14,1299 +14,167 @@
           "regionFormat-type-standard": "{0}標準時",
           "fallbackFormat": "{1}（{0}）",
           "zone": {
-            "America": {
-              "Adak": {
-                "exemplarCity": "アダック"
-              },
-              "Anchorage": {
-                "exemplarCity": "アンカレッジ"
-              },
-              "Anguilla": {
-                "exemplarCity": "アンギラ"
-              },
-              "Antigua": {
-                "exemplarCity": "アンティグア"
-              },
-              "Araguaina": {
-                "exemplarCity": "アラグァイナ"
-              },
-              "Argentina": {
-                "Rio_Gallegos": {
-                  "exemplarCity": "リオガジェゴス"
-                },
-                "San_Juan": {
-                  "exemplarCity": "サンファン"
-                },
-                "Ushuaia": {
-                  "exemplarCity": "ウシュアイア"
-                },
-                "La_Rioja": {
-                  "exemplarCity": "ラリオハ"
-                },
-                "San_Luis": {
-                  "exemplarCity": "サンルイス"
-                },
-                "Salta": {
-                  "exemplarCity": "サルタ"
-                },
-                "Tucuman": {
-                  "exemplarCity": "トゥクマン"
-                }
-              },
-              "Aruba": {
-                "exemplarCity": "アルバ"
-              },
-              "Asuncion": {
-                "exemplarCity": "アスンシオン"
-              },
-              "Bahia": {
-                "exemplarCity": "バイーア"
-              },
-              "Bahia_Banderas": {
-                "exemplarCity": "バイアバンデラ"
-              },
-              "Barbados": {
-                "exemplarCity": "バルバドス"
-              },
-              "Belem": {
-                "exemplarCity": "ベレン"
-              },
-              "Belize": {
-                "exemplarCity": "ベリーズ"
-              },
-              "Blanc-Sablon": {
-                "exemplarCity": "ブラン・サブロン"
-              },
-              "Boa_Vista": {
-                "exemplarCity": "ボアビスタ"
-              },
-              "Bogota": {
-                "exemplarCity": "ボゴタ"
-              },
-              "Boise": {
-                "exemplarCity": "ボイシ"
-              },
-              "Buenos_Aires": {
-                "exemplarCity": "ブエノスアイレス"
-              },
-              "Cambridge_Bay": {
-                "exemplarCity": "ケンブリッジベイ"
-              },
-              "Campo_Grande": {
-                "exemplarCity": "カンポグランデ"
-              },
-              "Cancun": {
-                "exemplarCity": "カンクン"
-              },
-              "Caracas": {
-                "exemplarCity": "カラカス"
-              },
-              "Catamarca": {
-                "exemplarCity": "カタマルカ"
-              },
-              "Cayenne": {
-                "exemplarCity": "カイエンヌ"
-              },
-              "Cayman": {
-                "exemplarCity": "ケイマン"
-              },
-              "Chicago": {
-                "exemplarCity": "シカゴ"
-              },
-              "Chihuahua": {
-                "exemplarCity": "チワワ"
-              },
-              "Ciudad_Juarez": {
-                "exemplarCity": "シウダー・フアレス"
-              },
-              "Coral_Harbour": {
-                "exemplarCity": "アティコカン"
-              },
-              "Cordoba": {
-                "exemplarCity": "コルドバ"
-              },
-              "Costa_Rica": {
-                "exemplarCity": "コスタリカ"
-              },
-              "Creston": {
-                "exemplarCity": "クレストン"
-              },
-              "Cuiaba": {
-                "exemplarCity": "クイアバ"
-              },
-              "Curacao": {
-                "exemplarCity": "キュラソー"
-              },
-              "Danmarkshavn": {
-                "exemplarCity": "デンマークシャウン"
-              },
-              "Dawson": {
-                "exemplarCity": "ドーソン"
-              },
-              "Dawson_Creek": {
-                "exemplarCity": "ドーソンクリーク"
-              },
-              "Denver": {
-                "exemplarCity": "デンバー"
-              },
-              "Detroit": {
-                "exemplarCity": "デトロイト"
-              },
-              "Dominica": {
-                "exemplarCity": "ドミニカ"
-              },
-              "Edmonton": {
-                "exemplarCity": "エドモントン"
-              },
-              "Eirunepe": {
-                "exemplarCity": "エイルネペ"
-              },
-              "El_Salvador": {
-                "exemplarCity": "エルサルバドル"
-              },
-              "Fort_Nelson": {
-                "exemplarCity": "フォートネルソン"
-              },
-              "Fortaleza": {
-                "exemplarCity": "フォルタレザ"
-              },
-              "Glace_Bay": {
-                "exemplarCity": "グレースベイ"
-              },
-              "Godthab": {
-                "exemplarCity": "ヌーク"
-              },
-              "Goose_Bay": {
-                "exemplarCity": "グースベイ"
-              },
-              "Grand_Turk": {
-                "exemplarCity": "グランドターク"
-              },
-              "Grenada": {
-                "exemplarCity": "グレナダ"
-              },
-              "Guadeloupe": {
-                "exemplarCity": "グアドループ"
-              },
-              "Guatemala": {
-                "exemplarCity": "グアテマラ"
-              },
-              "Guayaquil": {
-                "exemplarCity": "グアヤキル"
-              },
-              "Guyana": {
-                "exemplarCity": "ガイアナ"
-              },
-              "Halifax": {
-                "exemplarCity": "ハリファクス"
-              },
-              "Havana": {
-                "exemplarCity": "ハバナ"
-              },
-              "Hermosillo": {
-                "exemplarCity": "エルモシヨ"
-              },
-              "Indiana": {
-                "Vincennes": {
-                  "exemplarCity": "インディアナ州ビンセンス"
-                },
-                "Petersburg": {
-                  "exemplarCity": "インディアナ州ピーターズバーグ"
-                },
-                "Tell_City": {
-                  "exemplarCity": "インディアナ州テルシティ"
-                },
-                "Knox": {
-                  "exemplarCity": "インディアナ州ノックス"
-                },
-                "Winamac": {
-                  "exemplarCity": "インディアナ州ウィナマック"
-                },
-                "Marengo": {
-                  "exemplarCity": "インディアナ州マレンゴ"
-                },
-                "Vevay": {
-                  "exemplarCity": "インディアナ州ビベー"
-                }
-              },
-              "Indianapolis": {
-                "exemplarCity": "インディアナポリス"
-              },
-              "Inuvik": {
-                "exemplarCity": "イヌヴィク"
-              },
-              "Iqaluit": {
-                "exemplarCity": "イカルイット"
-              },
-              "Jamaica": {
-                "exemplarCity": "ジャマイカ"
-              },
-              "Jujuy": {
-                "exemplarCity": "フフイ"
-              },
-              "Juneau": {
-                "exemplarCity": "ジュノー"
-              },
-              "Kentucky": {
-                "Monticello": {
-                  "exemplarCity": "ケンタッキー州モンティチェロ"
-                }
-              },
-              "Kralendijk": {
-                "exemplarCity": "クラレンダイク"
-              },
-              "La_Paz": {
-                "exemplarCity": "ラパス"
-              },
-              "Lima": {
-                "exemplarCity": "リマ"
-              },
-              "Los_Angeles": {
-                "exemplarCity": "ロサンゼルス"
-              },
-              "Louisville": {
-                "exemplarCity": "ルイビル"
-              },
-              "Lower_Princes": {
-                "exemplarCity": "ローワー・プリンセズ・クウォーター"
-              },
-              "Maceio": {
-                "exemplarCity": "マセイオ"
-              },
-              "Managua": {
-                "exemplarCity": "マナグア"
-              },
-              "Manaus": {
-                "exemplarCity": "マナウス"
-              },
-              "Marigot": {
-                "exemplarCity": "マリゴ"
-              },
-              "Martinique": {
-                "exemplarCity": "マルティニーク"
-              },
-              "Matamoros": {
-                "exemplarCity": "マタモロス"
-              },
-              "Mazatlan": {
-                "exemplarCity": "マサトラン"
-              },
-              "Mendoza": {
-                "exemplarCity": "メンドーサ"
-              },
-              "Menominee": {
-                "exemplarCity": "メノミニー"
-              },
-              "Merida": {
-                "exemplarCity": "メリダ"
-              },
-              "Metlakatla": {
-                "exemplarCity": "メトラカトラ"
-              },
-              "Mexico_City": {
-                "exemplarCity": "メキシコシティー"
-              },
-              "Miquelon": {
-                "exemplarCity": "ミクロン島"
-              },
-              "Moncton": {
-                "exemplarCity": "モンクトン"
-              },
-              "Monterrey": {
-                "exemplarCity": "モンテレイ"
-              },
-              "Montevideo": {
-                "exemplarCity": "モンテビデオ"
-              },
-              "Montserrat": {
-                "exemplarCity": "モントセラト"
-              },
-              "Nassau": {
-                "exemplarCity": "ナッソー"
-              },
-              "New_York": {
-                "exemplarCity": "ニューヨーク"
-              },
-              "Nome": {
-                "exemplarCity": "ノーム"
-              },
-              "Noronha": {
-                "exemplarCity": "ノローニャ"
-              },
-              "North_Dakota": {
-                "Beulah": {
-                  "exemplarCity": "ノースダコタ州ビューラー"
-                },
-                "New_Salem": {
-                  "exemplarCity": "ノースダコタ州ニューセーラム"
-                },
-                "Center": {
-                  "exemplarCity": "ノースダコタ州センター"
-                }
-              },
-              "Ojinaga": {
-                "exemplarCity": "オヒナガ"
-              },
-              "Panama": {
-                "exemplarCity": "パナマ"
-              },
-              "Paramaribo": {
-                "exemplarCity": "パラマリボ"
-              },
-              "Phoenix": {
-                "exemplarCity": "フェニックス"
-              },
-              "Port-au-Prince": {
-                "exemplarCity": "ポルトープランス"
-              },
-              "Port_of_Spain": {
-                "exemplarCity": "ポートオブスペイン"
-              },
-              "Porto_Velho": {
-                "exemplarCity": "ポルトベーリョ"
-              },
-              "Puerto_Rico": {
-                "exemplarCity": "プエルトリコ"
-              },
-              "Punta_Arenas": {
-                "exemplarCity": "プンタアレナス"
-              },
-              "Rankin_Inlet": {
-                "exemplarCity": "ランキンインレット"
-              },
-              "Recife": {
-                "exemplarCity": "レシフェ"
-              },
-              "Regina": {
-                "exemplarCity": "レジャイナ"
-              },
-              "Resolute": {
-                "exemplarCity": "レゾリュート"
-              },
-              "Rio_Branco": {
-                "exemplarCity": "リオブランコ"
-              },
-              "Santarem": {
-                "exemplarCity": "サンタレム"
-              },
-              "Santiago": {
-                "exemplarCity": "サンチアゴ"
-              },
-              "Santo_Domingo": {
-                "exemplarCity": "サントドミンゴ"
-              },
-              "Sao_Paulo": {
-                "exemplarCity": "サンパウロ"
-              },
-              "Scoresbysund": {
-                "exemplarCity": "イトコルトルミット"
-              },
-              "Sitka": {
-                "exemplarCity": "シトカ"
-              },
-              "St_Barthelemy": {
-                "exemplarCity": "サン・バルテルミー"
-              },
-              "St_Johns": {
-                "exemplarCity": "セントジョンズ"
-              },
-              "St_Kitts": {
-                "exemplarCity": "セントクリストファー"
-              },
-              "St_Lucia": {
-                "exemplarCity": "セントルシア"
-              },
-              "St_Thomas": {
-                "exemplarCity": "セントトーマス"
-              },
-              "St_Vincent": {
-                "exemplarCity": "セントビンセント"
-              },
-              "Swift_Current": {
-                "exemplarCity": "スウィフトカレント"
-              },
-              "Tegucigalpa": {
-                "exemplarCity": "テグシガルパ"
-              },
-              "Thule": {
-                "exemplarCity": "チューレ"
-              },
-              "Tijuana": {
-                "exemplarCity": "ティフアナ"
-              },
-              "Toronto": {
-                "exemplarCity": "トロント"
-              },
-              "Tortola": {
-                "exemplarCity": "トルトーラ"
-              },
-              "Vancouver": {
-                "exemplarCity": "バンクーバー"
-              },
-              "Whitehorse": {
-                "exemplarCity": "ホワイトホース"
-              },
-              "Winnipeg": {
-                "exemplarCity": "ウィニペグ"
-              },
-              "Yakutat": {
-                "exemplarCity": "ヤクタット"
-              }
-            },
-            "Atlantic": {
-              "Azores": {
-                "exemplarCity": "アゾレス"
-              },
-              "Bermuda": {
-                "exemplarCity": "バミューダ"
-              },
-              "Canary": {
-                "exemplarCity": "カナリア"
-              },
-              "Cape_Verde": {
-                "exemplarCity": "カーボベルデ"
-              },
-              "Faeroe": {
-                "exemplarCity": "フェロー"
-              },
-              "Madeira": {
-                "exemplarCity": "マデイラ"
-              },
-              "Reykjavik": {
-                "exemplarCity": "レイキャビク"
-              },
-              "South_Georgia": {
-                "exemplarCity": "サウスジョージア"
-              },
-              "St_Helena": {
-                "exemplarCity": "セントヘレナ"
-              },
-              "Stanley": {
-                "exemplarCity": "スタンレー"
-              }
-            },
-            "Europe": {
-              "Amsterdam": {
-                "exemplarCity": "アムステルダム"
-              },
-              "Andorra": {
-                "exemplarCity": "アンドラ"
-              },
-              "Astrakhan": {
-                "exemplarCity": "アストラハン"
-              },
-              "Athens": {
-                "exemplarCity": "アテネ"
-              },
-              "Belgrade": {
-                "exemplarCity": "ベオグラード"
-              },
-              "Berlin": {
-                "exemplarCity": "ベルリン"
-              },
-              "Bratislava": {
-                "exemplarCity": "ブラチスラバ"
-              },
-              "Brussels": {
-                "exemplarCity": "ブリュッセル"
-              },
-              "Bucharest": {
-                "exemplarCity": "ブカレスト"
-              },
-              "Budapest": {
-                "exemplarCity": "ブダペスト"
-              },
-              "Busingen": {
-                "exemplarCity": "ビュージンゲン"
-              },
-              "Chisinau": {
-                "exemplarCity": "キシナウ"
-              },
-              "Copenhagen": {
-                "exemplarCity": "コペンハーゲン"
-              },
-              "Dublin": {
-                "long": {
-                  "daylight": "アイルランド標準時"
-                },
-                "exemplarCity": "ダブリン"
-              },
-              "Gibraltar": {
-                "exemplarCity": "ジブラルタル"
-              },
-              "Guernsey": {
-                "exemplarCity": "ガーンジー"
-              },
-              "Helsinki": {
-                "exemplarCity": "ヘルシンキ"
-              },
-              "Isle_of_Man": {
-                "exemplarCity": "マン島"
-              },
-              "Istanbul": {
-                "exemplarCity": "イスタンブール"
-              },
-              "Jersey": {
-                "exemplarCity": "ジャージー"
-              },
-              "Kaliningrad": {
-                "exemplarCity": "カリーニングラード"
-              },
-              "Kiev": {
-                "exemplarCity": "キーウ"
-              },
-              "Kirov": {
-                "exemplarCity": "キーロフ"
-              },
-              "Lisbon": {
-                "exemplarCity": "リスボン"
-              },
-              "Ljubljana": {
-                "exemplarCity": "リュブリャナ"
-              },
-              "London": {
-                "long": {
-                  "daylight": "英国夏時間"
-                },
-                "exemplarCity": "ロンドン"
-              },
-              "Luxembourg": {
-                "exemplarCity": "ルクセンブルク"
-              },
-              "Madrid": {
-                "exemplarCity": "マドリード"
-              },
-              "Malta": {
-                "exemplarCity": "マルタ"
-              },
-              "Mariehamn": {
-                "exemplarCity": "マリエハムン"
-              },
-              "Minsk": {
-                "exemplarCity": "ミンスク"
-              },
-              "Monaco": {
-                "exemplarCity": "モナコ"
-              },
-              "Moscow": {
-                "exemplarCity": "モスクワ"
-              },
-              "Oslo": {
-                "exemplarCity": "オスロ"
-              },
-              "Paris": {
-                "exemplarCity": "パリ"
-              },
-              "Podgorica": {
-                "exemplarCity": "ポドゴリツァ"
-              },
-              "Prague": {
-                "exemplarCity": "プラハ"
-              },
-              "Riga": {
-                "exemplarCity": "リガ"
-              },
-              "Rome": {
-                "exemplarCity": "ローマ"
-              },
-              "Samara": {
-                "exemplarCity": "サマラ"
-              },
-              "San_Marino": {
-                "exemplarCity": "サンマリノ"
-              },
-              "Sarajevo": {
-                "exemplarCity": "サラエボ"
-              },
-              "Saratov": {
-                "exemplarCity": "サラトフ"
-              },
-              "Simferopol": {
-                "exemplarCity": "シンフェロポリ"
-              },
-              "Skopje": {
-                "exemplarCity": "スコピエ"
-              },
-              "Sofia": {
-                "exemplarCity": "ソフィア"
-              },
-              "Stockholm": {
-                "exemplarCity": "ストックホルム"
-              },
-              "Tallinn": {
-                "exemplarCity": "タリン"
-              },
-              "Tirane": {
-                "exemplarCity": "ティラナ"
-              },
-              "Ulyanovsk": {
-                "exemplarCity": "ウリヤノフスク"
-              },
-              "Vaduz": {
-                "exemplarCity": "ファドゥーツ"
-              },
-              "Vatican": {
-                "exemplarCity": "バチカン"
-              },
-              "Vienna": {
-                "exemplarCity": "ウィーン"
-              },
-              "Vilnius": {
-                "exemplarCity": "ヴィリニュス"
-              },
-              "Volgograd": {
-                "exemplarCity": "ボルゴグラード"
-              },
-              "Warsaw": {
-                "exemplarCity": "ワルシャワ"
-              },
-              "Zagreb": {
-                "exemplarCity": "ザグレブ"
-              },
-              "Zurich": {
-                "exemplarCity": "チューリッヒ"
-              }
-            },
-            "Africa": {
-              "Abidjan": {
-                "exemplarCity": "アビジャン"
-              },
-              "Accra": {
-                "exemplarCity": "アクラ"
-              },
-              "Addis_Ababa": {
-                "exemplarCity": "アジスアベバ"
-              },
-              "Algiers": {
-                "exemplarCity": "アルジェ"
-              },
-              "Asmera": {
-                "exemplarCity": "アスマラ"
-              },
-              "Bamako": {
-                "exemplarCity": "バマコ"
-              },
-              "Bangui": {
-                "exemplarCity": "バンギ"
-              },
-              "Banjul": {
-                "exemplarCity": "バンジュール"
-              },
-              "Bissau": {
-                "exemplarCity": "ビサウ"
-              },
-              "Blantyre": {
-                "exemplarCity": "ブランタイヤ"
-              },
-              "Brazzaville": {
-                "exemplarCity": "ブラザビル"
-              },
-              "Bujumbura": {
-                "exemplarCity": "ブジュンブラ"
-              },
-              "Cairo": {
-                "exemplarCity": "カイロ"
-              },
-              "Casablanca": {
-                "exemplarCity": "カサブランカ"
-              },
-              "Ceuta": {
-                "exemplarCity": "セウタ"
-              },
-              "Conakry": {
-                "exemplarCity": "コナクリ"
-              },
-              "Dakar": {
-                "exemplarCity": "ダカール"
-              },
-              "Dar_es_Salaam": {
-                "exemplarCity": "ダルエスサラーム"
-              },
-              "Djibouti": {
-                "exemplarCity": "ジブチ"
-              },
-              "Douala": {
-                "exemplarCity": "ドゥアラ"
-              },
-              "El_Aaiun": {
-                "exemplarCity": "アイウン"
-              },
-              "Freetown": {
-                "exemplarCity": "フリータウン"
-              },
-              "Gaborone": {
-                "exemplarCity": "ハボローネ"
-              },
-              "Harare": {
-                "exemplarCity": "ハラレ"
-              },
-              "Johannesburg": {
-                "exemplarCity": "ヨハネスブルグ"
-              },
-              "Juba": {
-                "exemplarCity": "ジュバ"
-              },
-              "Kampala": {
-                "exemplarCity": "カンパラ"
-              },
-              "Khartoum": {
-                "exemplarCity": "ハルツーム"
-              },
-              "Kigali": {
-                "exemplarCity": "キガリ"
-              },
-              "Kinshasa": {
-                "exemplarCity": "キンシャサ"
-              },
-              "Lagos": {
-                "exemplarCity": "ラゴス"
-              },
-              "Libreville": {
-                "exemplarCity": "リーブルヴィル"
-              },
-              "Lome": {
-                "exemplarCity": "ロメ"
-              },
-              "Luanda": {
-                "exemplarCity": "ルアンダ"
-              },
-              "Lubumbashi": {
-                "exemplarCity": "ルブンバシ"
-              },
-              "Lusaka": {
-                "exemplarCity": "ルサカ"
-              },
-              "Malabo": {
-                "exemplarCity": "マラボ"
-              },
-              "Maputo": {
-                "exemplarCity": "マプト"
-              },
-              "Maseru": {
-                "exemplarCity": "マセル"
-              },
-              "Mbabane": {
-                "exemplarCity": "ムババーネ"
-              },
-              "Mogadishu": {
-                "exemplarCity": "モガディシオ"
-              },
-              "Monrovia": {
-                "exemplarCity": "モンロビア"
-              },
-              "Nairobi": {
-                "exemplarCity": "ナイロビ"
-              },
-              "Ndjamena": {
-                "exemplarCity": "ンジャメナ"
-              },
-              "Niamey": {
-                "exemplarCity": "ニアメ"
-              },
-              "Nouakchott": {
-                "exemplarCity": "ヌアクショット"
-              },
-              "Ouagadougou": {
-                "exemplarCity": "ワガドゥグー"
-              },
-              "Porto-Novo": {
-                "exemplarCity": "ポルトノボ"
-              },
-              "Sao_Tome": {
-                "exemplarCity": "サントメ"
-              },
-              "Tripoli": {
-                "exemplarCity": "トリポリ"
-              },
-              "Tunis": {
-                "exemplarCity": "チュニス"
-              },
-              "Windhoek": {
-                "exemplarCity": "ウィントフック"
-              }
-            },
-            "Asia": {
-              "Aden": {
-                "exemplarCity": "アデン"
-              },
-              "Almaty": {
-                "exemplarCity": "アルマトイ"
-              },
-              "Amman": {
-                "exemplarCity": "アンマン"
-              },
-              "Anadyr": {
-                "exemplarCity": "アナディリ"
-              },
-              "Aqtau": {
-                "exemplarCity": "アクタウ"
-              },
-              "Aqtobe": {
-                "exemplarCity": "アクトベ"
-              },
-              "Ashgabat": {
-                "exemplarCity": "アシガバード"
-              },
-              "Atyrau": {
-                "exemplarCity": "アティラウ"
-              },
-              "Baghdad": {
-                "exemplarCity": "バグダッド"
-              },
-              "Bahrain": {
-                "exemplarCity": "バーレーン"
-              },
-              "Baku": {
-                "exemplarCity": "バクー"
-              },
-              "Bangkok": {
-                "exemplarCity": "バンコク"
-              },
-              "Barnaul": {
-                "exemplarCity": "バルナウル"
-              },
-              "Beirut": {
-                "exemplarCity": "ベイルート"
-              },
-              "Bishkek": {
-                "exemplarCity": "ビシュケク"
-              },
-              "Brunei": {
-                "exemplarCity": "ブルネイ"
-              },
-              "Calcutta": {
-                "exemplarCity": "コルカタ"
-              },
-              "Chita": {
-                "exemplarCity": "チタ"
-              },
-              "Choibalsan": {
-                "exemplarCity": "チョイバルサン"
-              },
-              "Colombo": {
-                "exemplarCity": "コロンボ"
-              },
-              "Damascus": {
-                "exemplarCity": "ダマスカス"
-              },
-              "Dhaka": {
-                "exemplarCity": "ダッカ"
-              },
-              "Dili": {
-                "exemplarCity": "ディリ"
-              },
-              "Dubai": {
-                "exemplarCity": "ドバイ"
-              },
-              "Dushanbe": {
-                "exemplarCity": "ドゥシャンベ"
-              },
-              "Famagusta": {
-                "exemplarCity": "ファマグスタ"
-              },
-              "Gaza": {
-                "exemplarCity": "ガザ"
-              },
-              "Hebron": {
-                "exemplarCity": "ヘブロン"
-              },
-              "Hong_Kong": {
-                "exemplarCity": "香港"
-              },
-              "Hovd": {
-                "exemplarCity": "ホブド"
-              },
-              "Irkutsk": {
-                "exemplarCity": "イルクーツク"
-              },
-              "Jakarta": {
-                "exemplarCity": "ジャカルタ"
-              },
-              "Jayapura": {
-                "exemplarCity": "ジャヤプラ"
-              },
-              "Jerusalem": {
-                "exemplarCity": "エルサレム"
-              },
-              "Kabul": {
-                "exemplarCity": "カブール"
-              },
-              "Kamchatka": {
-                "exemplarCity": "カムチャッカ"
-              },
-              "Karachi": {
-                "exemplarCity": "カラチ"
-              },
-              "Katmandu": {
-                "exemplarCity": "カトマンズ"
-              },
-              "Khandyga": {
-                "exemplarCity": "ハンドゥイガ"
-              },
-              "Krasnoyarsk": {
-                "exemplarCity": "クラスノヤルスク"
-              },
-              "Kuala_Lumpur": {
-                "exemplarCity": "クアラルンプール"
-              },
-              "Kuching": {
-                "exemplarCity": "クチン"
-              },
-              "Kuwait": {
-                "exemplarCity": "クウェート"
-              },
-              "Macau": {
-                "exemplarCity": "マカオ"
-              },
-              "Magadan": {
-                "exemplarCity": "マガダン"
-              },
-              "Makassar": {
-                "exemplarCity": "マカッサル"
-              },
-              "Manila": {
-                "exemplarCity": "マニラ"
-              },
-              "Muscat": {
-                "exemplarCity": "マスカット"
-              },
-              "Nicosia": {
-                "exemplarCity": "ニコシア"
-              },
-              "Novokuznetsk": {
-                "exemplarCity": "ノヴォクズネツク"
-              },
-              "Novosibirsk": {
-                "exemplarCity": "ノヴォシビルスク"
-              },
-              "Omsk": {
-                "exemplarCity": "オムスク"
-              },
-              "Oral": {
-                "exemplarCity": "オラル"
-              },
-              "Phnom_Penh": {
-                "exemplarCity": "プノンペン"
-              },
-              "Pontianak": {
-                "exemplarCity": "ポンティアナック"
-              },
-              "Pyongyang": {
-                "exemplarCity": "平壌"
-              },
-              "Qatar": {
-                "exemplarCity": "カタール"
-              },
-              "Qostanay": {
-                "exemplarCity": "コスタナイ"
-              },
-              "Qyzylorda": {
-                "exemplarCity": "クズロルダ"
-              },
-              "Rangoon": {
-                "exemplarCity": "ヤンゴン"
-              },
-              "Riyadh": {
-                "exemplarCity": "リヤド"
-              },
-              "Saigon": {
-                "exemplarCity": "ホーチミン"
-              },
-              "Sakhalin": {
-                "exemplarCity": "サハリン"
-              },
-              "Samarkand": {
-                "exemplarCity": "サマルカンド"
-              },
-              "Seoul": {
-                "exemplarCity": "ソウル"
-              },
-              "Shanghai": {
-                "exemplarCity": "上海"
-              },
-              "Singapore": {
-                "exemplarCity": "シンガポール"
-              },
-              "Srednekolymsk": {
-                "exemplarCity": "スレドネコリムスク"
-              },
-              "Taipei": {
-                "exemplarCity": "台北"
-              },
-              "Tashkent": {
-                "exemplarCity": "タシケント"
-              },
-              "Tbilisi": {
-                "exemplarCity": "トビリシ"
-              },
-              "Tehran": {
-                "exemplarCity": "テヘラン"
-              },
-              "Thimphu": {
-                "exemplarCity": "ティンプー"
-              },
-              "Tokyo": {
-                "exemplarCity": "東京"
-              },
-              "Tomsk": {
-                "exemplarCity": "トムスク"
-              },
-              "Ulaanbaatar": {
-                "exemplarCity": "ウランバートル"
-              },
-              "Urumqi": {
-                "exemplarCity": "ウルムチ"
-              },
-              "Ust-Nera": {
-                "exemplarCity": "ウスチネラ"
-              },
-              "Vientiane": {
-                "exemplarCity": "ビエンチャン"
-              },
-              "Vladivostok": {
-                "exemplarCity": "ウラジオストク"
-              },
-              "Yakutsk": {
-                "exemplarCity": "ヤクーツク"
-              },
-              "Yekaterinburg": {
-                "exemplarCity": "エカテリンブルグ"
-              },
-              "Yerevan": {
-                "exemplarCity": "エレバン"
-              }
-            },
-            "Indian": {
-              "Antananarivo": {
-                "exemplarCity": "アンタナナリボ"
-              },
-              "Chagos": {
-                "exemplarCity": "チャゴス"
-              },
-              "Christmas": {
-                "exemplarCity": "クリスマス島"
-              },
-              "Cocos": {
-                "exemplarCity": "ココス諸島"
-              },
-              "Comoro": {
-                "exemplarCity": "コモロ"
-              },
-              "Kerguelen": {
-                "exemplarCity": "ケルゲレン諸島"
-              },
-              "Mahe": {
-                "exemplarCity": "マヘ"
-              },
-              "Maldives": {
-                "exemplarCity": "モルディブ"
-              },
-              "Mauritius": {
-                "exemplarCity": "モーリシャス"
-              },
-              "Mayotte": {
-                "exemplarCity": "マヨット"
-              },
-              "Reunion": {
-                "exemplarCity": "レユニオン"
-              }
-            },
-            "Australia": {
-              "Adelaide": {
-                "exemplarCity": "アデレード"
-              },
-              "Brisbane": {
-                "exemplarCity": "ブリスベン"
-              },
-              "Broken_Hill": {
-                "exemplarCity": "ブロークンヒル"
-              },
-              "Darwin": {
-                "exemplarCity": "ダーウィン"
-              },
-              "Eucla": {
-                "exemplarCity": "ユークラ"
-              },
-              "Hobart": {
-                "exemplarCity": "ホバート"
-              },
-              "Lindeman": {
-                "exemplarCity": "リンデマン"
-              },
-              "Lord_Howe": {
-                "exemplarCity": "ロードハウ"
-              },
-              "Melbourne": {
-                "exemplarCity": "メルボルン"
-              },
-              "Perth": {
-                "exemplarCity": "パース"
-              },
-              "Sydney": {
-                "exemplarCity": "シドニー"
-              }
-            },
             "Pacific": {
-              "Apia": {
-                "exemplarCity": "アピア"
-              },
-              "Auckland": {
-                "exemplarCity": "オークランド"
-              },
-              "Bougainville": {
-                "exemplarCity": "ブーゲンビル"
-              },
-              "Chatham": {
-                "exemplarCity": "チャタム"
-              },
-              "Easter": {
-                "exemplarCity": "イースター島"
-              },
-              "Efate": {
-                "exemplarCity": "エフェテ島"
-              },
-              "Enderbury": {
-                "exemplarCity": "エンダーベリー島"
-              },
-              "Fakaofo": {
-                "exemplarCity": "ファカオフォ"
-              },
-              "Fiji": {
-                "exemplarCity": "フィジー"
-              },
-              "Funafuti": {
-                "exemplarCity": "フナフティ"
-              },
-              "Galapagos": {
-                "exemplarCity": "ガラパゴス"
-              },
-              "Gambier": {
-                "exemplarCity": "ガンビエ諸島"
-              },
-              "Guadalcanal": {
-                "exemplarCity": "ガダルカナル"
-              },
-              "Guam": {
-                "exemplarCity": "グアム"
-              },
               "Honolulu": {
+                "_type": "zone",
                 "exemplarCity": "ホノルル"
               },
+              "Pago_Pago": {
+                "_type": "zone",
+                "exemplarCity": "パゴパゴ"
+              },
+              "Rarotonga": {
+                "_type": "zone",
+                "exemplarCity": "ラロトンガ"
+              },
+              "Easter": {
+                "_type": "zone",
+                "exemplarCity": "イースター島"
+              },
+              "Galapagos": {
+                "_type": "zone",
+                "exemplarCity": "ガラパゴス"
+              },
+              "Fiji": {
+                "_type": "zone",
+                "exemplarCity": "フィジー"
+              },
+              "Truk": {
+                "_type": "zone",
+                "exemplarCity": "チューク"
+              },
+              "Ponape": {
+                "_type": "zone",
+                "exemplarCity": "ポンペイ島"
+              },
+              "Kosrae": {
+                "_type": "zone",
+                "exemplarCity": "コスラエ"
+              },
+              "Guam": {
+                "_type": "zone",
+                "exemplarCity": "グアム"
+              },
+              "Enderbury": {
+                "_type": "zone",
+                "exemplarCity": "エンダーベリー島"
+              },
               "Kanton": {
+                "_type": "zone",
                 "exemplarCity": "カントン島"
               },
               "Kiritimati": {
+                "_type": "zone",
                 "exemplarCity": "キリスィマスィ島"
               },
-              "Kosrae": {
-                "exemplarCity": "コスラエ"
+              "Tarawa": {
+                "_type": "zone",
+                "exemplarCity": "タラワ"
               },
               "Kwajalein": {
+                "_type": "zone",
                 "exemplarCity": "クェゼリン"
               },
               "Majuro": {
+                "_type": "zone",
                 "exemplarCity": "マジュロ"
               },
-              "Marquesas": {
-                "exemplarCity": "マルキーズ"
+              "Saipan": {
+                "_type": "zone",
+                "exemplarCity": "サイパン"
               },
-              "Midway": {
-                "exemplarCity": "ミッドウェー島"
+              "Noumea": {
+                "_type": "zone",
+                "exemplarCity": "ヌメア"
+              },
+              "Norfolk": {
+                "_type": "zone",
+                "exemplarCity": "ノーフォーク島"
               },
               "Nauru": {
+                "_type": "zone",
                 "exemplarCity": "ナウル"
               },
               "Niue": {
+                "_type": "zone",
                 "exemplarCity": "ニウエ"
               },
-              "Norfolk": {
-                "exemplarCity": "ノーフォーク島"
+              "Chatham": {
+                "_type": "zone",
+                "exemplarCity": "チャタム"
               },
-              "Noumea": {
-                "exemplarCity": "ヌメア"
-              },
-              "Pago_Pago": {
-                "exemplarCity": "パゴパゴ"
-              },
-              "Palau": {
-                "exemplarCity": "パラオ"
-              },
-              "Pitcairn": {
-                "exemplarCity": "ピトケアン諸島"
-              },
-              "Ponape": {
-                "exemplarCity": "ポンペイ島"
-              },
-              "Port_Moresby": {
-                "exemplarCity": "ポートモレスビー"
-              },
-              "Rarotonga": {
-                "exemplarCity": "ラロトンガ"
-              },
-              "Saipan": {
-                "exemplarCity": "サイパン"
+              "Auckland": {
+                "_type": "zone",
+                "exemplarCity": "オークランド"
               },
               "Tahiti": {
+                "_type": "zone",
                 "exemplarCity": "タヒチ"
               },
-              "Tarawa": {
-                "exemplarCity": "タラワ"
+              "Marquesas": {
+                "_type": "zone",
+                "exemplarCity": "マルキーズ"
+              },
+              "Gambier": {
+                "_type": "zone",
+                "exemplarCity": "ガンビエ諸島"
+              },
+              "Port_Moresby": {
+                "_type": "zone",
+                "exemplarCity": "ポートモレスビー"
+              },
+              "Bougainville": {
+                "_type": "zone",
+                "exemplarCity": "ブーゲンビル"
+              },
+              "Pitcairn": {
+                "_type": "zone",
+                "exemplarCity": "ピトケアン諸島"
+              },
+              "Palau": {
+                "_type": "zone",
+                "exemplarCity": "パラオ"
+              },
+              "Guadalcanal": {
+                "_type": "zone",
+                "exemplarCity": "ガダルカナル"
+              },
+              "Fakaofo": {
+                "_type": "zone",
+                "exemplarCity": "ファカオフォ"
               },
               "Tongatapu": {
+                "_type": "zone",
                 "exemplarCity": "トンガタプ"
               },
-              "Truk": {
-                "exemplarCity": "チューク"
+              "Funafuti": {
+                "_type": "zone",
+                "exemplarCity": "フナフティ"
+              },
+              "Midway": {
+                "_type": "zone",
+                "exemplarCity": "ミッドウェー島"
               },
               "Wake": {
+                "_type": "zone",
                 "exemplarCity": "ウェーク島"
               },
+              "Efate": {
+                "_type": "zone",
+                "exemplarCity": "エフェテ島"
+              },
               "Wallis": {
+                "_type": "zone",
                 "exemplarCity": "ウォリス諸島"
-              }
-            },
-            "Arctic": {
-              "Longyearbyen": {
-                "exemplarCity": "ロングイェールビーン"
-              }
-            },
-            "Antarctica": {
-              "Casey": {
-                "exemplarCity": "ケーシー基地"
               },
-              "Davis": {
-                "exemplarCity": "デービス基地"
-              },
-              "DumontDUrville": {
-                "exemplarCity": "デュモン・デュルヴィル基地"
-              },
-              "Macquarie": {
-                "exemplarCity": "マッコリー"
-              },
-              "Mawson": {
-                "exemplarCity": "モーソン基地"
-              },
-              "McMurdo": {
-                "exemplarCity": "マクマード基地"
-              },
-              "Palmer": {
-                "exemplarCity": "パーマー基地"
-              },
-              "Rothera": {
-                "exemplarCity": "ロゼラ基地"
-              },
-              "Syowa": {
-                "exemplarCity": "昭和基地"
-              },
-              "Troll": {
-                "exemplarCity": "トロル基地"
-              },
-              "Vostok": {
-                "exemplarCity": "ボストーク基地"
+              "Apia": {
+                "_type": "zone",
+                "exemplarCity": "アピア"
               }
             },
             "Etc": {
               "UTC": {
+                "_type": "zone",
                 "long": {
                   "standard": "協定世界時"
                 },
@@ -1315,7 +183,1556 @@
                 }
               },
               "Unknown": {
+                "_type": "zone",
                 "exemplarCity": "地域不明"
+              }
+            },
+            "Europe": {
+              "Andorra": {
+                "_type": "zone",
+                "exemplarCity": "アンドラ"
+              },
+              "Tirane": {
+                "_type": "zone",
+                "exemplarCity": "ティラナ"
+              },
+              "Vienna": {
+                "_type": "zone",
+                "exemplarCity": "ウィーン"
+              },
+              "Mariehamn": {
+                "_type": "zone",
+                "exemplarCity": "マリエハムン"
+              },
+              "Sarajevo": {
+                "_type": "zone",
+                "exemplarCity": "サラエボ"
+              },
+              "Brussels": {
+                "_type": "zone",
+                "exemplarCity": "ブリュッセル"
+              },
+              "Sofia": {
+                "_type": "zone",
+                "exemplarCity": "ソフィア"
+              },
+              "Minsk": {
+                "_type": "zone",
+                "exemplarCity": "ミンスク"
+              },
+              "Zurich": {
+                "_type": "zone",
+                "exemplarCity": "チューリッヒ"
+              },
+              "Prague": {
+                "_type": "zone",
+                "exemplarCity": "プラハ"
+              },
+              "Busingen": {
+                "_type": "zone",
+                "exemplarCity": "ビュージンゲン"
+              },
+              "Berlin": {
+                "_type": "zone",
+                "exemplarCity": "ベルリン"
+              },
+              "Copenhagen": {
+                "_type": "zone",
+                "exemplarCity": "コペンハーゲン"
+              },
+              "Tallinn": {
+                "_type": "zone",
+                "exemplarCity": "タリン"
+              },
+              "Madrid": {
+                "_type": "zone",
+                "exemplarCity": "マドリード"
+              },
+              "Helsinki": {
+                "_type": "zone",
+                "exemplarCity": "ヘルシンキ"
+              },
+              "Paris": {
+                "_type": "zone",
+                "exemplarCity": "パリ"
+              },
+              "London": {
+                "_type": "zone",
+                "long": {
+                  "daylight": "英国夏時間"
+                },
+                "exemplarCity": "ロンドン"
+              },
+              "Guernsey": {
+                "_type": "zone",
+                "exemplarCity": "ガーンジー"
+              },
+              "Gibraltar": {
+                "_type": "zone",
+                "exemplarCity": "ジブラルタル"
+              },
+              "Athens": {
+                "_type": "zone",
+                "exemplarCity": "アテネ"
+              },
+              "Zagreb": {
+                "_type": "zone",
+                "exemplarCity": "ザグレブ"
+              },
+              "Budapest": {
+                "_type": "zone",
+                "exemplarCity": "ブダペスト"
+              },
+              "Dublin": {
+                "_type": "zone",
+                "long": {
+                  "daylight": "アイルランド標準時"
+                },
+                "exemplarCity": "ダブリン"
+              },
+              "Isle_of_Man": {
+                "_type": "zone",
+                "exemplarCity": "マン島"
+              },
+              "Rome": {
+                "_type": "zone",
+                "exemplarCity": "ローマ"
+              },
+              "Jersey": {
+                "_type": "zone",
+                "exemplarCity": "ジャージー"
+              },
+              "Vaduz": {
+                "_type": "zone",
+                "exemplarCity": "ファドゥーツ"
+              },
+              "Vilnius": {
+                "_type": "zone",
+                "exemplarCity": "ヴィリニュス"
+              },
+              "Luxembourg": {
+                "_type": "zone",
+                "exemplarCity": "ルクセンブルク"
+              },
+              "Riga": {
+                "_type": "zone",
+                "exemplarCity": "リガ"
+              },
+              "Monaco": {
+                "_type": "zone",
+                "exemplarCity": "モナコ"
+              },
+              "Chisinau": {
+                "_type": "zone",
+                "exemplarCity": "キシナウ"
+              },
+              "Podgorica": {
+                "_type": "zone",
+                "exemplarCity": "ポドゴリツァ"
+              },
+              "Skopje": {
+                "_type": "zone",
+                "exemplarCity": "スコピエ"
+              },
+              "Malta": {
+                "_type": "zone",
+                "exemplarCity": "マルタ"
+              },
+              "Amsterdam": {
+                "_type": "zone",
+                "exemplarCity": "アムステルダム"
+              },
+              "Oslo": {
+                "_type": "zone",
+                "exemplarCity": "オスロ"
+              },
+              "Warsaw": {
+                "_type": "zone",
+                "exemplarCity": "ワルシャワ"
+              },
+              "Lisbon": {
+                "_type": "zone",
+                "exemplarCity": "リスボン"
+              },
+              "Bucharest": {
+                "_type": "zone",
+                "exemplarCity": "ブカレスト"
+              },
+              "Belgrade": {
+                "_type": "zone",
+                "exemplarCity": "ベオグラード"
+              },
+              "Kaliningrad": {
+                "_type": "zone",
+                "exemplarCity": "カリーニングラード"
+              },
+              "Moscow": {
+                "_type": "zone",
+                "exemplarCity": "モスクワ"
+              },
+              "Volgograd": {
+                "_type": "zone",
+                "exemplarCity": "ボルゴグラード"
+              },
+              "Saratov": {
+                "_type": "zone",
+                "exemplarCity": "サラトフ"
+              },
+              "Astrakhan": {
+                "_type": "zone",
+                "exemplarCity": "アストラハン"
+              },
+              "Ulyanovsk": {
+                "_type": "zone",
+                "exemplarCity": "ウリヤノフスク"
+              },
+              "Kirov": {
+                "_type": "zone",
+                "exemplarCity": "キーロフ"
+              },
+              "Samara": {
+                "_type": "zone",
+                "exemplarCity": "サマラ"
+              },
+              "Stockholm": {
+                "_type": "zone",
+                "exemplarCity": "ストックホルム"
+              },
+              "Ljubljana": {
+                "_type": "zone",
+                "exemplarCity": "リュブリャナ"
+              },
+              "Bratislava": {
+                "_type": "zone",
+                "exemplarCity": "ブラチスラバ"
+              },
+              "San_Marino": {
+                "_type": "zone",
+                "exemplarCity": "サンマリノ"
+              },
+              "Istanbul": {
+                "_type": "zone",
+                "exemplarCity": "イスタンブール"
+              },
+              "Kiev": {
+                "_type": "zone",
+                "exemplarCity": "キーウ"
+              },
+              "Simferopol": {
+                "_type": "zone",
+                "exemplarCity": "シンフェロポリ"
+              },
+              "Vatican": {
+                "_type": "zone",
+                "exemplarCity": "バチカン"
+              }
+            },
+            "Asia": {
+              "Dubai": {
+                "_type": "zone",
+                "exemplarCity": "ドバイ"
+              },
+              "Kabul": {
+                "_type": "zone",
+                "exemplarCity": "カブール"
+              },
+              "Yerevan": {
+                "_type": "zone",
+                "exemplarCity": "エレバン"
+              },
+              "Baku": {
+                "_type": "zone",
+                "exemplarCity": "バクー"
+              },
+              "Dhaka": {
+                "_type": "zone",
+                "exemplarCity": "ダッカ"
+              },
+              "Bahrain": {
+                "_type": "zone",
+                "exemplarCity": "バーレーン"
+              },
+              "Brunei": {
+                "_type": "zone",
+                "exemplarCity": "ブルネイ"
+              },
+              "Thimphu": {
+                "_type": "zone",
+                "exemplarCity": "ティンプー"
+              },
+              "Urumqi": {
+                "_type": "zone",
+                "exemplarCity": "ウルムチ"
+              },
+              "Shanghai": {
+                "_type": "zone",
+                "exemplarCity": "上海"
+              },
+              "Nicosia": {
+                "_type": "zone",
+                "exemplarCity": "ニコシア"
+              },
+              "Famagusta": {
+                "_type": "zone",
+                "exemplarCity": "ファマグスタ"
+              },
+              "Tbilisi": {
+                "_type": "zone",
+                "exemplarCity": "トビリシ"
+              },
+              "Hong_Kong": {
+                "_type": "zone",
+                "exemplarCity": "香港"
+              },
+              "Jakarta": {
+                "_type": "zone",
+                "exemplarCity": "ジャカルタ"
+              },
+              "Pontianak": {
+                "_type": "zone",
+                "exemplarCity": "ポンティアナック"
+              },
+              "Makassar": {
+                "_type": "zone",
+                "exemplarCity": "マカッサル"
+              },
+              "Jayapura": {
+                "_type": "zone",
+                "exemplarCity": "ジャヤプラ"
+              },
+              "Jerusalem": {
+                "_type": "zone",
+                "exemplarCity": "エルサレム"
+              },
+              "Calcutta": {
+                "_type": "zone",
+                "exemplarCity": "コルカタ"
+              },
+              "Baghdad": {
+                "_type": "zone",
+                "exemplarCity": "バグダッド"
+              },
+              "Tehran": {
+                "_type": "zone",
+                "exemplarCity": "テヘラン"
+              },
+              "Amman": {
+                "_type": "zone",
+                "exemplarCity": "アンマン"
+              },
+              "Tokyo": {
+                "_type": "zone",
+                "exemplarCity": "東京"
+              },
+              "Bishkek": {
+                "_type": "zone",
+                "exemplarCity": "ビシュケク"
+              },
+              "Phnom_Penh": {
+                "_type": "zone",
+                "exemplarCity": "プノンペン"
+              },
+              "Pyongyang": {
+                "_type": "zone",
+                "exemplarCity": "平壌"
+              },
+              "Seoul": {
+                "_type": "zone",
+                "exemplarCity": "ソウル"
+              },
+              "Kuwait": {
+                "_type": "zone",
+                "exemplarCity": "クウェート"
+              },
+              "Aqtau": {
+                "_type": "zone",
+                "exemplarCity": "アクタウ"
+              },
+              "Oral": {
+                "_type": "zone",
+                "exemplarCity": "オラル"
+              },
+              "Atyrau": {
+                "_type": "zone",
+                "exemplarCity": "アティラウ"
+              },
+              "Aqtobe": {
+                "_type": "zone",
+                "exemplarCity": "アクトベ"
+              },
+              "Qostanay": {
+                "_type": "zone",
+                "exemplarCity": "コスタナイ"
+              },
+              "Qyzylorda": {
+                "_type": "zone",
+                "exemplarCity": "クズロルダ"
+              },
+              "Almaty": {
+                "_type": "zone",
+                "exemplarCity": "アルマトイ"
+              },
+              "Vientiane": {
+                "_type": "zone",
+                "exemplarCity": "ビエンチャン"
+              },
+              "Beirut": {
+                "_type": "zone",
+                "exemplarCity": "ベイルート"
+              },
+              "Colombo": {
+                "_type": "zone",
+                "exemplarCity": "コロンボ"
+              },
+              "Rangoon": {
+                "_type": "zone",
+                "exemplarCity": "ヤンゴン"
+              },
+              "Hovd": {
+                "_type": "zone",
+                "exemplarCity": "ホブド"
+              },
+              "Ulaanbaatar": {
+                "_type": "zone",
+                "exemplarCity": "ウランバートル"
+              },
+              "Macau": {
+                "_type": "zone",
+                "exemplarCity": "マカオ"
+              },
+              "Kuala_Lumpur": {
+                "_type": "zone",
+                "exemplarCity": "クアラルンプール"
+              },
+              "Kuching": {
+                "_type": "zone",
+                "exemplarCity": "クチン"
+              },
+              "Katmandu": {
+                "_type": "zone",
+                "exemplarCity": "カトマンズ"
+              },
+              "Muscat": {
+                "_type": "zone",
+                "exemplarCity": "マスカット"
+              },
+              "Manila": {
+                "_type": "zone",
+                "exemplarCity": "マニラ"
+              },
+              "Karachi": {
+                "_type": "zone",
+                "exemplarCity": "カラチ"
+              },
+              "Gaza": {
+                "_type": "zone",
+                "exemplarCity": "ガザ"
+              },
+              "Hebron": {
+                "_type": "zone",
+                "exemplarCity": "ヘブロン"
+              },
+              "Qatar": {
+                "_type": "zone",
+                "exemplarCity": "カタール"
+              },
+              "Yekaterinburg": {
+                "_type": "zone",
+                "exemplarCity": "エカテリンブルグ"
+              },
+              "Omsk": {
+                "_type": "zone",
+                "exemplarCity": "オムスク"
+              },
+              "Novosibirsk": {
+                "_type": "zone",
+                "exemplarCity": "ノヴォシビルスク"
+              },
+              "Barnaul": {
+                "_type": "zone",
+                "exemplarCity": "バルナウル"
+              },
+              "Tomsk": {
+                "_type": "zone",
+                "exemplarCity": "トムスク"
+              },
+              "Novokuznetsk": {
+                "_type": "zone",
+                "exemplarCity": "ノヴォクズネツク"
+              },
+              "Krasnoyarsk": {
+                "_type": "zone",
+                "exemplarCity": "クラスノヤルスク"
+              },
+              "Irkutsk": {
+                "_type": "zone",
+                "exemplarCity": "イルクーツク"
+              },
+              "Chita": {
+                "_type": "zone",
+                "exemplarCity": "チタ"
+              },
+              "Yakutsk": {
+                "_type": "zone",
+                "exemplarCity": "ヤクーツク"
+              },
+              "Vladivostok": {
+                "_type": "zone",
+                "exemplarCity": "ウラジオストク"
+              },
+              "Khandyga": {
+                "_type": "zone",
+                "exemplarCity": "ハンドゥイガ"
+              },
+              "Sakhalin": {
+                "_type": "zone",
+                "exemplarCity": "サハリン"
+              },
+              "Ust-Nera": {
+                "_type": "zone",
+                "exemplarCity": "ウスチネラ"
+              },
+              "Magadan": {
+                "_type": "zone",
+                "exemplarCity": "マガダン"
+              },
+              "Srednekolymsk": {
+                "_type": "zone",
+                "exemplarCity": "スレドネコリムスク"
+              },
+              "Kamchatka": {
+                "_type": "zone",
+                "exemplarCity": "カムチャッカ"
+              },
+              "Anadyr": {
+                "_type": "zone",
+                "exemplarCity": "アナディリ"
+              },
+              "Riyadh": {
+                "_type": "zone",
+                "exemplarCity": "リヤド"
+              },
+              "Singapore": {
+                "_type": "zone",
+                "exemplarCity": "シンガポール"
+              },
+              "Damascus": {
+                "_type": "zone",
+                "exemplarCity": "ダマスカス"
+              },
+              "Bangkok": {
+                "_type": "zone",
+                "exemplarCity": "バンコク"
+              },
+              "Dushanbe": {
+                "_type": "zone",
+                "exemplarCity": "ドゥシャンベ"
+              },
+              "Dili": {
+                "_type": "zone",
+                "exemplarCity": "ディリ"
+              },
+              "Ashgabat": {
+                "_type": "zone",
+                "exemplarCity": "アシガバード"
+              },
+              "Taipei": {
+                "_type": "zone",
+                "exemplarCity": "台北"
+              },
+              "Samarkand": {
+                "_type": "zone",
+                "exemplarCity": "サマルカンド"
+              },
+              "Tashkent": {
+                "_type": "zone",
+                "exemplarCity": "タシケント"
+              },
+              "Saigon": {
+                "_type": "zone",
+                "exemplarCity": "ホーチミン"
+              },
+              "Aden": {
+                "_type": "zone",
+                "exemplarCity": "アデン"
+              }
+            },
+            "America": {
+              "Antigua": {
+                "_type": "zone",
+                "exemplarCity": "アンティグア"
+              },
+              "Anguilla": {
+                "_type": "zone",
+                "exemplarCity": "アンギラ"
+              },
+              "Argentina": {
+                "Rio_Gallegos": {
+                  "_type": "zone",
+                  "exemplarCity": "リオガジェゴス"
+                },
+                "San_Juan": {
+                  "_type": "zone",
+                  "exemplarCity": "サンファン"
+                },
+                "Ushuaia": {
+                  "_type": "zone",
+                  "exemplarCity": "ウシュアイア"
+                },
+                "La_Rioja": {
+                  "_type": "zone",
+                  "exemplarCity": "ラリオハ"
+                },
+                "San_Luis": {
+                  "_type": "zone",
+                  "exemplarCity": "サンルイス"
+                },
+                "Salta": {
+                  "_type": "zone",
+                  "exemplarCity": "サルタ"
+                },
+                "Tucuman": {
+                  "_type": "zone",
+                  "exemplarCity": "トゥクマン"
+                }
+              },
+              "Mendoza": {
+                "_type": "zone",
+                "exemplarCity": "メンドーサ"
+              },
+              "Catamarca": {
+                "_type": "zone",
+                "exemplarCity": "カタマルカ"
+              },
+              "Jujuy": {
+                "_type": "zone",
+                "exemplarCity": "フフイ"
+              },
+              "Cordoba": {
+                "_type": "zone",
+                "exemplarCity": "コルドバ"
+              },
+              "Buenos_Aires": {
+                "_type": "zone",
+                "exemplarCity": "ブエノスアイレス"
+              },
+              "Aruba": {
+                "_type": "zone",
+                "exemplarCity": "アルバ"
+              },
+              "Barbados": {
+                "_type": "zone",
+                "exemplarCity": "バルバドス"
+              },
+              "St_Barthelemy": {
+                "_type": "zone",
+                "exemplarCity": "サン・バルテルミー"
+              },
+              "La_Paz": {
+                "_type": "zone",
+                "exemplarCity": "ラパス"
+              },
+              "Kralendijk": {
+                "_type": "zone",
+                "exemplarCity": "クラレンダイク"
+              },
+              "Eirunepe": {
+                "_type": "zone",
+                "exemplarCity": "エイルネペ"
+              },
+              "Rio_Branco": {
+                "_type": "zone",
+                "exemplarCity": "リオブランコ"
+              },
+              "Porto_Velho": {
+                "_type": "zone",
+                "exemplarCity": "ポルトベーリョ"
+              },
+              "Boa_Vista": {
+                "_type": "zone",
+                "exemplarCity": "ボアビスタ"
+              },
+              "Manaus": {
+                "_type": "zone",
+                "exemplarCity": "マナウス"
+              },
+              "Cuiaba": {
+                "_type": "zone",
+                "exemplarCity": "クイアバ"
+              },
+              "Santarem": {
+                "_type": "zone",
+                "exemplarCity": "サンタレム"
+              },
+              "Campo_Grande": {
+                "_type": "zone",
+                "exemplarCity": "カンポグランデ"
+              },
+              "Belem": {
+                "_type": "zone",
+                "exemplarCity": "ベレン"
+              },
+              "Araguaina": {
+                "_type": "zone",
+                "exemplarCity": "アラグァイナ"
+              },
+              "Sao_Paulo": {
+                "_type": "zone",
+                "exemplarCity": "サンパウロ"
+              },
+              "Bahia": {
+                "_type": "zone",
+                "exemplarCity": "バイーア"
+              },
+              "Fortaleza": {
+                "_type": "zone",
+                "exemplarCity": "フォルタレザ"
+              },
+              "Maceio": {
+                "_type": "zone",
+                "exemplarCity": "マセイオ"
+              },
+              "Recife": {
+                "_type": "zone",
+                "exemplarCity": "レシフェ"
+              },
+              "Noronha": {
+                "_type": "zone",
+                "exemplarCity": "ノローニャ"
+              },
+              "Nassau": {
+                "_type": "zone",
+                "exemplarCity": "ナッソー"
+              },
+              "Belize": {
+                "_type": "zone",
+                "exemplarCity": "ベリーズ"
+              },
+              "Dawson": {
+                "_type": "zone",
+                "exemplarCity": "ドーソン"
+              },
+              "Whitehorse": {
+                "_type": "zone",
+                "exemplarCity": "ホワイトホース"
+              },
+              "Inuvik": {
+                "_type": "zone",
+                "exemplarCity": "イヌヴィク"
+              },
+              "Vancouver": {
+                "_type": "zone",
+                "exemplarCity": "バンクーバー"
+              },
+              "Fort_Nelson": {
+                "_type": "zone",
+                "exemplarCity": "フォートネルソン"
+              },
+              "Dawson_Creek": {
+                "_type": "zone",
+                "exemplarCity": "ドーソンクリーク"
+              },
+              "Creston": {
+                "_type": "zone",
+                "exemplarCity": "クレストン"
+              },
+              "Edmonton": {
+                "_type": "zone",
+                "exemplarCity": "エドモントン"
+              },
+              "Swift_Current": {
+                "_type": "zone",
+                "exemplarCity": "スウィフトカレント"
+              },
+              "Cambridge_Bay": {
+                "_type": "zone",
+                "exemplarCity": "ケンブリッジベイ"
+              },
+              "Regina": {
+                "_type": "zone",
+                "exemplarCity": "レジャイナ"
+              },
+              "Winnipeg": {
+                "_type": "zone",
+                "exemplarCity": "ウィニペグ"
+              },
+              "Resolute": {
+                "_type": "zone",
+                "exemplarCity": "レゾリュート"
+              },
+              "Rankin_Inlet": {
+                "_type": "zone",
+                "exemplarCity": "ランキンインレット"
+              },
+              "Coral_Harbour": {
+                "_type": "zone",
+                "exemplarCity": "アティコカン"
+              },
+              "Toronto": {
+                "_type": "zone",
+                "exemplarCity": "トロント"
+              },
+              "Iqaluit": {
+                "_type": "zone",
+                "exemplarCity": "イカルイット"
+              },
+              "Moncton": {
+                "_type": "zone",
+                "exemplarCity": "モンクトン"
+              },
+              "Halifax": {
+                "_type": "zone",
+                "exemplarCity": "ハリファクス"
+              },
+              "Goose_Bay": {
+                "_type": "zone",
+                "exemplarCity": "グースベイ"
+              },
+              "Glace_Bay": {
+                "_type": "zone",
+                "exemplarCity": "グレースベイ"
+              },
+              "Blanc-Sablon": {
+                "_type": "zone",
+                "exemplarCity": "ブラン・サブロン"
+              },
+              "St_Johns": {
+                "_type": "zone",
+                "exemplarCity": "セントジョンズ"
+              },
+              "Punta_Arenas": {
+                "_type": "zone",
+                "exemplarCity": "プンタアレナス"
+              },
+              "Santiago": {
+                "_type": "zone",
+                "exemplarCity": "サンチアゴ"
+              },
+              "Bogota": {
+                "_type": "zone",
+                "exemplarCity": "ボゴタ"
+              },
+              "Costa_Rica": {
+                "_type": "zone",
+                "exemplarCity": "コスタリカ"
+              },
+              "Havana": {
+                "_type": "zone",
+                "exemplarCity": "ハバナ"
+              },
+              "Curacao": {
+                "_type": "zone",
+                "exemplarCity": "キュラソー"
+              },
+              "Dominica": {
+                "_type": "zone",
+                "exemplarCity": "ドミニカ"
+              },
+              "Santo_Domingo": {
+                "_type": "zone",
+                "exemplarCity": "サントドミンゴ"
+              },
+              "Guayaquil": {
+                "_type": "zone",
+                "exemplarCity": "グアヤキル"
+              },
+              "Grenada": {
+                "_type": "zone",
+                "exemplarCity": "グレナダ"
+              },
+              "Cayenne": {
+                "_type": "zone",
+                "exemplarCity": "カイエンヌ"
+              },
+              "Thule": {
+                "_type": "zone",
+                "exemplarCity": "チューレ"
+              },
+              "Godthab": {
+                "_type": "zone",
+                "exemplarCity": "ヌーク"
+              },
+              "Scoresbysund": {
+                "_type": "zone",
+                "exemplarCity": "イトコルトルミット"
+              },
+              "Danmarkshavn": {
+                "_type": "zone",
+                "exemplarCity": "デンマークシャウン"
+              },
+              "Guadeloupe": {
+                "_type": "zone",
+                "exemplarCity": "グアドループ"
+              },
+              "Guatemala": {
+                "_type": "zone",
+                "exemplarCity": "グアテマラ"
+              },
+              "Guyana": {
+                "_type": "zone",
+                "exemplarCity": "ガイアナ"
+              },
+              "Tegucigalpa": {
+                "_type": "zone",
+                "exemplarCity": "テグシガルパ"
+              },
+              "Port-au-Prince": {
+                "_type": "zone",
+                "exemplarCity": "ポルトープランス"
+              },
+              "Jamaica": {
+                "_type": "zone",
+                "exemplarCity": "ジャマイカ"
+              },
+              "St_Kitts": {
+                "_type": "zone",
+                "exemplarCity": "セントクリストファー"
+              },
+              "Cayman": {
+                "_type": "zone",
+                "exemplarCity": "ケイマン"
+              },
+              "St_Lucia": {
+                "_type": "zone",
+                "exemplarCity": "セントルシア"
+              },
+              "Marigot": {
+                "_type": "zone",
+                "exemplarCity": "マリゴ"
+              },
+              "Martinique": {
+                "_type": "zone",
+                "exemplarCity": "マルティニーク"
+              },
+              "Montserrat": {
+                "_type": "zone",
+                "exemplarCity": "モントセラト"
+              },
+              "Tijuana": {
+                "_type": "zone",
+                "exemplarCity": "ティフアナ"
+              },
+              "Hermosillo": {
+                "_type": "zone",
+                "exemplarCity": "エルモシヨ"
+              },
+              "Ciudad_Juarez": {
+                "_type": "zone",
+                "exemplarCity": "シウダー・フアレス"
+              },
+              "Mazatlan": {
+                "_type": "zone",
+                "exemplarCity": "マサトラン"
+              },
+              "Chihuahua": {
+                "_type": "zone",
+                "exemplarCity": "チワワ"
+              },
+              "Bahia_Banderas": {
+                "_type": "zone",
+                "exemplarCity": "バイアバンデラ"
+              },
+              "Ojinaga": {
+                "_type": "zone",
+                "exemplarCity": "オヒナガ"
+              },
+              "Monterrey": {
+                "_type": "zone",
+                "exemplarCity": "モンテレイ"
+              },
+              "Mexico_City": {
+                "_type": "zone",
+                "exemplarCity": "メキシコシティー"
+              },
+              "Matamoros": {
+                "_type": "zone",
+                "exemplarCity": "マタモロス"
+              },
+              "Merida": {
+                "_type": "zone",
+                "exemplarCity": "メリダ"
+              },
+              "Cancun": {
+                "_type": "zone",
+                "exemplarCity": "カンクン"
+              },
+              "Managua": {
+                "_type": "zone",
+                "exemplarCity": "マナグア"
+              },
+              "Panama": {
+                "_type": "zone",
+                "exemplarCity": "パナマ"
+              },
+              "Lima": {
+                "_type": "zone",
+                "exemplarCity": "リマ"
+              },
+              "Miquelon": {
+                "_type": "zone",
+                "exemplarCity": "ミクロン島"
+              },
+              "Puerto_Rico": {
+                "_type": "zone",
+                "exemplarCity": "プエルトリコ"
+              },
+              "Asuncion": {
+                "_type": "zone",
+                "exemplarCity": "アスンシオン"
+              },
+              "Paramaribo": {
+                "_type": "zone",
+                "exemplarCity": "パラマリボ"
+              },
+              "El_Salvador": {
+                "_type": "zone",
+                "exemplarCity": "エルサルバドル"
+              },
+              "Lower_Princes": {
+                "_type": "zone",
+                "exemplarCity": "ローワー・プリンセズ・クウォーター"
+              },
+              "Grand_Turk": {
+                "_type": "zone",
+                "exemplarCity": "グランドターク"
+              },
+              "Port_of_Spain": {
+                "_type": "zone",
+                "exemplarCity": "ポートオブスペイン"
+              },
+              "Adak": {
+                "_type": "zone",
+                "exemplarCity": "アダック"
+              },
+              "Nome": {
+                "_type": "zone",
+                "exemplarCity": "ノーム"
+              },
+              "Anchorage": {
+                "_type": "zone",
+                "exemplarCity": "アンカレッジ"
+              },
+              "Yakutat": {
+                "_type": "zone",
+                "exemplarCity": "ヤクタット"
+              },
+              "Sitka": {
+                "_type": "zone",
+                "exemplarCity": "シトカ"
+              },
+              "Juneau": {
+                "_type": "zone",
+                "exemplarCity": "ジュノー"
+              },
+              "Metlakatla": {
+                "_type": "zone",
+                "exemplarCity": "メトラカトラ"
+              },
+              "Los_Angeles": {
+                "_type": "zone",
+                "exemplarCity": "ロサンゼルス"
+              },
+              "Boise": {
+                "_type": "zone",
+                "exemplarCity": "ボイシ"
+              },
+              "Phoenix": {
+                "_type": "zone",
+                "exemplarCity": "フェニックス"
+              },
+              "Denver": {
+                "_type": "zone",
+                "exemplarCity": "デンバー"
+              },
+              "North_Dakota": {
+                "Beulah": {
+                  "_type": "zone",
+                  "exemplarCity": "ノースダコタ州ビューラー"
+                },
+                "New_Salem": {
+                  "_type": "zone",
+                  "exemplarCity": "ノースダコタ州ニューセーラム"
+                },
+                "Center": {
+                  "_type": "zone",
+                  "exemplarCity": "ノースダコタ州センター"
+                }
+              },
+              "Chicago": {
+                "_type": "zone",
+                "exemplarCity": "シカゴ"
+              },
+              "Menominee": {
+                "_type": "zone",
+                "exemplarCity": "メノミニー"
+              },
+              "Indiana": {
+                "Vincennes": {
+                  "_type": "zone",
+                  "exemplarCity": "インディアナ州ビンセンス"
+                },
+                "Petersburg": {
+                  "_type": "zone",
+                  "exemplarCity": "インディアナ州ピーターズバーグ"
+                },
+                "Tell_City": {
+                  "_type": "zone",
+                  "exemplarCity": "インディアナ州テルシティ"
+                },
+                "Knox": {
+                  "_type": "zone",
+                  "exemplarCity": "インディアナ州ノックス"
+                },
+                "Winamac": {
+                  "_type": "zone",
+                  "exemplarCity": "インディアナ州ウィナマック"
+                },
+                "Marengo": {
+                  "_type": "zone",
+                  "exemplarCity": "インディアナ州マレンゴ"
+                },
+                "Vevay": {
+                  "_type": "zone",
+                  "exemplarCity": "インディアナ州ビベー"
+                }
+              },
+              "Indianapolis": {
+                "_type": "zone",
+                "exemplarCity": "インディアナポリス"
+              },
+              "Louisville": {
+                "_type": "zone",
+                "exemplarCity": "ルイビル"
+              },
+              "Kentucky": {
+                "Monticello": {
+                  "_type": "zone",
+                  "exemplarCity": "ケンタッキー州モンティチェロ"
+                }
+              },
+              "Detroit": {
+                "_type": "zone",
+                "exemplarCity": "デトロイト"
+              },
+              "New_York": {
+                "_type": "zone",
+                "exemplarCity": "ニューヨーク"
+              },
+              "Montevideo": {
+                "_type": "zone",
+                "exemplarCity": "モンテビデオ"
+              },
+              "St_Vincent": {
+                "_type": "zone",
+                "exemplarCity": "セントビンセント"
+              },
+              "Caracas": {
+                "_type": "zone",
+                "exemplarCity": "カラカス"
+              },
+              "Tortola": {
+                "_type": "zone",
+                "exemplarCity": "トルトーラ"
+              },
+              "St_Thomas": {
+                "_type": "zone",
+                "exemplarCity": "セントトーマス"
+              }
+            },
+            "Africa": {
+              "Luanda": {
+                "_type": "zone",
+                "exemplarCity": "ルアンダ"
+              },
+              "Ouagadougou": {
+                "_type": "zone",
+                "exemplarCity": "ワガドゥグー"
+              },
+              "Bujumbura": {
+                "_type": "zone",
+                "exemplarCity": "ブジュンブラ"
+              },
+              "Porto-Novo": {
+                "_type": "zone",
+                "exemplarCity": "ポルトノボ"
+              },
+              "Gaborone": {
+                "_type": "zone",
+                "exemplarCity": "ハボローネ"
+              },
+              "Kinshasa": {
+                "_type": "zone",
+                "exemplarCity": "キンシャサ"
+              },
+              "Lubumbashi": {
+                "_type": "zone",
+                "exemplarCity": "ルブンバシ"
+              },
+              "Bangui": {
+                "_type": "zone",
+                "exemplarCity": "バンギ"
+              },
+              "Brazzaville": {
+                "_type": "zone",
+                "exemplarCity": "ブラザビル"
+              },
+              "Abidjan": {
+                "_type": "zone",
+                "exemplarCity": "アビジャン"
+              },
+              "Douala": {
+                "_type": "zone",
+                "exemplarCity": "ドゥアラ"
+              },
+              "Djibouti": {
+                "_type": "zone",
+                "exemplarCity": "ジブチ"
+              },
+              "Algiers": {
+                "_type": "zone",
+                "exemplarCity": "アルジェ"
+              },
+              "Cairo": {
+                "_type": "zone",
+                "exemplarCity": "カイロ"
+              },
+              "El_Aaiun": {
+                "_type": "zone",
+                "exemplarCity": "アイウン"
+              },
+              "Asmera": {
+                "_type": "zone",
+                "exemplarCity": "アスマラ"
+              },
+              "Ceuta": {
+                "_type": "zone",
+                "exemplarCity": "セウタ"
+              },
+              "Addis_Ababa": {
+                "_type": "zone",
+                "exemplarCity": "アジスアベバ"
+              },
+              "Libreville": {
+                "_type": "zone",
+                "exemplarCity": "リーブルヴィル"
+              },
+              "Accra": {
+                "_type": "zone",
+                "exemplarCity": "アクラ"
+              },
+              "Banjul": {
+                "_type": "zone",
+                "exemplarCity": "バンジュール"
+              },
+              "Conakry": {
+                "_type": "zone",
+                "exemplarCity": "コナクリ"
+              },
+              "Malabo": {
+                "_type": "zone",
+                "exemplarCity": "マラボ"
+              },
+              "Bissau": {
+                "_type": "zone",
+                "exemplarCity": "ビサウ"
+              },
+              "Nairobi": {
+                "_type": "zone",
+                "exemplarCity": "ナイロビ"
+              },
+              "Monrovia": {
+                "_type": "zone",
+                "exemplarCity": "モンロビア"
+              },
+              "Maseru": {
+                "_type": "zone",
+                "exemplarCity": "マセル"
+              },
+              "Tripoli": {
+                "_type": "zone",
+                "exemplarCity": "トリポリ"
+              },
+              "Casablanca": {
+                "_type": "zone",
+                "exemplarCity": "カサブランカ"
+              },
+              "Bamako": {
+                "_type": "zone",
+                "exemplarCity": "バマコ"
+              },
+              "Nouakchott": {
+                "_type": "zone",
+                "exemplarCity": "ヌアクショット"
+              },
+              "Blantyre": {
+                "_type": "zone",
+                "exemplarCity": "ブランタイヤ"
+              },
+              "Maputo": {
+                "_type": "zone",
+                "exemplarCity": "マプト"
+              },
+              "Windhoek": {
+                "_type": "zone",
+                "exemplarCity": "ウィントフック"
+              },
+              "Niamey": {
+                "_type": "zone",
+                "exemplarCity": "ニアメ"
+              },
+              "Lagos": {
+                "_type": "zone",
+                "exemplarCity": "ラゴス"
+              },
+              "Kigali": {
+                "_type": "zone",
+                "exemplarCity": "キガリ"
+              },
+              "Khartoum": {
+                "_type": "zone",
+                "exemplarCity": "ハルツーム"
+              },
+              "Freetown": {
+                "_type": "zone",
+                "exemplarCity": "フリータウン"
+              },
+              "Dakar": {
+                "_type": "zone",
+                "exemplarCity": "ダカール"
+              },
+              "Mogadishu": {
+                "_type": "zone",
+                "exemplarCity": "モガディシオ"
+              },
+              "Juba": {
+                "_type": "zone",
+                "exemplarCity": "ジュバ"
+              },
+              "Sao_Tome": {
+                "_type": "zone",
+                "exemplarCity": "サントメ"
+              },
+              "Mbabane": {
+                "_type": "zone",
+                "exemplarCity": "ムババーネ"
+              },
+              "Ndjamena": {
+                "_type": "zone",
+                "exemplarCity": "ンジャメナ"
+              },
+              "Lome": {
+                "_type": "zone",
+                "exemplarCity": "ロメ"
+              },
+              "Tunis": {
+                "_type": "zone",
+                "exemplarCity": "チュニス"
+              },
+              "Dar_es_Salaam": {
+                "_type": "zone",
+                "exemplarCity": "ダルエスサラーム"
+              },
+              "Kampala": {
+                "_type": "zone",
+                "exemplarCity": "カンパラ"
+              },
+              "Johannesburg": {
+                "_type": "zone",
+                "exemplarCity": "ヨハネスブルグ"
+              },
+              "Lusaka": {
+                "_type": "zone",
+                "exemplarCity": "ルサカ"
+              },
+              "Harare": {
+                "_type": "zone",
+                "exemplarCity": "ハラレ"
+              }
+            },
+            "Antarctica": {
+              "Rothera": {
+                "_type": "zone",
+                "exemplarCity": "ロゼラ基地"
+              },
+              "Palmer": {
+                "_type": "zone",
+                "exemplarCity": "パーマー基地"
+              },
+              "Troll": {
+                "_type": "zone",
+                "exemplarCity": "トロル基地"
+              },
+              "Syowa": {
+                "_type": "zone",
+                "exemplarCity": "昭和基地"
+              },
+              "Mawson": {
+                "_type": "zone",
+                "exemplarCity": "モーソン基地"
+              },
+              "Davis": {
+                "_type": "zone",
+                "exemplarCity": "デービス基地"
+              },
+              "Vostok": {
+                "_type": "zone",
+                "exemplarCity": "ボストーク基地"
+              },
+              "Casey": {
+                "_type": "zone",
+                "exemplarCity": "ケーシー基地"
+              },
+              "DumontDUrville": {
+                "_type": "zone",
+                "exemplarCity": "デュモン・デュルヴィル基地"
+              },
+              "McMurdo": {
+                "_type": "zone",
+                "exemplarCity": "マクマード基地"
+              },
+              "Macquarie": {
+                "_type": "zone",
+                "exemplarCity": "マッコリー"
+              }
+            },
+            "Australia": {
+              "Perth": {
+                "_type": "zone",
+                "exemplarCity": "パース"
+              },
+              "Eucla": {
+                "_type": "zone",
+                "exemplarCity": "ユークラ"
+              },
+              "Darwin": {
+                "_type": "zone",
+                "exemplarCity": "ダーウィン"
+              },
+              "Adelaide": {
+                "_type": "zone",
+                "exemplarCity": "アデレード"
+              },
+              "Broken_Hill": {
+                "_type": "zone",
+                "exemplarCity": "ブロークンヒル"
+              },
+              "Melbourne": {
+                "_type": "zone",
+                "exemplarCity": "メルボルン"
+              },
+              "Hobart": {
+                "_type": "zone",
+                "exemplarCity": "ホバート"
+              },
+              "Lindeman": {
+                "_type": "zone",
+                "exemplarCity": "リンデマン"
+              },
+              "Sydney": {
+                "_type": "zone",
+                "exemplarCity": "シドニー"
+              },
+              "Brisbane": {
+                "_type": "zone",
+                "exemplarCity": "ブリスベン"
+              },
+              "Lord_Howe": {
+                "_type": "zone",
+                "exemplarCity": "ロードハウ"
+              }
+            },
+            "Atlantic": {
+              "Bermuda": {
+                "_type": "zone",
+                "exemplarCity": "バミューダ"
+              },
+              "Cape_Verde": {
+                "_type": "zone",
+                "exemplarCity": "カーボベルデ"
+              },
+              "Canary": {
+                "_type": "zone",
+                "exemplarCity": "カナリア"
+              },
+              "Stanley": {
+                "_type": "zone",
+                "exemplarCity": "スタンレー"
+              },
+              "Faeroe": {
+                "_type": "zone",
+                "exemplarCity": "フェロー"
+              },
+              "South_Georgia": {
+                "_type": "zone",
+                "exemplarCity": "サウスジョージア"
+              },
+              "Reykjavik": {
+                "_type": "zone",
+                "exemplarCity": "レイキャビク"
+              },
+              "Azores": {
+                "_type": "zone",
+                "exemplarCity": "アゾレス"
+              },
+              "Madeira": {
+                "_type": "zone",
+                "exemplarCity": "マデイラ"
+              },
+              "St_Helena": {
+                "_type": "zone",
+                "exemplarCity": "セントヘレナ"
+              }
+            },
+            "Indian": {
+              "Cocos": {
+                "_type": "zone",
+                "exemplarCity": "ココス諸島"
+              },
+              "Christmas": {
+                "_type": "zone",
+                "exemplarCity": "クリスマス島"
+              },
+              "Chagos": {
+                "_type": "zone",
+                "exemplarCity": "チャゴス"
+              },
+              "Comoro": {
+                "_type": "zone",
+                "exemplarCity": "コモロ"
+              },
+              "Antananarivo": {
+                "_type": "zone",
+                "exemplarCity": "アンタナナリボ"
+              },
+              "Mauritius": {
+                "_type": "zone",
+                "exemplarCity": "モーリシャス"
+              },
+              "Maldives": {
+                "_type": "zone",
+                "exemplarCity": "モルディブ"
+              },
+              "Reunion": {
+                "_type": "zone",
+                "exemplarCity": "レユニオン"
+              },
+              "Mahe": {
+                "_type": "zone",
+                "exemplarCity": "マヘ"
+              },
+              "Kerguelen": {
+                "_type": "zone",
+                "exemplarCity": "ケルゲレン諸島"
+              },
+              "Mayotte": {
+                "_type": "zone",
+                "exemplarCity": "マヨット"
+              }
+            },
+            "Arctic": {
+              "Longyearbyen": {
+                "_type": "zone",
+                "exemplarCity": "ロングイェールビーン"
               }
             }
           },
@@ -1573,13 +1990,6 @@
                 "generic": "中国時間",
                 "standard": "中国標準時",
                 "daylight": "中国夏時間"
-              }
-            },
-            "Choibalsan": {
-              "long": {
-                "generic": "チョイバルサン時間",
-                "standard": "チョイバルサン標準時",
-                "daylight": "チョイバルサン夏時間"
               }
             },
             "Christmas": {

@@ -7,12 +7,9 @@
 //! Sample file:
 //! `<https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/weekData.json>`
 
-use core::convert::TryFrom;
 use icu::locale::{subtags::region, subtags::Region};
 use serde::{Deserialize, Deserializer};
 use std::collections::BTreeMap;
-use std::num::ParseIntError;
-use std::str::FromStr;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -26,22 +23,22 @@ pub(crate) enum Weekday {
     Sun,
 }
 
-impl From<&Weekday> for icu::calendar::types::IsoWeekday {
+impl From<&Weekday> for icu::calendar::types::Weekday {
     fn from(day: &Weekday) -> Self {
-        use icu::calendar::types::IsoWeekday;
+        use icu::calendar::types::Weekday as CalWeekday;
         match day {
-            Weekday::Mon => IsoWeekday::Monday,
-            Weekday::Tue => IsoWeekday::Tuesday,
-            Weekday::Wed => IsoWeekday::Wednesday,
-            Weekday::Thu => IsoWeekday::Thursday,
-            Weekday::Fri => IsoWeekday::Friday,
-            Weekday::Sat => IsoWeekday::Saturday,
-            Weekday::Sun => IsoWeekday::Sunday,
+            Weekday::Mon => CalWeekday::Monday,
+            Weekday::Tue => CalWeekday::Tuesday,
+            Weekday::Wed => CalWeekday::Wednesday,
+            Weekday::Thu => CalWeekday::Thursday,
+            Weekday::Fri => CalWeekday::Friday,
+            Weekday::Sat => CalWeekday::Saturday,
+            Weekday::Sun => CalWeekday::Sunday,
         }
     }
 }
 
-impl From<Weekday> for icu::calendar::types::IsoWeekday {
+impl From<Weekday> for icu::calendar::types::Weekday {
     fn from(day: Weekday) -> Self {
         (&day).into()
     }
@@ -76,7 +73,7 @@ impl<'de> Deserialize<'de> for Territory {
     {
         struct TerritoryVisitor;
 
-        impl<'de> serde::de::Visitor<'de> for TerritoryVisitor {
+        impl serde::de::Visitor<'_> for TerritoryVisitor {
             type Value = Territory;
 
             fn expecting(&self, formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
@@ -106,23 +103,10 @@ impl<'de> Deserialize<'de> for Territory {
     }
 }
 
-/// Wrapper used to deserialize json string keys as u8s.
-#[derive(Debug, Deserialize)]
-#[serde(try_from = "String")]
-pub(crate) struct U8(pub(crate) u8);
-
-impl TryFrom<String> for U8 {
-    type Error = ParseIntError;
-
-    fn try_from(s: String) -> Result<Self, Self::Error> {
-        Ok(Self(u8::from_str(&s)?))
-    }
-}
-
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub(crate) struct WeekData {
-    pub(crate) min_days: BTreeMap<Territory, U8>,
+    pub(crate) min_days: BTreeMap<Territory, String>,
     pub(crate) first_day: BTreeMap<Territory, Weekday>,
     pub(crate) weekend_start: BTreeMap<Territory, Weekday>,
     pub(crate) weekend_end: BTreeMap<Territory, Weekday>,

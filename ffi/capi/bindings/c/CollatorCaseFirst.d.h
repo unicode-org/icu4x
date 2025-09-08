@@ -13,8 +13,8 @@
 
 typedef enum CollatorCaseFirst {
   CollatorCaseFirst_Off = 0,
-  CollatorCaseFirst_LowerFirst = 1,
-  CollatorCaseFirst_UpperFirst = 2,
+  CollatorCaseFirst_Lower = 1,
+  CollatorCaseFirst_Upper = 2,
 } CollatorCaseFirst;
 
 typedef struct CollatorCaseFirst_option {union { CollatorCaseFirst ok; }; bool is_ok; } CollatorCaseFirst_option;

@@ -6,7 +6,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -17,12 +19,15 @@ namespace capi {
       DateTimeLength_Medium = 1,
       DateTimeLength_Short = 2,
     };
-    
+
     typedef struct DateTimeLength_option {union { DateTimeLength ok; }; bool is_ok; } DateTimeLength_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `Length`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.Length.html) for more information.
+ */
 class DateTimeLength {
 public:
   enum Value {
@@ -31,7 +36,8 @@ public:
     Short = 2,
   };
 
-  DateTimeLength() = default;
+  DateTimeLength(): value(Value::Medium) {}
+
   // Implicit conversions between enum and ::Value
   constexpr DateTimeLength(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

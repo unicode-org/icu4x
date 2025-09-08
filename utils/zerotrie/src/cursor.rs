@@ -69,7 +69,7 @@ where
     /// assert_eq!(longest_prefix, 3);
     /// ```
     #[inline]
-    pub fn cursor(&self) -> ZeroTrieSimpleAsciiCursor {
+    pub fn cursor(&self) -> ZeroTrieSimpleAsciiCursor<'_> {
         ZeroTrieSimpleAsciiCursor {
             trie: self.as_borrowed_slice(),
         }
@@ -106,7 +106,7 @@ where
     ///
     /// For more examples, see [`ZeroTrieSimpleAscii::cursor`].
     #[inline]
-    pub fn cursor(&self) -> ZeroAsciiIgnoreCaseTrieCursor {
+    pub fn cursor(&self) -> ZeroAsciiIgnoreCaseTrieCursor<'_> {
         ZeroAsciiIgnoreCaseTrieCursor {
             trie: self.as_borrowed_slice(),
         }
@@ -159,7 +159,7 @@ pub struct AsciiProbeResult {
     pub total_siblings: u8,
 }
 
-impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
+impl ZeroTrieSimpleAsciiCursor<'_> {
     /// Steps the cursor one character into the trie based on the character's byte value.
     ///
     /// # Examples
@@ -343,7 +343,7 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     }
 }
 
-impl<'a> ZeroAsciiIgnoreCaseTrieCursor<'a> {
+impl ZeroAsciiIgnoreCaseTrieCursor<'_> {
     /// Steps the cursor one byte into the trie.
     ///
     /// Returns the byte if matched, which may be a different case than the input byte.
@@ -411,7 +411,7 @@ impl<'a> ZeroAsciiIgnoreCaseTrieCursor<'a> {
     }
 }
 
-impl<'a> fmt::Write for ZeroTrieSimpleAsciiCursor<'a> {
+impl fmt::Write for ZeroTrieSimpleAsciiCursor<'_> {
     /// Steps the cursor through each ASCII byte of the string.
     ///
     /// If the string contains non-ASCII chars, an error is returned.
@@ -465,7 +465,7 @@ impl<'a> fmt::Write for ZeroTrieSimpleAsciiCursor<'a> {
     }
 }
 
-impl<'a> fmt::Write for ZeroAsciiIgnoreCaseTrieCursor<'a> {
+impl fmt::Write for ZeroAsciiIgnoreCaseTrieCursor<'_> {
     /// Steps the cursor through each ASCII byte of the string.
     ///
     /// If the string contains non-ASCII chars, an error is returned.

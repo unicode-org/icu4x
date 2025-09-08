@@ -7,12 +7,6 @@ use icu::collections::codepointtrie::toml::CodePointTrieToml;
 #[derive(serde::Deserialize)]
 pub(crate) struct DecompositionData {
     pub(crate) trie: CodePointTrieToml,
-}
-
-#[derive(serde::Deserialize)]
-pub(crate) struct DecompositionSupplement {
-    pub(crate) trie: CodePointTrieToml,
-    pub(crate) flags: u8,
     pub(crate) cap: u16,
 }
 

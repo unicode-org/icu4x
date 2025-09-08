@@ -1,6 +1,6 @@
-# Contributing to ICU4X Project
+# Contributing to ICU4X
 
-`ICU4X` is an open source project and welcomes everyone to participate.
+ICU4X is an open source project and welcomes everyone to participate.
 
 The core team has identified good starter projects and gave them **[good first issue](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+no%3Aassignee+label%3A%22good+first+issue%22+-label%3A%22blocked%22+) label**.  This is a great place to start as a volunteer.
 
@@ -42,7 +42,48 @@ To build all code paths, improve build times in VSCode, and prevent locking the 
 }
 ```
 
-Note: the path in `ICU4X_DATA_DIR` is relative to `provider/data/*/src/lib.rs` and it causes VSCode to build ICU4X with only the `und` locale. This reduces build times but also makes some tests fail; to run them normally, run `cargo test --all-features` on the command line.
+Note: the path in `ICU4X_DATA_DIR` is relative to `provider/data/*/src/lib.rs` and it causes Rust Analyzer to build ICU4X with only the `und` locale. This reduces build times but also makes some tests fail; to run them normally, run `cargo test --all-features` on the command line.
+
+### Building and Rebuilding Repo Data
+
+In the ICU4X repository, there are a few types of locale data:
+
+1. Test data: used for internal ICU4X development purposes only
+    - Downloaded data sources: `provider/source/tests/data`
+        - Regen: `cargo make download-repo-sources`
+    - Generated JSON data: `provider/source/data/debug`
+        - Regen: `cargo make testdata`
+2. Hard-coded source data: source of truth is this repo; used by icu4x-datagen
+    - Segmenter TOML files: `provider/source/data/segmenter`
+3. Runtime default compiled data: the `icu_*_data` crates
+    - Crate roots: `provider/data`
+        - Regen: `cargo make bakeddata`
+        - Regen a specific component: `cargo make bakeddata <component>`
+
+During development, it is often convenient to generate only a single data marker as JSON. To do this (fully offline), you can run, for example:
+
+```bash
+$ cargo run -p icu4x-datagen \
+    --no-default-features --features provider,fs_exporter \
+    -- --format fs --pretty -o _debug/data \
+	--cldr-root provider/source/tests/data/cldr \
+	--icuexport-root provider/source/tests/data/icuexport \
+	--segmenter-lstm-root provider/source/tests/data/lstm \
+	--tzdb-root provider/source/tests/data/tzdb \
+	--deduplication none \
+	--locales ru th \
+	--markers DatetimePatternsDateGregorianV1 DatetimePatternsDateBuddhistV1
+```
+
+Tips:
+
+- Set your desired locales and data markers on the bottom two lines.
+- To overwrite the directly, add: `-W`
+- To print verbose logs, add: `-v`
+
+### Browsing artifacts
+
+Several artifacts that are generated from the `main` branch are viewable at <https://unicode-org.github.io/icu4x/>. These include API docs, benchmarks, and the WASM demo. It's useful to bookmark this page for quick access.
 
 ## Contributing a Pull Request
 
@@ -79,10 +120,12 @@ There are various files that auto-generated across the ICU4X repository.  Here a
 need to run in order to recreate them.  These files may be run in more comprehensive tests such as those included in `cargo make ci-job-test` or `cargo make ci-all`.
 
 - `cargo make testdata` - regenerates all test data in the `provider/source/debug` directory.
-	- `cargo make bakeddata` - regenerates baked data in the `provider/data` directory.
-		- `cargo make bakeddata foo` can be used to generate data in `provider/data/foo` only.
+    - Tip: See [Building and Rebuilding Repo Data](#building-and-rebuilding-repo-data) for additional shortcuts.
+- `cargo make bakeddata` - regenerates baked data in the `provider/data` directory.
+    - `cargo make bakeddata foo` can be used to generate data in `provider/data/foo` only.
 - `cargo make generate-readmes` - generates README files according to Rust docs. Output files must be committed in git for check to pass.
-- `cargo make diplomat-gen` - recreates the Diplomat generated files in the `ffi/capi` directory.
+- `cargo make diplomat-gen` - recreates the Diplomat generated files in the `ffi/capi/bindings` directory.
+- `cargo make codegen` - recreates certain Askama generated files in the `ffi/capi/src` directory based on templates in `tools/make/codegen/templates`.
 
 ### Testing
 
@@ -104,7 +147,7 @@ Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to eac
 
  - `ci-job-doc`: Builds all Rustdoc; any warning is treated as an error.
  - `ci-job-test-docs`: Runs `cargo test --doc` on all the crates. This takes a while but is the main way of ensuring that nothing has been broken.
- - `ci-job-test-tutorials`: Builds all our tutorials against both local code (`locale`), and released ICU4X (`cratesio`).
+ - `ci-job-test-cargo`: Tests all our Cargo examples.
 <br/>
  
  - `ci-job-testdata`: Runs an `icu_provider_source` integration test with a subset of CLDR, ICU, and LSTM source data.
@@ -112,7 +155,7 @@ Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to eac
 <br/>
  
  - `ci-job-test-c`: Runs all C/C++ FFI tests; mostly important if you're changing the FFI interface.
-     + Requires `clang-16` and `lld-16` with the `gold` plugin (APT packages `llvm-16` and `lld-16`).
+     + Requires `clang-19` and `lld-19` with the `gold` plugin (APT packages `llvm-19` and `lld-19`).
  - `ci-job-test-js`: Runs all JS/WASM/Node FFI tests; mostly important if you're changing the FFI interface.
      + Requires Node.js version 16.18.0. This may not the one offered by the package manager; get it from the NodeJS website or `nvm`.
  - `ci-job-nostd`: Builds ICU4X for a `#[no_std]` target to verify that it's compatible.
@@ -183,7 +226,7 @@ We try to use [Conventional Comments](https://conventionalcomments.org/) for rev
 
 ### Social Contract
 
-`ICU4X` project focuses on a fairly hermetic domain of software internationalization, which requires prior knowledge of the domain.
+ICU4X project focuses on a fairly hermetic domain of software internationalization, which requires prior knowledge of the domain.
 With that in mind, most engineers working on patch authoring and reviews are expected to be senior enough to be trusted with the quality of their additions to the code.
 
 For those reasons, we are primarily placing **trust** in pull request authors to write high quality, readable, tested, maintainable and well documented code.

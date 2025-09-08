@@ -87,13 +87,19 @@ Here is an example of a `provider.rs` boilerplate for a component:
 
 ```rust
 use std::borrow::Cow;
+use icu_provider::prelude::*;
+
+icu_provider::data_marker!(
+    /// This is a sample data marker.
+    SampleMarkerV1,
+    SampleDataStruct<'static>,
+);
 
 /// This is a sample data struct.
-#[icu_provider::data_struct(SampleDataStructV1Marker = "foo/example@1")]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(Deserialize))]
 #[cfg_attr(feature = "datagen", derive(Serialize))]
-pub struct SampleDataStructV1<'data> {
+pub struct SampleDataStruct<'data> {
     /// This field is always present, and it may be borrowed or owned.
     pub normal_value: Cow<'data, str>,
 

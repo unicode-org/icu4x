@@ -354,11 +354,11 @@ fn test_greek_upper() {
 
     let assert_greek_uppercase = |input: &str, expected: &str| {
         assert_eq!(
-            cm.uppercase_to_string(nfc.normalize(input).as_str(), modern_greek),
+            cm.uppercase_to_string(nfc.normalize(input).as_ref(), modern_greek),
             nfc.normalize(expected)
         );
         assert_eq!(
-            cm.uppercase_to_string(nfd.normalize(input).as_str(), modern_greek),
+            cm.uppercase_to_string(nfd.normalize(input).as_ref(), modern_greek),
             nfd.normalize(expected)
         );
     };

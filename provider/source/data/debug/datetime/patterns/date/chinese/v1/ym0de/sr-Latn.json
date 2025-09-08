@@ -1,0 +1,18 @@
+{
+  "has_explicit_medium": true,
+  "has_explicit_short": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    4
+  ],
+  "elements": [
+    "r(U) MMMM d, EEEE",
+    "r MMM d, E",
+    "r-MM-dd, E",
+    "r MMM dd, E"
+  ]
+}

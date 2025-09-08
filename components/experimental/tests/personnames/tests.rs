@@ -23,11 +23,11 @@ const _: () = {
     }
 
     make_provider!(TestingProvider);
-    impl_person_names_format_v1_marker!(TestingProvider);
-    icu_locale_data::impl_likely_subtags_for_language_v1_marker!(TestingProvider);
-    icu_locale_data::impl_parents_v1_marker!(TestingProvider);
-    icu_properties_data::impl_script_value_to_short_name_v1_marker!(TestingProvider);
-    icu_properties_data::impl_script_with_extensions_property_v1_marker!(TestingProvider);
+    impl_person_names_format_v1!(TestingProvider);
+    icu_locale_data::impl_locale_likely_subtags_language_v1!(TestingProvider);
+    icu_locale_data::impl_locale_parents_v1!(TestingProvider);
+    icu_properties_data::impl_property_name_short_script_v1!(TestingProvider);
+    icu_properties_data::impl_property_script_with_extensions_v1!(TestingProvider);
 };
 
 #[test]
@@ -233,14 +233,14 @@ fn test_space_replacement_spec_formatting_locale_ja() -> Result<(), PersonNamesF
 
     let person_name = DefaultPersonName::new(
         person_data,
-        Some(locale!("de_Latn_CH")),
+        Some(locale!("de-Latn-CH")),
         Some(PreferredOrder::GivenFirst),
     )?;
 
     let formatter = PersonNamesFormatter::try_new_unstable(
         &TestingProvider,
         PersonNamesFormatterOptions::new(
-            locale!("ja_JP"),
+            locale!("ja-JP"),
             FormattingOrder::GivenFirst,
             FormattingLength::Medium,
             FormattingUsage::Referring,
@@ -276,14 +276,14 @@ fn test_space_replacement_spec_formatting_locale_ja_jpan_script(
 
     let person_name = DefaultPersonName::new(
         person_data,
-        Some(locale!("de_Jpan_CH")),
+        Some(locale!("de-Jpan-CH")),
         Some(PreferredOrder::GivenFirst),
     )?;
 
     let formatter = PersonNamesFormatter::try_new_unstable(
         &TestingProvider,
         PersonNamesFormatterOptions::new(
-            locale!("ja_JP"),
+            locale!("ja-JP"),
             FormattingOrder::GivenFirst,
             FormattingLength::Medium,
             FormattingUsage::Referring,
@@ -319,14 +319,14 @@ fn test_space_replacement_spec_formatting_locale_ja_compatible(
 
     let person_name = DefaultPersonName::new(
         person_data,
-        Some(locale!("ja_Jpan_JP")),
+        Some(locale!("ja-Jpan-JP")),
         Some(PreferredOrder::SurnameFirst),
     )?;
 
     let formatter = PersonNamesFormatter::try_new_unstable(
         &TestingProvider,
         PersonNamesFormatterOptions::new(
-            locale!("ja_JP"),
+            locale!("ja-JP"),
             FormattingOrder::GivenFirst,
             FormattingLength::Medium,
             FormattingUsage::Referring,
@@ -362,14 +362,14 @@ fn test_space_replacement_spec_formatting_locale_de_compatible(
 
     let person_name = DefaultPersonName::new(
         person_data,
-        Some(locale!("de_Latn_CH")),
+        Some(locale!("de-Latn-CH")),
         Some(PreferredOrder::GivenFirst),
     )?;
 
     let formatter = PersonNamesFormatter::try_new_unstable(
         &TestingProvider,
         PersonNamesFormatterOptions::new(
-            locale!("de_CH"),
+            locale!("de-CH"),
             FormattingOrder::GivenFirst,
             FormattingLength::Medium,
             FormattingUsage::Referring,
@@ -405,14 +405,14 @@ fn test_space_replacement_spec_formatting_locale_de_jpan_script(
 
     let person_name = DefaultPersonName::new(
         person_data,
-        Some(locale!("de_Jpan_CH")),
+        Some(locale!("de-Jpan-CH")),
         Some(PreferredOrder::GivenFirst),
     )?;
 
     let formatter = PersonNamesFormatter::try_new_unstable(
         &TestingProvider,
         PersonNamesFormatterOptions::new(
-            locale!("de_CH"),
+            locale!("de-CH"),
             FormattingOrder::GivenFirst,
             FormattingLength::Medium,
             FormattingUsage::Referring,
@@ -450,14 +450,14 @@ fn test_space_replacement_spec_formatting_locale_und_latn_jp(
 
     let person_name = DefaultPersonName::new(
         person_data,
-        Some(locale!("und_Latn_JP")),
+        Some(locale!("und-Latn-JP")),
         Some(PreferredOrder::GivenFirst),
     )?;
 
     let formatter = PersonNamesFormatter::try_new_unstable(
         &TestingProvider,
         PersonNamesFormatterOptions::new(
-            locale!("de_CH"),
+            locale!("de-CH"),
             FormattingOrder::GivenFirst,
             FormattingLength::Medium,
             FormattingUsage::Referring,

@@ -1,0 +1,16 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "out": "./docs",
+    "entryPoints": ["lib/index.d.ts"],
+    "basePath": "lib",
+    "sort": [
+        "static-first",
+        "alphabetical"
+    ],
+    "readme": "README.md",
+    "excludeInternal": true,
+    "navigation": {
+        "includeCategories": true,
+        "includeFolders": true
+    }
+}

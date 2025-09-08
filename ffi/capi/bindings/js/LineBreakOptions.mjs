@@ -5,43 +5,75 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html) for more information.
-*/
-export class LineBreakOptions {
 
+/**
+ * See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/2.0.0/icu/segmenter/options/struct.LineBreakOptions.html) for more information.
+ */
+export class LineBreakOptions {
     #strictness;
-    get strictness()  {
+    get strictness() {
         return this.#strictness;
     }
-    set strictness(value) {
+    set strictness(value){
         this.#strictness = value;
     }
-
     #wordOption;
-    get wordOption()  {
+    get wordOption() {
         return this.#wordOption;
     }
-    set wordOption(value) {
+    set wordOption(value){
         this.#wordOption = value;
     }
-    constructor() {
-        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
-            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
-        } else {
-            
-            this.#strictness = arguments[0];
-            this.#wordOption = arguments[1];
+    /** @internal */
+    static fromFields(structObj) {
+        return new LineBreakOptions(structObj);
+    }
+
+    #internalConstructor(structObj) {
+        if (typeof structObj !== "object") {
+            throw new Error("LineBreakOptions's constructor takes an object of LineBreakOptions's fields.");
         }
+
+        if ("strictness" in structObj) {
+            this.#strictness = structObj.strictness;
+        } else {
+            this.#strictness = null;
+        }
+
+        if ("wordOption" in structObj) {
+            this.#wordOption = structObj.wordOption;
+        } else {
+            this.#wordOption = null;
+        }
+
+        return this;
     }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
-    
     _intoFFI(
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [...diplomatRuntime.optionToArgsForCalling(this.#strictness, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#wordOption, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)])]
+        let buffer = diplomatRuntime.DiplomatBuf.struct(wasm, 16, 4);
+
+        this._writeToArrayBuffer(wasm.memory.buffer, buffer.ptr, functionCleanupArena, appendArrayMap);
+
+        functionCleanupArena.alloc(buffer);
+
+        return buffer.ptr;
+    }
+
+    static _fromSuppliedValue(internalConstructor, obj) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("_fromSuppliedValue cannot be called externally.");
+        }
+
+        if (obj instanceof LineBreakOptions) {
+            return obj;
+        }
+
+        return LineBreakOptions.fromFields(obj);
     }
 
     _writeToArrayBuffer(
@@ -59,10 +91,21 @@ export class LineBreakOptions {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    #fromFFI(ptr) {
+    static _fromFFI(internalConstructor, ptr) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("LineBreakOptions._fromFFI is not meant to be called externally. Please use the default constructor.");
+        }
+        let structObj = {};
         const strictnessDeref = ptr;
-        this.#strictness = diplomatRuntime.readOption(wasm, strictnessDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new LineBreakStrictness(diplomatRuntime.internalConstructor, deref) });
+        structObj.strictness = diplomatRuntime.readOption(wasm, strictnessDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new LineBreakStrictness(diplomatRuntime.internalConstructor, deref) });
         const wordOptionDeref = ptr + 8;
-        this.#wordOption = diplomatRuntime.readOption(wasm, wordOptionDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new LineBreakWordOption(diplomatRuntime.internalConstructor, deref) });
+        structObj.wordOption = diplomatRuntime.readOption(wasm, wordOptionDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new LineBreakWordOption(diplomatRuntime.internalConstructor, deref) });
+
+        return new LineBreakOptions(structObj);
+    }
+
+
+    constructor(structObj) {
+        return this.#internalConstructor(...arguments)
     }
 }

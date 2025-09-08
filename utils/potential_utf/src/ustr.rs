@@ -4,6 +4,7 @@
 
 #[cfg(feature = "alloc")]
 use alloc::boxed::Box;
+use core::cmp::Ordering;
 use core::fmt;
 use core::ops::Deref;
 
@@ -26,7 +27,7 @@ use core::ops::Deref;
 /// use zerovec::ZeroMap;
 ///
 /// // This map is cheap to deserialize, as we don't need to perform UTF-8 validation.
-/// let map: ZeroMap<PotentialUtf8, usize> = [
+/// let map: ZeroMap<PotentialUtf8, u8> = [
 ///     (PotentialUtf8::from_bytes(b"abc"), 11),
 ///     (PotentialUtf8::from_bytes(b"def"), 22),
 ///     (PotentialUtf8::from_bytes(b"ghi"), 33),
@@ -116,6 +117,30 @@ impl<'a> From<&'a str> for &'a PotentialUtf8 {
     }
 }
 
+impl PartialEq<str> for PotentialUtf8 {
+    fn eq(&self, other: &str) -> bool {
+        self.eq(Self::from_str(other))
+    }
+}
+
+impl PartialOrd<str> for PotentialUtf8 {
+    fn partial_cmp(&self, other: &str) -> Option<Ordering> {
+        self.partial_cmp(Self::from_str(other))
+    }
+}
+
+impl PartialEq<PotentialUtf8> for str {
+    fn eq(&self, other: &PotentialUtf8) -> bool {
+        PotentialUtf8::from_str(self).eq(other)
+    }
+}
+
+impl PartialOrd<PotentialUtf8> for str {
+    fn partial_cmp(&self, other: &PotentialUtf8) -> Option<Ordering> {
+        PotentialUtf8::from_str(self).partial_cmp(other)
+    }
+}
+
 #[cfg(feature = "alloc")]
 impl From<Box<str>> for Box<PotentialUtf8> {
     #[inline]
@@ -132,7 +157,7 @@ impl Deref for PotentialUtf8 {
 }
 
 /// This impl requires enabling the optional `zerovec` Cargo feature
-#[cfg(feature = "zerovec")]
+#[cfg(all(feature = "zerovec", feature = "alloc"))]
 impl<'a> zerovec::maps::ZeroMapKV<'a> for PotentialUtf8 {
     type Container = zerovec::VarZeroVec<'a, PotentialUtf8>;
     type Slice = zerovec::VarZeroSlice<PotentialUtf8>;
@@ -143,20 +168,20 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for PotentialUtf8 {
 // Safety (based on the safety checklist on the VarULE trait):
 //  1. PotentialUtf8 does not include any uninitialized or padding bytes (transparent over a ULE)
 //  2. PotentialUtf8 is aligned to 1 byte (transparent over a ULE)
-//  3. The impl of `validate_byte_slice()` returns an error if any byte is not valid (impossible)
-//  4. The impl of `validate_byte_slice()` returns an error if the slice cannot be used in its entirety (impossible)
-//  5. The impl of `from_byte_slice_unchecked()` returns a reference to the same data (returns the argument directly)
+//  3. The impl of `validate_bytes()` returns an error if any byte is not valid (impossible)
+//  4. The impl of `validate_bytes()` returns an error if the slice cannot be used in its entirety (impossible)
+//  5. The impl of `from_bytes_unchecked()` returns a reference to the same data (returns the argument directly)
 //  6. All other methods are defaulted
 //  7. `[T]` byte equality is semantic equality (transparent over a ULE)
 /// This impl requires enabling the optional `zerovec` Cargo feature
 #[cfg(feature = "zerovec")]
 unsafe impl zerovec::ule::VarULE for PotentialUtf8 {
     #[inline]
-    fn validate_byte_slice(_: &[u8]) -> Result<(), zerovec::ule::UleError> {
+    fn validate_bytes(_: &[u8]) -> Result<(), zerovec::ule::UleError> {
         Ok(())
     }
     #[inline]
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         PotentialUtf8::from_bytes(bytes)
     }
 }
@@ -241,5 +266,9 @@ impl PotentialUtf16 {
     pub const fn from_slice(other: &[u16]) -> &Self {
         // Safety: PotentialUtf16 is transparent over [u16]
         unsafe { core::mem::transmute(other) }
+    }
+
+    pub fn chars(&self) -> impl Iterator<Item = char> + '_ {
+        char::decode_utf16(self.0.iter().copied()).map(|c| c.unwrap_or(char::REPLACEMENT_CHARACTER))
     }
 }

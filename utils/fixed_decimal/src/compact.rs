@@ -5,10 +5,10 @@
 use core::fmt;
 use core::str::FromStr;
 
-use crate::FixedDecimal;
+use crate::Decimal;
 use crate::ParseError;
 
-/// A struct containing a [`FixedDecimal`] significand together with an exponent, representing a
+/// A struct containing a [`Decimal`] significand together with an exponent, representing a
 /// number written in compact notation (such as 1.2M).
 /// This represents a _source number_, as defined
 /// [in UTS #35](https://www.unicode.org/reports/tr35/tr35-numbers.html#Plural_rules_syntax).
@@ -19,13 +19,13 @@ use crate::ParseError;
 /// nor a sign in the exponent, and behaves differently in pluralization.
 #[derive(Debug, Clone, PartialEq)]
 pub struct CompactDecimal {
-    significand: FixedDecimal,
+    significand: Decimal,
     exponent: u8,
 }
 
 impl CompactDecimal {
     /// Constructs a [`CompactDecimal`] from its significand and exponent.
-    pub fn from_significand_and_exponent(significand: FixedDecimal, exponent: u8) -> Self {
+    pub fn from_significand_and_exponent(significand: Decimal, exponent: u8) -> Self {
         Self {
             significand,
             exponent,
@@ -35,32 +35,32 @@ impl CompactDecimal {
     /// Returns a reference to the significand of `self`.
     /// ```
     /// # use fixed_decimal::CompactDecimal;
-    /// # use fixed_decimal::FixedDecimal;
+    /// # use fixed_decimal::Decimal;
     /// # use std::str::FromStr;
     /// #
     /// assert_eq!(
     ///     CompactDecimal::from_str("+1.20c6").unwrap().significand(),
-    ///     &FixedDecimal::from_str("+1.20").unwrap()
+    ///     &Decimal::from_str("+1.20").unwrap()
     /// );
     /// ```
-    pub fn significand(&self) -> &FixedDecimal {
+    pub fn significand(&self) -> &Decimal {
         &self.significand
     }
 
     /// Returns the significand of `self`.
     /// ```
     /// # use fixed_decimal::CompactDecimal;
-    /// # use fixed_decimal::FixedDecimal;
+    /// # use fixed_decimal::Decimal;
     /// # use std::str::FromStr;
     /// #
     /// assert_eq!(
     ///     CompactDecimal::from_str("+1.20c6")
     ///         .unwrap()
     ///         .into_significand(),
-    ///     FixedDecimal::from_str("+1.20").unwrap()
+    ///     Decimal::from_str("+1.20").unwrap()
     /// );
     /// ```
-    pub fn into_significand(self) -> FixedDecimal {
+    pub fn into_significand(self) -> Decimal {
         self.significand
     }
 
@@ -127,7 +127,7 @@ impl CompactDecimal {
             return Err(ParseError::Syntax);
         }
         let mut parts = code_units.split(|&c| c == b'c');
-        let significand = FixedDecimal::try_from_utf8(parts.next().ok_or(ParseError::Syntax)?)?;
+        let significand = Decimal::try_from_utf8(parts.next().ok_or(ParseError::Syntax)?)?;
         match parts.next() {
             None => Ok(CompactDecimal {
                 significand,

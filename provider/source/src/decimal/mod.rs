@@ -6,6 +6,7 @@ use std::collections::HashSet;
 
 use crate::cldr_serde;
 use crate::SourceDataProvider;
+use icu_locale_core::locale;
 use icu_provider::prelude::*;
 
 #[cfg(feature = "experimental")]
@@ -14,6 +15,8 @@ mod compact;
 mod compact_decimal_pattern;
 pub(crate) mod decimal_pattern;
 mod symbols;
+
+mod digits;
 
 impl SourceDataProvider {
     /// Returns the digits for the given numbering system name.
@@ -48,9 +51,11 @@ impl SourceDataProvider {
         })
     }
 
-    fn get_supported_numsys_for_langid_without_default(
+    /// Get all numbering systems supported by a langid, potentially excluding the default one
+    fn get_supported_numsys_for_langid(
         &self,
         locale: &DataLocale,
+        exclude_default: bool,
     ) -> Result<Vec<Box<DataMarkerAttributes>>, DataError> {
         let resource: &cldr_serde::numbers::Resource = self
             .cldr()?
@@ -63,30 +68,78 @@ impl SourceDataProvider {
             .numsys_data
             .symbols
             .keys()
-            .filter(|nsname| **nsname != numbers.default_numbering_system)
+            .filter(|nsname| !exclude_default || **nsname != numbers.default_numbering_system)
             .filter_map(|nsname| Some(DataMarkerAttributes::try_from_str(nsname).ok()?.to_owned()))
             .collect())
     }
 
-    fn iter_ids_for_numbers(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+    /// Produce DataIdentifier's for all locale-numbering system pairs in the form <locale>/<numsys>
+    /// This also includes a bare <locale>
+    fn iter_ids_for_numbers_with_locales(
+        &self,
+    ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
             .numbers()
             .list_locales()?
             .flat_map(|locale| {
-                let data_locale = locale.clone();
-                let last = data_locale.clone();
-                self.get_supported_numsys_for_langid_without_default(&locale)
+                let last = locale;
+                self.get_supported_numsys_for_langid(&locale, true)
                     .expect("All languages from list_locales should be present")
                     .into_iter()
                     .map(move |nsname| {
                         DataIdentifierBorrowed::for_marker_attributes_and_locale(
                             DataMarkerAttributes::try_from_str(&nsname).unwrap(),
-                            &data_locale,
+                            &locale,
                         )
                         .into_owned()
                     })
                     .chain([DataIdentifierCow::from_locale(last)])
+            })
+            .collect())
+    }
+
+    /// Produce DataIdentifier's for all *used* numbering systems in the form und/<numsys>
+    fn iter_ids_for_used_numbers(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        Ok(self
+            .cldr()?
+            .numbers()
+            .list_locales()?
+            .flat_map(|locale| {
+                self.get_supported_numsys_for_langid(&locale, false)
+                    .expect("All languages from list_locales should be present")
+                    .into_iter()
+                    .map(move |nsname| {
+                        DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                            DataMarkerAttributes::try_from_str(&nsname).unwrap(),
+                            &locale!("und").into(),
+                        )
+                        .into_owned()
+                    })
+            })
+            .collect())
+    }
+
+    /// Produce DataIdentifier's for all digit-based numbering systems in the form und/<numsys>
+    #[allow(unused)] // TODO(#5824): Support user-specified numbering systems
+    fn iter_all_number_ids(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        use cldr_serde::numbering_systems::NumberingSystemType;
+        let resource: &cldr_serde::numbering_systems::Resource = self
+            .cldr()?
+            .core()
+            .read_and_parse("supplemental/numberingSystems.json")?;
+
+        Ok(resource
+            .supplemental
+            .numbering_systems
+            .iter()
+            .filter(|(_nsname, data)| data.nstype == NumberingSystemType::Numeric)
+            .map(|(nsname, _data)| {
+                DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::try_from_str(nsname).unwrap(),
+                    &locale!("und").into(),
+                )
+                .into_owned()
             })
             .collect())
     }

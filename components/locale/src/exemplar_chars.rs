@@ -16,35 +16,29 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locale::locale;
 //! use icu::locale::exemplar_chars::ExemplarCharacters;
+//! use icu::locale::locale;
 //!
 //! let locale = locale!("en-001").into();
 //! let exemplars_main = ExemplarCharacters::try_new_main(&locale)
 //!     .expect("locale should be present");
 //!
-//! assert!(exemplars_main.contains_char('a'));
-//! assert!(exemplars_main.contains_char('z'));
-//! assert!(exemplars_main.contains("a"));
-//! assert!(!exemplars_main.contains("ä"));
-//! assert!(!exemplars_main.contains("ng"));
+//! assert!(exemplars_main.contains('a'));
+//! assert!(exemplars_main.contains('z'));
+//! assert!(exemplars_main.contains_str("a"));
+//! assert!(!exemplars_main.contains_str("ä"));
+//! assert!(!exemplars_main.contains_str("ng"));
 //! ```
 
 use crate::provider::*;
 use core::ops::Deref;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
-use icu_provider::prelude::*;
+use icu_provider::{marker::ErasedMarker, prelude::*};
 
 /// A wrapper around `UnicodeSet` data (characters and strings)
 #[derive(Debug)]
 pub struct ExemplarCharacters {
-    data: DataPayload<ErasedUnicodeSetMarker>,
-}
-
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub(crate) struct ErasedUnicodeSetMarker;
-impl DynamicDataMarker for ErasedUnicodeSetMarker {
-    type DataStruct = ExemplarCharactersV1<'static>;
+    data: DataPayload<ErasedMarker<ExemplarCharactersData<'static>>>,
 }
 
 impl ExemplarCharacters {
@@ -64,7 +58,7 @@ impl ExemplarCharacters {
 /// [`ExemplarCharacters::as_borrowed()`]. More efficient to query.
 #[derive(Clone, Copy, Debug)]
 pub struct ExemplarCharactersBorrowed<'a> {
-    data: &'a ExemplarCharactersV1<'a>,
+    data: &'a ExemplarCharactersData<'a>,
 }
 
 impl<'a> Deref for ExemplarCharactersBorrowed<'a> {
@@ -97,204 +91,215 @@ macro_rules! make_exemplar_chars_unicode_set_property {
         $(#[$attr:meta])*
         pub fn $compiled:ident();
     ) => {
-        $(#[$attr])*
-        #[cfg(feature = "compiled_data")]
-        pub fn $compiled(
-            locale: &DataLocale,
-        ) -> Result<ExemplarCharactersBorrowed<'static>, DataError> {
-            Ok(ExemplarCharactersBorrowed {
-                data: DataProvider::<$data_marker>::load(
-                    &crate::provider::Baked,
-                    DataRequest {
-                        id: DataIdentifierBorrowed::for_locale(locale),
-                        ..Default::default()
-                    })?
-                .payload
-                .get_static()
-                .ok_or_else(|| DataError::custom("Baked provider didn't return static payload"))?
-            })
-        }
+        impl ExemplarCharactersBorrowed<'static> {
+            $(#[$attr])*
+            #[cfg(feature = "compiled_data")]
+            #[inline]
+            pub fn $compiled(
+                locale: &DataLocale,
+            ) -> Result<Self, DataError> {
+                Ok(ExemplarCharactersBorrowed {
+                    data: DataProvider::<$data_marker>::load(
+                        &crate::provider::Baked,
+                        DataRequest {
+                            id: DataIdentifierBorrowed::for_locale(locale),
+                            ..Default::default()
+                        })?
+                    .payload
+                    .get_static()
+                    .ok_or_else(|| DataError::custom("Baked provider didn't return static payload"))?
+                })
+            }
 
-        #[doc = concat!("A version of [`Self::", stringify!($compiled), "()`] that uses custom data provided by a [`DataProvider`].")]
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        pub fn $unstable(
-            provider: &(impl DataProvider<$data_marker> + ?Sized),
-            locale: &DataLocale,
-        ) -> Result<Self, DataError> {
-            Ok(Self {
-                data:
-                provider.load(
-                    DataRequest {
-                        id: DataIdentifierBorrowed::for_locale(locale),
-                        ..Default::default()
-                })?
-                .payload
-                .cast()
-            })
+        }
+        impl ExemplarCharacters {
+            $(#[$attr])*
+            #[cfg(feature = "compiled_data")]
+            pub fn $compiled(
+                locale: &DataLocale,
+            ) -> Result<ExemplarCharactersBorrowed<'static>, DataError> {
+                ExemplarCharactersBorrowed::$compiled(locale)
+            }
+
+            #[doc = concat!("A version of [`Self::", stringify!($compiled), "()`] that uses custom data provided by a [`DataProvider`].")]
+            ///
+            /// [📚 Help choosing a constructor](icu_provider::constructors)
+            pub fn $unstable(
+                provider: &(impl DataProvider<$data_marker> + ?Sized),
+                locale: &DataLocale,
+            ) -> Result<Self, DataError> {
+                Ok(Self {
+                    data:
+                    provider.load(
+                        DataRequest {
+                            id: DataIdentifierBorrowed::for_locale(locale),
+                            ..Default::default()
+                    })?
+                    .payload
+                    .cast()
+                })
+            }
         }
     }
 }
 
-impl ExemplarCharacters {
-    make_exemplar_chars_unicode_set_property!(
-        dyn_data_marker: ExemplarCharactersMain;
-        data_marker: ExemplarCharactersMainV1Marker;
-        func:
-        pub fn try_new_main_unstable();
+make_exemplar_chars_unicode_set_property!(
+    dyn_data_marker: ExemplarCharactersMain;
+    data_marker: LocaleExemplarCharactersMainV1;
+    func:
+    pub fn try_new_main_unstable();
 
-        /// Get the "main" set of exemplar characters.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use icu::locale::locale;
-        /// use icu::locale::exemplar_chars::ExemplarCharacters;
-        ///
-        /// let exemplars_main = ExemplarCharacters::try_new_main(&locale!("en").into())
-        ///     .expect("locale should be present");
-        ///
-        /// assert!(exemplars_main.contains_char('a'));
-        /// assert!(exemplars_main.contains_char('z'));
-        /// assert!(exemplars_main.contains("a"));
-        /// assert!(!exemplars_main.contains("ä"));
-        /// assert!(!exemplars_main.contains("ng"));
-        /// assert!(!exemplars_main.contains("A"));
-        /// ```
-        pub fn try_new_main();
-    );
+    /// Get the "main" set of exemplar characters.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::locale;
+    /// use icu::locale::exemplar_chars::ExemplarCharacters;
+    ///
+    /// let exemplars_main = ExemplarCharacters::try_new_main(&locale!("en").into())
+    ///     .expect("locale should be present");
+    ///
+    /// assert!(exemplars_main.contains('a'));
+    /// assert!(exemplars_main.contains('z'));
+    /// assert!(exemplars_main.contains_str("a"));
+    /// assert!(!exemplars_main.contains_str("ä"));
+    /// assert!(!exemplars_main.contains_str("ng"));
+    /// assert!(!exemplars_main.contains_str("A"));
+    /// ```
+    pub fn try_new_main();
+);
 
-    make_exemplar_chars_unicode_set_property!(
-        dyn_data_marker: ExemplarCharactersAuxiliary;
-        data_marker: ExemplarCharactersAuxiliaryV1Marker;
-        func:
-        pub fn try_new_auxiliary_unstable();
+make_exemplar_chars_unicode_set_property!(
+    dyn_data_marker: ExemplarCharactersAuxiliary;
+    data_marker: LocaleExemplarCharactersAuxiliaryV1;
+    func:
+    pub fn try_new_auxiliary_unstable();
 
-        /// Get the "auxiliary" set of exemplar characters.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use icu::locale::locale;
-        /// use icu::locale::exemplar_chars::ExemplarCharacters;
-        ///
-        /// let exemplars_auxiliary =
-        ///     ExemplarCharacters::try_new_auxiliary(&locale!("en").into())
-        ///     .expect("locale should be present");
-        ///
-        /// assert!(!exemplars_auxiliary.contains_char('a'));
-        /// assert!(!exemplars_auxiliary.contains_char('z'));
-        /// assert!(!exemplars_auxiliary.contains("a"));
-        /// assert!(exemplars_auxiliary.contains("ä"));
-        /// assert!(!exemplars_auxiliary.contains("ng"));
-        /// assert!(!exemplars_auxiliary.contains("A"));
-        /// ```
-        pub fn try_new_auxiliary();
-    );
+    /// Get the "auxiliary" set of exemplar characters.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::locale;
+    /// use icu::locale::exemplar_chars::ExemplarCharacters;
+    ///
+    /// let exemplars_auxiliary =
+    ///     ExemplarCharacters::try_new_auxiliary(&locale!("en").into())
+    ///     .expect("locale should be present");
+    ///
+    /// assert!(!exemplars_auxiliary.contains('a'));
+    /// assert!(!exemplars_auxiliary.contains('z'));
+    /// assert!(!exemplars_auxiliary.contains_str("a"));
+    /// assert!(exemplars_auxiliary.contains_str("ä"));
+    /// assert!(!exemplars_auxiliary.contains_str("ng"));
+    /// assert!(!exemplars_auxiliary.contains_str("A"));
+    /// ```
+    pub fn try_new_auxiliary();
+);
 
-    make_exemplar_chars_unicode_set_property!(
-        dyn_data_marker: ExemplarCharactersPunctuation;
-        data_marker: ExemplarCharactersPunctuationV1Marker;
-        func:
-        pub fn try_new_punctuation_unstable();
+make_exemplar_chars_unicode_set_property!(
+    dyn_data_marker: ExemplarCharactersPunctuation;
+    data_marker: LocaleExemplarCharactersPunctuationV1;
+    func:
+    pub fn try_new_punctuation_unstable();
 
-        /// Get the "punctuation" set of exemplar characters.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use icu::locale::locale;
-        /// use icu::locale::exemplar_chars::ExemplarCharacters;
-        ///
-        /// let exemplars_punctuation =
-        ///     ExemplarCharacters::try_new_punctuation(&locale!("en").into())
-        ///     .expect("locale should be present");
-        ///
-        /// assert!(!exemplars_punctuation.contains_char('0'));
-        /// assert!(!exemplars_punctuation.contains_char('9'));
-        /// assert!(!exemplars_punctuation.contains_char('%'));
-        /// assert!(exemplars_punctuation.contains_char(','));
-        /// assert!(exemplars_punctuation.contains_char('.'));
-        /// assert!(exemplars_punctuation.contains_char('!'));
-        /// assert!(exemplars_punctuation.contains_char('?'));
-        /// ```
-        pub fn try_new_punctuation();
-    );
+    /// Get the "punctuation" set of exemplar characters.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::locale;
+    /// use icu::locale::exemplar_chars::ExemplarCharacters;
+    ///
+    /// let exemplars_punctuation =
+    ///     ExemplarCharacters::try_new_punctuation(&locale!("en").into())
+    ///     .expect("locale should be present");
+    ///
+    /// assert!(!exemplars_punctuation.contains('0'));
+    /// assert!(!exemplars_punctuation.contains('9'));
+    /// assert!(!exemplars_punctuation.contains('%'));
+    /// assert!(exemplars_punctuation.contains(','));
+    /// assert!(exemplars_punctuation.contains('.'));
+    /// assert!(exemplars_punctuation.contains('!'));
+    /// assert!(exemplars_punctuation.contains('?'));
+    /// ```
+    pub fn try_new_punctuation();
+);
 
-    make_exemplar_chars_unicode_set_property!(
-        dyn_data_marker: ExemplarCharactersNumbers;
-        data_marker: ExemplarCharactersNumbersV1Marker;
-        func:
-        pub fn try_new_numbers_unstable();
+make_exemplar_chars_unicode_set_property!(
+    dyn_data_marker: ExemplarCharactersNumbers;
+    data_marker: LocaleExemplarCharactersNumbersV1;
+    func:
+    pub fn try_new_numbers_unstable();
 
-        /// Get the "numbers" set of exemplar characters.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use icu::locale::locale;
-        /// use icu::locale::exemplar_chars::ExemplarCharacters;
-        ///
-        /// let exemplars_numbers =
-        ///     ExemplarCharacters::try_new_numbers(&locale!("en").into())
-        ///     .expect("locale should be present");
-        ///
-        /// assert!(exemplars_numbers.contains_char('0'));
-        /// assert!(exemplars_numbers.contains_char('9'));
-        /// assert!(exemplars_numbers.contains_char('%'));
-        /// assert!(exemplars_numbers.contains_char(','));
-        /// assert!(exemplars_numbers.contains_char('.'));
-        /// assert!(!exemplars_numbers.contains_char('!'));
-        /// assert!(!exemplars_numbers.contains_char('?'));
-        /// ```
-        pub fn try_new_numbers();
-    );
+    /// Get the "numbers" set of exemplar characters.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::locale;
+    /// use icu::locale::exemplar_chars::ExemplarCharacters;
+    ///
+    /// let exemplars_numbers =
+    ///     ExemplarCharacters::try_new_numbers(&locale!("en").into())
+    ///     .expect("locale should be present");
+    ///
+    /// assert!(exemplars_numbers.contains('0'));
+    /// assert!(exemplars_numbers.contains('9'));
+    /// assert!(exemplars_numbers.contains('%'));
+    /// assert!(exemplars_numbers.contains(','));
+    /// assert!(exemplars_numbers.contains('.'));
+    /// assert!(!exemplars_numbers.contains('!'));
+    /// assert!(!exemplars_numbers.contains('?'));
+    /// ```
+    pub fn try_new_numbers();
+);
 
-    make_exemplar_chars_unicode_set_property!(
-        dyn_data_marker: ExemplarCharactersIndex;
-        data_marker: ExemplarCharactersIndexV1Marker;
-        func:
-        pub fn try_new_index_unstable();
+make_exemplar_chars_unicode_set_property!(
+    dyn_data_marker: ExemplarCharactersIndex;
+    data_marker: LocaleExemplarCharactersIndexV1;
+    func:
+    pub fn try_new_index_unstable();
 
-        /// Get the "index" set of exemplar characters.
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use icu::locale::locale;
-        /// use icu::locale::exemplar_chars::ExemplarCharacters;
-        ///
-        /// let exemplars_index =
-        ///     ExemplarCharacters::try_new_index(&locale!("en").into())
-        ///     .expect("locale should be present");
-        ///
-        /// assert!(!exemplars_index.contains_char('a'));
-        /// assert!(!exemplars_index.contains_char('z'));
-        /// assert!(!exemplars_index.contains("a"));
-        /// assert!(!exemplars_index.contains("ä"));
-        /// assert!(!exemplars_index.contains("ng"));
-        /// assert!(exemplars_index.contains("A"));
-        /// ```
-        pub fn try_new_index();
-    );
-}
+    /// Get the "index" set of exemplar characters.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::locale;
+    /// use icu::locale::exemplar_chars::ExemplarCharacters;
+    ///
+    /// let exemplars_index =
+    ///     ExemplarCharacters::try_new_index(&locale!("en").into())
+    ///     .expect("locale should be present");
+    ///
+    /// assert!(!exemplars_index.contains('a'));
+    /// assert!(!exemplars_index.contains('z'));
+    /// assert!(!exemplars_index.contains_str("a"));
+    /// assert!(!exemplars_index.contains_str("ä"));
+    /// assert!(!exemplars_index.contains_str("ng"));
+    /// assert!(exemplars_index.contains_str("A"));
+    /// ```
+    pub fn try_new_index();
+);

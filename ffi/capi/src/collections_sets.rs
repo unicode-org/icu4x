@@ -8,13 +8,14 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::properties_sets::ffi::CodePointSetData;
+    use crate::unstable::properties_sets::ffi::CodePointSetData;
 
     #[diplomat::opaque]
     #[diplomat::rust_link(
         icu::collections::codepointinvlist::CodePointInversionListBuilder,
         Struct
     )]
+    #[diplomat::attr(demo_gen, disable)] // mutable
     pub struct CodePointSetBuilder(
         pub icu_collections::codepointinvlist::CodePointInversionListBuilder,
     );

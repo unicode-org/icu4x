@@ -6,7 +6,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -18,12 +20,15 @@ namespace capi {
       LocaleParseError_Subtag = 2,
       LocaleParseError_Extension = 3,
     };
-    
+
     typedef struct LocaleParseError_option {union { LocaleParseError ok; }; bool is_ok; } LocaleParseError_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
+/**
+ * Additional information: [1](https://docs.rs/icu/2.0.0/icu/locale/enum.ParseError.html)
+ */
 class LocaleParseError {
 public:
   enum Value {
@@ -33,7 +38,8 @@ public:
     Extension = 3,
   };
 
-  LocaleParseError() = default;
+  LocaleParseError(): value(Value::Unknown) {}
+
   // Implicit conversions between enum and ::Value
   constexpr LocaleParseError(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

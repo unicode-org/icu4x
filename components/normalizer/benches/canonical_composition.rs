@@ -27,7 +27,7 @@ fn strip_headers(content: &str) -> String {
 fn normalizer_bench_data() -> [BenchDataContent; 16] {
     let nfc_normalizer = ComposingNormalizerBorrowed::new_nfc();
 
-    return [
+    [
         BenchDataContent {
             file_name: "TestNames_Latin".to_owned(),
             pairs: decompose_data(
@@ -145,7 +145,7 @@ fn normalizer_bench_data() -> [BenchDataContent; 16] {
                 result
             },
         },
-    ];
+    ]
 }
 
 fn function_under_bench(

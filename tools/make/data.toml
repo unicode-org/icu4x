@@ -40,16 +40,15 @@ exit_on_error true
 exec --fail-on-error cargo build -p icu4x-datagen --no-default-features --features fs_exporter,blob_exporter,baked_exporter
 
 # Filesystem
-exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format fs --syntax json --out provider/fs/tests/data/json --overwrite
-exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format fs --syntax bincode --out provider/fs/tests/data/bincode --overwrite
-exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format fs --syntax postcard --out provider/fs/tests/data/postcard --overwrite
+exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1 --locales full --format fs --syntax json --out provider/fs/tests/data/json --overwrite
+exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1 --locales full --format fs --syntax bincode --out provider/fs/tests/data/bincode --overwrite
+exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1 --locales full --format fs --syntax postcard --out provider/fs/tests/data/postcard --overwrite
 
 # Blob
-exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format blob --overwrite --out provider/blob/tests/data/v1.postcard
-exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format blob2 --overwrite --out provider/blob/tests/data/v2.postcard
+exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1 --locales full --format blob --overwrite --out provider/blob/tests/data/v3.postcard
 
 # Baked
-exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1Marker --locales full --format baked --pretty --overwrite --no-internal-fallback --deduplication none --out provider/baked/tests/data
+exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1 --locales full --format baked --pretty --overwrite --no-internal-fallback --deduplication none --out provider/baked/tests/data
 '''
 
 [tasks.testdata-check]

@@ -4,5 +4,6 @@
 
 pub(crate) mod bcp47_tzid;
 pub(crate) mod meta_zones;
+pub(crate) mod primary_zones;
 pub(crate) mod time_zone_names;
 pub(crate) mod windows_zones;

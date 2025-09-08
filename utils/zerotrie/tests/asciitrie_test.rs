@@ -31,12 +31,12 @@ fn test_basic() {
     for (key, expected) in data_ascii {
         let actual = match trie_ascii.get(key) {
             Some(v) => v,
-            None => panic!("value should be in trie: {:?} => {}", key, expected),
+            None => panic!("value should be in trie: {key:?} => {expected}"),
         };
         assert_eq!(*expected, actual);
         let actual = match trie_phf_ascii.get(key) {
             Some(v) => v,
-            None => panic!("value should be in trie6: {:?} => {}", key, expected),
+            None => panic!("value should be in trie6: {key:?} => {expected}"),
         };
         assert_eq!(*expected, actual);
     }
@@ -44,7 +44,7 @@ fn test_basic() {
     for (key, expected) in data_unicode {
         let actual_unicode = match trie_phf_unicode.get(key) {
             Some(v) => v,
-            None => panic!("value should be in trie6: {:?} => {}", key, expected),
+            None => panic!("value should be in trie6: {key:?} => {expected}"),
         };
         assert_eq!(*expected, actual_unicode);
     }
@@ -52,13 +52,13 @@ fn test_basic() {
     for (key, expected) in data_binary {
         let actual_bin6 = match trie_phf_binary.get(key) {
             Some(v) => v,
-            None => panic!("value should be in trie6: {:?} => {}", key, expected),
+            None => panic!("value should be in trie6: {key:?} => {expected}"),
         };
         assert_eq!(*expected, actual_bin6);
     }
 
     // Compare the size to a postcard ZeroMap
-    let zm: ZeroMap<[u8], usize> = data_ascii.iter().copied().collect();
+    let zm: ZeroMap<[u8], u32> = data_ascii.iter().map(|(a, b)| (*a, *b as u32)).collect();
     let mut serializer = postcard::Serializer {
         output: AllocVec::new(),
     };
@@ -69,5 +69,5 @@ fn test_basic() {
         .expect("Failed to finalize serializer output");
 
     assert_eq!(26, bytes_ascii.len());
-    assert_eq!(61, zeromap_bytes.len());
+    assert_eq!(77, zeromap_bytes.len());
 }

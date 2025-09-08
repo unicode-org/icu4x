@@ -1,0 +1,11 @@
+{
+  "defaults": {
+    "46": "CET",
+    "47": "EET",
+    "48": "WET",
+    "53": "GMT"
+  },
+  "overrides": {
+    "utc": "UTC"
+  }
+}

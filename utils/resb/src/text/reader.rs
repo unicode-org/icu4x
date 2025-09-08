@@ -349,7 +349,7 @@ where
     // find one, at which point we default to enabling locale fallback.
     let (input, is_fallback_enabled) = opt(root_table_type).parse(input)?;
     let is_fallback_enabled =
-        is_fallback_enabled.map_or(true, |type_id| type_id.input() != "table(nofallback)");
+        is_fallback_enabled.is_none_or(|type_id| type_id.input() != "table(nofallback)");
 
     // Read the body of the root resource itself.
     let (input, resource) = map(resource_body!(table_body), Resource::Table).parse(input)?;
@@ -525,7 +525,7 @@ impl Reader {
     ///
     /// Returns the parsed resource bundle and a list of the keys encountered in
     /// the resource bundle in the order they were encountered.
-    pub fn read(input: &str) -> Result<(ResourceBundle, Vec<Key>), TextParserError> {
+    pub fn read(input: &str) -> Result<(ResourceBundle<'_>, Vec<Key<'_>>), TextParserError> {
         let input = ParseState::new(input);
 
         let (final_state, bundle) = bundle::<VerboseError<ParseState>>(input.clone())

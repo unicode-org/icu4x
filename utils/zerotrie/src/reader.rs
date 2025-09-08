@@ -324,7 +324,7 @@ pub(crate) fn get_parameterized<T: ZeroTrieWithOptions + ?Sized>(
                 let is_match = if matches!(T::OPTIONS.case_sensitivity, CaseSensitivity::IgnoreCase)
                     && matches!(T::OPTIONS.lookup_strictness, LookupStrictness::Normal)
                 {
-                    b.to_ascii_lowercase() == c.to_ascii_lowercase()
+                    b.eq_ignore_ascii_case(c)
                 } else {
                     b == c
                 };
@@ -346,7 +346,7 @@ pub(crate) fn get_parameterized<T: ZeroTrieWithOptions + ?Sized>(
             {
                 let (trie_span, ascii_span);
                 (trie_span, trie) = trie.debug_split_at(x);
-                (ascii_span, ascii) = ascii.maybe_split_at(x)?;
+                (ascii_span, ascii) = ascii.split_at_checked(x)?;
                 if trie_span == ascii_span {
                     // Matched a byte span
                     continue;
@@ -463,7 +463,7 @@ pub(crate) fn step_parameterized<T: ZeroTrieWithOptions + ?Sized>(
             NodeType::Ascii => {
                 let is_match = if matches!(T::OPTIONS.case_sensitivity, CaseSensitivity::IgnoreCase)
                 {
-                    b.to_ascii_lowercase() == c.to_ascii_lowercase()
+                    b.eq_ignore_ascii_case(&c)
                 } else {
                     *b == c
                 };
@@ -515,6 +515,7 @@ pub(crate) fn step_parameterized<T: ZeroTrieWithOptions + ?Sized>(
             } else {
                 get_branch(trie, i, x, w)
             };
+            #[allow(clippy::indexing_slicing)] // i is from a binary search
             Some(search[i])
         }
         Err(_) => {
@@ -609,6 +610,7 @@ pub(crate) fn probe_parameterized<T: ZeroTrieWithOptions + ?Sized>(
         get_branch(trie, index, x, w)
     };
     Some(AsciiProbeResult {
+        #[allow(clippy::indexing_slicing)] // index < x, the length of search
         byte: search[index],
         total_siblings,
     })
@@ -658,7 +660,7 @@ impl<'a> ZeroTrieIterator<'a> {
 }
 
 #[cfg(feature = "alloc")]
-impl<'a> Iterator for ZeroTrieIterator<'a> {
+impl Iterator for ZeroTrieIterator<'_> {
     type Item = (Vec<u8>, usize);
     fn next(&mut self) -> Option<Self::Item> {
         let (mut trie, mut string, mut branch_idx);
@@ -732,12 +734,12 @@ pub(crate) fn get_iter_phf<S: AsRef<[u8]> + ?Sized>(store: &S) -> ZeroTrieIterat
 /// # Panics
 /// Panics if the trie contains non-ASCII items.
 #[cfg(feature = "alloc")]
-#[allow(clippy::type_complexity)]
+#[expect(clippy::type_complexity)]
 pub(crate) fn get_iter_ascii_or_panic<S: AsRef<[u8]> + ?Sized>(
     store: &S,
 ) -> core::iter::Map<ZeroTrieIterator<'_>, fn((Vec<u8>, usize)) -> (String, usize)> {
     ZeroTrieIterator::new(store, false).map(|(k, v)| {
-        #[allow(clippy::unwrap_used)] // in signature of function
+        #[expect(clippy::unwrap_used)] // in signature of function
         let ascii_str = String::from_utf8(k).unwrap();
         (ascii_str, v)
     })

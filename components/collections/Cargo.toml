@@ -24,6 +24,7 @@ displaydoc = { workspace = true }
 yoke = { workspace = true, features = ["derive"] }
 zerofrom = { workspace = true, features = ["derive"] }
 zerovec = { workspace = true, features = ["derive", "yoke"] }
+potential_utf = { workspace = true, features = ["zerovec"] }
 
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 databake = { workspace = true, features = ["derive"], optional = true }
@@ -31,7 +32,6 @@ databake = { workspace = true, features = ["derive"], optional = true }
 [dev-dependencies]
 iai = { workspace = true }
 icu = { path = "../../components/icu", default-features = false }
-icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_properties = { path = "../../components/properties" }
 postcard = { workspace = true, features = ["alloc"] }
 serde = { workspace = true, features = ["derive"] }
@@ -43,17 +43,12 @@ toml = { workspace = true }
 criterion = { workspace = true }
 
 [features]
-std = []
-serde = ["dep:serde", "zerovec/serde"]
+serde = ["dep:serde", "zerovec/serde", "potential_utf/serde", "alloc"]
 databake = ["dep:databake", "zerovec/databake"]
-bench = []
+alloc = ["zerovec/alloc"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI
-
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
 
 [[bench]]
 name = "codepointtrie"
@@ -63,7 +58,6 @@ path = "benches/codepointtrie.rs"
 [[bench]]
 name = "iai_cpt"
 harness = false
-required-features = ["bench"]
 path = "benches/iai_cpt.rs"
 
 [[bench]]

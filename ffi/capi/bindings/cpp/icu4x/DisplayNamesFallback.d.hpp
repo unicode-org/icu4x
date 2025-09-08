@@ -6,7 +6,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -16,12 +18,17 @@ namespace capi {
       DisplayNamesFallback_Code = 0,
       DisplayNamesFallback_None = 1,
     };
-    
+
     typedef struct DisplayNamesFallback_option {union { DisplayNamesFallback ok; }; bool is_ok; } DisplayNamesFallback_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
+/**
+ * 🚧 This API is experimental and may experience breaking changes outside major releases.
+ *
+ * See the [Rust documentation for `Fallback`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/enum.Fallback.html) for more information.
+ */
 class DisplayNamesFallback {
 public:
   enum Value {
@@ -29,7 +36,8 @@ public:
     None = 1,
   };
 
-  DisplayNamesFallback() = default;
+  DisplayNamesFallback(): value(Value::Code) {}
+
   // Implicit conversions between enum and ::Value
   constexpr DisplayNamesFallback(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

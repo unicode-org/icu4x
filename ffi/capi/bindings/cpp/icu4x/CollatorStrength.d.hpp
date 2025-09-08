@@ -6,7 +6,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -19,12 +21,15 @@ namespace capi {
       CollatorStrength_Quaternary = 3,
       CollatorStrength_Identical = 4,
     };
-    
+
     typedef struct CollatorStrength_option {union { CollatorStrength ok; }; bool is_ok; } CollatorStrength_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `Strength`](https://docs.rs/icu/2.0.0/icu/collator/options/enum.Strength.html) for more information.
+ */
 class CollatorStrength {
 public:
   enum Value {
@@ -35,7 +40,8 @@ public:
     Identical = 4,
   };
 
-  CollatorStrength() = default;
+  CollatorStrength(): value(Value::Primary) {}
+
   // Implicit conversions between enum and ::Value
   constexpr CollatorStrength(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

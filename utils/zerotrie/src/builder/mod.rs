@@ -27,13 +27,18 @@
 //! - `current_len` is the length in bytes of the current self-contained trie.
 //! - `lengths_stack` contains metadata for branch nodes.
 //!
-//! What follows is a verbal explanation of the build steps for a trie containing:
+//! Consider a trie containing the following strings and values:
 //!
 //! - "" → 11
 //! - "ad" → 22
 //! - "adef" → 33
 //! - "adghk" → 44
 //!
+//! Suppose `prefix_len = 2`, `i = 1`, and `j = 4`. This would indicate that we
+//! have are evaluating the strings with the "ad" prefix, which extend from
+//! index 1 (inclusive) to index 4 (exclusive).
+//!
+//! What follows is a verbal explanation of the build steps for the above trie.
 //! When a node is prepended, it is shown in **boldface**.
 //!
 //! 1. Initialize the builder by setting `i=3`, `j=4`, `prefix_len=5` (the last string),
@@ -231,7 +236,7 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
         let byte_str_slice = ByteStr::from_byte_slice_with_value(tuples);
         let result = ZeroTrieBuilderConst::<N>::from_tuple_slice::<100>(byte_str_slice);
         match result {
-            Ok(s) => Self::from_store(s.take_or_panic()),
+            Ok(s) => Self::from_store(s.build_or_panic()),
             Err(_) => panic!("Failed to build ZeroTrie"),
         }
     }
@@ -291,7 +296,7 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
         // encountered, this number may need to be increased.
         let result = ZeroTrieBuilderConst::<N>::from_tuple_slice::<100>(byte_str_slice);
         match result {
-            Ok(s) => Self::from_store(s.take_or_panic()),
+            Ok(s) => Self::from_store(s.build_or_panic()),
             Err(_) => panic!("Failed to build ZeroTrie"),
         }
     }

@@ -76,6 +76,26 @@ jobs:
     - name: Check
       run: cargo make ci-job-msrv-${{ matrix.behavior }}
 
+  msrv-utils:
+    runs-on: ubuntu-latest
+    # Set CARGO_HTTP_MULTIPLEXING=false to work around crates.io curl bug:
+    # <https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation>
+    env:
+      CARGO_HTTP_MULTIPLEXING: false
+    steps:
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+    # Cargo-make boilerplate
+    - name: Install cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
+
+    # No toolchain boilerplate as this runs on MSRV
+
+    # Actual job
+    - name: Check
+      run: cargo make ci-job-msrv-utils
 
   # ci-job-test
   test:
@@ -150,13 +170,9 @@ jobs:
       run: cargo make ci-job-test-gigo
 
 
-  # ci-job-test-tutorials
-  test-tutorials:
+  # ci-job-test-cargo
+  test-cargo:
     runs-on: ubuntu-latest
-    strategy:
-      matrix: 
-        behavior: [local] # reenable cratesio for 2.0
-      fail-fast: false
     steps:
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
@@ -177,8 +193,8 @@ jobs:
       run: sudo apt install libharfbuzz-dev
 
     # Actual job
-    - name: Run `cargo make ci-job-test-tutorials-${{ matrix.behavior }}`
-      run: cargo make ci-job-test-tutorials-${{ matrix.behavior }}
+    - name: Run `cargo make ci-job-test-cargo`
+      run: cargo make ci-job-test-cargo
 
 
   # ci-job-testdata
@@ -260,6 +276,11 @@ jobs:
     - name: Show the selected Rust toolchain
       run: rustup show
 
+    # Job-specific dependencies
+    # TODO: Remove on 2025-05-05, when clang-19 is in ubuntu-latest (https://github.com/actions/runner-images/issues/11895)
+    - name: Install LLD and Clang
+      run: sudo apt-get install lld-19 clang-19
+
     # Actual job
     - name: Run `cargo make ci-job-test-c`
       run: cargo make ci-job-test-c
@@ -290,6 +311,11 @@ jobs:
     - name: Show the selected Rust toolchain
       run: rustup show
 
+    # Job-specific dependencies
+    # TODO: Remove on 2025-05-05, when clang-19 is in ubuntu-latest (https://github.com/actions/runner-images/issues/11895)
+    - name: Install LLD
+      run: sudo apt-get install lld-19
+
     # Actual job
     - name: Run `cargo make ci-job-test-js`
       run: cargo make ci-job-test-js
@@ -297,15 +323,13 @@ jobs:
 
   # ci-job-test-dart
   test-dart:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-
-    # Software setup/installation for the container
-    - name: Install Rust toolchains
-      run: |
-        rustup toolchain install stable
 
     # Cargo-make boilerplate
     - name: Install cargo-make
@@ -316,17 +340,39 @@ jobs:
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
       run: cargo make set-ci-toolchain
+
     - name: Show the selected Rust toolchain
       run: rustup show
 
     # Job-specific dependencies
     - uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
       with:
-        sdk: 3.4.0-204.0.dev
+        sdk: ${{ github.event_name != 'schedule' && '3.10.0-22.0.dev' || 'dev' }}
+    - name: Install yq if Windows
+      if: ${{ matrix.os == 'windows-latest' }}
+      run: choco install yq
 
     # Actual job
     - name: Run `cargo make ci-job-test-dart`
       run: cargo make ci-job-test-dart
+
+    - name: Run `cargo make ci-job-test-dart` in local mode
+      run: |
+        cp ffi/dart/.dart_tool/lib/* dylib
+        git clean -xf ffi examples
+        yq -i ".hooks.user_defines.icu4x.buildMode = \"local\"" ffi/dart/pubspec.yaml
+        yq -i ".hooks.user_defines.icu4x.localPath = \"file://$(realpath dylib)\"" ffi/dart/pubspec.yaml
+        yq -i ".hooks.user_defines.icu4x.buildMode = \"local\"" examples/dart/pubspec.yaml
+        yq -i ".hooks.user_defines.icu4x.localPath = \"file://$(realpath dylib)\"" examples/dart/pubspec.yaml
+        cargo make ci-job-test-dart
+        rm dylib
+
+    - name: Run `cargo make ci-job-test-dart` in fetch mode
+      run: |
+        git clean -xf ffi examples
+        yq -i ".hooks.user_defines.icu4x.buildMode = \"fetch\"" ffi/dart/pubspec.yaml
+        yq -i ".hooks.user_defines.icu4x.buildMode = \"fetch\"" examples/dart/pubspec.yaml
+        cargo make ci-job-test-dart
  
 
   # ci-job-nostd
@@ -396,12 +442,12 @@ jobs:
 
     # Job-specific dependencies
     - name: Attempt to load cached GN Third-Party Tools
-      uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+      uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
       id: gn-third-party-tools-cache
       with:
         path: |
-          tutorials/gn/third_party_tools
-        key: gn-third-party-${{ runner.os }}-${{ hashFiles('tools/make/gn.toml', 'tutorials/gn/Cargo.lock') }}
+          examples/gn/third_party_tools
+        key: gn-third-party-${{ runner.os }}-${{ hashFiles('tools/make/gn.toml', 'examples/gn/Cargo.lock') }}
     - name: Install GN Third-Party Tools
       if: steps.gn-third-party-tools-cache.outputs.cache-hit != 'true'
       run: cargo make gn-install
@@ -525,6 +571,29 @@ jobs:
     - name: Cargo doc
       run: cargo make ci-job-doc
 
+  semver:
+    runs-on: ubuntu-latest
+    env:
+      # This is the baseline for semver-check. It can be changed
+      # if unstable APIs were changed but semver-check
+      # didn't know that they were unstable.
+      BASELINE_REF: 7d369fbb651d594322ef44f12ea56066973628e4 # a commit on main
+    steps:
+
+    # Checkout baseline revision; required because actions/checkout is shallow
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      with:
+        ref: ${{ env.BASELINE_REF }}
+
+    # Checkout HEAD revision
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+    # Actual job
+    - name: Check semver
+      uses: obi1kenobi/cargo-semver-checks-action@5b298c9520f7096a4683c0bd981a7ac5a7e249ae
+      with:
+        baseline-rev: ${{ env.BASELINE_REF }}
+
 
   # Notify on slack  
   notify-slack:
@@ -534,8 +603,6 @@ jobs:
     steps:
       - name: Notify slack of failure
         uses: ravsamhq/notify-slack-action@4ed28566c2bdcdaee6dca2b46b9666d01b4ed8a4 # v1
-        # Only notify main slack of failure for beta runs and for failed main CI
-        if: (github.event_name == 'schedule' && github.event.schedule == '1 14 * * *') || github.event_name == 'push'
         with:
           notify_when: failure
           status: failure # We do the filtering earlier
@@ -543,14 +610,5 @@ jobs:
           message_format: ${{ format('{{emoji}} {0} CI failed!' , ((github.event_name == 'schedule') && 'Beta' || (github.event_name == 'push') && 'Main' || 'Manually dispatched')) }}
           footer: '<{run_url}|View failure> | <https://github.com/unicode-org/icu4x/actions?query=event%3A${{ github.event_name }}|CI history for `${{ github.event_name }}`>'
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      - name: Notify nightly slack of failure
-        uses: ravsamhq/notify-slack-action@4ed28566c2bdcdaee6dca2b46b9666d01b4ed8a4 # v1
-        with:
-          notify_when: failure
-          status: failure # We do the filtering earlier
-          notification_title: ''
-          message_format: ${{ format('{{emoji}} {0} CI failed!' , ((github.event_name == 'schedule') && (github.event.schedule == '1 14 * * *' && 'Beta' || 'Nightly') || (github.event_name == 'push') && 'Main' || 'Manually dispatched on `${{ inputs.channel }}`')) }}
-          footer: '<{run_url}|View failure> | <https://github.com/unicode-org/icu4x/actions?query=event%3A${{ github.event_name }}|CI history for `${{ github.event_name }}`>'
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NIGHTLY_WEBHOOK_URL }}
+          # Notify main slack of failure for beta runs and and main CI, nightly slack otherwise
+          SLACK_WEBHOOK_URL: ${{ ((github.event_name == 'schedule' && github.event.schedule == '1 14 * * *') || github.event_name == 'push') && secrets.SLACK_WEBHOOK_URL || secrets.SLACK_NIGHTLY_WEBHOOK_URL }}

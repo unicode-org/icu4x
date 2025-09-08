@@ -3,21 +3,19 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
-use icu::datetime::pattern::runtime::{PatternPlurals, PluralPattern};
-use icu::datetime::provider::calendar::*;
-use icu::datetime::skeleton::reference::Skeleton;
-use icu::datetime::skeleton::SkeletonError;
+use icu::datetime::provider::skeleton::reference::Skeleton;
+use icu::datetime::provider::skeleton::*;
 use icu::plurals::PluralCategory;
 use std::collections::HashMap;
 use std::convert::TryFrom;
 
-impl From<&cldr_serde::ca::Dates> for DateSkeletonPatternsV1<'_> {
-    fn from(other: &cldr_serde::ca::Dates) -> Self {
+impl From<&cldr_serde::ca::AvailableFormats> for DateSkeletonPatterns<'_> {
+    fn from(other: &cldr_serde::ca::AvailableFormats) -> Self {
         let mut patterns: HashMap<String, HashMap<String, String>> = HashMap::new();
 
         // The CLDR keys for available_formats can have duplicate skeletons with either
         // an additional variant, or with multiple variants for different plurals.
-        for (skeleton_str, pattern_str) in other.datetime_formats.available_formats.0.iter() {
+        for (skeleton_str, pattern_str) in other.0.iter() {
             let (skeleton_str, plural_form_str) = match skeleton_str.split_once("-count-") {
                 Some((s, v)) => (s, v),
                 None => (skeleton_str.as_ref(), "other"),
@@ -43,6 +41,7 @@ impl From<&cldr_serde::ca::Dates> for DateSkeletonPatternsV1<'_> {
                 let pattern_str = patterns.get("other").expect("Other variant must exist");
                 let pattern = pattern_str.parse().expect("Unable to parse a pattern");
 
+                #[allow(unreachable_code, unused_variables, unused_mut)] // TODO(#5643)
                 let mut pattern_plurals = if patterns.len() == 1 {
                     PatternPlurals::SinglePattern(pattern)
                 } else {
@@ -65,7 +64,7 @@ impl From<&cldr_serde::ca::Dates> for DateSkeletonPatternsV1<'_> {
                 // here. The following `normalize` will turn those cases to `SingleVariant`.
                 pattern_plurals.normalize();
 
-                Some((SkeletonV1(skeleton), pattern_plurals))
+                Some((SkeletonData(skeleton), pattern_plurals))
             })
             .collect();
 
@@ -76,43 +75,31 @@ impl From<&cldr_serde::ca::Dates> for DateSkeletonPatternsV1<'_> {
 
 #[cfg(test)]
 mod test {
+    use super::super::legacy::DateLengths;
+    use super::*;
     use core::convert::TryFrom;
     use core::str::FromStr;
-    use either::Either;
-    use icu::datetime::skeleton::reference::Skeleton;
-    use icu::datetime::skeleton::*;
+    use icu::datetime::provider::fields::components;
+    use icu::datetime::provider::skeleton::reference::Skeleton;
     use icu::datetime::{
-        fields::{Day, Field, FieldLength, Month, Weekday},
-        options::{components, preferences},
-        pattern::{reference, runtime},
-        provider::calendar::{
-            DateSkeletonPatternsV1, DateSkeletonPatternsV1Marker, GregorianDateLengthsV1Marker,
-            SkeletonV1,
-        },
+        provider::fields::{Day, Field, FieldLength, Month, Weekday},
+        provider::pattern::{reference, runtime},
     };
     use icu::locale::locale;
-    use icu_provider::prelude::*;
+    use icu::locale::preferences::extensions::unicode::keywords::HourCycle;
     use litemap::LiteMap;
 
+    use crate::datetime::DatagenCalendar;
     use crate::SourceDataProvider;
 
-    fn get_data_payload() -> (
-        DataPayload<GregorianDateLengthsV1Marker>,
-        DataPayload<DateSkeletonPatternsV1Marker>,
-    ) {
+    fn get_data_payload() -> (DateLengths<'static>, DateSkeletonPatterns<'static>) {
         let locale = locale!("en").into();
 
-        let patterns = SourceDataProvider::new_testing()
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&locale),
-                ..Default::default()
-            })
-            .expect("Failed to load payload")
-            .payload;
         let data = SourceDataProvider::new_testing()
-            .get_datetime_resources(&locale, Either::Right("gregorian"))
+            .get_datetime_resources(&locale, Some(DatagenCalendar::Gregorian))
             .unwrap();
-        let skeletons = DataPayload::from_owned(DateSkeletonPatternsV1::from(&data));
+        let patterns = DateLengths::from(&data);
+        let skeletons = DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
         (patterns, skeletons)
     }
 
@@ -129,12 +116,12 @@ mod test {
         components.minute = Some(components::Numeric::Numeric);
         components.second = Some(components::Numeric::Numeric);
 
-        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
+        let requested_fields = components.to_vec_fields(HourCycle::H23);
         let (_, skeletons) = get_data_payload();
 
-        match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
-            BestSkeleton::AllFieldsMatch(available_format_pattern)
-            | BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
+        match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
+            BestSkeleton::AllFieldsMatch(available_format_pattern, _)
+            | BestSkeleton::MissingOrExtraFields(available_format_pattern, _) => {
                 assert_eq!(
                     available_format_pattern
                         .expect_pattern("pattern should not have plural variants")
@@ -152,13 +139,13 @@ mod test {
     #[test]
     fn test_skeleton_matching_missing_fields() {
         let mut components = components::Bag::empty();
-        components.week = Some(components::Week::TwoDigitWeekOfYear);
+        components.time_zone_name = Some(components::TimeZoneName::LongOffset);
         components.weekday = Some(components::Text::Short);
-        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
+        let requested_fields = components.to_vec_fields(HourCycle::H23);
         let (_, skeletons) = get_data_payload();
 
-        match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
-            BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
+        match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
+            BestSkeleton::MissingOrExtraFields(available_format_pattern, _) => {
                 assert_eq!(
                     available_format_pattern
                         .expect_pattern("pattern should not have plural variants")
@@ -183,17 +170,17 @@ mod test {
         components.day = Some(components::Day::NumericDayOfMonth);
         // This will be appended.
         components.time_zone_name = Some(components::TimeZoneName::LongSpecific);
-        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
+        let requested_fields = components.to_vec_fields(HourCycle::H23);
         let (patterns, skeletons) = get_data_payload();
 
         match create_best_pattern_for_fields(
-            skeletons.get(),
-            &patterns.get().length_combinations,
+            &skeletons,
+            &patterns.length_combinations,
             &requested_fields,
             &Default::default(),
             false,
         ) {
-            BestSkeleton::AllFieldsMatch(available_format_pattern) => {
+            BestSkeleton::AllFieldsMatch(available_format_pattern, _) => {
                 // TODO - Append items are needed here.
                 assert_eq!(
                     available_format_pattern
@@ -210,11 +197,11 @@ mod test {
     #[test]
     fn test_skeleton_empty_bag() {
         let components: components::Bag = Default::default();
-        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
+        let requested_fields = components.to_vec_fields(HourCycle::H23);
         let (_, skeletons) = get_data_payload();
 
         assert_eq!(
-            get_best_available_format_pattern(skeletons.get(), &requested_fields, false),
+            get_best_available_format_pattern(&skeletons, &requested_fields, false),
             BestSkeleton::NoMatch,
             "No match was found"
         );
@@ -225,14 +212,14 @@ mod test {
         let mut components = components::Bag::empty();
         components.hour = Some(components::Numeric::Numeric);
         components.time_zone_name = Some(components::TimeZoneName::LongSpecific);
-        let requested_fields = components.to_vec_fields(preferences::HourCycle::H23);
+        let requested_fields = components.to_vec_fields(HourCycle::H23);
         // Construct a set of skeletons that do not use the hour nor time zone symbols.
         let mut skeletons = LiteMap::new();
         skeletons.insert(
-            SkeletonV1::try_from("EEEE").unwrap(),
+            SkeletonData::try_from("EEEE").unwrap(),
             runtime::Pattern::from_str("weekday EEEE").unwrap().into(),
         );
-        let skeletons = DateSkeletonPatternsV1(skeletons);
+        let skeletons = DateSkeletonPatterns(skeletons);
 
         assert_eq!(
             get_best_available_format_pattern(&skeletons, &requested_fields, false),
@@ -248,11 +235,11 @@ mod test {
     #[rustfmt::skip]
     const SUPPORTED_STRING_SKELETONS: &[&str] = &[
         "E", "dEEEE", "EHm", "EHms", "dE", "Ehm", "Ehms", "H", "HHmm", "HHmmss", "Hm", "Hms", "M",
-        "MdEEEE", "MdE", "MMM", "MMMdEEEE", "MMMdE", "MMMM", "MMMMW",
+        "MdEEEE", "MdE", "MMM", "MMMdEEEE", "MMMdE", "MMMM",
         "MMMMdEEEE", "MMMMdE", "MMMMd",
         "MMMMdd", "MMMd", "MMMdd", "MMd", "MMdd", "Md", "Mdd", "d", "h", "hm", "hms", "mmss", "ms",
         "y", "yM", "yMdEEEE", "yMdE", "yMM", "yMMM", "yMMMdEEEE", "yMMMdE", "yMMMM", "yMMMMdEEEE",
-        "yMMMMdE", "yMMMMdcccc", "yMMMMd", "yMMMd", "yMMdd", "yMd", "yw",
+        "yMMMMdE", "yMMMMdcccc", "yMMMMd", "yMMMd", "yMMdd", "yMd", 
         "Gy", "GyM", "GyMMM", "GyMMMdEEEE", "GyMMMdE", "GyMMMM", "GyMMMMdE", "GyMMMMd", "GyMMMd",
         // Time zones
         "HHmmZ", "Hmsv", "Hmsvvvv", "Hmv", "Hmvvvv", "hmsv", "hmsvvvv", "hmv", "hmvvvv",
@@ -267,6 +254,8 @@ mod test {
         "Bh", "Bhm", "Bhms", "EBhm", "EBhms",
         // TODO(#501) - Quarters
         "yQ", "yQQQ", "yQQQQ",
+        // TODO(#5643) - Weeks
+        "MMMMW", "yw",
     ];
 
     #[test]
@@ -310,7 +299,7 @@ mod test {
             Skeleton::from(vec![
                 Field {
                     symbol: Month::Format.into(),
-                    length: FieldLength::Wide
+                    length: FieldLength::Four
                 },
                 Field {
                     symbol: Day::DayOfMonth.into(),
@@ -318,7 +307,7 @@ mod test {
                 },
                 Field {
                     symbol: Weekday::Format.into(),
-                    length: FieldLength::Wide
+                    length: FieldLength::Four
                 },
             ])
         );
@@ -327,8 +316,8 @@ mod test {
     #[test]
     fn test_skeleton_tuple_ordering() {
         let skeletons_strings = Vec::from([
-            "y", "yM", "yMdE", "yMdEEEE", "yMMM", "yw", "M", "Md", "Mdd", "MMd", "MMdd", "d", "h",
-            "hm", "hms", "Hm", "Hms", "ms", "mmss",
+            "y", "yM", "yMdE", "yMdEEEE", "yMMM", "M", "Md", "Mdd", "MMd", "MMdd", "d", "h", "hm",
+            "hms", "Hm", "Hms", "ms", "mmss",
         ]);
 
         let skeleton_fields: Vec<Skeleton> = skeletons_strings
@@ -380,12 +369,12 @@ mod test {
     fn test_skeleton_matching_weekday_short() {
         let mut components = components::Bag::empty();
         components.weekday = Some(components::Text::Short);
-        let default_hour_cycle = preferences::HourCycle::H23;
+        let default_hour_cycle = HourCycle::H23;
         let requested_fields = components.to_vec_fields(default_hour_cycle);
         let (_, skeletons) = get_data_payload();
 
-        match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
-            BestSkeleton::AllFieldsMatch(available_format_pattern) => {
+        match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
+            BestSkeleton::AllFieldsMatch(available_format_pattern, _) => {
                 assert_eq!(
                     available_format_pattern
                         .expect_pattern("pattern should not have plural variants")
@@ -403,12 +392,12 @@ mod test {
     fn test_skeleton_matching_weekday_long() {
         let mut components = components::Bag::empty();
         components.weekday = Some(components::Text::Long);
-        let default_hour_cycle = preferences::HourCycle::H23;
+        let default_hour_cycle = HourCycle::H23;
         let requested_fields = components.to_vec_fields(default_hour_cycle);
         let (_, skeletons) = get_data_payload();
 
-        match get_best_available_format_pattern(skeletons.get(), &requested_fields, false) {
-            BestSkeleton::AllFieldsMatch(available_format_pattern) => {
+        match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
+            BestSkeleton::AllFieldsMatch(available_format_pattern, _) => {
                 assert_eq!(
                     available_format_pattern
                         .expect_pattern("pattern should not have plural variants")
@@ -445,13 +434,12 @@ mod test {
         );
 
         assert_pattern_to_skeleton("K:mm", "hmm", "H11 maps to H12");
-        assert_pattern_to_skeleton("k:mm", "Hmm", "H23 maps to H24");
 
         assert_pattern_to_skeleton("ha mm", "hmm", "Day periods get removed");
         assert_pattern_to_skeleton("h 'at' b mm", "hmm", "Day periods get removed");
 
         assert_pattern_to_skeleton("y", "y", "The year is passed through");
-        assert_pattern_to_skeleton("Y", "Y", "The year is passed through");
+        assert_pattern_to_skeleton("U", "U", "The year is passed through");
 
         assert_pattern_to_skeleton("LLL", "MMM", "Remove standalone months.");
 
@@ -459,11 +447,12 @@ mod test {
         assert_pattern_to_skeleton("A", "A", "Seconds pass through");
 
         assert_pattern_to_skeleton("z", "z", "Time zones get passed through");
-        assert_pattern_to_skeleton("Z", "Z", "Time zones get passed through");
         assert_pattern_to_skeleton("O", "O", "Time zones get passed through");
         assert_pattern_to_skeleton("v", "v", "Time zones get passed through");
         assert_pattern_to_skeleton("V", "V", "Time zones get passed through");
         assert_pattern_to_skeleton("X", "X", "Time zones get passed through");
         assert_pattern_to_skeleton("x", "x", "Time zones get passed through");
+
+        assert_pattern_to_skeleton("Z", "xxxx", "Z gets resolved");
     }
 }

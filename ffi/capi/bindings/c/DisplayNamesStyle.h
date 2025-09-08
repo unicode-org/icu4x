@@ -19,5 +19,4 @@
 
 
 
-
 #endif // DisplayNamesStyle_H

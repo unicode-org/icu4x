@@ -6,7 +6,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -23,12 +25,15 @@ namespace capi {
       DataError_Custom = 7,
       DataError_Io = 8,
     };
-    
+
     typedef struct DataError_option {union { DataError ok; }; bool is_ok; } DataError_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
+/**
+ * Additional information: [1](https://docs.rs/icu_provider/2.0.0/icu_provider/struct.DataError.html), [2](https://docs.rs/icu_provider/2.0.0/icu_provider/enum.DataErrorKind.html)
+ */
 class DataError {
 public:
   enum Value {
@@ -43,7 +48,8 @@ public:
     Io = 8,
   };
 
-  DataError() = default;
+  DataError(): value(Value::Unknown) {}
+
   // Implicit conversions between enum and ::Value
   constexpr DataError(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

@@ -7,13 +7,14 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#include "CustomTimeZone.d.h"
 #include "DataProvider.d.h"
-#include "DateTime.d.h"
-#include "DateTimeLength.d.h"
-#include "Error.d.h"
-#include "IsoDateTime.d.h"
+#include "DateTimeFormatter.d.h"
+#include "DateTimeFormatterLoadError.d.h"
+#include "DateTimeWriteError.d.h"
+#include "IsoDate.d.h"
 #include "Locale.d.h"
+#include "Time.d.h"
+#include "TimeZoneInfo.d.h"
 
 #include "ZonedDateTimeFormatter.d.h"
 
@@ -22,15 +23,56 @@
 
 
 
-typedef struct icu4x_ZonedDateTimeFormatter_create_with_length_mv1_result {union {ZonedDateTimeFormatter* ok; Error err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_create_with_length_mv1_result;
-icu4x_ZonedDateTimeFormatter_create_with_length_mv1_result icu4x_ZonedDateTimeFormatter_create_with_length_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength length);
+typedef struct icu4x_ZonedDateTimeFormatter_create_specific_long_mv1_result {union {ZonedDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_create_specific_long_mv1_result;
+icu4x_ZonedDateTimeFormatter_create_specific_long_mv1_result icu4x_ZonedDateTimeFormatter_create_specific_long_mv1(const Locale* locale, const DateTimeFormatter* formatter);
 
-typedef struct icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1_result {union { Error err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1_result;
-icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1_result icu4x_ZonedDateTimeFormatter_format_datetime_with_custom_time_zone_mv1(const ZonedDateTimeFormatter* self, const DateTime* datetime, const CustomTimeZone* time_zone, DiplomatWrite* write);
+typedef struct icu4x_ZonedDateTimeFormatter_create_specific_long_with_provider_mv1_result {union {ZonedDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_create_specific_long_with_provider_mv1_result;
+icu4x_ZonedDateTimeFormatter_create_specific_long_with_provider_mv1_result icu4x_ZonedDateTimeFormatter_create_specific_long_with_provider_mv1(const DataProvider* provider, const Locale* locale, const DateTimeFormatter* formatter);
 
-typedef struct icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result {union { Error err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result;
-icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1_result icu4x_ZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone_mv1(const ZonedDateTimeFormatter* self, const IsoDateTime* datetime, const CustomTimeZone* time_zone, DiplomatWrite* write);
+typedef struct icu4x_ZonedDateTimeFormatter_create_specific_short_mv1_result {union {ZonedDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_create_specific_short_mv1_result;
+icu4x_ZonedDateTimeFormatter_create_specific_short_mv1_result icu4x_ZonedDateTimeFormatter_create_specific_short_mv1(const Locale* locale, const DateTimeFormatter* formatter);
 
+typedef struct icu4x_ZonedDateTimeFormatter_create_specific_short_with_provider_mv1_result {union {ZonedDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_create_specific_short_with_provider_mv1_result;
+icu4x_ZonedDateTimeFormatter_create_specific_short_with_provider_mv1_result icu4x_ZonedDateTimeFormatter_create_specific_short_with_provider_mv1(const DataProvider* provider, const Locale* locale, const DateTimeFormatter* formatter);
+
+typedef struct icu4x_ZonedDateTimeFormatter_create_localized_offset_long_mv1_result {union {ZonedDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_create_localized_offset_long_mv1_result;
+icu4x_ZonedDateTimeFormatter_create_localized_offset_long_mv1_result icu4x_ZonedDateTimeFormatter_create_localized_offset_long_mv1(const Locale* locale, const DateTimeFormatter* formatter);
+
+typedef struct icu4x_ZonedDateTimeFormatter_create_localized_offset_long_with_provider_mv1_result {union {ZonedDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_create_localized_offset_long_with_provider_mv1_result;
+icu4x_ZonedDateTimeFormatter_create_localized_offset_long_with_provider_mv1_result icu4x_ZonedDateTimeFormatter_create_localized_offset_long_with_provider_mv1(const DataProvider* provider, const Locale* locale, const DateTimeFormatter* formatter);
+
+typedef struct icu4x_ZonedDateTimeFormatter_create_localized_offset_short_mv1_result {union {ZonedDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_create_localized_offset_short_mv1_result;
+icu4x_ZonedDateTimeFormatter_create_localized_offset_short_mv1_result icu4x_ZonedDateTimeFormatter_create_localized_offset_short_mv1(const Locale* locale, const DateTimeFormatter* formatter);
+
+typedef struct icu4x_ZonedDateTimeFormatter_create_localized_offset_short_with_provider_mv1_result {union {ZonedDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_create_localized_offset_short_with_provider_mv1_result;
+icu4x_ZonedDateTimeFormatter_create_localized_offset_short_with_provider_mv1_result icu4x_ZonedDateTimeFormatter_create_localized_offset_short_with_provider_mv1(const DataProvider* provider, const Locale* locale, const DateTimeFormatter* formatter);
+
+typedef struct icu4x_ZonedDateTimeFormatter_create_generic_long_mv1_result {union {ZonedDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_create_generic_long_mv1_result;
+icu4x_ZonedDateTimeFormatter_create_generic_long_mv1_result icu4x_ZonedDateTimeFormatter_create_generic_long_mv1(const Locale* locale, const DateTimeFormatter* formatter);
+
+typedef struct icu4x_ZonedDateTimeFormatter_create_generic_long_with_provider_mv1_result {union {ZonedDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_create_generic_long_with_provider_mv1_result;
+icu4x_ZonedDateTimeFormatter_create_generic_long_with_provider_mv1_result icu4x_ZonedDateTimeFormatter_create_generic_long_with_provider_mv1(const DataProvider* provider, const Locale* locale, const DateTimeFormatter* formatter);
+
+typedef struct icu4x_ZonedDateTimeFormatter_create_generic_short_mv1_result {union {ZonedDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_create_generic_short_mv1_result;
+icu4x_ZonedDateTimeFormatter_create_generic_short_mv1_result icu4x_ZonedDateTimeFormatter_create_generic_short_mv1(const Locale* locale, const DateTimeFormatter* formatter);
+
+typedef struct icu4x_ZonedDateTimeFormatter_create_generic_short_with_provider_mv1_result {union {ZonedDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_create_generic_short_with_provider_mv1_result;
+icu4x_ZonedDateTimeFormatter_create_generic_short_with_provider_mv1_result icu4x_ZonedDateTimeFormatter_create_generic_short_with_provider_mv1(const DataProvider* provider, const Locale* locale, const DateTimeFormatter* formatter);
+
+typedef struct icu4x_ZonedDateTimeFormatter_create_location_mv1_result {union {ZonedDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_create_location_mv1_result;
+icu4x_ZonedDateTimeFormatter_create_location_mv1_result icu4x_ZonedDateTimeFormatter_create_location_mv1(const Locale* locale, const DateTimeFormatter* formatter);
+
+typedef struct icu4x_ZonedDateTimeFormatter_create_location_with_provider_mv1_result {union {ZonedDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_create_location_with_provider_mv1_result;
+icu4x_ZonedDateTimeFormatter_create_location_with_provider_mv1_result icu4x_ZonedDateTimeFormatter_create_location_with_provider_mv1(const DataProvider* provider, const Locale* locale, const DateTimeFormatter* formatter);
+
+typedef struct icu4x_ZonedDateTimeFormatter_create_exemplar_city_mv1_result {union {ZonedDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_create_exemplar_city_mv1_result;
+icu4x_ZonedDateTimeFormatter_create_exemplar_city_mv1_result icu4x_ZonedDateTimeFormatter_create_exemplar_city_mv1(const Locale* locale, const DateTimeFormatter* formatter);
+
+typedef struct icu4x_ZonedDateTimeFormatter_create_exemplar_city_with_provider_mv1_result {union {ZonedDateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_create_exemplar_city_with_provider_mv1_result;
+icu4x_ZonedDateTimeFormatter_create_exemplar_city_with_provider_mv1_result icu4x_ZonedDateTimeFormatter_create_exemplar_city_with_provider_mv1(const DataProvider* provider, const Locale* locale, const DateTimeFormatter* formatter);
+
+typedef struct icu4x_ZonedDateTimeFormatter_format_iso_mv1_result {union { DateTimeWriteError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatter_format_iso_mv1_result;
+icu4x_ZonedDateTimeFormatter_format_iso_mv1_result icu4x_ZonedDateTimeFormatter_format_iso_mv1(const ZonedDateTimeFormatter* self, const IsoDate* iso_date, const Time* time, const TimeZoneInfo* zone, DiplomatWrite* write);
 
 void icu4x_ZonedDateTimeFormatter_destroy_mv1(ZonedDateTimeFormatter* self);
 

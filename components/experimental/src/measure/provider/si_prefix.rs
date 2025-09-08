@@ -9,6 +9,9 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use alloc::string::String;
+use core::fmt::Write;
+
 /// Represents the base of an si prefix.
 #[zerovec::make_ule(BaseULE)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -38,4 +41,15 @@ pub struct SiPrefix {
 
     /// The base of the si prefix.
     pub base: Base,
+}
+
+impl SiPrefix {
+    /// Appends the short representation of the si prefix to the given string.
+    pub(crate) fn append_short_representation(&self, buff: &mut String) {
+        buff.push(match self.base {
+            Base::Decimal => 'D',
+            Base::Binary => 'B',
+        });
+        let _infallible = write!(buff, "{}", self.power);
+    }
 }

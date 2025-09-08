@@ -6,7 +6,7 @@
 //!
 //! This module can be used as a target for the `icu_provider_export` crate.
 //!
-//! See our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/tutorials/data_management.md) for more information about different data providers.
+//! See our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/tutorials/data-management.md) for more information about different data providers.
 //!
 //! # Examples
 //!
@@ -22,9 +22,13 @@
 //!     BakedExporter::new(demo_path.clone(), Default::default()).unwrap();
 //!
 //! // Export something. Make sure to use the same fallback data at runtime!
-//! ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::Maximal.into(), LocaleFallbacker::new().static_to_owned())
-//!     .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
-//!     .unwrap();
+//! ExportDriver::new(
+//!     [DataLocaleFamily::FULL],
+//!     DeduplicationStrategy::Maximal.into(),
+//!     LocaleFallbacker::new().static_to_owned(),
+//! )
+//! .export(&icu_provider::hello_world::HelloWorldProvider, exporter)
+//! .unwrap();
 //! #
 //! # let _ = std::fs::remove_dir_all(&demo_path);
 //! ```
@@ -50,8 +54,8 @@
 //! #   ($p:ty) => {
 //! #     use icu_provider::prelude::*;
 //! #     use icu_provider::hello_world::*;
-//! #     impl DataProvider<HelloWorldV1Marker> for $p {
-//! #       fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+//! #     impl DataProvider<HelloWorldV1> for $p {
+//! #       fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1>, DataError> {
 //! #         HelloWorldProvider.load(req)
 //! #       }
 //! #     }
@@ -63,7 +67,7 @@
 //! impl_data_provider!(MyDataProvider);
 //!
 //! # fn main() {
-//! let formatter = HelloWorldFormatter::try_new_unstable(&MyDataProvider, &locale!("en").into()).unwrap();
+//! let formatter = HelloWorldFormatter::try_new_unstable(&MyDataProvider, locale!("en").into()).unwrap();
 //!
 //! assert_eq!(formatter.format_to_string(), "Hello World");
 //! # }
@@ -83,8 +87,7 @@
 //! use icu_locale_core::locale;
 //! use icu_provider::hello_world::*;
 //!
-//! let formatter =
-//!     HelloWorldFormatter::try_new(&locale!("en").into()).unwrap();
+//! let formatter = HelloWorldFormatter::try_new(locale!("en").into()).unwrap();
 //!
 //! assert_eq!(formatter.format_to_string(), "Hello World");
 //! ```
@@ -147,7 +150,7 @@ impl Default for Options {
     }
 }
 
-#[allow(clippy::type_complexity)]
+#[expect(clippy::type_complexity)]
 /// See the module-level documentation for details.
 pub struct BakedExporter {
     // Input arguments
@@ -162,10 +165,9 @@ pub struct BakedExporter {
             HashMap<DataPayload<ExportMarker>, BTreeSet<DataIdentifierCow<'static>>>,
         >,
     >,
-    /// file names and statistics to be consumed by `close`.
-    impl_data: Mutex<BTreeMap<DataMarkerInfo, (SyncTokenStream, Statistics)>>,
-    // List of dependencies used by baking.
-    dependencies: CrateEnv,
+    /// file names, required crates, and statistics to be consumed by `close`.
+    impl_data:
+        Mutex<BTreeMap<DataMarkerInfo, (SyncTokenStream, BTreeSet<&'static str>, Statistics)>>,
 }
 
 #[derive(Default)]
@@ -213,7 +215,6 @@ impl BakedExporter {
             use_separate_crates,
             data: Default::default(),
             impl_data: Default::default(),
-            dependencies: Default::default(),
         })
     }
 
@@ -257,7 +258,8 @@ impl BakedExporter {
 
         if !self.use_separate_crates {
             // Don't search the whole file, there should be a macro in the first 1000 bytes
-            if formatted[..1000].contains("macro_rules!") || formatted[..1000].contains("include!")
+            if formatted[..core::cmp::min(formatted.len(), 1000)].contains("macro_rules!")
+                || formatted[..core::cmp::min(formatted.len(), 1000)].contains("include!")
             {
                 // Formatted, otherwise it'd be `macro_rules !`
                 formatted = formatted
@@ -283,36 +285,27 @@ impl BakedExporter {
             .map_err(|e| DataError::from(e).with_path_context(&path))
     }
 
-    fn print_deps(&mut self) {
-        let mut deps = core::mem::take(&mut self.dependencies)
-            .into_iter()
-            .collect::<BTreeSet<_>>();
-        if !self.use_separate_crates {
-            deps.retain(|&krate| {
-                !krate.starts_with("icu_")
-                    || krate == "icu_provider"
-                    || krate == "icu_locale_core"
-                    || krate == "icu_pattern"
-            });
-            deps.insert("icu");
-        }
-        deps.insert("icu_provider");
-
-        log::info!("The generated module requires the following crates:");
-        for crate_name in deps {
-            log::info!("{}", crate_name);
-        }
-    }
-
     fn write_impl_macros(
         &self,
         marker: DataMarkerInfo,
+        dependencies: CrateEnv,
         stats: Statistics,
         body: TokenStream,
         dry_body: Option<TokenStream>,
         iterable_body: TokenStream,
     ) -> Result<(), DataError> {
         let marker_unqualified = bake_marker(marker).into_iter().last().unwrap().to_string();
+
+        let mut required_crates = dependencies.into_iter().collect::<BTreeSet<_>>();
+        if !self.use_separate_crates {
+            required_crates.retain(|&krate| {
+                !krate.starts_with("icu_")
+                    || krate.starts_with("icu_provider")
+                    || krate == "icu_locale_core"
+                    || krate == "icu_pattern"
+            });
+            required_crates.insert("icu");
+        }
 
         let &Statistics {
             structs_total_size,
@@ -343,6 +336,11 @@ impl BakedExporter {
                 &mut doc,
                 "\n [^1]: these numbers can be smaller in practice due to linker deduplication"
             );
+        }
+
+        let _infallible = writeln!(&mut doc, "\n\n This macro requires the following crates:");
+        for required_crate in &required_crates {
+            let _infallible = writeln!(&mut doc, " * `{required_crate}`");
         }
 
         let ident = marker_unqualified.to_snake_case();
@@ -404,7 +402,7 @@ impl BakedExporter {
         self.impl_data
             .lock()
             .expect("poison")
-            .insert(marker, (ident, stats));
+            .insert(marker, (ident, required_crates, stats));
         Ok(())
     }
 }
@@ -431,7 +429,7 @@ impl DataExporter for BakedExporter {
         &self,
         marker: DataMarkerInfo,
         payload: &DataPayload<ExportMarker>,
-        _metadata: FlushMetadata,
+        metadata: FlushMetadata,
     ) -> Result<(), DataError> {
         let maybe_msrv = maybe_msrv();
 
@@ -450,7 +448,32 @@ impl DataExporter for BakedExporter {
         .parse::<TokenStream>()
         .unwrap();
 
-        let bake = payload.tokenize(&self.dependencies);
+        let (checksum_decl, metadata_bake) = if let Some(checksum) = metadata.checksum {
+            let singleton_checksum_ident = format!("{singleton_ident}_CHECKSUM")
+                .parse::<TokenStream>()
+                .unwrap();
+            (
+                quote! {
+                    #[doc(hidden)] // singletons might be used cross-crate
+                    pub const #singleton_checksum_ident: u64 = #checksum;
+                },
+                quote! {
+                    icu_provider::DataResponseMetadata::default().with_checksum(Self::#singleton_checksum_ident)
+                },
+            )
+        } else {
+            (
+                quote!(),
+                quote! {
+                    icu_provider::DataResponseMetadata::default()
+                },
+            )
+        };
+
+        let dependencies = CrateEnv::default();
+        dependencies.insert("icu_provider");
+
+        let bake = payload.tokenize(&dependencies);
 
         let stats = Statistics {
             structs_total_size: payload.baked_size(),
@@ -459,12 +482,13 @@ impl DataExporter for BakedExporter {
             lookup_struct_size: 0,
         };
 
-        self.write_impl_macros(marker, stats, quote! {
+        self.write_impl_macros(marker, dependencies, stats, quote! {
             #maybe_msrv
             impl $provider {
                 // Exposing singleton structs as consts allows us to get rid of fallibility
                 #[doc(hidden)] // singletons might be used cross-crate
                 pub const #singleton_ident: &'static <#marker_bake as icu_provider::DynamicDataMarker>::DataStruct = &#bake;
+                #checksum_decl
             }
 
             #maybe_msrv
@@ -473,10 +497,10 @@ impl DataExporter for BakedExporter {
                     &self,
                     req: icu_provider::DataRequest,
                 ) -> Result<icu_provider::DataResponse<#marker_bake>, icu_provider::DataError> {
-                    if req.id.locale.is_default() {
+                    if req.id.locale.is_unknown() {
                         Ok(icu_provider::DataResponse {
                             payload: icu_provider::DataPayload::from_static_ref(Self::#singleton_ident),
-                            metadata: Default::default(),
+                            metadata: #metadata_bake,
                         })
                     } else {
                         Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
@@ -488,8 +512,8 @@ impl DataExporter for BakedExporter {
             #maybe_msrv
             impl icu_provider::DryDataProvider<#marker_bake> for $provider {
                 fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
-                    if req.id.locale.is_default() {
-                        Ok(Default::default())
+                    if req.id.locale.is_unknown() {
+                        Ok(#metadata_bake)
                     } else {
                         Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
                     }
@@ -510,6 +534,13 @@ impl DataExporter for BakedExporter {
         let maybe_msrv = maybe_msrv();
 
         let marker_bake = bake_marker(marker);
+        let marker_bake_shouty = marker_bake
+            .clone()
+            .into_iter()
+            .last()
+            .unwrap()
+            .to_string()
+            .to_shouty_snake_case();
 
         let deduplicated_values = self
             .data
@@ -518,9 +549,13 @@ impl DataExporter for BakedExporter {
             .remove(&marker)
             .unwrap_or_default();
 
+        let dependencies = CrateEnv::default();
+        dependencies.insert("icu_provider");
+
         if deduplicated_values.is_empty() {
             self.write_impl_macros(
                 marker,
+                dependencies,
                 Default::default(),
                 quote! {
                     #maybe_msrv
@@ -553,57 +588,153 @@ impl DataExporter for BakedExporter {
         } else {
             let mut stats = Statistics::default();
 
-            let needs_fallback = self.use_internal_fallback
-                && deduplicated_values
-                    .iter()
-                    .any(|(_, ids)| ids.iter().any(|id| !id.locale.is_default()));
-
-            let mut baked_values = deduplicated_values
-                .into_iter()
+            let mut values = deduplicated_values
+                .iter()
                 .map(|(payload, ids)| {
+                    // TODO(#5230): Update these size calculations for EncodedStruct storage
                     stats.structs_count += 1;
                     stats.identifiers_count += ids.len();
                     stats.structs_total_size += payload.baked_size();
-
-                    (payload.tokenize(&self.dependencies), ids)
+                    (payload, ids)
                 })
                 .collect::<Vec<_>>();
 
             // Stability
-            baked_values.sort_by(|a, b| a.1.first().cmp(&b.1.first()));
+            values.sort_by(|a, b| a.1.first().cmp(&b.1.first()));
 
-            let (data, lookup_struct_size) = crate::zerotrie::bake(&marker_bake, baked_values);
+            let values = values.iter().enumerate();
 
-            stats.lookup_struct_size = lookup_struct_size;
+            // Safety invariant upheld: the only values being added to the trie are `index`
+            // values, which come from enumerating `values`
+            let trie = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii::from_iter(
+                values.clone().flat_map(|(index, (_payload, ids))| {
+                    ids.iter().map(move |id| {
+                        let mut encoded = id.locale.to_string().into_bytes();
+                        if !id.marker_attributes.is_empty() {
+                            encoded.push(icu_provider::baked::zerotrie::ID_SEPARATOR);
+                            encoded.extend_from_slice(id.marker_attributes.as_bytes());
+                        }
+                        (encoded, index)
+                    })
+                }),
+            );
 
-            let data_ident = format!(
-                "DATA_{}",
-                marker_bake
+            stats.lookup_struct_size = core::mem::size_of::<
+                icu_provider::baked::zerotrie::Data<icu_provider::hello_world::HelloWorldV1>,
+            >() + trie.as_borrowed_slice().borrows_size();
+
+            let mut consts = vec![];
+            let baked_trie = trie.as_borrowed_slice().bake(&Default::default());
+            let data_ident = format!("DATA_{marker_bake_shouty}")
+                .parse::<TokenStream>()
+                .unwrap();
+
+            if let Some(vzv_tokens) = DataPayload::tokenize_encoded_seq(
+                &values
                     .clone()
-                    .into_iter()
-                    .last()
-                    .unwrap()
-                    .to_string()
-                    .to_shouty_snake_case()
-            )
-            .parse::<TokenStream>()
-            .unwrap();
+                    .map(|(_index, (payload, _ids))| *payload)
+                    .collect::<Vec<_>>(),
+                &dependencies,
+            ) {
+                consts.push(quote! {
+                    // Safety invariant upheld: see above
+                    const #data_ident: icu_provider::baked::zerotrie::DataForVarULEs<#marker_bake> = {
+                        const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked:: #baked_trie;
+                        const VALUES: &'static zerovec::VarZeroSlice<<<#marker_bake as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::ule::MaybeAsVarULE>::EncodedStruct> = #vzv_tokens;
+                        unsafe {
+                            icu_provider::baked::zerotrie::DataForVarULEs::from_trie_and_values_unchecked(TRIE, VALUES)
+                        }
+                    };
+                });
+            } else if marker.expose_baked_consts {
+                let bakes = values.clone().map(|(_index, (payload, ids))| {
+                    let ident = format!(
+                        "{marker_bake_shouty}_{}",
+                        ids.first().unwrap().to_string().to_shouty_snake_case()
+                    )
+                    .parse::<TokenStream>()
+                    .unwrap();
+                    let bake = payload.tokenize(&dependencies);
 
-            self.dependencies.insert("icu_provider_baked");
+                    consts.push(quote! {
+                        pub const #ident: &<#marker_bake as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = &#bake;
+                    });
 
-            let search = if !needs_fallback {
+                    for deduped in ids.iter().skip(1) {
+                        let deduped_ident = format!(
+                            "{marker_bake_shouty}_{}",
+                            deduped.to_string().to_shouty_snake_case()
+                        )
+                        .parse::<TokenStream>()
+                        .unwrap();
+                        consts.push(quote! {
+                            pub const #deduped_ident: &<#marker_bake as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = Self::#ident;
+                        });
+                    }
+
+                    quote!(Self::#ident)
+                });
+                let data = quote! {
+                    // Safety invariant upheld: see above
+                    const #data_ident: icu_provider::baked::zerotrie::DataRef<#marker_bake> = unsafe {
+                        icu_provider::baked::zerotrie::DataRef::from_trie_and_refs_unchecked(icu_provider::baked:: #baked_trie, &[#(#bakes,)*])
+                    };
+                };
+                consts.push(data);
+            } else {
+                let bakes = values
+                    .clone()
+                    .map(|(_index, (payload, _ids))| payload.tokenize(&dependencies));
+                consts.push(quote! {
+                    // Safety invariant upheld: see above
+                    const #data_ident: icu_provider::baked::zerotrie::Data<#marker_bake> = {
+                        const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked:: #baked_trie;
+                        const VALUES: &'static [<#marker_bake as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct] = &[#(#bakes,)*];
+                        unsafe {
+                            icu_provider::baked::zerotrie::Data::from_trie_and_values_unchecked(TRIE, VALUES)
+                        }
+                    };
+                });
+            };
+
+            let metadata_bake = if let Some(checksum) = metadata.checksum {
                 quote! {
-                    let metadata = Default::default();
-                    let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req.id, req.metadata.attributes_prefix_match) else {
+                    icu_provider::DataResponseMetadata::default().with_checksum(#checksum)
+                }
+            } else {
+                quote! {
+                    icu_provider::DataResponseMetadata::default()
+                }
+            };
+
+            dependencies.insert("icu_provider/baked");
+
+            let search = if !self.use_internal_fallback {
+                quote! {
+                    let metadata = #metadata_bake;
+                    let Some(payload) = icu_provider::baked::DataStore::get(&Self::#data_ident, req.id, req.metadata.attributes_prefix_match) else {
+                        return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
+                    };
+                }
+            } else if deduplicated_values
+                .iter()
+                .all(|(_, ids)| ids.iter().all(|id| id.locale.is_unknown()))
+            {
+                quote! {
+                    // we need to use fallback, but all values are for root locale, so we just go there directly
+                    let mut req = req;
+                    req.id.locale = Default::default();
+                    let metadata = #metadata_bake;
+                    let Some(payload) = icu_provider::baked::DataStore::get(&Self::#data_ident, req.id, req.metadata.attributes_prefix_match) else {
                         return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
                     };
                 }
             } else {
-                self.dependencies.insert("icu_locale/compiled_data");
+                dependencies.insert("icu_locale/compiled_data");
                 quote! {
-                    let mut metadata = icu_provider::DataResponseMetadata::default();
+                    let mut metadata = #metadata_bake;
 
-                    let payload =  if let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, req.id, req.metadata.attributes_prefix_match) {
+                    let payload =  if let Some(payload) = icu_provider::baked::DataStore::get(&Self::#data_ident, req.id, req.metadata.attributes_prefix_match) {
                         payload
                     } else {
                         const FALLBACKER: icu_locale::fallback::LocaleFallbackerWithConfig<'static> =
@@ -611,11 +742,11 @@ impl DataExporter for BakedExporter {
                                 .for_config(<#marker_bake as icu_provider::DataMarker>::INFO.fallback_config);
                         let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
                         loop {
-                            if let Some(payload) = icu_provider_baked::DataStore::get(&Self::#data_ident, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get()), req.metadata.attributes_prefix_match) {
+                            if let Some(payload) = icu_provider::baked::DataStore::get(&Self::#data_ident, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get()), req.metadata.attributes_prefix_match) {
                                 metadata.locale = Some(fallback_iterator.take());
                                 break payload;
                             }
-                            if fallback_iterator.get().is_default() {
+                            if fallback_iterator.get().is_unknown() {
                                 return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req));
                             }
                             fallback_iterator.step();
@@ -626,11 +757,12 @@ impl DataExporter for BakedExporter {
 
             self.write_impl_macros(
                 marker,
+                dependencies,
                 stats,
                 quote! {
                     #maybe_msrv
                     impl $provider {
-                        const #data_ident: #data;
+                        #(#consts)*
                     }
 
                     #maybe_msrv
@@ -642,7 +774,7 @@ impl DataExporter for BakedExporter {
                             #search
 
                             Ok(icu_provider::DataResponse {
-                                payload: icu_provider::DataPayload::from_static_ref(payload),
+                                payload,
                                 metadata
                             })
                         }
@@ -664,7 +796,7 @@ impl DataExporter for BakedExporter {
                     #maybe_msrv
                     impl icu_provider::IterableDataProvider<#marker_bake> for $provider {
                         fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
-                            Ok(icu_provider_baked::DataStore::iter(&Self::#data_ident).collect())
+                            Ok(icu_provider::baked::DataStore::iter(&Self::#data_ident).collect())
                         }
                     }
                 },
@@ -672,7 +804,7 @@ impl DataExporter for BakedExporter {
         }
     }
 
-    fn close(&mut self) -> Result<(), DataError> {
+    fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
         log::info!("Writing macros module...");
 
         let data = core::mem::take(&mut self.impl_data)
@@ -681,13 +813,18 @@ impl DataExporter for BakedExporter {
 
         let maybe_msrv = maybe_msrv();
 
-        let marker_bakes = data.keys().copied().map(bake_marker);
-
-        let file_paths = data.values().map(|(i, _)| format!("{i}.rs.data"));
+        let file_paths = data.values().map(|(i, _, _)| format!("{i}.rs.data"));
 
         let macro_idents = data
             .values()
-            .map(|(i, _)| format!("impl_{i}").parse::<TokenStream>().unwrap());
+            .map(|(i, _, _)| format!("impl_{i}").parse::<TokenStream>().unwrap());
+
+        let required_crates = data
+            .values()
+            .flat_map(|(_, deps, _)| deps.iter().copied())
+            .collect::<BTreeSet<_>>();
+
+        let required_crates_list = required_crates.iter().map(|c| format!(" * `{c}`"));
 
         // mod.rs is the interface for built-in data. It exposes one macro per marker.
         self.write_to_file(
@@ -724,6 +861,10 @@ impl DataExporter for BakedExporter {
                 pub use __make_provider as make_provider;
 
                 // Not public as it will only work locally due to needing access to the other macros.
+                /// This macro requires the following crates:
+                #(
+                    #[doc = #required_crates_list]
+                )*
                 #[allow(unused_macros)]
                 macro_rules! impl_data_provider {
                     ($provider:ty) => {
@@ -733,58 +874,41 @@ impl DataExporter for BakedExporter {
                         )*
                     };
                 }
-
-                // Not public because `impl_data_provider` isn't.
-                #[allow(unused_macros)]
-                macro_rules! impl_any_provider {
-                    ($provider:ty) => {
-                        #maybe_msrv
-                        impl icu_provider::any::AnyProvider for $provider {
-                            fn load_any(&self, marker: icu_provider::DataMarkerInfo, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
-                                match marker.path.hashed() {
-                                    #(
-                                        h if h == <#marker_bakes as icu_provider::DataMarker>::INFO.path.hashed() =>
-                                            icu_provider::DataProvider::<#marker_bakes>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                                    )*
-                                    _ => Err(icu_provider::DataErrorKind::MarkerNotFound.with_req(marker, req)),
-                                }
-                            }
-                        }
-                    }
-                }
             },
         )?;
 
-        // TODO: Return the statistics instead of writing them out.
-        let mut file = crlify::BufWriterWithLineEndingFix::new(std::fs::File::create(
-            self.mod_directory.join("fingerprints.csv"),
-        )?);
-        for (marker, (_, stats)) in data {
-            if !marker.is_singleton {
-                writeln!(
-                    &mut file,
-                    "{marker:?}, <lookup>, {}B, {} identifiers",
-                    stats.lookup_struct_size, stats.identifiers_count
-                )?;
-            }
-        }
+        let statistics = data
+            .into_iter()
+            .map(|(marker, (_, _, stats))| (marker, stats))
+            .collect();
 
-        self.print_deps();
-
-        Ok(())
+        Ok(ExporterCloseMetadata(Some(Box::new(
+            BakedExporterCloseMetadata {
+                statistics,
+                required_crates,
+            },
+        ))))
     }
 }
 
+/// Metadata of a bake export
+pub struct BakedExporterCloseMetadata {
+    /// Per-marker size heuristics
+    pub statistics: BTreeMap<DataMarkerInfo, Statistics>,
+    /// List of crates required to compile the output
+    pub required_crates: BTreeSet<&'static str>,
+}
+
 macro_rules! cb {
-    ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
         fn bake_marker(marker: DataMarkerInfo) -> databake::TokenStream {
-            if marker.path.as_str() == icu_provider::hello_world::HelloWorldV1Marker::INFO.path.as_str() {
-                return databake::quote!(icu_provider::hello_world::HelloWorldV1Marker);
+            if marker.id == icu_provider::hello_world::HelloWorldV1::INFO.id {
+                return databake::quote!(icu_provider::hello_world::HelloWorldV1);
             }
 
             $(
-                if marker.path.as_str() == $path {
-                    return stringify!($marker)
+                if marker.id.name() == stringify!($marker) {
+                    return stringify!($marker_ty)
                         .replace("icu :: ", "icu_")
                         .parse()
                         .unwrap();
@@ -792,8 +916,8 @@ macro_rules! cb {
             )+
 
             $(
-                if marker.path.as_str() == $epath {
-                    return stringify!($emarker)
+                if marker.id.name() == stringify!($emarker) {
+                    return stringify!($emarker_ty)
                         .replace("icu :: ", "icu_")
                         .parse()
                         .unwrap();

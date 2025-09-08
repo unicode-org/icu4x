@@ -5,11 +5,15 @@
 use crate::cldr_serde;
 use crate::cldr_serde::units::data::DurationUnits;
 use crate::SourceDataProvider;
-use icu::experimental::duration::provider::{HmPadding, HmsPadding, MsPadding};
 use icu_provider::prelude::*;
+
+#[cfg(feature = "experimental")]
 use std::{borrow::Cow, collections::HashSet};
 
-use icu::experimental::duration::provider::{DigitalDurationDataV1, DigitalDurationDataV1Marker};
+#[cfg(feature = "experimental")]
+use icu::experimental::duration::provider::{DigitalDurationData, DigitalDurationDataV1};
+#[cfg(feature = "experimental")]
+use icu::experimental::duration::provider::{HmPadding, HmsPadding, MsPadding};
 
 /// Strips multiples of the given character from the start of the string.
 /// Returns padding size and modifies `s` to point to the stripped string.
@@ -65,13 +69,50 @@ fn strip_separated_padded_characters<'s, const N: usize>(
     ))
 }
 
-impl DataProvider<DigitalDurationDataV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<DigitalDurationDataV1Marker>, DataError> {
-        self.check_req::<DigitalDurationDataV1Marker>(req)?;
+#[cfg(feature = "experimental")]
+impl DataProvider<DigitalDurationDataV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<DigitalDurationDataV1>, DataError> {
+        let (
+            hm_hour_pad,
+            hm_min_pad,
+            hm_sep,
+            ms_min_pad,
+            ms_sec_pad,
+            hms_hour_pad,
+            hms_min_pad,
+            hms_sec_pad,
+        ) = self.load_duration_parts_internal(req)?;
 
+        let result = DigitalDurationData {
+            separator: Cow::Owned(hm_sep.to_string()),
+            hms_padding: HmsPadding {
+                h: hms_hour_pad,
+                m: hms_min_pad,
+                s: hms_sec_pad,
+            },
+            hm_padding: HmPadding {
+                h: hm_hour_pad,
+                m: hm_min_pad,
+            },
+            ms_padding: MsPadding {
+                m: ms_min_pad,
+                s: ms_sec_pad,
+            },
+        };
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(result),
+        })
+    }
+}
+
+impl SourceDataProvider {
+    #[expect(clippy::type_complexity)]
+    pub(crate) fn load_duration_parts_internal(
+        &self,
+        req: DataRequest<'_>,
+    ) -> Result<(u8, u8, &str, u8, u8, u8, u8, u8), DataError> {
         // Get units
         let units_format_data: &cldr_serde::units::data::Resource = self
             .cldr()?
@@ -101,31 +142,21 @@ impl DataProvider<DigitalDurationDataV1Marker> for SourceDataProvider {
             ));
         }
 
-        let result = DigitalDurationDataV1 {
-            separator: Cow::Owned(hm_sep.to_string()),
-            hms_padding: HmsPadding {
-                h: hms_hour_pad,
-                m: hms_min_pad,
-                s: hms_sec_pad,
-            },
-            hm_padding: HmPadding {
-                h: hm_hour_pad,
-                m: hm_min_pad,
-            },
-            ms_padding: MsPadding {
-                m: ms_min_pad,
-                s: ms_sec_pad,
-            },
-        };
-
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(result),
-        })
+        Ok((
+            hm_hour_pad,
+            hm_min_pad,
+            hm_sep,
+            ms_min_pad,
+            ms_sec_pad,
+            hms_hour_pad,
+            hms_min_pad,
+            hms_sec_pad,
+        ))
     }
 }
 
-impl crate::IterableDataProviderCached<DigitalDurationDataV1Marker> for SourceDataProvider {
+#[cfg(feature = "experimental")]
+impl crate::IterableDataProviderCached<DigitalDurationDataV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?

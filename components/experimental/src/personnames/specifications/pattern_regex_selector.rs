@@ -22,11 +22,11 @@ pub struct PersonNamePattern<'lt> {
     pub name_fields: Vec<(NameField, Cow<'lt, str>)>,
 }
 
-impl<'lt> PersonNamePattern<'lt> {}
+impl PersonNamePattern<'_> {}
 
 impl PersonNamePattern<'_> {
     #[cfg(test)]
-    fn get_field(&self, lookup_name_field: &NameField) -> Option<Cow<str>> {
+    fn get_field(&self, lookup_name_field: &NameField) -> Option<Cow<'_, str>> {
         self.name_fields
             .iter()
             .find(|(k, _)| k == lookup_name_field)
@@ -54,10 +54,7 @@ impl PersonNamePattern<'_> {
             }
         });
         let missing_fields = self.name_fields.iter().fold(0, |count, (name_field, _)| {
-            if available_name_fields
-                .iter()
-                .any(|&field| field == name_field)
-            {
+            if available_name_fields.contains(&name_field) {
                 count
             } else {
                 count + 1
@@ -79,7 +76,7 @@ impl PersonNamePattern<'_> {
             requested_name_field,
         );
 
-        return effective_name_field
+        effective_name_field
             .iter()
             .flat_map(|field| {
                 specifications::derive_missing_surname(
@@ -96,7 +93,7 @@ impl PersonNamePattern<'_> {
                     initial_sequence_pattern,
                 )
             })
-            .collect();
+            .collect()
     }
 
     pub fn format_person_name(
@@ -136,7 +133,7 @@ impl FromStr for NameFieldKind {
             "credentials" => Ok(NameFieldKind::Credentials),
 
             _ => {
-                icu_provider::log::warn!("Invalid NameFieldKind value matched [{}]", value);
+                icu_provider::log::warn!("Invalid NameFieldKind value matched [{value}]");
                 Err(PersonNamesFormatterError::InvalidCldrData)
             }
         }
@@ -156,7 +153,7 @@ impl FromStr for FieldModifier {
             "initial" => Ok(FieldModifier::Initial),
             "monogram" => Ok(FieldModifier::Monogram),
             _ => {
-                icu_provider::log::warn!("Invalid FieldModifier value matched [{}]", value);
+                icu_provider::log::warn!("Invalid FieldModifier value matched [{value}]");
                 Err(PersonNamesFormatterError::InvalidCldrData)
             }
         }
@@ -206,7 +203,9 @@ impl FromStr for NameField {
     }
 }
 
-pub fn to_person_name_pattern(value: &str) -> Result<PersonNamePattern, PersonNamesFormatterError> {
+pub fn to_person_name_pattern(
+    value: &str,
+) -> Result<PersonNamePattern<'_>, PersonNamesFormatterError> {
     let mut name_fields_map: Vec<(NameField, Cow<str>)> = Vec::new();
 
     let parsed_pattern = MultiNamedPlaceholderPattern::try_from_str(value, Default::default())?;
@@ -265,7 +264,7 @@ mod tests {
                 modifier: Default::default(),
             })
             .unwrap();
-        assert_eq!(nb_captures, 6, "{}", nb_captures);
+        assert_eq!(nb_captures, 6, "{nb_captures}");
         assert_eq!(
             trailing_end, "",
             "should be a empty at the end space matched"
@@ -293,7 +292,7 @@ mod tests {
         let person_name_pattern = to_person_name_pattern(pattern)?;
         let captures = person_name_pattern.name_fields.len();
 
-        assert_eq!(captures, 3, "{}", captures);
+        assert_eq!(captures, 3, "{captures}");
         assert!(
             person_name_pattern.contains_key(&NameField {
                 kind: NameFieldKind::Surname,

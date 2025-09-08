@@ -24,7 +24,6 @@ size_t icu4x_BidiInfo_size_mv1(const BidiInfo* self);
 
 uint8_t icu4x_BidiInfo_level_at_mv1(const BidiInfo* self, size_t pos);
 
-
 void icu4x_BidiInfo_destroy_mv1(BidiInfo* self);
 
 

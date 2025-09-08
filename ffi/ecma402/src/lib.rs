@@ -14,6 +14,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]
@@ -34,20 +35,6 @@ pub mod list;
 /// An adapter between [`DataLocale`] and [`ecma402_traits::Locale`].
 #[derive(Debug, Hash, Clone, PartialEq)]
 pub struct DataLocale(icu_provider::DataLocale);
-
-impl DataLocale {
-    /// Creates a `DataLocale` from any other [`ecma402_traits::Locale`]
-    fn from_ecma_locale<L: ecma402_traits::Locale>(other: L) -> Self {
-        #[allow(clippy::unwrap_used)] // ecma402_traits::Locale::to_string is a valid locale
-        Self(
-            other
-                .to_string()
-                .parse::<icu::locale::Locale>()
-                .unwrap()
-                .into(),
-        )
-    }
-}
 
 impl core::ops::Deref for DataLocale {
     type Target = icu_provider::DataLocale;

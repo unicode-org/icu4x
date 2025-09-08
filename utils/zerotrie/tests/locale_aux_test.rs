@@ -19,18 +19,19 @@ use testdata::locales_with_aux::{NUM_UNIQUE_BLOBS, STRINGS};
 use testdata::strings_to_litemap;
 
 #[test]
+#[cfg(target_pointer_width = "64")]
 fn test_combined() {
     let litemap = strings_to_litemap(STRINGS);
 
     let vzv: VarZeroVec<str> = STRINGS.into();
 
     // Lookup table size:
-    assert_eq!(vzv.as_bytes().len(), 10223);
+    assert_eq!(vzv.as_bytes().len(), 10219);
 
     // Size including pointer array:
     assert_eq!(
         vzv.as_bytes().len() + STRINGS.len() * core::mem::size_of::<usize>(),
-        18639
+        18635
     );
 
     let trie = ZeroTrieSimpleAscii::try_from(&litemap).unwrap();
@@ -55,7 +56,7 @@ fn test_combined() {
         8445
     );
 
-    let total_str_len = litemap.iter_keys().map(|k| k.len()).sum::<usize>();
+    let total_str_len = litemap.keys().map(|k| k.len()).sum::<usize>();
     assert_eq!(total_str_len, 8115);
 
     // Lookup table size:
@@ -81,6 +82,7 @@ fn test_combined() {
 }
 
 #[test]
+#[cfg(target_pointer_width = "64")]
 fn test_aux_split() {
     let locales: Vec<Locale> = STRINGS.iter().map(|s| s.parse().unwrap()).collect();
 
@@ -118,7 +120,7 @@ fn test_aux_split() {
         let trie = ZeroTriePerfectHash::try_from(&litemap).unwrap();
         total_perfecthash_len += trie.byte_len();
 
-        for k in litemap.iter_keys() {
+        for k in litemap.keys() {
             unique_locales.insert(k.clone());
         }
 
@@ -133,7 +135,7 @@ fn test_aux_split() {
 
     assert_eq!(total_simpleascii_len, 5098);
     assert_eq!(total_perfecthash_len, 5302);
-    assert_eq!(total_vzv_len, 5510);
+    assert_eq!(total_vzv_len, 5486);
 
     let total_unique_locale_str_len = unique_locales.iter().map(|v| v.len()).sum::<usize>();
     assert_eq!(total_unique_locale_str_len, 945);
@@ -149,7 +151,7 @@ fn test_aux_split() {
     );
     assert_eq!(
         total_vzv_len + STRINGS.len() * core::mem::size_of::<usize>(),
-        13926
+        13902
     );
     // 2x for the lookup arrays and value arrays
     assert_eq!(

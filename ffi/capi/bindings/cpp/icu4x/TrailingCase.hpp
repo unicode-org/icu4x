@@ -8,15 +8,16 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -31,7 +32,7 @@ inline icu4x::TrailingCase icu4x::TrailingCase::FromFFI(icu4x::capi::TrailingCas
     case icu4x::capi::TrailingCase_Unchanged:
       return static_cast<icu4x::TrailingCase::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_TrailingCase_HPP

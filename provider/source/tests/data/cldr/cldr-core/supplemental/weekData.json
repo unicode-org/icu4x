@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "46"
+      "_cldrVersion": "47"
     },
     "weekData": {
       "minDays": {
@@ -59,7 +59,7 @@
       "firstDay": {
         "001": "mon",
         "AD": "mon",
-        "AE": "sat",
+        "AE": "mon",
         "AF": "sat",
         "AG": "sun",
         "AI": "mon",

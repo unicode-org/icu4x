@@ -3,10 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 /// Data for calendar arithmetic
-pub(crate) mod japanese;
+pub(crate) mod eras;
 
 /// Cached data for chinese-based calendars
 pub(crate) mod chinese_based;
 
-/// Cached data for islamic calendars
-pub(crate) mod islamic;
+/// Cached data for hijri calendars
+pub(crate) mod hijri;

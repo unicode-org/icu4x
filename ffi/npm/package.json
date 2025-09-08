@@ -1,12 +1,13 @@
 {
-  "name": "icu4x",
-  "version": "0.0.1",
+  "name": "icu",
+  "version": "2.0.5",
   "description": "ICU4X JavaScript bindings via WebAssembly",
   "main": "lib/index.mjs",
   "exports": {
-    ".": "./lib/index.mjs",
-    "./demo": "./demo/index.mjs",
-    "./demo/rendering": "./demo/rendering/rendering.mjs"
+    ".": {
+      "import": "./lib/index.mjs",
+      "types": "./lib/index.d.ts"
+    }
   },
   "type": "module",
   "directories": {
@@ -34,9 +35,9 @@
   "bugs": {
     "url": "https://github.com/unicode-org/icu4x/issues"
   },
-  "homepage": "https://github.com/unicode-org/icu4x#readme",
+  "homepage": "https://icu4x.unicode.org",
   "author": "The ICU4X Project Developers",
-  "license": "Apache-2.0",
+  "license": "Unicode-3.0",
   "devDependencies": {
     "ava": "^5.3.1",
     "benchmark": "^2.1.4"

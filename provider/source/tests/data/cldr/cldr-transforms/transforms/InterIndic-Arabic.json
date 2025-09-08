@@ -1,0 +1,7 @@
+{
+  "_visibility": "internal",
+  "_source": "InterIndic",
+  "_direction": "forward",
+  "_target": "Arabic",
+  "_rulesFile": "InterIndic-Arabic.txt"
+}

@@ -39,9 +39,9 @@ impl<W: fmt::Write + ?Sized> PartsWrite for CoreWriteAsPartsWrite<W> {
 /// # Examples
 ///
 /// ```
-/// use writeable::Part;
-/// use writeable::assert_writeable_parts_eq;
 /// use writeable::adapters::WithPart;
+/// use writeable::assert_writeable_parts_eq;
+/// use writeable::Part;
 ///
 /// // Simple usage:
 ///
@@ -102,13 +102,8 @@ impl<T: Writeable + ?Sized> Writeable for WithPart<T> {
     }
 
     #[inline]
-    fn write_to_string(&self) -> Cow<str> {
+    fn write_to_string(&self) -> Cow<'_, str> {
         self.writeable.write_to_string()
-    }
-
-    #[inline]
-    fn writeable_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
-        self.writeable.writeable_cmp_bytes(other)
     }
 }
 

@@ -18,63 +18,30 @@ pub(crate) static MARKER_FILTERS: OnceLock<HashMap<DataMarkerInfo, &'static str>
 fn marker_filters() -> &'static HashMap<DataMarkerInfo, &'static str> {
     MARKER_FILTERS.get_or_init(|| {
         [
-            (LongSecondRelativeTimeFormatDataV1Marker::INFO, "second"),
-            (
-                ShortSecondRelativeTimeFormatDataV1Marker::INFO,
-                "second-short",
-            ),
-            (
-                NarrowSecondRelativeTimeFormatDataV1Marker::INFO,
-                "second-narrow",
-            ),
-            (LongMinuteRelativeTimeFormatDataV1Marker::INFO, "minute"),
-            (
-                ShortMinuteRelativeTimeFormatDataV1Marker::INFO,
-                "minute-short",
-            ),
-            (
-                NarrowMinuteRelativeTimeFormatDataV1Marker::INFO,
-                "minute-narrow",
-            ),
-            (LongHourRelativeTimeFormatDataV1Marker::INFO, "hour"),
-            (ShortHourRelativeTimeFormatDataV1Marker::INFO, "hour-short"),
-            (
-                NarrowHourRelativeTimeFormatDataV1Marker::INFO,
-                "hour-narrow",
-            ),
-            (LongDayRelativeTimeFormatDataV1Marker::INFO, "day"),
-            (ShortDayRelativeTimeFormatDataV1Marker::INFO, "day-short"),
-            (NarrowDayRelativeTimeFormatDataV1Marker::INFO, "day-narrow"),
-            (LongWeekRelativeTimeFormatDataV1Marker::INFO, "week"),
-            (ShortWeekRelativeTimeFormatDataV1Marker::INFO, "week-short"),
-            (
-                NarrowWeekRelativeTimeFormatDataV1Marker::INFO,
-                "week-narrow",
-            ),
-            (LongMonthRelativeTimeFormatDataV1Marker::INFO, "month"),
-            (
-                ShortMonthRelativeTimeFormatDataV1Marker::INFO,
-                "month-short",
-            ),
-            (
-                NarrowMonthRelativeTimeFormatDataV1Marker::INFO,
-                "month-narrow",
-            ),
-            (LongQuarterRelativeTimeFormatDataV1Marker::INFO, "quarter"),
-            (
-                ShortQuarterRelativeTimeFormatDataV1Marker::INFO,
-                "quarter-short",
-            ),
-            (
-                NarrowQuarterRelativeTimeFormatDataV1Marker::INFO,
-                "quarter-narrow",
-            ),
-            (LongYearRelativeTimeFormatDataV1Marker::INFO, "year"),
-            (ShortYearRelativeTimeFormatDataV1Marker::INFO, "year-short"),
-            (
-                NarrowYearRelativeTimeFormatDataV1Marker::INFO,
-                "year-narrow",
-            ),
+            (LongSecondRelativeV1::INFO, "second"),
+            (ShortSecondRelativeV1::INFO, "second-short"),
+            (NarrowSecondRelativeV1::INFO, "second-narrow"),
+            (LongMinuteRelativeV1::INFO, "minute"),
+            (ShortMinuteRelativeV1::INFO, "minute-short"),
+            (NarrowMinuteRelativeV1::INFO, "minute-narrow"),
+            (LongHourRelativeV1::INFO, "hour"),
+            (ShortHourRelativeV1::INFO, "hour-short"),
+            (NarrowHourRelativeV1::INFO, "hour-narrow"),
+            (LongDayRelativeV1::INFO, "day"),
+            (ShortDayRelativeV1::INFO, "day-short"),
+            (NarrowDayRelativeV1::INFO, "day-narrow"),
+            (LongWeekRelativeV1::INFO, "week"),
+            (ShortWeekRelativeV1::INFO, "week-short"),
+            (NarrowWeekRelativeV1::INFO, "week-narrow"),
+            (LongMonthRelativeV1::INFO, "month"),
+            (ShortMonthRelativeV1::INFO, "month-short"),
+            (NarrowMonthRelativeV1::INFO, "month-narrow"),
+            (LongQuarterRelativeV1::INFO, "quarter"),
+            (ShortQuarterRelativeV1::INFO, "quarter-short"),
+            (NarrowQuarterRelativeV1::INFO, "quarter-narrow"),
+            (LongYearRelativeV1::INFO, "year"),
+            (ShortYearRelativeV1::INFO, "year-short"),
+            (NarrowYearRelativeV1::INFO, "year-narrow"),
         ]
         .into_iter()
         .collect()
@@ -102,7 +69,7 @@ macro_rules! make_data_provider {
 
                     Ok(DataResponse {
                         metadata: Default::default(),
-                        payload: DataPayload::from_owned(RelativeTimePatternDataV1 {
+                        payload: DataPayload::from_owned(RelativeTimePatternData {
                             relatives: data.relatives.iter().map(|r| (&r.count, r.pattern.as_ref())).collect(),
                             past: (&data.past).into(),
                             future: (&data.future).into(),
@@ -142,30 +109,30 @@ impl From<&cldr_serde::date_fields::PluralRulesPattern>
 }
 
 make_data_provider!(
-    LongSecondRelativeTimeFormatDataV1Marker,
-    ShortSecondRelativeTimeFormatDataV1Marker,
-    NarrowSecondRelativeTimeFormatDataV1Marker,
-    LongMinuteRelativeTimeFormatDataV1Marker,
-    ShortMinuteRelativeTimeFormatDataV1Marker,
-    NarrowMinuteRelativeTimeFormatDataV1Marker,
-    LongHourRelativeTimeFormatDataV1Marker,
-    ShortHourRelativeTimeFormatDataV1Marker,
-    NarrowHourRelativeTimeFormatDataV1Marker,
-    LongDayRelativeTimeFormatDataV1Marker,
-    ShortDayRelativeTimeFormatDataV1Marker,
-    NarrowDayRelativeTimeFormatDataV1Marker,
-    LongWeekRelativeTimeFormatDataV1Marker,
-    ShortWeekRelativeTimeFormatDataV1Marker,
-    NarrowWeekRelativeTimeFormatDataV1Marker,
-    LongMonthRelativeTimeFormatDataV1Marker,
-    ShortMonthRelativeTimeFormatDataV1Marker,
-    NarrowMonthRelativeTimeFormatDataV1Marker,
-    LongQuarterRelativeTimeFormatDataV1Marker,
-    ShortQuarterRelativeTimeFormatDataV1Marker,
-    NarrowQuarterRelativeTimeFormatDataV1Marker,
-    LongYearRelativeTimeFormatDataV1Marker,
-    ShortYearRelativeTimeFormatDataV1Marker,
-    NarrowYearRelativeTimeFormatDataV1Marker,
+    LongSecondRelativeV1,
+    ShortSecondRelativeV1,
+    NarrowSecondRelativeV1,
+    LongMinuteRelativeV1,
+    ShortMinuteRelativeV1,
+    NarrowMinuteRelativeV1,
+    LongHourRelativeV1,
+    ShortHourRelativeV1,
+    NarrowHourRelativeV1,
+    LongDayRelativeV1,
+    ShortDayRelativeV1,
+    NarrowDayRelativeV1,
+    LongWeekRelativeV1,
+    ShortWeekRelativeV1,
+    NarrowWeekRelativeV1,
+    LongMonthRelativeV1,
+    ShortMonthRelativeV1,
+    NarrowMonthRelativeV1,
+    LongQuarterRelativeV1,
+    ShortQuarterRelativeV1,
+    NarrowQuarterRelativeV1,
+    LongYearRelativeV1,
+    ShortYearRelativeV1,
+    NarrowYearRelativeV1,
 );
 
 #[cfg(test)]
@@ -178,7 +145,7 @@ mod tests {
     #[test]
     fn test_basic() {
         let provider = SourceDataProvider::new_testing();
-        let data: DataPayload<ShortQuarterRelativeTimeFormatDataV1Marker> = provider
+        let data: DataPayload<ShortQuarterRelativeV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
@@ -186,7 +153,7 @@ mod tests {
             .unwrap()
             .payload;
         let rules =
-            PluralRules::try_new_cardinal_unstable(&provider, &langid!("en").into()).unwrap();
+            PluralRules::try_new_cardinal_unstable(&provider, langid!("en").into()).unwrap();
         assert_eq!(data.get().relatives.get(&0).unwrap(), "this qtr.");
         assert_writeable_eq!(
             data.get().past.get(1.into(), &rules).interpolate([1]),
@@ -205,7 +172,7 @@ mod tests {
     #[test]
     fn test_singular_sub_pattern() {
         let provider = SourceDataProvider::new_testing();
-        let data: DataPayload<LongYearRelativeTimeFormatDataV1Marker> = provider
+        let data: DataPayload<LongYearRelativeV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("ar").into()),
                 ..Default::default()
@@ -213,7 +180,7 @@ mod tests {
             .unwrap()
             .payload;
         let rules =
-            PluralRules::try_new_cardinal_unstable(&provider, &langid!("ar").into()).unwrap();
+            PluralRules::try_new_cardinal_unstable(&provider, langid!("ar").into()).unwrap();
         assert_eq!(data.get().relatives.get(&-1).unwrap(), "السنة الماضية");
 
         // past.one, future.two are without a placeholder.

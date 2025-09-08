@@ -119,7 +119,7 @@ pub struct LocaleError {
 
 #[derive(Debug, Deserialize, Clone)]
 #[serde(untagged)]
-#[allow(clippy::large_enum_variant)] // test code
+#[expect(clippy::large_enum_variant)] // test code
 pub enum LocaleInfo {
     String(String),
     Error(LocaleError),
@@ -176,7 +176,7 @@ impl TryFrom<LocaleSubtags> for LanguageIdentifier {
         let language = if let Some(lang) = subtags.language {
             lang.parse().expect("Failed to parse language subtag")
         } else {
-            subtags::Language::default()
+            subtags::Language::UNKNOWN
         };
         let script = subtags
             .script
@@ -205,7 +205,7 @@ impl TryFrom<LocaleSubtags> for Locale {
         let language = if let Some(lang) = subtags.language {
             lang.parse().expect("Failed to parse language subtag")
         } else {
-            subtags::Language::default()
+            subtags::Language::UNKNOWN
         };
         let script = subtags
             .script

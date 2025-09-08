@@ -5,9 +5,9 @@
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::locale::langid;
-use icu::segmenter::provider::DictionaryForWordLineExtendedV1Marker;
-use icu::segmenter::provider::DictionaryForWordOnlyAutoV1Marker;
-use icu::segmenter::provider::UCharDictionaryBreakDataV1;
+use icu::segmenter::provider::SegmenterDictionaryAutoV1;
+use icu::segmenter::provider::SegmenterDictionaryExtendedV1;
+use icu::segmenter::provider::UCharDictionaryBreakData;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 use std::fmt::Debug;
@@ -22,7 +22,7 @@ impl SourceDataProvider {
     fn load_dictionary_data(
         &self,
         req: DataRequest,
-    ) -> Result<UCharDictionaryBreakDataV1<'static>, DataError> {
+    ) -> Result<UCharDictionaryBreakData<'static>, DataError> {
         let filename = format!(
             "segmenter/dictionary/{}.toml",
             req.id.marker_attributes as &str
@@ -32,7 +32,7 @@ impl SourceDataProvider {
             .icuexport()
             .and_then(|e| e.read_and_parse_toml::<SegmenterDictionaryData>(&filename));
 
-        Ok(UCharDictionaryBreakDataV1 {
+        Ok(UCharDictionaryBreakData {
             trie_data: ZeroVec::alloc_from_slice(&toml_data?.trie_data),
         })
     }
@@ -66,8 +66,8 @@ macro_rules! implement {
     };
 }
 
-implement!(DictionaryForWordOnlyAutoV1Marker, ["cjdict"]);
+implement!(SegmenterDictionaryAutoV1, ["cjdict"]);
 implement!(
-    DictionaryForWordLineExtendedV1Marker,
+    SegmenterDictionaryExtendedV1,
     ["khmerdict", "laodict", "burmesedict", "thaidict"]
 );

@@ -22,7 +22,6 @@ fn locale_benches(c: &mut Criterion) {
         group.finish();
     }
 
-    #[cfg(feature = "bench")]
     {
         use criterion::BenchmarkId;
 

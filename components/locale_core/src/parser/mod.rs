@@ -7,29 +7,27 @@ mod langid;
 mod locale;
 
 pub use errors::ParseError;
-pub use langid::{
-    parse_language_identifier, parse_language_identifier_from_iter,
-    parse_language_identifier_with_single_variant,
-    parse_locale_with_single_variant_single_keyword_unicode_extension_from_iter, ParserMode,
-};
+pub use langid::*;
 
-pub use locale::{
-    parse_locale, parse_locale_with_single_variant_single_keyword_unicode_keyword_extension,
-};
+pub use locale::*;
 
+// Safety-usable invariant: returns a prefix of `slice`
 const fn skip_before_separator(slice: &[u8]) -> &[u8] {
     let mut end = 0;
+    // Invariant: end ≤ slice.len() since len is a nonnegative integer and end is 0
 
-    #[allow(clippy::indexing_slicing)] // very protected, should optimize out
-    while end < slice.len() && !matches!(slice[end], b'-' | b'_') {
+    #[expect(clippy::indexing_slicing)] // very protected, should optimize out
+    while end < slice.len() && !matches!(slice[end], b'-') {
+        // Invariant at beginning of loop: end < slice.len()
         // Advance until we reach end of slice or a separator.
         end += 1;
+        // Invariant at end of loop: end ≤ slice.len()
     }
 
     // Notice: this slice may be empty for cases like `"en-"` or `"en--US"`
-    // MSRV 1.71/1.79: Use split_at/split_at_unchecked
-    // SAFETY: end < slice.len() by while loop
-    unsafe { core::slice::from_raw_parts(slice.as_ptr(), end) }
+    // SAFETY: end ≤ slice.len() by while loop
+    // Safety-usable invariant upheld: returned a prefix of the slice
+    unsafe { slice.split_at_unchecked(end).0 }
 }
 
 // `SubtagIterator` is a helper iterator for [`LanguageIdentifier`] and [`Locale`] parsing.
@@ -47,7 +45,7 @@ const fn skip_before_separator(slice: &[u8]) -> &[u8] {
 #[derive(Copy, Clone, Debug)]
 pub struct SubtagIterator<'a> {
     remaining: &'a [u8],
-    // current is a prefix of remaining
+    // Safety invariant: current is a prefix of remaining
     current: Option<&'a [u8]>,
 }
 
@@ -55,6 +53,7 @@ impl<'a> SubtagIterator<'a> {
     pub const fn new(rest: &'a [u8]) -> Self {
         Self {
             remaining: rest,
+            // Safety invariant upheld: skip_before_separator() returns a prefix of `rest`
             current: Some(skip_before_separator(rest)),
         }
     }
@@ -66,14 +65,10 @@ impl<'a> SubtagIterator<'a> {
 
         self.current = if result.len() < self.remaining.len() {
             // If there is more after `result`, by construction `current` starts with a separator
-            // MSRV 1.79: Use split_at_unchecked
-            // SAFETY: `self.remaining` is strictly longer than `result`
-            self.remaining = unsafe {
-                core::slice::from_raw_parts(
-                    self.remaining.as_ptr().add(result.len() + 1),
-                    self.remaining.len() - (result.len() + 1),
-                )
-            };
+            // SAFETY: `self.remaining` is strictly longer than `result` due to `result` being a prefix (from the safety invariant)
+            self.remaining = unsafe { self.remaining.split_at_unchecked(result.len() + 1).1 };
+            // Safety invariant upheld: skip_before_separator() returns a prefix of `rest`, and we don't
+            // mutate self.remaining after this
             Some(skip_before_separator(self.remaining))
         } else {
             None
@@ -106,7 +101,7 @@ mod test {
 
     #[test]
     fn subtag_iterator_peek_test() {
-        let slice = "de_at-u-ca-foobar";
+        let slice = "de-at-u-ca-foobar";
         let mut si = SubtagIterator::new(slice.as_bytes());
 
         assert_eq!(si.peek().map(slice_to_str), Some("de"));
@@ -156,7 +151,7 @@ mod test {
         assert_eq!(si.next().map(slice_to_str), Some(""));
         assert_eq!(si.next(), None);
 
-        let slice = "de_at-u-ca-foobar";
+        let slice = "de-at-u-ca-foobar";
         let si = SubtagIterator::new(slice.as_bytes());
         assert_eq!(
             si.map(slice_to_str).collect::<Vec<_>>(),

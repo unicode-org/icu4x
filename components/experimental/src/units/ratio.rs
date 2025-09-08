@@ -21,35 +21,47 @@ use crate::measure::provider::si_prefix::{Base, SiPrefix};
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct IcuRatio(Ratio<BigInt>);
 
-/// Represents an error when the ratio string is invalid and cannot be parsed.
-#[derive(Debug, PartialEq)]
+/// The ratio string is invalid and cannot be parsed.
+#[derive(Debug, PartialEq, displaydoc::Display)]
 pub enum RatioFromStrError {
-    /// Represents an error when the ratio string is divided by zero.
+    /// The ratio string is divided by zero.
     DivisionByZero,
 
-    /// Represents an error when the ratio string contains multiple slashes.
+    /// The ratio string contains multiple slashes.
+    ///
     /// For example, "1/2/3".
+    #[displaydoc("The ratio string contains multiple slashes")]
     MultipleSlashes,
 
-    /// Represents an error when the ratio string contains non-numeric characters in fractions.
+    /// The ratio string contains non-numeric characters in fractions.
+    ///
     /// For example, "1/2A".
+    #[displaydoc("The ratio string contains non-numeric characters in fractions")]
     NonNumericCharactersInFractions,
 
-    /// Represents an error when the ratio string contains multiple scientific notations.
+    /// The ratio string contains multiple scientific notations.
+    ///
     /// For example, "1.5E6E6".
+    #[displaydoc("The ratio string contains multiple scientific notations")]
     MultipleScientificNotations,
 
-    /// Represents an error when the ratio string contains multiple decimal points.
+    /// The ratio string contains multiple decimal points.
+    ///
     /// For example, "1.5.6".
+    #[displaydoc("The ratio string contains multiple decimal points")]
     MultipleDecimalPoints,
 
-    /// Represents an error when the exponent part of the ratio string is not an integer.
+    /// The exponent part of the ratio string is not an integer.
+    ///
     /// For example, "1.5E6.5".
+    #[displaydoc("The exponent part of the ratio string is not an integer")]
     ExponentPartIsNotAnInteger,
 
-    /// Represents an error when the ratio string is dificient in some other way.
+    /// The ratio string is deficient in some other way.
     ParsingBigIntError(num_bigint::ParseBigIntError),
 }
+
+impl core::error::Error for RatioFromStrError {}
 
 impl IcuRatio {
     /// Creates a new `IcuRatio` from the given numerator and denominator.
@@ -60,6 +72,11 @@ impl IcuRatio {
     /// Returns the current [`IcuRatio`] as a [`Ratio`] of [`BigInt`].
     pub fn get_ratio(self) -> Ratio<BigInt> {
         self.0
+    }
+
+    /// Creates a new `IcuRatio` from the given integer.
+    pub fn from_integer(value: u64) -> Self {
+        Self(Ratio::from_integer(value.into()))
     }
 
     /// Returns the reciprocal of the ratio.
@@ -516,7 +533,7 @@ mod tests {
 
         for (input, expected) in test_cases.iter() {
             let actual = &IcuRatio::from_str(input);
-            assert_eq!(actual, expected, "Values do not match for input: {}", input);
+            assert_eq!(actual, expected, "Values do not match for input: {input}");
         }
     }
 }

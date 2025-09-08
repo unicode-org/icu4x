@@ -4,17 +4,14 @@
 
 use crate::cldr_serde;
 use crate::SourceDataProvider;
-use icu::experimental::dimension::provider::currency_displayname::*;
+use icu::experimental::dimension::provider::currency::displayname::*;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::HashSet;
 
-impl DataProvider<CurrencyDisplaynameV1Marker> for crate::SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<CurrencyDisplaynameV1Marker>, DataError> {
-        self.check_req::<CurrencyDisplaynameV1Marker>(req)?;
+impl DataProvider<CurrencyDisplaynameV1> for crate::SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencyDisplaynameV1>, DataError> {
+        self.check_req::<CurrencyDisplaynameV1>(req)?;
 
         let currencies_resource: &cldr_serde::currencies::data::Resource =
             self.cldr()?
@@ -35,7 +32,7 @@ impl DataProvider<CurrencyDisplaynameV1Marker> for crate::SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(CurrencyDisplaynameV1 {
+            payload: DataPayload::from_owned(CurrencyDisplayname {
                 display_name: Cow::Owned(
                     currency
                         .display_name
@@ -52,7 +49,7 @@ impl DataProvider<CurrencyDisplaynameV1Marker> for crate::SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<CurrencyDisplaynameV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<CurrencyDisplaynameV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let mut result = HashSet::new();
         let numbers = self.cldr()?.numbers();
@@ -65,13 +62,13 @@ impl crate::IterableDataProviderCached<CurrencyDisplaynameV1Marker> for SourceDa
 
             let currencies = &currencies_resource.main.value.numbers.currencies;
             for (currency, patterns) in currencies {
-                // If the currency doesn't have a display name, we can not create `CurrencyDisplaynameV1` for it.
+                // If the currency doesn't have a display name, we can not create `CurrencyDisplayname` for it.
                 // Therefore, we skip it.
                 if patterns.display_name.is_none() {
                     continue;
                 }
                 if let Ok(attributes) = DataMarkerAttributes::try_from_string(currency.clone()) {
-                    result.insert(DataIdentifierCow::from_owned(attributes, locale.clone()));
+                    result.insert(DataIdentifierCow::from_owned(attributes, locale));
                 }
             }
         }
@@ -85,7 +82,7 @@ fn test_basic() {
     use icu::locale::langid;
 
     let provider = SourceDataProvider::new_testing();
-    let en: DataPayload<CurrencyDisplaynameV1Marker> = provider
+    let en: DataPayload<CurrencyDisplaynameV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("USD"),
@@ -98,7 +95,7 @@ fn test_basic() {
     let display_name = en.get().to_owned().display_name;
     assert_eq!(display_name, "US Dollar");
 
-    let fr: DataPayload<CurrencyDisplaynameV1Marker> = provider
+    let fr: DataPayload<CurrencyDisplaynameV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("USD"),

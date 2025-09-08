@@ -4,36 +4,64 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** Collection of configurations for the ICU4X fallback algorithm.
-*
-*See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
-*/
-export class LocaleFallbackConfig {
 
+/**
+ * Collection of configurations for the ICU4X fallback algorithm.
+ *
+ * See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/2.0.0/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
+ */
+export class LocaleFallbackConfig {
     #priority;
-    get priority()  {
+    get priority() {
         return this.#priority;
     }
-    set priority(value) {
+    set priority(value){
         this.#priority = value;
     }
-    constructor() {
-        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
-            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
-        } else {
-            
-            this.#priority = arguments[0];
+    /** @internal */
+    static fromFields(structObj) {
+        return new LocaleFallbackConfig(structObj);
+    }
+
+    #internalConstructor(structObj) {
+        if (typeof structObj !== "object") {
+            throw new Error("LocaleFallbackConfig's constructor takes an object of LocaleFallbackConfig's fields.");
         }
+
+        if ("priority" in structObj) {
+            this.#priority = structObj.priority;
+        } else {
+            throw new Error("Missing required field priority.");
+        }
+
+        return this;
     }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
-    
     _intoFFI(
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [this.#priority.ffiValue]
+        let buffer = diplomatRuntime.DiplomatBuf.struct(wasm, 4, 4);
+
+        this._writeToArrayBuffer(wasm.memory.buffer, buffer.ptr, functionCleanupArena, appendArrayMap);
+
+        functionCleanupArena.alloc(buffer);
+
+        return buffer.ptr;
+    }
+
+    static _fromSuppliedValue(internalConstructor, obj) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("_fromSuppliedValue cannot be called externally.");
+        }
+
+        if (obj instanceof LocaleFallbackConfig) {
+            return obj;
+        }
+
+        return LocaleFallbackConfig.fromFields(obj);
     }
 
     _writeToArrayBuffer(
@@ -50,8 +78,19 @@ export class LocaleFallbackConfig {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    #fromFFI(ptr) {
+    static _fromFFI(internalConstructor, ptr) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("LocaleFallbackConfig._fromFFI is not meant to be called externally. Please use the default constructor.");
+        }
+        let structObj = {};
         const priorityDeref = diplomatRuntime.enumDiscriminant(wasm, ptr);
-        this.#priority = new LocaleFallbackPriority(diplomatRuntime.internalConstructor, priorityDeref);
+        structObj.priority = new LocaleFallbackPriority(diplomatRuntime.internalConstructor, priorityDeref);
+
+        return new LocaleFallbackConfig(structObj);
+    }
+
+
+    constructor(structObj) {
+        return this.#internalConstructor(...arguments)
     }
 }

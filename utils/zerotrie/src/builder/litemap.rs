@@ -30,7 +30,7 @@ impl ZeroTrieSimpleAscii<Vec<u8>> {
     }
 }
 
-impl<'a, K, S> TryFrom<&'a LiteMap<K, usize, S>> for ZeroTrie<Vec<u8>>
+impl<K, S> TryFrom<&LiteMap<K, usize, S>> for ZeroTrie<Vec<u8>>
 where
     // Borrow, not AsRef, because we rely on Ord being the same. Unfortunately
     // this means `LiteMap<&str, usize>` does not work.
@@ -46,10 +46,9 @@ where
     }
 }
 
-/// TODO(MSRV 1.83): Make this more infallible by calculating the required length,
-/// heap-allocating the required capacity, and pointing ConstAsciiTrieBuilderStore
-/// to the heap buffer.
-/// ```ignore
-/// const fn write_to_mut_buffer(buf: &mut [u8]) { buf[0] = 0; }
-/// ```
-const _: () = ();
+// TODO(MSRV 1.83): Make this more infallible by calculating the required length,
+// heap-allocating the required capacity, and pointing ConstAsciiTrieBuilderStore
+// to the heap buffer.
+// ```
+// const fn write_to_mut_buffer(buf: &mut [u8]) { buf[0] = 0; }
+// ```

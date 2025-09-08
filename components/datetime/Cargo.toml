@@ -4,7 +4,7 @@
 
 [package]
 name = "icu_datetime"
-description = "API for formatting date and time to user readable textual representation"
+description = "Human-readable formatting of dates, times, and time zones in hundreds of locales"
 
 authors.workspace = true
 categories.workspace = true
@@ -26,30 +26,32 @@ fixed_decimal = { workspace = true }
 icu_calendar = { workspace = true }
 icu_decimal = { workspace = true }
 icu_locale_core = { workspace = true }
+icu_pattern = { workspace = true, features = ["zerovec", "alloc"] }
 icu_plurals = { workspace = true }
-icu_provider = { workspace = true, features = ["macros"] }
-icu_timezone = { workspace = true }
+icu_provider = { workspace = true }
+icu_time = { workspace = true, features = ["alloc"] }
 smallvec = { workspace = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
-potential_utf = { workspace = true, features = ["zerovec"] }
+potential_utf = { workspace = true, features = ["alloc", "zerovec"] }
 writeable = { workspace = true }
-zerovec = { workspace = true, features = ["yoke"] }
+zerovec = { workspace = true, features = ["alloc", "yoke"] }
 
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
+zerotrie = { workspace = true, features = ["alloc"], optional = true }
 databake = { workspace = true, features = ["derive"], optional = true}
 
 icu_datetime_data = { workspace = true, optional = true }
+icu_locale = { workspace = true, optional = true }
 
 # Experimental
 litemap = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
-icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_calendar = { path = "../calendar", features = ["ixdtf"] }
 icu_provider_adapters = { path = "../../provider/adapters" }
-icu_provider_blob = { path = "../../provider/blob" }
-icu_timezone = { path = "../timezone", features = ["ixdtf"] }
+icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }
+icu_time = { path = "../time", features = ["ixdtf", "alloc"] }
 litemap = { path = "../../utils/litemap" }
 
 serde = { workspace = true, features = ["derive"] }
@@ -61,48 +63,43 @@ bincode = { workspace = true }
 criterion = { workspace = true }
 
 [features]
-default = ["compiled_data"]
-std = [
-    "icu_calendar/std",
-    "icu_decimal/std",
-    "icu_locale_core/std",
-    "icu_plurals/std",
-    "icu_provider/std",
-    "icu_timezone/std",
-]
+default = ["compiled_data", "ixdtf"]
 serde = [
     "dep:serde",
     "icu_calendar/serde",
     "icu_decimal/serde",
+    "icu_pattern/serde",
     "icu_plurals/serde",
+    "icu_provider/alloc",
     "icu_provider/serde",
-    "icu_timezone/serde",
+    "icu_time/serde",
     "litemap?/serde",
     "smallvec/serde",
     "tinystr/serde",
     "potential_utf/serde",
     "zerovec/serde",
+    "dep:zerotrie",
 ]
 datagen = [
     "dep:databake",
     "dep:litemap",
     "icu_calendar/datagen",
-    "icu_timezone/datagen",
+    "icu_pattern/databake",
+    "icu_plurals/datagen",
+    "icu_time/datagen",
+    "icu_provider/export",
     "serde",
-    "std",
 ]
 logging = ["icu_calendar/logging"]
 experimental = ["dep:litemap"]
-bench = ["serde", "datagen"]
-compiled_data = ["dep:icu_datetime_data", "icu_calendar/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_timezone/compiled_data"]
+compiled_data = ["dep:icu_datetime_data", "icu_calendar/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_time/compiled_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
+ixdtf = ["icu_time/ixdtf", "icu_calendar/ixdtf"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_run_size_tests)'] }
@@ -110,16 +107,16 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_run_size_tests)'] }
 [[bench]]
 name = "datetime"
 harness = false
-required-features = ["compiled_data"]
+required-features = ["compiled_data", "serde", "experimental"]
 
 [[bench]]
 name = "pattern"
 harness = false
-required-features = ["bench"]
+required-features = ["serde", "experimental"]
 
 [[test]]
 name = "datetime"
-required-features = ["experimental", "compiled_data"]
+required-features = ["experimental", "compiled_data", "serde"]
 
 [[test]]
 name = "resolved_components"
@@ -133,6 +130,5 @@ required-features = ["compiled_data"]
 name = "skeleton_serialization"
 required-features = ["experimental"]
 
-[[example]]
-name = "work_log"
-required-features = ["compiled_data"]
+[package.metadata.cargo-semver-checks.lints]
+workspace = true

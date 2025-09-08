@@ -6,7 +6,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -25,11 +27,36 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * The raw canonical composition operation.
+ *
+ * Callers should generally use ComposingNormalizer unless they specifically need raw composition operations
+ *
+ * See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
+ */
 class CanonicalComposition {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CanonicalComposition>, icu4x::DataError> create(const icu4x::DataProvider& provider);
+  /**
+   * Construct a new CanonicalComposition instance for NFC using compiled data.
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
+   */
+  inline static std::unique_ptr<icu4x::CanonicalComposition> create();
 
+  /**
+   * Construct a new CanonicalComposition instance for NFC using a particular data source.
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
+   */
+  inline static diplomat::result<std::unique_ptr<icu4x::CanonicalComposition>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
+
+  /**
+   * Performs canonical composition (including Hangul) on a pair of characters
+   * or returns NUL if these characters don’t compose. Composition exclusions are taken into account.
+   *
+   * See the [Rust documentation for `compose`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalCompositionBorrowed.html#method.compose) for more information.
+   */
   inline char32_t compose(char32_t starter, char32_t second) const;
 
   inline const icu4x::capi::CanonicalComposition* AsFFI() const;

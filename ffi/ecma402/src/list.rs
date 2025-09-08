@@ -21,17 +21,21 @@ impl ecma402_traits::listformat::Format for ListFormat {
         L: Locale,
         Self: Sized,
     {
-        let locale = crate::DataLocale::from_ecma_locale(locale);
+        #[expect(clippy::unwrap_used)] // ecma402_traits::Locale::to_string is a valid locale
+        let locale = icu::locale::Locale::try_from_str(&locale.to_string()).unwrap();
 
-        let style = match opts.style {
-            Style::Long => icu::list::ListLength::Wide,
-            Style::Narrow => icu::list::ListLength::Narrow,
-            Style::Short => icu::list::ListLength::Short,
+        let prefs = icu::list::ListFormatterPreferences::from(&locale);
+
+        let length = match opts.style {
+            Style::Long => icu::list::options::ListLength::Wide,
+            Style::Narrow => icu::list::options::ListLength::Narrow,
+            Style::Short => icu::list::options::ListLength::Short,
         };
+        let options = icu::list::options::ListFormatterOptions::default().with_length(length);
 
         Ok(Self(match opts.in_type {
-            Type::Conjunction => icu::list::ListFormatter::try_new_and_with_length(&locale, style),
-            Type::Disjunction => icu::list::ListFormatter::try_new_or_with_length(&locale, style),
+            Type::Conjunction => icu::list::ListFormatter::try_new_and(prefs, options),
+            Type::Disjunction => icu::list::ListFormatter::try_new_or(prefs, options),
         }?))
     }
 

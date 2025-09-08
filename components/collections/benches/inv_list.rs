@@ -8,12 +8,13 @@ use std::char;
 
 fn uniset_bench(c: &mut Criterion) {
     let best_ex = [0x41, 0x46];
-    let best_sample = CodePointInversionList::try_from_inversion_list_slice(&best_ex).unwrap();
+    let best_sample = CodePointInversionList::try_from_u32_inversion_list_slice(&best_ex).unwrap();
     let worst_ex: Vec<u32> = (0x0..((char::MAX as u32) + 1)).collect();
-    let worst_sample = CodePointInversionList::try_from_inversion_list_slice(&worst_ex).unwrap();
+    let worst_sample =
+        CodePointInversionList::try_from_u32_inversion_list_slice(&worst_ex).unwrap();
 
     c.bench_function("uniset/overview", |b| {
-        #[allow(clippy::suspicious_map)]
+        #[expect(clippy::suspicious_map)]
         b.iter(|| {
             best_sample
                 .iter_chars()
@@ -35,7 +36,6 @@ fn uniset_bench(c: &mut Criterion) {
         })
     });
 
-    #[cfg(feature = "bench")]
     {
         let mut group = c.benchmark_group("uniset/contains");
         group.bench_with_input("best", &best_sample, |b, sample| {

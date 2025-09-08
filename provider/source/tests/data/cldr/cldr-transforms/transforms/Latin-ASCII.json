@@ -1,0 +1,9 @@
+{
+  "_visibility": "external",
+  "_backwardAliasBcp47": "und-Latn-t-s0-ascii",
+  "_aliasBcp47": "und-t-und-latn-d0-ascii",
+  "_source": "Latin",
+  "_direction": "both",
+  "_target": "ASCII",
+  "_rulesFile": "Latin-ASCII.txt"
+}

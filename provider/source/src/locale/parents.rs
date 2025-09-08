@@ -6,15 +6,15 @@ use crate::cldr_serde;
 use crate::SourceDataProvider;
 
 use icu::locale::provider::*;
-use icu::locale::subtags::{Language, Region, Script};
+use icu::locale::subtags::{script, Language, Region, Script};
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::collections::{BTreeMap, HashSet};
 use writeable::Writeable;
 
-impl DataProvider<ParentsV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<ParentsV1Marker>, DataError> {
-        self.check_req::<ParentsV1Marker>(req)?;
+impl DataProvider<LocaleParentsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleParentsV1>, DataError> {
+        self.check_req::<LocaleParentsV1>(req)?;
         let parents_data: &cldr_serde::parent_locales::Resource = self
             .cldr()?
             .core()
@@ -28,26 +28,35 @@ impl DataProvider<ParentsV1Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<ParentsV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<LocaleParentsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl From<&cldr_serde::parent_locales::Resource> for ParentsV1<'static> {
+impl From<&cldr_serde::parent_locales::Resource> for Parents<'static> {
     fn from(source_data: &cldr_serde::parent_locales::Resource) -> Self {
         let mut parents = BTreeMap::<_, (Language, Option<Script>, Option<Region>)>::new();
 
         for (source, target) in source_data.supplemental.parent_locales.parent_locale.iter() {
-            assert!(!source.language.is_default());
-            if source.script.is_some() && source.region.is_none() && target.is_default() {
+            assert!(!source.language.is_unknown());
+            if source.script.is_some() && source.region.is_none() && target.is_unknown() {
                 // We always fall back from language-script to und
                 continue;
             }
             parents.insert(source.write_to_string(), target.into());
         }
 
-        ParentsV1 {
+        parents.insert(
+            "und-Hant".into(),
+            (Language::UNKNOWN, Some(script!("Hani")), None),
+        );
+        parents.insert(
+            "und-Hans".into(),
+            (Language::UNKNOWN, Some(script!("Hani")), None),
+        );
+
+        Parents {
             parents: parents
                 .iter()
                 .map(|(k, v)| (<&PotentialUtf8>::from(k.as_ref()), v))
@@ -62,7 +71,7 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let parents: DataResponse<ParentsV1Marker> = provider.load(Default::default()).unwrap();
+    let parents: DataResponse<LocaleParentsV1> = provider.load(Default::default()).unwrap();
 
     assert_eq!(
         parents

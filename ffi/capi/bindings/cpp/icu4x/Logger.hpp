@@ -8,19 +8,20 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     bool icu4x_Logger_init_simple_logger_mv1(void);
-    
-    
+
     void icu4x_Logger_destroy_mv1(Logger* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

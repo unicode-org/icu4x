@@ -2,14 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::{FixedDecimal, Sign};
-use icu_decimal::FixedDecimalFormatter;
+use fixed_decimal::{Decimal, Sign};
+use icu_decimal::DecimalFormatter;
 
 use crate::alloc::borrow::ToOwned;
 use alloc::borrow::Cow;
 use writeable::Writeable;
 
-use crate::dimension::provider::percent::PercentEssentialsV1;
+use crate::dimension::provider::percent::PercentEssentials;
 
 use super::options::{Display, PercentFormatterOptions};
 
@@ -26,13 +26,13 @@ impl<W1: Writeable, W2: Writeable> Writeable for Append<W1, W2> {
 }
 
 pub struct FormattedPercent<'l> {
-    pub(crate) value: &'l FixedDecimal,
-    pub(crate) essential: &'l PercentEssentialsV1<'l>,
+    pub(crate) value: &'l Decimal,
+    pub(crate) essential: &'l PercentEssentials<'l>,
     pub(crate) options: &'l PercentFormatterOptions,
-    pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
+    pub(crate) decimal_formatter: &'l DecimalFormatter,
 }
 
-impl<'l> Writeable for FormattedPercent<'l> {
+impl Writeable for FormattedPercent<'_> {
     fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
         W: core::fmt::Write + ?Sized,
@@ -43,7 +43,7 @@ impl<'l> Writeable for FormattedPercent<'l> {
             _ => self.value.to_owned(),
         };
 
-        let value = self.fixed_decimal_formatter.format(&abs_value);
+        let value = self.decimal_formatter.format(&abs_value);
 
         match self.options.display {
             // In the Standard display, we take the unsigned pattern only when the value is positive.
@@ -102,16 +102,16 @@ mod tests {
     use writeable::assert_writeable_eq;
 
     use crate::dimension::percent::{
-        formatter::PercentFormatter,
+        formatter::{PercentFormatter, PercentFormatterPreferences},
         options::{Display, PercentFormatterOptions},
     };
 
     #[test]
     pub fn test_en_us() {
-        let locale = locale!("en-US").into();
+        let prefs: PercentFormatterPreferences = locale!("en-US").into();
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
-        let default_fmt = PercentFormatter::try_new(&locale, Default::default()).unwrap();
+        let default_fmt = PercentFormatter::try_new(prefs, Default::default()).unwrap();
         let formatted_percent = default_fmt.format(&positive_value);
         assert_writeable_eq!(formatted_percent, "12,345.67%");
 
@@ -123,7 +123,7 @@ mod tests {
         // Approximate Case
         let approx_value = "12345.67".parse().unwrap();
         let approx_fmt = PercentFormatter::try_new(
-            &locale,
+            prefs,
             PercentFormatterOptions {
                 display: Display::Approximate,
             },
@@ -134,7 +134,7 @@ mod tests {
 
         // ExplicitSign Case
         let explicit_fmt = PercentFormatter::try_new(
-            &locale,
+            prefs,
             PercentFormatterOptions {
                 display: Display::ExplicitSign,
             },
@@ -146,10 +146,10 @@ mod tests {
 
     #[test]
     pub fn test_tr() {
-        let locale = locale!("tr").into();
+        let prefs: PercentFormatterPreferences = locale!("tr").into();
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
-        let default_fmt = PercentFormatter::try_new(&locale, Default::default()).unwrap();
+        let default_fmt = PercentFormatter::try_new(prefs, Default::default()).unwrap();
         let formatted_percent = default_fmt.format(&positive_value);
         assert_writeable_eq!(formatted_percent, "%12.345,67");
 
@@ -161,7 +161,7 @@ mod tests {
         // Approximate Case
         let approx_value = "12345.67".parse().unwrap();
         let approx_fmt = PercentFormatter::try_new(
-            &locale,
+            prefs,
             PercentFormatterOptions {
                 display: Display::Approximate,
             },
@@ -172,7 +172,7 @@ mod tests {
 
         // ExplicitSign Case
         let explicit_fmt = PercentFormatter::try_new(
-            &locale,
+            prefs,
             PercentFormatterOptions {
                 display: Display::ExplicitSign,
             },
@@ -184,10 +184,10 @@ mod tests {
 
     #[test]
     pub fn test_blo() {
-        let locale = locale!("blo").into();
+        let prefs: PercentFormatterPreferences = locale!("blo").into();
         // Positive case
         let positive_value = "12345.67".parse().unwrap();
-        let default_fmt = PercentFormatter::try_new(&locale, Default::default()).unwrap();
+        let default_fmt = PercentFormatter::try_new(prefs, Default::default()).unwrap();
         let formatted_percent = default_fmt.format(&positive_value);
         assert_writeable_eq!(formatted_percent, "%\u{a0}12\u{a0}345,67");
 
@@ -199,7 +199,7 @@ mod tests {
         // Approximate Case
         let approx_value = "12345.67".parse().unwrap();
         let approx_fmt = PercentFormatter::try_new(
-            &locale,
+            prefs,
             PercentFormatterOptions {
                 display: Display::Approximate,
             },
@@ -210,7 +210,7 @@ mod tests {
 
         // ExplicitSign Case
         let explicit_fmt = PercentFormatter::try_new(
-            &locale,
+            prefs,
             PercentFormatterOptions {
                 display: Display::ExplicitSign,
             },

@@ -17,3 +17,5 @@ pub struct ExponentError {
     /// The magnitude of the number being formatted.
     pub(crate) log10_type: i16,
 }
+
+impl core::error::Error for ExponentError {}

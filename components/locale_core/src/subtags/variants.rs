@@ -5,6 +5,7 @@
 use super::Variant;
 use crate::shortvec::ShortBoxSlice;
 
+#[cfg(feature = "alloc")]
 use alloc::vec::Vec;
 use core::ops::Deref;
 
@@ -76,10 +77,12 @@ impl Variants {
     /// Notice: For performance- and memory-constrained environments, it is recommended
     /// for the caller to use [`binary_search`](slice::binary_search) instead of [`sort`](slice::sort)
     /// and [`dedup`](Vec::dedup()).
+    #[cfg(feature = "alloc")]
     pub fn from_vec_unchecked(input: Vec<Variant>) -> Self {
         Self(input.into())
     }
 
+    #[cfg(feature = "alloc")]
     pub(crate) fn from_short_slice_unchecked(input: ShortBoxSlice<Variant>) -> Self {
         Self(input)
     }

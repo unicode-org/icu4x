@@ -17,23 +17,6 @@
         }
     },
     {
-        "description": "Hour cycle preference h24",
-        "input": {
-            "value": "2020-02-20T00:12:00.000",
-            "options": {
-                "length": {
-                    "time": "medium",
-                    "date": "medium"
-                }
-            }
-        },
-        "output": {
-            "values": {
-                "en-u-hc-h24": "Feb 20, 2020, 24:12:00"
-            }
-        }
-    },
-    {
         "description": "Hour cycle preference h11",
         "input": {
             "value": "2020-02-20T00:12:00.000",
@@ -98,23 +81,6 @@
         "output": {
             "values": {
                 "ja-u-hc-h12": "2020年2月20日木曜日 午前12:12:00"
-            }
-        }
-    },
-    {
-        "description": "Japan hour cycles can use h24",
-        "input": {
-            "value": "2020-02-20T00:12:00.000",
-            "options": {
-                "length": {
-                    "time": "medium",
-                    "date": "full"
-                }
-            }
-        },
-        "output": {
-            "values": {
-                "ja-u-hc-h24": "2020年2月20日木曜日 24:12:00"
             }
         }
     },

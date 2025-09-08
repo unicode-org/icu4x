@@ -2,40 +2,36 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datetime::options::DateTimeFormatterOptions;
+use icu_datetime::{fieldsets::builder::FieldSetBuilder, provider::fields::components};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Fixture(pub Vec<Test>);
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Test {
-    pub setups: Vec<TestInput>,
-    pub values: Vec<String>,
+pub(crate) struct Fixture {
+    pub(crate) setups: Vec<TestInput>,
+    pub(crate) values: Vec<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct TestInput {
-    pub locale: String,
-    pub options: TestOptions,
+pub(crate) struct TestInput {
+    pub(crate) locale: String,
+    pub(crate) options: TestOptions,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct TestOptions {
-    pub length: Option<icu_datetime::options::length::Bag>,
-    pub components: Option<icu_datetime::options::components::Bag>,
-    pub semantic: Option<icu_datetime::neo_skeleton::NeoSkeleton>,
-    pub preferences: Option<icu_datetime::options::preferences::Bag>,
+pub(crate) struct TestOptions {
+    pub(crate) length: Option<TestOptionsLength>,
+    pub(crate) components: Option<TestComponentsBag>,
+    pub(crate) semantic: Option<FieldSetBuilder>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct TestOptionsLength {
-    pub date: Option<TestLength>,
-    pub time: Option<TestLength>,
+pub(crate) struct TestOptionsLength {
+    pub(crate) date: Option<TestLength>,
+    pub(crate) time: Option<TestLength>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub enum TestLength {
+pub(crate) enum TestLength {
     #[serde(rename = "short")]
     Short,
     #[serde(rename = "medium")]
@@ -47,15 +43,21 @@ pub enum TestLength {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct PatternsFixture(pub Vec<String>);
+pub(crate) struct TestComponentsBag {
+    pub(crate) era: Option<components::Text>,
+    pub(crate) year: Option<components::Year>,
+    pub(crate) month: Option<components::Month>,
+    pub(crate) week: Option<components::Week>,
+    pub(crate) day: Option<components::Day>,
+    pub(crate) weekday: Option<components::Text>,
 
-#[allow(dead_code)]
-pub fn get_options(input: &TestOptions) -> Option<DateTimeFormatterOptions> {
-    if let Some(bag) = input.length {
-        return Some(bag.into());
-    }
-    if let Some(bag) = input.components {
-        return Some(bag.into());
-    }
-    None
+    pub(crate) hour: Option<components::Numeric>,
+    pub(crate) minute: Option<components::Numeric>,
+    pub(crate) second: Option<components::Numeric>,
+    pub(crate) subsecond: Option<u8>,
+
+    pub(crate) time_zone_name: Option<components::TimeZoneName>,
 }
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub(crate) struct PatternsFixture(pub(crate) Vec<String>);

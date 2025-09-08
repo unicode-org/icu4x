@@ -8,7 +8,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 #include "Locale.hpp"
 #include "LocaleFallbackIterator.hpp"
@@ -17,12 +19,11 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::LocaleFallbackIterator* icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1(const icu4x::capi::LocaleFallbackerWithConfig* self, const icu4x::capi::Locale* locale);
-    
-    
+
     void icu4x_LocaleFallbackerWithConfig_destroy_mv1(LocaleFallbackerWithConfig* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

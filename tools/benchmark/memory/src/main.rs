@@ -67,13 +67,12 @@ fn extract_bytes_from_log_line(preamble: &str, text: &str) -> u64 {
         .find("bytes")
         .expect("Unable to find the word \"bytes\" in the dhat output.");
 
-    return text
-        .get(start..end)
+    text.get(start..end)
         .expect("Unable to get a substring.")
         .trim()
         .replace(',', "")
         .parse::<u64>()
-        .expect("Unable to parse the byte amount");
+        .expect("Unable to parse the byte amount")
 }
 
 /// This file is intended to be run from CI to gather heap information, but it can also
@@ -103,8 +102,6 @@ fn main() {
             .arg("bench-memory")
             .arg("--features")
             .arg("icu_benchmark_macros/benchmark_memory")
-            .arg("--features")
-            .arg("bench")
             .status()
             .unwrap_or_else(|err| {
                 eprintln!("Failed to collect examples {err:?}");
@@ -165,8 +162,6 @@ fn main() {
             // icu_benchmark_macros package.
             .arg("--features")
             .arg("icu_benchmark_macros/benchmark_memory")
-            .arg("--features")
-            .arg("bench")
             .stderr(Stdio::piped())
             .spawn()
             .unwrap_or_else(|err| {

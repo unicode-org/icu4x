@@ -5,6 +5,7 @@
 use alloc::vec;
 use alloc::vec::Vec;
 use core::{char, cmp::Ordering, ops::RangeBounds};
+use potential_utf::PotentialCodePoint;
 
 use crate::codepointinvlist::{utils::deconstruct_range, CodePointInversionList};
 use zerovec::{ule::AsULE, ZeroVec};
@@ -26,8 +27,12 @@ impl CodePointInversionListBuilder {
 
     /// Returns a [`CodePointInversionList`] and consumes the [`CodePointInversionListBuilder`]
     pub fn build(self) -> CodePointInversionList<'static> {
-        let inv_list: ZeroVec<u32> = ZeroVec::alloc_from_slice(&self.intervals);
-        #[allow(clippy::unwrap_used)] // by invariant
+        let inv_list: ZeroVec<PotentialCodePoint> = self
+            .intervals
+            .into_iter()
+            .map(PotentialCodePoint::from_u24)
+            .collect();
+        #[expect(clippy::unwrap_used)] // by invariant
         CodePointInversionList::try_from_inversion_list(inv_list).unwrap()
     }
 
@@ -46,7 +51,7 @@ impl CodePointInversionListBuilder {
         let end_pos_check = (end_ind % 2 == 0) == add;
         let start_eq_end = start_ind == end_ind;
 
-        #[allow(clippy::indexing_slicing)] // all indices are binary search results
+        #[expect(clippy::indexing_slicing)] // all indices are binary search results
         if start_eq_end && start_pos_check && end_res.is_err() {
             self.intervals.splice(start_ind..end_ind, [start, end]);
         } else {
@@ -167,23 +172,24 @@ impl CodePointInversionListBuilder {
     ///     CodePointInversionList, CodePointInversionListBuilder,
     /// };
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// let set =
-    ///     CodePointInversionList::try_from_inversion_list_slice(&[0x41, 0x4C])
-    ///         .unwrap();
+    /// let set = CodePointInversionList::try_from_u32_inversion_list_slice(&[
+    ///     0x41, 0x4C,
+    /// ])
+    /// .unwrap();
     /// builder.add_set(&set);
     /// let check = builder.build();
     /// assert_eq!(check.iter_chars().next(), Some('A'));
     /// ```
     #[allow(unused_assignments)]
     pub fn add_set(&mut self, set: &CodePointInversionList) {
-        #[allow(clippy::indexing_slicing)] // chunks
+        #[expect(clippy::indexing_slicing)] // chunks
         set.as_inversion_list()
             .as_ule_slice()
             .chunks(2)
             .for_each(|pair| {
                 self.add(
-                    AsULE::from_unaligned(pair[0]),
-                    AsULE::from_unaligned(pair[1]),
+                    u32::from(PotentialCodePoint::from_unaligned(pair[0])),
+                    u32::from(PotentialCodePoint::from_unaligned(pair[1])),
                 )
             });
     }
@@ -197,7 +203,7 @@ impl CodePointInversionListBuilder {
             return;
         }
         if let Some(&last) = self.intervals.last() {
-            #[allow(clippy::indexing_slicing)]
+            #[expect(clippy::indexing_slicing)]
             // by invariant, if we have a last we have a (different) first
             if start <= self.intervals[0] && end >= last {
                 self.intervals.clear();
@@ -256,20 +262,20 @@ impl CodePointInversionListBuilder {
     /// ```
     /// use icu::collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// let set = CodePointInversionList::try_from_inversion_list_slice(&[0x41, 0x46]).unwrap();
+    /// let set = CodePointInversionList::try_from_u32_inversion_list_slice(&[0x41, 0x46]).unwrap();
     /// builder.add_range('A'..='Z');
     /// builder.remove_set(&set); // removes 'A'..='E'
     /// let check = builder.build();
     /// assert_eq!(check.iter_chars().next(), Some('F'));
-    #[allow(clippy::indexing_slicing)] // chunks
+    #[expect(clippy::indexing_slicing)] // chunks
     pub fn remove_set(&mut self, set: &CodePointInversionList) {
         set.as_inversion_list()
             .as_ule_slice()
             .chunks(2)
             .for_each(|pair| {
                 self.remove(
-                    AsULE::from_unaligned(pair[0]),
-                    AsULE::from_unaligned(pair[1]),
+                    u32::from(PotentialCodePoint::from_unaligned(pair[0])),
+                    u32::from(PotentialCodePoint::from_unaligned(pair[1])),
                 )
             });
     }
@@ -335,20 +341,21 @@ impl CodePointInversionListBuilder {
     ///     CodePointInversionList, CodePointInversionListBuilder,
     /// };
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// let set = CodePointInversionList::try_from_inversion_list_slice(&[65, 70])
-    ///     .unwrap();
+    /// let set =
+    ///     CodePointInversionList::try_from_u32_inversion_list_slice(&[65, 70])
+    ///         .unwrap();
     /// builder.add_range('A'..='Z');
     /// builder.retain_set(&set); // retains 'A'..='E'
     /// let check = builder.build();
     /// assert!(check.contains('A'));
     /// assert!(!check.contains('G'));
     /// ```
-    #[allow(clippy::indexing_slicing)] // chunks
+    #[expect(clippy::indexing_slicing)] // chunks
     pub fn retain_set(&mut self, set: &CodePointInversionList) {
         let mut prev = 0;
         for pair in set.as_inversion_list().as_ule_slice().chunks(2) {
-            let range_start = AsULE::from_unaligned(pair[0]);
-            let range_limit = AsULE::from_unaligned(pair[1]);
+            let range_start = u32::from(PotentialCodePoint::from_unaligned(pair[0]));
+            let range_limit = u32::from(PotentialCodePoint::from_unaligned(pair[1]));
             self.remove(prev, range_start);
             prev = range_limit;
         }
@@ -403,7 +410,7 @@ impl CodePointInversionListBuilder {
     ///     CodePointInversionList, CodePointInversionListBuilder,
     /// };
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// let set = CodePointInversionList::try_from_inversion_list_slice(&[
+    /// let set = CodePointInversionList::try_from_u32_inversion_list_slice(&[
     ///     0x0,
     ///     0x41,
     ///     0x46,
@@ -417,7 +424,7 @@ impl CodePointInversionListBuilder {
     /// ```
     pub fn complement(&mut self) {
         if !self.intervals.is_empty() {
-            #[allow(clippy::indexing_slicing)] // by invariant
+            #[expect(clippy::indexing_slicing)] // by invariant
             if self.intervals[0] == 0 {
                 self.intervals.drain(0..1);
             } else {
@@ -492,7 +499,7 @@ impl CodePointInversionListBuilder {
     ///     CodePointInversionList, CodePointInversionListBuilder,
     /// };
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// let set = CodePointInversionList::try_from_inversion_list_slice(&[
+    /// let set = CodePointInversionList::try_from_u32_inversion_list_slice(&[
     ///     0x41, 0x46, 0x4B, 0x5A,
     /// ])
     /// .unwrap();
@@ -503,7 +510,7 @@ impl CodePointInversionListBuilder {
     /// assert!(!check.contains('N')); // 78
     /// ```
     pub fn complement_set(&mut self, set: &CodePointInversionList) {
-        let inv_list_iter_owned = set.as_inversion_list().iter();
+        let inv_list_iter_owned = set.as_inversion_list().iter().map(u32::from);
         self.complement_list(inv_list_iter_owned);
     }
 
@@ -526,11 +533,9 @@ impl CodePointInversionListBuilder {
 mod tests {
     use super::{CodePointInversionList, CodePointInversionListBuilder};
     use core::char;
-    use zerovec::ZeroVec;
 
     fn generate_tester(ex: &[u32]) -> CodePointInversionListBuilder {
-        let inv_list = ZeroVec::<u32>::alloc_from_slice(ex);
-        let check = CodePointInversionList::try_from_inversion_list(inv_list).unwrap();
+        let check = CodePointInversionList::try_from_u32_inversion_list_slice(ex).unwrap();
         let mut builder = CodePointInversionListBuilder::new();
         builder.add_set(&check);
         builder
@@ -713,7 +718,7 @@ mod tests {
     #[test]
     fn test_add_codepointinversionlist() {
         let mut builder = generate_tester(&[0xA, 0x14, 0x28, 0x32]);
-        let check = CodePointInversionList::try_from_inversion_list_slice(&[
+        let check = CodePointInversionList::try_from_u32_inversion_list_slice(&[
             0x5, 0xA, 0x16, 0x21, 0x2C, 0x33,
         ])
         .unwrap();
@@ -851,7 +856,7 @@ mod tests {
     fn test_remove_set() {
         let mut builder = generate_tester(&[0xA, 0x14, 0x28, 0x32, 70, 80]);
         let remove =
-            CodePointInversionList::try_from_inversion_list_slice(&[0xA, 0x14, 0x2D, 0x4B])
+            CodePointInversionList::try_from_u32_inversion_list_slice(&[0xA, 0x14, 0x2D, 0x4B])
                 .unwrap();
         builder.remove_set(&remove);
         let expected = [0x28, 0x2D, 0x4B, 0x50];
@@ -884,7 +889,7 @@ mod tests {
     #[test]
     fn test_retain_set() {
         let mut builder = generate_tester(&[0xA, 0x14, 0x28, 0x32, 70, 80]);
-        let retain = CodePointInversionList::try_from_inversion_list_slice(&[
+        let retain = CodePointInversionList::try_from_u32_inversion_list_slice(&[
             0xE, 0x14, 0x19, 0x37, 0x4D, 0x51,
         ])
         .unwrap();
@@ -965,8 +970,9 @@ mod tests {
     #[test]
     fn test_complement_set() {
         let mut builder = generate_tester(&[0x43, 0x4E]);
-        let set = CodePointInversionList::try_from_inversion_list_slice(&[0x41, 0x46, 0x4B, 0x5A])
-            .unwrap();
+        let set =
+            CodePointInversionList::try_from_u32_inversion_list_slice(&[0x41, 0x46, 0x4B, 0x5A])
+                .unwrap();
         builder.complement_set(&set);
         let expected = [0x41, 0x43, 0x46, 0x4B, 0x4E, 0x5A];
         assert_eq!(builder.intervals, expected);

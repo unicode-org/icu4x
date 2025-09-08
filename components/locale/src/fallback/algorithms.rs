@@ -7,14 +7,14 @@ use icu_locale_core::subtags::{Language, Region, Script};
 
 use super::*;
 
-impl<'a> LocaleFallbackerWithConfig<'a> {
+impl LocaleFallbackerWithConfig<'_> {
     pub(crate) fn normalize(&self, locale: &mut DataLocale, default_script: &mut Option<Script>) {
         // 0. If there is an invalid "sd" subtag, drop it
         if let Some(subdivision) = locale.subdivision.take() {
             if let Some(region) = locale.region {
                 if subdivision
                     .as_str()
-                    .starts_with(region.into_tinystr().to_ascii_lowercase().as_str())
+                    .starts_with(region.to_tinystr().to_ascii_lowercase().as_str())
                 {
                     locale.subdivision = Some(subdivision);
                 }
@@ -29,8 +29,8 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                     .likely_subtags
                     .language_script
                     .get(&(
-                        language.into_tinystr().to_unvalidated(),
-                        script.into_tinystr().to_unvalidated(),
+                        language.to_tinystr().to_unvalidated(),
+                        script.to_tinystr().to_unvalidated(),
                     ))
                     .copied();
             }
@@ -39,7 +39,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                 locale.region = self
                     .likely_subtags
                     .language
-                    .get_copied(&language.into_tinystr().to_unvalidated())
+                    .get_copied(&language.to_tinystr().to_unvalidated())
                     .map(|(_s, r)| r);
             }
         }
@@ -49,14 +49,14 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                 .region
                 .and_then(|region| {
                     self.likely_subtags.language_region.get_copied(&(
-                        language.into_tinystr().to_unvalidated(),
-                        region.into_tinystr().to_unvalidated(),
+                        language.to_tinystr().to_unvalidated(),
+                        region.to_tinystr().to_unvalidated(),
                     ))
                 })
                 .or_else(|| {
                     self.likely_subtags
                         .language
-                        .get_copied(&language.into_tinystr().to_unvalidated())
+                        .get_copied(&language.to_tinystr().to_unvalidated())
                         .map(|(s, _r)| s)
                 });
             if locale.script == *default_script {
@@ -66,7 +66,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
     }
 }
 
-impl<'a> LocaleFallbackIteratorInner<'a> {
+impl LocaleFallbackIteratorInner<'_> {
     pub fn step(&mut self, locale: &mut DataLocale) {
         match self.config.priority {
             LocaleFallbackPriority::Language => self.step_language(locale),
@@ -110,8 +110,8 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
             if locale.script.is_none() {
                 let language = locale.language;
                 if let Some(script) = self.likely_subtags.language_region.get_copied(&(
-                    language.into_tinystr().to_unvalidated(),
-                    region.into_tinystr().to_unvalidated(),
+                    language.to_tinystr().to_unvalidated(),
+                    region.to_tinystr().to_unvalidated(),
                 )) {
                     locale.script = Some(script);
                 }
@@ -121,9 +121,9 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
             return;
         }
         // 8. Remove language+script
-        debug_assert!(!locale.language.is_default()); // don't call .step() on und
+        debug_assert!(!locale.language.is_unknown() || locale.script.is_some()); // don't call .step() on und
         locale.script = None;
-        locale.language = Language::UND;
+        locale.language = Language::UNKNOWN;
     }
 
     fn step_region(&mut self, locale: &mut DataLocale) {
@@ -139,9 +139,9 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
             return;
         }
         // 5. Remove language+script
-        if !locale.language.is_default() || locale.script.is_some() {
+        if !locale.language.is_unknown() || locale.script.is_some() {
             locale.script = None;
-            locale.language = Language::UND;
+            locale.language = Language::UNKNOWN;
             // Don't produce und-variant
             if locale.region.is_some() {
                 locale.variant = self.backup_variant.take();
@@ -179,7 +179,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
             let language_implied_script = self
                 .likely_subtags
                 .language
-                .get_copied(&locale.language.into_tinystr().to_unvalidated())
+                .get_copied(&locale.language.to_tinystr().to_unvalidated())
                 .map(|(s, _r)| s);
             if language_implied_script != self.max_script {
                 locale.script = self.max_script;
@@ -190,11 +190,11 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
         }
 
         // Remove the script if we have a language
-        if !locale.language.is_default() {
+        if !locale.language.is_unknown() {
             let language_implied_script = self
                 .likely_subtags
                 .language
-                .get_copied(&locale.language.into_tinystr().to_unvalidated())
+                .get_copied(&locale.language.to_tinystr().to_unvalidated())
                 .map(|(s, _r)| s);
             if locale.script.is_some() && language_implied_script == locale.script {
                 locale.script = None;
@@ -204,18 +204,16 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
                     locale.variant = self.backup_variant.take();
                 }
                 // needed if more fallback is added at the end
-                #[allow(clippy::needless_return)]
                 return;
             } else {
                 // 3. Remove the language and apply the maximized script
-                locale.language = Language::UND;
+                locale.language = Language::UNKNOWN;
                 locale.script = self.max_script;
                 // Don't produce und-variant
                 if locale.script.is_some() {
                     locale.variant = self.backup_variant.take();
                 }
                 // needed if more fallback is added at the end
-                #[allow(clippy::needless_return)]
                 return;
             }
         }
@@ -415,29 +413,36 @@ mod tests {
             // The fallback algorithm does not visit the language-script bundle when the
             // script is the default for the language
             expected_language_chain: &["zh-CN", "zh"],
-            expected_script_chain: &["zh-CN", "zh", "und-Hans"],
+            expected_script_chain: &["zh-CN", "zh", "und-Hans", "und-Hani"],
             expected_region_chain: &["zh-CN", "und-CN"],
         },
         TestCase {
             input: "zh-TW",
             requires_data: true,
             expected_language_chain: &["zh-TW", "zh-Hant"],
-            expected_script_chain: &["zh-TW", "zh-Hant", "und-Hant"],
+            expected_script_chain: &["zh-TW", "zh-Hant", "und-Hant", "und-Hani"],
             expected_region_chain: &["zh-TW", "und-TW"],
         },
         TestCase {
             input: "yue-HK",
             requires_data: true,
             expected_language_chain: &["yue-HK", "yue"],
-            expected_script_chain: &["yue-HK", "yue", "und-Hant"],
+            expected_script_chain: &["yue-HK", "yue", "und-Hant", "und-Hani"],
             expected_region_chain: &["yue-HK", "und-HK"],
         },
         TestCase {
             input: "yue-HK",
             requires_data: true,
             expected_language_chain: &["yue-HK", "yue"],
-            expected_script_chain: &["yue-HK", "yue", "und-Hant"],
+            expected_script_chain: &["yue-HK", "yue", "und-Hant", "und-Hani"],
             expected_region_chain: &["yue-HK", "und-HK"],
+        },
+        TestCase {
+            input: "yue-CN",
+            requires_data: true,
+            expected_language_chain: &["yue-CN", "yue-Hans"],
+            expected_script_chain: &["yue-CN", "yue-Hans", "und-Hans", "und-Hani"],
+            expected_region_chain: &["yue-CN", "und-CN"],
         },
         TestCase {
             input: "az-Arab-IR",
@@ -491,7 +496,7 @@ mod tests {
                     if i == 19 {
                         eprintln!("20 iterations reached!");
                     }
-                    if it.get().is_default() {
+                    if it.get().is_unknown() {
                         break;
                     }
                     actual_chain.push(it.get().write_to_string().into_owned());

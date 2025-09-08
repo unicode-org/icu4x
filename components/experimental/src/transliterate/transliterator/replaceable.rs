@@ -84,7 +84,7 @@ impl<'a> Hide<'a> {
         self.raw.splice(adjusted_range, replace_with);
     }
 
-    fn child(&mut self) -> Hide {
+    fn child(&mut self) -> Hide<'_> {
         Hide {
             raw: self.raw,
             hide_pre_len: self.hide_pre_len,
@@ -93,7 +93,7 @@ impl<'a> Hide<'a> {
     }
 
     /// Borrows into a child `Hide` with its visible part restricted to the given range.
-    fn tighten(&mut self, visible_range: Range<usize>) -> Hide {
+    fn tighten(&mut self, visible_range: Range<usize>) -> Hide<'_> {
         debug_assert!(visible_range.start <= self.len());
         debug_assert!(visible_range.end <= self.len());
 
@@ -115,14 +115,14 @@ impl<'a> Hide<'a> {
     }
 }
 
-impl<'a> Deref for Hide<'a> {
+impl Deref for Hide<'_> {
     type Target = [u8];
     fn deref(&self) -> &Self::Target {
         &self.raw[self.hide_pre_len..self.raw.len() - self.hide_post_len]
     }
 }
 
-impl<'a> DerefMut for Hide<'a> {
+impl DerefMut for Hide<'_> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         let len = self.raw.len();
         &mut self.raw[self.hide_pre_len..len - self.hide_post_len]
@@ -255,7 +255,7 @@ impl<'a> Replaceable<'a> {
     /// Returns a `Replaceable` with the same content as the current one.
     ///
     /// This is useful for repeated transliterations of the same modifiable range.
-    pub(crate) fn child(&mut self) -> Replaceable {
+    pub(crate) fn child(&mut self) -> Replaceable<'_> {
         Replaceable {
             content: self.content.child(),
             freeze_pre_len: self.freeze_pre_len,
@@ -296,7 +296,11 @@ impl<'a> Replaceable<'a> {
     ///
     /// # Safety
     /// The caller must ensure that `start` is a valid UTF-8 index into the internal text.
-    unsafe fn next_filtered_run(&mut self, start: usize, filter: &Filter) -> Option<Replaceable> {
+    unsafe fn next_filtered_run(
+        &mut self,
+        start: usize,
+        filter: &Filter,
+    ) -> Option<Replaceable<'_>> {
         if start == self.allowed_upper_bound() {
             // we have reached the end, there are no more runs
             return None;
@@ -359,7 +363,7 @@ impl<'a> Replaceable<'a> {
     }
 }
 
-impl<'a> Debug for Replaceable<'a> {
+impl Debug for Replaceable<'_> {
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         write!(f, "{:?}", self.content.hidden_prefix())?;
         write!(f, "[[[")?;
@@ -441,7 +445,7 @@ impl<'a, 'b> RepMatcher<'a, 'b, false> {
     }
 }
 
-impl<'a, 'b, const KEY_FINISHED: bool> RepMatcher<'a, 'b, KEY_FINISHED> {
+impl<const KEY_FINISHED: bool> RepMatcher<'_, '_, KEY_FINISHED> {
     fn remaining(&self) -> usize {
         if KEY_FINISHED {
             self.rep.content.len() - self.forward_cursor
@@ -469,7 +473,7 @@ impl<'a, 'b, const KEY_FINISHED: bool> RepMatcher<'a, 'b, KEY_FINISHED> {
     }
 }
 
-impl<'a, 'b, const KEY_FINISHED: bool> Utf8Matcher<Forward> for RepMatcher<'a, 'b, KEY_FINISHED> {
+impl<const KEY_FINISHED: bool> Utf8Matcher<Forward> for RepMatcher<'_, '_, KEY_FINISHED> {
     fn cursor(&self) -> usize {
         self.forward_cursor
     }
@@ -517,7 +521,7 @@ impl<'a, 'b, const KEY_FINISHED: bool> Utf8Matcher<Forward> for RepMatcher<'a, '
 }
 
 // we can always reverse match, no matter if the key has finished matching or not
-impl<'a, 'b, const KEY_FINISHED: bool> Utf8Matcher<Reverse> for RepMatcher<'a, 'b, KEY_FINISHED> {
+impl<const KEY_FINISHED: bool> Utf8Matcher<Reverse> for RepMatcher<'_, '_, KEY_FINISHED> {
     fn cursor(&self) -> usize {
         self.ante_cursor()
     }
@@ -579,6 +583,11 @@ pub(super) struct Reverse;
 /// The direction a match can be applied. Used in [`Utf8Matcher`].
 ///
 /// See [`Forward`] and [`Reverse`] for implementors.
+///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+/// </div>
 pub(super) trait MatchDirection: sealed::Sealed {}
 impl MatchDirection for Forward {}
 impl MatchDirection for Reverse {}
@@ -587,7 +596,6 @@ impl MatchDirection for Reverse {}
 ///
 /// The used indices in method parameters are all compatible with each other.
 // Thought: I don't think this needs to be called *Utf8* matcher, maybe just Matcheable
-
 pub(super) trait Utf8Matcher<D: MatchDirection>: Debug {
     fn cursor(&self) -> usize;
 
@@ -707,7 +715,7 @@ impl<'a, 'b> Insertable<'a, 'b> {
         if free_bytes < size {
             self._rep.content.splice(
                 self.end()..self.end(),
-                core::iter::repeat(0).take(size - free_bytes),
+                core::iter::repeat_n(0, size - free_bytes),
             );
         }
     }
@@ -912,13 +920,13 @@ impl<'a, 'b> Insertable<'a, 'b> {
     }
 }
 
-impl<'a, 'b> Drop for Insertable<'a, 'b> {
+impl Drop for Insertable<'_, '_> {
     fn drop(&mut self) {
         self.cleanup();
     }
 }
 
-impl<'a, 'b> Debug for Insertable<'a, 'b> {
+impl Debug for Insertable<'_, '_> {
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         write!(f, "{}|{}", self.curr_replacement(), self.free_range().len())
     }
@@ -935,13 +943,13 @@ where
     on_drop: F,
 }
 
-impl<'a, 'b, F> InsertableToReplaceableAdapter<'a, 'b, F>
+impl<F> InsertableToReplaceableAdapter<'_, '_, F>
 where
     F: FnMut(usize),
 {
     /// Returns a type that allows getting a `Replaceable` from it. The replaceable will
     /// transliterate everything since `self` was created with [`Insertable::start_replaceable_adapter`].
-    pub(super) fn as_replaceable(&mut self) -> InsertableGuard<impl FnMut(&[u8]) + '_> {
+    pub(super) fn as_replaceable(&mut self) -> InsertableGuard<'_, impl FnMut(&[u8]) + '_> {
         // Thought: we don't need to make the Insertable contiguous because the visible length hides
         //  the invalid UTF-8 tail. However, we do not gain anything from that empty buffer at the
         //  moment, because the child Replaceable's Insertable will not know about it. can we
@@ -976,7 +984,7 @@ where
     }
 }
 
-impl<'a, 'b, F> Drop for InsertableToReplaceableAdapter<'a, 'b, F>
+impl<F> Drop for InsertableToReplaceableAdapter<'_, '_, F>
 where
     F: FnMut(usize),
 {
@@ -995,7 +1003,7 @@ where
     }
 }
 
-impl<'a, 'b, F> DerefMut for InsertableToReplaceableAdapter<'a, 'b, F>
+impl<F> DerefMut for InsertableToReplaceableAdapter<'_, '_, F>
 where
     F: FnMut(usize),
 {
@@ -1020,12 +1028,12 @@ where
         Self { rep, on_drop }
     }
 
-    pub(crate) fn child(&mut self) -> Replaceable {
+    pub(crate) fn child(&mut self) -> Replaceable<'_> {
         self.rep.child()
     }
 }
 
-impl<'a, F> Drop for InsertableGuard<'a, F>
+impl<F> Drop for InsertableGuard<'_, F>
 where
     F: FnMut(&[u8]),
 {

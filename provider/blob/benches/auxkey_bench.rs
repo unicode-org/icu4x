@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+extern crate alloc;
+
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use icu_locale::LocaleFallbacker;
 use icu_locale_core::{langid, LanguageIdentifier};
@@ -13,15 +15,25 @@ use icu_provider_blob::export::BlobExporter;
 use icu_provider_blob::BlobDataProvider;
 use std::collections::BTreeSet;
 
-#[icu_provider::data_struct(
-    marker(MarkerA, "a@1"),
-    marker(MarkerB, "b@1"),
-    marker(MarkerC, "c@1"),
-    marker(MarkerD, "d@1")
+icu_provider::data_marker!(MarkerV1, Empty);
+icu_provider::data_marker!(MarkerV2, Empty);
+icu_provider::data_marker!(MarkerV3, Empty);
+icu_provider::data_marker!(MarkerV4, Empty);
+
+#[derive(
+    serde::Serialize,
+    serde::Deserialize,
+    Clone,
+    Copy,
+    databake::Bake,
+    PartialEq,
+    yoke::Yokeable,
+    zerofrom::ZeroFrom,
 )]
-#[derive(serde::Serialize, serde::Deserialize, Clone, Copy, databake::Bake, PartialEq)]
 #[databake(path = crate)]
 pub struct Empty;
+
+icu_provider::data_struct!(Empty);
 
 struct Baked;
 
@@ -36,7 +48,7 @@ macro_rules! implement {
             }
         }
         impl IterableDataProvider<$marker> for Baked {
-            fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+            fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
                 const LOCALES: &[LanguageIdentifier] = &[
                     langid!("af"),
                     langid!("am"),
@@ -243,10 +255,10 @@ macro_rules! implement {
     };
 }
 
-implement!(MarkerA);
-implement!(MarkerB);
-implement!(MarkerC);
-implement!(MarkerD);
+implement!(MarkerV1);
+implement!(MarkerV2);
+implement!(MarkerV3);
+implement!(MarkerV4);
 
 fn put_payloads<M: DataMarker>(exporter: &mut BlobExporter)
 where
@@ -270,39 +282,23 @@ where
     exporter.flush(M::INFO, Default::default()).unwrap();
 }
 
-fn make_blob_v1() -> Vec<u8> {
+fn make_blob_v3() -> Vec<u8> {
     let mut blob: Vec<u8> = Vec::new();
     let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
-    put_payloads::<MarkerA>(&mut exporter);
-    put_payloads::<MarkerB>(&mut exporter);
-    put_payloads::<MarkerC>(&mut exporter);
-    put_payloads::<MarkerD>(&mut exporter);
+    put_payloads::<MarkerV1>(&mut exporter);
+    put_payloads::<MarkerV2>(&mut exporter);
+    put_payloads::<MarkerV3>(&mut exporter);
+    put_payloads::<MarkerV4>(&mut exporter);
     exporter.close().unwrap();
     drop(exporter);
-    assert_eq!(blob.len(), 115274);
-    assert!(blob.len() > 100);
-    blob
-}
-
-fn make_blob_v2() -> Vec<u8> {
-    let mut blob: Vec<u8> = Vec::new();
-    let mut exporter = BlobExporter::new_v2_with_sink(Box::new(&mut blob));
-    put_payloads::<MarkerA>(&mut exporter);
-    put_payloads::<MarkerB>(&mut exporter);
-    put_payloads::<MarkerC>(&mut exporter);
-    put_payloads::<MarkerD>(&mut exporter);
-    exporter.close().unwrap();
-    drop(exporter);
-    assert_eq!(blob.len(), 32982);
+    assert_eq!(blob.len(), 32974);
     assert!(blob.len() > 100);
     blob
 }
 
 fn auxkey_bench(c: &mut Criterion) {
-    let blob_v1 = make_blob_v1();
-    auxkey_bench_for_version(c, &blob_v1, "v1");
-    let blob_v2 = make_blob_v2();
-    auxkey_bench_for_version(c, &blob_v2, "v2");
+    let blob_v3 = make_blob_v3();
+    auxkey_bench_for_version(c, &blob_v3, "v3");
 }
 
 fn auxkey_bench_for_version(c: &mut Criterion, blob: &[u8], version_id: &str) {
@@ -332,7 +328,7 @@ fn auxkey_bench_for_version(c: &mut Criterion, blob: &[u8], version_id: &str) {
             |b| {
                 b.iter(|| {
                     provider
-                        .load_data(black_box(MarkerA::INFO), black_box(req))
+                        .load_data(black_box(MarkerV1::INFO), black_box(req))
                         .unwrap()
                 });
             },

@@ -25,7 +25,7 @@
 //! use icu::locale::Locale;
 //! use icu::locale::{LocaleCanonicalizer, TransformResult};
 //!
-//! let lc = LocaleCanonicalizer::new();
+//! let lc = LocaleCanonicalizer::new_extended();
 //!
 //! let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc"
 //!     .parse()
@@ -37,14 +37,14 @@
 //! ```
 //! use icu::locale::{locale, LocaleExpander, TransformResult};
 //!
-//! let lc = LocaleExpander::new();
+//! let lc = LocaleExpander::new_common();
 //!
 //! let mut locale = locale!("zh-CN");
-//! assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
+//! assert_eq!(lc.maximize(&mut locale.id), TransformResult::Modified);
 //! assert_eq!(locale, locale!("zh-Hans-CN"));
 //!
 //! let mut locale = locale!("zh-Hant-TW");
-//! assert_eq!(lc.maximize(&mut locale), TransformResult::Unmodified);
+//! assert_eq!(lc.maximize(&mut locale.id), TransformResult::Unmodified);
 //! assert_eq!(locale, locale!("zh-Hant-TW"));
 //! ```
 //!
@@ -52,14 +52,14 @@
 //! use icu::locale::{locale, LocaleExpander, TransformResult};
 //! use writeable::assert_writeable_eq;
 //!
-//! let lc = LocaleExpander::new();
+//! let lc = LocaleExpander::new_common();
 //!
 //! let mut locale = locale!("zh-Hans-CN");
-//! assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);
+//! assert_eq!(lc.minimize(&mut locale.id), TransformResult::Modified);
 //! assert_eq!(locale, locale!("zh"));
 //!
 //! let mut locale = locale!("zh");
-//! assert_eq!(lc.minimize(&mut locale), TransformResult::Unmodified);
+//! assert_eq!(lc.minimize(&mut locale.id), TransformResult::Unmodified);
 //! assert_eq!(locale, locale!("zh"));
 //! ```
 //!
@@ -69,7 +69,7 @@
 //! [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`]: http://unicode.org/reports/tr35/#LocaleId_Canonicalization,
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(not(any(test, doc)), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -79,6 +79,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]

@@ -80,7 +80,7 @@
         // clippy::expect_used,
         // clippy::panic,
         clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
+        clippy::exhaustive_enums, clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]
@@ -130,7 +130,7 @@ pub struct CodePointTrieBuilder<'a, T> {
 
 impl<T> CodePointTrieBuilder<'_, T>
 where
-    T: TrieValue + Into<u32>,
+    T: TrieValue,
 {
     /// Build the [`CodePointTrie`].
     ///

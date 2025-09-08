@@ -17,7 +17,6 @@
 
 int32_t icu4x_LineBreakIteratorUtf8_next_mv1(LineBreakIteratorUtf8* self);
 
-
 void icu4x_LineBreakIteratorUtf8_destroy_mv1(LineBreakIteratorUtf8* self);
 
 

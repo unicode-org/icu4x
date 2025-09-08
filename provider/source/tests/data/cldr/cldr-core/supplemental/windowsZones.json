@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "46"
+      "_cldrVersion": "47"
     },
     "windowsZones": {
       "mapTimezones": [
@@ -694,13 +694,6 @@
         },
         {
           "mapZone": {
-            "_other": "Central Standard Time",
-            "_type": "CST6CDT",
-            "_territory": "ZZ"
-          }
-        },
-        {
-          "mapZone": {
             "_other": "Central Standard Time (Mexico)",
             "_type": "America/Mexico_City",
             "_territory": "001"
@@ -956,13 +949,6 @@
             "_other": "Eastern Standard Time",
             "_type": "America/New_York America/Detroit America/Indiana/Petersburg America/Indiana/Vincennes America/Indiana/Winamac America/Kentucky/Monticello America/Louisville",
             "_territory": "US"
-          }
-        },
-        {
-          "mapZone": {
-            "_other": "Eastern Standard Time",
-            "_type": "EST5EDT",
-            "_territory": "ZZ"
           }
         },
         {
@@ -1639,13 +1625,6 @@
         },
         {
           "mapZone": {
-            "_other": "Mountain Standard Time",
-            "_type": "MST7MDT",
-            "_territory": "ZZ"
-          }
-        },
-        {
-          "mapZone": {
             "_other": "Mountain Standard Time (Mexico)",
             "_type": "America/Mazatlan",
             "_territory": "001"
@@ -1859,13 +1838,6 @@
             "_other": "Pacific Standard Time",
             "_type": "America/Los_Angeles",
             "_territory": "US"
-          }
-        },
-        {
-          "mapZone": {
-            "_other": "Pacific Standard Time",
-            "_type": "PST8PDT",
-            "_territory": "ZZ"
           }
         },
         {
@@ -2830,7 +2802,7 @@
         {
           "mapZone": {
             "_other": "Ulaanbaatar Standard Time",
-            "_type": "Asia/Ulaanbaatar Asia/Choibalsan",
+            "_type": "Asia/Ulaanbaatar",
             "_territory": "MN"
           }
         },

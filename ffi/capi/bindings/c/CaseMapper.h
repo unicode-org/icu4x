@@ -20,12 +20,18 @@
 
 
 
-typedef struct icu4x_CaseMapper_create_mv1_result {union {CaseMapper* ok; DataError err;}; bool is_ok;} icu4x_CaseMapper_create_mv1_result;
-icu4x_CaseMapper_create_mv1_result icu4x_CaseMapper_create_mv1(const DataProvider* provider);
+CaseMapper* icu4x_CaseMapper_create_mv1(void);
+
+typedef struct icu4x_CaseMapper_create_with_provider_mv1_result {union {CaseMapper* ok; DataError err;}; bool is_ok;} icu4x_CaseMapper_create_with_provider_mv1_result;
+icu4x_CaseMapper_create_with_provider_mv1_result icu4x_CaseMapper_create_with_provider_mv1(const DataProvider* provider);
 
 void icu4x_CaseMapper_lowercase_mv1(const CaseMapper* self, DiplomatStringView s, const Locale* locale, DiplomatWrite* write);
 
 void icu4x_CaseMapper_uppercase_mv1(const CaseMapper* self, DiplomatStringView s, const Locale* locale, DiplomatWrite* write);
+
+void icu4x_CaseMapper_lowercase_with_compiled_data_mv1(DiplomatStringView s, const Locale* locale, DiplomatWrite* write);
+
+void icu4x_CaseMapper_uppercase_with_compiled_data_mv1(DiplomatStringView s, const Locale* locale, DiplomatWrite* write);
 
 void icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1(const CaseMapper* self, DiplomatStringView s, const Locale* locale, TitlecaseOptionsV1 options, DiplomatWrite* write);
 
@@ -37,14 +43,23 @@ void icu4x_CaseMapper_add_case_closure_to_mv1(const CaseMapper* self, char32_t c
 
 char32_t icu4x_CaseMapper_simple_lowercase_mv1(const CaseMapper* self, char32_t ch);
 
+char32_t icu4x_CaseMapper_simple_lowercase_with_compiled_data_mv1(char32_t ch);
+
 char32_t icu4x_CaseMapper_simple_uppercase_mv1(const CaseMapper* self, char32_t ch);
+
+char32_t icu4x_CaseMapper_simple_uppercase_with_compiled_data_mv1(char32_t ch);
 
 char32_t icu4x_CaseMapper_simple_titlecase_mv1(const CaseMapper* self, char32_t ch);
 
+char32_t icu4x_CaseMapper_simple_titlecase_with_compiled_data_mv1(char32_t ch);
+
 char32_t icu4x_CaseMapper_simple_fold_mv1(const CaseMapper* self, char32_t ch);
+
+char32_t icu4x_CaseMapper_simple_fold_with_compiled_data_mv1(char32_t ch);
 
 char32_t icu4x_CaseMapper_simple_fold_turkic_mv1(const CaseMapper* self, char32_t ch);
 
+char32_t icu4x_CaseMapper_simple_fold_turkic_with_compiled_data_mv1(char32_t ch);
 
 void icu4x_CaseMapper_destroy_mv1(CaseMapper* self);
 

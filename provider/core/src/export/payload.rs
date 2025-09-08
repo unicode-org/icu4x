@@ -4,28 +4,37 @@
 
 use core::any::Any;
 
-use crate::dynutil::UpcastDataPayload;
 use crate::prelude::*;
+use crate::ule::MaybeEncodeAsVarULE;
+use crate::{dynutil::UpcastDataPayload, ule::MaybeAsVarULE};
 use alloc::sync::Arc;
 use databake::{Bake, BakeSize, CrateEnv, TokenStream};
-use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
+use zerovec::VarZeroVec;
+
+#[cfg(doc)]
+use zerovec::ule::VarULE;
 
 trait ExportableDataPayload {
-    fn bake_yoke(&self, env: &CrateEnv) -> TokenStream;
+    fn bake_yoke(&self, ctx: &CrateEnv) -> TokenStream;
     fn bake_size(&self) -> usize;
     fn serialize_yoke(
         &self,
         serializer: &mut dyn erased_serde::Serializer,
     ) -> Result<(), DataError>;
+    fn maybe_bake_varule_encoded(
+        &self,
+        rest: &[&DataPayload<ExportMarker>],
+        ctx: &CrateEnv,
+    ) -> Option<TokenStream>;
     fn as_any(&self) -> &dyn Any;
     fn eq_dyn(&self, other: &dyn ExportableDataPayload) -> bool;
 }
 
 impl<M: DynamicDataMarker> ExportableDataPayload for DataPayload<M>
 where
-    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Bake + BakeSize + serde::Serialize,
-    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: PartialEq,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output:
+        Bake + BakeSize + serde::Serialize + MaybeEncodeAsVarULE + PartialEq,
 {
     fn bake_yoke(&self, ctx: &CrateEnv) -> TokenStream {
         self.get().bake(ctx)
@@ -44,6 +53,34 @@ where
             .erased_serialize(serializer)
             .map_err(|e| DataError::custom("Serde export").with_display_context(&e))?;
         Ok(())
+    }
+
+    fn maybe_bake_varule_encoded(
+        &self,
+        rest: &[&DataPayload<ExportMarker>],
+        ctx: &CrateEnv,
+    ) -> Option<TokenStream> {
+        let first_varule = self.get().maybe_encode_as_varule()?;
+        let recovered_vec: Vec<
+            &<<M::DataStruct as Yokeable<'_>>::Output as MaybeAsVarULE>::EncodedStruct,
+        > = core::iter::once(first_varule)
+            .chain(rest.iter().map(|v| {
+                #[expect(clippy::expect_used)] // exporter code
+                v.get()
+                    .payload
+                    .as_any()
+                    .downcast_ref::<Self>()
+                    .expect("payloads expected to be same type")
+                    .get()
+                    .maybe_encode_as_varule()
+                    .expect("MaybeEncodeAsVarULE impl should be symmetric")
+            }))
+            .collect();
+        let vzv: VarZeroVec<
+            <<M::DataStruct as Yokeable<'_>>::Output as MaybeAsVarULE>::EncodedStruct,
+        > = VarZeroVec::from(&recovered_vec);
+        let vzs = vzv.as_slice();
+        Some(vzs.bake(ctx))
     }
 
     fn as_any(&self) -> &dyn Any {
@@ -66,8 +103,8 @@ where
     }
 }
 
-#[doc(hidden)] // macro
 #[derive(yoke::Yokeable, Clone)]
+#[allow(missing_docs)]
 pub struct ExportBox {
     payload: Arc<dyn ExportableDataPayload + Sync + Send>,
 }
@@ -92,8 +129,8 @@ impl<M> UpcastDataPayload<M> for ExportMarker
 where
     M: DynamicDataMarker,
     M::DataStruct: Sync + Send,
-    for<'a> <M::DataStruct as Yokeable<'a>>::Output: Bake + BakeSize + serde::Serialize,
-    for<'a> YokeTraitHack<<M::DataStruct as Yokeable<'a>>::Output>: PartialEq,
+    for<'a> <M::DataStruct as Yokeable<'a>>::Output:
+        Bake + BakeSize + serde::Serialize + MaybeEncodeAsVarULE + PartialEq,
 {
     fn upcast(other: DataPayload<M>) -> DataPayload<ExportMarker> {
         DataPayload::from_owned(ExportBox {
@@ -108,13 +145,13 @@ impl DataPayload<ExportMarker> {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::export::*;
     /// use icu_provider::dynutil::UpcastDataPayload;
-    /// use icu_provider::hello_world::HelloWorldV1Marker;
+    /// use icu_provider::export::*;
+    /// use icu_provider::hello_world::HelloWorldV1;
     /// use icu_provider::prelude::*;
     ///
     /// // Create an example DataPayload
-    /// let payload: DataPayload<HelloWorldV1Marker> = Default::default();
+    /// let payload: DataPayload<HelloWorldV1> = Default::default();
     /// let export: DataPayload<ExportMarker> = UpcastDataPayload::upcast(payload);
     ///
     /// // Serialize the payload to a JSON string
@@ -140,22 +177,22 @@ impl DataPayload<ExportMarker> {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::export::*;
     /// use icu_provider::dynutil::UpcastDataPayload;
-    /// use icu_provider::hello_world::HelloWorldV1Marker;
+    /// use icu_provider::export::*;
+    /// use icu_provider::hello_world::HelloWorldV1;
     /// use icu_provider::prelude::*;
     /// # use databake::quote;
     /// # use std::collections::BTreeSet;
     ///
     /// // Create an example DataPayload
-    /// let payload: DataPayload<HelloWorldV1Marker> = Default::default();
+    /// let payload: DataPayload<HelloWorldV1> = Default::default();
     /// let export: DataPayload<ExportMarker> = UpcastDataPayload::upcast(payload);
     ///
     /// let env = databake::CrateEnv::default();
     /// let tokens = export.tokenize(&env);
     /// assert_eq!(
     ///     quote! {
-    ///         icu_provider::hello_world::HelloWorldV1 {
+    ///         icu_provider::hello_world::HelloWorld {
     ///             message: alloc::borrow::Cow::Borrowed("(und) Hello World"),
     ///         }
     ///     }
@@ -169,8 +206,15 @@ impl DataPayload<ExportMarker> {
     ///         .collect::<BTreeSet<_>>()
     /// );
     /// ```
-    pub fn tokenize(&self, env: &CrateEnv) -> TokenStream {
-        self.get().payload.bake_yoke(env)
+    pub fn tokenize(&self, ctx: &CrateEnv) -> TokenStream {
+        self.get().payload.bake_yoke(ctx)
+    }
+
+    /// If this payload's struct can be dereferenced as a [`VarULE`],
+    /// returns a [`TokenStream`] of the slice encoded as a [`VarZeroVec`].
+    pub fn tokenize_encoded_seq(structs: &[&Self], ctx: &CrateEnv) -> Option<TokenStream> {
+        let (first, rest) = structs.split_first()?;
+        first.get().payload.maybe_bake_varule_encoded(rest, ctx)
     }
 
     /// Returns the data size using postcard encoding
@@ -208,7 +252,7 @@ impl DataPayload<ExportMarker> {
         use postcard::ser_flavors::Flavor;
 
         struct HashFlavor<'a, H>(&'a mut H, usize);
-        impl<'a, H: core::hash::Hasher> Flavor for HashFlavor<'a, H> {
+        impl<H: core::hash::Hasher> Flavor for HashFlavor<'_, H> {
             type Output = usize;
 
             fn try_push(&mut self, data: u8) -> postcard::Result<()> {
@@ -251,13 +295,13 @@ mod tests {
 
     #[test]
     fn test_compare_with_dyn() {
-        let payload1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+        let payload1: DataPayload<HelloWorldV1> = DataPayload::from_owned(HelloWorld {
             message: "abc".into(),
         });
-        let payload2: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+        let payload2: DataPayload<HelloWorldV1> = DataPayload::from_owned(HelloWorld {
             message: "abc".into(),
         });
-        let payload3: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
+        let payload3: DataPayload<HelloWorldV1> = DataPayload::from_owned(HelloWorld {
             message: "def".into(),
         });
 
@@ -271,23 +315,17 @@ mod tests {
     #[test]
     fn test_export_marker_partial_eq() {
         let payload1: DataPayload<ExportMarker> =
-            UpcastDataPayload::upcast(DataPayload::<HelloWorldV1Marker>::from_owned(
-                HelloWorldV1 {
-                    message: "abc".into(),
-                },
-            ));
+            UpcastDataPayload::upcast(DataPayload::<HelloWorldV1>::from_owned(HelloWorld {
+                message: "abc".into(),
+            }));
         let payload2: DataPayload<ExportMarker> =
-            UpcastDataPayload::upcast(DataPayload::<HelloWorldV1Marker>::from_owned(
-                HelloWorldV1 {
-                    message: "abc".into(),
-                },
-            ));
+            UpcastDataPayload::upcast(DataPayload::<HelloWorldV1>::from_owned(HelloWorld {
+                message: "abc".into(),
+            }));
         let payload3: DataPayload<ExportMarker> =
-            UpcastDataPayload::upcast(DataPayload::<HelloWorldV1Marker>::from_owned(
-                HelloWorldV1 {
-                    message: "def".into(),
-                },
-            ));
+            UpcastDataPayload::upcast(DataPayload::<HelloWorldV1>::from_owned(HelloWorld {
+                message: "def".into(),
+            }));
 
         assert_eq!(payload1, payload2);
         assert_eq!(payload2, payload1);

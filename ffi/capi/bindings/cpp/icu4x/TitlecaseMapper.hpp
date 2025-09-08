@@ -8,7 +8,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
@@ -19,27 +21,36 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_TitlecaseMapper_create_mv1_result {union {icu4x::capi::TitlecaseMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_TitlecaseMapper_create_mv1_result;
-    icu4x_TitlecaseMapper_create_mv1_result icu4x_TitlecaseMapper_create_mv1(const icu4x::capi::DataProvider* provider);
-    
+    icu4x_TitlecaseMapper_create_mv1_result icu4x_TitlecaseMapper_create_mv1(void);
+
+    typedef struct icu4x_TitlecaseMapper_create_with_provider_mv1_result {union {icu4x::capi::TitlecaseMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_TitlecaseMapper_create_with_provider_mv1_result;
+    icu4x_TitlecaseMapper_create_with_provider_mv1_result icu4x_TitlecaseMapper_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
+
     void icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(const icu4x::capi::TitlecaseMapper* self, diplomat::capi::DiplomatStringView s, const icu4x::capi::Locale* locale, icu4x::capi::TitlecaseOptionsV1 options, diplomat::capi::DiplomatWrite* write);
-    
-    
+
+    void icu4x_TitlecaseMapper_titlecase_segment_with_compiled_data_v1_mv1(diplomat::capi::DiplomatStringView s, const icu4x::capi::Locale* locale, icu4x::capi::TitlecaseOptionsV1 options, diplomat::capi::DiplomatWrite* write);
+
     void icu4x_TitlecaseMapper_destroy_mv1(TitlecaseMapper* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::TitlecaseMapper>, icu4x::DataError> icu4x::TitlecaseMapper::create(const icu4x::DataProvider& provider) {
-  auto result = icu4x::capi::icu4x_TitlecaseMapper_create_mv1(provider.AsFFI());
+inline diplomat::result<std::unique_ptr<icu4x::TitlecaseMapper>, icu4x::DataError> icu4x::TitlecaseMapper::create() {
+  auto result = icu4x::capi::icu4x_TitlecaseMapper_create_mv1();
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::TitlecaseMapper>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::TitlecaseMapper>>(std::unique_ptr<icu4x::TitlecaseMapper>(icu4x::TitlecaseMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::TitlecaseMapper>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::TitlecaseMapper>, icu4x::DataError> icu4x::TitlecaseMapper::create_with_provider(const icu4x::DataProvider& provider) {
+  auto result = icu4x::capi::icu4x_TitlecaseMapper_create_with_provider_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::TitlecaseMapper>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::TitlecaseMapper>>(std::unique_ptr<icu4x::TitlecaseMapper>(icu4x::TitlecaseMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::TitlecaseMapper>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::TitlecaseMapper::titlecase_segment_v1(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options) const {
   if (!diplomat::capi::diplomat_is_str(s.data(), s.size())) {
-    return diplomat::Err<diplomat::Utf8Error>(diplomat::Utf8Error());
+    return diplomat::Err<diplomat::Utf8Error>();
   }
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
@@ -49,6 +60,44 @@ inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::TitlecaseMapper
     options.AsFFI(),
     &write);
   return diplomat::Ok<std::string>(std::move(output));
+}
+template<typename W>
+inline diplomat::result<std::monostate, diplomat::Utf8Error> icu4x::TitlecaseMapper::titlecase_segment_v1_write(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options, W& writeable) const {
+  if (!diplomat::capi::diplomat_is_str(s.data(), s.size())) {
+    return diplomat::Err<diplomat::Utf8Error>();
+  }
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  icu4x::capi::icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(this->AsFFI(),
+    {s.data(), s.size()},
+    locale.AsFFI(),
+    options.AsFFI(),
+    &write);
+  return diplomat::Ok<std::monostate>();
+}
+
+inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::TitlecaseMapper::titlecase_segment_with_compiled_data_v1(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options) {
+  if (!diplomat::capi::diplomat_is_str(s.data(), s.size())) {
+    return diplomat::Err<diplomat::Utf8Error>();
+  }
+  std::string output;
+  diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
+  icu4x::capi::icu4x_TitlecaseMapper_titlecase_segment_with_compiled_data_v1_mv1({s.data(), s.size()},
+    locale.AsFFI(),
+    options.AsFFI(),
+    &write);
+  return diplomat::Ok<std::string>(std::move(output));
+}
+template<typename W>
+inline diplomat::result<std::monostate, diplomat::Utf8Error> icu4x::TitlecaseMapper::titlecase_segment_with_compiled_data_v1_write(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options, W& writeable) {
+  if (!diplomat::capi::diplomat_is_str(s.data(), s.size())) {
+    return diplomat::Err<diplomat::Utf8Error>();
+  }
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  icu4x::capi::icu4x_TitlecaseMapper_titlecase_segment_with_compiled_data_v1_mv1({s.data(), s.size()},
+    locale.AsFFI(),
+    options.AsFFI(),
+    &write);
+  return diplomat::Ok<std::monostate>();
 }
 
 inline const icu4x::capi::TitlecaseMapper* icu4x::TitlecaseMapper::AsFFI() const {

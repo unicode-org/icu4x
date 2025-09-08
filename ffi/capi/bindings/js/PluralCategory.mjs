@@ -2,9 +2,11 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
-/** See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html) for more information.
-*/
+
+
+/**
+ * See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/2.0.0/icu/plurals/enum.PluralCategory.html) for more information.
+ */
 export class PluralCategory {
     #value = undefined;
 
@@ -17,13 +19,17 @@ export class PluralCategory {
         ["Other", 5]
     ]);
 
-    constructor(value) {
+    static getAllEntries() {
+        return PluralCategory.#values.entries();
+    }
+
+    #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
             // instances of this type, otherwise the enums are treated as singletons.
             if (arguments[1] === diplomatRuntime.internalConstructor ) {
                 this.#value = arguments[2];
-                return;
+                return this;
             }
             return PluralCategory.#objectValues[arguments[1]];
         }
@@ -35,18 +41,24 @@ export class PluralCategory {
         let intVal = PluralCategory.#values.get(value);
 
         // Nullish check, checks for null or undefined
-        if (intVal == null) {
+        if (intVal != null) {
             return PluralCategory.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a PluralCategory and does not correspond to any of its enumerator values.");
     }
 
-    get value() {
+    /** @internal */
+    static fromValue(value) {
+        return new PluralCategory(value);
+    }
+
+    get value(){
         return [...PluralCategory.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    /** @internal */
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -65,26 +77,39 @@ export class PluralCategory {
     static Many = PluralCategory.#objectValues[4];
     static Other = PluralCategory.#objectValues[5];
 
+
+    /**
+     * Construct from a string in the format
+     * [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
+     *
+     * See the [Rust documentation for `get_for_cldr_string`](https://docs.rs/icu/2.0.0/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_string) for more information.
+     *
+     * See the [Rust documentation for `get_for_cldr_bytes`](https://docs.rs/icu/2.0.0/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_bytes) for more information.
+     */
     static getForCldrString(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
-        
+
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
-        const result = wasm.icu4x_PluralCategory_get_for_cldr_string_mv1(diplomatReceive.buffer, ...sSlice.splat());
-    
+
+
+        const result = wasm.icu4x_PluralCategory_get_for_cldr_string_mv1(diplomatReceive.buffer, sSlice.ptr);
+
         try {
             if (!diplomatReceive.resultFlag) {
                 return null;
             }
             return new PluralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
+    }
+
+    constructor(value) {
+        return this.#internalConstructor(...arguments)
     }
 }

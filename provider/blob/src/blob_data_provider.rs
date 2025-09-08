@@ -3,8 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::blob_schema::BlobSchema;
-use alloc::boxed::Box;
-use alloc::collections::BTreeSet;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use icu_provider::Cart;
@@ -38,7 +36,7 @@ use yoke::*;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Read an ICU4X data blob dynamically:
-/// let blob = std::fs::read("tests/data/v2.postcard")
+/// let blob = std::fs::read("tests/data/v3.postcard")
 ///     .expect("Reading pre-computed postcard buffer");
 ///
 /// // Create a DataProvider from it:
@@ -48,7 +46,7 @@ use yoke::*;
 /// // Check that it works:
 /// let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
 ///     &provider,
-///     &locale!("la").into(),
+///     locale!("la").into(),
 /// )
 /// .expect("locale exists");
 ///
@@ -66,7 +64,7 @@ use yoke::*;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Read an ICU4X data blob statically:
-/// const HELLO_WORLD_BLOB: &[u8] = include_bytes!("../tests/data/v2.postcard");
+/// const HELLO_WORLD_BLOB: &[u8] = include_bytes!("../tests/data/v3.postcard");
 ///
 /// // Create a DataProvider from it:
 /// let provider = BlobDataProvider::try_new_from_static_blob(HELLO_WORLD_BLOB)
@@ -75,7 +73,7 @@ use yoke::*;
 /// // Check that it works:
 /// let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
 ///     &provider,
-///     &locale!("la").into(),
+///     locale!("la").into(),
 /// )
 /// .expect("locale exists");
 ///
@@ -96,7 +94,8 @@ impl core::fmt::Debug for BlobDataProvider {
 
 impl BlobDataProvider {
     /// Create a [`BlobDataProvider`] from a blob of ICU4X data.
-    pub fn try_new_from_blob(blob: Box<[u8]>) -> Result<Self, DataError> {
+    #[cfg(feature = "alloc")]
+    pub fn try_new_from_blob(blob: alloc::boxed::Box<[u8]>) -> Result<Self, DataError> {
         Ok(Self {
             data: Cart::try_make_yoke(blob, |bytes| {
                 BlobSchema::deserialize_and_check(&mut postcard::Deserializer::from_bytes(bytes))
@@ -114,9 +113,9 @@ impl BlobDataProvider {
         })
     }
 
-    #[doc(hidden)] // for testing purposes only: checks if it is using the V2Bigger format
-    pub fn internal_is_using_v2_bigger_format(&self) -> bool {
-        matches!(self.data.get(), BlobSchema::V002Bigger(..))
+    #[doc(hidden)] // for testing purposes only: checks if it is using the Bigger format
+    pub fn internal_is_using_bigger_format(&self) -> bool {
+        matches!(self.data.get(), BlobSchema::V003Bigger(..))
     }
 }
 
@@ -126,13 +125,16 @@ impl DynamicDataProvider<BufferMarker> for BlobDataProvider {
         marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
-        let payload = self
+        let payload: Yoke<(&[u8], Option<u64>), Option<Cart>> = self
             .data
-            .try_map_project_cloned(|blob, _| blob.load(marker, req))
-            .map(DataPayload::from_yoked_buffer)?;
+            .try_map_project_cloned(|blob, _| blob.load(marker, req))?;
         let mut metadata = DataResponseMetadata::default();
         metadata.buffer_format = Some(BufferFormat::Postcard1);
-        Ok(DataResponse { metadata, payload })
+        metadata.checksum = payload.get().1;
+        Ok(DataResponse {
+            metadata,
+            payload: DataPayload::from_yoked_buffer(payload.map_project(|(bytes, _), _| bytes)),
+        })
     }
 }
 
@@ -149,11 +151,12 @@ impl DynamicDryDataProvider<BufferMarker> for BlobDataProvider {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl IterableDynamicDataProvider<BufferMarker> for BlobDataProvider {
     fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    ) -> Result<alloc::collections::BTreeSet<DataIdentifierCow<'_>>, DataError> {
         self.data.get().iter_ids(marker)
     }
 }
@@ -165,94 +168,82 @@ mod test {
     use icu_provider::export::*;
     use icu_provider::hello_world::*;
 
-    #[icu_provider::data_struct(marker(HelloSingletonV1Marker, "hello/singleton@1", singleton))]
-    #[derive(Clone, Copy)]
-    pub struct HelloSingletonV1;
+    icu_provider::data_marker!(HelloSingletonV1, HelloSingleton, is_singleton = true);
+    #[derive(Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
+    pub struct HelloSingleton;
 
     #[test]
     fn test_empty() {
-        for version in [1, 2] {
-            let mut blob: Vec<u8> = Vec::new();
+        let mut blob: Vec<u8> = Vec::new();
 
-            {
-                let mut exporter = if version == 1 {
-                    BlobExporter::new_with_sink(Box::new(&mut blob))
-                } else {
-                    BlobExporter::new_v2_with_sink(Box::new(&mut blob))
-                };
+        {
+            let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
 
-                exporter
-                    .flush(HelloWorldV1Marker::INFO, Default::default())
-                    .unwrap();
+            exporter
+                .flush(HelloWorldV1::INFO, Default::default())
+                .unwrap();
 
-                exporter.close().unwrap();
-            }
-
-            let provider = BlobDataProvider::try_new_from_blob(blob.into()).unwrap();
-
-            assert!(
-                matches!(
-                    provider.load_data(HelloWorldV1Marker::INFO, Default::default()),
-                    Err(DataError {
-                        kind: DataErrorKind::IdentifierNotFound,
-                        ..
-                    })
-                ),
-                "(version: {version})"
-            );
+            exporter.close().unwrap();
         }
+
+        let provider = BlobDataProvider::try_new_from_blob(blob.into()).unwrap();
+
+        assert!(
+            matches!(
+                provider.load_data(HelloWorldV1::INFO, Default::default()),
+                Err(DataError {
+                    kind: DataErrorKind::IdentifierNotFound,
+                    ..
+                })
+            ),
+            "Empty blob test"
+        );
     }
 
     #[test]
     fn test_singleton() {
-        for version in [1, 2] {
-            let mut blob: Vec<u8> = Vec::new();
+        let mut blob: Vec<u8> = Vec::new();
 
-            {
-                let mut exporter = if version == 1 {
-                    BlobExporter::new_with_sink(Box::new(&mut blob))
-                } else {
-                    BlobExporter::new_v2_with_sink(Box::new(&mut blob))
-                };
+        {
+            let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
 
-                exporter
-                    .flush(HelloSingletonV1Marker::INFO, Default::default())
-                    .unwrap();
+            exporter
+                .flush(HelloSingletonV1::INFO, Default::default())
+                .unwrap();
 
-                exporter.close().unwrap();
-            }
-
-            let provider = BlobDataProvider::try_new_from_blob(blob.into()).unwrap();
-
-            assert!(
-                matches!(
-                    provider.load_data(
-                        HelloSingletonV1Marker::INFO,
-                        DataRequest {
-                            id: DataIdentifierBorrowed::for_locale(
-                                &icu_locale_core::langid!("de").into()
-                            ),
-                            ..Default::default()
-                        }
-                    ),
-                    Err(DataError {
-                        kind: DataErrorKind::InvalidRequest,
-                        ..
-                    })
-                ),
-                "(version: {version})"
-            );
-
-            assert!(
-                matches!(
-                    provider.load_data(HelloSingletonV1Marker::INFO, Default::default()),
-                    Err(DataError {
-                        kind: DataErrorKind::IdentifierNotFound,
-                        ..
-                    })
-                ),
-                "(version: {version})"
-            );
+            exporter.close().unwrap();
         }
+
+        let provider = BlobDataProvider::try_new_from_blob(blob.into()).unwrap();
+
+        assert!(
+            matches!(
+                provider.load_data(
+                    HelloSingletonV1::INFO,
+                    DataRequest {
+                        id: DataIdentifierBorrowed::for_locale(
+                            &icu_locale_core::langid!("de").into()
+                        ),
+                        ..Default::default()
+                    }
+                ),
+                Err(DataError {
+                    kind: DataErrorKind::InvalidRequest,
+                    ..
+                })
+            ),
+            "Singleton blob test"
+        );
+
+        assert!(
+            matches!(
+                provider.load_data(HelloSingletonV1::INFO, Default::default()),
+                Err(DataError {
+                    kind: DataErrorKind::IdentifierNotFound,
+                    ..
+                })
+            ),
+            "Singleton blob test"
+        );
     }
 }

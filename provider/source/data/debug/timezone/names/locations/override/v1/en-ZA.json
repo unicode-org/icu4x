@@ -1,0 +1,52 @@
+{
+  "locations": {
+    "casjf": "St John’s",
+    "gpmsb": "St Martin",
+    "gpsbh": "St Barthélemy",
+    "knbas": "St Kitts & Nevis",
+    "kzaau": "Aktau",
+    "lccas": "St Lucia",
+    "pmmqc": "St Pierre & Miquelon",
+    "shshn": "St Helena",
+    "vcsvd": "St Vincent & the Grenadines",
+    "vistt": "US Virgin Islands"
+  },
+  "pattern_generic": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " Time"
+    }
+  ],
+  "pattern_standard": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " Standard Time"
+    }
+  ],
+  "pattern_daylight": [
+    {
+      "Placeholder": "Singleton"
+    },
+    {
+      "Literal": " Daylight Time"
+    }
+  ],
+  "pattern_partial_location": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Literal": " ("
+    },
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": ")"
+    }
+  ]
+}

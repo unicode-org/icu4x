@@ -16,7 +16,9 @@ icu_provider = { workspace = true }
 
 clap = { workspace = true, features = ["derive"] }
 eyre = { workspace = true }
+flate2 = { workspace = true }
 log = { workspace = true }
 simple_logger = { workspace = true }
 ureq = { workspace = true }
+tar = { workspace = true }
 zip = { workspace = true, features = ["deflate"] }

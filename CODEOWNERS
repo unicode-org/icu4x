@@ -11,9 +11,9 @@ components/calendar/              @Manishearth @sffc
 components/casemap/               @Manishearth
 components/collator/              @hsivonen @echeran
 components/collections/           @echeran
-components/datetime/              @zbraniecki @nordzilla
+components/datetime/              @sffc @zbraniecki
 components/decimal/               @sffc
-components/experimental/src/compactdecimal/      @eggrobin
+components/experimental/src/compactdecimal/      @younies
 components/experimental/src/dimension/           @younies
 components/experimental/src/displaynames/        @sffc @snktd
 components/experimental/src/relativetime/        @pdogr
@@ -24,8 +24,8 @@ components/locale_core/           @zbraniecki @nciric
 components/normalizer/            @hsivonen @echeran
 components/plurals/               @zbraniecki @sffc
 components/segmenter/             @aethanyc @makotokato @sffc
-components/timezone/              @nordzilla
-tutorials/gn/                @sffc
+components/time/              @nekevss @robertbastian @sffc
+examples/gn/                     @sffc
 ffi/capi/                         @Manishearth
 ffi/ecma402/                      @filmil
 ffi/harfbuzz/                     @hsivonen
@@ -39,13 +39,15 @@ tools/benchmark/binsize/          @gnrunge
 tools/depcheck/                   @Manishearth
 tools/depcheck/src/allowlist.rs   @unicode-org/icu4x-owners
 tools/make/                       @Manishearth @sffc
-utils/bies/                @sffc
+utils/bies/                       @sffc
 utils/databake                    @robertbastian @Manishearth
 utils/deduplicating_array         @robertbastian
 utils/fixed_decimal/              @sffc @younies
+utils/izdtf                       @nekevss @sffc
 utils/litemap/                    @Manishearth @sffc
 utils/pattern/                    @zbraniecki
 utils/tinystr                     @zbraniecki @sffc
+utils/tzif                        @nordzilla
 utils/writeable/                  @sffc @robertbastian
 utils/yoke/                       @Manishearth @sffc
 utils/zerofrom                    @Manishearth @sffc

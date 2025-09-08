@@ -19,11 +19,11 @@ version.workspace = true
 [dependencies]
 icu_provider = { workspace = true }
 icu = { workspace = true, features = ["datagen"] }
-icu_provider_export = { workspace = true, features = ["rayon"] }
+icu_provider_export = { workspace = true }
 icu_provider_source = { workspace = true, optional = true }
 icu_provider_registry = { workspace = true }
 
-icu_provider_blob = { workspace = true, features = ["export"], optional = true }
+icu_provider_blob = { workspace = true, features = ["alloc"], optional = true }
 
 clap = { workspace = true, features = ["derive"] }
 eyre = { workspace = true }
@@ -31,11 +31,11 @@ log = { workspace = true }
 simple_logger = { workspace = true }
 
 [features]
-default = ["use_wasm", "networking", "fs_exporter", "blob_exporter", "baked_exporter", "provider"]
+default = ["use_wasm", "networking", "fs_exporter", "blob_exporter", "baked_exporter", "provider", "rayon"]
 provider = ["dep:icu_provider_source"]
 baked_exporter = ["icu_provider_export/baked_exporter"]
 blob_exporter = ["icu_provider_export/blob_exporter"]
-blob_input = ["dep:icu_provider_blob", "icu/datagen", "icu_provider/export"]
+blob_input = ["dep:icu_provider_blob", "icu/datagen"]
 fs_exporter = ["icu_provider_export/fs_exporter"]
 # Use wasm for building codepointtries
 use_wasm = ["icu_provider_source?/use_wasm"]
@@ -46,6 +46,7 @@ use_wasm = ["icu_provider_source?/use_wasm"]
 use_icu4c = ["icu_provider_source?/use_icu4c"]
 networking = ["icu_provider_source?/networking"]
 experimental = ["icu_provider_source?/experimental", "icu/experimental"]
+rayon = ["icu_provider_export/rayon"]
 
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check

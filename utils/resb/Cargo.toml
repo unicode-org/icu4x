@@ -5,8 +5,7 @@
 [package]
 name = "resb"
 description = "Utilities for reading and writing ICU resource bundle files"
-version = "0.0.0"
-publish = false
+version = "0.1.0"
 
 authors.workspace = true
 categories.workspace = true
@@ -25,12 +24,9 @@ all-features = true
 [dependencies]
 indexmap = { workspace = true, optional = true }
 log = { workspace = true, optional = true }
-nom = { workspace = true, optional = true }
+nom = { version = "7.0.0", optional = true }
 serde = { workspace = true, features = ["alloc"]}
-
-[dev-dependencies]
-serde = { workspace = true, features = ["derive"] }
-zerovec = { workspace = true, features = ["serde"] }
+potential_utf = { workspace = true }
 
 [features]
 default = []
@@ -45,8 +41,3 @@ name = "resb"
 [[example]]
 name = "genrb"
 required-features = ["serialize", "text"]
-
-[[example]]
-name = "time_zone_rule"
-# run in `cargo test`
-harness = false

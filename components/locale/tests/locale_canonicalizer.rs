@@ -22,12 +22,12 @@ fn test_maximize() {
         }
         let mut locale: Locale = case.input.parse().unwrap();
         let unmodified = locale.clone();
-        let result = lc.maximize(&mut locale);
+        let result = lc.maximize(&mut locale.id);
         assert_writeable_eq!(locale, case.output, "{:?}", case);
         if result == TransformResult::Modified {
-            assert_ne!(locale, unmodified, "{:?}", case);
+            assert_ne!(locale, unmodified, "{case:?}");
         } else {
-            assert_eq!(locale, unmodified, "{:?}", case);
+            assert_eq!(locale, unmodified, "{case:?}");
         }
     }
 }
@@ -46,19 +46,19 @@ fn test_minimize() {
         }
         let mut locale: Locale = case.input.parse().unwrap();
         let unmodified = locale.clone();
-        let result = lc.minimize(&mut locale);
+        let result = lc.minimize(&mut locale.id);
         assert_writeable_eq!(locale, case.output, "{:?}", case);
         if result == TransformResult::Modified {
-            assert_ne!(locale, unmodified, "{:?}", case);
+            assert_ne!(locale, unmodified, "{case:?}");
         } else {
-            assert_eq!(locale, unmodified, "{:?}", case);
+            assert_eq!(locale, unmodified, "{case:?}");
         }
     }
 }
 
 #[test]
 fn test_canonicalize() {
-    let lc = LocaleCanonicalizer::new();
+    let lc = LocaleCanonicalizer::new_extended();
 
     let testcases: Vec<fixtures::CanonicalizationTest> =
         serde_json::from_str(include_str!("fixtures/canonicalize.json"))
@@ -73,9 +73,9 @@ fn test_canonicalize() {
         let result = lc.canonicalize(&mut locale);
         assert_writeable_eq!(locale, case.output, "{:?}", case);
         if result == TransformResult::Modified {
-            assert_ne!(locale, unmodified, "{:?}", case);
+            assert_ne!(locale, unmodified, "{case:?}");
         } else {
-            assert_eq!(locale, unmodified, "{:?}", case);
+            assert_eq!(locale, unmodified, "{case:?}");
         }
     }
 }

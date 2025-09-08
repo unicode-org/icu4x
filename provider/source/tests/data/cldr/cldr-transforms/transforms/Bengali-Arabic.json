@@ -1,0 +1,9 @@
+{
+  "_visibility": "external",
+  "_alias": "Bengali-Arabic",
+  "_aliasBcp47": "und-Arab-t-und-beng",
+  "_source": "Beng",
+  "_direction": "forward",
+  "_target": "Arab",
+  "_rulesFile": "Bengali-Arabic.txt"
+}

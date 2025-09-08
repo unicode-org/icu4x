@@ -6,7 +6,7 @@ mod fixtures;
 
 use criterion::{criterion_group, criterion_main, Criterion};
 
-use icu_datetime::pattern::reference::Pattern;
+use icu_datetime::provider::pattern::reference::Pattern;
 
 fn pattern_benches(c: &mut Criterion) {
     let patterns = serde_json::from_str::<fixtures::PatternsFixture>(include_str!(

@@ -4,7 +4,8 @@
 
 use icu_locale_core::subtags::script;
 use icu_locale_core::{subtags, Locale};
-use icu_properties::script::{ScriptMapperBorrowed, ScriptWithExtensionsBorrowed};
+use icu_properties::props::Script;
+use icu_properties::{script::ScriptWithExtensionsBorrowed, PropertyNamesShortBorrowed};
 
 use crate::personnames::api::NameFieldKind::{Given, Surname};
 use crate::personnames::api::{NameFieldKind, PersonName, PersonNamesFormatterError};
@@ -44,7 +45,7 @@ fn compatible_scripts(sc1: subtags::Script, sc2: subtags::Script) -> bool {
 pub fn likely_person_name_locale<N>(
     person_name: &N,
     swe: ScriptWithExtensionsBorrowed,
-    scripts: ScriptMapperBorrowed,
+    scripts: PropertyNamesShortBorrowed<Script>,
 ) -> Result<Locale, PersonNamesFormatterError>
 where
     N: PersonName,
@@ -55,10 +56,10 @@ where
     }
     let name_script = found_name_script.unwrap_or(icu_properties::props::Script::Unknown);
 
-    let locid_script = scripts.get(name_script).unwrap();
+    let locid_script = scripts.get_locale_script(name_script).unwrap();
     person_name.name_locale().map_or_else(
         || {
-            let mut effective_locale = Locale::default();
+            let mut effective_locale = Locale::UNKNOWN;
             effective_locale.id.script = Some(locid_script);
             Ok(effective_locale)
         },
@@ -78,15 +79,13 @@ fn find_script<N>(
 where
     N: PersonName,
 {
-    use icu_properties::props::Script;
-
     person_name
         .available_name_fields()
         .iter()
         .filter(|&name_field| name_field.kind == kind)
         .find_map(|&name_field| {
             person_name.get(name_field).chars().find_map(|c| {
-                let char_script = swe.get_script_val(c as u32);
+                let char_script = swe.get_script_val(c);
                 match char_script {
                     Script::Common | Script::Unknown | Script::Inherited => None,
                     _ => Some(char_script),
@@ -111,14 +110,14 @@ mod tests {
     fn test_effective_locale_matching_script() {
         let lc = LocaleExpander::new_extended();
         let mut locale = locale!("fr");
-        lc.maximize(&mut locale);
+        lc.maximize(&mut locale.id);
         assert_eq!(
-            effective_locale(&locale!("de_Latn_ch"), &locale),
-            Ok(&locale!("de_Latn_ch"))
+            effective_locale(&locale!("de-Latn-ch"), &locale),
+            Ok(&locale!("de-Latn-ch"))
         );
         assert_eq!(
-            effective_locale(&locale, &locale!("de_Latn_ch")),
-            Ok(&locale!("fr_Latn_FR"))
+            effective_locale(&locale, &locale!("de-Latn-ch")),
+            Ok(&locale!("fr-Latn-FR"))
         );
     }
 
@@ -126,13 +125,13 @@ mod tests {
     fn test_effective_locale_non_matching_script() {
         let lc = LocaleExpander::new_extended();
         let mut locale = locale!("ja");
-        lc.maximize(&mut locale);
+        lc.maximize(&mut locale.id);
         assert_eq!(
-            effective_locale(&locale!("de_Latn_ch"), &locale),
+            effective_locale(&locale!("de-Latn-ch"), &locale),
             Ok(&locale!("ja-Jpan-JP"))
         );
         assert_eq!(
-            effective_locale(&locale, &locale!("de_Latn_ch")),
+            effective_locale(&locale, &locale!("de-Latn-ch")),
             Ok(&locale!("de-Latn-CH"))
         );
     }
@@ -141,29 +140,29 @@ mod tests {
     fn test_effective_locale_compatible_script() {
         let lc = LocaleExpander::new_extended();
         let mut locale = locale!("ja");
-        lc.maximize(&mut locale);
+        lc.maximize(&mut locale.id);
         assert_eq!(
-            effective_locale(&locale!("ja_Hani_JP"), &locale),
-            Ok(&locale!("ja_Hani_JP"))
+            effective_locale(&locale!("ja-Hani-JP"), &locale),
+            Ok(&locale!("ja-Hani-JP"))
         );
         assert_eq!(
-            effective_locale(&locale!("ja_Kana_JP"), &locale),
+            effective_locale(&locale!("ja-Kana-JP"), &locale),
             Ok(&locale!("ja-Kana-JP"))
         );
         assert_eq!(
-            effective_locale(&locale!("ja_Hira_JP"), &locale),
+            effective_locale(&locale!("ja-Hira-JP"), &locale),
             Ok(&locale!("ja-Hira-JP"))
         );
         assert_eq!(
-            effective_locale(&locale, &locale!("ja_Hani_JP")),
+            effective_locale(&locale, &locale!("ja-Hani-JP")),
             Ok(&locale!("ja-Jpan-JP"))
         );
         assert_eq!(
-            effective_locale(&locale, &locale!("ja_Kana_JP")),
+            effective_locale(&locale, &locale!("ja-Kana-JP")),
             Ok(&locale!("ja-Jpan-JP"))
         );
         assert_eq!(
-            effective_locale(&locale, &locale!("ja_Hira_JP")),
+            effective_locale(&locale, &locale!("ja-Hira-JP")),
             Ok(&locale!("ja-Jpan-JP"))
         );
     }
@@ -171,18 +170,18 @@ mod tests {
     #[test]
     fn test_likely_person_names_locale() {
         let swe = icu_properties::script::ScriptWithExtensions::new();
-        let scripts = icu_properties::script::ScriptMapper::new();
+        let scripts = icu_properties::PropertyNamesShort::<icu_properties::props::Script>::new();
         assert_eq!(
             likely_person_name_locale(&person_name("Miyazaki", "Hayao").unwrap(), swe, scripts),
-            Ok(locale!("und_Latn"))
+            Ok(locale!("und-Latn"))
         );
         assert_eq!(
             likely_person_name_locale(&person_name("駿", "宮崎").unwrap(), swe, scripts),
-            Ok(locale!("und_Hani"))
+            Ok(locale!("und-Hani"))
         );
         assert_eq!(
             likely_person_name_locale(&person_name("하야오", "미야자키").unwrap(), swe, scripts),
-            Ok(locale!("und_Hang"))
+            Ok(locale!("und-Hang"))
         );
         assert_eq!(
             likely_person_name_locale(
@@ -190,7 +189,7 @@ mod tests {
                 swe,
                 scripts
             ),
-            Ok(locale!("und_Kana"))
+            Ok(locale!("und-Kana"))
         );
     }
 

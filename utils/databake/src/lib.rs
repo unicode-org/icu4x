@@ -30,14 +30,14 @@
 //! #[derive(Bake)]
 //! #[databake(path = my_crate)]
 //! struct MyStruct {
-//!     number: u32,
-//!     string: &'static str,
-//!     slice: &'static [bool],
+//!     pub number: u32,
+//!     pub string: &'static str,
+//!     pub slice: &'static [bool],
 //! }
 //!
 //! #[derive(Bake)]
 //! #[databake(path = my_crate)]
-//! struct AnotherOne(MyStruct, char);
+//! struct AnotherOne(pub MyStruct, pub char);
 //! ```
 //!
 //! # Testing
@@ -48,21 +48,22 @@
 //! # #[derive(Bake)]
 //! # #[databake(path = my_crate)]
 //! # struct MyStruct {
-//! #   number: u32,
-//! #   string: &'static str,
-//! #   slice: &'static [bool],
+//! #   pub number: u32,
+//! #   pub string: &'static str,
+//! #   pub slice: &'static [bool],
 //! # }
 //! # #[derive(Bake)]
 //! # #[databake(path = my_crate)]
-//! # struct AnotherOne(MyStruct, char);
+//! # struct AnotherOne(pub MyStruct, pub char);
 //! # fn main() {
 //! test_bake!(
 //!     AnotherOne,
-//!     const, crate::AnotherOne(
+//!     const,
+//!     crate::AnotherOne(
 //!         crate::MyStruct {
-//!           number: 17u32,
-//!           string: "foo",
-//!           slice: &[true, false],
+//!             number: 17u32,
+//!             string: "foo",
+//!             slice: &[true, false],
 //!         },
 //!         'b',
 //!     ),

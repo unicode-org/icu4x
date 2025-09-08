@@ -4,17 +4,20 @@
 
 use crate::internals::{CaseMapLocale, FoldOptions, FullCaseWriteable, StringAndWriteable};
 use crate::provider::data::MappingKind;
+use crate::provider::CaseMap;
 use crate::provider::CaseMapV1;
-use crate::provider::CaseMapV1Marker;
 use crate::set::ClosureSink;
 use crate::titlecase::{LeadingAdjustment, TitlecaseOptions, TrailingCase};
-use alloc::string::String;
+use alloc::borrow::Cow;
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
 /// A struct with the ability to convert characters and strings to uppercase or lowercase,
 /// or fold them to a normalized form for case-insensitive comparison.
+///
+/// Most methods for this type live on [`CaseMapperBorrowed`], which you can obtain via
+/// [`CaseMapper::new()`] or [`CaseMapper::as_borrowed()`].
 ///
 /// # Examples
 ///
@@ -35,14 +38,7 @@ use writeable::Writeable;
 /// ```
 #[derive(Clone, Debug)]
 pub struct CaseMapper {
-    pub(crate) data: DataPayload<CaseMapV1Marker>,
-}
-
-#[cfg(feature = "compiled_data")]
-impl Default for CaseMapper {
-    fn default() -> Self {
-        Self::new()
-    }
+    pub(crate) data: DataPayload<CaseMapV1>,
 }
 
 impl AsRef<CaseMapper> for CaseMapper {
@@ -51,8 +47,26 @@ impl AsRef<CaseMapper> for CaseMapper {
     }
 }
 
-impl CaseMapper {
-    /// Creates a [`CaseMapper`] using compiled data.
+/// A struct with the ability to convert characters and strings to uppercase or lowercase,
+/// or fold them to a normalized form for case-insensitive comparison, borrowed version.
+///
+/// See methods or [`CaseMapper`] for examples.
+#[derive(Clone, Debug, Copy)]
+pub struct CaseMapperBorrowed<'a> {
+    pub(crate) data: &'a CaseMap<'a>,
+}
+
+impl CaseMapperBorrowed<'static> {
+    /// Cheaply converts a [`CaseMapperBorrowed<'static>`] into a [`CaseMapper`].
+    ///
+    /// Note: Due to branching and indirection, using [`CaseMapper`] might inhibit some
+    /// compile-time optimizations that are possible with [`CaseMapperBorrowed`].
+    pub const fn static_to_owned(self) -> CaseMapper {
+        CaseMapper {
+            data: DataPayload::from_static_ref(self.data),
+        }
+    }
+    /// Creates a [`CaseMapperBorrowed`] using compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -74,43 +88,28 @@ impl CaseMapper {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self {
-            data: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CASE_MAP_V1_MARKER,
-            ),
+            data: crate::provider::Baked::SINGLETON_CASE_MAP_V1,
         }
     }
+}
 
-    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
-    functions: [
-        new: skip,
-        try_new_with_any_provider,
-        try_new_with_buffer_provider,
-        try_new_unstable,
-        Self,
-    ]);
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<P>(provider: &P) -> Result<CaseMapper, DataError>
-    where
-        P: DataProvider<CaseMapV1Marker> + ?Sized,
-    {
-        let data = provider.load(Default::default())?.payload;
-        Ok(Self { data })
+#[cfg(feature = "compiled_data")]
+impl Default for CaseMapperBorrowed<'static> {
+    fn default() -> Self {
+        Self::new()
     }
+}
 
+impl<'a> CaseMapperBorrowed<'a> {
     /// Returns the full lowercase mapping of the given string as a [`Writeable`].
     /// This function is context and language sensitive. Callers should pass the text's language
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
     /// `Default::default()` for the root locale.
     ///
-    /// See [`Self::lowercase_to_string()`] for the equivalent convenience function that returns a String,
+    /// See [`Self::lowercase_to_string()`] for the equivalent convenience function that returns a string,
     /// as well as for an example.
-    pub fn lowercase<'a>(
-        &'a self,
-        src: &'a str,
-        langid: &LanguageIdentifier,
-    ) -> impl Writeable + 'a {
-        self.data.get().full_helper_writeable::<false>(
+    pub fn lowercase(self, src: &'a str, langid: &LanguageIdentifier) -> impl Writeable + 'a {
+        self.data.full_helper_writeable::<false>(
             src,
             CaseMapLocale::from_langid(langid),
             MappingKind::Lower,
@@ -123,14 +122,10 @@ impl CaseMapper {
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
     /// `Default::default()` for the root locale.
     ///
-    /// See [`Self::uppercase_to_string()`] for the equivalent convenience function that returns a String,
+    /// See [`Self::uppercase_to_string()`] for the equivalent convenience function that returns a string,
     /// as well as for an example.
-    pub fn uppercase<'a>(
-        &'a self,
-        src: &'a str,
-        langid: &LanguageIdentifier,
-    ) -> impl Writeable + 'a {
-        self.data.get().full_helper_writeable::<false>(
+    pub fn uppercase(self, src: &'a str, langid: &LanguageIdentifier) -> impl Writeable + 'a {
+        self.data.full_helper_writeable::<false>(
             src,
             CaseMapLocale::from_langid(langid),
             MappingKind::Upper,
@@ -157,12 +152,12 @@ impl CaseMapper {
     /// the behavior of this function and the equivalent ones on [`TitlecaseMapper`] when the head adjustment mode
     /// is [`LeadingAdjustment::None`].
     ///
-    /// See [`Self::titlecase_segment_with_only_case_data_to_string()`] for the equivalent convenience function that returns a String,
+    /// See [`Self::titlecase_segment_with_only_case_data_to_string()`] for the equivalent convenience function that returns a string,
     /// as well as for an example.
     ///
     /// [`TitlecaseMapper`]: crate::TitlecaseMapper
-    pub fn titlecase_segment_with_only_case_data<'a>(
-        &'a self,
+    pub fn titlecase_segment_with_only_case_data(
+        self,
         src: &'a str,
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
@@ -176,17 +171,18 @@ impl CaseMapper {
     ///
     /// We return a concrete type instead of `impl Trait` so the return value can be mixed with that of other calls
     /// to this function with different closures
-    pub(crate) fn titlecase_segment_with_adjustment<'a>(
-        &'a self,
+    pub(crate) fn titlecase_segment_with_adjustment(
+        self,
         src: &'a str,
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
-        char_is_lead: impl Fn(&CaseMapV1, char) -> bool,
-    ) -> StringAndWriteable<'a, FullCaseWriteable<'a, true>> {
-        let data = self.data.get();
-        let (head, rest) = match options.leading_adjustment {
+        char_is_lead: impl Fn(&CaseMap, char) -> bool,
+    ) -> StringAndWriteable<'a, FullCaseWriteable<'a, 'a, true>> {
+        let (head, rest) = match options.leading_adjustment.unwrap_or_default() {
             LeadingAdjustment::Auto | LeadingAdjustment::ToCased => {
-                let first_cased = src.char_indices().find(|(_i, ch)| char_is_lead(data, *ch));
+                let first_cased = src
+                    .char_indices()
+                    .find(|(_i, ch)| char_is_lead(self.data, *ch));
                 if let Some((first_cased, _ch)) = first_cased {
                     (
                         src.get(..first_cased).unwrap_or(""),
@@ -198,11 +194,11 @@ impl CaseMapper {
             }
             LeadingAdjustment::None => ("", src),
         };
-        let writeable = data.full_helper_writeable::<true>(
+        let writeable = self.data.full_helper_writeable::<true>(
             rest,
             CaseMapLocale::from_langid(langid),
             MappingKind::Title,
-            options.trailing_case,
+            options.trailing_case.unwrap_or_default(),
         );
         StringAndWriteable {
             string: head,
@@ -214,10 +210,10 @@ impl CaseMapper {
     ///
     /// Can be used to test if two strings are case-insensitively equivalent.
     ///
-    /// See [`Self::fold_string()`] for the equivalent convenience function that returns a String,
+    /// See [`Self::fold_string()`] for the equivalent convenience function that returns a string,
     /// as well as for an example.
-    pub fn fold<'a>(&'a self, src: &'a str) -> impl Writeable + 'a {
-        self.data.get().full_helper_writeable::<false>(
+    pub fn fold(self, src: &'a str) -> impl Writeable + 'a {
+        self.data.full_helper_writeable::<false>(
             src,
             CaseMapLocale::Root,
             MappingKind::Fold,
@@ -231,10 +227,10 @@ impl CaseMapper {
     ///
     /// Can be used to test if two strings are case-insensitively equivalent.
     ///
-    /// See [`Self::fold_turkic_string()`] for the equivalent convenience function that returns a String,
+    /// See [`Self::fold_turkic_string()`] for the equivalent convenience function that returns a string,
     /// as well as for an example.
-    pub fn fold_turkic<'a>(&'a self, src: &'a str) -> impl Writeable + 'a {
-        self.data.get().full_helper_writeable::<false>(
+    pub fn fold_turkic(self, src: &'a str) -> impl Writeable + 'a {
+        self.data.full_helper_writeable::<false>(
             src,
             CaseMapLocale::Turkish,
             MappingKind::Fold,
@@ -242,7 +238,7 @@ impl CaseMapper {
         )
     }
 
-    /// Returns the full lowercase mapping of the given string as a String.
+    /// Returns the full lowercase mapping of the given string as a string.
     ///
     /// This function is context and language sensitive. Callers should pass the text's language
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
@@ -268,11 +264,15 @@ impl CaseMapper {
     /// assert_eq!(cm.lowercase_to_string("CONSTANTINOPLE", &root), "constantinople");
     /// assert_eq!(cm.lowercase_to_string("CONSTANTINOPLE", &langid!("tr")), "constantınople");
     /// ```
-    pub fn lowercase_to_string(&self, src: &str, langid: &LanguageIdentifier) -> String {
-        self.lowercase(src, langid).write_to_string().into_owned()
+    pub fn lowercase_to_string<'s>(
+        self,
+        src: &'s str,
+        langid: &LanguageIdentifier,
+    ) -> Cow<'s, str> {
+        writeable::to_string_or_borrow(&self.lowercase(src, langid), src.as_bytes())
     }
 
-    /// Returns the full uppercase mapping of the given string as a String.
+    /// Returns the full uppercase mapping of the given string as a string.
     ///
     /// This function is context and language sensitive. Callers should pass the text's language
     /// as a `LanguageIdentifier` (usually the `id` field of the `Locale`) if available, or
@@ -301,8 +301,12 @@ impl CaseMapper {
     /// assert_eq!(cm.uppercase_to_string("և Երևանի", &root), "ԵՒ ԵՐԵՒԱՆԻ");
     /// assert_eq!(cm.uppercase_to_string("և Երևանի", &langid!("hy")), "ԵՎ ԵՐԵՎԱՆԻ"); // Eastern Armenian ech-yiwn ligature
     /// ```
-    pub fn uppercase_to_string(&self, src: &str, langid: &LanguageIdentifier) -> String {
-        self.uppercase(src, langid).write_to_string().into_owned()
+    pub fn uppercase_to_string<'s>(
+        self,
+        src: &'s str,
+        langid: &LanguageIdentifier,
+    ) -> Cow<'s, str> {
+        writeable::to_string_or_borrow(&self.uppercase(src, langid), src.as_bytes())
     }
 
     /// Returns the full titlecase mapping of the given string as a [`Writeable`], treating
@@ -359,15 +363,16 @@ impl CaseMapper {
     /// ```
     ///
     /// [`TitlecaseMapper`]: crate::TitlecaseMapper
-    pub fn titlecase_segment_with_only_case_data_to_string(
-        &self,
-        src: &str,
+    pub fn titlecase_segment_with_only_case_data_to_string<'s>(
+        self,
+        src: &'s str,
         langid: &LanguageIdentifier,
         options: TitlecaseOptions,
-    ) -> String {
-        self.titlecase_segment_with_only_case_data(src, langid, options)
-            .write_to_string()
-            .into_owned()
+    ) -> Cow<'s, str> {
+        writeable::to_string_or_borrow(
+            &self.titlecase_segment_with_only_case_data(src, langid, options),
+            src.as_bytes(),
+        )
     }
 
     /// Case-folds the characters in the given string as a String.
@@ -392,8 +397,8 @@ impl CaseMapper {
     /// assert_eq!(cm.fold_string("नमस्ते दुनिया"), "नमस्ते दुनिया");
     /// assert_eq!(cm.fold_string("Привет мир"), "привет мир");
     /// ```
-    pub fn fold_string(&self, src: &str) -> String {
-        self.fold(src).write_to_string().into_owned()
+    pub fn fold_string(self, src: &str) -> Cow<'_, str> {
+        writeable::to_string_or_borrow(&self.fold(src), src.as_bytes())
     }
 
     /// Case-folds the characters in the given string as a String,
@@ -422,16 +427,16 @@ impl CaseMapper {
     /// assert_eq!(cm.fold_turkic_string("नमस्ते दुनिया"), "नमस्ते दुनिया");
     /// assert_eq!(cm.fold_turkic_string("Привет мир"), "привет мир");
     /// ```
-    pub fn fold_turkic_string(&self, src: &str) -> String {
-        self.fold_turkic(src).write_to_string().into_owned()
+    pub fn fold_turkic_string(self, src: &str) -> Cow<'_, str> {
+        writeable::to_string_or_borrow(&self.fold_turkic(src), src.as_bytes())
     }
 
     /// Adds all simple case mappings and the full case folding for `c` to `set`.
     /// Also adds special case closure mappings.
     ///
-    /// Identical to [`CaseMapCloser::add_case_closure_to()`], see docs there for more information.
+    /// Identical to [`CaseMapCloserBorrowed::add_case_closure_to()`], see docs there for more information.
     /// This method is duplicated so that one does not need to load extra unfold data
-    /// if they only need this and not also [`CaseMapCloser::add_string_case_closure_to()`].
+    /// if they only need this and not also [`CaseMapCloserBorrowed::add_string_case_closure_to()`].
     ///
     ///
     /// # Examples
@@ -451,16 +456,16 @@ impl CaseMapper {
     /// assert!(!set.contains('s')); // does not contain itself
     /// ```
     ///
-    /// [`CaseMapCloser::add_case_closure_to()`]: crate::CaseMapCloser::add_case_closure_to
-    /// [`CaseMapCloser::add_string_case_closure_to()`]: crate::CaseMapCloser::add_string_case_closure_to
-    pub fn add_case_closure_to<S: ClosureSink>(&self, c: char, set: &mut S) {
-        self.data.get().add_case_closure_to(c, set);
+    /// [`CaseMapCloserBorrowed::add_case_closure_to()`]: crate::CaseMapCloserBorrowed::add_case_closure_to
+    /// [`CaseMapCloserBorrowed::add_string_case_closure_to()`]: crate::CaseMapCloserBorrowed::add_string_case_closure_to
+    pub fn add_case_closure_to<S: ClosureSink>(self, c: char, set: &mut S) {
+        self.data.add_case_closure_to(c, set);
     }
 
     /// Returns the lowercase mapping of the given `char`.
     /// This function only implements simple and common mappings. Full mappings,
     /// which can map one `char` to a string, are not included.
-    /// For full mappings, use [`CaseMapper::lowercase`].
+    /// For full mappings, use [`CaseMapperBorrowed::lowercase`].
     ///
     /// # Examples
     ///
@@ -474,14 +479,14 @@ impl CaseMapper {
     /// assert_eq!(cm.simple_lowercase('Ć'), 'ć');
     /// assert_eq!(cm.simple_lowercase('Γ'), 'γ');
     /// ```
-    pub fn simple_lowercase(&self, c: char) -> char {
-        self.data.get().simple_lower(c)
+    pub fn simple_lowercase(self, c: char) -> char {
+        self.data.simple_lower(c)
     }
 
     /// Returns the uppercase mapping of the given `char`.
     /// This function only implements simple and common mappings. Full mappings,
     /// which can map one `char` to a string, are not included.
-    /// For full mappings, use [`CaseMapper::uppercase`].
+    /// For full mappings, use [`CaseMapperBorrowed::uppercase`].
     ///
     /// # Examples
     ///
@@ -497,8 +502,8 @@ impl CaseMapper {
     ///
     /// assert_eq!(cm.simple_uppercase('ǳ'), 'Ǳ');
     /// ```
-    pub fn simple_uppercase(&self, c: char) -> char {
-        self.data.get().simple_upper(c)
+    pub fn simple_uppercase(self, c: char) -> char {
+        self.data.simple_upper(c)
     }
 
     /// Returns the titlecase mapping of the given `char`.
@@ -519,26 +524,26 @@ impl CaseMapper {
     /// assert_eq!(cm.simple_titlecase('ć'), 'Ć');
     /// assert_eq!(cm.simple_titlecase('γ'), 'Γ');
     /// ```
-    pub fn simple_titlecase(&self, c: char) -> char {
-        self.data.get().simple_title(c)
+    pub fn simple_titlecase(self, c: char) -> char {
+        self.data.simple_title(c)
     }
 
     /// Returns the simple case folding of the given char.
-    /// For full mappings, use [`CaseMapper::fold`].
+    /// For full mappings, use [`CaseMapperBorrowed::fold`].
     ///
     /// This function can be used to perform caseless matches on
     /// individual characters.
     /// > *Note:* With Unicode 15.0 data, there are three
     /// > pairs of characters for which equivalence under this
     /// > function is inconsistent with equivalence of the
-    /// > one-character strings under [`CaseMapper::fold`].
+    /// > one-character strings under [`CaseMapperBorrowed::fold`].
     /// > This is resolved in Unicode 15.1 and later.
     ///
     /// For compatibility applications where simple case folding
     /// of strings is required, this function can be applied to
     /// each character of a string.  Note that the resulting
     /// equivalence relation is different from that obtained
-    /// by [`CaseMapper::fold`]:
+    /// by [`CaseMapperBorrowed::fold`]:
     /// The strings "Straße" and "STRASSE" are distinct
     /// under simple case folding, but are equivalent under
     /// default (full) case folding.
@@ -564,18 +569,18 @@ impl CaseMapper {
     /// assert_eq!(cm.simple_fold('İ'), 'İ');
     /// assert_eq!(cm.simple_fold('ı'), 'ı');
     /// ```
-    pub fn simple_fold(&self, c: char) -> char {
-        self.data.get().simple_fold(c, FoldOptions::default())
+    pub fn simple_fold(self, c: char) -> char {
+        self.data.simple_fold(c, FoldOptions::default())
     }
 
     /// Returns the simple case folding of the given char, using Turkic (T) mappings for
     /// dotted/dotless i. This function does not fold `i` and `I` to the same character. Instead,
     /// `I` will fold to `ı`, and `İ` will fold to `i`. Otherwise, this is the same as
-    /// [`CaseMapper::fold()`].
+    /// [`CaseMapperBorrowed::fold()`].
     ///
     /// You can use the case folding to perform Turkic caseless matches on characters
     /// provided they don't full-casefold to strings. To avoid that situation,
-    /// convert to a string and use [`CaseMapper::fold_turkic`].
+    /// convert to a string and use [`CaseMapperBorrowed::fold_turkic`].
     ///
     ///
     /// # Examples
@@ -588,10 +593,60 @@ impl CaseMapper {
     /// assert_eq!(cm.simple_fold_turkic('I'), 'ı');
     /// assert_eq!(cm.simple_fold_turkic('İ'), 'i');
     /// ```
-    pub fn simple_fold_turkic(&self, c: char) -> char {
+    pub fn simple_fold_turkic(self, c: char) -> char {
         self.data
-            .get()
             .simple_fold(c, FoldOptions::with_turkic_mappings())
+    }
+}
+
+impl CaseMapper {
+    /// Creates a [`CaseMapperBorrowed`] using compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::casemap::CaseMapper;
+    /// use icu::locale::langid;
+    ///
+    /// let cm = CaseMapper::new();
+    ///
+    /// assert_eq!(
+    ///     cm.uppercase_to_string("hello world", &langid!("und")),
+    ///     "HELLO WORLD"
+    /// );
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    #[expect(clippy::new_ret_no_self)] // Intentional
+    pub const fn new() -> CaseMapperBorrowed<'static> {
+        CaseMapperBorrowed::new()
+    }
+
+    /// Constructs a borrowed version of this type for more efficient querying.
+    pub fn as_borrowed(&self) -> CaseMapperBorrowed<'_> {
+        CaseMapperBorrowed {
+            data: self.data.get(),
+        }
+    }
+
+    icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
+    functions: [
+        new: skip,
+        try_new_with_buffer_provider,
+        try_new_unstable,
+        Self,
+    ]);
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    pub fn try_new_unstable<P>(provider: &P) -> Result<CaseMapper, DataError>
+    where
+        P: DataProvider<CaseMapV1> + ?Sized,
+    {
+        let data = provider.load(Default::default())?.payload;
+        Ok(Self { data })
     }
 }
 

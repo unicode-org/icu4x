@@ -20,18 +20,19 @@ all-features = true
 
 [dependencies]
 displaydoc = { workspace = true }
-icu_provider = { workspace = true, features = ["macros"] }
+icu_provider = { workspace = true }
 regex-automata = { workspace = true, features = ["dfa-search"] }
 writeable = { workspace = true }
+zerovec = { workspace = true }
 
 databake = { workspace = true, features = ["derive"], optional = true}
-serde = { workspace = true, features = ["derive", "alloc"], optional = true }
+serde = { workspace = true, features = ["derive"], optional = true }
 
 icu_list_data = { workspace = true, optional = true }
+icu_locale = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
-icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 postcard = { workspace = true, features = ["use-std"] }
 rmp-serde = { workspace = true }
 serde_json = { workspace = true }
@@ -39,16 +40,8 @@ serde_json = { workspace = true }
 
 [features]
 default = ["compiled_data"]
-std = ["icu_provider/std"]
-serde = ["dep:serde", "icu_provider/serde"]
-serde_human = ["serde", "regex-automata/dfa-build", "regex-automata/syntax"]
-datagen = ["serde", "std", "dep:databake", "regex-automata/dfa-build", "regex-automata/syntax"]
-bench = []
-compiled_data = ["dep:icu_list_data"]
-
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
-
-[[example]]
-name = "and_list"
+serde = ["dep:serde", "icu_provider/serde", "icu_provider/alloc", "zerovec/serde"]
+serde_human = ["serde", "regex-automata/dfa-build", "regex-automata/syntax", "alloc"]
+datagen = ["serde", "dep:databake", "regex-automata/dfa-build", "regex-automata/syntax", "zerovec/databake", "alloc", "serde_human", "icu_provider/export"]
+compiled_data = ["dep:icu_list_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
+alloc = ["zerovec/alloc", "icu_provider/alloc", "serde?/alloc"]

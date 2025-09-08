@@ -5,17 +5,39 @@ import type { GraphemeClusterBreakIteratorUtf16 } from "./GraphemeClusterBreakIt
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** An ICU4X grapheme-cluster-break segmenter, capable of finding grapheme cluster breakpoints
-*in strings.
-*
-*See the [Rust documentation for `GraphemeClusterSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html) for more information.
-*/
-export class GraphemeClusterSegmenter {
-    
 
+/**
+ * An ICU4X grapheme-cluster-break segmenter, capable of finding grapheme cluster breakpoints
+ * in strings.
+ *
+ * See the [Rust documentation for `GraphemeClusterSegmenter`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.GraphemeClusterSegmenter.html) for more information.
+ */
+export class GraphemeClusterSegmenter {
+    /** @internal */
     get ffiValue(): pointer;
 
-    static create(provider: DataProvider): GraphemeClusterSegmenter;
 
+    /**
+     * Construct an {@link GraphemeClusterSegmenter}.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
+     */
+    static createWithProvider(provider: DataProvider): GraphemeClusterSegmenter;
+
+    /**
+     * Segments a string.
+     *
+     * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+     * to the WHATWG Encoding Standard.
+     *
+     * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.GraphemeClusterSegmenterBorrowed.html#method.segment_utf16) for more information.
+     */
     segment(input: string): GraphemeClusterBreakIteratorUtf16;
+
+    /**
+     * Construct an {@link GraphemeClusterSegmenter} using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
+     */
+    constructor();
 }

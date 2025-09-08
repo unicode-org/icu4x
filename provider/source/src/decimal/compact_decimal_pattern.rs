@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde::numbers::DecimalFormat;
-use icu::experimental::compactdecimal::provider::CompactDecimalPatternDataV1;
+use icu::experimental::compactdecimal::provider::CompactDecimalPatternData;
 use icu::experimental::compactdecimal::provider::*;
 use itertools::Itertools;
 use std::borrow::Cow;
@@ -162,7 +162,7 @@ fn parse(pattern: &str) -> Result<Option<ParsedPattern>, Cow<'static, str>> {
     }
 }
 
-impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
+impl TryFrom<&DecimalFormat> for CompactDecimalPatternData<'static> {
     type Error = Cow<'static, str>;
 
     fn try_from(other: &DecimalFormat) -> Result<Self, Self::Error> {
@@ -356,7 +356,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                 **log10_type != 0 || !plural_map.iter().all(|(_, pattern)| pattern.exponent == 0)
             });
         // Turn the BTreeMap of BTreeMaps into a ZeroMap2d.
-        Ok(CompactDecimalPatternDataV1 {
+        Ok(CompactDecimalPatternData {
             patterns: deduplicated_patterns
                 .flat_map(|(log10_type, plural_map)| {
                     plural_map.iter().map(|(count, pattern)| {
@@ -381,7 +381,7 @@ mod tests {
         // The type=1000, count=one case is incorrect (it is inconsistent with the
         // plural rules), but it is interesting because it forces a distinction
         // between 1000 and 10000 to be made in the ICU4X data.
-        let cldr_42_long_french_data = CompactDecimalPatternDataV1::try_from(
+        let cldr_42_long_french_data = CompactDecimalPatternData::try_from(
             &serde_json::from_str::<DecimalFormat>(
                 r#"
                 {
@@ -450,7 +450,7 @@ mod tests {
         );
         // French compact-long thousands, with the anomalous « millier » removed.
         // This allows 10000 and 1000 to be collapsed.
-        let compressible_long_french_data = CompactDecimalPatternDataV1::try_from(
+        let compressible_long_french_data = CompactDecimalPatternData::try_from(
             &serde_json::from_str::<DecimalFormat>(
                 r#"
                 {
@@ -505,7 +505,7 @@ mod tests {
     fn test_holes() {
         // Spanish compact-short data as of CLDR 42, up to 10¹¹.
         // Note that the abbreviation for 10⁹ is used only starting with 10¹⁰.
-        let spanish_data = CompactDecimalPatternDataV1::try_from(
+        let spanish_data = CompactDecimalPatternData::try_from(
             &serde_json::from_str::<DecimalFormat>(
                 r#"
                 {
@@ -599,7 +599,7 @@ mod tests {
     #[test]
     fn test_inter_pattern_errors() {
         assert_eq!(
-            CompactDecimalPatternDataV1::try_from(
+            CompactDecimalPatternData::try_from(
                 &serde_json::from_str::<DecimalFormat>(
                     r#"{ "1000-count-other": "0k", "1000-count-other": "0K" }"#,
                 )
@@ -611,7 +611,7 @@ mod tests {
         );
 
         assert_eq!(
-            CompactDecimalPatternDataV1::try_from(
+            CompactDecimalPatternData::try_from(
                 &serde_json::from_str::<DecimalFormat>(r#"{ "1-count-one": "0" }"#).unwrap()
             )
             .err()
@@ -620,7 +620,7 @@ mod tests {
         );
 
         assert_eq!(
-            CompactDecimalPatternDataV1::try_from(
+            CompactDecimalPatternData::try_from(
                 &serde_json::from_str::<DecimalFormat>(
                     r#"{ "1000-count-one": "0k", "1000-count-other": "0" }"#
                 )
@@ -632,7 +632,7 @@ mod tests {
         );
 
         assert_eq!(
-            CompactDecimalPatternDataV1::try_from(
+            CompactDecimalPatternData::try_from(
                 &serde_json::from_str::<DecimalFormat>(r#"{ "1000-count-other": "k" }"#).unwrap()
             )
             .err()
@@ -642,7 +642,7 @@ mod tests {
 
         // Given this data, it is ambiguous whether the 10 000 should be formatted as 10 thousand or 1 myriad.
         assert_eq!(
-            CompactDecimalPatternDataV1::try_from(
+            CompactDecimalPatternData::try_from(
                 &serde_json::from_str::<DecimalFormat>(
                     r#"
                         {
@@ -659,7 +659,7 @@ mod tests {
         );
 
         assert_eq!(
-            CompactDecimalPatternDataV1::try_from(
+            CompactDecimalPatternData::try_from(
                 &serde_json::from_str::<DecimalFormat>(r#"{ "1000-count-other": "00000 tenths" }"#)
                     .unwrap()
             )
@@ -672,7 +672,7 @@ mod tests {
         let overlong_pattern = format!("thous{}nds (0)", str::repeat("a", 245));
 
         assert_eq!(
-            CompactDecimalPatternDataV1::try_from(
+            CompactDecimalPatternData::try_from(
                 &serde_json::from_str::<DecimalFormat>(
                     format!(r#"{{ "1000-count-other": "{overlong_pattern}" }}"#).as_str()
                 )
@@ -684,7 +684,7 @@ mod tests {
         );
 
         assert_eq!(
-            CompactDecimalPatternDataV1::try_from(
+            CompactDecimalPatternData::try_from(
                 &serde_json::from_str::<DecimalFormat>(
                     format!(r#"{{ "1000-count-other": "{long_pattern}" }}"#).as_str()
                 )

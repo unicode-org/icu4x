@@ -3,13 +3,13 @@ import { CodePointSetData } from "./CodePointSetData.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/** See the [Rust documentation for `CodePointInversionListBuilder`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html) for more information.
-*/
 const CodePointSetBuilder_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_CodePointSetBuilder_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `CodePointInversionListBuilder`](https://docs.rs/icu/2.0.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html) for more information.
+ */
 export class CodePointSetBuilder {
     // Internal ptr reference:
     #ptr = null;
@@ -17,144 +17,283 @@ export class CodePointSetBuilder {
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
-    constructor(symbol, ptr, selfEdge) {
+
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("CodePointSetBuilder is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             CodePointSetBuilder_box_destroy_registry.register(this, this.#ptr);
         }
-    }
 
+        return this;
+    }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
 
-    static create() {
+
+    /**
+     * Make a new set builder containing nothing
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.new) for more information.
+     */
+    #defaultConstructor() {
+
         const result = wasm.icu4x_CodePointSetBuilder_create_mv1();
-    
+
         try {
             return new CodePointSetBuilder(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
+    /**
+     * Build this into a set
+     *
+     * This object is repopulated with an empty builder
+     *
+     * See the [Rust documentation for `build`](https://docs.rs/icu/2.0.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.build) for more information.
+     */
     build() {
+
         const result = wasm.icu4x_CodePointSetBuilder_build_mv1(this.ffiValue);
-    
+
         try {
             return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    complement() {wasm.icu4x_CodePointSetBuilder_complement_mv1(this.ffiValue);
-    
+    /**
+     * Complements this set
+     *
+     * (Elements in this set are removed and vice versa)
+     *
+     * See the [Rust documentation for `complement`](https://docs.rs/icu/2.0.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement) for more information.
+     */
+    complement() {
+    wasm.icu4x_CodePointSetBuilder_complement_mv1(this.ffiValue);
+
         try {}
-        
-        finally {}
+
+        finally {
+        }
     }
 
+    /**
+     * Returns whether this set is empty
+     *
+     * See the [Rust documentation for `is_empty`](https://docs.rs/icu/2.0.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.is_empty) for more information.
+     */
     get isEmpty() {
+
         const result = wasm.icu4x_CodePointSetBuilder_is_empty_mv1(this.ffiValue);
-    
+
         try {
             return result;
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    addChar(ch) {wasm.icu4x_CodePointSetBuilder_add_char_mv1(this.ffiValue, ch);
-    
+    /**
+     * Add a single character to the set
+     *
+     * See the [Rust documentation for `add_char`](https://docs.rs/icu/2.0.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_char) for more information.
+     */
+    addChar(ch) {
+    wasm.icu4x_CodePointSetBuilder_add_char_mv1(this.ffiValue, ch);
+
         try {}
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    addInclusiveRange(start, end) {wasm.icu4x_CodePointSetBuilder_add_inclusive_range_mv1(this.ffiValue, start, end);
-    
+    /**
+     * Add an inclusive range of characters to the set
+     *
+     * See the [Rust documentation for `add_range`](https://docs.rs/icu/2.0.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_range) for more information.
+     */
+    addInclusiveRange(start, end) {
+    wasm.icu4x_CodePointSetBuilder_add_inclusive_range_mv1(this.ffiValue, start, end);
+
         try {}
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    addSet(data) {wasm.icu4x_CodePointSetBuilder_add_set_mv1(this.ffiValue, data.ffiValue);
-    
+    /**
+     * Add all elements that belong to the provided set to the set
+     *
+     * See the [Rust documentation for `add_set`](https://docs.rs/icu/2.0.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_set) for more information.
+     */
+    addSet(data) {
+    wasm.icu4x_CodePointSetBuilder_add_set_mv1(this.ffiValue, data.ffiValue);
+
         try {}
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    removeChar(ch) {wasm.icu4x_CodePointSetBuilder_remove_char_mv1(this.ffiValue, ch);
-    
+    /**
+     * Remove a single character to the set
+     *
+     * See the [Rust documentation for `remove_char`](https://docs.rs/icu/2.0.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.remove_char) for more information.
+     */
+    removeChar(ch) {
+    wasm.icu4x_CodePointSetBuilder_remove_char_mv1(this.ffiValue, ch);
+
         try {}
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    removeInclusiveRange(start, end) {wasm.icu4x_CodePointSetBuilder_remove_inclusive_range_mv1(this.ffiValue, start, end);
-    
+    /**
+     * Remove an inclusive range of characters from the set
+     *
+     * See the [Rust documentation for `remove_range`](https://docs.rs/icu/2.0.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.remove_range) for more information.
+     */
+    removeInclusiveRange(start, end) {
+    wasm.icu4x_CodePointSetBuilder_remove_inclusive_range_mv1(this.ffiValue, start, end);
+
         try {}
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    removeSet(data) {wasm.icu4x_CodePointSetBuilder_remove_set_mv1(this.ffiValue, data.ffiValue);
-    
+    /**
+     * Remove all elements that belong to the provided set from the set
+     *
+     * See the [Rust documentation for `remove_set`](https://docs.rs/icu/2.0.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.remove_set) for more information.
+     */
+    removeSet(data) {
+    wasm.icu4x_CodePointSetBuilder_remove_set_mv1(this.ffiValue, data.ffiValue);
+
         try {}
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    retainChar(ch) {wasm.icu4x_CodePointSetBuilder_retain_char_mv1(this.ffiValue, ch);
-    
+    /**
+     * Removes all elements from the set except a single character
+     *
+     * See the [Rust documentation for `retain_char`](https://docs.rs/icu/2.0.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.retain_char) for more information.
+     */
+    retainChar(ch) {
+    wasm.icu4x_CodePointSetBuilder_retain_char_mv1(this.ffiValue, ch);
+
         try {}
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    retainInclusiveRange(start, end) {wasm.icu4x_CodePointSetBuilder_retain_inclusive_range_mv1(this.ffiValue, start, end);
-    
+    /**
+     * Removes all elements from the set except an inclusive range of characters f
+     *
+     * See the [Rust documentation for `retain_range`](https://docs.rs/icu/2.0.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.retain_range) for more information.
+     */
+    retainInclusiveRange(start, end) {
+    wasm.icu4x_CodePointSetBuilder_retain_inclusive_range_mv1(this.ffiValue, start, end);
+
         try {}
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    retainSet(data) {wasm.icu4x_CodePointSetBuilder_retain_set_mv1(this.ffiValue, data.ffiValue);
-    
+    /**
+     * Removes all elements from the set except all elements in the provided set
+     *
+     * See the [Rust documentation for `retain_set`](https://docs.rs/icu/2.0.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.retain_set) for more information.
+     */
+    retainSet(data) {
+    wasm.icu4x_CodePointSetBuilder_retain_set_mv1(this.ffiValue, data.ffiValue);
+
         try {}
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    complementChar(ch) {wasm.icu4x_CodePointSetBuilder_complement_char_mv1(this.ffiValue, ch);
-    
+    /**
+     * Complement a single character to the set
+     *
+     * (Characters which are in this set are removed and vice versa)
+     *
+     * See the [Rust documentation for `complement_char`](https://docs.rs/icu/2.0.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement_char) for more information.
+     */
+    complementChar(ch) {
+    wasm.icu4x_CodePointSetBuilder_complement_char_mv1(this.ffiValue, ch);
+
         try {}
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    complementInclusiveRange(start, end) {wasm.icu4x_CodePointSetBuilder_complement_inclusive_range_mv1(this.ffiValue, start, end);
-    
+    /**
+     * Complement an inclusive range of characters from the set
+     *
+     * (Characters which are in this set are removed and vice versa)
+     *
+     * See the [Rust documentation for `complement_range`](https://docs.rs/icu/2.0.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement_range) for more information.
+     */
+    complementInclusiveRange(start, end) {
+    wasm.icu4x_CodePointSetBuilder_complement_inclusive_range_mv1(this.ffiValue, start, end);
+
         try {}
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    complementSet(data) {wasm.icu4x_CodePointSetBuilder_complement_set_mv1(this.ffiValue, data.ffiValue);
-    
+    /**
+     * Complement all elements that belong to the provided set from the set
+     *
+     * (Characters which are in this set are removed and vice versa)
+     *
+     * See the [Rust documentation for `complement_set`](https://docs.rs/icu/2.0.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement_set) for more information.
+     */
+    complementSet(data) {
+    wasm.icu4x_CodePointSetBuilder_complement_set_mv1(this.ffiValue, data.ffiValue);
+
         try {}
-        
-        finally {}
+
+        finally {
+        }
+    }
+
+    /**
+     * Make a new set builder containing nothing
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.new) for more information.
+     */
+    constructor() {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
+        }
     }
 }

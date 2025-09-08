@@ -7,18 +7,17 @@ use std::collections::{BTreeMap, HashSet};
 use crate::cldr_serde::{self};
 use crate::SourceDataProvider;
 
-use icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1Marker;
-
-use icu::experimental::dimension::provider::pattern_key::{PatternKey, PowerValue};
-use icu::experimental::dimension::provider::units_essentials::CompoundCount;
-use icu::experimental::dimension::provider::units_essentials::UnitsEssentialsV1;
+use icu::experimental::dimension::provider::units::essentials::CompoundCount;
+use icu::experimental::dimension::provider::units::essentials::UnitsEssentials;
+use icu::experimental::dimension::provider::units::essentials::UnitsEssentialsV1;
+use icu::experimental::dimension::provider::units::pattern_key::{PatternKey, PowerValue};
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
 use zerovec::ZeroMap;
 
-impl DataProvider<UnitsEssentialsV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsEssentialsV1Marker>, DataError> {
-        self.check_req::<UnitsEssentialsV1Marker>(req)?;
+impl DataProvider<UnitsEssentialsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsEssentialsV1>, DataError> {
+        self.check_req::<UnitsEssentialsV1>(req)?;
 
         // Get units
         let units_format_data: &cldr_serde::units::data::Resource = self
@@ -117,7 +116,7 @@ impl DataProvider<UnitsEssentialsV1Marker> for SourceDataProvider {
             );
         }
 
-        let result = UnitsEssentialsV1 {
+        let result = UnitsEssentials {
             per: per.into(),
             times: times.into(),
             prefixes: ZeroMap::from_iter(prefixes),
@@ -130,7 +129,7 @@ impl DataProvider<UnitsEssentialsV1Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<UnitsEssentialsV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<UnitsEssentialsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let units = self.cldr()?.units();
         let locales = units.list_locales()?;
@@ -143,9 +142,7 @@ impl crate::IterableDataProviderCached<UnitsEssentialsV1Marker> for SourceDataPr
                     DataMarkerAttributes::from_str_or_panic("narrow"),
                 ]
                 .into_iter()
-                .map(move |length| {
-                    DataIdentifierCow::from_borrowed_and_owned(length, locale.clone())
-                })
+                .map(move |length| DataIdentifierCow::from_borrowed_and_owned(length, locale))
             })
             .collect())
     }
@@ -158,7 +155,7 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let us_long: DataPayload<UnitsEssentialsV1Marker> = provider
+    let us_long: DataPayload<UnitsEssentialsV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("long"),
@@ -175,7 +172,7 @@ fn test_basic() {
     let times = us_long.get().times.to_string();
     assert_eq!(times, "{0}-{1}");
 
-    let fr_long: DataPayload<UnitsEssentialsV1Marker> = provider
+    let fr_long: DataPayload<UnitsEssentialsV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("long"),
@@ -192,7 +189,7 @@ fn test_basic() {
     let times = fr_long.get().times.to_string();
     assert_eq!(times, "{0}-{1}");
 
-    let ar_eg_short: DataPayload<UnitsEssentialsV1Marker> = provider
+    let ar_eg_short: DataPayload<UnitsEssentialsV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("short"),

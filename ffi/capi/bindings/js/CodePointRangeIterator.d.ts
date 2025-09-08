@@ -3,13 +3,22 @@ import type { CodePointRangeIteratorResult } from "./CodePointRangeIteratorResul
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** An iterator over code point ranges, produced by `CodePointSetData` or
-*one of the `CodePointMapData` types
-*/
+
+/**
+ * An iterator over code point ranges, produced by `CodePointSetData` or
+ * one of the `CodePointMapData` types
+ */
 export class CodePointRangeIterator {
-    
-
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
+
+    /**
+     * Advance the iterator by one and return the next range.
+     *
+     * If the iterator is out of items, `done` will be true
+     */
     next(): CodePointRangeIteratorResult;
 }

@@ -10,7 +10,7 @@
 description = "Run C API tests"
 category = "ICU4X Development"
 command = "make"
-args = ["-C", "tutorials/c", "test"]
+args = ["-C", "examples/c", "test"]
 
 [tasks.test-c-tiny]
 description = "Run C API tests for tiny targets"
@@ -19,15 +19,15 @@ dependencies = ["install-unknown-linux-nightly"]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-exec --fail-on-error make -C tutorials/c-tiny/fixeddecimal
-exec --fail-on-error make -C tutorials/c-tiny/segmenter
+exec --fail-on-error make -C examples/c-tiny/decimal
+exec --fail-on-error make -C examples/c-tiny/segmenter
 '''
 
 [tasks.test-cpp]
 description = "Run CPP tests"
 category = "ICU4X Development"
 command = "make"
-args = ["-C", "tutorials/cpp", "test"]
+args = ["-C", "examples/cpp", "test"]
 
 
 # JS/WASM tasks
@@ -37,15 +37,22 @@ description = "Run JS tests"
 category = "ICU4X Development"
 dependencies = ["install-wasm-nightly"]
 env = { PINNED_CI_NIGHTLY = "${PINNED_CI_NIGHTLY}" }
-command = "npm"
-args = ["-C", "ffi/npm", "install-ci-test"]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+exec --fail-on-error npm -C ffi/npm install-ci-test
+exec --fail-on-error npm -C ffi/npm run bench
+exec --fail-on-error npm -C examples/npm install
+exec --fail-on-error npm -C examples/npm run compile
+exec --fail-on-error npm -C examples/npm run start
+'''
 
 [tasks.test-tinywasm]
 description = "Test the Tiny WASM example"
 category = "ICU4X Development"
 dependencies = ["install-wasm-nightly"]
 command = "make"
-args = ["-C", "tutorials/js-tiny", "test"]
+args = ["-C", "examples/js-tiny", "test"]
 
 
 # Dart tasks
@@ -53,11 +60,34 @@ args = ["-C", "tutorials/js-tiny", "test"]
 [tasks.test-dart]
 description = "Run Dart tests"
 category = "ICU4X Development"
-cwd = "ffi/dart"
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error dart --enable-experiment=native-assets pub get
-exec --fail-on-error dart --enable-experiment=native-assets test
+cd ffi/dart
+exec --fail-on-error dart pub get
+exec --fail-on-error dart format --set-exit-if-changed .
+exec --fail-on-error dart analyze
+exec --fail-on-error dart --enable-experiment=native-assets --enable-experiment=record-use test
+cd ../..
+
+cd examples/dart
+exec --fail-on-error dart pub get
+exec --fail-on-error dart format --set-exit-if-changed .
+exec --fail-on-error dart analyze
+exec --fail-on-error dart --enable-experiment=native-assets --enable-experiment=record-use build cli bin/example.dart
+bins = glob_array ./build/cli/*/bundle/bin/*
+bin = array_pop ${bins}
+exec --fail-on-error ${bin}
+libs = glob_array ./build/cli/*/bundle/lib/*
+lib = array_pop ${libs}
+size = filesize ${lib}
+println ${size} "bytes"
+pubspec = readfile pubspec.yaml
+is_local = contains ${pubspec} "buildMode: local"
+if not ${is_local} # local dylib is not treeshaken
+    if greater_than ${size} 10000000
+        trigger_error "Dart example binary >10MB"
+    end
+end
 '''
 
 # no_std tasks
@@ -74,6 +104,17 @@ args = ["check", "--package", "icu_freertos",
         "--no-default-features", "--features=wearos",
         "-Zbuild-std=core,alloc", "-Zbuild-std-features=panic_immediate_abort"]
 
+[tasks.check-noalloc]
+description = "Build crates that are expected to work in no-alloc mode"
+category = "ICU4X FFI"
+dependencies = ["install-unknown-linux-nightly"]
+toolchain = "${PINNED_CI_NIGHTLY}"
+command = "cargo"
+args = ["rustc", "-p", "noalloctest",
+        "--target", "x86_64-unknown-linux-gnu",
+        "--",
+        "-Clink-arg=-nostartfiles", "-Cpanic=abort",
+        "--cfg", "icu4x_noalloctest"]
 
 # Diplomat gen
 
@@ -97,7 +138,7 @@ dependencies = [
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-code = exec --get-exit-code git diff --exit-code -- ffi/capi
+code = exec --get-exit-code git diff --exit-code -- ffi/capi tools/web-demo/gen
 if ${code}
     trigger_error "Diplomat bindings need to be regenerated. Please run `cargo make diplomat-gen` and commit. (Testing against different Diplomat versions may omit install step.)"
 end
@@ -125,7 +166,7 @@ args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "js"]
 description = "Generate Demo HTML for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "demo_gen", "ffi/capi/diplomat-demo-config.toml"]
+args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "demo_gen"]
 
 [tasks.diplomat-gen-dart]
 description = "Generate Dart bindings for the FFI with Diplomat"

@@ -1,0 +1,15 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "unused"
+version = "0.0.0"
+# To ensure it stays on older lockfiles. Update when our pinned nightly supports lockfile v4
+rust-version = "1.81"
+
+[lib]
+path = "unused"
+
+[dependencies]
+icu_capi = { version = "2.0.0", default-features = false }

@@ -8,7 +8,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 #include "BidiParagraph.hpp"
 
@@ -16,18 +18,17 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     size_t icu4x_BidiInfo_paragraph_count_mv1(const icu4x::capi::BidiInfo* self);
-    
+
     icu4x::capi::BidiParagraph* icu4x_BidiInfo_paragraph_at_mv1(const icu4x::capi::BidiInfo* self, size_t n);
-    
+
     size_t icu4x_BidiInfo_size_mv1(const icu4x::capi::BidiInfo* self);
-    
+
     uint8_t icu4x_BidiInfo_level_at_mv1(const icu4x::capi::BidiInfo* self, size_t pos);
-    
-    
+
     void icu4x_BidiInfo_destroy_mv1(BidiInfo* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

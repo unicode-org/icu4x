@@ -1,0 +1,8 @@
+a.out
+target*
+*.i64
+*.dot
+*.elf
+*.o
+a.out.dSYM
+baked_data

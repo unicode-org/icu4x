@@ -2,94 +2,220 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-mod common;
-mod error;
-pub mod hour_cycle;
-mod item;
-pub mod reference;
-pub mod runtime;
+//! Lower-level, power-user APIs for formatting datetimes with pattern strings.
+//!
+//! ❗ This module forgoes most internationalization functionality of the datetime crate.
+//! It assumes that the pattern is already localized for the customer's locale. Most clients
+//! should use [`DateTimeFormatter`] instead of directly formatting with patterns.
+//!
+//! [`DateTimeFormatter`]: crate::DateTimeFormatter
 
-use crate::fields;
-pub use error::PatternError;
-pub use hour_cycle::CoarseHourCycle;
-use icu_provider::prelude::*;
-pub use item::{GenericPatternItem, PatternItem};
+mod formatter;
+mod names;
+#[expect(clippy::module_inception)] // the file pattern.rs should contain DateTimePattern
+mod pattern;
 
-/// The granularity of time represented in a pattern item.
-/// Ordered from least granular to most granular for comparison.
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, yoke::Yokeable, zerofrom::ZeroFrom,
-)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::pattern))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub use crate::error::ErrorField;
+use crate::unchecked::MissingInputFieldKind;
+pub use formatter::DateTimePatternFormatter;
+pub use formatter::FormattedDateTimePattern;
+use icu_calendar::types::MonthCode;
+use icu_calendar::AnyCalendarKind;
+use icu_pattern::SinglePlaceholderPattern;
+pub use names::DateTimeNames;
+pub(crate) use names::DateTimeNamesMetadata;
+pub use names::DayPeriodNameLength;
+pub use names::FixedCalendarDateTimeNames;
+pub use names::MonthNameLength;
+pub(crate) use names::RawDateTimeNames;
+pub(crate) use names::RawDateTimeNamesBorrowed;
+pub(crate) use names::TimeZoneDataPayloadsBorrowed;
+pub use names::WeekdayNameLength;
+pub use names::YearNameLength;
+pub use pattern::DateTimePattern;
+use tinystr::TinyStr16;
+
+#[cfg(doc)]
+use icu_calendar::types::CyclicYear;
+#[cfg(doc)]
+use icu_decimal::DecimalFormatter;
+#[cfg(doc)]
+use writeable::TryWriteable;
+
+pub(crate) enum GetNameForMonthError {
+    InvalidMonthCode,
+    InvalidFieldLength,
+    NotLoaded,
+}
+pub(crate) enum GetNameForWeekdayError {
+    InvalidFieldLength,
+    NotLoaded,
+}
+
+pub(crate) enum GetNameForEraError {
+    InvalidEraCode,
+    InvalidFieldLength,
+    NotLoaded,
+}
+
+pub(crate) enum GetNameForCyclicYearError {
+    InvalidYearNumber { max: u8 },
+    InvalidFieldLength,
+    NotLoaded,
+}
+
+pub(crate) enum GetNameForDayPeriodError {
+    InvalidFieldLength,
+    NotLoaded,
+}
+
+/// Internal enum to represent the kinds of month symbols for interpolation
+pub(crate) enum MonthPlaceholderValue<'a> {
+    PlainString(&'a str),
+    Numeric,
+    NumericPattern(&'a SinglePlaceholderPattern),
+}
+
+/// Error returned from [`FixedCalendarDateTimeNames`]'s pattern load methods.
+#[derive(Debug, Clone, Copy, PartialEq, displaydoc::Display)]
 #[non_exhaustive]
-pub enum TimeGranularity {
-    None,
-    Hours,
-    Minutes,
-    Seconds,
-    Nanoseconds,
+pub enum PatternLoadError {
+    /// A field conflicts with a previous field.
+    ///
+    /// Fields conflict if they require the same type of data, for example the
+    /// `EEE` and `EEEE` fields (short vs long weekday) conflict, or the `M`
+    /// and `L` (format vs standalone month) conflict.
+    #[displaydoc("A field {field:?} conflicts with a previously loaded field {previous_field:?}.")]
+    ConflictingField {
+        /// The field that was not able to be loaded.
+        field: ErrorField,
+        /// The field that prevented the new field from being loaded.
+        previous_field: ErrorField,
+    },
+    /// The field symbol is not supported in that length.
+    ///
+    /// Some fields, such as `O` are not defined for all lengths (e.g. `OO`).
+    #[displaydoc("The field {0:?} symbol is not supported in that length.")]
+    UnsupportedLength(ErrorField),
+    /// The specific formatter does not support this field.
+    ///
+    /// This happens for example when trying to load a month field
+    /// on a [`FixedCalendarDateTimeNames<Gregorian, ZoneFieldSet>`].
+    #[displaydoc("The specific formatter does not support the field {0:?}.")]
+    FormatterTooSpecific(ErrorField),
+    /// An error arising from the [`data provider`](icu_provider) for loading names.
+    #[displaydoc("Problem loading data for field {1:?}: {0}")]
+    Data(icu_provider::DataError, ErrorField),
 }
 
-impl Default for TimeGranularity {
-    fn default() -> Self {
-        Self::None
-    }
+impl core::error::Error for PatternLoadError {}
+
+/// Error returned from constructors that map from AnyCalendar to a formatter.
+#[derive(Debug, Clone, Copy, PartialEq, displaydoc::Display)]
+#[displaydoc("The calendar {kind:?} is not supported in DateTimeFormatter")]
+#[non_exhaustive]
+pub struct UnsupportedCalendarError {
+    /// The calendar kind that is not supported.
+    pub kind: AnyCalendarKind,
 }
 
-impl TimeGranularity {
-    /// Returns [`true`] if the most granular time being displayed will align with
-    /// the top of the hour, otherwise returns [`false`].
-    /// e.g. `12:00:00` is at the top of the hour for any display granularity.
-    /// e.g. `12:00:05` is only at the top of the hour if the seconds are not displayed.
-    pub fn is_top_of_hour(self, minute: u8, second: u8, nanosecond: u32) -> bool {
-        match self {
-            Self::None | Self::Hours => true,
-            Self::Minutes => minute == 0,
-            Self::Seconds => minute + second == 0,
-            Self::Nanoseconds => minute as u32 + second as u32 + nanosecond == 0,
-        }
-    }
+impl core::error::Error for UnsupportedCalendarError {}
 
-    #[inline]
-    pub(crate) fn from_ordinal(ordinal: u8) -> TimeGranularity {
-        use TimeGranularity::*;
-        match ordinal {
-            1 => Hours,
-            2 => Minutes,
-            3 => Seconds,
-            4 => Nanoseconds,
-            _ => None,
-        }
-    }
+#[non_exhaustive]
+#[derive(Debug, PartialEq, Copy, Clone, displaydoc::Display)]
+/// Error for the [`TryWriteable`] implementation of [`FormattedDateTimePattern`].
+///
+/// There are 3 general conditions for these errors to occur:
+///
+/// 1. Invariants of **unchecked functions** are not upheld
+/// 2. Invariants of **locale data** are not upheld
+/// 3. Invariants of **trait impls** are not upheld (including [scaffolding traits])
+///
+/// It is not always possible to distinguish the source of the errors. Each variant is documented
+/// with rules of thumb for when they might occur.
+///
+/// [unstable scaffolding traits]: crate::scaffold
+pub enum FormattedDateTimePatternError {
+    /// The [`MonthCode`] of the input is not valid for this calendar.
+    ///
+    /// Error conditions:
+    ///
+    /// - **Locale data:** for example, datetime names don't match the formatter's calendar
+    /// - **Trait impls:** for example, the date returns fields for the wrong calendar
+    ///
+    /// The output will contain the raw [`MonthCode`] as a fallback value.
+    #[displaydoc("Invalid month {0:?}")]
+    InvalidMonthCode(MonthCode),
+    /// The era code of the input is not valid for this calendar.
+    ///
+    /// Same error conditions as [`FormattedDateTimePatternError::InvalidMonthCode`].
+    ///
+    /// The output will contain the era code as the fallback.
+    #[displaydoc("Invalid era {0:?}")]
+    InvalidEra(TinyStr16),
+    /// The [`CyclicYear::year`] of the input is not valid for this calendar.
+    ///
+    /// Same error conditions as [`FormattedDateTimePatternError::InvalidMonthCode`].
+    ///
+    /// The output will contain [`CyclicYear::related_iso`] as a fallback value.
+    #[displaydoc("Invalid cyclic year {value} (maximum {max})")]
+    InvalidCyclicYear {
+        /// Value
+        value: u8,
+        /// Max
+        max: u8,
+    },
 
-    #[inline]
-    pub(crate) const fn ordinal(self) -> u8 {
-        use TimeGranularity::*;
-        match self {
-            None => 0,
-            Hours => 1,
-            Minutes => 2,
-            Seconds => 3,
-            Nanoseconds => 4,
-        }
-    }
-}
+    /// The localized names for a field have not been loaded.
+    ///
+    /// Error conditions:
+    ///
+    /// - **Unchecked functions:** for example, the pattern in [`with_pattern_unchecked`] contains fields that haven't been loaded
+    /// - **Trait impls:** for example, a custom field set does not include the correct names data
+    ///
+    /// The output will contain fallback values using field identifiers (such as `tue` for `Weekday::Tuesday`,
+    /// `M02` for month 2, etc.).
+    ///
+    /// [`with_pattern_unchecked`]: FixedCalendarDateTimeNames::with_pattern_unchecked
+    #[displaydoc("Names for {0:?} not loaded")]
+    NamesNotLoaded(ErrorField),
+    /// The [`DecimalFormatter`] has not been loaded.
+    ///
+    /// Same error conditions as [`FormattedDateTimePatternError::NamesNotLoaded`].
+    ///
+    /// The output will contain fallback values using Latin numerals.
+    #[displaydoc("DecimalFormatter not loaded")]
+    DecimalFormatterNotLoaded,
 
-impl From<PatternItem> for TimeGranularity {
-    /// Retrieves the granularity of time represented by a [`PatternItem`].
-    /// If the [`PatternItem`] is not time-related, returns [`None`].
-    fn from(item: PatternItem) -> Self {
-        match item {
-            PatternItem::Field(field) => match field.symbol {
-                fields::FieldSymbol::Hour(_) => Self::Hours,
-                fields::FieldSymbol::Minute => Self::Minutes,
-                fields::FieldSymbol::Second(_) => Self::Seconds,
-                fields::FieldSymbol::DecimalSecond(_) => Self::Nanoseconds,
-                _ => Self::None,
-            },
-            _ => Self::None,
-        }
-    }
+    /// An input field (such as "hour" or "month") is missing.
+    ///
+    /// Error conditions:
+    ///
+    /// - **Unchecked functions:** for example, the pattern in [`with_pattern_unchecked`] contains fields that aren't in the fieldset
+    /// - **Trait impls:** for example, a custom field set does not require the correct fields
+    ///
+    /// The output will contain the string `{X}` instead, where `X` is the symbol for which the input is missing.
+    ///
+    /// [`with_pattern_unchecked`]: FixedCalendarDateTimeNames::with_pattern_unchecked
+    #[displaydoc("Incomplete input, missing value for {0:?}")]
+    MissingInputField(MissingInputFieldKind),
+
+    /// The pattern contains a field symbol for which formatting is unsupported.
+    ///
+    /// Error conditions:
+    ///
+    /// - **Unchecked functions:** for example, the pattern in [`with_pattern_unchecked`] contains an unsupported field
+    ///
+    /// The output will contain the string `{unsupported:X}`, where `X` is the symbol of the unsupported field.
+    ///
+    /// [`with_pattern_unchecked`]: FixedCalendarDateTimeNames::with_pattern_unchecked
+    #[displaydoc("Unsupported field {0:?}")]
+    UnsupportedField(ErrorField),
+    /// The pattern contains a field that has a valid symbol but invalid length.
+    ///
+    /// Same error conditions as [`FormattedDateTimePatternError::UnsupportedField`].
+    ///
+    /// The output will contain fallback values similar to [`FormattedDateTimePatternError::NamesNotLoaded`].
+    #[displaydoc("Field length for {0:?} is invalid")]
+    UnsupportedLength(ErrorField),
 }

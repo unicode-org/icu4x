@@ -1,0 +1,34 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_capi_gn"
+publish = false
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+# Note: Only dependencies that are explicitly listed here are given public GN build targets.
+icu_capi = { version = "2.0.0", default-features = false, features = ["default_components"] }
+icu = { version = "2.0.0", default-features = false }
+icu_provider = { version = "2.0.0" }
+
+# We need to explicitly specify versions here because these have build scripts and/or we wish to supply flags
+[gn.package.icu_capi."2.0.2"]
+rustflags = []
+
+[gn.package.proc-macro2."1.0.91"]
+rustflags = ["--cfg=use_proc_macro", "--cfg=wrap_proc_macro", "--cfg=proc_macro_span"]
+
+[gn.package.serde."1.0.160"]
+rustflags = []
+
+[gn.package.serde_derive."1.0.160"]
+rustflags = []
+
+[gn.package.libm."0.2.7"]
+
+# Build cargo-gnaw with its own dependency resolution
+[workspace]
+exclude = ["third_party_tools/fuchsia/tools/cargo-gnaw"]

@@ -19,5 +19,4 @@
 
 
 
-
 #endif // LineBreakOptionsV2_H

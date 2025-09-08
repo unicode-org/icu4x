@@ -29,7 +29,7 @@
 //! but there's really not much point in using them).
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(test), no_std)]
+#![cfg_attr(not(any(test, doc)), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -39,6 +39,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]
@@ -62,7 +63,7 @@ where
     let mut seq = serializer.serialize_tuple(N)?;
 
     for i in 0..N {
-        #[allow(clippy::indexing_slicing)] // i, j in 0..N
+        #[expect(clippy::indexing_slicing)] // i, j in 0..N
         match array.iter().take(i).position(|item| item == &array[i]) {
             None if human => seq.serialize_element(&HumanSer::Value(&array[i]))?,
             None => seq.serialize_element(&MachineSer::Value(&array[i]))?,
@@ -92,7 +93,7 @@ where
         {
             match r {
                 HumanDe::Value(v) => {
-                    #[allow(clippy::indexing_slicing)] // i in 0..N by enumerate
+                    #[expect(clippy::indexing_slicing)] // i in 0..N by enumerate
                     array[i].write(v);
                 }
                 HumanDe::Fallback([j]) => unsafe {
@@ -103,7 +104,7 @@ where
                             "Illegal forward fallback {i}->{j}",
                         )));
                     }
-                    #[allow(clippy::indexing_slicing)] // j < i in 0..N by enumerate
+                    #[expect(clippy::indexing_slicing)] // j < i in 0..N by enumerate
                     array[i].write(array[j].assume_init_ref().clone());
                 },
             }
@@ -114,7 +115,7 @@ where
         {
             match r {
                 MachineDe::Value(v) => {
-                    #[allow(clippy::indexing_slicing)] // i in 0..N by enumerate
+                    #[expect(clippy::indexing_slicing)] // i in 0..N by enumerate
                     array[i].write(v);
                 }
                 MachineDe::Fallback(j) => unsafe {
@@ -125,7 +126,7 @@ where
                             "Illegal forward fallback {i}->{j}",
                         )));
                     }
-                    #[allow(clippy::indexing_slicing)] // j < i in 0..N by enumerate
+                    #[expect(clippy::indexing_slicing)] // j < i in 0..N by enumerate
                     array[i].write(array[j].assume_init_ref().clone());
                 },
             }
@@ -173,7 +174,7 @@ pub enum MachineDe<T> {
     Fallback(usize),
 }
 
-impl<'a, T> Serialize for MachineSer<'a, T>
+impl<T> Serialize for MachineSer<'_, T>
 where
     T: Serialize,
 {

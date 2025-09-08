@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::Decimal;
 #[cfg(feature = "experimental")]
 use icu_plurals::PluralOperands;
-use icu_plurals::{PluralCategory, PluralRuleType};
+use icu_plurals::{PluralCategory, PluralRuleType, PluralRulesOptions};
 use serde::Deserialize;
 
 /// Defines the data-driven test sets for the operands.
@@ -40,9 +40,11 @@ pub struct FixedDecimalInput {
     pow10: i16,
 }
 
-impl From<&FixedDecimalInput> for FixedDecimal {
+impl From<&FixedDecimalInput> for Decimal {
     fn from(f: &FixedDecimalInput) -> Self {
-        FixedDecimal::from(f.from).multiplied_pow10(f.pow10)
+        let mut dec = Decimal::from(f.from);
+        dec.multiply_pow10(f.pow10);
+        dec
     }
 }
 
@@ -66,7 +68,7 @@ pub enum PluralOperandsInput {
 #[cfg(feature = "experimental")]
 impl From<PluralOperandsInput> for PluralOperands {
     fn from(input: PluralOperandsInput) -> Self {
-        use icu_plurals::rules::RawPluralOperands;
+        use icu_plurals::RawPluralOperands;
         match input {
             PluralOperandsInput::List(operands) => PluralOperands::from(RawPluralOperands {
                 i: operands.1,
@@ -133,11 +135,11 @@ pub enum PluralRuleTypeInput {
     Ordinal,
 }
 
-impl From<PluralRuleTypeInput> for PluralRuleType {
+impl From<PluralRuleTypeInput> for PluralRulesOptions {
     fn from(other: PluralRuleTypeInput) -> Self {
         match other {
-            PluralRuleTypeInput::Cardinal => PluralRuleType::Cardinal,
-            PluralRuleTypeInput::Ordinal => PluralRuleType::Ordinal,
+            PluralRuleTypeInput::Cardinal => PluralRuleType::Cardinal.into(),
+            PluralRuleTypeInput::Ordinal => PluralRuleType::Ordinal.into(),
         }
     }
 }

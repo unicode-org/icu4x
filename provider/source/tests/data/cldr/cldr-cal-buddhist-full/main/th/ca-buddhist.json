@@ -354,7 +354,7 @@
                 "GyMMMd": "d MMM G y",
                 "GyMMMEd": "E d MMM G y",
                 "GyMMMEEEEd": "EEEEที่ d MMM G y",
-                "h": "h a",
+                "h": "h a",
                 "H": "HH",
                 "hm": "h:mm a",
                 "Hm": "HH:mm",
@@ -400,11 +400,11 @@
               "intervalFormats": {
                 "intervalFormatFallback": "{0} - {1}",
                 "Bh": {
-                  "B": "h B – h B",
+                  "B": "h B – h B",
                   "h": "h – h B"
                 },
                 "Bhm": {
-                  "B": "h:mm B – h:mm B",
+                  "B": "h:mm B – h:mm B",
                   "h": "h:mm – h:mm B",
                   "m": "h:mm – h:mm B"
                 },
@@ -412,7 +412,7 @@
                   "d": "d–d"
                 },
                 "Gy": {
-                  "G": "G y – G y",
+                  "G": "G y – G y",
                   "y": "G y–y"
                 },
                 "GyM": {
@@ -450,14 +450,14 @@
                   "y": "E d MMM G y – E d MMM y"
                 },
                 "h": {
-                  "a": "h a – h a",
-                  "h": "h–h a"
+                  "a": "h a – h a",
+                  "h": "h–h a"
                 },
                 "H": {
                   "H": "H–H"
                 },
                 "hm": {
-                  "a": "h:mm a – h:mm a",
+                  "a": "h:mm a – h:mm a",
                   "h": "h:mm–h:mm a",
                   "m": "h:mm–h:mm a"
                 },
@@ -466,7 +466,7 @@
                   "m": "H:mm–H:mm"
                 },
                 "hmv": {
-                  "a": "h:mm a – h:mm a v",
+                  "a": "h:mm a – h:mm a v",
                   "h": "h:mm–h:mm a v",
                   "m": "h:mm–h:mm a v"
                 },
@@ -475,8 +475,8 @@
                   "m": "H:mm–H:mm v"
                 },
                 "hv": {
-                  "a": "h a – h a v",
-                  "h": "h–h a v"
+                  "a": "h a – h a v",
+                  "h": "h–h a v"
                 },
                 "Hv": {
                   "H": "H–H v"

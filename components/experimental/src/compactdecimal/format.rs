@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::borrow::Cow;
-use fixed_decimal::{CompactDecimal, FixedDecimal};
+use fixed_decimal::{CompactDecimal, Decimal};
 use writeable::Writeable;
 use zerovec::maps::ZeroMap2dCursor;
 
@@ -25,13 +25,13 @@ impl FormattedCompactDecimal<'_> {
     /// # Examples
     ///
     /// ```
-    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::Decimal;
     /// use icu::experimental::compactdecimal::CompactDecimalFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let short_english = CompactDecimalFormatter::try_new_short(
-    ///     &locale!("en").into(),
+    ///     locale!("en").into(),
     ///     Default::default(),
     /// )
     /// .unwrap();
@@ -49,20 +49,20 @@ impl FormattedCompactDecimal<'_> {
     }
 }
 
-impl<'l> Writeable for FormattedCompactDecimal<'l> {
+impl Writeable for FormattedCompactDecimal<'_> {
     fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
     where
         W: core::fmt::Write + ?Sized,
     {
         if self.value.exponent() == 0 {
             self.formatter
-                .fixed_decimal_formatter
+                .decimal_formatter
                 .format(self.value.significand())
                 .write_to(sink)
         } else {
             let plural_map = self.plural_map.as_ref().ok_or(core::fmt::Error)?;
             let chosen_pattern = (|| {
-                if self.value.significand() == &FixedDecimal::from(1) {
+                if self.value.significand() == &Decimal::from(1) {
                     if let Some(pattern) = plural_map.get1(&Count::Explicit1) {
                         return Some(pattern);
                     }
@@ -87,7 +87,7 @@ impl<'l> Writeable for FormattedCompactDecimal<'l> {
                             .ok_or(core::fmt::Error)?,
                     )?;
                     self.formatter
-                        .fixed_decimal_formatter
+                        .decimal_formatter
                         .format(self.value.significand())
                         .write_to(sink)?;
                     sink.write_str(

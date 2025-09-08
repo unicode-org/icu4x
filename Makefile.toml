@@ -3,7 +3,7 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 extend = [
-    { path = "./tutorials/gn/gn.toml"}, #
+    { path = "./examples/gn/gn.toml"}, #
     { path = "./tools/make/data.toml"}, #
     { path = "./tools/make/valgrind.toml"}, #
     { path = "./tools/make/tidy.toml"}, #
@@ -19,7 +19,7 @@ default_to_workspace = false
 # The toolchain that CI is being run in. Allows tests to change under beta/nightly.
 CI_TOOLCHAIN = { value = "pinned-stable", condition = { env_not_set = ["CI_TOOLCHAIN"]}}
 # The pinned nightly toolchain for jobs that require a nightly compiler.
-PINNED_CI_NIGHTLY = { value = "nightly-2024-07-23", condition = { env_not_set = ["PINNED_CI_NIGHTLY"] } }
+PINNED_CI_NIGHTLY = { value = "nightly-2025-02-17", condition = { env_not_set = ["PINNED_CI_NIGHTLY"] } }
 
 [tasks.quick]
 description = "Run quick version of all lints and builds (useful before pushing to GitHub)"
@@ -61,8 +61,26 @@ category = "ICU4X Development"
 env = { ICU4X_DATA_DIR = "../stubdata" }
 script_runner = "@duckscript"
 script = '''
+exec --fail-on-error rustup install 1.82 --profile minimal
+exec --fail-on-error cargo +1.82 check --all-targets --all-features
+'''
+
+[tasks.ci-job-msrv-utils]
+description = "Check utils that have different MSRVs"
+category = "ICU4X Development"
+dependencies = [
+    # This list should be kept in sync with the list in rust_versions.md
+    "msrv-zerofrom",
+]
+
+[tasks.msrv-zerofrom]
+description = "Run MSRV tests for the zerofrom MSRV job"
+category = "ICU4X Development"
+env = { ICU4X_DATA_DIR = "../stubdata" }
+script_runner = "@duckscript"
+script = '''
 exec --fail-on-error rustup install 1.71.1 --profile minimal
-exec --fail-on-error cargo +1.71.1 check --all-targets --all-features
+exec --fail-on-error cargo +1.71.1 check -p zerofrom --all-targets --all-features
 '''
 
 [tasks.ci-job-test]
@@ -79,18 +97,11 @@ dependencies = [
     "test-dev-without-assertions",
 ]
 
-[tasks.ci-job-test-tutorials-local]
-description = "Run all checks for the CI 'test-tutorials' job"
+[tasks.ci-job-test-cargo]
+description = "Run all checks for the CI 'test-cargo' job"
 category = "CI"
 dependencies = [
-    "test-tutorials-local",
-]
-
-[tasks.ci-job-test-tutorials-cratesio]
-description = "Run all checks for the CI 'test-tutorials' job"
-category = "CI"
-dependencies = [
-    "test-tutorials-cratesio",
+    "test-cargo",
 ]
 
 [tasks.ci-job-testdata]
@@ -144,6 +155,7 @@ env = { ICU4X_DATA_DIR = "../stubdata" }
 category = "CI"
 dependencies = [
     "check-nostd",
+    "check-noalloc",
     "check-freertos-wearos",
 ]
 
@@ -162,6 +174,8 @@ category = "CI"
 dependencies = [
     "verify-gn-gen",
     "gn-run",
+    # Until https://github.com/wasmerio/wasmer/issues/5610
+    # "gn-run-wasi",
 ]
 
 [tasks.ci-job-msrv-features-1]
@@ -170,8 +184,8 @@ category = "CI"
 env = { ICU4X_DATA_DIR = "../stubdata" }
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install 1.71.1 --profile minimal
-exec --fail-on-error cargo +1.71.1 make check-all-features-chunked 1
+exec --fail-on-error rustup install 1.82 --profile minimal
+exec --fail-on-error cargo +1.82 make check-all-features-chunked 1
 '''
 
 [tasks.ci-job-msrv-features-2]
@@ -180,8 +194,8 @@ category = "CI"
 env = { ICU4X_DATA_DIR = "../stubdata" }
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install 1.71.1 --profile minimal
-exec --fail-on-error cargo +1.71.1 make check-all-features-chunked 2
+exec --fail-on-error rustup install 1.82 --profile minimal
+exec --fail-on-error cargo +1.82 make check-all-features-chunked 2
 '''
 
 [tasks.ci-job-msrv-features-3]
@@ -190,8 +204,8 @@ category = "CI"
 env = { ICU4X_DATA_DIR = "../stubdata" }
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install 1.71.1 --profile minimal
-exec --fail-on-error cargo +1.71.1 make check-all-features-chunked 3
+exec --fail-on-error rustup install 1.82 --profile minimal
+exec --fail-on-error cargo +1.82 make check-all-features-chunked 3
 '''
 
 [tasks.ci-job-msrv-features]
@@ -218,6 +232,7 @@ dependencies = [
     "generated-readme-check",
     "license-file-check",
     "depcheck",
+    "codegen-check",
 ]
 
 [tasks.ci-job-clippy]
@@ -258,7 +273,7 @@ dependencies = [
     # Get a coffee
     "ci-job-test",
     "ci-job-test-docs",
-    "ci-job-test-tutorials-cratesio",
+    "ci-job-test-cargo",
     "ci-job-testdata",
     "ci-job-msrv-features",
     "ci-job-full-datagen",

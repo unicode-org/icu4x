@@ -3,9 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::measure::measureunit::MeasureUnit;
-use crate::measure::parser::MeasureUnitParser;
 use crate::measure::provider::single_unit::SingleUnit;
-use crate::units::provider;
 use crate::units::ratio::IcuRatio;
 use crate::units::{
     converter::{
@@ -14,6 +12,7 @@ use crate::units::{
     },
     provider::Sign,
 };
+use crate::units::{provider, InvalidConversionError};
 
 use icu_provider::prelude::*;
 use icu_provider::DataError;
@@ -23,10 +22,10 @@ use num_traits::{One, Zero};
 use zerovec::ZeroSlice;
 
 use super::convertible::Convertible;
-/// ConverterFactory is a factory for creating a converter.
+/// ConverterFactory is responsible for creating converters.
 pub struct ConverterFactory {
     /// Contains the necessary data for the conversion factory.
-    payload: DataPayload<provider::UnitsInfoV1Marker>,
+    payload: DataPayload<provider::UnitsInfoV1>,
 }
 
 impl From<Sign> for num_bigint::Sign {
@@ -39,11 +38,10 @@ impl From<Sign> for num_bigint::Sign {
 }
 
 impl ConverterFactory {
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         () -> error: DataError,
         functions: [
             new: skip,
-            try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
             Self,
@@ -58,24 +56,18 @@ impl ConverterFactory {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self {
-            payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_UNITS_INFO_V1_MARKER,
-            ),
+            payload: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_UNITS_INFO_V1),
         }
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: ?Sized + DataProvider<provider::UnitsInfoV1Marker>,
+        D: ?Sized + DataProvider<provider::UnitsInfoV1>,
     {
         let payload = provider.load(DataRequest::default())?.payload;
 
         Ok(Self { payload })
-    }
-
-    pub fn parser(&self) -> MeasureUnitParser<'_> {
-        MeasureUnitParser::from_payload(self.payload.get().units_conversion_trie.as_borrowed())
     }
 
     /// Calculates the offset between two units by performing the following steps:
@@ -95,23 +87,29 @@ impl ConverterFactory {
     ///    which simplifies to: Offset = (Offset1 - Offset2) * (1/ConversionRate2).
     ///
     /// NOTE:
-    ///   An offset can be calculated if both the input and output units are simple.
-    ///   A unit is considered simple if it is made up of a single unit item, with a power of 1 and an SI prefix of 0.
-    ///   
-    ///   For example:
-    ///     `meter` and `foot` are simple units.
-    ///     `meter-per-second` and `foot-per-second` are not simple units.
+    ///   - An offset can be calculated if both the input and output units are simple.
+    ///   - A unit is considered simple if it is made up of a single unit, with a power of 1 and an SI prefix power of 0.
+    ///     - For example:
+    ///         - `meter` and `foot` are simple units.
+    ///         - `square-meter` and `square-foot` are simple units.
+    ///         - `meter-per-second` and `foot-per-second` are not simple units.
     fn compute_offset(
         &self,
         input_unit: &MeasureUnit,
         output_unit: &MeasureUnit,
     ) -> Option<IcuRatio> {
-        if !(input_unit.contained_units.len() == 1
-            && output_unit.contained_units.len() == 1
-            && input_unit.contained_units[0].power == 1
-            && output_unit.contained_units[0].power == 1
-            && input_unit.contained_units[0].si_prefix.power == 0
-            && output_unit.contained_units[0].si_prefix.power == 0)
+        let &[input_unit] = input_unit.single_units() else {
+            return Some(IcuRatio::zero());
+        };
+
+        let &[output_unit] = output_unit.single_units() else {
+            return Some(IcuRatio::zero());
+        };
+
+        if !(input_unit.power == 1
+            && output_unit.power == 1
+            && input_unit.si_prefix.power == 0
+            && output_unit.si_prefix.power == 0)
         {
             return Some(IcuRatio::zero());
         }
@@ -119,8 +117,7 @@ impl ConverterFactory {
         let input_conversion_info = self
             .payload
             .get()
-            .convert_infos
-            .get(input_unit.contained_units[0].unit_id as usize);
+            .conversion_info_by_unit_id(input_unit.unit_id);
         debug_assert!(
             input_conversion_info.is_some(),
             "Failed to get input conversion info"
@@ -130,8 +127,7 @@ impl ConverterFactory {
         let output_conversion_info = self
             .payload
             .get()
-            .convert_infos
-            .get(output_unit.contained_units[0].unit_id as usize);
+            .conversion_info_by_unit_id(output_unit.unit_id);
         debug_assert!(
             output_conversion_info.is_some(),
             "Failed to get output conversion info"
@@ -154,7 +150,11 @@ impl ConverterFactory {
     /// NOTE:
     ///   If the units are neither proportional nor reciprocal, the function will return `None`,
     ///   indicating that the units are incompatible.
-    fn is_reciprocal(&self, unit1: &MeasureUnit, unit2: &MeasureUnit) -> Option<bool> {
+    fn is_reciprocal(
+        &self,
+        unit1: &MeasureUnit,
+        unit2: &MeasureUnit,
+    ) -> Result<bool, InvalidConversionError> {
         /// A struct that contains the sum and difference of base unit powers.
         /// For example:
         ///     For the input unit `meter-per-second`, the base units are `meter` (power: 1) and `second` (power: -1).
@@ -170,29 +170,33 @@ impl ConverterFactory {
             sums: i16,
         }
 
-        /// Inserting the units item into the map.
+        /// Inserts composite units into the map by decomposing them into their basic units.
         /// NOTE:
-        ///     This will require to go through the basic units of the given unit items.
-        ///     For example, `newton` has the basic units:  `gram`, `meter`, and `second` (each one has it is own power and si prefix).
-        fn insert_non_basic_units(
+        ///     This process involves iterating through the basic units of the provided composite units.
+        ///     For example, `newton` is composed of the basic units: `gram`, `meter`, and `second` (each with its own power and SI prefix).
+        fn insert_composite_units(
             factory: &ConverterFactory,
-            units: &[SingleUnit],
+            single_units: &[SingleUnit],
             sign: i16,
             map: &mut LiteMap<u16, PowersInfo>,
-        ) -> Option<()> {
-            for item in units {
-                let items_from_item = factory
+        ) -> Result<(), InvalidConversionError> {
+            for single_unit in single_units {
+                let conversion_info = factory
                     .payload
                     .get()
-                    .convert_infos
-                    .get(item.unit_id as usize);
+                    .conversion_info_by_unit_id(single_unit.unit_id);
 
-                debug_assert!(items_from_item.is_some(), "Failed to get convert info");
+                debug_assert!(conversion_info.is_some(), "Failed to get convert info");
 
-                insert_base_units(items_from_item?.basic_units(), item.power as i16, sign, map);
+                match conversion_info {
+                    Some(items) => {
+                        insert_base_units(items.basic_units(), single_unit.power as i16, sign, map)
+                    }
+                    None => return Err(InvalidConversionError),
+                }
             }
 
-            Some(())
+            Ok(())
         }
 
         /// Inserting the basic units into the map.
@@ -224,15 +228,13 @@ impl ConverterFactory {
             }
         }
 
-        let unit1 = &unit1.contained_units;
-        let unit2 = &unit2.contained_units;
-
         let mut map = LiteMap::new();
-        insert_non_basic_units(self, unit1, 1, &mut map)?;
-        insert_non_basic_units(self, unit2, -1, &mut map)?;
+        for (single_units, sign) in [(&unit1.single_units, 1), (&unit2.single_units, -1)] {
+            insert_composite_units(self, single_units.as_slice(), sign, &mut map)?;
+        }
 
         let (power_sums_are_zero, power_diffs_are_zero) =
-            map.iter_values()
+            map.values()
                 .fold((true, true), |(sums, diffs), powers_info| {
                     (
                         sums && powers_info.sums == 0,
@@ -241,11 +243,11 @@ impl ConverterFactory {
                 });
 
         if power_diffs_are_zero {
-            Some(false)
+            Ok(false)
         } else if power_sums_are_zero {
-            Some(true)
+            Ok(true)
         } else {
-            None
+            Err(InvalidConversionError)
         }
     }
 
@@ -253,8 +255,7 @@ impl ConverterFactory {
         let conversion_info = self
             .payload
             .get()
-            .convert_infos
-            .get(unit_item.unit_id as usize);
+            .conversion_info_by_unit_id(unit_item.unit_id);
         debug_assert!(conversion_info.is_some(), "Failed to get conversion info");
         let conversion_info = conversion_info?;
 
@@ -279,19 +280,37 @@ impl ConverterFactory {
         input_unit: &MeasureUnit,
         output_unit: &MeasureUnit,
     ) -> Option<UnitsConverter<T>> {
-        let is_reciprocal = self.is_reciprocal(input_unit, output_unit)?;
+        let is_reciprocal = match self.is_reciprocal(input_unit, output_unit) {
+            Ok(is_reciprocal) => is_reciprocal,
+            Err(InvalidConversionError) => return None,
+        };
 
         // Determine the sign of the powers of the units from root to unit2.
         let root_to_unit2_direction_sign = if is_reciprocal { 1 } else { -1 };
 
         let mut conversion_rate = IcuRatio::one();
-        for input_item in input_unit.contained_units.iter() {
-            conversion_rate *= Self::compute_conversion_term(self, input_item, 1)?;
+        for input_single_unit in input_unit.single_units.as_slice() {
+            conversion_rate *= Self::compute_conversion_term(self, input_single_unit, 1)?;
         }
 
-        for output_item in output_unit.contained_units.iter() {
-            conversion_rate *=
-                Self::compute_conversion_term(self, output_item, root_to_unit2_direction_sign)?;
+        if input_unit.constant_denominator() != 0 {
+            conversion_rate /= IcuRatio::from_integer(input_unit.constant_denominator());
+        }
+
+        for output_single_unit in output_unit.single_units.as_slice() {
+            conversion_rate *= Self::compute_conversion_term(
+                self,
+                output_single_unit,
+                root_to_unit2_direction_sign,
+            )?;
+        }
+
+        if output_unit.constant_denominator() != 0 {
+            if is_reciprocal {
+                conversion_rate /= IcuRatio::from_integer(output_unit.constant_denominator());
+            } else {
+                conversion_rate *= IcuRatio::from_integer(output_unit.constant_denominator());
+            }
         }
 
         let offset = self.compute_offset(input_unit, output_unit)?;
@@ -324,5 +343,53 @@ impl ConverterFactory {
                 },
             )))
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::ConverterFactory;
+    use crate::measure::measureunit::MeasureUnit;
+
+    #[test]
+    fn test_converter_factory() {
+        let factory = ConverterFactory::new();
+        let input_unit = MeasureUnit::try_from_str("meter").unwrap();
+        let output_unit = MeasureUnit::try_from_str("foot").unwrap();
+        let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
+        let result = converter.convert(&1000.0);
+        assert!(
+            ((result - 3280.84) / 3280.84).abs() < 0.00001,
+            "The relative difference between the result and the expected value is too large: {}",
+            ((result - 3280.84) / 3280.84).abs()
+        );
+    }
+
+    #[test]
+    fn test_converter_factory_with_constant_denominator() {
+        let factory = ConverterFactory::new();
+        let input_unit = MeasureUnit::try_from_str("liter-per-100-kilometer").unwrap();
+        let output_unit = MeasureUnit::try_from_str("mile-per-gallon").unwrap();
+        let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
+        let result = converter.convert(&1.0);
+        assert!(
+            ((result - 235.21) / 235.21).abs() < 0.0001,
+            "The relative difference between the result and the expected value is too large: {}",
+            ((result - 235.21) / 235.21).abs()
+        );
+    }
+
+    #[test]
+    fn test_converter_factory_with_offset() {
+        let factory = ConverterFactory::new();
+        let input_unit = MeasureUnit::try_from_str("celsius").unwrap();
+        let output_unit = MeasureUnit::try_from_str("fahrenheit").unwrap();
+        let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
+        let result = converter.convert(&0.0);
+        assert!(
+            ((result - 32.0) / 32.0).abs() < 0.00001,
+            "The relative difference between the result and the expected value is too large: {}",
+            ((result - 32.0) / 32.0).abs()
+        );
     }
 }

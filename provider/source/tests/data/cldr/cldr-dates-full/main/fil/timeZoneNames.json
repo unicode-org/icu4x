@@ -14,181 +14,27 @@
           "regionFormat-type-standard": "Standard na Oras sa {0}",
           "fallbackFormat": "{1} ({0})",
           "zone": {
-            "America": {
-              "Asuncion": {
-                "exemplarCity": "Asunción"
-              },
-              "Bahia_Banderas": {
-                "exemplarCity": "Bahia Banderas"
-              },
-              "Cancun": {
-                "exemplarCity": "Cancun"
-              },
-              "Ciudad_Juarez": {
-                "exemplarCity": "Lungsod ng Juárez"
-              },
-              "Coral_Harbour": {
-                "exemplarCity": "Atikokan"
-              },
-              "Curacao": {
-                "exemplarCity": "Curaçao"
-              },
-              "Godthab": {
-                "exemplarCity": "Nuuk"
-              },
-              "Indiana": {
-                "Vincennes": {
-                  "exemplarCity": "Vincennes, Indiana"
-                },
-                "Petersburg": {
-                  "exemplarCity": "Petersburg, Indiana"
-                },
-                "Tell_City": {
-                  "exemplarCity": "Tell City, Indiana"
-                },
-                "Knox": {
-                  "exemplarCity": "Knox, Indiana"
-                },
-                "Winamac": {
-                  "exemplarCity": "Winamac, Indiana"
-                },
-                "Marengo": {
-                  "exemplarCity": "Marengo, Indiana"
-                },
-                "Vevay": {
-                  "exemplarCity": "Vevay, Indiana"
-                }
-              },
-              "Kentucky": {
-                "Monticello": {
-                  "exemplarCity": "Monticello, Kentucky"
-                }
-              },
-              "Lower_Princes": {
-                "exemplarCity": "Lower Prince’s Quarter"
-              },
-              "Merida": {
-                "exemplarCity": "Merida"
-              },
-              "Mexico_City": {
-                "exemplarCity": "Lungsod ng Mexico"
-              },
-              "North_Dakota": {
-                "Beulah": {
-                  "exemplarCity": "Beulah, North Dakota"
-                },
-                "New_Salem": {
-                  "exemplarCity": "New Salem, North Dakota"
-                },
-                "Center": {
-                  "exemplarCity": "Center, North Dakota"
-                }
-              },
-              "Port_of_Spain": {
-                "exemplarCity": "Puwerto ng Espanya"
-              },
-              "Rankin_Inlet": {
-                "exemplarCity": "Makipot na Look ng Rankin"
-              },
-              "Scoresbysund": {
-                "exemplarCity": "Ittoqqortoormiit"
-              },
-              "St_Barthelemy": {
-                "exemplarCity": "St. Barthélemy"
-              },
-              "St_Johns": {
-                "exemplarCity": "St. John’s"
-              },
-              "St_Kitts": {
-                "exemplarCity": "St. Kitts"
-              },
-              "St_Lucia": {
-                "exemplarCity": "St. Lucia"
-              },
-              "St_Thomas": {
-                "exemplarCity": "St. Thomas"
-              },
-              "St_Vincent": {
-                "exemplarCity": "St. Vincent"
-              }
-            },
-            "Atlantic": {
-              "Faeroe": {
-                "exemplarCity": "Faroe"
-              },
-              "St_Helena": {
-                "exemplarCity": "St. Helena"
-              }
-            },
-            "Europe": {
-              "Dublin": {
-                "long": {
-                  "daylight": "Standard na Oras sa Ireland"
-                }
-              },
-              "Kiev": {
-                "exemplarCity": "Kiev"
-              },
-              "London": {
-                "long": {
-                  "daylight": "Oras sa Tag-init ng Britain"
-                }
-              }
-            },
-            "Africa": {
-              "Asmera": {
-                "exemplarCity": "Asmara"
-              },
-              "Sao_Tome": {
-                "exemplarCity": "São Tomé"
-              }
-            },
-            "Asia": {
-              "Calcutta": {
-                "exemplarCity": "Kolkata"
-              },
-              "Katmandu": {
-                "exemplarCity": "Kathmandu"
-              },
-              "Macau": {
-                "exemplarCity": "Macau"
-              },
-              "Qostanay": {
-                "exemplarCity": "Kostanay"
-              },
-              "Rangoon": {
-                "exemplarCity": "Yangon"
-              },
-              "Saigon": {
-                "exemplarCity": "Lungsod ng Ho Chi Minh"
-              }
-            },
-            "Indian": {
-              "Reunion": {
-                "exemplarCity": "Réunion"
-              }
-            },
             "Pacific": {
-              "Enderbury": {
-                "exemplarCity": "Enderbury"
-              },
               "Honolulu": {
+                "_type": "zone",
                 "exemplarCity": "Honolulu"
               },
+              "Truk": {
+                "_type": "zone",
+                "exemplarCity": "Chuuk"
+              },
               "Ponape": {
+                "_type": "zone",
                 "exemplarCity": "Pohnpei"
               },
-              "Truk": {
-                "exemplarCity": "Chuuk"
-              }
-            },
-            "Antarctica": {
-              "DumontDUrville": {
-                "exemplarCity": "Dumont d’Urville"
+              "Enderbury": {
+                "_type": "zone",
+                "exemplarCity": "Enderbury"
               }
             },
             "Etc": {
               "UTC": {
+                "_type": "zone",
                 "long": {
                   "standard": "Coordinated Universal Time"
                 },
@@ -197,7 +43,216 @@
                 }
               },
               "Unknown": {
+                "_type": "zone",
                 "exemplarCity": "Di-kilalang Lungsod"
+              }
+            },
+            "Antarctica": {
+              "DumontDUrville": {
+                "_type": "zone",
+                "exemplarCity": "Dumont-d’Urville"
+              }
+            },
+            "America": {
+              "St_Barthelemy": {
+                "_type": "zone",
+                "exemplarCity": "St. Barthélemy"
+              },
+              "Noronha": {
+                "_type": "zone",
+                "exemplarCity": "Fernando de Noronha"
+              },
+              "Rankin_Inlet": {
+                "_type": "zone",
+                "exemplarCity": "Makipot na Look ng Rankin"
+              },
+              "Coral_Harbour": {
+                "_type": "zone",
+                "exemplarCity": "Atikokan"
+              },
+              "St_Johns": {
+                "_type": "zone",
+                "exemplarCity": "St. John’s"
+              },
+              "Curacao": {
+                "_type": "zone",
+                "exemplarCity": "Curaçao"
+              },
+              "Godthab": {
+                "_type": "zone",
+                "exemplarCity": "Nuuk"
+              },
+              "Scoresbysund": {
+                "_type": "zone",
+                "exemplarCity": "Ittoqqortoormiit"
+              },
+              "St_Kitts": {
+                "_type": "zone",
+                "exemplarCity": "St. Kitts"
+              },
+              "St_Lucia": {
+                "_type": "zone",
+                "exemplarCity": "St. Lucia"
+              },
+              "Ciudad_Juarez": {
+                "_type": "zone",
+                "exemplarCity": "Lungsod ng Juárez"
+              },
+              "Bahia_Banderas": {
+                "_type": "zone",
+                "exemplarCity": "Bahia Banderas"
+              },
+              "Mexico_City": {
+                "_type": "zone",
+                "exemplarCity": "Lungsod ng Mexico"
+              },
+              "Merida": {
+                "_type": "zone",
+                "exemplarCity": "Merida"
+              },
+              "Cancun": {
+                "_type": "zone",
+                "exemplarCity": "Cancun"
+              },
+              "Asuncion": {
+                "_type": "zone",
+                "exemplarCity": "Asunción"
+              },
+              "Lower_Princes": {
+                "_type": "zone",
+                "exemplarCity": "Lower Prince’s Quarter"
+              },
+              "Port_of_Spain": {
+                "_type": "zone",
+                "exemplarCity": "Puwerto ng Espanya"
+              },
+              "North_Dakota": {
+                "Beulah": {
+                  "_type": "zone",
+                  "exemplarCity": "Beulah, North Dakota"
+                },
+                "New_Salem": {
+                  "_type": "zone",
+                  "exemplarCity": "New Salem, North Dakota"
+                },
+                "Center": {
+                  "_type": "zone",
+                  "exemplarCity": "Center, North Dakota"
+                }
+              },
+              "Indiana": {
+                "Vincennes": {
+                  "_type": "zone",
+                  "exemplarCity": "Vincennes, Indiana"
+                },
+                "Petersburg": {
+                  "_type": "zone",
+                  "exemplarCity": "Petersburg, Indiana"
+                },
+                "Tell_City": {
+                  "_type": "zone",
+                  "exemplarCity": "Tell City, Indiana"
+                },
+                "Knox": {
+                  "_type": "zone",
+                  "exemplarCity": "Knox, Indiana"
+                },
+                "Winamac": {
+                  "_type": "zone",
+                  "exemplarCity": "Winamac, Indiana"
+                },
+                "Marengo": {
+                  "_type": "zone",
+                  "exemplarCity": "Marengo, Indiana"
+                },
+                "Vevay": {
+                  "_type": "zone",
+                  "exemplarCity": "Vevay, Indiana"
+                }
+              },
+              "Kentucky": {
+                "Monticello": {
+                  "_type": "zone",
+                  "exemplarCity": "Monticello, Kentucky"
+                }
+              },
+              "St_Vincent": {
+                "_type": "zone",
+                "exemplarCity": "St. Vincent"
+              },
+              "St_Thomas": {
+                "_type": "zone",
+                "exemplarCity": "St. Thomas"
+              }
+            },
+            "Africa": {
+              "Asmera": {
+                "_type": "zone",
+                "exemplarCity": "Asmara"
+              },
+              "Sao_Tome": {
+                "_type": "zone",
+                "exemplarCity": "São Tomé"
+              }
+            },
+            "Atlantic": {
+              "Faeroe": {
+                "_type": "zone",
+                "exemplarCity": "Faroe"
+              },
+              "St_Helena": {
+                "_type": "zone",
+                "exemplarCity": "St. Helena"
+              }
+            },
+            "Europe": {
+              "London": {
+                "_type": "zone",
+                "long": {
+                  "daylight": "Oras sa Tag-init ng Britain"
+                }
+              },
+              "Dublin": {
+                "_type": "zone",
+                "long": {
+                  "daylight": "Standard na Oras sa Ireland"
+                }
+              },
+              "Kiev": {
+                "_type": "zone",
+                "exemplarCity": "Kiev"
+              }
+            },
+            "Asia": {
+              "Calcutta": {
+                "_type": "zone",
+                "exemplarCity": "Kolkata"
+              },
+              "Qostanay": {
+                "_type": "zone",
+                "exemplarCity": "Kostanay"
+              },
+              "Rangoon": {
+                "_type": "zone",
+                "exemplarCity": "Yangon"
+              },
+              "Macau": {
+                "_type": "zone",
+                "exemplarCity": "Macau"
+              },
+              "Katmandu": {
+                "_type": "zone",
+                "exemplarCity": "Kathmandu"
+              },
+              "Saigon": {
+                "_type": "zone",
+                "exemplarCity": "Lungsod ng Ho Chi Minh"
+              }
+            },
+            "Indian": {
+              "Reunion": {
+                "_type": "zone",
+                "exemplarCity": "Réunion"
               }
             }
           },
@@ -422,13 +477,6 @@
                 "generic": "Oras sa China",
                 "standard": "Standard na Oras sa China",
                 "daylight": "Daylight Time sa China"
-              }
-            },
-            "Choibalsan": {
-              "long": {
-                "generic": "Oras sa Choibalsan",
-                "standard": "Standard na Oras sa Choibalsan",
-                "daylight": "Oras sa Tag-init ng Choibalsan"
               }
             },
             "Christmas": {

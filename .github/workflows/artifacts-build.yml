@@ -29,7 +29,7 @@ on:
   push
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -83,11 +83,15 @@ jobs:
           --exclude icu_benchmark_macros
           --exclude icu_ffi_coverage
           --exclude md-tests
-          --exclude icu_provider_macros
           --exclude databake-derive
           --exclude yoke-derive
           --exclude zerofrom-derive
           --exclude zerovec-derive
+
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: rustdoc
+        path: target/doc
 
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
@@ -134,21 +138,28 @@ jobs:
     - name: Build docs
       uses: mattnotmitt/doxygen-action@411df0c62acb5b96b8a93d93a7bf4b753c47ea05 # v1.9.5
       with:
-          doxyfile-path: 'tools/config.doxy'
+          doxyfile-path: 'tools/doxygen/config.doxy'
+
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      id: upload_artifact
+      with:
+        name: cppdoc
+        path: tools/doxygen/html
         
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
-        gsutil -m cp -r html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/cppdoc
+        gsutil -m cp -r tools/doxygen/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/cppdoc
     
     - name: Upload docs to Google Cloud Storage (main)
       if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
       run: |
-        gsutil -m cp -r html/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/cppdoc
+        gsutil -m cp -r tools/doxygen/html/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/cppdoc
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
         echo "📖 C++ docs"
         echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/cppdoc/index.html"
+        echo "Artifact URL is: ${{ steps.upload_artifact.outputs.artifact-url }}"
 
   ts-docs:
     name: "TypeScript docs"
@@ -176,11 +187,16 @@ jobs:
 
     - name: Build docs
       run: |
+        npm install typedoc@0.26.5 --exact -g
         cd ffi/npm
         make lib/index.mjs
-        npm install typedoc@0.26.5 --exact
-        node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme ../../tutorials/js.md --basePath lib
+        typedoc
         cd ../..
+
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: tsdoc
+        path: ffi/npm/docs
         
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
@@ -223,16 +239,19 @@ jobs:
     - name: Install Dart
       uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
       with:
-        sdk: 3.4.0-204.0.dev
+        sdk: 3.9.0-138.0.dev
         
     - name: Build docs
       run: |
         cd ffi/dart
-        make lib/src/lib.g.dart
-        # https://github.com/dart-lang/dartdoc/issues/3590
         dart pub get
         dart doc
         cd ../..
+
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: dartdoc
+        path: ffi/dart/doc/api
 
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
@@ -269,16 +288,19 @@ jobs:
     - name: Init packages
       run: |
         npm -C ffi/npm ci
-        npm -C tutorials/web-demo ci
-      env: 
-        PINNED_CI_NIGHTLY: nightly-2024-07-23
+        npm -C tools/web-demo ci
 
     - name: Run Webpack
-      run: npm -C tutorials/web-demo run build
+      run: npm -C tools/web-demo run build
+
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: wasmdemo
+        path: tools/web-demo/public
 
     - name: Upload wasm-demo bundle to Google Cloud Storage
       run: |
-        gsutil -m cp -r tutorials/web-demo/public/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
+        gsutil -m cp -r tools/web-demo/public/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
@@ -344,7 +366,7 @@ jobs:
     - name: Run benchmark
       shell: /usr/bin/bash -o pipefail -e {0}
       run: |
-        cargo bench --features bench --manifest-path ${{ matrix.component }}/Cargo.toml -- --output-format bencher | tee benchmarks/perf/${{ matrix.component }}/output.txt;
+        cargo bench --manifest-path ${{ matrix.component }}/Cargo.toml --all-features -- --output-format bencher | tee benchmarks/perf/${{ matrix.component }}/output.txt;
 
     - name:  Download previous benchmark data
       run: |
@@ -403,6 +425,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+    # gsutil needs Python 3.11 but macos-latest has 3.12
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -558,6 +586,169 @@ jobs:
           git checkout empty
           gsutil -m cp -r benchmarks/binsize/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/binsize
 
+  ffi-libs:
+    if: github.ref_type == 'tag' && github.repository == 'unicode-org/icu4x'
+    name: Build FFI binaries
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        compiletype: [ dynamic, static ]
+        include_data: [true, false]
+        exclude:
+          - compiletype: dynamic
+            include_data: false
+    runs-on: ${{ matrix.os }}
+    env:
+      FEATURES: ${{ matrix.include_data == true && 'default_components,experimental,buffer_provider,compiled_data' || 'default_components,experimental,buffer_provider' }}
+      FILENAME_SUFFIX: ${{ matrix.compiletype == 'static' && matrix.include_data == true && '-with_data' || '' }}
+
+    steps:
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+    - name: Install Rust toolchains
+      run: |
+        rustup toolchain install stable
+        rustup toolchain install nightly
+    
+    - name: Show the selected Rust toolchain
+      run: rustup show
+    
+    - uses: dart-lang/setup-dart@e51d8e571e22473a2ddebf0ef8a2123f0ab2c02c
+      with:
+        sdk: main
+
+    - name: Setup additional linkers
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get install gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf gcc-riscv64-linux-gnu gcc-i686-linux-gnu
+        mkdir -p .cargo
+        echo "[target]" >> .cargo/config.toml
+        echo "aarch64-linux-android.linker=\"$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android30-clang\"" >> .cargo/config.toml
+        echo "armv7-linux-androideabi.linker=\"$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi30-clang\"" >> .cargo/config.toml
+        echo "i686-linux-android.linker=\"$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android30-clang\"" >> .cargo/config.toml
+        echo "x86_64-linux-android.linker=\"$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android30-clang\"" >> .cargo/config.toml
+        echo "riscv64-linux-android.linker=\"$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/riscv64-linux-android35-clang\"" >> .cargo/config.toml
+        echo "aarch64-unknown-linux-gnu.linker=\"aarch64-linux-gnu-gcc\"" >> .cargo/config.toml
+        echo "armv7-unknown-linux-gnueabihf.linker=\"arm-linux-gnueabihf-gcc\"" >> .cargo/config.toml
+        echo "riscv64gc-unknown-linux-gnu.linker=\"riscv64-linux-gnu-gcc\"" >> .cargo/config.toml
+        
+    - name: Build Linux
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        (cd ffi/dart && dart pub get)
+
+        mkdir bin
+        
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-armv7-linux-androideabi --target armv7-linux-androideabi --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-linux-android --target aarch64-linux-android --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-i686-linux-android --target i686-linux-android --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-linux-android --target x86_64-linux-android --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-armv7-unknown-linux-gnueabihf --target armv7-unknown-linux-gnueabihf --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-unknown-linux-gnu --target aarch64-unknown-linux-gnu --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-riscv64gc-unknown-linux-gnu --target riscv64gc-unknown-linux-gnu --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-unknown-linux-gnu --target x86_64-unknown-linux-gnu --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+
+    - name: Build Linux data
+      if: matrix.os == 'ubuntu-latest' && matrix.compiletype == 'static' && matrix.include_data == false
+      run: |
+        cd provider/icu4x-datagen # avoid global feature resolution
+        rustup target add aarch64-unknown-linux-gnu
+        cargo build --release --bin icu4x-datagen --no-default-features --features blob_exporter,blob_input,rayon --target aarch64-unknown-linux-gnu
+        rustup target add riscv64gc-unknown-linux-gnu
+        cargo build --release --bin icu4x-datagen --no-default-features --features blob_exporter,blob_input,rayon --target riscv64gc-unknown-linux-gnu
+        rustup target add x86_64-unknown-linux-gnu
+        cargo build --release --bin icu4x-datagen --no-default-features --features blob_exporter,blob_input,rayon --target x86_64-unknown-linux-gnu
+        cd ../..
+
+        cp target/aarch64-unknown-linux-gnu/release/icu4x-datagen bin/icu4x-datagen-aarch64-unknown-linux-gnu
+        cp target/riscv64gc-unknown-linux-gnu/release/icu4x-datagen bin/icu4x-datagen-riscv64gc-unknown-linux-gnu
+        cp target/x86_64-unknown-linux-gnu/release/icu4x-datagen bin/icu4x-datagen-x86_64-unknown-linux-gnu
+  
+    - name: Build Mac
+      if: matrix.os == 'macos-latest'
+      run: |
+        (cd ffi/dart && dart pub get)
+
+        mkdir bin
+
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-apple-ios --target aarch64-apple-ios --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-apple-ios --target x86_64-apple-ios --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-apple-darwin --target aarch64-apple-darwin --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-apple-darwin --target x86_64-apple-darwin --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+
+    - name: Build Mac data
+      if: matrix.os == 'macos-latest' && matrix.compiletype == 'static' && matrix.include_data == false
+      run: |
+        cargo run -p icu4x-datagen -- --locales modern --markers all --format blob --out bin/full.postcard
+        
+        cd provider/icu4x-datagen # avoid global feature resolution
+        rustup target add aarch64-apple-darwin
+        cargo build --release --bin icu4x-datagen --no-default-features --features blob_exporter,blob_input,rayon --target aarch64-apple-darwin
+        rustup target add x86_64-apple-darwin
+        cargo build --release --bin icu4x-datagen --no-default-features --features blob_exporter,blob_input,rayon --target x86_64-apple-darwin
+        cd ../..
+
+        cp target/aarch64-apple-darwin/release/icu4x-datagen bin/icu4x-datagen-aarch64-apple-darwin
+        cp target/x86_64-apple-darwin/release/icu4x-datagen bin/icu4x-datagen-x86_64-apple-darwin
+  
+    - name: Build Windows
+      if: matrix.os == 'windows-latest'
+      run: |
+        pushd ffi/dart
+        dart pub get
+        popd
+
+        mkdir bin
+        
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-pc-windows-msvc --target aarch64-pc-windows-msvc --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-i686-pc-windows-msvc --target i686-pc-windows-msvc --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-pc-windows-msvc --target x86_64-pc-windows-msvc --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+
+        DEL bin\*.dll.exp
+        DEL bin\*.dll.lib
+        DEL bin\*.pdb
+
+    - name: Build Windows data
+      if: matrix.os == 'windows-latest' && matrix.compiletype == 'static' && matrix.include_data == false
+      run: |
+        cd provider/icu4x-datagen # avoid global feature resolution
+        rustup target add aarch64-pc-windows-msvc
+        cargo build --release --bin icu4x-datagen --no-default-features --features blob_exporter,blob_input,rayon --target aarch64-pc-windows-msvc
+        rustup target add x86_64-pc-windows-msvc
+        cargo build --release --bin icu4x-datagen --no-default-features --features blob_exporter,blob_input,rayon --target x86_64-pc-windows-msvc
+        cd ../..
+
+        cp target/aarch64-pc-windows-msvc/release/icu4x-datagen.exe bin/icu4x-datagen-aarch64-pc-windows-msvc.exe
+        cp target/x86_64-pc-windows-msvc/release/icu4x-datagen.exe bin/icu4x-datagen-x86_64-pc-windows-msvc-datagen.exe
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: ffi-${{matrix.os}}-${{ matrix.compiletype }}${{ matrix.compiletype == 'static' && matrix.include_data == true && '-with_data' || '' }}-libs
+        path: bin
+        
+  release-ffi-libs:
+    needs: ffi-libs
+    runs-on: ubuntu-latest
+    if: github.ref_type == 'tag' && github.repository == 'unicode-org/icu4x'
+    steps:
+      - name: Download binaries
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: ffi-*-libs
+
+      - name: Display structure of downloaded files
+        run: ls -R
+
+      - name: Release
+        uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8
+        with:
+          files: '**'
+          fail_on_unmatched_files: true
+          draft: true
+          body: "`icu_capi` artifacts based on ref ${{ github.ref_name }}"
+
   gh-pages:
     name: "Deploy to GitHub Pages"
     needs: [rust-docs, cpp-docs, ts-docs, dart-docs, wasm-demo, bench-perf, bench-memory] # bench-binsize
@@ -582,9 +773,10 @@ jobs:
           mkdir website
           gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/* website || true
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@a753861a5debcf57bf8b404356158c8e1e33150c # v2.0.0
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
           path: 'website'
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@f27bcc15848fdcdcc02f01754eb838e44bcf389b # v1.2.9
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
+

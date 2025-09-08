@@ -2,70 +2,120 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-# These word boundary rules are based on UAX #29, Unicode Version 15.1.0.
-# https://www.unicode.org/reports/tr29/tr29-43.html
+# These word boundary rules are based on UAX #29, Unicode Version 16.0.0.
+# https://www.unicode.org/reports/tr29/tr29-45.html
 
 segmenter_type = "word"
 
 [[tables]]
 name = "CR"
+# unicodeset "[:Word_Break=CR:]"
 
 [[tables]]
 name = "LF"
+# unicodeset "[:Word_Break=LF:]"
 
 [[tables]]
 name = "Newline"
+# unicodeset "[:Word_Break=Newline:]"
 
 [[tables]]
+# Excluding dictionary characters
 name = "Extend"
+# unicodeset "[[:Word_Break=Extend:] - [[:Hani:] [:Line_Break=Complex_Context:]]]"
 
 [[tables]]
 name = "ZWJ"
+# unicodeset "[:Word_Break=ZWJ:]"
 
 [[tables]]
 name = "Regional_Indicator"
+# unicodeset "[:Word_Break=Regional_Indicator:]"
 
 [[tables]]
 name = "Format"
+# unicodeset "[:Word_Break=Format:]"
 
 [[tables]]
 name = "Katakana"
+# unicodeset "[:Word_Break=Katakana:]"
 
 [[tables]]
 name = "Hebrew_Letter"
+# unicodeset "[:Word_Break=Hebrew_Letter:]"
 
 [[tables]]
+# Some ALetter is also ExtPic. This property excludes ExtPic.
 name = "ALetter"
+# unicodeset "[[:Word_Break=ALetter:] - [:Extended_Pictographic:]]"
 
 [[tables]]
 name = "Single_Quote"
+# unicodeset "[:Word_Break=Single_Quote:]"
 
 [[tables]]
 name = "Double_Quote"
+# unicodeset "[:Word_Break=Double_Quote:]"
 
 [[tables]]
 name = "MidNumLet"
+# unicodeset "[:Word_Break=MidNumLet:]"
 
 [[tables]]
+# Default data is en-US. We have to exlude some characters.
 name = "MidLetter"
+# unicodeset "[[:Word_Break=MidLetter:] - [\\u003A \\uFE55 \\uFF1A]]"
 
 [[tables]]
 name = "MidNum"
+# unicodeset "[:Word_Break=MidNum:]"
 
 [[tables]]
 name = "Numeric"
+# unicodeset "[:Word_Break=Numeric:]"
 
 [[tables]]
 name = "ExtendNumLet"
+# unicodeset "[:Word_Break=ExtendNumLet:]"
 
 [[tables]]
 name = "WSegSpace"
+# unicodeset "[:Word_Break=WSegSpace:]"
 
 [[tables]]
+# Some ALetter is also ExtPic. This property excludes ALetter.
 name = "Extended_Pictographic"
+# unicodeset "[[:Extended_Pictographic:] - [:Word_Break=ALetter:]]"
 
 [[tables]]
+# Some ALetter is also ExtPic. This property ALetter + ExtPic.
+name = "ALetter_Extended_Pictographic"
+# unicodeset "[[:Word_Break=ALetter:] & [:Extended_Pictographic:]]"
+
+[[tables]]
+# TODO(#2239):
+# How to handle Katakana in UAX29? UAX29 defines Katakana rule, but CJ dictionary has another rules.
+# Katakana will use UAX#29 rules instead of dictionary.
+#
+# Also, Unicode 16.0 changes some Complex properties to others such as U+19DA.
+# Excluding Numriec should be removed after line break is 16.0
 name = "SA"
+# unicodeset "[[[:Line_Break=ComplexContext:] - [\\u19da]] [:Script=Han:] [:Script=Hiragana:]]"
+
+[[tables]]
+# moving marker only
+name = "ALetter_ZWJ"
+as_simple_property = true
+
+[[tables]]
+# moving marker only
+name = "Hebrew_Letter_ZWJ"
+as_simple_property = true
+
+[[tables]]
+# moving marker only
+name = "Numeric_ZWJ"
+as_simple_property = true
 
 [[tables]]
 name = "ALetter"
@@ -74,7 +124,17 @@ right = "Extend"
 
 [[tables]]
 name = "ALetter"
+left = "ALetter_Extended_Pictographic"
+right = "Extend"
+
+[[tables]]
+name = "ALetter"
 left = "ALetter"
+right = "Format"
+
+[[tables]]
+name = "ALetter"
+left = "ALetter_Extended_Pictographic"
 right = "Format"
 
 [[tables]]
@@ -94,6 +154,11 @@ right = "ZWJ"
 
 [[tables]]
 name = "ALetter_ZWJ"
+left = "ALetter_Extended_Pictographic"
+right = "ZWJ"
+
+[[tables]]
+name = "ALetter_ZWJ"
 left = "ALetter_ZWJ"
 right = "ZWJ"
 
@@ -104,17 +169,37 @@ right = "Extend"
 
 [[tables]]
 name = "Numeric"
+left = "Numeric_ZWJ"
+right = "Extend"
+
+[[tables]]
+name = "Numeric"
 left = "Numeric"
 right = "Format"
 
 [[tables]]
 name = "Numeric"
+left = "Numeric_ZWJ"
+right = "Format"
+
+[[tables]]
+name = "Numeric_ZWJ"
 left = "Numeric"
 right = "ZWJ"
 
 [[tables]]
+name = "Numeric_ZWJ"
+left = "Numeric_ZWJ"
+right = "ZWJ"
+
+[[tables]]
 name = "ExtendNumLet"
 left = "ExtendNumLet"
+right = "Extend"
+
+[[tables]]
+name = "ExtendNumLet"
+left = "ExtendNumLet_ZWJ"
 right = "Extend"
 
 [[tables]]
@@ -124,7 +209,17 @@ right = "Format"
 
 [[tables]]
 name = "ExtendNumLet"
+left = "ExtendNumLet_ZWJ"
+right = "Format"
+
+[[tables]]
+name = "ExtendNumLet_ZWJ"
 left = "ExtendNumLet"
+right = "ZWJ"
+
+[[tables]]
+name = "ExtendNumLet_ZWJ"
+left = "ExtendNumLet_ZWJ"
 right = "ZWJ"
 
 [[tables]]
@@ -134,17 +229,37 @@ right = "Extend"
 
 [[tables]]
 name = "Single_Quote"
+left = "Single_Quote_ZWJ"
+right = "Extend"
+
+[[tables]]
+name = "Single_Quote"
 left = "Single_Quote"
 right = "Format"
 
 [[tables]]
 name = "Single_Quote"
+left = "Single_Quote_ZWJ"
+right = "Format"
+
+[[tables]]
+name = "Single_Quote_ZWJ"
 left = "Single_Quote"
 right = "ZWJ"
 
 [[tables]]
+name = "Single_Quote_ZWJ"
+left = "Single_Quote_ZWJ"
+right = "ZWJ"
+
+[[tables]]
 name = "Double_Quote"
 left = "Double_Quote"
+right = "Extend"
+
+[[tables]]
+name = "Double_Quote"
+left = "Double_Quote_ZWJ"
 right = "Extend"
 
 [[tables]]
@@ -154,7 +269,17 @@ right = "Format"
 
 [[tables]]
 name = "Double_Quote"
+left = "Double_Quote_ZWJ"
+right = "Format"
+
+[[tables]]
+name = "Double_Quote_ZWJ"
 left = "Double_Quote"
+right = "ZWJ"
+
+[[tables]]
+name = "Double_Quote_ZWJ"
+left = "Double_Quote_ZWJ"
 right = "ZWJ"
 
 [[tables]]
@@ -164,17 +289,37 @@ right = "Extend"
 
 [[tables]]
 name = "MidLetter"
+left = "MidLetter_ZWJ"
+right = "Extend"
+
+[[tables]]
+name = "MidLetter"
 left = "MidLetter"
 right = "Format"
 
 [[tables]]
 name = "MidLetter"
+left = "MidLetter_ZWJ"
+right = "Format"
+
+[[tables]]
+name = "MidLetter_ZWJ"
 left = "MidLetter"
 right = "ZWJ"
 
 [[tables]]
+name = "MidLetter_ZWJ"
+left = "MidLetter_ZWJ"
+right = "ZWJ"
+
+[[tables]]
 name = "MidNum"
 left = "MidNum"
+right = "Extend"
+
+[[tables]]
+name = "MidNum"
+left = "MidNum_ZWJ"
 right = "Extend"
 
 [[tables]]
@@ -184,7 +329,17 @@ right = "Format"
 
 [[tables]]
 name = "MidNum"
+left = "MidNum_ZWJ"
+right = "Format"
+
+[[tables]]
+name = "MidNum_ZWJ"
 left = "MidNum"
+right = "ZWJ"
+
+[[tables]]
+name = "MidNum_ZWJ"
+left = "MidNum_ZWJ"
 right = "ZWJ"
 
 [[tables]]
@@ -194,73 +349,73 @@ right = "Extend"
 
 [[tables]]
 name = "MidNumLet"
+left = "MidNumLet_ZWJ"
+right = "Extend"
+
+[[tables]]
+name = "MidNumLet"
 left = "MidNumLet"
 right = "Format"
 
 [[tables]]
 name = "MidNumLet"
+left = "MidNumLet_ZWJ"
+right = "Format"
+
+[[tables]]
+name = "MidNumLet_ZWJ"
 left = "MidNumLet"
 right = "ZWJ"
 
 [[tables]]
-name = "WSegSpace_Extend"
+name = "MidNumLet_ZWJ"
+left = "MidNumLet_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+name = "WSegSpace_XX"
 left = "WSegSpace"
 right = "Extend"
 
 [[tables]]
-name = "WSegSpace_Extend"
-left = "WSegSpace_Extend"
+name = "WSegSpace_XX"
+left = "WSegSpace_XX"
 right = "Extend"
 
 [[tables]]
-name = "WSegSpace_Format"
+name = "WSegSpace_XX"
+left = "WSegSpace_ZWJ"
+right = "Extend"
+
+[[tables]]
+name = "WSegSpace_XX"
 left = "WSegSpace"
 right = "Format"
 
 [[tables]]
-name = "WSegSpace_Format"
-left = "WSegSpace_Format"
+name = "WSegSpace_XX"
+left = "WSegSpace_XX"
 right = "Format"
 
 [[tables]]
-name = "WSegSpace_Extend"
-left = "WSegSpace_Format"
-right = "Extend"
-
-[[tables]]
-name = "WSegSpace_Format"
-left = "WSegSpace_Extend"
+name = "WSegSpace_XX"
+left = "WSegSpace_ZWJ"
 right = "Format"
 
 [[tables]]
 name = "WSegSpace_ZWJ"
 left = "WSegSpace"
+right = "ZWJ"
+
+[[tables]]
+name = "WSegSpace_ZWJ"
+left = "WSegSpace_XX"
 right = "ZWJ"
 
 [[tables]]
 name = "WSegSpace_ZWJ"
 left = "WSegSpace_ZWJ"
 right = "ZWJ"
-
-[[tables]]
-name = "WSegSpace_ZWJ"
-left = "WSegSpace_Extend"
-right = "ZWJ"
-
-[[tables]]
-name = "WSegSpace_ZWJ"
-left = "WSegSpace_Format"
-right = "ZWJ"
-
-[[tables]]
-name = "WSegSpace_Extend"
-left = "WSegSpace_ZWJ"
-right = "Extend"
-
-[[tables]]
-name = "WSegSpace_Format"
-left = "WSegSpace_ZWJ"
-right = "Format"
 
 [[tables]]
 name = "Unknown"
@@ -269,7 +424,17 @@ right = "Extend"
 
 [[tables]]
 name = "Unknown"
+left = "Unknown_ZWJ"
+right = "Extend"
+
+[[tables]]
+name = "Unknown"
 left = "Unknown"
+right = "Format"
+
+[[tables]]
+name = "Unknown"
+left = "Unknown_ZWJ"
 right = "Format"
 
 [[tables]]
@@ -278,8 +443,18 @@ left = "Unknown"
 right = "ZWJ"
 
 [[tables]]
+name = "Unknown_ZWJ"
+left = "Unknown_ZWJ"
+right = "ZWJ"
+
+[[tables]]
 name = "Katakana"
 left = "Katakana"
+right = "Extend"
+
+[[tables]]
+name = "Katakana"
+left = "Katakana_ZWJ"
 right = "Extend"
 
 [[tables]]
@@ -289,7 +464,17 @@ right = "Format"
 
 [[tables]]
 name = "Katakana"
+left = "Katakana_ZWJ"
+right = "Format"
+
+[[tables]]
+name = "Katakana_ZWJ"
 left = "Katakana"
+right = "ZWJ"
+
+[[tables]]
+name = "Katakana_ZWJ"
+left = "Katakana_ZWJ"
 right = "ZWJ"
 
 [[tables]]
@@ -299,12 +484,27 @@ right = "Extend"
 
 [[tables]]
 name = "Regional_Indicator"
+left = "Regional_Indicator_ZWJ"
+right = "Extend"
+
+[[tables]]
+name = "Regional_Indicator"
 left = "Regional_Indicator"
 right = "Format"
 
 [[tables]]
 name = "Regional_Indicator"
+left = "Regional_Indicator_ZWJ"
+right = "Format"
+
+[[tables]]
+name = "Regional_Indicator_ZWJ"
 left = "Regional_Indicator"
+right = "ZWJ"
+
+[[tables]]
+name = "Regional_Indicator_ZWJ"
+left = "Regional_Indicator_ZWJ"
 right = "ZWJ"
 
 [[tables]]
@@ -314,12 +514,27 @@ right = "Extend"
 
 [[tables]]
 name = "Hebrew_Letter"
+left = "Hebrew_Letter_ZWJ"
+right = "Extend"
+
+[[tables]]
+name = "Hebrew_Letter"
 left = "Hebrew_Letter"
 right = "Format"
 
 [[tables]]
 name = "Hebrew_Letter"
+left = "Hebrew_Letter_ZWJ"
+right = "Format"
+
+[[tables]]
+name = "Hebrew_Letter_ZWJ"
 left = "Hebrew_Letter"
+right = "ZWJ"
+
+[[tables]]
+name = "Hebrew_Letter_ZWJ"
+left = "Hebrew_Letter_ZWJ"
 right = "ZWJ"
 
 [[tables]]
@@ -328,8 +543,18 @@ left = "Extended_Pictographic"
 right = "Extend"
 
 [[tables]]
+name = "ALetter"
+left = "ALetter_Extended_Pictographic"
+right = "Extend"
+
+[[tables]]
 name = "Extended_Pictographic"
 left = "Extended_Pictographic"
+right = "Format"
+
+[[tables]]
+name = "ALetter"
+left = "ALetter_Extended_Pictographic"
 right = "Format"
 
 [[tables]]
@@ -338,6 +563,16 @@ left = "Extended_Pictographic"
 right = "ZWJ"
 
 [[tables]]
+name = "Extended_Pictographic_ZWJ"
+left = "Extended_Pictographic_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+name = "ALetter_ZWJ"
+left = "ALetter_Extended_Pictographic"
+right = "ZWJ"
+
+[[tables]]
 name = "Extended_Pictographic"
 left = "Extended_Pictographic_ZWJ"
 right = "Extend"
@@ -354,17 +589,37 @@ right = "Extend"
 
 [[tables]]
 name = "Format"
+left = "Format_ZWJ"
+right = "Extend"
+
+[[tables]]
+name = "Format"
 left = "Format"
 right = "Format"
 
 [[tables]]
 name = "Format"
+left = "Format_ZWJ"
+right = "Format"
+
+[[tables]]
+name = "Format_ZWJ"
 left = "Format"
 right = "ZWJ"
 
 [[tables]]
+name = "Format_ZWJ"
+left = "Format_ZWJ"
+right = "ZWJ"
+
+[[tables]]
 name = "Extend"
 left = "Extend"
+right = "Extend"
+
+[[tables]]
+name = "Extend"
+left = "Extend_ZWJ"
 right = "Extend"
 
 [[tables]]
@@ -374,7 +629,17 @@ right = "Format"
 
 [[tables]]
 name = "Extend"
+left = "Extend_ZWJ"
+right = "Format"
+
+[[tables]]
+name = "Extend_ZWJ"
 left = "Extend"
+right = "ZWJ"
+
+[[tables]]
+name = "Extend_ZWJ"
+left = "Extend_ZWJ"
 right = "ZWJ"
 
 [[tables]]
@@ -519,13 +784,31 @@ right = "Extend"
 [[tables]]
 # WB4
 name = "Hebrew_Letter_Single_Quote"
+left = "Hebrew_Letter_Single_Quote_ZWJ"
+right = "Extend"
+
+[[tables]]
+# WB4
+name = "Hebrew_Letter_Single_Quote"
 left = "Hebrew_Letter_Single_Quote"
 right = "Format"
 
 [[tables]]
 # WB4
 name = "Hebrew_Letter_Single_Quote"
+left = "Hebrew_Letter_Single_Quote_ZWJ"
+right = "Format"
+
+[[tables]]
+# WB4
+name = "Hebrew_Letter_Single_Quote_ZWJ"
 left = "Hebrew_Letter_Single_Quote"
+right = "ZWJ"
+
+[[tables]]
+# WB4
+name = "Hebrew_Letter_Single_Quote_ZWJ"
+left = "Hebrew_Letter_Single_Quote_ZWJ"
 right = "ZWJ"
 
 [[tables]]
@@ -557,6 +840,11 @@ left = "Numeric_Single_Quote"
 right = "Format"
 
 [[tables]]
+name = "Numeric_Single_Quote"
+left = "Numeric_Single_Quote"
+right = "ZWJ"
+
+[[tables]]
 name = "Numeric_MidNum"
 left = "Numeric_MidNum"
 right = "Extend"
@@ -565,6 +853,11 @@ right = "Extend"
 name = "Numeric_MidNum"
 left = "Numeric_MidNum"
 right = "Format"
+
+[[tables]]
+name = "Numeric_MidNum"
+left = "Numeric_MidNum"
+right = "ZWJ"
 
 [[tables]]
 name = "Numeric_MidNumLet"
@@ -577,18 +870,18 @@ left = "Numeric_MidNumLet"
 right = "Format"
 
 [[tables]]
-name = "Unknown"
-left = "Unknown"
-right = "Extend"
-
-[[tables]]
-name = "Unknown"
-left = "Unknown"
-right = "Format"
+name = "Numeric_MidNumLet"
+left = "Numeric_MidNumLet"
+right = "ZWJ"
 
 [[tables]]
 name = "ALetter_MidLetter"
 left = "ALetter"
+right = "MidLetter"
+
+[[tables]]
+name = "ALetter_MidLetter"
+left = "ALetter_Extended_Pictographic"
 right = "MidLetter"
 
 [[tables]]
@@ -599,6 +892,11 @@ right = "MidLetter"
 [[tables]]
 name = "ALetter_MidNumLet"
 left = "ALetter"
+right = "MidNumLet"
+
+[[tables]]
+name = "ALetter_MidNumLet"
+left = "ALetter_Extended_Pictographic"
 right = "MidNumLet"
 
 [[tables]]
@@ -609,6 +907,11 @@ right = "MidNumLet"
 [[tables]]
 name = "ALetter_Single_Quote"
 left = "ALetter"
+right = "Single_Quote"
+
+[[tables]]
+name = "ALetter_Single_Quote"
+left = "ALetter_Extended_Pictographic"
 right = "Single_Quote"
 
 [[tables]]
@@ -622,34 +925,78 @@ left = "Hebrew_Letter"
 right = "MidLetter"
 
 [[tables]]
+name = "Hebrew_Letter_MidLetter"
+left = "Hebrew_Letter_ZWJ"
+right = "MidLetter"
+
+[[tables]]
+#WB6/7
 name = "Hebrew_Letter_MidNumLet"
 left = "Hebrew_Letter"
 right = "MidNumLet"
 
 [[tables]]
+name = "Hebrew_Letter_MidNumLet"
+left = "Hebrew_Letter_ZWJ"
+right = "MidNumLet"
+
+[[tables]]
+#WB6/7/7a
 name = "Hebrew_Letter_Single_Quote"
 left = "Hebrew_Letter"
 right = "Single_Quote"
-interm_break_state = false
 
 [[tables]]
+name = "Hebrew_Letter_Single_Quote"
+left = "Hebrew_Letter_ZWJ"
+right = "Single_Quote"
+
+[[tables]]
+#WB7b/WB7c
 name = "Hebrew_Letter_Double_Quote"
 left = "Hebrew_Letter"
 right = "Double_Quote"
 
 [[tables]]
+#WB7b/WB7c
+name = "Hebrew_Letter_Double_Quote"
+left = "Hebrew_Letter_ZWJ"
+right = "Double_Quote"
+
+[[tables]]
+#WB11
 name = "Numeric_MidNum"
 left = "Numeric"
 right = "MidNum"
 
 [[tables]]
+#WB11
+name = "Numeric_MidNum"
+left = "Numeric_ZWJ"
+right = "MidNum"
+
+[[tables]]
+#WB11
 name = "Numeric_MidNumLet"
 left = "Numeric"
 right = "MidNumLet"
 
 [[tables]]
+#WB11
+name = "Numeric_MidNumLet"
+left = "Numeric_ZWJ"
+right = "MidNumLet"
+
+[[tables]]
+#WB11
 name = "Numeric_Single_Quote"
 left = "Numeric"
+right = "Single_Quote"
+
+[[tables]]
+#WB11
+name = "Numeric_Single_Quote"
+left = "Numeric_ZWJ"
 right = "Single_Quote"
 
 [[tables]]
@@ -658,8 +1005,38 @@ left = "Regional_Indicator"
 right = "Regional_Indicator"
 
 [[tables]]
+name = "RI_RI"
+left = "Regional_Indicator_ZWJ"
+right = "Regional_Indicator"
+
+[[tables]]
+name = "RI_RI"
+left = "RI_RI"
+right = "Extend"
+
+[[tables]]
+name = "RI_RI"
+left = "RI_RI_ZWJ"
+right = "Extend"
+
+[[tables]]
+name = "RI_RI"
+left = "RI_RI"
+right = "Format"
+
+[[tables]]
+name = "RI_RI"
+left = "RI_RI_ZWJ"
+right = "Format"
+
+[[tables]]
 name = "RI_RI_ZWJ"
 left = "RI_RI"
+right = "ZWJ"
+
+[[tables]]
+name = "RI_RI_ZWJ"
+left = "RI_RI_ZWJ"
 right = "ZWJ"
 
 [[rules]]
@@ -672,6 +1049,7 @@ break_state = true
 # WB2
 left = [
   "ALetter",
+  "ALetter_Extended_Pictographic",
   "Katakana",
   "Hebrew_Letter",
   "Numeric",
@@ -687,10 +1065,26 @@ left = [
   "Single_Quote",
   "Double_Quote",
   "ALetter_ZWJ",
-  "Unknown_ZWJ",
+  "Double_Quote_ZWJ",
+  "Extend_ZWJ",
   "Extended_Pictographic_ZWJ",
+  "ExtendNumLet_ZWJ",
+  "Format_ZWJ",
+  "Hebrew_Letter_ZWJ",
+  "Katakana_ZWJ",
+  "MidLetter_ZWJ",
+  "MidNum_ZWJ",
+  "MidNumLet_ZWJ",
+  "Numeric_ZWJ",
+  "Single_Quote_ZWJ",
+  "Extended_Pictographic_ZWJ",
+  "Regional_Indicator_ZWJ",
+  "Unknown_ZWJ",
+  "WSegSpace_ZWJ",
+  "WSegSpace_XX",
   "Hebrew_Letter_Single_Quote",
-  "ALetter_ZWJ"
+  "Hebrew_Letter_Single_Quote_ZWJ",
+  "RI_RI_ZWJ"
 ]
 right = [ "eot" ]
 break_state = true
@@ -705,11 +1099,30 @@ break_state = false
 # WB3c
 left = [
   "ZWJ",
-  "Extended_Pictographic_ZWJ",
   "ALetter_ZWJ",
-  "Unknown_ZWJ"
+  "Double_Quote_ZWJ",
+  "Extend_ZWJ",
+  "ExtendNumLet_ZWJ",
+  "Extended_Pictographic_ZWJ",
+  "Format_ZWJ",
+  "Hebrew_Letter_ZWJ",
+  "Hebrew_Letter_Single_Quote_ZWJ",
+  "Katakana_ZWJ",
+  "MidLetter_ZWJ",
+  "MidNum_ZWJ",
+  "MidNumLet_ZWJ",
+  "Numeric_ZWJ",
+  "Regional_Indicator_ZWJ",
+  "Single_Quote_ZWJ",
+  "Regional_Indicator_ZWJ",
+  "RI_RI_ZWJ",
+  "Unknown_ZWJ",
+  "WSegSpace_ZWJ"
 ]
-right = [ "Extended_Pictographic" ]
+right = [
+  "Extended_Pictographic",
+  "ALetter_Extended_Pictographic"
+]
 break_state = false
 
 [[rules]]
@@ -720,8 +1133,18 @@ break_state = false
 
 [[rules]]
 # WB5
-left = [ "ALetter", "ALetter_ZWJ", "Hebrew_Letter" ]
-right = [ "ALetter", "Hebrew_Letter" ]
+left = [
+  "ALetter",
+  "ALetter_Extended_Pictographic",
+  "Hebrew_Letter",
+  "ALetter_ZWJ",
+  "Hebrew_Letter_ZWJ"
+]
+right = [
+  "ALetter",
+  "ALetter_Extended_Pictographic",
+  "Hebrew_Letter"
+]
 break_state = false
 
 [[rules]]
@@ -732,9 +1155,14 @@ left = [
   "ALetter_Single_Quote",
   "Hebrew_Letter_MidLetter",
   "Hebrew_Letter_MidNumLet",
-  "Hebrew_Letter_Single_Quote"
+  "Hebrew_Letter_Single_Quote",
+  "Hebrew_Letter_Single_Quote_ZWJ"
 ]
-right = [ "ALetter", "Hebrew_Letter" ]
+right = [
+  "ALetter",
+  "ALetter_Extended_Pictographic",
+  "Hebrew_Letter"
+]
 break_state = false
 
 [[rules]]
@@ -745,20 +1173,36 @@ break_state = false
 
 [[rules]]
 # WB8
-left = [ "Numeric" ]
+left = [
+  "Numeric",
+  "Numeric_ZWJ"
+]
 right = [ "Numeric" ]
 break_state = false
 
 [[rules]]
 # WB9
-left = [ "ALetter", "ALetter_ZWJ", "Hebrew_Letter" ]
+left = [
+  "ALetter",
+  "ALetter_Extended_Pictographic",
+  "Hebrew_Letter",
+  "ALetter_ZWJ",
+  "Hebrew_Letter_ZWJ"
+]
 right = [ "Numeric" ]
 break_state = false
 
 [[rules]]
 # WB10
-left = [ "Numeric" ]
-right = [ "ALetter", "Hebrew_Letter" ]
+left = [
+  "Numeric",
+  "Numeric_ZWJ"
+]
+right = [
+  "ALetter",
+  "ALetter_Extended_Pictographic",
+  "Hebrew_Letter"
+]
 break_state = false
 
 [[rules]]
@@ -773,7 +1217,10 @@ break_state = false
 
 [[rules]]
 # WB13
-left = [ "Katakana" ]
+left = [
+  "Katakana",
+  "Katakana_ZWJ"
+]
 right = [ "Katakana" ]
 break_state = false
 
@@ -781,24 +1228,64 @@ break_state = false
 # WB13a
 left = [
   "ALetter",
-  "ALetter_ZWJ",
+  "ALetter_Extended_Pictographic",
   "Hebrew_Letter",
   "Numeric",
   "Katakana",
-  "ExtendNumLet"
+  "ExtendNumLet",
+  "ALetter_ZWJ",
+  "ExtendNumLet_ZWJ",
+  "Hebrew_Letter_ZWJ",
+  "Numeric_ZWJ"
 ]
 right = [ "ExtendNumLet" ]
 break_state = false
 
 [[rules]]
 # WB13b
-left = [ "ExtendNumLet" ]
-right = [ "ALetter", "Hebrew_Letter", "Numeric", "Katakana" ]
+left = [
+  "ExtendNumLet",
+  "ExtendNumLet_ZWJ"
+]
+right = [
+  "ALetter",
+  "ALetter_Extended_Pictographic",
+  "Hebrew_Letter",
+  "Numeric",
+  "Katakana"
+]
 break_state = false
 
 [[rules]]
 # WB999
 left = [ "Any" ]
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# WB999
+left = [
+  "ALetter_ZWJ",
+  "Double_Quote_ZWJ",
+  "Extend_ZWJ",
+  "Extended_Pictographic_ZWJ",
+  "ExtendNumLet_ZWJ",
+  "Format_ZWJ",
+  "Hebrew_Letter_ZWJ",
+  "Katakana_ZWJ",
+  "MidLetter_ZWJ",
+  "MidNum_ZWJ",
+  "MidNumLet_ZWJ",
+  "Numeric_ZWJ",
+  "Regional_Indicator_ZWJ",
+  "Single_Quote_ZWJ",
+  "Unknown_ZWJ",
+  "WSegSpace_ZWJ",
+  "WSegSpace_XX",
+  "Hebrew_Letter_Single_Quote",
+  "Hebrew_Letter_Single_Quote_ZWJ",
+  "RI_RI_ZWJ"
+]
 right = [ "Any" ]
 break_state = true
 

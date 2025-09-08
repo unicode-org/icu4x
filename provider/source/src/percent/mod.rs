@@ -17,10 +17,11 @@ use icu_pattern::SinglePlaceholder;
 use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
+use zerovec::VarZeroCow;
 
-impl DataProvider<PercentEssentialsV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<PercentEssentialsV1Marker>, DataError> {
-        self.check_req::<PercentEssentialsV1Marker>(req)?;
+impl DataProvider<PercentEssentialsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<PercentEssentialsV1>, DataError> {
+        self.check_req::<PercentEssentialsV1>(req)?;
 
         let numbers_resource: &cldr_serde::numbers::Resource = self
             .cldr()?
@@ -36,7 +37,7 @@ impl DataProvider<PercentEssentialsV1Marker> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<PercentEssentialsV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<PercentEssentialsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
@@ -49,7 +50,7 @@ impl IterableDataProviderCached<PercentEssentialsV1Marker> for SourceDataProvide
 
 fn extract_percent_essentials<'data>(
     numbers_resource: &cldr_serde::numbers::Resource,
-) -> Result<PercentEssentialsV1<'data>, DataError> {
+) -> Result<PercentEssentials<'data>, DataError> {
     // TODO(#3838): these patterns might be numbering system dependent.
     let percent_patterns = &&numbers_resource
         .main
@@ -89,7 +90,7 @@ fn extract_percent_essentials<'data>(
         None => Cow::Owned(String::from("-") + &standard_pattern),
     };
 
-    Ok(PercentEssentialsV1 {
+    Ok(PercentEssentials {
         unsigned_pattern: create_unsigned_pattern(unsigned_pattern, &localized_percent_sign)?,
         signed_pattern: create_signed_pattern(&signed_pattern, &localized_percent_sign)?,
         approximately_sign: localized_approximately_sign.into(),
@@ -102,7 +103,7 @@ fn extract_percent_essentials<'data>(
 fn create_signed_pattern<'a>(
     pattern: &str,
     localized_percent_sign: &str,
-) -> Result<Cow<'a, Pattern<DoublePlaceholder>>, DataError> {
+) -> Result<VarZeroCow<'a, Pattern<DoublePlaceholder>>, DataError> {
     // While all locales use the `%`, some include non-breaking spaces.
     // Hence using the literal `%` char here.
     let percent_pattern_index = pattern.find('%').unwrap();
@@ -170,7 +171,7 @@ fn create_signed_pattern<'a>(
     let pattern = DoublePlaceholderPattern::try_from_str(&pattern_vec.concat(), Default::default())
         .map_err(|e| DataError::custom("Could not parse pattern").with_display_context(&e))?;
 
-    Ok(Cow::Owned(pattern))
+    Ok(VarZeroCow::new_owned(pattern))
 }
 
 /// Used only for positive percents.
@@ -178,7 +179,7 @@ fn create_signed_pattern<'a>(
 fn create_unsigned_pattern<'a>(
     pattern: &str,
     localized_percent_sign: &str,
-) -> Result<Cow<'a, Pattern<SinglePlaceholder>>, DataError> {
+) -> Result<VarZeroCow<'a, Pattern<SinglePlaceholder>>, DataError> {
     // While all locales use the `%`, some include non-breaking spaces.
     // Hence using the literal `%` char here.
     let percent_sign_index = pattern.find('%').unwrap();
@@ -218,7 +219,7 @@ fn create_unsigned_pattern<'a>(
     )
     .map_err(|e| DataError::custom("Could not parse pattern").with_display_context(&e))?;
 
-    Ok(Cow::Owned(pattern))
+    Ok(VarZeroCow::new_owned(pattern))
 }
 
 #[test]
@@ -229,7 +230,7 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let en: DataResponse<PercentEssentialsV1Marker> = provider
+    let en: DataResponse<PercentEssentialsV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("en").into()).as_borrowed(),
             ..Default::default()
@@ -241,7 +242,7 @@ fn test_basic() {
     assert_writeable_eq!(en_pattern.unsigned_pattern.interpolate(["123"]), "123%");
     assert_writeable_eq!(en_pattern.signed_pattern.interpolate(["123", "+"]), "+123%");
 
-    let tr: DataResponse<PercentEssentialsV1Marker> = provider
+    let tr: DataResponse<PercentEssentialsV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("tr").into()).as_borrowed(),
             ..Default::default()
@@ -253,7 +254,7 @@ fn test_basic() {
     assert_writeable_eq!(tr_pattern.unsigned_pattern.interpolate(["345"]), "%345");
     assert_writeable_eq!(tr_pattern.signed_pattern.interpolate(["345", "+"]), "+%345");
 
-    let ar_eg: DataResponse<PercentEssentialsV1Marker> = provider
+    let ar_eg: DataResponse<PercentEssentialsV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("ar-EG").into()).as_borrowed(),
             ..Default::default()

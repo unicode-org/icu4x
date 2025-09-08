@@ -22,15 +22,20 @@
 
 
 typedef struct icu4x_PluralRules_create_cardinal_mv1_result {union {PluralRules* ok; DataError err;}; bool is_ok;} icu4x_PluralRules_create_cardinal_mv1_result;
-icu4x_PluralRules_create_cardinal_mv1_result icu4x_PluralRules_create_cardinal_mv1(const DataProvider* provider, const Locale* locale);
+icu4x_PluralRules_create_cardinal_mv1_result icu4x_PluralRules_create_cardinal_mv1(const Locale* locale);
+
+typedef struct icu4x_PluralRules_create_cardinal_with_provider_mv1_result {union {PluralRules* ok; DataError err;}; bool is_ok;} icu4x_PluralRules_create_cardinal_with_provider_mv1_result;
+icu4x_PluralRules_create_cardinal_with_provider_mv1_result icu4x_PluralRules_create_cardinal_with_provider_mv1(const DataProvider* provider, const Locale* locale);
 
 typedef struct icu4x_PluralRules_create_ordinal_mv1_result {union {PluralRules* ok; DataError err;}; bool is_ok;} icu4x_PluralRules_create_ordinal_mv1_result;
-icu4x_PluralRules_create_ordinal_mv1_result icu4x_PluralRules_create_ordinal_mv1(const DataProvider* provider, const Locale* locale);
+icu4x_PluralRules_create_ordinal_mv1_result icu4x_PluralRules_create_ordinal_mv1(const Locale* locale);
+
+typedef struct icu4x_PluralRules_create_ordinal_with_provider_mv1_result {union {PluralRules* ok; DataError err;}; bool is_ok;} icu4x_PluralRules_create_ordinal_with_provider_mv1_result;
+icu4x_PluralRules_create_ordinal_with_provider_mv1_result icu4x_PluralRules_create_ordinal_with_provider_mv1(const DataProvider* provider, const Locale* locale);
 
 PluralCategory icu4x_PluralRules_category_for_mv1(const PluralRules* self, const PluralOperands* op);
 
 PluralCategories icu4x_PluralRules_categories_mv1(const PluralRules* self);
-
 
 void icu4x_PluralRules_destroy_mv1(PluralRules* self);
 

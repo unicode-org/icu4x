@@ -47,7 +47,7 @@ fn test_locale_parsing() {
 }
 
 #[test]
-fn test_langid_invalid() {
+fn test_locale_invalid() {
     let data = serde_json::from_str(include_str!("fixtures/invalid-extensions.json"))
         .expect("Failed to read a fixture");
 
@@ -56,14 +56,14 @@ fn test_langid_invalid() {
 
 #[test]
 fn test_locale_is_empty() {
-    let locale: Locale = Locale::default();
+    let locale: Locale = Locale::UNKNOWN;
     assert!(locale.extensions.is_empty());
     assert_writeable_eq!(locale, "und");
 }
 
 #[test]
 fn test_locale_conversions() {
-    let locale: Locale = Locale::default();
+    let locale: Locale = Locale::UNKNOWN;
     let langid: LanguageIdentifier = locale.clone().into();
     let locale2: Locale = langid.into();
     assert_eq!(locale, locale2);

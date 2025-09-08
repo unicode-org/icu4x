@@ -4,14 +4,17 @@
 
 use core::borrow::Borrow;
 use core::cmp::Ordering;
+#[cfg(feature = "alloc")]
 use core::iter::FromIterator;
+#[cfg(feature = "alloc")]
 use core::str::FromStr;
 use litemap::LiteMap;
-use writeable::Writeable;
 
 use super::Key;
 use super::Value;
+#[cfg(feature = "alloc")]
 use crate::parser::ParseError;
+#[cfg(feature = "alloc")]
 use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
 
@@ -94,11 +97,13 @@ impl Keywords {
     /// A constructor which takes a str slice, parses it and
     /// produces a well-formed [`Keywords`].
     #[inline]
+    #[cfg(feature = "alloc")]
     pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
         Self::try_from_utf8(s.as_bytes())
     }
 
     /// See [`Self::try_from_str`]
+    #[cfg(feature = "alloc")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
         let mut iter = SubtagIterator::new(code_units);
         Self::try_from_iter(&mut iter)
@@ -184,6 +189,7 @@ impl Keywords {
     /// }
     /// assert_eq!(keywords.get(&key!("ca")), Some(&value!("gregory")));
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn get_mut<Q>(&mut self, key: &Q) -> Option<&mut Value>
     where
         Key: Borrow<Q>,
@@ -212,6 +218,7 @@ impl Keywords {
     /// assert_eq!(old_value, Some(value!("buddhist")));
     /// assert_eq!(loc, "und-u-hello-ca-japanese-hc-h12".parse().unwrap());
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn set(&mut self, key: Key, value: Value) -> Option<Value> {
         self.0.insert(key, value)
     }
@@ -230,6 +237,7 @@ impl Keywords {
     /// loc.extensions.unicode.keywords.remove(key!("ca"));
     /// assert_eq!(loc, "und-u-hello-hc-h12".parse().unwrap());
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn remove<Q: Borrow<Key>>(&mut self, key: Q) -> Option<Value> {
         self.0.remove(key.borrow())
     }
@@ -238,7 +246,7 @@ impl Keywords {
     ///
     /// Returns the old Unicode extension keywords.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// ```
     /// use icu::locale::Locale;
@@ -271,8 +279,9 @@ impl Keywords {
     ///     .unicode
     ///     .keywords
     ///     .retain_by_key(|&k| k == key!("ms"));
-    /// assert_eq!(loc, Locale::default());
+    /// assert_eq!(loc, Locale::UNKNOWN);
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn retain_by_key<F>(&mut self, mut predicate: F)
     where
         F: FnMut(&Key) -> bool,
@@ -312,9 +321,10 @@ impl Keywords {
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        self.writeable_cmp_bytes(other)
+        writeable::cmp_utf8(self, other)
     }
 
+    #[cfg(feature = "alloc")]
     pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParseError> {
         let mut keywords = LiteMap::new();
 
@@ -377,12 +387,14 @@ impl From<LiteMap<Key, Value, ShortBoxSlice<(Key, Value)>>> for Keywords {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl FromIterator<(Key, Value)> for Keywords {
     fn from_iter<I: IntoIterator<Item = (Key, Value)>>(iter: I) -> Self {
         LiteMap::from_iter(iter).into()
     }
 }
 
+#[cfg(feature = "alloc")]
 impl FromStr for Keywords {
     type Err = ParseError;
 

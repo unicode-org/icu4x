@@ -2,9 +2,11 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
-/** Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.RangeError.html), [2](https://docs.rs/icu/latest/icu/calendar/enum.DateError.html)
-*/
+
+
+/**
+ * Additional information: [1](https://docs.rs/icu/2.0.0/icu/calendar/struct.RangeError.html), [2](https://docs.rs/icu/2.0.0/icu/calendar/enum.DateError.html)
+ */
 export class CalendarError {
     #value = undefined;
 
@@ -15,13 +17,17 @@ export class CalendarError {
         ["UnknownMonthCode", 3]
     ]);
 
-    constructor(value) {
+    static getAllEntries() {
+        return CalendarError.#values.entries();
+    }
+
+    #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
             // instances of this type, otherwise the enums are treated as singletons.
             if (arguments[1] === diplomatRuntime.internalConstructor ) {
                 this.#value = arguments[2];
-                return;
+                return this;
             }
             return CalendarError.#objectValues[arguments[1]];
         }
@@ -33,18 +39,24 @@ export class CalendarError {
         let intVal = CalendarError.#values.get(value);
 
         // Nullish check, checks for null or undefined
-        if (intVal == null) {
+        if (intVal != null) {
             return CalendarError.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a CalendarError and does not correspond to any of its enumerator values.");
     }
 
-    get value() {
+    /** @internal */
+    static fromValue(value) {
+        return new CalendarError(value);
+    }
+
+    get value(){
         return [...CalendarError.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    /** @internal */
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -58,4 +70,9 @@ export class CalendarError {
     static OutOfRange = CalendarError.#objectValues[1];
     static UnknownEra = CalendarError.#objectValues[2];
     static UnknownMonthCode = CalendarError.#objectValues[3];
+
+
+    constructor(value) {
+        return this.#internalConstructor(...arguments)
+    }
 }

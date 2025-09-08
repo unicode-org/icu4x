@@ -4,16 +4,16 @@
 
 /// A macro allowing for compile-time construction of valid [`LanguageIdentifier`]s.
 ///
-/// The macro will perform syntax canonicalization of the tag.
+/// The macro will perform syntax normalization of the tag.
 ///
 /// # Examples
 ///
 /// ```
 /// use icu::locale::{langid, LanguageIdentifier};
 ///
-/// const DE_AT: LanguageIdentifier = langid!("de_at");
+/// const DE_AT: LanguageIdentifier = langid!("de-at");
 ///
-/// let de_at: LanguageIdentifier = "de_at".parse().unwrap();
+/// let de_at: LanguageIdentifier = "de-at".parse().unwrap();
 ///
 /// assert_eq!(DE_AT, de_at);
 /// ```
@@ -36,37 +36,34 @@
 /// [`Heap Allocations in Constants`]: https://github.com/rust-lang/const-eval/issues/20
 #[macro_export]
 macro_rules! langid {
-    ($langid:literal) => {{
-        const R: $crate::LanguageIdentifier =
-            match $crate::LanguageIdentifier::try_from_utf8_with_single_variant($langid.as_bytes()) {
-                Ok((language, script, region, variant)) => $crate::LanguageIdentifier {
-                    language,
-                    script,
-                    region,
-                    variants: match variant {
-                        Some(v) => $crate::subtags::Variants::from_variant(v),
-                        None => $crate::subtags::Variants::new(),
-                    }
-                },
-                #[allow(clippy::panic)] // const context
-                _ => panic!(concat!("Invalid language code: ", $langid, " . Note langid! macro can only support up to a single variant tag. Use runtime parsing instead.")),
-            };
-        R
+    ($langid:literal) => { const {
+        match $crate::LanguageIdentifier::try_from_utf8_with_single_variant($langid.as_bytes()) {
+            Ok((language, script, region, variant)) => $crate::LanguageIdentifier {
+                language,
+                script,
+                region,
+                variants: match variant {
+                    Some(v) => $crate::subtags::Variants::from_variant(v),
+                    None => $crate::subtags::Variants::new(),
+                }
+            },
+            _ => panic!(concat!("Invalid language code: ", $langid, " . Note langid! macro can only support up to a single variant tag. Use runtime parsing instead.")),
+        }
     }};
 }
 
 /// A macro allowing for compile-time construction of valid [`Locale`]s.
 ///
-/// The macro will perform syntax canonicalization of the tag.
+/// The macro will perform syntax normalization of the tag.
 ///
 /// # Examples
 ///
 /// ```
 /// use icu::locale::{locale, Locale};
 ///
-/// const DE_AT: Locale = locale!("de_at");
+/// const DE_AT: Locale = locale!("de-at");
 ///
-/// let de_at: Locale = "de_at".parse().unwrap();
+/// let de_at: Locale = "de-at".parse().unwrap();
 ///
 /// assert_eq!(DE_AT, de_at);
 /// ```
@@ -121,45 +118,42 @@ macro_rules! langid {
 /// [`Heap Allocations in Constants`]: https://github.com/rust-lang/const-eval/issues/20
 #[macro_export]
 macro_rules! locale {
-    ($locale:literal) => {{
-        const R: $crate::Locale =
-            match $crate::Locale::try_from_utf8_with_single_variant_single_keyword_unicode_extension(
-                $locale.as_bytes(),
-            ) {
-                Ok((language, script, region, variant, keyword)) => $crate::Locale {
-                    id: $crate::LanguageIdentifier {
-                        language,
-                        script,
-                        region,
-                        variants: match variant {
-                            Some(v) => $crate::subtags::Variants::from_variant(v),
-                            None => $crate::subtags::Variants::new(),
-                        },
-                    },
-                    extensions: match keyword {
-                        Some(k) => $crate::extensions::Extensions::from_unicode(
-                            $crate::extensions::unicode::Unicode {
-                                keywords: $crate::extensions::unicode::Keywords::new_single(
-                                    k.0,
-                                    $crate::extensions::unicode::Value::from_subtag(k.1),
-                                ),
-
-                                attributes: $crate::extensions::unicode::Attributes::new(),
-                            },
-                        ),
-                        None => $crate::extensions::Extensions::new(),
+    ($locale:literal) => { const {
+        match $crate::Locale::try_from_utf8_with_single_variant_single_keyword_unicode_extension(
+            $locale.as_bytes(),
+        ) {
+            Ok((language, script, region, variant, keyword)) => $crate::Locale {
+                id: $crate::LanguageIdentifier {
+                    language,
+                    script,
+                    region,
+                    variants: match variant {
+                        Some(v) => $crate::subtags::Variants::from_variant(v),
+                        None => $crate::subtags::Variants::new(),
                     },
                 },
-                #[allow(clippy::panic)] // const context
-                _ => panic!(concat!(
-                    "Invalid language code: ",
-                    $locale,
-                    " . Note the locale! macro only supports up to one variant tag; \
-                                        and one unicode keyword, other extension are \
-                                        not supported. Use runtime parsing instead."
-                )),
-            };
-        R
+                extensions: match keyword {
+                    Some(k) => $crate::extensions::Extensions::from_unicode(
+                        $crate::extensions::unicode::Unicode {
+                            keywords: $crate::extensions::unicode::Keywords::new_single(
+                                k.0,
+                                $crate::extensions::unicode::Value::from_subtag(k.1),
+                            ),
+
+                            attributes: $crate::extensions::unicode::Attributes::new(),
+                        },
+                    ),
+                    None => $crate::extensions::Extensions::new(),
+                },
+            },
+            _ => panic!(concat!(
+                "Invalid language code: ",
+                $locale,
+                " . Note the locale! macro only supports up to one variant tag; \
+                                    and one unicode keyword, other extension are \
+                                    not supported. Use runtime parsing instead."
+            )),
+        }
     }};
 }
 
@@ -170,22 +164,22 @@ mod test {
 
     #[test]
     fn test_langid_macro_can_parse_langid_with_single_variant() {
-        const DE_AT_FOOBAR: LanguageIdentifier = langid!("de_at-foobar");
-        let de_at_foobar: LanguageIdentifier = "de_at-foobar".parse().unwrap();
+        const DE_AT_FOOBAR: LanguageIdentifier = langid!("de-at-foobar");
+        let de_at_foobar: LanguageIdentifier = "de-at-foobar".parse().unwrap();
         assert_eq!(DE_AT_FOOBAR, de_at_foobar);
     }
 
     #[test]
     fn test_locale_macro_can_parse_locale_with_single_variant() {
-        const DE_AT_FOOBAR: Locale = locale!("de_at-foobar");
-        let de_at_foobar: Locale = "de_at-foobar".parse().unwrap();
+        const DE_AT_FOOBAR: Locale = locale!("de-at-foobar");
+        let de_at_foobar: Locale = "de-at-foobar".parse().unwrap();
         assert_eq!(DE_AT_FOOBAR, de_at_foobar);
     }
 
     #[test]
     fn test_locale_macro_can_parse_locale_with_single_keyword_unicode_extension() {
-        const DE_AT_U_CA_FOOBAR: Locale = locale!("de_at-u-ca-foobar");
-        let de_at_u_ca_foobar: Locale = "de_at-u-ca-foobar".parse().unwrap();
+        const DE_AT_U_CA_FOOBAR: Locale = locale!("de-at-u-ca-foobar");
+        let de_at_u_ca_foobar: Locale = "de-at-u-ca-foobar".parse().unwrap();
         assert_eq!(DE_AT_U_CA_FOOBAR, de_at_u_ca_foobar);
     }
 }

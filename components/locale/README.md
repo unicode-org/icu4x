@@ -25,7 +25,7 @@ This minimize method returns a new Locale that is the result of running the
 use icu::locale::Locale;
 use icu::locale::{LocaleCanonicalizer, TransformResult};
 
-let lc = LocaleCanonicalizer::new();
+let lc = LocaleCanonicalizer::new_extended();
 
 let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc"
     .parse()
@@ -37,14 +37,14 @@ assert_eq!(locale, "ja-Latn-alalc97-fonipa".parse::<Locale>().unwrap());
 ```rust
 use icu::locale::{locale, LocaleExpander, TransformResult};
 
-let lc = LocaleExpander::new();
+let lc = LocaleExpander::new_common();
 
 let mut locale = locale!("zh-CN");
-assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
+assert_eq!(lc.maximize(&mut locale.id), TransformResult::Modified);
 assert_eq!(locale, locale!("zh-Hans-CN"));
 
 let mut locale = locale!("zh-Hant-TW");
-assert_eq!(lc.maximize(&mut locale), TransformResult::Unmodified);
+assert_eq!(lc.maximize(&mut locale.id), TransformResult::Unmodified);
 assert_eq!(locale, locale!("zh-Hant-TW"));
 ```
 
@@ -52,14 +52,14 @@ assert_eq!(locale, locale!("zh-Hant-TW"));
 use icu::locale::{locale, LocaleExpander, TransformResult};
 use writeable::assert_writeable_eq;
 
-let lc = LocaleExpander::new();
+let lc = LocaleExpander::new_common();
 
 let mut locale = locale!("zh-Hans-CN");
-assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);
+assert_eq!(lc.minimize(&mut locale.id), TransformResult::Modified);
 assert_eq!(locale, locale!("zh"));
 
 let mut locale = locale!("zh");
-assert_eq!(lc.minimize(&mut locale), TransformResult::Unmodified);
+assert_eq!(lc.minimize(&mut locale.id), TransformResult::Unmodified);
 assert_eq!(locale, locale!("zh"));
 ```
 

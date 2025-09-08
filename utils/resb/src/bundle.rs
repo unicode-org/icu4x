@@ -52,7 +52,7 @@ impl<'a> ResourceBundle<'a> {
     }
 
     /// Gets the root resource in the resource tree.
-    pub fn root(&self) -> &Resource {
+    pub fn root(&self) -> &Resource<'_> {
         &self.root
     }
 }
@@ -105,7 +105,7 @@ impl<'a> From<&'a str> for Key<'a> {
     }
 }
 
-impl<'a> From<String> for Key<'a> {
+impl From<String> for Key<'_> {
     fn from(value: String) -> Self {
         Self(Cow::from(value))
     }

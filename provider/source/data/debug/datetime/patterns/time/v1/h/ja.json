@@ -1,0 +1,15 @@
+{
+  "variant_pattern_indices": [
+    2,
+    2,
+    2,
+    3,
+    3,
+    3
+  ],
+  "elements": [
+    "ah時",
+    "ah:mm",
+    "ah:mm:ss"
+  ]
+}

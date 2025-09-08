@@ -24,7 +24,7 @@ impl<'de> Deserialize<'de> for PluralRange {
     {
         struct PluralRangeVisitor;
 
-        impl<'de> Visitor<'de> for PluralRangeVisitor {
+        impl Visitor<'_> for PluralRangeVisitor {
             type Value = PluralRange;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {

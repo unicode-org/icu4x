@@ -32,17 +32,10 @@ where
         }
     }
 
-    fn write_to_string(&self) -> Cow<str> {
+    fn write_to_string(&self) -> Cow<'_, str> {
         match self {
             Either::Left(w) => w.write_to_string(),
             Either::Right(w) => w.write_to_string(),
-        }
-    }
-
-    fn writeable_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
-        match self {
-            Either::Left(w) => w.writeable_cmp_bytes(other),
-            Either::Right(w) => w.writeable_cmp_bytes(other),
         }
     }
 }

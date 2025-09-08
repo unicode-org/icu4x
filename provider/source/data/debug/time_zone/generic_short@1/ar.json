@@ -1,8 +1,0 @@
-{
-  "defaults": {
-    "gulf": "GST"
-  },
-  "overrides": {
-    "utc": "UTC"
-  }
-}

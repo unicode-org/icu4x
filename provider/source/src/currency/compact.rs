@@ -9,16 +9,13 @@ use crate::SourceDataProvider;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 
-use icu::experimental::dimension::provider::currency_compact::*;
+use icu::experimental::dimension::provider::currency::compact::*;
 use icu::plurals::PluralCategory;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
 
-impl DataProvider<ShortCurrencyCompactV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<ShortCurrencyCompactV1Marker>, DataError> {
+impl DataProvider<ShortCurrencyCompactV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<ShortCurrencyCompactV1>, DataError> {
         let numbers_resource: &cldr_serde::numbers::Resource = self
             .cldr()?
             .numbers()
@@ -47,7 +44,7 @@ impl DataProvider<ShortCurrencyCompactV1Marker> for SourceDataProvider {
             None => {
                 return Ok(DataResponse {
                     metadata: Default::default(),
-                    payload: DataPayload::from_owned(ShortCurrencyCompactV1 {
+                    payload: DataPayload::from_owned(ShortCurrencyCompact {
                         compact_patterns: Default::default(),
                     }),
                 })
@@ -117,12 +114,12 @@ impl DataProvider<ShortCurrencyCompactV1Marker> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(ShortCurrencyCompactV1 { compact_patterns }),
+            payload: DataPayload::from_owned(ShortCurrencyCompact { compact_patterns }),
         })
     }
 }
 
-impl IterableDataProviderCached<ShortCurrencyCompactV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<ShortCurrencyCompactV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
@@ -135,11 +132,11 @@ impl IterableDataProviderCached<ShortCurrencyCompactV1Marker> for SourceDataProv
 
 #[test]
 fn test_basic() {
-    use icu::experimental::dimension::provider::currency_compact::*;
+    use icu::experimental::dimension::provider::currency::compact::*;
     use icu::locale::langid;
 
     let provider = SourceDataProvider::new_testing();
-    let en: DataResponse<ShortCurrencyCompactV1Marker> = provider
+    let en: DataResponse<ShortCurrencyCompactV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
             ..Default::default()
@@ -166,7 +163,7 @@ fn test_basic() {
         Some("¤ 0K")
     );
 
-    let ja: DataResponse<ShortCurrencyCompactV1Marker> = provider
+    let ja: DataResponse<ShortCurrencyCompactV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_locale(&langid!("ja").into()),
             ..Default::default()

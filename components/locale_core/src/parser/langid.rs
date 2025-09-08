@@ -6,8 +6,10 @@ pub use super::errors::ParseError;
 use crate::extensions::unicode::{Attribute, Key, Value};
 use crate::extensions::ExtensionType;
 use crate::parser::SubtagIterator;
+#[cfg(feature = "alloc")]
 use crate::shortvec::ShortBoxSlice;
 use crate::subtags::Subtag;
+#[cfg(feature = "alloc")]
 use crate::LanguageIdentifier;
 use crate::{extensions, subtags};
 
@@ -15,6 +17,7 @@ use crate::{extensions, subtags};
 pub enum ParserMode {
     LanguageIdentifier,
     Locale,
+    #[allow(dead_code)]
     Partial,
 }
 
@@ -25,6 +28,7 @@ enum ParserPosition {
     Variant,
 }
 
+#[cfg(feature = "alloc")]
 pub fn parse_language_identifier_from_iter(
     iter: &mut SubtagIterator,
     mode: ParserMode,
@@ -99,6 +103,7 @@ pub fn parse_language_identifier_from_iter(
     })
 }
 
+#[cfg(feature = "alloc")]
 pub fn parse_language_identifier(
     t: &[u8],
     mode: ParserMode,
@@ -107,7 +112,7 @@ pub fn parse_language_identifier(
     parse_language_identifier_from_iter(&mut iter, mode)
 }
 
-#[allow(clippy::type_complexity)]
+#[expect(clippy::type_complexity)]
 pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_from_iter(
     mut iter: SubtagIterator,
     mode: ParserMode,
@@ -231,7 +236,7 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
                         } else {
                             break;
                         }
-                        iter = iter.next_const().0
+                        iter = iter.next_const().0;
                     }
                     if let Some(k) = key {
                         keyword = Some((k, current_type));
@@ -247,7 +252,7 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
     Ok((language, script, region, variant, keyword))
 }
 
-#[allow(clippy::type_complexity)]
+#[expect(clippy::type_complexity)]
 pub const fn parse_language_identifier_with_single_variant(
     t: &[u8],
     mode: ParserMode,

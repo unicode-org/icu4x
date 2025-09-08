@@ -80,7 +80,7 @@ fn make_testdata() {
         matches!(attrs.as_str(), "CAD" | "EGP" | "EUR" | "GBP" | "USD")
     })
     .export(&provider, exporter)
-    .unwrap()
+    .unwrap();
 }
 
 struct ZeroCopyCheckExporter {
@@ -105,9 +105,9 @@ const EXPECTED_TRANSIENT_VIOLATIONS: &[DataMarkerInfo] = &[
     // Regex DFAs need to be validated, which involved creating a BTreeMap.
     // If required we could avoid this using one of the approaches in
     // https://github.com/unicode-org/icu4x/pulls/3697.
-    icu::list::provider::AndListV2Marker::INFO,
-    icu::list::provider::OrListV2Marker::INFO,
-    icu::list::provider::UnitListV2Marker::INFO,
+    icu::list::provider::ListOrV1::INFO,
+    icu::list::provider::ListAndV1::INFO,
+    icu::list::provider::ListUnitV1::INFO,
 ];
 
 impl DataExporter for ZeroCopyCheckExporter {
@@ -136,21 +136,21 @@ impl DataExporter for ZeroCopyCheckExporter {
         let payload_after;
 
         macro_rules! cb {
-            ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+            ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
                 ((allocated, deallocated), payload_after) = match marker {
-                    k if k == icu_provider::hello_world::HelloWorldV1Marker::INFO => {
-                        let deserialized: DataPayload<icu_provider::hello_world::HelloWorldV1Marker> = buffer_payload.into_deserialized(icu_provider::buf::BufferFormat::Postcard1).unwrap();
+                    k if k == icu_provider::hello_world::HelloWorldV1::INFO => {
+                        let deserialized: DataPayload<icu_provider::hello_world::HelloWorldV1> = buffer_payload.into_deserialized(icu_provider::buf::BufferFormat::Postcard1).unwrap();
                         (MeasuringAllocator::end_measure(), UpcastDataPayload::upcast(deserialized))
                     }
                     $(
-                        k if k == <$marker>::INFO => {
-                            let deserialized: DataPayload<$marker> = buffer_payload.into_deserialized(icu_provider::buf::BufferFormat::Postcard1).unwrap();
+                        k if k == <$marker_ty>::INFO => {
+                            let deserialized: DataPayload<$marker_ty> = buffer_payload.into_deserialized(icu_provider::buf::BufferFormat::Postcard1).unwrap();
                             (MeasuringAllocator::end_measure(), UpcastDataPayload::upcast(deserialized))
                         }
                     )+
                     $(
-                        k if k == <$emarker>::INFO => {
-                            let deserialized: DataPayload<$emarker> = buffer_payload.into_deserialized(icu_provider::buf::BufferFormat::Postcard1).unwrap();
+                        k if k == <$emarker_ty>::INFO => {
+                            let deserialized: DataPayload<$emarker_ty> = buffer_payload.into_deserialized(icu_provider::buf::BufferFormat::Postcard1).unwrap();
                             (MeasuringAllocator::end_measure(), UpcastDataPayload::upcast(deserialized))
                         }
                     )+
@@ -194,7 +194,7 @@ impl DataExporter for ZeroCopyCheckExporter {
         Ok(())
     }
 
-    fn close(&mut self) -> Result<(), DataError> {
+    fn close(&mut self) -> Result<ExporterCloseMetadata, DataError> {
         assert_eq!(
             self.rountrip_errors.get_mut().expect("poison"),
             &mut BTreeSet::default()
@@ -225,7 +225,7 @@ impl DataExporter for ZeroCopyCheckExporter {
             Expected:\n{EXPECTED_VIOLATIONS:?}\nFound:\n{violations:?}\nExpected (transient):\n{EXPECTED_TRANSIENT_VIOLATIONS:?}\nFound (transient):\n{transient_violations:?}"
         );
 
-        Ok(())
+        Ok(Default::default())
     }
 }
 

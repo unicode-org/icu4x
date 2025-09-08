@@ -23,22 +23,24 @@ all-features = true
 displaydoc = { workspace = true }
 icu_collections = { workspace = true }
 icu_locale_core = { workspace = true }
-icu_provider = { workspace = true, features = ["macros"] }
+icu_provider = { workspace = true }
 utf8_iter = { workspace = true }
-zerovec = { workspace = true, features = ["yoke"] }
+zerovec = { workspace = true, features = ["alloc", "yoke"] }
 
 databake = { workspace = true, optional = true, features = ["derive"] }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
-potential_utf = { workspace = true, features = ["zerovec"] }
+potential_utf = { workspace = true, features = ["alloc", "zerovec"] }
 
 core_maths = { workspace = true, optional = true }
 
 icu_segmenter_data = { workspace = true, optional = true }
+icu_locale = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
 icu_properties = { path = "../properties", features = ["compiled_data"] }
 itertools = { workspace = true }
+ndarray = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 
@@ -47,13 +49,11 @@ criterion = { workspace = true }
 
 [features]
 default = ["compiled_data", "auto"]
-std = ["icu_collections/std", "icu_locale_core/std", "icu_provider/std"]
 serde = ["dep:serde", "potential_utf/serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
-datagen = ["serde", "dep:databake", "potential_utf/databake", "zerovec/databake", "icu_collections/databake"]
+datagen = ["serde", "dep:databake", "potential_utf/databake", "zerovec/databake", "icu_collections/databake", "icu_provider/export"]
 lstm = ["dep:core_maths"]
 auto = ["lstm"] # Enabled try_new_auto_unstable constructors
-compiled_data = ["dep:icu_segmenter_data"]
-bench = []
+compiled_data = ["dep:icu_segmenter_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI
@@ -65,3 +65,7 @@ harness = false
 [[test]]
 name = "complex_word"
 required-features = ["auto"]
+
+[[test]]
+name = "cnn"
+required-features = []

@@ -20,13 +20,13 @@ mod algorithms;
 /// algorithm. See *[the design doc]* for a detailed description and [#2243](
 /// https://github.com/unicode-org/icu4x/issues/2243) to track alignment with *UTS #35*.
 ///
-/// If running fallback in a loop, use [`DataLocale::is_default()`] to break from the loop.
+/// If running fallback in a loop, use [`DataLocale::is_unknown()`] to break from the loop.
 ///
 /// # Examples
 ///
 /// ```
-/// use icu::locale::locale;
 /// use icu::locale::fallback::LocaleFallbacker;
+/// use icu::locale::locale;
 ///
 /// // Set up a LocaleFallbacker with data.
 /// let fallbacker = LocaleFallbacker::new();
@@ -53,34 +53,33 @@ mod algorithms;
 ///
 /// [UTS #35: Locale Inheritance and Matching]: https://www.unicode.org/reports/tr35/#Locale_Inheritance
 /// [the design doc]: https://docs.google.com/document/d/1Mp7EUyl-sFh_HZYgyeVwj88vJGpCBIWxzlCwGgLCDwM/edit
-/// [language identifier]: icu::locale::LanguageIdentifier
 #[doc(hidden)] // canonical location in super
 #[derive(Debug, Clone, PartialEq)]
 pub struct LocaleFallbacker {
-    likely_subtags: DataPayload<LikelySubtagsForLanguageV1Marker>,
-    parents: DataPayload<ParentsV1Marker>,
+    likely_subtags: DataPayload<LocaleLikelySubtagsLanguageV1>,
+    parents: DataPayload<LocaleParentsV1>,
 }
 
 /// Borrowed version of [`LocaleFallbacker`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct LocaleFallbackerBorrowed<'a> {
-    likely_subtags: &'a LikelySubtagsForLanguageV1<'a>,
-    parents: &'a ParentsV1<'a>,
+    likely_subtags: &'a LikelySubtagsForLanguage<'a>,
+    parents: &'a Parents<'a>,
 }
 
 /// A [`LocaleFallbackerBorrowed`] with an associated [`LocaleFallbackConfig`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct LocaleFallbackerWithConfig<'a> {
-    likely_subtags: &'a LikelySubtagsForLanguageV1<'a>,
-    parents: &'a ParentsV1<'a>,
+    likely_subtags: &'a LikelySubtagsForLanguage<'a>,
+    parents: &'a Parents<'a>,
     config: LocaleFallbackConfig,
 }
 
 /// Inner iteration type. Does not own the item under fallback.
 #[derive(Debug)]
 struct LocaleFallbackIteratorInner<'a> {
-    likely_subtags: &'a LikelySubtagsForLanguageV1<'a>,
-    parents: &'a ParentsV1<'a>,
+    likely_subtags: &'a LikelySubtagsForLanguage<'a>,
+    parents: &'a Parents<'a>,
     config: LocaleFallbackConfig,
     backup_subdivision: Option<Subtag>,
     backup_variant: Option<Variant>,
@@ -93,10 +92,9 @@ struct LocaleFallbackIteratorInner<'a> {
 /// Because the `Iterator` trait does not allow items to borrow from the iterator, this class does
 /// not implement that trait. Instead, use `.step()` and `.get()`.
 #[derive(Debug)]
-pub struct LocaleFallbackIterator<'a, 'b> {
+pub struct LocaleFallbackIterator<'a> {
     current: DataLocale,
     inner: LocaleFallbackIteratorInner<'a>,
-    phantom: core::marker::PhantomData<&'b ()>,
 }
 
 impl LocaleFallbacker {
@@ -106,33 +104,28 @@ impl LocaleFallbacker {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    #[allow(clippy::new_ret_no_self)] // keeping constructors together
+    #[expect(clippy::new_ret_no_self)] // keeping constructors together
     pub const fn new<'a>() -> LocaleFallbackerBorrowed<'a> {
-        let tickstatic = LocaleFallbackerBorrowed {
-            likely_subtags: crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1_MARKER,
-            parents: crate::provider::Baked::SINGLETON_PARENTS_V1_MARKER,
-        };
         // Safety: we're transmuting down from LocaleFallbackerBorrowed<'static> to LocaleFallbackerBorrowed<'a>
         // ZeroMaps use associated types in a way that confuse the compiler which gives up and marks them
         // as invariant. However, they are covariant, and in non-const code this covariance can be safely triggered
         // using Yokeable::transform. In const code we must transmute. In the long run we should
         // be able to `transform()` in const code, and also we will have hopefully improved map polymorphism (#3128)
-        unsafe { core::mem::transmute(tickstatic) }
+        unsafe { core::mem::transmute(LocaleFallbackerBorrowed::<'static>::new()) }
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
         functions: [
             new: skip,
-            try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
             Self
     ]);
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<LikelySubtagsForLanguageV1Marker> + DataProvider<ParentsV1Marker> + ?Sized,
+        P: DataProvider<LocaleLikelySubtagsLanguageV1> + DataProvider<LocaleParentsV1> + ?Sized,
     {
         let likely_subtags = provider.load(Default::default())?.payload;
         let parents = provider.load(Default::default())?.payload;
@@ -146,13 +139,13 @@ impl LocaleFallbacker {
     /// surprising behavior, especially in multi-script languages.
     pub fn new_without_data() -> Self {
         LocaleFallbacker {
-            likely_subtags: DataPayload::from_owned(LikelySubtagsForLanguageV1 {
+            likely_subtags: DataPayload::from_owned(LikelySubtagsForLanguage {
                 language: Default::default(),
                 language_region: Default::default(),
                 language_script: Default::default(),
                 // Unused
                 und: (
-                    Default::default(),
+                    Language::UNKNOWN,
                     crate::subtags::script!("Zzzz"),
                     crate::subtags::region!("ZZ"),
                 ),
@@ -163,12 +156,12 @@ impl LocaleFallbacker {
 
     /// Associates a configuration with this fallbacker.
     #[inline]
-    pub fn for_config(&self, config: LocaleFallbackConfig) -> LocaleFallbackerWithConfig {
+    pub fn for_config(&self, config: LocaleFallbackConfig) -> LocaleFallbackerWithConfig<'_> {
         self.as_borrowed().for_config(config)
     }
 
     /// Creates a borrowed version of this fallbacker for performance.
-    pub fn as_borrowed(&self) -> LocaleFallbackerBorrowed {
+    pub fn as_borrowed(&self) -> LocaleFallbackerBorrowed<'_> {
         LocaleFallbackerBorrowed {
             likely_subtags: self.likely_subtags.get(),
             parents: self.parents.get(),
@@ -189,6 +182,20 @@ impl<'a> LocaleFallbackerBorrowed<'a> {
 }
 
 impl LocaleFallbackerBorrowed<'static> {
+    /// Creates a [`LocaleFallbackerBorrowed`] with compiled fallback data (likely subtags and parent locales).
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    #[expect(clippy::new_without_default)]
+    pub const fn new() -> Self {
+        Self {
+            likely_subtags: crate::provider::Baked::SINGLETON_LOCALE_LIKELY_SUBTAGS_LANGUAGE_V1,
+            parents: crate::provider::Baked::SINGLETON_LOCALE_PARENTS_V1,
+        }
+    }
+
     /// Cheaply converts a [`LocaleFallbackerBorrowed<'static>`] into a [`LocaleFallbacker`].
     ///
     /// Note: Due to branching and indirection, using [`LocaleFallbacker`] might inhibit some
@@ -207,7 +214,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
     /// If you have a [`Locale`](icu_locale_core::Locale), call `.into()` to get a [`DataLocale`].
     ///
     /// When first initialized, the locale is normalized according to the fallback algorithm.
-    pub fn fallback_for(&self, mut locale: DataLocale) -> LocaleFallbackIterator<'a, 'static> {
+    pub fn fallback_for(&self, mut locale: DataLocale) -> LocaleFallbackIterator<'a> {
         let mut default_script = None;
         self.normalize(&mut locale, &mut default_script);
         let max_script = locale.script.or(default_script);
@@ -222,12 +229,11 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                 backup_region: None,
                 max_script,
             },
-            phantom: core::marker::PhantomData,
         }
     }
 }
 
-impl LocaleFallbackIterator<'_, '_> {
+impl LocaleFallbackIterator<'_> {
     /// Borrows the current [`DataLocale`] under fallback.
     pub fn get(&self) -> &DataLocale {
         &self.current

@@ -17,7 +17,6 @@
 
 int32_t icu4x_GraphemeClusterBreakIteratorLatin1_next_mv1(GraphemeClusterBreakIteratorLatin1* self);
 
-
 void icu4x_GraphemeClusterBreakIteratorLatin1_destroy_mv1(GraphemeClusterBreakIteratorLatin1* self);
 
 

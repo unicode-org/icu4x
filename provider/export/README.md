@@ -6,7 +6,7 @@
 
 For command-line usage, see the [`icu4x-datagen` binary](https://crates.io/crate/icu4x-datagen).
 
-Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/tutorials/data_management.md).
+Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/tutorials/data-management.md).
 
 ## Examples
 
@@ -16,17 +16,21 @@ use icu_provider_export::prelude::*;
 use icu_provider_source::SourceDataProvider;
 use std::fs::File;
 
-let provider = SourceDataProvider::new_latest_tested();
+let provider = SourceDataProvider::new();
 
-ExportDriver::new([DataLocaleFamily::FULL], DeduplicationStrategy::None.into(), LocaleFallbacker::try_new_unstable(&provider).unwrap())
-    .with_markers([icu::list::provider::AndListV2Marker::INFO])
-    .export(
-        &provider,
-        BlobExporter::new_v2_with_sink(Box::new(
-            File::create("data.postcard").unwrap(),
-        )),
-    )
-    .unwrap();
+ExportDriver::new(
+    [DataLocaleFamily::FULL],
+    DeduplicationStrategy::None.into(),
+    LocaleFallbacker::try_new_unstable(&provider).unwrap(),
+)
+.with_markers([icu::list::provider::ListAndV1::INFO])
+.export(
+    &provider,
+    BlobExporter::new_with_sink(Box::new(
+        File::create("data.postcard").unwrap(),
+    )),
+)
+.unwrap();
 ```
 
 ## Cargo features

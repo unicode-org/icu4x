@@ -1,0 +1,43 @@
+{
+  "defaults": {
+    "3": "Oras sa Gitnang Africa",
+    "4": "Oras sa Silangang Africa",
+    "5": "Oras sa Timog Africa",
+    "6": "Oras sa Kanlurang Africa",
+    "29": "Oras sa Brunei Darussalam",
+    "32": "Standard na Oras sa Chamorro",
+    "37": "Oras sa Cocos Islands",
+    "43": "Oras sa East Timor",
+    "52": "Oras sa Katimugang France at Antartiko",
+    "53": "Greenwich Mean Time",
+    "57": "Oras sa Gilbert Islands",
+    "61": "Oras sa Gulf",
+    "66": "Standard na Oras sa India",
+    "67": "Oras sa Indian Ocean",
+    "68": "Oras sa Indochina",
+    "69": "Oras sa Gitnang Indonesia",
+    "70": "Oras sa Silangang Indonesia",
+    "71": "Oras sa Kanlurang Indonesia",
+    "77": "Oras ng Kazakhstan",
+    "78": "Oras sa Silangang Kazakhstan",
+    "79": "Oras sa Kanlurang Kazakhstan",
+    "83": "Oras sa Kyrgystan",
+    "84": "Oras sa Line Islands",
+    "87": "Oras sa Malaysia",
+    "90": "Oras sa Marshall Islands",
+    "96": "Oras sa Myanmar",
+    "109": "Oras sa Papua New Guinea",
+    "113": "Oras sa Phoenix Islands",
+    "115": "Oras sa Pitcairn",
+    "116": "Oras sa Ponape",
+    "117": "Oras sa Pyongyang",
+    "118": "Oras sa Reunion",
+    "124": "Standard na Oras sa Singapore",
+    "126": "Oras sa Timog Georgia",
+    "146": "Oras sa Wake Island",
+    "150": "Oras sa Yukon"
+  },
+  "overrides": {
+    "utc": "Coordinated Universal Time"
+  }
+}

@@ -8,19 +8,20 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     int32_t icu4x_GraphemeClusterBreakIteratorUtf16_next_mv1(icu4x::capi::GraphemeClusterBreakIteratorUtf16* self);
-    
-    
+
     void icu4x_GraphemeClusterBreakIteratorUtf16_destroy_mv1(GraphemeClusterBreakIteratorUtf16* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

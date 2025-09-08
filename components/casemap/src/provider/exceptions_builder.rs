@@ -39,7 +39,7 @@ impl ExceptionHeader {
     }
 
     // Returns true if the given slot exists for this exception
-    pub(crate) fn has_slot(&self, slot: ExceptionSlot) -> bool {
+    pub(crate) fn has_slot(self, slot: ExceptionSlot) -> bool {
         self.slot_presence.has_slot(slot)
     }
 }
@@ -142,7 +142,7 @@ impl<'a> CaseMapExceptionsBuilder<'a> {
         if self.double_slots {
             let hi = self.read_raw()? as u32;
             let lo = self.read_raw()? as u32;
-            Ok(hi << 16 | lo)
+            Ok((hi << 16) | lo)
         } else {
             Ok(self.read_raw()? as u32)
         }

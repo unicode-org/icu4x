@@ -32,8 +32,8 @@
 //!     .get_set_for_value(GeneralCategory::LineSeparator);
 //! let line_sep = line_sep_data.as_borrowed();
 //!
-//! assert!(line_sep.contains32(0x2028));
-//! assert!(!line_sep.contains32(0x2029));
+//! assert!(line_sep.contains('\u{2028}'));
+//! assert!(!line_sep.contains('\u{2029}'));
 //! ```
 //!
 //! ## Property data as `CodePointMapData`s
@@ -52,7 +52,7 @@
 //! [`CodePointMapData`]: crate::CodePointMapData
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![cfg_attr(not(any(test, doc)), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -62,25 +62,28 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
 
+#[cfg(feature = "alloc")]
 extern crate alloc;
 
 mod code_point_set;
 pub use code_point_set::{CodePointSetData, CodePointSetDataBorrowed};
 mod code_point_map;
 pub use code_point_map::{CodePointMapData, CodePointMapDataBorrowed};
-mod unicode_set;
-pub use unicode_set::{UnicodeSetData, UnicodeSetDataBorrowed};
+mod emoji;
+pub use emoji::{EmojiSetData, EmojiSetDataBorrowed};
 mod names;
-pub use names::{PropertyNames, PropertyNamesBorrowed, PropertyParser, PropertyParserBorrowed};
+pub use names::{
+    PropertyNamesLong, PropertyNamesLongBorrowed, PropertyNamesShort, PropertyNamesShortBorrowed,
+    PropertyParser, PropertyParserBorrowed,
+};
 mod runtime;
-pub use runtime::UnicodeProperty;
 
-pub mod bidi;
 // NOTE: The Pernosco debugger has special knowledge
 // of the `CanonicalCombiningClass` struct inside the `props`
 // module. Please do not change the crate-module-qualified
@@ -89,6 +92,7 @@ pub mod props;
 pub mod provider;
 pub mod script;
 
+mod bidi;
 mod trievalue;
 
 mod private {

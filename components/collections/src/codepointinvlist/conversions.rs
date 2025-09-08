@@ -2,15 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::iter::FromIterator;
 use core::{
     convert::TryFrom,
-    iter::FromIterator,
     ops::{Range, RangeBounds, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive},
 };
 
 use super::RangeError;
 use crate::codepointinvlist::utils::deconstruct_range;
-use crate::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+use crate::codepointinvlist::CodePointInversionList;
+use crate::codepointinvlist::CodePointInversionListBuilder;
+use potential_utf::PotentialCodePoint;
 use zerovec::ZeroVec;
 
 fn try_from_range<'data>(
@@ -18,16 +20,19 @@ fn try_from_range<'data>(
 ) -> Result<CodePointInversionList<'data>, RangeError> {
     let (from, till) = deconstruct_range(range);
     if from < till {
-        let set = [from, till];
-        let inv_list: ZeroVec<u32> = ZeroVec::alloc_from_slice(&set);
-        #[allow(clippy::unwrap_used)] // valid
+        let set = [
+            PotentialCodePoint::from_u24(from),
+            PotentialCodePoint::from_u24(till),
+        ];
+        let inv_list: ZeroVec<PotentialCodePoint> = ZeroVec::alloc_from_slice(&set);
+        #[expect(clippy::unwrap_used)] // valid
         Ok(CodePointInversionList::try_from_inversion_list(inv_list).unwrap())
     } else {
         Err(RangeError(from, till))
     }
 }
 
-impl<'data> TryFrom<Range<char>> for CodePointInversionList<'data> {
+impl TryFrom<Range<char>> for CodePointInversionList<'_> {
     type Error = RangeError;
 
     fn try_from(range: Range<char>) -> Result<Self, Self::Error> {
@@ -35,7 +40,7 @@ impl<'data> TryFrom<Range<char>> for CodePointInversionList<'data> {
     }
 }
 
-impl<'data> TryFrom<RangeFrom<char>> for CodePointInversionList<'data> {
+impl TryFrom<RangeFrom<char>> for CodePointInversionList<'_> {
     type Error = RangeError;
 
     fn try_from(range: RangeFrom<char>) -> Result<Self, Self::Error> {
@@ -43,7 +48,7 @@ impl<'data> TryFrom<RangeFrom<char>> for CodePointInversionList<'data> {
     }
 }
 
-impl<'data> TryFrom<RangeFull> for CodePointInversionList<'data> {
+impl TryFrom<RangeFull> for CodePointInversionList<'_> {
     type Error = RangeError;
 
     fn try_from(_: RangeFull) -> Result<Self, Self::Error> {
@@ -51,7 +56,7 @@ impl<'data> TryFrom<RangeFull> for CodePointInversionList<'data> {
     }
 }
 
-impl<'data> TryFrom<RangeInclusive<char>> for CodePointInversionList<'data> {
+impl TryFrom<RangeInclusive<char>> for CodePointInversionList<'_> {
     type Error = RangeError;
 
     fn try_from(range: RangeInclusive<char>) -> Result<Self, Self::Error> {
@@ -59,7 +64,7 @@ impl<'data> TryFrom<RangeInclusive<char>> for CodePointInversionList<'data> {
     }
 }
 
-impl<'data> TryFrom<RangeTo<char>> for CodePointInversionList<'data> {
+impl TryFrom<RangeTo<char>> for CodePointInversionList<'_> {
     type Error = RangeError;
 
     fn try_from(range: RangeTo<char>) -> Result<Self, Self::Error> {
@@ -67,7 +72,7 @@ impl<'data> TryFrom<RangeTo<char>> for CodePointInversionList<'data> {
     }
 }
 
-impl<'data> TryFrom<RangeToInclusive<char>> for CodePointInversionList<'data> {
+impl TryFrom<RangeToInclusive<char>> for CodePointInversionList<'_> {
     type Error = RangeError;
 
     fn try_from(range: RangeToInclusive<char>) -> Result<Self, Self::Error> {
@@ -168,7 +173,7 @@ mod tests {
             0xC000..=0xFFFF,
         ];
         let expected =
-            CodePointInversionList::try_from_inversion_list_slice(&[0x0, 0x1_0000]).unwrap();
+            CodePointInversionList::try_from_u32_inversion_list_slice(&[0x0, 0x1_0000]).unwrap();
         let actual = CodePointInversionList::from_iter(ranges);
         assert_eq!(expected, actual);
     }

@@ -8,9 +8,11 @@ use icu_locale_core::*;
 use icu_provider::DataError;
 use icu_provider_source::SourceDataProvider;
 use simple_logger::SimpleLogger;
+use std::collections::BTreeSet;
 use std::fs::{self, File};
 use std::io::{self, BufWriter, Cursor, Write};
 use std::path::PathBuf;
+use std::process::Command;
 use zip::ZipArchive;
 
 include!("../globs.rs.data");
@@ -66,15 +68,18 @@ fn main() -> eyre::Result<()> {
                 &mut ureq::get(resource)
                     .call()
                     .map_err(|e| DataError::custom("Download").with_display_context(&e))?
+                    .into_body()
                     .into_reader(),
                 &mut BufWriter::new(File::create(&root)?),
             )?;
         }
 
+        log::info!("Reading: {root:?}");
+
         Ok(root)
     }
 
-    fn extract(
+    fn extract_zip(
         zip: PathBuf,
         paths: Vec<String>,
         root: PathBuf,
@@ -103,6 +108,38 @@ fn main() -> eyre::Result<()> {
         Ok(())
     }
 
+    fn extract_tar(
+        tar: PathBuf,
+        paths: BTreeSet<String>,
+        root: PathBuf,
+        success: &mut Vec<String>,
+    ) -> eyre::Result<()> {
+        let mut tar = tar::Archive::new(flate2::read::GzDecoder::new(
+            std::fs::File::open(&tar).expect("should just have been downloaded"),
+        ));
+
+        for e in tar.entries()? {
+            let mut e = e?;
+            let Some(spath) = e.path()?.to_str().map(ToString::to_string) else {
+                continue;
+            };
+            if paths.contains(&spath) {
+                let path = root.join(&spath);
+                fs::create_dir_all(path.parent().unwrap())?;
+                io::copy(
+                    &mut e,
+                    &mut crlify::BufWriterWithLineEndingFix::new(
+                        File::create(&path)
+                            .with_context(|| format!("Failed to create file {:?}", &path))?,
+                    ),
+                )
+                .with_context(|| format!("Failed to write file {:?}", &spath))?;
+                success.push(spath);
+            }
+        }
+        Ok(())
+    }
+
     fn expand_paths(in_paths: &[&str], replace_hyphen_by_underscore: bool) -> Vec<String> {
         let mut paths = vec![];
         for pattern in in_paths {
@@ -124,19 +161,13 @@ fn main() -> eyre::Result<()> {
         paths
     }
 
-    // TODO(#3736): Remove this workaround when cldr-json has transform rules
-    std::fs::rename(
-        out_root.join("tests/data/cldr/cldr-transforms-full"),
-        out_root.join("tests/data/cldr-transforms-full"),
-    )?;
-
     std::fs::remove_dir_all(out_root.join("tests/data/cldr"))?;
     let mut cldr_data = Vec::new();
-    extract(
+    extract_zip(
         cached(&format!(
             "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-full.zip",
-            SourceDataProvider::LATEST_TESTED_CLDR_TAG,
-            SourceDataProvider::LATEST_TESTED_CLDR_TAG
+            SourceDataProvider::TESTED_CLDR_TAG,
+            SourceDataProvider::TESTED_CLDR_TAG
         ))
         .with_context(|| "Failed to download CLDR ZIP".to_owned())?,
         expand_paths(CLDR_JSON_GLOB, false),
@@ -144,36 +175,13 @@ fn main() -> eyre::Result<()> {
         &mut cldr_data,
     )?;
 
-    // TODO(#3736): Remove this workaround when cldr-json has transform rules
-    std::fs::rename(
-        out_root.join("tests/data/cldr-transforms-full"),
-        out_root.join("tests/data/cldr/cldr-transforms-full"),
-    )?;
-    let transform_index = cldr_data.len();
-    for entry in
-        std::fs::read_dir(out_root.join("tests/data/cldr/cldr-transforms-full/main")).unwrap()
-    {
-        for entry in std::fs::read_dir(entry.unwrap().path()).unwrap() {
-            cldr_data.push(
-                entry
-                    .unwrap()
-                    .path()
-                    .strip_prefix(out_root.join("tests/data/cldr"))
-                    .unwrap()
-                    .to_string_lossy()
-                    .replace('\\', "/"),
-            );
-        }
-    }
-    cldr_data[transform_index..].sort();
-
     std::fs::remove_dir_all(out_root.join("tests/data/icuexport"))?;
     let mut icuexport_data = Vec::new();
-    extract(
+    extract_zip(
         cached(&format!(
             "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
-            SourceDataProvider::LATEST_TESTED_ICUEXPORT_TAG,
-            SourceDataProvider::LATEST_TESTED_ICUEXPORT_TAG.replace('/', "-")
+            SourceDataProvider::TESTED_ICUEXPORT_TAG,
+            SourceDataProvider::TESTED_ICUEXPORT_TAG.replace('/', "-")
         ))
         .with_context(|| "Failed to download ICU ZIP".to_owned())?,
         expand_paths(ICUEXPORTDATA_GLOB, true),
@@ -182,10 +190,10 @@ fn main() -> eyre::Result<()> {
     )?;
 
     std::fs::remove_dir_all(out_root.join("tests/data/lstm"))?;
-    extract(
+    extract_zip(
         cached(&format!(
             "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{}/models.zip",
-            SourceDataProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG,
+            SourceDataProvider::TESTED_SEGMENTER_LSTM_TAG,
         ))
         .with_context(|| "Failed to download LSTM ZIP".to_owned())?,
         LSTM_GLOB.iter().copied().map(String::from).collect(),
@@ -194,28 +202,31 @@ fn main() -> eyre::Result<()> {
     )?;
 
     std::fs::remove_dir_all(out_root.join("tests/data/tzdb"))?;
-    extract(
+    extract_tar(
         cached(&format!(
-            "https://github.com/eggert/tz/archive/refs/tags/{}.zip",
-            SourceDataProvider::LATEST_TESTED_TZDB_TAG,
+            "https://www.iana.org/time-zones/repository/releases/tzdata{}.tar.gz",
+            SourceDataProvider::TESTED_TZDB_TAG,
         ))
-        .with_context(|| "Failed to download LSTM ZIP".to_owned())?,
-        TZDB_GLOB
-            .iter()
-            .copied()
-            .map(|p| format!("tz-{}/{p}", SourceDataProvider::LATEST_TESTED_TZDB_TAG))
-            .collect(),
-        out_root.join("tests/data"),
+        .with_context(|| "Failed to download TZDB ZIP".to_owned())?,
+        TZDB_GLOB.iter().copied().map(String::from).collect(),
+        out_root.join("tests/data/tzdb"),
         &mut Default::default(),
     )?;
-    std::fs::rename(
-        out_root.join(format!(
-            "tests/data/tz-{}",
-            SourceDataProvider::LATEST_TESTED_TZDB_TAG
-        )),
-        out_root.join("tests/data/tzdb"),
-    )
-    .unwrap();
+
+    let mut tzdb_data = TZDB_GLOB.iter().copied().collect::<BTreeSet<_>>();
+
+    let gen_files = ["rearguard.zi", "vanguard.zi"];
+    Command::new("make")
+        .arg("-C")
+        .arg(out_root.join("tests/data/tzdb"))
+        .args(gen_files)
+        .status()
+        .unwrap();
+    tzdb_data.extend(gen_files);
+    std::fs::remove_file(out_root.join("tests/data/tzdb/Makefile")).unwrap();
+    std::fs::remove_file(out_root.join("tests/data/tzdb/ziguard.awk")).unwrap();
+    tzdb_data.remove("Makefile");
+    tzdb_data.remove("ziguard.awk");
 
     let cldr_data = cldr_data
         .iter()
@@ -241,13 +252,11 @@ fn main() -> eyre::Result<()> {
         })
         .collect::<Vec<_>>()
         .join(",\n                        ");
-    let tzdb_data: String = TZDB_GLOB
+    let tzdb_data: String = tzdb_data
         .iter()
         .map(|path| {
             let path = path.replace('\\', "/");
-            format!(
-                r#"("tz-tag/{path}", include_bytes!("../../tests/data/tzdb/{path}").as_slice())"#
-            )
+            format!(r#"("{path}", include_bytes!("../../tests/data/tzdb/{path}").as_slice())"#)
         })
         .collect::<Vec<_>>()
         .join(",\n                        ");
@@ -262,7 +271,7 @@ fn main() -> eyre::Result<()> {
 use crate::{{AbstractFs, CldrCache, SerdeCache, SourceDataProvider, TzdbCache}};
 use std::sync::{{Arc, OnceLock}};
 impl SourceDataProvider {{
-    // This is equivalent to `new_latest_tested` for the files defined in `tools/testdata-scripts/globs.rs.data`.
+    // This is equivalent to `new` for the files defined in `tools/testdata-scripts/globs.rs.data`.
     pub fn new_testing() -> Self {{
         // Singleton so that all instantiations share the same cache.
         static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();
@@ -287,7 +296,7 @@ impl SourceDataProvider {{
                     [
                         {tzdb_data}
                     ].into_iter().collect(),
-                ), cache: Default::default() }})),
+                ), transitions: Default::default() }})),
                 ..SourceDataProvider::new_custom()
             }})
             .clone()

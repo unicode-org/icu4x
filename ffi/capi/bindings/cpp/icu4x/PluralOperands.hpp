@@ -8,34 +8,42 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
-#include "FixedDecimal.hpp"
-#include "FixedDecimalParseError.hpp"
+#include "Decimal.hpp"
+#include "DecimalParseError.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
-    typedef struct icu4x_PluralOperands_from_string_mv1_result {union {icu4x::capi::PluralOperands* ok; icu4x::capi::FixedDecimalParseError err;}; bool is_ok;} icu4x_PluralOperands_from_string_mv1_result;
+
+    typedef struct icu4x_PluralOperands_from_string_mv1_result {union {icu4x::capi::PluralOperands* ok; icu4x::capi::DecimalParseError err;}; bool is_ok;} icu4x_PluralOperands_from_string_mv1_result;
     icu4x_PluralOperands_from_string_mv1_result icu4x_PluralOperands_from_string_mv1(diplomat::capi::DiplomatStringView s);
-    
-    icu4x::capi::PluralOperands* icu4x_PluralOperands_from_fixed_decimal_mv1(const icu4x::capi::FixedDecimal* x);
-    
-    
+
+    icu4x::capi::PluralOperands* icu4x_PluralOperands_from_int64_mv1(int64_t i);
+
+    icu4x::capi::PluralOperands* icu4x_PluralOperands_from_fixed_decimal_mv1(const icu4x::capi::Decimal* x);
+
     void icu4x_PluralOperands_destroy_mv1(PluralOperands* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::FixedDecimalParseError> icu4x::PluralOperands::from_string(std::string_view s) {
+inline diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::DecimalParseError> icu4x::PluralOperands::from_string(std::string_view s) {
   auto result = icu4x::capi::icu4x_PluralOperands_from_string_mv1({s.data(), s.size()});
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::FixedDecimalParseError>(diplomat::Ok<std::unique_ptr<icu4x::PluralOperands>>(std::unique_ptr<icu4x::PluralOperands>(icu4x::PluralOperands::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::FixedDecimalParseError>(diplomat::Err<icu4x::FixedDecimalParseError>(icu4x::FixedDecimalParseError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::DecimalParseError>(diplomat::Ok<std::unique_ptr<icu4x::PluralOperands>>(std::unique_ptr<icu4x::PluralOperands>(icu4x::PluralOperands::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::DecimalParseError>(diplomat::Err<icu4x::DecimalParseError>(icu4x::DecimalParseError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<icu4x::PluralOperands> icu4x::PluralOperands::from_fixed_decimal(const icu4x::FixedDecimal& x) {
+inline std::unique_ptr<icu4x::PluralOperands> icu4x::PluralOperands::from(int64_t i) {
+  auto result = icu4x::capi::icu4x_PluralOperands_from_int64_mv1(i);
+  return std::unique_ptr<icu4x::PluralOperands>(icu4x::PluralOperands::FromFFI(result));
+}
+
+inline std::unique_ptr<icu4x::PluralOperands> icu4x::PluralOperands::from_fixed_decimal(const icu4x::Decimal& x) {
   auto result = icu4x::capi::icu4x_PluralOperands_from_fixed_decimal_mv1(x.AsFFI());
   return std::unique_ptr<icu4x::PluralOperands>(icu4x::PluralOperands::FromFFI(result));
 }

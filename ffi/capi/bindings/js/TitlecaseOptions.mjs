@@ -5,43 +5,75 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html) for more information.
-*/
-export class TitlecaseOptions {
 
+/**
+ * See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/2.0.0/icu/casemap/options/struct.TitlecaseOptions.html) for more information.
+ */
+export class TitlecaseOptions {
     #leadingAdjustment;
-    get leadingAdjustment()  {
+    get leadingAdjustment() {
         return this.#leadingAdjustment;
     }
-    set leadingAdjustment(value) {
+    set leadingAdjustment(value){
         this.#leadingAdjustment = value;
     }
-
     #trailingCase;
-    get trailingCase()  {
+    get trailingCase() {
         return this.#trailingCase;
     }
-    set trailingCase(value) {
+    set trailingCase(value){
         this.#trailingCase = value;
     }
-    constructor() {
-        if (arguments.length > 0 && arguments[0] === diplomatRuntime.internalConstructor) {
-            this.#fromFFI(...Array.prototype.slice.call(arguments, 1));
-        } else {
-            
-            this.#leadingAdjustment = arguments[0];
-            this.#trailingCase = arguments[1];
+    /** @internal */
+    static fromFields(structObj) {
+        return new TitlecaseOptions(diplomatRuntime.exposeConstructor, structObj);
+    }
+
+    #internalConstructor(structObj) {
+        if (typeof structObj !== "object") {
+            throw new Error("TitlecaseOptions's constructor takes an object of TitlecaseOptions's fields.");
         }
+
+        if ("leadingAdjustment" in structObj) {
+            this.#leadingAdjustment = structObj.leadingAdjustment;
+        } else {
+            this.#leadingAdjustment = null;
+        }
+
+        if ("trailingCase" in structObj) {
+            this.#trailingCase = structObj.trailingCase;
+        } else {
+            this.#trailingCase = null;
+        }
+
+        return this;
     }
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
-    
     _intoFFI(
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [...diplomatRuntime.optionToArgsForCalling(this.#leadingAdjustment, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#trailingCase, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)])]
+        let buffer = diplomatRuntime.DiplomatBuf.struct(wasm, 16, 4);
+
+        this._writeToArrayBuffer(wasm.memory.buffer, buffer.ptr, functionCleanupArena, appendArrayMap);
+
+        functionCleanupArena.alloc(buffer);
+
+        return buffer.ptr;
+    }
+
+    static _fromSuppliedValue(internalConstructor, obj) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("_fromSuppliedValue cannot be called externally.");
+        }
+
+        if (obj instanceof TitlecaseOptions) {
+            return obj;
+        }
+
+        return TitlecaseOptions.fromFields(obj);
     }
 
     _writeToArrayBuffer(
@@ -59,24 +91,48 @@ export class TitlecaseOptions {
     // and passes it down to individual fields containing the borrow.
     // This method does not attempt to handle any dependencies between lifetimes, the caller
     // should handle this when constructing edge arrays.
-    #fromFFI(ptr) {
+    static _fromFFI(internalConstructor, ptr) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("TitlecaseOptions._fromFFI is not meant to be called externally. Please use the default constructor.");
+        }
+        let structObj = {};
         const leadingAdjustmentDeref = ptr;
-        this.#leadingAdjustment = diplomatRuntime.readOption(wasm, leadingAdjustmentDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new LeadingAdjustment(diplomatRuntime.internalConstructor, deref) });
+        structObj.leadingAdjustment = diplomatRuntime.readOption(wasm, leadingAdjustmentDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new LeadingAdjustment(diplomatRuntime.internalConstructor, deref) });
         const trailingCaseDeref = ptr + 8;
-        this.#trailingCase = diplomatRuntime.readOption(wasm, trailingCaseDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new TrailingCase(diplomatRuntime.internalConstructor, deref) });
+        structObj.trailingCase = diplomatRuntime.readOption(wasm, trailingCaseDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new TrailingCase(diplomatRuntime.internalConstructor, deref) });
+
+        return new TitlecaseOptions(diplomatRuntime.exposeConstructor, structObj);
     }
 
-    static defaultOptions() {
+
+    /**
+     * See the [Rust documentation for `default`](https://docs.rs/icu/2.0.0/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
+     */
+    #defaultConstructor() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 16, 4, false);
-        
+
+
         const result = wasm.icu4x_TitlecaseOptionsV1_default_mv1(diplomatReceive.buffer);
-    
+
         try {
-            return new TitlecaseOptions(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+            return TitlecaseOptions._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
-        
+
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    /**
+     * See the [Rust documentation for `default`](https://docs.rs/icu/2.0.0/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
+     */
+    constructor() {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
         }
     }
 }

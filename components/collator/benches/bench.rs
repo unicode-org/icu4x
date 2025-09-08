@@ -2,21 +2,72 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use criterion::{black_box, criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
+use criterion::measurement::WallTime;
+use criterion::{
+    black_box, criterion_group, criterion_main, BatchSize, BenchmarkGroup, BenchmarkId, Criterion,
+};
 
-use icu::collator::*;
-use icu::locale::Locale;
-use icu_provider::DataLocale;
+use icu::collator::{options::*, *};
+use icu::locale::locale;
+use icu_locale_core::Locale;
 
-fn to_data_locale(locale_str: &str) -> DataLocale {
-    locale_str
-        .parse::<Locale>()
-        .expect("Failed to parse locale")
-        .into()
+// Split the baseline and collator benches into distinct `#inline(never)` functions to avoid
+// collator layout changes from affecting the baseline!
+
+#[inline(never)]
+fn baseline_bench(group: &mut BenchmarkGroup<'_, WallTime>, file_name: &&str, elements: &[&str]) {
+    // baseline performance, locale-unaware code point sort done by Rust (0 for ordering in the html report)
+    group.bench_function(
+        BenchmarkId::new(format!("{file_name}/0_rust_sort"), "default"),
+        |bencher| {
+            bencher.iter_batched(
+                || black_box(elements.to_vec()),
+                |mut lines| lines.sort_unstable(),
+                BatchSize::SmallInput,
+            )
+        },
+    );
+}
+
+#[inline(never)]
+fn collator_bench(
+    group: &mut BenchmarkGroup<'_, WallTime>,
+    file_name: &&str,
+    elements: &[&str],
+    index: usize,
+    strength: Strength,
+    locale_under_bench: &Locale,
+) {
+    let mut options = CollatorOptions::default();
+    options.strength = Some(strength);
+    let collator =
+        Collator::try_new(CollatorPreferences::from(locale_under_bench), options).unwrap();
+    // ICU4X collator performance, sort is locale-aware
+    group.bench_function(
+        BenchmarkId::new(
+            format!("{file_name}/1_icu4x_sort"),
+            format!("{index}_{strength:?}"),
+        ),
+        |bencher| {
+            bencher.iter_batched(
+                || black_box(elements.to_vec()),
+                |mut lines| lines.sort_unstable_by(|left, right| collator.compare(left, right)),
+                BatchSize::SmallInput,
+            )
+        },
+    );
 }
 
 pub fn collator_with_locale(criterion: &mut Criterion) {
     // Load file content in reverse order vector.
+    let content_photos: (&str, Vec<&str>) = (
+        "TestFilenames_Photos",
+        include_str!("data/TestFilenames_Photos.txt")
+            .lines()
+            .filter(|&s| !s.starts_with('#'))
+            .rev()
+            .collect::<Vec<&str>>(),
+    );
     let content_latin: (&str, Vec<&str>) = (
         "TestNames_Latin",
         include_str!("data/TestNames_Latin.txt")
@@ -99,36 +150,44 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
         Strength::Identical,
     ];
     let performance_parameters = [
-        (to_data_locale("en_US"), vec![&content_latin], &all_strength),
-        (to_data_locale("da_DK"), vec![&content_latin], &all_strength),
-        (to_data_locale("fr_CA"), vec![&content_latin], &all_strength),
         (
-            to_data_locale("ja_JP"),
+            locale!("en-US"),
+            vec![&content_latin, &content_photos],
+            &all_strength,
+        ),
+        (
+            locale!("da-DK"),
+            vec![&content_latin, &content_photos],
+            &all_strength,
+        ),
+        (locale!("fr-CA"), vec![&content_latin], &all_strength),
+        (
+            locale!("ja-JP"),
             vec![&content_latin, &content_jp_h, &content_jp_k, &content_asian],
             &all_strength,
         ),
         (
-            to_data_locale("zh-u-co-pinyin"),
+            locale!("zh-u-co-pinyin"),
             vec![&content_latin, &content_chinese],
             &all_strength,
         ), // zh_CN
         (
-            to_data_locale("zh-u-co-stroke"),
+            locale!("zh-u-co-stroke"),
             vec![&content_latin, &content_chinese],
             &all_strength,
         ), // zh_TW
         (
-            to_data_locale("ru_RU"),
+            locale!("ru-RU"),
             vec![&content_latin, &content_russian],
             &all_strength,
         ),
         (
-            to_data_locale("th"),
+            locale!("th"),
             vec![&content_latin, &content_thai],
             &all_strength,
         ),
         (
-            to_data_locale("ko_KR"),
+            locale!("ko-KR"),
             vec![&content_latin, &content_korean],
             &all_strength,
         ),
@@ -140,41 +199,21 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
 
         for content_under_bench in files_under_bench {
             let (file_name, elements) = black_box(content_under_bench);
-            // baseline performance, locale-unaware code point sort done by Rust (0 for ordering in the html report)
-            group.bench_function(
-                BenchmarkId::new(format!("{}/0_rust_sort", file_name), "default"),
-                |bencher| {
-                    bencher.iter_batched(
-                        || elements.clone(),
-                        |mut lines| lines.sort_unstable(),
-                        BatchSize::SmallInput,
-                    )
-                },
-            );
+            baseline_bench(&mut group, file_name, elements);
 
             // index to keep order of strength in the html report
             for (index, strength) in benched_strength.iter().enumerate() {
-                let mut options = CollatorOptions::new();
-                options.strength = Some(*strength);
-                let collator = Collator::try_new(&locale_under_bench, options).unwrap();
-                // ICU4X collator performance, sort is locale-aware
-                group.bench_function(
-                    BenchmarkId::new(
-                        format!("{}/1_icu4x_sort", file_name),
-                        format!("{}_{:?}", index, strength),
-                    ),
-                    |bencher| {
-                        bencher.iter_batched(
-                            || elements.clone(),
-                            |mut lines| {
-                                lines.sort_unstable_by(|left, right| collator.compare(left, right))
-                            },
-                            BatchSize::SmallInput,
-                        )
-                    },
+                collator_bench(
+                    &mut group,
+                    file_name,
+                    elements,
+                    index,
+                    *strength,
+                    &locale_under_bench,
                 );
             }
         }
+        // TODO: Bench content_photos with numeric mode on.
         group.finish();
     }
 }

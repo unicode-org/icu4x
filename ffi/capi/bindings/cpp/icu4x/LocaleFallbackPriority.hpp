@@ -8,15 +8,16 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -31,7 +32,7 @@ inline icu4x::LocaleFallbackPriority icu4x::LocaleFallbackPriority::FromFFI(icu4
     case icu4x::capi::LocaleFallbackPriority_Region:
       return static_cast<icu4x::LocaleFallbackPriority::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_LocaleFallbackPriority_HPP

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::FixedDecimal;
+use fixed_decimal::Decimal;
 use icu_experimental::relativetime::{
     options::Numeric, RelativeTimeFormatter, RelativeTimeFormatterOptions,
 };
@@ -16,27 +16,27 @@ macro_rules! generate_test {
         #[test]
         fn $test_name(){
             let relative_time_formatter = RelativeTimeFormatter::$constructor(
-                &locale!("en").into(),
+                locale!("en").into(),
                 $options
             )
             .expect("locale should be present");
 
             $(
                 assert_writeable_eq!(
-                    relative_time_formatter.format(FixedDecimal::from($en_time)),
+                    relative_time_formatter.format(Decimal::from($en_time)),
                     $en_expected
                 );
             )+
 
             let relative_time_formatter = RelativeTimeFormatter::$constructor(
-                &locale!("ar-EG").into(),
+                locale!("ar-EG").into(),
                 $options
             )
             .expect("locale should be present");
 
             $(
                 assert_writeable_eq!(
-                    relative_time_formatter.format(FixedDecimal::from($ar_time)),
+                    relative_time_formatter.format(Decimal::from($ar_time)),
                     $ar_expected
                 );
             )+

@@ -1,0 +1,21 @@
+{
+  "defaults": [
+    [
+      [
+        61,
+        "Standard"
+      ],
+      "GST"
+    ]
+  ],
+  "overrides": [
+    [
+      [
+        "utc",
+        "Standard"
+      ],
+      "UTC"
+    ]
+  ],
+  "use_standard": []
+}

@@ -19,5 +19,4 @@
 
 
 
-
 #endif // CollatorCaseFirst_H

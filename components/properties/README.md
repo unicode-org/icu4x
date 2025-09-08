@@ -32,8 +32,8 @@ let line_sep_data = CodePointMapData::<GeneralCategory>::new()
     .get_set_for_value(GeneralCategory::LineSeparator);
 let line_sep = line_sep_data.as_borrowed();
 
-assert!(line_sep.contains32(0x2028));
-assert!(!line_sep.contains32(0x2029));
+assert!(line_sep.contains('\u{2028}'));
+assert!(!line_sep.contains('\u{2029}'));
 ```
 
 ### Property data as `CodePointMapData`s

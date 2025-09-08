@@ -6,7 +6,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -17,16 +19,37 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * Thin wrapper around a vector that maps visual indices to source indices
+ *
+ * `map[visualIndex] = sourceIndex`
+ *
+ * Produced by `reorder_visual()` on {@link Bidi}.
+ */
 class ReorderedIndexMap {
 public:
 
+  /**
+   * Get this as a slice/array of indices
+   */
   inline diplomat::span<const size_t> as_slice() const;
 
+  /**
+   * The length of this map
+   */
   inline size_t len() const;
 
+  /**
+   * Whether this map is empty
+   */
   inline bool is_empty() const;
 
-  inline size_t get(size_t index) const;
+  /**
+   * Get element at `index`. Returns 0 when out of bounds
+   * (note that 0 is also a valid in-bounds value, please use `len()`
+   * to avoid out-of-bounds)
+   */
+  inline size_t operator[](size_t index) const;
 
   inline const icu4x::capi::ReorderedIndexMap* AsFFI() const;
   inline icu4x::capi::ReorderedIndexMap* AsFFI();

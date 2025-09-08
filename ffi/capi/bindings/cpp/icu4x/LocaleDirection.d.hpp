@@ -6,7 +6,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -17,12 +19,15 @@ namespace capi {
       LocaleDirection_RightToLeft = 1,
       LocaleDirection_Unknown = 2,
     };
-    
+
     typedef struct LocaleDirection_option {union { LocaleDirection ok; }; bool is_ok; } LocaleDirection_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `Direction`](https://docs.rs/icu/2.0.0/icu/locale/enum.Direction.html) for more information.
+ */
 class LocaleDirection {
 public:
   enum Value {
@@ -31,7 +36,8 @@ public:
     Unknown = 2,
   };
 
-  LocaleDirection() = default;
+  LocaleDirection(): value(Value::Unknown) {}
+
   // Implicit conversions between enum and ::Value
   constexpr LocaleDirection(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

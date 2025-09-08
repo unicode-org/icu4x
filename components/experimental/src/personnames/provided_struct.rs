@@ -35,7 +35,7 @@ impl PersonName for DefaultPersonName {
     }
 
     fn available_name_fields(&self) -> Vec<&NameField> {
-        self.person_data.iter_keys().collect()
+        self.person_data.keys().collect()
     }
 
     fn has_name_field_kind(&self, lookup_name_field: &NameFieldKind) -> bool {

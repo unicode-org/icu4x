@@ -2,91 +2,39 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::convert::{compute_bcp47_tzids_btreemap, compute_canonical_tzids_btreemap};
-use crate::cldr_serde;
 use crate::SourceDataProvider;
-use icu::timezone::provider::names::*;
-use icu::timezone::TimeZoneBcp47Id;
+use core::hash::Hash;
+use icu::time::provider::iana::*;
+use icu::time::TimeZone;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
-use std::collections::BTreeSet;
 use std::collections::HashSet;
 use std::hash::Hasher;
-use zerotrie::{ZeroAsciiIgnoreCaseTrie, ZeroTriePerfectHash};
-use zerovec::{ZeroSlice, ZeroVec};
+use zerotrie::ZeroAsciiIgnoreCaseTrie;
 
-impl DataProvider<IanaToBcp47MapV1Marker> for SourceDataProvider {
-    fn load(&self, _: DataRequest) -> Result<DataResponse<IanaToBcp47MapV1Marker>, DataError> {
-        let resource: &cldr_serde::time_zones::bcp47_tzid::Resource =
-            self.cldr()?.bcp47().read_and_parse("timezone.json")?;
+impl DataProvider<TimezoneIdentifiersIanaCoreV1> for SourceDataProvider {
+    fn load(
+        &self,
+        _: DataRequest,
+    ) -> Result<DataResponse<TimezoneIdentifiersIanaCoreV1>, DataError> {
+        let iana2bcp = self.iana_to_bcp47_map()?;
+        let bcp2iana = self.bcp47_to_canonical_iana_map()?;
 
-        let iana2bcp = &compute_bcp47_tzids_btreemap(&resource.keyword.u.time_zones.values);
-
-        // Sort and deduplicate the BCP-47 IDs:
-        let bcp_set: BTreeSet<TimeZoneBcp47Id> = iana2bcp.values().copied().collect();
-        let bcp47_ids: ZeroVec<TimeZoneBcp47Id> = bcp_set.iter().copied().collect();
-        let bcp47_ids_checksum = compute_bcp47_ids_hash(&bcp47_ids);
-
-        // Transform the map to use BCP indices:
-        #[allow(clippy::unwrap_used)] // structures are derived from each other
-        let map: BTreeMap<Vec<u8>, usize> = iana2bcp
-            .iter()
-            .map(|(iana, bcp)| {
-                (
-                    iana.as_bytes().to_ascii_lowercase().to_vec(),
-                    bcp47_ids.binary_search(bcp).unwrap(),
-                )
-            })
-            .collect();
-
-        let data_struct = IanaToBcp47MapV1 {
-            map: ZeroTriePerfectHash::try_from(&map)
-                .map_err(|e| {
-                    DataError::custom("Could not create ZeroTrie from timezone.json data")
-                        .with_display_context(&e)
-                })?
-                .convert_store()
-                .into_zerotrie(),
-            bcp47_ids,
-            bcp47_ids_checksum,
-        };
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(data_struct),
-        })
-    }
-}
-
-impl crate::IterableDataProviderCached<IanaToBcp47MapV1Marker> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(HashSet::from_iter([Default::default()]))
-    }
-}
-
-impl DataProvider<IanaToBcp47MapV3Marker> for SourceDataProvider {
-    fn load(&self, _: DataRequest) -> Result<DataResponse<IanaToBcp47MapV3Marker>, DataError> {
-        let resource: &cldr_serde::time_zones::bcp47_tzid::Resource =
-            self.cldr()?.bcp47().read_and_parse("timezone.json")?;
-
-        let iana2bcp = &compute_bcp47_tzids_btreemap(&resource.keyword.u.time_zones.values);
-
-        // Sort and deduplicate the BCP-47 IDs:
-        let bcp_set: BTreeSet<TimeZoneBcp47Id> = iana2bcp.values().copied().collect();
-        let bcp47_ids: ZeroVec<TimeZoneBcp47Id> = bcp_set.iter().copied().collect();
+        // Sort the BCP-47 IDs by canonical IANA:
+        let mut sorted_by_iana: Vec<(&TimeZone, &String)> = bcp2iana.iter().collect();
+        sorted_by_iana.sort_by_key(|&(_, iana)| iana);
+        let bcp47_ids = sorted_by_iana.iter().map(|&(&tz, _)| tz).collect();
         let bcp47_ids_checksum = compute_bcp47_ids_hash(&bcp47_ids);
 
         // Get the canonical IANA names.
-        // Note: The BTreeMap retains the order of the aliases, which is important for establishing
-        // the canonical order of the IANA names.
-        let bcp2iana = compute_canonical_tzids_btreemap(&resource.keyword.u.time_zones.values);
 
         // Transform the map to use BCP indices:
-        #[allow(clippy::unwrap_used)] // structures are derived from each other
+        #[expect(clippy::unwrap_used)] // structures are derived from each other
         let map: BTreeMap<Vec<u8>, usize> = iana2bcp
             .iter()
             .map(|(iana, bcp)| {
                 let is_canonical = bcp2iana.get(bcp) == Some(iana);
-                let index = bcp47_ids.binary_search(bcp).unwrap();
+                let index = bcp47_ids.iter().position(|x| x == bcp).unwrap();
                 (
                     if iana.contains('/') {
                         iana.to_owned()
@@ -94,7 +42,7 @@ impl DataProvider<IanaToBcp47MapV3Marker> for SourceDataProvider {
                         format!(
                             "{}{iana}",
                             char::from_u32(
-                                icu::timezone::provider::names::NON_REGION_CITY_PREFIX as u32
+                                icu::time::provider::iana::NON_REGION_CITY_PREFIX as u32
                             )
                             .unwrap()
                         )
@@ -105,56 +53,72 @@ impl DataProvider<IanaToBcp47MapV3Marker> for SourceDataProvider {
             })
             .collect();
 
-        let data_struct = IanaToBcp47MapV3 {
+        let data_struct = IanaToBcp47Map {
             map: ZeroAsciiIgnoreCaseTrie::try_from(&map)
                 .map_err(|e| {
                     DataError::custom("Could not create ZeroTrie from timezone.json data")
                         .with_display_context(&e)
                 })?
                 .convert_store(),
-            bcp47_ids,
-            bcp47_ids_checksum,
+            bcp47_ids: bcp47_ids.into(),
         };
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata: DataResponseMetadata::default().with_checksum(bcp47_ids_checksum),
             payload: DataPayload::from_owned(data_struct),
         })
     }
 }
 
-impl crate::IterableDataProviderCached<IanaToBcp47MapV3Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<TimezoneIdentifiersIanaCoreV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl DataProvider<Bcp47ToIanaMapV1Marker> for SourceDataProvider {
-    fn load(&self, _: DataRequest) -> Result<DataResponse<Bcp47ToIanaMapV1Marker>, DataError> {
-        let resource: &cldr_serde::time_zones::bcp47_tzid::Resource =
-            self.cldr()?.bcp47().read_and_parse("timezone.json")?;
-        // Note: The BTreeMap retains the order of the aliases, which is important for establishing
-        // the canonical order of the IANA names.
-        let bcp2iana = compute_canonical_tzids_btreemap(&resource.keyword.u.time_zones.values);
-        let bcp47_ids: ZeroVec<TimeZoneBcp47Id> = bcp2iana.keys().copied().collect();
-        let bcp47_ids_checksum = compute_bcp47_ids_hash(&bcp47_ids);
+impl DataProvider<TimezoneIdentifiersIanaExtendedV1> for SourceDataProvider {
+    fn load(
+        &self,
+        _: DataRequest,
+    ) -> Result<DataResponse<TimezoneIdentifiersIanaExtendedV1>, DataError> {
+        let iana2bcp = self.iana_to_bcp47_map()?;
+        let bcp2iana = self.bcp47_to_canonical_iana_map()?;
 
-        // Make the VarZeroVec of canonical IANA names.
-        // Note: we can't build VarZeroVec from an iterator yet.
-        let iana_vec: Vec<String> = bcp2iana.into_values().collect();
-        let canonical_iana_ids = iana_vec.as_slice().into();
+        let mut sorted_by_iana: Vec<(&TimeZone, &String)> = bcp2iana.iter().collect();
+        sorted_by_iana.sort_by_key(|&(_, iana)| iana);
+        let bcp47_ids_checksum =
+            compute_bcp47_ids_hash(&sorted_by_iana.iter().map(|&(&tz, _)| tz).collect());
 
-        let data_struct = Bcp47ToIanaMapV1 {
-            bcp47_ids_checksum,
-            canonical_iana_ids,
+        let canonical_iana_ids = sorted_by_iana
+            .iter()
+            .map(|&(_, iana)| iana)
+            .collect::<Vec<_>>();
+        let mut non_canonical_iana_ids = iana2bcp
+            .keys()
+            .filter(|k| !canonical_iana_ids.contains(k))
+            .collect::<Vec<_>>();
+        non_canonical_iana_ids.sort_by(|a, b| {
+            a.as_bytes()
+                .iter()
+                .map(u8::to_ascii_lowercase)
+                .cmp(b.as_bytes().iter().map(u8::to_ascii_lowercase))
+        });
+        let normalized_iana_ids = canonical_iana_ids
+            .into_iter()
+            .chain(non_canonical_iana_ids)
+            .collect::<Vec<_>>();
+
+        let data_struct = IanaNames {
+            // Note: we can't build VarZeroVec from an iterator yet.
+            normalized_iana_ids: normalized_iana_ids.as_slice().into(),
         };
         Ok(DataResponse {
-            metadata: Default::default(),
+            metadata: DataResponseMetadata::default().with_checksum(bcp47_ids_checksum),
             payload: DataPayload::from_owned(data_struct),
         })
     }
 }
 
-impl crate::IterableDataProviderCached<Bcp47ToIanaMapV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<TimezoneIdentifiersIanaExtendedV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -164,96 +128,48 @@ fn create_hasher() -> impl std::hash::Hasher {
     twox_hash::XxHash64::with_seed(0)
 }
 
-fn compute_bcp47_ids_hash(bcp47_ids: &ZeroSlice<TimeZoneBcp47Id>) -> u64 {
+fn compute_bcp47_ids_hash(bcp47_ids: &Vec<TimeZone>) -> u64 {
     let mut hasher = create_hasher();
-    hasher.write(bcp47_ids.as_bytes());
+    bcp47_ids.hash(&mut hasher);
     hasher.finish()
 }
 
 #[test]
 fn test_compute_bcp47_ids_hash() {
-    let bcp47_ids: ZeroVec<TimeZoneBcp47Id> = [
-        TimeZoneBcp47Id(tinystr::tinystr!(8, "aedxb")),
-        TimeZoneBcp47Id(tinystr::tinystr!(8, "brfor")),
-        TimeZoneBcp47Id(tinystr::tinystr!(8, "usinvev")),
-    ]
-    .into_iter()
-    .collect();
+    use icu::locale::subtags::subtag;
 
-    // Checksum 1: the default output of the zeroslice hashing function
+    let bcp47_ids = vec![
+        TimeZone(subtag!("aedxb")),
+        TimeZone(subtag!("brfor")),
+        TimeZone(subtag!("usinvev")),
+    ];
+
+    // Checksum 1: the default output of the hashing function
     let checksum1 = compute_bcp47_ids_hash(&bcp47_ids);
-    assert_eq!(checksum1, 0x66FA043B31200DCB); // stability
-
-    // Checksum 2: hashing of each individual element
-    // (should equal 1)
-    let mut hasher = create_hasher();
-    for bcp47 in bcp47_ids.iter() {
-        hasher.write(bcp47.0.all_bytes());
-    }
-    let checksum2 = hasher.finish();
-    assert_eq!(checksum1, checksum2);
+    assert_eq!(checksum1, 2080308884639987833); // stability
 
     // Checksum 3: hashing of a ZeroVec in a different order
     // (should not equal 1)
-    let bcp47_ids_rev: ZeroVec<TimeZoneBcp47Id> = [
-        TimeZoneBcp47Id(tinystr::tinystr!(8, "usinvev")),
-        TimeZoneBcp47Id(tinystr::tinystr!(8, "aedxb")),
-        TimeZoneBcp47Id(tinystr::tinystr!(8, "brfor")),
-    ]
-    .into_iter()
-    .collect();
+    let bcp47_ids_rev = vec![
+        TimeZone(subtag!("usinvev")),
+        TimeZone(subtag!("aedxb")),
+        TimeZone(subtag!("brfor")),
+    ];
     let checksum3 = compute_bcp47_ids_hash(&bcp47_ids_rev);
     assert_ne!(checksum1, checksum3);
 
     // Checksum 4: moving letters between the elements should change the hash
     // (should not equal 1)
-    let bcp47_ids_roll: ZeroVec<TimeZoneBcp47Id> = [
-        TimeZoneBcp47Id(tinystr::tinystr!(8, "aedx")),
-        TimeZoneBcp47Id(tinystr::tinystr!(8, "bbrfor")),
-        TimeZoneBcp47Id(tinystr::tinystr!(8, "usinvev")),
-    ]
-    .into_iter()
-    .collect();
+    let bcp47_ids_roll = vec![
+        TimeZone(subtag!("aedx")),
+        TimeZone(subtag!("bbrfor")),
+        TimeZone(subtag!("usinvev")),
+    ];
     let checksum4 = compute_bcp47_ids_hash(&bcp47_ids_roll);
     assert_ne!(checksum1, checksum4);
 
-    // Checksum 5: empty strings at the end should change the hash
-    // (should not equal 1)
-    let bcp47_ids_empty_end: ZeroVec<TimeZoneBcp47Id> = [
-        TimeZoneBcp47Id(tinystr::tinystr!(8, "aedxb")),
-        TimeZoneBcp47Id(tinystr::tinystr!(8, "brfor")),
-        TimeZoneBcp47Id(tinystr::tinystr!(8, "usinvev")),
-        TimeZoneBcp47Id(tinystr::tinystr!(8, "")),
-    ]
-    .into_iter()
-    .collect();
-    let checksum5 = compute_bcp47_ids_hash(&bcp47_ids_empty_end);
-    assert_ne!(checksum1, checksum5);
-
-    // Checksum 6: empty strings in the middle should change the hash
-    // (should not equal 1 or 5)
-    let bcp47_ids_empty_middle: ZeroVec<TimeZoneBcp47Id> = [
-        TimeZoneBcp47Id(tinystr::tinystr!(8, "aedxb")),
-        TimeZoneBcp47Id(tinystr::tinystr!(8, "")),
-        TimeZoneBcp47Id(tinystr::tinystr!(8, "brfor")),
-        TimeZoneBcp47Id(tinystr::tinystr!(8, "usinvev")),
-    ]
-    .into_iter()
-    .collect();
-    let checksum6 = compute_bcp47_ids_hash(&bcp47_ids_empty_middle);
-    assert_ne!(checksum1, checksum6);
-    assert_ne!(checksum5, checksum6);
-
     // Additional coverage
-    assert_ne!(checksum2, checksum3);
-    assert_ne!(checksum2, checksum4);
-    assert_ne!(checksum2, checksum5);
-    assert_ne!(checksum2, checksum6);
     assert_ne!(checksum3, checksum4);
-    assert_ne!(checksum3, checksum5);
-    assert_ne!(checksum3, checksum6);
-    assert_ne!(checksum4, checksum5);
-    assert_ne!(checksum4, checksum6);
 }
 
 /// Tests that all IANA time zone IDs normalize and canonicalize to their correct form.
@@ -261,25 +177,17 @@ fn test_compute_bcp47_ids_hash() {
 fn test_normalize_canonicalize_iana_coverage() {
     let provider = crate::SourceDataProvider::new_testing();
 
-    let resource: &cldr_serde::time_zones::bcp47_tzid::Resource = provider
-        .cldr()
-        .unwrap()
-        .bcp47()
-        .read_and_parse("timezone.json")
-        .unwrap();
-    let iana2bcp = &compute_bcp47_tzids_btreemap(&resource.keyword.u.time_zones.values);
+    let iana2bcp = provider.iana_to_bcp47_map().unwrap();
+    let bcp2iana = provider.bcp47_to_canonical_iana_map().unwrap();
 
-    let mapper = icu::timezone::TimeZoneIdMapper::try_new_unstable(&provider).unwrap();
-    let mapper = mapper.as_borrowed();
+    let parser = icu::time::zone::iana::IanaParserExtended::try_new_unstable(&provider).unwrap();
+    let parser = parser.as_borrowed();
 
-    for iana_id in iana2bcp.keys() {
-        let normalized = mapper.normalize_iana(iana_id).unwrap().0;
-        assert_eq!(&normalized, iana_id);
-    }
-
-    let bcp2iana = compute_canonical_tzids_btreemap(&resource.keyword.u.time_zones.values);
-    for (iana_id, bcp47_id) in iana2bcp.iter() {
-        let canonicalized = mapper.canonicalize_iana(iana_id).unwrap().0;
-        assert_eq!(&canonicalized, bcp2iana.get(bcp47_id).unwrap());
+    for (iana_id, bcp47) in iana2bcp {
+        let unnormalized = iana_id.to_ascii_uppercase();
+        let r = parser.parse(&unnormalized);
+        assert_eq!(r.time_zone, *bcp47);
+        assert_eq!(r.canonical, bcp2iana.get(bcp47).unwrap());
+        assert_eq!(r.normalized, iana_id);
     }
 }

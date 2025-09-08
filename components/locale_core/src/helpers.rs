@@ -45,7 +45,6 @@ macro_rules! impl_tinystr_subtag {
             pub const fn try_from_utf8(
                 code_units: &[u8],
             ) -> Result<Self, crate::parser::errors::ParseError> {
-                #[allow(clippy::double_comparisons)] // if code_units.len() === 0
                 if code_units.len() < $len_start || code_units.len() > $len_end {
                     return Err(crate::parser::errors::ParseError::$error);
                 }
@@ -99,7 +98,7 @@ macro_rules! impl_tinystr_subtag {
             }
 
             #[doc(hidden)]
-            pub const fn into_tinystr(&self) -> tinystr::TinyAsciiStr<$len_end> {
+            pub const fn to_tinystr(&self) -> tinystr::TinyAsciiStr<$len_end> {
                 self.0
             }
 
@@ -144,7 +143,7 @@ macro_rules! impl_tinystr_subtag {
 
         impl From<$name> for tinystr::TinyAsciiStr<$len_end> {
             fn from(input: $name) -> Self {
-                input.into_tinystr()
+                input.to_tinystr()
             }
         }
 
@@ -158,7 +157,8 @@ macro_rules! impl_tinystr_subtag {
                 writeable::LengthHint::exact(self.0.len())
             }
             #[inline]
-            fn write_to_string(&self) -> alloc::borrow::Cow<str> {
+            #[cfg(feature = "alloc")]
+            fn write_to_string(&self) -> alloc::borrow::Cow<'_, str> {
                 alloc::borrow::Cow::Borrowed(self.0.as_str())
             }
         }
@@ -186,15 +186,12 @@ macro_rules! impl_tinystr_subtag {
         #[macro_export]
         #[doc(hidden)] // macro
         macro_rules! $internal_macro_name {
-            ($string:literal) => {{
+            ($string:literal) => { const {
                 use $crate::$($path ::)+ $name;
-                const R: $name =
-                    match $name::try_from_utf8($string.as_bytes()) {
-                        Ok(r) => r,
-                        #[allow(clippy::panic)] // const context
-                        _ => panic!(concat!("Invalid ", $(stringify!($path), "::",)+ stringify!($name), ": ", $string)),
-                    };
-                R
+                match $name::try_from_utf8($string.as_bytes()) {
+                    Ok(r) => r,
+                    _ => panic!(concat!("Invalid ", $(stringify!($path), "::",)+ stringify!($name), ": ", $string)),
+                }
             }};
         }
         #[doc(inline)]
@@ -278,13 +275,13 @@ macro_rules! impl_tinystr_subtag {
         //
         // 1. Must not include any uninitialized or padding bytes (true since transparent over a ULE).
         // 2. Must have an alignment of 1 byte (true since transparent over a ULE).
-        // 3. ULE::validate_byte_slice() checks that the given byte slice represents a valid slice.
-        // 4. ULE::validate_byte_slice() checks that the given byte slice has a valid length.
+        // 3. ULE::validate_bytes() checks that the given byte slice represents a valid slice.
+        // 4. ULE::validate_bytes() checks that the given byte slice has a valid length.
         // 5. All other methods must be left with their default impl.
         // 6. Byte equality is semantic equality.
         #[cfg(feature = "zerovec")]
         unsafe impl zerovec::ule::ULE for $name {
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
+            fn validate_bytes(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
                 let it = bytes.chunks_exact(core::mem::size_of::<Self>());
                 if !it.remainder().is_empty() {
                     return Err(zerovec::ule::UleError::length::<Self>(bytes.len()));
@@ -362,8 +359,8 @@ macro_rules! impl_writeable_for_each_subtag_str_no_test {
             }
 
             $(
-                fn write_to_string(&self) -> alloc::borrow::Cow<str> {
-                    #[allow(clippy::unwrap_used)] // impl_writeable_for_subtag_list's $borrow uses unwrap
+                #[cfg(feature = "alloc")]
+                fn write_to_string(&self) -> alloc::borrow::Cow<'_, str> {
                     let $self = self;
                     if $borrow_cond {
                         $borrow
@@ -382,7 +379,7 @@ macro_rules! impl_writeable_for_each_subtag_str_no_test {
 
 macro_rules! impl_writeable_for_subtag_list {
     ($type:tt, $sample1:literal, $sample2:literal) => {
-        impl_writeable_for_each_subtag_str_no_test!($type, selff, selff.0.len() == 1 => alloc::borrow::Cow::Borrowed(selff.0.get(0).unwrap().as_str()));
+        impl_writeable_for_each_subtag_str_no_test!($type, selff, selff.0.len() == 1 => #[allow(clippy::unwrap_used)] { alloc::borrow::Cow::Borrowed(selff.0.get(0).unwrap().as_str())} );
 
         #[test]
         fn test_writeable() {

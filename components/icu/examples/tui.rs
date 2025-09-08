@@ -5,17 +5,15 @@
 // An example program making use of a number of ICU components
 // in a pseudo-real-world application of Textual User Interface.
 
-use icu::calendar::{Date, Gregorian, Time};
+use icu::calendar::{Date, Gregorian};
+use icu::collections::codepointinvlist::CodePointInversionListBuilder;
+use icu::datetime::fieldsets::{self, YMDT};
+use icu::datetime::FixedCalendarDateTimeFormatter;
 use icu::locale::locale;
 use icu::plurals::{PluralCategory, PluralRules};
-use icu::timezone::CustomTimeZone;
-use icu_collections::codepointinvlist::CodePointInversionListBuilder;
-use icu_datetime::neo::TypedNeoFormatter;
-use icu_datetime::neo_marker::NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker;
-use icu_datetime::neo_skeleton::NeoSkeletonLength;
-use icu_timezone::CustomZonedDateTime;
+use icu::time::TimeZoneInfo;
+use icu::time::{Time, ZonedDateTime};
 use std::env;
-use writeable::adapters::LossyWrap;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -23,7 +21,7 @@ fn main() {
     let locale = args
         .get(1)
         .map(|s| s.parse().expect("Failed to parse locale"))
-        .unwrap_or_else(|| locale!("en").into());
+        .unwrap_or_else(|| locale!("en"));
 
     let user_name = args.as_slice().get(2).map(String::as_str).unwrap_or("John");
 
@@ -40,18 +38,18 @@ fn main() {
     println!("User: {user_name}");
 
     {
-        let dtf = TypedNeoFormatter::<
-            Gregorian,
-            NeoYearMonthDayHourMinuteSecondTimeZoneGenericShortMarker,
-        >::try_new(&locale, NeoSkeletonLength::Medium.into())
+        let dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+            locale.into(),
+            YMDT::medium().with_zone(fieldsets::zone::LocalizedOffsetShort),
+        )
         .expect("Failed to create zoned datetime formatter.");
-        let date = Date::try_new_gregorian_date(2020, 10, 10).unwrap();
+        let date = Date::try_new_gregorian(2020, 10, 10).unwrap();
         let time = Time::try_new(18, 56, 0, 0).unwrap();
-        let zone = CustomTimeZone::utc();
+        let zone = TimeZoneInfo::utc();
 
-        let formatted_dt = dtf.format(&CustomZonedDateTime { date, time, zone });
+        let formatted_dt = dtf.format(&ZonedDateTime { date, time, zone });
 
-        println!("Today is: {}", LossyWrap(formatted_dt));
+        println!("Today is: {formatted_dt}");
     }
 
     {
@@ -70,7 +68,7 @@ fn main() {
     }
 
     {
-        let pr = PluralRules::try_new_cardinal(&locale!("en").into())
+        let pr = PluralRules::try_new_cardinal(locale!("en").into())
             .expect("Failed to create PluralRules.");
 
         match pr.category_for(email_count) {

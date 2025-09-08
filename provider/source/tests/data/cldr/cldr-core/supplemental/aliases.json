@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "46"
+      "_cldrVersion": "47"
     },
     "metadata": {
       "alias": {
@@ -278,6 +278,10 @@
           "cld": {
             "_reason": "macrolanguage",
             "_replacement": "syr"
+          },
+          "cls": {
+            "_reason": "macrolanguage",
+            "_replacement": "sa"
           },
           "cmk": {
             "_reason": "deprecated",
@@ -1133,7 +1137,7 @@
           },
           "nbx": {
             "_reason": "deprecated",
-            "_replacement": "ekc"
+            "_replacement": "gll"
           },
           "ncp": {
             "_reason": "deprecated",
@@ -4877,6 +4881,10 @@
             "_reason": "overlong",
             "_replacement": "GP"
           },
+          "frgua": {
+            "_reason": "deprecated",
+            "_replacement": "GP"
+          },
           "frh": {
             "_reason": "deprecated",
             "_replacement": "frcor"
@@ -4897,9 +4905,17 @@
             "_reason": "deprecated",
             "_replacement": "frnaq"
           },
+          "frlre": {
+            "_reason": "deprecated",
+            "_replacement": "RE"
+          },
           "frm": {
             "_reason": "deprecated",
             "_replacement": "frges"
+          },
+          "frmay": {
+            "_reason": "deprecated",
+            "_replacement": "YT"
           },
           "frmf": {
             "_reason": "overlong",
@@ -5204,6 +5220,10 @@
             }
           },
           "Asia": {
+            "Choibalsan": {
+              "_reason": "deprecated",
+              "_replacement": "Asia/Ulaanbaatar"
+            },
             "Chongqing": {
               "_reason": "deprecated",
               "_replacement": "Asia/Shanghai"

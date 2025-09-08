@@ -4,10 +4,10 @@
 
 mod fixtures;
 
-use fixed_decimal::FixedDecimal;
-#[cfg(feature = "experimental")]
-use icu_plurals::rules::RawPluralOperands;
+use fixed_decimal::Decimal;
 use icu_plurals::PluralOperands;
+#[cfg(feature = "experimental")]
+use icu_plurals::RawPluralOperands;
 
 #[test]
 fn test_parsing_operands() {
@@ -61,7 +61,7 @@ fn test_from_fixed_decimals() {
         serde_json::from_str(include_str!("fixtures/operands.json"))
             .expect("Failed to read a fixture");
     for test in test_set.from_test {
-        let input: FixedDecimal = FixedDecimal::from(&test.input);
+        let input: Decimal = Decimal::from(&test.input);
         let actual: PluralOperands = PluralOperands::from(&input);
         let expected: PluralOperands = PluralOperands::from(test.expected.clone());
         assert_eq!(

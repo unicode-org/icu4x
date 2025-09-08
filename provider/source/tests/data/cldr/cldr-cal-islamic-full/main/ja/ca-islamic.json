@@ -307,8 +307,8 @@
               "short": "Gy/MM/dd"
             },
             "dateSkeletons": {
-              "full": "GyMEEEEd",
-              "long": "GyMd",
+              "full": "GyMMMEEEEd",
+              "long": "GyMMMd",
               "medium": "GyMMdd",
               "short": "GyMMdd"
             },

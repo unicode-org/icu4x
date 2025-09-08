@@ -11,7 +11,10 @@
         clippy::unwrap_used,
         clippy::expect_used,
         clippy::panic,
-        // Exhaustiveness and Debug is not required for Diplomat types
+        // Enums should be non-exhaustive, as exhaustive enums don't exist in other languages anyway
+        clippy::exhaustive_enums,
+        // Structs should be exhaustive, as they are exhaustive in C/C++
+        // Debug is not required as there is no stable Rust API
     )
 )]
 // Diplomat limitations
@@ -21,26 +24,27 @@
     clippy::should_implement_trait
 )]
 
-//! This crate contains the source of truth for the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
-//! FFI bindings. This generates the C, C++, JavaScript, and TypeScript bindings. This crate also contains the `extern "C"`
-//! FFI for ICU4X.
+//! This crate contains the `extern "C"` FFI for ICU4X, as well as the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
+//! C, C++, Dart, JavaScript, and TypeScript bindings.
 //!
-//! While the types in this crate are public, APIs from this crate are *not intended to be used from Rust*
-//! and as such this crate may unpredictably change its Rust API across compatible semver versions. The `extern "C"` APIs exposed
-//! by this crate, while not directly documented, are stable within the same major semver version, as are the bindings exposed under
-//! the `cpp/` and `js/` folders.
+#![allow(rustdoc::invalid_html_tags)]
+// attribute split over three lines because `cargo generate-readmes` does not evaluate `#![doc = ]` docs
+//! <p style='font-weight: bold; font-size: 24px;'> 🔗 See the <a target='_blank' href='https://icu4x.unicode.org/
+#![cfg_attr(doc, doc = core::env!("CARGO_PKG_VERSION"))]
+//! '>ICU4X website</a> for FFI docs and examples</p>
 //!
-//! This crate may still be explored for documentation on docs.rs, and there are language-specific docs available as well.
-//! C++, Dart, and TypeScript headers contain inline documentation, which is available pre-rendered: [C++], [TypeScript].
+//! This crate is `no_std`-compatible, but requires an allocator. If you wish to use it in `no_std` mode, you can either
+//! enable the `looping_panic_handler` and `libc_alloc` Cargo features, or write a wrapper crate that defines an
+//! allocator/panic handler.
 //!
-//! This crate is `no_std`-compatible. If you wish to use it in `no_std` mode, you must write a wrapper crate that defines an allocator
-//! and a panic hook in order to compile as a C library.
+//! <div class="stab unstable">
+//! 🚧 While the types in this crate are public, APIs from this crate are <em>not intended to be used from Rust</em> and as
+//! such this crate may unpredictably change its Rust API across compatible semver versions.
 //!
-//! More information on using ICU4X from C++ can be found in [our tutorial].
+//! The <code>extern "C"</code> APIs exposed by this crate, while not directly documented, are stable within the same major
+//! semver version, as are the bindings in the <code>bindings</code> folder.
+//! </div>
 //!
-//! [our tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/cpp.md
-//! [TypeScript]: https://unicode-org.github.io/icu4x/tsdoc
-//! [C++]: https://unicode-org.github.io/icu4x/cppdoc
 
 // Renamed so you can't accidentally use it
 #[cfg(target_arch = "wasm32")]
@@ -56,87 +60,113 @@ extern crate alloc;
 #[cfg(all(not(feature = "std"), feature = "libc_alloc"))]
 extern crate libc_alloc;
 
-// Common modules
-pub mod errors;
-pub mod locale_core;
-#[cfg(feature = "logging")]
-pub mod logging;
-#[macro_use]
-pub mod provider;
-
-// Components
-
-#[cfg(feature = "properties")]
-pub mod bidi;
-#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
-pub mod calendar;
-#[cfg(feature = "casemap")]
-pub mod casemap;
-#[cfg(feature = "collator")]
-pub mod collator;
-#[cfg(feature = "properties")]
-pub mod collections_sets;
-#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
-pub mod date;
-#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
-pub mod datetime;
 #[cfg(feature = "datetime")]
-pub mod datetime_formatter;
-#[cfg(feature = "decimal")]
-pub mod decimal;
-#[cfg(feature = "experimental")]
-pub mod displaynames;
-#[cfg(feature = "locale")]
-pub mod exemplar_chars;
-#[cfg(feature = "locale")]
-pub mod fallbacker;
-#[cfg(feature = "decimal")]
-pub mod fixed_decimal;
-#[cfg(feature = "list")]
-pub mod list;
-#[cfg(feature = "locale")]
-pub mod locale;
-#[cfg(feature = "locale")]
-pub mod locale_directionality;
-#[cfg(feature = "timezone")]
-pub mod metazone_calculator;
-#[cfg(feature = "normalizer")]
-pub mod normalizer;
-#[cfg(feature = "normalizer")]
-pub mod normalizer_properties;
-#[cfg(feature = "plurals")]
-pub mod pluralrules;
-#[cfg(feature = "properties")]
-pub mod properties_iter;
-#[cfg(feature = "properties")]
-pub mod properties_maps;
-#[cfg(feature = "properties")]
-pub mod properties_names;
-#[cfg(feature = "properties")]
-pub mod properties_sets;
-#[cfg(feature = "properties")]
-pub mod properties_unisets;
-#[cfg(feature = "properties")]
-pub mod script;
-#[cfg(feature = "segmenter")]
-pub mod segmenter_grapheme;
-#[cfg(feature = "segmenter")]
-pub mod segmenter_line;
-#[cfg(feature = "segmenter")]
-pub mod segmenter_sentence;
-#[cfg(feature = "segmenter")]
-pub mod segmenter_word;
-#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
-pub mod time;
-#[cfg(any(feature = "datetime", feature = "timezone"))]
-pub mod timezone;
-#[cfg(any(feature = "datetime", feature = "timezone"))]
-pub mod timezone_mapper;
-#[cfg(feature = "experimental")]
-pub mod units_converter;
-#[cfg(feature = "calendar")]
-pub mod week;
-#[cfg(feature = "timezone")]
-pub mod zone_offset_calculator;
-#[cfg(feature = "datetime")]
-pub mod zoned_formatter;
+pub(crate) mod datetime_helpers;
+
+/// The Rust API of this crate is **UNSTABLE**; this crate is primarily intended
+/// to be used from its FFI bindings, packaged with the crate.
+///
+/// The C ABI layer is stable.
+#[path = "."] // https://github.com/rust-lang/rust/issues/35016
+pub mod unstable {
+    // Common modules
+    pub mod errors;
+    pub mod locale_core;
+    #[cfg(feature = "logging")]
+    pub mod logging;
+    #[macro_use]
+    pub mod provider;
+
+    // Components
+
+    #[cfg(feature = "properties")]
+    pub mod bidi;
+    #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+    pub mod calendar;
+    #[cfg(feature = "casemap")]
+    pub mod casemap;
+    #[cfg(feature = "collator")]
+    pub mod collator;
+    #[cfg(feature = "properties")]
+    pub mod collections_sets;
+    #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+    pub mod date;
+    #[cfg(feature = "datetime")]
+    pub mod date_formatter;
+    #[cfg(feature = "datetime")]
+    pub mod date_time_formatter;
+    #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+    pub mod datetime;
+    #[cfg(feature = "datetime")]
+    pub mod datetime_options;
+    #[cfg(feature = "decimal")]
+    pub mod decimal;
+    #[cfg(feature = "experimental")]
+    pub mod displaynames;
+    #[cfg(feature = "locale")]
+    pub mod exemplar_chars;
+    #[cfg(feature = "locale")]
+    pub mod fallbacker;
+    #[cfg(feature = "decimal")]
+    pub mod fixed_decimal;
+    #[cfg(any(feature = "datetime", feature = "timezone"))]
+    pub mod iana_parser;
+    #[cfg(feature = "list")]
+    pub mod list;
+    #[cfg(feature = "locale")]
+    pub mod locale;
+    #[cfg(feature = "locale")]
+    pub mod locale_directionality;
+    #[cfg(feature = "normalizer")]
+    pub mod normalizer;
+    #[cfg(feature = "normalizer")]
+    pub mod normalizer_properties;
+    #[cfg(feature = "plurals")]
+    pub mod pluralrules;
+    #[cfg(feature = "properties")]
+    pub mod properties_bidi;
+    #[cfg(feature = "properties")]
+    pub mod properties_enums;
+    #[cfg(feature = "properties")]
+    pub mod properties_iter;
+    #[cfg(feature = "properties")]
+    pub mod properties_maps;
+    #[cfg(feature = "properties")]
+    pub mod properties_names;
+    #[cfg(feature = "properties")]
+    pub mod properties_sets;
+    #[cfg(feature = "properties")]
+    pub mod properties_unisets;
+    #[cfg(feature = "properties")]
+    pub mod script;
+    #[cfg(feature = "segmenter")]
+    pub mod segmenter_grapheme;
+    #[cfg(feature = "segmenter")]
+    pub mod segmenter_line;
+    #[cfg(feature = "segmenter")]
+    pub mod segmenter_sentence;
+    #[cfg(feature = "segmenter")]
+    pub mod segmenter_word;
+    #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+    pub mod time;
+    #[cfg(feature = "datetime")]
+    pub mod time_formatter;
+    #[cfg(any(feature = "datetime", feature = "timezone"))]
+    pub mod timezone;
+    #[cfg(feature = "datetime")]
+    pub mod timezone_formatter;
+    #[cfg(any(feature = "datetime", feature = "timezone"))]
+    pub mod variant_offset;
+    #[cfg(feature = "calendar")]
+    pub mod week;
+    #[cfg(any(feature = "datetime", feature = "timezone"))]
+    pub mod windows_parser;
+    #[cfg(feature = "datetime")]
+    pub mod zoned_date_formatter;
+    #[cfg(feature = "datetime")]
+    pub mod zoned_date_time_formatter;
+    #[cfg(feature = "datetime")]
+    pub mod zoned_datetime;
+    #[cfg(feature = "datetime")]
+    pub mod zoned_time_formatter;
+}

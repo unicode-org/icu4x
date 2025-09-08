@@ -2,22 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! The functions in this module return a [`CodePointSetData`] containing
-//! the set of characters with a particular Unicode property.
-//!
-//! The descriptions of most properties are taken from [`TR44`], the documentation for the
-//! Unicode Character Database.  Some properties are instead defined in [`TR18`], the
-//! documentation for Unicode regular expressions. In particular, Annex C of this document
-//! defines properties for POSIX compatibility.
-//!
-//! [`CodePointSetData`]: crate::sets::CodePointSetData
-//! [`TR44`]: https://www.unicode.org/reports/tr44
-//! [`TR18`]: https://www.unicode.org/reports/tr18
-
 use crate::provider::*;
-use crate::runtime::UnicodeProperty;
 use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 
 /// A set of Unicode code points. Access its data via the borrowed version,
@@ -37,22 +25,22 @@ use icu_provider::prelude::*;
 /// ```
 #[derive(Debug)]
 pub struct CodePointSetData {
-    data: DataPayload<ErasedPropertyCodePointSetV1Marker>,
+    data: DataPayload<ErasedMarker<PropertyCodePointSet<'static>>>,
 }
 
 impl CodePointSetData {
-    /// Creates a new [`CodePointSetData`] for a [`BinaryProperty`].
+    /// Creates a new [`CodePointSetDataBorrowed`] for a [`BinaryProperty`].
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[allow(clippy::new_ret_no_self)]
+    #[expect(clippy::new_ret_no_self)]
     #[cfg(feature = "compiled_data")]
     pub const fn new<P: BinaryProperty>() -> CodePointSetDataBorrowed<'static> {
-        CodePointSetDataBorrowed { set: P::SINGLETON }
+        CodePointSetDataBorrowed::new::<P>()
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P: BinaryProperty>(
         provider: &(impl DataProvider<P::DataMarker> + ?Sized),
     ) -> Result<CodePointSetData, DataError> {
@@ -76,16 +64,16 @@ impl CodePointSetData {
     /// Typically it is preferable to use getters like [`load_ascii_hex_digit()`] instead
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DynamicDataMarker<DataStruct = PropertyCodePointSetV1<'static>>,
+        M: DynamicDataMarker<DataStruct = PropertyCodePointSet<'static>>,
     {
         Self { data: data.cast() }
     }
 
     /// Construct a new owned [`CodePointInversionList`]
     pub fn from_code_point_inversion_list(set: CodePointInversionList<'static>) -> Self {
-        let set = PropertyCodePointSetV1::from_code_point_inversion_list(set);
+        let set = PropertyCodePointSet::from_code_point_inversion_list(set);
         CodePointSetData::from_data(
-            DataPayload::<ErasedPropertyCodePointSetV1Marker>::from_owned(set),
+            DataPayload::<ErasedMarker<PropertyCodePointSet<'static>>>::from_owned(set),
         )
     }
 
@@ -120,10 +108,20 @@ impl CodePointSetData {
 /// [`CodePointSetData::as_borrowed()`]. More efficient to query.
 #[derive(Clone, Copy, Debug)]
 pub struct CodePointSetDataBorrowed<'a> {
-    set: &'a PropertyCodePointSetV1<'a>,
+    set: &'a PropertyCodePointSet<'a>,
 }
 
 impl CodePointSetDataBorrowed<'static> {
+    /// Creates a new [`CodePointSetData`] for a [`BinaryProperty`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[inline]
+    #[cfg(feature = "compiled_data")]
+    pub const fn new<P: BinaryProperty>() -> Self {
+        CodePointSetDataBorrowed { set: P::SINGLETON }
+    }
     /// Cheaply converts a [`CodePointSetDataBorrowed<'static>`] into a [`CodePointSetData`].
     ///
     /// Note: Due to branching and indirection, using [`CodePointSetData`] might inhibit some
@@ -154,17 +152,7 @@ impl<'a> CodePointSetDataBorrowed<'a> {
         self.set.contains(ch)
     }
 
-    /// Check if the set contains a character as a UTF32 code unit
-    ///
-    /// ```rust
-    /// use icu::properties::CodePointSetData;
-    /// use icu::properties::props::Alphabetic;
-    ///
-    /// let alphabetic = CodePointSetData::new::<Alphabetic>();
-    ///
-    /// assert!(!alphabetic.contains32(0x0A69));  // U+0A69 GURMUKHI DIGIT THREE
-    /// assert!(alphabetic.contains32(0x00C4));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
-    /// ```
+    /// See [`Self::contains`].
     #[inline]
     pub fn contains32(self, ch: u32) -> bool {
         self.set.contains32(ch)
@@ -180,8 +168,8 @@ impl<'a> CodePointSetDataBorrowed<'a> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::CodePointSetData;
     /// use icu::properties::props::Alphabetic;
+    /// use icu::properties::CodePointSetData;
     ///
     /// let alphabetic = CodePointSetData::new::<Alphabetic>();
     /// let mut ranges = alphabetic.iter_ranges();
@@ -204,8 +192,8 @@ impl<'a> CodePointSetDataBorrowed<'a> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::CodePointSetData;
     /// use icu::properties::props::Alphabetic;
+    /// use icu::properties::CodePointSetData;
     ///
     /// let alphabetic = CodePointSetData::new::<Alphabetic>();
     /// let mut ranges = alphabetic.iter_ranges();
@@ -221,15 +209,36 @@ impl<'a> CodePointSetDataBorrowed<'a> {
 
 /// A binary Unicode character property.
 ///
-/// See [`CodePointSetData`] for usage information.
-pub trait BinaryProperty: crate::private::Sealed {
+/// The descriptions of most properties are taken from [`TR44`], the documentation for the
+/// Unicode Character Database.  Some properties are instead defined in [`TR18`], the
+/// documentation for Unicode regular expressions. In particular, Annex C of this document
+/// defines properties for POSIX compatibility.
+///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+/// </div>
+///
+/// [`TR44`]: https://www.unicode.org/reports/tr44
+/// [`TR18`]: https://www.unicode.org/reports/tr18
+pub trait BinaryProperty: crate::private::Sealed + Sized {
     #[doc(hidden)]
-    type DataMarker: DataMarker<DataStruct = PropertyCodePointSetV1<'static>>;
+    type DataMarker: DataMarker<DataStruct = PropertyCodePointSet<'static>>;
     #[doc(hidden)]
     #[cfg(feature = "compiled_data")]
-    const SINGLETON: &'static PropertyCodePointSetV1<'static>;
-    #[doc(hidden)]
-    const VALUE: UnicodeProperty;
+    const SINGLETON: &'static PropertyCodePointSet<'static>;
+    /// The name of this property
+    const NAME: &'static [u8];
+    /// The abbreviated name of this property, if it exists, otherwise the name
+    const SHORT_NAME: &'static [u8];
+
+    /// Convenience method for `CodePointSetData::new().contains(ch)`
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
+    fn for_char(ch: char) -> bool {
+        CodePointSetData::new::<Self>().contains(ch)
+    }
 }
 
 #[cfg(test)]

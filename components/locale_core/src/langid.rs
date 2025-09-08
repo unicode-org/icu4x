@@ -3,17 +3,26 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::cmp::Ordering;
+#[cfg(feature = "alloc")]
 use core::str::FromStr;
 
-use crate::parser::{
-    parse_language_identifier, parse_language_identifier_with_single_variant, ParseError,
-    ParserMode, SubtagIterator,
-};
+use crate::parser;
 use crate::subtags;
-use alloc::string::String;
-use writeable::Writeable;
+use crate::ParseError;
+#[cfg(feature = "alloc")]
+use alloc::borrow::Cow;
 
 /// A core struct representing a [`Unicode BCP47 Language Identifier`].
+///
+/// # Ordering
+///
+/// This type deliberately does not implement `Ord` or `PartialOrd` because there are
+/// multiple possible orderings. Depending on your use case, two orderings are available:
+///
+/// 1. A string ordering, suitable for stable serialization: [`LanguageIdentifier::strict_cmp`]
+/// 2. A struct ordering, suitable for use with a BTreeSet: [`LanguageIdentifier::total_cmp`]
+///
+/// See issue: <https://github.com/unicode-org/icu4x/issues/1215>
 ///
 /// # Parsing
 ///
@@ -31,17 +40,13 @@ use writeable::Writeable;
 /// This operation normalizes syntax to be well-formed. No legacy subtag replacements is performed.
 /// For validation and canonicalization, see `LocaleCanonicalizer`.
 ///
-/// # Ordering
+/// # Serde
 ///
-/// This type deliberately does not implement `Ord` or `PartialOrd` because there are
-/// multiple possible orderings, and the team did not want to favor one over any other.
+/// This type implements `serde::Serialize` and `serde::Deserialize` if the
+/// `"serde"` Cargo feature is enabled on the crate.
 ///
-/// Instead, there are functions available that return these different orderings:
-///
-/// - [`LanguageIdentifier::strict_cmp`]
-/// - [`LanguageIdentifier::total_cmp`]
-///
-/// See issue: <https://github.com/unicode-org/icu4x/issues/1215>
+/// The value will be serialized as a string and parsed when deserialized.
+/// For tips on efficient storage and retrieval of locales, see [`crate::zerovec`].
 ///
 /// # Examples
 ///
@@ -69,7 +74,7 @@ use writeable::Writeable;
 ///     subtags::{language, region, script, variant},
 /// };
 ///
-/// let li = langid!("eN_latn_Us-Valencia");
+/// let li = langid!("eN-latn-Us-Valencia");
 ///
 /// assert_eq!(li.language, language!("en"));
 /// assert_eq!(li.script, Some(script!("Latn")));
@@ -78,7 +83,7 @@ use writeable::Writeable;
 /// ```
 ///
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier
-#[derive(Default, PartialEq, Eq, Clone, Hash)] // no Ord or PartialOrd: see docs
+#[derive(PartialEq, Eq, Clone, Hash)] // no Ord or PartialOrd: see docs
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
 pub struct LanguageIdentifier {
     /// Language subtag of the language identifier.
@@ -92,6 +97,9 @@ pub struct LanguageIdentifier {
 }
 
 impl LanguageIdentifier {
+    /// The unknown language identifier "und".
+    pub const UNKNOWN: Self = crate::langid!("und");
+
     /// A constructor which takes a utf8 slice, parses it and
     /// produces a well-formed [`LanguageIdentifier`].
     ///
@@ -103,17 +111,19 @@ impl LanguageIdentifier {
     /// LanguageIdentifier::try_from_str("en-US").expect("Parsing failed");
     /// ```
     #[inline]
+    #[cfg(feature = "alloc")]
     pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
         Self::try_from_utf8(s.as_bytes())
     }
 
     /// See [`Self::try_from_str`]
+    #[cfg(feature = "alloc")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
-        parse_language_identifier(code_units, ParserMode::LanguageIdentifier)
+        crate::parser::parse_language_identifier(code_units, parser::ParserMode::LanguageIdentifier)
     }
 
     #[doc(hidden)] // macro use
-    #[allow(clippy::type_complexity)]
+    #[expect(clippy::type_complexity)]
     // The return type should be `Result<Self, ParseError>` once the `const_precise_live_drops`
     // is stabilized ([rust-lang#73255](https://github.com/rust-lang/rust/issues/73255)).
     pub const fn try_from_utf8_with_single_variant(
@@ -127,7 +137,10 @@ impl LanguageIdentifier {
         ),
         ParseError,
     > {
-        parse_language_identifier_with_single_variant(code_units, ParserMode::LanguageIdentifier)
+        crate::parser::parse_language_identifier_with_single_variant(
+            code_units,
+            parser::ParserMode::LanguageIdentifier,
+        )
     }
 
     /// A constructor which takes a utf8 slice which may contain extension keys,
@@ -146,32 +159,22 @@ impl LanguageIdentifier {
     ///
     /// This method should be used for input that may be a locale identifier.
     /// All extensions will be lost.
+    #[cfg(feature = "alloc")]
     pub fn try_from_locale_bytes(v: &[u8]) -> Result<Self, ParseError> {
-        parse_language_identifier(v, ParserMode::Locale)
+        parser::parse_language_identifier(v, parser::ParserMode::Locale)
     }
 
-    /// Const-friendly version of [`Default::default`].
-    pub const fn default() -> Self {
-        Self {
-            language: subtags::Language::UND,
-            script: None,
-            region: None,
-            variants: subtags::Variants::new(),
-        }
-    }
-
-    /// Whether this language identifier equals [`Self::default`].
-    pub const fn is_default(&self) -> bool {
-        self.language.is_default()
+    /// Whether this [`LanguageIdentifier`] equals [`LanguageIdentifier::UNKNOWN`].
+    pub const fn is_unknown(&self) -> bool {
+        self.language.is_unknown()
             && self.script.is_none()
             && self.region.is_none()
             && self.variants.is_empty()
     }
 
-    /// This is a best-effort operation that performs all available levels of canonicalization.
+    /// Normalize the language identifier (operating on UTF-8 formatted byte slices)
     ///
-    /// At the moment the operation will normalize casing and the separator, but in the future
-    /// it may also validate and update from deprecated subtags to canonical ones.
+    /// This operation will normalize casing and the separator.
     ///
     /// # Examples
     ///
@@ -179,13 +182,33 @@ impl LanguageIdentifier {
     /// use icu::locale::LanguageIdentifier;
     ///
     /// assert_eq!(
-    ///     LanguageIdentifier::canonicalize("pL_latn_pl").as_deref(),
+    ///     LanguageIdentifier::normalize("pL-latn-pl").as_deref(),
     ///     Ok("pl-Latn-PL")
     /// );
     /// ```
-    pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParseError> {
-        let lang_id = Self::try_from_utf8(input.as_ref())?;
-        Ok(lang_id.write_to_string().into_owned())
+    #[cfg(feature = "alloc")]
+    pub fn normalize_utf8(input: &[u8]) -> Result<Cow<'_, str>, ParseError> {
+        let lang_id = Self::try_from_utf8(input)?;
+        Ok(writeable::to_string_or_borrow(&lang_id, input))
+    }
+
+    /// Normalize the language identifier (operating on strings)
+    ///
+    /// This operation will normalize casing and the separator.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::LanguageIdentifier;
+    ///
+    /// assert_eq!(
+    ///     LanguageIdentifier::normalize("pL-latn-pl").as_deref(),
+    ///     Ok("pl-Latn-PL")
+    /// );
+    /// ```
+    #[cfg(feature = "alloc")]
+    pub fn normalize(input: &str) -> Result<Cow<'_, str>, ParseError> {
+        Self::normalize_utf8(input.as_bytes())
     }
 
     /// Compare this [`LanguageIdentifier`] with BCP-47 bytes.
@@ -198,31 +221,50 @@ impl LanguageIdentifier {
     ///
     /// # Examples
     ///
+    /// Sorting a list of langids with this method requires converting one of them to a string:
+    ///
     /// ```
     /// use icu::locale::LanguageIdentifier;
     /// use std::cmp::Ordering;
+    /// use writeable::Writeable;
     ///
+    /// // Random input order:
     /// let bcp47_strings: &[&str] = &[
-    ///     "pl-Latn-PL",
-    ///     "und",
-    ///     "und-Adlm",
-    ///     "und-GB",
-    ///     "und-ZA",
+    ///     "ar-Latn",
+    ///     "zh-Hant-TW",
+    ///     "zh-TW",
     ///     "und-fonipa",
-    ///     "zh",
+    ///     "zh-Hant",
+    ///     "ar-SA",
     /// ];
     ///
-    /// for ab in bcp47_strings.windows(2) {
-    ///     let a = ab[0];
-    ///     let b = ab[1];
-    ///     assert!(a.cmp(b) == Ordering::Less);
-    ///     let a_langid = a.parse::<LanguageIdentifier>().unwrap();
-    ///     assert!(a_langid.strict_cmp(a.as_bytes()) == Ordering::Equal);
-    ///     assert!(a_langid.strict_cmp(b.as_bytes()) == Ordering::Less);
-    /// }
+    /// let mut langids = bcp47_strings
+    ///     .iter()
+    ///     .map(|s| s.parse().unwrap())
+    ///     .collect::<Vec<LanguageIdentifier>>();
+    /// langids.sort_by(|a, b| {
+    ///     let b = b.write_to_string();
+    ///     a.strict_cmp(b.as_bytes())
+    /// });
+    /// let strict_cmp_strings = langids
+    ///     .iter()
+    ///     .map(|l| l.to_string())
+    ///     .collect::<Vec<String>>();
+    ///
+    /// // Output ordering, sorted alphabetically
+    /// let expected_ordering: &[&str] = &[
+    ///     "ar-Latn",
+    ///     "ar-SA",
+    ///     "und-fonipa",
+    ///     "zh-Hant",
+    ///     "zh-Hant-TW",
+    ///     "zh-TW",
+    /// ];
+    ///
+    /// assert_eq!(expected_ordering, strict_cmp_strings);
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        self.writeable_cmp_bytes(other)
+        writeable::cmp_utf8(self, other)
     }
 
     pub(crate) fn as_tuple(
@@ -244,7 +286,47 @@ impl LanguageIdentifier {
     ///
     /// # Examples
     ///
-    /// Using a wrapper to add one of these to a [`BTreeSet`]:
+    /// This method returns a nonsensical ordering derived from the fields of the struct:
+    ///
+    /// ```
+    /// use icu::locale::LanguageIdentifier;
+    /// use std::cmp::Ordering;
+    ///
+    /// // Input strings, sorted alphabetically
+    /// let bcp47_strings: &[&str] = &[
+    ///     "ar-Latn",
+    ///     "ar-SA",
+    ///     "und-fonipa",
+    ///     "zh-Hant",
+    ///     "zh-Hant-TW",
+    ///     "zh-TW",
+    /// ];
+    /// assert!(bcp47_strings.windows(2).all(|w| w[0] < w[1]));
+    ///
+    /// let mut langids = bcp47_strings
+    ///     .iter()
+    ///     .map(|s| s.parse().unwrap())
+    ///     .collect::<Vec<LanguageIdentifier>>();
+    /// langids.sort_by(LanguageIdentifier::total_cmp);
+    /// let total_cmp_strings = langids
+    ///     .iter()
+    ///     .map(|l| l.to_string())
+    ///     .collect::<Vec<String>>();
+    ///
+    /// // Output ordering, sorted arbitrarily
+    /// let expected_ordering: &[&str] = &[
+    ///     "ar-SA",
+    ///     "ar-Latn",
+    ///     "und-fonipa",
+    ///     "zh-TW",
+    ///     "zh-Hant",
+    ///     "zh-Hant-TW",
+    /// ];
+    ///
+    /// assert_eq!(expected_ordering, total_cmp_strings);
+    /// ```
+    ///
+    /// Use a wrapper to add a [`LanguageIdentifier`] to a [`BTreeSet`]:
     ///
     /// ```no_run
     /// use icu::locale::LanguageIdentifier;
@@ -307,7 +389,7 @@ impl LanguageIdentifier {
             };
         }
 
-        let mut iter = SubtagIterator::new(other.as_bytes());
+        let mut iter = parser::SubtagIterator::new(other.as_bytes());
         if !subtag_matches!(subtags::Language, iter, self.language) {
             return false;
         }
@@ -349,14 +431,14 @@ impl LanguageIdentifier {
     /// Executes `f` on each subtag string of this `LanguageIdentifier`, with every string in
     /// lowercase ascii form.
     ///
-    /// The default canonicalization of language identifiers uses titlecase scripts and uppercase
+    /// The default normalization of language identifiers uses titlecase scripts and uppercase
     /// regions. However, this differs from [RFC6497 (BCP 47 Extension T)], which specifies:
     ///
     /// > _The canonical form for all subtags in the extension is lowercase, with the fields
     /// > ordered by the separators, alphabetically._
     ///
     /// Hence, this method is used inside [`Transform Extensions`] to be able to get the correct
-    /// canonicalization of the language identifier.
+    /// normalization of the language identifier.
     ///
     /// As an example, the canonical form of locale **EN-LATN-CA-T-EN-LATN-CA** is
     /// **en-Latn-CA-t-en-latn-ca**, with the script and region parts lowercased inside T extensions,
@@ -370,10 +452,10 @@ impl LanguageIdentifier {
     {
         f(self.language.as_str())?;
         if let Some(ref script) = self.script {
-            f(script.into_tinystr().to_ascii_lowercase().as_str())?;
+            f(script.to_tinystr().to_ascii_lowercase().as_str())?;
         }
         if let Some(ref region) = self.region {
-            f(region.into_tinystr().to_ascii_lowercase().as_str())?;
+            f(region.to_tinystr().to_ascii_lowercase().as_str())?;
         }
         for variant in self.variants.iter() {
             f(variant.as_str())?;
@@ -384,14 +466,14 @@ impl LanguageIdentifier {
     /// Writes this `LanguageIdentifier` to a sink, replacing uppercase ascii chars with
     /// lowercase ascii chars.
     ///
-    /// The default canonicalization of language identifiers uses titlecase scripts and uppercase
+    /// The default normalization of language identifiers uses titlecase scripts and uppercase
     /// regions. However, this differs from [RFC6497 (BCP 47 Extension T)], which specifies:
     ///
     /// > _The canonical form for all subtags in the extension is lowercase, with the fields
     /// > ordered by the separators, alphabetically._
     ///
     /// Hence, this method is used inside [`Transform Extensions`] to be able to get the correct
-    /// canonicalization of the language identifier.
+    /// normalization of the language identifier.
     ///
     /// As an example, the canonical form of locale **EN-LATN-CA-T-EN-LATN-CA** is
     /// **en-Latn-CA-t-en-latn-ca**, with the script and region parts lowercased inside T extensions,
@@ -415,25 +497,13 @@ impl LanguageIdentifier {
     }
 }
 
-impl AsRef<LanguageIdentifier> for LanguageIdentifier {
-    #[inline(always)]
-    fn as_ref(&self) -> &Self {
-        self
-    }
-}
-
-impl AsMut<LanguageIdentifier> for LanguageIdentifier {
-    fn as_mut(&mut self) -> &mut Self {
-        self
-    }
-}
-
 impl core::fmt::Debug for LanguageIdentifier {
     fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         core::fmt::Display::fmt(&self, f)
     }
 }
 
+#[cfg(feature = "alloc")]
 impl FromStr for LanguageIdentifier {
     type Err = ParseError;
 
@@ -448,7 +518,7 @@ impl_writeable_for_each_subtag_str_no_test!(LanguageIdentifier, selff, selff.scr
 #[test]
 fn test_writeable() {
     use writeable::assert_writeable_eq;
-    assert_writeable_eq!(LanguageIdentifier::default(), "und");
+    assert_writeable_eq!(LanguageIdentifier::UNKNOWN, "und");
     assert_writeable_eq!("und-001".parse::<LanguageIdentifier>().unwrap(), "und-001");
     assert_writeable_eq!(
         "und-Mymr".parse::<LanguageIdentifier>().unwrap(),
@@ -479,7 +549,9 @@ impl From<subtags::Language> for LanguageIdentifier {
     fn from(language: subtags::Language) -> Self {
         Self {
             language,
-            ..Default::default()
+            script: None,
+            region: None,
+            variants: subtags::Variants::new(),
         }
     }
 }
@@ -497,8 +569,10 @@ impl From<subtags::Language> for LanguageIdentifier {
 impl From<Option<subtags::Script>> for LanguageIdentifier {
     fn from(script: Option<subtags::Script>) -> Self {
         Self {
+            language: subtags::Language::UNKNOWN,
             script,
-            ..Default::default()
+            region: None,
+            variants: subtags::Variants::new(),
         }
     }
 }
@@ -516,8 +590,10 @@ impl From<Option<subtags::Script>> for LanguageIdentifier {
 impl From<Option<subtags::Region>> for LanguageIdentifier {
     fn from(region: Option<subtags::Region>) -> Self {
         Self {
+            language: subtags::Language::UNKNOWN,
+            script: None,
             region,
-            ..Default::default()
+            variants: subtags::Variants::new(),
         }
     }
 }
@@ -559,7 +635,7 @@ impl
             language: lsr.0,
             script: lsr.1,
             region: lsr.2,
-            ..Default::default()
+            variants: subtags::Variants::new(),
         }
     }
 }

@@ -108,7 +108,7 @@
         "output": {
             "values": {
                 "en-u-ca-japanese": "1800 Anno Domini",
-                "en-u-ca-japanext": "12 Kansei (1789–1801)"
+                "en-u-ca-japanese-x-extended": "12 Kansei (1789–1801)"
             }
         }
     },
@@ -125,7 +125,7 @@
         "output": {
             "values": {
                 "en-u-ca-japanese": "1600 Anno Domini",
-                "en-u-ca-japanext": "5 Keichō (1596–1615)"
+                "en-u-ca-japanese-x-extended": "5 Keichō (1596–1615)"
             }
         }
     }

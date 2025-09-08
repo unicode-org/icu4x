@@ -3,9 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub(crate) trait MaybeSplitAt<T> {
-    /// Like slice::split_at but returns an Option instead of panicking
-    /// if the index is out of range.
-    fn maybe_split_at(&self, mid: usize) -> Option<(&Self, &Self)>;
     /// Like slice::split_at but debug-panics and returns an empty second slice
     /// if the index is out of range.
     fn debug_split_at(&self, mid: usize) -> (&Self, &Self);
@@ -13,25 +10,11 @@ pub(crate) trait MaybeSplitAt<T> {
 
 impl<T> MaybeSplitAt<T> for [T] {
     #[inline]
-    fn maybe_split_at(&self, mid: usize) -> Option<(&Self, &Self)> {
-        if mid > self.len() {
-            None
-        } else {
-            // Note: We're trusting the compiler to inline this and remove the assertion
-            // hiding on the top of slice::split_at: `assert(mid <= self.len())`
-            Some(self.split_at(mid))
-        }
-    }
-    #[inline]
     fn debug_split_at(&self, mid: usize) -> (&Self, &Self) {
-        if mid > self.len() {
-            debug_assert!(false, "debug_split_at: index expected to be in range");
+        self.split_at_checked(mid).unwrap_or_else(|| {
+            debug_assert!(false, "debug_split_at: {mid} expected to be in range");
             (self, &[])
-        } else {
-            // Note: We're trusting the compiler to inline this and remove the assertion
-            // hiding on the top of slice::split_at: `assert(mid <= self.len())`
-            self.split_at(mid)
-        }
+        })
     }
 }
 
@@ -95,8 +78,11 @@ pub(crate) const MAX_USIZE_LEN_AS_DIGITS: usize = core::mem::size_of::<usize>() 
 /// Formats a usize as a string of length N, padded with spaces,
 /// with the given prefix.
 ///
+/// # Panics
+///
 /// If the string is too short, the function may panic. To prevent
 /// this, N should be MAX_USIZE_LEN_AS_DIGITS larger than M.
+#[allow(clippy::indexing_slicing)] // documented, and based on const parameters
 pub(crate) const fn const_fmt_int<const M: usize, const N: usize>(
     prefix: [u8; M],
     value: usize,

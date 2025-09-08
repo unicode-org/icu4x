@@ -282,7 +282,7 @@ fn test_invert_angular() {
 }
 
 /// Error returned when casting from an i32
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, displaydoc::Display)]
 #[allow(clippy::exhaustive_enums)] // enum is specific to function and has a closed set of possible values
 pub enum I32CastError {
     /// Less than i32::MIN
@@ -290,6 +290,8 @@ pub enum I32CastError {
     /// Greater than i32::MAX
     AboveMax,
 }
+
+impl core::error::Error for I32CastError {}
 
 impl I32CastError {
     pub(crate) const fn saturate(self) -> i32 {
@@ -314,7 +316,7 @@ pub const fn i64_to_i32(input: i64) -> Result<i32, I32CastError> {
 
 /// Convert an i64 to i32 but saturate at th ebounds
 #[inline]
-pub fn i64_to_saturated_i32(input: i64) -> i32 {
+pub(crate) fn i64_to_saturated_i32(input: i64) -> i32 {
     i64_to_i32(input).unwrap_or_else(|i| i.saturate())
 }
 
@@ -333,4 +335,12 @@ fn test_i64_to_saturated_i32() {
     assert_eq!(i64_to_saturated_i32(2147483648), 2147483647);
     assert_eq!(i64_to_saturated_i32(2147483649), 2147483647);
     assert_eq!(i64_to_saturated_i32(i64::MAX), i32::MAX);
+}
+
+/// returns the weekday (0-6) after (strictly) the fixed date
+pub(crate) const fn k_day_after(weekday: i64, fixed: RataDie) -> RataDie {
+    let day_of_week = fixed.to_i64_date().rem_euclid(7);
+    let beginning_of_week = fixed.to_i64_date() - day_of_week;
+    let day = beginning_of_week + weekday;
+    RataDie::new(day + if weekday <= day_of_week { 7 } else { 0 })
 }

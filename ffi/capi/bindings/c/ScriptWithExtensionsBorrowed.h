@@ -17,14 +17,13 @@
 
 
 
-uint16_t icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv1(const ScriptWithExtensionsBorrowed* self, uint32_t code_point);
+uint16_t icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv1(const ScriptWithExtensionsBorrowed* self, char32_t ch);
 
-ScriptExtensionsSet* icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(const ScriptWithExtensionsBorrowed* self, uint32_t code_point);
+ScriptExtensionsSet* icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(const ScriptWithExtensionsBorrowed* self, char32_t ch);
 
-bool icu4x_ScriptWithExtensionsBorrowed_has_script_mv1(const ScriptWithExtensionsBorrowed* self, uint32_t code_point, uint16_t script);
+bool icu4x_ScriptWithExtensionsBorrowed_has_script_mv1(const ScriptWithExtensionsBorrowed* self, char32_t ch, uint16_t script);
 
 CodePointSetData* icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_set_mv1(const ScriptWithExtensionsBorrowed* self, uint16_t script);
-
 
 void icu4x_ScriptWithExtensionsBorrowed_destroy_mv1(ScriptWithExtensionsBorrowed* self);
 

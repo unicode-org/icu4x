@@ -801,24 +801,7 @@ See also: the [Panics](#Panics--required) section of this document.
 
 #### Special Case: `split_at`
 
-The standard library functions such as `slice::split_at` are panicky, but they are not covered by our Clippy lints.
-
-Instead of using `slice::split_at` directly, it is recommended to use a helper function, which can be saved in the file in which it is being used. Example:
-
-```rust
-/// Like slice::split_at but returns an Option instead of panicking
-#[inline]
-fn debug_split_at(slice: &[u8], mid: usize) -> Option<(&[u8], &[u8])> {
-    if mid > slice.len() {
-        debug_assert!(false, "debug_split_at: index expected to be in range");
-        None
-    } else {
-        // Note: We're trusting the compiler to inline this and remove the assertion
-        // hiding on the top of slice::split_at: `assert(mid <= self.len())`
-        Some(slice.split_at(mid))
-    }
-}
-```
+The standard library functions such as `slice::split_at` are panicky, but they are not covered by our Clippy lints. Be careful to use `slice::split_at_checked` instead.
 
 #### Exception: Poison
 

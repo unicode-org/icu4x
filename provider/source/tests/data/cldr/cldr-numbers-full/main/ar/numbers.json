@@ -329,6 +329,7 @@
             }
           },
           "standard": "‏#,##0.00 ¤;‏-#,##0.00 ¤",
+          "standard-alphaNextToNumber": "¤ #,##0.00",
           "standard-noCurrency": "#,##0.00",
           "accounting": "؜#,##0.00¤;(؜#,##0.00¤)",
           "accounting-alphaNextToNumber": "؜#,##0.00 ¤;(؜#,##0.00 ¤)",

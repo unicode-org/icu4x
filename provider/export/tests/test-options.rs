@@ -51,11 +51,11 @@ impl TestingProvider {
     }
 }
 
-impl DataProvider<HelloWorldV1Marker> for TestingProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+impl DataProvider<HelloWorldV1> for TestingProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(HelloWorldV1 {
+            payload: DataPayload::from_owned(HelloWorld {
                 message: (*self
                     .0
                     .get(&(
@@ -69,8 +69,8 @@ impl DataProvider<HelloWorldV1Marker> for TestingProvider {
     }
 }
 
-impl IterableDataProvider<HelloWorldV1Marker> for TestingProvider {
-    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+impl IterableDataProvider<HelloWorldV1> for TestingProvider {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
         Ok(self
             .0
             .keys()
@@ -84,7 +84,8 @@ impl IterableDataProvider<HelloWorldV1Marker> for TestingProvider {
     }
 }
 
-make_exportable_provider!(TestingProvider, [HelloWorldV1Marker,]);
+extern crate alloc;
+make_exportable_provider!(TestingProvider, [HelloWorldV1,]);
 
 fn families(
     langids: impl IntoIterator<Item = LanguageIdentifier>,

@@ -8,15 +8,16 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -33,7 +34,7 @@ inline icu4x::DisplayNamesStyle icu4x::DisplayNamesStyle::FromFFI(icu4x::capi::D
     case icu4x::capi::DisplayNamesStyle_Menu:
       return static_cast<icu4x::DisplayNamesStyle::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_DisplayNamesStyle_HPP

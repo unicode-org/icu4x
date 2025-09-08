@@ -2,30 +2,25 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! The functions in this module return a [`CodePointMapData`] representing, for
-//! each code point in the entire range of code points, the property values
-//! for a particular Unicode property.
-//!
-//! The descriptions of most properties are taken from [`TR44`], the documentation for the
-//! Unicode Character Database.
-//!
-//! [`TR44`]: https://www.unicode.org/reports/tr44
-
+#[cfg(feature = "alloc")]
+use crate::code_point_set::CodePointSetData;
 use crate::props::GeneralCategory;
+use crate::props::GeneralCategoryGroup;
 use crate::provider::*;
-use crate::{code_point_set::CodePointSetData, props::GeneralCategoryGroup};
 use core::ops::RangeInclusive;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
-use zerovec::ule::UleError;
 
-/// A wrapper around code point map data. It is returned by APIs that return Unicode
+/// A wrapper around code point map data.
+///
+/// It is returned by APIs that return Unicode
 /// property data in a map-like form, ex: enumerated property value data keyed
 /// by code point. Access its data via the borrowed version,
 /// [`CodePointMapDataBorrowed`].
 #[derive(Debug, Clone)]
 pub struct CodePointMapData<T: TrieValue> {
-    data: DataPayload<ErasedPropertyCodePointMapV1Marker<T>>,
+    data: DataPayload<ErasedMarker<PropertyCodePointMap<'static, T>>>,
 }
 
 impl<T: TrieValue> CodePointMapData<T> {
@@ -37,15 +32,15 @@ impl<T: TrieValue> CodePointMapData<T> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    #[allow(clippy::new_ret_no_self)]
+    #[expect(clippy::new_ret_no_self)]
     pub const fn new() -> CodePointMapDataBorrowed<'static, T>
     where
         T: EnumeratedProperty,
     {
-        CodePointMapDataBorrowed { map: T::SINGLETON }
+        CodePointMapDataBorrowed::new()
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable(
         provider: &(impl DataProvider<T::DataMarker> + ?Sized),
     ) -> Result<Self, DataError>
@@ -91,15 +86,14 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter as u8);  // U+6728
     /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol as u8);  // U+1F383 JACK-O-LANTERN
     /// ```
-    pub fn try_into_converted<P>(self) -> Result<CodePointMapData<P>, UleError>
+    #[cfg(feature = "alloc")]
+    pub fn try_into_converted<P>(self) -> Result<CodePointMapData<P>, zerovec::ule::UleError>
     where
         P: TrieValue,
     {
         self.data
-            .try_map_project::<ErasedPropertyCodePointMapV1Marker<P>, _, _>(move |data, _| {
-                data.try_into_converted()
-            })
-            .map(CodePointMapData::from_data)
+            .try_map_project(|data, _| data.try_into_converted())
+            .map(CodePointMapData::from_data::<ErasedMarker<PropertyCodePointMap<'static, P>>>)
     }
 
     /// Construct a new one from loaded data
@@ -107,16 +101,16 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// Typically it is preferable to use getters like [`load_general_category()`] instead
     pub(crate) fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DynamicDataMarker<DataStruct = PropertyCodePointMapV1<'static, T>>,
+        M: DynamicDataMarker<DataStruct = PropertyCodePointMap<'static, T>>,
     {
         Self { data: data.cast() }
     }
 
     /// Construct a new one an owned [`CodePointTrie`]
     pub fn from_code_point_trie(trie: CodePointTrie<'static, T>) -> Self {
-        let set = PropertyCodePointMapV1::from_code_point_trie(trie);
+        let set = PropertyCodePointMap::from_code_point_trie(trie);
         CodePointMapData::from_data(
-            DataPayload::<ErasedPropertyCodePointMapV1Marker<T>>::from_owned(set),
+            DataPayload::<ErasedMarker<PropertyCodePointMap<'static, T>>>::from_owned(set),
         )
     }
 
@@ -151,7 +145,7 @@ impl<T: TrieValue> CodePointMapData<T> {
 /// [`CodePointSetData::as_borrowed()`]. More efficient to query.
 #[derive(Clone, Copy, Debug)]
 pub struct CodePointMapDataBorrowed<'a, T: TrieValue> {
-    map: &'a PropertyCodePointMapV1<'a, T>,
+    map: &'a PropertyCodePointMap<'a, T>,
 }
 
 impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
@@ -168,23 +162,13 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter);  // U+6728
     /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
     /// ```
+    #[inline]
     pub fn get(self, ch: char) -> T {
-        self.map.get32(ch as u32)
+        self.map.get(ch)
     }
 
-    /// Get the value this map has associated with code point `ch`
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu::properties::CodePointMapData;
-    /// use icu::properties::props::GeneralCategory;
-    ///
-    /// let gc = CodePointMapData::<GeneralCategory>::new();
-    ///
-    /// assert_eq!(gc.get32(0x6728), GeneralCategory::OtherLetter);  // U+6728 (木)
-    /// assert_eq!(gc.get32(0x1F383), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
-    /// ```
+    /// See [`Self::get`].
+    #[inline]
     pub fn get32(self, ch: u32) -> T {
         self.map.get32(ch)
     }
@@ -194,8 +178,8 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::CodePointMapData;
     /// use icu::properties::props::GeneralCategory;
+    /// use icu::properties::CodePointMapData;
     ///
     /// let gc = CodePointMapData::<GeneralCategory>::new();
     ///
@@ -206,6 +190,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// assert!(other_letter_set.contains('木')); // U+6728
     /// assert!(!other_letter_set.contains('🎃')); // U+1F383 JACK-O-LANTERN
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn get_set_for_value(self, value: T) -> CodePointSetData {
         let set = self.map.get_set_for_value(value);
         CodePointSetData::from_code_point_inversion_list(set)
@@ -217,8 +202,8 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// # Examples
     ///
     /// ```
-    /// use icu::properties::CodePointMapData;
     /// use icu::properties::props::GeneralCategory;
+    /// use icu::properties::CodePointMapData;
     ///
     /// let gc = CodePointMapData::<GeneralCategory>::new();
     /// let mut ranges = gc.iter_ranges();
@@ -240,8 +225,8 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     ///
     ///
     /// ```
-    /// use icu::properties::CodePointMapData;
     /// use icu::properties::props::GeneralCategory;
+    /// use icu::properties::CodePointMapData;
     ///
     /// let gc = CodePointMapData::<GeneralCategory>::new();
     /// let mut ranges = gc.iter_ranges_for_value(GeneralCategory::UppercaseLetter);
@@ -281,9 +266,26 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     }
 }
 
-impl<'a> CodePointMapDataBorrowed<'a, GeneralCategory> {
-    /// TODO
-    pub fn get_set_for_value_group(&self, value: GeneralCategoryGroup) -> crate::CodePointSetData {
+impl CodePointMapDataBorrowed<'_, GeneralCategory> {
+    /// Get a [`CodePointSetData`] for all elements corresponding to a particular value group
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
+    /// use icu::properties::CodePointMapData;
+    ///
+    /// let gc = CodePointMapData::<GeneralCategory>::new();
+    ///
+    /// let other_letter_set_data =
+    ///     gc.get_set_for_value_group(GeneralCategoryGroup::OtherLetter);
+    /// let other_letter_set = other_letter_set_data.as_borrowed();
+    ///
+    /// assert!(other_letter_set.contains('木')); // U+6728
+    /// assert!(!other_letter_set.contains('🎃')); // U+1F383 JACK-O-LANTERN
+    /// ```
+    #[cfg(feature = "alloc")]
+    pub fn get_set_for_value_group(self, value: GeneralCategoryGroup) -> crate::CodePointSetData {
         let matching_gc_ranges = self
             .iter_ranges()
             .filter(|cpm_range| (1 << cpm_range.value as u32) & value.0 != 0)
@@ -292,7 +294,29 @@ impl<'a> CodePointMapDataBorrowed<'a, GeneralCategory> {
     }
 }
 
+#[cfg(feature = "compiled_data")]
+impl<T: EnumeratedProperty> Default for CodePointMapDataBorrowed<'static, T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<T: TrieValue> CodePointMapDataBorrowed<'static, T> {
+    /// Creates a new [`CodePointMapDataBorrowed`] for a [`EnumeratedProperty`].
+    ///
+    /// See the documentation on [`EnumeratedProperty`] implementations for details.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self
+    where
+        T: EnumeratedProperty,
+    {
+        CodePointMapDataBorrowed { map: T::SINGLETON }
+    }
+
     /// Cheaply converts a [`CodePointMapDataBorrowed<'static>`] into a [`CodePointMapData`].
     ///
     /// Note: Due to branching and indirection, using [`CodePointMapData`] might inhibit some
@@ -311,8 +335,8 @@ impl<'a> CodePointMapDataBorrowed<'a, GeneralCategory> {
     /// # Examples
     ///
     /// ```
-    /// use icu::properties::CodePointMapData;
     /// use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
+    /// use icu::properties::CodePointMapData;
     ///
     /// let gc = CodePointMapData::<GeneralCategory>::new();
     /// let mut ranges = gc.iter_ranges_for_group(GeneralCategoryGroup::Letter);
@@ -336,10 +360,32 @@ impl<'a> CodePointMapDataBorrowed<'a, GeneralCategory> {
 }
 
 /// A Unicode character property that assigns a value to each code point.
+///
+/// The descriptions of most properties are taken from [`TR44`], the documentation for the
+/// Unicode Character Database.
+///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+/// </div>
+///
+/// [`TR44`]: https://www.unicode.org/reports/tr44
 pub trait EnumeratedProperty: crate::private::Sealed + TrieValue {
     #[doc(hidden)]
-    type DataMarker: DataMarker<DataStruct = PropertyCodePointMapV1<'static, Self>>;
+    type DataMarker: DataMarker<DataStruct = PropertyCodePointMap<'static, Self>>;
     #[doc(hidden)]
     #[cfg(feature = "compiled_data")]
-    const SINGLETON: &'static PropertyCodePointMapV1<'static, Self>;
+    const SINGLETON: &'static PropertyCodePointMap<'static, Self>;
+    /// The name of this property
+    const NAME: &'static [u8];
+    /// The abbreviated name of this property, if it exists, otherwise the name
+    const SHORT_NAME: &'static [u8];
+
+    /// Convenience method for `CodePointMapData::new().get(ch)`
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
+    fn for_char(ch: char) -> Self {
+        CodePointMapData::new().get(ch)
+    }
 }

@@ -2,9 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-pub(crate) mod power;
-pub(crate) mod si_prefix;
-
+pub mod category;
 pub mod measureunit;
 pub mod parser;
 pub mod provider;
+pub mod single_unit_vec;

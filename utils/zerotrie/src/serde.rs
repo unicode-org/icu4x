@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::builder::bytestr::ByteStr;
+use crate::options::ZeroTrieWithOptions;
 use crate::zerotrie::ZeroTrieFlavor;
 use crate::ZeroAsciiIgnoreCaseTrie;
 use crate::ZeroTrie;
@@ -44,10 +45,7 @@ impl<'de> Visitor<'de> for ByteStrVisitor {
     }
 }
 
-impl<'de, 'data> Deserialize<'de> for &'data ByteStr
-where
-    'de: 'data,
-{
+impl<'data, 'de: 'data> Deserialize<'de> for &'data ByteStr {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
@@ -57,10 +55,7 @@ where
     }
 }
 
-impl<'de, 'data> Deserialize<'de> for Box<ByteStr>
-where
-    'de: 'data,
-{
+impl<'de> Deserialize<'de> for Box<ByteStr> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
@@ -75,7 +70,7 @@ where
     }
 }
 
-impl<'data> Serialize for &'data ByteStr {
+impl Serialize for &ByteStr {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
@@ -92,9 +87,8 @@ impl<'data> Serialize for &'data ByteStr {
     }
 }
 
-impl<'de, 'data, Store> Deserialize<'de> for ZeroTrieSimpleAscii<Store>
+impl<'data, 'de: 'data, Store> Deserialize<'de> for ZeroTrieSimpleAscii<Store>
 where
-    'de: 'data,
     // DISCUSS: There are several possibilities for the bounds here that would
     // get the job done. I could look for Deserialize, but this would require
     // creating a custom Deserializer for the map case. I also considered
@@ -113,12 +107,10 @@ where
         } else {
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
             let (flags, trie_bytes) = <(u8, &[u8])>::deserialize(deserializer)?;
-            let store = Store::from(trie_bytes);
-            let zerotrie = match flags {
-                Self::FLAGS => ZeroTrieSimpleAscii::from_store(store),
-                _ => return Err(D::Error::custom("invalid ZeroTrie tag")),
+            if Self::OPTIONS.to_u8_flags() != flags {
+                return Err(D::Error::custom("invalid ZeroTrie tag"));
             };
-            Ok(zerotrie)
+            Ok(ZeroTrieSimpleAscii::from_store(Store::from(trie_bytes)))
         }
     }
 }
@@ -162,12 +154,10 @@ where
         } else {
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
             let (flags, trie_bytes) = <(u8, &[u8])>::deserialize(deserializer)?;
-            let store = Store::from(trie_bytes);
-            let zerotrie = match flags {
-                Self::FLAGS => ZeroAsciiIgnoreCaseTrie::from_store(store),
-                _ => return Err(D::Error::custom("invalid ZeroTrie tag")),
-            };
-            Ok(zerotrie)
+            if Self::OPTIONS.to_u8_flags() != flags {
+                return Err(D::Error::custom("invalid ZeroTrie tag"));
+            }
+            Ok(ZeroAsciiIgnoreCaseTrie::from_store(Store::from(trie_bytes)))
         }
     }
 }
@@ -185,7 +175,11 @@ where
             lm.serialize(serializer)
         } else {
             // Note: `impl Serialize for ByteStr` uses `serialize_bytes`
-            (Self::FLAGS, ByteStr::from_bytes(self.as_bytes())).serialize(serializer)
+            (
+                Self::OPTIONS.to_u8_flags(),
+                ByteStr::from_bytes(self.as_bytes()),
+            )
+                .serialize(serializer)
         }
     }
 }
@@ -207,12 +201,10 @@ where
         } else {
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
             let (flags, trie_bytes) = <(u8, &[u8])>::deserialize(deserializer)?;
-            let store = Store::from(trie_bytes);
-            let zerotrie = match flags {
-                Self::FLAGS => ZeroTriePerfectHash::from_store(store),
-                _ => return Err(D::Error::custom("invalid ZeroTrie tag")),
-            };
-            Ok(zerotrie)
+            if Self::OPTIONS.to_u8_flags() != flags {
+                return Err(D::Error::custom("invalid ZeroTrie tag"));
+            }
+            Ok(ZeroTriePerfectHash::from_store(Store::from(trie_bytes)))
         }
     }
 }
@@ -234,7 +226,11 @@ where
             lm.serialize(serializer)
         } else {
             // Note: `impl Serialize for ByteStr` uses `serialize_bytes`
-            (Self::FLAGS, ByteStr::from_bytes(self.as_bytes())).serialize(serializer)
+            (
+                Self::OPTIONS.to_u8_flags(),
+                ByteStr::from_bytes(self.as_bytes()),
+            )
+                .serialize(serializer)
         }
     }
 }
@@ -256,12 +252,12 @@ where
         } else {
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
             let (flags, trie_bytes) = <(u8, &[u8])>::deserialize(deserializer)?;
-            let store = Store::from(trie_bytes);
-            let zerotrie = match flags {
-                Self::FLAGS => ZeroTrieExtendedCapacity::from_store(store),
-                _ => return Err(D::Error::custom("invalid ZeroTrie tag")),
-            };
-            Ok(zerotrie)
+            if Self::OPTIONS.to_u8_flags() != flags {
+                return Err(D::Error::custom("invalid ZeroTrie tag"));
+            }
+            Ok(ZeroTrieExtendedCapacity::from_store(Store::from(
+                trie_bytes,
+            )))
         }
     }
 }
@@ -283,7 +279,11 @@ where
             lm.serialize(serializer)
         } else {
             // Note: `impl Serialize for ByteStr` uses `serialize_bytes`
-            (Self::FLAGS, ByteStr::from_bytes(self.as_bytes())).serialize(serializer)
+            (
+                Self::OPTIONS.to_u8_flags(),
+                ByteStr::from_bytes(self.as_bytes()),
+            )
+                .serialize(serializer)
         }
     }
 }
@@ -309,17 +309,14 @@ where
                 .split_first()
                 .ok_or(D::Error::custom("expected at least 1 byte for ZeroTrie"))?;
             let store = Store::from(trie_bytes);
-            let zerotrie = match *tag {
-                ZeroTrieSimpleAscii::<u8>::FLAGS => {
-                    ZeroTrieSimpleAscii::from_store(store).into_zerotrie()
-                }
-                ZeroTriePerfectHash::<u8>::FLAGS => {
-                    ZeroTriePerfectHash::from_store(store).into_zerotrie()
-                }
-                ZeroTrieExtendedCapacity::<u8>::FLAGS => {
-                    ZeroTrieExtendedCapacity::from_store(store).into_zerotrie()
-                }
-                _ => return Err(D::Error::custom("invalid ZeroTrie tag")),
+            let zerotrie = if *tag == ZeroTrieSimpleAscii::<u8>::OPTIONS.to_u8_flags() {
+                ZeroTrieSimpleAscii::from_store(store).into_zerotrie()
+            } else if *tag == ZeroTriePerfectHash::<u8>::OPTIONS.to_u8_flags() {
+                ZeroTriePerfectHash::from_store(store).into_zerotrie()
+            } else if *tag == ZeroTrieExtendedCapacity::<u8>::OPTIONS.to_u8_flags() {
+                ZeroTrieExtendedCapacity::from_store(store).into_zerotrie()
+            } else {
+                return Err(D::Error::custom("invalid ZeroTrie tag"));
             };
             Ok(zerotrie)
         }
@@ -343,11 +340,18 @@ where
             lm.serialize(serializer)
         } else {
             let (tag, bytes) = match &self.0 {
-                ZeroTrieFlavor::SimpleAscii(t) => (ZeroTrieSimpleAscii::<u8>::FLAGS, t.as_bytes()),
-                ZeroTrieFlavor::PerfectHash(t) => (ZeroTriePerfectHash::<u8>::FLAGS, t.as_bytes()),
-                ZeroTrieFlavor::ExtendedCapacity(t) => {
-                    (ZeroTrieExtendedCapacity::<u8>::FLAGS, t.as_bytes())
-                }
+                ZeroTrieFlavor::SimpleAscii(t) => (
+                    ZeroTrieSimpleAscii::<u8>::OPTIONS.to_u8_flags(),
+                    t.as_bytes(),
+                ),
+                ZeroTrieFlavor::PerfectHash(t) => (
+                    ZeroTriePerfectHash::<u8>::OPTIONS.to_u8_flags(),
+                    t.as_bytes(),
+                ),
+                ZeroTrieFlavor::ExtendedCapacity(t) => (
+                    ZeroTrieExtendedCapacity::<u8>::OPTIONS.to_u8_flags(),
+                    t.as_bytes(),
+                ),
             };
             let mut all_in_one_vec = Vec::with_capacity(bytes.len() + 1);
             all_in_one_vec.push(tag);
@@ -396,9 +400,9 @@ mod tests {
         assert_eq!(original.trie, bincode_recovered.trie);
         assert_eq!(original.trie, rmp_recovered.trie);
 
-        assert!(matches!(json_recovered.trie.take_store(), Cow::Owned(_)));
+        assert!(matches!(json_recovered.trie.into_store(), Cow::Owned(_)));
         assert!(matches!(
-            bincode_recovered.trie.take_store(),
+            bincode_recovered.trie.into_store(),
             Cow::Borrowed(_)
         ));
     }
@@ -427,9 +431,9 @@ mod tests {
         assert_eq!(original.trie, json_recovered.trie);
         assert_eq!(original.trie, bincode_recovered.trie);
 
-        assert!(matches!(json_recovered.trie.take_store(), Cow::Owned(_)));
+        assert!(matches!(json_recovered.trie.into_store(), Cow::Owned(_)));
         assert!(matches!(
-            bincode_recovered.trie.take_store(),
+            bincode_recovered.trie.into_store(),
             Cow::Borrowed(_)
         ));
     }
@@ -458,9 +462,9 @@ mod tests {
         assert_eq!(original.trie, json_recovered.trie);
         assert_eq!(original.trie, bincode_recovered.trie);
 
-        assert!(matches!(json_recovered.trie.take_store(), Cow::Owned(_)));
+        assert!(matches!(json_recovered.trie.into_store(), Cow::Owned(_)));
         assert!(matches!(
-            bincode_recovered.trie.take_store(),
+            bincode_recovered.trie.into_store(),
             Cow::Borrowed(_)
         ));
     }
@@ -483,9 +487,9 @@ mod tests {
         assert_eq!(original.trie, json_recovered.trie);
         assert_eq!(original.trie, bincode_recovered.trie);
 
-        assert!(matches!(json_recovered.trie.take_store(), Cow::Owned(_)));
+        assert!(matches!(json_recovered.trie.into_store(), Cow::Owned(_)));
         assert!(matches!(
-            bincode_recovered.trie.take_store(),
+            bincode_recovered.trie.into_store(),
             Cow::Borrowed(_)
         ));
     }
@@ -508,9 +512,9 @@ mod tests {
         assert_eq!(original.trie, json_recovered.trie);
         assert_eq!(original.trie, bincode_recovered.trie);
 
-        assert!(matches!(json_recovered.trie.take_store(), Cow::Owned(_)));
+        assert!(matches!(json_recovered.trie.into_store(), Cow::Owned(_)));
         assert!(matches!(
-            bincode_recovered.trie.take_store(),
+            bincode_recovered.trie.into_store(),
             Cow::Borrowed(_)
         ));
     }
@@ -539,9 +543,9 @@ mod tests {
         assert_eq!(original.trie, json_recovered.trie);
         assert_eq!(original.trie, bincode_recovered.trie);
 
-        assert!(matches!(json_recovered.trie.take_store(), Cow::Owned(_)));
+        assert!(matches!(json_recovered.trie.into_store(), Cow::Owned(_)));
         assert!(matches!(
-            bincode_recovered.trie.take_store(),
+            bincode_recovered.trie.into_store(),
             Cow::Borrowed(_)
         ));
     }
@@ -564,9 +568,9 @@ mod tests {
         assert_eq!(original.trie, json_recovered.trie);
         assert_eq!(original.trie, bincode_recovered.trie);
 
-        assert!(matches!(json_recovered.trie.take_store(), Cow::Owned(_)));
+        assert!(matches!(json_recovered.trie.into_store(), Cow::Owned(_)));
         assert!(matches!(
-            bincode_recovered.trie.take_store(),
+            bincode_recovered.trie.into_store(),
             Cow::Borrowed(_)
         ));
     }
@@ -603,8 +607,8 @@ mod tests_zerovec {
         assert_eq!(original.trie, json_recovered.trie);
         assert_eq!(original.trie, bincode_recovered.trie);
 
-        assert!(json_recovered.trie.take_store().is_owned());
-        assert!(!bincode_recovered.trie.take_store().is_owned());
+        assert!(json_recovered.trie.into_store().is_owned());
+        assert!(!bincode_recovered.trie.into_store().is_owned());
     }
 
     #[derive(Serialize, Deserialize)]
@@ -632,7 +636,7 @@ mod tests_zerovec {
         assert_eq!(original.trie, json_recovered.trie);
         assert_eq!(original.trie, bincode_recovered.trie);
 
-        assert!(json_recovered.trie.take_store().is_owned());
-        assert!(!bincode_recovered.trie.take_store().is_owned());
+        assert!(json_recovered.trie.into_store().is_owned());
+        assert!(!bincode_recovered.trie.into_store().is_owned());
     }
 }

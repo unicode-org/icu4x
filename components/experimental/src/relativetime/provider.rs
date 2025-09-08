@@ -26,40 +26,134 @@ use zerovec::ZeroMap;
 /// </div>
 pub use crate::provider::Baked;
 
-/// Relative time format V1 data struct.
+icu_provider::data_marker!(
+    /// `LongSecondRelativeV1`
+    LongSecondRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `ShortSecondRelativeV1`
+    ShortSecondRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `NarrowSecondRelativeV1`
+    NarrowSecondRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `LongMinuteRelativeV1`
+    LongMinuteRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `ShortMinuteRelativeV1`
+    ShortMinuteRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `NarrowMinuteRelativeV1`
+    NarrowMinuteRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `LongHourRelativeV1`
+    LongHourRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `ShortHourRelativeV1`
+    ShortHourRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `NarrowHourRelativeV1`
+    NarrowHourRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `LongDayRelativeV1`
+    LongDayRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `ShortDayRelativeV1`
+    ShortDayRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `NarrowDayRelativeV1`
+    NarrowDayRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `LongWeekRelativeV1`
+    LongWeekRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `ShortWeekRelativeV1`
+    ShortWeekRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `NarrowWeekRelativeV1`
+    NarrowWeekRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `LongMonthRelativeV1`
+    LongMonthRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `ShortMonthRelativeV1`
+    ShortMonthRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `NarrowMonthRelativeV1`
+    NarrowMonthRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `LongQuarterRelativeV1`
+    LongQuarterRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `ShortQuarterRelativeV1`
+    ShortQuarterRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `NarrowQuarterRelativeV1`
+    NarrowQuarterRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `LongYearRelativeV1`
+    LongYearRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `ShortYearRelativeV1`
+    ShortYearRelativeV1,
+    RelativeTimePatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `NarrowYearRelativeV1`
+    NarrowYearRelativeV1,
+    RelativeTimePatternData<'static>,
+);
 
-#[icu_provider::data_struct(
-    LongSecondRelativeTimeFormatDataV1Marker = "relativetime/long/second@1",
-    ShortSecondRelativeTimeFormatDataV1Marker = "relativetime/short/second@1",
-    NarrowSecondRelativeTimeFormatDataV1Marker = "relativetime/narrow/second@1",
-    LongMinuteRelativeTimeFormatDataV1Marker = "relativetime/long/minute@1",
-    ShortMinuteRelativeTimeFormatDataV1Marker = "relativetime/short/minute@1",
-    NarrowMinuteRelativeTimeFormatDataV1Marker = "relativetime/narrow/minute@1",
-    LongHourRelativeTimeFormatDataV1Marker = "relativetime/long/hour@1",
-    ShortHourRelativeTimeFormatDataV1Marker = "relativetime/short/hour@1",
-    NarrowHourRelativeTimeFormatDataV1Marker = "relativetime/narrow/hour@1",
-    LongDayRelativeTimeFormatDataV1Marker = "relativetime/long/day@1",
-    ShortDayRelativeTimeFormatDataV1Marker = "relativetime/short/day@1",
-    NarrowDayRelativeTimeFormatDataV1Marker = "relativetime/narrow/day@1",
-    LongWeekRelativeTimeFormatDataV1Marker = "relativetime/long/week@1",
-    ShortWeekRelativeTimeFormatDataV1Marker = "relativetime/short/week@1",
-    NarrowWeekRelativeTimeFormatDataV1Marker = "relativetime/narrow/week@1",
-    LongMonthRelativeTimeFormatDataV1Marker = "relativetime/long/month@1",
-    ShortMonthRelativeTimeFormatDataV1Marker = "relativetime/short/month@1",
-    NarrowMonthRelativeTimeFormatDataV1Marker = "relativetime/narrow/month@1",
-    LongQuarterRelativeTimeFormatDataV1Marker = "relativetime/long/quarter@1",
-    ShortQuarterRelativeTimeFormatDataV1Marker = "relativetime/short/quarter@1",
-    NarrowQuarterRelativeTimeFormatDataV1Marker = "relativetime/narrow/quarter@1",
-    LongYearRelativeTimeFormatDataV1Marker = "relativetime/long/year@1",
-    ShortYearRelativeTimeFormatDataV1Marker = "relativetime/short/year@1",
-    NarrowYearRelativeTimeFormatDataV1Marker = "relativetime/narrow/year@1"
-)]
-#[derive(Debug, Clone, PartialEq)]
+/// Relative time format  data struct.
+#[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::relativetime::provider))]
 #[yoke(prove_covariance_manually)]
-pub struct RelativeTimePatternDataV1<'data> {
+pub struct RelativeTimePatternData<'data> {
     /// Mapping for relative times with unique names.
     /// Example.
     /// In English, "-1" corresponds to "yesterday", "1" corresponds to "tomorrow".
@@ -73,8 +167,4 @@ pub struct RelativeTimePatternDataV1<'data> {
     pub future: PluralElementsPackedCow<'data, SinglePlaceholderPattern>,
 }
 
-pub(crate) struct ErasedRelativeTimeFormatV1Marker;
-
-impl DynamicDataMarker for ErasedRelativeTimeFormatV1Marker {
-    type DataStruct = RelativeTimePatternDataV1<'static>;
-}
+icu_provider::data_struct!(RelativeTimePatternData<'_>, #[cfg(feature = "datagen")]);

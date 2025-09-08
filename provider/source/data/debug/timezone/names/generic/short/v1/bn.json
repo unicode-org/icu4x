@@ -1,0 +1,8 @@
+{
+  "defaults": {
+    "66": "IST"
+  },
+  "overrides": {
+    "utc": "UTC"
+  }
+}

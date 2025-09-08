@@ -10,15 +10,15 @@
 //! * [`Script`] is an optional field representing the written script used by the locale.
 //! * [`Region`] is the region used by the locale.
 //! * [`Variants`] is a list of optional [`Variant`] subtags containing information about the
-//!                variant adjustments used by the locale.
+//!   variant adjustments used by the locale.
 //!
-//! Subtags can be used in isolation, and all basic operations such as parsing, syntax canonicalization
+//! Subtags can be used in isolation, and all basic operations such as parsing, syntax normalization
 //! and serialization are supported on each individual subtag, but most commonly
 //! they are used to construct a [`LanguageIdentifier`] instance.
 //!
 //! [`Variants`] is a special structure which contains a list of [`Variant`] subtags.
 //! It is wrapped around to allow for sorting and deduplication of variants, which
-//! is one of the required steps of language identifier and locale syntax canonicalization.
+//! is one of the required steps of language identifier and locale syntax normalization.
 //!
 //! # Examples
 //!
@@ -40,8 +40,8 @@
 //! assert_eq!(variant.as_str(), "macos");
 //! ```
 //!
-//! `Notice`: The subtags are canonicalized on parsing. That means
-//! that all operations work on a canonicalized version of the subtag
+//! `Notice`: The subtags are normalized on parsing. That means
+//! that all operations work on a normalized version of the subtag
 //! and serialization is very cheap.
 //!
 //! [`LanguageIdentifier`]: super::LanguageIdentifier
@@ -91,8 +91,9 @@ impl_tinystr_subtag!(
     ["f", "toolooong"],
 );
 
-#[allow(clippy::len_without_is_empty)]
+#[expect(clippy::len_without_is_empty)]
 impl Subtag {
+    #[allow(dead_code)]
     pub(crate) const fn valid_key(v: &[u8]) -> bool {
         2 <= v.len() && v.len() <= 8
     }
@@ -120,6 +121,7 @@ impl Subtag {
         self.0
     }
 
+    #[allow(dead_code)]
     pub(crate) fn to_ascii_lowercase(self) -> Self {
         Self(self.0.to_ascii_lowercase())
     }

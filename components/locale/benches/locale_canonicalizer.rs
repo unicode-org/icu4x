@@ -8,7 +8,7 @@ use icu_locale::LocaleExpander;
 use icu_locale_core::Locale;
 
 fn canonicalize_bench(c: &mut Criterion) {
-    let lc = LocaleCanonicalizer::new();
+    let lc = LocaleCanonicalizer::new_common();
 
     let mut group = c.benchmark_group("uncanonicalized");
 
@@ -38,7 +38,7 @@ fn canonicalize_bench(c: &mut Criterion) {
 }
 
 fn canonicalize_noop_bench(c: &mut Criterion) {
-    let lc = LocaleCanonicalizer::new();
+    let lc = LocaleCanonicalizer::new_common();
 
     let mut group = c.benchmark_group("canonicalized");
 
@@ -69,7 +69,7 @@ fn canonicalize_noop_bench(c: &mut Criterion) {
 }
 
 fn maximize_bench(c: &mut Criterion) {
-    let lc = LocaleExpander::new();
+    let lc = LocaleExpander::new_common();
 
     let mut group = c.benchmark_group("likelysubtags");
 
@@ -81,7 +81,7 @@ fn maximize_bench(c: &mut Criterion) {
         b.iter(|| {
             for locale in &locales {
                 let mut locale = locale.clone();
-                lc.maximize(black_box(&mut locale));
+                lc.maximize(black_box(&mut locale.id));
             }
         })
     });
@@ -90,7 +90,7 @@ fn maximize_bench(c: &mut Criterion) {
         b.iter(|| {
             for locale in &locales {
                 let mut locale = locale.clone();
-                lc.minimize(black_box(&mut locale));
+                lc.minimize(black_box(&mut locale.id));
             }
         })
     });

@@ -22,43 +22,39 @@ all-features = true
 [dependencies]
 displaydoc = { workspace = true }
 fixed_decimal = { workspace = true }
-icu_provider = { workspace = true, features = ["macros"] }
+icu_provider = { workspace = true }
+icu_locale_core = { workspace = true }
 writeable = { workspace = true }
-
+zerovec = { workspace = true }
 databake = { workspace = true, features = ["derive"], optional = true}
-serde = { workspace = true, features = ["derive", "alloc"], optional = true }
+serde = { workspace = true, features = ["derive"], optional = true }
+tinystr = { workspace = true }
 
 icu_decimal_data = { workspace = true, optional = true }
+icu_locale = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
-icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
-icu_locale_core = { path = "../../components/locale_core" }
 icu_provider_adapters = { path = "../../provider/adapters" }
 rand = { workspace = true }
 rand_pcg = { workspace = true }
 rand_distr = { workspace = true }
-getrandom = { workspace = true, features = ["js"] }
+getrandom = { workspace = true, features = ["wasm_js"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = { workspace = true }
 
 [features]
 default = ["compiled_data"]
-std = ["fixed_decimal/std", "icu_locale_core/std", "icu_provider/std"]
-serde = ["dep:serde", "icu_provider/serde"]
-datagen = ["serde", "dep:databake"]
-bench = ["serde"]
-compiled_data = ["dep:icu_decimal_data"]
+serde = ["dep:serde", "icu_provider/serde", "zerovec/serde", "tinystr/serde"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake", "icu_provider/export", "alloc"]
+compiled_data = ["dep:icu_decimal_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
+ryu = ["fixed_decimal/ryu"]
+alloc = ["serde?/alloc", "zerovec/alloc"]
 
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_run_size_tests)'] }
 
 [[bench]]
 name = "fixed_decimal_format"
 harness = false
-
-[[example]]
-name = "code_line_diff"
-required-features = ["serde"]

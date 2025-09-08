@@ -15,7 +15,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::rules::runtime::ast::Rule;
+use crate::provider::rules::runtime::ast::Rule;
 use crate::{PluralCategory, PluralElements, PluralElementsInner, PluralOperands, PluralRules};
 use alloc::borrow::{Cow, ToOwned};
 use alloc::boxed::Box;
@@ -23,7 +23,6 @@ use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;
 use icu_provider::prelude::*;
-use icu_provider::DynamicDataMarker;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 use zerovec::ule::vartuple::VarTuple;
@@ -34,6 +33,8 @@ use zerovec::ule::UleError;
 use zerovec::ule::VarULE;
 use zerovec::ule::ULE;
 use zerovec::VarZeroSlice;
+
+pub mod rules;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -52,23 +53,45 @@ const _: () = {
     use icu_plurals_data::*;
     mod icu {
         pub use crate as plurals;
-        pub use icu_plurals_data::icu_locale as locale;
+        pub use icu_locale as locale;
     }
 
     make_provider!(Baked);
-    impl_cardinal_v1_marker!(Baked);
-    impl_ordinal_v1_marker!(Baked);
+    impl_plurals_cardinal_v1!(Baked);
+    impl_plurals_ordinal_v1!(Baked);
     #[cfg(feature = "experimental")]
-    impl_plural_ranges_v1_marker!(Baked);
+    impl_plurals_ranges_v1!(Baked);
 };
+
+icu_provider::data_marker!(
+    /// Data for cardinal classification
+    PluralsCardinalV1,
+    "plurals/cardinal/v1",
+    PluralRulesData<'static>,
+);
+
+icu_provider::data_marker!(
+    /// Data for ordinal classification
+    PluralsOrdinalV1,
+    "plurals/ordinal/v1",
+    PluralRulesData<'static>,
+);
+
+#[cfg(feature = "experimental")]
+icu_provider::data_marker!(
+    /// Data for plural range formatting
+    PluralsRangesV1,
+    "plurals/ranges/v1",
+    PluralRanges<'static>
+);
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    CardinalV1Marker::INFO,
-    OrdinalV1Marker::INFO,
+    PluralsCardinalV1::INFO,
+    PluralsOrdinalV1::INFO,
     #[cfg(feature = "experimental")]
-    PluralRangesV1Marker::INFO,
+    PluralsRangesV1::INFO,
 ];
 
 /// Plural rule strings conforming to UTS 35 syntax. Includes separate fields for five of the six
@@ -81,45 +104,39 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(
-    CardinalV1Marker = "plurals/cardinal@1",
-    OrdinalV1Marker = "plurals/ordinal@1"
-)]
-#[derive(Default, Clone, PartialEq, Debug)]
+#[derive(Default, Clone, PartialEq, Debug, Yokeable, ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct PluralRulesV1<'data> {
-    /// Rule that matches [`PluralCategory::Zero`](super::PluralCategory::Zero), or `None` if not present.
+pub struct PluralRulesData<'data> {
+    /// Rule that matches [`PluralCategory::Zero`], or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub zero: Option<Rule<'data>>,
-    /// Rule that matches [`PluralCategory::One`](super::PluralCategory::One), or `None` if not present.
+    /// Rule that matches [`PluralCategory::One`], or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub one: Option<Rule<'data>>,
-    /// Rule that matches [`PluralCategory::Two`](super::PluralCategory::Two), or `None` if not present.
+    /// Rule that matches [`PluralCategory::Two`], or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub two: Option<Rule<'data>>,
-    /// Rule that matches [`PluralCategory::Few`](super::PluralCategory::Few), or `None` if not present.
+    /// Rule that matches [`PluralCategory::Few`], or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub few: Option<Rule<'data>>,
-    /// Rule that matches [`PluralCategory::Many`](super::PluralCategory::Many), or `None` if not present.
+    /// Rule that matches [`PluralCategory::Many`], or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub many: Option<Rule<'data>>,
 }
 
-pub(crate) struct ErasedPluralRulesV1Marker;
+icu_provider::data_struct!(
+    PluralRulesData<'_>,
+    #[cfg(feature = "datagen")]
+);
 
-impl DynamicDataMarker for ErasedPluralRulesV1Marker {
-    type DataStruct = PluralRulesV1<'static>;
-}
-
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 pub use ranges::*;
 
-#[cfg(any(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "experimental")]
 mod ranges {
-    use crate::PluralCategory;
-    use icu_provider::prelude::*;
+    use super::*;
     use zerovec::ZeroMap;
 
     /// [`PluralCategory`] but serializable as provider data.
@@ -263,7 +280,7 @@ mod ranges {
 
             struct HumanReadableVisitor;
 
-            impl<'de> Visitor<'de> for HumanReadableVisitor {
+            impl Visitor<'_> for HumanReadableVisitor {
                 type Value = UnvalidatedPluralRange;
 
                 fn expecting(&self, formatter: &mut alloc::fmt::Formatter) -> alloc::fmt::Result {
@@ -319,13 +336,12 @@ mod ranges {
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    #[icu_provider::data_struct(PluralRangesV1Marker = "plurals/ranges@1")]
-    #[derive(Clone, PartialEq, Debug)]
+    #[derive(Clone, PartialEq, Debug, Yokeable, ZeroFrom)]
     #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
     #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     #[yoke(prove_covariance_manually)]
-    pub struct PluralRangesV1<'data> {
+    pub struct PluralRanges<'data> {
         /// Map between the categories of the endpoints of a range and its corresponding
         /// category.
         ///
@@ -334,6 +350,11 @@ mod ranges {
         #[cfg_attr(feature = "serde", serde(borrow))]
         pub ranges: ZeroMap<'data, UnvalidatedPluralRange, RawPluralCategory>,
     }
+
+    icu_provider::data_struct!(
+        PluralRanges<'_>,
+        #[cfg(feature = "datagen")]
+    );
 }
 
 /// A sized packed [`PluralElements`] suitable for use in data structs.
@@ -374,7 +395,7 @@ pub struct PluralElementsPackedCow<'data, V: VarULE + ?Sized> {
 /// A bitpacked DST for [`PluralElements`].
 ///
 /// Can be put in a [`Cow`] or a [`VarZeroSlice`].
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq)]
 #[repr(transparent)]
 pub struct PluralElementsPackedULE<V: VarULE + ?Sized> {
     _v: PhantomData<V>,
@@ -395,6 +416,16 @@ pub struct PluralElementsPackedULE<V: VarULE + ?Sized> {
     bytes: [u8],
 }
 
+impl<V: VarULE + fmt::Debug + ?Sized> fmt::Debug for PluralElementsPackedULE<V> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let unpacked = self.as_parts();
+        f.debug_struct("PluralElementsPackedULE")
+            .field("parts", &unpacked)
+            .field("bytes", &&self.bytes)
+            .finish()
+    }
+}
+
 impl<V: VarULE + ?Sized> ToOwned for PluralElementsPackedULE<V> {
     type Owned = Box<PluralElementsPackedULE<V>>;
     fn to_owned(&self) -> Self::Owned {
@@ -402,11 +433,19 @@ impl<V: VarULE + ?Sized> ToOwned for PluralElementsPackedULE<V> {
     }
 }
 
+// Safety (based on the safety checklist on the VarULE trait):
+//  1. PluralElementsPackedULE does not include any uninitialized or padding bytes: it is transparent over a VarULE type ([u8])
+//  2. PluralElementsPackedULE is aligned to 1 byte: it is transparent over a VarULE type ([u8])
+//  3. The impl of `validate_bytes()` returns an error if any byte is not valid.
+//  4. The impl of `validate_bytes()` returns an error if the slice cannot be used in its entirety
+//  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
+//  6. `parse_bytes()` is equivalent to `validate_bytes()` followed by `from_bytes_unchecked()`
+//  7. byte equality is semantic equality
 unsafe impl<V> VarULE for PluralElementsPackedULE<V>
 where
     V: VarULE + ?Sized,
 {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         let unpacked_bytes =
             Self::unpack_bytes(bytes).ok_or_else(|| UleError::length::<Self>(bytes.len()))?;
         // The high bit of lead_byte was read in unpack_bytes.
@@ -416,14 +455,14 @@ where
             return Err(UleError::parse::<Self>());
         }
         // Now validate the two variable-length slices.
-        V::validate_byte_slice(unpacked_bytes.v_bytes)?;
+        V::validate_bytes(unpacked_bytes.v_bytes)?;
         if let Some(specials_bytes) = unpacked_bytes.specials_bytes {
-            PluralElementsTupleSliceVarULE::<V>::validate_byte_slice(specials_bytes)?;
+            PluralElementsTupleSliceVarULE::<V>::validate_bytes(specials_bytes)?;
         }
         Ok(())
     }
 
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // Safety: the bytes are valid by trait invariant, and we are transparent over bytes
         core::mem::transmute(bytes)
     }
@@ -437,8 +476,8 @@ where
     ///
     /// # Safety
     ///
-    /// The bytes must be valid according to [`PluralElementsPackedULE::validate_byte_slice`].
-    pub const unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
+    /// The bytes must be valid according to [`PluralElementsPackedULE::validate_bytes`].
+    pub const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // Safety: the bytes are valid by trait invariant, and we are transparent over bytes
         core::mem::transmute(bytes)
     }
@@ -448,7 +487,7 @@ where
     /// 2. Bytes corresponding to the default V
     /// 3. Bytes corresponding to the specials slice, if present
     #[inline]
-    fn unpack_bytes(bytes: &[u8]) -> Option<PluralElementsUnpackedBytes> {
+    fn unpack_bytes(bytes: &[u8]) -> Option<PluralElementsUnpackedBytes<'_>> {
         let (lead_byte, remainder) = bytes.split_first()?;
         if lead_byte & 0x80 == 0 {
             Some(PluralElementsUnpackedBytes {
@@ -458,12 +497,7 @@ where
             })
         } else {
             let (second_byte, remainder) = remainder.split_first()?;
-            // TODO in Rust 1.80: use split_at_checked
-            let v_length = *second_byte as usize;
-            if remainder.len() < v_length {
-                return None;
-            }
-            let (v_bytes, remainder) = remainder.split_at(v_length);
+            let (v_bytes, remainder) = remainder.split_at_checked(*second_byte as usize)?;
             Some(PluralElementsUnpackedBytes {
                 lead_byte: *lead_byte,
                 v_bytes,
@@ -473,17 +507,17 @@ where
     }
 
     /// Unpacks this structure into the default value and the optional list of specials.
-    fn as_parts(&self) -> PluralElementsUnpacked<V> {
+    fn as_parts(&self) -> PluralElementsUnpacked<'_, V> {
         // Safety: the bytes are valid by invariant
         let unpacked_bytes = unsafe { Self::unpack_bytes(&self.bytes).unwrap_unchecked() };
         let metadata = FourBitMetadata(unpacked_bytes.lead_byte & 0x0F);
         // Safety: the bytes are valid by invariant
-        let default = unsafe { V::from_byte_slice_unchecked(unpacked_bytes.v_bytes) };
-        #[allow(clippy::manual_map)] // more explicit with the unsafe code
+        let default = unsafe { V::from_bytes_unchecked(unpacked_bytes.v_bytes) };
+        #[expect(clippy::manual_map)] // more explicit with the unsafe code
         let specials = if let Some(specials_bytes) = unpacked_bytes.specials_bytes {
             // Safety: the bytes are valid by invariant
             Some(unsafe {
-                PluralElementsTupleSliceVarULE::<V>::from_byte_slice_unchecked(specials_bytes)
+                PluralElementsTupleSliceVarULE::<V>::from_bytes_unchecked(specials_bytes)
             })
         } else {
             None
@@ -503,21 +537,21 @@ where
         match parts.specials {
             Some(specials) => {
                 if op.is_exactly_zero() {
-                    if let Some(value) = get_special(specials, PluralElementsKeysV1::ExplicitZero) {
+                    if let Some(value) = get_special(specials, PluralElementsKeys::ExplicitZero) {
                         return value;
                     }
                 }
                 if op.is_exactly_one() {
-                    if let Some(value) = get_special(specials, PluralElementsKeysV1::ExplicitOne) {
+                    if let Some(value) = get_special(specials, PluralElementsKeys::ExplicitOne) {
                         return value;
                     }
                 }
                 match category {
-                    PluralCategory::Zero => Some(PluralElementsKeysV1::Zero),
-                    PluralCategory::One => Some(PluralElementsKeysV1::One),
-                    PluralCategory::Two => Some(PluralElementsKeysV1::Two),
-                    PluralCategory::Few => Some(PluralElementsKeysV1::Few),
-                    PluralCategory::Many => Some(PluralElementsKeysV1::Many),
+                    PluralCategory::Zero => Some(PluralElementsKeys::Zero),
+                    PluralCategory::One => Some(PluralElementsKeys::One),
+                    PluralCategory::Two => Some(PluralElementsKeys::Two),
+                    PluralCategory::Few => Some(PluralElementsKeys::Few),
+                    PluralCategory::Many => Some(PluralElementsKeys::Many),
                     PluralCategory::Other => None,
                 }
                 .and_then(|key| get_special(specials, key))
@@ -526,14 +560,25 @@ where
         }
         .unwrap_or(parts.default)
     }
+
+    /// Recovers the [`PluralElements`] corresponding to this packed structure.
+    #[cfg(feature = "datagen")]
+    pub fn decode(&self) -> PluralElements<(FourBitMetadata, &V)> {
+        PluralElements(PluralElementsInner::from_packed(self))
+    }
+
+    /// Returns the value for the default ("other") plural variant.
+    pub fn get_default(&self) -> (FourBitMetadata, &V) {
+        self.as_parts().default
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[zerovec::make_ule(PluralCategoryV1ULE)]
+#[zerovec::make_ule(PluralCategoryULE)]
 #[repr(u8)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-enum PluralElementsKeysV1 {
+enum PluralElementsKeys {
     Zero = 0,
     One = 1,
     Two = 2,
@@ -547,36 +592,36 @@ impl<T> PluralElementsInner<T>
 where
     T: PartialEq,
 {
-    fn get_specials_tuples(&self) -> impl Iterator<Item = (PluralElementsKeysV1, &T)> {
+    fn get_specials_tuples(&self) -> impl Iterator<Item = (PluralElementsKeys, &T)> {
         [
             self.zero
                 .as_ref()
                 .filter(|&p| *p != self.other)
-                .map(|s| (PluralElementsKeysV1::Zero, s)),
+                .map(|s| (PluralElementsKeys::Zero, s)),
             self.one
                 .as_ref()
                 .filter(|&p| *p != self.other)
-                .map(|s| (PluralElementsKeysV1::One, s)),
+                .map(|s| (PluralElementsKeys::One, s)),
             self.two
                 .as_ref()
                 .filter(|&p| *p != self.other)
-                .map(|s| (PluralElementsKeysV1::Two, s)),
+                .map(|s| (PluralElementsKeys::Two, s)),
             self.few
                 .as_ref()
                 .filter(|&p| *p != self.other)
-                .map(|s| (PluralElementsKeysV1::Few, s)),
+                .map(|s| (PluralElementsKeys::Few, s)),
             self.many
                 .as_ref()
                 .filter(|&p| *p != self.other)
-                .map(|s| (PluralElementsKeysV1::Many, s)),
+                .map(|s| (PluralElementsKeys::Many, s)),
             self.explicit_zero
                 .as_ref()
                 .filter(|&p| *p != self.other)
-                .map(|s| (PluralElementsKeysV1::ExplicitZero, s)),
+                .map(|s| (PluralElementsKeys::ExplicitZero, s)),
             self.explicit_one
                 .as_ref()
                 .filter(|&p| *p != self.other)
-                .map(|s| (PluralElementsKeysV1::ExplicitOne, s)),
+                .map(|s| (PluralElementsKeys::ExplicitOne, s)),
         ]
         .into_iter()
         .flatten()
@@ -610,10 +655,10 @@ impl FourBitMetadata {
     }
 }
 
-/// A pair of [`PluralElementsKeysV1`] and [`FourBitMetadata`].
+/// A pair of [`PluralElementsKeys`] and [`FourBitMetadata`].
 #[derive(Debug, Copy, Clone)]
 struct PluralCategoryAndMetadata {
-    pub plural_category: PluralElementsKeysV1,
+    pub plural_category: PluralElementsKeys,
     pub metadata: FourBitMetadata,
 }
 
@@ -627,7 +672,7 @@ struct PluralCategoryAndMetadataUnpacked {
 #[repr(transparent)]
 struct PluralCategoryAndMetadataPackedULE(
     /// Representation: `ppppmmmm`
-    /// - `pppp` are a valid [`PluralElementsKeysV1`]
+    /// - `pppp` are a valid [`PluralElementsKeys`]
     /// - `mmmm` are a valid [`FourBitMetadata`]
     ///
     /// The valid values are determined by their respective types.
@@ -650,12 +695,12 @@ impl From<PluralCategoryAndMetadata> for PluralCategoryAndMetadataPackedULE {
 //
 // 1. The type is a single byte, not padding.
 // 2. The type is a single byte, so it has align(1).
-// 3. `validate_byte_slice` checks the validity of every byte.
-// 4. `validate_byte_slice` checks the validity of every byte.
+// 3. `validate_bytes` checks the validity of every byte.
+// 4. `validate_bytes` checks the validity of every byte.
 // 5. All other methods are be left with their default impl.
 // 6. The represented enums implement Eq by byte equality.
 unsafe impl ULE for PluralCategoryAndMetadataPackedULE {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
         bytes
             .iter()
             .all(|byte| {
@@ -686,7 +731,7 @@ impl PluralCategoryAndMetadataPackedULE {
 
 impl PluralCategoryAndMetadata {
     fn try_from_unpacked(unpacked: PluralCategoryAndMetadataUnpacked) -> Option<Self> {
-        let plural_category = PluralElementsKeysV1::new_from_u8(unpacked.plural_category_byte)?;
+        let plural_category = PluralElementsKeys::new_from_u8(unpacked.plural_category_byte)?;
         let metadata = FourBitMetadata::try_from_byte(unpacked.metadata_byte)?;
         Some(Self {
             plural_category,
@@ -720,6 +765,7 @@ struct PluralElementsPackedBuilder<'a, T> {
 }
 
 /// Internal unpacked and deserialized values from a [`PluralElementsPackedULE`].
+#[derive(Debug)]
 struct PluralElementsUnpacked<'a, V: VarULE + ?Sized> {
     pub default: PluralElementWithMetadata<'a, V>,
     pub specials: Option<&'a PluralElementsTupleSliceVarULE<V>>,
@@ -735,7 +781,7 @@ struct PluralElementsUnpackedBytes<'a> {
 /// Helper function to access a value from [`PluralElementsTupleSliceVarULE`]
 fn get_special<V: VarULE + ?Sized>(
     data: &PluralElementsTupleSliceVarULE<V>,
-    key: PluralElementsKeysV1,
+    key: PluralElementsKeys,
 ) -> Option<(FourBitMetadata, &V)> {
     data.iter()
         .filter_map(|ule| {
@@ -805,22 +851,25 @@ where
 
     fn encode_var_ule_write(&self, dst: &mut [u8]) {
         let builder = self.0.to_packed_builder();
-        #[allow(clippy::unwrap_used)] // by trait invariant
+        #[expect(clippy::unwrap_used)] // by trait invariant
         let (lead_byte, remainder) = dst.split_first_mut().unwrap();
         *lead_byte = builder.default.0.get();
         if let Some(specials) = builder.specials {
             *lead_byte |= 0x80;
-            #[allow(clippy::unwrap_used)] // by trait invariant
+            #[expect(clippy::unwrap_used)] // by trait invariant
             let (second_byte, remainder) = remainder.split_first_mut().unwrap();
             *second_byte = match u8::try_from(builder.default.1.encode_var_ule_len()) {
                 Ok(x) => x,
                 // TODO: Inform the user more nicely that their data doesn't fit in our packed structure
-                #[allow(clippy::panic)] // for now okay since it is mostly only during datagen
+                #[expect(clippy::panic)] // for now okay since it is mostly only during datagen
                 Err(_) => {
                     panic!("other value too long to be packed: {self:?}")
                 }
             };
-            let (v_bytes, specials_bytes) = remainder.split_at_mut(*second_byte as usize);
+            #[expect(clippy::unwrap_used)] // for now okay since it is mostly only during datagen
+            let (v_bytes, specials_bytes) = remainder
+                .split_at_mut_checked(*second_byte as usize)
+                .unwrap();
             builder.default.1.encode_var_ule_write(v_bytes);
             EncodeAsVarULE::<PluralElementsTupleSliceVarULE<V>>::encode_var_ule_write(
                 &specials,
@@ -843,25 +892,25 @@ where
             other: parts.default,
             zero: parts
                 .specials
-                .and_then(|specials| get_special(specials, PluralElementsKeysV1::Zero)),
+                .and_then(|specials| get_special(specials, PluralElementsKeys::Zero)),
             one: parts
                 .specials
-                .and_then(|specials| get_special(specials, PluralElementsKeysV1::One)),
+                .and_then(|specials| get_special(specials, PluralElementsKeys::One)),
             two: parts
                 .specials
-                .and_then(|specials| get_special(specials, PluralElementsKeysV1::Two)),
+                .and_then(|specials| get_special(specials, PluralElementsKeys::Two)),
             few: parts
                 .specials
-                .and_then(|specials| get_special(specials, PluralElementsKeysV1::Few)),
+                .and_then(|specials| get_special(specials, PluralElementsKeys::Few)),
             many: parts
                 .specials
-                .and_then(|specials| get_special(specials, PluralElementsKeysV1::Many)),
+                .and_then(|specials| get_special(specials, PluralElementsKeys::Many)),
             explicit_zero: parts
                 .specials
-                .and_then(|specials| get_special(specials, PluralElementsKeysV1::ExplicitZero)),
+                .and_then(|specials| get_special(specials, PluralElementsKeys::ExplicitZero)),
             explicit_one: parts
                 .specials
-                .and_then(|specials| get_special(specials, PluralElementsKeysV1::ExplicitOne)),
+                .and_then(|specials| get_special(specials, PluralElementsKeys::ExplicitOne)),
         }
     }
 }
@@ -894,7 +943,7 @@ where
             ))
         } else {
             let bytes = <&[u8]>::deserialize(deserializer)?;
-            PluralElementsPackedULE::<V>::parse_byte_slice(bytes).map_err(serde::de::Error::custom)
+            PluralElementsPackedULE::<V>::parse_bytes(bytes).map_err(serde::de::Error::custom)
         }
     }
 }
@@ -915,7 +964,7 @@ where
             Ok(plural_elements.into_packed())
         } else {
             let bytes = <&[u8]>::deserialize(deserializer)?;
-            PluralElementsPackedULE::<V>::parse_byte_slice(bytes)
+            PluralElementsPackedULE::<V>::parse_bytes(bytes)
                 .map(|ule| ule.to_owned())
                 .map_err(serde::de::Error::custom)
         }
@@ -936,7 +985,7 @@ where
                 PluralElementsInner::from_packed(self);
             plural_elements.serialize(serializer)
         } else {
-            serializer.serialize_bytes(self.as_byte_slice())
+            serializer.serialize_bytes(self.as_bytes())
         }
     }
 }
@@ -952,7 +1001,7 @@ where
         let bytes = (&self.bytes).bake(ctx);
         databake::quote! {
             // Safety: the bytes came directly from self.bytes on the previous line.
-            unsafe { icu_plurals::provider::PluralElementsPackedULE::from_byte_slice_unchecked(#bytes) }
+            unsafe { icu_plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(#bytes) }
         }
     }
 }
@@ -997,7 +1046,7 @@ where
 }
 
 // Need a manual impl because the derive(Clone) impl bounds are wrong
-impl<'data, V> Clone for PluralElementsPackedCow<'data, V>
+impl<V> Clone for PluralElementsPackedCow<'_, V>
 where
     V: VarULE + ?Sized,
 {
@@ -1075,10 +1124,10 @@ fn test_serde_nonsingleton_roundtrip() {
     assert_eq!(
         postcard_bytes,
         &[
-            16,   // Postcard header
+            12,   // Postcard header
             0x80, // Discriminant
             3, b'a', b'b', b'c', // String of length 3
-            1, 0, 0, 0, 0, 0, // VarZeroVec of length 1
+            1, 0, // VarZeroVec of length 1
             0x10, b'd', b'e', b'f', b'g' // Plural category 1 and string "defg"
         ]
     );

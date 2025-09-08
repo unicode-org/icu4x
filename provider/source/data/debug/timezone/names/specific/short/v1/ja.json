@@ -1,0 +1,28 @@
+{
+  "defaults": [
+    [
+      [
+        75,
+        "Standard"
+      ],
+      "JST"
+    ],
+    [
+      [
+        75,
+        "Daylight"
+      ],
+      "JDT"
+    ]
+  ],
+  "overrides": [
+    [
+      [
+        "utc",
+        "Standard"
+      ],
+      "UTC"
+    ]
+  ],
+  "use_standard": []
+}

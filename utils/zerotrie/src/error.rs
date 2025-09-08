@@ -21,3 +21,5 @@ pub enum ZeroTrieBuildError {
     #[displaydoc("Mixed-case data added to case-insensitive trie")]
     MixedCase,
 }
+
+impl core::error::Error for ZeroTrieBuildError {}

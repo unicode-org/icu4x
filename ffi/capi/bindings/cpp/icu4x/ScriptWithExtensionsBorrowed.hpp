@@ -8,7 +8,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 #include "CodePointSetData.hpp"
 #include "ScriptExtensionsSet.hpp"
@@ -17,37 +19,36 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
-    uint16_t icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv1(const icu4x::capi::ScriptWithExtensionsBorrowed* self, uint32_t code_point);
-    
-    icu4x::capi::ScriptExtensionsSet* icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(const icu4x::capi::ScriptWithExtensionsBorrowed* self, uint32_t code_point);
-    
-    bool icu4x_ScriptWithExtensionsBorrowed_has_script_mv1(const icu4x::capi::ScriptWithExtensionsBorrowed* self, uint32_t code_point, uint16_t script);
-    
+
+    uint16_t icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv1(const icu4x::capi::ScriptWithExtensionsBorrowed* self, char32_t ch);
+
+    icu4x::capi::ScriptExtensionsSet* icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(const icu4x::capi::ScriptWithExtensionsBorrowed* self, char32_t ch);
+
+    bool icu4x_ScriptWithExtensionsBorrowed_has_script_mv1(const icu4x::capi::ScriptWithExtensionsBorrowed* self, char32_t ch, uint16_t script);
+
     icu4x::capi::CodePointSetData* icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_set_mv1(const icu4x::capi::ScriptWithExtensionsBorrowed* self, uint16_t script);
-    
-    
+
     void icu4x_ScriptWithExtensionsBorrowed_destroy_mv1(ScriptWithExtensionsBorrowed* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
 
-inline uint16_t icu4x::ScriptWithExtensionsBorrowed::get_script_val(uint32_t code_point) const {
+inline uint16_t icu4x::ScriptWithExtensionsBorrowed::get_script_val(char32_t ch) const {
   auto result = icu4x::capi::icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv1(this->AsFFI(),
-    code_point);
+    ch);
   return result;
 }
 
-inline std::unique_ptr<icu4x::ScriptExtensionsSet> icu4x::ScriptWithExtensionsBorrowed::get_script_extensions_val(uint32_t code_point) const {
+inline std::unique_ptr<icu4x::ScriptExtensionsSet> icu4x::ScriptWithExtensionsBorrowed::get_script_extensions_val(char32_t ch) const {
   auto result = icu4x::capi::icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(this->AsFFI(),
-    code_point);
+    ch);
   return std::unique_ptr<icu4x::ScriptExtensionsSet>(icu4x::ScriptExtensionsSet::FromFFI(result));
 }
 
-inline bool icu4x::ScriptWithExtensionsBorrowed::has_script(uint32_t code_point, uint16_t script) const {
+inline bool icu4x::ScriptWithExtensionsBorrowed::has_script(char32_t ch, uint16_t script) const {
   auto result = icu4x::capi::icu4x_ScriptWithExtensionsBorrowed_has_script_mv1(this->AsFFI(),
-    code_point,
+    ch,
     script);
   return result;
 }

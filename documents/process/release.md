@@ -38,6 +38,7 @@ Once the release checklist is complete, the assigned release driver will perform
 
 * Land the changelog (see below)
   * Note: Do this _before_ tagging the release so that it is included in the tag
+* Remove all `-dev` prelease tags from `Cargo.toml`s
 * Go through the prerelease checklist again, ensuring that no problems were reintroduced in the PRs that landed since the opening of the checklist. (Things like doc prettification will likely need to be rerun!)
 * Release utils (see section below). Get the version bumps reviewed and checked in before releasing.
 * Update ICU4X package versions as needed. Most of this can be done by updating `workspace.package` in the root `Cargo.toml` and the `workspace.dependencies` entries there. Some `icu_*` crates do not follow the ICU4X versioning scheme like `icu_codepointtrie_builder` or experimental crates.
@@ -64,7 +65,7 @@ The ICU4X TC may decide to make a patch release of an ICU4X component on an old 
 * Fix the issue on the main branch. Get it reviewed and landed.
   * Include an update to the changelog.
   * If possible, avoid mixing functional changes with generated files (e.g. data or FFI) in the commit that lands on the main branch.
-* For util crates (and other crates not versioned with ICU4X), update their `Cargo.toml`s on `main` to reflect the version you wish to publish, to simplify things for people making ICU4X major/minor releases in the future. Do NOT publish from `main`.
+* If your release also requires uplifting patches to a utils crate (and other crates not versioned with ICU4X), update their `Cargo.toml`s on `main` to reflect the version you wish to publish, to simplify things for people making ICU4X major/minor releases in the future. In this case, try to avoid publishing the util from `main`: it's fine if there have already been out-of-cycle util releases on `main`, but if this is the first util release since the last ICU4X release, cherry pick just the necessary changes onto the release branch.
 * Check out the `release/x.y` branch. On this branch:
   * Cherry-pick the functional change from the main branch
   * Cherry-pick the changelog update if it was a separate commit

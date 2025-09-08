@@ -17,8 +17,8 @@ use icu_collections::{
 use icu_properties::script::ScriptWithExtensions;
 use icu_properties::{
     props::{
-        GeneralCategory, GeneralCategoryGroup, GraphemeClusterBreak, Script, SentenceBreak,
-        WordBreak,
+        CanonicalCombiningClass, EnumeratedProperty, GeneralCategory, GeneralCategoryGroup,
+        GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
     },
     CodePointMapData,
 };
@@ -26,18 +26,24 @@ use icu_properties::{
     props::{PatternWhiteSpace, XidContinue, XidStart},
     CodePointSetData,
 };
-use icu_properties::{provider::*, PropertyParser, UnicodeProperty};
+use icu_properties::{provider::*, PropertyParser};
 use icu_provider::prelude::*;
 
 /// The kind of error that occurred.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, displaydoc::Display)]
 #[non_exhaustive]
 pub enum ParseErrorKind {
-    /// An unexpected character was encountered. This variant implies the other variants
+    /// An unexpected character was encountered.
+    ///
+    /// This variant implies the other variants
     /// (notably `UnknownProperty` and `Unimplemented`) do not apply.
+    #[displaydoc("An unexpected character was encountered")]
     UnexpectedChar(char),
-    /// The property name or value is unknown. For property names, make sure you use the spelling
+    /// The property name or value is unknown.
+    ///
+    /// For property names, make sure you use the spelling
     /// defined in [ECMA-262](https://tc39.es/ecma262/#table-nonbinary-unicode-properties).
+    #[displaydoc("The property name or value is unknown")]
     UnknownProperty,
     /// A reference to an unknown variable.
     UnknownVariable,
@@ -47,11 +53,13 @@ pub enum ParseErrorKind {
     Eof,
     /// Something unexpected went wrong with our code. Please file a bug report on GitHub.
     Internal,
-    /// The provided syntax is not supported by us. Note that unknown properties will return the
+    /// The provided syntax is not supported by us.
+    ///
+    /// Note that unknown properties will return the
     /// `UnknownProperty` variant, not this one.
+    #[displaydoc("The provided syntax is not supported by us.")]
     Unimplemented,
-    /// The provided escape sequence is not a valid Unicode code point or represents too many
-    /// code points.
+    /// The provided escape sequence is not a valid Unicode code point or represents too many code points.
     InvalidEscape,
 }
 use zerovec::VarZeroVec;
@@ -148,7 +156,6 @@ impl ParseError {
                 }
 
                 // exclusive_end is at most source.len() due to str::is_char_boundary and at least 0 by type
-                #[allow(clippy::indexing_slicing)]
                 s.push_str(&source[..exclusive_end]);
                 s.push_str("← ");
             }
@@ -243,11 +250,15 @@ impl<'a> VariableMap<'a> {
     /// Insert a `VariableValue` into the `VariableMap`.
     ///
     /// Returns `Err` with the old value, if it exists, and does not update the map.
-    pub fn insert(&mut self, key: String, value: VariableValue<'a>) -> Result<(), &VariableValue> {
+    pub fn insert(
+        &mut self,
+        key: String,
+        value: VariableValue<'a>,
+    ) -> Result<(), &VariableValue<'_>> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.contains_key(&key) {
             // we just checked that this key exists
-            #[allow(clippy::indexing_slicing)]
+            #[expect(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
         }
 
@@ -266,11 +277,11 @@ impl<'a> VariableMap<'a> {
     /// Insert a `char` into the `VariableMap`.    
     ///
     /// Returns `Err` with the old value, if it exists, and does not update the map.
-    pub fn insert_char(&mut self, key: String, c: char) -> Result<(), &VariableValue> {
+    pub fn insert_char(&mut self, key: String, c: char) -> Result<(), &VariableValue<'_>> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.contains_key(&key) {
             // we just checked that this key exists
-            #[allow(clippy::indexing_slicing)]
+            #[expect(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
         }
 
@@ -281,11 +292,11 @@ impl<'a> VariableMap<'a> {
     /// Insert a `String` of any length into the `VariableMap`.
     ///
     /// Returns `Err` with the old value, if it exists, and does not update the map.
-    pub fn insert_string(&mut self, key: String, s: String) -> Result<(), &VariableValue> {
+    pub fn insert_string(&mut self, key: String, s: String) -> Result<(), &VariableValue<'_>> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.contains_key(&key) {
             // we just checked that this key exists
-            #[allow(clippy::indexing_slicing)]
+            #[expect(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
         }
 
@@ -302,11 +313,11 @@ impl<'a> VariableMap<'a> {
     /// Insert a `&str` of any length into the `VariableMap`.
     ///
     /// Returns `Err` with the old value, if it exists, and does not update the map.
-    pub fn insert_str(&mut self, key: String, s: &'a str) -> Result<(), &VariableValue> {
+    pub fn insert_str(&mut self, key: String, s: &'a str) -> Result<(), &VariableValue<'_>> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.contains_key(&key) {
             // we just checked that this key exists
-            #[allow(clippy::indexing_slicing)]
+            #[expect(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
         }
 
@@ -327,11 +338,11 @@ impl<'a> VariableMap<'a> {
         &mut self,
         key: String,
         set: CodePointInversionListAndStringList<'a>,
-    ) -> Result<(), &VariableValue> {
+    ) -> Result<(), &VariableValue<'_>> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.contains_key(&key) {
             // we just checked that this key exists
-            #[allow(clippy::indexing_slicing)]
+            #[expect(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
         }
         self.0.insert(key, VariableValue::UnicodeSet(set));
@@ -426,67 +437,71 @@ struct UnicodeSetBuilder<'a, 'b, P: ?Sized> {
 impl<'a, 'b, P> UnicodeSetBuilder<'a, 'b, P>
 where
     P: ?Sized
-        + DataProvider<AsciiHexDigitV1Marker>
-        + DataProvider<AlphabeticV1Marker>
-        + DataProvider<BidiControlV1Marker>
-        + DataProvider<BidiMirroredV1Marker>
-        + DataProvider<CaseIgnorableV1Marker>
-        + DataProvider<CasedV1Marker>
-        + DataProvider<ChangesWhenCasefoldedV1Marker>
-        + DataProvider<ChangesWhenCasemappedV1Marker>
-        + DataProvider<ChangesWhenLowercasedV1Marker>
-        + DataProvider<ChangesWhenNfkcCasefoldedV1Marker>
-        + DataProvider<ChangesWhenTitlecasedV1Marker>
-        + DataProvider<ChangesWhenUppercasedV1Marker>
-        + DataProvider<DashV1Marker>
-        + DataProvider<DefaultIgnorableCodePointV1Marker>
-        + DataProvider<DeprecatedV1Marker>
-        + DataProvider<DiacriticV1Marker>
-        + DataProvider<EmojiV1Marker>
-        + DataProvider<EmojiComponentV1Marker>
-        + DataProvider<EmojiModifierV1Marker>
-        + DataProvider<EmojiModifierBaseV1Marker>
-        + DataProvider<EmojiPresentationV1Marker>
-        + DataProvider<ExtendedPictographicV1Marker>
-        + DataProvider<ExtenderV1Marker>
-        + DataProvider<GraphemeBaseV1Marker>
-        + DataProvider<GraphemeClusterBreakV1Marker>
-        + DataProvider<GraphemeClusterBreakNameToValueV1Marker>
-        + DataProvider<GraphemeExtendV1Marker>
-        + DataProvider<HexDigitV1Marker>
-        + DataProvider<IdsBinaryOperatorV1Marker>
-        + DataProvider<IdsTrinaryOperatorV1Marker>
-        + DataProvider<IdContinueV1Marker>
-        + DataProvider<IdStartV1Marker>
-        + DataProvider<IdeographicV1Marker>
-        + DataProvider<JoinControlV1Marker>
-        + DataProvider<LogicalOrderExceptionV1Marker>
-        + DataProvider<LowercaseV1Marker>
-        + DataProvider<MathV1Marker>
-        + DataProvider<NoncharacterCodePointV1Marker>
-        + DataProvider<PatternSyntaxV1Marker>
-        + DataProvider<PatternWhiteSpaceV1Marker>
-        + DataProvider<QuotationMarkV1Marker>
-        + DataProvider<RadicalV1Marker>
-        + DataProvider<RegionalIndicatorV1Marker>
-        + DataProvider<SentenceBreakV1Marker>
-        + DataProvider<SentenceBreakNameToValueV1Marker>
-        + DataProvider<SentenceTerminalV1Marker>
-        + DataProvider<SoftDottedV1Marker>
-        + DataProvider<TerminalPunctuationV1Marker>
-        + DataProvider<UnifiedIdeographV1Marker>
-        + DataProvider<UppercaseV1Marker>
-        + DataProvider<VariationSelectorV1Marker>
-        + DataProvider<WhiteSpaceV1Marker>
-        + DataProvider<WordBreakV1Marker>
-        + DataProvider<WordBreakNameToValueV1Marker>
-        + DataProvider<XidContinueV1Marker>
-        + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
-        + DataProvider<GeneralCategoryV1Marker>
-        + DataProvider<ScriptNameToValueV1Marker>
-        + DataProvider<ScriptV1Marker>
-        + DataProvider<ScriptWithExtensionsPropertyV1Marker>
-        + DataProvider<XidStartV1Marker>,
+        + DataProvider<PropertyBinaryAlphabeticV1>
+        + DataProvider<PropertyBinaryAsciiHexDigitV1>
+        + DataProvider<PropertyBinaryBidiControlV1>
+        + DataProvider<PropertyBinaryBidiMirroredV1>
+        + DataProvider<PropertyBinaryCasedV1>
+        + DataProvider<PropertyBinaryCaseIgnorableV1>
+        + DataProvider<PropertyBinaryChangesWhenCasefoldedV1>
+        + DataProvider<PropertyBinaryChangesWhenCasemappedV1>
+        + DataProvider<PropertyBinaryChangesWhenLowercasedV1>
+        + DataProvider<PropertyBinaryChangesWhenNfkcCasefoldedV1>
+        + DataProvider<PropertyBinaryChangesWhenTitlecasedV1>
+        + DataProvider<PropertyBinaryChangesWhenUppercasedV1>
+        + DataProvider<PropertyBinaryDashV1>
+        + DataProvider<PropertyBinaryDefaultIgnorableCodePointV1>
+        + DataProvider<PropertyBinaryDeprecatedV1>
+        + DataProvider<PropertyBinaryDiacriticV1>
+        + DataProvider<PropertyBinaryEmojiComponentV1>
+        + DataProvider<PropertyBinaryEmojiModifierBaseV1>
+        + DataProvider<PropertyBinaryEmojiModifierV1>
+        + DataProvider<PropertyBinaryEmojiPresentationV1>
+        + DataProvider<PropertyBinaryEmojiV1>
+        + DataProvider<PropertyBinaryExtendedPictographicV1>
+        + DataProvider<PropertyBinaryExtenderV1>
+        + DataProvider<PropertyBinaryGraphemeBaseV1>
+        + DataProvider<PropertyBinaryGraphemeExtendV1>
+        + DataProvider<PropertyBinaryHexDigitV1>
+        + DataProvider<PropertyBinaryIdContinueV1>
+        + DataProvider<PropertyBinaryIdeographicV1>
+        + DataProvider<PropertyBinaryIdsBinaryOperatorV1>
+        + DataProvider<PropertyBinaryIdStartV1>
+        + DataProvider<PropertyBinaryIdsTrinaryOperatorV1>
+        + DataProvider<PropertyBinaryJoinControlV1>
+        + DataProvider<PropertyBinaryLogicalOrderExceptionV1>
+        + DataProvider<PropertyBinaryLowercaseV1>
+        + DataProvider<PropertyBinaryMathV1>
+        + DataProvider<PropertyBinaryNoncharacterCodePointV1>
+        + DataProvider<PropertyBinaryPatternSyntaxV1>
+        + DataProvider<PropertyBinaryPatternWhiteSpaceV1>
+        + DataProvider<PropertyBinaryQuotationMarkV1>
+        + DataProvider<PropertyBinaryRadicalV1>
+        + DataProvider<PropertyBinaryRegionalIndicatorV1>
+        + DataProvider<PropertyBinarySentenceTerminalV1>
+        + DataProvider<PropertyBinarySoftDottedV1>
+        + DataProvider<PropertyBinaryTerminalPunctuationV1>
+        + DataProvider<PropertyBinaryUnifiedIdeographV1>
+        + DataProvider<PropertyBinaryUppercaseV1>
+        + DataProvider<PropertyBinaryVariationSelectorV1>
+        + DataProvider<PropertyBinaryWhiteSpaceV1>
+        + DataProvider<PropertyBinaryXidContinueV1>
+        + DataProvider<PropertyBinaryXidStartV1>
+        + DataProvider<PropertyEnumCanonicalCombiningClassV1>
+        + DataProvider<PropertyEnumGeneralCategoryV1>
+        + DataProvider<PropertyEnumGraphemeClusterBreakV1>
+        + DataProvider<PropertyEnumLineBreakV1>
+        + DataProvider<PropertyEnumScriptV1>
+        + DataProvider<PropertyEnumSentenceBreakV1>
+        + DataProvider<PropertyEnumWordBreakV1>
+        + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
+        + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
+        + DataProvider<PropertyNameParseGraphemeClusterBreakV1>
+        + DataProvider<PropertyNameParseLineBreakV1>
+        + DataProvider<PropertyNameParseScriptV1>
+        + DataProvider<PropertyNameParseSentenceBreakV1>
+        + DataProvider<PropertyNameParseWordBreakV1>
+        + DataProvider<PropertyScriptWithExtensionsV1>,
 {
     fn new_internal(
         iter: &'a mut Peekable<CharIndices<'b>>,
@@ -1118,12 +1133,18 @@ where
         let mut try_scx = Err(PEK::UnknownProperty.into());
         // contains a value for the Grapheme_Cluster_Break property that needs to be tried
         let mut try_gcb = Err(PEK::UnknownProperty.into());
+        // contains a value for the Line_Break property that needs to be tried
+        let mut try_lb = Err(PEK::UnknownProperty.into());
         // contains a value for the Sentence_Break property that needs to be tried
         let mut try_sb = Err(PEK::UnknownProperty.into());
         // contains a value for the Word_Break property that needs to be tried
         let mut try_wb = Err(PEK::UnknownProperty.into());
         // contains a supposed binary property name that needs to be tried
         let mut try_binary = Err(PEK::UnknownProperty.into());
+        // contains a supposed canonical combining class property name that needs to be tried
+        let mut try_ccc: Result<&str, ParseError> = Err(PEK::UnknownProperty.into());
+        // contains a supposed block property name that needs to be tried
+        let mut try_block: Result<&str, ParseError> = Err(PEK::UnknownProperty.into());
 
         if !value.is_empty() {
             // key is gc, sc, scx, grapheme cluster break, sentence break, word break
@@ -1131,13 +1152,20 @@ where
             // OR
             // key is a binary property and value is a truthy/falsy value
 
-            match key {
-                "General_Category" | "gc" => try_gc = Ok(value),
-                "Grapheme_Cluster_Break" => try_gcb = Ok(value),
-                "Script" | "sc" => try_sc = Ok(value),
-                "Script_Extensions" | "scx" => try_scx = Ok(value),
-                "Sentence_Break" => try_sb = Ok(value),
-                "Word_Break" => try_wb = Ok(value),
+            match key.as_bytes() {
+                GeneralCategory::NAME | GeneralCategory::SHORT_NAME => try_gc = Ok(value),
+                GraphemeClusterBreak::NAME | GraphemeClusterBreak::SHORT_NAME => {
+                    try_gcb = Ok(value)
+                }
+                LineBreak::NAME | LineBreak::SHORT_NAME => try_lb = Ok(value),
+                Script::NAME | Script::SHORT_NAME => try_sc = Ok(value),
+                SentenceBreak::NAME | SentenceBreak::SHORT_NAME => try_sb = Ok(value),
+                WordBreak::NAME | WordBreak::SHORT_NAME => try_wb = Ok(value),
+                CanonicalCombiningClass::NAME | CanonicalCombiningClass::SHORT_NAME => {
+                    try_ccc = Ok(value)
+                }
+                b"Script_Extensions" | b"scx" => try_scx = Ok(value),
+                b"Block" | b"blk" => try_block = Ok(value),
                 _ => {
                     let normalized_value = value.to_ascii_lowercase();
                     let truthy = matches!(normalized_value.as_str(), "true" | "t" | "yes" | "y");
@@ -1167,8 +1195,11 @@ where
             .or_else(|_| try_scx.and_then(|value| self.try_load_script_extensions_set(value)))
             .or_else(|_| try_binary.and_then(|value| self.try_load_ecma262_binary_set(value)))
             .or_else(|_| try_gcb.and_then(|value| self.try_load_grapheme_cluster_break_set(value)))
+            .or_else(|_| try_lb.and_then(|value| self.try_load_line_break_set(value)))
             .or_else(|_| try_sb.and_then(|value| self.try_load_sentence_break_set(value)))
-            .or_else(|_| try_wb.and_then(|value| self.try_load_word_break_set(value)))?;
+            .or_else(|_| try_wb.and_then(|value| self.try_load_word_break_set(value)))
+            .or_else(|_| try_ccc.and_then(|value| self.try_load_ccc_set(value)))
+            .or_else(|_| try_block.and_then(|value| self.try_load_block_set(value)))?;
         Ok(inverted)
     }
 
@@ -1209,7 +1240,6 @@ where
 
         // validate_hex_digits ensures that chars (including the last one) are ascii hex digits,
         // which are all exactly one UTF-8 byte long, so slicing on these offsets always respects char boundaries
-        #[allow(clippy::indexing_slicing)]
         let hex_source = &self.source[first_offset..=end_offset];
         let num = u32::from_str_radix(hex_source, 16).map_err(|_| PEK::Internal)?;
         char::try_from(num)
@@ -1372,10 +1402,10 @@ where
     }
 
     fn try_load_ecma262_binary_set(&mut self, name: &str) -> Result<()> {
-        let prop = UnicodeProperty::parse_ecma262_name(name).ok_or(PEK::UnknownProperty)?;
-        let set = CodePointSetData::try_new_runtime_unstable(self.property_provider, prop)
-            .ok_or(PEK::UnknownProperty)?
-            .map_err(|_data_error| PEK::Internal)?;
+        let set =
+            CodePointSetData::try_new_for_ecma262_unstable(self.property_provider, name.as_bytes())
+                .ok_or(PEK::UnknownProperty)?
+                .map_err(|_data_error| PEK::Internal)?;
         self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
     }
@@ -1393,6 +1423,21 @@ where
             CodePointMapData::<GraphemeClusterBreak>::try_new_unstable(self.property_provider)
                 .map_err(|_| PEK::Internal)?;
         let set = property_map.as_borrowed().get_set_for_value(gcb_value);
+        self.single_set.add_set(&set.to_code_point_inversion_list());
+        Ok(())
+    }
+
+    fn try_load_line_break_set(&mut self, name: &str) -> Result<()> {
+        let parser = PropertyParser::<LineBreak>::try_new_unstable(self.property_provider)
+            .map_err(|_| PEK::Internal)?;
+        let lb_value = parser
+            .as_borrowed()
+            .get_loose(name)
+            .ok_or(PEK::UnknownProperty)?;
+        // TODO(#3550): This could be cached; does not depend on name.
+        let property_map = CodePointMapData::<LineBreak>::try_new_unstable(self.property_provider)
+            .map_err(|_| PEK::Internal)?;
+        let set = property_map.as_borrowed().get_set_for_value(lb_value);
         self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
     }
@@ -1425,6 +1470,44 @@ where
             .map_err(|_| PEK::Internal)?;
         let set = property_map.as_borrowed().get_set_for_value(wb_value);
         self.single_set.add_set(&set.to_code_point_inversion_list());
+        Ok(())
+    }
+
+    fn try_load_ccc_set(&mut self, name: &str) -> Result<()> {
+        let parser =
+            PropertyParser::<CanonicalCombiningClass>::try_new_unstable(self.property_provider)
+                .map_err(|_| PEK::Internal)?;
+        let value = parser
+            .as_borrowed()
+            .get_loose(name)
+            // TODO: make the property parser do this
+            .or_else(|| {
+                name.parse()
+                    .ok()
+                    .map(CanonicalCombiningClass::from_icu4c_value)
+            })
+            .ok_or(PEK::UnknownProperty)?;
+        // TODO(#3550): This could be cached; does not depend on name.
+        let property_map =
+            CodePointMapData::<CanonicalCombiningClass>::try_new_unstable(self.property_provider)
+                .map_err(|_| PEK::Internal)?;
+        let set = property_map.as_borrowed().get_set_for_value(value);
+        self.single_set.add_set(&set.to_code_point_inversion_list());
+        Ok(())
+    }
+
+    fn try_load_block_set(&mut self, name: &str) -> Result<()> {
+        // TODO: source these from properties
+        self.single_set
+            .add_range(match name.to_ascii_lowercase().as_str() {
+                "arabic" => '\u{0600}'..'\u{06FF}',
+                "thaana" => '\u{0780}'..'\u{07BF}',
+                _ => {
+                    #[cfg(feature = "log")]
+                    log::warn!("Skipping :block={name}:");
+                    return Err(PEK::Unimplemented.into());
+                }
+            });
         Ok(())
     }
 }
@@ -1484,7 +1567,7 @@ where
 ///
 /// let (set, _) =
 ///     parse(r"[[a-z{hello\ world}]&[^a-y{hello\ world}]]").unwrap();
-/// assert!(set.contains_char('z'));
+/// assert!(set.contains('z'));
 /// assert_eq!(set.size(), 1);
 /// assert!(!set.has_strings());
 /// ```
@@ -1539,7 +1622,7 @@ pub fn parse(source: &str) -> Result<(CodePointInversionListAndStringList<'stati
 /// let (set, consumed) = parse_with_variables(source, &variable_map).unwrap();
 /// assert_eq!(consumed, source.len());
 /// assert!(set.code_points().contains_range('d'..='z'));
-/// assert!(set.contains("Hello World"));
+/// assert!(set.contains_str("Hello World"));
 /// assert_eq!(set.size(), 1 + ('d'..='z').count());
 #[cfg(feature = "compiled_data")]
 pub fn parse_with_variables(
@@ -1549,7 +1632,7 @@ pub fn parse_with_variables(
     parse_unstable_with_variables(source, variable_map, &icu_properties::provider::Baked)
 }
 
-#[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, parse_with_variables)]
+#[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, parse_with_variables)]
 pub fn parse_unstable_with_variables<P>(
     source: &str,
     variable_map: &VariableMap<'_>,
@@ -1557,67 +1640,71 @@ pub fn parse_unstable_with_variables<P>(
 ) -> Result<(CodePointInversionListAndStringList<'static>, usize)>
 where
     P: ?Sized
-        + DataProvider<AsciiHexDigitV1Marker>
-        + DataProvider<AlphabeticV1Marker>
-        + DataProvider<BidiControlV1Marker>
-        + DataProvider<BidiMirroredV1Marker>
-        + DataProvider<CaseIgnorableV1Marker>
-        + DataProvider<CasedV1Marker>
-        + DataProvider<ChangesWhenCasefoldedV1Marker>
-        + DataProvider<ChangesWhenCasemappedV1Marker>
-        + DataProvider<ChangesWhenLowercasedV1Marker>
-        + DataProvider<ChangesWhenNfkcCasefoldedV1Marker>
-        + DataProvider<ChangesWhenTitlecasedV1Marker>
-        + DataProvider<ChangesWhenUppercasedV1Marker>
-        + DataProvider<DashV1Marker>
-        + DataProvider<DefaultIgnorableCodePointV1Marker>
-        + DataProvider<DeprecatedV1Marker>
-        + DataProvider<DiacriticV1Marker>
-        + DataProvider<EmojiV1Marker>
-        + DataProvider<EmojiComponentV1Marker>
-        + DataProvider<EmojiModifierV1Marker>
-        + DataProvider<EmojiModifierBaseV1Marker>
-        + DataProvider<EmojiPresentationV1Marker>
-        + DataProvider<ExtendedPictographicV1Marker>
-        + DataProvider<ExtenderV1Marker>
-        + DataProvider<GraphemeBaseV1Marker>
-        + DataProvider<GraphemeClusterBreakV1Marker>
-        + DataProvider<GraphemeClusterBreakNameToValueV1Marker>
-        + DataProvider<GraphemeExtendV1Marker>
-        + DataProvider<HexDigitV1Marker>
-        + DataProvider<IdsBinaryOperatorV1Marker>
-        + DataProvider<IdsTrinaryOperatorV1Marker>
-        + DataProvider<IdContinueV1Marker>
-        + DataProvider<IdStartV1Marker>
-        + DataProvider<IdeographicV1Marker>
-        + DataProvider<JoinControlV1Marker>
-        + DataProvider<LogicalOrderExceptionV1Marker>
-        + DataProvider<LowercaseV1Marker>
-        + DataProvider<MathV1Marker>
-        + DataProvider<NoncharacterCodePointV1Marker>
-        + DataProvider<PatternSyntaxV1Marker>
-        + DataProvider<PatternWhiteSpaceV1Marker>
-        + DataProvider<QuotationMarkV1Marker>
-        + DataProvider<RadicalV1Marker>
-        + DataProvider<RegionalIndicatorV1Marker>
-        + DataProvider<SentenceBreakV1Marker>
-        + DataProvider<SentenceBreakNameToValueV1Marker>
-        + DataProvider<SentenceTerminalV1Marker>
-        + DataProvider<SoftDottedV1Marker>
-        + DataProvider<TerminalPunctuationV1Marker>
-        + DataProvider<UnifiedIdeographV1Marker>
-        + DataProvider<UppercaseV1Marker>
-        + DataProvider<VariationSelectorV1Marker>
-        + DataProvider<WhiteSpaceV1Marker>
-        + DataProvider<WordBreakV1Marker>
-        + DataProvider<WordBreakNameToValueV1Marker>
-        + DataProvider<XidContinueV1Marker>
-        + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
-        + DataProvider<GeneralCategoryV1Marker>
-        + DataProvider<ScriptNameToValueV1Marker>
-        + DataProvider<ScriptV1Marker>
-        + DataProvider<ScriptWithExtensionsPropertyV1Marker>
-        + DataProvider<XidStartV1Marker>,
+        + DataProvider<PropertyBinaryAlphabeticV1>
+        + DataProvider<PropertyBinaryAsciiHexDigitV1>
+        + DataProvider<PropertyBinaryBidiControlV1>
+        + DataProvider<PropertyBinaryBidiMirroredV1>
+        + DataProvider<PropertyBinaryCasedV1>
+        + DataProvider<PropertyBinaryCaseIgnorableV1>
+        + DataProvider<PropertyBinaryChangesWhenCasefoldedV1>
+        + DataProvider<PropertyBinaryChangesWhenCasemappedV1>
+        + DataProvider<PropertyBinaryChangesWhenLowercasedV1>
+        + DataProvider<PropertyBinaryChangesWhenNfkcCasefoldedV1>
+        + DataProvider<PropertyBinaryChangesWhenTitlecasedV1>
+        + DataProvider<PropertyBinaryChangesWhenUppercasedV1>
+        + DataProvider<PropertyBinaryDashV1>
+        + DataProvider<PropertyBinaryDefaultIgnorableCodePointV1>
+        + DataProvider<PropertyBinaryDeprecatedV1>
+        + DataProvider<PropertyBinaryDiacriticV1>
+        + DataProvider<PropertyBinaryEmojiComponentV1>
+        + DataProvider<PropertyBinaryEmojiModifierBaseV1>
+        + DataProvider<PropertyBinaryEmojiModifierV1>
+        + DataProvider<PropertyBinaryEmojiPresentationV1>
+        + DataProvider<PropertyBinaryEmojiV1>
+        + DataProvider<PropertyBinaryExtendedPictographicV1>
+        + DataProvider<PropertyBinaryExtenderV1>
+        + DataProvider<PropertyBinaryGraphemeBaseV1>
+        + DataProvider<PropertyBinaryGraphemeExtendV1>
+        + DataProvider<PropertyBinaryHexDigitV1>
+        + DataProvider<PropertyBinaryIdContinueV1>
+        + DataProvider<PropertyBinaryIdeographicV1>
+        + DataProvider<PropertyBinaryIdsBinaryOperatorV1>
+        + DataProvider<PropertyBinaryIdStartV1>
+        + DataProvider<PropertyBinaryIdsTrinaryOperatorV1>
+        + DataProvider<PropertyBinaryJoinControlV1>
+        + DataProvider<PropertyBinaryLogicalOrderExceptionV1>
+        + DataProvider<PropertyBinaryLowercaseV1>
+        + DataProvider<PropertyBinaryMathV1>
+        + DataProvider<PropertyBinaryNoncharacterCodePointV1>
+        + DataProvider<PropertyBinaryPatternSyntaxV1>
+        + DataProvider<PropertyBinaryPatternWhiteSpaceV1>
+        + DataProvider<PropertyBinaryQuotationMarkV1>
+        + DataProvider<PropertyBinaryRadicalV1>
+        + DataProvider<PropertyBinaryRegionalIndicatorV1>
+        + DataProvider<PropertyBinarySentenceTerminalV1>
+        + DataProvider<PropertyBinarySoftDottedV1>
+        + DataProvider<PropertyBinaryTerminalPunctuationV1>
+        + DataProvider<PropertyBinaryUnifiedIdeographV1>
+        + DataProvider<PropertyBinaryUppercaseV1>
+        + DataProvider<PropertyBinaryVariationSelectorV1>
+        + DataProvider<PropertyBinaryWhiteSpaceV1>
+        + DataProvider<PropertyBinaryXidContinueV1>
+        + DataProvider<PropertyBinaryXidStartV1>
+        + DataProvider<PropertyEnumCanonicalCombiningClassV1>
+        + DataProvider<PropertyEnumGeneralCategoryV1>
+        + DataProvider<PropertyEnumGraphemeClusterBreakV1>
+        + DataProvider<PropertyEnumLineBreakV1>
+        + DataProvider<PropertyEnumScriptV1>
+        + DataProvider<PropertyEnumSentenceBreakV1>
+        + DataProvider<PropertyEnumWordBreakV1>
+        + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
+        + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
+        + DataProvider<PropertyNameParseGraphemeClusterBreakV1>
+        + DataProvider<PropertyNameParseLineBreakV1>
+        + DataProvider<PropertyNameParseScriptV1>
+        + DataProvider<PropertyNameParseSentenceBreakV1>
+        + DataProvider<PropertyNameParseWordBreakV1>
+        + DataProvider<PropertyScriptWithExtensionsV1>,
 {
     // TODO(#3550): Add function "parse_overescaped" that uses a custom iterator to de-overescape (i.e., maps \\ to \) on-the-fly?
     // ^ will likely need a different iterator type on UnicodeSetBuilder
@@ -1664,74 +1751,78 @@ where
     Ok((cpinvlistandstrlist, parsed_bytes))
 }
 
-#[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, parse)]
+#[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, parse)]
 pub fn parse_unstable<P>(
     source: &str,
     provider: &P,
 ) -> Result<(CodePointInversionListAndStringList<'static>, usize)>
 where
     P: ?Sized
-        + DataProvider<AsciiHexDigitV1Marker>
-        + DataProvider<AlphabeticV1Marker>
-        + DataProvider<BidiControlV1Marker>
-        + DataProvider<BidiMirroredV1Marker>
-        + DataProvider<CaseIgnorableV1Marker>
-        + DataProvider<CasedV1Marker>
-        + DataProvider<ChangesWhenCasefoldedV1Marker>
-        + DataProvider<ChangesWhenCasemappedV1Marker>
-        + DataProvider<ChangesWhenLowercasedV1Marker>
-        + DataProvider<ChangesWhenNfkcCasefoldedV1Marker>
-        + DataProvider<ChangesWhenTitlecasedV1Marker>
-        + DataProvider<ChangesWhenUppercasedV1Marker>
-        + DataProvider<DashV1Marker>
-        + DataProvider<DefaultIgnorableCodePointV1Marker>
-        + DataProvider<DeprecatedV1Marker>
-        + DataProvider<DiacriticV1Marker>
-        + DataProvider<EmojiV1Marker>
-        + DataProvider<EmojiComponentV1Marker>
-        + DataProvider<EmojiModifierV1Marker>
-        + DataProvider<EmojiModifierBaseV1Marker>
-        + DataProvider<EmojiPresentationV1Marker>
-        + DataProvider<ExtendedPictographicV1Marker>
-        + DataProvider<ExtenderV1Marker>
-        + DataProvider<GraphemeBaseV1Marker>
-        + DataProvider<GraphemeClusterBreakV1Marker>
-        + DataProvider<GraphemeClusterBreakNameToValueV1Marker>
-        + DataProvider<GraphemeExtendV1Marker>
-        + DataProvider<HexDigitV1Marker>
-        + DataProvider<IdsBinaryOperatorV1Marker>
-        + DataProvider<IdsTrinaryOperatorV1Marker>
-        + DataProvider<IdContinueV1Marker>
-        + DataProvider<IdStartV1Marker>
-        + DataProvider<IdeographicV1Marker>
-        + DataProvider<JoinControlV1Marker>
-        + DataProvider<LogicalOrderExceptionV1Marker>
-        + DataProvider<LowercaseV1Marker>
-        + DataProvider<MathV1Marker>
-        + DataProvider<NoncharacterCodePointV1Marker>
-        + DataProvider<PatternSyntaxV1Marker>
-        + DataProvider<PatternWhiteSpaceV1Marker>
-        + DataProvider<QuotationMarkV1Marker>
-        + DataProvider<RadicalV1Marker>
-        + DataProvider<RegionalIndicatorV1Marker>
-        + DataProvider<SentenceBreakV1Marker>
-        + DataProvider<SentenceBreakNameToValueV1Marker>
-        + DataProvider<SentenceTerminalV1Marker>
-        + DataProvider<SoftDottedV1Marker>
-        + DataProvider<TerminalPunctuationV1Marker>
-        + DataProvider<UnifiedIdeographV1Marker>
-        + DataProvider<UppercaseV1Marker>
-        + DataProvider<VariationSelectorV1Marker>
-        + DataProvider<WhiteSpaceV1Marker>
-        + DataProvider<WordBreakV1Marker>
-        + DataProvider<WordBreakNameToValueV1Marker>
-        + DataProvider<XidContinueV1Marker>
-        + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
-        + DataProvider<GeneralCategoryV1Marker>
-        + DataProvider<ScriptNameToValueV1Marker>
-        + DataProvider<ScriptV1Marker>
-        + DataProvider<ScriptWithExtensionsPropertyV1Marker>
-        + DataProvider<XidStartV1Marker>,
+        + DataProvider<PropertyBinaryAlphabeticV1>
+        + DataProvider<PropertyBinaryAsciiHexDigitV1>
+        + DataProvider<PropertyBinaryBidiControlV1>
+        + DataProvider<PropertyBinaryBidiMirroredV1>
+        + DataProvider<PropertyBinaryCasedV1>
+        + DataProvider<PropertyBinaryCaseIgnorableV1>
+        + DataProvider<PropertyBinaryChangesWhenCasefoldedV1>
+        + DataProvider<PropertyBinaryChangesWhenCasemappedV1>
+        + DataProvider<PropertyBinaryChangesWhenLowercasedV1>
+        + DataProvider<PropertyBinaryChangesWhenNfkcCasefoldedV1>
+        + DataProvider<PropertyBinaryChangesWhenTitlecasedV1>
+        + DataProvider<PropertyBinaryChangesWhenUppercasedV1>
+        + DataProvider<PropertyBinaryDashV1>
+        + DataProvider<PropertyBinaryDefaultIgnorableCodePointV1>
+        + DataProvider<PropertyBinaryDeprecatedV1>
+        + DataProvider<PropertyBinaryDiacriticV1>
+        + DataProvider<PropertyBinaryEmojiComponentV1>
+        + DataProvider<PropertyBinaryEmojiModifierBaseV1>
+        + DataProvider<PropertyBinaryEmojiModifierV1>
+        + DataProvider<PropertyBinaryEmojiPresentationV1>
+        + DataProvider<PropertyBinaryEmojiV1>
+        + DataProvider<PropertyBinaryExtendedPictographicV1>
+        + DataProvider<PropertyBinaryExtenderV1>
+        + DataProvider<PropertyBinaryGraphemeBaseV1>
+        + DataProvider<PropertyBinaryGraphemeExtendV1>
+        + DataProvider<PropertyBinaryHexDigitV1>
+        + DataProvider<PropertyBinaryIdContinueV1>
+        + DataProvider<PropertyBinaryIdeographicV1>
+        + DataProvider<PropertyBinaryIdsBinaryOperatorV1>
+        + DataProvider<PropertyBinaryIdStartV1>
+        + DataProvider<PropertyBinaryIdsTrinaryOperatorV1>
+        + DataProvider<PropertyBinaryJoinControlV1>
+        + DataProvider<PropertyBinaryLogicalOrderExceptionV1>
+        + DataProvider<PropertyBinaryLowercaseV1>
+        + DataProvider<PropertyBinaryMathV1>
+        + DataProvider<PropertyBinaryNoncharacterCodePointV1>
+        + DataProvider<PropertyBinaryPatternSyntaxV1>
+        + DataProvider<PropertyBinaryPatternWhiteSpaceV1>
+        + DataProvider<PropertyBinaryQuotationMarkV1>
+        + DataProvider<PropertyBinaryRadicalV1>
+        + DataProvider<PropertyBinaryRegionalIndicatorV1>
+        + DataProvider<PropertyBinarySentenceTerminalV1>
+        + DataProvider<PropertyBinarySoftDottedV1>
+        + DataProvider<PropertyBinaryTerminalPunctuationV1>
+        + DataProvider<PropertyBinaryUnifiedIdeographV1>
+        + DataProvider<PropertyBinaryUppercaseV1>
+        + DataProvider<PropertyBinaryVariationSelectorV1>
+        + DataProvider<PropertyBinaryWhiteSpaceV1>
+        + DataProvider<PropertyBinaryXidContinueV1>
+        + DataProvider<PropertyBinaryXidStartV1>
+        + DataProvider<PropertyEnumCanonicalCombiningClassV1>
+        + DataProvider<PropertyEnumGeneralCategoryV1>
+        + DataProvider<PropertyEnumGraphemeClusterBreakV1>
+        + DataProvider<PropertyEnumLineBreakV1>
+        + DataProvider<PropertyEnumScriptV1>
+        + DataProvider<PropertyEnumSentenceBreakV1>
+        + DataProvider<PropertyEnumWordBreakV1>
+        + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
+        + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
+        + DataProvider<PropertyNameParseGraphemeClusterBreakV1>
+        + DataProvider<PropertyNameParseLineBreakV1>
+        + DataProvider<PropertyNameParseScriptV1>
+        + DataProvider<PropertyNameParseSentenceBreakV1>
+        + DataProvider<PropertyNameParseWordBreakV1>
+        + DataProvider<PropertyScriptWithExtensionsV1>,
 {
     let dummy = Default::default();
     parse_unstable_with_variables(source, &dummy, provider)
@@ -1788,7 +1879,7 @@ mod tests {
         for s in strings {
             expected_size += 1;
             assert!(
-                cpinvlistandstrlist.contains(s),
+                cpinvlistandstrlist.contains_str(s),
                 "missing string \"{}\" from parsed set \"{}\"",
                 s.escape_debug(),
                 source.escape_debug()
@@ -2113,6 +2204,11 @@ mod tests {
                 &map_char_set,
                 "[$set-$a]",
                 r"[$set-$a← error: unexpected variable",
+            ),
+            (
+                &map_char_set,
+                "[$=]",
+                "[$=← error: unexpected character '='",
             ),
         ];
         for (variable_map, source, expected_err) in cases {

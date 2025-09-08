@@ -5,7 +5,7 @@
 [package]
 name = "zerofrom"
 description = "ZeroFrom trait for constructing"
-version = "0.1.4"
+version = "0.1.6"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 categories = ["data-structures", "caching", "no-std"]
 keywords = ["zerocopy", "serialization", "lifetime", "borrow"]
@@ -14,7 +14,7 @@ edition.workspace = true
 include.workspace = true
 license.workspace = true
 repository.workspace = true
-rust-version.workspace = true
+rust-version = "1.71.1"
 
 [package.metadata.workspaces]
 independent = true

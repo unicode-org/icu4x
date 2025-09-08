@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::types::{Era, MonthCode};
+use crate::types::MonthCode;
 use displaydoc::Display;
 
 #[derive(Debug, Copy, Clone, PartialEq, Display)]
@@ -22,12 +22,14 @@ pub enum DateError {
         max: i32,
     },
     /// Unknown era
-    #[displaydoc("Unknown era {0:?}")]
-    UnknownEra(Era),
+    #[displaydoc("Unknown era")]
+    UnknownEra,
     /// Unknown month code
     #[displaydoc("Unknown month code {0:?}")]
     UnknownMonthCode(MonthCode),
 }
+
+impl core::error::Error for DateError {}
 
 #[derive(Debug, Copy, Clone, PartialEq, Display)]
 /// An argument is out of range for its domain.
@@ -44,6 +46,8 @@ pub struct RangeError {
     pub max: i32,
 }
 
+impl core::error::Error for RangeError {}
+
 impl From<RangeError> for DateError {
     fn from(value: RangeError) -> Self {
         let RangeError {
@@ -59,4 +63,31 @@ impl From<RangeError> for DateError {
             max,
         }
     }
+}
+
+pub(crate) fn range_check<T: Ord + Into<i32> + Copy>(
+    value: T,
+    field: &'static str,
+    bounds: impl core::ops::RangeBounds<T>,
+) -> Result<T, RangeError> {
+    use core::ops::Bound::*;
+
+    if !bounds.contains(&value) {
+        return Err(RangeError {
+            field,
+            value: value.into(),
+            min: match bounds.start_bound() {
+                Included(&m) => m.into(),
+                Excluded(&m) => m.into() + 1,
+                Unbounded => i32::MIN,
+            },
+            max: match bounds.end_bound() {
+                Included(&m) => m.into(),
+                Excluded(&m) => m.into() - 1,
+                Unbounded => i32::MAX,
+            },
+        });
+    }
+
+    Ok(value)
 }

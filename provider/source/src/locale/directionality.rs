@@ -10,25 +10,25 @@ use icu::locale::provider::*;
 
 use icu_provider::prelude::*;
 
-impl DataProvider<ScriptDirectionV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<ScriptDirectionV1Marker>, DataError> {
-        self.check_req::<ScriptDirectionV1Marker>(req)?;
+impl DataProvider<LocaleScriptDirectionV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleScriptDirectionV1>, DataError> {
+        self.check_req::<LocaleScriptDirectionV1>(req)?;
         let data: &cldr_serde::directionality::Resource =
             self.cldr()?.core().read_and_parse("scriptMetadata.json")?;
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(ScriptDirectionV1::from(data)),
+            payload: DataPayload::from_owned(ScriptDirection::from(data)),
         })
     }
 }
 
-impl crate::IterableDataProviderCached<ScriptDirectionV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<LocaleScriptDirectionV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl From<&cldr_serde::directionality::Resource> for ScriptDirectionV1<'_> {
+impl From<&cldr_serde::directionality::Resource> for ScriptDirection<'_> {
     fn from(other: &cldr_serde::directionality::Resource) -> Self {
         let mut rtl = vec![];
         let mut ltr = vec![];
@@ -54,44 +54,44 @@ fn test_basic() {
     use icu::locale::subtags::script;
 
     let provider = SourceDataProvider::new_testing();
-    let data: DataResponse<ScriptDirectionV1Marker> = provider.load(Default::default()).unwrap();
+    let data: DataResponse<LocaleScriptDirectionV1> = provider.load(Default::default()).unwrap();
 
     assert!(data
         .payload
         .get()
         .rtl
-        .binary_search(&script!("Avst").into_tinystr().to_unvalidated())
+        .binary_search(&script!("Avst").to_tinystr().to_unvalidated())
         .is_ok());
     assert!(data
         .payload
         .get()
         .ltr
-        .binary_search(&script!("Avst").into_tinystr().to_unvalidated())
+        .binary_search(&script!("Avst").to_tinystr().to_unvalidated())
         .is_err());
 
     assert!(data
         .payload
         .get()
         .ltr
-        .binary_search(&script!("Latn").into_tinystr().to_unvalidated())
+        .binary_search(&script!("Latn").to_tinystr().to_unvalidated())
         .is_ok());
     assert!(data
         .payload
         .get()
         .rtl
-        .binary_search(&script!("Latn").into_tinystr().to_unvalidated())
+        .binary_search(&script!("Latn").to_tinystr().to_unvalidated())
         .is_err());
 
     assert!(data
         .payload
         .get()
         .ltr
-        .binary_search(&script!("Zzzz").into_tinystr().to_unvalidated())
+        .binary_search(&script!("Zzzz").to_tinystr().to_unvalidated())
         .is_err());
     assert!(data
         .payload
         .get()
         .rtl
-        .binary_search(&script!("Zzzz").into_tinystr().to_unvalidated())
+        .binary_search(&script!("Zzzz").to_tinystr().to_unvalidated())
         .is_err());
 }

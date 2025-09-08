@@ -26,7 +26,19 @@ use zerovec::ZeroMap2d;
 /// </div>
 pub use crate::provider::Baked;
 
-/// Compact Decimal Pattern V1 data struct.
+icu_provider::data_marker!(
+    /// `LongCompactDecimalFormatDataV1`
+    LongCompactDecimalFormatDataV1,
+    CompactDecimalPatternData<'static>,
+);
+icu_provider::data_marker!(
+    /// `ShortCompactDecimalFormatDataV1`
+    ShortCompactDecimalFormatDataV1,
+    CompactDecimalPatternData<'static>,
+);
+
+/// Compact Decimal Pattern  data struct.
+///
 /// As in CLDR, this is a mapping from type (a power of ten, corresponding to
 /// the magnitude of the number being formatted) and count (a plural case or an
 /// explicit 1) to a pattern.
@@ -51,20 +63,18 @@ pub use crate::provider::Baked;
 ///
 /// Finally, the pattern indicating noncompact notation for the first few powers
 /// of ten is omitted; that is, there is an implicit (1, other) ↦ 0.
-#[icu_provider::data_struct(
-    LongCompactDecimalFormatDataV1Marker = "compactdecimal/long@1",
-    ShortCompactDecimalFormatDataV1Marker = "compactdecimal/short@1"
-)]
-#[derive(Debug, Clone, Default, PartialEq)]
+#[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::compactdecimal::provider))]
 #[yoke(prove_covariance_manually)]
-pub struct CompactDecimalPatternDataV1<'data> {
+pub struct CompactDecimalPatternData<'data> {
     /// A map keyed on log10 of the CLDR `type` attribute and the CLDR `count` attribute.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub patterns: ZeroMap2d<'data, i8, Count, PatternULE>,
 }
+
+icu_provider::data_struct!(CompactDecimalPatternData<'_>, #[cfg(feature = "datagen")]);
 
 /// A CLDR plural keyword, or the explicit value 1.
 /// See <https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>.
@@ -140,9 +150,4 @@ pub struct Pattern<'data> {
     /// The underlying CLDR pattern with the placeholder removed, e.g.,
     /// " M" for the pattern "000 M"
     pub literal_text: Cow<'data, str>,
-}
-pub(crate) struct ErasedCompactDecimalFormatDataV1Marker;
-
-impl DynamicDataMarker for ErasedCompactDecimalFormatDataV1Marker {
-    type DataStruct = CompactDecimalPatternDataV1<'static>;
 }

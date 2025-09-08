@@ -4,17 +4,18 @@
 
 //! Experimental.
 
-use fixed_decimal::FixedDecimal;
-use icu_decimal::{options::FixedDecimalFormatterOptions, FixedDecimalFormatter};
+use fixed_decimal::Decimal;
+use icu_decimal::{options::DecimalFormatterOptions, DecimalFormatter};
 use icu_plurals::PluralRules;
 use icu_provider::prelude::*;
 
-use crate::dimension::provider::{
-    currency_patterns::CurrencyPatternsDataV1Marker,
-    extended_currency::CurrencyExtendedDataV1Marker,
+use crate::dimension::provider::currency::{
+    extended::CurrencyExtendedDataV1, patterns::CurrencyPatternsDataV1,
 };
 
-use super::{long_format::LongFormattedCurrency, CurrencyCode};
+use super::{
+    formatter::CurrencyFormatterPreferences, long_format::LongFormattedCurrency, CurrencyCode,
+};
 
 extern crate alloc;
 
@@ -27,24 +28,23 @@ extern crate alloc;
 /// Read more about the options in the [`super::options`] module.
 pub struct LongCurrencyFormatter {
     /// Extended data for the currency formatter.
-    extended: DataPayload<CurrencyExtendedDataV1Marker>,
+    extended: DataPayload<CurrencyExtendedDataV1>,
 
     /// Formatting patterns for each currency plural category.
-    patterns: DataPayload<CurrencyPatternsDataV1Marker>,
+    patterns: DataPayload<CurrencyPatternsDataV1>,
 
-    /// A [`FixedDecimalFormatter`] to format the currency value.
-    fixed_decimal_formatter: FixedDecimalFormatter,
+    /// A [`DecimalFormatter`] to format the currency value.
+    decimal_formatter: DecimalFormatter,
 
     /// A [`PluralRules`] to determine the plural category of the unit.
     plural_rules: PluralRules,
 }
 
 impl LongCurrencyFormatter {
-    icu_provider::gen_any_buffer_data_constructors!(
-        (locale: &DataLocale, currency_code: &CurrencyCode) -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: CurrencyFormatterPreferences, currency_code: &CurrencyCode) -> error: DataError,
         functions: [
             try_new: skip,
-            try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
             Self
@@ -57,9 +57,13 @@ impl LongCurrencyFormatter {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: &DataLocale, currency_code: &CurrencyCode) -> Result<Self, DataError> {
-        let fixed_decimal_formatter =
-            FixedDecimalFormatter::try_new(locale, FixedDecimalFormatterOptions::default())?;
+    pub fn try_new(
+        prefs: CurrencyFormatterPreferences,
+        currency_code: &CurrencyCode,
+    ) -> Result<Self, DataError> {
+        let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
+        let decimal_formatter =
+            DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
 
         let marker_attributes = DataMarkerAttributes::try_from_str(currency_code.0.as_str())
             .map_err(|_| {
@@ -72,7 +76,7 @@ impl LongCurrencyFormatter {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     marker_attributes,
-                    locale,
+                    &locale,
                 ),
                 ..Default::default()
             })?
@@ -80,33 +84,35 @@ impl LongCurrencyFormatter {
 
         let patterns = crate::provider::Baked.load(Default::default())?.payload;
 
-        let plural_rules = PluralRules::try_new_cardinal(locale)?;
+        let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
 
         Ok(Self {
             extended,
             patterns,
-            fixed_decimal_formatter,
+            decimal_formatter,
             plural_rules,
         })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
-        locale: &DataLocale,
+        prefs: CurrencyFormatterPreferences,
         currency_code: &CurrencyCode,
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::extended_currency::CurrencyExtendedDataV1Marker>
-            + DataProvider<super::super::provider::currency_patterns::CurrencyPatternsDataV1Marker>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>
-            + DataProvider<icu_plurals::provider::CardinalV1Marker>,
+            + DataProvider<crate::dimension::provider::currency::extended::CurrencyExtendedDataV1>
+            + DataProvider<crate::dimension::provider::currency::patterns::CurrencyPatternsDataV1>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1>
+            + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
-        let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
+        let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
+        let decimal_formatter = DecimalFormatter::try_new_unstable(
             provider,
-            locale,
-            FixedDecimalFormatterOptions::default(),
+            (&prefs).into(),
+            DecimalFormatterOptions::default(),
         )?;
 
         let marker_attributes = DataMarkerAttributes::try_from_str(currency_code.0.as_str())
@@ -119,7 +125,7 @@ impl LongCurrencyFormatter {
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     marker_attributes,
-                    locale,
+                    &locale,
                 ),
                 ..Default::default()
             })?
@@ -127,17 +133,17 @@ impl LongCurrencyFormatter {
 
         let patterns = provider.load(Default::default())?.payload;
 
-        let plural_rules = PluralRules::try_new_cardinal_unstable(provider, locale)?;
+        let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
 
         Ok(Self {
             extended,
             patterns,
-            fixed_decimal_formatter,
+            decimal_formatter,
             plural_rules,
         })
     }
 
-    /// Formats in the long format a [`FixedDecimal`] value for the given currency code.
+    /// Formats in the long format a [`Decimal`] value for the given currency code.
     ///
     /// # Examples
     /// ```
@@ -147,9 +153,9 @@ impl LongCurrencyFormatter {
     /// use tinystr::*;
     /// use writeable::Writeable;
     ///
-    /// let locale = locale!("en-US").into();
+    /// let currency_preferences = locale!("en-US").into();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
-    /// let fmt = LongCurrencyFormatter::try_new(&locale, &currency_code).unwrap();
+    /// let fmt = LongCurrencyFormatter::try_new(currency_preferences, &currency_code).unwrap();
     /// let value = "12345.67".parse().unwrap();
     /// let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
     /// let mut sink = String::new();
@@ -158,7 +164,7 @@ impl LongCurrencyFormatter {
     /// ```
     pub fn format_fixed_decimal<'l>(
         &'l self,
-        value: &'l FixedDecimal,
+        value: &'l Decimal,
         currency_code: CurrencyCode,
     ) -> LongFormattedCurrency<'l> {
         LongFormattedCurrency {
@@ -166,7 +172,7 @@ impl LongCurrencyFormatter {
             _currency_code: currency_code,
             extended: self.extended.get(),
             patterns: self.patterns.get(),
-            fixed_decimal_formatter: &self.fixed_decimal_formatter,
+            decimal_formatter: &self.decimal_formatter,
             plural_rules: &self.plural_rules,
         }
     }

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locale_core::langid;
-use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1, HelloWorldV1Marker};
+use icu_provider::hello_world::{HelloWorld, HelloWorldProvider, HelloWorldV1};
 use icu_provider::prelude::*;
 use icu_provider_fs::FsDataProvider;
 
@@ -25,22 +25,21 @@ fn test_provider() {
 
             let expected = HelloWorldProvider
                 .load(req)
-                .unwrap_or_else(|e| panic!("{e}: {req:?} ({path})"))
-                .payload;
+                .unwrap_or_else(|e| panic!("{e}: {req:?} ({path})"));
 
-            let actual: DataPayload<HelloWorldV1Marker> = provider
+            let actual: DataResponse<HelloWorldV1> = provider
                 .as_deserializing()
                 .load(req)
-                .unwrap_or_else(|e| panic!("{e}: {req:?} ({path})"))
-                .payload;
-            assert_eq!(actual.get(), expected.get());
+                .unwrap_or_else(|e| panic!("{e}: {req:?} ({path})"));
+            assert_eq!(actual.payload.get(), expected.payload.get());
+            assert_eq!(actual.metadata.checksum, expected.metadata.checksum);
 
-            let actual: DataPayload<HelloWorldV1Marker> = (&provider as &dyn BufferProvider)
+            let actual: DataResponse<HelloWorldV1> = (&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(req)
-                .unwrap_or_else(|e| panic!("{e}: {req:?} ({path})"))
-                .payload;
-            assert_eq!(actual.get(), expected.get());
+                .unwrap_or_else(|e| panic!("{e}: {req:?} ({path})"));
+            assert_eq!(actual.payload.get(), expected.payload.get());
+            assert_eq!(actual.metadata.checksum, expected.metadata.checksum);
         }
     }
 }
@@ -50,7 +49,7 @@ fn test_errors() {
     for path in PATHS {
         let provider = FsDataProvider::try_new(path.into()).unwrap();
 
-        let err: Result<DataResponse<HelloWorldV1Marker>, DataError> =
+        let err: Result<DataResponse<HelloWorldV1>, DataError> =
             provider.as_deserializing().load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("zh-DE").into()),
                 ..Default::default()
@@ -67,16 +66,9 @@ fn test_errors() {
             "{err:?}"
         );
 
-        struct WrongV1Marker;
-        impl DynamicDataMarker for WrongV1Marker {
-            type DataStruct = HelloWorldV1<'static>;
-        }
-        impl DataMarker for WrongV1Marker {
-            const INFO: DataMarkerInfo =
-                DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!("nope@1"));
-        }
+        icu_provider::data_marker!(WrongV1, HelloWorld<'static>);
 
-        let err: Result<DataResponse<WrongV1Marker>, DataError> =
+        let err: Result<DataResponse<WrongV1>, DataError> =
             provider.as_deserializing().load(Default::default());
 
         assert!(
@@ -102,7 +94,7 @@ fn prefix_match() {
             "ja".parse().unwrap(),
         );
 
-        assert!(DataProvider::<HelloWorldV1Marker>::load(
+        assert!(DataProvider::<HelloWorldV1>::load(
             &provider.as_deserializing(),
             DataRequest {
                 id: id.as_borrowed(),
@@ -111,7 +103,7 @@ fn prefix_match() {
         )
         .is_err());
 
-        assert!(DataProvider::<HelloWorldV1Marker>::load(
+        assert!(DataProvider::<HelloWorldV1>::load(
             &provider.as_deserializing(),
             DataRequest {
                 id: id.as_borrowed(),
@@ -129,7 +121,7 @@ fn prefix_match() {
             "ja".parse().unwrap(),
         );
 
-        assert!(DataProvider::<HelloWorldV1Marker>::load(
+        assert!(DataProvider::<HelloWorldV1>::load(
             &provider.as_deserializing(),
             DataRequest {
                 id: id.as_borrowed(),

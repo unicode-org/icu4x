@@ -19,5 +19,4 @@
 
 
 
-
 #endif // CollatorResolvedOptionsV1_H

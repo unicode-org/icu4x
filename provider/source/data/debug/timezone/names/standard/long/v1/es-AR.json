@@ -1,0 +1,37 @@
+{
+  "defaults": {
+    "3": "hora de África central",
+    "4": "hora de África oriental",
+    "5": "hora de Sudáfrica",
+    "6": "hora de África occidental",
+    "32": "hora estándar de Chamorro",
+    "36": "hora de la Isla de Navidad",
+    "43": "hora de Timor Oriental",
+    "51": "hora de la Guayana Francesa",
+    "52": "hora de las Tierras Australes y Antárticas Francesas",
+    "53": "hora del meridiano de Greenwich",
+    "57": "hora de Islas Gilbert",
+    "61": "hora estándar del Golfo",
+    "66": "hora de India",
+    "67": "hora del océano Índico",
+    "68": "hora de Indochina",
+    "69": "hora de Indonesia central",
+    "70": "hora de Indonesia oriental",
+    "71": "hora de Indonesia occidental",
+    "77": "hora de Kazajistán",
+    "78": "hora de Kazajistán oriental",
+    "79": "hora de Kazajistán occidental",
+    "84": "hora de las Espóradas Ecuatoriales",
+    "87": "hora de Malasia",
+    "90": "hora de Islas Marshall",
+    "109": "hora de Papúa Nueva Guinea",
+    "113": "hora de las Islas Fénix",
+    "115": "hora de Pitcairn",
+    "117": "hora de Pionyang",
+    "126": "hora de Georgia del Sur",
+    "150": "hora de Yukón"
+  },
+  "overrides": {
+    "utc": "hora universal coordinada"
+  }
+}

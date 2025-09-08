@@ -4,7 +4,7 @@
 
 use super::ensure;
 use crate::data::posix::{
-    DstTransitionInfo, PosixTzString, TransitionDate, TransitionDay, ZoneVariantInfo,
+    DstTransitionInfo, PosixTzString, TimeZoneVariantInfo, TransitionDate, TransitionDay,
 };
 use crate::data::time::{Hours, Minutes, Seconds};
 use combine::parser::byte::{byte, digit};
@@ -249,13 +249,13 @@ where
 /// Parses the STD time-zone variant info including the variant name and the offset in seconds.
 ///
 /// See [`zone_variant_name`] and [`offset_time`] for more information.
-fn std_variant_info<Input>() -> impl Parser<Input, Output = ZoneVariantInfo>
+fn std_variant_info<Input>() -> impl Parser<Input, Output = TimeZoneVariantInfo>
 where
     Input: Stream<Token = u8>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
     combine::struct_parser! {
-        ZoneVariantInfo {
+        TimeZoneVariantInfo {
             name: zone_variant_name(),
             offset: offset_time(),
         }
@@ -267,13 +267,13 @@ where
 /// This differs from [`std_variant_info`] in that it takes a predetermined STD offset
 /// offset as an argument. If no explicit DST offset is parsed, it will default to the
 /// STD offset minus one hour.
-fn dst_variant_info<Input>(std_offset: Seconds) -> impl Parser<Input, Output = ZoneVariantInfo>
+fn dst_variant_info<Input>(std_offset: Seconds) -> impl Parser<Input, Output = TimeZoneVariantInfo>
 where
     Input: Stream<Token = u8>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
     combine::struct_parser! {
-        ZoneVariantInfo {
+        TimeZoneVariantInfo {
             name: zone_variant_name(),
             offset: optional(offset_time()).map(move |time| time.unwrap_or(std_offset - Hours(1).as_seconds())),
         }
@@ -646,7 +646,7 @@ mod test {
         assert_parse_eq!(
             std_variant_info(),
             "EST+5",
-            ZoneVariantInfo {
+            TimeZoneVariantInfo {
                 name: "EST".to_owned(),
                 offset: Hours(5).as_seconds(),
             }
@@ -654,7 +654,7 @@ mod test {
         assert_parse_eq!(
             std_variant_info(),
             "IST-2",
-            ZoneVariantInfo {
+            TimeZoneVariantInfo {
                 name: "IST".to_owned(),
                 offset: Hours(-2).as_seconds(),
             }
@@ -662,7 +662,7 @@ mod test {
         assert_parse_eq!(
             std_variant_info(),
             "<0made+up0>-24:59:59",
-            ZoneVariantInfo {
+            TimeZoneVariantInfo {
                 name: "0made+up0".to_owned(),
                 offset: Hours(-24).as_seconds() - Minutes(59).as_seconds() - Seconds(59)
             }
@@ -693,7 +693,7 @@ mod test {
         assert_parse_eq!(
             dst_variant_info(Hours(5).as_seconds()),
             "EDT",
-            ZoneVariantInfo {
+            TimeZoneVariantInfo {
                 name: "EDT".to_owned(),
                 offset: Hours(4).as_seconds(),
             }
@@ -701,7 +701,7 @@ mod test {
         assert_parse_eq!(
             dst_variant_info(Hours(-2).as_seconds()),
             "IDT",
-            ZoneVariantInfo {
+            TimeZoneVariantInfo {
                 name: "IDT".to_owned(),
                 offset: Hours(-3).as_seconds(),
             }
@@ -709,7 +709,7 @@ mod test {
         assert_parse_eq!(
             dst_variant_info(Seconds(0)),
             "<0made+up0>-24:59:59",
-            ZoneVariantInfo {
+            TimeZoneVariantInfo {
                 name: "0made+up0".to_owned(),
                 offset: Hours(-24).as_seconds() - Minutes(59).as_seconds() - Seconds(59)
             }
@@ -777,7 +777,7 @@ mod test {
             dst_transition_info(Hours(4).as_seconds()),
             "WARST,J1/0,J365/25",
             DstTransitionInfo {
-                variant_info: ZoneVariantInfo {
+                variant_info: TimeZoneVariantInfo {
                     name: "WARST".to_owned(),
                     offset: Hours(3).as_seconds()
                 },
@@ -795,7 +795,7 @@ mod test {
             dst_transition_info(Hours(-2).as_seconds()),
             "IDT,M3.4.4/26,M10.5.0",
             DstTransitionInfo {
-                variant_info: ZoneVariantInfo {
+                variant_info: TimeZoneVariantInfo {
                     name: "IDT".to_owned(),
                     offset: Hours(-3).as_seconds()
                 },
@@ -817,12 +817,12 @@ mod test {
             posix_tz_string(),
             "WGT3WGST,M3.5.0/-2,M10.5.0/-1",
             PosixTzString {
-                std_info: ZoneVariantInfo {
+                std_info: TimeZoneVariantInfo {
                     name: "WGT".to_owned(),
                     offset: Hours(3).as_seconds(),
                 },
                 dst_info: Some(DstTransitionInfo {
-                    variant_info: ZoneVariantInfo {
+                    variant_info: TimeZoneVariantInfo {
                         name: "WGST".to_owned(),
                         offset: Hours(2).as_seconds()
                     },
@@ -841,12 +841,12 @@ mod test {
             posix_tz_string(),
             "WART4WARST,J1/0,J365/25",
             PosixTzString {
-                std_info: ZoneVariantInfo {
+                std_info: TimeZoneVariantInfo {
                     name: "WART".to_owned(),
                     offset: Hours(4).as_seconds(),
                 },
                 dst_info: Some(DstTransitionInfo {
-                    variant_info: ZoneVariantInfo {
+                    variant_info: TimeZoneVariantInfo {
                         name: "WARST".to_owned(),
                         offset: Hours(3).as_seconds()
                     },

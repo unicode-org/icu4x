@@ -16,6 +16,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]
@@ -24,10 +25,11 @@
 pub mod provider;
 
 mod compile;
-#[allow(clippy::indexing_slicing, clippy::unwrap_used)] // TODO(#3958): Remove.
 mod transliterator;
 
-pub use transliterator::*;
+#[cfg(feature = "compiled_data")]
+pub use transliterator::TransliteratorBuilder;
+pub use transliterator::{CustomTransliterator, Transliterator};
 
 pub use compile::RuleCollection;
 pub use compile::RuleCollectionProvider;

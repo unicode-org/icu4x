@@ -1,0 +1,21 @@
+{
+  "has_explicit_medium": true,
+  "has_explicit_short": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    4,
+    5,
+    6,
+    7
+  ],
+  "elements": [
+    "EEEE, dd. MMMM y.",
+    "E, dd. MM. y.",
+    "E, d. M. yy.",
+    "E, d. M. y.",
+    "EEEE, dd. MMMM y. GGG",
+    "E, dd. MMM y. GGG",
+    "E, d. MMM y. GGG"
+  ]
+}

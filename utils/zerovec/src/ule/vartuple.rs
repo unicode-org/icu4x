@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Types to help compose VarULE primitives.
+//! Types to help compose fixed-size [`ULE`] and variable-size [`VarULE`] primitives.
 //!
 //! This module exports [`VarTuple`] and [`VarTupleULE`], which allow a single sized type and
 //! a single unsized type to be stored together as a [`VarULE`].
@@ -50,14 +50,16 @@
 //! ```
 
 use core::mem::{size_of, transmute_copy};
+use zerofrom::ZeroFrom;
 
 use super::{AsULE, EncodeAsVarULE, UleError, VarULE, ULE};
 
 /// A sized type that can be converted to a [`VarTupleULE`].
 ///
 /// See the module for examples.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
 #[allow(clippy::exhaustive_structs)] // well-defined type
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct VarTuple<A, B> {
     pub sized: A,
     pub variable: B,
@@ -66,7 +68,7 @@ pub struct VarTuple<A, B> {
 /// A dynamically-sized type combining a sized and an unsized type.
 ///
 /// See the module for examples.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // well-defined type
 #[repr(C)]
 pub struct VarTupleULE<A: AsULE, V: VarULE + ?Sized> {
@@ -96,9 +98,9 @@ pub struct VarTupleULE<A: AsULE, V: VarULE + ?Sized> {
 //
 // 1. align(1): see "Representation" above.
 // 2. No padding: see "Representation" above.
-// 3. `validate_byte_slice` checks length and defers to the inner ULEs.
-// 4. `validate_byte_slice` checks length and defers to the inner ULEs.
-// 5. `from_byte_slice_unchecked` returns a fat pointer to the bytes.
+// 3. `validate_bytes` checks length and defers to the inner ULEs.
+// 4. `validate_bytes` checks length and defers to the inner ULEs.
+// 5. `from_bytes_unchecked` returns a fat pointer to the bytes.
 // 6. All other methods are left at their default impl.
 // 7. The two ULEs have byte equality, so this composition has byte equality.
 unsafe impl<A, V> VarULE for VarTupleULE<A, V>
@@ -106,26 +108,20 @@ where
     A: AsULE + 'static,
     V: VarULE + ?Sized,
 {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), UleError> {
-        // TODO: use split_first_chunk_mut in 1.77
-        if bytes.len() < size_of::<A::ULE>() {
-            return Err(UleError::length::<Self>(bytes.len()));
-        }
-        let (sized_chunk, variable_chunk) = bytes.split_at(size_of::<A::ULE>());
-        A::ULE::validate_byte_slice(sized_chunk)?;
-        V::validate_byte_slice(variable_chunk)?;
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
+        let (sized_chunk, variable_chunk) = bytes
+            .split_at_checked(size_of::<A::ULE>())
+            .ok_or(UleError::length::<Self>(bytes.len()))?;
+        A::ULE::validate_bytes(sized_chunk)?;
+        V::validate_bytes(variable_chunk)?;
         Ok(())
     }
 
-    unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-        #[allow(clippy::panic)] // panic is documented in function contract
-        if bytes.len() < size_of::<A::ULE>() {
-            panic!("from_byte_slice_unchecked called with short slice")
-        }
-        let (_sized_chunk, variable_chunk) = bytes.split_at(size_of::<A::ULE>());
+    unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
+        let (_sized_chunk, variable_chunk) = bytes.split_at_unchecked(size_of::<A::ULE>());
         // Safety: variable_chunk is a valid V because of this function's precondition: bytes is a valid Self,
         // and a valid Self contains a valid V after the space needed for A::ULE.
-        let variable_ref = V::from_byte_slice_unchecked(variable_chunk);
+        let variable_ref = V::from_bytes_unchecked(variable_chunk);
         let variable_ptr: *const V = variable_ref;
 
         // Safety: The DST of VarTupleULE is a pointer to the `sized` element and has a metadata
@@ -175,8 +171,104 @@ where
     fn encode_var_ule_write(&self, dst: &mut [u8]) {
         // TODO: use split_first_chunk_mut in 1.77
         let (sized_chunk, variable_chunk) = dst.split_at_mut(size_of::<A::ULE>());
-        sized_chunk.clone_from_slice([self.sized.to_unaligned()].as_byte_slice());
+        sized_chunk.clone_from_slice([self.sized.to_unaligned()].as_bytes());
         self.variable.encode_var_ule_write(variable_chunk);
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl<A, V> alloc::borrow::ToOwned for VarTupleULE<A, V>
+where
+    A: AsULE + 'static,
+    V: VarULE + ?Sized,
+{
+    type Owned = alloc::boxed::Box<Self>;
+    fn to_owned(&self) -> Self::Owned {
+        crate::ule::encode_varule_to_box(self)
+    }
+}
+
+impl<'a, A, B, V> ZeroFrom<'a, VarTupleULE<A, V>> for VarTuple<A, B>
+where
+    A: AsULE + 'static,
+    V: VarULE + ?Sized,
+    B: ZeroFrom<'a, V>,
+{
+    fn zero_from(other: &'a VarTupleULE<A, V>) -> Self {
+        VarTuple {
+            sized: AsULE::from_unaligned(other.sized),
+            variable: B::zero_from(&other.variable),
+        }
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<A, V> serde::Serialize for VarTupleULE<A, V>
+where
+    A: AsULE + 'static,
+    V: VarULE + ?Sized,
+    A: serde::Serialize,
+    V: serde::Serialize,
+{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        if serializer.is_human_readable() {
+            let this = VarTuple {
+                sized: A::from_unaligned(self.sized),
+                variable: &self.variable,
+            };
+            this.serialize(serializer)
+        } else {
+            serializer.serialize_bytes(self.as_bytes())
+        }
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'a, 'de: 'a, A, V> serde::Deserialize<'de> for &'a VarTupleULE<A, V>
+where
+    A: AsULE + 'static,
+    V: VarULE + ?Sized,
+    A: serde::Deserialize<'de>,
+{
+    fn deserialize<Des>(deserializer: Des) -> Result<Self, Des::Error>
+    where
+        Des: serde::Deserializer<'de>,
+    {
+        if !deserializer.is_human_readable() {
+            let bytes = <&[u8]>::deserialize(deserializer)?;
+            VarTupleULE::<A, V>::parse_bytes(bytes).map_err(serde::de::Error::custom)
+        } else {
+            Err(serde::de::Error::custom(
+                "&VarTupleULE can only deserialize in zero-copy ways",
+            ))
+        }
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de, A, V> serde::Deserialize<'de> for alloc::boxed::Box<VarTupleULE<A, V>>
+where
+    A: AsULE + 'static,
+    V: VarULE + ?Sized,
+    A: serde::Deserialize<'de>,
+    alloc::boxed::Box<V>: serde::Deserialize<'de>,
+{
+    fn deserialize<Des>(deserializer: Des) -> Result<Self, Des::Error>
+    where
+        Des: serde::Deserializer<'de>,
+    {
+        if deserializer.is_human_readable() {
+            let this = VarTuple::<A, alloc::boxed::Box<V>>::deserialize(deserializer)?;
+            Ok(crate::ule::encode_varule_to_box(&this))
+        } else {
+            // This branch should usually not be hit, since Cow-like use cases will hit the Deserialize impl for &'a TupleNVarULE instead.
+
+            let deserialized = <&VarTupleULE<A, V>>::deserialize(deserializer)?;
+            Ok(deserialized.to_boxed())
+        }
     }
 }
 
@@ -189,6 +281,10 @@ fn test_simple() {
     let var_tuple_ule = super::encode_varule_to_box(&var_tuple);
     assert_eq!(var_tuple_ule.sized.as_unsigned_int(), 1500);
     assert_eq!(&var_tuple_ule.variable, "hello");
+
+    // Can't use inference due to https://github.com/rust-lang/rust/issues/130180
+    #[cfg(feature = "serde")]
+    crate::ule::test_utils::assert_serde_roundtrips::<VarTupleULE<u16, str>>(&var_tuple_ule);
 }
 
 #[test]
@@ -198,7 +294,7 @@ fn test_nested() {
         sized: 2000u16,
         variable: VarTuple {
             sized: '🦙',
-            variable: ZeroVec::alloc_from_slice(&[b'I', b'C', b'U']),
+            variable: ZeroVec::alloc_from_slice(b"ICU"),
         },
     };
     let var_tuple_ule = super::encode_varule_to_box(&var_tuple);
@@ -206,6 +302,11 @@ fn test_nested() {
     assert_eq!(var_tuple_ule.variable.sized.to_char(), '🦙');
     assert_eq!(
         &var_tuple_ule.variable.variable,
-        ZeroSlice::from_ule_slice(&[b'I', b'C', b'U'])
+        ZeroSlice::from_ule_slice(b"ICU")
     );
+    // Can't use inference due to https://github.com/rust-lang/rust/issues/130180
+    #[cfg(feature = "serde")]
+    crate::ule::test_utils::assert_serde_roundtrips::<
+        VarTupleULE<u16, VarTupleULE<char, ZeroSlice<_>>>,
+    >(&var_tuple_ule);
 }

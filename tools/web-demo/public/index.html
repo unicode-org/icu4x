@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>ICU4X Web Demo</title>
+        <script src="dist/index.bundle.js"></script>
+        <link rel="stylesheet" href="dist/index.css"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body class="container my-2 mx-0 readable-width">
+        <div id="loading">Loading...</div>
+        <div id="loaded" hidden>
+            <p>
+                The <code>icu</code> library is exposed in the global scope, so examples can also be run in the browser console.
+            </p>
+        </div>
+        <template id="terminus">
+            <link rel="stylesheet" href="dist/index.css"/>
+            <div class="vstack gap-2">
+                <slot name="parameters"></slot>
+                <div class="input-group mb-small">
+                    <div class="form-control" style="background: var(--bs-secondary-bg); min-width: 400px"><pre><slot name="code"></slot></pre></div>
+                    <button type="submit" class="btn btn-primary" data-submit>▶</button>
+                    <div class="form-control" style="background: var(--bs-secondary-bg)"><slot name="output"></slot></div>
+                </div>
+            </div>
+        </template>
+
+        <style>
+            .error {
+                color: var(--bs-form-invalid-border-color);
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+                padding-left: 30px;
+                background-repeat: no-repeat;
+                background-size: 20px;
+            }
+        </style>
+        <template id="parameter">
+            <link rel="stylesheet" href="dist/index.css"/>
+            <div class="input-group">
+                <label class="input-group-text" style="min-width: 300px;"><code style="margin-left: auto;"><slot name="param-name"></slot></code></label>
+                <slot name="parameter"></slot>
+            </div>
+        </template>
+
+        <template id="enum">
+            <select class="form-select" data-oninput data-options style="width: 300px; font-size: 0.875em; font-family: var(--bs-font-monospace)">
+                <!-- Select doesn't evaluate anything other than option nodes, so to allow dropdowns (in addition to other HTML elements), we just search for data-options to append options to.-->
+            </select>
+        </template>
+
+        <template id="enum-option">
+            <option style="width: 300px; font-size: 0.875em; font-family: var(--bs-font-monospace)">
+                <slot name="option-text"></slot>
+            </option>
+        </template>
+
+        <template id="string">
+            <input type="text" class="form-control" data-oninput style="width: inherit; width: 300px;"/>
+        </template>
+
+        <template id="string-array">
+            <textarea class="form-control" data-oninput style="width: 300px;"></textarea>
+        </template>
+
+        <template id="number">
+            <input class="form-control" type="number" data-oninput style="width: 300px;"/>
+        </template>
+
+        <template id="boolean">
+              <div class="input-group-text">
+                <input class="form-check-input mt-0" type="checkbox" id="bool" data-oninput="">
+            </div>
+        </template>
+    </body>
+</html>

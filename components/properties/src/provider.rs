@@ -15,44 +15,40 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-pub mod bidi;
 pub mod names;
 
 pub use names::{
-    BidiClassNameToValueV1Marker, BidiClassValueToLongNameV1Marker,
-    BidiClassValueToShortNameV1Marker, CanonicalCombiningClassNameToValueV1Marker,
-    CanonicalCombiningClassValueToLongNameV1Marker,
-    CanonicalCombiningClassValueToShortNameV1Marker, EastAsianWidthNameToValueV1Marker,
-    EastAsianWidthValueToLongNameV1Marker, EastAsianWidthValueToShortNameV1Marker,
-    GeneralCategoryMaskNameToValueV1Marker, GeneralCategoryNameToValueV1Marker,
-    GeneralCategoryValueToLongNameV1Marker, GeneralCategoryValueToShortNameV1Marker,
-    GraphemeClusterBreakNameToValueV1Marker, GraphemeClusterBreakValueToLongNameV1Marker,
-    GraphemeClusterBreakValueToShortNameV1Marker, HangulSyllableTypeNameToValueV1Marker,
-    HangulSyllableTypeValueToLongNameV1Marker, HangulSyllableTypeValueToShortNameV1Marker,
-    IndicSyllabicCategoryNameToValueV1Marker, IndicSyllabicCategoryValueToLongNameV1Marker,
-    IndicSyllabicCategoryValueToShortNameV1Marker, JoiningTypeNameToValueV1Marker,
-    JoiningTypeValueToLongNameV1Marker, JoiningTypeValueToShortNameV1Marker,
-    LineBreakNameToValueV1Marker, LineBreakValueToLongNameV1Marker,
-    LineBreakValueToShortNameV1Marker, ScriptNameToValueV1Marker, ScriptValueToLongNameV1Marker,
-    ScriptValueToShortNameV1Marker, SentenceBreakNameToValueV1Marker,
-    SentenceBreakValueToLongNameV1Marker, SentenceBreakValueToShortNameV1Marker,
-    WordBreakNameToValueV1Marker, WordBreakValueToLongNameV1Marker,
-    WordBreakValueToShortNameV1Marker,
+    PropertyNameLongBidiClassV1, PropertyNameLongCanonicalCombiningClassV1,
+    PropertyNameLongEastAsianWidthV1, PropertyNameLongGeneralCategoryV1,
+    PropertyNameLongGraphemeClusterBreakV1, PropertyNameLongHangulSyllableTypeV1,
+    PropertyNameLongIndicSyllabicCategoryV1, PropertyNameLongJoiningTypeV1,
+    PropertyNameLongLineBreakV1, PropertyNameLongScriptV1, PropertyNameLongSentenceBreakV1,
+    PropertyNameLongVerticalOrientationV1, PropertyNameLongWordBreakV1,
+    PropertyNameParseBidiClassV1, PropertyNameParseCanonicalCombiningClassV1,
+    PropertyNameParseEastAsianWidthV1, PropertyNameParseGeneralCategoryMaskV1,
+    PropertyNameParseGeneralCategoryV1, PropertyNameParseGraphemeClusterBreakV1,
+    PropertyNameParseHangulSyllableTypeV1, PropertyNameParseIndicSyllabicCategoryV1,
+    PropertyNameParseJoiningTypeV1, PropertyNameParseLineBreakV1, PropertyNameParseScriptV1,
+    PropertyNameParseSentenceBreakV1, PropertyNameParseVerticalOrientationV1,
+    PropertyNameParseWordBreakV1, PropertyNameShortBidiClassV1,
+    PropertyNameShortCanonicalCombiningClassV1, PropertyNameShortEastAsianWidthV1,
+    PropertyNameShortGeneralCategoryV1, PropertyNameShortGraphemeClusterBreakV1,
+    PropertyNameShortHangulSyllableTypeV1, PropertyNameShortIndicSyllabicCategoryV1,
+    PropertyNameShortJoiningTypeV1, PropertyNameShortLineBreakV1, PropertyNameShortScriptV1,
+    PropertyNameShortSentenceBreakV1, PropertyNameShortVerticalOrientationV1,
+    PropertyNameShortWordBreakV1,
 };
 
 pub use crate::props::gc::GeneralCategoryULE;
-pub use bidi::BidiAuxiliaryPropertiesV1Marker;
-
+use crate::props::*;
 use crate::script::ScriptWithExt;
-
 use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
-
-use zerovec::{ule::UleError, VarZeroVec, ZeroSlice};
+use zerovec::{VarZeroVec, ZeroSlice};
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -74,245 +70,747 @@ const _: () = {
         pub use icu_collections as collections;
     }
     make_provider!(Baked);
-    impl_alnum_v1_marker!(Baked);
-    impl_alphabetic_v1_marker!(Baked);
-    impl_ascii_hex_digit_v1_marker!(Baked);
-    impl_basic_emoji_v1_marker!(Baked);
-    impl_bidi_auxiliary_properties_v1_marker!(Baked);
-    impl_bidi_class_name_to_value_v1_marker!(Baked);
-    impl_bidi_class_v1_marker!(Baked);
-    impl_bidi_class_value_to_long_name_v1_marker!(Baked);
-    impl_bidi_class_value_to_short_name_v1_marker!(Baked);
-    impl_bidi_control_v1_marker!(Baked);
-    impl_bidi_mirrored_v1_marker!(Baked);
-    impl_blank_v1_marker!(Baked);
-    impl_canonical_combining_class_name_to_value_v1_marker!(Baked);
-    impl_canonical_combining_class_v1_marker!(Baked);
-    impl_canonical_combining_class_value_to_long_name_v1_marker!(Baked);
-    impl_canonical_combining_class_value_to_short_name_v1_marker!(Baked);
-    impl_case_ignorable_v1_marker!(Baked);
-    impl_case_sensitive_v1_marker!(Baked);
-    impl_cased_v1_marker!(Baked);
-    impl_changes_when_casefolded_v1_marker!(Baked);
-    impl_changes_when_casemapped_v1_marker!(Baked);
-    impl_changes_when_lowercased_v1_marker!(Baked);
-    impl_changes_when_nfkc_casefolded_v1_marker!(Baked);
-    impl_changes_when_titlecased_v1_marker!(Baked);
-    impl_changes_when_uppercased_v1_marker!(Baked);
-    impl_dash_v1_marker!(Baked);
-    impl_default_ignorable_code_point_v1_marker!(Baked);
-    impl_deprecated_v1_marker!(Baked);
-    impl_diacritic_v1_marker!(Baked);
-    impl_east_asian_width_name_to_value_v1_marker!(Baked);
-    impl_east_asian_width_v1_marker!(Baked);
-    impl_east_asian_width_value_to_long_name_v1_marker!(Baked);
-    impl_east_asian_width_value_to_short_name_v1_marker!(Baked);
-    impl_emoji_component_v1_marker!(Baked);
-    impl_emoji_modifier_base_v1_marker!(Baked);
-    impl_emoji_modifier_v1_marker!(Baked);
-    impl_emoji_presentation_v1_marker!(Baked);
-    impl_emoji_v1_marker!(Baked);
-    impl_extended_pictographic_v1_marker!(Baked);
-    impl_extender_v1_marker!(Baked);
-    impl_full_composition_exclusion_v1_marker!(Baked);
-    impl_general_category_mask_name_to_value_v1_marker!(Baked);
-    impl_general_category_name_to_value_v1_marker!(Baked);
-    impl_general_category_v1_marker!(Baked);
-    impl_general_category_value_to_long_name_v1_marker!(Baked);
-    impl_general_category_value_to_short_name_v1_marker!(Baked);
-    impl_graph_v1_marker!(Baked);
-    impl_grapheme_base_v1_marker!(Baked);
-    impl_grapheme_cluster_break_name_to_value_v1_marker!(Baked);
-    impl_grapheme_cluster_break_v1_marker!(Baked);
-    impl_grapheme_cluster_break_value_to_long_name_v1_marker!(Baked);
-    impl_grapheme_cluster_break_value_to_short_name_v1_marker!(Baked);
-    impl_grapheme_extend_v1_marker!(Baked);
-    impl_grapheme_link_v1_marker!(Baked);
-    impl_hangul_syllable_type_name_to_value_v1_marker!(Baked);
-    impl_hangul_syllable_type_v1_marker!(Baked);
-    impl_hangul_syllable_type_value_to_long_name_v1_marker!(Baked);
-    impl_hangul_syllable_type_value_to_short_name_v1_marker!(Baked);
-    impl_hex_digit_v1_marker!(Baked);
-    impl_hyphen_v1_marker!(Baked);
-    impl_id_continue_v1_marker!(Baked);
-    impl_id_start_v1_marker!(Baked);
-    impl_ideographic_v1_marker!(Baked);
-    impl_ids_binary_operator_v1_marker!(Baked);
-    impl_ids_trinary_operator_v1_marker!(Baked);
-    impl_indic_syllabic_category_name_to_value_v1_marker!(Baked);
-    impl_indic_syllabic_category_v1_marker!(Baked);
-    impl_indic_syllabic_category_value_to_long_name_v1_marker!(Baked);
-    impl_indic_syllabic_category_value_to_short_name_v1_marker!(Baked);
-    impl_join_control_v1_marker!(Baked);
-    impl_joining_type_name_to_value_v1_marker!(Baked);
-    impl_joining_type_v1_marker!(Baked);
-    impl_joining_type_value_to_long_name_v1_marker!(Baked);
-    impl_joining_type_value_to_short_name_v1_marker!(Baked);
-    impl_line_break_name_to_value_v1_marker!(Baked);
-    impl_line_break_v1_marker!(Baked);
-    impl_line_break_value_to_long_name_v1_marker!(Baked);
-    impl_line_break_value_to_short_name_v1_marker!(Baked);
-    impl_logical_order_exception_v1_marker!(Baked);
-    impl_lowercase_v1_marker!(Baked);
-    impl_math_v1_marker!(Baked);
-    impl_nfc_inert_v1_marker!(Baked);
-    impl_nfd_inert_v1_marker!(Baked);
-    impl_nfkc_inert_v1_marker!(Baked);
-    impl_nfkd_inert_v1_marker!(Baked);
-    impl_noncharacter_code_point_v1_marker!(Baked);
-    impl_pattern_syntax_v1_marker!(Baked);
-    impl_pattern_white_space_v1_marker!(Baked);
-    impl_prepended_concatenation_mark_v1_marker!(Baked);
-    impl_print_v1_marker!(Baked);
-    impl_quotation_mark_v1_marker!(Baked);
-    impl_radical_v1_marker!(Baked);
-    impl_regional_indicator_v1_marker!(Baked);
-    impl_script_name_to_value_v1_marker!(Baked);
-    impl_script_v1_marker!(Baked);
-    impl_script_value_to_long_name_v1_marker!(Baked);
-    impl_script_value_to_short_name_v1_marker!(Baked);
-    impl_script_with_extensions_property_v1_marker!(Baked);
-    impl_segment_starter_v1_marker!(Baked);
-    impl_sentence_break_name_to_value_v1_marker!(Baked);
-    impl_sentence_break_v1_marker!(Baked);
-    impl_sentence_break_value_to_long_name_v1_marker!(Baked);
-    impl_sentence_break_value_to_short_name_v1_marker!(Baked);
-    impl_sentence_terminal_v1_marker!(Baked);
-    impl_soft_dotted_v1_marker!(Baked);
-    impl_terminal_punctuation_v1_marker!(Baked);
-    impl_unified_ideograph_v1_marker!(Baked);
-    impl_uppercase_v1_marker!(Baked);
-    impl_variation_selector_v1_marker!(Baked);
-    impl_white_space_v1_marker!(Baked);
-    impl_word_break_name_to_value_v1_marker!(Baked);
-    impl_word_break_v1_marker!(Baked);
-    impl_word_break_value_to_long_name_v1_marker!(Baked);
-    impl_word_break_value_to_short_name_v1_marker!(Baked);
-    impl_xdigit_v1_marker!(Baked);
-    impl_xid_continue_v1_marker!(Baked);
-    impl_xid_start_v1_marker!(Baked);
+    impl_property_binary_alnum_v1!(Baked);
+    impl_property_binary_alphabetic_v1!(Baked);
+    impl_property_binary_ascii_hex_digit_v1!(Baked);
+    impl_property_binary_basic_emoji_v1!(Baked);
+    impl_property_binary_bidi_control_v1!(Baked);
+    impl_property_binary_bidi_mirrored_v1!(Baked);
+    impl_property_binary_blank_v1!(Baked);
+    impl_property_binary_case_ignorable_v1!(Baked);
+    impl_property_binary_case_sensitive_v1!(Baked);
+    impl_property_binary_cased_v1!(Baked);
+    impl_property_binary_changes_when_casefolded_v1!(Baked);
+    impl_property_binary_changes_when_casemapped_v1!(Baked);
+    impl_property_binary_changes_when_lowercased_v1!(Baked);
+    impl_property_binary_changes_when_nfkc_casefolded_v1!(Baked);
+    impl_property_binary_changes_when_titlecased_v1!(Baked);
+    impl_property_binary_changes_when_uppercased_v1!(Baked);
+    impl_property_binary_dash_v1!(Baked);
+    impl_property_binary_default_ignorable_code_point_v1!(Baked);
+    impl_property_binary_deprecated_v1!(Baked);
+    impl_property_binary_diacritic_v1!(Baked);
+    impl_property_binary_emoji_component_v1!(Baked);
+    impl_property_binary_emoji_modifier_base_v1!(Baked);
+    impl_property_binary_emoji_modifier_v1!(Baked);
+    impl_property_binary_emoji_presentation_v1!(Baked);
+    impl_property_binary_emoji_v1!(Baked);
+    impl_property_binary_extended_pictographic_v1!(Baked);
+    impl_property_binary_extender_v1!(Baked);
+    impl_property_binary_full_composition_exclusion_v1!(Baked);
+    impl_property_binary_graph_v1!(Baked);
+    impl_property_binary_grapheme_base_v1!(Baked);
+    impl_property_binary_grapheme_extend_v1!(Baked);
+    impl_property_binary_grapheme_link_v1!(Baked);
+    impl_property_binary_hex_digit_v1!(Baked);
+    impl_property_binary_hyphen_v1!(Baked);
+    impl_property_binary_id_continue_v1!(Baked);
+    impl_property_binary_id_start_v1!(Baked);
+    impl_property_binary_ideographic_v1!(Baked);
+    impl_property_binary_ids_binary_operator_v1!(Baked);
+    impl_property_binary_ids_trinary_operator_v1!(Baked);
+    impl_property_binary_join_control_v1!(Baked);
+    impl_property_binary_logical_order_exception_v1!(Baked);
+    impl_property_binary_lowercase_v1!(Baked);
+    impl_property_binary_math_v1!(Baked);
+    impl_property_binary_nfc_inert_v1!(Baked);
+    impl_property_binary_nfd_inert_v1!(Baked);
+    impl_property_binary_nfkc_inert_v1!(Baked);
+    impl_property_binary_nfkd_inert_v1!(Baked);
+    impl_property_binary_noncharacter_code_point_v1!(Baked);
+    impl_property_binary_pattern_syntax_v1!(Baked);
+    impl_property_binary_pattern_white_space_v1!(Baked);
+    impl_property_binary_prepended_concatenation_mark_v1!(Baked);
+    impl_property_binary_print_v1!(Baked);
+    impl_property_binary_quotation_mark_v1!(Baked);
+    impl_property_binary_radical_v1!(Baked);
+    impl_property_binary_regional_indicator_v1!(Baked);
+    impl_property_binary_segment_starter_v1!(Baked);
+    impl_property_binary_sentence_terminal_v1!(Baked);
+    impl_property_binary_soft_dotted_v1!(Baked);
+    impl_property_binary_terminal_punctuation_v1!(Baked);
+    impl_property_binary_unified_ideograph_v1!(Baked);
+    impl_property_binary_uppercase_v1!(Baked);
+    impl_property_binary_variation_selector_v1!(Baked);
+    impl_property_binary_white_space_v1!(Baked);
+    impl_property_binary_xdigit_v1!(Baked);
+    impl_property_binary_xid_continue_v1!(Baked);
+    impl_property_binary_xid_start_v1!(Baked);
+    impl_property_enum_bidi_class_v1!(Baked);
+    impl_property_enum_bidi_mirroring_glyph_v1!(Baked);
+    impl_property_enum_canonical_combining_class_v1!(Baked);
+    impl_property_enum_east_asian_width_v1!(Baked);
+    impl_property_enum_general_category_v1!(Baked);
+    impl_property_enum_grapheme_cluster_break_v1!(Baked);
+    impl_property_enum_hangul_syllable_type_v1!(Baked);
+    impl_property_enum_indic_conjunct_break_v1!(Baked);
+    impl_property_enum_indic_syllabic_category_v1!(Baked);
+    impl_property_enum_joining_type_v1!(Baked);
+    impl_property_enum_line_break_v1!(Baked);
+    impl_property_enum_script_v1!(Baked);
+    impl_property_enum_sentence_break_v1!(Baked);
+    impl_property_enum_vertical_orientation_v1!(Baked);
+    impl_property_enum_word_break_v1!(Baked);
+    impl_property_name_long_bidi_class_v1!(Baked);
+    impl_property_name_long_canonical_combining_class_v1!(Baked);
+    impl_property_name_long_east_asian_width_v1!(Baked);
+    impl_property_name_long_general_category_v1!(Baked);
+    impl_property_name_long_grapheme_cluster_break_v1!(Baked);
+    impl_property_name_long_hangul_syllable_type_v1!(Baked);
+    impl_property_name_long_indic_syllabic_category_v1!(Baked);
+    impl_property_name_long_joining_type_v1!(Baked);
+    impl_property_name_long_line_break_v1!(Baked);
+    impl_property_name_long_script_v1!(Baked);
+    impl_property_name_long_sentence_break_v1!(Baked);
+    impl_property_name_long_vertical_orientation_v1!(Baked);
+    impl_property_name_long_word_break_v1!(Baked);
+    impl_property_name_parse_bidi_class_v1!(Baked);
+    impl_property_name_parse_canonical_combining_class_v1!(Baked);
+    impl_property_name_parse_east_asian_width_v1!(Baked);
+    impl_property_name_parse_general_category_mask_v1!(Baked);
+    impl_property_name_parse_general_category_v1!(Baked);
+    impl_property_name_parse_grapheme_cluster_break_v1!(Baked);
+    impl_property_name_parse_hangul_syllable_type_v1!(Baked);
+    impl_property_name_parse_indic_syllabic_category_v1!(Baked);
+    impl_property_name_parse_joining_type_v1!(Baked);
+    impl_property_name_parse_line_break_v1!(Baked);
+    impl_property_name_parse_script_v1!(Baked);
+    impl_property_name_parse_sentence_break_v1!(Baked);
+    impl_property_name_parse_vertical_orientation_v1!(Baked);
+    impl_property_name_parse_word_break_v1!(Baked);
+    impl_property_name_short_bidi_class_v1!(Baked);
+    impl_property_name_short_canonical_combining_class_v1!(Baked);
+    impl_property_name_short_east_asian_width_v1!(Baked);
+    impl_property_name_short_general_category_v1!(Baked);
+    impl_property_name_short_grapheme_cluster_break_v1!(Baked);
+    impl_property_name_short_hangul_syllable_type_v1!(Baked);
+    impl_property_name_short_indic_syllabic_category_v1!(Baked);
+    impl_property_name_short_joining_type_v1!(Baked);
+    impl_property_name_short_line_break_v1!(Baked);
+    impl_property_name_short_script_v1!(Baked);
+    impl_property_name_short_sentence_break_v1!(Baked);
+    impl_property_name_short_vertical_orientation_v1!(Baked);
+    impl_property_name_short_word_break_v1!(Baked);
+    impl_property_script_with_extensions_v1!(Baked);
 };
+
+icu_provider::data_marker!(
+    /// `PropertyBinaryAlnumV1`
+    PropertyBinaryAlnumV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryAlphabeticV1`
+    PropertyBinaryAlphabeticV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryAsciiHexDigitV1`
+    PropertyBinaryAsciiHexDigitV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryBidiControlV1`
+    PropertyBinaryBidiControlV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryBidiMirroredV1`
+    PropertyBinaryBidiMirroredV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryBlankV1`
+    PropertyBinaryBlankV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryCasedV1`
+    PropertyBinaryCasedV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryCaseIgnorableV1`
+    PropertyBinaryCaseIgnorableV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryCaseSensitiveV1`
+    PropertyBinaryCaseSensitiveV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryChangesWhenCasefoldedV1`
+    PropertyBinaryChangesWhenCasefoldedV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryChangesWhenCasemappedV1`
+    PropertyBinaryChangesWhenCasemappedV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryChangesWhenLowercasedV1`
+    PropertyBinaryChangesWhenLowercasedV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryChangesWhenNfkcCasefoldedV1`
+    PropertyBinaryChangesWhenNfkcCasefoldedV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryChangesWhenTitlecasedV1`
+    PropertyBinaryChangesWhenTitlecasedV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryChangesWhenUppercasedV1`
+    PropertyBinaryChangesWhenUppercasedV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryDashV1`
+    PropertyBinaryDashV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryDefaultIgnorableCodePointV1`
+    PropertyBinaryDefaultIgnorableCodePointV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryDeprecatedV1`
+    PropertyBinaryDeprecatedV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryDiacriticV1`
+    PropertyBinaryDiacriticV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryEmojiComponentV1`
+    PropertyBinaryEmojiComponentV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryEmojiModifierBaseV1`
+    PropertyBinaryEmojiModifierBaseV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryEmojiModifierV1`
+    PropertyBinaryEmojiModifierV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryEmojiPresentationV1`
+    PropertyBinaryEmojiPresentationV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryEmojiV1`
+    PropertyBinaryEmojiV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryExtendedPictographicV1`
+    PropertyBinaryExtendedPictographicV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryExtenderV1`
+    PropertyBinaryExtenderV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryFullCompositionExclusionV1`
+    PropertyBinaryFullCompositionExclusionV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryGraphemeBaseV1`
+    PropertyBinaryGraphemeBaseV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryGraphemeExtendV1`
+    PropertyBinaryGraphemeExtendV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryGraphemeLinkV1`
+    PropertyBinaryGraphemeLinkV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryGraphV1`
+    PropertyBinaryGraphV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryHexDigitV1`
+    PropertyBinaryHexDigitV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryHyphenV1`
+    PropertyBinaryHyphenV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryIdContinueV1`
+    PropertyBinaryIdContinueV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryIdeographicV1`
+    PropertyBinaryIdeographicV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryIdsBinaryOperatorV1`
+    PropertyBinaryIdsBinaryOperatorV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryIdStartV1`
+    PropertyBinaryIdStartV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryIdsTrinaryOperatorV1`
+    PropertyBinaryIdsTrinaryOperatorV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryJoinControlV1`
+    PropertyBinaryJoinControlV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryLogicalOrderExceptionV1`
+    PropertyBinaryLogicalOrderExceptionV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryLowercaseV1`
+    PropertyBinaryLowercaseV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryMathV1`
+    PropertyBinaryMathV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryNfcInertV1`
+    PropertyBinaryNfcInertV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryNfdInertV1`
+    PropertyBinaryNfdInertV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryNfkcInertV1`
+    PropertyBinaryNfkcInertV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryNfkdInertV1`
+    PropertyBinaryNfkdInertV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryNoncharacterCodePointV1`
+    PropertyBinaryNoncharacterCodePointV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryPatternSyntaxV1`
+    PropertyBinaryPatternSyntaxV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryPatternWhiteSpaceV1`
+    PropertyBinaryPatternWhiteSpaceV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryPrependedConcatenationMarkV1`
+    PropertyBinaryPrependedConcatenationMarkV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryPrintV1`
+    PropertyBinaryPrintV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryQuotationMarkV1`
+    PropertyBinaryQuotationMarkV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryRadicalV1`
+    PropertyBinaryRadicalV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryRegionalIndicatorV1`
+    PropertyBinaryRegionalIndicatorV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinarySegmentStarterV1`
+    PropertyBinarySegmentStarterV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinarySentenceTerminalV1`
+    PropertyBinarySentenceTerminalV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinarySoftDottedV1`
+    PropertyBinarySoftDottedV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryTerminalPunctuationV1`
+    PropertyBinaryTerminalPunctuationV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryUnifiedIdeographV1`
+    PropertyBinaryUnifiedIdeographV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryUppercaseV1`
+    PropertyBinaryUppercaseV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryVariationSelectorV1`
+    PropertyBinaryVariationSelectorV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryWhiteSpaceV1`
+    PropertyBinaryWhiteSpaceV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryXdigitV1`
+    PropertyBinaryXdigitV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryXidContinueV1`
+    PropertyBinaryXidContinueV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryXidStartV1`
+    PropertyBinaryXidStartV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// Data marker for the 'BidiClass' Unicode property
+    PropertyEnumBidiClassV1,
+    PropertyCodePointMap<'static, crate::props::BidiClass>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// Data marker for the 'CanonicalCombiningClass' Unicode property
+    PropertyEnumCanonicalCombiningClassV1,
+    PropertyCodePointMap<'static, crate::props::CanonicalCombiningClass>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// Data marker for the 'EastAsianWidth' Unicode property
+    PropertyEnumEastAsianWidthV1,
+    PropertyCodePointMap<'static, crate::props::EastAsianWidth>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// Data marker for the 'GeneralCategory' Unicode property
+    PropertyEnumGeneralCategoryV1,
+    PropertyCodePointMap<'static, crate::props::GeneralCategory>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// Data marker for the 'GraphemeClusterBreak' Unicode property
+    PropertyEnumGraphemeClusterBreakV1,
+    PropertyCodePointMap<'static, crate::props::GraphemeClusterBreak>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// Data marker for the 'HangulSyllableType' Unicode property
+    PropertyEnumHangulSyllableTypeV1,
+    PropertyCodePointMap<'static, crate::props::HangulSyllableType>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// Data marker for the 'IndicConjunctBreak' Unicode property
+    PropertyEnumIndicConjunctBreakV1,
+    PropertyCodePointMap<'static, crate::props::IndicConjunctBreak>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// Data marker for the 'IndicSyllabicCategory' Unicode property
+    PropertyEnumIndicSyllabicCategoryV1,
+    PropertyCodePointMap<'static, crate::props::IndicSyllabicCategory>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// Data marker for the 'JoiningType' Unicode property
+    PropertyEnumJoiningTypeV1,
+    PropertyCodePointMap<'static, crate::props::JoiningType>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// Data marker for the 'LineBreak' Unicode property
+    PropertyEnumLineBreakV1,
+    PropertyCodePointMap<'static, crate::props::LineBreak>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// Data marker for the 'Script' Unicode property
+    PropertyEnumScriptV1,
+    PropertyCodePointMap<'static, crate::props::Script>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// Data marker for the 'SentenceBreak' Unicode property
+    PropertyEnumSentenceBreakV1,
+    PropertyCodePointMap<'static, crate::props::SentenceBreak>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// Data marker for the 'Vertical_Orientation' Unicode property
+    PropertyEnumVerticalOrientationV1,
+    PropertyCodePointMap<'static, crate::props::VerticalOrientation>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// Data marker for the 'WordBreak' Unicode property
+    PropertyEnumWordBreakV1,
+    PropertyCodePointMap<'static, crate::props::WordBreak>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// Data marker for the 'BidiMirroringGlyph' Unicode property
+    PropertyEnumBidiMirroringGlyphV1,
+    PropertyCodePointMap<'static, crate::bidi::BidiMirroringGlyph>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryBasicEmojiV1`
+    PropertyBinaryBasicEmojiV1,
+    PropertyUnicodeSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyScriptWithExtensionsV1`
+    PropertyScriptWithExtensionsV1,
+    ScriptWithExtensionsProperty<'static>,
+    is_singleton = true
+);
 
 /// All data keys in this module.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    AlnumV1Marker::INFO,
-    AlphabeticV1Marker::INFO,
-    AsciiHexDigitV1Marker::INFO,
-    BasicEmojiV1Marker::INFO,
-    bidi::BidiAuxiliaryPropertiesV1Marker::INFO,
-    BidiControlV1Marker::INFO,
-    BidiMirroredV1Marker::INFO,
-    BlankV1Marker::INFO,
-    CasedV1Marker::INFO,
-    CaseIgnorableV1Marker::INFO,
-    CaseSensitiveV1Marker::INFO,
-    ChangesWhenCasefoldedV1Marker::INFO,
-    ChangesWhenCasemappedV1Marker::INFO,
-    ChangesWhenLowercasedV1Marker::INFO,
-    ChangesWhenNfkcCasefoldedV1Marker::INFO,
-    ChangesWhenTitlecasedV1Marker::INFO,
-    ChangesWhenUppercasedV1Marker::INFO,
-    DashV1Marker::INFO,
-    DefaultIgnorableCodePointV1Marker::INFO,
-    DeprecatedV1Marker::INFO,
-    DiacriticV1Marker::INFO,
-    EmojiComponentV1Marker::INFO,
-    EmojiModifierBaseV1Marker::INFO,
-    EmojiModifierV1Marker::INFO,
-    EmojiPresentationV1Marker::INFO,
-    EmojiV1Marker::INFO,
-    ExtendedPictographicV1Marker::INFO,
-    ExtenderV1Marker::INFO,
-    FullCompositionExclusionV1Marker::INFO,
-    GraphemeBaseV1Marker::INFO,
-    GraphemeExtendV1Marker::INFO,
-    GraphemeLinkV1Marker::INFO,
-    GraphV1Marker::INFO,
-    HexDigitV1Marker::INFO,
-    HyphenV1Marker::INFO,
-    IdContinueV1Marker::INFO,
-    IdeographicV1Marker::INFO,
-    IdsBinaryOperatorV1Marker::INFO,
-    IdStartV1Marker::INFO,
-    IdsTrinaryOperatorV1Marker::INFO,
-    JoinControlV1Marker::INFO,
-    LogicalOrderExceptionV1Marker::INFO,
-    LowercaseV1Marker::INFO,
-    MathV1Marker::INFO,
-    NfcInertV1Marker::INFO,
-    NfdInertV1Marker::INFO,
-    NfkcInertV1Marker::INFO,
-    NfkdInertV1Marker::INFO,
-    NoncharacterCodePointV1Marker::INFO,
-    PatternSyntaxV1Marker::INFO,
-    PatternWhiteSpaceV1Marker::INFO,
-    PrependedConcatenationMarkV1Marker::INFO,
-    PrintV1Marker::INFO,
-    QuotationMarkV1Marker::INFO,
-    RadicalV1Marker::INFO,
-    RegionalIndicatorV1Marker::INFO,
-    ScriptWithExtensionsPropertyV1Marker::INFO,
-    ScriptWithExtensionsPropertyV1Marker::INFO,
-    SegmentStarterV1Marker::INFO,
-    SentenceTerminalV1Marker::INFO,
-    SoftDottedV1Marker::INFO,
-    TerminalPunctuationV1Marker::INFO,
-    UnifiedIdeographV1Marker::INFO,
-    UppercaseV1Marker::INFO,
-    VariationSelectorV1Marker::INFO,
-    WhiteSpaceV1Marker::INFO,
-    XdigitV1Marker::INFO,
-    XidContinueV1Marker::INFO,
-    XidStartV1Marker::INFO,
-    BidiClassNameToValueV1Marker::INFO,
-    BidiClassV1Marker::INFO,
-    BidiClassValueToLongNameV1Marker::INFO,
-    BidiClassValueToShortNameV1Marker::INFO,
-    CanonicalCombiningClassNameToValueV1Marker::INFO,
-    CanonicalCombiningClassV1Marker::INFO,
-    CanonicalCombiningClassValueToLongNameV1Marker::INFO,
-    CanonicalCombiningClassValueToShortNameV1Marker::INFO,
-    EastAsianWidthNameToValueV1Marker::INFO,
-    EastAsianWidthV1Marker::INFO,
-    EastAsianWidthValueToLongNameV1Marker::INFO,
-    EastAsianWidthValueToShortNameV1Marker::INFO,
-    GeneralCategoryMaskNameToValueV1Marker::INFO,
-    GeneralCategoryNameToValueV1Marker::INFO,
-    GeneralCategoryV1Marker::INFO,
-    GeneralCategoryValueToLongNameV1Marker::INFO,
-    GeneralCategoryValueToShortNameV1Marker::INFO,
-    GraphemeClusterBreakNameToValueV1Marker::INFO,
-    GraphemeClusterBreakV1Marker::INFO,
-    GraphemeClusterBreakValueToLongNameV1Marker::INFO,
-    GraphemeClusterBreakValueToShortNameV1Marker::INFO,
-    HangulSyllableTypeNameToValueV1Marker::INFO,
-    HangulSyllableTypeV1Marker::INFO,
-    HangulSyllableTypeValueToLongNameV1Marker::INFO,
-    HangulSyllableTypeValueToShortNameV1Marker::INFO,
-    IndicSyllabicCategoryNameToValueV1Marker::INFO,
-    IndicSyllabicCategoryV1Marker::INFO,
-    IndicSyllabicCategoryValueToLongNameV1Marker::INFO,
-    IndicSyllabicCategoryValueToShortNameV1Marker::INFO,
-    JoiningTypeNameToValueV1Marker::INFO,
-    JoiningTypeV1Marker::INFO,
-    JoiningTypeValueToLongNameV1Marker::INFO,
-    JoiningTypeValueToShortNameV1Marker::INFO,
-    LineBreakNameToValueV1Marker::INFO,
-    LineBreakV1Marker::INFO,
-    LineBreakValueToLongNameV1Marker::INFO,
-    LineBreakValueToShortNameV1Marker::INFO,
-    ScriptNameToValueV1Marker::INFO,
-    ScriptV1Marker::INFO,
-    ScriptValueToLongNameV1Marker::INFO,
-    ScriptValueToShortNameV1Marker::INFO,
-    SentenceBreakNameToValueV1Marker::INFO,
-    SentenceBreakV1Marker::INFO,
-    SentenceBreakValueToLongNameV1Marker::INFO,
-    SentenceBreakValueToShortNameV1Marker::INFO,
-    WordBreakNameToValueV1Marker::INFO,
-    WordBreakV1Marker::INFO,
-    WordBreakValueToLongNameV1Marker::INFO,
-    WordBreakValueToShortNameV1Marker::INFO,
+    PropertyNameLongBidiClassV1::INFO,
+    PropertyNameLongCanonicalCombiningClassV1::INFO,
+    PropertyNameLongEastAsianWidthV1::INFO,
+    PropertyNameLongGeneralCategoryV1::INFO,
+    PropertyNameLongGraphemeClusterBreakV1::INFO,
+    PropertyNameLongHangulSyllableTypeV1::INFO,
+    PropertyNameLongIndicSyllabicCategoryV1::INFO,
+    PropertyNameLongJoiningTypeV1::INFO,
+    PropertyNameLongLineBreakV1::INFO,
+    PropertyNameLongScriptV1::INFO,
+    PropertyNameLongSentenceBreakV1::INFO,
+    PropertyNameLongVerticalOrientationV1::INFO,
+    PropertyNameLongWordBreakV1::INFO,
+    PropertyNameParseBidiClassV1::INFO,
+    PropertyNameParseCanonicalCombiningClassV1::INFO,
+    PropertyNameParseEastAsianWidthV1::INFO,
+    PropertyNameParseGeneralCategoryMaskV1::INFO,
+    PropertyNameParseGeneralCategoryV1::INFO,
+    PropertyNameParseGraphemeClusterBreakV1::INFO,
+    PropertyNameParseHangulSyllableTypeV1::INFO,
+    PropertyNameParseIndicSyllabicCategoryV1::INFO,
+    PropertyNameParseJoiningTypeV1::INFO,
+    PropertyNameParseLineBreakV1::INFO,
+    PropertyNameParseScriptV1::INFO,
+    PropertyNameParseSentenceBreakV1::INFO,
+    PropertyNameParseVerticalOrientationV1::INFO,
+    PropertyNameParseWordBreakV1::INFO,
+    PropertyNameShortBidiClassV1::INFO,
+    PropertyNameShortCanonicalCombiningClassV1::INFO,
+    PropertyNameShortEastAsianWidthV1::INFO,
+    PropertyNameShortGeneralCategoryV1::INFO,
+    PropertyNameShortGraphemeClusterBreakV1::INFO,
+    PropertyNameShortHangulSyllableTypeV1::INFO,
+    PropertyNameShortIndicSyllabicCategoryV1::INFO,
+    PropertyNameShortJoiningTypeV1::INFO,
+    PropertyNameShortLineBreakV1::INFO,
+    PropertyNameShortScriptV1::INFO,
+    PropertyNameShortSentenceBreakV1::INFO,
+    PropertyNameShortVerticalOrientationV1::INFO,
+    PropertyNameShortWordBreakV1::INFO,
+    PropertyBinaryAlnumV1::INFO,
+    PropertyBinaryAlphabeticV1::INFO,
+    PropertyBinaryAsciiHexDigitV1::INFO,
+    PropertyBinaryBidiControlV1::INFO,
+    PropertyBinaryBidiMirroredV1::INFO,
+    PropertyBinaryBlankV1::INFO,
+    PropertyBinaryCasedV1::INFO,
+    PropertyBinaryCaseIgnorableV1::INFO,
+    PropertyBinaryCaseSensitiveV1::INFO,
+    PropertyBinaryChangesWhenCasefoldedV1::INFO,
+    PropertyBinaryChangesWhenCasemappedV1::INFO,
+    PropertyBinaryChangesWhenLowercasedV1::INFO,
+    PropertyBinaryChangesWhenNfkcCasefoldedV1::INFO,
+    PropertyBinaryChangesWhenTitlecasedV1::INFO,
+    PropertyBinaryChangesWhenUppercasedV1::INFO,
+    PropertyBinaryDashV1::INFO,
+    PropertyBinaryDefaultIgnorableCodePointV1::INFO,
+    PropertyBinaryDeprecatedV1::INFO,
+    PropertyBinaryDiacriticV1::INFO,
+    PropertyBinaryEmojiComponentV1::INFO,
+    PropertyBinaryEmojiModifierBaseV1::INFO,
+    PropertyBinaryEmojiModifierV1::INFO,
+    PropertyBinaryEmojiPresentationV1::INFO,
+    PropertyBinaryEmojiV1::INFO,
+    PropertyBinaryExtendedPictographicV1::INFO,
+    PropertyBinaryExtenderV1::INFO,
+    PropertyBinaryFullCompositionExclusionV1::INFO,
+    PropertyBinaryGraphemeBaseV1::INFO,
+    PropertyBinaryGraphemeExtendV1::INFO,
+    PropertyBinaryGraphemeLinkV1::INFO,
+    PropertyBinaryGraphV1::INFO,
+    PropertyBinaryHexDigitV1::INFO,
+    PropertyBinaryHyphenV1::INFO,
+    PropertyBinaryIdContinueV1::INFO,
+    PropertyBinaryIdeographicV1::INFO,
+    PropertyBinaryIdsBinaryOperatorV1::INFO,
+    PropertyBinaryIdStartV1::INFO,
+    PropertyBinaryIdsTrinaryOperatorV1::INFO,
+    PropertyBinaryJoinControlV1::INFO,
+    PropertyBinaryLogicalOrderExceptionV1::INFO,
+    PropertyBinaryLowercaseV1::INFO,
+    PropertyBinaryMathV1::INFO,
+    PropertyBinaryNfcInertV1::INFO,
+    PropertyBinaryNfdInertV1::INFO,
+    PropertyBinaryNfkcInertV1::INFO,
+    PropertyBinaryNfkdInertV1::INFO,
+    PropertyBinaryNoncharacterCodePointV1::INFO,
+    PropertyBinaryPatternSyntaxV1::INFO,
+    PropertyBinaryPatternWhiteSpaceV1::INFO,
+    PropertyBinaryPrependedConcatenationMarkV1::INFO,
+    PropertyBinaryPrintV1::INFO,
+    PropertyBinaryQuotationMarkV1::INFO,
+    PropertyBinaryRadicalV1::INFO,
+    PropertyBinaryRegionalIndicatorV1::INFO,
+    PropertyBinarySegmentStarterV1::INFO,
+    PropertyBinarySentenceTerminalV1::INFO,
+    PropertyBinarySoftDottedV1::INFO,
+    PropertyBinaryTerminalPunctuationV1::INFO,
+    PropertyBinaryUnifiedIdeographV1::INFO,
+    PropertyBinaryUppercaseV1::INFO,
+    PropertyBinaryVariationSelectorV1::INFO,
+    PropertyBinaryWhiteSpaceV1::INFO,
+    PropertyBinaryXdigitV1::INFO,
+    PropertyBinaryXidContinueV1::INFO,
+    PropertyBinaryXidStartV1::INFO,
+    PropertyEnumBidiClassV1::INFO,
+    PropertyEnumCanonicalCombiningClassV1::INFO,
+    PropertyEnumEastAsianWidthV1::INFO,
+    PropertyEnumGeneralCategoryV1::INFO,
+    PropertyEnumGraphemeClusterBreakV1::INFO,
+    PropertyEnumHangulSyllableTypeV1::INFO,
+    PropertyEnumIndicConjunctBreakV1::INFO,
+    PropertyEnumIndicSyllabicCategoryV1::INFO,
+    PropertyEnumJoiningTypeV1::INFO,
+    PropertyEnumLineBreakV1::INFO,
+    PropertyEnumScriptV1::INFO,
+    PropertyEnumSentenceBreakV1::INFO,
+    PropertyEnumVerticalOrientationV1::INFO,
+    PropertyEnumWordBreakV1::INFO,
+    PropertyEnumBidiMirroringGlyphV1::INFO,
+    PropertyBinaryBasicEmojiV1::INFO,
+    PropertyScriptWithExtensionsV1::INFO,
 ];
 
 /// A set of characters which share a particular property value.
@@ -325,79 +823,12 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(
-    marker(AlnumV1Marker, "props/alnum@1", singleton),
-    marker(AlphabeticV1Marker, "props/Alpha@1", singleton),
-    marker(AsciiHexDigitV1Marker, "props/AHex@1", singleton),
-    marker(BidiControlV1Marker, "props/Bidi_C@1", singleton),
-    marker(BidiMirroredV1Marker, "props/Bidi_M@1", singleton),
-    marker(BlankV1Marker, "props/blank@1", singleton),
-    marker(CasedV1Marker, "props/Cased@1", singleton),
-    marker(CaseIgnorableV1Marker, "props/CI@1", singleton),
-    marker(CaseSensitiveV1Marker, "props/Sensitive@1", singleton),
-    marker(ChangesWhenCasefoldedV1Marker, "props/CWCF@1", singleton),
-    marker(ChangesWhenCasemappedV1Marker, "props/CWCM@1", singleton),
-    marker(ChangesWhenLowercasedV1Marker, "props/CWL@1", singleton),
-    marker(ChangesWhenNfkcCasefoldedV1Marker, "props/CWKCF@1", singleton),
-    marker(ChangesWhenTitlecasedV1Marker, "props/CWT@1", singleton),
-    marker(ChangesWhenUppercasedV1Marker, "props/CWU@1", singleton),
-    marker(DashV1Marker, "props/Dash@1", singleton),
-    marker(DefaultIgnorableCodePointV1Marker, "props/DI@1", singleton),
-    marker(DeprecatedV1Marker, "props/Dep@1", singleton),
-    marker(DiacriticV1Marker, "props/Dia@1", singleton),
-    marker(EmojiComponentV1Marker, "props/EComp@1", singleton),
-    marker(EmojiModifierBaseV1Marker, "props/EBase@1", singleton),
-    marker(EmojiModifierV1Marker, "props/EMod@1", singleton),
-    marker(EmojiPresentationV1Marker, "props/EPres@1", singleton),
-    marker(EmojiV1Marker, "props/Emoji@1", singleton),
-    marker(ExtendedPictographicV1Marker, "props/ExtPict@1", singleton),
-    marker(ExtenderV1Marker, "props/Ext@1", singleton),
-    marker(FullCompositionExclusionV1Marker, "props/Comp_Ex@1", singleton),
-    marker(GraphemeBaseV1Marker, "props/Gr_Base@1", singleton),
-    marker(GraphemeExtendV1Marker, "props/Gr_Ext@1", singleton),
-    marker(GraphemeLinkV1Marker, "props/Gr_Link@1", singleton),
-    marker(GraphV1Marker, "props/graph@1", singleton),
-    marker(HexDigitV1Marker, "props/Hex@1", singleton),
-    marker(HyphenV1Marker, "props/Hyphen@1", singleton),
-    marker(IdContinueV1Marker, "props/IDC@1", singleton),
-    marker(IdeographicV1Marker, "props/Ideo@1", singleton),
-    marker(IdsBinaryOperatorV1Marker, "props/IDSB@1", singleton),
-    marker(IdStartV1Marker, "props/IDS@1", singleton),
-    marker(IdsTrinaryOperatorV1Marker, "props/IDST@1", singleton),
-    marker(JoinControlV1Marker, "props/Join_C@1", singleton),
-    marker(LogicalOrderExceptionV1Marker, "props/LOE@1", singleton),
-    marker(LowercaseV1Marker, "props/Lower@1", singleton),
-    marker(MathV1Marker, "props/Math@1", singleton),
-    marker(NfcInertV1Marker, "props/nfcinert@1", singleton),
-    marker(NfdInertV1Marker, "props/nfdinert@1", singleton),
-    marker(NfkcInertV1Marker, "props/nfkcinert@1", singleton),
-    marker(NfkdInertV1Marker, "props/nfkdinert@1", singleton),
-    marker(NoncharacterCodePointV1Marker, "props/NChar@1", singleton),
-    marker(PatternSyntaxV1Marker, "props/Pat_Syn@1", singleton),
-    marker(PatternWhiteSpaceV1Marker, "props/Pat_WS@1", singleton),
-    marker(PrependedConcatenationMarkV1Marker, "props/PCM@1", singleton),
-    marker(PrintV1Marker, "props/print@1", singleton),
-    marker(QuotationMarkV1Marker, "props/QMark@1", singleton),
-    marker(RadicalV1Marker, "props/Radical@1", singleton),
-    marker(RegionalIndicatorV1Marker, "props/RI@1", singleton),
-    marker(SegmentStarterV1Marker, "props/segstart@1", singleton),
-    marker(SentenceTerminalV1Marker, "props/STerm@1", singleton),
-    marker(SoftDottedV1Marker, "props/SD@1", singleton),
-    marker(TerminalPunctuationV1Marker, "props/Term@1", singleton),
-    marker(UnifiedIdeographV1Marker, "props/UIdeo@1", singleton),
-    marker(UppercaseV1Marker, "props/Upper@1", singleton),
-    marker(VariationSelectorV1Marker, "props/VS@1", singleton),
-    marker(WhiteSpaceV1Marker, "props/WSpace@1", singleton),
-    marker(XdigitV1Marker, "props/xdigit@1", singleton),
-    marker(XidContinueV1Marker, "props/XIDC@1", singleton),
-    marker(XidStartV1Marker, "props/XIDS@1", singleton)
-)]
-#[derive(Debug, Eq, PartialEq, Clone)]
+#[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
-pub enum PropertyCodePointSetV1<'data> {
+pub enum PropertyCodePointSet<'data> {
     /// The set of characters, represented as an inversion list
     InversionList(#[cfg_attr(feature = "serde", serde(borrow))] CodePointInversionList<'data>),
     // new variants should go BELOW existing ones
@@ -405,14 +836,13 @@ pub enum PropertyCodePointSetV1<'data> {
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub(crate) struct ErasedPropertyCodePointSetV1Marker;
-impl DynamicDataMarker for ErasedPropertyCodePointSetV1Marker {
-    type DataStruct = PropertyCodePointSetV1<'static>;
-}
+icu_provider::data_struct!(
+    PropertyCodePointSet<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 // See CodePointSetData for documentation of these functions
-impl<'data> PropertyCodePointSetV1<'data> {
+impl<'data> PropertyCodePointSet<'data> {
     #[inline]
     pub(crate) fn contains(&self, ch: char) -> bool {
         match *self {
@@ -481,7 +911,7 @@ impl<'data> PropertyCodePointSetV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
-pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
+pub enum PropertyCodePointMap<'data, T: TrieValue> {
     /// A codepoint trie storing the data
     CodePointTrie(#[cfg_attr(feature = "serde", serde(borrow))] CodePointTrie<'data, T>),
     // new variants should go BELOW existing ones
@@ -489,69 +919,13 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub(crate) struct ErasedPropertyCodePointMapV1Marker<T>(core::marker::PhantomData<T>);
-impl<T: TrieValue> DynamicDataMarker for ErasedPropertyCodePointMapV1Marker<T> {
-    type DataStruct = PropertyCodePointMapV1<'static, T>;
-}
-
-macro_rules! data_struct_generic {
-    ($(marker($marker:ident, $ty:ident, $path:literal),)+) => {
-        $(
-            #[doc = core::concat!("Data marker for the '", stringify!($ty), "' Unicode property")]
-            #[derive(Debug, Default)]
-            #[cfg_attr(feature = "datagen", derive(databake::Bake))]
-            #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
-            pub struct $marker;
-            impl icu_provider::DynamicDataMarker for $marker {
-                type DataStruct = PropertyCodePointMapV1<'static, $ty>;
-            }
-            impl icu_provider::DataMarker for $marker {
-                const INFO: icu_provider::DataMarkerInfo = {
-                    let mut info = DataMarkerInfo::from_path(icu_provider::marker::data_marker_path!($path));
-                    info.is_singleton = true;
-                    info
-                };
-            }
-        )+
-    }
-}
-
-use crate::props::*;
-
-data_struct_generic!(
-    marker(BidiClassV1Marker, BidiClass, "props/bc@1"),
-    marker(
-        CanonicalCombiningClassV1Marker,
-        CanonicalCombiningClass,
-        "props/ccc@1"
-    ),
-    marker(EastAsianWidthV1Marker, EastAsianWidth, "props/ea@1"),
-    marker(GeneralCategoryV1Marker, GeneralCategory, "props/gc@1"),
-    marker(
-        GraphemeClusterBreakV1Marker,
-        GraphemeClusterBreak,
-        "props/GCB@1"
-    ),
-    marker(
-        HangulSyllableTypeV1Marker,
-        HangulSyllableType,
-        "props/hst@1"
-    ),
-    marker(
-        IndicSyllabicCategoryV1Marker,
-        IndicSyllabicCategory,
-        "props/InSC@1"
-    ),
-    marker(JoiningTypeV1Marker, JoiningType, "props/jt@1"),
-    marker(LineBreakV1Marker, LineBreak, "props/lb@1"),
-    marker(ScriptV1Marker, Script, "props/sc@1"),
-    marker(SentenceBreakV1Marker, SentenceBreak, "props/SB@1"),
-    marker(WordBreakV1Marker, WordBreak, "props/WB@1"),
+icu_provider::data_struct!(
+    <T: TrieValue> PropertyCodePointMap<'_, T>,
+    #[cfg(feature = "datagen")]
 );
 
 // See CodePointMapData for documentation of these functions
-impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
+impl<'data, T: TrieValue> PropertyCodePointMap<'data, T> {
     #[inline]
     pub(crate) fn get32(&self, ch: u32) -> T {
         match *self {
@@ -560,18 +934,29 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
     }
 
     #[inline]
-    pub(crate) fn try_into_converted<P>(self) -> Result<PropertyCodePointMapV1<'data, P>, UleError>
+    pub(crate) fn get(&self, c: char) -> T {
+        match *self {
+            Self::CodePointTrie(ref t) => t.get(c),
+        }
+    }
+
+    #[inline]
+    #[cfg(feature = "alloc")]
+    pub(crate) fn try_into_converted<P>(
+        self,
+    ) -> Result<PropertyCodePointMap<'data, P>, zerovec::ule::UleError>
     where
         P: TrieValue,
     {
         match self {
             Self::CodePointTrie(t) => t
                 .try_into_converted()
-                .map(PropertyCodePointMapV1::CodePointTrie),
+                .map(PropertyCodePointMap::CodePointTrie),
         }
     }
 
     #[inline]
+    #[cfg(feature = "alloc")]
     pub(crate) fn get_set_for_value(&self, value: T) -> CodePointInversionList<'static> {
         match *self {
             Self::CodePointTrie(ref t) => t.get_set_for_value(value),
@@ -622,13 +1007,12 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(BasicEmojiV1Marker, "props/Basic_Emoji@1", singleton))]
-#[derive(Debug, Eq, PartialEq, Clone)]
+#[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
-pub enum PropertyUnicodeSetV1<'data> {
+pub enum PropertyUnicodeSet<'data> {
     /// A set representing characters in an inversion list, and the strings in a list.
     CPInversionListStrList(
         #[cfg_attr(feature = "serde", serde(borrow))] CodePointInversionListAndStringList<'data>,
@@ -638,11 +1022,16 @@ pub enum PropertyUnicodeSetV1<'data> {
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
 
-impl<'data> PropertyUnicodeSetV1<'data> {
+icu_provider::data_struct!(
+    PropertyUnicodeSet<'_>,
+    #[cfg(feature = "datagen")]
+);
+
+impl<'data> PropertyUnicodeSet<'data> {
     #[inline]
-    pub(crate) fn contains(&self, s: &str) -> bool {
+    pub(crate) fn contains_str(&self, s: &str) -> bool {
         match *self {
-            Self::CPInversionListStrList(ref l) => l.contains(s),
+            Self::CPInversionListStrList(ref l) => l.contains_str(s),
         }
     }
 
@@ -654,9 +1043,9 @@ impl<'data> PropertyUnicodeSetV1<'data> {
     }
 
     #[inline]
-    pub(crate) fn contains_char(&self, ch: char) -> bool {
+    pub(crate) fn contains(&self, ch: char) -> bool {
         match *self {
-            Self::CPInversionListStrList(ref l) => l.contains_char(ch),
+            Self::CPInversionListStrList(ref l) => l.contains(ch),
         }
     }
 
@@ -694,16 +1083,11 @@ impl<'data> PropertyUnicodeSetV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(
-    ScriptWithExtensionsPropertyV1Marker,
-    "props/scx@1",
-    singleton
-))]
-#[derive(Debug, Eq, PartialEq, Clone)]
+#[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct ScriptWithExtensionsPropertyV1<'data> {
+pub struct ScriptWithExtensionsProperty<'data> {
     /// Note: The `ScriptWithExt` values in this array will assume a 12-bit layout. The 2
     /// higher order bits 11..10 will indicate how to deduce the Script value and
     /// Script_Extensions value, nearly matching the representation
@@ -729,3 +1113,8 @@ pub struct ScriptWithExtensionsPropertyV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,
 }
+
+icu_provider::data_struct!(
+    ScriptWithExtensionsProperty<'_>,
+    #[cfg(feature = "datagen")]
+);

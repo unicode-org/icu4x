@@ -8,8 +8,8 @@
 
 // These come from `uchar.h`, which is not available on all platforms.
 // Redefining them in C is no problem, however in >C++11 they are fundamental
-// types, which don't like being redefined. 
-#if !(__cplusplus >= 201100) 
+// types, which don't like being redefined.
+#if !(__cplusplus >= 201100)
 // https://en.cppreference.com/w/c/string/multibyte/char16_t
 typedef uint_least16_t char16_t;
 // https://en.cppreference.com/w/c/string/multibyte/char32_t
@@ -48,7 +48,10 @@ bool diplomat_is_str(const char* buf, size_t len);
 
 #define MAKE_SLICES_AND_OPTIONS(name, c_ty) \
     MAKE_SLICES(name, c_ty) \
-    typedef struct Option##name {union { c_ty ok; }; bool is_ok; } Option##name;
+    typedef struct Option##name {union { c_ty ok; }; bool is_ok; } Option##name; \
+    typedef struct Option##name##View {union { Diplomat##name##View ok; }; bool is_ok; } Option##name##View; \
+    typedef struct Option##name##ViewMut {union { Diplomat##name##ViewMut ok; }; bool is_ok; } Option##name##ViewMut; \
+    typedef struct Option##name##Array {union { Diplomat##name##Array ok; }; bool is_ok; } Option##name##Array; \
 
 MAKE_SLICES_AND_OPTIONS(I8, int8_t)
 MAKE_SLICES_AND_OPTIONS(U8, uint8_t)
@@ -64,10 +67,10 @@ MAKE_SLICES_AND_OPTIONS(F32, float)
 MAKE_SLICES_AND_OPTIONS(F64, double)
 MAKE_SLICES_AND_OPTIONS(Bool, bool)
 MAKE_SLICES_AND_OPTIONS(Char, char32_t)
-MAKE_SLICES(String, char)
-MAKE_SLICES(String16, char16_t)
-MAKE_SLICES(Strings, DiplomatStringView)
-MAKE_SLICES(Strings16, DiplomatString16View)
+MAKE_SLICES_AND_OPTIONS(String, char)
+MAKE_SLICES_AND_OPTIONS(String16, char16_t)
+MAKE_SLICES_AND_OPTIONS(Strings, DiplomatStringView)
+MAKE_SLICES_AND_OPTIONS(Strings16, DiplomatString16View)
 
 DiplomatWrite diplomat_simple_write(char* buf, size_t buf_size);
 

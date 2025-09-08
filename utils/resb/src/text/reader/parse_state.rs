@@ -66,7 +66,7 @@ impl<'a> ParseState<'a> {
 
     /// Takes the set of keys in order of discovery and replaces it with an
     /// empty set.
-    pub fn take_keys(self) -> IndexSet<Key<'a>> {
+    pub fn take_keys(&self) -> IndexSet<Key<'a>> {
         self.keys_in_discovery_order.take()
     }
 }
@@ -75,7 +75,6 @@ impl<'a> ParseState<'a> {
 ///
 /// These trait implementations provide access to the internal input string for
 /// functions originating in [`nom`].
-
 impl Compare<&str> for ParseState<'_> {
     fn compare(&self, t: &str) -> nom::CompareResult {
         self.input.compare(t)

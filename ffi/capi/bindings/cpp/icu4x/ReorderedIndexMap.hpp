@@ -8,25 +8,26 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     diplomat::capi::DiplomatUsizeView icu4x_ReorderedIndexMap_as_slice_mv1(const icu4x::capi::ReorderedIndexMap* self);
-    
+
     size_t icu4x_ReorderedIndexMap_len_mv1(const icu4x::capi::ReorderedIndexMap* self);
-    
+
     bool icu4x_ReorderedIndexMap_is_empty_mv1(const icu4x::capi::ReorderedIndexMap* self);
-    
+
     size_t icu4x_ReorderedIndexMap_get_mv1(const icu4x::capi::ReorderedIndexMap* self, size_t index);
-    
-    
+
     void icu4x_ReorderedIndexMap_destroy_mv1(ReorderedIndexMap* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -46,7 +47,7 @@ inline bool icu4x::ReorderedIndexMap::is_empty() const {
   return result;
 }
 
-inline size_t icu4x::ReorderedIndexMap::get(size_t index) const {
+inline size_t icu4x::ReorderedIndexMap::operator[](size_t index) const {
   auto result = icu4x::capi::icu4x_ReorderedIndexMap_get_mv1(this->AsFFI(),
     index);
   return result;

@@ -84,7 +84,6 @@ pub fn fixed_from_fast_persian(year: i32, month: u8, day: u8) -> RataDie {
 pub fn arithmetic_persian_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
     let year = arithmetic_persian_year_from_fixed(date);
     let year = i64_to_i32(year)?;
-    #[allow(clippy::unwrap_used)] // valid month,day
     let day_of_year = 1_i64 + (date - fixed_from_arithmetic_persian(year, 1, 1));
     #[allow(unstable_name_collisions)] // div_ceil is unstable and polyfilled
     let month = if day_of_year <= 186 {
@@ -146,7 +145,7 @@ fn fast_persian_year_from_fixed(date: RataDie) -> i64 {
 /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4789
 /// Not used, but kept for comparative purposes
 #[allow(dead_code)]
-fn is_arithmetic_leap_year(p_year: i32, _data: ()) -> bool {
+fn is_arithmetic_leap_year(p_year: i32) -> bool {
     let mut p_year = p_year as i64;
     if 0 < p_year {
         p_year -= 474;
@@ -159,7 +158,7 @@ fn is_arithmetic_leap_year(p_year: i32, _data: ()) -> bool {
 }
 
 /// Calculated using the 33-year rule
-pub fn is_leap_year(p_year: i32, _data: ()) -> bool {
+pub fn is_leap_year(p_year: i32) -> bool {
     if p_year >= MIN_NON_LEAP_CORRECTION && NON_LEAP_CORRECTION.binary_search(&p_year).is_ok() {
         false
     } else if p_year > MIN_NON_LEAP_CORRECTION
@@ -179,7 +178,7 @@ mod tests {
     fn test_persian_epoch() {
         let epoch = FIXED_PERSIAN_EPOCH.to_i64_date();
         // Iso year of Persian Epoch
-        let epoch_year_from_fixed = crate::iso::iso_year_from_fixed(RataDie::new(epoch));
+        let epoch_year_from_fixed = crate::iso::iso_year_from_fixed(RataDie::new(epoch)).unwrap();
         // 622 is the correct ISO year for the Persian Epoch
         assert_eq!(epoch_year_from_fixed, 622);
     }

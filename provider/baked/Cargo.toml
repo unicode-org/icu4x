@@ -4,8 +4,9 @@
 
 [package]
 name = "icu_provider_baked"
+description = "Tooling for the ICU4X baked data provider"
+version = "2.0.1"
 
-version.workspace = true
 rust-version.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -16,29 +17,17 @@ categories.workspace = true
 include.workspace = true
 
 [dependencies]
-icu_provider = { workspace = true }
+icu_provider = { workspace = true, features = ["export", "baked"] }
 writeable = { workspace = true }
-zerotrie = { workspace = true, features = ["alloc"] }
+zerotrie = { workspace = true, features = ["alloc", "databake"] }
+zerovec = { workspace = true }
 
-crlify = { workspace = true, optional = true }
-databake = { workspace = true, optional = true}
-icu_provider_registry = { workspace = true, optional = true }
-log = { workspace = true, optional = true }
-proc-macro2 = { workspace = true, optional = true }
-heck = { workspace = true, optional = true }
+crlify = { workspace = true }
+databake = { workspace = true}
+icu_provider_registry = { workspace = true }
+log = { workspace = true }
+proc-macro2 = { workspace = true }
+heck = { workspace = true }
 
 [dev-dependencies]
-icu_provider = { path = "../core", features = ["export"] }
 icu_provider_export = { path = "../export" }
-
-[features]
-export = [
-    "dep:crlify",
-    "dep:databake",
-    "dep:heck",
-    "dep:icu_provider_registry",
-    "dep:log",
-    "dep:proc-macro2",
-    "icu_provider/export",
-    "zerotrie/databake",
-]
