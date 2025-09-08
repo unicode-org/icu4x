@@ -25,7 +25,8 @@
 //! let offset_eight = UtcOffset::from_seconds(-8 * 3600);
 //! assert_eq!(possible, PossibleOffset::Ambiguous {
 //!     before: Offset { offset: offset_seven, rule_applies: true },
-//!     after: Offset { offset: offset_eight, rule_applies: false }
+//!     after: Offset { offset: offset_eight, rule_applies: false },
+//!     transition: 1762074000,
 //! });
 //! ```
 
@@ -306,6 +307,8 @@ pub enum PossibleOffset {
         before: Offset,
         /// The offset after the transition
         after: Offset,
+        /// The transition epoch in seconds
+        transition: i64,
     },
     /// There is no possible offset, because we are at a forward transition
     None {
@@ -504,6 +507,7 @@ impl<'a> Zone<'a> {
                     return PossibleOffset::Ambiguous {
                         before: before_first_candidate,
                         after: first_candidate.into(),
+                        transition: first_candidate.since,
                     };
                 }
                 // We are in the first candidate's gap
@@ -546,6 +550,7 @@ impl<'a> Zone<'a> {
                     return PossibleOffset::Ambiguous {
                         before: first_candidate.into(),
                         after: second_candidate.into(),
+                        transition: second_candidate.since,
                     };
                 }
                 // We are in the second candidate's gap

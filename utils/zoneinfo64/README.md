@@ -24,7 +24,8 @@ let possible = pacific.for_date_time(2025, 11, 2, 1, 0, 0);
 let offset_eight = UtcOffset::from_seconds(-8 * 3600);
 assert_eq!(possible, PossibleOffset::Ambiguous {
     before: Offset { offset: offset_seven, rule_applies: true },
-    after: Offset { offset: offset_eight, rule_applies: false }
+    after: Offset { offset: offset_eight, rule_applies: false },
+    transition: 1762074000,
 });
 ```
 

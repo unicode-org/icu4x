@@ -49,7 +49,7 @@ impl<'a> TimeZone for Zone<'a> {
         ) {
             PossibleOffset::None { .. } => chrono::MappedLocalTime::None,
             PossibleOffset::Single(o) => chrono::MappedLocalTime::Single(ChronoOffset(o, *self)),
-            PossibleOffset::Ambiguous { before, after } => {
+            PossibleOffset::Ambiguous { before, after, .. } => {
                 MappedLocalTime::Ambiguous(ChronoOffset(before, *self), ChronoOffset(after, *self))
             }
         }
@@ -66,7 +66,7 @@ impl<'a> TimeZone for Zone<'a> {
         ) {
             PossibleOffset::None { .. } => chrono::MappedLocalTime::None,
             PossibleOffset::Single(o) => chrono::MappedLocalTime::Single(ChronoOffset(o, *self)),
-            PossibleOffset::Ambiguous { before, after } => {
+            PossibleOffset::Ambiguous { before, after, .. } => {
                 MappedLocalTime::Ambiguous(ChronoOffset(before, *self), ChronoOffset(after, *self))
             }
         }
