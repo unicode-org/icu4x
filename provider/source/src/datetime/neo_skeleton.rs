@@ -581,10 +581,6 @@ impl_neo_skeleton_datagen!(
     DatetimePatternsDateJapaneseV1,
     DatagenCalendar::JapaneseModern
 );
-impl_neo_skeleton_datagen!(
-    DatetimePatternsDateJapanextV1,
-    DatagenCalendar::JapaneseExtended
-);
 impl_neo_skeleton_datagen!(DatetimePatternsDatePersianV1, DatagenCalendar::Persian);
 impl_neo_skeleton_datagen!(DatetimePatternsDateRocV1, DatagenCalendar::Roc);
 

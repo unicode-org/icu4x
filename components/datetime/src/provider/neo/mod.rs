@@ -394,13 +394,6 @@ icu_provider::data_marker!(
 );
 
 icu_provider::data_marker!(
-    /// `DatetimeNamesMonthBuddhistV1`
-    DatetimeNamesMonthBuddhistV1,
-    MonthNames<'static>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "datetime_month_length"
-);
-icu_provider::data_marker!(
     /// `DatetimeNamesMonthChineseV1`
     DatetimeNamesMonthChineseV1,
     MonthNames<'static>,
@@ -457,29 +450,8 @@ icu_provider::data_marker!(
     attributes_domain = "datetime_month_length"
 );
 icu_provider::data_marker!(
-    /// `DatetimeNamesMonthJapaneseV1`
-    DatetimeNamesMonthJapaneseV1,
-    MonthNames<'static>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "datetime_month_length"
-);
-icu_provider::data_marker!(
-    /// `DatetimeNamesMonthJapanextV1`
-    DatetimeNamesMonthJapanextV1,
-    MonthNames<'static>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "datetime_month_length"
-);
-icu_provider::data_marker!(
     /// `DatetimeNamesMonthPersianV1`
     DatetimeNamesMonthPersianV1,
-    MonthNames<'static>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "datetime_month_length"
-);
-icu_provider::data_marker!(
-    /// `DatetimeNamesMonthRocV1`
-    DatetimeNamesMonthRocV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_month_length"

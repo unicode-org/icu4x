@@ -699,12 +699,6 @@ impl_symbols_datagen!(
 
 // Months
 impl_symbols_datagen!(
-    DatetimeNamesMonthBuddhistV1,
-    DatagenCalendar::Buddhist,
-    NORMAL_KEY_LENGTHS,
-    months_convert
-);
-impl_symbols_datagen!(
     DatetimeNamesMonthChineseV1,
     DatagenCalendar::Chinese,
     NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
@@ -753,26 +747,8 @@ impl_symbols_datagen!(
     months_convert
 );
 impl_symbols_datagen!(
-    DatetimeNamesMonthJapaneseV1,
-    DatagenCalendar::JapaneseModern,
-    NORMAL_KEY_LENGTHS,
-    months_convert
-);
-impl_symbols_datagen!(
-    DatetimeNamesMonthJapanextV1,
-    DatagenCalendar::JapaneseExtended,
-    NORMAL_KEY_LENGTHS,
-    months_convert
-);
-impl_symbols_datagen!(
     DatetimeNamesMonthPersianV1,
     DatagenCalendar::Persian,
-    NORMAL_KEY_LENGTHS,
-    months_convert
-);
-impl_symbols_datagen!(
-    DatetimeNamesMonthRocV1,
-    DatagenCalendar::Roc,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
