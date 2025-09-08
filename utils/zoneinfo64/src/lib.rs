@@ -16,13 +16,13 @@
 //! let pacific = zoneinfo.get("America/Los_Angeles").unwrap();
 //! // Calculate the timezone offset for 2024-01-01
 //! let offset = pacific.for_timestamp(1704067200000);
-//! let offset_seven = UtcOffsetSeconds(-7 * 3600);
+//! let offset_seven = UtcOffsetSeconds::from_seconds(-7 * 3600);
 //! assert_eq!(offset.offset, offset_seven);
 //!
 //! // Calculate possible offsets at 2025-11-02T01:00:00
 //! // This is during a DST switchover and is ambiguous
 //! let possible = pacific.for_date_time(2025, 11, 2, 1, 0, 0);
-//! let offset_eight = UtcOffsetSeconds(-8 * 3600);
+//! let offset_eight = UtcOffsetSeconds::from_seconds(-8 * 3600);
 //! assert_eq!(possible, PossibleOffset::Ambiguous(
 //!     Offset { offset: offset_seven, rule_applies: true },
 //!     Offset { offset: offset_eight, rule_applies: false }
@@ -49,7 +49,17 @@ const SECONDS_IN_UTC_DAY: i64 = 24 * 60 * 60;
 
 /// An offset from UTC, in seconds
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
-pub struct UtcOffsetSeconds(pub i32);
+pub struct UtcOffsetSeconds(i32);
+
+impl UtcOffsetSeconds {
+    pub fn from_seconds(x: i32) -> Self {
+        Self(x)
+    }
+
+    pub fn seconds(self) -> i32 {
+        self.0
+    }
+}
 
 #[derive(Debug)]
 /// The primary type containing parsed ZoneInfo64 data
