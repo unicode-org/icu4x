@@ -116,11 +116,8 @@ macro_rules! gen_buffer_constructors_with_external_loader {
         where
             P: BufferProvider + ?Sized,
         {
-            use crate::provider::compat::CompatProvider;
-            let deser_provider = provider.as_deserializing();
-            let compat_provider = CompatProvider(&deser_provider, &provider);
             Self::$internal_fn(
-                &compat_provider,
+                &crate::provider::compat::CompatProvider(&provider),
                 &ExternalLoaderBuffer(provider),
                 prefs,
                 field_set_with_options.get_field(),
