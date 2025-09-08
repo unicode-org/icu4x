@@ -22,7 +22,7 @@ assert_eq!(offset.offset, offset_seven);
 // This is during a DST switchover and is ambiguous
 let possible = pacific.for_date_time(2025, 11, 2, 1, 0, 0);
 let offset_eight = UtcOffset::from_seconds(-8 * 3600);
-assert_eq!(possible, PossibleOffset::Ambiguous{
+assert_eq!(possible, PossibleOffset::Ambiguous {
     before: Offset { offset: offset_seven, rule_applies: true },
     after: Offset { offset: offset_eight, rule_applies: false }
 });

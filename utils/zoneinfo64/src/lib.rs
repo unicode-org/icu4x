@@ -23,7 +23,7 @@
 //! // This is during a DST switchover and is ambiguous
 //! let possible = pacific.for_date_time(2025, 11, 2, 1, 0, 0);
 //! let offset_eight = UtcOffset::from_seconds(-8 * 3600);
-//! assert_eq!(possible, PossibleOffset::Ambiguous{
+//! assert_eq!(possible, PossibleOffset::Ambiguous {
 //!     before: Offset { offset: offset_seven, rule_applies: true },
 //!     after: Offset { offset: offset_eight, rule_applies: false }
 //! });
@@ -297,7 +297,7 @@ impl From<Transition> for Offset {
 pub enum PossibleOffset {
     /// There is a single possible offset
     Single(Offset),
-    /// There are multiple possible offsets, because we are within a transition
+    /// There are multiple possible offsets, because we are inside a backward transition
     ///
     /// Note: Temporal requires these to be in ascending order of offset, Temporal consumers should sort them
     // <https://tc39.es/proposal-temporal/#sec-getnamedtimezoneepochnanoseconds>
@@ -307,7 +307,7 @@ pub enum PossibleOffset {
         /// The offset after the transition
         after: Offset,
     },
-    /// There is no possible offset, this is a gap transition
+    /// There is no possible offset, because we are at a forward transition
     None {
         /// The offset before this transition
         ///
