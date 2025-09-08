@@ -663,15 +663,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "deduplicating_array"
-version = "0.1.8"
-dependencies = [
- "postcard",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "depcheck"
 version = "0.0.0"
 

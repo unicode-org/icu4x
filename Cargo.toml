@@ -66,7 +66,6 @@ members = [
     "utils/crlify",
     "utils/databake",
     "utils/databake/derive",
-    "utils/deduplicating_array",
     "utils/fixed_decimal",
     "utils/ixdtf",
     "utils/litemap",
@@ -191,7 +190,6 @@ calendrical_calculations = { version = "0.2.1", path = "utils/calendrical_calcul
 crlify = { version = "1.0.4", path = "utils/crlify", default-features = false }
 databake = { version = "0.2.0", path = "utils/databake", default-features = false }
 databake-derive = { version = "0.2.0", path = "utils/databake/derive", default-features = false }
-deduplicating_array = { version = "0.1.6", path = "utils/deduplicating_array", default-features = false }
 fixed_decimal = { version = "0.7.0", path = "utils/fixed_decimal", default-features = false }
 ixdtf = { version = "0.6.0", path = "utils/ixdtf", default-features = false }
 litemap = { version = "0.8.0", path = "utils/litemap", default-features = false }
