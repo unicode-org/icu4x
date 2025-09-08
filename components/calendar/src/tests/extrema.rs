@@ -7,6 +7,7 @@ use crate::Calendar;
 use crate::Date;
 use crate::Ref;
 
+#[track_caller]
 fn check_extrema<C: Calendar>(cal: C) {
     // Minimum and maximum dates allowed in ECMA-262 Temporal.
     let min_date_iso = Date::try_new_iso(-271821, 4, 19).unwrap();

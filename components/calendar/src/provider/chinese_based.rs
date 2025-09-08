@@ -91,6 +91,8 @@ impl PackedChineseBasedYearInfo {
     /// out_of_valid_astronomical_range is true when the data is for a date that is well
     /// outside calendrical_calculations::chinese_based::WELL_BEHAVED_ASTRONOMICAL_RANGE.
     /// It clamps some values to avoid debug assertions on calendrical invariants.
+    ///
+    /// It only needs to be set in debug-assertions mode, and is ignored in release.
     pub(crate) fn new(
         month_lengths: [bool; 13],
         leap_month_idx: Option<u8>,

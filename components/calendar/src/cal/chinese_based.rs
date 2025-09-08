@@ -153,12 +153,18 @@ impl ChineseBasedYearInfo {
             chinese_based::month_structure_for_year::<CB>(new_year, next_new_year);
 
         let ny_offset = new_year - calendrical_calculations::iso::fixed_from_iso(related_iso, 1, 1);
+
+        #[cfg(debug_assertions)]
+        let out_of_valid_astronomical_range =
+            !WELL_BEHAVED_ASTRONOMICAL_YEAR_RANGE.contains(&i64::from(related_iso));
+        #[cfg(not(debug_assertions))]
+        let out_of_valid_astronomical_range = false;
         Self {
             packed_data: PackedChineseBasedYearInfo::new(
                 month_lengths,
                 leap_month,
                 ny_offset,
-                !WELL_BEHAVED_ASTRONOMICAL_YEAR_RANGE.contains(&i64::from(related_iso)),
+                out_of_valid_astronomical_range,
             ),
             related_iso,
         }
