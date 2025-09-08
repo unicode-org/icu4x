@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::UtcOffset;
 use crate::{Offset, PossibleOffset, Zone};
 use chrono::{
     Datelike, FixedOffset, MappedLocalTime, NaiveDate, NaiveDateTime, TimeZone, Timelike,
 };
-use icu_time::zone::UtcOffset;
 
 #[derive(Clone, Copy, Debug)]
 pub struct ChronoOffset<'a>(Offset, Zone<'a>);
@@ -27,7 +27,7 @@ impl ChronoOffset<'_> {
 
 impl<'a> chrono::Offset for ChronoOffset<'a> {
     fn fix(&self) -> FixedOffset {
-        FixedOffset::east_opt(self.0.offset.to_seconds()).unwrap()
+        FixedOffset::east_opt(self.0.offset.0).unwrap()
     }
 }
 
