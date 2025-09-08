@@ -606,7 +606,7 @@ mod tests {
                 0,
                 0
             ),
-            PossibleOffset::Ambiguous(_, _),
+            PossibleOffset::Ambiguous { .. },
         ));
     }
 
