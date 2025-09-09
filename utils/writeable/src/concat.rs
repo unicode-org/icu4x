@@ -47,6 +47,7 @@ use core::fmt;
 /// )
 /// ```
 #[derive(Debug)]
+#[allow(clippy::exhaustive_structs)] // designed for nesting
 pub struct Concat<A, B>(pub A, pub B);
 
 impl<A, B> Writeable for Concat<A, B>
