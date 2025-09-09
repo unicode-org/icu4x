@@ -115,7 +115,7 @@ where
     }
 }
 
-/// Returns a [`Writeable`] concatinating any number of [`Writeable`]s.
+/// Returns a [`Writeable`] concatenating any number of [`Writeable`]s.
 ///
 /// The macro resolves to a nested [`Concat`].
 ///
@@ -140,7 +140,7 @@ macro_rules! __concatenate {
     ($x:expr) => ($x);
     // `$x` followed by at least one `$y,`
     ($x:expr, $($y:expr),+) => (
-        // Call `find_min!` on the tail `$y`
+        // Call `concatenate!` recursively on the tail `$y`
         $crate::adapters::Concat($x, $crate::concatenate!($($y),+))
     )
 }
