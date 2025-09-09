@@ -3630,6 +3630,8 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 (FS::Day(Day::DayOfYear), One | Two | Three) => numeric_field = Some(field),
                 // F
                 (FS::Day(Day::DayOfWeekInMonth), One) => numeric_field = Some(field),
+                // g
+                (FS::Day(Day::ModifiedJulianDay), One) => numeric_field = Some(field),
 
                 // K..KK, h..hh, H..HH, k..kk
                 (FS::Hour(_), One | Two) => numeric_field = Some(field),

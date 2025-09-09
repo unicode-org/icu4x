@@ -288,7 +288,7 @@ impl FieldSymbol {
             Self::Day(Day::DayOfMonth) => 9,
             Self::Day(Day::DayOfYear) => 10,
             Self::Day(Day::DayOfWeekInMonth) => 11,
-            // Self::Day(Day::ModifiedJulianDay) => 12,
+            Self::Day(Day::ModifiedJulianDay) => 12,
             Self::Weekday(Weekday::Format) => 13,
             Self::Weekday(Weekday::Local) => 14,
             Self::Weekday(Weekday::StandAlone) => 15,
@@ -563,10 +563,10 @@ field_type!(
         ///
         /// For the example `"2nd Wed in July"`, this field would provide `"2"`.  Should likely be paired with the [`Weekday`] field.
         'F' => DayOfWeekInMonth = 2,
-        // /// Field symbol for the modified Julian day (numeric).
-        // ///
-        // /// The value of this field differs from the conventional Julian day number in a couple of ways, which are based on measuring relative to the local time zone.
-        // 'g' => ModifiedJulianDay = 3,
+        /// Field symbol for the modified Julian day (numeric).
+        ///
+        /// The value of this field differs from the conventional Julian day number in a couple of ways, which are based on measuring relative to the local time zone.
+        'g' => ModifiedJulianDay = 3,
     };
     Numeric;
     DayULE
