@@ -60,7 +60,7 @@ Runtime customizability of locale data can sometimes come at a performance or me
 
 ## Locale data from multiple sources works seamlessly
 
-*What:* If data is available for a particular constructor and locale from multiple data providers derived from the same _data source version_ (such as CLDR), then _i18n correctness_ should not change based on which data provider is used to load the data. Behavior that is _i18n correct_ reflects all locale-specific data and tailorings according to the _data source version_.
+*What:* If data is available for a particular constructor and locale from multiple data providers derived from the same _data source version_ (such as a particular CLDR release), then _i18n correctness_ should not change based on which data provider is used to load the data. Behavior that is _i18n correct_ reflects all locale-specific data and tailorings according to the _data source version_.
 
 *Why:* Locale data can be loaded from multiple sources: for example, some data might be baked into the binary, some might be loaded from the operating system, and some might be downloaded on demand in the form of language packs. These multiple data sources should be _additive_ in nature: they can add features and locales, but they should not impact the i18n correctness of existing features and locales.
 
