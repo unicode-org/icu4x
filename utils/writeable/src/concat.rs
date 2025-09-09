@@ -8,7 +8,7 @@ use core::fmt;
 
 /// A [`Writeable`] that efficiently concatenates two other [`Writeable`]s.
 ///
-/// See the [`concat!`] macro for a convenient way to make one of these.
+/// See the [`concatenate!`] macro for a convenient way to make one of these.
 ///
 /// # Examples
 ///
@@ -124,7 +124,7 @@ where
 /// ```
 /// use writeable::assert_writeable_eq;
 ///
-/// let concatenated = writeable::concat!(
+/// let concatenated = writeable::concatenate!(
 ///     "Health: ",
 ///     5,
 ///     '/',
@@ -135,14 +135,14 @@ where
 /// ```
 #[macro_export]
 #[doc(hidden)] // macro
-macro_rules! __concat {
+macro_rules! __concatenate {
     // Base case:
     ($x:expr) => ($x);
     // `$x` followed by at least one `$y,`
     ($x:expr, $($y:expr),+) => (
         // Call `find_min!` on the tail `$y`
-        $crate::adapters::Concat($x, $crate::concat!($($y),+))
+        $crate::adapters::Concat($x, $crate::concatenate!($($y),+))
     )
 }
 #[doc(inline)]
-pub use __concat as concat;
+pub use __concatenate as concatenate;

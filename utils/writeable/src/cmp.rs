@@ -106,15 +106,15 @@ pub fn cmp_utf8(writeable: &impl Writeable, other: &[u8]) -> Ordering {
 ///
 /// assert_eq!(
 ///     Ordering::Less,
-///     writeable::cmp_str(&writeable::concat!("en", '-', "AU"), "en-US")
+///     writeable::cmp_str(&writeable::concatenate!("en", '-', "AU"), "en-US")
 /// );
 /// assert_eq!(
 ///     Ordering::Equal,
-///     writeable::cmp_str(&writeable::concat!("en", '-', "US"), "en-US")
+///     writeable::cmp_str(&writeable::concatenate!("en", '-', "US"), "en-US")
 /// );
 /// assert_eq!(
 ///     Ordering::Greater,
-///     writeable::cmp_str(&writeable::concat!("fr", '-', "US"), "en-US")
+///     writeable::cmp_str(&writeable::concatenate!("fr", '-', "US"), "en-US")
 /// );
 /// ```
 #[inline]
