@@ -316,9 +316,9 @@ pub enum PossibleOffset {
         ///
         /// This is useful when performing fallback behavior on hitting a
         /// transition where the local time has a gap.
-        before: UtcOffset,
+        before: Offset,
         /// The offset after this transition
-        after: UtcOffset,
+        after: Offset,
         /// The transition epoch in seconds
         transition: i64,
     },
@@ -513,8 +513,8 @@ impl<'a> Zone<'a> {
                 // We are in the first candidate's gap
                 (false, true) => {
                     return PossibleOffset::None {
-                        before: before_first_candidate.offset,
-                        after: first_candidate.offset,
+                        before: before_first_candidate,
+                        after: first_candidate.into(),
                         transition: first_candidate.since,
                     }
                 }
@@ -556,8 +556,8 @@ impl<'a> Zone<'a> {
                 // We are in the second candidate's gap
                 (false, true) => {
                     return PossibleOffset::None {
-                        before: first_candidate.offset,
-                        after: second_candidate.offset,
+                        before: first_candidate.into(),
+                        after: second_candidate.into(),
                         transition: second_candidate.since,
                     }
                 }
