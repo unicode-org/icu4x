@@ -277,6 +277,7 @@ impl FieldSymbol {
             Self::Era => 0,
             Self::Year(Year::Calendar) => 1,
             // Self::Year(Year::WeekOf) => 2,
+            Self::Year(Year::Extended) => 2,
             Self::Year(Year::Cyclic) => 3,
             Self::Year(Year::RelatedIso) => 4,
             Self::Month(Month::Format) => 5,
@@ -507,10 +508,12 @@ field_type! (
         'U' => Cyclic = 1,
         /// Field symbol for related ISO; some calendars which use different year numbering than ISO, or no year numbering, may express years in an ISO year corresponding to a calendar year.
         'r' => RelatedIso = 2,
+        /// Field symbol for extended year
+        'u' => Extended = 3,
         // /// Field symbol for year in "week of year".
         // ///
         // /// This works for “week of year” based calendars in which the year transition occurs on a week boundary; may differ from calendar year [`Year::Calendar`] near a year transition. This numeric year designation is used in conjunction with [`Week::WeekOfYear`], but can be used in non-Gregorian based calendar systems where week date processing is desired. The field length is interpreted in the same way as for [`Year::Calendar`].
-        // 'Y' => WeekOf = 3,
+        // 'Y' => WeekOf = 4,
     };
     YearULE
 );

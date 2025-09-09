@@ -68,8 +68,6 @@ impl From<fields::SymbolError> for SkeletonError {
                     'B'
                     // TODO(#501) - Quarters
                     | 'Q' | 'q'
-                    // Extended year
-                    | 'u'
                     // TODO(#5643) - Weeks
                     | 'Y' | 'w' | 'W'
                     => Self::SymbolUnimplemented(ch),

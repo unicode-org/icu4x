@@ -221,6 +221,12 @@ where
             })?;
             Ok(())
         }
+        (FieldSymbol::Year(Year::Extended), l) => {
+            const PART: Part = parts::EXTENDED_YEAR;
+            input!(PART, Year, year = input.year);
+            let extended = year.monotonic_year();
+            try_write_number(PART, w, decimal_formatter, extended.into(), l)?
+        }
         (FieldSymbol::Month(_), l @ (FieldLength::One | FieldLength::Two)) => {
             const PART: Part = parts::MONTH;
             input!(PART, Month, month = input.month);
@@ -659,5 +665,26 @@ mod tests {
             .unwrap()
             .format(&crate::input::Date::try_new_gregorian(1996, 9, 2).unwrap());
         writeable::assert_try_writeable_eq!(formatted_datetime, "2450329", Ok(()));
+    }
+
+    #[test]
+    fn extended_year() {
+        let locale = icu::locale::locale!("en");
+        let parsed_pattern = crate::pattern::DateTimePattern::try_from_pattern_str("u").unwrap();
+        let mut names = crate::pattern::FixedCalendarDateTimeNames::<
+            icu::calendar::cal::Ethiopian,
+            crate::fieldsets::enums::DateFieldSet,
+        >::try_new(locale.into())
+        .unwrap();
+        let formatted_datetime = names.include_for_pattern(&parsed_pattern).unwrap().format(
+            &crate::input::Date::try_new_ethiopian(
+                icu::calendar::cal::EthiopianEraStyle::AmeteMihret,
+                10,
+                9,
+                2,
+            )
+            .unwrap(),
+        );
+        writeable::assert_try_writeable_eq!(formatted_datetime, "-5490", Ok(()));
     }
 }

@@ -3616,6 +3616,8 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
 
                 // y+
                 (FS::Year(Year::Calendar), _) => numeric_field = Some(field),
+                // u+
+                (FS::Year(Year::Extended), _) => numeric_field = Some(field),
                 // r+
                 (FS::Year(Year::RelatedIso), _) => {
                     // always formats as ASCII
