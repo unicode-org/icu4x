@@ -102,7 +102,7 @@ pub use try_writeable::TryWriteable;
 pub mod adapters {
     use super::*;
 
-    pub use concat::Concat;
+    pub use concat::Concatenate;
     pub use parts_write_adapter::CoreWriteAsPartsWrite;
     pub use parts_write_adapter::WithPart;
     pub use try_writeable::TryWriteableInfallibleAsWriteable;
