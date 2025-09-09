@@ -763,3 +763,30 @@ impl_pattern_datagen!(
     GLUE_PATTERN_KEY_LENGTHS,
     datetimepattern_convert
 );
+
+#[test]
+fn buddhist_japanese_roc_use_gregorian_months() {
+    let provider = crate::SourceDataProvider::new_testing();
+    let locale = icu::locale::locale!("en").into();
+
+    let buddhist = &provider
+        .load_calendar_dates(&locale, DatagenCalendar::Buddhist)
+        .unwrap()
+        .months;
+    let gregorian = &provider
+        .load_calendar_dates(&locale, DatagenCalendar::Gregorian)
+        .unwrap()
+        .months;
+    let japanese = &provider
+        .load_calendar_dates(&locale, DatagenCalendar::JapaneseModern)
+        .unwrap()
+        .months;
+    let roc = &provider
+        .load_calendar_dates(&locale, DatagenCalendar::Roc)
+        .unwrap()
+        .months;
+
+    assert_eq!(buddhist, gregorian);
+    assert_eq!(japanese, gregorian);
+    assert_eq!(roc, gregorian);
+}
