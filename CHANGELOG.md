@@ -19,8 +19,8 @@
         - Add `Yoke::with_mut_return`, similar to `Yoke::with_mut` but with a callback that may
             return any `'static` type. (unicode-org#6827)
     - `zoneinfo64`
-        - Add gap offset data to `PossibleOffset::None` to help resolve gap transitions (unicode-org#6913)
-        - Add `GapOffsets` to help resolve gap transitions (unicode-org#6913)
+        - Remove `icu_time` dependency (unicode-org#6914)
+        - Add gap offset data to `PossibleOffset::None` to help resolve forward transitions (unicode-org#6913)
 
 ## icu4x 2.0.x
 
