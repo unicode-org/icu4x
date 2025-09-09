@@ -5,7 +5,7 @@
 [package]
 name = "zoneinfo64"
 description = "Working with ICU zoneinfo64.res timezone data bundles"
-version = "0.1.0"
+version = "0.2.0-dev"
 
 rust-version.workspace = true
 authors.workspace = true

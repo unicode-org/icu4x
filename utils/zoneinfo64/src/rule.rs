@@ -558,7 +558,7 @@ mod tests {
         let zone = TZDB.get(tz).unwrap();
 
         // start_before doesn't actually happen
-        assert_eq!(
+        assert!(matches!(
             zone.for_date_time(
                 year,
                 start_month,
@@ -567,8 +567,8 @@ mod tests {
                 0,
                 0
             ),
-            PossibleOffset::None,
-        );
+            PossibleOffset::None { .. }
+        ));
 
         // start_after happens exactly once
         assert!(matches!(
@@ -606,7 +606,7 @@ mod tests {
                 0,
                 0
             ),
-            PossibleOffset::Ambiguous(_, _),
+            PossibleOffset::Ambiguous { .. },
         ));
     }
 

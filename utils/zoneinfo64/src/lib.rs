@@ -23,10 +23,11 @@
 //! // This is during a DST switchover and is ambiguous
 //! let possible = pacific.for_date_time(2025, 11, 2, 1, 0, 0);
 //! let offset_eight = UtcOffset::from_seconds(-8 * 3600);
-//! assert_eq!(possible, PossibleOffset::Ambiguous(
-//!     Offset { offset: offset_seven, rule_applies: true },
-//!     Offset { offset: offset_eight, rule_applies: false }
-//! ));
+//! assert_eq!(possible, PossibleOffset::Ambiguous {
+//!     before: Offset { offset: offset_seven, rule_applies: true },
+//!     after: Offset { offset: offset_eight, rule_applies: false },
+//!     transition: 1762074000,
+//! });
 //! ```
 
 use std::fmt::Debug;
@@ -297,13 +298,30 @@ impl From<Transition> for Offset {
 pub enum PossibleOffset {
     /// There is a single possible offset
     Single(Offset),
-    /// There are multiple possible offsets (sorted based on which transition comes first)
+    /// There are multiple possible offsets, because we are inside a backward transition
     ///
     /// Note: Temporal requires these to be in ascending order of offset, Temporal consumers should sort them
     // <https://tc39.es/proposal-temporal/#sec-getnamedtimezoneepochnanoseconds>
-    Ambiguous(Offset, Offset),
-    /// There is no possible offset, this is a gap transition
-    None,
+    Ambiguous {
+        /// The offset before the transition
+        before: Offset,
+        /// The offset after the transition
+        after: Offset,
+        /// The transition epoch in seconds
+        transition: i64,
+    },
+    /// There is no possible offset, because we are at a forward transition
+    None {
+        /// The offset before this transition
+        ///
+        /// This is useful when performing fallback behavior on hitting a
+        /// transition where the local time has a gap.
+        before: Offset,
+        /// The offset after this transition
+        after: Offset,
+        /// The transition epoch in seconds
+        transition: i64,
+    },
 }
 
 impl<'a> TzZoneData<'a> {
@@ -486,13 +504,20 @@ impl<'a> Zone<'a> {
                     // there can be no repeated local times.
                     debug_assert_ne!(before_first_candidate.offset, first_candidate.offset);
 
-                    return PossibleOffset::Ambiguous(
-                        before_first_candidate,
-                        first_candidate.into(),
-                    );
+                    return PossibleOffset::Ambiguous {
+                        before: before_first_candidate,
+                        after: first_candidate.into(),
+                        transition: first_candidate.since,
+                    };
                 }
                 // We are in the first candidate's gap
-                (false, true) => return PossibleOffset::None,
+                (false, true) => {
+                    return PossibleOffset::None {
+                        before: before_first_candidate,
+                        after: first_candidate.into(),
+                        transition: first_candidate.since,
+                    }
+                }
                 // We are after the first candidate, try the second
                 (false, false) => {}
             }
@@ -522,13 +547,20 @@ impl<'a> Zone<'a> {
                     // there can be no repeated local times.
                     debug_assert_ne!(first_candidate.offset, second_candidate.offset);
 
-                    return PossibleOffset::Ambiguous(
-                        first_candidate.into(),
-                        second_candidate.into(),
-                    );
+                    return PossibleOffset::Ambiguous {
+                        before: first_candidate.into(),
+                        after: second_candidate.into(),
+                        transition: second_candidate.since,
+                    };
                 }
                 // We are in the second candidate's gap
-                (false, true) => return PossibleOffset::None,
+                (false, true) => {
+                    return PossibleOffset::None {
+                        before: first_candidate.into(),
+                        after: second_candidate.into(),
+                        transition: second_candidate.since,
+                    }
+                }
                 // We are after the second candidate
                 (false, false) => return PossibleOffset::Single(second_candidate.into()),
             }
