@@ -30,7 +30,7 @@ use core::fmt;
 ///
 /// impl TryWriteable for AlwaysPanic {
 ///     type Error = &'static str;
-///     fn try_write_to_parts<W: writeable::PartsWrite + ?Sized>(&self, sink: &mut W) -> Result<Result<(), Self::Error>, core::fmt::Error> {
+///     fn try_write_to_parts<W: writeable::PartsWrite + ?Sized>(&self, _sink: &mut W) -> Result<Result<(), Self::Error>, core::fmt::Error> {
 ///         // Unreachable panic: the first Writeable errors,
 ///         // so the second Writeable is not evaluated.
 ///         panic!()

@@ -98,7 +98,7 @@ pub fn cmp_utf8(writeable: &impl Writeable, other: &[u8]) -> Ordering {
 /// assert_eq!(Ordering::Less, (*message_str).cmp("Hello, Bob!"));
 /// ```
 ///
-/// This function can be combined with the Writeable impl on tuples to make an efficient
+/// This function can be combined with `writeable::concatenate!` to make an efficient
 /// string-substring comparison:
 ///
 /// ```
