@@ -766,6 +766,8 @@ impl_pattern_datagen!(
 
 #[test]
 fn buddhist_japanese_roc_use_gregorian_months() {
+    // https://www.unicode.org/reports/tr35/tr35-dates.html#Calendar_Elements
+
     let provider = crate::SourceDataProvider::new_testing();
     let locale = icu::locale::locale!("en").into();
 
