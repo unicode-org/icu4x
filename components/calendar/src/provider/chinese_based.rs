@@ -95,8 +95,7 @@ impl PackedChineseBasedYearInfo {
         month_lengths: [bool; 13],
         leap_month_idx: Option<u8>,
         ny_offset: i64,
-        #[cfg(debug_assertions)]
-        out_of_valid_astronomical_range: bool,
+        #[cfg(debug_assertions)] out_of_valid_astronomical_range: bool,
     ) -> Self {
         // This assertion is an API correctness assertion and even bad calendar arithmetic
         // should not produce this
@@ -274,8 +273,13 @@ mod test {
             // Avoid bad invariants
             month_lengths[12] = false;
         }
-        let packed =
-            PackedChineseBasedYearInfo::new(month_lengths, leap_month_idx, ny_offset, false);
+        let packed = PackedChineseBasedYearInfo::new(
+            month_lengths,
+            leap_month_idx,
+            ny_offset,
+            #[cfg(debug_assertions)]
+            false,
+        );
 
         assert_eq!(
             ny_offset,
