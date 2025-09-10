@@ -18,7 +18,6 @@ use calendrical_calculations::chinese_based::{
 };
 use calendrical_calculations::rata_die::RataDie;
 use core::marker::PhantomData;
-use core::ops::Range;
 use tinystr::tinystr;
 
 /// The trait ChineseBased is used by Chinese-based calendars to perform computations shared by such calendar.
@@ -130,7 +129,8 @@ impl From<ChineseBasedYearInfo> for i32 {
 
 /// An approximate way to check if a year is within the well-behaved astronomical range.
 /// This does not need to be exact.
-const WELL_BEHAVED_ASTRONOMICAL_YEAR_RANGE: Range<i64> =
+#[cfg(debug_assertions)]
+const WELL_BEHAVED_ASTRONOMICAL_YEAR_RANGE: core::ops::Range<i64> =
     (WELL_BEHAVED_ASTRONOMICAL_RANGE.start.to_i64_date() / 365)
         ..(WELL_BEHAVED_ASTRONOMICAL_RANGE.end.to_i64_date() / 365);
 
@@ -154,17 +154,13 @@ impl ChineseBasedYearInfo {
 
         let ny_offset = new_year - calendrical_calculations::iso::fixed_from_iso(related_iso, 1, 1);
 
-        #[cfg(debug_assertions)]
-        let out_of_valid_astronomical_range =
-            !WELL_BEHAVED_ASTRONOMICAL_YEAR_RANGE.contains(&i64::from(related_iso));
-        #[cfg(not(debug_assertions))]
-        let out_of_valid_astronomical_range = false;
         Self {
             packed_data: PackedChineseBasedYearInfo::new(
                 month_lengths,
                 leap_month,
                 ny_offset,
-                out_of_valid_astronomical_range,
+                #[cfg(debug_assertions)]
+                !WELL_BEHAVED_ASTRONOMICAL_YEAR_RANGE.contains(&i64::from(related_iso)),
             ),
             related_iso,
         }

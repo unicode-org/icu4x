@@ -91,12 +91,11 @@ impl PackedChineseBasedYearInfo {
     /// out_of_valid_astronomical_range is true when the data is for a date that is well
     /// outside calendrical_calculations::chinese_based::WELL_BEHAVED_ASTRONOMICAL_RANGE.
     /// It clamps some values to avoid debug assertions on calendrical invariants.
-    ///
-    /// It only needs to be set in debug-assertions mode, and is ignored in release.
     pub(crate) fn new(
         month_lengths: [bool; 13],
         leap_month_idx: Option<u8>,
         ny_offset: i64,
+        #[cfg(debug_assertions)]
         out_of_valid_astronomical_range: bool,
     ) -> Self {
         // This assertion is an API correctness assertion and even bad calendar arithmetic
@@ -109,11 +108,13 @@ impl PackedChineseBasedYearInfo {
 
         // Assert the offset is in range, but allow it to be out of
         // range when out_of_valid_astronomical_range=true
+        #[cfg(debug_assertions)]
         debug_assert!(
             ny_offset >= 0 || out_of_valid_astronomical_range,
             "Year offset too small to store"
         );
         // The maximum new-year's offset we have found is 33
+        #[cfg(debug_assertions)]
         debug_assert!(
             ny_offset < 34 || out_of_valid_astronomical_range,
             "Year offset too big to store"
@@ -253,6 +254,7 @@ mod serialization {
                 other.month_has_30_days,
                 other.leap_month_idx,
                 other.ny_offset as i64,
+                #[cfg(debug_assertions)]
                 false,
             )
         }
