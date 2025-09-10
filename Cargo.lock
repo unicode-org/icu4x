@@ -4012,7 +4012,7 @@ dependencies = [
 
 [[package]]
 name = "zoneinfo64"
-version = "0.2.0-dev"
+version = "0.2.0"
 dependencies = [
  "calendrical_calculations",
  "chrono",

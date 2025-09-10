@@ -207,7 +207,7 @@ zerofrom-derive = { version = "0.1.3", path = "utils/zerofrom/derive", default-f
 zerotrie = { version = "0.2.0", path = "utils/zerotrie", default-features = false }
 zerovec = { version = "0.11.3", path = "utils/zerovec", default-features = false }
 zerovec-derive = { version = "0.11.1", path = "utils/zerovec/derive", default-features = false }
-zoneinfo64 = { version = "0.1.0", path = "utils/zoneinfo64", default-features = false }
+zoneinfo64 = { version = "0.2.0", path = "utils/zoneinfo64", default-features = false }
 
 # Tools
 icu_benchmark_macros = { path = "tools/benchmark/macros" }
