@@ -53,7 +53,7 @@ impl ChineseBasedCache<'_> {
 /// Byte 2:          ] | [   NY offset       ] | unused
 /// ```
 ///
-/// Where the New Year Offset is the offset from ISO Jan 21 of that year for Chinese New Year,
+/// Where the New Year Offset is the offset from ISO Jan 19 of that year for Chinese New Year,
 /// the month lengths are stored as 1 = 30, 0 = 29 for each month including the leap month.
 /// The largest possible offset is 33, which requires 6 bits of storage.
 ///
@@ -67,15 +67,15 @@ impl ChineseBasedCache<'_> {
 pub(crate) struct PackedChineseBasedYearInfo(pub u8, pub u8, pub u8);
 
 impl PackedChineseBasedYearInfo {
-    /// The first day of the ISO year on which Chinese New Year may occur
+    /// The first day on which Chinese New Year may occur
     ///
     /// According to Reingold & Dershowitz, ch 19.6, Chinese New Year occurs on Jan 21 - Feb 21 inclusive.
     ///
-    /// Chinese New Year in the year 30 AD is January 20 (30-01-20).
-    ///
     /// We allow it to occur as early as January 19 which is the earliest the second new moon
     /// could occur after the Winter Solstice if the solstice is pinned to December 20.
-    const FIRST_NY: i64 = 18;
+    const fn earliest_ny(related_iso: i32) -> RataDie {
+        calendrical_calculations::iso::const_fixed_from_iso(related_iso, 1, 19)
+    }
 
     /// It clamps some values to avoid debug assertions on calendrical invariants.
     pub(crate) const fn new(
@@ -84,17 +84,18 @@ impl PackedChineseBasedYearInfo {
         leap_month: Option<u8>,
         new_year: RataDie,
     ) -> Self {
-        // This assertion is an API correctness assertion and even bad calendar arithmetic
+        // These assertions are API correctness assertions and even bad calendar arithmetic
         // should not produce this
-        debug_assert!(
-            !month_lengths[12] || leap_month.is_some(),
-            "Last month length should not be set for non-leap years"
-        );
-        let ny_offset = new_year.since(calendrical_calculations::iso::const_fixed_from_iso(
-            related_iso,
-            1,
-            1,
-        )) - Self::FIRST_NY;
+        if let Some(l) = leap_month {
+            debug_assert!(2 <= l && l <= 13, "Leap month indices must be 2 <= i <= 13");
+        } else {
+            debug_assert!(
+                !month_lengths[12],
+                "Last month length should not be set for non-leap years"
+            )
+        }
+
+        let ny_offset = new_year.since(Self::earliest_ny(related_iso));
 
         #[cfg(debug_assertions)]
         let out_of_valid_astronomical_range = WELL_BEHAVED_ASTRONOMICAL_RANGE.start.to_i64_date()
@@ -114,6 +115,7 @@ impl PackedChineseBasedYearInfo {
             ny_offset < 34 || out_of_valid_astronomical_range,
             "Year offset too big to store"
         );
+
         // Just clamp to something we can represent when things get of range.
         //
         // This will typically happen when out_of_valid_astronomical_range
@@ -122,11 +124,6 @@ impl PackedChineseBasedYearInfo {
         // We can store up to 6 bytes for ny_offset, even if our
         // maximum asserted value is otherwise 33.
         let ny_offset = ny_offset & (0x40 - 1);
-        // Also an API correctness assertion
-
-        if let Some(l) = leap_month {
-            debug_assert!(1 <= l && l <= 13, "Leap month indices must be 1 <= i <= 13");
-        }
 
         let mut all = 0u32; // last byte unused
 
@@ -150,9 +147,7 @@ impl PackedChineseBasedYearInfo {
     }
 
     pub(crate) fn new_year(self, related_iso: i32) -> RataDie {
-        calendrical_calculations::iso::const_fixed_from_iso(related_iso, 1, 1)
-            + Self::FIRST_NY
-            + (self.2 as i64 >> 1)
+        Self::earliest_ny(related_iso) + (self.2 as i64 >> 1)
     }
 
     pub(crate) fn leap_month(self) -> Option<u8> {
@@ -165,11 +160,6 @@ impl PackedChineseBasedYearInfo {
     pub(crate) fn month_has_30_days(self, month: u8) -> bool {
         let months = u16::from_le_bytes([self.0, self.1]);
         months & (1 << (month - 1) as u16) != 0
-    }
-
-    #[cfg(test)]
-    pub(crate) fn month_lengths(self) -> [bool; 13] {
-        core::array::from_fn(|i| self.month_has_30_days(i as u8 + 1))
     }
 
     // Which day of year is the last day of a month (month is 1-indexed)
@@ -208,9 +198,9 @@ mod test {
             packed.leap_month(),
             "Roundtrip with {month_lengths:?}, {leap_month_idx:?}, {ny_offset}"
         );
-        let month_lengths_roundtrip = packed.month_lengths();
         assert_eq!(
-            month_lengths, month_lengths_roundtrip,
+            month_lengths,
+            core::array::from_fn(|i| packed.month_has_30_days(i as u8 + 1)),
             "Roundtrip with {month_lengths:?}, {leap_month_idx:?}, {ny_offset}"
         );
     }
