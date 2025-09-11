@@ -44,7 +44,7 @@ fn era_year(year: i32) -> EraYear {
             era: tinystr!(16, "ah"),
             era_index: Some(0),
             year,
-            monotonic_year: year,
+            extended_year: year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     } else {
@@ -52,7 +52,7 @@ fn era_year(year: i32) -> EraYear {
             era: tinystr!(16, "bh"),
             era_index: Some(1),
             year: 1 - year,
-            monotonic_year: year,
+            extended_year: year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     }
@@ -238,11 +238,11 @@ impl From<HijriYearInfo> for i32 {
 
 impl HijriData<'_> {
     /// Get the cached data for a given extended year
-    fn get(&self, monotonic_year: i32) -> Option<HijriYearInfo> {
+    fn get(&self, extended_year: i32) -> Option<HijriYearInfo> {
         Some(HijriYearInfo::unpack(
-            monotonic_year,
+            extended_year,
             self.data
-                .get(usize::try_from(monotonic_year - self.first_extended_year).ok()?)?,
+                .get(usize::try_from(extended_year - self.first_extended_year).ok()?)?,
         ))
     }
 }
@@ -256,13 +256,13 @@ impl HijriYearInfo {
         PackedHijriYearInfo::new(self.value, self.month_lengths, self.start_day)
     }
 
-    fn unpack(monotonic_year: i32, packed: PackedHijriYearInfo) -> Self {
-        let (month_lengths, start_day) = packed.unpack(monotonic_year);
+    fn unpack(extended_year: i32, packed: PackedHijriYearInfo) -> Self {
+        let (month_lengths, start_day) = packed.unpack(extended_year);
 
         HijriYearInfo {
             month_lengths,
             start_day,
-            value: monotonic_year,
+            value: extended_year,
         }
     }
 
@@ -337,11 +337,11 @@ impl HijriYearInfo {
 }
 
 impl PrecomputedDataSource<HijriYearInfo> for HijriSimulated {
-    fn load_or_compute_info(&self, monotonic_year: i32) -> HijriYearInfo {
+    fn load_or_compute_info(&self, extended_year: i32) -> HijriYearInfo {
         self.data
             .as_ref()
-            .and_then(|d| d.get().get(monotonic_year))
-            .unwrap_or_else(|| self.location.compute_year_info(monotonic_year))
+            .and_then(|d| d.get().get(extended_year))
+            .unwrap_or_else(|| self.location.compute_year_info(extended_year))
     }
 }
 
@@ -473,7 +473,7 @@ impl Calendar for HijriSimulated {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        era_year(date.0.monotonic_year())
+        era_year(date.0.extended_year())
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -504,15 +504,15 @@ impl Calendar for HijriSimulated {
 }
 
 impl HijriSimulatedLocation {
-    fn compute_year_info(self, monotonic_year: i32) -> HijriYearInfo {
+    fn compute_year_info(self, extended_year: i32) -> HijriYearInfo {
         let start_day = calendrical_calculations::islamic::fixed_from_observational_islamic(
-            monotonic_year,
+            extended_year,
             1,
             1,
             self.location(),
         );
         let next_start_day = calendrical_calculations::islamic::fixed_from_observational_islamic(
-            monotonic_year + 1,
+            extended_year + 1,
             1,
             1,
             self.location(),
@@ -521,7 +521,7 @@ impl HijriSimulatedLocation {
             LONG_YEAR_LEN | SHORT_YEAR_LEN => (),
             353 => {
                 icu_provider::log::trace!(
-                    "({}) Found year {monotonic_year} AH with length {}. See <https://github.com/unicode-org/icu4x/issues/4930>",
+                    "({}) Found year {extended_year} AH with length {}. See <https://github.com/unicode-org/icu4x/issues/4930>",
                     HijriSimulated::DEBUG_NAME,
                     next_start_day - start_day
                 );
@@ -529,7 +529,7 @@ impl HijriSimulatedLocation {
             other => {
                 debug_assert!(
                     !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&start_day),
-                    "({}) Found year {monotonic_year} AH with length {}!",
+                    "({}) Found year {extended_year} AH with length {}!",
                     HijriSimulated::DEBUG_NAME,
                     other
                 )
@@ -541,7 +541,7 @@ impl HijriSimulatedLocation {
             let mut month_lengths = core::array::from_fn(|month_idx| {
                 let days_in_month =
                     calendrical_calculations::islamic::observational_islamic_month_days(
-                        monotonic_year,
+                        extended_year,
                         month_idx as u8 + 1,
                         self.location(),
                     );
@@ -550,7 +550,7 @@ impl HijriSimulatedLocation {
                     30 => true,
                     31 => {
                         icu_provider::log::trace!(
-                            "({}) Found year {monotonic_year} AH with month length {days_in_month} for month {}.",
+                            "({}) Found year {extended_year} AH with month length {days_in_month} for month {}.",
                             HijriSimulated::DEBUG_NAME,
                             month_idx + 1
                         );
@@ -560,7 +560,7 @@ impl HijriSimulatedLocation {
                     _ => {
                         debug_assert!(
                             !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&start_day),
-                            "({}) Found year {monotonic_year} AH with month length {days_in_month} for month {}!",
+                            "({}) Found year {extended_year} AH with month length {days_in_month} for month {}!",
                             HijriSimulated::DEBUG_NAME,
                             month_idx + 1
                         );
@@ -574,7 +574,7 @@ impl HijriSimulatedLocation {
             if excess_days != 0 {
                 debug_assert!(
                     excess_days == 1 || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&start_day),
-                    "({}) Found year {monotonic_year} AH with more than one excess day!",
+                    "({}) Found year {extended_year} AH with more than one excess day!",
                     HijriSimulated::DEBUG_NAME
                 );
                 if let Some(l) = month_lengths.iter_mut().find(|l| !(**l)) {
@@ -586,7 +586,7 @@ impl HijriSimulatedLocation {
         HijriYearInfo {
             month_lengths,
             start_day,
-            value: monotonic_year,
+            value: extended_year,
         }
     }
 }
@@ -752,7 +752,7 @@ impl Calendar for HijriUmmAlQura {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        era_year(date.0.monotonic_year())
+        era_year(date.0.extended_year())
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -969,7 +969,7 @@ impl Calendar for HijriTabular {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        era_year(date.0.monotonic_year())
+        era_year(date.0.extended_year())
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

@@ -119,7 +119,7 @@ pub struct Date<A: AsCalendar> {
 impl<A: AsCalendar> Date<A> {
     /// Construct a date from from era/month codes and fields, and some calendar representation
     ///
-    /// The year is `monotonic_year` if no era is provided
+    /// The year is `extended_year` if no era is provided
     #[inline]
     pub fn try_new_from_codes(
         era: Option<&str>,
@@ -236,11 +236,11 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().year_info(&self.inner).into()
     }
 
-    /// This currently returns the same value as [`Self::monotonic_year()`]
-    #[deprecated = "Please use monotonic_year() instead"]
+    /// This currently returns the same value as [`Self::extended_year()`]
+    #[deprecated = "Please use extended_year() instead"]
     #[inline]
     pub fn extended_year(&self) -> i32 {
-        self.monotonic_year()
+        self.extended_year()
     }
 
     /// The "monotonic year".
@@ -256,8 +256,8 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// See [`Self::year()`] for more information about the year.
     #[inline]
-    pub fn monotonic_year(&self) -> i32 {
-        self.year().monotonic_year()
+    pub fn extended_year(&self) -> i32 {
+        self.year().extended_year()
     }
 
     /// Returns whether `self` is in a calendar-specific leap year

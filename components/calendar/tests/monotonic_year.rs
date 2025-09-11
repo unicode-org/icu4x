@@ -33,18 +33,18 @@ static MONOTONIC_EPOCHS: &[(AnyCalendarKind, i32)] = &[
 ];
 
 #[test]
-fn test_monotonic_year() {
+fn test_extended_year() {
     let iso = icu_calendar::cal::Iso;
     let m_01 = MonthCode::new_normal(1).unwrap();
     for (kind, monotonic_epoch) in MONOTONIC_EPOCHS.iter() {
         let calendar = Rc::new(AnyCalendar::new(*kind));
 
-        // Create the first date in the epoch year (monotonic_year = 0)
+        // Create the first date in the epoch year (extended_year = 0)
         let date_in_epoch_year =
             Date::try_new_from_codes(None, 0, m_01, 1, calendar.clone()).unwrap();
         let iso_date_in_epoch_year = date_in_epoch_year.to_calendar(iso);
         assert_eq!(
-            iso_date_in_epoch_year.monotonic_year(),
+            iso_date_in_epoch_year.extended_year(),
             *monotonic_epoch,
             "Monotonic year for {date_in_epoch_year:?} should be {monotonic_epoch}"
         );
@@ -67,7 +67,7 @@ fn test_monotonic_year() {
             AnyCalendarKind::Japanese | AnyCalendarKind::JapaneseExtended
         ) {
             assert_eq!(
-                date_in_2025.monotonic_year(),
+                date_in_2025.extended_year(),
                 2025,
                 "Monotonic year for {date_in_2025:?} should be 2025"
             );
@@ -76,7 +76,7 @@ fn test_monotonic_year() {
             // These two function calls are not equivalent in general.
             let expected = date_in_2025.year().era_year_or_related_iso();
             assert_eq!(
-                date_in_2025.monotonic_year(),
+                date_in_2025.extended_year(),
                 expected,
                 "Monotonic year for {date_in_2025:?} should be {expected}"
             );

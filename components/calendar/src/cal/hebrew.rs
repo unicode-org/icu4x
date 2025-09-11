@@ -261,12 +261,12 @@ impl Calendar for Hebrew {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let monotonic_year = date.0.monotonic_year();
+        let extended_year = date.0.extended_year();
         types::EraYear {
             era_index: Some(0),
             era: tinystr!(16, "am"),
-            year: monotonic_year,
-            monotonic_year,
+            year: extended_year,
+            extended_year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     }
