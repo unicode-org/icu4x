@@ -4,6 +4,9 @@
 
 //! A serde serialization strategy that uses `PartialEq` to reduce serialized size.
 //!
+//! *This crate works, but does not currently have a GitHub repo since the ICU4X project
+//! is not using it anymore.*
+//!
 //! This create can be used with Serde derive like this:
 //!
 //! ```rust
