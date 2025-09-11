@@ -12,44 +12,35 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+#[cfg(debug_assertions)]
+use calendrical_calculations::chinese_based::WELL_BEHAVED_ASTRONOMICAL_RANGE;
+use calendrical_calculations::rata_die::RataDie;
 use icu_provider::prelude::*;
-use zerovec::ule::{AsULE, ULE};
-use zerovec::ZeroVec;
 
-icu_provider::data_marker!(
-    /// Precomputed data for the Chinese calendar
-    CalendarChineseV1,
-    "calendar/chinese/v1",
-    ChineseBasedCache<'static>,
-    is_singleton = true
-);
-icu_provider::data_marker!(
-    /// Precomputed data for the Dangi calendar
-    CalendarDangiV1,
-    "calendar/dangi/v1",
-    ChineseBasedCache<'static>,
-    is_singleton = true
-);
+use crate::cal::chinese_based::ChineseBasedYearInfo;
 
 /// Cached/precompiled data for a certain range of years for a chinese-based
 /// calendar. Avoids the need to perform lunar calendar arithmetic for most calendrical
 /// operations.
 #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider::chinese_based))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct ChineseBasedCache<'data> {
+pub(crate) struct ChineseBasedCache<'data> {
     /// The ISO year corresponding to the first data entry for this year
     pub first_related_iso_year: i32,
     /// A list of precomputed data for each year beginning with first_related_iso_year
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub data: ZeroVec<'data, PackedChineseBasedYearInfo>,
+    pub data: &'data [PackedChineseBasedYearInfo],
 }
 
-icu_provider::data_struct!(
-    ChineseBasedCache<'_>,
-    #[cfg(feature = "datagen")]
-);
+impl ChineseBasedCache<'_> {
+    pub fn get(&self, related_iso: i32) -> Option<ChineseBasedYearInfo> {
+        self.data
+            .get(usize::try_from(related_iso - self.first_related_iso_year).ok()?)
+            .copied()
+            .map(|packed_data| ChineseBasedYearInfo {
+                packed_data,
+                related_iso,
+            })
+    }
+}
 
 /// The struct containing compiled ChineseData
 ///
@@ -71,11 +62,9 @@ icu_provider::data_struct!(
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ULE)]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(C, packed)]
-pub struct PackedChineseBasedYearInfo(pub u8, pub u8, pub u8);
+pub(crate) struct PackedChineseBasedYearInfo(pub u8, pub u8, pub u8);
 
 impl PackedChineseBasedYearInfo {
     /// The first day of the ISO year on which Chinese New Year may occur
@@ -88,22 +77,29 @@ impl PackedChineseBasedYearInfo {
     /// could occur after the Winter Solstice if the solstice is pinned to December 20.
     const FIRST_NY: i64 = 18;
 
-    /// out_of_valid_astronomical_range is true when the data is for a date that is well
-    /// outside calendrical_calculations::chinese_based::WELL_BEHAVED_ASTRONOMICAL_RANGE.
     /// It clamps some values to avoid debug assertions on calendrical invariants.
-    pub(crate) fn new(
+    pub(crate) const fn new(
+        related_iso: i32,
         month_lengths: [bool; 13],
-        leap_month_idx: Option<u8>,
-        ny_offset: i64,
-        #[cfg(debug_assertions)] out_of_valid_astronomical_range: bool,
+        leap_month: Option<u8>,
+        new_year: RataDie,
     ) -> Self {
         // This assertion is an API correctness assertion and even bad calendar arithmetic
         // should not produce this
         debug_assert!(
-            !month_lengths[12] || leap_month_idx.is_some(),
+            !month_lengths[12] || leap_month.is_some(),
             "Last month length should not be set for non-leap years"
         );
-        let mut ny_offset = ny_offset - Self::FIRST_NY;
+        let ny_offset = new_year.since(calendrical_calculations::iso::const_fixed_from_iso(
+            related_iso,
+            1,
+            1,
+        )) - Self::FIRST_NY;
+
+        #[cfg(debug_assertions)]
+        let out_of_valid_astronomical_range = WELL_BEHAVED_ASTRONOMICAL_RANGE.start.to_i64_date()
+            > new_year.to_i64_date()
+            || new_year.to_i64_date() > WELL_BEHAVED_ASTRONOMICAL_RANGE.end.to_i64_date();
 
         // Assert the offset is in range, but allow it to be out of
         // range when out_of_valid_astronomical_range=true
@@ -125,30 +121,38 @@ impl PackedChineseBasedYearInfo {
         //
         // We can store up to 6 bytes for ny_offset, even if our
         // maximum asserted value is otherwise 33.
-        ny_offset = ny_offset.clamp(0, 0x40);
+        let ny_offset = ny_offset & (0x40 - 1);
         // Also an API correctness assertion
 
-        debug_assert!(
-            leap_month_idx.map(|l| l <= 13).unwrap_or(true),
-            "Leap month indices must be 1 <= i <= 13"
-        );
+        if let Some(l) = leap_month {
+            debug_assert!(1 <= l && l <= 13, "Leap month indices must be 1 <= i <= 13");
+        }
+
         let mut all = 0u32; // last byte unused
 
-        for (month, length_30) in month_lengths.iter().enumerate() {
-            if *length_30 {
+        let mut month = 0;
+        while month < month_lengths.len() {
+            #[allow(clippy::indexing_slicing)] // const iteration
+            if month_lengths[month] {
                 all |= 1 << month as u32;
             }
+            month += 1;
         }
-        let leap_month_idx = leap_month_idx.unwrap_or(0);
+        let leap_month_idx = if let Some(leap_month_idx) = leap_month {
+            leap_month_idx
+        } else {
+            0
+        };
         all |= (leap_month_idx as u32) << (8 + 5);
         all |= (ny_offset as u32) << (16 + 1);
         let le = all.to_le_bytes();
         Self(le[0], le[1], le[2])
     }
 
-    // Get the new year difference from the ISO new year
-    pub(crate) fn ny_offset(self) -> u8 {
-        Self::FIRST_NY as u8 + (self.2 >> 1)
+    pub(crate) fn new_year(self, related_iso: i32) -> RataDie {
+        calendrical_calculations::iso::const_fixed_from_iso(related_iso, 1, 1)
+            + Self::FIRST_NY
+            + (self.2 as i64 >> 1)
     }
 
     pub(crate) fn leap_month(self) -> Option<u8> {
@@ -163,7 +167,7 @@ impl PackedChineseBasedYearInfo {
         months & (1 << (month - 1) as u16) != 0
     }
 
-    #[cfg(any(test, feature = "datagen"))]
+    #[cfg(test)]
     pub(crate) fn month_lengths(self) -> [bool; 13] {
         core::array::from_fn(|i| self.month_has_30_days(i as u8 + 1))
     }
@@ -182,108 +186,21 @@ impl PackedChineseBasedYearInfo {
     }
 }
 
-impl AsULE for PackedChineseBasedYearInfo {
-    type ULE = Self;
-    fn to_unaligned(self) -> Self {
-        self
-    }
-    fn from_unaligned(other: Self) -> Self {
-        other
-    }
-}
-
-#[cfg(feature = "serde")]
-mod serialization {
-    use super::*;
-
-    #[cfg(feature = "datagen")]
-    use serde::{ser, Serialize};
-    use serde::{Deserialize, Deserializer};
-
-    #[derive(Deserialize)]
-    #[cfg_attr(feature = "datagen", derive(Serialize))]
-    struct SerdePackedChineseBasedYearInfo {
-        ny_offset: u8,
-        month_has_30_days: [bool; 13],
-        leap_month_idx: Option<u8>,
-    }
-
-    impl<'de> Deserialize<'de> for PackedChineseBasedYearInfo {
-        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-        where
-            D: Deserializer<'de>,
-        {
-            if deserializer.is_human_readable() {
-                SerdePackedChineseBasedYearInfo::deserialize(deserializer).map(Into::into)
-            } else {
-                let data = <(u8, u8, u8)>::deserialize(deserializer)?;
-                Ok(PackedChineseBasedYearInfo(data.0, data.1, data.2))
-            }
-        }
-    }
-
-    #[cfg(feature = "datagen")]
-    impl Serialize for PackedChineseBasedYearInfo {
-        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: ser::Serializer,
-        {
-            if serializer.is_human_readable() {
-                SerdePackedChineseBasedYearInfo::from(*self).serialize(serializer)
-            } else {
-                (self.0, self.1, self.2).serialize(serializer)
-            }
-        }
-    }
-
-    #[cfg(feature = "datagen")]
-    impl From<PackedChineseBasedYearInfo> for SerdePackedChineseBasedYearInfo {
-        fn from(other: PackedChineseBasedYearInfo) -> Self {
-            Self {
-                ny_offset: other.ny_offset(),
-                month_has_30_days: other.month_lengths(),
-                leap_month_idx: other.leap_month(),
-            }
-        }
-    }
-
-    impl From<SerdePackedChineseBasedYearInfo> for PackedChineseBasedYearInfo {
-        fn from(other: SerdePackedChineseBasedYearInfo) -> Self {
-            Self::new(
-                other.month_has_30_days,
-                other.leap_month_idx,
-                other.ny_offset as i64,
-                #[cfg(debug_assertions)]
-                false,
-            )
-        }
-    }
-}
-
 #[cfg(test)]
 mod test {
     use super::*;
 
     fn packed_roundtrip_single(
-        mut month_lengths: [bool; 13],
+        month_lengths: [bool; 13],
         leap_month_idx: Option<u8>,
         ny_offset: i64,
     ) {
-        if leap_month_idx.is_none() {
-            // Avoid bad invariants
-            month_lengths[12] = false;
-        }
-        let packed = PackedChineseBasedYearInfo::new(
-            month_lengths,
-            leap_month_idx,
-            ny_offset,
-            #[cfg(debug_assertions)]
-            false,
-        );
+        let ny = calendrical_calculations::iso::fixed_from_iso(1000, 1, 1) + ny_offset;
+        let packed = PackedChineseBasedYearInfo::new(1000, month_lengths, leap_month_idx, ny);
 
         assert_eq!(
-            ny_offset,
-            packed.ny_offset() as i64,
+            ny,
+            packed.new_year(1000),
             "Roundtrip with {month_lengths:?}, {leap_month_idx:?}, {ny_offset}"
         );
         assert_eq!(
@@ -306,10 +223,10 @@ mod test {
             false, true, false, true, false, true, false, true, false, true, false, true, false,
         ];
         const ALTERNATING2: [bool; 13] = [
-            true, false, true, false, true, false, true, false, true, false, true, false, true,
+            true, false, true, false, true, false, true, false, true, false, true, false, false,
         ];
         const RANDOM1: [bool; 13] = [
-            true, true, false, false, true, true, false, true, true, true, true, false, true,
+            true, true, false, false, true, true, false, true, true, true, true, false, false,
         ];
         const RANDOM2: [bool; 13] = [
             false, true, true, true, true, false, true, true, true, false, false, true, false,

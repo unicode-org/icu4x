@@ -21,8 +21,6 @@
 macro_rules! registry(
     ($cb:ident) => {
         cb!(
-            icu::calendar::provider::CalendarChineseV1: CalendarChineseV1,
-            icu::calendar::provider::CalendarDangiV1: CalendarDangiV1,
             icu::calendar::provider::CalendarJapaneseModernV1: CalendarJapaneseModernV1,
             icu::calendar::provider::CalendarHijriSimulatedMeccaV1: CalendarHijriSimulatedMeccaV1,
             icu::calendar::provider::CalendarJapaneseExtendedV1: CalendarJapaneseExtendedV1,

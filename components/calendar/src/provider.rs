@@ -15,9 +15,8 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
-pub mod chinese_based;
+pub(crate) mod chinese_based;
 pub mod hijri;
-pub use chinese_based::{CalendarChineseV1, CalendarDangiV1};
 pub use hijri::CalendarHijriSimulatedMeccaV1;
 
 use crate::types::Weekday;
@@ -46,8 +45,6 @@ const _: () = {
         pub use icu_locale as locale;
     }
     make_provider!(Baked);
-    impl_calendar_chinese_v1!(Baked);
-    impl_calendar_dangi_v1!(Baked);
     impl_calendar_hijri_simulated_mecca_v1!(Baked);
     impl_calendar_japanese_modern_v1!(Baked);
     impl_calendar_japanese_extended_v1!(Baked);
@@ -83,8 +80,6 @@ icu_provider::data_marker!(
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    CalendarChineseV1::INFO,
-    CalendarDangiV1::INFO,
     CalendarHijriSimulatedMeccaV1::INFO,
     CalendarJapaneseModernV1::INFO,
     CalendarJapaneseExtendedV1::INFO,
