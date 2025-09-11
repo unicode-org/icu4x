@@ -11,7 +11,7 @@ use icu_calendar::Date;
 use std::rc::Rc;
 
 /// Reference: <https://tc39.es/proposal-intl-era-monthcode/#sec-temporal-calendardatearithmeticyear>
-static MONOTONIC_EPOCHS: &[(AnyCalendarKind, i32)] = &[
+static EXTENDED_EPOCHS: &[(AnyCalendarKind, i32)] = &[
     (AnyCalendarKind::Buddhist, -543),
     (AnyCalendarKind::Chinese, 0),
     (AnyCalendarKind::Coptic, 283),
@@ -36,7 +36,7 @@ static MONOTONIC_EPOCHS: &[(AnyCalendarKind, i32)] = &[
 fn test_extended_year() {
     let iso = icu_calendar::cal::Iso;
     let m_01 = MonthCode::new_normal(1).unwrap();
-    for (kind, monotonic_epoch) in MONOTONIC_EPOCHS.iter() {
+    for (kind, extended_epoch) in EXTENDED_EPOCHS.iter() {
         let calendar = Rc::new(AnyCalendar::new(*kind));
 
         // Create the first date in the epoch year (extended_year = 0)
@@ -45,12 +45,12 @@ fn test_extended_year() {
         let iso_date_in_epoch_year = date_in_epoch_year.to_calendar(iso);
         assert_eq!(
             iso_date_in_epoch_year.extended_year(),
-            *monotonic_epoch,
-            "Monotonic year for {date_in_epoch_year:?} should be {monotonic_epoch}"
+            *extended_epoch,
+            "Extended year for {date_in_epoch_year:?} should be {extended_epoch}"
         );
 
         // Test that for all calendars except Japanese, the *current* era is
-        // the same as that used for the monotonic year
+        // the same as that used for the extended year
         // This date can be anything as long as it is vaguely modern.
         //
         // Note that this property is not *required* by the specification, new
@@ -60,8 +60,8 @@ fn test_extended_year() {
         let iso_date_in_2025 = Date::try_new_iso(2025, 1, 1).unwrap();
         let date_in_2025 = iso_date_in_2025.to_calendar(calendar.clone());
 
-        // The monotonic year should align with the year in the modern era or related ISO.
-        // There is a special case for Japanese since it has a modern era but uses ISO for the monotonic year.
+        // The extended year should align with the year in the modern era or related ISO.
+        // There is a special case for Japanese since it has a modern era but uses ISO for the extended year.
         if matches!(
             kind,
             AnyCalendarKind::Japanese | AnyCalendarKind::JapaneseExtended
@@ -69,7 +69,7 @@ fn test_extended_year() {
             assert_eq!(
                 date_in_2025.extended_year(),
                 2025,
-                "Monotonic year for {date_in_2025:?} should be 2025"
+                "Extended year for {date_in_2025:?} should be 2025"
             );
         } else {
             // Note: This code only works because 2025 is in the modern era for all calendars.
@@ -78,7 +78,7 @@ fn test_extended_year() {
             assert_eq!(
                 date_in_2025.extended_year(),
                 expected,
-                "Monotonic year for {date_in_2025:?} should be {expected}"
+                "Extended year for {date_in_2025:?} should be {expected}"
             );
         }
     }

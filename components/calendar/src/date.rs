@@ -236,17 +236,10 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().year_info(&self.inner).into()
     }
 
-    /// This currently returns the same value as [`Self::extended_year()`]
-    #[deprecated = "Please use extended_year() instead"]
-    #[inline]
-    pub fn extended_year(&self) -> i32 {
-        self.extended_year()
-    }
-
-    /// The "monotonic year".
+    /// The "extended year".
     ///
     /// This year number can be used when you need a simple numeric representation
-    /// of the year, and can be meaningfully compared with monotonic years from other
+    /// of the year, and can be meaningfully compared with extended years from other
     /// eras or used in arithmetic.
     ///
     /// For calendars defined in Temporal, this will match the "arithmetic year"

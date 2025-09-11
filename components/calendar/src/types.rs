@@ -48,7 +48,7 @@ impl YearInfo {
         }
     }
 
-    /// Get the monotonic year (See [`Date::extended_year`](crate::Date::extended_year))
+    /// Get the extended year (See [`Date::extended_year`](crate::Date::extended_year))
     /// for more information
     pub fn extended_year(self) -> i32 {
         match self {
