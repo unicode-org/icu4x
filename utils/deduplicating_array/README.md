@@ -4,8 +4,8 @@
 
 A serde serialization strategy that uses `PartialEq` to reduce serialized size.
 
-*This crate works, but does not currently have a GitHub repo since the ICU4X project
-is not using it anymore.*
+**This crate works, but does not currently have a GitHub repo since the ICU4X project
+is not using it anymore.**
 
 This create can be used with Serde derive like this:
 
@@ -30,7 +30,3 @@ This implies that singleton integer arrays cannot be used as array elements (the
 but there's really not much point in using them).
 
 <!-- cargo-rdme end -->
-
-## More Information
-
-For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).
