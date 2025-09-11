@@ -7,7 +7,7 @@
 use crate::cal::hijri::HijriSimulatedLocation;
 use crate::cal::iso::IsoDateInner;
 use crate::cal::{
-    Buddhist, Chinese, Coptic, Dangi, Ethiopian, EthiopianEraStyle, Gregorian, Hebrew,
+    Buddhist, Chinese, Coptic, Dangi, Ethiopian, EthiopianEraStyle, Gregorian, Hebrew, Hijri,
     HijriSimulated, HijriTabular, HijriTabularEpoch, HijriTabularLeapYears, HijriUmmAlQura, Indian,
     Iso, Japanese, JapaneseExtended, Persian, Roc,
 };
@@ -571,7 +571,7 @@ impl AnyCalendar {
                 ))
             }
             AnyCalendarKind::HijriSimulatedMecca => {
-                AnyCalendar::HijriSimulated(HijriSimulated::new_mecca())
+                AnyCalendar::HijriSimulated(Hijri::new_simulated_mecca())
             }
             AnyCalendarKind::HijriTabularTypeIIThursday => {
                 AnyCalendar::HijriTabular(HijriTabular::new(
@@ -579,7 +579,9 @@ impl AnyCalendar {
                     HijriTabularEpoch::Thursday,
                 ))
             }
-            AnyCalendarKind::HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(HijriUmmAlQura::new()),
+            AnyCalendarKind::HijriUmmAlQura => {
+                AnyCalendar::HijriUmmAlQura(Hijri::new_umm_al_qura())
+            }
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Japanese => AnyCalendar::Japanese(Japanese::new()),
             AnyCalendarKind::JapaneseExtended => {
@@ -624,7 +626,7 @@ impl AnyCalendar {
                 ))
             }
             AnyCalendarKind::HijriSimulatedMecca => AnyCalendar::HijriSimulated(
-                HijriSimulated::try_new_mecca_with_buffer_provider(provider)?,
+                Hijri::try_new_simulated_mecca_with_buffer_provider(provider)?,
             ),
             AnyCalendarKind::HijriTabularTypeIIThursday => {
                 AnyCalendar::HijriTabular(HijriTabular::new(
@@ -632,7 +634,9 @@ impl AnyCalendar {
                     HijriTabularEpoch::Thursday,
                 ))
             }
-            AnyCalendarKind::HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(HijriUmmAlQura::new()),
+            AnyCalendarKind::HijriUmmAlQura => {
+                AnyCalendar::HijriUmmAlQura(Hijri::new_umm_al_qura())
+            }
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Japanese => {
                 AnyCalendar::Japanese(Japanese::try_new_with_buffer_provider(provider)?)
@@ -676,7 +680,7 @@ impl AnyCalendar {
                 ))
             }
             AnyCalendarKind::HijriSimulatedMecca => {
-                AnyCalendar::HijriSimulated(HijriSimulated::try_new_mecca_unstable(provider)?)
+                AnyCalendar::HijriSimulated(Hijri::try_new_simulated_mecca_unstable(provider)?)
             }
             AnyCalendarKind::HijriTabularTypeIIThursday => {
                 AnyCalendar::HijriTabular(HijriTabular::new(
@@ -684,7 +688,9 @@ impl AnyCalendar {
                     HijriTabularEpoch::Thursday,
                 ))
             }
-            AnyCalendarKind::HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(HijriUmmAlQura::new()),
+            AnyCalendarKind::HijriUmmAlQura => {
+                AnyCalendar::HijriUmmAlQura(Hijri::new_umm_al_qura())
+            }
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Japanese => {
                 AnyCalendar::Japanese(Japanese::try_new_unstable(provider)?)
@@ -843,13 +849,15 @@ impl AnyCalendarKind {
                 HijriTabularEpoch::Friday,
             )
             .debug_name(),
-            AnyCalendarKind::HijriSimulatedMecca => HijriSimulated::DEBUG_NAME,
+            AnyCalendarKind::HijriSimulatedMecca => {
+                Hijri::new_simulated_mecca_always_calculating().debug_name()
+            }
             AnyCalendarKind::HijriTabularTypeIIThursday => HijriTabular::new(
                 crate::cal::hijri::HijriTabularLeapYears::TypeII,
                 HijriTabularEpoch::Thursday,
             )
             .debug_name(),
-            AnyCalendarKind::HijriUmmAlQura => HijriUmmAlQura::DEBUG_NAME,
+            AnyCalendarKind::HijriUmmAlQura => Hijri::new_umm_al_qura().debug_name(),
             AnyCalendarKind::Iso => Iso.debug_name(),
             AnyCalendarKind::Japanese => Japanese::DEBUG_NAME,
             AnyCalendarKind::JapaneseExtended => JapaneseExtended::DEBUG_NAME,
@@ -1302,7 +1310,7 @@ impl IntoAnyCalendar for HijriSimulated {
     }
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
-        match self.location {
+        match self.0.location {
             HijriSimulatedLocation::Mecca => AnyCalendarKind::HijriSimulatedMecca,
         }
     }

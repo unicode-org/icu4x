@@ -241,7 +241,7 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/ummalqura",
         &fxs,
-        icu::calendar::cal::HijriUmmAlQura::new(),
+        icu::calendar::cal::Hijri::new_umm_al_qura(),
         |y, m, d| Date::try_new_ummalqura(y, m, d).unwrap(),
     );
 
@@ -249,13 +249,13 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/observational",
         &fxs,
-        icu::calendar::cal::HijriSimulated::new_mecca_always_calculating(),
+        icu::calendar::cal::Hijri::new_simulated_mecca_always_calculating(),
         |y, m, d| {
-            Date::try_new_simulated_hijri_with_calendar(
+            Date::try_new_hijri_with_calendar(
                 y,
                 m,
                 d,
-                icu::calendar::cal::HijriSimulated::new_mecca_always_calculating(),
+                icu::calendar::cal::Hijri::new_simulated_mecca_always_calculating(),
             )
             .unwrap()
         },

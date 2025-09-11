@@ -5,7 +5,7 @@
 use std::collections::HashSet;
 
 use crate::SourceDataProvider;
-use icu::calendar::cal::HijriSimulated;
+use icu::calendar::cal::Hijri;
 use icu::calendar::provider::hijri::*;
 use icu_provider::prelude::*;
 
@@ -15,7 +15,7 @@ impl DataProvider<CalendarHijriSimulatedMeccaV1> for SourceDataProvider {
         req: DataRequest,
     ) -> Result<DataResponse<CalendarHijriSimulatedMeccaV1>, DataError> {
         self.check_req::<CalendarHijriSimulatedMeccaV1>(req)?;
-        let cache = HijriSimulated::new_mecca_always_calculating().build_cache(1317..1567);
+        let cache = Hijri::new_simulated_mecca_always_calculating().build_cache(1317..1567);
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(cache),
