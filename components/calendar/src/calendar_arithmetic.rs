@@ -273,7 +273,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         DayOfYear(C::day_of_provided_year(self.year, self.month, self.day))
     }
 
-    pub fn monotonic_year(&self) -> i32 {
+    pub fn extended_year(&self) -> i32 {
         self.year.into()
     }
 

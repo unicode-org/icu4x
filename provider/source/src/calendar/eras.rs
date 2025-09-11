@@ -187,7 +187,7 @@ fn process_era_dates_map(
                 .unwrap()
                 .to_iso();
             *d = EraStartDate {
-                year: date.monotonic_year(),
+                year: date.extended_year(),
                 month: date.month().ordinal,
                 day: date.day_of_month().0,
             };

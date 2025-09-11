@@ -32,7 +32,7 @@ fn main() {
         let date = Date::try_new_iso(year, month, day).expect("date should parse");
         println!(
             "Year: {}, Month: {}, Day: {}",
-            date.monotonic_year(),
+            date.extended_year(),
             date.month().ordinal,
             date.day_of_month().0,
         );
