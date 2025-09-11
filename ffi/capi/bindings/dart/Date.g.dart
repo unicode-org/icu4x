@@ -185,19 +185,11 @@ final class Date implements ffi.Finalizable {
     return result;
   }
 
-  /// Deprecated, use [Self::monotonic_year]
+  /// Deprecated, use [Self::extended_year]
   ///
   /// See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.extended_year) for more information.
   int get extendedYear {
     final result = _icu4x_Date_extended_year_mv1(_ffi);
-    return result;
-  }
-
-  /// Returns the monotonic year in the Date
-  ///
-  /// See the [Rust documentation for `monotonic_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.monotonic_year) for more information.
-  int get monotonicYear {
-    final result = _icu4x_Date_monotonic_year_mv1(_ffi);
     return result;
   }
 
@@ -330,11 +322,6 @@ external int _icu4x_Date_era_year_or_related_iso_mv1(ffi.Pointer<ffi.Opaque> sel
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_extended_year_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Date_extended_year_mv1(ffi.Pointer<ffi.Opaque> self);
-
-@_DiplomatFfiUse('icu4x_Date_monotonic_year_mv1')
-@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_monotonic_year_mv1')
-// ignore: non_constant_identifier_names
-external int _icu4x_Date_monotonic_year_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('icu4x_Date_era_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_era_mv1')

@@ -142,18 +142,11 @@ export class Date {
     get eraYearOrRelatedIso(): number;
 
     /**
-     * Deprecated, use {@link Self::monotonic_year}
+     * Deprecated, use {@link Self::extended_year}
      *
      * See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.extended_year) for more information.
      */
     get extendedYear(): number;
-
-    /**
-     * Returns the monotonic year in the Date
-     *
-     * See the [Rust documentation for `monotonic_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.monotonic_year) for more information.
-     */
-    get monotonicYear(): number;
 
     /**
      * Returns the era for this date, or an empty string
