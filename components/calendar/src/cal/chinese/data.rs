@@ -2,7 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data obtained from [`calendrical_calculations`].
+//! Data obtained from [`calendrical_calculations`], with a fix for
+//! 1906 per <https://github.com/dotnet/runtime/blob/1d1bf92fcf43aa6981804dc53c5174445069c9e4/src/libraries/System.Private.CoreLib/src/System/Globalization/ChineseLunisolarCalendar.cs#L34>.
 
 use crate::provider::chinese_based::PackedChineseBasedYearInfo;
 
@@ -19,7 +20,7 @@ pub const DATA: &[PackedChineseBasedYearInfo] = {
         PackedChineseBasedYearInfo::new(1903, [s, l, s, l, s, s, l, s, s, l, l, s, l], Some(6), iso(1903, 1, 29)),
         PackedChineseBasedYearInfo::new(1904, [l, l, s, l, s, s, l, s, s, l, l, s, s], None, iso(1904, 2, 16)),
         PackedChineseBasedYearInfo::new(1905, [l, l, s, l, l, s, s, l, s, l, s, l, s], None, iso(1905, 2, 4)),
-        PackedChineseBasedYearInfo::new(1906, [s, l, s, l, l, s, l, s, l, s, l, s, l], Some(5), iso(1906, 1, 25)),
+        PackedChineseBasedYearInfo::new(1906, [s, l, l, s, l, s, l, s, l, s, l, s, l], Some(5), iso(1906, 1, 25)),
         PackedChineseBasedYearInfo::new(1907, [s, l, s, l, s, l, l, s, l, s, l, s, s], None, iso(1907, 2, 13)),
         PackedChineseBasedYearInfo::new(1908, [l, s, s, l, l, s, l, s, l, l, s, l, s], None, iso(1908, 2, 2)),
         PackedChineseBasedYearInfo::new(1909, [s, l, s, s, l, s, l, s, l, l, l, s, l], Some(3), iso(1909, 1, 22)),
