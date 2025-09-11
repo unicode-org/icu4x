@@ -355,7 +355,11 @@ pub mod ffi {
             self.0.year().era_year_or_related_iso()
         }
 
-        /// Deprecated, use [`Self::extended_year`]
+        /// Returns the extended year, which can be used for
+        ///
+        /// This year number can be used when you need a simple numeric representation
+        /// of the year, and can be meaningfully compared with extended years from other
+        /// eras or used in arithmetic.
         #[diplomat::rust_link(icu::calendar::Date::extended_year, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::types::YearInfo::extended_year, FnInEnum, hidden)]
         #[diplomat::attr(auto, getter)]

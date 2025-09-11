@@ -358,7 +358,11 @@ export class Date {
     }
 
     /**
-     * Deprecated, use {@link Self::extended_year}
+     * Returns the extended year, which can be used for
+     *
+     * This year number can be used when you need a simple numeric representation
+     * of the year, and can be meaningfully compared with extended years from other
+     * eras or used in arithmetic.
      *
      * See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.extended_year) for more information.
      */
