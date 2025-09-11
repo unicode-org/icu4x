@@ -28,7 +28,7 @@ pub use gregorian::Gregorian;
 pub use hebrew::Hebrew;
 pub use hijri::{
     Hijri, HijriSighting, HijriSimulated, HijriTabular, HijriTabularEpoch, HijriTabularLeapYears,
-    HijriUmmAlQura, HijriYearInfo, SimulatedSighting, UmmAlQuraSighting,
+    HijriUmmAlQura, HijriYearInfo, SimulatedSighting, TabularSighting, UmmAlQuraSighting,
 };
 pub use indian::Indian;
 pub use iso::Iso;

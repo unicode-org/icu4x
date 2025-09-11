@@ -48,11 +48,11 @@ fn check_extrema_hijri_uaq() {
 
 #[test]
 fn check_extrema_hijri_tabular() {
-    check_extrema(HijriTabular::new(
+    check_extrema(Hijri::new_tabular(
         HijriTabularLeapYears::TypeII,
         HijriTabularEpoch::Thursday,
     ));
-    check_extrema(HijriTabular::new(
+    check_extrema(Hijri::new_tabular(
         HijriTabularLeapYears::TypeII,
         HijriTabularEpoch::Friday,
     ));

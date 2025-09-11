@@ -94,12 +94,6 @@ impl CldrCalendar for Indian {
     type SkeletaV1 = DatetimePatternsDateIndianV1;
 }
 
-impl CldrCalendar for HijriTabular {
-    type YearNamesV1 = DatetimeNamesYearHijriV1;
-    type MonthNamesV1 = DatetimeNamesMonthHijriV1;
-    type SkeletaV1 = DatetimePatternsDateHijriV1;
-}
-
 impl<S: HijriSighting> CldrCalendar for Hijri<S> {
     type YearNamesV1 = DatetimeNamesYearHijriV1;
     type MonthNamesV1 = DatetimeNamesMonthHijriV1;
@@ -139,7 +133,6 @@ impl UnstableSealed for Ethiopian {}
 impl UnstableSealed for Gregorian {}
 impl UnstableSealed for Hebrew {}
 impl UnstableSealed for Indian {}
-impl UnstableSealed for HijriTabular {}
 impl<S: HijriSighting> UnstableSealed for Hijri<S> {}
 impl UnstableSealed for Japanese {}
 impl UnstableSealed for JapaneseExtended {}
@@ -377,11 +370,11 @@ impl FormattableAnyCalendar {
             Gregorian => AnyCalendar::Gregorian(cal::Gregorian),
             Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
             Indian => AnyCalendar::Indian(cal::Indian),
-            HijriTabularTypeIIFriday => AnyCalendar::HijriTabular(cal::HijriTabular::new(
+            HijriTabularTypeIIFriday => AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
                 cal::HijriTabularLeapYears::TypeII,
                 cal::HijriTabularEpoch::Friday,
             )),
-            HijriTabularTypeIIThursday => AnyCalendar::HijriTabular(cal::HijriTabular::new(
+            HijriTabularTypeIIThursday => AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
                 cal::HijriTabularLeapYears::TypeII,
                 cal::HijriTabularEpoch::Thursday,
             )),
@@ -414,11 +407,11 @@ impl FormattableAnyCalendar {
             Gregorian => AnyCalendar::Gregorian(cal::Gregorian),
             Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
             Indian => AnyCalendar::Indian(cal::Indian),
-            HijriTabularTypeIIFriday => AnyCalendar::HijriTabular(cal::HijriTabular::new(
+            HijriTabularTypeIIFriday => AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
                 cal::HijriTabularLeapYears::TypeII,
                 cal::HijriTabularEpoch::Friday,
             )),
-            HijriTabularTypeIIThursday => AnyCalendar::HijriTabular(cal::HijriTabular::new(
+            HijriTabularTypeIIThursday => AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
                 cal::HijriTabularLeapYears::TypeII,
                 cal::HijriTabularEpoch::Thursday,
             )),
@@ -455,11 +448,11 @@ impl FormattableAnyCalendar {
             Gregorian => AnyCalendar::Gregorian(cal::Gregorian),
             Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
             Indian => AnyCalendar::Indian(cal::Indian),
-            HijriTabularTypeIIFriday => AnyCalendar::HijriTabular(cal::HijriTabular::new(
+            HijriTabularTypeIIFriday => AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
                 cal::HijriTabularLeapYears::TypeII,
                 cal::HijriTabularEpoch::Friday,
             )),
-            HijriTabularTypeIIThursday => AnyCalendar::HijriTabular(cal::HijriTabular::new(
+            HijriTabularTypeIIThursday => AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
                 cal::HijriTabularLeapYears::TypeII,
                 cal::HijriTabularEpoch::Thursday,
             )),

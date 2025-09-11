@@ -147,14 +147,14 @@ fn test_indian_continuity() {
 
 #[test]
 fn test_hijri_civil_continuity() {
-    let cal = crate::cal::HijriTabular::new(
+    let cal = crate::cal::Hijri::new_tabular(
         crate::cal::HijriTabularLeapYears::TypeII,
         crate::cal::HijriTabularEpoch::Friday,
     );
     let cal = Ref(&cal);
-    let date = Date::try_new_hijri_tabular_with_calendar(-10, 1, 1, cal);
+    let date = Date::try_new_hijri_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
-    let date = Date::try_new_hijri_tabular_with_calendar(-300, 1, 1, cal);
+    let date = Date::try_new_hijri_with_calendar(-300, 1, 1, cal);
     check_every_250_days(date.unwrap());
 }
 
@@ -172,14 +172,14 @@ fn test_hijri_simulated_mecca_continuity() {
 
 #[test]
 fn test_hijri_tabular_continuity() {
-    let cal = crate::cal::HijriTabular::new(
+    let cal = crate::cal::Hijri::new_tabular(
         crate::cal::HijriTabularLeapYears::TypeII,
         crate::cal::HijriTabularEpoch::Thursday,
     );
     let cal = Ref(&cal);
-    let date = Date::try_new_hijri_tabular_with_calendar(-10, 1, 1, cal);
+    let date = Date::try_new_hijri_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
-    let date = Date::try_new_hijri_tabular_with_calendar(-300, 1, 1, cal);
+    let date = Date::try_new_hijri_with_calendar(-300, 1, 1, cal);
     check_every_250_days(date.unwrap());
 }
 

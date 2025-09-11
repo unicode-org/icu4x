@@ -82,7 +82,7 @@ pub struct Hijri<S>(pub(crate) S);
 ///
 /// "Sightings" can either be actual observations, or agreed-upon rules.
 ///
-/// This crate includes the [`UmmAlQuraSighting`] and [`SimulatedSighting`], other
+/// This crate includes the [`UmmAlQuraSighting`], [`SimulatedSighting`], and [`TabularSighting`], other
 /// sightings can be implemented by users.
 pub trait HijriSighting: Clone + Debug {
     /// The BCP-47 [`CalendarAlgorithm`] for the Hijri calendar using this sighting, if defined.
@@ -242,40 +242,71 @@ impl HijriSighting for UmmAlQuraSighting {
         {
             HijriYearInfo::unpack(year, packed)
         } else {
-            HijriYearInfo {
-                value: year,
-                start_day: calendrical_calculations::islamic::fixed_from_tabular_islamic(
-                    year,
-                    1,
-                    1,
-                    ISLAMIC_EPOCH_FRIDAY,
-                ),
-                month_lengths: core::array::from_fn(|i| {
-                    HijriTabular::days_in_provided_month(year, i as u8 + 1) == 30
-                }),
+            TabularSighting {
+                leap_years: HijriTabularLeapYears::TypeII,
+                epoch: HijriTabularEpoch::Friday,
             }
+            .year_info(year)
         }
     }
 }
 
-/// The [tabular Hijri Calendar](https://en.wikipedia.org/wiki/Tabular_Islamic_calendar).
-///
+/// See [`Hijri`] and [`TabularSighting`]
+pub type HijriTabular = Hijri<TabularSighting>;
+
 /// See [`HijriTabularEpoch`] and [`HijriTabularLeapYears`] for customization.
 ///
-/// The most common version of this calendar uses [`HijriTabularEpoch::Friday`] and [`HijriTabularLeapYears::TypeII`].
-///
-/// # Era codes
-///
-/// This calendar uses two era codes: `ah`, and `bh`, corresponding to the Anno Hegirae and Before Hijrah eras
-///
-/// # Month codes
-///
-/// This calendar is a pure lunar calendar with no leap months. It uses month codes
-/// `"M01" - "M12"`.
+/// The most common version of this sighting uses [`HijriTabularEpoch::Friday`] and [`HijriTabularLeapYears::TypeII`].
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-pub struct HijriTabular {
+pub struct TabularSighting {
     pub(crate) leap_years: HijriTabularLeapYears,
     pub(crate) epoch: HijriTabularEpoch,
+}
+
+impl TabularSighting {
+    /// Construct a new [`TabularSighting`] with the given leap year rule and epoch.
+    pub const fn new(leap_years: HijriTabularLeapYears, epoch: HijriTabularEpoch) -> Self {
+        Self { epoch, leap_years }
+    }
+}
+
+impl HijriSighting for TabularSighting {
+    fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
+        Some(match (self.epoch, self.leap_years) {
+            (HijriTabularEpoch::Friday, HijriTabularLeapYears::TypeII) => {
+                CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil))
+            }
+            (HijriTabularEpoch::Thursday, HijriTabularLeapYears::TypeII) => {
+                CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Tbla))
+            }
+        })
+    }
+
+    fn debug_name(&self) -> &'static str {
+        match self.epoch {
+            HijriTabularEpoch::Friday => "Hijri (civil)",
+            HijriTabularEpoch::Thursday => "Hijri (astronomical)",
+        }
+    }
+
+    fn year_info(&self, year: i32) -> HijriYearInfo {
+        let is_leap = match self.leap_years {
+            HijriTabularLeapYears::TypeII => (14 + 11 * year).rem_euclid(30) < 11,
+        };
+
+        HijriYearInfo {
+            month_lengths: [
+                true, false, true, false, true, false, true, false, true, false, true, is_leap,
+            ],
+            start_day: calendrical_calculations::islamic::fixed_from_tabular_islamic(
+                year,
+                1,
+                1,
+                self.epoch.rata_die(),
+            ),
+            value: year,
+        }
+    }
 }
 
 impl HijriSimulated {
@@ -421,9 +452,15 @@ pub enum HijriTabularLeapYears {
 }
 
 impl HijriTabular {
-    /// Construct a new [`HijriTabular`] with the given leap year rule and epoch.
+    /// Use [`Self::new_tabular`]
+    #[deprecated(since = "2.1.0", note = "use `Hijri::new_tabular`")]
     pub const fn new(leap_years: HijriTabularLeapYears, epoch: HijriTabularEpoch) -> Self {
-        Self { epoch, leap_years }
+        Hijri::new_tabular(leap_years, epoch)
+    }
+
+    /// Construct a new [`Hijri`] with tabular sighting and the given leap year rule and epoch.
+    pub const fn new_tabular(leap_years: HijriTabularLeapYears, epoch: HijriTabularEpoch) -> Self {
+        Self(TabularSighting::new(leap_years, epoch))
     }
 }
 
@@ -773,209 +810,16 @@ impl Date<HijriUmmAlQura> {
     }
 }
 
-/// The inner date type used for representing [`Date`]s of [`HijriTabular`]. See [`Date`] and [`HijriTabular`] for more details.
-
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-pub struct HijriTabularDateInner(ArithmeticDate<HijriTabular>);
-
-impl CalendarArithmetic for HijriTabular {
-    type YearInfo = i32;
-
-    fn days_in_provided_month(year: i32, month: u8) -> u8 {
-        match month {
-            1 | 3 | 5 | 7 | 9 | 11 => 30,
-            2 | 4 | 6 | 8 | 10 => 29,
-            12 if Self::provided_year_is_leap(year) => 30,
-            12 => 29,
-            _ => 0,
-        }
-    }
-
-    fn months_in_provided_year(_year: Self::YearInfo) -> u8 {
-        12
-    }
-
-    fn days_in_provided_year(year: i32) -> u16 {
-        if Self::provided_year_is_leap(year) {
-            LONG_YEAR_LEN
-        } else {
-            SHORT_YEAR_LEN
-        }
-    }
-
-    fn provided_year_is_leap(year: i32) -> bool {
-        (14 + 11 * year).rem_euclid(30) < 11
-    }
-
-    fn last_month_day_in_provided_year(year: i32) -> (u8, u8) {
-        if Self::provided_year_is_leap(year) {
-            (12, 30)
-        } else {
-            (12, 29)
-        }
-    }
-}
-
-impl crate::cal::scaffold::UnstableSealed for HijriTabular {}
-impl Calendar for HijriTabular {
-    type DateInner = HijriTabularDateInner;
-    type Year = types::EraYear;
-
-    fn from_codes(
-        &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
-        day: u8,
-    ) -> Result<Self::DateInner, DateError> {
-        let year = match era {
-            None => year,
-            Some("ah") => range_check(year, "year", 1..)?,
-            Some("bh") => 1 - range_check(year, "year", 1..)?,
-            Some(_) => return Err(DateError::UnknownEra),
-        };
-
-        ArithmeticDate::new_from_codes(self, year, month_code, day).map(HijriTabularDateInner)
-    }
-
-    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        let (y, m, d) = match self.leap_years {
-            HijriTabularLeapYears::TypeII => {
-                calendrical_calculations::islamic::tabular_islamic_from_fixed(
-                    rd,
-                    self.epoch.rata_die(),
-                )
-            }
-        };
-
-        debug_assert!(Date::try_new_hijri_tabular_with_calendar(y, m, d, crate::Ref(self)).is_ok());
-        HijriTabularDateInner(ArithmeticDate::new_unchecked(y, m, d))
-    }
-
-    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        match self.leap_years {
-            HijriTabularLeapYears::TypeII => {
-                calendrical_calculations::islamic::fixed_from_tabular_islamic(
-                    date.0.year,
-                    date.0.month,
-                    date.0.day,
-                    self.epoch.rata_die(),
-                )
-            }
-        }
-    }
-
-    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
-        self.from_rata_die(Iso.to_rata_die(&iso))
-    }
-
-    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        Iso.from_rata_die(self.to_rata_die(date))
-    }
-
-    fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        date.0.months_in_year()
-    }
-
-    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.0.days_in_year()
-    }
-
-    fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        date.0.days_in_month()
-    }
-
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.0.offset_date(offset, &())
-    }
-
-    fn until(
-        &self,
-        date1: &Self::DateInner,
-        date2: &Self::DateInner,
-        _calendar2: &Self,
-        _largest_unit: DateDurationUnit,
-        _smallest_unit: DateDurationUnit,
-    ) -> DateDuration<Self> {
-        date1.0.until(date2.0, _largest_unit, _smallest_unit)
-    }
-
-    fn debug_name(&self) -> &'static str {
-        match self.epoch {
-            HijriTabularEpoch::Friday => "Hijri (civil)",
-            HijriTabularEpoch::Thursday => "Hijri (astronomical)",
-        }
-    }
-
-    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        era_year(date.0.monotonic_year())
-    }
-
-    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::provided_year_is_leap(date.0.year)
-    }
-
-    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        date.0.month()
-    }
-
-    fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        date.0.day_of_month()
-    }
-
-    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        date.0.day_of_year()
-    }
-
-    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
-        let expected_calendar = match (self.epoch, self.leap_years) {
-            (crate::cal::HijriTabularEpoch::Friday, crate::cal::HijriTabularLeapYears::TypeII) => {
-                crate::preferences::CalendarAlgorithm::Hijri(Some(
-                    crate::preferences::HijriCalendarAlgorithm::Civil,
-                ))
-            }
-            (
-                crate::cal::HijriTabularEpoch::Thursday,
-                crate::cal::HijriTabularLeapYears::TypeII,
-            ) => crate::preferences::CalendarAlgorithm::Hijri(Some(
-                crate::preferences::HijriCalendarAlgorithm::Tbla,
-            )),
-        };
-        Some(expected_calendar)
-    }
-}
-
 impl<A: AsCalendar<Calendar = HijriTabular>> Date<A> {
-    /// Construct new Tabular Hijri Date.
-    ///
-    /// ```rust
-    /// use icu::calendar::cal::{
-    ///     HijriTabular, HijriTabularEpoch, HijriTabularLeapYears,
-    /// };
-    /// use icu::calendar::Date;
-    ///
-    /// let hijri = HijriTabular::new(
-    ///     HijriTabularLeapYears::TypeII,
-    ///     HijriTabularEpoch::Thursday,
-    /// );
-    ///
-    /// let date_hijri =
-    ///     Date::try_new_hijri_tabular_with_calendar(1392, 4, 25, hijri)
-    ///         .expect("Failed to initialize Hijri Date instance.");
-    ///
-    /// assert_eq!(date_hijri.era_year().year, 1392);
-    /// assert_eq!(date_hijri.month().ordinal, 4);
-    /// assert_eq!(date_hijri.day_of_month().0, 25);
-    /// ```
+    /// Deprecated
+    #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar")]
     pub fn try_new_hijri_tabular_with_calendar(
         year: i32,
         month: u8,
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, RangeError> {
-        ArithmeticDate::new_from_ordinals(year, month, day)
-            .map(HijriTabularDateInner)
-            .map(|inner| Date::from_raw(inner, calendar))
+        Date::try_new_hijri_with_calendar(year, month, day, calendar)
     }
 }
 
@@ -1700,26 +1544,22 @@ mod test {
 
     #[test]
     fn test_rd_from_hijri() {
-        let calendar = HijriTabular::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday);
+        let calendar = Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday);
         let calendar = Ref(&calendar);
         for (case, f_date) in ARITHMETIC_CASES.iter().zip(TEST_RD.iter()) {
-            let date = Date::try_new_hijri_tabular_with_calendar(
-                case.year, case.month, case.day, calendar,
-            )
-            .unwrap();
+            let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
+                .unwrap();
             assert_eq!(date.to_rata_die(), RataDie::new(*f_date), "{case:?}");
         }
     }
 
     #[test]
     fn test_hijri_from_rd() {
-        let calendar = HijriTabular::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday);
+        let calendar = Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday);
         let calendar = Ref(&calendar);
         for (case, f_date) in ARITHMETIC_CASES.iter().zip(TEST_RD.iter()) {
-            let date = Date::try_new_hijri_tabular_with_calendar(
-                case.year, case.month, case.day, calendar,
-            )
-            .unwrap();
+            let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
+                .unwrap();
             let date_rd = Date::from_rata_die(RataDie::new(*f_date), calendar);
 
             assert_eq!(date, date_rd, "{case:?}");
@@ -1729,13 +1569,11 @@ mod test {
     #[test]
     fn test_rd_from_hijri_tbla() {
         let calendar =
-            HijriTabular::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday);
+            Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday);
         let calendar = Ref(&calendar);
         for (case, f_date) in ASTRONOMICAL_CASES.iter().zip(TEST_RD.iter()) {
-            let date = Date::try_new_hijri_tabular_with_calendar(
-                case.year, case.month, case.day, calendar,
-            )
-            .unwrap();
+            let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
+                .unwrap();
             assert_eq!(date.to_rata_die(), RataDie::new(*f_date), "{case:?}");
         }
     }
@@ -1743,13 +1581,11 @@ mod test {
     #[test]
     fn test_hijri_tbla_from_rd() {
         let calendar =
-            HijriTabular::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday);
+            Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday);
         let calendar = Ref(&calendar);
         for (case, f_date) in ASTRONOMICAL_CASES.iter().zip(TEST_RD.iter()) {
-            let date = Date::try_new_hijri_tabular_with_calendar(
-                case.year, case.month, case.day, calendar,
-            )
-            .unwrap();
+            let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
+                .unwrap();
             let date_rd = Date::from_rata_die(RataDie::new(*f_date), calendar);
 
             assert_eq!(date, date_rd, "{case:?}");
