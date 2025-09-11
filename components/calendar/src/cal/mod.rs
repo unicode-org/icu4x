@@ -11,7 +11,8 @@ pub(crate) mod dangi;
 pub(crate) mod ethiopian;
 pub(crate) mod gregorian;
 pub(crate) mod hebrew;
-pub(crate) mod hijri;
+#[path = "hijri.rs"]
+pub(crate) mod hijri_internal;
 pub(crate) mod indian;
 pub(crate) mod iso;
 pub(crate) mod japanese;
@@ -26,16 +27,29 @@ pub use dangi::Dangi;
 pub use ethiopian::{Ethiopian, EthiopianEraStyle};
 pub use gregorian::Gregorian;
 pub use hebrew::Hebrew;
-pub use hijri::{
-    Hijri, HijriSighting, HijriSimulated, HijriTabular, HijriTabularEpoch, HijriTabularLeapYears,
-    HijriUmmAlQura, HijriYearInfo, SimulatedSighting, TabularSighting, UmmAlQuraSighting,
-};
+pub use hijri_internal::Hijri;
+/// Customizations for the [`Hijri`] calendar.
+pub mod hijri {
+    pub use super::hijri_internal::{
+        AstronomicalSimulation, HijriSighting, HijriTabularEpoch, HijriTabularLeapYears,
+        HijriYearInfo, TabularAlgorithm, UmmAlQura,
+    };
+}
 pub use indian::Indian;
 pub use iso::Iso;
 pub use japanese::{Japanese, JapaneseExtended};
 pub use julian::Julian;
 pub use persian::Persian;
 pub use roc::Roc;
+
+#[doc(hidden)] // semver
+pub use hijri::{HijriTabularEpoch, HijriTabularLeapYears};
+#[doc(hidden)] // semver
+pub type HijriSimulated = Hijri<hijri::AstronomicalSimulation>;
+#[doc(hidden)] // semver
+pub type HijriUmmAlQura = Hijri<hijri::UmmAlQura>;
+#[doc(hidden)] // semver
+pub type HijriTabular = Hijri<hijri::TabularAlgorithm>;
 
 pub use crate::any_calendar::{AnyCalendar, AnyCalendarKind};
 

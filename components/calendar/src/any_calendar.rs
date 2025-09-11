@@ -4,7 +4,7 @@
 
 //! Module for working with multiple calendars at once
 
-use crate::cal::hijri::{HijriSimulatedLocation, TabularSighting};
+use crate::cal::hijri_internal::{HijriSimulatedLocation, TabularAlgorithm};
 use crate::cal::iso::IsoDateInner;
 use crate::cal::{
     Buddhist, Chinese, Coptic, Dangi, Ethiopian, EthiopianEraStyle, Gregorian, Hebrew, Hijri,
@@ -132,7 +132,7 @@ pub enum AnyDateInner {
     /// A date for an [`Indian`] calendar
     Indian(<Indian as Calendar>::DateInner),
     /// A date for a [`HijriTabular`] calendar
-    HijriTabular(<HijriTabular as Calendar>::DateInner, TabularSighting),
+    HijriTabular(<HijriTabular as Calendar>::DateInner, TabularAlgorithm),
     /// A date for a [`HijriSimulated`] calendar
     HijriSimulated(<HijriSimulated as Calendar>::DateInner),
     /// A date for a [`HijriUmmAlQura`] calendar
@@ -739,7 +739,7 @@ impl AnyDateInner {
             AnyDateInner::Indian(_) => AnyCalendarKind::Indian,
             AnyDateInner::HijriTabular(
                 _,
-                TabularSighting {
+                TabularAlgorithm {
                     leap_years: HijriTabularLeapYears::TypeII,
                     epoch: HijriTabularEpoch::Friday,
                 },
@@ -747,7 +747,7 @@ impl AnyDateInner {
             AnyDateInner::HijriSimulated(_) => AnyCalendarKind::HijriSimulatedMecca,
             AnyDateInner::HijriTabular(
                 _,
-                TabularSighting {
+                TabularAlgorithm {
                     leap_years: HijriTabularLeapYears::TypeII,
                     epoch: HijriTabularEpoch::Thursday,
                 },
@@ -1257,11 +1257,11 @@ impl IntoAnyCalendar for HijriTabular {
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
         match self.0 {
-            TabularSighting {
+            TabularAlgorithm {
                 leap_years: HijriTabularLeapYears::TypeII,
                 epoch: HijriTabularEpoch::Friday,
             } => AnyCalendarKind::HijriTabularTypeIIFriday,
-            TabularSighting {
+            TabularAlgorithm {
                 leap_years: HijriTabularLeapYears::TypeII,
                 epoch: HijriTabularEpoch::Thursday,
             } => AnyCalendarKind::HijriTabularTypeIIThursday,

@@ -40,6 +40,7 @@ use icu_provider::prelude::*;
 use tinystr::tinystr;
 use ummalqura_data::{UMMALQURA_DATA, UMMALQURA_DATA_STARTING_YEAR};
 
+#[path = "hijri/ummalqura_data.rs"]
 mod ummalqura_data;
 
 fn era_year(year: i32) -> EraYear {
@@ -83,7 +84,7 @@ pub struct Hijri<S>(pub S);
 ///
 /// "Sightings" can either be actual observations, or agreed-upon rules.
 ///
-/// This crate includes the [`UmmAlQuraSighting`], [`SimulatedSighting`], and [`TabularSighting`], other
+/// This crate includes the [`UmmAlQura`], [`AstronomicalSimulation`], and [`TabularAlgorithm`], other
 /// sightings can be implemented by users.
 pub trait HijriSighting: Clone + Debug {
     /// The BCP-47 [`CalendarAlgorithm`] for the Hijri calendar using this sighting, if defined.
@@ -100,15 +101,12 @@ pub trait HijriSighting: Clone + Debug {
     fn year_info(&self, year: i32) -> HijriYearInfo;
 }
 
-/// See [`Hijri`] and [`SimulatedSighting`].
-pub type HijriSimulated = Hijri<SimulatedSighting>;
-
 /// An astrononmical simulation for a particular location.
 ///
 /// These simulations are known to not necessarily match sightings on the ground, but are included for
 /// completeness.
 #[derive(Clone, Debug)]
-pub struct SimulatedSighting {
+pub struct AstronomicalSimulation {
     pub(crate) location: HijriSimulatedLocation,
     data: Option<DataPayload<ErasedMarker<HijriData<'static>>>>,
 }
@@ -118,7 +116,7 @@ pub(crate) enum HijriSimulatedLocation {
     Mecca,
 }
 
-impl HijriSighting for SimulatedSighting {
+impl HijriSighting for AstronomicalSimulation {
     fn debug_name(&self) -> &'static str {
         "Hijri (simulated)"
     }
@@ -215,17 +213,14 @@ impl HijriSighting for SimulatedSighting {
     }
 }
 
-/// See [`Hijri`] and [`UmmAlQuraSighting`].
-pub type HijriUmmAlQura = Hijri<UmmAlQuraSighting>;
-
 /// The [Umm al-Qura Hijri sighting](https://en.wikipedia.org/wiki/Islamic_calendar#Saudi_Arabia's_Umm_al-Qura_calendar)
 ///
 /// This is the official calendar in Saudi Arabia.
 #[derive(Clone, Debug, Default)]
 #[non_exhaustive]
-pub struct UmmAlQuraSighting;
+pub struct UmmAlQura;
 
-impl HijriSighting for UmmAlQuraSighting {
+impl HijriSighting for UmmAlQura {
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         Some(CalendarAlgorithm::Hijri(Some(
             HijriCalendarAlgorithm::Umalqura,
@@ -243,7 +238,7 @@ impl HijriSighting for UmmAlQuraSighting {
         {
             HijriYearInfo::unpack(year, packed)
         } else {
-            TabularSighting {
+            TabularAlgorithm {
                 leap_years: HijriTabularLeapYears::TypeII,
                 epoch: HijriTabularEpoch::Friday,
             }
@@ -252,26 +247,23 @@ impl HijriSighting for UmmAlQuraSighting {
     }
 }
 
-/// See [`Hijri`] and [`TabularSighting`]
-pub type HijriTabular = Hijri<TabularSighting>;
-
 /// See [`HijriTabularEpoch`] and [`HijriTabularLeapYears`] for customization.
 ///
 /// The most common version of this sighting uses [`HijriTabularEpoch::Friday`] and [`HijriTabularLeapYears::TypeII`].
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-pub struct TabularSighting {
+pub struct TabularAlgorithm {
     pub(crate) leap_years: HijriTabularLeapYears,
     pub(crate) epoch: HijriTabularEpoch,
 }
 
-impl TabularSighting {
-    /// Construct a new [`TabularSighting`] with the given leap year rule and epoch.
+impl TabularAlgorithm {
+    /// Construct a new [`TabularAlgorithm`] with the given leap year rule and epoch.
     pub const fn new(leap_years: HijriTabularLeapYears, epoch: HijriTabularEpoch) -> Self {
         Self { epoch, leap_years }
     }
 }
 
-impl HijriSighting for TabularSighting {
+impl HijriSighting for TabularAlgorithm {
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         Some(match (self.epoch, self.leap_years) {
             (HijriTabularEpoch::Friday, HijriTabularLeapYears::TypeII) => {
@@ -310,7 +302,7 @@ impl HijriSighting for TabularSighting {
     }
 }
 
-impl HijriSimulated {
+impl Hijri<AstronomicalSimulation> {
     /// Use [`Self::new_simulated_mecca`].
     #[cfg(feature = "compiled_data")]
     #[deprecated(since = "2.1.0", note = "use `Hijri::new_simulated_mecca`")]
@@ -325,7 +317,7 @@ impl HijriSimulated {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new_simulated_mecca() -> Self {
-        Self(SimulatedSighting {
+        Self(AstronomicalSimulation {
             location: HijriSimulatedLocation::Mecca,
             data: Some(DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_CALENDAR_HIJRI_SIMULATED_MECCA_V1,
@@ -369,7 +361,7 @@ impl HijriSimulated {
     >(
         provider: &D,
     ) -> Result<Self, DataError> {
-        Ok(Self(SimulatedSighting {
+        Ok(Self(AstronomicalSimulation {
             location: HijriSimulatedLocation::Mecca,
             data: Some(provider.load(Default::default())?.payload.cast()),
         }))
@@ -377,7 +369,7 @@ impl HijriSimulated {
 
     /// Creates a new [`Hijri`] using simulated sightings at Mecca, without any precomputed data.
     pub const fn new_simulated_mecca_always_calculating() -> Self {
-        Self(SimulatedSighting {
+        Self(AstronomicalSimulation {
             location: HijriSimulatedLocation::Mecca,
             data: None,
         })
@@ -389,7 +381,7 @@ impl HijriSimulated {
         note = "use `Hijri::new_simulated_mecca_always_calculating`"
     )]
     pub const fn new_mecca_always_calculating() -> Self {
-        Self(SimulatedSighting {
+        Self(AstronomicalSimulation {
             location: HijriSimulatedLocation::Mecca,
             data: None,
         })
@@ -409,16 +401,16 @@ impl HijriSimulated {
     }
 }
 
-impl HijriUmmAlQura {
+impl Hijri<UmmAlQura> {
     /// Use [`Self::new_umm_al_qura`]
     #[deprecated(since = "2.1.0", note = "use `Self::new_umm_al_qura`")]
     pub const fn new() -> Self {
-        Self(UmmAlQuraSighting)
+        Self(UmmAlQura)
     }
 
-    /// Creates a Hijri calendar using [`UmmAlQuraSighting`].
+    /// Creates a Hijri calendar using [`UmmAlQura`].
     pub const fn new_umm_al_qura() -> Self {
-        Self(UmmAlQuraSighting)
+        Self(UmmAlQura)
     }
 }
 
@@ -452,7 +444,7 @@ pub enum HijriTabularLeapYears {
     TypeII,
 }
 
-impl HijriTabular {
+impl Hijri<TabularAlgorithm> {
     /// Use [`Self::new_tabular`]
     #[deprecated(since = "2.1.0", note = "use `Hijri::new_tabular`")]
     pub const fn new(leap_years: HijriTabularLeapYears, epoch: HijriTabularEpoch) -> Self {
@@ -461,7 +453,7 @@ impl HijriTabular {
 
     /// Construct a new [`Hijri`] with tabular sighting and the given leap year rule and epoch.
     pub const fn new_tabular(leap_years: HijriTabularLeapYears, epoch: HijriTabularEpoch) -> Self {
-        Self(TabularSighting::new(leap_years, epoch))
+        Self(TabularAlgorithm::new(leap_years, epoch))
     }
 }
 
@@ -582,7 +574,7 @@ impl HijriYearInfo {
     }
 }
 
-impl<A: AsCalendar<Calendar = HijriSimulated>> Date<A> {
+impl<A: AsCalendar<Calendar = Hijri<AstronomicalSimulation>>> Date<A> {
     /// Deprecated
     #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar`")]
     pub fn try_new_simulated_hijri_with_calendar(
@@ -792,11 +784,11 @@ impl<A: AsCalendar<Calendar = Hijri<S>>, S: HijriSighting> Date<A> {
     }
 }
 
-impl Date<HijriUmmAlQura> {
+impl Date<Hijri<UmmAlQura>> {
     /// Construct new Hijri Umm al-Qura Date.
     ///
     /// ```rust
-    /// use icu::calendar::cal::HijriUmmAlQura;
+    /// use icu::calendar::cal::Hijri;
     /// use icu::calendar::Date;
     ///
     /// let date_hijri = Date::try_new_ummalqura(1392, 4, 25)
@@ -811,7 +803,7 @@ impl Date<HijriUmmAlQura> {
     }
 }
 
-impl<A: AsCalendar<Calendar = HijriTabular>> Date<A> {
+impl<A: AsCalendar<Calendar = Hijri<TabularAlgorithm>>> Date<A> {
     /// Deprecated
     #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar")]
     pub fn try_new_hijri_tabular_with_calendar(
@@ -1688,8 +1680,10 @@ mod test {
                         iso(1997, 5, 8),
                     ),
                 ),
-                _ => TabularSighting::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday)
-                    .year_info(year),
+                _ => {
+                    TabularAlgorithm::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday)
+                        .year_info(year)
+                }
             }
         }
     }
@@ -1725,7 +1719,7 @@ mod test {
         // 1518 1 1 = 764589 (R.D Date)
         let sum_days_in_year: i64 = (START_YEAR..END_YEAR)
             .map(|year| {
-                HijriSimulated::days_in_provided_year(
+                Hijri::<UmmAlQura>::days_in_provided_year(
                     Hijri::new_simulated_mecca_always_calculating().load_or_compute_info(year),
                 ) as i64
             })
@@ -1751,7 +1745,7 @@ mod test {
         // 1518 1 1 = 764588 (R.D Date)
         let sum_days_in_year: i64 = (START_YEAR..END_YEAR)
             .map(|year| {
-                HijriUmmAlQura::days_in_provided_year(
+                Hijri::<UmmAlQura>::days_in_provided_year(
                     Hijri::new_umm_al_qura().load_or_compute_info(year),
                 ) as i64
             })
@@ -1912,7 +1906,7 @@ mod test {
             .collect::<Vec<_>>();
 
         let icu4x = (1300..=1600)
-            .map(|y| UmmAlQuraSighting.year_info(y))
+            .map(|y| UmmAlQura.year_info(y))
             .collect::<Vec<_>>();
 
         assert_eq!(icu4x, icu4c);

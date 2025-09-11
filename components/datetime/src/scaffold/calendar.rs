@@ -9,8 +9,9 @@ use crate::scaffold::UnstableSealed;
 use crate::{DateTimeFormatterPreferences, MismatchedCalendarError};
 use core::marker::PhantomData;
 use icu_calendar::cal::{
-    self, Buddhist, Chinese, Coptic, Dangi, Ethiopian, Gregorian, Hebrew, Hijri, HijriSighting,
-    HijriSimulated, HijriTabular, HijriUmmAlQura, Indian, Japanese, JapaneseExtended, Persian, Roc,
+    self, hijri::HijriSighting, Buddhist, Chinese, Coptic, Dangi, Ethiopian, Gregorian, Hebrew,
+    Hijri, HijriSimulated, HijriTabular, HijriUmmAlQura, Indian, Japanese, JapaneseExtended,
+    Persian, Roc,
 };
 use icu_calendar::{AnyCalendar, AnyCalendarKind, AsCalendar, Date, IntoAnyCalendar, Ref};
 use icu_provider::marker::NeverMarker;
