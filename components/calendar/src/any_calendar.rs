@@ -619,9 +619,9 @@ impl AnyCalendar {
                     HijriTabularEpoch::Friday,
                 ))
             }
-            AnyCalendarKind::HijriSimulatedMecca => AnyCalendar::HijriSimulated(
-                HijriSimulated::try_new_mecca_with_buffer_provider(provider)?,
-            ),
+            AnyCalendarKind::HijriSimulatedMecca => {
+                AnyCalendar::HijriSimulated(HijriSimulated::new_mecca())
+            }
             AnyCalendarKind::HijriTabularTypeIIThursday => {
                 AnyCalendar::HijriTabular(HijriTabular::new(
                     crate::cal::hijri::HijriTabularLeapYears::TypeII,
@@ -646,7 +646,6 @@ impl AnyCalendar {
     where
         P: DataProvider<crate::provider::CalendarJapaneseModernV1>
             + DataProvider<crate::provider::CalendarJapaneseExtendedV1>
-            + DataProvider<crate::provider::CalendarHijriSimulatedMeccaV1>
             + ?Sized,
     {
         Ok(match kind {
@@ -670,7 +669,7 @@ impl AnyCalendar {
                 ))
             }
             AnyCalendarKind::HijriSimulatedMecca => {
-                AnyCalendar::HijriSimulated(HijriSimulated::try_new_mecca_unstable(provider)?)
+                AnyCalendar::HijriSimulated(HijriSimulated::new_mecca())
             }
             AnyCalendarKind::HijriTabularTypeIIThursday => {
                 AnyCalendar::HijriTabular(HijriTabular::new(

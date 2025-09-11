@@ -23,7 +23,6 @@ use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::{range_check, DateError};
 use crate::provider::hijri::PackedHijriYearInfo;
-use crate::provider::hijri::{CalendarHijriSimulatedMeccaV1, HijriData};
 use crate::types::EraYear;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use crate::{AsCalendar, RangeError};
@@ -31,10 +30,10 @@ use calendrical_calculations::islamic::{
     ISLAMIC_EPOCH_FRIDAY, ISLAMIC_EPOCH_THURSDAY, WELL_BEHAVED_ASTRONOMICAL_RANGE,
 };
 use calendrical_calculations::rata_die::RataDie;
-use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use tinystr::tinystr;
 
+mod simulated_mecca_data;
 mod ummalqura_data;
 
 fn era_year(year: i32) -> EraYear {
@@ -70,7 +69,6 @@ fn era_year(year: i32) -> EraYear {
 #[derive(Clone, Debug)]
 pub struct HijriSimulated {
     pub(crate) location: HijriSimulatedLocation,
-    data: Option<DataPayload<ErasedMarker<HijriData<'static>>>>,
 }
 
 #[derive(Clone, Debug, Copy, PartialEq)]
@@ -123,58 +121,33 @@ pub struct HijriTabular {
 }
 
 impl HijriSimulated {
-    /// Creates a new [`HijriSimulated`] for reference location Mecca, with some compiled data containing precomputed calendrical calculations.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "compiled_data")]
+    /// Creates a new [`HijriSimulated`] for reference location Mecca.
     pub const fn new_mecca() -> Self {
         Self {
             location: HijriSimulatedLocation::Mecca,
-            data: Some(DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CALENDAR_HIJRI_SIMULATED_MECCA_V1,
-            )),
         }
     }
 
-    icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
-        functions: [
-            new: skip,
-            try_new_mecca_with_buffer_provider,
-            try_new_mecca_unstable,
-            Self,
-    ]);
+    #[cfg(feature = "serde")]
+    #[deprecated(since = "2.1.0", note = "Use `Self::new_mecca`")]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::new_mecca)]
+    pub fn try_new_mecca_with_buffer_provider(
+        _provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
+    ) -> Result<Self, DataError> {
+        Ok(Self::new_mecca())
+    }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_mecca)]
-    pub fn try_new_mecca_unstable<D: DataProvider<CalendarHijriSimulatedMeccaV1> + ?Sized>(
-        provider: &D,
-    ) -> Result<Self, DataError> {
-        Ok(Self {
-            location: HijriSimulatedLocation::Mecca,
-            data: Some(provider.load(Default::default())?.payload.cast()),
-        })
+    #[deprecated(since = "2.1.0", note = "Use `Self::new_mecca`")]
+    /// Use [`Self::new_mecca()`].
+    pub fn try_new_mecca_unstable<D: ?Sized>(_provider: &D) -> Result<Self, DataError> {
+        Ok(Self::new_mecca())
     }
 
-    /// Construct a new [`HijriSimulated`] for reference location Mecca, without any precomputed calendrical calculations.
+    /// Use [`Self::new_mecca()`].
+    #[deprecated(since = "2.1.0", note = "Use `Self::new_mecca`")]
     pub const fn new_mecca_always_calculating() -> Self {
-        Self {
-            location: HijriSimulatedLocation::Mecca,
-            data: None,
-        }
-    }
-
-    /// Compute a cache for this calendar
-    #[cfg(feature = "datagen")]
-    pub fn build_cache(&self, extended_years: core::ops::Range<i32>) -> HijriData<'static> {
-        let data = extended_years
-            .clone()
-            .map(|year| self.location.compute_year_info(year).pack())
-            .collect();
-        HijriData {
-            first_extended_year: extended_years.start,
-            data,
-        }
+        Self::new_mecca()
     }
 }
 
@@ -235,26 +208,10 @@ impl From<HijriYearInfo> for i32 {
     }
 }
 
-impl HijriData<'_> {
-    /// Get the cached data for a given extended year
-    fn get(&self, monotonic_year: i32) -> Option<HijriYearInfo> {
-        Some(HijriYearInfo::unpack(
-            monotonic_year,
-            self.data
-                .get(usize::try_from(monotonic_year - self.first_extended_year).ok()?)?,
-        ))
-    }
-}
-
 const LONG_YEAR_LEN: u16 = 355;
 const SHORT_YEAR_LEN: u16 = 354;
 
 impl HijriYearInfo {
-    #[cfg(feature = "datagen")]
-    fn pack(&self) -> PackedHijriYearInfo {
-        PackedHijriYearInfo::new(self.value, self.month_lengths, self.start_day)
-    }
-
     fn unpack(monotonic_year: i32, packed: PackedHijriYearInfo) -> Self {
         let (month_lengths, start_day) = packed.unpack(monotonic_year);
 
@@ -336,11 +293,12 @@ impl HijriYearInfo {
 }
 
 impl PrecomputedDataSource<HijriYearInfo> for HijriSimulated {
-    fn load_or_compute_info(&self, monotonic_year: i32) -> HijriYearInfo {
-        self.data
-            .as_ref()
-            .and_then(|d| d.get().get(monotonic_year))
-            .unwrap_or_else(|| self.location.compute_year_info(monotonic_year))
+    fn load_or_compute_info(&self, year: i32) -> HijriYearInfo {
+        usize::try_from(year - simulated_mecca_data::STARTING_YEAR)
+            .ok()
+            .and_then(|i| simulated_mecca_data::DATA.get(i))
+            .map(|&p| HijriYearInfo::unpack(year, p))
+            .unwrap_or_else(|| self.location.compute_year_info(year))
     }
 }
 
@@ -1923,24 +1881,17 @@ mod test {
 
     #[test]
     fn test_regression_5069_obs() {
-        let cached = HijriSimulated::new_mecca();
-        let comp = HijriSimulated::new_mecca_always_calculating();
+        let cal = HijriSimulated::new_mecca();
 
-        let cached = crate::Ref(&cached);
-        let comp = crate::Ref(&comp);
+        let cal = crate::Ref(&cal);
 
-        let dt_cached = Date::try_new_simulated_hijri_with_calendar(1390, 1, 30, cached).unwrap();
-        let dt_comp = Date::try_new_simulated_hijri_with_calendar(1390, 1, 30, comp).unwrap();
+        let dt = Date::try_new_simulated_hijri_with_calendar(1390, 1, 30, cal).unwrap();
 
-        assert_eq!(dt_cached.to_iso(), dt_comp.to_iso());
-
-        assert_eq!(dt_comp.to_iso().to_calendar(comp), dt_comp);
-        assert_eq!(dt_cached.to_iso().to_calendar(cached), dt_cached);
+        assert_eq!(dt.to_iso().to_calendar(cal), dt);
 
         let dt = Date::try_new_iso(2000, 5, 5).unwrap();
 
-        assert!(dt.to_calendar(comp).day_of_month().0 > 0);
-        assert!(dt.to_calendar(cached).day_of_month().0 > 0);
+        assert!(dt.to_calendar(cal).day_of_month().0 > 0);
     }
 
     #[test]

@@ -16,8 +16,7 @@
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
 pub(crate) mod chinese_based;
-pub mod hijri;
-pub use hijri::CalendarHijriSimulatedMeccaV1;
+pub(crate) mod hijri;
 
 use crate::types::Weekday;
 use icu_provider::fallback::{LocaleFallbackConfig, LocaleFallbackPriority};
@@ -45,7 +44,6 @@ const _: () = {
         pub use icu_locale as locale;
     }
     make_provider!(Baked);
-    impl_calendar_hijri_simulated_mecca_v1!(Baked);
     impl_calendar_japanese_modern_v1!(Baked);
     impl_calendar_japanese_extended_v1!(Baked);
     impl_calendar_week_v1!(Baked);
@@ -80,7 +78,6 @@ icu_provider::data_marker!(
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    CalendarHijriSimulatedMeccaV1::INFO,
     CalendarJapaneseModernV1::INFO,
     CalendarJapaneseExtendedV1::INFO,
     CalendarWeekV1::INFO,

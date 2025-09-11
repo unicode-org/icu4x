@@ -217,13 +217,13 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/observational",
         &fxs,
-        icu::calendar::cal::HijriSimulated::new_mecca_always_calculating(),
+        icu::calendar::cal::HijriSimulated::new_mecca(),
         |y, m, d| {
             Date::try_new_simulated_hijri_with_calendar(
                 y,
                 m,
                 d,
-                icu::calendar::cal::HijriSimulated::new_mecca_always_calculating(),
+                icu::calendar::cal::HijriSimulated::new_mecca(),
             )
             .unwrap()
         },
