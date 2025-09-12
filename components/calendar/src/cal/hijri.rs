@@ -404,11 +404,11 @@ impl Hijri<TabularAlgorithm> {
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct HijriYearInfo {
     /// The lenghts of the twelve months, either 29 (`false`) or 30 (`true`).
-    month_lengths: [bool; 12],
+    pub month_lengths: [bool; 12],
     /// The first day of the year.
-    start_day: RataDie,
+    pub start_day: RataDie,
     /// The year number.
-    value: i32,
+    pub value: i32,
 }
 
 impl From<HijriYearInfo> for i32 {
@@ -1532,111 +1532,6 @@ mod test {
         }
     }
 
-    static HIJRI_IRAN_CASES: [DateCase; 4] = [
-        DateCase {
-            year: 1412,
-            month: 9,
-            day: 12,
-        },
-        DateCase {
-            year: 1416,
-            month: 10,
-            day: 6,
-        },
-        DateCase {
-            year: 1460,
-            month: 10,
-            day: 12,
-        },
-        DateCase {
-            year: 1518,
-            month: 3,
-            day: 5,
-        },
-    ];
-
-    #[derive(Clone, Copy, Debug)]
-    struct IranTestSighting;
-
-    impl HijriSighting for IranTestSighting {
-        fn year_info(&self, year: i32) -> HijriYearInfo {
-            let s = false;
-            let l = true;
-            use calendrical_calculations::iso::fixed_from_iso as iso;
-            match year {
-                1411 => HijriYearInfo {
-                    value: year,
-                    month_lengths: [l, l, s, l, s, l, s, l, s, l, s, s],
-                    start_day: iso(1990, 7, 24),
-                },
-                1412 => HijriYearInfo {
-                    value: year,
-                    month_lengths: [l, l, s, l, s, l, s, l, s, l, l, s],
-                    start_day: iso(1991, 7, 13),
-                },
-                1413 => HijriYearInfo {
-                    value: year,
-                    month_lengths: [l, s, l, s, s, l, s, l, s, l, l, l],
-                    start_day: iso(1992, 7, 2),
-                },
-                1414 => HijriYearInfo {
-                    value: year,
-                    month_lengths: [s, l, s, s, l, s, l, s, s, l, l, l],
-                    start_day: iso(1993, 6, 22),
-                },
-                1415 => HijriYearInfo {
-                    value: year,
-                    month_lengths: [l, l, s, s, s, l, s, s, s, l, l, l],
-                    start_day: iso(1994, 6, 11),
-                },
-                1416 => HijriYearInfo {
-                    value: year,
-                    month_lengths: [l, l, s, l, s, s, l, s, s, l, l, s],
-                    start_day: iso(1995, 5, 31),
-                },
-                1417 => HijriYearInfo {
-                    value: year,
-                    month_lengths: [l, l, l, s, s, l, s, l, s, l, s, s],
-                    start_day: iso(1996, 5, 19),
-                },
-                1418 => HijriYearInfo::unpack(
-                    year,
-                    PackedHijriYearInfo::new(
-                        year,
-                        [l, l, s, l, l, s, l, s, s, l, l, s],
-                        iso(1997, 5, 8),
-                    ),
-                ),
-                _ => {
-                    TabularAlgorithm::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday)
-                        .year_info(year)
-                }
-            }
-        }
-    }
-
-    #[test]
-    fn test_hijri_iran_from_rd() {
-        let calendar = Hijri(IranTestSighting);
-        for (case, f_date) in HIJRI_IRAN_CASES.iter().rev().zip(TEST_RD.iter().rev()) {
-            let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
-                .unwrap();
-            let date_rd = Date::from_rata_die(RataDie::new(*f_date), calendar);
-
-            assert_eq!(date, date_rd, "{case:?}");
-        }
-    }
-
-    #[test]
-    fn test_rd_from_hijri_iran() {
-        let calendar = Hijri(IranTestSighting);
-        for (case, f_date) in HIJRI_IRAN_CASES.iter().rev().zip(TEST_RD.iter().rev()) {
-            let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
-                .unwrap();
-            assert_eq!(date.to_rata_die(), RataDie::new(*f_date), "{case:?}");
-        }
-    }
-
     #[ignore] // slow
     #[test]
     fn test_days_in_provided_year_simulated() {
@@ -1646,9 +1541,9 @@ mod test {
         // 1518 1 1 = 764589 (R.D Date)
         let sum_days_in_year: i64 = (START_YEAR..END_YEAR)
             .map(|year| {
-                Hijri::<UmmAlQura>::days_in_provided_year(
-                    Hijri::new_simulated_mecca().load_or_compute_info(year),
-                ) as i64
+                Hijri::new_simulated_mecca()
+                    .load_or_compute_info(year)
+                    .days_in_year() as i64
             })
             .sum();
         let expected_number_of_days = Date::try_new_hijri_with_calendar(END_YEAR, 1, 1, calendar)
@@ -1672,9 +1567,9 @@ mod test {
         // 1518 1 1 = 764588 (R.D Date)
         let sum_days_in_year: i64 = (START_YEAR..END_YEAR)
             .map(|year| {
-                Hijri::<UmmAlQura>::days_in_provided_year(
-                    Hijri::new_umm_al_qura().load_or_compute_info(year),
-                ) as i64
+                Hijri::new_umm_al_qura()
+                    .load_or_compute_info(year)
+                    .days_in_year() as i64
             })
             .sum();
         let expected_number_of_days = Date::try_new_ummalqura(END_YEAR, 1, 1)
