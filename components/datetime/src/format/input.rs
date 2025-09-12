@@ -6,7 +6,7 @@
 //! formatting operations.
 
 use crate::scaffold::*;
-use icu_calendar::types::DayOfYear;
+use icu_calendar::types::{DayOfYear, RataDie};
 use icu_calendar::{AsCalendar, Calendar};
 use icu_time::scaffold::IntoOption;
 use icu_time::zone::ZoneNameTimestamp;
@@ -38,6 +38,8 @@ pub struct DateTimeInputUnchecked {
     pub(crate) iso_weekday: Option<Weekday>,
     /// The day-of-year, required for field sets with weeks.
     pub(crate) day_of_year: Option<DayOfYear>,
+    /// The RataDie of the day
+    pub(crate) rata_die: Option<RataDie>,
     /// The hour, required for field sets with times (`T`).
     pub(crate) hour: Option<Hour>,
     /// The minute, required for field sets with times (`T`).
@@ -112,6 +114,7 @@ impl DateTimeInputUnchecked {
             + GetField<D::DayOfMonthInput>
             + GetField<D::DayOfWeekInput>
             + GetField<D::DayOfYearInput>
+            + GetField<D::RataDieInput>
             + GetField<T::HourInput>
             + GetField<T::MinuteInput>
             + GetField<T::SecondInput>
@@ -126,6 +129,7 @@ impl DateTimeInputUnchecked {
             day_of_month: GetField::<D::DayOfMonthInput>::get_field(input).into_option(),
             iso_weekday: GetField::<D::DayOfWeekInput>::get_field(input).into_option(),
             day_of_year: GetField::<D::DayOfYearInput>::get_field(input).into_option(),
+            rata_die: GetField::<D::RataDieInput>::get_field(input).into_option(),
             hour: GetField::<T::HourInput>::get_field(input).into_option(),
             minute: GetField::<T::MinuteInput>::get_field(input).into_option(),
             second: GetField::<T::SecondInput>::get_field(input).into_option(),
