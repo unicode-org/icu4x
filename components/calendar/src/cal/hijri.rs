@@ -357,7 +357,7 @@ impl Hijri<UmmAlQura> {
     }
 }
 
-/// The epoch for the [`HijriTabular`] calendar.
+/// The epoch for the [`TabularAlgorithm`] sighting.
 #[non_exhaustive]
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub enum HijriTabularEpoch {
@@ -376,7 +376,7 @@ impl HijriTabularEpoch {
     }
 }
 
-/// The leap year rule for the [`HijriTabular`] calendar.
+/// The leap year rule for the [`TabularAlgorithm`] sighting.
 ///
 /// This specifies which years of a 30-year cycle have an additional day at
 /// the end of the year.
