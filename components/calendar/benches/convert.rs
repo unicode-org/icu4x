@@ -51,12 +51,6 @@ fn convert_benches(c: &mut Criterion) {
 
     bench_calendar(
         &mut group,
-        "calendar/chinese_calculating",
-        icu::calendar::cal::Chinese::new_always_calculating(),
-    );
-
-    bench_calendar(
-        &mut group,
         "calendar/chinese_cached",
         icu::calendar::cal::Chinese::new(),
     );
@@ -72,7 +66,7 @@ fn convert_benches(c: &mut Criterion) {
     bench_calendar(
         &mut group,
         "calendar/islamic/observational",
-        icu::calendar::cal::Hijri::new_simulated_mecca_always_calculating(),
+        icu::calendar::cal::Hijri::new_simulated_mecca(),
     );
 
     bench_calendar(

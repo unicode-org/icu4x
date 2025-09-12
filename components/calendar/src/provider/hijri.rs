@@ -13,37 +13,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use calendrical_calculations::rata_die::RataDie;
-use icu_provider::prelude::*;
 use zerovec::ule::AsULE;
-use zerovec::ZeroVec;
-
-icu_provider::data_marker!(
-    /// Precomputed data for the Hijri obsevational calendar
-    CalendarHijriSimulatedMeccaV1,
-    "calendar/hijri/simulated/mecca/v1",
-    HijriData<'static>,
-    is_singleton = true,
-);
-
-/// Cached/precompiled data for a certain range of years for a chinese-based
-/// calendar. Avoids the need to perform lunar calendar arithmetic for most calendrical
-/// operations.
-#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider::hijri))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct HijriData<'data> {
-    /// The extended year corresponding to the first data entry for this year
-    pub first_extended_year: i32,
-    /// A list of precomputed data for each year beginning with first_extended_year
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub data: ZeroVec<'data, PackedHijriYearInfo>,
-}
-
-icu_provider::data_struct!(
-    HijriData<'_>,
-    #[cfg(feature = "datagen")]
-);
 
 /// The struct containing compiled Hijri YearInfo
 ///
