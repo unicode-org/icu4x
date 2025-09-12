@@ -28,33 +28,33 @@ fn check_extrema<C: Calendar>(cal: C) {
 
 #[test]
 fn check_extrema_chinese() {
-    check_extrema(Chinese::new())
+    check_extrema(LunarChinese::new_china())
 }
 
 #[test]
 fn check_extrema_dangi() {
-    check_extrema(Dangi::new())
+    check_extrema(LunarChinese::new_dangi())
 }
 
 #[test]
 fn check_extrema_hijri_simulated_mecca() {
-    check_extrema(HijriSimulated::new_mecca())
+    check_extrema(Hijri::new_simulated_mecca())
 }
 
 #[test]
 fn check_extrema_hijri_uaq() {
-    check_extrema(HijriUmmAlQura::new())
+    check_extrema(Hijri::new_umm_al_qura())
 }
 
 #[test]
 fn check_extrema_hijri_tabular() {
-    check_extrema(HijriTabular::new(
-        HijriTabularLeapYears::TypeII,
-        HijriTabularEpoch::Thursday,
+    check_extrema(Hijri::new_tabular(
+        hijri::TabularAlgorithmLeapYears::TypeII,
+        hijri::TabularAlgorithmEpoch::Thursday,
     ));
-    check_extrema(HijriTabular::new(
-        HijriTabularLeapYears::TypeII,
-        HijriTabularEpoch::Friday,
+    check_extrema(Hijri::new_tabular(
+        hijri::TabularAlgorithmLeapYears::TypeII,
+        hijri::TabularAlgorithmEpoch::Friday,
     ));
 }
 
