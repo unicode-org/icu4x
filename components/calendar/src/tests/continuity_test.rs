@@ -75,7 +75,7 @@ fn test_buddhist_continuity() {
 
 #[test]
 fn test_chinese_continuity() {
-    let cal = crate::cal::Chinese::new();
+    let cal = crate::cal::LunarChinese::new_china();
     let cal = Ref(&cal);
     let date = Date::try_new_chinese_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
@@ -95,11 +95,11 @@ fn test_coptic_continuity() {
 
 #[test]
 fn test_dangi_continuity() {
-    let cal = crate::cal::Dangi::new();
+    let cal = crate::cal::LunarChinese::new_dangi();
     let cal = Ref(&cal);
-    let date = Date::try_new_dangi_with_calendar(-10, 1, 1, cal);
+    let date = Date::try_new_chinese_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
-    let date = Date::try_new_dangi_with_calendar(-300, 1, 1, cal);
+    let date = Date::try_new_chinese_with_calendar(-300, 1, 1, cal);
     check_every_250_days(date.unwrap());
 }
 

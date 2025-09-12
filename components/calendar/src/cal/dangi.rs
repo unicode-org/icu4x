@@ -5,10 +5,10 @@
 //! This module contains types and implementations for the Korean Dangi calendar.
 //!
 //! ```rust
-//! use icu::calendar::cal::Dangi;
+//! use icu::calendar::cal::LunarChinese;
 //! use icu::calendar::Date;
 //!
-//! let dangi = Dangi::new();
+//! let dangi = LunarChinese::new_dangi();
 //! let dangi_date = Date::try_new_dangi_with_calendar(2023, 6, 6, dangi)
 //!     .expect("Failed to initialize Dangi Date instance.");
 //!
@@ -18,15 +18,12 @@
 //! assert_eq!(dangi_date.day_of_month().0, 6);
 //! ```
 
-use crate::cal::chinese_based::ChineseBasedWithDataLoading;
-use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::PrecomputedDataSource;
-use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::cal::chinese::Location;
+use crate::cal::LunarChinese;
 use crate::error::DateError;
 use crate::provider::chinese_based::ChineseBasedCache;
-use crate::types::CyclicYear;
 use crate::AsCalendar;
-use crate::{types, Calendar, Date};
+use crate::Date;
 use calendrical_calculations::rata_die::RataDie;
 use icu_provider::prelude::*;
 
@@ -36,250 +33,140 @@ mod data;
 ///
 /// The Dangi Calendar is a lunisolar calendar used traditionally in North and South Korea.
 /// It is often used today to track important cultural events and holidays like Seollal
-/// (Korean lunar new year). It is similar to the Chinese lunar calendar (see [`Chinese`](super::Chinese)),
+/// (Korean lunar new year). It is similar to the Chinese lunar calendar (see [`China`](super::chinese::China)),
 /// except that observations are based in Korea (currently UTC+9) rather than China (UTC+8).
 /// This can cause some differences; for example, 2012 was a leap year, but in the Dangi
 /// calendar the leap month was 3, while in the Chinese calendar the leap month was 4.
 ///
-/// This calendar is currently in a preview state: formatting for this calendar is not
-/// going to be perfect.
-///
 /// ```rust
-/// use icu::calendar::cal::{Chinese, Dangi};
+/// use icu::calendar::cal::LunarChinese;
 /// use icu::calendar::Date;
 /// use tinystr::tinystr;
 ///
 /// let iso_a = Date::try_new_iso(2012, 4, 23).unwrap();
-/// let dangi_a = iso_a.to_calendar(Dangi::new());
-/// let chinese_a = iso_a.to_calendar(Chinese::new());
+/// let dangi_a = iso_a.to_calendar(LunarChinese::new_dangi());
+/// let chinese_a = iso_a.to_calendar(LunarChinese::new_china());
 ///
 /// assert_eq!(dangi_a.month().standard_code.0, tinystr!(4, "M03L"));
 /// assert_eq!(chinese_a.month().standard_code.0, tinystr!(4, "M04"));
 ///
 /// let iso_b = Date::try_new_iso(2012, 5, 23).unwrap();
-/// let dangi_b = iso_b.to_calendar(Dangi::new());
-/// let chinese_b = iso_b.to_calendar(Chinese::new());
+/// let dangi_b = iso_b.to_calendar(LunarChinese::new_dangi());
+/// let chinese_b = iso_b.to_calendar(LunarChinese::new_china());
 ///
 /// assert_eq!(dangi_b.month().standard_code.0, tinystr!(4, "M04"));
 /// assert_eq!(chinese_b.month().standard_code.0, tinystr!(4, "M04L"));
 /// ```
-/// # Era codes
-///
-/// This calendar does not use era codes.
-///
-/// # Month codes
-///
-/// This calendar is a lunisolar calendar. It supports regular month codes `"M01" - "M12"` as well
-/// as leap month codes `"M01L" - "M12L"`.
 #[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub struct Dangi;
 
-/// The inner date type used for representing [`Date`]s of [`Dangi`]. See [`Date`] and [`Dangi`] for more detail.
-#[derive(Debug, Eq, PartialEq, PartialOrd, Ord, Clone, Copy)]
-pub struct DangiDateInner(ArithmeticDate<Dangi>);
-
-impl Dangi {
+impl LunarChinese<Dangi> {
     /// Creates a new [`Dangi`] calendar.
-    pub const fn new() -> Self {
-        Self
+    pub const fn new_dangi() -> Self {
+        Self(Dangi)
     }
 
+    /// Use [`Self::new_dangi`].
+    #[deprecated(since = "2.1.0", note = "use `Self::new_dangi()")]
+    pub const fn new() -> Self {
+        Self::new_dangi()
+    }
+
+    /// Use [`Self::new_dangi`].
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::new)]
-    #[deprecated]
-    #[allow(deprecated)]
+    #[deprecated(since = "2.1.0", note = "use `Self::new_dangi()")]
     pub fn try_new_with_buffer_provider(
-        provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
+        _provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
-        use icu_provider::buf::AsDeserializingBufferProvider;
-        Self::try_new_unstable(&provider.as_deserializing())
+        Ok(Self::new_dangi())
     }
 
+    /// Use [`Self::new_dangi`].
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    #[deprecated]
+    #[deprecated(since = "2.1.0", note = "use `Self::new_dangi()")]
     pub fn try_new_unstable<D: ?Sized>(_provider: &D) -> Result<Self, DataError> {
-        Ok(Self)
+        Ok(Self::new_dangi())
     }
 
-    /// Construct a new [`Dangi`] without any precomputed calendrical calculations.
-    #[deprecated]
+    /// Use [`Self::new_dangi`].
+    #[deprecated(since = "2.1.0", note = "use `Self::new_dangi()")]
     pub fn new_always_calculating() -> Self {
-        Self
+        Self::new_dangi()
     }
-
-    pub(crate) const DEBUG_NAME: &'static str = "Dangi";
 }
 
-impl crate::cal::scaffold::UnstableSealed for Dangi {}
-impl Calendar for Dangi {
-    type DateInner = DangiDateInner;
-    type Year = CyclicYear;
+impl Location for Dangi {
+    fn start_day(&self, monotonic_year: i32) -> RataDie {
+        self.start_day_and_month_lengths(monotonic_year).0
+    }
 
-    fn from_codes(
-        &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: crate::types::MonthCode,
-        day: u8,
-    ) -> Result<Self::DateInner, DateError> {
-        match era {
-            None => {}
-            _ => return Err(DateError::UnknownEra),
+    fn leap_month(&self, monotonic_year: i32) -> Option<u8> {
+        self.start_day_and_month_lengths(monotonic_year).1
+    }
+
+    fn is_month_long(&self, monotonic_year: i32, month: u8) -> bool {
+        self.start_day_and_month_lengths(monotonic_year)
+            .2
+            .get(month as usize - 1)
+            .copied()
+            .unwrap_or_default()
+    }
+
+    fn start_day_and_month_lengths(&self, related_iso: i32) -> (RataDie, Option<u8>, [bool; 13]) {
+        if let Some(cached) = (ChineseBasedCache {
+            first_related_iso_year: data::STARTING_YEAR,
+            data: data::DATA,
         }
-
-        let year = Self.load_or_compute_info(year);
-
-        let Some(month) = year.parse_month_code(month_code) else {
-            return Err(DateError::UnknownMonthCode(month_code));
+        .get(related_iso))
+        {
+            return (
+                cached.new_year(related_iso),
+                cached.leap_month(),
+                core::array::from_fn(|i| cached.month_has_30_days(i as u8 + 1)),
+            );
         };
 
-        year.validate_md(month, day)?;
-
-        Ok(DangiDateInner(ArithmeticDate::new_unchecked(
-            year, month, day,
-        )))
+        crate::cal::chinese_based::compute::<calendrical_calculations::chinese_based::Dangi>(
+            related_iso,
+        )
     }
 
-    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        let iso = Iso.from_rata_die(rd);
-        let y = Self::load_or_compute_info_for_rd(rd, iso.iso_year());
-        let (m, d) = y.md_from_rd(rd);
-        DangiDateInner(ArithmeticDate::new_unchecked(y, m, d))
-    }
-
-    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        date.0.year.rd_from_md(date.0.month, date.0.day)
-    }
-
-    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
-        let rd = Iso.to_rata_die(&iso);
-        let y = Self::load_or_compute_info_for_rd(rd, iso.iso_year());
-        let (m, d) = y.md_from_rd(rd);
-        DangiDateInner(ArithmeticDate::new_unchecked(y, m, d))
-    }
-
-    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        Iso.from_rata_die(self.to_rata_die(date))
-    }
-
-    fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        date.0.months_in_year()
-    }
-
-    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.0.days_in_year()
-    }
-
-    fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        date.0.days_in_month()
-    }
-
-    fn offset_date(&self, date: &mut Self::DateInner, offset: crate::DateDuration<Self>) {
-        date.0.offset_date(offset, &Self);
-    }
-
-    fn until(
+    fn calendar_algorithm(
         &self,
-        date1: &Self::DateInner,
-        date2: &Self::DateInner,
-        _calendar2: &Self,
-        largest_unit: crate::DateDurationUnit,
-        smallest_unit: crate::DateDurationUnit,
-    ) -> crate::DateDuration<Self> {
-        date1.0.until(date2.0, largest_unit, smallest_unit)
-    }
-
-    fn debug_name(&self) -> &'static str {
-        Self::DEBUG_NAME
-    }
-
-    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let year = date.0.year;
-        CyclicYear {
-            year: (year.related_iso as i64 - 4).rem_euclid(60) as u8 + 1,
-            related_iso: year.related_iso,
-        }
-    }
-
-    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::provided_year_is_leap(date.0.year)
-    }
-
-    fn month(&self, date: &Self::DateInner) -> crate::types::MonthInfo {
-        date.0.year.month(date.0.month)
-    }
-
-    fn day_of_month(&self, date: &Self::DateInner) -> crate::types::DayOfMonth {
-        date.0.day_of_month()
-    }
-
-    fn day_of_year(&self, date: &Self::DateInner) -> crate::types::DayOfYear {
-        types::DayOfYear(date.0.year.day_of_year(date.0.month, date.0.day))
-    }
-
-    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+    ) -> Option<icu_locale::preferences::extensions::unicode::keywords::CalendarAlgorithm> {
         Some(crate::preferences::CalendarAlgorithm::Dangi)
+    }
+    fn debug_name(&self) -> &'static str {
+        "Dangi"
     }
 }
 
-impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
-    /// Construct a new Dangi date from a `year`, `month`, and `day`.
-    /// `year` represents the [ISO](crate::Iso) year that roughly matches the Dangi year;
-    /// `month` represents the month of the year ordinally (ex. if it is a leap year, the last month will be 13, not 12);
-    /// `day` indicates day of month.
-    ///
-    /// This date will not use any precomputed calendrical calculations,
-    /// one that loads such data from a provider will be added in the future (#3933)
-    ///
-    /// ```rust
-    /// use icu::calendar::cal::Dangi;
-    /// use icu::calendar::Date;
-    ///
-    /// let dangi = Dangi::new();
-    ///
-    /// let date_dangi = Date::try_new_dangi_with_calendar(2023, 6, 18, dangi)
-    ///     .expect("Failed to initialize Dangi Date instance.");
-    ///
-    /// assert_eq!(date_dangi.cyclic_year().related_iso, 2023);
-    /// assert_eq!(date_dangi.cyclic_year().year, 40);
-    /// assert_eq!(date_dangi.month().ordinal, 6);
-    /// assert_eq!(date_dangi.day_of_month().0, 18);
-    /// ```
+impl<A: AsCalendar<Calendar = LunarChinese<Dangi>>> Date<A> {
+    /// Use [`Date::try_new_chinese_with_calendar`]
+    #[deprecated(since = "2.1.0", note = "use `Date::try_new_chinese_with_calendar`")]
     pub fn try_new_dangi_with_calendar(
         related_iso_year: i32,
         month: u8,
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, DateError> {
-        let year = Dangi.load_or_compute_info(related_iso_year);
-        year.validate_md(month, day)?;
-        Ok(Date::from_raw(
-            DangiDateInner(ArithmeticDate::new_unchecked(year, month, day)),
-            calendar,
-        ))
+        Date::try_new_chinese_with_calendar(related_iso_year, month, day, calendar)
     }
-}
-
-impl ChineseBasedWithDataLoading for Dangi {
-    type CB = calendrical_calculations::chinese_based::Dangi;
-    const DATA: &ChineseBasedCache<'static> = &ChineseBasedCache {
-        first_related_iso_year: data::STARTING_YEAR,
-        data: data::DATA,
-    };
 }
 
 #[cfg(test)]
 mod test {
-
-    use super::*;
-    use crate::cal::Chinese;
+    use crate::cal::iso::Iso;
+    use crate::cal::LunarChinese;
+    use crate::Date;
     use calendrical_calculations::rata_die::RataDie;
 
     fn check_cyclic_and_rel_iso(year: i32) {
         let iso = Date::try_new_iso(year, 6, 6).unwrap();
-        let chinese = iso.to_calendar(Chinese);
-        let dangi = iso.to_calendar(Dangi);
+        let chinese = iso.to_calendar(LunarChinese::new_china());
+        let dangi = iso.to_calendar(LunarChinese::new_dangi());
         let chinese_year = chinese.cyclic_year();
         let korean_year = dangi.cyclic_year();
         assert_eq!(
@@ -318,7 +205,7 @@ mod test {
         while rd < max_rd && iters < max_iters {
             let rata_die = RataDie::new(rd);
             let iso = Date::from_rata_die(rata_die, Iso);
-            let dangi = iso.to_calendar(Dangi);
+            let dangi = iso.to_calendar(LunarChinese::new_dangi());
             let result = dangi.to_calendar(Iso);
             assert_eq!(
                 iso, result,
@@ -839,7 +726,7 @@ mod test {
 
         for case in cases {
             let iso = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day).unwrap();
-            let dangi = iso.to_calendar(Dangi);
+            let dangi = iso.to_calendar(LunarChinese::new_dangi());
             let dangi_cyclic = dangi.cyclic_year();
             let dangi_month = dangi.month().ordinal;
             let dangi_day = dangi.day_of_month().0;

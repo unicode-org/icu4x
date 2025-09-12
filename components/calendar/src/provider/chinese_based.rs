@@ -17,8 +17,6 @@ use calendrical_calculations::chinese_based::WELL_BEHAVED_ASTRONOMICAL_RANGE;
 use calendrical_calculations::rata_die::RataDie;
 use icu_provider::prelude::*;
 
-use crate::cal::chinese_based::ChineseBasedYearInfo;
-
 /// Cached/precompiled data for a certain range of years for a chinese-based
 /// calendar. Avoids the need to perform lunar calendar arithmetic for most calendrical
 /// operations.
@@ -31,14 +29,10 @@ pub(crate) struct ChineseBasedCache<'data> {
 }
 
 impl ChineseBasedCache<'_> {
-    pub fn get(&self, related_iso: i32) -> Option<ChineseBasedYearInfo> {
+    pub fn get(&self, related_iso: i32) -> Option<PackedChineseBasedYearInfo> {
         self.data
             .get(usize::try_from(related_iso - self.first_related_iso_year).ok()?)
             .copied()
-            .map(|packed_data| ChineseBasedYearInfo {
-                packed_data,
-                related_iso,
-            })
     }
 }
 

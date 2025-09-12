@@ -28,12 +28,12 @@ fn check_extrema<C: Calendar>(cal: C) {
 
 #[test]
 fn check_extrema_chinese() {
-    check_extrema(Chinese::new())
+    check_extrema(LunarChinese::new_china())
 }
 
 #[test]
 fn check_extrema_dangi() {
-    check_extrema(Dangi::new())
+    check_extrema(LunarChinese::new_dangi())
 }
 
 #[test]

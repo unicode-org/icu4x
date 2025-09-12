@@ -6,11 +6,9 @@
 //! as well as in related and derived calendars such as the Korean and Vietnamese lunar calendars.
 
 use crate::{
-    calendar_arithmetic::{CalendarArithmetic, PrecomputedDataSource},
     error::DateError,
-    provider::chinese_based::{ChineseBasedCache, PackedChineseBasedYearInfo},
+    provider::chinese_based::PackedChineseBasedYearInfo,
     types::{MonthCode, MonthInfo},
-    Calendar,
 };
 
 use calendrical_calculations::chinese_based::{
@@ -18,49 +16,6 @@ use calendrical_calculations::chinese_based::{
 };
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
-
-/// The trait ChineseBased is used by Chinese-based calendars to perform computations shared by such calendar.
-///
-/// For an example of how to use this trait, see `impl ChineseBasedWithDataLoading for Chinese` in [`Chinese`].
-pub(crate) trait ChineseBasedWithDataLoading: Calendar {
-    type CB: ChineseBased;
-
-    const DATA: &ChineseBasedCache<'static>;
-
-    /// Given an ISO date (in both ArithmeticDate and R.D. format), returns the ChineseBasedYearInfo and extended year for that date, loading
-    /// from cache or computing.
-    fn load_or_compute_info_for_rd(rd: RataDie, actual_iso: i32) -> ChineseBasedYearInfo {
-        if let Some(cached) = Self::DATA.get(actual_iso).and_then(|year| {
-            if rd >= year.new_year() {
-                Some(year)
-            } else {
-                // We're dealing with an ISO day in the beginning of the year, before Chinese New Year.
-                // Return data for the previous Chinese year instead.
-                Self::DATA.get(actual_iso - 1)
-            }
-        }) {
-            return cached;
-        };
-        // compute
-
-        let mid_year = calendrical_calculations::iso::fixed_from_iso(actual_iso, 7, 1);
-        let year_bounds = YearBounds::compute::<Self::CB>(mid_year);
-        let YearBounds { new_year, .. } = year_bounds;
-        if rd >= new_year {
-            ChineseBasedYearInfo::compute_with_yb::<Self::CB>(actual_iso, year_bounds)
-        } else {
-            ChineseBasedYearInfo::compute::<Self::CB>(actual_iso - 1)
-        }
-    }
-}
-
-impl<C: ChineseBasedWithDataLoading> PrecomputedDataSource<ChineseBasedYearInfo> for C {
-    fn load_or_compute_info(&self, related_iso: i32) -> ChineseBasedYearInfo {
-        C::DATA
-            .get(related_iso)
-            .unwrap_or_else(|| ChineseBasedYearInfo::compute::<C::CB>(related_iso))
-    }
-}
 
 /// A data struct used to load and use information for a set of ChineseBasedDates
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
@@ -80,42 +35,30 @@ impl From<ChineseBasedYearInfo> for i32 {
     }
 }
 
+/// Compute ChineseBasedYearInfo for a given extended year
+pub(crate) fn compute<CB: ChineseBased>(related_iso: i32) -> (RataDie, Option<u8>, [bool; 13]) {
+    let mid_year = calendrical_calculations::iso::fixed_from_iso(related_iso, 7, 1);
+    let year_bounds = YearBounds::compute::<CB>(mid_year);
+
+    let YearBounds {
+        new_year,
+        next_new_year,
+        ..
+    } = year_bounds;
+    let (month_lengths, leap_month) =
+        chinese_based::month_structure_for_year::<CB>(new_year, next_new_year);
+
+    (new_year, leap_month, month_lengths)
+}
+
 impl ChineseBasedYearInfo {
-    /// Compute ChineseBasedYearInfo for a given extended year
-    fn compute<CB: ChineseBased>(related_iso: i32) -> Self {
-        let mid_year = calendrical_calculations::iso::fixed_from_iso(related_iso, 7, 1);
-        let year_bounds = YearBounds::compute::<CB>(mid_year);
-        Self::compute_with_yb::<CB>(related_iso, year_bounds)
-    }
-
-    /// Compute ChineseBasedYearInfo for a given extended year, for which you have already computed the YearBounds
-    fn compute_with_yb<CB: ChineseBased>(related_iso: i32, year_bounds: YearBounds) -> Self {
-        let YearBounds {
-            new_year,
-            next_new_year,
-            ..
-        } = year_bounds;
-        let (month_lengths, leap_month) =
-            chinese_based::month_structure_for_year::<CB>(new_year, next_new_year);
-
-        Self {
-            packed_data: PackedChineseBasedYearInfo::new(
-                related_iso,
-                month_lengths,
-                leap_month,
-                new_year,
-            ),
-            related_iso,
-        }
-    }
-
     /// Get the new year R.D.    
     pub(crate) fn new_year(self) -> RataDie {
         self.packed_data.new_year(self.related_iso)
     }
 
     /// Get the next new year R.D.
-    fn next_new_year(self) -> RataDie {
+    pub(crate) fn next_new_year(self) -> RataDie {
         self.new_year() + i64::from(self.days_in_year())
     }
 
@@ -123,7 +66,7 @@ impl ChineseBasedYearInfo {
     /// that is the leap month (not the ordinal month). In other words, for
     /// a year with an M05L, this will return Some(5). Note that the regular month precedes
     /// the leap month.
-    fn leap_month(self) -> Option<u8> {
+    pub(crate) fn leap_month(self) -> Option<u8> {
         self.packed_data.leap_month()
     }
 
@@ -133,7 +76,7 @@ impl ChineseBasedYearInfo {
     ///
     /// Will be zero for the first month as the last day of the previous month
     /// is not in this year
-    fn last_day_of_previous_month(self, month: u8) -> u16 {
+    pub(crate) fn last_day_of_previous_month(self, month: u8) -> u16 {
         debug_assert!((1..=13).contains(&month), "Month out of bounds!");
         // Get the last day of the previous month.
         // Since `month` is 1-indexed, this needs to check if the month is 1 for the zero case
@@ -144,12 +87,12 @@ impl ChineseBasedYearInfo {
         }
     }
 
-    fn days_in_year(self) -> u16 {
+    pub(crate) fn days_in_year(self) -> u16 {
         self.last_day_of_month(self.months_in_year())
     }
 
     /// Return the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
-    fn months_in_year(self) -> u8 {
+    pub(crate) fn months_in_year(self) -> u8 {
         if self.leap_month().is_some() {
             13
         } else {
@@ -163,12 +106,12 @@ impl ChineseBasedYearInfo {
     ///
     /// Will be zero for the first month as the last day of the previous month
     /// is not in this year
-    fn last_day_of_month(self, month: u8) -> u16 {
+    pub(crate) fn last_day_of_month(self, month: u8) -> u16 {
         debug_assert!((1..=13).contains(&month), "Month out of bounds!");
         self.packed_data.last_day_of_month(month)
     }
 
-    fn days_in_month(self, month: u8) -> u8 {
+    pub(crate) fn days_in_month(self, month: u8) -> u8 {
         if self.packed_data.month_has_30_days(month) {
             30
         } else {
@@ -358,39 +301,5 @@ impl ChineseBasedYearInfo {
             }
         }
         None
-    }
-}
-
-impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
-    type YearInfo = ChineseBasedYearInfo;
-
-    fn days_in_provided_month(year: ChineseBasedYearInfo, month: u8) -> u8 {
-        year.days_in_month(month)
-    }
-
-    /// Returns the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
-    fn months_in_provided_year(year: ChineseBasedYearInfo) -> u8 {
-        year.months_in_year()
-    }
-
-    /// Returns true if the given year is a leap year, and false if not.
-    fn provided_year_is_leap(year: ChineseBasedYearInfo) -> bool {
-        year.leap_month().is_some()
-    }
-
-    /// Returns the (month, day) of the last day in a Chinese year (the day before Chinese New Year).
-    /// The last month in a year will always be 12 in a common year or 13 in a leap year. The day is
-    /// determined by finding the day immediately before the next new year and calculating the number
-    /// of days since the last new moon (beginning of the last month in the year).
-    fn last_month_day_in_provided_year(year: ChineseBasedYearInfo) -> (u8, u8) {
-        if year.leap_month().is_some() {
-            (13, year.days_in_month(13))
-        } else {
-            (12, year.days_in_month(12))
-        }
-    }
-
-    fn days_in_provided_year(year: ChineseBasedYearInfo) -> u16 {
-        year.days_in_year()
     }
 }

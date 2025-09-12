@@ -52,7 +52,7 @@ fn convert_benches(c: &mut Criterion) {
     bench_calendar(
         &mut group,
         "calendar/chinese_cached",
-        icu::calendar::cal::Chinese::new(),
+        icu::calendar::cal::LunarChinese::new_china(),
     );
 
     bench_calendar(
