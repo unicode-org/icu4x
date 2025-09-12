@@ -85,49 +85,56 @@ mod dangi_data;
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct LunarChinese<X>(pub X);
 
-/// TODO
-pub trait Location: Clone + core::fmt::Debug {
+/// The rules for the [`LunarChinese`] calendar.
+///
+/// The calendar depends on both astronomical calculations and local time.
+/// The rules for how to perform these calculations, as well as how local
+/// time is determined differ between countries and have changed over time.
+///
+/// For example, the [`China`] type implements the rules that are used in
+/// China, and the [`Dangi`] type implements the rules used in Korea.
+pub trait Rules: Clone + core::fmt::Debug {
     /// The first day of the year.
-    fn start_day(&self, monotonic_year: i32) -> RataDie;
+    fn start_day(&self, related_iso: i32) -> RataDie;
 
     /// The ordinal of the potential leap month of this year.
     ///
     /// For example, if the leap month is `03L`, this would return 4.
-    fn leap_month(&self, monotonic_year: i32) -> Option<u8>;
+    fn leap_month(&self, related_iso: i32) -> Option<u8>;
 
     /// Returns whether the given (1-indexed) month has 30 days.
-    fn is_month_long(&self, monotonic_year: i32, month: u8) -> bool;
+    fn is_month_long(&self, related_iso: i32, month: u8) -> bool;
 
     /// [`Self::is_month_long`] for a whole year at a time.
-    fn month_lengths(&self, monotonic_year: i32) -> [bool; 13] {
-        core::array::from_fn(|i| self.is_month_long(monotonic_year, i as u8 + 1))
+    fn month_lengths(&self, related_iso: i32) -> [bool; 13] {
+        core::array::from_fn(|i| self.is_month_long(related_iso, i as u8 + 1))
     }
 
-    /// If calculations can be reused between [`Self::start_day`] and [`Self::month_lengths`],
+    /// If calculations can be reused between [`Self::start_day`], [`Self::leap_month`], and [`Self::month_lengths`],
     /// implement this method; it is the one actually called by calendar code.
-    fn start_day_and_month_lengths(
+    fn start_day_and_leap_month_and_month_lengths(
         &self,
-        monotonic_year: i32,
+        related_iso: i32,
     ) -> (RataDie, Option<u8>, [bool; 13]) {
         (
-            self.start_day(monotonic_year),
-            self.leap_month(monotonic_year),
-            self.month_lengths(monotonic_year),
+            self.start_day(related_iso),
+            self.leap_month(related_iso),
+            self.month_lengths(related_iso),
         )
     }
 
-    /// The debug name for this <bikeshed>.
+    /// The debug name for the calendar defined by these [`Rules`].
     fn debug_name(&self) -> &'static str {
         "Chinese (custom)"
     }
 
-    /// The BCP-47 [`CalendarAlgorithm`] for the Chinese calendar using this <bikeshed>, if defined.
+    /// The BCP-47 [`CalendarAlgorithm`] for the calendar defined by these [`Rules`], if defined.
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         None
     }
 }
 
-fn compute<CB: ChineseBased>(related_iso: i32) -> (RataDie, Option<u8>, [bool; 13]) {
+fn fallback_approximation<CB: ChineseBased>(related_iso: i32) -> (RataDie, Option<u8>, [bool; 13]) {
     let mid_year = calendrical_calculations::iso::fixed_from_iso(related_iso, 7, 1);
     let year_bounds = YearBounds::compute::<CB>(mid_year);
 
@@ -142,40 +149,68 @@ fn compute<CB: ChineseBased>(related_iso: i32) -> (RataDie, Option<u8>, [bool; 1
     (new_year, leap_month, month_lengths)
 }
 
-/// The China version of the [`LunarChinese`] calendar.
+/// The [`Rules`] used in China.
 ///
-/// This follows the rules in GBTODO for the years 1900-2100.
+/// Accurate calculation according to [GB/T 33661-2017] is computationally
+/// [expensive](https://ytliu0.github.io/ChineseCalendar/computation.html#modern),
+/// so this crate uses precomputed data for the years 1901-2100,
+/// and falls back to a simplified algorithm from [`calendrical_calculations`]
+/// *that does not conform to [GB/T 33661-2017]* outside this range.
 ///
-/// It matches the calendars published by the [Purple Mountain Observatory](todo)
-/// and the [Hong Kong observatory](todo).
-#[derive(Debug, Clone)]
+/// If accuracy is required beyond 2100, clients can implement their own
+/// [`Rules`] type.
+/// Note that there will always be a small degree of uncertainty, as
+/// [GB/T 33661-2017] depends on the uncertain future [difference between UT1
+/// and UTC](https://en.wikipedia.org/wiki/Leap_second#Future).
+/// In fact, as noted by
+/// [Yuk Tung Liu](https://ytliu0.github.io/ChineseCalendar/computation.html#modern),
+/// even the years 2057, 2089, and 2097 as computed with today's value of UT1-UTC
+/// have lunar events very close to local midnight, which might affect the start
+/// of a (single) month if additional leap seconds are introduced.
+///
+/// Dates before 1901 are mainly of historical interest, and might not be purely
+/// algorithmic (inaccuracies have lead to erroneous calendars being
+/// officially published). While data for historical years is available,
+/// such as from the excellent compilation by
+/// [Yuk Tung Liu](https://ytliu0.github.io/ChineseCalendar/table.html),
+/// they are not included for binary size reasons. If accuracy is required
+/// in this range we suggest a custom [`Rules`] type using the desired data.
+///
+/// [GB/T 33661-2017]: https://openstd.samr.gov.cn/bzgk/gb/newGbInfo?hcno=E107EA4DE9725EDF819F33C60A44B296
+#[derive(Copy, Clone, Debug, Default)]
 #[non_exhaustive]
 pub struct China;
 
-impl Location for China {
-    fn start_day(&self, monotonic_year: i32) -> RataDie {
-        self.start_day_and_month_lengths(monotonic_year).0
+impl Rules for China {
+    fn start_day(&self, related_iso: i32) -> RataDie {
+        self.start_day_and_leap_month_and_month_lengths(related_iso)
+            .0
     }
 
-    fn leap_month(&self, monotonic_year: i32) -> Option<u8> {
-        self.start_day_and_month_lengths(monotonic_year).1
+    fn leap_month(&self, related_iso: i32) -> Option<u8> {
+        self.start_day_and_leap_month_and_month_lengths(related_iso)
+            .1
     }
 
-    fn is_month_long(&self, monotonic_year: i32, month: u8) -> bool {
-        self.start_day_and_month_lengths(monotonic_year)
+    fn is_month_long(&self, related_iso: i32, month: u8) -> bool {
+        self.start_day_and_leap_month_and_month_lengths(related_iso)
             .2
             .get(month as usize - 1)
             .copied()
             .unwrap_or_default()
     }
 
-    fn start_day_and_month_lengths(&self, related_iso: i32) -> (RataDie, Option<u8>, [bool; 13]) {
+    fn start_day_and_leap_month_and_month_lengths(
+        &self,
+        related_iso: i32,
+    ) -> (RataDie, Option<u8>, [bool; 13]) {
         if let Some(cached) = (ChineseBasedCache {
             first_related_iso_year: chinese_data::STARTING_YEAR,
             data: chinese_data::DATA,
         }
         .get(related_iso))
         {
+            // TODO: avoid decode-encode cycle
             return (
                 cached.new_year(related_iso),
                 cached.leap_month(),
@@ -183,7 +218,7 @@ impl Location for China {
             );
         };
 
-        compute::<calendrical_calculations::chinese_based::Chinese>(related_iso)
+        fallback_approximation::<calendrical_calculations::chinese_based::Chinese>(related_iso)
     }
 
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
@@ -223,7 +258,7 @@ impl Location for China {
 /// assert_eq!(dangi_b.month().standard_code.0, tinystr!(4, "M04"));
 /// assert_eq!(chinese_b.month().standard_code.0, tinystr!(4, "M04L"));
 /// ```
-#[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub struct Dangi;
 
@@ -263,30 +298,36 @@ impl LunarChinese<Dangi> {
     }
 }
 
-impl Location for Dangi {
-    fn start_day(&self, monotonic_year: i32) -> RataDie {
-        self.start_day_and_month_lengths(monotonic_year).0
+impl Rules for Dangi {
+    fn start_day(&self, related_iso: i32) -> RataDie {
+        self.start_day_and_leap_month_and_month_lengths(related_iso)
+            .0
     }
 
-    fn leap_month(&self, monotonic_year: i32) -> Option<u8> {
-        self.start_day_and_month_lengths(monotonic_year).1
+    fn leap_month(&self, related_iso: i32) -> Option<u8> {
+        self.start_day_and_leap_month_and_month_lengths(related_iso)
+            .1
     }
 
-    fn is_month_long(&self, monotonic_year: i32, month: u8) -> bool {
-        self.start_day_and_month_lengths(monotonic_year)
+    fn is_month_long(&self, related_iso: i32, month: u8) -> bool {
+        self.start_day_and_leap_month_and_month_lengths(related_iso)
             .2
             .get(month as usize - 1)
             .copied()
             .unwrap_or_default()
     }
 
-    fn start_day_and_month_lengths(&self, related_iso: i32) -> (RataDie, Option<u8>, [bool; 13]) {
+    fn start_day_and_leap_month_and_month_lengths(
+        &self,
+        related_iso: i32,
+    ) -> (RataDie, Option<u8>, [bool; 13]) {
         if let Some(cached) = (ChineseBasedCache {
             first_related_iso_year: dangi_data::STARTING_YEAR,
             data: dangi_data::DATA,
         }
         .get(related_iso))
         {
+            // TODO: avoid decode-encode cycle
             return (
                 cached.new_year(related_iso),
                 cached.leap_month(),
@@ -294,7 +335,7 @@ impl Location for Dangi {
             );
         };
 
-        compute::<calendrical_calculations::chinese_based::Dangi>(related_iso)
+        fallback_approximation::<calendrical_calculations::chinese_based::Dangi>(related_iso)
     }
 
     fn calendar_algorithm(
@@ -320,20 +361,20 @@ impl<A: AsCalendar<Calendar = LunarChinese<Dangi>>> Date<A> {
     }
 }
 
-/// The inner date type used for representing [`Date`]s of [`Chinese`]. See [`Date`] and [`Chinese`] for more details.
+/// The inner date type used for representing [`Date`]s of [`LunarChinese`].
 #[derive(Debug, Clone)]
-pub struct ChineseDateInner<X: Location>(ArithmeticDate<LunarChinese<X>>);
+pub struct ChineseDateInner<X: Rules>(ArithmeticDate<LunarChinese<X>>);
 
-impl<S: Location> Copy for ChineseDateInner<S> {}
-impl<S: Location> PartialEq for ChineseDateInner<S> {
+impl<S: Rules> Copy for ChineseDateInner<S> {}
+impl<S: Rules> PartialEq for ChineseDateInner<S> {
     fn eq(&self, other: &Self) -> bool {
         self.0 == other.0
     }
 }
-impl<S: Location> Eq for ChineseDateInner<S> {}
+impl<S: Rules> Eq for ChineseDateInner<S> {}
 
 impl LunarChinese<China> {
-    /// Creates a new [`Chinese`] with some precomputed calendrical calculations.
+    /// Creates a new [`LunarChinese`] with some precomputed calendrical calculations.
     pub const fn new_china() -> Self {
         LunarChinese(China)
     }
@@ -366,7 +407,7 @@ impl LunarChinese<China> {
     }
 }
 
-impl<X: Location> CalendarArithmetic for LunarChinese<X> {
+impl<X: Rules> CalendarArithmetic for LunarChinese<X> {
     type YearInfo = ChineseBasedYearInfo;
 
     fn days_in_provided_month(year: ChineseBasedYearInfo, month: u8) -> u8 {
@@ -400,9 +441,11 @@ impl<X: Location> CalendarArithmetic for LunarChinese<X> {
     }
 }
 
-impl<X: Location> PrecomputedDataSource<ChineseBasedYearInfo> for LunarChinese<X> {
+impl<X: Rules> PrecomputedDataSource<ChineseBasedYearInfo> for LunarChinese<X> {
     fn load_or_compute_info(&self, related_iso: i32) -> ChineseBasedYearInfo {
-        let (new_year, leap_month, month_lengths) = self.0.start_day_and_month_lengths(related_iso);
+        let (new_year, leap_month, month_lengths) = self
+            .0
+            .start_day_and_leap_month_and_month_lengths(related_iso);
 
         ChineseBasedYearInfo {
             packed_data: PackedChineseBasedYearInfo::new(
@@ -416,8 +459,8 @@ impl<X: Location> PrecomputedDataSource<ChineseBasedYearInfo> for LunarChinese<X
     }
 }
 
-impl<X: Location> crate::cal::scaffold::UnstableSealed for LunarChinese<X> {}
-impl<X: Location> Calendar for LunarChinese<X> {
+impl<X: Rules> crate::cal::scaffold::UnstableSealed for LunarChinese<X> {}
+impl<X: Rules> Calendar for LunarChinese<X> {
     type DateInner = ChineseDateInner<X>;
     type Year = types::CyclicYear;
 
@@ -562,7 +605,7 @@ impl<X: Location> Calendar for LunarChinese<X> {
     }
 }
 
-impl<X: Location, A: AsCalendar<Calendar = LunarChinese<X>>> Date<A> {
+impl<X: Rules, A: AsCalendar<Calendar = LunarChinese<X>>> Date<A> {
     /// Construct a new Chinese date from a `year`, `month`, and `day`.
     /// `year` represents the [ISO](crate::Iso) year that roughly matches the Chinese year;
     /// `month` represents the month of the year ordinally (ex. if it is a leap year, the last month will be 13, not 12);

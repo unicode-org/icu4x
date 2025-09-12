@@ -23,7 +23,7 @@ pub use buddhist::Buddhist;
 pub use chinese_internal::LunarChinese;
 /// Customizations for the [`LunarChinese`] calendar.
 pub mod chinese {
-    pub use super::chinese_internal::{China, Dangi, Location};
+    pub use super::chinese_internal::{China, Dangi, Rules};
 }
 pub use coptic::Coptic;
 pub use ethiopian::{Ethiopian, EthiopianEraStyle};
