@@ -21,13 +21,29 @@ define_preferences!(
     /// The preferences for relative time formatting.
     [Copy]
     RelativeTimeFormatterPreferences,
-    {}
+    {
+        /// The user's preferred numbering system.
+        ///
+        /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
+        ///
+        /// To get the resolved numbering system, you can inspect the data provider.
+        /// See the [`provider`] module for an example.
+        numbering_system: preferences::NumberingSystem
+    }
 );
 prefs_convert!(
     RelativeTimeFormatterPreferences,
-    DecimalFormatterPreferences
+    DecimalFormatterPreferences,
+    { numbering_system }
 );
 prefs_convert!(RelativeTimeFormatterPreferences, PluralRulesPreferences);
+
+/// Locale preferences used by this crate
+pub mod preferences {
+    /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
+    #[doc = "\n"] // prevent autoformatting
+    pub use icu_locale_core::preferences::extensions::unicode::keywords::NumberingSystem;
+}
 
 /// A formatter to render locale-sensitive relative time.
 ///
