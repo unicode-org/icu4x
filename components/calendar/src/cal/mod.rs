@@ -32,7 +32,7 @@ pub use hijri_internal::Hijri;
 pub mod hijri {
     pub use super::hijri_internal::{
         AstronomicalSimulation, HijriSighting, HijriTabularEpoch, HijriTabularLeapYears,
-        HijriYearInfo, TabularAlgorithm, UmmAlQura,
+        TabularAlgorithm, UmmAlQura,
     };
 }
 pub use indian::Indian;

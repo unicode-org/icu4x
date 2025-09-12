@@ -22,7 +22,6 @@ use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::{range_check, DateError};
-use crate::provider::hijri::PackedHijriYearInfo;
 use crate::types::EraYear;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use crate::{AsCalendar, RangeError};
@@ -86,6 +85,26 @@ pub struct Hijri<S>(pub S);
 /// This crate includes the [`UmmAlQura`], [`AstronomicalSimulation`], and [`TabularAlgorithm`], other
 /// sightings can be implemented by users.
 pub trait HijriSighting: Clone + Debug {
+    /// The first day of the year.
+    fn start_day(&self, monotonic_year: i32) -> RataDie;
+
+    /// Returns whether the given (1-indexed) month has 30 days.
+    fn is_month_long(&self, monotonic_year: i32, month: u8) -> bool;
+
+    /// [`Self::is_month_long`] for a whole year at a time.
+    fn month_lengths(&self, monotonic_year: i32) -> [bool; 12] {
+        core::array::from_fn(|i| self.is_month_long(monotonic_year, i as u8 + 1))
+    }
+
+    /// If calculations can be reused between [`Self::start_day`] and [`Self::month_lengths`],
+    /// implement this method; it is the one actually called by calendar code.
+    fn start_day_and_month_lengths(&self, monotonic_year: i32) -> (RataDie, [bool; 12]) {
+        (
+            self.start_day(monotonic_year),
+            self.month_lengths(monotonic_year),
+        )
+    }
+
     /// The BCP-47 [`CalendarAlgorithm`] for the Hijri calendar using this sighting, if defined.
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         None
@@ -95,9 +114,6 @@ pub trait HijriSighting: Clone + Debug {
     fn debug_name(&self) -> &'static str {
         "Hijri (custom sighting)"
     }
-
-    /// Computes the [`HijriYearInfo`] for the given year.
-    fn year_info(&self, monotonic_year: i32) -> HijriYearInfo;
 }
 
 /// An astrononmical simulation for a particular location.
@@ -119,12 +135,24 @@ impl HijriSighting for AstronomicalSimulation {
         "Hijri (simulated)"
     }
 
-    fn year_info(&self, monotonic_year: i32) -> HijriYearInfo {
+    fn start_day(&self, monotonic_year: i32) -> RataDie {
+        self.start_day_and_month_lengths(monotonic_year).0
+    }
+
+    fn is_month_long(&self, monotonic_year: i32, month: u8) -> bool {
+        self.start_day_and_month_lengths(monotonic_year)
+            .1
+            .get(month as usize - 1)
+            .copied()
+            .unwrap_or_default()
+    }
+
+    fn start_day_and_month_lengths(&self, monotonic_year: i32) -> (RataDie, [bool; 12]) {
         if let Some(&packed) = usize::try_from(monotonic_year - simulated_mecca_data::STARTING_YEAR)
             .ok()
             .and_then(|i| simulated_mecca_data::DATA.get(i))
         {
-            return HijriYearInfo::unpack(monotonic_year, packed);
+            return packed.unpack(monotonic_year);
         }
 
         let location = match self.location {
@@ -209,11 +237,7 @@ impl HijriSighting for AstronomicalSimulation {
             }
             month_lengths
         };
-        HijriYearInfo {
-            month_lengths,
-            start_day,
-            monotonic_year,
-        }
+        (start_day, month_lengths)
     }
 }
 
@@ -235,18 +259,30 @@ impl HijriSighting for UmmAlQura {
         "Hijri (Umm al-Qura)"
     }
 
-    fn year_info(&self, monotonic_year: i32) -> HijriYearInfo {
+    fn start_day(&self, monotonic_year: i32) -> RataDie {
+        self.start_day_and_month_lengths(monotonic_year).0
+    }
+
+    fn is_month_long(&self, monotonic_year: i32, month: u8) -> bool {
+        self.start_day_and_month_lengths(monotonic_year)
+            .1
+            .get(month as usize - 1)
+            .copied()
+            .unwrap_or_default()
+    }
+
+    fn start_day_and_month_lengths(&self, monotonic_year: i32) -> (RataDie, [bool; 12]) {
         if let Some(&packed) = usize::try_from(monotonic_year - ummalqura_data::STARTING_YEAR)
             .ok()
             .and_then(|i| ummalqura_data::DATA.get(i))
         {
-            HijriYearInfo::unpack(monotonic_year, packed)
+            packed.unpack(monotonic_year)
         } else {
             TabularAlgorithm {
                 leap_years: HijriTabularLeapYears::TypeII,
                 epoch: HijriTabularEpoch::Friday,
             }
-            .year_info(monotonic_year)
+            .start_day_and_month_lengths(monotonic_year)
         }
     }
 }
@@ -286,23 +322,21 @@ impl HijriSighting for TabularAlgorithm {
         }
     }
 
-    fn year_info(&self, monotonic_year: i32) -> HijriYearInfo {
-        let is_leap = match self.leap_years {
-            HijriTabularLeapYears::TypeII => (14 + 11 * monotonic_year).rem_euclid(30) < 11,
-        };
+    fn is_month_long(&self, monotonic_year: i32, month: u8) -> bool {
+        month % 2 == 1
+            || month == 12
+                && match self.leap_years {
+                    HijriTabularLeapYears::TypeII => (14 + 11 * monotonic_year).rem_euclid(30) < 11,
+                }
+    }
 
-        HijriYearInfo {
-            month_lengths: [
-                true, false, true, false, true, false, true, false, true, false, true, is_leap,
-            ],
-            start_day: calendrical_calculations::islamic::fixed_from_tabular_islamic(
-                monotonic_year,
-                1,
-                1,
-                self.epoch.rata_die(),
-            ),
+    fn start_day(&self, monotonic_year: i32) -> RataDie {
+        calendrical_calculations::islamic::fixed_from_tabular_islamic(
             monotonic_year,
-        }
+            1,
+            1,
+            self.epoch.rata_die(),
+        )
     }
 }
 
@@ -405,13 +439,10 @@ impl Hijri<TabularAlgorithm> {
 
 /// Information about a Hijri year.
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
-pub struct HijriYearInfo {
-    /// The lenghts of the twelve months, either 29 (`false`) or 30 (`true`).
-    pub month_lengths: [bool; 12],
-    /// The first day of the year.
-    pub start_day: RataDie,
-    /// The year number.
-    pub monotonic_year: i32,
+pub(crate) struct HijriYearInfo {
+    month_lengths: [bool; 12],
+    start_day: RataDie,
+    monotonic_year: i32,
 }
 
 impl From<HijriYearInfo> for i32 {
@@ -424,16 +455,6 @@ const LONG_YEAR_LEN: u16 = 355;
 const SHORT_YEAR_LEN: u16 = 354;
 
 impl HijriYearInfo {
-    fn unpack(monotonic_year: i32, packed: PackedHijriYearInfo) -> Self {
-        let (month_lengths, start_day) = packed.unpack(monotonic_year);
-
-        HijriYearInfo {
-            month_lengths,
-            start_day,
-            monotonic_year,
-        }
-    }
-
     /// The number of days in a given 1-indexed month
     fn days_in_month(self, month: u8) -> u8 {
         let Some(zero_month) = month.checked_sub(1) else {
@@ -679,7 +700,12 @@ impl<S: HijriSighting> Calendar for Hijri<S> {
 
 impl<S: HijriSighting> PrecomputedDataSource<HijriYearInfo> for Hijri<S> {
     fn load_or_compute_info(&self, monotonic_year: i32) -> HijriYearInfo {
-        self.0.year_info(monotonic_year)
+        let (start_day, month_lengths) = self.0.start_day_and_month_lengths(monotonic_year);
+        HijriYearInfo {
+            month_lengths,
+            start_day,
+            monotonic_year,
+        }
     }
 }
 

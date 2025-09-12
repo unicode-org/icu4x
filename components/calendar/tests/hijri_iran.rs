@@ -5,7 +5,6 @@
 use icu_calendar::cal::hijri::HijriSighting;
 use icu_calendar::cal::hijri::HijriTabularEpoch;
 use icu_calendar::cal::hijri::HijriTabularLeapYears;
-use icu_calendar::cal::hijri::HijriYearInfo;
 use icu_calendar::cal::hijri::TabularAlgorithm;
 use icu_calendar::cal::Hijri;
 use icu_calendar::types::RataDie;
@@ -47,53 +46,34 @@ static HIJRI_IRAN_CASES: [DateCase; 4] = [
 struct IranTestSighting;
 
 impl HijriSighting for IranTestSighting {
-    fn year_info(&self, monotonic_year: i32) -> HijriYearInfo {
-        let s = false;
-        let l = true;
+    fn is_month_long(&self, monotonic_year: i32, month: u8) -> bool {
+        match monotonic_year {
+            1411 => matches!(month, 1 | 2 | 4 | 6 | 8 | 10),
+            1412 => matches!(month, 1 | 2 | 4 | 6 | 8 | 10 | 11),
+            1413 => matches!(month, 1 | 3 | 6 | 8 | 10 | 11 | 12),
+            1414 => matches!(month, 2 | 5 | 7 | 10 | 11 | 12),
+            1415 => matches!(month, 1 | 2 | 6 | 10 | 11 | 12),
+            1416 => matches!(month, 1 | 2 | 4 | 7 | 10 | 11),
+            1417 => matches!(month, 1 | 2 | 3 | 6 | 8 | 10),
+            1418 => matches!(month, 1 | 2 | 4 | 5 | 7 | 10 | 11),
+            _ => TabularAlgorithm::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday)
+                .is_month_long(monotonic_year, month),
+        }
+    }
+
+    fn start_day(&self, monotonic_year: i32) -> RataDie {
         use calendrical_calculations::iso::fixed_from_iso as iso;
         match monotonic_year {
-            1411 => HijriYearInfo {
-                monotonic_year,
-                month_lengths: [l, l, s, l, s, l, s, l, s, l, s, s],
-                start_day: iso(1990, 7, 24),
-            },
-            1412 => HijriYearInfo {
-                monotonic_year,
-                month_lengths: [l, l, s, l, s, l, s, l, s, l, l, s],
-                start_day: iso(1991, 7, 13),
-            },
-            1413 => HijriYearInfo {
-                monotonic_year,
-                month_lengths: [l, s, l, s, s, l, s, l, s, l, l, l],
-                start_day: iso(1992, 7, 2),
-            },
-            1414 => HijriYearInfo {
-                monotonic_year,
-                month_lengths: [s, l, s, s, l, s, l, s, s, l, l, l],
-                start_day: iso(1993, 6, 22),
-            },
-            1415 => HijriYearInfo {
-                monotonic_year,
-                month_lengths: [l, l, s, s, s, l, s, s, s, l, l, l],
-                start_day: iso(1994, 6, 11),
-            },
-            1416 => HijriYearInfo {
-                monotonic_year,
-                month_lengths: [l, l, s, l, s, s, l, s, s, l, l, s],
-                start_day: iso(1995, 5, 31),
-            },
-            1417 => HijriYearInfo {
-                monotonic_year,
-                month_lengths: [l, l, l, s, s, l, s, l, s, l, s, s],
-                start_day: iso(1996, 5, 19),
-            },
-            1418 => HijriYearInfo {
-                monotonic_year,
-                month_lengths: [l, l, s, l, l, s, l, s, s, l, l, s],
-                start_day: iso(1997, 5, 8),
-            },
+            1411 => iso(1990, 7, 24),
+            1412 => iso(1991, 7, 13),
+            1413 => iso(1992, 7, 2),
+            1414 => iso(1993, 6, 22),
+            1415 => iso(1994, 6, 11),
+            1416 => iso(1995, 5, 31),
+            1417 => iso(1996, 5, 19),
+            1418 => iso(1997, 5, 8),
             _ => TabularAlgorithm::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday)
-                .year_info(monotonic_year),
+                .start_day(monotonic_year),
         }
     }
 }

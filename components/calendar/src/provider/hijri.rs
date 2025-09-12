@@ -71,7 +71,7 @@ impl PackedHijriYearInfo {
         Self(all)
     }
 
-    pub(crate) fn unpack(self, monotonic_year: i32) -> ([bool; 12], RataDie) {
+    pub(crate) fn unpack(self, monotonic_year: i32) -> (RataDie, [bool; 12]) {
         let month_lengths = core::array::from_fn(|i| self.0 & (1 << (i as u8) as u16) != 0);
         let start_offset = if (self.0 & 0b1_0000_0000_0000) != 0 {
             -((self.0 >> 13) as i64)
@@ -79,8 +79,8 @@ impl PackedHijriYearInfo {
             (self.0 >> 13) as i64
         };
         (
-            month_lengths,
             Self::mean_synodic_start_day(monotonic_year) + start_offset,
+            month_lengths,
         )
     }
 
@@ -108,7 +108,7 @@ impl AsULE for PackedHijriYearInfo {
 fn test_hijri_packed_roundtrip() {
     fn single_roundtrip(month_lengths: [bool; 12], year_start: RataDie) {
         let packed = PackedHijriYearInfo::new(1600, month_lengths, year_start);
-        let (month_lengths2, year_start2) = packed.unpack(1600);
+        let (year_start2, month_lengths2) = packed.unpack(1600);
         assert_eq!(month_lengths, month_lengths2, "Month lengths must match for testcase {month_lengths:?} / {year_start:?}, with packed repr: {packed:?}");
         assert_eq!(year_start, year_start2, "Month lengths must match for testcase {month_lengths:?} / {year_start:?}, with packed repr: {packed:?}");
     }
