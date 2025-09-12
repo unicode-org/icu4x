@@ -122,11 +122,11 @@ pub trait HijriSighting: Clone + Debug {
 /// completeness.
 #[derive(Clone, Debug)]
 pub struct AstronomicalSimulation {
-    pub(crate) location: HijriSimulatedLocation,
+    pub(crate) location: SimulatedLocation,
 }
 
 #[derive(Clone, Debug, Copy, PartialEq)]
-pub(crate) enum HijriSimulatedLocation {
+pub(crate) enum SimulatedLocation {
     Mecca,
 }
 
@@ -156,7 +156,7 @@ impl HijriSighting for AstronomicalSimulation {
         }
 
         let location = match self.location {
-            HijriSimulatedLocation::Mecca => calendrical_calculations::islamic::MECCA,
+            SimulatedLocation::Mecca => calendrical_calculations::islamic::MECCA,
         };
 
         let start_day = calendrical_calculations::islamic::fixed_from_observational_islamic(
@@ -279,26 +279,26 @@ impl HijriSighting for UmmAlQura {
             packed.unpack(monotonic_year)
         } else {
             TabularAlgorithm {
-                leap_years: HijriTabularLeapYears::TypeII,
-                epoch: HijriTabularEpoch::Friday,
+                leap_years: TabularAlgorithmLeapYears::TypeII,
+                epoch: TabularAlgorithmEpoch::Friday,
             }
             .start_day_and_month_lengths(monotonic_year)
         }
     }
 }
 
-/// See [`HijriTabularEpoch`] and [`HijriTabularLeapYears`] for customization.
+/// See [`TabularAlgorithmEpoch`] and [`TabularAlgorithmLeapYears`] for customization.
 ///
-/// The most common version of this sighting uses [`HijriTabularEpoch::Friday`] and [`HijriTabularLeapYears::TypeII`].
+/// The most common version of this sighting uses [`TabularAlgorithmEpoch::Friday`] and [`TabularAlgorithmLeapYears::TypeII`].
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct TabularAlgorithm {
-    pub(crate) leap_years: HijriTabularLeapYears,
-    pub(crate) epoch: HijriTabularEpoch,
+    pub(crate) leap_years: TabularAlgorithmLeapYears,
+    pub(crate) epoch: TabularAlgorithmEpoch,
 }
 
 impl TabularAlgorithm {
     /// Construct a new [`TabularAlgorithm`] with the given leap year rule and epoch.
-    pub const fn new(leap_years: HijriTabularLeapYears, epoch: HijriTabularEpoch) -> Self {
+    pub const fn new(leap_years: TabularAlgorithmLeapYears, epoch: TabularAlgorithmEpoch) -> Self {
         Self { epoch, leap_years }
     }
 }
@@ -306,10 +306,10 @@ impl TabularAlgorithm {
 impl HijriSighting for TabularAlgorithm {
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         Some(match (self.epoch, self.leap_years) {
-            (HijriTabularEpoch::Friday, HijriTabularLeapYears::TypeII) => {
+            (TabularAlgorithmEpoch::Friday, TabularAlgorithmLeapYears::TypeII) => {
                 CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil))
             }
-            (HijriTabularEpoch::Thursday, HijriTabularLeapYears::TypeII) => {
+            (TabularAlgorithmEpoch::Thursday, TabularAlgorithmLeapYears::TypeII) => {
                 CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Tbla))
             }
         })
@@ -317,8 +317,8 @@ impl HijriSighting for TabularAlgorithm {
 
     fn debug_name(&self) -> &'static str {
         match self.epoch {
-            HijriTabularEpoch::Friday => "Hijri (civil)",
-            HijriTabularEpoch::Thursday => "Hijri (astronomical)",
+            TabularAlgorithmEpoch::Friday => "Hijri (civil)",
+            TabularAlgorithmEpoch::Thursday => "Hijri (astronomical)",
         }
     }
 
@@ -326,7 +326,9 @@ impl HijriSighting for TabularAlgorithm {
         month % 2 == 1
             || month == 12
                 && match self.leap_years {
-                    HijriTabularLeapYears::TypeII => (14 + 11 * monotonic_year).rem_euclid(30) < 11,
+                    TabularAlgorithmLeapYears::TypeII => {
+                        (14 + 11 * monotonic_year).rem_euclid(30) < 11
+                    }
                 }
     }
 
@@ -355,7 +357,7 @@ impl Hijri<AstronomicalSimulation> {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     pub const fn new_simulated_mecca() -> Self {
         Self(AstronomicalSimulation {
-            location: HijriSimulatedLocation::Mecca,
+            location: SimulatedLocation::Mecca,
         })
     }
 
@@ -397,14 +399,14 @@ impl Hijri<UmmAlQura> {
 /// The epoch for the [`TabularAlgorithm`] sighting.
 #[non_exhaustive]
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-pub enum HijriTabularEpoch {
+pub enum TabularAlgorithmEpoch {
     /// Thusday July 15, 622 AD (0622-07-18 ISO)
     Thursday,
     /// Friday July 16, 622 AD (0622-07-19 ISO)
     Friday,
 }
 
-impl HijriTabularEpoch {
+impl TabularAlgorithmEpoch {
     fn rata_die(self) -> RataDie {
         match self {
             Self::Thursday => ISLAMIC_EPOCH_THURSDAY,
@@ -419,7 +421,7 @@ impl HijriTabularEpoch {
 /// the end of the year.
 #[non_exhaustive]
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-pub enum HijriTabularLeapYears {
+pub enum TabularAlgorithmLeapYears {
     /// Leap years 2, 5, 7, 10, 13, 16, 18, 21, 24, 26, 29
     TypeII,
 }
@@ -427,12 +429,15 @@ pub enum HijriTabularLeapYears {
 impl Hijri<TabularAlgorithm> {
     /// Use [`Self::new_tabular`]
     #[deprecated(since = "2.1.0", note = "use `Hijri::new_tabular`")]
-    pub const fn new(leap_years: HijriTabularLeapYears, epoch: HijriTabularEpoch) -> Self {
+    pub const fn new(leap_years: TabularAlgorithmLeapYears, epoch: TabularAlgorithmEpoch) -> Self {
         Hijri::new_tabular(leap_years, epoch)
     }
 
     /// Construct a new [`Hijri`] with tabular sighting and the given leap year rule and epoch.
-    pub const fn new_tabular(leap_years: HijriTabularLeapYears, epoch: HijriTabularEpoch) -> Self {
+    pub const fn new_tabular(
+        leap_years: TabularAlgorithmLeapYears,
+        epoch: TabularAlgorithmEpoch,
+    ) -> Self {
         Self(TabularAlgorithm::new(leap_years, epoch))
     }
 }
@@ -1493,7 +1498,10 @@ mod test {
 
     #[test]
     fn test_rd_from_hijri() {
-        let calendar = Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday);
+        let calendar = Hijri::new_tabular(
+            TabularAlgorithmLeapYears::TypeII,
+            TabularAlgorithmEpoch::Friday,
+        );
         let calendar = Ref(&calendar);
         for (case, f_date) in ARITHMETIC_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
@@ -1504,7 +1512,10 @@ mod test {
 
     #[test]
     fn test_hijri_from_rd() {
-        let calendar = Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday);
+        let calendar = Hijri::new_tabular(
+            TabularAlgorithmLeapYears::TypeII,
+            TabularAlgorithmEpoch::Friday,
+        );
         let calendar = Ref(&calendar);
         for (case, f_date) in ARITHMETIC_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
@@ -1517,8 +1528,10 @@ mod test {
 
     #[test]
     fn test_rd_from_hijri_tbla() {
-        let calendar =
-            Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday);
+        let calendar = Hijri::new_tabular(
+            TabularAlgorithmLeapYears::TypeII,
+            TabularAlgorithmEpoch::Thursday,
+        );
         let calendar = Ref(&calendar);
         for (case, f_date) in ASTRONOMICAL_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
@@ -1529,8 +1542,10 @@ mod test {
 
     #[test]
     fn test_hijri_tbla_from_rd() {
-        let calendar =
-            Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday);
+        let calendar = Hijri::new_tabular(
+            TabularAlgorithmLeapYears::TypeII,
+            TabularAlgorithmEpoch::Thursday,
+        );
         let calendar = Ref(&calendar);
         for (case, f_date) in ASTRONOMICAL_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)

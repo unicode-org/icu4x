@@ -2,11 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::cal::hijri::HijriSighting;
-use icu_calendar::cal::hijri::HijriTabularEpoch;
-use icu_calendar::cal::hijri::HijriTabularLeapYears;
-use icu_calendar::cal::hijri::TabularAlgorithm;
-use icu_calendar::cal::Hijri;
+use icu_calendar::cal::{hijri::*, Hijri};
 use icu_calendar::types::RataDie;
 use icu_calendar::Date;
 
@@ -56,8 +52,11 @@ impl HijriSighting for IranTestSighting {
             1416 => matches!(month, 1 | 2 | 4 | 7 | 10 | 11),
             1417 => matches!(month, 1 | 2 | 3 | 6 | 8 | 10),
             1418 => matches!(month, 1 | 2 | 4 | 5 | 7 | 10 | 11),
-            _ => TabularAlgorithm::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday)
-                .is_month_long(monotonic_year, month),
+            _ => TabularAlgorithm::new(
+                TabularAlgorithmLeapYears::TypeII,
+                TabularAlgorithmEpoch::Friday,
+            )
+            .is_month_long(monotonic_year, month),
         }
     }
 
@@ -72,8 +71,11 @@ impl HijriSighting for IranTestSighting {
             1416 => iso(1995, 5, 31),
             1417 => iso(1996, 5, 19),
             1418 => iso(1997, 5, 8),
-            _ => TabularAlgorithm::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday)
-                .start_day(monotonic_year),
+            _ => TabularAlgorithm::new(
+                TabularAlgorithmLeapYears::TypeII,
+                TabularAlgorithmEpoch::Friday,
+            )
+            .start_day(monotonic_year),
         }
     }
 }

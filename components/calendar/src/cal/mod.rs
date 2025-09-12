@@ -31,8 +31,8 @@ pub use hijri_internal::Hijri;
 /// Customizations for the [`Hijri`] calendar.
 pub mod hijri {
     pub use super::hijri_internal::{
-        AstronomicalSimulation, HijriSighting, HijriTabularEpoch, HijriTabularLeapYears,
-        TabularAlgorithm, UmmAlQura,
+        AstronomicalSimulation, HijriSighting, TabularAlgorithm, TabularAlgorithmEpoch,
+        TabularAlgorithmLeapYears, UmmAlQura,
     };
 }
 pub use indian::Indian;
@@ -42,13 +42,19 @@ pub use julian::Julian;
 pub use persian::Persian;
 pub use roc::Roc;
 
-#[doc(hidden)] // semver
-pub use hijri::{HijriTabularEpoch, HijriTabularLeapYears};
-#[doc(hidden)] // semver
+/// Deprecated
+#[deprecated]
+pub use hijri::{
+    TabularAlgorithmEpoch as HijriTabularEpoch, TabularAlgorithmLeapYears as HijriTabularLeapYears,
+};
+/// Deprecated
+#[deprecated]
 pub type HijriSimulated = Hijri<hijri::AstronomicalSimulation>;
-#[doc(hidden)] // semver
+/// Deprecated
+#[deprecated]
 pub type HijriUmmAlQura = Hijri<hijri::UmmAlQura>;
-#[doc(hidden)] // semver
+/// Deprecated
+#[deprecated]
 pub type HijriTabular = Hijri<hijri::TabularAlgorithm>;
 
 pub use crate::any_calendar::{AnyCalendar, AnyCalendarKind};

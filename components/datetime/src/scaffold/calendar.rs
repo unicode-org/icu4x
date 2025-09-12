@@ -8,11 +8,7 @@ use crate::provider::{neo::*, *};
 use crate::scaffold::UnstableSealed;
 use crate::{DateTimeFormatterPreferences, MismatchedCalendarError};
 use core::marker::PhantomData;
-use icu_calendar::cal::{
-    self, hijri::HijriSighting, Buddhist, Chinese, Coptic, Dangi, Ethiopian, Gregorian, Hebrew,
-    Hijri, HijriSimulated, HijriTabular, HijriUmmAlQura, Indian, Japanese, JapaneseExtended,
-    Persian, Roc,
-};
+use icu_calendar::cal::{self, *};
 use icu_calendar::{AnyCalendar, AnyCalendarKind, AsCalendar, Date, IntoAnyCalendar, Ref};
 use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
@@ -95,7 +91,7 @@ impl CldrCalendar for Indian {
     type SkeletaV1 = DatetimePatternsDateIndianV1;
 }
 
-impl<S: HijriSighting> CldrCalendar for Hijri<S> {
+impl<S: hijri::HijriSighting> CldrCalendar for Hijri<S> {
     type YearNamesV1 = DatetimeNamesYearHijriV1;
     type MonthNamesV1 = DatetimeNamesMonthHijriV1;
     type SkeletaV1 = DatetimePatternsDateHijriV1;
@@ -134,7 +130,7 @@ impl UnstableSealed for Ethiopian {}
 impl UnstableSealed for Gregorian {}
 impl UnstableSealed for Hebrew {}
 impl UnstableSealed for Indian {}
-impl<S: HijriSighting> UnstableSealed for Hijri<S> {}
+impl<S: hijri::HijriSighting> UnstableSealed for Hijri<S> {}
 impl UnstableSealed for Japanese {}
 impl UnstableSealed for JapaneseExtended {}
 impl UnstableSealed for Persian {}
@@ -227,9 +223,9 @@ impl IntoFormattableAnyCalendar for Ethiopian {}
 impl IntoFormattableAnyCalendar for Gregorian {}
 impl IntoFormattableAnyCalendar for Hebrew {}
 impl IntoFormattableAnyCalendar for Indian {}
-impl IntoFormattableAnyCalendar for HijriTabular {}
-impl IntoFormattableAnyCalendar for HijriSimulated {}
-impl IntoFormattableAnyCalendar for HijriUmmAlQura {}
+impl IntoFormattableAnyCalendar for Hijri<hijri::TabularAlgorithm> {}
+impl IntoFormattableAnyCalendar for Hijri<hijri::AstronomicalSimulation> {}
+impl IntoFormattableAnyCalendar for Hijri<hijri::UmmAlQura> {}
 // _NOT_ Hijri<S>
 impl IntoFormattableAnyCalendar for Japanese {}
 // _NOT_ JapaneseExtended
@@ -372,12 +368,12 @@ impl FormattableAnyCalendar {
             Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
             Indian => AnyCalendar::Indian(cal::Indian),
             HijriTabularTypeIIFriday => AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
-                cal::HijriTabularLeapYears::TypeII,
-                cal::HijriTabularEpoch::Friday,
+                hijri::TabularAlgorithmLeapYears::TypeII,
+                hijri::TabularAlgorithmEpoch::Friday,
             )),
             HijriTabularTypeIIThursday => AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
-                cal::HijriTabularLeapYears::TypeII,
-                cal::HijriTabularEpoch::Thursday,
+                hijri::TabularAlgorithmLeapYears::TypeII,
+                hijri::TabularAlgorithmEpoch::Thursday,
             )),
             HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(cal::Hijri::new_umm_al_qura()),
             Japanese => AnyCalendar::Japanese(cal::Japanese::new()),
@@ -409,12 +405,12 @@ impl FormattableAnyCalendar {
             Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
             Indian => AnyCalendar::Indian(cal::Indian),
             HijriTabularTypeIIFriday => AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
-                cal::HijriTabularLeapYears::TypeII,
-                cal::HijriTabularEpoch::Friday,
+                hijri::TabularAlgorithmLeapYears::TypeII,
+                hijri::TabularAlgorithmEpoch::Friday,
             )),
             HijriTabularTypeIIThursday => AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
-                cal::HijriTabularLeapYears::TypeII,
-                cal::HijriTabularEpoch::Thursday,
+                hijri::TabularAlgorithmLeapYears::TypeII,
+                hijri::TabularAlgorithmEpoch::Thursday,
             )),
             HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(cal::Hijri::new_umm_al_qura()),
             Japanese => {
@@ -447,12 +443,12 @@ impl FormattableAnyCalendar {
             Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
             Indian => AnyCalendar::Indian(cal::Indian),
             HijriTabularTypeIIFriday => AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
-                cal::HijriTabularLeapYears::TypeII,
-                cal::HijriTabularEpoch::Friday,
+                hijri::TabularAlgorithmLeapYears::TypeII,
+                hijri::TabularAlgorithmEpoch::Friday,
             )),
             HijriTabularTypeIIThursday => AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
-                cal::HijriTabularLeapYears::TypeII,
-                cal::HijriTabularEpoch::Thursday,
+                hijri::TabularAlgorithmLeapYears::TypeII,
+                hijri::TabularAlgorithmEpoch::Thursday,
             )),
             HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(cal::Hijri::new_umm_al_qura()),
             Japanese => AnyCalendar::Japanese(cal::Japanese::try_new_unstable(provider)?),
@@ -583,7 +579,7 @@ impl CalMarkers<YearNamesV1> for FullDataCalMarkers {
     type Gregorian = <Gregorian as CldrCalendar>::YearNamesV1;
     type Hebrew = <Hebrew as CldrCalendar>::YearNamesV1;
     type Indian = <Indian as CldrCalendar>::YearNamesV1;
-    type Hijri = <HijriUmmAlQura as CldrCalendar>::YearNamesV1;
+    type Hijri = <Hijri<hijri::UmmAlQura> as CldrCalendar>::YearNamesV1;
     type Japanese = <Japanese as CldrCalendar>::YearNamesV1;
     type Persian = <Persian as CldrCalendar>::YearNamesV1;
     type Roc = <Roc as CldrCalendar>::YearNamesV1;
@@ -598,7 +594,7 @@ impl CalMarkers<MonthNamesV1> for FullDataCalMarkers {
     type Gregorian = <Gregorian as CldrCalendar>::MonthNamesV1;
     type Hebrew = <Hebrew as CldrCalendar>::MonthNamesV1;
     type Indian = <Indian as CldrCalendar>::MonthNamesV1;
-    type Hijri = <HijriUmmAlQura as CldrCalendar>::MonthNamesV1;
+    type Hijri = <Hijri<hijri::UmmAlQura> as CldrCalendar>::MonthNamesV1;
     type Japanese = <Japanese as CldrCalendar>::MonthNamesV1;
     type Persian = <Persian as CldrCalendar>::MonthNamesV1;
     type Roc = <Roc as CldrCalendar>::MonthNamesV1;
@@ -613,7 +609,7 @@ impl CalMarkers<ErasedPackedPatterns> for FullDataCalMarkers {
     type Gregorian = <Gregorian as CldrCalendar>::SkeletaV1;
     type Hebrew = <Hebrew as CldrCalendar>::SkeletaV1;
     type Indian = <Indian as CldrCalendar>::SkeletaV1;
-    type Hijri = <HijriUmmAlQura as CldrCalendar>::SkeletaV1;
+    type Hijri = <Hijri<hijri::UmmAlQura> as CldrCalendar>::SkeletaV1;
     type Japanese = <Japanese as CldrCalendar>::SkeletaV1;
     type Persian = <Persian as CldrCalendar>::SkeletaV1;
     type Roc = <Roc as CldrCalendar>::SkeletaV1;

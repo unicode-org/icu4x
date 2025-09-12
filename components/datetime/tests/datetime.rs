@@ -6,11 +6,7 @@ mod fixtures;
 mod patterns;
 
 use fixtures::TestOutputItem;
-use icu_calendar::cal::{
-    Buddhist, Chinese, Coptic, Dangi, Ethiopian, EthiopianEraStyle, Gregorian, Hebrew, Hijri,
-    HijriTabularEpoch, HijriTabularLeapYears, Indian, Iso, Japanese, JapaneseExtended, Persian,
-    Roc,
-};
+use icu_calendar::cal::*;
 use icu_calendar::AnyCalendarKind;
 use icu_datetime::fieldsets::enums::*;
 use icu_datetime::scaffold::CldrCalendar;
@@ -123,8 +119,8 @@ fn test_fixture(fixture_name: &str, file: &str) {
                     assert_fixture_element(
                         prefs,
                         Hijri::new_tabular(
-                            HijriTabularLeapYears::TypeII,
-                            HijriTabularEpoch::Friday,
+                            hijri::TabularAlgorithmLeapYears::TypeII,
+                            hijri::TabularAlgorithmEpoch::Friday,
                         ),
                         input,
                         &expected,
@@ -146,8 +142,8 @@ fn test_fixture(fixture_name: &str, file: &str) {
                     assert_fixture_element(
                         prefs,
                         Hijri::new_tabular(
-                            HijriTabularLeapYears::TypeII,
-                            HijriTabularEpoch::Thursday,
+                            hijri::TabularAlgorithmLeapYears::TypeII,
+                            hijri::TabularAlgorithmEpoch::Thursday,
                         ),
                         input,
                         &expected,
