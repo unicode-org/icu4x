@@ -162,7 +162,7 @@ fn test_hijri_civil_continuity() {
 fn test_hijri_simulated_mecca_continuity() {
     #[cfg(feature = "logging")]
     let _ = simple_logger::SimpleLogger::new().env().init();
-    let cal = crate::cal::HijriSimulated::new_mecca_always_calculating();
+    let cal = crate::cal::HijriSimulated::new_mecca();
     let cal = Ref(&cal);
     let date = Date::try_new_simulated_hijri_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());

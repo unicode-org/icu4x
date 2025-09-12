@@ -126,44 +126,12 @@ fn date_benches(c: &mut Criterion) {
 
     bench_calendar(
         &mut group,
-        "calendar/chinese_calculating",
-        &fxs,
-        icu::calendar::cal::Chinese::new_always_calculating(),
-        |y, m, d| {
-            Date::try_new_chinese_with_calendar(
-                y,
-                m,
-                d,
-                icu::calendar::cal::Chinese::new_always_calculating(),
-            )
-            .unwrap()
-        },
-    );
-
-    bench_calendar(
-        &mut group,
         "calendar/chinese_cached",
         &fxs,
         icu::calendar::cal::Chinese::new(),
         |y, m, d| {
             Date::try_new_chinese_with_calendar(y, m, d, icu::calendar::cal::Chinese::new())
                 .unwrap()
-        },
-    );
-
-    bench_calendar(
-        &mut group,
-        "calendar/dangi_calculating",
-        &fxs,
-        icu::calendar::cal::Dangi::new_always_calculating(),
-        |y, m, d| {
-            Date::try_new_dangi_with_calendar(
-                y,
-                m,
-                d,
-                icu::calendar::cal::Dangi::new_always_calculating(),
-            )
-            .unwrap()
         },
     );
 
@@ -249,13 +217,13 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/observational",
         &fxs,
-        icu::calendar::cal::HijriSimulated::new_mecca_always_calculating(),
+        icu::calendar::cal::HijriSimulated::new_mecca(),
         |y, m, d| {
             Date::try_new_simulated_hijri_with_calendar(
                 y,
                 m,
                 d,
-                icu::calendar::cal::HijriSimulated::new_mecca_always_calculating(),
+                icu::calendar::cal::HijriSimulated::new_mecca(),
             )
             .unwrap()
         },

@@ -391,7 +391,7 @@ where
 size_test!(
     DateTimeFormatter<crate::fieldsets::YMD>,
     neo_year_month_day_formatter_size,
-    384
+    368
 );
 
 /// [`DateTimeFormatter`] is a formatter capable of formatting dates and/or times from

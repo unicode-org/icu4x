@@ -412,9 +412,9 @@ impl FormattableAnyCalendar {
         use FormattableAnyCalendarKind::*;
         let any_calendar = match kind {
             Buddhist => AnyCalendar::Buddhist(cal::Buddhist),
-            Chinese => AnyCalendar::Chinese(cal::Chinese::try_new_with_buffer_provider(provider)?),
+            Chinese => AnyCalendar::Chinese(cal::Chinese::new()),
             Coptic => AnyCalendar::Coptic(cal::Coptic),
-            Dangi => AnyCalendar::Dangi(cal::Dangi::try_new_with_buffer_provider(provider)?),
+            Dangi => AnyCalendar::Dangi(cal::Dangi::new()),
             Ethiopian => AnyCalendar::Ethiopian(cal::Ethiopian::new()),
             EthiopianAmeteAlem => AnyCalendar::Ethiopian(cal::Ethiopian::new_with_era_style(
                 cal::EthiopianEraStyle::AmeteAlem,
@@ -445,17 +445,14 @@ impl FormattableAnyCalendar {
         kind: FormattableAnyCalendarKind,
     ) -> Result<Self, DataError>
     where
-        P: ?Sized
-            + DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>
-            + DataProvider<icu_calendar::provider::CalendarChineseV1>
-            + DataProvider<icu_calendar::provider::CalendarDangiV1>,
+        P: ?Sized + DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>,
     {
         use FormattableAnyCalendarKind::*;
         let any_calendar = match kind {
             Buddhist => AnyCalendar::Buddhist(cal::Buddhist),
-            Chinese => AnyCalendar::Chinese(cal::Chinese::try_new_unstable(provider)?),
+            Chinese => AnyCalendar::Chinese(cal::Chinese::new()),
             Coptic => AnyCalendar::Coptic(cal::Coptic),
-            Dangi => AnyCalendar::Dangi(cal::Dangi::try_new_unstable(provider)?),
+            Dangi => AnyCalendar::Dangi(cal::Dangi::new()),
             Ethiopian => AnyCalendar::Ethiopian(cal::Ethiopian::new()),
             EthiopianAmeteAlem => AnyCalendar::Ethiopian(cal::Ethiopian::new_with_era_style(
                 cal::EthiopianEraStyle::AmeteAlem,

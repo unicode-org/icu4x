@@ -601,13 +601,9 @@ impl AnyCalendar {
     {
         Ok(match kind {
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
-            AnyCalendarKind::Chinese => {
-                AnyCalendar::Chinese(Chinese::try_new_with_buffer_provider(provider)?)
-            }
+            AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese::new()),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
-            AnyCalendarKind::Dangi => {
-                AnyCalendar::Dangi(Dangi::try_new_with_buffer_provider(provider)?)
-            }
+            AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi::new()),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
                 EthiopianEraStyle::AmeteMihret,
             )),
@@ -623,9 +619,9 @@ impl AnyCalendar {
                     HijriTabularEpoch::Friday,
                 ))
             }
-            AnyCalendarKind::HijriSimulatedMecca => AnyCalendar::HijriSimulated(
-                HijriSimulated::try_new_mecca_with_buffer_provider(provider)?,
-            ),
+            AnyCalendarKind::HijriSimulatedMecca => {
+                AnyCalendar::HijriSimulated(HijriSimulated::new_mecca())
+            }
             AnyCalendarKind::HijriTabularTypeIIThursday => {
                 AnyCalendar::HijriTabular(HijriTabular::new(
                     crate::cal::hijri::HijriTabularLeapYears::TypeII,
@@ -650,16 +646,13 @@ impl AnyCalendar {
     where
         P: DataProvider<crate::provider::CalendarJapaneseModernV1>
             + DataProvider<crate::provider::CalendarJapaneseExtendedV1>
-            + DataProvider<crate::provider::CalendarChineseV1>
-            + DataProvider<crate::provider::CalendarDangiV1>
-            + DataProvider<crate::provider::CalendarHijriSimulatedMeccaV1>
             + ?Sized,
     {
         Ok(match kind {
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
-            AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese::try_new_unstable(provider)?),
+            AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
-            AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi::try_new_unstable(provider)?),
+            AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
                 EthiopianEraStyle::AmeteMihret,
             )),
@@ -676,7 +669,7 @@ impl AnyCalendar {
                 ))
             }
             AnyCalendarKind::HijriSimulatedMecca => {
-                AnyCalendar::HijriSimulated(HijriSimulated::try_new_mecca_unstable(provider)?)
+                AnyCalendar::HijriSimulated(HijriSimulated::new_mecca())
             }
             AnyCalendarKind::HijriTabularTypeIIThursday => {
                 AnyCalendar::HijriTabular(HijriTabular::new(
