@@ -47,53 +47,53 @@ static HIJRI_IRAN_CASES: [DateCase; 4] = [
 struct IranTestSighting;
 
 impl HijriSighting for IranTestSighting {
-    fn year_info(&self, year: i32) -> HijriYearInfo {
+    fn year_info(&self, monotonic_year: i32) -> HijriYearInfo {
         let s = false;
         let l = true;
         use calendrical_calculations::iso::fixed_from_iso as iso;
-        match year {
+        match monotonic_year {
             1411 => HijriYearInfo {
-                value: year,
+                monotonic_year,
                 month_lengths: [l, l, s, l, s, l, s, l, s, l, s, s],
                 start_day: iso(1990, 7, 24),
             },
             1412 => HijriYearInfo {
-                value: year,
+                monotonic_year,
                 month_lengths: [l, l, s, l, s, l, s, l, s, l, l, s],
                 start_day: iso(1991, 7, 13),
             },
             1413 => HijriYearInfo {
-                value: year,
+                monotonic_year,
                 month_lengths: [l, s, l, s, s, l, s, l, s, l, l, l],
                 start_day: iso(1992, 7, 2),
             },
             1414 => HijriYearInfo {
-                value: year,
+                monotonic_year,
                 month_lengths: [s, l, s, s, l, s, l, s, s, l, l, l],
                 start_day: iso(1993, 6, 22),
             },
             1415 => HijriYearInfo {
-                value: year,
+                monotonic_year,
                 month_lengths: [l, l, s, s, s, l, s, s, s, l, l, l],
                 start_day: iso(1994, 6, 11),
             },
             1416 => HijriYearInfo {
-                value: year,
+                monotonic_year,
                 month_lengths: [l, l, s, l, s, s, l, s, s, l, l, s],
                 start_day: iso(1995, 5, 31),
             },
             1417 => HijriYearInfo {
-                value: year,
+                monotonic_year,
                 month_lengths: [l, l, l, s, s, l, s, l, s, l, s, s],
                 start_day: iso(1996, 5, 19),
             },
             1418 => HijriYearInfo {
-                value: year,
+                monotonic_year,
                 month_lengths: [l, l, s, l, l, s, l, s, s, l, l, s],
                 start_day: iso(1997, 5, 8),
             },
             _ => TabularAlgorithm::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday)
-                .year_info(year),
+                .year_info(monotonic_year),
         }
     }
 }

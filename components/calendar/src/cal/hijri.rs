@@ -42,21 +42,21 @@ mod simulated_mecca_data;
 #[path = "hijri/ummalqura_data.rs"]
 mod ummalqura_data;
 
-fn era_year(year: i32) -> EraYear {
-    if year > 0 {
+fn era_year(monotonic_year: i32) -> EraYear {
+    if monotonic_year > 0 {
         types::EraYear {
             era: tinystr!(16, "ah"),
             era_index: Some(0),
-            year,
-            monotonic_year: year,
+            year: monotonic_year,
+            monotonic_year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     } else {
         types::EraYear {
             era: tinystr!(16, "bh"),
             era_index: Some(1),
-            year: 1 - year,
-            monotonic_year: year,
+            year: 1 - monotonic_year,
+            monotonic_year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     }
@@ -97,7 +97,7 @@ pub trait HijriSighting: Clone + Debug {
     }
 
     /// Computes the [`HijriYearInfo`] for the given year.
-    fn year_info(&self, year: i32) -> HijriYearInfo;
+    fn year_info(&self, monotonic_year: i32) -> HijriYearInfo;
 }
 
 /// An astrononmical simulation for a particular location.
@@ -119,12 +119,12 @@ impl HijriSighting for AstronomicalSimulation {
         "Hijri (simulated)"
     }
 
-    fn year_info(&self, year: i32) -> HijriYearInfo {
-        if let Some(&packed) = usize::try_from(year - simulated_mecca_data::STARTING_YEAR)
+    fn year_info(&self, monotonic_year: i32) -> HijriYearInfo {
+        if let Some(&packed) = usize::try_from(monotonic_year - simulated_mecca_data::STARTING_YEAR)
             .ok()
             .and_then(|i| simulated_mecca_data::DATA.get(i))
         {
-            return HijriYearInfo::unpack(year, packed);
+            return HijriYearInfo::unpack(monotonic_year, packed);
         }
 
         let location = match self.location {
@@ -132,10 +132,13 @@ impl HijriSighting for AstronomicalSimulation {
         };
 
         let start_day = calendrical_calculations::islamic::fixed_from_observational_islamic(
-            year, 1, 1, location,
+            monotonic_year,
+            1,
+            1,
+            location,
         );
         let next_start_day = calendrical_calculations::islamic::fixed_from_observational_islamic(
-            year + 1,
+            monotonic_year + 1,
             1,
             1,
             location,
@@ -144,7 +147,7 @@ impl HijriSighting for AstronomicalSimulation {
             LONG_YEAR_LEN | SHORT_YEAR_LEN => (),
             353 => {
                 icu_provider::log::trace!(
-                    "({}) Found year {year} AH with length {}. See <https://github.com/unicode-org/icu4x/issues/4930>",
+                    "({}) Found year {monotonic_year} AH with length {}. See <https://github.com/unicode-org/icu4x/issues/4930>",
                     self.debug_name(),
                     next_start_day - start_day
                 );
@@ -152,7 +155,7 @@ impl HijriSighting for AstronomicalSimulation {
             other => {
                 debug_assert!(
                     !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&start_day),
-                    "({}) Found year {year} AH with length {}!",
+                    "({}) Found year {monotonic_year} AH with length {}!",
                     self.debug_name(),
                     other
                 )
@@ -164,7 +167,7 @@ impl HijriSighting for AstronomicalSimulation {
             let mut month_lengths = core::array::from_fn(|month_idx| {
                 let days_in_month =
                     calendrical_calculations::islamic::observational_islamic_month_days(
-                        year,
+                        monotonic_year,
                         month_idx as u8 + 1,
                         location,
                     );
@@ -173,7 +176,7 @@ impl HijriSighting for AstronomicalSimulation {
                     30 => true,
                     31 => {
                         icu_provider::log::trace!(
-                            "({}) Found year {year} AH with month length {days_in_month} for month {}.",
+                            "({}) Found year {monotonic_year} AH with month length {days_in_month} for month {}.",
                             self.debug_name(),
                             month_idx + 1
                         );
@@ -183,7 +186,7 @@ impl HijriSighting for AstronomicalSimulation {
                     _ => {
                         debug_assert!(
                             !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&start_day),
-                            "({}) Found year {year} AH with month length {days_in_month} for month {}!",
+                            "({}) Found year {monotonic_year} AH with month length {days_in_month} for month {}!",
                             self.debug_name(),
                             month_idx + 1
                         );
@@ -197,7 +200,7 @@ impl HijriSighting for AstronomicalSimulation {
             if excess_days != 0 {
                 debug_assert!(
                     excess_days == 1 || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&start_day),
-                    "({}) Found year {year} AH with more than one excess day!",
+                    "({}) Found year {monotonic_year} AH with more than one excess day!",
                     self.debug_name()
                 );
                 if let Some(l) = month_lengths.iter_mut().find(|l| !(**l)) {
@@ -209,7 +212,7 @@ impl HijriSighting for AstronomicalSimulation {
         HijriYearInfo {
             month_lengths,
             start_day,
-            value: year,
+            monotonic_year,
         }
     }
 }
@@ -232,18 +235,18 @@ impl HijriSighting for UmmAlQura {
         "Hijri (Umm al-Qura)"
     }
 
-    fn year_info(&self, year: i32) -> HijriYearInfo {
-        if let Some(&packed) = usize::try_from(year - ummalqura_data::STARTING_YEAR)
+    fn year_info(&self, monotonic_year: i32) -> HijriYearInfo {
+        if let Some(&packed) = usize::try_from(monotonic_year - ummalqura_data::STARTING_YEAR)
             .ok()
             .and_then(|i| ummalqura_data::DATA.get(i))
         {
-            HijriYearInfo::unpack(year, packed)
+            HijriYearInfo::unpack(monotonic_year, packed)
         } else {
             TabularAlgorithm {
                 leap_years: HijriTabularLeapYears::TypeII,
                 epoch: HijriTabularEpoch::Friday,
             }
-            .year_info(year)
+            .year_info(monotonic_year)
         }
     }
 }
@@ -283,9 +286,9 @@ impl HijriSighting for TabularAlgorithm {
         }
     }
 
-    fn year_info(&self, year: i32) -> HijriYearInfo {
+    fn year_info(&self, monotonic_year: i32) -> HijriYearInfo {
         let is_leap = match self.leap_years {
-            HijriTabularLeapYears::TypeII => (14 + 11 * year).rem_euclid(30) < 11,
+            HijriTabularLeapYears::TypeII => (14 + 11 * monotonic_year).rem_euclid(30) < 11,
         };
 
         HijriYearInfo {
@@ -293,12 +296,12 @@ impl HijriSighting for TabularAlgorithm {
                 true, false, true, false, true, false, true, false, true, false, true, is_leap,
             ],
             start_day: calendrical_calculations::islamic::fixed_from_tabular_islamic(
-                year,
+                monotonic_year,
                 1,
                 1,
                 self.epoch.rata_die(),
             ),
-            value: year,
+            monotonic_year,
         }
     }
 }
@@ -408,12 +411,12 @@ pub struct HijriYearInfo {
     /// The first day of the year.
     pub start_day: RataDie,
     /// The year number.
-    pub value: i32,
+    pub monotonic_year: i32,
 }
 
 impl From<HijriYearInfo> for i32 {
     fn from(value: HijriYearInfo) -> Self {
-        value.value
+        value.monotonic_year
     }
 }
 
@@ -427,7 +430,7 @@ impl HijriYearInfo {
         HijriYearInfo {
             month_lengths,
             start_day,
-            value: monotonic_year,
+            monotonic_year,
         }
     }
 
@@ -675,8 +678,8 @@ impl<S: HijriSighting> Calendar for Hijri<S> {
 }
 
 impl<S: HijriSighting> PrecomputedDataSource<HijriYearInfo> for Hijri<S> {
-    fn load_or_compute_info(&self, year: i32) -> HijriYearInfo {
-        self.0.year_info(year)
+    fn load_or_compute_info(&self, monotonic_year: i32) -> HijriYearInfo {
+        self.0.year_info(monotonic_year)
     }
 }
 
@@ -1599,7 +1602,7 @@ mod test {
             .unwrap();
         assert_eq!(dt.0.day, 1);
         assert_eq!(dt.0.month, 1);
-        assert_eq!(dt.0.year.value, -6823);
+        assert_eq!(dt.0.year.monotonic_year, -6823);
     }
 
     #[test]
