@@ -699,12 +699,6 @@ impl_symbols_datagen!(
 
 // Months
 impl_symbols_datagen!(
-    DatetimeNamesMonthBuddhistV1,
-    DatagenCalendar::Buddhist,
-    NORMAL_KEY_LENGTHS,
-    months_convert
-);
-impl_symbols_datagen!(
     DatetimeNamesMonthChineseV1,
     DatagenCalendar::Chinese,
     NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
@@ -753,26 +747,8 @@ impl_symbols_datagen!(
     months_convert
 );
 impl_symbols_datagen!(
-    DatetimeNamesMonthJapaneseV1,
-    DatagenCalendar::JapaneseModern,
-    NORMAL_KEY_LENGTHS,
-    months_convert
-);
-impl_symbols_datagen!(
-    DatetimeNamesMonthJapanextV1,
-    DatagenCalendar::JapaneseExtended,
-    NORMAL_KEY_LENGTHS,
-    months_convert
-);
-impl_symbols_datagen!(
     DatetimeNamesMonthPersianV1,
     DatagenCalendar::Persian,
-    NORMAL_KEY_LENGTHS,
-    months_convert
-);
-impl_symbols_datagen!(
-    DatetimeNamesMonthRocV1,
-    DatagenCalendar::Roc,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
@@ -787,3 +763,32 @@ impl_pattern_datagen!(
     GLUE_PATTERN_KEY_LENGTHS,
     datetimepattern_convert
 );
+
+#[test]
+fn buddhist_japanese_roc_use_gregorian_months() {
+    // https://www.unicode.org/reports/tr35/tr35-dates.html#Calendar_Elements
+
+    let provider = crate::SourceDataProvider::new_testing();
+    let locale = icu::locale::locale!("en").into();
+
+    let buddhist = &provider
+        .load_calendar_dates(&locale, DatagenCalendar::Buddhist)
+        .unwrap()
+        .months;
+    let gregorian = &provider
+        .load_calendar_dates(&locale, DatagenCalendar::Gregorian)
+        .unwrap()
+        .months;
+    let japanese = &provider
+        .load_calendar_dates(&locale, DatagenCalendar::JapaneseModern)
+        .unwrap()
+        .months;
+    let roc = &provider
+        .load_calendar_dates(&locale, DatagenCalendar::Roc)
+        .unwrap()
+        .months;
+
+    assert_eq!(buddhist, gregorian);
+    assert_eq!(japanese, gregorian);
+    assert_eq!(roc, gregorian);
+}
