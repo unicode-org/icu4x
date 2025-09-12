@@ -18,7 +18,10 @@
 
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::error::{range_check, DateError};
+use crate::calendar_arithmetic::{CalendarNonLunisolar, CalendarWithEras};
+use crate::error::DateError;
+use crate::options::{DateFromFieldsOptions, Overflow};
+use crate::types::DateFields;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
@@ -82,26 +85,38 @@ impl CalendarArithmetic for Julian {
     }
 }
 
+impl CalendarWithEras for Julian {
+    #[inline]
+    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
+        match era {
+            "ad" | "ce" => Ok(era_year),
+            "bc" | "bce" => Ok(1 - era_year),
+            _ => Err(DateError::UnknownEra),
+        }
+    }
+}
+
+impl CalendarNonLunisolar for Julian {
+    #[inline]
+    fn fixed_monotonic_reference_year(&self) -> i32 {
+        todo!()
+    }
+}
+
 impl crate::cal::scaffold::UnstableSealed for Julian {}
 impl Calendar for Julian {
     type DateInner = JulianDateInner;
     type Year = types::EraYear;
 
-    fn from_codes(
+    fn from_fields(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
-        day: u8,
+        fields: DateFields,
+        options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let year = match era {
-            Some("ce" | "ad") => range_check(year, "year", 1..)?,
-            None => year,
-            Some("bce" | "bc") => 1 - range_check(year, "year", 1..)?,
-            Some(_) => return Err(DateError::UnknownEra),
-        };
-
-        ArithmeticDate::new_from_codes(self, year, month_code, day).map(JulianDateInner)
+        let (year, month, day) = fields.get_non_lunisolar_ordinals(self)?;
+        ArithmeticDate::new_from_ordinals(year, month, day, options.overflow())
+            .map(JulianDateInner)
+            .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -231,7 +246,7 @@ impl Date<Julian> {
     /// assert_eq!(date_julian.day_of_month().0, 20);
     /// ```
     pub fn try_new_julian(year: i32, month: u8, day: u8) -> Result<Date<Julian>, RangeError> {
-        ArithmeticDate::new_from_ordinals(year, month, day)
+        ArithmeticDate::new_from_ordinals(year, month, day, Overflow::Reject)
             .map(JulianDateInner)
             .map(|inner| Date::from_raw(inner, Julian))
     }

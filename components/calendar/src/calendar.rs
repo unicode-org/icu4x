@@ -6,6 +6,7 @@ use calendrical_calculations::rata_die::RataDie;
 
 use crate::cal::iso::IsoDateInner;
 use crate::error::DateError;
+use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::{types, DateDuration, DateDurationUnit};
 use core::fmt;
 
@@ -40,6 +41,30 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
+    ) -> Result<Self::DateInner, DateError> {
+        let mut fields = types::DateFields::default();
+        if era.is_some() {
+            fields.era = era;
+            fields.era_year = Some(year);
+        } else {
+            fields.monotonic_year = Some(year);
+        }
+        fields.month_code = Some(month_code);
+        // TODO(review): Previously a day number 0 was a range error; now it
+        // defaults to 1. Is that a problem?
+        fields.day = core::num::NonZeroU8::new(day);
+        let options = DateFromFieldsOptions {
+            overflow: Some(Overflow::Reject),
+        };
+        self.from_fields(fields, options)
+    }
+
+    /// Construct a date from a bag of date fields.
+    #[expect(clippy::wrong_self_convention)]
+    fn from_fields(
+        &self,
+        fields: types::DateFields,
+        options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError>;
 
     /// Construct the date from an ISO date

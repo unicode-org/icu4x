@@ -12,7 +12,8 @@ use crate::cal::{
     Iso, Japanese, JapaneseExtended, Persian, Roc,
 };
 use crate::error::DateError;
-use crate::types::YearInfo;
+use crate::options::DateFromFieldsOptions;
+use crate::types::{DateFields, YearInfo};
 use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, Ref};
 
 use crate::preferences::{CalendarAlgorithm, HijriCalendarAlgorithm};
@@ -223,14 +224,12 @@ impl Calendar for AnyCalendar {
     type DateInner = AnyDateInner;
     type Year = YearInfo;
 
-    fn from_codes(
+    fn from_fields(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
-        day: u8,
+        fields: DateFields,
+        options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        Ok(match_cal!(match self: (c) => c.from_codes(era, year, month_code, day)?))
+        Ok(match_cal!(match self: (c) => c.from_fields(fields, options)?))
     }
 
     fn from_iso(&self, iso: IsoDateInner) -> AnyDateInner {
