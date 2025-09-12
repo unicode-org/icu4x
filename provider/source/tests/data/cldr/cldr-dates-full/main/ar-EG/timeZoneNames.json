@@ -10,6 +10,7 @@
           "hourFormat": "+HH:mm;-HH:mm",
           "gmtFormat": "غرينتش{0}",
           "gmtZeroFormat": "غرينتش",
+          "gmtUnknownFormat": "غرينتش+?",
           "regionFormat": "توقيت {0}",
           "regionFormat-type-daylight": "توقيت {0} الصيفي",
           "regionFormat-type-standard": "توقيت {0} الرسمي",
@@ -57,10 +58,6 @@
                 "exemplarCity": "غوام"
               },
               "Enderbury": {
-                "_type": "zone",
-                "exemplarCity": "اندربيرج"
-              },
-              "Kanton": {
                 "_type": "zone",
                 "exemplarCity": "كانتون"
               },
@@ -1001,6 +998,10 @@
                 "_type": "zone",
                 "exemplarCity": "سانت جونس"
               },
+              "Coyhaique": {
+                "_type": "zone",
+                "exemplarCity": "كويهايكيو"
+              },
               "Punta_Arenas": {
                 "_type": "zone",
                 "exemplarCity": "بونتا أريناز"
@@ -1760,9 +1761,7 @@
             },
             "Africa_Western": {
               "long": {
-                "generic": "توقيت غرب أفريقيا",
-                "standard": "توقيت غرب أفريقيا الرسمي",
-                "daylight": "توقيت غرب أفريقيا الصيفي"
+                "standard": "توقيت غرب أفريقيا"
               }
             },
             "Alaska": {
@@ -2117,14 +2116,16 @@
             "Gulf": {
               "long": {
                 "standard": "توقيت الخليج"
-              },
-              "short": {
-                "standard": "GST"
               }
             },
             "Guyana": {
               "long": {
                 "standard": "توقيت غيانا"
+              }
+            },
+            "Hawaii": {
+              "long": {
+                "standard": "توقيت هاواي ألوتيان الرسمي"
               }
             },
             "Hawaii_Aleutian": {

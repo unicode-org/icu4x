@@ -22,7 +22,10 @@
     "zh-Hans": "chinois simplifié",
     "zh-Hant": "chinois traditionnel"
   },
-  "short_names": {},
+  "short_names": {
+    "en-GB": "anglais britannique",
+    "en-US": "anglais américain"
+  },
   "long_names": {
     "zh-Hans": "mandarin simplifié",
     "zh-Hant": "mandarin traditionnel"
