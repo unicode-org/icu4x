@@ -4,10 +4,9 @@
 
 //! Types for individual calendars
 pub(crate) mod buddhist;
-pub(crate) mod chinese;
-pub(crate) mod chinese_based;
+#[path = "chinese.rs"]
+pub(crate) mod chinese_internal;
 pub(crate) mod coptic;
-pub(crate) mod dangi;
 pub(crate) mod ethiopian;
 pub(crate) mod gregorian;
 pub(crate) mod hebrew;
@@ -21,9 +20,12 @@ pub(crate) mod persian;
 pub(crate) mod roc;
 
 pub use buddhist::Buddhist;
-pub use chinese::Chinese;
+pub use chinese_internal::LunarChinese;
+/// Customizations for the [`LunarChinese`] calendar.
+pub mod chinese {
+    pub use super::chinese_internal::{China, Dangi, LunarChineseYearData, Rules};
+}
 pub use coptic::Coptic;
-pub use dangi::Dangi;
 pub use ethiopian::{Ethiopian, EthiopianEraStyle};
 pub use gregorian::Gregorian;
 pub use hebrew::Hebrew;
@@ -56,6 +58,12 @@ pub type HijriUmmAlQura = Hijri<hijri::UmmAlQura>;
 /// Deprecated
 #[deprecated]
 pub type HijriTabular = Hijri<hijri::TabularAlgorithm>;
+/// Deprecated
+#[deprecated]
+pub type Dangi = LunarChinese<chinese::Dangi>;
+/// Deprecated
+#[deprecated]
+pub type Chinese = LunarChinese<chinese::China>;
 
 pub use crate::any_calendar::{AnyCalendar, AnyCalendarKind};
 
