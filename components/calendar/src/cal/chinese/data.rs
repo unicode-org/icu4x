@@ -216,3 +216,79 @@ pub const DATA: &[PackedChineseBasedYearInfo] = {
         PackedChineseBasedYearInfo::new(2099, [l, l, s, l, l, s, s, l, s, s, l, s, l], Some(3), iso(2099, 1, 21)),
     ]
 };
+
+#[test]
+#[ignore] // slow, network
+fn test_against_hong_kong_observatory_data() {
+    use crate::{
+        cal::{Chinese, Gregorian},
+        types::MonthCode,
+        Date,
+    };
+
+    let mut related_iso = 1900;
+    let mut lunar_month = MonthCode::new_normal(11).unwrap();
+
+    for year in 1901..=2100 {
+        println!("Validating year {year}...");
+
+        for line in ureq::get(&format!(
+            "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T{year}e.txt"
+        ))
+        .call()
+        .unwrap()
+        .body_mut()
+        .read_to_string()
+        .unwrap()
+        .split('\n')
+        {
+            if !line.starts_with(['1', '2']) {
+                // comments or blank lines
+                continue;
+            }
+
+            let mut fields = line.split_ascii_whitespace();
+
+            let mut gregorian = fields.next().unwrap().split('/');
+            let gregorian = Date::try_new_gregorian(
+                gregorian.next().unwrap().parse().unwrap(),
+                gregorian.next().unwrap().parse().unwrap(),
+                gregorian.next().unwrap().parse().unwrap(),
+            )
+            .unwrap();
+
+            let day_or_lunar_month = fields.next().unwrap();
+
+            let lunar_day = if fields.next().is_some_and(|s| s.contains("Lunar")) {
+                let new_lunar_month = day_or_lunar_month
+                    // 1st, 2nd, 3rd, nth
+                    .split_once(['s', 'n', 'r', 't'])
+                    .unwrap()
+                    .0
+                    .parse()
+                    .unwrap();
+                if new_lunar_month == lunar_month.parsed().unwrap().0 {
+                    lunar_month = MonthCode::new_leap(new_lunar_month).unwrap();
+                } else {
+                    lunar_month = MonthCode::new_normal(new_lunar_month).unwrap();
+                }
+                if new_lunar_month == 1 {
+                    related_iso += 1;
+                }
+                1
+            } else {
+                day_or_lunar_month.parse().unwrap()
+            };
+
+            let chinese =
+                Date::try_new_from_codes(None, related_iso, lunar_month, lunar_day, Chinese::new())
+                    .unwrap();
+
+            assert_eq!(
+                gregorian,
+                chinese.to_calendar(Gregorian),
+                "{line}, {chinese:?}"
+            );
+        }
+    }
+}

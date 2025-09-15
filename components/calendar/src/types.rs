@@ -184,6 +184,20 @@ impl MonthCode {
         let bytes = [b'M', b'0' + tens, b'0' + ones, 0];
         Some(MonthCode(TinyAsciiStr::try_from_raw(bytes).ok()?))
     }
+
+    /// Construct a "leap" month code given a number ("MxxL").
+    ///
+    /// Returns an error for months greater than 99
+    pub fn new_leap(number: u8) -> Option<Self> {
+        let tens = number / 10;
+        let ones = number % 10;
+        if tens > 9 {
+            return None;
+        }
+
+        let bytes = [b'M', b'0' + tens, b'0' + ones, b'L'];
+        Some(MonthCode(TinyAsciiStr::try_from_raw(bytes).ok()?))
+    }
 }
 
 #[test]
