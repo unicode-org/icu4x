@@ -663,15 +663,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "deduplicating_array"
-version = "0.1.8"
-dependencies = [
- "postcard",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "depcheck"
 version = "0.0.0"
 
@@ -4012,7 +4003,7 @@ dependencies = [
 
 [[package]]
 name = "zoneinfo64"
-version = "0.2.0-dev"
+version = "0.2.0"
 dependencies = [
  "calendrical_calculations",
  "chrono",

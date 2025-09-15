@@ -132,7 +132,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
                 CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Rgsa)) => {
                     assert_fixture_element(
                         prefs,
-                        HijriSimulated::new_mecca_always_calculating(),
+                        HijriSimulated::new_mecca(),
                         input,
                         &expected,
                         field_set,

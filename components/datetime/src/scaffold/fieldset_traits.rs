@@ -7,7 +7,7 @@ use crate::{
     scaffold::*,
 };
 use icu_calendar::{
-    provider::{CalendarChineseV1, CalendarDangiV1, CalendarJapaneseModernV1},
+    provider::CalendarJapaneseModernV1,
     types::{DayOfMonth, DayOfYear, MonthInfo, RataDie, Weekday, YearInfo},
 };
 use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV1};
@@ -500,9 +500,7 @@ impl<T> AllFixedCalendarExternalDataMarkers for T where
 /// for datetime formatting with any calendar.
 // This trait is implicitly sealed due to sealed supertraits
 pub trait AllAnyCalendarExternalDataMarkers:
-    DataProvider<CalendarChineseV1>
-    + DataProvider<CalendarDangiV1>
-    + DataProvider<CalendarJapaneseModernV1>
+    DataProvider<CalendarJapaneseModernV1>
     + DataProvider<DecimalSymbolsV1>
     + DataProvider<DecimalDigitsV1>
 {
@@ -510,8 +508,6 @@ pub trait AllAnyCalendarExternalDataMarkers:
 
 impl<T> AllAnyCalendarExternalDataMarkers for T where
     T: ?Sized
-        + DataProvider<CalendarChineseV1>
-        + DataProvider<CalendarDangiV1>
         + DataProvider<CalendarJapaneseModernV1>
         + DataProvider<DecimalSymbolsV1>
         + DataProvider<DecimalDigitsV1>

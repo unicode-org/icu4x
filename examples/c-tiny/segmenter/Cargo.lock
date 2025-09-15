@@ -4,9 +4,8 @@ version = 3
 
 [[package]]
 name = "diplomat"
-version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ea1fa372cd3d71ab28ee5d1176be9e93eaed0eba94a3498d12b8113109c4d313"
+version = "0.12.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=35e06283521e5630689b0900057ebe66afec3dfb#35e06283521e5630689b0900057ebe66afec3dfb"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -16,15 +15,13 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5ebd68bdec9f1f4e625f207e3179c0687e7c73bad578ec37df48a23a414da8d4"
+version = "0.12.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=35e06283521e5630689b0900057ebe66afec3dfb#35e06283521e5630689b0900057ebe66afec3dfb"
 
 [[package]]
 name = "diplomat_core"
-version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f8372a0961d18867e19c8cc0a2afb3ad46d5c5bd5e30b2c71d4edc788c93bbb8"
+version = "0.12.1"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=35e06283521e5630689b0900057ebe66afec3dfb#35e06283521e5630689b0900057ebe66afec3dfb"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -47,7 +44,7 @@ dependencies = [
 
 [[package]]
 name = "icu_capi"
-version = "2.0.0"
+version = "2.0.2"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -285,7 +282,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.11.2"
+version = "0.11.4"
 dependencies = [
  "yoke",
  "zerofrom",
@@ -318,10 +315,6 @@ name = "databake-derive"
 version = "0.2.0"
 
 [[patch.unused]]
-name = "deduplicating_array"
-version = "0.1.8"
-
-[[patch.unused]]
 name = "fixed_decimal"
 version = "0.7.0"
 
@@ -343,7 +336,7 @@ version = "0.0.0"
 
 [[patch.unused]]
 name = "icu_calendar"
-version = "2.0.0"
+version = "2.0.3"
 
 [[patch.unused]]
 name = "icu_calendar_data"
@@ -363,11 +356,11 @@ version = "0.5.0"
 
 [[patch.unused]]
 name = "icu_collator"
-version = "2.0.0"
+version = "2.0.1"
 
 [[patch.unused]]
 name = "icu_collator_data"
-version = "2.0.0"
+version = "2.0.1"
 
 [[patch.unused]]
 name = "icu_datetime"
@@ -375,7 +368,7 @@ version = "2.0.0"
 
 [[patch.unused]]
 name = "icu_datetime_data"
-version = "2.0.0"
+version = "2.0.2"
 
 [[patch.unused]]
 name = "icu_decimal"
@@ -387,7 +380,7 @@ version = "2.0.0"
 
 [[patch.unused]]
 name = "icu_experimental"
-version = "0.3.0"
+version = "0.4.0-dev.1"
 
 [[patch.unused]]
 name = "icu_experimental_data"
@@ -399,7 +392,7 @@ version = "2.0.0"
 
 [[patch.unused]]
 name = "icu_harfbuzz"
-version = "0.2.0"
+version = "0.3.0"
 
 [[patch.unused]]
 name = "icu_list"
@@ -435,15 +428,15 @@ version = "2.0.0"
 
 [[patch.unused]]
 name = "icu_properties"
-version = "2.0.0"
+version = "2.0.1"
 
 [[patch.unused]]
 name = "icu_properties_data"
-version = "2.0.0"
+version = "2.0.1"
 
 [[patch.unused]]
 name = "icu_provider_baked"
-version = "2.0.0"
+version = "2.0.1"
 
 [[patch.unused]]
 name = "icu_provider_blob"
@@ -463,7 +456,7 @@ version = "2.0.0"
 
 [[patch.unused]]
 name = "icu_provider_source"
-version = "2.0.0"
+version = "2.0.2"
 
 [[patch.unused]]
 name = "icu_segmenter"
@@ -479,11 +472,11 @@ version = "2.0.0"
 
 [[patch.unused]]
 name = "icu_time_data"
-version = "2.0.0"
+version = "2.0.2"
 
 [[patch.unused]]
 name = "ixdtf"
-version = "0.5.0"
+version = "0.6.3"
 
 [[patch.unused]]
 name = "tzif"
