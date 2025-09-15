@@ -384,17 +384,17 @@ fn test_icu4c_agreement() {
                     + year_start_estimate_fix;
                 (
                     1300 + years_since_1300 as i32,
-                    (ISLAMIC_EPOCH_FRIDAY + year_start, month_lengths),
+                    PackedHijriYearInfo::new(
+                        1300 + years_since_1300 as i32,
+                        month_lengths,
+                        ISLAMIC_EPOCH_FRIDAY + year_start,
+                    ),
                 )
             },
         )
         .collect::<Vec<_>>();
 
-    let icu4x = DATA
-        .iter()
-        .zip(1300..=1600)
-        .map(|(&p, y)| (y, p.unpack(y)))
-        .collect::<Vec<_>>();
+    let icu4x = (1300..=1600).zip(DATA.iter().copied()).collect::<Vec<_>>();
 
     assert_eq!(icu4x, icu4c);
 }

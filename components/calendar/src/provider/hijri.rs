@@ -48,12 +48,20 @@ impl PackedHijriYearInfo {
         let start_offset = start_day.since(Self::mean_synodic_start_day(monotonic_year));
 
         debug_assert!(
-            -8 < start_offset && start_offset < 8,
+            -8 < start_offset && start_offset < 8
+                || calendrical_calculations::islamic::WELL_BEHAVED_ASTRONOMICAL_RANGE
+                    .start
+                    .to_i64_date()
+                    > start_day.to_i64_date()
+                || calendrical_calculations::islamic::WELL_BEHAVED_ASTRONOMICAL_RANGE
+                    .end
+                    .to_i64_date()
+                    < start_day.to_i64_date(),
             "Year offset too big to store"
         );
-        let start_offset = start_offset as i8;
+        let start_offset = start_offset as i8 & 0b1000_0111u8 as i8;
 
-        let mut all = 0u16; // last byte unused
+        let mut all = 0u16;
 
         let mut i = 0;
         while i < 12 {
@@ -71,17 +79,32 @@ impl PackedHijriYearInfo {
         Self(all)
     }
 
-    pub(crate) fn unpack(self, monotonic_year: i32) -> (RataDie, [bool; 12]) {
-        let month_lengths = core::array::from_fn(|i| self.0 & (1 << (i as u8) as u16) != 0);
+    pub(crate) fn start_day(self, monotonic_year: i32) -> RataDie {
         let start_offset = if (self.0 & 0b1_0000_0000_0000) != 0 {
             -((self.0 >> 13) as i64)
         } else {
             (self.0 >> 13) as i64
         };
-        (
-            Self::mean_synodic_start_day(monotonic_year) + start_offset,
-            month_lengths,
-        )
+        Self::mean_synodic_start_day(monotonic_year) + start_offset
+    }
+
+    pub(crate) fn month_has_30_days(self, month: u8) -> bool {
+        self.0 & (1 << (month - 1) as u16) != 0
+    }
+
+    pub(crate) fn is_leap(self) -> bool {
+        (self.0 & ((1 << 12) - 1)).count_ones() == 7
+    }
+
+    pub(crate) fn last_day_of_month(self, month: u8) -> u16 {
+        // month is 1-indexed, so `29 * month` includes the current month
+        let mut prev_month_lengths = 29 * month as u16;
+        // month is 1-indexed, so `1 << month` is a mask with all zeroes except
+        // for a 1 at the bit index at the next month. Subtracting 1 from it gets us
+        // a bitmask for all months up to now
+        let long_month_bits = self.0 & ((1 << month as u16) - 1);
+        prev_month_lengths += long_month_bits.count_ones().try_into().unwrap_or(0);
+        prev_month_lengths
     }
 
     const fn mean_synodic_start_day(monotonic_year: i32) -> RataDie {
@@ -106,11 +129,12 @@ impl AsULE for PackedHijriYearInfo {
 
 #[test]
 fn test_hijri_packed_roundtrip() {
-    fn single_roundtrip(month_lengths: [bool; 12], year_start: RataDie) {
-        let packed = PackedHijriYearInfo::new(1600, month_lengths, year_start);
-        let (year_start2, month_lengths2) = packed.unpack(1600);
-        assert_eq!(month_lengths, month_lengths2, "Month lengths must match for testcase {month_lengths:?} / {year_start:?}, with packed repr: {packed:?}");
-        assert_eq!(year_start, year_start2, "Month lengths must match for testcase {month_lengths:?} / {year_start:?}, with packed repr: {packed:?}");
+    fn single_roundtrip(month_lengths: [bool; 12], start_day: RataDie) {
+        let packed = PackedHijriYearInfo::new(1600, month_lengths, start_day);
+        for i in 0..12 {
+            assert_eq!(packed.month_has_30_days(i + 1), month_lengths[i as usize]);
+        }
+        assert_eq!(packed.start_day(1600), start_day);
     }
 
     let l = true;
