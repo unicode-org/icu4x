@@ -136,7 +136,11 @@ impl AsULE for VariantOffsetsWithMetazoneMembershipKind {
     fn from_unaligned([std, dst]: Self::ULE) -> Self {
         Self {
             offsets: VariantOffsets {
-                standard: UtcOffset::from_seconds_unchecked(
+                standard: UtcOffset::from_seconds_unchecked(if std == i8::MAX {
+                    // Special bit pattern for value that appears in TZDB but is not
+                    // representable by our schema.
+                    -2670
+                } else {
                     std as i32 * SECONDS_TO_EIGHTS_OF_HOURS
                         + match std % 8 {
                             // 7.5, 37.5, representing 10, 40
@@ -147,8 +151,8 @@ impl AsULE for VariantOffsetsWithMetazoneMembershipKind {
                             -3 | -7 => 150,
                             // 0, 15, 30, 45
                             _ => 0,
-                        },
-                ),
+                        }
+                }),
                 daylight: match dst as u8 & 0b0011_1111 {
                     0 => None,
                     1 => Some(0),
@@ -179,9 +183,13 @@ impl AsULE for VariantOffsetsWithMetazoneMembershipKind {
     }
 
     fn to_unaligned(self) -> Self::ULE {
+        let offset = self.offsets.standard.to_seconds();
         [
-            {
-                let offset = self.offsets.standard.to_seconds();
+            if offset == -2670 {
+                // Special bit pattern for value that appears in TZDB but is not
+                // representable by our schema.
+                i8::MAX
+            } else {
                 debug_assert_eq!(offset.abs() % 60, 0);
                 let scaled = match offset.abs() / 60 % 60 {
                     0 | 15 | 30 | 45 => offset / SECONDS_TO_EIGHTS_OF_HOURS,
@@ -198,7 +206,7 @@ impl AsULE for VariantOffsetsWithMetazoneMembershipKind {
                         offset / SECONDS_TO_EIGHTS_OF_HOURS
                     }
                 };
-                debug_assert!(i8::MIN as i32 <= scaled && scaled <= i8::MAX as i32);
+                debug_assert!(i8::MIN as i32 <= scaled && scaled < i8::MAX as i32);
                 scaled as i8
             },
             match self
@@ -292,21 +300,29 @@ impl serde::Serialize for VariantOffsets {
         S: serde::Serializer,
     {
         if serializer.is_human_readable() {
-            serializer.serialize_str(&if let Some(dst) = self.daylight {
-                alloc::format!(
-                    "{:+02}:{:02}/{:+02}:{:02}",
-                    self.standard.hours_part(),
-                    self.standard.minutes_part(),
+            use alloc::fmt::Write;
+            let mut r = alloc::format!(
+                "{:+02}:{:02}",
+                self.standard.hours_part(),
+                self.standard.minutes_part(),
+            );
+            if self.standard.seconds_part() != 0 {
+                let _infallible = write!(&mut r, ":{:02}", self.standard.seconds_part());
+            }
+            if let Some(dst) = self.daylight {
+                let _infallible = write!(
+                    &mut r,
+                    "/{:+02}:{:02}",
                     dst.hours_part(),
                     dst.minutes_part(),
-                )
-            } else {
-                alloc::format!(
-                    "{:+02}:{:02}",
-                    self.standard.hours_part(),
-                    self.standard.minutes_part(),
-                )
-            })
+                );
+
+                if dst.seconds_part() != 0 {
+                    let _infallible = write!(&mut r, ":{:02}", dst.seconds_part());
+                }
+            }
+
+            serializer.serialize_str(&r)
         } else {
             self.to_unaligned().serialize(serializer)
         }

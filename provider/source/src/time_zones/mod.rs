@@ -14,16 +14,16 @@ use icu::locale::subtags::region;
 use icu::time::provider::*;
 use icu::time::zone::UtcOffset;
 use icu::time::zone::VariantOffsets;
-use icu::time::zone::ZoneNameTimestamp;
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
-use icu_time::ZonedDateTime;
 use itertools::Itertools;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
 use std::sync::OnceLock;
 use twox_hash::XxHash64;
+
+pub(crate) type Timestamp = icu::time::ZonedDateTime<icu::calendar::Iso, UtcOffset>;
 
 mod convert;
 mod names;
@@ -41,7 +41,7 @@ pub(crate) struct Caches {
 
 #[derive(Debug)]
 struct MetazoneData {
-    periods: BTreeMap<TimeZone, Vec<(ZoneNameTimestamp, VariantOffsets, Option<MetazoneInfo>)>>,
+    periods: BTreeMap<TimeZone, Vec<(Timestamp, VariantOffsets, Option<MetazoneInfo>)>>,
     reverse: BTreeMap<(MetazoneId, MzMembership), Vec<TimeZone>>,
     ids: BTreeMap<String, MetazoneId>,
     checksum: u64,
@@ -104,7 +104,7 @@ impl SourceDataProvider {
                                 .collect::<Vec<_>>(),
                         )
                     })
-                    .collect::<BTreeMap<TimeZone, Vec<(ZoneNameTimestamp, Transition)>>>();
+                    .collect::<BTreeMap<TimeZone, Vec<(Timestamp, Transition)>>>();
 
                 let mut all_metazones = BTreeSet::new();
 
@@ -137,7 +137,7 @@ impl SourceDataProvider {
                                         period
                                             .uses_meta_zone
                                             .from
-                                            .unwrap_or(ZoneNameTimestamp::far_in_past()),
+                                            .unwrap_or(Timestamp::from_epoch_milliseconds_and_utc_offset(0, Default::default())),
                                         Some(&period.uses_meta_zone),
                                     )),
                                     // leave the metazone if there's a `to` date
@@ -165,11 +165,11 @@ impl SourceDataProvider {
 
                         (bcp47, periods)
                     })
-                    .collect::<BTreeMap<TimeZone, Vec<(ZoneNameTimestamp, Option<&UsesMetazone>)>>>();
+                    .collect::<BTreeMap<TimeZone, Vec<(Timestamp, Option<&UsesMetazone>)>>>();
 
                 let mut offsets_and_metazones = BTreeMap::<
                     TimeZone,
-                    Vec<(ZoneNameTimestamp, VariantOffsets, Option<&str>)>,
+                    Vec<(Timestamp, VariantOffsets, Option<&str>)>,
                 >::new();
 
                 for (&tz, offsets_vec) in &offsets {
@@ -180,7 +180,7 @@ impl SourceDataProvider {
                     let mut curr_mz = mzs.next_if(|&(s, _)| s == start).and_then(|(_, mz)| mz);
 
                     loop {
-                        let (mut std, daylight) = curr_mz.map(|mzi| {
+                        let (std, daylight) = curr_mz.map(|mzi| {
                                 let std_override = mzi.std_offset.as_ref().map(|s| UtcOffset::try_from_str(s).unwrap().to_seconds() as i64);
                                 let dst_override = mzi.dst_offset.as_ref().map(|s| UtcOffset::try_from_str(s).unwrap().to_seconds() as i64);
 
@@ -227,11 +227,6 @@ impl SourceDataProvider {
                                     (curr_offset.dst_offset_relative != 0).then_some(curr_offset.utc_offset + curr_offset.dst_offset_relative)
                                 )
                             });
-
-                        // Africa/Monrovia used -00:44:30 pre-1972. We cannot represent this, so we set it to -00:45
-                        if std == -2670 {
-                            std = -2700;
-                        };
 
                         let mut os = VariantOffsets::from_standard(UtcOffset::from_seconds_unchecked(std as i32));
                         os.daylight = daylight.map(|o| UtcOffset::from_seconds_unchecked(o as i32));
@@ -659,11 +654,9 @@ impl crate::source::Tzdb {
         let rearguard = self.rearguard.as_ref().map(|tzdb| tzdb.timespans(iana));
         let vanguard = self.vanguard.as_ref().map(|tzdb| tzdb.timespans(iana));
 
-        fn fixed_timespans_to_map(
-            set: FixedTimespanSet,
-        ) -> BTreeMap<ZoneNameTimestamp, FixedTimespan> {
+        fn fixed_timespans_to_map(set: FixedTimespanSet) -> BTreeMap<Timestamp, FixedTimespan> {
             Some((
-                ZoneNameTimestamp::far_in_past(),
+                Timestamp::from_epoch_milliseconds_and_utc_offset(0, Default::default()),
                 set.rest
                     .iter()
                     .filter(|&&(start, _)| start < 0)
@@ -679,11 +672,9 @@ impl crate::source::Tzdb {
                     .filter(|&(start, _)| start >= 0)
                     .map(move |(start, ts)| {
                         (
-                            ZoneNameTimestamp::from_zoned_date_time_iso(
-                                ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
-                                    start * 1000,
-                                    UtcOffset::zero(),
-                                ),
+                            Timestamp::from_epoch_milliseconds_and_utc_offset(
+                                start * 1000,
+                                UtcOffset::zero(),
                             ),
                             ts,
                         )
@@ -715,7 +706,7 @@ impl crate::source::Tzdb {
 
 #[derive(Clone)]
 struct Transition {
-    transition: ZoneNameTimestamp,
+    transition: Timestamp,
     utc_offset: i64,
     dst_offset_relative: i64,
     rearguard_agrees: Option<bool>,
@@ -731,15 +722,14 @@ impl Transition {
 
 impl std::fmt::Debug for Transition {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let zdt = self.transition.to_zoned_date_time_iso();
         write!(
             f,
             "{:04}-{:02}-{:02} {:02}:{:02}",
-            zdt.date.era_year().year,
-            zdt.date.month().ordinal,
-            zdt.date.day_of_month().0,
-            zdt.time.hour.number(),
-            zdt.time.minute.number()
+            self.transition.date.era_year().year,
+            self.transition.date.month().ordinal,
+            self.transition.date.day_of_month().0,
+            self.transition.time.hour.number(),
+            self.transition.time.minute.number()
         )?;
         write!(
             f,

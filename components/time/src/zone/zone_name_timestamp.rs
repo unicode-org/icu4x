@@ -55,8 +55,19 @@ use crate::{zone::UtcOffset, DateTime, ZonedDateTime};
 /// assert_writeable_eq!(name_2010, "Pacific Time");
 /// assert_writeable_eq!(name_2025, "Alaska Time");
 /// ```
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Copy, Clone, PartialEq, Eq)]
 pub struct ZoneNameTimestamp(u32);
+
+impl Ord for ZoneNameTimestamp {
+    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+        self.epoch_millis().cmp(&other.epoch_millis())
+    }
+}
+impl PartialOrd for ZoneNameTimestamp {
+    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
 
 impl ZoneNameTimestamp {
     /// Recovers the UTC datetime for this [`ZoneNameTimestamp`].
@@ -64,7 +75,7 @@ impl ZoneNameTimestamp {
     /// This will always return a [`ZonedDateTime`] with [`UtcOffset::zero()`]
     pub fn to_zoned_date_time_iso(self) -> ZonedDateTime<Iso, UtcOffset> {
         ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
-            self.0 as i64 * 15 * 60 * 1000,
+            self.epoch_millis(),
             UtcOffset::zero(),
         )
     }
@@ -103,11 +114,44 @@ impl ZoneNameTimestamp {
     /// assert_eq!(recovered_zoned_date_time.time.subsecond.number(), 0); // always zero
     /// ```
     pub fn from_zoned_date_time_iso(zoned_date_time: ZonedDateTime<Iso, UtcOffset>) -> Self {
-        let qh = zoned_date_time.to_epoch_milliseconds_utc() / 1000 / 60 / 15;
-        let qh_clamped = qh.clamp(Self::far_in_past().0 as i64, Self::far_in_future().0 as i64);
-        // Valid cast as the value is clamped to u32 values.
-        let qh_u32 = qh_clamped as u32;
-        Self(qh_u32)
+        let ms = zoned_date_time.to_epoch_milliseconds_utc();
+        Self(match ms {
+            // Special bit patterns for values that appear in TZDB but are not multiples of
+            // 15 minutes.
+            63593070000 => 0xFFFFF0,
+            307622400000 => 0xFFFFF1,
+            576041460000 => 0xFFFFF2,
+            576043260000 => 0xFFFFF3,
+            594180060000 => 0xFFFFF4,
+            607491060000 => 0xFFFFF5,
+            1601740860000 => 0xFFFFF6,
+            1633190460000 => 0xFFFFF7,
+            1664640060000 => 0xFFFFF8,
+            _ => {
+                let qh = zoned_date_time.to_epoch_milliseconds_utc() / 1000 / 60 / 15;
+                let qh_clamped =
+                    qh.clamp(Self::far_in_past().0 as i64, Self::far_in_future().0 as i64);
+                // Valid cast as the value is clamped to u32 values.
+                qh_clamped as u32
+            }
+        })
+    }
+
+    fn epoch_millis(self) -> i64 {
+        match self.0 {
+            // Special bit patterns for values that appear in TZDB but are not multiples of
+            // 15 minutes.
+            0xFFFFF0 => 63593070000,
+            0xFFFFF1 => 307622400000,
+            0xFFFFF2 => 576041460000,
+            0xFFFFF3 => 576043260000,
+            0xFFFFF4 => 594180060000,
+            0xFFFFF5 => 607491060000,
+            0xFFFFF6 => 1601740860000,
+            0xFFFFF7 => 1633190460000,
+            0xFFFFF8 => 1664640060000,
+            x => x as i64 * 15 * 60 * 1000,
+        }
     }
 
     /// Recovers the UTC datetime for this [`ZoneNameTimestamp`].
@@ -189,10 +233,14 @@ impl serde::Serialize for ZoneNameTimestamp {
             let day = date_time.date.day_of_month().0;
             let hour = date_time.time.hour.number();
             let minute = date_time.time.minute.number();
+            let second = date_time.time.second.number();
+            let mut s = alloc::format!("{year:04}-{month:02}-{day:02} {hour:02}:{minute:02}");
+            if second != 0 {
+                use alloc::fmt::Write;
+                let _infallible = write!(&mut s, ":{second:02}");
+            }
             // don't serialize the metadata for now
-            return serializer.serialize_str(&alloc::format!(
-                "{year:04}-{month:02}-{day:02} {hour:02}:{minute:02}"
-            ));
+            return serializer.serialize_str(&s);
         }
         serializer.serialize_u32(self.0)
     }

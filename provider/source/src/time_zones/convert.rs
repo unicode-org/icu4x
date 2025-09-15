@@ -387,8 +387,12 @@ impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
                 .into_keys()
                 .map(|ps| {
                     let convert = |&(t, os, mz)| {
+                        let t2 = ZoneNameTimestamp::from_zoned_date_time_iso(t);
+                        if t2.to_zoned_date_time_iso() != t {
+                            log::warn!("{t:?} does not round-trip through ZoneNameTimestamp");
+                        }
                         (
-                            Timestamp24(t),
+                            Timestamp24(t2),
                             offset_index[&pack_offsets_and_mzmsk(os, mz)],
                             NichedOption(mz.map(|i| i.id)),
                         )
