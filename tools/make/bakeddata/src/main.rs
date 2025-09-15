@@ -83,7 +83,9 @@ fn main() {
             .collect()
     };
 
-    let source = SourceDataProvider::new();
+    let source = SourceDataProvider::new()
+        .with_tzdb(Path::new("provider/source/tests/data/tzdb"))
+        .unwrap();
 
     let driver = ExportDriver::new(
         source

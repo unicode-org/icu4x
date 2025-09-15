@@ -73,8 +73,8 @@ hooks:
           ? const ToLinkHook(package)
           : const ToAppBundle(),
     );
-    output.addDependencies(buildMode.dependencies);
-    output.addDependency(input.packageRoot.resolve('pubspec.yaml'));
+    output.dependencies.addAll(buildMode.dependencies);
+    output.dependencies.add(input.packageRoot.resolve('pubspec.yaml'));
   });
 }
 
