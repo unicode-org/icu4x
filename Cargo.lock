@@ -1209,6 +1209,7 @@ dependencies = [
  "serde_json",
  "simple_logger",
  "tinystr",
+ "ureq",
  "writeable",
  "zerovec",
 ]
