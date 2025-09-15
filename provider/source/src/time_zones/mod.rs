@@ -19,6 +19,7 @@ use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
 use icu_time::ZonedDateTime;
 use itertools::Itertools;
+use litemap::LiteMap;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
@@ -661,7 +662,7 @@ impl crate::source::Tzdb {
 
         fn fixed_timespans_to_map(
             set: FixedTimespanSet,
-        ) -> BTreeMap<ZoneNameTimestamp, FixedTimespan> {
+        ) -> LiteMap<ZoneNameTimestamp, FixedTimespan> {
             Some((
                 ZoneNameTimestamp::far_in_past(),
                 set.rest
@@ -696,18 +697,35 @@ impl crate::source::Tzdb {
         let rearguard = rearguard.map(|set| set.map(fixed_timespans_to_map).unwrap_or_default());
         let vanguard = vanguard.map(|set| set.map(fixed_timespans_to_map).unwrap_or_default());
 
-        Some(main.into_iter().map(move |(transition, ts)| {
+        // We have to take the union of all transitions to properly calulcate whether
+        // main/rearguard/vanguard agree for a transition.
+        let all_transitions = main
+            .keys()
+            .chain(rearguard.iter().flat_map(|r| r.keys()))
+            .chain(vanguard.iter().flat_map(|v| v.keys()))
+            .copied()
+            .collect::<BTreeSet<_>>();
+
+        let get_transition = move |db: &LiteMap<ZoneNameTimestamp, FixedTimespan>, t| {
+            db.get_indexed(db.find_index(&t).unwrap_or_else(|e| e - 1))
+                .unwrap()
+                .1
+                .clone()
+        };
+
+        Some(all_transitions.into_iter().map(move |transition| {
+            let main = get_transition(&main, transition);
             Transition {
                 transition,
-                utc_offset: ts.utc_offset,
-                dst_offset_relative: ts.dst_offset,
+                utc_offset: main.utc_offset,
+                dst_offset_relative: main.dst_offset,
                 rearguard_agrees: rearguard
                     .as_ref()
-                    .map(|z| z.get(&transition).is_some_and(|rts| rts == &ts)),
+                    .map(|r| get_transition(r, transition) == main),
                 vanguard_agrees: vanguard
                     .as_ref()
-                    .map(|z| z.get(&transition).is_some_and(|rts| rts == &ts)),
-                name: ts.name,
+                    .map(|v| get_transition(v, transition) == main),
+                name: main.name,
             }
         }))
     }
