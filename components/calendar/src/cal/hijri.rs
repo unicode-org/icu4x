@@ -430,8 +430,8 @@ impl HijriYearData {
     /// Creates [`HijriYearData`] from the given parts.
     ///
     /// `start_day` is the date for the first day of the year, see [`Date::to_rata_die`]
-    /// to obtain a [`RataDie`] from a [`Date`] in an arbitrary calendar. 
-    /// 
+    /// to obtain a [`RataDie`] from a [`Date`] in an arbitrary calendar.
+    ///
     /// `month_lengths[n - 1]` is true if the nth month has 30 days, and false otherwise.
     /// Either 6 or 7 months should have 30 days.
     pub fn new(monotonic_year: i32, start_day: RataDie, month_lengths: [bool; 12]) -> Self {
