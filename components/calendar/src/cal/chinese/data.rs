@@ -292,3 +292,37 @@ fn test_against_hong_kong_observatory_data() {
         }
     }
 }
+
+#[test]
+fn test_against_calendrical_calculations() {
+    use calendrical_calculations::chinese_based::{Chinese, YearBounds};
+    for (i, data) in DATA.iter().enumerate() {
+        let year = STARTING_YEAR + i as i32;
+        if year < 1912 {
+            // `calendrical_calculations` implements the modern post-1912 algorithm, see
+            // https://ytliu.epizy.com/Shixian/Shixian_summary.html
+            continue;
+        }
+        let YearBounds {
+            new_year,
+            next_new_year,
+        } = calendrical_calculations::chinese_based::YearBounds::compute::<Chinese>(
+            calendrical_calculations::iso::const_fixed_from_iso(year, 7, 1),
+        );
+        let (month_lengths, leap_month) =
+            calendrical_calculations::chinese_based::month_structure_for_year::<Chinese>(
+                new_year,
+                next_new_year,
+            );
+
+        assert_eq!(data.leap_month(), leap_month);
+        assert_eq!(data.new_year(year), new_year);
+        for (m, l) in month_lengths.iter().enumerate() {
+            assert_eq!(
+                data.month_has_30_days(m as u8 + 1),
+                *l,
+                "{year}, {month_lengths:?}"
+            );
+        }
+    }
+}
