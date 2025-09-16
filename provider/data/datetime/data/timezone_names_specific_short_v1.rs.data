@@ -18,9 +18,9 @@
 #[macro_export]
 macro_rules! __impl_timezone_names_specific_short_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.82"]
+        #[clippy::msrv = "1.83"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.82"]
+        #[clippy::msrv = "1.83"]
         impl $provider {
             const DATA_TIMEZONE_NAMES_SPECIFIC_SHORT_V1: icu_provider::baked::zerotrie::Data<icu::datetime::provider::time_zones::TimezoneNamesSpecificShortV1> = {
                 const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1xabcdefghijklmnopqrstuvyz\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x0B\x19&0\x170>LSVjl|\x8F\x97\xCA\xD8\xDA\xF7\x08\x0C\x0E\x12\xC3frs\x01\x02\x80\x81\x82t\x83\xC4lnrs\x02\x03\x05o\x84\x85x\x85\x86\xC4ahsy\x01\x03\x04\x86r\x87\x88\x86\xC3aes\x01\x02\x89\x8Ab\x8A\xC5elnsu\x01\x02\xA7\xDB\x80\x89\x83-\xD201ABCEGHIKLMNRSTUZ\x03\x06\x0C\x0E\x14\x16(+79?V`brtv01\x8B50\x86\xC2EU\x01\x8C\x8DW\x8E\xC2AM\x01\x8F\x8ER\x8E\xC5BHMUY\x02\x03\x04\x06\x90\0\x8E\x8E\x90\x01\x90\x02K\x90\x03\xC3DEN\x02\x04\x90\x04\x90\x05\x90\x06E\x8E\xC2RS\x01\x8E\x8E\xC7GHOPUWY\x01\x02\x04\x05\x06\x07\x8E\x8B\x90\x03\x8B\x8E\x8E\x90\x07\xC3AGZ\x01\x02\x8E\x8E\x90\x08W\x8E\xC5DGLSZ\x01\x03\x04\x05\x8E\x90\t\x8E\x8E\x8EZ\x8EG\x8E\xC3AMW\x01\x02\x8E\x8E\x8E\x86-\xC84ABCEPUV\x04\x07\n\x12\x15\x18\x1F19\x90\nR\x90\x0BO\x90\x0C\xC2LO\x02\x90\r\x90\x0EC\x90\x0FE\x90\x10\xC2SY\x01\x87\x90\x11E\x90\x12\x90\x13\xC3fry\x07\x12-Adlm\x90\x14-\xC2CG\x03A\x90\x15F\x90\x16\x89\xC4adlu\x02\x04\x05\x90\x17\x90\x18\x86\x85\xC4irsu\x02\x03\x05\x90\x19\x86b\x8A\x86\xC2dt\x02\x90\x1A\x89a\x90\x1B\xC5gknou\x03\x05\x06\x08p\x90\x1C\x90\x1D\x85k\x85\x90\x1Ev\x89\xC5klrst\x01\x02\x03\x05\x89\x85\x85\x90\t\x86\xC3elo\x04\x0B-IN\x85\x90\x13-SR\x90\x1F\x90\x13\xC2mr\x02\x90 \x90!\xC3alt\x01\x02\x85\x89\x90\x1C-\xC7ACGMPST\x03\x06\t\x11\x14\x17O\x90\nV\x90\nW\x90\n\xC2OZ\x02\x90\n\x90\nT\x90\"T\x90\nL\x90\nu\x90\x10-\xC2BE\x03O\x90\x0CC\x90\x0Fo\x86\xC6cdkorv\x02\x04\x06\x08\x0F\x90#\x90$\x90%\x90&\x86-Latn\x86\x90'\xC2ae\x0C\x85-\xC2MS\x03Y\x90(G\x90(\x85nd\x90\ni\x87rl\x90\x1Ch-\xC2HS\x05ant\x90)G\x90(" };
@@ -667,7 +667,7 @@ macro_rules! __impl_timezone_names_specific_short_v1 {
                 unsafe { icu_provider::baked::zerotrie::Data::from_trie_and_values_unchecked(TRIE, VALUES) }
             };
         }
-        #[clippy::msrv = "1.82"]
+        #[clippy::msrv = "1.83"]
         impl icu_provider::DataProvider<icu::datetime::provider::time_zones::TimezoneNamesSpecificShortV1> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::time_zones::TimezoneNamesSpecificShortV1>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default().with_checksum(3469217558444165963u64);
@@ -693,7 +693,7 @@ macro_rules! __impl_timezone_names_specific_short_v1 {
     };
     ($ provider : ty , ITER) => {
         __impl_timezone_names_specific_short_v1!($provider);
-        #[clippy::msrv = "1.82"]
+        #[clippy::msrv = "1.83"]
         impl icu_provider::IterableDataProvider<icu::datetime::provider::time_zones::TimezoneNamesSpecificShortV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider::baked::DataStore::iter(&Self::DATA_TIMEZONE_NAMES_SPECIFIC_SHORT_V1).collect())
