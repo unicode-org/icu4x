@@ -11,7 +11,11 @@ install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-f
 install_crate_args = ["--version", "^1.10"]
 env = { RUSTFLAGS = "-Dwarnings",  "ICU4X_DATA_DIR" = "../stubdata" }
 command = "cargo"
-args = ["check-all-features", "--n-chunks", "3", "--chunk", "${@}"]
+args = ["check-all-features", "--n-chunks", "3", "--chunk", "${@}",
+    # Exclude internal tools (keep this list in sync with the one in ci-job-msrv-check)
+    "--workspace", "--exclude", "diplomat-gen", "--exclude", "codegen", "--exclude", "bakeddata",
+    "--exclude", "depcheck", "--exclude", "diplomat-coverage"
+]
 
 [tasks.check-all-features]
 description = "Build all permutations of all features"

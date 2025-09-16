@@ -62,7 +62,8 @@ env = { ICU4X_DATA_DIR = "../stubdata" }
 script_runner = "@duckscript"
 script = '''
 exec --fail-on-error rustup install 1.82 --profile minimal
-exec --fail-on-error cargo +1.82 check --all-targets --all-features
+# Exclude internal tools (keep this list in sync with the one in check-all-features-chunked)
+exec --fail-on-error cargo +1.82 check --all-targets --all-features --workspace --exclude diplomat-gen --exclude codegen --exclude bakeddata --exclude depcheck --exclude diplomat-coverage
 '''
 
 [tasks.ci-job-msrv-utils]
