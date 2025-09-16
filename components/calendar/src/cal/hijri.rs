@@ -21,7 +21,7 @@
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::calendar_arithmetic::{CalendarNonLunisolar, CalendarWithEras};
+use crate::calendar_arithmetic::{CalendarArithmeticConstruction};
 use crate::error::DateError;
 use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::provider::hijri::PackedHijriYearInfo;
@@ -376,7 +376,7 @@ impl CalendarArithmetic for HijriSimulated {
     }
 }
 
-impl CalendarWithEras for HijriSimulated {
+impl CalendarArithmeticConstruction forHijriSimulated {
     #[inline]
     fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
         match era {
@@ -662,7 +662,7 @@ impl CalendarArithmetic for HijriUmmAlQura {
     }
 }
 
-impl CalendarWithEras for HijriUmmAlQura {
+impl CalendarArithmeticConstruction forHijriUmmAlQura {
     #[inline]
     fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
         match era {
@@ -894,7 +894,7 @@ impl CalendarArithmetic for HijriTabular {
     }
 }
 
-impl CalendarWithEras for HijriTabular {
+impl CalendarArithmeticConstruction forHijriTabular {
     #[inline]
     fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
         match era {

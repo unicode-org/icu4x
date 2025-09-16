@@ -16,7 +16,7 @@
 //! assert_eq!(date_roc.day_of_month().0, 2);
 //! ```
 
-use crate::calendar_arithmetic::{CalendarNonLunisolar, CalendarWithEras};
+use crate::calendar_arithmetic::{CalendarArithmeticConstruction};
 use crate::options::DateFromFieldsOptions;
 use crate::types::DateFields;
 use crate::{
@@ -56,7 +56,7 @@ pub struct Roc;
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct RocDateInner(IsoDateInner);
 
-impl CalendarWithEras for Roc {
+impl CalendarArithmeticConstruction forRoc {
     #[inline]
     fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
         match era {

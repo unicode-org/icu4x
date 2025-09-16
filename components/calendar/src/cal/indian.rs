@@ -18,7 +18,7 @@
 
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::calendar_arithmetic::{CalendarNonLunisolar, CalendarWithEras};
+use crate::calendar_arithmetic::{CalendarArithmeticConstruction};
 use crate::error::DateError;
 use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::types::DateFields;
@@ -89,7 +89,7 @@ const DAY_OFFSET: u16 = 80;
 /// The Śaka era is 78 years behind Gregorian. This number should be added to Gregorian dates
 const YEAR_OFFSET: i32 = 78;
 
-impl CalendarWithEras for Indian {
+impl CalendarArithmeticConstruction forIndian {
     #[inline]
     fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
         match era {

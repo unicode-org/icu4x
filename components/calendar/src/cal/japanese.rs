@@ -22,7 +22,7 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::{CalendarNonLunisolar, CalendarWithEras};
+use crate::calendar_arithmetic::{CalendarArithmeticConstruction};
 use crate::error::{range_check, DateError};
 use crate::options::DateFromFieldsOptions;
 use crate::provider::{CalendarJapaneseExtendedV1, CalendarJapaneseModernV1, EraStartDate};
@@ -169,7 +169,7 @@ impl JapaneseExtended {
     pub(crate) const DEBUG_NAME: &'static str = "Japanese (historical era data)";
 }
 
-impl CalendarWithEras for Japanese {
+impl CalendarArithmeticConstruction forJapanese {
     #[inline]
     fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
         match era {

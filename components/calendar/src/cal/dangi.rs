@@ -21,7 +21,7 @@
 use crate::cal::chinese_based::{ChineseBasedPrecomputedData, ChineseBasedWithDataLoading};
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::calendar_arithmetic::{CalendarLunisolar, CalendarWithEras, PrecomputedDataSource};
+use crate::calendar_arithmetic::{CalendarArithmeticConstruction, PrecomputedDataSource};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
 use crate::provider::chinese_based::CalendarDangiV1;
@@ -149,7 +149,7 @@ impl Dangi {
     pub(crate) const DEBUG_NAME: &'static str = "Dangi";
 }
 
-impl CalendarWithEras for Dangi {
+impl CalendarArithmeticConstruction forDangi {
     #[inline]
     fn era_year_to_monotonic(&self, _era: &str, _era_year: i32) -> Result<i32, DateError> {
         // This calendar has no era codes

@@ -17,11 +17,11 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::calendar_arithmetic::{CalendarNonLunisolar, CalendarWithEras};
+use core::num::NonZeroU8;
+use crate::types::{DateFields, MonthCode};
+use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, CalendarArithmeticConstruction};
 use crate::error::DateError;
 use crate::options::{DateFromFieldsOptions, Overflow};
-use crate::types::DateFields;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
@@ -115,7 +115,7 @@ impl CalendarArithmetic for Ethiopian {
     }
 }
 
-impl CalendarWithEras for Ethiopian {
+impl CalendarArithmeticConstruction forEthiopian {
     #[inline]
     fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
         match (self.era_style(), era) {

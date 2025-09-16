@@ -16,7 +16,7 @@
 //! ```
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::calendar_arithmetic::{CalendarNonLunisolar, CalendarWithEras};
+use crate::calendar_arithmetic::{CalendarArithmeticConstruction};
 use crate::error::DateError;
 use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::types::DateFields;
@@ -88,7 +88,7 @@ impl CalendarArithmetic for Iso {
     }
 }
 
-impl CalendarWithEras for Iso {
+impl CalendarArithmeticConstruction forIso {
     #[inline]
     fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
         match era {

@@ -17,10 +17,11 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::{ArithmeticDate, CalendarNonLunisolar, CalendarWithEras};
+use core::num::NonZeroU8;
+use crate::types::{DateFields, MonthCode};
+use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmeticConstruction};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
-use crate::types::DateFields;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -51,7 +52,9 @@ const BUDDHIST_ERA_OFFSET: i32 = -543;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Buddhist;
 
-impl CalendarWithEras for Buddhist {
+impl CalendarArithmeticConstruction for Buddhist {
+    type YearInfo = i32;
+
     #[inline]
     fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
         match era {
@@ -59,12 +62,19 @@ impl CalendarWithEras for Buddhist {
             _ => Err(DateError::UnknownEra),
         }
     }
-}
 
-impl CalendarNonLunisolar for Buddhist {
     #[inline]
-    fn fixed_monotonic_reference_year(&self) -> i32 {
+    fn reference_year_from_month_day(month_code: MonthCode, day: u8) -> Result<i32, DateError> {
         todo!()
+    }
+
+    #[inline]
+    fn ordinal_month_from_code(
+        &self,
+        _year: Self::YearInfo,
+        parsed_month_code: (NonZeroU8, bool),
+    ) -> Result<NonZeroU8, DateError> {
+        Ok(parsed_month_code.0)
     }
 }
 

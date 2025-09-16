@@ -17,7 +17,7 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::{ArithmeticDate, CalendarNonLunisolar, CalendarWithEras};
+use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmeticConstruction};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
 use crate::types::DateFields;
@@ -46,7 +46,9 @@ pub struct Gregorian;
 /// The inner date type used for representing [`Date`]s of [`Gregorian`]. See [`Date`] and [`Gregorian`] for more details.
 pub struct GregorianDateInner(pub(crate) IsoDateInner);
 
-impl CalendarWithEras for Gregorian {
+impl CalendarArithmeticConstruction for Gregorian {
+    type YearInfo = i32;
+
     #[inline]
     fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
         match era {
@@ -55,12 +57,17 @@ impl CalendarWithEras for Gregorian {
             _ => Err(DateError::UnknownEra),
         }
     }
-}
-
-impl CalendarNonLunisolar for Gregorian {
-    #[inline]
-    fn fixed_monotonic_reference_year(&self) -> i32 {
-        1972
+    
+    fn reference_year_from_month_day(month_code: types::MonthCode, day: u8) -> Result<i32, DateError> {
+        todo!()
+    }
+    
+    fn ordinal_month_from_code(
+        &self,
+        _year: Self::YearInfo,
+        parsed_month_code: (core::num::NonZeroU8, bool),
+    ) -> Result<core::num::NonZeroU8, DateError> {
+        Ok(parsed_month_code.0)
     }
 }
 

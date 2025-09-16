@@ -127,26 +127,32 @@ pub(crate) trait CalendarArithmetic: Calendar {
     }
 }
 
-// TODO: Rename this trait, because it should work with all calendars
-// TODO: Consider putting these fns on CalendarArithmetic?
-pub(crate) trait CalendarWithEras {
+pub(crate) trait CalendarArithmeticConstruction {
+    type YearInfo;
+
+    /// Converts the era and era year to an extended year. If the calendar does not have eras,
+    /// this should always return an Err result.
+    // TODO: extended_year_from_era
     fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError>;
-}
 
-// TODO: Consider merging this into CalendarLunisolar and having just one trait
-// TODO: Consider putting these fns on CalendarArithmetic?
-pub(crate) trait CalendarNonLunisolar {
-    fn fixed_monotonic_reference_year(&self) -> i32;
-}
+    /// Calculates the ECMA reference year for the month code and day, or an error
+    /// if the month code and day are invalid.
+    fn reference_year_from_month_day(&self, month_code: MonthCode, day: u8) -> Result<i32, DateError>;
 
-// TODO: Plumb through the custom year type instead of monotonic year i32
-pub(crate) trait CalendarLunisolar {
-    fn variable_monotonic_reference_year(&self, month_code: MonthCode, day: u8) -> i32;
-    fn variable_ordinal_month(
+    /// Calculates the ordinal month for the given year and month code.
+    /// 
+    /// The default impl is for non-lunisolar calendars!
+    #[inline]
+    fn ordinal_month_from_code(
         &self,
-        monotonic_year: i32,
+        _year: Self::YearInfo,
         month_code: MonthCode,
-    ) -> Result<NonZeroU8, DateError>;
+    ) -> Result<NonZeroU8, DateError> {
+        match month_code.parsed_nonzero() {
+            Some((month_number, false)) => Ok(month_number),
+            _ => Err(DateError::UnknownMonthCode(month_code)),
+        }
+    }
 }
 
 pub(crate) trait PrecomputedDataSource<YearInfo> {
@@ -389,13 +395,6 @@ impl<'a> DateFields<'a> {
         }
     }
 
-    fn get_non_lunisolar_ordinal_month(self) -> Result<Option<NonZeroU8>, DateError> {
-        self.get_ordinal_month(|month_code| match month_code.parsed_nonzero() {
-            Some((month_number, false)) => Ok(month_number),
-            _ => Err(DateError::UnknownMonthCode(month_code)),
-        })
-    }
-
     /// Returns:
     ///
     /// - Ok(Some) if there is a well-defined month
@@ -432,7 +431,7 @@ impl<'a> DateFields<'a> {
         options: DateFromFieldsOptions,
     ) -> Result<(i32, u8, u8), DateError>
     where
-        C: CalendarNonLunisolar + CalendarWithEras,
+        C: CalendarArithmetic,
     {
         let missing_fields_strategy = options.missing_fields_strategy.unwrap_or_default();
         let maybe_year =
@@ -466,7 +465,7 @@ impl<'a> DateFields<'a> {
 
     pub(crate) fn get_lunisolar_ordinals<C>(self, cal: &C) -> Result<(i32, u8, u8), DateError>
     where
-        C: CalendarLunisolar + CalendarWithEras,
+        C: CalendarArithmetic,
     {
         let maybe_year =
             self.get_monotonic_year(|era, era_year| cal.era_year_to_monotonic(era, era_year))?;

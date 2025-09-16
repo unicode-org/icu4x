@@ -131,7 +131,7 @@ impl PrecomputedDataSource<HebrewYearInfo> for () {
     }
 }
 
-impl CalendarWithEras for Hebrew {
+impl CalendarArithmeticConstruction forHebrew {
     #[inline]
     fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
         match era {
