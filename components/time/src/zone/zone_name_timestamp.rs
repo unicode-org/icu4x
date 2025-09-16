@@ -117,16 +117,17 @@ impl ZoneNameTimestamp {
         let ms = zoned_date_time.to_epoch_milliseconds_utc();
         Self(match ms {
             // Special bit patterns for values that appear in TZDB but are not multiples of
-            // 15 minutes.
-            63593070000 => 0xFFFFF0,
-            307622400000 => 0xFFFFF1,
-            576041460000 => 0xFFFFF2,
-            576043260000 => 0xFFFFF3,
-            594180060000 => 0xFFFFF4,
-            607491060000 => 0xFFFFF5,
-            1601740860000 => 0xFFFFF6,
-            1633190460000 => 0xFFFFF7,
-            1664640060000 => 0xFFFFF8,
+            // 15 minutes. The whole range until the next 15-minutes multiple also needs to
+            // round down to these values (instead of the previous 15-minutes multiple).
+            63593070000..63593100000 => 0xFFFFFE,
+            307622400000..307622700000 => 0xFFFFFD,
+            576041460000..576042300000 => 0xFFFFFC,
+            576043260000..576044100000 => 0xFFFFFB,
+            594180060000..594180900000 => 0xFFFFFA,
+            607491060000..607491900000 => 0xFFFFF9,
+            1601740860000..1601741700000 => 0xFFFFF8,
+            1633190460000..1633191300000 => 0xFFFFF7,
+            1664640060000..1664640900000 => 0xFFFFF6,
             _ => {
                 let qh = zoned_date_time.to_epoch_milliseconds_utc() / 1000 / 60 / 15;
                 let qh_clamped =
@@ -141,15 +142,15 @@ impl ZoneNameTimestamp {
         match self.0 {
             // Special bit patterns for values that appear in TZDB but are not multiples of
             // 15 minutes.
-            0xFFFFF0 => 63593070000,
-            0xFFFFF1 => 307622400000,
-            0xFFFFF2 => 576041460000,
-            0xFFFFF3 => 576043260000,
-            0xFFFFF4 => 594180060000,
-            0xFFFFF5 => 607491060000,
-            0xFFFFF6 => 1601740860000,
+            0xFFFFFE => 63593070000,
+            0xFFFFFD => 307622400000,
+            0xFFFFFC => 576041460000,
+            0xFFFFFB => 576043260000,
+            0xFFFFFA => 594180060000,
+            0xFFFFF9 => 607491060000,
+            0xFFFFF8 => 1601740860000,
             0xFFFFF7 => 1633190460000,
-            0xFFFFF8 => 1664640060000,
+            0xFFFFF6 => 1664640060000,
             x => x as i64 * 15 * 60 * 1000,
         }
     }
