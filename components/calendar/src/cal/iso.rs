@@ -15,8 +15,8 @@
 //! assert_eq!(date_iso.day_of_month().0, 2);
 //! ```
 
-use crate::calendar_arithmetic::CalendarArithmeticConstruction;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::DateError;
 use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::types::DateFields;
@@ -88,7 +88,7 @@ impl CalendarArithmetic for Iso {
     }
 }
 
-impl CalendarArithmeticConstruction for Iso {
+impl DateFieldsResolver for Iso {
     type YearInfo = i32;
 
     #[inline]
@@ -123,8 +123,8 @@ impl Calendar for Iso {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_ordinals(self, options)?;
-        ArithmeticDate::new_from_ordinals(year, month, day, options)
+        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
+        ArithmeticDate::try_from_builder(builder, options)
             .map(IsoDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
@@ -133,7 +133,7 @@ impl Calendar for Iso {
         IsoDateInner(match calendrical_calculations::iso::iso_from_fixed(date) {
             Err(I32CastError::BelowMin) => ArithmeticDate::min_date(),
             Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
-            Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
+            Ok((year, month, day)) => ArithmeticDate::new_unchecked_ymd(year, month, day),
         })
     }
 
@@ -228,7 +228,7 @@ impl Date<Iso> {
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
     pub fn try_new_iso(year: i32, month: u8, day: u8) -> Result<Date<Iso>, RangeError> {
-        ArithmeticDate::new_from_ordinals(year, month, day, Default::default())
+        ArithmeticDate::try_from_ymd(year, month, day)
             .map(IsoDateInner)
             .map(|inner| Date::from_raw(inner, Iso))
     }

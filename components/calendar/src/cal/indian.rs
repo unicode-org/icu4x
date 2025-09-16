@@ -17,8 +17,8 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::CalendarArithmeticConstruction;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::DateError;
 use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::types::DateFields;
@@ -89,7 +89,7 @@ const DAY_OFFSET: u16 = 80;
 /// The Śaka era is 78 years behind Gregorian. This number should be added to Gregorian dates
 const YEAR_OFFSET: i32 = 78;
 
-impl CalendarArithmeticConstruction for Indian {
+impl DateFieldsResolver for Indian {
     type YearInfo = i32;
 
     #[inline]
@@ -124,8 +124,8 @@ impl Calendar for Indian {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_ordinals(self, options)?;
-        ArithmeticDate::new_from_ordinals(year, month, day, options)
+        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
+        ArithmeticDate::try_from_builder(builder, options)
             .map(IndianDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
@@ -261,7 +261,7 @@ impl Date<Indian> {
     /// assert_eq!(date_indian.day_of_month().0, 12);
     /// ```
     pub fn try_new_indian(year: i32, month: u8, day: u8) -> Result<Date<Indian>, RangeError> {
-        ArithmeticDate::new_from_ordinals(year, month, day, Default::default())
+        ArithmeticDate::try_from_ymd(year, month, day)
             .map(IndianDateInner)
             .map(|inner| Date::from_raw(inner, Indian))
     }

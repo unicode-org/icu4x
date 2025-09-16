@@ -17,13 +17,12 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmeticConstruction};
+use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
-use crate::types::{DateFields, MonthCode};
+use crate::types::DateFields;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::rata_die::RataDie;
-use core::num::NonZeroU8;
 use tinystr::tinystr;
 
 /// The number of years the Buddhist Era is ahead of C.E. by
@@ -52,7 +51,7 @@ const BUDDHIST_ERA_OFFSET: i32 = -543;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Buddhist;
 
-impl CalendarArithmeticConstruction for Buddhist {
+impl DateFieldsResolver for Buddhist {
     type YearInfo = i32;
 
     #[inline]
@@ -88,10 +87,10 @@ impl Calendar for Buddhist {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_ordinals(self, options)?;
+        let mut builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
         // Year is stored as an ISO year
-        let year = year + BUDDHIST_ERA_OFFSET;
-        ArithmeticDate::new_from_ordinals(year, month, day, options)
+        builder.year += BUDDHIST_ERA_OFFSET;
+        ArithmeticDate::try_from_builder(builder, options)
             .map(IsoDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }

@@ -17,7 +17,7 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmeticConstruction};
+use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
 use crate::types::DateFields;
@@ -46,7 +46,7 @@ pub struct Gregorian;
 /// The inner date type used for representing [`Date`]s of [`Gregorian`]. See [`Date`] and [`Gregorian`] for more details.
 pub struct GregorianDateInner(pub(crate) IsoDateInner);
 
-impl CalendarArithmeticConstruction for Gregorian {
+impl DateFieldsResolver for Gregorian {
     type YearInfo = i32;
 
     #[inline]
@@ -82,8 +82,8 @@ impl Calendar for Gregorian {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_ordinals(self, options)?;
-        ArithmeticDate::new_from_ordinals(year, month, day, options)
+        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
+        ArithmeticDate::try_from_builder(builder, options)
             .map(IsoDateInner)
             .map(GregorianDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))

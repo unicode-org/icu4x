@@ -17,8 +17,8 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::CalendarArithmeticConstruction;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
@@ -94,7 +94,7 @@ impl CalendarArithmetic for Coptic {
     }
 }
 
-impl CalendarArithmeticConstruction for Coptic {
+impl DateFieldsResolver for Coptic {
     type YearInfo = i32;
 
     #[inline]
@@ -129,8 +129,8 @@ impl Calendar for Coptic {
         fields: types::DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_ordinals(self, options)?;
-        ArithmeticDate::new_from_ordinals(year, month, day, options)
+        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
+        ArithmeticDate::try_from_builder(builder, options)
             .map(CopticDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
@@ -140,7 +140,7 @@ impl Calendar for Coptic {
             match calendrical_calculations::coptic::coptic_from_fixed(rd) {
                 Err(I32CastError::BelowMin) => ArithmeticDate::min_date(),
                 Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
-                Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
+                Ok((year, month, day)) => ArithmeticDate::new_unchecked_ymd(year, month, day),
             },
         )
     }
@@ -234,7 +234,7 @@ impl Date<Coptic> {
     /// assert_eq!(date_coptic.day_of_month().0, 6);
     /// ```
     pub fn try_new_coptic(year: i32, month: u8, day: u8) -> Result<Date<Coptic>, RangeError> {
-        ArithmeticDate::new_from_ordinals(year, month, day, Default::default())
+        ArithmeticDate::try_from_ymd(year, month, day)
             .map(CopticDateInner)
             .map(|inner| Date::from_raw(inner, Coptic))
     }

@@ -16,7 +16,7 @@
 //! assert_eq!(date_roc.day_of_month().0, 2);
 //! ```
 
-use crate::calendar_arithmetic::CalendarArithmeticConstruction;
+use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
 use crate::options::DateFromFieldsOptions;
 use crate::types::DateFields;
 use crate::{
@@ -56,7 +56,7 @@ pub struct Roc;
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct RocDateInner(IsoDateInner);
 
-impl CalendarArithmeticConstruction for Roc {
+impl DateFieldsResolver for Roc {
     type YearInfo = i32;
 
     #[inline]
@@ -93,10 +93,10 @@ impl Calendar for Roc {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_ordinals(self, options)?;
+        let mut builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
         // Year is stored as an ISO year
-        let year = year + ROC_ERA_OFFSET;
-        ArithmeticDate::new_from_ordinals(year, month, day, options)
+        builder.year += ROC_ERA_OFFSET;
+        ArithmeticDate::try_from_builder(builder, options)
             .map(IsoDateInner)
             .map(RocDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))

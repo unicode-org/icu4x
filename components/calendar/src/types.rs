@@ -202,13 +202,6 @@ impl MonthCode {
         None
     }
 
-    #[inline]
-    pub(crate) fn parsed_nonzero(self) -> Option<(NonZeroU8, bool)> {
-        let (number, is_leap) = self.parsed()?;
-        let number = NonZeroU8::new(number)?;
-        Some((number, is_leap))
-    }
-
     /// Construct a "normal" month code given a number ("Mxx").
     ///
     /// Returns an error for months greater than 99

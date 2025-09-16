@@ -18,7 +18,7 @@
 
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{
-    ArithmeticDate, CalendarArithmetic, CalendarArithmeticConstruction,
+    ArithmeticDate, ArithmeticDateBuilder, CalendarArithmetic, DateFieldsResolver,
 };
 use crate::error::DateError;
 use crate::options::{DateFromFieldsOptions, Overflow};
@@ -117,7 +117,7 @@ impl CalendarArithmetic for Ethiopian {
     }
 }
 
-impl CalendarArithmeticConstruction for Ethiopian {
+impl DateFieldsResolver for Ethiopian {
     type YearInfo = i32;
 
     #[inline]
@@ -154,12 +154,12 @@ impl Calendar for Ethiopian {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (mut year, month, day) = fields.get_ordinals(self, options)?;
+        let mut builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
         if matches!(self.era_style(), EthiopianEraStyle::AmeteMihret) {
             // Year is stored as an Amete Alem year
-            year += INCARNATION_OFFSET;
+            builder.year += INCARNATION_OFFSET;
         }
-        ArithmeticDate::new_from_ordinals(year, month, day, options)
+        ArithmeticDate::try_from_builder(builder, options)
             .map(EthiopianDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
@@ -169,7 +169,7 @@ impl Calendar for Ethiopian {
             match calendrical_calculations::ethiopian::ethiopian_from_fixed(rd) {
                 Err(I32CastError::BelowMin) => ArithmeticDate::min_date(),
                 Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
-                Ok((year, month, day)) => ArithmeticDate::new_unchecked(
+                Ok((year, month, day)) => ArithmeticDate::new_unchecked_ymd(
                     // calendrical calculations returns years in the Incarnation era
                     year + INCARNATION_OFFSET,
                     month,
@@ -319,7 +319,7 @@ impl Date<Ethiopian> {
         if era_style == EthiopianEraStyle::AmeteAlem {
             year -= INCARNATION_OFFSET;
         }
-        ArithmeticDate::new_from_ordinals(year, month, day, Default::default())
+        ArithmeticDate::try_from_ymd(year, month, day)
             .map(EthiopianDateInner)
             .map(|inner| Date::from_raw(inner, Ethiopian::new_with_era_style(era_style)))
     }

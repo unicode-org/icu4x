@@ -19,8 +19,8 @@
 
 use crate::cal::chinese_based::{ChineseBasedPrecomputedData, ChineseBasedWithDataLoading};
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::calendar_arithmetic::{CalendarArithmeticConstruction, PrecomputedDataSource};
+use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, CalendarArithmetic};
+use crate::calendar_arithmetic::{DateFieldsResolver, PrecomputedDataSource};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
 use crate::provider::chinese_based::CalendarChineseV1;
@@ -152,7 +152,7 @@ impl Chinese {
     pub(crate) const DEBUG_NAME: &'static str = "Chinese";
 }
 
-impl CalendarArithmeticConstruction for Chinese {
+impl DateFieldsResolver for Chinese {
     type YearInfo = super::chinese_based::ChineseBasedYearInfo;
 
     #[inline]
@@ -199,11 +199,9 @@ impl Calendar for Chinese {
         fields: types::DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_ordinals(self, options)?;
-        year.validate_md(month, day)?;
-        Ok(ChineseDateInner(ArithmeticDate::new_unchecked(
-            year, month, day,
-        )))
+        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
+        builder.year.validate_md(builder.month, builder.day)?;
+        Ok(ChineseDateInner(ArithmeticDate::new_unchecked(builder)))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -212,7 +210,7 @@ impl Calendar for Chinese {
             .get_precomputed_data()
             .load_or_compute_info_for_rd(rd, iso.0);
         let (m, d) = y.md_from_rd(rd);
-        ChineseDateInner(ArithmeticDate::new_unchecked(y, m, d))
+        ChineseDateInner(ArithmeticDate::new_unchecked_ymd(y, m, d))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
@@ -225,7 +223,7 @@ impl Calendar for Chinese {
             .get_precomputed_data()
             .load_or_compute_info_for_rd(rd, iso.0);
         let (m, d) = y.md_from_rd(rd);
-        ChineseDateInner(ArithmeticDate::new_unchecked(y, m, d))
+        ChineseDateInner(ArithmeticDate::new_unchecked_ymd(y, m, d))
     }
 
     fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
@@ -342,7 +340,7 @@ impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
             .load_or_compute_info(related_iso_year);
         year.validate_md(month, day)?;
         Ok(Date::from_raw(
-            ChineseDateInner(ArithmeticDate::new_unchecked(year, month, day)),
+            ChineseDateInner(ArithmeticDate::new_unchecked_ymd(year, month, day)),
             calendar,
         ))
     }

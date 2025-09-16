@@ -19,9 +19,9 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::CalendarArithmeticConstruction;
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::DateError;
 use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::provider::hijri::PackedHijriYearInfo;
@@ -376,21 +376,22 @@ impl CalendarArithmetic for HijriSimulated {
     }
 }
 
-impl CalendarArithmeticConstruction for HijriSimulated {
-    type YearInfo = i32;
+impl DateFieldsResolver for HijriSimulated {
+    type YearInfo = HijriYearInfo;
 
     #[inline]
     fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
-        match era {
-            "ah" => Ok(era_year),
-            "bh" => Ok(1 - era_year),
-            _ => Err(DateError::UnknownEra),
-        }
+        let extended_year = match era {
+            "ah" => era_year,
+            "bh" => 1 - era_year,
+            _ => return Err(DateError::UnknownEra),
+        };
+        Ok(self.year_info_from_extended(extended_year))
     }
 
     #[inline]
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
-        extended_year
+        self.load_or_compute_info(extended_year)
     }
 
     #[inline]
@@ -412,8 +413,8 @@ impl Calendar for HijriSimulated {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_ordinals(self, options)?;
-        ArithmeticDate::new_from_ordinals(self.load_or_compute_info(year), month, day, options)
+        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
+        ArithmeticDate::try_from_builder(builder, options)
             .map(HijriSimulatedDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
@@ -440,7 +441,7 @@ impl Calendar for HijriSimulated {
             }
         };
         let (m, d) = y.md_from_rd(rd);
-        HijriSimulatedDateInner(ArithmeticDate::new_unchecked(y, m, d))
+        HijriSimulatedDateInner(ArithmeticDate::new_unchecked_ymd(y, m, d))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
@@ -634,7 +635,7 @@ impl<A: AsCalendar<Calendar = HijriSimulated>> Date<A> {
         calendar: A,
     ) -> Result<Date<A>, RangeError> {
         let y = calendar.as_calendar().load_or_compute_info(year);
-        ArithmeticDate::new_from_ordinals(y, month, day, Default::default())
+        ArithmeticDate::try_from_ymd(y, month, day)
             .map(HijriSimulatedDateInner)
             .map(|inner| Date::from_raw(inner, calendar))
     }
@@ -671,21 +672,22 @@ impl CalendarArithmetic for HijriUmmAlQura {
     }
 }
 
-impl CalendarArithmeticConstruction for HijriUmmAlQura {
-    type YearInfo = i32;
+impl DateFieldsResolver for HijriUmmAlQura {
+    type YearInfo = HijriYearInfo;
 
     #[inline]
     fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
-        match era {
-            "ah" => Ok(era_year),
-            "bh" => Ok(1 - era_year),
-            _ => Err(DateError::UnknownEra),
-        }
+        let extended_year = match era {
+            "ah" => era_year,
+            "bh" => 1 - era_year,
+            _ => return Err(DateError::UnknownEra),
+        };
+        Ok(self.year_info_from_extended(extended_year))
     }
 
     #[inline]
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
-        extended_year
+        self.load_or_compute_info(extended_year)
     }
 
     #[inline]
@@ -707,8 +709,8 @@ impl Calendar for HijriUmmAlQura {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_ordinals(self, options)?;
-        ArithmeticDate::new_from_ordinals(self.load_or_compute_info(year), month, day, options)
+        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
+        ArithmeticDate::try_from_builder(builder, options)
             .map(HijriUmmAlQuraDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
@@ -735,7 +737,7 @@ impl Calendar for HijriUmmAlQura {
             }
         };
         let (m, d) = y.md_from_rd(rd);
-        HijriUmmAlQuraDateInner(ArithmeticDate::new_unchecked(y, m, d))
+        HijriUmmAlQuraDateInner(ArithmeticDate::new_unchecked_ymd(y, m, d))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
@@ -858,12 +860,7 @@ impl Date<HijriUmmAlQura> {
     ) -> Result<Date<HijriUmmAlQura>, RangeError> {
         let y = HijriUmmAlQura.load_or_compute_info(year);
         Ok(Date::from_raw(
-            HijriUmmAlQuraDateInner(ArithmeticDate::new_from_ordinals(
-                y,
-                month,
-                day,
-                Default::default(),
-            )?),
+            HijriUmmAlQuraDateInner(ArithmeticDate::try_from_ymd(y, month, day)?),
             HijriUmmAlQura,
         ))
     }
@@ -912,7 +909,7 @@ impl CalendarArithmetic for HijriTabular {
     }
 }
 
-impl CalendarArithmeticConstruction for HijriTabular {
+impl DateFieldsResolver for HijriTabular {
     type YearInfo = i32;
 
     #[inline]
@@ -949,8 +946,8 @@ impl Calendar for HijriTabular {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_ordinals(self, options)?;
-        ArithmeticDate::new_from_ordinals(year, month, day, options)
+        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
+        ArithmeticDate::try_from_builder(builder, options)
             .map(HijriTabularDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
@@ -966,7 +963,7 @@ impl Calendar for HijriTabular {
         };
 
         debug_assert!(Date::try_new_hijri_tabular_with_calendar(y, m, d, crate::Ref(self)).is_ok());
-        HijriTabularDateInner(ArithmeticDate::new_unchecked(y, m, d))
+        HijriTabularDateInner(ArithmeticDate::new_unchecked_ymd(y, m, d))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
@@ -1090,7 +1087,7 @@ impl<A: AsCalendar<Calendar = HijriTabular>> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, RangeError> {
-        ArithmeticDate::new_from_ordinals(year, month, day, Default::default())
+        ArithmeticDate::try_from_ymd(year, month, day)
             .map(HijriTabularDateInner)
             .map(|inner| Date::from_raw(inner, calendar))
     }

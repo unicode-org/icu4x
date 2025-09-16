@@ -18,10 +18,8 @@
 use core::num::NonZeroU8;
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::PrecomputedDataSource;
-use crate::calendar_arithmetic::{
-    ArithmeticDate, CalendarArithmetic, CalendarArithmeticConstruction,
-};
+use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, DateFieldsResolver};
+use crate::calendar_arithmetic::{ArithmeticDateBuilder, PrecomputedDataSource};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
 use crate::types::{DateFields, MonthInfo};
@@ -135,7 +133,7 @@ impl PrecomputedDataSource<HebrewYearInfo> for () {
     }
 }
 
-impl CalendarArithmeticConstruction for Hebrew {
+impl DateFieldsResolver for Hebrew {
     type YearInfo = HebrewYearInfo;
 
     #[inline]
@@ -219,9 +217,9 @@ impl Calendar for Hebrew {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_ordinals(self, options)?;
-        Ok(HebrewDateInner(ArithmeticDate::new_from_ordinals(
-            year, month, day, options,
+        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
+        Ok(HebrewDateInner(ArithmeticDate::try_from_builder(
+            builder, options,
         )?))
     }
 
@@ -233,7 +231,7 @@ impl Calendar for Hebrew {
 
         let year = HebrewYearInfo::compute_with_keviyah(year.keviyah, h_year);
         let (month, day) = year.keviyah.month_day_for(day);
-        HebrewDateInner(ArithmeticDate::new_unchecked(year, month, day))
+        HebrewDateInner(ArithmeticDate::new_unchecked_ymd(year, month, day))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
@@ -381,7 +379,7 @@ impl Date<Hebrew> {
     pub fn try_new_hebrew(year: i32, month: u8, day: u8) -> Result<Date<Hebrew>, RangeError> {
         let year = HebrewYearInfo::compute(year);
 
-        ArithmeticDate::new_from_ordinals(year, month, day, Default::default())
+        ArithmeticDate::try_from_ymd(year, month, day)
             .map(HebrewDateInner)
             .map(|inner| Date::from_raw(inner, Hebrew))
     }
