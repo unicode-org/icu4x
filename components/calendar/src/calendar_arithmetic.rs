@@ -127,28 +127,35 @@ pub(crate) trait CalendarArithmetic: Calendar {
     }
 }
 
-pub(crate) trait CalendarArithmeticConstruction {
-    type YearInfo;
+pub(crate) trait CalendarArithmeticConstruction: Calendar {
+    type YearInfo: PartialEq;
 
-    /// Converts the era and era year to an extended year. If the calendar does not have eras,
+    /// Converts the era and era year to a YearInfo. If the calendar does not have eras,
     /// this should always return an Err result.
-    // TODO: extended_year_from_era
-    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError>;
+    // TODO: year_info_from_era
+    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError>;
+
+    /// Converts an extended year to a YearInfo.
+    fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo;
 
     /// Calculates the ECMA reference year for the month code and day, or an error
     /// if the month code and day are invalid.
-    fn reference_year_from_month_day(&self, month_code: MonthCode, day: u8) -> Result<i32, DateError>;
+    fn reference_year_from_month_day(
+        &self,
+        month_code: MonthCode,
+        day: u8,
+    ) -> Result<Self::YearInfo, DateError>;
 
     /// Calculates the ordinal month for the given year and month code.
-    /// 
+    ///
     /// The default impl is for non-lunisolar calendars!
     #[inline]
     fn ordinal_month_from_code(
         &self,
-        _year: Self::YearInfo,
+        _year: &Self::YearInfo,
         month_code: MonthCode,
-    ) -> Result<NonZeroU8, DateError> {
-        match month_code.parsed_nonzero() {
+    ) -> Result<u8, DateError> {
+        match month_code.parsed() {
             Some((month_number, false)) => Ok(month_number),
             _ => Err(DateError::UnknownMonthCode(month_code)),
         }
@@ -376,20 +383,25 @@ impl<'a> DateFields<'a> {
     /// - Err if the callback returns an error
     /// - Err if there is only one of era and era_year
     /// - Err if all three fields are set and they are inconsistent
-    fn get_monotonic_year(
+    fn get_year<YearInfo>(
         self,
-        era_year_to_monotonic: impl FnOnce(&str, i32) -> Result<i32, DateError>,
-    ) -> Result<Option<i32>, DateError> {
+        year_info_from_era_year: impl FnOnce(&str, i32) -> Result<YearInfo, DateError>,
+        year_info_from_extended_year: impl FnOnce(i32) -> YearInfo,
+    ) -> Result<Option<YearInfo>, DateError>
+    where
+        YearInfo: PartialEq,
+    {
+        let extended_year_as_year_info = self.monotonic_year.map(year_info_from_extended_year);
         match (self.era, self.era_year) {
-            (None, None) => Ok(self.monotonic_year),
+            (None, None) => Ok(extended_year_as_year_info),
             (Some(era), Some(era_year)) => {
-                let computed_year = era_year_to_monotonic(era, era_year)?;
-                if let Some(monotonic_year) = self.monotonic_year {
-                    if computed_year != monotonic_year {
+                let era_year_as_year_info = year_info_from_era_year(era, era_year)?;
+                if let Some(other) = extended_year_as_year_info {
+                    if era_year_as_year_info != other {
                         return Err(DateError::InconsistentYear);
                     }
                 }
-                Ok(Some(computed_year))
+                Ok(Some(era_year_as_year_info))
             }
             (Some(_), None) | (None, Some(_)) => Err(DateError::NotEnoughFields),
         }
@@ -404,19 +416,20 @@ impl<'a> DateFields<'a> {
     /// - Err if both fields are set and they are inconstent
     fn get_ordinal_month(
         self,
-        month_code_to_ordinal: impl FnOnce(MonthCode) -> Result<NonZeroU8, DateError>,
-    ) -> Result<Option<NonZeroU8>, DateError> {
+        ordinal_month_from_code: impl FnOnce(MonthCode) -> Result<u8, DateError>,
+    ) -> Result<Option<u8>, DateError> {
+        let ordinal_month_as_u8 = self.ordinal_month.map(|x| x.get());
         match self.month_code {
             Some(month_code) => {
-                let computed_month = month_code_to_ordinal(month_code)?;
-                if let Some(ordinal_month) = self.ordinal_month {
+                let computed_month = ordinal_month_from_code(month_code)?;
+                if let Some(ordinal_month) = ordinal_month_as_u8 {
                     if computed_month != ordinal_month {
                         return Err(DateError::InconsistentMonth);
                     }
                 }
                 Ok(Some(computed_month))
             }
-            None => Ok(self.ordinal_month),
+            None => Ok(ordinal_month_as_u8),
         }
     }
 
@@ -425,31 +438,19 @@ impl<'a> DateFields<'a> {
     ///
     /// Returns an error when various conditions happen, in accordance with
     /// the ECMAScript Temporal specification.
-    pub(crate) fn get_non_lunisolar_ordinals<C>(
+    pub(crate) fn get_ordinals<C>(
         self,
         cal: &C,
         options: DateFromFieldsOptions,
-    ) -> Result<(i32, u8, u8), DateError>
+    ) -> Result<(C::YearInfo, u8, u8), DateError>
     where
-        C: CalendarArithmetic,
+        C: CalendarArithmeticConstruction,
     {
         let missing_fields_strategy = options.missing_fields_strategy.unwrap_or_default();
-        let maybe_year =
-            self.get_monotonic_year(|era, era_year| cal.era_year_to_monotonic(era, era_year))?;
-        let year = match maybe_year {
-            Some(year) => year,
-            None => match missing_fields_strategy {
-                MissingFieldsStrategy::Reject => return Err(DateError::NotEnoughFields),
-                MissingFieldsStrategy::Ecma => match self.month_code {
-                    Some(month_code) => cal.fixed_monotonic_reference_year(),
-                    None => return Err(DateError::NotEnoughFields),
-                },
-            },
-        };
-        let month = match self.get_non_lunisolar_ordinal_month()? {
-            Some(month) => month.get(),
-            None => return Err(DateError::NotEnoughFields),
-        };
+        let maybe_year = self.get_year(
+            |era, era_year| cal.era_year_to_monotonic(era, era_year),
+            |extended_year| cal.year_info_from_extended(extended_year),
+        )?;
         let day = match self.day {
             Some(day) => day.get(),
             None => match missing_fields_strategy {
@@ -460,31 +461,22 @@ impl<'a> DateFields<'a> {
                 },
             },
         };
-        Ok((year, month, day))
-    }
-
-    pub(crate) fn get_lunisolar_ordinals<C>(self, cal: &C) -> Result<(i32, u8, u8), DateError>
-    where
-        C: CalendarArithmetic,
-    {
-        let maybe_year =
-            self.get_monotonic_year(|era, era_year| cal.era_year_to_monotonic(era, era_year))?;
-        let day = if maybe_year.is_some() {
-            self.day.map(|x| x.get()).unwrap_or(1)
-        } else {
-            return Err(DateError::NotEnoughFields);
-        };
         let year = match maybe_year {
             Some(year) => year,
-            None => match self.month_code {
-                Some(month_code) => cal.variable_monotonic_reference_year(month_code, day),
-                None => return Err(DateError::NotEnoughFields),
+            None => match missing_fields_strategy {
+                MissingFieldsStrategy::Reject => return Err(DateError::NotEnoughFields),
+                MissingFieldsStrategy::Ecma => match self.month_code {
+                    Some(month_code) => cal.reference_year_from_month_day(month_code, day)?,
+                    None => return Err(DateError::NotEnoughFields),
+                },
             },
         };
-        let month = self
-            .get_ordinal_month(|month_code| cal.variable_ordinal_month(year, month_code))?
-            .ok_or(DateError::NotEnoughFields)?
-            .get();
+        let month = match self
+            .get_ordinal_month(|month_code| cal.ordinal_month_from_code(&year, month_code))?
+        {
+            Some(month) => month,
+            None => return Err(DateError::NotEnoughFields),
+        };
         Ok((year, month, day))
     }
 }

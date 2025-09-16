@@ -19,9 +19,9 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
+use crate::calendar_arithmetic::CalendarArithmeticConstruction;
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::calendar_arithmetic::{CalendarArithmeticConstruction};
 use crate::error::DateError;
 use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::provider::hijri::PackedHijriYearInfo;
@@ -376,20 +376,29 @@ impl CalendarArithmetic for HijriSimulated {
     }
 }
 
-impl CalendarArithmeticConstruction forHijriSimulated {
+impl CalendarArithmeticConstruction for HijriSimulated {
+    type YearInfo = i32;
+
     #[inline]
-    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
+    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
         match era {
             "ah" => Ok(era_year),
             "bh" => Ok(1 - era_year),
             _ => Err(DateError::UnknownEra),
         }
     }
-}
 
-impl CalendarNonLunisolar for HijriSimulated {
     #[inline]
-    fn fixed_monotonic_reference_year(&self) -> i32 {
+    fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
+        extended_year
+    }
+
+    #[inline]
+    fn reference_year_from_month_day(
+        &self,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::YearInfo, DateError> {
         todo!()
     }
 }
@@ -403,7 +412,7 @@ impl Calendar for HijriSimulated {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_non_lunisolar_ordinals(self, options)?;
+        let (year, month, day) = fields.get_ordinals(self, options)?;
         ArithmeticDate::new_from_ordinals(self.load_or_compute_info(year), month, day, options)
             .map(HijriSimulatedDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))
@@ -662,20 +671,29 @@ impl CalendarArithmetic for HijriUmmAlQura {
     }
 }
 
-impl CalendarArithmeticConstruction forHijriUmmAlQura {
+impl CalendarArithmeticConstruction for HijriUmmAlQura {
+    type YearInfo = i32;
+
     #[inline]
-    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
+    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
         match era {
             "ah" => Ok(era_year),
             "bh" => Ok(1 - era_year),
             _ => Err(DateError::UnknownEra),
         }
     }
-}
 
-impl CalendarNonLunisolar for HijriUmmAlQura {
     #[inline]
-    fn fixed_monotonic_reference_year(&self) -> i32 {
+    fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
+        extended_year
+    }
+
+    #[inline]
+    fn reference_year_from_month_day(
+        &self,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::YearInfo, DateError> {
         todo!()
     }
 }
@@ -689,7 +707,7 @@ impl Calendar for HijriUmmAlQura {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_non_lunisolar_ordinals(self, options)?;
+        let (year, month, day) = fields.get_ordinals(self, options)?;
         ArithmeticDate::new_from_ordinals(self.load_or_compute_info(year), month, day, options)
             .map(HijriUmmAlQuraDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))
@@ -894,20 +912,29 @@ impl CalendarArithmetic for HijriTabular {
     }
 }
 
-impl CalendarArithmeticConstruction forHijriTabular {
+impl CalendarArithmeticConstruction for HijriTabular {
+    type YearInfo = i32;
+
     #[inline]
-    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
+    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
         match era {
             "ah" => Ok(era_year),
             "bh" => Ok(1 - era_year),
             _ => Err(DateError::UnknownEra),
         }
     }
-}
 
-impl CalendarNonLunisolar for HijriTabular {
     #[inline]
-    fn fixed_monotonic_reference_year(&self) -> i32 {
+    fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
+        extended_year
+    }
+
+    #[inline]
+    fn reference_year_from_month_day(
+        &self,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::YearInfo, DateError> {
         todo!()
     }
 }
@@ -922,7 +949,7 @@ impl Calendar for HijriTabular {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_non_lunisolar_ordinals(self, options)?;
+        let (year, month, day) = fields.get_ordinals(self, options)?;
         ArithmeticDate::new_from_ordinals(year, month, day, options)
             .map(HijriTabularDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))

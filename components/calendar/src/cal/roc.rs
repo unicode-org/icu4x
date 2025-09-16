@@ -16,7 +16,7 @@
 //! assert_eq!(date_roc.day_of_month().0, 2);
 //! ```
 
-use crate::calendar_arithmetic::{CalendarArithmeticConstruction};
+use crate::calendar_arithmetic::CalendarArithmeticConstruction;
 use crate::options::DateFromFieldsOptions;
 use crate::types::DateFields;
 use crate::{
@@ -56,20 +56,29 @@ pub struct Roc;
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct RocDateInner(IsoDateInner);
 
-impl CalendarArithmeticConstruction forRoc {
+impl CalendarArithmeticConstruction for Roc {
+    type YearInfo = i32;
+
     #[inline]
-    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
+    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
         match era {
             "roc" => Ok(era_year),
             "broc" => Ok(1 - era_year),
             _ => Err(DateError::UnknownEra),
         }
     }
-}
 
-impl CalendarNonLunisolar for Roc {
     #[inline]
-    fn fixed_monotonic_reference_year(&self) -> i32 {
+    fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
+        extended_year
+    }
+
+    #[inline]
+    fn reference_year_from_month_day(
+        &self,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::YearInfo, DateError> {
         todo!()
     }
 }
@@ -84,7 +93,7 @@ impl Calendar for Roc {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_non_lunisolar_ordinals(self, options)?;
+        let (year, month, day) = fields.get_ordinals(self, options)?;
         // Year is stored as an ISO year
         let year = year + ROC_ERA_OFFSET;
         ArithmeticDate::new_from_ordinals(year, month, day, options)

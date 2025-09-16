@@ -17,8 +17,8 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
+use crate::calendar_arithmetic::CalendarArithmeticConstruction;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::calendar_arithmetic::{CalendarArithmeticConstruction};
 use crate::error::DateError;
 use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::types::DateFields;
@@ -89,19 +89,28 @@ const DAY_OFFSET: u16 = 80;
 /// The Śaka era is 78 years behind Gregorian. This number should be added to Gregorian dates
 const YEAR_OFFSET: i32 = 78;
 
-impl CalendarArithmeticConstruction forIndian {
+impl CalendarArithmeticConstruction for Indian {
+    type YearInfo = i32;
+
     #[inline]
-    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
+    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
         match era {
             "shaka" => Ok(era_year),
             _ => Err(DateError::UnknownEra),
         }
     }
-}
 
-impl CalendarNonLunisolar for Indian {
     #[inline]
-    fn fixed_monotonic_reference_year(&self) -> i32 {
+    fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
+        extended_year
+    }
+
+    #[inline]
+    fn reference_year_from_month_day(
+        &self,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::YearInfo, DateError> {
         todo!()
     }
 }
@@ -115,7 +124,7 @@ impl Calendar for Indian {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_non_lunisolar_ordinals(self, options)?;
+        let (year, month, day) = fields.get_ordinals(self, options)?;
         ArithmeticDate::new_from_ordinals(year, month, day, options)
             .map(IndianDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))

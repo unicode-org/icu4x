@@ -17,11 +17,10 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
+use crate::calendar_arithmetic::CalendarArithmeticConstruction;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::calendar_arithmetic::{CalendarArithmeticConstruction};
 use crate::error::DateError;
-use crate::options::{DateFromFieldsOptions, Overflow};
-use crate::types::DateFields;
+use crate::options::DateFromFieldsOptions;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
@@ -95,19 +94,28 @@ impl CalendarArithmetic for Coptic {
     }
 }
 
-impl CalendarArithmeticConstruction forCoptic {
+impl CalendarArithmeticConstruction for Coptic {
+    type YearInfo = i32;
+
     #[inline]
-    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
+    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
         match era {
             "am" => Ok(era_year),
             _ => Err(DateError::UnknownEra),
         }
     }
-}
 
-impl CalendarNonLunisolar for Coptic {
     #[inline]
-    fn fixed_monotonic_reference_year(&self) -> i32 {
+    fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
+        extended_year
+    }
+
+    #[inline]
+    fn reference_year_from_month_day(
+        &self,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::YearInfo, DateError> {
         todo!()
     }
 }
@@ -118,10 +126,10 @@ impl Calendar for Coptic {
     type Year = types::EraYear;
     fn from_fields(
         &self,
-        fields: DateFields,
+        fields: types::DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_non_lunisolar_ordinals(self, options)?;
+        let (year, month, day) = fields.get_ordinals(self, options)?;
         ArithmeticDate::new_from_ordinals(year, month, day, options)
             .map(CopticDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))

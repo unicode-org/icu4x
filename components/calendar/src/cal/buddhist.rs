@@ -17,13 +17,13 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use core::num::NonZeroU8;
-use crate::types::{DateFields, MonthCode};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmeticConstruction};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
+use crate::types::{DateFields, MonthCode};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::rata_die::RataDie;
+use core::num::NonZeroU8;
 use tinystr::tinystr;
 
 /// The number of years the Buddhist Era is ahead of C.E. by
@@ -56,7 +56,7 @@ impl CalendarArithmeticConstruction for Buddhist {
     type YearInfo = i32;
 
     #[inline]
-    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
+    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
         match era {
             "be" => Ok(era_year),
             _ => Err(DateError::UnknownEra),
@@ -64,17 +64,17 @@ impl CalendarArithmeticConstruction for Buddhist {
     }
 
     #[inline]
-    fn reference_year_from_month_day(month_code: MonthCode, day: u8) -> Result<i32, DateError> {
-        todo!()
+    fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
+        extended_year
     }
 
     #[inline]
-    fn ordinal_month_from_code(
+    fn reference_year_from_month_day(
         &self,
-        _year: Self::YearInfo,
-        parsed_month_code: (NonZeroU8, bool),
-    ) -> Result<NonZeroU8, DateError> {
-        Ok(parsed_month_code.0)
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::YearInfo, DateError> {
+        todo!()
     }
 }
 
@@ -88,7 +88,7 @@ impl Calendar for Buddhist {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_non_lunisolar_ordinals(self, options)?;
+        let (year, month, day) = fields.get_ordinals(self, options)?;
         // Year is stored as an ISO year
         let year = year + BUDDHIST_ERA_OFFSET;
         ArithmeticDate::new_from_ordinals(year, month, day, options)

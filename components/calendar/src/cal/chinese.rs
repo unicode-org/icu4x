@@ -24,11 +24,11 @@ use crate::calendar_arithmetic::{CalendarArithmeticConstruction, PrecomputedData
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
 use crate::provider::chinese_based::CalendarChineseV1;
-use crate::types::DateFields;
 use crate::AsCalendar;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use calendrical_calculations::rata_die::RataDie;
 use core::cmp::Ordering;
+use core::num::NonZeroU8;
 use icu_provider::prelude::*;
 
 /// The [Chinese Calendar](https://en.wikipedia.org/wiki/Chinese_calendar)
@@ -152,26 +152,40 @@ impl Chinese {
     pub(crate) const DEBUG_NAME: &'static str = "Chinese";
 }
 
-impl CalendarArithmeticConstruction forChinese {
+impl CalendarArithmeticConstruction for Chinese {
+    type YearInfo = super::chinese_based::ChineseBasedYearInfo;
+
     #[inline]
-    fn era_year_to_monotonic(&self, _era: &str, _era_year: i32) -> Result<i32, DateError> {
+    fn era_year_to_monotonic(
+        &self,
+        _era: &str,
+        _era_year: i32,
+    ) -> Result<Self::YearInfo, DateError> {
         // This calendar has no era codes
         Err(DateError::UnknownEra)
     }
-}
 
-impl CalendarLunisolar for Chinese {
     #[inline]
-    fn variable_monotonic_reference_year(&self, month_code: types::MonthCode, day: u8) -> i32 {
+    fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
+        self.get_precomputed_data()
+            .load_or_compute_info(extended_year)
+    }
+
+    fn reference_year_from_month_day(
+        &self,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::YearInfo, DateError> {
         todo!()
     }
-    #[inline]
-    fn variable_ordinal_month(
+
+    fn ordinal_month_from_code(
         &self,
-        monotonic_year: i32,
+        year: &Self::YearInfo,
         month_code: types::MonthCode,
-    ) -> Result<core::num::NonZeroU8, DateError> {
-        todo!()
+    ) -> Result<u8, DateError> {
+        year.parse_month_code(month_code)
+            .ok_or(DateError::UnknownMonthCode(month_code))
     }
 }
 
@@ -182,23 +196,14 @@ impl Calendar for Chinese {
 
     fn from_fields(
         &self,
-        fields: DateFields,
+        fields: types::DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_lunisolar_ordinals(self)?;
-        let year = self.get_precomputed_data().load_or_compute_info(year);
-
-        todo!()
-
-        // let Some(month) = year.parse_month_code(month_code) else {
-        //     return Err(DateError::UnknownMonthCode(month_code));
-        // };
-
-        // year.validate_md(month, day)?;
-
-        // Ok(ChineseDateInner(ArithmeticDate::new_unchecked(
-        //     year, month, day,
-        // )))
+        let (year, month, day) = fields.get_ordinals(self, options)?;
+        year.validate_md(month, day)?;
+        Ok(ChineseDateInner(ArithmeticDate::new_unchecked(
+            year, month, day,
+        )))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {

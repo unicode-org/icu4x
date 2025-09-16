@@ -17,14 +17,16 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use core::num::NonZeroU8;
-use crate::types::{DateFields, MonthCode};
-use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, CalendarArithmeticConstruction};
+use crate::calendar_arithmetic::{
+    ArithmeticDate, CalendarArithmetic, CalendarArithmeticConstruction,
+};
 use crate::error::DateError;
 use crate::options::{DateFromFieldsOptions, Overflow};
+use crate::types::{DateFields, MonthCode};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
+use core::num::NonZeroU8;
 use tinystr::tinystr;
 
 /// The number of years the Amete Alem epoch precedes the Amete Mihret epoch
@@ -115,9 +117,11 @@ impl CalendarArithmetic for Ethiopian {
     }
 }
 
-impl CalendarArithmeticConstruction forEthiopian {
+impl CalendarArithmeticConstruction for Ethiopian {
+    type YearInfo = i32;
+
     #[inline]
-    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
+    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
         match (self.era_style(), era) {
             (EthiopianEraStyle::AmeteMihret, "am") => Ok(era_year),
             (EthiopianEraStyle::AmeteMihret, "aa") => Ok(era_year - INCARNATION_OFFSET),
@@ -125,11 +129,18 @@ impl CalendarArithmeticConstruction forEthiopian {
             (_, _) => Err(DateError::UnknownEra),
         }
     }
-}
 
-impl CalendarNonLunisolar for Ethiopian {
     #[inline]
-    fn fixed_monotonic_reference_year(&self) -> i32 {
+    fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
+        extended_year
+    }
+
+    #[inline]
+    fn reference_year_from_month_day(
+        &self,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::YearInfo, DateError> {
         todo!()
     }
 }
@@ -143,7 +154,7 @@ impl Calendar for Ethiopian {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (mut year, month, day) = fields.get_non_lunisolar_ordinals(self, options)?;
+        let (mut year, month, day) = fields.get_ordinals(self, options)?;
         if matches!(self.era_style(), EthiopianEraStyle::AmeteMihret) {
             // Year is stored as an Amete Alem year
             year += INCARNATION_OFFSET;

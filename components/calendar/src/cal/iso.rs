@@ -15,8 +15,8 @@
 //! assert_eq!(date_iso.day_of_month().0, 2);
 //! ```
 
+use crate::calendar_arithmetic::CalendarArithmeticConstruction;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::calendar_arithmetic::{CalendarArithmeticConstruction};
 use crate::error::DateError;
 use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::types::DateFields;
@@ -88,19 +88,28 @@ impl CalendarArithmetic for Iso {
     }
 }
 
-impl CalendarArithmeticConstruction forIso {
+impl CalendarArithmeticConstruction for Iso {
+    type YearInfo = i32;
+
     #[inline]
-    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
+    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
         match era {
             "default" => Ok(era_year),
             _ => Err(DateError::UnknownEra),
         }
     }
-}
 
-impl CalendarNonLunisolar for Iso {
     #[inline]
-    fn fixed_monotonic_reference_year(&self) -> i32 {
+    fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
+        extended_year
+    }
+
+    #[inline]
+    fn reference_year_from_month_day(
+        &self,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::YearInfo, DateError> {
         todo!()
     }
 }
@@ -114,7 +123,7 @@ impl Calendar for Iso {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_non_lunisolar_ordinals(self, options)?;
+        let (year, month, day) = fields.get_ordinals(self, options)?;
         ArithmeticDate::new_from_ordinals(year, month, day, options)
             .map(IsoDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))

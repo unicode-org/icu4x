@@ -15,11 +15,15 @@
 //! assert_eq!(hebrew_date.day_of_month().0, 11);
 //! ```
 
+use core::num::NonZeroU8;
+
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::calendar_arithmetic::{CalendarLunisolar, CalendarWithEras, PrecomputedDataSource};
+use crate::calendar_arithmetic::PrecomputedDataSource;
+use crate::calendar_arithmetic::{
+    ArithmeticDate, CalendarArithmetic, CalendarArithmeticConstruction,
+};
 use crate::error::DateError;
-use crate::options::{DateFromFieldsOptions, Overflow};
+use crate::options::DateFromFieldsOptions;
 use crate::types::{DateFields, MonthInfo};
 use crate::RangeError;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
@@ -131,52 +135,38 @@ impl PrecomputedDataSource<HebrewYearInfo> for () {
     }
 }
 
-impl CalendarArithmeticConstruction forHebrew {
+impl CalendarArithmeticConstruction for Hebrew {
+    type YearInfo = HebrewYearInfo;
+
     #[inline]
-    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
+    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
         match era {
-            "am" => Ok(era_year),
+            "am" => Ok(HebrewYearInfo::compute(era_year)),
             _ => Err(DateError::UnknownEra),
         }
     }
-}
 
-impl CalendarLunisolar for Hebrew {
     #[inline]
-    fn variable_monotonic_reference_year(&self, month_code: types::MonthCode, day: u8) -> i32 {
-        todo!()
+    fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
+        HebrewYearInfo::compute(extended_year)
     }
-    #[inline]
-    fn variable_ordinal_month(
+
+    fn reference_year_from_month_day(
         &self,
-        monotonic_year: i32,
         month_code: types::MonthCode,
-    ) -> Result<core::num::NonZeroU8, DateError> {
+        day: u8,
+    ) -> Result<Self::YearInfo, DateError> {
         todo!()
     }
-}
 
-impl crate::cal::scaffold::UnstableSealed for Hebrew {}
-impl Calendar for Hebrew {
-    type DateInner = HebrewDateInner;
-    type Year = types::EraYear;
-
-    fn from_fields(
+    fn ordinal_month_from_code(
         &self,
-        fields: DateFields,
-        options: DateFromFieldsOptions,
-    ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_lunisolar_ordinals(self)?;
-        let year = HebrewYearInfo::compute(year);
-
-        todo!()
-
-        /*
+        year: &Self::YearInfo,
+        month_code: types::MonthCode,
+    ) -> Result<u8, DateError> {
         let is_leap_year = year.keviyah.is_leap();
-
         let month_code_str = month_code.0.as_str();
-
-        let month_ordinal = if is_leap_year {
+        let ordinal_month = if is_leap_year {
             match month_code_str {
                 "M01" => 1,
                 "M02" => 2,
@@ -215,13 +205,24 @@ impl Calendar for Hebrew {
                 }
             }
         };
+        Ok(ordinal_month)
+    }
+}
 
+impl crate::cal::scaffold::UnstableSealed for Hebrew {}
+impl Calendar for Hebrew {
+    type DateInner = HebrewDateInner;
+    type Year = types::EraYear;
+
+    fn from_fields(
+        &self,
+        fields: DateFields,
+        options: DateFromFieldsOptions,
+    ) -> Result<Self::DateInner, DateError> {
+        let (year, month, day) = fields.get_ordinals(self, options)?;
         Ok(HebrewDateInner(ArithmeticDate::new_from_ordinals(
-            year,
-            month_ordinal,
-            day,
+            year, month, day, options,
         )?))
-        */
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
