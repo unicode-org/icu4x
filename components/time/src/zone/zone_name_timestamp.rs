@@ -55,19 +55,8 @@ use crate::{zone::UtcOffset, DateTime, ZonedDateTime};
 /// assert_writeable_eq!(name_2010, "Pacific Time");
 /// assert_writeable_eq!(name_2025, "Alaska Time");
 /// ```
-#[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ZoneNameTimestamp(u32);
-
-impl Ord for ZoneNameTimestamp {
-    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
-        self.epoch_millis().cmp(&other.epoch_millis())
-    }
-}
-impl PartialOrd for ZoneNameTimestamp {
-    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
-        Some(self.cmp(other))
-    }
-}
 
 impl ZoneNameTimestamp {
     /// Recovers the UTC datetime for this [`ZoneNameTimestamp`].
@@ -75,7 +64,19 @@ impl ZoneNameTimestamp {
     /// This will always return a [`ZonedDateTime`] with [`UtcOffset::zero()`]
     pub fn to_zoned_date_time_iso(self) -> ZonedDateTime<Iso, UtcOffset> {
         ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
-            self.epoch_millis(),
+            match self.0 as i64 * 15 * 60 * 1000 {
+                // See `from_zoned_date_time_iso`
+                63593100000 => 63593070000,
+                307622700000 => 307622400000,
+                576042300000 => 576041460000,
+                576044100000 => 576043260000,
+                594180900000 => 594180060000,
+                607491900000 => 607491060000,
+                1601741700000 => 1601740860000,
+                1633191300000 => 1633190460000,
+                1664640900000 => 1664640060000,
+                ms => ms,
+            },
             UtcOffset::zero(),
         )
     }
@@ -114,45 +115,24 @@ impl ZoneNameTimestamp {
     /// assert_eq!(recovered_zoned_date_time.time.subsecond.number(), 0); // always zero
     /// ```
     pub fn from_zoned_date_time_iso(zoned_date_time: ZonedDateTime<Iso, UtcOffset>) -> Self {
-        let ms = zoned_date_time.to_epoch_milliseconds_utc();
-        Self(match ms {
-            // Special bit patterns for values that appear in TZDB but are not multiples of
-            // 15 minutes. The whole range until the next 15-minutes multiple also needs to
-            // round down to these values (instead of the previous 15-minutes multiple).
-            63593070000..63593100000 => 0xFFFFFE,
-            307622400000..307622700000 => 0xFFFFFD,
-            576041460000..576042300000 => 0xFFFFFC,
-            576043260000..576044100000 => 0xFFFFFB,
-            594180060000..594180900000 => 0xFFFFFA,
-            607491060000..607491900000 => 0xFFFFF9,
-            1601740860000..1601741700000 => 0xFFFFF8,
-            1633190460000..1633191300000 => 0xFFFFF7,
-            1664640060000..1664640900000 => 0xFFFFF6,
-            _ => {
-                let qh = zoned_date_time.to_epoch_milliseconds_utc() / 1000 / 60 / 15;
-                let qh_clamped =
-                    qh.clamp(Self::far_in_past().0 as i64, Self::far_in_future().0 as i64);
-                // Valid cast as the value is clamped to u32 values.
-                qh_clamped as u32
-            }
-        })
-    }
-
-    fn epoch_millis(self) -> i64 {
-        match self.0 {
-            // Special bit patterns for values that appear in TZDB but are not multiples of
-            // 15 minutes.
-            0xFFFFFE => 63593070000,
-            0xFFFFFD => 307622400000,
-            0xFFFFFC => 576041460000,
-            0xFFFFFB => 576043260000,
-            0xFFFFFA => 594180060000,
-            0xFFFFF9 => 607491060000,
-            0xFFFFF8 => 1601740860000,
-            0xFFFFF7 => 1633190460000,
-            0xFFFFF6 => 1664640060000,
-            x => x as i64 * 15 * 60 * 1000,
-        }
+        let ms = match zoned_date_time.to_epoch_milliseconds_utc() {
+            // Values that are not multiples of 15, that we map to the next multiple
+            // of 15 (which is always 00:15 or 00:45, values that are otherwise unused).
+            63593070000..63593100000 => 63593100000,
+            307622400000..307622700000 => 307622700000,
+            576041460000..576042300000 => 576042300000,
+            576043260000..576044100000 => 576044100000,
+            594180060000..594180900000 => 594180900000,
+            607491060000..607491900000 => 607491900000,
+            1601740860000..1601741700000 => 1601741700000,
+            1633190460000..1633191300000 => 1633191300000,
+            1664640060000..1664640900000 => 1664640900000,
+            ms => ms,
+        };
+        let qh = ms / 1000 / 60 / 15;
+        let qh_clamped = qh.clamp(Self::far_in_past().0 as i64, Self::far_in_future().0 as i64);
+        // Valid cast as the value is clamped to u32 values.
+        Self(qh_clamped as u32)
     }
 
     /// Recovers the UTC datetime for this [`ZoneNameTimestamp`].
