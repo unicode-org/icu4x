@@ -441,6 +441,8 @@ macro_rules! impl_date_or_calendar_period_marker {
         $(input_day_of_week = $day_of_week_yes:ident,)?
         // Whether the input should contain the day of the year.
         $(input_day_of_year = $day_of_year_yes:ident,)?
+        // Whether the input should contain the rata die.
+        $(input_rata_die = $rata_die_yes:ident,)?
         // Whether the input should declare its calendar kind.
         $(input_any_calendar_kind = $any_calendar_kind_yes:ident,)?
         // Whether the alignment option should be available.
@@ -532,6 +534,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             type MonthInput = datetime_marker_helper!(@input/month, $($month_yes)?);
             type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, $($day_of_month_yes)?);
             type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, $($day_of_year_yes)?);
+            type RataDieInput = datetime_marker_helper!(@input/rata_die, $($rata_die_yes)?);
             type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, $($day_of_week_yes)?);
         }
         impl<C: CldrCalendar> TypedDateDataMarkers<C> for $type {
@@ -580,6 +583,7 @@ macro_rules! impl_date_marker {
         $(input_day_of_month = $day_of_month_yes:ident,)?
         $(input_day_of_week = $day_of_week_yes:ident,)?
         $(input_day_of_year = $day_of_year_yes:ident,)?
+        $(input_rata_die = $rata_die_yes:ident,)?
         $(input_any_calendar_kind = $any_calendar_kind_yes:ident,)?
         $(option_alignment = $option_alignment_yes:ident,)?
     ) => {
@@ -598,6 +602,7 @@ macro_rules! impl_date_marker {
             $(input_day_of_month = $day_of_month_yes,)?
             $(input_day_of_week = $day_of_week_yes,)?
             $(input_day_of_year = $day_of_year_yes,)?
+            $(input_rata_die = $rata_die_yes,)?
             $(input_any_calendar_kind = $any_calendar_kind_yes,)?
             $(option_alignment = $option_alignment_yes,)?
         );
@@ -693,6 +698,7 @@ macro_rules! impl_date_marker {
             type MonthInput = datetime_marker_helper!(@input/month, $($month_yes)?);
             type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, $($day_of_month_yes)?);
             type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, $($day_of_year_yes)?);
+            type RataDieInput = datetime_marker_helper!(@input/rata_die, $($rata_die_yes)?);
             type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, $($day_of_week_yes)?);
         }
         impl<C: CldrCalendar> TypedDateDataMarkers<C> for $type_time {

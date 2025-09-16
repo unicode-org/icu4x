@@ -138,7 +138,7 @@ pub mod ffi {
         #[diplomat::attr(auto, getter)]
         #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn year(&self) -> i32 {
-            self.0.monotonic_year()
+            self.0.extended_year()
         }
 
         /// Returns if the year is a leap year for this date
@@ -355,19 +355,16 @@ pub mod ffi {
             self.0.year().era_year_or_related_iso()
         }
 
-        /// Deprecated, use [`Self::monotonic_year`]
+        /// Returns the extended year, which can be used for
+        ///
+        /// This year number can be used when you need a simple numeric representation
+        /// of the year, and can be meaningfully compared with extended years from other
+        /// eras or used in arithmetic.
         #[diplomat::rust_link(icu::calendar::Date::extended_year, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::YearInfo::extended_year, FnInEnum, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn extended_year(&self) -> i32 {
-            self.0.monotonic_year()
-        }
-
-        /// Returns the monotonic year in the Date
-        #[diplomat::rust_link(icu::calendar::Date::monotonic_year, FnInStruct)]
-        #[diplomat::rust_link(icu::calendar::types::YearInfo::monotonic_year, FnInEnum, hidden)]
-        #[diplomat::attr(auto, getter)]
-        pub fn monotonic_year(&self) -> i32 {
-            self.0.monotonic_year()
+            self.0.extended_year()
         }
 
         /// Returns the era for this date, or an empty string

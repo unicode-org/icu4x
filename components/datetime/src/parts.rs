@@ -93,6 +93,18 @@ pub const DAY: Part = Part {
 };
 
 /// A [`Part`] used by [`FormattedDateTime`](super::FormattedDateTime).
+pub const EXTENDED_YEAR: Part = Part {
+    category: "datetime",
+    value: "extendedYear",
+};
+
+/// A [`Part`] used by [`FormattedDateTime`](super::FormattedDateTime).
+pub const JULIAN_DAY: Part = Part {
+    category: "datetime",
+    value: "julianDay",
+};
+
+/// A [`Part`] used by [`FormattedDateTime`](super::FormattedDateTime).
 pub const WEEKDAY: Part = Part {
     category: "datetime",
     value: "weekday",
