@@ -47,48 +47,48 @@ static HIJRI_IRAN_CASES: [DateCase; 4] = [
 struct IranTestSighting;
 
 impl HijriSighting for IranTestSighting {
-    fn year_data(&self, monotonic_year: i32) -> HijriYearData {
+    fn year_data(&self, extended_year: i32) -> HijriYearData {
         let s = false;
         let l = true;
         use calendrical_calculations::iso::fixed_from_iso as iso;
-        match monotonic_year {
+        match extended_year {
             1411 => HijriYearData::new(
-                monotonic_year,
+                extended_year,
                 iso(1990, 7, 24),
                 [l, l, s, l, s, l, s, l, s, l, s, s],
             ),
             1412 => HijriYearData::new(
-                monotonic_year,
+                extended_year,
                 iso(1991, 7, 13),
                 [l, l, s, l, s, l, s, l, s, l, l, s],
             ),
             1413 => HijriYearData::new(
-                monotonic_year,
+                extended_year,
                 iso(1992, 7, 2),
                 [l, s, l, s, s, l, s, l, s, l, l, l],
             ),
             1414 => HijriYearData::new(
-                monotonic_year,
+                extended_year,
                 iso(1993, 6, 22),
                 [s, l, s, s, l, s, l, s, s, l, l, l],
             ),
             1415 => HijriYearData::new(
-                monotonic_year,
+                extended_year,
                 iso(1994, 6, 11),
                 [l, l, s, s, s, l, s, s, s, l, l, l],
             ),
             1416 => HijriYearData::new(
-                monotonic_year,
+                extended_year,
                 iso(1995, 5, 31),
                 [l, l, s, l, s, s, l, s, s, l, l, s],
             ),
             1417 => HijriYearData::new(
-                monotonic_year,
+                extended_year,
                 iso(1996, 5, 19),
                 [l, l, l, s, s, l, s, l, s, l, s, s],
             ),
             1418 => HijriYearData::new(
-                monotonic_year,
+                extended_year,
                 iso(1997, 5, 8),
                 [l, l, s, l, l, s, l, s, s, l, l, s],
             ),
@@ -96,7 +96,7 @@ impl HijriSighting for IranTestSighting {
                 TabularAlgorithmLeapYears::TypeII,
                 TabularAlgorithmEpoch::Friday,
             )
-            .year_data(monotonic_year),
+            .year_data(extended_year),
         }
     }
 }

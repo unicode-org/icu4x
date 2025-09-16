@@ -224,7 +224,7 @@ where
         (FieldSymbol::Year(Year::Extended), l) => {
             const PART: Part = parts::EXTENDED_YEAR;
             input!(PART, Year, year = input.year);
-            let extended = year.monotonic_year();
+            let extended = year.extended_year();
             try_write_number(PART, w, decimal_formatter, extended.into(), l)?
         }
         (FieldSymbol::Month(_), l @ (FieldLength::One | FieldLength::Two)) => {

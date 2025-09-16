@@ -127,21 +127,21 @@ impl Calendar for Roc {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let monotonic_year = date.0.iso_year() - ROC_ERA_OFFSET;
-        if monotonic_year > 0 {
+        let extended_year = date.0.iso_year() - ROC_ERA_OFFSET;
+        if extended_year > 0 {
             types::EraYear {
                 era: tinystr!(16, "roc"),
                 era_index: Some(1),
-                year: monotonic_year,
-                monotonic_year,
+                year: extended_year,
+                extended_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
             types::EraYear {
                 era: tinystr!(16, "broc"),
                 era_index: Some(0),
-                year: 1 - monotonic_year,
-                monotonic_year,
+                year: 1 - extended_year,
+                extended_year,
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }
         }
@@ -233,7 +233,7 @@ mod test {
             "Failed era check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
         );
         assert_eq!(
-            roc_from_rd.monotonic_year(),
+            roc_from_rd.extended_year(),
             if case.expected_era == "roc" {
                 case.expected_year
             } else {

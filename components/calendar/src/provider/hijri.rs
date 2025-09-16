@@ -41,11 +41,11 @@ pub struct PackedHijriYearInfo(pub u16);
 
 impl PackedHijriYearInfo {
     pub(crate) const fn new(
-        monotonic_year: i32,
+        extended_year: i32,
         month_lengths: [bool; 12],
         start_day: RataDie,
     ) -> Self {
-        let start_offset = start_day.since(Self::mean_synodic_start_day(monotonic_year));
+        let start_offset = start_day.since(Self::mean_synodic_start_day(extended_year));
 
         debug_assert!(
             -8 < start_offset && start_offset < 8
@@ -79,13 +79,13 @@ impl PackedHijriYearInfo {
         Self(all)
     }
 
-    pub(crate) fn start_day(self, monotonic_year: i32) -> RataDie {
+    pub(crate) fn start_day(self, extended_year: i32) -> RataDie {
         let start_offset = if (self.0 & 0b1_0000_0000_0000) != 0 {
             -((self.0 >> 13) as i64)
         } else {
             (self.0 >> 13) as i64
         };
-        Self::mean_synodic_start_day(monotonic_year) + start_offset
+        Self::mean_synodic_start_day(extended_year) + start_offset
     }
 
     pub(crate) fn month_has_30_days(self, month: u8) -> bool {
@@ -107,11 +107,11 @@ impl PackedHijriYearInfo {
         prev_month_lengths
     }
 
-    const fn mean_synodic_start_day(monotonic_year: i32) -> RataDie {
+    const fn mean_synodic_start_day(extended_year: i32) -> RataDie {
         // -1 because the epoch is new year of year 1
         // truncating instead of flooring does not matter, as this is used for positive years only
         calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY.add(
-            ((monotonic_year - 1) as f64 * calendrical_calculations::islamic::MEAN_YEAR_LENGTH)
+            ((extended_year - 1) as f64 * calendrical_calculations::islamic::MEAN_YEAR_LENGTH)
                 as i64,
         )
     }
