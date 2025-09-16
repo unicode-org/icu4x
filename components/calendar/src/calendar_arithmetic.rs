@@ -465,9 +465,9 @@ impl<'a> DateFields<'a> {
             Some(year) => year,
             None => match missing_fields_strategy {
                 MissingFieldsStrategy::Reject => return Err(DateError::NotEnoughFields),
-                MissingFieldsStrategy::Ecma => match self.month_code {
-                    Some(month_code) => cal.reference_year_from_month_day(month_code, day)?,
-                    None => return Err(DateError::NotEnoughFields),
+                MissingFieldsStrategy::Ecma => match (self.month_code, self.ordinal_month) {
+                    (Some(month_code), None) => cal.reference_year_from_month_day(month_code, day)?,
+                    _ => return Err(DateError::NotEnoughFields),
                 },
             },
         };

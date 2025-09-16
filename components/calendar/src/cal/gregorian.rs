@@ -66,15 +66,11 @@ impl CalendarArithmeticConstruction for Gregorian {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        month_code: types::MonthCode,
-        day: u8,
+        _month_code: types::MonthCode,
+        _day: u8,
     ) -> Result<Self::YearInfo, DateError> {
-        todo!()
+        Ok(1972)
     }
-}
-
-impl Gregorian {
-    const REFERENCE_YEAR: i32 = 1972;
 }
 
 impl crate::cal::scaffold::UnstableSealed for Gregorian {}
