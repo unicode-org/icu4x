@@ -8,20 +8,16 @@
 description = "Build all permutations of all features for the provided chunk index (3 chunks)"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-features", test_arg = ["--help"] }
-install_crate_args = ["--version", "^1.10"]
+install_crate_args = ["--version", "^1.11"]
 env = { RUSTFLAGS = "-Dwarnings",  "ICU4X_DATA_DIR" = "../stubdata" }
 command = "cargo"
-args = ["check-all-features", "--n-chunks", "3", "--chunk", "${@}",
-    # Exclude internal tools (keep this list in sync with the one in ci-job-msrv-check)
-    "--workspace", "--exclude", "diplomat-gen", "--exclude", "codegen", "--exclude", "bakeddata",
-    "--exclude", "depcheck", "--exclude", "diplomat-coverage"
-]
+args = ["check-all-features", "--n-chunks", "3", "--chunk", "${@}"]
 
 [tasks.check-all-features]
 description = "Build all permutations of all features"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-features", test_arg = ["--help"] }
-install_crate_args = ["--version", "^1.10"]
+install_crate_args = ["--version", "^1.11"]
 env = { RUSTFLAGS = "-Dwarnings",  "ICU4X_DATA_DIR" = "../stubdata" }
 command = "cargo"
 args = ["check-all-features"]
@@ -30,7 +26,7 @@ args = ["check-all-features"]
 description = "Build all permutations of all features"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-build-all-features", test_arg = ["--help"] }
-install_crate_args = ["--version", "^1.10"]
+install_crate_args = ["--version", "^1.11"]
 env = { RUSTFLAGS = "-Dwarnings",  "ICU4X_DATA_DIR" = "../stubdata" }
 command = "cargo"
 args = ["build-all-features"]
