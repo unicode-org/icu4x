@@ -68,7 +68,7 @@ jobs:
     - name: Install cargo-all-features
       uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
       with:
-        tool: cargo-all-features@1.10.0
+        tool: cargo-all-features@1.11.0
 
     # No toolchain boilerplate as this runs on MSRV
 
