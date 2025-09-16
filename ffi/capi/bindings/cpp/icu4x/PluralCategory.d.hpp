@@ -37,35 +37,35 @@ namespace icu4x {
  */
 class PluralCategory {
 public:
-  enum Value {
-    Zero = 0,
-    One = 1,
-    Two = 2,
-    Few = 3,
-    Many = 4,
-    Other = 5,
-  };
+    enum Value {
+        Zero = 0,
+        One = 1,
+        Two = 2,
+        Few = 3,
+        Many = 4,
+        Other = 5,
+    };
 
-  PluralCategory(): value(Value::Other) {}
+    PluralCategory(): value(Value::Other) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr PluralCategory(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr PluralCategory(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
   /**
-   * Construct from a string in the format
-   * [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
-   *
-   * See the [Rust documentation for `get_for_cldr_string`](https://docs.rs/icu/2.0.0/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_string) for more information.
-   *
-   * See the [Rust documentation for `get_for_cldr_bytes`](https://docs.rs/icu/2.0.0/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_bytes) for more information.
+     * Construct from a string in the format
+     * [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
+     *
+     * See the [Rust documentation for `get_for_cldr_string`](https://docs.rs/icu/2.0.0/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_string) for more information.
+     *
+     * See the [Rust documentation for `get_for_cldr_bytes`](https://docs.rs/icu/2.0.0/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_bytes) for more information.
    */
   inline static std::optional<icu4x::PluralCategory> get_for_cldr_string(std::string_view s);
 
-  inline icu4x::capi::PluralCategory AsFFI() const;
-  inline static icu4x::PluralCategory FromFFI(icu4x::capi::PluralCategory c_enum);
+    inline icu4x::capi::PluralCategory AsFFI() const;
+    inline static icu4x::PluralCategory FromFFI(icu4x::capi::PluralCategory c_enum);
 private:
     Value value;
 };

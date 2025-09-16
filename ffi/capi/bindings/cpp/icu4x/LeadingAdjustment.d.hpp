@@ -30,22 +30,22 @@ namespace icu4x {
  */
 class LeadingAdjustment {
 public:
-  enum Value {
-    Auto = 0,
-    None = 1,
-    ToCased = 2,
-  };
+    enum Value {
+        Auto = 0,
+        None = 1,
+        ToCased = 2,
+    };
 
-  LeadingAdjustment(): value(Value::Auto) {}
+    LeadingAdjustment(): value(Value::Auto) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr LeadingAdjustment(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr LeadingAdjustment(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::LeadingAdjustment AsFFI() const;
-  inline static icu4x::LeadingAdjustment FromFFI(icu4x::capi::LeadingAdjustment c_enum);
+    inline icu4x::capi::LeadingAdjustment AsFFI() const;
+    inline static icu4x::LeadingAdjustment FromFFI(icu4x::capi::LeadingAdjustment c_enum);
 private:
     Value value;
 };

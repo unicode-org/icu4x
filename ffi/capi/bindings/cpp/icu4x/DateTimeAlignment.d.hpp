@@ -29,21 +29,21 @@ namespace icu4x {
  */
 class DateTimeAlignment {
 public:
-  enum Value {
-    Auto = 0,
-    Column = 1,
-  };
+    enum Value {
+        Auto = 0,
+        Column = 1,
+    };
 
-  DateTimeAlignment(): value(Value::Auto) {}
+    DateTimeAlignment(): value(Value::Auto) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr DateTimeAlignment(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr DateTimeAlignment(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::DateTimeAlignment AsFFI() const;
-  inline static icu4x::DateTimeAlignment FromFFI(icu4x::capi::DateTimeAlignment c_enum);
+    inline icu4x::capi::DateTimeAlignment AsFFI() const;
+    inline static icu4x::DateTimeAlignment FromFFI(icu4x::capi::DateTimeAlignment c_enum);
 private:
     Value value;
 };

@@ -42,48 +42,48 @@ namespace capi {
 } // namespace
 
 inline std::unique_ptr<icu4x::VariantOffsetsCalculator> icu4x::VariantOffsetsCalculator::create() {
-  auto result = icu4x::capi::icu4x_VariantOffsetsCalculator_create_mv1();
-  return std::unique_ptr<icu4x::VariantOffsetsCalculator>(icu4x::VariantOffsetsCalculator::FromFFI(result));
+    auto result = icu4x::capi::icu4x_VariantOffsetsCalculator_create_mv1();
+    return std::unique_ptr<icu4x::VariantOffsetsCalculator>(icu4x::VariantOffsetsCalculator::FromFFI(result));
 }
 
 inline diplomat::result<std::unique_ptr<icu4x::VariantOffsetsCalculator>, icu4x::DataError> icu4x::VariantOffsetsCalculator::create_with_provider(const icu4x::DataProvider& provider) {
-  auto result = icu4x::capi::icu4x_VariantOffsetsCalculator_create_with_provider_mv1(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::VariantOffsetsCalculator>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::VariantOffsetsCalculator>>(std::unique_ptr<icu4x::VariantOffsetsCalculator>(icu4x::VariantOffsetsCalculator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::VariantOffsetsCalculator>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    auto result = icu4x::capi::icu4x_VariantOffsetsCalculator_create_with_provider_mv1(provider.AsFFI());
+    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::VariantOffsetsCalculator>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::VariantOffsetsCalculator>>(std::unique_ptr<icu4x::VariantOffsetsCalculator>(icu4x::VariantOffsetsCalculator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::VariantOffsetsCalculator>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::optional<icu4x::VariantOffsets> icu4x::VariantOffsetsCalculator::compute_offsets_from_time_zone_and_date_time(const icu4x::TimeZone& time_zone, const icu4x::IsoDate& utc_date, const icu4x::Time& utc_time) const {
-  auto result = icu4x::capi::icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1(this->AsFFI(),
-    time_zone.AsFFI(),
-    utc_date.AsFFI(),
-    utc_time.AsFFI());
-  return result.is_ok ? std::optional<icu4x::VariantOffsets>(icu4x::VariantOffsets::FromFFI(result.ok)) : std::nullopt;
+    auto result = icu4x::capi::icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1(this->AsFFI(),
+        time_zone.AsFFI(),
+        utc_date.AsFFI(),
+        utc_time.AsFFI());
+    return result.is_ok ? std::optional<icu4x::VariantOffsets>(icu4x::VariantOffsets::FromFFI(result.ok)) : std::nullopt;
 }
 
 inline std::optional<icu4x::VariantOffsets> icu4x::VariantOffsetsCalculator::compute_offsets_from_time_zone_and_timestamp(const icu4x::TimeZone& time_zone, int64_t timestamp) const {
-  auto result = icu4x::capi::icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_timestamp_mv1(this->AsFFI(),
-    time_zone.AsFFI(),
-    timestamp);
-  return result.is_ok ? std::optional<icu4x::VariantOffsets>(icu4x::VariantOffsets::FromFFI(result.ok)) : std::nullopt;
+    auto result = icu4x::capi::icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_timestamp_mv1(this->AsFFI(),
+        time_zone.AsFFI(),
+        timestamp);
+    return result.is_ok ? std::optional<icu4x::VariantOffsets>(icu4x::VariantOffsets::FromFFI(result.ok)) : std::nullopt;
 }
 
 inline const icu4x::capi::VariantOffsetsCalculator* icu4x::VariantOffsetsCalculator::AsFFI() const {
-  return reinterpret_cast<const icu4x::capi::VariantOffsetsCalculator*>(this);
+    return reinterpret_cast<const icu4x::capi::VariantOffsetsCalculator*>(this);
 }
 
 inline icu4x::capi::VariantOffsetsCalculator* icu4x::VariantOffsetsCalculator::AsFFI() {
-  return reinterpret_cast<icu4x::capi::VariantOffsetsCalculator*>(this);
+    return reinterpret_cast<icu4x::capi::VariantOffsetsCalculator*>(this);
 }
 
 inline const icu4x::VariantOffsetsCalculator* icu4x::VariantOffsetsCalculator::FromFFI(const icu4x::capi::VariantOffsetsCalculator* ptr) {
-  return reinterpret_cast<const icu4x::VariantOffsetsCalculator*>(ptr);
+    return reinterpret_cast<const icu4x::VariantOffsetsCalculator*>(ptr);
 }
 
 inline icu4x::VariantOffsetsCalculator* icu4x::VariantOffsetsCalculator::FromFFI(icu4x::capi::VariantOffsetsCalculator* ptr) {
-  return reinterpret_cast<icu4x::VariantOffsetsCalculator*>(ptr);
+    return reinterpret_cast<icu4x::VariantOffsetsCalculator*>(ptr);
 }
 
 inline void icu4x::VariantOffsetsCalculator::operator delete(void* ptr) {
-  icu4x::capi::icu4x_VariantOffsetsCalculator_destroy_mv1(reinterpret_cast<icu4x::capi::VariantOffsetsCalculator*>(ptr));
+    icu4x::capi::icu4x_VariantOffsetsCalculator_destroy_mv1(reinterpret_cast<icu4x::capi::VariantOffsetsCalculator*>(ptr));
 }
 
 

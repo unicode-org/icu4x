@@ -24,17 +24,17 @@ namespace capi {
 
 
 inline icu4x::capi::Decomposed icu4x::Decomposed::AsFFI() const {
-  return icu4x::capi::Decomposed {
-    /* .first = */ first,
-    /* .second = */ second,
-  };
+    return icu4x::capi::Decomposed {
+        /* .first = */ first,
+        /* .second = */ second,
+    };
 }
 
 inline icu4x::Decomposed icu4x::Decomposed::FromFFI(icu4x::capi::Decomposed c_struct) {
-  return icu4x::Decomposed {
-    /* .first = */ c_struct.first,
-    /* .second = */ c_struct.second,
-  };
+    return icu4x::Decomposed {
+        /* .first = */ c_struct.first,
+        /* .second = */ c_struct.second,
+    };
 }
 
 

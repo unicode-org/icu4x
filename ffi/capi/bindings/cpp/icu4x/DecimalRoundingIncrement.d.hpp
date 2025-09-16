@@ -33,23 +33,23 @@ namespace icu4x {
  */
 class DecimalRoundingIncrement {
 public:
-  enum Value {
-    MultiplesOf1 = 0,
-    MultiplesOf2 = 1,
-    MultiplesOf5 = 2,
-    MultiplesOf25 = 3,
-  };
+    enum Value {
+        MultiplesOf1 = 0,
+        MultiplesOf2 = 1,
+        MultiplesOf5 = 2,
+        MultiplesOf25 = 3,
+    };
 
-  DecimalRoundingIncrement(): value(Value::MultiplesOf1) {}
+    DecimalRoundingIncrement(): value(Value::MultiplesOf1) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr DecimalRoundingIncrement(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr DecimalRoundingIncrement(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::DecimalRoundingIncrement AsFFI() const;
-  inline static icu4x::DecimalRoundingIncrement FromFFI(icu4x::capi::DecimalRoundingIncrement c_enum);
+    inline icu4x::capi::DecimalRoundingIncrement AsFFI() const;
+    inline static icu4x::DecimalRoundingIncrement FromFFI(icu4x::capi::DecimalRoundingIncrement c_enum);
 private:
     Value value;
 };

@@ -23,16 +23,16 @@ namespace capi {
 } // namespace
 
 inline icu4x::capi::DateTimeWriteError icu4x::DateTimeWriteError::AsFFI() const {
-  return static_cast<icu4x::capi::DateTimeWriteError>(value);
+    return static_cast<icu4x::capi::DateTimeWriteError>(value);
 }
 
 inline icu4x::DateTimeWriteError icu4x::DateTimeWriteError::FromFFI(icu4x::capi::DateTimeWriteError c_enum) {
-  switch (c_enum) {
-    case icu4x::capi::DateTimeWriteError_Unknown:
-    case icu4x::capi::DateTimeWriteError_MissingTimeZoneVariant:
-      return static_cast<icu4x::DateTimeWriteError::Value>(c_enum);
-    default:
-      std::abort();
-  }
+    switch (c_enum) {
+        case icu4x::capi::DateTimeWriteError_Unknown:
+        case icu4x::capi::DateTimeWriteError_MissingTimeZoneVariant:
+            return static_cast<icu4x::DateTimeWriteError::Value>(c_enum);
+        default:
+            std::abort();
+    }
 }
 #endif // icu4x_DateTimeWriteError_HPP

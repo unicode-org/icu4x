@@ -29,28 +29,28 @@ namespace capi {
 } // namespace
 
 inline std::optional<icu4x::TimeZoneAndCanonical> icu4x::TimeZoneAndCanonicalIterator::next() {
-  auto result = icu4x::capi::icu4x_TimeZoneAndCanonicalIterator_next_mv1(this->AsFFI());
-  return result.is_ok ? std::optional<icu4x::TimeZoneAndCanonical>(icu4x::TimeZoneAndCanonical::FromFFI(result.ok)) : std::nullopt;
+    auto result = icu4x::capi::icu4x_TimeZoneAndCanonicalIterator_next_mv1(this->AsFFI());
+    return result.is_ok ? std::optional<icu4x::TimeZoneAndCanonical>(icu4x::TimeZoneAndCanonical::FromFFI(result.ok)) : std::nullopt;
 }
 
 inline const icu4x::capi::TimeZoneAndCanonicalIterator* icu4x::TimeZoneAndCanonicalIterator::AsFFI() const {
-  return reinterpret_cast<const icu4x::capi::TimeZoneAndCanonicalIterator*>(this);
+    return reinterpret_cast<const icu4x::capi::TimeZoneAndCanonicalIterator*>(this);
 }
 
 inline icu4x::capi::TimeZoneAndCanonicalIterator* icu4x::TimeZoneAndCanonicalIterator::AsFFI() {
-  return reinterpret_cast<icu4x::capi::TimeZoneAndCanonicalIterator*>(this);
+    return reinterpret_cast<icu4x::capi::TimeZoneAndCanonicalIterator*>(this);
 }
 
 inline const icu4x::TimeZoneAndCanonicalIterator* icu4x::TimeZoneAndCanonicalIterator::FromFFI(const icu4x::capi::TimeZoneAndCanonicalIterator* ptr) {
-  return reinterpret_cast<const icu4x::TimeZoneAndCanonicalIterator*>(ptr);
+    return reinterpret_cast<const icu4x::TimeZoneAndCanonicalIterator*>(ptr);
 }
 
 inline icu4x::TimeZoneAndCanonicalIterator* icu4x::TimeZoneAndCanonicalIterator::FromFFI(icu4x::capi::TimeZoneAndCanonicalIterator* ptr) {
-  return reinterpret_cast<icu4x::TimeZoneAndCanonicalIterator*>(ptr);
+    return reinterpret_cast<icu4x::TimeZoneAndCanonicalIterator*>(ptr);
 }
 
 inline void icu4x::TimeZoneAndCanonicalIterator::operator delete(void* ptr) {
-  icu4x::capi::icu4x_TimeZoneAndCanonicalIterator_destroy_mv1(reinterpret_cast<icu4x::capi::TimeZoneAndCanonicalIterator*>(ptr));
+    icu4x::capi::icu4x_TimeZoneAndCanonicalIterator_destroy_mv1(reinterpret_cast<icu4x::capi::TimeZoneAndCanonicalIterator*>(ptr));
 }
 
 

@@ -28,28 +28,28 @@ namespace capi {
 } // namespace
 
 inline std::unique_ptr<icu4x::Locale> icu4x::LocaleFallbackIterator::next() {
-  auto result = icu4x::capi::icu4x_LocaleFallbackIterator_next_mv1(this->AsFFI());
-  return std::unique_ptr<icu4x::Locale>(icu4x::Locale::FromFFI(result));
+    auto result = icu4x::capi::icu4x_LocaleFallbackIterator_next_mv1(this->AsFFI());
+    return std::unique_ptr<icu4x::Locale>(icu4x::Locale::FromFFI(result));
 }
 
 inline const icu4x::capi::LocaleFallbackIterator* icu4x::LocaleFallbackIterator::AsFFI() const {
-  return reinterpret_cast<const icu4x::capi::LocaleFallbackIterator*>(this);
+    return reinterpret_cast<const icu4x::capi::LocaleFallbackIterator*>(this);
 }
 
 inline icu4x::capi::LocaleFallbackIterator* icu4x::LocaleFallbackIterator::AsFFI() {
-  return reinterpret_cast<icu4x::capi::LocaleFallbackIterator*>(this);
+    return reinterpret_cast<icu4x::capi::LocaleFallbackIterator*>(this);
 }
 
 inline const icu4x::LocaleFallbackIterator* icu4x::LocaleFallbackIterator::FromFFI(const icu4x::capi::LocaleFallbackIterator* ptr) {
-  return reinterpret_cast<const icu4x::LocaleFallbackIterator*>(ptr);
+    return reinterpret_cast<const icu4x::LocaleFallbackIterator*>(ptr);
 }
 
 inline icu4x::LocaleFallbackIterator* icu4x::LocaleFallbackIterator::FromFFI(icu4x::capi::LocaleFallbackIterator* ptr) {
-  return reinterpret_cast<icu4x::LocaleFallbackIterator*>(ptr);
+    return reinterpret_cast<icu4x::LocaleFallbackIterator*>(ptr);
 }
 
 inline void icu4x::LocaleFallbackIterator::operator delete(void* ptr) {
-  icu4x::capi::icu4x_LocaleFallbackIterator_destroy_mv1(reinterpret_cast<icu4x::capi::LocaleFallbackIterator*>(ptr));
+    icu4x::capi::icu4x_LocaleFallbackIterator_destroy_mv1(reinterpret_cast<icu4x::capi::LocaleFallbackIterator*>(ptr));
 }
 
 

@@ -26,11 +26,11 @@ namespace capi {
 
 namespace icu4x {
 struct IsoWeekOfYear {
-  uint8_t week_number;
-  int32_t iso_year;
+    uint8_t week_number;
+    int32_t iso_year;
 
-  inline icu4x::capi::IsoWeekOfYear AsFFI() const;
-  inline static icu4x::IsoWeekOfYear FromFFI(icu4x::capi::IsoWeekOfYear c_struct);
+    inline icu4x::capi::IsoWeekOfYear AsFFI() const;
+    inline static icu4x::IsoWeekOfYear FromFFI(icu4x::capi::IsoWeekOfYear c_struct);
 };
 
 } // namespace

@@ -44,46 +44,46 @@ class IanaParserExtended {
 public:
 
   /**
-   * Create a new {@link IanaParserExtended} using compiled data
-   *
-   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
+     * Create a new {@link IanaParserExtended} using compiled data
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
    */
   inline static std::unique_ptr<icu4x::IanaParserExtended> create();
 
   /**
-   * Create a new {@link IanaParserExtended} using a particular data source
-   *
-   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
+     * Create a new {@link IanaParserExtended} using a particular data source
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
    */
   inline static diplomat::result<std::unique_ptr<icu4x::IanaParserExtended>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   /**
-   * See the [Rust documentation for `parse`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.parse) for more information.
+     * See the [Rust documentation for `parse`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.parse) for more information.
    */
   inline icu4x::TimeZoneAndCanonicalAndNormalized parse(std::string_view value) const;
 
   /**
-   * See the [Rust documentation for `iter`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter) for more information.
+     * See the [Rust documentation for `iter`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter) for more information.
    */
   inline std::unique_ptr<icu4x::TimeZoneAndCanonicalIterator> iter() const;
 
   /**
-   * See the [Rust documentation for `iter_all`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter_all) for more information.
+     * See the [Rust documentation for `iter_all`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter_all) for more information.
    */
   inline std::unique_ptr<icu4x::TimeZoneAndCanonicalAndNormalizedIterator> iter_all() const;
 
-  inline const icu4x::capi::IanaParserExtended* AsFFI() const;
-  inline icu4x::capi::IanaParserExtended* AsFFI();
-  inline static const icu4x::IanaParserExtended* FromFFI(const icu4x::capi::IanaParserExtended* ptr);
-  inline static icu4x::IanaParserExtended* FromFFI(icu4x::capi::IanaParserExtended* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::IanaParserExtended* AsFFI() const;
+    inline icu4x::capi::IanaParserExtended* AsFFI();
+    inline static const icu4x::IanaParserExtended* FromFFI(const icu4x::capi::IanaParserExtended* ptr);
+    inline static icu4x::IanaParserExtended* FromFFI(icu4x::capi::IanaParserExtended* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  IanaParserExtended() = delete;
-  IanaParserExtended(const icu4x::IanaParserExtended&) = delete;
-  IanaParserExtended(icu4x::IanaParserExtended&&) noexcept = delete;
-  IanaParserExtended operator=(const icu4x::IanaParserExtended&) = delete;
-  IanaParserExtended operator=(icu4x::IanaParserExtended&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    IanaParserExtended() = delete;
+    IanaParserExtended(const icu4x::IanaParserExtended&) = delete;
+    IanaParserExtended(icu4x::IanaParserExtended&&) noexcept = delete;
+    IanaParserExtended operator=(const icu4x::IanaParserExtended&) = delete;
+    IanaParserExtended operator=(icu4x::IanaParserExtended&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace

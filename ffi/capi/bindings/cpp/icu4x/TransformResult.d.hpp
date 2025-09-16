@@ -29,21 +29,21 @@ namespace icu4x {
  */
 class TransformResult {
 public:
-  enum Value {
-    Modified = 0,
-    Unmodified = 1,
-  };
+    enum Value {
+        Modified = 0,
+        Unmodified = 1,
+    };
 
-  TransformResult(): value(Value::Unmodified) {}
+    TransformResult(): value(Value::Unmodified) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr TransformResult(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr TransformResult(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::TransformResult AsFFI() const;
-  inline static icu4x::TransformResult FromFFI(icu4x::capi::TransformResult c_enum);
+    inline icu4x::capi::TransformResult AsFFI() const;
+    inline static icu4x::TransformResult FromFFI(icu4x::capi::TransformResult c_enum);
 private:
     Value value;
 };

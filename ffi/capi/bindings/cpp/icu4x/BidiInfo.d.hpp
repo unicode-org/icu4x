@@ -33,41 +33,41 @@ class BidiInfo {
 public:
 
   /**
-   * The number of paragraphs contained here
+     * The number of paragraphs contained here
    */
   inline size_t paragraph_count() const;
 
   /**
-   * Get the nth paragraph, returning `None` if out of bounds
+     * Get the nth paragraph, returning `None` if out of bounds
    */
   inline std::unique_ptr<icu4x::BidiParagraph> paragraph_at(size_t n) const;
 
   /**
-   * The number of bytes in this full text
+     * The number of bytes in this full text
    */
   inline size_t size() const;
 
   /**
-   * Get the BIDI level at a particular byte index in the full text.
-   * This integer is conceptually a `unicode_bidi::Level`,
-   * and can be further inspected using the static methods on Bidi.
-   *
-   * Returns 0 (equivalent to `Level::ltr()`) on error
+     * Get the BIDI level at a particular byte index in the full text.
+     * This integer is conceptually a `unicode_bidi::Level`,
+     * and can be further inspected using the static methods on Bidi.
+     *
+     * Returns 0 (equivalent to `Level::ltr()`) on error
    */
   inline uint8_t level_at(size_t pos) const;
 
-  inline const icu4x::capi::BidiInfo* AsFFI() const;
-  inline icu4x::capi::BidiInfo* AsFFI();
-  inline static const icu4x::BidiInfo* FromFFI(const icu4x::capi::BidiInfo* ptr);
-  inline static icu4x::BidiInfo* FromFFI(icu4x::capi::BidiInfo* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::BidiInfo* AsFFI() const;
+    inline icu4x::capi::BidiInfo* AsFFI();
+    inline static const icu4x::BidiInfo* FromFFI(const icu4x::capi::BidiInfo* ptr);
+    inline static icu4x::BidiInfo* FromFFI(icu4x::capi::BidiInfo* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  BidiInfo() = delete;
-  BidiInfo(const icu4x::BidiInfo&) = delete;
-  BidiInfo(icu4x::BidiInfo&&) noexcept = delete;
-  BidiInfo operator=(const icu4x::BidiInfo&) = delete;
-  BidiInfo operator=(icu4x::BidiInfo&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    BidiInfo() = delete;
+    BidiInfo(const icu4x::BidiInfo&) = delete;
+    BidiInfo(icu4x::BidiInfo&&) noexcept = delete;
+    BidiInfo operator=(const icu4x::BidiInfo&) = delete;
+    BidiInfo operator=(icu4x::BidiInfo&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace

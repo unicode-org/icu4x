@@ -27,22 +27,22 @@ namespace capi {
 namespace icu4x {
 class BidiDirection {
 public:
-  enum Value {
-    Ltr = 0,
-    Rtl = 1,
-    Mixed = 2,
-  };
+    enum Value {
+        Ltr = 0,
+        Rtl = 1,
+        Mixed = 2,
+    };
 
-  BidiDirection(): value(Value::Ltr) {}
+    BidiDirection(): value(Value::Ltr) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr BidiDirection(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr BidiDirection(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::BidiDirection AsFFI() const;
-  inline static icu4x::BidiDirection FromFFI(icu4x::capi::BidiDirection c_enum);
+    inline icu4x::capi::BidiDirection AsFFI() const;
+    inline static icu4x::BidiDirection FromFFI(icu4x::capi::BidiDirection c_enum);
 private:
     Value value;
 };

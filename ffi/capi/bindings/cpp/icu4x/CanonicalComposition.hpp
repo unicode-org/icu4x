@@ -34,40 +34,40 @@ namespace capi {
 } // namespace
 
 inline std::unique_ptr<icu4x::CanonicalComposition> icu4x::CanonicalComposition::create() {
-  auto result = icu4x::capi::icu4x_CanonicalComposition_create_mv1();
-  return std::unique_ptr<icu4x::CanonicalComposition>(icu4x::CanonicalComposition::FromFFI(result));
+    auto result = icu4x::capi::icu4x_CanonicalComposition_create_mv1();
+    return std::unique_ptr<icu4x::CanonicalComposition>(icu4x::CanonicalComposition::FromFFI(result));
 }
 
 inline diplomat::result<std::unique_ptr<icu4x::CanonicalComposition>, icu4x::DataError> icu4x::CanonicalComposition::create_with_provider(const icu4x::DataProvider& provider) {
-  auto result = icu4x::capi::icu4x_CanonicalComposition_create_with_provider_mv1(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CanonicalComposition>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CanonicalComposition>>(std::unique_ptr<icu4x::CanonicalComposition>(icu4x::CanonicalComposition::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CanonicalComposition>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    auto result = icu4x::capi::icu4x_CanonicalComposition_create_with_provider_mv1(provider.AsFFI());
+    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CanonicalComposition>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CanonicalComposition>>(std::unique_ptr<icu4x::CanonicalComposition>(icu4x::CanonicalComposition::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CanonicalComposition>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline char32_t icu4x::CanonicalComposition::compose(char32_t starter, char32_t second) const {
-  auto result = icu4x::capi::icu4x_CanonicalComposition_compose_mv1(this->AsFFI(),
-    starter,
-    second);
-  return result;
+    auto result = icu4x::capi::icu4x_CanonicalComposition_compose_mv1(this->AsFFI(),
+        starter,
+        second);
+    return result;
 }
 
 inline const icu4x::capi::CanonicalComposition* icu4x::CanonicalComposition::AsFFI() const {
-  return reinterpret_cast<const icu4x::capi::CanonicalComposition*>(this);
+    return reinterpret_cast<const icu4x::capi::CanonicalComposition*>(this);
 }
 
 inline icu4x::capi::CanonicalComposition* icu4x::CanonicalComposition::AsFFI() {
-  return reinterpret_cast<icu4x::capi::CanonicalComposition*>(this);
+    return reinterpret_cast<icu4x::capi::CanonicalComposition*>(this);
 }
 
 inline const icu4x::CanonicalComposition* icu4x::CanonicalComposition::FromFFI(const icu4x::capi::CanonicalComposition* ptr) {
-  return reinterpret_cast<const icu4x::CanonicalComposition*>(ptr);
+    return reinterpret_cast<const icu4x::CanonicalComposition*>(ptr);
 }
 
 inline icu4x::CanonicalComposition* icu4x::CanonicalComposition::FromFFI(icu4x::capi::CanonicalComposition* ptr) {
-  return reinterpret_cast<icu4x::CanonicalComposition*>(ptr);
+    return reinterpret_cast<icu4x::CanonicalComposition*>(ptr);
 }
 
 inline void icu4x::CanonicalComposition::operator delete(void* ptr) {
-  icu4x::capi::icu4x_CanonicalComposition_destroy_mv1(reinterpret_cast<icu4x::capi::CanonicalComposition*>(ptr));
+    icu4x::capi::icu4x_CanonicalComposition_destroy_mv1(reinterpret_cast<icu4x::capi::CanonicalComposition*>(ptr));
 }
 
 

@@ -23,18 +23,18 @@ namespace capi {
 } // namespace
 
 inline icu4x::capi::LineBreakStrictness icu4x::LineBreakStrictness::AsFFI() const {
-  return static_cast<icu4x::capi::LineBreakStrictness>(value);
+    return static_cast<icu4x::capi::LineBreakStrictness>(value);
 }
 
 inline icu4x::LineBreakStrictness icu4x::LineBreakStrictness::FromFFI(icu4x::capi::LineBreakStrictness c_enum) {
-  switch (c_enum) {
-    case icu4x::capi::LineBreakStrictness_Loose:
-    case icu4x::capi::LineBreakStrictness_Normal:
-    case icu4x::capi::LineBreakStrictness_Strict:
-    case icu4x::capi::LineBreakStrictness_Anywhere:
-      return static_cast<icu4x::LineBreakStrictness::Value>(c_enum);
-    default:
-      std::abort();
-  }
+    switch (c_enum) {
+        case icu4x::capi::LineBreakStrictness_Loose:
+        case icu4x::capi::LineBreakStrictness_Normal:
+        case icu4x::capi::LineBreakStrictness_Strict:
+        case icu4x::capi::LineBreakStrictness_Anywhere:
+            return static_cast<icu4x::LineBreakStrictness::Value>(c_enum);
+        default:
+            std::abort();
+    }
 }
 #endif // icu4x_LineBreakStrictness_HPP

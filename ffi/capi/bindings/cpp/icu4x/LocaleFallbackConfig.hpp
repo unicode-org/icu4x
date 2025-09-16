@@ -25,15 +25,15 @@ namespace capi {
 
 
 inline icu4x::capi::LocaleFallbackConfig icu4x::LocaleFallbackConfig::AsFFI() const {
-  return icu4x::capi::LocaleFallbackConfig {
-    /* .priority = */ priority.AsFFI(),
-  };
+    return icu4x::capi::LocaleFallbackConfig {
+        /* .priority = */ priority.AsFFI(),
+    };
 }
 
 inline icu4x::LocaleFallbackConfig icu4x::LocaleFallbackConfig::FromFFI(icu4x::capi::LocaleFallbackConfig c_struct) {
-  return icu4x::LocaleFallbackConfig {
-    /* .priority = */ icu4x::LocaleFallbackPriority::FromFFI(c_struct.priority),
-  };
+    return icu4x::LocaleFallbackConfig {
+        /* .priority = */ icu4x::LocaleFallbackPriority::FromFFI(c_struct.priority),
+    };
 }
 
 

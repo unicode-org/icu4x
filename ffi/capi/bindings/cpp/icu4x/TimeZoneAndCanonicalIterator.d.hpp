@@ -30,22 +30,22 @@ class TimeZoneAndCanonicalIterator {
 public:
 
   /**
-   * See the [Rust documentation for `next`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html#method.next) for more information.
+     * See the [Rust documentation for `next`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html#method.next) for more information.
    */
   inline std::optional<icu4x::TimeZoneAndCanonical> next();
 
-  inline const icu4x::capi::TimeZoneAndCanonicalIterator* AsFFI() const;
-  inline icu4x::capi::TimeZoneAndCanonicalIterator* AsFFI();
-  inline static const icu4x::TimeZoneAndCanonicalIterator* FromFFI(const icu4x::capi::TimeZoneAndCanonicalIterator* ptr);
-  inline static icu4x::TimeZoneAndCanonicalIterator* FromFFI(icu4x::capi::TimeZoneAndCanonicalIterator* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::TimeZoneAndCanonicalIterator* AsFFI() const;
+    inline icu4x::capi::TimeZoneAndCanonicalIterator* AsFFI();
+    inline static const icu4x::TimeZoneAndCanonicalIterator* FromFFI(const icu4x::capi::TimeZoneAndCanonicalIterator* ptr);
+    inline static icu4x::TimeZoneAndCanonicalIterator* FromFFI(icu4x::capi::TimeZoneAndCanonicalIterator* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  TimeZoneAndCanonicalIterator() = delete;
-  TimeZoneAndCanonicalIterator(const icu4x::TimeZoneAndCanonicalIterator&) = delete;
-  TimeZoneAndCanonicalIterator(icu4x::TimeZoneAndCanonicalIterator&&) noexcept = delete;
-  TimeZoneAndCanonicalIterator operator=(const icu4x::TimeZoneAndCanonicalIterator&) = delete;
-  TimeZoneAndCanonicalIterator operator=(icu4x::TimeZoneAndCanonicalIterator&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    TimeZoneAndCanonicalIterator() = delete;
+    TimeZoneAndCanonicalIterator(const icu4x::TimeZoneAndCanonicalIterator&) = delete;
+    TimeZoneAndCanonicalIterator(icu4x::TimeZoneAndCanonicalIterator&&) noexcept = delete;
+    TimeZoneAndCanonicalIterator operator=(const icu4x::TimeZoneAndCanonicalIterator&) = delete;
+    TimeZoneAndCanonicalIterator operator=(icu4x::TimeZoneAndCanonicalIterator&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace

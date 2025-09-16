@@ -23,17 +23,17 @@ namespace capi {
 } // namespace
 
 inline icu4x::capi::ListLength icu4x::ListLength::AsFFI() const {
-  return static_cast<icu4x::capi::ListLength>(value);
+    return static_cast<icu4x::capi::ListLength>(value);
 }
 
 inline icu4x::ListLength icu4x::ListLength::FromFFI(icu4x::capi::ListLength c_enum) {
-  switch (c_enum) {
-    case icu4x::capi::ListLength_Wide:
-    case icu4x::capi::ListLength_Short:
-    case icu4x::capi::ListLength_Narrow:
-      return static_cast<icu4x::ListLength::Value>(c_enum);
-    default:
-      std::abort();
-  }
+    switch (c_enum) {
+        case icu4x::capi::ListLength_Wide:
+        case icu4x::capi::ListLength_Short:
+        case icu4x::capi::ListLength_Narrow:
+            return static_cast<icu4x::ListLength::Value>(c_enum);
+        default:
+            std::abort();
+    }
 }
 #endif // icu4x_ListLength_HPP

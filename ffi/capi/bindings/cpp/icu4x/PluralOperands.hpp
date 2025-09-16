@@ -34,38 +34,38 @@ namespace capi {
 } // namespace
 
 inline diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::DecimalParseError> icu4x::PluralOperands::from_string(std::string_view s) {
-  auto result = icu4x::capi::icu4x_PluralOperands_from_string_mv1({s.data(), s.size()});
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::DecimalParseError>(diplomat::Ok<std::unique_ptr<icu4x::PluralOperands>>(std::unique_ptr<icu4x::PluralOperands>(icu4x::PluralOperands::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::DecimalParseError>(diplomat::Err<icu4x::DecimalParseError>(icu4x::DecimalParseError::FromFFI(result.err)));
+    auto result = icu4x::capi::icu4x_PluralOperands_from_string_mv1({s.data(), s.size()});
+    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::DecimalParseError>(diplomat::Ok<std::unique_ptr<icu4x::PluralOperands>>(std::unique_ptr<icu4x::PluralOperands>(icu4x::PluralOperands::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::DecimalParseError>(diplomat::Err<icu4x::DecimalParseError>(icu4x::DecimalParseError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::PluralOperands> icu4x::PluralOperands::from(int64_t i) {
-  auto result = icu4x::capi::icu4x_PluralOperands_from_int64_mv1(i);
-  return std::unique_ptr<icu4x::PluralOperands>(icu4x::PluralOperands::FromFFI(result));
+    auto result = icu4x::capi::icu4x_PluralOperands_from_int64_mv1(i);
+    return std::unique_ptr<icu4x::PluralOperands>(icu4x::PluralOperands::FromFFI(result));
 }
 
 inline std::unique_ptr<icu4x::PluralOperands> icu4x::PluralOperands::from_fixed_decimal(const icu4x::Decimal& x) {
-  auto result = icu4x::capi::icu4x_PluralOperands_from_fixed_decimal_mv1(x.AsFFI());
-  return std::unique_ptr<icu4x::PluralOperands>(icu4x::PluralOperands::FromFFI(result));
+    auto result = icu4x::capi::icu4x_PluralOperands_from_fixed_decimal_mv1(x.AsFFI());
+    return std::unique_ptr<icu4x::PluralOperands>(icu4x::PluralOperands::FromFFI(result));
 }
 
 inline const icu4x::capi::PluralOperands* icu4x::PluralOperands::AsFFI() const {
-  return reinterpret_cast<const icu4x::capi::PluralOperands*>(this);
+    return reinterpret_cast<const icu4x::capi::PluralOperands*>(this);
 }
 
 inline icu4x::capi::PluralOperands* icu4x::PluralOperands::AsFFI() {
-  return reinterpret_cast<icu4x::capi::PluralOperands*>(this);
+    return reinterpret_cast<icu4x::capi::PluralOperands*>(this);
 }
 
 inline const icu4x::PluralOperands* icu4x::PluralOperands::FromFFI(const icu4x::capi::PluralOperands* ptr) {
-  return reinterpret_cast<const icu4x::PluralOperands*>(ptr);
+    return reinterpret_cast<const icu4x::PluralOperands*>(ptr);
 }
 
 inline icu4x::PluralOperands* icu4x::PluralOperands::FromFFI(icu4x::capi::PluralOperands* ptr) {
-  return reinterpret_cast<icu4x::PluralOperands*>(ptr);
+    return reinterpret_cast<icu4x::PluralOperands*>(ptr);
 }
 
 inline void icu4x::PluralOperands::operator delete(void* ptr) {
-  icu4x::capi::icu4x_PluralOperands_destroy_mv1(reinterpret_cast<icu4x::capi::PluralOperands*>(ptr));
+    icu4x::capi::icu4x_PluralOperands_destroy_mv1(reinterpret_cast<icu4x::capi::PluralOperands*>(ptr));
 }
 
 

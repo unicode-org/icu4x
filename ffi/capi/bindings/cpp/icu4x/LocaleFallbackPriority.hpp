@@ -23,16 +23,16 @@ namespace capi {
 } // namespace
 
 inline icu4x::capi::LocaleFallbackPriority icu4x::LocaleFallbackPriority::AsFFI() const {
-  return static_cast<icu4x::capi::LocaleFallbackPriority>(value);
+    return static_cast<icu4x::capi::LocaleFallbackPriority>(value);
 }
 
 inline icu4x::LocaleFallbackPriority icu4x::LocaleFallbackPriority::FromFFI(icu4x::capi::LocaleFallbackPriority c_enum) {
-  switch (c_enum) {
-    case icu4x::capi::LocaleFallbackPriority_Language:
-    case icu4x::capi::LocaleFallbackPriority_Region:
-      return static_cast<icu4x::LocaleFallbackPriority::Value>(c_enum);
-    default:
-      std::abort();
-  }
+    switch (c_enum) {
+        case icu4x::capi::LocaleFallbackPriority_Language:
+        case icu4x::capi::LocaleFallbackPriority_Region:
+            return static_cast<icu4x::LocaleFallbackPriority::Value>(c_enum);
+        default:
+            std::abort();
+    }
 }
 #endif // icu4x_LocaleFallbackPriority_HPP

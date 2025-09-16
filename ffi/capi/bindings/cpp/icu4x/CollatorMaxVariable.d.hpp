@@ -31,23 +31,23 @@ namespace icu4x {
  */
 class CollatorMaxVariable {
 public:
-  enum Value {
-    Space = 0,
-    Punctuation = 1,
-    Symbol = 2,
-    Currency = 3,
-  };
+    enum Value {
+        Space = 0,
+        Punctuation = 1,
+        Symbol = 2,
+        Currency = 3,
+    };
 
-  CollatorMaxVariable(): value(Value::Space) {}
+    CollatorMaxVariable(): value(Value::Space) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr CollatorMaxVariable(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr CollatorMaxVariable(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::CollatorMaxVariable AsFFI() const;
-  inline static icu4x::CollatorMaxVariable FromFFI(icu4x::capi::CollatorMaxVariable c_enum);
+    inline icu4x::capi::CollatorMaxVariable AsFFI() const;
+    inline static icu4x::CollatorMaxVariable FromFFI(icu4x::capi::CollatorMaxVariable c_enum);
 private:
     Value value;
 };

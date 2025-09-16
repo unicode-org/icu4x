@@ -45,61 +45,61 @@ namespace capi {
 } // namespace
 
 inline std::unique_ptr<icu4x::LocaleExpander> icu4x::LocaleExpander::create_common() {
-  auto result = icu4x::capi::icu4x_LocaleExpander_create_common_mv1();
-  return std::unique_ptr<icu4x::LocaleExpander>(icu4x::LocaleExpander::FromFFI(result));
+    auto result = icu4x::capi::icu4x_LocaleExpander_create_common_mv1();
+    return std::unique_ptr<icu4x::LocaleExpander>(icu4x::LocaleExpander::FromFFI(result));
 }
 
 inline diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError> icu4x::LocaleExpander::create_common_with_provider(const icu4x::DataProvider& provider) {
-  auto result = icu4x::capi::icu4x_LocaleExpander_create_common_with_provider_mv1(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::LocaleExpander>>(std::unique_ptr<icu4x::LocaleExpander>(icu4x::LocaleExpander::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    auto result = icu4x::capi::icu4x_LocaleExpander_create_common_with_provider_mv1(provider.AsFFI());
+    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::LocaleExpander>>(std::unique_ptr<icu4x::LocaleExpander>(icu4x::LocaleExpander::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::LocaleExpander> icu4x::LocaleExpander::create_extended() {
-  auto result = icu4x::capi::icu4x_LocaleExpander_create_extended_mv1();
-  return std::unique_ptr<icu4x::LocaleExpander>(icu4x::LocaleExpander::FromFFI(result));
+    auto result = icu4x::capi::icu4x_LocaleExpander_create_extended_mv1();
+    return std::unique_ptr<icu4x::LocaleExpander>(icu4x::LocaleExpander::FromFFI(result));
 }
 
 inline diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError> icu4x::LocaleExpander::create_extended_with_provider(const icu4x::DataProvider& provider) {
-  auto result = icu4x::capi::icu4x_LocaleExpander_create_extended_with_provider_mv1(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::LocaleExpander>>(std::unique_ptr<icu4x::LocaleExpander>(icu4x::LocaleExpander::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    auto result = icu4x::capi::icu4x_LocaleExpander_create_extended_with_provider_mv1(provider.AsFFI());
+    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::LocaleExpander>>(std::unique_ptr<icu4x::LocaleExpander>(icu4x::LocaleExpander::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline icu4x::TransformResult icu4x::LocaleExpander::maximize(icu4x::Locale& locale) const {
-  auto result = icu4x::capi::icu4x_LocaleExpander_maximize_mv1(this->AsFFI(),
-    locale.AsFFI());
-  return icu4x::TransformResult::FromFFI(result);
+    auto result = icu4x::capi::icu4x_LocaleExpander_maximize_mv1(this->AsFFI(),
+        locale.AsFFI());
+    return icu4x::TransformResult::FromFFI(result);
 }
 
 inline icu4x::TransformResult icu4x::LocaleExpander::minimize(icu4x::Locale& locale) const {
-  auto result = icu4x::capi::icu4x_LocaleExpander_minimize_mv1(this->AsFFI(),
-    locale.AsFFI());
-  return icu4x::TransformResult::FromFFI(result);
+    auto result = icu4x::capi::icu4x_LocaleExpander_minimize_mv1(this->AsFFI(),
+        locale.AsFFI());
+    return icu4x::TransformResult::FromFFI(result);
 }
 
 inline icu4x::TransformResult icu4x::LocaleExpander::minimize_favor_script(icu4x::Locale& locale) const {
-  auto result = icu4x::capi::icu4x_LocaleExpander_minimize_favor_script_mv1(this->AsFFI(),
-    locale.AsFFI());
-  return icu4x::TransformResult::FromFFI(result);
+    auto result = icu4x::capi::icu4x_LocaleExpander_minimize_favor_script_mv1(this->AsFFI(),
+        locale.AsFFI());
+    return icu4x::TransformResult::FromFFI(result);
 }
 
 inline const icu4x::capi::LocaleExpander* icu4x::LocaleExpander::AsFFI() const {
-  return reinterpret_cast<const icu4x::capi::LocaleExpander*>(this);
+    return reinterpret_cast<const icu4x::capi::LocaleExpander*>(this);
 }
 
 inline icu4x::capi::LocaleExpander* icu4x::LocaleExpander::AsFFI() {
-  return reinterpret_cast<icu4x::capi::LocaleExpander*>(this);
+    return reinterpret_cast<icu4x::capi::LocaleExpander*>(this);
 }
 
 inline const icu4x::LocaleExpander* icu4x::LocaleExpander::FromFFI(const icu4x::capi::LocaleExpander* ptr) {
-  return reinterpret_cast<const icu4x::LocaleExpander*>(ptr);
+    return reinterpret_cast<const icu4x::LocaleExpander*>(ptr);
 }
 
 inline icu4x::LocaleExpander* icu4x::LocaleExpander::FromFFI(icu4x::capi::LocaleExpander* ptr) {
-  return reinterpret_cast<icu4x::LocaleExpander*>(ptr);
+    return reinterpret_cast<icu4x::LocaleExpander*>(ptr);
 }
 
 inline void icu4x::LocaleExpander::operator delete(void* ptr) {
-  icu4x::capi::icu4x_LocaleExpander_destroy_mv1(reinterpret_cast<icu4x::capi::LocaleExpander*>(ptr));
+    icu4x::capi::icu4x_LocaleExpander_destroy_mv1(reinterpret_cast<icu4x::capi::LocaleExpander*>(ptr));
 }
 
 

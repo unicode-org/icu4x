@@ -32,22 +32,22 @@ namespace icu4x {
  */
 class DecimalSign {
 public:
-  enum Value {
-    None = 0,
-    Negative = 1,
-    Positive = 2,
-  };
+    enum Value {
+        None = 0,
+        Negative = 1,
+        Positive = 2,
+    };
 
-  DecimalSign(): value(Value::None) {}
+    DecimalSign(): value(Value::None) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr DecimalSign(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr DecimalSign(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::DecimalSign AsFFI() const;
-  inline static icu4x::DecimalSign FromFFI(icu4x::capi::DecimalSign c_enum);
+    inline icu4x::capi::DecimalSign AsFFI() const;
+    inline static icu4x::DecimalSign FromFFI(icu4x::capi::DecimalSign c_enum);
 private:
     Value value;
 };

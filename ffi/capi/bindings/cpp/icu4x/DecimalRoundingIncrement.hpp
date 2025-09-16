@@ -23,18 +23,18 @@ namespace capi {
 } // namespace
 
 inline icu4x::capi::DecimalRoundingIncrement icu4x::DecimalRoundingIncrement::AsFFI() const {
-  return static_cast<icu4x::capi::DecimalRoundingIncrement>(value);
+    return static_cast<icu4x::capi::DecimalRoundingIncrement>(value);
 }
 
 inline icu4x::DecimalRoundingIncrement icu4x::DecimalRoundingIncrement::FromFFI(icu4x::capi::DecimalRoundingIncrement c_enum) {
-  switch (c_enum) {
-    case icu4x::capi::DecimalRoundingIncrement_MultiplesOf1:
-    case icu4x::capi::DecimalRoundingIncrement_MultiplesOf2:
-    case icu4x::capi::DecimalRoundingIncrement_MultiplesOf5:
-    case icu4x::capi::DecimalRoundingIncrement_MultiplesOf25:
-      return static_cast<icu4x::DecimalRoundingIncrement::Value>(c_enum);
-    default:
-      std::abort();
-  }
+    switch (c_enum) {
+        case icu4x::capi::DecimalRoundingIncrement_MultiplesOf1:
+        case icu4x::capi::DecimalRoundingIncrement_MultiplesOf2:
+        case icu4x::capi::DecimalRoundingIncrement_MultiplesOf5:
+        case icu4x::capi::DecimalRoundingIncrement_MultiplesOf25:
+            return static_cast<icu4x::DecimalRoundingIncrement::Value>(c_enum);
+        default:
+            std::abort();
+    }
 }
 #endif // icu4x_DecimalRoundingIncrement_HPP

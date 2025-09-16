@@ -29,21 +29,21 @@ namespace icu4x {
  */
 class CollatorNumericOrdering {
 public:
-  enum Value {
-    Off = 0,
-    On = 1,
-  };
+    enum Value {
+        Off = 0,
+        On = 1,
+    };
 
-  CollatorNumericOrdering(): value(Value::Off) {}
+    CollatorNumericOrdering(): value(Value::Off) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr CollatorNumericOrdering(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr CollatorNumericOrdering(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::CollatorNumericOrdering AsFFI() const;
-  inline static icu4x::CollatorNumericOrdering FromFFI(icu4x::capi::CollatorNumericOrdering c_enum);
+    inline icu4x::capi::CollatorNumericOrdering AsFFI() const;
+    inline static icu4x::CollatorNumericOrdering FromFFI(icu4x::capi::CollatorNumericOrdering c_enum);
 private:
     Value value;
 };

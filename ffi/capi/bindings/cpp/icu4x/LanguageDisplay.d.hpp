@@ -31,21 +31,21 @@ namespace icu4x {
  */
 class LanguageDisplay {
 public:
-  enum Value {
-    Dialect = 0,
-    Standard = 1,
-  };
+    enum Value {
+        Dialect = 0,
+        Standard = 1,
+    };
 
-  LanguageDisplay(): value(Value::Dialect) {}
+    LanguageDisplay(): value(Value::Dialect) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr LanguageDisplay(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr LanguageDisplay(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::LanguageDisplay AsFFI() const;
-  inline static icu4x::LanguageDisplay FromFFI(icu4x::capi::LanguageDisplay c_enum);
+    inline icu4x::capi::LanguageDisplay AsFFI() const;
+    inline static icu4x::LanguageDisplay FromFFI(icu4x::capi::LanguageDisplay c_enum);
 private:
     Value value;
 };

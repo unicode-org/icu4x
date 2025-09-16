@@ -68,75 +68,75 @@ namespace icu4x {
  */
 class IndicSyllabicCategory {
 public:
-  enum Value {
-    Other = 0,
-    Avagraha = 1,
-    Bindu = 2,
-    BrahmiJoiningNumber = 3,
-    CantillationMark = 4,
-    Consonant = 5,
-    ConsonantDead = 6,
-    ConsonantFinal = 7,
-    ConsonantHeadLetter = 8,
-    ConsonantInitialPostfixed = 9,
-    ConsonantKiller = 10,
-    ConsonantMedial = 11,
-    ConsonantPlaceholder = 12,
-    ConsonantPrecedingRepha = 13,
-    ConsonantPrefixed = 14,
-    ConsonantSucceedingRepha = 15,
-    ConsonantSubjoined = 16,
-    ConsonantWithStacker = 17,
-    GeminationMark = 18,
-    InvisibleStacker = 19,
-    Joiner = 20,
-    ModifyingLetter = 21,
-    NonJoiner = 22,
-    Nukta = 23,
-    Number = 24,
-    NumberJoiner = 25,
-    PureKiller = 26,
-    RegisterShifter = 27,
-    SyllableModifier = 28,
-    ToneLetter = 29,
-    ToneMark = 30,
-    Virama = 31,
-    Visarga = 32,
-    Vowel = 33,
-    VowelDependent = 34,
-    VowelIndependent = 35,
-    ReorderingKiller = 36,
-  };
+    enum Value {
+        Other = 0,
+        Avagraha = 1,
+        Bindu = 2,
+        BrahmiJoiningNumber = 3,
+        CantillationMark = 4,
+        Consonant = 5,
+        ConsonantDead = 6,
+        ConsonantFinal = 7,
+        ConsonantHeadLetter = 8,
+        ConsonantInitialPostfixed = 9,
+        ConsonantKiller = 10,
+        ConsonantMedial = 11,
+        ConsonantPlaceholder = 12,
+        ConsonantPrecedingRepha = 13,
+        ConsonantPrefixed = 14,
+        ConsonantSucceedingRepha = 15,
+        ConsonantSubjoined = 16,
+        ConsonantWithStacker = 17,
+        GeminationMark = 18,
+        InvisibleStacker = 19,
+        Joiner = 20,
+        ModifyingLetter = 21,
+        NonJoiner = 22,
+        Nukta = 23,
+        Number = 24,
+        NumberJoiner = 25,
+        PureKiller = 26,
+        RegisterShifter = 27,
+        SyllableModifier = 28,
+        ToneLetter = 29,
+        ToneMark = 30,
+        Virama = 31,
+        Visarga = 32,
+        Vowel = 33,
+        VowelDependent = 34,
+        VowelIndependent = 35,
+        ReorderingKiller = 36,
+    };
 
-  IndicSyllabicCategory(): value(Value::Other) {}
+    IndicSyllabicCategory(): value(Value::Other) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr IndicSyllabicCategory(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr IndicSyllabicCategory(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
   /**
-   * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
    */
   inline static icu4x::IndicSyllabicCategory for_char(char32_t ch);
 
   /**
-   * Convert to an integer value usable with ICU4C and CodePointMapData
-   *
-   * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#method.to_icu4c_value) for more information.
+     * Convert to an integer value usable with ICU4C and CodePointMapData
+     *
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#method.to_icu4c_value) for more information.
    */
   inline uint8_t to_integer_value() const;
 
   /**
-   * Convert from an integer value from ICU4C or CodePointMapData
-   *
-   * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#method.from_icu4c_value) for more information.
+     * Convert from an integer value from ICU4C or CodePointMapData
+     *
+     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#method.from_icu4c_value) for more information.
    */
   inline static std::optional<icu4x::IndicSyllabicCategory> from_integer_value(uint8_t other);
 
-  inline icu4x::capi::IndicSyllabicCategory AsFFI() const;
-  inline static icu4x::IndicSyllabicCategory FromFFI(icu4x::capi::IndicSyllabicCategory c_enum);
+    inline icu4x::capi::IndicSyllabicCategory AsFFI() const;
+    inline static icu4x::IndicSyllabicCategory FromFFI(icu4x::capi::IndicSyllabicCategory c_enum);
 private:
     Value value;
 };

@@ -29,21 +29,21 @@ namespace icu4x {
  */
 class CollatorAlternateHandling {
 public:
-  enum Value {
-    NonIgnorable = 0,
-    Shifted = 1,
-  };
+    enum Value {
+        NonIgnorable = 0,
+        Shifted = 1,
+    };
 
-  CollatorAlternateHandling(): value(Value::NonIgnorable) {}
+    CollatorAlternateHandling(): value(Value::NonIgnorable) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr CollatorAlternateHandling(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr CollatorAlternateHandling(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::CollatorAlternateHandling AsFFI() const;
-  inline static icu4x::CollatorAlternateHandling FromFFI(icu4x::capi::CollatorAlternateHandling c_enum);
+    inline icu4x::capi::CollatorAlternateHandling AsFFI() const;
+    inline static icu4x::CollatorAlternateHandling FromFFI(icu4x::capi::CollatorAlternateHandling c_enum);
 private:
     Value value;
 };

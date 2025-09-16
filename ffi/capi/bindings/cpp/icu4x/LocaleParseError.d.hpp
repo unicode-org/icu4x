@@ -31,23 +31,23 @@ namespace icu4x {
  */
 class LocaleParseError {
 public:
-  enum Value {
-    Unknown = 0,
-    Language = 1,
-    Subtag = 2,
-    Extension = 3,
-  };
+    enum Value {
+        Unknown = 0,
+        Language = 1,
+        Subtag = 2,
+        Extension = 3,
+    };
 
-  LocaleParseError(): value(Value::Unknown) {}
+    LocaleParseError(): value(Value::Unknown) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr LocaleParseError(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr LocaleParseError(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::LocaleParseError AsFFI() const;
-  inline static icu4x::LocaleParseError FromFFI(icu4x::capi::LocaleParseError c_enum);
+    inline icu4x::capi::LocaleParseError AsFFI() const;
+    inline static icu4x::LocaleParseError FromFFI(icu4x::capi::LocaleParseError c_enum);
 private:
     Value value;
 };

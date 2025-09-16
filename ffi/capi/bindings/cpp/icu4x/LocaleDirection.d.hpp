@@ -30,22 +30,22 @@ namespace icu4x {
  */
 class LocaleDirection {
 public:
-  enum Value {
-    LeftToRight = 0,
-    RightToLeft = 1,
-    Unknown = 2,
-  };
+    enum Value {
+        LeftToRight = 0,
+        RightToLeft = 1,
+        Unknown = 2,
+    };
 
-  LocaleDirection(): value(Value::Unknown) {}
+    LocaleDirection(): value(Value::Unknown) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr LocaleDirection(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr LocaleDirection(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::LocaleDirection AsFFI() const;
-  inline static icu4x::LocaleDirection FromFFI(icu4x::capi::LocaleDirection c_enum);
+    inline icu4x::capi::LocaleDirection AsFFI() const;
+    inline static icu4x::LocaleDirection FromFFI(icu4x::capi::LocaleDirection c_enum);
 private:
     Value value;
 };
