@@ -321,7 +321,6 @@ pub const DATA: &[PackedHijriYearInfo] = {
 
 #[test]
 fn test_icu4c_agreement() {
-    use crate::cal::hijri::HijriYearInfo;
     use calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY;
 
     // From https://github.com/unicode-org/icu/blob/1bf6bf774dbc8c6c2051963a81100ea1114b497f/icu4c/source/i18n/islamcal.cpp#L87
@@ -383,20 +382,19 @@ fn test_icu4c_agreement() {
                 // From https://github.com/unicode-org/icu/blob/1bf6bf774dbc8c6c2051963a81100ea1114b497f/icu4c/source/i18n/islamcal.cpp#L813
                 let year_start = ((354.36720 * years_since_1300 as f64) + 460322.05 + 0.5) as i64
                     + year_start_estimate_fix;
-                HijriYearInfo {
-                    value: 1300 + years_since_1300 as i32,
-                    month_lengths,
-                    start_day: ISLAMIC_EPOCH_FRIDAY + year_start,
-                }
+                (
+                    1300 + years_since_1300 as i32,
+                    PackedHijriYearInfo::new(
+                        1300 + years_since_1300 as i32,
+                        month_lengths,
+                        ISLAMIC_EPOCH_FRIDAY + year_start,
+                    ),
+                )
             },
         )
         .collect::<Vec<_>>();
 
-    let icu4x = DATA
-        .iter()
-        .zip(1300..=1600)
-        .map(|(&p, y)| HijriYearInfo::unpack(y, p))
-        .collect::<Vec<_>>();
+    let icu4x = (1300..=1600).zip(DATA.iter().copied()).collect::<Vec<_>>();
 
     assert_eq!(icu4x, icu4c);
 }
