@@ -33,23 +33,23 @@ namespace icu4x {
  */
 class DisplayNamesStyle {
 public:
-  enum Value {
-    Narrow = 0,
-    Short = 1,
-    Long = 2,
-    Menu = 3,
-  };
+    enum Value {
+        Narrow = 0,
+        Short = 1,
+        Long = 2,
+        Menu = 3,
+    };
 
-  DisplayNamesStyle(): value(Value::Narrow) {}
+    DisplayNamesStyle(): value(Value::Narrow) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr DisplayNamesStyle(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr DisplayNamesStyle(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::DisplayNamesStyle AsFFI() const;
-  inline static icu4x::DisplayNamesStyle FromFFI(icu4x::capi::DisplayNamesStyle c_enum);
+    inline icu4x::capi::DisplayNamesStyle AsFFI() const;
+    inline static icu4x::DisplayNamesStyle FromFFI(icu4x::capi::DisplayNamesStyle c_enum);
 private:
     Value value;
 };

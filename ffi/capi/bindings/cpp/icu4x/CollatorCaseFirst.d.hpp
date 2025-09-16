@@ -30,22 +30,22 @@ namespace icu4x {
  */
 class CollatorCaseFirst {
 public:
-  enum Value {
-    Off = 0,
-    Lower = 1,
-    Upper = 2,
-  };
+    enum Value {
+        Off = 0,
+        Lower = 1,
+        Upper = 2,
+    };
 
-  CollatorCaseFirst(): value(Value::Off) {}
+    CollatorCaseFirst(): value(Value::Off) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr CollatorCaseFirst(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr CollatorCaseFirst(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::CollatorCaseFirst AsFFI() const;
-  inline static icu4x::CollatorCaseFirst FromFFI(icu4x::capi::CollatorCaseFirst c_enum);
+    inline icu4x::capi::CollatorCaseFirst AsFFI() const;
+    inline static icu4x::CollatorCaseFirst FromFFI(icu4x::capi::CollatorCaseFirst c_enum);
 private:
     Value value;
 };

@@ -48,15 +48,15 @@ namespace icu4x {
  * See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/2.0.0/icu/collator/options/struct.ResolvedCollatorOptions.html) for more information.
  */
 struct CollatorResolvedOptionsV1 {
-  icu4x::CollatorStrength strength;
-  icu4x::CollatorAlternateHandling alternate_handling;
-  icu4x::CollatorCaseFirst case_first;
-  icu4x::CollatorMaxVariable max_variable;
-  icu4x::CollatorCaseLevel case_level;
-  icu4x::CollatorNumericOrdering numeric;
+    icu4x::CollatorStrength strength;
+    icu4x::CollatorAlternateHandling alternate_handling;
+    icu4x::CollatorCaseFirst case_first;
+    icu4x::CollatorMaxVariable max_variable;
+    icu4x::CollatorCaseLevel case_level;
+    icu4x::CollatorNumericOrdering numeric;
 
-  inline icu4x::capi::CollatorResolvedOptionsV1 AsFFI() const;
-  inline static icu4x::CollatorResolvedOptionsV1 FromFFI(icu4x::capi::CollatorResolvedOptionsV1 c_struct);
+    inline icu4x::capi::CollatorResolvedOptionsV1 AsFFI() const;
+    inline static icu4x::CollatorResolvedOptionsV1 FromFFI(icu4x::capi::CollatorResolvedOptionsV1 c_struct);
 };
 
 } // namespace

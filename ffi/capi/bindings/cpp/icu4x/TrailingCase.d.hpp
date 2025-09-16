@@ -29,21 +29,21 @@ namespace icu4x {
  */
 class TrailingCase {
 public:
-  enum Value {
-    Lower = 0,
-    Unchanged = 1,
-  };
+    enum Value {
+        Lower = 0,
+        Unchanged = 1,
+    };
 
-  TrailingCase(): value(Value::Lower) {}
+    TrailingCase(): value(Value::Lower) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr TrailingCase(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr TrailingCase(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::TrailingCase AsFFI() const;
-  inline static icu4x::TrailingCase FromFFI(icu4x::capi::TrailingCase c_enum);
+    inline icu4x::capi::TrailingCase AsFFI() const;
+    inline static icu4x::TrailingCase FromFFI(icu4x::capi::TrailingCase c_enum);
 private:
     Value value;
 };

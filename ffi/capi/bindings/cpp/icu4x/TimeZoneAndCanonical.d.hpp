@@ -34,11 +34,11 @@ namespace icu4x {
  * See the [Rust documentation for `TimeZoneAndCanonical`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneAndCanonical.html) for more information.
  */
 struct TimeZoneAndCanonical {
-  std::unique_ptr<icu4x::TimeZone> time_zone;
-  std::string_view canonical;
+    std::unique_ptr<icu4x::TimeZone> time_zone;
+    std::string_view canonical;
 
-  inline icu4x::capi::TimeZoneAndCanonical AsFFI() const;
-  inline static icu4x::TimeZoneAndCanonical FromFFI(icu4x::capi::TimeZoneAndCanonical c_struct);
+    inline icu4x::capi::TimeZoneAndCanonical AsFFI() const;
+    inline static icu4x::TimeZoneAndCanonical FromFFI(icu4x::capi::TimeZoneAndCanonical c_struct);
 };
 
 } // namespace

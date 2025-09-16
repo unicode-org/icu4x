@@ -23,16 +23,16 @@ namespace capi {
 } // namespace
 
 inline icu4x::capi::DateTimeAlignment icu4x::DateTimeAlignment::AsFFI() const {
-  return static_cast<icu4x::capi::DateTimeAlignment>(value);
+    return static_cast<icu4x::capi::DateTimeAlignment>(value);
 }
 
 inline icu4x::DateTimeAlignment icu4x::DateTimeAlignment::FromFFI(icu4x::capi::DateTimeAlignment c_enum) {
-  switch (c_enum) {
-    case icu4x::capi::DateTimeAlignment_Auto:
-    case icu4x::capi::DateTimeAlignment_Column:
-      return static_cast<icu4x::DateTimeAlignment::Value>(c_enum);
-    default:
-      std::abort();
-  }
+    switch (c_enum) {
+        case icu4x::capi::DateTimeAlignment_Auto:
+        case icu4x::capi::DateTimeAlignment_Column:
+            return static_cast<icu4x::DateTimeAlignment::Value>(c_enum);
+        default:
+            std::abort();
+    }
 }
 #endif // icu4x_DateTimeAlignment_HPP

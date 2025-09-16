@@ -23,17 +23,17 @@ namespace capi {
 } // namespace
 
 inline icu4x::capi::DecimalParseError icu4x::DecimalParseError::AsFFI() const {
-  return static_cast<icu4x::capi::DecimalParseError>(value);
+    return static_cast<icu4x::capi::DecimalParseError>(value);
 }
 
 inline icu4x::DecimalParseError icu4x::DecimalParseError::FromFFI(icu4x::capi::DecimalParseError c_enum) {
-  switch (c_enum) {
-    case icu4x::capi::DecimalParseError_Unknown:
-    case icu4x::capi::DecimalParseError_Limit:
-    case icu4x::capi::DecimalParseError_Syntax:
-      return static_cast<icu4x::DecimalParseError::Value>(c_enum);
-    default:
-      std::abort();
-  }
+    switch (c_enum) {
+        case icu4x::capi::DecimalParseError_Unknown:
+        case icu4x::capi::DecimalParseError_Limit:
+        case icu4x::capi::DecimalParseError_Syntax:
+            return static_cast<icu4x::DecimalParseError::Value>(c_enum);
+        default:
+            std::abort();
+    }
 }
 #endif // icu4x_DecimalParseError_HPP

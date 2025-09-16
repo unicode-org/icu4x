@@ -16,3 +16,6 @@ rustdoc-types = "0.36"
 serde_json = { workspace = true }
 syn-inline-mod = "0.6.0"
 
+[package.metadata.cargo-all-features]
+# Unpublished internal tool; skip
+skip_package = true

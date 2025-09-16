@@ -32,24 +32,24 @@ namespace icu4x {
  */
 class Rfc9557ParseError {
 public:
-  enum Value {
-    Unknown = 0,
-    InvalidSyntax = 1,
-    OutOfRange = 2,
-    MissingFields = 3,
-    UnknownCalendar = 4,
-  };
+    enum Value {
+        Unknown = 0,
+        InvalidSyntax = 1,
+        OutOfRange = 2,
+        MissingFields = 3,
+        UnknownCalendar = 4,
+    };
 
-  Rfc9557ParseError(): value(Value::Unknown) {}
+    Rfc9557ParseError(): value(Value::Unknown) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr Rfc9557ParseError(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr Rfc9557ParseError(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::Rfc9557ParseError AsFFI() const;
-  inline static icu4x::Rfc9557ParseError FromFFI(icu4x::capi::Rfc9557ParseError c_enum);
+    inline icu4x::capi::Rfc9557ParseError AsFFI() const;
+    inline static icu4x::Rfc9557ParseError FromFFI(icu4x::capi::Rfc9557ParseError c_enum);
 private:
     Value value;
 };

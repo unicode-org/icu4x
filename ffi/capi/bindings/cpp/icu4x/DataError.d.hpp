@@ -36,28 +36,28 @@ namespace icu4x {
  */
 class DataError {
 public:
-  enum Value {
-    Unknown = 0,
-    MarkerNotFound = 1,
-    IdentifierNotFound = 2,
-    InvalidRequest = 3,
-    InconsistentData = 4,
-    Downcast = 5,
-    Deserialize = 6,
-    Custom = 7,
-    Io = 8,
-  };
+    enum Value {
+        Unknown = 0,
+        MarkerNotFound = 1,
+        IdentifierNotFound = 2,
+        InvalidRequest = 3,
+        InconsistentData = 4,
+        Downcast = 5,
+        Deserialize = 6,
+        Custom = 7,
+        Io = 8,
+    };
 
-  DataError(): value(Value::Unknown) {}
+    DataError(): value(Value::Unknown) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr DataError(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr DataError(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::DataError AsFFI() const;
-  inline static icu4x::DataError FromFFI(icu4x::capi::DataError c_enum);
+    inline icu4x::capi::DataError AsFFI() const;
+    inline static icu4x::DataError FromFFI(icu4x::capi::DataError c_enum);
 private:
     Value value;
 };

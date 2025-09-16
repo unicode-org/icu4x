@@ -35,39 +35,39 @@ namespace capi {
 } // namespace
 
 inline std::unique_ptr<icu4x::CanonicalDecomposition> icu4x::CanonicalDecomposition::create() {
-  auto result = icu4x::capi::icu4x_CanonicalDecomposition_create_mv1();
-  return std::unique_ptr<icu4x::CanonicalDecomposition>(icu4x::CanonicalDecomposition::FromFFI(result));
+    auto result = icu4x::capi::icu4x_CanonicalDecomposition_create_mv1();
+    return std::unique_ptr<icu4x::CanonicalDecomposition>(icu4x::CanonicalDecomposition::FromFFI(result));
 }
 
 inline diplomat::result<std::unique_ptr<icu4x::CanonicalDecomposition>, icu4x::DataError> icu4x::CanonicalDecomposition::create_with_provider(const icu4x::DataProvider& provider) {
-  auto result = icu4x::capi::icu4x_CanonicalDecomposition_create_with_provider_mv1(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CanonicalDecomposition>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CanonicalDecomposition>>(std::unique_ptr<icu4x::CanonicalDecomposition>(icu4x::CanonicalDecomposition::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CanonicalDecomposition>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    auto result = icu4x::capi::icu4x_CanonicalDecomposition_create_with_provider_mv1(provider.AsFFI());
+    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CanonicalDecomposition>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CanonicalDecomposition>>(std::unique_ptr<icu4x::CanonicalDecomposition>(icu4x::CanonicalDecomposition::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CanonicalDecomposition>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline icu4x::Decomposed icu4x::CanonicalDecomposition::decompose(char32_t c) const {
-  auto result = icu4x::capi::icu4x_CanonicalDecomposition_decompose_mv1(this->AsFFI(),
-    c);
-  return icu4x::Decomposed::FromFFI(result);
+    auto result = icu4x::capi::icu4x_CanonicalDecomposition_decompose_mv1(this->AsFFI(),
+        c);
+    return icu4x::Decomposed::FromFFI(result);
 }
 
 inline const icu4x::capi::CanonicalDecomposition* icu4x::CanonicalDecomposition::AsFFI() const {
-  return reinterpret_cast<const icu4x::capi::CanonicalDecomposition*>(this);
+    return reinterpret_cast<const icu4x::capi::CanonicalDecomposition*>(this);
 }
 
 inline icu4x::capi::CanonicalDecomposition* icu4x::CanonicalDecomposition::AsFFI() {
-  return reinterpret_cast<icu4x::capi::CanonicalDecomposition*>(this);
+    return reinterpret_cast<icu4x::capi::CanonicalDecomposition*>(this);
 }
 
 inline const icu4x::CanonicalDecomposition* icu4x::CanonicalDecomposition::FromFFI(const icu4x::capi::CanonicalDecomposition* ptr) {
-  return reinterpret_cast<const icu4x::CanonicalDecomposition*>(ptr);
+    return reinterpret_cast<const icu4x::CanonicalDecomposition*>(ptr);
 }
 
 inline icu4x::CanonicalDecomposition* icu4x::CanonicalDecomposition::FromFFI(icu4x::capi::CanonicalDecomposition* ptr) {
-  return reinterpret_cast<icu4x::CanonicalDecomposition*>(ptr);
+    return reinterpret_cast<icu4x::CanonicalDecomposition*>(ptr);
 }
 
 inline void icu4x::CanonicalDecomposition::operator delete(void* ptr) {
-  icu4x::capi::icu4x_CanonicalDecomposition_destroy_mv1(reinterpret_cast<icu4x::capi::CanonicalDecomposition*>(ptr));
+    icu4x::capi::icu4x_CanonicalDecomposition_destroy_mv1(reinterpret_cast<icu4x::capi::CanonicalDecomposition*>(ptr));
 }
 
 

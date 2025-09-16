@@ -23,19 +23,19 @@ namespace capi {
 } // namespace
 
 inline icu4x::capi::CollatorStrength icu4x::CollatorStrength::AsFFI() const {
-  return static_cast<icu4x::capi::CollatorStrength>(value);
+    return static_cast<icu4x::capi::CollatorStrength>(value);
 }
 
 inline icu4x::CollatorStrength icu4x::CollatorStrength::FromFFI(icu4x::capi::CollatorStrength c_enum) {
-  switch (c_enum) {
-    case icu4x::capi::CollatorStrength_Primary:
-    case icu4x::capi::CollatorStrength_Secondary:
-    case icu4x::capi::CollatorStrength_Tertiary:
-    case icu4x::capi::CollatorStrength_Quaternary:
-    case icu4x::capi::CollatorStrength_Identical:
-      return static_cast<icu4x::CollatorStrength::Value>(c_enum);
-    default:
-      std::abort();
-  }
+    switch (c_enum) {
+        case icu4x::capi::CollatorStrength_Primary:
+        case icu4x::capi::CollatorStrength_Secondary:
+        case icu4x::capi::CollatorStrength_Tertiary:
+        case icu4x::capi::CollatorStrength_Quaternary:
+        case icu4x::capi::CollatorStrength_Identical:
+            return static_cast<icu4x::CollatorStrength::Value>(c_enum);
+        default:
+            std::abort();
+    }
 }
 #endif // icu4x_CollatorStrength_HPP

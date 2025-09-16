@@ -24,17 +24,17 @@ namespace capi {
 
 
 inline icu4x::capi::IsoWeekOfYear icu4x::IsoWeekOfYear::AsFFI() const {
-  return icu4x::capi::IsoWeekOfYear {
-    /* .week_number = */ week_number,
-    /* .iso_year = */ iso_year,
-  };
+    return icu4x::capi::IsoWeekOfYear {
+        /* .week_number = */ week_number,
+        /* .iso_year = */ iso_year,
+    };
 }
 
 inline icu4x::IsoWeekOfYear icu4x::IsoWeekOfYear::FromFFI(icu4x::capi::IsoWeekOfYear c_struct) {
-  return icu4x::IsoWeekOfYear {
-    /* .week_number = */ c_struct.week_number,
-    /* .iso_year = */ c_struct.iso_year,
-  };
+    return icu4x::IsoWeekOfYear {
+        /* .week_number = */ c_struct.week_number,
+        /* .iso_year = */ c_struct.iso_year,
+    };
 }
 
 

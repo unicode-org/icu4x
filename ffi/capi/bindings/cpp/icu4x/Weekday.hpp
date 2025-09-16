@@ -23,21 +23,21 @@ namespace capi {
 } // namespace
 
 inline icu4x::capi::Weekday icu4x::Weekday::AsFFI() const {
-  return static_cast<icu4x::capi::Weekday>(value);
+    return static_cast<icu4x::capi::Weekday>(value);
 }
 
 inline icu4x::Weekday icu4x::Weekday::FromFFI(icu4x::capi::Weekday c_enum) {
-  switch (c_enum) {
-    case icu4x::capi::Weekday_Monday:
-    case icu4x::capi::Weekday_Tuesday:
-    case icu4x::capi::Weekday_Wednesday:
-    case icu4x::capi::Weekday_Thursday:
-    case icu4x::capi::Weekday_Friday:
-    case icu4x::capi::Weekday_Saturday:
-    case icu4x::capi::Weekday_Sunday:
-      return static_cast<icu4x::Weekday::Value>(c_enum);
-    default:
-      std::abort();
-  }
+    switch (c_enum) {
+        case icu4x::capi::Weekday_Monday:
+        case icu4x::capi::Weekday_Tuesday:
+        case icu4x::capi::Weekday_Wednesday:
+        case icu4x::capi::Weekday_Thursday:
+        case icu4x::capi::Weekday_Friday:
+        case icu4x::capi::Weekday_Saturday:
+        case icu4x::capi::Weekday_Sunday:
+            return static_cast<icu4x::Weekday::Value>(c_enum);
+        default:
+            std::abort();
+    }
 }
 #endif // icu4x_Weekday_HPP

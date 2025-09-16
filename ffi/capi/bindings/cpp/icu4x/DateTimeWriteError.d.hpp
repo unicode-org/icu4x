@@ -33,21 +33,21 @@ namespace icu4x {
  */
 class DateTimeWriteError {
 public:
-  enum Value {
-    Unknown = 0,
-    MissingTimeZoneVariant = 1,
-  };
+    enum Value {
+        Unknown = 0,
+        MissingTimeZoneVariant = 1,
+    };
 
-  DateTimeWriteError(): value(Value::Unknown) {}
+    DateTimeWriteError(): value(Value::Unknown) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr DateTimeWriteError(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr DateTimeWriteError(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::DateTimeWriteError AsFFI() const;
-  inline static icu4x::DateTimeWriteError FromFFI(icu4x::capi::DateTimeWriteError c_enum);
+    inline icu4x::capi::DateTimeWriteError AsFFI() const;
+    inline static icu4x::DateTimeWriteError FromFFI(icu4x::capi::DateTimeWriteError c_enum);
 private:
     Value value;
 };

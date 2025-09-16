@@ -23,16 +23,16 @@ namespace capi {
 } // namespace
 
 inline icu4x::capi::CollatorCaseLevel icu4x::CollatorCaseLevel::AsFFI() const {
-  return static_cast<icu4x::capi::CollatorCaseLevel>(value);
+    return static_cast<icu4x::capi::CollatorCaseLevel>(value);
 }
 
 inline icu4x::CollatorCaseLevel icu4x::CollatorCaseLevel::FromFFI(icu4x::capi::CollatorCaseLevel c_enum) {
-  switch (c_enum) {
-    case icu4x::capi::CollatorCaseLevel_Off:
-    case icu4x::capi::CollatorCaseLevel_On:
-      return static_cast<icu4x::CollatorCaseLevel::Value>(c_enum);
-    default:
-      std::abort();
-  }
+    switch (c_enum) {
+        case icu4x::capi::CollatorCaseLevel_Off:
+        case icu4x::capi::CollatorCaseLevel_On:
+            return static_cast<icu4x::CollatorCaseLevel::Value>(c_enum);
+        default:
+            std::abort();
+    }
 }
 #endif // icu4x_CollatorCaseLevel_HPP

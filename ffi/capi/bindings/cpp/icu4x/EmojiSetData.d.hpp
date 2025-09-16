@@ -42,45 +42,45 @@ class EmojiSetData {
 public:
 
   /**
-   * Checks whether the string is in the set.
-   *
-   * See the [Rust documentation for `contains_str`](https://docs.rs/icu/2.0.0/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains_str) for more information.
+     * Checks whether the string is in the set.
+     *
+     * See the [Rust documentation for `contains_str`](https://docs.rs/icu/2.0.0/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains_str) for more information.
    */
   inline bool contains(std::string_view s) const;
 
   /**
-   * Checks whether the code point is in the set.
-   *
-   * See the [Rust documentation for `contains`](https://docs.rs/icu/2.0.0/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains) for more information.
+     * Checks whether the code point is in the set.
+     *
+     * See the [Rust documentation for `contains`](https://docs.rs/icu/2.0.0/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains) for more information.
    */
   inline bool contains(char32_t cp) const;
 
   /**
-   * Create a map for the `Basic_Emoji` property, using compiled data.
-   *
-   * See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.BasicEmoji.html) for more information.
+     * Create a map for the `Basic_Emoji` property, using compiled data.
+     *
+     * See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.BasicEmoji.html) for more information.
    */
   inline static std::unique_ptr<icu4x::EmojiSetData> create_basic();
 
   /**
-   * Create a map for the `Basic_Emoji` property, using a particular data source.
-   *
-   * See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.BasicEmoji.html) for more information.
+     * Create a map for the `Basic_Emoji` property, using a particular data source.
+     *
+     * See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.BasicEmoji.html) for more information.
    */
   inline static diplomat::result<std::unique_ptr<icu4x::EmojiSetData>, icu4x::DataError> create_basic_with_provider(const icu4x::DataProvider& provider);
 
-  inline const icu4x::capi::EmojiSetData* AsFFI() const;
-  inline icu4x::capi::EmojiSetData* AsFFI();
-  inline static const icu4x::EmojiSetData* FromFFI(const icu4x::capi::EmojiSetData* ptr);
-  inline static icu4x::EmojiSetData* FromFFI(icu4x::capi::EmojiSetData* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::EmojiSetData* AsFFI() const;
+    inline icu4x::capi::EmojiSetData* AsFFI();
+    inline static const icu4x::EmojiSetData* FromFFI(const icu4x::capi::EmojiSetData* ptr);
+    inline static icu4x::EmojiSetData* FromFFI(icu4x::capi::EmojiSetData* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  EmojiSetData() = delete;
-  EmojiSetData(const icu4x::EmojiSetData&) = delete;
-  EmojiSetData(icu4x::EmojiSetData&&) noexcept = delete;
-  EmojiSetData operator=(const icu4x::EmojiSetData&) = delete;
-  EmojiSetData operator=(icu4x::EmojiSetData&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    EmojiSetData() = delete;
+    EmojiSetData(const icu4x::EmojiSetData&) = delete;
+    EmojiSetData(icu4x::EmojiSetData&&) noexcept = delete;
+    EmojiSetData operator=(const icu4x::EmojiSetData&) = delete;
+    EmojiSetData operator=(icu4x::EmojiSetData&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace

@@ -140,9 +140,9 @@ checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
 
 [[package]]
 name = "askama"
-version = "0.13.1"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5d4744ed2eef2645831b441d8f5459689ade2ab27c854488fbab1fbe94fce1a7"
+checksum = "f75363874b771be265f4ffe307ca705ef6f3baa19011c149da8674a87f1b75c4"
 dependencies = [
  "askama_derive",
  "itoa",
@@ -153,9 +153,9 @@ dependencies = [
 
 [[package]]
 name = "askama_derive"
-version = "0.13.1"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d661e0f57be36a5c14c48f78d09011e67e0cb618f269cca9f2fd8d15b68c46ac"
+checksum = "129397200fe83088e8a68407a8e2b1f826cf0086b21ccdb866a722c8bcd3a94f"
 dependencies = [
  "askama_parser",
  "basic-toml",
@@ -170,9 +170,9 @@ dependencies = [
 
 [[package]]
 name = "askama_parser"
-version = "0.13.0"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cf315ce6524c857bb129ff794935cf6d42c82a6cff60526fe2a63593de4d0d4f"
+checksum = "d6ab5630b3d5eaf232620167977f95eb51f3432fc76852328774afbd242d4358"
 dependencies = [
  "memchr",
  "serde",
@@ -711,7 +711,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.12.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=35e06283521e5630689b0900057ebe66afec3dfb#35e06283521e5630689b0900057ebe66afec3dfb"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=fb5e716f9032d5a00a985896e4e54d5db2e38ac2#fb5e716f9032d5a00a985896e4e54d5db2e38ac2"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -742,7 +742,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.12.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=35e06283521e5630689b0900057ebe66afec3dfb#35e06283521e5630689b0900057ebe66afec3dfb"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=fb5e716f9032d5a00a985896e4e54d5db2e38ac2#fb5e716f9032d5a00a985896e4e54d5db2e38ac2"
 dependencies = [
  "log",
 ]
@@ -750,7 +750,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.12.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=35e06283521e5630689b0900057ebe66afec3dfb#35e06283521e5630689b0900057ebe66afec3dfb"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=fb5e716f9032d5a00a985896e4e54d5db2e38ac2#fb5e716f9032d5a00a985896e4e54d5db2e38ac2"
 dependencies = [
  "askama",
  "clap",
@@ -771,7 +771,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.12.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=35e06283521e5630689b0900057ebe66afec3dfb#35e06283521e5630689b0900057ebe66afec3dfb"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=fb5e716f9032d5a00a985896e4e54d5db2e38ac2#fb5e716f9032d5a00a985896e4e54d5db2e38ac2"
 dependencies = [
  "displaydoc",
  "either",

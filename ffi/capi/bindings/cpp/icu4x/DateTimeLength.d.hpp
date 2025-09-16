@@ -30,22 +30,22 @@ namespace icu4x {
  */
 class DateTimeLength {
 public:
-  enum Value {
-    Long = 0,
-    Medium = 1,
-    Short = 2,
-  };
+    enum Value {
+        Long = 0,
+        Medium = 1,
+        Short = 2,
+    };
 
-  DateTimeLength(): value(Value::Medium) {}
+    DateTimeLength(): value(Value::Medium) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr DateTimeLength(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr DateTimeLength(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::DateTimeLength AsFFI() const;
-  inline static icu4x::DateTimeLength FromFFI(icu4x::capi::DateTimeLength c_enum);
+    inline icu4x::capi::DateTimeLength AsFFI() const;
+    inline static icu4x::DateTimeLength FromFFI(icu4x::capi::DateTimeLength c_enum);
 private:
     Value value;
 };

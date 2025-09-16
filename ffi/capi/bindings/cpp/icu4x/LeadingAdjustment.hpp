@@ -23,17 +23,17 @@ namespace capi {
 } // namespace
 
 inline icu4x::capi::LeadingAdjustment icu4x::LeadingAdjustment::AsFFI() const {
-  return static_cast<icu4x::capi::LeadingAdjustment>(value);
+    return static_cast<icu4x::capi::LeadingAdjustment>(value);
 }
 
 inline icu4x::LeadingAdjustment icu4x::LeadingAdjustment::FromFFI(icu4x::capi::LeadingAdjustment c_enum) {
-  switch (c_enum) {
-    case icu4x::capi::LeadingAdjustment_Auto:
-    case icu4x::capi::LeadingAdjustment_None:
-    case icu4x::capi::LeadingAdjustment_ToCased:
-      return static_cast<icu4x::LeadingAdjustment::Value>(c_enum);
-    default:
-      std::abort();
-  }
+    switch (c_enum) {
+        case icu4x::capi::LeadingAdjustment_Auto:
+        case icu4x::capi::LeadingAdjustment_None:
+        case icu4x::capi::LeadingAdjustment_ToCased:
+            return static_cast<icu4x::LeadingAdjustment::Value>(c_enum);
+        default:
+            std::abort();
+    }
 }
 #endif // icu4x_LeadingAdjustment_HPP

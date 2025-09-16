@@ -28,28 +28,28 @@ namespace capi {
 } // namespace
 
 inline std::unique_ptr<icu4x::TimeZone> icu4x::TimeZoneIterator::next() {
-  auto result = icu4x::capi::icu4x_TimeZoneIterator_next_mv1(this->AsFFI());
-  return std::unique_ptr<icu4x::TimeZone>(icu4x::TimeZone::FromFFI(result));
+    auto result = icu4x::capi::icu4x_TimeZoneIterator_next_mv1(this->AsFFI());
+    return std::unique_ptr<icu4x::TimeZone>(icu4x::TimeZone::FromFFI(result));
 }
 
 inline const icu4x::capi::TimeZoneIterator* icu4x::TimeZoneIterator::AsFFI() const {
-  return reinterpret_cast<const icu4x::capi::TimeZoneIterator*>(this);
+    return reinterpret_cast<const icu4x::capi::TimeZoneIterator*>(this);
 }
 
 inline icu4x::capi::TimeZoneIterator* icu4x::TimeZoneIterator::AsFFI() {
-  return reinterpret_cast<icu4x::capi::TimeZoneIterator*>(this);
+    return reinterpret_cast<icu4x::capi::TimeZoneIterator*>(this);
 }
 
 inline const icu4x::TimeZoneIterator* icu4x::TimeZoneIterator::FromFFI(const icu4x::capi::TimeZoneIterator* ptr) {
-  return reinterpret_cast<const icu4x::TimeZoneIterator*>(ptr);
+    return reinterpret_cast<const icu4x::TimeZoneIterator*>(ptr);
 }
 
 inline icu4x::TimeZoneIterator* icu4x::TimeZoneIterator::FromFFI(icu4x::capi::TimeZoneIterator* ptr) {
-  return reinterpret_cast<icu4x::TimeZoneIterator*>(ptr);
+    return reinterpret_cast<icu4x::TimeZoneIterator*>(ptr);
 }
 
 inline void icu4x::TimeZoneIterator::operator delete(void* ptr) {
-  icu4x::capi::icu4x_TimeZoneIterator_destroy_mv1(reinterpret_cast<icu4x::capi::TimeZoneIterator*>(ptr));
+    icu4x::capi::icu4x_TimeZoneIterator_destroy_mv1(reinterpret_cast<icu4x::capi::TimeZoneIterator*>(ptr));
 }
 
 
