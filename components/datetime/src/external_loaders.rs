@@ -103,10 +103,7 @@ where
 
 impl<P> FormattableAnyCalendarLoader for ExternalLoaderUnstable<'_, P>
 where
-    P: DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>
-        + DataProvider<icu_calendar::provider::CalendarChineseV1>
-        + DataProvider<icu_calendar::provider::CalendarDangiV1>
-        + ?Sized,
+    P: DataProvider<icu_calendar::provider::CalendarJapaneseModernV1> + ?Sized,
 {
     #[inline]
     fn load(&self, kind: FormattableAnyCalendarKind) -> Result<FormattableAnyCalendar, DataError> {
