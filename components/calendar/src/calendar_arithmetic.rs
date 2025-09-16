@@ -426,7 +426,11 @@ impl<'a> DateFields<'a> {
     ///
     /// Returns an error when various conditions happen, in accordance with
     /// the ECMAScript Temporal specification.
-    pub(crate) fn get_non_lunisolar_ordinals<C>(self, cal: &C, options: DateFromFieldsOptions) -> Result<(i32, u8, u8), DateError>
+    pub(crate) fn get_non_lunisolar_ordinals<C>(
+        self,
+        cal: &C,
+        options: DateFromFieldsOptions,
+    ) -> Result<(i32, u8, u8), DateError>
     where
         C: CalendarNonLunisolar + CalendarWithEras,
     {
@@ -439,8 +443,8 @@ impl<'a> DateFields<'a> {
             Some(year) => year,
             None => match missing_fields_strategy {
                 MissingFieldsStrategy::Reject => return Err(DateError::NotEnoughFields),
-                MissingFieldsStrategy::Ecma => cal.fixed_monotonic_reference_year()
-            }
+                MissingFieldsStrategy::Ecma => cal.fixed_monotonic_reference_year(),
+            },
         };
         let month = maybe_month.ok_or(DateError::NotEnoughFields)?.get();
         let day = match maybe_day {
@@ -449,9 +453,9 @@ impl<'a> DateFields<'a> {
                 MissingFieldsStrategy::Reject => return Err(DateError::NotEnoughFields),
                 MissingFieldsStrategy::Ecma => match maybe_year {
                     Some(_) => 1,
-                    None => return Err(DateError::NotEnoughFields)
-                }
-            }
+                    None => return Err(DateError::NotEnoughFields),
+                },
+            },
         };
         Ok((year, month, day))
     }

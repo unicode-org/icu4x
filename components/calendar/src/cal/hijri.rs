@@ -404,14 +404,9 @@ impl Calendar for HijriSimulated {
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
         let (year, month, day) = fields.get_non_lunisolar_ordinals(self, options)?;
-        ArithmeticDate::new_from_ordinals(
-            self.load_or_compute_info(year),
-            month,
-            day,
-            options,
-        )
-        .map(HijriSimulatedDateInner)
-        .map_err(|e| e.maybe_with_month_code(fields.month_code))
+        ArithmeticDate::new_from_ordinals(self.load_or_compute_info(year), month, day, options)
+            .map(HijriSimulatedDateInner)
+            .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -695,14 +690,9 @@ impl Calendar for HijriUmmAlQura {
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
         let (year, month, day) = fields.get_non_lunisolar_ordinals(self, options)?;
-        ArithmeticDate::new_from_ordinals(
-            self.load_or_compute_info(year),
-            month,
-            day,
-            options,
-        )
-        .map(HijriUmmAlQuraDateInner)
-        .map_err(|e| e.maybe_with_month_code(fields.month_code))
+        ArithmeticDate::new_from_ordinals(self.load_or_compute_info(year), month, day, options)
+            .map(HijriUmmAlQuraDateInner)
+            .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
