@@ -185,6 +185,9 @@ pub enum MissingFieldsStrategy {
     /// 2. If `month_code` and `day` are set but nothing else, then set the year to a
     ///    _reference year_: some year in the calendar that contains the specified month
     ///    and day, according to the ECMAScript specification.
+    ///
+    /// Note that the reference year is _not_ added if an ordinal month is present, since
+    /// the identity of an ordinal month changes from year to year.
     Ecma,
 }
 
@@ -201,7 +204,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_missing_fields_strategy_reject() {
+    fn test_missing_fields_strategy() {
         // The sets of fields that identify a year, according to the table in the docs
         let valid_year_field_sets = [
             &["era", "era_year"][..],
@@ -243,6 +246,25 @@ mod tests {
             })
             .collect::<BTreeSet<BTreeSet<&str>>>();
 
+        // Field sets with year and month but without day that ECMA accepts
+        let field_sets_without_day = valid_year_field_sets
+            .iter()
+            .cartesian_product(valid_month_field_sets.iter())
+            .map(|(year_fields, month_fields)| {
+                year_fields
+                    .iter()
+                    .chain(month_fields.iter())
+                    .copied()
+                    .collect::<BTreeSet<&str>>()
+            })
+            .collect::<BTreeSet<BTreeSet<&str>>>();
+
+        // Field sets with month and day but without year that ECMA accepts
+        let field_sets_without_year = [&["month_code", "day"][..]]
+            .into_iter()
+            .map(|field_names| field_names.into_iter().copied().collect())
+            .collect::<Vec<BTreeSet<&str>>>();
+
         // A map from field names to a function that sets that field
         let mut field_fns = BTreeMap::<&str, &dyn Fn(&mut DateFields)>::new();
         field_fns.insert("era", &|fields| fields.era = Some("ad"));
@@ -263,7 +285,12 @@ mod tests {
 
             // Check whether this case should succeed: whether it identifies a year,
             // a month, and a day.
-            let should_succeed = all_valid_field_sets.contains(&field_set);
+            let should_succeed_rejecting = all_valid_field_sets.contains(&field_set);
+
+            // Check whether it should succeed in ECMA mode.
+            let should_succeed_ecma = should_succeed_rejecting
+                || field_sets_without_day.contains(&field_set)
+                || field_sets_without_year.contains(&field_set);
 
             // Populate the fields in the field set
             let mut fields = Default::default();
@@ -276,12 +303,27 @@ mod tests {
             options.missing_fields_strategy = Some(MissingFieldsStrategy::Reject);
             match Date::try_from_fields(fields, options, Gregorian) {
                 Ok(_) => assert!(
-                    should_succeed,
+                    should_succeed_rejecting,
                     "Succeeded, but should have rejected: {fields:?}"
                 ),
                 Err(DateError::NotEnoughFields) => assert!(
-                    !should_succeed,
+                    !should_succeed_rejecting,
                     "Rejected, but should have succeeded: {fields:?}"
+                ),
+                Err(e) => panic!("Unexpected error: {e} for {fields:?}"),
+            }
+
+            // Check ECMA mode
+            let mut options = DateFromFieldsOptions::default();
+            options.missing_fields_strategy = Some(MissingFieldsStrategy::Ecma);
+            match Date::try_from_fields(fields, options, Gregorian) {
+                Ok(_) => assert!(
+                    should_succeed_ecma,
+                    "Succeeded, but should have rejected (ECMA): {fields:?}"
+                ),
+                Err(DateError::NotEnoughFields) => assert!(
+                    !should_succeed_ecma,
+                    "Rejected, but should have succeeded (ECMA): {fields:?}"
                 ),
                 Err(e) => panic!("Unexpected error: {e} for {fields:?}"),
             }

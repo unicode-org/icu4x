@@ -437,17 +437,21 @@ impl<'a> DateFields<'a> {
         let missing_fields_strategy = options.missing_fields_strategy.unwrap_or_default();
         let maybe_year =
             self.get_monotonic_year(|era, era_year| cal.era_year_to_monotonic(era, era_year))?;
-        let maybe_month = self.get_non_lunisolar_ordinal_month()?;
-        let maybe_day = self.day;
         let year = match maybe_year {
             Some(year) => year,
             None => match missing_fields_strategy {
                 MissingFieldsStrategy::Reject => return Err(DateError::NotEnoughFields),
-                MissingFieldsStrategy::Ecma => cal.fixed_monotonic_reference_year(),
+                MissingFieldsStrategy::Ecma => match self.month_code {
+                    Some(month_code) => cal.fixed_monotonic_reference_year(),
+                    None => return Err(DateError::NotEnoughFields),
+                },
             },
         };
-        let month = maybe_month.ok_or(DateError::NotEnoughFields)?.get();
-        let day = match maybe_day {
+        let month = match self.get_non_lunisolar_ordinal_month()? {
+            Some(month) => month.get(),
+            None => return Err(DateError::NotEnoughFields),
+        };
+        let day = match self.day {
             Some(day) => day.get(),
             None => match missing_fields_strategy {
                 MissingFieldsStrategy::Reject => return Err(DateError::NotEnoughFields),
