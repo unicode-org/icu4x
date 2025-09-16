@@ -51,7 +51,7 @@ fn era_year(extended_year: i32) -> EraYear {
 /// The [Hijri Calendar](https://en.wikipedia.org/wiki/Islamic_calendar)
 ///
 /// There are many variants of this calendar, using different lunar observations or calculations
-/// (see [`HijriSighting`]).
+/// (see [`HijriRules`]).
 ///
 /// # Era codes
 ///
@@ -67,11 +67,9 @@ pub struct Hijri<S>(pub S);
 
 /// Defines a variant of the [`Hijri`] calendar.
 ///
-/// "Sightings" can either be actual observations, or agreed-upon rules.
-///
-/// This crate includes the [`UmmAlQura`], [`AstronomicalSimulation`], and [`TabularAlgorithm`], other
-/// sightings can be implemented by users.
-pub trait HijriSighting: Clone + Debug {
+/// This crate includes the [`UmmAlQura`], [`AstronomicalSimulation`], and [`TabularAlgorithm`]
+/// rules, other rules can be implemented by users.
+pub trait Rules: Clone + Debug {
     /// Returns data about the given year.
     fn year_data(&self, extended_year: i32) -> HijriYearData;
 
@@ -86,10 +84,10 @@ pub trait HijriSighting: Clone + Debug {
     }
 }
 
-/// An astrononmical simulation for a particular location.
+/// An astronomical simulation for a particular location.
 ///
-/// These simulations are known to not necessarily match sightings on the ground, but are included for
-/// completeness.
+/// These simulations are known to not necessarily match sightings on the ground,
+/// but are included for completeness.
 #[derive(Clone, Debug)]
 pub struct AstronomicalSimulation {
     pub(crate) location: SimulatedLocation,
@@ -100,9 +98,11 @@ pub(crate) enum SimulatedLocation {
     Mecca,
 }
 
-impl HijriSighting for AstronomicalSimulation {
+impl Rules for AstronomicalSimulation {
     fn debug_name(&self) -> &'static str {
-        "Hijri (simulated)"
+        match self.location {
+            SimulatedLocation::Mecca => "Hijri (simulated, Mecca)",
+        }
     }
 
     fn year_data(&self, extended_year: i32) -> HijriYearData {
@@ -202,14 +202,14 @@ impl HijriSighting for AstronomicalSimulation {
     }
 }
 
-/// The [Umm al-Qura Hijri sighting](https://en.wikipedia.org/wiki/Islamic_calendar#Saudi_Arabia's_Umm_al-Qura_calendar)
+/// The [Umm al-Qura rules](https://en.wikipedia.org/wiki/Islamic_calendar#Saudi_Arabia's_Umm_al-Qura_calendar)
 ///
-/// This is the official calendar in Saudi Arabia.
+/// These define the official calendar in Saudi Arabia.
 #[derive(Clone, Debug, Default)]
 #[non_exhaustive]
 pub struct UmmAlQura;
 
-impl HijriSighting for UmmAlQura {
+impl Rules for UmmAlQura {
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         Some(CalendarAlgorithm::Hijri(Some(
             HijriCalendarAlgorithm::Umalqura,
@@ -239,9 +239,11 @@ impl HijriSighting for UmmAlQura {
     }
 }
 
+/// The [Tabular Hijri Algorithm](https://en.wikipedia.org/wiki/Tabular_Islamic_calendar)
+///
 /// See [`TabularAlgorithmEpoch`] and [`TabularAlgorithmLeapYears`] for customization.
 ///
-/// The most common version of this sighting uses [`TabularAlgorithmEpoch::Friday`] and [`TabularAlgorithmLeapYears::TypeII`].
+/// The most common version of these rules uses [`TabularAlgorithmEpoch::Friday`] and [`TabularAlgorithmLeapYears::TypeII`].
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct TabularAlgorithm {
     pub(crate) leap_years: TabularAlgorithmLeapYears,
@@ -255,7 +257,7 @@ impl TabularAlgorithm {
     }
 }
 
-impl HijriSighting for TabularAlgorithm {
+impl Rules for TabularAlgorithm {
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         Some(match (self.epoch, self.leap_years) {
             (TabularAlgorithmEpoch::Friday, TabularAlgorithmLeapYears::TypeII) => {
@@ -538,18 +540,18 @@ where
 
 #[allow(clippy::derived_hash_with_manual_eq)] // bounds
 #[derive(Clone, Debug, Hash)]
-/// The inner date type used for representing [`Date`]s of [`HijriObservational`]. See [`Date`] and [`HijriObservational`] for more details.
-pub struct HijriDateInner<S: HijriSighting>(ArithmeticDate<Hijri<S>>);
+/// The inner date type used for representing [`Date`]s of [`Hijri`]. See [`Date`] and [`Hijri`] for more details.
+pub struct HijriDateInner<R: Rules>(ArithmeticDate<Hijri<R>>);
 
-impl<S: HijriSighting> Copy for HijriDateInner<S> {}
-impl<S: HijriSighting> PartialEq for HijriDateInner<S> {
+impl<R: Rules> Copy for HijriDateInner<R> {}
+impl<R: Rules> PartialEq for HijriDateInner<R> {
     fn eq(&self, other: &Self) -> bool {
         self.0 == other.0
     }
 }
-impl<S: HijriSighting> Eq for HijriDateInner<S> {}
+impl<R: Rules> Eq for HijriDateInner<R> {}
 
-impl<S: HijriSighting> CalendarArithmetic for Hijri<S> {
+impl<R: Rules> CalendarArithmetic for Hijri<R> {
     type YearInfo = HijriYearData;
 
     fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8 {
@@ -579,7 +581,7 @@ impl<S: HijriSighting> CalendarArithmetic for Hijri<S> {
     }
 }
 
-impl<S: HijriSighting> DateFieldsResolver for Hijri<S> {
+impl<R: Rules> DateFieldsResolver for Hijri<R> {
     type YearInfo = HijriYearData;
 
     #[inline]
@@ -609,9 +611,9 @@ impl<S: HijriSighting> DateFieldsResolver for Hijri<S> {
     }
 }
 
-impl<S: HijriSighting> crate::cal::scaffold::UnstableSealed for Hijri<S> {}
-impl<S: HijriSighting> Calendar for Hijri<S> {
-    type DateInner = HijriDateInner<S>;
+impl<R: Rules> crate::cal::scaffold::UnstableSealed for Hijri<R> {}
+impl<R: Rules> Calendar for Hijri<R> {
+    type DateInner = HijriDateInner<R>;
     type Year = types::EraYear;
     fn from_fields(
         &self,
@@ -717,13 +719,13 @@ impl<S: HijriSighting> Calendar for Hijri<S> {
     }
 }
 
-impl<S: HijriSighting> PrecomputedDataSource<HijriYearData> for Hijri<S> {
+impl<R: Rules> PrecomputedDataSource<HijriYearData> for Hijri<R> {
     fn load_or_compute_info(&self, extended_year: i32) -> HijriYearData {
         self.0.year_data(extended_year)
     }
 }
 
-impl<A: AsCalendar<Calendar = Hijri<S>>, S: HijriSighting> Date<A> {
+impl<A: AsCalendar<Calendar = Hijri<R>>, R: Rules> Date<A> {
     /// Construct new Hijri Date.
     ///
     /// ```rust
@@ -755,19 +757,8 @@ impl<A: AsCalendar<Calendar = Hijri<S>>, S: HijriSighting> Date<A> {
 }
 
 impl Date<Hijri<UmmAlQura>> {
-    /// Construct new Hijri Umm al-Qura Date.
-    ///
-    /// ```rust
-    /// use icu::calendar::cal::Hijri;
-    /// use icu::calendar::Date;
-    ///
-    /// let date_hijri = Date::try_new_ummalqura(1392, 4, 25)
-    ///     .expect("Failed to initialize Hijri Date instance.");
-    ///
-    /// assert_eq!(date_hijri.era_year().year, 1392);
-    /// assert_eq!(date_hijri.month().ordinal, 4);
-    /// assert_eq!(date_hijri.day_of_month().0, 25);
-    /// ```
+    /// Deprecated
+    #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar")]
     pub fn try_new_ummalqura(year: i32, month: u8, day: u8) -> Result<Self, RangeError> {
         Date::try_new_hijri_with_calendar(year, month, day, Hijri::new_umm_al_qura())
     }
