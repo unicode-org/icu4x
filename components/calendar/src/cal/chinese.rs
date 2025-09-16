@@ -19,8 +19,8 @@
 
 use crate::cal::chinese_based::{ChineseBasedPrecomputedData, ChineseBasedWithDataLoading};
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::{CalendarLunisolar, CalendarWithEras, PrecomputedDataSource};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::calendar_arithmetic::{CalendarLunisolar, CalendarWithEras, PrecomputedDataSource};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
 use crate::provider::chinese_based::CalendarChineseV1;
@@ -167,10 +167,10 @@ impl CalendarLunisolar for Chinese {
     }
     #[inline]
     fn variable_ordinal_month(
-            &self,
-            monotonic_year: i32,
-            month_code: types::MonthCode,
-        ) -> Result<core::num::NonZeroU8, DateError> {
+        &self,
+        monotonic_year: i32,
+        month_code: types::MonthCode,
+    ) -> Result<core::num::NonZeroU8, DateError> {
         todo!()
     }
 }

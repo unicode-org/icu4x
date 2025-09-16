@@ -114,8 +114,8 @@ impl Calendar for Persian {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_non_lunisolar_ordinals(self)?;
-        ArithmeticDate::new_from_ordinals(year, month, day, options.overflow())
+        let (year, month, day) = fields.get_non_lunisolar_ordinals(self, options)?;
+        ArithmeticDate::new_from_ordinals(year, month, day, options)
             .map(PersianDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
@@ -232,7 +232,7 @@ impl Date<Persian> {
     /// assert_eq!(date_persian.day_of_month().0, 25);
     /// ```
     pub fn try_new_persian(year: i32, month: u8, day: u8) -> Result<Date<Persian>, RangeError> {
-        ArithmeticDate::new_from_ordinals(year, month, day, Overflow::Reject)
+        ArithmeticDate::new_from_ordinals(year, month, day, Default::default())
             .map(PersianDateInner)
             .map(|inner| Date::from_raw(inner, Persian))
     }

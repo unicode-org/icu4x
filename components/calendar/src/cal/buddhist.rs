@@ -78,10 +78,10 @@ impl Calendar for Buddhist {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_non_lunisolar_ordinals(self)?;
+        let (year, month, day) = fields.get_non_lunisolar_ordinals(self, options)?;
         // Year is stored as an ISO year
         let year = year + BUDDHIST_ERA_OFFSET;
-        ArithmeticDate::new_from_ordinals(year, month, day, options.overflow())
+        ArithmeticDate::new_from_ordinals(year, month, day, options)
             .map(IsoDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }

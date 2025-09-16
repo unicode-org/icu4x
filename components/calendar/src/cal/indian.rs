@@ -115,8 +115,8 @@ impl Calendar for Indian {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_non_lunisolar_ordinals(self)?;
-        ArithmeticDate::new_from_ordinals(year, month, day, options.overflow())
+        let (year, month, day) = fields.get_non_lunisolar_ordinals(self, options)?;
+        ArithmeticDate::new_from_ordinals(year, month, day, options)
             .map(IndianDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
@@ -252,7 +252,7 @@ impl Date<Indian> {
     /// assert_eq!(date_indian.day_of_month().0, 12);
     /// ```
     pub fn try_new_indian(year: i32, month: u8, day: u8) -> Result<Date<Indian>, RangeError> {
-        ArithmeticDate::new_from_ordinals(year, month, day, Overflow::Reject)
+        ArithmeticDate::new_from_ordinals(year, month, day, Default::default())
             .map(IndianDateInner)
             .map(|inner| Date::from_raw(inner, Indian))
     }

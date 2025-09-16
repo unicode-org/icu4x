@@ -143,12 +143,12 @@ impl Calendar for Ethiopian {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (mut year, month, day) = fields.get_non_lunisolar_ordinals(self)?;
+        let (mut year, month, day) = fields.get_non_lunisolar_ordinals(self, options)?;
         if matches!(self.era_style(), EthiopianEraStyle::AmeteMihret) {
             // Year is stored as an Amete Alem year
             year += INCARNATION_OFFSET;
         }
-        ArithmeticDate::new_from_ordinals(year, month, day, options.overflow())
+        ArithmeticDate::new_from_ordinals(year, month, day, options)
             .map(EthiopianDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
@@ -308,7 +308,7 @@ impl Date<Ethiopian> {
         if era_style == EthiopianEraStyle::AmeteAlem {
             year -= INCARNATION_OFFSET;
         }
-        ArithmeticDate::new_from_ordinals(year, month, day, Overflow::Reject)
+        ArithmeticDate::new_from_ordinals(year, month, day, Default::default())
             .map(EthiopianDateInner)
             .map(|inner| Date::from_raw(inner, Ethiopian::new_with_era_style(era_style)))
     }

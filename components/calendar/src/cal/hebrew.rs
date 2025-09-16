@@ -16,8 +16,8 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::{CalendarLunisolar, CalendarWithEras, PrecomputedDataSource};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::calendar_arithmetic::{CalendarLunisolar, CalendarWithEras, PrecomputedDataSource};
 use crate::error::DateError;
 use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::types::{DateFields, MonthInfo};
@@ -148,10 +148,10 @@ impl CalendarLunisolar for Hebrew {
     }
     #[inline]
     fn variable_ordinal_month(
-            &self,
-            monotonic_year: i32,
-            month_code: types::MonthCode,
-        ) -> Result<core::num::NonZeroU8, DateError> {
+        &self,
+        monotonic_year: i32,
+        month_code: types::MonthCode,
+    ) -> Result<core::num::NonZeroU8, DateError> {
         todo!()
     }
 }
@@ -380,7 +380,7 @@ impl Date<Hebrew> {
     pub fn try_new_hebrew(year: i32, month: u8, day: u8) -> Result<Date<Hebrew>, RangeError> {
         let year = HebrewYearInfo::compute(year);
 
-        ArithmeticDate::new_from_ordinals(year, month, day, Overflow::Reject)
+        ArithmeticDate::new_from_ordinals(year, month, day, Default::default())
             .map(HebrewDateInner)
             .map(|inner| Date::from_raw(inner, Hebrew))
     }

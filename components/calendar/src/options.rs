@@ -145,18 +145,17 @@ pub enum Overflow {
 /// How to infer missing fields when the fields that are present do not fully constitute a Date.
 ///
 /// In order for the fields to fully constitute a Date, they must identify a year, a month,
-/// and a day. The following sets of fields are sufficient:
-///
-/// - era, era year, month code, day
-/// - extended year, month code, day
-/// - era, era year, ordinal month, day
-/// - extended year, ordinal month, day
-///
-/// If the fields that are present (not `None`) do not cover any of these sets, then ICU4X uses
-/// the strategy specified here.
-///
-/// If the fields that are present are at least as many as one of the above sets, then this
-/// strategy has no effect (even if the fields are out-of-bounds or inconsistent).
+/// and a day. The following rules apply:
+/// 
+/// 1. At least one of extended year or era + era year must be present.
+/// 2. At least one of month code or ordinal month must be present.
+/// 3. If era is present, era year must also be present.
+/// 4. If era year is present, era must also be present.
+/// 
+/// If any of these rules are violated, then ICU4X uses the strategy specified here.
+/// 
+/// If all of the rules are satisfied, then this strategy has no effect. Fields that are
+/// out of bounds or inconsistent are handled by other error types.
 #[derive(Copy, Clone, Debug, PartialEq, Default)]
 #[non_exhaustive]
 pub enum MissingFieldsStrategy {
@@ -172,14 +171,13 @@ pub enum MissingFieldsStrategy {
     /// ⚠️ This option causes a year or day to be implicitly added to the Date!
     ///
     /// Missing fields are populated as follows:
+    /// 
+    /// 1. If the year and month are present
     ///
-    /// | Fields Present               | Missing Fields Behavior               |
-    /// |------------------------------|---------------------------------------|
-    /// | era, era year, month code    | set day to 1                          |
-    /// | extended year, month code    | set day to 1                          |
-    /// | era, era year, ordinal month | set day to 1                          |
-    /// | extended year, ordinal month | set day to 1                          |
-    /// | month code, day              | set extended year to a reference year |
+    /// | Fields Present  | Missing Fields Behavior               |
+    /// |-----------------|---------------------------------------|
+    /// | Year, Month     | set day to 1                          |
+    /// | month code, day | set extended year to a reference year |
     ///
     /// If the fields that are present do not cover any of these sets, then
     /// [`DateError::NotEnoughFields`] is returned.
@@ -189,4 +187,63 @@ pub enum MissingFieldsStrategy {
     ///
     /// [`DateError::NotEnoughFields`]: crate::DateError::NotEnoughFields
     Ecma,
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{types::{DateFields, MonthCode}, Date, DateError, Gregorian};
+    use core::num::NonZeroU8;
+    use std::collections::{BTreeMap, BTreeSet};
+    use itertools::Itertools;
+
+    use super::*;
+
+    #[test]
+    fn test_missing_fields_strategy_reject() {
+        // A fully populated DateFields that is internally consistent
+        let all_date_fields = DateFields {
+            era: Some("ad"),
+            era_year: Some(2000),
+            monotonic_year: Some(2000),
+            month_code: MonthCode::new_normal(4),
+            ordinal_month: NonZeroU8::new(4),
+            day: NonZeroU8::new(20),
+        };
+
+        // The sets of fields that are defined to fully constitute a Date
+        let mut minimal_sets = Vec::<BTreeSet::<&str>>::new();
+        minimal_sets.push(["era", "era_year", "month_code", "day"].into_iter().collect());
+        minimal_sets.push(["extended_year", "month_code", "day"].into_iter().collect());
+        minimal_sets.push(["era", "era_year", "ordinal_month", "day"].into_iter().collect());
+        minimal_sets.push(["extended_year", "ordinal_month", "day"].into_iter().collect());
+
+        // A map from field names to a function that unsets that field
+        let mut field_fns = BTreeMap::<&str, &dyn Fn(&mut DateFields)>::new();
+        field_fns.insert("era", &|fields| fields.era = None);
+        field_fns.insert("era_year", &|fields| fields.era_year = None);
+        field_fns.insert("monotonic_year", &|fields| fields.monotonic_year = None);
+        field_fns.insert("month_code", &|fields| fields.month_code = None);
+        field_fns.insert("ordinal_month", &|fields| fields.ordinal_month = None);
+        field_fns.insert("day", &|fields| fields.day = None);
+
+        for fields_to_remove in field_fns.keys().copied().powerset() {
+            let fields_to_remove = fields_to_remove.into_iter().collect::<BTreeSet<&str>>();
+            let should_succeed = minimal_sets.iter().any(|set| set.is_disjoint(&fields_to_remove));
+
+            // Clone the base fields and unset all fields in this permutation
+            let mut fields = all_date_fields.clone();
+            for field_name in fields_to_remove {
+                field_fns.get(field_name).unwrap()(&mut fields);
+            }
+
+            // Check whether we were able to successfully construct the date
+            let mut options = DateFromFieldsOptions::default();
+            options.missing_fields_strategy = Some(MissingFieldsStrategy::Reject);
+            match Date::try_from_fields(fields, options, Gregorian) {
+                Ok(_) => assert!(should_succeed, "Succeeded, but should have rejected: {fields:?}"),
+                Err(DateError::NotEnoughFields) => assert!(!should_succeed, "Rejected, but should have succeeded: {fields:?}"),
+                Err(e) => panic!("Unexpected error: {e} for {fields:?}"),
+            }
+        }
+    }
 }

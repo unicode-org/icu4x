@@ -403,12 +403,12 @@ impl Calendar for HijriSimulated {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_non_lunisolar_ordinals(self)?;
+        let (year, month, day) = fields.get_non_lunisolar_ordinals(self, options)?;
         ArithmeticDate::new_from_ordinals(
             self.load_or_compute_info(year),
             month,
             day,
-            options.overflow(),
+            options,
         )
         .map(HijriSimulatedDateInner)
         .map_err(|e| e.maybe_with_month_code(fields.month_code))
@@ -630,7 +630,7 @@ impl<A: AsCalendar<Calendar = HijriSimulated>> Date<A> {
         calendar: A,
     ) -> Result<Date<A>, RangeError> {
         let y = calendar.as_calendar().load_or_compute_info(year);
-        ArithmeticDate::new_from_ordinals(y, month, day, Overflow::Reject)
+        ArithmeticDate::new_from_ordinals(y, month, day, Default::default())
             .map(HijriSimulatedDateInner)
             .map(|inner| Date::from_raw(inner, calendar))
     }
@@ -694,12 +694,12 @@ impl Calendar for HijriUmmAlQura {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_non_lunisolar_ordinals(self)?;
+        let (year, month, day) = fields.get_non_lunisolar_ordinals(self, options)?;
         ArithmeticDate::new_from_ordinals(
             self.load_or_compute_info(year),
             month,
             day,
-            options.overflow(),
+            options,
         )
         .map(HijriUmmAlQuraDateInner)
         .map_err(|e| e.maybe_with_month_code(fields.month_code))
@@ -854,7 +854,7 @@ impl Date<HijriUmmAlQura> {
                 y,
                 month,
                 day,
-                Overflow::Reject,
+                Default::default(),
             )?),
             HijriUmmAlQura,
         ))
@@ -932,8 +932,8 @@ impl Calendar for HijriTabular {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let (year, month, day) = fields.get_non_lunisolar_ordinals(self)?;
-        ArithmeticDate::new_from_ordinals(year, month, day, options.overflow())
+        let (year, month, day) = fields.get_non_lunisolar_ordinals(self, options)?;
+        ArithmeticDate::new_from_ordinals(year, month, day, options)
             .map(HijriTabularDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
@@ -1073,7 +1073,7 @@ impl<A: AsCalendar<Calendar = HijriTabular>> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, RangeError> {
-        ArithmeticDate::new_from_ordinals(year, month, day, Overflow::Reject)
+        ArithmeticDate::new_from_ordinals(year, month, day, Default::default())
             .map(HijriTabularDateInner)
             .map(|inner| Date::from_raw(inner, calendar))
     }

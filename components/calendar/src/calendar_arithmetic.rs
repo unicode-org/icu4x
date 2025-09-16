@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::range_check_with_overflow;
-use crate::options::Overflow;
+use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy};
 use crate::types::{DateFields, DayOfYear, MonthCode};
 use crate::{types, Calendar, DateDuration, DateDurationUnit, DateError, RangeError};
 use core::cmp::Ordering;
@@ -340,7 +340,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         year: C::YearInfo,
         month: u8,
         day: u8,
-        overflow: Overflow,
+        options: DateFromFieldsOptions,
     ) -> Result<Self, RangeError> {
         Ok(Self::new_unchecked(
             year,
@@ -348,13 +348,13 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
                 month,
                 "month",
                 1..=C::months_in_provided_year(year),
-                overflow,
+                options.overflow.unwrap_or_default(),
             )?,
             range_check_with_overflow(
                 day,
                 "day",
                 1..=C::days_in_provided_month(year, month),
-                overflow,
+                options.overflow.unwrap_or_default(),
             )?,
         ))
     }
@@ -390,11 +390,9 @@ impl<'a> DateFields<'a> {
     }
 
     fn get_non_lunisolar_ordinal_month(self) -> Result<Option<NonZeroU8>, DateError> {
-        self.get_ordinal_month(|month_code| {
-            match month_code.parsed_nonzero() {
-                Some((month_number, false)) => Ok(month_number),
-                _ => Err(DateError::UnknownMonthCode(month_code))
-            }
+        self.get_ordinal_month(|month_code| match month_code.parsed_nonzero() {
+            Some((month_number, false)) => Ok(month_number),
+            _ => Err(DateError::UnknownMonthCode(month_code)),
         })
     }
 
@@ -418,7 +416,7 @@ impl<'a> DateFields<'a> {
                     }
                 }
                 Ok(Some(computed_month))
-            },
+            }
             None => Ok(self.ordinal_month),
         }
     }
@@ -428,20 +426,32 @@ impl<'a> DateFields<'a> {
     ///
     /// Returns an error when various conditions happen, in accordance with
     /// the ECMAScript Temporal specification.
-    pub(crate) fn get_non_lunisolar_ordinals<C>(self, cal: &C) -> Result<(i32, u8, u8), DateError>
+    pub(crate) fn get_non_lunisolar_ordinals<C>(self, cal: &C, options: DateFromFieldsOptions) -> Result<(i32, u8, u8), DateError>
     where
         C: CalendarNonLunisolar + CalendarWithEras,
     {
+        let missing_fields_strategy = options.missing_fields_strategy.unwrap_or_default();
         let maybe_year =
             self.get_monotonic_year(|era, era_year| cal.era_year_to_monotonic(era, era_year))?;
         let maybe_month = self.get_non_lunisolar_ordinal_month()?;
         let maybe_day = self.day;
-        let year = maybe_year.unwrap_or(cal.fixed_monotonic_reference_year());
+        let year = match maybe_year {
+            Some(year) => year,
+            None => match missing_fields_strategy {
+                MissingFieldsStrategy::Reject => return Err(DateError::NotEnoughFields),
+                MissingFieldsStrategy::Ecma => cal.fixed_monotonic_reference_year()
+            }
+        };
         let month = maybe_month.ok_or(DateError::NotEnoughFields)?.get();
-        let day = if maybe_year.is_some() {
-            maybe_day.map(|x| x.get()).unwrap_or(1)
-        } else {
-            return Err(DateError::NotEnoughFields);
+        let day = match maybe_day {
+            Some(day) => day.get(),
+            None => match missing_fields_strategy {
+                MissingFieldsStrategy::Reject => return Err(DateError::NotEnoughFields),
+                MissingFieldsStrategy::Ecma => match maybe_year {
+                    Some(_) => 1,
+                    None => return Err(DateError::NotEnoughFields)
+                }
+            }
         };
         Ok((year, month, day))
     }
@@ -465,9 +475,7 @@ impl<'a> DateFields<'a> {
             },
         };
         let month = self
-            .get_ordinal_month(|month_code| {
-                cal.variable_ordinal_month(year, month_code)
-            })?
+            .get_ordinal_month(|month_code| cal.variable_ordinal_month(year, month_code))?
             .ok_or(DateError::NotEnoughFields)?
             .get();
         Ok((year, month, day))
