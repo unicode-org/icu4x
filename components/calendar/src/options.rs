@@ -10,6 +10,8 @@
 pub struct DateFromFieldsOptions {
     /// How to behave with out-of-bounds fields.
     pub overflow: Option<Overflow>,
+    /// How to behave when the fields that are present do not fully constitute a Date.
+    pub missing_fields_strategy: Option<MissingFieldsStrategy>,
 }
 
 impl DateFromFieldsOptions {
@@ -138,4 +140,53 @@ pub enum Overflow {
     /// assert!(matches!(err, DateError::Range { .. }));
     /// ```
     Reject,
+}
+
+/// How to infer missing fields when the fields that are present do not fully constitute a Date.
+///
+/// In order for the fields to fully constitute a Date, they must identify a year, a month,
+/// and a day. The following sets of fields are sufficient:
+///
+/// - era, era year, month code, day
+/// - extended year, month code, day
+/// - era, era year, ordinal month, day
+/// - extended year, ordinal month, day
+///
+/// If the fields that are present (not `None`) do not cover any of these sets, then ICU4X uses
+/// the strategy specified here.
+///
+/// If the fields that are present are at least as many as one of the above sets, then this
+/// strategy has no effect (even if the fields are out-of-bounds or inconsistent).
+#[derive(Copy, Clone, Debug, PartialEq, Default)]
+#[non_exhaustive]
+pub enum MissingFieldsStrategy {
+    /// If the fields that are present do not fully constitute a Date,
+    /// return [`DateError::NotEnoughFields`].
+    ///
+    /// [`DateError::NotEnoughFields`]: crate::DateError::NotEnoughFields
+    #[default]
+    Reject,
+    /// If the fields that are present do not fully constitute a Date,
+    /// follow the ECMAScript specification when possible.
+    ///
+    /// ⚠️ This option causes a year or day to be implicitly added to the Date!
+    ///
+    /// Missing fields are populated as follows:
+    ///
+    /// | Fields Present               | Missing Fields Behavior               |
+    /// |------------------------------|---------------------------------------|
+    /// | era, era year, month code    | set day to 1                          |
+    /// | extended year, month code    | set day to 1                          |
+    /// | era, era year, ordinal month | set day to 1                          |
+    /// | extended year, ordinal month | set day to 1                          |
+    /// | month code, day              | set extended year to a reference year |
+    ///
+    /// If the fields that are present do not cover any of these sets, then
+    /// [`DateError::NotEnoughFields`] is returned.
+    ///
+    /// The reference year is _some_ year in the calendar that contains the specified month code
+    /// and day. The algorithm for choosing the reference year is specified by ECMAScript.
+    ///
+    /// [`DateError::NotEnoughFields`]: crate::DateError::NotEnoughFields
+    Ecma,
 }

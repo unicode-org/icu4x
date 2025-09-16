@@ -6,7 +6,7 @@ use calendrical_calculations::rata_die::RataDie;
 
 use crate::cal::iso::IsoDateInner;
 use crate::error::DateError;
-use crate::options::{DateFromFieldsOptions, Overflow};
+use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
 use crate::{types, DateDuration, DateDurationUnit};
 use core::fmt;
 
@@ -55,6 +55,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         fields.day = core::num::NonZeroU8::new(day);
         let options = DateFromFieldsOptions {
             overflow: Some(Overflow::Reject),
+            missing_fields_strategy: Some(MissingFieldsStrategy::Reject),
         };
         self.from_fields(fields, options)
     }
