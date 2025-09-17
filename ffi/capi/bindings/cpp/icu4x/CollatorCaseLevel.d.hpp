@@ -29,21 +29,21 @@ namespace icu4x {
  */
 class CollatorCaseLevel {
 public:
-  enum Value {
-    Off = 0,
-    On = 1,
-  };
+    enum Value {
+        Off = 0,
+        On = 1,
+    };
 
-  CollatorCaseLevel(): value(Value::Off) {}
+    CollatorCaseLevel(): value(Value::Off) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr CollatorCaseLevel(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr CollatorCaseLevel(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::CollatorCaseLevel AsFFI() const;
-  inline static icu4x::CollatorCaseLevel FromFFI(icu4x::capi::CollatorCaseLevel c_enum);
+    inline icu4x::capi::CollatorCaseLevel AsFFI() const;
+    inline static icu4x::CollatorCaseLevel FromFFI(icu4x::capi::CollatorCaseLevel c_enum);
 private:
     Value value;
 };

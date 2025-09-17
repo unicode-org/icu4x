@@ -30,15 +30,15 @@ namespace capi {
 
 namespace icu4x {
 struct PluralCategories {
-  bool zero;
-  bool one;
-  bool two;
-  bool few;
-  bool many;
-  bool other;
+    bool zero;
+    bool one;
+    bool two;
+    bool few;
+    bool many;
+    bool other;
 
-  inline icu4x::capi::PluralCategories AsFFI() const;
-  inline static icu4x::PluralCategories FromFFI(icu4x::capi::PluralCategories c_struct);
+    inline icu4x::capi::PluralCategories AsFFI() const;
+    inline static icu4x::PluralCategories FromFFI(icu4x::capi::PluralCategories c_struct);
 };
 
 } // namespace

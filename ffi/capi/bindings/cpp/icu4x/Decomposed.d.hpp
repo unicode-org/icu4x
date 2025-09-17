@@ -33,11 +33,11 @@ namespace icu4x {
  * See the [Rust documentation for `Decomposed`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/enum.Decomposed.html) for more information.
  */
 struct Decomposed {
-  char32_t first;
-  char32_t second;
+    char32_t first;
+    char32_t second;
 
-  inline icu4x::capi::Decomposed AsFFI() const;
-  inline static icu4x::Decomposed FromFFI(icu4x::capi::Decomposed c_struct);
+    inline icu4x::capi::Decomposed AsFFI() const;
+    inline static icu4x::Decomposed FromFFI(icu4x::capi::Decomposed c_struct);
 };
 
 } // namespace

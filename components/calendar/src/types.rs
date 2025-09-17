@@ -48,11 +48,11 @@ impl YearInfo {
         }
     }
 
-    /// Get the monotonic year (See [`Date::monotonic_year`](crate::Date::monotonic_year))
+    /// Get the extended year (See [`Date::extended_year`](crate::Date::extended_year))
     /// for more information
-    pub fn monotonic_year(self) -> i32 {
+    pub fn extended_year(self) -> i32 {
         match self {
-            YearInfo::Era(e) => e.monotonic_year,
+            YearInfo::Era(e) => e.extended_year,
             YearInfo::Cyclic(c) => c.related_iso,
         }
     }
@@ -97,8 +97,8 @@ pub enum YearAmbiguity {
 pub struct EraYear {
     /// The numeric year in that era
     pub year: i32,
-    /// See [`YearInfo::monotonic_year()`]
-    pub monotonic_year: i32,
+    /// See [`YearInfo::extended_year()`]
+    pub extended_year: i32,
     /// The era code as defined by CLDR, expect for cases where CLDR does not define a code.
     pub era: TinyStr16,
     /// An era index, for calendars with a small set of eras.
@@ -182,6 +182,20 @@ impl MonthCode {
         }
 
         let bytes = [b'M', b'0' + tens, b'0' + ones, 0];
+        Some(MonthCode(TinyAsciiStr::try_from_raw(bytes).ok()?))
+    }
+
+    /// Construct a "leap" month code given a number ("MxxL").
+    ///
+    /// Returns an error for months greater than 99
+    pub fn new_leap(number: u8) -> Option<Self> {
+        let tens = number / 10;
+        let ones = number % 10;
+        if tens > 9 {
+            return None;
+        }
+
+        let bytes = [b'M', b'0' + tens, b'0' + ones, b'L'];
         Some(MonthCode(TinyAsciiStr::try_from_raw(bytes).ok()?))
     }
 }

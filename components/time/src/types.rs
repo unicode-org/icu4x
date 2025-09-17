@@ -209,6 +209,18 @@ pub struct ZonedDateTime<A: AsCalendar, Z> {
 
 const UNIX_EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
 
+impl Ord for ZonedDateTime<Iso, UtcOffset> {
+    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+        self.to_epoch_milliseconds_utc()
+            .cmp(&other.to_epoch_milliseconds_utc())
+    }
+}
+impl PartialOrd for ZonedDateTime<Iso, UtcOffset> {
+    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
 impl ZonedDateTime<Iso, UtcOffset> {
     /// Creates a [`ZonedDateTime`] from an absolute time, in milliseconds since the UNIX Epoch,
     /// and a UTC offset.

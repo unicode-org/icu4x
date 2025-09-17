@@ -39,45 +39,45 @@ class LocaleFallbacker {
 public:
 
   /**
-   * Creates a new `LocaleFallbacker` from compiled data.
-   *
-   * See the [Rust documentation for `new`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.new) for more information.
+     * Creates a new `LocaleFallbacker` from compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.new) for more information.
    */
   inline static std::unique_ptr<icu4x::LocaleFallbacker> create();
 
   /**
-   * Creates a new `LocaleFallbacker` from a data provider.
-   *
-   * See the [Rust documentation for `new`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.new) for more information.
+     * Creates a new `LocaleFallbacker` from a data provider.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.new) for more information.
    */
   inline static diplomat::result<std::unique_ptr<icu4x::LocaleFallbacker>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   /**
-   * Creates a new `LocaleFallbacker` without data for limited functionality.
-   *
-   * See the [Rust documentation for `new_without_data`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.new_without_data) for more information.
+     * Creates a new `LocaleFallbacker` without data for limited functionality.
+     *
+     * See the [Rust documentation for `new_without_data`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.new_without_data) for more information.
    */
   inline static std::unique_ptr<icu4x::LocaleFallbacker> without_data();
 
   /**
-   * Associates this `LocaleFallbacker` with configuration options.
-   *
-   * See the [Rust documentation for `for_config`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.for_config) for more information.
+     * Associates this `LocaleFallbacker` with configuration options.
+     *
+     * See the [Rust documentation for `for_config`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.for_config) for more information.
    */
   inline std::unique_ptr<icu4x::LocaleFallbackerWithConfig> for_config(icu4x::LocaleFallbackConfig config) const;
 
-  inline const icu4x::capi::LocaleFallbacker* AsFFI() const;
-  inline icu4x::capi::LocaleFallbacker* AsFFI();
-  inline static const icu4x::LocaleFallbacker* FromFFI(const icu4x::capi::LocaleFallbacker* ptr);
-  inline static icu4x::LocaleFallbacker* FromFFI(icu4x::capi::LocaleFallbacker* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::LocaleFallbacker* AsFFI() const;
+    inline icu4x::capi::LocaleFallbacker* AsFFI();
+    inline static const icu4x::LocaleFallbacker* FromFFI(const icu4x::capi::LocaleFallbacker* ptr);
+    inline static icu4x::LocaleFallbacker* FromFFI(icu4x::capi::LocaleFallbacker* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  LocaleFallbacker() = delete;
-  LocaleFallbacker(const icu4x::LocaleFallbacker&) = delete;
-  LocaleFallbacker(icu4x::LocaleFallbacker&&) noexcept = delete;
-  LocaleFallbacker operator=(const icu4x::LocaleFallbacker&) = delete;
-  LocaleFallbacker operator=(icu4x::LocaleFallbacker&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    LocaleFallbacker() = delete;
+    LocaleFallbacker(const icu4x::LocaleFallbacker&) = delete;
+    LocaleFallbacker(icu4x::LocaleFallbacker&&) noexcept = delete;
+    LocaleFallbacker operator=(const icu4x::LocaleFallbacker&) = delete;
+    LocaleFallbacker operator=(icu4x::LocaleFallbacker&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace

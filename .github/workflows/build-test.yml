@@ -68,7 +68,7 @@ jobs:
     - name: Install cargo-all-features
       uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
       with:
-        tool: cargo-all-features@1.10.0
+        tool: cargo-all-features@1.11.0
 
     # No toolchain boilerplate as this runs on MSRV
 
@@ -347,7 +347,7 @@ jobs:
     # Job-specific dependencies
     - uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
       with:
-        sdk: ${{ github.event_name != 'schedule' && '3.10.0-22.0.dev' || 'dev' }}
+        sdk: ${{ github.event_name == 'schedule' && github.event.schedule == '0 14 * * *' && 'dev' || '3.10.0-186.0.dev' }}
     - name: Install yq if Windows
       if: ${{ matrix.os == 'windows-latest' }}
       run: choco install yq
@@ -577,7 +577,7 @@ jobs:
       # This is the baseline for semver-check. It can be changed
       # if unstable APIs were changed but semver-check
       # didn't know that they were unstable.
-      BASELINE_REF: fe588b97f72310dabda1d210444cda0c72cefa26 # a commit on main
+      BASELINE_REF: 3ea9b557fc6cafc03d2100d0629e0ad3ef8c7407 # a commit on main
     steps:
 
     # Checkout baseline revision; required because actions/checkout is shallow

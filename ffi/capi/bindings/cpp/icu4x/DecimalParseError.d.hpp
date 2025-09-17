@@ -30,22 +30,22 @@ namespace icu4x {
  */
 class DecimalParseError {
 public:
-  enum Value {
-    Unknown = 0,
-    Limit = 1,
-    Syntax = 2,
-  };
+    enum Value {
+        Unknown = 0,
+        Limit = 1,
+        Syntax = 2,
+    };
 
-  DecimalParseError(): value(Value::Unknown) {}
+    DecimalParseError(): value(Value::Unknown) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr DecimalParseError(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr DecimalParseError(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::DecimalParseError AsFFI() const;
-  inline static icu4x::DecimalParseError FromFFI(icu4x::capi::DecimalParseError c_enum);
+    inline icu4x::capi::DecimalParseError AsFFI() const;
+    inline static icu4x::DecimalParseError FromFFI(icu4x::capi::DecimalParseError c_enum);
 private:
     Value value;
 };

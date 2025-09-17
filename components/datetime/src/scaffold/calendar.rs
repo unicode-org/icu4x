@@ -8,12 +8,7 @@ use crate::provider::{neo::*, *};
 use crate::scaffold::UnstableSealed;
 use crate::{DateTimeFormatterPreferences, MismatchedCalendarError};
 use core::marker::PhantomData;
-use icu_calendar::cal::Roc;
-use icu_calendar::cal::{self, Chinese};
-use icu_calendar::cal::{
-    Buddhist, Coptic, Dangi, Ethiopian, Gregorian, Hebrew, HijriSimulated, HijriTabular,
-    HijriUmmAlQura, Indian, Japanese, JapaneseExtended, Persian,
-};
+use icu_calendar::cal::{self, *};
 use icu_calendar::{AnyCalendar, AnyCalendarKind, AsCalendar, Date, IntoAnyCalendar, Ref};
 use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
@@ -54,7 +49,7 @@ impl CldrCalendar for Buddhist {
     type SkeletaV1 = DatetimePatternsDateBuddhistV1;
 }
 
-impl CldrCalendar for Chinese {
+impl CldrCalendar for LunarChinese<chinese::China> {
     type YearNamesV1 = DatetimeNamesYearChineseV1;
     type MonthNamesV1 = DatetimeNamesMonthChineseV1;
     type SkeletaV1 = DatetimePatternsDateChineseV1;
@@ -66,7 +61,7 @@ impl CldrCalendar for Coptic {
     type SkeletaV1 = DatetimePatternsDateCopticV1;
 }
 
-impl CldrCalendar for Dangi {
+impl CldrCalendar for LunarChinese<chinese::Dangi> {
     type YearNamesV1 = DatetimeNamesYearDangiV1;
     type MonthNamesV1 = DatetimeNamesMonthDangiV1;
     type SkeletaV1 = DatetimePatternsDateDangiV1;
@@ -96,19 +91,7 @@ impl CldrCalendar for Indian {
     type SkeletaV1 = DatetimePatternsDateIndianV1;
 }
 
-impl CldrCalendar for HijriTabular {
-    type YearNamesV1 = DatetimeNamesYearHijriV1;
-    type MonthNamesV1 = DatetimeNamesMonthHijriV1;
-    type SkeletaV1 = DatetimePatternsDateHijriV1;
-}
-
-impl CldrCalendar for HijriSimulated {
-    type YearNamesV1 = DatetimeNamesYearHijriV1;
-    type MonthNamesV1 = DatetimeNamesMonthHijriV1;
-    type SkeletaV1 = DatetimePatternsDateHijriV1;
-}
-
-impl CldrCalendar for HijriUmmAlQura {
+impl<S: hijri::HijriSighting> CldrCalendar for Hijri<S> {
     type YearNamesV1 = DatetimeNamesYearHijriV1;
     type MonthNamesV1 = DatetimeNamesMonthHijriV1;
     type SkeletaV1 = DatetimePatternsDateHijriV1;
@@ -140,16 +123,14 @@ impl CldrCalendar for Roc {
 
 impl UnstableSealed for () {}
 impl UnstableSealed for Buddhist {}
-impl UnstableSealed for Chinese {}
+impl UnstableSealed for LunarChinese<chinese::China> {}
 impl UnstableSealed for Coptic {}
-impl UnstableSealed for Dangi {}
+impl UnstableSealed for LunarChinese<chinese::Dangi> {}
 impl UnstableSealed for Ethiopian {}
 impl UnstableSealed for Gregorian {}
 impl UnstableSealed for Hebrew {}
 impl UnstableSealed for Indian {}
-impl UnstableSealed for HijriTabular {}
-impl UnstableSealed for HijriSimulated {}
-impl UnstableSealed for HijriUmmAlQura {}
+impl<S: hijri::HijriSighting> UnstableSealed for Hijri<S> {}
 impl UnstableSealed for Japanese {}
 impl UnstableSealed for JapaneseExtended {}
 impl UnstableSealed for Persian {}
@@ -235,16 +216,17 @@ pub trait IntoFormattableAnyCalendar: CldrCalendar + IntoAnyCalendar {}
 
 // keep in sync with FormattableAnyCalendarKind
 impl IntoFormattableAnyCalendar for Buddhist {}
-impl IntoFormattableAnyCalendar for Chinese {}
+impl IntoFormattableAnyCalendar for LunarChinese<chinese::China> {}
 impl IntoFormattableAnyCalendar for Coptic {}
-impl IntoFormattableAnyCalendar for Dangi {}
+impl IntoFormattableAnyCalendar for LunarChinese<chinese::Dangi> {}
 impl IntoFormattableAnyCalendar for Ethiopian {}
 impl IntoFormattableAnyCalendar for Gregorian {}
 impl IntoFormattableAnyCalendar for Hebrew {}
 impl IntoFormattableAnyCalendar for Indian {}
-impl IntoFormattableAnyCalendar for HijriTabular {}
-impl IntoFormattableAnyCalendar for HijriSimulated {}
-impl IntoFormattableAnyCalendar for HijriUmmAlQura {}
+impl IntoFormattableAnyCalendar for Hijri<hijri::TabularAlgorithm> {}
+impl IntoFormattableAnyCalendar for Hijri<hijri::AstronomicalSimulation> {}
+impl IntoFormattableAnyCalendar for Hijri<hijri::UmmAlQura> {}
+// _NOT_ Hijri<S>
 impl IntoFormattableAnyCalendar for Japanese {}
 // _NOT_ JapaneseExtended
 impl IntoFormattableAnyCalendar for Persian {}
@@ -375,9 +357,9 @@ impl FormattableAnyCalendar {
         use FormattableAnyCalendarKind::*;
         let any_calendar = match kind {
             Buddhist => AnyCalendar::Buddhist(cal::Buddhist),
-            Chinese => AnyCalendar::Chinese(cal::Chinese::new()),
+            Chinese => AnyCalendar::Chinese(cal::LunarChinese::new_china()),
             Coptic => AnyCalendar::Coptic(cal::Coptic),
-            Dangi => AnyCalendar::Dangi(cal::Dangi::new()),
+            Dangi => AnyCalendar::Dangi(cal::LunarChinese::new_dangi()),
             Ethiopian => AnyCalendar::Ethiopian(cal::Ethiopian::new()),
             EthiopianAmeteAlem => AnyCalendar::Ethiopian(cal::Ethiopian::new_with_era_style(
                 cal::EthiopianEraStyle::AmeteAlem,
@@ -385,15 +367,15 @@ impl FormattableAnyCalendar {
             Gregorian => AnyCalendar::Gregorian(cal::Gregorian),
             Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
             Indian => AnyCalendar::Indian(cal::Indian),
-            HijriTabularTypeIIFriday => AnyCalendar::HijriTabular(cal::HijriTabular::new(
-                cal::HijriTabularLeapYears::TypeII,
-                cal::HijriTabularEpoch::Friday,
+            HijriTabularTypeIIFriday => AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
+                hijri::TabularAlgorithmLeapYears::TypeII,
+                hijri::TabularAlgorithmEpoch::Friday,
             )),
-            HijriTabularTypeIIThursday => AnyCalendar::HijriTabular(cal::HijriTabular::new(
-                cal::HijriTabularLeapYears::TypeII,
-                cal::HijriTabularEpoch::Thursday,
+            HijriTabularTypeIIThursday => AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
+                hijri::TabularAlgorithmLeapYears::TypeII,
+                hijri::TabularAlgorithmEpoch::Thursday,
             )),
-            HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(cal::HijriUmmAlQura::new()),
+            HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(cal::Hijri::new_umm_al_qura()),
             Japanese => AnyCalendar::Japanese(cal::Japanese::new()),
             Persian => AnyCalendar::Persian(cal::Persian),
             Roc => AnyCalendar::Roc(cal::Roc),
@@ -412,9 +394,9 @@ impl FormattableAnyCalendar {
         use FormattableAnyCalendarKind::*;
         let any_calendar = match kind {
             Buddhist => AnyCalendar::Buddhist(cal::Buddhist),
-            Chinese => AnyCalendar::Chinese(cal::Chinese::try_new_with_buffer_provider(provider)?),
+            Chinese => AnyCalendar::Chinese(cal::LunarChinese::new_china()),
             Coptic => AnyCalendar::Coptic(cal::Coptic),
-            Dangi => AnyCalendar::Dangi(cal::Dangi::try_new_with_buffer_provider(provider)?),
+            Dangi => AnyCalendar::Dangi(cal::LunarChinese::new_dangi()),
             Ethiopian => AnyCalendar::Ethiopian(cal::Ethiopian::new()),
             EthiopianAmeteAlem => AnyCalendar::Ethiopian(cal::Ethiopian::new_with_era_style(
                 cal::EthiopianEraStyle::AmeteAlem,
@@ -422,15 +404,15 @@ impl FormattableAnyCalendar {
             Gregorian => AnyCalendar::Gregorian(cal::Gregorian),
             Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
             Indian => AnyCalendar::Indian(cal::Indian),
-            HijriTabularTypeIIFriday => AnyCalendar::HijriTabular(cal::HijriTabular::new(
-                cal::HijriTabularLeapYears::TypeII,
-                cal::HijriTabularEpoch::Friday,
+            HijriTabularTypeIIFriday => AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
+                hijri::TabularAlgorithmLeapYears::TypeII,
+                hijri::TabularAlgorithmEpoch::Friday,
             )),
-            HijriTabularTypeIIThursday => AnyCalendar::HijriTabular(cal::HijriTabular::new(
-                cal::HijriTabularLeapYears::TypeII,
-                cal::HijriTabularEpoch::Thursday,
+            HijriTabularTypeIIThursday => AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
+                hijri::TabularAlgorithmLeapYears::TypeII,
+                hijri::TabularAlgorithmEpoch::Thursday,
             )),
-            HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(cal::HijriUmmAlQura::new()),
+            HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(cal::Hijri::new_umm_al_qura()),
             Japanese => {
                 AnyCalendar::Japanese(cal::Japanese::try_new_with_buffer_provider(provider)?)
             }
@@ -445,17 +427,14 @@ impl FormattableAnyCalendar {
         kind: FormattableAnyCalendarKind,
     ) -> Result<Self, DataError>
     where
-        P: ?Sized
-            + DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>
-            + DataProvider<icu_calendar::provider::CalendarChineseV1>
-            + DataProvider<icu_calendar::provider::CalendarDangiV1>,
+        P: ?Sized + DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>,
     {
         use FormattableAnyCalendarKind::*;
         let any_calendar = match kind {
             Buddhist => AnyCalendar::Buddhist(cal::Buddhist),
-            Chinese => AnyCalendar::Chinese(cal::Chinese::try_new_unstable(provider)?),
+            Chinese => AnyCalendar::Chinese(cal::LunarChinese::new_china()),
             Coptic => AnyCalendar::Coptic(cal::Coptic),
-            Dangi => AnyCalendar::Dangi(cal::Dangi::try_new_unstable(provider)?),
+            Dangi => AnyCalendar::Dangi(cal::LunarChinese::new_dangi()),
             Ethiopian => AnyCalendar::Ethiopian(cal::Ethiopian::new()),
             EthiopianAmeteAlem => AnyCalendar::Ethiopian(cal::Ethiopian::new_with_era_style(
                 cal::EthiopianEraStyle::AmeteAlem,
@@ -463,15 +442,15 @@ impl FormattableAnyCalendar {
             Gregorian => AnyCalendar::Gregorian(cal::Gregorian),
             Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
             Indian => AnyCalendar::Indian(cal::Indian),
-            HijriTabularTypeIIFriday => AnyCalendar::HijriTabular(cal::HijriTabular::new(
-                cal::HijriTabularLeapYears::TypeII,
-                cal::HijriTabularEpoch::Friday,
+            HijriTabularTypeIIFriday => AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
+                hijri::TabularAlgorithmLeapYears::TypeII,
+                hijri::TabularAlgorithmEpoch::Friday,
             )),
-            HijriTabularTypeIIThursday => AnyCalendar::HijriTabular(cal::HijriTabular::new(
-                cal::HijriTabularLeapYears::TypeII,
-                cal::HijriTabularEpoch::Thursday,
+            HijriTabularTypeIIThursday => AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
+                hijri::TabularAlgorithmLeapYears::TypeII,
+                hijri::TabularAlgorithmEpoch::Thursday,
             )),
-            HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(cal::HijriUmmAlQura::new()),
+            HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(cal::Hijri::new_umm_al_qura()),
             Japanese => AnyCalendar::Japanese(cal::Japanese::try_new_unstable(provider)?),
             Persian => AnyCalendar::Persian(cal::Persian),
             Roc => AnyCalendar::Roc(cal::Roc),
@@ -593,14 +572,14 @@ where
 
 impl CalMarkers<YearNamesV1> for FullDataCalMarkers {
     type Buddhist = <Buddhist as CldrCalendar>::YearNamesV1;
-    type Chinese = <Chinese as CldrCalendar>::YearNamesV1;
+    type Chinese = <LunarChinese<chinese::China> as CldrCalendar>::YearNamesV1;
     type Coptic = <Coptic as CldrCalendar>::YearNamesV1;
-    type Dangi = <Dangi as CldrCalendar>::YearNamesV1;
+    type Dangi = <LunarChinese<chinese::Dangi> as CldrCalendar>::YearNamesV1;
     type Ethiopian = <Ethiopian as CldrCalendar>::YearNamesV1;
     type Gregorian = <Gregorian as CldrCalendar>::YearNamesV1;
     type Hebrew = <Hebrew as CldrCalendar>::YearNamesV1;
     type Indian = <Indian as CldrCalendar>::YearNamesV1;
-    type Hijri = <HijriUmmAlQura as CldrCalendar>::YearNamesV1;
+    type Hijri = <Hijri<hijri::UmmAlQura> as CldrCalendar>::YearNamesV1;
     type Japanese = <Japanese as CldrCalendar>::YearNamesV1;
     type Persian = <Persian as CldrCalendar>::YearNamesV1;
     type Roc = <Roc as CldrCalendar>::YearNamesV1;
@@ -608,14 +587,14 @@ impl CalMarkers<YearNamesV1> for FullDataCalMarkers {
 
 impl CalMarkers<MonthNamesV1> for FullDataCalMarkers {
     type Buddhist = <Buddhist as CldrCalendar>::MonthNamesV1;
-    type Chinese = <Chinese as CldrCalendar>::MonthNamesV1;
+    type Chinese = <LunarChinese<chinese::China> as CldrCalendar>::MonthNamesV1;
     type Coptic = <Coptic as CldrCalendar>::MonthNamesV1;
-    type Dangi = <Dangi as CldrCalendar>::MonthNamesV1;
+    type Dangi = <LunarChinese<chinese::Dangi> as CldrCalendar>::MonthNamesV1;
     type Ethiopian = <Ethiopian as CldrCalendar>::MonthNamesV1;
     type Gregorian = <Gregorian as CldrCalendar>::MonthNamesV1;
     type Hebrew = <Hebrew as CldrCalendar>::MonthNamesV1;
     type Indian = <Indian as CldrCalendar>::MonthNamesV1;
-    type Hijri = <HijriUmmAlQura as CldrCalendar>::MonthNamesV1;
+    type Hijri = <Hijri<hijri::UmmAlQura> as CldrCalendar>::MonthNamesV1;
     type Japanese = <Japanese as CldrCalendar>::MonthNamesV1;
     type Persian = <Persian as CldrCalendar>::MonthNamesV1;
     type Roc = <Roc as CldrCalendar>::MonthNamesV1;
@@ -623,14 +602,14 @@ impl CalMarkers<MonthNamesV1> for FullDataCalMarkers {
 
 impl CalMarkers<ErasedPackedPatterns> for FullDataCalMarkers {
     type Buddhist = <Buddhist as CldrCalendar>::SkeletaV1;
-    type Chinese = <Chinese as CldrCalendar>::SkeletaV1;
+    type Chinese = <LunarChinese<chinese::China> as CldrCalendar>::SkeletaV1;
     type Coptic = <Coptic as CldrCalendar>::SkeletaV1;
-    type Dangi = <Dangi as CldrCalendar>::SkeletaV1;
+    type Dangi = <LunarChinese<chinese::Dangi> as CldrCalendar>::SkeletaV1;
     type Ethiopian = <Ethiopian as CldrCalendar>::SkeletaV1;
     type Gregorian = <Gregorian as CldrCalendar>::SkeletaV1;
     type Hebrew = <Hebrew as CldrCalendar>::SkeletaV1;
     type Indian = <Indian as CldrCalendar>::SkeletaV1;
-    type Hijri = <HijriUmmAlQura as CldrCalendar>::SkeletaV1;
+    type Hijri = <Hijri<hijri::UmmAlQura> as CldrCalendar>::SkeletaV1;
     type Japanese = <Japanese as CldrCalendar>::SkeletaV1;
     type Persian = <Persian as CldrCalendar>::SkeletaV1;
     type Roc = <Roc as CldrCalendar>::SkeletaV1;

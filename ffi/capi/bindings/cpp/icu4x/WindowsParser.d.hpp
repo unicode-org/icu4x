@@ -41,36 +41,36 @@ class WindowsParser {
 public:
 
   /**
-   * Create a new {@link WindowsParser} using compiled data
-   *
-   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
+     * Create a new {@link WindowsParser} using compiled data
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
    */
   inline static std::unique_ptr<icu4x::WindowsParser> create();
 
   /**
-   * Create a new {@link WindowsParser} using a particular data source
-   *
-   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
+     * Create a new {@link WindowsParser} using a particular data source
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
    */
   inline static diplomat::result<std::unique_ptr<icu4x::WindowsParser>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   /**
-   * See the [Rust documentation for `parse`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParserBorrowed.html#method.parse) for more information.
+     * See the [Rust documentation for `parse`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParserBorrowed.html#method.parse) for more information.
    */
   inline std::unique_ptr<icu4x::TimeZone> parse(std::string_view value, std::string_view region) const;
 
-  inline const icu4x::capi::WindowsParser* AsFFI() const;
-  inline icu4x::capi::WindowsParser* AsFFI();
-  inline static const icu4x::WindowsParser* FromFFI(const icu4x::capi::WindowsParser* ptr);
-  inline static icu4x::WindowsParser* FromFFI(icu4x::capi::WindowsParser* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::WindowsParser* AsFFI() const;
+    inline icu4x::capi::WindowsParser* AsFFI();
+    inline static const icu4x::WindowsParser* FromFFI(const icu4x::capi::WindowsParser* ptr);
+    inline static icu4x::WindowsParser* FromFFI(icu4x::capi::WindowsParser* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  WindowsParser() = delete;
-  WindowsParser(const icu4x::WindowsParser&) = delete;
-  WindowsParser(icu4x::WindowsParser&&) noexcept = delete;
-  WindowsParser operator=(const icu4x::WindowsParser&) = delete;
-  WindowsParser operator=(icu4x::WindowsParser&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    WindowsParser() = delete;
+    WindowsParser(const icu4x::WindowsParser&) = delete;
+    WindowsParser(icu4x::WindowsParser&&) noexcept = delete;
+    WindowsParser operator=(const icu4x::WindowsParser&) = delete;
+    WindowsParser operator=(icu4x::WindowsParser&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace

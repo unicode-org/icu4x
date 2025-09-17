@@ -25,17 +25,17 @@ namespace capi {
 
 
 inline icu4x::capi::VariantOffsets icu4x::VariantOffsets::AsFFI() const {
-  return icu4x::capi::VariantOffsets {
-    /* .standard = */ standard->AsFFI(),
-    /* .daylight = */ daylight ? daylight->AsFFI() : nullptr,
-  };
+    return icu4x::capi::VariantOffsets {
+        /* .standard = */ standard->AsFFI(),
+        /* .daylight = */ daylight ? daylight->AsFFI() : nullptr,
+    };
 }
 
 inline icu4x::VariantOffsets icu4x::VariantOffsets::FromFFI(icu4x::capi::VariantOffsets c_struct) {
-  return icu4x::VariantOffsets {
-    /* .standard = */ std::unique_ptr<icu4x::UtcOffset>(icu4x::UtcOffset::FromFFI(c_struct.standard)),
-    /* .daylight = */ std::unique_ptr<icu4x::UtcOffset>(icu4x::UtcOffset::FromFFI(c_struct.daylight)),
-  };
+    return icu4x::VariantOffsets {
+        /* .standard = */ std::unique_ptr<icu4x::UtcOffset>(icu4x::UtcOffset::FromFFI(c_struct.standard)),
+        /* .daylight = */ std::unique_ptr<icu4x::UtcOffset>(icu4x::UtcOffset::FromFFI(c_struct.daylight)),
+    };
 }
 
 

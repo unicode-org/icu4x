@@ -5,7 +5,7 @@
 [package]
 name = "icu_calendar"
 description = "Date APIs for Gregorian and non-Gregorian calendars"
-version = "2.0.3"
+version = "2.0.4"
 
 authors.workspace = true
 categories.workspace = true
@@ -41,6 +41,7 @@ icu = { path = "../../components/icu", default-features = false }
 serde = { workspace = true, features = ["derive", "alloc"] }
 serde_json = { workspace = true }
 simple_logger = { workspace = true }
+ureq = { workspace = true }
 
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]

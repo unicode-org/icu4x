@@ -2,7 +2,33 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! TODO
+//! This crate contains utilities for working with ICU4C's zoneinfo64 format
+//!
+//! ```rust
+//! # use zoneinfo64::{Offset, PossibleOffset, ZoneInfo64, UtcOffset};
+//!
+//! // Needs to be u32-aligned
+//! let resb = resb::include_bytes_as_u32!("./data/zoneinfo64.res");
+//! // Then we parse the data
+//! let zoneinfo = ZoneInfo64::try_from_u32s(resb)
+//!            .expect("Error processing resource bundle file");
+//!
+//! let pacific = zoneinfo.get("America/Los_Angeles").unwrap();
+//! // Calculate the timezone offset for 2024-01-01
+//! let offset = pacific.for_timestamp(1704067200000);
+//! let offset_seven = UtcOffset::from_seconds(-7 * 3600);
+//! assert_eq!(offset.offset, offset_seven);
+//!
+//! // Calculate possible offsets at 2025-11-02T01:00:00
+//! // This is during a DST switchover and is ambiguous
+//! let possible = pacific.for_date_time(2025, 11, 2, 1, 0, 0);
+//! let offset_eight = UtcOffset::from_seconds(-8 * 3600);
+//! assert_eq!(possible, PossibleOffset::Ambiguous {
+//!     before: Offset { offset: offset_seven, rule_applies: true },
+//!     after: Offset { offset: offset_eight, rule_applies: false },
+//!     transition: 1762074000,
+//! });
+//! ```
 
 use std::fmt::Debug;
 
@@ -11,7 +37,6 @@ use potential_utf::PotentialUtf16;
 use resb::binary::BinaryDeserializerError;
 
 use icu_locale_core::subtags::Region;
-use icu_time::zone::UtcOffset;
 
 #[cfg(feature = "chrono")]
 mod chrono_impls;
@@ -20,18 +45,40 @@ mod rule;
 use rule::*;
 mod deserialize;
 
+/// A bundled zoneinfo64.res that can be used for testing. No guarantee is made
+/// as to the version in use; though we will try to keep it up to date.
+pub const ZONEINFO64_RES_FOR_TESTING: &[u32] = resb::include_bytes_as_u32!("./data/zoneinfo64.res");
+
 const EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
 const SECONDS_IN_UTC_DAY: i64 = 24 * 60 * 60;
 
-#[derive(Debug)]
-pub struct ZoneInfo64<'a> {
-    zones: Vec<TzZone<'a>>,
-    names: Vec<&'a PotentialUtf16>,
-    rules: Vec<TzRule>,
-    regions: Vec<Region>,
+/// An offset from UTC time (stored to seconds precision)
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+pub struct UtcOffset(i32);
+
+impl UtcOffset {
+    pub fn from_seconds(x: i32) -> Self {
+        Self(x)
+    }
+
+    pub fn seconds(self) -> i32 {
+        self.0
+    }
 }
 
 #[derive(Debug)]
+/// The primary type containing parsed ZoneInfo64 data
+pub struct ZoneInfo64<'a> {
+    // Invariant: non-empty
+    zones: Vec<TzZone<'a>>,
+    // Invariant: same size as zones
+    names: Vec<&'a PotentialUtf16>,
+    rules: Vec<TzRule>,
+    // Invariant: same size as zones
+    regions: Vec<Region>,
+}
+
+#[derive(Debug, Clone)]
 enum TzZone<'a> {
     // The rule data is boxed here due to the large size difference between the
     // `TzDataRuleData` struct and `u32`. It's not strictly necessary.
@@ -39,6 +86,7 @@ enum TzZone<'a> {
     Int(u32),
 }
 
+#[derive(Clone)]
 struct TzZoneData<'a> {
     /// Transitions before the epoch of i32::MIN
     trans_pre32: &'a [(i32, i32)],
@@ -99,6 +147,7 @@ impl Debug for TzZoneData<'_> {
 }
 
 impl<'a> ZoneInfo64<'a> {
+    /// Parse this object from 4-byte aligned data
     pub fn try_from_u32s(resb: &'a [u32]) -> Result<Self, BinaryDeserializerError> {
         crate::deserialize::deserialize(resb)
     }
@@ -117,54 +166,102 @@ impl<'a> ZoneInfo64<'a> {
 
         matches!(zone, &TzZone::Int(_))
     }
+    #[cfg(test)]
+    fn iter(&'a self) -> impl Iterator<Item = Zone<'a>> {
+        (0..self.names.len()).map(move |i| Zone::from_raw_parts((i as u16, self)))
+    }
 
+    /// Get data for a given IANA timezone id. Aliases are supported.
     pub fn get(&'a self, iana: &str) -> Option<Zone<'a>> {
         let idx = self
             .names
             .binary_search_by(|&n| n.chars().cmp(iana.chars()))
             .ok()?;
 
-        #[expect(clippy::indexing_slicing)] // binary search
-        let name = self.names[idx];
-
-        #[expect(clippy::indexing_slicing)] // regions and names have the same length
-        let region = self.regions[idx];
-        #[expect(clippy::indexing_slicing)] // zones and names have the same length
-        let mut zone = &self.zones[idx];
-
-        #[expect(clippy::indexing_slicing)] // TzZone::Ints are validated as indices
-        if let &TzZone::Int(i) = zone {
-            zone = &self.zones[i as usize];
-        }
-        let TzZone::Table(ref zone) = zone else {
-            unreachable!() // data validate to have at most one alias jump
+        #[expect(clippy::indexing_slicing)] // just validated
+        let resolved_idx = if let TzZone::Int(i) = self.zones[idx] {
+            i as u16
+        } else {
+            idx as u16
         };
 
-        #[expect(clippy::indexing_slicing)] // rules indices are all valid
-        let final_rule = zone
-            .final_rule_offset_year
-            .map(|(idx, offset, year)| (&self.rules[idx as usize], offset, year))
-            .map(|(inner, offset_seconds, start_year)| Rule {
-                start_year,
-                standard_offset_seconds: offset_seconds,
-                inner,
-            });
-
+        // idx is a valid index into info.names by binary search
+        // zone_idx is a valid index into info.zones by the invariant that links don't point to links
         Some(Zone {
-            simple: zone.as_ref(),
-            final_rule,
-            region,
-            name,
+            idx: idx as u16,
+            resolved_idx,
+            info: self,
         })
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+/// Data for a given time zone
+#[derive(Clone, Copy)]
 pub struct Zone<'a> {
-    simple: &'a TzZoneData<'a>,
-    final_rule: Option<Rule<'a>>,
-    pub name: &'a PotentialUtf16,
-    pub region: Region,
+    // a valid index into info.names
+    idx: u16,
+    // a resolved index into info.zones which points to a TzZone::Table
+    resolved_idx: u16,
+    info: &'a ZoneInfo64<'a>,
+}
+
+impl<'a> Zone<'a> {
+    /// Decomposes this [`Zone`] into its raw parts, consisting
+    /// of some state stored in a `u16`, and the associated [`ZoneInfo64`].
+    ///
+    /// See [`Self::from_raw_parts`] for the inverse operation.
+    pub fn into_raw_parts(self) -> (u16, &'a ZoneInfo64<'a>) {
+        (self.idx, self.info)
+    }
+
+    /// Recreates the [`Zone`] from raw parts.
+    ///
+    /// Returns garbage if `parts` was not obtained from [`Self::into_raw_parts`].
+    pub fn from_raw_parts(parts: (u16, &'a ZoneInfo64<'a>)) -> Self {
+        let (idx, info) = parts;
+        // info.zones.len() > 0 by invariant, so this doesn't underflow ...
+        let idx = core::cmp::min(info.zones.len() - 1, idx as usize);
+        #[expect(clippy::indexing_slicing)] // ... and idx is a valid index
+        let resolved_idx = if let TzZone::Int(i) = info.zones[idx] {
+            i as u16
+        } else {
+            idx as u16
+        };
+
+        // idx is a valid index into info.names by safety invariant
+        // zone_idx is a valid index into info.zones by the invariant that links don't point to links
+        Self {
+            idx: idx as u16,
+            resolved_idx,
+            info,
+        }
+    }
+}
+
+impl Debug for Zone<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Zone")
+            .field("simple", self.simple())
+            .field("rule", &self.simple().final_rule(&self.info.rules))
+            .field("name", &self.name().chars().collect::<String>())
+            .field("region", &self.region())
+            .finish()
+    }
+}
+
+impl PartialEq for Zone<'_> {
+    fn eq(&self, other: &Self) -> bool {
+        self.name() == other.name()
+            && self.region() == other.region()
+            && self.simple().trans == other.simple().trans
+            && self.simple().trans_post32 == other.simple().trans_post32
+            && self.simple().trans_pre32 == other.simple().trans_pre32
+            && self.simple().type_map == other.simple().type_map
+            && self.simple().type_offsets == other.simple().type_offsets
+            && self.simple().links == other.simple().links
+            && self.simple().final_rule(&self.info.rules)
+                == other.simple().final_rule(&other.info.rules)
+    }
 }
 
 /// A resolved offset for a given point in time
@@ -176,14 +273,14 @@ pub struct Offset {
     pub rule_applies: bool,
 }
 
-/// A transition (from the non-rule transition array in the data)
+/// A transition
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Transition {
     /// When the transition starts
     pub since: i64,
     /// The offset from UTC after this transition
     pub offset: UtcOffset,
-    /// Whether or not the Rule (i.e. "non standard" time) applies
+    /// Whether or not the rule (i.e. "non standard" time) applies
     pub rule_applies: bool,
 }
 
@@ -196,20 +293,38 @@ impl From<Transition> for Offset {
     }
 }
 
+/// Possible offsets for a local datetime
 #[derive(Debug, PartialEq)]
 pub enum PossibleOffset {
     /// There is a single possible offset
     Single(Offset),
-    /// There are multiple possible offsets (sorted based on which transition comes first)
+    /// There are multiple possible offsets, because we are inside a backward transition
     ///
     /// Note: Temporal requires these to be in ascending order of offset, Temporal consumers should sort them
     // <https://tc39.es/proposal-temporal/#sec-getnamedtimezoneepochnanoseconds>
-    Ambiguous(Offset, Offset),
-    /// There is no possible offset, this is a gap transition
-    None,
+    Ambiguous {
+        /// The offset before the transition
+        before: Offset,
+        /// The offset after the transition
+        after: Offset,
+        /// The transition epoch in seconds
+        transition: i64,
+    },
+    /// There is no possible offset, because we are at a forward transition
+    None {
+        /// The offset before this transition
+        ///
+        /// This is useful when performing fallback behavior on hitting a
+        /// transition where the local time has a gap.
+        before: Offset,
+        /// The offset after this transition
+        after: Offset,
+        /// The transition epoch in seconds
+        transition: i64,
+    },
 }
 
-impl Zone<'_> {
+impl<'a> TzZoneData<'a> {
     /// Returns the index of the previous transition.
     ///
     /// As this can be -1, it returns an isize.
@@ -217,8 +332,7 @@ impl Zone<'_> {
     /// Does not consider rule transitions
     fn prev_transition_offset_idx(&self, seconds_since_epoch: i64) -> isize {
         if seconds_since_epoch < i32::MIN as i64 {
-            self.simple
-                .trans_pre32
+            self.trans_pre32
                 .binary_search(&(
                     (seconds_since_epoch >> 32) as i32,
                     (seconds_since_epoch & 0xFFFFFFFF) as i32,
@@ -227,19 +341,17 @@ impl Zone<'_> {
                 // binary_search returns the index of the next (higher) transition, so we subtract one
                 .unwrap_or_else(|i| i as isize - 1)
         } else if seconds_since_epoch <= i32::MAX as i64 {
-            self.simple.trans_pre32.len() as isize
+            self.trans_pre32.len() as isize
                 + self
-                    .simple
                     .trans
                     .binary_search(&(seconds_since_epoch as i32))
                     .map(|i| i as isize)
                     // binary_search returns the index of the next (higher) transition, so we subtract one
                     .unwrap_or_else(|i| i as isize - 1)
         } else {
-            self.simple.trans_pre32.len() as isize
-                + self.simple.trans.len() as isize
+            self.trans_pre32.len() as isize
+                + self.trans.len() as isize
                 + self
-                    .simple
                     .trans_post32
                     .binary_search(&(
                         (seconds_since_epoch >> 32) as i32,
@@ -252,7 +364,7 @@ impl Zone<'_> {
     }
 
     fn transition_count(&self) -> isize {
-        self.simple.type_map.len() as isize
+        self.type_map.len() as isize
     }
 
     /// Gets the information for the transition offset at idx.
@@ -263,12 +375,12 @@ impl Zone<'_> {
     /// Does not handle rule transitions
     fn transition_offset_at(&self, idx: isize) -> Transition {
         // before first transition don't use `type_map`, just the first entry in `type_offsets`
-        if idx < 0 || self.simple.type_map.is_empty() {
+        if idx < 0 || self.type_map.is_empty() {
             #[expect(clippy::unwrap_used)] // type_offsets non-empty by invariant
-            let &(standard, rule_additional) = self.simple.type_offsets.first().unwrap();
+            let &(standard, rule_additional) = self.type_offsets.first().unwrap();
             return Transition {
                 since: i64::MIN,
-                offset: UtcOffset::from_seconds_unchecked(standard + rule_additional),
+                offset: UtcOffset(standard + rule_additional),
                 rule_applies: rule_additional > 0,
             };
         }
@@ -281,26 +393,45 @@ impl Zone<'_> {
 
         #[expect(clippy::indexing_slicing)]
         // type_map has length sum(trans*), and type_map values are validated to be valid indices in type_offsets
-        let (standard, rule_additional) =
-            self.simple.type_offsets[self.simple.type_map[idx] as usize];
+        let (standard, rule_additional) = self.type_offsets[self.type_map[idx] as usize];
 
         #[expect(clippy::indexing_slicing)] // by guards or invariant
-        let since = if idx < self.simple.trans_pre32.len() {
-            let (hi, lo) = self.simple.trans_pre32[idx];
+        let since = if idx < self.trans_pre32.len() {
+            let (hi, lo) = self.trans_pre32[idx];
             ((hi as u32 as u64) << 32 | (lo as u32 as u64)) as i64
-        } else if idx - self.simple.trans_pre32.len() < self.simple.trans.len() {
-            self.simple.trans[idx - self.simple.trans_pre32.len()] as i64
+        } else if idx - self.trans_pre32.len() < self.trans.len() {
+            self.trans[idx - self.trans_pre32.len()] as i64
         } else {
-            let (hi, lo) = self.simple.trans_post32
-                [idx - self.simple.trans_pre32.len() - self.simple.trans.len()];
+            let (hi, lo) = self.trans_post32[idx - self.trans_pre32.len() - self.trans.len()];
             ((hi as u32 as u64) << 32 | (lo as u32 as u64)) as i64
         };
 
         Transition {
             since,
-            offset: UtcOffset::from_seconds_unchecked(standard + rule_additional),
+            offset: UtcOffset(standard + rule_additional),
             rule_applies: rule_additional > 0,
         }
+    }
+
+    fn final_rule(&self, rules: &'a [TzRule]) -> Option<Rule<'a>> {
+        #[expect(clippy::indexing_slicing)] // rules indices are all valid
+        self.final_rule_offset_year
+            .map(|(idx, standard_offset_seconds, start_year)| Rule {
+                start_year,
+                standard_offset_seconds,
+                inner: &rules[idx as usize],
+            })
+    }
+}
+
+impl<'a> Zone<'a> {
+    fn simple(&self) -> &'a TzZoneData<'a> {
+        #[expect(clippy::indexing_slicing)] // invariant
+        let TzZone::Table(ref zone) = &self.info.zones[self.resolved_idx as usize] else {
+            unreachable!() // invariant
+        };
+
+        zone
     }
 
     /// Get the possible offsets for a local datetime.
@@ -321,7 +452,16 @@ impl Zone<'_> {
             * SECONDS_IN_UTC_DAY
             + ((hour as i64 * 60 + minute as i64) * 60 + second as i64);
 
-        let rule = self.final_rule.filter(|rule| year >= rule.start_year);
+        let simple = self.simple();
+        let rule = simple
+            .final_rule_offset_year
+            .filter(|&(_, _, start_year)| year >= start_year)
+            .map(|(idx, standard_offset_seconds, start_year)| Rule {
+                    start_year,
+                    standard_offset_seconds,
+                    #[expect(clippy::indexing_slicing)] // rules indices are all valid
+                    inner: &self.info.rules[idx as usize],
+                });
         let mut idx = 0;
 
         // Compute the candidate transition and the offset that was used before the transition (which is
@@ -333,7 +473,7 @@ impl Zone<'_> {
             (Some(before), candidate)
         } else {
             // Pretend date time is UTC to get a candidate
-            idx = self.prev_transition_offset_idx(seconds_since_local_epoch);
+            idx = simple.prev_transition_offset_idx(seconds_since_local_epoch);
 
             // We use the transition before the "timestamp" as the first candidate.
             //
@@ -342,16 +482,15 @@ impl Zone<'_> {
             // and we know that prior transitions are far enough away that there is no chance of their
             // wall times overlapping (`test_transition_local_times_do_not_overlap`)
             (
-                (idx >= 0).then(|| self.transition_offset_at(idx - 1).into()),
-                self.transition_offset_at(idx),
+                (idx >= 0).then(|| simple.transition_offset_at(idx - 1).into()),
+                simple.transition_offset_at(idx),
             )
         };
 
         // There's only an actual transition into `first_candidate` if there's an offset before it.
         if let Some(before_first_candidate) = before_first_candidate {
-            let wall_before =
-                first_candidate.since + before_first_candidate.offset.to_seconds() as i64;
-            let wall_after = first_candidate.since + first_candidate.offset.to_seconds() as i64;
+            let wall_before = first_candidate.since + i64::from(before_first_candidate.offset.0);
+            let wall_after = first_candidate.since + i64::from(first_candidate.offset.0);
 
             match (
                 seconds_since_local_epoch < wall_before,
@@ -365,13 +504,20 @@ impl Zone<'_> {
                     // there can be no repeated local times.
                     debug_assert_ne!(before_first_candidate.offset, first_candidate.offset);
 
-                    return PossibleOffset::Ambiguous(
-                        before_first_candidate,
-                        first_candidate.into(),
-                    );
+                    return PossibleOffset::Ambiguous {
+                        before: before_first_candidate,
+                        after: first_candidate.into(),
+                        transition: first_candidate.since,
+                    };
                 }
                 // We are in the first candidate's gap
-                (false, true) => return PossibleOffset::None,
+                (false, true) => {
+                    return PossibleOffset::None {
+                        before: before_first_candidate,
+                        after: first_candidate.into(),
+                        transition: first_candidate.since,
+                    }
+                }
                 // We are after the first candidate, try the second
                 (false, false) => {}
             }
@@ -382,12 +528,12 @@ impl Zone<'_> {
             Some(rule.transition(year, day_before_year, true).1)
         } else {
             // We use the transition after the "timestamp" as the second candidate.
-            (idx + 1 < self.transition_count()).then(|| self.transition_offset_at(idx + 1))
+            (idx + 1 < simple.transition_count()).then(|| simple.transition_offset_at(idx + 1))
         };
 
         if let Some(second_candidate) = second_candidate {
-            let wall_before = second_candidate.since + first_candidate.offset.to_seconds() as i64;
-            let wall_after = second_candidate.since + second_candidate.offset.to_seconds() as i64;
+            let wall_before = second_candidate.since + i64::from(first_candidate.offset.0);
+            let wall_after = second_candidate.since + i64::from(second_candidate.offset.0);
 
             match (
                 seconds_since_local_epoch < wall_before,
@@ -401,13 +547,20 @@ impl Zone<'_> {
                     // there can be no repeated local times.
                     debug_assert_ne!(first_candidate.offset, second_candidate.offset);
 
-                    return PossibleOffset::Ambiguous(
-                        first_candidate.into(),
-                        second_candidate.into(),
-                    );
+                    return PossibleOffset::Ambiguous {
+                        before: first_candidate.into(),
+                        after: second_candidate.into(),
+                        transition: second_candidate.since,
+                    };
                 }
                 // We are in the second candidate's gap
-                (false, true) => return PossibleOffset::None,
+                (false, true) => {
+                    return PossibleOffset::None {
+                        before: first_candidate.into(),
+                        after: second_candidate.into(),
+                        transition: second_candidate.since,
+                    }
+                }
                 // We are after the second candidate
                 (false, false) => return PossibleOffset::Single(second_candidate.into()),
             }
@@ -416,19 +569,20 @@ impl Zone<'_> {
         PossibleOffset::Single(first_candidate.into())
     }
 
-    /// Get the offset for a timestamp.
+    /// Get the offset for a timestamp (as seconds since the Unix epoch).
     pub fn for_timestamp(&self, seconds_since_epoch: i64) -> Offset {
-        let idx = self.prev_transition_offset_idx(seconds_since_epoch);
+        let simple = self.simple();
+        let idx = simple.prev_transition_offset_idx(seconds_since_epoch);
         // If the previous transition is the last one then we need to check
         // against the rule
-        if idx == self.transition_count() - 1 {
-            if let Some(rule) = self.final_rule {
+        if idx == simple.transition_count() - 1 {
+            if let Some(rule) = simple.final_rule(&self.info.rules) {
                 if let Some(resolved) = rule.for_timestamp(seconds_since_epoch) {
                     return resolved;
                 }
             }
         }
-        self.transition_offset_at(idx).into()
+        simple.transition_offset_at(idx).into()
     }
 
     /// Returns the latest transition with a `since` field
@@ -448,7 +602,8 @@ impl Zone<'_> {
         seconds_exact: bool,
         require_offset_change: bool,
     ) -> Option<Transition> {
-        let mut idx = self.prev_transition_offset_idx(seconds_since_epoch);
+        let simple = self.simple();
+        let mut idx = simple.prev_transition_offset_idx(seconds_since_epoch);
 
         // `self.transition_offset_at()` returns a synthetic transition at `i64::MIN`
         // for the time range before the actual first transition.
@@ -456,28 +611,28 @@ impl Zone<'_> {
             return None;
         }
 
-        if idx == self.transition_count() - 1 {
+        if idx == simple.transition_count() - 1 {
             // If the previous transition is the last one then we need to check
             // against the rule
-            if let Some(rule) = self.final_rule {
+            if let Some(rule) = simple.final_rule(&self.info.rules) {
                 if let Some(resolved) = rule.prev_transition(seconds_since_epoch, seconds_exact) {
                     return Some(resolved);
                 }
             }
         }
 
-        let mut candidate = self.transition_offset_at(idx);
+        let mut candidate = simple.transition_offset_at(idx);
         if candidate.since == seconds_since_epoch && seconds_exact {
             // If the transition is an exact hit, we actually want the one before
             if idx <= 0 {
                 return None;
             }
             idx -= 1;
-            candidate = self.transition_offset_at(idx);
+            candidate = simple.transition_offset_at(idx);
         }
 
         while require_offset_change && idx > 0 {
-            let prev = self.transition_offset_at(idx - 1);
+            let prev = simple.transition_offset_at(idx - 1);
             if prev.offset == candidate.offset {
                 candidate = prev;
                 idx -= 1;
@@ -499,21 +654,38 @@ impl Zone<'_> {
         seconds_since_epoch: i64,
         require_offset_change: bool,
     ) -> Option<Transition> {
-        let mut idx = self.prev_transition_offset_idx(seconds_since_epoch);
+        let simple = self.simple();
+        let mut idx = simple.prev_transition_offset_idx(seconds_since_epoch);
         while require_offset_change
-            && idx < self.transition_count() - 1
-            && self.transition_offset_at(idx).offset == self.transition_offset_at(idx + 1).offset
+            && idx < simple.transition_count() - 1
+            && simple.transition_offset_at(idx).offset
+                == simple.transition_offset_at(idx + 1).offset
         {
             idx += 1;
         }
 
-        Some(if idx == self.transition_count() - 1 {
+        Some(if idx == simple.transition_count() - 1 {
             // If the previous transition is the last one then the next one
             // can only be the rule.
-            self.final_rule?.next_transition(seconds_since_epoch)
+            simple
+                .final_rule(&self.info.rules)?
+                .next_transition(seconds_since_epoch)
         } else {
-            self.transition_offset_at(idx + 1)
+            simple.transition_offset_at(idx + 1)
         })
+    }
+
+    // Returns the name of the timezone
+    pub fn name(&self) -> &'a PotentialUtf16 {
+        #[expect(clippy::indexing_slicing)] // idx is a valid index into info.names
+        self.info.names[self.idx as usize]
+    }
+
+    // Returns the region of the timezone
+    pub fn region(&self) -> Region {
+        #[expect(clippy::indexing_slicing)]
+        // idx is a valid index into info.names, which has the same length as info.regions
+        self.info.regions[self.idx as usize]
     }
 }
 
@@ -525,7 +697,7 @@ mod tests {
     use std::{str::FromStr, sync::LazyLock};
 
     pub(crate) static TZDB: LazyLock<ZoneInfo64> = LazyLock::new(|| {
-        ZoneInfo64::try_from_u32s(resb::include_bytes_as_u32!("../tests/data/zoneinfo64.res"))
+        ZoneInfo64::try_from_u32s(ZONEINFO64_RES_FOR_TESTING)
             .expect("Error processing resource bundle file")
     });
 
@@ -534,7 +706,7 @@ mod tests {
     fn test_monotonic_transition_times() {
         for chrono in time_zones_to_test() {
             let iana = chrono.name();
-            let zoneinfo64 = TZDB.get(iana).unwrap();
+            let zoneinfo64 = TZDB.get(iana).unwrap().simple();
 
             for (prev, curr) in (-1..zoneinfo64.transition_count())
                 .map(|idx| zoneinfo64.transition_offset_at(idx))
@@ -553,14 +725,14 @@ mod tests {
     fn test_transition_local_times_do_not_overlap() {
         for chrono in time_zones_to_test() {
             let iana = chrono.name();
-            let zoneinfo64 = TZDB.get(iana).unwrap();
+            let zoneinfo64 = TZDB.get(iana).unwrap().simple();
 
             for (prev, curr) in (-1..zoneinfo64.transition_count())
                 .map(|idx| zoneinfo64.transition_offset_at(idx))
                 .tuple_windows::<(_, _)>()
             {
-                let prev_wall = prev.since.saturating_add(prev.offset.to_seconds() as i64);
-                let curr_wall = curr.since.saturating_add(curr.offset.to_seconds() as i64);
+                let prev_wall = prev.since.saturating_add(i64::from(prev.offset.0));
+                let curr_wall = curr.since.saturating_add(i64::from(curr.offset.0));
 
                 assert!(
                     prev_wall < curr_wall,
@@ -647,7 +819,7 @@ mod tests {
             .preceding(jiff::Timestamp::from_str("2100-01-01T00:00:00Z").unwrap())
             .map(|t| Transition {
                 since: t.timestamp().as_second(),
-                offset: UtcOffset::from_seconds_unchecked(t.offset().seconds()),
+                offset: UtcOffset(t.offset().seconds()),
                 rule_applies: t.dst().is_dst(),
             })
             .collect::<Vec<_>>();
@@ -658,9 +830,9 @@ mod tests {
         transitions.retain(|t| {
             let before = tz.to_offset_info(jiff::Timestamp::from_second(t.since - 1).unwrap());
             if require_offset_change {
-                before.offset().seconds() != t.offset.to_seconds()
+                before.offset().seconds() != t.offset.0
             } else {
-                before.offset().seconds() != t.offset.to_seconds()
+                before.offset().seconds() != t.offset.0
                 || before.dst().is_dst() != t.rule_applies
                 // This is a super weird transition that would be removed by our rule,
                 // but we want to keep it because it's in zoneinfo64.
@@ -758,11 +930,51 @@ mod tests {
                 )
             }
 
-            if zoneinfo64.final_rule.is_none() {
+            if zoneinfo64.simple().final_rule_offset_year.is_none() {
                 assert_eq!(
                     zoneinfo64
                         .next_transition(transitions.last().unwrap().since, require_offset_change),
                     None
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn test_raw() {
+        // non-alias zone without a rule
+        let simple_zone = TZDB
+            .zones
+            .iter()
+            .position(|z| match z {
+                TzZone::Table(z) => z.final_rule_offset_year.is_none(),
+                _ => false,
+            })
+            .unwrap();
+
+        let other_tzdb = ZoneInfo64 {
+            zones: vec![TZDB.zones[simple_zone].clone()],
+            names: vec![TZDB.names[simple_zone]],
+            rules: vec![],
+            regions: vec![TZDB.regions[simple_zone]],
+        };
+
+        for zone in TZDB.iter() {
+            // Rountrips if we observe the precondition
+            assert_eq!(zone, Zone::from_raw_parts(zone.into_raw_parts()));
+
+            // If we mess with the state, we get garbage (which sometimes
+            // is just the right garbage)
+            if zone.idx as usize != TZDB.zones.len() - 1 {
+                assert_ne!(
+                    zone,
+                    Zone::from_raw_parts((zone.into_raw_parts().0 + 1, &TZDB)),
+                );
+            }
+            if zone.idx as usize != simple_zone {
+                assert_ne!(
+                    zone,
+                    Zone::from_raw_parts((zone.into_raw_parts().0, &other_tzdb))
                 );
             }
         }

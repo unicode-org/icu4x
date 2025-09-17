@@ -121,7 +121,7 @@ impl Calendar for Buddhist {
             era: tinystr!(16, "be"),
             era_index: Some(0),
             year,
-            monotonic_year: year,
+            extended_year: year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     }

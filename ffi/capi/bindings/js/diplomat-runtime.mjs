@@ -110,7 +110,7 @@ export function writeOptionToArrayBuffer(arrayBuffer, offset, jsValue, size, ali
 * Calls writeToArrayBufferCallback(arrayBuffer, offset, jsValue) for non-null jsValues
 *
 * This array will have size<T>/align<T> elements for the actual T, then one element
-* for the is_ok bool, and then align<T> - 1 elements for padding.
+* for the is_ok bool.
 *
 * See wasm_abi_quirks.md's section on Unions for understanding this ABI.
 */
@@ -145,29 +145,41 @@ export function optionToArgsForCalling(jsValue, size, align, writeToArrayBufferC
     return args;
 }
 
+/**
+* For Option<T> of given size/align (of T, not the overall option type),
+* return a pointer to wasm memory, allocated in `allocator`, that stores a `jsValue`
+* of that option type (or `null`).
+*
+* Calls writeToArrayBufferCallback(arrayBuffer, offset, jsValue) for non-null jsValues.
+*
+* This array will have size<T>/align<T> elements for the actual T, then one element
+* for the is_ok bool.
+*/
 export function optionToBufferForCalling(wasm, jsValue, size, align, allocator, writeToArrayBufferCallback) {
-    let buf = DiplomatBuf.struct(wasm, size, align);
+    let buf = DiplomatBuf.struct(wasm, size + align, align);
 
     let buffer;
     // Add 1 to the size since we're also accounting for the 0 or 1 is_ok field:
     if (align == 8) {
-        buffer = new BigUint64Array(wasm.memory.buffer, buf, size / align + 1);
+        buffer = new BigUint64Array(wasm.memory.buffer, buf.ptr, size / align + 1);
     } else if (align == 4) {
-        buffer = new Uint32Array(wasm.memory.buffer, buf, size / align + 1);
+        buffer = new Uint32Array(wasm.memory.buffer, buf.ptr, size / align + 1);
     } else if (align == 2) {
-        buffer = new Uint16Array(wasm.memory.buffer, buf, size / align + 1);
+        buffer = new Uint16Array(wasm.memory.buffer, buf.ptr, size / align + 1);
     } else {
-        buffer = new Uint8Array(wasm.memory.buffer, buf, size / align + 1);
+        buffer = new Uint8Array(wasm.memory.buffer, buf.ptr, size / align + 1);
     }
 
     buffer.fill(0);
 
     if (jsValue != null) {
-        writeToArrayBufferCallback(buffer.buffer, 0, jsValue);
+        // Note that `buffer.buffer` is the underlying ArrayBuffer (`buffer` is just a view),
+        // so we must provide the offset pointer (buf.ptr)
+        writeToArrayBufferCallback(buffer.buffer, buf.ptr, jsValue);
         buffer[buffer.length - 1] = 1;
     }
 
-    allocator.alloc(buf);
+    return allocator.alloc(buf).ptr;
 }
 
 

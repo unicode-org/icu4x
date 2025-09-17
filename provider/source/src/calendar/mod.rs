@@ -4,9 +4,3 @@
 
 /// Data for calendar arithmetic
 pub(crate) mod eras;
-
-/// Cached data for chinese-based calendars
-pub(crate) mod chinese_based;
-
-/// Cached data for hijri calendars
-pub(crate) mod hijri;

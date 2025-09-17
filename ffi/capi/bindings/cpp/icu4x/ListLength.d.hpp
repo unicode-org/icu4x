@@ -30,22 +30,22 @@ namespace icu4x {
  */
 class ListLength {
 public:
-  enum Value {
-    Wide = 0,
-    Short = 1,
-    Narrow = 2,
-  };
+    enum Value {
+        Wide = 0,
+        Short = 1,
+        Narrow = 2,
+    };
 
-  ListLength(): value(Value::Wide) {}
+    ListLength(): value(Value::Wide) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr ListLength(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr ListLength(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::ListLength AsFFI() const;
-  inline static icu4x::ListLength FromFFI(icu4x::capi::ListLength c_enum);
+    inline icu4x::capi::ListLength AsFFI() const;
+    inline static icu4x::ListLength FromFFI(icu4x::capi::ListLength c_enum);
 private:
     Value value;
 };

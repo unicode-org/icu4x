@@ -183,23 +183,33 @@ enum OffsetDataBorrowed<'a> {
 ///
 /// [data provider]: icu_provider
 #[derive(Debug)]
+#[deprecated(
+    since = "2.1.0",
+    note = "this API is a bad approximation of a time zone database"
+)]
 pub struct VariantOffsetsCalculator {
     offset_period: OffsetData,
 }
 
 /// The borrowed version of a  [`VariantOffsetsCalculator`]
 #[derive(Debug)]
+#[deprecated(
+    since = "2.1.0",
+    note = "this API is a bad approximation of a time zone database"
+)]
 pub struct VariantOffsetsCalculatorBorrowed<'a> {
     offset_period: OffsetDataBorrowed<'a>,
 }
 
 #[cfg(feature = "compiled_data")]
+#[allow(deprecated)]
 impl Default for VariantOffsetsCalculatorBorrowed<'static> {
     fn default() -> Self {
         VariantOffsetsCalculator::new()
     }
 }
 
+#[allow(deprecated)]
 impl VariantOffsetsCalculator {
     /// Constructs a `VariantOffsetsCalculator` using compiled data.
     ///
@@ -262,6 +272,7 @@ impl VariantOffsetsCalculator {
     }
 }
 
+#[allow(deprecated)]
 impl VariantOffsetsCalculatorBorrowed<'static> {
     /// Constructs a `VariantOffsetsCalculatorBorrowed` using compiled data.
     ///
@@ -292,6 +303,7 @@ impl VariantOffsetsCalculatorBorrowed<'static> {
     }
 }
 
+#[allow(deprecated)]
 impl VariantOffsetsCalculatorBorrowed<'_> {
     /// Calculate zone offsets from timezone and local datetime.
     ///
@@ -359,27 +371,14 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     }
 }
 
-/// Represents the different offsets in use for a time zone
-#[non_exhaustive]
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
-pub struct VariantOffsets {
-    /// The standard offset.
-    pub standard: UtcOffset,
-    /// The daylight-saving offset, if used.
-    pub daylight: Option<UtcOffset>,
-}
-
-impl VariantOffsets {
-    /// Creates a new [`VariantOffsets`] from a [`UtcOffset`] representing standard time.
-    pub fn from_standard(standard: UtcOffset) -> Self {
-        Self {
-            standard,
-            daylight: None,
-        }
-    }
-}
+#[deprecated(
+    since = "2.1.0",
+    note = "this API is a bad approximation of a time zone database"
+)]
+pub use crate::provider::VariantOffsets;
 
 #[test]
+#[allow(deprecated)]
 pub fn test_legacy_offsets_data() {
     use crate::ZonedDateTime;
     use icu_locale_core::subtags::subtag;
@@ -408,11 +407,8 @@ pub fn test_legacy_offsets_data() {
         "2019-03-16 16:00Z",
         "2019-10-03 19:00Z",
         "2020-03-07 16:00Z",
-        "2020-10-03 16:00Z",
         "2021-03-13 13:00Z",
-        "2021-10-02 16:00Z",
         "2022-03-12 13:00Z",
-        "2022-10-01 16:00Z",
         "2023-03-08 16:00Z",
     ] {
         let t = ZoneNameTimestamp::from_zoned_date_time_iso(

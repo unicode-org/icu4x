@@ -23,16 +23,16 @@ namespace capi {
 } // namespace
 
 inline icu4x::capi::CollatorAlternateHandling icu4x::CollatorAlternateHandling::AsFFI() const {
-  return static_cast<icu4x::capi::CollatorAlternateHandling>(value);
+    return static_cast<icu4x::capi::CollatorAlternateHandling>(value);
 }
 
 inline icu4x::CollatorAlternateHandling icu4x::CollatorAlternateHandling::FromFFI(icu4x::capi::CollatorAlternateHandling c_enum) {
-  switch (c_enum) {
-    case icu4x::capi::CollatorAlternateHandling_NonIgnorable:
-    case icu4x::capi::CollatorAlternateHandling_Shifted:
-      return static_cast<icu4x::CollatorAlternateHandling::Value>(c_enum);
-    default:
-      std::abort();
-  }
+    switch (c_enum) {
+        case icu4x::capi::CollatorAlternateHandling_NonIgnorable:
+        case icu4x::capi::CollatorAlternateHandling_Shifted:
+            return static_cast<icu4x::CollatorAlternateHandling::Value>(c_enum);
+        default:
+            std::abort();
+    }
 }
 #endif // icu4x_CollatorAlternateHandling_HPP

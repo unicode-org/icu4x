@@ -10,7 +10,7 @@ checksum = "ace50bade8e6234aa140d9a2f552bbee1db4d353f69b8217bc503490fc1a9f26"
 
 [[package]]
 name = "calendrical_calculations"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "core_maths",
  "displaydoc",
@@ -75,7 +75,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "2.0.1"
+version = "2.0.3"
 dependencies = [
  "calendrical_calculations",
  "displaydoc",
@@ -114,7 +114,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_collator"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "displaydoc",
  "icu_collator_data",
@@ -127,12 +127,13 @@ dependencies = [
  "smallvec",
  "utf16_iter",
  "utf8_iter",
+ "write16",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_collator_data"
-version = "2.0.0"
+version = "2.0.1"
 
 [[package]]
 name = "icu_collections"
@@ -171,7 +172,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "2.0.0"
+version = "2.0.2"
 
 [[package]]
 name = "icu_decimal"
@@ -195,7 +196,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_experimental"
-version = "0.3.0"
+version = "0.4.0-dev.1"
 dependencies = [
  "displaydoc",
  "either",
@@ -396,11 +397,11 @@ dependencies = [
 
 [[package]]
 name = "icu_time_data"
-version = "2.0.0"
+version = "2.0.2"
 
 [[package]]
 name = "ixdtf"
-version = "0.5.0"
+version = "0.6.3"
 dependencies = [
  "displaydoc",
 ]
@@ -634,7 +635,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.11.2"
+version = "0.11.4"
 dependencies = [
  "yoke",
  "zerofrom",
@@ -667,10 +668,6 @@ name = "databake-derive"
 version = "0.2.0"
 
 [[patch.unused]]
-name = "deduplicating_array"
-version = "0.1.8"
-
-[[patch.unused]]
 name = "icu4x-datagen"
 version = "2.0.0"
 
@@ -684,7 +681,7 @@ version = "0.0.0"
 
 [[patch.unused]]
 name = "icu_capi"
-version = "2.0.0"
+version = "2.0.2"
 
 [[patch.unused]]
 name = "icu_codepointtrie_builder"
@@ -696,7 +693,7 @@ version = "2.0.0"
 
 [[patch.unused]]
 name = "icu_harfbuzz"
-version = "0.2.0"
+version = "0.3.0"
 
 [[patch.unused]]
 name = "icu_provider_adapters"
@@ -724,7 +721,7 @@ version = "2.0.0"
 
 [[patch.unused]]
 name = "icu_provider_source"
-version = "2.0.0"
+version = "2.0.2"
 
 [[patch.unused]]
 name = "tzif"

@@ -41,12 +41,12 @@ namespace icu4x {
  * See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.DisplayNamesOptions.html) for more information.
  */
 struct DisplayNamesOptionsV1 {
-  std::optional<icu4x::DisplayNamesStyle> style;
-  std::optional<icu4x::DisplayNamesFallback> fallback;
-  std::optional<icu4x::LanguageDisplay> language_display;
+    std::optional<icu4x::DisplayNamesStyle> style;
+    std::optional<icu4x::DisplayNamesFallback> fallback;
+    std::optional<icu4x::LanguageDisplay> language_display;
 
-  inline icu4x::capi::DisplayNamesOptionsV1 AsFFI() const;
-  inline static icu4x::DisplayNamesOptionsV1 FromFFI(icu4x::capi::DisplayNamesOptionsV1 c_struct);
+    inline icu4x::capi::DisplayNamesOptionsV1 AsFFI() const;
+    inline static icu4x::DisplayNamesOptionsV1 FromFFI(icu4x::capi::DisplayNamesOptionsV1 c_struct);
 };
 
 } // namespace

@@ -30,27 +30,27 @@ namespace icu4x {
  */
 class SegmenterWordType {
 public:
-  enum Value {
-    None = 0,
-    Number = 1,
-    Letter = 2,
-  };
+    enum Value {
+        None = 0,
+        Number = 1,
+        Letter = 2,
+    };
 
-  SegmenterWordType(): value(Value::None) {}
+    SegmenterWordType(): value(Value::None) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr SegmenterWordType(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr SegmenterWordType(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
   /**
-   * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
+     * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
    */
   inline bool is_word_like() const;
 
-  inline icu4x::capi::SegmenterWordType AsFFI() const;
-  inline static icu4x::SegmenterWordType FromFFI(icu4x::capi::SegmenterWordType c_enum);
+    inline icu4x::capi::SegmenterWordType AsFFI() const;
+    inline static icu4x::SegmenterWordType FromFFI(icu4x::capi::SegmenterWordType c_enum);
 private:
     Value value;
 };

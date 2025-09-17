@@ -41,51 +41,51 @@ namespace capi {
 } // namespace
 
 inline std::unique_ptr<icu4x::GraphemeClusterSegmenter> icu4x::GraphemeClusterSegmenter::create() {
-  auto result = icu4x::capi::icu4x_GraphemeClusterSegmenter_create_mv1();
-  return std::unique_ptr<icu4x::GraphemeClusterSegmenter>(icu4x::GraphemeClusterSegmenter::FromFFI(result));
+    auto result = icu4x::capi::icu4x_GraphemeClusterSegmenter_create_mv1();
+    return std::unique_ptr<icu4x::GraphemeClusterSegmenter>(icu4x::GraphemeClusterSegmenter::FromFFI(result));
 }
 
 inline diplomat::result<std::unique_ptr<icu4x::GraphemeClusterSegmenter>, icu4x::DataError> icu4x::GraphemeClusterSegmenter::create_with_provider(const icu4x::DataProvider& provider) {
-  auto result = icu4x::capi::icu4x_GraphemeClusterSegmenter_create_with_provider_mv1(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::GraphemeClusterSegmenter>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::GraphemeClusterSegmenter>>(std::unique_ptr<icu4x::GraphemeClusterSegmenter>(icu4x::GraphemeClusterSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::GraphemeClusterSegmenter>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    auto result = icu4x::capi::icu4x_GraphemeClusterSegmenter_create_with_provider_mv1(provider.AsFFI());
+    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::GraphemeClusterSegmenter>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::GraphemeClusterSegmenter>>(std::unique_ptr<icu4x::GraphemeClusterSegmenter>(icu4x::GraphemeClusterSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::GraphemeClusterSegmenter>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::GraphemeClusterBreakIteratorUtf8> icu4x::GraphemeClusterSegmenter::segment(std::string_view input) const {
-  auto result = icu4x::capi::icu4x_GraphemeClusterSegmenter_segment_utf8_mv1(this->AsFFI(),
-    {input.data(), input.size()});
-  return std::unique_ptr<icu4x::GraphemeClusterBreakIteratorUtf8>(icu4x::GraphemeClusterBreakIteratorUtf8::FromFFI(result));
+    auto result = icu4x::capi::icu4x_GraphemeClusterSegmenter_segment_utf8_mv1(this->AsFFI(),
+        {input.data(), input.size()});
+    return std::unique_ptr<icu4x::GraphemeClusterBreakIteratorUtf8>(icu4x::GraphemeClusterBreakIteratorUtf8::FromFFI(result));
 }
 
 inline std::unique_ptr<icu4x::GraphemeClusterBreakIteratorUtf16> icu4x::GraphemeClusterSegmenter::segment16(std::u16string_view input) const {
-  auto result = icu4x::capi::icu4x_GraphemeClusterSegmenter_segment_utf16_mv1(this->AsFFI(),
-    {input.data(), input.size()});
-  return std::unique_ptr<icu4x::GraphemeClusterBreakIteratorUtf16>(icu4x::GraphemeClusterBreakIteratorUtf16::FromFFI(result));
+    auto result = icu4x::capi::icu4x_GraphemeClusterSegmenter_segment_utf16_mv1(this->AsFFI(),
+        {input.data(), input.size()});
+    return std::unique_ptr<icu4x::GraphemeClusterBreakIteratorUtf16>(icu4x::GraphemeClusterBreakIteratorUtf16::FromFFI(result));
 }
 
 inline std::unique_ptr<icu4x::GraphemeClusterBreakIteratorLatin1> icu4x::GraphemeClusterSegmenter::segment_latin1(diplomat::span<const uint8_t> input) const {
-  auto result = icu4x::capi::icu4x_GraphemeClusterSegmenter_segment_latin1_mv1(this->AsFFI(),
-    {input.data(), input.size()});
-  return std::unique_ptr<icu4x::GraphemeClusterBreakIteratorLatin1>(icu4x::GraphemeClusterBreakIteratorLatin1::FromFFI(result));
+    auto result = icu4x::capi::icu4x_GraphemeClusterSegmenter_segment_latin1_mv1(this->AsFFI(),
+        {input.data(), input.size()});
+    return std::unique_ptr<icu4x::GraphemeClusterBreakIteratorLatin1>(icu4x::GraphemeClusterBreakIteratorLatin1::FromFFI(result));
 }
 
 inline const icu4x::capi::GraphemeClusterSegmenter* icu4x::GraphemeClusterSegmenter::AsFFI() const {
-  return reinterpret_cast<const icu4x::capi::GraphemeClusterSegmenter*>(this);
+    return reinterpret_cast<const icu4x::capi::GraphemeClusterSegmenter*>(this);
 }
 
 inline icu4x::capi::GraphemeClusterSegmenter* icu4x::GraphemeClusterSegmenter::AsFFI() {
-  return reinterpret_cast<icu4x::capi::GraphemeClusterSegmenter*>(this);
+    return reinterpret_cast<icu4x::capi::GraphemeClusterSegmenter*>(this);
 }
 
 inline const icu4x::GraphemeClusterSegmenter* icu4x::GraphemeClusterSegmenter::FromFFI(const icu4x::capi::GraphemeClusterSegmenter* ptr) {
-  return reinterpret_cast<const icu4x::GraphemeClusterSegmenter*>(ptr);
+    return reinterpret_cast<const icu4x::GraphemeClusterSegmenter*>(ptr);
 }
 
 inline icu4x::GraphemeClusterSegmenter* icu4x::GraphemeClusterSegmenter::FromFFI(icu4x::capi::GraphemeClusterSegmenter* ptr) {
-  return reinterpret_cast<icu4x::GraphemeClusterSegmenter*>(ptr);
+    return reinterpret_cast<icu4x::GraphemeClusterSegmenter*>(ptr);
 }
 
 inline void icu4x::GraphemeClusterSegmenter::operator delete(void* ptr) {
-  icu4x::capi::icu4x_GraphemeClusterSegmenter_destroy_mv1(reinterpret_cast<icu4x::capi::GraphemeClusterSegmenter*>(ptr));
+    icu4x::capi::icu4x_GraphemeClusterSegmenter_destroy_mv1(reinterpret_cast<icu4x::capi::GraphemeClusterSegmenter*>(ptr));
 }
 
 

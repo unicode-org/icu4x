@@ -4,8 +4,8 @@
 
 [package]
 name = "zoneinfo64"
-version = "0.0.0"
-publish = false
+description = "Working with ICU zoneinfo64.res timezone data bundles"
+version = "0.2.0"
 
 rust-version.workspace = true
 authors.workspace = true
@@ -16,9 +16,14 @@ license.workspace = true
 categories.workspace = true
 include.workspace = true
 
+[package.metadata.workspaces]
+independent = true
+
+[package.metadata.docs.rs]
+all-features = true
+
 [dependencies]
 icu_locale_core = { workspace = true }
-icu_time = { workspace = true }
 potential_utf = { workspace = true }
 resb = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
