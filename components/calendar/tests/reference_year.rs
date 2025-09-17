@@ -86,7 +86,7 @@ fn test_reference_year_indian() {
 
 #[test]
 fn test_reference_year_hijri_tabular_type_ii_friday() {
-    test_reference_year_impl(HijriTabular::new(
+    test_reference_year_impl(Hijri::new_tabular(
         HijriTabularLeapYears::TypeII,
         HijriTabularEpoch::Friday,
     ))
@@ -94,12 +94,12 @@ fn test_reference_year_hijri_tabular_type_ii_friday() {
 
 #[test]
 fn test_reference_year_hijri_simulated_mecca() {
-    test_reference_year_impl(HijriSimulated::new_mecca())
+    test_reference_year_impl(Hijri::new_simulated_mecca())
 }
 
 #[test]
 fn test_reference_year_hijri_tabular_type_ii_thursday() {
-    test_reference_year_impl(HijriTabular::new(
+    test_reference_year_impl(Hijri::new_tabular(
         HijriTabularLeapYears::TypeII,
         HijriTabularEpoch::Thursday,
     ))
@@ -107,7 +107,7 @@ fn test_reference_year_hijri_tabular_type_ii_thursday() {
 
 #[test]
 fn test_reference_year_hijri_umm_al_qura() {
-    test_reference_year_impl(HijriUmmAlQura::new())
+    test_reference_year_impl(Hijri::new_umm_al_qura())
 }
 
 #[test]

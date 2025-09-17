@@ -204,6 +204,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[allow(clippy::field_reassign_with_default)] // want out-of-crate code style
     fn test_missing_fields_strategy() {
         // The sets of fields that identify a year, according to the table in the docs
         let valid_year_field_sets = [
@@ -212,7 +213,7 @@ mod tests {
             &["era", "era_year", "extended_year"][..],
         ]
         .into_iter()
-        .map(|field_names| field_names.into_iter().copied().collect())
+        .map(|field_names| field_names.iter().copied().collect())
         .collect::<Vec<BTreeSet<&str>>>();
 
         // The sets of fields that identify a month, according to the table in the docs
@@ -222,13 +223,13 @@ mod tests {
             &["month_code", "ordinal_month"][..],
         ]
         .into_iter()
-        .map(|field_names| field_names.into_iter().copied().collect())
+        .map(|field_names| field_names.iter().copied().collect())
         .collect::<Vec<BTreeSet<&str>>>();
 
         // The sets of fields that identify a day, according to the table in the docs
         let valid_day_field_sets = [&["day"][..]]
             .into_iter()
-            .map(|field_names| field_names.into_iter().copied().collect())
+            .map(|field_names| field_names.iter().copied().collect())
             .collect::<Vec<BTreeSet<&str>>>();
 
         // All possible valid sets of fields
@@ -262,7 +263,7 @@ mod tests {
         // Field sets with month and day but without year that ECMA accepts
         let field_sets_without_year = [&["month_code", "day"][..]]
             .into_iter()
-            .map(|field_names| field_names.into_iter().copied().collect())
+            .map(|field_names| field_names.iter().copied().collect())
             .collect::<Vec<BTreeSet<&str>>>();
 
         // A map from field names to a function that sets that field

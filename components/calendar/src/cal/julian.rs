@@ -20,7 +20,7 @@ use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::DateError;
-use crate::options::{DateFromFieldsOptions, Overflow};
+use crate::options::DateFromFieldsOptions;
 use crate::types::DateFields;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
@@ -108,7 +108,7 @@ impl DateFieldsResolver for Julian {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, DateError> {
-        todo!()
+        todo!("{month_code}/{day}")
     }
 }
 

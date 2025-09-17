@@ -175,7 +175,7 @@ impl DateFieldsResolver for Japanese {
     #[inline]
     fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
         match era {
-            qwerty => todo!(),
+            "reiwa" => todo!("{era_year}"),
             _ => Err(DateError::UnknownEra),
         }
     }
@@ -214,7 +214,7 @@ impl Calendar for Japanese {
         // }
 
         // self.new_japanese_date_inner(era, year, month, day)
-        todo!()
+        todo!("{fields:?}/{options:?}")
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {

@@ -135,7 +135,7 @@ impl DateFieldsResolver for Dangi {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, DateError> {
-        todo!()
+        todo!("{month_code}/{day}")
     }
 
     fn ordinal_month_from_code(

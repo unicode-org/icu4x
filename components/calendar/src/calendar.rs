@@ -50,9 +50,12 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
             fields.monotonic_year = Some(year);
         }
         fields.month_code = Some(month_code);
-        // TODO(review): Previously a day number 0 was a range error; now it
-        // defaults to 1. Is that a problem?
-        fields.day = core::num::NonZeroU8::new(day);
+        fields.day = Some(core::num::NonZeroU8::new(day).ok_or(DateError::Range {
+            field: "day",
+            value: day as i32,
+            min: 1,
+            max: i32::MAX,
+        })?);
         let options = DateFromFieldsOptions {
             overflow: Some(Overflow::Reject),
             missing_fields_strategy: Some(MissingFieldsStrategy::Reject),
