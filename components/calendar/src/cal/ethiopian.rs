@@ -21,12 +21,11 @@ use crate::calendar_arithmetic::{
     ArithmeticDate, ArithmeticDateBuilder, CalendarArithmetic, DateFieldsResolver,
 };
 use crate::error::DateError;
-use crate::options::{DateFromFieldsOptions, Overflow};
-use crate::types::{DateFields, MonthCode};
+use crate::options::DateFromFieldsOptions;
+use crate::types::DateFields;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
-use core::num::NonZeroU8;
 use tinystr::tinystr;
 
 /// The number of years the Amete Alem epoch precedes the Amete Mihret epoch
@@ -141,7 +140,14 @@ impl DateFieldsResolver for Ethiopian {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, DateError> {
-        todo!()
+        let anno_martyrum_year =
+            crate::cal::Coptic::reference_year_from_month_day(month_code, day)?;
+        let amete_mihret_year = anno_martyrum_year + 276;
+        if matches!(self.era_style(), EthiopianEraStyle::AmeteAlem) {
+            Ok(amete_mihret_year + INCARNATION_OFFSET)
+        } else {
+            Ok(amete_mihret_year)
+        }
     }
 }
 

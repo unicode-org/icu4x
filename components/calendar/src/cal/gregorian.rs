@@ -69,7 +69,7 @@ impl DateFieldsResolver for Gregorian {
         _month_code: types::MonthCode,
         _day: u8,
     ) -> Result<Self::YearInfo, DateError> {
-        Ok(1972)
+        Ok(Iso::REFERENCE_YEAR)
     }
 }
 

@@ -23,7 +23,7 @@ use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::DateError;
-use crate::options::{DateFromFieldsOptions, Overflow};
+use crate::options::DateFromFieldsOptions;
 use crate::provider::hijri::PackedHijriYearInfo;
 use crate::provider::hijri::{CalendarHijriSimulatedMeccaV1, HijriData};
 use crate::types::{DateFields, EraYear};
@@ -344,6 +344,37 @@ impl PrecomputedDataSource<HijriYearInfo> for HijriSimulated {
     }
 }
 
+fn compute_hijri_reference_year<C>(
+    month_code: types::MonthCode,
+    day: u8,
+    cal: &C,
+    year_info_from_extended: impl Fn(i32) -> C::YearInfo,
+) -> Result<C::YearInfo, DateError>
+where
+    C: CalendarArithmetic,
+{
+    let (ordinal_month, _is_leap) = month_code
+        .parsed()
+        .ok_or(DateError::UnknownMonthCode(month_code))?;
+    let dec_31 = Date::from_raw(IsoDateInner(Iso::LAST_DAY_OF_REFERENCE_YEAR), Iso)
+        .to_calendar(crate::Ref(cal));
+    // December 31, 1972 occurs in the 11th month, 1392 AH, but the day could vary
+    debug_assert_eq!(dec_31.month().ordinal, 11);
+    let (earlier_year, later_year) =
+        if ordinal_month < 11 || (ordinal_month == 11 && day <= dec_31.day_of_month().0) {
+            (1391, 1392)
+        } else {
+            (1390, 1391)
+        };
+    let year_info = year_info_from_extended(later_year);
+    if day <= C::days_in_provided_month(year_info, ordinal_month) {
+        return Ok(year_info);
+    }
+    let year_info = year_info_from_extended(earlier_year);
+    debug_assert!(day <= C::days_in_provided_month(year_info, ordinal_month));
+    Ok(year_info)
+}
+
 /// The inner date type used for representing [`Date`]s of [`HijriSimulated`]. See [`Date`] and [`HijriSimulated`] for more details.
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
@@ -400,7 +431,9 @@ impl DateFieldsResolver for HijriSimulated {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, DateError> {
-        todo!()
+        compute_hijri_reference_year(month_code, day, self, |extended_year| {
+            self.load_or_compute_info(extended_year)
+        })
     }
 }
 
@@ -696,7 +729,9 @@ impl DateFieldsResolver for HijriUmmAlQura {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, DateError> {
-        todo!()
+        compute_hijri_reference_year(month_code, day, self, |extended_year| {
+            self.load_or_compute_info(extended_year)
+        })
     }
 }
 
@@ -932,7 +967,7 @@ impl DateFieldsResolver for HijriTabular {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, DateError> {
-        todo!()
+        compute_hijri_reference_year(month_code, day, self, |extended_year| extended_year)
     }
 }
 

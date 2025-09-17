@@ -15,8 +15,6 @@
 //! assert_eq!(hebrew_date.day_of_month().0, 11);
 //! ```
 
-use core::num::NonZeroU8;
-
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, DateFieldsResolver};
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, PrecomputedDataSource};
@@ -154,7 +152,39 @@ impl DateFieldsResolver for Hebrew {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, DateError> {
-        todo!()
+        let month_code_str = month_code.0.as_str();
+        // December 31, 1972 occurs on 4th month, 26th day, 5733 AM
+        let hebrew_year = match month_code_str {
+            "M01" => 5733,
+            "M02" => match day {
+                // There is no day 30 in 5733 (there is in 5732)
+                1..=29 => 5733,
+                _ => 5732,
+            },
+            "M03" => match day {
+                // There is no day 30 in 5733 (there is in 5732)
+                1..=29 => 5733,
+                _ => 5732,
+            },
+            "M04" => match day {
+                1..=26 => 5733,
+                _ => 5732,
+            },
+            "M05" => 5732,
+            "M06" => 5732,
+            // Neither 5731 nor 5732 is a leap year
+            "M06L" => 5730,
+            "M07" => 5732,
+            "M08" => 5732,
+            "M09" => 5732,
+            "M10" => 5732,
+            "M11" => 5732,
+            "M12" => 5732,
+            _ => {
+                return Err(DateError::UnknownMonthCode(month_code));
+            }
+        };
+        Ok(HebrewYearInfo::compute(hebrew_year))
     }
 
     fn ordinal_month_from_code(

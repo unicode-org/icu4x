@@ -116,7 +116,28 @@ impl DateFieldsResolver for Coptic {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, DateError> {
-        todo!()
+        Coptic::reference_year_from_month_day(month_code, day)
+    }
+}
+
+impl Coptic {
+    pub(crate) fn reference_year_from_month_day(
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<i32, DateError> {
+        let (ordinal_month, _is_leap) = month_code
+            .parsed()
+            .ok_or(DateError::UnknownMonthCode(month_code))?;
+        // December 31, 1972 occurs on 4th month, 22nd day, 1689 AM
+        let anno_martyrum_year = if ordinal_month < 4 || (ordinal_month == 4 && day <= 22) {
+            1689
+        } else if ordinal_month == 13 && day == 6 {
+            // 1687 AM is a leap year
+            1687
+        } else {
+            1688
+        };
+        Ok(anno_martyrum_year)
     }
 }
 

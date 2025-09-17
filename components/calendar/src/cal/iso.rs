@@ -41,6 +41,12 @@ use tinystr::tinystr;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Iso;
 
+impl Iso {
+    pub(crate) const REFERENCE_YEAR: i32 = 1972;
+    pub(crate) const LAST_DAY_OF_REFERENCE_YEAR: ArithmeticDate<Iso> =
+        ArithmeticDate::<Iso>::new_unchecked_ymd(1972, 12, 31);
+}
+
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 /// The inner date type used for representing [`Date`]s of [`Iso`]. See [`Date`] and [`Iso`] for more details.
 pub struct IsoDateInner(pub(crate) ArithmeticDate<Iso>);
@@ -107,10 +113,10 @@ impl DateFieldsResolver for Iso {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        month_code: types::MonthCode,
-        day: u8,
+        _month_code: types::MonthCode,
+        _day: u8,
     ) -> Result<Self::YearInfo, DateError> {
-        todo!()
+        Ok(Self::REFERENCE_YEAR)
     }
 }
 

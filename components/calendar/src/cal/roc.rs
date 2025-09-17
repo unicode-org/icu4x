@@ -76,10 +76,10 @@ impl DateFieldsResolver for Roc {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        month_code: types::MonthCode,
-        day: u8,
+        _month_code: types::MonthCode,
+        _day: u8,
     ) -> Result<Self::YearInfo, DateError> {
-        todo!()
+        Ok(Iso::REFERENCE_YEAR - ROC_ERA_OFFSET)
     }
 }
 
