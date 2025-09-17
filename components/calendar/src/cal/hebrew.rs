@@ -33,7 +33,7 @@ use calendrical_calculations::rata_die::RataDie;
 /// [`MonthInfo`] has slightly divergent behavior: because the regular month Adar is formatted
 /// as "Adar II" in a leap year, this calendar will produce the special code `"M06L"` in any [`MonthInfo`]
 /// objects it creates.
-#[derive(Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord, Default)]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord, Default)]
 #[allow(clippy::exhaustive_structs)] // unit struct
 pub struct Hebrew;
 

@@ -88,7 +88,7 @@ pub trait Rules: Clone + Debug {
 ///
 /// These simulations are known to not necessarily match sightings on the ground,
 /// but are included for completeness.
-#[derive(Clone, Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct AstronomicalSimulation {
     pub(crate) location: SimulatedLocation,
 }
@@ -205,7 +205,7 @@ impl Rules for AstronomicalSimulation {
 /// The [Umm al-Qura rules](https://en.wikipedia.org/wiki/Islamic_calendar#Saudi_Arabia's_Umm_al-Qura_calendar)
 ///
 /// These define the official calendar in Saudi Arabia.
-#[derive(Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default)]
 #[non_exhaustive]
 pub struct UmmAlQura;
 
@@ -782,7 +782,6 @@ mod test {
     use types::MonthCode;
 
     use super::*;
-    use crate::Ref;
 
     const START_YEAR: i32 = -1245;
     const END_YEAR: i32 = 1518;
@@ -1475,7 +1474,6 @@ mod test {
     #[test]
     fn test_simulated_hijri_from_rd() {
         let calendar = Hijri::new_simulated_mecca();
-        let calendar = Ref(&calendar);
         for (case, f_date) in SIMULATED_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
                 .unwrap();
@@ -1488,7 +1486,6 @@ mod test {
     #[test]
     fn test_rd_from_simulated_hijri() {
         let calendar = Hijri::new_simulated_mecca();
-        let calendar = Ref(&calendar);
         for (case, f_date) in SIMULATED_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
                 .unwrap();
@@ -1502,7 +1499,6 @@ mod test {
             TabularAlgorithmLeapYears::TypeII,
             TabularAlgorithmEpoch::Friday,
         );
-        let calendar = Ref(&calendar);
         for (case, f_date) in ARITHMETIC_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
                 .unwrap();
@@ -1516,7 +1512,6 @@ mod test {
             TabularAlgorithmLeapYears::TypeII,
             TabularAlgorithmEpoch::Friday,
         );
-        let calendar = Ref(&calendar);
         for (case, f_date) in ARITHMETIC_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
                 .unwrap();
@@ -1532,7 +1527,6 @@ mod test {
             TabularAlgorithmLeapYears::TypeII,
             TabularAlgorithmEpoch::Thursday,
         );
-        let calendar = Ref(&calendar);
         for (case, f_date) in ASTRONOMICAL_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
                 .unwrap();
@@ -1546,7 +1540,6 @@ mod test {
             TabularAlgorithmLeapYears::TypeII,
             TabularAlgorithmEpoch::Thursday,
         );
-        let calendar = Ref(&calendar);
         for (case, f_date) in ASTRONOMICAL_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
                 .unwrap();
@@ -1559,7 +1552,6 @@ mod test {
     #[test]
     fn test_saudi_hijri_from_rd() {
         let calendar = Hijri::new_umm_al_qura();
-        let calendar = Ref(&calendar);
         for (case, f_date) in UMMALQURA_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
                 .unwrap();
@@ -1572,7 +1564,6 @@ mod test {
     #[test]
     fn test_rd_from_saudi_hijri() {
         let calendar = Hijri::new_umm_al_qura();
-        let calendar = Ref(&calendar);
         for (case, f_date) in UMMALQURA_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
                 .unwrap();
@@ -1584,7 +1575,6 @@ mod test {
     #[test]
     fn test_days_in_provided_year_simulated() {
         let calendar = Hijri::new_simulated_mecca();
-        let calendar = Ref(&calendar);
         // -1245 1 1 = -214526 (R.D Date)
         // 1518 1 1 = 764589 (R.D Date)
         let sum_days_in_year: i64 = (START_YEAR..END_YEAR)
@@ -1613,11 +1603,10 @@ mod test {
     #[test]
     fn test_days_in_provided_year_ummalqura() {
         let calendar = Hijri::new_umm_al_qura();
-        let calendar = crate::Ref(&calendar);
         // -1245 1 1 = -214528 (R.D Date)
         // 1518 1 1 = 764588 (R.D Date)
         let sum_days_in_year: i64 = (START_YEAR..END_YEAR)
-            .map(|year| calendar.0 .0.year_data(year).last_day_of_month(12) as i64)
+            .map(|year| calendar.0.year_data(year).last_day_of_month(12) as i64)
             .sum();
         let expected_number_of_days = Date::try_new_hijri_with_calendar(END_YEAR, 1, 1, calendar)
             .unwrap()
@@ -1652,20 +1641,16 @@ mod test {
 
     #[test]
     fn test_regression_5069_uaq() {
-        let cached = Hijri::new_umm_al_qura();
+        let calendar = Hijri::new_umm_al_qura();
 
-        let cached = crate::Ref(&cached);
+        let dt = Date::try_new_hijri_with_calendar(1391, 1, 29, calendar).unwrap();
 
-        let dt_cached = Date::try_new_hijri_with_calendar(1391, 1, 29, cached).unwrap();
-
-        assert_eq!(dt_cached.to_iso().to_calendar(cached), dt_cached);
+        assert_eq!(dt.to_iso().to_calendar(calendar), dt);
     }
 
     #[test]
     fn test_regression_5069_obs() {
         let cal = Hijri::new_simulated_mecca();
-
-        let cal = crate::Ref(&cal);
 
         let dt = Date::try_new_hijri_with_calendar(1390, 1, 30, cal).unwrap();
 
@@ -1678,20 +1663,18 @@ mod test {
 
     #[test]
     fn test_regression_6197() {
-        let cached = Hijri::new_umm_al_qura();
-
-        let cached = crate::Ref(&cached);
+        let calendar = Hijri::new_umm_al_qura();
 
         let iso = Date::try_new_iso(2025, 2, 26).unwrap();
 
-        let cached = iso.to_calendar(cached);
+        let date = iso.to_calendar(calendar);
 
         // Data from https://www.ummulqura.org.sa/
         assert_eq!(
             (
-                cached.day_of_month().0,
-                cached.month().ordinal,
-                cached.era_year().year
+                date.day_of_month().0,
+                date.month().ordinal,
+                date.era_year().year
             ),
             (27, 8, 1446)
         );
