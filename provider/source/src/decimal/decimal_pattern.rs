@@ -63,7 +63,6 @@ impl FromStr for DecimalSubPattern {
                 "#,#0.###" => (2, 2, 0, 3),
                 "#,##,##0.00" => (3, 2, 2, 2),
                 "#,#0.00" => (2, 2, 2, 2),
-                "#,####0.00" => (5, 2, 2, 2),
                 _ => return Err(Error::UnknownPatternBody(body.to_string())),
             };
         Ok(Self {
