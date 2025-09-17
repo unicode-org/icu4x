@@ -2,16 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::collections::HashSet;
-
-use crate::cldr_serde::{self};
+use crate::cldr_serde;
 use crate::SourceDataProvider;
-
 use icu::experimental::dimension::provider::units::display_name::{
     UnitsDisplayName, UnitsDisplayNameV1,
 };
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
+use std::collections::HashSet;
 
 impl DataProvider<UnitsDisplayNameV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsDisplayNameV1>, DataError> {
@@ -51,9 +49,7 @@ impl DataProvider<UnitsDisplayNameV1> for SourceDataProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(UnitsDisplayName {
-                patterns: unit_patterns
-                    .try_into()
-                    .map_err(|e: DataError| e.with_req(UnitsDisplayNameV1::INFO, req))?,
+                patterns: unit_patterns.try_into_plural_elements_packed_cow()?,
             }),
         })
     }

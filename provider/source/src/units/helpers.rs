@@ -2,19 +2,21 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cldr_serde::units::data::Patterns;
+use crate::cldr_serde::units::info::Constant;
 use core::str::FromStr;
-use std::collections::{BTreeMap, VecDeque};
-
 use icu::experimental::measure::measureunit::MeasureUnit;
 use icu::experimental::measure::provider::single_unit::UnitID;
 use icu::experimental::units::provider::{ConversionInfo, Exactness, Sign};
 use icu::experimental::units::ratio::IcuRatio;
-use icu_provider::DataError;
+use icu::plurals::provider::PluralElementsPackedCow;
+use icu::plurals::PluralElements;
+use icu_pattern::SinglePlaceholderPattern;
+use icu_provider::{DataError, DataErrorKind};
 use num_traits::One;
 use num_traits::Signed;
+use std::collections::{BTreeMap, VecDeque};
 use zerovec::ZeroVec;
-
-use crate::cldr_serde::units::info::Constant;
 
 /// Represents a scientific number that contains only clean numerator and denominator terms.
 /// NOTE:
@@ -481,4 +483,26 @@ fn test_convert_constant_to_num_denom_strings() {
     let input = "1 2 * 3";
     let actual = split_unit_term(input);
     assert!(actual.is_err());
+}
+
+impl Patterns {
+    pub(crate) fn try_into_plural_elements_packed_cow(
+        &self,
+    ) -> Result<PluralElementsPackedCow<'static, SinglePlaceholderPattern>, DataError> {
+        let other_pattern = self.other.as_deref().ok_or_else(|| {
+            DataErrorKind::IdentifierNotFound
+                .into_error()
+                .with_debug_context(self)
+        })?;
+
+        Ok(PluralElements::new(other_pattern)
+            .with_zero_value(self.zero.as_deref())
+            .with_one_value(self.one.as_deref())
+            .with_two_value(self.two.as_deref())
+            .with_few_value(self.few.as_deref())
+            .with_many_value(self.many.as_deref())
+            .with_explicit_one_value(self.explicit_one.as_deref())
+            .with_explicit_zero_value(self.explicit_zero.as_deref())
+            .into())
+    }
 }

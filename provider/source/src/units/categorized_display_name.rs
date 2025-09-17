@@ -2,11 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::collections::HashSet;
-
-use crate::cldr_serde::{self};
+use crate::cldr_serde;
 use crate::SourceDataProvider;
-
 use cldr_serde::units::preferences::UnitType;
 use icu::experimental::dimension::provider::units::categorized_display_name::{
     UnitsNameAreaCoreV1, UnitsNameAreaExtendedV1, UnitsNameAreaOutlierV1, UnitsNameDurationCoreV1,
@@ -19,6 +16,7 @@ use icu::experimental::dimension::provider::units::display_name::UnitsDisplayNam
 use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
+use std::collections::HashSet;
 
 fn get_display_name_payload<M>(
     source_data_provider: &SourceDataProvider,
@@ -62,9 +60,7 @@ where
     Ok(DataResponse {
         metadata: Default::default(),
         payload: DataPayload::from_owned(UnitsDisplayName {
-            patterns: unit_patterns
-                .try_into()
-                .map_err(|e: DataError| e.with_req(M::INFO, req))?,
+            patterns: unit_patterns.try_into_plural_elements_packed_cow()?,
         }),
     })
 }
