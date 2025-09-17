@@ -221,7 +221,7 @@ pub const DATA: &[PackedChineseBasedYearInfo] = {
 #[ignore] // slow, network
 fn test_against_hong_kong_observatory_data() {
     use crate::{
-        cal::{Chinese, Gregorian},
+        cal::{Gregorian, LunarChinese},
         types::MonthCode,
         Date,
     };
@@ -280,9 +280,14 @@ fn test_against_hong_kong_observatory_data() {
                 day_or_lunar_month.parse().unwrap()
             };
 
-            let chinese =
-                Date::try_new_from_codes(None, related_iso, lunar_month, lunar_day, Chinese::new())
-                    .unwrap();
+            let chinese = Date::try_new_from_codes(
+                None,
+                related_iso,
+                lunar_month,
+                lunar_day,
+                LunarChinese::new_china(),
+            )
+            .unwrap();
 
             assert_eq!(
                 gregorian,
