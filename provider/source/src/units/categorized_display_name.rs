@@ -72,28 +72,20 @@ impl SourceDataProvider {
         let numbers = self.cldr()?.numbers();
         let locales = numbers.list_locales()?;
         for locale in locales {
-            let likely_subtags: &cldr_serde::likely_subtags::Resource = self
+            // Try to fill the lang_id with all the missing data to find the region.
+            let mut lang_id = LanguageIdentifier::from(locale.language);
+            let _ = self
                 .cldr()?
-                .core()
-                .read_and_parse("supplemental/likelySubtags.json")?;
-
-            // Try to find a likely subtag for the language, and extract its region.
-            let region = locale
-                .region
-                .map(|r| r.to_string())
-                .or_else(|| {
-                    let lang_id = LanguageIdentifier::from(locale.language);
-                    likely_subtags
-                        .supplemental
-                        .likely_subtags
-                        .get(&lang_id)
-                        .and_then(|id| id.region.map(|r| r.to_string()))
-                })
-                .ok_or_else(|| {
-                    let lang_id = LanguageIdentifier::from(locale.language);
-                    DataError::custom("No region found for language: {}")
-                        .with_debug_context(&lang_id)
-                })?;
+                .extended_locale_expander()?
+                .maximize(&mut lang_id);
+            let region = match lang_id.region {
+                Some(region) => region.to_string(),
+                None => {
+                    return Err(DataErrorKind::InvalidRequest
+                        .into_error()
+                        .with_debug_context(&lang_id))
+                }
+            };
 
             // Load and parse the unit constants from the supplemental data file.
             let preferences: &cldr_serde::units::preferences::Resource = self
