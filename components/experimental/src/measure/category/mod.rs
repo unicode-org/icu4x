@@ -4,7 +4,7 @@
 
 use core::marker::PhantomData;
 
-use icu_provider::DynamicDataMarker;
+use icu_provider::{DataMarker, DynamicDataMarker};
 
 use crate::{
     dimension::provider::units::{
@@ -27,9 +27,9 @@ pub mod mass;
 pub mod volume;
 
 pub trait MeasureUnitCategory {
-    type DataMarkerCore: DynamicDataMarker<DataStruct = UnitsDisplayName<'static>>;
-    type DataMarkerExtended: DynamicDataMarker<DataStruct = UnitsDisplayName<'static>>;
-    type DataMarkerOutlier: DynamicDataMarker<DataStruct = UnitsDisplayName<'static>>;
+    type DataMarkerCore: DynamicDataMarker<DataStruct = UnitsDisplayName<'static>> + DataMarker;
+    type DataMarkerExtended: DynamicDataMarker<DataStruct = UnitsDisplayName<'static>> + DataMarker;
+    type DataMarkerOutlier: DynamicDataMarker<DataStruct = UnitsDisplayName<'static>> + DataMarker;
 }
 
 /// A [`MeasureUnit`] that is related to a specific category.

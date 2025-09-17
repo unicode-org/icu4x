@@ -62,12 +62,7 @@ pub struct CategorizedFormatter<C: MeasureUnitCategory> {
     plural_rules: PluralRules,
 }
 
-impl<C: MeasureUnitCategory> CategorizedFormatter<C>
-where
-    <C as MeasureUnitCategory>::DataMarkerCore: icu_provider::DataMarker,
-    <C as MeasureUnitCategory>::DataMarkerExtended: icu_provider::DataMarker,
-    <C as MeasureUnitCategory>::DataMarkerOutlier: icu_provider::DataMarker,
-{
+impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
     // TODO: Remove this function once we have separate markers for different widths.
     #[inline]
     fn attribute(width: Width, unit: &str) -> SmallVec<[u8; 32]> {
@@ -212,7 +207,6 @@ where
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
-        <C as MeasureUnitCategory>::DataMarkerCore: icu_provider::DataMarker,
     {
         let (locale, decimal_formatter, plural_rules, attribute) =
             Self::extract_formatting_info_unstable(provider, prefs, categorized_unit, options)?;
@@ -301,8 +295,6 @@ where
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
-        <C as MeasureUnitCategory>::DataMarkerCore: icu_provider::DataMarker,
-        <C as MeasureUnitCategory>::DataMarkerExtended: icu_provider::DataMarker,
     {
         let (locale, decimal_formatter, plural_rules, attribute) =
             Self::extract_formatting_info_unstable(provider, prefs, categorized_unit, options)?;
@@ -398,9 +390,6 @@ where
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
-        <C as MeasureUnitCategory>::DataMarkerCore: icu_provider::DataMarker,
-        <C as MeasureUnitCategory>::DataMarkerExtended: icu_provider::DataMarker,
-        <C as MeasureUnitCategory>::DataMarkerOutlier: icu_provider::DataMarker,
     {
         let (locale, decimal_formatter, plural_rules, attribute) =
             Self::extract_formatting_info_unstable(provider, prefs, categorized_unit, options)?;
