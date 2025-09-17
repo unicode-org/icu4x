@@ -187,13 +187,15 @@ fn test_hijri_tabular_continuity() {
 fn test_hijri_umm_al_qura_continuity() {
     #[cfg(feature = "logging")]
     let _ = simple_logger::SimpleLogger::new().env().init();
-    let date = Date::try_new_ummalqura(-10, 1, 1);
+    let cal = crate::cal::Hijri::new_umm_al_qura();
+    let cal = Ref(&cal);
+    let date = Date::try_new_hijri_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
-    let date = Date::try_new_ummalqura(1290, 1, 1);
+    let date = Date::try_new_hijri_with_calendar(1290, 1, 1, cal);
     check_continuity(date.unwrap());
-    let date = Date::try_new_ummalqura(1590, 1, 1);
+    let date = Date::try_new_hijri_with_calendar(1590, 1, 1, cal);
     check_continuity(date.unwrap());
-    let date = Date::try_new_ummalqura(-300, 1, 1);
+    let date = Date::try_new_hijri_with_calendar(-300, 1, 1, cal);
     check_every_250_days(date.unwrap());
 }
 

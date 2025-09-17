@@ -1570,7 +1570,8 @@ mod test {
         let calendar = Hijri::new_umm_al_qura();
         let calendar = Ref(&calendar);
         for (case, f_date) in UMMALQURA_CASES.iter().zip(TEST_RD.iter()) {
-            let date = Date::try_new_ummalqura(case.year, case.month, case.day).unwrap();
+            let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
+                .unwrap();
             let date_rd = Date::from_rata_die(RataDie::new(*f_date), calendar);
 
             assert_eq!(date, date_rd, "{case:?}");
@@ -1579,8 +1580,11 @@ mod test {
 
     #[test]
     fn test_rd_from_saudi_hijri() {
+        let calendar = Hijri::new_umm_al_qura();
+        let calendar = Ref(&calendar);
         for (case, f_date) in UMMALQURA_CASES.iter().zip(TEST_RD.iter()) {
-            let date = Date::try_new_ummalqura(case.year, case.month, case.day).unwrap();
+            let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
+                .unwrap();
             assert_eq!(date.to_rata_die(), RataDie::new(*f_date), "{case:?}");
         }
     }
@@ -1617,20 +1621,18 @@ mod test {
     #[ignore] // slow
     #[test]
     fn test_days_in_provided_year_ummalqura() {
+        let calendar = Hijri::new_umm_al_qura();
+        let calendar = crate::Ref(&calendar);
         // -1245 1 1 = -214528 (R.D Date)
         // 1518 1 1 = 764588 (R.D Date)
         let sum_days_in_year: i64 = (START_YEAR..END_YEAR)
-            .map(|year| {
-                Hijri::new_umm_al_qura()
-                    .0
-                    .year_data(year)
-                    .last_day_of_month(12) as i64
-            })
+            .map(|year| calendar.0 .0.year_data(year).last_day_of_month(12) as i64)
             .sum();
-        let expected_number_of_days = Date::try_new_ummalqura(END_YEAR, 1, 1)
+        let expected_number_of_days = Date::try_new_hijri_with_calendar(END_YEAR, 1, 1, calendar)
             .unwrap()
             .to_rata_die()
-            - (Date::try_new_ummalqura(START_YEAR, 1, 1).unwrap()).to_rata_die(); // The number of days between Umm al-Qura Hijri years -1245 and 1518
+            - (Date::try_new_hijri_with_calendar(START_YEAR, 1, 1, calendar).unwrap())
+                .to_rata_die(); // The number of days between Umm al-Qura Hijri years -1245 and 1518
 
         assert_eq!(sum_days_in_year, expected_number_of_days);
     }
@@ -1663,7 +1665,7 @@ mod test {
 
         let cached = crate::Ref(&cached);
 
-        let dt_cached = Date::try_new_ummalqura(1391, 1, 29).unwrap();
+        let dt_cached = Date::try_new_hijri_with_calendar(1391, 1, 29, cached).unwrap();
 
         assert_eq!(dt_cached.to_iso().to_calendar(cached), dt_cached);
     }
