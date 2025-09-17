@@ -187,7 +187,10 @@ impl DateFieldsResolver for Chinese {
             (10, false, true) => 1972,
             (10, true, false) => 1870,
             (10, true, true) => -4098,
-            (11, false, false) => 1971,
+            // Dec 31, 1972 is 1972-M11-26, dates after that
+            // are in the next year
+            (11, false, false) if day > 26 => 1971,
+            (11, false, false) => 1972,
             (11, false, true) => 1969,
             // Specced backwards-looking algorithm produces 1642, but
             // 2033 is a better date with a forwards-looking algorithm.

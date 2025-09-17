@@ -42,7 +42,6 @@ fn test_reference_year_buddhist() {
 }
 
 #[test]
-#[ignore] // TODO: not yet implemented
 fn test_reference_year_chinese() {
     test_reference_year_impl(Chinese::new())
 }
@@ -53,7 +52,6 @@ fn test_reference_year_coptic() {
 }
 
 #[test]
-#[ignore] // TODO: not yet implemented
 fn test_reference_year_dangi() {
     test_reference_year_impl(Dangi::new())
 }

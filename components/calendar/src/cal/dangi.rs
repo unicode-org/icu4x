@@ -189,7 +189,10 @@ impl DateFieldsResolver for Dangi {
             // Uses forward-looking algorithm (was: 1870)
             (10, true, false) => 1984,
             (10, true, true) => -3946,
-            (11, false, false) => 1971,
+            // Dec 31, 1972 is 1972-M11-26, dates after that
+            // are in the next year
+            (11, false, false) if day > 26 => 1971,
+            (11, false, false) => 1972,
             (11, false, true) => 1969,
             // Uses forward-looking algorithm (was: 1851)
             (11, true, false) => 2033,
