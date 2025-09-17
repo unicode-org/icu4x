@@ -110,7 +110,7 @@ where
         ]
     );
 
-    /// Extracts the formatting info for that needed to create a stable creator of [`CategorizedFormatter`].
+    /// Extracts the formatting info.
     ///
     /// This is a helper function for the constructors to avoid writing the same code multiple times.
     #[cfg(feature = "compiled_data")]
