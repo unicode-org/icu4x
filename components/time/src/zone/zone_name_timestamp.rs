@@ -64,7 +64,19 @@ impl ZoneNameTimestamp {
     /// This will always return a [`ZonedDateTime`] with [`UtcOffset::zero()`]
     pub fn to_zoned_date_time_iso(self) -> ZonedDateTime<Iso, UtcOffset> {
         ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
-            self.0 as i64 * 15 * 60 * 1000,
+            match self.0 as i64 * 15 * 60 * 1000 {
+                // See `from_zoned_date_time_iso`
+                63593100000 => 63593070000,
+                307622700000 => 307622400000,
+                576042300000 => 576041460000,
+                576044100000 => 576043260000,
+                594180900000 => 594180060000,
+                607491900000 => 607491060000,
+                1601741700000 => 1601740860000,
+                1633191300000 => 1633190460000,
+                1664640900000 => 1664640060000,
+                ms => ms,
+            },
             UtcOffset::zero(),
         )
     }
@@ -103,11 +115,24 @@ impl ZoneNameTimestamp {
     /// assert_eq!(recovered_zoned_date_time.time.subsecond.number(), 0); // always zero
     /// ```
     pub fn from_zoned_date_time_iso(zoned_date_time: ZonedDateTime<Iso, UtcOffset>) -> Self {
-        let qh = zoned_date_time.to_epoch_milliseconds_utc() / 1000 / 60 / 15;
+        let ms = match zoned_date_time.to_epoch_milliseconds_utc() {
+            // Values that are not multiples of 15, that we map to the next multiple
+            // of 15 (which is always 00:15 or 00:45, values that are otherwise unused).
+            63593070000..63593100000 => 63593100000,
+            307622400000..307622700000 => 307622700000,
+            576041460000..576042300000 => 576042300000,
+            576043260000..576044100000 => 576044100000,
+            594180060000..594180900000 => 594180900000,
+            607491060000..607491900000 => 607491900000,
+            1601740860000..1601741700000 => 1601741700000,
+            1633190460000..1633191300000 => 1633191300000,
+            1664640060000..1664640900000 => 1664640900000,
+            ms => ms,
+        };
+        let qh = ms / 1000 / 60 / 15;
         let qh_clamped = qh.clamp(Self::far_in_past().0 as i64, Self::far_in_future().0 as i64);
         // Valid cast as the value is clamped to u32 values.
-        let qh_u32 = qh_clamped as u32;
-        Self(qh_u32)
+        Self(qh_clamped as u32)
     }
 
     /// Recovers the UTC datetime for this [`ZoneNameTimestamp`].
@@ -189,10 +214,14 @@ impl serde::Serialize for ZoneNameTimestamp {
             let day = date_time.date.day_of_month().0;
             let hour = date_time.time.hour.number();
             let minute = date_time.time.minute.number();
+            let second = date_time.time.second.number();
+            let mut s = alloc::format!("{year:04}-{month:02}-{day:02} {hour:02}:{minute:02}");
+            if second != 0 {
+                use alloc::fmt::Write;
+                let _infallible = write!(&mut s, ":{second:02}");
+            }
             // don't serialize the metadata for now
-            return serializer.serialize_str(&alloc::format!(
-                "{year:04}-{month:02}-{day:02} {hour:02}:{minute:02}"
-            ));
+            return serializer.serialize_str(&s);
         }
         serializer.serialize_u32(self.0)
     }
