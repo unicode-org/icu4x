@@ -116,13 +116,11 @@ fn test_reference_year_iso() {
 }
 
 #[test]
-#[ignore] // TODO: not yet implemented
 fn test_reference_year_japanese() {
     test_reference_year_impl(Japanese::new())
 }
 
 #[test]
-#[ignore] // TODO: not yet implemented
 fn test_reference_year_japanese_extended() {
     test_reference_year_impl(JapaneseExtended::new())
 }

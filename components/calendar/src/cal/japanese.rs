@@ -22,7 +22,7 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::DateFieldsResolver;
+use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::{range_check, DateError};
 use crate::options::DateFromFieldsOptions;
 use crate::provider::{CalendarJapaneseExtendedV1, CalendarJapaneseModernV1, EraStartDate};
@@ -174,10 +174,17 @@ impl DateFieldsResolver for Japanese {
 
     #[inline]
     fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
-        match era {
-            "reiwa" => todo!("{era_year}"),
-            _ => Err(DateError::UnknownEra),
-        }
+        let era = match era {
+            "ce" | "ad" => {
+                return Ok(era_year);
+            }
+            "bce" | "bc" => {
+                return Ok(1 - era_year);
+            }
+            e => e.parse().map_err(|_| DateError::UnknownEra)?,
+        };
+        let (era_start, _next_era_start) = self.japanese_era_range_for(era)?;
+        Ok(era_start.year + era_year - 1)
     }
 
     #[inline]
@@ -205,16 +212,10 @@ impl Calendar for Japanese {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        // let Some((month, false)) = month_code.parsed() else {
-        //     return Err(DateError::UnknownMonthCode(month_code));
-        // };
-
-        // if month > 12 {
-        //     return Err(DateError::UnknownMonthCode(month_code));
-        // }
-
-        // self.new_japanese_date_inner(era, year, month, day)
-        todo!("{fields:?}/{options:?}")
+        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
+        let iso_date = ArithmeticDate::try_from_builder(builder, options)
+            .map_err(|e| e.maybe_with_month_code(fields.month_code))?;
+        Ok(self.from_iso(IsoDateInner(iso_date)))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
