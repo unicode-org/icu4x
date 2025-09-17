@@ -135,7 +135,65 @@ impl DateFieldsResolver for Dangi {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, DateError> {
-        todo!("{month_code}/{day}")
+        let Some((number, is_leap)) = month_code.parsed() else {
+            return Err(DateError::UnknownMonthCode(month_code));
+        };
+        // Computed via code from
+        // <https://github.com/unicode-org/icu4x/pull/6910#issuecomment-3303786919>
+        let extended = match (number, is_leap, day > 29) {
+            (1, false, false) => 1972,
+            (1, false, true) => 1970,
+            (1, true, false) => 1651,
+            (1, true, true) => 1461,
+            (2, false, false) => 1972,
+            (2, false, true) => 1972,
+            (2, true, false) => 1947,
+            (2, true, true) => 1765,
+            (3, false, false) => 1972,
+            (3, false, true) => 1968,
+            (3, true, false) => 1966,
+            (3, true, true) => 1955,
+            (4, false, false) => 1972,
+            (4, false, true) => 1970,
+            (4, true, false) => 1963,
+            (4, true, true) => 1944,
+            (5, false, false) => 1972,
+            (5, false, true) => 1972,
+            (5, true, false) => 1971,
+            (5, true, true) => 1952,
+            (6, false, false) => 1972,
+            (6, false, true) => 1971,
+            (6, true, false) => 1960,
+            (6, true, true) => 1941,
+            (7, false, false) => 1972,
+            (7, false, true) => 1972,
+            (7, true, false) => 1968,
+            (7, true, true) => 1938,
+            (8, false, false) => 1972,
+            (8, false, true) => 1971,
+            (8, true, false) => 1957,
+            (8, true, true) => 1718,
+            (9, false, false) => 1972,
+            (9, false, true) => 1972,
+            (9, true, false) => 1832,
+            (9, true, true) => -5738,
+            (10, false, false) => 1972,
+            (10, false, true) => 1972,
+            (10, true, false) => 1870,
+            (10, true, true) => -3946,
+            (11, false, false) => 1971,
+            (11, false, true) => 1969,
+            (11, true, false) => 1851,
+            (11, true, true) => -2173,
+            (12, false, false) => 1971,
+            (12, false, true) => 1971,
+            (12, true, false) => 1889,
+            (12, true, true) => -1182,
+
+            _ => return Err(DateError::UnknownMonthCode(month_code)),
+        };
+
+        Ok(self.load_or_compute_info(extended))
     }
 
     fn ordinal_month_from_code(

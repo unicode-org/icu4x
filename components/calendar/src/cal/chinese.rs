@@ -144,6 +144,8 @@ impl DateFieldsResolver for Chinese {
         let Some((number, is_leap)) = month_code.parsed() else {
             return Err(DateError::UnknownMonthCode(month_code));
         };
+        // Computed via code from
+        // <https://github.com/unicode-org/icu4x/pull/6910#issuecomment-3303786919>
         let extended = match (number, is_leap, day > 29) {
             (1, false, false) => 1972,
             (1, false, true) => 1970,
