@@ -2,19 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Hebrew calendar.
-//!
-//! ```rust
-//! use icu::calendar::Date;
-//!
-//! let hebrew_date = Date::try_new_hebrew(3425, 10, 11)
-//!     .expect("Failed to initialize hebrew Date instance.");
-//!
-//! assert_eq!(hebrew_date.era_year().year, 3425);
-//! assert_eq!(hebrew_date.month().ordinal, 10);
-//! assert_eq!(hebrew_date.day_of_month().0, 11);
-//! ```
-
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, DateFieldsResolver};
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, PrecomputedDataSource};

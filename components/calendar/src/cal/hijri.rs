@@ -2,22 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Hijri calendars.
-//!
-//! ```rust
-//! use icu::calendar::cal::Hijri;
-//! use icu::calendar::Date;
-//!
-//! let hijri = Hijri::new_simulated_mecca();
-//! let hijri_date =
-//!     Date::try_new_hijri_with_calendar(1348, 10, 11, hijri)
-//!         .expect("Failed to initialize Hijri Date instance.");
-//!
-//! assert_eq!(hijri_date.era_year().year, 1348);
-//! assert_eq!(hijri_date.month().ordinal, 10);
-//! assert_eq!(hijri_date.day_of_month().0, 11);
-//! ```
-
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
