@@ -24,6 +24,7 @@ use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, Calendar
 use crate::calendar_arithmetic::{DateFieldsResolver, PrecomputedDataSource};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
+use crate::provider::chinese_based::ChineseBasedCache;
 use crate::types::{CyclicYear, DateFields};
 use crate::AsCalendar;
 use crate::{types, Calendar, Date};
@@ -126,8 +127,7 @@ impl DateFieldsResolver for Dangi {
 
     #[inline]
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
-        self.get_precomputed_data()
-            .load_or_compute_info(extended_year)
+        self.load_or_compute_info(extended_year)
     }
 
     fn reference_year_from_month_day(

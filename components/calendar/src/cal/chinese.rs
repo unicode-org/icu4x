@@ -23,12 +23,10 @@ use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, Calendar
 use crate::calendar_arithmetic::{DateFieldsResolver, PrecomputedDataSource};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
-use crate::provider::chinese_based::CalendarChineseV1;
+use crate::provider::chinese_based::ChineseBasedCache;
 use crate::AsCalendar;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use calendrical_calculations::rata_die::RataDie;
-use core::cmp::Ordering;
-use core::num::NonZeroU8;
 use icu_provider::prelude::*;
 
 mod data;
@@ -135,8 +133,7 @@ impl DateFieldsResolver for Chinese {
 
     #[inline]
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
-        self.get_precomputed_data()
-            .load_or_compute_info(extended_year)
+        self.load_or_compute_info(extended_year)
     }
 
     fn reference_year_from_month_day(
