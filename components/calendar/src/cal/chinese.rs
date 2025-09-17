@@ -189,7 +189,11 @@ impl DateFieldsResolver for Chinese {
             (10, true, true) => -4098,
             (11, false, false) => 1971,
             (11, false, true) => 1969,
-            (11, true, false) => 1642,
+            // Specced backwards-looking algorithm produces 1642, but
+            // 2033 is a better date with a forwards-looking algorithm.
+            // See <https://github.com/tc39/proposal-intl-era-monthcode/issues/60#issuecomment-3192982095>
+            // Data from: <https://github.com/unicode-org/icu4x/pull/6910#issuecomment-3303988559>
+            (11, true, false) => 2033,
             (11, true, true) => -2173,
             (12, false, false) => 1971,
             (12, false, true) => 1971,

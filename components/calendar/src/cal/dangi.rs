@@ -140,6 +140,11 @@ impl DateFieldsResolver for Dangi {
         };
         // Computed via code from
         // <https://github.com/unicode-org/icu4x/pull/6910#issuecomment-3303786919>
+        //
+        // Some (marked) dates use a forward looking algorithm from
+        // <https://github.com/tc39/proposal-intl-era-monthcode/issues/60#issuecomment-3192982095>
+        // to produce a better in-range date.
+        // Code for that is <https://github.com/unicode-org/icu4x/pull/6910#issuecomment-3303988559>
         let extended = match (number, is_leap, day > 29) {
             (1, false, false) => 1972,
             (1, false, true) => 1970,
@@ -172,18 +177,22 @@ impl DateFieldsResolver for Dangi {
             (8, false, false) => 1972,
             (8, false, true) => 1971,
             (8, true, false) => 1957,
-            (8, true, true) => 1718,
+            // Uses forward-looking algorithm (was: 1718)
+            (8, true, true) => 2052,
             (9, false, false) => 1972,
             (9, false, true) => 1972,
-            (9, true, false) => 1832,
+            // Uses forward-looking algorithm (was: 1832)
+            (9, true, false) => 1972,
             (9, true, true) => -5738,
             (10, false, false) => 1972,
             (10, false, true) => 1972,
-            (10, true, false) => 1870,
+            // Uses forward-looking algorithm (was: 1870)
+            (10, true, false) => 1984,
             (10, true, true) => -3946,
             (11, false, false) => 1971,
             (11, false, true) => 1969,
-            (11, true, false) => 1851,
+            // Uses forward-looking algorithm (was: 1851)
+            (11, true, false) => 2033,
             (11, true, true) => -2173,
             (12, false, false) => 1971,
             (12, false, true) => 1971,
