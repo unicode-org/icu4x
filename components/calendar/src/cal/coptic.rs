@@ -206,12 +206,12 @@ impl Calendar for Coptic {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let year = date.0.monotonic_year();
+        let year = date.0.extended_year();
         types::EraYear {
             era: tinystr!(16, "am"),
             era_index: Some(0),
             year,
-            monotonic_year: year,
+            extended_year: year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     }

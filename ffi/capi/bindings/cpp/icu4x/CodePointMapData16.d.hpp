@@ -46,59 +46,59 @@ class CodePointMapData16 {
 public:
 
   /**
-   * Gets the value for a code point.
-   *
-   * See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
+     * Gets the value for a code point.
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
    */
   inline uint16_t operator[](char32_t cp) const;
 
   /**
-   * Produces an iterator over ranges of code points that map to `value`
-   *
-   * See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
+     * Produces an iterator over ranges of code points that map to `value`
+     *
+     * See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
    */
   inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_value(uint16_t value) const;
 
   /**
-   * Produces an iterator over ranges of code points that do not map to `value`
-   *
-   * See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
+     * Produces an iterator over ranges of code points that do not map to `value`
+     *
+     * See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
    */
   inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_value_complemented(uint16_t value) const;
 
   /**
-   * Gets a {@link CodePointSetData} representing all entries in this map that map to the given value
-   *
-   * See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
+     * Gets a {@link CodePointSetData} representing all entries in this map that map to the given value
+     *
+     * See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
    */
   inline std::unique_ptr<icu4x::CodePointSetData> get_set_for_value(uint16_t value) const;
 
   /**
-   * Create a map for the `Script` property, using compiled data.
-   *
-   * See the [Rust documentation for `Script`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html) for more information.
+     * Create a map for the `Script` property, using compiled data.
+     *
+     * See the [Rust documentation for `Script`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html) for more information.
    */
   inline static std::unique_ptr<icu4x::CodePointMapData16> create_script();
 
   /**
-   * Create a map for the `Script` property, using a particular data source.
-   *
-   * See the [Rust documentation for `Script`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html) for more information.
+     * Create a map for the `Script` property, using a particular data source.
+     *
+     * See the [Rust documentation for `Script`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html) for more information.
    */
   inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData16>, icu4x::DataError> create_script_with_provider(const icu4x::DataProvider& provider);
 
-  inline const icu4x::capi::CodePointMapData16* AsFFI() const;
-  inline icu4x::capi::CodePointMapData16* AsFFI();
-  inline static const icu4x::CodePointMapData16* FromFFI(const icu4x::capi::CodePointMapData16* ptr);
-  inline static icu4x::CodePointMapData16* FromFFI(icu4x::capi::CodePointMapData16* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::CodePointMapData16* AsFFI() const;
+    inline icu4x::capi::CodePointMapData16* AsFFI();
+    inline static const icu4x::CodePointMapData16* FromFFI(const icu4x::capi::CodePointMapData16* ptr);
+    inline static icu4x::CodePointMapData16* FromFFI(icu4x::capi::CodePointMapData16* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  CodePointMapData16() = delete;
-  CodePointMapData16(const icu4x::CodePointMapData16&) = delete;
-  CodePointMapData16(icu4x::CodePointMapData16&&) noexcept = delete;
-  CodePointMapData16 operator=(const icu4x::CodePointMapData16&) = delete;
-  CodePointMapData16 operator=(icu4x::CodePointMapData16&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    CodePointMapData16() = delete;
+    CodePointMapData16(const icu4x::CodePointMapData16&) = delete;
+    CodePointMapData16(icu4x::CodePointMapData16&&) noexcept = delete;
+    CodePointMapData16 operator=(const icu4x::CodePointMapData16&) = delete;
+    CodePointMapData16 operator=(icu4x::CodePointMapData16&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace

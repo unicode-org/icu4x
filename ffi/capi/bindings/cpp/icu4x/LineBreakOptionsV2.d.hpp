@@ -36,11 +36,11 @@ namespace icu4x {
  * See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/2.0.0/icu/segmenter/options/struct.LineBreakOptions.html) for more information.
  */
 struct LineBreakOptionsV2 {
-  std::optional<icu4x::LineBreakStrictness> strictness;
-  std::optional<icu4x::LineBreakWordOption> word_option;
+    std::optional<icu4x::LineBreakStrictness> strictness;
+    std::optional<icu4x::LineBreakWordOption> word_option;
 
-  inline icu4x::capi::LineBreakOptionsV2 AsFFI() const;
-  inline static icu4x::LineBreakOptionsV2 FromFFI(icu4x::capi::LineBreakOptionsV2 c_struct);
+    inline icu4x::capi::LineBreakOptionsV2 AsFFI() const;
+    inline static icu4x::LineBreakOptionsV2 FromFFI(icu4x::capi::LineBreakOptionsV2 c_struct);
 };
 
 } // namespace

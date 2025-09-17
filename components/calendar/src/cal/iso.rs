@@ -53,7 +53,7 @@ pub struct IsoDateInner(pub(crate) ArithmeticDate<Iso>);
 
 impl IsoDateInner {
     pub(crate) fn iso_year(self) -> i32 {
-        self.0.monotonic_year()
+        self.0.extended_year()
     }
 }
 
@@ -183,12 +183,12 @@ impl Calendar for Iso {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let monotonic_year = date.iso_year();
+        let extended_year = date.iso_year();
         types::EraYear {
             era_index: Some(0),
             era: tinystr!(16, "default"),
-            year: monotonic_year,
-            monotonic_year,
+            year: extended_year,
+            extended_year,
             ambiguity: types::YearAmbiguity::Unambiguous,
         }
     }

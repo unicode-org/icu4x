@@ -3,10 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    zone::{
-        iana::IanaParserBorrowed, models, InvalidOffsetError, UtcOffset,
-        VariantOffsetsCalculatorBorrowed,
-    },
+    zone::{iana::IanaParserBorrowed, models, InvalidOffsetError, UtcOffset},
     DateTime, Time, TimeZone, TimeZoneInfo, ZonedDateTime,
 };
 use core::str::FromStr;
@@ -351,7 +348,7 @@ impl<'a> Intermediate<'a> {
     fn full(
         self,
         iana_parser: IanaParserBorrowed<'_>,
-        offset_calculator: VariantOffsetsCalculatorBorrowed,
+        offset_calculator: crate::zone::VariantOffsetsCalculatorBorrowed,
     ) -> Result<TimeZoneInfo<models::Full>, ParseError> {
         let Some(offset) = self.offset else {
             return Err(ParseError::MismatchedTimeZoneFields);
@@ -484,7 +481,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// )
     /// .unwrap();
     ///
-    /// assert_eq!(zoneddatetime.date.monotonic_year(), 5784);
+    /// assert_eq!(zoneddatetime.date.extended_year(), 5784);
     /// assert_eq!(
     ///     zoneddatetime.date.month().standard_code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M11"))
@@ -635,7 +632,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
         rfc_9557_str: &str,
         calendar: A,
         iana_parser: IanaParserBorrowed,
-        offset_calculator: VariantOffsetsCalculatorBorrowed,
+        offset_calculator: crate::zone::VariantOffsetsCalculatorBorrowed,
     ) -> Result<Self, ParseError> {
         Self::try_full_from_utf8(
             rfc_9557_str.as_bytes(),
@@ -653,7 +650,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
         rfc_9557_str: &[u8],
         calendar: A,
         iana_parser: IanaParserBorrowed,
-        offset_calculator: VariantOffsetsCalculatorBorrowed,
+        offset_calculator: crate::zone::VariantOffsetsCalculatorBorrowed,
     ) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(rfc_9557_str).parse()?;
         let date = Date::try_from_ixdtf_record(&ixdtf_record, calendar)?;

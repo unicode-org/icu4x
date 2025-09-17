@@ -31,21 +31,21 @@ namespace icu4x {
  */
 class LocaleFallbackPriority {
 public:
-  enum Value {
-    Language = 0,
-    Region = 1,
-  };
+    enum Value {
+        Language = 0,
+        Region = 1,
+    };
 
-  LocaleFallbackPriority(): value(Value::Language) {}
+    LocaleFallbackPriority(): value(Value::Language) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr LocaleFallbackPriority(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr LocaleFallbackPriority(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::LocaleFallbackPriority AsFFI() const;
-  inline static icu4x::LocaleFallbackPriority FromFFI(icu4x::capi::LocaleFallbackPriority c_enum);
+    inline icu4x::capi::LocaleFallbackPriority AsFFI() const;
+    inline static icu4x::LocaleFallbackPriority FromFFI(icu4x::capi::LocaleFallbackPriority c_enum);
 private:
     Value value;
 };

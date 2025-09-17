@@ -35,10 +35,10 @@ namespace icu4x {
  * See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/2.0.0/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
  */
 struct LocaleFallbackConfig {
-  icu4x::LocaleFallbackPriority priority;
+    icu4x::LocaleFallbackPriority priority;
 
-  inline icu4x::capi::LocaleFallbackConfig AsFFI() const;
-  inline static icu4x::LocaleFallbackConfig FromFFI(icu4x::capi::LocaleFallbackConfig c_struct);
+    inline icu4x::capi::LocaleFallbackConfig AsFFI() const;
+    inline static icu4x::LocaleFallbackConfig FromFFI(icu4x::capi::LocaleFallbackConfig c_struct);
 };
 
 } // namespace

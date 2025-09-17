@@ -36,12 +36,12 @@ namespace icu4x {
  * values if and only if `done=false`.
  */
 struct CodePointRangeIteratorResult {
-  char32_t start;
-  char32_t end;
-  bool done;
+    char32_t start;
+    char32_t end;
+    bool done;
 
-  inline icu4x::capi::CodePointRangeIteratorResult AsFFI() const;
-  inline static icu4x::CodePointRangeIteratorResult FromFFI(icu4x::capi::CodePointRangeIteratorResult c_struct);
+    inline icu4x::capi::CodePointRangeIteratorResult AsFFI() const;
+    inline static icu4x::CodePointRangeIteratorResult FromFFI(icu4x::capi::CodePointRangeIteratorResult c_struct);
 };
 
 } // namespace

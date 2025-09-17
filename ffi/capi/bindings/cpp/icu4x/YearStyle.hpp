@@ -23,17 +23,17 @@ namespace capi {
 } // namespace
 
 inline icu4x::capi::YearStyle icu4x::YearStyle::AsFFI() const {
-  return static_cast<icu4x::capi::YearStyle>(value);
+    return static_cast<icu4x::capi::YearStyle>(value);
 }
 
 inline icu4x::YearStyle icu4x::YearStyle::FromFFI(icu4x::capi::YearStyle c_enum) {
-  switch (c_enum) {
-    case icu4x::capi::YearStyle_Auto:
-    case icu4x::capi::YearStyle_Full:
-    case icu4x::capi::YearStyle_WithEra:
-      return static_cast<icu4x::YearStyle::Value>(c_enum);
-    default:
-      std::abort();
-  }
+    switch (c_enum) {
+        case icu4x::capi::YearStyle_Auto:
+        case icu4x::capi::YearStyle_Full:
+        case icu4x::capi::YearStyle_WithEra:
+            return static_cast<icu4x::YearStyle::Value>(c_enum);
+        default:
+            std::abort();
+    }
 }
 #endif // icu4x_YearStyle_HPP

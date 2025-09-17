@@ -37,24 +37,24 @@ class LocaleFallbackerWithConfig {
 public:
 
   /**
-   * Creates an iterator from a locale with each step of fallback.
-   *
-   * See the [Rust documentation for `fallback_for`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.fallback_for) for more information.
+     * Creates an iterator from a locale with each step of fallback.
+     *
+     * See the [Rust documentation for `fallback_for`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.fallback_for) for more information.
    */
   inline std::unique_ptr<icu4x::LocaleFallbackIterator> fallback_for_locale(const icu4x::Locale& locale) const;
 
-  inline const icu4x::capi::LocaleFallbackerWithConfig* AsFFI() const;
-  inline icu4x::capi::LocaleFallbackerWithConfig* AsFFI();
-  inline static const icu4x::LocaleFallbackerWithConfig* FromFFI(const icu4x::capi::LocaleFallbackerWithConfig* ptr);
-  inline static icu4x::LocaleFallbackerWithConfig* FromFFI(icu4x::capi::LocaleFallbackerWithConfig* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::LocaleFallbackerWithConfig* AsFFI() const;
+    inline icu4x::capi::LocaleFallbackerWithConfig* AsFFI();
+    inline static const icu4x::LocaleFallbackerWithConfig* FromFFI(const icu4x::capi::LocaleFallbackerWithConfig* ptr);
+    inline static icu4x::LocaleFallbackerWithConfig* FromFFI(icu4x::capi::LocaleFallbackerWithConfig* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  LocaleFallbackerWithConfig() = delete;
-  LocaleFallbackerWithConfig(const icu4x::LocaleFallbackerWithConfig&) = delete;
-  LocaleFallbackerWithConfig(icu4x::LocaleFallbackerWithConfig&&) noexcept = delete;
-  LocaleFallbackerWithConfig operator=(const icu4x::LocaleFallbackerWithConfig&) = delete;
-  LocaleFallbackerWithConfig operator=(icu4x::LocaleFallbackerWithConfig&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    LocaleFallbackerWithConfig() = delete;
+    LocaleFallbackerWithConfig(const icu4x::LocaleFallbackerWithConfig&) = delete;
+    LocaleFallbackerWithConfig(icu4x::LocaleFallbackerWithConfig&&) noexcept = delete;
+    LocaleFallbackerWithConfig operator=(const icu4x::LocaleFallbackerWithConfig&) = delete;
+    LocaleFallbackerWithConfig operator=(icu4x::LocaleFallbackerWithConfig&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace

@@ -36,45 +36,45 @@ namespace capi {
 } // namespace
 
 inline icu4x::capi::EastAsianWidth icu4x::EastAsianWidth::AsFFI() const {
-  return static_cast<icu4x::capi::EastAsianWidth>(value);
+    return static_cast<icu4x::capi::EastAsianWidth>(value);
 }
 
 inline icu4x::EastAsianWidth icu4x::EastAsianWidth::FromFFI(icu4x::capi::EastAsianWidth c_enum) {
-  switch (c_enum) {
-    case icu4x::capi::EastAsianWidth_Neutral:
-    case icu4x::capi::EastAsianWidth_Ambiguous:
-    case icu4x::capi::EastAsianWidth_Halfwidth:
-    case icu4x::capi::EastAsianWidth_Fullwidth:
-    case icu4x::capi::EastAsianWidth_Narrow:
-    case icu4x::capi::EastAsianWidth_Wide:
-      return static_cast<icu4x::EastAsianWidth::Value>(c_enum);
-    default:
-      std::abort();
-  }
+    switch (c_enum) {
+        case icu4x::capi::EastAsianWidth_Neutral:
+        case icu4x::capi::EastAsianWidth_Ambiguous:
+        case icu4x::capi::EastAsianWidth_Halfwidth:
+        case icu4x::capi::EastAsianWidth_Fullwidth:
+        case icu4x::capi::EastAsianWidth_Narrow:
+        case icu4x::capi::EastAsianWidth_Wide:
+            return static_cast<icu4x::EastAsianWidth::Value>(c_enum);
+        default:
+            std::abort();
+    }
 }
 
 inline icu4x::EastAsianWidth icu4x::EastAsianWidth::for_char(char32_t ch) {
-  auto result = icu4x::capi::icu4x_EastAsianWidth_for_char_mv1(ch);
-  return icu4x::EastAsianWidth::FromFFI(result);
+    auto result = icu4x::capi::icu4x_EastAsianWidth_for_char_mv1(ch);
+    return icu4x::EastAsianWidth::FromFFI(result);
 }
 
 inline std::optional<std::string_view> icu4x::EastAsianWidth::long_name() const {
-  auto result = icu4x::capi::icu4x_EastAsianWidth_long_name_mv1(this->AsFFI());
-  return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
+    auto result = icu4x::capi::icu4x_EastAsianWidth_long_name_mv1(this->AsFFI());
+    return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
 inline std::optional<std::string_view> icu4x::EastAsianWidth::short_name() const {
-  auto result = icu4x::capi::icu4x_EastAsianWidth_short_name_mv1(this->AsFFI());
-  return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
+    auto result = icu4x::capi::icu4x_EastAsianWidth_short_name_mv1(this->AsFFI());
+    return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
 inline uint8_t icu4x::EastAsianWidth::to_integer_value() const {
-  auto result = icu4x::capi::icu4x_EastAsianWidth_to_integer_value_mv1(this->AsFFI());
-  return result;
+    auto result = icu4x::capi::icu4x_EastAsianWidth_to_integer_value_mv1(this->AsFFI());
+    return result;
 }
 
 inline std::optional<icu4x::EastAsianWidth> icu4x::EastAsianWidth::from_integer_value(uint8_t other) {
-  auto result = icu4x::capi::icu4x_EastAsianWidth_from_integer_value_mv1(other);
-  return result.is_ok ? std::optional<icu4x::EastAsianWidth>(icu4x::EastAsianWidth::FromFFI(result.ok)) : std::nullopt;
+    auto result = icu4x::capi::icu4x_EastAsianWidth_from_integer_value_mv1(other);
+    return result.is_ok ? std::optional<icu4x::EastAsianWidth>(icu4x::EastAsianWidth::FromFFI(result.ok)) : std::nullopt;
 }
 #endif // icu4x_EastAsianWidth_HPP

@@ -358,30 +358,17 @@ export class Date {
     }
 
     /**
-     * Deprecated, use {@link Self::monotonic_year}
+     * Returns the extended year, which can be used for
+     *
+     * This year number can be used when you need a simple numeric representation
+     * of the year, and can be meaningfully compared with extended years from other
+     * eras or used in arithmetic.
      *
      * See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.extended_year) for more information.
      */
     get extendedYear() {
 
         const result = wasm.icu4x_Date_extended_year_mv1(this.ffiValue);
-
-        try {
-            return result;
-        }
-
-        finally {
-        }
-    }
-
-    /**
-     * Returns the monotonic year in the Date
-     *
-     * See the [Rust documentation for `monotonic_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.monotonic_year) for more information.
-     */
-    get monotonicYear() {
-
-        const result = wasm.icu4x_Date_monotonic_year_mv1(this.ffiValue);
 
         try {
             return result;

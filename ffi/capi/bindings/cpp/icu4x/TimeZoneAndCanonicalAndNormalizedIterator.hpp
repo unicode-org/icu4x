@@ -29,28 +29,28 @@ namespace capi {
 } // namespace
 
 inline std::optional<icu4x::TimeZoneAndCanonicalAndNormalized> icu4x::TimeZoneAndCanonicalAndNormalizedIterator::next() {
-  auto result = icu4x::capi::icu4x_TimeZoneAndCanonicalAndNormalizedIterator_next_mv1(this->AsFFI());
-  return result.is_ok ? std::optional<icu4x::TimeZoneAndCanonicalAndNormalized>(icu4x::TimeZoneAndCanonicalAndNormalized::FromFFI(result.ok)) : std::nullopt;
+    auto result = icu4x::capi::icu4x_TimeZoneAndCanonicalAndNormalizedIterator_next_mv1(this->AsFFI());
+    return result.is_ok ? std::optional<icu4x::TimeZoneAndCanonicalAndNormalized>(icu4x::TimeZoneAndCanonicalAndNormalized::FromFFI(result.ok)) : std::nullopt;
 }
 
 inline const icu4x::capi::TimeZoneAndCanonicalAndNormalizedIterator* icu4x::TimeZoneAndCanonicalAndNormalizedIterator::AsFFI() const {
-  return reinterpret_cast<const icu4x::capi::TimeZoneAndCanonicalAndNormalizedIterator*>(this);
+    return reinterpret_cast<const icu4x::capi::TimeZoneAndCanonicalAndNormalizedIterator*>(this);
 }
 
 inline icu4x::capi::TimeZoneAndCanonicalAndNormalizedIterator* icu4x::TimeZoneAndCanonicalAndNormalizedIterator::AsFFI() {
-  return reinterpret_cast<icu4x::capi::TimeZoneAndCanonicalAndNormalizedIterator*>(this);
+    return reinterpret_cast<icu4x::capi::TimeZoneAndCanonicalAndNormalizedIterator*>(this);
 }
 
 inline const icu4x::TimeZoneAndCanonicalAndNormalizedIterator* icu4x::TimeZoneAndCanonicalAndNormalizedIterator::FromFFI(const icu4x::capi::TimeZoneAndCanonicalAndNormalizedIterator* ptr) {
-  return reinterpret_cast<const icu4x::TimeZoneAndCanonicalAndNormalizedIterator*>(ptr);
+    return reinterpret_cast<const icu4x::TimeZoneAndCanonicalAndNormalizedIterator*>(ptr);
 }
 
 inline icu4x::TimeZoneAndCanonicalAndNormalizedIterator* icu4x::TimeZoneAndCanonicalAndNormalizedIterator::FromFFI(icu4x::capi::TimeZoneAndCanonicalAndNormalizedIterator* ptr) {
-  return reinterpret_cast<icu4x::TimeZoneAndCanonicalAndNormalizedIterator*>(ptr);
+    return reinterpret_cast<icu4x::TimeZoneAndCanonicalAndNormalizedIterator*>(ptr);
 }
 
 inline void icu4x::TimeZoneAndCanonicalAndNormalizedIterator::operator delete(void* ptr) {
-  icu4x::capi::icu4x_TimeZoneAndCanonicalAndNormalizedIterator_destroy_mv1(reinterpret_cast<icu4x::capi::TimeZoneAndCanonicalAndNormalizedIterator*>(ptr));
+    icu4x::capi::icu4x_TimeZoneAndCanonicalAndNormalizedIterator_destroy_mv1(reinterpret_cast<icu4x::capi::TimeZoneAndCanonicalAndNormalizedIterator*>(ptr));
 }
 
 

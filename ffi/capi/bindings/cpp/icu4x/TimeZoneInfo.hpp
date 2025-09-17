@@ -55,80 +55,80 @@ namespace capi {
 } // namespace
 
 inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::TimeZoneInfo::utc() {
-  auto result = icu4x::capi::icu4x_TimeZoneInfo_utc_mv1();
-  return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
+    auto result = icu4x::capi::icu4x_TimeZoneInfo_utc_mv1();
+    return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
 }
 
 inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::TimeZoneInfo::from_parts(const icu4x::TimeZone& id, const icu4x::UtcOffset* offset, std::optional<icu4x::TimeZoneVariant> _variant) {
-  auto result = icu4x::capi::icu4x_TimeZoneInfo_from_parts_mv1(id.AsFFI(),
-    offset ? offset->AsFFI() : nullptr,
-    _variant.has_value() ? (icu4x::capi::TimeZoneVariant_option{ { _variant.value().AsFFI() }, true }) : (icu4x::capi::TimeZoneVariant_option{ {}, false }));
-  return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
+    auto result = icu4x::capi::icu4x_TimeZoneInfo_from_parts_mv1(id.AsFFI(),
+        offset ? offset->AsFFI() : nullptr,
+        _variant.has_value() ? (icu4x::capi::TimeZoneVariant_option{ { _variant.value().AsFFI() }, true }) : (icu4x::capi::TimeZoneVariant_option{ {}, false }));
+    return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
 }
 
 inline std::unique_ptr<icu4x::TimeZone> icu4x::TimeZoneInfo::id() const {
-  auto result = icu4x::capi::icu4x_TimeZoneInfo_id_mv1(this->AsFFI());
-  return std::unique_ptr<icu4x::TimeZone>(icu4x::TimeZone::FromFFI(result));
+    auto result = icu4x::capi::icu4x_TimeZoneInfo_id_mv1(this->AsFFI());
+    return std::unique_ptr<icu4x::TimeZone>(icu4x::TimeZone::FromFFI(result));
 }
 
 inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::TimeZoneInfo::at_date_time_iso(const icu4x::IsoDate& date, const icu4x::Time& time) const {
-  auto result = icu4x::capi::icu4x_TimeZoneInfo_at_date_time_iso_mv1(this->AsFFI(),
-    date.AsFFI(),
-    time.AsFFI());
-  return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
+    auto result = icu4x::capi::icu4x_TimeZoneInfo_at_date_time_iso_mv1(this->AsFFI(),
+        date.AsFFI(),
+        time.AsFFI());
+    return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
 }
 
 inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::TimeZoneInfo::at_timestamp(int64_t timestamp) const {
-  auto result = icu4x::capi::icu4x_TimeZoneInfo_at_timestamp_mv1(this->AsFFI(),
-    timestamp);
-  return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
+    auto result = icu4x::capi::icu4x_TimeZoneInfo_at_timestamp_mv1(this->AsFFI(),
+        timestamp);
+    return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
 }
 
 inline std::optional<icu4x::IsoDateTime> icu4x::TimeZoneInfo::zone_name_date_time() const {
-  auto result = icu4x::capi::icu4x_TimeZoneInfo_zone_name_date_time_mv1(this->AsFFI());
-  return result.is_ok ? std::optional<icu4x::IsoDateTime>(icu4x::IsoDateTime::FromFFI(result.ok)) : std::nullopt;
+    auto result = icu4x::capi::icu4x_TimeZoneInfo_zone_name_date_time_mv1(this->AsFFI());
+    return result.is_ok ? std::optional<icu4x::IsoDateTime>(icu4x::IsoDateTime::FromFFI(result.ok)) : std::nullopt;
 }
 
 inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::TimeZoneInfo::with_variant(icu4x::TimeZoneVariant _time_variant) const {
-  auto result = icu4x::capi::icu4x_TimeZoneInfo_with_variant_mv1(this->AsFFI(),
-    _time_variant.AsFFI());
-  return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
+    auto result = icu4x::capi::icu4x_TimeZoneInfo_with_variant_mv1(this->AsFFI(),
+        _time_variant.AsFFI());
+    return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
 }
 
 inline std::unique_ptr<icu4x::UtcOffset> icu4x::TimeZoneInfo::offset() const {
-  auto result = icu4x::capi::icu4x_TimeZoneInfo_offset_mv1(this->AsFFI());
-  return std::unique_ptr<icu4x::UtcOffset>(icu4x::UtcOffset::FromFFI(result));
+    auto result = icu4x::capi::icu4x_TimeZoneInfo_offset_mv1(this->AsFFI());
+    return std::unique_ptr<icu4x::UtcOffset>(icu4x::UtcOffset::FromFFI(result));
 }
 
 inline std::optional<std::monostate> icu4x::TimeZoneInfo::infer_variant(const icu4x::VariantOffsetsCalculator& _offset_calculator) {
-  auto result = icu4x::capi::icu4x_TimeZoneInfo_infer_variant_mv1(this->AsFFI(),
-    _offset_calculator.AsFFI());
-  return result.is_ok ? std::optional<std::monostate>() : std::nullopt;
+    auto result = icu4x::capi::icu4x_TimeZoneInfo_infer_variant_mv1(this->AsFFI(),
+        _offset_calculator.AsFFI());
+    return result.is_ok ? std::optional<std::monostate>() : std::nullopt;
 }
 
 inline std::optional<icu4x::TimeZoneVariant> icu4x::TimeZoneInfo::variant() const {
-  auto result = icu4x::capi::icu4x_TimeZoneInfo_variant_mv1(this->AsFFI());
-  return result.is_ok ? std::optional<icu4x::TimeZoneVariant>(icu4x::TimeZoneVariant::FromFFI(result.ok)) : std::nullopt;
+    auto result = icu4x::capi::icu4x_TimeZoneInfo_variant_mv1(this->AsFFI());
+    return result.is_ok ? std::optional<icu4x::TimeZoneVariant>(icu4x::TimeZoneVariant::FromFFI(result.ok)) : std::nullopt;
 }
 
 inline const icu4x::capi::TimeZoneInfo* icu4x::TimeZoneInfo::AsFFI() const {
-  return reinterpret_cast<const icu4x::capi::TimeZoneInfo*>(this);
+    return reinterpret_cast<const icu4x::capi::TimeZoneInfo*>(this);
 }
 
 inline icu4x::capi::TimeZoneInfo* icu4x::TimeZoneInfo::AsFFI() {
-  return reinterpret_cast<icu4x::capi::TimeZoneInfo*>(this);
+    return reinterpret_cast<icu4x::capi::TimeZoneInfo*>(this);
 }
 
 inline const icu4x::TimeZoneInfo* icu4x::TimeZoneInfo::FromFFI(const icu4x::capi::TimeZoneInfo* ptr) {
-  return reinterpret_cast<const icu4x::TimeZoneInfo*>(ptr);
+    return reinterpret_cast<const icu4x::TimeZoneInfo*>(ptr);
 }
 
 inline icu4x::TimeZoneInfo* icu4x::TimeZoneInfo::FromFFI(icu4x::capi::TimeZoneInfo* ptr) {
-  return reinterpret_cast<icu4x::TimeZoneInfo*>(ptr);
+    return reinterpret_cast<icu4x::TimeZoneInfo*>(ptr);
 }
 
 inline void icu4x::TimeZoneInfo::operator delete(void* ptr) {
-  icu4x::capi::icu4x_TimeZoneInfo_destroy_mv1(reinterpret_cast<icu4x::capi::TimeZoneInfo*>(ptr));
+    icu4x::capi::icu4x_TimeZoneInfo_destroy_mv1(reinterpret_cast<icu4x::capi::TimeZoneInfo*>(ptr));
 }
 
 

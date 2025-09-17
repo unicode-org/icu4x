@@ -27,28 +27,28 @@ namespace capi {
 } // namespace
 
 inline bool icu4x::Logger::init_simple_logger() {
-  auto result = icu4x::capi::icu4x_Logger_init_simple_logger_mv1();
-  return result;
+    auto result = icu4x::capi::icu4x_Logger_init_simple_logger_mv1();
+    return result;
 }
 
 inline const icu4x::capi::Logger* icu4x::Logger::AsFFI() const {
-  return reinterpret_cast<const icu4x::capi::Logger*>(this);
+    return reinterpret_cast<const icu4x::capi::Logger*>(this);
 }
 
 inline icu4x::capi::Logger* icu4x::Logger::AsFFI() {
-  return reinterpret_cast<icu4x::capi::Logger*>(this);
+    return reinterpret_cast<icu4x::capi::Logger*>(this);
 }
 
 inline const icu4x::Logger* icu4x::Logger::FromFFI(const icu4x::capi::Logger* ptr) {
-  return reinterpret_cast<const icu4x::Logger*>(ptr);
+    return reinterpret_cast<const icu4x::Logger*>(ptr);
 }
 
 inline icu4x::Logger* icu4x::Logger::FromFFI(icu4x::capi::Logger* ptr) {
-  return reinterpret_cast<icu4x::Logger*>(ptr);
+    return reinterpret_cast<icu4x::Logger*>(ptr);
 }
 
 inline void icu4x::Logger::operator delete(void* ptr) {
-  icu4x::capi::icu4x_Logger_destroy_mv1(reinterpret_cast<icu4x::capi::Logger*>(ptr));
+    icu4x::capi::icu4x_Logger_destroy_mv1(reinterpret_cast<icu4x::capi::Logger*>(ptr));
 }
 
 

@@ -30,22 +30,22 @@ namespace icu4x {
  */
 class LineBreakWordOption {
 public:
-  enum Value {
-    Normal = 0,
-    BreakAll = 1,
-    KeepAll = 2,
-  };
+    enum Value {
+        Normal = 0,
+        BreakAll = 1,
+        KeepAll = 2,
+    };
 
-  LineBreakWordOption(): value(Value::Normal) {}
+    LineBreakWordOption(): value(Value::Normal) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr LineBreakWordOption(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr LineBreakWordOption(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::LineBreakWordOption AsFFI() const;
-  inline static icu4x::LineBreakWordOption FromFFI(icu4x::capi::LineBreakWordOption c_enum);
+    inline icu4x::capi::LineBreakWordOption AsFFI() const;
+    inline static icu4x::LineBreakWordOption FromFFI(icu4x::capi::LineBreakWordOption c_enum);
 private:
     Value value;
 };

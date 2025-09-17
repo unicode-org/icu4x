@@ -6,16 +6,17 @@
 //! as well as in related and derived calendars such as the Korean and Vietnamese lunar calendars.
 
 use crate::{
-    calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, PrecomputedDataSource},
+    calendar_arithmetic::{CalendarArithmetic, PrecomputedDataSource},
     error::DateError,
     provider::chinese_based::{ChineseBasedCache, PackedChineseBasedYearInfo},
     types::{MonthCode, MonthInfo},
-    Calendar, Iso,
+    Calendar,
 };
 
-use calendrical_calculations::chinese_based::{self, ChineseBased, YearBounds};
+use calendrical_calculations::chinese_based::{
+    self, ChineseBased, YearBounds, WELL_BEHAVED_ASTRONOMICAL_RANGE,
+};
 use calendrical_calculations::rata_die::RataDie;
-use core::marker::PhantomData;
 use tinystr::tinystr;
 
 /// The trait ChineseBased is used by Chinese-based calendars to perform computations shared by such calendar.
@@ -23,87 +24,41 @@ use tinystr::tinystr;
 /// For an example of how to use this trait, see `impl ChineseBasedWithDataLoading for Chinese` in [`Chinese`].
 pub(crate) trait ChineseBasedWithDataLoading: Calendar {
     type CB: ChineseBased;
-    /// Get the compiled const data for a ChineseBased calendar; can return `None` if the given year
-    /// does not correspond to any compiled data.
-    fn get_precomputed_data(&self) -> ChineseBasedPrecomputedData<'_, Self::CB>;
-}
 
-/// Contains any loaded precomputed data. If constructed with Default, will
-/// *not* contain any extra data and will always compute stuff from scratch
-#[derive(Default)]
-pub(crate) struct ChineseBasedPrecomputedData<'a, CB: ChineseBased> {
-    data: Option<&'a ChineseBasedCache<'a>>,
-    _cb: PhantomData<CB>,
-}
-
-impl<CB: ChineseBased> PrecomputedDataSource<ChineseBasedYearInfo>
-    for ChineseBasedPrecomputedData<'_, CB>
-{
-    fn load_or_compute_info(&self, related_iso: i32) -> ChineseBasedYearInfo {
-        self.data
-            .and_then(|d| {
-                Some(ChineseBasedYearInfo {
-                    packed_data: d
-                        .data
-                        .get(usize::try_from(related_iso - d.first_related_iso_year).ok()?)?,
-                    related_iso,
-                })
-            })
-            .unwrap_or_else(|| ChineseBasedYearInfo::compute::<CB>(related_iso))
-    }
-}
-
-impl<'b, CB: ChineseBased> ChineseBasedPrecomputedData<'b, CB> {
-    pub(crate) fn new(data: Option<&'b ChineseBasedCache<'b>>) -> Self {
-        Self {
-            data,
-            _cb: PhantomData,
-        }
-    }
+    const DATA: &ChineseBasedCache<'static>;
 
     /// Given an ISO date (in both ArithmeticDate and R.D. format), returns the ChineseBasedYearInfo and extended year for that date, loading
     /// from cache or computing.
-    pub(crate) fn load_or_compute_info_for_rd(
-        &self,
-        rd: RataDie,
-        iso: ArithmeticDate<Iso>,
-    ) -> ChineseBasedYearInfo {
-        if let Some(cached) = self.data.and_then(|d| {
-            let delta = usize::try_from(iso.year - d.first_related_iso_year).ok()?;
-            if delta == 0 {
-                return None;
-            }
-
-            let packed_data = d.data.get(delta)?;
-            if iso.day_of_year().0 > packed_data.ny_offset() as u16 {
-                Some(ChineseBasedYearInfo {
-                    packed_data,
-                    related_iso: iso.year,
-                })
+    fn load_or_compute_info_for_rd(rd: RataDie, actual_iso: i32) -> ChineseBasedYearInfo {
+        if let Some(cached) = Self::DATA.get(actual_iso).and_then(|year| {
+            if rd >= year.new_year() {
+                Some(year)
             } else {
                 // We're dealing with an ISO day in the beginning of the year, before Chinese New Year.
                 // Return data for the previous Chinese year instead.
-                if delta <= 1 {
-                    return None;
-                }
-                Some(ChineseBasedYearInfo {
-                    packed_data: d.data.get(delta - 1)?,
-                    related_iso: iso.year - 1,
-                })
+                Self::DATA.get(actual_iso - 1)
             }
         }) {
             return cached;
         };
         // compute
 
-        let mid_year = calendrical_calculations::iso::fixed_from_iso(iso.year, 7, 1);
-        let year_bounds = YearBounds::compute::<CB>(mid_year);
+        let mid_year = calendrical_calculations::iso::fixed_from_iso(actual_iso, 7, 1);
+        let year_bounds = YearBounds::compute::<Self::CB>(mid_year);
         let YearBounds { new_year, .. } = year_bounds;
         if rd >= new_year {
-            ChineseBasedYearInfo::compute_with_yb::<CB>(iso.year, year_bounds)
+            ChineseBasedYearInfo::compute_with_yb::<Self::CB>(actual_iso, year_bounds)
         } else {
-            ChineseBasedYearInfo::compute::<CB>(iso.year - 1)
+            ChineseBasedYearInfo::compute::<Self::CB>(actual_iso - 1)
         }
+    }
+}
+
+impl<C: ChineseBasedWithDataLoading> PrecomputedDataSource<ChineseBasedYearInfo> for C {
+    fn load_or_compute_info(&self, related_iso: i32) -> ChineseBasedYearInfo {
+        C::DATA
+            .get(related_iso)
+            .unwrap_or_else(|| ChineseBasedYearInfo::compute::<C::CB>(related_iso))
     }
 }
 
@@ -115,7 +70,7 @@ pub(crate) struct ChineseBasedYearInfo {
     /// - length of each month in the year
     /// - whether or not there is a leap month, and which month it is
     /// - the date of Chinese New Year in the related ISO year
-    packed_data: PackedChineseBasedYearInfo,
+    pub(crate) packed_data: PackedChineseBasedYearInfo,
     pub(crate) related_iso: i32,
 }
 
@@ -143,17 +98,20 @@ impl ChineseBasedYearInfo {
         let (month_lengths, leap_month) =
             chinese_based::month_structure_for_year::<CB>(new_year, next_new_year);
 
-        let ny_offset = new_year - calendrical_calculations::iso::fixed_from_iso(related_iso, 1, 1);
         Self {
-            packed_data: PackedChineseBasedYearInfo::new(month_lengths, leap_month, ny_offset),
+            packed_data: PackedChineseBasedYearInfo::new(
+                related_iso,
+                month_lengths,
+                leap_month,
+                new_year,
+            ),
             related_iso,
         }
     }
 
     /// Get the new year R.D.    
     pub(crate) fn new_year(self) -> RataDie {
-        calendrical_calculations::iso::fixed_from_iso(self.related_iso, 1, 1)
-            + self.packed_data.ny_offset() as i64
+        self.packed_data.new_year(self.related_iso)
     }
 
     /// Get the next new year R.D.
@@ -220,12 +178,15 @@ impl ChineseBasedYearInfo {
 
     pub(crate) fn md_from_rd(self, rd: RataDie) -> (u8, u8) {
         debug_assert!(
-            rd < self.next_new_year(),
+            rd < self.next_new_year() || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&rd),
             "Stored date {rd:?} out of bounds!"
         );
         // 1-indexed day of year
         let day_of_year = u16::try_from(rd - self.new_year() + 1);
-        debug_assert!(day_of_year.is_ok(), "Somehow got a very large year in data");
+        debug_assert!(
+            day_of_year.is_ok() || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&rd),
+            "Somehow got a very large year in data"
+        );
         let day_of_year = day_of_year.unwrap_or(1);
         let mut month = 1;
         // TODO(#3933) perhaps use a binary search
@@ -239,7 +200,9 @@ impl ChineseBasedYearInfo {
         debug_assert!((1..=13).contains(&month), "Month out of bounds!");
 
         debug_assert!(
-            month < 13 || self.leap_month().is_some(),
+            month < 13
+                || self.leap_month().is_some()
+                || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&rd),
             "Cannot have 13 months in a non-leap year!"
         );
         let day_before_month_start = self.last_day_of_previous_month(month);
@@ -429,18 +392,5 @@ impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
 
     fn days_in_provided_year(year: ChineseBasedYearInfo) -> u16 {
         year.days_in_year()
-    }
-}
-
-#[cfg(feature = "datagen")]
-impl ChineseBasedCache<'_> {
-    /// Compute this data for a range of years
-    pub fn compute_for<CB: ChineseBased>(related_isos: core::ops::Range<i32>) -> Self {
-        ChineseBasedCache {
-            first_related_iso_year: related_isos.start,
-            data: related_isos
-                .map(|related_iso| ChineseBasedYearInfo::compute::<CB>(related_iso).packed_data)
-                .collect(),
-        }
     }
 }

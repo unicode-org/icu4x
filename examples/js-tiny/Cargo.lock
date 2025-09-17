@@ -10,7 +10,7 @@ checksum = "ace50bade8e6234aa140d9a2f552bbee1db4d353f69b8217bc503490fc1a9f26"
 
 [[package]]
 name = "calendrical_calculations"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "core_maths",
  "displaydoc",
@@ -46,9 +46,8 @@ dependencies = [
 
 [[package]]
 name = "diplomat"
-version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ea1fa372cd3d71ab28ee5d1176be9e93eaed0eba94a3498d12b8113109c4d313"
+version = "0.12.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=35e06283521e5630689b0900057ebe66afec3dfb#35e06283521e5630689b0900057ebe66afec3dfb"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -58,18 +57,16 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5ebd68bdec9f1f4e625f207e3179c0687e7c73bad578ec37df48a23a414da8d4"
+version = "0.12.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=35e06283521e5630689b0900057ebe66afec3dfb#35e06283521e5630689b0900057ebe66afec3dfb"
 dependencies = [
  "log",
 ]
 
 [[package]]
 name = "diplomat_core"
-version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f8372a0961d18867e19c8cc0a2afb3ad46d5c5bd5e30b2c71d4edc788c93bbb8"
+version = "0.12.1"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=35e06283521e5630689b0900057ebe66afec3dfb#35e06283521e5630689b0900057ebe66afec3dfb"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -108,7 +105,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "2.0.0"
+version = "2.0.3"
 dependencies = [
  "calendrical_calculations",
  "displaydoc",
@@ -128,7 +125,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_capi"
-version = "2.0.0"
+version = "2.0.2"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -180,7 +177,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_collator"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "displaydoc",
  "icu_collator_data",
@@ -193,12 +190,13 @@ dependencies = [
  "smallvec",
  "utf16_iter",
  "utf8_iter",
+ "write16",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_collator_data"
-version = "2.0.0"
+version = "2.0.1"
 
 [[package]]
 name = "icu_collections"
@@ -237,7 +235,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "2.0.0"
+version = "2.0.2"
 
 [[package]]
 name = "icu_decimal"
@@ -260,7 +258,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_experimental"
-version = "0.3.0"
+version = "0.4.0-dev.1"
 dependencies = [
  "displaydoc",
  "either",
@@ -389,7 +387,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_properties"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -404,7 +402,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties_data"
-version = "2.0.0"
+version = "2.0.1"
 
 [[package]]
 name = "icu_provider"
@@ -472,7 +470,7 @@ dependencies = [
 
 [[package]]
 name = "icu_time_data"
-version = "2.0.0"
+version = "2.0.2"
 
 [[package]]
 name = "itoa"
@@ -482,7 +480,7 @@ checksum = "4a5f13b858c8d314ee3e8f639011f7ccefe71f97f96e50151fb991f267928e2c"
 
 [[package]]
 name = "ixdtf"
-version = "0.5.0"
+version = "0.6.3"
 dependencies = [
  "displaydoc",
 ]
@@ -961,7 +959,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.11.2"
+version = "0.11.4"
 dependencies = [
  "yoke",
  "zerofrom",
@@ -994,10 +992,6 @@ name = "databake-derive"
 version = "0.2.0"
 
 [[patch.unused]]
-name = "deduplicating_array"
-version = "0.1.8"
-
-[[patch.unused]]
 name = "icu"
 version = "2.0.0"
 
@@ -1023,11 +1017,11 @@ version = "2.0.0"
 
 [[patch.unused]]
 name = "icu_harfbuzz"
-version = "0.2.0"
+version = "0.3.0"
 
 [[patch.unused]]
 name = "icu_provider_baked"
-version = "2.0.0"
+version = "2.0.1"
 
 [[patch.unused]]
 name = "icu_provider_blob"
@@ -1047,7 +1041,7 @@ version = "2.0.0"
 
 [[patch.unused]]
 name = "icu_provider_source"
-version = "2.0.0"
+version = "2.0.2"
 
 [[patch.unused]]
 name = "tzif"

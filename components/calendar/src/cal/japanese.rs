@@ -280,7 +280,7 @@ impl Calendar for Japanese {
             era: date.era,
             era_index: None,
             year: date.adjusted_year,
-            monotonic_year: date.inner.0.monotonic_year(),
+            extended_year: date.inner.0.extended_year(),
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     }

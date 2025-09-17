@@ -66,7 +66,6 @@ members = [
     "utils/crlify",
     "utils/databake",
     "utils/databake/derive",
-    "utils/deduplicating_array",
     "utils/fixed_decimal",
     "utils/ixdtf",
     "utils/litemap",
@@ -191,7 +190,6 @@ calendrical_calculations = { version = "0.2.2", path = "utils/calendrical_calcul
 crlify = { version = "1.0.4", path = "utils/crlify", default-features = false }
 databake = { version = "0.2.0", path = "utils/databake", default-features = false }
 databake-derive = { version = "0.2.0", path = "utils/databake/derive", default-features = false }
-deduplicating_array = { version = "0.1.6", path = "utils/deduplicating_array", default-features = false }
 fixed_decimal = { version = "0.7.0", path = "utils/fixed_decimal", default-features = false }
 ixdtf = { version = "0.6.0", path = "utils/ixdtf", default-features = false }
 litemap = { version = "0.8.0", path = "utils/litemap", default-features = false }
@@ -207,7 +205,7 @@ zerofrom-derive = { version = "0.1.3", path = "utils/zerofrom/derive", default-f
 zerotrie = { version = "0.2.0", path = "utils/zerotrie", default-features = false }
 zerovec = { version = "0.11.3", path = "utils/zerovec", default-features = false }
 zerovec-derive = { version = "0.11.1", path = "utils/zerovec/derive", default-features = false }
-zoneinfo64 = { version = "0.1.0", path = "utils/zoneinfo64", default-features = false }
+zoneinfo64 = { version = "0.2.0", path = "utils/zoneinfo64", default-features = false }
 
 # Tools
 icu_benchmark_macros = { path = "tools/benchmark/macros" }
@@ -217,10 +215,10 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Diplomat must be published preceding a new ICU4X release but may use git versions in between
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "35e06283521e5630689b0900057ebe66afec3dfb", default-features = false }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "35e06283521e5630689b0900057ebe66afec3dfb", default-features = false }
-diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "35e06283521e5630689b0900057ebe66afec3dfb", default-features = false }
-diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "35e06283521e5630689b0900057ebe66afec3dfb", default-features = false }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "fb5e716f9032d5a00a985896e4e54d5db2e38ac2", default-features = false }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "fb5e716f9032d5a00a985896e4e54d5db2e38ac2", default-features = false }
+diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "fb5e716f9032d5a00a985896e4e54d5db2e38ac2", default-features = false }
+diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "fb5e716f9032d5a00a985896e4e54d5db2e38ac2", default-features = false }
 
 # EXTERNAL DEPENDENCIES
 #
@@ -275,7 +273,7 @@ toml = { version = "0.8.0", default-features = false, features = ["parse"] }
 
 ## External Deps Group 3: Dev and Datagen deps. Include default features.
 arraystring = "0.3.0"
-askama = "0.13"
+askama = "0.14"
 atoi = "2.0.0"
 bincode = "1.3.1" # Can be updated to 2.0 after MSRV 1.85
 clap = "4.2.0"

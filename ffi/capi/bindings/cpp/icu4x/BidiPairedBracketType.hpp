@@ -23,17 +23,17 @@ namespace capi {
 } // namespace
 
 inline icu4x::capi::BidiPairedBracketType icu4x::BidiPairedBracketType::AsFFI() const {
-  return static_cast<icu4x::capi::BidiPairedBracketType>(value);
+    return static_cast<icu4x::capi::BidiPairedBracketType>(value);
 }
 
 inline icu4x::BidiPairedBracketType icu4x::BidiPairedBracketType::FromFFI(icu4x::capi::BidiPairedBracketType c_enum) {
-  switch (c_enum) {
-    case icu4x::capi::BidiPairedBracketType_Open:
-    case icu4x::capi::BidiPairedBracketType_Close:
-    case icu4x::capi::BidiPairedBracketType_None:
-      return static_cast<icu4x::BidiPairedBracketType::Value>(c_enum);
-    default:
-      std::abort();
-  }
+    switch (c_enum) {
+        case icu4x::capi::BidiPairedBracketType_Open:
+        case icu4x::capi::BidiPairedBracketType_Close:
+        case icu4x::capi::BidiPairedBracketType_None:
+            return static_cast<icu4x::BidiPairedBracketType::Value>(c_enum);
+        default:
+            std::abort();
+    }
 }
 #endif // icu4x_BidiPairedBracketType_HPP

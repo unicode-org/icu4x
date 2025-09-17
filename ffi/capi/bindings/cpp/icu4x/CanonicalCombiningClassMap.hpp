@@ -34,39 +34,39 @@ namespace capi {
 } // namespace
 
 inline std::unique_ptr<icu4x::CanonicalCombiningClassMap> icu4x::CanonicalCombiningClassMap::create() {
-  auto result = icu4x::capi::icu4x_CanonicalCombiningClassMap_create_mv1();
-  return std::unique_ptr<icu4x::CanonicalCombiningClassMap>(icu4x::CanonicalCombiningClassMap::FromFFI(result));
+    auto result = icu4x::capi::icu4x_CanonicalCombiningClassMap_create_mv1();
+    return std::unique_ptr<icu4x::CanonicalCombiningClassMap>(icu4x::CanonicalCombiningClassMap::FromFFI(result));
 }
 
 inline diplomat::result<std::unique_ptr<icu4x::CanonicalCombiningClassMap>, icu4x::DataError> icu4x::CanonicalCombiningClassMap::create_with_provider(const icu4x::DataProvider& provider) {
-  auto result = icu4x::capi::icu4x_CanonicalCombiningClassMap_create_with_provider_mv1(provider.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CanonicalCombiningClassMap>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CanonicalCombiningClassMap>>(std::unique_ptr<icu4x::CanonicalCombiningClassMap>(icu4x::CanonicalCombiningClassMap::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CanonicalCombiningClassMap>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    auto result = icu4x::capi::icu4x_CanonicalCombiningClassMap_create_with_provider_mv1(provider.AsFFI());
+    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CanonicalCombiningClassMap>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CanonicalCombiningClassMap>>(std::unique_ptr<icu4x::CanonicalCombiningClassMap>(icu4x::CanonicalCombiningClassMap::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CanonicalCombiningClassMap>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline uint8_t icu4x::CanonicalCombiningClassMap::operator[](char32_t ch) const {
-  auto result = icu4x::capi::icu4x_CanonicalCombiningClassMap_get_mv1(this->AsFFI(),
-    ch);
-  return result;
+    auto result = icu4x::capi::icu4x_CanonicalCombiningClassMap_get_mv1(this->AsFFI(),
+        ch);
+    return result;
 }
 
 inline const icu4x::capi::CanonicalCombiningClassMap* icu4x::CanonicalCombiningClassMap::AsFFI() const {
-  return reinterpret_cast<const icu4x::capi::CanonicalCombiningClassMap*>(this);
+    return reinterpret_cast<const icu4x::capi::CanonicalCombiningClassMap*>(this);
 }
 
 inline icu4x::capi::CanonicalCombiningClassMap* icu4x::CanonicalCombiningClassMap::AsFFI() {
-  return reinterpret_cast<icu4x::capi::CanonicalCombiningClassMap*>(this);
+    return reinterpret_cast<icu4x::capi::CanonicalCombiningClassMap*>(this);
 }
 
 inline const icu4x::CanonicalCombiningClassMap* icu4x::CanonicalCombiningClassMap::FromFFI(const icu4x::capi::CanonicalCombiningClassMap* ptr) {
-  return reinterpret_cast<const icu4x::CanonicalCombiningClassMap*>(ptr);
+    return reinterpret_cast<const icu4x::CanonicalCombiningClassMap*>(ptr);
 }
 
 inline icu4x::CanonicalCombiningClassMap* icu4x::CanonicalCombiningClassMap::FromFFI(icu4x::capi::CanonicalCombiningClassMap* ptr) {
-  return reinterpret_cast<icu4x::CanonicalCombiningClassMap*>(ptr);
+    return reinterpret_cast<icu4x::CanonicalCombiningClassMap*>(ptr);
 }
 
 inline void icu4x::CanonicalCombiningClassMap::operator delete(void* ptr) {
-  icu4x::capi::icu4x_CanonicalCombiningClassMap_destroy_mv1(reinterpret_cast<icu4x::capi::CanonicalCombiningClassMap*>(ptr));
+    icu4x::capi::icu4x_CanonicalCombiningClassMap_destroy_mv1(reinterpret_cast<icu4x::capi::CanonicalCombiningClassMap*>(ptr));
 }
 
 

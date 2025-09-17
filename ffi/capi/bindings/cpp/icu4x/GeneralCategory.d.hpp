@@ -62,87 +62,87 @@ namespace icu4x {
  */
 class GeneralCategory {
 public:
-  enum Value {
-    Unassigned = 0,
-    UppercaseLetter = 1,
-    LowercaseLetter = 2,
-    TitlecaseLetter = 3,
-    ModifierLetter = 4,
-    OtherLetter = 5,
-    NonspacingMark = 6,
-    SpacingMark = 8,
-    EnclosingMark = 7,
-    DecimalNumber = 9,
-    LetterNumber = 10,
-    OtherNumber = 11,
-    SpaceSeparator = 12,
-    LineSeparator = 13,
-    ParagraphSeparator = 14,
-    Control = 15,
-    Format = 16,
-    PrivateUse = 17,
-    Surrogate = 18,
-    DashPunctuation = 19,
-    OpenPunctuation = 20,
-    ClosePunctuation = 21,
-    ConnectorPunctuation = 22,
-    InitialPunctuation = 28,
-    FinalPunctuation = 29,
-    OtherPunctuation = 23,
-    MathSymbol = 24,
-    CurrencySymbol = 25,
-    ModifierSymbol = 26,
-    OtherSymbol = 27,
-  };
+    enum Value {
+        Unassigned = 0,
+        UppercaseLetter = 1,
+        LowercaseLetter = 2,
+        TitlecaseLetter = 3,
+        ModifierLetter = 4,
+        OtherLetter = 5,
+        NonspacingMark = 6,
+        SpacingMark = 8,
+        EnclosingMark = 7,
+        DecimalNumber = 9,
+        LetterNumber = 10,
+        OtherNumber = 11,
+        SpaceSeparator = 12,
+        LineSeparator = 13,
+        ParagraphSeparator = 14,
+        Control = 15,
+        Format = 16,
+        PrivateUse = 17,
+        Surrogate = 18,
+        DashPunctuation = 19,
+        OpenPunctuation = 20,
+        ClosePunctuation = 21,
+        ConnectorPunctuation = 22,
+        InitialPunctuation = 28,
+        FinalPunctuation = 29,
+        OtherPunctuation = 23,
+        MathSymbol = 24,
+        CurrencySymbol = 25,
+        ModifierSymbol = 26,
+        OtherSymbol = 27,
+    };
 
-  GeneralCategory(): value(Value::Unassigned) {}
+    GeneralCategory(): value(Value::Unassigned) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr GeneralCategory(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr GeneralCategory(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
   /**
-   * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
    */
   inline static icu4x::GeneralCategory for_char(char32_t ch);
 
   /**
-   * Convert to an integer using the ICU4C integer mappings for `General_Category`
-   * Get the "long" name of this property value (returns empty if property value is unknown)
-   *
-   * See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+     * Convert to an integer using the ICU4C integer mappings for `General_Category`
+     * Get the "long" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
    */
   inline std::optional<std::string_view> long_name() const;
 
   /**
-   * Get the "short" name of this property value (returns empty if property value is unknown)
-   *
-   * See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+     * Get the "short" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
    */
   inline std::optional<std::string_view> short_name() const;
 
   /**
-   * Convert to an integer value usable with ICU4C and CodePointMapData
+     * Convert to an integer value usable with ICU4C and CodePointMapData
    */
   inline uint8_t to_integer_value() const;
 
   /**
-   * Produces a GeneralCategoryGroup mask that can represent a group of general categories
-   *
-   * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+     * Produces a GeneralCategoryGroup mask that can represent a group of general categories
+     *
+     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
    */
   inline icu4x::GeneralCategoryGroup to_group() const;
 
   /**
-   * Convert from an integer using the ICU4C integer mappings for `General_Category`
-   * Convert from an integer value from ICU4C or CodePointMapData
+     * Convert from an integer using the ICU4C integer mappings for `General_Category`
+     * Convert from an integer value from ICU4C or CodePointMapData
    */
   inline static std::optional<icu4x::GeneralCategory> from_integer_value(uint8_t other);
 
-  inline icu4x::capi::GeneralCategory AsFFI() const;
-  inline static icu4x::GeneralCategory FromFFI(icu4x::capi::GeneralCategory c_enum);
+    inline icu4x::capi::GeneralCategory AsFFI() const;
+    inline static icu4x::GeneralCategory FromFFI(icu4x::capi::GeneralCategory c_enum);
 private:
     Value value;
 };

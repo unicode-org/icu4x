@@ -30,22 +30,22 @@ namespace icu4x {
  */
 class BidiPairedBracketType {
 public:
-  enum Value {
-    Open = 0,
-    Close = 1,
-    None = 2,
-  };
+    enum Value {
+        Open = 0,
+        Close = 1,
+        None = 2,
+    };
 
-  BidiPairedBracketType(): value(Value::None) {}
+    BidiPairedBracketType(): value(Value::None) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr BidiPairedBracketType(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr BidiPairedBracketType(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::BidiPairedBracketType AsFFI() const;
-  inline static icu4x::BidiPairedBracketType FromFFI(icu4x::capi::BidiPairedBracketType c_enum);
+    inline icu4x::capi::BidiPairedBracketType AsFFI() const;
+    inline static icu4x::BidiPairedBracketType FromFFI(icu4x::capi::BidiPairedBracketType c_enum);
 private:
     Value value;
 };

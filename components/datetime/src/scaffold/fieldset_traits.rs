@@ -7,8 +7,8 @@ use crate::{
     scaffold::*,
 };
 use icu_calendar::{
-    provider::{CalendarChineseV1, CalendarDangiV1, CalendarJapaneseModernV1},
-    types::{DayOfMonth, DayOfYear, MonthInfo, Weekday, YearInfo},
+    provider::CalendarJapaneseModernV1,
+    types::{DayOfMonth, DayOfYear, MonthInfo, RataDie, Weekday, YearInfo},
 };
 use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV1};
 use icu_provider::{marker::NeverMarker, prelude::*};
@@ -35,6 +35,8 @@ pub trait DateInputMarkers: UnstableSealed {
     type DayOfMonthInput: IntoOption<DayOfMonth>;
     /// Marker for resolving the day-of-year input field.
     type DayOfYearInput: IntoOption<DayOfYear>;
+    /// Marker for resolving the day-of-year input field.
+    type RataDieInput: IntoOption<RataDie>;
     /// Marker for resolving the day-of-week input field.
     type DayOfWeekInput: IntoOption<Weekday>;
 }
@@ -193,6 +195,7 @@ pub trait AllInputMarkers<R: DateTimeMarkers>:
     + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
     + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
     + GetField<<R::D as DateInputMarkers>::DayOfYearInput>
+    + GetField<<R::D as DateInputMarkers>::RataDieInput>
     + GetField<<R::T as TimeMarkers>::HourInput>
     + GetField<<R::T as TimeMarkers>::MinuteInput>
     + GetField<<R::T as TimeMarkers>::SecondInput>
@@ -218,6 +221,7 @@ where
         + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
         + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
         + GetField<<R::D as DateInputMarkers>::DayOfYearInput>
+        + GetField<<R::D as DateInputMarkers>::RataDieInput>
         + GetField<<R::T as TimeMarkers>::HourInput>
         + GetField<<R::T as TimeMarkers>::MinuteInput>
         + GetField<<R::T as TimeMarkers>::SecondInput>
@@ -496,9 +500,7 @@ impl<T> AllFixedCalendarExternalDataMarkers for T where
 /// for datetime formatting with any calendar.
 // This trait is implicitly sealed due to sealed supertraits
 pub trait AllAnyCalendarExternalDataMarkers:
-    DataProvider<CalendarChineseV1>
-    + DataProvider<CalendarDangiV1>
-    + DataProvider<CalendarJapaneseModernV1>
+    DataProvider<CalendarJapaneseModernV1>
     + DataProvider<DecimalSymbolsV1>
     + DataProvider<DecimalDigitsV1>
 {
@@ -506,8 +508,6 @@ pub trait AllAnyCalendarExternalDataMarkers:
 
 impl<T> AllAnyCalendarExternalDataMarkers for T where
     T: ?Sized
-        + DataProvider<CalendarChineseV1>
-        + DataProvider<CalendarDangiV1>
         + DataProvider<CalendarJapaneseModernV1>
         + DataProvider<DecimalSymbolsV1>
         + DataProvider<DecimalDigitsV1>
@@ -519,6 +519,7 @@ impl DateInputMarkers for () {
     type MonthInput = ();
     type DayOfMonthInput = ();
     type DayOfYearInput = ();
+    type RataDieInput = ();
     type DayOfWeekInput = ();
 }
 
@@ -649,6 +650,9 @@ macro_rules! datetime_marker_helper {
     };
     (@input/day_of_year, yes) => {
         DayOfYear
+    };
+    (@input/rata_die, yes) => {
+        RataDie
     };
     (@input/hour, yes) => {
         Hour

@@ -31,21 +31,21 @@ namespace icu4x {
  */
 class DisplayNamesFallback {
 public:
-  enum Value {
-    Code = 0,
-    None = 1,
-  };
+    enum Value {
+        Code = 0,
+        None = 1,
+    };
 
-  DisplayNamesFallback(): value(Value::Code) {}
+    DisplayNamesFallback(): value(Value::Code) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr DisplayNamesFallback(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr DisplayNamesFallback(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::DisplayNamesFallback AsFFI() const;
-  inline static icu4x::DisplayNamesFallback FromFFI(icu4x::capi::DisplayNamesFallback c_enum);
+    inline icu4x::capi::DisplayNamesFallback AsFFI() const;
+    inline static icu4x::DisplayNamesFallback FromFFI(icu4x::capi::DisplayNamesFallback c_enum);
 private:
     Value value;
 };

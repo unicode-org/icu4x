@@ -31,26 +31,26 @@ namespace capi {
 namespace icu4x {
 class Weekday {
 public:
-  enum Value {
-    Monday = 1,
-    Tuesday = 2,
-    Wednesday = 3,
-    Thursday = 4,
-    Friday = 5,
-    Saturday = 6,
-    Sunday = 7,
-  };
+    enum Value {
+        Monday = 1,
+        Tuesday = 2,
+        Wednesday = 3,
+        Thursday = 4,
+        Friday = 5,
+        Saturday = 6,
+        Sunday = 7,
+    };
 
-  Weekday(): value(Value::Monday) {}
+    Weekday(): value(Value::Monday) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr Weekday(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr Weekday(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::Weekday AsFFI() const;
-  inline static icu4x::Weekday FromFFI(icu4x::capi::Weekday c_enum);
+    inline icu4x::capi::Weekday AsFFI() const;
+    inline static icu4x::Weekday FromFFI(icu4x::capi::Weekday c_enum);
 private:
     Value value;
 };

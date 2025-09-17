@@ -30,22 +30,22 @@ namespace icu4x {
  */
 class YearStyle {
 public:
-  enum Value {
-    Auto = 0,
-    Full = 1,
-    WithEra = 2,
-  };
+    enum Value {
+        Auto = 0,
+        Full = 1,
+        WithEra = 2,
+    };
 
-  YearStyle(): value(Value::Auto) {}
+    YearStyle(): value(Value::Auto) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr YearStyle(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr YearStyle(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::YearStyle AsFFI() const;
-  inline static icu4x::YearStyle FromFFI(icu4x::capi::YearStyle c_enum);
+    inline icu4x::capi::YearStyle AsFFI() const;
+    inline static icu4x::YearStyle FromFFI(icu4x::capi::YearStyle c_enum);
 private:
     Value value;
 };

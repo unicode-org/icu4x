@@ -183,12 +183,12 @@ impl Calendar for Persian {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let monotonic_year = date.0.monotonic_year();
+        let extended_year = date.0.extended_year();
         types::EraYear {
             era: tinystr!(16, "ap"),
             era_index: Some(0),
-            year: monotonic_year,
-            monotonic_year,
+            year: extended_year,
+            extended_year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     }

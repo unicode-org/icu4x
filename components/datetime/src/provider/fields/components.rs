@@ -205,15 +205,17 @@ impl Bag {
                     Day::NumericDayOfMonth | Day::TwoDigitDayOfMonth => fields::Day::DayOfMonth,
                     Day::DayOfWeekInMonth => fields::Day::DayOfWeekInMonth,
                     Day::DayOfYear => fields::Day::DayOfYear,
+                    Day::ModifiedJulianDay => fields::Day::ModifiedJulianDay,
                 }),
                 length: match day {
                     // d    1 	  Numeric day of month: minimum digits
                     // dd   01 	  Numeric day of month: 2 digits, zero pad if needed
                     // F    1  	  Numeric day of week in month: minimum digits
                     // D    1     Numeric day of year: minimum digits
-                    Day::NumericDayOfMonth | Day::DayOfWeekInMonth | Day::DayOfYear => {
-                        FieldLength::One
-                    }
+                    Day::NumericDayOfMonth
+                    | Day::DayOfWeekInMonth
+                    | Day::DayOfYear
+                    | Day::ModifiedJulianDay => FieldLength::One,
                     Day::TwoDigitDayOfMonth => FieldLength::Two,
                 },
             });
@@ -489,6 +491,8 @@ pub enum Day {
     DayOfWeekInMonth,
     /// The day of year (numeric).
     DayOfYear,
+    /// The modified Julian day (numeric)
+    ModifiedJulianDay,
 }
 
 /// Options for displaying a time zone for the `components::`[`Bag`].
@@ -657,6 +661,7 @@ impl Bag {
                         },
                         fields::Day::DayOfYear => Day::DayOfYear,
                         fields::Day::DayOfWeekInMonth => Day::DayOfWeekInMonth,
+                        fields::Day::ModifiedJulianDay => Day::ModifiedJulianDay,
                     });
                 }
                 FieldSymbol::Weekday(weekday) => {

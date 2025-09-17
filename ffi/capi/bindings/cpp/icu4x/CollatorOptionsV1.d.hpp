@@ -42,13 +42,13 @@ namespace icu4x {
  * See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/2.0.0/icu/collator/options/struct.CollatorOptions.html) for more information.
  */
 struct CollatorOptionsV1 {
-  std::optional<icu4x::CollatorStrength> strength;
-  std::optional<icu4x::CollatorAlternateHandling> alternate_handling;
-  std::optional<icu4x::CollatorMaxVariable> max_variable;
-  std::optional<icu4x::CollatorCaseLevel> case_level;
+    std::optional<icu4x::CollatorStrength> strength;
+    std::optional<icu4x::CollatorAlternateHandling> alternate_handling;
+    std::optional<icu4x::CollatorMaxVariable> max_variable;
+    std::optional<icu4x::CollatorCaseLevel> case_level;
 
-  inline icu4x::capi::CollatorOptionsV1 AsFFI() const;
-  inline static icu4x::CollatorOptionsV1 FromFFI(icu4x::capi::CollatorOptionsV1 c_struct);
+    inline icu4x::capi::CollatorOptionsV1 AsFFI() const;
+    inline static icu4x::CollatorOptionsV1 FromFFI(icu4x::capi::CollatorOptionsV1 c_struct);
 };
 
 } // namespace

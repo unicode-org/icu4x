@@ -42,55 +42,55 @@ namespace capi {
 } // namespace
 
 inline diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError> icu4x::Collator::create_v1(const icu4x::Locale& locale, icu4x::CollatorOptionsV1 options) {
-  auto result = icu4x::capi::icu4x_Collator_create_v1_mv1(locale.AsFFI(),
-    options.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::Collator>>(std::unique_ptr<icu4x::Collator>(icu4x::Collator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    auto result = icu4x::capi::icu4x_Collator_create_v1_mv1(locale.AsFFI(),
+        options.AsFFI());
+    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::Collator>>(std::unique_ptr<icu4x::Collator>(icu4x::Collator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError> icu4x::Collator::create_v1_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::CollatorOptionsV1 options) {
-  auto result = icu4x::capi::icu4x_Collator_create_v1_with_provider_mv1(provider.AsFFI(),
-    locale.AsFFI(),
-    options.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::Collator>>(std::unique_ptr<icu4x::Collator>(icu4x::Collator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    auto result = icu4x::capi::icu4x_Collator_create_v1_with_provider_mv1(provider.AsFFI(),
+        locale.AsFFI(),
+        options.AsFFI());
+    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::Collator>>(std::unique_ptr<icu4x::Collator>(icu4x::Collator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline int8_t icu4x::Collator::compare(std::string_view left, std::string_view right) const {
-  auto result = icu4x::capi::icu4x_Collator_compare_utf8_mv1(this->AsFFI(),
-    {left.data(), left.size()},
-    {right.data(), right.size()});
-  return result;
+    auto result = icu4x::capi::icu4x_Collator_compare_utf8_mv1(this->AsFFI(),
+        {left.data(), left.size()},
+        {right.data(), right.size()});
+    return result;
 }
 
 inline int8_t icu4x::Collator::compare16(std::u16string_view left, std::u16string_view right) const {
-  auto result = icu4x::capi::icu4x_Collator_compare_utf16_mv1(this->AsFFI(),
-    {left.data(), left.size()},
-    {right.data(), right.size()});
-  return result;
+    auto result = icu4x::capi::icu4x_Collator_compare_utf16_mv1(this->AsFFI(),
+        {left.data(), left.size()},
+        {right.data(), right.size()});
+    return result;
 }
 
 inline icu4x::CollatorResolvedOptionsV1 icu4x::Collator::resolved_options_v1() const {
-  auto result = icu4x::capi::icu4x_Collator_resolved_options_v1_mv1(this->AsFFI());
-  return icu4x::CollatorResolvedOptionsV1::FromFFI(result);
+    auto result = icu4x::capi::icu4x_Collator_resolved_options_v1_mv1(this->AsFFI());
+    return icu4x::CollatorResolvedOptionsV1::FromFFI(result);
 }
 
 inline const icu4x::capi::Collator* icu4x::Collator::AsFFI() const {
-  return reinterpret_cast<const icu4x::capi::Collator*>(this);
+    return reinterpret_cast<const icu4x::capi::Collator*>(this);
 }
 
 inline icu4x::capi::Collator* icu4x::Collator::AsFFI() {
-  return reinterpret_cast<icu4x::capi::Collator*>(this);
+    return reinterpret_cast<icu4x::capi::Collator*>(this);
 }
 
 inline const icu4x::Collator* icu4x::Collator::FromFFI(const icu4x::capi::Collator* ptr) {
-  return reinterpret_cast<const icu4x::Collator*>(ptr);
+    return reinterpret_cast<const icu4x::Collator*>(ptr);
 }
 
 inline icu4x::Collator* icu4x::Collator::FromFFI(icu4x::capi::Collator* ptr) {
-  return reinterpret_cast<icu4x::Collator*>(ptr);
+    return reinterpret_cast<icu4x::Collator*>(ptr);
 }
 
 inline void icu4x::Collator::operator delete(void* ptr) {
-  icu4x::capi::icu4x_Collator_destroy_mv1(reinterpret_cast<icu4x::capi::Collator*>(ptr));
+    icu4x::capi::icu4x_Collator_destroy_mv1(reinterpret_cast<icu4x::capi::Collator*>(ptr));
 }
 
 

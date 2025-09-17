@@ -126,11 +126,14 @@ template<> struct WriteTrait<std::string> {
 
 template<class T> struct Ok {
   T inner;
+
+  // Move constructor always allowed
   Ok(T&& i): inner(std::forward<T>(i)) {}
-  // We don't want to expose an lvalue-capable constructor in general
-  // however there is no problem doing this for trivially copyable types
+
+  //  copy constructor allowed only for trivially copyable types
   template<typename X = T, typename = typename std::enable_if<std::is_trivially_copyable<X>::value>::type>
-  Ok(T i): inner(i) {}
+  Ok(const T& i) : inner(i) {}
+
   Ok() = default;
   Ok(Ok&&) noexcept = default;
   Ok(const Ok &) = default;
@@ -138,13 +141,17 @@ template<class T> struct Ok {
   Ok& operator=(Ok&&) noexcept = default;
 };
 
+
 template<class T> struct Err {
   T inner;
+
+  // Move constructor always allowed
   Err(T&& i): inner(std::forward<T>(i)) {}
-  // We don't want to expose an lvalue-capable constructor in general
-  // however there is no problem doing this for trivially copyable types
+
+  //  copy constructor allowed only for trivially copyable types
   template<typename X = T, typename = typename std::enable_if<std::is_trivially_copyable<X>::value>::type>
-  Err(T i): inner(i) {}
+  Err(const T& i) : inner(i) {}
+
   Err() = default;
   Err(Err&&) noexcept = default;
   Err(const Err &) = default;
