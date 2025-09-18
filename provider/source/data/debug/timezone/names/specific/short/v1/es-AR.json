@@ -2,14 +2,14 @@
   "defaults": [
     [
       [
-        16,
+        15,
         "Standard"
       ],
       "ART"
     ],
     [
       [
-        16,
+        15,
         "Daylight"
       ],
       "ARST"

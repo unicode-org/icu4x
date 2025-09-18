@@ -83,12 +83,6 @@ impl SourceDataProvider {
                     .supplemental
                     .meta_zones;
 
-                let metazones_patch =
-                    serde_json::from_str::<cldr_serde::time_zones::meta_zones::Resource>(include_str!("../../data/metaZonesPatched.json"))
-                    .unwrap()
-                    .supplemental
-                    .meta_zones;
-
                 let tzdb = self.tzdb()?.parsed()?;
 
                 let bcp47_tzid_data = self.iana_to_bcp47_map()?;
@@ -113,7 +107,6 @@ impl SourceDataProvider {
                     .meta_zones_territory
                     .0
                     .iter()
-                    .chain(metazones_patch.meta_zones_territory.0.iter())
                     .filter_map(|mt| {
                         if mt.map_zone.territory != region!("001") {
                             return None;
@@ -126,7 +119,6 @@ impl SourceDataProvider {
                     .meta_zone_info
                     .time_zone
                     .iter()
-                    .chain(metazones_patch.meta_zone_info.time_zone.iter())
                     .map(|(iana, periods)| {
                         let &bcp47 = bcp47_tzid_data.get(&iana).unwrap();
                         let mut periods = periods
@@ -559,26 +551,15 @@ impl SourceDataProvider {
 
                 for (&bcp47_tzid, bcp47_tzid_data) in bcp47_tzids_resource {
                     regions_to_zones
-                        .entry(match bcp47_tzid.as_str() {
-                            // backfill since this data is not in 47 yet
-                            "ancur" => region!("CW"),
-                            "fimhq" => region!("AX"),
-                            "gpmsb" => region!("MF"),
-                            "gpsbh" => region!("BL"),
-                            "gazastrp" | "hebron" => region!("PS"),
-                            "jeruslm" => region!("IL"),
-                            _ => {
-                                if bcp47_tzid_data.deprecated == Some(true) {
-                                    continue;
-                                } else if let Some(region) = bcp47_tzid_data.region {
-                                    region
-                                } else if bcp47_tzid.0.len() != 5 {
-                                    // Length-5 ID without override, no region
-                                    continue;
-                                } else {
-                                    bcp47_tzid.as_str()[0..2].parse().unwrap()
-                                }
-                            }
+                        .entry(if bcp47_tzid_data.deprecated == Some(true) {
+                            continue;
+                        } else if let Some(region) = bcp47_tzid_data.region {
+                            region
+                        } else if bcp47_tzid.0.len() != 5 {
+                            // Length-5 ID without override, no region
+                            continue;
+                        } else {
+                            bcp47_tzid.as_str()[0..2].parse().unwrap()
                         })
                         .or_default()
                         .insert(bcp47_tzid);

@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "47"
+      "_cldrVersion": "48"
     },
     "weekData": {
       "minDays": {
@@ -127,7 +127,7 @@
         "IN": "sun",
         "IQ": "sat",
         "IR": "sat",
-        "IS": "mon",
+        "IS": "sun",
         "IT": "mon",
         "JM": "sun",
         "JO": "sat",

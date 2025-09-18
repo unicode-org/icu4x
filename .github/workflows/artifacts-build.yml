@@ -239,7 +239,8 @@ jobs:
     - name: Install Dart
       uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
       with:
-        sdk: 3.9.0-138.0.dev
+        # Keep in sync with build-test.yml
+        sdk: 3.10.0-186.0.dev
         
     - name: Build docs
       run: |

@@ -11,7 +11,7 @@
   ],
   "elements": [
     "MMMM y GGG",
-    "MMM y GGG",
-    "MMM y GGGGG"
+    "GGG y-MM",
+    "GGGGG y-M"
   ]
 }

@@ -9,6 +9,7 @@
 
 use crate::time_zones::Timestamp;
 use icu::locale::subtags::Region;
+use icu::time::Time;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
@@ -129,8 +130,13 @@ fn deserialize_date<'de, D: serde::de::Deserializer<'de>>(
         return Ok(None);
     };
 
-    let DateTime { date, time } = DateTime::try_from_str(&timestamp, Iso)
+    let DateTime { date, mut time } = DateTime::try_from_str(&timestamp, Iso)
         .map_err(|_| D::Error::custom("Invalid metazone timestamp"))?;
+
+    // https://unicode-org.atlassian.net/browse/CLDR-18988
+    if time == Time::try_new(0, 45, 0, 0).unwrap() {
+        time = Time::try_new(0, 44, 30, 0).unwrap()
+    }
 
     Ok(Some(Timestamp {
         date,

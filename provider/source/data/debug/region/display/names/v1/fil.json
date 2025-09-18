@@ -1,6 +1,6 @@
 {
   "names": {
-    "001": "Mundo",
+    "001": "mundo",
     "002": "Africa",
     "003": "Hilagang Amerika",
     "005": "Timog Amerika",
@@ -82,6 +82,7 @@
     "CN": "China",
     "CO": "Colombia",
     "CP": "Clipperton Island",
+    "CQ": "Sark",
     "CR": "Costa Rica",
     "CU": "Cuba",
     "CV": "Cape Verde",
@@ -296,7 +297,7 @@
     "ZZ": "Hindi Kilalang Rehiyon"
   },
   "short_names": {
-    "GB": "U.K.",
+    "GB": "UK",
     "HK": "Hong Kong",
     "MO": "Macau",
     "PS": "Palestine",

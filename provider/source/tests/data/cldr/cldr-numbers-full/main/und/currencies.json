@@ -260,6 +260,9 @@
           "RWF": {
             "symbol-alt-narrow": "RF"
           },
+          "SAR": {
+            "symbol-alt-variant": "⃁"
+          },
           "SBD": {
             "symbol-alt-narrow": "$"
           },
