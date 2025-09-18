@@ -45,7 +45,7 @@ impl CldrCalendar for () {
 
 impl CldrCalendar for Buddhist {
     type YearNamesV1 = DatetimeNamesYearBuddhistV1;
-    type MonthNamesV1 = DatetimeNamesMonthBuddhistV1;
+    type MonthNamesV1 = DatetimeNamesMonthGregorianV1;
     type SkeletaV1 = DatetimePatternsDateBuddhistV1;
 }
 
@@ -99,14 +99,14 @@ impl<S: hijri::HijriSighting> CldrCalendar for Hijri<S> {
 
 impl CldrCalendar for Japanese {
     type YearNamesV1 = DatetimeNamesYearJapaneseV1;
-    type MonthNamesV1 = DatetimeNamesMonthJapaneseV1;
+    type MonthNamesV1 = DatetimeNamesMonthGregorianV1;
     type SkeletaV1 = DatetimePatternsDateJapaneseV1;
 }
 
 impl CldrCalendar for JapaneseExtended {
     type YearNamesV1 = DatetimeNamesYearJapanextV1;
-    type MonthNamesV1 = DatetimeNamesMonthJapanextV1;
-    type SkeletaV1 = DatetimePatternsDateJapanextV1;
+    type MonthNamesV1 = DatetimeNamesMonthGregorianV1;
+    type SkeletaV1 = DatetimePatternsDateJapaneseV1;
 }
 
 impl CldrCalendar for Persian {
@@ -117,7 +117,7 @@ impl CldrCalendar for Persian {
 
 impl CldrCalendar for Roc {
     type YearNamesV1 = DatetimeNamesYearRocV1;
-    type MonthNamesV1 = DatetimeNamesMonthRocV1;
+    type MonthNamesV1 = DatetimeNamesMonthGregorianV1;
     type SkeletaV1 = DatetimePatternsDateRocV1;
 }
 
