@@ -27,7 +27,7 @@ define_preferences!(
         /// The user's preferred numbering system.
         ///
         /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
-        numbering_system: super::super::preferences::NumberingSystem
+        numbering_system: crate::dimension::preferences::NumberingSystem
     }
 );
 prefs_convert!(UnitsFormatterPreferences, DecimalFormatterPreferences, {
