@@ -13,6 +13,7 @@ This is a checklist of things that should be done in the weeks leading to the re
 
 * [ ] Verify that the milestone and checklist are complete
 * [ ] Verify with component owners that they're ready for release
+* [ ] Verify that the semver breakages (listed by the build-test job) are acceptable
 * [ ] Take a bird-eye view at:
   * [ ] READMEs
   * [ ] Documentation
