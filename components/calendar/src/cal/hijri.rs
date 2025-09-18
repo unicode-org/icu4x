@@ -500,8 +500,10 @@ where
     let (ordinal_month, _is_leap) = month_code
         .parsed()
         .ok_or(DateError::UnknownMonthCode(month_code))?;
-    let dec_31 = Date::from_raw(IsoDateInner(Iso::LAST_DAY_OF_REFERENCE_YEAR), Iso)
-        .to_calendar(crate::Ref(cal));
+    let dec_31 = Date::from_rata_die(
+        crate::cal::abstract_gregorian::LAST_DAY_OF_REFERENCE_YEAR,
+        crate::Ref(cal),
+    );
     // December 31, 1972 occurs in the 11th month, 1392 AH, but the day could vary
     debug_assert_eq!(dec_31.month().ordinal, 11);
     let (y0, y1, y2, y3) =

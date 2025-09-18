@@ -179,7 +179,7 @@ impl DateFieldsResolver for Japanese {
         _month_code: types::MonthCode,
         _day: u8,
     ) -> Result<Self::YearInfo, DateError> {
-        Ok(Iso::REFERENCE_YEAR)
+        Ok(crate::cal::abstract_gregorian::REFERENCE_YEAR)
     }
 }
 

@@ -562,7 +562,7 @@ impl<X: Rules> Calendar for LunarChinese<X> {
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
         let iso = Iso.from_rata_die(rd);
         let y = {
-            let actual_iso = iso.iso_year();
+            let actual_iso = iso.0.extended_year();
             let candidate = self.0.year_data(actual_iso);
 
             if rd >= candidate.new_year() {
@@ -582,7 +582,7 @@ impl<X: Rules> Calendar for LunarChinese<X> {
     fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
         let rd = Iso.to_rata_die(&iso);
         let y = {
-            let actual_iso = iso.iso_year();
+            let actual_iso = iso.0.extended_year();
             let candidate = self.0.year_data(actual_iso);
 
             if rd >= candidate.new_year() {
