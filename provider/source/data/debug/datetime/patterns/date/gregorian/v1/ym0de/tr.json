@@ -7,13 +7,14 @@
     0,
     4,
     5,
-    5
+    6
   ],
   "elements": [
     "d MMMM y EEEE",
     "d MMM y E",
     "d.MM.y E",
     "GGG d MMMM y EEEE",
-    "GGG d MMM y E"
+    "GGG d MMM y E",
+    "GGG d.MM.y E"
   ]
 }

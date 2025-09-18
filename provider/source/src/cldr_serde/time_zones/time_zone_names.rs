@@ -33,30 +33,8 @@ impl Metazone {
     }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub(crate) struct Metazones(pub(crate) BTreeMap<String, Metazone>);
-
-// TODO(CLDR-18858): upstream
-impl<'de> Deserialize<'de> for Metazones {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let mut raw = BTreeMap::<String, Metazone>::deserialize(deserializer)?;
-        if let Some(wat) = raw.get_mut("Africa_Western") {
-            for ns in [wat.long.as_mut(), wat.short.as_mut()]
-                .into_iter()
-                .flatten()
-            {
-                if let Some(generic) = ns.0.remove("generic") {
-                    ns.0.insert("standard".into(), generic);
-                }
-                ns.0.remove("daylight");
-            }
-        }
-        Ok(Self(raw))
-    }
-}
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 // Since this value can be either a Location or a table of sub-regions, we use
@@ -107,6 +85,7 @@ pub(crate) struct TimeZoneNames {
     pub(crate) hour_format: String,
     pub(crate) gmt_format: PatternString<SinglePlaceholder>,
     pub(crate) gmt_zero_format: String,
+    pub(crate) gmt_unknown_format: String,
     pub(crate) region_format: PatternString<SinglePlaceholder>,
     pub(crate) region_format_dt: PatternString<SinglePlaceholder>,
     pub(crate) region_format_st: PatternString<SinglePlaceholder>,
@@ -140,6 +119,9 @@ impl<'de> Visitor<'de> for TimeZoneNamesVisitor {
             } else if key.eq("gmtZeroFormat") {
                 let value = map.next_value::<String>()?;
                 time_zone_names.gmt_zero_format = value;
+            } else if key.eq("gmtUnknownFormat") {
+                let value = map.next_value::<String>()?;
+                time_zone_names.gmt_unknown_format = value;
             } else if key.eq("fallbackFormat") {
                 let value = map.next_value::<PatternString<DoublePlaceholder>>()?;
                 time_zone_names.fallback_format = value;

@@ -4,7 +4,7 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 740B[^1] for the singleton data struct
+/// * 756B[^1] for the singleton data struct
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 ///
@@ -21,7 +21,7 @@ macro_rules! __impl_locale_script_direction_v1 {
         #[clippy::msrv = "1.82"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_LOCALE_SCRIPT_DIRECTION_V1: &'static <icu::locale::provider::LocaleScriptDirectionV1 as icu_provider::DynamicDataMarker>::DataStruct = &icu::locale::provider::ScriptDirection { rtl: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"AdlmArabArmiAvstChrsCprtElymGaraHatrHebrHungKharLydiMandManiMendMercMeroNarbNbatNkooOrkhOugrPalmPhliPhlpPhnxPrtiRohgSamrSarbSogdSogoSyrcThaaYezi") }, ltr: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"AghbAhomArmnBaliBamuBassBatkBengBhksBopoBrahBugiBuhdCakmCansCariChamCherCoptCpmnCyrlDevaDiakDogrDsrtDuplEgypElbaEthiGeorGlagGongGonmGothGranGrekGujrGukhGuruHanbHangHaniHanoHansHantHiraHluwHmngHmnpItalJamoJavaJpanKaliKanaKawiKhmrKhojKitsKndaKoreKraiKthiLanaLaooLatnLepcLimbLinaLinbLisuLyciMahjMakaMarcMedfMlymModiMongMrooMteiMultMymrNagmNandNewaNshuOgamOlckOnaoOryaOsgeOsmaPaucPermPhagPlrdRjngRunrSaurSgnwShawShrdSiddSindSinhSoraSoyoSundSunuSyloTagbTakrTaleTaluTamlTangTavtTeluTfngTglgThaiTibtTirhTnsaTodrTotoTutgUgarVaiiVithWaraWchoXpeoXsuxYiiiZanb") } };
+            pub const SINGLETON_LOCALE_SCRIPT_DIRECTION_V1: &'static <icu::locale::provider::LocaleScriptDirectionV1 as icu_provider::DynamicDataMarker>::DataStruct = &icu::locale::provider::ScriptDirection { rtl: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"AdlmArabArmiAvstChrsCprtElymGaraHatrHebrHungKharLydiMandManiMendMercMeroNarbNbatNkooOrkhOugrPalmPhliPhlpPhnxPrtiRohgSamrSarbSidtSogdSogoSyrcThaaYezi") }, ltr: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"AghbAhomArmnBaliBamuBassBatkBengBerfBhksBopoBrahBugiBuhdCakmCansCariChamCherCoptCpmnCyrlDevaDiakDogrDsrtDuplEgypElbaEthiGeorGlagGongGonmGothGranGrekGujrGukhGuruHanbHangHaniHanoHansHantHiraHluwHmngHmnpItalJamoJavaJpanKaliKanaKawiKhmrKhojKitsKndaKoreKraiKthiLanaLaooLatnLepcLimbLinaLinbLisuLyciMahjMakaMarcMedfMlymModiMongMrooMteiMultMymrNagmNandNewaNshuOgamOlckOnaoOryaOsgeOsmaPaucPermPhagPlrdRjngRunrSaurSgnwShawShrdSiddSindSinhSoraSoyoSundSunuSyloTagbTakrTaleTaluTamlTangTavtTayoTeluTfngTglgThaiTibtTirhTnsaTodrTolsTotoTutgUgarVaiiVithWaraWchoXpeoXsuxYiiiZanb") } };
         }
         #[clippy::msrv = "1.82"]
         impl icu_provider::DataProvider<icu::locale::provider::LocaleScriptDirectionV1> for $provider {

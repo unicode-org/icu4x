@@ -9,7 +9,10 @@
         "auxiliary": "[{а́} {е́} {и́} {о́} {у́} {ы́} {э́} {ю́} {я́}]",
         "index": "[А Б В Г Д ЕЁ Ж З И Й К Л М Н О П Р С Т У Ф Х Ц Ч Ш Щ Ы Э Ю Я]",
         "numbers": "[  \\- ‑ , % ‰ + 0 1 2 3 4 5 6 7 8 9]",
+        "numbers-auxiliary": "[. / A B C D E F I L M V X]",
         "punctuation": "[\\- ‐‑ – — , ; \\: ! ? . … '‘‚ \"“„ « » ( ) \\[ \\] \\{ \\} § @ * / \\& #]",
+        "punctuation-auxiliary": "[· + < = > ~ №]",
+        "punctuation-person": "[\\- ‑ . '’ ( )]",
         "ellipsis": {
           "final": "{0}…",
           "initial": "…{0}",

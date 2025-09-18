@@ -31,9 +31,9 @@
           },
           "year-short": {
             "displayName": "an",
-            "relative-type--1": "l’année dernière",
+            "relative-type--1": "l’an dernier",
             "relative-type-0": "cette année",
-            "relative-type-1": "l’année prochaine",
+            "relative-type-1": "l’an prochain",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "dans {0} a",
               "relativeTimePattern-count-other": "dans {0} a"
@@ -45,9 +45,9 @@
           },
           "year-narrow": {
             "displayName": "a",
-            "relative-type--1": "l’année dernière",
+            "relative-type--1": "l’an dernier",
             "relative-type-0": "cette année",
-            "relative-type-1": "l’année prochaine",
+            "relative-type-1": "l’an prochain",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "+{0} a",
               "relativeTimePattern-count-other": "+{0} a"

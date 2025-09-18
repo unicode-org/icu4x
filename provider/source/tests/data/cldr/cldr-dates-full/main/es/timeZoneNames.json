@@ -9,6 +9,7 @@
           "hourFormat": "+HH:mm;-HH:mm",
           "gmtFormat": "GMT{0}",
           "gmtZeroFormat": "GMT",
+          "gmtUnknownFormat": "GMT+?",
           "regionFormat": "hora de {0}",
           "regionFormat-type-daylight": "horario de verano de {0}",
           "regionFormat-type-standard": "horario estándar de {0}",
@@ -41,7 +42,7 @@
               },
               "Enderbury": {
                 "_type": "zone",
-                "exemplarCity": "Enderbury"
+                "exemplarCity": "Isla Kanton"
               },
               "Saipan": {
                 "_type": "zone",
@@ -58,6 +59,10 @@
               "Palau": {
                 "_type": "zone",
                 "exemplarCity": "Palaos"
+              },
+              "Wallis": {
+                "_type": "zone",
+                "exemplarCity": "Wallis & Futuna"
               }
             },
             "Etc": {
@@ -175,6 +180,10 @@
               "Rangoon": {
                 "_type": "zone",
                 "exemplarCity": "Yangón (Rangún)"
+              },
+              "Hovd": {
+                "_type": "zone",
+                "exemplarCity": "Khovd"
               },
               "Ulaanbaatar": {
                 "_type": "zone",
@@ -556,6 +565,10 @@
                 "_type": "zone",
                 "exemplarCity": "Praga"
               },
+              "Busingen": {
+                "_type": "zone",
+                "exemplarCity": "Büsingen"
+              },
               "Berlin": {
                 "_type": "zone",
                 "exemplarCity": "Berlín"
@@ -696,6 +709,10 @@
               }
             },
             "Antarctica": {
+              "Syowa": {
+                "_type": "zone",
+                "exemplarCity": "Showa"
+              },
               "DumontDUrville": {
                 "_type": "zone",
                 "exemplarCity": "Dumont-d’Urville"
@@ -892,9 +909,7 @@
             },
             "Africa_Western": {
               "long": {
-                "generic": "hora de África occidental",
-                "standard": "hora estándar de África occidental",
-                "daylight": "hora de verano de África occidental"
+                "standard": "hora de África occidental"
               }
             },
             "Alaska": {
@@ -1286,6 +1301,11 @@
             "Guyana": {
               "long": {
                 "standard": "hora de Guyana"
+              }
+            },
+            "Hawaii": {
+              "long": {
+                "standard": "hora estándar de Hawái-Aleutianas"
               }
             },
             "Hawaii_Aleutian": {
@@ -1736,6 +1756,13 @@
             "Truk": {
               "long": {
                 "standard": "hora de Chuuk"
+              }
+            },
+            "Turkey": {
+              "long": {
+                "generic": "Hora de Turquía",
+                "standard": "Hora estándar de Turquía",
+                "daylight": "Hora de verano de Turquía"
               }
             },
             "Turkmenistan": {

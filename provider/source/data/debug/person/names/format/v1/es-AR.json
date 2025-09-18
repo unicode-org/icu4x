@@ -131,7 +131,7 @@
     {
       "attributes": 1188,
       "patterns": [
-        "{surname} {surname2}, {given-informal}",
+        "{surname}, {given-informal}",
         "{surname} {surname2}, {given-informal}"
       ]
     },
