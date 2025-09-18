@@ -31,7 +31,8 @@ type FormattingInfo = (
     DataLocale,
     DecimalFormatter,
     PluralRules,
-    SmallVec<[u8; 32]>,
+    // Holds the attributes.
+    SmallVec<[u8; 32]>, // TODO: Remove this once we have separate markers for different widths.
 );
 
 define_preferences!(
@@ -42,7 +43,7 @@ define_preferences!(
         /// The user's preferred numbering system.
         ///
         /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
-        numbering_system: super::super::preferences::NumberingSystem
+        numbering_system: crate::dimension::preferences::NumberingSystem
     }
 );
 prefs_convert!(
