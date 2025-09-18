@@ -1,5 +1,5 @@
-#ifndef icu4x_LocaleFallbackerWithConfig_D_HPP
-#define icu4x_LocaleFallbackerWithConfig_D_HPP
+#ifndef ICU4X_LocaleFallbackerWithConfig_D_HPP
+#define ICU4X_LocaleFallbackerWithConfig_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,14 +9,14 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct Locale; }
 class Locale;
 namespace capi { struct LocaleFallbackIterator; }
 class LocaleFallbackIterator;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -36,11 +36,11 @@ namespace icu4x {
 class LocaleFallbackerWithConfig {
 public:
 
-  /**
+    /**
      * Creates an iterator from a locale with each step of fallback.
      *
      * See the [Rust documentation for `fallback_for`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.fallback_for) for more information.
-   */
+     */
   inline std::unique_ptr<icu4x::LocaleFallbackIterator> fallback_for_locale(const icu4x::Locale& locale) const;
 
     inline const icu4x::capi::LocaleFallbackerWithConfig* AsFFI() const;
@@ -58,4 +58,4 @@ private:
 };
 
 } // namespace
-#endif // icu4x_LocaleFallbackerWithConfig_D_HPP
+#endif // ICU4X_LocaleFallbackerWithConfig_D_HPP

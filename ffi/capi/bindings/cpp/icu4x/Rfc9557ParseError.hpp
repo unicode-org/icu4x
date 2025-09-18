@@ -1,5 +1,5 @@
-#ifndef icu4x_Rfc9557ParseError_HPP
-#define icu4x_Rfc9557ParseError_HPP
+#ifndef ICU4X_Rfc9557ParseError_HPP
+#define ICU4X_Rfc9557ParseError_HPP
 
 #include "Rfc9557ParseError.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -38,4 +38,4 @@ inline icu4x::Rfc9557ParseError icu4x::Rfc9557ParseError::FromFFI(icu4x::capi::R
             std::abort();
     }
 }
-#endif // icu4x_Rfc9557ParseError_HPP
+#endif // ICU4X_Rfc9557ParseError_HPP

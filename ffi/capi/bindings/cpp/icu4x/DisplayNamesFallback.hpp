@@ -1,5 +1,5 @@
-#ifndef icu4x_DisplayNamesFallback_HPP
-#define icu4x_DisplayNamesFallback_HPP
+#ifndef ICU4X_DisplayNamesFallback_HPP
+#define ICU4X_DisplayNamesFallback_HPP
 
 #include "DisplayNamesFallback.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -35,4 +35,4 @@ inline icu4x::DisplayNamesFallback icu4x::DisplayNamesFallback::FromFFI(icu4x::c
             std::abort();
     }
 }
-#endif // icu4x_DisplayNamesFallback_HPP
+#endif // ICU4X_DisplayNamesFallback_HPP

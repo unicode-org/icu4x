@@ -1,5 +1,5 @@
-#ifndef icu4x_SentenceBreak_HPP
-#define icu4x_SentenceBreak_HPP
+#ifndef ICU4X_SentenceBreak_HPP
+#define ICU4X_SentenceBreak_HPP
 
 #include "SentenceBreak.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -20,10 +20,10 @@ namespace capi {
 
     icu4x::capi::SentenceBreak icu4x_SentenceBreak_for_char_mv1(char32_t ch);
 
-    typedef struct icu4x_SentenceBreak_long_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_SentenceBreak_long_name_mv1_result;
+    typedef struct icu4x_SentenceBreak_long_name_mv1_result {union {icu4x::diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_SentenceBreak_long_name_mv1_result;
     icu4x_SentenceBreak_long_name_mv1_result icu4x_SentenceBreak_long_name_mv1(icu4x::capi::SentenceBreak self);
 
-    typedef struct icu4x_SentenceBreak_short_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_SentenceBreak_short_name_mv1_result;
+    typedef struct icu4x_SentenceBreak_short_name_mv1_result {union {icu4x::diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_SentenceBreak_short_name_mv1_result;
     icu4x_SentenceBreak_short_name_mv1_result icu4x_SentenceBreak_short_name_mv1(icu4x::capi::SentenceBreak self);
 
     uint8_t icu4x_SentenceBreak_to_integer_value_mv1(icu4x::capi::SentenceBreak self);
@@ -86,4 +86,4 @@ inline std::optional<icu4x::SentenceBreak> icu4x::SentenceBreak::from_integer_va
     auto result = icu4x::capi::icu4x_SentenceBreak_from_integer_value_mv1(other);
     return result.is_ok ? std::optional<icu4x::SentenceBreak>(icu4x::SentenceBreak::FromFFI(result.ok)) : std::nullopt;
 }
-#endif // icu4x_SentenceBreak_HPP
+#endif // ICU4X_SentenceBreak_HPP

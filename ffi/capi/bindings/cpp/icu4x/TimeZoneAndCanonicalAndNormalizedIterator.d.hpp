@@ -1,5 +1,5 @@
-#ifndef icu4x_TimeZoneAndCanonicalAndNormalizedIterator_D_HPP
-#define icu4x_TimeZoneAndCanonicalAndNormalizedIterator_D_HPP
+#ifndef ICU4X_TimeZoneAndCanonicalAndNormalizedIterator_D_HPP
+#define ICU4X_TimeZoneAndCanonicalAndNormalizedIterator_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,11 +9,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 struct TimeZoneAndCanonicalAndNormalized;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -29,9 +29,9 @@ namespace icu4x {
 class TimeZoneAndCanonicalAndNormalizedIterator {
 public:
 
-  /**
+    /**
      * See the [Rust documentation for `next`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalizedIter.html#method.next) for more information.
-   */
+     */
   inline std::optional<icu4x::TimeZoneAndCanonicalAndNormalized> next();
 
     inline const icu4x::capi::TimeZoneAndCanonicalAndNormalizedIterator* AsFFI() const;
@@ -49,4 +49,4 @@ private:
 };
 
 } // namespace
-#endif // icu4x_TimeZoneAndCanonicalAndNormalizedIterator_D_HPP
+#endif // ICU4X_TimeZoneAndCanonicalAndNormalizedIterator_D_HPP

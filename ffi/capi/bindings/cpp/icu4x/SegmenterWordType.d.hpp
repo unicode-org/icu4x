@@ -1,5 +1,5 @@
-#ifndef icu4x_SegmenterWordType_D_HPP
-#define icu4x_SegmenterWordType_D_HPP
+#ifndef ICU4X_SegmenterWordType_D_HPP
+#define ICU4X_SegmenterWordType_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -44,9 +44,9 @@ public:
     // Prevent usage as boolean value
     explicit operator bool() const = delete;
 
-  /**
+    /**
      * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
-   */
+     */
   inline bool is_word_like() const;
 
     inline icu4x::capi::SegmenterWordType AsFFI() const;
@@ -56,4 +56,4 @@ private:
 };
 
 } // namespace
-#endif // icu4x_SegmenterWordType_D_HPP
+#endif // ICU4X_SegmenterWordType_D_HPP

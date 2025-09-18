@@ -1,5 +1,5 @@
-#ifndef icu4x_ReorderedIndexMap_D_HPP
-#define icu4x_ReorderedIndexMap_D_HPP
+#ifndef ICU4X_ReorderedIndexMap_D_HPP
+#define ICU4X_ReorderedIndexMap_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -29,26 +29,26 @@ namespace icu4x {
 class ReorderedIndexMap {
 public:
 
-  /**
+    /**
      * Get this as a slice/array of indices
-   */
-  inline diplomat::span<const size_t> as_slice() const;
+     */
+  inline icu4x::diplomat::span<const size_t> as_slice() const;
 
-  /**
+    /**
      * The length of this map
-   */
+     */
   inline size_t len() const;
 
-  /**
+    /**
      * Whether this map is empty
-   */
+     */
   inline bool is_empty() const;
 
-  /**
+    /**
      * Get element at `index`. Returns 0 when out of bounds
      * (note that 0 is also a valid in-bounds value, please use `len()`
      * to avoid out-of-bounds)
-   */
+     */
   inline size_t operator[](size_t index) const;
 
     inline const icu4x::capi::ReorderedIndexMap* AsFFI() const;
@@ -66,4 +66,4 @@ private:
 };
 
 } // namespace
-#endif // icu4x_ReorderedIndexMap_D_HPP
+#endif // ICU4X_ReorderedIndexMap_D_HPP

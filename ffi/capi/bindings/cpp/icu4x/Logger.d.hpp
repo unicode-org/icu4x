@@ -1,5 +1,5 @@
-#ifndef icu4x_Logger_D_HPP
-#define icu4x_Logger_D_HPP
+#ifndef ICU4X_Logger_D_HPP
+#define ICU4X_Logger_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -25,13 +25,13 @@ namespace icu4x {
 class Logger {
 public:
 
-  /**
+    /**
      * Initialize the logger using `simple_logger`
      *
      * Requires the `simple_logger` Cargo feature.
      *
      * Returns `false` if there was already a logger set.
-   */
+     */
   inline static bool init_simple_logger();
 
     inline const icu4x::capi::Logger* AsFFI() const;
@@ -49,4 +49,4 @@ private:
 };
 
 } // namespace
-#endif // icu4x_Logger_D_HPP
+#endif // ICU4X_Logger_D_HPP

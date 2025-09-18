@@ -1,5 +1,5 @@
-#ifndef icu4x_TimeZoneAndCanonicalAndNormalizedIterator_HPP
-#define icu4x_TimeZoneAndCanonicalAndNormalizedIterator_HPP
+#ifndef ICU4X_TimeZoneAndCanonicalAndNormalizedIterator_HPP
+#define ICU4X_TimeZoneAndCanonicalAndNormalizedIterator_HPP
 
 #include "TimeZoneAndCanonicalAndNormalizedIterator.d.hpp"
 
@@ -11,8 +11,8 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "TimeZoneAndCanonicalAndNormalized.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -54,4 +54,4 @@ inline void icu4x::TimeZoneAndCanonicalAndNormalizedIterator::operator delete(vo
 }
 
 
-#endif // icu4x_TimeZoneAndCanonicalAndNormalizedIterator_HPP
+#endif // ICU4X_TimeZoneAndCanonicalAndNormalizedIterator_HPP

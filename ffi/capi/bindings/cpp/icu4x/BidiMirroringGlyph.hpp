@@ -1,5 +1,5 @@
-#ifndef icu4x_BidiMirroringGlyph_HPP
-#define icu4x_BidiMirroringGlyph_HPP
+#ifndef ICU4X_BidiMirroringGlyph_HPP
+#define ICU4X_BidiMirroringGlyph_HPP
 
 #include "BidiMirroringGlyph.d.hpp"
 
@@ -11,8 +11,8 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "BidiPairedBracketType.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -33,7 +33,7 @@ inline icu4x::BidiMirroringGlyph icu4x::BidiMirroringGlyph::for_char(char32_t ch
 
 inline icu4x::capi::BidiMirroringGlyph icu4x::BidiMirroringGlyph::AsFFI() const {
     return icu4x::capi::BidiMirroringGlyph {
-        /* .mirroring_glyph = */ mirroring_glyph.has_value() ? (diplomat::capi::OptionChar{ { mirroring_glyph.value() }, true }) : (diplomat::capi::OptionChar{ {}, false }),
+        /* .mirroring_glyph = */ mirroring_glyph.has_value() ? (icu4x::diplomat::capi::OptionChar{ { mirroring_glyph.value() }, true }) : (icu4x::diplomat::capi::OptionChar{ {}, false }),
         /* .mirrored = */ mirrored,
         /* .paired_bracket_type = */ paired_bracket_type.AsFFI(),
     };
@@ -48,4 +48,4 @@ inline icu4x::BidiMirroringGlyph icu4x::BidiMirroringGlyph::FromFFI(icu4x::capi:
 }
 
 
-#endif // icu4x_BidiMirroringGlyph_HPP
+#endif // ICU4X_BidiMirroringGlyph_HPP

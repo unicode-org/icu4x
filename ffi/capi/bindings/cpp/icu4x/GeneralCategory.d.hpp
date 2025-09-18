@@ -1,5 +1,5 @@
-#ifndef icu4x_GeneralCategory_D_HPP
-#define icu4x_GeneralCategory_D_HPP
+#ifndef ICU4X_GeneralCategory_D_HPP
+#define ICU4X_GeneralCategory_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,12 +9,12 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 struct GeneralCategoryGroup;
 class GeneralCategory;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -103,42 +103,42 @@ public:
     // Prevent usage as boolean value
     explicit operator bool() const = delete;
 
-  /**
+    /**
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
-   */
+     */
   inline static icu4x::GeneralCategory for_char(char32_t ch);
 
-  /**
+    /**
      * Convert to an integer using the ICU4C integer mappings for `General_Category`
      * Get the "long" name of this property value (returns empty if property value is unknown)
      *
      * See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
-   */
+     */
   inline std::optional<std::string_view> long_name() const;
 
-  /**
+    /**
      * Get the "short" name of this property value (returns empty if property value is unknown)
      *
      * See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
-   */
+     */
   inline std::optional<std::string_view> short_name() const;
 
-  /**
+    /**
      * Convert to an integer value usable with ICU4C and CodePointMapData
-   */
+     */
   inline uint8_t to_integer_value() const;
 
-  /**
+    /**
      * Produces a GeneralCategoryGroup mask that can represent a group of general categories
      *
      * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
-   */
+     */
   inline icu4x::GeneralCategoryGroup to_group() const;
 
-  /**
+    /**
      * Convert from an integer using the ICU4C integer mappings for `General_Category`
      * Convert from an integer value from ICU4C or CodePointMapData
-   */
+     */
   inline static std::optional<icu4x::GeneralCategory> from_integer_value(uint8_t other);
 
     inline icu4x::capi::GeneralCategory AsFFI() const;
@@ -148,4 +148,4 @@ private:
 };
 
 } // namespace
-#endif // icu4x_GeneralCategory_D_HPP
+#endif // ICU4X_GeneralCategory_D_HPP

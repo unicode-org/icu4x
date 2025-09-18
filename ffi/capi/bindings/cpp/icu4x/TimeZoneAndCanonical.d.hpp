@@ -1,5 +1,5 @@
-#ifndef icu4x_TimeZoneAndCanonical_D_HPP
-#define icu4x_TimeZoneAndCanonical_D_HPP
+#ifndef ICU4X_TimeZoneAndCanonical_D_HPP
+#define ICU4X_TimeZoneAndCanonical_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,19 +9,19 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct TimeZone; }
 class TimeZone;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
 namespace capi {
     struct TimeZoneAndCanonical {
       icu4x::capi::TimeZone* time_zone;
-      diplomat::capi::DiplomatStringView canonical;
+      icu4x::diplomat::capi::DiplomatStringView canonical;
     };
 
     typedef struct TimeZoneAndCanonical_option {union { TimeZoneAndCanonical ok; }; bool is_ok; } TimeZoneAndCanonical_option;
@@ -42,4 +42,4 @@ struct TimeZoneAndCanonical {
 };
 
 } // namespace
-#endif // icu4x_TimeZoneAndCanonical_D_HPP
+#endif // ICU4X_TimeZoneAndCanonical_D_HPP

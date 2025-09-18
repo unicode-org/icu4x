@@ -1,5 +1,5 @@
-#ifndef icu4x_PluralCategory_D_HPP
-#define icu4x_PluralCategory_D_HPP
+#ifndef ICU4X_PluralCategory_D_HPP
+#define ICU4X_PluralCategory_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,11 +9,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 class PluralCategory;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -54,14 +54,14 @@ public:
     // Prevent usage as boolean value
     explicit operator bool() const = delete;
 
-  /**
+    /**
      * Construct from a string in the format
      * [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
      *
      * See the [Rust documentation for `get_for_cldr_string`](https://docs.rs/icu/2.0.0/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_string) for more information.
      *
      * See the [Rust documentation for `get_for_cldr_bytes`](https://docs.rs/icu/2.0.0/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_bytes) for more information.
-   */
+     */
   inline static std::optional<icu4x::PluralCategory> get_for_cldr_string(std::string_view s);
 
     inline icu4x::capi::PluralCategory AsFFI() const;
@@ -71,4 +71,4 @@ private:
 };
 
 } // namespace
-#endif // icu4x_PluralCategory_D_HPP
+#endif // ICU4X_PluralCategory_D_HPP

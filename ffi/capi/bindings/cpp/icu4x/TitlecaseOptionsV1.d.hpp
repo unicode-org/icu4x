@@ -1,5 +1,5 @@
-#ifndef icu4x_TitlecaseOptionsV1_D_HPP
-#define icu4x_TitlecaseOptionsV1_D_HPP
+#ifndef ICU4X_TitlecaseOptionsV1_D_HPP
+#define ICU4X_TitlecaseOptionsV1_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,15 +9,15 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "LeadingAdjustment.d.hpp"
 #include "TrailingCase.d.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 struct TitlecaseOptionsV1;
 class LeadingAdjustment;
 class TrailingCase;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -40,9 +40,9 @@ struct TitlecaseOptionsV1 {
     std::optional<icu4x::LeadingAdjustment> leading_adjustment;
     std::optional<icu4x::TrailingCase> trailing_case;
 
-  /**
+    /**
      * See the [Rust documentation for `default`](https://docs.rs/icu/2.0.0/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
-   */
+     */
   inline static icu4x::TitlecaseOptionsV1 default_options();
 
     inline icu4x::capi::TitlecaseOptionsV1 AsFFI() const;
@@ -50,4 +50,4 @@ struct TitlecaseOptionsV1 {
 };
 
 } // namespace
-#endif // icu4x_TitlecaseOptionsV1_D_HPP
+#endif // ICU4X_TitlecaseOptionsV1_D_HPP

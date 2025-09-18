@@ -1,5 +1,5 @@
-#ifndef icu4x_TrailingCase_HPP
-#define icu4x_TrailingCase_HPP
+#ifndef ICU4X_TrailingCase_HPP
+#define ICU4X_TrailingCase_HPP
 
 #include "TrailingCase.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -35,4 +35,4 @@ inline icu4x::TrailingCase icu4x::TrailingCase::FromFFI(icu4x::capi::TrailingCas
             std::abort();
     }
 }
-#endif // icu4x_TrailingCase_HPP
+#endif // ICU4X_TrailingCase_HPP

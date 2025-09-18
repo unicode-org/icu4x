@@ -1,5 +1,5 @@
-#ifndef icu4x_TitlecaseOptionsV1_HPP
-#define icu4x_TitlecaseOptionsV1_HPP
+#ifndef ICU4X_TitlecaseOptionsV1_HPP
+#define ICU4X_TitlecaseOptionsV1_HPP
 
 #include "TitlecaseOptionsV1.d.hpp"
 
@@ -11,9 +11,9 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "LeadingAdjustment.hpp"
 #include "TrailingCase.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -47,4 +47,4 @@ inline icu4x::TitlecaseOptionsV1 icu4x::TitlecaseOptionsV1::FromFFI(icu4x::capi:
 }
 
 
-#endif // icu4x_TitlecaseOptionsV1_HPP
+#endif // ICU4X_TitlecaseOptionsV1_HPP

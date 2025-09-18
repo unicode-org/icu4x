@@ -1,5 +1,5 @@
-#ifndef icu4x_HangulSyllableType_D_HPP
-#define icu4x_HangulSyllableType_D_HPP
+#ifndef ICU4X_HangulSyllableType_D_HPP
+#define ICU4X_HangulSyllableType_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,11 +9,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 class HangulSyllableType;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -54,23 +54,23 @@ public:
     // Prevent usage as boolean value
     explicit operator bool() const = delete;
 
-  /**
+    /**
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
-   */
+     */
   inline static icu4x::HangulSyllableType for_char(char32_t ch);
 
-  /**
+    /**
      * Convert to an integer value usable with ICU4C and CodePointMapData
      *
      * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html#method.to_icu4c_value) for more information.
-   */
+     */
   inline uint8_t to_integer_value() const;
 
-  /**
+    /**
      * Convert from an integer value from ICU4C or CodePointMapData
      *
      * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html#method.from_icu4c_value) for more information.
-   */
+     */
   inline static std::optional<icu4x::HangulSyllableType> from_integer_value(uint8_t other);
 
     inline icu4x::capi::HangulSyllableType AsFFI() const;
@@ -80,4 +80,4 @@ private:
 };
 
 } // namespace
-#endif // icu4x_HangulSyllableType_D_HPP
+#endif // ICU4X_HangulSyllableType_D_HPP

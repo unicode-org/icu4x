@@ -1,5 +1,5 @@
-#ifndef icu4x_TimePrecision_D_HPP
-#define icu4x_TimePrecision_D_HPP
+#ifndef ICU4X_TimePrecision_D_HPP
+#define ICU4X_TimePrecision_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,11 +9,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 class TimePrecision;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -70,9 +70,9 @@ public:
     // Prevent usage as boolean value
     explicit operator bool() const = delete;
 
-  /**
+    /**
      * See the [Rust documentation for `try_from_int`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.SubsecondDigits.html#method.try_from_int) for more information.
-   */
+     */
   inline static std::optional<icu4x::TimePrecision> from_subsecond_digits(uint8_t digits);
 
     inline icu4x::capi::TimePrecision AsFFI() const;
@@ -82,4 +82,4 @@ private:
 };
 
 } // namespace
-#endif // icu4x_TimePrecision_D_HPP
+#endif // ICU4X_TimePrecision_D_HPP

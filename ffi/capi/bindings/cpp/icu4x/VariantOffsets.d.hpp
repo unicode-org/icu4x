@@ -1,5 +1,5 @@
-#ifndef icu4x_VariantOffsets_D_HPP
-#define icu4x_VariantOffsets_D_HPP
+#ifndef ICU4X_VariantOffsets_D_HPP
+#define ICU4X_VariantOffsets_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,12 +9,12 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct UtcOffset; }
 class UtcOffset;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -42,4 +42,4 @@ struct VariantOffsets {
 };
 
 } // namespace
-#endif // icu4x_VariantOffsets_D_HPP
+#endif // ICU4X_VariantOffsets_D_HPP

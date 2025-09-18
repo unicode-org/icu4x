@@ -1,5 +1,5 @@
-#ifndef icu4x_Decimal_HPP
-#define icu4x_Decimal_HPP
+#ifndef ICU4X_Decimal_HPP
+#define ICU4X_Decimal_HPP
 
 #include "Decimal.d.hpp"
 
@@ -11,13 +11,13 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "DecimalLimitError.hpp"
 #include "DecimalParseError.hpp"
 #include "DecimalRoundingIncrement.hpp"
 #include "DecimalSign.hpp"
 #include "DecimalSignDisplay.hpp"
 #include "DecimalSignedRoundingMode.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -45,7 +45,7 @@ namespace capi {
     icu4x_Decimal_from_double_with_round_trip_precision_mv1_result icu4x_Decimal_from_double_with_round_trip_precision_mv1(double f);
 
     typedef struct icu4x_Decimal_from_string_mv1_result {union {icu4x::capi::Decimal* ok; icu4x::capi::DecimalParseError err;}; bool is_ok;} icu4x_Decimal_from_string_mv1_result;
-    icu4x_Decimal_from_string_mv1_result icu4x_Decimal_from_string_mv1(diplomat::capi::DiplomatStringView v);
+    icu4x_Decimal_from_string_mv1_result icu4x_Decimal_from_string_mv1(icu4x::diplomat::capi::DiplomatStringView v);
 
     uint8_t icu4x_Decimal_digit_at_mv1(const icu4x::capi::Decimal* self, int16_t magnitude);
 
@@ -96,7 +96,7 @@ namespace capi {
     typedef struct icu4x_Decimal_concatenate_end_mv1_result { bool is_ok;} icu4x_Decimal_concatenate_end_mv1_result;
     icu4x_Decimal_concatenate_end_mv1_result icu4x_Decimal_concatenate_end_mv1(icu4x::capi::Decimal* self, icu4x::capi::Decimal* other);
 
-    void icu4x_Decimal_to_string_mv1(const icu4x::capi::Decimal* self, diplomat::capi::DiplomatWrite* write);
+    void icu4x_Decimal_to_string_mv1(const icu4x::capi::Decimal* self, icu4x::diplomat::capi::DiplomatWrite* write);
 
     void icu4x_Decimal_destroy_mv1(Decimal* self);
 
@@ -124,31 +124,31 @@ inline std::unique_ptr<icu4x::Decimal> icu4x::Decimal::from(uint64_t v) {
     return std::unique_ptr<icu4x::Decimal>(icu4x::Decimal::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError> icu4x::Decimal::from_double_with_integer_precision(double f) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError> icu4x::Decimal::from_double_with_integer_precision(double f) {
     auto result = icu4x::capi::icu4x_Decimal_from_double_with_integer_precision_mv1(f);
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError>(diplomat::Ok<std::unique_ptr<icu4x::Decimal>>(std::unique_ptr<icu4x::Decimal>(icu4x::Decimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError>(diplomat::Err<icu4x::DecimalLimitError>(icu4x::DecimalLimitError {}));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::Decimal>>(std::unique_ptr<icu4x::Decimal>(icu4x::Decimal::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError>(icu4x::diplomat::Err<icu4x::DecimalLimitError>(icu4x::DecimalLimitError {}));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError> icu4x::Decimal::from_double_with_lower_magnitude(double f, int16_t magnitude) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError> icu4x::Decimal::from_double_with_lower_magnitude(double f, int16_t magnitude) {
     auto result = icu4x::capi::icu4x_Decimal_from_double_with_lower_magnitude_mv1(f,
         magnitude);
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError>(diplomat::Ok<std::unique_ptr<icu4x::Decimal>>(std::unique_ptr<icu4x::Decimal>(icu4x::Decimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError>(diplomat::Err<icu4x::DecimalLimitError>(icu4x::DecimalLimitError {}));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::Decimal>>(std::unique_ptr<icu4x::Decimal>(icu4x::Decimal::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError>(icu4x::diplomat::Err<icu4x::DecimalLimitError>(icu4x::DecimalLimitError {}));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError> icu4x::Decimal::from_double_with_significant_digits(double f, uint8_t digits) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError> icu4x::Decimal::from_double_with_significant_digits(double f, uint8_t digits) {
     auto result = icu4x::capi::icu4x_Decimal_from_double_with_significant_digits_mv1(f,
         digits);
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError>(diplomat::Ok<std::unique_ptr<icu4x::Decimal>>(std::unique_ptr<icu4x::Decimal>(icu4x::Decimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError>(diplomat::Err<icu4x::DecimalLimitError>(icu4x::DecimalLimitError {}));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::Decimal>>(std::unique_ptr<icu4x::Decimal>(icu4x::Decimal::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError>(icu4x::diplomat::Err<icu4x::DecimalLimitError>(icu4x::DecimalLimitError {}));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError> icu4x::Decimal::from_double_with_round_trip_precision(double f) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError> icu4x::Decimal::from_double_with_round_trip_precision(double f) {
     auto result = icu4x::capi::icu4x_Decimal_from_double_with_round_trip_precision_mv1(f);
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError>(diplomat::Ok<std::unique_ptr<icu4x::Decimal>>(std::unique_ptr<icu4x::Decimal>(icu4x::Decimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError>(diplomat::Err<icu4x::DecimalLimitError>(icu4x::DecimalLimitError {}));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::Decimal>>(std::unique_ptr<icu4x::Decimal>(icu4x::Decimal::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError>(icu4x::diplomat::Err<icu4x::DecimalLimitError>(icu4x::DecimalLimitError {}));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalParseError> icu4x::Decimal::from_string(std::string_view v) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalParseError> icu4x::Decimal::from_string(std::string_view v) {
     auto result = icu4x::capi::icu4x_Decimal_from_string_mv1({v.data(), v.size()});
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalParseError>(diplomat::Ok<std::unique_ptr<icu4x::Decimal>>(std::unique_ptr<icu4x::Decimal>(icu4x::Decimal::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalParseError>(diplomat::Err<icu4x::DecimalParseError>(icu4x::DecimalParseError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalParseError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::Decimal>>(std::unique_ptr<icu4x::Decimal>(icu4x::Decimal::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalParseError>(icu4x::diplomat::Err<icu4x::DecimalParseError>(icu4x::DecimalParseError::FromFFI(result.err)));
 }
 
 inline uint8_t icu4x::Decimal::digit_at(int16_t magnitude) const {
@@ -267,22 +267,22 @@ inline void icu4x::Decimal::round_with_mode_and_increment(int16_t position, icu4
         increment.AsFFI());
 }
 
-inline diplomat::result<std::monostate, std::monostate> icu4x::Decimal::concatenate_end(icu4x::Decimal& other) {
+inline icu4x::diplomat::result<std::monostate, std::monostate> icu4x::Decimal::concatenate_end(icu4x::Decimal& other) {
     auto result = icu4x::capi::icu4x_Decimal_concatenate_end_mv1(this->AsFFI(),
         other.AsFFI());
-    return result.is_ok ? diplomat::result<std::monostate, std::monostate>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, std::monostate>(diplomat::Err<std::monostate>());
+    return result.is_ok ? icu4x::diplomat::result<std::monostate, std::monostate>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, std::monostate>(icu4x::diplomat::Err<std::monostate>());
 }
 
 inline std::string icu4x::Decimal::to_string() const {
     std::string output;
-    diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
+    icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteFromString(output);
     icu4x::capi::icu4x_Decimal_to_string_mv1(this->AsFFI(),
         &write);
     return output;
 }
 template<typename W>
 inline void icu4x::Decimal::to_string_write(W& writeable) const {
-    diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+    icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
     icu4x::capi::icu4x_Decimal_to_string_mv1(this->AsFFI(),
         &write);
 }
@@ -308,4 +308,4 @@ inline void icu4x::Decimal::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_Decimal_HPP
+#endif // ICU4X_Decimal_HPP

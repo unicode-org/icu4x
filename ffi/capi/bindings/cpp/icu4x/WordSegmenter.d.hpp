@@ -1,5 +1,5 @@
-#ifndef icu4x_WordSegmenter_D_HPP
-#define icu4x_WordSegmenter_D_HPP
+#ifndef ICU4X_WordSegmenter_D_HPP
+#define ICU4X_WordSegmenter_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,8 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
@@ -25,7 +24,8 @@ class WordBreakIteratorUtf8;
 namespace capi { struct WordSegmenter; }
 class WordSegmenter;
 class DataError;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -43,7 +43,7 @@ namespace icu4x {
 class WordSegmenter {
 public:
 
-  /**
+    /**
      * Construct an {@link WordSegmenter} with automatically selecting the best available LSTM
      * or dictionary payload data, using compiled data. This does not assume any content locale.
      *
@@ -51,10 +51,10 @@ public:
      * Khmer, Lao, and Thai.
      *
      * See the [Rust documentation for `new_auto`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.new_auto) for more information.
-   */
+     */
   inline static std::unique_ptr<icu4x::WordSegmenter> create_auto();
 
-  /**
+    /**
      * Construct an {@link WordSegmenter} with automatically selecting the best available LSTM
      * or dictionary payload data, using compiled data.
      *
@@ -62,10 +62,10 @@ public:
      * Khmer, Lao, and Thai.
      *
      * See the [Rust documentation for `try_new_auto`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto) for more information.
-   */
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_auto_with_content_locale(const icu4x::Locale& locale);
+     */
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_auto_with_content_locale(const icu4x::Locale& locale);
 
-  /**
+    /**
      * Construct an {@link WordSegmenter} with automatically selecting the best available LSTM
      * or dictionary payload data, using a particular data source.
      *
@@ -73,10 +73,10 @@ public:
      * Khmer, Lao, and Thai.
      *
      * See the [Rust documentation for `try_new_auto`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto) for more information.
-   */
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_auto_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+     */
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_auto_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
-  /**
+    /**
      * Construct an {@link WordSegmenter} with LSTM payload data for Burmese, Khmer, Lao, and
      * Thai, using compiled data.  This does not assume any content locale.
      *
@@ -84,10 +84,10 @@ public:
      * Khmer, Lao, and Thai.
      *
      * See the [Rust documentation for `new_lstm`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.new_lstm) for more information.
-   */
+     */
   inline static std::unique_ptr<icu4x::WordSegmenter> create_lstm();
 
-  /**
+    /**
      * Construct an {@link WordSegmenter} with LSTM payload data for Burmese, Khmer, Lao, and
      * Thai, using compiled data.
      *
@@ -95,10 +95,10 @@ public:
      * Khmer, Lao, and Thai.
      *
      * See the [Rust documentation for `try_new_lstm`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm) for more information.
-   */
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_lstm_with_content_locale(const icu4x::Locale& locale);
+     */
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_lstm_with_content_locale(const icu4x::Locale& locale);
 
-  /**
+    /**
      * Construct an {@link WordSegmenter} with LSTM payload data for Burmese, Khmer, Lao, and
      * Thai, using a particular data source.
      *
@@ -106,10 +106,10 @@ public:
      * Khmer, Lao, and Thai.
      *
      * See the [Rust documentation for `try_new_lstm`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm) for more information.
-   */
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_lstm_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+     */
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_lstm_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
-  /**
+    /**
      * Construct an {@link WordSegmenter} with with dictionary payload data for Chinese, Japanese,
      * Burmese, Khmer, Lao, and Thai, using compiled data.  This does not assume any content locale.
      *
@@ -117,10 +117,10 @@ public:
      * Khmer, Lao, and Thai.
      *
      * See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.new_dictionary) for more information.
-   */
+     */
   inline static std::unique_ptr<icu4x::WordSegmenter> create_dictionary();
 
-  /**
+    /**
      * Construct an {@link WordSegmenter} with dictionary payload data for Chinese, Japanese,
      * Burmese, Khmer, Lao, and Thai, using compiled data.
      *
@@ -128,10 +128,10 @@ public:
      * Khmer, Lao, and Thai.
      *
      * See the [Rust documentation for `try_new_dictionary`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary) for more information.
-   */
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_dictionary_with_content_locale(const icu4x::Locale& locale);
+     */
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_dictionary_with_content_locale(const icu4x::Locale& locale);
 
-  /**
+    /**
      * Construct an {@link WordSegmenter} with dictionary payload data for Chinese, Japanese,
      * Burmese, Khmer, Lao, and Thai, using a particular data source.
      *
@@ -139,35 +139,35 @@ public:
      * Khmer, Lao, and Thai.
      *
      * See the [Rust documentation for `try_new_dictionary`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary) for more information.
-   */
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_dictionary_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+     */
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_dictionary_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
-  /**
+    /**
      * Segments a string.
      *
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
      * to the WHATWG Encoding Standard.
      *
      * See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenterBorrowed.html#method.segment_utf8) for more information.
-   */
+     */
   inline std::unique_ptr<icu4x::WordBreakIteratorUtf8> segment(std::string_view input) const;
 
-  /**
+    /**
      * Segments a string.
      *
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
      * to the WHATWG Encoding Standard.
      *
      * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenterBorrowed.html#method.segment_utf16) for more information.
-   */
+     */
   inline std::unique_ptr<icu4x::WordBreakIteratorUtf16> segment16(std::u16string_view input) const;
 
-  /**
+    /**
      * Segments a Latin-1 string.
      *
      * See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenterBorrowed.html#method.segment_latin1) for more information.
-   */
-  inline std::unique_ptr<icu4x::WordBreakIteratorLatin1> segment_latin1(diplomat::span<const uint8_t> input) const;
+     */
+  inline std::unique_ptr<icu4x::WordBreakIteratorLatin1> segment_latin1(icu4x::diplomat::span<const uint8_t> input) const;
 
     inline const icu4x::capi::WordSegmenter* AsFFI() const;
     inline icu4x::capi::WordSegmenter* AsFFI();
@@ -184,4 +184,4 @@ private:
 };
 
 } // namespace
-#endif // icu4x_WordSegmenter_D_HPP
+#endif // ICU4X_WordSegmenter_D_HPP
