@@ -412,11 +412,8 @@ pub(crate) mod legacy {
             "2019-03-16 16:00Z",
             "2019-10-03 19:00Z",
             "2020-03-07 16:00Z",
-            "2020-10-03 16:00Z",
             "2021-03-13 13:00Z",
-            "2021-10-02 16:00Z",
             "2022-03-12 13:00Z",
-            "2022-10-01 16:00Z",
             "2023-03-08 16:00Z",
         ] {
             let t = ZoneNameTimestamp::from_zoned_date_time_iso(
@@ -424,12 +421,22 @@ pub(crate) mod legacy {
             );
 
             assert_eq!(
-                converted.get().get(tz, t).unwrap().1.map(|mz| mz.id),
+                converted
+                    .get()
+                    .get(tz, t)
+                    .unwrap()
+                    .1
+                    .map(|mz| match mz.id.get() {
+                        // the ID list changed with CLDR 48
+                        22 => 21,
+                        31 => 30,
+                        _ => unreachable!(),
+                    }),
                 icu_time::provider::Baked::SINGLETON_TIMEZONE_PERIODS_V1
                     .get(tz, t)
                     .unwrap()
                     .1
-                    .map(|mz| mz.id),
+                    .map(|mz| mz.id.get()),
                 "{timestamp:?}",
             );
         }

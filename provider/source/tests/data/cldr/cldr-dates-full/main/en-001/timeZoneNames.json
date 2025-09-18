@@ -10,6 +10,7 @@
           "hourFormat": "+HH:mm;-HH:mm",
           "gmtFormat": "GMT{0}",
           "gmtZeroFormat": "GMT",
+          "gmtUnknownFormat": "GMT+?",
           "regionFormat": "{0} Time",
           "regionFormat-type-daylight": "{0} Daylight Time",
           "regionFormat-type-standard": "{0} Standard Time",
@@ -27,29 +28,127 @@
               },
               "Unknown": {
                 "_type": "zone",
-                "exemplarCity": "Unknown City"
+                "exemplarCity": "Unknown Location"
+              }
+            },
+            "Europe": {
+              "Tirane": {
+                "_type": "zone",
+                "exemplarCity": "Tirana"
+              },
+              "Busingen": {
+                "_type": "zone",
+                "exemplarCity": "Büsingen"
+              },
+              "London": {
+                "_type": "zone",
+                "long": {
+                  "daylight": "British Summer Time"
+                }
+              },
+              "Dublin": {
+                "_type": "zone",
+                "long": {
+                  "daylight": "Irish Standard Time"
+                }
+              },
+              "Chisinau": {
+                "_type": "zone",
+                "exemplarCity": "Chișinău"
+              },
+              "Kiev": {
+                "_type": "zone",
+                "exemplarCity": "Kyiv"
               }
             },
             "Antarctica": {
+              "Rothera": {
+                "_type": "zone",
+                "exemplarCity": "Rothera Station"
+              },
+              "Palmer": {
+                "_type": "zone",
+                "exemplarCity": "Palmer Land"
+              },
+              "Troll": {
+                "_type": "zone",
+                "exemplarCity": "Troll Station"
+              },
+              "Syowa": {
+                "_type": "zone",
+                "exemplarCity": "Showa Station"
+              },
+              "Mawson": {
+                "_type": "zone",
+                "exemplarCity": "Mawson Station"
+              },
+              "Vostok": {
+                "_type": "zone",
+                "exemplarCity": "Vostok Station"
+              },
+              "Casey": {
+                "_type": "zone",
+                "exemplarCity": "Casey Station"
+              },
               "DumontDUrville": {
                 "_type": "zone",
-                "exemplarCity": "Dumont-d’Urville"
+                "exemplarCity": "Dumont d’Urville Station"
+              },
+              "McMurdo": {
+                "_type": "zone",
+                "exemplarCity": "McMurdo Station"
               },
               "Macquarie": {
                 "_type": "zone",
                 "exemplarCity": "Macquarie Island"
               }
             },
-            "Australia": {
-              "Lord_Howe": {
-                "_type": "zone",
-                "exemplarCity": "Lord Howe Island"
-              }
-            },
             "America": {
+              "Argentina": {
+                "Rio_Gallegos": {
+                  "_type": "zone",
+                  "exemplarCity": "Río Gallegos"
+                },
+                "Tucuman": {
+                  "_type": "zone",
+                  "exemplarCity": "Tucumán"
+                }
+              },
+              "Cordoba": {
+                "_type": "zone",
+                "exemplarCity": "Córdoba"
+              },
               "St_Barthelemy": {
                 "_type": "zone",
                 "exemplarCity": "St Barthélemy"
+              },
+              "Eirunepe": {
+                "_type": "zone",
+                "exemplarCity": "Eirunepé"
+              },
+              "Cuiaba": {
+                "_type": "zone",
+                "exemplarCity": "Cuiabá"
+              },
+              "Santarem": {
+                "_type": "zone",
+                "exemplarCity": "Santarém"
+              },
+              "Belem": {
+                "_type": "zone",
+                "exemplarCity": "Belém"
+              },
+              "Araguaina": {
+                "_type": "zone",
+                "exemplarCity": "Araguaína"
+              },
+              "Sao_Paulo": {
+                "_type": "zone",
+                "exemplarCity": "São Paulo"
+              },
+              "Maceio": {
+                "_type": "zone",
+                "exemplarCity": "Maceió"
               },
               "Noronha": {
                 "_type": "zone",
@@ -62,6 +161,10 @@
               "St_Johns": {
                 "_type": "zone",
                 "exemplarCity": "St John’s"
+              },
+              "Bogota": {
+                "_type": "zone",
+                "exemplarCity": "Bogotá"
               },
               "Curacao": {
                 "_type": "zone",
@@ -87,9 +190,17 @@
                 "_type": "zone",
                 "exemplarCity": "Ciudad Juárez"
               },
+              "Mazatlan": {
+                "_type": "zone",
+                "exemplarCity": "Mazatlán"
+              },
               "Bahia_Banderas": {
                 "_type": "zone",
                 "exemplarCity": "Bahía de Banderas"
+              },
+              "Mexico_City": {
+                "_type": "zone",
+                "exemplarCity": "Mexico City"
               },
               "Merida": {
                 "_type": "zone",
@@ -98,6 +209,10 @@
               "Cancun": {
                 "_type": "zone",
                 "exemplarCity": "Cancún"
+              },
+              "Miquelon": {
+                "_type": "zone",
+                "exemplarCity": "Saint-Pierre"
               },
               "Asuncion": {
                 "_type": "zone",
@@ -166,6 +281,12 @@
                 "exemplarCity": "St Thomas"
               }
             },
+            "Australia": {
+              "Lord_Howe": {
+                "_type": "zone",
+                "exemplarCity": "Lord Howe Island"
+              }
+            },
             "Indian": {
               "Cocos": {
                 "_type": "zone",
@@ -175,15 +296,35 @@
                 "_type": "zone",
                 "exemplarCity": "Christmas Island"
               },
+              "Chagos": {
+                "_type": "zone",
+                "exemplarCity": "Chagos Archipelago"
+              },
+              "Comoro": {
+                "_type": "zone",
+                "exemplarCity": "Comoros"
+              },
               "Reunion": {
                 "_type": "zone",
                 "exemplarCity": "Réunion"
+              },
+              "Mahe": {
+                "_type": "zone",
+                "exemplarCity": "Mahé"
+              },
+              "Kerguelen": {
+                "_type": "zone",
+                "exemplarCity": "Kerguelen Islands"
               }
             },
             "Pacific": {
               "Easter": {
                 "_type": "zone",
                 "exemplarCity": "Easter Island"
+              },
+              "Galapagos": {
+                "_type": "zone",
+                "exemplarCity": "Galápagos Islands"
               },
               "Truk": {
                 "_type": "zone",
@@ -195,56 +336,50 @@
               },
               "Enderbury": {
                 "_type": "zone",
-                "exemplarCity": "Enderbury"
+                "exemplarCity": "Canton Island"
+              },
+              "Kwajalein": {
+                "_type": "zone",
+                "exemplarCity": "Kwajalein Atoll"
+              },
+              "Noumea": {
+                "_type": "zone",
+                "exemplarCity": "Nouméa"
               },
               "Norfolk": {
                 "_type": "zone",
                 "exemplarCity": "Norfolk Island"
               },
+              "Chatham": {
+                "_type": "zone",
+                "exemplarCity": "Chatham Islands"
+              },
+              "Marquesas": {
+                "_type": "zone",
+                "exemplarCity": "Marquesas Islands"
+              },
+              "Pitcairn": {
+                "_type": "zone",
+                "exemplarCity": "Pitcairn Islands"
+              },
+              "Midway": {
+                "_type": "zone",
+                "exemplarCity": "Midway Atoll"
+              },
               "Wake": {
                 "_type": "zone",
                 "exemplarCity": "Wake Island"
-              }
-            },
-            "Africa": {
-              "Asmera": {
-                "_type": "zone",
-                "exemplarCity": "Asmara"
               },
-              "Sao_Tome": {
+              "Wallis": {
                 "_type": "zone",
-                "exemplarCity": "São Tomé"
-              }
-            },
-            "Atlantic": {
-              "Faeroe": {
-                "_type": "zone",
-                "exemplarCity": "Faroe"
-              },
-              "St_Helena": {
-                "_type": "zone",
-                "exemplarCity": "St Helena"
-              }
-            },
-            "Europe": {
-              "London": {
-                "_type": "zone",
-                "long": {
-                  "daylight": "British Summer Time"
-                }
-              },
-              "Dublin": {
-                "_type": "zone",
-                "long": {
-                  "daylight": "Irish Standard Time"
-                }
-              },
-              "Kiev": {
-                "_type": "zone",
-                "exemplarCity": "Kyiv"
+                "exemplarCity": "Wallis & Futuna"
               }
             },
             "Asia": {
+              "Urumqi": {
+                "_type": "zone",
+                "exemplarCity": "Ürümqi"
+              },
               "Calcutta": {
                 "_type": "zone",
                 "exemplarCity": "Kolkata"
@@ -257,9 +392,17 @@
                 "_type": "zone",
                 "exemplarCity": "Kostanay"
               },
+              "Qyzylorda": {
+                "_type": "zone",
+                "exemplarCity": "Kyzylorda"
+              },
               "Rangoon": {
                 "_type": "zone",
                 "exemplarCity": "Yangon"
+              },
+              "Hovd": {
+                "_type": "zone",
+                "exemplarCity": "Khovd"
               },
               "Macau": {
                 "_type": "zone",
@@ -272,6 +415,42 @@
               "Saigon": {
                 "_type": "zone",
                 "exemplarCity": "Ho Chi Minh City"
+              }
+            },
+            "Africa": {
+              "El_Aaiun": {
+                "_type": "zone",
+                "exemplarCity": "El Aaiún"
+              },
+              "Asmera": {
+                "_type": "zone",
+                "exemplarCity": "Asmara"
+              },
+              "Sao_Tome": {
+                "_type": "zone",
+                "exemplarCity": "São Tomé"
+              },
+              "Ndjamena": {
+                "_type": "zone",
+                "exemplarCity": "N’Djamena"
+              },
+              "Lome": {
+                "_type": "zone",
+                "exemplarCity": "Lomé"
+              }
+            },
+            "Atlantic": {
+              "Canary": {
+                "_type": "zone",
+                "exemplarCity": "Canaries"
+              },
+              "Faeroe": {
+                "_type": "zone",
+                "exemplarCity": "Faroes"
+              },
+              "St_Helena": {
+                "_type": "zone",
+                "exemplarCity": "St Helena"
               }
             }
           },
@@ -305,9 +484,7 @@
             },
             "Africa_Western": {
               "long": {
-                "generic": "West Africa Time",
-                "standard": "West Africa Standard Time",
-                "daylight": "West Africa Summer Time"
+                "standard": "West Africa Time"
               }
             },
             "Alaska": {
@@ -705,6 +882,11 @@
                 "standard": "Guyana Time"
               }
             },
+            "Hawaii": {
+              "long": {
+                "standard": "Hawaii-Aleutian Standard Time"
+              }
+            },
             "Hawaii_Aleutian": {
               "long": {
                 "generic": "Hawaii-Aleutian Time",
@@ -721,9 +903,9 @@
             },
             "Hovd": {
               "long": {
-                "generic": "Hovd Time",
-                "standard": "Hovd Standard Time",
-                "daylight": "Hovd Summer Time"
+                "generic": "Khovd Time",
+                "standard": "Khovd Standard Time",
+                "daylight": "Khovd Summer Time"
               }
             },
             "India": {
@@ -1055,9 +1237,9 @@
             },
             "Qyzylorda": {
               "long": {
-                "generic": "Qyzylorda Time",
-                "standard": "Qyzylorda Standard Time",
-                "daylight": "Qyzylorda Summer Time"
+                "generic": "Kyzylorda Time",
+                "standard": "Kyzylorda Standard Time",
+                "daylight": "Kyzylorda Summer Time"
               }
             },
             "Reunion": {
@@ -1153,6 +1335,13 @@
             "Truk": {
               "long": {
                 "standard": "Chuuk Time"
+              }
+            },
+            "Turkey": {
+              "long": {
+                "generic": "Türkiye Time",
+                "standard": "Türkiye Standard Time",
+                "daylight": "Türkiye Summer Time"
               }
             },
             "Turkmenistan": {

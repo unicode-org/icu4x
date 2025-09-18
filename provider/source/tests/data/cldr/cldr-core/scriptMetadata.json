@@ -177,7 +177,7 @@
       "likelyLanguage": "bbc"
     },
     "Beng": {
-      "rank": 21,
+      "rank": 20,
       "age": {
         "m_version_": 16842752
       },
@@ -191,6 +191,22 @@
       "density": 1,
       "originCountry": "BD",
       "likelyLanguage": "bn"
+    },
+    "Berf": {
+      "rank": 33,
+      "age": {
+        "m_version_": 285212672
+      },
+      "sampleChar": "𖺡",
+      "idUsage": "EXCLUSION",
+      "rtl": "NO",
+      "lbLetters": "NO",
+      "hasCase": "YES",
+      "shapingReq": "MIN",
+      "ime": "NO",
+      "density": 1,
+      "originCountry": "SD",
+      "likelyLanguage": "zag"
     },
     "Bhks": {
       "rank": 33,
@@ -209,12 +225,12 @@
       "likelyLanguage": "sa"
     },
     "Bopo": {
-      "rank": 33,
+      "rank": 26,
       "age": {
         "m_version_": 16842752
       },
       "sampleChar": "ㄅ",
-      "idUsage": "RECOMMENDED",
+      "idUsage": "LIMITED_USE",
       "rtl": "NO",
       "lbLetters": "YES",
       "hasCase": "NO",
@@ -305,7 +321,7 @@
       "likelyLanguage": "ccp"
     },
     "Cans": {
-      "rank": 32,
+      "rank": 33,
       "age": {
         "m_version_": 50331648
       },
@@ -385,7 +401,7 @@
       "likelyLanguage": "xco"
     },
     "Copt": {
-      "rank": 33,
+      "rank": 27,
       "age": {
         "m_version_": 16842752
       },
@@ -577,7 +593,7 @@
       "likelyLanguage": "arc"
     },
     "Ethi": {
-      "rank": 28,
+      "rank": 32,
       "age": {
         "m_version_": 50331648
       },
@@ -646,7 +662,7 @@
         "m_version_": 184549376
       },
       "sampleChar": "𑵱",
-      "idUsage": "LIMITED_USE",
+      "idUsage": "EXCLUSION",
       "rtl": "NO",
       "lbLetters": "NO",
       "hasCase": "NO",
@@ -721,7 +737,7 @@
       "likelyLanguage": "el"
     },
     "Gujr": {
-      "rank": 20,
+      "rank": 19,
       "age": {
         "m_version_": 16842752
       },
@@ -753,7 +769,7 @@
       "likelyLanguage": "gvr"
     },
     "Guru": {
-      "rank": 22,
+      "rank": 21,
       "age": {
         "m_version_": 16842752
       },
@@ -1102,10 +1118,10 @@
       "ime": "NO",
       "density": 1,
       "originCountry": "PK",
-      "likelyLanguage": "pra"
+      "likelyLanguage": "pgd"
     },
     "Khmr": {
-      "rank": 25,
+      "rank": 30,
       "age": {
         "m_version_": 50331648
       },
@@ -1233,7 +1249,7 @@
       "likelyLanguage": "nod"
     },
     "Laoo": {
-      "rank": 23,
+      "rank": 22,
       "age": {
         "m_version_": 16842752
       },
@@ -1617,7 +1633,7 @@
       "likelyLanguage": "skr"
     },
     "Mymr": {
-      "rank": 19,
+      "rank": 29,
       "age": {
         "m_version_": 50331648
       },
@@ -1809,7 +1825,7 @@
       "likelyLanguage": "otk"
     },
     "Orya": {
-      "rank": 30,
+      "rank": 24,
       "age": {
         "m_version_": 16842752
       },
@@ -2176,6 +2192,22 @@
       "originCountry": "IN",
       "likelyLanguage": "sa"
     },
+    "Sidt": {
+      "rank": 33,
+      "age": {
+        "m_version_": 285212672
+      },
+      "sampleChar": "𐥐",
+      "idUsage": "EXCLUSION",
+      "rtl": "YES",
+      "lbLetters": "NO",
+      "hasCase": "NO",
+      "shapingReq": "NO",
+      "ime": "NO",
+      "density": 1,
+      "originCountry": "TR",
+      "likelyLanguage": "xsd"
+    },
     "Sind": {
       "rank": 33,
       "age": {
@@ -2193,7 +2225,7 @@
       "likelyLanguage": "sd"
     },
     "Sinh": {
-      "rank": 27,
+      "rank": 31,
       "age": {
         "m_version_": 50331648
       },
@@ -2448,6 +2480,22 @@
       "originCountry": "VN",
       "likelyLanguage": "blt"
     },
+    "Tayo": {
+      "rank": 33,
+      "age": {
+        "m_version_": 285212672
+      },
+      "sampleChar": "𞛕",
+      "idUsage": "EXCLUSION",
+      "rtl": "NO",
+      "lbLetters": "YES",
+      "hasCase": "NO",
+      "shapingReq": "YES",
+      "ime": "NO",
+      "density": 1,
+      "originCountry": "VN",
+      "likelyLanguage": "tyj"
+    },
     "Telu": {
       "rank": 17,
       "age": {
@@ -2497,7 +2545,7 @@
       "likelyLanguage": "fil"
     },
     "Thaa": {
-      "rank": 29,
+      "rank": 33,
       "age": {
         "m_version_": 50331648
       },
@@ -2529,7 +2577,7 @@
       "likelyLanguage": "th"
     },
     "Tibt": {
-      "rank": 26,
+      "rank": 28,
       "age": {
         "m_version_": 33554432
       },
@@ -2591,6 +2639,22 @@
       "density": 1,
       "originCountry": "AL",
       "likelyLanguage": "sq"
+    },
+    "Tols": {
+      "rank": 33,
+      "age": {
+        "m_version_": 285212672
+      },
+      "sampleChar": "𑷆",
+      "idUsage": "EXCLUSION",
+      "rtl": "NO",
+      "lbLetters": "NO",
+      "hasCase": "NO",
+      "shapingReq": "MIN",
+      "ime": "NO",
+      "density": 1,
+      "originCountry": "IN",
+      "likelyLanguage": "kru"
     },
     "Toto": {
       "rank": 33,
@@ -2785,7 +2849,7 @@
       "likelyLanguage": "cmg"
     },
     "Zinh": {
-      "rank": 24,
+      "rank": 23,
       "age": {
         "m_version_": 16842752
       },
@@ -2817,7 +2881,7 @@
       "likelyLanguage": "und"
     },
     "Zzzz": {
-      "rank": 31,
+      "rank": 25,
       "age": {
         "m_version_": 16842752
       },

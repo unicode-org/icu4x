@@ -18,7 +18,6 @@ use icu_time::zone::ZoneNameTimestamp;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
-use writeable::Writeable;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ule::vartuple::VarTuple;
 use zerovec::ule::NichedOption;
@@ -49,14 +48,7 @@ impl DataProvider<TimezoneNamesEssentialsV1> for SourceDataProvider {
                 offset_separator,
                 offset_pattern: Cow::Owned(time_zone_names.gmt_format.0.clone()),
                 offset_zero: time_zone_names.gmt_zero_format.clone().into(),
-                // TODO: get this from CLDR
-                offset_unknown: time_zone_names
-                    .gmt_format
-                    .0
-                    .interpolate(["+?"])
-                    .write_to_string()
-                    .into_owned()
-                    .into(),
+                offset_unknown: time_zone_names.gmt_unknown_format.clone().into(),
             }),
         })
     }
@@ -387,8 +379,12 @@ impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
                 .into_keys()
                 .map(|ps| {
                     let convert = |&(t, os, mz)| {
+                        let t2 = ZoneNameTimestamp::from_zoned_date_time_iso(t);
+                        if t2.to_zoned_date_time_iso() != t {
+                            log::warn!("{t:?} does not round-trip through ZoneNameTimestamp");
+                        }
                         (
-                            Timestamp24(t),
+                            Timestamp24(t2),
                             offset_index[&pack_offsets_and_mzmsk(os, mz)],
                             NichedOption(mz.map(|i| i.id)),
                         )

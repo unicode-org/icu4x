@@ -75,11 +75,11 @@ pub enum AnyCalendar {
     /// A [`Buddhist`] calendar
     Buddhist(Buddhist),
     /// A [`Chinese`] calendar
-    Chinese(Chinese),
+    Chinese(LunarChinese<chinese::China>),
     /// A [`Coptic`] calendar
     Coptic(Coptic),
     /// A [`Dangi`] calendar
-    Dangi(Dangi),
+    Dangi(LunarChinese<chinese::Dangi>),
     /// An [`Ethiopian`] calendar
     Ethiopian(Ethiopian),
     /// A [`Gregorian`] calendar
@@ -114,11 +114,11 @@ pub enum AnyDateInner {
     /// A date for a [`Buddhist`] calendar
     Buddhist(<Buddhist as Calendar>::DateInner),
     /// A date for a [`Chinese`] calendar
-    Chinese(<Chinese as Calendar>::DateInner),
+    Chinese(<LunarChinese<chinese::China> as Calendar>::DateInner),
     /// A date for a [`Coptic`] calendar
     Coptic(<Coptic as Calendar>::DateInner),
     /// A date for a [`Dangi`] calendar
-    Dangi(<Dangi as Calendar>::DateInner),
+    Dangi(<LunarChinese<chinese::Dangi> as Calendar>::DateInner),
     /// A date for an [`Ethiopian`] calendar
     Ethiopian(<Ethiopian as Calendar>::DateInner),
     /// A date for a [`Gregorian`] calendar
@@ -535,9 +535,9 @@ impl AnyCalendar {
     pub const fn new(kind: AnyCalendarKind) -> Self {
         match kind {
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
-            AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese::new()),
+            AnyCalendarKind::Chinese => AnyCalendar::Chinese(LunarChinese::new_china()),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
-            AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi::new()),
+            AnyCalendarKind::Dangi => AnyCalendar::Dangi(LunarChinese::new_dangi()),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
                 EthiopianEraStyle::AmeteMihret,
             )),
@@ -586,9 +586,9 @@ impl AnyCalendar {
     {
         Ok(match kind {
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
-            AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese::new()),
+            AnyCalendarKind::Chinese => AnyCalendar::Chinese(LunarChinese::new_china()),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
-            AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi::new()),
+            AnyCalendarKind::Dangi => AnyCalendar::Dangi(LunarChinese::new_dangi()),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
                 EthiopianEraStyle::AmeteMihret,
             )),
@@ -637,9 +637,9 @@ impl AnyCalendar {
     {
         Ok(match kind {
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
-            AnyCalendarKind::Chinese => AnyCalendar::Chinese(Chinese),
+            AnyCalendarKind::Chinese => AnyCalendar::Chinese(LunarChinese::new_china()),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
-            AnyCalendarKind::Dangi => AnyCalendar::Dangi(Dangi),
+            AnyCalendarKind::Dangi => AnyCalendar::Dangi(LunarChinese::new_dangi()),
             AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
                 EthiopianEraStyle::AmeteMihret,
             )),
@@ -816,9 +816,9 @@ impl AnyCalendarKind {
     fn debug_name(self) -> &'static str {
         match self {
             AnyCalendarKind::Buddhist => Buddhist.debug_name(),
-            AnyCalendarKind::Chinese => Chinese::DEBUG_NAME,
+            AnyCalendarKind::Chinese => LunarChinese::new_china().debug_name(),
             AnyCalendarKind::Coptic => Coptic.debug_name(),
-            AnyCalendarKind::Dangi => Dangi::DEBUG_NAME,
+            AnyCalendarKind::Dangi => LunarChinese::new_dangi().debug_name(),
             AnyCalendarKind::Ethiopian => Ethiopian(false).debug_name(),
             AnyCalendarKind::EthiopianAmeteAlem => Ethiopian(true).debug_name(),
             AnyCalendarKind::Gregorian => Gregorian.debug_name(),
@@ -973,7 +973,7 @@ impl From<Buddhist> for AnyCalendar {
     }
 }
 
-impl IntoAnyCalendar for Chinese {
+impl IntoAnyCalendar for LunarChinese<chinese::China> {
     #[inline]
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Chinese(self)
@@ -1004,8 +1004,8 @@ impl IntoAnyCalendar for Chinese {
     }
 }
 
-impl From<Chinese> for AnyCalendar {
-    fn from(value: Chinese) -> AnyCalendar {
+impl From<LunarChinese<chinese::China>> for AnyCalendar {
+    fn from(value: LunarChinese<chinese::China>) -> AnyCalendar {
         value.to_any()
     }
 }
@@ -1047,7 +1047,7 @@ impl From<Coptic> for AnyCalendar {
     }
 }
 
-impl IntoAnyCalendar for Dangi {
+impl IntoAnyCalendar for LunarChinese<chinese::Dangi> {
     #[inline]
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Dangi(self)
@@ -1078,8 +1078,8 @@ impl IntoAnyCalendar for Dangi {
     }
 }
 
-impl From<Dangi> for AnyCalendar {
-    fn from(value: Dangi) -> AnyCalendar {
+impl From<LunarChinese<chinese::Dangi>> for AnyCalendar {
+    fn from(value: LunarChinese<chinese::Dangi>) -> AnyCalendar {
         value.to_any()
     }
 }

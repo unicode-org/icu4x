@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "47"
+      "_cldrVersion": "48"
     },
     "numberingSystems": {
       "adlm": {
@@ -375,6 +375,10 @@
       },
       "tnsa": {
         "_digits": "𖫀𖫁𖫂𖫃𖫄𖫅𖫆𖫇𖫈𖫉",
+        "_type": "numeric"
+      },
+      "tols": {
+        "_digits": "𑷠𑷡𑷢𑷣𑷤𑷥𑷦𑷧𑷨𑷩",
         "_type": "numeric"
       },
       "vaii": {

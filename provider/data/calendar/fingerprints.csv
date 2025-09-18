@@ -1,6 +1,6 @@
 calendar/japanese/extended/v1, <singleton>, 5238B, 5216B, e80e648736f019
 calendar/japanese/modern/v1, <singleton>, 134B, 111B, ec96742e22e8fc30
-calendar/week/v1, <lookup>, 292B, 72 identifiers
+calendar/week/v1, <lookup>, 295B, 73 identifiers
 calendar/week/v1, <total>, 20B, 20B, 10 unique payloads
 calendar/week/v1, und, 2B, 2B, db63f20c2a6a914a
 calendar/week/v1, und-AF, 2B, 2B, 16c731ae6e8c3ec5
@@ -30,6 +30,7 @@ calendar/week/v1, und-IL, 2B, 2B, cb9ee1109d9e876d
 calendar/week/v1, und-IN, 2B, 2B, 636a8b37946c4ebf
 calendar/week/v1, und-IQ, -> und-BH
 calendar/week/v1, und-IR, 2B, 2B, b90bfc6cd21be7d7
+calendar/week/v1, und-IS, -> und-AG
 calendar/week/v1, und-JM, -> und-AG
 calendar/week/v1, und-JO, -> und-BH
 calendar/week/v1, und-JP, -> und-AG
