@@ -67,9 +67,13 @@ pub enum EthiopianEraStyle {
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 pub struct Ethiopian(pub(crate) bool);
 
+#[allow(missing_docs)] // not actually public
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+pub struct EthiopianDateInner(CopticDateInner);
+
 impl crate::cal::scaffold::UnstableSealed for Ethiopian {}
 impl Calendar for Ethiopian {
-    type DateInner = CopticDateInner;
+    type DateInner = EthiopianDateInner;
     type Year = types::EraYear;
     fn from_codes(
         &self,
@@ -93,38 +97,39 @@ impl Calendar for Ethiopian {
         };
         ArithmeticDate::new_from_codes(self, year - COPTIC_OFFSET, month_code, day)
             .map(CopticDateInner)
+            .map(EthiopianDateInner)
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        Coptic.from_rata_die(rd)
+        EthiopianDateInner(Coptic.from_rata_die(rd))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        Coptic.to_rata_die(date)
+        Coptic.to_rata_die(&date.0)
     }
 
     fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
-        Coptic.from_iso(iso)
+        EthiopianDateInner(Coptic.from_iso(iso))
     }
 
     fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        Coptic.to_iso(date)
+        Coptic.to_iso(&date.0)
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Coptic.months_in_year(date)
+        Coptic.months_in_year(&date.0)
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        Coptic.days_in_year(date)
+        Coptic.days_in_year(&date.0)
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        Coptic.days_in_month(date)
+        Coptic.days_in_month(&date.0)
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        Coptic.offset_date(date, offset.cast_unit());
+        Coptic.offset_date(&mut date.0, offset.cast_unit());
     }
 
     fn until(
@@ -136,12 +141,12 @@ impl Calendar for Ethiopian {
         smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
         Coptic
-            .until(date1, date2, &Coptic, largest_unit, smallest_unit)
+            .until(&date1.0, &date2.0, &Coptic, largest_unit, smallest_unit)
             .cast_unit()
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let year = date.0.extended_year() + COPTIC_OFFSET;
+        let year = date.0 .0.extended_year() + COPTIC_OFFSET;
         let extended_year = if self.0 {
             year
         } else {
@@ -168,19 +173,19 @@ impl Calendar for Ethiopian {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Coptic.is_in_leap_year(date)
+        Coptic.is_in_leap_year(&date.0)
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        Coptic.month(date)
+        Coptic.month(&date.0)
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        Coptic.day_of_month(date)
+        Coptic.day_of_month(&date.0)
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        Coptic.day_of_year(date)
+        Coptic.day_of_year(&date.0)
     }
 
     fn debug_name(&self) -> &'static str {
@@ -238,6 +243,7 @@ impl Date<Ethiopian> {
         }
         ArithmeticDate::new_from_ordinals(year - COPTIC_OFFSET, month, day)
             .map(CopticDateInner)
+            .map(EthiopianDateInner)
             .map(|inner| Date::from_raw(inner, Ethiopian::new_with_era_style(era_style)))
     }
 }
