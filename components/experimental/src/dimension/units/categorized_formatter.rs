@@ -24,8 +24,6 @@ use icu_provider::{
 };
 use smallvec::SmallVec;
 
-extern crate alloc;
-
 /// Type alias for the formatting info needed by the formatter constructors.
 type FormattingInfo = (
     DataLocale,
