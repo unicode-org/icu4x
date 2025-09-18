@@ -20,23 +20,23 @@ macro_rules! define_units_data_markers {
 
 define_units_data_markers!(
     // Area
-    UnitsNameAreaCoreV1, "Display names for core area units, encompassing the units specified by unit preferences for the given locale";
-    UnitsNameAreaExtendedV1, "Display names for extended area units, encompassing the units specified by unit preferences for the other locales";
-    UnitsNameAreaOutlierV1, "Display names for outlier area units, encompassing the units which are not specified by unit preferences for any locale";
+    UnitsNamesAreaCoreV1, "Display names for core area units, encompassing the units specified by unit preferences for the given locale";
+    UnitsNamesAreaExtendedV1, "Display names for extended area units, encompassing the units specified by unit preferences for the other locales";
+    UnitsNamesAreaOutlierV1, "Display names for outlier area units, encompassing the units which are not specified by unit preferences for any locale";
     // Duration
-    UnitsNameDurationCoreV1, "Display names for core duration units, encompassing the units specified by unit preferences for the given locale";
-    UnitsNameDurationExtendedV1, "Display names for extended duration units, encompassing the units specified by unit preferences for the other locales";
-    UnitsNameDurationOutlierV1, "Display names for outlier duration units, encompassing the units which are not specified by unit preferences for any locale";
+    UnitsNamesDurationCoreV1, "Display names for core duration units, encompassing the units specified by unit preferences for the given locale";
+    UnitsNamesDurationExtendedV1, "Display names for extended duration units, encompassing the units specified by unit preferences for the other locales";
+    UnitsNamesDurationOutlierV1, "Display names for outlier duration units, encompassing the units which are not specified by unit preferences for any locale";
     // Length
-    UnitsNameLengthCoreV1, "Display names for core length units, encompassing the units specified by unit preferences for the given locale";
-    UnitsNameLengthExtendedV1, "Display names for extended length units, encompassing the units specified by unit preferences for the other locales";
-    UnitsNameLengthOutlierV1, "Display names for outlier length units, encompassing the units which are not specified by unit preferences for any locale";
+    UnitsNamesLengthCoreV1, "Display names for core length units, encompassing the units specified by unit preferences for the given locale";
+    UnitsNamesLengthExtendedV1, "Display names for extended length units, encompassing the units specified by unit preferences for the other locales";
+    UnitsNamesLengthOutlierV1, "Display names for outlier length units, encompassing the units which are not specified by unit preferences for any locale";
     // Mass
-    UnitsNameMassCoreV1, "Display names for core mass units, encompassing the units specified by unit preferences for the given locale";
-    UnitsNameMassExtendedV1, "Display names for extended mass units, encompassing the units specified by unit preferences for the other locales";
-    UnitsNameMassOutlierV1, "Display names for outlier mass units, encompassing the units which are not specified by unit preferences for any locale";
+    UnitsNamesMassCoreV1, "Display names for core mass units, encompassing the units specified by unit preferences for the given locale";
+    UnitsNamesMassExtendedV1, "Display names for extended mass units, encompassing the units specified by unit preferences for the other locales";
+    UnitsNamesMassOutlierV1, "Display names for outlier mass units, encompassing the units which are not specified by unit preferences for any locale";
     // Volume
-    UnitsNameVolumeCoreV1, "Display names for core volume units, encompassing the units specified by unit preferences for the given locale";
-    UnitsNameVolumeExtendedV1, "Display names for extended volume units, encompassing the units specified by unit preferences for the other locales";
-    UnitsNameVolumeOutlierV1, "Display names for outlier volume units, encompassing the units which are not specified by unit preferences for any locale";
+    UnitsNamesVolumeCoreV1, "Display names for core volume units, encompassing the units specified by unit preferences for the given locale";
+    UnitsNamesVolumeExtendedV1, "Display names for extended volume units, encompassing the units specified by unit preferences for the other locales";
+    UnitsNamesVolumeOutlierV1, "Display names for outlier volume units, encompassing the units which are not specified by unit preferences for any locale";
 );

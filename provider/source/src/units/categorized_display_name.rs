@@ -6,11 +6,11 @@ use crate::cldr_serde;
 use crate::SourceDataProvider;
 use cldr_serde::units::preferences::UnitType;
 use icu::experimental::dimension::provider::units::categorized_display_name::{
-    UnitsNameAreaCoreV1, UnitsNameAreaExtendedV1, UnitsNameAreaOutlierV1, UnitsNameDurationCoreV1,
-    UnitsNameDurationExtendedV1, UnitsNameDurationOutlierV1, UnitsNameLengthCoreV1,
-    UnitsNameLengthExtendedV1, UnitsNameLengthOutlierV1, UnitsNameMassCoreV1,
-    UnitsNameMassExtendedV1, UnitsNameMassOutlierV1, UnitsNameVolumeCoreV1,
-    UnitsNameVolumeExtendedV1, UnitsNameVolumeOutlierV1,
+    UnitsNamesAreaCoreV1, UnitsNamesAreaExtendedV1, UnitsNamesAreaOutlierV1,
+    UnitsNamesDurationCoreV1, UnitsNamesDurationExtendedV1, UnitsNamesDurationOutlierV1,
+    UnitsNamesLengthCoreV1, UnitsNamesLengthExtendedV1, UnitsNamesLengthOutlierV1,
+    UnitsNamesMassCoreV1, UnitsNamesMassExtendedV1, UnitsNamesMassOutlierV1,
+    UnitsNamesVolumeCoreV1, UnitsNamesVolumeExtendedV1, UnitsNamesVolumeOutlierV1,
 };
 use icu::experimental::dimension::provider::units::display_name::UnitsDisplayName;
 use icu::locale::LanguageIdentifier;
@@ -166,29 +166,29 @@ macro_rules! impl_units_display_name_provider {
 }
 
 // Area
-impl_units_display_name_provider!(UnitsNameAreaCoreV1, UnitType::Core, "area");
-impl_units_display_name_provider!(UnitsNameAreaExtendedV1, UnitType::Extended, "area");
-impl_units_display_name_provider!(UnitsNameAreaOutlierV1, UnitType::Outlier, "area");
+impl_units_display_name_provider!(UnitsNamesAreaCoreV1, UnitType::Core, "area");
+impl_units_display_name_provider!(UnitsNamesAreaExtendedV1, UnitType::Extended, "area");
+impl_units_display_name_provider!(UnitsNamesAreaOutlierV1, UnitType::Outlier, "area");
 
 // Duration
-impl_units_display_name_provider!(UnitsNameDurationCoreV1, UnitType::Core, "duration");
-impl_units_display_name_provider!(UnitsNameDurationExtendedV1, UnitType::Extended, "duration");
-impl_units_display_name_provider!(UnitsNameDurationOutlierV1, UnitType::Outlier, "duration");
+impl_units_display_name_provider!(UnitsNamesDurationCoreV1, UnitType::Core, "duration");
+impl_units_display_name_provider!(UnitsNamesDurationExtendedV1, UnitType::Extended, "duration");
+impl_units_display_name_provider!(UnitsNamesDurationOutlierV1, UnitType::Outlier, "duration");
 
 // Length
-impl_units_display_name_provider!(UnitsNameLengthCoreV1, UnitType::Core, "length");
-impl_units_display_name_provider!(UnitsNameLengthExtendedV1, UnitType::Extended, "length");
-impl_units_display_name_provider!(UnitsNameLengthOutlierV1, UnitType::Outlier, "length");
+impl_units_display_name_provider!(UnitsNamesLengthCoreV1, UnitType::Core, "length");
+impl_units_display_name_provider!(UnitsNamesLengthExtendedV1, UnitType::Extended, "length");
+impl_units_display_name_provider!(UnitsNamesLengthOutlierV1, UnitType::Outlier, "length");
 
 // Mass
-impl_units_display_name_provider!(UnitsNameMassCoreV1, UnitType::Core, "mass");
-impl_units_display_name_provider!(UnitsNameMassExtendedV1, UnitType::Extended, "mass");
-impl_units_display_name_provider!(UnitsNameMassOutlierV1, UnitType::Outlier, "mass");
+impl_units_display_name_provider!(UnitsNamesMassCoreV1, UnitType::Core, "mass");
+impl_units_display_name_provider!(UnitsNamesMassExtendedV1, UnitType::Extended, "mass");
+impl_units_display_name_provider!(UnitsNamesMassOutlierV1, UnitType::Outlier, "mass");
 
 // Volume
-impl_units_display_name_provider!(UnitsNameVolumeCoreV1, UnitType::Core, "volume");
-impl_units_display_name_provider!(UnitsNameVolumeExtendedV1, UnitType::Extended, "volume");
-impl_units_display_name_provider!(UnitsNameVolumeOutlierV1, UnitType::Outlier, "volume");
+impl_units_display_name_provider!(UnitsNamesVolumeCoreV1, UnitType::Core, "volume");
+impl_units_display_name_provider!(UnitsNamesVolumeExtendedV1, UnitType::Extended, "volume");
+impl_units_display_name_provider!(UnitsNamesVolumeOutlierV1, UnitType::Outlier, "volume");
 
 #[test]
 fn test_basic() {
@@ -199,7 +199,7 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let us_locale_long_meter: DataPayload<UnitsNameLengthExtendedV1> = provider
+    let us_locale_long_meter: DataPayload<UnitsNamesLengthExtendedV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("long-meter"),
@@ -216,7 +216,7 @@ fn test_basic() {
     let long = units_us.patterns.get(1.into(), &en_rules).interpolate([1]);
     assert_writeable_eq!(long, "1 meter");
 
-    let us_locale_short_meter: DataPayload<UnitsNameLengthExtendedV1> = provider
+    let us_locale_short_meter: DataPayload<UnitsNamesLengthExtendedV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("short-meter"),
@@ -234,7 +234,7 @@ fn test_basic() {
         .interpolate([5]);
     assert_writeable_eq!(short, "5 m");
 
-    let ar_eg_locale: DataPayload<UnitsNameLengthCoreV1> = provider
+    let ar_eg_locale: DataPayload<UnitsNamesLengthCoreV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("long-meter"),
@@ -253,7 +253,7 @@ fn test_basic() {
         .interpolate([1]);
     assert_writeable_eq!(long, "متر");
 
-    let fr_locale: DataPayload<UnitsNameLengthCoreV1> = provider
+    let fr_locale: DataPayload<UnitsNamesLengthCoreV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("short-meter"),
