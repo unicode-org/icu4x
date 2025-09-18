@@ -163,18 +163,21 @@ mod test {
     use crate::{VarZeroSlice, VarZeroVec};
 
     #[derive(serde::Serialize, serde::Deserialize)]
+    #[expect(dead_code)]
     struct DeriveTest_VarZeroVec<'data> {
         #[serde(borrow)]
         _data: VarZeroVec<'data, str>,
     }
 
     #[derive(serde::Serialize, serde::Deserialize)]
+    #[expect(dead_code)]
     struct DeriveTest_VarZeroSlice<'data> {
         #[serde(borrow)]
         _data: &'data VarZeroSlice<str>,
     }
 
     #[derive(serde::Serialize, serde::Deserialize)]
+    #[expect(dead_code)]
     struct DeriveTest_VarZeroVec_of_VarZeroSlice<'data> {
         #[serde(borrow)]
         _data: VarZeroVec<'data, VarZeroSlice<str>>,

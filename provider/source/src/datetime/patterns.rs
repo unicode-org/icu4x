@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::legacy::{DateLengths, LengthPatterns, TimeLengths};
+#[cfg(test)]
+use super::legacy::DateLengths;
+use super::legacy::{LengthPatterns, TimeLengths};
 use crate::cldr_serde;
 use icu::datetime::provider::pattern;
 use icu::datetime::provider::pattern::CoarseHourCycle;
@@ -37,6 +39,7 @@ impl From<&cldr_serde::ca::LengthPatterns> for LengthPatterns<'_> {
     }
 }
 
+#[cfg(test)]
 impl From<&cldr_serde::ca::DateTimeFormats> for LengthPatterns<'_> {
     fn from(other: &cldr_serde::ca::DateTimeFormats) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
@@ -93,6 +96,7 @@ impl From<&cldr_serde::ca::DateTimeFormats> for GenericLengthPatterns<'_> {
     }
 }
 
+#[cfg(test)]
 impl From<&cldr_serde::ca::Dates> for DateLengths<'_> {
     fn from(other: &cldr_serde::ca::Dates) -> Self {
         let length_combinations_v1 = GenericLengthPatterns::from(&other.datetime_formats);

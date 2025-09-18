@@ -71,6 +71,7 @@ mod test {
     ];
 
     #[derive(Serialize, Deserialize)]
+    #[expect(dead_code)]
     struct DeriveTestZeroHashMap<'data> {
         #[serde(borrow)]
         _data: ZeroHashMap<'data, str, [u8]>,

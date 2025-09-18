@@ -5,23 +5,15 @@
 //! TODO(#5613): Even though these markers are no longer exported, we need them in order to export
 //! semantic skeleton data markers. This should be refactored to skip the intermediate data struct.
 
+#![allow(dead_code)] // so many unused fields
+
 use alloc::borrow::Cow;
 use icu::datetime::provider::pattern::runtime;
-use icu::datetime::provider::skeleton::*;
 use icu::{calendar::types::MonthCode, datetime::provider::pattern::CoarseHourCycle};
-use icu_provider::prelude::*;
-use potential_utf::PotentialUtf8;
 use tinystr::{tinystr, TinyStr4};
 use zerovec::ZeroMap;
 
 /// Data struct for date/time patterns broken down by pattern length.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub struct LengthPatterns<'data> {
     /// A full length date/time pattern.
     pub full: runtime::Pattern<'data>,
@@ -34,29 +26,16 @@ pub struct LengthPatterns<'data> {
 }
 
 /// Pattern data for dates.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[derive(Debug, PartialEq, Clone, Default, zerofrom::ZeroFrom, yoke::Yokeable)]
+#[cfg(test)]
 pub struct DateLengths<'data> {
     /// Date pattern data, broken down by pattern length.
     pub date: LengthPatterns<'data>,
 
     /// Patterns used to combine date and time length patterns into full date_time patterns.
-    pub length_combinations: GenericLengthPatterns<'data>,
+    pub length_combinations: icu::datetime::provider::skeleton::GenericLengthPatterns<'data>,
 }
 
 /// Pattern data for times.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub struct TimeLengths<'data> {
     /// These patterns are common uses of time formatting, broken down by the length of the
     /// pattern. Users can override the hour cycle with a preference, so there are two
@@ -75,37 +54,13 @@ pub struct TimeLengths<'data> {
 /// Symbol data for the months, weekdays, and eras needed to format a date.
 ///
 /// For more information on date time symbols, see [`FieldSymbol`](crate::provider::fields::FieldSymbol).
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[yoke(prove_covariance_manually)]
+#[cfg(test)]
 pub struct DateSymbols<'data> {
     /// Symbol data for months.
     pub months: months::Contexts<'data>,
     /// Symbol data for weekdays.
     pub weekdays: weekdays::Contexts<'data>,
-    /// Symbol data for eras.
     pub eras: Eras<'data>,
-}
-
-/// Symbol data for the day periods needed to format a time.
-///
-/// For more information on date time symbols, see [`FieldSymbol`](crate::provider::fields::FieldSymbol).
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[yoke(prove_covariance_manually)]
-pub struct TimeSymbols<'data> {
-    /// Symbol data for day periods.
-    pub day_periods: day_periods::Contexts<'data>,
 }
 
 /// String data for the name, abbreviation, and narrow form of a date's era.
@@ -118,124 +73,29 @@ pub struct TimeSymbols<'data> {
 /// such as for the extended Japanese calendar.
 ///
 /// For more information on date time symbols, see [`FieldSymbol`](crate::provider::fields::FieldSymbol).
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[yoke(prove_covariance_manually)]
+#[cfg(test)]
+#[derive(Default)]
 pub struct Eras<'data> {
     /// Symbol data for era names.
     ///
     /// Keys are era codes, and values are display names. See [`Eras`].
-    pub names: ZeroMap<'data, PotentialUtf8, str>,
+    pub names: ZeroMap<'data, potential_utf::PotentialUtf8, str>,
     /// Symbol data for era abbreviations.
     ///
     /// Keys are era codes, and values are display names. See [`Eras`].
-    pub abbr: ZeroMap<'data, PotentialUtf8, str>,
+    pub abbr: ZeroMap<'data, potential_utf::PotentialUtf8, str>,
     /// Symbol data for era narrow forms.
     ///
     /// Keys are era codes, and values are display names. See [`Eras`].
-    pub narrow: ZeroMap<'data, PotentialUtf8, str>,
+    pub narrow: ZeroMap<'data, potential_utf::PotentialUtf8, str>,
 }
 
-// Note: the SymbolsV* struct doc strings metadata are attached to `$name` in the macro invocation to
-// avoid macro parsing ambiguity caused by other metadata already attached to `$symbols`.
-macro_rules! symbols {
-    ($(#[$symbols_attr:meta])*  $name: ident, $field_id: ident, $symbols: item) => {
-
-        $(#[$symbols_attr])*
-        #[doc = concat!("Formatting symbols for [`",
-                stringify!($field_id),
-                "`](crate::provider::fields::FieldSymbol::",
-                stringify!($field_id),
-                ").\n\n",
-                "For more information on date time symbols, see [`FieldSymbol`](crate::provider::fields::FieldSymbol).")]
-        pub mod $name {
-            use super::*;
-
-            #[derive(Debug, PartialEq, Clone, zerofrom::ZeroFrom, yoke::Yokeable)]
-            #[yoke(prove_covariance_manually)]
-            #[doc = concat!("Locale data for ", stringify!($field_id), " corresponding to the symbols.")]
-            ///
-            /// <div class="stab unstable">
-            /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-            /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-            /// to be stable, their Rust representation might not be. Use with caution.
-            /// </div>
-            $symbols
-
-            // UTS 35 specifies that `format` widths are mandatory,
-            // except for `short`.
-            #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-            #[yoke(prove_covariance_manually)]
-            #[doc = concat!("Symbol data for the \"format\" style formatting of ", stringify!($field_id),
-                ".\n\nThe format style is used in contexts where it is different from the stand-alone form, ex: ",
-                "a case inflected form where the stand-alone form is the nominative case.")]
-            ///
-            /// <div class="stab unstable">
-            /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-            /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-            /// to be stable, their Rust representation might not be. Use with caution.
-            /// </div>
-            pub struct FormatWidths<'data> {
-                #[doc = concat!("Abbreviated length symbol for \"format\" style symbol for ", stringify!($name), ".")]
-                pub abbreviated: Symbols<'data>,
-                #[doc = concat!("Narrow length symbol for \"format\" style symbol for ", stringify!($name), ".")]
-                pub narrow: Symbols<'data>,
-                #[doc = concat!("Short length symbol for \"format\" style symbol for ", stringify!($name), ", if present.")]
-                pub short: Option<Symbols<'data>>,
-                #[doc = concat!("Wide length symbol for \"format\" style symbol for ", stringify!($name), ".")]
-                pub wide: Symbols<'data>,
-            }
-
-            // UTS 35 specifies that `stand_alone` widths are optional
-            #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-            #[yoke(prove_covariance_manually)]
-            #[doc = concat!("Symbol data for the \"stand-alone\" style formatting of ", stringify!($field_id),
-                ".\n\nThe stand-alone style is used in contexts where the field is displayed by itself.")]
-            ///
-            /// <div class="stab unstable">
-            /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-            /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-            /// to be stable, their Rust representation might not be. Use with caution.
-            /// </div>
-            pub struct StandAloneWidths<'data> {
-                #[doc = concat!("Abbreviated length symbol for \"stand-alone\" style symbol for ", stringify!($name), ".")]
-                pub abbreviated: Option<Symbols<'data>>,
-                #[doc = concat!("Narrow length symbol for \"stand-alone\" style symbol for ", stringify!($name), ".")]
-                pub narrow: Option<Symbols<'data>>,
-                #[doc = concat!("Short length symbol for \"stand-alone\" style symbol for ", stringify!($name), ".")]
-                pub short: Option<Symbols<'data>>,
-                #[doc = concat!("Wide length symbol for \"stand-alone\" style symbol for ", stringify!($name), ".")]
-                pub wide: Option<Symbols<'data>>,
-            }
-
-            #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-            #[yoke(prove_covariance_manually)]
-            #[doc = concat!("The struct containing the symbol data for ", stringify!($field_id),
-                " that contains the \"format\" style symbol data ([`FormatWidths`]) and \"stand-alone\" style symbol data ([`StandAloneWidths`]).")]
-            ///
-            /// <div class="stab unstable">
-            /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-            /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-            /// to be stable, their Rust representation might not be. Use with caution.
-            /// </div>
-            pub struct Contexts<'data> {
-                /// The symbol data for "format" style symbols.
-                pub format: FormatWidths<'data>,
-                /// The symbol data for "stand-alone" style symbols.
-                pub stand_alone: Option<StandAloneWidths<'data>>,
-            }
-        }
-    };
-}
-
-symbols!(
-    months,
-    Month,
+///Formatting symbols for [`Month`](crate::provider::fields::FieldSymbol::Month).
+///
+///For more information on date time symbols, see [`FieldSymbol`](crate::provider::fields::FieldSymbol).
+pub mod months {
+    use super::*;
+    ///Locale data for Month corresponding to the symbols.
     #[expect(clippy::large_enum_variant)]
     pub enum Symbols<'data> {
         /// Twelve symbols for a solar calendar
@@ -245,7 +105,46 @@ symbols!(
         /// A calendar with an arbitrary number of months, potentially including leap months
         Other(ZeroMap<'data, MonthCode, str>),
     }
-);
+
+    ///Symbol data for the "format" style formatting of Month.
+    ///
+    ///The format style is used in contexts where it is different from the stand-alone form, ex: a case inflected form where the stand-alone form is the nominative case.
+    #[cfg(test)]
+    pub struct FormatWidths<'data> {
+        ///Abbreviated length symbol for "format" style symbol for months.
+        pub abbreviated: Symbols<'data>,
+        ///Narrow length symbol for "format" style symbol for months.
+        pub narrow: Symbols<'data>,
+        ///Short length symbol for "format" style symbol for months, if present.
+        pub short: Option<Symbols<'data>>,
+        ///Wide length symbol for "format" style symbol for months.
+        pub wide: Symbols<'data>,
+    }
+
+    ///Symbol data for the "stand-alone" style formatting of Month.
+    ///
+    ///The stand-alone style is used in contexts where the field is displayed by itself.
+    #[cfg(test)]
+    pub struct StandAloneWidths<'data> {
+        ///Abbreviated length symbol for "stand-alone" style symbol for months.
+        pub abbreviated: Option<Symbols<'data>>,
+        ///Narrow length symbol for "stand-alone" style symbol for months.
+        pub narrow: Option<Symbols<'data>>,
+        ///Short length symbol for "stand-alone" style symbol for months.
+        pub short: Option<Symbols<'data>>,
+        ///Wide length symbol for "stand-alone" style symbol for months.
+        pub wide: Option<Symbols<'data>>,
+    }
+
+    ///The struct containing the symbol data for Month that contains the "format" style symbol data ([`FormatWidths`]) and "stand-alone" style symbol data ([`StandAloneWidths`]).
+    #[cfg(test)]
+    pub struct Contexts<'data> {
+        /// The symbol data for "format" style symbols.
+        pub format: FormatWidths<'data>,
+        /// The symbol data for "stand-alone" style symbols.
+        pub stand_alone: Option<StandAloneWidths<'data>>,
+    }
+}
 
 impl months::Symbols<'_> {
     /// Get the symbol for the given month code
@@ -294,17 +193,59 @@ impl Default for months::Symbols<'_> {
     }
 }
 
-symbols!(
-    weekdays,
-    Weekday,
-    #[derive(Default)]
+///Formatting symbols for [`Weekday`](crate::provider::fields::FieldSymbol::Weekday).
+///
+///For more information on date time symbols, see [`FieldSymbol`](crate::provider::fields::FieldSymbol).
+pub mod weekdays {
+    use super::*;
+    ///Locale data for Weekday corresponding to the symbols.
     pub struct Symbols<'data>(pub [Cow<'data, str>; 7]);
-);
 
-symbols!(
-    day_periods,
-    DayPeriod,
-    #[derive(Default)]
+    ///Symbol data for the "format" style formatting of Weekday.
+    ///
+    ///The format style is used in contexts where it is different from the stand-alone form, ex: a case inflected form where the stand-alone form is the nominative case.
+    #[cfg(test)]
+    pub struct FormatWidths<'data> {
+        ///Abbreviated length symbol for "format" style symbol for weekdays.
+        pub abbreviated: Symbols<'data>,
+        ///Narrow length symbol for "format" style symbol for weekdays.
+        pub narrow: Symbols<'data>,
+        ///Short length symbol for "format" style symbol for weekdays, if present.
+        pub short: Option<Symbols<'data>>,
+        ///Wide length symbol for "format" style symbol for weekdays.
+        pub wide: Symbols<'data>,
+    }
+
+    ///Symbol data for the "stand-alone" style formatting of Weekday.
+    ///
+    ///The stand-alone style is used in contexts where the field is displayed by itself.
+    #[cfg(test)]
+    pub struct StandAloneWidths<'data> {
+        ///Abbreviated length symbol for "stand-alone" style symbol for weekdays.
+        pub abbreviated: Option<Symbols<'data>>,
+        ///Narrow length symbol for "stand-alone" style symbol for weekdays.
+        pub narrow: Option<Symbols<'data>>,
+        ///Short length symbol for "stand-alone" style symbol for weekdays.
+        pub short: Option<Symbols<'data>>,
+        ///Wide length symbol for "stand-alone" style symbol for weekdays.
+        pub wide: Option<Symbols<'data>>,
+    }
+
+    #[cfg(test)]
+    pub struct Contexts<'data> {
+        /// The symbol data for "format" style symbols.
+        pub format: FormatWidths<'data>,
+        /// The symbol data for "stand-alone" style symbols.
+        pub stand_alone: Option<StandAloneWidths<'data>>,
+    }
+}
+
+///Formatting symbols for [`DayPeriod`](crate::provider::fields::FieldSymbol::DayPeriod).
+///
+///For more information on date time symbols, see [`FieldSymbol`](crate::provider::fields::FieldSymbol).
+pub mod day_periods {
+    use super::*;
+    ///Locale data for DayPeriod corresponding to the symbols.
     pub struct Symbols<'data> {
         /// Day period for AM (before noon).
         pub am: Cow<'data, str>,
@@ -315,7 +256,7 @@ symbols!(
         /// Day period for midnight, in locales that support it.
         pub midnight: Option<Cow<'data, str>>,
     }
-);
+}
 
 #[cfg(test)]
 mod test {

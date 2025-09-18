@@ -161,6 +161,7 @@ mod test {
     use crate::ZeroVec;
 
     #[derive(serde::Serialize, serde::Deserialize)]
+    #[expect(dead_code)]
     struct DeriveTest_ZeroVec<'data> {
         #[serde(borrow)]
         _data: ZeroVec<'data, u16>,
