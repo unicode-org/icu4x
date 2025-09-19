@@ -1,5 +1,5 @@
-#ifndef icu4x_IanaParser_HPP
-#define icu4x_IanaParser_HPP
+#ifndef ICU4X_IanaParser_HPP
+#define ICU4X_IanaParser_HPP
 
 #include "IanaParser.d.hpp"
 
@@ -11,11 +11,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "TimeZone.hpp"
 #include "TimeZoneIterator.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -27,7 +27,7 @@ namespace capi {
     typedef struct icu4x_IanaParser_create_with_provider_mv1_result {union {icu4x::capi::IanaParser* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_IanaParser_create_with_provider_mv1_result;
     icu4x_IanaParser_create_with_provider_mv1_result icu4x_IanaParser_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
 
-    icu4x::capi::TimeZone* icu4x_IanaParser_parse_mv1(const icu4x::capi::IanaParser* self, diplomat::capi::DiplomatStringView value);
+    icu4x::capi::TimeZone* icu4x_IanaParser_parse_mv1(const icu4x::capi::IanaParser* self, icu4x::diplomat::capi::DiplomatStringView value);
 
     icu4x::capi::TimeZoneIterator* icu4x_IanaParser_iter_mv1(const icu4x::capi::IanaParser* self);
 
@@ -42,9 +42,9 @@ inline std::unique_ptr<icu4x::IanaParser> icu4x::IanaParser::create() {
     return std::unique_ptr<icu4x::IanaParser>(icu4x::IanaParser::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::IanaParser>, icu4x::DataError> icu4x::IanaParser::create_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::IanaParser>, icu4x::DataError> icu4x::IanaParser::create_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_IanaParser_create_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::IanaParser>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::IanaParser>>(std::unique_ptr<icu4x::IanaParser>(icu4x::IanaParser::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::IanaParser>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::IanaParser>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::IanaParser>>(std::unique_ptr<icu4x::IanaParser>(icu4x::IanaParser::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::IanaParser>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::TimeZone> icu4x::IanaParser::parse(std::string_view value) const {
@@ -79,4 +79,4 @@ inline void icu4x::IanaParser::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_IanaParser_HPP
+#endif // ICU4X_IanaParser_HPP

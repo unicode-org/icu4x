@@ -1,5 +1,5 @@
-#ifndef icu4x_CanonicalCombiningClass_HPP
-#define icu4x_CanonicalCombiningClass_HPP
+#ifndef ICU4X_CanonicalCombiningClass_HPP
+#define ICU4X_CanonicalCombiningClass_HPP
 
 #include "CanonicalCombiningClass.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -113,4 +113,4 @@ inline std::optional<icu4x::CanonicalCombiningClass> icu4x::CanonicalCombiningCl
     auto result = icu4x::capi::icu4x_CanonicalCombiningClass_from_integer_value_mv1(other);
     return result.is_ok ? std::optional<icu4x::CanonicalCombiningClass>(icu4x::CanonicalCombiningClass::FromFFI(result.ok)) : std::nullopt;
 }
-#endif // icu4x_CanonicalCombiningClass_HPP
+#endif // ICU4X_CanonicalCombiningClass_HPP

@@ -1,5 +1,5 @@
-#ifndef icu4x_CalendarKind_D_HPP
-#define icu4x_CalendarKind_D_HPP
+#ifndef ICU4X_CalendarKind_D_HPP
+#define ICU4X_CalendarKind_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,13 +9,13 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct Locale; }
 class Locale;
 class CalendarKind;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -83,9 +83,9 @@ public:
     explicit operator bool() const = delete;
 
   /**
-     * Creates a new {@link CalendarKind} for the specified locale, using compiled data.
-     *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendarKind.html#method.new) for more information.
+   * Creates a new {@link CalendarKind} for the specified locale, using compiled data.
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendarKind.html#method.new) for more information.
    */
   inline static icu4x::CalendarKind create(const icu4x::Locale& locale);
 
@@ -96,4 +96,4 @@ private:
 };
 
 } // namespace
-#endif // icu4x_CalendarKind_D_HPP
+#endif // ICU4X_CalendarKind_D_HPP

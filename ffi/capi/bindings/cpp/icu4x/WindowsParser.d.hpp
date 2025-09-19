@@ -1,5 +1,5 @@
-#ifndef icu4x_WindowsParser_D_HPP
-#define icu4x_WindowsParser_D_HPP
+#ifndef ICU4X_WindowsParser_D_HPP
+#define ICU4X_WindowsParser_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,8 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
@@ -19,7 +18,8 @@ class TimeZone;
 namespace capi { struct WindowsParser; }
 class WindowsParser;
 class DataError;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -41,21 +41,21 @@ class WindowsParser {
 public:
 
   /**
-     * Create a new {@link WindowsParser} using compiled data
-     *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
+   * Create a new {@link WindowsParser} using compiled data
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
    */
   inline static std::unique_ptr<icu4x::WindowsParser> create();
 
   /**
-     * Create a new {@link WindowsParser} using a particular data source
-     *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
+   * Create a new {@link WindowsParser} using a particular data source
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::WindowsParser>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::WindowsParser>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   /**
-     * See the [Rust documentation for `parse`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParserBorrowed.html#method.parse) for more information.
+   * See the [Rust documentation for `parse`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParserBorrowed.html#method.parse) for more information.
    */
   inline std::unique_ptr<icu4x::TimeZone> parse(std::string_view value, std::string_view region) const;
 
@@ -74,4 +74,4 @@ private:
 };
 
 } // namespace
-#endif // icu4x_WindowsParser_D_HPP
+#endif // ICU4X_WindowsParser_D_HPP

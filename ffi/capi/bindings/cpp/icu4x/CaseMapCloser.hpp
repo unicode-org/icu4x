@@ -1,5 +1,5 @@
-#ifndef icu4x_CaseMapCloser_HPP
-#define icu4x_CaseMapCloser_HPP
+#ifndef ICU4X_CaseMapCloser_HPP
+#define ICU4X_CaseMapCloser_HPP
 
 #include "CaseMapCloser.d.hpp"
 
@@ -11,10 +11,10 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "CodePointSetBuilder.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -29,7 +29,7 @@ namespace capi {
 
     void icu4x_CaseMapCloser_add_case_closure_to_mv1(const icu4x::capi::CaseMapCloser* self, char32_t c, icu4x::capi::CodePointSetBuilder* builder);
 
-    bool icu4x_CaseMapCloser_add_string_case_closure_to_mv1(const icu4x::capi::CaseMapCloser* self, diplomat::capi::DiplomatStringView s, icu4x::capi::CodePointSetBuilder* builder);
+    bool icu4x_CaseMapCloser_add_string_case_closure_to_mv1(const icu4x::capi::CaseMapCloser* self, icu4x::diplomat::capi::DiplomatStringView s, icu4x::capi::CodePointSetBuilder* builder);
 
     void icu4x_CaseMapCloser_destroy_mv1(CaseMapCloser* self);
 
@@ -37,14 +37,14 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::CaseMapCloser>, icu4x::DataError> icu4x::CaseMapCloser::create() {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CaseMapCloser>, icu4x::DataError> icu4x::CaseMapCloser::create() {
     auto result = icu4x::capi::icu4x_CaseMapCloser_create_mv1();
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CaseMapCloser>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CaseMapCloser>>(std::unique_ptr<icu4x::CaseMapCloser>(icu4x::CaseMapCloser::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CaseMapCloser>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CaseMapCloser>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CaseMapCloser>>(std::unique_ptr<icu4x::CaseMapCloser>(icu4x::CaseMapCloser::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CaseMapCloser>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::CaseMapCloser>, icu4x::DataError> icu4x::CaseMapCloser::create_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CaseMapCloser>, icu4x::DataError> icu4x::CaseMapCloser::create_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_CaseMapCloser_create_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CaseMapCloser>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CaseMapCloser>>(std::unique_ptr<icu4x::CaseMapCloser>(icu4x::CaseMapCloser::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CaseMapCloser>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CaseMapCloser>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CaseMapCloser>>(std::unique_ptr<icu4x::CaseMapCloser>(icu4x::CaseMapCloser::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CaseMapCloser>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline void icu4x::CaseMapCloser::add_case_closure_to(char32_t c, icu4x::CodePointSetBuilder& builder) const {
@@ -81,4 +81,4 @@ inline void icu4x::CaseMapCloser::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_CaseMapCloser_HPP
+#endif // ICU4X_CaseMapCloser_HPP

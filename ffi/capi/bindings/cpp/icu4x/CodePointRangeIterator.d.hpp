@@ -1,5 +1,5 @@
-#ifndef icu4x_CodePointRangeIterator_D_HPP
-#define icu4x_CodePointRangeIterator_D_HPP
+#ifndef ICU4X_CodePointRangeIterator_D_HPP
+#define ICU4X_CodePointRangeIterator_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,11 +9,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 struct CodePointRangeIteratorResult;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -31,9 +31,9 @@ class CodePointRangeIterator {
 public:
 
   /**
-     * Advance the iterator by one and return the next range.
-     *
-     * If the iterator is out of items, `done` will be true
+   * Advance the iterator by one and return the next range.
+   *
+   * If the iterator is out of items, `done` will be true
    */
   inline icu4x::CodePointRangeIteratorResult next();
 
@@ -52,4 +52,4 @@ private:
 };
 
 } // namespace
-#endif // icu4x_CodePointRangeIterator_D_HPP
+#endif // ICU4X_CodePointRangeIterator_D_HPP

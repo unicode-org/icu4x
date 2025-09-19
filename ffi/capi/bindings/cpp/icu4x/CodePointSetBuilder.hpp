@@ -1,5 +1,5 @@
-#ifndef icu4x_CodePointSetBuilder_HPP
-#define icu4x_CodePointSetBuilder_HPP
+#ifndef ICU4X_CodePointSetBuilder_HPP
+#define ICU4X_CodePointSetBuilder_HPP
 
 #include "CodePointSetBuilder.d.hpp"
 
@@ -11,8 +11,8 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "CodePointSetData.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -161,4 +161,4 @@ inline void icu4x::CodePointSetBuilder::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_CodePointSetBuilder_HPP
+#endif // ICU4X_CodePointSetBuilder_HPP

@@ -84,13 +84,17 @@ fn main() -> std::io::Result<()> {
         &root.join("ffi/capi/src/lib.rs"),
         lang.as_str(),
         &{
-            let include = if lang != "demo_gen" {
+            let mut include = if lang != "demo_gen" {
                 root.join("ffi/capi/bindings").join(&lang)
             } else {
                 root.join("tools/web-demo/gen")
             };
+
             std::fs::remove_dir_all(&include)?;
-            std::fs::create_dir(&include)?;
+            if lang == "cpp" {
+                include = include.join("icu4x");
+            }
+            std::fs::create_dir_all(&include)?;
             include
         },
         &docs_url_gen,

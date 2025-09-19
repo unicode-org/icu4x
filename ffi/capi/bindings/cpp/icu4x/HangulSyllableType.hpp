@@ -1,5 +1,5 @@
-#ifndef icu4x_HangulSyllableType_HPP
-#define icu4x_HangulSyllableType_HPP
+#ifndef ICU4X_HangulSyllableType_HPP
+#define ICU4X_HangulSyllableType_HPP
 
 #include "HangulSyllableType.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -61,4 +61,4 @@ inline std::optional<icu4x::HangulSyllableType> icu4x::HangulSyllableType::from_
     auto result = icu4x::capi::icu4x_HangulSyllableType_from_integer_value_mv1(other);
     return result.is_ok ? std::optional<icu4x::HangulSyllableType>(icu4x::HangulSyllableType::FromFFI(result.ok)) : std::nullopt;
 }
-#endif // icu4x_HangulSyllableType_HPP
+#endif // ICU4X_HangulSyllableType_HPP

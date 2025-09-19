@@ -1,5 +1,5 @@
-#ifndef icu4x_CodePointMapData8_HPP
-#define icu4x_CodePointMapData8_HPP
+#ifndef ICU4X_CodePointMapData8_HPP
+#define ICU4X_CodePointMapData8_HPP
 
 #include "CodePointMapData8.d.hpp"
 
@@ -11,12 +11,12 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "CodePointRangeIterator.hpp"
 #include "CodePointSetData.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "GeneralCategoryGroup.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -134,9 +134,9 @@ inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::creat
     return std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_general_category_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_general_category_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_CodePointMapData8_create_general_category_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::create_bidi_class() {
@@ -144,9 +144,9 @@ inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::creat
     return std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_bidi_class_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_bidi_class_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_CodePointMapData8_create_bidi_class_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::create_east_asian_width() {
@@ -154,9 +154,9 @@ inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::creat
     return std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_east_asian_width_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_east_asian_width_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_CodePointMapData8_create_east_asian_width_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::create_hangul_syllable_type() {
@@ -164,9 +164,9 @@ inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::creat
     return std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_hangul_syllable_type_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_hangul_syllable_type_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_CodePointMapData8_create_hangul_syllable_type_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::create_indic_syllabic_category() {
@@ -174,9 +174,9 @@ inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::creat
     return std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_indic_syllabic_category_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_indic_syllabic_category_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_CodePointMapData8_create_indic_syllabic_category_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::create_line_break() {
@@ -184,9 +184,9 @@ inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::creat
     return std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_line_break_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_line_break_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_CodePointMapData8_create_line_break_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::create_grapheme_cluster_break() {
@@ -194,9 +194,9 @@ inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::creat
     return std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_grapheme_cluster_break_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_grapheme_cluster_break_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_CodePointMapData8_create_grapheme_cluster_break_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::create_word_break() {
@@ -204,9 +204,9 @@ inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::creat
     return std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_word_break_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_word_break_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_CodePointMapData8_create_word_break_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::create_sentence_break() {
@@ -214,9 +214,9 @@ inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::creat
     return std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_sentence_break_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_sentence_break_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_CodePointMapData8_create_sentence_break_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::create_joining_type() {
@@ -224,9 +224,9 @@ inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::creat
     return std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_joining_type_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_joining_type_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_CodePointMapData8_create_joining_type_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::create_canonical_combining_class() {
@@ -234,9 +234,9 @@ inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::creat
     return std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_canonical_combining_class_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_canonical_combining_class_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_CodePointMapData8_create_canonical_combining_class_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::create_vertical_orientation() {
@@ -244,9 +244,9 @@ inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::creat
     return std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_vertical_orientation_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_vertical_orientation_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_CodePointMapData8_create_vertical_orientation_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline const icu4x::capi::CodePointMapData8* icu4x::CodePointMapData8::AsFFI() const {
@@ -270,4 +270,4 @@ inline void icu4x::CodePointMapData8::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_CodePointMapData8_HPP
+#endif // ICU4X_CodePointMapData8_HPP

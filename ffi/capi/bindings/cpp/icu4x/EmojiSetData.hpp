@@ -1,5 +1,5 @@
-#ifndef icu4x_EmojiSetData_HPP
-#define icu4x_EmojiSetData_HPP
+#ifndef ICU4X_EmojiSetData_HPP
+#define ICU4X_EmojiSetData_HPP
 
 #include "EmojiSetData.d.hpp"
 
@@ -11,16 +11,16 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
 
-    bool icu4x_EmojiSetData_contains_str_mv1(const icu4x::capi::EmojiSetData* self, diplomat::capi::DiplomatStringView s);
+    bool icu4x_EmojiSetData_contains_str_mv1(const icu4x::capi::EmojiSetData* self, icu4x::diplomat::capi::DiplomatStringView s);
 
     bool icu4x_EmojiSetData_contains_mv1(const icu4x::capi::EmojiSetData* self, char32_t cp);
 
@@ -52,9 +52,9 @@ inline std::unique_ptr<icu4x::EmojiSetData> icu4x::EmojiSetData::create_basic() 
     return std::unique_ptr<icu4x::EmojiSetData>(icu4x::EmojiSetData::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::EmojiSetData>, icu4x::DataError> icu4x::EmojiSetData::create_basic_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::EmojiSetData>, icu4x::DataError> icu4x::EmojiSetData::create_basic_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_EmojiSetData_create_basic_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::EmojiSetData>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::EmojiSetData>>(std::unique_ptr<icu4x::EmojiSetData>(icu4x::EmojiSetData::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::EmojiSetData>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::EmojiSetData>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::EmojiSetData>>(std::unique_ptr<icu4x::EmojiSetData>(icu4x::EmojiSetData::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::EmojiSetData>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline const icu4x::capi::EmojiSetData* icu4x::EmojiSetData::AsFFI() const {
@@ -78,4 +78,4 @@ inline void icu4x::EmojiSetData::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_EmojiSetData_HPP
+#endif // ICU4X_EmojiSetData_HPP

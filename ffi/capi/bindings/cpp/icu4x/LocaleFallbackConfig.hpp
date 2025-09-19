@@ -1,5 +1,5 @@
-#ifndef icu4x_LocaleFallbackConfig_HPP
-#define icu4x_LocaleFallbackConfig_HPP
+#ifndef ICU4X_LocaleFallbackConfig_HPP
+#define ICU4X_LocaleFallbackConfig_HPP
 
 #include "LocaleFallbackConfig.d.hpp"
 
@@ -11,8 +11,8 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "LocaleFallbackPriority.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -37,4 +37,4 @@ inline icu4x::LocaleFallbackConfig icu4x::LocaleFallbackConfig::FromFFI(icu4x::c
 }
 
 
-#endif // icu4x_LocaleFallbackConfig_HPP
+#endif // ICU4X_LocaleFallbackConfig_HPP

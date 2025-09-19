@@ -1,5 +1,5 @@
-#ifndef icu4x_CalendarKind_HPP
-#define icu4x_CalendarKind_HPP
+#ifndef ICU4X_CalendarKind_HPP
+#define ICU4X_CalendarKind_HPP
 
 #include "CalendarKind.d.hpp"
 
@@ -11,8 +11,8 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "Locale.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -59,4 +59,4 @@ inline icu4x::CalendarKind icu4x::CalendarKind::create(const icu4x::Locale& loca
     auto result = icu4x::capi::icu4x_CalendarKind_create_mv1(locale.AsFFI());
     return icu4x::CalendarKind::FromFFI(result);
 }
-#endif // icu4x_CalendarKind_HPP
+#endif // ICU4X_CalendarKind_HPP

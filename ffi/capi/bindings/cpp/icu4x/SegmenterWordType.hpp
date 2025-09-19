@@ -1,5 +1,5 @@
-#ifndef icu4x_SegmenterWordType_HPP
-#define icu4x_SegmenterWordType_HPP
+#ifndef ICU4X_SegmenterWordType_HPP
+#define ICU4X_SegmenterWordType_HPP
 
 #include "SegmenterWordType.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -43,4 +43,4 @@ inline bool icu4x::SegmenterWordType::is_word_like() const {
     auto result = icu4x::capi::icu4x_SegmenterWordType_is_word_like_mv1(this->AsFFI());
     return result;
 }
-#endif // icu4x_SegmenterWordType_HPP
+#endif // ICU4X_SegmenterWordType_HPP

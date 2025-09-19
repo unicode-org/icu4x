@@ -1,5 +1,5 @@
-#ifndef icu4x_DecimalSign_HPP
-#define icu4x_DecimalSign_HPP
+#ifndef ICU4X_DecimalSign_HPP
+#define ICU4X_DecimalSign_HPP
 
 #include "DecimalSign.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -36,4 +36,4 @@ inline icu4x::DecimalSign icu4x::DecimalSign::FromFFI(icu4x::capi::DecimalSign c
             std::abort();
     }
 }
-#endif // icu4x_DecimalSign_HPP
+#endif // ICU4X_DecimalSign_HPP

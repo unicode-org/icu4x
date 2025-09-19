@@ -1,5 +1,5 @@
-#ifndef icu4x_IndicSyllabicCategory_HPP
-#define icu4x_IndicSyllabicCategory_HPP
+#ifndef ICU4X_IndicSyllabicCategory_HPP
+#define ICU4X_IndicSyllabicCategory_HPP
 
 #include "IndicSyllabicCategory.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -92,4 +92,4 @@ inline std::optional<icu4x::IndicSyllabicCategory> icu4x::IndicSyllabicCategory:
     auto result = icu4x::capi::icu4x_IndicSyllabicCategory_from_integer_value_mv1(other);
     return result.is_ok ? std::optional<icu4x::IndicSyllabicCategory>(icu4x::IndicSyllabicCategory::FromFFI(result.ok)) : std::nullopt;
 }
-#endif // icu4x_IndicSyllabicCategory_HPP
+#endif // ICU4X_IndicSyllabicCategory_HPP

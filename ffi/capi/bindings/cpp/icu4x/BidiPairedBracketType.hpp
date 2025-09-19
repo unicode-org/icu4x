@@ -1,5 +1,5 @@
-#ifndef icu4x_BidiPairedBracketType_HPP
-#define icu4x_BidiPairedBracketType_HPP
+#ifndef ICU4X_BidiPairedBracketType_HPP
+#define ICU4X_BidiPairedBracketType_HPP
 
 #include "BidiPairedBracketType.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -36,4 +36,4 @@ inline icu4x::BidiPairedBracketType icu4x::BidiPairedBracketType::FromFFI(icu4x:
             std::abort();
     }
 }
-#endif // icu4x_BidiPairedBracketType_HPP
+#endif // ICU4X_BidiPairedBracketType_HPP

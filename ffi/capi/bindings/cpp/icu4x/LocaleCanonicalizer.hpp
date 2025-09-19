@@ -1,5 +1,5 @@
-#ifndef icu4x_LocaleCanonicalizer_HPP
-#define icu4x_LocaleCanonicalizer_HPP
+#ifndef ICU4X_LocaleCanonicalizer_HPP
+#define ICU4X_LocaleCanonicalizer_HPP
 
 #include "LocaleCanonicalizer.d.hpp"
 
@@ -11,11 +11,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "Locale.hpp"
 #include "TransformResult.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -45,9 +45,9 @@ inline std::unique_ptr<icu4x::LocaleCanonicalizer> icu4x::LocaleCanonicalizer::c
     return std::unique_ptr<icu4x::LocaleCanonicalizer>(icu4x::LocaleCanonicalizer::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::LocaleCanonicalizer>, icu4x::DataError> icu4x::LocaleCanonicalizer::create_common_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleCanonicalizer>, icu4x::DataError> icu4x::LocaleCanonicalizer::create_common_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_LocaleCanonicalizer_create_common_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::LocaleCanonicalizer>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::LocaleCanonicalizer>>(std::unique_ptr<icu4x::LocaleCanonicalizer>(icu4x::LocaleCanonicalizer::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::LocaleCanonicalizer>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleCanonicalizer>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::LocaleCanonicalizer>>(std::unique_ptr<icu4x::LocaleCanonicalizer>(icu4x::LocaleCanonicalizer::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleCanonicalizer>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::LocaleCanonicalizer> icu4x::LocaleCanonicalizer::create_extended() {
@@ -55,9 +55,9 @@ inline std::unique_ptr<icu4x::LocaleCanonicalizer> icu4x::LocaleCanonicalizer::c
     return std::unique_ptr<icu4x::LocaleCanonicalizer>(icu4x::LocaleCanonicalizer::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::LocaleCanonicalizer>, icu4x::DataError> icu4x::LocaleCanonicalizer::create_extended_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleCanonicalizer>, icu4x::DataError> icu4x::LocaleCanonicalizer::create_extended_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_LocaleCanonicalizer_create_extended_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::LocaleCanonicalizer>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::LocaleCanonicalizer>>(std::unique_ptr<icu4x::LocaleCanonicalizer>(icu4x::LocaleCanonicalizer::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::LocaleCanonicalizer>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleCanonicalizer>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::LocaleCanonicalizer>>(std::unique_ptr<icu4x::LocaleCanonicalizer>(icu4x::LocaleCanonicalizer::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleCanonicalizer>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline icu4x::TransformResult icu4x::LocaleCanonicalizer::canonicalize(icu4x::Locale& locale) const {
@@ -87,4 +87,4 @@ inline void icu4x::LocaleCanonicalizer::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_LocaleCanonicalizer_HPP
+#endif // ICU4X_LocaleCanonicalizer_HPP

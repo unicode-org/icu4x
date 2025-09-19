@@ -1,5 +1,5 @@
-#ifndef icu4x_TimeZoneVariant_HPP
-#define icu4x_TimeZoneVariant_HPP
+#ifndef ICU4X_TimeZoneVariant_HPP
+#define ICU4X_TimeZoneVariant_HPP
 
 #include "TimeZoneVariant.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -42,4 +42,4 @@ inline icu4x::TimeZoneVariant icu4x::TimeZoneVariant::from_rearguard_isdst(bool 
     auto result = icu4x::capi::icu4x_TimeZoneVariant_from_rearguard_isdst_mv1(isdst);
     return icu4x::TimeZoneVariant::FromFFI(result);
 }
-#endif // icu4x_TimeZoneVariant_HPP
+#endif // ICU4X_TimeZoneVariant_HPP

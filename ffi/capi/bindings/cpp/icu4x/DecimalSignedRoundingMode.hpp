@@ -1,5 +1,5 @@
-#ifndef icu4x_DecimalSignedRoundingMode_HPP
-#define icu4x_DecimalSignedRoundingMode_HPP
+#ifndef ICU4X_DecimalSignedRoundingMode_HPP
+#define ICU4X_DecimalSignedRoundingMode_HPP
 
 #include "DecimalSignedRoundingMode.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -42,4 +42,4 @@ inline icu4x::DecimalSignedRoundingMode icu4x::DecimalSignedRoundingMode::FromFF
             std::abort();
     }
 }
-#endif // icu4x_DecimalSignedRoundingMode_HPP
+#endif // ICU4X_DecimalSignedRoundingMode_HPP

@@ -1,5 +1,5 @@
-#ifndef icu4x_LocaleParseError_HPP
-#define icu4x_LocaleParseError_HPP
+#ifndef ICU4X_LocaleParseError_HPP
+#define ICU4X_LocaleParseError_HPP
 
 #include "LocaleParseError.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -37,4 +37,4 @@ inline icu4x::LocaleParseError icu4x::LocaleParseError::FromFFI(icu4x::capi::Loc
             std::abort();
     }
 }
-#endif // icu4x_LocaleParseError_HPP
+#endif // ICU4X_LocaleParseError_HPP

@@ -1,5 +1,5 @@
-#ifndef icu4x_GeneralCategory_HPP
-#define icu4x_GeneralCategory_HPP
+#ifndef ICU4X_GeneralCategory_HPP
+#define ICU4X_GeneralCategory_HPP
 
 #include "GeneralCategory.d.hpp"
 
@@ -11,8 +11,8 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "GeneralCategoryGroup.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -21,10 +21,10 @@ namespace capi {
 
     icu4x::capi::GeneralCategory icu4x_GeneralCategory_for_char_mv1(char32_t ch);
 
-    typedef struct icu4x_GeneralCategory_long_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_GeneralCategory_long_name_mv1_result;
+    typedef struct icu4x_GeneralCategory_long_name_mv1_result {union {icu4x::diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_GeneralCategory_long_name_mv1_result;
     icu4x_GeneralCategory_long_name_mv1_result icu4x_GeneralCategory_long_name_mv1(icu4x::capi::GeneralCategory self);
 
-    typedef struct icu4x_GeneralCategory_short_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_GeneralCategory_short_name_mv1_result;
+    typedef struct icu4x_GeneralCategory_short_name_mv1_result {union {icu4x::diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_GeneralCategory_short_name_mv1_result;
     icu4x_GeneralCategory_short_name_mv1_result icu4x_GeneralCategory_short_name_mv1(icu4x::capi::GeneralCategory self);
 
     uint8_t icu4x_GeneralCategory_to_integer_value_mv1(icu4x::capi::GeneralCategory self);
@@ -109,4 +109,4 @@ inline std::optional<icu4x::GeneralCategory> icu4x::GeneralCategory::from_intege
     auto result = icu4x::capi::icu4x_GeneralCategory_from_integer_value_mv1(other);
     return result.is_ok ? std::optional<icu4x::GeneralCategory>(icu4x::GeneralCategory::FromFFI(result.ok)) : std::nullopt;
 }
-#endif // icu4x_GeneralCategory_HPP
+#endif // ICU4X_GeneralCategory_HPP

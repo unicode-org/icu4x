@@ -1,5 +1,5 @@
-#ifndef icu4x_GeneralCategoryGroup_HPP
-#define icu4x_GeneralCategoryGroup_HPP
+#ifndef ICU4X_GeneralCategoryGroup_HPP
+#define ICU4X_GeneralCategoryGroup_HPP
 
 #include "GeneralCategoryGroup.d.hpp"
 
@@ -11,8 +11,8 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "GeneralCategory.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -138,4 +138,4 @@ inline icu4x::GeneralCategoryGroup icu4x::GeneralCategoryGroup::FromFFI(icu4x::c
 }
 
 
-#endif // icu4x_GeneralCategoryGroup_HPP
+#endif // ICU4X_GeneralCategoryGroup_HPP

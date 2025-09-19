@@ -1,5 +1,5 @@
-#ifndef icu4x_DisplayNamesOptionsV1_HPP
-#define icu4x_DisplayNamesOptionsV1_HPP
+#ifndef ICU4X_DisplayNamesOptionsV1_HPP
+#define ICU4X_DisplayNamesOptionsV1_HPP
 
 #include "DisplayNamesOptionsV1.d.hpp"
 
@@ -11,10 +11,10 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "DisplayNamesFallback.hpp"
 #include "DisplayNamesStyle.hpp"
 #include "LanguageDisplay.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -43,4 +43,4 @@ inline icu4x::DisplayNamesOptionsV1 icu4x::DisplayNamesOptionsV1::FromFFI(icu4x:
 }
 
 
-#endif // icu4x_DisplayNamesOptionsV1_HPP
+#endif // ICU4X_DisplayNamesOptionsV1_HPP

@@ -1,5 +1,5 @@
-#ifndef icu4x_TransformResult_HPP
-#define icu4x_TransformResult_HPP
+#ifndef ICU4X_TransformResult_HPP
+#define ICU4X_TransformResult_HPP
 
 #include "TransformResult.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -35,4 +35,4 @@ inline icu4x::TransformResult icu4x::TransformResult::FromFFI(icu4x::capi::Trans
             std::abort();
     }
 }
-#endif // icu4x_TransformResult_HPP
+#endif // ICU4X_TransformResult_HPP

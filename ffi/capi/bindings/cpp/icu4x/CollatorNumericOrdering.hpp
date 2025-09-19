@@ -1,5 +1,5 @@
-#ifndef icu4x_CollatorNumericOrdering_HPP
-#define icu4x_CollatorNumericOrdering_HPP
+#ifndef ICU4X_CollatorNumericOrdering_HPP
+#define ICU4X_CollatorNumericOrdering_HPP
 
 #include "CollatorNumericOrdering.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -35,4 +35,4 @@ inline icu4x::CollatorNumericOrdering icu4x::CollatorNumericOrdering::FromFFI(ic
             std::abort();
     }
 }
-#endif // icu4x_CollatorNumericOrdering_HPP
+#endif // ICU4X_CollatorNumericOrdering_HPP

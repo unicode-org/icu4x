@@ -1,5 +1,5 @@
-#ifndef icu4x_DateTimeMismatchedCalendarError_HPP
-#define icu4x_DateTimeMismatchedCalendarError_HPP
+#ifndef ICU4X_DateTimeMismatchedCalendarError_HPP
+#define ICU4X_DateTimeMismatchedCalendarError_HPP
 
 #include "DateTimeMismatchedCalendarError.d.hpp"
 
@@ -11,8 +11,8 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "CalendarKind.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -39,4 +39,4 @@ inline icu4x::DateTimeMismatchedCalendarError icu4x::DateTimeMismatchedCalendarE
 }
 
 
-#endif // icu4x_DateTimeMismatchedCalendarError_HPP
+#endif // ICU4X_DateTimeMismatchedCalendarError_HPP

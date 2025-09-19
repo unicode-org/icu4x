@@ -1,5 +1,5 @@
-#ifndef icu4x_DataProvider_HPP
-#define icu4x_DataProvider_HPP
+#ifndef ICU4X_DataProvider_HPP
+#define ICU4X_DataProvider_HPP
 
 #include "DataProvider.d.hpp"
 
@@ -11,9 +11,9 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "LocaleFallbacker.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -21,10 +21,10 @@ namespace capi {
     extern "C" {
 
     typedef struct icu4x_DataProvider_from_fs_mv1_result {union {icu4x::capi::DataProvider* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_DataProvider_from_fs_mv1_result;
-    icu4x_DataProvider_from_fs_mv1_result icu4x_DataProvider_from_fs_mv1(diplomat::capi::DiplomatStringView path);
+    icu4x_DataProvider_from_fs_mv1_result icu4x_DataProvider_from_fs_mv1(icu4x::diplomat::capi::DiplomatStringView path);
 
     typedef struct icu4x_DataProvider_from_byte_slice_mv1_result {union {icu4x::capi::DataProvider* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_DataProvider_from_byte_slice_mv1_result;
-    icu4x_DataProvider_from_byte_slice_mv1_result icu4x_DataProvider_from_byte_slice_mv1(diplomat::capi::DiplomatU8View blob);
+    icu4x_DataProvider_from_byte_slice_mv1_result icu4x_DataProvider_from_byte_slice_mv1(icu4x::diplomat::capi::DiplomatU8View blob);
 
     typedef struct icu4x_DataProvider_fork_by_marker_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_DataProvider_fork_by_marker_mv1_result;
     icu4x_DataProvider_fork_by_marker_mv1_result icu4x_DataProvider_fork_by_marker_mv1(icu4x::capi::DataProvider* self, icu4x::capi::DataProvider* other);
@@ -41,32 +41,32 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError> icu4x::DataProvider::from_fs(std::string_view path) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError> icu4x::DataProvider::from_fs(std::string_view path) {
     auto result = icu4x::capi::icu4x_DataProvider_from_fs_mv1({path.data(), path.size()});
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::DataProvider>>(std::unique_ptr<icu4x::DataProvider>(icu4x::DataProvider::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::DataProvider>>(std::unique_ptr<icu4x::DataProvider>(icu4x::DataProvider::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError> icu4x::DataProvider::from_byte_slice(diplomat::span<const uint8_t> blob) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError> icu4x::DataProvider::from_byte_slice(icu4x::diplomat::span<const uint8_t> blob) {
     auto result = icu4x::capi::icu4x_DataProvider_from_byte_slice_mv1({blob.data(), blob.size()});
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::DataProvider>>(std::unique_ptr<icu4x::DataProvider>(icu4x::DataProvider::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::DataProvider>>(std::unique_ptr<icu4x::DataProvider>(icu4x::DataProvider::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::monostate, icu4x::DataError> icu4x::DataProvider::fork_by_marker(icu4x::DataProvider& other) {
+inline icu4x::diplomat::result<std::monostate, icu4x::DataError> icu4x::DataProvider::fork_by_marker(icu4x::DataProvider& other) {
     auto result = icu4x::capi::icu4x_DataProvider_fork_by_marker_mv1(this->AsFFI(),
         other.AsFFI());
-    return result.is_ok ? diplomat::result<std::monostate, icu4x::DataError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::monostate, icu4x::DataError> icu4x::DataProvider::fork_by_locale(icu4x::DataProvider& other) {
+inline icu4x::diplomat::result<std::monostate, icu4x::DataError> icu4x::DataProvider::fork_by_locale(icu4x::DataProvider& other) {
     auto result = icu4x::capi::icu4x_DataProvider_fork_by_locale_mv1(this->AsFFI(),
         other.AsFFI());
-    return result.is_ok ? diplomat::result<std::monostate, icu4x::DataError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::monostate, icu4x::DataError> icu4x::DataProvider::enable_locale_fallback_with(const icu4x::LocaleFallbacker& fallbacker) {
+inline icu4x::diplomat::result<std::monostate, icu4x::DataError> icu4x::DataProvider::enable_locale_fallback_with(const icu4x::LocaleFallbacker& fallbacker) {
     auto result = icu4x::capi::icu4x_DataProvider_enable_locale_fallback_with_mv1(this->AsFFI(),
         fallbacker.AsFFI());
-    return result.is_ok ? diplomat::result<std::monostate, icu4x::DataError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Ok<std::monostate>()) : icu4x::diplomat::result<std::monostate, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline const icu4x::capi::DataProvider* icu4x::DataProvider::AsFFI() const {
@@ -90,4 +90,4 @@ inline void icu4x::DataProvider::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_DataProvider_HPP
+#endif // ICU4X_DataProvider_HPP

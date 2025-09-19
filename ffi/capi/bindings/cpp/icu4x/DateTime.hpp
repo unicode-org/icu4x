@@ -1,5 +1,5 @@
-#ifndef icu4x_DateTime_HPP
-#define icu4x_DateTime_HPP
+#ifndef ICU4X_DateTime_HPP
+#define ICU4X_DateTime_HPP
 
 #include "DateTime.d.hpp"
 
@@ -11,11 +11,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "Calendar.hpp"
 #include "Date.hpp"
 #include "Rfc9557ParseError.hpp"
 #include "Time.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -23,16 +23,16 @@ namespace capi {
     extern "C" {
 
     typedef struct icu4x_DateTime_from_string_mv1_result {union {icu4x::capi::DateTime ok; icu4x::capi::Rfc9557ParseError err;}; bool is_ok;} icu4x_DateTime_from_string_mv1_result;
-    icu4x_DateTime_from_string_mv1_result icu4x_DateTime_from_string_mv1(diplomat::capi::DiplomatStringView v, const icu4x::capi::Calendar* calendar);
+    icu4x_DateTime_from_string_mv1_result icu4x_DateTime_from_string_mv1(icu4x::diplomat::capi::DiplomatStringView v, const icu4x::capi::Calendar* calendar);
 
     } // extern "C"
 } // namespace capi
 } // namespace
 
-inline diplomat::result<icu4x::DateTime, icu4x::Rfc9557ParseError> icu4x::DateTime::from_string(std::string_view v, const icu4x::Calendar& calendar) {
+inline icu4x::diplomat::result<icu4x::DateTime, icu4x::Rfc9557ParseError> icu4x::DateTime::from_string(std::string_view v, const icu4x::Calendar& calendar) {
     auto result = icu4x::capi::icu4x_DateTime_from_string_mv1({v.data(), v.size()},
         calendar.AsFFI());
-    return result.is_ok ? diplomat::result<icu4x::DateTime, icu4x::Rfc9557ParseError>(diplomat::Ok<icu4x::DateTime>(icu4x::DateTime::FromFFI(result.ok))) : diplomat::result<icu4x::DateTime, icu4x::Rfc9557ParseError>(diplomat::Err<icu4x::Rfc9557ParseError>(icu4x::Rfc9557ParseError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<icu4x::DateTime, icu4x::Rfc9557ParseError>(icu4x::diplomat::Ok<icu4x::DateTime>(icu4x::DateTime::FromFFI(result.ok))) : icu4x::diplomat::result<icu4x::DateTime, icu4x::Rfc9557ParseError>(icu4x::diplomat::Err<icu4x::Rfc9557ParseError>(icu4x::Rfc9557ParseError::FromFFI(result.err)));
 }
 
 
@@ -51,4 +51,4 @@ inline icu4x::DateTime icu4x::DateTime::FromFFI(icu4x::capi::DateTime c_struct) 
 }
 
 
-#endif // icu4x_DateTime_HPP
+#endif // ICU4X_DateTime_HPP

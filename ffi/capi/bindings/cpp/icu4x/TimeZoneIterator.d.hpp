@@ -1,5 +1,5 @@
-#ifndef icu4x_TimeZoneIterator_D_HPP
-#define icu4x_TimeZoneIterator_D_HPP
+#ifndef ICU4X_TimeZoneIterator_D_HPP
+#define ICU4X_TimeZoneIterator_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,12 +9,12 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct TimeZone; }
 class TimeZone;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -31,7 +31,7 @@ class TimeZoneIterator {
 public:
 
   /**
-     * See the [Rust documentation for `next`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneIter.html#method.next) for more information.
+   * See the [Rust documentation for `next`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneIter.html#method.next) for more information.
    */
   inline std::unique_ptr<icu4x::TimeZone> next();
 
@@ -50,4 +50,4 @@ private:
 };
 
 } // namespace
-#endif // icu4x_TimeZoneIterator_D_HPP
+#endif // ICU4X_TimeZoneIterator_D_HPP

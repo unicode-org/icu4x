@@ -1,5 +1,5 @@
-#ifndef icu4x_DecomposingNormalizer_HPP
-#define icu4x_DecomposingNormalizer_HPP
+#ifndef ICU4X_DecomposingNormalizer_HPP
+#define ICU4X_DecomposingNormalizer_HPP
 
 #include "DecomposingNormalizer.d.hpp"
 
@@ -11,9 +11,9 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -30,15 +30,15 @@ namespace capi {
     typedef struct icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1_result {union {icu4x::capi::DecomposingNormalizer* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1_result;
     icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1_result icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1(const icu4x::capi::DataProvider* provider);
 
-    void icu4x_DecomposingNormalizer_normalize_mv1(const icu4x::capi::DecomposingNormalizer* self, diplomat::capi::DiplomatStringView s, diplomat::capi::DiplomatWrite* write);
+    void icu4x_DecomposingNormalizer_normalize_mv1(const icu4x::capi::DecomposingNormalizer* self, icu4x::diplomat::capi::DiplomatStringView s, icu4x::diplomat::capi::DiplomatWrite* write);
 
-    bool icu4x_DecomposingNormalizer_is_normalized_mv1(const icu4x::capi::DecomposingNormalizer* self, diplomat::capi::DiplomatStringView s);
+    bool icu4x_DecomposingNormalizer_is_normalized_mv1(const icu4x::capi::DecomposingNormalizer* self, icu4x::diplomat::capi::DiplomatStringView s);
 
-    bool icu4x_DecomposingNormalizer_is_normalized_utf16_mv1(const icu4x::capi::DecomposingNormalizer* self, diplomat::capi::DiplomatString16View s);
+    bool icu4x_DecomposingNormalizer_is_normalized_utf16_mv1(const icu4x::capi::DecomposingNormalizer* self, icu4x::diplomat::capi::DiplomatString16View s);
 
-    size_t icu4x_DecomposingNormalizer_is_normalized_up_to_mv1(const icu4x::capi::DecomposingNormalizer* self, diplomat::capi::DiplomatStringView s);
+    size_t icu4x_DecomposingNormalizer_is_normalized_up_to_mv1(const icu4x::capi::DecomposingNormalizer* self, icu4x::diplomat::capi::DiplomatStringView s);
 
-    size_t icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(const icu4x::capi::DecomposingNormalizer* self, diplomat::capi::DiplomatString16View s);
+    size_t icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(const icu4x::capi::DecomposingNormalizer* self, icu4x::diplomat::capi::DiplomatString16View s);
 
     void icu4x_DecomposingNormalizer_destroy_mv1(DecomposingNormalizer* self);
 
@@ -51,9 +51,9 @@ inline std::unique_ptr<icu4x::DecomposingNormalizer> icu4x::DecomposingNormalize
     return std::unique_ptr<icu4x::DecomposingNormalizer>(icu4x::DecomposingNormalizer::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError> icu4x::DecomposingNormalizer::create_nfd_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError> icu4x::DecomposingNormalizer::create_nfd_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_DecomposingNormalizer_create_nfd_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::DecomposingNormalizer>>(std::unique_ptr<icu4x::DecomposingNormalizer>(icu4x::DecomposingNormalizer::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::DecomposingNormalizer>>(std::unique_ptr<icu4x::DecomposingNormalizer>(icu4x::DecomposingNormalizer::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::DecomposingNormalizer> icu4x::DecomposingNormalizer::create_nfkd() {
@@ -61,14 +61,14 @@ inline std::unique_ptr<icu4x::DecomposingNormalizer> icu4x::DecomposingNormalize
     return std::unique_ptr<icu4x::DecomposingNormalizer>(icu4x::DecomposingNormalizer::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError> icu4x::DecomposingNormalizer::create_nfkd_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError> icu4x::DecomposingNormalizer::create_nfkd_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::DecomposingNormalizer>>(std::unique_ptr<icu4x::DecomposingNormalizer>(icu4x::DecomposingNormalizer::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::DecomposingNormalizer>>(std::unique_ptr<icu4x::DecomposingNormalizer>(icu4x::DecomposingNormalizer::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::DecomposingNormalizer>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::string icu4x::DecomposingNormalizer::normalize(std::string_view s) const {
     std::string output;
-    diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
+    icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteFromString(output);
     icu4x::capi::icu4x_DecomposingNormalizer_normalize_mv1(this->AsFFI(),
         {s.data(), s.size()},
         &write);
@@ -76,7 +76,7 @@ inline std::string icu4x::DecomposingNormalizer::normalize(std::string_view s) c
 }
 template<typename W>
 inline void icu4x::DecomposingNormalizer::normalize_write(std::string_view s, W& writeable) const {
-    diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+    icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
     icu4x::capi::icu4x_DecomposingNormalizer_normalize_mv1(this->AsFFI(),
         {s.data(), s.size()},
         &write);
@@ -127,4 +127,4 @@ inline void icu4x::DecomposingNormalizer::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_DecomposingNormalizer_HPP
+#endif // ICU4X_DecomposingNormalizer_HPP

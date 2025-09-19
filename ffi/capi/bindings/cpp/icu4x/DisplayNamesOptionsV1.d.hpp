@@ -1,5 +1,5 @@
-#ifndef icu4x_DisplayNamesOptionsV1_D_HPP
-#define icu4x_DisplayNamesOptionsV1_D_HPP
+#ifndef ICU4X_DisplayNamesOptionsV1_D_HPP
+#define ICU4X_DisplayNamesOptionsV1_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,16 +9,16 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "DisplayNamesFallback.d.hpp"
 #include "DisplayNamesStyle.d.hpp"
 #include "LanguageDisplay.d.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 class DisplayNamesFallback;
 class DisplayNamesStyle;
 class LanguageDisplay;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -50,4 +50,4 @@ struct DisplayNamesOptionsV1 {
 };
 
 } // namespace
-#endif // icu4x_DisplayNamesOptionsV1_D_HPP
+#endif // ICU4X_DisplayNamesOptionsV1_D_HPP

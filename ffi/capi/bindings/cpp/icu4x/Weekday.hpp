@@ -1,5 +1,5 @@
-#ifndef icu4x_Weekday_HPP
-#define icu4x_Weekday_HPP
+#ifndef ICU4X_Weekday_HPP
+#define ICU4X_Weekday_HPP
 
 #include "Weekday.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -40,4 +40,4 @@ inline icu4x::Weekday icu4x::Weekday::FromFFI(icu4x::capi::Weekday c_enum) {
             std::abort();
     }
 }
-#endif // icu4x_Weekday_HPP
+#endif // ICU4X_Weekday_HPP

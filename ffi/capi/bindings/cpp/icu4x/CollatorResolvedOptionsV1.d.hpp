@@ -1,5 +1,5 @@
-#ifndef icu4x_CollatorResolvedOptionsV1_D_HPP
-#define icu4x_CollatorResolvedOptionsV1_D_HPP
+#ifndef ICU4X_CollatorResolvedOptionsV1_D_HPP
+#define ICU4X_CollatorResolvedOptionsV1_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,14 +9,13 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "CollatorAlternateHandling.d.hpp"
 #include "CollatorCaseFirst.d.hpp"
 #include "CollatorCaseLevel.d.hpp"
 #include "CollatorMaxVariable.d.hpp"
 #include "CollatorNumericOrdering.d.hpp"
 #include "CollatorStrength.d.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 class CollatorAlternateHandling;
 class CollatorCaseFirst;
@@ -24,7 +23,8 @@ class CollatorCaseLevel;
 class CollatorMaxVariable;
 class CollatorNumericOrdering;
 class CollatorStrength;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -60,4 +60,4 @@ struct CollatorResolvedOptionsV1 {
 };
 
 } // namespace
-#endif // icu4x_CollatorResolvedOptionsV1_D_HPP
+#endif // ICU4X_CollatorResolvedOptionsV1_D_HPP

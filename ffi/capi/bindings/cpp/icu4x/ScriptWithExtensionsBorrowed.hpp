@@ -1,5 +1,5 @@
-#ifndef icu4x_ScriptWithExtensionsBorrowed_HPP
-#define icu4x_ScriptWithExtensionsBorrowed_HPP
+#ifndef ICU4X_ScriptWithExtensionsBorrowed_HPP
+#define ICU4X_ScriptWithExtensionsBorrowed_HPP
 
 #include "ScriptWithExtensionsBorrowed.d.hpp"
 
@@ -11,9 +11,9 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "CodePointSetData.hpp"
 #include "ScriptExtensionsSet.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -80,4 +80,4 @@ inline void icu4x::ScriptWithExtensionsBorrowed::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_ScriptWithExtensionsBorrowed_HPP
+#endif // ICU4X_ScriptWithExtensionsBorrowed_HPP

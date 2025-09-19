@@ -1,5 +1,5 @@
-#ifndef icu4x_LocaleFallbackerWithConfig_HPP
-#define icu4x_LocaleFallbackerWithConfig_HPP
+#ifndef ICU4X_LocaleFallbackerWithConfig_HPP
+#define ICU4X_LocaleFallbackerWithConfig_HPP
 
 #include "LocaleFallbackerWithConfig.d.hpp"
 
@@ -11,9 +11,9 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "Locale.hpp"
 #include "LocaleFallbackIterator.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -55,4 +55,4 @@ inline void icu4x::LocaleFallbackerWithConfig::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_LocaleFallbackerWithConfig_HPP
+#endif // ICU4X_LocaleFallbackerWithConfig_HPP

@@ -1,5 +1,5 @@
-#ifndef icu4x_TimeZoneAndCanonical_HPP
-#define icu4x_TimeZoneAndCanonical_HPP
+#ifndef ICU4X_TimeZoneAndCanonical_HPP
+#define ICU4X_TimeZoneAndCanonical_HPP
 
 #include "TimeZoneAndCanonical.d.hpp"
 
@@ -11,8 +11,8 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "TimeZone.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -39,4 +39,4 @@ inline icu4x::TimeZoneAndCanonical icu4x::TimeZoneAndCanonical::FromFFI(icu4x::c
 }
 
 
-#endif // icu4x_TimeZoneAndCanonical_HPP
+#endif // ICU4X_TimeZoneAndCanonical_HPP

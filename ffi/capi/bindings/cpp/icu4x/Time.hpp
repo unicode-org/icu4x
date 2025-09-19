@@ -1,5 +1,5 @@
-#ifndef icu4x_Time_HPP
-#define icu4x_Time_HPP
+#ifndef ICU4X_Time_HPP
+#define ICU4X_Time_HPP
 
 #include "Time.d.hpp"
 
@@ -11,9 +11,9 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "CalendarError.hpp"
 #include "Rfc9557ParseError.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -24,7 +24,7 @@ namespace capi {
     icu4x_Time_create_mv1_result icu4x_Time_create_mv1(uint8_t hour, uint8_t minute, uint8_t second, uint32_t subsecond);
 
     typedef struct icu4x_Time_from_string_mv1_result {union {icu4x::capi::Time* ok; icu4x::capi::Rfc9557ParseError err;}; bool is_ok;} icu4x_Time_from_string_mv1_result;
-    icu4x_Time_from_string_mv1_result icu4x_Time_from_string_mv1(diplomat::capi::DiplomatStringView v);
+    icu4x_Time_from_string_mv1_result icu4x_Time_from_string_mv1(icu4x::diplomat::capi::DiplomatStringView v);
 
     typedef struct icu4x_Time_start_of_day_mv1_result {union {icu4x::capi::Time* ok; icu4x::capi::CalendarError err;}; bool is_ok;} icu4x_Time_start_of_day_mv1_result;
     icu4x_Time_start_of_day_mv1_result icu4x_Time_start_of_day_mv1(void);
@@ -46,27 +46,27 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError> icu4x::Time::create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t subsecond) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError> icu4x::Time::create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t subsecond) {
     auto result = icu4x::capi::icu4x_Time_create_mv1(hour,
         minute,
         second,
         subsecond);
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError>(diplomat::Ok<std::unique_ptr<icu4x::Time>>(std::unique_ptr<icu4x::Time>(icu4x::Time::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError>(diplomat::Err<icu4x::CalendarError>(icu4x::CalendarError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::Time>>(std::unique_ptr<icu4x::Time>(icu4x::Time::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError>(icu4x::diplomat::Err<icu4x::CalendarError>(icu4x::CalendarError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::Rfc9557ParseError> icu4x::Time::from_string(std::string_view v) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::Rfc9557ParseError> icu4x::Time::from_string(std::string_view v) {
     auto result = icu4x::capi::icu4x_Time_from_string_mv1({v.data(), v.size()});
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::Rfc9557ParseError>(diplomat::Ok<std::unique_ptr<icu4x::Time>>(std::unique_ptr<icu4x::Time>(icu4x::Time::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::Rfc9557ParseError>(diplomat::Err<icu4x::Rfc9557ParseError>(icu4x::Rfc9557ParseError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::Rfc9557ParseError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::Time>>(std::unique_ptr<icu4x::Time>(icu4x::Time::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::Rfc9557ParseError>(icu4x::diplomat::Err<icu4x::Rfc9557ParseError>(icu4x::Rfc9557ParseError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError> icu4x::Time::start_of_day() {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError> icu4x::Time::start_of_day() {
     auto result = icu4x::capi::icu4x_Time_start_of_day_mv1();
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError>(diplomat::Ok<std::unique_ptr<icu4x::Time>>(std::unique_ptr<icu4x::Time>(icu4x::Time::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError>(diplomat::Err<icu4x::CalendarError>(icu4x::CalendarError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::Time>>(std::unique_ptr<icu4x::Time>(icu4x::Time::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError>(icu4x::diplomat::Err<icu4x::CalendarError>(icu4x::CalendarError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError> icu4x::Time::noon() {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError> icu4x::Time::noon() {
     auto result = icu4x::capi::icu4x_Time_noon_mv1();
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError>(diplomat::Ok<std::unique_ptr<icu4x::Time>>(std::unique_ptr<icu4x::Time>(icu4x::Time::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError>(diplomat::Err<icu4x::CalendarError>(icu4x::CalendarError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::Time>>(std::unique_ptr<icu4x::Time>(icu4x::Time::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError>(icu4x::diplomat::Err<icu4x::CalendarError>(icu4x::CalendarError::FromFFI(result.err)));
 }
 
 inline uint8_t icu4x::Time::hour() const {
@@ -110,4 +110,4 @@ inline void icu4x::Time::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_Time_HPP
+#endif // ICU4X_Time_HPP

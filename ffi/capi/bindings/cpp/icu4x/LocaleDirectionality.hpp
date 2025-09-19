@@ -1,5 +1,5 @@
-#ifndef icu4x_LocaleDirectionality_HPP
-#define icu4x_LocaleDirectionality_HPP
+#ifndef ICU4X_LocaleDirectionality_HPP
+#define ICU4X_LocaleDirectionality_HPP
 
 #include "LocaleDirectionality.d.hpp"
 
@@ -11,11 +11,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "Locale.hpp"
 #include "LocaleDirection.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -49,9 +49,9 @@ inline std::unique_ptr<icu4x::LocaleDirectionality> icu4x::LocaleDirectionality:
     return std::unique_ptr<icu4x::LocaleDirectionality>(icu4x::LocaleDirectionality::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError> icu4x::LocaleDirectionality::create_common_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError> icu4x::LocaleDirectionality::create_common_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_LocaleDirectionality_create_common_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::LocaleDirectionality>>(std::unique_ptr<icu4x::LocaleDirectionality>(icu4x::LocaleDirectionality::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::LocaleDirectionality>>(std::unique_ptr<icu4x::LocaleDirectionality>(icu4x::LocaleDirectionality::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::LocaleDirectionality> icu4x::LocaleDirectionality::create_extended() {
@@ -59,9 +59,9 @@ inline std::unique_ptr<icu4x::LocaleDirectionality> icu4x::LocaleDirectionality:
     return std::unique_ptr<icu4x::LocaleDirectionality>(icu4x::LocaleDirectionality::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError> icu4x::LocaleDirectionality::create_extended_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError> icu4x::LocaleDirectionality::create_extended_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_LocaleDirectionality_create_extended_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::LocaleDirectionality>>(std::unique_ptr<icu4x::LocaleDirectionality>(icu4x::LocaleDirectionality::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::LocaleDirectionality>>(std::unique_ptr<icu4x::LocaleDirectionality>(icu4x::LocaleDirectionality::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleDirectionality>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline icu4x::LocaleDirection icu4x::LocaleDirectionality::operator[](const icu4x::Locale& locale) const {
@@ -103,4 +103,4 @@ inline void icu4x::LocaleDirectionality::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_LocaleDirectionality_HPP
+#endif // ICU4X_LocaleDirectionality_HPP

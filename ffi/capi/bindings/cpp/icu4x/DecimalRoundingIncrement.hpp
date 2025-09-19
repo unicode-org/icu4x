@@ -1,5 +1,5 @@
-#ifndef icu4x_DecimalRoundingIncrement_HPP
-#define icu4x_DecimalRoundingIncrement_HPP
+#ifndef ICU4X_DecimalRoundingIncrement_HPP
+#define ICU4X_DecimalRoundingIncrement_HPP
 
 #include "DecimalRoundingIncrement.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -37,4 +37,4 @@ inline icu4x::DecimalRoundingIncrement icu4x::DecimalRoundingIncrement::FromFFI(
             std::abort();
     }
 }
-#endif // icu4x_DecimalRoundingIncrement_HPP
+#endif // ICU4X_DecimalRoundingIncrement_HPP

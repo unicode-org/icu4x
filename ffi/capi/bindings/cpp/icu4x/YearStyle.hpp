@@ -1,5 +1,5 @@
-#ifndef icu4x_YearStyle_HPP
-#define icu4x_YearStyle_HPP
+#ifndef ICU4X_YearStyle_HPP
+#define ICU4X_YearStyle_HPP
 
 #include "YearStyle.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -36,4 +36,4 @@ inline icu4x::YearStyle icu4x::YearStyle::FromFFI(icu4x::capi::YearStyle c_enum)
             std::abort();
     }
 }
-#endif // icu4x_YearStyle_HPP
+#endif // ICU4X_YearStyle_HPP

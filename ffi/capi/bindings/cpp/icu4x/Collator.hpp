@@ -1,5 +1,5 @@
-#ifndef icu4x_Collator_HPP
-#define icu4x_Collator_HPP
+#ifndef ICU4X_Collator_HPP
+#define ICU4X_Collator_HPP
 
 #include "Collator.d.hpp"
 
@@ -11,12 +11,12 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "CollatorOptionsV1.hpp"
 #include "CollatorResolvedOptionsV1.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "Locale.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -29,9 +29,9 @@ namespace capi {
     typedef struct icu4x_Collator_create_v1_with_provider_mv1_result {union {icu4x::capi::Collator* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_Collator_create_v1_with_provider_mv1_result;
     icu4x_Collator_create_v1_with_provider_mv1_result icu4x_Collator_create_v1_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::CollatorOptionsV1 options);
 
-    int8_t icu4x_Collator_compare_utf8_mv1(const icu4x::capi::Collator* self, diplomat::capi::DiplomatStringView left, diplomat::capi::DiplomatStringView right);
+    int8_t icu4x_Collator_compare_utf8_mv1(const icu4x::capi::Collator* self, icu4x::diplomat::capi::DiplomatStringView left, icu4x::diplomat::capi::DiplomatStringView right);
 
-    int8_t icu4x_Collator_compare_utf16_mv1(const icu4x::capi::Collator* self, diplomat::capi::DiplomatString16View left, diplomat::capi::DiplomatString16View right);
+    int8_t icu4x_Collator_compare_utf16_mv1(const icu4x::capi::Collator* self, icu4x::diplomat::capi::DiplomatString16View left, icu4x::diplomat::capi::DiplomatString16View right);
 
     icu4x::capi::CollatorResolvedOptionsV1 icu4x_Collator_resolved_options_v1_mv1(const icu4x::capi::Collator* self);
 
@@ -41,17 +41,17 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError> icu4x::Collator::create_v1(const icu4x::Locale& locale, icu4x::CollatorOptionsV1 options) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError> icu4x::Collator::create_v1(const icu4x::Locale& locale, icu4x::CollatorOptionsV1 options) {
     auto result = icu4x::capi::icu4x_Collator_create_v1_mv1(locale.AsFFI(),
         options.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::Collator>>(std::unique_ptr<icu4x::Collator>(icu4x::Collator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::Collator>>(std::unique_ptr<icu4x::Collator>(icu4x::Collator::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError> icu4x::Collator::create_v1_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::CollatorOptionsV1 options) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError> icu4x::Collator::create_v1_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::CollatorOptionsV1 options) {
     auto result = icu4x::capi::icu4x_Collator_create_v1_with_provider_mv1(provider.AsFFI(),
         locale.AsFFI(),
         options.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::Collator>>(std::unique_ptr<icu4x::Collator>(icu4x::Collator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::Collator>>(std::unique_ptr<icu4x::Collator>(icu4x::Collator::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::Collator>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline int8_t icu4x::Collator::compare(std::string_view left, std::string_view right) const {
@@ -94,4 +94,4 @@ inline void icu4x::Collator::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_Collator_HPP
+#endif // ICU4X_Collator_HPP

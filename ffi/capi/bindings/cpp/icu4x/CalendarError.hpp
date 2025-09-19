@@ -1,5 +1,5 @@
-#ifndef icu4x_CalendarError_HPP
-#define icu4x_CalendarError_HPP
+#ifndef ICU4X_CalendarError_HPP
+#define ICU4X_CalendarError_HPP
 
 #include "CalendarError.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -37,4 +37,4 @@ inline icu4x::CalendarError icu4x::CalendarError::FromFFI(icu4x::capi::CalendarE
             std::abort();
     }
 }
-#endif // icu4x_CalendarError_HPP
+#endif // ICU4X_CalendarError_HPP

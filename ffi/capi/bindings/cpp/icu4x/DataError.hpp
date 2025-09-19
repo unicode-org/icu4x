@@ -1,5 +1,5 @@
-#ifndef icu4x_DataError_HPP
-#define icu4x_DataError_HPP
+#ifndef ICU4X_DataError_HPP
+#define ICU4X_DataError_HPP
 
 #include "DataError.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -42,4 +42,4 @@ inline icu4x::DataError icu4x::DataError::FromFFI(icu4x::capi::DataError c_enum)
             std::abort();
     }
 }
-#endif // icu4x_DataError_HPP
+#endif // ICU4X_DataError_HPP

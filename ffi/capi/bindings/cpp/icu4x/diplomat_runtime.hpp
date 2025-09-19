@@ -1,5 +1,5 @@
-#ifndef DIPLOMAT_RUNTIME_CPP_H
-#define DIPLOMAT_RUNTIME_CPP_H
+#ifndef ICU4X_DIPLOMAT_RUNTIME_CPP_H
+#define ICU4X_DIPLOMAT_RUNTIME_CPP_H
 
 #include <optional>
 #include <string>
@@ -18,6 +18,7 @@
 #include <array>
 #endif
 
+namespace icu4x {
 namespace diplomat {
 
 namespace capi {
@@ -499,5 +500,5 @@ struct next_to_iter_helper {
 };
 
 } // namespace diplomat
-
+} // namespace icu4x
 #endif

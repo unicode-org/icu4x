@@ -1,5 +1,5 @@
-#ifndef icu4x_Decomposed_HPP
-#define icu4x_Decomposed_HPP
+#ifndef ICU4X_Decomposed_HPP
+#define ICU4X_Decomposed_HPP
 
 #include "Decomposed.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -38,4 +38,4 @@ inline icu4x::Decomposed icu4x::Decomposed::FromFFI(icu4x::capi::Decomposed c_st
 }
 
 
-#endif // icu4x_Decomposed_HPP
+#endif // ICU4X_Decomposed_HPP

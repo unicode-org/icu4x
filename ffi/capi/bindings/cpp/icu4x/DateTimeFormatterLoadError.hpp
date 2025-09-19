@@ -1,5 +1,5 @@
-#ifndef icu4x_DateTimeFormatterLoadError_HPP
-#define icu4x_DateTimeFormatterLoadError_HPP
+#ifndef ICU4X_DateTimeFormatterLoadError_HPP
+#define ICU4X_DateTimeFormatterLoadError_HPP
 
 #include "DateTimeFormatterLoadError.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -46,4 +46,4 @@ inline icu4x::DateTimeFormatterLoadError icu4x::DateTimeFormatterLoadError::From
             std::abort();
     }
 }
-#endif // icu4x_DateTimeFormatterLoadError_HPP
+#endif // ICU4X_DateTimeFormatterLoadError_HPP
