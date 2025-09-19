@@ -286,6 +286,9 @@ pub struct MonthInfo {
     /// This follows [Temporal's specification](https://tc39.es/proposal-intl-era-monthcode/#table-additional-month-codes).
     /// Months considered the "same" have the same code: This means that the Hebrew months "Adar" and "Adar II" ("Adar, but during a leap year")
     /// are considered the same month and have the code M05.
+    ///
+    /// [`Date::from_codes`]: crate::Date::from_codes
+    /// [`Date::try_from_fields`]: crate::Date::try_from_fields
     pub standard_code: MonthCode,
 
     /// A month code, useable for formatting.
@@ -296,6 +299,9 @@ pub struct MonthInfo {
     /// formatting in a leap year, for example Adar/Adar II in the Hebrew calendar in a leap year has
     /// the standard code M06, but for formatting specifically the Hebrew calendar will return M06L since it is formatted
     /// differently.
+    ///
+    /// [`Date::from_codes`]: crate::Date::from_codes
+    /// [`Date::try_from_fields`]: crate::Date::try_from_fields
     pub formatting_code: MonthCode,
 }
 

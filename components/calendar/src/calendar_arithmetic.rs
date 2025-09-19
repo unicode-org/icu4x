@@ -379,9 +379,13 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
     pub(crate) fn try_from_ymd(year: C::YearInfo, month: u8, day: u8) -> Result<Self, RangeError> {
         let builder = ArithmeticDateBuilder { year, month, day };
-        let mut options = DateFromFieldsOptions::default();
-        options.overflow = Some(Overflow::Reject);
-        Self::try_from_builder(builder, options)
+        Self::try_from_builder(
+            builder,
+            DateFromFieldsOptions {
+                overflow: Some(Overflow::Reject),
+                ..Default::default()
+            },
+        )
     }
 }
 
