@@ -711,7 +711,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.12.0"
-source = "git+https://github.com/Manishearth/diplomat?rev=6d7c8746b126ea09230948a9c2f7c2de087624cc#6d7c8746b126ea09230948a9c2f7c2de087624cc"
+source = "git+https://github.com/Manishearth/diplomat?rev=0fd371d03cb11866a87782762e3fd445e13a3800#0fd371d03cb11866a87782762e3fd445e13a3800"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -742,7 +742,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.12.0"
-source = "git+https://github.com/Manishearth/diplomat?rev=6d7c8746b126ea09230948a9c2f7c2de087624cc#6d7c8746b126ea09230948a9c2f7c2de087624cc"
+source = "git+https://github.com/Manishearth/diplomat?rev=0fd371d03cb11866a87782762e3fd445e13a3800#0fd371d03cb11866a87782762e3fd445e13a3800"
 dependencies = [
  "log",
 ]
@@ -750,7 +750,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.12.1"
-source = "git+https://github.com/Manishearth/diplomat?rev=6d7c8746b126ea09230948a9c2f7c2de087624cc#6d7c8746b126ea09230948a9c2f7c2de087624cc"
+source = "git+https://github.com/Manishearth/diplomat?rev=0fd371d03cb11866a87782762e3fd445e13a3800#0fd371d03cb11866a87782762e3fd445e13a3800"
 dependencies = [
  "askama",
  "clap",
@@ -771,7 +771,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.12.1"
-source = "git+https://github.com/Manishearth/diplomat?rev=6d7c8746b126ea09230948a9c2f7c2de087624cc#6d7c8746b126ea09230948a9c2f7c2de087624cc"
+source = "git+https://github.com/Manishearth/diplomat?rev=0fd371d03cb11866a87782762e3fd445e13a3800#0fd371d03cb11866a87782762e3fd445e13a3800"
 dependencies = [
  "displaydoc",
  "either",
