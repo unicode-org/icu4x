@@ -30,7 +30,7 @@ use calendrical_calculations::chinese_based::{
     self, ChineseBased, YearBounds, WELL_BEHAVED_ASTRONOMICAL_RANGE,
 };
 use calendrical_calculations::rata_die::RataDie;
-use icu_locale::preferences::extensions::unicode::keywords::CalendarAlgorithm;
+use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
 use icu_provider::prelude::*;
 use tinystr::tinystr;
 
