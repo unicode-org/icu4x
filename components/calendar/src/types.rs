@@ -281,26 +281,26 @@ pub struct MonthInfo {
 
     /// The month code, used to distinguish months during leap years.
     ///
-    /// Round-trips through `Date` constructors like [`Date::from_codes`] and [`Date::try_from_fields`].
+    /// Round-trips through `Date` constructors like [`Date::try_new_from_codes`] and [`Date::try_from_fields`].
     ///
     /// This follows [Temporal's specification](https://tc39.es/proposal-intl-era-monthcode/#table-additional-month-codes).
     /// Months considered the "same" have the same code: This means that the Hebrew months "Adar" and "Adar II" ("Adar, but during a leap year")
     /// are considered the same month and have the code M05.
     ///
-    /// [`Date::from_codes`]: crate::Date::from_codes
+    /// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
     /// [`Date::try_from_fields`]: crate::Date::try_from_fields
     pub standard_code: MonthCode,
 
     /// A month code, useable for formatting.
     ///
-    /// Does NOT necessarily round-trip through `Date` constructors like [`Date::from_codes`] and [`Date::try_from_fields`].
+    /// Does NOT necessarily round-trip through `Date` constructors like [`Date::try_new_from_codes`] and [`Date::try_from_fields`].
     ///
     /// This may not necessarily be the canonical month code for a month in cases where a month has different
     /// formatting in a leap year, for example Adar/Adar II in the Hebrew calendar in a leap year has
     /// the standard code M06, but for formatting specifically the Hebrew calendar will return M06L since it is formatted
     /// differently.
     ///
-    /// [`Date::from_codes`]: crate::Date::from_codes
+    /// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
     /// [`Date::try_from_fields`]: crate::Date::try_from_fields
     pub formatting_code: MonthCode,
 }
