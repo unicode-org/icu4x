@@ -109,7 +109,17 @@ impl DateFieldsResolver for Persian {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, DateError> {
-        todo!("{month_code}/{day}")
+        let (ordinal_month, _is_leap) = month_code
+            .parsed()
+            .ok_or(DateError::UnknownMonthCode(month_code))?;
+        // December 31, 1972 occurs on 10th month, 10th day, 1351 AP
+        let persian_year = if ordinal_month < 10 || (ordinal_month == 10 && day <= 10) {
+            1351
+        } else {
+            // Note: 1350 is a leap year
+            1350
+        };
+        Ok(persian_year)
     }
 }
 

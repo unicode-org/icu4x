@@ -108,7 +108,17 @@ impl DateFieldsResolver for Julian {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, DateError> {
-        todo!("{month_code}/{day}")
+        let (ordinal_month, _is_leap) = month_code
+            .parsed()
+            .ok_or(DateError::UnknownMonthCode(month_code))?;
+        // December 31, 1972 occurs on 12th month, 18th day, 1972 Old Style
+        // Note: 1972 is a leap year
+        let julian_year = if ordinal_month < 12 || (ordinal_month == 12 && day <= 18) {
+            1972
+        } else {
+            1971
+        };
+        Ok(julian_year)
     }
 }
 

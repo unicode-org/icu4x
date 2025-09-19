@@ -202,8 +202,7 @@ impl DateFieldsResolver for Hebrew {
                 "M04" => 4,
                 "M05" => 5,
                 "M05L" => 6,
-                // M06L is the formatting era code used for Adar II
-                "M06" | "M06L" => 7,
+                "M06" => 7,
                 "M07" => 8,
                 "M08" => 9,
                 "M09" => 10,

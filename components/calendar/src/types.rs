@@ -280,12 +280,17 @@ pub struct MonthInfo {
     pub ordinal: u8,
 
     /// The month code, used to distinguish months during leap years.
+    /// 
+    /// Round-trips through `Date` constructors like [`Date::from_codes`] and [`Date::try_from_fields`].
     ///
     /// This follows [Temporal's specification](https://tc39.es/proposal-intl-era-monthcode/#table-additional-month-codes).
     /// Months considered the "same" have the same code: This means that the Hebrew months "Adar" and "Adar II" ("Adar, but during a leap year")
-    /// are considered the same month and have the code M05
+    /// are considered the same month and have the code M05.
     pub standard_code: MonthCode,
-    /// A month code, useable for formatting
+
+    /// A month code, useable for formatting.
+    /// 
+    /// Does NOT necessarily round-trip through `Date` constructors like [`Date::from_codes`] and [`Date::try_from_fields`].
     ///
     /// This may not necessarily be the canonical month code for a month in cases where a month has different
     /// formatting in a leap year, for example Adar/Adar II in the Hebrew calendar in a leap year has

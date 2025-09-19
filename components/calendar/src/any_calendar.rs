@@ -1703,6 +1703,8 @@ mod tests {
         single_test_roundtrip(ethiopian, None, -100, "M03", 1);
         single_test_roundtrip(ethiopian, Some(("am", Some(1))), 2000, "M13", 1);
         single_test_roundtrip(ethiopian, Some(("aa", Some(0))), 5400, "M03", 1);
+        // Since #6910, the era range is not enforced in try_from_codes
+        /*
         single_test_error(
             ethiopian,
             Some(("am", Some(0))),
@@ -1729,6 +1731,7 @@ mod tests {
                 max: 5500,
             },
         );
+        */
         single_test_error(
             ethiopian,
             Some(("am", Some(0))),
@@ -1755,6 +1758,8 @@ mod tests {
         single_test_roundtrip(gregorian, None, 2000, "M03", 1);
         single_test_roundtrip(gregorian, None, -100, "M03", 1);
         single_test_roundtrip(gregorian, Some(("bce", Some(0))), 100, "M03", 1);
+        // Since #6910, the era range is not enforced in try_from_codes
+        /*
         single_test_error(
             gregorian,
             Some(("ce", Some(1))),
@@ -1781,7 +1786,7 @@ mod tests {
                 max: i32::MAX,
             },
         );
-
+        */
         single_test_error(
             gregorian,
             Some(("bce", Some(0))),
@@ -1836,6 +1841,8 @@ mod tests {
         single_test_roundtrip(japanese, None, -100, "M03", 1);
         single_test_roundtrip(japanese, None, 2024, "M03", 1);
         single_test_roundtrip(japanese, Some(("bce", None)), 10, "M03", 1);
+        // Since #6910, the era range is not enforced in try_from_codes
+        /*
         single_test_error(
             japanese,
             Some(("ce", None)),
@@ -1862,7 +1869,7 @@ mod tests {
                 max: i32::MAX,
             },
         );
-
+        */
         single_test_error(
             japanese,
             Some(("reiwa", None)),
@@ -1878,6 +1885,8 @@ mod tests {
         single_test_roundtrip(japanext, Some(("tenpyokampo-749", None)), 1, "M04", 20);
         single_test_roundtrip(japanext, Some(("ce", None)), 100, "M03", 1);
         single_test_roundtrip(japanext, Some(("bce", None)), 10, "M03", 1);
+        // Since #6910, the era range is not enforced in try_from_codes
+        /*
         single_test_error(
             japanext,
             Some(("ce", None)),
@@ -1904,7 +1913,7 @@ mod tests {
                 max: i32::MAX,
             },
         );
-
+        */
         single_test_error(
             japanext,
             Some(("reiwa", None)),

@@ -522,12 +522,16 @@ where
         .to_calendar(crate::Ref(cal));
     // December 31, 1972 occurs in the 11th month, 1392 AH, but the day could vary
     debug_assert_eq!(dec_31.month().ordinal, 11);
-    let (y0, y1, y2) =
+    let (y0, y1, y2, y3) =
         if ordinal_month < 11 || (ordinal_month == 11 && day <= dec_31.day_of_month().0) {
-            (1390, 1391, 1392)
+            (1389, 1390, 1391, 1392)
         } else {
-            (1389, 1390, 1391)
+            (1388, 1389, 1390, 1391)
         };
+    let year_info = year_info_from_extended(y3);
+    if day <= C::days_in_provided_month(year_info, ordinal_month) {
+        return Ok(year_info);
+    }
     let year_info = year_info_from_extended(y2);
     if day <= C::days_in_provided_month(year_info, ordinal_month) {
         return Ok(year_info);
@@ -537,7 +541,11 @@ where
         return Ok(year_info);
     }
     let year_info = year_info_from_extended(y0);
-    debug_assert!(day <= C::days_in_provided_month(year_info, ordinal_month));
+    // This function might be called with out-of-range days that are handled later.
+    // Some calendars don't have day 30s in every month so we don't check those.
+    if day <= 29 {
+        debug_assert!(day <= C::days_in_provided_month(year_info, ordinal_month), "{month_code:?}/{day}");
+    }
     Ok(year_info)
 }
 

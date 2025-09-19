@@ -2,19 +2,20 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::{collections::HashSet, num::NonZeroU8};
+use std::{collections::HashSet, fmt::Debug, num::NonZeroU8};
 
 use icu_calendar::{
     cal::*,
-    options::{DateFromFieldsOptions, MissingFieldsStrategy},
-    types::DateFields,
+    options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow},
+    types::{DateFields, MonthCode},
     Calendar, Date, Ref,
 };
 
 fn test_reference_year_impl<C>(cal: C)
 where
-    C: Calendar,
+    C: Calendar + Debug,
 {
+    // Test that all dates in a certain range behave according to Temporal
     let mut month_days_seen = HashSet::new();
     let mut rd = Date::try_new_iso(1972, 12, 31).unwrap().to_rata_die();
     for _ in 1..1000 {
@@ -27,12 +28,34 @@ where
         options.missing_fields_strategy = Some(MissingFieldsStrategy::Ecma);
         let reference_date = Date::try_from_fields(fields, options, Ref(&cal)).unwrap();
         if month_days_seen.contains(&month_day) {
-            assert_ne!(date, reference_date);
+            assert_ne!(date, reference_date, "{cal:?}");
         } else {
-            assert_eq!(date, reference_date);
+            assert_eq!(date, reference_date, "{cal:?}");
             month_days_seen.insert(month_day);
         }
         rd -= 1;
+    }
+    // Test that all MonthDay values round-trip
+    for month_number in 1..=14 {
+        for is_leap in [false, true] {
+            for day_number in 1..=32 {
+                let mut fields = DateFields::default();
+                fields.month_code = match is_leap {
+                    false => MonthCode::new_normal(month_number),
+                    true => MonthCode::new_leap(month_number),
+                };
+                fields.day = NonZeroU8::new(day_number);
+                let mut options = DateFromFieldsOptions::default();
+                options.overflow = Some(Overflow::Reject);
+                options.missing_fields_strategy = Some(MissingFieldsStrategy::Ecma);
+                let Ok(reference_date) = Date::try_from_fields(fields, options, Ref(&cal)) else {
+                    // Not every date exists in every calendar
+                    continue;
+                };
+                assert_eq!(fields.month_code.unwrap(), reference_date.month().standard_code, "{fields:?} {cal:?}");
+                assert_eq!(fields.day.unwrap().get(), reference_date.day_of_month().0, "{fields:?} {cal:?}");
+            }
+        }
     }
 }
 
@@ -43,7 +66,7 @@ fn test_reference_year_buddhist() {
 
 #[test]
 fn test_reference_year_chinese() {
-    test_reference_year_impl(Chinese::new())
+    test_reference_year_impl(LunarChinese::new_china())
 }
 
 #[test]
@@ -53,7 +76,7 @@ fn test_reference_year_coptic() {
 
 #[test]
 fn test_reference_year_dangi() {
-    test_reference_year_impl(Dangi::new())
+    test_reference_year_impl(LunarChinese::new_dangi())
 }
 
 #[test]
@@ -72,12 +95,16 @@ fn test_reference_year_gregorian() {
 }
 
 #[test]
+fn test_reference_year_julian() {
+    test_reference_year_impl(Julian)
+}
+
+#[test]
 fn test_reference_year_hebrew() {
     test_reference_year_impl(Hebrew)
 }
 
 #[test]
-#[ignore] // TODO: not yet implemented
 fn test_reference_year_indian() {
     test_reference_year_impl(Indian)
 }
@@ -124,7 +151,6 @@ fn test_reference_year_japanese_extended() {
 }
 
 #[test]
-#[ignore] // TODO: not yet implemented
 fn test_reference_year_persian() {
     test_reference_year_impl(Persian)
 }

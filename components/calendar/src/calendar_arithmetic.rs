@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::range_check_with_overflow;
-use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy};
+use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
 use crate::types::{DateFields, DayOfYear, MonthCode};
 use crate::{types, Calendar, DateDuration, DateDurationUnit, DateError, RangeError};
 use core::cmp::Ordering;
@@ -379,7 +379,9 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
     pub(crate) fn try_from_ymd(year: C::YearInfo, month: u8, day: u8) -> Result<Self, RangeError> {
         let builder = ArithmeticDateBuilder { year, month, day };
-        Self::try_from_builder(builder, Default::default())
+        let mut options = DateFromFieldsOptions::default();
+        options.overflow = Some(Overflow::Reject);
+        Self::try_from_builder(builder, options)
     }
 }
 
