@@ -64,26 +64,10 @@ pub(crate) mod enumerated {
     }
 }
 
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 pub(crate) mod code_point_prop {
     #[derive(serde::Deserialize)]
-    pub(crate) struct CodePointPropertyMapRange {
-        #[serde(rename = "a")]
-        pub(crate) _a: u32,
-        #[serde(rename = "b")]
-        pub(crate) _b: u32,
-        #[serde(rename = "v")]
-        pub(crate) _v: u32,
-    }
-
-    #[derive(serde::Deserialize)]
     pub(crate) struct CodePointPropertyMap {
-        #[serde(rename = "long_name")]
-        pub(crate) _long_name: String,
-        #[serde(rename = "short_name")]
-        pub(crate) _short_name: String,
-        #[serde(rename = "ranges")]
-        pub(crate) _ranges: Vec<CodePointPropertyMapRange>,
-        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         pub(crate) code_point_trie: super::CodePointTrieToml,
     }
 
@@ -91,7 +75,6 @@ pub(crate) mod code_point_prop {
     pub(crate) struct Main {
         // TODO: update icuexportdata to print a different TOML header than "enum_property"
         #[serde(default)]
-        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
         pub(crate) enum_property: Vec<CodePointPropertyMap>,
     }
 }

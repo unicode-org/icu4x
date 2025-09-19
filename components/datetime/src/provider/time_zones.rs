@@ -285,6 +285,7 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
+#[cfg(feature = "serde")]
 pub(crate) mod legacy {
     use super::*;
     use icu_time::zone::ZoneNameTimestamp;
@@ -308,10 +309,9 @@ pub(crate) mod legacy {
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
     #[derive(PartialEq, Debug, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-    #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-    #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     #[yoke(prove_covariance_manually)]
+    #[allow(dead_code, reason = "We construct this struct through serde impls")]
     pub struct MetazonePeriod<'data> {
         /// The default mapping between period and offsets. The second level key is a wall-clock time encoded as
         /// [`ZoneNameTimestamp`]. It represents when the metazone started to be used.
@@ -324,7 +324,6 @@ pub(crate) mod legacy {
         #[cfg(feature = "datagen")]
     );
 
-    #[cfg(feature = "serde")]
     #[inline(never)] // keep this compat code self-contained and not duplicated
     pub(crate) fn metazone_timezone_compat(
         provider: &impl BufferProvider,

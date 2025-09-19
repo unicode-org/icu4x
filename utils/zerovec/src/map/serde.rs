@@ -236,12 +236,14 @@ mod test {
     use crate::{map::ZeroMapBorrowed, ZeroMap};
 
     #[derive(serde::Serialize, serde::Deserialize)]
+    #[expect(dead_code)]
     struct DeriveTest_ZeroMap<'data> {
         #[serde(borrow)]
         _data: ZeroMap<'data, str, [u8]>,
     }
 
     #[derive(serde::Serialize, serde::Deserialize)]
+    #[expect(dead_code)]
     struct DeriveTest_ZeroMapBorrowed<'data> {
         #[serde(borrow)]
         _data: ZeroMapBorrowed<'data, str, [u8]>,

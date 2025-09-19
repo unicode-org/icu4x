@@ -2,18 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-mod fixtures;
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+pub(crate) struct PatternsFixture(pub(crate) Vec<String>);
 
 use criterion::{criterion_group, criterion_main, Criterion};
 
 use icu_datetime::provider::pattern::reference::Pattern;
 
 fn pattern_benches(c: &mut Criterion) {
-    let patterns = serde_json::from_str::<fixtures::PatternsFixture>(include_str!(
-        "fixtures/tests/patterns.json"
-    ))
-    .unwrap()
-    .0;
+    let patterns = serde_json::from_str::<PatternsFixture>(include_str!("fixtures/patterns.json"))
+        .unwrap()
+        .0;
 
     {
         let mut group = c.benchmark_group("pattern");
