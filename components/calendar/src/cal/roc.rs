@@ -2,20 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Republic of China calendar.
-//!
-//! ```rust
-//! use icu::calendar::{cal::Roc, Date};
-//!
-//! let date_iso = Date::try_new_iso(1970, 1, 2)
-//!     .expect("Failed to initialize ISO Date instance.");
-//! let date_roc = Date::new_from_iso(date_iso, Roc);
-//!
-//! assert_eq!(date_roc.era_year().year, 59);
-//! assert_eq!(date_roc.month().ordinal, 1);
-//! assert_eq!(date_roc.day_of_month().0, 2);
-//! ```
-
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
 use crate::options::DateFromFieldsOptions;
 use crate::types::DateFields;

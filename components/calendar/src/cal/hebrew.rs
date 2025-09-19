@@ -2,19 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Hebrew calendar.
-//!
-//! ```rust
-//! use icu::calendar::Date;
-//!
-//! let hebrew_date = Date::try_new_hebrew(3425, 10, 11)
-//!     .expect("Failed to initialize hebrew Date instance.");
-//!
-//! assert_eq!(hebrew_date.era_year().year, 3425);
-//! assert_eq!(hebrew_date.month().ordinal, 10);
-//! assert_eq!(hebrew_date.day_of_month().0, 11);
-//! ```
-
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, DateFieldsResolver};
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, PrecomputedDataSource};
@@ -46,7 +33,7 @@ use calendrical_calculations::rata_die::RataDie;
 /// [`MonthInfo`] has slightly divergent behavior: because the regular month Adar is formatted
 /// as "Adar II" in a leap year, this calendar will produce the special code `"M06L"` in any [`MonthInfo`]
 /// objects it creates.
-#[derive(Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord, Default)]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord, Default)]
 #[allow(clippy::exhaustive_structs)] // unit struct
 pub struct Hebrew;
 

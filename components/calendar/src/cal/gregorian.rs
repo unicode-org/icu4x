@@ -2,20 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Gregorian calendar.
-//!
-//! ```rust
-//! use icu::calendar::{cal::Gregorian, Date};
-//!
-//! let date_iso = Date::try_new_iso(1970, 1, 2)
-//!     .expect("Failed to initialize ISO Date instance.");
-//! let date_gregorian = Date::new_from_iso(date_iso, Gregorian);
-//!
-//! assert_eq!(date_gregorian.era_year().year, 1970);
-//! assert_eq!(date_gregorian.month().ordinal, 1);
-//! assert_eq!(date_gregorian.day_of_month().0, 2);
-//! ```
-
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::DateError;

@@ -184,7 +184,7 @@ fn date_benches(c: &mut Criterion) {
         "calendar/islamic/ummalqura",
         &fxs,
         icu::calendar::cal::Hijri::new_umm_al_qura(),
-        |y, m, d, _| Date::try_new_ummalqura(y, m, d).unwrap(),
+        |y, m, d, c| Date::try_new_hijri_with_calendar(y, m, d, c).unwrap(),
     );
 
     bench_calendar(

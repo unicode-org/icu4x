@@ -2,20 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Buddhist calendar.
-//!
-//! ```rust
-//! use icu::calendar::{cal::Buddhist, Date};
-//!
-//! let date_iso = Date::try_new_iso(1970, 1, 2)
-//!     .expect("Failed to initialize ISO Date instance.");
-//! let date_buddhist = Date::new_from_iso(date_iso, Buddhist);
-//!
-//! assert_eq!(date_buddhist.era_year().year, 2513);
-//! assert_eq!(date_buddhist.month().ordinal, 1);
-//! assert_eq!(date_buddhist.day_of_month().0, 2);
-//! ```
-
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::DateError;

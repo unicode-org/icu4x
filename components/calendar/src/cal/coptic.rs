@@ -2,20 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Coptic calendar.
-//!
-//! ```rust
-//! use icu::calendar::{cal::Coptic, Date};
-//!
-//! let date_iso = Date::try_new_iso(1970, 1, 2)
-//!     .expect("Failed to initialize ISO Date instance.");
-//! let date_coptic = Date::new_from_iso(date_iso, Coptic);
-//!
-//! assert_eq!(date_coptic.era_year().year, 1686);
-//! assert_eq!(date_coptic.month().ordinal, 4);
-//! assert_eq!(date_coptic.day_of_month().0, 24);
-//! ```
-
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};

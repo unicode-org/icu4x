@@ -2,21 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Chinese calendar.
-//!
-//! ```rust
-//! use icu::calendar::{cal::Chinese, Date};
-//!
-//! let chinese = Chinese::new_china();
-//! let chinese_date = Date::try_new_chinese_with_calendar(2023, 6, 6, chinese)
-//!     .expect("Failed to initialize Chinese Date instance.");
-//!
-//! assert_eq!(chinese_date.cyclic_year().related_iso, 2023);
-//! assert_eq!(chinese_date.cyclic_year().year, 40);
-//! assert_eq!(chinese_date.month().ordinal, 6);
-//! assert_eq!(chinese_date.day_of_month().0, 6);
-//! ```
-
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, CalendarArithmetic};
 use crate::calendar_arithmetic::{DateFieldsResolver, PrecomputedDataSource};
