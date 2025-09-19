@@ -432,7 +432,7 @@ fn test_calendar_eras() {
                     // Check that the start/end date uses year 1, and minimal/maximal month/day
                     assert_eq!(era_year.year, 1, "Didn't get correct year for {in_era:?}");
                 }
-                // Cyclic calendars use related_iso for their monotonic years, which won't
+                // Cyclic calendars use related_iso for their extended years, which won't
                 // work with the CLDR "default" eras. Skip testing them.
                 icu::calendar::types::YearInfo::Cyclic(_) => (),
                 _ => unreachable!(),
