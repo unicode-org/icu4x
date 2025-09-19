@@ -3,3 +3,4 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub mod data;
+pub mod supplemental;
