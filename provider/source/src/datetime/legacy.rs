@@ -69,12 +69,6 @@ pub mod months {
     ///The format style is used in contexts where it is different from the stand-alone form, ex: a case inflected form where the stand-alone form is the nominative case.
     #[cfg(test)]
     pub struct FormatWidths<'data> {
-        ///Abbreviated length symbol for "format" style symbol for months.
-        pub abbreviated: Symbols<'data>,
-        ///Narrow length symbol for "format" style symbol for months.
-        pub narrow: Symbols<'data>,
-        ///Short length symbol for "format" style symbol for months, if present.
-        pub short: Option<Symbols<'data>>,
         ///Wide length symbol for "format" style symbol for months.
         pub wide: Symbols<'data>,
     }
@@ -164,14 +158,8 @@ pub mod weekdays {
     ///The format style is used in contexts where it is different from the stand-alone form, ex: a case inflected form where the stand-alone form is the nominative case.
     #[cfg(test)]
     pub struct FormatWidths<'data> {
-        ///Abbreviated length symbol for "format" style symbol for weekdays.
-        pub abbreviated: Symbols<'data>,
-        ///Narrow length symbol for "format" style symbol for weekdays.
-        pub narrow: Symbols<'data>,
         ///Short length symbol for "format" style symbol for weekdays, if present.
         pub short: Option<Symbols<'data>>,
-        ///Wide length symbol for "format" style symbol for weekdays.
-        pub wide: Symbols<'data>,
     }
 
     ///Symbol data for the "stand-alone" style formatting of Weekday.
@@ -289,9 +277,6 @@ mod test {
     impl ca::FormatWidths<cldr_serde::ca::MonthSymbols> {
         fn get(&self, ctx: &(&'static [TinyStr4], &str)) -> months::FormatWidths<'static> {
             months::FormatWidths {
-                abbreviated: self.abbreviated.get(ctx),
-                narrow: self.narrow.get(ctx),
-                short: self.short.as_ref().map(|width| width.get(ctx)),
                 wide: self.wide.get(ctx),
             }
         }
@@ -369,10 +354,7 @@ mod test {
         fn get(&self, ctx: &()) -> weekdays::Contexts<'static> {
             weekdays::Contexts {
                 format: weekdays::FormatWidths {
-                    abbreviated: self.format.abbreviated.get(ctx),
-                    narrow: self.format.narrow.get(ctx),
                     short: self.format.short.as_ref().map(|width| width.get(ctx)),
-                    wide: self.format.wide.get(ctx),
                 },
                 stand_alone: self
                     .stand_alone
@@ -492,7 +474,6 @@ mod test {
         let data = provider
             .get_datetime_resources(&langid!("cs").into(), Some(DatagenCalendar::Gregorian))
             .unwrap();
-
 
         let cs_dates = convert_dates(&data, DatagenCalendar::Gregorian);
 
