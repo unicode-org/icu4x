@@ -162,27 +162,12 @@ pub mod weekdays {
         pub short: Option<Symbols<'data>>,
     }
 
-    ///Symbol data for the "stand-alone" style formatting of Weekday.
-    ///
-    ///The stand-alone style is used in contexts where the field is displayed by itself.
-    #[cfg(test)]
-    pub struct StandAloneWidths<'data> {
-        ///Abbreviated length symbol for "stand-alone" style symbol for weekdays.
-        pub abbreviated: Option<Symbols<'data>>,
-        ///Narrow length symbol for "stand-alone" style symbol for weekdays.
-        pub narrow: Option<Symbols<'data>>,
-        ///Short length symbol for "stand-alone" style symbol for weekdays.
-        pub short: Option<Symbols<'data>>,
-        ///Wide length symbol for "stand-alone" style symbol for weekdays.
-        pub wide: Option<Symbols<'data>>,
-    }
-
     #[cfg(test)]
     pub struct Contexts<'data> {
         /// The symbol data for "format" style symbols.
         pub format: FormatWidths<'data>,
-        /// The symbol data for "stand-alone" style symbols.
-        pub stand_alone: Option<StandAloneWidths<'data>>,
+        /// Whether or not there are "standalone" style symbols
+        pub stand_alone: bool,
     }
 }
 
@@ -359,7 +344,7 @@ mod test {
                 stand_alone: self
                     .stand_alone
                     .as_ref()
-                    .and_then(|stand_alone| {
+                    .map(|stand_alone| {
                         let abbreviated = stand_alone
                             .abbreviated
                             .as_ref()
@@ -377,27 +362,12 @@ mod test {
                             .wide
                             .as_ref()
                             .and_then(|v| v.get_unaliased(&self.format.wide));
-                        if abbreviated.is_none()
-                            && narrow.is_none()
-                            && wide.is_none()
-                            && short.is_none()
-                        {
-                            None
-                        } else {
-                            Some(ca::StandAloneWidths {
-                                abbreviated,
-                                narrow,
-                                short,
-                                wide,
-                            })
-                        }
+                        abbreviated.is_some()
+                            || narrow.is_some()
+                            || wide.is_some()
+                            || short.is_some()
                     })
-                    .map(|ref stand_alone| weekdays::StandAloneWidths {
-                        abbreviated: stand_alone.abbreviated.as_ref().map(|width| width.get(ctx)),
-                        narrow: stand_alone.narrow.as_ref().map(|width| width.get(ctx)),
-                        short: stand_alone.short.as_ref().map(|width| width.get(ctx)),
-                        wide: stand_alone.wide.as_ref().map(|width| width.get(ctx)),
-                    }),
+                    .unwrap_or(false),
             }
         }
     }
@@ -528,6 +498,6 @@ mod test {
         assert!(cs_dates.months.stand_alone.as_ref().unwrap().wide.is_some());
 
         // Czech weekdays are unaliased because they completely overlap.
-        assert!(cs_dates.weekdays.stand_alone.is_none());
+        assert!(!cs_dates.weekdays.stand_alone);
     }
 }
