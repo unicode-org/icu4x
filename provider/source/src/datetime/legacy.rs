@@ -50,34 +50,6 @@ pub struct DateSymbols<'data> {
     pub months: months::Contexts<'data>,
     /// Symbol data for weekdays.
     pub weekdays: weekdays::Contexts<'data>,
-    pub eras: Eras<'data>,
-}
-
-/// String data for the name, abbreviation, and narrow form of a date's era.
-///
-/// Keys of the map represent era codes, and the values are the display names.
-///
-/// Era codes are derived from CLDR data, and are calendar specific.
-/// Some examples include: `"be"`, `"0"` / `"1"`, `"bce"` / `"ce"`,
-/// `"heisei"` / `"meiji"` / `"reiwa"` / ...  Not all era codes are inherited as-is,
-/// such as for the extended Japanese calendar.
-///
-/// For more information on date time symbols, see [`FieldSymbol`](crate::provider::fields::FieldSymbol).
-#[cfg(test)]
-#[derive(Default)]
-pub struct Eras<'data> {
-    /// Symbol data for era names.
-    ///
-    /// Keys are era codes, and values are display names. See [`Eras`].
-    pub names: ZeroMap<'data, potential_utf::PotentialUtf8, str>,
-    /// Symbol data for era abbreviations.
-    ///
-    /// Keys are era codes, and values are display names. See [`Eras`].
-    pub abbr: ZeroMap<'data, potential_utf::PotentialUtf8, str>,
-    /// Symbol data for era narrow forms.
-    ///
-    /// Keys are era codes, and values are display names. See [`Eras`].
-    pub narrow: ZeroMap<'data, potential_utf::PotentialUtf8, str>,
 }
 
 ///Formatting symbols for [`Month`](crate::provider::fields::FieldSymbol::Month).
@@ -251,7 +223,7 @@ pub mod day_periods {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::cldr_serde::{ca, eras::EraData};
+    use crate::cldr_serde::ca;
     use crate::datetime::DatagenCalendar;
     use crate::{cldr_serde, SourceDataProvider};
     use icu::calendar::types::MonthCode;
@@ -455,7 +427,6 @@ mod test {
     fn convert_dates(
         other: &cldr_serde::ca::Dates,
         calendar: DatagenCalendar,
-        all_eras: &[(usize, EraData)],
     ) -> DateSymbols<'static> {
         DateSymbols {
             months: other.months.get(&(
@@ -513,32 +484,6 @@ mod test {
                 calendar.cldr_name(),
             )),
             weekdays: other.days.get(&()),
-            eras: other
-                .eras
-                .as_ref()
-                .map(|in_eras| {
-                    let mut out_eras = Eras::default();
-
-                    for (index, era) in all_eras {
-                        if let Some(name) = in_eras.names.get(&index.to_string()) {
-                            out_eras
-                                .names
-                                .insert(era.code.as_deref().unwrap().into(), name);
-                        }
-                        if let Some(abbr) = in_eras.abbr.get(&index.to_string()) {
-                            out_eras
-                                .abbr
-                                .insert(era.code.as_deref().unwrap().into(), abbr);
-                        }
-                        if let Some(narrow) = in_eras.narrow.get(&index.to_string()) {
-                            out_eras
-                                .narrow
-                                .insert(era.code.as_deref().unwrap().into(), narrow);
-                        }
-                    }
-                    out_eras
-                })
-                .unwrap_or_default(),
         }
     }
     #[test]
@@ -552,9 +497,8 @@ mod test {
             .get_datetime_resources(&langid!("cs").into(), Some(DatagenCalendar::Gregorian))
             .unwrap();
 
-        let all_eras = &provider.all_eras().unwrap()[&DatagenCalendar::Gregorian];
 
-        let cs_dates = convert_dates(&data, DatagenCalendar::Gregorian, all_eras);
+        let cs_dates = convert_dates(&data, DatagenCalendar::Gregorian);
 
         assert_eq!(
             "srpna",
@@ -577,9 +521,7 @@ mod test {
             .get_datetime_resources(&langid!("cs").into(), Some(DatagenCalendar::Gregorian))
             .unwrap();
 
-        let all_eras = &provider.all_eras().unwrap()[&DatagenCalendar::Gregorian];
-
-        let cs_dates = convert_dates(&data, DatagenCalendar::Gregorian, all_eras);
+        let cs_dates = convert_dates(&data, DatagenCalendar::Gregorian);
 
         // Czech months are not unaliased because `wide` differs.
         assert!(cs_dates.months.stand_alone.is_some());
