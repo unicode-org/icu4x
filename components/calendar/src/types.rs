@@ -27,11 +27,11 @@ pub struct DateFields<'a> {
     ///
     /// If set, [`Self::era`] must also be set.
     pub era_year: Option<i32>,
-    /// See [`Date::monotonic_year()`](crate::Date::monotonic_year).
+    /// See [`Date::extended_year()`](crate::Date::extended_year).
     ///
     /// If both this and [`Self::era`]/[`Self::era_year`] are set, they must
     /// refer to the same year.
-    pub monotonic_year: Option<i32>,
+    pub extended_year: Option<i32>,
     /// The [`MonthCode`] representing a valid month in this calendar year.
     pub month_code: Option<MonthCode>,
     /// See [`MonthInfo::ordinal`].

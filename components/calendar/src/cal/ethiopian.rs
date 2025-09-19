@@ -120,7 +120,7 @@ impl DateFieldsResolver for Ethiopian {
     type YearInfo = i32;
 
     #[inline]
-    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+    fn era_year_to_extended(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
         match (self.era_style(), era) {
             (EthiopianEraStyle::AmeteMihret, "am") => Ok(era_year),
             (EthiopianEraStyle::AmeteMihret, "aa") => Ok(era_year - INCARNATION_OFFSET),

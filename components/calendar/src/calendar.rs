@@ -47,7 +47,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
             fields.era = era;
             fields.era_year = Some(year);
         } else {
-            fields.monotonic_year = Some(year);
+            fields.extended_year = Some(year);
         }
         fields.month_code = Some(month_code);
         fields.day = Some(core::num::NonZeroU8::new(day).ok_or(DateError::Range {

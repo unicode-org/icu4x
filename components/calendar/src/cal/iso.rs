@@ -98,7 +98,7 @@ impl DateFieldsResolver for Iso {
     type YearInfo = i32;
 
     #[inline]
-    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+    fn era_year_to_extended(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
         match era {
             "default" => Ok(era_year),
             _ => Err(DateError::UnknownEra),

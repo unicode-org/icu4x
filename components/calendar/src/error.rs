@@ -83,7 +83,7 @@ pub enum DateError {
     /// )
     /// .expect("a well-defined Japanese date");
     ///
-    /// fields.monotonic_year = Some(1900);
+    /// fields.extended_year = Some(1900);
     ///
     /// let err = Date::try_from_fields(
     ///     fields,
@@ -110,7 +110,7 @@ pub enum DateError {
     /// use tinystr::tinystr;
     ///
     /// let mut fields = DateFields::default();
-    /// fields.monotonic_year = Some(5783);
+    /// fields.extended_year = Some(5783);
     /// fields.month_code = Some(MonthCode(tinystr!(4, "M06")));
     /// fields.ordinal_month = NonZeroU8::new(6);
     /// fields.day = NonZeroU8::new(1);
@@ -122,7 +122,7 @@ pub enum DateError {
     /// )
     /// .expect("a well-defined Hebrew date in a common year");
     ///
-    /// fields.monotonic_year = Some(5784);
+    /// fields.extended_year = Some(5784);
     ///
     /// let err = Date::try_from_fields(
     ///     fields,
@@ -170,7 +170,7 @@ pub enum DateError {
     /// .expect_err("need more than an ordinal month and an era year");
     /// assert!(matches!(err, DateError::NotEnoughFields));
     ///
-    /// fields.monotonic_year = 5783;
+    /// fields.extended_year = 5783;
     ///
     /// let err = Date::try_from_fields(
     ///     fields,

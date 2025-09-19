@@ -528,7 +528,7 @@ impl<X: Rules> DateFieldsResolver for LunarChinese<X> {
     type YearInfo = LunarChineseYearData;
 
     #[inline]
-    fn era_year_to_monotonic(
+    fn era_year_to_extended(
         &self,
         _era: &str,
         _era_year: i32,

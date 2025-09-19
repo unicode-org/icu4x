@@ -170,7 +170,7 @@ impl<A: AsCalendar> Date<A> {
     /// )
     /// .expect("Jan 1 in the reference year");
     ///
-    /// fields.monotonic_year = Some(1972);
+    /// fields.extended_year = Some(1972);
     ///
     /// let d2 = Date::try_from_fields(
     ///     fields,

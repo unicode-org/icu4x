@@ -48,7 +48,7 @@ pub enum Overflow {
     ///
     /// // 5784, a leap year, contains M05L, but the day is too big.
     /// let mut fields = DateFields::default();
-    /// fields.monotonic_year = Some(5784);
+    /// fields.extended_year = Some(5784);
     /// fields.month_code = Some(MonthCode(tinystr!(4, "M05L")));
     /// fields.day = NonZeroU8::new(50);
     ///
@@ -60,12 +60,12 @@ pub enum Overflow {
     /// .unwrap();
     ///
     /// // Constrained to the 20th day of M05L of year 5784
-    /// assert_eq!(date.year().monotonic_year(), 5784);
+    /// assert_eq!(date.year().extended_year(), 5784);
     /// assert_eq!(date.month().standard_code, MonthCode(tinystr!(4, "M05L")));
     /// assert_eq!(date.day_of_month().0, 20);
     ///
     /// // 5785, a common year, does not contain M05L.
-    /// fields.monotonic_year = Some(5785);
+    /// fields.extended_year = Some(5785);
     ///
     /// let date = Date::try_from_fields(
     ///     fields,
@@ -75,7 +75,7 @@ pub enum Overflow {
     /// .unwrap();
     ///
     /// // Constrained to the 20th day of M06 of year 5785
-    /// assert_eq!(date.year().monotonic_year(), 5785);
+    /// assert_eq!(date.year().extended_year(), 5785);
     /// assert_eq!(date.month().standard_code, MonthCode(tinystr!(4, "M06")));
     /// assert_eq!(date.day_of_month().0, 20);
     /// ```
@@ -101,7 +101,7 @@ pub enum Overflow {
     ///
     /// // 5784, a leap year, contains M05L, but the day is too big.
     /// let mut fields = DateFields::default();
-    /// fields.monotonic_year = Some(5784);
+    /// fields.extended_year = Some(5784);
     /// fields.month_code = Some(MonthCode(tinystr!(4, "M05L")));
     /// fields.day = NonZeroU8::new(50);
     ///
@@ -122,7 +122,7 @@ pub enum Overflow {
     /// ).expect("A valid Hebrew date");
     ///
     /// // 5785, a common year, does not contain M05L.
-    /// fields.monotonic_year = Some(5785);
+    /// fields.extended_year = Some(5785);
     ///
     /// let err = Date::try_from_fields(
     ///     fields,
@@ -271,7 +271,7 @@ mod tests {
         field_fns.insert("era", &|fields| fields.era = Some("ad"));
         field_fns.insert("era_year", &|fields| fields.era_year = Some(2000));
         field_fns.insert("extended_year", &|fields| {
-            fields.monotonic_year = Some(2000)
+            fields.extended_year = Some(2000)
         });
         field_fns.insert("month_code", &|fields| {
             fields.month_code = MonthCode::new_normal(4)
