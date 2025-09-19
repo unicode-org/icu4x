@@ -15,10 +15,6 @@ use zerovec::ZeroMap;
 /// Data struct for date/time patterns broken down by pattern length.
 #[cfg(test)]
 pub struct LengthPatterns<'data> {
-    /// A full length date/time pattern.
-    pub full: runtime::Pattern<'data>,
-    /// A long length date/time pattern.
-    pub long: runtime::Pattern<'data>,
     /// A medium length date/time pattern.
     pub medium: runtime::Pattern<'data>,
     /// A short length date/time pattern.

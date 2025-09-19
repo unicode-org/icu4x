@@ -18,16 +18,6 @@ impl From<&cldr_serde::ca::LengthPatterns> for LengthPatterns<'_> {
     fn from(other: &cldr_serde::ca::LengthPatterns) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
-            full: other
-                .full
-                .get_pattern()
-                .parse()
-                .expect("Failed to parse pattern"),
-            long: other
-                .long
-                .get_pattern()
-                .parse()
-                .expect("Failed to parse pattern"),
             medium: other
                 .medium
                 .get_pattern()
@@ -47,16 +37,6 @@ impl From<&cldr_serde::ca::DateTimeFormats> for LengthPatterns<'_> {
     fn from(other: &cldr_serde::ca::DateTimeFormats) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
-            full: other
-                .full
-                .get_pattern()
-                .parse()
-                .expect("Failed to parse pattern"),
-            long: other
-                .long
-                .get_pattern()
-                .parse()
-                .expect("Failed to parse pattern"),
             medium: other
                 .medium
                 .get_pattern()
