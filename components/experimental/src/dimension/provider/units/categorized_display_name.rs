@@ -20,23 +20,42 @@ macro_rules! define_units_data_markers {
 
 define_units_data_markers!(
     // Area
-    UnitsNamesAreaCoreV1, "Display names for core area units, encompassing the units specified by unit preferences for the given locale";
-    UnitsNamesAreaExtendedV1, "Display names for extended area units, encompassing the units specified by unit preferences for the other locales";
-    UnitsNamesAreaOutlierV1, "Display names for outlier area units, encompassing the units which are not specified by unit preferences for any locale";
+    UnitsNamesAreaCoreV1,
+    "Display names for area units defined by locale-specific preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
+    UnitsNamesAreaExtendedV1,
+    "Display names for area units covering units from other locales\' preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
+    UnitsNamesAreaOutlierV1,
+    "Display names for area units not specified by any locale\'s preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
+
     // Duration
-    UnitsNamesDurationCoreV1, "Display names for core duration units, encompassing the units specified by unit preferences for the given locale";
-    UnitsNamesDurationExtendedV1, "Display names for extended duration units, encompassing the units specified by unit preferences for the other locales";
-    UnitsNamesDurationOutlierV1, "Display names for outlier duration units, encompassing the units which are not specified by unit preferences for any locale";
+    UnitsNamesDurationCoreV1,
+    "Display names for duration units defined by locale-specific preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
+    UnitsNamesDurationExtendedV1,
+    "Display names for duration units covering units from other locales\' preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
+    UnitsNamesDurationOutlierV1,
+    "Display names for duration units not specified by any locale\'s preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
+
     // Length
-    UnitsNamesLengthCoreV1, "Display names for core length units, encompassing the units specified by unit preferences for the given locale";
-    UnitsNamesLengthExtendedV1, "Display names for extended length units, encompassing the units specified by unit preferences for the other locales";
-    UnitsNamesLengthOutlierV1, "Display names for outlier length units, encompassing the units which are not specified by unit preferences for any locale";
+    UnitsNamesLengthCoreV1,
+    "Display names for length units defined by locale-specific preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
+    UnitsNamesLengthExtendedV1,
+    "Display names for length units covering units from other locales\' preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
+    UnitsNamesLengthOutlierV1,
+    "Display names for length units not specified by any locale\'s preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
+
     // Mass
-    UnitsNamesMassCoreV1, "Display names for core mass units, encompassing the units specified by unit preferences for the given locale";
-    UnitsNamesMassExtendedV1, "Display names for extended mass units, encompassing the units specified by unit preferences for the other locales";
-    UnitsNamesMassOutlierV1, "Display names for outlier mass units, encompassing the units which are not specified by unit preferences for any locale";
+    UnitsNamesMassCoreV1,
+    "Display names for mass units defined by locale-specific preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
+    UnitsNamesMassExtendedV1,
+    "Display names for mass units covering units from other locales\' preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
+    UnitsNamesMassOutlierV1,
+    "Display names for mass units not specified by any locale\'s preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
+
     // Volume
-    UnitsNamesVolumeCoreV1, "Display names for core volume units, encompassing the units specified by unit preferences for the given locale";
-    UnitsNamesVolumeExtendedV1, "Display names for extended volume units, encompassing the units specified by unit preferences for the other locales";
-    UnitsNamesVolumeOutlierV1, "Display names for outlier volume units, encompassing the units which are not specified by unit preferences for any locale";
+    UnitsNamesVolumeCoreV1,
+    "Display names for volume units defined by locale-specific preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
+    UnitsNamesVolumeExtendedV1,
+    "Display names for volume units covering units from other locales\' preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
+    UnitsNamesVolumeOutlierV1,
+    "Display names for volume units not specified by any locale\'s preferences. Access requires specifying width and unit in DataMarkerAttributes (e.g., short-meter).";
 );
