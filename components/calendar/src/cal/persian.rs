@@ -91,7 +91,7 @@ impl DateFieldsResolver for Persian {
     type YearInfo = i32;
 
     #[inline]
-    fn era_year_to_extended(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
         match era {
             "ap" | "sh" | "hs" => Ok(era_year),
             _ => Err(DateError::UnknownEra),

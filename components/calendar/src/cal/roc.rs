@@ -60,7 +60,7 @@ impl DateFieldsResolver for Roc {
     type YearInfo = i32;
 
     #[inline]
-    fn era_year_to_extended(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
         match era {
             "roc" => Ok(era_year),
             "broc" => Ok(1 - era_year),

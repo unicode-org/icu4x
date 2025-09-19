@@ -173,7 +173,7 @@ impl DateFieldsResolver for Japanese {
     type YearInfo = i32;
 
     #[inline]
-    fn era_year_to_extended(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
         let era = match era {
             "ce" | "ad" => {
                 return Ok(era_year);

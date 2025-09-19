@@ -596,7 +596,7 @@ impl<S: HijriSighting> DateFieldsResolver for Hijri<S> {
     type YearInfo = HijriYearData;
 
     #[inline]
-    fn era_year_to_extended(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
         let extended_year = match era {
             "ah" => era_year,
             "bh" => 1 - era_year,

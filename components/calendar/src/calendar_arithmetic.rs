@@ -132,8 +132,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
 
     /// Converts the era and era year to a YearInfo. If the calendar does not have eras,
     /// this should always return an Err result.
-    // TODO: year_info_from_era
-    fn era_year_to_extended(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError>;
+    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError>;
 
     /// Converts an extended year to a YearInfo.
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo;
@@ -411,7 +410,7 @@ where
             match (fields.era, fields.era_year) {
                 (None, None) => extended_year_as_year_info,
                 (Some(era), Some(era_year)) => {
-                    let era_year_as_year_info = cal.era_year_to_extended(era, era_year)?;
+                    let era_year_as_year_info = cal.year_info_from_era(era, era_year)?;
                     if let Some(other) = extended_year_as_year_info {
                         if era_year_as_year_info != other {
                             return Err(DateError::InconsistentYear);
