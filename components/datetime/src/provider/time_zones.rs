@@ -311,7 +311,7 @@ pub(crate) mod legacy {
     #[derive(PartialEq, Debug, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     #[yoke(prove_covariance_manually)]
-    #[allow(dead_code)]
+    #[expect(dead_code, reason = "We construct this struct through serde impls")]
     pub struct MetazonePeriod<'data> {
         /// The default mapping between period and offsets. The second level key is a wall-clock time encoded as
         /// [`ZoneNameTimestamp`]. It represents when the metazone started to be used.
