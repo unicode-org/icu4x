@@ -71,7 +71,10 @@ mod test {
     ];
 
     #[derive(Serialize, Deserialize)]
-    #[expect(dead_code)]
+    #[expect(
+        dead_code,
+        reason = "Remove this if the lint behavior changes. The dead_code lint explicitly ignores constructing trait impls."
+    )]
     struct DeriveTestZeroHashMap<'data> {
         #[serde(borrow)]
         _data: ZeroHashMap<'data, str, [u8]>,

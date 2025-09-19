@@ -161,7 +161,10 @@ mod test {
     use crate::ZeroVec;
 
     #[derive(serde::Serialize, serde::Deserialize)]
-    #[expect(dead_code)]
+    #[expect(
+        dead_code,
+        reason = "Remove this if the lint behavior changes. The dead_code lint explicitly ignores constructing trait impls."
+    )]
     struct DeriveTest_ZeroVec<'data> {
         #[serde(borrow)]
         _data: ZeroVec<'data, u16>,
