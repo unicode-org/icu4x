@@ -160,6 +160,7 @@ impl<A: AsCalendar> Date<A> {
     /// use std::num::NonZeroU8;
     ///
     /// let mut fields = DateFields::default();
+    /// fields.extended_year = Some(2000);
     /// fields.ordinal_month = NonZeroU8::new(1);
     /// fields.day = NonZeroU8::new(1);
     ///
@@ -168,18 +169,10 @@ impl<A: AsCalendar> Date<A> {
     ///     Default::default(),
     ///     Gregorian
     /// )
-    /// .expect("Jan 1 in the reference year");
+    /// .expect("Jan 1 in year 2000");
     ///
-    /// fields.extended_year = Some(1972);
-    ///
-    /// let d2 = Date::try_from_fields(
-    ///     fields,
-    ///     Default::default(),
-    ///     Gregorian
-    /// )
-    /// .expect("Jan 1, 1972");
-    ///
-    /// assert_eq!(d1, d2, "The reference year for Gregorian is 1972");
+    /// let d2 = Date::try_new_gregorian(2000, 1, 1).unwrap();
+    /// assert_eq!(d1, d2);
     /// ```
     ///
     /// See [`DateError`] for examples of error conditions.

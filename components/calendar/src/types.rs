@@ -280,7 +280,7 @@ pub struct MonthInfo {
     pub ordinal: u8,
 
     /// The month code, used to distinguish months during leap years.
-    /// 
+    ///
     /// Round-trips through `Date` constructors like [`Date::from_codes`] and [`Date::try_from_fields`].
     ///
     /// This follows [Temporal's specification](https://tc39.es/proposal-intl-era-monthcode/#table-additional-month-codes).
@@ -289,7 +289,7 @@ pub struct MonthInfo {
     pub standard_code: MonthCode,
 
     /// A month code, useable for formatting.
-    /// 
+    ///
     /// Does NOT necessarily round-trip through `Date` constructors like [`Date::from_codes`] and [`Date::try_from_fields`].
     ///
     /// This may not necessarily be the canonical month code for a month in cases where a month has different

@@ -544,7 +544,10 @@ where
     // This function might be called with out-of-range days that are handled later.
     // Some calendars don't have day 30s in every month so we don't check those.
     if day <= 29 {
-        debug_assert!(day <= C::days_in_provided_month(year_info, ordinal_month), "{month_code:?}/{day}");
+        debug_assert!(
+            day <= C::days_in_provided_month(year_info, ordinal_month),
+            "{month_code:?}/{day}"
+        );
     }
     Ok(year_info)
 }

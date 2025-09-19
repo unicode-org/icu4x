@@ -19,7 +19,7 @@ use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, DateFieldsResolver};
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, PrecomputedDataSource};
 use crate::error::DateError;
-use crate::options::DateFromFieldsOptions;
+use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::types::{DateFields, MonthInfo};
 use crate::RangeError;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
@@ -191,6 +191,7 @@ impl DateFieldsResolver for Hebrew {
         &self,
         year: &Self::YearInfo,
         month_code: types::MonthCode,
+        options: DateFromFieldsOptions,
     ) -> Result<u8, DateError> {
         let is_leap_year = year.keviyah.is_leap();
         let month_code_str = month_code.0.as_str();
@@ -220,6 +221,8 @@ impl DateFieldsResolver for Hebrew {
                 "M03" => 3,
                 "M04" => 4,
                 "M05" => 5,
+                // M05L maps to M06 in a common year
+                "M05L" if matches!(options.overflow, Some(Overflow::Constrain)) => 6,
                 "M06" => 6,
                 "M07" => 7,
                 "M08" => 8,

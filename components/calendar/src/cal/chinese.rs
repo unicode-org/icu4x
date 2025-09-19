@@ -98,7 +98,7 @@ pub trait Rules: Clone + core::fmt::Debug {
     /// Returns data about the given year.
     fn year_data(&self, related_iso: i32) -> LunarChineseYearData;
 
-    /// FIXME: Bikshed this function. Is this the right level of abstraction?
+    /// TODO: Bikshed this function. Is this the right level of abstraction?
     ///
     /// Returns the year data for the given month and day.
     fn reference_year_from_month_day(
@@ -528,11 +528,7 @@ impl<X: Rules> DateFieldsResolver for LunarChinese<X> {
     type YearInfo = LunarChineseYearData;
 
     #[inline]
-    fn year_info_from_era(
-        &self,
-        _era: &str,
-        _era_year: i32,
-    ) -> Result<Self::YearInfo, DateError> {
+    fn year_info_from_era(&self, _era: &str, _era_year: i32) -> Result<Self::YearInfo, DateError> {
         // This calendar has no era codes
         Err(DateError::UnknownEra)
     }
@@ -555,7 +551,9 @@ impl<X: Rules> DateFieldsResolver for LunarChinese<X> {
         &self,
         year: &Self::YearInfo,
         month_code: types::MonthCode,
+        _options: DateFromFieldsOptions,
     ) -> Result<u8, DateError> {
+        // TODO: Handle leap months in common years!
         year.parse_month_code(month_code)
             .ok_or(DateError::UnknownMonthCode(month_code))
     }

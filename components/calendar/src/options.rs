@@ -59,10 +59,10 @@ pub enum Overflow {
     /// )
     /// .unwrap();
     ///
-    /// // Constrained to the 20th day of M05L of year 5784
+    /// // Constrained to the 30th day of M05L of year 5784
     /// assert_eq!(date.year().extended_year(), 5784);
     /// assert_eq!(date.month().standard_code, MonthCode(tinystr!(4, "M05L")));
-    /// assert_eq!(date.day_of_month().0, 20);
+    /// assert_eq!(date.day_of_month().0, 30);
     ///
     /// // 5785, a common year, does not contain M05L.
     /// fields.extended_year = Some(5785);
@@ -74,10 +74,10 @@ pub enum Overflow {
     /// )
     /// .unwrap();
     ///
-    /// // Constrained to the 20th day of M06 of year 5785
+    /// // Constrained to the 29th day of M06 of year 5785
     /// assert_eq!(date.year().extended_year(), 5785);
     /// assert_eq!(date.month().standard_code, MonthCode(tinystr!(4, "M06")));
-    /// assert_eq!(date.day_of_month().0, 20);
+    /// assert_eq!(date.day_of_month().0, 29);
     /// ```
     #[default]
     Constrain,
@@ -130,7 +130,7 @@ pub enum Overflow {
     ///     Hebrew
     /// )
     /// .expect_err("Month is out of bounds");
-    /// assert!(matches!(err, DateError::Range { .. }));
+    /// assert!(matches!(err, DateError::UnknownMonthCode(_)));
     /// ```
     Reject,
 }
@@ -270,9 +270,7 @@ mod tests {
         let mut field_fns = BTreeMap::<&str, &dyn Fn(&mut DateFields)>::new();
         field_fns.insert("era", &|fields| fields.era = Some("ad"));
         field_fns.insert("era_year", &|fields| fields.era_year = Some(2000));
-        field_fns.insert("extended_year", &|fields| {
-            fields.extended_year = Some(2000)
-        });
+        field_fns.insert("extended_year", &|fields| fields.extended_year = Some(2000));
         field_fns.insert("month_code", &|fields| {
             fields.month_code = MonthCode::new_normal(4)
         });

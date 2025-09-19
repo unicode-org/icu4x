@@ -153,6 +153,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
         &self,
         _year: &Self::YearInfo,
         month_code: MonthCode,
+        _options: DateFromFieldsOptions,
     ) -> Result<u8, DateError> {
         match month_code.parsed() {
             Some((month_number, false)) => Ok(month_number),
@@ -447,7 +448,7 @@ where
             let ordinal_month_as_u8 = fields.ordinal_month.map(|x| x.get());
             match fields.month_code {
                 Some(month_code) => {
-                    let computed_month = cal.ordinal_month_from_code(&year, month_code)?;
+                    let computed_month = cal.ordinal_month_from_code(&year, month_code, options)?;
                     if let Some(ordinal_month) = ordinal_month_as_u8 {
                         if computed_month != ordinal_month {
                             return Err(DateError::InconsistentMonth);

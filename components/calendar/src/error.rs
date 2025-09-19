@@ -170,7 +170,7 @@ pub enum DateError {
     /// .expect_err("need more than an ordinal month and an era year");
     /// assert!(matches!(err, DateError::NotEnoughFields));
     ///
-    /// fields.extended_year = 5783;
+    /// fields.extended_year = Some(5783);
     ///
     /// let err = Date::try_from_fields(
     ///     fields,
@@ -187,8 +187,16 @@ pub enum DateError {
     ///     Default::default(),
     ///     Hebrew
     /// )
-    /// .expect("we have enough fields! (day defaults to 1)");
-    /// assert_eq!(date.day_of_month().0, 1);
+    /// .expect_err("still missing the day");
+    /// assert!(matches!(err, DateError::NotEnoughFields));
+    ///
+    /// fields.day = NonZeroU8::new(1);
+    /// let date = Date::try_from_fields(
+    ///     fields,
+    ///     Default::default(),
+    ///     Hebrew
+    /// )
+    /// .expect("we have enough fields!");
     /// ```
     #[displaydoc("Not enough fields")]
     NotEnoughFields,

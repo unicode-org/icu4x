@@ -52,8 +52,16 @@ where
                     // Not every date exists in every calendar
                     continue;
                 };
-                assert_eq!(fields.month_code.unwrap(), reference_date.month().standard_code, "{fields:?} {cal:?}");
-                assert_eq!(fields.day.unwrap().get(), reference_date.day_of_month().0, "{fields:?} {cal:?}");
+                assert_eq!(
+                    fields.month_code.unwrap(),
+                    reference_date.month().standard_code,
+                    "{fields:?} {cal:?}"
+                );
+                assert_eq!(
+                    fields.day.unwrap().get(),
+                    reference_date.day_of_month().0,
+                    "{fields:?} {cal:?}"
+                );
             }
         }
     }
