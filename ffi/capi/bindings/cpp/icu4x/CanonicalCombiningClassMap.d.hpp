@@ -35,25 +35,25 @@ namespace icu4x {
 class CanonicalCombiningClassMap {
 public:
 
-    /**
-     * Construct a new CanonicalCombiningClassMap instance for NFC using compiled data.
-     *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
-     */
+  /**
+   * Construct a new CanonicalCombiningClassMap instance for NFC using compiled data.
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
+   */
   inline static std::unique_ptr<icu4x::CanonicalCombiningClassMap> create();
 
-    /**
-     * Construct a new CanonicalCombiningClassMap instance for NFC using a particular data source.
-     *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
-     */
+  /**
+   * Construct a new CanonicalCombiningClassMap instance for NFC using a particular data source.
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
+   */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CanonicalCombiningClassMap>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
-    /**
-     * See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalCombiningClassMapBorrowed.html#method.get) for more information.
-     *
-     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html)
-     */
+  /**
+   * See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalCombiningClassMapBorrowed.html#method.get) for more information.
+   *
+   * Additional information: [1](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html)
+   */
   inline uint8_t operator[](char32_t ch) const;
 
     inline const icu4x::capi::CanonicalCombiningClassMap* AsFFI() const;

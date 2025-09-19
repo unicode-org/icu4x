@@ -38,36 +38,36 @@ namespace icu4x {
 class GeneralCategoryNameToGroupMapper {
 public:
 
-    /**
-     * Get the mask value matching the given name, using strict matching
-     *
-     * Returns 0 if the name is unknown for this property
-     *
-     * See the [Rust documentation for `get_strict`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyParserBorrowed.html#method.get_strict) for more information.
-     */
+  /**
+   * Get the mask value matching the given name, using strict matching
+   *
+   * Returns 0 if the name is unknown for this property
+   *
+   * See the [Rust documentation for `get_strict`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyParserBorrowed.html#method.get_strict) for more information.
+   */
   inline icu4x::GeneralCategoryGroup get_strict(std::string_view name) const;
 
-    /**
-     * Get the mask value matching the given name, using loose matching
-     *
-     * Returns 0 if the name is unknown for this property
-     *
-     * See the [Rust documentation for `get_loose`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyParserBorrowed.html#method.get_loose) for more information.
-     */
+  /**
+   * Get the mask value matching the given name, using loose matching
+   *
+   * Returns 0 if the name is unknown for this property
+   *
+   * See the [Rust documentation for `get_loose`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyParserBorrowed.html#method.get_loose) for more information.
+   */
   inline icu4x::GeneralCategoryGroup get_loose(std::string_view name) const;
 
-    /**
-     * Create a name-to-mask mapper for the `General_Category` property, using compiled data.
-     *
-     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
-     */
+  /**
+   * Create a name-to-mask mapper for the `General_Category` property, using compiled data.
+   *
+   * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+   */
   inline static std::unique_ptr<icu4x::GeneralCategoryNameToGroupMapper> create();
 
-    /**
-     * Create a name-to-mask mapper for the `General_Category` property, using a particular data source.
-     *
-     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
-     */
+  /**
+   * Create a name-to-mask mapper for the `General_Category` property, using a particular data source.
+   *
+   * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+   */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::GeneralCategoryNameToGroupMapper>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
     inline const icu4x::capi::GeneralCategoryNameToGroupMapper* AsFFI() const;

@@ -40,23 +40,23 @@ namespace icu4x {
 class WindowsParser {
 public:
 
-    /**
-     * Create a new {@link WindowsParser} using compiled data
-     *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
-     */
+  /**
+   * Create a new {@link WindowsParser} using compiled data
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
+   */
   inline static std::unique_ptr<icu4x::WindowsParser> create();
 
-    /**
-     * Create a new {@link WindowsParser} using a particular data source
-     *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
-     */
+  /**
+   * Create a new {@link WindowsParser} using a particular data source
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
+   */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::WindowsParser>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
-    /**
-     * See the [Rust documentation for `parse`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParserBorrowed.html#method.parse) for more information.
-     */
+  /**
+   * See the [Rust documentation for `parse`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParserBorrowed.html#method.parse) for more information.
+   */
   inline std::unique_ptr<icu4x::TimeZone> parse(std::string_view value, std::string_view region) const;
 
     inline const icu4x::capi::WindowsParser* AsFFI() const;

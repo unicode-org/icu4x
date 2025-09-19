@@ -40,9 +40,9 @@ struct BidiMirroringGlyph {
     bool mirrored;
     icu4x::BidiPairedBracketType paired_bracket_type;
 
-    /**
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
-     */
+  /**
+   * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+   */
   inline static icu4x::BidiMirroringGlyph for_char(char32_t ch);
 
     inline icu4x::capi::BidiMirroringGlyph AsFFI() const;

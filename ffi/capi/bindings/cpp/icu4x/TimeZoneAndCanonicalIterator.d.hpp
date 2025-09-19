@@ -29,9 +29,9 @@ namespace icu4x {
 class TimeZoneAndCanonicalIterator {
 public:
 
-    /**
-     * See the [Rust documentation for `next`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html#method.next) for more information.
-     */
+  /**
+   * See the [Rust documentation for `next`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html#method.next) for more information.
+   */
   inline std::optional<icu4x::TimeZoneAndCanonical> next();
 
     inline const icu4x::capi::TimeZoneAndCanonicalIterator* AsFFI() const;

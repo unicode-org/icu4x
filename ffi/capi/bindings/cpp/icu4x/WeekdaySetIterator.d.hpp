@@ -31,9 +31,9 @@ namespace icu4x {
 class WeekdaySetIterator {
 public:
 
-    /**
-     * See the [Rust documentation for `next`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekdaySetIterator.html#method.next) for more information.
-     */
+  /**
+   * See the [Rust documentation for `next`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekdaySetIterator.html#method.next) for more information.
+   */
   inline std::optional<icu4x::Weekday> next();
 
     inline const icu4x::capi::WeekdaySetIterator* AsFFI() const;

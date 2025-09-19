@@ -30,9 +30,9 @@ namespace icu4x {
 class TimeZoneIterator {
 public:
 
-    /**
-     * See the [Rust documentation for `next`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneIter.html#method.next) for more information.
-     */
+  /**
+   * See the [Rust documentation for `next`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneIter.html#method.next) for more information.
+   */
   inline std::unique_ptr<icu4x::TimeZone> next();
 
     inline const icu4x::capi::TimeZoneIterator* AsFFI() const;

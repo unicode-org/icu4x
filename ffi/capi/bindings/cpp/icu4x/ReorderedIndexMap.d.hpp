@@ -29,26 +29,26 @@ namespace icu4x {
 class ReorderedIndexMap {
 public:
 
-    /**
-     * Get this as a slice/array of indices
-     */
+  /**
+   * Get this as a slice/array of indices
+   */
   inline icu4x::diplomat::span<const size_t> as_slice() const;
 
-    /**
-     * The length of this map
-     */
+  /**
+   * The length of this map
+   */
   inline size_t len() const;
 
-    /**
-     * Whether this map is empty
-     */
+  /**
+   * Whether this map is empty
+   */
   inline bool is_empty() const;
 
-    /**
-     * Get element at `index`. Returns 0 when out of bounds
-     * (note that 0 is also a valid in-bounds value, please use `len()`
-     * to avoid out-of-bounds)
-     */
+  /**
+   * Get element at `index`. Returns 0 when out of bounds
+   * (note that 0 is also a valid in-bounds value, please use `len()`
+   * to avoid out-of-bounds)
+   */
   inline size_t operator[](size_t index) const;
 
     inline const icu4x::capi::ReorderedIndexMap* AsFFI() const;

@@ -36,11 +36,11 @@ namespace icu4x {
 class LocaleFallbackerWithConfig {
 public:
 
-    /**
-     * Creates an iterator from a locale with each step of fallback.
-     *
-     * See the [Rust documentation for `fallback_for`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.fallback_for) for more information.
-     */
+  /**
+   * Creates an iterator from a locale with each step of fallback.
+   *
+   * See the [Rust documentation for `fallback_for`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.fallback_for) for more information.
+   */
   inline std::unique_ptr<icu4x::LocaleFallbackIterator> fallback_for_locale(const icu4x::Locale& locale) const;
 
     inline const icu4x::capi::LocaleFallbackerWithConfig* AsFFI() const;

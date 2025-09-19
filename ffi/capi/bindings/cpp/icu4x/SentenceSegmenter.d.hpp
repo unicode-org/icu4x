@@ -43,48 +43,48 @@ namespace icu4x {
 class SentenceSegmenter {
 public:
 
-    /**
-     * Construct a {@link SentenceSegmenter} using compiled data. This does not assume any content locale.
-     *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
-     */
+  /**
+   * Construct a {@link SentenceSegmenter} using compiled data. This does not assume any content locale.
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
+   */
   inline static std::unique_ptr<icu4x::SentenceSegmenter> create();
 
-    /**
-     * Construct a {@link SentenceSegmenter} for content known to be of a given locale, using compiled data.
-     */
+  /**
+   * Construct a {@link SentenceSegmenter} for content known to be of a given locale, using compiled data.
+   */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError> create_with_content_locale(const icu4x::Locale& locale);
 
-    /**
-     * Construct a {@link SentenceSegmenter}  for content known to be of a given locale, using a particular data source.
-     */
+  /**
+   * Construct a {@link SentenceSegmenter}  for content known to be of a given locale, using a particular data source.
+   */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError> create_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
-    /**
-     * Segments a string.
-     *
-     * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
-     * to the WHATWG Encoding Standard.
-     *
-     * See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.SentenceSegmenterBorrowed.html#method.segment_utf8) for more information.
-     */
+  /**
+   * Segments a string.
+   *
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+   * to the WHATWG Encoding Standard.
+   *
+   * See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.SentenceSegmenterBorrowed.html#method.segment_utf8) for more information.
+   */
   inline std::unique_ptr<icu4x::SentenceBreakIteratorUtf8> segment(std::string_view input) const;
 
-    /**
-     * Segments a string.
-     *
-     * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
-     * to the WHATWG Encoding Standard.
-     *
-     * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.SentenceSegmenterBorrowed.html#method.segment_utf16) for more information.
-     */
+  /**
+   * Segments a string.
+   *
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+   * to the WHATWG Encoding Standard.
+   *
+   * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.SentenceSegmenterBorrowed.html#method.segment_utf16) for more information.
+   */
   inline std::unique_ptr<icu4x::SentenceBreakIteratorUtf16> segment16(std::u16string_view input) const;
 
-    /**
-     * Segments a Latin-1 string.
-     *
-     * See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.SentenceSegmenterBorrowed.html#method.segment_latin1) for more information.
-     */
+  /**
+   * Segments a Latin-1 string.
+   *
+   * See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.SentenceSegmenterBorrowed.html#method.segment_latin1) for more information.
+   */
   inline std::unique_ptr<icu4x::SentenceBreakIteratorLatin1> segment_latin1(icu4x::diplomat::span<const uint8_t> input) const;
 
     inline const icu4x::capi::SentenceSegmenter* AsFFI() const;

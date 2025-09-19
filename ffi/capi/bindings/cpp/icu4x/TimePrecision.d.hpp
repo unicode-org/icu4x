@@ -70,9 +70,9 @@ public:
     // Prevent usage as boolean value
     explicit operator bool() const = delete;
 
-    /**
-     * See the [Rust documentation for `try_from_int`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.SubsecondDigits.html#method.try_from_int) for more information.
-     */
+  /**
+   * See the [Rust documentation for `try_from_int`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.SubsecondDigits.html#method.try_from_int) for more information.
+   */
   inline static std::optional<icu4x::TimePrecision> from_subsecond_digits(uint8_t digits);
 
     inline icu4x::capi::TimePrecision AsFFI() const;

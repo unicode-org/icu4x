@@ -36,38 +36,38 @@ namespace icu4x {
 class TitlecaseMapper {
 public:
 
-    /**
-     * Construct a new `TitlecaseMapper` instance using compiled data.
-     *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
-     */
+  /**
+   * Construct a new `TitlecaseMapper` instance using compiled data.
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
+   */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::TitlecaseMapper>, icu4x::DataError> create();
 
-    /**
-     * Construct a new `TitlecaseMapper` instance using a particular data source.
-     *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
-     */
+  /**
+   * Construct a new `TitlecaseMapper` instance using a particular data source.
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
+   */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::TitlecaseMapper>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
-    /**
-     * Returns the full titlecase mapping of the given string
-     *
-     * The `v1` refers to the version of the options struct, which may change as we add more options
-     *
-     * See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/2.0.0/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
-     */
+  /**
+   * Returns the full titlecase mapping of the given string
+   *
+   * The `v1` refers to the version of the options struct, which may change as we add more options
+   *
+   * See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/2.0.0/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
+   */
   inline icu4x::diplomat::result<std::string, icu4x::diplomat::Utf8Error> titlecase_segment_v1(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options) const;
   template<typename W>
   inline icu4x::diplomat::result<std::monostate, icu4x::diplomat::Utf8Error> titlecase_segment_v1_write(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options, W& writeable_output) const;
 
-    /**
-     * Returns the full titlecase mapping of the given string, using compiled data (avoids having to allocate a TitlecaseMapper object)
-     *
-     * The `v1` refers to the version of the options struct, which may change as we add more options
-     *
-     * See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/2.0.0/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
-     */
+  /**
+   * Returns the full titlecase mapping of the given string, using compiled data (avoids having to allocate a TitlecaseMapper object)
+   *
+   * The `v1` refers to the version of the options struct, which may change as we add more options
+   *
+   * See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/2.0.0/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
+   */
   inline static icu4x::diplomat::result<std::string, icu4x::diplomat::Utf8Error> titlecase_segment_with_compiled_data_v1(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options);
   template<typename W>
   inline static icu4x::diplomat::result<std::monostate, icu4x::diplomat::Utf8Error> titlecase_segment_with_compiled_data_v1_write(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options, W& writeable_output);

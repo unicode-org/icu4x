@@ -32,28 +32,28 @@ namespace icu4x {
 class BidiInfo {
 public:
 
-    /**
-     * The number of paragraphs contained here
-     */
+  /**
+   * The number of paragraphs contained here
+   */
   inline size_t paragraph_count() const;
 
-    /**
-     * Get the nth paragraph, returning `None` if out of bounds
-     */
+  /**
+   * Get the nth paragraph, returning `None` if out of bounds
+   */
   inline std::unique_ptr<icu4x::BidiParagraph> paragraph_at(size_t n) const;
 
-    /**
-     * The number of bytes in this full text
-     */
+  /**
+   * The number of bytes in this full text
+   */
   inline size_t size() const;
 
-    /**
-     * Get the BIDI level at a particular byte index in the full text.
-     * This integer is conceptually a `unicode_bidi::Level`,
-     * and can be further inspected using the static methods on Bidi.
-     *
-     * Returns 0 (equivalent to `Level::ltr()`) on error
-     */
+  /**
+   * Get the BIDI level at a particular byte index in the full text.
+   * This integer is conceptually a `unicode_bidi::Level`,
+   * and can be further inspected using the static methods on Bidi.
+   *
+   * Returns 0 (equivalent to `Level::ltr()`) on error
+   */
   inline uint8_t level_at(size_t pos) const;
 
     inline const icu4x::capi::BidiInfo* AsFFI() const;

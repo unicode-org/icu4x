@@ -44,9 +44,9 @@ public:
     // Prevent usage as boolean value
     explicit operator bool() const = delete;
 
-    /**
-     * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
-     */
+  /**
+   * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
+   */
   inline bool is_word_like() const;
 
     inline icu4x::capi::SegmenterWordType AsFFI() const;

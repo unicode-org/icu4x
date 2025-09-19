@@ -40,37 +40,37 @@ namespace icu4x {
 class WeekInformation {
 public:
 
-    /**
-     * Creates a new {@link WeekInformation} from locale data using compiled data.
-     *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
-     */
+  /**
+   * Creates a new {@link WeekInformation} from locale data using compiled data.
+   *
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
+   */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::WeekInformation>, icu4x::DataError> create(const icu4x::Locale& locale);
 
-    /**
-     * Creates a new {@link WeekInformation} from locale data using a particular data source.
-     *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
-     */
+  /**
+   * Creates a new {@link WeekInformation} from locale data using a particular data source.
+   *
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
+   */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::WeekInformation>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
-    /**
-     * Returns the weekday that starts the week for this object's locale
-     *
-     * See the [Rust documentation for `first_weekday`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#structfield.first_weekday) for more information.
-     */
+  /**
+   * Returns the weekday that starts the week for this object's locale
+   *
+   * See the [Rust documentation for `first_weekday`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#structfield.first_weekday) for more information.
+   */
   inline icu4x::Weekday first_weekday() const;
 
-    /**
-     * See the [Rust documentation for `weekend`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#structfield.weekend) for more information.
-     *
-     * See the [Rust documentation for `contains`](https://docs.rs/icu/2.0.0/icu/calendar/provider/struct.WeekdaySet.html#method.contains) for more information.
-     */
+  /**
+   * See the [Rust documentation for `weekend`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#structfield.weekend) for more information.
+   *
+   * See the [Rust documentation for `contains`](https://docs.rs/icu/2.0.0/icu/calendar/provider/struct.WeekdaySet.html#method.contains) for more information.
+   */
   inline bool is_weekend(icu4x::Weekday day) const;
 
-    /**
-     * See the [Rust documentation for `weekend`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#method.weekend) for more information.
-     */
+  /**
+   * See the [Rust documentation for `weekend`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#method.weekend) for more information.
+   */
   inline std::unique_ptr<icu4x::WeekdaySetIterator> weekend() const;
 
     inline const icu4x::capi::WeekInformation* AsFFI() const;
