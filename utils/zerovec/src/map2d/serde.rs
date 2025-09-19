@@ -354,7 +354,7 @@ mod test {
     use crate::map2d::{ZeroMap2d, ZeroMap2dBorrowed};
 
     #[derive(serde::Serialize, serde::Deserialize)]
-    #[expect(
+    #[allow(
         dead_code,
         reason = "We are testing that these types can be deserialized, and the dead_code lint explicitly ignores constructing trait impls."
     )]
@@ -364,7 +364,7 @@ mod test {
     }
 
     #[derive(serde::Serialize, serde::Deserialize)]
-    #[expect(
+    #[allow(
         dead_code,
         reason = "We are testing that these types can be deserialized, and the dead_code lint explicitly ignores constructing trait impls."
     )]

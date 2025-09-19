@@ -163,7 +163,7 @@ mod test {
     use crate::{VarZeroSlice, VarZeroVec};
 
     #[derive(serde::Serialize, serde::Deserialize)]
-    #[expect(
+    #[allow(
         dead_code,
         reason = "Remove this if the lint behavior changes. The dead_code lint explicitly ignores constructing trait impls."
     )]
@@ -173,7 +173,7 @@ mod test {
     }
 
     #[derive(serde::Serialize, serde::Deserialize)]
-    #[expect(
+    #[allow(
         dead_code,
         reason = "Remove this if the lint behavior changes. The dead_code lint explicitly ignores constructing trait impls."
     )]
@@ -183,7 +183,7 @@ mod test {
     }
 
     #[derive(serde::Serialize, serde::Deserialize)]
-    #[expect(
+    #[allow(
         dead_code,
         reason = "Remove this if the lint behavior changes. The dead_code lint explicitly ignores constructing trait impls."
     )]

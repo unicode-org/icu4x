@@ -51,7 +51,7 @@ pub(crate) struct Supplemental {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-#[expect(
+#[allow(
     dead_code,
     reason = "This is WIP, remove this annotation when this component is done"
 )]
