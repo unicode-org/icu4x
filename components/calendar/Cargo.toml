@@ -38,6 +38,7 @@ icu_locale = { workspace = true, optional = true }
 [dev-dependencies]
 icu_provider = { path = "../../provider/core", features = ["logging"] }
 icu = { path = "../../components/icu", default-features = false }
+itertools = { workspace = true }
 serde = { workspace = true, features = ["derive", "alloc"] }
 serde_json = { workspace = true }
 simple_logger = { workspace = true }

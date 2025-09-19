@@ -5,6 +5,7 @@
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::error::DateError;
+use crate::options::DateFromFieldsOptions;
 use crate::types::{CyclicYear, EraYear, IsoWeekOfYear};
 use crate::week::{RelativeUnit, WeekCalculator, WeekOf};
 use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
@@ -131,6 +132,48 @@ impl<A: AsCalendar> Date<A> {
         let inner = calendar
             .as_calendar()
             .from_codes(era, year, month_code, day)?;
+        Ok(Date { inner, calendar })
+    }
+
+    /// Construct a date from from a bag of fields.
+    ///
+    /// This function allows specifying the year as either extended year or era + era year,
+    /// and the month as either ordinal or month code. It can constrain out-of-bounds values
+    /// and fill in missing fields. See [`DateFromFieldsOptions`] for more information.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_calendar::Date;
+    /// use icu_calendar::DateError;
+    /// use icu_calendar::cal::Gregorian;
+    /// use icu_calendar::types::DateFields;
+    /// use std::num::NonZeroU8;
+    ///
+    /// let mut fields = DateFields::default();
+    /// fields.extended_year = Some(2000);
+    /// fields.ordinal_month = NonZeroU8::new(1);
+    /// fields.day = NonZeroU8::new(1);
+    ///
+    /// let d1 = Date::try_from_fields(
+    ///     fields,
+    ///     Default::default(),
+    ///     Gregorian
+    /// )
+    /// .expect("Jan 1 in year 2000");
+    ///
+    /// let d2 = Date::try_new_gregorian(2000, 1, 1).unwrap();
+    /// assert_eq!(d1, d2);
+    /// ```
+    ///
+    /// See [`DateError`] for examples of error conditions.
+    #[inline]
+    pub fn try_from_fields(
+        fields: types::DateFields,
+        options: DateFromFieldsOptions,
+        calendar: A,
+    ) -> Result<Self, DateError> {
+        let inner = calendar.as_calendar().from_fields(fields, options)?;
         Ok(Date { inner, calendar })
     }
 

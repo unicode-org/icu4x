@@ -18,10 +18,10 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::PrecomputedDataSource;
-use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, CalendarArithmetic};
+use crate::calendar_arithmetic::{DateFieldsResolver, PrecomputedDataSource};
 use crate::error::DateError;
-use crate::preferences::CalendarAlgorithm;
+use crate::options::DateFromFieldsOptions;
 use crate::provider::chinese_based::{ChineseBasedCache, PackedChineseBasedYearInfo};
 use crate::types::{MonthCode, MonthInfo};
 use crate::AsCalendar;
@@ -30,6 +30,7 @@ use calendrical_calculations::chinese_based::{
     self, ChineseBased, YearBounds, WELL_BEHAVED_ASTRONOMICAL_RANGE,
 };
 use calendrical_calculations::rata_die::RataDie;
+use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
 use icu_provider::prelude::*;
 use tinystr::tinystr;
 
@@ -97,6 +98,15 @@ pub trait Rules: Clone + core::fmt::Debug {
     /// Returns data about the given year.
     fn year_data(&self, related_iso: i32) -> LunarChineseYearData;
 
+    /// TODO: Bikshed this function. Is this the right level of abstraction?
+    ///
+    /// Returns the year data for the given month and day.
+    fn reference_year_from_month_day(
+        &self,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<LunarChineseYearData, DateError>;
+
     /// The debug name for the calendar defined by these [`Rules`].
     fn debug_name(&self) -> &'static str {
         "Chinese (custom)"
@@ -163,6 +173,77 @@ impl Rules for China {
         } else {
             LunarChineseYearData::gb_t_33661_2017(related_iso)
         }
+    }
+
+    fn reference_year_from_month_day(
+        &self,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<LunarChineseYearData, DateError> {
+        let Some((number, is_leap)) = month_code.parsed() else {
+            return Err(DateError::UnknownMonthCode(month_code));
+        };
+        // Computed via code from
+        // <https://github.com/unicode-org/icu4x/pull/6910#issuecomment-3303786919>
+        let extended = match (number, is_leap, day > 29) {
+            (1, false, false) => 1972,
+            (1, false, true) => 1970,
+            (1, true, false) => 1651,
+            (1, true, true) => 1461,
+            (2, false, false) => 1972,
+            (2, false, true) => 1972,
+            (2, true, false) => 1947,
+            (2, true, true) => 1765,
+            (3, false, false) => 1972,
+            (3, false, true) => 1966,
+            (3, true, false) => 1966,
+            (3, true, true) => 1955,
+            (4, false, false) => 1972,
+            (4, false, true) => 1970,
+            (4, true, false) => 1963,
+            (4, true, true) => 1944,
+            (5, false, false) => 1972,
+            (5, false, true) => 1972,
+            (5, true, false) => 1971,
+            (5, true, true) => 1952,
+            (6, false, false) => 1972,
+            (6, false, true) => 1971,
+            (6, true, false) => 1960,
+            (6, true, true) => 1941,
+            (7, false, false) => 1972,
+            (7, false, true) => 1972,
+            (7, true, false) => 1968,
+            (7, true, true) => 1938,
+            (8, false, false) => 1972,
+            (8, false, true) => 1971,
+            (8, true, false) => 1957,
+            (8, true, true) => 1718,
+            (9, false, false) => 1972,
+            (9, false, true) => 1972,
+            (9, true, false) => 1832,
+            (9, true, true) => -5738,
+            (10, false, false) => 1972,
+            (10, false, true) => 1972,
+            (10, true, false) => 1870,
+            (10, true, true) => -4098,
+            // Dec 31, 1972 is 1972-M11-26, dates after that
+            // are in the next year
+            (11, false, false) if day > 26 => 1971,
+            (11, false, false) => 1972,
+            (11, false, true) => 1969,
+            // Specced backwards-looking algorithm produces 1642, but
+            // 2033 is a better date with a forwards-looking algorithm.
+            // See <https://github.com/tc39/proposal-intl-era-monthcode/issues/60#issuecomment-3192982095>
+            // Data from: <https://github.com/unicode-org/icu4x/pull/6910#issuecomment-3303988559>
+            (11, true, false) => 2033,
+            (11, true, true) => -2173,
+            (12, false, false) => 1971,
+            (12, false, true) => 1971,
+            (12, true, false) => 1403,
+            (12, true, true) => -180,
+            _ => return Err(DateError::UnknownMonthCode(month_code)),
+        };
+        Ok(self.year_data(extended))
     }
 
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
@@ -257,6 +338,83 @@ impl Rules for Dangi {
         } else {
             fallback_approximation::<calendrical_calculations::chinese_based::Dangi>(related_iso)
         }
+    }
+
+    fn reference_year_from_month_day(
+        &self,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<LunarChineseYearData, DateError> {
+        let Some((number, is_leap)) = month_code.parsed() else {
+            return Err(DateError::UnknownMonthCode(month_code));
+        };
+        // Computed via code from
+        // <https://github.com/unicode-org/icu4x/pull/6910#issuecomment-3303786919>
+        //
+        // Some (marked) dates use a forward looking algorithm from
+        // <https://github.com/tc39/proposal-intl-era-monthcode/issues/60#issuecomment-3192982095>
+        // to produce a better in-range date.
+        // Code for that is <https://github.com/unicode-org/icu4x/pull/6910#issuecomment-3303988559>
+        let extended = match (number, is_leap, day > 29) {
+            (1, false, false) => 1972,
+            (1, false, true) => 1970,
+            (1, true, false) => 1651,
+            (1, true, true) => 1461,
+            (2, false, false) => 1972,
+            (2, false, true) => 1972,
+            (2, true, false) => 1947,
+            (2, true, true) => 1765,
+            (3, false, false) => 1972,
+            (3, false, true) => 1968,
+            (3, true, false) => 1966,
+            (3, true, true) => 1955,
+            (4, false, false) => 1972,
+            (4, false, true) => 1970,
+            (4, true, false) => 1963,
+            (4, true, true) => 1944,
+            (5, false, false) => 1972,
+            (5, false, true) => 1972,
+            (5, true, false) => 1971,
+            (5, true, true) => 1952,
+            (6, false, false) => 1972,
+            (6, false, true) => 1971,
+            (6, true, false) => 1960,
+            (6, true, true) => 1941,
+            (7, false, false) => 1972,
+            (7, false, true) => 1972,
+            (7, true, false) => 1968,
+            (7, true, true) => 1938,
+            (8, false, false) => 1972,
+            (8, false, true) => 1971,
+            (8, true, false) => 1957,
+            // Uses forward-looking algorithm (was: 1718)
+            (8, true, true) => 2052,
+            (9, false, false) => 1972,
+            (9, false, true) => 1972,
+            // Uses forward-looking algorithm (was: 1832)
+            (9, true, false) => 1972,
+            (9, true, true) => -5738,
+            (10, false, false) => 1972,
+            (10, false, true) => 1972,
+            // Uses forward-looking algorithm (was: 1870)
+            (10, true, false) => 1984,
+            (10, true, true) => -3946,
+            // Dec 31, 1972 is 1972-M11-26, dates after that
+            // are in the next year
+            (11, false, false) if day > 26 => 1971,
+            (11, false, false) => 1972,
+            (11, false, true) => 1969,
+            // Uses forward-looking algorithm (was: 1851)
+            (11, true, false) => 2033,
+            (11, true, true) => -2173,
+            (12, false, false) => 1971,
+            (12, false, true) => 1971,
+            (12, true, false) => 1889,
+            (12, true, true) => -1182,
+
+            _ => return Err(DateError::UnknownMonthCode(month_code)),
+        };
+        Ok(self.year_data(extended))
     }
 
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
@@ -366,35 +524,54 @@ impl<X: Rules> PrecomputedDataSource<LunarChineseYearData> for LunarChinese<X> {
     }
 }
 
+impl<X: Rules> DateFieldsResolver for LunarChinese<X> {
+    type YearInfo = LunarChineseYearData;
+
+    #[inline]
+    fn year_info_from_era(&self, _era: &str, _era_year: i32) -> Result<Self::YearInfo, DateError> {
+        // This calendar has no era codes
+        Err(DateError::UnknownEra)
+    }
+
+    #[inline]
+    fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
+        self.load_or_compute_info(extended_year)
+    }
+
+    #[inline]
+    fn reference_year_from_month_day(
+        &self,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::YearInfo, DateError> {
+        self.0.reference_year_from_month_day(month_code, day)
+    }
+
+    fn ordinal_month_from_code(
+        &self,
+        year: &Self::YearInfo,
+        month_code: types::MonthCode,
+        _options: DateFromFieldsOptions,
+    ) -> Result<u8, DateError> {
+        // TODO: Handle leap months in common years!
+        year.parse_month_code(month_code)
+            .ok_or(DateError::UnknownMonthCode(month_code))
+    }
+}
+
 impl<X: Rules> crate::cal::scaffold::UnstableSealed for LunarChinese<X> {}
 impl<X: Rules> Calendar for LunarChinese<X> {
     type DateInner = ChineseDateInner<X>;
     type Year = types::CyclicYear;
 
-    // Construct a date from era/month codes and fields
-    fn from_codes(
+    fn from_fields(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
-        day: u8,
+        fields: types::DateFields,
+        options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        match era {
-            None => {}
-            _ => return Err(DateError::UnknownEra),
-        }
-
-        let year = self.0.year_data(year);
-
-        let Some(month) = year.parse_month_code(month_code) else {
-            return Err(DateError::UnknownMonthCode(month_code));
-        };
-
-        year.validate_md(month, day)?;
-
-        Ok(ChineseDateInner(ArithmeticDate::new_unchecked(
-            year, month, day,
-        )))
+        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
+        builder.year.validate_md(builder.month, builder.day)?;
+        Ok(ChineseDateInner(ArithmeticDate::new_unchecked(builder)))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -410,7 +587,7 @@ impl<X: Rules> Calendar for LunarChinese<X> {
             }
         };
         let (m, d) = y.md_from_rd(rd);
-        ChineseDateInner(ArithmeticDate::new_unchecked(y, m, d))
+        ChineseDateInner(ArithmeticDate::new_unchecked_ymd(y, m, d))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
@@ -430,7 +607,7 @@ impl<X: Rules> Calendar for LunarChinese<X> {
             }
         };
         let (m, d) = y.md_from_rd(rd);
-        ChineseDateInner(ArithmeticDate::new_unchecked(y, m, d))
+        ChineseDateInner(ArithmeticDate::new_unchecked_ymd(y, m, d))
     }
 
     fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
@@ -544,7 +721,7 @@ impl<X: Rules, A: AsCalendar<Calendar = LunarChinese<X>>> Date<A> {
         let year = calendar.as_calendar().0.year_data(related_iso_year);
         year.validate_md(month, day)?;
         Ok(Date::from_raw(
-            ChineseDateInner(ArithmeticDate::new_unchecked(year, month, day)),
+            ChineseDateInner(ArithmeticDate::new_unchecked_ymd(year, month, day)),
             calendar,
         ))
     }

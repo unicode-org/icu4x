@@ -17,8 +17,10 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::ArithmeticDate;
+use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::DateError;
+use crate::options::DateFromFieldsOptions;
+use crate::types::DateFields;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -49,25 +51,48 @@ const BUDDHIST_ERA_OFFSET: i32 = -543;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Buddhist;
 
+impl DateFieldsResolver for Buddhist {
+    type YearInfo = i32;
+
+    #[inline]
+    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+        match era {
+            "be" => Ok(era_year),
+            _ => Err(DateError::UnknownEra),
+        }
+    }
+
+    #[inline]
+    fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
+        extended_year
+    }
+
+    #[inline]
+    fn reference_year_from_month_day(
+        &self,
+        _month_code: types::MonthCode,
+        _day: u8,
+    ) -> Result<Self::YearInfo, DateError> {
+        Ok(Iso::REFERENCE_YEAR - BUDDHIST_ERA_OFFSET)
+    }
+}
+
 impl crate::cal::scaffold::UnstableSealed for Buddhist {}
 impl Calendar for Buddhist {
     type DateInner = IsoDateInner;
     type Year = types::EraYear;
 
-    fn from_codes(
+    fn from_fields(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
-        day: u8,
+        fields: DateFields,
+        options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        match era {
-            Some("be") | None => {}
-            _ => return Err(DateError::UnknownEra),
-        }
-        let year = year + BUDDHIST_ERA_OFFSET;
-
-        ArithmeticDate::new_from_codes(self, year, month_code, day).map(IsoDateInner)
+        let mut builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
+        // Year is stored as an ISO year
+        builder.year += BUDDHIST_ERA_OFFSET;
+        ArithmeticDate::try_from_builder(builder, options)
+            .map(IsoDateInner)
+            .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
 
     fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {

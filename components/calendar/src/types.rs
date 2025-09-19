@@ -7,10 +7,41 @@
 #[doc(no_inline)]
 pub use calendrical_calculations::rata_die::RataDie;
 use core::fmt;
+use core::num::NonZeroU8;
 use tinystr::TinyAsciiStr;
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::maps::ZeroMapKV;
 use zerovec::ule::AsULE;
+
+/// A bag of various ways of expressing the year, month, and/or day.
+///
+/// Pass this into [`Date::try_from_fields`](crate::Date::try_from_fields).
+#[derive(Copy, Clone, Debug, PartialEq, Default)]
+#[non_exhaustive]
+pub struct DateFields<'a> {
+    /// The era code as defined by CLDR.
+    ///
+    /// If set, [`Self::era_year`] must also be set.
+    pub era: Option<&'a str>,
+    /// The numeric year in [`Self::era`].
+    ///
+    /// If set, [`Self::era`] must also be set.
+    pub era_year: Option<i32>,
+    /// See [`Date::extended_year()`](crate::Date::extended_year).
+    ///
+    /// If both this and [`Self::era`]/[`Self::era_year`] are set, they must
+    /// refer to the same year.
+    pub extended_year: Option<i32>,
+    /// The [`MonthCode`] representing a valid month in this calendar year.
+    pub month_code: Option<MonthCode>,
+    /// See [`MonthInfo::ordinal`].
+    ///
+    /// If both this and [`Self::month_code`] are set, they must refer to
+    /// the same month.
+    pub ordinal_month: Option<NonZeroU8>,
+    /// See [`DayOfMonth`].
+    pub day: Option<NonZeroU8>,
+}
 
 /// The type of year: Calendars like Chinese don't have an era and instead format with cyclic years.
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -250,16 +281,27 @@ pub struct MonthInfo {
 
     /// The month code, used to distinguish months during leap years.
     ///
+    /// Round-trips through `Date` constructors like [`Date::try_new_from_codes`] and [`Date::try_from_fields`].
+    ///
     /// This follows [Temporal's specification](https://tc39.es/proposal-intl-era-monthcode/#table-additional-month-codes).
     /// Months considered the "same" have the same code: This means that the Hebrew months "Adar" and "Adar II" ("Adar, but during a leap year")
-    /// are considered the same month and have the code M05
+    /// are considered the same month and have the code M05.
+    ///
+    /// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
+    /// [`Date::try_from_fields`]: crate::Date::try_from_fields
     pub standard_code: MonthCode,
-    /// A month code, useable for formatting
+
+    /// A month code, useable for formatting.
+    ///
+    /// Does NOT necessarily round-trip through `Date` constructors like [`Date::try_new_from_codes`] and [`Date::try_from_fields`].
     ///
     /// This may not necessarily be the canonical month code for a month in cases where a month has different
     /// formatting in a leap year, for example Adar/Adar II in the Hebrew calendar in a leap year has
     /// the standard code M06, but for formatting specifically the Hebrew calendar will return M06L since it is formatted
     /// differently.
+    ///
+    /// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
+    /// [`Date::try_from_fields`]: crate::Date::try_from_fields
     pub formatting_code: MonthCode,
 }
 
