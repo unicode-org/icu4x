@@ -419,6 +419,7 @@ where
                     }
                     Some(era_year_as_year_info)
                 }
+                // Era and Era Year must be both or neither
                 (Some(_), None) | (None, Some(_)) => return Err(DateError::NotEnoughFields),
             }
         };
@@ -427,6 +428,8 @@ where
             None => match missing_fields_strategy {
                 MissingFieldsStrategy::Reject => return Err(DateError::NotEnoughFields),
                 MissingFieldsStrategy::Ecma => match maybe_year {
+                    // The ECMAScript strategy is to pick day 1, always, regardless of whether
+                    // that day exists for the month/year combo
                     Some(_) => 1,
                     None => return Err(DateError::NotEnoughFields),
                 },

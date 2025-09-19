@@ -137,18 +137,9 @@ impl<A: AsCalendar> Date<A> {
 
     /// Construct a date from from a bag of fields.
     ///
-    /// This function is fairly lenient. For example:
-    ///
-    /// - If the year and month are set but the day is missing, it defaults to 1.
-    /// - If the month and day are set but the year is missing, it defaults to a reference year.\*
-    /// - Redundant fields may be set, but if they are inconsistent, an error is returned.
-    ///
-    /// This functions aims to conform to ECMAScript Temporal, in particular the union of
-    /// `CalendarResolveFields` and `CalendarDateToISO`.
-    ///
-    /// \* A "reference year" is a specific year in the calendar that contains the given month and
-    /// day. See the Temporal operation [CalendarMonthDayToISOReferenceDate](
-    /// https://tc39.es/proposal-temporal/#sec-temporal-calendarmonthdaytoisoreferencedate).
+    /// This function allows specifying the year as either extended year or era + era year,
+    /// and the month as either ordinal or month code. It can constrain out-of-bounds values
+    /// and fill in missing fields. See [`DateFromFieldsOptions`] for more information.
     ///
     /// # Examples
     ///
