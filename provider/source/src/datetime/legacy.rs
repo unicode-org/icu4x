@@ -5,15 +5,15 @@
 //! TODO(#5613): Even though these markers are no longer exported, we need them in order to export
 //! semantic skeleton data markers. This should be refactored to skip the intermediate data struct.
 
-#![allow(dead_code)] // so many unused fields
-
 use alloc::borrow::Cow;
+#[cfg(test)]
 use icu::datetime::provider::pattern::runtime;
 use icu::{calendar::types::MonthCode, datetime::provider::pattern::CoarseHourCycle};
 use tinystr::{tinystr, TinyStr4};
 use zerovec::ZeroMap;
 
 /// Data struct for date/time patterns broken down by pattern length.
+#[cfg(test)]
 pub struct LengthPatterns<'data> {
     /// A full length date/time pattern.
     pub full: runtime::Pattern<'data>,
@@ -36,17 +36,7 @@ pub struct DateLengths<'data> {
 }
 
 /// Pattern data for times.
-pub struct TimeLengths<'data> {
-    /// These patterns are common uses of time formatting, broken down by the length of the
-    /// pattern. Users can override the hour cycle with a preference, so there are two
-    /// pattern groups stored here. Note that the pattern will contain either h11 or h12.
-    pub time_h11_h12: LengthPatterns<'data>,
-
-    /// These patterns are common uses of time formatting, broken down by the length of the
-    /// pattern. Users can override the hour cycle with a preference, so there are two
-    /// pattern groups stored here. Note that the pattern will contain either h23 or h24.
-    pub time_h23_h24: LengthPatterns<'data>,
-
+pub struct TimeLengths {
     /// By default a locale will prefer one hour cycle type over another.
     pub preferred_hour_cycle: CoarseHourCycle,
 }

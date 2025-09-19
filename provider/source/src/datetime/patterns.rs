@@ -4,13 +4,16 @@
 
 #[cfg(test)]
 use super::legacy::DateLengths;
-use super::legacy::{LengthPatterns, TimeLengths};
+#[cfg(test)]
+use super::legacy::LengthPatterns;
+use super::legacy::TimeLengths;
 use crate::cldr_serde;
 use icu::datetime::provider::pattern;
 use icu::datetime::provider::pattern::CoarseHourCycle;
 use icu::datetime::provider::skeleton::*;
 use icu_provider::DataLocale;
 
+#[cfg(test)]
 impl From<&cldr_serde::ca::LengthPatterns> for LengthPatterns<'_> {
     fn from(other: &cldr_serde::ca::LengthPatterns) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
@@ -108,11 +111,8 @@ impl From<&cldr_serde::ca::Dates> for DateLengths<'_> {
     }
 }
 
-impl TimeLengths<'_> {
+impl TimeLengths {
     pub(crate) fn from_serde(other: &cldr_serde::ca::Dates, locale: &DataLocale) -> Self {
-        let length_combinations_v1 = GenericLengthPatterns::from(&other.datetime_formats);
-        let skeletons_v1 = DateSkeletonPatterns::from(&other.datetime_formats.available_formats);
-
         // Note: TimeLengths is only used for preferred_hour_cycle, we don't really use
         // the rest of the pattern here.
         let pattern_str_full = other.time_skeletons.full.get_pattern();
@@ -153,66 +153,8 @@ impl TimeLengths<'_> {
 
         let preferred_hour_cycle =
             preferred_hour_cycle.expect("Could not find a preferred hour cycle.");
-        let alt_hour_cycle = if preferred_hour_cycle == CoarseHourCycle::H11H12 {
-            CoarseHourCycle::H23
-        } else {
-            CoarseHourCycle::H11H12
-        };
-
-        let (time_h11_h12, time_h23_h24) = {
-            let time = (&other.time_skeletons).into();
-            let alt_time = LengthPatterns {
-                full: alt_hour_cycle
-                    .apply_on_pattern(
-                        &length_combinations_v1,
-                        &skeletons_v1,
-                        pattern_str_full,
-                        pattern_full,
-                    )
-                    .as_ref()
-                    .expect("Failed to apply a coarse hour cycle to a full pattern.")
-                    .into(),
-                long: alt_hour_cycle
-                    .apply_on_pattern(
-                        &length_combinations_v1,
-                        &skeletons_v1,
-                        pattern_str_long,
-                        pattern_long,
-                    )
-                    .as_ref()
-                    .expect("Failed to apply a coarse hour cycle to a long pattern.")
-                    .into(),
-                medium: alt_hour_cycle
-                    .apply_on_pattern(
-                        &length_combinations_v1,
-                        &skeletons_v1,
-                        pattern_str_medium,
-                        pattern_medium,
-                    )
-                    .as_ref()
-                    .expect("Failed to apply a coarse hour cycle to a medium pattern.")
-                    .into(),
-                short: alt_hour_cycle
-                    .apply_on_pattern(
-                        &length_combinations_v1,
-                        &skeletons_v1,
-                        pattern_str_short,
-                        pattern_short,
-                    )
-                    .as_ref()
-                    .expect("Failed to apply a coarse hour cycle to a short pattern.")
-                    .into(),
-            };
-
-            match preferred_hour_cycle {
-                CoarseHourCycle::H11H12 => (time, alt_time),
-                CoarseHourCycle::H23 => (alt_time, time),
-            }
-        };
 
         Self {
-            time_h11_h12,
-            time_h23_h24,
             preferred_hour_cycle,
         }
     }
