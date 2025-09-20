@@ -171,6 +171,8 @@ impl DateFieldsResolver for Hebrew {
                 _ => 5732,
             },
             "M05" => 5732,
+            // Neither 5731 nor 5732 is a leap year
+            "M05L" => 5730,
             "M06" => 5732,
             // Neither 5731 nor 5732 is a leap year
             "M06L" => 5730,
