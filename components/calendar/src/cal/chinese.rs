@@ -570,8 +570,9 @@ impl<X: Rules> Calendar for LunarChinese<X> {
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
         let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        builder.year.validate_md(builder.month, builder.day)?;
-        Ok(ChineseDateInner(ArithmeticDate::new_unchecked(builder)))
+        Ok(ChineseDateInner(ArithmeticDate::try_from_builder(
+            builder, options,
+        )?))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -1050,6 +1051,8 @@ impl LunarChineseYearData {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::options::{DateFromFieldsOptions, Overflow};
+    use crate::types::DateFields;
     use crate::types::MonthCode;
     use calendrical_calculations::{iso::fixed_from_iso, rata_die::RataDie};
     use tinystr::tinystr;
@@ -1737,6 +1740,24 @@ mod test {
             rd += 7043;
             iters += 1;
         }
+    }
+
+    #[test]
+    fn test_from_fields_constrain() {
+        let fields = DateFields {
+            day: core::num::NonZero::new(31),
+            month_code: Some(MonthCode("M01".parse().unwrap())),
+            extended_year: Some(1972),
+            ..Default::default()
+        };
+        let options = DateFromFieldsOptions {
+            overflow: Some(Overflow::Constrain),
+            ..Default::default()
+        };
+
+        let cal = LunarChinese::new_china();
+        let date = Date::try_from_fields(fields, options, cal).unwrap();
+        assert_eq!(date.day_of_month().0, 29, "Day was successfully constrained");
     }
 
     #[test]

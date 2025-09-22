@@ -177,13 +177,6 @@ impl PrecomputedDataSource<i32> for () {
 }
 
 impl<C: CalendarArithmetic> ArithmeticDate<C> {
-    /// Create a new `ArithmeticDate` without checking that `month` and `day` are in bounds.
-    #[inline]
-    pub const fn new_unchecked(builder: ArithmeticDateBuilder<C::YearInfo>) -> Self {
-        let ArithmeticDateBuilder { year, month, day } = builder;
-        Self::new_unchecked_ymd(year, month, day)
-    }
-
     #[inline]
     pub(crate) const fn new_unchecked_ymd(year: C::YearInfo, month: u8, day: u8) -> Self {
         ArithmeticDate {
@@ -397,7 +390,7 @@ pub(crate) struct ArithmeticDateBuilder<YearInfo> {
 
 impl<YearInfo> ArithmeticDateBuilder<YearInfo>
 where
-    YearInfo: PartialEq,
+    YearInfo: PartialEq + Debug,
 {
     pub(crate) fn try_from_fields<C>(
         fields: DateFields,
@@ -469,6 +462,7 @@ where
                 },
             }
         };
+
         Ok(Self { year, month, day })
     }
 }
