@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::cal::hijri::HijriSighting;
 use icu_calendar::cal::hijri::HijriYearData;
+use icu_calendar::cal::hijri::Rules;
 use icu_calendar::cal::hijri::TabularAlgorithm;
 use icu_calendar::cal::hijri::TabularAlgorithmEpoch;
 use icu_calendar::cal::hijri::TabularAlgorithmLeapYears;
@@ -46,7 +46,7 @@ static HIJRI_IRAN_CASES: [DateCase; 4] = [
 #[derive(Clone, Copy, Debug)]
 struct IranTestSighting;
 
-impl HijriSighting for IranTestSighting {
+impl Rules for IranTestSighting {
     fn year_data(&self, extended_year: i32) -> HijriYearData {
         let s = false;
         let l = true;
