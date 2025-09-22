@@ -77,7 +77,6 @@ const _: () = {
     impl_property_binary_bidi_control_v1!(Baked);
     impl_property_binary_bidi_mirrored_v1!(Baked);
     impl_property_binary_blank_v1!(Baked);
-    impl_property_binary_composition_exclusion_v1!(Baked);
     impl_property_binary_case_ignorable_v1!(Baked);
     impl_property_binary_case_sensitive_v1!(Baked);
     impl_property_binary_cased_v1!(Baked);
@@ -114,8 +113,6 @@ const _: () = {
     impl_property_binary_ids_trinary_operator_v1!(Baked);
     impl_property_binary_ids_unary_operator_v1!(Baked);
     impl_property_binary_join_control_v1!(Baked);
-    impl_property_binary_keh_nomirror_v1!(Baked);
-    impl_property_binary_keh_norotate_v1!(Baked);
     impl_property_binary_logical_order_exception_v1!(Baked);
     impl_property_binary_lowercase_v1!(Baked);
     impl_property_binary_math_v1!(Baked);
@@ -124,14 +121,6 @@ const _: () = {
     impl_property_binary_nfd_inert_v1!(Baked);
     impl_property_binary_nfkc_inert_v1!(Baked);
     impl_property_binary_nfkd_inert_v1!(Baked);
-    impl_property_binary_other_alphabetic_v1!(Baked);
-    impl_property_binary_other_default_ignorable_code_point_v1!(Baked);
-    impl_property_binary_other_grapheme_extend_v1!(Baked);
-    impl_property_binary_other_id_continue_v1!(Baked);
-    impl_property_binary_other_id_start_v1!(Baked);
-    impl_property_binary_other_lowercase_v1!(Baked);
-    impl_property_binary_other_math_v1!(Baked);
-    impl_property_binary_other_uppercase_v1!(Baked);
     impl_property_binary_noncharacter_code_point_v1!(Baked);
     impl_property_binary_pattern_syntax_v1!(Baked);
     impl_property_binary_pattern_white_space_v1!(Baked);
@@ -151,10 +140,6 @@ const _: () = {
     impl_property_binary_xdigit_v1!(Baked);
     impl_property_binary_xid_continue_v1!(Baked);
     impl_property_binary_xid_start_v1!(Baked);
-    impl_property_binary_expands_on_nfc_v1!(Baked);
-    impl_property_binary_expands_on_nfd_v1!(Baked);
-    impl_property_binary_expands_on_nfkc_v1!(Baked);
-    impl_property_binary_expands_on_nfkd_v1!(Baked);
     impl_property_enum_bidi_class_v1!(Baked);
     impl_property_enum_bidi_mirroring_glyph_v1!(Baked);
     impl_property_enum_canonical_combining_class_v1!(Baked);
@@ -252,12 +237,6 @@ icu_provider::data_marker!(
 icu_provider::data_marker!(
     /// `PropertyBinaryCasedV1`
     PropertyBinaryCasedV1,
-    PropertyCodePointSet<'static>,
-    is_singleton = true
-);
-icu_provider::data_marker!(
-    /// `PropertyBinaryCompositionExclusionV1`
-    PropertyBinaryCompositionExclusionV1,
     PropertyCodePointSet<'static>,
     is_singleton = true
 );
@@ -472,18 +451,6 @@ icu_provider::data_marker!(
     is_singleton = true
 );
 icu_provider::data_marker!(
-    /// `PropertyBinaryKEHNoMirrorV1`
-    PropertyBinaryKEHNoMirrorV1,
-    PropertyCodePointSet<'static>,
-    is_singleton = true
-);
-icu_provider::data_marker!(
-    /// `PropertyBinaryKEHNoRotateV1`
-    PropertyBinaryKEHNoRotateV1,
-    PropertyCodePointSet<'static>,
-    is_singleton = true
-);
-icu_provider::data_marker!(
     /// `PropertyBinaryLogicalOrderExceptionV1`
     PropertyBinaryLogicalOrderExceptionV1,
     PropertyCodePointSet<'static>,
@@ -528,54 +495,6 @@ icu_provider::data_marker!(
 icu_provider::data_marker!(
     /// `PropertyBinaryNfkdInertV1`
     PropertyBinaryNfkdInertV1,
-    PropertyCodePointSet<'static>,
-    is_singleton = true
-);
-icu_provider::data_marker!(
-    /// `PropertyBinaryOtherAlphabeticV1`
-    PropertyBinaryOtherAlphabeticV1,
-    PropertyCodePointSet<'static>,
-    is_singleton = true
-);
-icu_provider::data_marker!(
-    /// `PropertyBinaryOtherDefaultIgnorableCodePointV1`
-    PropertyBinaryOtherDefaultIgnorableCodePointV1,
-    PropertyCodePointSet<'static>,
-    is_singleton = true
-);
-icu_provider::data_marker!(
-    /// `PropertyBinaryOtherGraphemeExtendV1`
-    PropertyBinaryOtherGraphemeExtendV1,
-    PropertyCodePointSet<'static>,
-    is_singleton = true
-);
-icu_provider::data_marker!(
-    /// `PropertyBinaryOtherIDContinueV1`
-    PropertyBinaryOtherIDContinueV1,
-    PropertyCodePointSet<'static>,
-    is_singleton = true
-);
-icu_provider::data_marker!(
-    /// `PropertyBinaryOtherIDStartV1`
-    PropertyBinaryOtherIDStartV1,
-    PropertyCodePointSet<'static>,
-    is_singleton = true
-);
-icu_provider::data_marker!(
-    /// `PropertyBinaryOtherLowercaseV1`
-    PropertyBinaryOtherLowercaseV1,
-    PropertyCodePointSet<'static>,
-    is_singleton = true
-);
-icu_provider::data_marker!(
-    /// `PropertyBinaryOtherMathV1`
-    PropertyBinaryOtherMathV1,
-    PropertyCodePointSet<'static>,
-    is_singleton = true
-);
-icu_provider::data_marker!(
-    /// `PropertyBinaryOtherUppercaseV1`
-    PropertyBinaryOtherUppercaseV1,
     PropertyCodePointSet<'static>,
     is_singleton = true
 );
@@ -690,30 +609,6 @@ icu_provider::data_marker!(
 icu_provider::data_marker!(
     /// `PropertyBinaryXidStartV1`
     PropertyBinaryXidStartV1,
-    PropertyCodePointSet<'static>,
-    is_singleton = true
-);
-icu_provider::data_marker!(
-    /// `PropertyBinaryExpandsOnNFCV1`
-    PropertyBinaryExpandsOnNFCV1,
-    PropertyCodePointSet<'static>,
-    is_singleton = true
-);
-icu_provider::data_marker!(
-    /// `PropertyBinaryExpandsOnNFDV1`
-    PropertyBinaryExpandsOnNFDV1,
-    PropertyCodePointSet<'static>,
-    is_singleton = true
-);
-icu_provider::data_marker!(
-    /// `PropertyBinaryExpandsOnNFKCV1`
-    PropertyBinaryExpandsOnNFKCV1,
-    PropertyCodePointSet<'static>,
-    is_singleton = true
-);
-icu_provider::data_marker!(
-    /// `PropertyBinaryExpandsOnNFKDV1`
-    PropertyBinaryExpandsOnNFKDV1,
     PropertyCodePointSet<'static>,
     is_singleton = true
 );
@@ -869,7 +764,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     PropertyBinaryBidiMirroredV1::INFO,
     PropertyBinaryBlankV1::INFO,
     PropertyBinaryCasedV1::INFO,
-    PropertyBinaryCompositionExclusionV1::INFO,
     PropertyBinaryCaseIgnorableV1::INFO,
     PropertyBinaryCaseSensitiveV1::INFO,
     PropertyBinaryChangesWhenCasefoldedV1::INFO,
@@ -905,8 +799,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     PropertyBinaryIdsTrinaryOperatorV1::INFO,
     PropertyBinaryIDSUnaryOperatorV1::INFO,
     PropertyBinaryJoinControlV1::INFO,
-    PropertyBinaryKEHNoMirrorV1::INFO,
-    PropertyBinaryKEHNoRotateV1::INFO,
     PropertyBinaryLogicalOrderExceptionV1::INFO,
     PropertyBinaryLowercaseV1::INFO,
     PropertyBinaryMathV1::INFO,
@@ -916,14 +808,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     PropertyBinaryNfkcInertV1::INFO,
     PropertyBinaryNfkdInertV1::INFO,
     PropertyBinaryNoncharacterCodePointV1::INFO,
-    PropertyBinaryOtherAlphabeticV1::INFO,
-    PropertyBinaryOtherDefaultIgnorableCodePointV1::INFO,
-    PropertyBinaryOtherGraphemeExtendV1::INFO,
-    PropertyBinaryOtherIDContinueV1::INFO,
-    PropertyBinaryOtherIDStartV1::INFO,
-    PropertyBinaryOtherLowercaseV1::INFO,
-    PropertyBinaryOtherMathV1::INFO,
-    PropertyBinaryOtherUppercaseV1::INFO,
     PropertyBinaryPatternSyntaxV1::INFO,
     PropertyBinaryPatternWhiteSpaceV1::INFO,
     PropertyBinaryPrependedConcatenationMarkV1::INFO,
@@ -942,10 +826,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     PropertyBinaryXdigitV1::INFO,
     PropertyBinaryXidContinueV1::INFO,
     PropertyBinaryXidStartV1::INFO,
-    PropertyBinaryExpandsOnNFCV1::INFO,
-    PropertyBinaryExpandsOnNFDV1::INFO,
-    PropertyBinaryExpandsOnNFKCV1::INFO,
-    PropertyBinaryExpandsOnNFKDV1::INFO,
     PropertyEnumBidiClassV1::INFO,
     PropertyEnumCanonicalCombiningClassV1::INFO,
     PropertyEnumEastAsianWidthV1::INFO,
