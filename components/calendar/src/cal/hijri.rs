@@ -51,7 +51,7 @@ fn era_year(extended_year: i32) -> EraYear {
 /// The [Hijri Calendar](https://en.wikipedia.org/wiki/Islamic_calendar)
 ///
 /// There are many variants of this calendar, using different lunar observations or calculations
-/// (see [`HijriRules`]).
+/// (see [`Rules`]).
 ///
 /// # Era codes
 ///
