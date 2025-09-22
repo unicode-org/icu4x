@@ -139,6 +139,10 @@ pub(crate) trait DateFieldsResolver: Calendar {
 
     /// Calculates the ECMA reference year for the month code and day, or an error
     /// if the month code and day are invalid.
+    ///
+    /// Note that this is called before any potential Overflow::Constrain application,
+    /// so this should accept out-of-range day values as if they are the highest possible
+    /// day for the given month.
     fn reference_year_from_month_day(
         &self,
         month_code: MonthCode,

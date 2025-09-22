@@ -131,7 +131,9 @@ impl Coptic {
         // December 31, 1972 occurs on 4th month, 22nd day, 1689 AM
         let anno_martyrum_year = if ordinal_month < 4 || (ordinal_month == 4 && day <= 22) {
             1689
-        } else if ordinal_month == 13 && day == 6 {
+        // Note: this must be >=6, not just == 6, since we have not yet
+        // applied a potential Overflow::Constrain.
+        } else if ordinal_month == 13 && day >= 6 {
             // 1687 AM is a leap year
             1687
         } else {
@@ -264,6 +266,9 @@ impl Date<Coptic> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
+    use crate::types::{DateFields, MonthCode};
+
     #[test]
     fn test_coptic_regression() {
         // https://github.com/unicode-org/icu4x/issues/2254
@@ -271,5 +276,24 @@ mod tests {
         let coptic = iso_date.to_calendar(Coptic);
         let recovered_iso = coptic.to_iso();
         assert_eq!(iso_date, recovered_iso);
+    }
+
+    #[test]
+    fn test_from_fields_monthday_constrain() {
+        // M13-7 is not a real day, however this should resolve to M12-6
+        // with Overflow::Constrain
+        let fields = DateFields {
+            month_code: Some(MonthCode("M13".parse().unwrap())),
+            day: core::num::NonZero::new(7),
+            ..Default::default()
+        };
+        let options = DateFromFieldsOptions {
+            overflow: Some(Overflow::Constrain),
+            missing_fields_strategy: Some(MissingFieldsStrategy::Ecma),
+            ..Default::default()
+        };
+
+        let date = Date::try_from_fields(fields, options, Coptic).unwrap();
+        assert_eq!(date.day_of_month().0, 6, "Day was successfully constrained");
     }
 }

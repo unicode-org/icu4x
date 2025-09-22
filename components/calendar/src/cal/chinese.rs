@@ -1757,7 +1757,11 @@ mod test {
 
         let cal = LunarChinese::new_china();
         let date = Date::try_from_fields(fields, options, cal).unwrap();
-        assert_eq!(date.day_of_month().0, 29, "Day was successfully constrained");
+        assert_eq!(
+            date.day_of_month().0,
+            29,
+            "Day was successfully constrained"
+        );
     }
 
     #[test]
