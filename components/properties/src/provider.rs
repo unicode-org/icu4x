@@ -397,14 +397,14 @@ icu_provider::data_marker!(
     is_singleton = true
 );
 icu_provider::data_marker!(
-    /// `PropertyBinaryIDCompatMathContinueV1`
-    PropertyBinaryIDCompatMathContinueV1,
+    /// `PropertyBinaryIdCompatMathContinueV1`
+    PropertyBinaryIdCompatMathContinueV1,
     PropertyCodePointSet<'static>,
     is_singleton = true
 );
 icu_provider::data_marker!(
-    /// `PropertyBinaryIDCompatMathStartV1`
-    PropertyBinaryIDCompatMathStartV1,
+    /// `PropertyBinaryIdCompatMathStartV1`
+    PropertyBinaryIdCompatMathStartV1,
     PropertyCodePointSet<'static>,
     is_singleton = true
 );
@@ -439,8 +439,8 @@ icu_provider::data_marker!(
     is_singleton = true
 );
 icu_provider::data_marker!(
-    /// `PropertyBinaryIDSUnaryOperatorV1`
-    PropertyBinaryIDSUnaryOperatorV1,
+    /// `PropertyBinaryIdsUnaryOperatorV1`
+    PropertyBinaryIdsUnaryOperatorV1,
     PropertyCodePointSet<'static>,
     is_singleton = true
 );
@@ -790,14 +790,14 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     PropertyBinaryGraphV1::INFO,
     PropertyBinaryHexDigitV1::INFO,
     PropertyBinaryHyphenV1::INFO,
-    PropertyBinaryIDCompatMathContinueV1::INFO,
-    PropertyBinaryIDCompatMathStartV1::INFO,
+    PropertyBinaryIdCompatMathContinueV1::INFO,
+    PropertyBinaryIdCompatMathStartV1::INFO,
     PropertyBinaryIdContinueV1::INFO,
     PropertyBinaryIdeographicV1::INFO,
     PropertyBinaryIdsBinaryOperatorV1::INFO,
     PropertyBinaryIdStartV1::INFO,
     PropertyBinaryIdsTrinaryOperatorV1::INFO,
-    PropertyBinaryIDSUnaryOperatorV1::INFO,
+    PropertyBinaryIdsUnaryOperatorV1::INFO,
     PropertyBinaryJoinControlV1::INFO,
     PropertyBinaryLogicalOrderExceptionV1::INFO,
     PropertyBinaryLowercaseV1::INFO,

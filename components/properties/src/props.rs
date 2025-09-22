@@ -2443,8 +2443,8 @@ make_binary_property! {
 make_binary_property! {
     name: "ID_Compat_Math_Continue";
     short_name: "ID_Compat_Math_Continue";
-    ident: IDCompatMathContinue;
-    data_marker: crate::provider::PropertyBinaryIDCompatMathContinueV1;
+    ident: IdCompatMathContinue;
+    data_marker: crate::provider::PropertyBinaryIdCompatMathContinueV1;
     singleton: SINGLETON_PROPERTY_BINARY_ID_COMPAT_MATH_CONTINUE_V1;
     /// ID_Compat_Math_Continue Property
 }
@@ -2452,8 +2452,8 @@ make_binary_property! {
 make_binary_property! {
     name: "ID_Compat_Math_Start";
     short_name: "ID_Compat_Math_Start";
-    ident: IDCompatMathStart;
-    data_marker: crate::provider::PropertyBinaryIDCompatMathStartV1;
+    ident: IdCompatMathStart;
+    data_marker: crate::provider::PropertyBinaryIdCompatMathStartV1;
     singleton: SINGLETON_PROPERTY_BINARY_ID_COMPAT_MATH_START_V1;
     /// ID_Compat_Math_Start Property
 }
@@ -2587,8 +2587,8 @@ make_binary_property! {
 make_binary_property! {
     name: "IDS_Unary_Operator";
     short_name: "IDSU";
-    ident: IDSUnaryOperator;
-    data_marker: crate::provider::PropertyBinaryIDSUnaryOperatorV1;
+    ident: IdsUnaryOperator;
+    data_marker: crate::provider::PropertyBinaryIdsUnaryOperatorV1;
     singleton: SINGLETON_PROPERTY_BINARY_IDS_UNARY_OPERATOR_V1;
     /// IDS_Unary_Operator Property
 }
