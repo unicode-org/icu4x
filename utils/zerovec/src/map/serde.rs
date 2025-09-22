@@ -236,14 +236,20 @@ mod test {
     use crate::{map::ZeroMapBorrowed, ZeroMap};
 
     #[derive(serde::Serialize, serde::Deserialize)]
-    #[expect(dead_code)]
+    #[expect(
+        dead_code,
+        reason = "The dead_code lint explicitly ignores constructing trait impls."
+    )]
     struct DeriveTest_ZeroMap<'data> {
         #[serde(borrow)]
         _data: ZeroMap<'data, str, [u8]>,
     }
 
     #[derive(serde::Serialize, serde::Deserialize)]
-    #[expect(dead_code)]
+    #[expect(
+        dead_code,
+        reason = "The dead_code lint explicitly ignores constructing trait impls."
+    )]
     struct DeriveTest_ZeroMapBorrowed<'data> {
         #[serde(borrow)]
         _data: ZeroMapBorrowed<'data, str, [u8]>,

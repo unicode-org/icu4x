@@ -163,7 +163,7 @@ mod test {
     #[derive(serde::Serialize, serde::Deserialize)]
     #[allow(
         dead_code,
-        reason = "Remove this if the lint behavior changes. The dead_code lint explicitly ignores constructing trait impls."
+        reason = "The dead_code lint explicitly ignores constructing trait impls."
     )]
     struct DeriveTest_ZeroVec<'data> {
         #[serde(borrow)]
