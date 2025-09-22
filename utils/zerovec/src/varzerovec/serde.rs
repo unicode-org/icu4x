@@ -163,18 +163,30 @@ mod test {
     use crate::{VarZeroSlice, VarZeroVec};
 
     #[derive(serde::Serialize, serde::Deserialize)]
+    #[allow(
+        dead_code,
+        reason = "The dead_code lint explicitly ignores constructing trait impls."
+    )]
     struct DeriveTest_VarZeroVec<'data> {
         #[serde(borrow)]
         _data: VarZeroVec<'data, str>,
     }
 
     #[derive(serde::Serialize, serde::Deserialize)]
+    #[allow(
+        dead_code,
+        reason = "The dead_code lint explicitly ignores constructing trait impls."
+    )]
     struct DeriveTest_VarZeroSlice<'data> {
         #[serde(borrow)]
         _data: &'data VarZeroSlice<str>,
     }
 
     #[derive(serde::Serialize, serde::Deserialize)]
+    #[allow(
+        dead_code,
+        reason = "The dead_code lint explicitly ignores constructing trait impls."
+    )]
     struct DeriveTest_VarZeroVec_of_VarZeroSlice<'data> {
         #[serde(borrow)]
         _data: VarZeroVec<'data, VarZeroSlice<str>>,
