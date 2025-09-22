@@ -73,14 +73,14 @@ pub trait Rules: Clone + Debug {
     /// Returns data about the given year.
     fn year_data(&self, extended_year: i32) -> HijriYearData;
 
-    /// The BCP-47 [`CalendarAlgorithm`] for the Hijri calendar using this sighting, if defined.
+    /// The BCP-47 [`CalendarAlgorithm`] for the Hijri calendar using these rules, if defined.
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         None
     }
 
-    /// The debug name for this sighting.
+    /// The debug name for these rules.
     fn debug_name(&self) -> &'static str {
-        "Hijri (custom sighting)"
+        "Hijri (custom rules)"
     }
 }
 
@@ -306,11 +306,7 @@ impl Hijri<AstronomicalSimulation> {
         Self::new_simulated_mecca()
     }
 
-    /// Creates a new [`Hijri`] using simulated sightings at Mecca, with some compiled data containing precomputed data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// Creates a new [`Hijri`] using simulated sightings at Mecca.
     pub const fn new_simulated_mecca() -> Self {
         Self(AstronomicalSimulation {
             location: SimulatedLocation::Mecca,
@@ -352,7 +348,7 @@ impl Hijri<UmmAlQura> {
     }
 }
 
-/// The epoch for the [`TabularAlgorithm`] sighting.
+/// The epoch for the [`TabularAlgorithm`] rules.
 #[non_exhaustive]
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub enum TabularAlgorithmEpoch {
@@ -371,7 +367,7 @@ impl TabularAlgorithmEpoch {
     }
 }
 
-/// The leap year rule for the [`TabularAlgorithm`] sighting.
+/// The leap year rule for the [`TabularAlgorithm`] rules.
 ///
 /// This specifies which years of a 30-year cycle have an additional day at
 /// the end of the year.
@@ -389,7 +385,7 @@ impl Hijri<TabularAlgorithm> {
         Hijri::new_tabular(leap_years, epoch)
     }
 
-    /// Construct a new [`Hijri`] with tabular sighting and the given leap year rule and epoch.
+    /// Construct a new [`Hijri`] with tabular rules and the given leap year rule and epoch.
     pub const fn new_tabular(
         leap_years: TabularAlgorithmLeapYears,
         epoch: TabularAlgorithmEpoch,
