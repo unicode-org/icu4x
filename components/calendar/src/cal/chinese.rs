@@ -140,14 +140,14 @@ fn fallback_approximation<CB: ChineseBased>(related_iso: i32) -> LunarChineseYea
 ///
 /// Accurate calculation according to [GB/T 33661-2017] is computationally
 /// [expensive](https://ytliu0.github.io/ChineseCalendar/computation.html#modern),
-/// so this type includes precomputed data for the years 1901-2100.
+/// so this type includes precomputed data for the years 1912-2125.
 ///
-/// If performance is required beyond 2100, clients can implement their own
+/// If performance is required beyond 2125, clients can implement their own
 /// [`Rules`] type using data computed by [`LunarChineseYearData::gb_t_33661_2017`],
 /// or from sources like the excellent compilation by
 /// [Yuk Tung Liu](https://ytliu0.github.io/ChineseCalendar/table.html).
 ///
-/// Dates before 1901 are mainly of historical interest, and were calculated
+/// Dates before 1912 are mainly of historical interest, and were calculated
 /// using different [methods](https://ytliu.epizy.com/Shixian/Shixian_summary.html)
 /// than [GB/T 33661-2017]. These algorithms and data are not included for binary
 /// size reasons. If accuracy is required in this range clients can implement their
