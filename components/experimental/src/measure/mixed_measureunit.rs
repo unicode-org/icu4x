@@ -10,11 +10,11 @@ use super::single_unit_vec::SingleUnitVec;
 /// which is a combination of one or more single units used together to express a measurement.
 ///
 /// # Examples
-/// - `meter` - a special case of a mixed unit that contains only one single unit.
 /// - `foot-and-inch`
 /// - `kilometer-and-meter`
+/// - `meter` - a special case of a mixed unit that contains only one single unit.
 ///
-/// Note: Compound units such as `meter-per-second` or units with a constant denominator are not supported in mixed units.
+/// Note: Compound units (e.g. `meter-per-second`) or units with a constant denominator (e.g. `liter-per-100-kilometer`) are not supported in mixed units.
 #[derive(Debug, Eq, Clone, PartialEq)]
 pub struct MixedMeasureUnit {
     /// Contains the single mixed units.
