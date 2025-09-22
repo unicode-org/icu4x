@@ -1762,6 +1762,20 @@ mod test {
             29,
             "Day was successfully constrained"
         );
+
+        // 2022 did not have M01L, the month should be constrained back down
+        let fields = DateFields {
+            day: core::num::NonZero::new(1),
+            month_code: Some(MonthCode("M01L".parse().unwrap())),
+            extended_year: Some(2022),
+            ..Default::default()
+        };
+        let date = Date::try_from_fields(fields, options, cal).unwrap();
+        assert_eq!(
+            date.month().standard_code.0,
+            "M01",
+            "Month was successfully constrained"
+        );
     }
 
     #[test]
