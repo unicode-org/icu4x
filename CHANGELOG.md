@@ -6,7 +6,8 @@
     - General
     - `icu_calendar`
       - Fix `und-SA-u-ca-islamic` (unicode-org#6736)
-    - 
+    - `icu_properties`
+      - Add support for missing binary properties.
 - Data model and providers
     - ...
 - FFI
