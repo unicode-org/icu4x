@@ -81,16 +81,16 @@ public:
   /**
    * See the [Rust documentation for `format`](https://docs.rs/icu/2.0.0/icu/list/struct.ListFormatter.html#method.format) for more information.
    */
-  inline std::string format(icu4x::diplomat::span<const std::string_view> list) const;
+  inline std::string format(icu4x::diplomat::span<const diplomat::string_view_for_slice> list) const;
   template<typename W>
-  inline void format_write(icu4x::diplomat::span<const std::string_view> list, W& writeable_output) const;
+  inline void format_write(icu4x::diplomat::span<const diplomat::string_view_for_slice> list, W& writeable_output) const;
 
   /**
    * See the [Rust documentation for `format`](https://docs.rs/icu/2.0.0/icu/list/struct.ListFormatter.html#method.format) for more information.
    */
-  inline std::string format16(icu4x::diplomat::span<const std::u16string_view> list) const;
+  inline std::string format16(icu4x::diplomat::span<const diplomat::u16string_view_for_slice> list) const;
   template<typename W>
-  inline void format16_write(icu4x::diplomat::span<const std::u16string_view> list, W& writeable_output) const;
+  inline void format16_write(icu4x::diplomat::span<const diplomat::u16string_view_for_slice> list, W& writeable_output) const;
 
     inline const icu4x::capi::ListFormatter* AsFFI() const;
     inline icu4x::capi::ListFormatter* AsFFI();
