@@ -10,6 +10,7 @@ use super::single_unit_vec::SingleUnitVec;
 /// which is a combination of one or more single units used together to express a measurement.
 ///
 /// # Examples
+/// - `meter` - a special case of a mixed unit that contains only one single unit.
 /// - `foot-and-inch`
 /// - `kilometer-and-meter`
 ///
@@ -23,6 +24,7 @@ pub struct MixedMeasureUnit {
 impl MixedMeasureUnit {
     /// Returns a slice of the mixed units contained within this mixed unit.
     pub fn try_from_str(mixed_units_str: &str) -> Result<MixedMeasureUnit, InvalidUnitError> {
+        // '-and-' is the separator for the mixed units and it is allowed to appear in the start or end of the string.
         let mixed_units_strs = mixed_units_str.split("-and-");
         let mut mixed_units = SingleUnitVec::Zero;
         for unit in mixed_units_strs {
