@@ -1915,6 +1915,15 @@ make_binary_property! {
 }
 
 make_binary_property! {
+    name: "Composition_Exclusion";
+    short_name: "CE";
+    ident: CompositionExclusion;
+    data_marker: crate::provider::PropertyBinaryCompositionExclusionV1;
+    singleton: SINGLETON_PROPERTY_BINARY_COMPOSITION_EXCLUSION_V1;
+    /// Composition_Exclusion Property
+}
+
+make_binary_property! {
     name: "Case_Ignorable";
     short_name: "CI";
     ident: CaseIgnorable;
@@ -2441,6 +2450,24 @@ make_binary_property! {
 }
 
 make_binary_property! {
+    name: "ID_Compat_Math_Continue";
+    short_name: "ID_Compat_Math_Continue";
+    ident: IDCompatMathContinue;
+    data_marker: crate::provider::PropertyBinaryIDCompatMathContinueV1;
+    singleton: SINGLETON_PROPERTY_BINARY_ID_COMPAT_MATH_CONTINUE_V1;
+    /// ID_Compat_Math_Continue Property
+}
+
+make_binary_property! {
+    name: "ID_Compat_Math_Start";
+    short_name: "ID_Compat_Math_Start";
+    ident: IDCompatMathStart;
+    data_marker: crate::provider::PropertyBinaryIDCompatMathStartV1;
+    singleton: SINGLETON_PROPERTY_BINARY_ID_COMPAT_MATH_START_V1;
+    /// ID_Compat_Math_Start Property
+}
+
+make_binary_property! {
     name: "Id_Continue";
     short_name: "IDC";
     ident: IdContinue;
@@ -2567,6 +2594,15 @@ make_binary_property! {
 }
 
 make_binary_property! {
+    name: "IDS_Unary_Operator";
+    short_name: "IDSU";
+    ident: IDSUnaryOperator;
+    data_marker: crate::provider::PropertyBinaryIDSUnaryOperatorV1;
+    singleton: SINGLETON_PROPERTY_BINARY_IDS_UNARY_OPERATOR_V1;
+    /// IDS_Unary_Operator Property
+}
+
+make_binary_property! {
     name: "Join_Control";
     short_name: "Join_C";
     ident: JoinControl;
@@ -2587,6 +2623,24 @@ make_binary_property! {
     /// assert!(join_control.contains('\u{200D}'));  // ZERO WIDTH JOINER
     /// assert!(!join_control.contains('\u{200E}'));
     /// ```
+}
+
+make_binary_property! {
+    name: "kEH_NoMirror";
+    short_name: "kEH_NoMirror";
+    ident: KEHNoMirror;
+    data_marker: crate::provider::PropertyBinaryKEHNoMirrorV1;
+    singleton: SINGLETON_PROPERTY_BINARY_KEH_NO_MIRROR_V1;
+    /// kEH_NoMirror Property
+}
+
+make_binary_property! {
+    name: "kEH_NoRotate";
+    short_name: "kEH_NoRotate";
+    ident: KEHNoRotate;
+    data_marker: crate::provider::PropertyBinaryKEHNoRotateV1;
+    singleton: SINGLETON_PROPERTY_BINARY_KEH_NO_ROTATE_V1;
+    /// kEH_NoRotate Property
 }
 
 make_binary_property! {
@@ -2657,6 +2711,15 @@ make_binary_property! {
 }
 
 make_binary_property! {
+    name: "Modifier_Combining_Mark";
+    short_name: "MCM";
+    ident: ModifierCombiningMark;
+    data_marker: crate::provider::PropertyBinaryModifierCombiningMarkV1;
+    singleton: SINGLETON_PROPERTY_BINARY_MODIFIER_COMBINING_MARK_V1;
+    /// Modifier_Combining_Mark Property
+}
+
+make_binary_property! {
     name: "Noncharacter_Code_Point";
     short_name: "NChar";
     ident: NoncharacterCodePoint;
@@ -2712,6 +2775,78 @@ make_binary_property! {
     data_marker: crate::provider::PropertyBinaryNfkdInertV1;
     singleton: SINGLETON_PROPERTY_BINARY_NFKD_INERT_V1;
     /// Characters that are inert under NFKD, i.e., they do not interact with adjacent characters.
+}
+
+make_binary_property! {
+    name: "Other_Alphabetic";
+    short_name: "OAlpha";
+    ident: OtherAlphabetic;
+    data_marker: crate::provider::PropertyBinaryOtherAlphabeticV1;
+    singleton: SINGLETON_PROPERTY_BINARY_OTHER_ALPHABETIC_V1;
+    /// Other_Alphabetic Property
+}
+
+make_binary_property! {
+    name: "Other_Default_Ignorable_Code_Point";
+    short_name: "ODI";
+    ident: OtherDefaultIgnorableCodePoint;
+    data_marker: crate::provider::PropertyBinaryOtherDefaultIgnorableCodePointV1;
+    singleton: SINGLETON_PROPERTY_BINARY_OTHER_DEFAULT_IGNORABLE_CODE_POINT_V1;
+    /// Other_Default_Ignorable_Code_Point Property
+}
+
+make_binary_property! {
+    name: "Other_Grapheme_Extend";
+    short_name: "OGr_Ext";
+    ident: OtherGraphemeExtend;
+    data_marker: crate::provider::PropertyBinaryOtherGraphemeExtendV1;
+    singleton: SINGLETON_PROPERTY_BINARY_OTHER_GRAPHEME_EXTEND_V1;
+    /// Other_Grapheme_Extend Property
+}
+
+make_binary_property! {
+    name: "Other_ID_Continue";
+    short_name: "OIDC";
+    ident: OtherIDContinue;
+    data_marker: crate::provider::PropertyBinaryOtherIDContinueV1;
+    singleton: SINGLETON_PROPERTY_BINARY_OTHER_ID_CONTINUE_V1;
+    /// Other_ID_Continue Property
+}
+
+make_binary_property! {
+    name: "Other_ID_Start";
+    short_name: "OIDS";
+    ident: OtherIDStart;
+    data_marker: crate::provider::PropertyBinaryOtherIDStartV1;
+    singleton: SINGLETON_PROPERTY_BINARY_OTHER_ID_START_V1;
+    /// Other_ID_Start Property
+}
+
+make_binary_property! {
+    name: "Other_Lowercase";
+    short_name: "OLower";
+    ident: OtherLowercase;
+    data_marker: crate::provider::PropertyBinaryOtherLowercaseV1;
+    singleton: SINGLETON_PROPERTY_BINARY_OTHER_LOWERCASE_V1;
+    /// Other_Lowercase Property
+}
+
+make_binary_property! {
+    name: "Other_Math";
+    short_name: "OMath";
+    ident: OtherMath;
+    data_marker: crate::provider::PropertyBinaryOtherMathV1;
+    singleton: SINGLETON_PROPERTY_BINARY_OTHER_MATH_V1;
+    /// Other_Math Property
+}
+
+make_binary_property! {
+    name: "Other_Uppercase";
+    short_name: "OUpper";
+    ident: OtherUppercase;
+    data_marker: crate::provider::PropertyBinaryOtherUppercaseV1;
+    singleton: SINGLETON_PROPERTY_BINARY_OTHER_UPPERCASE_V1;
+    /// Other_Uppercase Property
 }
 
 make_binary_property! {
@@ -3102,6 +3237,42 @@ make_binary_property! {
     /// assert!(!xid_start.contains('ⓧ'));  // U+24E7 CIRCLED LATIN SMALL LETTER X
     /// assert!(!xid_start.contains('\u{FC5E}'));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
+}
+
+make_binary_property! {
+    name: "Expands_On_NFC";
+    short_name: "XO_NFC";
+    ident: ExpandsOnNFC;
+    data_marker: crate::provider::PropertyBinaryExpandsOnNFCV1;
+    singleton: SINGLETON_PROPERTY_BINARY_EXPANDS_ON_NFC_V1;
+    /// Expands_On_NFC Property
+}
+
+make_binary_property! {
+    name: "Expands_On_NFD";
+    short_name: "XO_NFD";
+    ident: ExpandsOnNFD;
+    data_marker: crate::provider::PropertyBinaryExpandsOnNFDV1;
+    singleton: SINGLETON_PROPERTY_BINARY_EXPANDS_ON_NFD_V1;
+    /// Expands_On_NFD Property
+}
+
+make_binary_property! {
+    name: "Expands_On_NFKC";
+    short_name: "XO_NFKC";
+    ident: ExpandsOnNFKC;
+    data_marker: crate::provider::PropertyBinaryExpandsOnNFKCV1;
+    singleton: SINGLETON_PROPERTY_BINARY_EXPANDS_ON_NFKC_V1;
+    /// Expands_On_NFKC Property
+}
+
+make_binary_property! {
+    name: "Expands_On_NFKD";
+    short_name: "XO_NFKD";
+    ident: ExpandsOnNFKD;
+    data_marker: crate::provider::PropertyBinaryExpandsOnNFKDV1;
+    singleton: SINGLETON_PROPERTY_BINARY_EXPANDS_ON_NFKD_V1;
+    /// Expands_On_NFKD Property
 }
 
 pub use crate::emoji::EmojiSet;
