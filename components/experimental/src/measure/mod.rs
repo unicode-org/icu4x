@@ -4,6 +4,7 @@
 
 pub mod category;
 pub mod measureunit;
+pub mod mixed_measureunit;
 pub mod parser;
 pub mod provider;
 pub mod single_unit_vec;
