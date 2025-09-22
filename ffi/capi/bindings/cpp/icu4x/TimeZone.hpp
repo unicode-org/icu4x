@@ -1,5 +1,5 @@
-#ifndef icu4x_TimeZone_HPP
-#define icu4x_TimeZone_HPP
+#ifndef ICU4X_TimeZone_HPP
+#define ICU4X_TimeZone_HPP
 
 #include "TimeZone.d.hpp"
 
@@ -11,9 +11,9 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "TimeZoneInfo.hpp"
 #include "UtcOffset.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -24,7 +24,7 @@ namespace capi {
 
     bool icu4x_TimeZone_is_unknown_mv1(const icu4x::capi::TimeZone* self);
 
-    icu4x::capi::TimeZone* icu4x_TimeZone_create_from_bcp47_mv1(diplomat::capi::DiplomatStringView id);
+    icu4x::capi::TimeZone* icu4x_TimeZone_create_from_bcp47_mv1(icu4x::diplomat::capi::DiplomatStringView id);
 
     icu4x::capi::TimeZoneInfo* icu4x_TimeZone_with_offset_mv1(const icu4x::capi::TimeZone* self, const icu4x::capi::UtcOffset* offset);
 
@@ -83,4 +83,4 @@ inline void icu4x::TimeZone::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_TimeZone_HPP
+#endif // ICU4X_TimeZone_HPP

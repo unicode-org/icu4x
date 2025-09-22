@@ -6,7 +6,6 @@ use ffi::*;
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     #[cfg(feature = "datetime")]
     use diplomat_runtime::DiplomatOption;

@@ -1,5 +1,5 @@
-#ifndef icu4x_Calendar_HPP
-#define icu4x_Calendar_HPP
+#ifndef ICU4X_Calendar_HPP
+#define ICU4X_Calendar_HPP
 
 #include "Calendar.d.hpp"
 
@@ -11,10 +11,10 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "CalendarKind.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -39,10 +39,10 @@ inline std::unique_ptr<icu4x::Calendar> icu4x::Calendar::create(icu4x::CalendarK
     return std::unique_ptr<icu4x::Calendar>(icu4x::Calendar::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> icu4x::Calendar::create_with_provider(const icu4x::DataProvider& provider, icu4x::CalendarKind kind) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError> icu4x::Calendar::create_with_provider(const icu4x::DataProvider& provider, icu4x::CalendarKind kind) {
     auto result = icu4x::capi::icu4x_Calendar_create_with_provider_mv1(provider.AsFFI(),
         kind.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::Calendar>>(std::unique_ptr<icu4x::Calendar>(icu4x::Calendar::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::Calendar>>(std::unique_ptr<icu4x::Calendar>(icu4x::Calendar::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::Calendar>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline icu4x::CalendarKind icu4x::Calendar::kind() const {
@@ -71,4 +71,4 @@ inline void icu4x::Calendar::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_Calendar_HPP
+#endif // ICU4X_Calendar_HPP

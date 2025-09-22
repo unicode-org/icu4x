@@ -1,5 +1,5 @@
-#ifndef icu4x_BidiDirection_HPP
-#define icu4x_BidiDirection_HPP
+#ifndef ICU4X_BidiDirection_HPP
+#define ICU4X_BidiDirection_HPP
 
 #include "BidiDirection.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -36,4 +36,4 @@ inline icu4x::BidiDirection icu4x::BidiDirection::FromFFI(icu4x::capi::BidiDirec
             std::abort();
     }
 }
-#endif // icu4x_BidiDirection_HPP
+#endif // ICU4X_BidiDirection_HPP

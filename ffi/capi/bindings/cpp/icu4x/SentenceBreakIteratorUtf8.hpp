@@ -1,5 +1,5 @@
-#ifndef icu4x_SentenceBreakIteratorUtf8_HPP
-#define icu4x_SentenceBreakIteratorUtf8_HPP
+#ifndef ICU4X_SentenceBreakIteratorUtf8_HPP
+#define ICU4X_SentenceBreakIteratorUtf8_HPP
 
 #include "SentenceBreakIteratorUtf8.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -52,4 +52,4 @@ inline void icu4x::SentenceBreakIteratorUtf8::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_SentenceBreakIteratorUtf8_HPP
+#endif // ICU4X_SentenceBreakIteratorUtf8_HPP

@@ -1,5 +1,5 @@
-#ifndef icu4x_LocaleCanonicalizer_D_HPP
-#define icu4x_LocaleCanonicalizer_D_HPP
+#ifndef ICU4X_LocaleCanonicalizer_D_HPP
+#define ICU4X_LocaleCanonicalizer_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,8 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
@@ -20,7 +19,8 @@ namespace capi { struct LocaleCanonicalizer; }
 class LocaleCanonicalizer;
 class DataError;
 class TransformResult;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -39,35 +39,35 @@ class LocaleCanonicalizer {
 public:
 
   /**
-     * Create a new {@link LocaleCanonicalizer} using compiled data.
-     *
-     * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleCanonicalizer.html#method.new_common) for more information.
+   * Create a new {@link LocaleCanonicalizer} using compiled data.
+   *
+   * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleCanonicalizer.html#method.new_common) for more information.
    */
   inline static std::unique_ptr<icu4x::LocaleCanonicalizer> create_common();
 
   /**
-     * Create a new {@link LocaleCanonicalizer}.
-     *
-     * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleCanonicalizer.html#method.new_common) for more information.
+   * Create a new {@link LocaleCanonicalizer}.
+   *
+   * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleCanonicalizer.html#method.new_common) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::LocaleCanonicalizer>, icu4x::DataError> create_common_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleCanonicalizer>, icu4x::DataError> create_common_with_provider(const icu4x::DataProvider& provider);
 
   /**
-     * Create a new {@link LocaleCanonicalizer} with extended data using compiled data.
-     *
-     * See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleCanonicalizer.html#method.new_extended) for more information.
+   * Create a new {@link LocaleCanonicalizer} with extended data using compiled data.
+   *
+   * See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleCanonicalizer.html#method.new_extended) for more information.
    */
   inline static std::unique_ptr<icu4x::LocaleCanonicalizer> create_extended();
 
   /**
-     * Create a new {@link LocaleCanonicalizer} with extended data.
-     *
-     * See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleCanonicalizer.html#method.new_extended) for more information.
+   * Create a new {@link LocaleCanonicalizer} with extended data.
+   *
+   * See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleCanonicalizer.html#method.new_extended) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::LocaleCanonicalizer>, icu4x::DataError> create_extended_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleCanonicalizer>, icu4x::DataError> create_extended_with_provider(const icu4x::DataProvider& provider);
 
   /**
-     * See the [Rust documentation for `canonicalize`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleCanonicalizer.html#method.canonicalize) for more information.
+   * See the [Rust documentation for `canonicalize`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleCanonicalizer.html#method.canonicalize) for more information.
    */
   inline icu4x::TransformResult canonicalize(icu4x::Locale& locale) const;
 
@@ -86,4 +86,4 @@ private:
 };
 
 } // namespace
-#endif // icu4x_LocaleCanonicalizer_D_HPP
+#endif // ICU4X_LocaleCanonicalizer_D_HPP

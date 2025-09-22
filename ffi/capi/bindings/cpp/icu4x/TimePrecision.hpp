@@ -1,5 +1,5 @@
-#ifndef icu4x_TimePrecision_HPP
-#define icu4x_TimePrecision_HPP
+#ifndef ICU4X_TimePrecision_HPP
+#define ICU4X_TimePrecision_HPP
 
 #include "TimePrecision.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -54,4 +54,4 @@ inline std::optional<icu4x::TimePrecision> icu4x::TimePrecision::from_subsecond_
     auto result = icu4x::capi::icu4x_TimePrecision_from_subsecond_digits_mv1(digits);
     return result.is_ok ? std::optional<icu4x::TimePrecision>(icu4x::TimePrecision::FromFFI(result.ok)) : std::nullopt;
 }
-#endif // icu4x_TimePrecision_HPP
+#endif // ICU4X_TimePrecision_HPP

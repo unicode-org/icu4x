@@ -1,5 +1,5 @@
-#ifndef icu4x_IsoDate_HPP
-#define icu4x_IsoDate_HPP
+#ifndef ICU4X_IsoDate_HPP
+#define ICU4X_IsoDate_HPP
 
 #include "IsoDate.d.hpp"
 
@@ -11,13 +11,13 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "Calendar.hpp"
 #include "CalendarError.hpp"
 #include "Date.hpp"
 #include "IsoWeekOfYear.hpp"
 #include "Rfc9557ParseError.hpp"
 #include "Weekday.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -30,7 +30,7 @@ namespace capi {
     icu4x::capi::IsoDate* icu4x_IsoDate_from_rata_die_mv1(int64_t rd);
 
     typedef struct icu4x_IsoDate_from_string_mv1_result {union {icu4x::capi::IsoDate* ok; icu4x::capi::Rfc9557ParseError err;}; bool is_ok;} icu4x_IsoDate_from_string_mv1_result;
-    icu4x_IsoDate_from_string_mv1_result icu4x_IsoDate_from_string_mv1(diplomat::capi::DiplomatStringView v);
+    icu4x_IsoDate_from_string_mv1_result icu4x_IsoDate_from_string_mv1(icu4x::diplomat::capi::DiplomatStringView v);
 
     icu4x::capi::Date* icu4x_IsoDate_to_calendar_mv1(const icu4x::capi::IsoDate* self, const icu4x::capi::Calendar* calendar);
 
@@ -64,11 +64,11 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarError> icu4x::IsoDate::create(int32_t year, uint8_t month, uint8_t day) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarError> icu4x::IsoDate::create(int32_t year, uint8_t month, uint8_t day) {
     auto result = icu4x::capi::icu4x_IsoDate_create_mv1(year,
         month,
         day);
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarError>(diplomat::Ok<std::unique_ptr<icu4x::IsoDate>>(std::unique_ptr<icu4x::IsoDate>(icu4x::IsoDate::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarError>(diplomat::Err<icu4x::CalendarError>(icu4x::CalendarError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::IsoDate>>(std::unique_ptr<icu4x::IsoDate>(icu4x::IsoDate::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarError>(icu4x::diplomat::Err<icu4x::CalendarError>(icu4x::CalendarError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::IsoDate> icu4x::IsoDate::from_rata_die(int64_t rd) {
@@ -76,9 +76,9 @@ inline std::unique_ptr<icu4x::IsoDate> icu4x::IsoDate::from_rata_die(int64_t rd)
     return std::unique_ptr<icu4x::IsoDate>(icu4x::IsoDate::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::Rfc9557ParseError> icu4x::IsoDate::from_string(std::string_view v) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::Rfc9557ParseError> icu4x::IsoDate::from_string(std::string_view v) {
     auto result = icu4x::capi::icu4x_IsoDate_from_string_mv1({v.data(), v.size()});
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::Rfc9557ParseError>(diplomat::Ok<std::unique_ptr<icu4x::IsoDate>>(std::unique_ptr<icu4x::IsoDate>(icu4x::IsoDate::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::Rfc9557ParseError>(diplomat::Err<icu4x::Rfc9557ParseError>(icu4x::Rfc9557ParseError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::Rfc9557ParseError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::IsoDate>>(std::unique_ptr<icu4x::IsoDate>(icu4x::IsoDate::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::Rfc9557ParseError>(icu4x::diplomat::Err<icu4x::Rfc9557ParseError>(icu4x::Rfc9557ParseError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::Date> icu4x::IsoDate::to_calendar(const icu4x::Calendar& calendar) const {
@@ -168,4 +168,4 @@ inline void icu4x::IsoDate::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_IsoDate_HPP
+#endif // ICU4X_IsoDate_HPP

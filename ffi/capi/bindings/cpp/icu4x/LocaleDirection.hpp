@@ -1,5 +1,5 @@
-#ifndef icu4x_LocaleDirection_HPP
-#define icu4x_LocaleDirection_HPP
+#ifndef ICU4X_LocaleDirection_HPP
+#define ICU4X_LocaleDirection_HPP
 
 #include "LocaleDirection.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -36,4 +36,4 @@ inline icu4x::LocaleDirection icu4x::LocaleDirection::FromFFI(icu4x::capi::Local
             std::abort();
     }
 }
-#endif // icu4x_LocaleDirection_HPP
+#endif // ICU4X_LocaleDirection_HPP

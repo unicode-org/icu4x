@@ -1,5 +1,5 @@
-#ifndef icu4x_BidiParagraph_HPP
-#define icu4x_BidiParagraph_HPP
+#ifndef ICU4X_BidiParagraph_HPP
+#define ICU4X_BidiParagraph_HPP
 
 #include "BidiParagraph.d.hpp"
 
@@ -11,8 +11,8 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "BidiDirection.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -30,7 +30,7 @@ namespace capi {
     size_t icu4x_BidiParagraph_range_end_mv1(const icu4x::capi::BidiParagraph* self);
 
     typedef struct icu4x_BidiParagraph_reorder_line_mv1_result { bool is_ok;} icu4x_BidiParagraph_reorder_line_mv1_result;
-    icu4x_BidiParagraph_reorder_line_mv1_result icu4x_BidiParagraph_reorder_line_mv1(const icu4x::capi::BidiParagraph* self, size_t range_start, size_t range_end, diplomat::capi::DiplomatWrite* write);
+    icu4x_BidiParagraph_reorder_line_mv1_result icu4x_BidiParagraph_reorder_line_mv1(const icu4x::capi::BidiParagraph* self, size_t range_start, size_t range_end, icu4x::diplomat::capi::DiplomatWrite* write);
 
     uint8_t icu4x_BidiParagraph_level_at_mv1(const icu4x::capi::BidiParagraph* self, size_t pos);
 
@@ -68,7 +68,7 @@ inline size_t icu4x::BidiParagraph::range_end() const {
 
 inline std::optional<std::string> icu4x::BidiParagraph::reorder_line(size_t range_start, size_t range_end) const {
     std::string output;
-    diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
+    icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteFromString(output);
     auto result = icu4x::capi::icu4x_BidiParagraph_reorder_line_mv1(this->AsFFI(),
         range_start,
         range_end,
@@ -77,7 +77,7 @@ inline std::optional<std::string> icu4x::BidiParagraph::reorder_line(size_t rang
 }
 template<typename W>
 inline std::optional<std::monostate> icu4x::BidiParagraph::reorder_line_write(size_t range_start, size_t range_end, W& writeable) const {
-    diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+    icu4x::diplomat::capi::DiplomatWrite write = icu4x::diplomat::WriteTrait<W>::Construct(writeable);
     auto result = icu4x::capi::icu4x_BidiParagraph_reorder_line_mv1(this->AsFFI(),
         range_start,
         range_end,
@@ -112,4 +112,4 @@ inline void icu4x::BidiParagraph::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_BidiParagraph_HPP
+#endif // ICU4X_BidiParagraph_HPP

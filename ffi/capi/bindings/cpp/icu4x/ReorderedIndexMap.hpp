@@ -1,5 +1,5 @@
-#ifndef icu4x_ReorderedIndexMap_HPP
-#define icu4x_ReorderedIndexMap_HPP
+#ifndef ICU4X_ReorderedIndexMap_HPP
+#define ICU4X_ReorderedIndexMap_HPP
 
 #include "ReorderedIndexMap.d.hpp"
 
@@ -11,14 +11,14 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
 
-    diplomat::capi::DiplomatUsizeView icu4x_ReorderedIndexMap_as_slice_mv1(const icu4x::capi::ReorderedIndexMap* self);
+    icu4x::diplomat::capi::DiplomatUsizeView icu4x_ReorderedIndexMap_as_slice_mv1(const icu4x::capi::ReorderedIndexMap* self);
 
     size_t icu4x_ReorderedIndexMap_len_mv1(const icu4x::capi::ReorderedIndexMap* self);
 
@@ -32,9 +32,9 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::span<const size_t> icu4x::ReorderedIndexMap::as_slice() const {
+inline icu4x::diplomat::span<const size_t> icu4x::ReorderedIndexMap::as_slice() const {
     auto result = icu4x::capi::icu4x_ReorderedIndexMap_as_slice_mv1(this->AsFFI());
-    return diplomat::span<const size_t>(result.data, result.len);
+    return icu4x::diplomat::span<const size_t>(result.data, result.len);
 }
 
 inline size_t icu4x::ReorderedIndexMap::len() const {
@@ -74,4 +74,4 @@ inline void icu4x::ReorderedIndexMap::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_ReorderedIndexMap_HPP
+#endif // ICU4X_ReorderedIndexMap_HPP

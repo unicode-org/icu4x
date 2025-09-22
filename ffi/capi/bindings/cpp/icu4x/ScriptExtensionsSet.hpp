@@ -1,5 +1,5 @@
-#ifndef icu4x_ScriptExtensionsSet_HPP
-#define icu4x_ScriptExtensionsSet_HPP
+#ifndef ICU4X_ScriptExtensionsSet_HPP
+#define ICU4X_ScriptExtensionsSet_HPP
 
 #include "ScriptExtensionsSet.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -69,4 +69,4 @@ inline void icu4x::ScriptExtensionsSet::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_ScriptExtensionsSet_HPP
+#endif // ICU4X_ScriptExtensionsSet_HPP

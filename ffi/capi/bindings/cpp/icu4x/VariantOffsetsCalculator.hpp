@@ -1,5 +1,5 @@
-#ifndef icu4x_VariantOffsetsCalculator_HPP
-#define icu4x_VariantOffsetsCalculator_HPP
+#ifndef ICU4X_VariantOffsetsCalculator_HPP
+#define ICU4X_VariantOffsetsCalculator_HPP
 
 #include "VariantOffsetsCalculator.d.hpp"
 
@@ -11,13 +11,13 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "IsoDate.hpp"
 #include "Time.hpp"
 #include "TimeZone.hpp"
 #include "VariantOffsets.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -46,9 +46,9 @@ inline std::unique_ptr<icu4x::VariantOffsetsCalculator> icu4x::VariantOffsetsCal
     return std::unique_ptr<icu4x::VariantOffsetsCalculator>(icu4x::VariantOffsetsCalculator::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::VariantOffsetsCalculator>, icu4x::DataError> icu4x::VariantOffsetsCalculator::create_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::VariantOffsetsCalculator>, icu4x::DataError> icu4x::VariantOffsetsCalculator::create_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_VariantOffsetsCalculator_create_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::VariantOffsetsCalculator>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::VariantOffsetsCalculator>>(std::unique_ptr<icu4x::VariantOffsetsCalculator>(icu4x::VariantOffsetsCalculator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::VariantOffsetsCalculator>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::VariantOffsetsCalculator>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::VariantOffsetsCalculator>>(std::unique_ptr<icu4x::VariantOffsetsCalculator>(icu4x::VariantOffsetsCalculator::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::VariantOffsetsCalculator>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::optional<icu4x::VariantOffsets> icu4x::VariantOffsetsCalculator::compute_offsets_from_time_zone_and_date_time(const icu4x::TimeZone& time_zone, const icu4x::IsoDate& utc_date, const icu4x::Time& utc_time) const {
@@ -87,4 +87,4 @@ inline void icu4x::VariantOffsetsCalculator::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_VariantOffsetsCalculator_HPP
+#endif // ICU4X_VariantOffsetsCalculator_HPP
