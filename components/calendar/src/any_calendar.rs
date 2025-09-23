@@ -819,8 +819,12 @@ impl AnyCalendarKind {
             AnyCalendarKind::Chinese => LunarChinese::new_china().debug_name(),
             AnyCalendarKind::Coptic => Coptic.debug_name(),
             AnyCalendarKind::Dangi => LunarChinese::new_dangi().debug_name(),
-            AnyCalendarKind::Ethiopian => Ethiopian(false).debug_name(),
-            AnyCalendarKind::EthiopianAmeteAlem => Ethiopian(true).debug_name(),
+            AnyCalendarKind::Ethiopian => {
+                Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret).debug_name()
+            }
+            AnyCalendarKind::EthiopianAmeteAlem => {
+                Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem).debug_name()
+            }
             AnyCalendarKind::Gregorian => Gregorian.debug_name(),
             AnyCalendarKind::Hebrew => Hebrew.debug_name(),
             AnyCalendarKind::Indian => Indian.debug_name(),
@@ -1092,10 +1096,9 @@ impl IntoAnyCalendar for Ethiopian {
     }
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
-        if self.0 {
-            AnyCalendarKind::EthiopianAmeteAlem
-        } else {
-            AnyCalendarKind::Ethiopian
+        match self.era_style() {
+            EthiopianEraStyle::AmeteAlem => AnyCalendarKind::EthiopianAmeteAlem,
+            EthiopianEraStyle::AmeteMihret => AnyCalendarKind::Ethiopian,
         }
     }
     #[inline]
