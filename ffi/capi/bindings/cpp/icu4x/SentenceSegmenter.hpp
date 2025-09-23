@@ -1,5 +1,5 @@
-#ifndef icu4x_SentenceSegmenter_HPP
-#define icu4x_SentenceSegmenter_HPP
+#ifndef ICU4X_SentenceSegmenter_HPP
+#define ICU4X_SentenceSegmenter_HPP
 
 #include "SentenceSegmenter.d.hpp"
 
@@ -11,13 +11,13 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "Locale.hpp"
 #include "SentenceBreakIteratorLatin1.hpp"
 #include "SentenceBreakIteratorUtf16.hpp"
 #include "SentenceBreakIteratorUtf8.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -32,11 +32,11 @@ namespace capi {
     typedef struct icu4x_SentenceSegmenter_create_with_content_locale_and_provider_mv1_result {union {icu4x::capi::SentenceSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_SentenceSegmenter_create_with_content_locale_and_provider_mv1_result;
     icu4x_SentenceSegmenter_create_with_content_locale_and_provider_mv1_result icu4x_SentenceSegmenter_create_with_content_locale_and_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
 
-    icu4x::capi::SentenceBreakIteratorUtf8* icu4x_SentenceSegmenter_segment_utf8_mv1(const icu4x::capi::SentenceSegmenter* self, diplomat::capi::DiplomatStringView input);
+    icu4x::capi::SentenceBreakIteratorUtf8* icu4x_SentenceSegmenter_segment_utf8_mv1(const icu4x::capi::SentenceSegmenter* self, icu4x::diplomat::capi::DiplomatStringView input);
 
-    icu4x::capi::SentenceBreakIteratorUtf16* icu4x_SentenceSegmenter_segment_utf16_mv1(const icu4x::capi::SentenceSegmenter* self, diplomat::capi::DiplomatString16View input);
+    icu4x::capi::SentenceBreakIteratorUtf16* icu4x_SentenceSegmenter_segment_utf16_mv1(const icu4x::capi::SentenceSegmenter* self, icu4x::diplomat::capi::DiplomatString16View input);
 
-    icu4x::capi::SentenceBreakIteratorLatin1* icu4x_SentenceSegmenter_segment_latin1_mv1(const icu4x::capi::SentenceSegmenter* self, diplomat::capi::DiplomatU8View input);
+    icu4x::capi::SentenceBreakIteratorLatin1* icu4x_SentenceSegmenter_segment_latin1_mv1(const icu4x::capi::SentenceSegmenter* self, icu4x::diplomat::capi::DiplomatU8View input);
 
     void icu4x_SentenceSegmenter_destroy_mv1(SentenceSegmenter* self);
 
@@ -49,15 +49,15 @@ inline std::unique_ptr<icu4x::SentenceSegmenter> icu4x::SentenceSegmenter::creat
     return std::unique_ptr<icu4x::SentenceSegmenter>(icu4x::SentenceSegmenter::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError> icu4x::SentenceSegmenter::create_with_content_locale(const icu4x::Locale& locale) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError> icu4x::SentenceSegmenter::create_with_content_locale(const icu4x::Locale& locale) {
     auto result = icu4x::capi::icu4x_SentenceSegmenter_create_with_content_locale_mv1(locale.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::SentenceSegmenter>>(std::unique_ptr<icu4x::SentenceSegmenter>(icu4x::SentenceSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::SentenceSegmenter>>(std::unique_ptr<icu4x::SentenceSegmenter>(icu4x::SentenceSegmenter::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError> icu4x::SentenceSegmenter::create_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError> icu4x::SentenceSegmenter::create_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale) {
     auto result = icu4x::capi::icu4x_SentenceSegmenter_create_with_content_locale_and_provider_mv1(provider.AsFFI(),
         locale.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::SentenceSegmenter>>(std::unique_ptr<icu4x::SentenceSegmenter>(icu4x::SentenceSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::SentenceSegmenter>>(std::unique_ptr<icu4x::SentenceSegmenter>(icu4x::SentenceSegmenter::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::SentenceBreakIteratorUtf8> icu4x::SentenceSegmenter::segment(std::string_view input) const {
@@ -72,7 +72,7 @@ inline std::unique_ptr<icu4x::SentenceBreakIteratorUtf16> icu4x::SentenceSegment
     return std::unique_ptr<icu4x::SentenceBreakIteratorUtf16>(icu4x::SentenceBreakIteratorUtf16::FromFFI(result));
 }
 
-inline std::unique_ptr<icu4x::SentenceBreakIteratorLatin1> icu4x::SentenceSegmenter::segment_latin1(diplomat::span<const uint8_t> input) const {
+inline std::unique_ptr<icu4x::SentenceBreakIteratorLatin1> icu4x::SentenceSegmenter::segment_latin1(icu4x::diplomat::span<const uint8_t> input) const {
     auto result = icu4x::capi::icu4x_SentenceSegmenter_segment_latin1_mv1(this->AsFFI(),
         {input.data(), input.size()});
     return std::unique_ptr<icu4x::SentenceBreakIteratorLatin1>(icu4x::SentenceBreakIteratorLatin1::FromFFI(result));
@@ -99,4 +99,4 @@ inline void icu4x::SentenceSegmenter::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_SentenceSegmenter_HPP
+#endif // ICU4X_SentenceSegmenter_HPP

@@ -1,5 +1,5 @@
-#ifndef icu4x_LocaleFallbackPriority_HPP
-#define icu4x_LocaleFallbackPriority_HPP
+#ifndef ICU4X_LocaleFallbackPriority_HPP
+#define ICU4X_LocaleFallbackPriority_HPP
 
 #include "LocaleFallbackPriority.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -35,4 +35,4 @@ inline icu4x::LocaleFallbackPriority icu4x::LocaleFallbackPriority::FromFFI(icu4
             std::abort();
     }
 }
-#endif // icu4x_LocaleFallbackPriority_HPP
+#endif // ICU4X_LocaleFallbackPriority_HPP

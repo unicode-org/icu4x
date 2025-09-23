@@ -2,19 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Persian calendar.
-//!
-//! ```rust
-//! use icu::calendar::Date;
-//!
-//! let persian_date = Date::try_new_persian(1348, 10, 11)
-//!     .expect("Failed to initialize Persian Date instance.");
-//!
-//! assert_eq!(persian_date.era_year().year, 1348);
-//! assert_eq!(persian_date.month().ordinal, 10);
-//! assert_eq!(persian_date.day_of_month().0, 11);
-//! ```
-
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};

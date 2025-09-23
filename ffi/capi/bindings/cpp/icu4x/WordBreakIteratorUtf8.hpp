@@ -1,5 +1,5 @@
-#ifndef icu4x_WordBreakIteratorUtf8_HPP
-#define icu4x_WordBreakIteratorUtf8_HPP
+#ifndef ICU4X_WordBreakIteratorUtf8_HPP
+#define ICU4X_WordBreakIteratorUtf8_HPP
 
 #include "WordBreakIteratorUtf8.d.hpp"
 
@@ -11,8 +11,8 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "SegmenterWordType.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -67,4 +67,4 @@ inline void icu4x::WordBreakIteratorUtf8::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_WordBreakIteratorUtf8_HPP
+#endif // ICU4X_WordBreakIteratorUtf8_HPP

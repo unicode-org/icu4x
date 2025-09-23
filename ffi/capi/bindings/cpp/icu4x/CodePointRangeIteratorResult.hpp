@@ -1,5 +1,5 @@
-#ifndef icu4x_CodePointRangeIteratorResult_HPP
-#define icu4x_CodePointRangeIteratorResult_HPP
+#ifndef ICU4X_CodePointRangeIteratorResult_HPP
+#define ICU4X_CodePointRangeIteratorResult_HPP
 
 #include "CodePointRangeIteratorResult.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -40,4 +40,4 @@ inline icu4x::CodePointRangeIteratorResult icu4x::CodePointRangeIteratorResult::
 }
 
 
-#endif // icu4x_CodePointRangeIteratorResult_HPP
+#endif // ICU4X_CodePointRangeIteratorResult_HPP

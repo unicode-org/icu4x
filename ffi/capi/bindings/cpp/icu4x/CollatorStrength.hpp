@@ -1,5 +1,5 @@
-#ifndef icu4x_CollatorStrength_HPP
-#define icu4x_CollatorStrength_HPP
+#ifndef ICU4X_CollatorStrength_HPP
+#define ICU4X_CollatorStrength_HPP
 
 #include "CollatorStrength.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -38,4 +38,4 @@ inline icu4x::CollatorStrength icu4x::CollatorStrength::FromFFI(icu4x::capi::Col
             std::abort();
     }
 }
-#endif // icu4x_CollatorStrength_HPP
+#endif // ICU4X_CollatorStrength_HPP

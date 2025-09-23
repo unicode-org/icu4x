@@ -1,5 +1,5 @@
-#ifndef icu4x_DateTimeWriteError_HPP
-#define icu4x_DateTimeWriteError_HPP
+#ifndef ICU4X_DateTimeWriteError_HPP
+#define ICU4X_DateTimeWriteError_HPP
 
 #include "DateTimeWriteError.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -35,4 +35,4 @@ inline icu4x::DateTimeWriteError icu4x::DateTimeWriteError::FromFFI(icu4x::capi:
             std::abort();
     }
 }
-#endif // icu4x_DateTimeWriteError_HPP
+#endif // ICU4X_DateTimeWriteError_HPP

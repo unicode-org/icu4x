@@ -1,5 +1,5 @@
-#ifndef DIPLOMAT_RUNTIME_CPP_H
-#define DIPLOMAT_RUNTIME_CPP_H
+#ifndef ICU4X_DIPLOMAT_RUNTIME_CPP_H
+#define ICU4X_DIPLOMAT_RUNTIME_CPP_H
 
 #include <optional>
 #include <string>
@@ -18,6 +18,7 @@
 #include <array>
 #endif
 
+namespace icu4x {
 namespace diplomat {
 
 namespace capi {
@@ -281,6 +282,68 @@ private:
 
 #endif // __cplusplus >= 202002L
 
+// An ABI stable std::basic_string_view equivalent for the case of string
+// views in slices
+template <class CharT, class Traits = std::char_traits<CharT>>
+class basic_string_view_for_slice {
+public:
+  using std_string_view           = std::basic_string_view<CharT, Traits>;
+  using traits_type               = typename std_string_view::traits_type;
+  using value_type                = typename std_string_view::value_type;
+  using pointer                   = typename std_string_view::pointer;
+  using const_pointer             = typename std_string_view::const_pointer;
+  using size_type                 = typename std_string_view::size_type;
+  using difference_type           = typename std_string_view::difference_type;
+
+  constexpr basic_string_view_for_slice() noexcept
+    : basic_string_view_for_slice{std_string_view{}} {}
+
+  constexpr basic_string_view_for_slice(const basic_string_view_for_slice& other) noexcept = default;
+
+  constexpr basic_string_view_for_slice(const const_pointer s, const size_type count)
+    : basic_string_view_for_slice{std_string_view{s, count}} {}
+
+  constexpr basic_string_view_for_slice(const const_pointer s)
+    : basic_string_view_for_slice{std_string_view{s}} {}
+
+  constexpr basic_string_view_for_slice& operator=(const basic_string_view_for_slice& view) noexcept = default;
+
+  constexpr basic_string_view_for_slice(const std_string_view& s) noexcept
+    : data_{s.data(), s.size()} {}
+
+  constexpr basic_string_view_for_slice& operator=(const std_string_view& s) noexcept {
+    data_ = {s.data(), s.size()};
+    return *this;
+  }
+
+  constexpr operator std_string_view() const noexcept { return {data(), size()}; }
+  constexpr std_string_view as_sv() const noexcept { return *this; }
+
+  constexpr const_pointer data() const noexcept { return data_.data; }
+  constexpr size_type size() const noexcept { return data_.len; }
+
+private:
+  using capi_type =
+    std::conditional_t<std::is_same_v<value_type, char>,
+      capi::DiplomatStringView,
+    std::conditional_t<std::is_same_v<value_type, char16_t>,
+      capi::DiplomatString16View,
+      void>>;
+
+  static_assert(!std::is_void_v<capi_type>,
+    "ABI compatible string_views are only supported for char and char16_t");
+
+  capi_type data_;
+};
+
+// We only implement these specialisations as diplomat doesn't provide c abi
+// types for others
+using string_view_for_slice = basic_string_view_for_slice<char>;
+using u16string_view_for_slice = basic_string_view_for_slice<char16_t>;
+
+using string_view_span = span<const string_view_for_slice>;
+using u16string_view_span = span<const u16string_view_for_slice>;
+
 // Interop between std::function & our C Callback wrapper type
 
 template <typename T, typename = void>
@@ -499,5 +562,5 @@ struct next_to_iter_helper {
 };
 
 } // namespace diplomat
-
+} // namespace icu4x
 #endif

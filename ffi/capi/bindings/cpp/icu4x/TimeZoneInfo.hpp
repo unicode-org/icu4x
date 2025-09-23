@@ -1,5 +1,5 @@
-#ifndef icu4x_TimeZoneInfo_HPP
-#define icu4x_TimeZoneInfo_HPP
+#ifndef ICU4X_TimeZoneInfo_HPP
+#define ICU4X_TimeZoneInfo_HPP
 
 #include "TimeZoneInfo.d.hpp"
 
@@ -11,7 +11,6 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "IsoDate.hpp"
 #include "IsoDateTime.hpp"
 #include "Time.hpp"
@@ -19,6 +18,7 @@
 #include "TimeZoneVariant.hpp"
 #include "UtcOffset.hpp"
 #include "VariantOffsetsCalculator.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -132,4 +132,4 @@ inline void icu4x::TimeZoneInfo::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_TimeZoneInfo_HPP
+#endif // ICU4X_TimeZoneInfo_HPP

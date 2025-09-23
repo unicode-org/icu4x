@@ -91,7 +91,7 @@ impl CldrCalendar for Indian {
     type SkeletaV1 = DatetimePatternsDateIndianV1;
 }
 
-impl<S: hijri::HijriSighting> CldrCalendar for Hijri<S> {
+impl<R: hijri::Rules> CldrCalendar for Hijri<R> {
     type YearNamesV1 = DatetimeNamesYearHijriV1;
     type MonthNamesV1 = DatetimeNamesMonthHijriV1;
     type SkeletaV1 = DatetimePatternsDateHijriV1;
@@ -130,7 +130,7 @@ impl UnstableSealed for Ethiopian {}
 impl UnstableSealed for Gregorian {}
 impl UnstableSealed for Hebrew {}
 impl UnstableSealed for Indian {}
-impl<S: hijri::HijriSighting> UnstableSealed for Hijri<S> {}
+impl<R: hijri::Rules> UnstableSealed for Hijri<R> {}
 impl UnstableSealed for Japanese {}
 impl UnstableSealed for JapaneseExtended {}
 impl UnstableSealed for Persian {}

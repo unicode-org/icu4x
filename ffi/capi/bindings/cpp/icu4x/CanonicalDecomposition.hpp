@@ -1,5 +1,5 @@
-#ifndef icu4x_CanonicalDecomposition_HPP
-#define icu4x_CanonicalDecomposition_HPP
+#ifndef ICU4X_CanonicalDecomposition_HPP
+#define ICU4X_CanonicalDecomposition_HPP
 
 #include "CanonicalDecomposition.d.hpp"
 
@@ -11,10 +11,10 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "Decomposed.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -39,9 +39,9 @@ inline std::unique_ptr<icu4x::CanonicalDecomposition> icu4x::CanonicalDecomposit
     return std::unique_ptr<icu4x::CanonicalDecomposition>(icu4x::CanonicalDecomposition::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::CanonicalDecomposition>, icu4x::DataError> icu4x::CanonicalDecomposition::create_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CanonicalDecomposition>, icu4x::DataError> icu4x::CanonicalDecomposition::create_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_CanonicalDecomposition_create_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CanonicalDecomposition>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CanonicalDecomposition>>(std::unique_ptr<icu4x::CanonicalDecomposition>(icu4x::CanonicalDecomposition::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CanonicalDecomposition>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CanonicalDecomposition>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CanonicalDecomposition>>(std::unique_ptr<icu4x::CanonicalDecomposition>(icu4x::CanonicalDecomposition::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CanonicalDecomposition>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline icu4x::Decomposed icu4x::CanonicalDecomposition::decompose(char32_t c) const {
@@ -71,4 +71,4 @@ inline void icu4x::CanonicalDecomposition::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_CanonicalDecomposition_HPP
+#endif // ICU4X_CanonicalDecomposition_HPP

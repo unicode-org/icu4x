@@ -1,5 +1,5 @@
-#ifndef icu4x_GeneralCategoryNameToGroupMapper_HPP
-#define icu4x_GeneralCategoryNameToGroupMapper_HPP
+#ifndef ICU4X_GeneralCategoryNameToGroupMapper_HPP
+#define ICU4X_GeneralCategoryNameToGroupMapper_HPP
 
 #include "GeneralCategoryNameToGroupMapper.d.hpp"
 
@@ -11,19 +11,19 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "GeneralCategoryGroup.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
 
-    icu4x::capi::GeneralCategoryGroup icu4x_GeneralCategoryNameToGroupMapper_get_strict_mv1(const icu4x::capi::GeneralCategoryNameToGroupMapper* self, diplomat::capi::DiplomatStringView name);
+    icu4x::capi::GeneralCategoryGroup icu4x_GeneralCategoryNameToGroupMapper_get_strict_mv1(const icu4x::capi::GeneralCategoryNameToGroupMapper* self, icu4x::diplomat::capi::DiplomatStringView name);
 
-    icu4x::capi::GeneralCategoryGroup icu4x_GeneralCategoryNameToGroupMapper_get_loose_mv1(const icu4x::capi::GeneralCategoryNameToGroupMapper* self, diplomat::capi::DiplomatStringView name);
+    icu4x::capi::GeneralCategoryGroup icu4x_GeneralCategoryNameToGroupMapper_get_loose_mv1(const icu4x::capi::GeneralCategoryNameToGroupMapper* self, icu4x::diplomat::capi::DiplomatStringView name);
 
     icu4x::capi::GeneralCategoryNameToGroupMapper* icu4x_GeneralCategoryNameToGroupMapper_create_mv1(void);
 
@@ -53,9 +53,9 @@ inline std::unique_ptr<icu4x::GeneralCategoryNameToGroupMapper> icu4x::GeneralCa
     return std::unique_ptr<icu4x::GeneralCategoryNameToGroupMapper>(icu4x::GeneralCategoryNameToGroupMapper::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::GeneralCategoryNameToGroupMapper>, icu4x::DataError> icu4x::GeneralCategoryNameToGroupMapper::create_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::GeneralCategoryNameToGroupMapper>, icu4x::DataError> icu4x::GeneralCategoryNameToGroupMapper::create_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_GeneralCategoryNameToGroupMapper_create_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::GeneralCategoryNameToGroupMapper>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::GeneralCategoryNameToGroupMapper>>(std::unique_ptr<icu4x::GeneralCategoryNameToGroupMapper>(icu4x::GeneralCategoryNameToGroupMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::GeneralCategoryNameToGroupMapper>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::GeneralCategoryNameToGroupMapper>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::GeneralCategoryNameToGroupMapper>>(std::unique_ptr<icu4x::GeneralCategoryNameToGroupMapper>(icu4x::GeneralCategoryNameToGroupMapper::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::GeneralCategoryNameToGroupMapper>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline const icu4x::capi::GeneralCategoryNameToGroupMapper* icu4x::GeneralCategoryNameToGroupMapper::AsFFI() const {
@@ -79,4 +79,4 @@ inline void icu4x::GeneralCategoryNameToGroupMapper::operator delete(void* ptr) 
 }
 
 
-#endif // icu4x_GeneralCategoryNameToGroupMapper_HPP
+#endif // ICU4X_GeneralCategoryNameToGroupMapper_HPP

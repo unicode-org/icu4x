@@ -1,5 +1,5 @@
-#ifndef icu4x_LineBreakOptionsV2_D_HPP
-#define icu4x_LineBreakOptionsV2_D_HPP
+#ifndef ICU4X_LineBreakOptionsV2_D_HPP
+#define ICU4X_LineBreakOptionsV2_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,14 +9,14 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "LineBreakStrictness.d.hpp"
 #include "LineBreakWordOption.d.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 class LineBreakStrictness;
 class LineBreakWordOption;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -44,4 +44,4 @@ struct LineBreakOptionsV2 {
 };
 
 } // namespace
-#endif // icu4x_LineBreakOptionsV2_D_HPP
+#endif // ICU4X_LineBreakOptionsV2_D_HPP

@@ -1,5 +1,5 @@
-#ifndef icu4x_WordBreakIteratorUtf16_D_HPP
-#define icu4x_WordBreakIteratorUtf16_D_HPP
+#ifndef ICU4X_WordBreakIteratorUtf16_D_HPP
+#define ICU4X_WordBreakIteratorUtf16_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,11 +9,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 class SegmenterWordType;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -30,24 +30,24 @@ class WordBreakIteratorUtf16 {
 public:
 
   /**
-     * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
-     * out of range of a 32-bit signed integer.
-     *
-     * See the [Rust documentation for `next`](https://docs.rs/icu/2.0.0/icu/segmenter/iterators/struct.WordBreakIterator.html#method.next) for more information.
+   * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
+   * out of range of a 32-bit signed integer.
+   *
+   * See the [Rust documentation for `next`](https://docs.rs/icu/2.0.0/icu/segmenter/iterators/struct.WordBreakIterator.html#method.next) for more information.
    */
   inline int32_t next();
 
   /**
-     * Return the status value of break boundary.
-     *
-     * See the [Rust documentation for `word_type`](https://docs.rs/icu/2.0.0/icu/segmenter/iterators/struct.WordBreakIterator.html#method.word_type) for more information.
+   * Return the status value of break boundary.
+   *
+   * See the [Rust documentation for `word_type`](https://docs.rs/icu/2.0.0/icu/segmenter/iterators/struct.WordBreakIterator.html#method.word_type) for more information.
    */
   inline icu4x::SegmenterWordType word_type() const;
 
   /**
-     * Return true when break boundary is word-like such as letter/number/CJK
-     *
-     * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/2.0.0/icu/segmenter/iterators/struct.WordBreakIterator.html#method.is_word_like) for more information.
+   * Return true when break boundary is word-like such as letter/number/CJK
+   *
+   * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/2.0.0/icu/segmenter/iterators/struct.WordBreakIterator.html#method.is_word_like) for more information.
    */
   inline bool is_word_like() const;
 
@@ -66,4 +66,4 @@ private:
 };
 
 } // namespace
-#endif // icu4x_WordBreakIteratorUtf16_D_HPP
+#endif // ICU4X_WordBreakIteratorUtf16_D_HPP

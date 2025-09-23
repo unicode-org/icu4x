@@ -1,5 +1,5 @@
-#ifndef icu4x_CollatorCaseFirst_HPP
-#define icu4x_CollatorCaseFirst_HPP
+#ifndef ICU4X_CollatorCaseFirst_HPP
+#define ICU4X_CollatorCaseFirst_HPP
 
 #include "CollatorCaseFirst.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -36,4 +36,4 @@ inline icu4x::CollatorCaseFirst icu4x::CollatorCaseFirst::FromFFI(icu4x::capi::C
             std::abort();
     }
 }
-#endif // icu4x_CollatorCaseFirst_HPP
+#endif // ICU4X_CollatorCaseFirst_HPP

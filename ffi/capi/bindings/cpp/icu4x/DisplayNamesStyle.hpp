@@ -1,5 +1,5 @@
-#ifndef icu4x_DisplayNamesStyle_HPP
-#define icu4x_DisplayNamesStyle_HPP
+#ifndef ICU4X_DisplayNamesStyle_HPP
+#define ICU4X_DisplayNamesStyle_HPP
 
 #include "DisplayNamesStyle.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -37,4 +37,4 @@ inline icu4x::DisplayNamesStyle icu4x::DisplayNamesStyle::FromFFI(icu4x::capi::D
             std::abort();
     }
 }
-#endif // icu4x_DisplayNamesStyle_HPP
+#endif // ICU4X_DisplayNamesStyle_HPP

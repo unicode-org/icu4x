@@ -1,5 +1,5 @@
-#ifndef icu4x_CanonicalCombiningClassMap_HPP
-#define icu4x_CanonicalCombiningClassMap_HPP
+#ifndef ICU4X_CanonicalCombiningClassMap_HPP
+#define ICU4X_CanonicalCombiningClassMap_HPP
 
 #include "CanonicalCombiningClassMap.d.hpp"
 
@@ -11,9 +11,9 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -38,9 +38,9 @@ inline std::unique_ptr<icu4x::CanonicalCombiningClassMap> icu4x::CanonicalCombin
     return std::unique_ptr<icu4x::CanonicalCombiningClassMap>(icu4x::CanonicalCombiningClassMap::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::CanonicalCombiningClassMap>, icu4x::DataError> icu4x::CanonicalCombiningClassMap::create_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CanonicalCombiningClassMap>, icu4x::DataError> icu4x::CanonicalCombiningClassMap::create_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_CanonicalCombiningClassMap_create_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CanonicalCombiningClassMap>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CanonicalCombiningClassMap>>(std::unique_ptr<icu4x::CanonicalCombiningClassMap>(icu4x::CanonicalCombiningClassMap::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CanonicalCombiningClassMap>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CanonicalCombiningClassMap>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CanonicalCombiningClassMap>>(std::unique_ptr<icu4x::CanonicalCombiningClassMap>(icu4x::CanonicalCombiningClassMap::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CanonicalCombiningClassMap>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline uint8_t icu4x::CanonicalCombiningClassMap::operator[](char32_t ch) const {
@@ -70,4 +70,4 @@ inline void icu4x::CanonicalCombiningClassMap::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_CanonicalCombiningClassMap_HPP
+#endif // ICU4X_CanonicalCombiningClassMap_HPP
