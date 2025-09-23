@@ -2,14 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, DateFieldsResolver};
+use crate::cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears};
+use crate::cal::iso::IsoEra;
+use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::{range_check, DateError};
-use crate::options::DateFromFieldsOptions;
-use crate::provider::{CalendarJapaneseExtendedV1, CalendarJapaneseModernV1, EraStartDate};
-use crate::types::DateFields;
-use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, Ref};
-use calendrical_calculations::rata_die::RataDie;
+use crate::provider::{
+    CalendarJapaneseExtendedV1, CalendarJapaneseModernV1, EraStartDate, JapaneseEras,
+};
+use crate::{types, AsCalendar, Date};
 use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyStr16};
 
@@ -71,14 +71,6 @@ pub struct Japanese {
 /// This calendar supports 12 solar month codes (`M01` - `M12`)
 #[derive(Clone, Debug, Default)]
 pub struct JapaneseExtended(Japanese);
-
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-/// The inner date type used for representing [`Date`]s of [`Japanese`]. See [`Date`] and [`Japanese`] for more details.
-pub struct JapaneseDateInner {
-    inner: IsoDateInner,
-    adjusted_year: i32,
-    era: TinyStr16,
-}
 
 impl Japanese {
     /// Creates a new [`Japanese`] using only modern eras (post-meiji) from compiled data.
@@ -150,245 +142,58 @@ impl JapaneseExtended {
     pub(crate) const DEBUG_NAME: &'static str = "Japanese (historical era data)";
 }
 
-impl DateFieldsResolver for Japanese {
-    type YearInfo = i32;
-
-    #[inline]
-    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+impl GregorianYears for &'_ Japanese {
+    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, DateError> {
         let era = match era {
-            "ce" | "ad" => {
-                return Ok(era_year);
+            Some("ce" | "ad") | None => {
+                return Ok(year);
             }
-            "bce" | "bc" => {
-                return Ok(1 - era_year);
+            Some("bce" | "bc") => {
+                return Ok(1 - year);
             }
-            e => e.parse().map_err(|_| DateError::UnknownEra)?,
+            Some(e) => e.parse().map_err(|_| DateError::UnknownEra)?,
         };
-        let (era_start, _next_era_start) = self.japanese_era_range_for(era)?;
-        Ok(era_start.year + era_year - 1)
+        let (era_start, _next_era_start) = self.eras.get().japanese_era_range_for(era)?;
+        Ok(era_start.year + year - 1)
     }
 
-    #[inline]
-    fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
-        extended_year
-    }
-
-    #[inline]
-    fn reference_year_from_month_day(
-        &self,
-        _month_code: types::MonthCode,
-        _day: u8,
-    ) -> Result<Self::YearInfo, DateError> {
-        Ok(crate::cal::abstract_gregorian::REFERENCE_YEAR)
-    }
-}
-
-impl crate::cal::scaffold::UnstableSealed for Japanese {}
-impl Calendar for Japanese {
-    type DateInner = JapaneseDateInner;
-    type Year = types::EraYear;
-
-    fn from_fields(
-        &self,
-        fields: DateFields,
-        options: DateFromFieldsOptions,
-    ) -> Result<Self::DateInner, DateError> {
-        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        let iso_date = ArithmeticDate::try_from_builder(builder, options)
-            .map_err(|e| e.maybe_with_month_code(fields.month_code))?;
-        Ok(self.from_iso(IsoDateInner(iso_date)))
-    }
-
-    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        self.from_iso(Iso.from_rata_die(rd))
-    }
-
-    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        Iso.to_rata_die(&self.to_iso(date))
-    }
-
-    fn from_iso(&self, iso: IsoDateInner) -> JapaneseDateInner {
-        let (adjusted_year, era) = self.adjusted_year_for(iso);
-        JapaneseDateInner {
-            inner: iso,
-            adjusted_year,
-            era,
-        }
-    }
-
-    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        date.inner
-    }
-
-    fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Iso.months_in_year(&date.inner)
-    }
-
-    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        Iso.days_in_year(&date.inner)
-    }
-
-    fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        Iso.days_in_month(&date.inner)
-    }
-
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        Iso.offset_date(&mut date.inner, offset.cast_unit());
-        let (adjusted_year, era) = self.adjusted_year_for(date.inner);
-        date.adjusted_year = adjusted_year;
-        date.era = era
-    }
-
-    fn until(
-        &self,
-        date1: &Self::DateInner,
-        date2: &Self::DateInner,
-        _calendar2: &Self,
-        largest_unit: DateDurationUnit,
-        smallest_unit: DateDurationUnit,
-    ) -> DateDuration<Self> {
-        Iso.until(
-            &date1.inner,
-            &date2.inner,
-            &Iso,
-            largest_unit,
-            smallest_unit,
-        )
-        .cast_unit()
-    }
-
-    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+    fn era_year_from_extended(&self, extended_year: i32, month: u8, day: u8) -> types::EraYear {
+        let (year, era) = self.eras.get().adjusted_year_for(extended_year, month, day);
         types::EraYear {
-            era: date.era,
+            era,
             era_index: None,
-            year: date.adjusted_year,
-            extended_year: date.inner.0.extended_year(),
+            year,
+            extended_year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     }
 
-    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Iso.is_in_leap_year(&date.inner)
-    }
-
-    /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        Iso.month(&date.inner)
-    }
-
-    /// The calendar-specific day-of-month represented by `date`
-    fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        Iso.day_of_month(&date.inner)
-    }
-
-    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        Iso.day_of_year(&date.inner)
-    }
-
     fn debug_name(&self) -> &'static str {
-        Self::DEBUG_NAME
+        if self.eras.get().dates_to_eras.len() > 10 {
+            "Japanese  (historical era data)"
+        } else {
+            "Japanese"
+        }
     }
 
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
-        Some(crate::preferences::CalendarAlgorithm::Japanese)
+        if self.eras.get().dates_to_eras.len() > 10 {
+            None
+        } else {
+            Some(crate::preferences::CalendarAlgorithm::Japanese)
+        }
     }
 }
 
-impl crate::cal::scaffold::UnstableSealed for JapaneseExtended {}
-impl Calendar for JapaneseExtended {
-    type DateInner = JapaneseDateInner;
-    type Year = types::EraYear;
+impl_with_abstract_gregorian!(Japanese, JapaneseDateInner, Japanese, this, this);
 
-    fn from_fields(
-        &self,
-        fields: DateFields,
-        options: DateFromFieldsOptions,
-    ) -> Result<Self::DateInner, DateError> {
-        self.0.from_fields(fields, options)
-    }
-
-    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        Japanese::from_rata_die(&self.0, rd)
-    }
-
-    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        Japanese::to_rata_die(&self.0, date)
-    }
-
-    fn from_iso(&self, iso: IsoDateInner) -> JapaneseDateInner {
-        Japanese::from_iso(&self.0, iso)
-    }
-
-    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        Japanese::to_iso(&self.0, date)
-    }
-
-    fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Japanese::months_in_year(&self.0, date)
-    }
-
-    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        Japanese::days_in_year(&self.0, date)
-    }
-
-    fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        Japanese::days_in_month(&self.0, date)
-    }
-
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        Japanese::offset_date(&self.0, date, offset.cast_unit())
-    }
-
-    fn until(
-        &self,
-        date1: &Self::DateInner,
-        date2: &Self::DateInner,
-        calendar2: &Self,
-        largest_unit: DateDurationUnit,
-        smallest_unit: DateDurationUnit,
-    ) -> DateDuration<Self> {
-        Japanese::until(
-            &self.0,
-            date1,
-            date2,
-            &calendar2.0,
-            largest_unit,
-            smallest_unit,
-        )
-        .cast_unit()
-    }
-
-    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        Japanese::year_info(&self.0, date)
-    }
-
-    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Japanese::is_in_leap_year(&self.0, date)
-    }
-
-    /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        Japanese::month(&self.0, date)
-    }
-
-    /// The calendar-specific day-of-month represented by `date`
-    fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        Japanese::day_of_month(&self.0, date)
-    }
-
-    /// Information of the day of the year
-    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        Japanese::day_of_year(&self.0, date)
-    }
-
-    fn debug_name(&self) -> &'static str {
-        Self::DEBUG_NAME
-    }
-
-    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
-        Some(crate::preferences::CalendarAlgorithm::Japanese)
-    }
-}
+impl_with_abstract_gregorian!(
+    JapaneseExtended,
+    JapaneseExtendedDateInner,
+    Japanese,
+    this,
+    &this.0
+);
 
 impl Date<Japanese> {
     /// Construct a new Japanese Date.
@@ -443,10 +248,11 @@ impl Date<Japanese> {
         day: u8,
         japanese_calendar: A,
     ) -> Result<Date<A>, DateError> {
-        let inner =
-            japanese_calendar
-                .as_calendar()
-                .new_japanese_date_inner(Some(era), year, month, day)?;
+        let inner = japanese_calendar
+            .as_calendar()
+            .eras
+            .get()
+            .new_japanese_date_inner(Some(era), year, month, day)?;
         Ok(Date::from_raw(inner, japanese_calendar))
     }
 }
@@ -492,13 +298,16 @@ impl Date<JapaneseExtended> {
         day: u8,
         japanext_calendar: A,
     ) -> Result<Date<A>, DateError> {
-        let inner = japanext_calendar.as_calendar().0.new_japanese_date_inner(
-            Some(era),
-            year,
-            month,
-            day,
-        )?;
-        Ok(Date::from_raw(inner, japanext_calendar))
+        let inner = japanext_calendar
+            .as_calendar()
+            .0
+            .eras
+            .get()
+            .new_japanese_date_inner(Some(era), year, month, day)?;
+        Ok(Date::from_raw(
+            JapaneseExtendedDateInner(inner.0),
+            japanext_calendar,
+        ))
     }
 }
 
@@ -528,16 +337,12 @@ const REIWA_START: EraStartDate = EraStartDate {
     day: 1,
 };
 
-impl Japanese {
+impl JapaneseEras<'_> {
     /// Given an ISO date, give year and era for that date in the Japanese calendar
     ///
     /// This will also use Gregorian eras for eras that are before the earliest era
-    fn adjusted_year_for(&self, date: IsoDateInner) -> (i32, TinyStr16) {
-        let date: EraStartDate = EraStartDate {
-            year: date.0.year,
-            month: date.0.month,
-            day: date.0.day,
-        };
+    fn adjusted_year_for(&self, year: i32, month: u8, day: u8) -> (i32, TinyStr16) {
+        let date: EraStartDate = EraStartDate { year, month, day };
         let (start, era) = self.japanese_era_for(date);
         // The year in which an era starts is Year 1, and it may be short
         // The only time this function will experience dates that are *before*
@@ -557,12 +362,11 @@ impl Japanese {
 
     /// Given an date, obtain the era data (not counting spliced gregorian eras)
     fn japanese_era_for(&self, date: EraStartDate) -> (EraStartDate, TinyStr16) {
-        let era_data = self.eras.get();
         // We optimize for the five "modern" post-Meiji eras, which are stored in a smaller
         // array and also hardcoded. The hardcoded version is not used if data indicates the
         // presence of newer eras.
         if date >= MEIJI_START
-            && era_data.dates_to_eras.last().map(|x| x.1) == Some(tinystr!(16, "reiwa"))
+            && self.dates_to_eras.last().map(|x| x.1) == Some(tinystr!(16, "reiwa"))
         {
             // Fast path in case eras have not changed since this code was written
             return if date >= REIWA_START {
@@ -577,7 +381,7 @@ impl Japanese {
                 (MEIJI_START, tinystr!(16, "meiji"))
             };
         }
-        let data = &era_data.dates_to_eras;
+        let data = &self.dates_to_eras;
         match data.binary_search_by(|(d, _)| d.cmp(&date)) {
             Ok(index) => data.get(index),
             Err(index) if index == 0 => data.get(index),
@@ -597,7 +401,7 @@ impl Japanese {
         // Avoid linear search by trying well known eras
         if era == tinystr!(16, "reiwa") {
             // Check if we're the last
-            if let Some(last) = self.eras.get().dates_to_eras.last() {
+            if let Some(last) = self.dates_to_eras.last() {
                 if last.1 == era {
                     return Ok((REIWA_START, None));
                 }
@@ -612,8 +416,7 @@ impl Japanese {
             return Ok((MEIJI_START, Some(TAISHO_START)));
         }
 
-        let era_data = self.eras.get();
-        let data = &era_data.dates_to_eras;
+        let data = &self.dates_to_eras;
         // Try to avoid linear search by binary searching for the year suffix
         if let Some(year) = era.split('-').nth(1) {
             if let Ok(ref int) = year.parse::<i32>() {
@@ -647,28 +450,25 @@ impl Japanese {
         month: u8,
         day: u8,
     ) -> Result<JapaneseDateInner, DateError> {
-        let cal = Ref(self);
         let era = match era {
             None => {
-                return Ok(Date::try_new_gregorian(year, month, day)?
-                    .to_calendar(cal)
-                    .inner);
+                return Ok(JapaneseDateInner(ArithmeticDate::new_gregorian::<IsoEra>(
+                    year, month, day,
+                )?));
             }
             Some("ce" | "ad") => {
-                return Ok(
-                    Date::try_new_gregorian(range_check(year, "year", 1..)?, month, day)?
-                        .to_calendar(cal)
-                        .inner,
-                );
+                return Ok(JapaneseDateInner(ArithmeticDate::new_gregorian::<IsoEra>(
+                    range_check(year, "year", 1..)?,
+                    month,
+                    day,
+                )?));
             }
             Some("bce" | "bc") => {
-                return Ok(Date::try_new_gregorian(
+                return Ok(JapaneseDateInner(ArithmeticDate::new_gregorian::<IsoEra>(
                     1 - range_check(year, "year", 1..)?,
                     month,
                     day,
-                )?
-                .to_calendar(cal)
-                .inner);
+                )?));
             }
             Some(e) => e.parse().map_err(|_| DateError::UnknownEra)?,
         };
@@ -740,11 +540,7 @@ impl Japanese {
         }
 
         let iso = Date::try_new_iso(date_in_iso.year, date_in_iso.month, date_in_iso.day)?;
-        Ok(JapaneseDateInner {
-            inner: iso.inner,
-            adjusted_year: year,
-            era,
-        })
+        Ok(JapaneseDateInner(iso.inner.0))
     }
 }
 

@@ -48,7 +48,7 @@ impl GregorianYears for RocEra {
         }
     }
 
-    fn era_year_from_extended(&self, extended_year: i32) -> types::EraYear {
+    fn era_year_from_extended(&self, extended_year: i32, _month: u8, _day: u8) -> types::EraYear {
         if extended_year > 0 {
             types::EraYear {
                 era: tinystr!(16, "roc"),

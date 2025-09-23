@@ -52,7 +52,7 @@ impl GregorianYears for BuddhistEra {
         }
     }
 
-    fn era_year_from_extended(&self, extended_year: i32) -> types::EraYear {
+    fn era_year_from_extended(&self, extended_year: i32, _month: u8, _day: u8) -> types::EraYear {
         types::EraYear {
             era: tinystr!(16, "be"),
             era_index: Some(0),
