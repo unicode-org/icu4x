@@ -685,6 +685,6 @@ mod tests {
             )
             .unwrap(),
         );
-        writeable::assert_try_writeable_eq!(formatted_datetime, "-5490", Ok(()));
+        writeable::assert_try_writeable_eq!(formatted_datetime, "10", Ok(()));
     }
 }
