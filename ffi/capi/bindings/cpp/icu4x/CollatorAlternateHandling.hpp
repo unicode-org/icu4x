@@ -1,5 +1,5 @@
-#ifndef icu4x_CollatorAlternateHandling_HPP
-#define icu4x_CollatorAlternateHandling_HPP
+#ifndef ICU4X_CollatorAlternateHandling_HPP
+#define ICU4X_CollatorAlternateHandling_HPP
 
 #include "CollatorAlternateHandling.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -35,4 +35,4 @@ inline icu4x::CollatorAlternateHandling icu4x::CollatorAlternateHandling::FromFF
             std::abort();
     }
 }
-#endif // icu4x_CollatorAlternateHandling_HPP
+#endif // ICU4X_CollatorAlternateHandling_HPP

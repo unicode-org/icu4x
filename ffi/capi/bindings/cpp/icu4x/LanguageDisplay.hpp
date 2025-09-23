@@ -1,5 +1,5 @@
-#ifndef icu4x_LanguageDisplay_HPP
-#define icu4x_LanguageDisplay_HPP
+#ifndef ICU4X_LanguageDisplay_HPP
+#define ICU4X_LanguageDisplay_HPP
 
 #include "LanguageDisplay.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -35,4 +35,4 @@ inline icu4x::LanguageDisplay icu4x::LanguageDisplay::FromFFI(icu4x::capi::Langu
             std::abort();
     }
 }
-#endif // icu4x_LanguageDisplay_HPP
+#endif // ICU4X_LanguageDisplay_HPP

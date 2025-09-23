@@ -1,5 +1,5 @@
-#ifndef icu4x_LocaleExpander_HPP
-#define icu4x_LocaleExpander_HPP
+#ifndef ICU4X_LocaleExpander_HPP
+#define ICU4X_LocaleExpander_HPP
 
 #include "LocaleExpander.d.hpp"
 
@@ -11,11 +11,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "Locale.hpp"
 #include "TransformResult.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -49,9 +49,9 @@ inline std::unique_ptr<icu4x::LocaleExpander> icu4x::LocaleExpander::create_comm
     return std::unique_ptr<icu4x::LocaleExpander>(icu4x::LocaleExpander::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError> icu4x::LocaleExpander::create_common_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError> icu4x::LocaleExpander::create_common_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_LocaleExpander_create_common_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::LocaleExpander>>(std::unique_ptr<icu4x::LocaleExpander>(icu4x::LocaleExpander::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::LocaleExpander>>(std::unique_ptr<icu4x::LocaleExpander>(icu4x::LocaleExpander::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::LocaleExpander> icu4x::LocaleExpander::create_extended() {
@@ -59,9 +59,9 @@ inline std::unique_ptr<icu4x::LocaleExpander> icu4x::LocaleExpander::create_exte
     return std::unique_ptr<icu4x::LocaleExpander>(icu4x::LocaleExpander::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError> icu4x::LocaleExpander::create_extended_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError> icu4x::LocaleExpander::create_extended_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_LocaleExpander_create_extended_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::LocaleExpander>>(std::unique_ptr<icu4x::LocaleExpander>(icu4x::LocaleExpander::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::LocaleExpander>>(std::unique_ptr<icu4x::LocaleExpander>(icu4x::LocaleExpander::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline icu4x::TransformResult icu4x::LocaleExpander::maximize(icu4x::Locale& locale) const {
@@ -103,4 +103,4 @@ inline void icu4x::LocaleExpander::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_LocaleExpander_HPP
+#endif // ICU4X_LocaleExpander_HPP

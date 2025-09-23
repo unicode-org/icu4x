@@ -1,5 +1,5 @@
-#ifndef icu4x_CollatorMaxVariable_HPP
-#define icu4x_CollatorMaxVariable_HPP
+#ifndef ICU4X_CollatorMaxVariable_HPP
+#define ICU4X_CollatorMaxVariable_HPP
 
 #include "CollatorMaxVariable.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -37,4 +37,4 @@ inline icu4x::CollatorMaxVariable icu4x::CollatorMaxVariable::FromFFI(icu4x::cap
             std::abort();
     }
 }
-#endif // icu4x_CollatorMaxVariable_HPP
+#endif // ICU4X_CollatorMaxVariable_HPP

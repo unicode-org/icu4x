@@ -1,5 +1,5 @@
-#ifndef icu4x_DateTimeAlignment_HPP
-#define icu4x_DateTimeAlignment_HPP
+#ifndef ICU4X_DateTimeAlignment_HPP
+#define ICU4X_DateTimeAlignment_HPP
 
 #include "DateTimeAlignment.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -35,4 +35,4 @@ inline icu4x::DateTimeAlignment icu4x::DateTimeAlignment::FromFFI(icu4x::capi::D
             std::abort();
     }
 }
-#endif // icu4x_DateTimeAlignment_HPP
+#endif // ICU4X_DateTimeAlignment_HPP

@@ -41,7 +41,7 @@ impl MeasureUnit {
         }
 
         let mut constant_denominator = 0;
-        let mut single_units = SingleUnitVec::Zero;
+        let mut single_units = SingleUnitVec::Empty;
         let mut sign = 1;
         while !code_units.is_empty() {
             // First: extract the power.

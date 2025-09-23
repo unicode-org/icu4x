@@ -1,5 +1,5 @@
-#ifndef icu4x_VariantOffsets_HPP
-#define icu4x_VariantOffsets_HPP
+#ifndef ICU4X_VariantOffsets_HPP
+#define ICU4X_VariantOffsets_HPP
 
 #include "VariantOffsets.d.hpp"
 
@@ -11,8 +11,8 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "UtcOffset.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -39,4 +39,4 @@ inline icu4x::VariantOffsets icu4x::VariantOffsets::FromFFI(icu4x::capi::Variant
 }
 
 
-#endif // icu4x_VariantOffsets_HPP
+#endif // ICU4X_VariantOffsets_HPP

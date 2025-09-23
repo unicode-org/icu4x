@@ -1,5 +1,5 @@
-#ifndef icu4x_DecimalParseError_HPP
-#define icu4x_DecimalParseError_HPP
+#ifndef ICU4X_DecimalParseError_HPP
+#define ICU4X_DecimalParseError_HPP
 
 #include "DecimalParseError.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -36,4 +36,4 @@ inline icu4x::DecimalParseError icu4x::DecimalParseError::FromFFI(icu4x::capi::D
             std::abort();
     }
 }
-#endif // icu4x_DecimalParseError_HPP
+#endif // ICU4X_DecimalParseError_HPP

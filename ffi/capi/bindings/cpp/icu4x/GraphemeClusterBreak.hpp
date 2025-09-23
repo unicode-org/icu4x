@@ -1,5 +1,5 @@
-#ifndef icu4x_GraphemeClusterBreak_HPP
-#define icu4x_GraphemeClusterBreak_HPP
+#ifndef ICU4X_GraphemeClusterBreak_HPP
+#define ICU4X_GraphemeClusterBreak_HPP
 
 #include "GraphemeClusterBreak.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -73,4 +73,4 @@ inline std::optional<icu4x::GraphemeClusterBreak> icu4x::GraphemeClusterBreak::f
     auto result = icu4x::capi::icu4x_GraphemeClusterBreak_from_integer_value_mv1(other);
     return result.is_ok ? std::optional<icu4x::GraphemeClusterBreak>(icu4x::GraphemeClusterBreak::FromFFI(result.ok)) : std::nullopt;
 }
-#endif // icu4x_GraphemeClusterBreak_HPP
+#endif // ICU4X_GraphemeClusterBreak_HPP

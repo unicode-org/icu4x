@@ -1,5 +1,5 @@
-#ifndef icu4x_LeadingAdjustment_HPP
-#define icu4x_LeadingAdjustment_HPP
+#ifndef ICU4X_LeadingAdjustment_HPP
+#define ICU4X_LeadingAdjustment_HPP
 
 #include "LeadingAdjustment.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -36,4 +36,4 @@ inline icu4x::LeadingAdjustment icu4x::LeadingAdjustment::FromFFI(icu4x::capi::L
             std::abort();
     }
 }
-#endif // icu4x_LeadingAdjustment_HPP
+#endif // ICU4X_LeadingAdjustment_HPP

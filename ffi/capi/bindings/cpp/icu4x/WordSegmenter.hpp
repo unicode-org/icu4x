@@ -1,5 +1,5 @@
-#ifndef icu4x_WordSegmenter_HPP
-#define icu4x_WordSegmenter_HPP
+#ifndef ICU4X_WordSegmenter_HPP
+#define ICU4X_WordSegmenter_HPP
 
 #include "WordSegmenter.d.hpp"
 
@@ -11,13 +11,13 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
 #include "Locale.hpp"
 #include "WordBreakIteratorLatin1.hpp"
 #include "WordBreakIteratorUtf16.hpp"
 #include "WordBreakIteratorUtf8.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -48,11 +48,11 @@ namespace capi {
     typedef struct icu4x_WordSegmenter_create_dictionary_with_content_locale_and_provider_mv1_result {union {icu4x::capi::WordSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_WordSegmenter_create_dictionary_with_content_locale_and_provider_mv1_result;
     icu4x_WordSegmenter_create_dictionary_with_content_locale_and_provider_mv1_result icu4x_WordSegmenter_create_dictionary_with_content_locale_and_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
 
-    icu4x::capi::WordBreakIteratorUtf8* icu4x_WordSegmenter_segment_utf8_mv1(const icu4x::capi::WordSegmenter* self, diplomat::capi::DiplomatStringView input);
+    icu4x::capi::WordBreakIteratorUtf8* icu4x_WordSegmenter_segment_utf8_mv1(const icu4x::capi::WordSegmenter* self, icu4x::diplomat::capi::DiplomatStringView input);
 
-    icu4x::capi::WordBreakIteratorUtf16* icu4x_WordSegmenter_segment_utf16_mv1(const icu4x::capi::WordSegmenter* self, diplomat::capi::DiplomatString16View input);
+    icu4x::capi::WordBreakIteratorUtf16* icu4x_WordSegmenter_segment_utf16_mv1(const icu4x::capi::WordSegmenter* self, icu4x::diplomat::capi::DiplomatString16View input);
 
-    icu4x::capi::WordBreakIteratorLatin1* icu4x_WordSegmenter_segment_latin1_mv1(const icu4x::capi::WordSegmenter* self, diplomat::capi::DiplomatU8View input);
+    icu4x::capi::WordBreakIteratorLatin1* icu4x_WordSegmenter_segment_latin1_mv1(const icu4x::capi::WordSegmenter* self, icu4x::diplomat::capi::DiplomatU8View input);
 
     void icu4x_WordSegmenter_destroy_mv1(WordSegmenter* self);
 
@@ -65,15 +65,15 @@ inline std::unique_ptr<icu4x::WordSegmenter> icu4x::WordSegmenter::create_auto()
     return std::unique_ptr<icu4x::WordSegmenter>(icu4x::WordSegmenter::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> icu4x::WordSegmenter::create_auto_with_content_locale(const icu4x::Locale& locale) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> icu4x::WordSegmenter::create_auto_with_content_locale(const icu4x::Locale& locale) {
     auto result = icu4x::capi::icu4x_WordSegmenter_create_auto_with_content_locale_mv1(locale.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::WordSegmenter>>(std::unique_ptr<icu4x::WordSegmenter>(icu4x::WordSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::WordSegmenter>>(std::unique_ptr<icu4x::WordSegmenter>(icu4x::WordSegmenter::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> icu4x::WordSegmenter::create_auto_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> icu4x::WordSegmenter::create_auto_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale) {
     auto result = icu4x::capi::icu4x_WordSegmenter_create_auto_with_content_locale_and_provider_mv1(provider.AsFFI(),
         locale.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::WordSegmenter>>(std::unique_ptr<icu4x::WordSegmenter>(icu4x::WordSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::WordSegmenter>>(std::unique_ptr<icu4x::WordSegmenter>(icu4x::WordSegmenter::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::WordSegmenter> icu4x::WordSegmenter::create_lstm() {
@@ -81,15 +81,15 @@ inline std::unique_ptr<icu4x::WordSegmenter> icu4x::WordSegmenter::create_lstm()
     return std::unique_ptr<icu4x::WordSegmenter>(icu4x::WordSegmenter::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> icu4x::WordSegmenter::create_lstm_with_content_locale(const icu4x::Locale& locale) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> icu4x::WordSegmenter::create_lstm_with_content_locale(const icu4x::Locale& locale) {
     auto result = icu4x::capi::icu4x_WordSegmenter_create_lstm_with_content_locale_mv1(locale.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::WordSegmenter>>(std::unique_ptr<icu4x::WordSegmenter>(icu4x::WordSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::WordSegmenter>>(std::unique_ptr<icu4x::WordSegmenter>(icu4x::WordSegmenter::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> icu4x::WordSegmenter::create_lstm_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> icu4x::WordSegmenter::create_lstm_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale) {
     auto result = icu4x::capi::icu4x_WordSegmenter_create_lstm_with_content_locale_and_provider_mv1(provider.AsFFI(),
         locale.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::WordSegmenter>>(std::unique_ptr<icu4x::WordSegmenter>(icu4x::WordSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::WordSegmenter>>(std::unique_ptr<icu4x::WordSegmenter>(icu4x::WordSegmenter::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::WordSegmenter> icu4x::WordSegmenter::create_dictionary() {
@@ -97,15 +97,15 @@ inline std::unique_ptr<icu4x::WordSegmenter> icu4x::WordSegmenter::create_dictio
     return std::unique_ptr<icu4x::WordSegmenter>(icu4x::WordSegmenter::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> icu4x::WordSegmenter::create_dictionary_with_content_locale(const icu4x::Locale& locale) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> icu4x::WordSegmenter::create_dictionary_with_content_locale(const icu4x::Locale& locale) {
     auto result = icu4x::capi::icu4x_WordSegmenter_create_dictionary_with_content_locale_mv1(locale.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::WordSegmenter>>(std::unique_ptr<icu4x::WordSegmenter>(icu4x::WordSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::WordSegmenter>>(std::unique_ptr<icu4x::WordSegmenter>(icu4x::WordSegmenter::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> icu4x::WordSegmenter::create_dictionary_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> icu4x::WordSegmenter::create_dictionary_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale) {
     auto result = icu4x::capi::icu4x_WordSegmenter_create_dictionary_with_content_locale_and_provider_mv1(provider.AsFFI(),
         locale.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::WordSegmenter>>(std::unique_ptr<icu4x::WordSegmenter>(icu4x::WordSegmenter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::WordSegmenter>>(std::unique_ptr<icu4x::WordSegmenter>(icu4x::WordSegmenter::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::WordBreakIteratorUtf8> icu4x::WordSegmenter::segment(std::string_view input) const {
@@ -120,7 +120,7 @@ inline std::unique_ptr<icu4x::WordBreakIteratorUtf16> icu4x::WordSegmenter::segm
     return std::unique_ptr<icu4x::WordBreakIteratorUtf16>(icu4x::WordBreakIteratorUtf16::FromFFI(result));
 }
 
-inline std::unique_ptr<icu4x::WordBreakIteratorLatin1> icu4x::WordSegmenter::segment_latin1(diplomat::span<const uint8_t> input) const {
+inline std::unique_ptr<icu4x::WordBreakIteratorLatin1> icu4x::WordSegmenter::segment_latin1(icu4x::diplomat::span<const uint8_t> input) const {
     auto result = icu4x::capi::icu4x_WordSegmenter_segment_latin1_mv1(this->AsFFI(),
         {input.data(), input.size()});
     return std::unique_ptr<icu4x::WordBreakIteratorLatin1>(icu4x::WordBreakIteratorLatin1::FromFFI(result));
@@ -147,4 +147,4 @@ inline void icu4x::WordSegmenter::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_WordSegmenter_HPP
+#endif // ICU4X_WordSegmenter_HPP

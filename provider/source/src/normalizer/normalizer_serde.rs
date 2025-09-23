@@ -17,14 +17,6 @@ pub(crate) struct DecompositionTables {
 }
 
 #[derive(serde::Deserialize)]
-pub(crate) struct CompositionPassthrough {
-    #[serde(rename = "trie")]
-    pub(crate) _trie: CodePointTrieToml,
-    #[serde(rename = "first")]
-    pub(crate) _first: u32,
-}
-
-#[derive(serde::Deserialize)]
 pub(crate) struct CanonicalCompositions {
     pub(crate) compositions: Vec<u16>,
 }

@@ -2,25 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Japanese calendar.
-//!
-//! ```rust
-//! use icu::calendar::cal::Japanese;
-//! use icu::calendar::Date;
-//! use tinystr::tinystr;
-//!
-//! let japanese_calendar = Japanese::new();
-//!
-//! let date_iso = Date::try_new_iso(1970, 1, 2)
-//!     .expect("Failed to initialize ISO Date instance.");
-//! let date_japanese = Date::new_from_iso(date_iso, japanese_calendar);
-//!
-//! assert_eq!(date_japanese.era_year().year, 45);
-//! assert_eq!(date_japanese.month().ordinal, 1);
-//! assert_eq!(date_japanese.day_of_month().0, 2);
-//! assert_eq!(date_japanese.era_year().era, "showa");
-//! ```
-
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::{range_check, DateError};

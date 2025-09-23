@@ -1,5 +1,5 @@
-#ifndef icu4x_LocaleFallbackIterator_HPP
-#define icu4x_LocaleFallbackIterator_HPP
+#ifndef ICU4X_LocaleFallbackIterator_HPP
+#define ICU4X_LocaleFallbackIterator_HPP
 
 #include "LocaleFallbackIterator.d.hpp"
 
@@ -11,8 +11,8 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "Locale.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -53,4 +53,4 @@ inline void icu4x::LocaleFallbackIterator::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_LocaleFallbackIterator_HPP
+#endif // ICU4X_LocaleFallbackIterator_HPP

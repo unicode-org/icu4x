@@ -1,5 +1,5 @@
-#ifndef icu4x_PropertyValueNameToEnumMapper_HPP
-#define icu4x_PropertyValueNameToEnumMapper_HPP
+#ifndef ICU4X_PropertyValueNameToEnumMapper_HPP
+#define ICU4X_PropertyValueNameToEnumMapper_HPP
 
 #include "PropertyValueNameToEnumMapper.d.hpp"
 
@@ -11,18 +11,18 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
 
-    int16_t icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(const icu4x::capi::PropertyValueNameToEnumMapper* self, diplomat::capi::DiplomatStringView name);
+    int16_t icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(const icu4x::capi::PropertyValueNameToEnumMapper* self, icu4x::diplomat::capi::DiplomatStringView name);
 
-    int16_t icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(const icu4x::capi::PropertyValueNameToEnumMapper* self, diplomat::capi::DiplomatStringView name);
+    int16_t icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(const icu4x::capi::PropertyValueNameToEnumMapper* self, icu4x::diplomat::capi::DiplomatStringView name);
 
     icu4x::capi::PropertyValueNameToEnumMapper* icu4x_PropertyValueNameToEnumMapper_create_general_category_mv1(void);
 
@@ -102,9 +102,9 @@ inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValu
     return std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_general_category_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_general_category_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_PropertyValueNameToEnumMapper_create_general_category_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValueNameToEnumMapper::create_hangul_syllable_type() {
@@ -112,9 +112,9 @@ inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValu
     return std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_hangul_syllable_type_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_hangul_syllable_type_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValueNameToEnumMapper::create_east_asian_width() {
@@ -122,9 +122,9 @@ inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValu
     return std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_east_asian_width_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_east_asian_width_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValueNameToEnumMapper::create_bidi_class() {
@@ -132,9 +132,9 @@ inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValu
     return std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_bidi_class_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_bidi_class_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_PropertyValueNameToEnumMapper_create_bidi_class_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValueNameToEnumMapper::create_indic_syllabic_category() {
@@ -142,9 +142,9 @@ inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValu
     return std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_indic_syllabic_category_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_indic_syllabic_category_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValueNameToEnumMapper::create_line_break() {
@@ -152,9 +152,9 @@ inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValu
     return std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_line_break_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_line_break_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_PropertyValueNameToEnumMapper_create_line_break_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValueNameToEnumMapper::create_grapheme_cluster_break() {
@@ -162,9 +162,9 @@ inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValu
     return std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_grapheme_cluster_break_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_grapheme_cluster_break_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValueNameToEnumMapper::create_word_break() {
@@ -172,9 +172,9 @@ inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValu
     return std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_word_break_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_word_break_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_PropertyValueNameToEnumMapper_create_word_break_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValueNameToEnumMapper::create_sentence_break() {
@@ -182,9 +182,9 @@ inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValu
     return std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_sentence_break_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_sentence_break_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_PropertyValueNameToEnumMapper_create_sentence_break_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValueNameToEnumMapper::create_script() {
@@ -192,9 +192,9 @@ inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValu
     return std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_script_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_script_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_PropertyValueNameToEnumMapper_create_script_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValueNameToEnumMapper::create_vertical_orientation() {
@@ -202,9 +202,9 @@ inline std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> icu4x::PropertyValu
     return std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_vertical_orientation_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> icu4x::PropertyValueNameToEnumMapper::create_vertical_orientation_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>>(std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>(icu4x::PropertyValueNameToEnumMapper::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline const icu4x::capi::PropertyValueNameToEnumMapper* icu4x::PropertyValueNameToEnumMapper::AsFFI() const {
@@ -228,4 +228,4 @@ inline void icu4x::PropertyValueNameToEnumMapper::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_PropertyValueNameToEnumMapper_HPP
+#endif // ICU4X_PropertyValueNameToEnumMapper_HPP

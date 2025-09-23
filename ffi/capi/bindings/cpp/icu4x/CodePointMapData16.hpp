@@ -1,5 +1,5 @@
-#ifndef icu4x_CodePointMapData16_HPP
-#define icu4x_CodePointMapData16_HPP
+#ifndef ICU4X_CodePointMapData16_HPP
+#define ICU4X_CodePointMapData16_HPP
 
 #include "CodePointMapData16.d.hpp"
 
@@ -11,11 +11,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "CodePointRangeIterator.hpp"
 #include "CodePointSetData.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -70,9 +70,9 @@ inline std::unique_ptr<icu4x::CodePointMapData16> icu4x::CodePointMapData16::cre
     return std::unique_ptr<icu4x::CodePointMapData16>(icu4x::CodePointMapData16::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::CodePointMapData16>, icu4x::DataError> icu4x::CodePointMapData16::create_script_with_provider(const icu4x::DataProvider& provider) {
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData16>, icu4x::DataError> icu4x::CodePointMapData16::create_script_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_CodePointMapData16_create_script_with_provider_mv1(provider.AsFFI());
-    return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::CodePointMapData16>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData16>>(std::unique_ptr<icu4x::CodePointMapData16>(icu4x::CodePointMapData16::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::CodePointMapData16>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData16>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData16>>(std::unique_ptr<icu4x::CodePointMapData16>(icu4x::CodePointMapData16::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData16>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
 inline const icu4x::capi::CodePointMapData16* icu4x::CodePointMapData16::AsFFI() const {
@@ -96,4 +96,4 @@ inline void icu4x::CodePointMapData16::operator delete(void* ptr) {
 }
 
 
-#endif // icu4x_CodePointMapData16_HPP
+#endif // ICU4X_CodePointMapData16_HPP

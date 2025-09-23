@@ -1,5 +1,5 @@
-#ifndef icu4x_LineBreak_HPP
-#define icu4x_LineBreak_HPP
+#ifndef ICU4X_LineBreak_HPP
+#define ICU4X_LineBreak_HPP
 
 #include "LineBreak.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -20,10 +20,10 @@ namespace capi {
 
     icu4x::capi::LineBreak icu4x_LineBreak_for_char_mv1(char32_t ch);
 
-    typedef struct icu4x_LineBreak_long_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_LineBreak_long_name_mv1_result;
+    typedef struct icu4x_LineBreak_long_name_mv1_result {union {icu4x::diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_LineBreak_long_name_mv1_result;
     icu4x_LineBreak_long_name_mv1_result icu4x_LineBreak_long_name_mv1(icu4x::capi::LineBreak self);
 
-    typedef struct icu4x_LineBreak_short_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_LineBreak_short_name_mv1_result;
+    typedef struct icu4x_LineBreak_short_name_mv1_result {union {icu4x::diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_LineBreak_short_name_mv1_result;
     icu4x_LineBreak_short_name_mv1_result icu4x_LineBreak_short_name_mv1(icu4x::capi::LineBreak self);
 
     uint8_t icu4x_LineBreak_to_integer_value_mv1(icu4x::capi::LineBreak self);
@@ -119,4 +119,4 @@ inline std::optional<icu4x::LineBreak> icu4x::LineBreak::from_integer_value(uint
     auto result = icu4x::capi::icu4x_LineBreak_from_integer_value_mv1(other);
     return result.is_ok ? std::optional<icu4x::LineBreak>(icu4x::LineBreak::FromFFI(result.ok)) : std::nullopt;
 }
-#endif // icu4x_LineBreak_HPP
+#endif // ICU4X_LineBreak_HPP

@@ -1,5 +1,5 @@
-#ifndef icu4x_LineBreakOptionsV2_HPP
-#define icu4x_LineBreakOptionsV2_HPP
+#ifndef ICU4X_LineBreakOptionsV2_HPP
+#define ICU4X_LineBreakOptionsV2_HPP
 
 #include "LineBreakOptionsV2.d.hpp"
 
@@ -11,9 +11,9 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "LineBreakStrictness.hpp"
 #include "LineBreakWordOption.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -40,4 +40,4 @@ inline icu4x::LineBreakOptionsV2 icu4x::LineBreakOptionsV2::FromFFI(icu4x::capi:
 }
 
 
-#endif // icu4x_LineBreakOptionsV2_HPP
+#endif // ICU4X_LineBreakOptionsV2_HPP
