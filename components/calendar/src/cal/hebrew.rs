@@ -146,6 +146,8 @@ impl DateFieldsResolver for Hebrew {
             "M02" => match day {
                 // There is no day 30 in 5733 (there is in 5732)
                 1..=29 => 5733,
+                // Note (here and below): this must be > 29, not just == 30,
+                // since we have not yet applied a potential Overflow::Constrain.
                 _ => 5732,
             },
             "M03" => match day {
@@ -250,7 +252,7 @@ impl Calendar for Hebrew {
 
         let year = HebrewYearInfo::compute_with_keviyah(year.keviyah, h_year);
         let (month, day) = year.keviyah.month_day_for(day);
-        HebrewDateInner(ArithmeticDate::new_unchecked_ymd(year, month, day))
+        HebrewDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {

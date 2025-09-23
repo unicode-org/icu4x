@@ -127,7 +127,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         match calendrical_calculations::iso::iso_from_fixed(date) {
             Err(I32CastError::BelowMin) => ArithmeticDate::min_date(),
             Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
-            Ok((year, month, day)) => ArithmeticDate::new_unchecked_ymd(year, month, day),
+            Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
         }
     }
 

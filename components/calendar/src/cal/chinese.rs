@@ -6,7 +6,7 @@ use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, CalendarArithmetic};
 use crate::calendar_arithmetic::{DateFieldsResolver, PrecomputedDataSource};
 use crate::error::DateError;
-use crate::options::DateFromFieldsOptions;
+use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::provider::chinese_based::{ChineseBasedCache, PackedChineseBasedYearInfo};
 use crate::types::{MonthCode, MonthInfo};
 use crate::AsCalendar;
@@ -536,11 +536,17 @@ impl<X: Rules> DateFieldsResolver for LunarChinese<X> {
         &self,
         year: &Self::YearInfo,
         month_code: types::MonthCode,
-        _options: DateFromFieldsOptions,
+        options: DateFromFieldsOptions,
     ) -> Result<u8, DateError> {
-        // TODO: Handle leap months in common years!
-        year.parse_month_code(month_code)
-            .ok_or(DateError::UnknownMonthCode(month_code))
+        match year.parse_month_code(month_code) {
+            ComputedOrdinalMonth::Exact(val) => Ok(val),
+            ComputedOrdinalMonth::LeapToNormal(val)
+                if options.overflow == Some(Overflow::Constrain) =>
+            {
+                Ok(val)
+            }
+            _ => Err(DateError::UnknownMonthCode(month_code)),
+        }
     }
 }
 
@@ -555,8 +561,9 @@ impl<X: Rules> Calendar for LunarChinese<X> {
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
         let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        builder.year.validate_md(builder.month, builder.day)?;
-        Ok(ChineseDateInner(ArithmeticDate::new_unchecked(builder)))
+        Ok(ChineseDateInner(ArithmeticDate::try_from_builder(
+            builder, options,
+        )?))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -572,7 +579,7 @@ impl<X: Rules> Calendar for LunarChinese<X> {
             }
         };
         let (m, d) = y.md_from_rd(rd);
-        ChineseDateInner(ArithmeticDate::new_unchecked_ymd(y, m, d))
+        ChineseDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
@@ -592,7 +599,7 @@ impl<X: Rules> Calendar for LunarChinese<X> {
             }
         };
         let (m, d) = y.md_from_rd(rd);
-        ChineseDateInner(ArithmeticDate::new_unchecked_ymd(y, m, d))
+        ChineseDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
     fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
@@ -706,7 +713,7 @@ impl<X: Rules, A: AsCalendar<Calendar = LunarChinese<X>>> Date<A> {
         let year = calendar.as_calendar().0.year_data(related_iso_year);
         year.validate_md(month, day)?;
         Ok(Date::from_raw(
-            ChineseDateInner(ArithmeticDate::new_unchecked_ymd(year, month, day)),
+            ChineseDateInner(ArithmeticDate::new_unchecked(year, month, day)),
             calendar,
         ))
     }
@@ -986,55 +993,46 @@ impl LunarChineseYearData {
     }
 
     /// Get the ordinal lunar month from a code for chinese-based calendars.
-    pub(crate) fn parse_month_code(self, code: MonthCode) -> Option<u8> {
+    fn parse_month_code(self, code: MonthCode) -> ComputedOrdinalMonth {
         // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
         // it is impossible to actually have 14 months in a year.
         let leap_month = self.leap_month().unwrap_or(14);
 
-        if code.0.len() < 3 {
-            return None;
+        let Some((unadjusted @ 1..13, leap)) = code.parsed() else {
+            return ComputedOrdinalMonth::NotFound;
+        };
+
+        if leap && unadjusted + 1 == leap_month {
+            return ComputedOrdinalMonth::Exact(leap_month);
         }
-        let bytes = code.0.all_bytes();
-        if bytes[0] != b'M' {
-            return None;
+
+        let adjusted = unadjusted + (unadjusted + 1 > leap_month) as u8;
+
+        if leap {
+            ComputedOrdinalMonth::LeapToNormal(adjusted)
+        } else {
+            ComputedOrdinalMonth::Exact(adjusted)
         }
-        if code.0.len() == 4 && bytes[3] != b'L' {
-            return None;
-        }
-        // Unadjusted is zero-indexed month index, must add one to it to use
-        let mut unadjusted = 0;
-        if bytes[1] == b'0' {
-            if bytes[2] >= b'1' && bytes[2] <= b'9' {
-                unadjusted = bytes[2] - b'0';
-            }
-        } else if bytes[1] == b'1' && bytes[2] >= b'0' && bytes[2] <= b'2' {
-            unadjusted = 10 + bytes[2] - b'0';
-        }
-        if bytes[3] == b'L' {
-            // Asked for a leap month that doesn't exist
-            if unadjusted + 1 != leap_month {
-                return None;
-            } else {
-                // The leap month occurs after the regular month of the same name
-                return Some(unadjusted + 1);
-            }
-        }
-        if unadjusted != 0 {
-            // If the month has an index greater than that of the leap month,
-            // bump it up by one
-            if unadjusted + 1 > leap_month {
-                return Some(unadjusted + 1);
-            } else {
-                return Some(unadjusted);
-            }
-        }
-        None
     }
+}
+
+/// An ordinal month computed from a month code
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+enum ComputedOrdinalMonth {
+    /// The exact code was found
+    Exact(u8),
+    /// The exact code was not found, but the corresponding
+    /// non-leap ordinal month exists
+    LeapToNormal(u8),
+    /// The month code was not found at all, either as leap or non-leap
+    NotFound,
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::options::{DateFromFieldsOptions, Overflow};
+    use crate::types::DateFields;
     use crate::types::MonthCode;
     use calendrical_calculations::{iso::fixed_from_iso, rata_die::RataDie};
     use tinystr::tinystr;
@@ -1505,7 +1503,7 @@ mod test {
             let ordinal = year.parse_month_code(code);
             assert_eq!(
                 ordinal,
-                Some(ordinal_code_pair.0),
+                ComputedOrdinalMonth::Exact(ordinal_code_pair.0),
                 "Code to ordinal failed for year: {}, code: {code}",
                 year.related_iso
             );
@@ -1531,8 +1529,8 @@ mod test {
             let year = LunarChinese::new_china().0.year_data(year);
             let code = MonthCode(code);
             let ordinal = year.parse_month_code(code);
-            assert_eq!(
-                ordinal, None,
+            assert!(
+                !matches!(ordinal, ComputedOrdinalMonth::Exact(_)),
                 "Invalid month code failed for year: {}, code: {code}",
                 year.related_iso
             );
@@ -1722,6 +1720,42 @@ mod test {
             rd += 7043;
             iters += 1;
         }
+    }
+
+    #[test]
+    fn test_from_fields_constrain() {
+        let fields = DateFields {
+            day: core::num::NonZero::new(31),
+            month_code: Some(MonthCode("M01".parse().unwrap())),
+            extended_year: Some(1972),
+            ..Default::default()
+        };
+        let options = DateFromFieldsOptions {
+            overflow: Some(Overflow::Constrain),
+            ..Default::default()
+        };
+
+        let cal = LunarChinese::new_china();
+        let date = Date::try_from_fields(fields, options, cal).unwrap();
+        assert_eq!(
+            date.day_of_month().0,
+            29,
+            "Day was successfully constrained"
+        );
+
+        // 2022 did not have M01L, the month should be constrained back down
+        let fields = DateFields {
+            day: core::num::NonZero::new(1),
+            month_code: Some(MonthCode("M01L".parse().unwrap())),
+            extended_year: Some(2022),
+            ..Default::default()
+        };
+        let date = Date::try_from_fields(fields, options, cal).unwrap();
+        assert_eq!(
+            date.month().standard_code.0,
+            "M01",
+            "Month was successfully constrained"
+        );
     }
 
     #[test]
