@@ -69,7 +69,7 @@ members = [
     "utils/ixdtf",
     "utils/litemap",
     "utils/resb",
-    "utils/env_preferences",
+    "utils/host_info",
     "utils/tinystr",
     "utils/tzif",
     "utils/potential_utf",

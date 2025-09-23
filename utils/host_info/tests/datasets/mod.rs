@@ -16,22 +16,24 @@ const WINDOWS_DATASET: &str = include_str!("windows.txt");
 
 #[test]
 fn posix() {
-    use env_preferences::parse::posix::PosixLocale;
+    use icu_host_info::locale::PosixLocale;
+    use icu_locale_core::Locale;
 
     for locale in POSIX_DATASET.lines() {
         let posix_locale = PosixLocale::try_from_str(locale).expect(locale);
 
-        posix_locale.try_convert_lossy().expect(locale);
+        Locale::try_from(posix_locale).expect(locale);
     }
 }
 
 #[test]
 fn windows() {
-    use env_preferences::parse::windows::WindowsLocale;
+    use icu_host_info::locale::WindowsLocale;
+    use icu_locale_core::Locale;
 
     for locale in WINDOWS_DATASET.lines() {
         let windows_locale = WindowsLocale::try_from_str(locale).expect(locale);
 
-        windows_locale.try_convert_lossy().expect(locale);
+        Locale::try_from(windows_locale).expect(locale);
     }
 }
