@@ -7,11 +7,10 @@ use crate::SourceDataProvider;
 use icu::calendar::AnyCalendarKind;
 use icu_provider::prelude::*;
 
+#[cfg(test)]
 mod legacy;
-mod names;
 mod neo;
 mod neo_skeleton;
-mod patterns;
 mod skeletons;
 pub(crate) mod week_data;
 

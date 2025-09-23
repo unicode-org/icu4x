@@ -5,15 +5,15 @@
 //! TODO(#5613): Even though these markers are no longer exported, we need them in order to export
 //! semantic skeleton data markers. This should be refactored to skip the intermediate data struct.
 
+use crate::cldr_serde;
 use alloc::borrow::Cow;
-#[cfg(test)]
+use icu::calendar::types::MonthCode;
+use icu::datetime::provider::neo::*;
 use icu::datetime::provider::pattern::runtime;
-use icu::{calendar::types::MonthCode, datetime::provider::pattern::CoarseHourCycle};
-use tinystr::{tinystr, TinyStr4};
+use icu::datetime::provider::skeleton::*;
 use zerovec::ZeroMap;
 
 /// Data struct for date/time patterns broken down by pattern length.
-#[cfg(test)]
 pub struct LengthPatterns<'data> {
     /// A medium length date/time pattern.
     pub medium: runtime::Pattern<'data>,
@@ -22,7 +22,6 @@ pub struct LengthPatterns<'data> {
 }
 
 /// Pattern data for dates.
-#[cfg(test)]
 pub struct DateLengths<'data> {
     /// Date pattern data, broken down by pattern length.
     pub date: LengthPatterns<'data>,
@@ -31,16 +30,9 @@ pub struct DateLengths<'data> {
     pub length_combinations: icu::datetime::provider::skeleton::GenericLengthPatterns<'data>,
 }
 
-/// Pattern data for times.
-pub struct TimeLengths {
-    /// By default a locale will prefer one hour cycle type over another.
-    pub preferred_hour_cycle: CoarseHourCycle,
-}
-
 /// Symbol data for the months, weekdays, and eras needed to format a date.
 ///
 /// For more information on date time symbols, see [`FieldSymbol`](crate::provider::fields::FieldSymbol).
-#[cfg(test)]
 pub struct DateSymbols<'data> {
     /// Symbol data for months.
     pub months: months::Contexts<'data>,
@@ -67,7 +59,6 @@ pub mod months {
     ///Symbol data for the "format" style formatting of Month.
     ///
     ///The format style is used in contexts where it is different from the stand-alone form, ex: a case inflected form where the stand-alone form is the nominative case.
-    #[cfg(test)]
     pub struct FormatWidths<'data> {
         ///Wide length symbol for "format" style symbol for months.
         pub wide: Symbols<'data>,
@@ -76,7 +67,6 @@ pub mod months {
     ///Symbol data for the "stand-alone" style formatting of Month.
     ///
     ///The stand-alone style is used in contexts where the field is displayed by itself.
-    #[cfg(test)]
     pub struct StandAloneWidths<'data> {
         ///Abbreviated length symbol for "stand-alone" style symbol for months.
         pub abbreviated: Option<Symbols<'data>>,
@@ -89,7 +79,6 @@ pub mod months {
     }
 
     ///The struct containing the symbol data for Month that contains the "format" style symbol data ([`FormatWidths`]) and "stand-alone" style symbol data ([`StandAloneWidths`]).
-    #[cfg(test)]
     pub struct Contexts<'data> {
         /// The symbol data for "format" style symbols.
         pub format: FormatWidths<'data>,
@@ -101,6 +90,7 @@ pub mod months {
 impl months::Symbols<'_> {
     /// Get the symbol for the given month code
     pub fn get(&self, code: MonthCode) -> Option<&str> {
+        use tinystr::{tinystr, TinyStr4};
         match *self {
             Self::SolarTwelve(ref arr) => {
                 // The tinystr macro doesn't work in match patterns
@@ -156,13 +146,11 @@ pub mod weekdays {
     ///Symbol data for the "format" style formatting of Weekday.
     ///
     ///The format style is used in contexts where it is different from the stand-alone form, ex: a case inflected form where the stand-alone form is the nominative case.
-    #[cfg(test)]
     pub struct FormatWidths<'data> {
         ///Short length symbol for "format" style symbol for weekdays, if present.
         pub short: Option<Symbols<'data>>,
     }
 
-    #[cfg(test)]
     pub struct Contexts<'data> {
         /// The symbol data for "format" style symbols.
         pub format: FormatWidths<'data>,
@@ -189,7 +177,110 @@ pub mod day_periods {
     }
 }
 
-#[cfg(test)]
+impl From<&cldr_serde::ca::LengthPatterns> for LengthPatterns<'_> {
+    fn from(other: &cldr_serde::ca::LengthPatterns) -> Self {
+        // TODO(#308): Support numbering system variations. We currently throw them away.
+        Self {
+            medium: other
+                .medium
+                .get_pattern()
+                .parse()
+                .expect("Failed to parse pattern"),
+            short: other
+                .short
+                .get_pattern()
+                .parse()
+                .expect("Failed to parse pattern"),
+        }
+    }
+}
+
+impl From<&cldr_serde::ca::DateTimeFormats> for LengthPatterns<'_> {
+    fn from(other: &cldr_serde::ca::DateTimeFormats) -> Self {
+        // TODO(#308): Support numbering system variations. We currently throw them away.
+        Self {
+            medium: other
+                .medium
+                .get_pattern()
+                .parse()
+                .expect("Failed to parse pattern"),
+            short: other
+                .short
+                .get_pattern()
+                .parse()
+                .expect("Failed to parse pattern"),
+        }
+    }
+}
+
+impl From<&cldr_serde::ca::Dates> for DateLengths<'_> {
+    fn from(other: &cldr_serde::ca::Dates) -> Self {
+        let length_combinations_v1 = GenericLengthPatterns::from(&other.datetime_formats);
+
+        Self {
+            date: (&other.date_skeletons).into(),
+            length_combinations: length_combinations_v1,
+        }
+    }
+}
+
+impl<'a> From<&months::Symbols<'a>> for MonthNames<'a> {
+    fn from(other: &months::Symbols<'a>) -> Self {
+        match other {
+            months::Symbols::SolarTwelve(cow_list) => {
+                // Can't zero-copy convert a cow list to a VarZeroVec, so we need to allocate
+                // a new VarZeroVec. Since VarZeroVec does not implement `from_iter`, first we
+                // make a Vec of string references.
+                let vec: alloc::vec::Vec<&str> = cow_list.iter().map(|x| &**x).collect();
+                MonthNames::Linear((&vec).into())
+            }
+            months::Symbols::Other(zero_map) => {
+                // Only calendar that uses this is hebrew, we can assume it is 12-month
+                let mut vec = vec![""; 24];
+
+                for (k, v) in zero_map.iter() {
+                    let Some((number, leap)) = MonthCode(*k).parsed() else {
+                        debug_assert!(false, "Found unknown month code {k}");
+                        continue;
+                    };
+                    let offset = if leap { 12 } else { 0 };
+                    if let Some(entry) = vec.get_mut((number + offset - 1) as usize) {
+                        *entry = v;
+                    } else {
+                        debug_assert!(false, "Found out of bounds hebrew month code {k}")
+                    }
+                }
+                MonthNames::LeapLinear((&vec).into())
+            }
+        }
+    }
+}
+
+impl<'a> From<&weekdays::Symbols<'a>> for LinearNames<'a> {
+    fn from(other: &weekdays::Symbols<'a>) -> Self {
+        // Input is a cow array of length 7. Need to make it a VarZeroVec.
+        let vec: alloc::vec::Vec<&str> = other.0.iter().map(|x| &**x).collect();
+        LinearNames {
+            names: (&vec).into(),
+        }
+    }
+}
+
+impl<'a> From<&day_periods::Symbols<'a>> for LinearNames<'a> {
+    fn from(other: &day_periods::Symbols<'a>) -> Self {
+        // Input is a struct with four fields. Need to make it a VarZeroVec.
+        let vec: alloc::vec::Vec<&str> = match (other.noon.as_ref(), other.midnight.as_ref()) {
+            (Some(noon), Some(midnight)) => vec![&other.am, &other.pm, &noon, &midnight],
+            (Some(noon), None) => vec![&other.am, &other.pm, &noon],
+            (None, Some(midnight)) => vec![&other.am, &other.pm, "", &midnight],
+            (None, None) => vec![&other.am, &other.pm],
+        };
+        LinearNames {
+            names: (&vec).into(),
+        }
+    }
+}
+
 mod test {
     use super::*;
     use crate::cldr_serde::ca;
