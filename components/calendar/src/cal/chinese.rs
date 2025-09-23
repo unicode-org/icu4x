@@ -1013,47 +1013,21 @@ impl LunarChineseYearData {
         // it is impossible to actually have 14 months in a year.
         let leap_month = self.leap_month().unwrap_or(14);
 
-        if code.0.len() < 3 {
+        let Some((unadjusted @ 1..13, leap)) = code.parsed() else {
             return ComputedOrdinalMonth::NotFound;
+        };
+
+        if leap && unadjusted + 1 == leap_month {
+            return ComputedOrdinalMonth::Exact(leap_month);
         }
-        let bytes = code.0.all_bytes();
-        if bytes[0] != b'M' {
-            return ComputedOrdinalMonth::NotFound;
+
+        let adjusted = unadjusted + (unadjusted + 1 > leap_month) as u8;
+
+        if leap {
+            ComputedOrdinalMonth::LeapToNormal(adjusted)
+        } else {
+            ComputedOrdinalMonth::Exact(adjusted)
         }
-        if code.0.len() == 4 && bytes[3] != b'L' {
-            return ComputedOrdinalMonth::NotFound;
-        }
-        // Unadjusted is zero-indexed month index, must add one to it to use
-        let mut unadjusted = 0;
-        if bytes[1] == b'0' {
-            if bytes[2] >= b'1' && bytes[2] <= b'9' {
-                unadjusted = bytes[2] - b'0';
-            }
-        } else if bytes[1] == b'1' && bytes[2] >= b'0' && bytes[2] <= b'2' {
-            unadjusted = 10 + bytes[2] - b'0';
-        }
-        let mut month_found: fn(u8) -> ComputedOrdinalMonth = ComputedOrdinalMonth::Exact;
-        if bytes[3] == b'L' {
-            // Asked for a leap month that doesn't exist
-            if unadjusted + 1 != leap_month {
-                // Continue with the logic, but return LeapToNormal
-                // instead of Exact
-                month_found = ComputedOrdinalMonth::LeapToNormal;
-            } else {
-                // The leap month occurs after the regular month of the same name
-                return ComputedOrdinalMonth::Exact(unadjusted + 1);
-            }
-        }
-        if unadjusted != 0 {
-            // If the month has an index greater than that of the leap month,
-            // bump it up by one
-            if unadjusted + 1 > leap_month {
-                return month_found(unadjusted + 1);
-            } else {
-                return month_found(unadjusted);
-            }
-        }
-        ComputedOrdinalMonth::NotFound
     }
 }
 
