@@ -7,12 +7,12 @@ use crate::SourceDataProvider;
 use icu::calendar::AnyCalendarKind;
 use icu_provider::prelude::*;
 
-#[cfg(test)]
+#[cfg(test)] // TODO(#5613)
 mod legacy;
 mod neo;
 mod neo_skeleton;
 mod skeletons;
-pub(crate) mod week_data;
+mod week_data;
 
 /// These are the calendars that datetime needs names for. They are roughly the
 /// CLDR calendars, with the Hijri calendars merged, and the Japanese calendar split.
