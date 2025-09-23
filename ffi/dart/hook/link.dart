@@ -6,7 +6,6 @@ import 'package:code_assets/code_assets.dart'
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:hooks/hooks.dart' show LinkInput;
 import 'package:hooks/hooks.dart' show link;
-import 'package:icu4x/src/hook_helpers/link_helpers.dart' show SymbolReader;
 import 'package:icu4x/src/hook_helpers/shared.dart' show assetId, package;
 import 'package:logging/logging.dart' show Level, Logger;
 import 'package:native_toolchain_c/native_toolchain_c.dart'
@@ -26,18 +25,9 @@ Future<void> main(List<String> args) async {
       return;
     }
 
-    final usages = input.usages;
-    final symbolsToKeep = input.fetchSymbolsToBeKept;
-
-    final symbols = usages
-        ?.constantsOf(diplomatFfiUseIdentifier)
+    final usedSymbols = input.usages
+        ?.constantsOf(_diplomatFfiUseIdentifier)
         .map((instance) => instance['symbol'] as String);
-
-    final usedSymbols = symbols?.whereNot(
-      (symbol) => symbolsToKeep.entries.any(
-        (entry) => _isUnusedSymbol(symbol, entry.key, entry.value),
-      ),
-    );
 
     print('''
 ### Using symbols:
@@ -68,13 +58,10 @@ Future<void> main(List<String> args) async {
   });
 }
 
-const diplomatFfiUseIdentifier = record_use.Identifier(
+const _diplomatFfiUseIdentifier = record_use.Identifier(
   importUri: 'package:icu4x/src/bindings/lib.g.dart',
   name: '_DiplomatFfiUse',
 );
-
-bool _isUnusedSymbol(String symbol, String prefix, Set<String>? usedSymbols) =>
-    symbol.startsWith(prefix) && !(usedSymbols?.contains(symbol) ?? true);
 
 extension on LinkInput {
   record_use.RecordedUsages? get usages {
