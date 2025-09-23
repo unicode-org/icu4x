@@ -136,34 +136,9 @@ impl SourceDataProvider {
 
 #[cfg(test)]
 mod test {
-    use super::legacy::DateLengths;
     use super::*;
     use icu::datetime::provider::skeleton::{DateSkeletonPatterns, SkeletonData};
     use icu::locale::langid;
-
-    #[test]
-    fn test_basic_patterns() {
-        let data = SourceDataProvider::new_testing()
-            .get_datetime_resources(&langid!("cs").into(), Some(DatagenCalendar::Gregorian))
-            .unwrap();
-
-        let cs_dates = DateLengths::from(&data);
-
-        assert_eq!("yMd", cs_dates.date.medium.to_string());
-    }
-
-    #[test]
-    fn test_with_numbering_system() {
-        let data = SourceDataProvider::new_testing()
-            .get_datetime_resources(&langid!("haw").into(), Some(DatagenCalendar::Gregorian))
-            .unwrap();
-
-        let haw_dates = DateLengths::from(&data);
-
-        assert_eq!("yMMMd", haw_dates.date.medium.to_string());
-        // TODO(#308): Support numbering system variations. We currently throw them away.
-        assert_eq!("yyMd", haw_dates.date.short.to_string());
-    }
 
     #[test]
     #[ignore] // TODO(#5643)

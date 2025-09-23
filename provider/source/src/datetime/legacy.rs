@@ -6,11 +6,19 @@
 //! semantic skeleton data markers. This should be refactored to skip the intermediate data struct.
 
 use crate::cldr_serde;
+use crate::cldr_serde::ca;
+use crate::datetime::DatagenCalendar;
+use crate::SourceDataProvider;
 use alloc::borrow::Cow;
 use icu::calendar::types::MonthCode;
+use icu::datetime::preferences::HourCycle;
+use icu::datetime::provider::fields::components;
 use icu::datetime::provider::neo::*;
 use icu::datetime::provider::pattern::runtime;
 use icu::datetime::provider::skeleton::*;
+use icu::locale::langid;
+use std::collections::BTreeMap;
+use tinystr::{tinystr, TinyStr4};
 use zerovec::ZeroMap;
 
 /// Data struct for date/time patterns broken down by pattern length.
@@ -281,314 +289,361 @@ impl<'a> From<&day_periods::Symbols<'a>> for LinearNames<'a> {
     }
 }
 
-mod test {
-    use super::*;
-    use crate::cldr_serde::ca;
-    use crate::datetime::DatagenCalendar;
-    use crate::{cldr_serde, SourceDataProvider};
-    use icu::calendar::types::MonthCode;
-    use icu::locale::langid;
-    use std::borrow::Cow;
-    use std::collections::BTreeMap;
-    use tinystr::{tinystr, TinyStr4};
-    impl cldr_serde::ca::MonthSymbols {
-        fn get_unaliased(&self, other: &Self) -> Option<Self> {
-            if self == other {
-                None
-            } else {
-                Some(self.clone())
-            }
+impl cldr_serde::ca::MonthSymbols {
+    fn get_unaliased(&self, other: &Self) -> Option<Self> {
+        if self == other {
+            None
+        } else {
+            Some(self.clone())
         }
     }
-    impl ca::Contexts<cldr_serde::ca::MonthSymbols> {
-        fn get(&self, ctx: &(&'static [TinyStr4], &str)) -> months::Contexts<'static> {
-            months::Contexts {
-                format: self.format.get(ctx),
-                stand_alone: self
-                    .stand_alone
-                    .as_ref()
-                    .and_then(|stand_alone| {
-                        let abbreviated = stand_alone
-                            .abbreviated
-                            .as_ref()
-                            .and_then(|v| v.get_unaliased(&self.format.abbreviated));
-                        let narrow = stand_alone
-                            .narrow
-                            .as_ref()
-                            .and_then(|v| v.get_unaliased(&self.format.narrow));
-                        let short = if stand_alone.short == self.format.short {
-                            None
-                        } else {
-                            stand_alone.short.clone()
-                        };
-                        let wide = stand_alone
-                            .wide
-                            .as_ref()
-                            .and_then(|v| v.get_unaliased(&self.format.wide));
-                        if abbreviated.is_none()
-                            && narrow.is_none()
-                            && wide.is_none()
-                            && short.is_none()
-                        {
-                            None
-                        } else {
-                            Some(ca::StandAloneWidths {
-                                abbreviated,
-                                narrow,
-                                short,
-                                wide,
-                            })
-                        }
-                    })
-                    .map(|ref stand_alone| months::StandAloneWidths {
-                        abbreviated: stand_alone.abbreviated.as_ref().map(|width| width.get(ctx)),
-                        narrow: stand_alone.narrow.as_ref().map(|width| width.get(ctx)),
-                        short: stand_alone.short.as_ref().map(|width| width.get(ctx)),
-                        wide: stand_alone.wide.as_ref().map(|width| width.get(ctx)),
-                    }),
-            }
+}
+impl ca::Contexts<cldr_serde::ca::MonthSymbols> {
+    fn get(&self, ctx: &(&'static [TinyStr4], &str)) -> months::Contexts<'static> {
+        months::Contexts {
+            format: self.format.get(ctx),
+            stand_alone: self
+                .stand_alone
+                .as_ref()
+                .and_then(|stand_alone| {
+                    let abbreviated = stand_alone
+                        .abbreviated
+                        .as_ref()
+                        .and_then(|v| v.get_unaliased(&self.format.abbreviated));
+                    let narrow = stand_alone
+                        .narrow
+                        .as_ref()
+                        .and_then(|v| v.get_unaliased(&self.format.narrow));
+                    let short = if stand_alone.short == self.format.short {
+                        None
+                    } else {
+                        stand_alone.short.clone()
+                    };
+                    let wide = stand_alone
+                        .wide
+                        .as_ref()
+                        .and_then(|v| v.get_unaliased(&self.format.wide));
+                    if abbreviated.is_none()
+                        && narrow.is_none()
+                        && wide.is_none()
+                        && short.is_none()
+                    {
+                        None
+                    } else {
+                        Some(ca::StandAloneWidths {
+                            abbreviated,
+                            narrow,
+                            short,
+                            wide,
+                        })
+                    }
+                })
+                .map(|ref stand_alone| months::StandAloneWidths {
+                    abbreviated: stand_alone.abbreviated.as_ref().map(|width| width.get(ctx)),
+                    narrow: stand_alone.narrow.as_ref().map(|width| width.get(ctx)),
+                    short: stand_alone.short.as_ref().map(|width| width.get(ctx)),
+                    wide: stand_alone.wide.as_ref().map(|width| width.get(ctx)),
+                }),
         }
     }
-    impl ca::StandAloneWidths<cldr_serde::ca::MonthSymbols> {}
-    impl ca::FormatWidths<cldr_serde::ca::MonthSymbols> {
-        fn get(&self, ctx: &(&'static [TinyStr4], &str)) -> months::FormatWidths<'static> {
-            months::FormatWidths {
-                wide: self.wide.get(ctx),
-            }
+}
+impl ca::StandAloneWidths<cldr_serde::ca::MonthSymbols> {}
+impl ca::FormatWidths<cldr_serde::ca::MonthSymbols> {
+    fn get(&self, ctx: &(&'static [TinyStr4], &str)) -> months::FormatWidths<'static> {
+        months::FormatWidths {
+            wide: self.wide.get(ctx),
         }
     }
+}
 
-    impl cldr_serde::ca::MonthSymbols {
-        fn get(&self, ctx: &(&'static [TinyStr4], &str)) -> months::Symbols<'static> {
-            if ctx.0.len() == 12 && self.0.len() == 12 {
-                let mut arr: [Cow<'static, str>; 12] = Default::default();
-                for (k, v) in self.0.iter() {
+impl cldr_serde::ca::MonthSymbols {
+    fn get(&self, ctx: &(&'static [TinyStr4], &str)) -> months::Symbols<'static> {
+        if ctx.0.len() == 12 && self.0.len() == 12 {
+            let mut arr: [Cow<'static, str>; 12] = Default::default();
+            for (k, v) in self.0.iter() {
+                let index: usize = k
+                    .parse()
+                    .expect("CLDR month indices must parse as numbers!");
+                if index == 0 {
+                    panic!("CLDR month indices cannot be zero");
+                }
+
+                arr[index - 1] = Cow::Owned(v.into());
+            }
+
+            for (i, val) in arr.iter().enumerate() {
+                if val.is_empty() {
+                    panic!("Solar calendar does not have data for month {i}");
+                }
+            }
+            months::Symbols::SolarTwelve(arr)
+        } else {
+            let mut map = BTreeMap::new();
+            for (k, v) in self.0.iter() {
+                let code = if k == "7-yeartype-leap" && ctx.1 == "hebrew" {
+                    tinystr!(4, "M06L")
+                } else {
                     let index: usize = k
                         .parse()
                         .expect("CLDR month indices must parse as numbers!");
+
                     if index == 0 {
                         panic!("CLDR month indices cannot be zero");
                     }
+                    *ctx.0
+                        .get(index - 1)
+                        .expect("Found out of bounds month index for calendar")
+                };
 
-                    arr[index - 1] = Cow::Owned(v.into());
-                }
+                map.insert(MonthCode(code), v.as_ref());
+            }
+            months::Symbols::Other(map.into_iter().collect())
+        }
+    }
+}
 
-                for (i, val) in arr.iter().enumerate() {
-                    if val.is_empty() {
-                        panic!("Solar calendar does not have data for month {i}");
-                    }
-                }
-                months::Symbols::SolarTwelve(arr)
-            } else {
-                let mut map = BTreeMap::new();
-                for (k, v) in self.0.iter() {
-                    let code = if k == "7-yeartype-leap" && ctx.1 == "hebrew" {
-                        tinystr!(4, "M06L")
+impl cldr_serde::ca::DaySymbols {
+    fn get(&self, _ctx: &()) -> weekdays::Symbols<'static> {
+        weekdays::Symbols([
+            Cow::Owned(self.sun.clone()),
+            Cow::Owned(self.mon.clone()),
+            Cow::Owned(self.tue.clone()),
+            Cow::Owned(self.wed.clone()),
+            Cow::Owned(self.thu.clone()),
+            Cow::Owned(self.fri.clone()),
+            Cow::Owned(self.sat.clone()),
+        ])
+    }
+}
+impl cldr_serde::ca::DaySymbols {
+    fn get_unaliased(&self, other: &Self) -> Option<Self> {
+        if self == other {
+            None
+        } else {
+            Some(self.clone())
+        }
+    }
+}
+impl ca::Contexts<cldr_serde::ca::DaySymbols> {
+    fn get(&self, ctx: &()) -> weekdays::Contexts<'static> {
+        weekdays::Contexts {
+            format: weekdays::FormatWidths {
+                short: self.format.short.as_ref().map(|width| width.get(ctx)),
+            },
+            stand_alone: self
+                .stand_alone
+                .as_ref()
+                .map(|stand_alone| {
+                    let abbreviated = stand_alone
+                        .abbreviated
+                        .as_ref()
+                        .and_then(|v| v.get_unaliased(&self.format.abbreviated));
+                    let narrow = stand_alone
+                        .narrow
+                        .as_ref()
+                        .and_then(|v| v.get_unaliased(&self.format.narrow));
+                    let short = if stand_alone.short == self.format.short {
+                        None
                     } else {
-                        let index: usize = k
-                            .parse()
-                            .expect("CLDR month indices must parse as numbers!");
-
-                        if index == 0 {
-                            panic!("CLDR month indices cannot be zero");
-                        }
-                        *ctx.0
-                            .get(index - 1)
-                            .expect("Found out of bounds month index for calendar")
+                        stand_alone.short.clone()
                     };
+                    let wide = stand_alone
+                        .wide
+                        .as_ref()
+                        .and_then(|v| v.get_unaliased(&self.format.wide));
+                    abbreviated.is_some() || narrow.is_some() || wide.is_some() || short.is_some()
+                })
+                .unwrap_or(false),
+        }
+    }
+}
 
-                    map.insert(MonthCode(code), v.as_ref());
+fn convert_dates(other: &cldr_serde::ca::Dates, calendar: DatagenCalendar) -> DateSymbols<'static> {
+    DateSymbols {
+        months: other.months.get(&(
+            {
+                // This will need to be more complicated to handle lunar calendars
+                // https://github.com/unicode-org/icu4x/issues/2066
+                static SOLAR_MONTH_CODES: &[TinyStr4] = &[
+                    tinystr!(4, "M01"),
+                    tinystr!(4, "M02"),
+                    tinystr!(4, "M03"),
+                    tinystr!(4, "M04"),
+                    tinystr!(4, "M05"),
+                    tinystr!(4, "M06"),
+                    tinystr!(4, "M07"),
+                    tinystr!(4, "M08"),
+                    tinystr!(4, "M09"),
+                    tinystr!(4, "M10"),
+                    tinystr!(4, "M11"),
+                    tinystr!(4, "M12"),
+                    tinystr!(4, "M13"),
+                ];
+                // CLDR labels the regular months and M05L by their ordinals
+                // whereas M06L is stored as 7-yeartype-leap
+                static HEBREW_MONTH_CODES: &[TinyStr4] = &[
+                    tinystr!(4, "M01"),
+                    tinystr!(4, "M02"),
+                    tinystr!(4, "M03"),
+                    tinystr!(4, "M04"),
+                    tinystr!(4, "M05"),
+                    tinystr!(4, "M05L"),
+                    tinystr!(4, "M06"),
+                    tinystr!(4, "M07"),
+                    tinystr!(4, "M08"),
+                    tinystr!(4, "M09"),
+                    tinystr!(4, "M10"),
+                    tinystr!(4, "M11"),
+                    tinystr!(4, "M12"),
+                    // M06L is handled separately in MonthSymbols code
+                ];
+                match calendar {
+                    DatagenCalendar::Buddhist
+                    | DatagenCalendar::Chinese
+                    | DatagenCalendar::Dangi
+                    | DatagenCalendar::Gregorian
+                    | DatagenCalendar::Indian
+                    | DatagenCalendar::Hijri
+                    | DatagenCalendar::JapaneseExtended
+                    | DatagenCalendar::JapaneseModern
+                    | DatagenCalendar::Persian
+                    | DatagenCalendar::Roc => &SOLAR_MONTH_CODES[0..12],
+                    DatagenCalendar::Coptic | DatagenCalendar::Ethiopic => SOLAR_MONTH_CODES,
+                    DatagenCalendar::Hebrew => HEBREW_MONTH_CODES,
                 }
-                months::Symbols::Other(map.into_iter().collect())
-            }
-        }
+            },
+            calendar.cldr_name(),
+        )),
+        weekdays: other.days.get(&()),
     }
+}
 
-    impl cldr_serde::ca::DaySymbols {
-        fn get(&self, _ctx: &()) -> weekdays::Symbols<'static> {
-            weekdays::Symbols([
-                Cow::Owned(self.sun.clone()),
-                Cow::Owned(self.mon.clone()),
-                Cow::Owned(self.tue.clone()),
-                Cow::Owned(self.wed.clone()),
-                Cow::Owned(self.thu.clone()),
-                Cow::Owned(self.fri.clone()),
-                Cow::Owned(self.sat.clone()),
-            ])
-        }
-    }
-    impl cldr_serde::ca::DaySymbols {
-        fn get_unaliased(&self, other: &Self) -> Option<Self> {
-            if self == other {
-                None
-            } else {
-                Some(self.clone())
-            }
-        }
-    }
-    impl ca::Contexts<cldr_serde::ca::DaySymbols> {
-        fn get(&self, ctx: &()) -> weekdays::Contexts<'static> {
-            weekdays::Contexts {
-                format: weekdays::FormatWidths {
-                    short: self.format.short.as_ref().map(|width| width.get(ctx)),
-                },
-                stand_alone: self
-                    .stand_alone
-                    .as_ref()
-                    .map(|stand_alone| {
-                        let abbreviated = stand_alone
-                            .abbreviated
-                            .as_ref()
-                            .and_then(|v| v.get_unaliased(&self.format.abbreviated));
-                        let narrow = stand_alone
-                            .narrow
-                            .as_ref()
-                            .and_then(|v| v.get_unaliased(&self.format.narrow));
-                        let short = if stand_alone.short == self.format.short {
-                            None
-                        } else {
-                            stand_alone.short.clone()
-                        };
-                        let wide = stand_alone
-                            .wide
-                            .as_ref()
-                            .and_then(|v| v.get_unaliased(&self.format.wide));
-                        abbreviated.is_some()
-                            || narrow.is_some()
-                            || wide.is_some()
-                            || short.is_some()
-                    })
-                    .unwrap_or(false),
-            }
-        }
-    }
+#[test]
+fn test_basic_symbols() {
+    use icu::calendar::types::MonthCode;
+    use tinystr::tinystr;
 
-    fn convert_dates(
-        other: &cldr_serde::ca::Dates,
-        calendar: DatagenCalendar,
-    ) -> DateSymbols<'static> {
-        DateSymbols {
-            months: other.months.get(&(
-                {
-                    // This will need to be more complicated to handle lunar calendars
-                    // https://github.com/unicode-org/icu4x/issues/2066
-                    static SOLAR_MONTH_CODES: &[TinyStr4] = &[
-                        tinystr!(4, "M01"),
-                        tinystr!(4, "M02"),
-                        tinystr!(4, "M03"),
-                        tinystr!(4, "M04"),
-                        tinystr!(4, "M05"),
-                        tinystr!(4, "M06"),
-                        tinystr!(4, "M07"),
-                        tinystr!(4, "M08"),
-                        tinystr!(4, "M09"),
-                        tinystr!(4, "M10"),
-                        tinystr!(4, "M11"),
-                        tinystr!(4, "M12"),
-                        tinystr!(4, "M13"),
-                    ];
-                    // CLDR labels the regular months and M05L by their ordinals
-                    // whereas M06L is stored as 7-yeartype-leap
-                    static HEBREW_MONTH_CODES: &[TinyStr4] = &[
-                        tinystr!(4, "M01"),
-                        tinystr!(4, "M02"),
-                        tinystr!(4, "M03"),
-                        tinystr!(4, "M04"),
-                        tinystr!(4, "M05"),
-                        tinystr!(4, "M05L"),
-                        tinystr!(4, "M06"),
-                        tinystr!(4, "M07"),
-                        tinystr!(4, "M08"),
-                        tinystr!(4, "M09"),
-                        tinystr!(4, "M10"),
-                        tinystr!(4, "M11"),
-                        tinystr!(4, "M12"),
-                        // M06L is handled separately in MonthSymbols code
-                    ];
-                    match calendar {
-                        DatagenCalendar::Buddhist
-                        | DatagenCalendar::Chinese
-                        | DatagenCalendar::Dangi
-                        | DatagenCalendar::Gregorian
-                        | DatagenCalendar::Indian
-                        | DatagenCalendar::Hijri
-                        | DatagenCalendar::JapaneseExtended
-                        | DatagenCalendar::JapaneseModern
-                        | DatagenCalendar::Persian
-                        | DatagenCalendar::Roc => &SOLAR_MONTH_CODES[0..12],
-                        DatagenCalendar::Coptic | DatagenCalendar::Ethiopic => SOLAR_MONTH_CODES,
-                        DatagenCalendar::Hebrew => HEBREW_MONTH_CODES,
-                    }
-                },
-                calendar.cldr_name(),
-            )),
-            weekdays: other.days.get(&()),
-        }
-    }
-    #[test]
-    fn test_basic_symbols() {
-        use icu::calendar::types::MonthCode;
-        use tinystr::tinystr;
+    let provider = SourceDataProvider::new_testing();
 
-        let provider = SourceDataProvider::new_testing();
+    let data = provider
+        .get_datetime_resources(&langid!("cs").into(), Some(DatagenCalendar::Gregorian))
+        .unwrap();
 
-        let data = provider
-            .get_datetime_resources(&langid!("cs").into(), Some(DatagenCalendar::Gregorian))
-            .unwrap();
+    let cs_dates = convert_dates(&data, DatagenCalendar::Gregorian);
 
-        let cs_dates = convert_dates(&data, DatagenCalendar::Gregorian);
-
-        assert_eq!(
-            "srpna",
-            cs_dates
-                .months
-                .format
-                .wide
-                .get(MonthCode(tinystr!(4, "M08")))
-                .unwrap()
-        );
-
-        assert_eq!("po", cs_dates.weekdays.format.short.as_ref().unwrap().0[1]);
-    }
-
-    #[test]
-    fn unalias_contexts() {
-        let provider = SourceDataProvider::new_testing();
-
-        let data = provider
-            .get_datetime_resources(&langid!("cs").into(), Some(DatagenCalendar::Gregorian))
-            .unwrap();
-
-        let cs_dates = convert_dates(&data, DatagenCalendar::Gregorian);
-
-        // Czech months are not unaliased because `wide` differs.
-        assert!(cs_dates.months.stand_alone.is_some());
-
-        // Czech months are not unaliased because `wide` differs.
-        assert!(cs_dates
+    assert_eq!(
+        "srpna",
+        cs_dates
             .months
-            .stand_alone
-            .as_ref()
+            .format
+            .wide
+            .get(MonthCode(tinystr!(4, "M08")))
             .unwrap()
-            .abbreviated
-            .is_none());
-        assert!(cs_dates
-            .months
-            .stand_alone
-            .as_ref()
-            .unwrap()
-            .short
-            .is_none());
-        assert!(cs_dates
-            .months
-            .stand_alone
-            .as_ref()
-            .unwrap()
-            .narrow
-            .is_none());
-        assert!(cs_dates.months.stand_alone.as_ref().unwrap().wide.is_some());
+    );
 
-        // Czech weekdays are unaliased because they completely overlap.
-        assert!(!cs_dates.weekdays.stand_alone);
-    }
+    assert_eq!("po", cs_dates.weekdays.format.short.as_ref().unwrap().0[1]);
+}
+
+#[test]
+fn unalias_contexts() {
+    let provider = SourceDataProvider::new_testing();
+
+    let data = provider
+        .get_datetime_resources(&langid!("cs").into(), Some(DatagenCalendar::Gregorian))
+        .unwrap();
+
+    let cs_dates = convert_dates(&data, DatagenCalendar::Gregorian);
+
+    // Czech months are not unaliased because `wide` differs.
+    assert!(cs_dates.months.stand_alone.is_some());
+
+    // Czech months are not unaliased because `wide` differs.
+    assert!(cs_dates
+        .months
+        .stand_alone
+        .as_ref()
+        .unwrap()
+        .abbreviated
+        .is_none());
+    assert!(cs_dates
+        .months
+        .stand_alone
+        .as_ref()
+        .unwrap()
+        .short
+        .is_none());
+    assert!(cs_dates
+        .months
+        .stand_alone
+        .as_ref()
+        .unwrap()
+        .narrow
+        .is_none());
+    assert!(cs_dates.months.stand_alone.as_ref().unwrap().wide.is_some());
+
+    // Czech weekdays are unaliased because they completely overlap.
+    assert!(!cs_dates.weekdays.stand_alone);
+}
+
+// TODO(#586) - Append items support needs to be added.
+#[test]
+#[should_panic]
+fn test_missing_append_items_support() {
+    let mut components = components::Bag::empty();
+    components.year = Some(components::Year::Numeric);
+    components.month = Some(components::Month::Long);
+    components.day = Some(components::Day::NumericDayOfMonth);
+    // This will be appended.
+    components.time_zone_name = Some(components::TimeZoneName::LongSpecific);
+    let requested_fields = components.to_vec_fields(HourCycle::H23);
+
+    let data = SourceDataProvider::new_testing()
+        .get_datetime_resources(&langid!("en").into(), Some(DatagenCalendar::Gregorian))
+        .unwrap();
+    let patterns = DateLengths::from(&data);
+    let skeletons = DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
+
+    match create_best_pattern_for_fields(
+        &skeletons,
+        &patterns.length_combinations,
+        &requested_fields,
+        &Default::default(),
+        false,
+    ) {
+        BestSkeleton::AllFieldsMatch(available_format_pattern, _) => {
+            // TODO - Append items are needed here.
+            assert_eq!(
+                available_format_pattern
+                    .expect_pattern("pattern should not have plural variants")
+                    .to_string()
+                    .as_str(),
+                "MMMM d, y vvvv"
+            )
+        }
+        best => panic!("Unexpected {best:?}"),
+    };
+}
+
+#[test]
+fn test_basic_patterns() {
+    let data = SourceDataProvider::new_testing()
+        .get_datetime_resources(&langid!("cs").into(), Some(DatagenCalendar::Gregorian))
+        .unwrap();
+
+    let cs_dates = DateLengths::from(&data);
+
+    assert_eq!("yMd", cs_dates.date.medium.to_string());
+}
+
+#[test]
+fn test_with_numbering_system() {
+    let data = SourceDataProvider::new_testing()
+        .get_datetime_resources(&langid!("haw").into(), Some(DatagenCalendar::Gregorian))
+        .unwrap();
+
+    let haw_dates = DateLengths::from(&data);
+
+    assert_eq!("yMMMd", haw_dates.date.medium.to_string());
+    // TODO(#308): Support numbering system variations. We currently throw them away.
+    assert_eq!("yyMd", haw_dates.date.short.to_string());
 }
