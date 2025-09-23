@@ -594,7 +594,7 @@ impl<X: Rules> Calendar for LunarChinese<X> {
             }
         };
         let (m, d) = y.md_from_rd(rd);
-        ChineseDateInner(ArithmeticDate::new_unchecked_ymd(y, m, d))
+        ChineseDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
@@ -614,7 +614,7 @@ impl<X: Rules> Calendar for LunarChinese<X> {
             }
         };
         let (m, d) = y.md_from_rd(rd);
-        ChineseDateInner(ArithmeticDate::new_unchecked_ymd(y, m, d))
+        ChineseDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
     fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
@@ -728,7 +728,7 @@ impl<X: Rules, A: AsCalendar<Calendar = LunarChinese<X>>> Date<A> {
         let year = calendar.as_calendar().0.year_data(related_iso_year);
         year.validate_md(month, day)?;
         Ok(Date::from_raw(
-            ChineseDateInner(ArithmeticDate::new_unchecked_ymd(year, month, day)),
+            ChineseDateInner(ArithmeticDate::new_unchecked(year, month, day)),
             calendar,
         ))
     }

@@ -265,7 +265,7 @@ impl Calendar for Hebrew {
 
         let year = HebrewYearInfo::compute_with_keviyah(year.keviyah, h_year);
         let (month, day) = year.keviyah.month_day_for(day);
-        HebrewDateInner(ArithmeticDate::new_unchecked_ymd(year, month, day))
+        HebrewDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {

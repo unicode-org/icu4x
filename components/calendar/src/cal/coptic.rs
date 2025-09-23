@@ -163,7 +163,7 @@ impl Calendar for Coptic {
             match calendrical_calculations::coptic::coptic_from_fixed(rd) {
                 Err(I32CastError::BelowMin) => ArithmeticDate::min_date(),
                 Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
-                Ok((year, month, day)) => ArithmeticDate::new_unchecked_ymd(year, month, day),
+                Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
             },
         )
     }

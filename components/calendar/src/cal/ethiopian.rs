@@ -175,7 +175,7 @@ impl Calendar for Ethiopian {
             match calendrical_calculations::ethiopian::ethiopian_from_fixed(rd) {
                 Err(I32CastError::BelowMin) => ArithmeticDate::min_date(),
                 Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
-                Ok((year, month, day)) => ArithmeticDate::new_unchecked_ymd(
+                Ok((year, month, day)) => ArithmeticDate::new_unchecked(
                     // calendrical calculations returns years in the Incarnation era
                     year + INCARNATION_OFFSET,
                     month,

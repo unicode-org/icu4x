@@ -662,7 +662,7 @@ impl<S: HijriSighting> Calendar for Hijri<S> {
             }
         };
         let (m, d) = y.md_from_rd(rd);
-        HijriDateInner(ArithmeticDate::new_unchecked_ymd(y, m, d))
+        HijriDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {

@@ -182,7 +182,7 @@ impl PrecomputedDataSource<i32> for () {
 
 impl<C: CalendarArithmetic> ArithmeticDate<C> {
     #[inline]
-    pub(crate) const fn new_unchecked_ymd(year: C::YearInfo, month: u8, day: u8) -> Self {
+    pub(crate) const fn new_unchecked(year: C::YearInfo, month: u8, day: u8) -> Self {
         ArithmeticDate {
             year,
             month,
@@ -196,7 +196,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     where
         C: CalendarArithmetic<YearInfo = i32>,
     {
-        ArithmeticDate::new_unchecked_ymd(i32::MIN, 1, 1)
+        ArithmeticDate::new_unchecked(i32::MIN, 1, 1)
     }
 
     #[inline]
@@ -206,7 +206,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     {
         let year = i32::MAX;
         let (month, day) = C::last_month_day_in_provided_year(year);
-        ArithmeticDate::new_unchecked_ymd(year, month, day)
+        ArithmeticDate::new_unchecked(year, month, day)
     }
 
     #[inline]
@@ -300,7 +300,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     #[inline]
     pub fn date_from_year_day(year: C::YearInfo, year_day: u16) -> ArithmeticDate<C> {
         let (month, day) = C::date_from_provided_year_day(year, year_day);
-        ArithmeticDate::new_unchecked_ymd(year, month, day)
+        ArithmeticDate::new_unchecked(year, month, day)
     }
 
     #[inline]
@@ -357,7 +357,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         options: DateFromFieldsOptions,
     ) -> Result<Self, RangeError> {
         let ArithmeticDateBuilder { year, month, day } = builder;
-        Ok(Self::new_unchecked_ymd(
+        Ok(Self::new_unchecked(
             year,
             range_check_with_overflow(
                 month,
@@ -479,21 +479,21 @@ mod tests {
     #[test]
     fn test_ord() {
         let dates_in_order = [
-            ArithmeticDate::<Iso>::new_unchecked_ymd(-10, 1, 1),
-            ArithmeticDate::<Iso>::new_unchecked_ymd(-10, 1, 2),
-            ArithmeticDate::<Iso>::new_unchecked_ymd(-10, 2, 1),
-            ArithmeticDate::<Iso>::new_unchecked_ymd(-1, 1, 1),
-            ArithmeticDate::<Iso>::new_unchecked_ymd(-1, 1, 2),
-            ArithmeticDate::<Iso>::new_unchecked_ymd(-1, 2, 1),
-            ArithmeticDate::<Iso>::new_unchecked_ymd(0, 1, 1),
-            ArithmeticDate::<Iso>::new_unchecked_ymd(0, 1, 2),
-            ArithmeticDate::<Iso>::new_unchecked_ymd(0, 2, 1),
-            ArithmeticDate::<Iso>::new_unchecked_ymd(1, 1, 1),
-            ArithmeticDate::<Iso>::new_unchecked_ymd(1, 1, 2),
-            ArithmeticDate::<Iso>::new_unchecked_ymd(1, 2, 1),
-            ArithmeticDate::<Iso>::new_unchecked_ymd(10, 1, 1),
-            ArithmeticDate::<Iso>::new_unchecked_ymd(10, 1, 2),
-            ArithmeticDate::<Iso>::new_unchecked_ymd(10, 2, 1),
+            ArithmeticDate::<Iso>::new_unchecked(-10, 1, 1),
+            ArithmeticDate::<Iso>::new_unchecked(-10, 1, 2),
+            ArithmeticDate::<Iso>::new_unchecked(-10, 2, 1),
+            ArithmeticDate::<Iso>::new_unchecked(-1, 1, 1),
+            ArithmeticDate::<Iso>::new_unchecked(-1, 1, 2),
+            ArithmeticDate::<Iso>::new_unchecked(-1, 2, 1),
+            ArithmeticDate::<Iso>::new_unchecked(0, 1, 1),
+            ArithmeticDate::<Iso>::new_unchecked(0, 1, 2),
+            ArithmeticDate::<Iso>::new_unchecked(0, 2, 1),
+            ArithmeticDate::<Iso>::new_unchecked(1, 1, 1),
+            ArithmeticDate::<Iso>::new_unchecked(1, 1, 2),
+            ArithmeticDate::<Iso>::new_unchecked(1, 2, 1),
+            ArithmeticDate::<Iso>::new_unchecked(10, 1, 1),
+            ArithmeticDate::<Iso>::new_unchecked(10, 1, 2),
+            ArithmeticDate::<Iso>::new_unchecked(10, 2, 1),
         ];
         for (i, i_date) in dates_in_order.iter().enumerate() {
             for (j, j_date) in dates_in_order.iter().enumerate() {

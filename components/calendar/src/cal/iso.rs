@@ -44,7 +44,7 @@ pub struct Iso;
 impl Iso {
     pub(crate) const REFERENCE_YEAR: i32 = 1972;
     pub(crate) const LAST_DAY_OF_REFERENCE_YEAR: ArithmeticDate<Iso> =
-        ArithmeticDate::<Iso>::new_unchecked_ymd(1972, 12, 31);
+        ArithmeticDate::<Iso>::new_unchecked(1972, 12, 31);
 }
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
@@ -139,7 +139,7 @@ impl Calendar for Iso {
         IsoDateInner(match calendrical_calculations::iso::iso_from_fixed(date) {
             Err(I32CastError::BelowMin) => ArithmeticDate::min_date(),
             Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
-            Ok((year, month, day)) => ArithmeticDate::new_unchecked_ymd(year, month, day),
+            Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
         })
     }
 
