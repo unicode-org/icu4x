@@ -2118,6 +2118,7 @@ dependencies = [
  "icu_locale_core",
  "icu_properties",
  "icu_provider",
+ "icu_time",
  "litemap",
  "potential_utf",
  "tinystr",
