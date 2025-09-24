@@ -29,8 +29,6 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
-extern crate alloc;
-
 mod cptrie;
 mod error;
 mod impl_const;

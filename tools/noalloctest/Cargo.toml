@@ -20,6 +20,7 @@ publish = false
 
 [dependencies]
 # Dependencies that should be no-alloc should go here
+icu_collections = { workspace = true }
 icu_locale_core = { workspace = true, features = ["serde"] }
 icu_provider = { workspace = true, features = ["baked", "logging", "sync", "serde", "deserialize_postcard_1"] }
 litemap = { workspace = true, features = ["yoke"] }
