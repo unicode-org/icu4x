@@ -7,7 +7,11 @@
     - `icu_calendar`
       - Fix `und-SA-u-ca-islamic` (unicode-org#6736)
     - `icu_properties`
-      - Add support for missing binary properties.
+      - Add support for missing binary properties:
+        - ID_Compat_Math_Continue
+        - ID_Compat_Math_Start
+        - IDS_Unary_Operator
+        - Modifier_Combining_Mark
 - Data model and providers
     - ...
 - FFI
