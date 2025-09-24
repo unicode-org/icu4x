@@ -174,6 +174,7 @@ pub trait TryWriteable {
         LengthHint::undefined()
     }
 
+    /// Returns a `&str` that matches the output of `write_to` (if it succeeds), if possible.
     fn try_borrow(&self) -> Option<&str> {
         None
     }
