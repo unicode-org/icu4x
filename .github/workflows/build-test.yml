@@ -613,7 +613,7 @@ jobs:
           notify_when: failure
           status: failure # We do the filtering earlier
           notification_title: ''
-          message_format: ${{ format('{{emoji}} {0} CI failed!' , ((github.event_name == 'schedule') && 'Beta' || (github.event_name == 'push') && 'Main' || 'Manually dispatched')) }}
+          message_format: ${{ format('{{emoji}} {0} CI failed!' , (github.event_name == 'push' && 'Main' || (github.event.schedule == '1 14 * * *' && 'Beta' || 'Nightly') }}
           footer: '<{run_url}|View failure> | <https://github.com/unicode-org/icu4x/actions?query=event%3A${{ github.event_name }}|CI history for `${{ github.event_name }}`>'
         env:
           # Notify main slack of failure for beta runs and and main CI, nightly slack otherwise
