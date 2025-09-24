@@ -24,7 +24,7 @@ all-features = true
 [dependencies]
 displaydoc = { workspace = true }
 smallvec = { workspace = true }
-writeable = { workspace = true }
+writeable = { workspace = true, features = ["alloc"] }
 
 ryu = { workspace = true, features = ["small"], optional = true }
 

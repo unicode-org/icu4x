@@ -26,7 +26,8 @@ serde_json = { workspace = true }
 bincode = { workspace = true }
 
 [features]
-alloc = ["serde?/alloc", "zerovec?/alloc"]
+default = ["alloc"]
+alloc = ["serde?/alloc", "writeable/alloc", "zerovec?/alloc"]
 databake = ["dep:databake"]
 serde = ["dep:serde"]
 writeable = ["dep:writeable", "alloc"]

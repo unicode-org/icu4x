@@ -2146,6 +2146,7 @@ dependencies = [
  "litemap",
  "potential_utf",
  "tinystr",
+ "writeable",
  "yoke",
  "zerofrom",
  "zerotrie",

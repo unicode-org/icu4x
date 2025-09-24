@@ -102,6 +102,7 @@ impl<T: Writeable + ?Sized> Writeable for WithPart<T> {
     }
 
     #[inline]
+    #[cfg(feature = "alloc")]
     fn write_to_string(&self) -> Cow<'_, str> {
         self.writeable.write_to_string()
     }

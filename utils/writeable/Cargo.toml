@@ -31,7 +31,9 @@ rand = { workspace = true, features = ["small_rng"] }
 criterion = { workspace = true }
 
 [features]
+default = ["alloc"]
 either = ["dep:either"]
+alloc = []
 
 [lib]
 bench = false  # This option is required for Benchmark CI

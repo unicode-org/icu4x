@@ -23,6 +23,7 @@ publish = false
 litemap = { workspace = true }
 potential_utf = { workspace = true }
 tinystr = { workspace = true }
+writeable = { workspace = true }
 yoke = { workspace = true }
 zerofrom = { workspace = true }
 zerotrie = { workspace = true }
