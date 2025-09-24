@@ -172,8 +172,8 @@ impl<'a> SliceOrString<'a> {
 ///         Ok(())
 ///     }
 ///     #[inline]
-///     fn write_to_string(&self) -> Cow<'_, str> {
-///         writeable::to_string_or_borrow(self, self.0.as_bytes())
+///     fn try_borrow(&self) -> Option<&str> {
+///         self.0.is_ascii_lowercase().then_some(&self.0)
 ///     }
 /// }
 ///

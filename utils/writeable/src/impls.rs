@@ -104,21 +104,9 @@ impl Writeable for str {
         LengthHint::exact(self.len())
     }
 
-    /// Returns a borrowed `str`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use std::borrow::Cow;
-    /// use writeable::Writeable;
-    ///
-    /// let cow = "foo".write_to_string();
-    /// assert!(matches!(cow, Cow::Borrowed(_)));
-    /// ```
     #[inline]
-    #[cfg(feature = "alloc")]
-    fn write_to_string(&self) -> Cow<'_, str> {
-        Cow::Borrowed(self)
+    fn try_borrow(&self) -> Option<&str> {
+        Some(self)
     }
 }
 
@@ -135,8 +123,8 @@ impl Writeable for String {
     }
 
     #[inline]
-    fn write_to_string(&self) -> Cow<'_, str> {
-        Cow::Borrowed(self)
+    fn try_borrow(&self) -> Option<&str> {
+        Some(self)
     }
 }
 
@@ -177,6 +165,11 @@ impl<T: Writeable + ?Sized> Writeable for &T {
     }
 
     #[inline]
+    fn try_borrow(&self) -> Option<&str> {
+        (*self).try_borrow()
+    }
+
+    #[inline]
     #[cfg(feature = "alloc")]
     fn write_to_string(&self) -> Cow<'_, str> {
         (*self).write_to_string()
@@ -198,6 +191,10 @@ macro_rules! impl_write_smart_pointer {
             #[inline]
             fn writeable_length_hint(&self) -> LengthHint {
                 core::borrow::Borrow::<T>::borrow(self).writeable_length_hint()
+            }
+            #[inline]
+            fn try_borrow(&self) -> Option<&str> {
+                core::borrow::Borrow::<T>::borrow(self).try_borrow()
             }
             #[inline]
             fn write_to_string(&self) -> Cow<'_, str> {

@@ -283,17 +283,23 @@ pub trait Writeable {
         LengthHint::undefined()
     }
 
-    /// Creates a new `String` with the data from this `Writeable`. Like `ToString`,
-    /// but smaller and faster.
+    /// Returns a `&str` that matches the output of `write_to`, if possible.
     ///
-    /// The default impl allocates an owned `String`. However, if it is possible to return a
-    /// borrowed string, overwrite this method to return a `Cow::Borrowed`.
+    /// This method is used to avoid materializing a [`String`] in `write_to_string`.
+    fn try_borrow(&self) -> Option<&str> {
+        None
+    }
+
+    /// Creates a new string with the data from this `Writeable`.
+    ///
+    /// Unlike [`to_string`](ToString::to_string), this does not pull in `core::fmt`
+    /// code, and borrows the string if possible.
     ///
     /// To remove the `Cow` wrapper, call `.into_owned()` or `.as_str()` as appropriate.
     ///
     /// # Examples
     ///
-    /// Inspect a `Writeable` before writing it to the sink:
+    /// Inspect a [`Writeable`] before writing it to the sink:
     ///
     /// ```
     /// use core::fmt::{Result, Write};
@@ -322,8 +328,27 @@ pub trait Writeable {
     ///     w.write_to_string().into_owned()
     /// }
     /// ```
+    ///
+    /// # Note to implementors
+    ///
+    /// This method has a default implementation in terms of `try_borrow`,
+    /// `writeable_length_hint`, and `write_to`. The only case
+    /// where this should be implemented is if the computation of `try_borrow`
+    /// requires a full invocation of `write_to`. In this case, implement this
+    /// using [`to_string_or_borrow`].
+    ///
+    /// # `alloc` Cargo feature
+    ///
+    /// Calling or implementing this method requires the `alloc` Cargo feature.
+    /// However, as all the methods required by the default implementation do
+    /// not require the `alloc` Cargo feature, a caller that uses the feature
+    /// can still call this on types from crates that don't use the `alloc`
+    /// Cargo feature.
     #[cfg(feature = "alloc")]
     fn write_to_string(&self) -> Cow<'_, str> {
+        if let Some(borrow) = self.try_borrow() {
+            return Cow::Borrowed(borrow);
+        }
         let hint = self.writeable_length_hint();
         if hint.is_zero() {
             return Cow::Borrowed("");

@@ -236,17 +236,6 @@ impl writeable::Writeable for Other {
         }
         result
     }
-
-    #[cfg(feature = "alloc")]
-    fn write_to_string(&self) -> alloc::borrow::Cow<'_, str> {
-        if self.keys.is_empty() {
-            return alloc::borrow::Cow::Borrowed("");
-        }
-        let mut string =
-            alloc::string::String::with_capacity(self.writeable_length_hint().capacity());
-        let _ = self.write_to(&mut string);
-        alloc::borrow::Cow::Owned(string)
-    }
 }
 
 #[cfg(test)]

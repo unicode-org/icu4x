@@ -174,6 +174,10 @@ pub trait TryWriteable {
         LengthHint::undefined()
     }
 
+    fn try_borrow(&self) -> Option<&str> {
+        None
+    }
+
     /// Writes the content of this writeable to a string.
     ///
     /// In the failure case, this function returns the error and the best-effort string ("lossy mode").
@@ -194,6 +198,9 @@ pub trait TryWriteable {
     /// ```
     #[cfg(feature = "alloc")]
     fn try_write_to_string(&self) -> Result<Cow<'_, str>, (Self::Error, Cow<'_, str>)> {
+        if let Some(borrow) = self.try_borrow() {
+            return Ok(Cow::Borrowed(borrow));
+        }
         let hint = self.writeable_length_hint();
         if hint.is_zero() {
             return Ok(Cow::Borrowed(""));
@@ -290,6 +297,11 @@ where
     #[inline]
     fn writeable_length_hint(&self) -> LengthHint {
         self.0.writeable_length_hint()
+    }
+
+    #[inline]
+    fn try_borrow(&self) -> Option<&str> {
+        self.0.try_borrow()
     }
 
     #[inline]
