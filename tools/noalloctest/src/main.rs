@@ -11,6 +11,7 @@ use icu_collections as _;
 use icu_locale_core as _;
 use icu_properties as _;
 use icu_provider as _;
+use icu_time as _;
 use litemap as _;
 use potential_utf as _;
 use tinystr as _;

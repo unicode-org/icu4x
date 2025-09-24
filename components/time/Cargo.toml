@@ -44,10 +44,10 @@ writeable = { workspace = true }
 [features]
 default = ["compiled_data", "ixdtf"]
 ixdtf = ["dep:ixdtf", "icu_calendar/ixdtf"]
-serde = ["dep:serde", "zerovec/serde", "zerotrie/serde", "icu_provider/serde", "icu_locale_core/serde"]
+serde = ["dep:serde", "zerovec/serde", "zerotrie/serde", "icu_provider/serde", "icu_locale_core/serde", "alloc"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "zerotrie/databake", "icu_provider/export", "icu_locale_core/databake", "alloc"]
 compiled_data = ["dep:icu_time_data", "icu_calendar/compiled_data", "icu_provider/baked"]
-alloc = ["zerotrie/alloc", "serde?/alloc"]
+alloc = ["zerotrie/alloc", "serde?/alloc", "zerovec/alloc"]
 
 [package.metadata.cargo-semver-checks.lints]
 workspace = true

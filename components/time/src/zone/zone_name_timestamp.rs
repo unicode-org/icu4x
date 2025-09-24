@@ -5,7 +5,7 @@
 use core::fmt;
 
 use icu_calendar::Iso;
-use zerovec::{maps::ZeroMapKV, ule::AsULE, ZeroSlice, ZeroVec};
+use zerovec::ule::AsULE;
 
 use crate::{zone::UtcOffset, DateTime, ZonedDateTime};
 
@@ -193,9 +193,10 @@ impl AsULE for ZoneNameTimestamp {
     }
 }
 
-impl<'a> ZeroMapKV<'a> for ZoneNameTimestamp {
-    type Container = ZeroVec<'a, Self>;
-    type Slice = ZeroSlice<Self>;
+#[cfg(feature = "alloc")]
+impl<'a> zerovec::maps::ZeroMapKV<'a> for ZoneNameTimestamp {
+    type Container = zerovec::ZeroVec<'a, Self>;
+    type Slice = zerovec::ZeroSlice<Self>;
     type GetType = <Self as AsULE>::ULE;
     type OwnedType = Self;
 }

@@ -25,6 +25,7 @@ icu_collections = { workspace = true }
 icu_locale_core = { workspace = true, features = ["serde"] }
 icu_properties = { workspace = true, features = ["compiled_data"] }
 icu_provider = { workspace = true, features = ["baked", "logging", "sync", "serde", "deserialize_postcard_1"] }
+icu_time = { workspace = true, features = ["ixdtf"] }
 litemap = { workspace = true, features = ["yoke"] }
 potential_utf = { workspace = true, features = ["serde", "writeable", "zerovec"] }
 tinystr = { workspace = true, features = ["serde", "zerovec"] }
