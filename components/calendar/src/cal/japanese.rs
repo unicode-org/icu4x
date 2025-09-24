@@ -5,7 +5,7 @@
 use crate::cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears};
 use crate::cal::iso::IsoEra;
 use crate::calendar_arithmetic::ArithmeticDate;
-use crate::error::{range_check, DateError};
+use crate::error::DateError;
 use crate::provider::{
     CalendarJapaneseExtendedV1, CalendarJapaneseModernV1, EraStartDate, JapaneseEras,
 };
@@ -458,14 +458,12 @@ impl JapaneseEras<'_> {
             }
             Some("ce" | "ad") => {
                 return Ok(JapaneseDateInner(ArithmeticDate::new_gregorian::<IsoEra>(
-                    range_check(year, "year", 1..)?,
-                    month,
-                    day,
+                    year, month, day,
                 )?));
             }
             Some("bce" | "bc") => {
                 return Ok(JapaneseDateInner(ArithmeticDate::new_gregorian::<IsoEra>(
-                    1 - range_check(year, "year", 1..)?,
+                    1 - year,
                     month,
                     day,
                 )?));
