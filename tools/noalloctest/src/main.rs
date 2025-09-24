@@ -6,6 +6,7 @@
 #![cfg_attr(icu4x_noalloctest, no_std)]
 #![cfg_attr(icu4x_noalloctest, no_main)]
 
+use icu_calendar as _;
 use icu_collections as _;
 use icu_locale_core as _;
 use icu_properties as _;

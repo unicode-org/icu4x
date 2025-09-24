@@ -57,6 +57,8 @@ pub(crate) enum ShortBoxSliceInner<T> {
     ZeroOne(Option<T>),
     #[cfg(feature = "alloc")]
     Multi(Box<[T]>),
+    #[cfg(not(feature = "alloc"))]
+    Two([T; 2]),
 }
 
 impl<T> Default for ShortBoxSliceInner<T> {
@@ -91,6 +93,14 @@ impl<T> ShortBoxSlice<T> {
     pub const fn new_single(item: T) -> Self {
         use ShortBoxSliceInner::*;
         Self(ZeroOne(Some(item)))
+    }
+
+    pub fn new_double(first: T, second: T) -> Self {
+        use ShortBoxSliceInner::*;
+        #[cfg(feature = "alloc")]
+        return Self(Multi(vec![first, second].into_boxed_slice()));
+        #[cfg(not(feature = "alloc"))]
+        return Self(Two([first, second]));
     }
 
     /// Pushes an element onto this [`ShortBoxSlice`].
@@ -142,6 +152,8 @@ impl<T> ShortBoxSlice<T> {
             ZeroOne(_) => 1,
             #[cfg(feature = "alloc")]
             Multi(ref v) => v.len(),
+            #[cfg(not(feature = "alloc"))]
+            Two(_) => 2,
         }
     }
 
@@ -210,6 +222,8 @@ impl<T> ShortBoxSlice<T> {
                     _ => (Multi(v.into_boxed_slice()), removed_item),
                 }
             }
+            #[cfg(not(feature = "alloc"))]
+            Two([f, s]) => (ZeroOne(Some(f)), s),
         };
         self.0 = replaced;
         removed_item
@@ -238,6 +252,14 @@ impl<T> ShortBoxSlice<T> {
                 vec.retain(f);
                 *self = ShortBoxSlice::from(vec)
             }
+            #[cfg(not(feature = "alloc"))]
+            Two([first, second]) => {
+                *self = match (Some(first).filter(&mut f), Some(second).filter(&mut f)) {
+                    (None, None) => ShortBoxSlice::new(),
+                    (None, Some(x)) | (Some(x), None) => ShortBoxSlice::new_single(x),
+                    (Some(f), Some(s)) => ShortBoxSlice::new_double(f, s),
+                }
+            }
         };
     }
 }
@@ -252,6 +274,8 @@ impl<T> Deref for ShortBoxSlice<T> {
             ZeroOne(Some(ref v)) => core::slice::from_ref(v),
             #[cfg(feature = "alloc")]
             Multi(ref v) => v,
+            #[cfg(not(feature = "alloc"))]
+            Two(ref v) => v,
         }
     }
 }
@@ -264,6 +288,8 @@ impl<T> DerefMut for ShortBoxSlice<T> {
             ZeroOne(Some(ref mut v)) => core::slice::from_mut(v),
             #[cfg(feature = "alloc")]
             Multi(ref mut v) => v,
+            #[cfg(not(feature = "alloc"))]
+            Two(ref mut v) => v,
         }
     }
 }
@@ -309,6 +335,8 @@ pub(crate) enum ShortBoxSliceIntoIterInner<T> {
     ZeroOne(Option<T>),
     #[cfg(feature = "alloc")]
     Multi(alloc::vec::IntoIter<T>),
+    #[cfg(not(feature = "alloc"))]
+    Two(core::array::IntoIter<T, 2>),
 }
 
 impl<T> Iterator for ShortBoxSliceIntoIter<T> {
@@ -319,6 +347,8 @@ impl<T> Iterator for ShortBoxSliceIntoIter<T> {
             ZeroOne(option) => option.take(),
             #[cfg(feature = "alloc")]
             Multi(into_iter) => into_iter.next(),
+            #[cfg(not(feature = "alloc"))]
+            Two(into_iter) => into_iter.next(),
         }
     }
 }
@@ -338,6 +368,10 @@ impl<T> IntoIterator for ShortBoxSlice<T> {
             ShortBoxSliceInner::Multi(boxed_slice) => ShortBoxSliceIntoIter(
                 ShortBoxSliceIntoIterInner::Multi(boxed_slice.into_vec().into_iter()),
             ),
+            #[cfg(not(feature = "alloc"))]
+            ShortBoxSliceInner::Two(arr) => {
+                ShortBoxSliceIntoIter(ShortBoxSliceIntoIterInner::Two(arr.into_iter()))
+            }
         }
     }
 }
