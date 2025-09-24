@@ -2113,6 +2113,7 @@ dependencies = [
 name = "noalloctest"
 version = "2.0.0"
 dependencies = [
+ "icu_calendar",
  "icu_collections",
  "icu_locale_core",
  "icu_properties",
