@@ -426,7 +426,7 @@ impl JapaneseEras<'_> {
         }
 
         // Avoidance didn't work. Let's find the era manually, searching back from the present
-        if let Some((index, (start, _))) = data.iter().enumerate().rev().find(|d| d.1 .1 == era) {
+        if let Some((start, _)) = data.iter().rev().find(|d| d.1 == era) {
             return Ok(start);
         }
 
