@@ -40,7 +40,7 @@ impl_with_abstract_gregorian!(
 );
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct BuddhistEra;
+pub(crate) struct BuddhistEra;
 
 impl GregorianYears for BuddhistEra {
     const EXTENDED_YEAR_OFFSET: i32 = -543;

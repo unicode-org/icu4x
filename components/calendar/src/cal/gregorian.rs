@@ -12,7 +12,7 @@ use tinystr::tinystr;
 impl_with_abstract_gregorian!(crate::cal::Gregorian, GregorianDateInner, CeBce, _x, CeBce);
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct CeBce;
+pub(crate) struct CeBce;
 
 impl GregorianYears for CeBce {
     fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, DateError> {

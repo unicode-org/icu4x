@@ -26,7 +26,7 @@ pub struct Iso;
 impl_with_abstract_gregorian!(crate::cal::Iso, IsoDateInner, IsoEra, _x, IsoEra);
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct IsoEra;
+pub(crate) struct IsoEra;
 
 impl GregorianYears for IsoEra {
     fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, DateError> {

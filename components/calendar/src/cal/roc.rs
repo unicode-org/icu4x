@@ -34,7 +34,7 @@ pub struct Roc;
 impl_with_abstract_gregorian!(crate::cal::Roc, RocDateInner, RocEra, _x, RocEra);
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct RocEra;
+pub(crate) struct RocEra;
 
 impl GregorianYears for RocEra {
     const EXTENDED_YEAR_OFFSET: i32 = 1911;
