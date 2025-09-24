@@ -244,9 +244,8 @@ impl Date<Japanese> {
         let extended = japanese_calendar
             .as_calendar()
             .extended_from_era_year(Some(era), year)?;
-        let iso = Date::try_new_iso(extended, month, day)?;
         Ok(Date::from_raw(
-            JapaneseDateInner(iso.inner.0),
+            JapaneseDateInner(ArithmeticDate::new_gregorian<&Japanese>(extended, month, day)),
             japanese_calendar,
         ))
     }
