@@ -242,6 +242,7 @@ pub(crate) mod gc {
     #[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
     #[allow(clippy::exhaustive_enums)] // this type is stable
     #[zerovec::make_ule(GeneralCategoryULE)]
+    #[cfg_attr(not(feature = "alloc"), zerovec::skip_derive(ZeroMapKV))]
     #[repr(u8)]
     pub enum GeneralCategory {
         /// (`Cn`) A reserved unassigned code point or a noncharacter
