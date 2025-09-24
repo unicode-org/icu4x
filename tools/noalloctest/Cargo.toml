@@ -20,6 +20,7 @@ publish = false
 
 [dependencies]
 # Dependencies that should be no-alloc should go here
+icu_locale_core = { workspace = true, features = ["serde"] }
 litemap = { workspace = true, features = ["yoke"] }
 potential_utf = { workspace = true, features = ["serde", "writeable", "zerovec"] }
 tinystr = { workspace = true, features = ["serde", "zerovec"] }

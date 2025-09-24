@@ -280,7 +280,7 @@ impl FromStr for Transform {
     }
 }
 
-writeable::impl_display_with_writeable!(Transform);
+writeable::impl_display_with_writeable!(Transform, #[cfg(feature = "alloc")]);
 
 impl writeable::Writeable for Transform {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {

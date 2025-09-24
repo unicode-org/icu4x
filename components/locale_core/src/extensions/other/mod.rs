@@ -210,7 +210,7 @@ impl FromStr for Other {
     }
 }
 
-writeable::impl_display_with_writeable!(Other);
+writeable::impl_display_with_writeable!(Other, #[cfg(feature = "alloc")]);
 
 impl writeable::Writeable for Other {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {

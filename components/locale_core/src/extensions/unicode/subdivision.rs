@@ -151,7 +151,7 @@ impl writeable::Writeable for SubdivisionId {
     }
 }
 
-writeable::impl_display_with_writeable!(SubdivisionId);
+writeable::impl_display_with_writeable!(SubdivisionId, #[cfg(feature = "alloc")]);
 
 impl FromStr for SubdivisionId {
     type Err = ParseError;
