@@ -7,6 +7,7 @@
 #![cfg_attr(icu4x_noalloctest, no_main)]
 
 use icu_locale_core as _;
+use icu_provider as _;
 use litemap as _;
 use potential_utf as _;
 use tinystr as _;
