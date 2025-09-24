@@ -223,13 +223,7 @@ impl Date<Japanese> {
     /// assert_eq!(date.month().ordinal, 1);
     /// assert_eq!(date.day_of_month().0, 2);
     ///
-    /// // This function will error for eras that are out of bounds:
-    /// // (Heisei was 32 years long, Heisei 33 is in Reiwa)
-    /// let oob_date =
-    ///     Date::try_new_japanese_with_calendar(era, 33, 1, 2, japanese_calendar);
-    /// assert!(oob_date.is_err());
-    ///
-    /// // and for unknown eras
+    /// // This function will error for unknown eras
     /// let fake_era = "neko"; // 🐱
     /// let fake_date = Date::try_new_japanese_with_calendar(
     ///     fake_era,
