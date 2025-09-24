@@ -2,14 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
-use crate::error::DateError;
-use crate::options::DateFromFieldsOptions;
-use crate::types::DateFields;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
-use calendrical_calculations::helpers::I32CastError;
-use calendrical_calculations::rata_die::RataDie;
+use crate::cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears};
+use crate::calendar_arithmetic::ArithmeticDate;
+use crate::{types, Date, DateError, RangeError};
 use tinystr::tinystr;
 
 /// The [ISO-8601 Calendar](https://en.wikipedia.org/wiki/ISO_8601#Dates)
@@ -28,149 +23,20 @@ use tinystr::tinystr;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Iso;
 
-impl Iso {
-    pub(crate) const REFERENCE_YEAR: i32 = 1972;
-    pub(crate) const LAST_DAY_OF_REFERENCE_YEAR: ArithmeticDate<Iso> =
-        ArithmeticDate::<Iso>::new_unchecked(1972, 12, 31);
-}
+impl_with_abstract_gregorian!(crate::cal::Iso, IsoDateInner, IsoEra, _x, IsoEra);
 
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-/// The inner date type used for representing [`Date`]s of [`Iso`]. See [`Date`] and [`Iso`] for more details.
-pub struct IsoDateInner(pub(crate) ArithmeticDate<Iso>);
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub(crate) struct IsoEra;
 
-impl IsoDateInner {
-    pub(crate) fn iso_year(self) -> i32 {
-        self.0.extended_year()
-    }
-}
-
-impl CalendarArithmetic for Iso {
-    type YearInfo = i32;
-
-    fn days_in_provided_month(year: i32, month: u8) -> u8 {
-        // https://www.youtube.com/watch?v=J9KijLyP-yg&t=1394s
-        if month == 2 {
-            28 + calendrical_calculations::iso::is_leap_year(year) as u8
-        } else {
-            30 | month ^ (month >> 3)
-        }
-    }
-
-    fn months_in_provided_year(_: i32) -> u8 {
-        12
-    }
-
-    fn provided_year_is_leap(year: i32) -> bool {
-        calendrical_calculations::iso::is_leap_year(year)
-    }
-
-    fn last_month_day_in_provided_year(_year: i32) -> (u8, u8) {
-        (12, 31)
-    }
-
-    fn days_in_provided_year(year: i32) -> u16 {
-        365 + calendrical_calculations::iso::is_leap_year(year) as u16
-    }
-
-    fn day_of_provided_year(year: Self::YearInfo, month: u8, day: u8) -> u16 {
-        calendrical_calculations::iso::days_before_month(year, month) + day as u16
-    }
-
-    fn date_from_provided_year_day(year: Self::YearInfo, year_day: u16) -> (u8, u8) {
-        calendrical_calculations::iso::year_day(year, year_day)
-    }
-}
-
-impl DateFieldsResolver for Iso {
-    type YearInfo = i32;
-
-    #[inline]
-    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+impl GregorianYears for IsoEra {
+    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, DateError> {
         match era {
-            "default" => Ok(era_year),
-            _ => Err(DateError::UnknownEra),
+            Some("default") | None => Ok(year),
+            Some(_) => Err(DateError::UnknownEra),
         }
     }
 
-    #[inline]
-    fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
-        extended_year
-    }
-
-    #[inline]
-    fn reference_year_from_month_day(
-        &self,
-        _month_code: types::MonthCode,
-        _day: u8,
-    ) -> Result<Self::YearInfo, DateError> {
-        Ok(Self::REFERENCE_YEAR)
-    }
-}
-
-impl crate::cal::scaffold::UnstableSealed for Iso {}
-impl Calendar for Iso {
-    type DateInner = IsoDateInner;
-    type Year = types::EraYear;
-    fn from_fields(
-        &self,
-        fields: DateFields,
-        options: DateFromFieldsOptions,
-    ) -> Result<Self::DateInner, DateError> {
-        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        ArithmeticDate::try_from_builder(builder, options)
-            .map(IsoDateInner)
-            .map_err(|e| e.maybe_with_month_code(fields.month_code))
-    }
-
-    fn from_rata_die(&self, date: RataDie) -> IsoDateInner {
-        IsoDateInner(match calendrical_calculations::iso::iso_from_fixed(date) {
-            Err(I32CastError::BelowMin) => ArithmeticDate::min_date(),
-            Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
-            Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
-        })
-    }
-
-    fn to_rata_die(&self, date: &IsoDateInner) -> RataDie {
-        calendrical_calculations::iso::fixed_from_iso(date.0.year, date.0.month, date.0.day)
-    }
-
-    fn from_iso(&self, iso: IsoDateInner) -> IsoDateInner {
-        iso
-    }
-
-    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        *date
-    }
-
-    fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        date.0.months_in_year()
-    }
-
-    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.0.days_in_year()
-    }
-
-    fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        date.0.days_in_month()
-    }
-
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.0.offset_date(offset, &());
-    }
-
-    fn until(
-        &self,
-        date1: &Self::DateInner,
-        date2: &Self::DateInner,
-        _calendar2: &Self,
-        _largest_unit: DateDurationUnit,
-        _smallest_unit: DateDurationUnit,
-    ) -> DateDuration<Self> {
-        date1.0.until(date2.0, _largest_unit, _smallest_unit)
-    }
-
-    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let extended_year = date.iso_year();
+    fn era_year_from_extended(&self, extended_year: i32, _month: u8, _day: u8) -> types::EraYear {
         types::EraYear {
             era_index: Some(0),
             era: tinystr!(16, "default"),
@@ -180,30 +46,8 @@ impl Calendar for Iso {
         }
     }
 
-    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::provided_year_is_leap(date.0.year)
-    }
-
-    /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        date.0.month()
-    }
-
-    /// The calendar-specific day-of-month represented by `date`
-    fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        date.0.day_of_month()
-    }
-
-    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        date.0.day_of_year()
-    }
-
     fn debug_name(&self) -> &'static str {
         "ISO"
-    }
-
-    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
-        None
     }
 }
 
@@ -221,9 +65,9 @@ impl Date<Iso> {
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
     pub fn try_new_iso(year: i32, month: u8, day: u8) -> Result<Date<Iso>, RangeError> {
-        ArithmeticDate::try_from_ymd(year, month, day)
+        ArithmeticDate::new_gregorian::<IsoEra>(year, month, day)
             .map(IsoDateInner)
-            .map(|inner| Date::from_raw(inner, Iso))
+            .map(|i| Date::from_raw(i, Iso))
     }
 }
 
@@ -237,7 +81,9 @@ impl Iso {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::types::Weekday;
+    use crate::types::{RataDie, Weekday};
+    use crate::Calendar;
+    use crate::DateDuration;
 
     #[test]
     fn iso_overflow() {

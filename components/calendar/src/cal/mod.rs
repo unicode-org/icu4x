@@ -19,6 +19,8 @@ pub(crate) mod julian;
 pub(crate) mod persian;
 pub(crate) mod roc;
 
+pub(crate) mod abstract_gregorian;
+
 pub use buddhist::Buddhist;
 pub use chinese_internal::LunarChinese;
 /// Customizations for the [`LunarChinese`] calendar.

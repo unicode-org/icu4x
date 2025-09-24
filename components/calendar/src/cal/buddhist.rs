@@ -2,19 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, DateFieldsResolver};
-use crate::error::DateError;
-use crate::options::DateFromFieldsOptions;
-use crate::types::DateFields;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
-use calendrical_calculations::rata_die::RataDie;
+use crate::preferences::CalendarAlgorithm;
+use crate::{
+    cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears},
+    calendar_arithmetic::ArithmeticDate,
+    types, Date, DateError, RangeError,
+};
 use tinystr::tinystr;
-
-/// The number of years the Buddhist Era is ahead of C.E. by
-///
-/// (-543 ISO = 544 BCE = 1 BE)
-const BUDDHIST_ERA_OFFSET: i32 = -543;
 
 #[derive(Copy, Clone, Debug, Default)]
 /// The [Thai Solar Buddhist Calendar][cal]
@@ -37,131 +31,43 @@ const BUDDHIST_ERA_OFFSET: i32 = -543;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Buddhist;
 
-impl DateFieldsResolver for Buddhist {
-    type YearInfo = i32;
+impl_with_abstract_gregorian!(
+    crate::cal::Buddhist,
+    BuddhistDateInner,
+    BuddhistEra,
+    _x,
+    BuddhistEra
+);
 
-    #[inline]
-    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub(crate) struct BuddhistEra;
+
+impl GregorianYears for BuddhistEra {
+    const EXTENDED_YEAR_OFFSET: i32 = -543;
+
+    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, DateError> {
         match era {
-            "be" => Ok(era_year),
+            Some("be") | None => Ok(year),
             _ => Err(DateError::UnknownEra),
         }
     }
 
-    #[inline]
-    fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
-        extended_year
-    }
-
-    #[inline]
-    fn reference_year_from_month_day(
-        &self,
-        _month_code: types::MonthCode,
-        _day: u8,
-    ) -> Result<Self::YearInfo, DateError> {
-        Ok(Iso::REFERENCE_YEAR - BUDDHIST_ERA_OFFSET)
-    }
-}
-
-impl crate::cal::scaffold::UnstableSealed for Buddhist {}
-impl Calendar for Buddhist {
-    type DateInner = IsoDateInner;
-    type Year = types::EraYear;
-
-    fn from_fields(
-        &self,
-        fields: DateFields,
-        options: DateFromFieldsOptions,
-    ) -> Result<Self::DateInner, DateError> {
-        let mut builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        // Year is stored as an ISO year
-        builder.year += BUDDHIST_ERA_OFFSET;
-        ArithmeticDate::try_from_builder(builder, options)
-            .map(IsoDateInner)
-            .map_err(|e| e.maybe_with_month_code(fields.month_code))
-    }
-
-    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
-        iso
-    }
-
-    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        *date
-    }
-
-    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        Iso.from_rata_die(rd)
-    }
-
-    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        Iso.to_rata_die(date)
-    }
-
-    fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Iso.months_in_year(date)
-    }
-
-    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        Iso.days_in_year(date)
-    }
-
-    fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        Iso.days_in_month(date)
-    }
-
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        Iso.offset_date(date, offset.cast_unit())
-    }
-
-    fn until(
-        &self,
-        date1: &Self::DateInner,
-        date2: &Self::DateInner,
-        _calendar2: &Self,
-        largest_unit: DateDurationUnit,
-        smallest_unit: DateDurationUnit,
-    ) -> DateDuration<Self> {
-        Iso.until(date1, date2, &Iso, largest_unit, smallest_unit)
-            .cast_unit()
-    }
-
-    /// The calendar-specific year represented by `date`
-    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let year = date.iso_year() - BUDDHIST_ERA_OFFSET;
+    fn era_year_from_extended(&self, extended_year: i32, _month: u8, _day: u8) -> types::EraYear {
         types::EraYear {
             era: tinystr!(16, "be"),
             era_index: Some(0),
-            year,
-            extended_year: year,
+            year: extended_year,
+            extended_year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
-    }
-
-    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Iso.is_in_leap_year(date)
-    }
-
-    /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        Iso.month(date)
-    }
-
-    /// The calendar-specific day-of-month represented by `date`
-    fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        Iso.day_of_month(date)
-    }
-
-    /// Information of the day of the year
-    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        Iso.day_of_year(date)
     }
 
     fn debug_name(&self) -> &'static str {
         "Buddhist"
     }
 
-    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
-        Some(crate::preferences::CalendarAlgorithm::Buddhist)
+    fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
+        Some(CalendarAlgorithm::Buddhist)
     }
 }
 
@@ -181,13 +87,15 @@ impl Date<Buddhist> {
     /// assert_eq!(date_buddhist.day_of_month().0, 2);
     /// ```
     pub fn try_new_buddhist(year: i32, month: u8, day: u8) -> Result<Date<Buddhist>, RangeError> {
-        Date::try_new_iso(year + BUDDHIST_ERA_OFFSET, month, day)
-            .map(|d| Date::new_from_iso(d, Buddhist))
+        ArithmeticDate::new_gregorian::<BuddhistEra>(year, month, day)
+            .map(BuddhistDateInner)
+            .map(|i| Date::from_raw(i, Buddhist))
     }
 }
 
 #[cfg(test)]
 mod test {
+    use crate::cal::Iso;
     use calendrical_calculations::rata_die::RataDie;
 
     use super::*;

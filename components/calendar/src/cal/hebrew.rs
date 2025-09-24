@@ -531,7 +531,7 @@ mod tests {
     fn test_negative_era_years() {
         let greg_date = Date::try_new_gregorian(-5000, 1, 1).unwrap();
         let greg_year = greg_date.era_year();
-        assert_eq!(greg_date.inner.0 .0.year, -5000);
+        assert_eq!(greg_date.inner.0.year, -5000);
         assert_eq!(greg_year.era, "bce");
         // In Gregorian, era year is 1 - extended year
         assert_eq!(greg_year.year, 5001);
