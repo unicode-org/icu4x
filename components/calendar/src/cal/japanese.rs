@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears};
-use crate::cal::iso::IsoEra;
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::DateError;
 use crate::provider::{
@@ -248,12 +247,14 @@ impl Date<Japanese> {
         day: u8,
         japanese_calendar: A,
     ) -> Result<Date<A>, DateError> {
-        let inner = japanese_calendar
+        let extended = japanese_calendar
             .as_calendar()
-            .eras
-            .get()
-            .new_japanese_date_inner(Some(era), year, month, day)?;
-        Ok(Date::from_raw(inner, japanese_calendar))
+            .extended_from_era_year(Some(era), year)?;
+        let iso = Date::try_new_iso(extended, month, day)?;
+        Ok(Date::from_raw(
+            JapaneseDateInner(iso.inner.0),
+            japanese_calendar,
+        ))
     }
 }
 
@@ -298,15 +299,12 @@ impl Date<JapaneseExtended> {
         day: u8,
         japanext_calendar: A,
     ) -> Result<Date<A>, DateError> {
-        let inner = japanext_calendar
-            .as_calendar()
-            .0
-            .eras
-            .get()
-            .new_japanese_date_inner(Some(era), year, month, day)?;
+        let extended =
+            (&japanext_calendar.as_calendar().0).extended_from_era_year(Some(era), year)?;
+        let iso = Date::try_new_iso(extended, month, day)?;
 
         Ok(Date::from_raw(
-            JapaneseExtendedDateInner(inner.0),
+            JapaneseExtendedDateInner(iso.inner.0),
             japanext_calendar,
         ))
     }
@@ -432,40 +430,6 @@ impl JapaneseEras<'_> {
 
         Err(DateError::UnknownEra)
     }
-
-    fn new_japanese_date_inner(
-        &self,
-        era: Option<&str>,
-        year: i32,
-        month: u8,
-        day: u8,
-    ) -> Result<JapaneseDateInner, DateError> {
-        let era = match era {
-            None => {
-                return Ok(JapaneseDateInner(ArithmeticDate::new_gregorian::<IsoEra>(
-                    year, month, day,
-                )?));
-            }
-            Some("ce" | "ad") => {
-                return Ok(JapaneseDateInner(ArithmeticDate::new_gregorian::<IsoEra>(
-                    year, month, day,
-                )?));
-            }
-            Some("bce" | "bc") => {
-                return Ok(JapaneseDateInner(ArithmeticDate::new_gregorian::<IsoEra>(
-                    1 - year,
-                    month,
-                    day,
-                )?));
-            }
-            Some(e) => e.parse().map_err(|_| DateError::UnknownEra)?,
-        };
-
-        let era_start = self.japanese_era_start(era)?;
-
-        let iso = Date::try_new_iso(era_start.year + year - 1, month, day)?;
-        Ok(JapaneseDateInner(iso.inner.0))
-    }
 }
 
 #[cfg(test)]
@@ -574,22 +538,6 @@ mod tests {
         error: DateError,
     ) {
         let date = Date::try_new_japanese_with_calendar(era, year, month, day, calendar);
-        assert_eq!(
-            date,
-            Err(error),
-            "Construction with {era:?}, {year}, {month}, {day} did not return {error:?}"
-        )
-    }
-
-    fn single_test_error_ext(
-        calendar: Ref<JapaneseExtended>,
-        era: &str,
-        year: i32,
-        month: u8,
-        day: u8,
-        error: DateError,
-    ) {
-        let date = Date::try_new_japanese_extended_with_calendar(era, year, month, day, calendar);
         assert_eq!(
             date,
             Err(error),
