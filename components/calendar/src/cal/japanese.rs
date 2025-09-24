@@ -392,13 +392,10 @@ impl JapaneseEras<'_> {
     }
 
     /// Returns the era start data for a given era
-    fn japanese_era_start(
-        &self,
-        era: TinyStr16,
-    ) -> Result<EraStartDate, DateError> {
+    fn japanese_era_start(&self, era: TinyStr16) -> Result<EraStartDate, DateError> {
         // Avoid linear search by trying well known eras
         if era == tinystr!(16, "reiwa") {
-            return Ok(REIWA_START)
+            return Ok(REIWA_START);
         } else if era == tinystr!(16, "heisei") {
             return Ok(HEISEI_START);
         } else if era == tinystr!(16, "showa") {
@@ -610,27 +607,11 @@ mod tests {
         single_test_roundtrip(calendar, "heisei", 12, 3, 1);
         single_test_roundtrip(calendar, "taisho", 3, 3, 1);
         // Heisei did not start until later in the year
-        single_test_era_range_roundtrip(
-            calendar,
-            "heisei",
-            1,
-            1,
-            1,
-            "showa",
-            64
-        );
+        single_test_era_range_roundtrip(calendar, "heisei", 1, 1, 1, "showa", 64);
 
         single_test_roundtrip_ext(calendar_ext, "heisei", 12, 3, 1);
         single_test_roundtrip_ext(calendar_ext, "taisho", 3, 3, 1);
-        single_test_era_range_roundtrip_ext(
-            calendar_ext,
-            "heisei",
-            1,
-            1,
-            1,
-            "showa",
-            64
-        );
+        single_test_era_range_roundtrip_ext(calendar_ext, "heisei", 1, 1, 1, "showa", 64);
 
         single_test_roundtrip_ext(calendar_ext, "hakuho-672", 4, 3, 1);
         single_test_error(calendar, "hakuho-672", 4, 3, 1, DateError::UnknownEra);
@@ -642,70 +623,38 @@ mod tests {
         single_test_roundtrip(calendar, "ce", 100, 3, 1);
         single_test_roundtrip_ext(calendar_ext, "ce", 100, 3, 1);
         single_test_roundtrip(calendar, "ce", 1000, 3, 1);
-        single_test_error(
-            calendar,
-            "ce",
-            0,
-            3,
-            1,
-            DateError::Range {
-                field: "year",
-                value: 0,
-                min: 1,
-                max: i32::MAX,
-            },
-        );
-        single_test_error(
-            calendar,
-            "bce",
-            -1,
-            3,
-            1,
-            DateError::Range {
-                field: "year",
-                value: -1,
-                min: 1,
-                max: i32::MAX,
-            },
-        );
+        single_test_era_range_roundtrip(calendar, "ce", 0, 3, 1, "bce", 1);
+        single_test_era_range_roundtrip(calendar, "bce", -1, 3, 1, "ce", 2);
 
         // handle the cases where bce/ce get adjusted to different eras
         // single_test_gregorian_roundtrip(calendar, "ce", 2021, 3, 1, "reiwa", 3);
         single_test_era_range_roundtrip_ext(calendar_ext, "ce", 1000, 3, 1, "choho-999", 2);
         single_test_era_range_roundtrip_ext(calendar_ext, "ce", 749, 5, 10, "tenpyokampo-749", 1);
         single_test_era_range_roundtrip_ext(calendar_ext, "bce", 10, 3, 1, "bce", 10);
-        single_test_era_range_roundtrip_ext(calendar_ext, "ce", -1, 3, 1, "bce", 1);
+        single_test_era_range_roundtrip_ext(calendar_ext, "ce", -1, 3, 1, "bce", 2);
 
         // There were multiple eras in this year
         // This one is from Apr 14 to July 2
         single_test_roundtrip_ext(calendar_ext, "tenpyokampo-749", 1, 4, 20);
         single_test_roundtrip_ext(calendar_ext, "tenpyokampo-749", 1, 4, 14);
         single_test_roundtrip_ext(calendar_ext, "tenpyokampo-749", 1, 7, 1);
-        single_test_error_ext(
+        single_test_era_range_roundtrip_ext(
             calendar_ext,
             "tenpyokampo-749",
             1,
             7,
             5,
-            DateError::Range {
-                field: "month",
-                value: 7,
-                min: 1,
-                max: 6,
-            },
+            "tenpyoshoho-749",
+            1,
         );
-        single_test_error_ext(
+        single_test_era_range_roundtrip_ext(
             calendar_ext,
             "tenpyokampo-749",
             1,
             4,
             13,
-            DateError::Range {
-                field: "day",
-                value: 13,
-                min: 14,
-                max: 31,
-            },
+            "tenpyoshoho-749",
+            1,
         );
     }
 }
