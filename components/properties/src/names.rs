@@ -661,6 +661,7 @@ impl PropertyEnumToValueNameLookup for PropertyEnumToValueNameLinearMap<'_> {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl PropertyEnumToValueNameLookup for PropertyEnumToValueNameSparseMap<'_> {
     fn get(&self, prop: u32) -> Option<&str> {
         self.map.get(&u16::try_from(prop).ok()?)
@@ -874,6 +875,7 @@ impl_value_getter! {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl_value_getter! {
     impl CanonicalCombiningClass {
         PropertyNameParseCanonicalCombiningClassV1 / SINGLETON_PROPERTY_NAME_PARSE_CANONICAL_COMBINING_CLASS_V1;
