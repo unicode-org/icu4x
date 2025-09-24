@@ -153,7 +153,7 @@ impl GregorianYears for &'_ Japanese {
             }
             Some(e) => e.parse().map_err(|_| DateError::UnknownEra)?,
         };
-        let (era_start, _next_era_start) = self.eras.get().japanese_era_range_for(era)?;
+        let era_start = self.eras.get().japanese_era_start(era)?;
         Ok(era_start.year + year - 1)
     }
 
@@ -304,6 +304,7 @@ impl Date<JapaneseExtended> {
             .eras
             .get()
             .new_japanese_date_inner(Some(era), year, month, day)?;
+
         Ok(Date::from_raw(
             JapaneseExtendedDateInner(inner.0),
             japanext_calendar,
@@ -390,30 +391,22 @@ impl JapaneseEras<'_> {
         .unwrap_or((REIWA_START, tinystr!(16, "reiwa")))
     }
 
-    /// Returns the range of dates for a given Japanese era code,
-    /// not handling "bce" or "ce"
-    ///
-    /// Returns (era_start, era_end)
-    fn japanese_era_range_for(
+    /// Returns the era start data for a given era
+    fn japanese_era_start(
         &self,
         era: TinyStr16,
-    ) -> Result<(EraStartDate, Option<EraStartDate>), DateError> {
+    ) -> Result<EraStartDate, DateError> {
         // Avoid linear search by trying well known eras
         if era == tinystr!(16, "reiwa") {
-            // Check if we're the last
-            if let Some(last) = self.dates_to_eras.last() {
-                if last.1 == era {
-                    return Ok((REIWA_START, None));
-                }
-            }
+            return Ok(REIWA_START)
         } else if era == tinystr!(16, "heisei") {
-            return Ok((HEISEI_START, Some(REIWA_START)));
+            return Ok(HEISEI_START);
         } else if era == tinystr!(16, "showa") {
-            return Ok((SHOWA_START, Some(HEISEI_START)));
+            return Ok(SHOWA_START);
         } else if era == tinystr!(16, "taisho") {
-            return Ok((TAISHO_START, Some(SHOWA_START)));
+            return Ok(TAISHO_START);
         } else if era == tinystr!(16, "meiji") {
-            return Ok((MEIJI_START, Some(TAISHO_START)));
+            return Ok(MEIJI_START);
         }
 
         let data = &self.dates_to_eras;
@@ -429,7 +422,7 @@ impl JapaneseEras<'_> {
                     // There are a couple of rare cases of this, but it's not worth writing a range-based binary search
                     // to catch them since this is an optimization
                     if code == era {
-                        return Ok((era_start, data.get(index + 1).map(|e| e.0)));
+                        return Ok(era_start);
                     }
                 }
             }
@@ -437,7 +430,7 @@ impl JapaneseEras<'_> {
 
         // Avoidance didn't work. Let's find the era manually, searching back from the present
         if let Some((index, (start, _))) = data.iter().enumerate().rev().find(|d| d.1 .1 == era) {
-            return Ok((start, data.get(index + 1).map(|e| e.0)));
+            return Ok(start);
         }
 
         Err(DateError::UnknownEra)
@@ -471,73 +464,9 @@ impl JapaneseEras<'_> {
             Some(e) => e.parse().map_err(|_| DateError::UnknownEra)?,
         };
 
-        let (era_start, next_era_start) = self.japanese_era_range_for(era)?;
+        let era_start = self.japanese_era_start(era)?;
 
-        let next_era_start = next_era_start.unwrap_or(EraStartDate {
-            year: i32::MAX,
-            month: 12,
-            day: 31,
-        });
-
-        let date_in_iso = EraStartDate {
-            year: era_start.year + year - 1,
-            month,
-            day,
-        };
-
-        if date_in_iso < era_start {
-            return Err(if date_in_iso.year < era_start.year {
-                DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: 1 + next_era_start.year - era_start.year,
-                }
-            } else if date_in_iso.month < era_start.month {
-                DateError::Range {
-                    field: "month",
-                    value: month as i32,
-                    min: era_start.month as i32,
-                    max: 12,
-                }
-            } else
-            /* if date_in_iso.day < era_start.day */
-            {
-                DateError::Range {
-                    field: "day",
-                    value: day as i32,
-                    min: era_start.day as i32,
-                    max: 31,
-                }
-            });
-        } else if date_in_iso >= next_era_start {
-            return Err(if date_in_iso.year > era_start.year {
-                DateError::Range {
-                    field: "year",
-                    value: year,
-                    min: 1,
-                    max: 1 + next_era_start.year - era_start.year,
-                }
-            } else if date_in_iso.month > era_start.month {
-                DateError::Range {
-                    field: "month",
-                    value: month as i32,
-                    min: 1,
-                    max: next_era_start.month as i32 - 1,
-                }
-            } else
-            /* if date_in_iso.day >= era_start.day */
-            {
-                DateError::Range {
-                    field: "day",
-                    value: day as i32,
-                    min: 1,
-                    max: next_era_start.day as i32 - 1,
-                }
-            });
-        }
-
-        let iso = Date::try_new_iso(date_in_iso.year, date_in_iso.month, date_in_iso.day)?;
+        let iso = Date::try_new_iso(era_start.year + year - 1, month, day)?;
         Ok(JapaneseDateInner(iso.inner.0))
     }
 }
@@ -583,8 +512,35 @@ mod tests {
         )
     }
 
-    // test that the Gregorian eras roundtrip to Japanese ones
-    fn single_test_gregorian_roundtrip_ext(
+    // test that out-of-range era values roundtrip to other eras
+    fn single_test_era_range_roundtrip(
+        calendar: Ref<Japanese>,
+        era: &str,
+        year: i32,
+        month: u8,
+        day: u8,
+        era2: &str,
+        year2: i32,
+    ) {
+        let expected = Date::try_new_japanese_with_calendar(era2, year2, month, day, calendar)
+            .unwrap_or_else(|e| {
+                panic!(
+                    "Failed to construct expectation date with {era2:?}, {year2}, {month}, {day}: {e:?}"
+                )
+            });
+
+        let date = Date::try_new_japanese_with_calendar(era, year, month, day, calendar)
+            .unwrap_or_else(|e| {
+                panic!("Failed to construct date with {era:?}, {year}, {month}, {day}: {e:?}")
+            });
+        let iso = date.to_iso();
+        let reconstructed = Date::new_from_iso(iso, calendar);
+        assert_eq!(
+            expected, reconstructed,
+            "Failed to roundtrip with {era:?}, {year}, {month}, {day} == {era2:?}, {year}"
+        )
+    }
+    fn single_test_era_range_roundtrip_ext(
         calendar: Ref<JapaneseExtended>,
         era: &str,
         year: i32,
@@ -654,34 +610,26 @@ mod tests {
         single_test_roundtrip(calendar, "heisei", 12, 3, 1);
         single_test_roundtrip(calendar, "taisho", 3, 3, 1);
         // Heisei did not start until later in the year
-        single_test_error(
+        single_test_era_range_roundtrip(
             calendar,
             "heisei",
             1,
             1,
             1,
-            DateError::Range {
-                field: "day",
-                value: 1,
-                min: 8,
-                max: 31,
-            },
+            "showa",
+            64
         );
 
         single_test_roundtrip_ext(calendar_ext, "heisei", 12, 3, 1);
         single_test_roundtrip_ext(calendar_ext, "taisho", 3, 3, 1);
-        single_test_error_ext(
+        single_test_era_range_roundtrip_ext(
             calendar_ext,
             "heisei",
             1,
             1,
             1,
-            DateError::Range {
-                field: "day",
-                value: 1,
-                min: 8,
-                max: 31,
-            },
+            "showa",
+            64
         );
 
         single_test_roundtrip_ext(calendar_ext, "hakuho-672", 4, 3, 1);
@@ -723,9 +671,10 @@ mod tests {
 
         // handle the cases where bce/ce get adjusted to different eras
         // single_test_gregorian_roundtrip(calendar, "ce", 2021, 3, 1, "reiwa", 3);
-        single_test_gregorian_roundtrip_ext(calendar_ext, "ce", 1000, 3, 1, "choho-999", 2);
-        single_test_gregorian_roundtrip_ext(calendar_ext, "ce", 749, 5, 10, "tenpyokampo-749", 1);
-        single_test_gregorian_roundtrip_ext(calendar_ext, "bce", 10, 3, 1, "bce", 10);
+        single_test_era_range_roundtrip_ext(calendar_ext, "ce", 1000, 3, 1, "choho-999", 2);
+        single_test_era_range_roundtrip_ext(calendar_ext, "ce", 749, 5, 10, "tenpyokampo-749", 1);
+        single_test_era_range_roundtrip_ext(calendar_ext, "bce", 10, 3, 1, "bce", 10);
+        single_test_era_range_roundtrip_ext(calendar_ext, "ce", -1, 3, 1, "bce", 1);
 
         // There were multiple eras in this year
         // This one is from Apr 14 to July 2
