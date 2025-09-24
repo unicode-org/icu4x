@@ -173,7 +173,7 @@ impl<'a> SliceOrString<'a> {
 ///     }
 ///     #[inline]
 ///     fn try_borrow(&self) -> Option<&str> {
-///         self.0.is_ascii_lowercase().then_some(&self.0)
+///         self.0.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_whitespace()).then_some(&self.0)
 ///     }
 /// }
 ///
