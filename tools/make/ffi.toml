@@ -112,6 +112,7 @@ toolchain = "${PINNED_CI_NIGHTLY}"
 command = "cargo"
 args = ["rustc", "-p", "noalloctest",
         "--target", "x86_64-unknown-linux-gnu",
+        "-Zbuild-std=core,panic_abort",
         "--",
         "-Clink-arg=-nostartfiles", "-Cpanic=abort",
         "--cfg", "icu4x_noalloctest"]
