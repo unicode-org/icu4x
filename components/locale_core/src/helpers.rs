@@ -160,7 +160,7 @@ macro_rules! impl_tinystr_subtag {
             }
         }
 
-        writeable::impl_display_with_writeable!($name);
+        writeable::impl_display_with_writeable!($name, #[cfg(feature = "alloc")]);
 
         #[doc = concat!("A macro allowing for compile-time construction of valid [`", stringify!($name), "`] subtags.")]
         ///
@@ -322,6 +322,7 @@ macro_rules! impl_tinystr_subtag {
         }
 
         #[cfg(feature = "zerovec")]
+        #[cfg(feature = "alloc")]
         impl<'a> zerovec::maps::ZeroMapKV<'a> for $name {
             type Container = zerovec::ZeroVec<'a, $name>;
             type Slice = zerovec::ZeroSlice<$name>;
@@ -377,7 +378,7 @@ macro_rules! impl_writeable_for_each_subtag_str_no_test {
             )?
         }
 
-        writeable::impl_display_with_writeable!($type);
+        writeable::impl_display_with_writeable!($type, #[cfg(feature = "alloc")]);
     };
 }
 
