@@ -20,13 +20,13 @@ publish = false
 
 [dependencies]
 # Dependencies that should be no-alloc should go here
-litemap = { workspace = true }
+litemap = { workspace = true, features = ["yoke"] }
 potential_utf = { workspace = true, features = ["serde", "writeable", "zerovec"] }
 tinystr = { workspace = true }
 writeable = { workspace = true, features = ["either"] }
-yoke = { workspace = true }
+yoke = { workspace = true, features = ["serde", "zerofrom"] }
 zerofrom = { workspace = true }
-zerotrie = { workspace = true }
+zerotrie = { workspace = true, features = ["yoke", "zerofrom"] }
 zerovec = { workspace = true, features = ["serde", "yoke"] }
 
 [lints.rust]
