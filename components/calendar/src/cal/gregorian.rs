@@ -4,7 +4,6 @@
 
 use crate::cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears};
 use crate::calendar_arithmetic::ArithmeticDate;
-use crate::error::range_check;
 use crate::preferences::CalendarAlgorithm;
 use crate::{types, Date, DateError, RangeError};
 use tinystr::tinystr;
@@ -18,8 +17,8 @@ impl GregorianYears for CeBce {
     fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, DateError> {
         match era {
             None => Ok(year),
-            Some("ad" | "ce") => Ok(range_check(year, "year", 1..)?),
-            Some("bce" | "bc") => Ok(1 - range_check(year, "year", 1..)?),
+            Some("ad" | "ce") => Ok(year),
+            Some("bce" | "bc") => Ok(1 - year),
             Some(_) => Err(DateError::UnknownEra),
         }
     }
