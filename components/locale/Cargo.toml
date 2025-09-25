@@ -24,7 +24,6 @@ all-features = true
 
 [dependencies]
 databake = { workspace = true, optional = true, features = ["derive"] }
-displaydoc = { workspace = true }
 icu_locale_core = { workspace = true, features = ["alloc", "zerovec"] }
 icu_provider = { workspace = true }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }

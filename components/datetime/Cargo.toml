@@ -21,7 +21,6 @@ all-features = true
 
 [dependencies]
 displaydoc = { workspace = true }
-either = { workspace = true }
 fixed_decimal = { workspace = true }
 icu_calendar = { workspace = true }
 icu_decimal = { workspace = true }
@@ -30,7 +29,6 @@ icu_pattern = { workspace = true, features = ["zerovec", "alloc"] }
 icu_plurals = { workspace = true }
 icu_provider = { workspace = true }
 icu_time = { workspace = true, features = ["alloc"] }
-smallvec = { workspace = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 potential_utf = { workspace = true, features = ["alloc", "zerovec"] }
 writeable = { workspace = true }
@@ -39,12 +37,13 @@ zerovec = { workspace = true, features = ["alloc", "yoke"] }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 zerotrie = { workspace = true, features = ["alloc"], optional = true }
 databake = { workspace = true, features = ["derive"], optional = true}
+either = { workspace = true, optional = true }
+smallvec = { workspace = true, optional = true }
+litemap = { workspace = true, optional = true }
 
 icu_datetime_data = { workspace = true, optional = true }
 icu_locale = { workspace = true, optional = true }
 
-# Experimental
-litemap = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
@@ -74,7 +73,7 @@ serde = [
     "icu_provider/serde",
     "icu_time/serde",
     "litemap?/serde",
-    "smallvec/serde",
+    "smallvec?/serde",
     "tinystr/serde",
     "potential_utf/serde",
     "zerovec/serde",
@@ -82,7 +81,9 @@ serde = [
 ]
 datagen = [
     "dep:databake",
+    "dep:either",
     "dep:litemap",
+    "dep:smallvec",
     "icu_calendar/datagen",
     "icu_pattern/databake",
     "icu_plurals/datagen",
@@ -91,7 +92,7 @@ datagen = [
     "serde",
 ]
 logging = ["icu_calendar/logging"]
-experimental = ["dep:litemap"]
+experimental = []
 compiled_data = ["dep:icu_datetime_data", "icu_calendar/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_time/compiled_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 ixdtf = ["icu_time/ixdtf", "icu_calendar/ixdtf"]
 

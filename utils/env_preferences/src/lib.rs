@@ -18,6 +18,11 @@ pub mod parse;
 
 pub use error::{LocaleError, ParseError, RetrievalError};
 
+// doc
+use core_foundation_sys as _;
+#[cfg(target_os = "windows")]
+use libc as _;
+
 #[cfg(any(doc, target_os = "macos"))]
 pub mod apple;
 #[cfg(any(doc, target_os = "linux"))]

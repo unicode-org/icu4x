@@ -27,7 +27,6 @@ icu_locale_core = { workspace = true, features = ["alloc"]}
 ixdtf = { workspace = true, optional = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 zerovec = { workspace = true, features = ["derive"] }
-writeable = { workspace = true }
 
 databake = { workspace = true, features = ["derive"], optional = true }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
