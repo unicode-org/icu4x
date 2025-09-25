@@ -21,7 +21,7 @@ publish = false
 [dependencies]
 # Dependencies that should be no-alloc should go here
 litemap = { workspace = true }
-potential_utf = { workspace = true, features = ["writeable"] }
+potential_utf = { workspace = true, features = ["serde", "writeable", "zerovec"] }
 tinystr = { workspace = true }
 writeable = { workspace = true, features = ["either"] }
 yoke = { workspace = true }
