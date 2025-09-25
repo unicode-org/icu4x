@@ -28,7 +28,7 @@ zerofrom = { workspace = true }
 zerovec-derive = { workspace = true, optional = true}
 
 databake = { workspace = true, features = ["derive"], optional = true }
-serde = { workspace = true, features = ["alloc", "derive"], optional = true }
+serde = { workspace = true, features = ["derive"], optional = true }
 
 yoke = { workspace = true, optional = true }
 twox-hash = { workspace = true, optional = true }
@@ -56,9 +56,9 @@ criterion = { workspace = true }
 derive = ["dep:zerovec-derive"]
 hashmap = ["dep:twox-hash", "alloc"]
 yoke = ["dep:yoke"]
-serde = ["dep:serde", "alloc"]
+serde = ["dep:serde"]
 databake = ["dep:databake"]
-alloc = []
+alloc = ["serde?/alloc"]
 # No longer does anything
 std = []
 

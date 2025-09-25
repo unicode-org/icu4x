@@ -27,7 +27,7 @@ writeable = { workspace = true, features = ["either"] }
 yoke = { workspace = true }
 zerofrom = { workspace = true }
 zerotrie = { workspace = true }
-zerovec = { workspace = true }
+zerovec = { workspace = true, features = ["serde", "yoke"] }
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_noalloctest)'] }

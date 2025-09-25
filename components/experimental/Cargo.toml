@@ -45,7 +45,7 @@ tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 potential_utf = { workspace = true, features = ["zerovec"] }
 writeable = { workspace = true }
 zerotrie = { workspace = true, features = ["yoke", "zerofrom"] }
-zerovec = { workspace = true, features = ["derive", "yoke"] }
+zerovec = { workspace = true, features = ["alloc", "derive", "yoke"] }
 zerofrom = { workspace = true }
 
 displaydoc = { workspace = true }
