@@ -3,14 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears};
+use crate::cal::gregorian::CeBce;
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::DateError;
-use crate::provider::{
-    CalendarJapaneseExtendedV1, CalendarJapaneseModernV1, EraStartDate, JapaneseEras,
-};
+use crate::provider::{CalendarJapaneseExtendedV1, CalendarJapaneseModernV1, EraStartDate};
 use crate::{types, AsCalendar, Date};
 use icu_provider::prelude::*;
-use tinystr::{tinystr, TinyStr16};
+use tinystr::tinystr;
 
 /// The [Japanese Calendar] (with modern eras only)
 ///
@@ -141,28 +140,125 @@ impl JapaneseExtended {
     pub(crate) const DEBUG_NAME: &'static str = "Japanese (historical era data)";
 }
 
+const MEIJI_START: EraStartDate = EraStartDate {
+    year: 1868,
+    month: 10,
+    day: 23,
+};
+const TAISHO_START: EraStartDate = EraStartDate {
+    year: 1912,
+    month: 7,
+    day: 30,
+};
+const SHOWA_START: EraStartDate = EraStartDate {
+    year: 1926,
+    month: 12,
+    day: 25,
+};
+const HEISEI_START: EraStartDate = EraStartDate {
+    year: 1989,
+    month: 1,
+    day: 8,
+};
+const REIWA_START: EraStartDate = EraStartDate {
+    year: 2019,
+    month: 5,
+    day: 1,
+};
+
 impl GregorianYears for &'_ Japanese {
     fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, DateError> {
-        let era = match era {
-            Some("ce" | "ad") | None => {
-                return Ok(year);
-            }
-            Some("bce" | "bc") => {
-                return Ok(1 - year);
-            }
-            Some(e) => e.parse().map_err(|_| DateError::UnknownEra)?,
+        if let Ok(g) = CeBce.extended_from_era_year(era, year) {
+            return Ok(g);
+        }
+        let Some(era) = era else {
+            // unreachable, handled by CeBce
+            return Err(DateError::UnknownEra);
         };
-        let era_start = self.eras.get().japanese_era_start(era)?;
+
+        // Avoid linear search by trying well known eras
+        if era == "reiwa" {
+            return Ok(year - 1 + REIWA_START.year);
+        } else if era == "heisei" {
+            return Ok(year - 1 + HEISEI_START.year);
+        } else if era == "showa" {
+            return Ok(year - 1 + SHOWA_START.year);
+        } else if era == "taisho" {
+            return Ok(year - 1 + TAISHO_START.year);
+        } else if era == "meiji" {
+            return Ok(year - 1 + MEIJI_START.year);
+        }
+
+        let data = &self.eras.get().dates_to_eras;
+
+        // Try to avoid linear search by binary searching for the year suffix
+        if let Some(start_year) = era.split('-').nth(1).and_then(|y| y.parse::<i32>().ok()) {
+            if let Ok(index) = data.binary_search_by(|(d, _)| d.year.cmp(&start_year)) {
+                // There is a slight chance we hit the case where there are two eras in the same year
+                // There are a couple of rare cases of this, but it's not worth writing a range-based binary search
+                // to catch them since this is an optimization
+                #[expect(clippy::unwrap_used)] // binary search
+                if data.get(index).unwrap().1 == era {
+                    return Ok(start_year + year - 1);
+                }
+            }
+        }
+
+        // Avoidance didn't work. Let's find the era manually, searching back from the present
+        let era_start = data
+            .iter()
+            .rev()
+            .find_map(|(s, e)| (e == era).then_some(s))
+            .ok_or(DateError::UnknownEra)?;
         Ok(era_start.year + year - 1)
     }
 
-    fn era_year_from_extended(&self, extended_year: i32, month: u8, day: u8) -> types::EraYear {
-        let (year, era) = self.eras.get().adjusted_year_for(extended_year, month, day);
+    fn era_year_from_extended(&self, year: i32, month: u8, day: u8) -> types::EraYear {
+        let date: EraStartDate = EraStartDate { year, month, day };
+
+        let (start, era) = if date >= MEIJI_START
+            && self
+                .eras
+                .get()
+                .dates_to_eras
+                .last()
+                .is_some_and(|(_, e)| e == tinystr!(16, "reiwa"))
+        {
+            // We optimize for the five "modern" post-Meiji eras, which are stored in a smaller
+            // array and also hardcoded. The hardcoded version is not used if data indicates the
+            // presence of newer eras.
+            if date >= REIWA_START {
+                (REIWA_START, tinystr!(16, "reiwa"))
+            } else if date >= HEISEI_START {
+                (HEISEI_START, tinystr!(16, "heisei"))
+            } else if date >= SHOWA_START {
+                (SHOWA_START, tinystr!(16, "showa"))
+            } else if date >= TAISHO_START {
+                (TAISHO_START, tinystr!(16, "taisho"))
+            } else {
+                (MEIJI_START, tinystr!(16, "meiji"))
+            }
+        } else {
+            let data = &self.eras.get().dates_to_eras;
+            #[allow(clippy::unwrap_used)] // binary search
+            match data.binary_search_by(|(d, _)| d.cmp(&date)) {
+                Err(0) => {
+                    return types::EraYear {
+                        // TODO: return era indices?
+                        era_index: None,
+                        ..CeBce.era_year_from_extended(year, month, day)
+                    };
+                }
+                Ok(index) => data.get(index).unwrap(),
+                Err(index) => data.get(index - 1).unwrap(),
+            }
+        };
+
         types::EraYear {
             era,
             era_index: None,
-            year,
-            extended_year,
+            year: year - start.year + 1,
+            extended_year: year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     }
@@ -302,128 +398,6 @@ impl Date<JapaneseExtended> {
             )?),
             japanext_calendar,
         ))
-    }
-}
-
-const MEIJI_START: EraStartDate = EraStartDate {
-    year: 1868,
-    month: 10,
-    day: 23,
-};
-const TAISHO_START: EraStartDate = EraStartDate {
-    year: 1912,
-    month: 7,
-    day: 30,
-};
-const SHOWA_START: EraStartDate = EraStartDate {
-    year: 1926,
-    month: 12,
-    day: 25,
-};
-const HEISEI_START: EraStartDate = EraStartDate {
-    year: 1989,
-    month: 1,
-    day: 8,
-};
-const REIWA_START: EraStartDate = EraStartDate {
-    year: 2019,
-    month: 5,
-    day: 1,
-};
-
-impl JapaneseEras<'_> {
-    /// Given an ISO date, give year and era for that date in the Japanese calendar
-    ///
-    /// This will also use Gregorian eras for eras that are before the earliest era
-    fn adjusted_year_for(&self, year: i32, month: u8, day: u8) -> (i32, TinyStr16) {
-        let date: EraStartDate = EraStartDate { year, month, day };
-        let (start, era) = self.japanese_era_for(date);
-        // The year in which an era starts is Year 1, and it may be short
-        // The only time this function will experience dates that are *before*
-        // the era start date are for the first era (Currently, taika-645
-        // for japanext, meiji for japanese),
-        // In such a case, we instead fall back to Gregorian era codes
-        if date < start {
-            if date.year <= 0 {
-                (1 - date.year, tinystr!(16, "bce"))
-            } else {
-                (date.year, tinystr!(16, "ce"))
-            }
-        } else {
-            (date.year - start.year + 1, era)
-        }
-    }
-
-    /// Given an date, obtain the era data (not counting spliced gregorian eras)
-    fn japanese_era_for(&self, date: EraStartDate) -> (EraStartDate, TinyStr16) {
-        // We optimize for the five "modern" post-Meiji eras, which are stored in a smaller
-        // array and also hardcoded. The hardcoded version is not used if data indicates the
-        // presence of newer eras.
-        if date >= MEIJI_START
-            && self.dates_to_eras.last().map(|x| x.1) == Some(tinystr!(16, "reiwa"))
-        {
-            // Fast path in case eras have not changed since this code was written
-            return if date >= REIWA_START {
-                (REIWA_START, tinystr!(16, "reiwa"))
-            } else if date >= HEISEI_START {
-                (HEISEI_START, tinystr!(16, "heisei"))
-            } else if date >= SHOWA_START {
-                (SHOWA_START, tinystr!(16, "showa"))
-            } else if date >= TAISHO_START {
-                (TAISHO_START, tinystr!(16, "taisho"))
-            } else {
-                (MEIJI_START, tinystr!(16, "meiji"))
-            };
-        }
-        let data = &self.dates_to_eras;
-        match data.binary_search_by(|(d, _)| d.cmp(&date)) {
-            Ok(index) => data.get(index),
-            Err(index) if index == 0 => data.get(index),
-            Err(index) => data.get(index - 1).or_else(|| data.iter().next_back()),
-        }
-        .unwrap_or((REIWA_START, tinystr!(16, "reiwa")))
-    }
-
-    /// Returns the era start data for a given era
-    fn japanese_era_start(&self, era: TinyStr16) -> Result<EraStartDate, DateError> {
-        // Avoid linear search by trying well known eras
-        if era == tinystr!(16, "reiwa") {
-            return Ok(REIWA_START);
-        } else if era == tinystr!(16, "heisei") {
-            return Ok(HEISEI_START);
-        } else if era == tinystr!(16, "showa") {
-            return Ok(SHOWA_START);
-        } else if era == tinystr!(16, "taisho") {
-            return Ok(TAISHO_START);
-        } else if era == tinystr!(16, "meiji") {
-            return Ok(MEIJI_START);
-        }
-
-        let data = &self.dates_to_eras;
-        // Try to avoid linear search by binary searching for the year suffix
-        if let Some(year) = era.split('-').nth(1) {
-            if let Ok(ref int) = year.parse::<i32>() {
-                if let Ok(index) = data.binary_search_by(|(d, _)| d.year.cmp(int)) {
-                    #[expect(clippy::expect_used)] // see expect message
-                    let (era_start, code) = data
-                        .get(index)
-                        .expect("Indexing from successful binary search must succeed");
-                    // There is a slight chance we hit the case where there are two eras in the same year
-                    // There are a couple of rare cases of this, but it's not worth writing a range-based binary search
-                    // to catch them since this is an optimization
-                    if code == era {
-                        return Ok(era_start);
-                    }
-                }
-            }
-        }
-
-        // Avoidance didn't work. Let's find the era manually, searching back from the present
-        if let Some((start, _)) = data.iter().rev().find(|d| d.1 == era) {
-            return Ok(start);
-        }
-
-        Err(DateError::UnknownEra)
     }
 }
 
