@@ -296,10 +296,10 @@ impl Date<JapaneseExtended> {
     ) -> Result<Date<A>, DateError> {
         let extended =
             (&japanext_calendar.as_calendar().0).extended_from_era_year(Some(era), year)?;
-        let iso = Date::try_new_iso(extended, month, day)?;
-
         Ok(Date::from_raw(
-            JapaneseExtendedDateInner(iso.inner.0),
+            JapaneseExtendedDateInner(ArithmeticDate::new_gregorian::<&Japanese>(
+                extended, month, day,
+            )?),
             japanext_calendar,
         ))
     }
