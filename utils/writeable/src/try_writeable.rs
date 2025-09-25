@@ -257,6 +257,14 @@ where
     }
 
     #[inline]
+    fn try_borrow(&self) -> Option<&str> {
+        match self {
+            Ok(t) => t.try_borrow(),
+            Err(e) => e.try_borrow(),
+        }
+    }
+
+    #[inline]
     #[cfg(feature = "alloc")]
     fn try_write_to_string(&self) -> Result<Cow<'_, str>, (Self::Error, Cow<'_, str>)> {
         match self {
@@ -357,6 +365,11 @@ where
     #[inline]
     fn writeable_length_hint(&self) -> LengthHint {
         self.0.writeable_length_hint()
+    }
+
+    #[inline]
+    fn try_borrow(&self) -> Option<&str> {
+        self.0.try_borrow()
     }
 
     #[inline]
