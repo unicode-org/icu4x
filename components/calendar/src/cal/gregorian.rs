@@ -100,7 +100,7 @@ impl Date<Gregorian> {
 impl Gregorian {
     /// Returns the date of Easter in the given year.
     pub fn easter(year: i32) -> Date<Self> {
-        Date::from_rata_die(calendrical_calculations::iso::easter(year), Self)
+        Date::from_rata_die(calendrical_calculations::gregorian::easter(year), Self)
     }
 }
 
