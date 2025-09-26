@@ -25,7 +25,7 @@ all-features = true
 [dependencies]
 displaydoc = { workspace = true }
 
-serde = { workspace = true, features = ["alloc"], optional = true }
+serde_core = { workspace = true, features = ["alloc"], optional = true }
 zerovec = { workspace = true, optional = true }
 databake = { workspace = true, optional = true }
 
@@ -43,7 +43,7 @@ default = ["alloc"]
 alloc = ["zerovec?/alloc"]
 zerovec = ["dep:zerovec"]
 databake = ["dep:databake"]
-serde = ["dep:serde"]
+serde = ["dep:serde_core"]
 # No longer does anything
 std = []
 

@@ -9,5 +9,4 @@ name = "unused"
 path = "unused"
 
 [dependencies]
-icu_capi = { version = "2.0.0", features = ["provider_fs", "experimental"] }
-icu_provider = { version = "2.0.0", features = ["deserialize_json"] }
+icu_capi = "2"

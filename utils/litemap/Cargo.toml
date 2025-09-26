@@ -24,7 +24,7 @@ all-features = true
 
 [dependencies]
 databake = { workspace = true, optional = true }
-serde = { workspace = true, optional = true, features = ["alloc"]}
+serde_core = { workspace = true, optional = true, features = ["alloc"]}
 yoke = { workspace = true, features = ["derive"], optional = true }
 
 [dev-dependencies]
@@ -34,7 +34,7 @@ icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_locale_core = { path = "../../components/locale_core" }
 postcard = { workspace = true, features = ["use-std"] }
 rkyv = { workspace = true, features = ["validation"] }
-serde = { workspace = true }
+serde_core = { workspace = true }
 serde_json = { workspace = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
@@ -44,7 +44,7 @@ criterion = { workspace = true }
 default = ["alloc"]
 alloc = []
 databake = ["dep:databake"]
-serde = ["dep:serde", "alloc"]
+serde = ["dep:serde_core", "alloc"]
 yoke = ["dep:yoke"]
 
 # Enables the `testing` module with tools for testing custom stores.
