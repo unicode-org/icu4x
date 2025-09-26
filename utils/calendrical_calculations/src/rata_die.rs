@@ -108,7 +108,7 @@ impl RataDie {
 impl fmt::Debug for RataDie {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let rd = self.0;
-        if let Ok((y, m, d)) = crate::iso::iso_from_fixed(*self) {
+        if let Ok((y, m, d)) = crate::gregorian::gregorian_from_fixed(*self) {
             write!(f, "{rd} R.D. ({y}-{m:02}-{d:02})")
         } else {
             write!(f, "{rd} R.D. (out of bounds)")

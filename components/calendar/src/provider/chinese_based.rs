@@ -68,7 +68,7 @@ impl PackedChineseBasedYearInfo {
     /// We allow it to occur as early as January 19 which is the earliest the second new moon
     /// could occur after the Winter Solstice if the solstice is pinned to December 20.
     const fn earliest_ny(related_iso: i32) -> RataDie {
-        calendrical_calculations::iso::const_fixed_from_iso(related_iso, 1, 19)
+        calendrical_calculations::gregorian::fixed_from_gregorian(related_iso, 1, 19)
     }
 
     /// It clamps some values to avoid debug assertions on calendrical invariants.
@@ -179,7 +179,7 @@ mod test {
         leap_month_idx: Option<u8>,
         ny_offset: i64,
     ) {
-        let ny = calendrical_calculations::iso::fixed_from_iso(1000, 1, 1) + ny_offset;
+        let ny = calendrical_calculations::gregorian::fixed_from_gregorian(1000, 1, 1) + ny_offset;
         let packed = PackedChineseBasedYearInfo::new(1000, month_lengths, leap_month_idx, ny);
 
         assert_eq!(

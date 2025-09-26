@@ -48,7 +48,7 @@ impl CalendarArithmetic for AbstractGregorian<IsoEra> {
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
         // https://www.youtube.com/watch?v=J9KijLyP-yg&t=1394s
         if month == 2 {
-            28 + calendrical_calculations::iso::is_leap_year(year) as u8
+            28 + calendrical_calculations::gregorian::is_leap_year(year) as u8
         } else {
             30 | month ^ (month >> 3)
         }
@@ -59,7 +59,7 @@ impl CalendarArithmetic for AbstractGregorian<IsoEra> {
     }
 
     fn provided_year_is_leap(year: i32) -> bool {
-        calendrical_calculations::iso::is_leap_year(year)
+        calendrical_calculations::gregorian::is_leap_year(year)
     }
 
     fn last_month_day_in_provided_year(_year: i32) -> (u8, u8) {
@@ -67,21 +67,21 @@ impl CalendarArithmetic for AbstractGregorian<IsoEra> {
     }
 
     fn days_in_provided_year(year: i32) -> u16 {
-        365 + calendrical_calculations::iso::is_leap_year(year) as u16
+        365 + calendrical_calculations::gregorian::is_leap_year(year) as u16
     }
 
     fn day_of_provided_year(year: Self::YearInfo, month: u8, day: u8) -> u16 {
-        calendrical_calculations::iso::days_before_month(year, month) + day as u16
+        calendrical_calculations::gregorian::days_before_month(year, month) + day as u16
     }
 
     fn date_from_provided_year_day(year: Self::YearInfo, year_day: u16) -> (u8, u8) {
-        calendrical_calculations::iso::year_day(year, year_day)
+        calendrical_calculations::gregorian::year_day(year, year_day)
     }
 }
 
 pub(crate) const REFERENCE_YEAR: i32 = 1972;
 pub(crate) const LAST_DAY_OF_REFERENCE_YEAR: RataDie =
-    calendrical_calculations::iso::day_before_year(REFERENCE_YEAR + 1);
+    calendrical_calculations::gregorian::day_before_year(REFERENCE_YEAR + 1);
 
 impl<Y: GregorianYears> DateFieldsResolver for AbstractGregorian<Y> {
     // Gregorian year
@@ -124,7 +124,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     }
 
     fn from_rata_die(&self, date: RataDie) -> Self::DateInner {
-        match calendrical_calculations::iso::iso_from_fixed(date) {
+        match calendrical_calculations::gregorian::gregorian_from_fixed(date) {
             Err(I32CastError::BelowMin) => ArithmeticDate::min_date(),
             Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
             Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
@@ -132,7 +132,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        calendrical_calculations::iso::fixed_from_iso(date.year, date.month, date.day)
+        calendrical_calculations::gregorian::fixed_from_gregorian(date.year, date.month, date.day)
     }
 
     fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {

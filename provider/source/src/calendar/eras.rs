@@ -158,7 +158,8 @@ fn process_era_dates_map(
                     // All pre-Taisho start dates are known to be wrong, this at least makes them valid.
                     // See https://unicode-org.atlassian.net/browse/CLDR-11400
                     if start.month == 2 && start.day > 28 {
-                        start.day = if calendrical_calculations::iso::is_leap_year(start.year) {
+                        start.day = if calendrical_calculations::gregorian::is_leap_year(start.year)
+                        {
                             29
                         } else {
                             28

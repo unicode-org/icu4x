@@ -29,7 +29,7 @@ pub const fn is_leap_year(year: i32) -> bool {
 // The fixed calculations algorithms are from the Calendrical Calculations book.
 //
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1167-L1189>
-pub const fn const_fixed_from_iso(year: i32, month: u8, day: u8) -> RataDie {
+pub const fn fixed_from_gregorian(year: i32, month: u8, day: u8) -> RataDie {
     day_before_year(year)
         .add(days_before_month(year, month) as i64)
         .add(day as i64)
@@ -51,13 +51,8 @@ pub const fn days_before_month(year: i32, month: u8) -> u16 {
     }
 }
 
-/// Non-const version of [`const_fixed_from_iso`]
-pub fn fixed_from_iso(year: i32, month: u8, day: u8) -> RataDie {
-    const_fixed_from_iso(year, month, day)
-}
-
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217>
-pub const fn iso_year_from_fixed(date: RataDie) -> Result<i32, I32CastError> {
+pub const fn year_from_fixed(date: RataDie) -> Result<i32, I32CastError> {
     // Shouldn't overflow because it's not possbile to construct extreme values of RataDie
     let date = date.since(EPOCH);
 
@@ -110,8 +105,8 @@ pub fn year_day(year: i32, day_of_year: u16) -> (u8, u8) {
 }
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1525-L1540>
-pub fn iso_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
-    let year = iso_year_from_fixed(date)?;
+pub fn gregorian_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
+    let year = year_from_fixed(date)?;
     let day_of_year = date - day_before_year(year);
     let (month, day) = year_day(year, day_of_year as u16);
     Ok((year, month, day))
@@ -124,7 +119,7 @@ pub fn easter(year: i32) -> RataDie {
         (14 + 11 * year.rem_euclid(19) - century * 3 / 4 + (5 + 8 * century) / 25).rem_euclid(30);
     let adjusted_epact = shifted_epact
         + (shifted_epact == 0 || (shifted_epact == 1 && 10 < year.rem_euclid(19))) as i32;
-    let paschal_moon = fixed_from_iso(year, 4, 19) - adjusted_epact as i64;
+    let paschal_moon = fixed_from_gregorian(year, 4, 19) - adjusted_epact as i64;
 
     k_day_after(0, paschal_moon)
 }
@@ -143,6 +138,6 @@ fn test_easter() {
         (2028, 4, 16),
         (2029, 4, 1),
     ] {
-        assert_eq!(easter(y), fixed_from_iso(y, m, d));
+        assert_eq!(easter(y), fixed_from_gregorian(y, m, d));
     }
 }
