@@ -45,8 +45,8 @@
                 "en-u-ca-coptic": "1736 AM",
                 "fr-u-ca-coptic": "1736 ap. D.",
                 "en-u-ca-ethiopic" : "2012 ERA1",
-                "fr-u-ca-ethiopic" : "2012 ap. Inc.",
-                "fr-u-ca-ethioaa" : "7512 av. Inc."
+                "fr-u-ca-ethiopic" : "2012 ERA1",
+                "fr-u-ca-ethioaa" : "7512 ERA0"
             }
         }
     },

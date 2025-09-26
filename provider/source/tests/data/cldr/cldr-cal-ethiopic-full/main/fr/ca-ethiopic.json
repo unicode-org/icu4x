@@ -291,16 +291,16 @@
             },
             "eras": {
               "eraNames": {
-                "0": "avant l’Incarnation",
-                "1": "après l’Incarnation"
+                "0": "ERA0",
+                "1": "ERA1"
               },
               "eraAbbr": {
-                "0": "av. Inc.",
-                "1": "ap. Inc."
+                "0": "ERA0",
+                "1": "ERA1"
               },
               "eraNarrow": {
-                "0": "av. Inc.",
-                "1": "ap. Inc."
+                "0": "ERA0",
+                "1": "ERA1"
               }
             },
             "dateFormats": {
