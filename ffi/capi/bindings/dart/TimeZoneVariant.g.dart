@@ -3,6 +3,7 @@
 
 part of 'lib.g.dart';
 
+@core.Deprecated('type not needed anymore')
 enum TimeZoneVariant {
 
   standard,
@@ -14,6 +15,7 @@ enum TimeZoneVariant {
   /// See the [Rust documentation for `with_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/enum.TimeZoneVariant.html)
+  @core.Deprecated('type not needed anymore')
   static TimeZoneVariant fromRearguardIsdst(bool isdst) {
     final result = _icu4x_TimeZoneVariant_from_rearguard_isdst_mv1(isdst);
     return TimeZoneVariant.values[result];

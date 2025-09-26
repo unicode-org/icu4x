@@ -29,7 +29,7 @@ impl DataProvider<TimezoneIdentifiersIanaCoreV1> for SourceDataProvider {
         // Get the canonical IANA names.
 
         // Transform the map to use BCP indices:
-        #[allow(clippy::unwrap_used)] // structures are derived from each other
+        #[expect(clippy::unwrap_used)] // structures are derived from each other
         let map: BTreeMap<Vec<u8>, usize> = iana2bcp
             .iter()
             .map(|(iana, bcp)| {

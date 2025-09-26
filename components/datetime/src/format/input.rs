@@ -6,11 +6,11 @@
 //! formatting operations.
 
 use crate::scaffold::*;
-use icu_calendar::types::DayOfYear;
+use icu_calendar::types::{DayOfYear, RataDie};
 use icu_calendar::{AsCalendar, Calendar};
 use icu_time::scaffold::IntoOption;
 use icu_time::zone::ZoneNameTimestamp;
-use icu_time::{zone::TimeZoneVariant, Hour, Minute, Nanosecond, Second};
+use icu_time::{Hour, Minute, Nanosecond, Second};
 
 use icu_calendar::Date;
 use icu_time::{zone::UtcOffset, Time, TimeZone};
@@ -38,6 +38,8 @@ pub struct DateTimeInputUnchecked {
     pub(crate) iso_weekday: Option<Weekday>,
     /// The day-of-year, required for field sets with weeks.
     pub(crate) day_of_year: Option<DayOfYear>,
+    /// The RataDie of the day
+    pub(crate) rata_die: Option<RataDie>,
     /// The hour, required for field sets with times (`T`).
     pub(crate) hour: Option<Hour>,
     /// The minute, required for field sets with times (`T`).
@@ -52,9 +54,6 @@ pub struct DateTimeInputUnchecked {
     /// The time zone UTC offset, required for field sets with
     /// certain time zone styles.
     pub(crate) zone_offset: Option<UtcOffset>,
-    /// The time zone variant, required for field sets with
-    /// certain time zone styles.
-    pub(crate) zone_variant: Option<TimeZoneVariant>,
     /// The local ISO time, required for field sets with
     /// certain time zone styles.
     pub(crate) zone_name_timestamp: Option<ZoneNameTimestamp>,
@@ -95,14 +94,13 @@ impl DateTimeInputUnchecked {
     }
 
     /// Sets the local time for time zone name resolution.
-    pub fn set_time_zone_name_timestamp(&mut self, local_time: ZoneNameTimestamp) {
-        self.zone_name_timestamp = Some(local_time);
+    pub fn set_time_zone_name_timestamp(&mut self, timestamp: ZoneNameTimestamp) {
+        self.zone_name_timestamp = Some(timestamp);
     }
 
-    /// Sets the time zone variant.
-    pub fn set_time_zone_variant(&mut self, zone_variant: TimeZoneVariant) {
-        self.zone_variant = Some(zone_variant);
-    }
+    /// No-op
+    #[deprecated]
+    pub fn set_time_zone_variant(&mut self, _zone_variant: icu_time::zone::TimeZoneVariant) {}
 
     /// Construct given neo date input instances.
     pub(crate) fn extract_from_neo_input<D, T, Z, I>(input: &I) -> Self
@@ -116,13 +114,13 @@ impl DateTimeInputUnchecked {
             + GetField<D::DayOfMonthInput>
             + GetField<D::DayOfWeekInput>
             + GetField<D::DayOfYearInput>
+            + GetField<D::RataDieInput>
             + GetField<T::HourInput>
             + GetField<T::MinuteInput>
             + GetField<T::SecondInput>
             + GetField<T::NanosecondInput>
             + GetField<Z::TimeZoneIdInput>
             + GetField<Z::TimeZoneOffsetInput>
-            + GetField<Z::TimeZoneVariantInput>
             + GetField<Z::TimeZoneNameTimestampInput>,
     {
         Self {
@@ -131,13 +129,13 @@ impl DateTimeInputUnchecked {
             day_of_month: GetField::<D::DayOfMonthInput>::get_field(input).into_option(),
             iso_weekday: GetField::<D::DayOfWeekInput>::get_field(input).into_option(),
             day_of_year: GetField::<D::DayOfYearInput>::get_field(input).into_option(),
+            rata_die: GetField::<D::RataDieInput>::get_field(input).into_option(),
             hour: GetField::<T::HourInput>::get_field(input).into_option(),
             minute: GetField::<T::MinuteInput>::get_field(input).into_option(),
             second: GetField::<T::SecondInput>::get_field(input).into_option(),
             subsecond: GetField::<T::NanosecondInput>::get_field(input).into_option(),
             zone_id: GetField::<Z::TimeZoneIdInput>::get_field(input).into_option(),
             zone_offset: GetField::<Z::TimeZoneOffsetInput>::get_field(input).into_option(),
-            zone_variant: GetField::<Z::TimeZoneVariantInput>::get_field(input).into_option(),
             zone_name_timestamp: GetField::<Z::TimeZoneNameTimestampInput>::get_field(input)
                 .into_option(),
         }

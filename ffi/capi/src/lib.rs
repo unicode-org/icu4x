@@ -11,7 +11,10 @@
         clippy::unwrap_used,
         clippy::expect_used,
         clippy::panic,
-        // Exhaustiveness and Debug is not required for Diplomat types
+        // Enums should be non-exhaustive, as exhaustive enums don't exist in other languages anyway
+        clippy::exhaustive_enums,
+        // Structs should be exhaustive, as they are exhaustive in C/C++
+        // Debug is not required as there is no stable Rust API
     )
 )]
 // Diplomat limitations
@@ -20,6 +23,8 @@
     clippy::result_unit_err,
     clippy::should_implement_trait
 )]
+// libc is behind a negative feature
+#![allow(unused_crate_dependencies)]
 
 //! This crate contains the `extern "C"` FFI for ICU4X, as well as the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
 //! C, C++, Dart, JavaScript, and TypeScript bindings.
@@ -78,7 +83,7 @@ pub mod unstable {
 
     #[cfg(feature = "properties")]
     pub mod bidi;
-    #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+    #[cfg(feature = "calendar")]
     pub mod calendar;
     #[cfg(feature = "casemap")]
     pub mod casemap;
@@ -86,13 +91,13 @@ pub mod unstable {
     pub mod collator;
     #[cfg(feature = "properties")]
     pub mod collections_sets;
-    #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+    #[cfg(feature = "calendar")]
     pub mod date;
     #[cfg(feature = "datetime")]
     pub mod date_formatter;
     #[cfg(feature = "datetime")]
     pub mod date_time_formatter;
-    #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+    #[cfg(feature = "calendar")]
     pub mod datetime;
     #[cfg(feature = "datetime")]
     pub mod datetime_options;
@@ -106,7 +111,7 @@ pub mod unstable {
     pub mod fallbacker;
     #[cfg(feature = "decimal")]
     pub mod fixed_decimal;
-    #[cfg(any(feature = "datetime", feature = "timezone"))]
+    #[cfg(feature = "datetime")]
     pub mod iana_parser;
     #[cfg(feature = "list")]
     pub mod list;
@@ -114,8 +119,6 @@ pub mod unstable {
     pub mod locale;
     #[cfg(feature = "locale")]
     pub mod locale_directionality;
-    #[cfg(feature = "experimental")]
-    pub mod measure_unit_parser;
     #[cfg(feature = "normalizer")]
     pub mod normalizer;
     #[cfg(feature = "normalizer")]
@@ -146,21 +149,19 @@ pub mod unstable {
     pub mod segmenter_sentence;
     #[cfg(feature = "segmenter")]
     pub mod segmenter_word;
-    #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+    #[cfg(feature = "calendar")]
     pub mod time;
     #[cfg(feature = "datetime")]
     pub mod time_formatter;
-    #[cfg(any(feature = "datetime", feature = "timezone"))]
+    #[cfg(feature = "datetime")]
     pub mod timezone;
     #[cfg(feature = "datetime")]
     pub mod timezone_formatter;
-    #[cfg(feature = "experimental")]
-    pub mod units_converter;
-    #[cfg(any(feature = "datetime", feature = "timezone"))]
+    #[cfg(feature = "datetime")]
     pub mod variant_offset;
     #[cfg(feature = "calendar")]
     pub mod week;
-    #[cfg(any(feature = "datetime", feature = "timezone"))]
+    #[cfg(feature = "datetime")]
     pub mod windows_parser;
     #[cfg(feature = "datetime")]
     pub mod zoned_date_formatter;

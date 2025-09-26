@@ -19,6 +19,7 @@
     "dkcph": "Kopenhag",
     "egcai": "Kahire",
     "eheai": "Layun",
+    "fotho": "Faroe",
     "galbv": "Librevil",
     "gblon": "Londra",
     "getbs": "Tiflis",
@@ -28,6 +29,7 @@
     "gsgrv": "Güney Georgia",
     "hubud": "Budapeşte",
     "inccu": "Kalküta",
+    "iodga": "Chagos",
     "iqbgw": "Bağdat",
     "irthr": "Tahran",
     "itrom": "Roma",
@@ -60,12 +62,14 @@
     "somgq": "Mogadişu",
     "ssjub": "Cuba",
     "sydam": "Şam",
+    "tfpfr": "Kerguelen",
     "tjdyu": "Duşanbe",
     "tmasb": "Aşkabat",
     "trist": "İstanbul",
     "tzdar": "Darüsselam",
     "unk": "Bilinmeyen Şehir",
     "uztas": "Taşkent",
-    "vnsgn": "Ho Chi Minh Kenti"
+    "vnsgn": "Ho Chi Minh Kenti",
+    "wfmau": "Wallis & Futuna"
   }
 }

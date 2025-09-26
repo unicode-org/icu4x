@@ -6,6 +6,14 @@
 #![cfg_attr(icu4x_noalloctest, no_std)]
 #![cfg_attr(icu4x_noalloctest, no_main)]
 
+use litemap as _;
+use potential_utf as _;
+use tinystr as _;
+use yoke as _;
+use zerofrom as _;
+use zerotrie as _;
+use zerovec as _;
+
 #[cfg(icu4x_noalloctest)]
 mod real {
     #[panic_handler]

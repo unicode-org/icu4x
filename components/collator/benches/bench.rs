@@ -18,7 +18,7 @@ use icu_locale_core::Locale;
 fn baseline_bench(group: &mut BenchmarkGroup<'_, WallTime>, file_name: &&str, elements: &[&str]) {
     // baseline performance, locale-unaware code point sort done by Rust (0 for ordering in the html report)
     group.bench_function(
-        BenchmarkId::new(format!("{}/0_rust_sort", file_name), "default"),
+        BenchmarkId::new(format!("{file_name}/0_rust_sort"), "default"),
         |bencher| {
             bencher.iter_batched(
                 || black_box(elements.to_vec()),
@@ -45,8 +45,8 @@ fn collator_bench(
     // ICU4X collator performance, sort is locale-aware
     group.bench_function(
         BenchmarkId::new(
-            format!("{}/1_icu4x_sort", file_name),
-            format!("{}_{:?}", index, strength),
+            format!("{file_name}/1_icu4x_sort"),
+            format!("{index}_{strength:?}"),
         ),
         |bencher| {
             bencher.iter_batched(

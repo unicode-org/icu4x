@@ -7,7 +7,6 @@
 #[rustfmt::skip]
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
     use writeable::TryWriteable;
@@ -49,6 +48,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_long")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::SpecificLong, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
+        #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_specific_long(
             locale: &Locale,
@@ -374,7 +374,6 @@ pub mod ffi {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_short")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericShort, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
-        #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_generic_short(
             locale: &Locale,
@@ -583,9 +582,6 @@ pub mod ffi {
             }
             else {
                 input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::far_in_future())
-            }
-            if let Some(variant) = zone.variant {
-                input.set_time_zone_variant(variant);
             }
             let _infallible = self
                 .0

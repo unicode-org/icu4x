@@ -2,125 +2,118 @@
   "defaults": [
     [
       [
-        8,
+        7,
         "Standard"
       ],
       "AKST"
     ],
     [
       [
-        8,
+        7,
         "Daylight"
       ],
       "AKDT"
     ],
     [
       [
-        10,
+        9,
         "Standard"
       ],
       "CST"
     ],
     [
       [
-        10,
+        9,
         "Daylight"
       ],
       "CDT"
     ],
     [
       [
-        11,
+        10,
         "Standard"
       ],
       "EST"
     ],
     [
       [
-        11,
+        10,
         "Daylight"
       ],
       "EDT"
     ],
     [
       [
-        12,
+        11,
         "Standard"
       ],
       "MST"
     ],
     [
       [
-        12,
+        11,
         "Daylight"
       ],
       "MDT"
     ],
     [
       [
-        13,
+        12,
         "Standard"
       ],
       "PST"
     ],
     [
       [
-        13,
+        12,
         "Daylight"
       ],
       "PDT"
     ],
     [
       [
-        22,
+        17,
         "Standard"
       ],
       "AST"
     ],
     [
       [
-        22,
+        17,
         "Daylight"
       ],
       "ADT"
     ],
     [
       [
-        68,
-        "Standard"
-      ],
-      "HAST"
-    ],
-    [
-      [
-        68,
-        "Daylight"
-      ],
-      "HADT"
-    ],
-    [
-      [
-        101,
+        52,
         "Standard"
       ],
       "GMT"
-    ]
-  ],
-  "overrides": [
+    ],
     [
       [
-        "ushnl",
+        62,
         "Standard"
       ],
       "HST"
     ],
     [
       [
-        "ushnl",
+        63,
+        "Standard"
+      ],
+      "HAST"
+    ],
+    [
+      [
+        63,
         "Daylight"
       ],
-      "HDT"
-    ],
+      "HADT"
+    ]
+  ],
+  "overrides": [
     [
       [
         "utc",

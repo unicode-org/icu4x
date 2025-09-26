@@ -1,5 +1,5 @@
-#ifndef icu4x_VariantOffsetsCalculator_D_HPP
-#define icu4x_VariantOffsetsCalculator_D_HPP
+#ifndef ICU4X_VariantOffsetsCalculator_D_HPP
+#define ICU4X_VariantOffsetsCalculator_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,8 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
@@ -24,7 +23,8 @@ namespace capi { struct VariantOffsetsCalculator; }
 class VariantOffsetsCalculator;
 struct VariantOffsets;
 class DataError;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -36,8 +36,10 @@ namespace capi {
 namespace icu4x {
 /**
  * See the [Rust documentation for `VariantOffsetsCalculator`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculator.html) for more information.
+ *
+ * \deprecated this API is a bad approximation of a time zone database
  */
-class VariantOffsetsCalculator {
+class [[deprecated("this API is a bad approximation of a time zone database")]] VariantOffsetsCalculator {
 public:
 
   /**
@@ -52,26 +54,31 @@ public:
    *
    * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculator.html#method.new) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::VariantOffsetsCalculator>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::VariantOffsetsCalculator>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
    */
-  inline std::optional<icu4x::VariantOffsets> compute_offsets_from_time_zone_and_date_time(const icu4x::TimeZone& time_zone, const icu4x::IsoDate& local_date, const icu4x::Time& local_time) const;
+  inline std::optional<icu4x::VariantOffsets> compute_offsets_from_time_zone_and_date_time(const icu4x::TimeZone& time_zone, const icu4x::IsoDate& utc_date, const icu4x::Time& utc_time) const;
 
-  inline const icu4x::capi::VariantOffsetsCalculator* AsFFI() const;
-  inline icu4x::capi::VariantOffsetsCalculator* AsFFI();
-  inline static const icu4x::VariantOffsetsCalculator* FromFFI(const icu4x::capi::VariantOffsetsCalculator* ptr);
-  inline static icu4x::VariantOffsetsCalculator* FromFFI(icu4x::capi::VariantOffsetsCalculator* ptr);
-  inline static void operator delete(void* ptr);
+  /**
+   * See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
+   */
+  inline std::optional<icu4x::VariantOffsets> compute_offsets_from_time_zone_and_timestamp(const icu4x::TimeZone& time_zone, int64_t timestamp) const;
+
+    inline const icu4x::capi::VariantOffsetsCalculator* AsFFI() const;
+    inline icu4x::capi::VariantOffsetsCalculator* AsFFI();
+    inline static const icu4x::VariantOffsetsCalculator* FromFFI(const icu4x::capi::VariantOffsetsCalculator* ptr);
+    inline static icu4x::VariantOffsetsCalculator* FromFFI(icu4x::capi::VariantOffsetsCalculator* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  VariantOffsetsCalculator() = delete;
-  VariantOffsetsCalculator(const icu4x::VariantOffsetsCalculator&) = delete;
-  VariantOffsetsCalculator(icu4x::VariantOffsetsCalculator&&) noexcept = delete;
-  VariantOffsetsCalculator operator=(const icu4x::VariantOffsetsCalculator&) = delete;
-  VariantOffsetsCalculator operator=(icu4x::VariantOffsetsCalculator&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    VariantOffsetsCalculator() = delete;
+    VariantOffsetsCalculator(const icu4x::VariantOffsetsCalculator&) = delete;
+    VariantOffsetsCalculator(icu4x::VariantOffsetsCalculator&&) noexcept = delete;
+    VariantOffsetsCalculator operator=(const icu4x::VariantOffsetsCalculator&) = delete;
+    VariantOffsetsCalculator operator=(icu4x::VariantOffsetsCalculator&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_VariantOffsetsCalculator_D_HPP
+#endif // ICU4X_VariantOffsetsCalculator_D_HPP

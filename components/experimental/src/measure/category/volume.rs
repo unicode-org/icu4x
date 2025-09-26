@@ -19,6 +19,7 @@ impl Volume {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
+                id: Some("cubic-meter"),
                 single_units: SingleUnitVec::One(SingleUnit {
                     power: 3,
                     si_prefix: SiPrefix {
@@ -37,6 +38,7 @@ impl Volume {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
+                id: Some("liter"),
                 single_units: SingleUnitVec::One(SingleUnit {
                     power: 1,
                     si_prefix: SiPrefix {
@@ -54,17 +56,16 @@ impl Volume {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::measure::parser::MeasureUnitParser;
+    use crate::measure::measureunit::MeasureUnit;
 
     #[test]
     fn test_volume_category() {
-        let parser = MeasureUnitParser::default();
         let cubic_meter = Volume::cubic_meter();
-        let cubic_meter_parsed = parser.try_from_str("cubic-meter").unwrap();
+        let cubic_meter_parsed = MeasureUnit::try_from_str("cubic-meter").unwrap();
         assert_eq!(cubic_meter.unit, cubic_meter_parsed);
 
         let liter = Volume::liter();
-        let liter_parsed = parser.try_from_str("liter").unwrap();
+        let liter_parsed = MeasureUnit::try_from_str("liter").unwrap();
         assert_eq!(liter.unit, liter_parsed);
     }
 }

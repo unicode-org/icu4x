@@ -2,560 +2,553 @@
   "defaults": [
     [
       [
-        6,
-        "Standard"
-      ],
-      "Standard na Oras sa Kanlurang Africa"
-    ],
-    [
-      [
-        6,
-        "Daylight"
-      ],
-      "Oras sa Tag-init ng Kanlurang Africa"
-    ],
-    [
-      [
-        8,
+        7,
         "Standard"
       ],
       "Standard na Oras sa Alaska"
     ],
     [
       [
-        8,
+        7,
         "Daylight"
       ],
       "Daylight Time sa Alaska"
     ],
     [
       [
-        9,
+        8,
         "Standard"
       ],
       "Standard na Oras sa Amazon"
     ],
     [
       [
-        9,
+        8,
         "Daylight"
       ],
       "Oras sa Tag-init ng Amazon"
     ],
     [
       [
-        10,
+        9,
         "Standard"
       ],
       "Sentral na Standard na Oras sa North America"
     ],
     [
       [
-        10,
+        9,
         "Daylight"
       ],
       "Sentral na Daylight na Oras sa North America"
     ],
     [
       [
-        11,
+        10,
         "Standard"
       ],
       "Standard na Oras sa Silangan ng Hilangang Amerika"
     ],
     [
       [
-        11,
+        10,
         "Daylight"
       ],
       "Daylight na Oras sa Silangan ng Hilagang Amerika"
     ],
     [
       [
-        12,
+        11,
         "Standard"
       ],
       "Standard na Oras sa Bundok sa Hilagang Amerika"
     ],
     [
       [
-        12,
+        11,
         "Daylight"
       ],
       "Daylight na Oras sa Bundok sa Hilagang Amerika"
     ],
     [
       [
-        13,
+        12,
         "Standard"
       ],
       "Standard na Oras sa Pasipiko sa Hilagang Amerika"
     ],
     [
       [
-        13,
+        12,
         "Daylight"
       ],
       "Daylight na Oras sa Pasipiko sa Hilagang Amerika"
     ],
     [
       [
-        14,
-        "Standard"
-      ],
-      "Standard Time sa Anadyr"
-    ],
-    [
-      [
-        15,
+        13,
         "Standard"
       ],
       "Standard na Oras sa Apia"
     ],
     [
       [
-        15,
+        13,
         "Daylight"
       ],
       "Daylight Time sa Apia"
     ],
     [
       [
-        18,
+        14,
         "Standard"
       ],
       "Standard na Oras sa Arabia"
     ],
     [
       [
-        19,
+        15,
         "Standard"
       ],
       "Standard na Oras sa Argentina"
     ],
     [
       [
-        22,
+        17,
         "Standard"
       ],
       "Standard na Oras sa Atlantiko"
     ],
     [
       [
-        22,
+        17,
         "Daylight"
       ],
       "Daylight na Oras sa Atlantiko"
     ],
     [
       [
-        23,
+        18,
         "Standard"
       ],
       "Standard na Oras sa Gitnang Australya"
     ],
     [
       [
-        23,
+        18,
         "Daylight"
       ],
       "Daylight Time sa Gitnang Australya"
     ],
     [
       [
-        24,
+        19,
         "Standard"
       ],
       "Standard Time ng Gitnang Kanluran ng Australia"
     ],
     [
       [
-        25,
+        20,
         "Standard"
       ],
       "Standard na Oras sa Silangang Australia"
     ],
     [
       [
-        25,
+        20,
         "Daylight"
       ],
       "Daylight Time sa Silangang Australia"
     ],
     [
       [
-        26,
+        21,
         "Standard"
       ],
       "Standard na Oras sa Kanlurang Australia"
     ],
     [
       [
-        27,
+        22,
         "Daylight"
       ],
       "Oras sa Tag-init ng Azerbaijan"
     ],
     [
       [
-        28,
+        23,
         "Daylight"
       ],
       "Oras sa Tag-init ng Azores"
     ],
     [
       [
-        32,
+        27,
         "Standard"
       ],
       "Standard na Oras sa Brasilia"
     ],
     [
       [
-        32,
+        27,
         "Daylight"
       ],
       "Oras sa Tag-init ng Brasilia"
     ],
     [
       [
-        37,
+        32,
         "Daylight"
       ],
       "Daylight Time sa Chatham"
     ],
     [
       [
-        38,
+        33,
         "Standard"
       ],
       "Standard na Oras sa Chile"
     ],
     [
       [
-        38,
+        33,
         "Daylight"
       ],
       "Oras sa Tag-init ng Chile"
     ],
     [
       [
-        39,
+        34,
         "Standard"
       ],
       "Standard na Oras sa China"
     ],
     [
       [
-        44,
+        39,
         "Daylight"
       ],
       "Daylight na Oras sa Cuba"
     ],
     [
       [
-        47,
+        43,
         "Standard"
       ],
       "Standard na Oras sa Easter Island"
     ],
     [
       [
-        47,
+        43,
         "Daylight"
       ],
       "Oras sa Tag-init ng Easter Island"
     ],
     [
       [
-        50,
+        45,
         "Standard"
       ],
       "Standard na Oras sa Gitnang Europe"
     ],
     [
       [
-        50,
+        45,
         "Daylight"
       ],
       "Oras sa Tag-init ng Gitnang Europe"
     ],
     [
       [
-        51,
+        46,
         "Standard"
       ],
       "Standard na Oras sa Silangang Europe"
     ],
     [
       [
-        51,
+        46,
         "Daylight"
       ],
       "Oras sa Tag-init ng Silangang Europe"
     ],
     [
       [
-        53,
+        47,
         "Standard"
       ],
       "Standard na Oras sa Kanlurang Europe"
     ],
     [
       [
-        53,
+        47,
         "Daylight"
       ],
       "Oras sa Tag-init ng Kanlurang Europe"
     ],
     [
       [
-        55,
+        49,
         "Daylight"
       ],
       "Oras sa Tag-init ng Fiji"
     ],
     [
       [
-        60,
-        "Daylight"
-      ],
-      "Oras sa Tag-init ng Georgia"
-    ],
-    [
-      [
-        62,
+        58,
         "Standard"
       ],
       "Standard na Oras sa Silangang Greenland"
     ],
     [
       [
-        62,
+        58,
         "Daylight"
       ],
       "Oras sa Tag-init ng Silangang Greenland"
     ],
     [
       [
-        64,
+        59,
         "Standard"
       ],
       "Standard na Oras sa Kanlurang Greenland"
     ],
     [
       [
-        64,
+        59,
         "Daylight"
       ],
       "Oras sa Tag-init ng Kanlurang Greenland"
     ],
     [
       [
-        68,
+        63,
         "Standard"
       ],
       "Standard na Oras sa Hawaii-Aleutian"
     ],
     [
       [
-        68,
+        63,
         "Daylight"
       ],
       "Oras sa Tag-init ng Hawaii-Aleutian"
     ],
     [
       [
-        70,
+        65,
+        "Standard"
+      ],
+      "Standard na Oras sa Hovd"
+    ],
+    [
+      [
+        65,
         "Daylight"
       ],
       "Oras sa Tag-init ng Hovd"
     ],
     [
       [
-        77,
+        72,
         "Daylight"
       ],
       "Daylight Time sa Iran"
     ],
     [
       [
-        78,
+        73,
         "Standard"
       ],
       "Standard na Oras sa Irkutsk"
     ],
     [
       [
-        79,
+        74,
         "Daylight"
       ],
       "Daylight Time sa Israel"
     ],
     [
       [
-        82,
+        76,
         "Standard"
       ],
       "Standard Time sa Petropavlovsk-Kamchatski"
     ],
     [
       [
-        85,
+        80,
         "Standard"
       ],
       "Standard na Oras sa Korea"
     ],
     [
       [
-        87,
+        82,
         "Standard"
       ],
       "Standard na Oras sa Krasnoyarsk"
     ],
     [
       [
-        91,
+        85,
         "Daylight"
       ],
       "Daylight Time sa Lorde Howe"
     ],
     [
       [
-        100,
+        86,
+        "Standard"
+      ],
+      "Standard na Oras sa Magadan"
+    ],
+    [
+      [
+        93,
         "Standard"
       ],
       "Standard na Oras sa Pasipiko ng Mexico"
     ],
     [
       [
-        100,
+        93,
         "Daylight"
       ],
       "Daylight na Oras sa Pasipiko ng Mexico"
     ],
     [
       [
-        102,
+        94,
         "Standard"
       ],
       "Standard na Oras sa Ulan Bator"
     ],
     [
       [
-        102,
+        94,
         "Daylight"
       ],
       "Oras sa Tag-init ng Ulan Bator"
     ],
     [
       [
-        103,
+        95,
         "Standard"
       ],
       "Standard na Oras sa Moscow"
     ],
     [
       [
-        108,
-        "Standard"
-      ],
-      "Standard na Oras sa Newfoundland"
-    ],
-    [
-      [
-        108,
-        "Daylight"
-      ],
-      "Daylight na Oras sa Newfoundland"
-    ],
-    [
-      [
-        109,
+        100,
         "Standard"
       ],
       "Standard na Oras sa New Zealand"
     ],
     [
       [
-        109,
+        100,
         "Daylight"
       ],
       "Daylight Time sa New Zealand"
     ],
     [
       [
-        112,
+        101,
+        "Standard"
+      ],
+      "Standard na Oras sa Newfoundland"
+    ],
+    [
+      [
+        101,
+        "Daylight"
+      ],
+      "Daylight na Oras sa Newfoundland"
+    ],
+    [
+      [
+        103,
         "Daylight"
       ],
       "Daylight Time sa Norfolk Island"
     ],
     [
       [
-        119,
+        110,
         "Daylight"
       ],
       "Oras sa Tag-init ng Paraguay"
     ],
     [
       [
-        123,
+        114,
         "Standard"
       ],
       "Standard na Oras sa Saint Pierre & Miquelon"
     ],
     [
       [
-        123,
+        114,
         "Daylight"
       ],
       "Daylight na Oras sa Saint Pierre & Miquelon"
     ],
     [
       [
-        131,
+        120,
         "Standard"
       ],
       "Standard Time sa Samara"
     ],
     [
       [
-        132,
+        121,
         "Standard"
       ],
       "Standard na Oras sa Samoa"
     ],
     [
       [
-        140,
+        129,
         "Standard"
       ],
       "Standard na Oras sa Taipei"
     ],
     [
       [
-        143,
+        132,
         "Daylight"
       ],
       "Oras sa Tag-init ng Tonga"
     ],
     [
       [
-        148,
+        137,
+        "Daylight"
+      ],
+      "Oras sa Tag-init ng Uruguay"
+    ],
+    [
+      [
+        139,
         "Standard"
       ],
       "Standard na Oras sa Uzbekistan"
     ],
     [
       [
-        151,
+        142,
         "Standard"
       ],
       "Standard na Oras sa Vladivostok"
     ],
     [
       [
-        156,
+        147,
         "Standard"
       ],
       "Standard na Oras sa Yakutsk"
@@ -589,67 +582,69 @@
     3,
     4,
     5,
-    30,
+    6,
+    25,
+    26,
+    28,
     31,
-    33,
+    35,
     36,
     40,
     41,
-    45,
-    46,
-    48,
-    49,
+    42,
+    44,
+    50,
+    51,
+    52,
+    53,
+    54,
     56,
-    57,
-    58,
-    59,
+    60,
     61,
+    62,
     66,
     67,
+    68,
+    69,
+    70,
     71,
-    72,
-    73,
-    74,
-    75,
-    76,
+    77,
+    78,
+    79,
     81,
     83,
     84,
-    86,
+    87,
     88,
+    89,
     90,
-    94,
-    95,
+    92,
     96,
     97,
-    99,
-    101,
-    104,
-    105,
-    107,
-    110,
+    98,
+    102,
+    108,
+    109,
+    113,
+    115,
+    116,
     117,
     118,
+    119,
     122,
     124,
     125,
     126,
+    127,
     128,
-    129,
+    130,
+    131,
     133,
-    135,
     136,
-    137,
-    138,
-    139,
     141,
-    142,
     144,
+    145,
     146,
-    150,
-    153,
-    154,
-    155,
-    158
+    149
   ]
 }

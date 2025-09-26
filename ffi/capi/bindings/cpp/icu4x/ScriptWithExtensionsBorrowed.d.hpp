@@ -1,5 +1,5 @@
-#ifndef icu4x_ScriptWithExtensionsBorrowed_D_HPP
-#define icu4x_ScriptWithExtensionsBorrowed_D_HPP
+#ifndef ICU4X_ScriptWithExtensionsBorrowed_D_HPP
+#define ICU4X_ScriptWithExtensionsBorrowed_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,14 +9,14 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct CodePointSetData; }
 class CodePointSetData;
 namespace capi { struct ScriptExtensionsSet; }
 class ScriptExtensionsSet;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -64,19 +64,19 @@ public:
    */
   inline std::unique_ptr<icu4x::CodePointSetData> get_script_extensions_set(uint16_t script) const;
 
-  inline const icu4x::capi::ScriptWithExtensionsBorrowed* AsFFI() const;
-  inline icu4x::capi::ScriptWithExtensionsBorrowed* AsFFI();
-  inline static const icu4x::ScriptWithExtensionsBorrowed* FromFFI(const icu4x::capi::ScriptWithExtensionsBorrowed* ptr);
-  inline static icu4x::ScriptWithExtensionsBorrowed* FromFFI(icu4x::capi::ScriptWithExtensionsBorrowed* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::ScriptWithExtensionsBorrowed* AsFFI() const;
+    inline icu4x::capi::ScriptWithExtensionsBorrowed* AsFFI();
+    inline static const icu4x::ScriptWithExtensionsBorrowed* FromFFI(const icu4x::capi::ScriptWithExtensionsBorrowed* ptr);
+    inline static icu4x::ScriptWithExtensionsBorrowed* FromFFI(icu4x::capi::ScriptWithExtensionsBorrowed* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  ScriptWithExtensionsBorrowed() = delete;
-  ScriptWithExtensionsBorrowed(const icu4x::ScriptWithExtensionsBorrowed&) = delete;
-  ScriptWithExtensionsBorrowed(icu4x::ScriptWithExtensionsBorrowed&&) noexcept = delete;
-  ScriptWithExtensionsBorrowed operator=(const icu4x::ScriptWithExtensionsBorrowed&) = delete;
-  ScriptWithExtensionsBorrowed operator=(icu4x::ScriptWithExtensionsBorrowed&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    ScriptWithExtensionsBorrowed() = delete;
+    ScriptWithExtensionsBorrowed(const icu4x::ScriptWithExtensionsBorrowed&) = delete;
+    ScriptWithExtensionsBorrowed(icu4x::ScriptWithExtensionsBorrowed&&) noexcept = delete;
+    ScriptWithExtensionsBorrowed operator=(const icu4x::ScriptWithExtensionsBorrowed&) = delete;
+    ScriptWithExtensionsBorrowed operator=(icu4x::ScriptWithExtensionsBorrowed&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_ScriptWithExtensionsBorrowed_D_HPP
+#endif // ICU4X_ScriptWithExtensionsBorrowed_D_HPP

@@ -30,7 +30,7 @@ target/wasm32-unknown-unknown/release/icu_capi.wasm: FORCE
 	rustup toolchain install ${LLVM_COMPATIBLE_NIGHTLY}
 	rustup component add rust-src --toolchain ${LLVM_COMPATIBLE_NIGHTLY}
 	# Build the WASM library
-	RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-arg=-zstack-size=${WASM_STACK_SIZE} -Clinker-plugin-lto -Ccodegen-units=1 -C linker=${BASEDIR}/ld.py -C linker-flavor=wasm-ld -Clto -Cembed-bitcode" \
+	RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-arg=-zstack-size=${WASM_STACK_SIZE} -Clinker-plugin-lto -Ccodegen-units=1 -C linker=${BASEDIR}/ld.py -C linker-flavor=wasm-ld -Clto -Cembed-bitcode -Zwasm-c-abi=spec" \
 	cargo +${LLVM_COMPATIBLE_NIGHTLY} rustc \
 		-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort \
 		--target wasm32-unknown-unknown \

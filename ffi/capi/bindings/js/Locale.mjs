@@ -53,11 +53,11 @@ export class Locale {
     static fromString(name) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
+        const nameSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, name)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_Locale_from_string_mv1(diplomatReceive.buffer, ...nameSlice.splat());
+        const result = wasm.icu4x_Locale_from_string_mv1(diplomatReceive.buffer, nameSlice.ptr);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -136,11 +136,11 @@ export class Locale {
     getUnicodeExtension(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_Locale_get_unicode_extension_mv1(this.ffiValue, ...sSlice.splat(), write.buffer);
+        const result = wasm.icu4x_Locale_get_unicode_extension_mv1(this.ffiValue, sSlice.ptr, write.buffer);
 
         try {
             return result === 0 ? null : write.readString8();
@@ -161,10 +161,10 @@ export class Locale {
     setUnicodeExtension(k, v) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const kSlice = diplomatRuntime.DiplomatBuf.str8(wasm, k);
-        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
+        const kSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, k)));
+        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, v)));
 
-        const result = wasm.icu4x_Locale_set_unicode_extension_mv1(this.ffiValue, ...kSlice.splat(), ...vSlice.splat());
+        const result = wasm.icu4x_Locale_set_unicode_extension_mv1(this.ffiValue, kSlice.ptr, vSlice.ptr);
 
         try {
             return result === 1;
@@ -203,11 +203,11 @@ export class Locale {
     set language(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_Locale_set_language_mv1(diplomatReceive.buffer, this.ffiValue, ...sSlice.splat());
+        const result = wasm.icu4x_Locale_set_language_mv1(diplomatReceive.buffer, this.ffiValue, sSlice.ptr);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -251,11 +251,11 @@ export class Locale {
     set region(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_Locale_set_region_mv1(diplomatReceive.buffer, this.ffiValue, ...sSlice.splat());
+        const result = wasm.icu4x_Locale_set_region_mv1(diplomatReceive.buffer, this.ffiValue, sSlice.ptr);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -299,11 +299,11 @@ export class Locale {
     set script(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_Locale_set_script_mv1(diplomatReceive.buffer, this.ffiValue, ...sSlice.splat());
+        const result = wasm.icu4x_Locale_set_script_mv1(diplomatReceive.buffer, this.ffiValue, sSlice.ptr);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -327,13 +327,13 @@ export class Locale {
     static normalize(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_Locale_normalize_mv1(diplomatReceive.buffer, ...sSlice.splat(), write.buffer);
+        const result = wasm.icu4x_Locale_normalize_mv1(diplomatReceive.buffer, sSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -376,9 +376,9 @@ export class Locale {
     normalizingEq(other) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const otherSlice = diplomatRuntime.DiplomatBuf.str8(wasm, other);
+        const otherSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, other)));
 
-        const result = wasm.icu4x_Locale_normalizing_eq_mv1(this.ffiValue, ...otherSlice.splat());
+        const result = wasm.icu4x_Locale_normalizing_eq_mv1(this.ffiValue, otherSlice.ptr);
 
         try {
             return result;
@@ -396,9 +396,9 @@ export class Locale {
     compareToString(other) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const otherSlice = diplomatRuntime.DiplomatBuf.str8(wasm, other);
+        const otherSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, other)));
 
-        const result = wasm.icu4x_Locale_compare_to_string_mv1(this.ffiValue, ...otherSlice.splat());
+        const result = wasm.icu4x_Locale_compare_to_string_mv1(this.ffiValue, otherSlice.ptr);
 
         try {
             return result;

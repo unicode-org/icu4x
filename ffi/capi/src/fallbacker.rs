@@ -4,7 +4,6 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -26,7 +25,9 @@ pub mod ffi {
         FnInEnum,
         hidden
     )]
+    #[non_exhaustive]
     pub enum LocaleFallbackPriority {
+        #[diplomat::attr(auto, default)]
         Language = 0,
         Region = 1,
     }

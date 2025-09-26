@@ -165,11 +165,11 @@ export class Decimal {
     static fromString(v) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
+        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, v)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_Decimal_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat());
+        const result = wasm.icu4x_Decimal_from_string_mv1(diplomatReceive.buffer, vSlice.ptr);
 
         try {
             if (!diplomatReceive.resultFlag) {

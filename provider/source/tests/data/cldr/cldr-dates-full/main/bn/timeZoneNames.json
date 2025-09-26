@@ -9,6 +9,7 @@
           "hourFormat": "+HH:mm;-HH:mm",
           "gmtFormat": "GMT {0}",
           "gmtZeroFormat": "GMT",
+          "gmtUnknownFormat": "GMT+?",
           "regionFormat": "{0} সময়",
           "regionFormat-type-daylight": "{0} দিবালোক সময়",
           "regionFormat-type-standard": "{0} মানক সময়",
@@ -56,10 +57,6 @@
                 "exemplarCity": "গুয়াম"
               },
               "Enderbury": {
-                "_type": "zone",
-                "exemplarCity": "এন্ডারবারি"
-              },
-              "Kanton": {
                 "_type": "zone",
                 "exemplarCity": "ক্যান্টন"
               },
@@ -1000,6 +997,10 @@
                 "_type": "zone",
                 "exemplarCity": "সেন্ট জন্স"
               },
+              "Coyhaique": {
+                "_type": "zone",
+                "exemplarCity": "কোয়আইকে"
+              },
               "Punta_Arenas": {
                 "_type": "zone",
                 "exemplarCity": "পুন্টা আরেনাস"
@@ -1766,9 +1767,7 @@
             },
             "Africa_Western": {
               "long": {
-                "generic": "পশ্চিম আফ্রিকা সময়",
-                "standard": "পশ্চিম আফ্রিকা মানক সময়",
-                "daylight": "পশ্চিম আফ্রিকা গ্রীষ্মকালীন সময়"
+                "standard": "পশ্চিম আফ্রিকা সময়"
               }
             },
             "Alaska": {
@@ -1978,9 +1977,9 @@
             },
             "Colombia": {
               "long": {
-                "generic": "কোলোম্বিয়া সময়",
+                "generic": "কলম্বিয়া সময়",
                 "standard": "কোলোম্বিয়া মানক সময়",
-                "daylight": "কোলোম্বিয়া গ্রীষ্মকালীন সময়"
+                "daylight": "কলম্বিয়া গ্রীষ্মকালীন সময়"
               }
             },
             "Cook": {
@@ -2123,6 +2122,11 @@
             "Guyana": {
               "long": {
                 "standard": "গুয়ানা সময়"
+              }
+            },
+            "Hawaii": {
+              "long": {
+                "standard": "হাওয়াই-আলেউত মানক সময়"
               }
             },
             "Hawaii_Aleutian": {

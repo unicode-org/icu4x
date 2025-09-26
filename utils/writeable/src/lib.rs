@@ -312,7 +312,7 @@ pub trait Writeable {
     ///     w.write_to_string().into_owned()
     /// }
     /// ```
-    fn write_to_string(&self) -> Cow<str> {
+    fn write_to_string(&self) -> Cow<'_, str> {
         let hint = self.writeable_length_hint();
         if hint.is_zero() {
             return Cow::Borrowed("");

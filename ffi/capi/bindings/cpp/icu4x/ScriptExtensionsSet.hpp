@@ -1,5 +1,5 @@
-#ifndef icu4x_ScriptExtensionsSet_HPP
-#define icu4x_ScriptExtensionsSet_HPP
+#ifndef ICU4X_ScriptExtensionsSet_HPP
+#define ICU4X_ScriptExtensionsSet_HPP
 
 #include "ScriptExtensionsSet.d.hpp"
 
@@ -11,7 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -32,41 +32,41 @@ namespace capi {
 } // namespace
 
 inline bool icu4x::ScriptExtensionsSet::contains(uint16_t script) const {
-  auto result = icu4x::capi::icu4x_ScriptExtensionsSet_contains_mv1(this->AsFFI(),
-    script);
-  return result;
+    auto result = icu4x::capi::icu4x_ScriptExtensionsSet_contains_mv1(this->AsFFI(),
+        script);
+    return result;
 }
 
 inline size_t icu4x::ScriptExtensionsSet::count() const {
-  auto result = icu4x::capi::icu4x_ScriptExtensionsSet_count_mv1(this->AsFFI());
-  return result;
+    auto result = icu4x::capi::icu4x_ScriptExtensionsSet_count_mv1(this->AsFFI());
+    return result;
 }
 
 inline std::optional<uint16_t> icu4x::ScriptExtensionsSet::script_at(size_t index) const {
-  auto result = icu4x::capi::icu4x_ScriptExtensionsSet_script_at_mv1(this->AsFFI(),
-    index);
-  return result.is_ok ? std::optional<uint16_t>(result.ok) : std::nullopt;
+    auto result = icu4x::capi::icu4x_ScriptExtensionsSet_script_at_mv1(this->AsFFI(),
+        index);
+    return result.is_ok ? std::optional<uint16_t>(result.ok) : std::nullopt;
 }
 
 inline const icu4x::capi::ScriptExtensionsSet* icu4x::ScriptExtensionsSet::AsFFI() const {
-  return reinterpret_cast<const icu4x::capi::ScriptExtensionsSet*>(this);
+    return reinterpret_cast<const icu4x::capi::ScriptExtensionsSet*>(this);
 }
 
 inline icu4x::capi::ScriptExtensionsSet* icu4x::ScriptExtensionsSet::AsFFI() {
-  return reinterpret_cast<icu4x::capi::ScriptExtensionsSet*>(this);
+    return reinterpret_cast<icu4x::capi::ScriptExtensionsSet*>(this);
 }
 
 inline const icu4x::ScriptExtensionsSet* icu4x::ScriptExtensionsSet::FromFFI(const icu4x::capi::ScriptExtensionsSet* ptr) {
-  return reinterpret_cast<const icu4x::ScriptExtensionsSet*>(ptr);
+    return reinterpret_cast<const icu4x::ScriptExtensionsSet*>(ptr);
 }
 
 inline icu4x::ScriptExtensionsSet* icu4x::ScriptExtensionsSet::FromFFI(icu4x::capi::ScriptExtensionsSet* ptr) {
-  return reinterpret_cast<icu4x::ScriptExtensionsSet*>(ptr);
+    return reinterpret_cast<icu4x::ScriptExtensionsSet*>(ptr);
 }
 
 inline void icu4x::ScriptExtensionsSet::operator delete(void* ptr) {
-  icu4x::capi::icu4x_ScriptExtensionsSet_destroy_mv1(reinterpret_cast<icu4x::capi::ScriptExtensionsSet*>(ptr));
+    icu4x::capi::icu4x_ScriptExtensionsSet_destroy_mv1(reinterpret_cast<icu4x::capi::ScriptExtensionsSet*>(ptr));
 }
 
 
-#endif // icu4x_ScriptExtensionsSet_HPP
+#endif // ICU4X_ScriptExtensionsSet_HPP

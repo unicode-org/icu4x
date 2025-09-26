@@ -1,10 +1,13 @@
 {
   "name": "icu",
-  "version": "2.0.0",
+  "version": "2.0.5",
   "description": "ICU4X JavaScript bindings via WebAssembly",
   "main": "lib/index.mjs",
   "exports": {
-    ".": "./lib/index.mjs"
+    ".": {
+      "import": "./lib/index.mjs",
+      "types": "./lib/index.d.ts"
+    }
   },
   "type": "module",
   "directories": {

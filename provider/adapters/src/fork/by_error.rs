@@ -133,7 +133,7 @@ where
     fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    ) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
         let result = self.0.iter_ids_for_marker(marker);
         match result {
             Ok(ok) => return Ok(ok),
@@ -301,7 +301,7 @@ where
     fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    ) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
         let mut last_error = F::UNIT_ERROR.with_marker(marker);
         for provider in self.providers.iter() {
             let result = provider.iter_ids_for_marker(marker);

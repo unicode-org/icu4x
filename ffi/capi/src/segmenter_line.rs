@@ -4,7 +4,6 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_segmenter::scaffold::{Latin1, PotentiallyIllFormedUtf8, Utf16};
@@ -25,16 +24,20 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::segmenter::options::LineBreakStrictness, Enum)]
     #[diplomat::enum_convert(icu_segmenter::options::LineBreakStrictness, needs_wildcard)]
+    #[non_exhaustive]
     pub enum LineBreakStrictness {
         Loose,
         Normal,
+        #[diplomat::attr(auto, default)]
         Strict,
         Anywhere,
     }
 
     #[diplomat::rust_link(icu::segmenter::options::LineBreakWordOption, Enum)]
     #[diplomat::enum_convert(icu_segmenter::options::LineBreakWordOption, needs_wildcard)]
+    #[non_exhaustive]
     pub enum LineBreakWordOption {
+        #[diplomat::attr(auto, default)]
         Normal,
         BreakAll,
         KeepAll,

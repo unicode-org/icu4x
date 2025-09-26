@@ -1,5 +1,5 @@
-#ifndef icu4x_GraphemeClusterBreak_D_HPP
-#define icu4x_GraphemeClusterBreak_D_HPP
+#ifndef ICU4X_GraphemeClusterBreak_D_HPP
+#define ICU4X_GraphemeClusterBreak_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,11 +9,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 class GraphemeClusterBreak;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -49,33 +49,34 @@ namespace icu4x {
  */
 class GraphemeClusterBreak {
 public:
-  enum Value {
-    Other = 0,
-    Control = 1,
-    CR = 2,
-    Extend = 3,
-    L = 4,
-    LF = 5,
-    LV = 6,
-    LVT = 7,
-    T = 8,
-    V = 9,
-    SpacingMark = 10,
-    Prepend = 11,
-    RegionalIndicator = 12,
-    EBase = 13,
-    EBaseGAZ = 14,
-    EModifier = 15,
-    GlueAfterZwj = 16,
-    ZWJ = 17,
-  };
+    enum Value {
+        Other = 0,
+        Control = 1,
+        CR = 2,
+        Extend = 3,
+        L = 4,
+        LF = 5,
+        LV = 6,
+        LVT = 7,
+        T = 8,
+        V = 9,
+        SpacingMark = 10,
+        Prepend = 11,
+        RegionalIndicator = 12,
+        EBase = 13,
+        EBaseGAZ = 14,
+        EModifier = 15,
+        GlueAfterZwj = 16,
+        ZWJ = 17,
+    };
 
-  GraphemeClusterBreak() = default;
-  // Implicit conversions between enum and ::Value
-  constexpr GraphemeClusterBreak(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    GraphemeClusterBreak(): value(Value::Other) {}
+
+    // Implicit conversions between enum and ::Value
+    constexpr GraphemeClusterBreak(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
   /**
    * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
@@ -96,11 +97,11 @@ public:
    */
   inline static std::optional<icu4x::GraphemeClusterBreak> from_integer_value(uint8_t other);
 
-  inline icu4x::capi::GraphemeClusterBreak AsFFI() const;
-  inline static icu4x::GraphemeClusterBreak FromFFI(icu4x::capi::GraphemeClusterBreak c_enum);
+    inline icu4x::capi::GraphemeClusterBreak AsFFI() const;
+    inline static icu4x::GraphemeClusterBreak FromFFI(icu4x::capi::GraphemeClusterBreak c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_GraphemeClusterBreak_D_HPP
+#endif // ICU4X_GraphemeClusterBreak_D_HPP

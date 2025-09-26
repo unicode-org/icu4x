@@ -51,7 +51,13 @@ export class DateTime {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [this.#date.ffiValue, this.#time.ffiValue]
+        let buffer = diplomatRuntime.DiplomatBuf.struct(wasm, 8, 4);
+
+        this._writeToArrayBuffer(wasm.memory.buffer, buffer.ptr, functionCleanupArena, appendArrayMap);
+
+        functionCleanupArena.alloc(buffer);
+
+        return buffer.ptr;
     }
 
     static _fromSuppliedValue(internalConstructor, obj) {
@@ -103,11 +109,11 @@ export class DateTime {
     static fromString(v, calendar) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
+        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, v)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
 
 
-        const result = wasm.icu4x_DateTime_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat(), calendar.ffiValue);
+        const result = wasm.icu4x_DateTime_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, calendar.ffiValue);
 
         try {
             if (!diplomatReceive.resultFlag) {

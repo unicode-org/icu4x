@@ -1,5 +1,5 @@
-#ifndef icu4x_GraphemeClusterBreakIteratorUtf8_D_HPP
-#define icu4x_GraphemeClusterBreakIteratorUtf8_D_HPP
+#ifndef ICU4X_GraphemeClusterBreakIteratorUtf8_D_HPP
+#define ICU4X_GraphemeClusterBreakIteratorUtf8_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -33,19 +33,19 @@ public:
    */
   inline int32_t next();
 
-  inline const icu4x::capi::GraphemeClusterBreakIteratorUtf8* AsFFI() const;
-  inline icu4x::capi::GraphemeClusterBreakIteratorUtf8* AsFFI();
-  inline static const icu4x::GraphemeClusterBreakIteratorUtf8* FromFFI(const icu4x::capi::GraphemeClusterBreakIteratorUtf8* ptr);
-  inline static icu4x::GraphemeClusterBreakIteratorUtf8* FromFFI(icu4x::capi::GraphemeClusterBreakIteratorUtf8* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::GraphemeClusterBreakIteratorUtf8* AsFFI() const;
+    inline icu4x::capi::GraphemeClusterBreakIteratorUtf8* AsFFI();
+    inline static const icu4x::GraphemeClusterBreakIteratorUtf8* FromFFI(const icu4x::capi::GraphemeClusterBreakIteratorUtf8* ptr);
+    inline static icu4x::GraphemeClusterBreakIteratorUtf8* FromFFI(icu4x::capi::GraphemeClusterBreakIteratorUtf8* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  GraphemeClusterBreakIteratorUtf8() = delete;
-  GraphemeClusterBreakIteratorUtf8(const icu4x::GraphemeClusterBreakIteratorUtf8&) = delete;
-  GraphemeClusterBreakIteratorUtf8(icu4x::GraphemeClusterBreakIteratorUtf8&&) noexcept = delete;
-  GraphemeClusterBreakIteratorUtf8 operator=(const icu4x::GraphemeClusterBreakIteratorUtf8&) = delete;
-  GraphemeClusterBreakIteratorUtf8 operator=(icu4x::GraphemeClusterBreakIteratorUtf8&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    GraphemeClusterBreakIteratorUtf8() = delete;
+    GraphemeClusterBreakIteratorUtf8(const icu4x::GraphemeClusterBreakIteratorUtf8&) = delete;
+    GraphemeClusterBreakIteratorUtf8(icu4x::GraphemeClusterBreakIteratorUtf8&&) noexcept = delete;
+    GraphemeClusterBreakIteratorUtf8 operator=(const icu4x::GraphemeClusterBreakIteratorUtf8&) = delete;
+    GraphemeClusterBreakIteratorUtf8 operator=(icu4x::GraphemeClusterBreakIteratorUtf8&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_GraphemeClusterBreakIteratorUtf8_D_HPP
+#endif // ICU4X_GraphemeClusterBreakIteratorUtf8_D_HPP

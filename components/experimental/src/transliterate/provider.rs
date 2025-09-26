@@ -27,6 +27,9 @@ use icu_provider::prelude::*;
 use vecs::Index32;
 use zerovec::*;
 
+#[cfg(feature = "compiled_data")]
+pub use crate::provider::Baked;
+
 // TODO(#3776): Improve the documentation of this datastruct.
 
 icu_provider::data_marker!(
@@ -104,7 +107,7 @@ impl RuleBasedTransliterator<'_> {
     /// Returns an iterator of dependencies on other transliterators.
     ///
     /// Note that this may contain duplicate entries.
-    pub fn deps(&self) -> impl Iterator<Item = Cow<str>> {
+    pub fn deps(&self) -> impl Iterator<Item = Cow<'_, str>> {
         use zerofrom::ZeroFrom;
         self.id_group_list
             .iter()
@@ -175,7 +178,7 @@ pub struct Rule<'a> {
 }
 
 /// The special matchers and replacers used by this transliterator.
-#[derive(Debug, Clone, zerofrom::ZeroFrom, PartialEq, Eq)]
+#[derive(Debug, Clone, zerofrom::ZeroFrom, PartialEq, Eq, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::transliterate::provider))]

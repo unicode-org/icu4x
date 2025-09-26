@@ -14,7 +14,7 @@ publish = false
 [dependencies]
 icu = { version = "2.0.0", default-features = false } # turn off compiled_data
 icu_provider = { version = "2.0.0", features = ["baked"] } # for databake
-zerovec = "0.11.1" # for databake
+zerovec = "0.11.3-dev" # for databake
 
 [build-dependencies]
 icu = "2.0.0"

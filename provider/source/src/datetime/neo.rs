@@ -108,7 +108,6 @@ impl SourceDataProvider {
         let data = self.load_calendar_dates(req.id.locale, calendar)?;
         let data = conversion(req.id, data)?;
 
-        #[allow(clippy::redundant_closure_call)]
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(data),

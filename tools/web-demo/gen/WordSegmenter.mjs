@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-import { lib } from "./index.mjs";
+import { icu } from "./index.mjs";
 
 export default {
 	"WordSegmenter.segment": {
@@ -10,13 +10,13 @@ export default {
 			var segmenter;
 			switch (model) {
 				case "Auto":
-					segmenter = lib.WordSegmenter.createAuto();
+					segmenter = icu.WordSegmenter.createAuto();
 					break;
 				case "LSTM":
-					segmenter = lib.WordSegmenter.createLstm();
+					segmenter = icu.WordSegmenter.createLstm();
 					break;
 				case "Dictionary":
-					segmenter = lib.WordSegmenter.createDictionary();
+					segmenter = icu.WordSegmenter.createDictionary();
 			}
 			
 			let last = 0;
@@ -38,16 +38,26 @@ export default {
 			
 			return segments.join(" . ");
 		},
+		expr: (model, text) => {
+			switch (model) {
+				case "'Auto'":
+					return 'icu.WordSegmenter.createAuto().segment(text)';
+				case "'LSTM'":
+					return 'icu.WordSegmenter.createLstm().segment(text)';
+				case "'Dictionary'":
+					return 'icu.WordSegmenter.createDictionary().segment(text)';
+			}
+			return 'icu.WordSegmenter.type().segment(text)';
+		},
 		funcName: "WordSegmenter.segment",
 		parameters: [
 			{
-				name: "Model Type (Auto, LSTM, or Dictionary)",
-				type: "string",
-				typeUse: "string",
-				defaultValue: "Auto"
+				name: "type",
+				typeUse: "enumerator",
+				values: ["Auto", "LSTM", "Dictionary"],
 			},
 			{
-				name: "Text",
+				name: "text",
 				type: "string",
 				typeUse: "string",
 				defaultValue: "โดยที่การยอมรับนับถือเกียรติศักดิ์ประจำตัว และสิทธิเท่าเทียมกันและโอนมิได้ของบรรดา สมาชิก ทั้ง หลายแห่งครอบครัว มนุษย์เป็นหลักมูลเหตุแห่งอิสรภาพ ความยุติธรรม และสันติภาพในโลก"

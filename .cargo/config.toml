@@ -9,3 +9,8 @@ clippy-all = "clippy --all-features --all-targets -- -D warnings"
 
 [resolver]
 incompatible-rust-versions = 'fallback' # default in resolver = "3", which we cannot use yet
+
+# https://github.com/rust-lang/rust/issues/141626
+# (can be removed once link.exe is fixed)
+[target.x86_64-pc-windows-msvc]
+linker = "rust-lld"

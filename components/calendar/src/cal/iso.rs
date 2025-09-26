@@ -2,24 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the ISO calendar.
-//!
-//! ```rust
-//! use icu::calendar::Date;
-//!
-//! let date_iso = Date::try_new_iso(1970, 1, 2)
-//!     .expect("Failed to initialize ISO Date instance.");
-//!
-//! assert_eq!(date_iso.era_year().year, 1970);
-//! assert_eq!(date_iso.month().ordinal, 1);
-//! assert_eq!(date_iso.day_of_month().0, 2);
-//! ```
-
-use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::error::DateError;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
-use calendrical_calculations::helpers::I32CastError;
-use calendrical_calculations::rata_die::RataDie;
+use crate::cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears};
+use crate::calendar_arithmetic::ArithmeticDate;
+use crate::{types, Date, DateError, RangeError};
 use tinystr::tinystr;
 
 /// The [ISO-8601 Calendar](https://en.wikipedia.org/wiki/ISO_8601#Dates)
@@ -38,149 +23,31 @@ use tinystr::tinystr;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Iso;
 
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-/// The inner date type used for representing [`Date`]s of [`Iso`]. See [`Date`] and [`Iso`] for more details.
-pub struct IsoDateInner(pub(crate) ArithmeticDate<Iso>);
+impl_with_abstract_gregorian!(crate::cal::Iso, IsoDateInner, IsoEra, _x, IsoEra);
 
-impl CalendarArithmetic for Iso {
-    type YearInfo = i32;
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub(crate) struct IsoEra;
 
-    fn days_in_provided_month(year: i32, month: u8) -> u8 {
-        match month {
-            4 | 6 | 9 | 11 => 30,
-            2 if Self::provided_year_is_leap(year) => 29,
-            2 => 28,
-            1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
-            _ => 0,
+impl GregorianYears for IsoEra {
+    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, DateError> {
+        match era {
+            Some("default") | None => Ok(year),
+            Some(_) => Err(DateError::UnknownEra),
         }
     }
 
-    fn months_in_provided_year(_: i32) -> u8 {
-        12
-    }
-
-    fn provided_year_is_leap(year: i32) -> bool {
-        calendrical_calculations::iso::is_leap_year(year)
-    }
-
-    fn last_month_day_in_provided_year(_year: i32) -> (u8, u8) {
-        (12, 31)
-    }
-
-    fn days_in_provided_year(year: i32) -> u16 {
-        if Self::provided_year_is_leap(year) {
-            366
-        } else {
-            365
-        }
-    }
-}
-
-impl crate::cal::scaffold::UnstableSealed for Iso {}
-impl Calendar for Iso {
-    type DateInner = IsoDateInner;
-    type Year = types::EraYear;
-    /// Construct a date from era/month codes and fields
-    fn from_codes(
-        &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
-        day: u8,
-    ) -> Result<Self::DateInner, DateError> {
-        let year = match era {
-            Some("default") | None => year,
-            Some(_) => return Err(DateError::UnknownEra),
-        };
-
-        ArithmeticDate::new_from_codes(self, year, month_code, day).map(IsoDateInner)
-    }
-
-    fn from_rata_die(&self, date: RataDie) -> IsoDateInner {
-        IsoDateInner(match calendrical_calculations::iso::iso_from_fixed(date) {
-            Err(I32CastError::BelowMin) => ArithmeticDate::min_date(),
-            Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
-            Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
-        })
-    }
-
-    fn to_rata_die(&self, date: &IsoDateInner) -> RataDie {
-        calendrical_calculations::iso::fixed_from_iso(date.0.year, date.0.month, date.0.day)
-    }
-
-    fn from_iso(&self, iso: IsoDateInner) -> IsoDateInner {
-        iso
-    }
-
-    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        *date
-    }
-
-    fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        date.0.months_in_year()
-    }
-
-    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.0.days_in_year()
-    }
-
-    fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        date.0.days_in_month()
-    }
-
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.0.offset_date(offset, &());
-    }
-
-    #[allow(clippy::field_reassign_with_default)]
-    fn until(
-        &self,
-        date1: &Self::DateInner,
-        date2: &Self::DateInner,
-        _calendar2: &Self,
-        _largest_unit: DateDurationUnit,
-        _smallest_unit: DateDurationUnit,
-    ) -> DateDuration<Self> {
-        date1.0.until(date2.0, _largest_unit, _smallest_unit)
-    }
-
-    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+    fn era_year_from_extended(&self, extended_year: i32, _month: u8, _day: u8) -> types::EraYear {
         types::EraYear {
             era_index: Some(0),
             era: tinystr!(16, "default"),
-            year: self.extended_year(date),
+            year: extended_year,
+            extended_year,
             ambiguity: types::YearAmbiguity::Unambiguous,
         }
     }
 
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        date.0.extended_year()
-    }
-
-    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::provided_year_is_leap(date.0.year)
-    }
-
-    /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        date.0.month()
-    }
-
-    /// The calendar-specific day-of-month represented by `date`
-    fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        date.0.day_of_month()
-    }
-
-    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        date.0.day_of_year()
-    }
-
     fn debug_name(&self) -> &'static str {
         "ISO"
-    }
-
-    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
-        None
     }
 }
 
@@ -198,9 +65,9 @@ impl Date<Iso> {
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
     pub fn try_new_iso(year: i32, month: u8, day: u8) -> Result<Date<Iso>, RangeError> {
-        ArithmeticDate::new_from_ordinals(year, month, day)
+        ArithmeticDate::new_gregorian::<IsoEra>(year, month, day)
             .map(IsoDateInner)
-            .map(|inner| Date::from_raw(inner, Iso))
+            .map(|i| Date::from_raw(i, Iso))
     }
 }
 
@@ -209,46 +76,14 @@ impl Iso {
     pub fn new() -> Self {
         Self
     }
-
-    pub(crate) fn iso_from_year_day(year: i32, year_day: u16) -> IsoDateInner {
-        let mut month = 1;
-        let mut day = year_day as i32;
-        while month <= 12 {
-            let month_days = Self::days_in_provided_month(year, month) as i32;
-            if day <= month_days {
-                break;
-            } else {
-                debug_assert!(month < 12); // don't try going to month 13
-                day -= month_days;
-                month += 1;
-            }
-        }
-        let day = day as u8; // day <= month_days < u8::MAX
-
-        // month in 1..=12, day <= month_days
-        IsoDateInner(ArithmeticDate::new_unchecked(year, month, day))
-    }
-
-    pub(crate) fn day_of_year(date: IsoDateInner) -> u16 {
-        // Cumulatively how much are dates in each month
-        // offset from "30 days in each month" (in non leap years)
-        let month_offset = [0, 1, -1, 0, 0, 1, 1, 2, 3, 3, 4, 4];
-        #[allow(clippy::indexing_slicing)] // date.0.month in 1..=12
-        let mut offset = month_offset[date.0.month as usize - 1];
-        if Self::provided_year_is_leap(date.0.year) && date.0.month > 2 {
-            // Months after February in a leap year are offset by one less
-            offset += 1;
-        }
-        let prev_month_days = (30 * (date.0.month as i32 - 1) + offset) as u16;
-
-        prev_month_days + date.0.day as u16
-    }
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::types::Weekday;
+    use crate::types::{RataDie, Weekday};
+    use crate::Calendar;
+    use crate::DateDuration;
 
     #[test]
     fn iso_overflow() {

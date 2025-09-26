@@ -207,6 +207,20 @@ pub struct ZonedDateTime<A: AsCalendar, Z> {
     pub zone: Z,
 }
 
+const UNIX_EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
+
+impl Ord for ZonedDateTime<Iso, UtcOffset> {
+    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+        self.to_epoch_milliseconds_utc()
+            .cmp(&other.to_epoch_milliseconds_utc())
+    }
+}
+impl PartialOrd for ZonedDateTime<Iso, UtcOffset> {
+    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
 impl ZonedDateTime<Iso, UtcOffset> {
     /// Creates a [`ZonedDateTime`] from an absolute time, in milliseconds since the UNIX Epoch,
     /// and a UTC offset.
@@ -267,9 +281,8 @@ impl ZonedDateTime<Iso, UtcOffset> {
             local_epoch_milliseconds.div_euclid(86400000),
             local_epoch_milliseconds.rem_euclid(86400000),
         );
-        const UNIX_EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
         let rata_die = UNIX_EPOCH + epoch_days;
-        #[allow(clippy::unwrap_used)] // these values are derived via modulo operators
+        #[expect(clippy::unwrap_used)] // these values are derived via modulo operators
         let time = Time::try_new(
             (time_millisecs / 3600000) as u8,
             ((time_millisecs % 3600000) / 60000) as u8,
@@ -282,5 +295,17 @@ impl ZonedDateTime<Iso, UtcOffset> {
             time,
             zone: utc_offset,
         }
+    }
+
+    pub(crate) fn to_epoch_milliseconds_utc(self) -> i64 {
+        let ZonedDateTime { date, time, zone } = self;
+        let days = date.to_rata_die() - UNIX_EPOCH;
+        let hours = time.hour.number() as i64;
+        let minutes = time.minute.number() as i64;
+        let seconds = time.second.number() as i64;
+        let nanos = time.subsecond.number() as i64;
+        let offset_seconds = zone.to_seconds() as i64;
+        (((days * 24 + hours) * 60 + minutes) * 60 + seconds - offset_seconds) * 1000
+            + nanos / 1_000_000
     }
 }

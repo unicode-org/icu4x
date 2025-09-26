@@ -101,7 +101,7 @@ unsafe impl ULE for PatternItemULE {
             return Err(UleError::length::<Self>(bytes.len()));
         }
 
-        #[allow(clippy::indexing_slicing)] // chunks
+        #[expect(clippy::indexing_slicing)] // chunks
         if !bytes
             .chunks(3)
             // This upholds the safety invariant by checking all invariants
@@ -133,7 +133,7 @@ impl AsULE for PatternItem {
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         let value = unaligned.0;
-        #[allow(clippy::unwrap_used)] // validated
+        #[expect(clippy::unwrap_used)] // validated
         if PatternItemULE::determine_field_from_u8(value[0]) {
             let symbol = fields::FieldSymbol::from_idx(value[1]).unwrap();
             let length = fields::FieldLength::from_idx(value[2]).unwrap();
@@ -259,7 +259,7 @@ unsafe impl ULE for GenericPatternItemULE {
         if bytes.len() % 3 != 0 {
             return Err(UleError::length::<Self>(bytes.len()));
         }
-        #[allow(clippy::indexing_slicing)] // chunks
+        #[expect(clippy::indexing_slicing)] // chunks
         if !bytes
             .chunks_exact(3)
             .all(|c| Self::bytes_in_range((&c[0], &c[1], &c[2])))
@@ -298,7 +298,7 @@ impl AsULE for GenericPatternItem {
         if GenericPatternItemULE::determine_field_from_u8(value[0]) {
             Self::Placeholder(value[2])
         } else {
-            #[allow(clippy::unwrap_used)] // validated
+            #[expect(clippy::unwrap_used)] // validated
             Self::Literal(
                 char::try_from(u32::from_be_bytes([0x00, value[0], value[1], value[2]])).unwrap(),
             )

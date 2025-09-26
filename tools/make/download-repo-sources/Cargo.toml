@@ -22,3 +22,7 @@ simple_logger = { workspace = true }
 ureq = { workspace = true }
 tar = { workspace = true }
 zip = { workspace = true, features = ["deflate"] }
+
+[package.metadata.cargo-all-features]
+# Unpublished internal tool; skip
+skip_package = true

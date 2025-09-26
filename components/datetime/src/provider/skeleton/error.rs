@@ -10,6 +10,12 @@ use displaydoc::Display;
 ///
 /// Serde will generate an error such as:
 /// "invalid value: unclosed literal in pattern, expected a valid UTS 35 pattern string at line 1 column 12"
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[allow(missing_docs)]
 #[non_exhaustive]
@@ -62,12 +68,8 @@ impl From<fields::SymbolError> for SkeletonError {
                     'B'
                     // TODO(#501) - Quarters
                     | 'Q' | 'q'
-                    // Extended year
-                    | 'u'
                     // TODO(#5643) - Weeks
                     | 'Y' | 'w' | 'W'
-                    // Modified Julian Day
-                    | 'g'
                     => Self::SymbolUnimplemented(ch),
                     _ => Self::SymbolUnknown(ch),
                 }

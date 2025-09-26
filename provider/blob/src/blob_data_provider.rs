@@ -156,7 +156,7 @@ impl IterableDynamicDataProvider<BufferMarker> for BlobDataProvider {
     fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<alloc::collections::BTreeSet<DataIdentifierCow>, DataError> {
+    ) -> Result<alloc::collections::BTreeSet<DataIdentifierCow<'_>>, DataError> {
         self.data.get().iter_ids(marker)
     }
 }

@@ -172,12 +172,12 @@ impl<'a> SliceOrString<'a> {
 ///         Ok(())
 ///     }
 ///     #[inline]
-///     fn write_to_string(&self) -> Cow<str> {
+///     fn write_to_string(&self) -> Cow<'_, str> {
 ///         writeable::to_string_or_borrow(self, self.0.as_bytes())
 ///     }
 /// }
 ///
-/// fn make_lowercase(input: &str) -> Cow<str> {
+/// fn make_lowercase(input: &str) -> Cow<'_, str> {
 ///     let writeable = MakeAsciiLower(input);
 ///     writeable::to_string_or_borrow(&writeable, input.as_bytes())
 /// }

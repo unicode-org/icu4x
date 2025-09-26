@@ -1,5 +1,5 @@
-#ifndef icu4x_ScriptWithExtensions_D_HPP
-#define icu4x_ScriptWithExtensions_D_HPP
+#ifndef ICU4X_ScriptWithExtensions_D_HPP
+#define ICU4X_ScriptWithExtensions_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,8 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct CodePointRangeIterator; }
 class CodePointRangeIterator;
@@ -21,7 +20,8 @@ class ScriptWithExtensions;
 namespace capi { struct ScriptWithExtensionsBorrowed; }
 class ScriptWithExtensionsBorrowed;
 class DataError;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -51,7 +51,7 @@ public:
    *
    * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/properties/script/struct.ScriptWithExtensions.html#method.new) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::ScriptWithExtensions>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::ScriptWithExtensions>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Get the Script property value for a code point
@@ -81,19 +81,19 @@ public:
    */
   inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_script(uint16_t script) const;
 
-  inline const icu4x::capi::ScriptWithExtensions* AsFFI() const;
-  inline icu4x::capi::ScriptWithExtensions* AsFFI();
-  inline static const icu4x::ScriptWithExtensions* FromFFI(const icu4x::capi::ScriptWithExtensions* ptr);
-  inline static icu4x::ScriptWithExtensions* FromFFI(icu4x::capi::ScriptWithExtensions* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::ScriptWithExtensions* AsFFI() const;
+    inline icu4x::capi::ScriptWithExtensions* AsFFI();
+    inline static const icu4x::ScriptWithExtensions* FromFFI(const icu4x::capi::ScriptWithExtensions* ptr);
+    inline static icu4x::ScriptWithExtensions* FromFFI(icu4x::capi::ScriptWithExtensions* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  ScriptWithExtensions() = delete;
-  ScriptWithExtensions(const icu4x::ScriptWithExtensions&) = delete;
-  ScriptWithExtensions(icu4x::ScriptWithExtensions&&) noexcept = delete;
-  ScriptWithExtensions operator=(const icu4x::ScriptWithExtensions&) = delete;
-  ScriptWithExtensions operator=(icu4x::ScriptWithExtensions&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    ScriptWithExtensions() = delete;
+    ScriptWithExtensions(const icu4x::ScriptWithExtensions&) = delete;
+    ScriptWithExtensions(icu4x::ScriptWithExtensions&&) noexcept = delete;
+    ScriptWithExtensions operator=(const icu4x::ScriptWithExtensions&) = delete;
+    ScriptWithExtensions operator=(icu4x::ScriptWithExtensions&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_ScriptWithExtensions_D_HPP
+#endif // ICU4X_ScriptWithExtensions_D_HPP

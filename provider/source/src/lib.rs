@@ -20,6 +20,8 @@
 use cldr_cache::CldrCache;
 use elsa::sync::FrozenMap;
 use icu::calendar::{Date, Iso};
+use icu::time::zone::UtcOffset;
+use icu::time::Time;
 use icu_provider::prelude::*;
 use source::{AbstractFs, SerdeCache, TzdbCache};
 use std::collections::{BTreeSet, HashSet};
@@ -83,8 +85,8 @@ pub struct SourceDataProvider {
     tzdb_paths: Option<Arc<TzdbCache>>,
     trie_type: TrieType,
     collation_root_han: CollationRootHan,
-    pub(crate) timezone_horizon: Date<Iso>,
-    #[allow(clippy::type_complexity)] // not as complex as it appears
+    pub(crate) timezone_horizon: time_zones::Timestamp,
+    #[expect(clippy::type_complexity)] // not as complex as it appears
     requests_cache: Arc<
         FrozenMap<
             DataMarkerInfo,
@@ -108,7 +110,7 @@ icu_provider::marker::impl_data_provider_never_marker!(SourceDataProvider);
 
 impl SourceDataProvider {
     /// The CLDR JSON tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_CLDR_TAG: &'static str = "47.0.0";
+    pub const TESTED_CLDR_TAG: &'static str = "48.0.0-ALPHA2D0";
 
     /// The ICU export tag that has been verified to work with this version of `SourceDataProvider`.
     pub const TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2025-05-21/77.x";
@@ -117,7 +119,7 @@ impl SourceDataProvider {
     pub const TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
 
     /// The TZDB tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_TZDB_TAG: &'static str = "2025a";
+    pub const TESTED_TZDB_TAG: &'static str = "2025b";
 
     /// A provider using the data that has been verified to work with this version of `SourceDataProvider`.
     ///
@@ -128,7 +130,7 @@ impl SourceDataProvider {
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
-    #[allow(clippy::new_without_default)]
+    #[expect(clippy::new_without_default)]
     pub fn new() -> Self {
         // Singleton so that all instantiations share the same cache.
         static SINGLETON: std::sync::OnceLock<SourceDataProvider> = std::sync::OnceLock::new();
@@ -155,7 +157,11 @@ impl SourceDataProvider {
             segmenter_lstm_paths: None,
             tzdb_paths: None,
             trie_type: Default::default(),
-            timezone_horizon: Date::try_new_iso(2015, 1, 1).unwrap(),
+            timezone_horizon: time_zones::Timestamp::try_offset_only_from_str(
+                "2015-01-01T00:00:00Z",
+                Default::default(),
+            )
+            .unwrap(),
             collation_root_han: Default::default(),
             requests_cache: Default::default(),
         }
@@ -349,16 +355,20 @@ impl SourceDataProvider {
         }
     }
 
-    /// Set the timezone horizon.
+    /// Set the timezone horizon from a UTC date.
     ///
     /// Timezone names that have not been in use since before this date are not included,
     /// formatting will fall back to formats like "Germany Time" or "GMT+1".
     ///
     /// Defaults to 2015-01-01, which is a reasonable time frame where people remember
     /// time zone changes.
-    pub fn with_timezone_horizon(self, timezone_horizon: Date<Iso>) -> Self {
+    pub fn with_timezone_horizon(self, date: Date<Iso>) -> Self {
         Self {
-            timezone_horizon,
+            timezone_horizon: time_zones::Timestamp {
+                date,
+                time: Time::start_of_day(),
+                zone: UtcOffset::zero(),
+            },
             ..self
         }
     }
@@ -439,10 +449,9 @@ trait IterableDataProviderCached<M: DataMarker>: DataProvider<M> {
 }
 
 impl SourceDataProvider {
-    #[allow(clippy::type_complexity)] // not as complex as it appears
     fn populate_requests_cache<M: DataMarker>(
         &self,
-    ) -> Result<&HashSet<DataIdentifierCow>, DataError>
+    ) -> Result<&HashSet<DataIdentifierCow<'_>>, DataError>
     where
         SourceDataProvider: IterableDataProviderCached<M>,
     {
@@ -459,7 +468,7 @@ impl<M: DataMarker> IterableDataProvider<M> for SourceDataProvider
 where
     SourceDataProvider: IterableDataProviderCached<M>,
 {
-    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
         Ok(if <M as DataMarker>::INFO.is_singleton {
             [Default::default()].into_iter().collect()
         } else {

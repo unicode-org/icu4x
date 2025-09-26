@@ -9,8 +9,8 @@ use icu_decimal::{options::DecimalFormatterOptions, DecimalFormatter};
 use icu_plurals::PluralRules;
 use icu_provider::prelude::*;
 
-use crate::dimension::provider::{
-    currency_patterns::CurrencyPatternsDataV1, extended_currency::CurrencyExtendedDataV1,
+use crate::dimension::provider::currency::{
+    extended::CurrencyExtendedDataV1, patterns::CurrencyPatternsDataV1,
 };
 
 use super::{
@@ -102,8 +102,8 @@ impl LongCurrencyFormatter {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::extended_currency::CurrencyExtendedDataV1>
-            + DataProvider<super::super::provider::currency_patterns::CurrencyPatternsDataV1>
+            + DataProvider<crate::dimension::provider::currency::extended::CurrencyExtendedDataV1>
+            + DataProvider<crate::dimension::provider::currency::patterns::CurrencyPatternsDataV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,

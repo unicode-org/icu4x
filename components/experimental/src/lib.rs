@@ -53,6 +53,21 @@ pub mod provider {
         impl_currency_patterns_data_v1!(Baked);
         impl_currency_extended_data_v1!(Baked);
         impl_units_display_name_v1!(Baked);
+        impl_units_names_area_core_v1!(Baked);
+        impl_units_names_area_extended_v1!(Baked);
+        impl_units_names_area_outlier_v1!(Baked);
+        impl_units_names_duration_core_v1!(Baked);
+        impl_units_names_duration_extended_v1!(Baked);
+        impl_units_names_duration_outlier_v1!(Baked);
+        impl_units_names_length_core_v1!(Baked);
+        impl_units_names_length_extended_v1!(Baked);
+        impl_units_names_length_outlier_v1!(Baked);
+        impl_units_names_mass_core_v1!(Baked);
+        impl_units_names_mass_extended_v1!(Baked);
+        impl_units_names_mass_outlier_v1!(Baked);
+        impl_units_names_volume_core_v1!(Baked);
+        impl_units_names_volume_extended_v1!(Baked);
+        impl_units_names_volume_outlier_v1!(Baked);
         impl_units_essentials_v1!(Baked);
         impl_language_display_names_v1!(Baked);
         impl_digital_duration_data_v1!(Baked);
@@ -88,7 +103,6 @@ pub mod provider {
         impl_short_year_relative_v1!(Baked);
         impl_transliterator_rules_v1!(Baked);
         impl_units_info_v1!(Baked);
-        impl_units_trie_v1!(Baked);
         impl_unit_ids_v1!(Baked);
     };
 
@@ -102,21 +116,35 @@ pub mod provider {
         super::compactdecimal::provider::ShortCompactDecimalFormatDataV1::INFO,
         super::compactdecimal::provider::LongCompactDecimalFormatDataV1::INFO,
         super::compactdecimal::provider::ShortCompactDecimalFormatDataV1::INFO,
-        super::dimension::provider::currency_compact::ShortCurrencyCompactV1::INFO,
-        super::dimension::provider::currency_displayname::CurrencyDisplaynameV1::INFO,
-        super::dimension::provider::currency::CurrencyEssentialsV1::INFO,
-        super::dimension::provider::currency_patterns::CurrencyPatternsDataV1::INFO,
-        super::dimension::provider::extended_currency::CurrencyExtendedDataV1::INFO,
+        super::dimension::provider::currency::compact::ShortCurrencyCompactV1::INFO,
+        super::dimension::provider::currency::displayname::CurrencyDisplaynameV1::INFO,
+        super::dimension::provider::currency::essentials::CurrencyEssentialsV1::INFO,
+        super::dimension::provider::currency::patterns::CurrencyPatternsDataV1::INFO,
+        super::dimension::provider::currency::extended::CurrencyExtendedDataV1::INFO,
         super::dimension::provider::percent::PercentEssentialsV1::INFO,
-        super::dimension::provider::units_essentials::UnitsEssentialsV1::INFO,
-        super::dimension::provider::units::UnitsDisplayNameV1::INFO,
+        super::dimension::provider::units::essentials::UnitsEssentialsV1::INFO,
+        super::dimension::provider::units::display_name::UnitsDisplayNameV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNamesAreaCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNamesAreaExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNamesAreaOutlierV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNamesDurationCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNamesDurationExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNamesDurationOutlierV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNamesLengthCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNamesLengthExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNamesLengthOutlierV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNamesMassCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNamesMassExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNamesMassOutlierV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNamesVolumeCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNamesVolumeExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNamesVolumeOutlierV1::INFO,
         super::displaynames::provider::LanguageDisplayNamesV1::INFO,
         super::duration::provider::DigitalDurationDataV1::INFO,
         super::displaynames::provider::LocaleDisplayNamesV1::INFO,
         super::displaynames::provider::RegionDisplayNamesV1::INFO,
         super::displaynames::provider::ScriptDisplayNamesV1::INFO,
         super::displaynames::provider::VariantDisplayNamesV1::INFO,
-        super::measure::provider::trie::UnitsTrieV1::INFO,
         super::measure::provider::UnitIdsV1::INFO,
         super::personnames::provider::PersonNamesFormatV1::INFO,
         super::relativetime::provider::LongDayRelativeV1::INFO,

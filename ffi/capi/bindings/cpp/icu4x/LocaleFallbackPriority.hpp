@@ -1,5 +1,5 @@
-#ifndef icu4x_LocaleFallbackPriority_HPP
-#define icu4x_LocaleFallbackPriority_HPP
+#ifndef ICU4X_LocaleFallbackPriority_HPP
+#define ICU4X_LocaleFallbackPriority_HPP
 
 #include "LocaleFallbackPriority.d.hpp"
 
@@ -11,28 +11,26 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
-    extern "C" {
 
-    } // extern "C"
 } // namespace capi
 } // namespace
 
 inline icu4x::capi::LocaleFallbackPriority icu4x::LocaleFallbackPriority::AsFFI() const {
-  return static_cast<icu4x::capi::LocaleFallbackPriority>(value);
+    return static_cast<icu4x::capi::LocaleFallbackPriority>(value);
 }
 
 inline icu4x::LocaleFallbackPriority icu4x::LocaleFallbackPriority::FromFFI(icu4x::capi::LocaleFallbackPriority c_enum) {
-  switch (c_enum) {
-    case icu4x::capi::LocaleFallbackPriority_Language:
-    case icu4x::capi::LocaleFallbackPriority_Region:
-      return static_cast<icu4x::LocaleFallbackPriority::Value>(c_enum);
-    default:
-      std::abort();
-  }
+    switch (c_enum) {
+        case icu4x::capi::LocaleFallbackPriority_Language:
+        case icu4x::capi::LocaleFallbackPriority_Region:
+            return static_cast<icu4x::LocaleFallbackPriority::Value>(c_enum);
+        default:
+            std::abort();
+    }
 }
-#endif // icu4x_LocaleFallbackPriority_HPP
+#endif // ICU4X_LocaleFallbackPriority_HPP

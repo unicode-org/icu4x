@@ -1,5 +1,5 @@
-#ifndef icu4x_TimeZone_D_HPP
-#define icu4x_TimeZone_D_HPP
+#ifndef ICU4X_TimeZone_D_HPP
+#define ICU4X_TimeZone_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,8 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct TimeZone; }
 class TimeZone;
@@ -18,7 +17,8 @@ namespace capi { struct TimeZoneInfo; }
 class TimeZoneInfo;
 namespace capi { struct UtcOffset; }
 class UtcOffset;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -67,19 +67,19 @@ public:
    */
   inline std::unique_ptr<icu4x::TimeZoneInfo> without_offset() const;
 
-  inline const icu4x::capi::TimeZone* AsFFI() const;
-  inline icu4x::capi::TimeZone* AsFFI();
-  inline static const icu4x::TimeZone* FromFFI(const icu4x::capi::TimeZone* ptr);
-  inline static icu4x::TimeZone* FromFFI(icu4x::capi::TimeZone* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::TimeZone* AsFFI() const;
+    inline icu4x::capi::TimeZone* AsFFI();
+    inline static const icu4x::TimeZone* FromFFI(const icu4x::capi::TimeZone* ptr);
+    inline static icu4x::TimeZone* FromFFI(icu4x::capi::TimeZone* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  TimeZone() = delete;
-  TimeZone(const icu4x::TimeZone&) = delete;
-  TimeZone(icu4x::TimeZone&&) noexcept = delete;
-  TimeZone operator=(const icu4x::TimeZone&) = delete;
-  TimeZone operator=(icu4x::TimeZone&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    TimeZone() = delete;
+    TimeZone(const icu4x::TimeZone&) = delete;
+    TimeZone(icu4x::TimeZone&&) noexcept = delete;
+    TimeZone operator=(const icu4x::TimeZone&) = delete;
+    TimeZone operator=(icu4x::TimeZone&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_TimeZone_D_HPP
+#endif // ICU4X_TimeZone_D_HPP

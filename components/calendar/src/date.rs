@@ -3,8 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
+use crate::cal::{abstract_gregorian::AbstractGregorian, iso::IsoEra};
 use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::error::DateError;
+use crate::options::DateFromFieldsOptions;
 use crate::types::{CyclicYear, EraYear, IsoWeekOfYear};
 use crate::week::{RelativeUnit, WeekCalculator, WeekOf};
 use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
@@ -134,6 +136,48 @@ impl<A: AsCalendar> Date<A> {
         Ok(Date { inner, calendar })
     }
 
+    /// Construct a date from from a bag of fields.
+    ///
+    /// This function allows specifying the year as either extended year or era + era year,
+    /// and the month as either ordinal or month code. It can constrain out-of-bounds values
+    /// and fill in missing fields. See [`DateFromFieldsOptions`] for more information.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_calendar::Date;
+    /// use icu_calendar::DateError;
+    /// use icu_calendar::cal::Gregorian;
+    /// use icu_calendar::types::DateFields;
+    /// use std::num::NonZeroU8;
+    ///
+    /// let mut fields = DateFields::default();
+    /// fields.extended_year = Some(2000);
+    /// fields.ordinal_month = NonZeroU8::new(1);
+    /// fields.day = NonZeroU8::new(1);
+    ///
+    /// let d1 = Date::try_from_fields(
+    ///     fields,
+    ///     Default::default(),
+    ///     Gregorian
+    /// )
+    /// .expect("Jan 1 in year 2000");
+    ///
+    /// let d2 = Date::try_new_gregorian(2000, 1, 1).unwrap();
+    /// assert_eq!(d1, d2);
+    /// ```
+    ///
+    /// See [`DateError`] for examples of error conditions.
+    #[inline]
+    pub fn try_from_fields(
+        fields: types::DateFields,
+        options: DateFromFieldsOptions,
+        calendar: A,
+    ) -> Result<Self, DateError> {
+        let inner = calendar.as_calendar().from_fields(fields, options)?;
+        Ok(Date { inner, calendar })
+    }
+
     /// Construct a date from a [`RataDie`] and some calendar representation
     #[inline]
     pub fn from_rata_die(rd: RataDie, calendar: A) -> Self {
@@ -236,13 +280,21 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().year_info(&self.inner).into()
     }
 
-    /// The "extended year", typically anchored with year 1 as the year 1 of either the most modern or
-    /// otherwise some "major" era for the calendar
+    /// The "extended year".
+    ///
+    /// This year number can be used when you need a simple numeric representation
+    /// of the year, and can be meaningfully compared with extended years from other
+    /// eras or used in arithmetic.
+    ///
+    /// For calendars defined in Temporal, this will match the "arithmetic year"
+    /// as defined in <https://tc39.es/proposal-intl-era-monthcode/>.
+    /// This is typically anchored with year 1 as the year 1 of either the most modern or
+    /// otherwise some "major" era for the calendar.
     ///
     /// See [`Self::year()`] for more information about the year.
     #[inline]
     pub fn extended_year(&self) -> i32 {
-        self.calendar.as_calendar().extended_year(&self.inner)
+        self.year().extended_year()
     }
 
     /// Returns whether `self` is in a calendar-specific leap year
@@ -339,7 +391,9 @@ impl Date<Iso> {
     pub fn week_of_year(&self) -> IsoWeekOfYear {
         let week_of = WeekCalculator::ISO
             .week_of(
-                Iso::days_in_provided_year(self.inner.0.year.saturating_sub(1)),
+                AbstractGregorian::<IsoEra>::days_in_provided_year(
+                    self.inner.0.year.saturating_sub(1),
+                ),
                 self.days_in_year(),
                 self.day_of_year().0,
                 self.day_of_week(),
@@ -395,7 +449,7 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// Useful for converting a `&Date<C>` into an equivalent `Date<D>` without cloning
     /// the calendar.
-    pub fn as_borrowed(&self) -> Date<Ref<A>> {
+    pub fn as_borrowed(&self) -> Date<Ref<'_, A>> {
         Date::from_raw(self.inner, Ref(&self.calendar))
     }
 }

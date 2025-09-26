@@ -48,31 +48,23 @@ pub enum Style {
 
 /// An enum for fallback return when the system does not have the
 /// requested display name.
-#[allow(missing_docs)] // The variants are self explanatory.
+#[allow(missing_docs)]
 #[non_exhaustive]
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[derive(Debug, Default, Eq, PartialEq, Clone, Copy)]
 pub enum Fallback {
+    /// Fall back to the BCP-47 code when display name cannot be found
+    #[default]
     Code,
+    /// Do not fall back, return an error when the display name cannot be found
     None,
-}
-
-impl Default for Fallback {
-    fn default() -> Self {
-        Self::Code
-    }
 }
 
 /// An enum for the language display kind.
 #[allow(missing_docs)] // The variants are self explanatory.
 #[non_exhaustive]
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[derive(Debug, Default, Eq, PartialEq, Clone, Copy)]
 pub enum LanguageDisplay {
+    #[default]
     Dialect,
     Standard,
-}
-
-impl Default for LanguageDisplay {
-    fn default() -> Self {
-        Self::Dialect
-    }
 }

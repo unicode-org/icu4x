@@ -44,10 +44,13 @@ criterion = { workspace = true }
 [features]
 export = [
     "icu_provider/export",
-    "log",
+    "dep:log",
     "alloc",
 ]
 alloc = ["icu_provider/alloc", "postcard/alloc", "zerotrie/alloc", "serde/alloc"]
+
+# added by accident
+log = []
 
 [lib]
 bench = false  # This option is required for Benchmark CI

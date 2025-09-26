@@ -6,7 +6,6 @@ use ffi::*;
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     #[cfg(feature = "datetime")]
     use diplomat_runtime::DiplomatOption;
@@ -18,6 +17,7 @@ pub mod ffi {
     #[repr(C)]
     #[diplomat::rust_link(icu_provider::DataError, Struct, compact)]
     #[diplomat::rust_link(icu_provider::DataErrorKind, Enum, compact)]
+    #[non_exhaustive]
     pub enum DataError {
         Unknown = 0x00,
         MarkerNotFound = 0x01,
@@ -33,6 +33,7 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(icu::locale::ParseError, Enum, compact)]
+    #[non_exhaustive]
     pub enum LocaleParseError {
         Unknown = 0x00,
         Language = 0x01,
@@ -44,6 +45,7 @@ pub mod ffi {
     #[repr(C)]
     #[diplomat::rust_link(fixed_decimal::ParseError, Enum, compact)]
     #[cfg(any(feature = "decimal", feature = "plurals"))]
+    #[non_exhaustive]
     pub enum DecimalParseError {
         Unknown = 0x00,
         Limit = 0x01,
@@ -59,7 +61,8 @@ pub mod ffi {
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::RangeError, Struct, compact)]
     #[diplomat::rust_link(icu::calendar::DateError, Enum, compact)]
-    #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+    #[cfg(feature = "calendar")]
+    #[non_exhaustive]
     pub enum CalendarError {
         Unknown = 0x00,
         OutOfRange = 0x01,
@@ -71,7 +74,8 @@ pub mod ffi {
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::ParseError, Enum, compact)]
     #[diplomat::rust_link(icu::time::ParseError, Enum, compact)]
-    #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+    #[cfg(feature = "calendar")]
+    #[non_exhaustive]
     pub enum Rfc9557ParseError {
         Unknown = 0x00,
         InvalidSyntax = 0x01,
@@ -82,7 +86,7 @@ pub mod ffi {
 
     #[derive(Debug, PartialEq, Eq)]
     #[diplomat::rust_link(icu::time::zone::InvalidOffsetError, Struct, compact)]
-    #[cfg(any(feature = "datetime", feature = "timezone"))]
+    #[cfg(feature = "datetime")]
     pub struct TimeZoneInvalidOffsetError;
 
     #[derive(Debug, PartialEq, Eq)]
@@ -91,6 +95,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::datetime::pattern::PatternLoadError, Enum, compact)]
     #[diplomat::rust_link(icu_provider::DataError, Struct, compact)]
     #[diplomat::rust_link(icu_provider::DataErrorKind, Enum, compact)]
+    #[non_exhaustive]
     pub enum DateTimeFormatterLoadError {
         Unknown = 0x00,
 
@@ -118,8 +123,7 @@ pub mod ffi {
 
     /// An error when formatting a datetime.
     ///
-    /// Currently the only reachable error here is a missing time zone variant. If you encounter
-    /// that error, you need to call `with_variant` or `infer_variant` on your `TimeZoneInfo`.
+    /// Currently never returned by any API.
     #[cfg(feature = "datetime")]
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
@@ -128,8 +132,10 @@ pub mod ffi {
         Enum,
         compact
     )]
+    #[non_exhaustive]
     pub enum DateTimeWriteError {
         Unknown = 0x00,
+        /// Unused
         MissingTimeZoneVariant = 0x01,
     }
 }
@@ -154,14 +160,14 @@ impl From<icu_provider::DataError> for DataError {
     }
 }
 
-#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+#[cfg(feature = "calendar")]
 impl From<icu_calendar::RangeError> for CalendarError {
     fn from(_: icu_calendar::RangeError) -> Self {
         Self::OutOfRange
     }
 }
 
-#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+#[cfg(feature = "calendar")]
 impl From<icu_calendar::DateError> for CalendarError {
     fn from(e: icu_calendar::DateError) -> Self {
         match e {
@@ -173,7 +179,7 @@ impl From<icu_calendar::DateError> for CalendarError {
     }
 }
 
-#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+#[cfg(feature = "calendar")]
 impl From<icu_calendar::ParseError> for Rfc9557ParseError {
     fn from(e: icu_calendar::ParseError) -> Self {
         match e {
@@ -186,7 +192,7 @@ impl From<icu_calendar::ParseError> for Rfc9557ParseError {
     }
 }
 
-#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+#[cfg(feature = "calendar")]
 impl From<icu_time::ParseError> for Rfc9557ParseError {
     fn from(e: icu_time::ParseError) -> Self {
         match e {
@@ -274,16 +280,9 @@ impl From<icu_datetime::MismatchedCalendarError> for ffi::DateTimeMismatchedCale
 
 #[cfg(feature = "datetime")]
 impl From<icu_datetime::unchecked::FormattedDateTimeUncheckedError> for DateTimeWriteError {
-    fn from(value: icu_datetime::unchecked::FormattedDateTimeUncheckedError) -> Self {
-        match value {
-            icu_datetime::unchecked::FormattedDateTimeUncheckedError::MissingInputField(
-                icu_datetime::unchecked::MissingInputFieldKind::TimeZoneVariant,
-            ) => Self::MissingTimeZoneVariant,
-            err => {
-                debug_assert!(false, "unexpected datetime formatting error: {err}");
-                Self::Unknown
-            }
-        }
+    fn from(err: icu_datetime::unchecked::FormattedDateTimeUncheckedError) -> Self {
+        debug_assert!(false, "unexpected datetime formatting error: {err}");
+        Self::Unknown
     }
 }
 
@@ -317,7 +316,7 @@ impl From<icu_locale_core::ParseError> for LocaleParseError {
     }
 }
 
-#[cfg(any(feature = "timezone", feature = "datetime"))]
+#[cfg(feature = "datetime")]
 impl From<icu_time::zone::InvalidOffsetError> for TimeZoneInvalidOffsetError {
     fn from(_: icu_time::zone::InvalidOffsetError) -> Self {
         Self

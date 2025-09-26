@@ -12,6 +12,7 @@ use std::collections::BTreeSet;
 use std::fs::{self, File};
 use std::io::{self, BufWriter, Cursor, Write};
 use std::path::PathBuf;
+use std::process::Command;
 use zip::ZipArchive;
 
 include!("../globs.rs.data");
@@ -212,6 +213,21 @@ fn main() -> eyre::Result<()> {
         &mut Default::default(),
     )?;
 
+    let mut tzdb_data = TZDB_GLOB.iter().copied().collect::<BTreeSet<_>>();
+
+    let gen_files = ["rearguard.zi", "vanguard.zi"];
+    Command::new("make")
+        .arg("-C")
+        .arg(out_root.join("tests/data/tzdb"))
+        .args(gen_files)
+        .status()
+        .unwrap();
+    tzdb_data.extend(gen_files);
+    std::fs::remove_file(out_root.join("tests/data/tzdb/Makefile")).unwrap();
+    std::fs::remove_file(out_root.join("tests/data/tzdb/ziguard.awk")).unwrap();
+    tzdb_data.remove("Makefile");
+    tzdb_data.remove("ziguard.awk");
+
     let cldr_data = cldr_data
         .iter()
         .map(|path| {
@@ -236,7 +252,7 @@ fn main() -> eyre::Result<()> {
         })
         .collect::<Vec<_>>()
         .join(",\n                        ");
-    let tzdb_data: String = TZDB_GLOB
+    let tzdb_data: String = tzdb_data
         .iter()
         .map(|path| {
             let path = path.replace('\\', "/");

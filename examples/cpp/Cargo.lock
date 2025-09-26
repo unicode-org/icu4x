@@ -10,7 +10,7 @@ checksum = "ace50bade8e6234aa140d9a2f552bbee1db4d353f69b8217bc503490fc1a9f26"
 
 [[package]]
 name = "calendrical_calculations"
-version = "0.2.0"
+version = "0.2.2"
 dependencies = [
  "core_maths",
  "displaydoc",
@@ -71,9 +71,8 @@ dependencies = [
 
 [[package]]
 name = "diplomat"
-version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ea1fa372cd3d71ab28ee5d1176be9e93eaed0eba94a3498d12b8113109c4d313"
+version = "0.12.0"
+source = "git+https://github.com/Manishearth/diplomat?branch=cpp-lib-name#472cd4f49468ba895e931d9d6dfe55973ada5065"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -83,18 +82,16 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5ebd68bdec9f1f4e625f207e3179c0687e7c73bad578ec37df48a23a414da8d4"
+version = "0.12.0"
+source = "git+https://github.com/Manishearth/diplomat?branch=cpp-lib-name#472cd4f49468ba895e931d9d6dfe55973ada5065"
 dependencies = [
  "log",
 ]
 
 [[package]]
 name = "diplomat_core"
-version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f8372a0961d18867e19c8cc0a2afb3ad46d5c5bd5e30b2c71d4edc788c93bbb8"
+version = "0.12.1"
+source = "git+https://github.com/Manishearth/diplomat?branch=cpp-lib-name#472cd4f49468ba895e931d9d6dfe55973ada5065"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -122,6 +119,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "48c757948c5ede0e46177b7add2e67155f70e33c07fea8284df6576da70b3719"
 
 [[package]]
+name = "embedded-io"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ef1a6892d9eef45c8fa6b9e0086428a2cca8491aca8f787c534a3d6d0bcb3ced"
+
+[[package]]
+name = "embedded-io"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "edd0f118536f44f5ccd48bcb8b111bdc3de888b58c74639dfb034a357d0f206d"
+
+[[package]]
 name = "erased-serde"
 version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -143,7 +152,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "2.0.1"
+version = "2.0.4"
 dependencies = [
  "calendrical_calculations",
  "displaydoc",
@@ -164,7 +173,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_capi"
-version = "2.0.0"
+version = "2.0.2"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -220,7 +229,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_collator"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "displaydoc",
  "icu_collator_data",
@@ -234,12 +243,13 @@ dependencies = [
  "smallvec",
  "utf16_iter",
  "utf8_iter",
+ "write16",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_collator_data"
-version = "2.0.0"
+version = "2.0.1"
 
 [[package]]
 name = "icu_collections"
@@ -275,12 +285,13 @@ dependencies = [
  "smallvec",
  "tinystr",
  "writeable",
+ "zerotrie",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_datetime_data"
-version = "2.0.0"
+version = "2.0.2"
 
 [[package]]
 name = "icu_decimal"
@@ -304,7 +315,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_experimental"
-version = "0.3.0"
+version = "0.4.0-dev.1"
 dependencies = [
  "displaydoc",
  "either",
@@ -553,7 +564,7 @@ dependencies = [
 
 [[package]]
 name = "icu_time_data"
-version = "2.0.0"
+version = "2.0.2"
 
 [[package]]
 name = "itoa"
@@ -563,10 +574,7 @@ checksum = "4a5f13b858c8d314ee3e8f639011f7ccefe71f97f96e50151fb991f267928e2c"
 
 [[package]]
 name = "ixdtf"
-version = "0.5.0"
-dependencies = [
- "displaydoc",
-]
+version = "0.6.3"
 
 [[package]]
 name = "lazy_static"
@@ -666,12 +674,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "170a2601f67cc9dba8edd8c4870b15f71a6a2dc196daec8c83f72b59dff628a8"
 dependencies = [
  "cobs",
+ "embedded-io 0.4.0",
+ "embedded-io 0.6.1",
  "serde",
 ]
 
 [[package]]
 name = "potential_utf"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "serde",
  "writeable",
@@ -1097,7 +1107,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.11.2"
+version = "0.11.4"
 dependencies = [
  "databake",
  "serde",
@@ -1122,10 +1132,6 @@ version = "0.2.4"
 [[patch.unused]]
 name = "crlify"
 version = "1.0.4"
-
-[[patch.unused]]
-name = "deduplicating_array"
-version = "0.1.8"
 
 [[patch.unused]]
 name = "icu"
@@ -1153,7 +1159,7 @@ version = "2.0.0"
 
 [[patch.unused]]
 name = "icu_harfbuzz"
-version = "0.2.0"
+version = "0.3.0"
 
 [[patch.unused]]
 name = "icu_provider_baked"
@@ -1169,7 +1175,7 @@ version = "2.0.0"
 
 [[patch.unused]]
 name = "icu_provider_source"
-version = "2.0.0"
+version = "2.0.2"
 
 [[patch.unused]]
 name = "tzif"

@@ -52,7 +52,7 @@ impl<'a> ResourceBundle<'a> {
     }
 
     /// Gets the root resource in the resource tree.
-    pub fn root(&self) -> &Resource {
+    pub fn root(&self) -> &Resource<'_> {
         &self.root
     }
 }

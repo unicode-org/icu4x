@@ -2,14 +2,14 @@
   "defaults": [
     [
       [
-        2,
+        3,
         "Standard"
       ],
       "CAT"
     ],
     [
       [
-        3,
+        4,
         "Standard"
       ],
       "EAT"
@@ -37,7 +37,7 @@
     ],
     [
       [
-        101,
+        52,
         "Standard"
       ],
       "GMT"

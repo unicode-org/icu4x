@@ -21,7 +21,7 @@ impl ecma402_traits::listformat::Format for ListFormat {
         L: Locale,
         Self: Sized,
     {
-        #[allow(clippy::unwrap_used)] // ecma402_traits::Locale::to_string is a valid locale
+        #[expect(clippy::unwrap_used)] // ecma402_traits::Locale::to_string is a valid locale
         let locale = icu::locale::Locale::try_from_str(&locale.to_string()).unwrap();
 
         let prefs = icu::list::ListFormatterPreferences::from(&locale);

@@ -3,6 +3,8 @@
 
 part of 'lib.g.dart';
 
+/// 🚧 This API is experimental and may experience breaking changes outside major releases.
+///
 /// See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html) for more information.
 final class RegionDisplayNames implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
@@ -21,8 +23,11 @@ final class RegionDisplayNames implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('icu4x_RegionDisplayNames_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_RegionDisplayNames_destroy_mv1));
 
+  /// 🚧 This API is experimental and may experience breaking changes outside major releases.
+  ///
   /// Creates a new `RegionDisplayNames` from locale data and an options bag using compiled data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
@@ -37,6 +42,8 @@ final class RegionDisplayNames implements ffi.Finalizable {
     return RegionDisplayNames._fromFfi(result.union.ok, []);
   }
 
+  /// 🚧 This API is experimental and may experience breaking changes outside major releases.
+  ///
   /// Creates a new `RegionDisplayNames` from locale data and an options bag using a particular data source.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
@@ -51,6 +58,8 @@ final class RegionDisplayNames implements ffi.Finalizable {
     return RegionDisplayNames._fromFfi(result.union.ok, []);
   }
 
+  /// 🚧 This API is experimental and may experience breaking changes outside major releases.
+  ///
   /// Returns the locale specific display name of a region.
   /// Note that the function returns an empty string in case the display name for a given
   /// region code is not found.

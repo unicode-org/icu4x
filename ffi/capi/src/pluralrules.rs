@@ -4,7 +4,6 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -18,12 +17,15 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::plurals::PluralCategory, Enum)]
     #[diplomat::enum_convert(icu_plurals::PluralCategory)]
+    #[non_exhaustive]
     pub enum PluralCategory {
         Zero,
         One,
         Two,
         Few,
         Many,
+        // This is an output type, so the default mostly impacts deferred initialization.
+        #[diplomat::attr(auto, default)]
         Other,
     }
 

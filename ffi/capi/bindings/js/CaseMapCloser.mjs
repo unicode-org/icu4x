@@ -115,9 +115,9 @@ export class CaseMapCloser {
     addStringCaseClosureTo(s, builder) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
 
-        const result = wasm.icu4x_CaseMapCloser_add_string_case_closure_to_mv1(this.ffiValue, ...sSlice.splat(), builder.ffiValue);
+        const result = wasm.icu4x_CaseMapCloser_add_string_case_closure_to_mv1(this.ffiValue, sSlice.ptr, builder.ffiValue);
 
         try {
             return result;

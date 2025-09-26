@@ -1,5 +1,5 @@
-#ifndef icu4x_CodePointSetBuilder_D_HPP
-#define icu4x_CodePointSetBuilder_D_HPP
+#ifndef ICU4X_CodePointSetBuilder_D_HPP
+#define ICU4X_CodePointSetBuilder_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,14 +9,14 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct CodePointSetBuilder; }
 class CodePointSetBuilder;
 namespace capi { struct CodePointSetData; }
 class CodePointSetData;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -154,19 +154,19 @@ public:
    */
   inline void complement_set(const icu4x::CodePointSetData& data);
 
-  inline const icu4x::capi::CodePointSetBuilder* AsFFI() const;
-  inline icu4x::capi::CodePointSetBuilder* AsFFI();
-  inline static const icu4x::CodePointSetBuilder* FromFFI(const icu4x::capi::CodePointSetBuilder* ptr);
-  inline static icu4x::CodePointSetBuilder* FromFFI(icu4x::capi::CodePointSetBuilder* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::CodePointSetBuilder* AsFFI() const;
+    inline icu4x::capi::CodePointSetBuilder* AsFFI();
+    inline static const icu4x::CodePointSetBuilder* FromFFI(const icu4x::capi::CodePointSetBuilder* ptr);
+    inline static icu4x::CodePointSetBuilder* FromFFI(icu4x::capi::CodePointSetBuilder* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  CodePointSetBuilder() = delete;
-  CodePointSetBuilder(const icu4x::CodePointSetBuilder&) = delete;
-  CodePointSetBuilder(icu4x::CodePointSetBuilder&&) noexcept = delete;
-  CodePointSetBuilder operator=(const icu4x::CodePointSetBuilder&) = delete;
-  CodePointSetBuilder operator=(icu4x::CodePointSetBuilder&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    CodePointSetBuilder() = delete;
+    CodePointSetBuilder(const icu4x::CodePointSetBuilder&) = delete;
+    CodePointSetBuilder(icu4x::CodePointSetBuilder&&) noexcept = delete;
+    CodePointSetBuilder operator=(const icu4x::CodePointSetBuilder&) = delete;
+    CodePointSetBuilder operator=(icu4x::CodePointSetBuilder&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_CodePointSetBuilder_D_HPP
+#endif // ICU4X_CodePointSetBuilder_D_HPP

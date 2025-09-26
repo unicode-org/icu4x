@@ -474,7 +474,11 @@ pub(crate) enum PackedSkeletonVariant {
 }
 
 impl PackedPatterns<'_> {
-    pub(crate) fn get(&self, length: Length, variant: PackedSkeletonVariant) -> PatternBorrowed {
+    pub(crate) fn get(
+        &self,
+        length: Length,
+        variant: PackedSkeletonVariant,
+    ) -> PatternBorrowed<'_> {
         use Length::*;
         use PackedSkeletonVariant::*;
         let lms = self.header & constants::LMS_MASK;
@@ -547,12 +551,12 @@ impl PackedPatterns<'_> {
         &self,
         length: Length,
         variant: PackedSkeletonVariant,
-    ) -> PluralElements<Pattern> {
+    ) -> PluralElements<Pattern<'_>> {
         PluralElements::new(self.get(length, variant).as_pattern())
     }
 
     /// Converts this packed data to a builder that can be mutated.
-    pub fn to_builder(&self) -> PackedPatternsBuilder {
+    pub fn to_builder(&self) -> PackedPatternsBuilder<'_> {
         use Length::*;
         use PackedSkeletonVariant::*;
         let mut builder = PackedPatternsBuilder {

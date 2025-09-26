@@ -209,7 +209,7 @@ icu_provider::data_struct!(
 
 impl<'data> CollationData<'data> {
     pub(crate) fn ce32_for_char(&self, c: char) -> CollationElement32 {
-        CollationElement32::new(self.trie.get32(c as u32))
+        CollationElement32::new(self.trie.get(c))
     }
     pub(crate) fn get_ce32(&'data self, index: usize) -> CollationElement32 {
         CollationElement32::new(if let Some(u) = self.ce32s.get(index) {
@@ -245,7 +245,7 @@ impl<'data> CollationData<'data> {
         index: usize,
     ) -> (CollationElement32, &'data ZeroSlice<u16>) {
         if let Some(slice) = self.contexts.get_subslice(index..self.contexts.len()) {
-            #[allow(clippy::unwrap_used)]
+            #[expect(clippy::unwrap_used)]
             if slice.len() >= 2 {
                 // `unwrap` must succeed due to the length check above.
                 let first = slice.get(0).unwrap();
@@ -618,7 +618,7 @@ icu_provider::data_struct!(
 );
 
 impl CollationSpecialPrimariesValidated<'_> {
-    #[allow(clippy::unwrap_used)]
+    #[expect(clippy::unwrap_used)]
     pub(crate) fn last_primary_for_group(&self, max_variable: MaxVariable) -> u32 {
         // `unwrap` is OK, because `Collator::try_new` validates the length.
         //
@@ -632,7 +632,7 @@ impl CollationSpecialPrimariesValidated<'_> {
         // Indexing slicing OK by construction and pasting this
         // into Compiler Explorer shows that the panic
         // is optimized away.
-        #[allow(clippy::indexing_slicing)]
+        #[expect(clippy::indexing_slicing)]
         let field = self.compressible_bytes[usize::from(b >> 4)];
         let mask = 1 << (b & 0b1111);
         (field & mask) != 0

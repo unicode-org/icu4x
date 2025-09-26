@@ -18,16 +18,14 @@ include.workspace = true
 
 [dependencies]
 icu_provider = { workspace = true, features = ["export", "baked"] }
-writeable = { workspace = true }
-zerotrie = { workspace = true, features = ["alloc", "databake"] }
-zerovec = { workspace = true }
 
 crlify = { workspace = true }
-databake = { workspace = true}
+databake = { workspace = true }
 icu_provider_registry = { workspace = true }
 log = { workspace = true }
-proc-macro2 = { workspace = true }
 heck = { workspace = true }
+zerotrie = { workspace = true, features = ["databake"] }
 
 [dev-dependencies]
 icu_provider_export = { path = "../export" }
+zerovec = { workspace = true }

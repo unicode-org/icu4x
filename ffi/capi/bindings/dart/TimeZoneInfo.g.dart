@@ -21,6 +21,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('icu4x_TimeZoneInfo_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TimeZoneInfo_destroy_mv1));
 
   /// Creates a time zone for UTC (Coordinated Universal Time).
@@ -32,13 +33,15 @@ final class TimeZoneInfo implements ffi.Finalizable {
   }
 
   /// Creates a time zone info from parts.
+  ///
+  /// `variant` is ignored.
   factory TimeZoneInfo(TimeZone id, {UtcOffset? offset, TimeZoneVariant? variant}) {
     final result = _icu4x_TimeZoneInfo_from_parts_mv1(id._ffi, offset?._ffi ?? ffi.Pointer.fromAddress(0), variant != null ? _ResultInt32Void.ok(variant.index) : _ResultInt32Void.err());
     return TimeZoneInfo._fromFfi(result, []);
   }
 
   /// See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.id) for more information.
-  TimeZone id() {
+  TimeZone get id {
     final result = _icu4x_TimeZoneInfo_id_mv1(_ffi);
     return TimeZone._fromFfi(result, []);
   }
@@ -49,6 +52,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
   /// Notes:
   ///
   /// - If not set, the formatting datetime is used if possible.
+  /// - If the offset is not set, the datetime is interpreted as UTC.
   /// - The constraints are the same as with `ZoneNameTimestamp` in Rust.
   /// - Set to year 1000 or 9999 for a reference far in the past or future.
   ///
@@ -60,8 +64,26 @@ final class TimeZoneInfo implements ffi.Finalizable {
     return TimeZoneInfo._fromFfi(result, []);
   }
 
+  /// Sets the timestamp, in milliseconds since Unix epoch, at which to interpret the time zone
+  /// for display name lookup.
+  ///
+  /// Notes:
+  ///
+  /// - If not set, the formatting datetime is used if possible.
+  /// - The constraints are the same as with `ZoneNameTimestamp` in Rust.
+  ///
+  /// See the [Rust documentation for `with_zone_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_zone_name_timestamp) for more information.
+  ///
+  /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.ZoneNameTimestamp.html#method.from_zoned_date_time_iso), [2](https://docs.rs/icu/2.0.0/icu/time/zone/struct.ZoneNameTimestamp.html)
+  TimeZoneInfo atTimestamp(int timestamp) {
+    final result = _icu4x_TimeZoneInfo_at_timestamp_mv1(_ffi, timestamp);
+    return TimeZoneInfo._fromFfi(result, []);
+  }
+
+  /// Returns the DateTime for the UTC zone name reference time
+  ///
   /// See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
-  IsoDateTime? zoneNameDateTime() {
+  IsoDateTime? get zoneNameDateTime {
     final result = _icu4x_TimeZoneInfo_zone_name_date_time_mv1(_ffi);
     if (!result.isOk) {
       return null;
@@ -70,24 +92,28 @@ final class TimeZoneInfo implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `with_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
+  @core.Deprecated('returns unmodified copy')
   TimeZoneInfo withVariant(TimeZoneVariant timeVariant) {
     final result = _icu4x_TimeZoneInfo_with_variant_mv1(_ffi, timeVariant.index);
     return TimeZoneInfo._fromFfi(result, []);
   }
 
-  /// Infers the zone variant.
-  ///
-  /// Requires the offset and local time to be set.
-  ///
+  UtcOffset? get offset {
+    final result = _icu4x_TimeZoneInfo_offset_mv1(_ffi);
+    return result.address == 0 ? null : UtcOffset._fromFfi(result, []);
+  }
+
   /// See the [Rust documentation for `infer_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.infer_variant) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/enum.TimeZoneVariant.html)
+  @core.Deprecated('does nothing')
   bool inferVariant(VariantOffsetsCalculator offsetCalculator) {
     final result = _icu4x_TimeZoneInfo_infer_variant_mv1(_ffi, offsetCalculator._ffi);
     return result.isOk;
   }
 
   /// See the [Rust documentation for `variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.variant) for more information.
+  @core.Deprecated('always returns null')
   TimeZoneVariant? variant() {
     final result = _icu4x_TimeZoneInfo_variant_mv1(_ffi);
     if (!result.isOk) {
@@ -123,6 +149,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_TimeZoneInfo_id_mv1(ffi.Pointer<ffi.Opaq
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_TimeZoneInfo_at_date_time_iso_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> date, ffi.Pointer<ffi.Opaque> time);
 
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_at_timestamp_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Int64)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_at_timestamp_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_TimeZoneInfo_at_timestamp_mv1(ffi.Pointer<ffi.Opaque> self, int timestamp);
+
 @_DiplomatFfiUse('icu4x_TimeZoneInfo_zone_name_date_time_mv1')
 @ffi.Native<_ResultIsoDateTimeFfiVoid Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_zone_name_date_time_mv1')
 // ignore: non_constant_identifier_names
@@ -132,6 +163,11 @@ external _ResultIsoDateTimeFfiVoid _icu4x_TimeZoneInfo_zone_name_date_time_mv1(f
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_with_variant_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_TimeZoneInfo_with_variant_mv1(ffi.Pointer<ffi.Opaque> self, int timeVariant);
+
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_offset_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_offset_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_TimeZoneInfo_offset_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('icu4x_TimeZoneInfo_infer_variant_mv1')
 @ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_infer_variant_mv1')

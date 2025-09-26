@@ -1,13 +1,5 @@
 {
-  "defaults": [
-    [
-      [
-        66,
-        "Standard"
-      ],
-      "GST"
-    ]
-  ],
+  "defaults": {},
   "overrides": [
     [
       [

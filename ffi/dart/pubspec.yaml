@@ -1,19 +1,43 @@
-name: icu
-repository: https://github.com/unicode-org/icu4x
+name: icu4x
+description: > 
+  Dart bindings for the Rust icu4x crate.
+version: 2.0.0-dev.1
+repository: https://github.com/unicode-org/icu4x/tree/main/ffi/dart
+issue_tracker: https://github.com/unicode-org/icu4x/issues?q=is%3Aissue%20is%3Aopen%20label%3AU-flutter
 
-publish_to: none
+platforms:
+  # web: Not supported for now.
+  android:
+  ios:
+  linux:
+  macos:
+  windows:
+
+topics:
+  - i18n
 
 environment:
-  sdk: '>=3.7.0 <4.0.0'
+  sdk: '>=3.8.1 <4.0.0'
 
 dependencies:
-  ffi: ^2.0.0
-  code_assets: ^0.19.0
-  hooks: ^0.19.0
-  meta: ^1.16.0
+  args: ^2.7.0
+  code_assets: ^0.19.7
+  collection: ^1.19.1
+  crypto: ^3.0.6
+  ffi: ^2.1.4
+  hooks: ^0.20.1
+  logging: ^1.3.0
+  meta: ^1.17.0
+  native_toolchain_c: ^0.17.1
+  path: ^1.9.1
+  record_use: ^0.4.1
 
 dev_dependencies:
-  args: ^2.6.0
-  lints: ^5.1.1
-  test: ^1.21.0
-  path: ^1.0.0
+  dart_flutter_team_lints: ^3.5.2
+  test: ^1.26.3
+
+hooks:
+  user_defines:
+    icu4x:
+      buildMode: checkout
+      checkoutPath: ../../

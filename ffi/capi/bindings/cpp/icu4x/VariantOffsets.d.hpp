@@ -1,5 +1,5 @@
-#ifndef icu4x_VariantOffsets_D_HPP
-#define icu4x_VariantOffsets_D_HPP
+#ifndef ICU4X_VariantOffsets_D_HPP
+#define ICU4X_VariantOffsets_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,12 +9,12 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct UtcOffset; }
 class UtcOffset;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -34,12 +34,12 @@ namespace icu4x {
  * See the [Rust documentation for `VariantOffsets`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsets.html) for more information.
  */
 struct VariantOffsets {
-  std::unique_ptr<icu4x::UtcOffset> standard;
-  std::unique_ptr<icu4x::UtcOffset> daylight;
+    std::unique_ptr<icu4x::UtcOffset> standard;
+    std::unique_ptr<icu4x::UtcOffset> daylight;
 
-  inline icu4x::capi::VariantOffsets AsFFI() const;
-  inline static icu4x::VariantOffsets FromFFI(icu4x::capi::VariantOffsets c_struct);
+    inline icu4x::capi::VariantOffsets AsFFI() const;
+    inline static icu4x::VariantOffsets FromFFI(icu4x::capi::VariantOffsets c_struct);
 };
 
 } // namespace
-#endif // icu4x_VariantOffsets_D_HPP
+#endif // ICU4X_VariantOffsets_D_HPP

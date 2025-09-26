@@ -8,7 +8,8 @@
 
 mod deserializer;
 mod header;
-pub use self::deserializer::from_bytes;
+pub use self::deserializer::from_words;
+pub mod helpers;
 
 #[cfg(feature = "serialize")]
 mod serializer;
@@ -18,6 +19,32 @@ pub use self::serializer::Serializer;
 use core::{fmt, slice::SliceIndex};
 
 use self::header::BinHeader;
+
+/// Includes bytes as a properly aligned and sized `&[u32]`. This is required for `resb` deserialization.
+#[macro_export]
+macro_rules! include_bytes_as_u32 {
+    ($path:literal) => {
+        const {
+            #[repr(align(4))]
+            pub struct AlignedAs<Bytes: ?Sized> {
+                pub bytes: Bytes,
+            }
+
+            const B: &[u8] = &AlignedAs {
+                bytes: *include_bytes!($path),
+            }
+            .bytes;
+            // SAFETY: B is statically borrowed, 4-aligned, and the length is within
+            // the static slice (truncated to a multiple of four).
+            unsafe {
+                core::slice::from_raw_parts(
+                    B.as_ptr() as *const u32,
+                    B.len() / core::mem::size_of::<u32>(),
+                )
+            }
+        }
+    };
+}
 
 /// Gets the endianness of a binary resource bundle's data.
 pub fn determine_endianness(resb: &[u8]) -> Result<Endianness, BinaryDeserializerError> {
@@ -362,28 +389,32 @@ pub struct BinaryDeserializerError {
 }
 
 impl BinaryDeserializerError {
-    fn invalid_data(message: &'static str) -> Self {
+    /// TODO
+    pub fn invalid_data(message: &'static str) -> Self {
         Self {
             kind: ErrorKind::InvalidData,
             message,
         }
     }
 
-    fn resource_type_mismatch(message: &'static str) -> Self {
+    /// TODO
+    pub fn resource_type_mismatch(message: &'static str) -> Self {
         Self {
             kind: ErrorKind::ResourceTypeMismatch,
             message,
         }
     }
 
-    fn unsupported_format(message: &'static str) -> Self {
+    /// TODO
+    pub fn unsupported_format(message: &'static str) -> Self {
         Self {
             kind: ErrorKind::UnsupportedFormat,
             message,
         }
     }
 
-    fn unknown(message: &'static str) -> Self {
+    /// TODO
+    pub fn unknown(message: &'static str) -> Self {
         Self {
             kind: ErrorKind::Unknown,
             message,
@@ -438,7 +469,7 @@ where
 fn read_u16(input: &[u8]) -> Result<(u16, &[u8]), BinaryDeserializerError> {
     // Safe to unwrap at the end of this because `try_into()` for arrays will
     // only fail if the slice is the wrong size.
-    #[allow(clippy::unwrap_used)]
+    #[expect(clippy::unwrap_used)]
     let bytes = get_subslice(input, ..core::mem::size_of::<u16>())?
         .try_into()
         .unwrap();

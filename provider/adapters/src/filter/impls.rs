@@ -77,7 +77,7 @@ where
     /// assert!(!available_ids
     ///     .contains(&DataIdentifierCow::from_locale(langid!("en").into())));
     /// ```
-    #[allow(clippy::type_complexity)]
+    #[expect(clippy::type_complexity)]
     pub fn with_filter<'a>(
         self,
         predicate: impl Fn(DataIdentifierBorrowed) -> bool + Sync + 'a,

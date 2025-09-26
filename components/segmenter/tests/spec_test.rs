@@ -154,7 +154,7 @@ fn line_break_test(file: &'static str) {
                     c
                 )
             }
-            println!("Test case #{}", i);
+            println!("Test case #{i}");
             panic!()
         }
 
@@ -244,7 +244,7 @@ fn word_break_test(file: &'static str) {
                     c
                 )
             }
-            println!("Test case #{}", i);
+            println!("Test case #{i}");
             panic!()
         }
 
@@ -323,7 +323,7 @@ fn grapheme_break_test(file: &'static str) {
                     c
                 )
             }
-            println!("Test case #{}", i);
+            println!("Test case #{i}");
             panic!()
         }
 
@@ -402,7 +402,7 @@ fn sentence_break_test(file: &'static str) {
                     c
                 )
             }
-            println!("Test case #{}", i);
+            println!("Test case #{i}");
             panic!()
         }
 

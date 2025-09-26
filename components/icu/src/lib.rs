@@ -117,6 +117,7 @@
 //! [`FsDataProvider`]: https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html
 //! [`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html
 //! [`icu_provider_adapters`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/
+//! [`icu4x-datagen`]: https://crates.io/crates/icu4x-datagen
 //! [`Locale`]: crate::locale::Locale
 //! [data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/data-provider-runtime.md#loading-additional-data-at-runtime
 
@@ -137,9 +138,8 @@
 )]
 #![warn(missing_docs)]
 
-#[cfg(doc)]
 // Needed for intra-doc link to work, since icu_provider is otherwise never mentioned in this crate
-extern crate icu_provider;
+use icu_provider as _;
 
 #[doc(inline)]
 pub use icu_calendar as calendar;

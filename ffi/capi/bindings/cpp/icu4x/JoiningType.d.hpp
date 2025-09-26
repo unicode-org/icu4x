@@ -1,5 +1,5 @@
-#ifndef icu4x_JoiningType_D_HPP
-#define icu4x_JoiningType_D_HPP
+#ifndef ICU4X_JoiningType_D_HPP
+#define ICU4X_JoiningType_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,11 +9,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 class JoiningType;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -37,21 +37,22 @@ namespace icu4x {
  */
 class JoiningType {
 public:
-  enum Value {
-    NonJoining = 0,
-    JoinCausing = 1,
-    DualJoining = 2,
-    LeftJoining = 3,
-    RightJoining = 4,
-    Transparent = 5,
-  };
+    enum Value {
+        NonJoining = 0,
+        JoinCausing = 1,
+        DualJoining = 2,
+        LeftJoining = 3,
+        RightJoining = 4,
+        Transparent = 5,
+    };
 
-  JoiningType() = default;
-  // Implicit conversions between enum and ::Value
-  constexpr JoiningType(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    JoiningType(): value(Value::NonJoining) {}
+
+    // Implicit conversions between enum and ::Value
+    constexpr JoiningType(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
   /**
    * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
@@ -86,11 +87,11 @@ public:
    */
   inline static std::optional<icu4x::JoiningType> from_integer_value(uint8_t other);
 
-  inline icu4x::capi::JoiningType AsFFI() const;
-  inline static icu4x::JoiningType FromFFI(icu4x::capi::JoiningType c_enum);
+    inline icu4x::capi::JoiningType AsFFI() const;
+    inline static icu4x::JoiningType FromFFI(icu4x::capi::JoiningType c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_JoiningType_D_HPP
+#endif // ICU4X_JoiningType_D_HPP

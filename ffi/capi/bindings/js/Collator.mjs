@@ -54,7 +54,7 @@ export class Collator {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_Collator_create_v1_mv1(diplomatReceive.buffer, locale.ffiValue, ...CollatorOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_Collator_create_v1_mv1(diplomatReceive.buffer, locale.ffiValue, CollatorOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -82,7 +82,7 @@ export class Collator {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_Collator_create_v1_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...CollatorOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_Collator_create_v1_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, CollatorOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -110,10 +110,10 @@ export class Collator {
     compare(left, right) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const leftSlice = diplomatRuntime.DiplomatBuf.str16(wasm, left);
-        const rightSlice = diplomatRuntime.DiplomatBuf.str16(wasm, right);
+        const leftSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str16(wasm, left)));
+        const rightSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str16(wasm, right)));
 
-        const result = wasm.icu4x_Collator_compare_utf16_mv1(this.ffiValue, ...leftSlice.splat(), ...rightSlice.splat());
+        const result = wasm.icu4x_Collator_compare_utf16_mv1(this.ffiValue, leftSlice.ptr, rightSlice.ptr);
 
         try {
             return result;

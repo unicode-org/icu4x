@@ -156,7 +156,6 @@ impl ParseError {
                 }
 
                 // exclusive_end is at most source.len() due to str::is_char_boundary and at least 0 by type
-                #[allow(clippy::indexing_slicing)]
                 s.push_str(&source[..exclusive_end]);
                 s.push_str("← ");
             }
@@ -251,11 +250,15 @@ impl<'a> VariableMap<'a> {
     /// Insert a `VariableValue` into the `VariableMap`.
     ///
     /// Returns `Err` with the old value, if it exists, and does not update the map.
-    pub fn insert(&mut self, key: String, value: VariableValue<'a>) -> Result<(), &VariableValue> {
+    pub fn insert(
+        &mut self,
+        key: String,
+        value: VariableValue<'a>,
+    ) -> Result<(), &VariableValue<'_>> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.contains_key(&key) {
             // we just checked that this key exists
-            #[allow(clippy::indexing_slicing)]
+            #[expect(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
         }
 
@@ -274,11 +277,11 @@ impl<'a> VariableMap<'a> {
     /// Insert a `char` into the `VariableMap`.    
     ///
     /// Returns `Err` with the old value, if it exists, and does not update the map.
-    pub fn insert_char(&mut self, key: String, c: char) -> Result<(), &VariableValue> {
+    pub fn insert_char(&mut self, key: String, c: char) -> Result<(), &VariableValue<'_>> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.contains_key(&key) {
             // we just checked that this key exists
-            #[allow(clippy::indexing_slicing)]
+            #[expect(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
         }
 
@@ -289,11 +292,11 @@ impl<'a> VariableMap<'a> {
     /// Insert a `String` of any length into the `VariableMap`.
     ///
     /// Returns `Err` with the old value, if it exists, and does not update the map.
-    pub fn insert_string(&mut self, key: String, s: String) -> Result<(), &VariableValue> {
+    pub fn insert_string(&mut self, key: String, s: String) -> Result<(), &VariableValue<'_>> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.contains_key(&key) {
             // we just checked that this key exists
-            #[allow(clippy::indexing_slicing)]
+            #[expect(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
         }
 
@@ -310,11 +313,11 @@ impl<'a> VariableMap<'a> {
     /// Insert a `&str` of any length into the `VariableMap`.
     ///
     /// Returns `Err` with the old value, if it exists, and does not update the map.
-    pub fn insert_str(&mut self, key: String, s: &'a str) -> Result<(), &VariableValue> {
+    pub fn insert_str(&mut self, key: String, s: &'a str) -> Result<(), &VariableValue<'_>> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.contains_key(&key) {
             // we just checked that this key exists
-            #[allow(clippy::indexing_slicing)]
+            #[expect(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
         }
 
@@ -335,11 +338,11 @@ impl<'a> VariableMap<'a> {
         &mut self,
         key: String,
         set: CodePointInversionListAndStringList<'a>,
-    ) -> Result<(), &VariableValue> {
+    ) -> Result<(), &VariableValue<'_>> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.contains_key(&key) {
             // we just checked that this key exists
-            #[allow(clippy::indexing_slicing)]
+            #[expect(clippy::indexing_slicing)]
             return Err(&self.0[&key]);
         }
         self.0.insert(key, VariableValue::UnicodeSet(set));
@@ -1237,7 +1240,6 @@ where
 
         // validate_hex_digits ensures that chars (including the last one) are ascii hex digits,
         // which are all exactly one UTF-8 byte long, so slicing on these offsets always respects char boundaries
-        #[allow(clippy::indexing_slicing)]
         let hex_source = &self.source[first_offset..=end_offset];
         let num = u32::from_str_radix(hex_source, 16).map_err(|_| PEK::Internal)?;
         char::try_from(num)

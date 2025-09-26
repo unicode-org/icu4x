@@ -104,15 +104,19 @@ const _: () = {
     impl_property_binary_grapheme_link_v1!(Baked);
     impl_property_binary_hex_digit_v1!(Baked);
     impl_property_binary_hyphen_v1!(Baked);
+    impl_property_binary_id_compat_math_continue_v1!(Baked);
+    impl_property_binary_id_compat_math_start_v1!(Baked);
     impl_property_binary_id_continue_v1!(Baked);
     impl_property_binary_id_start_v1!(Baked);
     impl_property_binary_ideographic_v1!(Baked);
     impl_property_binary_ids_binary_operator_v1!(Baked);
     impl_property_binary_ids_trinary_operator_v1!(Baked);
+    impl_property_binary_ids_unary_operator_v1!(Baked);
     impl_property_binary_join_control_v1!(Baked);
     impl_property_binary_logical_order_exception_v1!(Baked);
     impl_property_binary_lowercase_v1!(Baked);
     impl_property_binary_math_v1!(Baked);
+    impl_property_binary_modifier_combining_mark_v1!(Baked);
     impl_property_binary_nfc_inert_v1!(Baked);
     impl_property_binary_nfd_inert_v1!(Baked);
     impl_property_binary_nfkc_inert_v1!(Baked);
@@ -393,6 +397,18 @@ icu_provider::data_marker!(
     is_singleton = true
 );
 icu_provider::data_marker!(
+    /// `PropertyBinaryIdCompatMathContinueV1`
+    PropertyBinaryIdCompatMathContinueV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryIdCompatMathStartV1`
+    PropertyBinaryIdCompatMathStartV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
     /// `PropertyBinaryIdContinueV1`
     PropertyBinaryIdContinueV1,
     PropertyCodePointSet<'static>,
@@ -423,6 +439,12 @@ icu_provider::data_marker!(
     is_singleton = true
 );
 icu_provider::data_marker!(
+    /// `PropertyBinaryIdsUnaryOperatorV1`
+    PropertyBinaryIdsUnaryOperatorV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
     /// `PropertyBinaryJoinControlV1`
     PropertyBinaryJoinControlV1,
     PropertyCodePointSet<'static>,
@@ -443,6 +465,12 @@ icu_provider::data_marker!(
 icu_provider::data_marker!(
     /// `PropertyBinaryMathV1`
     PropertyBinaryMathV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryModifierCombiningMarkV1`
+    PropertyBinaryModifierCombiningMarkV1,
     PropertyCodePointSet<'static>,
     is_singleton = true
 );
@@ -762,15 +790,19 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     PropertyBinaryGraphV1::INFO,
     PropertyBinaryHexDigitV1::INFO,
     PropertyBinaryHyphenV1::INFO,
+    PropertyBinaryIdCompatMathContinueV1::INFO,
+    PropertyBinaryIdCompatMathStartV1::INFO,
     PropertyBinaryIdContinueV1::INFO,
     PropertyBinaryIdeographicV1::INFO,
     PropertyBinaryIdsBinaryOperatorV1::INFO,
     PropertyBinaryIdStartV1::INFO,
     PropertyBinaryIdsTrinaryOperatorV1::INFO,
+    PropertyBinaryIdsUnaryOperatorV1::INFO,
     PropertyBinaryJoinControlV1::INFO,
     PropertyBinaryLogicalOrderExceptionV1::INFO,
     PropertyBinaryLowercaseV1::INFO,
     PropertyBinaryMathV1::INFO,
+    PropertyBinaryModifierCombiningMarkV1::INFO,
     PropertyBinaryNfcInertV1::INFO,
     PropertyBinaryNfdInertV1::INFO,
     PropertyBinaryNfkcInertV1::INFO,
@@ -930,6 +962,13 @@ impl<'data, T: TrieValue> PropertyCodePointMap<'data, T> {
     pub(crate) fn get32(&self, ch: u32) -> T {
         match *self {
             Self::CodePointTrie(ref t) => t.get32(ch),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn get(&self, c: char) -> T {
+        match *self {
+            Self::CodePointTrie(ref t) => t.get(c),
         }
     }
 

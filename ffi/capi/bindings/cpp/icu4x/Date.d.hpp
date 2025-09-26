@@ -1,5 +1,5 @@
-#ifndef icu4x_Date_D_HPP
-#define icu4x_Date_D_HPP
+#ifndef ICU4X_Date_D_HPP
+#define ICU4X_Date_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,8 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct Calendar; }
 class Calendar;
@@ -21,7 +20,8 @@ class IsoDate;
 class CalendarError;
 class Rfc9557ParseError;
 class Weekday;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -45,7 +45,7 @@ public:
    *
    * See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError> from_iso_in_calendar(int32_t iso_year, uint8_t iso_month, uint8_t iso_day, const icu4x::Calendar& calendar);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError> from_iso_in_calendar(int32_t iso_year, uint8_t iso_month, uint8_t iso_day, const icu4x::Calendar& calendar);
 
   /**
    * Creates a new {@link Date} from the given codes, which are interpreted in the given calendar system
@@ -54,21 +54,21 @@ public:
    *
    * See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.try_new_from_codes) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError> from_codes_in_calendar(std::string_view era_code, int32_t year, std::string_view month_code, uint8_t day, const icu4x::Calendar& calendar);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError> from_codes_in_calendar(std::string_view era_code, int32_t year, std::string_view month_code, uint8_t day, const icu4x::Calendar& calendar);
 
   /**
    * Creates a new {@link Date} from the given Rata Die
    *
    * See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError> from_rata_die(int64_t rd, const icu4x::Calendar& calendar);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError> from_rata_die(int64_t rd, const icu4x::Calendar& calendar);
 
   /**
    * Creates a new {@link Date} from an IXDTF string.
    *
    * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.try_from_str) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::Rfc9557ParseError> from_string(std::string_view v, const icu4x::Calendar& calendar);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::Rfc9557ParseError> from_string(std::string_view v, const icu4x::Calendar& calendar);
 
   /**
    * Convert this date to one in a different calendar
@@ -134,6 +134,8 @@ public:
    * Additional information: [1](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.month)
    */
   inline std::string month_code() const;
+  template<typename W>
+  inline void month_code_write(W& writeable_output) const;
 
   /**
    * Returns the month number of this month.
@@ -161,7 +163,11 @@ public:
   inline int32_t era_year_or_related_iso() const;
 
   /**
-   * Returns the extended year in the Date
+   * Returns the extended year, which can be used for
+   *
+   * This year number can be used when you need a simple numeric representation
+   * of the year, and can be meaningfully compared with extended years from other
+   * eras or used in arithmetic.
    *
    * See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.extended_year) for more information.
    */
@@ -175,6 +181,8 @@ public:
    * Additional information: [1](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.year)
    */
   inline std::string era() const;
+  template<typename W>
+  inline void era_write(W& writeable_output) const;
 
   /**
    * Returns the number of months in the year represented by this date
@@ -204,19 +212,19 @@ public:
    */
   inline std::unique_ptr<icu4x::Calendar> calendar() const;
 
-  inline const icu4x::capi::Date* AsFFI() const;
-  inline icu4x::capi::Date* AsFFI();
-  inline static const icu4x::Date* FromFFI(const icu4x::capi::Date* ptr);
-  inline static icu4x::Date* FromFFI(icu4x::capi::Date* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::Date* AsFFI() const;
+    inline icu4x::capi::Date* AsFFI();
+    inline static const icu4x::Date* FromFFI(const icu4x::capi::Date* ptr);
+    inline static icu4x::Date* FromFFI(icu4x::capi::Date* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  Date() = delete;
-  Date(const icu4x::Date&) = delete;
-  Date(icu4x::Date&&) noexcept = delete;
-  Date operator=(const icu4x::Date&) = delete;
-  Date operator=(icu4x::Date&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    Date() = delete;
+    Date(const icu4x::Date&) = delete;
+    Date(icu4x::Date&&) noexcept = delete;
+    Date operator=(const icu4x::Date&) = delete;
+    Date operator=(icu4x::Date&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_Date_D_HPP
+#endif // ICU4X_Date_D_HPP

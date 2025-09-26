@@ -2,23 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Coptic calendar.
-//!
-//! ```rust
-//! use icu::calendar::{cal::Coptic, Date};
-//!
-//! let date_iso = Date::try_new_iso(1970, 1, 2)
-//!     .expect("Failed to initialize ISO Date instance.");
-//! let date_coptic = Date::new_from_iso(date_iso, Coptic);
-//!
-//! assert_eq!(date_coptic.era_year().year, 1686);
-//! assert_eq!(date_coptic.month().ordinal, 4);
-//! assert_eq!(date_coptic.day_of_month().0, 24);
-//! ```
-
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::DateError;
+use crate::options::DateFromFieldsOptions;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
@@ -92,23 +80,68 @@ impl CalendarArithmetic for Coptic {
     }
 }
 
+impl DateFieldsResolver for Coptic {
+    type YearInfo = i32;
+
+    #[inline]
+    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+        match era {
+            "am" => Ok(era_year),
+            _ => Err(DateError::UnknownEra),
+        }
+    }
+
+    #[inline]
+    fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
+        extended_year
+    }
+
+    #[inline]
+    fn reference_year_from_month_day(
+        &self,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::YearInfo, DateError> {
+        Coptic::reference_year_from_month_day(month_code, day)
+    }
+}
+
+impl Coptic {
+    pub(crate) fn reference_year_from_month_day(
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<i32, DateError> {
+        let (ordinal_month, _is_leap) = month_code
+            .parsed()
+            .ok_or(DateError::UnknownMonthCode(month_code))?;
+        // December 31, 1972 occurs on 4th month, 22nd day, 1689 AM
+        let anno_martyrum_year = if ordinal_month < 4 || (ordinal_month == 4 && day <= 22) {
+            1689
+        // Note: this must be >=6, not just == 6, since we have not yet
+        // applied a potential Overflow::Constrain.
+        } else if ordinal_month == 13 && day >= 6 {
+            // 1687 AM is a leap year
+            1687
+        } else {
+            1688
+        };
+        Ok(anno_martyrum_year)
+    }
+}
+
 impl crate::cal::scaffold::UnstableSealed for Coptic {}
 impl Calendar for Coptic {
     type DateInner = CopticDateInner;
     type Year = types::EraYear;
-    fn from_codes(
+    fn from_fields(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
-        day: u8,
+        fields: types::DateFields,
+        options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let year = match era {
-            Some("am") | None => year,
-            Some(_) => return Err(DateError::UnknownEra),
-        };
-
-        ArithmeticDate::new_from_codes(self, year, month_code, day).map(CopticDateInner)
+        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
+        ArithmeticDate::try_from_builder(builder, options)
+            .map(CopticDateInner)
+            .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -149,7 +182,6 @@ impl Calendar for Coptic {
         date.0.offset_date(offset, &());
     }
 
-    #[allow(clippy::field_reassign_with_default)]
     fn until(
         &self,
         date1: &Self::DateInner,
@@ -162,17 +194,14 @@ impl Calendar for Coptic {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let year = self.extended_year(date);
+        let year = date.0.extended_year();
         types::EraYear {
             era: tinystr!(16, "am"),
             era_index: Some(0),
             year,
+            extended_year: year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
-    }
-
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        date.0.extended_year()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -214,7 +243,7 @@ impl Date<Coptic> {
     /// assert_eq!(date_coptic.day_of_month().0, 6);
     /// ```
     pub fn try_new_coptic(year: i32, month: u8, day: u8) -> Result<Date<Coptic>, RangeError> {
-        ArithmeticDate::new_from_ordinals(year, month, day)
+        ArithmeticDate::try_from_ymd(year, month, day)
             .map(CopticDateInner)
             .map(|inner| Date::from_raw(inner, Coptic))
     }
@@ -223,6 +252,9 @@ impl Date<Coptic> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
+    use crate::types::{DateFields, MonthCode};
+
     #[test]
     fn test_coptic_regression() {
         // https://github.com/unicode-org/icu4x/issues/2254
@@ -230,5 +262,24 @@ mod tests {
         let coptic = iso_date.to_calendar(Coptic);
         let recovered_iso = coptic.to_iso();
         assert_eq!(iso_date, recovered_iso);
+    }
+
+    #[test]
+    fn test_from_fields_monthday_constrain() {
+        // M13-7 is not a real day, however this should resolve to M12-6
+        // with Overflow::Constrain
+        let fields = DateFields {
+            month_code: Some(MonthCode("M13".parse().unwrap())),
+            day: core::num::NonZero::new(7),
+            ..Default::default()
+        };
+        let options = DateFromFieldsOptions {
+            overflow: Some(Overflow::Constrain),
+            missing_fields_strategy: Some(MissingFieldsStrategy::Ecma),
+            ..Default::default()
+        };
+
+        let date = Date::try_from_fields(fields, options, Coptic).unwrap();
+        assert_eq!(date.day_of_month().0, 6, "Day was successfully constrained");
     }
 }

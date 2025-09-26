@@ -108,7 +108,7 @@ impl DataProvider<DigitalDurationDataV1> for SourceDataProvider {
 }
 
 impl SourceDataProvider {
-    #[allow(clippy::type_complexity)]
+    #[expect(clippy::type_complexity)]
     pub(crate) fn load_duration_parts_internal(
         &self,
         req: DataRequest<'_>,

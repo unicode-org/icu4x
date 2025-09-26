@@ -75,7 +75,7 @@ If you wish to use data generation in a `build.rs` script, you need to manually 
 [dependencies]
 icu = { version = "2.0.0", default-features = false } # turn off compiled_data
 icu_provider = "2.0.0" # for databake
-zerovec = "0.9" # for databake
+zerovec = "0.11" # for databake
 
 # for build.rs:
 [build-dependencies]

@@ -23,6 +23,7 @@ final class LineSegmenter implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('icu4x_LineSegmenter_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_LineSegmenter_destroy_mv1));
 
   /// Construct a [LineSegmenter] with default options (no locale-based tailoring) using compiled data. It automatically loads the best

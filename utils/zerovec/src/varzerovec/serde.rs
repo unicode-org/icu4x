@@ -13,7 +13,7 @@ use serde::de::{self, Deserialize, Deserializer, SeqAccess, Visitor};
 use serde::ser::{Serialize, SerializeSeq, Serializer};
 
 struct VarZeroVecVisitor<T: ?Sized, F: VarZeroVecFormat> {
-    #[allow(clippy::type_complexity)] // this is a private marker type, who cares
+    #[expect(clippy::type_complexity)] // this is a private marker type, who cares
     marker: PhantomData<(fn() -> Box<T>, F)>,
 }
 
@@ -163,18 +163,30 @@ mod test {
     use crate::{VarZeroSlice, VarZeroVec};
 
     #[derive(serde::Serialize, serde::Deserialize)]
+    #[allow(
+        dead_code,
+        reason = "The dead_code lint explicitly ignores constructing trait impls."
+    )]
     struct DeriveTest_VarZeroVec<'data> {
         #[serde(borrow)]
         _data: VarZeroVec<'data, str>,
     }
 
     #[derive(serde::Serialize, serde::Deserialize)]
+    #[allow(
+        dead_code,
+        reason = "The dead_code lint explicitly ignores constructing trait impls."
+    )]
     struct DeriveTest_VarZeroSlice<'data> {
         #[serde(borrow)]
         _data: &'data VarZeroSlice<str>,
     }
 
     #[derive(serde::Serialize, serde::Deserialize)]
+    #[allow(
+        dead_code,
+        reason = "The dead_code lint explicitly ignores constructing trait impls."
+    )]
     struct DeriveTest_VarZeroVec_of_VarZeroSlice<'data> {
         #[serde(borrow)]
         _data: VarZeroVec<'data, VarZeroSlice<str>>,

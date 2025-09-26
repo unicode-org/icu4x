@@ -56,7 +56,7 @@ export class DecimalFormatter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_DecimalFormatter_create_with_grouping_strategy_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(groupingStrategy, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
+        const result = wasm.icu4x_DecimalFormatter_create_with_grouping_strategy_mv1(diplomatReceive.buffer, locale.ffiValue, diplomatRuntime.optionToBufferForCalling(wasm, groupingStrategy, 4, 4, functionCleanupArena, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -84,7 +84,7 @@ export class DecimalFormatter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_DecimalFormatter_create_with_grouping_strategy_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(groupingStrategy, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
+        const result = wasm.icu4x_DecimalFormatter_create_with_grouping_strategy_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, diplomatRuntime.optionToBufferForCalling(wasm, groupingStrategy, 4, 4, functionCleanupArena, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -109,17 +109,17 @@ export class DecimalFormatter {
     static createWithManualData(plusSignPrefix, plusSignSuffix, minusSignPrefix, minusSignSuffix, decimalSeparator, groupingSeparator, primaryGroupSize, secondaryGroupSize, minGroupSize, digits, groupingStrategy) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const plusSignPrefixSlice = diplomatRuntime.DiplomatBuf.str8(wasm, plusSignPrefix);
-        const plusSignSuffixSlice = diplomatRuntime.DiplomatBuf.str8(wasm, plusSignSuffix);
-        const minusSignPrefixSlice = diplomatRuntime.DiplomatBuf.str8(wasm, minusSignPrefix);
-        const minusSignSuffixSlice = diplomatRuntime.DiplomatBuf.str8(wasm, minusSignSuffix);
-        const decimalSeparatorSlice = diplomatRuntime.DiplomatBuf.str8(wasm, decimalSeparator);
-        const groupingSeparatorSlice = diplomatRuntime.DiplomatBuf.str8(wasm, groupingSeparator);
-        const digitsSlice = diplomatRuntime.DiplomatBuf.slice(wasm, digits, "u16");
+        const plusSignPrefixSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, plusSignPrefix)));
+        const plusSignSuffixSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, plusSignSuffix)));
+        const minusSignPrefixSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, minusSignPrefix)));
+        const minusSignSuffixSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, minusSignSuffix)));
+        const decimalSeparatorSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, decimalSeparator)));
+        const groupingSeparatorSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, groupingSeparator)));
+        const digitsSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.slice(wasm, digits, "u16")));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_DecimalFormatter_create_with_manual_data_mv1(diplomatReceive.buffer, ...plusSignPrefixSlice.splat(), ...plusSignSuffixSlice.splat(), ...minusSignPrefixSlice.splat(), ...minusSignSuffixSlice.splat(), ...decimalSeparatorSlice.splat(), ...groupingSeparatorSlice.splat(), primaryGroupSize, secondaryGroupSize, minGroupSize, ...digitsSlice.splat(), ...diplomatRuntime.optionToArgsForCalling(groupingStrategy, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
+        const result = wasm.icu4x_DecimalFormatter_create_with_manual_data_mv1(diplomatReceive.buffer, plusSignPrefixSlice.ptr, plusSignSuffixSlice.ptr, minusSignPrefixSlice.ptr, minusSignSuffixSlice.ptr, decimalSeparatorSlice.ptr, groupingSeparatorSlice.ptr, primaryGroupSize, secondaryGroupSize, minGroupSize, digitsSlice.ptr, diplomatRuntime.optionToBufferForCalling(wasm, groupingStrategy, 4, 4, functionCleanupArena, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
 
         try {
             if (!diplomatReceive.resultFlag) {

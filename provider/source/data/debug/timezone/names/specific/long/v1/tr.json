@@ -9,427 +9,448 @@
     ],
     [
       [
-        6,
-        "Standard"
-      ],
-      "Batı Afrika Standart Saati"
-    ],
-    [
-      [
-        6,
-        "Daylight"
-      ],
-      "Batı Afrika Yaz Saati"
-    ],
-    [
-      [
-        8,
+        7,
         "Standard"
       ],
       "Alaska Standart Saati"
     ],
     [
       [
-        8,
+        7,
         "Daylight"
       ],
       "Alaska Yaz Saati"
     ],
     [
       [
-        9,
+        8,
         "Standard"
       ],
       "Amazon Standart Saati"
     ],
     [
       [
-        9,
+        8,
         "Daylight"
       ],
       "Amazon Yaz Saati"
     ],
     [
       [
-        10,
+        9,
         "Standard"
       ],
       "Kuzey Amerika Merkezi Standart Saati"
     ],
     [
       [
-        10,
+        9,
         "Daylight"
       ],
       "Kuzey Amerika Merkezi Yaz Saati"
     ],
     [
       [
-        11,
+        10,
         "Standard"
       ],
       "Kuzey Amerika Doğu Standart Saati"
     ],
     [
       [
-        11,
+        10,
         "Daylight"
       ],
       "Kuzey Amerika Doğu Yaz Saati"
     ],
     [
       [
-        12,
+        11,
         "Standard"
       ],
       "Kuzey Amerika Dağ Standart Saati"
     ],
     [
       [
-        12,
+        11,
         "Daylight"
       ],
       "Kuzey Amerika Dağ Yaz Saati"
     ],
     [
       [
-        13,
+        12,
         "Standard"
       ],
       "Kuzey Amerika Pasifik Standart Saati"
     ],
     [
       [
-        13,
+        12,
         "Daylight"
       ],
       "Kuzey Amerika Pasifik Yaz Saati"
     ],
     [
       [
-        15,
+        13,
         "Standard"
       ],
       "Apia Standart Saati"
     ],
     [
       [
-        15,
+        13,
         "Daylight"
       ],
       "Apia Yaz Saati"
     ],
     [
       [
-        18,
+        14,
         "Standard"
       ],
       "Arabistan Standart Saati"
     ],
     [
       [
-        19,
+        15,
         "Standard"
       ],
       "Arjantin Standart Saati"
     ],
     [
       [
-        22,
+        17,
         "Standard"
       ],
       "Atlantik Standart Saati"
     ],
     [
       [
-        22,
+        17,
         "Daylight"
       ],
       "Atlantik Yaz Saati"
     ],
     [
       [
-        23,
+        18,
         "Standard"
       ],
       "Orta Avustralya Standart Saati"
     ],
     [
       [
-        23,
+        18,
         "Daylight"
       ],
       "Orta Avustralya Yaz Saati"
     ],
     [
       [
-        24,
+        19,
         "Standard"
       ],
       "İç Batı Avustralya Standart Saati"
     ],
     [
       [
-        25,
+        20,
         "Standard"
       ],
       "Doğu Avustralya Standart Saati"
     ],
     [
       [
-        25,
+        20,
         "Daylight"
       ],
       "Doğu Avustralya Yaz Saati"
     ],
     [
       [
-        26,
+        21,
         "Standard"
       ],
       "Batı Avustralya Standart Saati"
     ],
     [
       [
-        28,
+        23,
         "Standard"
       ],
       "Azorlar Standart Saati"
     ],
     [
       [
-        28,
+        23,
         "Daylight"
       ],
       "Azorlar Yaz Saati"
     ],
     [
       [
-        32,
+        27,
         "Standard"
       ],
       "Brasilia Standart Saati"
     ],
     [
       [
-        32,
+        27,
         "Daylight"
       ],
       "Brasilia Yaz Saati"
     ],
     [
       [
-        35,
+        29,
         "Standard"
       ],
       "Cape Verde Standart Saati"
     ],
     [
       [
-        38,
+        33,
         "Standard"
       ],
       "Şili Standart Saati"
     ],
     [
       [
-        39,
+        33,
+        "Daylight"
+      ],
+      "Şili Yaz Saati"
+    ],
+    [
+      [
+        34,
         "Standard"
       ],
       "Çin Standart Saati"
     ],
     [
       [
-        50,
+        45,
         "Standard"
       ],
       "Orta Avrupa Standart Saati"
     ],
     [
       [
-        50,
+        45,
         "Daylight"
       ],
       "Orta Avrupa Yaz Saati"
     ],
     [
       [
-        51,
+        46,
         "Standard"
       ],
       "Doğu Avrupa Standart Saati"
     ],
     [
       [
-        51,
+        46,
         "Daylight"
       ],
       "Doğu Avrupa Yaz Saati"
     ],
     [
       [
-        53,
+        47,
         "Standard"
       ],
       "Batı Avrupa Standart Saati"
     ],
     [
       [
-        53,
+        47,
         "Daylight"
       ],
       "Batı Avrupa Yaz Saati"
     ],
     [
       [
-        62,
+        58,
         "Standard"
       ],
       "Doğu Grönland Standart Saati"
     ],
     [
       [
-        62,
+        58,
         "Daylight"
       ],
       "Doğu Grönland Yaz Saati"
     ],
     [
       [
-        64,
+        59,
         "Standard"
       ],
       "Batı Grönland Standart Saati"
     ],
     [
       [
-        64,
+        59,
         "Daylight"
       ],
       "Batı Grönland Yaz Saati"
     ],
     [
       [
-        68,
+        63,
         "Standard"
       ],
       "Hawaii-Aleut Standart Saati"
     ],
     [
       [
-        68,
+        63,
         "Daylight"
       ],
       "Hawaii-Aleut Yaz Saati"
     ],
     [
       [
-        78,
+        65,
+        "Standard"
+      ],
+      "Hovd Standart Saati"
+    ],
+    [
+      [
+        65,
+        "Daylight"
+      ],
+      "Hovd Yaz Saati"
+    ],
+    [
+      [
+        73,
         "Standard"
       ],
       "İrkutsk Standart Saati"
     ],
     [
       [
-        82,
+        76,
         "Standard"
       ],
       "Petropavlovsk-Kamçatski Standart Saati"
     ],
     [
       [
-        85,
+        80,
         "Standard"
       ],
       "Kore Standart Saati"
     ],
     [
       [
-        87,
+        82,
         "Standard"
       ],
       "Krasnoyarsk Standart Saati"
     ],
     [
       [
-        100,
+        86,
+        "Standard"
+      ],
+      "Magadan Standart Saati"
+    ],
+    [
+      [
+        93,
         "Standard"
       ],
       "Meksika Pasifik Kıyısı Standart Saati"
     ],
     [
       [
-        100,
+        93,
         "Daylight"
       ],
       "Meksika Pasifik Kıyısı Yaz Saati"
     ],
     [
       [
-        103,
+        95,
         "Standard"
       ],
       "Moskova Standart Saati"
     ],
     [
       [
-        108,
-        "Standard"
-      ],
-      "Newfoundland Standart Saati"
-    ],
-    [
-      [
-        108,
-        "Daylight"
-      ],
-      "Newfoundland Yaz Saati"
-    ],
-    [
-      [
-        109,
+        100,
         "Standard"
       ],
       "Yeni Zelanda Standart Saati"
     ],
     [
       [
-        109,
+        100,
         "Daylight"
       ],
       "Yeni Zelanda Yaz Saati"
     ],
     [
       [
-        132,
+        101,
+        "Standard"
+      ],
+      "Newfoundland Standart Saati"
+    ],
+    [
+      [
+        101,
+        "Daylight"
+      ],
+      "Newfoundland Yaz Saati"
+    ],
+    [
+      [
+        120,
+        "Standard"
+      ],
+      "Samara Standart Saati"
+    ],
+    [
+      [
+        121,
         "Standard"
       ],
       "Samoa Standart Saati"
     ],
     [
       [
-        140,
+        129,
         "Standard"
       ],
       "Taipei Standart Saati"
     ],
     [
       [
-        148,
+        139,
         "Standard"
       ],
       "Özbekistan Standart Saati"
     ],
     [
       [
-        151,
+        142,
         "Standard"
       ],
       "Vladivostok Standart Saati"
     ],
     [
       [
-        156,
+        147,
         "Standard"
       ],
       "Yakutsk Standart Saati"
@@ -463,68 +484,70 @@
     3,
     4,
     5,
+    6,
+    25,
+    26,
+    28,
     30,
     31,
-    33,
-    34,
+    35,
     36,
     40,
     41,
-    45,
-    46,
-    48,
-    49,
+    42,
+    44,
+    50,
+    51,
+    52,
+    53,
+    54,
     56,
-    57,
-    58,
-    59,
+    60,
     61,
+    62,
     66,
     67,
+    68,
+    69,
+    70,
     71,
-    72,
-    73,
-    74,
-    75,
-    76,
+    77,
+    78,
+    79,
     81,
     83,
     84,
-    86,
+    87,
     88,
+    89,
     90,
-    94,
-    95,
+    92,
     96,
     97,
-    99,
-    101,
-    104,
-    105,
-    107,
-    110,
+    98,
+    102,
+    108,
+    109,
+    113,
+    115,
+    116,
     117,
     118,
+    119,
     122,
     124,
     125,
     126,
+    127,
     128,
-    129,
+    130,
+    131,
     133,
-    135,
     136,
-    137,
-    138,
-    139,
     141,
-    142,
     144,
+    145,
     146,
-    150,
-    153,
-    154,
-    155,
-    158
+    149
   ]
 }

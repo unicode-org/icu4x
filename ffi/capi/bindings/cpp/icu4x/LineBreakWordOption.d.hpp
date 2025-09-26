@@ -1,5 +1,5 @@
-#ifndef icu4x_LineBreakWordOption_D_HPP
-#define icu4x_LineBreakWordOption_D_HPP
+#ifndef ICU4X_LineBreakWordOption_D_HPP
+#define ICU4X_LineBreakWordOption_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -30,24 +30,25 @@ namespace icu4x {
  */
 class LineBreakWordOption {
 public:
-  enum Value {
-    Normal = 0,
-    BreakAll = 1,
-    KeepAll = 2,
-  };
+    enum Value {
+        Normal = 0,
+        BreakAll = 1,
+        KeepAll = 2,
+    };
 
-  LineBreakWordOption() = default;
-  // Implicit conversions between enum and ::Value
-  constexpr LineBreakWordOption(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    LineBreakWordOption(): value(Value::Normal) {}
 
-  inline icu4x::capi::LineBreakWordOption AsFFI() const;
-  inline static icu4x::LineBreakWordOption FromFFI(icu4x::capi::LineBreakWordOption c_enum);
+    // Implicit conversions between enum and ::Value
+    constexpr LineBreakWordOption(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
+
+    inline icu4x::capi::LineBreakWordOption AsFFI() const;
+    inline static icu4x::LineBreakWordOption FromFFI(icu4x::capi::LineBreakWordOption c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_LineBreakWordOption_D_HPP
+#endif // ICU4X_LineBreakWordOption_D_HPP

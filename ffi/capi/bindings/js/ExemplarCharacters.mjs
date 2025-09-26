@@ -55,9 +55,9 @@ export class ExemplarCharacters {
     containsStr(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
 
-        const result = wasm.icu4x_ExemplarCharacters_contains_str_mv1(this.ffiValue, ...sSlice.splat());
+        const result = wasm.icu4x_ExemplarCharacters_contains_str_mv1(this.ffiValue, sSlice.ptr);
 
         try {
             return result;

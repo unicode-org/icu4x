@@ -4,26 +4,31 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     #[diplomat::enum_convert(icu_datetime::options::Length, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::options::Length, Enum)]
+    #[non_exhaustive]
     pub enum DateTimeLength {
         Long,
+        #[diplomat::attr(auto, default)]
         Medium,
         Short,
     }
 
     #[diplomat::enum_convert(icu_datetime::options::Alignment, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::options::Alignment, Enum)]
+    #[non_exhaustive]
     pub enum DateTimeAlignment {
+        #[diplomat::attr(auto, default)]
         Auto,
         Column,
     }
 
     #[diplomat::enum_convert(icu_datetime::options::YearStyle, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::options::YearStyle, Enum)]
+    #[non_exhaustive]
     pub enum YearStyle {
+        #[diplomat::attr(auto, default)]
         Auto,
         Full,
         WithEra,
@@ -31,10 +36,12 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::datetime::options::TimePrecision, Enum)]
     #[diplomat::rust_link(icu::datetime::options::SubsecondDigits, Enum)]
+    #[non_exhaustive]
     pub enum TimePrecision {
         Hour,
         Minute,
         MinuteOptional,
+        #[diplomat::attr(auto, default)]
         Second,
         Subsecond1,
         Subsecond2,

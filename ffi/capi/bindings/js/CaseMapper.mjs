@@ -92,10 +92,10 @@ export class CaseMapper {
     lowercase(s, locale) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_CaseMapper_lowercase_mv1(this.ffiValue, ...sSlice.splat(), locale.ffiValue, write.buffer);
+    wasm.icu4x_CaseMapper_lowercase_mv1(this.ffiValue, sSlice.ptr, locale.ffiValue, write.buffer);
 
         try {
             return write.readString8();
@@ -116,10 +116,10 @@ export class CaseMapper {
     uppercase(s, locale) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_CaseMapper_uppercase_mv1(this.ffiValue, ...sSlice.splat(), locale.ffiValue, write.buffer);
+    wasm.icu4x_CaseMapper_uppercase_mv1(this.ffiValue, sSlice.ptr, locale.ffiValue, write.buffer);
 
         try {
             return write.readString8();
@@ -140,10 +140,10 @@ export class CaseMapper {
     static lowercaseWithCompiledData(s, locale) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_CaseMapper_lowercase_with_compiled_data_mv1(...sSlice.splat(), locale.ffiValue, write.buffer);
+    wasm.icu4x_CaseMapper_lowercase_with_compiled_data_mv1(sSlice.ptr, locale.ffiValue, write.buffer);
 
         try {
             return write.readString8();
@@ -164,10 +164,10 @@ export class CaseMapper {
     static uppercaseWithCompiledData(s, locale) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_CaseMapper_uppercase_with_compiled_data_mv1(...sSlice.splat(), locale.ffiValue, write.buffer);
+    wasm.icu4x_CaseMapper_uppercase_with_compiled_data_mv1(sSlice.ptr, locale.ffiValue, write.buffer);
 
         try {
             return write.readString8();
@@ -192,10 +192,10 @@ export class CaseMapper {
     titlecaseSegmentWithOnlyCaseData(s, locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1(this.ffiValue, ...sSlice.splat(), locale.ffiValue, ...TitlecaseOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}), write.buffer);
+    wasm.icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1(this.ffiValue, sSlice.ptr, locale.ffiValue, TitlecaseOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false), write.buffer);
 
         try {
             return write.readString8();
@@ -216,10 +216,10 @@ export class CaseMapper {
     fold(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_CaseMapper_fold_mv1(this.ffiValue, ...sSlice.splat(), write.buffer);
+    wasm.icu4x_CaseMapper_fold_mv1(this.ffiValue, sSlice.ptr, write.buffer);
 
         try {
             return write.readString8();
@@ -241,10 +241,10 @@ export class CaseMapper {
     foldTurkic(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_CaseMapper_fold_turkic_mv1(this.ffiValue, ...sSlice.splat(), write.buffer);
+    wasm.icu4x_CaseMapper_fold_turkic_mv1(this.ffiValue, sSlice.ptr, write.buffer);
 
         try {
             return write.readString8();
@@ -303,6 +303,23 @@ export class CaseMapper {
     }
 
     /**
+     * Returns the simple lowercase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+     *
+     * See the [Rust documentation for `simple_lowercase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_lowercase) for more information.
+     */
+    static simpleLowercaseWithCompiledData(ch) {
+
+        const result = wasm.icu4x_CaseMapper_simple_lowercase_with_compiled_data_mv1(ch);
+
+        try {
+            return result;
+        }
+
+        finally {
+        }
+    }
+
+    /**
      * Returns the simple uppercase mapping of the given character.
      *
      * This function only implements simple and common mappings.
@@ -314,6 +331,23 @@ export class CaseMapper {
     simpleUppercase(ch) {
 
         const result = wasm.icu4x_CaseMapper_simple_uppercase_mv1(this.ffiValue, ch);
+
+        try {
+            return result;
+        }
+
+        finally {
+        }
+    }
+
+    /**
+     * Returns the simple uppercase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+     *
+     * See the [Rust documentation for `simple_uppercase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_uppercase) for more information.
+     */
+    static simpleUppercaseWithCompiledData(ch) {
+
+        const result = wasm.icu4x_CaseMapper_simple_uppercase_with_compiled_data_mv1(ch);
 
         try {
             return result;
@@ -345,6 +379,23 @@ export class CaseMapper {
     }
 
     /**
+     * Returns the simple titlecase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+     *
+     * See the [Rust documentation for `simple_titlecase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_titlecase) for more information.
+     */
+    static simpleTitlecaseWithCompiledData(ch) {
+
+        const result = wasm.icu4x_CaseMapper_simple_titlecase_with_compiled_data_mv1(ch);
+
+        try {
+            return result;
+        }
+
+        finally {
+        }
+    }
+
+    /**
      * Returns the simple casefolding of the given character.
      *
      * This function only implements simple folding.
@@ -365,7 +416,24 @@ export class CaseMapper {
     }
 
     /**
-     * Returns the simple casefolding of the given character in the Turkic locale
+     * Returns the simple casefolding of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+     *
+     * See the [Rust documentation for `simple_fold`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_fold) for more information.
+     */
+    static simpleFoldWithCompiledData(ch) {
+
+        const result = wasm.icu4x_CaseMapper_simple_fold_with_compiled_data_mv1(ch);
+
+        try {
+            return result;
+        }
+
+        finally {
+        }
+    }
+
+    /**
+     * Returns the simple casefolding of the given character in the Turkic locale.
      *
      * This function only implements simple folding.
      * For full folding, use `CaseMapperBorrowed::fold_turkic`.
@@ -375,6 +443,23 @@ export class CaseMapper {
     simpleFoldTurkic(ch) {
 
         const result = wasm.icu4x_CaseMapper_simple_fold_turkic_mv1(this.ffiValue, ch);
+
+        try {
+            return result;
+        }
+
+        finally {
+        }
+    }
+
+    /**
+     * Returns the simple Turkic casefolding of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+     *
+     * See the [Rust documentation for `simple_fold_turkic`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_fold_turkic) for more information.
+     */
+    static simpleFoldTurkicWithCompiledData(ch) {
+
+        const result = wasm.icu4x_CaseMapper_simple_fold_turkic_with_compiled_data_mv1(ch);
 
         try {
             return result;

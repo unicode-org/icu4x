@@ -9,7 +9,6 @@
 #[rustfmt::skip]
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
     {%- if flavor.has_date() %}
@@ -114,7 +113,7 @@ pub mod ffi {
         {%- if variant.supports_zone() %}
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         {%- endif %}
-        {%- if variant.is_default_constructor() && !ctor.is_with_provider() %}
+        {%- if variant.is_demo_constructor() && !ctor.is_with_provider() %}
         #[diplomat::demo(default_constructor)]
         {%- endif %}
         #[cfg(feature = "{{ ctor.cargo_feature() }}")]

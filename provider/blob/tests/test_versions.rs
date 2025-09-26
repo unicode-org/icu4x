@@ -57,11 +57,10 @@ fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1>, test_prefix
                 ..Default::default()
             })
             .unwrap();
-        assert_eq!(blob_result.payload, expected_result.payload, "{:?}", id);
+        assert_eq!(blob_result.payload, expected_result.payload, "{id:?}");
         assert_eq!(
             blob_result.metadata.checksum, expected_result.metadata.checksum,
-            "{:?}",
-            id
+            "{id:?}"
         );
     }
 
@@ -184,7 +183,7 @@ impl DataProvider<HelloWorldV1> for ManyLocalesProvider {
 const LOWERCASE: core::ops::RangeInclusive<u8> = b'a'..=b'z';
 
 impl IterableDataProvider<HelloWorldV1> for ManyLocalesProvider {
-    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
         Ok(LOWERCASE
             .flat_map(|i0| {
                 LOWERCASE.flat_map(move |i1| {

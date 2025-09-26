@@ -49,7 +49,7 @@ fn main() {
 
         let formatted_dt = dtf.format(&ZonedDateTime { date, time, zone });
 
-        println!("Today is: {}", formatted_dt);
+        println!("Today is: {formatted_dt}");
     }
 
     {

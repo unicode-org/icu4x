@@ -4,14 +4,33 @@
 
 use core::marker::PhantomData;
 
-use crate::measure::measureunit::MeasureUnit;
+use icu_provider::{DataMarker, DynamicDataMarker};
+
+use crate::{
+    dimension::provider::units::{
+        categorized_display_name::{
+            UnitsNamesAreaCoreV1, UnitsNamesAreaExtendedV1, UnitsNamesAreaOutlierV1,
+            UnitsNamesDurationCoreV1, UnitsNamesDurationExtendedV1, UnitsNamesDurationOutlierV1,
+            UnitsNamesLengthCoreV1, UnitsNamesLengthExtendedV1, UnitsNamesLengthOutlierV1,
+            UnitsNamesMassCoreV1, UnitsNamesMassExtendedV1, UnitsNamesMassOutlierV1,
+            UnitsNamesVolumeCoreV1, UnitsNamesVolumeExtendedV1, UnitsNamesVolumeOutlierV1,
+        },
+        display_name::UnitsDisplayName,
+    },
+    measure::measureunit::MeasureUnit,
+};
 
 pub mod area;
+pub mod duration;
 pub mod length;
 pub mod mass;
 pub mod volume;
 
-pub trait MeasureUnitCategory {}
+pub trait MeasureUnitCategory {
+    type DataMarkerCore: DynamicDataMarker<DataStruct = UnitsDisplayName<'static>> + DataMarker;
+    type DataMarkerExtended: DynamicDataMarker<DataStruct = UnitsDisplayName<'static>> + DataMarker;
+    type DataMarkerOutlier: DynamicDataMarker<DataStruct = UnitsDisplayName<'static>> + DataMarker;
+}
 
 /// A [`MeasureUnit`] that is related to a specific category.
 ///
@@ -21,19 +40,54 @@ pub struct CategorizedMeasureUnit<T: MeasureUnitCategory> {
     pub unit: MeasureUnit,
 }
 
-/// A [`MeasureUnit`] that is related to the length category.
-pub struct Length;
+impl<T: MeasureUnitCategory> CategorizedMeasureUnit<T> {
+    // TODO: remove this once we are using the short units name in the datagen to locate the units.
+    /// Returns the CLDR ID of the unit.
+    pub fn cldr_id(&self) -> &str {
+        match self.unit.id {
+            Some(id) => id,
+            None => unimplemented!(),
+        }
+    }
+}
 
 /// A [`MeasureUnit`] that is related to the area category.
 pub struct Area;
 
-/// A [`MeasureUnit`] that is related to the volume category.
-pub struct Volume;
+/// A [`MeasureUnit`] that is related to the duration category.
+pub struct Duration;
+
+/// A [`MeasureUnit`] that is related to the length category.
+pub struct Length;
 
 /// A [`MeasureUnit`] that is related to the mass category.
 pub struct Mass;
 
-impl MeasureUnitCategory for Length {}
-impl MeasureUnitCategory for Area {}
-impl MeasureUnitCategory for Volume {}
-impl MeasureUnitCategory for Mass {}
+/// A [`MeasureUnit`] that is related to the volume category.
+pub struct Volume;
+
+impl MeasureUnitCategory for Area {
+    type DataMarkerCore = UnitsNamesAreaCoreV1;
+    type DataMarkerExtended = UnitsNamesAreaExtendedV1;
+    type DataMarkerOutlier = UnitsNamesAreaOutlierV1;
+}
+impl MeasureUnitCategory for Duration {
+    type DataMarkerCore = UnitsNamesDurationCoreV1;
+    type DataMarkerExtended = UnitsNamesDurationExtendedV1;
+    type DataMarkerOutlier = UnitsNamesDurationOutlierV1;
+}
+impl MeasureUnitCategory for Length {
+    type DataMarkerCore = UnitsNamesLengthCoreV1;
+    type DataMarkerExtended = UnitsNamesLengthExtendedV1;
+    type DataMarkerOutlier = UnitsNamesLengthOutlierV1;
+}
+impl MeasureUnitCategory for Mass {
+    type DataMarkerCore = UnitsNamesMassCoreV1;
+    type DataMarkerExtended = UnitsNamesMassExtendedV1;
+    type DataMarkerOutlier = UnitsNamesMassOutlierV1;
+}
+impl MeasureUnitCategory for Volume {
+    type DataMarkerCore = UnitsNamesVolumeCoreV1;
+    type DataMarkerExtended = UnitsNamesVolumeExtendedV1;
+    type DataMarkerOutlier = UnitsNamesVolumeOutlierV1;
+}

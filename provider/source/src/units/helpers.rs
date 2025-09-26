@@ -2,18 +2,22 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cldr_serde::units::data::Patterns;
+use crate::cldr_serde::units::info::Constant;
+use crate::cldr_serde::units::preferences::{CategorizedUnitsList, Supplemental, UnitType};
 use core::str::FromStr;
-use std::collections::{BTreeMap, VecDeque};
-
-use icu::experimental::measure::parser::MeasureUnitParser;
+use icu::experimental::measure::measureunit::MeasureUnit;
+use icu::experimental::measure::provider::single_unit::UnitID;
 use icu::experimental::units::provider::{ConversionInfo, Exactness, Sign};
 use icu::experimental::units::ratio::IcuRatio;
-use icu_provider::DataError;
+use icu::plurals::provider::PluralElementsPackedCow;
+use icu::plurals::PluralElements;
+use icu_pattern::SinglePlaceholderPattern;
+use icu_provider::{DataError, DataErrorKind};
 use num_traits::One;
 use num_traits::Signed;
+use std::collections::{BTreeMap, HashSet, VecDeque};
 use zerovec::ZeroVec;
-
-use crate::cldr_serde::units::info::Constant;
 
 /// Represents a scientific number that contains only clean numerator and denominator terms.
 /// NOTE:
@@ -141,10 +145,10 @@ pub(crate) fn process_factor(
 
 /// Extracts the conversion info from a base unit, factor and offset.
 pub(crate) fn extract_conversion_info<'data>(
+    unit_id: UnitID,
     base_unit: &str,
     factor: &ScientificNumber,
     offset: &ScientificNumber,
-    parser: &MeasureUnitParser,
 ) -> Result<ConversionInfo<'data>, DataError> {
     let factor_fraction = convert_slices_to_fraction(&factor.clean_num, &factor.clean_den)?;
     let offset_fraction = convert_slices_to_fraction(&offset.clean_num, &offset.clean_den)?;
@@ -159,11 +163,11 @@ pub(crate) fn extract_conversion_info<'data>(
         Exactness::Approximate
     };
 
-    let base_unit = parser
-        .try_from_str(base_unit)
+    let base_unit = MeasureUnit::try_from_str(base_unit)
         .map_err(|_| DataError::custom("the base unit is not valid"))?;
 
     Ok(ConversionInfo {
+        unit_id,
         basic_units: ZeroVec::from_iter(base_unit.single_units().iter().copied()),
         factor_num: factor_num.into(),
         factor_den: factor_den.into(),
@@ -480,4 +484,104 @@ fn test_convert_constant_to_num_denom_strings() {
     let input = "1 2 * 3";
     let actual = split_unit_term(input);
     assert!(actual.is_err());
+}
+
+impl Patterns {
+    pub(crate) fn try_into_plural_elements_packed_cow(
+        &self,
+    ) -> Result<PluralElementsPackedCow<'static, SinglePlaceholderPattern>, DataError> {
+        let other_pattern = self.other.as_deref().ok_or_else(|| {
+            DataErrorKind::IdentifierNotFound
+                .into_error()
+                .with_debug_context(self)
+        })?;
+
+        Ok(PluralElements::new(other_pattern)
+            .with_zero_value(self.zero.as_deref())
+            .with_one_value(self.one.as_deref())
+            .with_two_value(self.two.as_deref())
+            .with_few_value(self.few.as_deref())
+            .with_many_value(self.many.as_deref())
+            .with_explicit_one_value(self.explicit_one.as_deref())
+            .with_explicit_zero_value(self.explicit_zero.as_deref())
+            .into())
+    }
+}
+
+impl Supplemental {
+    /// Helper function to check if a target unit matches any unit in the set,
+    /// including as a subunit in compound units (e.g., "foot" matches "foot-and-inch")
+    fn unit_matches_any(target_unit: &str, units: &HashSet<String>) -> bool {
+        units.iter().any(|u| u.contains(target_unit))
+    }
+
+    /// Returns a map from each category (e.g., "length", "mass", "duration") to a map from each region to a set of units.
+    /// This excludes usages; it only checks if the unit is present for a given country in a specific category and region.
+    /// NOTE:
+    ///   The units can be present as compound units (e.g., "square-meter") or mixed units (e.g., "foot-and-inch").
+    pub(crate) fn categorized_units_list(&self) -> CategorizedUnitsList {
+        let mut result = BTreeMap::new();
+
+        // Iterate through each category in the unit preference data
+        for (category, usage_prefs) in &self.unit_preference_data {
+            let mut region_units_map = BTreeMap::new();
+
+            // For each usage in this category (e.g., "default", "person", etc.)
+            for region_prefs in usage_prefs.values() {
+                // For each region in this usage
+                for (region_str, unit_prefs) in region_prefs {
+                    // Get or create the units set for this region (using string key)
+                    let units_set = region_units_map
+                        .entry(region_str.clone())
+                        .or_insert_with(HashSet::new);
+
+                    // Add all units for this region (HashSet automatically handles duplicates)
+                    for unit_pref in unit_prefs {
+                        units_set.insert(unit_pref.unit.clone());
+                    }
+                }
+            }
+
+            result.insert(category.clone(), region_units_map);
+        }
+
+        result
+    }
+
+    /// Determines the type of unit based on the region and category.
+    /// If the unit is present in the unit preferences and the region is present in the unit preferences, it is a core unit.
+    /// If the unit is present in the unit preferences but not in the region preferences, it is an extended unit.
+    /// If the unit is not present in the unit preferences, it is an outlier unit.
+    ///
+    /// If the specific region is not found, falls back to region "001" (world/default region).
+    ///
+    /// The matching includes subunit matching: a unit like "foot" will match compound units like "foot-and-inch".
+    pub(crate) fn unit_type(
+        category: &str,
+        unit: &str,
+        region: &str,
+        categorized_units_list: &CategorizedUnitsList,
+    ) -> UnitType {
+        let region_units = match categorized_units_list.get(category) {
+            Some(units) => units,
+            None => return UnitType::Outlier,
+        };
+
+        let found_in_region = region_units
+            .get(region)
+            .or_else(|| region_units.get("001"))
+            .is_some_and(|units| Self::unit_matches_any(unit, units));
+
+        let found_anywhere = region_units
+            .values()
+            .any(|units| Self::unit_matches_any(unit, units));
+
+        if found_in_region {
+            UnitType::Core
+        } else if found_anywhere {
+            UnitType::Extended
+        } else {
+            UnitType::Outlier
+        }
+    }
 }

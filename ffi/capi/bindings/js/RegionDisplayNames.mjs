@@ -12,6 +12,8 @@ const RegionDisplayNames_box_destroy_registry = new FinalizationRegistry((ptr) =
 });
 
 /**
+ * 🚧 This API is experimental and may experience breaking changes outside major releases.
+ *
  * See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html) for more information.
  */
 export class RegionDisplayNames {
@@ -44,6 +46,8 @@ export class RegionDisplayNames {
 
 
     /**
+     * 🚧 This API is experimental and may experience breaking changes outside major releases.
+     *
      * Creates a new `RegionDisplayNames` from locale data and an options bag using compiled data.
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
@@ -54,7 +58,7 @@ export class RegionDisplayNames {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_RegionDisplayNames_create_v1_mv1(diplomatReceive.buffer, locale.ffiValue, ...DisplayNamesOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_RegionDisplayNames_create_v1_mv1(diplomatReceive.buffer, locale.ffiValue, DisplayNamesOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -72,6 +76,8 @@ export class RegionDisplayNames {
     }
 
     /**
+     * 🚧 This API is experimental and may experience breaking changes outside major releases.
+     *
      * Creates a new `RegionDisplayNames` from locale data and an options bag using a particular data source.
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
@@ -82,7 +88,7 @@ export class RegionDisplayNames {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_RegionDisplayNames_create_v1_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...DisplayNamesOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_RegionDisplayNames_create_v1_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, DisplayNamesOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -100,6 +106,8 @@ export class RegionDisplayNames {
     }
 
     /**
+     * 🚧 This API is experimental and may experience breaking changes outside major releases.
+     *
      * Returns the locale specific display name of a region.
      * Note that the function returns an empty string in case the display name for a given
      * region code is not found.
@@ -109,13 +117,13 @@ export class RegionDisplayNames {
     of(region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const regionSlice = diplomatRuntime.DiplomatBuf.str8(wasm, region);
+        const regionSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, region)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_RegionDisplayNames_of_mv1(diplomatReceive.buffer, this.ffiValue, ...regionSlice.splat(), write.buffer);
+        const result = wasm.icu4x_RegionDisplayNames_of_mv1(diplomatReceive.buffer, this.ffiValue, regionSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -134,6 +142,8 @@ export class RegionDisplayNames {
     }
 
     /**
+     * 🚧 This API is experimental and may experience breaking changes outside major releases.
+     *
      * Creates a new `RegionDisplayNames` from locale data and an options bag using compiled data.
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.

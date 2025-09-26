@@ -155,7 +155,7 @@ pub struct LstmDataFloat32<'data> {
 
 impl<'data> LstmDataFloat32<'data> {
     #[doc(hidden)] // databake
-    #[allow(clippy::too_many_arguments)] // constructor
+    #[expect(clippy::too_many_arguments)] // constructor
     pub const fn from_parts_unchecked(
         model: ModelType,
         dic: ZeroMap<'data, PotentialUtf8, u16>,
@@ -186,7 +186,7 @@ impl<'data> LstmDataFloat32<'data> {
 
     #[cfg(any(feature = "serde", feature = "datagen"))]
     /// Creates a LstmDataFloat32 with the given data. Fails if the matrix dimensions are inconsistent.
-    #[allow(clippy::too_many_arguments)] // constructor
+    #[expect(clippy::too_many_arguments)] // constructor
     pub fn try_from_parts(
         model: ModelType,
         dic: ZeroMap<'data, PotentialUtf8, u16>,

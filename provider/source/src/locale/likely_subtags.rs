@@ -99,7 +99,7 @@ impl<'a> LikelySubtagsResources<'a> {
     fn get_basic_plus_languages(
         coverage_levels: &cldr_serde::coverage_levels::Resource,
     ) -> HashSet<Language> {
-        #[allow(clippy::unnecessary_filter_map)] // better for future refactoring
+        #[expect(clippy::unnecessary_filter_map)] // better for future refactoring
         coverage_levels
             .coverage_levels
             .iter()

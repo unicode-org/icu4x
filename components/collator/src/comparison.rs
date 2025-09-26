@@ -44,7 +44,7 @@ use crate::provider::CollationSpecialPrimariesValidated;
 use crate::provider::CollationTailoringV1;
 use core::array;
 use core::cmp::Ordering;
-use core::convert::TryFrom;
+use core::convert::{Infallible, TryFrom};
 use icu_normalizer::provider::DecompositionData;
 use icu_normalizer::provider::DecompositionTables;
 use icu_normalizer::provider::NormalizerNfdDataV1;
@@ -65,8 +65,9 @@ const LEVEL_SEPARATOR_BYTE: u8 = 1;
 ///
 /// Same as the unique primary and identical-level weights of U+FFFE.  Must not
 /// be used as primary compression low terminator.  Otherwise usable.
+const MERGE_SEPARATOR: char = '\u{fffe}';
 const MERGE_SEPARATOR_BYTE: u8 = 2;
-const MERGE_SEPARATOR_PRIMARY: u32 = 0x02000000; // for U+FFFE
+const MERGE_SEPARATOR_PRIMARY: u32 = 0x02000000;
 
 /// Primary compression low terminator, must be greater than MERGE_SEPARATOR_BYTE.
 ///
@@ -134,6 +135,35 @@ const TER_UPPER_FIRST_COMMON: [u8; 4] = [
 const QUAT_COMMON: [u8; 4] = [0x1c, 0x1c + 0x70, 0x1c + 0xe0, 0x71];
 const QUAT_SHIFTED_LIMIT_BYTE: u8 = QUAT_COMMON[WEIGHT_LOW] - 1; // 0x1b
 
+// Do not use byte values 0, 1, 2 because they are separators in sort keys.
+const SLOPE_MIN: i32 = 3;
+const SLOPE_MAX: i32 = 0xff;
+const SLOPE_MIDDLE: i32 = 0x81;
+const SLOPE_TAIL_COUNT: i32 = SLOPE_MAX - SLOPE_MIN + 1;
+const SLOPE_SINGLE: i32 = 80;
+const SLOPE_LEAD_2: i32 = 42;
+const SLOPE_LEAD_3: i32 = 3;
+
+// The difference value range for single-byters.
+const SLOPE_REACH_POS_1: i32 = SLOPE_SINGLE;
+const SLOPE_REACH_NEG_1: i32 = -SLOPE_SINGLE;
+
+// The difference value range for double-byters.
+const SLOPE_REACH_POS_2: i32 = SLOPE_LEAD_2 * SLOPE_TAIL_COUNT + (SLOPE_LEAD_2 - 1);
+const SLOPE_REACH_NEG_2: i32 = -SLOPE_REACH_POS_2 - 1;
+
+// The difference value range for 3-byters.
+const SLOPE_REACH_POS_3: i32 = SLOPE_LEAD_3 * SLOPE_TAIL_COUNT * SLOPE_TAIL_COUNT
+    + (SLOPE_LEAD_3 - 1) * SLOPE_TAIL_COUNT
+    + (SLOPE_TAIL_COUNT - 1);
+const SLOPE_REACH_NEG_3: i32 = -SLOPE_REACH_POS_3 - 1;
+
+// The lead byte start values.
+const SLOPE_START_POS_2: i32 = SLOPE_MIDDLE + SLOPE_SINGLE + 1;
+const SLOPE_START_POS_3: i32 = SLOPE_START_POS_2 + SLOPE_LEAD_2;
+const SLOPE_START_NEG_2: i32 = SLOPE_MIDDLE + SLOPE_REACH_NEG_1;
+const SLOPE_START_NEG_3: i32 = SLOPE_START_NEG_2 - SLOPE_LEAD_2;
+
 struct AnyQuaternaryAccumulator(u32);
 
 impl AnyQuaternaryAccumulator {
@@ -156,6 +186,68 @@ impl AnyQuaternaryAccumulator {
 #[inline(always)]
 fn in_inclusive_range16(i: u16, start: u16, end: u16) -> bool {
     i.wrapping_sub(start) <= (end - start)
+}
+
+/// Helper trait for getting a `char` iterator from Latin1 data.
+///
+/// ✨ *Enabled with the `latin1` Cargo feature.*
+#[cfg(feature = "latin1")]
+trait Latin1Chars {
+    fn latin1_chars(&self) -> impl DoubleEndedIterator<Item = char>;
+}
+
+#[cfg(feature = "latin1")]
+impl Latin1Chars for [u8] {
+    fn latin1_chars(&self) -> impl DoubleEndedIterator<Item = char> {
+        self.iter().map(|b| char::from(*b))
+    }
+}
+
+/// Finds the identical prefix of `left` and `right` containing
+/// Latin1.
+///
+/// Returns the identical prefix, the part of `left` after the
+/// prefix, and the part of `right` after the prefix.
+///
+/// ✨ *Enabled with the `latin1` Cargo feature.*
+#[cfg(feature = "latin1")]
+fn split_prefix_latin1<'a, 'b>(left: &'a [u8], right: &'b [u8]) -> (&'a [u8], &'a [u8], &'b [u8]) {
+    let i = left
+        .iter()
+        .zip(right.iter())
+        .take_while(|(l, r)| l == r)
+        .count();
+    if let Some((head, left_tail)) = left.split_at_checked(i) {
+        if let Some(right_tail) = right.get(i..) {
+            return (head, left_tail, right_tail);
+        }
+    }
+    (&[], left, right)
+}
+
+/// Finds the identical prefix of `left` containing Latin1
+/// and `right` containing potentially ill-formed UTF-16.
+///
+/// Returns the identical prefix, the part of `left` after the
+/// prefix, and the part of `right` after the prefix.
+///
+/// ✨ *Enabled with the `latin1` Cargo feature.*
+#[cfg(feature = "latin1")]
+fn split_prefix_latin1_utf16<'a, 'b>(
+    left: &'a [u8],
+    right: &'b [u16],
+) -> (&'a [u8], &'a [u8], &'b [u16]) {
+    let i = left
+        .iter()
+        .zip(right.iter())
+        .take_while(|(l, r)| u16::from(**l) == **r)
+        .count();
+    if let Some((head, left_tail)) = left.split_at_checked(i) {
+        if let Some(right_tail) = right.get(i..) {
+            return (head, left_tail, right_tail);
+        }
+    }
+    (&[], left, right)
 }
 
 /// Finds the identical prefix of `left` and `right` containing
@@ -474,7 +566,7 @@ pub struct Collator {
 
 impl Collator {
     /// Constructs a borrowed version of this type for more efficient querying.
-    pub fn as_borrowed(&self) -> CollatorBorrowed {
+    pub fn as_borrowed(&self) -> CollatorBorrowed<'_> {
         CollatorBorrowed {
             special_primaries: self.special_primaries.get(),
             root: self.root.get(),
@@ -538,7 +630,7 @@ impl Collator {
         )
     }
 
-    #[allow(clippy::too_many_arguments)]
+    #[expect(clippy::too_many_arguments)]
     fn try_new_unstable_internal<D>(
         provider: &D,
         root: DataPayload<CollationRootV1>,
@@ -579,7 +671,7 @@ impl Collator {
             {
                 CollationSpecialPrimariesValidated {
                     compressible_bytes: array::from_fn(|i| {
-                        #[allow(clippy::unwrap_used)] // protected by the if
+                        #[expect(clippy::unwrap_used)] // protected by the if
                         {
                             csp.last_primaries
                                 .get((MaxVariable::Currency as usize) + i)
@@ -618,19 +710,22 @@ impl Collator {
 macro_rules! compare {
     ($(#[$meta:meta])*,
      $compare:ident,
-     $slice:ty,
+     $left_slice:ty,
+     $right_slice:ty,
      $split_prefix:ident,
+     $left_to_iter:ident,
+     $right_to_iter:ident,
     ) => {
         $(#[$meta])*
-        pub fn $compare(&self, left: &$slice, right: &$slice) -> Ordering {
+        pub fn $compare(&self, left: &$left_slice, right: &$right_slice) -> Ordering {
             let (head, left_tail, right_tail) = $split_prefix(left, right);
             if left_tail.is_empty() && right_tail.is_empty() {
                 return Ordering::Equal;
             }
-            let ret = self.compare_impl(left_tail.chars(), right_tail.chars(), head.chars());
+            let ret = self.compare_impl(left_tail.$left_to_iter(), right_tail.$right_to_iter(), head.$left_to_iter().rev());
             if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
-                return Decomposition::new(left_tail.chars(), self.decompositions, self.tables).cmp(
-                    Decomposition::new(right_tail.chars(), self.decompositions, self.tables),
+                return Decomposition::new(left_tail.$left_to_iter(), self.decompositions, self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }).cmp(
+                    Decomposition::new(right_tail.$right_to_iter(), self.decompositions, self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }),
                 );
             }
             ret
@@ -701,7 +796,7 @@ impl CollatorBorrowed<'static> {
 
         // Attribute belongs closer to `unwrap`, but
         // https://github.com/rust-lang/rust/issues/15701
-        #[allow(clippy::unwrap_used)]
+        #[expect(clippy::unwrap_used)]
         Ok(CollatorBorrowed {
             special_primaries,
             root,
@@ -753,8 +848,6 @@ macro_rules! collation_elements {
     ($self:expr, $chars:expr, $tailoring:expr, $numeric_primary:expr) => {{
         let jamo = <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from($self.jamo.ce32s.as_ule_slice());
 
-        // `unwrap` OK, because length already validated
-        #[allow(clippy::unwrap_used)]
         let jamo = jamo.unwrap();
 
         CollationElements::new(
@@ -783,7 +876,10 @@ impl CollatorBorrowed<'_> {
         ,
         compare,
         str,
+        str,
         split_prefix,
+        chars,
+        chars,
     );
 
     compare!(
@@ -793,7 +889,10 @@ impl CollatorBorrowed<'_> {
         ,
         compare_utf8,
         [u8],
+        [u8],
         split_prefix_u8,
+        chars,
+        chars,
     );
 
     compare!(
@@ -802,11 +901,47 @@ impl CollatorBorrowed<'_> {
         ,
         compare_utf16,
         [u16],
+        [u16],
         split_prefix_u16,
+        chars,
+        chars,
+    );
+
+    compare!(
+        /// Compare Latin1 slices.
+        ///
+        /// ✨ *Enabled with the `latin1` Cargo feature.*
+        #[cfg(feature = "latin1")]
+        ,
+        compare_latin1,
+        [u8],
+        [u8],
+        split_prefix_latin1,
+        latin1_chars,
+        latin1_chars,
+    );
+
+    compare!(
+        /// Compare Latin1 slice with potentially ill-formed UTF-16
+        /// slice.
+        ///
+        /// If you need to compare a potentially ill-formed UTF-16
+        /// slice with a Latin1 slice, swap the arguments and
+        /// call `reverse()` on the return value.
+        ///
+        /// ✨ *Enabled with the `latin1` Cargo feature.*
+        #[cfg(feature = "latin1")]
+        ,
+        compare_latin1_utf16,
+        [u8],
+        [u16],
+        split_prefix_latin1_utf16,
+        latin1_chars,
+        chars,
     );
 
     #[inline(always)]
-    fn tailoring_or_root(&self) -> &CollationData {
+    fn tailoring_or_root(&self) -> &CollationData<'_> {
         if let Some(tailoring) = &self.tailoring {
             tailoring
         } else {
@@ -850,21 +985,18 @@ impl CollatorBorrowed<'_> {
 
     /// The implementation of the comparison operation.
     ///
-    /// `head_chars` is an iterator over the identical prefix and
-    /// `left_chars` and `right_chars` are iterators over the parts
-    /// after the identical prefix.
-    ///
-    /// Currently, all three have the same concrete type, so the
-    /// trait bound is given as `DoubleEndedIterator`.
-    /// `head_chars` is iterated backwards and `left_chars` and
-    /// `right_chars` forward. If this were a public API, this
-    /// should have three generic types, one for each argument,
-    /// for maximum flexibility.
-    fn compare_impl<I: DoubleEndedIterator<Item = char>>(
+    /// `head_chars` is an iterator _backward_ over the identical
+    /// prefix and `left_chars` and `right_chars` are iterators
+    /// _forward_ over the parts after the identical prefix.
+    fn compare_impl<
+        L: Iterator<Item = char>,
+        R: Iterator<Item = char>,
+        H: Iterator<Item = char>,
+    >(
         &self,
-        left_chars: I,
-        right_chars: I,
-        mut head_chars: I,
+        left_chars: L,
+        right_chars: R,
+        mut head_chars: H,
     ) -> Ordering {
         // Sadly, it looks like variable CEs and backward second level
         // require us to store the full 64-bit CEs instead of storing only
@@ -913,9 +1045,9 @@ impl CollatorBorrowed<'_> {
         // since there is already a place where to put them.
 
         // This loop is only broken out of as goto forward.
-        #[allow(clippy::never_loop)]
+        #[expect(clippy::never_loop)]
         'prefix: loop {
-            if let Some(mut head_last_c) = head_chars.next_back() {
+            if let Some(mut head_last_c) = head_chars.next() {
                 let norm_trie = &self.decompositions.trie;
                 let mut head_last = CharacterAndClassAndTrieValue::new_with_trie_val(
                     head_last_c,
@@ -986,7 +1118,7 @@ impl CollatorBorrowed<'_> {
 
                         // This loop is only broken out of as goto forward. The control flow
                         // is much more readable this way.
-                        #[allow(clippy::never_loop)]
+                        #[expect(clippy::never_loop)]
                         loop {
                             // The two highest bits are about NFC, which we don't
                             // care about here.
@@ -1112,7 +1244,7 @@ impl CollatorBorrowed<'_> {
                     tail_first_ce32 = head_last_ce32;
                     tail_first_ok = head_last_ok;
 
-                    head_last_c = if let Some(head_last_c) = head_chars.next_back() {
+                    head_last_c = if let Some(head_last_c) = head_chars.next() {
                         head_last_c
                     } else {
                         // We need to step back beyond the start of the prefix.
@@ -1349,7 +1481,7 @@ impl CollatorBorrowed<'_> {
                         }
                         let left_new_remaining = left_iter.as_slice();
                         // Index in range by construction
-                        #[allow(clippy::indexing_slicing)]
+                        #[expect(clippy::indexing_slicing)]
                         let left_prefix =
                             &left_remaining[..left_remaining.len() - 1 - left_new_remaining.len()];
                         left_remaining = left_new_remaining;
@@ -1364,7 +1496,7 @@ impl CollatorBorrowed<'_> {
                         }
                         let right_new_remaining = right_iter.as_slice();
                         // Index in range by construction
-                        #[allow(clippy::indexing_slicing)]
+                        #[expect(clippy::indexing_slicing)]
                         let right_prefix = &right_remaining
                             [..right_remaining.len() - 1 - right_new_remaining.len()];
                         right_remaining = right_new_remaining;
@@ -1635,7 +1767,7 @@ impl CollatorBorrowed<'_> {
     }
 
     fn sort_key_levels(&self) -> u8 {
-        #[allow(clippy::indexing_slicing)]
+        #[expect(clippy::indexing_slicing)]
         let mut levels = LEVEL_MASKS[self.options.strength() as usize];
         if self.options.case_level() {
             levels |= CASE_LEVEL_FLAG;
@@ -1689,7 +1821,7 @@ impl CollatorBorrowed<'_> {
         S: CollationKeySink + ?Sized,
         S::State: Default,
     {
-        self.write_sort_key_impl(s.chars(), sink, |nfd, sink| nfd.normalize_to(s, sink))
+        self.write_sort_key_impl(s.chars(), sink)
     }
 
     /// Given potentially invalid UTF-8, write the sort key bytes up to the collator's strength.
@@ -1700,7 +1832,7 @@ impl CollatorBorrowed<'_> {
         S: CollationKeySink + ?Sized,
         S::State: Default,
     {
-        self.write_sort_key_impl(s.chars(), sink, |nfd, sink| nfd.normalize_utf8_to(s, sink))
+        self.write_sort_key_impl(s.chars(), sink)
     }
 
     /// Given potentially invalid UTF-16, write the sort key bytes up to the collator's strength.
@@ -1711,31 +1843,31 @@ impl CollatorBorrowed<'_> {
         S: CollationKeySink + ?Sized,
         S::State: Default,
     {
-        self.write_sort_key_impl(s.chars(), sink, |nfd, sink| nfd.normalize_utf16_to(s, sink))
+        self.write_sort_key_impl(s.chars(), sink)
     }
 
-    fn write_sort_key_impl<I, S, N>(
-        &self,
-        iter: I,
-        sink: &mut S,
-        normalize: N,
-    ) -> Result<S::Output, S::Error>
+    fn write_sort_key_impl<I, S>(&self, iter: I, sink: &mut S) -> Result<S::Output, S::Error>
     where
-        I: Iterator<Item = char>,
+        I: Iterator<Item = char> + Clone,
         S: CollationKeySink + ?Sized,
         S::State: Default,
-        N: Fn(DecomposingNormalizerBorrowed, &mut SinkAdapter<'_, S>) -> core::fmt::Result,
     {
+        let identical = if self.options.strength() == Strength::Identical {
+            Some(iter.clone())
+        } else {
+            None
+        };
+
         let mut state = S::State::default();
         self.write_sort_key_up_to_quaternary(iter, sink, &mut state)?;
 
-        if self.options.strength() == Strength::Identical {
+        if let Some(iter) = identical {
             let nfd =
                 DecomposingNormalizerBorrowed::new_with_data(self.decompositions, self.tables);
             sink.write_byte(&mut state, LEVEL_SEPARATOR_BYTE)?;
-            let mut adapter = SinkAdapter::new(sink, &mut state);
-            let _ = normalize(nfd, &mut adapter);
-            adapter.finish()?;
+
+            let iter = nfd.normalize_iter(iter);
+            write_identical_level(iter, sink, &mut state)?;
         }
 
         sink.finish(state)
@@ -1771,10 +1903,10 @@ impl CollatorBorrowed<'_> {
         let mut quaternaries = SortKeyLevel::default();
 
         let mut prev_reordered_primary = 0;
-        let mut common_cases = 0;
-        let mut common_secondaries = 0;
-        let mut common_tertiaries = 0;
-        let mut common_quaternaries = 0;
+        let mut common_cases = 0usize;
+        let mut common_secondaries = 0usize;
+        let mut common_tertiaries = 0usize;
+        let mut common_quaternaries = 0usize;
         let mut prev_secondary = 0;
         let mut sec_segment_start = 0;
 
@@ -1786,12 +1918,12 @@ impl CollatorBorrowed<'_> {
                 // ignorables, and shift further variable CEs.
                 if common_quaternaries != 0 {
                     common_quaternaries -= 1;
-                    while common_quaternaries >= QUAT_COMMON[WEIGHT_MAX_COUNT] {
+                    while common_quaternaries >= QUAT_COMMON[WEIGHT_MAX_COUNT] as _ {
                         quaternaries.append_byte(QUAT_COMMON[WEIGHT_MIDDLE]);
-                        common_quaternaries -= QUAT_COMMON[WEIGHT_MAX_COUNT];
+                        common_quaternaries -= QUAT_COMMON[WEIGHT_MAX_COUNT] as usize;
                     }
                     // Shifted primary weights are lower than the common weight.
-                    quaternaries.append_byte(QUAT_COMMON[WEIGHT_LOW] + common_quaternaries);
+                    quaternaries.append_byte(QUAT_COMMON[WEIGHT_LOW] + common_quaternaries as u8);
                     common_quaternaries = 0;
                 }
 
@@ -1868,14 +2000,14 @@ impl CollatorBorrowed<'_> {
                 ($key:ident, $w:ident, $common:ident, $weights:ident, $lim:expr) => {
                     if $common != 0 {
                         $common -= 1;
-                        while $common >= $weights[WEIGHT_MAX_COUNT] {
+                        while $common >= $weights[WEIGHT_MAX_COUNT] as _ {
                             $key.append_byte($weights[WEIGHT_MIDDLE]);
-                            $common -= $weights[WEIGHT_MAX_COUNT];
+                            $common -= $weights[WEIGHT_MAX_COUNT] as usize;
                         }
                         let b = if $w < $lim {
-                            $weights[WEIGHT_LOW] + $common
+                            $weights[WEIGHT_LOW] + ($common as u8)
                         } else {
-                            $weights[WEIGHT_HIGH] - $common
+                            $weights[WEIGHT_HIGH] - ($common as u8)
                         };
                         $key.append_byte(b);
                         $common = 0;
@@ -1903,11 +2035,11 @@ impl CollatorBorrowed<'_> {
                     if common_secondaries != 0 {
                         common_secondaries -= 1;
                         // Append reverse weights.  The level will be re-reversed later.
-                        let remainder = common_secondaries % SEC_COMMON[WEIGHT_MAX_COUNT];
+                        let remainder = common_secondaries % SEC_COMMON[WEIGHT_MAX_COUNT] as usize;
                         let b = if prev_secondary < COMMON_WEIGHT16 {
-                            SEC_COMMON[WEIGHT_LOW] + remainder
+                            SEC_COMMON[WEIGHT_LOW] + remainder as u8
                         } else {
-                            SEC_COMMON[WEIGHT_HIGH] - remainder
+                            SEC_COMMON[WEIGHT_HIGH] - remainder as u8
                         };
                         secondaries.append_byte(b);
                         common_secondaries -= remainder;
@@ -1915,7 +2047,7 @@ impl CollatorBorrowed<'_> {
                         while common_secondaries > 0 {
                             // same as >= SEC_COMMON[WEIGHT_MAX_COUNT]
                             secondaries.append_byte(SEC_COMMON[WEIGHT_MIDDLE]);
-                            common_secondaries -= SEC_COMMON[WEIGHT_MAX_COUNT];
+                            common_secondaries -= SEC_COMMON[WEIGHT_MAX_COUNT] as usize;
                         }
                         // commonSecondaries == 0
                     }
@@ -1929,7 +2061,7 @@ impl CollatorBorrowed<'_> {
                             let mut r = last;
 
                             // these indices start at valid values and we stop when they cross
-                            #[allow(clippy::indexing_slicing)]
+                            #[expect(clippy::indexing_slicing)]
                             while q < r {
                                 let b = secs[q];
                                 secs[q] = secs[r];
@@ -1975,14 +2107,16 @@ impl CollatorBorrowed<'_> {
                             if common_cases != 0 && (c > LEVEL_SEPARATOR_BYTE || !cases.is_empty())
                             {
                                 common_cases -= 1;
-                                while common_cases >= CASE_LOWER_FIRST_COMMON[WEIGHT_MAX_COUNT] {
+                                while common_cases >= CASE_LOWER_FIRST_COMMON[WEIGHT_MAX_COUNT] as _
+                                {
                                     cases.append_byte(CASE_LOWER_FIRST_COMMON[WEIGHT_MIDDLE] << 4);
-                                    common_cases -= CASE_LOWER_FIRST_COMMON[WEIGHT_MAX_COUNT];
+                                    common_cases -=
+                                        CASE_LOWER_FIRST_COMMON[WEIGHT_MAX_COUNT] as usize;
                                 }
                                 let b = if c <= LEVEL_SEPARATOR_BYTE {
-                                    CASE_LOWER_FIRST_COMMON[WEIGHT_LOW] + common_cases
+                                    CASE_LOWER_FIRST_COMMON[WEIGHT_LOW] + common_cases as u8
                                 } else {
-                                    CASE_LOWER_FIRST_COMMON[WEIGHT_HIGH] - common_cases
+                                    CASE_LOWER_FIRST_COMMON[WEIGHT_HIGH] - common_cases as u8
                                 };
                                 cases.append_byte(b << 4);
                                 common_cases = 0;
@@ -1998,12 +2132,14 @@ impl CollatorBorrowed<'_> {
                             // highest one.
                             if common_cases != 0 {
                                 common_cases -= 1;
-                                while common_cases >= CASE_UPPER_FIRST_COMMON[WEIGHT_MAX_COUNT] {
+                                while common_cases >= CASE_UPPER_FIRST_COMMON[WEIGHT_MAX_COUNT] as _
+                                {
                                     cases.append_byte(CASE_UPPER_FIRST_COMMON[WEIGHT_LOW] << 4);
-                                    common_cases -= CASE_UPPER_FIRST_COMMON[WEIGHT_MAX_COUNT];
+                                    common_cases -=
+                                        CASE_UPPER_FIRST_COMMON[WEIGHT_MAX_COUNT] as usize;
                                 }
                                 cases.append_byte(
-                                    (CASE_UPPER_FIRST_COMMON[WEIGHT_LOW] + common_cases) << 4,
+                                    (CASE_UPPER_FIRST_COMMON[WEIGHT_LOW] + common_cases as u8) << 4,
                                 );
                                 common_cases = 0;
                             }
@@ -2116,7 +2252,7 @@ impl CollatorBorrowed<'_> {
         }
 
         macro_rules! write_level {
-            ($key:ident, $level:expr, $flag:ident) => {
+            ($key:ident, $flag:ident) => {
                 if levels & $flag != 0 {
                     sink.write(state, &[LEVEL_SEPARATOR_BYTE])?;
                     sink.write(state, &$key.buf)?;
@@ -2124,7 +2260,7 @@ impl CollatorBorrowed<'_> {
             };
         }
 
-        write_level!(secondaries, Level::Secondary, SECONDARY_LEVEL_FLAG);
+        write_level!(secondaries, SECONDARY_LEVEL_FLAG);
 
         if levels & CASE_LEVEL_FLAG != 0 {
             sink.write(state, &[LEVEL_SEPARATOR_BYTE])?;
@@ -2146,8 +2282,8 @@ impl CollatorBorrowed<'_> {
             }
         }
 
-        write_level!(tertiaries, Level::Tertiary, TERTIARY_LEVEL_FLAG);
-        write_level!(quaternaries, Level::Quaternary, QUATERNARY_LEVEL_FLAG);
+        write_level!(tertiaries, TERTIARY_LEVEL_FLAG);
+        write_level!(quaternaries, QUATERNARY_LEVEL_FLAG);
 
         Ok(())
     }
@@ -2155,7 +2291,16 @@ impl CollatorBorrowed<'_> {
 
 /// Error indicating that a [`CollationKeySink`] with limited space ran out of space.
 #[derive(Debug, PartialEq, Eq)]
-pub struct TooSmall;
+pub struct TooSmall {
+    /// The total length, in bytes, of the sort key.
+    pub length: usize,
+}
+
+impl TooSmall {
+    pub fn new(length: usize) -> Self {
+        Self { length }
+    }
+}
 
 /// A [`std::io::Write`]-like trait for writing to a buffer-like object.
 ///
@@ -2175,17 +2320,16 @@ pub trait CollationKeySink {
 
     /// Write a single byte into the writer.
     fn write_byte(&mut self, state: &mut Self::State, b: u8) -> Result<(), Self::Error> {
-        self.write(state, &[b])?;
-        Ok(())
+        self.write(state, &[b])
     }
 
     /// Finalize any internal sink state (perhaps by flushing a buffer) and return the final
     /// output value.
-    fn finish(&self, state: Self::State) -> Result<Self::Output, Self::Error>;
+    fn finish(&mut self, state: Self::State) -> Result<Self::Output, Self::Error>;
 }
 
 impl CollationKeySink for Vec<u8> {
-    type Error = core::convert::Infallible;
+    type Error = Infallible;
     type State = ();
     type Output = ();
 
@@ -2194,13 +2338,13 @@ impl CollationKeySink for Vec<u8> {
         Ok(())
     }
 
-    fn finish(&self, _: Self::State) -> Result<Self::Output, Self::Error> {
+    fn finish(&mut self, _: Self::State) -> Result<Self::Output, Self::Error> {
         Ok(())
     }
 }
 
 impl CollationKeySink for VecDeque<u8> {
-    type Error = core::convert::Infallible;
+    type Error = Infallible;
     type State = ();
     type Output = ();
 
@@ -2209,22 +2353,22 @@ impl CollationKeySink for VecDeque<u8> {
         Ok(())
     }
 
-    fn finish(&self, _: Self::State) -> Result<Self::Output, Self::Error> {
+    fn finish(&mut self, _: Self::State) -> Result<Self::Output, Self::Error> {
         Ok(())
     }
 }
 
 impl<const N: usize> CollationKeySink for SmallVec<[u8; N]> {
-    type Error = core::convert::Infallible;
+    type Error = Infallible;
     type State = ();
     type Output = ();
 
-    fn write(&mut self, _: &mut (), buf: &[u8]) -> Result<(), Self::Error> {
+    fn write(&mut self, _: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error> {
         self.extend_from_slice(buf);
         Ok(())
     }
 
-    fn finish(&self, _: Self::State) -> Result<Self::Output, Self::Error> {
+    fn finish(&mut self, _: Self::State) -> Result<Self::Output, Self::Error> {
         Ok(())
     }
 }
@@ -2234,20 +2378,22 @@ impl CollationKeySink for [u8] {
     type State = usize;
     type Output = usize;
 
-    fn write(&mut self, used: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error> {
-        if buf.len() <= self.len() - *used {
+    fn write(&mut self, offset: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error> {
+        if *offset + buf.len() <= self.len() {
             // just checked bounds
-            #[allow(clippy::indexing_slicing)]
-            self[*used..*used + buf.len()].copy_from_slice(buf);
-            *used += buf.len();
-            Ok(())
-        } else {
-            Err(TooSmall)
+            #[expect(clippy::indexing_slicing)]
+            self[*offset..*offset + buf.len()].copy_from_slice(buf);
         }
+        *offset += buf.len();
+        Ok(())
     }
 
-    fn finish(&self, used: Self::State) -> Result<Self::Output, Self::Error> {
-        Ok(used)
+    fn finish(&mut self, offset: Self::State) -> Result<Self::Output, Self::Error> {
+        if offset <= self.len() {
+            Ok(offset)
+        } else {
+            Err(TooSmall::new(offset))
+        }
     }
 }
 
@@ -2308,67 +2454,112 @@ impl SortKeyLevel {
     }
 }
 
-struct SinkAdapter<'a, S: CollationKeySink + ?Sized> {
-    inner: &'a mut S,
-    state: &'a mut S::State,
-    error: Option<S::Error>,
+// The algorithm below (BOCSU or Binary Ordered Compression Scheme for Unicode) is translated
+// from the C++ code in ICU4C at icu4c/source/i18n/bocsu.{cpp,h}.  The algorithm works by
+// converting a sequence of codepoints into a sequence of presumably small differences.  See
+// the C++ code for a more detailed explanation.
+
+macro_rules! negdivmod {
+    ($n:ident, $d:ident, $m:ident) => {
+        $m = $n % $d;
+        $n /= $d;
+        if $m < 0 {
+            $n -= 1;
+            $m += $d;
+        }
+    };
 }
 
-impl<'a, S> SinkAdapter<'a, S>
+fn write_diff<S>(mut diff: i32, sink: &mut S, state: &mut S::State) -> Result<(), S::Error>
 where
     S: CollationKeySink + ?Sized,
 {
-    fn new(inner: &'a mut S, state: &'a mut S::State) -> Self {
-        Self {
-            inner,
-            state,
-            error: None,
+    let mut out = |b| sink.write_byte(state, b);
+
+    if diff >= SLOPE_REACH_NEG_1 {
+        if diff <= SLOPE_REACH_POS_1 {
+            out((SLOPE_MIDDLE + diff) as _)?;
+        } else if diff <= SLOPE_REACH_POS_2 {
+            out((SLOPE_START_POS_2 + (diff / SLOPE_TAIL_COUNT)) as _)?;
+            out((SLOPE_MIN + diff % SLOPE_TAIL_COUNT) as _)?;
+        } else if diff <= SLOPE_REACH_POS_3 {
+            let p2 = SLOPE_MIN + diff % SLOPE_TAIL_COUNT;
+            diff /= SLOPE_TAIL_COUNT;
+            let p1 = SLOPE_MIN + diff % SLOPE_TAIL_COUNT;
+            let p0 = SLOPE_START_POS_3 + (diff / SLOPE_TAIL_COUNT);
+            out(p0 as _)?;
+            out(p1 as _)?;
+            out(p2 as _)?;
+        } else {
+            let p3 = SLOPE_MIN + diff % SLOPE_TAIL_COUNT;
+            diff /= SLOPE_TAIL_COUNT;
+            let p2 = SLOPE_MIN + diff % SLOPE_TAIL_COUNT;
+            diff /= SLOPE_TAIL_COUNT;
+            let p1 = SLOPE_MIN + diff % SLOPE_TAIL_COUNT;
+            out(SLOPE_MAX as _)?;
+            out(p1 as _)?;
+            out(p2 as _)?;
+            out(p3 as _)?;
+        }
+    } else {
+        let mut m;
+
+        if diff >= SLOPE_REACH_NEG_2 {
+            negdivmod!(diff, SLOPE_TAIL_COUNT, m);
+            out((SLOPE_START_NEG_2 + diff) as _)?;
+            out((SLOPE_MIN + m) as _)?;
+        } else if diff >= SLOPE_REACH_NEG_3 {
+            negdivmod!(diff, SLOPE_TAIL_COUNT, m);
+            let p2 = SLOPE_MIN + m;
+            negdivmod!(diff, SLOPE_TAIL_COUNT, m);
+            let p1 = SLOPE_MIN + m;
+            let p0 = SLOPE_START_NEG_3 + diff;
+            out(p0 as _)?;
+            out(p1 as _)?;
+            out(p2 as _)?;
+        } else {
+            negdivmod!(diff, SLOPE_TAIL_COUNT, m);
+            let p3 = SLOPE_MIN + m;
+            negdivmod!(diff, SLOPE_TAIL_COUNT, m);
+            let p2 = SLOPE_MIN + m;
+            negdivmod!(diff, SLOPE_TAIL_COUNT, m);
+            let p1 = SLOPE_MIN + m;
+            let _ = diff;
+            out(SLOPE_MIN as _)?;
+            out(p1 as _)?;
+            out(p2 as _)?;
+            out(p3 as _)?;
         }
     }
 
-    fn finish(self) -> Result<(), S::Error> {
-        self.error.map_or(Ok(()), Err)
-    }
-
-    fn map_err(&mut self, error: S::Error) -> core::fmt::Error {
-        self.error = Some(error);
-        core::fmt::Error
-    }
+    Ok(())
 }
 
-impl<S> core::fmt::Write for SinkAdapter<'_, S>
+fn write_identical_level<I, S>(iter: I, sink: &mut S, state: &mut S::State) -> Result<(), S::Error>
 where
+    I: Iterator<Item = char>,
     S: CollationKeySink + ?Sized,
 {
-    fn write_str(&mut self, s: &str) -> core::fmt::Result {
-        self.inner
-            .write(self.state, s.as_bytes())
-            .map_err(|e| self.map_err(e))
-    }
-}
+    let mut prev = 0i32;
 
-impl<S> write16::Write16 for SinkAdapter<'_, S>
-where
-    S: CollationKeySink + ?Sized,
-{
-    fn write_slice(&mut self, s: &[u16]) -> core::fmt::Result {
-        // For the identical level, if the input is UTF-16, transcode to UTF-8.
-        let iter = char::decode_utf16(s.iter().cloned());
-        let mut bytes = [0u8; 4];
-        for c in iter {
-            let c = c.unwrap_or(char::REPLACEMENT_CHARACTER); // shouldn't happen
-            self.inner
-                .write(self.state, c.encode_utf8(&mut bytes).as_bytes())
-                .map_err(|e| self.map_err(e))?;
+    for c in iter {
+        if !(0x4e00..=0xa000).contains(&prev) {
+            prev = (prev & !0x7f) - SLOPE_REACH_NEG_1;
+        } else {
+            // Unihan U+4e00..U+9fa5:  double-bytes down from the upper end
+            prev = 0x9fff - SLOPE_REACH_POS_2;
         }
-        Ok(())
-    }
 
-    fn write_char(&mut self, c: char) -> core::fmt::Result {
-        self.inner
-            .write(self.state, c.encode_utf8(&mut [0u8; 4]).as_bytes())
-            .map_err(|e| self.map_err(e))
+        if c == MERGE_SEPARATOR {
+            sink.write_byte(state, MERGE_SEPARATOR_BYTE)?;
+            prev = 0;
+        } else {
+            let c = c as i32;
+            write_diff(c - prev, sink, state)?;
+            prev = c;
+        }
     }
+    Ok(())
 }
 
 #[cfg(test)]
@@ -2516,7 +2707,7 @@ mod test {
         let collator = collator_en(Strength::Identical);
         let mut k = [0u8; 0];
         let res = collator.write_sort_key_to("áAbc", &mut k[..]);
-        assert_eq!(res, Err(TooSmall));
+        assert!(matches!(res, Err(TooSmall { .. })));
     }
 
     #[test]
@@ -2525,7 +2716,7 @@ mod test {
         let collator = collator_en(Strength::Identical);
         let mut k = [0u8; 5];
         let res = collator.write_sort_key_to("áAbc", &mut k[..]);
-        assert_eq!(res, Err(TooSmall));
+        assert!(matches!(res, Err(TooSmall { .. })));
     }
 
     #[test]
@@ -2534,7 +2725,26 @@ mod test {
         let collator = collator_en(Strength::Identical);
         let mut k = [0u8; 22];
         let res = collator.write_sort_key_to("áAbc", &mut k[..]);
-        assert_eq!(res, Err(TooSmall));
+        assert!(matches!(res, Err(TooSmall { .. })));
+    }
+
+    #[test]
+    fn sort_key_just_right() {
+        // get the length needed
+        let collator = collator_en(Strength::Identical);
+        let mut k = [0u8; 0];
+        let res = collator.write_sort_key_to("áAbc", &mut k[..]);
+        let len = res.unwrap_err().length;
+
+        // almost enough
+        let mut k = vec![0u8; len - 1];
+        let res = collator.write_sort_key_to("áAbc", &mut k[..]);
+        let len = res.unwrap_err().length;
+
+        // just right
+        let mut k = vec![0u8; len];
+        let res = collator.write_sort_key_to("áAbc", &mut k[..]);
+        assert_eq!(res, Ok(len));
     }
 
     #[test]
@@ -2543,6 +2753,40 @@ mod test {
         const STR16: &[u16] = &[0x68, 0x65, 0x6c, 0x6c, 0x6f];
         let mut k = [0u8; 4];
         let res = collator.write_sort_key_utf16_to(STR16, &mut k[..]);
-        assert_eq!(res, Err(TooSmall));
+        assert!(matches!(res, Err(TooSmall { .. })));
+    }
+
+    #[test]
+    fn sort_key_very_long() {
+        let collator = collator_en(Strength::Secondary);
+        let mut k = Vec::new();
+        let Ok(()) = collator.write_sort_key_to(&"a".repeat(300), &mut k);
+    }
+
+    fn check_sort_key_less(a: &[u16], b: &[u16]) {
+        let collator = collator_en(Strength::Identical);
+        let mut ak = Vec::new();
+        let Ok(()) = collator.write_sort_key_utf16_to(a, &mut ak);
+        let mut bk = Vec::new();
+        let Ok(()) = collator.write_sort_key_utf16_to(b, &mut bk);
+        assert!(ak < bk, "failed: {a:04x?} - {b:04x?}");
+    }
+
+    #[test]
+    fn sort_key_fffe_bug_6811() {
+        check_sort_key_less(
+            &[0xfffe, 0x0001, 0x0002, 0x0003],
+            &[0x0001, 0xfffe, 0x0002, 0x0003],
+        );
+        check_sort_key_less(
+            &[0x0001, 0xfffe, 0x0002, 0x0003],
+            &[0x0001, 0x0002, 0xfffe, 0x0003],
+        );
+        check_sort_key_less(
+            &[0x0001, 0x0002, 0xfffe, 0x0003],
+            &[0x0001, 0x0002, 0x0003, 0xfffe],
+        );
+        check_sort_key_less(&[0xfffe, 0x0000, 0x0000], &[0x0000, 0xfffe, 0x0000]);
+        check_sort_key_less(&[0x0000, 0xfffe, 0x0000], &[0x0000, 0x0000, 0xfffe]);
     }
 }

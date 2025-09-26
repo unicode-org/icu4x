@@ -12,7 +12,6 @@ pub mod ratio;
 
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[displaydoc("The unit is not valid")]
-/// The unit is not valid.
-/// This can occur if the unit ID does not adhere to the CLDR specification.
-/// For example, `meter` is a valid unit ID, but `metre` is not.
-pub struct InvalidUnitError;
+/// There is no conversion between the two units or the conversion data is missing.
+/// In the end, the conversion is not possible.
+pub struct InvalidConversionError;

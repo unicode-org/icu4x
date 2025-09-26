@@ -1,5 +1,5 @@
-#ifndef icu4x_LineBreak_D_HPP
-#define icu4x_LineBreak_D_HPP
+#ifndef ICU4X_LineBreak_D_HPP
+#define ICU4X_LineBreak_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,11 +9,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 class LineBreak;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -79,63 +79,64 @@ namespace icu4x {
  */
 class LineBreak {
 public:
-  enum Value {
-    Unknown = 0,
-    Ambiguous = 1,
-    Alphabetic = 2,
-    BreakBoth = 3,
-    BreakAfter = 4,
-    BreakBefore = 5,
-    MandatoryBreak = 6,
-    ContingentBreak = 7,
-    ClosePunctuation = 8,
-    CombiningMark = 9,
-    CarriageReturn = 10,
-    Exclamation = 11,
-    Glue = 12,
-    Hyphen = 13,
-    Ideographic = 14,
-    Inseparable = 15,
-    InfixNumeric = 16,
-    LineFeed = 17,
-    Nonstarter = 18,
-    Numeric = 19,
-    OpenPunctuation = 20,
-    PostfixNumeric = 21,
-    PrefixNumeric = 22,
-    Quotation = 23,
-    ComplexContext = 24,
-    Surrogate = 25,
-    Space = 26,
-    BreakSymbols = 27,
-    ZWSpace = 28,
-    NextLine = 29,
-    WordJoiner = 30,
-    H2 = 31,
-    H3 = 32,
-    JL = 33,
-    JT = 34,
-    JV = 35,
-    CloseParenthesis = 36,
-    ConditionalJapaneseStarter = 37,
-    HebrewLetter = 38,
-    RegionalIndicator = 39,
-    EBase = 40,
-    EModifier = 41,
-    ZWJ = 42,
-    Aksara = 43,
-    AksaraPrebase = 44,
-    AksaraStart = 45,
-    ViramaFinal = 46,
-    Virama = 47,
-  };
+    enum Value {
+        Unknown = 0,
+        Ambiguous = 1,
+        Alphabetic = 2,
+        BreakBoth = 3,
+        BreakAfter = 4,
+        BreakBefore = 5,
+        MandatoryBreak = 6,
+        ContingentBreak = 7,
+        ClosePunctuation = 8,
+        CombiningMark = 9,
+        CarriageReturn = 10,
+        Exclamation = 11,
+        Glue = 12,
+        Hyphen = 13,
+        Ideographic = 14,
+        Inseparable = 15,
+        InfixNumeric = 16,
+        LineFeed = 17,
+        Nonstarter = 18,
+        Numeric = 19,
+        OpenPunctuation = 20,
+        PostfixNumeric = 21,
+        PrefixNumeric = 22,
+        Quotation = 23,
+        ComplexContext = 24,
+        Surrogate = 25,
+        Space = 26,
+        BreakSymbols = 27,
+        ZWSpace = 28,
+        NextLine = 29,
+        WordJoiner = 30,
+        H2 = 31,
+        H3 = 32,
+        JL = 33,
+        JT = 34,
+        JV = 35,
+        CloseParenthesis = 36,
+        ConditionalJapaneseStarter = 37,
+        HebrewLetter = 38,
+        RegionalIndicator = 39,
+        EBase = 40,
+        EModifier = 41,
+        ZWJ = 42,
+        Aksara = 43,
+        AksaraPrebase = 44,
+        AksaraStart = 45,
+        ViramaFinal = 46,
+        Virama = 47,
+    };
 
-  LineBreak() = default;
-  // Implicit conversions between enum and ::Value
-  constexpr LineBreak(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    LineBreak(): value(Value::Unknown) {}
+
+    // Implicit conversions between enum and ::Value
+    constexpr LineBreak(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
   /**
    * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
@@ -170,11 +171,11 @@ public:
    */
   inline static std::optional<icu4x::LineBreak> from_integer_value(uint8_t other);
 
-  inline icu4x::capi::LineBreak AsFFI() const;
-  inline static icu4x::LineBreak FromFFI(icu4x::capi::LineBreak c_enum);
+    inline icu4x::capi::LineBreak AsFFI() const;
+    inline static icu4x::LineBreak FromFFI(icu4x::capi::LineBreak c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_LineBreak_D_HPP
+#endif // ICU4X_LineBreak_D_HPP

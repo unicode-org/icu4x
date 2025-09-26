@@ -1,5 +1,5 @@
-#ifndef icu4x_DecimalSign_HPP
-#define icu4x_DecimalSign_HPP
+#ifndef ICU4X_DecimalSign_HPP
+#define ICU4X_DecimalSign_HPP
 
 #include "DecimalSign.d.hpp"
 
@@ -11,29 +11,27 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
-    extern "C" {
 
-    } // extern "C"
 } // namespace capi
 } // namespace
 
 inline icu4x::capi::DecimalSign icu4x::DecimalSign::AsFFI() const {
-  return static_cast<icu4x::capi::DecimalSign>(value);
+    return static_cast<icu4x::capi::DecimalSign>(value);
 }
 
 inline icu4x::DecimalSign icu4x::DecimalSign::FromFFI(icu4x::capi::DecimalSign c_enum) {
-  switch (c_enum) {
-    case icu4x::capi::DecimalSign_None:
-    case icu4x::capi::DecimalSign_Negative:
-    case icu4x::capi::DecimalSign_Positive:
-      return static_cast<icu4x::DecimalSign::Value>(c_enum);
-    default:
-      std::abort();
-  }
+    switch (c_enum) {
+        case icu4x::capi::DecimalSign_None:
+        case icu4x::capi::DecimalSign_Negative:
+        case icu4x::capi::DecimalSign_Positive:
+            return static_cast<icu4x::DecimalSign::Value>(c_enum);
+        default:
+            std::abort();
+    }
 }
-#endif // icu4x_DecimalSign_HPP
+#endif // ICU4X_DecimalSign_HPP

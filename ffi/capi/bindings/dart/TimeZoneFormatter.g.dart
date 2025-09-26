@@ -21,6 +21,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('icu4x_TimeZoneFormatter_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TimeZoneFormatter_destroy_mv1));
 
   /// Creates a zoned formatter based on a non-zoned formatter.
