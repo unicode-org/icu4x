@@ -8,10 +8,9 @@
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/plurals.json>
 
 use icu::locale::LanguageIdentifier;
-use serde::Deserialize;
 use std::collections::HashMap;
 
-#[derive(PartialEq, PartialOrd, Ord, Eq, Debug, Deserialize)]
+#[derive(PartialEq, PartialOrd, Ord, Eq, Debug, serde_derive::Deserialize)]
 pub(crate) struct LocalePluralRules {
     #[serde(rename = "pluralRule-count-zero")]
     pub(crate) zero: Option<String>,
@@ -25,10 +24,10 @@ pub(crate) struct LocalePluralRules {
     pub(crate) many: Option<String>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Rules(pub(crate) HashMap<LanguageIdentifier, LocalePluralRules>);
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Supplemental {
     #[serde(rename = "plurals-type-cardinal")]
     pub(crate) plurals_type_cardinal: Option<Rules>,
@@ -36,7 +35,7 @@ pub(crate) struct Supplemental {
     pub(crate) plurals_type_ordinal: Option<Rules>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Resource {
     pub(crate) supplemental: Supplemental,
 }

@@ -35,7 +35,8 @@ log = { workspace = true, optional = true }
 # serde
 bincode = { workspace = true, optional = true }
 postcard = { workspace = true, optional = true }
-serde = { workspace = true, features = ["derive", "alloc"], optional = true }
+serde = { workspace = true, features = ["alloc"], optional = true }
+serde_derive = { workspace = true, optional = true }
 serde_json = { workspace = true, optional = true }
 
 # export
@@ -59,7 +60,7 @@ sync = []
 logging = ["dep:log"]
 
 # Enable BufferProvider and other deserialization infrastructure
-serde = ["dep:serde", "yoke/serde"]
+serde = ["dep:serde", "dep:serde_derive", "yoke/serde"]
 
 # Features for specific serde formats
 deserialize_json = ["serde", "dep:serde_json"]

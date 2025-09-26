@@ -36,9 +36,9 @@ impl core::error::Error for SymbolError {}
 /// [`Hour::H23`]. Each field symbol is represented within the date formatting pattern string
 /// by a distinct character from the set of `A..Z` and `a..z`.
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // part of data struct
 pub enum FieldSymbol {
     /// Era name.
@@ -398,9 +398,9 @@ macro_rules! field_type {
     ($(#[$enum_attr:meta])* $i:ident; { $( $(#[$variant_attr:meta])* $key:literal => $val:ident = $idx:expr,)* }; $($ule_name:ident)?) => (
         #[derive(Debug, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
         // TODO(#1044): This should be replaced with a custom derive.
-        #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+        #[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
         #[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
-        #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+        #[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
         #[allow(clippy::enum_variant_names)]
         $(
             #[repr(u8)]
@@ -772,9 +772,9 @@ impl LengthType for TimeZone {
 #[derive(
     Debug, Eq, PartialEq, Ord, PartialOrd, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom,
 )]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 #[repr(u8)]
 #[zerovec::make_ule(DecimalSecondULE)]
 #[zerovec::derive(Debug)]

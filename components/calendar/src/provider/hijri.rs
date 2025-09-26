@@ -34,9 +34,9 @@ use zerovec::ule::AsULE;
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd, Ord, Debug)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 pub struct PackedHijriYearInfo(pub u16);
 
 impl PackedHijriYearInfo {

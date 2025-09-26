@@ -57,7 +57,7 @@ Serialize and deserialize a struct with ZeroVec and VarZeroVec with Bincode:
 use zerovec::{VarZeroVec, ZeroVec};
 
 // This example requires the "serde" feature
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(serde_derive::Serialize, serde_derive::Deserialize)]
 pub struct DataStruct<'data> {
     #[serde(borrow)]
     nums: ZeroVec<'data, u32>,
@@ -112,7 +112,7 @@ struct Person<'a> {
     name: Cow<'a, str>,
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(serde_derive::Serialize, serde_derive::Deserialize)]
 struct Data<'a> {
     #[serde(borrow)]
     important_dates: ZeroVec<'a, Date>,

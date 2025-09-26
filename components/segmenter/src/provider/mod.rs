@@ -145,9 +145,9 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 pub struct RuleBreakData<'data> {
     /// Property table.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -192,9 +192,9 @@ icu_provider::data_struct!(
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 pub struct UCharDictionaryBreakData<'data> {
     /// Dictionary data of char16trie.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -216,10 +216,10 @@ impl DynamicDataMarker for UCharDictionaryBreakDataV1 {
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize,databake::Bake),
+    derive(serde_derive::Serialize,databake::Bake),
     databake(path = icu_segmenter::provider),
 )]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 pub struct RuleBreakDataOverride<'data> {
     /// The difference of property table for special locale.
     #[cfg_attr(feature = "serde", serde(borrow))]

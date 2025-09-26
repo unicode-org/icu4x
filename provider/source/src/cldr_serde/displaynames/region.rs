@@ -7,16 +7,15 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-localenames-full/main/en/territories.json>
 
-use serde::Deserialize;
 use std::collections::HashMap;
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Regions {
     #[serde(rename = "territories")]
     pub(crate) regions: HashMap<String, String>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct LangDisplayNames {
     #[serde(rename = "localeDisplayNames")]
     pub(crate) localedisplaynames: Regions,

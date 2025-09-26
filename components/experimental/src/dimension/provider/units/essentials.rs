@@ -45,9 +45,9 @@ icu_provider::data_marker!(
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::units::essentials))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct UnitsEssentials<'data> {
     // TODO: use `SinglePlaceholderPattern` instead of `str` for the patterns' string representations.
@@ -69,8 +69,8 @@ icu_provider::data_struct!(UnitsEssentials<'_>, #[cfg(feature = "datagen")]);
 /// See <https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>. // TODO??
 #[zerovec::make_ule(CompoundCountULE)]
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::units::essentials))]
 #[repr(u8)]
 pub enum CompoundCount {

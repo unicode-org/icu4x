@@ -7,12 +7,12 @@ use serde::{de::Error, Deserialize, Deserializer};
 use std::{borrow::Cow, collections::BTreeMap};
 
 // cldr-core/supplemental/calendarData.json
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Resource {
     pub(crate) supplemental: Supplemental,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Supplemental {
     #[serde(rename = "calendarData")]
     pub(crate) calendar_data: BTreeMap<String, CalendarData>,

@@ -105,9 +105,9 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Default, Clone, PartialEq, Debug, Yokeable, ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 pub struct PluralRulesData<'data> {
     /// Rule that matches [`PluralCategory::Zero`], or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -147,9 +147,9 @@ mod ranges {
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
     #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Ord, PartialOrd)]
-    #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+    #[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
     #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+    #[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
     #[zerovec::make_ule(RawPluralCategoryULE)]
     #[repr(u8)]
     #[cfg_attr(
@@ -337,9 +337,9 @@ mod ranges {
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
     #[derive(Clone, PartialEq, Debug, Yokeable, ZeroFrom)]
-    #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+    #[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
     #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+    #[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
     #[yoke(prove_covariance_manually)]
     pub struct PluralRanges<'data> {
         /// Map between the categories of the endpoints of a range and its corresponding
@@ -367,8 +367,8 @@ mod ranges {
 ///
 /// Use [`PluralElementsPackedULE`] directly if you need these additional features.
 #[derive(Debug, PartialEq, Yokeable, ZeroFrom)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_plurals::provider))]
 #[cfg_attr(
     feature = "serde",
@@ -576,8 +576,8 @@ where
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[zerovec::make_ule(PluralCategoryULE)]
 #[repr(u8)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 enum PluralElementsKeys {
     Zero = 0,
     One = 1,
@@ -630,7 +630,10 @@ where
 
 /// Four bits of metadata that are stored and retrieved with the plural elements.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde_derive::Serialize, serde_derive::Deserialize)
+)]
 #[repr(transparent)]
 pub struct FourBitMetadata(u8);
 

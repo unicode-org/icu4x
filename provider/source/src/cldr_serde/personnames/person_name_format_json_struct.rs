@@ -8,21 +8,20 @@
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-person-names-full/main/en/personNames.json>
 
 use litemap::LiteMap;
-use serde::Deserialize;
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct FormalityFormatting(pub(crate) LiteMap<String, String>);
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct ReferringFormatting(pub(crate) LiteMap<String, FormalityFormatting>);
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct SizedFormatting(pub(crate) LiteMap<String, ReferringFormatting>);
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct OrderFormatting(pub(crate) LiteMap<String, SizedFormatting>);
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct PersonNames {
     #[serde(rename = "givenFirst")]
     pub(crate) given_first: Vec<String>,
@@ -37,7 +36,7 @@ pub(crate) struct PersonNames {
     pub(crate) formatting_pattern: OrderFormatting,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct CldrData {
     #[serde(rename = "personNames")]
     pub(crate) person_names: PersonNames,

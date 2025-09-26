@@ -6,39 +6,38 @@
 
 use icu_datetime::fieldsets::builder::FieldSetBuilder;
 use icu_datetime::provider::fields::components;
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde_derive::Serialize, serde_derive::Deserialize)]
 pub struct Fixture(pub Vec<Test>);
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde_derive::Serialize, serde_derive::Deserialize)]
 pub struct Test {
     pub description: Option<String>,
     pub input: TestInput,
     pub output: TestOutput,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde_derive::Serialize, serde_derive::Deserialize)]
 pub struct TestInput {
     pub value: String,
     pub options: TestOptions,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde_derive::Serialize, serde_derive::Deserialize)]
 pub struct TestOptions {
     pub length: Option<TestOptionsLength>,
     pub components: Option<TestComponentsBag>,
     pub semantic: Option<FieldSetBuilder>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde_derive::Serialize, serde_derive::Deserialize)]
 pub struct TestOptionsLength {
     pub date: Option<TestLength>,
     pub time: Option<TestLength>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde_derive::Serialize, serde_derive::Deserialize)]
 pub enum TestLength {
     #[serde(rename = "short")]
     Short,
@@ -50,7 +49,7 @@ pub enum TestLength {
     Full,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde_derive::Serialize, serde_derive::Deserialize)]
 pub struct TestComponentsBag {
     pub era: Option<components::Text>,
     pub year: Option<components::Year>,
@@ -67,13 +66,13 @@ pub struct TestComponentsBag {
     pub time_zone_name: Option<components::TimeZoneName>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde_derive::Serialize, serde_derive::Deserialize)]
 pub struct TestOutput {
     // Key is locale, and value is expected test output.
     pub values: HashMap<String, TestOutputItem>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde_derive::Serialize, serde_derive::Deserialize)]
 #[serde(untagged)]
 pub enum TestOutputItem {
     ExpectedString(String),

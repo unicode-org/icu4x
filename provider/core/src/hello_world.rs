@@ -20,10 +20,10 @@ use zerofrom::*;
 
 /// A struct containing "Hello World" in the requested language.
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroFrom)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 #[cfg_attr(
     any(feature = "deserialize_json", feature = "export"),
-    derive(serde::Serialize)
+    derive(serde_derive::Serialize)
 )]
 #[cfg_attr(feature = "export", derive(databake::Bake))]
 #[cfg_attr(feature = "export", databake(path = icu_provider::hello_world))]

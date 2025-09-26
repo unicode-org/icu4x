@@ -12,34 +12,33 @@ use icu_time::{DateTime, TimeZoneInfo, ZonedDateTime};
 use writeable::Writeable;
 
 use icu_datetime::{fieldsets::builder::FieldSetBuilder, provider::fields::components};
-use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde_derive::Serialize, serde_derive::Deserialize)]
 pub(crate) struct Fixture {
     pub(crate) setups: Vec<TestInput>,
     pub(crate) values: Vec<String>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde_derive::Serialize, serde_derive::Deserialize)]
 pub(crate) struct TestInput {
     pub(crate) locale: String,
     pub(crate) options: TestOptions,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde_derive::Serialize, serde_derive::Deserialize)]
 pub(crate) struct TestOptions {
     pub(crate) length: Option<TestOptionsLength>,
     pub(crate) components: Option<TestComponentsBag>,
     pub(crate) semantic: Option<FieldSetBuilder>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde_derive::Serialize, serde_derive::Deserialize)]
 pub(crate) struct TestOptionsLength {
     pub(crate) date: Option<TestLength>,
     pub(crate) time: Option<TestLength>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde_derive::Serialize, serde_derive::Deserialize)]
 pub(crate) enum TestLength {
     #[serde(rename = "short")]
     Short,
@@ -51,7 +50,7 @@ pub(crate) enum TestLength {
     Full,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, serde_derive::Serialize, serde_derive::Deserialize)]
 pub(crate) struct TestComponentsBag {
     pub(crate) era: Option<components::Text>,
     pub(crate) year: Option<components::Year>,

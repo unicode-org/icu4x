@@ -247,7 +247,7 @@ impl From<LocaleError> for ParseError {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, serde_derive::Deserialize)]
 pub struct LocaleTest {
     pub input: LocaleInfo,
     pub output: LocaleInfo,

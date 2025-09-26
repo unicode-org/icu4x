@@ -13,7 +13,7 @@ use std::collections::HashSet;
 use std::fmt::Debug;
 use zerovec::ZeroVec;
 
-#[derive(serde::Deserialize, Debug)]
+#[derive(serde_derive::Deserialize, Debug)]
 struct SegmenterDictionaryData {
     trie_data: Vec<u16>,
 }

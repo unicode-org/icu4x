@@ -8,10 +8,9 @@
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-bcp47/bcp47/timezone.json>
 
 use icu::{locale::subtags::Region, time::TimeZone};
-use serde::Deserialize;
 use std::collections::BTreeMap;
 
-#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, serde_derive::Deserialize)]
 pub(crate) struct Bcp47TzidAliasData {
     #[serde(rename = "_deprecated")]
     pub(crate) deprecated: Option<bool>,
@@ -29,7 +28,7 @@ pub(crate) struct Bcp47TzidAliasData {
     pub(crate) region: Option<Region>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Bcp47TimeZoneIds {
     pub(crate) _alias: String,
     pub(crate) _description: String,
@@ -37,18 +36,18 @@ pub(crate) struct Bcp47TimeZoneIds {
     pub(crate) values: BTreeMap<TimeZone, Bcp47TzidAliasData>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct U {
     #[serde(rename = "tz")]
     pub(crate) time_zones: Bcp47TimeZoneIds,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Keyword {
     pub(crate) u: U,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Resource {
     pub(crate) keyword: Keyword,
 }

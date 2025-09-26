@@ -24,8 +24,8 @@ use zerovec::ule::{AsULE, ULE};
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize))]
 pub struct ExceptionBits {
     /// Whether or not the slots are double-width.
     ///
@@ -120,8 +120,8 @@ impl ExceptionBits {
 /// </div>
 #[derive(Copy, Clone, PartialEq, Eq, ULE, Debug, Default)]
 #[repr(transparent)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize))]
 pub struct SlotPresence(pub u8);
 
 impl SlotPresence {

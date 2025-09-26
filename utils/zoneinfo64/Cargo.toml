@@ -26,7 +26,8 @@ all-features = true
 icu_locale_core = { workspace = true }
 potential_utf = { workspace = true }
 resb = { workspace = true }
-serde = { workspace = true, features = ["derive"] }
+serde = { workspace = true }
+serde_derive = { workspace = true }
 calendrical_calculations = { workspace = true }
 
 chrono = { version = "0.4", optional = true }

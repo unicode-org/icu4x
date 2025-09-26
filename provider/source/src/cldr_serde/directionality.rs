@@ -2,11 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use serde::Deserialize;
 use std::collections::HashMap;
 use tinystr::TinyAsciiStr;
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) enum Rtl {
     #[serde(rename = "YES")]
     Yes,
@@ -16,13 +15,13 @@ pub(crate) enum Rtl {
     Unknown,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Metadata {
     pub(crate) rtl: Rtl,
 }
 
 // cldr-core/scriptMetadata.json
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Resource {
     #[serde(rename = "scriptMetadata")]
     pub(crate) script_metadata: HashMap<TinyAsciiStr<4>, Metadata>,

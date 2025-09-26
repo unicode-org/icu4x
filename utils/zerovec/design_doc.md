@@ -76,7 +76,7 @@ Similar to `Cow`, [`ZeroVec`] has `Owned` and `Borrowed` variants that can be di
 ```rust
 use zerovec::ZeroVec;
 
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(serde_derive::Serialize, serde_derive::Deserialize)]
 struct Foo<'a> {
     #[serde(borrow)]
     chars: ZeroVec<'a, char>, // Behaves like Vec<char>
@@ -98,7 +98,7 @@ Vectors of variable-size types work via [`VarZeroVec<'a, T>`][`VarZeroVec`], whe
 ```rust
 use zerovec::{VarZeroVec, ZeroSlice};
 
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(serde_derive::Serialize, serde_derive::Deserialize)]
 struct Foo<'a> {
     #[serde(borrow)]
     strings: VarZeroVec<'a, str>, // behaves like Vec<String>

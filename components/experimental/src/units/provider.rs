@@ -36,9 +36,9 @@ icu_provider::data_marker!(UnitsInfoV1, UnitsInfo<'static>, is_singleton = true)
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::units::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 pub struct UnitsInfo<'data> {
     /// Contains conversion information sorted by unit_id, including conversion rates and base units.
     /// For instance, the conversion for `foot` is represented as `1 foot = 0.3048 meter`.
@@ -77,12 +77,12 @@ icu_provider::data_struct!(UnitsInfo<'_>, #[cfg(feature = "datagen")]);
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::units::provider))]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize),
+    derive(serde_derive::Serialize),
     zerovec::derive(Serialize)
 )]
 #[cfg_attr(
     feature = "serde",
-    derive(serde::Deserialize),
+    derive(serde_derive::Deserialize),
     zerovec::derive(Deserialize)
 )]
 #[zerovec::derive(Debug)]
@@ -125,9 +125,9 @@ pub struct ConversionInfo<'data> {
 
 /// This enum is used to represent the sign of a constant value.
 #[zerovec::make_ule(SignULE)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::units::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 #[repr(u8)]
 pub enum Sign {
@@ -138,9 +138,9 @@ pub enum Sign {
 
 /// This enum is used to represent the exactness of a factor
 #[zerovec::make_ule(ExactnessULE)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::units::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 #[repr(u8)]
 pub enum Exactness {

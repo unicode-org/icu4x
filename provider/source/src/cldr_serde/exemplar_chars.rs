@@ -7,9 +7,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-misc-full/main/de/characters.json>
 
-use serde::Deserialize;
-
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct LocaleExemplarCharacters {
     #[serde(rename = "exemplarCharacters")]
     pub(crate) main: Option<String>,
@@ -19,7 +17,7 @@ pub(crate) struct LocaleExemplarCharacters {
     pub(crate) punctuation: Option<String>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Characters {
     pub(crate) characters: LocaleExemplarCharacters,
 }

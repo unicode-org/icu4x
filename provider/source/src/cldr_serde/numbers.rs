@@ -13,7 +13,7 @@ use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 use serde::Deserialize;
 use std::collections::HashMap;
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Symbols {
     // This list is not comprehensive; add more fields when needed
     #[serde(rename = "approximatelySign")]
@@ -28,14 +28,14 @@ pub(crate) struct Symbols {
     pub(crate) percent_sign: String,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct DecimalFormats {
     pub(crate) standard: String,
     pub(crate) long: DecimalFormatLength,
     pub(crate) short: DecimalFormatLength,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct DecimalFormatLength {
     #[serde(rename = "decimalFormat")]
     pub(crate) decimal_format: DecimalFormat,
@@ -103,12 +103,12 @@ impl<'de> Visitor<'de> for DecimalFormatVisitor {
     }
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct ShortCompactCurrencyPatterns {
     pub(crate) standard: DecimalFormat,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct CurrencyFormattingPatterns {
     /// Standard pattern
     pub(crate) standard: String,
@@ -146,7 +146,7 @@ pub(crate) struct CurrencyFormattingPatterns {
     pub(crate) pattern_other: Option<PatternString<DoublePlaceholder>>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct PercentFormattingPatterns {
     /// Standard pattern
     pub(crate) standard: String,
@@ -221,7 +221,7 @@ impl<'de> Deserialize<'de> for NumberingSystemData {
     }
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Numbers {
     #[serde(rename = "defaultNumberingSystem")]
     pub(crate) default_numbering_system: String,
@@ -232,7 +232,7 @@ pub(crate) struct Numbers {
     pub(crate) numsys_data: NumberingSystemData,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct LangNumbers {
     pub(crate) numbers: Numbers,
 }

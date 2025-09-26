@@ -8,16 +8,15 @@
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/likelySubtags.json>
 
 use icu::locale::LanguageIdentifier;
-use serde::Deserialize;
 use std::collections::HashMap;
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Supplemental {
     #[serde(rename = "likelySubtags")]
     pub(crate) likely_subtags: HashMap<LanguageIdentifier, LanguageIdentifier>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Resource {
     pub(crate) supplemental: Supplemental,
 }

@@ -26,7 +26,8 @@ tinystr = { workspace = true, features = ["alloc"] }
 writeable = { workspace = true }
 
 databake = { workspace = true, features = ["derive"], optional = true }
-serde = { workspace = true, features = ["alloc", "derive"], optional = true }
+serde = { workspace = true, features = ["alloc"], optional = true }
+serde_derive = { workspace = true, optional = true }
 zerovec = { workspace = true, optional = true }
 
 [dev-dependencies]
@@ -36,7 +37,7 @@ icu_provider = { path = "../../provider/core" }
 litemap = { workspace = true, features = ["testing"] }
 postcard = { workspace = true, features = ["use-std"] }
 potential_utf = { workspace = true }
-serde = { workspace = true, features = ["derive"] }
+serde = { workspace = true, features = ["alloc"] }
 serde_json = { workspace = true }
 
 
@@ -45,7 +46,7 @@ criterion = { workspace = true }
 
 [features]
 databake = ["dep:databake", "alloc"]
-serde = ["dep:serde", "tinystr/serde", "alloc"]
+serde = ["dep:serde", "dep:serde_derive", "tinystr/serde", "alloc"]
 zerovec = ["dep:zerovec", "tinystr/zerovec"]
 alloc = []
 

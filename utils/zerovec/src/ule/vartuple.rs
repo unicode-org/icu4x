@@ -59,7 +59,10 @@ use super::{AsULE, EncodeAsVarULE, UleError, VarULE, ULE};
 /// See the module for examples.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
 #[allow(clippy::exhaustive_structs)] // well-defined type
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde_derive::Serialize, serde_derive::Deserialize)
+)]
 pub struct VarTuple<A, B> {
     pub sized: A,
     pub variable: B,

@@ -32,7 +32,10 @@ pub enum PatternItem<'a, T> {
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_enums)] // Part of core data model
 #[cfg(feature = "alloc")]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde_derive::Serialize, serde_derive::Deserialize)
+)]
 pub enum PatternItemCow<'a, T> {
     /// A placeholder of the type specified on this [`PatternItemCow`].
     Placeholder(T),

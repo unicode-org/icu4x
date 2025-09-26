@@ -7,10 +7,9 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-numbers-full/main/en/currencies.json>
 
-use serde::Deserialize;
 use std::collections::BTreeMap;
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct CurrencyPatterns {
     #[serde(rename = "symbol")]
     pub(crate) short: Option<String>,
@@ -46,12 +45,12 @@ pub(crate) struct CurrencyPatterns {
     pub(crate) other: Option<String>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Numbers {
     pub(crate) currencies: BTreeMap<String, CurrencyPatterns>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct LangNumbers {
     pub(crate) numbers: Numbers,
 }

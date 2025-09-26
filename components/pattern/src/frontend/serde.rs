@@ -18,7 +18,7 @@ where
     B::PlaceholderKeyCow<'data>: Deserialize<'de>,
     &'data B::Store: Deserialize<'de>,
 {
-    #[derive(Deserialize)]
+    #[derive(serde_derive::Deserialize)]
     #[serde(transparent)]
     // Cows fail to borrow in some situations (array, option), but structs of Cows don't.
     struct CowPatternWrap<'data1, B: PatternBackend<Store = str>>

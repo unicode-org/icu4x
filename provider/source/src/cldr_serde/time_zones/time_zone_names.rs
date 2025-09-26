@@ -14,10 +14,10 @@ use serde::{
 };
 use std::collections::BTreeMap;
 
-#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, serde_derive::Deserialize)]
 pub(crate) struct ZoneFormat(pub(crate) BTreeMap<String, String>);
 
-#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, serde_derive::Deserialize)]
 pub(crate) struct Metazone {
     pub(crate) long: Option<ZoneFormat>,
     pub(crate) short: Option<ZoneFormat>,
@@ -33,10 +33,10 @@ impl Metazone {
     }
 }
 
-#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, serde_derive::Deserialize)]
 pub(crate) struct Metazones(pub(crate) BTreeMap<String, Metazone>);
 
-#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, serde_derive::Deserialize)]
 // Since this value can be either a Location or a table of sub-regions, we use
 // the presence of fields to distinguish the object types. If CLDR-JSON adds
 // more fields to Location in the future, they must also be added here.
@@ -67,17 +67,17 @@ impl Location {
     }
 }
 
-#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, serde_derive::Deserialize)]
 #[serde(untagged)]
 pub(crate) enum LocationOrSubRegion {
     Location(Location),
     SubRegion(BTreeMap<String, Location>),
 }
 
-#[derive(PartialEq, Debug, Clone, Default, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Default, serde_derive::Deserialize)]
 pub(crate) struct Region(pub(crate) BTreeMap<String, LocationOrSubRegion>);
 
-#[derive(PartialEq, Debug, Clone, Default, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Default, serde_derive::Deserialize)]
 pub(crate) struct Zones(pub(crate) BTreeMap<String, Region>);
 
 #[derive(PartialEq, Debug, Default, Clone)]
@@ -159,13 +159,13 @@ impl<'de> Deserialize<'de> for TimeZoneNames {
     }
 }
 
-#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, serde_derive::Deserialize)]
 pub(crate) struct Dates {
     #[serde(rename = "timeZoneNames")]
     pub(crate) time_zone_names: TimeZoneNames,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct LangTimeZones {
     pub(crate) dates: Dates,
 }

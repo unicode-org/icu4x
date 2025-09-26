@@ -7,17 +7,16 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-core/supplemental/numberingSystems.json>
 
-use serde::Deserialize;
 use std::collections::HashMap;
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub(crate) enum NumberingSystemType {
     Numeric,
     Algorithmic,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct NumberingSystem {
     #[serde(rename = "_type")]
     pub(crate) nstype: NumberingSystemType,
@@ -27,13 +26,13 @@ pub(crate) struct NumberingSystem {
     pub(crate) rules: Option<String>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct SupplementalData {
     #[serde(rename = "numberingSystems")]
     pub(crate) numbering_systems: HashMap<String, NumberingSystem>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Resource {
     pub(crate) supplemental: SupplementalData,
 }

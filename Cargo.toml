@@ -255,6 +255,7 @@ postcard = { version = "1.0.3", default-features = false }
 regex-automata = { version = "0.4.7", default-features = false }
 ryu = { version = "1.0.5", default-features = false }
 serde = { version = "1.0.110", default-features = false }
+serde_derive = { version = "1.0.110", default-features = false }
 serde-json-core = { version = "0.6.0", default-features = false }
 smallvec = { version = "1.10.0", default-features = false }
 stable_deref_trait = { version = "1.2.0", default-features = false }

@@ -7,32 +7,30 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/windowsZones.json>
 
-use serde::Deserialize;
-
-#[derive(Deserialize)]
+#[derive(serde_derive::Deserialize)]
 pub(crate) struct WindowsResource {
     pub(crate) supplemental: WindowsSupplemental,
 }
 
-#[derive(Deserialize)]
+#[derive(serde_derive::Deserialize)]
 pub(crate) struct WindowsSupplemental {
     #[serde(rename = "windowsZones")]
     pub(crate) windows_zones: WindowsZones,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, serde_derive::Deserialize)]
 pub(crate) struct WindowsZones {
     #[serde(rename = "mapTimezones")]
     pub(crate) mapped_zones: Vec<MappedWindowsTimeZone>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, serde_derive::Deserialize)]
 pub(crate) struct MappedWindowsTimeZone {
     #[serde(rename = "mapZone")]
     pub(crate) map_zone: MapZone,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, serde_derive::Deserialize)]
 pub(crate) struct MapZone {
     #[serde(rename = "_other")]
     pub(crate) windows_id: String,

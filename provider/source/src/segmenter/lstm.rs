@@ -18,7 +18,7 @@ use std::fmt::Debug;
 use zerovec::ZeroVec;
 
 // ndarray data structure in LSTM JSON data.
-#[derive(serde::Deserialize, Debug)]
+#[derive(serde_derive::Deserialize, Debug)]
 struct RawLstmMatrix {
     #[allow(dead_code)]
     pub(crate) v: i16,
@@ -43,7 +43,7 @@ impl RawLstmMatrix {
 }
 
 // LSTM JSON data structure.
-#[derive(serde::Deserialize, Debug)]
+#[derive(serde_derive::Deserialize, Debug)]
 struct RawLstmData {
     model: String,
     dic: HashMap<String, u16>,

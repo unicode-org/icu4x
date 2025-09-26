@@ -124,15 +124,15 @@ impl<'de> Deserialize<'de> for Field {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, serde_derive::Deserialize)]
 pub(crate) struct Fields(pub(crate) HashMap<String, Field>);
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, serde_derive::Deserialize)]
 pub(crate) struct Dates {
     pub(crate) fields: Fields,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, serde_derive::Deserialize)]
 pub(crate) struct RelativeTimeDates {
     pub(crate) dates: Dates,
 }

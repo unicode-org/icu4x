@@ -8,16 +8,15 @@
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/primaryZones.json>
 
 use icu::locale::subtags::Region;
-use serde::Deserialize;
 use std::collections::BTreeMap;
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, serde_derive::Deserialize)]
 pub(crate) struct Supplemental {
     #[serde(rename = "primaryZones")]
     pub(crate) primary_zones: BTreeMap<Region, String>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, serde_derive::Deserialize)]
 pub(crate) struct Resource {
     pub(crate) supplemental: Supplemental,
 }

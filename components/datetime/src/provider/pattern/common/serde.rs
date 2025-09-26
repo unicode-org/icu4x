@@ -15,8 +15,8 @@ mod reference {
 
     /// A helper struct that is shaped exactly like `runtime::Pattern`
     /// and is used to aid in quick deserialization.
-    #[derive(Debug, Clone, PartialEq, Deserialize)]
-    #[cfg_attr(feature = "datagen", derive(Serialize))]
+    #[derive(Debug, Clone, PartialEq, serde_derive::Deserialize)]
+    #[cfg_attr(feature = "datagen", derive(serde_derive::Serialize))]
     struct PatternForSerde {
         items: Vec<PatternItem>,
         time_granularity: TimeGranularity,
@@ -123,8 +123,8 @@ mod runtime {
 
     /// A helper struct that is shaped exactly like `runtime::Pattern`
     /// and is used to aid in quick deserialization.
-    #[derive(Debug, Clone, PartialEq, Deserialize)]
-    #[cfg_attr(feature = "datagen", derive(Serialize))]
+    #[derive(Debug, Clone, PartialEq, serde_derive::Deserialize)]
+    #[cfg_attr(feature = "datagen", derive(serde_derive::Serialize))]
     struct PatternForSerde<'data> {
         #[serde(borrow)]
         pub items: ZeroVec<'data, PatternItem>,

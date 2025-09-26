@@ -37,8 +37,6 @@ use crate::{
 
 use crate::pattern::DateTimePattern;
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
 
 /// See the [module-level](./index.html) docs for more information.
 ///
@@ -344,7 +342,7 @@ impl Bag {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(
     feature = "serde",
-    derive(Serialize, Deserialize),
+    derive(serde_derive::Serialize, serde_derive::Deserialize),
     serde(rename_all = "kebab-case")
 )]
 #[non_exhaustive]
@@ -366,7 +364,7 @@ pub enum Numeric {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(
     feature = "serde",
-    derive(Serialize, Deserialize),
+    derive(serde_derive::Serialize, serde_derive::Deserialize),
     serde(rename_all = "kebab-case")
 )]
 #[non_exhaustive]
@@ -393,7 +391,7 @@ pub enum Text {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(
     feature = "serde",
-    derive(Serialize, Deserialize),
+    derive(serde_derive::Serialize, serde_derive::Deserialize),
     serde(rename_all = "kebab-case")
 )]
 #[non_exhaustive]
@@ -421,7 +419,7 @@ pub enum Year {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(
     feature = "serde",
-    derive(Serialize, Deserialize),
+    derive(serde_derive::Serialize, serde_derive::Deserialize),
     serde(rename_all = "kebab-case")
 )]
 #[non_exhaustive]
@@ -454,7 +452,7 @@ pub enum Month {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(
     feature = "serde",
-    derive(Serialize, Deserialize),
+    derive(serde_derive::Serialize, serde_derive::Deserialize),
     serde(rename_all = "kebab-case")
 )]
 #[non_exhaustive]
@@ -478,7 +476,7 @@ pub enum Week {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(
     feature = "serde",
-    derive(Serialize, Deserialize),
+    derive(serde_derive::Serialize, serde_derive::Deserialize),
     serde(rename_all = "kebab-case")
 )]
 #[non_exhaustive]
@@ -509,7 +507,7 @@ pub enum Day {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(
     feature = "serde",
-    derive(Serialize, Deserialize),
+    derive(serde_derive::Serialize, serde_derive::Deserialize),
     serde(rename_all = "kebab-case")
 )]
 #[non_exhaustive]

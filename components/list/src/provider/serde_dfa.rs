@@ -217,7 +217,7 @@ mod test {
             .is_none());
     }
 
-    #[derive(serde::Deserialize)]
+    #[derive(serde_derive::Deserialize)]
     struct OptionSerdeDFA<'data>(
         #[serde(borrow, deserialize_with = "SerdeDFA::maybe_deserialize")] Option<SerdeDFA<'data>>,
     );

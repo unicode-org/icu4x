@@ -60,7 +60,6 @@ where
 #[cfg(test)]
 mod test {
     use crate::{VarZeroVec, ZeroHashMap, ZeroVec};
-    use serde::{Deserialize, Serialize};
 
     const JSON_STR: &str = "[[[0,0],[0,1],[0,1]],[1,2,0],[\"b\",\"c\",\"a\"]]";
 
@@ -70,7 +69,7 @@ mod test {
         3, 0, 1, 0, 2, 0, 98, 99, 97,
     ];
 
-    #[derive(Serialize, Deserialize)]
+    #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
     #[allow(
         dead_code,
         reason = "The dead_code lint explicitly ignores constructing trait impls."

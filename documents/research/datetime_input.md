@@ -265,7 +265,7 @@ impl DateTimeTraitObject for GregorianDateTime {
 With all calendar systems merged into a common set of identifiers for month and weekday names, we can model the locale data to be calendar system agnostic.
 
 ```rust
-#[derive(Serialize, Deserialize)]
+#[derive(serde_derive::Serialize, serde_derive::Deserialize)]
 pub struct MonthNamesV1 {
     // note: we'd use tuple_vec_map in production
     pub names: Map<TinyStr8, String>,

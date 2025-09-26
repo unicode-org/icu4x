@@ -25,7 +25,8 @@ icu_provider = { workspace = true, features = ["alloc"] }
 zerovec = { workspace = true, features = ["alloc", "yoke"] }
 
 databake = { workspace = true, features = ["derive"], optional = true}
-serde = { workspace = true, features = ["derive", "alloc"], optional = true }
+serde = { workspace = true, features = ["alloc"], optional = true }
+serde_derive = { workspace = true, optional = true }
 displaydoc = { workspace = true, optional = true }
 
 icu_plurals_data = { workspace = true, optional = true }
@@ -34,7 +35,8 @@ icu_locale = { workspace = true, optional = true }
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
 icu_locale_core = { path = "../../components/locale_core" }
-serde = { workspace = true, features = ["derive"] }
+serde = { workspace = true }
+serde_derive = { workspace = true }
 serde_json = { workspace = true }
 postcard = { workspace = true, features = ["alloc"] }
 
@@ -43,7 +45,7 @@ criterion = { workspace = true }
 
 [features]
 default = ["compiled_data"]
-serde = ["dep:serde", "zerovec/serde", "icu_locale_core/serde", "icu_provider/serde", "dep:displaydoc"]
+serde = ["dep:serde", "dep:serde_derive", "zerovec/serde", "icu_locale_core/serde", "icu_provider/serde", "dep:displaydoc"]
 datagen = ["serde", "zerovec/databake", "dep:databake", "icu_provider/export"]
 experimental = []
 compiled_data = ["dep:icu_plurals_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]

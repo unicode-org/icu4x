@@ -7,7 +7,6 @@ use crate::datapath::marker_to_path;
 use crate::manifest::Manifest;
 use icu_provider::export::*;
 use icu_provider::prelude::*;
-use serde::{Deserialize, Serialize};
 use std::fmt::Write;
 use std::fs;
 use std::io::Write as _;
@@ -15,7 +14,7 @@ use std::path::PathBuf;
 
 /// Choices of what to do if [`FilesystemExporter`] tries to write to a pre-existing directory.
 #[non_exhaustive]
-#[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, serde_derive::Serialize, serde_derive::Deserialize)]
 pub enum OverwriteOption {
     /// If the directory doesn't exist, create it.
     /// If it does exist, remove it safely (`rmdir`) and re-create it.
@@ -33,7 +32,7 @@ impl Default for OverwriteOption {
 
 /// Options bag for initializing a [`FilesystemExporter`].
 #[non_exhaustive]
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, serde_derive::Serialize, serde_derive::Deserialize)]
 pub struct Options {
     /// Directory in the filesystem to write output.
     pub root: PathBuf,

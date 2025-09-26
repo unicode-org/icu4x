@@ -28,7 +28,8 @@ zerofrom = { workspace = true }
 zerovec-derive = { workspace = true, optional = true}
 
 databake = { workspace = true, features = ["derive"], optional = true }
-serde = { workspace = true, features = ["alloc", "derive"], optional = true }
+serde = { workspace = true, features = ["alloc"], optional = true }
+serde_derive = { workspace = true, optional = true }
 
 yoke = { workspace = true, optional = true }
 twox-hash = { workspace = true, optional = true }
@@ -43,7 +44,8 @@ rand = { workspace = true }
 rand_distr = { workspace = true }
 rand_pcg = { workspace = true }
 rmp-serde = { workspace = true }
-serde = { workspace = true, features = ["derive"] }
+serde = { workspace = true }
+serde_derive = { workspace = true }
 serde_json = { workspace = true }
 potential_utf = { path = "../../utils/potential_utf", features = ["zerovec"] }
 yoke = { workspace = true, features = ["derive"] }
@@ -56,7 +58,7 @@ criterion = { workspace = true }
 derive = ["dep:zerovec-derive"]
 hashmap = ["dep:twox-hash", "alloc"]
 yoke = ["dep:yoke"]
-serde = ["dep:serde", "alloc"]
+serde = ["dep:serde", "dep:serde_derive", "alloc"]
 databake = ["dep:databake"]
 alloc = []
 # No longer does anything

@@ -4,24 +4,24 @@
 
 use icu::collections::codepointtrie::toml::CodePointTrieToml;
 
-#[derive(serde::Deserialize)]
+#[derive(serde_derive::Deserialize)]
 pub(crate) struct Exceptions {
     pub(crate) exceptions: Vec<u16>,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde_derive::Deserialize)]
 pub(crate) struct Unfold {
     pub(crate) unfold: Vec<u16>,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde_derive::Deserialize)]
 pub(crate) struct Level1 {
     pub(crate) code_point_trie: CodePointTrieToml,
     pub(crate) exceptions: Exceptions,
     pub(crate) unfold: Unfold,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde_derive::Deserialize)]
 pub(crate) struct Main {
     pub(crate) ucase: Level1,
 }

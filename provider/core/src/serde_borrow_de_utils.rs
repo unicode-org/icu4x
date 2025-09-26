@@ -6,14 +6,14 @@ use alloc::borrow::Cow;
 use serde::de::Deserializer;
 use serde::Deserialize;
 
-#[derive(Deserialize)]
+#[derive(serde_derive::Deserialize)]
 #[serde(transparent)]
 // Cows fail to borrow in some situations (array, option), but structs of Cows don't.
 #[allow(clippy::exhaustive_structs)] // newtype
 #[derive(Debug)]
 pub struct CowWrap<'data>(#[serde(borrow)] pub Cow<'data, str>);
 
-#[derive(Deserialize)]
+#[derive(serde_derive::Deserialize)]
 #[serde(transparent)]
 // Cows fail to borrow in some situations (array, option), but structs of Cows don't.
 #[allow(clippy::exhaustive_structs)] // newtype

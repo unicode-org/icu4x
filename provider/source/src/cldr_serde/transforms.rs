@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use serde::Deserialize;
-
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub(crate) enum Direction {
     Forward,
@@ -12,7 +10,7 @@ pub(crate) enum Direction {
     Both,
 }
 
-#[derive(PartialEq, Debug, Default, Copy, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Default, Copy, Clone, serde_derive::Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub(crate) enum Visibility {
     Internal,
@@ -21,7 +19,7 @@ pub(crate) enum Visibility {
 }
 
 // cldr-transforms/transforms/<lang>.json
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Resource {
     #[serde(rename = "_rulesFile")]
     pub(crate) rules_file: String,

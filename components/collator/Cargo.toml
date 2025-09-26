@@ -30,7 +30,8 @@ smallvec = { workspace = true, features = ["union", "const_generics", "const_new
 zerovec = { workspace = true }
 
 databake = { workspace = true, optional = true, features = ["derive"] }
-serde = { workspace = true, features = ["derive", "alloc"], optional = true }
+serde = { workspace = true, features = ["alloc"], optional = true }
+serde_derive = { workspace = true, optional = true }
 
 icu_collator_data = { workspace = true, optional = true }
 icu_locale = { workspace = true, optional = true }
@@ -48,7 +49,7 @@ criterion = { workspace = true }
 
 [features]
 default = ["compiled_data"]
-serde = ["dep:serde", "zerovec/serde", "icu_properties/serde", "icu_normalizer/serde", "icu_collections/serde", "icu_provider/serde"]
+serde = ["dep:serde", "dep:serde_derive", "zerovec/serde", "icu_properties/serde", "icu_normalizer/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_properties/datagen", "icu_normalizer/datagen", "icu_collections/databake", "icu_provider/export"]
 compiled_data = ["dep:icu_collator_data", "icu_normalizer/compiled_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 latin1 = []

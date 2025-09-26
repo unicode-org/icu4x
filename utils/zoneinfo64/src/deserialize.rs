@@ -115,7 +115,7 @@ pub(crate) fn deserialize<'a>(resb: &'a [u32]) -> Result<ZoneInfo64<'a>, BinaryD
     })
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, serde_derive::Deserialize)]
 #[serde(rename = "zoneinfo64")]
 #[serde(rename_all = "PascalCase")]
 struct ZoneInfo64Raw<'a> {
@@ -174,7 +174,7 @@ impl<'de: 'a, 'a> Deserialize<'de> for TzZoneRaw<'a> {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, serde_derive::Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TzZoneDataRaw<'a> {
     #[serde(borrow, deserialize_with = "resb::binary::helpers::i32_tuple")]

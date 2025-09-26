@@ -75,7 +75,7 @@ pub(crate) struct Patterns {
     pub(crate) other_compound_unit_pattern1: Option<String>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub struct DurationUnit {
     #[serde(rename = "durationUnitPattern")]
     pub(crate) pat: String,
@@ -83,7 +83,7 @@ pub struct DurationUnit {
     pub(crate) alt_pat: Option<String>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub struct DurationUnits {
     #[serde(rename = "durationUnit-type-hm")]
     pub hm: DurationUnit,
@@ -123,7 +123,7 @@ impl<'de> Deserialize<'de> for UnitsData {
     where
         D: serde::Deserializer<'de>,
     {
-        #[derive(Deserialize)]
+        #[derive(serde_derive::Deserialize)]
         struct Raw {
             long: BTreeMap<String, Patterns>,
             short: BTreeMap<String, Patterns>,
@@ -181,7 +181,7 @@ impl<'de> Deserialize<'de> for UnitsData {
     }
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct LangUnits {
     pub(crate) units: UnitsData,
 }

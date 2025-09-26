@@ -7,17 +7,16 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/aliases.json>
 
-use serde::Deserialize;
 use std::collections::HashMap;
 use tinystr::TinyAsciiStr;
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Replacement<T> {
     #[serde(rename = "_replacement")]
     pub(crate) replacement: T,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Alias {
     #[serde(rename = "languageAlias")]
     pub(crate) language_aliases: HashMap<String, Replacement<String>>,
@@ -31,17 +30,17 @@ pub(crate) struct Alias {
     pub(crate) subdivision_aliases: HashMap<TinyAsciiStr<7>, Replacement<String>>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Metadata {
     pub(crate) alias: Alias,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Supplemental {
     pub(crate) metadata: Metadata,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Resource {
     pub(crate) supplemental: Supplemental,
 }

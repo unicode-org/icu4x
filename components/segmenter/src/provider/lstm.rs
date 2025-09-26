@@ -23,7 +23,7 @@ macro_rules! lstm_matrix {
         /// to be stable, their Rust representation might not be. Use with caution.
         /// </div>
         #[derive(PartialEq, Debug, Clone, zerofrom::ZeroFrom, yoke::Yokeable)]
-        #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+        #[cfg_attr(feature = "datagen", derive(serde_derive::Serialize))]
         pub struct $name<'data> {
             // Invariant: dims.product() == data.len()
             #[allow(missing_docs)]
@@ -61,7 +61,7 @@ macro_rules! lstm_matrix {
             where
                 S: serde::de::Deserializer<'de>,
             {
-                #[derive(serde::Deserialize)]
+                #[derive(serde_derive::Deserialize)]
                 struct Raw<'data> {
                     dims: [u16; $generic],
                     #[serde(borrow)]
@@ -101,9 +101,9 @@ lstm_matrix!(LstmMatrix2, 2);
 lstm_matrix!(LstmMatrix3, 3);
 
 #[derive(PartialEq, Debug, Clone, Copy)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 /// The type of LSTM model
 ///
 /// <div class="stab unstable">
@@ -126,7 +126,7 @@ pub enum ModelType {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(PartialEq, Debug, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize))]
 #[yoke(prove_covariance_manually)]
 pub struct LstmDataFloat32<'data> {
     /// Type of the model
@@ -246,7 +246,7 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for LstmDataFloat32<'data> {
     where
         S: serde::de::Deserializer<'de>,
     {
-        #[derive(serde::Deserialize)]
+        #[derive(serde_derive::Deserialize)]
         struct Raw<'data> {
             model: ModelType,
             #[cfg_attr(feature = "serde", serde(borrow))]
@@ -356,9 +356,9 @@ impl databake::BakeSize for LstmDataFloat32<'_> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_segmenter::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 #[yoke(prove_covariance_manually)]
 #[non_exhaustive]
 pub enum LstmData<'data> {

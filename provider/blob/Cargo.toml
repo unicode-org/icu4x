@@ -23,6 +23,7 @@ all-features = true
 icu_provider = { workspace = true, features = ["deserialize_postcard_1", "serde"] }
 postcard = { workspace = true }
 serde = { workspace = true }
+serde_derive = { workspace = true }
 writeable = {workspace = true }
 zerovec = { workspace = true, features = ["serde", "yoke"] }
 zerotrie = { workspace = true, features = ["serde", "zerovec"] }

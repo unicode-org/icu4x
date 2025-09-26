@@ -49,7 +49,10 @@ use alloc::{boxed::Box, string::String};
 /// );
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde_derive::Serialize, serde_derive::Deserialize)
+)]
 #[allow(clippy::exhaustive_enums)] // Defined to have two entries
 pub enum DoublePlaceholderKey {
     /// The placeholder `{0}`.

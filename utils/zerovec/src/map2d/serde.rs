@@ -353,7 +353,7 @@ where
 mod test {
     use crate::map2d::{ZeroMap2d, ZeroMap2dBorrowed};
 
-    #[derive(serde::Serialize, serde::Deserialize)]
+    #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
     #[allow(
         dead_code,
         reason = "We are testing that these types can be deserialized, and the dead_code lint explicitly ignores constructing trait impls."
@@ -363,7 +363,7 @@ mod test {
         _data: ZeroMap2d<'data, u16, str, [u8]>,
     }
 
-    #[derive(serde::Serialize, serde::Deserialize)]
+    #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
     #[allow(
         dead_code,
         reason = "We are testing that these types can be deserialized, and the dead_code lint explicitly ignores constructing trait impls."

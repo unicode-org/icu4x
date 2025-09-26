@@ -170,12 +170,12 @@ type UnvalidatedLanguageVariantsPair = LanguageStrStrPairVarULE;
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
 #[cfg_attr(
     feature = "serde",
-    derive(serde::Deserialize),
+    derive(serde_derive::Deserialize),
     zerovec::derive(Deserialize)
 )]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
+    derive(serde_derive::Serialize, databake::Bake),
     zerovec::derive(Serialize),
     databake(path = icu_locale::provider),
 )]
@@ -196,12 +196,12 @@ pub struct StrStrPair<'a>(
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
 #[cfg_attr(
     feature = "serde",
-    derive(serde::Deserialize),
+    derive(serde_derive::Deserialize),
     zerovec::derive(Deserialize)
 )]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
+    derive(serde_derive::Serialize, databake::Bake),
     zerovec::derive(Serialize),
     databake(path = icu_locale::provider),
 )]
@@ -213,9 +213,9 @@ pub struct LanguageStrStrPair<'a>(
 );
 
 #[derive(PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 #[yoke(prove_covariance_manually)]
 /// This alias data is used for locale canonicalization.
 ///
@@ -290,9 +290,9 @@ icu_provider::data_struct!(
 );
 
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 /// This likely subtags data is used for the minimize and maximize operations.
 ///
 /// Each field defines a mapping from an old identifier to a new identifier,
@@ -336,9 +336,9 @@ icu_provider::data_struct!(
 );
 
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 /// This likely subtags data is used for the minimize and maximize operations.
 ///
 /// Each field defines a mapping from an old identifier to a new identifier,
@@ -380,9 +380,9 @@ icu_provider::data_struct!(
 );
 
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 /// This likely subtags data is used for full coverage of locales, including ones that
 /// don't otherwise have data in the Common Locale Data Repository (CLDR).
 ///
@@ -420,9 +420,9 @@ icu_provider::data_struct!(
 
 /// Locale fallback rules derived from CLDR parent locales data.
 #[derive(Default, Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct Parents<'data> {
     /// Map from language identifier to language identifier, indicating that the language on the
@@ -437,9 +437,9 @@ icu_provider::data_struct!(
 );
 
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_locale::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 /// This directionality data is used to determine the script directionality of a locale.
 ///
 /// <div class="stab unstable">
@@ -472,10 +472,10 @@ icu_provider::data_struct!(
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen", 
-    derive(serde::Serialize, databake::Bake),
+    derive(serde_derive::Serialize, databake::Bake),
     databake(path = icu_locale::provider),
 )]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 pub struct ExemplarCharactersData<'data>(
     #[cfg_attr(feature = "serde", serde(borrow))] pub CodePointInversionListAndStringList<'data>,
 );

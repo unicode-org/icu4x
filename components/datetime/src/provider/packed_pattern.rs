@@ -587,16 +587,16 @@ mod _serde {
     use crate::provider::pattern::reference;
     use zerovec::VarZeroSlice;
 
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-    #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+    #[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
+    #[cfg_attr(feature = "datagen", derive(serde_derive::Serialize))]
     struct PackedPatternsMachine<'data> {
         pub header: u32,
         #[serde(borrow)]
         pub elements: &'data VarZeroSlice<PluralElementsPackedULE<ZeroSlice<PatternItem>>>,
     }
 
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-    #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+    #[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
+    #[cfg_attr(feature = "datagen", derive(serde_derive::Serialize))]
     #[derive(Default)]
     struct PackedPatternsHuman {
         #[cfg_attr(

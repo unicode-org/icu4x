@@ -10,7 +10,7 @@ use std::{fs::File, io::BufReader};
 /// Note that this file tests only valid skeleton cases for the stability of the serialization
 /// pipeline. For tests failure cases see the file where skeletons are defined.
 
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(serde_derive::Serialize, serde_derive::Deserialize)]
 struct SkeletonFixtures {
     pub skeletons: Vec<String>,
 }

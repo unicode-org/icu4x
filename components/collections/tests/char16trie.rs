@@ -293,12 +293,12 @@ fn months() {
     assert_eq!(res, TrieResult::NoMatch);
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde_derive::Deserialize)]
 pub struct TestFile {
     ucharstrie: Char16TrieVec,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde_derive::Deserialize)]
 pub struct Char16TrieVec {
     data: Vec<u16>,
 }

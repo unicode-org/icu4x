@@ -33,8 +33,8 @@ const SURROGATES_LEN: u32 = 0xDFFF - SURROGATES_START + 1;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_casemap::provider::exceptions))]
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub struct CaseMapExceptions<'data> {
@@ -91,12 +91,12 @@ impl CaseMapExceptions<'_> {
 #[zerovec::skip_derive(Ord)]
 #[cfg_attr(
     feature = "serde",
-    derive(serde::Deserialize),
+    derive(serde_derive::Deserialize),
     zerovec::derive(Deserialize)
 )]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize),
+    derive(serde_derive::Serialize),
     zerovec::derive(Serialize)
 )]
 pub struct Exception<'a> {
@@ -422,8 +422,8 @@ impl fmt::Debug for ExceptionULE {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize))]
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct DecodedException<'a> {
     /// The various bit-based data associated with this exception

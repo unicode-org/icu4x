@@ -7,13 +7,13 @@
 use icu_datetime::provider::pattern::reference;
 use std::{fs::File, io::BufReader};
 
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(serde_derive::Serialize, serde_derive::Deserialize)]
 struct InvalidPatternFixture {
     pub pattern: String,
     pub error: String,
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(serde_derive::Serialize, serde_derive::Deserialize)]
 struct PatternFixtures {
     pub valid_patterns: Vec<String>,
     pub invalid_patterns: Vec<InvalidPatternFixture>,

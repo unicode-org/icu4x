@@ -104,7 +104,7 @@ use crate::options::*;
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
-    derive(serde::Serialize, serde::Deserialize)
+    derive(serde_derive::Serialize, serde_derive::Deserialize)
 )]
 #[non_exhaustive]
 pub enum DateFields {
@@ -178,7 +178,7 @@ impl DateFields {
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
-    derive(serde::Serialize, serde::Deserialize)
+    derive(serde_derive::Serialize, serde_derive::Deserialize)
 )]
 #[non_exhaustive]
 pub enum ZoneStyle {
@@ -284,7 +284,7 @@ mod _serde {
     use super::*;
     use serde::{Deserialize, Serialize};
 
-    #[derive(Serialize, Deserialize)]
+    #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
     #[serde(rename_all = "camelCase")]
     struct FieldSetBuilderHuman {
         #[serde(skip_serializing_if = "Option::is_none")]
@@ -301,7 +301,7 @@ mod _serde {
         pub year_style: Option<YearStyle>,
     }
 
-    #[derive(Serialize)]
+    #[derive(serde_derive::Serialize)]
     #[serde(rename_all = "camelCase")]
     struct FieldSetBuilderMachine {
         pub length: Option<Length>,

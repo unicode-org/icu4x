@@ -47,7 +47,7 @@ Additional points:
 Consider the struct
 
 ```rust
-#[derive(serde::Deserialize)]
+#[derive(serde_derive::Deserialize)]
 pub struct MonthNamesBad {
     // Invariant 1: the first element in the vector is the default value
     // Invariant 2: the length of the vector is the same as month_count
@@ -84,7 +84,7 @@ Below are 3 approaches to resolve this issue that are consistent with the ICU4X 
 Change the functions to return default fallback values if the data is not in the expected form. This code also consolidates `month_count` and `month_names` into the same field, a change reflected in all of the proposed solutions.
 
 ```rust
-#[derive(serde::Deserialize)]
+#[derive(serde_derive::Deserialize)]
 pub struct MonthNamesGIGO {
     // WEAK Invariant: the first element in the vector is the default value
     month_names: Vec<String>,
@@ -115,7 +115,7 @@ impl MonthNamesGIGO {
 Change the struct so that it doesn't have internal invariants.
 
 ```rust
-#[derive(serde::Deserialize)]
+#[derive(serde_derive::Deserialize)]
 pub struct MonthNamesNoInvariants {
     pub first_month_name: String,
     pub remaining_months: Vec<String>,
@@ -147,12 +147,12 @@ With this solution, check that there are the expected number of items at deseria
 ```rust
 use icu_provider::DataError;
 
-#[derive(serde::Deserialize)]
+#[derive(serde_derive::Deserialize)]
 struct MonthNamesInner {
     pub month_names: Vec<String>,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde_derive::Deserialize)]
 #[serde(try_from = "MonthNamesInner")]
 pub struct MonthNamesCheckedInvariants {
     // Invariant: the vector is non-empty.

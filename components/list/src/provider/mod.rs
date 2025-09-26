@@ -82,9 +82,9 @@ icu_provider::data_struct!(
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_list::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 pub struct ListFormatterPatterns<'data> {
     /// The start pattern
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -124,9 +124,9 @@ impl ListFormatterPatterns<'_> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_list::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 pub struct ConditionalListJoinerPattern<'data> {
     /// The default pattern
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -147,7 +147,7 @@ pub struct ConditionalListJoinerPattern<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_list::provider))]
 pub struct SpecialCasePattern<'data> {
     /// The condition on the following element
@@ -165,7 +165,7 @@ impl<'data> SpecialCasePattern<'data> {
     {
         use serde::Deserialize;
 
-        #[derive(Deserialize)]
+        #[derive(serde_derive::Deserialize)]
         struct SpecialCasePatternOptionalDfa<'data> {
             #[cfg_attr(
                 feature = "serde",
@@ -196,7 +196,7 @@ impl<'data> SpecialCasePattern<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize))]
 pub struct ListJoinerPattern<'data> {
     /// The pattern string without the placeholders
     pub(crate) string: VarZeroCow<'data, str>,
@@ -216,7 +216,7 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for ListJoinerPattern<'data> {
     where
         D: serde::Deserializer<'de>,
     {
-        #[derive(serde::Deserialize)]
+        #[derive(serde_derive::Deserialize)]
         struct Dummy<'data> {
             #[cfg_attr(feature = "serde", serde(borrow))]
             string: VarZeroCow<'data, str>,

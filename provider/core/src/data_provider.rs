@@ -461,7 +461,7 @@ mod test {
     use alloc::borrow::Cow;
     use alloc::string::String;
     use core::fmt::Debug;
-    use serde::{Deserialize, Serialize};
+    use serde_derive::{Deserialize, Serialize};
 
     // This tests DataProvider borrow semantics with a dummy data provider based on a
     // JSON string. It also exercises most of the data provider code paths.

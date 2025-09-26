@@ -45,7 +45,7 @@ mod lstm;
 // name = "Double_Quote_ALetter"
 // left = "Double_Quote"
 // right = "ALetter"
-#[derive(serde::Deserialize, Debug)]
+#[derive(serde_derive::Deserialize, Debug)]
 struct SegmenterProperty {
     name: String,
     // If left and right are defined, this define is combined state.
@@ -63,7 +63,7 @@ struct SegmenterProperty {
 // left = [ "Double_Qoute" ]
 // right = [ "Double_Qoute" ]
 // break_state = true # true if break opportunity.
-#[derive(serde::Deserialize, Debug)]
+#[derive(serde_derive::Deserialize, Debug)]
 struct SegmenterState {
     left: Vec<String>,
     right: Vec<String>,
@@ -81,7 +81,7 @@ struct SegmenterState {
 // ...
 // [[rules]]
 // ...
-#[derive(serde::Deserialize, Debug)]
+#[derive(serde_derive::Deserialize, Debug)]
 struct SegmenterRuleTable {
     segmenter_type: String,
     tables: Vec<SegmenterProperty>,

@@ -216,7 +216,10 @@ pub use __impl_data_provider_never_marker as impl_data_provider_never_marker;
 ///
 /// The hash will be stable over time within major releases.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Hash, ULE)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde_derive::Serialize, serde_derive::Deserialize)
+)]
 #[repr(transparent)]
 pub struct DataMarkerIdHash([u8; 4]);
 

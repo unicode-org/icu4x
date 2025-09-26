@@ -28,7 +28,8 @@ syn = { workspace = true, features = ["extra-traits"]}
 
 [dev-dependencies]
 zerovec = { path = "..", features = ["serde", "derive"] }
-serde = { workspace = true, features = ["derive"] }
+serde = { workspace = true }
+serde_derive = { workspace = true }
 zerofrom = { path = "../../../utils/zerofrom" }
 bincode = { workspace = true }
 serde_json = { workspace = true }

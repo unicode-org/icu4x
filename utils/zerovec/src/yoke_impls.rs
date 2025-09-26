@@ -305,7 +305,10 @@ mod test {
     // duplicate tests elsewhere in this crate, but they are here for completeness.
 
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[cfg_attr(
+        feature = "serde",
+        derive(serde_derive::Serialize, serde_derive::Deserialize)
+    )]
     #[cfg_attr(feature = "databake", derive(databake::Bake))]
     #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     struct DeriveTest_ZeroVec<'data> {
@@ -325,7 +328,10 @@ mod test {
     }
 
     #[derive(yoke::Yokeable)]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[cfg_attr(
+        feature = "serde",
+        derive(serde_derive::Serialize, serde_derive::Deserialize)
+    )]
     #[cfg_attr(feature = "databake", derive(databake::Bake))]
     #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     struct DeriveTest_ZeroSlice<'data> {
@@ -345,7 +351,10 @@ mod test {
     }
 
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[cfg_attr(
+        feature = "serde",
+        derive(serde_derive::Serialize, serde_derive::Deserialize)
+    )]
     #[cfg_attr(feature = "databake", derive(databake::Bake))]
     #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     struct DeriveTest_VarZeroVec<'data> {
@@ -365,7 +374,10 @@ mod test {
     }
 
     #[derive(yoke::Yokeable)]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[cfg_attr(
+        feature = "serde",
+        derive(serde_derive::Serialize, serde_derive::Deserialize)
+    )]
     #[cfg_attr(feature = "databake", derive(databake::Bake))]
     #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     struct DeriveTest_VarZeroSlice<'data> {
@@ -385,7 +397,10 @@ mod test {
     }
 
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[cfg_attr(
+        feature = "serde",
+        derive(serde_derive::Serialize, serde_derive::Deserialize)
+    )]
     #[cfg_attr(feature = "databake", derive(databake::Bake))]
     #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     #[yoke(prove_covariance_manually)]
@@ -412,7 +427,10 @@ mod test {
     }
 
     #[derive(yoke::Yokeable)]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[cfg_attr(
+        feature = "serde",
+        derive(serde_derive::Serialize, serde_derive::Deserialize)
+    )]
     #[cfg_attr(feature = "databake", derive(databake::Bake))]
     #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     #[yoke(prove_covariance_manually)]
@@ -439,7 +457,10 @@ mod test {
     }
 
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[cfg_attr(
+        feature = "serde",
+        derive(serde_derive::Serialize, serde_derive::Deserialize)
+    )]
     #[cfg_attr(feature = "databake", derive(databake::Bake))]
     #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     #[yoke(prove_covariance_manually)]
@@ -466,7 +487,10 @@ mod test {
     }
 
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[cfg_attr(
+        feature = "serde",
+        derive(serde_derive::Serialize, serde_derive::Deserialize)
+    )]
     #[cfg_attr(feature = "databake", derive(databake::Bake))]
     #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     #[yoke(prove_covariance_manually)]
@@ -495,7 +519,10 @@ mod test {
     }
 
     #[derive(yoke::Yokeable)]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+    #[cfg_attr(
+        feature = "serde",
+        derive(serde_derive::Serialize, serde_derive::Deserialize)
+    )]
     #[cfg_attr(feature = "databake", derive(databake::Bake))]
     #[cfg_attr(feature = "databake", databake(path = zerovec::yoke_impls::test))]
     #[yoke(prove_covariance_manually)]

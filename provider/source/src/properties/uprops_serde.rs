@@ -5,7 +5,7 @@
 use icu::collections::codepointtrie::toml::CodePointTrieToml;
 
 pub(crate) mod binary {
-    #[derive(serde::Deserialize)]
+    #[derive(serde_derive::Deserialize)]
     pub(crate) struct BinaryProperty {
         #[serde(rename = "long_name")]
         pub(crate) _long_name: String,
@@ -16,14 +16,14 @@ pub(crate) mod binary {
         pub(crate) strings: Option<Vec<String>>,
     }
 
-    #[derive(serde::Deserialize)]
+    #[derive(serde_derive::Deserialize)]
     pub(crate) struct Main {
         #[serde(default)]
         pub(crate) binary_property: Vec<BinaryProperty>,
     }
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde_derive::Deserialize)]
 pub(crate) struct PropertyValue {
     pub(crate) discr: u32,
     pub(crate) long: String,
@@ -33,7 +33,7 @@ pub(crate) struct PropertyValue {
 }
 
 pub(crate) mod enumerated {
-    #[derive(serde::Deserialize)]
+    #[derive(serde_derive::Deserialize)]
     pub(crate) struct EnumeratedPropertyMapRange {
         #[serde(rename = "a")]
         pub(crate) _a: u32,
@@ -45,7 +45,7 @@ pub(crate) mod enumerated {
         pub(crate) _name: String,
     }
 
-    #[derive(serde::Deserialize)]
+    #[derive(serde_derive::Deserialize)]
     pub(crate) struct EnumeratedPropertyMap {
         #[serde(rename = "long_name")]
         pub(crate) _long_name: String,
@@ -57,7 +57,7 @@ pub(crate) mod enumerated {
         pub(crate) code_point_trie: super::CodePointTrieToml,
     }
 
-    #[derive(serde::Deserialize)]
+    #[derive(serde_derive::Deserialize)]
     pub(crate) struct Main {
         #[serde(default)]
         pub(crate) enum_property: Vec<EnumeratedPropertyMap>,
@@ -66,12 +66,12 @@ pub(crate) mod enumerated {
 
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 pub(crate) mod code_point_prop {
-    #[derive(serde::Deserialize)]
+    #[derive(serde_derive::Deserialize)]
     pub(crate) struct CodePointPropertyMap {
         pub(crate) code_point_trie: super::CodePointTrieToml,
     }
 
-    #[derive(serde::Deserialize)]
+    #[derive(serde_derive::Deserialize)]
     pub(crate) struct Main {
         // TODO: update icuexportdata to print a different TOML header than "enum_property"
         #[serde(default)]
@@ -80,7 +80,7 @@ pub(crate) mod code_point_prop {
 }
 
 pub(crate) mod mask {
-    #[derive(serde::Deserialize)]
+    #[derive(serde_derive::Deserialize)]
     pub(crate) struct MaskPropertyMap {
         #[serde(rename = "long_name")]
         pub(crate) _long_name: String,
@@ -91,7 +91,7 @@ pub(crate) mod mask {
         pub(crate) values: Vec<super::PropertyValue>,
     }
 
-    #[derive(serde::Deserialize)]
+    #[derive(serde_derive::Deserialize)]
     pub(crate) struct Main {
         #[serde(default)]
         pub(crate) mask_property: Vec<MaskPropertyMap>,
@@ -101,7 +101,7 @@ pub(crate) mod mask {
 pub(crate) mod script_extensions {
     use super::CodePointTrieToml;
 
-    #[derive(serde::Deserialize)]
+    #[derive(serde_derive::Deserialize)]
     pub(crate) struct ScriptWithExtensionsPropertyProperty {
         #[serde(rename = "long_name")]
         pub(crate) _long_name: String,
@@ -111,7 +111,7 @@ pub(crate) mod script_extensions {
         pub(crate) code_point_trie: CodePointTrieToml,
     }
 
-    #[derive(serde::Deserialize)]
+    #[derive(serde_derive::Deserialize)]
     pub(crate) struct Main {
         #[serde(default)]
         pub(crate) script_extensions: Vec<ScriptWithExtensionsPropertyProperty>,

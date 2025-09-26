@@ -54,7 +54,7 @@ use core::ptr::NonNull;
 /// // The little-endian bytes correspond to the numbers on the following line.
 /// let nums: &[u16] = &[211, 281, 421, 461];
 ///
-/// #[derive(serde::Serialize, serde::Deserialize)]
+/// #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
 /// struct Data<'a> {
 ///     #[serde(borrow)]
 ///     nums: ZeroVec<'a, u16>,

@@ -230,7 +230,10 @@ fn small0_in_fast_small16() {
 /// The width of the elements in the data array of a [`CodePointTrie`].
 /// See [`UCPTrieValueWidth`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
 #[derive(Clone, Copy, PartialEq)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde_derive::Serialize, serde_derive::Deserialize)
+)]
 pub enum ValueWidthEnum {
     Bits16 = 0,
     Bits32 = 1,
@@ -317,25 +320,25 @@ pub fn run_trie_tests<T: TrieValue + Into<u32>>(trie: &CodePointTrie<T>, check_r
 // The following structs might be useful later for de-/serialization of the
 // main `CodePointTrie` struct in the corresponding data provider.
 
-#[cfg_attr(any(feature = "serde", test), derive(serde::Deserialize))]
+#[cfg_attr(any(feature = "serde", test), derive(serde_derive::Deserialize))]
 pub struct UnicodeEnumeratedProperty {
     pub code_point_map: EnumPropCodePointMap,
     pub code_point_trie: EnumPropSerializedCPT,
 }
 
-#[cfg_attr(any(feature = "serde", test), derive(serde::Deserialize))]
+#[cfg_attr(any(feature = "serde", test), derive(serde_derive::Deserialize))]
 pub struct EnumPropCodePointMap {
     pub data: EnumPropCodePointMapData,
 }
 
-#[cfg_attr(any(feature = "serde", test), derive(serde::Deserialize))]
+#[cfg_attr(any(feature = "serde", test), derive(serde_derive::Deserialize))]
 pub struct EnumPropCodePointMapData {
     pub long_name: String,
     pub name: String,
     pub ranges: Vec<(u32, u32, u32)>,
 }
 
-#[cfg_attr(any(feature = "serde", test), derive(serde::Deserialize))]
+#[cfg_attr(any(feature = "serde", test), derive(serde_derive::Deserialize))]
 pub struct EnumPropSerializedCPT {
     #[cfg_attr(any(feature = "serde", test), serde(rename = "struct"))]
     pub trie_struct: EnumPropSerializedCPTStruct,
@@ -346,7 +349,7 @@ pub struct EnumPropSerializedCPT {
 // using similar functions, some of these structs may be useful to refactor
 // into main code at a later point.
 
-#[cfg_attr(any(feature = "serde", test), derive(serde::Deserialize))]
+#[cfg_attr(any(feature = "serde", test), derive(serde_derive::Deserialize))]
 pub struct EnumPropSerializedCPTStruct {
     #[cfg_attr(any(feature = "serde", test), serde(skip))]
     pub long_name: String,
@@ -385,12 +388,12 @@ pub fn run_deserialize_test_from_test_data(test_file: &str) {
     // The following structs are specific to the TOML format files for dumped ICU
     // test data.
 
-    #[derive(serde::Deserialize)]
+    #[derive(serde_derive::Deserialize)]
     pub struct TestFile {
         code_point_trie: TestCodePointTrie,
     }
 
-    #[derive(serde::Deserialize)]
+    #[derive(serde_derive::Deserialize)]
     pub struct TestCodePointTrie {
         // The trie_struct field for test data files is dumped from the same source
         // (ICU4C) using the same function (usrc_writeUCPTrie) as property data
@@ -401,7 +404,7 @@ pub fn run_deserialize_test_from_test_data(test_file: &str) {
         test_data: TestData,
     }
 
-    #[derive(serde::Deserialize)]
+    #[derive(serde_derive::Deserialize)]
     pub struct TestData {
         #[serde(rename(deserialize = "checkRanges"))]
         check_ranges: Vec<u32>,

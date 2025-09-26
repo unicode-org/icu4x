@@ -13,7 +13,7 @@ use icu::time::Time;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
-#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, serde_derive::Deserialize)]
 pub(crate) struct UsesMetazone {
     #[serde(rename = "_mzone")]
     pub(crate) mzone: Option<String>,
@@ -27,36 +27,36 @@ pub(crate) struct UsesMetazone {
     pub(crate) dst_offset: Option<String>,
 }
 
-#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, serde_derive::Deserialize)]
 pub(crate) struct MetazoneForPeriod {
     #[serde(rename = "usesMetazone")]
     pub(crate) uses_meta_zone: UsesMetazone,
 }
 
-#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, serde_derive::Deserialize)]
 #[serde(untagged)]
 pub(crate) enum MetaLocationOrSubRegion {
     Location(Vec<MetazoneForPeriod>),
     SubRegion(BTreeMap<String, Vec<MetazoneForPeriod>>),
 }
 
-#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, serde_derive::Deserialize)]
 #[serde(untagged)]
 pub(crate) enum ZonePeriod {
     Region(Vec<MetazoneForPeriod>),
     LocationOrSubRegion(BTreeMap<String, MetaLocationOrSubRegion>),
 }
 
-#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, serde_derive::Deserialize)]
 pub(crate) struct TimeZonePeriod(pub(crate) BTreeMap<String, ZonePeriod>);
 
-#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, serde_derive::Deserialize)]
 pub(crate) struct MetazoneInfo {
     #[serde(rename = "timezone")]
     pub(crate) time_zone: TimeZonePeriod,
 }
 
-#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, serde_derive::Deserialize)]
 pub(crate) struct MapZone {
     #[serde(rename = "_other")]
     pub(crate) metazone: String,
@@ -66,16 +66,16 @@ pub(crate) struct MapZone {
     pub(crate) territory: Region,
 }
 
-#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, serde_derive::Deserialize)]
 pub(crate) struct MetazoneTerritory {
     #[serde(rename = "mapZone")]
     pub(crate) map_zone: MapZone,
 }
 
-#[derive(PartialEq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, serde_derive::Deserialize)]
 pub(crate) struct MetazonesTerritory(pub(crate) Vec<MetazoneTerritory>);
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, serde_derive::Deserialize)]
 pub(crate) struct Metazones {
     #[serde(rename = "metazoneInfo")]
     pub(crate) meta_zone_info: MetazoneInfo,
@@ -83,13 +83,13 @@ pub(crate) struct Metazones {
     pub(crate) meta_zones_territory: MetazonesTerritory,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, serde_derive::Deserialize)]
 pub(crate) struct Supplemental {
     #[serde(rename = "metaZones")]
     pub(crate) meta_zones: Metazones,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, serde_derive::Deserialize)]
 pub(crate) struct Resource {
     pub(crate) supplemental: Supplemental,
 }

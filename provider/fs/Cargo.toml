@@ -21,7 +21,8 @@ all-features = true
 
 [dependencies]
 icu_provider = { workspace = true, features = ["serde", "std", "export"] }
-serde = { workspace = true, features = ["derive", "alloc"] }
+serde = { workspace = true, features = ["alloc"] }
+serde_derive = { workspace = true }
 serde-json-core = { workspace = true, features = ["std"] }
 
 # Dependencies for the export feature

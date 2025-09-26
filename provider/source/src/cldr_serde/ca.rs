@@ -17,7 +17,7 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 
-#[derive(Debug, PartialEq, Clone, Deserialize)]
+#[derive(Debug, PartialEq, Clone, serde_derive::Deserialize)]
 pub(crate) struct FormatWidths<Symbols> {
     pub(crate) abbreviated: Symbols,
     pub(crate) narrow: Symbols,
@@ -25,7 +25,7 @@ pub(crate) struct FormatWidths<Symbols> {
     pub(crate) wide: Symbols,
 }
 
-#[derive(Debug, PartialEq, Clone, Deserialize)]
+#[derive(Debug, PartialEq, Clone, serde_derive::Deserialize)]
 pub(crate) struct StandAloneWidths<Symbols> {
     pub(crate) abbreviated: Option<Symbols>,
     pub(crate) narrow: Option<Symbols>,
@@ -33,12 +33,12 @@ pub(crate) struct StandAloneWidths<Symbols> {
     pub(crate) wide: Option<Symbols>,
 }
 
-#[derive(Debug, PartialEq, Clone, Deserialize)]
+#[derive(Debug, PartialEq, Clone, serde_derive::Deserialize)]
 pub(crate) struct Numeric<Symbols> {
     pub(crate) all: Symbols,
 }
 
-#[derive(Debug, PartialEq, Clone, Deserialize)]
+#[derive(Debug, PartialEq, Clone, serde_derive::Deserialize)]
 pub(crate) struct Contexts<Symbols> {
     pub(crate) format: FormatWidths<Symbols>,
     #[serde(rename = "stand-alone")]
@@ -98,14 +98,14 @@ impl<Symbols> Contexts<Symbols> {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Deserialize)]
+#[derive(Debug, PartialEq, Clone, serde_derive::Deserialize)]
 pub(crate) struct MonthSymbols(pub(crate) HashMap<String, String>);
-#[derive(Debug, PartialEq, Clone, Deserialize)]
+#[derive(Debug, PartialEq, Clone, serde_derive::Deserialize)]
 pub(crate) struct MonthPatternSymbols {
     pub(crate) leap: PatternString<SinglePlaceholder>,
 }
 
-#[derive(Debug, PartialEq, Clone, Deserialize)]
+#[derive(Debug, PartialEq, Clone, serde_derive::Deserialize)]
 pub(crate) struct DaySymbols {
     pub(crate) sun: String,
     pub(crate) mon: String,
@@ -118,7 +118,7 @@ pub(crate) struct DaySymbols {
 
 // The day period symbols are Cow<'static, str> instead of String because the Option
 // needs to be retained when converting them into Cow for the data provider.
-#[derive(Debug, PartialEq, Clone, Deserialize)]
+#[derive(Debug, PartialEq, Clone, serde_derive::Deserialize)]
 pub(crate) struct DayPeriodSymbols {
     pub(crate) am: Cow<'static, str>,
     pub(crate) pm: Cow<'static, str>,
@@ -202,10 +202,10 @@ impl DateTimeFormats {
     }
 }
 
-#[derive(PartialEq, Clone, Debug, Deserialize)]
+#[derive(PartialEq, Clone, Debug, serde_derive::Deserialize)]
 pub(crate) struct AvailableFormats(pub(crate) HashMap<String, String>);
 
-#[derive(PartialEq, Clone, Debug, Deserialize)]
+#[derive(PartialEq, Clone, Debug, serde_derive::Deserialize)]
 pub(crate) struct CyclicNameSets {
     pub(crate) years: Option<Contexts<BTreeMap<u8, String>>>,
 }
@@ -238,12 +238,12 @@ pub(crate) struct Dates {
     pub(crate) datetime_formats: DateTimeFormats,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct DatesCalendars {
     pub(crate) calendars: HashMap<String, Dates>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct LangDates {
     pub(crate) dates: DatesCalendars,
 }

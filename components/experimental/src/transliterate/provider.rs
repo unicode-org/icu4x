@@ -42,7 +42,7 @@ icu_provider::data_marker!(
 
 /// The data struct representing [UTS #35 transform rules](https://unicode.org/reports/tr35/tr35-general.html#Transforms).
 #[derive(Debug, Clone, PartialEq, Eq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::transliterate::provider))]
 pub struct RuleBasedTransliterator<'a> {
     /// Whether this transliterator is accessible directly through the constructor.
@@ -68,7 +68,7 @@ impl<'de> serde::Deserialize<'de> for RuleBasedTransliterator<'de> {
         D: serde::Deserializer<'de>,
     {
         use serde::de::Error;
-        #[derive(serde::Deserialize)]
+        #[derive(serde_derive::Deserialize)]
         pub struct Raw<'a> {
             pub visibility: bool,
             #[serde(borrow)]
@@ -128,12 +128,12 @@ impl RuleBasedTransliterator<'_> {
 #[zerovec::derive(Debug)]
 #[cfg_attr(
     feature = "serde",
-    derive(serde::Deserialize),
+    derive(serde_derive::Deserialize),
     zerovec::derive(Deserialize)
 )]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize),
+    derive(serde_derive::Serialize),
     zerovec::derive(Serialize)
 )]
 pub struct SimpleId<'a> {
@@ -154,12 +154,12 @@ pub struct SimpleId<'a> {
 #[zerovec::derive(Debug)]
 #[cfg_attr(
     feature = "serde",
-    derive(serde::Deserialize),
+    derive(serde_derive::Deserialize),
     zerovec::derive(Deserialize)
 )]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize),
+    derive(serde_derive::Serialize),
     zerovec::derive(Serialize)
 )]
 pub struct Rule<'a> {
@@ -179,8 +179,8 @@ pub struct Rule<'a> {
 
 /// The special matchers and replacers used by this transliterator.
 #[derive(Debug, Clone, zerofrom::ZeroFrom, PartialEq, Eq, Default)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::transliterate::provider))]
 pub struct VarTable<'a> {
     /// Variable definitions.
@@ -236,12 +236,12 @@ impl VarTable<'_> {
 #[zerovec::derive(Debug)]
 #[cfg_attr(
     feature = "serde",
-    derive(serde::Deserialize),
+    derive(serde_derive::Deserialize),
     zerovec::derive(Deserialize)
 )]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize),
+    derive(serde_derive::Serialize),
     zerovec::derive(Serialize)
 )]
 pub struct Segment<'a> {
@@ -259,12 +259,12 @@ pub struct Segment<'a> {
 #[zerovec::derive(Debug)]
 #[cfg_attr(
     feature = "serde",
-    derive(serde::Deserialize),
+    derive(serde_derive::Deserialize),
     zerovec::derive(Deserialize)
 )]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize),
+    derive(serde_derive::Serialize),
     zerovec::derive(Serialize)
 )]
 pub struct FunctionCall<'a> {

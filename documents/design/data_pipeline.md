@@ -98,7 +98,7 @@ icu_provider::data_marker!(
 /// This is a sample data struct.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(Deserialize))]
-#[cfg_attr(feature = "datagen", derive(Serialize))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize))]
 pub struct SampleDataStruct<'data> {
     /// This field is always present, and it may be borrowed or owned.
     pub normal_value: Cow<'data, str>,

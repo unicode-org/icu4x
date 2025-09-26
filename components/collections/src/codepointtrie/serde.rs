@@ -7,7 +7,7 @@ use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
 use zerofrom::ZeroFrom;
 use zerovec::ZeroVec;
 
-#[derive(Serialize, Deserialize)]
+#[derive(serde_derive::Serialize, serde_derive::Deserialize)]
 pub struct CodePointTrieSerde<'trie, T: TrieValue> {
     header: CodePointTrieHeader,
     #[serde(borrow)]

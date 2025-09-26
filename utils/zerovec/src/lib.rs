@@ -58,7 +58,7 @@
 //! use zerovec::{VarZeroVec, ZeroVec};
 //!
 //! // This example requires the "serde" feature
-//! #[derive(serde::Serialize, serde::Deserialize)]
+//! #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
 //! pub struct DataStruct<'data> {
 //!     #[serde(borrow)]
 //!     nums: ZeroVec<'data, u32>,
@@ -115,7 +115,7 @@
 //!     name: Cow<'a, str>,
 //! }
 //!
-//! #[derive(serde::Serialize, serde::Deserialize)]
+//! #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
 //! struct Data<'a> {
 //!     #[serde(borrow)]
 //!     important_dates: ZeroVec<'a, Date>,
@@ -372,7 +372,7 @@ pub mod vecs {
 ///     d: u8,
 /// }
 ///
-/// #[derive(serde::Serialize, serde::Deserialize)]
+/// #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
 /// struct Dates<'a> {
 ///     #[serde(borrow)]
 ///     dates: ZeroVec<'a, Date>,
@@ -489,7 +489,7 @@ pub use zerovec_derive::make_ule;
 ///     name: Cow<'a, str>,
 /// }
 ///
-/// #[derive(serde::Serialize, serde::Deserialize)]
+/// #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
 /// struct Data<'a> {
 ///     // note: VarZeroVec always must reference the ULE type directly
 ///     #[serde(borrow)]

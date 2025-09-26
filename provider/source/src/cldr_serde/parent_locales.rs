@@ -24,7 +24,7 @@ pub(crate) struct LocaleRules {
     pub(crate) collations: Option<LocaleRule>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct ParentLocales {
     #[serde(rename = "parentLocale")]
     pub(crate) parent_locale: HashMap<LanguageIdentifier, LanguageIdentifier>,
@@ -42,13 +42,13 @@ fn rules_backport() -> LocaleRules {
     }
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Supplemental {
     #[serde(rename = "parentLocales")]
     pub(crate) parent_locales: ParentLocales,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Resource {
     pub(crate) supplemental: Supplemental,
 }

@@ -7,13 +7,12 @@
 //! Sample file:
 //! <https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/currencyData.json>
 
-use serde::Deserialize;
 use std::collections::BTreeMap;
 use tinystr::TinyAsciiStr;
 
 type ISOCode = TinyAsciiStr<3>;
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct RoundingModes {
     // TODO: Get `deserialize_option_number_from_string` to work
     //    HINT: #[serde(deserialize_with = "serde_aux::prelude::deserialize_option_number_from_string")])
@@ -30,7 +29,7 @@ pub(crate) struct RoundingModes {
     pub(crate) cash_digits: Option<String>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Fractions {
     #[serde(rename = "DEFAULT")]
     default: RoundingModes,
@@ -39,18 +38,18 @@ pub(crate) struct Fractions {
     pub(crate) currencies: BTreeMap<ISOCode, RoundingModes>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct CurrencyData {
     pub(crate) fractions: Fractions,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Supplemental {
     #[serde(rename = "currencyData")]
     pub(crate) currency_data: CurrencyData,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 #[allow(
     dead_code,
     reason = "This is WIP, remove this annotation when this component is done"

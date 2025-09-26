@@ -34,7 +34,8 @@ potential_utf = { workspace = true, features = ["alloc", "zerovec"] }
 writeable = { workspace = true }
 zerovec = { workspace = true, features = ["alloc", "yoke"] }
 
-serde = { workspace = true, features = ["derive", "alloc"], optional = true }
+serde = { workspace = true, features = ["alloc"], optional = true }
+serde_derive = { workspace = true, optional = true }
 zerotrie = { workspace = true, features = ["alloc"], optional = true }
 databake = { workspace = true, features = ["derive"], optional = true}
 either = { workspace = true, optional = true }
@@ -53,7 +54,8 @@ icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }
 icu_time = { path = "../time", features = ["ixdtf", "alloc"] }
 litemap = { path = "../../utils/litemap" }
 
-serde = { workspace = true, features = ["derive"] }
+serde = { workspace = true }
+serde_derive = { workspace = true }
 serde_json = { workspace = true }
 
 bincode = { workspace = true }
@@ -65,6 +67,7 @@ criterion = { workspace = true }
 default = ["compiled_data", "ixdtf"]
 serde = [
     "dep:serde",
+    "dep:serde_derive",
     "icu_calendar/serde",
     "icu_decimal/serde",
     "icu_pattern/serde",

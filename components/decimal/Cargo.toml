@@ -26,7 +26,8 @@ icu_locale_core = { workspace = true }
 writeable = { workspace = true }
 zerovec = { workspace = true }
 databake = { workspace = true, features = ["derive"], optional = true}
-serde = { workspace = true, features = ["derive"], optional = true }
+serde = { workspace = true, features = ["alloc"], optional = true }
+serde_derive = { workspace = true, optional = true }
 
 icu_decimal_data = { workspace = true, optional = true }
 icu_locale = { workspace = true, optional = true }
@@ -44,7 +45,7 @@ criterion = { workspace = true }
 
 [features]
 default = ["compiled_data"]
-serde = ["dep:serde", "icu_provider/serde", "zerovec/serde"]
+serde = ["dep:serde", "dep:serde_derive", "icu_provider/serde", "zerovec/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_provider/export", "alloc"]
 compiled_data = ["dep:icu_decimal_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 ryu = ["fixed_decimal/ryu"]

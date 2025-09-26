@@ -160,7 +160,7 @@ mod test {
     use crate::samples::*;
     use crate::ZeroVec;
 
-    #[derive(serde::Serialize, serde::Deserialize)]
+    #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
     #[allow(
         dead_code,
         reason = "The dead_code lint explicitly ignores constructing trait impls."

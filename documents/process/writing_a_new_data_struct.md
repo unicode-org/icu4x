@@ -102,9 +102,9 @@ icu_provider::data_marker!(
 );
 
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 pub struct DecimalSymbols<'data> {
     /// Character used to separate the integer and fraction parts of the number.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -138,7 +138,7 @@ use serde::Deserialize;
 use std::collections::HashMap;
 use tinystr::TinyStr8;
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub struct Numbers {
     #[serde(rename = "defaultNumberingSystem")]
     pub default_numbering_system: TinyStr8,
@@ -147,15 +147,15 @@ pub struct Numbers {
     pub minimum_grouping_digits: u8,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub struct LangNumbers {
     pub numbers: Numbers,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub struct LangData(pub HashMap<LanguageIdentifier, LangNumbers>);
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub struct Resource {
     pub main: LangData,
 }

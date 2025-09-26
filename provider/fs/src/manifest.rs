@@ -15,7 +15,7 @@ pub struct Manifest {
     pub file_extension: &'static str,
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(serde_derive::Serialize, serde_derive::Deserialize)]
 struct JsonManifest {
     #[serde(rename = "syntax")]
     pub buffer_format: BufferFormat,

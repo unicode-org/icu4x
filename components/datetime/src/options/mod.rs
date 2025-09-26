@@ -58,7 +58,7 @@ use icu_time::scaffold::IntoOption;
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
-    derive(serde::Serialize, serde::Deserialize)
+    derive(serde_derive::Serialize, serde_derive::Deserialize)
 )]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
@@ -130,7 +130,7 @@ impl IntoOption<Length> for Length {
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
-    derive(serde::Serialize, serde::Deserialize)
+    derive(serde_derive::Serialize, serde_derive::Deserialize)
 )]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
@@ -260,7 +260,7 @@ impl IntoOption<Alignment> for Alignment {
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
-    derive(serde::Serialize, serde::Deserialize)
+    derive(serde_derive::Serialize, serde_derive::Deserialize)
 )]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
@@ -384,7 +384,7 @@ impl IntoOption<YearStyle> for YearStyle {
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
-    derive(serde::Serialize, serde::Deserialize)
+    derive(serde_derive::Serialize, serde_derive::Deserialize)
 )]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
@@ -446,7 +446,7 @@ impl IntoOption<TimePrecision> for TimePrecision {
 }
 
 #[cfg(all(feature = "serde", feature = "experimental"))]
-#[derive(Copy, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Copy, Clone, serde_derive::Serialize, serde_derive::Deserialize)]
 #[serde(rename_all = "camelCase")]
 enum TimePrecisionSerde {
     Hour,

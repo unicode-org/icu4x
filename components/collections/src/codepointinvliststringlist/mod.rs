@@ -31,7 +31,10 @@ use zerovec::{VarZeroSlice, VarZeroVec};
 #[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroFrom)]
 #[cfg_attr(not(feature = "alloc"), zerovec::skip_derive(ZeroMapKV, ToOwned))]
 // Valid to auto-derive Deserialize because the invariants are weakly held
-#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde_derive::Serialize, serde_derive::Deserialize)
+)]
 #[cfg_attr(feature = "serde", zerovec::derive(Serialize, Deserialize, Debug))]
 pub struct CodePointInversionListAndStringList<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]

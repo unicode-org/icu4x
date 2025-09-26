@@ -10,10 +10,9 @@
 use icu::experimental::measure::parser::ids::CLDR_IDS_TRIE;
 use icu::experimental::measure::provider::single_unit::UnitID;
 use icu_provider::DataError;
-use serde::Deserialize;
 use std::collections::BTreeMap;
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Constant {
     #[serde(rename = "_value")]
     pub(crate) value: String,
@@ -25,7 +24,7 @@ pub(crate) struct Constant {
     pub(crate) description: Option<String>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Quantity {
     #[serde(rename = "_quantity")]
     pub(crate) quantity: String,
@@ -37,7 +36,7 @@ pub(crate) struct Quantity {
     pub(crate) description: Option<String>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct ConvertUnit {
     #[serde(rename = "_baseUnit")]
     pub(crate) base_unit: String,
@@ -49,25 +48,25 @@ pub(crate) struct ConvertUnit {
     pub(crate) offset: Option<String>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct UnitConstants {
     #[serde(flatten)]
     pub(crate) constants: BTreeMap<String, Constant>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct UnitQuantities {
     #[serde(flatten)]
     pub(crate) quantities: BTreeMap<String, Quantity>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct ConvertUnits {
     #[serde(flatten)]
     pub(crate) convert_units: BTreeMap<String, ConvertUnit>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct Supplemental {
     #[serde(rename = "unitConstants")]
     pub(crate) unit_constants: UnitConstants,
@@ -79,7 +78,7 @@ pub(crate) struct Supplemental {
     pub(crate) convert_units: ConvertUnits,
 }
 
-#[derive(Deserialize)]
+#[derive(serde_derive::Deserialize)]
 pub(crate) struct Resource {
     pub(crate) supplemental: Supplemental,
 }

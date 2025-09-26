@@ -235,7 +235,7 @@ where
 mod test {
     use crate::{map::ZeroMapBorrowed, ZeroMap};
 
-    #[derive(serde::Serialize, serde::Deserialize)]
+    #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
     #[expect(
         dead_code,
         reason = "The dead_code lint explicitly ignores constructing trait impls."
@@ -245,7 +245,7 @@ mod test {
         _data: ZeroMap<'data, str, [u8]>,
     }
 
-    #[derive(serde::Serialize, serde::Deserialize)]
+    #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
     #[expect(
         dead_code,
         reason = "The dead_code lint explicitly ignores constructing trait impls."

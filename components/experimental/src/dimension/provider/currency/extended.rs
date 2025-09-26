@@ -32,8 +32,8 @@ icu_provider::data_marker!(
 
 /// Currency Extended  data struct.
 #[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize))]
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyExtendedData<'data> {
     /// Contains the localized display names for a currency based on plural rules.

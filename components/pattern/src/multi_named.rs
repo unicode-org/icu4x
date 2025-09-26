@@ -57,7 +57,10 @@ pub struct MultiNamedPlaceholderKey<'a>(pub &'a str);
 
 /// Cowable version of [`MultiNamedPlaceholderKey`], used during construction.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde_derive::Serialize, serde_derive::Deserialize)
+)]
 #[repr(transparent)]
 #[allow(clippy::exhaustive_structs)] // transparent newtype
 #[cfg(feature = "alloc")]

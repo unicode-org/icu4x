@@ -88,7 +88,7 @@ pub use self::unfold::CaseMapUnfold;
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_casemap::provider))]
 #[yoke(prove_covariance_manually)]
 /// CaseMapper provides low-level access to the data necessary to
@@ -108,7 +108,7 @@ icu_provider::data_struct!(
 #[cfg(feature = "serde")]
 impl<'de> serde::Deserialize<'de> for CaseMap<'de> {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-        #[derive(serde::Deserialize)]
+        #[derive(serde_derive::Deserialize)]
         pub struct Raw<'data> {
             #[serde(borrow)]
             pub trie: CodePointTrie<'data, CaseMapData>,

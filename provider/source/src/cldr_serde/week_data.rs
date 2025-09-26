@@ -11,7 +11,7 @@ use icu::locale::{subtags::region, subtags::Region};
 use serde::{Deserialize, Deserializer};
 use std::collections::BTreeMap;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, serde_derive::Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub(crate) enum Weekday {
     Mon,
@@ -103,7 +103,7 @@ impl<'de> Deserialize<'de> for Territory {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, serde_derive::Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub(crate) struct WeekData {
     pub(crate) min_days: BTreeMap<Territory, String>,
@@ -112,13 +112,13 @@ pub(crate) struct WeekData {
     pub(crate) weekend_end: BTreeMap<Territory, Weekday>,
 }
 
-#[derive(Deserialize)]
+#[derive(serde_derive::Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub(crate) struct Supplemental {
     pub(crate) week_data: WeekData,
 }
 
-#[derive(Deserialize)]
+#[derive(serde_derive::Deserialize)]
 pub(crate) struct Resource {
     pub(crate) supplemental: Supplemental,
 }

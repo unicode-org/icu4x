@@ -10,7 +10,10 @@ use alloc::borrow::Cow;
 use icu_pattern::{Pattern, SinglePlaceholder};
 
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde_derive::Serialize, serde_derive::Deserialize)
+)]
 #[cfg_attr(feature = "databake", derive(databake::Bake))]
 #[cfg_attr(feature = "databake", databake(path = crate))]
 #[derive(Debug, PartialEq)]

@@ -4,24 +4,24 @@
 
 use icu::collections::codepointtrie::toml::CodePointTrieToml;
 
-#[derive(serde::Deserialize)]
+#[derive(serde_derive::Deserialize)]
 pub(crate) struct DecompositionData {
     pub(crate) trie: CodePointTrieToml,
     pub(crate) cap: u16,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde_derive::Deserialize)]
 pub(crate) struct DecompositionTables {
     pub(crate) scalars16: Vec<u16>,
     pub(crate) scalars32: Vec<u32>,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde_derive::Deserialize)]
 pub(crate) struct CanonicalCompositions {
     pub(crate) compositions: Vec<u16>,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde_derive::Deserialize)]
 pub(crate) struct NonRecursiveDecompositionSupplement {
     pub(crate) trie: CodePointTrieToml,
     pub(crate) scalars32: Vec<u32>,

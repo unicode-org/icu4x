@@ -19,7 +19,7 @@ macro_rules! impl_tinystr_subtag {
         [$bad_example:literal $(, $more_bad_examples:literal)*],
     ) => {
         #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-        #[cfg_attr(feature = "serde", derive(serde::Serialize))]
+        #[cfg_attr(feature = "serde", derive(serde_derive::Serialize))]
         #[repr(transparent)]
         $(#[$doc])*
         pub struct $name(tinystr::TinyAsciiStr<$len_end>);

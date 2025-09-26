@@ -26,7 +26,8 @@ displaydoc = { workspace = true }
 writeable = { workspace = true, features = ["either"] }
 databake = { workspace = true, features = ["derive"], optional = true }
 litemap = { workspace = true, optional = true }
-serde = { workspace = true, features = ["derive", "alloc"], optional = true }
+serde = { workspace = true, features = ["alloc"], optional = true }
+serde_derive = { workspace = true, optional = true }
 yoke = { workspace = true, features = ["derive"], optional = true }
 zerovec = { workspace = true, optional = true }
 
@@ -43,6 +44,6 @@ default = []
 alloc = ["zerovec?/alloc"]
 databake = ["dep:databake"]
 litemap = ["dep:litemap"]
-serde = ["alloc", "dep:serde"]
+serde = ["alloc", "dep:serde", "dep:serde_derive"]
 yoke = ["dep:yoke"]
 zerovec = ["dep:zerovec", "alloc"]

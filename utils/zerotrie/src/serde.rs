@@ -371,7 +371,7 @@ mod tests {
     use super::*;
     use alloc::borrow::Cow;
 
-    #[derive(Serialize, Deserialize)]
+    #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
     pub struct ZeroTrieSimpleAsciiCow<'a> {
         #[serde(borrow)]
         trie: ZeroTrieSimpleAscii<Cow<'a, [u8]>>,
@@ -407,7 +407,7 @@ mod tests {
         ));
     }
 
-    #[derive(Serialize, Deserialize)]
+    #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
     pub struct ZeroAsciiIgnoreCaseTrieCow<'a> {
         #[serde(borrow)]
         trie: ZeroAsciiIgnoreCaseTrie<Cow<'a, [u8]>>,
@@ -438,7 +438,7 @@ mod tests {
         ));
     }
 
-    #[derive(Serialize, Deserialize)]
+    #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
     pub struct ZeroTriePerfectHashCow<'a> {
         #[serde(borrow)]
         trie: ZeroTriePerfectHash<Cow<'a, [u8]>>,
@@ -519,7 +519,7 @@ mod tests {
         ));
     }
 
-    #[derive(Serialize, Deserialize)]
+    #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
     pub struct ZeroTrieAnyCow<'a> {
         #[serde(borrow)]
         trie: ZeroTrie<Cow<'a, [u8]>>,
@@ -582,7 +582,7 @@ mod tests_zerovec {
     use super::*;
     use zerovec::ZeroVec;
 
-    #[derive(Serialize, Deserialize)]
+    #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
     pub struct ZeroTrieSimpleAsciiZeroVec<'a> {
         #[serde(borrow)]
         trie: ZeroTrieSimpleAscii<ZeroVec<'a, u8>>,
@@ -611,7 +611,7 @@ mod tests_zerovec {
         assert!(!bincode_recovered.trie.into_store().is_owned());
     }
 
-    #[derive(Serialize, Deserialize)]
+    #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
     pub struct ZeroTriePerfectHashZeroVec<'a> {
         #[serde(borrow)]
         trie: ZeroTriePerfectHash<ZeroVec<'a, u8>>,

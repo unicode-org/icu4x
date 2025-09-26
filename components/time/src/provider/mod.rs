@@ -68,9 +68,9 @@ const SECONDS_TO_EIGHTS_OF_HOURS: i32 = 60 * 60 / 8;
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[zerovec::make_ule(TimeZoneVariantULE)]
 #[repr(u8)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_time::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 #[non_exhaustive]
 pub enum TimeZoneVariant {
     /// The variant corresponding to `"standard"` in CLDR.
@@ -400,8 +400,8 @@ pub struct TimezonePeriods<'a> {
 
 /// Encodes ZoneNameTimestamp in 3 bytes by dropping the unused metadata
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize))]
 pub struct Timestamp24(pub ZoneNameTimestamp);
 
 impl AsULE for Timestamp24 {
@@ -418,8 +418,8 @@ impl AsULE for Timestamp24 {
 }
 
 #[cfg(feature = "serde")]
-#[derive(serde::Deserialize)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[derive(serde_derive::Deserialize)]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize))]
 struct TimeZonePeriodsSerde<'a> {
     #[serde(borrow)]
     pub index: ZeroTrieSimpleAscii<ZeroVec<'a, u8>>,

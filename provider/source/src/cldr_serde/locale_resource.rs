@@ -26,7 +26,7 @@ use serde::Deserialize;
 ///
 /// This deserializer is generic over `T`, which is the type of the resource-specific fields,
 /// and will in effect "strip" the top two layers from the JSON when parsing.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, serde_derive::Deserialize)]
 pub(crate) struct LocaleResource<T> {
     pub(crate) main: SingleLocaleMap<T>,
 }

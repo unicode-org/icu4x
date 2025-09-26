@@ -124,9 +124,9 @@ use provider::UnvalidatedPluralRange;
 /// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Ord, PartialOrd)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_plurals))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
 #[repr(u8)]
 #[zerovec::make_ule(PluralCategoryULE)]
 #[allow(clippy::exhaustive_enums)] // this type is mostly stable. new categories may potentially be added in the future,
@@ -833,8 +833,8 @@ where
 pub struct PluralElements<T>(PluralElementsInner<T>);
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde_derive::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde_derive::Serialize))]
 pub(crate) struct PluralElementsInner<T> {
     #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
     zero: Option<T>,

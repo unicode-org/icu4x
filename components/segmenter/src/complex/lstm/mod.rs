@@ -325,12 +325,11 @@ mod tests {
     use super::*;
     use crate::GraphemeClusterSegmenter;
     use icu_provider::prelude::*;
-    use serde::Deserialize;
 
     /// `TestCase` is a struct used to store a single test case.
     /// Each test case has two attributes: `unseg` which denotes the unsegmented line, and `true_bies` which indicates the Bies
     /// sequence representing the true segmentation.
-    #[derive(PartialEq, Debug, Deserialize)]
+    #[derive(PartialEq, Debug, serde_derive::Deserialize)]
     struct TestCase {
         unseg: String,
         expected_bies: String,
@@ -338,7 +337,7 @@ mod tests {
     }
 
     /// `TestTextData` is a struct to store a vector of `TestCase` that represents a test text.
-    #[derive(PartialEq, Debug, Deserialize)]
+    #[derive(PartialEq, Debug, serde_derive::Deserialize)]
     struct TestTextData {
         testcases: Vec<TestCase>,
     }

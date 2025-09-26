@@ -6,10 +6,9 @@ use fixed_decimal::Decimal;
 #[cfg(feature = "experimental")]
 use icu_plurals::PluralOperands;
 use icu_plurals::{PluralCategory, PluralRuleType, PluralRulesOptions};
-use serde::Deserialize;
 
 /// Defines the data-driven test sets for the operands.
-#[derive(Deserialize)]
+#[derive(serde_derive::Deserialize)]
 #[allow(dead_code)]
 pub struct OperandsTestSet {
     pub string: Vec<OperandsTest<String>>,
@@ -20,7 +19,7 @@ pub struct OperandsTestSet {
 
 /// A single test case verifying the conversion from [FixedDecimal] into
 /// [PluralOperands].
-#[derive(Debug, Deserialize)]
+#[derive(Debug, serde_derive::Deserialize)]
 #[allow(dead_code)]
 pub struct FromTestCase {
     /// The [FixedDecimal] input
@@ -32,7 +31,7 @@ pub struct FromTestCase {
 /// A serialized representation of [FixedDecimal] in the data driven tests.
 ///
 /// Use the `From` trait to convert into [FixedDecimal] in tests.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, serde_derive::Deserialize)]
 pub struct FixedDecimalInput {
     /// Value supplied to [FixedDecimal::from] when constructing.
     from: i64,
@@ -48,7 +47,7 @@ impl From<&FixedDecimalInput> for Decimal {
     }
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, serde_derive::Deserialize)]
 #[serde(untagged)]
 pub enum PluralOperandsInput {
     List((f64, u64, usize, usize, u64, u64, usize)),
@@ -102,14 +101,14 @@ impl From<PluralOperandsInput> for PluralOperands {
     }
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, serde_derive::Deserialize)]
 #[allow(dead_code)]
 pub struct OperandsTest<T> {
     pub input: T,
     pub output: PluralOperandsInput,
 }
 
-#[derive(Deserialize)]
+#[derive(serde_derive::Deserialize)]
 #[allow(dead_code)]
 pub struct RuleTest {
     pub rule: String,
@@ -117,7 +116,7 @@ pub struct RuleTest {
     pub output: RuleTestOutput,
 }
 
-#[derive(Deserialize)]
+#[derive(serde_derive::Deserialize)]
 #[serde(untagged)]
 #[allow(dead_code)]
 pub enum RuleTestOutput {
@@ -125,11 +124,11 @@ pub enum RuleTestOutput {
     Error(String),
 }
 
-#[derive(Deserialize)]
+#[derive(serde_derive::Deserialize)]
 #[allow(dead_code)]
 pub struct RuleTestSet(pub Vec<RuleTest>);
 
-#[derive(Clone, Copy, Debug, Deserialize)]
+#[derive(Clone, Copy, Debug, serde_derive::Deserialize)]
 pub enum PluralRuleTypeInput {
     Cardinal,
     Ordinal,
@@ -144,7 +143,7 @@ impl From<PluralRuleTypeInput> for PluralRulesOptions {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, serde_derive::Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum PluralCategoryInput {
     Zero,
@@ -169,7 +168,7 @@ impl PartialEq<PluralCategory> for &PluralCategoryInput {
     }
 }
 
-#[derive(Deserialize)]
+#[derive(serde_derive::Deserialize)]
 #[allow(dead_code)]
 pub struct CategoriesTest {
     pub langid: String,

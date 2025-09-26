@@ -10,7 +10,7 @@ icu_benchmark_macros::instrument!();
 
 use zerovec::ZeroVec;
 
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(serde_derive::Serialize, serde_derive::Deserialize)]
 struct DataStruct<'s> {
     #[serde(borrow)]
     pub nums: ZeroVec<'s, u16>,

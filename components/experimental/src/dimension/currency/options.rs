@@ -4,13 +4,13 @@
 
 //! Options for [`CurrencyFormatter`](crate::dimension::currency::formatter::CurrencyFormatter).
 
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
-
 /// A collection of configuration options that determine the formatting behavior of
 /// [`CurrencyFormatter`](crate::dimension::currency::formatter::CurrencyFormatter).
 #[derive(Copy, Debug, Eq, PartialEq, Clone, Default, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde_derive::Serialize, serde_derive::Deserialize)
+)]
 #[non_exhaustive]
 pub struct CurrencyFormatterOptions {
     /// The width of the currency format.
@@ -24,7 +24,10 @@ impl From<Width> for CurrencyFormatterOptions {
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde_derive::Serialize, serde_derive::Deserialize)
+)]
 #[non_exhaustive]
 pub enum Width {
     /// Format the currency with the standard (short) currency symbol.

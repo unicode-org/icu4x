@@ -29,7 +29,8 @@ tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 zerovec = { workspace = true, features = ["derive"] }
 
 databake = { workspace = true, features = ["derive"], optional = true }
-serde = { workspace = true, features = ["derive", "alloc"], optional = true }
+serde = { workspace = true, features = ["alloc"], optional = true }
+serde_derive = { workspace = true, optional = true }
 
 icu_calendar_data = { workspace = true, optional = true }
 icu_locale = { workspace = true, optional = true }
@@ -38,7 +39,8 @@ icu_locale = { workspace = true, optional = true }
 icu_provider = { path = "../../provider/core", features = ["logging"] }
 icu = { path = "../../components/icu", default-features = false }
 itertools = { workspace = true }
-serde = { workspace = true, features = ["derive", "alloc"] }
+serde = { workspace = true, features = ["alloc"] }
+serde_derive = { workspace = true }
 serde_json = { workspace = true }
 simple_logger = { workspace = true }
 ureq = { workspace = true }
@@ -52,7 +54,7 @@ criterion = { workspace = true }
 default = ["compiled_data", "ixdtf"]
 ixdtf = ["dep:ixdtf"]
 logging = ["calendrical_calculations/logging"]
-serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
+serde = ["dep:serde", "dep:serde_derive", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake", "alloc", "icu_provider/export"]
 compiled_data = ["dep:icu_calendar_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 

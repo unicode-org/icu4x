@@ -19,7 +19,7 @@
 //! use zerovec::ule::*;
 //! use zerovec::ZeroVec;
 //!
-//! #[derive(serde::Serialize, serde::Deserialize)]
+//! #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
 //! struct Foo<'a> {
 //!     field1: char,
 //!     field2: u32,
@@ -39,7 +39,7 @@
 //! use zerofrom::ZeroFrom;
 //! use core::mem;
 //!
-//! # #[derive(serde::Serialize, serde::Deserialize)]
+//! # #[derive(serde_derive::Serialize, serde_derive::Deserialize)]
 //! # struct Foo<'a> {
 //! #    field1: char,
 //! #    field2: u32,

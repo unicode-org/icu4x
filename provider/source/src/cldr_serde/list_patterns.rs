@@ -7,11 +7,9 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-misc-full/main/en/listPatterns.json>
 
-use serde::Deserialize;
-
 use super::locale_resource::LocaleResource;
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct ListPattern {
     pub(crate) start: String,
     pub(crate) middle: String,
@@ -20,7 +18,7 @@ pub(crate) struct ListPattern {
     pub(crate) pair: String,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct ListPatterns {
     #[serde(rename = "listPattern-type-standard")]
     pub(crate) standard: ListPattern,
@@ -42,7 +40,7 @@ pub(crate) struct ListPatterns {
     pub(crate) unit_short: ListPattern,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, serde_derive::Deserialize)]
 pub(crate) struct LangListPatterns {
     #[serde(rename = "listPatterns")]
     pub(crate) list_patterns: ListPatterns,
