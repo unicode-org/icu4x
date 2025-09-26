@@ -37,10 +37,10 @@ impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
         use icu::collections::codepointinvlist::CodePointInversionListBuilder;
         use icu::collections::codepointtrie::CodePointTrie;
         use icu::collections::codepointtrie::TrieType;
+        use icu::collections::codepointtrie::TrieValue;
         use icu::properties::props::BidiMirroringGlyph;
         use icu::properties::props::BidiPairedBracketType;
         use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
-        use icu_collections::codepointtrie::TrieValue;
 
         self.check_req::<PropertyEnumBidiMirroringGlyphV1>(req)?;
 

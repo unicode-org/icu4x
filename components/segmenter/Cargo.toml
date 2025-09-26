@@ -20,7 +20,6 @@ version.workspace = true
 all-features = true
 
 [dependencies]
-displaydoc = { workspace = true }
 icu_collections = { workspace = true }
 icu_locale_core = { workspace = true }
 icu_provider = { workspace = true }

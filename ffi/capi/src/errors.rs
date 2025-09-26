@@ -61,7 +61,7 @@ pub mod ffi {
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::RangeError, Struct, compact)]
     #[diplomat::rust_link(icu::calendar::DateError, Enum, compact)]
-    #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+    #[cfg(feature = "calendar")]
     #[non_exhaustive]
     pub enum CalendarError {
         Unknown = 0x00,
@@ -74,7 +74,7 @@ pub mod ffi {
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::ParseError, Enum, compact)]
     #[diplomat::rust_link(icu::time::ParseError, Enum, compact)]
-    #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+    #[cfg(feature = "calendar")]
     #[non_exhaustive]
     pub enum Rfc9557ParseError {
         Unknown = 0x00,
@@ -86,7 +86,7 @@ pub mod ffi {
 
     #[derive(Debug, PartialEq, Eq)]
     #[diplomat::rust_link(icu::time::zone::InvalidOffsetError, Struct, compact)]
-    #[cfg(any(feature = "datetime", feature = "timezone"))]
+    #[cfg(feature = "datetime")]
     pub struct TimeZoneInvalidOffsetError;
 
     #[derive(Debug, PartialEq, Eq)]
@@ -160,14 +160,14 @@ impl From<icu_provider::DataError> for DataError {
     }
 }
 
-#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+#[cfg(feature = "calendar")]
 impl From<icu_calendar::RangeError> for CalendarError {
     fn from(_: icu_calendar::RangeError) -> Self {
         Self::OutOfRange
     }
 }
 
-#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+#[cfg(feature = "calendar")]
 impl From<icu_calendar::DateError> for CalendarError {
     fn from(e: icu_calendar::DateError) -> Self {
         match e {
@@ -179,7 +179,7 @@ impl From<icu_calendar::DateError> for CalendarError {
     }
 }
 
-#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+#[cfg(feature = "calendar")]
 impl From<icu_calendar::ParseError> for Rfc9557ParseError {
     fn from(e: icu_calendar::ParseError) -> Self {
         match e {
@@ -192,7 +192,7 @@ impl From<icu_calendar::ParseError> for Rfc9557ParseError {
     }
 }
 
-#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+#[cfg(feature = "calendar")]
 impl From<icu_time::ParseError> for Rfc9557ParseError {
     fn from(e: icu_time::ParseError) -> Self {
         match e {
@@ -316,7 +316,7 @@ impl From<icu_locale_core::ParseError> for LocaleParseError {
     }
 }
 
-#[cfg(any(feature = "timezone", feature = "datetime"))]
+#[cfg(feature = "datetime")]
 impl From<icu_time::zone::InvalidOffsetError> for TimeZoneInvalidOffsetError {
     fn from(_: icu_time::zone::InvalidOffsetError) -> Self {
         Self

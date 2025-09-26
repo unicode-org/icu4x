@@ -19,7 +19,6 @@ version.workspace = true
 all-features = true
 
 [dependencies]
-displaydoc = { workspace = true }
 icu_provider = { workspace = true }
 regex-automata = { workspace = true, features = ["dfa-search"] }
 writeable = { workspace = true }

@@ -138,9 +138,8 @@
 )]
 #![warn(missing_docs)]
 
-#[cfg(doc)]
 // Needed for intra-doc link to work, since icu_provider is otherwise never mentioned in this crate
-extern crate icu_provider;
+use icu_provider as _;
 
 #[doc(inline)]
 pub use icu_calendar as calendar;
