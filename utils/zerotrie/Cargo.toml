@@ -36,7 +36,7 @@ postcard = { workspace = true, features = ["alloc"] }
 rand = { workspace = true }
 rand_pcg = { workspace = true }
 rmp-serde = { workspace = true }
-serde = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 zerovec = { path = "../../utils/zerovec", features = ["serde", "hashmap"] }
 icu_locale_core = { workspace = true, features = ["alloc"]  }

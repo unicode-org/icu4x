@@ -370,6 +370,7 @@ mod testdata {
 mod tests {
     use super::*;
     use alloc::borrow::Cow;
+    use serde::{Serialize, Deserialize};
 
     #[derive(Serialize, Deserialize)]
     pub struct ZeroTrieSimpleAsciiCow<'a> {
@@ -383,7 +384,7 @@ mod tests {
         let original = ZeroTrieSimpleAsciiCow { trie };
         let json_str = serde_json::to_string(&original).unwrap();
         let bincode_bytes = bincode::serialize(&original).unwrap();
-        let rmp_bytes = rmp_serde_core::to_vec(&original).unwrap();
+        let rmp_bytes = rmp_serde::to_vec(&original).unwrap();
 
         assert_eq!(json_str, testdata::basic::JSON_STR_ASCII);
         assert_eq!(&bincode_bytes[0..9], &[0, 26, 0, 0, 0, 0, 0, 0, 0]);
@@ -394,7 +395,7 @@ mod tests {
         let json_recovered: ZeroTrieSimpleAsciiCow = serde_json::from_str(&json_str).unwrap();
         let bincode_recovered: ZeroTrieSimpleAsciiCow =
             bincode::deserialize(&bincode_bytes).unwrap();
-        let rmp_recovered: ZeroTrieSimpleAsciiCow = rmp_serde_core::from_slice(&rmp_bytes).unwrap();
+        let rmp_recovered: ZeroTrieSimpleAsciiCow = rmp_serde::from_slice(&rmp_bytes).unwrap();
 
         assert_eq!(original.trie, json_recovered.trie);
         assert_eq!(original.trie, bincode_recovered.trie);
@@ -581,6 +582,7 @@ mod tests {
 mod tests_zerovec {
     use super::*;
     use zerovec::ZeroVec;
+    use serde::{Serialize, Deserialize};
 
     #[derive(Serialize, Deserialize)]
     pub struct ZeroTrieSimpleAsciiZeroVec<'a> {
