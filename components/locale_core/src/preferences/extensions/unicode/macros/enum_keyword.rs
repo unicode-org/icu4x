@@ -167,7 +167,7 @@ macro_rules! __enum_keyword {
                         // complaints.
                         #[allow(non_snake_case)]
                         Self::$variant $(($v2))? => {
-                            input.push_subtag($crate::subtags::subtag!($key));
+                            *input = $crate::extensions::unicode::Value::from_subtag(Some($crate::subtags::subtag!($key)));
 
                             $(
                                 if let Some(v2) = $v2 {
@@ -315,6 +315,53 @@ mod tests {
         assert_eq!(
             DummyKeyword::Sub(Some(DummySubKeyword::Rare)).as_str(),
             "sub-rare"
+        );
+    }
+
+    #[test]
+    fn enum_keywords_boolean_test() {
+        enum_keyword!(DummyTrueKeyword { Standard, Rare });
+
+        enum_keyword!(DummyKeyword {
+            ("false" => False),
+            ("true" => True(DummyTrueKeyword) {
+                ("standard" => Standard),
+                ("rare" => Rare)
+            })
+        }, "dk");
+
+        let v = unicode::Value::from_str("false").unwrap();
+        let dk = DummyKeyword::try_from(&v).unwrap();
+        assert_eq!(dk, DummyKeyword::False);
+        assert_eq!(unicode::Value::from(dk), v);
+
+        let v = unicode::Value::from_str("true").unwrap();
+        let dk = DummyKeyword::try_from(&v).unwrap();
+        assert_eq!(dk, DummyKeyword::True(None));
+        assert_eq!(unicode::Value::from(dk), v);
+
+        let v = unicode::Value::from_str("foo").unwrap();
+        let dk = DummyKeyword::try_from(&v);
+        assert!(dk.is_err());
+
+        let v = unicode::Value::from_str("true-standard").unwrap();
+        let dk = DummyKeyword::try_from(&v).unwrap();
+        assert_eq!(dk, DummyKeyword::True(Some(DummyTrueKeyword::Standard)));
+        assert_eq!(unicode::Value::from(dk), v);
+
+        let v = unicode::Value::from_str("true-rare").unwrap();
+        let dk = DummyKeyword::try_from(&v).unwrap();
+        assert_eq!(dk, DummyKeyword::True(Some(DummyTrueKeyword::Rare)));
+        assert_eq!(unicode::Value::from(dk), v);
+
+        let v = unicode::Value::from_str("true-foo").unwrap();
+        let dk = DummyKeyword::try_from(&v).unwrap();
+        assert_eq!(dk, DummyKeyword::True(None));
+        assert_eq!(unicode::Value::from(dk), unicode::value!("true"));
+
+        assert_eq!(
+            DummyKeyword::True(Some(DummyTrueKeyword::Rare)).as_str(),
+            "true-rare"
         );
     }
 }
