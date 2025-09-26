@@ -23,7 +23,7 @@ all-features = true
 databake = { workspace = true, features = ["derive"], optional = true }
 displaydoc = { workspace = true }
 litemap = { workspace = true, features = ["alloc"], optional = true }
-serde = { workspace = true, optional = true }
+serde_core = { workspace = true, optional = true }
 yoke = { workspace = true, features = ["derive"], optional = true }
 zerofrom = { workspace = true, optional = true }
 zerovec = { workspace = true, optional = true }
@@ -53,7 +53,7 @@ default = []
 alloc = []
 databake = ["dep:databake", "zerovec?/databake"]
 litemap = ["dep:litemap", "alloc"]
-serde = ["dep:serde", "dep:litemap", "alloc", "litemap/serde", "zerovec?/serde"]
+serde = ["dep:serde_core", "dep:litemap", "alloc", "litemap/serde", "zerovec?/serde"]
 yoke = ["dep:yoke"]
 zerofrom = ["dep:zerofrom"]
 

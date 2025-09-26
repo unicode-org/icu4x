@@ -14,12 +14,12 @@ use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::fmt;
 use litemap::LiteMap;
-use serde::de::Error;
-use serde::de::Visitor;
-use serde::Deserialize;
-use serde::Deserializer;
-use serde::Serialize;
-use serde::Serializer;
+use serde_core::de::Error;
+use serde_core::de::Visitor;
+use serde_core::Deserialize;
+use serde_core::Deserializer;
+use serde_core::Serialize;
+use serde_core::Serializer;
 
 struct ByteStrVisitor;
 impl<'de> Visitor<'de> for ByteStrVisitor {
@@ -35,7 +35,7 @@ impl<'de> Visitor<'de> for ByteStrVisitor {
     }
     fn visit_seq<A>(self, mut v: A) -> Result<Self::Value, A::Error>
     where
-        A: serde::de::SeqAccess<'de>,
+        A: serde_core::de::SeqAccess<'de>,
     {
         let mut result = Vec::with_capacity(v.size_hint().unwrap_or(0));
         while let Some(x) = v.next_element::<u8>()? {
@@ -383,7 +383,7 @@ mod tests {
         let original = ZeroTrieSimpleAsciiCow { trie };
         let json_str = serde_json::to_string(&original).unwrap();
         let bincode_bytes = bincode::serialize(&original).unwrap();
-        let rmp_bytes = rmp_serde::to_vec(&original).unwrap();
+        let rmp_bytes = rmp_serde_core::to_vec(&original).unwrap();
 
         assert_eq!(json_str, testdata::basic::JSON_STR_ASCII);
         assert_eq!(&bincode_bytes[0..9], &[0, 26, 0, 0, 0, 0, 0, 0, 0]);
@@ -394,7 +394,7 @@ mod tests {
         let json_recovered: ZeroTrieSimpleAsciiCow = serde_json::from_str(&json_str).unwrap();
         let bincode_recovered: ZeroTrieSimpleAsciiCow =
             bincode::deserialize(&bincode_bytes).unwrap();
-        let rmp_recovered: ZeroTrieSimpleAsciiCow = rmp_serde::from_slice(&rmp_bytes).unwrap();
+        let rmp_recovered: ZeroTrieSimpleAsciiCow = rmp_serde_core::from_slice(&rmp_bytes).unwrap();
 
         assert_eq!(original.trie, json_recovered.trie);
         assert_eq!(original.trie, bincode_recovered.trie);
