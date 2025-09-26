@@ -370,7 +370,7 @@ mod testdata {
 mod tests {
     use super::*;
     use alloc::borrow::Cow;
-    use serde::{Serialize, Deserialize};
+    use serde::{Deserialize, Serialize};
 
     #[derive(Serialize, Deserialize)]
     pub struct ZeroTrieSimpleAsciiCow<'a> {
@@ -581,8 +581,8 @@ mod tests {
 #[cfg(feature = "zerovec")]
 mod tests_zerovec {
     use super::*;
+    use serde::{Deserialize, Serialize};
     use zerovec::ZeroVec;
-    use serde::{Serialize, Deserialize};
 
     #[derive(Serialize, Deserialize)]
     pub struct ZeroTrieSimpleAsciiZeroVec<'a> {
