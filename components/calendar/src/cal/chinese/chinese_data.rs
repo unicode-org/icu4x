@@ -7,7 +7,7 @@
 
 use crate::provider::chinese_based::PackedChineseBasedYearInfo;
 
-pub const STARTING_YEAR: i32 = 1901;
+pub const STARTING_YEAR: i32 = 1912;
 
 #[rustfmt::skip]
 pub const DATA: &[PackedChineseBasedYearInfo] = {
@@ -15,17 +15,6 @@ pub const DATA: &[PackedChineseBasedYearInfo] = {
     let l = true; // long
     let s = false; // short
     &[
-        PackedChineseBasedYearInfo::new(1901, [s, l, s, s, l, s, l, s, l, l, l, s, s], None, iso(1901, 2, 19)),
-        PackedChineseBasedYearInfo::new(1902, [l, s, l, s, s, l, s, l, s, l, l, l, s], None, iso(1902, 2, 8)),
-        PackedChineseBasedYearInfo::new(1903, [s, l, s, l, s, s, l, s, s, l, l, s, l], Some(6), iso(1903, 1, 29)),
-        PackedChineseBasedYearInfo::new(1904, [l, l, s, l, s, s, l, s, s, l, l, s, s], None, iso(1904, 2, 16)),
-        PackedChineseBasedYearInfo::new(1905, [l, l, s, l, l, s, s, l, s, l, s, l, s], None, iso(1905, 2, 4)),
-        PackedChineseBasedYearInfo::new(1906, [s, l, l, s, l, s, l, s, l, s, l, s, l], Some(5), iso(1906, 1, 25)),
-        PackedChineseBasedYearInfo::new(1907, [s, l, s, l, s, l, l, s, l, s, l, s, s], None, iso(1907, 2, 13)),
-        PackedChineseBasedYearInfo::new(1908, [l, s, s, l, l, s, l, s, l, l, s, l, s], None, iso(1908, 2, 2)),
-        PackedChineseBasedYearInfo::new(1909, [s, l, s, s, l, s, l, s, l, l, l, s, l], Some(3), iso(1909, 1, 22)),
-        PackedChineseBasedYearInfo::new(1910, [s, l, s, s, l, s, l, s, l, l, l, s, s], None, iso(1910, 2, 10)),
-        PackedChineseBasedYearInfo::new(1911, [l, s, l, s, s, l, s, s, l, l, s, l, l], Some(7), iso(1911, 1, 30)),
         PackedChineseBasedYearInfo::new(1912, [l, s, l, s, s, l, s, s, l, l, s, l, s], None, iso(1912, 2, 18)),
         PackedChineseBasedYearInfo::new(1913, [l, l, s, l, s, s, l, s, s, l, s, l, s], None, iso(1913, 2, 6)),
         PackedChineseBasedYearInfo::new(1914, [l, l, s, l, s, l, s, l, s, s, l, s, l], Some(6), iso(1914, 1, 26)),
@@ -214,6 +203,32 @@ pub const DATA: &[PackedChineseBasedYearInfo] = {
         PackedChineseBasedYearInfo::new(2097, [l, s, l, s, s, s, l, s, l, l, s, l, s], None, iso(2097, 2, 12)),
         PackedChineseBasedYearInfo::new(2098, [l, l, s, l, s, s, s, l, s, l, s, l, s], None, iso(2098, 2, 1)),
         PackedChineseBasedYearInfo::new(2099, [l, l, s, l, l, s, s, l, s, s, l, s, l], Some(3), iso(2099, 1, 21)),
+        PackedChineseBasedYearInfo::new(2100, [l, l, s, l, s, l, s, l, s, s, l, s, s], None, iso(2100, 2, 9)),
+        PackedChineseBasedYearInfo::new(2101, [l, l, s, l, l, s, l, s, l, s, s, l, s], Some(8), iso(2101, 1, 29)),
+        PackedChineseBasedYearInfo::new(2102, [l, s, l, l, s, l, s, l, l, s, l, s, s], None, iso(2102, 2, 17)),
+        PackedChineseBasedYearInfo::new(2103, [s, l, s, l, s, l, s, l, l, l, s, l, s], None, iso(2103, 2, 7)),
+        PackedChineseBasedYearInfo::new(2104, [s, l, s, s, l, s, l, s, l, l, s, l, l], Some(6), iso(2104, 1, 28)),
+        PackedChineseBasedYearInfo::new(2105, [s, l, s, s, l, s, s, l, l, s, l, l, s], None, iso(2105, 2, 15)),
+        PackedChineseBasedYearInfo::new(2106, [l, s, l, s, s, l, s, s, l, s, l, l, s], None, iso(2106, 2, 4)),
+        PackedChineseBasedYearInfo::new(2107, [l, l, s, l, s, s, l, s, s, l, s, l, l], Some(5), iso(2107, 1, 24)),
+        PackedChineseBasedYearInfo::new(2108, [l, s, l, s, l, s, l, s, s, l, s, l, s], None, iso(2108, 2, 12)),
+        PackedChineseBasedYearInfo::new(2109, [l, s, l, l, s, l, s, l, s, s, l, s, l], Some(10), iso(2109, 1, 31)),
+        PackedChineseBasedYearInfo::new(2110, [s, l, l, s, l, l, s, l, s, s, l, s, s], None, iso(2110, 2, 19)),
+        PackedChineseBasedYearInfo::new(2111, [l, s, l, s, l, l, s, l, s, l, l, s, s], None, iso(2111, 2, 8)),
+        PackedChineseBasedYearInfo::new(2112, [s, l, s, l, s, l, s, l, l, s, l, l, s], Some(7), iso(2112, 1, 29)),
+        PackedChineseBasedYearInfo::new(2113, [l, s, s, l, s, s, l, l, s, l, l, l, s], None, iso(2113, 2, 16)),
+        PackedChineseBasedYearInfo::new(2114, [s, l, s, s, l, s, s, l, s, l, l, l, s], None, iso(2114, 2, 6)),
+        PackedChineseBasedYearInfo::new(2115, [s, l, l, s, s, l, s, s, l, s, l, l, l], Some(5), iso(2115, 1, 26)),
+        PackedChineseBasedYearInfo::new(2116, [s, l, s, l, s, l, s, s, l, s, l, l, s], None, iso(2116, 2, 14)),
+        PackedChineseBasedYearInfo::new(2117, [s, l, l, s, l, s, l, s, s, l, s, l, s], None, iso(2117, 2, 2)),
+        PackedChineseBasedYearInfo::new(2118, [s, l, l, s, l, l, s, l, s, s, l, s, l], Some(4), iso(2118, 1, 22)),
+        PackedChineseBasedYearInfo::new(2119, [s, l, l, s, l, s, l, s, l, s, l, s, s], None, iso(2119, 2, 10)),
+        PackedChineseBasedYearInfo::new(2120, [l, s, l, s, l, s, l, l, s, l, s, l, s], Some(8), iso(2120, 1, 30)),
+        PackedChineseBasedYearInfo::new(2121, [l, s, l, s, l, s, l, s, l, l, s, l, s], None, iso(2121, 2, 17)),
+        PackedChineseBasedYearInfo::new(2122, [s, l, s, l, s, s, l, s, l, l, l, s, s], None, iso(2122, 2, 7)),
+        PackedChineseBasedYearInfo::new(2123, [l, l, s, s, l, s, s, l, s, l, l, l, s], Some(6), iso(2123, 1, 27)),
+        PackedChineseBasedYearInfo::new(2124, [l, s, l, s, l, s, s, l, s, l, l, s, s], None, iso(2124, 2, 15)),
+        PackedChineseBasedYearInfo::new(2125, [l, l, s, l, s, l, s, s, l, s, l, s, s], None, iso(2125, 2, 3)),
     ]
 };
 
@@ -226,10 +241,10 @@ fn test_against_hong_kong_observatory_data() {
         Date,
     };
 
-    let mut related_iso = 1900;
+    let mut related_iso = 1911;
     let mut lunar_month = MonthCode::new_normal(11).unwrap();
 
-    for year in 1901..=2100 {
+    for year in 1912..=2100 {
         println!("Validating year {year}...");
 
         for line in ureq::get(&format!(
@@ -303,11 +318,6 @@ fn test_against_calendrical_calculations() {
     use calendrical_calculations::chinese_based::{Chinese, YearBounds};
     for (i, data) in DATA.iter().enumerate() {
         let year = STARTING_YEAR + i as i32;
-        if year < 1912 {
-            // `calendrical_calculations` implements the modern post-1912 algorithm, see
-            // https://ytliu.epizy.com/Shixian/Shixian_summary.html
-            continue;
-        }
         let YearBounds {
             new_year,
             next_new_year,
