@@ -126,18 +126,23 @@ fn test_currency() {
     options.strength = Some(Strength::Quaternary);
 
     let collator = Collator::try_new(Default::default(), options).unwrap();
-    // Iterating as chars and re-encoding due to
-    // https://github.com/rust-lang/rust/issues/83871 being nightly-only. :-(
-    let mut lower_buf = [0u8; 4];
-    let mut higher_buf = [0u8; 4];
-    let mut chars = currencies.chars();
-    while let Some(lower) = chars.next() {
-        let tail = chars.clone();
-        for higher in tail {
-            let lower_str = lower.encode_utf8(&mut lower_buf);
-            let higher_str = higher.encode_utf8(&mut higher_buf);
-            assert_eq!(collator.compare(lower_str, higher_str), Ordering::Less);
+    let mut chars = currencies.char_indices();
+    let mut lower_start = chars.offset();
+    while let Some(_) = chars.next() {
+        let lower_end = chars.offset();
+        let higher_start = lower_end;
+        let mut tail = chars.clone();
+        while let Some(_) = tail.next() {
+            let higher_end = tail.offset();
+            assert_eq!(
+                collator.compare(
+                    &currencies[lower_start..lower_end],
+                    &currencies[higher_start..higher_end]
+                ),
+                Ordering::Less
+            );
         }
+        lower_start = higher_start;
     }
 }
 
