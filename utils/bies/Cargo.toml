@@ -25,7 +25,7 @@ all-features = true
 itertools = { workspace = true }
 partial-min-max = "0.4"
 strum = { version = "0.27", features = ["derive"] }
-writeable = { workspace = true }
+writeable = { workspace = true, features = ["alloc"] }
 
 [dev-dependencies]
 rand = { workspace = true }

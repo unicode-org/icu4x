@@ -23,13 +23,13 @@ all-features = true
 calendrical_calculations = { workspace = true }
 displaydoc = { workspace = true }
 icu_provider = { workspace = true }
-icu_locale_core = { workspace = true, features = ["alloc"]}
+icu_locale_core = { workspace = true }
 ixdtf = { workspace = true, optional = true }
-tinystr = { workspace = true, features = ["alloc", "zerovec"] }
+tinystr = { workspace = true, features = ["zerovec"] }
 zerovec = { workspace = true, features = ["derive"] }
 
 databake = { workspace = true, features = ["derive"], optional = true }
-serde = { workspace = true, features = ["derive", "alloc"], optional = true }
+serde = { workspace = true, features = ["derive"], optional = true }
 
 icu_calendar_data = { workspace = true, optional = true }
 icu_locale = { workspace = true, optional = true }
@@ -56,7 +56,7 @@ serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake", "alloc", "icu_provider/export"]
 compiled_data = ["dep:icu_calendar_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 
-alloc = []
+alloc = ["icu_locale_core/alloc", "tinystr/alloc", "serde?/alloc"]
 
 [[bench]]
 name = "date"

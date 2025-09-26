@@ -200,7 +200,7 @@ impl FromStr for Private {
     }
 }
 
-writeable::impl_display_with_writeable!(Private);
+writeable::impl_display_with_writeable!(Private, #[cfg(feature = "alloc")]);
 
 impl writeable::Writeable for Private {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {

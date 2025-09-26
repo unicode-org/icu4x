@@ -103,7 +103,7 @@ impl<A: AsCalendar> Date<A> {
         if let Some(ixdtf_calendar) = ixdtf_record.calendar {
             if let Some(expected_calendar) = calendar.as_calendar().calendar_algorithm() {
                 if let Some(parsed_calendar) =
-                    icu_locale_core::extensions::unicode::Value::try_from_utf8(ixdtf_calendar)
+                    icu_locale_core::extensions::unicode::Value::try_two_from_utf8(ixdtf_calendar)
                         .ok()
                         .and_then(|v| CalendarAlgorithm::try_from(&v).ok())
                 {

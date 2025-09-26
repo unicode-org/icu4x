@@ -4,7 +4,9 @@
 
 use core::str::FromStr;
 
-use crate::provider::{legacy::TimezoneVariantsOffsetsV1, TimezonePeriods, TimezonePeriodsV1};
+#[cfg(feature = "alloc")]
+use crate::provider::legacy::TimezoneVariantsOffsetsV1;
+use crate::provider::{TimezonePeriods, TimezonePeriodsV1};
 use crate::TimeZone;
 use icu_provider::prelude::*;
 
@@ -169,12 +171,14 @@ impl FromStr for UtcOffset {
 
 #[derive(Debug)]
 enum OffsetData {
+    #[cfg(feature = "alloc")] // doesn't alloc, but ZeroMap are behind the alloc feature
     Old(DataPayload<TimezoneVariantsOffsetsV1>),
     New(DataPayload<TimezonePeriodsV1>),
 }
 
 #[derive(Debug)]
 enum OffsetDataBorrowed<'a> {
+    #[cfg(feature = "alloc")]
     Old(&'a zerovec::ZeroMap2d<'a, TimeZone, ZoneNameTimestamp, VariantOffsets>),
     New(&'a TimezonePeriods<'a>),
 }
@@ -231,19 +235,25 @@ impl VariantOffsetsCalculator {
         use icu_provider::buf::AsDeserializingBufferProvider;
         {
             Ok(Self {
-                offset_period: if let Ok(payload) = DataProvider::<TimezonePeriodsV1>::load(
+                offset_period: match DataProvider::<TimezonePeriodsV1>::load(
                     &provider.as_deserializing(),
                     Default::default(),
                 ) {
-                    OffsetData::New(payload.payload)
-                } else {
-                    OffsetData::Old(
-                        DataProvider::<TimezoneVariantsOffsetsV1>::load(
-                            &provider.as_deserializing(),
-                            Default::default(),
-                        )?
-                        .payload,
-                    )
+                    Ok(payload) => OffsetData::New(payload.payload),
+                    Err(_e) => {
+                        #[cfg(feature = "alloc")]
+                        {
+                            OffsetData::Old(
+                                DataProvider::<TimezoneVariantsOffsetsV1>::load(
+                                    &provider.as_deserializing(),
+                                    Default::default(),
+                                )?
+                                .payload,
+                            )
+                        }
+                        #[cfg(not(feature = "alloc"))]
+                        return Err(_e);
+                    }
                 },
             })
         }
@@ -266,6 +276,7 @@ impl VariantOffsetsCalculator {
         VariantOffsetsCalculatorBorrowed {
             offset_period: match self.offset_period {
                 OffsetData::New(ref payload) => OffsetDataBorrowed::New(payload.get()),
+                #[cfg(feature = "alloc")]
                 OffsetData::Old(ref payload) => OffsetDataBorrowed::Old(payload.get()),
             },
         }
@@ -297,6 +308,7 @@ impl VariantOffsetsCalculatorBorrowed<'static> {
         VariantOffsetsCalculator {
             offset_period: match self.offset_period {
                 OffsetDataBorrowed::New(p) => OffsetData::New(DataPayload::from_static_ref(p)),
+                #[cfg(feature = "alloc")]
                 OffsetDataBorrowed::Old(p) => OffsetData::Old(DataPayload::from_static_ref(p)),
             },
         }
@@ -354,11 +366,12 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
         time_zone_id: TimeZone,
         timestamp: ZoneNameTimestamp,
     ) -> Option<VariantOffsets> {
-        use zerovec::ule::AsULE;
-        let mut offsets = None;
         match self.offset_period {
             OffsetDataBorrowed::New(p) => p.get(time_zone_id, timestamp).map(|(os, _)| os),
+            #[cfg(feature = "alloc")]
             OffsetDataBorrowed::Old(p) => {
+                use zerovec::ule::AsULE;
+                let mut offsets = None;
                 for (bytes, id) in p.get0(&time_zone_id)?.iter1_copied().rev() {
                     if timestamp >= ZoneNameTimestamp::from_unaligned(*bytes) {
                         offsets = Some(id);

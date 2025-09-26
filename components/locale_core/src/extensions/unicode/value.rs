@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::parser::ParseError;
-#[cfg(feature = "alloc")]
 use crate::parser::SubtagIterator;
 use crate::shortvec::{ShortBoxSlice, ShortBoxSliceIntoIter};
 use crate::subtags::{subtag, Subtag};
@@ -71,6 +70,37 @@ impl Value {
             }
         }
         Ok(Self(v))
+    }
+
+    #[doc(hidden)]
+    pub fn try_two_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
+        let mut one = None;
+        let mut two = None;
+
+        if !code_units.is_empty() {
+            for chunk in SubtagIterator::new(code_units) {
+                let subtag = Subtag::try_from_utf8(chunk)?;
+                if subtag != TRUE_VALUE {
+                    if one.is_none() {
+                        one = Some(subtag);
+                    } else if two.is_none() {
+                        two = Some(subtag);
+                    } else {
+                        return Err(ParseError::InvalidSubtag);
+                    }
+                }
+            }
+        }
+
+        let Some(one) = one else {
+            return Err(ParseError::InvalidSubtag);
+        };
+
+        Ok(Self(if let Some(two) = two {
+            ShortBoxSlice::new_double(one, two)
+        } else {
+            ShortBoxSlice::new_single(one)
+        }))
     }
 
     /// Returns a reference to a single [`Subtag`] if the [`Value`] contains exactly one
@@ -224,6 +254,11 @@ impl Value {
             None | Some(TRUE_VALUE) => Self(ShortBoxSlice::new()),
             Some(val) => Self(ShortBoxSlice::new_single(val)),
         }
+    }
+
+    #[doc(hidden)]
+    pub fn from_two_subtags(f: Subtag, s: Subtag) -> Self {
+        Self(ShortBoxSlice::new_double(f, s))
     }
 
     /// A constructor which takes a pre-sorted list of [`Value`] elements.

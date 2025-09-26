@@ -6,9 +6,16 @@
 #![cfg_attr(icu4x_noalloctest, no_std)]
 #![cfg_attr(icu4x_noalloctest, no_main)]
 
+use icu_calendar as _;
+use icu_collections as _;
+use icu_locale_core as _;
+use icu_properties as _;
+use icu_provider as _;
+use icu_time as _;
 use litemap as _;
 use potential_utf as _;
 use tinystr as _;
+use writeable as _;
 use yoke as _;
 use zerofrom as _;
 use zerotrie as _;

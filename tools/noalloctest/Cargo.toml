@@ -20,13 +20,20 @@ publish = false
 
 [dependencies]
 # Dependencies that should be no-alloc should go here
-litemap = { workspace = true }
-potential_utf = { workspace = true }
-tinystr = { workspace = true }
-yoke = { workspace = true }
+icu_calendar = { workspace = true, features = ["ixdtf", "logging"] }
+icu_collections = { workspace = true }
+icu_locale_core = { workspace = true, features = ["serde"] }
+icu_properties = { workspace = true, features = ["compiled_data"] }
+icu_provider = { workspace = true, features = ["baked", "logging", "sync", "serde", "deserialize_postcard_1"] }
+icu_time = { workspace = true, features = ["ixdtf"] }
+litemap = { workspace = true, features = ["yoke"] }
+potential_utf = { workspace = true, features = ["serde", "writeable", "zerovec"] }
+tinystr = { workspace = true, features = ["serde", "zerovec"] }
+writeable = { workspace = true, features = ["either"] }
+yoke = { workspace = true, features = ["serde", "zerofrom"] }
 zerofrom = { workspace = true }
-zerotrie = { workspace = true }
-zerovec = { workspace = true }
+zerotrie = { workspace = true, features = ["yoke", "zerofrom"] }
+zerovec = { workspace = true, features = ["serde", "yoke"] }
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_noalloctest)'] }

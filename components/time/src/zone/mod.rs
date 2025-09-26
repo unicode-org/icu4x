@@ -76,7 +76,6 @@ use icu_calendar::Iso;
 use icu_locale_core::subtags::{subtag, Subtag};
 use icu_provider::prelude::yoke;
 use zerovec::ule::{AsULE, ULE};
-use zerovec::{ZeroSlice, ZeroVec};
 
 /// Time zone data model choices.
 pub mod models {
@@ -205,9 +204,10 @@ impl AsULE for TimeZone {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
-    type Container = ZeroVec<'a, TimeZone>;
-    type Slice = ZeroSlice<TimeZone>;
+    type Container = zerovec::ZeroVec<'a, TimeZone>;
+    type Slice = zerovec::ZeroSlice<TimeZone>;
     type GetType = TimeZone;
     type OwnedType = TimeZone;
 }

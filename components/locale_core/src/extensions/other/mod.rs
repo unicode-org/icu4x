@@ -210,7 +210,7 @@ impl FromStr for Other {
     }
 }
 
-writeable::impl_display_with_writeable!(Other);
+writeable::impl_display_with_writeable!(Other, #[cfg(feature = "alloc")]);
 
 impl writeable::Writeable for Other {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
@@ -235,17 +235,6 @@ impl writeable::Writeable for Other {
             result += writeable::Writeable::writeable_length_hint(key) + 1;
         }
         result
-    }
-
-    #[cfg(feature = "alloc")]
-    fn write_to_string(&self) -> alloc::borrow::Cow<'_, str> {
-        if self.keys.is_empty() {
-            return alloc::borrow::Cow::Borrowed("");
-        }
-        let mut string =
-            alloc::string::String::with_capacity(self.writeable_length_hint().capacity());
-        let _ = self.write_to(&mut string);
-        alloc::borrow::Cow::Owned(string)
     }
 }
 
