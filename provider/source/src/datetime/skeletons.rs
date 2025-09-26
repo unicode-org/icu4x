@@ -75,7 +75,6 @@ impl From<&cldr_serde::ca::AvailableFormats> for DateSkeletonPatterns<'_> {
 
 #[cfg(test)]
 mod test {
-    use super::super::legacy::DateLengths;
     use super::*;
     use core::convert::TryFrom;
     use core::str::FromStr;
@@ -92,15 +91,13 @@ mod test {
     use crate::datetime::DatagenCalendar;
     use crate::SourceDataProvider;
 
-    fn get_data_payload() -> (DateLengths<'static>, DateSkeletonPatterns<'static>) {
+    fn get_data_payload() -> DateSkeletonPatterns<'static> {
         let locale = locale!("en").into();
 
         let data = SourceDataProvider::new_testing()
             .get_datetime_resources(&locale, Some(DatagenCalendar::Gregorian))
             .unwrap();
-        let patterns = DateLengths::from(&data);
-        let skeletons = DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
-        (patterns, skeletons)
+        DateSkeletonPatterns::from(&data.datetime_formats.available_formats)
     }
 
     /// This is an initial smoke test to verify the skeleton machinery is working. For more in-depth
@@ -117,7 +114,7 @@ mod test {
         components.second = Some(components::Numeric::Numeric);
 
         let requested_fields = components.to_vec_fields(HourCycle::H23);
-        let (_, skeletons) = get_data_payload();
+        let skeletons = get_data_payload();
 
         match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
             BestSkeleton::AllFieldsMatch(available_format_pattern, _)
@@ -142,7 +139,7 @@ mod test {
         components.time_zone_name = Some(components::TimeZoneName::LongOffset);
         components.weekday = Some(components::Text::Short);
         let requested_fields = components.to_vec_fields(HourCycle::H23);
-        let (_, skeletons) = get_data_payload();
+        let skeletons = get_data_payload();
 
         match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
             BestSkeleton::MissingOrExtraFields(available_format_pattern, _) => {
@@ -160,45 +157,11 @@ mod test {
         };
     }
 
-    // TODO(#586) - Append items support needs to be added.
-    #[test]
-    #[should_panic]
-    fn test_missing_append_items_support() {
-        let mut components = components::Bag::empty();
-        components.year = Some(components::Year::Numeric);
-        components.month = Some(components::Month::Long);
-        components.day = Some(components::Day::NumericDayOfMonth);
-        // This will be appended.
-        components.time_zone_name = Some(components::TimeZoneName::LongSpecific);
-        let requested_fields = components.to_vec_fields(HourCycle::H23);
-        let (patterns, skeletons) = get_data_payload();
-
-        match create_best_pattern_for_fields(
-            &skeletons,
-            &patterns.length_combinations,
-            &requested_fields,
-            &Default::default(),
-            false,
-        ) {
-            BestSkeleton::AllFieldsMatch(available_format_pattern, _) => {
-                // TODO - Append items are needed here.
-                assert_eq!(
-                    available_format_pattern
-                        .expect_pattern("pattern should not have plural variants")
-                        .to_string()
-                        .as_str(),
-                    "MMMM d, y vvvv"
-                )
-            }
-            best => panic!("Unexpected {best:?}"),
-        };
-    }
-
     #[test]
     fn test_skeleton_empty_bag() {
         let components: components::Bag = Default::default();
         let requested_fields = components.to_vec_fields(HourCycle::H23);
-        let (_, skeletons) = get_data_payload();
+        let skeletons = get_data_payload();
 
         assert_eq!(
             get_best_available_format_pattern(&skeletons, &requested_fields, false),
@@ -371,7 +334,7 @@ mod test {
         components.weekday = Some(components::Text::Short);
         let default_hour_cycle = HourCycle::H23;
         let requested_fields = components.to_vec_fields(default_hour_cycle);
-        let (_, skeletons) = get_data_payload();
+        let skeletons = get_data_payload();
 
         match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
             BestSkeleton::AllFieldsMatch(available_format_pattern, _) => {
@@ -394,7 +357,7 @@ mod test {
         components.weekday = Some(components::Text::Long);
         let default_hour_cycle = HourCycle::H23;
         let requested_fields = components.to_vec_fields(default_hour_cycle);
-        let (_, skeletons) = get_data_payload();
+        let skeletons = get_data_payload();
 
         match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
             BestSkeleton::AllFieldsMatch(available_format_pattern, _) => {

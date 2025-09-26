@@ -22,9 +22,8 @@ all-features = true
 [dependencies]
 displaydoc = { workspace = true }
 icu_locale_core = { workspace = true }
-stable_deref_trait = { workspace = true }
-writeable = { workspace = true }
-tinystr = { workspace = true }
+stable_deref_trait = { workspace = true, optional = true }
+writeable = { workspace = true, optional = true }
 yoke = { workspace = true, features = ["alloc", "derive"] }
 zerofrom = { workspace = true, features = ["alloc", "derive"] }
 zerovec = { workspace = true, features = ["derive"]}
@@ -54,7 +53,7 @@ criterion = { workspace = true }
 
 [features]
 std = ["alloc"]
-alloc = ["icu_locale_core/alloc", "zerovec/alloc", "zerotrie/alloc"]
+alloc = ["icu_locale_core/alloc", "zerovec/alloc", "zerotrie?/alloc", "dep:stable_deref_trait", "dep:writeable"]
 sync = []
 # Enable logging of additional context of data errors
 logging = ["dep:log"]
@@ -68,10 +67,13 @@ deserialize_bincode_1 = ["serde", "dep:bincode", "std"]
 deserialize_postcard_1 = ["serde", "dep:postcard"]
 
 # Dependencies for baked provider scaffolding
-baked = ["zerotrie"]
+baked = ["dep:zerotrie", "dep:writeable"]
 
 # Dependencies for running data generation
 export = ["serde", "dep:erased-serde", "dep:databake", "std", "sync", "dep:postcard", "zerovec/databake"]
+
+# added by accident
+zerotrie = []
 
 [package.metadata.cargo-all-features]
 denylist = ["macros"]

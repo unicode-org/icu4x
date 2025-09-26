@@ -22,8 +22,8 @@ independent = true
 [features]
 default = ["alloc", "zerofrom"]
 derive = ["dep:yoke-derive", "zerofrom/derive"]
-alloc = ["stable_deref_trait/alloc", "serde?/alloc", "zerofrom/alloc"]
-serde = ["dep:serde"]
+alloc = ["stable_deref_trait/alloc", "zerofrom/alloc"]
+serde = []
 zerofrom = ["dep:zerofrom"]
 
 [package.metadata.docs.rs]
@@ -38,7 +38,6 @@ stable_deref_trait = { workspace = true }
 
 yoke-derive = { workspace = true, optional = true }
 
-serde = { workspace = true, optional = true }
 zerofrom = { workspace = true, optional = true}
 
 [dev-dependencies]

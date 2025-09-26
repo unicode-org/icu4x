@@ -710,8 +710,8 @@ dependencies = [
 
 [[package]]
 name = "diplomat"
-version = "0.12.0"
-source = "git+https://github.com/Manishearth/diplomat?rev=9739cb1a2cb615c930cafce52a02aa465a50e293#9739cb1a2cb615c930cafce52a02aa465a50e293"
+version = "0.13.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=17ef80019d62bb918c5849a16abba7b0076d6730#17ef80019d62bb918c5849a16abba7b0076d6730"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -741,16 +741,16 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.12.0"
-source = "git+https://github.com/Manishearth/diplomat?rev=9739cb1a2cb615c930cafce52a02aa465a50e293#9739cb1a2cb615c930cafce52a02aa465a50e293"
+version = "0.13.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=17ef80019d62bb918c5849a16abba7b0076d6730#17ef80019d62bb918c5849a16abba7b0076d6730"
 dependencies = [
  "log",
 ]
 
 [[package]]
 name = "diplomat-tool"
-version = "0.12.1"
-source = "git+https://github.com/Manishearth/diplomat?rev=9739cb1a2cb615c930cafce52a02aa465a50e293#9739cb1a2cb615c930cafce52a02aa465a50e293"
+version = "0.13.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=17ef80019d62bb918c5849a16abba7b0076d6730#17ef80019d62bb918c5849a16abba7b0076d6730"
 dependencies = [
  "askama",
  "clap",
@@ -770,8 +770,8 @@ dependencies = [
 
 [[package]]
 name = "diplomat_core"
-version = "0.12.1"
-source = "git+https://github.com/Manishearth/diplomat?rev=9739cb1a2cb615c930cafce52a02aa465a50e293#9739cb1a2cb615c930cafce52a02aa465a50e293"
+version = "0.13.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=17ef80019d62bb918c5849a16abba7b0076d6730#17ef80019d62bb918c5849a16abba7b0076d6730"
 dependencies = [
  "displaydoc",
  "either",
@@ -1187,7 +1187,6 @@ name = "icu_benchmark_memory"
 version = "0.0.0"
 dependencies = [
  "clap",
- "libc",
  "serde_json",
 ]
 
@@ -1211,7 +1210,6 @@ dependencies = [
  "simple_logger",
  "tinystr",
  "ureq",
- "writeable",
  "zerovec",
 ]
 
@@ -1246,9 +1244,7 @@ dependencies = [
  "icu_segmenter",
  "icu_time",
  "libc_alloc",
- "log",
  "potential_utf",
- "serde",
  "simple_logger",
  "tinystr",
  "unicode-bidi",
@@ -1262,7 +1258,6 @@ version = "2.0.0"
 dependencies = [
  "criterion",
  "databake",
- "displaydoc",
  "icu",
  "icu_casemap_data",
  "icu_collections",
@@ -1299,7 +1294,6 @@ dependencies = [
  "atoi",
  "criterion",
  "databake",
- "displaydoc",
  "icu",
  "icu_collator_data",
  "icu_collections",
@@ -1314,7 +1308,6 @@ dependencies = [
  "smallvec",
  "utf16_iter",
  "utf8_iter",
- "write16",
  "zerovec",
 ]
 
@@ -1385,7 +1378,6 @@ version = "2.0.0"
 dependencies = [
  "criterion",
  "databake",
- "displaydoc",
  "fixed_decimal",
  "getrandom 0.3.2",
  "icu",
@@ -1398,7 +1390,6 @@ dependencies = [
  "rand_distr",
  "rand_pcg",
  "serde",
- "tinystr",
  "writeable",
  "zerovec",
 ]
@@ -1465,7 +1456,6 @@ dependencies = [
 name = "icu_harfbuzz"
 version = "0.3.0"
 dependencies = [
- "displaydoc",
  "harfbuzz-traits",
  "icu_normalizer",
  "icu_properties",
@@ -1477,7 +1467,6 @@ name = "icu_list"
 version = "2.0.0"
 dependencies = [
  "databake",
- "displaydoc",
  "icu",
  "icu_list_data",
  "icu_locale",
@@ -1501,7 +1490,6 @@ version = "2.0.0"
 dependencies = [
  "criterion",
  "databake",
- "displaydoc",
  "icu",
  "icu_collections",
  "icu_locale_core",
@@ -1549,7 +1537,6 @@ dependencies = [
  "criterion",
  "databake",
  "detone",
- "displaydoc",
  "icu",
  "icu_collections",
  "icu_normalizer_data",
@@ -1596,7 +1583,6 @@ dependencies = [
  "icu",
  "icu_locale",
  "icu_locale_core",
- "icu_normalizer_data",
  "icu_plurals_data",
  "icu_provider",
  "postcard",
@@ -1614,13 +1600,11 @@ name = "icu_properties"
 version = "2.0.1"
 dependencies = [
  "databake",
- "displaydoc",
  "icu",
  "icu_collections",
  "icu_locale_core",
  "icu_properties_data",
  "icu_provider",
- "potential_utf",
  "serde",
  "unicode-bidi",
  "zerotrie",
@@ -1649,7 +1633,6 @@ dependencies = [
  "serde",
  "serde_json",
  "stable_deref_trait",
- "tinystr",
  "writeable",
  "yoke",
  "zerofrom",
@@ -1661,13 +1644,9 @@ dependencies = [
 name = "icu_provider_adapters"
 version = "2.0.0"
 dependencies = [
- "databake",
  "icu_locale",
  "icu_provider",
- "serde",
- "tinystr",
  "writeable",
- "zerovec",
 ]
 
 [[package]]
@@ -1681,8 +1660,6 @@ dependencies = [
  "icu_provider_export",
  "icu_provider_registry",
  "log",
- "proc-macro2",
- "writeable",
  "zerotrie",
  "zerovec",
 ]
@@ -1734,11 +1711,9 @@ dependencies = [
  "bincode",
  "criterion",
  "crlify",
- "displaydoc",
  "icu_locale_core",
  "icu_provider",
  "icu_provider_export",
- "log",
  "postcard",
  "serde",
  "serde-json-core",
@@ -1760,16 +1735,12 @@ version = "2.0.2"
 dependencies = [
  "calendrical_calculations",
  "displaydoc",
- "either",
  "elsa",
  "flate2",
  "icu",
  "icu_codepointtrie_builder",
- "icu_collections",
- "icu_experimental",
  "icu_pattern",
  "icu_provider",
- "icu_provider_adapters",
  "icu_provider_export",
  "icu_provider_registry",
  "icu_segmenter",
@@ -1806,7 +1777,6 @@ dependencies = [
  "core_maths",
  "criterion",
  "databake",
- "displaydoc",
  "icu",
  "icu_collections",
  "icu_locale",
