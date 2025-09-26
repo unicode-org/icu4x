@@ -99,7 +99,7 @@ impl PatternMetadata {
     }
 
     pub(crate) fn to_four_bit_metadata(self) -> FourBitMetadata {
-        #[allow(clippy::unwrap_used)] // valid values for self.0 are 0, 1, 2, 3, or 4
+        #[expect(clippy::unwrap_used)] // valid values for self.0 are 0, 1, 2, 3, or 4
         FourBitMetadata::try_from_byte(self.0).unwrap()
     }
 
@@ -123,7 +123,7 @@ impl Pattern<'_> {
         }
     }
 
-    pub(crate) fn as_borrowed(&self) -> PatternBorrowed {
+    pub(crate) fn as_borrowed(&self) -> PatternBorrowed<'_> {
         PatternBorrowed {
             items: &self.items,
             metadata: self.metadata,

@@ -135,7 +135,7 @@ where
 #[cfg(feature = "alloc")]
 pub trait IterableDataProvider<M: DataMarker>: DataProvider<M> {
     /// Returns a set of [`DataIdentifierCow`].
-    fn iter_ids(&self) -> Result<alloc::collections::BTreeSet<DataIdentifierCow>, DataError>;
+    fn iter_ids(&self) -> Result<alloc::collections::BTreeSet<DataIdentifierCow<'_>>, DataError>;
 }
 
 /// A data provider that loads data for a specific data type.
@@ -311,7 +311,7 @@ pub trait IterableDynamicDataProvider<M: DynamicDataMarker>: DynamicDataProvider
     fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<alloc::collections::BTreeSet<DataIdentifierCow>, DataError>;
+    ) -> Result<alloc::collections::BTreeSet<DataIdentifierCow<'_>>, DataError>;
 }
 
 #[cfg(feature = "alloc")]
@@ -323,7 +323,7 @@ where
     fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<alloc::collections::BTreeSet<DataIdentifierCow>, DataError> {
+    ) -> Result<alloc::collections::BTreeSet<DataIdentifierCow<'_>>, DataError> {
         (**self).iter_ids_for_marker(marker)
     }
 }

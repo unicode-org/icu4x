@@ -60,13 +60,34 @@ args = ["-C", "examples/js-tiny", "test"]
 [tasks.test-dart]
 description = "Run Dart tests"
 category = "ICU4X Development"
-cwd = "ffi/dart"
 script_runner = "@duckscript"
 script = '''
+cd ffi/dart
 exec --fail-on-error dart pub get
 exec --fail-on-error dart format --set-exit-if-changed .
 exec --fail-on-error dart analyze
-exec --fail-on-error dart --enable-experiment=native-assets test
+exec --fail-on-error dart --enable-experiment=record-use test
+cd ../..
+
+cd examples/dart
+exec --fail-on-error dart pub get
+exec --fail-on-error dart format --set-exit-if-changed .
+exec --fail-on-error dart analyze
+exec --fail-on-error dart --enable-experiment=record-use build cli bin/example.dart
+bins = glob_array ./build/cli/*/bundle/bin/*
+bin = array_pop ${bins}
+exec --fail-on-error ${bin}
+libs = glob_array ./build/cli/*/bundle/lib/*
+lib = array_pop ${libs}
+size = filesize ${lib}
+println ${size} "bytes"
+pubspec = readfile pubspec.yaml
+is_local = contains ${pubspec} "buildMode: local"
+if not ${is_local} # local dylib is not treeshaken
+    if greater_than ${size} 10000000
+        trigger_error "Dart example binary >10MB"
+    end
+end
 '''
 
 # no_std tasks
@@ -91,6 +112,7 @@ toolchain = "${PINNED_CI_NIGHTLY}"
 command = "cargo"
 args = ["rustc", "-p", "noalloctest",
         "--target", "x86_64-unknown-linux-gnu",
+        "-Zbuild-std=core,panic_abort",
         "--",
         "-Clink-arg=-nostartfiles", "-Cpanic=abort",
         "--cfg", "icu4x_noalloctest"]

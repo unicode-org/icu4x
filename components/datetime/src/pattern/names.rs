@@ -999,7 +999,7 @@ where
     ///
     /// assert_writeable_eq!(formatter.format(&Time::start_of_day()), "12:00 a.m.");
     /// ```
-    #[allow(clippy::result_large_err)] // returning self as the error
+    #[expect(clippy::result_large_err)] // returning self as the error
     #[cfg(feature = "compiled_data")]
     pub fn try_into_formatter(
         self,
@@ -1021,7 +1021,7 @@ where
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_into_formatter)]
-    #[allow(clippy::result_large_err)] // returning self as the error
+    #[expect(clippy::result_large_err)] // returning self as the error
     pub fn try_into_formatter_unstable<P>(
         self,
         provider: &P,
@@ -1043,7 +1043,7 @@ where
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::try_into_formatter)]
-    #[allow(clippy::result_large_err)] // returning self as the error
+    #[expect(clippy::result_large_err)] // returning self as the error
     #[cfg(feature = "serde")]
     pub fn try_into_formatter_with_buffer_provider<P>(
         self,
@@ -1209,7 +1209,7 @@ where
     ///
     /// assert_writeable_eq!(formatter.format(&Time::start_of_day()), "12:00 a.m.");
     /// ```
-    #[allow(clippy::result_large_err)] // returning self as the error
+    #[expect(clippy::result_large_err)] // returning self as the error
     #[cfg(feature = "compiled_data")]
     pub fn try_into_formatter(
         self,
@@ -1232,7 +1232,7 @@ where
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_into_formatter)]
-    #[allow(clippy::result_large_err)] // returning self as the error
+    #[expect(clippy::result_large_err)] // returning self as the error
     pub fn try_into_formatter_unstable<P>(
         self,
         provider: &P,
@@ -1255,7 +1255,7 @@ where
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::try_into_formatter)]
-    #[allow(clippy::result_large_err)] // returning self as the error
+    #[expect(clippy::result_large_err)] // returning self as the error
     #[cfg(feature = "serde")]
     pub fn try_into_formatter_with_buffer_provider<P>(
         self,
@@ -1820,6 +1820,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     }
 
     /// Loads generic non-location long time zone names.
+    // NOTE: If a buffer version of this fn is added in 2.x, it should use the CompatProvider
     pub fn load_time_zone_generic_long_names<P>(
         &mut self,
         provider: &P,
@@ -1862,16 +1863,16 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// use icu::time::zone::{IanaParser, VariantOffsetsCalculator};
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_full_from_str(
-    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    /// let mut zone_berlin_winter = ZonedDateTime::try_full_from_str(
+    ///     "2024-01-01T00:00:00+01:00[Europe/Berlin]",
     ///     Gregorian,
     ///     IanaParser::new(),
     ///     VariantOffsetsCalculator::new(),
     /// )
     /// .unwrap()
     /// .zone;
-    /// let mut zone_london_summer = ZonedDateTime::try_full_from_str(
-    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    /// let mut zone_berlin_summer = ZonedDateTime::try_full_from_str(
+    ///     "2024-07-01T00:00:00+02:00[Europe/Berlin]",
     ///     Gregorian,
     ///     IanaParser::new(),
     ///     VariantOffsetsCalculator::new(),
@@ -1887,6 +1888,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_generic_long_names().unwrap();
+    /// names.include_time_zone_location_names().unwrap();
     ///
     /// // Create a pattern with symbol `vvvv`:
     /// let pattern_str = "'Your time zone is:' vvvv";
@@ -1895,18 +1897,14 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// assert_try_writeable_eq!(
     ///     names
     ///         .with_pattern_unchecked(&pattern)
-    ///         .format(&zone_london_winter),
-    ///     "Your time zone is: Greenwich Mean Time",
+    ///         .format(&zone_berlin_winter),
+    ///     "Your time zone is: Central European Time",
     /// );
     /// assert_try_writeable_eq!(
     ///     names
     ///         .with_pattern_unchecked(&pattern)
-    ///         .format(&zone_london_summer),
-    ///     // Note: The year-round generic name of this zone is Greenwich
-    ///     // Mean Time, which may be confusing since the zone observes
-    ///     // daylight savings time. See:
-    ///     // <https://unicode-org.atlassian.net/issues/CLDR-18378>
-    ///     "Your time zone is: Greenwich Mean Time",
+    ///         .format(&zone_berlin_summer),
+    ///     "Your time zone is: Central European Time",
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -1915,6 +1913,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     }
 
     /// Loads generic non-location short time zone names.
+    // NOTE: If a buffer version of this fn is added in 2.x, it should use the CompatProvider
     pub fn load_time_zone_generic_short_names<P>(
         &mut self,
         provider: &P,
@@ -1953,16 +1952,16 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// use icu::time::zone::{IanaParser, VariantOffsetsCalculator};
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_full_from_str(
-    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    /// let mut zone_berlin_winter = ZonedDateTime::try_full_from_str(
+    ///     "2024-01-01T00:00:00+01:00[Europe/Berlin]",
     ///     Gregorian,
     ///     IanaParser::new(),
     ///     VariantOffsetsCalculator::new(),
     /// )
     /// .unwrap()
     /// .zone;
-    /// let mut zone_london_summer = ZonedDateTime::try_full_from_str(
-    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    /// let mut zone_berlin_summer = ZonedDateTime::try_full_from_str(
+    ///     "2024-07-01T00:00:00+02:00[Europe/Berlin]",
     ///     Gregorian,
     ///     IanaParser::new(),
     ///     VariantOffsetsCalculator::new(),
@@ -1978,6 +1977,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_generic_short_names().unwrap();
+    /// names.include_time_zone_location_names().unwrap();
     ///
     /// // Create a pattern with symbol `v`:
     /// let pattern_str = "'Your time zone is:' v";
@@ -1986,18 +1986,14 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// assert_try_writeable_eq!(
     ///     names
     ///         .with_pattern_unchecked(&pattern)
-    ///         .format(&zone_london_winter),
-    ///     "Your time zone is: GMT",
+    ///         .format(&zone_berlin_winter),
+    ///     "Your time zone is: CET",
     /// );
     /// assert_try_writeable_eq!(
     ///     names
     ///         .with_pattern_unchecked(&pattern)
-    ///         .format(&zone_london_summer),
-    ///     // Note: The year-round generic name of this zone is Greenwich
-    ///     // Mean Time, which may be confusing since the zone observes
-    ///     // daylight savings time. See:
-    ///     // <https://unicode-org.atlassian.net/issues/CLDR-18378>
-    ///     "Your time zone is: GMT",
+    ///         .format(&zone_berlin_summer),
+    ///     "Your time zone is: CET",
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -2006,6 +2002,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     }
 
     /// Loads specific non-location long time zone names.
+    // NOTE: If a buffer version of this fn is added in 2.x, it should use the CompatProvider
     pub fn load_time_zone_specific_long_names<P>(
         &mut self,
         provider: &P,
@@ -2097,6 +2094,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     }
 
     /// Loads specific non-location short time zone names.
+    // NOTE: If a buffer version of this fn is added in 2.x, it should use the CompatProvider
     pub fn load_time_zone_specific_short_names<P>(
         &mut self,
         provider: &P,
@@ -2189,6 +2187,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// and all data required for its fallback formats.
     ///
     /// See [`GenericShort`](crate::fieldsets::zone::GenericShort)
+    // NOTE: If a buffer version of this fn is added in 2.x, it should use the CompatProvider
     pub fn load_time_zone_generic_short_names_with_fallback<P>(
         &mut self,
         provider: &P,
@@ -2245,6 +2244,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// and all data required for its fallback formats.
     ///
     /// See [`GenericLong`](crate::fieldsets::zone::GenericLong)
+    // NOTE: If a buffer version of this fn is added in 2.x, it should use the CompatProvider
     pub fn load_time_zone_generic_long_names_with_fallback<P>(
         &mut self,
         provider: &P,
@@ -2305,6 +2305,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// except for decimal formatting.
     ///
     /// See [`SpecificShort`](crate::fieldsets::zone::SpecificShort)
+    // NOTE: If a buffer version of this fn is added in 2.x, it should use the CompatProvider
     pub fn load_time_zone_specific_short_names_with_fallback<P>(
         &mut self,
         provider: &P,
@@ -2359,6 +2360,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// except for decimal formatting.
     ///
     /// See [`SpecificLong`](crate::fieldsets::zone::SpecificLong)
+    // NOTE: If a buffer version of this fn is added in 2.x, it should use the CompatProvider
     pub fn load_time_zone_specific_long_names_with_fallback<P>(
         &mut self,
         provider: &P,
@@ -2531,6 +2533,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     /// and loads all data required for that pattern.
     ///
     /// Does not duplicate textual field symbols. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
+    // NOTE: If a buffer version of this fn is added in 2.x, it should use the CompatProvider
     pub fn load_for_pattern<'l, P>(
         &'l mut self,
         provider: &P,
@@ -2824,7 +2827,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         }
     }
 
-    pub(crate) fn as_borrowed(&self) -> RawDateTimeNamesBorrowed {
+    pub(crate) fn as_borrowed(&self) -> RawDateTimeNamesBorrowed<'_> {
         RawDateTimeNamesBorrowed {
             year_names: self.year_names.get().inner,
             month_names: self.month_names.get().inner,
@@ -3267,7 +3270,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         )
     }
 
-    #[allow(clippy::too_many_arguments)]
+    #[expect(clippy::too_many_arguments)]
     pub(crate) fn load_time_zone_field_zzzz_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
@@ -3290,7 +3293,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         )
     }
 
-    #[allow(clippy::too_many_arguments)] // internal function with lots of generics
+    #[expect(clippy::too_many_arguments)] // internal function with lots of generics
     pub(crate) fn load_time_zone_field_v_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
@@ -3312,7 +3315,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         )
     }
 
-    #[allow(clippy::too_many_arguments)]
+    #[expect(clippy::too_many_arguments)]
     pub(crate) fn load_time_zone_field_vvvv_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
@@ -3414,7 +3417,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     ///
     /// This function has a lot of arguments because many of the arguments are generic,
     /// and pulling them out to an options struct would be cumbersome.
-    #[allow(clippy::too_many_arguments)]
+    #[expect(clippy::too_many_arguments)]
     pub(crate) fn load_for_pattern(
         &mut self,
         year_provider: &(impl BoundDataProvider<YearNamesV1> + ?Sized),
@@ -3613,6 +3616,8 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
 
                 // y+
                 (FS::Year(Year::Calendar), _) => numeric_field = Some(field),
+                // u+
+                (FS::Year(Year::Extended), _) => numeric_field = Some(field),
                 // r+
                 (FS::Year(Year::RelatedIso), _) => {
                     // always formats as ASCII
@@ -3627,6 +3632,8 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 (FS::Day(Day::DayOfYear), One | Two | Three) => numeric_field = Some(field),
                 // F
                 (FS::Day(Day::DayOfWeekInMonth), One) => numeric_field = Some(field),
+                // g
+                (FS::Day(Day::ModifiedJulianDay), One) => numeric_field = Some(field),
 
                 // K..KK, h..hh, H..HH, k..kk
                 (FS::Hour(_), One | Two) => numeric_field = Some(field),
@@ -3665,7 +3672,7 @@ impl RawDateTimeNamesBorrowed<'_> {
         field_symbol: fields::Month,
         field_length: FieldLength,
         code: MonthCode,
-    ) -> Result<MonthPlaceholderValue, GetNameForMonthError> {
+    ) -> Result<MonthPlaceholderValue<'_>, GetNameForMonthError> {
         let month_name_length = MonthNameLength::from_field(field_symbol, field_length)
             .ok_or(GetNameForMonthError::InvalidFieldLength)?;
         let month_names = self

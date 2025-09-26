@@ -12,7 +12,7 @@ use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::PluralRulesPreferences;
 use icu_provider::prelude::*;
 
-use super::super::provider::currency::CurrencyEssentialsV1;
+use super::super::provider::currency::essentials::CurrencyEssentialsV1;
 use super::format::FormattedCurrency;
 use super::options::CurrencyFormatterOptions;
 use super::CurrencyCode;
@@ -27,7 +27,7 @@ define_preferences!(
         /// The user's preferred numbering system.
         ///
         /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
-        numbering_system: super::super::preferences::NumberingSystem
+        numbering_system: crate::dimension::preferences::NumberingSystem
     }
 );
 
@@ -101,7 +101,7 @@ impl CurrencyFormatter {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::currency::CurrencyEssentialsV1>
+            + DataProvider<super::super::provider::currency::essentials::CurrencyEssentialsV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {

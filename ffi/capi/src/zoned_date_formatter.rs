@@ -7,7 +7,6 @@
 #[rustfmt::skip]
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_calendar::Gregorian;
@@ -591,13 +590,13 @@ pub mod ffi {
                 input.set_time_zone_name_timestamp(zone_name_timestamp);
             }
             else {
-                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
-                    date: iso_date.0,
-                    time: icu_time::Time::noon()
-                }))
-            }
-            if let Some(variant) = zone.variant {
-                input.set_time_zone_variant(variant);
+                #[allow(deprecated)] // clean up in 3.0
+                input.set_time_zone_name_timestamp(zone.id.with_offset(zone.offset).with_zone_name_timestamp(
+                    icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
+                        date: iso_date.0,
+                        time: icu_time::Time::noon(),
+                    })
+                ).zone_name_timestamp());
             }
             let _infallible = self
                 .0
@@ -1153,13 +1152,13 @@ pub mod ffi {
                 input.set_time_zone_name_timestamp(zone_name_timestamp);
             }
             else {
-                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
-                    date: iso_date.0,
-                    time: icu_time::Time::noon()
-                }))
-            }
-            if let Some(variant) = zone.variant {
-                input.set_time_zone_variant(variant);
+                #[allow(deprecated)] // clean up in 3.0
+                input.set_time_zone_name_timestamp(zone.id.with_offset(zone.offset).with_zone_name_timestamp(
+                    icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
+                        date: iso_date.0,
+                        time: icu_time::Time::noon(),
+                    })
+                ).zone_name_timestamp());
             }
             let _infallible = self
                 .0

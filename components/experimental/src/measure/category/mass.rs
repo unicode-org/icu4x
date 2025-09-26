@@ -19,6 +19,7 @@ impl Mass {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
+                id: Some("gram"),
                 single_units: SingleUnitVec::One(SingleUnit {
                     power: 1,
                     si_prefix: SiPrefix {
@@ -37,6 +38,7 @@ impl Mass {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
+                id: Some("kilogram"),
                 single_units: SingleUnitVec::One(SingleUnit {
                     power: 1,
                     si_prefix: SiPrefix {
@@ -54,18 +56,16 @@ impl Mass {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::measure::parser::MeasureUnitParser;
+    use crate::measure::measureunit::MeasureUnit;
 
     #[test]
     fn test_mass_category() {
-        let parser = MeasureUnitParser::default();
-
         let gram = Mass::gram();
-        let gram_parsed = parser.try_from_str("gram").unwrap();
+        let gram_parsed = MeasureUnit::try_from_str("gram").unwrap();
         assert_eq!(gram.unit, gram_parsed);
 
         let kilogram = Mass::kilogram();
-        let kilogram_parsed = parser.try_from_str("kilogram").unwrap();
+        let kilogram_parsed = MeasureUnit::try_from_str("kilogram").unwrap();
         assert_eq!(kilogram.unit, kilogram_parsed);
     }
 }

@@ -1,5 +1,5 @@
-#ifndef icu4x_TimeFormatter_D_HPP
-#define icu4x_TimeFormatter_D_HPP
+#ifndef ICU4X_TimeFormatter_D_HPP
+#define ICU4X_TimeFormatter_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,8 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
@@ -24,7 +23,8 @@ class DateTimeAlignment;
 class DateTimeFormatterLoadError;
 class DateTimeLength;
 class TimePrecision;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -47,7 +47,7 @@ public:
    *
    * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.T.html#method.for_length)
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError> create(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError> create(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
    * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/type.NoCalendarFormatter.html#method.try_new) for more information.
@@ -56,7 +56,7 @@ public:
    *
    * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.T.html#method.for_length)
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError> create_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError> create_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
 
   /**
    * See the [Rust documentation for `format`](https://docs.rs/icu/2.0.0/icu/datetime/type.NoCalendarFormatter.html#method.format) for more information.
@@ -65,19 +65,19 @@ public:
   template<typename W>
   inline void format_write(const icu4x::Time& time, W& writeable_output) const;
 
-  inline const icu4x::capi::TimeFormatter* AsFFI() const;
-  inline icu4x::capi::TimeFormatter* AsFFI();
-  inline static const icu4x::TimeFormatter* FromFFI(const icu4x::capi::TimeFormatter* ptr);
-  inline static icu4x::TimeFormatter* FromFFI(icu4x::capi::TimeFormatter* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::TimeFormatter* AsFFI() const;
+    inline icu4x::capi::TimeFormatter* AsFFI();
+    inline static const icu4x::TimeFormatter* FromFFI(const icu4x::capi::TimeFormatter* ptr);
+    inline static icu4x::TimeFormatter* FromFFI(icu4x::capi::TimeFormatter* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  TimeFormatter() = delete;
-  TimeFormatter(const icu4x::TimeFormatter&) = delete;
-  TimeFormatter(icu4x::TimeFormatter&&) noexcept = delete;
-  TimeFormatter operator=(const icu4x::TimeFormatter&) = delete;
-  TimeFormatter operator=(icu4x::TimeFormatter&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    TimeFormatter() = delete;
+    TimeFormatter(const icu4x::TimeFormatter&) = delete;
+    TimeFormatter(icu4x::TimeFormatter&&) noexcept = delete;
+    TimeFormatter operator=(const icu4x::TimeFormatter&) = delete;
+    TimeFormatter operator=(icu4x::TimeFormatter&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_TimeFormatter_D_HPP
+#endif // ICU4X_TimeFormatter_D_HPP

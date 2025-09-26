@@ -4,7 +4,6 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -16,9 +15,12 @@ pub mod ffi {
     use crate::unstable::locale_core::ffi::Locale;
 
     #[diplomat::rust_link(icu::locale::Direction, Enum)]
+    #[non_exhaustive]
     pub enum LocaleDirection {
         LeftToRight,
         RightToLeft,
+        // This is an output type, so the default mostly impacts deferred initialization.
+        #[diplomat::attr(auto, default)]
         Unknown,
     }
 

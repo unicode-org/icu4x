@@ -1,4 +1,4 @@
-timezone/identifiers/iana/core/v1, <singleton>, 9559B, 9516B, fe8602f4657f987
+timezone/identifiers/iana/core/v1, <singleton>, 9559B, 9516B, adf80dcf2d7955d6
 timezone/identifiers/iana/extended/v1, <singleton>, 9757B, 9735B, ca82fcaee49bef7
 timezone/identifiers/windows/v1, <singleton>, 8634B, 8591B, 90b7fe3f9cadf5bd
-timezone/variants/offsets/v1, <singleton>, 13392B, 13304B, aa83b8d389343bb9
+timezone/periods/v1, <singleton>, 6848B, 6783B, f47e64bfc41a85b9

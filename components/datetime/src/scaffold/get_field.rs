@@ -3,11 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_calendar::{
-    types::{DayOfMonth, DayOfYear, MonthInfo, Weekday, YearInfo},
+    types::{DayOfMonth, DayOfYear, MonthInfo, RataDie, Weekday, YearInfo},
     AsCalendar, Calendar, Date,
 };
 use icu_time::{
-    zone::{models::TimeZoneModel, TimeZoneVariant, UtcOffset, ZoneNameTimestamp},
+    zone::{models::TimeZoneModel, UtcOffset, ZoneNameTimestamp},
     DateTime, Hour, Minute, Nanosecond, Second, Time, TimeZone, TimeZoneInfo, ZonedDateTime,
 };
 
@@ -70,6 +70,13 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfYear> for Date<A> {
     #[inline]
     fn get_field(&self) -> DayOfYear {
         self.day_of_year()
+    }
+}
+
+impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<RataDie> for Date<A> {
+    #[inline]
+    fn get_field(&self) -> RataDie {
+        self.to_rata_die()
     }
 }
 
@@ -140,6 +147,13 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfYear> for DateTime<
     }
 }
 
+impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<RataDie> for DateTime<A> {
+    #[inline]
+    fn get_field(&self) -> RataDie {
+        self.date.to_rata_die()
+    }
+}
+
 impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Hour> for DateTime<A> {
     #[inline]
     fn get_field(&self) -> Hour {
@@ -205,6 +219,13 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<DayOfYear> for ZonedD
     }
 }
 
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<RataDie> for ZonedDateTime<A, Z> {
+    #[inline]
+    fn get_field(&self) -> RataDie {
+        self.date.to_rata_die()
+    }
+}
+
 impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<Hour> for ZonedDateTime<A, Z> {
     #[inline]
     fn get_field(&self) -> Hour {
@@ -254,16 +275,6 @@ where
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<TimeZoneVariant> for ZonedDateTime<A, Z>
-where
-    Z: GetField<TimeZoneVariant>,
-{
-    #[inline]
-    fn get_field(&self) -> TimeZoneVariant {
-        self.zone.get_field()
-    }
-}
-
 impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<ZoneNameTimestamp>
     for ZonedDateTime<A, Z>
 where
@@ -303,16 +314,6 @@ where
     #[inline]
     fn get_field(&self) -> Option<UtcOffset> {
         self.offset()
-    }
-}
-
-impl<O> GetField<TimeZoneVariant> for TimeZoneInfo<O>
-where
-    O: TimeZoneModel<TimeZoneVariant = TimeZoneVariant>,
-{
-    #[inline]
-    fn get_field(&self) -> TimeZoneVariant {
-        self.variant()
     }
 }
 

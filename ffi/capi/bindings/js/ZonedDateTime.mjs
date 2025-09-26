@@ -118,9 +118,40 @@ export class ZonedDateTime {
 
 
     /**
+     * Creates a new {@link ZonedIsoDateTime} from an IXDTF string.
+     *
+     * See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_strict_from_str) for more information.
+     */
+    static strictFromString(v, calendar, ianaParser) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, v)));
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
+
+
+        const result = wasm.icu4x_ZonedDateTime_strict_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, calendar.ffiValue, ianaParser.ffiValue);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new Rfc9557ParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('Rfc9557ParseError.' + cause.value, { cause });
+            }
+            return ZonedDateTime._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+        }
+
+        finally {
+            functionCleanupArena.free();
+
+            diplomatReceive.free();
+        }
+    }
+
+    /**
      * Creates a new {@link ZonedDateTime} from an IXDTF string.
      *
      * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
+     *
+     * @deprecated use strict_from_string
      */
     static fullFromString(v, calendar, ianaParser, offsetCalculator) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -205,7 +236,7 @@ export class ZonedDateTime {
     }
 
     /**
-     * Creates a new {@link ZonedDateTime} from an IXDTF string, without requiring the offset or calculating the zone variant.
+     * Creates a new {@link ZonedDateTime} from an IXDTF string, without requiring the offset.
      *
      * See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_lenient_from_str) for more information.
      */

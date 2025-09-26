@@ -2,15 +2,14 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "47"
+      "_cldrVersion": "48"
     },
     "calendarData": {
       "buddhist": {
         "calendarSystem": "solar",
         "eras": {
           "0": {
-            "_code": "buddhist",
-            "_aliases": "be",
+            "_code": "be",
             "_start": "-542-01-01"
           }
         }
@@ -19,20 +18,15 @@
         "calendarSystem": "lunisolar",
         "eras": {
           "0": {
-            "_code": "chinese",
-            "_start": "-2636-01-01"
+            "_start": "-2636-02-15"
           }
         }
       },
       "coptic": {
         "calendarSystem": "other",
         "eras": {
-          "0": {
-            "_code": "coptic-inverse",
-            "_end": "284-08-28"
-          },
           "1": {
-            "_code": "coptic",
+            "_code": "am",
             "_start": "284-08-29"
           }
         }
@@ -41,8 +35,7 @@
         "calendarSystem": "lunisolar",
         "eras": {
           "0": {
-            "_code": "dangi",
-            "_start": "-2332-01-01"
+            "_start": "-2332-02-15"
           }
         }
       },
@@ -50,23 +43,20 @@
         "calendarSystem": "other",
         "eras": {
           "0": {
-            "_code": "ethioaa",
-            "_aliases": "ethiopic-amete-alem mundi",
-            "_end": "8-08-28"
+            "_code": "aa",
+            "_start": "-5492-07-17"
           },
           "1": {
-            "_code": "ethiopic",
-            "_aliases": "incar",
-            "_start": "8-08-29"
+            "_code": "am",
+            "_start": "8-08-27"
           }
         }
       },
       "ethiopic-amete-alem": {
         "eras": {
           "0": {
-            "_code": "ethioaa",
-            "_aliases": "ethiopic-amete-alem mundi",
-            "_end": "-5492-08-29"
+            "_code": "aa",
+            "_start": "-5492-07-17"
           }
         }
       },
@@ -75,13 +65,13 @@
         "calendarSystem": "solar",
         "eras": {
           "0": {
-            "_code": "gregory-inverse",
-            "_aliases": "bc bce",
+            "_code": "bce",
+            "_aliases": "bc",
             "_end": "0-12-31"
           },
           "1": {
-            "_code": "gregory",
-            "_aliases": "ad ce",
+            "_code": "ce",
+            "_aliases": "ad",
             "_start": "1-01-01"
           }
         }
@@ -90,18 +80,16 @@
         "calendarSystem": "lunisolar",
         "eras": {
           "0": {
-            "_code": "hebrew",
-            "_aliases": "am",
-            "_start": "-3760-10-7"
+            "_code": "am",
+            "_start": "-3760-09-07"
           }
         }
       },
       "indian": {
         "eras": {
           "0": {
-            "_code": "indian",
-            "_aliases": "saka",
-            "_start": "79-01-01"
+            "_code": "shaka",
+            "_start": "79-03-22"
           }
         }
       },
@@ -109,9 +97,12 @@
         "calendarSystem": "lunar",
         "eras": {
           "0": {
-            "_code": "islamic",
-            "_aliases": "ah",
-            "_start": "622-7-15"
+            "_code": "ah",
+            "_start": "622-07-19"
+          },
+          "1": {
+            "_code": "bh",
+            "_end": "622-07-18"
           }
         }
       },
@@ -119,9 +110,12 @@
         "calendarSystem": "lunar",
         "eras": {
           "0": {
-            "_code": "islamic-civil",
-            "_aliases": "islamicc ah",
-            "_start": "622-7-16"
+            "_code": "ah",
+            "_start": "622-07-19"
+          },
+          "1": {
+            "_code": "bh",
+            "_end": "622-07-18"
           }
         }
       },
@@ -129,9 +123,12 @@
         "calendarSystem": "lunar",
         "eras": {
           "0": {
-            "_code": "islamic-rgsa",
-            "_aliases": "ah",
-            "_start": "622-7-15"
+            "_code": "ah",
+            "_start": "622-07-19"
+          },
+          "1": {
+            "_code": "bh",
+            "_end": "622-07-18"
           }
         }
       },
@@ -139,9 +136,12 @@
         "calendarSystem": "lunar",
         "eras": {
           "0": {
-            "_code": "islamic-tbla",
-            "_aliases": "ah",
-            "_start": "622-7-15"
+            "_code": "ah",
+            "_start": "622-07-18"
+          },
+          "1": {
+            "_code": "bh",
+            "_end": "622-07-17"
           }
         }
       },
@@ -149,9 +149,12 @@
         "calendarSystem": "lunar",
         "eras": {
           "0": {
-            "_code": "islamic-umalqura",
-            "_aliases": "ah",
-            "_start": "622-7-15"
+            "_code": "ah",
+            "_start": "622-07-19"
+          },
+          "1": {
+            "_code": "bh",
+            "_end": "622-07-18"
           }
         }
       },
@@ -859,11 +862,11 @@
           },
           "232": {
             "_code": "meiji",
-            "_start": "1868-9-8"
+            "_start": "1868-10-23"
           },
           "233": {
             "_code": "taisho",
-            "_start": "1912-7-30"
+            "_start": "1912-07-30"
           },
           "234": {
             "_code": "showa",
@@ -871,11 +874,11 @@
           },
           "235": {
             "_code": "heisei",
-            "_start": "1989-1-8"
+            "_start": "1989-01-08"
           },
           "236": {
             "_code": "reiwa",
-            "_start": "2019-5-1"
+            "_start": "2019-05-01"
           }
         }
       },
@@ -883,22 +886,19 @@
         "calendarSystem": "solar",
         "eras": {
           "0": {
-            "_code": "persian",
-            "_aliases": "ap",
-            "_start": "622-01-01"
+            "_code": "ap",
+            "_start": "622-03-21"
           }
         }
       },
       "roc": {
         "eras": {
           "0": {
-            "_code": "roc-inverse",
-            "_aliases": "before-roc",
+            "_code": "broc",
             "_end": "1911-12-31"
           },
           "1": {
             "_code": "roc",
-            "_aliases": "minguo",
             "_start": "1912-01-01"
           }
         }

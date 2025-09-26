@@ -59,7 +59,7 @@ impl TryFrom<&[u8]> for BinHeader {
 
     // We can safely index in this function as we first guarantee that the input
     // is sufficiently large.
-    #[allow(clippy::indexing_slicing)]
+    #[expect(clippy::indexing_slicing)]
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
         if value.len() < core::mem::size_of::<BinHeader>() {
             return Err(BinaryDeserializerError::invalid_data(
@@ -102,7 +102,7 @@ impl TryFrom<&[u8]> for BinReprInfo {
 
     // We can safely index in this function as we first guarantee that the input
     // is sufficiently large.
-    #[allow(clippy::indexing_slicing)]
+    #[expect(clippy::indexing_slicing)]
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
         if value.len() < core::mem::size_of::<BinReprInfo>() {
             return Err(BinaryDeserializerError::invalid_data(

@@ -495,28 +495,7 @@ macro_rules! __define_preferences {
 
         impl From<&$crate::Locale> for $name {
             fn from(loc: &$crate::Locale) -> Self {
-                use $crate::preferences::PreferenceKey;
-
-                $(
-                    let mut $key = None;
-                )*
-
-                for (k, v) in loc.extensions.unicode.keywords.iter() {
-                    $(
-                        if let Ok(Some(r)) = <$pref>::try_from_key_value(k, v) {
-                            $key = Some(r);
-                            continue;
-                        }
-                    )*
-                }
-
-                Self {
-                    locale_preferences: loc.into(),
-
-                    $(
-                        $key,
-                    )*
-                }
+                $name::from_locale_strict(loc).unwrap_or_else(|e| e)
             }
         }
 
@@ -563,6 +542,49 @@ macro_rules! __define_preferences {
                         self.$key = Some(value);
                     }
                 )*
+            }
+
+            #[doc = concat!("Construct a `", stringify!($name), "` from a `Locale`")]
+            ///
+            /// Returns `Err` if any of of the preference values are invalid.
+            pub fn from_locale_strict(loc: &$crate::Locale) -> Result<Self, Self> {
+                use $crate::preferences::PreferenceKey;
+
+                let mut is_err = false;
+
+                $(
+                    let mut $key = None;
+                )*
+
+                for (k, v) in loc.extensions.unicode.keywords.iter() {
+                    $(
+
+                        match <$pref>::try_from_key_value(k, v) {
+                            Ok(Some(k)) => {
+                                $key = Some(k);
+                                continue;
+                            }
+                            Ok(None) => {}
+                            Err(_) => {
+                                is_err = true
+                            }
+                        }
+                    )*
+                }
+
+                let r = Self {
+                    locale_preferences: loc.into(),
+
+                    $(
+                        $key,
+                    )*
+                };
+
+                if is_err {
+                    Err(r)
+                } else {
+                    Ok(r)
+                }
             }
         }
     )

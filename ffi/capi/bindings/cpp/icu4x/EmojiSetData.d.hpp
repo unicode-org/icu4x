@@ -1,5 +1,5 @@
-#ifndef icu4x_EmojiSetData_D_HPP
-#define icu4x_EmojiSetData_D_HPP
+#ifndef ICU4X_EmojiSetData_D_HPP
+#define ICU4X_EmojiSetData_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,15 +9,15 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
 namespace capi { struct EmojiSetData; }
 class EmojiSetData;
 class DataError;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -67,21 +67,21 @@ public:
    *
    * See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.BasicEmoji.html) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::EmojiSetData>, icu4x::DataError> create_basic_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::EmojiSetData>, icu4x::DataError> create_basic_with_provider(const icu4x::DataProvider& provider);
 
-  inline const icu4x::capi::EmojiSetData* AsFFI() const;
-  inline icu4x::capi::EmojiSetData* AsFFI();
-  inline static const icu4x::EmojiSetData* FromFFI(const icu4x::capi::EmojiSetData* ptr);
-  inline static icu4x::EmojiSetData* FromFFI(icu4x::capi::EmojiSetData* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::EmojiSetData* AsFFI() const;
+    inline icu4x::capi::EmojiSetData* AsFFI();
+    inline static const icu4x::EmojiSetData* FromFFI(const icu4x::capi::EmojiSetData* ptr);
+    inline static icu4x::EmojiSetData* FromFFI(icu4x::capi::EmojiSetData* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  EmojiSetData() = delete;
-  EmojiSetData(const icu4x::EmojiSetData&) = delete;
-  EmojiSetData(icu4x::EmojiSetData&&) noexcept = delete;
-  EmojiSetData operator=(const icu4x::EmojiSetData&) = delete;
-  EmojiSetData operator=(icu4x::EmojiSetData&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    EmojiSetData() = delete;
+    EmojiSetData(const icu4x::EmojiSetData&) = delete;
+    EmojiSetData(icu4x::EmojiSetData&&) noexcept = delete;
+    EmojiSetData operator=(const icu4x::EmojiSetData&) = delete;
+    EmojiSetData operator=(icu4x::EmojiSetData&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_EmojiSetData_D_HPP
+#endif // ICU4X_EmojiSetData_D_HPP

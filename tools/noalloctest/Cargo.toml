@@ -20,12 +20,6 @@ publish = false
 
 [dependencies]
 # Dependencies that should be no-alloc should go here
-icu_calendar = { workspace = true }
-icu_collections = { workspace = true }
-icu_locale_core = { workspace = true }
-icu_properties = { workspace = true }
-icu_provider = { workspace = true, features = ["baked"] }
-icu_time = { workspace = true }
 litemap = { workspace = true }
 potential_utf = { workspace = true }
 tinystr = { workspace = true }

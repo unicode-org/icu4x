@@ -17,7 +17,6 @@ use icu::plurals::PluralElements;
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use icu_provider::prelude::*;
 
-use super::legacy::*;
 use super::DatagenCalendar;
 
 type VariantPatternsElement<'a> = PatternsWithDistance<PluralElements<runtime::Pattern<'a>>>;
@@ -151,7 +150,6 @@ impl SourceDataProvider {
         let data = self.get_datetime_resources(locale, calendar)?;
 
         let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats);
-        let time_lengths_v1 = TimeLengths::from(&data);
         let skeleton_patterns =
             DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
 
@@ -214,11 +212,12 @@ impl SourceDataProvider {
         let [long, medium, short] = [Length::Long, Length::Medium, Length::Short]
             .map(|length| to_components_bag(length, attributes, &data))
             .map(|components| {
+                let preferred_hour_cycle = preferred_hour_cycle(&data, locale);
                 // TODO: Use a Skeleton here in order to retain 'E' vs 'c'
                 let pattern = expand_pp_to_pe(select_pattern(
                     components,
                     &skeleton_patterns,
-                    time_lengths_v1.preferred_hour_cycle,
+                    preferred_hour_cycle,
                     &length_combinations_v1,
                 ));
                 match components {
@@ -239,13 +238,13 @@ impl SourceDataProvider {
                             variant0: Some(expand_pp_to_pe(select_pattern(
                                 components_with_full_year,
                                 &skeleton_patterns,
-                                time_lengths_v1.preferred_hour_cycle,
+                                preferred_hour_cycle,
                                 &length_combinations_v1,
                             ))),
                             variant1: Some(expand_pp_to_pe(select_pattern(
                                 components_with_era,
                                 &skeleton_patterns,
-                                time_lengths_v1.preferred_hour_cycle,
+                                preferred_hour_cycle,
                                 &length_combinations_v1,
                             ))),
                         }
@@ -261,13 +260,13 @@ impl SourceDataProvider {
                             variant0: Some(expand_pp_to_pe(select_pattern(
                                 components_with_minute,
                                 &skeleton_patterns,
-                                time_lengths_v1.preferred_hour_cycle,
+                                preferred_hour_cycle,
                                 &length_combinations_v1,
                             ))),
                             variant1: Some(expand_pp_to_pe(select_pattern(
                                 components_with_second,
                                 &skeleton_patterns,
-                                time_lengths_v1.preferred_hour_cycle,
+                                preferred_hour_cycle,
                                 &length_combinations_v1,
                             ))),
                         }
@@ -413,6 +412,62 @@ fn check_for_field(attributes: &DataMarkerAttributes, field: &str) -> bool {
         }
     }
     false
+}
+
+fn preferred_hour_cycle(other: &cldr_serde::ca::Dates, locale: &DataLocale) -> CoarseHourCycle {
+    let mut preferred_hour_cycle: Option<CoarseHourCycle> = None;
+    for s in [
+        &other.time_skeletons.full,
+        &other.time_skeletons.long,
+        &other.time_skeletons.medium,
+        &other.time_skeletons.short,
+    ] {
+        let Some(hour_cycle) = pattern::CoarseHourCycle::determine(
+            &s.get_pattern()
+                .parse()
+                .expect("Failed to crate pattern from bytes"),
+        ) else {
+            continue;
+        };
+
+        if let Some(preferred_hour_cycle) = preferred_hour_cycle {
+            if hour_cycle != preferred_hour_cycle {
+                log::warn!("{locale:?} contained a mix of coarse hour cycle types ({hour_cycle:?}, {preferred_hour_cycle:?})");
+            }
+        } else {
+            preferred_hour_cycle = Some(hour_cycle);
+        }
+    }
+
+    preferred_hour_cycle.expect("Could not find a preferred hour cycle.")
+}
+
+impl From<&cldr_serde::ca::DateTimeFormats> for GenericLengthPatterns<'_> {
+    fn from(other: &cldr_serde::ca::DateTimeFormats) -> Self {
+        // TODO(#308): Support numbering system variations. We currently throw them away.
+        Self {
+            full: other
+                .full
+                .get_pattern()
+                .parse()
+                .expect("Failed to parse pattern"),
+            long: other
+                .long
+                .get_pattern()
+                .parse()
+                .expect("Failed to parse pattern"),
+            medium: other
+                .medium
+                .get_pattern()
+                .parse()
+                .expect("Failed to parse pattern"),
+            short: other
+                .short
+                .get_pattern()
+                .parse()
+                .expect("Failed to parse pattern"),
+        }
+    }
 }
 
 #[test]
@@ -701,8 +756,8 @@ fn test_en_overlap_patterns() {
     6
   ],
   "elements": [
-    "EEEE, h a",
-    "EEE, h a",
+    "EEEE h a",
+    "E h a",
     "EEEE h:m a",
     "E h:mm a",
     "EEEE h:m:s a",
@@ -893,7 +948,6 @@ mod date_skeleton_consistency_tests {
         let mut num_problems = 0;
         let data = provider.get_datetime_resources(locale, Some(cal)).unwrap();
         let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats);
-        let time_lengths_v1 = TimeLengths::from(&data);
         let skeleton_patterns =
             DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
         let skeleton_pattern_set = data
@@ -913,7 +967,7 @@ mod date_skeleton_consistency_tests {
             .collect::<HashSet<_>>();
         let test_case_data = TestCaseFixedArgs {
             skeleton_patterns: &skeleton_patterns,
-            preferred_hour_cycle: time_lengths_v1.preferred_hour_cycle,
+            preferred_hour_cycle: preferred_hour_cycle(&data, locale),
             length_combinations_v1: &length_combinations_v1,
             cal,
             locale,

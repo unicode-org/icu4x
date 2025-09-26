@@ -1,5 +1,5 @@
-#ifndef icu4x_Logger_D_HPP
-#define icu4x_Logger_D_HPP
+#ifndef ICU4X_Logger_D_HPP
+#define ICU4X_Logger_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -34,19 +34,19 @@ public:
    */
   inline static bool init_simple_logger();
 
-  inline const icu4x::capi::Logger* AsFFI() const;
-  inline icu4x::capi::Logger* AsFFI();
-  inline static const icu4x::Logger* FromFFI(const icu4x::capi::Logger* ptr);
-  inline static icu4x::Logger* FromFFI(icu4x::capi::Logger* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::Logger* AsFFI() const;
+    inline icu4x::capi::Logger* AsFFI();
+    inline static const icu4x::Logger* FromFFI(const icu4x::capi::Logger* ptr);
+    inline static icu4x::Logger* FromFFI(icu4x::capi::Logger* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  Logger() = delete;
-  Logger(const icu4x::Logger&) = delete;
-  Logger(icu4x::Logger&&) noexcept = delete;
-  Logger operator=(const icu4x::Logger&) = delete;
-  Logger operator=(icu4x::Logger&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    Logger() = delete;
+    Logger(const icu4x::Logger&) = delete;
+    Logger(icu4x::Logger&&) noexcept = delete;
+    Logger operator=(const icu4x::Logger&) = delete;
+    Logger operator=(icu4x::Logger&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_Logger_D_HPP
+#endif // ICU4X_Logger_D_HPP

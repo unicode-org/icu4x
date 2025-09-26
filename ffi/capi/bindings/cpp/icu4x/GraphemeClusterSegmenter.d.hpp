@@ -1,5 +1,5 @@
-#ifndef icu4x_GraphemeClusterSegmenter_D_HPP
-#define icu4x_GraphemeClusterSegmenter_D_HPP
+#ifndef ICU4X_GraphemeClusterSegmenter_D_HPP
+#define ICU4X_GraphemeClusterSegmenter_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,8 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
@@ -23,7 +22,8 @@ class GraphemeClusterBreakIteratorUtf8;
 namespace capi { struct GraphemeClusterSegmenter; }
 class GraphemeClusterSegmenter;
 class DataError;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -54,7 +54,7 @@ public:
    *
    * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::GraphemeClusterSegmenter>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::GraphemeClusterSegmenter>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Segments a string.
@@ -81,21 +81,21 @@ public:
    *
    * See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.GraphemeClusterSegmenterBorrowed.html#method.segment_latin1) for more information.
    */
-  inline std::unique_ptr<icu4x::GraphemeClusterBreakIteratorLatin1> segment_latin1(diplomat::span<const uint8_t> input) const;
+  inline std::unique_ptr<icu4x::GraphemeClusterBreakIteratorLatin1> segment_latin1(icu4x::diplomat::span<const uint8_t> input) const;
 
-  inline const icu4x::capi::GraphemeClusterSegmenter* AsFFI() const;
-  inline icu4x::capi::GraphemeClusterSegmenter* AsFFI();
-  inline static const icu4x::GraphemeClusterSegmenter* FromFFI(const icu4x::capi::GraphemeClusterSegmenter* ptr);
-  inline static icu4x::GraphemeClusterSegmenter* FromFFI(icu4x::capi::GraphemeClusterSegmenter* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::GraphemeClusterSegmenter* AsFFI() const;
+    inline icu4x::capi::GraphemeClusterSegmenter* AsFFI();
+    inline static const icu4x::GraphemeClusterSegmenter* FromFFI(const icu4x::capi::GraphemeClusterSegmenter* ptr);
+    inline static icu4x::GraphemeClusterSegmenter* FromFFI(icu4x::capi::GraphemeClusterSegmenter* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  GraphemeClusterSegmenter() = delete;
-  GraphemeClusterSegmenter(const icu4x::GraphemeClusterSegmenter&) = delete;
-  GraphemeClusterSegmenter(icu4x::GraphemeClusterSegmenter&&) noexcept = delete;
-  GraphemeClusterSegmenter operator=(const icu4x::GraphemeClusterSegmenter&) = delete;
-  GraphemeClusterSegmenter operator=(icu4x::GraphemeClusterSegmenter&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    GraphemeClusterSegmenter() = delete;
+    GraphemeClusterSegmenter(const icu4x::GraphemeClusterSegmenter&) = delete;
+    GraphemeClusterSegmenter(icu4x::GraphemeClusterSegmenter&&) noexcept = delete;
+    GraphemeClusterSegmenter operator=(const icu4x::GraphemeClusterSegmenter&) = delete;
+    GraphemeClusterSegmenter operator=(icu4x::GraphemeClusterSegmenter&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_GraphemeClusterSegmenter_D_HPP
+#endif // ICU4X_GraphemeClusterSegmenter_D_HPP

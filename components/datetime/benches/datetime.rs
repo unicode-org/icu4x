@@ -2,44 +2,92 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-mod fixtures;
-
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use icu_datetime::{fieldsets, DateTimeFormatter, FixedCalendarDateTimeFormatter};
 
-use icu_calendar::{Date, Gregorian};
+use icu_calendar::Gregorian;
 use icu_locale_core::{locale, Locale};
-use icu_time::{zone::TimeZoneVariant, DateTime, Time, TimeZoneInfo, ZonedDateTime};
-use mock::parse_zoned_gregorian_from_str;
+use icu_time::zone::{IanaParser, ZoneNameTimestamp};
+use icu_time::{DateTime, TimeZoneInfo, ZonedDateTime};
 use writeable::Writeable;
 
-#[path = "../tests/mock.rs"]
-mod mock;
+use icu_datetime::{fieldsets::builder::FieldSetBuilder, provider::fields::components};
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub(crate) struct Fixture {
+    pub(crate) setups: Vec<TestInput>,
+    pub(crate) values: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub(crate) struct TestInput {
+    pub(crate) locale: String,
+    pub(crate) options: TestOptions,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub(crate) struct TestOptions {
+    pub(crate) length: Option<TestOptionsLength>,
+    pub(crate) components: Option<TestComponentsBag>,
+    pub(crate) semantic: Option<FieldSetBuilder>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub(crate) struct TestOptionsLength {
+    pub(crate) date: Option<TestLength>,
+    pub(crate) time: Option<TestLength>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub(crate) enum TestLength {
+    #[serde(rename = "short")]
+    Short,
+    #[serde(rename = "medium")]
+    Medium,
+    #[serde(rename = "long")]
+    Long,
+    #[serde(rename = "full")]
+    Full,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub(crate) struct TestComponentsBag {
+    pub(crate) era: Option<components::Text>,
+    pub(crate) year: Option<components::Year>,
+    pub(crate) month: Option<components::Month>,
+    pub(crate) week: Option<components::Week>,
+    pub(crate) day: Option<components::Day>,
+    pub(crate) weekday: Option<components::Text>,
+
+    pub(crate) hour: Option<components::Numeric>,
+    pub(crate) minute: Option<components::Numeric>,
+    pub(crate) second: Option<components::Numeric>,
+    pub(crate) subsecond: Option<u8>,
+
+    pub(crate) time_zone_name: Option<components::TimeZoneName>,
+}
 
 fn datetime_benches(c: &mut Criterion) {
     let mut group = c.benchmark_group("datetime");
 
     let mut bench_neoneo_datetime_with_fixture = |name, file, has_zones| {
-        let fx = serde_json::from_str::<fixtures::Fixture>(file).unwrap();
+        let fx = serde_json::from_str::<Fixture>(file).unwrap();
 
         let datetimes = fx
             .values
             .iter()
             .map(|s| {
                 if has_zones {
-                    parse_zoned_gregorian_from_str(s)
+                    ZonedDateTime::try_lenient_from_str(s, Gregorian, IanaParser::new()).expect(s)
                 } else {
                     let DateTime { date, time } = DateTime::try_from_str(s, Gregorian).unwrap();
                     ZonedDateTime {
                         date,
                         time,
                         // zone is unused but we need to make the types match
-                        zone: TimeZoneInfo::utc()
-                            .at_date_time_iso(DateTime {
-                                date: Date::try_new_iso(2024, 1, 1).unwrap(),
-                                time: Time::start_of_day(),
-                            })
-                            .with_variant(TimeZoneVariant::Standard),
+                        zone: TimeZoneInfo::unknown()
+                            .with_zone_name_timestamp(ZoneNameTimestamp::far_in_future()),
                     }
                 }
             })
@@ -79,21 +127,17 @@ fn datetime_benches(c: &mut Criterion) {
         });
     };
 
-    bench_neoneo_datetime_with_fixture(
-        "lengths",
-        include_str!("fixtures/tests/lengths.json"),
-        false,
-    );
+    bench_neoneo_datetime_with_fixture("lengths", include_str!("fixtures/lengths.json"), false);
 
     bench_neoneo_datetime_with_fixture(
         "components",
-        include_str!("fixtures/tests/components.json"),
+        include_str!("fixtures/components.json"),
         false,
     );
 
     bench_neoneo_datetime_with_fixture(
         "lengths_with_zones",
-        include_str!("fixtures/tests/lengths_with_zones.json"),
+        include_str!("fixtures/lengths_with_zones.json"),
         true,
     );
 

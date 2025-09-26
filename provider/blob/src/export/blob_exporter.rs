@@ -23,7 +23,6 @@ use postcard::ser_flavors::{AllocVec, Flavor};
 /// See the module-level docs for an example.
 pub struct BlobExporter<'w> {
     /// Map of marker path hash -> locale byte string -> blob ID
-    #[allow(clippy::type_complexity)]
     resources: Mutex<BTreeMap<DataMarkerIdHash, BTreeMap<Vec<u8>, usize>>>,
     checksums: Mutex<BTreeMap<DataMarkerIdHash, u64>>,
     // All seen markers
@@ -80,7 +79,7 @@ impl DataExporter for BlobExporter<'_> {
             let len = unique_resources.len();
             *unique_resources.entry(output).or_insert(len)
         };
-        #[allow(clippy::expect_used)]
+        #[expect(clippy::expect_used)]
         self.resources
             .lock()
             .expect("poison")

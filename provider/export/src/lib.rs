@@ -124,7 +124,7 @@ use std::sync::Arc;
 pub struct ExportDriver {
     markers: Option<BTreeSet<DataMarkerInfo>>,
     requested_families: HashMap<DataLocale, DataLocaleFamilyAnnotations>,
-    #[allow(clippy::type_complexity)] // sigh
+    #[expect(clippy::type_complexity)] // sigh
     attributes_filters:
         HashMap<String, Arc<Box<dyn Fn(&DataMarkerAttributes) -> bool + Send + Sync + 'static>>>,
     fallbacker: LocaleFallbacker,

@@ -1,5 +1,5 @@
-#ifndef icu4x_HangulSyllableType_D_HPP
-#define icu4x_HangulSyllableType_D_HPP
+#ifndef ICU4X_HangulSyllableType_D_HPP
+#define ICU4X_HangulSyllableType_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,11 +9,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 class HangulSyllableType;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -37,22 +37,22 @@ namespace icu4x {
  */
 class HangulSyllableType {
 public:
-  enum Value {
-    NotApplicable = 0,
-    LeadingJamo = 1,
-    VowelJamo = 2,
-    TrailingJamo = 3,
-    LeadingVowelSyllable = 4,
-    LeadingVowelTrailingSyllable = 5,
-  };
+    enum Value {
+        NotApplicable = 0,
+        LeadingJamo = 1,
+        VowelJamo = 2,
+        TrailingJamo = 3,
+        LeadingVowelSyllable = 4,
+        LeadingVowelTrailingSyllable = 5,
+    };
 
-  HangulSyllableType(): value(Value::NotApplicable) {}
+    HangulSyllableType(): value(Value::NotApplicable) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr HangulSyllableType(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr HangulSyllableType(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
   /**
    * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
@@ -73,11 +73,11 @@ public:
    */
   inline static std::optional<icu4x::HangulSyllableType> from_integer_value(uint8_t other);
 
-  inline icu4x::capi::HangulSyllableType AsFFI() const;
-  inline static icu4x::HangulSyllableType FromFFI(icu4x::capi::HangulSyllableType c_enum);
+    inline icu4x::capi::HangulSyllableType AsFFI() const;
+    inline static icu4x::HangulSyllableType FromFFI(icu4x::capi::HangulSyllableType c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_HangulSyllableType_D_HPP
+#endif // ICU4X_HangulSyllableType_D_HPP

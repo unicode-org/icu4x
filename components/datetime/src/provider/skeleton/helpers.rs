@@ -296,7 +296,7 @@ pub fn create_best_pattern_for_fields<'data>(
                 let time = time_pattern.clone();
 
                 // TODO(#2626) - Since this is fallible, we should make this method fallible.
-                #[allow(clippy::expect_used)] // Generic pattern combination should never fail.
+                #[expect(clippy::expect_used)] // Generic pattern combination should never fail.
                 let dt = dt_pattern
                     .clone()
                     .combined(date, time)

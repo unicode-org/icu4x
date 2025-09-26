@@ -1,5 +1,5 @@
-#ifndef icu4x_BidiPairedBracketType_D_HPP
-#define icu4x_BidiPairedBracketType_D_HPP
+#ifndef ICU4X_BidiPairedBracketType_D_HPP
+#define ICU4X_BidiPairedBracketType_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -30,25 +30,25 @@ namespace icu4x {
  */
 class BidiPairedBracketType {
 public:
-  enum Value {
-    Open = 0,
-    Close = 1,
-    None = 2,
-  };
+    enum Value {
+        Open = 0,
+        Close = 1,
+        None = 2,
+    };
 
-  BidiPairedBracketType(): value(Value::Open) {}
+    BidiPairedBracketType(): value(Value::None) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr BidiPairedBracketType(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr BidiPairedBracketType(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::BidiPairedBracketType AsFFI() const;
-  inline static icu4x::BidiPairedBracketType FromFFI(icu4x::capi::BidiPairedBracketType c_enum);
+    inline icu4x::capi::BidiPairedBracketType AsFFI() const;
+    inline static icu4x::BidiPairedBracketType FromFFI(icu4x::capi::BidiPairedBracketType c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_BidiPairedBracketType_D_HPP
+#endif // ICU4X_BidiPairedBracketType_D_HPP

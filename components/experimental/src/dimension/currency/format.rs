@@ -10,8 +10,8 @@ use writeable::Writeable;
 use crate::dimension::currency::options::CurrencyFormatterOptions;
 use crate::dimension::currency::options::Width;
 use crate::dimension::currency::CurrencyCode;
-use crate::dimension::provider::currency;
-use crate::dimension::provider::currency::CurrencyEssentials;
+use crate::dimension::provider::currency::essentials;
+use crate::dimension::provider::currency::essentials::CurrencyEssentials;
 
 pub struct FormattedCurrency<'l> {
     pub(crate) value: &'l Decimal,
@@ -39,12 +39,12 @@ impl Writeable for FormattedCurrency<'_> {
             Width::Narrow => config.narrow_placeholder_value,
         };
         let currency_sign_value = match placeholder_index {
-            Some(currency::PlaceholderValue::Index(index)) => self
+            Some(essentials::PlaceholderValue::Index(index)) => self
                 .essential
                 .placeholders
                 .get(index.into())
                 .ok_or(core::fmt::Error)?,
-            Some(currency::PlaceholderValue::ISO) | None => self.currency_code.0.as_str(),
+            Some(essentials::PlaceholderValue::ISO) | None => self.currency_code.0.as_str(),
         };
 
         let pattern_selection = match self.options.width {
@@ -52,8 +52,8 @@ impl Writeable for FormattedCurrency<'_> {
             Width::Narrow => config.narrow_pattern_selection,
         };
         let pattern = match pattern_selection {
-            currency::PatternSelection::Standard => self.essential.standard_pattern.as_ref(),
-            currency::PatternSelection::StandardAlphaNextToNumber => self
+            essentials::PatternSelection::Standard => self.essential.standard_pattern.as_ref(),
+            essentials::PatternSelection::StandardAlphaNextToNumber => self
                 .essential
                 .standard_alpha_next_to_number_pattern
                 .as_ref(),
@@ -124,12 +124,15 @@ mod tests {
         let positive_value = "12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
         // TODO(#6064)
-        assert_writeable_eq!(formatted_currency, "ج.م.\u{200f}\u{a0}١٢٬٣٤٥٫٦٧");
+        assert_writeable_eq!(formatted_currency, "\u{200f}١٢٬٣٤٥٫٦٧\u{a0}ج.م.\u{200f}");
 
         // Negative case
         let negative_value = "-12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
         // TODO(#6064)
-        assert_writeable_eq!(formatted_currency, "ج.م.\u{200f}\u{a0}\u{61c}-١٢٬٣٤٥٫٦٧");
+        assert_writeable_eq!(
+            formatted_currency,
+            "\u{200f}\u{61c}-١٢٬٣٤٥٫٦٧\u{a0}ج.م.\u{200f}"
+        );
     }
 }

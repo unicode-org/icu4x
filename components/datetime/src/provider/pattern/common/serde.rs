@@ -40,7 +40,6 @@ mod reference {
         }
     }
 
-    #[allow(clippy::upper_case_acronyms)]
     pub(crate) struct DeserializePatternUTS35String;
 
     impl de::Visitor<'_> for DeserializePatternUTS35String {
@@ -141,7 +140,6 @@ mod runtime {
         }
     }
 
-    #[allow(clippy::upper_case_acronyms)]
     struct DeserializePatternUTS35String;
 
     impl<'de> de::Visitor<'de> for DeserializePatternUTS35String {
@@ -222,7 +220,6 @@ mod runtime {
         use super::super::super::super::runtime::GenericPattern;
         use super::*;
 
-        #[allow(clippy::upper_case_acronyms)]
         struct DeserializeGenericPatternUTS35String;
 
         impl<'de> de::Visitor<'de> for DeserializeGenericPatternUTS35String {

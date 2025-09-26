@@ -15,6 +15,8 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+#[cfg(feature = "serde")]
+pub(crate) mod compat;
 pub mod fields;
 pub mod neo;
 pub(crate) mod packed_pattern;
@@ -58,8 +60,6 @@ const _: () = {
     impl_timezone_names_specific_long_v1!(Baked);
     impl_timezone_names_specific_short_v1!(Baked);
     impl_timezone_names_standard_long_v1!(Baked);
-
-    impl_timezone_metazone_periods_v1!(Baked);
 
     impl_datetime_patterns_glue_v1!(Baked);
     impl_datetime_patterns_time_v1!(Baked);
@@ -110,6 +110,20 @@ const _: () = {
     impl_datetime_patterns_date_roc_v1!(Baked);
 };
 
+#[cfg(feature = "compiled_data")]
+impl icu_provider::DataProvider<icu_time::provider::TimezonePeriodsV1> for Baked {
+    #[inline]
+    fn load(
+        &self,
+        req: icu_provider::DataRequest,
+    ) -> Result<
+        icu_provider::DataResponse<icu_time::provider::TimezonePeriodsV1>,
+        icu_provider::DataError,
+    > {
+        icu_time::provider::Baked.load(req)
+    }
+}
+
 #[cfg(feature = "datagen")]
 use icu_provider::prelude::*;
 
@@ -123,7 +137,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     time_zones::TimezoneNamesGenericLongV1::INFO,
     time_zones::TimezoneNamesStandardLongV1::INFO,
     time_zones::TimezoneNamesGenericShortV1::INFO,
-    time_zones::TimezoneMetazonePeriodsV1::INFO,
     time_zones::TimezoneNamesSpecificLongV1::INFO,
     time_zones::TimezoneNamesSpecificShortV1::INFO,
     time_zones::TimezoneNamesEssentialsV1::INFO,

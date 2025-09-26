@@ -68,7 +68,7 @@ jobs:
     - name: Install cargo-all-features
       uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
       with:
-        tool: cargo-all-features@1.10.0
+        tool: cargo-all-features@1.11.0
 
     # No toolchain boilerplate as this runs on MSRV
 
@@ -323,7 +323,10 @@ jobs:
 
   # ci-job-test-dart
   test-dart:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -344,11 +347,35 @@ jobs:
     # Job-specific dependencies
     - uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
       with:
-        sdk: ${{ github.event_name != 'schedule' && '3.9.0-138.0.dev' || 'dev' }}
+        # Keep in sync with artifacts-build.yml
+        sdk: ${{ github.event_name == 'schedule' && github.event.schedule == '0 14 * * *' && 'dev' || '3.10.0-186.0.dev' }}
+    - name: Install yq if Windows
+      if: ${{ matrix.os == 'windows-latest' }}
+      run: choco install yq
 
     # Actual job
     - name: Run `cargo make ci-job-test-dart`
       run: cargo make ci-job-test-dart
+
+    - name: Run `cargo make ci-job-test-dart` in local mode
+      run: |
+        cp ffi/dart/.dart_tool/lib/* dylib
+        git clean -xf ffi examples
+        yq -i ".hooks.user_defines.icu4x.buildMode = \"local\"" ffi/dart/pubspec.yaml
+        yq -i ".hooks.user_defines.icu4x.localPath = \"file://$(realpath dylib)\"" ffi/dart/pubspec.yaml
+        yq -i ".hooks.user_defines.icu4x.buildMode = \"local\"" examples/dart/pubspec.yaml
+        yq -i ".hooks.user_defines.icu4x.localPath = \"file://$(realpath dylib)\"" examples/dart/pubspec.yaml
+        cargo make ci-job-test-dart
+        rm dylib
+
+    - name: Run `cargo make ci-job-test-dart` in fetch mode
+      # reenable after next release
+      if: false
+      run: |
+        git clean -xf ffi examples
+        yq -i ".hooks.user_defines.icu4x.buildMode = \"fetch\"" ffi/dart/pubspec.yaml
+        yq -i ".hooks.user_defines.icu4x.buildMode = \"fetch\"" examples/dart/pubspec.yaml
+        cargo make ci-job-test-dart
  
 
   # ci-job-nostd
@@ -549,26 +576,29 @@ jobs:
 
   semver:
     runs-on: ubuntu-latest
-    env:
-      # This is the baseline for semver-check. It can be changed,
-      # such as if unstable APIs were changed but semver-check
-      # didn't know that they were unstable.
-      BASELINE_REF: 6c91bf7cfcb524cba85eb1c3030ae43d437052e9 # a commit on main
     steps:
-
-    # Checkout baseline revision; required because actions/checkout is shallow
-    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-      with:
-        ref: ${{ env.BASELINE_REF }}
 
     # Checkout HEAD revision
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
+    - name: Fetch base_ref if needed
+      if: ${{ github.event_name == 'pull_request' }}
+      run: git fetch origin ${{ github.base_ref }}
+
     # Actual job
     - name: Check semver
-      uses: sffc/cargo-semver-checks-action@99233fa6fae21c528b2072684ce69fbd71a4105a
+      uses: obi1kenobi/cargo-semver-checks-action@5b298c9520f7096a4683c0bd981a7ac5a7e249ae
+      # On pull requests, run against the base_ref so only violations added in that PR
+      # will trigger
+      if: ${{ github.event_name == 'pull_request' }}
       with:
-        baseline-rev: ${{ env.BASELINE_REF }}
+        baseline-rev: origin/${{ github.base_ref }}
+
+    - name: Show semver violations since last release
+      uses: obi1kenobi/cargo-semver-checks-action@5b298c9520f7096a4683c0bd981a7ac5a7e249ae
+      # On main, run against the last release, but warn only
+      if: ${{ github.event_name != 'pull_request' }}
+      continue-on-error: true
 
 
   # Notify on slack  
@@ -579,23 +609,12 @@ jobs:
     steps:
       - name: Notify slack of failure
         uses: ravsamhq/notify-slack-action@4ed28566c2bdcdaee6dca2b46b9666d01b4ed8a4 # v1
-        # Only notify main slack of failure for beta runs and for failed main CI
-        if: (github.event_name == 'schedule' && github.event.schedule == '1 14 * * *') || github.event_name == 'push'
         with:
           notify_when: failure
           status: failure # We do the filtering earlier
           notification_title: ''
-          message_format: ${{ format('{{emoji}} {0} CI failed!' , ((github.event_name == 'schedule') && 'Beta' || (github.event_name == 'push') && 'Main' || 'Manually dispatched')) }}
+          message_format: ${{ format('{{emoji}} {0} CI failed!' , (github.event_name == 'push' && 'Main' || (github.event.schedule == '1 14 * * *' && 'Beta' || 'Nightly'))) }}
           footer: '<{run_url}|View failure> | <https://github.com/unicode-org/icu4x/actions?query=event%3A${{ github.event_name }}|CI history for `${{ github.event_name }}`>'
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      - name: Notify nightly slack of failure
-        uses: ravsamhq/notify-slack-action@4ed28566c2bdcdaee6dca2b46b9666d01b4ed8a4 # v1
-        with:
-          notify_when: failure
-          status: failure # We do the filtering earlier
-          notification_title: ''
-          message_format: ${{ format('{{emoji}} {0} CI failed!' , ((github.event_name == 'schedule') && (github.event.schedule == '1 14 * * *' && 'Beta' || 'Nightly') || (github.event_name == 'push') && 'Main' || 'Manually dispatched on `${{ inputs.channel }}`')) }}
-          footer: '<{run_url}|View failure> | <https://github.com/unicode-org/icu4x/actions?query=event%3A${{ github.event_name }}|CI history for `${{ github.event_name }}`>'
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NIGHTLY_WEBHOOK_URL }}
+          # Notify main slack of failure for beta runs and and main CI, nightly slack otherwise
+          SLACK_WEBHOOK_URL: ${{ ((github.event_name == 'schedule' && github.event.schedule == '1 14 * * *') || github.event_name == 'push') && secrets.SLACK_WEBHOOK_URL || secrets.SLACK_NIGHTLY_WEBHOOK_URL }}

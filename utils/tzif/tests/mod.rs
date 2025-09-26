@@ -6,7 +6,7 @@ use std::path::Path;
 use walkdir::WalkDir;
 
 fn parse_tzif_file(path: &Path) -> Result<(), tzif::error::Error> {
-    println!("parsing {:?}", path);
+    println!("parsing {path:?}");
     let parsed = tzif::parse_tzif_file(path)?;
     println!("{parsed:#?}");
     Ok(())

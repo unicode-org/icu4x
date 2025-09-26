@@ -83,7 +83,7 @@ impl<'a> IxdtfParser<'a, Utf8> {
     /// Creates a new `IxdtfParser` from a source `&str`.
     #[inline]
     #[must_use]
-    #[allow(clippy::should_implement_trait)]
+    #[expect(clippy::should_implement_trait)]
     pub fn from_str(source: &'a str) -> Self {
         Self::from_utf8(source.as_bytes())
     }
@@ -257,7 +257,7 @@ impl<'a> TimeZoneParser<'a, Utf8> {
     /// Creates a new `TimeZoneParser` from a source `&str`.
     #[inline]
     #[must_use]
-    #[allow(clippy::should_implement_trait)]
+    #[expect(clippy::should_implement_trait)]
     pub fn from_str(source: &'a str) -> Self {
         Self::from_utf8(source.as_bytes())
     }
@@ -330,9 +330,15 @@ impl<'a, T: EncodingType> TimeZoneParser<'a, T> {
     /// let identifier = "+00:00:00";
     /// let err = TimeZoneParser::from_str(identifier).parse_identifier().unwrap_err();
     /// assert_eq!(err, ParseError::InvalidMinutePrecisionOffset);
+    ///
+    /// let identifier = "+00:00.1";
+    /// let err = TimeZoneParser::from_str(identifier).parse_identifier().unwrap_err();
+    /// assert_eq!(err, ParseError::InvalidEnd);
     /// ```
     pub fn parse_identifier(&mut self) -> ParserResult<TimeZoneRecord<'a, T>> {
-        timezone::parse_time_zone(&mut self.cursor)
+        let result = timezone::parse_time_zone(&mut self.cursor)?;
+        self.cursor.close()?;
+        Ok(result)
     }
 
     /// Parse a UTC offset from the provided source.
@@ -449,7 +455,7 @@ impl<'a> IsoDurationParser<'a, Utf8> {
     /// Creates a new `IsoDurationParser` from a source `&str`.
     #[inline]
     #[must_use]
-    #[allow(clippy::should_implement_trait)]
+    #[expect(clippy::should_implement_trait)]
     pub fn from_str(source: &'a str) -> Self {
         Self::from_utf8(source.as_bytes())
     }

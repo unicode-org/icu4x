@@ -150,6 +150,8 @@ exec --fail-on-error ./third_party_tools/bin/gn gen --root=../.. out/host
 exec --fail-on-error rustup run ${PINNED_CI_NIGHTLY} ./third_party_tools/depot_tools/ninja -C out/host
 '''
 
+
+
 [tasks.gn-build-wasi]
 description = "Build the GN version of ICU4X for wasm32-wasi"
 category = "ICU4X Development"
@@ -173,19 +175,30 @@ exec --fail-on-error ./third_party_tools/bin/gn gen --root=../.. --args=target_o
 exec --fail-on-error rustup run ${PINNED_CI_NIGHTLY} ./third_party_tools/depot_tools/ninja -C out/wasi
 '''
 
-[tasks.gn-run]
+[tasks.gn-run-wasi]
 description = "Run the GN version of ICU4X"
 category = "ICU4X Development"
-install_crate = { crate_name = "wasmer-cli", binary = "wasmer", test_arg = ["--help"] }
 install_crate_args = ["--features=singlepass,cranelift", "--version=6.0.0"]
+install_crate = { crate_name = "wasmer-cli", binary = "wasmer", test_arg = ["--help"] }
 dependencies = [
-    "gn-build",
     "gn-build-wasi",
 ]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
 cd examples/gn
-exec --fail-on-error ./out/host/obj/examples/gn/hello_world/print_hello
 exec --fail-on-error wasmer run ./out/wasi/obj/examples/gn/hello_world/print_hello
+'''
+
+[tasks.gn-run]
+description = "Run the GN version of ICU4X"
+category = "ICU4X Development"
+dependencies = [
+    "gn-build",
+]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+cd examples/gn
+exec --fail-on-error ./out/host/obj/examples/gn/hello_world/print_hello
 '''

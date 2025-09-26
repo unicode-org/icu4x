@@ -1,5 +1,5 @@
-#ifndef icu4x_TimePrecision_D_HPP
-#define icu4x_TimePrecision_D_HPP
+#ifndef ICU4X_TimePrecision_D_HPP
+#define ICU4X_TimePrecision_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,11 +9,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 class TimePrecision;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -46,40 +46,40 @@ namespace icu4x {
  */
 class TimePrecision {
 public:
-  enum Value {
-    Hour = 0,
-    Minute = 1,
-    MinuteOptional = 2,
-    Second = 3,
-    Subsecond1 = 4,
-    Subsecond2 = 5,
-    Subsecond3 = 6,
-    Subsecond4 = 7,
-    Subsecond5 = 8,
-    Subsecond6 = 9,
-    Subsecond7 = 10,
-    Subsecond8 = 11,
-    Subsecond9 = 12,
-  };
+    enum Value {
+        Hour = 0,
+        Minute = 1,
+        MinuteOptional = 2,
+        Second = 3,
+        Subsecond1 = 4,
+        Subsecond2 = 5,
+        Subsecond3 = 6,
+        Subsecond4 = 7,
+        Subsecond5 = 8,
+        Subsecond6 = 9,
+        Subsecond7 = 10,
+        Subsecond8 = 11,
+        Subsecond9 = 12,
+    };
 
-  TimePrecision(): value(Value::Hour) {}
+    TimePrecision(): value(Value::Second) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr TimePrecision(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr TimePrecision(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
   /**
    * See the [Rust documentation for `try_from_int`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.SubsecondDigits.html#method.try_from_int) for more information.
    */
   inline static std::optional<icu4x::TimePrecision> from_subsecond_digits(uint8_t digits);
 
-  inline icu4x::capi::TimePrecision AsFFI() const;
-  inline static icu4x::TimePrecision FromFFI(icu4x::capi::TimePrecision c_enum);
+    inline icu4x::capi::TimePrecision AsFFI() const;
+    inline static icu4x::TimePrecision FromFFI(icu4x::capi::TimePrecision c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_TimePrecision_D_HPP
+#endif // ICU4X_TimePrecision_D_HPP

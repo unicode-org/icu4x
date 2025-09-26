@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::dimension::provider::units::UnitsDisplayNameV1;
+use crate::dimension::provider::units::display_name::UnitsDisplayNameV1;
 use crate::dimension::units::formatter::{UnitsFormatter, UnitsFormatterPreferences};
 use crate::dimension::units::options::{UnitsFormatterOptions, Width};
 use crate::duration::options::FieldStyle;

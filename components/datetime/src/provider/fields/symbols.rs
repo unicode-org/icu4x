@@ -216,7 +216,7 @@ impl AsULE for FieldSymbol {
         FieldSymbolULE(self.idx())
     }
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        #[allow(clippy::unwrap_used)] // OK because the ULE is pre-validated
+        #[expect(clippy::unwrap_used)] // OK because the ULE is pre-validated
         Self::from_idx(unaligned.0).unwrap()
     }
 }
@@ -277,6 +277,7 @@ impl FieldSymbol {
             Self::Era => 0,
             Self::Year(Year::Calendar) => 1,
             // Self::Year(Year::WeekOf) => 2,
+            Self::Year(Year::Extended) => 2,
             Self::Year(Year::Cyclic) => 3,
             Self::Year(Year::RelatedIso) => 4,
             Self::Month(Month::Format) => 5,
@@ -288,7 +289,7 @@ impl FieldSymbol {
             Self::Day(Day::DayOfMonth) => 9,
             Self::Day(Day::DayOfYear) => 10,
             Self::Day(Day::DayOfWeekInMonth) => 11,
-            // Self::Day(Day::ModifiedJulianDay) => 12,
+            Self::Day(Day::ModifiedJulianDay) => 12,
             Self::Weekday(Weekday::Format) => 13,
             Self::Weekday(Weekday::Local) => 14,
             Self::Weekday(Weekday::StandAlone) => 15,
@@ -507,10 +508,12 @@ field_type! (
         'U' => Cyclic = 1,
         /// Field symbol for related ISO; some calendars which use different year numbering than ISO, or no year numbering, may express years in an ISO year corresponding to a calendar year.
         'r' => RelatedIso = 2,
+        /// Field symbol for extended year
+        'u' => Extended = 3,
         // /// Field symbol for year in "week of year".
         // ///
         // /// This works for “week of year” based calendars in which the year transition occurs on a week boundary; may differ from calendar year [`Year::Calendar`] near a year transition. This numeric year designation is used in conjunction with [`Week::WeekOfYear`], but can be used in non-Gregorian based calendar systems where week date processing is desired. The field length is interpreted in the same way as for [`Year::Calendar`].
-        // 'Y' => WeekOf = 3,
+        // 'Y' => WeekOf = 4,
     };
     YearULE
 );
@@ -563,10 +566,10 @@ field_type!(
         ///
         /// For the example `"2nd Wed in July"`, this field would provide `"2"`.  Should likely be paired with the [`Weekday`] field.
         'F' => DayOfWeekInMonth = 2,
-        // /// Field symbol for the modified Julian day (numeric).
-        // ///
-        // /// The value of this field differs from the conventional Julian day number in a couple of ways, which are based on measuring relative to the local time zone.
-        // 'g' => ModifiedJulianDay = 3,
+        /// Field symbol for the modified Julian day (numeric).
+        ///
+        /// The value of this field differs from the conventional Julian day number in a couple of ways, which are based on measuring relative to the local time zone.
+        'g' => ModifiedJulianDay = 3,
     };
     Numeric;
     DayULE
@@ -772,7 +775,6 @@ impl LengthType for TimeZone {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[allow(clippy::enum_variant_names)]
 #[repr(u8)]
 #[zerovec::make_ule(DecimalSecondULE)]
 #[zerovec::derive(Debug)]

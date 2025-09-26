@@ -85,6 +85,7 @@ pub(crate) struct TimeZoneNames {
     pub(crate) hour_format: String,
     pub(crate) gmt_format: PatternString<SinglePlaceholder>,
     pub(crate) gmt_zero_format: String,
+    pub(crate) gmt_unknown_format: String,
     pub(crate) region_format: PatternString<SinglePlaceholder>,
     pub(crate) region_format_dt: PatternString<SinglePlaceholder>,
     pub(crate) region_format_st: PatternString<SinglePlaceholder>,
@@ -118,6 +119,9 @@ impl<'de> Visitor<'de> for TimeZoneNamesVisitor {
             } else if key.eq("gmtZeroFormat") {
                 let value = map.next_value::<String>()?;
                 time_zone_names.gmt_zero_format = value;
+            } else if key.eq("gmtUnknownFormat") {
+                let value = map.next_value::<String>()?;
+                time_zone_names.gmt_unknown_format = value;
             } else if key.eq("fallbackFormat") {
                 let value = map.next_value::<PatternString<DoublePlaceholder>>()?;
                 time_zone_names.fallback_format = value;

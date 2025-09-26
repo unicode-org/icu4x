@@ -383,7 +383,7 @@ impl Serializer {
                     // to share a single set of bytes in the 16-bit data block.
                     // We can't use `if let` here because we need to borrow as
                     // mutable in the `else` case.
-                    #[allow(clippy::unwrap_used)]
+                    #[expect(clippy::unwrap_used)]
                     let data = strings.get(string).unwrap();
                     data.borrow_mut().copy_count += 1;
                     existing_string_data = Some((string, data));
@@ -445,7 +445,7 @@ impl Serializer {
         for (i, string) in sorted_strings.iter().enumerate() {
             // We can safely unwrap here as `sorted_strings` is just a sorted
             // list of keys for the map in question.
-            #[allow(clippy::unwrap_used)]
+            #[expect(clippy::unwrap_used)]
             let data = strings.get(string).unwrap();
 
             if data.borrow().containing_string.is_some() {
@@ -477,7 +477,7 @@ impl Serializer {
                 // Note the offset of the suffix into its containing string and
                 // link the two. We can safely unwrap here as `sorted_strings`
                 // are all keys for the map in question.
-                #[allow(clippy::unwrap_used)]
+                #[expect(clippy::unwrap_used)]
                 let suffix_data = strings.get(suffix).unwrap();
                 suffix_data.borrow_mut().offset =
                     (string.chars().count() - suffix.chars().count()) as u32;
@@ -508,7 +508,7 @@ impl Serializer {
                 // sorted to the end, we are guaranteed to have already written
                 // the containing string. We can't use `if let` here because we
                 // need to borrow as mutable, but we can safely unwrap.
-                #[allow(clippy::unwrap_used)]
+                #[expect(clippy::unwrap_used)]
                 let containing_string = data.borrow().containing_string.unwrap();
                 let containing_data =
                     strings

@@ -1,5 +1,5 @@
-#ifndef icu4x_LanguageDisplay_D_HPP
-#define icu4x_LanguageDisplay_D_HPP
+#ifndef ICU4X_LanguageDisplay_D_HPP
+#define ICU4X_LanguageDisplay_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -25,28 +25,30 @@ namespace capi {
 
 namespace icu4x {
 /**
+ * 🚧 This API is experimental and may experience breaking changes outside major releases.
+ *
  * See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/enum.LanguageDisplay.html) for more information.
  */
 class LanguageDisplay {
 public:
-  enum Value {
-    Dialect = 0,
-    Standard = 1,
-  };
+    enum Value {
+        Dialect = 0,
+        Standard = 1,
+    };
 
-  LanguageDisplay(): value(Value::Dialect) {}
+    LanguageDisplay(): value(Value::Dialect) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr LanguageDisplay(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr LanguageDisplay(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::LanguageDisplay AsFFI() const;
-  inline static icu4x::LanguageDisplay FromFFI(icu4x::capi::LanguageDisplay c_enum);
+    inline icu4x::capi::LanguageDisplay AsFFI() const;
+    inline static icu4x::LanguageDisplay FromFFI(icu4x::capi::LanguageDisplay c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_LanguageDisplay_D_HPP
+#endif // ICU4X_LanguageDisplay_D_HPP

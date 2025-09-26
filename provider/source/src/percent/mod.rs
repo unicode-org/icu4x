@@ -17,6 +17,7 @@ use icu_pattern::SinglePlaceholder;
 use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
+use zerovec::VarZeroCow;
 
 impl DataProvider<PercentEssentialsV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PercentEssentialsV1>, DataError> {
@@ -102,7 +103,7 @@ fn extract_percent_essentials<'data>(
 fn create_signed_pattern<'a>(
     pattern: &str,
     localized_percent_sign: &str,
-) -> Result<Cow<'a, Pattern<DoublePlaceholder>>, DataError> {
+) -> Result<VarZeroCow<'a, Pattern<DoublePlaceholder>>, DataError> {
     // While all locales use the `%`, some include non-breaking spaces.
     // Hence using the literal `%` char here.
     let percent_pattern_index = pattern.find('%').unwrap();
@@ -170,7 +171,7 @@ fn create_signed_pattern<'a>(
     let pattern = DoublePlaceholderPattern::try_from_str(&pattern_vec.concat(), Default::default())
         .map_err(|e| DataError::custom("Could not parse pattern").with_display_context(&e))?;
 
-    Ok(Cow::Owned(pattern))
+    Ok(VarZeroCow::new_owned(pattern))
 }
 
 /// Used only for positive percents.
@@ -178,7 +179,7 @@ fn create_signed_pattern<'a>(
 fn create_unsigned_pattern<'a>(
     pattern: &str,
     localized_percent_sign: &str,
-) -> Result<Cow<'a, Pattern<SinglePlaceholder>>, DataError> {
+) -> Result<VarZeroCow<'a, Pattern<SinglePlaceholder>>, DataError> {
     // While all locales use the `%`, some include non-breaking spaces.
     // Hence using the literal `%` char here.
     let percent_sign_index = pattern.find('%').unwrap();
@@ -218,7 +219,7 @@ fn create_unsigned_pattern<'a>(
     )
     .map_err(|e| DataError::custom("Could not parse pattern").with_display_context(&e))?;
 
-    Ok(Cow::Owned(pattern))
+    Ok(VarZeroCow::new_owned(pattern))
 }
 
 #[test]

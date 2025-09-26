@@ -6,7 +6,6 @@ use ffi::IsoWeekOfYear;
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
     use alloc::sync::Arc;
@@ -19,6 +18,7 @@ pub mod ffi {
     use tinystr::TinyAsciiStr;
 
     #[diplomat::enum_convert(icu_calendar::types::Weekday)]
+    #[non_exhaustive]
     pub enum Weekday {
         Monday = 1,
         Tuesday,
@@ -354,8 +354,13 @@ pub mod ffi {
             self.0.year().era_year_or_related_iso()
         }
 
-        /// Returns the extended year in the Date
+        /// Returns the extended year, which can be used for
+        ///
+        /// This year number can be used when you need a simple numeric representation
+        /// of the year, and can be meaningfully compared with extended years from other
+        /// eras or used in arithmetic.
         #[diplomat::rust_link(icu::calendar::Date::extended_year, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::YearInfo::extended_year, FnInEnum, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn extended_year(&self) -> i32 {
             self.0.extended_year()

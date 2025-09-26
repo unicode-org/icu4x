@@ -11,9 +11,9 @@
 
 use icu_provider::prelude::*;
 use num_bigint::BigInt;
-use zerovec::{ule::AsULE, VarZeroVec, ZeroVec};
+use zerovec::{maps::ZeroVecLike, ule::AsULE, VarZeroVec, ZeroVec};
 
-use crate::measure::provider::single_unit::SingleUnit;
+use crate::measure::provider::single_unit::{SingleUnit, UnitID};
 #[cfg(feature = "compiled_data")]
 /// Baked data
 ///
@@ -40,10 +40,31 @@ icu_provider::data_marker!(UnitsInfoV1, UnitsInfo<'static>, is_singleton = true)
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::units::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct UnitsInfo<'data> {
-    /// Contains the conversion information, such as the conversion rate and the base unit.
-    /// For example, the conversion information for the unit `foot` is `1 foot = 0.3048 meter`.
+    /// Contains conversion information sorted by unit_id, including conversion rates and base units.
+    /// For instance, the conversion for `foot` is represented as `1 foot = 0.3048 meter`.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub conversion_info: VarZeroVec<'data, ConversionInfoULE>,
+}
+
+impl UnitsInfo<'_> {
+    /// Retrieves the conversion details associated with a specific unit_id.
+    ///
+    /// # Parameters
+    ///
+    /// * `unit_id` - A unique identifier representing the unit to be located.
+    ///
+    /// # Returns
+    ///
+    /// * `Some(&ConversionInfoULE)` - A reference to the conversion information if the unit_id is found.
+    /// * `None` - If the unit_id is not found.
+    pub fn conversion_info_by_unit_id(&self, unit_id: UnitID) -> Option<&ConversionInfoULE> {
+        self.conversion_info
+            .zvl_binary_search_by(|convert_unit| {
+                convert_unit.unit_id.as_unsigned_int().cmp(&unit_id)
+            })
+            .ok()
+            .map(|index| &self.conversion_info[index])
+    }
 }
 
 icu_provider::data_struct!(UnitsInfo<'_>, #[cfg(feature = "datagen")]);
@@ -66,6 +87,10 @@ icu_provider::data_struct!(UnitsInfo<'_>, #[cfg(feature = "datagen")]);
 )]
 #[zerovec::derive(Debug)]
 pub struct ConversionInfo<'data> {
+    /// Represents the unique identifier for the unit that is being converted.
+    /// For example, when converting from `square-meter`, `unit_id` corresponds to the identifier of `meter`.
+    pub unit_id: UnitID,
+
     /// Contains the base unit (after parsing) which what the unit is converted to.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub basic_units: ZeroVec<'data, SingleUnit>,

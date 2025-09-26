@@ -4,7 +4,6 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
     use alloc::vec::Vec;
@@ -13,7 +12,11 @@ pub mod ffi {
     #[cfg(feature = "buffer_provider")]
     use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
 
+    #[non_exhaustive]
     pub enum BidiDirection {
+        // This is an output type, so the default mostly impacts deferred initialization.
+        // We pick Ltr since the algorithm defaults to Ltr in the absence of other info.
+        #[diplomat::attr(auto, default)]
         Ltr,
         Rtl,
         Mixed,

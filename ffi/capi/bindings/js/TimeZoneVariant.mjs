@@ -4,6 +4,9 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 
+/**
+ * @deprecated type not needed anymore
+ */
 export class TimeZoneVariant {
     #value = undefined;
 
@@ -69,6 +72,8 @@ export class TimeZoneVariant {
      * See the [Rust documentation for `with_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/enum.TimeZoneVariant.html)
+     *
+     * @deprecated type not needed anymore
      */
     static fromRearguardIsdst(isdst) {
 

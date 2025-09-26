@@ -107,7 +107,7 @@ impl RuleBasedTransliterator<'_> {
     /// Returns an iterator of dependencies on other transliterators.
     ///
     /// Note that this may contain duplicate entries.
-    pub fn deps(&self) -> impl Iterator<Item = Cow<str>> {
+    pub fn deps(&self) -> impl Iterator<Item = Cow<'_, str>> {
         use zerofrom::ZeroFrom;
         self.id_group_list
             .iter()

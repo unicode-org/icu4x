@@ -78,6 +78,23 @@ define_preferences!(
     }
 );
 
+#[test]
+fn prefs() {
+    use icu_locale::locale;
+    assert_eq!(
+        DateTimeFormatterPreferences::from_locale_strict(&locale!("en-US-u-hc-h23"))
+            .unwrap()
+            .hour_cycle,
+        Some(HourCycle::H23)
+    );
+    assert_eq!(
+        DateTimeFormatterPreferences::from_locale_strict(&locale!("en-US-u-hc-h24"))
+            .unwrap_err()
+            .hour_cycle,
+        None
+    );
+}
+
 prefs_convert!(DateTimeFormatterPreferences, DecimalFormatterPreferences, {
     numbering_system
 });
@@ -88,25 +105,6 @@ prefs_convert!(DateTimeFormatterPreferences, CalendarPreferences, {
 
 /// Helper macro for generating any/buffer constructors in this file.
 macro_rules! gen_buffer_constructors_with_external_loader {
-    (@runtime_fset, $fset:ident, $compiled_fn:ident $buffer_fn:ident, $internal_fn:ident) => {
-        #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
-        #[cfg(feature = "serde")]
-        pub fn $buffer_fn<P>(
-            provider: &P,
-            prefs: DateTimeFormatterPreferences,
-            field_set_with_options: $fset,
-        ) -> Result<Self, DateTimeFormatterLoadError>
-        where
-            P: BufferProvider + ?Sized,
-        {
-            Self::$internal_fn(
-                &provider.as_deserializing(),
-                &ExternalLoaderBuffer(provider),
-                prefs,
-                field_set_with_options.get_field(),
-            )
-        }
-    };
     (@compiletime_fset, $fset:ident, $compiled_fn:ident, $buffer_fn:ident, $internal_fn:ident) => {
         #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::$compiled_fn)]
         #[cfg(feature = "serde")]
@@ -118,8 +116,11 @@ macro_rules! gen_buffer_constructors_with_external_loader {
         where
             P: BufferProvider + ?Sized,
         {
+            use crate::provider::compat::CompatProvider;
+            let deser_provider = provider.as_deserializing();
+            let compat_provider = CompatProvider(&deser_provider, &provider);
             Self::$internal_fn(
-                &provider.as_deserializing(),
+                &compat_provider,
                 &ExternalLoaderBuffer(provider),
                 prefs,
                 field_set_with_options.get_field(),
@@ -296,7 +297,7 @@ where
         .map_err(|e| e.0)
     }
 
-    #[allow(clippy::result_large_err)] // returning ownership of an argument to the caller
+    #[expect(clippy::result_large_err)] // returning ownership of an argument to the caller
     pub(crate) fn try_new_internal_with_names<P0, P1, L>(
         provider_p: &P0,
         provider: &P1,
@@ -373,7 +374,7 @@ where
     FSet::Z: ZoneMarkers,
 {
     /// Formats a datetime. Calendars and fields must match at compile time.
-    pub fn format<I>(&self, input: &I) -> FormattedDateTime
+    pub fn format<I>(&self, input: &I) -> FormattedDateTime<'_>
     where
         I: ?Sized + InFixedCalendar<C> + AllInputMarkers<FSet>,
     {
@@ -390,7 +391,7 @@ where
 size_test!(
     DateTimeFormatter<crate::fieldsets::YMD>,
     neo_year_month_day_formatter_size,
-    384
+    368
 );
 
 /// [`DateTimeFormatter`] is a formatter capable of formatting dates and/or times from
@@ -518,9 +519,9 @@ where
         .map_err(|e| e.0)
     }
 
-    #[allow(clippy::result_large_err)] // returning ownership of an argument to the caller
-    #[allow(clippy::too_many_arguments)] // internal function with lots of generics
-    #[allow(clippy::type_complexity)] // return type has all the parts inside
+    #[expect(clippy::result_large_err)] // returning ownership of an argument to the caller
+    #[expect(clippy::too_many_arguments)] // internal function with lots of generics
+    #[expect(clippy::type_complexity)] // return type has all the parts inside
     pub(crate) fn try_new_internal_with_calendar_and_names<P0, P1, L>(
         provider_p: &P0,
         provider: &P1,
@@ -665,7 +666,7 @@ where
     pub fn format_same_calendar<I>(
         &self,
         datetime: &I,
-    ) -> Result<FormattedDateTime, crate::MismatchedCalendarError>
+    ) -> Result<FormattedDateTime<'_>, crate::MismatchedCalendarError>
     where
         I: ?Sized + InSameCalendar + AllInputMarkers<FSet>,
     {
@@ -1008,7 +1009,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     ///
     /// assert_eq!(formatter.calendar().kind(), AnyCalendarKind::Buddhist);
     /// ```
-    pub fn calendar(&self) -> icu_calendar::Ref<AnyCalendar> {
+    pub fn calendar(&self) -> icu_calendar::Ref<'_, AnyCalendar> {
         icu_calendar::Ref(self.calendar.any_calendar())
     }
 

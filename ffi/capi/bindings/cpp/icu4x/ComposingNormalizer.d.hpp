@@ -1,5 +1,5 @@
-#ifndef icu4x_ComposingNormalizer_D_HPP
-#define icu4x_ComposingNormalizer_D_HPP
+#ifndef ICU4X_ComposingNormalizer_D_HPP
+#define ICU4X_ComposingNormalizer_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,15 +9,15 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct ComposingNormalizer; }
 class ComposingNormalizer;
 namespace capi { struct DataProvider; }
 class DataProvider;
 class DataError;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -45,7 +45,7 @@ public:
    *
    * See the [Rust documentation for `new_nfc`](https://docs.rs/icu/2.0.0/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::ComposingNormalizer>, icu4x::DataError> create_nfc_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::ComposingNormalizer>, icu4x::DataError> create_nfc_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Construct a new ComposingNormalizer instance for NFKC using compiled data.
@@ -59,7 +59,7 @@ public:
    *
    * See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/2.0.0/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::ComposingNormalizer>, icu4x::DataError> create_nfkc_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::ComposingNormalizer>, icu4x::DataError> create_nfkc_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Normalize a string
@@ -109,19 +109,19 @@ public:
    */
   inline size_t is_normalized16_up_to(std::u16string_view s) const;
 
-  inline const icu4x::capi::ComposingNormalizer* AsFFI() const;
-  inline icu4x::capi::ComposingNormalizer* AsFFI();
-  inline static const icu4x::ComposingNormalizer* FromFFI(const icu4x::capi::ComposingNormalizer* ptr);
-  inline static icu4x::ComposingNormalizer* FromFFI(icu4x::capi::ComposingNormalizer* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::ComposingNormalizer* AsFFI() const;
+    inline icu4x::capi::ComposingNormalizer* AsFFI();
+    inline static const icu4x::ComposingNormalizer* FromFFI(const icu4x::capi::ComposingNormalizer* ptr);
+    inline static icu4x::ComposingNormalizer* FromFFI(icu4x::capi::ComposingNormalizer* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  ComposingNormalizer() = delete;
-  ComposingNormalizer(const icu4x::ComposingNormalizer&) = delete;
-  ComposingNormalizer(icu4x::ComposingNormalizer&&) noexcept = delete;
-  ComposingNormalizer operator=(const icu4x::ComposingNormalizer&) = delete;
-  ComposingNormalizer operator=(icu4x::ComposingNormalizer&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    ComposingNormalizer() = delete;
+    ComposingNormalizer(const icu4x::ComposingNormalizer&) = delete;
+    ComposingNormalizer(icu4x::ComposingNormalizer&&) noexcept = delete;
+    ComposingNormalizer operator=(const icu4x::ComposingNormalizer&) = delete;
+    ComposingNormalizer operator=(icu4x::ComposingNormalizer&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_ComposingNormalizer_D_HPP
+#endif // ICU4X_ComposingNormalizer_D_HPP

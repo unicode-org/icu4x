@@ -107,6 +107,13 @@ export class CaseMapper {
     simpleLowercase(ch: codepoint): codepoint;
 
     /**
+     * Returns the simple lowercase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+     *
+     * See the [Rust documentation for `simple_lowercase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_lowercase) for more information.
+     */
+    static simpleLowercaseWithCompiledData(ch: codepoint): codepoint;
+
+    /**
      * Returns the simple uppercase mapping of the given character.
      *
      * This function only implements simple and common mappings.
@@ -116,6 +123,13 @@ export class CaseMapper {
      * See the [Rust documentation for `simple_uppercase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_uppercase) for more information.
      */
     simpleUppercase(ch: codepoint): codepoint;
+
+    /**
+     * Returns the simple uppercase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+     *
+     * See the [Rust documentation for `simple_uppercase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_uppercase) for more information.
+     */
+    static simpleUppercaseWithCompiledData(ch: codepoint): codepoint;
 
     /**
      * Returns the simple titlecase mapping of the given character.
@@ -129,6 +143,13 @@ export class CaseMapper {
     simpleTitlecase(ch: codepoint): codepoint;
 
     /**
+     * Returns the simple titlecase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+     *
+     * See the [Rust documentation for `simple_titlecase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_titlecase) for more information.
+     */
+    static simpleTitlecaseWithCompiledData(ch: codepoint): codepoint;
+
+    /**
      * Returns the simple casefolding of the given character.
      *
      * This function only implements simple folding.
@@ -139,7 +160,14 @@ export class CaseMapper {
     simpleFold(ch: codepoint): codepoint;
 
     /**
-     * Returns the simple casefolding of the given character in the Turkic locale
+     * Returns the simple casefolding of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+     *
+     * See the [Rust documentation for `simple_fold`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_fold) for more information.
+     */
+    static simpleFoldWithCompiledData(ch: codepoint): codepoint;
+
+    /**
+     * Returns the simple casefolding of the given character in the Turkic locale.
      *
      * This function only implements simple folding.
      * For full folding, use `CaseMapperBorrowed::fold_turkic`.
@@ -147,6 +175,13 @@ export class CaseMapper {
      * See the [Rust documentation for `simple_fold_turkic`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_fold_turkic) for more information.
      */
     simpleFoldTurkic(ch: codepoint): codepoint;
+
+    /**
+     * Returns the simple Turkic casefolding of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+     *
+     * See the [Rust documentation for `simple_fold_turkic`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_fold_turkic) for more information.
+     */
+    static simpleFoldTurkicWithCompiledData(ch: codepoint): codepoint;
 
     /**
      * Construct a new CaseMapper instance using compiled data.

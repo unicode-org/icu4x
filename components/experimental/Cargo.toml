@@ -5,7 +5,7 @@
 [package]
 name = "icu_experimental"
 description = "ICU4X pre-release components under active development; all code in this crate is unstable."
-version = "0.4.0-dev"
+version = "0.4.0-dev.1"
 
 authors.workspace = true
 categories.workspace = true

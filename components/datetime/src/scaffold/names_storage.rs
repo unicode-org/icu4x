@@ -177,7 +177,7 @@ pub trait MaybePayload<M: DynamicDataMarker, Variables>: UnstableSealed {
     where
         P: BoundDataProvider<M> + ?Sized,
         Self: Sized;
-    fn get(&self) -> DataPayloadWithVariablesBorrowed<M, Variables>;
+    fn get(&self) -> DataPayloadWithVariablesBorrowed<'_, M, Variables>;
 }
 
 /// An implementation of [`MaybePayload`] that wraps an optional [`DataPayload`],
@@ -294,7 +294,7 @@ where
         }
     }
     #[inline]
-    fn get(&self) -> DataPayloadWithVariablesBorrowed<M, Variables> {
+    fn get(&self) -> DataPayloadWithVariablesBorrowed<'_, M, Variables> {
         DataPayloadWithVariablesBorrowed {
             inner: self.inner.as_borrowed(),
         }
@@ -317,9 +317,8 @@ impl<M: DynamicDataMarker, Variables> MaybePayload<M, Variables> for () {
     {
         Err(MaybePayloadError::FormatterTooSpecific)
     }
-    #[allow(clippy::needless_lifetimes)] // Yokeable is involved
     #[inline]
-    fn get(&self) -> DataPayloadWithVariablesBorrowed<M, Variables> {
+    fn get(&self) -> DataPayloadWithVariablesBorrowed<'_, M, Variables> {
         DataPayloadWithVariablesBorrowed {
             inner: OptionalNames::None,
         }
@@ -372,7 +371,6 @@ impl<M: DynamicDataMarker, Variables> OptionalNames<Variables, DataPayload<M>>
 where
     Variables: Copy,
 {
-    #[allow(clippy::needless_lifetimes)] // Yokeable is involved
     #[inline]
     pub(crate) fn as_borrowed<'a>(
         &'a self,

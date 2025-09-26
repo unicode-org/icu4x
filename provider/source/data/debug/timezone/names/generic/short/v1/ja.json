@@ -1,6 +1,6 @@
 {
   "defaults": {
-    "80": "JST"
+    "75": "JST"
   },
   "overrides": {
     "utc": "UTC"

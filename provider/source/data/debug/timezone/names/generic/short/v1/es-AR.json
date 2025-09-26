@@ -1,7 +1,6 @@
 {
   "defaults": {
-    "19": "ART",
-    "21": "WART"
+    "15": "ART"
   },
   "overrides": {
     "utc": "UTC"

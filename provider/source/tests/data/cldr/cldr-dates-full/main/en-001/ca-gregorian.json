@@ -355,9 +355,12 @@
                 "Bhms": "h:mm:ss B",
                 "d": "d",
                 "E": "ccc",
+                "EBh": "E h B",
                 "EBhm": "E h:mm B",
                 "EBhms": "E h:mm:ss B",
                 "Ed": "E d",
+                "Eh": "E h a",
+                "Eh-alt-ascii": "E h a",
                 "Ehm": "E h:mm a",
                 "Ehm-alt-ascii": "E h:mm a",
                 "EHm": "E HH:mm",
@@ -365,7 +368,9 @@
                 "Ehms-alt-ascii": "E h:mm:ss a",
                 "EHms": "E HH:mm:ss",
                 "Gy": "y G",
-                "GyMd": "d/M/y G",
+                "GyM": "M/y G",
+                "GyMd": "dd/MM/y G",
+                "GyMEd": "E, dd/MM/y G",
                 "GyMMM": "MMM y G",
                 "GyMMMd": "d MMM y G",
                 "GyMMMEd": "E, d MMM y G",
@@ -384,6 +389,9 @@
                 "hmv": "h:mm a v",
                 "hmv-alt-ascii": "h:mm a v",
                 "Hmv": "HH:mm v",
+                "hv": "h a v",
+                "hv-alt-ascii": "h a v",
+                "Hv": "HH'h' v",
                 "M": "L",
                 "Md": "dd/MM",
                 "MEd": "E, dd/MM",
@@ -565,6 +573,14 @@
               }
             },
             "dateTimeFormats-atTime": {
+              "standard": {
+                "full": "{1} 'at' {0}",
+                "long": "{1} 'at' {0}",
+                "medium": "{1}, {0}",
+                "short": "{1}, {0}"
+              }
+            },
+            "dateTimeFormats-relative": {
               "standard": {
                 "full": "{1} 'at' {0}",
                 "long": "{1} 'at' {0}",

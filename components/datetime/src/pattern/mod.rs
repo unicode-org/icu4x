@@ -12,7 +12,7 @@
 
 mod formatter;
 mod names;
-#[allow(clippy::module_inception)] // the file pattern.rs should contain DateTimePattern
+#[expect(clippy::module_inception)] // the file pattern.rs should contain DateTimePattern
 mod pattern;
 
 pub use crate::error::ErrorField;

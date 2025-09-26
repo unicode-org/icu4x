@@ -23,7 +23,7 @@ const SYSTEM_CHARSET_FAMILY: CharsetFamily = CharsetFamily::Ascii;
 
 /// Deserializes an instance of type `T` from bytes representing a binary ICU
 /// resource bundle.
-pub fn from_bytes<'a, T>(input: &'a [u8]) -> Result<T, BinaryDeserializerError>
+pub fn from_words<'a, T>(input: &'a [u32]) -> Result<T, BinaryDeserializerError>
 where
     T: Deserialize<'a>,
 {
@@ -65,7 +65,11 @@ struct ResourceTreeDeserializer<'de> {
 impl<'de> ResourceTreeDeserializer<'de> {
     /// Creates a new deserializer from the header and index of the resource
     /// bundle.
-    fn from_bytes(input: &'de [u8]) -> Result<Self, BinaryDeserializerError> {
+    fn from_bytes(input: &'de [u32]) -> Result<Self, BinaryDeserializerError> {
+        let input = unsafe {
+            core::slice::from_raw_parts(input.as_ptr() as *const u8, core::mem::size_of_val(input))
+        };
+
         let header = BinHeader::try_from(input)?;
 
         // Verify that the representation in the resource bundle is one we're
@@ -782,7 +786,7 @@ impl<'de> de::MapAccess<'de> for EmptyMapAccess {
         Ok(None)
     }
 
-    #[allow(clippy::panic)]
+    #[expect(clippy::panic)]
     fn next_value_seed<V>(&mut self, _seed: V) -> Result<V::Value, Self::Error>
     where
         V: de::DeserializeSeed<'de>,
@@ -881,7 +885,7 @@ impl<'de> Resource16BitDeserializer<'de> {
         let units = byte_slices.map(|bytes| {
             // We can safely unwrap as we guarantee above that this chunk is
             // exactly 2 bytes.
-            #[allow(clippy::unwrap_used)]
+            #[expect(clippy::unwrap_used)]
             let bytes = <[u8; 2]>::try_from(bytes).unwrap();
             u16::from_le_bytes(bytes)
         });
@@ -1243,7 +1247,7 @@ impl TryFrom<u32> for ResDescriptor {
 fn read_u32(input: &[u8]) -> Result<(u32, &[u8]), BinaryDeserializerError> {
     // Safe to unwrap at the end of this because `try_into()` for arrays will
     // only fail if the slice is the wrong size.
-    #[allow(clippy::unwrap_used)]
+    #[expect(clippy::unwrap_used)]
     let bytes = input
         .get(0..core::mem::size_of::<u32>())
         .ok_or(BinaryDeserializerError::invalid_data(

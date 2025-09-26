@@ -23,6 +23,7 @@ final class ScriptWithExtensions implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('icu4x_ScriptWithExtensions_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ScriptWithExtensions_destroy_mv1));
 
   /// Create a map for the `Script`/`Script_Extensions` properties, using compiled data.

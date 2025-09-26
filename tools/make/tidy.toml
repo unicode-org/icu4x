@@ -263,8 +263,14 @@ end
 [tasks.depcheck]
 description = "Run the dependency checker"
 category = "ICU4X Development"
-command = "cargo"
-args = ["run", "--manifest-path", "tools/make/depcheck/Cargo.toml"]
+script_runner = "@duckscript"
+env = { "RUSTFLAGS" = "-D unused_crate_dependencies" }
+script = '''
+exit_on_error true
+
+exec --fail-on-error cargo check --all-features
+exec --fail-on-error cargo run --manifest-path tools/make/depcheck/Cargo.toml
+'''
 
 [tasks.codegen]
 description = "Run the codegen tool"

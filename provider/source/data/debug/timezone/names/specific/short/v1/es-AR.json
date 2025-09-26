@@ -2,31 +2,17 @@
   "defaults": [
     [
       [
-        19,
+        15,
         "Standard"
       ],
       "ART"
     ],
     [
       [
-        19,
+        15,
         "Daylight"
       ],
       "ARST"
-    ],
-    [
-      [
-        21,
-        "Standard"
-      ],
-      "WART"
-    ],
-    [
-      [
-        21,
-        "Daylight"
-      ],
-      "WARST"
     ]
   ],
   "overrides": [

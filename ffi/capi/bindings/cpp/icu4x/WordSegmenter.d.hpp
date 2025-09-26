@@ -1,5 +1,5 @@
-#ifndef icu4x_WordSegmenter_D_HPP
-#define icu4x_WordSegmenter_D_HPP
+#ifndef ICU4X_WordSegmenter_D_HPP
+#define ICU4X_WordSegmenter_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,8 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
@@ -25,7 +24,8 @@ class WordBreakIteratorUtf8;
 namespace capi { struct WordSegmenter; }
 class WordSegmenter;
 class DataError;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -63,7 +63,7 @@ public:
    *
    * See the [Rust documentation for `try_new_auto`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_auto_with_content_locale(const icu4x::Locale& locale);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_auto_with_content_locale(const icu4x::Locale& locale);
 
   /**
    * Construct an {@link WordSegmenter} with automatically selecting the best available LSTM
@@ -74,7 +74,7 @@ public:
    *
    * See the [Rust documentation for `try_new_auto`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_auto_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_auto_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
   /**
    * Construct an {@link WordSegmenter} with LSTM payload data for Burmese, Khmer, Lao, and
@@ -96,7 +96,7 @@ public:
    *
    * See the [Rust documentation for `try_new_lstm`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_lstm_with_content_locale(const icu4x::Locale& locale);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_lstm_with_content_locale(const icu4x::Locale& locale);
 
   /**
    * Construct an {@link WordSegmenter} with LSTM payload data for Burmese, Khmer, Lao, and
@@ -107,7 +107,7 @@ public:
    *
    * See the [Rust documentation for `try_new_lstm`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_lstm_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_lstm_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
   /**
    * Construct an {@link WordSegmenter} with with dictionary payload data for Chinese, Japanese,
@@ -129,7 +129,7 @@ public:
    *
    * See the [Rust documentation for `try_new_dictionary`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_dictionary_with_content_locale(const icu4x::Locale& locale);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_dictionary_with_content_locale(const icu4x::Locale& locale);
 
   /**
    * Construct an {@link WordSegmenter} with dictionary payload data for Chinese, Japanese,
@@ -140,7 +140,7 @@ public:
    *
    * See the [Rust documentation for `try_new_dictionary`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_dictionary_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_dictionary_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
   /**
    * Segments a string.
@@ -167,21 +167,21 @@ public:
    *
    * See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenterBorrowed.html#method.segment_latin1) for more information.
    */
-  inline std::unique_ptr<icu4x::WordBreakIteratorLatin1> segment_latin1(diplomat::span<const uint8_t> input) const;
+  inline std::unique_ptr<icu4x::WordBreakIteratorLatin1> segment_latin1(icu4x::diplomat::span<const uint8_t> input) const;
 
-  inline const icu4x::capi::WordSegmenter* AsFFI() const;
-  inline icu4x::capi::WordSegmenter* AsFFI();
-  inline static const icu4x::WordSegmenter* FromFFI(const icu4x::capi::WordSegmenter* ptr);
-  inline static icu4x::WordSegmenter* FromFFI(icu4x::capi::WordSegmenter* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::WordSegmenter* AsFFI() const;
+    inline icu4x::capi::WordSegmenter* AsFFI();
+    inline static const icu4x::WordSegmenter* FromFFI(const icu4x::capi::WordSegmenter* ptr);
+    inline static icu4x::WordSegmenter* FromFFI(icu4x::capi::WordSegmenter* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  WordSegmenter() = delete;
-  WordSegmenter(const icu4x::WordSegmenter&) = delete;
-  WordSegmenter(icu4x::WordSegmenter&&) noexcept = delete;
-  WordSegmenter operator=(const icu4x::WordSegmenter&) = delete;
-  WordSegmenter operator=(icu4x::WordSegmenter&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    WordSegmenter() = delete;
+    WordSegmenter(const icu4x::WordSegmenter&) = delete;
+    WordSegmenter(icu4x::WordSegmenter&&) noexcept = delete;
+    WordSegmenter operator=(const icu4x::WordSegmenter&) = delete;
+    WordSegmenter operator=(icu4x::WordSegmenter&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_WordSegmenter_D_HPP
+#endif // ICU4X_WordSegmenter_D_HPP

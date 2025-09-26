@@ -8,9 +8,9 @@ use super::{
 };
 use crate::{
     compactdecimal::CompactDecimalFormatter,
-    dimension::provider::{
-        currency::{self, CurrencyEssentials},
-        currency_compact::ShortCurrencyCompact,
+    dimension::provider::currency::{
+        compact::ShortCurrencyCompact,
+        essentials::{self, CurrencyEssentials},
     },
 };
 use fixed_decimal::Decimal;
@@ -44,12 +44,12 @@ impl Writeable for FormattedCompactCurrency<'_> {
         };
 
         let currency_placeholder = match placeholder_index {
-            Some(currency::PlaceholderValue::Index(index)) => self
+            Some(essentials::PlaceholderValue::Index(index)) => self
                 .essential
                 .placeholders
                 .get(index.into())
                 .ok_or(core::fmt::Error)?,
-            Some(currency::PlaceholderValue::ISO) | None => self.currency_code.0.as_str(),
+            Some(essentials::PlaceholderValue::ISO) | None => self.currency_code.0.as_str(),
         };
 
         let pattern_selection = match self.options.width {
@@ -61,8 +61,8 @@ impl Writeable for FormattedCompactCurrency<'_> {
         // Therefore, in the next PR, we will add the code to handle using the compact currency patterns.
 
         let pattern = match pattern_selection {
-            currency::PatternSelection::Standard => self.essential.standard_pattern.as_ref(),
-            currency::PatternSelection::StandardAlphaNextToNumber => self
+            essentials::PatternSelection::Standard => self.essential.standard_pattern.as_ref(),
+            essentials::PatternSelection::StandardAlphaNextToNumber => self
                 .essential
                 .standard_alpha_next_to_number_pattern
                 .as_ref(),
@@ -150,12 +150,15 @@ mod tests {
         let positive_value = "12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&positive_value, currency_code);
         // TODO(#6064)
-        assert_writeable_eq!(formatted_currency, "ج.م.\u{200f}\u{a0}١٢\u{a0}ألف"); //  "ج.م.١٢ألف"
+        assert_writeable_eq!(formatted_currency, "\u{200f}١٢\u{a0}ألف\u{a0}ج.م.\u{200f}"); //  "ج.م.١٢ألف"
 
         // Negative case
         let negative_value = "-12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&negative_value, currency_code);
         // TODO(#6064)
-        assert_writeable_eq!(formatted_currency, "ج.م.\u{200f}\u{a0}\u{61c}-١٢\u{a0}ألف");
+        assert_writeable_eq!(
+            formatted_currency,
+            "\u{200f}\u{61c}-١٢\u{a0}ألف\u{a0}ج.م.\u{200f}"
+        );
     }
 }

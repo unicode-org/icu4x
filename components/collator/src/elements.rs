@@ -921,7 +921,7 @@ impl<'data, I> CollationElements<'data, I>
 where
     I: Iterator<Item = char>,
 {
-    #[allow(clippy::too_many_arguments)]
+    #[expect(clippy::too_many_arguments)]
     pub fn new(
         delegate: I,
         root: &'data CollationData,
@@ -1045,7 +1045,7 @@ where
         }
         // index has to be in range due to the check above.
         // rewriting with `get()` would result in two checks.
-        #[allow(clippy::indexing_slicing)]
+        #[expect(clippy::indexing_slicing)]
         if !self.upcoming[0].decomposition_starts_with_non_starter() {
             return;
         }
@@ -1113,7 +1113,7 @@ where
         let mut unnormalized = core::mem::take(&mut self.upcoming);
         let last_index = unnormalized.len() - 1;
         // Indexing is for debug assert only.
-        #[allow(clippy::indexing_slicing)]
+        #[expect(clippy::indexing_slicing)]
         {
             debug_assert!(!unnormalized[0].decomposition_starts_with_non_starter());
         }
@@ -1123,13 +1123,13 @@ where
                 self.push_decomposed_combining(c);
             } else if i == last_index {
                 // Indices are in range by construction, so indexing is OK.
-                #[allow(clippy::indexing_slicing)]
+                #[expect(clippy::indexing_slicing)]
                 self.upcoming[start_combining..].sort_by_key(|c| c.ccc());
                 self.upcoming.push(c);
                 return;
             } else {
                 // Indices are in range by construction, so indexing is OK.
-                #[allow(clippy::indexing_slicing)]
+                #[expect(clippy::indexing_slicing)]
                 self.upcoming[start_combining..].sort_by_key(|c| c.ccc());
                 start_combining = self.push_decomposed_starter(c);
             }
@@ -1138,7 +1138,7 @@ where
         #[cfg(debug_assertions)]
         debug_assert!(self.iter_exhausted);
         // Indices are in range by construction, so indexing is OK.
-        #[allow(clippy::indexing_slicing)]
+        #[expect(clippy::indexing_slicing)]
         self.upcoming[start_combining..].sort_by_key(|c| c.ccc());
     }
 
@@ -1373,7 +1373,7 @@ where
                 } else {
                     // Got a new starter
                     // Indices are in range by construction, so indexing is OK.
-                    #[allow(clippy::indexing_slicing)]
+                    #[expect(clippy::indexing_slicing)]
                     self.upcoming[start_combining..].sort_by_key(|c| c.ccc());
                     self.upcoming.push(ch);
                     return;
@@ -1384,7 +1384,7 @@ where
                     self.iter_exhausted = true;
                 }
                 // Indices are in range by construction, so indexing is OK.
-                #[allow(clippy::indexing_slicing)]
+                #[expect(clippy::indexing_slicing)]
                 self.upcoming[start_combining..].sort_by_key(|c| c.ccc());
                 return;
             }
@@ -1394,7 +1394,7 @@ where
     // Assumption: `pos` starts from zero and increases one by one.
     // Indexing is OK, because we check against `len()` and the `pos`
     // increases one by one by construction.
-    #[allow(clippy::indexing_slicing)]
+    #[expect(clippy::indexing_slicing)]
     fn look_ahead(&mut self, pos: usize) -> Option<CharacterAndClassAndTrieValue> {
         debug_assert!(self.upcoming_normalized);
         if pos + 1 == self.upcoming.len() {
@@ -1450,7 +1450,7 @@ where
         let start = c.decomposition_starts_with_non_starter() as usize;
         self.upcoming.insert(0, c);
         // Indices in range by construction
-        #[allow(clippy::indexing_slicing)]
+        #[expect(clippy::indexing_slicing)]
         {
             let slice: &mut [CharacterAndClassAndTrieValue] = &mut self.upcoming[start..end];
             slice.sort_by_key(|cc| cc.ccc());
@@ -1504,7 +1504,7 @@ where
                     let jamo_index = (c as usize).wrapping_sub(HANGUL_L_BASE as usize);
                     // Attribute belongs on an inner expression, but
                     // https://github.com/rust-lang/rust/issues/15701
-                    #[allow(clippy::indexing_slicing)]
+                    #[expect(clippy::indexing_slicing)]
                     if jamo_index >= self.jamo.len() {
                         ce32 = data.ce32_for_char(c);
                         if ce32 == FALLBACK_CE32 {
@@ -1758,7 +1758,7 @@ where
                 // No prefix matches on Hangul
                 self.mark_prefix_unmatchable();
                 // Indexing OK, because indices in range by construction
-                #[allow(clippy::indexing_slicing)]
+                #[expect(clippy::indexing_slicing)]
                 if self.is_next_decomposition_starts_with_starter() {
                     // TODO(#1941): Assuming self-contained CE32s is OK for the root,
                     // but not currently OK for search collation, which at this time
@@ -1787,7 +1787,7 @@ where
                 // `upcoming`.
                 //
                 // Indexing OK, because indices in range by construction
-                #[allow(clippy::indexing_slicing)]
+                #[expect(clippy::indexing_slicing)]
                 if t != 0 {
                     self.pending.push(
                         CollationElement32::new_from_ule(
@@ -1815,7 +1815,7 @@ where
                 }
 
                 // Indexing OK, because indices in range by construction
-                #[allow(clippy::indexing_slicing)]
+                #[expect(clippy::indexing_slicing)]
                 return CollationElement32::new_from_ule(self.jamo[l as usize])
                     .to_ce_self_contained_or_gigo();
             }
@@ -2108,7 +2108,7 @@ where
                                         zeros = digits.len() - 1;
                                     }
                                     // Index in range by construction above
-                                    #[allow(clippy::indexing_slicing)]
+                                    #[expect(clippy::indexing_slicing)]
                                     let mut remaining = &digits[zeros..];
                                     while !remaining.is_empty() {
                                         // Numeric CEs are generated for segments of
@@ -2122,7 +2122,7 @@ where
                                             let mut digit_iter = head.iter();
                                             // `unwrap` succeeds, because we always have at least one
                                             // digit to even start numeric processing.
-                                            #[allow(clippy::unwrap_used)]
+                                            #[expect(clippy::unwrap_used)]
                                             let mut value = u32::from(*digit_iter.next().unwrap());
                                             for &digit in digit_iter {
                                                 value *= 10;
@@ -2198,16 +2198,16 @@ where
                                         //   `head[len - 1]` isn't a leading zero, and `&&`
                                         //   short-circuits, so the `head[len - 2]` access doesn't
                                         //   occur.
-                                        #[allow(clippy::indexing_slicing)]
+                                        #[expect(clippy::indexing_slicing)]
                                         while head[len - 1] == 0 && head[len - 2] == 0 {
                                             len -= 2;
                                         }
                                         // Read the first pair
                                         // Index in bounds by construction above.
-                                        #[allow(clippy::indexing_slicing)]
+                                        #[expect(clippy::indexing_slicing)]
                                         let mut digit_iter = head[..len].iter();
                                         // `unwrap` succeeds by construction
-                                        #[allow(clippy::unwrap_used)]
+                                        #[expect(clippy::unwrap_used)]
                                         let mut pair = if len & 1 == 1 {
                                             // Only "half a pair" if we have an odd number of digits.
                                             u32::from(*digit_iter.next().unwrap())
@@ -2323,7 +2323,7 @@ where
                     i = 0;
                     while i < drain_from_upcoming {
                         // By construction, `drain_from_upcoming` doesn't exceed `upcoming.len()`
-                        #[allow(clippy::indexing_slicing)]
+                        #[expect(clippy::indexing_slicing)]
                         let ch = self.upcoming[i].character();
                         self.prefix_push(ch);
                         i += 1;
@@ -2359,7 +2359,7 @@ where
                         }
                     }
                     // By construction, we have at least on pending CE by now.
-                    #[allow(clippy::indexing_slicing)]
+                    #[expect(clippy::indexing_slicing)]
                     let ret = self.pending[0];
                     debug_assert_eq!(self.pending_pos, 0);
                     if self.pending.len() == 1 {
@@ -2383,7 +2383,7 @@ where
         while !self.is_next_decomposition_starts_with_starter() {
             // `unwrap` is OK, because `!self.is_next_decomposition_starts_with_starter()`
             // means the `unwrap()` must succeed.
-            #[allow(clippy::unwrap_used)]
+            #[expect(clippy::unwrap_used)]
             let combining = self.next_internal().unwrap().c_and_c;
             let combining_c = combining.character();
             if !in_inclusive_range(combining_c, '\u{0340}', '\u{0F81}') {

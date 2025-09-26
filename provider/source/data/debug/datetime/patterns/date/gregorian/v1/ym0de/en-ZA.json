@@ -7,13 +7,14 @@
     0,
     4,
     5,
-    5
+    6
   ],
   "elements": [
     "EEEE, dd MMMM y",
     "E, dd MMM y",
     "E, y/MM/dd",
     "EEEE, dd MMMM y GGG",
-    "E, dd MMM y GGG"
+    "E, dd MMM y GGG",
+    "E, dd/MM/y GGG"
   ]
 }

@@ -62,7 +62,8 @@ env = { ICU4X_DATA_DIR = "../stubdata" }
 script_runner = "@duckscript"
 script = '''
 exec --fail-on-error rustup install 1.82 --profile minimal
-exec --fail-on-error cargo +1.82 check --all-targets --all-features
+# Exclude internal tools (Make sure to skip_package = true in the Cargo.toml for these crates)
+exec --fail-on-error cargo +1.82 check --all-targets --all-features --workspace --exclude diplomat-gen --exclude codegen --exclude bakeddata --exclude depcheck --exclude diplomat-coverage
 '''
 
 [tasks.ci-job-msrv-utils]
@@ -174,6 +175,8 @@ category = "CI"
 dependencies = [
     "verify-gn-gen",
     "gn-run",
+    # Until https://github.com/wasmerio/wasmer/issues/5610
+    # "gn-run-wasi",
 ]
 
 [tasks.ci-job-msrv-features-1]

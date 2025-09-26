@@ -150,7 +150,7 @@ impl Default for Options {
     }
 }
 
-#[allow(clippy::type_complexity)]
+#[expect(clippy::type_complexity)]
 /// See the module-level documentation for details.
 pub struct BakedExporter {
     // Input arguments
@@ -606,8 +606,8 @@ impl DataExporter for BakedExporter {
 
             // Safety invariant upheld: the only values being added to the trie are `index`
             // values, which come from enumerating `values`
-            let trie = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii::from_iter(
-                values.clone().flat_map(|(index, (_payload, ids))| {
+            let trie = zerotrie::ZeroTrieSimpleAscii::from_iter(values.clone().flat_map(
+                |(index, (_payload, ids))| {
                     ids.iter().map(move |id| {
                         let mut encoded = id.locale.to_string().into_bytes();
                         if !id.marker_attributes.is_empty() {
@@ -616,8 +616,8 @@ impl DataExporter for BakedExporter {
                         }
                         (encoded, index)
                     })
-                }),
-            );
+                },
+            ));
 
             stats.lookup_struct_size = core::mem::size_of::<
                 icu_provider::baked::zerotrie::Data<icu_provider::hello_world::HelloWorldV1>,

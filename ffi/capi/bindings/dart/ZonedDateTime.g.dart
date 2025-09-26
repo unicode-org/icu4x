@@ -37,11 +37,26 @@ final class ZonedDateTime {
     return struct;
   }
 
+  /// Creates a new [ZonedIsoDateTime] from an IXDTF string.
+  ///
+  /// See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_strict_from_str) for more information.
+  ///
+  /// Throws [Rfc9557ParseError] on failure.
+  factory ZonedDateTime.strictFromString(String v, Calendar calendar, IanaParser ianaParser) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_ZonedDateTime_strict_from_string_mv1(v._utf8AllocIn(temp.arena), calendar._ffi, ianaParser._ffi);
+    if (!result.isOk) {
+      throw Rfc9557ParseError.values[result.union.err];
+    }
+    return ZonedDateTime._fromFfi(result.union.ok);
+  }
+
   /// Creates a new [ZonedDateTime] from an IXDTF string.
   ///
   /// See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
+  @core.Deprecated('use strict_from_string')
   factory ZonedDateTime.fullFromString(String v, Calendar calendar, IanaParser ianaParser, VariantOffsetsCalculator offsetCalculator) {
     final temp = _FinalizedArena();
     final result = _icu4x_ZonedDateTime_full_from_string_mv1(v._utf8AllocIn(temp.arena), calendar._ffi, ianaParser._ffi, offsetCalculator._ffi);
@@ -79,7 +94,7 @@ final class ZonedDateTime {
     return ZonedDateTime._fromFfi(result.union.ok);
   }
 
-  /// Creates a new [ZonedDateTime] from an IXDTF string, without requiring the offset or calculating the zone variant.
+  /// Creates a new [ZonedDateTime] from an IXDTF string, without requiring the offset.
   ///
   /// See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_lenient_from_str) for more information.
   ///
@@ -108,6 +123,11 @@ final class ZonedDateTime {
         zone,
       ]);
 }
+
+@_DiplomatFfiUse('icu4x_ZonedDateTime_strict_from_string_mv1')
+@ffi.Native<_ResultZonedDateTimeFfiInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTime_strict_from_string_mv1')
+// ignore: non_constant_identifier_names
+external _ResultZonedDateTimeFfiInt32 _icu4x_ZonedDateTime_strict_from_string_mv1(_SliceUtf8 v, ffi.Pointer<ffi.Opaque> calendar, ffi.Pointer<ffi.Opaque> ianaParser);
 
 @_DiplomatFfiUse('icu4x_ZonedDateTime_full_from_string_mv1')
 @ffi.Native<_ResultZonedDateTimeFfiInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateTime_full_from_string_mv1')

@@ -1,5 +1,5 @@
-#ifndef icu4x_CodePointRangeIteratorResult_HPP
-#define icu4x_CodePointRangeIteratorResult_HPP
+#ifndef ICU4X_CodePointRangeIteratorResult_HPP
+#define ICU4X_CodePointRangeIteratorResult_HPP
 
 #include "CodePointRangeIteratorResult.d.hpp"
 
@@ -11,33 +11,31 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
-    extern "C" {
 
-    } // extern "C"
 } // namespace capi
 } // namespace
 
 
 inline icu4x::capi::CodePointRangeIteratorResult icu4x::CodePointRangeIteratorResult::AsFFI() const {
-  return icu4x::capi::CodePointRangeIteratorResult {
-    /* .start = */ start,
-    /* .end = */ end,
-    /* .done = */ done,
-  };
+    return icu4x::capi::CodePointRangeIteratorResult {
+        /* .start = */ start,
+        /* .end = */ end,
+        /* .done = */ done,
+    };
 }
 
 inline icu4x::CodePointRangeIteratorResult icu4x::CodePointRangeIteratorResult::FromFFI(icu4x::capi::CodePointRangeIteratorResult c_struct) {
-  return icu4x::CodePointRangeIteratorResult {
-    /* .start = */ c_struct.start,
-    /* .end = */ c_struct.end,
-    /* .done = */ c_struct.done,
-  };
+    return icu4x::CodePointRangeIteratorResult {
+        /* .start = */ c_struct.start,
+        /* .end = */ c_struct.end,
+        /* .done = */ c_struct.done,
+    };
 }
 
 
-#endif // icu4x_CodePointRangeIteratorResult_HPP
+#endif // ICU4X_CodePointRangeIteratorResult_HPP

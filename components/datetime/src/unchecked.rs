@@ -95,7 +95,10 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeFormatter<
     /// [`ZonedDateTime`]: crate::input::ZonedDateTime
     /// [`YMD`]: crate::fieldsets::YMD
     /// [`format_unchecked`]: Self::format_unchecked
-    pub fn format_unchecked(&self, datetime: DateTimeInputUnchecked) -> FormattedDateTimeUnchecked {
+    pub fn format_unchecked(
+        &self,
+        datetime: DateTimeInputUnchecked,
+    ) -> FormattedDateTimeUnchecked<'_> {
         FormattedDateTimeUnchecked {
             pattern: self.selection.select(&datetime),
             input: datetime,
@@ -173,7 +176,10 @@ impl<FSet: DateTimeNamesMarker> DateTimeFormatter<FSet> {
     /// [`ZonedDateTime`]: crate::input::ZonedDateTime
     /// [`YMD`]: crate::fieldsets::YMD
     /// [`format_unchecked`]: Self::format_unchecked
-    pub fn format_unchecked(&self, datetime: DateTimeInputUnchecked) -> FormattedDateTimeUnchecked {
+    pub fn format_unchecked(
+        &self,
+        datetime: DateTimeInputUnchecked,
+    ) -> FormattedDateTimeUnchecked<'_> {
         FormattedDateTimeUnchecked {
             pattern: self.selection.select(&datetime),
             input: datetime,
@@ -261,6 +267,8 @@ pub enum MissingInputFieldKind {
     DayOfMonth,
     /// Day of year
     DayOfYear,
+    /// RataDie
+    RataDie,
     /// Hour
     Hour,
     /// Minute
@@ -283,7 +291,8 @@ pub enum MissingInputFieldKind {
     TimeZoneId,
     /// Time zone name timestamp
     TimeZoneNameTimestamp,
-    /// Time zone variant
+    /// Unused as of 2.1.0
+    #[deprecated(since = "2.1.0", note = "unused, never returned")]
     TimeZoneVariant,
 }
 

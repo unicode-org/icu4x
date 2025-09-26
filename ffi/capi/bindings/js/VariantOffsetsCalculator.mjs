@@ -14,6 +14,8 @@ const VariantOffsetsCalculator_box_destroy_registry = new FinalizationRegistry((
 
 /**
  * See the [Rust documentation for `VariantOffsetsCalculator`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculator.html) for more information.
+ *
+ * @deprecated this API is a bad approximation of a time zone database
  */
 export class VariantOffsetsCalculator {
     // Internal ptr reference:
@@ -88,11 +90,32 @@ export class VariantOffsetsCalculator {
     /**
      * See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
      */
-    computeOffsetsFromTimeZoneAndDateTime(timeZone, localDate, localTime) {
+    computeOffsetsFromTimeZoneAndDateTime(timeZone, utcDate, utcTime) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
 
 
-        const result = wasm.icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1(diplomatReceive.buffer, this.ffiValue, timeZone.ffiValue, localDate.ffiValue, localTime.ffiValue);
+        const result = wasm.icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1(diplomatReceive.buffer, this.ffiValue, timeZone.ffiValue, utcDate.ffiValue, utcTime.ffiValue);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return VariantOffsets._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+        }
+
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    /**
+     * See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
+     */
+    computeOffsetsFromTimeZoneAndTimestamp(timeZone, timestamp) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
+
+
+        const result = wasm.icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_timestamp_mv1(diplomatReceive.buffer, this.ffiValue, timeZone.ffiValue, timestamp);
 
         try {
             if (!diplomatReceive.resultFlag) {

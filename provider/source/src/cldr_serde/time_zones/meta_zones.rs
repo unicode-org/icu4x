@@ -7,28 +7,24 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/metaZones.json>
 
+use crate::time_zones::Timestamp;
+use icu::locale::subtags::Region;
+use icu::time::Time;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub(crate) struct MetazoneAliasData {
-    #[serde(rename = "_longId")]
-    pub(crate) long_id: String,
-    #[serde(rename = "_since")]
-    pub(crate) since: String,
-}
-
-#[derive(Debug, Clone, Deserialize)]
-pub(crate) struct MetazoneIds(pub(crate) BTreeMap<tinystr::TinyAsciiStr<4>, MetazoneAliasData>);
-
-#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub(crate) struct UsesMetazone {
     #[serde(rename = "_mzone")]
-    pub(crate) mzone: String,
-    #[serde(rename = "_from")]
-    pub(crate) from: Option<String>,
-    #[serde(rename = "_to")]
-    pub(crate) to: Option<String>,
+    pub(crate) mzone: Option<String>,
+    #[serde(rename = "_from", default, deserialize_with = "deserialize_date")]
+    pub(crate) from: Option<Timestamp>,
+    #[serde(rename = "_to", default, deserialize_with = "deserialize_date")]
+    pub(crate) to: Option<Timestamp>,
+    #[serde(rename = "_stdOffset")]
+    pub(crate) std_offset: Option<String>,
+    #[serde(rename = "_dstOffset")]
+    pub(crate) dst_offset: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
@@ -63,11 +59,11 @@ pub(crate) struct MetazoneInfo {
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub(crate) struct MapZone {
     #[serde(rename = "_other")]
-    pub(crate) other: String,
+    pub(crate) metazone: String,
     #[serde(rename = "_type")]
-    pub(crate) zone_type: String,
+    pub(crate) time_zone: String,
     #[serde(rename = "_territory")]
-    pub(crate) territory: String,
+    pub(crate) territory: Region,
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
@@ -84,9 +80,7 @@ pub(crate) struct Metazones {
     #[serde(rename = "metazoneInfo")]
     pub(crate) meta_zone_info: MetazoneInfo,
     #[serde(rename = "metazones")]
-    pub(crate) _meta_zones_territory: MetazonesTerritory,
-    #[serde(rename = "metazoneIds")]
-    pub(crate) meta_zone_ids: MetazoneIds,
+    pub(crate) meta_zones_territory: MetazonesTerritory,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -98,4 +92,55 @@ pub(crate) struct Supplemental {
 #[derive(Debug, Clone, Deserialize)]
 pub(crate) struct Resource {
     pub(crate) supplemental: Supplemental,
+}
+
+impl TimeZonePeriod {
+    pub(crate) fn iter(&self) -> impl Iterator<Item = (String, &Vec<MetazoneForPeriod>)> + '_ {
+        self.0.iter().flat_map(|(key, zone)| match zone {
+            ZonePeriod::Region(periods) => vec![(key.to_string(), periods)],
+            ZonePeriod::LocationOrSubRegion(place) => place
+                .iter()
+                .flat_map(
+                    move |(key2, location_or_subregion)| match location_or_subregion {
+                        MetaLocationOrSubRegion::Location(periods) => {
+                            vec![(format!("{key}/{key2}"), periods)]
+                        }
+                        MetaLocationOrSubRegion::SubRegion(subregion) => subregion
+                            .iter()
+                            .flat_map(move |(key3, periods)| {
+                                vec![(format!("{key}/{key2}/{key3}"), periods)]
+                            })
+                            .collect::<Vec<_>>(),
+                    },
+                )
+                .collect::<Vec<_>>(),
+        })
+    }
+}
+
+fn deserialize_date<'de, D: serde::de::Deserializer<'de>>(
+    deserializer: D,
+) -> Result<Option<Timestamp>, D::Error> {
+    use icu::calendar::Iso;
+    use icu::time::zone::UtcOffset;
+    use icu::time::DateTime;
+    use serde::de::Error;
+
+    let Some(timestamp) = Option::<String>::deserialize(deserializer)? else {
+        return Ok(None);
+    };
+
+    let DateTime { date, mut time } = DateTime::try_from_str(&timestamp, Iso)
+        .map_err(|_| D::Error::custom("Invalid metazone timestamp"))?;
+
+    // https://unicode-org.atlassian.net/browse/CLDR-18988
+    if time == Time::try_new(0, 45, 0, 0).unwrap() {
+        time = Time::try_new(0, 44, 30, 0).unwrap()
+    }
+
+    Ok(Some(Timestamp {
+        date,
+        time,
+        zone: UtcOffset::zero(),
+    }))
 }

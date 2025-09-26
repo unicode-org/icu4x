@@ -47,7 +47,6 @@ pub(crate) mod internal {
         let frac_part = if n.fract() == 0.0 {
             ""
         } else {
-            #[allow(clippy::indexing_slicing)] // fract output shape
             &raw_frac_part[2..]
         };
 
@@ -111,7 +110,7 @@ pub(crate) mod internal {
     pub fn to_icu4x_operands(n: f64, opts: Options) -> PluralOperands {
         dbg!("n={}", n);
         let nstr = fixed_format(n, &opts);
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[expect(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let ret = PluralOperands::from(&Decimal::from_str(&nstr).unwrap());
         dbg!("ret={:?}\n---\n", &ret);
         ret
@@ -243,7 +242,7 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
         L: ecma402_traits::Locale,
         Self: Sized,
     {
-        #[allow(clippy::unwrap_used)] // ecma402_traits::Locale::to_string is a valid locale
+        #[expect(clippy::unwrap_used)] // ecma402_traits::Locale::to_string is a valid locale
         let locale = icu::locale::Locale::try_from_str(&l.to_string()).unwrap();
 
         let prefs = icu::plurals::PluralRulesPreferences::from(&locale);
@@ -324,8 +323,7 @@ mod testing {
                     })
                     .collect::<Vec<_>>(),
                 test.expected,
-                "for test case: {}",
-                i
+                "for test case: {i}"
             );
         }
         Ok(())

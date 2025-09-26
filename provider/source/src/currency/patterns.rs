@@ -8,7 +8,7 @@ use crate::SourceDataProvider;
 
 use std::collections::HashSet;
 
-use icu::experimental::dimension::provider::currency_patterns::*;
+use icu::experimental::dimension::provider::currency::patterns::*;
 use icu::plurals::PluralElements;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;

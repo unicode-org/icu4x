@@ -533,7 +533,7 @@ mod tests {
 
         for (input, expected) in test_cases.iter() {
             let actual = &IcuRatio::from_str(input);
-            assert_eq!(actual, expected, "Values do not match for input: {}", input);
+            assert_eq!(actual, expected, "Values do not match for input: {input}");
         }
     }
 }

@@ -2,23 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Indian national calendar.
-//!
-//! ```rust
-//! use icu::calendar::{cal::Indian, Date};
-//!
-//! let date_iso = Date::try_new_iso(1970, 1, 2)
-//!     .expect("Failed to initialize ISO Date instance.");
-//! let date_indian = Date::new_from_iso(date_iso, Indian);
-//!
-//! assert_eq!(date_indian.era_year().year, 1891);
-//! assert_eq!(date_indian.month().ordinal, 10);
-//! assert_eq!(date_indian.day_of_month().0, 12);
-//! ```
-
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::DateError;
+use crate::options::DateFromFieldsOptions;
+use crate::types::DateFields;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -49,11 +38,7 @@ impl CalendarArithmetic for Indian {
 
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
         if month == 1 {
-            if Self::provided_year_is_leap(year) {
-                31
-            } else {
-                30
-            }
+            30 + Self::provided_year_is_leap(year) as u8
         } else if (2..=6).contains(&month) {
             31
         } else if (7..=12).contains(&month) {
@@ -68,7 +53,7 @@ impl CalendarArithmetic for Indian {
     }
 
     fn provided_year_is_leap(year: i32) -> bool {
-        Iso::provided_year_is_leap(year + 78)
+        calendrical_calculations::iso::is_leap_year(year + YEAR_OFFSET)
     }
 
     fn last_month_day_in_provided_year(_year: i32) -> (u8, u8) {
@@ -90,22 +75,55 @@ const DAY_OFFSET: u16 = 80;
 /// The Śaka era is 78 years behind Gregorian. This number should be added to Gregorian dates
 const YEAR_OFFSET: i32 = 78;
 
+impl DateFieldsResolver for Indian {
+    type YearInfo = i32;
+
+    #[inline]
+    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+        match era {
+            "shaka" => Ok(era_year),
+            _ => Err(DateError::UnknownEra),
+        }
+    }
+
+    #[inline]
+    fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
+        extended_year
+    }
+
+    #[inline]
+    fn reference_year_from_month_day(
+        &self,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::YearInfo, DateError> {
+        let (ordinal_month, _is_leap) = month_code
+            .parsed()
+            .ok_or(DateError::UnknownMonthCode(month_code))?;
+        // December 31, 1972 occurs on 10th month, 10th day, 1894 Shaka
+        // Note: 1894 Shaka is also a leap year
+        let shaka_year = if ordinal_month < 10 || (ordinal_month == 10 && day <= 10) {
+            1894
+        } else {
+            1893
+        };
+        Ok(shaka_year)
+    }
+}
+
 impl crate::cal::scaffold::UnstableSealed for Indian {}
 impl Calendar for Indian {
     type DateInner = IndianDateInner;
     type Year = types::EraYear;
-    fn from_codes(
+    fn from_fields(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
-        day: u8,
+        fields: DateFields,
+        options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let year = match era {
-            Some("shaka") | None => year,
-            Some(_) => return Err(DateError::UnknownEra),
-        };
-        ArithmeticDate::new_from_codes(self, year, month_code, day).map(IndianDateInner)
+        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
+        ArithmeticDate::try_from_builder(builder, options)
+            .map(IndianDateInner)
+            .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -119,7 +137,9 @@ impl Calendar for Indian {
     // Algorithms directly implemented in icu_calendar since they're not from the book
     fn from_iso(&self, iso: IsoDateInner) -> IndianDateInner {
         // Get day number in year (1 indexed)
-        let day_of_year_iso = Iso::day_of_year(iso);
+        let day_of_year_iso =
+            calendrical_calculations::iso::days_before_month(iso.0.year, iso.0.month)
+                + iso.0.day as u16;
         // Convert to Śaka year
         let mut year = iso.0.year - YEAR_OFFSET;
         // This is in the previous Indian year
@@ -132,10 +152,7 @@ impl Calendar for Indian {
         } else {
             day_of_year_iso - DAY_OFFSET
         };
-        IndianDateInner(ArithmeticDate::date_from_year_day(
-            year,
-            day_of_year_indian as u32,
-        ))
+        IndianDateInner(ArithmeticDate::date_from_year_day(year, day_of_year_indian))
     }
 
     // Algorithms directly implemented in icu_calendar since they're not from the book
@@ -152,7 +169,8 @@ impl Calendar for Indian {
         } else {
             day_of_year_indian + DAY_OFFSET
         };
-        Iso::iso_from_year_day(year, day_of_year_iso)
+
+        IsoDateInner(ArithmeticDate::date_from_year_day(year, day_of_year_iso))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -171,7 +189,6 @@ impl Calendar for Indian {
         date.0.offset_date(offset, &());
     }
 
-    #[allow(clippy::field_reassign_with_default)]
     fn until(
         &self,
         date1: &Self::DateInner,
@@ -184,16 +201,14 @@ impl Calendar for Indian {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        let extended_year = date.0.extended_year();
         types::EraYear {
             era_index: Some(0),
             era: tinystr!(16, "shaka"),
-            year: self.extended_year(date),
+            year: extended_year,
+            extended_year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
-    }
-
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        date.0.extended_year()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -242,7 +257,7 @@ impl Date<Indian> {
     /// assert_eq!(date_indian.day_of_month().0, 12);
     /// ```
     pub fn try_new_indian(year: i32, month: u8, day: u8) -> Result<Date<Indian>, RangeError> {
-        ArithmeticDate::new_from_ordinals(year, month, day)
+        ArithmeticDate::try_from_ymd(year, month, day)
             .map(IndianDateInner)
             .map(|inner| Date::from_raw(inner, Indian))
     }

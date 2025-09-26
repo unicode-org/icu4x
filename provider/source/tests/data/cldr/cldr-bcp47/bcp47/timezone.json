@@ -37,7 +37,8 @@
         },
         "ancur": {
           "_description": "Curaçao",
-          "_alias": "America/Curacao"
+          "_alias": "America/Curacao",
+          "_region": "CW"
         },
         "aolad": {
           "_description": "Luanda, Angola",
@@ -46,7 +47,7 @@
         "aqams": {
           "_deprecated": true,
           "_description": "Amundsen-Scott Station, South Pole",
-          "_preferred": "nzakl"
+          "_preferred": "aqmcm"
         },
         "aqcas": {
           "_description": "Casey Station, Bailey Peninsula",
@@ -66,7 +67,7 @@
         },
         "aqmcm": {
           "_description": "McMurdo Station, Ross Island",
-          "_alias": "Antarctica/McMurdo"
+          "_alias": "Antarctica/McMurdo Antarctica/South_Pole"
         },
         "aqplm": {
           "_description": "Palmer Station, Anvers Island",
@@ -506,6 +507,11 @@
           "_description": "Rarotonga, Cook Islands",
           "_alias": "Pacific/Rarotonga"
         },
+        "clcxq": {
+          "_description": "Aysén Region, Chile",
+          "_alias": "America/Coyhaique",
+          "_since": "48"
+        },
         "clipc": {
           "_description": "Easter Island, Chile",
           "_alias": "Pacific/Easter Chile/EasterIsland"
@@ -665,7 +671,8 @@
         },
         "fimhq": {
           "_description": "Mariehamn, Åland, Finland",
-          "_alias": "Europe/Mariehamn"
+          "_alias": "Europe/Mariehamn",
+          "_region": "AX"
         },
         "fjsuv": {
           "_description": "Fiji",
@@ -710,6 +717,7 @@
         "gazastrp": {
           "_description": "Gaza Strip, Palestinian Territories",
           "_alias": "Asia/Gaza",
+          "_region": "PS",
           "_since": "40"
         },
         "gblon": {
@@ -776,11 +784,13 @@
         },
         "gpmsb": {
           "_description": "Marigot, Saint Martin",
-          "_alias": "America/Marigot"
+          "_alias": "America/Marigot",
+          "_region": "MF"
         },
         "gpsbh": {
           "_description": "Saint Barthélemy",
-          "_alias": "America/St_Barthelemy"
+          "_alias": "America/St_Barthelemy",
+          "_region": "BL"
         },
         "gqssg": {
           "_description": "Malabo, Equatorial Guinea",
@@ -813,6 +823,7 @@
         "hebron": {
           "_description": "West Bank, Palestinian Territories",
           "_alias": "Asia/Hebron",
+          "_region": "PS",
           "_since": "21"
         },
         "hkhkg": {
@@ -886,7 +897,8 @@
         },
         "jeruslm": {
           "_description": "Jerusalem",
-          "_alias": "Asia/Jerusalem Asia/Tel_Aviv Israel"
+          "_alias": "Asia/Jerusalem Asia/Tel_Aviv Israel",
+          "_region": "IL"
         },
         "jesth": {
           "_description": "Jersey",
@@ -1236,7 +1248,7 @@
         },
         "nzakl": {
           "_description": "Auckland, New Zealand",
-          "_alias": "Pacific/Auckland Antarctica/South_Pole NZ"
+          "_alias": "Pacific/Auckland NZ"
         },
         "nzcht": {
           "_description": "Chatham Islands, New Zealand",

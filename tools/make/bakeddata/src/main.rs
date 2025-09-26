@@ -83,7 +83,9 @@ fn main() {
             .collect()
     };
 
-    let source = SourceDataProvider::new();
+    let source = SourceDataProvider::new()
+        .with_tzdb(Path::new("provider/source/tests/data/tzdb"))
+        .unwrap();
 
     let driver = ExportDriver::new(
         source
@@ -260,6 +262,30 @@ fn main() {
         for line in lines {
             writeln!(&mut out, "{line}").unwrap();
         }
+    }
+
+    if components.len() == COMPONENTS.len() {
+        // On full datagen runs (as in CI) validate that `--markers all --locales full` works
+        struct SinkExporter;
+        impl DataExporter for SinkExporter {
+            fn put_payload(
+                &self,
+                _marker: DataMarkerInfo,
+                _id: DataIdentifierBorrowed,
+                _payload: &DataPayload<ExportMarker>,
+            ) -> Result<(), DataError> {
+                Ok(())
+            }
+        }
+        ExportDriver::new(
+            [DataLocaleFamily::FULL],
+            DeduplicationStrategy::Maximal.into(),
+            LocaleFallbacker::try_new_unstable(&source).unwrap(),
+        )
+        // These are all supported models
+        .with_recommended_segmenter_models()
+        .export(&source, SinkExporter)
+        .unwrap();
     }
 }
 

@@ -177,7 +177,7 @@ impl DatePatternSelectionData {
         &self,
         input: &DateTimeInputUnchecked,
         options: RawOptions,
-    ) -> Option<DatePatternDataBorrowed> {
+    ) -> Option<DatePatternDataBorrowed<'_>> {
         let payload = self.payload.get_option()?;
         let year_style = options.year_style.unwrap_or_default();
         let variant = match (
@@ -339,7 +339,7 @@ impl TimePatternSelectionData {
         input: &DateTimeInputUnchecked,
         options: RawOptions,
         prefs: RawPreferences,
-    ) -> Option<TimePatternDataBorrowed> {
+    ) -> Option<TimePatternDataBorrowed<'_>> {
         let payload = self.payload.get_option()?;
         let time_precision = options.time_precision.unwrap_or_default();
         let (variant, subsecond_digits) = input.resolve_time_precision(time_precision);
@@ -383,7 +383,7 @@ impl ZonePatternSelectionData {
     }
 
     /// Borrows a resolved pattern based on the given datetime
-    pub(crate) fn select(&self, _input: &DateTimeInputUnchecked) -> ZonePatternDataBorrowed {
+    pub(crate) fn select(&self, _input: &DateTimeInputUnchecked) -> ZonePatternDataBorrowed<'_> {
         let Self::SinglePatternItem(_, pattern_item) = self;
         ZonePatternDataBorrowed::SinglePatternItem(pattern_item)
     }
@@ -400,7 +400,6 @@ impl<'a> ZonePatternDataBorrowed<'a> {
 }
 
 impl DateTimeZonePatternSelectionData {
-    #[allow(clippy::too_many_arguments)] // private function with lots of generics
     pub(crate) fn try_new_with_skeleton(
         date_provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
         time_provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
@@ -634,7 +633,10 @@ impl DateTimeZonePatternSelectionData {
     }
 
     /// Borrows a resolved pattern based on the given datetime
-    pub(crate) fn select(&self, input: &DateTimeInputUnchecked) -> DateTimeZonePatternDataBorrowed {
+    pub(crate) fn select(
+        &self,
+        input: &DateTimeInputUnchecked,
+    ) -> DateTimeZonePatternDataBorrowed<'_> {
         DateTimeZonePatternDataBorrowed {
             date: self.date.select(input, self.options),
             time: self.time.select(input, self.options, self.prefs),
@@ -739,7 +741,7 @@ impl<'a> DateTimeZonePatternDataBorrowed<'a> {
 impl<'a> ItemsAndOptions<'a> {
     pub(crate) fn iter_items(self) -> impl Iterator<Item = PatternItem> + 'a {
         self.items.iter().map(move |mut pattern_item| {
-            #[allow(clippy::single_match)] // need `ref mut`, which doesn't work in `if let`?
+            #[expect(clippy::single_match)] // need `ref mut`, which doesn't work in `if let`?
             match &mut pattern_item {
                 PatternItem::Field(ref mut field) => {
                     let alignment = self.alignment.unwrap_or_default();

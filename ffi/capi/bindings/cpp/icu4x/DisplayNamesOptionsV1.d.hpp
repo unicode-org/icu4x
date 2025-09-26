@@ -1,5 +1,5 @@
-#ifndef icu4x_DisplayNamesOptionsV1_D_HPP
-#define icu4x_DisplayNamesOptionsV1_D_HPP
+#ifndef ICU4X_DisplayNamesOptionsV1_D_HPP
+#define ICU4X_DisplayNamesOptionsV1_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,16 +9,16 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
 #include "DisplayNamesFallback.d.hpp"
 #include "DisplayNamesStyle.d.hpp"
 #include "LanguageDisplay.d.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 class DisplayNamesFallback;
 class DisplayNamesStyle;
 class LanguageDisplay;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -36,16 +36,18 @@ namespace capi {
 
 namespace icu4x {
 /**
+ * 🚧 This API is experimental and may experience breaking changes outside major releases.
+ *
  * See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.DisplayNamesOptions.html) for more information.
  */
 struct DisplayNamesOptionsV1 {
-  std::optional<icu4x::DisplayNamesStyle> style;
-  std::optional<icu4x::DisplayNamesFallback> fallback;
-  std::optional<icu4x::LanguageDisplay> language_display;
+    std::optional<icu4x::DisplayNamesStyle> style;
+    std::optional<icu4x::DisplayNamesFallback> fallback;
+    std::optional<icu4x::LanguageDisplay> language_display;
 
-  inline icu4x::capi::DisplayNamesOptionsV1 AsFFI() const;
-  inline static icu4x::DisplayNamesOptionsV1 FromFFI(icu4x::capi::DisplayNamesOptionsV1 c_struct);
+    inline icu4x::capi::DisplayNamesOptionsV1 AsFFI() const;
+    inline static icu4x::DisplayNamesOptionsV1 FromFFI(icu4x::capi::DisplayNamesOptionsV1 c_struct);
 };
 
 } // namespace
-#endif // icu4x_DisplayNamesOptionsV1_D_HPP
+#endif // ICU4X_DisplayNamesOptionsV1_D_HPP

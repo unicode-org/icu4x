@@ -88,7 +88,6 @@ pub mod provider {
         impl_short_year_relative_v1!(Baked);
         impl_transliterator_rules_v1!(Baked);
         impl_units_info_v1!(Baked);
-        impl_units_trie_v1!(Baked);
         impl_unit_ids_v1!(Baked);
     };
 
@@ -102,21 +101,20 @@ pub mod provider {
         super::compactdecimal::provider::ShortCompactDecimalFormatDataV1::INFO,
         super::compactdecimal::provider::LongCompactDecimalFormatDataV1::INFO,
         super::compactdecimal::provider::ShortCompactDecimalFormatDataV1::INFO,
-        super::dimension::provider::currency_compact::ShortCurrencyCompactV1::INFO,
-        super::dimension::provider::currency_displayname::CurrencyDisplaynameV1::INFO,
-        super::dimension::provider::currency::CurrencyEssentialsV1::INFO,
-        super::dimension::provider::currency_patterns::CurrencyPatternsDataV1::INFO,
-        super::dimension::provider::extended_currency::CurrencyExtendedDataV1::INFO,
+        super::dimension::provider::currency::compact::ShortCurrencyCompactV1::INFO,
+        super::dimension::provider::currency::displayname::CurrencyDisplaynameV1::INFO,
+        super::dimension::provider::currency::essentials::CurrencyEssentialsV1::INFO,
+        super::dimension::provider::currency::patterns::CurrencyPatternsDataV1::INFO,
+        super::dimension::provider::currency::extended::CurrencyExtendedDataV1::INFO,
         super::dimension::provider::percent::PercentEssentialsV1::INFO,
-        super::dimension::provider::units_essentials::UnitsEssentialsV1::INFO,
-        super::dimension::provider::units::UnitsDisplayNameV1::INFO,
+        super::dimension::provider::units::essentials::UnitsEssentialsV1::INFO,
+        super::dimension::provider::units::display_name::UnitsDisplayNameV1::INFO,
         super::displaynames::provider::LanguageDisplayNamesV1::INFO,
         super::duration::provider::DigitalDurationDataV1::INFO,
         super::displaynames::provider::LocaleDisplayNamesV1::INFO,
         super::displaynames::provider::RegionDisplayNamesV1::INFO,
         super::displaynames::provider::ScriptDisplayNamesV1::INFO,
         super::displaynames::provider::VariantDisplayNamesV1::INFO,
-        super::measure::provider::trie::UnitsTrieV1::INFO,
         super::measure::provider::UnitIdsV1::INFO,
         super::personnames::provider::PersonNamesFormatV1::INFO,
         super::relativetime::provider::LongDayRelativeV1::INFO,

@@ -1295,7 +1295,7 @@ mod tests {
     }
 
     #[test]
-    #[allow(clippy::bool_assert_comparison)] // clearer when we're testing bools directly
+    #[expect(clippy::bool_assert_comparison)] // clearer when we're testing bools directly
     fn break_rule() {
         let payload =
             DataProvider::<SegmenterBreakLineV1>::load(&crate::provider::Baked, Default::default())

@@ -1,5 +1,5 @@
-#ifndef icu4x_DecimalSignedRoundingMode_D_HPP
-#define icu4x_DecimalSignedRoundingMode_D_HPP
+#ifndef ICU4X_DecimalSignedRoundingMode_D_HPP
+#define ICU4X_DecimalSignedRoundingMode_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -38,31 +38,31 @@ namespace icu4x {
  */
 class DecimalSignedRoundingMode {
 public:
-  enum Value {
-    Expand = 0,
-    Trunc = 1,
-    HalfExpand = 2,
-    HalfTrunc = 3,
-    HalfEven = 4,
-    Ceil = 5,
-    Floor = 6,
-    HalfCeil = 7,
-    HalfFloor = 8,
-  };
+    enum Value {
+        Expand = 0,
+        Trunc = 1,
+        HalfExpand = 2,
+        HalfTrunc = 3,
+        HalfEven = 4,
+        Ceil = 5,
+        Floor = 6,
+        HalfCeil = 7,
+        HalfFloor = 8,
+    };
 
-  DecimalSignedRoundingMode(): value(Value::Expand) {}
+    DecimalSignedRoundingMode(): value(Value::Expand) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr DecimalSignedRoundingMode(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr DecimalSignedRoundingMode(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::DecimalSignedRoundingMode AsFFI() const;
-  inline static icu4x::DecimalSignedRoundingMode FromFFI(icu4x::capi::DecimalSignedRoundingMode c_enum);
+    inline icu4x::capi::DecimalSignedRoundingMode AsFFI() const;
+    inline static icu4x::DecimalSignedRoundingMode FromFFI(icu4x::capi::DecimalSignedRoundingMode c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_DecimalSignedRoundingMode_D_HPP
+#endif // ICU4X_DecimalSignedRoundingMode_D_HPP

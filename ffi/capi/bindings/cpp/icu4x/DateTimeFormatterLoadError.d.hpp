@@ -1,5 +1,5 @@
-#ifndef icu4x_DateTimeFormatterLoadError_D_HPP
-#define icu4x_DateTimeFormatterLoadError_D_HPP
+#ifndef ICU4X_DateTimeFormatterLoadError_D_HPP
+#define ICU4X_DateTimeFormatterLoadError_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -40,35 +40,35 @@ namespace icu4x {
  */
 class DateTimeFormatterLoadError {
 public:
-  enum Value {
-    Unknown = 0,
-    InvalidDateFields = 2049,
-    UnsupportedLength = 2051,
-    ConflictingField = 2057,
-    FormatterTooSpecific = 2058,
-    DataMarkerNotFound = 1,
-    DataIdentifierNotFound = 2,
-    DataInvalidRequest = 3,
-    DataInconsistentData = 4,
-    DataDowncast = 5,
-    DataDeserialize = 6,
-    DataCustom = 7,
-    DataIo = 8,
-  };
+    enum Value {
+        Unknown = 0,
+        InvalidDateFields = 2049,
+        UnsupportedLength = 2051,
+        ConflictingField = 2057,
+        FormatterTooSpecific = 2058,
+        DataMarkerNotFound = 1,
+        DataIdentifierNotFound = 2,
+        DataInvalidRequest = 3,
+        DataInconsistentData = 4,
+        DataDowncast = 5,
+        DataDeserialize = 6,
+        DataCustom = 7,
+        DataIo = 8,
+    };
 
-  DateTimeFormatterLoadError(): value(Value::Unknown) {}
+    DateTimeFormatterLoadError(): value(Value::Unknown) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr DateTimeFormatterLoadError(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr DateTimeFormatterLoadError(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::DateTimeFormatterLoadError AsFFI() const;
-  inline static icu4x::DateTimeFormatterLoadError FromFFI(icu4x::capi::DateTimeFormatterLoadError c_enum);
+    inline icu4x::capi::DateTimeFormatterLoadError AsFFI() const;
+    inline static icu4x::DateTimeFormatterLoadError FromFFI(icu4x::capi::DateTimeFormatterLoadError c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_DateTimeFormatterLoadError_D_HPP
+#endif // ICU4X_DateTimeFormatterLoadError_D_HPP

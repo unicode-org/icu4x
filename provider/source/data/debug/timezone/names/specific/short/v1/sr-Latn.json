@@ -2,49 +2,49 @@
   "defaults": [
     [
       [
-        50,
+        45,
         "Standard"
       ],
       "CET"
     ],
     [
       [
-        50,
+        45,
         "Daylight"
       ],
       "CEST"
     ],
     [
       [
-        51,
+        46,
         "Standard"
       ],
       "EET"
     ],
     [
       [
-        51,
+        46,
         "Daylight"
       ],
       "EEST"
     ],
     [
       [
-        53,
+        47,
         "Standard"
       ],
       "WET"
     ],
     [
       [
-        53,
+        47,
         "Daylight"
       ],
       "WEST"
     ],
     [
       [
-        101,
+        52,
         "Standard"
       ],
       "GMT"
