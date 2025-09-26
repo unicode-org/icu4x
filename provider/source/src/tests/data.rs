@@ -238,6 +238,7 @@ impl SourceDataProvider {
                         ("cldr-core/supplemental/calendarData.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/calendarData.json").as_slice()),
                         ("cldr-core/supplemental/currencyData.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/currencyData.json").as_slice()),
                         ("cldr-core/supplemental/units.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/units.json").as_slice()),
+                        ("cldr-core/supplemental/unitPreferenceData.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/unitPreferenceData.json").as_slice()),
                         ("cldr-core/supplemental/likelySubtags.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/likelySubtags.json").as_slice()),
                         ("cldr-core/supplemental/metaZones.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/metaZones.json").as_slice()),
                         ("cldr-core/supplemental/primaryZones.json", include_bytes!("../../tests/data/cldr/cldr-core/supplemental/primaryZones.json").as_slice()),
