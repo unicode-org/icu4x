@@ -492,7 +492,7 @@ impl core::fmt::Debug for Locale {
     }
 }
 
-impl_writeable_for_each_subtag_str_no_test!(Locale, selff, selff.extensions.is_empty() => selff.id.write_to_string());
+impl_writeable_for_each_subtag_str_no_test!(Locale, selff, selff.extensions.is_empty() => selff.id.try_borrow());
 
 #[test]
 fn test_writeable() {

@@ -125,7 +125,7 @@ impl FromStr for Value {
     }
 }
 
-impl_writeable_for_each_subtag_str_no_test!(Value, selff, selff.0.is_empty() => alloc::borrow::Cow::Borrowed("true"));
+impl_writeable_for_each_subtag_str_no_test!(Value, selff, selff.0.is_empty() => Some("true"));
 
 #[test]
 fn test_writeable() {
