@@ -13,6 +13,6 @@ mod relativetime;
 
 pub use format::FormattedRelativeTime;
 pub use options::RelativeTimeFormatterOptions;
+pub use relativetime::preferences;
 pub use relativetime::RelativeTimeFormatter;
 pub use relativetime::RelativeTimeFormatterPreferences;
-pub use relativetime::preferences;
