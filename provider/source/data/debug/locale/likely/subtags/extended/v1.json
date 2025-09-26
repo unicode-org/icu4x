@@ -2,6 +2,13 @@
   "language_script": [
     [
       [
+        "abq",
+        "Latn"
+      ],
+      "TR"
+    ],
+    [
+      [
         "arc",
         "Hatr"
       ],
@@ -135,6 +142,13 @@
     ],
     [
       [
+        "stu",
+        "Tale"
+      ],
+      "CN"
+    ],
+    [
+      [
         "unr",
         "Deva"
       ],
@@ -142,6 +156,13 @@
     ]
   ],
   "language_region": [
+    [
+      [
+        "abq",
+        "TR"
+      ],
+      "Latn"
+    ],
     [
       [
         "hak",
@@ -218,6 +239,13 @@
         "TR"
       ],
       "Latn"
+    ],
+    [
+      [
+        "stu",
+        "CN"
+      ],
+      "Tale"
     ],
     [
       [
@@ -375,6 +403,10 @@
     "abp": [
       "Latn",
       "PH"
+    ],
+    "abq": [
+      "Cyrl",
+      "RU"
     ],
     "abr": [
       "Latn",
@@ -8327,6 +8359,10 @@
     "grq": [
       "Latn",
       "PG"
+    ],
+    "grr": [
+      "Arab",
+      "DZ"
     ],
     "grs": [
       "Latn",
@@ -16380,6 +16416,10 @@
       "Latn",
       "MX"
     ],
+    "mzb": [
+      "Arab",
+      "DZ"
+    ],
     "mzd": [
       "Latn",
       "CM"
@@ -22307,6 +22347,10 @@
     "stt": [
       "Latn",
       "VN"
+    ],
+    "stu": [
+      "Lana",
+      "MM"
     ],
     "stv": [
       "Ethi",
@@ -28551,6 +28595,13 @@
         "TH"
       ],
       "hnj"
+    ],
+    [
+      [
+        "Lana",
+        "MM"
+      ],
+      "stu"
     ],
     [
       [
