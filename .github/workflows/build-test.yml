@@ -562,7 +562,7 @@ jobs:
 
   # Notify on slack  
   notify-slack:
-    needs: [msrv, test, testdata, test-docs, full-datagen, test-c, test-js, test-dart, nostd, diplomat, gn, fmt, tidy, clippy, doc]
+    needs: [msrv, test, testdata, test-docs, full-datagen, test-c, test-js, test-dart, nostd, diplomat, fmt, tidy, clippy, doc]
     if: ${{ always() && contains(needs.*.result, 'failure') && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_name == 'main')) }}
     runs-on: ubuntu-latest
     steps:
