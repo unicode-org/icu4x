@@ -73,7 +73,7 @@ mod test {
     #[derive(Serialize, Deserialize)]
     #[allow(
         dead_code,
-        reason = "The dead_code lint explicitly ignores constructing trait impls."
+        reason = "Tests compatibility of custom impl with Serde derive."
     )]
     struct DeriveTestZeroHashMap<'data> {
         #[serde(borrow)]

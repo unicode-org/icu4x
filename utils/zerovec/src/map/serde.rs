@@ -238,7 +238,7 @@ mod test {
     #[derive(serde::Serialize, serde::Deserialize)]
     #[expect(
         dead_code,
-        reason = "The dead_code lint explicitly ignores constructing trait impls."
+        reason = "Tests compatibility of custom impl with Serde derive."
     )]
     struct DeriveTest_ZeroMap<'data> {
         #[serde(borrow)]
@@ -248,7 +248,7 @@ mod test {
     #[derive(serde::Serialize, serde::Deserialize)]
     #[expect(
         dead_code,
-        reason = "The dead_code lint explicitly ignores constructing trait impls."
+        reason = "Tests compatibility of custom impl with Serde derive."
     )]
     struct DeriveTest_ZeroMapBorrowed<'data> {
         #[serde(borrow)]

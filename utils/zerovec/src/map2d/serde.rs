@@ -356,7 +356,7 @@ mod test {
     #[derive(serde::Serialize, serde::Deserialize)]
     #[allow(
         dead_code,
-        reason = "We are testing that these types can be deserialized, and the dead_code lint explicitly ignores constructing trait impls."
+        reason = "We are testing that these types can be deserialized, and Tests compatibility of custom impl with Serde derive."
     )]
     struct DeriveTest_ZeroMap2d<'data> {
         #[serde(borrow)]
@@ -366,7 +366,7 @@ mod test {
     #[derive(serde::Serialize, serde::Deserialize)]
     #[allow(
         dead_code,
-        reason = "We are testing that these types can be deserialized, and the dead_code lint explicitly ignores constructing trait impls."
+        reason = "We are testing that these types can be deserialized, and Tests compatibility of custom impl with Serde derive."
     )]
     struct DeriveTest_ZeroMap2dBorrowed<'data> {
         #[serde(borrow)]
