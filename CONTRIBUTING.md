@@ -160,8 +160,6 @@ Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to eac
      + Requires Node.js version 16.18.0. This may not the one offered by the package manager; get it from the NodeJS website or `nvm`.
  - `ci-job-nostd`: Builds ICU4X for a `#[no_std]` target to verify that it's compatible.
  - `ci-job-diplomat`: Verifies that diplomat-generated bindings are up to date.
- - `ci-job-gn`: Verifies that the GN wrapper is up to date.
-     + Requires GN to be installed: `cargo make gn-install`.
  
 ### Structure of commits in a Pull Request
 
