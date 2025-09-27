@@ -155,8 +155,8 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         date.days_in_month()
     }
 
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.offset_date(offset.cast_unit(), &());
+    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration) {
+        date.offset_date(offset, &());
     }
 
     fn until(
@@ -166,10 +166,8 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         _calendar2: &Self,
         _largest_unit: DateDurationUnit,
         _smallest_unit: DateDurationUnit,
-    ) -> DateDuration<Self> {
-        date1
-            .until(*date2, _largest_unit, _smallest_unit)
-            .cast_unit()
+    ) -> DateDuration {
+        date1.until(*date2, _largest_unit, _smallest_unit)
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
@@ -266,11 +264,11 @@ macro_rules! impl_with_abstract_gregorian {
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr).days_in_month(&date.0)
             }
 
-            fn offset_date(&self, date: &mut Self::DateInner, offset: crate::DateDuration<Self>) {
+            fn offset_date(&self, date: &mut Self::DateInner, offset: crate::DateDuration) {
                 let $self_ident = self;
                 let mut inner = date.0;
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
-                    .offset_date(&mut inner, offset.cast_unit());
+                    .offset_date(&mut inner, offset);
                 date.0 = inner;
             }
 
@@ -281,17 +279,15 @@ macro_rules! impl_with_abstract_gregorian {
                 _calendar2: &Self,
                 largest_unit: crate::DateDurationUnit,
                 smallest_unit: crate::DateDurationUnit,
-            ) -> crate::DateDuration<Self> {
+            ) -> crate::DateDuration {
                 let $self_ident = self;
-                crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
-                    .until(
-                        &date1.0,
-                        &date2.0,
-                        &crate::cal::abstract_gregorian::AbstractGregorian($eras_expr),
-                        largest_unit,
-                        smallest_unit,
-                    )
-                    .cast_unit()
+                crate::cal::abstract_gregorian::AbstractGregorian($eras_expr).until(
+                    &date1.0,
+                    &date2.0,
+                    &crate::cal::abstract_gregorian::AbstractGregorian($eras_expr),
+                    largest_unit,
+                    smallest_unit,
+                )
             }
 
             fn year_info(&self, date: &Self::DateInner) -> Self::Year {

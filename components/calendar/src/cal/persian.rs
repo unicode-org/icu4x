@@ -164,7 +164,7 @@ impl Calendar for Persian {
         date.0.days_in_month()
     }
 
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
+    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration) {
         date.0.offset_date(offset, &())
     }
 
@@ -175,7 +175,7 @@ impl Calendar for Persian {
         _calendar2: &Self,
         _largest_unit: DateDurationUnit,
         _smallest_unit: DateDurationUnit,
-    ) -> DateDuration<Self> {
+    ) -> DateDuration {
         date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 

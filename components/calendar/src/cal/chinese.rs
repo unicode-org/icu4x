@@ -617,7 +617,7 @@ impl<X: Rules> Calendar for LunarChinese<X> {
     }
 
     #[doc(hidden)] // unstable
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
+    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration) {
         date.0.offset_date(offset, self);
     }
 
@@ -633,7 +633,7 @@ impl<X: Rules> Calendar for LunarChinese<X> {
         _calendar2: &Self,
         _largest_unit: DateDurationUnit,
         _smallest_unit: DateDurationUnit,
-    ) -> DateDuration<Self> {
+    ) -> DateDuration {
         date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 

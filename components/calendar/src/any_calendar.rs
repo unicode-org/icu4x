@@ -252,54 +252,34 @@ impl Calendar for AnyCalendar {
         match_cal_and_date!(match (self, date): (c, d) => c.days_in_month(d))
     }
 
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
+    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration) {
         match (self, date) {
-            (Self::Buddhist(c), AnyDateInner::Buddhist(ref mut d)) => {
-                c.offset_date(d, offset.cast_unit())
-            }
-            (Self::Chinese(c), AnyDateInner::Chinese(ref mut d)) => {
-                c.offset_date(d, offset.cast_unit())
-            }
-            (Self::Coptic(c), AnyDateInner::Coptic(ref mut d)) => {
-                c.offset_date(d, offset.cast_unit())
-            }
-            (Self::Dangi(c), AnyDateInner::Dangi(ref mut d)) => {
-                c.offset_date(d, offset.cast_unit())
-            }
-            (Self::Ethiopian(c), AnyDateInner::Ethiopian(ref mut d)) => {
-                c.offset_date(d, offset.cast_unit())
-            }
-            (Self::Gregorian(c), AnyDateInner::Gregorian(ref mut d)) => {
-                c.offset_date(d, offset.cast_unit())
-            }
-            (Self::Hebrew(c), AnyDateInner::Hebrew(ref mut d)) => {
-                c.offset_date(d, offset.cast_unit())
-            }
-            (Self::Indian(c), AnyDateInner::Indian(ref mut d)) => {
-                c.offset_date(d, offset.cast_unit())
-            }
+            (Self::Buddhist(c), AnyDateInner::Buddhist(ref mut d)) => c.offset_date(d, offset),
+            (Self::Chinese(c), AnyDateInner::Chinese(ref mut d)) => c.offset_date(d, offset),
+            (Self::Coptic(c), AnyDateInner::Coptic(ref mut d)) => c.offset_date(d, offset),
+            (Self::Dangi(c), AnyDateInner::Dangi(ref mut d)) => c.offset_date(d, offset),
+            (Self::Ethiopian(c), AnyDateInner::Ethiopian(ref mut d)) => c.offset_date(d, offset),
+            (Self::Gregorian(c), AnyDateInner::Gregorian(ref mut d)) => c.offset_date(d, offset),
+            (Self::Hebrew(c), AnyDateInner::Hebrew(ref mut d)) => c.offset_date(d, offset),
+            (Self::Indian(c), AnyDateInner::Indian(ref mut d)) => c.offset_date(d, offset),
             (Self::HijriTabular(c), &mut AnyDateInner::HijriTabular(ref mut d, sighting))
                 if c.0 == sighting =>
             {
-                c.offset_date(d, offset.cast_unit())
+                c.offset_date(d, offset)
             }
             (Self::HijriSimulated(c), AnyDateInner::HijriSimulated(ref mut d)) => {
-                c.offset_date(d, offset.cast_unit())
+                c.offset_date(d, offset)
             }
             (Self::HijriUmmAlQura(c), AnyDateInner::HijriUmmAlQura(ref mut d)) => {
-                c.offset_date(d, offset.cast_unit())
+                c.offset_date(d, offset)
             }
-            (Self::Iso(c), AnyDateInner::Iso(ref mut d)) => c.offset_date(d, offset.cast_unit()),
-            (Self::Japanese(c), AnyDateInner::Japanese(ref mut d)) => {
-                c.offset_date(d, offset.cast_unit())
-            }
+            (Self::Iso(c), AnyDateInner::Iso(ref mut d)) => c.offset_date(d, offset),
+            (Self::Japanese(c), AnyDateInner::Japanese(ref mut d)) => c.offset_date(d, offset),
             (Self::JapaneseExtended(c), AnyDateInner::JapaneseExtended(ref mut d)) => {
-                c.offset_date(d, offset.cast_unit())
+                c.offset_date(d, offset)
             }
-            (Self::Persian(c), AnyDateInner::Persian(ref mut d)) => {
-                c.offset_date(d, offset.cast_unit())
-            }
-            (Self::Roc(c), AnyDateInner::Roc(ref mut d)) => c.offset_date(d, offset.cast_unit()),
+            (Self::Persian(c), AnyDateInner::Persian(ref mut d)) => c.offset_date(d, offset),
+            (Self::Roc(c), AnyDateInner::Roc(ref mut d)) => c.offset_date(d, offset),
             // This is only reached from misuse of from_raw, a semi-internal api
             #[expect(clippy::panic)]
             (_, d) => panic!(
@@ -317,126 +297,100 @@ impl Calendar for AnyCalendar {
         calendar2: &Self,
         largest_unit: DateDurationUnit,
         smallest_unit: DateDurationUnit,
-    ) -> DateDuration<Self> {
+    ) -> DateDuration {
         match (self, calendar2, date1, date2) {
             (
                 Self::Buddhist(c1),
                 Self::Buddhist(c2),
                 AnyDateInner::Buddhist(d1),
                 AnyDateInner::Buddhist(d2),
-            ) => c1
-                .until(d1, d2, c2, largest_unit, smallest_unit)
-                .cast_unit(),
+            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
             (
                 Self::Chinese(c1),
                 Self::Chinese(c2),
                 AnyDateInner::Chinese(d1),
                 AnyDateInner::Chinese(d2),
-            ) => c1
-                .until(d1, d2, c2, largest_unit, smallest_unit)
-                .cast_unit(),
+            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
             (
                 Self::Coptic(c1),
                 Self::Coptic(c2),
                 AnyDateInner::Coptic(d1),
                 AnyDateInner::Coptic(d2),
-            ) => c1
-                .until(d1, d2, c2, largest_unit, smallest_unit)
-                .cast_unit(),
+            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
             (
                 Self::Dangi(c1),
                 Self::Dangi(c2),
                 AnyDateInner::Dangi(d1),
                 AnyDateInner::Dangi(d2),
-            ) => c1
-                .until(d1, d2, c2, largest_unit, smallest_unit)
-                .cast_unit(),
+            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
             (
                 Self::Ethiopian(c1),
                 Self::Ethiopian(c2),
                 AnyDateInner::Ethiopian(d1),
                 AnyDateInner::Ethiopian(d2),
-            ) => c1
-                .until(d1, d2, c2, largest_unit, smallest_unit)
-                .cast_unit(),
+            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
             (
                 Self::Gregorian(c1),
                 Self::Gregorian(c2),
                 AnyDateInner::Gregorian(d1),
                 AnyDateInner::Gregorian(d2),
-            ) => c1
-                .until(d1, d2, c2, largest_unit, smallest_unit)
-                .cast_unit(),
+            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
             (
                 Self::Hebrew(c1),
                 Self::Hebrew(c2),
                 AnyDateInner::Hebrew(d1),
                 AnyDateInner::Hebrew(d2),
-            ) => c1
-                .until(d1, d2, c2, largest_unit, smallest_unit)
-                .cast_unit(),
+            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
             (
                 Self::Indian(c1),
                 Self::Indian(c2),
                 AnyDateInner::Indian(d1),
                 AnyDateInner::Indian(d2),
-            ) => c1
-                .until(d1, d2, c2, largest_unit, smallest_unit)
-                .cast_unit(),
+            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
             (
                 Self::HijriTabular(c1),
                 Self::HijriTabular(c2),
                 &AnyDateInner::HijriTabular(ref d1, s1),
                 &AnyDateInner::HijriTabular(ref d2, s2),
-            ) if c1.0 == c2.0 && c2.0 == s1 && s1 == s2 => c1
-                .until(d1, d2, c2, largest_unit, smallest_unit)
-                .cast_unit(),
+            ) if c1.0 == c2.0 && c2.0 == s1 && s1 == s2 => {
+                c1.until(d1, d2, c2, largest_unit, smallest_unit)
+            }
             (
                 Self::HijriSimulated(c1),
                 Self::HijriSimulated(c2),
                 AnyDateInner::HijriSimulated(d1),
                 AnyDateInner::HijriSimulated(d2),
-            ) => c1
-                .until(d1, d2, c2, largest_unit, smallest_unit)
-                .cast_unit(),
+            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
             (
                 Self::HijriUmmAlQura(c1),
                 Self::HijriUmmAlQura(c2),
                 AnyDateInner::HijriUmmAlQura(d1),
                 AnyDateInner::HijriUmmAlQura(d2),
-            ) => c1
-                .until(d1, d2, c2, largest_unit, smallest_unit)
-                .cast_unit(),
-            (Self::Iso(c1), Self::Iso(c2), AnyDateInner::Iso(d1), AnyDateInner::Iso(d2)) => c1
-                .until(d1, d2, c2, largest_unit, smallest_unit)
-                .cast_unit(),
+            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
+            (Self::Iso(c1), Self::Iso(c2), AnyDateInner::Iso(d1), AnyDateInner::Iso(d2)) => {
+                c1.until(d1, d2, c2, largest_unit, smallest_unit)
+            }
             (
                 Self::Japanese(c1),
                 Self::Japanese(c2),
                 AnyDateInner::Japanese(d1),
                 AnyDateInner::Japanese(d2),
-            ) => c1
-                .until(d1, d2, c2, largest_unit, smallest_unit)
-                .cast_unit(),
+            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
             (
                 Self::JapaneseExtended(c1),
                 Self::JapaneseExtended(c2),
                 AnyDateInner::JapaneseExtended(d1),
                 AnyDateInner::JapaneseExtended(d2),
-            ) => c1
-                .until(d1, d2, c2, largest_unit, smallest_unit)
-                .cast_unit(),
+            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
             (
                 Self::Persian(c1),
                 Self::Persian(c2),
                 AnyDateInner::Persian(d1),
                 AnyDateInner::Persian(d2),
-            ) => c1
-                .until(d1, d2, c2, largest_unit, smallest_unit)
-                .cast_unit(),
-            (Self::Roc(c1), Self::Roc(c2), AnyDateInner::Roc(d1), AnyDateInner::Roc(d2)) => c1
-                .until(d1, d2, c2, largest_unit, smallest_unit)
-                .cast_unit(),
+            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
+            (Self::Roc(c1), Self::Roc(c2), AnyDateInner::Roc(d1), AnyDateInner::Roc(d2)) => {
+                c1.until(d1, d2, c2, largest_unit, smallest_unit)
+            }
             _ => {
                 // attempt to convert
                 let iso = calendar2.to_iso(date2);
@@ -444,8 +398,7 @@ impl Calendar for AnyCalendar {
                 match_cal_and_date!(match (self, date1):
                     (c1, d1) => {
                         let d2 = c1.from_iso(iso);
-                        let until = c1.until(d1, &d2, c1, largest_unit, smallest_unit);
-                        until.cast_unit::<AnyCalendar>()
+                        c1.until(d1, &d2, c1, largest_unit, smallest_unit)
                     }
                 )
             }

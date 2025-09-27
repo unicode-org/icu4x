@@ -2,13 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::Calendar;
-use core::fmt;
-use core::marker::PhantomData;
-
-/// A duration between two dates
+/// A signed length of time in terms of days, weeks, months, and years.
 ///
-/// Can be used to perform date arithmetic
+/// This type represents the abstract concept of a date duration. For example, a duration of
+/// "1 month" is represented as "1 month" in the data model, without any context of how many
+/// days the month might be.
+///
+/// Use [`DateDuration`] for calculating the difference between two [`Date`]s and adding
+/// date units to a [`Date`].
 ///
 /// # Example
 ///
@@ -62,31 +63,29 @@ use core::marker::PhantomData;
 /// ```
 ///
 /// Currently unstable for ICU4X 1.0
-#[derive(Eq, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // this type should be stable (and is intended to be constructed manually)
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Default)]
+#[allow(clippy::exhaustive_structs)] // spec-defined in Temporal
 #[doc(hidden)] // unstable
-pub struct DateDuration<C: Calendar + ?Sized> {
+pub struct DateDuration {
+    /// Whether the duration is negative.
+    ///
+    /// A negative duration is an abstract concept that could result, for example, from
+    /// taking the difference between two [`Date`]s.
+    ///
+    /// The fields of the duration are either all positive or all negative. Mixed signs
+    /// are not allowed.
+    ///
+    /// By convention, this field should be `false` if the duration is zero.
+    pub is_negative: bool,
     /// The number of years
-    pub years: i32,
+    pub years: u32,
     /// The number of months
-    pub months: i32,
+    pub months: u32,
     /// The number of weeks
-    pub weeks: i32,
+    pub weeks: u32,
     /// The number of days
-    pub days: i32,
-    /// A marker for the calendar
-    pub marker: PhantomData<C>,
+    pub days: u64,
 }
-
-// Custom impl so that C need not be bound on Copy/Clone
-impl<C: Calendar + ?Sized> Clone for DateDuration<C> {
-    fn clone(&self) -> Self {
-        *self
-    }
-}
-
-// Custom impl so that C need not be bound on Copy/Clone
-impl<C: Calendar + ?Sized> Copy for DateDuration<C> {}
 
 /// A "duration unit" used to specify the minimum or maximum duration of time to
 /// care about
@@ -104,55 +103,40 @@ pub enum DateDurationUnit {
     Days,
 }
 
-impl<C: Calendar + ?Sized> Default for DateDuration<C> {
-    fn default() -> Self {
+impl DateDuration {
+    /// Returns a new [`DateDuration`] representing a number of years.
+    pub fn new_years(years: i32) -> Self {
         Self {
-            years: 0,
-            months: 0,
-            weeks: 0,
-            days: 0,
-            marker: PhantomData,
-        }
-    }
-}
-
-impl<C: Calendar + ?Sized> DateDuration<C> {
-    /// Construct a DateDuration
-    ///
-    /// ```rust
-    /// # use icu::calendar::*;
-    /// // two years, three months, and five days
-    /// let duration: DateDuration<Iso> = DateDuration::new(2, 3, 0, 5);
-    /// ```
-    pub fn new(years: i32, months: i32, weeks: i32, days: i32) -> Self {
-        DateDuration {
-            years,
-            months,
-            weeks,
-            days,
-            marker: PhantomData,
+            is_negative: years.is_negative(),
+            years: years.unsigned_abs(),
+            ..Default::default()
         }
     }
 
-    /// Explicitly cast duration to one for a different calendar
-    pub fn cast_unit<C2: Calendar + ?Sized>(self) -> DateDuration<C2> {
-        DateDuration {
-            years: self.years,
-            months: self.months,
-            days: self.days,
-            weeks: self.weeks,
-            marker: PhantomData,
+    /// Returns a new [`DateDuration`] representing a number of months.
+    pub fn new_months(months: i32) -> Self {
+        Self {
+            is_negative: months.is_negative(),
+            months: months.unsigned_abs(),
+            ..Default::default()
         }
     }
-}
 
-impl<C: Calendar> fmt::Debug for DateDuration<C> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
-        f.debug_struct("DateDuration")
-            .field("years", &self.years)
-            .field("months", &self.months)
-            .field("weeks", &self.weeks)
-            .field("days", &self.days)
-            .finish()
+    /// Returns a new [`DateDuration`] representing a number of weeks.
+    pub fn new_weeks(weeks: i32) -> Self {
+        Self {
+            is_negative: weeks.is_negative(),
+            weeks: weeks.unsigned_abs(),
+            ..Default::default()
+        }
+    }
+
+    /// Returns a new [`DateDuration`] representing a number of days.
+    pub fn new_days(days: i64) -> Self {
+        Self {
+            is_negative: days.is_negative(),
+            days: days.unsigned_abs(),
+            ..Default::default()
+        }
     }
 }
