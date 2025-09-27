@@ -165,7 +165,7 @@ mod test {
     #[derive(serde::Serialize, serde::Deserialize)]
     #[allow(
         dead_code,
-        reason = "The dead_code lint explicitly ignores constructing trait impls."
+        reason = "Tests compatibility of custom impl with Serde derive."
     )]
     struct DeriveTest_VarZeroVec<'data> {
         #[serde(borrow)]
@@ -175,7 +175,7 @@ mod test {
     #[derive(serde::Serialize, serde::Deserialize)]
     #[allow(
         dead_code,
-        reason = "The dead_code lint explicitly ignores constructing trait impls."
+        reason = "Tests compatibility of custom impl with Serde derive."
     )]
     struct DeriveTest_VarZeroSlice<'data> {
         #[serde(borrow)]
@@ -185,7 +185,7 @@ mod test {
     #[derive(serde::Serialize, serde::Deserialize)]
     #[allow(
         dead_code,
-        reason = "The dead_code lint explicitly ignores constructing trait impls."
+        reason = "Tests compatibility of custom impl with Serde derive."
     )]
     struct DeriveTest_VarZeroVec_of_VarZeroSlice<'data> {
         #[serde(borrow)]
