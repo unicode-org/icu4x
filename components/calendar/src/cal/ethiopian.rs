@@ -143,8 +143,8 @@ impl Calendar for Ethiopian {
         Coptic.days_in_month(&date.0)
     }
 
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        Coptic.offset_date(&mut date.0, offset.cast_unit());
+    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration) {
+        Coptic.offset_date(&mut date.0, offset);
     }
 
     fn until(
@@ -154,10 +154,8 @@ impl Calendar for Ethiopian {
         _calendar2: &Self,
         largest_unit: DateDurationUnit,
         smallest_unit: DateDurationUnit,
-    ) -> DateDuration<Self> {
-        Coptic
-            .until(&date1.0, &date2.0, &Coptic, largest_unit, smallest_unit)
-            .cast_unit()
+    ) -> DateDuration {
+        Coptic.until(&date1.0, &date2.0, &Coptic, largest_unit, smallest_unit)
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {

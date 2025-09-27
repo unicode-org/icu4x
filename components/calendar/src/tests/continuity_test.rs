@@ -3,16 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::*;
-use core::marker::PhantomData;
 
 fn check_continuity<A: AsCalendar>(mut date: Date<A>) {
-    let one_day_duration = DateDuration::<A::Calendar> {
-        years: 0,
-        months: 0,
-        weeks: 0,
-        days: 1,
-        marker: PhantomData,
-    };
+    let duration = DateDuration::new_days(1);
 
     let mut rata_die = date.to_rata_die();
     let mut weekday = date.day_of_week();
@@ -20,7 +13,7 @@ fn check_continuity<A: AsCalendar>(mut date: Date<A>) {
     let mut is_in_leap_year = date.is_in_leap_year();
 
     for _ in 0..(366 * 20) {
-        let next_date = date.added(one_day_duration);
+        let next_date = date.added(duration);
         let next_rata_die = next_date.to_iso().to_rata_die();
         assert_eq!(next_rata_die, rata_die + 1, "{next_date:?}");
         let next_weekday = next_date.day_of_week();
@@ -43,18 +36,12 @@ fn check_continuity<A: AsCalendar>(mut date: Date<A>) {
 }
 
 fn check_every_250_days<A: AsCalendar>(mut date: Date<A>) {
-    let one_thousand_days_duration = DateDuration::<A::Calendar> {
-        years: 0,
-        months: 0,
-        weeks: 0,
-        days: 250,
-        marker: PhantomData,
-    };
+    let duration = DateDuration::new_days(250);
 
     let mut rata_die = date.to_rata_die();
 
     for _ in 0..2000 {
-        let next_date = date.added(one_thousand_days_duration);
+        let next_date = date.added(duration);
         let next_iso = next_date.to_iso();
         let next_rata_die = next_iso.to_rata_die();
         assert_eq!(next_rata_die, rata_die + 250, "{next_date:?}");

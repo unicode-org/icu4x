@@ -457,7 +457,11 @@ mod tests {
         let day = (yyyymmdd % 100) as u8;
 
         let date = Date::try_new_iso(year, month, day)?;
-        let previous_month = date.added(DateDuration::new(0, -1, 0, 0));
+        let previous_month = date.added(DateDuration {
+            months: 1,
+            is_negative: true,
+            ..Default::default()
+        });
 
         calendar.week_of(
             u16::from(previous_month.days_in_month()),
