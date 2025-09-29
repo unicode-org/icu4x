@@ -105,7 +105,7 @@ impl Writeable for str {
     }
 
     #[inline]
-    fn try_borrow(&self) -> Option<&str> {
+    fn writeable_borrow(&self) -> Option<&str> {
         Some(self)
     }
 }
@@ -123,7 +123,7 @@ impl Writeable for String {
     }
 
     #[inline]
-    fn try_borrow(&self) -> Option<&str> {
+    fn writeable_borrow(&self) -> Option<&str> {
         Some(self)
     }
 }
@@ -165,8 +165,8 @@ impl<T: Writeable + ?Sized> Writeable for &T {
     }
 
     #[inline]
-    fn try_borrow(&self) -> Option<&str> {
-        (*self).try_borrow()
+    fn writeable_borrow(&self) -> Option<&str> {
+        (*self).writeable_borrow()
     }
 
     #[inline]
@@ -193,8 +193,8 @@ macro_rules! impl_write_smart_pointer {
                 core::borrow::Borrow::<T>::borrow(self).writeable_length_hint()
             }
             #[inline]
-            fn try_borrow(&self) -> Option<&str> {
-                core::borrow::Borrow::<T>::borrow(self).try_borrow()
+            fn writeable_borrow(&self) -> Option<&str> {
+                core::borrow::Borrow::<T>::borrow(self).writeable_borrow()
             }
             #[inline]
             fn write_to_string(&self) -> Cow<'_, str> {

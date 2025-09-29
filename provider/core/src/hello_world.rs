@@ -342,8 +342,8 @@ impl Writeable for FormattedHelloWorld<'_> {
         self.data.message.write_to(sink)
     }
 
-    fn try_borrow(&self) -> Option<&str> {
-        self.data.message.try_borrow()
+    fn writeable_borrow(&self) -> Option<&str> {
+        self.data.message.writeable_borrow()
     }
 
     fn writeable_length_hint(&self) -> writeable::LengthHint {

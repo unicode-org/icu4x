@@ -49,7 +49,7 @@ impl TryWriteable for &'_ PotentialUtf8 {
         LengthHint::between(self.0.len(), self.0.len() * 3)
     }
 
-    fn try_borrow(&self) -> Option<&str> {
+    fn writeable_borrow(&self) -> Option<&str> {
         core::str::from_utf8(&self.0).ok()
     }
 }

@@ -32,10 +32,10 @@ where
         }
     }
 
-    fn try_borrow(&self) -> Option<&str> {
+    fn writeable_borrow(&self) -> Option<&str> {
         match self {
-            Either::Left(w) => w.try_borrow(),
-            Either::Right(w) => w.try_borrow(),
+            Either::Left(w) => w.writeable_borrow(),
+            Either::Right(w) => w.writeable_borrow(),
         }
     }
 

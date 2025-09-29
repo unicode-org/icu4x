@@ -101,8 +101,8 @@ impl<T: Writeable + ?Sized> Writeable for WithPart<T> {
         self.writeable.writeable_length_hint()
     }
 
-    fn try_borrow(&self) -> Option<&str> {
-        self.writeable.try_borrow()
+    fn writeable_borrow(&self) -> Option<&str> {
+        self.writeable.writeable_borrow()
     }
 
     #[inline]

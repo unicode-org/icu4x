@@ -156,7 +156,7 @@ macro_rules! impl_tinystr_subtag {
             fn writeable_length_hint(&self) -> writeable::LengthHint {
                 writeable::LengthHint::exact(self.0.len())
             }
-            fn try_borrow(&self) -> Option<&str> {
+            fn writeable_borrow(&self) -> Option<&str> {
                 Some(self.0.as_str())
             }
         }
@@ -357,7 +357,7 @@ macro_rules! impl_writeable_for_each_subtag_str_no_test {
             }
 
             $(
-                fn try_borrow(&self) -> Option<&str> {
+                fn writeable_borrow(&self) -> Option<&str> {
                     let $self = self;
                     if $borrow_cond {
                         $borrow

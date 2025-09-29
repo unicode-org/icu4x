@@ -286,7 +286,7 @@ pub trait Writeable {
     /// Returns a `&str` that matches the output of `write_to`, if possible.
     ///
     /// This method is used to avoid materializing a [`String`] in `write_to_string`.
-    fn try_borrow(&self) -> Option<&str> {
+    fn writeable_borrow(&self) -> Option<&str> {
         None
     }
 
@@ -331,9 +331,9 @@ pub trait Writeable {
     ///
     /// # Note to implementors
     ///
-    /// This method has a default implementation in terms of `try_borrow`,
+    /// This method has a default implementation in terms of `writeable_borrow`,
     /// `writeable_length_hint`, and `write_to`. The only case
-    /// where this should be implemented is if the computation of `try_borrow`
+    /// where this should be implemented is if the computation of `writeable_borrow`
     /// requires a full invocation of `write_to`. In this case, implement this
     /// using [`to_string_or_borrow`].
     ///
@@ -346,7 +346,7 @@ pub trait Writeable {
     /// Cargo feature.
     #[cfg(feature = "alloc")]
     fn write_to_string(&self) -> Cow<'_, str> {
-        if let Some(borrow) = self.try_borrow() {
+        if let Some(borrow) = self.writeable_borrow() {
             return Cow::Borrowed(borrow);
         }
         let hint = self.writeable_length_hint();
