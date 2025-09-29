@@ -22,7 +22,7 @@ all-features = true
 [dependencies]
 icu_collections = { workspace = true }
 icu_provider = { workspace = true }
-zerovec = { workspace = true, features = ["derive", "yoke"] }
+zerovec = { workspace = true, features = ["alloc", "derive", "yoke"] }
 zerotrie = { workspace = true, features = ["yoke", "zerofrom"] }
 databake = { workspace = true, features = ["derive"], optional = true}
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }

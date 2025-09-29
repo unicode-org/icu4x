@@ -222,7 +222,7 @@ impl FromStr for Unicode {
     }
 }
 
-writeable::impl_display_with_writeable!(Unicode);
+writeable::impl_display_with_writeable!(Unicode, #[cfg(feature = "alloc")]);
 
 impl writeable::Writeable for Unicode {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
