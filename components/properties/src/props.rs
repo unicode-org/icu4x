@@ -2441,6 +2441,24 @@ make_binary_property! {
 }
 
 make_binary_property! {
+    name: "ID_Compat_Math_Continue";
+    short_name: "ID_Compat_Math_Continue";
+    ident: IdCompatMathContinue;
+    data_marker: crate::provider::PropertyBinaryIdCompatMathContinueV1;
+    singleton: SINGLETON_PROPERTY_BINARY_ID_COMPAT_MATH_CONTINUE_V1;
+    /// ID_Compat_Math_Continue Property
+}
+
+make_binary_property! {
+    name: "ID_Compat_Math_Start";
+    short_name: "ID_Compat_Math_Start";
+    ident: IdCompatMathStart;
+    data_marker: crate::provider::PropertyBinaryIdCompatMathStartV1;
+    singleton: SINGLETON_PROPERTY_BINARY_ID_COMPAT_MATH_START_V1;
+    /// ID_Compat_Math_Start Property
+}
+
+make_binary_property! {
     name: "Id_Continue";
     short_name: "IDC";
     ident: IdContinue;
@@ -2567,6 +2585,15 @@ make_binary_property! {
 }
 
 make_binary_property! {
+    name: "IDS_Unary_Operator";
+    short_name: "IDSU";
+    ident: IdsUnaryOperator;
+    data_marker: crate::provider::PropertyBinaryIdsUnaryOperatorV1;
+    singleton: SINGLETON_PROPERTY_BINARY_IDS_UNARY_OPERATOR_V1;
+    /// IDS_Unary_Operator Property
+}
+
+make_binary_property! {
     name: "Join_Control";
     short_name: "Join_C";
     ident: JoinControl;
@@ -2654,6 +2681,15 @@ make_binary_property! {
     /// assert!(!math.contains('/'));
     /// assert!(math.contains('∕'));  // U+2215 DIVISION SLASH
     /// ```
+}
+
+make_binary_property! {
+    name: "Modifier_Combining_Mark";
+    short_name: "MCM";
+    ident: ModifierCombiningMark;
+    data_marker: crate::provider::PropertyBinaryModifierCombiningMarkV1;
+    singleton: SINGLETON_PROPERTY_BINARY_MODIFIER_COMBINING_MARK_V1;
+    /// Modifier_Combining_Mark Property
 }
 
 make_binary_property! {

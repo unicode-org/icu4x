@@ -19,7 +19,6 @@ macro_rules! impl_tinystr_subtag {
         [$bad_example:literal $(, $more_bad_examples:literal)*],
     ) => {
         #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
-        #[cfg_attr(feature = "serde", derive(serde::Serialize))]
         #[repr(transparent)]
         $(#[$doc])*
         pub struct $name(tinystr::TinyAsciiStr<$len_end>);
@@ -235,6 +234,16 @@ macro_rules! impl_tinystr_subtag {
             $(
                 writeable::assert_writeable_eq!($more_good_examples.parse::<$name>().unwrap(), $more_good_examples);
             )*
+        }
+
+        #[cfg(feature = "serde")]
+        impl serde::Serialize for $name {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: serde::Serializer,
+            {
+                self.0.serialize(serializer)
+            }
         }
 
         #[cfg(feature = "serde")]

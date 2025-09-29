@@ -71,7 +71,7 @@ pub const BASIC_BUILD_DEPS: &[&str] = &[
 /// This should almost never change
 ///
 /// Keep in sync with Cargo.toml crates.io dependencies.
-pub const EXTRA_SERDE_DEPS: &[&str] = &["serde", "serde_derive"];
+pub const EXTRA_SERDE_DEPS: &[&str] = &["serde", "serde_core", "serde_derive"];
 
 /// Dependencies allowed when opting in to compiled data
 pub const EXTRA_DATA_DEPS: &[&str] = &[

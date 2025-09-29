@@ -8,9 +8,9 @@ use alloc::string::ToString;
 use core::fmt;
 use core::marker::PhantomData;
 use core::ops::Deref;
-use serde::de::{Error, SeqAccess, Visitor};
-use serde::ser::SerializeTuple;
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use serde_core::de::{Error, SeqAccess, Visitor};
+use serde_core::ser::SerializeTuple;
+use serde_core::{Deserialize, Deserializer, Serialize, Serializer};
 
 impl<const N: usize> Serialize for TinyAsciiStr<N> {
     #[inline]

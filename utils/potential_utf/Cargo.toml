@@ -17,7 +17,7 @@ include.workspace = true
 
 [dependencies]
 databake = { workspace = true, optional = true }
-serde = { workspace = true, optional = true }
+serde_core = { workspace = true, optional = true }
 zerovec = { workspace = true, optional = true }
 writeable = { workspace = true, optional = true }
 
@@ -27,8 +27,8 @@ bincode = { workspace = true }
 
 [features]
 default = ["alloc"]
-alloc = ["serde?/alloc", "writeable/alloc", "zerovec?/alloc"]
+alloc = ["serde_core?/alloc", "writeable/alloc", "zerovec?/alloc"]
 databake = ["dep:databake"]
-serde = ["dep:serde"]
+serde = ["dep:serde_core"]
 writeable = ["dep:writeable"]
 zerovec = ["dep:zerovec"]
