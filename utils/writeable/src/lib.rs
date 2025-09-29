@@ -470,7 +470,12 @@ macro_rules! assert_writeable_eq {
         let (actual_str, actual_parts) = $crate::_internal::writeable_to_parts_for_test(actual_writeable);
         let actual_len = actual_str.len();
         assert_eq!(actual_str, $expected_str, $($arg)*);
-        assert_eq!(actual_str, $crate::Writeable::write_to_string(actual_writeable), $($arg)+);
+        let cow = $crate::Writeable::write_to_string(actual_writeable);
+        assert_eq!(actual_str, cow, $($arg)+);
+        if let Some(borrowed) = ($crate::Writeable::writeable_borrow(&actual_writeable)) {
+            assert_eq!(borrowed, $expected_str, $($arg)*);
+            assert!(matches!(cow, std::borrow::Cow::Borrowed(_)), $($arg)*);
+        }
         let length_hint = $crate::Writeable::writeable_length_hint(actual_writeable);
         let lower = length_hint.0;
         assert!(
@@ -485,7 +490,7 @@ macro_rules! assert_writeable_eq {
                 format!($($arg)*),
             );
         }
-        assert_eq!(actual_writeable.to_string(), $expected_str);
+        assert_eq!(actual_writeable.to_string(), $expected_str, $($arg)*);
         actual_parts // return for assert_writeable_parts_eq
     }};
 }
