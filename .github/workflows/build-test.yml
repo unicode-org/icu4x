@@ -424,47 +424,6 @@ jobs:
       run: cargo make ci-job-diplomat
 
 
-  # ci-job-gn
-  gn:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-
-    # Cargo-make boilerplate
-    - name: Install cargo-make
-      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
-      with:
-        tool: cargo-make@0.37.13
-
-    # Toolchain boilerplate
-    - name: Potentially override rust version with nightly
-      run: cargo make set-ci-toolchain
-    - name: Show the selected Rust toolchain
-      run: rustup show
-
-    # Job-specific dependencies
-    - name: Attempt to load cached GN Third-Party Tools
-      uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
-      id: gn-third-party-tools-cache
-      with:
-        path: |
-          examples/gn/third_party_tools
-        key: gn-third-party-${{ runner.os }}-${{ hashFiles('tools/make/gn.toml', 'examples/gn/Cargo.lock') }}
-    - name: Install GN Third-Party Tools
-      if: steps.gn-third-party-tools-cache.outputs.cache-hit != 'true'
-      run: cargo make gn-install
-
-    - name: Install cargo-rdme
-      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
-      with:
-        tool: cargo-rdme@1.4.2
-
-    # Actual job
-    - name: Run `cargo make ci-job-gn`
-      run: cargo make ci-job-gn
-
-
   # ci-job-fmt
   fmt:
     runs-on: ubuntu-latest
@@ -509,12 +468,6 @@ jobs:
       run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
-
-    # Job-specific dependencies
-    - name: Install cargo-rdme
-      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
-      with:
-        tool: cargo-rdme@1.4.2
 
     # Actual job
     - name: Tidy
@@ -603,7 +556,7 @@ jobs:
 
   # Notify on slack  
   notify-slack:
-    needs: [msrv, test, testdata, test-docs, full-datagen, test-c, test-js, test-dart, nostd, diplomat, gn, fmt, tidy, clippy, doc]
+    needs: [msrv, test, testdata, test-docs, full-datagen, test-c, test-js, test-dart, nostd, diplomat, fmt, tidy, clippy, doc]
     if: ${{ always() && contains(needs.*.result, 'failure') && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_name == 'main')) }}
     runs-on: ubuntu-latest
     steps:

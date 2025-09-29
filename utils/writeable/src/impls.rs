@@ -104,23 +104,13 @@ impl Writeable for str {
         LengthHint::exact(self.len())
     }
 
-    /// Returns a borrowed `str`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use std::borrow::Cow;
-    /// use writeable::Writeable;
-    ///
-    /// let cow = "foo".write_to_string();
-    /// assert!(matches!(cow, Cow::Borrowed(_)));
-    /// ```
     #[inline]
-    fn write_to_string(&self) -> Cow<'_, str> {
-        Cow::Borrowed(self)
+    fn writeable_borrow(&self) -> Option<&str> {
+        Some(self)
     }
 }
 
+#[cfg(feature = "alloc")]
 impl Writeable for String {
     #[inline]
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
@@ -133,8 +123,8 @@ impl Writeable for String {
     }
 
     #[inline]
-    fn write_to_string(&self) -> Cow<'_, str> {
-        Cow::Borrowed(self)
+    fn writeable_borrow(&self) -> Option<&str> {
+        Some(self)
     }
 }
 
@@ -150,6 +140,7 @@ impl Writeable for char {
     }
 
     #[inline]
+    #[cfg(feature = "alloc")]
     fn write_to_string(&self) -> Cow<'_, str> {
         let mut s = String::with_capacity(self.len_utf8());
         s.push(*self);
@@ -174,11 +165,18 @@ impl<T: Writeable + ?Sized> Writeable for &T {
     }
 
     #[inline]
+    fn writeable_borrow(&self) -> Option<&str> {
+        (*self).writeable_borrow()
+    }
+
+    #[inline]
+    #[cfg(feature = "alloc")]
     fn write_to_string(&self) -> Cow<'_, str> {
         (*self).write_to_string()
     }
 }
 
+#[cfg(feature = "alloc")]
 macro_rules! impl_write_smart_pointer {
     ($ty:path, T: $extra_bound:path) => {
         impl<'a, T: ?Sized + Writeable + $extra_bound> Writeable for $ty {
@@ -195,6 +193,10 @@ macro_rules! impl_write_smart_pointer {
                 core::borrow::Borrow::<T>::borrow(self).writeable_length_hint()
             }
             #[inline]
+            fn writeable_borrow(&self) -> Option<&str> {
+                core::borrow::Borrow::<T>::borrow(self).writeable_borrow()
+            }
+            #[inline]
             fn write_to_string(&self) -> Cow<'_, str> {
                 core::borrow::Borrow::<T>::borrow(self).write_to_string()
             }
@@ -206,9 +208,13 @@ macro_rules! impl_write_smart_pointer {
     };
 }
 
+#[cfg(feature = "alloc")]
 impl_write_smart_pointer!(Cow<'a, T>, T: alloc::borrow::ToOwned);
+#[cfg(feature = "alloc")]
 impl_write_smart_pointer!(alloc::boxed::Box<T>);
+#[cfg(feature = "alloc")]
 impl_write_smart_pointer!(alloc::rc::Rc<T>);
+#[cfg(feature = "alloc")]
 impl_write_smart_pointer!(alloc::sync::Arc<T>);
 
 #[test]

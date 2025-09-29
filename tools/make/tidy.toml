@@ -132,6 +132,7 @@ echo "License header check complete"
 
 [tasks.generate-readmes]
 description = "Automatically generate README.md for each component."
+install_crate = { crate_name = "cargo-rdme", test_arg = ["--help"] }
 category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''

@@ -174,6 +174,11 @@ pub trait TryWriteable {
         LengthHint::undefined()
     }
 
+    /// Returns a `&str` that matches the output of `write_to` (if it succeeds), if possible.
+    fn writeable_borrow(&self) -> Option<&str> {
+        None
+    }
+
     /// Writes the content of this writeable to a string.
     ///
     /// In the failure case, this function returns the error and the best-effort string ("lossy mode").
@@ -192,7 +197,11 @@ pub trait TryWriteable {
     ///     .try_write_to_string()
     ///     .map_err(|(e, _)| e);
     /// ```
+    #[cfg(feature = "alloc")]
     fn try_write_to_string(&self) -> Result<Cow<'_, str>, (Self::Error, Cow<'_, str>)> {
+        if let Some(borrow) = self.writeable_borrow() {
+            return Ok(Cow::Borrowed(borrow));
+        }
         let hint = self.writeable_length_hint();
         if hint.is_zero() {
             return Ok(Cow::Borrowed(""));
@@ -248,6 +257,15 @@ where
     }
 
     #[inline]
+    fn writeable_borrow(&self) -> Option<&str> {
+        match self {
+            Ok(t) => t.writeable_borrow(),
+            Err(e) => e.writeable_borrow(),
+        }
+    }
+
+    #[inline]
+    #[cfg(feature = "alloc")]
     fn try_write_to_string(&self) -> Result<Cow<'_, str>, (Self::Error, Cow<'_, str>)> {
         match self {
             Ok(t) => Ok(t.write_to_string()),
@@ -291,6 +309,12 @@ where
     }
 
     #[inline]
+    fn writeable_borrow(&self) -> Option<&str> {
+        self.0.writeable_borrow()
+    }
+
+    #[inline]
+    #[cfg(feature = "alloc")]
     fn write_to_string(&self) -> Cow<'_, str> {
         match self.0.try_write_to_string() {
             Ok(s) => s,
@@ -344,6 +368,12 @@ where
     }
 
     #[inline]
+    fn writeable_borrow(&self) -> Option<&str> {
+        self.0.writeable_borrow()
+    }
+
+    #[inline]
+    #[cfg(feature = "alloc")]
     fn try_write_to_string(&self) -> Result<Cow<'_, str>, (Infallible, Cow<'_, str>)> {
         Ok(self.0.write_to_string())
     }
