@@ -85,25 +85,28 @@ Future buildLib(
   final additionalFeatures = isNoStd
       ? ['libc_alloc', 'looping_panic_handler']
       : ['simple_logger'];
-  await runProcess('cargo', [
-    if (buildStatic || isNoStd) '+$nightly',
-    'rustc',
-    '--manifest-path=ffi/capi/Cargo.toml',
-    '--crate-type=${buildStatic ? 'staticlib' : 'cdylib'}',
-    '--release',
-    '--config=profile.release.panic="abort"',
-    '--config=profile.release.codegen-units=1',
-    '--no-default-features',
-    '--features=${{...cargoFeatures, ...additionalFeatures}.join(',')}',
-    if (isNoStd) '-Zbuild-std=core,alloc',
-    if (buildStatic || isNoStd) ...[
-      '-Zbuild-std=std,panic_abort',
+  await runProcess(
+    'cargo',
+    [
+      if (buildStatic || isNoStd) '+$nightly',
+      'rustc',
+      '--manifest-path=ffi/capi/Cargo.toml',
+      '--crate-type=${buildStatic ? 'staticlib' : 'cdylib'}',
+      '--release',
+      '--config=profile.release.panic="abort"',
+      '--config=profile.release.codegen-units=1',
+      '--no-default-features',
+      '--features=${{...cargoFeatures, ...additionalFeatures}.join(',')}',
+      if (isNoStd) '-Zbuild-std=core,alloc',
+      if (buildStatic || isNoStd) ...['-Zbuild-std=std,panic_abort'],
+      '--target=$rustTarget',
+      '--',
+      '--emit',
+      'link=${out.toFilePath(windows: Platform.isWindows)}',
     ],
-    '--target=$rustTarget',
-    '--',
-    '--emit',
-    'link=${out.toFilePath(windows: Platform.isWindows)}',
-  ], workingDirectory: workingDirectory, environment: {"RUSTFLAGS", "-Zunstable-options -Cpanic=immediate-abort"});
+    workingDirectory: workingDirectory,
+    environment: {'RUSTFLAGS': '-Zunstable-options -Cpanic=immediate-abort'},
+  );
 }
 
 bool _isNoStdTarget(String target) =>
@@ -114,7 +117,7 @@ Future<void> runProcess(
   List<String> arguments, {
   Directory? workingDirectory,
   bool dryRun = false,
-  Map<String, String>? environment = null,
+  Map<String, String>? environment,
 }) async {
   print('----------');
   print('Running `$executable $arguments` in $workingDirectory');
