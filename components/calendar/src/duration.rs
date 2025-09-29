@@ -30,19 +30,31 @@
 /// assert_eq!(date_iso.days_in_month(), 30);
 ///
 /// // Advancing date in-place by 1 year, 2 months, 3 weeks, 4 days.
-/// date_iso.add(DateDuration::new(1, 2, 3, 4));
+/// date_iso.add(DateDuration {
+///     is_negative: false,
+///     years: 1,
+///     months: 2,
+///     weeks: 3,
+///     days: 4
+/// });
 /// assert_eq!(date_iso.era_year().year, 1993);
 /// assert_eq!(date_iso.month().ordinal, 11);
 /// assert_eq!(date_iso.day_of_month().0, 27);
 ///
 /// // Reverse date advancement.
-/// date_iso.add(DateDuration::new(-1, -2, -3, -4));
+/// date_iso.add(DateDuration {
+///     is_negative: true,
+///     years: 1,
+///     months: 2,
+///     weeks: 3,
+///     days: 4
+/// });
 /// assert_eq!(date_iso.era_year().year, 1992);
 /// assert_eq!(date_iso.month().ordinal, 9);
 /// assert_eq!(date_iso.day_of_month().0, 2);
 ///
 /// // Creating ISO date: 2022-01-30.
-/// let newer_date_iso = Date::try_new_iso(2022, 1, 30)
+/// let newer_date_iso = Date::try_new_iso(2022, 10, 30)
 ///     .expect("Failed to initialize ISO Date instance.");
 ///
 /// // Comparing dates: 2022-01-30 and 1992-09-02.
@@ -52,11 +64,17 @@
 ///     DateDurationUnit::Days,
 /// );
 /// assert_eq!(duration.years, 30);
-/// assert_eq!(duration.months, -8);
+/// assert_eq!(duration.months, 1);
 /// assert_eq!(duration.days, 28);
 ///
 /// // Create new date with date advancement. Reassign to new variable.
-/// let mutated_date_iso = date_iso.added(DateDuration::new(1, 2, 3, 4));
+/// let mutated_date_iso = date_iso.added(DateDuration {
+///     is_negative: false,
+///     years: 1,
+///     months: 2,
+///     weeks: 3,
+///     days: 4
+/// });
 /// assert_eq!(mutated_date_iso.era_year().year, 1993);
 /// assert_eq!(mutated_date_iso.month().ordinal, 11);
 /// assert_eq!(mutated_date_iso.day_of_month().0, 27);
@@ -105,7 +123,7 @@ pub enum DateDurationUnit {
 
 impl DateDuration {
     /// Returns a new [`DateDuration`] representing a number of years.
-    pub fn new_years(years: i32) -> Self {
+    pub fn for_years(years: i32) -> Self {
         Self {
             is_negative: years.is_negative(),
             years: years.unsigned_abs(),
@@ -114,7 +132,7 @@ impl DateDuration {
     }
 
     /// Returns a new [`DateDuration`] representing a number of months.
-    pub fn new_months(months: i32) -> Self {
+    pub fn for_months(months: i32) -> Self {
         Self {
             is_negative: months.is_negative(),
             months: months.unsigned_abs(),
@@ -123,7 +141,7 @@ impl DateDuration {
     }
 
     /// Returns a new [`DateDuration`] representing a number of weeks.
-    pub fn new_weeks(weeks: i32) -> Self {
+    pub fn for_weeks(weeks: i32) -> Self {
         Self {
             is_negative: weeks.is_negative(),
             weeks: weeks.unsigned_abs(),
@@ -132,7 +150,7 @@ impl DateDuration {
     }
 
     /// Returns a new [`DateDuration`] representing a number of days.
-    pub fn new_days(days: i64) -> Self {
+    pub fn for_days(days: i64) -> Self {
         Self {
             is_negative: days.is_negative(),
             days: days.unsigned_abs(),

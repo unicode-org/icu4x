@@ -5,7 +5,7 @@
 use crate::*;
 
 fn check_continuity<A: AsCalendar>(mut date: Date<A>) {
-    let duration = DateDuration::new_days(1);
+    let duration = DateDuration::for_days(1);
 
     let mut rata_die = date.to_rata_die();
     let mut weekday = date.day_of_week();
@@ -36,7 +36,7 @@ fn check_continuity<A: AsCalendar>(mut date: Date<A>) {
 }
 
 fn check_every_250_days<A: AsCalendar>(mut date: Date<A>) {
-    let duration = DateDuration::new_days(250);
+    let duration = DateDuration::for_days(250);
 
     let mut rata_die = date.to_rata_die();
 
