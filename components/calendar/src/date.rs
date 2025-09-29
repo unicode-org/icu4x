@@ -239,7 +239,7 @@ impl<A: AsCalendar> Date<A> {
     /// Add a `duration` to this date, mutating it
     #[doc(hidden)] // unstable
     #[inline]
-    pub fn add(&mut self, duration: DateDuration<A::Calendar>) {
+    pub fn add(&mut self, duration: DateDuration) {
         self.calendar
             .as_calendar()
             .offset_date(&mut self.inner, duration)
@@ -248,7 +248,7 @@ impl<A: AsCalendar> Date<A> {
     /// Add a `duration` to this date, returning the new one
     #[doc(hidden)] // unstable
     #[inline]
-    pub fn added(mut self, duration: DateDuration<A::Calendar>) -> Self {
+    pub fn added(mut self, duration: DateDuration) -> Self {
         self.add(duration);
         self
     }
@@ -261,7 +261,7 @@ impl<A: AsCalendar> Date<A> {
         other: &Date<B>,
         largest_unit: DateDurationUnit,
         smallest_unit: DateDurationUnit,
-    ) -> DateDuration<A::Calendar> {
+    ) -> DateDuration {
         self.calendar.as_calendar().until(
             self.inner(),
             other.inner(),

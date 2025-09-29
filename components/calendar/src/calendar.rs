@@ -111,7 +111,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
 
     #[doc(hidden)] // unstable
     /// Add `offset` to `date`
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>);
+    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration);
     #[doc(hidden)] // unstable
     /// Calculate `date2 - date` as a duration
     ///
@@ -124,7 +124,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         calendar2: &Self,
         largest_unit: DateDurationUnit,
         smallest_unit: DateDurationUnit,
-    ) -> DateDuration<Self>;
+    ) -> DateDuration;
 
     /// Returns the [`CalendarAlgorithm`](crate::preferences::CalendarAlgorithm) that is required to match
     /// when parsing into this calendar.

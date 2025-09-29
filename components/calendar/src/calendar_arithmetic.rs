@@ -250,17 +250,33 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     #[inline]
     pub fn offset_date(
         &mut self,
-        offset: DateDuration<C>,
+        offset: DateDuration,
         data: &impl PrecomputedDataSource<C::YearInfo>,
     ) {
-        if offset.years != 0 {
+        // TODO: THIS IS A TERRIBLE IMPL TO BE REWRITTEN
+        let (years, months, weeks, days) = if offset.is_negative {
+            (
+                -(offset.years as i32),
+                -(offset.months as i32),
+                -(offset.weeks as i32),
+                -(offset.days as i32),
+            )
+        } else {
+            (
+                offset.years as i32,
+                offset.months as i32,
+                offset.weeks as i32,
+                offset.days as i32,
+            )
+        };
+        if years != 0 {
             // For offset_date to work with lunar calendars, need to handle an edge case where the original month is not valid in the future year.
-            self.year = data.load_or_compute_info(self.year.into() + offset.years);
+            self.year = data.load_or_compute_info(self.year.into() + years);
         }
 
-        self.offset_months(offset.months, data);
+        self.offset_months(months, data);
 
-        let day_offset = offset.days + offset.weeks * 7 + self.day as i32 - 1;
+        let day_offset = days + weeks * 7 + self.day as i32 - 1;
         self.day = 1;
         self.offset_days(day_offset, data);
     }
@@ -271,15 +287,25 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         date2: ArithmeticDate<C>,
         _largest_unit: DateDurationUnit,
         _smaller_unit: DateDurationUnit,
-    ) -> DateDuration<C> {
+    ) -> DateDuration {
         // This simple implementation does not need C::PrecomputedDataSource right now, but it
         // likely will once we've written a proper implementation
-        DateDuration::new(
-            self.year.into() - date2.year.into(),
-            self.month as i32 - date2.month as i32,
-            0,
-            self.day as i32 - date2.day as i32,
-        )
+        // TODO: THIS IS A TERRIBLE IMPL TO BE REWRITTEN
+        let years: i32 = self.year.into() - date2.year.into();
+        let months: i32 = self.month as i32 - date2.month as i32;
+        let days: i64 = self.day as i64 - date2.day as i64;
+        let is_negative = years.is_negative() || months.is_negative() || days.is_negative();
+        #[allow(clippy::panic)]
+        if is_negative && (years.is_positive() || months.is_positive() || days.is_positive()) {
+            panic!("oops, not yet supported");
+        }
+        DateDuration {
+            is_negative,
+            years: years.unsigned_abs(),
+            months: months.unsigned_abs(),
+            weeks: 0,
+            days: days.unsigned_abs(),
+        }
     }
 
     #[inline]

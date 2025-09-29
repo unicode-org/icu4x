@@ -25,12 +25,13 @@ use icu_calendar::{AsCalendar, Calendar, Date, DateDuration};
 fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
     // black_box used to avoid compiler optimization.
     // Arithmetic
-    date.add(DateDuration::new(
-        black_box(1),
-        black_box(2),
-        black_box(3),
-        black_box(4),
-    ));
+    date.add(DateDuration {
+        is_negative: false,
+        years: black_box(1),
+        months: black_box(2),
+        weeks: black_box(3),
+        days: black_box(4),
+    });
 
     // Retrieving vals
     let _ = black_box(date.year());
