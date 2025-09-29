@@ -13,7 +13,7 @@ use icu_provider::DataPayload;
 
 use super::format::FormattedUnit;
 use super::options::{UnitsFormatterOptions, Width};
-use crate::dimension::provider::units::display_name::UnitsDisplayNameV1;
+use crate::dimension::provider::units::display_names::UnitsDisplayNameV1;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
 
@@ -134,7 +134,7 @@ impl UnitsFormatter {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::units::display_name::UnitsDisplayNameV1>
+            + DataProvider<super::super::provider::units::display_names::UnitsDisplayNameV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,

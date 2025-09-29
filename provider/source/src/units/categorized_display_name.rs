@@ -12,7 +12,7 @@ use icu::experimental::dimension::provider::units::categorized_display_name::{
     UnitsNamesMassCoreV1, UnitsNamesMassExtendedV1, UnitsNamesMassOutlierV1,
     UnitsNamesVolumeCoreV1, UnitsNamesVolumeExtendedV1, UnitsNamesVolumeOutlierV1,
 };
-use icu::experimental::dimension::provider::units::display_name::UnitsDisplayName;
+use icu::experimental::dimension::provider::units::display_names::UnitsDisplayName;
 use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;

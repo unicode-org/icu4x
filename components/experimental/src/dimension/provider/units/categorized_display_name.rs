@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::dimension::provider::units::display_name::UnitsDisplayName;
+use crate::dimension::provider::units::display_names::UnitsDisplayName;
 
 macro_rules! define_units_data_markers {
     ($($marker:ident, $doc:literal);* $(;)?) => {

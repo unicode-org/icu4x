@@ -4,7 +4,7 @@
 
 use crate::cldr_serde;
 use crate::SourceDataProvider;
-use icu::experimental::dimension::provider::units::display_name::{
+use icu::experimental::dimension::provider::units::display_names::{
     UnitsDisplayName, UnitsDisplayNameV1,
 };
 use icu_provider::prelude::*;

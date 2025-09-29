@@ -3,6 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub mod categorized_display_name;
-pub mod display_name;
+pub mod display_names;
 pub mod essentials;
 pub mod pattern_key;

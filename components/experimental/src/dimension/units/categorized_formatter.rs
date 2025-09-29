@@ -56,7 +56,7 @@ prefs_convert!(CategorizedUnitsFormatterPreferences, PluralRulesPreferences);
 /// This is useful for type inference and for ensuring that the correct units are used.
 pub struct CategorizedFormatter<C: MeasureUnitCategory> {
     _category: PhantomData<C>,
-    display_name: DataPayload<crate::dimension::provider::units::display_name::UnitsDisplayNameV1>,
+    display_name: DataPayload<crate::dimension::provider::units::display_names::UnitsDisplayNameV1>,
     decimal_formatter: DecimalFormatter,
     plural_rules: PluralRules,
 }

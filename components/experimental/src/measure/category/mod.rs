@@ -15,7 +15,7 @@ use crate::{
             UnitsNamesMassCoreV1, UnitsNamesMassExtendedV1, UnitsNamesMassOutlierV1,
             UnitsNamesVolumeCoreV1, UnitsNamesVolumeExtendedV1, UnitsNamesVolumeOutlierV1,
         },
-        display_name::UnitsDisplayName,
+        display_names::UnitsDisplayName,
     },
     measure::measureunit::MeasureUnit,
 };
