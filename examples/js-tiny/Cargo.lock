@@ -10,7 +10,7 @@ checksum = "ace50bade8e6234aa140d9a2f552bbee1db4d353f69b8217bc503490fc1a9f26"
 
 [[package]]
 name = "calendrical_calculations"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "core_maths",
  "displaydoc",
@@ -46,8 +46,8 @@ dependencies = [
 
 [[package]]
 name = "diplomat"
-version = "0.12.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=35e06283521e5630689b0900057ebe66afec3dfb#35e06283521e5630689b0900057ebe66afec3dfb"
+version = "0.13.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=17ef80019d62bb918c5849a16abba7b0076d6730#17ef80019d62bb918c5849a16abba7b0076d6730"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -57,16 +57,16 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.12.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=35e06283521e5630689b0900057ebe66afec3dfb#35e06283521e5630689b0900057ebe66afec3dfb"
+version = "0.13.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=17ef80019d62bb918c5849a16abba7b0076d6730#17ef80019d62bb918c5849a16abba7b0076d6730"
 dependencies = [
  "log",
 ]
 
 [[package]]
 name = "diplomat_core"
-version = "0.12.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=35e06283521e5630689b0900057ebe66afec3dfb#35e06283521e5630689b0900057ebe66afec3dfb"
+version = "0.13.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=17ef80019d62bb918c5849a16abba7b0076d6730#17ef80019d62bb918c5849a16abba7b0076d6730"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -105,7 +105,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "2.0.3"
+version = "2.0.4"
 dependencies = [
  "calendrical_calculations",
  "displaydoc",
@@ -115,7 +115,6 @@ dependencies = [
  "icu_provider",
  "ixdtf",
  "tinystr",
- "writeable",
  "zerovec",
 ]
 
@@ -147,7 +146,6 @@ dependencies = [
  "icu_provider_adapters",
  "icu_segmenter",
  "icu_time",
- "log",
  "potential_utf",
  "simple_logger",
  "tinystr",
@@ -160,7 +158,6 @@ dependencies = [
 name = "icu_casemap"
 version = "2.0.0"
 dependencies = [
- "displaydoc",
  "icu_casemap_data",
  "icu_collections",
  "icu_locale_core",
@@ -179,7 +176,6 @@ version = "2.0.0"
 name = "icu_collator"
 version = "2.0.1"
 dependencies = [
- "displaydoc",
  "icu_collator_data",
  "icu_collections",
  "icu_locale",
@@ -190,7 +186,6 @@ dependencies = [
  "smallvec",
  "utf16_iter",
  "utf8_iter",
- "write16",
  "zerovec",
 ]
 
@@ -214,7 +209,6 @@ name = "icu_datetime"
 version = "2.0.0"
 dependencies = [
  "displaydoc",
- "either",
  "fixed_decimal",
  "icu_calendar",
  "icu_datetime_data",
@@ -225,9 +219,7 @@ dependencies = [
  "icu_plurals",
  "icu_provider",
  "icu_time",
- "litemap",
  "potential_utf",
- "smallvec",
  "tinystr",
  "writeable",
  "zerovec",
@@ -241,13 +233,11 @@ version = "2.0.2"
 name = "icu_decimal"
 version = "2.0.0"
 dependencies = [
- "displaydoc",
  "fixed_decimal",
  "icu_decimal_data",
  "icu_locale",
  "icu_locale_core",
  "icu_provider",
- "tinystr",
  "writeable",
  "zerovec",
 ]
@@ -296,7 +286,6 @@ version = "0.3.0"
 name = "icu_list"
 version = "2.0.0"
 dependencies = [
- "displaydoc",
  "icu_list_data",
  "icu_locale",
  "icu_provider",
@@ -313,7 +302,6 @@ version = "2.0.0"
 name = "icu_locale"
 version = "2.0.0"
 dependencies = [
- "displaydoc",
  "icu_collections",
  "icu_locale_core",
  "icu_locale_data",
@@ -342,7 +330,6 @@ version = "2.0.0"
 name = "icu_normalizer"
 version = "2.0.0"
 dependencies = [
- "displaydoc",
  "icu_collections",
  "icu_normalizer_data",
  "icu_properties",
@@ -364,6 +351,7 @@ version = "0.4.0"
 dependencies = [
  "displaydoc",
  "either",
+ "serde",
  "writeable",
  "yoke",
  "zerovec",
@@ -373,7 +361,6 @@ dependencies = [
 name = "icu_plurals"
 version = "2.0.0"
 dependencies = [
- "displaydoc",
  "fixed_decimal",
  "icu_locale",
  "icu_plurals_data",
@@ -389,12 +376,10 @@ version = "2.0.0"
 name = "icu_properties"
 version = "2.0.1"
 dependencies = [
- "displaydoc",
  "icu_collections",
  "icu_locale_core",
  "icu_properties_data",
  "icu_provider",
- "potential_utf",
  "unicode-bidi",
  "zerotrie",
  "zerovec",
@@ -412,7 +397,6 @@ dependencies = [
  "icu_locale_core",
  "log",
  "stable_deref_trait",
- "tinystr",
  "writeable",
  "yoke",
  "zerofrom",
@@ -426,8 +410,6 @@ version = "2.0.0"
 dependencies = [
  "icu_locale",
  "icu_provider",
- "tinystr",
- "zerovec",
 ]
 
 [[package]]
@@ -435,7 +417,6 @@ name = "icu_segmenter"
 version = "2.0.0"
 dependencies = [
  "core_maths",
- "displaydoc",
  "icu_collections",
  "icu_locale",
  "icu_locale_core",
@@ -462,8 +443,6 @@ dependencies = [
  "icu_time_data",
  "ixdtf",
  "serde",
- "tinystr",
- "writeable",
  "zerotrie",
  "zerovec",
 ]
@@ -481,9 +460,6 @@ checksum = "4a5f13b858c8d314ee3e8f639011f7ccefe71f97f96e50151fb991f267928e2c"
 [[package]]
 name = "ixdtf"
 version = "0.6.3"
-dependencies = [
- "displaydoc",
-]
 
 [[package]]
 name = "lazy_static"
@@ -569,9 +545,9 @@ dependencies = [
 
 [[package]]
 name = "potential_utf"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
- "serde",
+ "serde_core",
  "writeable",
  "zerovec",
 ]
@@ -614,18 +590,28 @@ checksum = "28d3b2b1366ec20994f1fd18c3c594f05c5dd4bc44d8bb0c1c632c8d6829481f"
 
 [[package]]
 name = "serde"
-version = "1.0.219"
+version = "1.0.228"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5f0e2c6ed6606019b4e29e69dbaba95b11854410e5347d525002456dbbb786b6"
+checksum = "9a8e94ea7f378bd32cbbd37198a4a91436180c5bb472411e48b5ec2e2124ae9e"
+dependencies = [
+ "serde_core",
+ "serde_derive",
+]
+
+[[package]]
+name = "serde_core"
+version = "1.0.228"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "41d385c7d4ca58e59fc732af25c3983b67ac852c1a25000afe1175de458b67ad"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.219"
+version = "1.0.228"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5b0276cf7f2c73365f7157c8123c21cd9a50fbbd844757af28ca1f5925fc2a00"
+checksum = "d540f220d3187173da220f885ab66608367b6574e925011a9353e4badda91d79"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -915,7 +901,6 @@ dependencies = [
 name = "yoke"
 version = "0.8.0"
 dependencies = [
- "serde",
  "stable_deref_trait",
  "yoke-derive",
  "zerofrom",
