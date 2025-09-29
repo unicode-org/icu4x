@@ -1,5 +1,5 @@
-#ifndef icu4x_WordBreakIteratorUtf8_D_HPP
-#define icu4x_WordBreakIteratorUtf8_D_HPP
+#ifndef ICU4X_WordBreakIteratorUtf8_D_HPP
+#define ICU4X_WordBreakIteratorUtf8_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,11 +9,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 class SegmenterWordType;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -51,19 +51,19 @@ public:
    */
   inline bool is_word_like() const;
 
-  inline const icu4x::capi::WordBreakIteratorUtf8* AsFFI() const;
-  inline icu4x::capi::WordBreakIteratorUtf8* AsFFI();
-  inline static const icu4x::WordBreakIteratorUtf8* FromFFI(const icu4x::capi::WordBreakIteratorUtf8* ptr);
-  inline static icu4x::WordBreakIteratorUtf8* FromFFI(icu4x::capi::WordBreakIteratorUtf8* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::WordBreakIteratorUtf8* AsFFI() const;
+    inline icu4x::capi::WordBreakIteratorUtf8* AsFFI();
+    inline static const icu4x::WordBreakIteratorUtf8* FromFFI(const icu4x::capi::WordBreakIteratorUtf8* ptr);
+    inline static icu4x::WordBreakIteratorUtf8* FromFFI(icu4x::capi::WordBreakIteratorUtf8* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  WordBreakIteratorUtf8() = delete;
-  WordBreakIteratorUtf8(const icu4x::WordBreakIteratorUtf8&) = delete;
-  WordBreakIteratorUtf8(icu4x::WordBreakIteratorUtf8&&) noexcept = delete;
-  WordBreakIteratorUtf8 operator=(const icu4x::WordBreakIteratorUtf8&) = delete;
-  WordBreakIteratorUtf8 operator=(icu4x::WordBreakIteratorUtf8&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    WordBreakIteratorUtf8() = delete;
+    WordBreakIteratorUtf8(const icu4x::WordBreakIteratorUtf8&) = delete;
+    WordBreakIteratorUtf8(icu4x::WordBreakIteratorUtf8&&) noexcept = delete;
+    WordBreakIteratorUtf8 operator=(const icu4x::WordBreakIteratorUtf8&) = delete;
+    WordBreakIteratorUtf8 operator=(icu4x::WordBreakIteratorUtf8&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_WordBreakIteratorUtf8_D_HPP
+#endif // ICU4X_WordBreakIteratorUtf8_D_HPP

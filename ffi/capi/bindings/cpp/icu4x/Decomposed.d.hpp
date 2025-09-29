@@ -1,5 +1,5 @@
-#ifndef icu4x_Decomposed_D_HPP
-#define icu4x_Decomposed_D_HPP
+#ifndef ICU4X_Decomposed_D_HPP
+#define ICU4X_Decomposed_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -33,12 +33,12 @@ namespace icu4x {
  * See the [Rust documentation for `Decomposed`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/enum.Decomposed.html) for more information.
  */
 struct Decomposed {
-  char32_t first;
-  char32_t second;
+    char32_t first;
+    char32_t second;
 
-  inline icu4x::capi::Decomposed AsFFI() const;
-  inline static icu4x::Decomposed FromFFI(icu4x::capi::Decomposed c_struct);
+    inline icu4x::capi::Decomposed AsFFI() const;
+    inline static icu4x::Decomposed FromFFI(icu4x::capi::Decomposed c_struct);
 };
 
 } // namespace
-#endif // icu4x_Decomposed_D_HPP
+#endif // ICU4X_Decomposed_D_HPP

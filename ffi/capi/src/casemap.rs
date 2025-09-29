@@ -6,7 +6,6 @@ use icu_casemap::options::TitlecaseOptions;
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -225,6 +224,15 @@ pub mod ffi {
                 .map(|ch| self.0.as_borrowed().simple_lowercase(ch) as DiplomatChar)
                 .unwrap_or(ch)
         }
+        /// Returns the simple lowercase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+        #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::simple_lowercase, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::attr(demo_gen, disable)] // available through Self::create()
+        pub fn simple_lowercase_with_compiled_data(ch: DiplomatChar) -> DiplomatChar {
+            char::from_u32(ch)
+                .map(|ch| icu_casemap::CaseMapper::new().simple_lowercase(ch) as DiplomatChar)
+                .unwrap_or(ch)
+        }
 
         /// Returns the simple uppercase mapping of the given character.
         ///
@@ -235,6 +243,16 @@ pub mod ffi {
         pub fn simple_uppercase(&self, ch: DiplomatChar) -> DiplomatChar {
             char::from_u32(ch)
                 .map(|ch| self.0.as_borrowed().simple_uppercase(ch) as DiplomatChar)
+                .unwrap_or(ch)
+        }
+
+        /// Returns the simple uppercase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+        #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::simple_uppercase, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::attr(demo_gen, disable)] // available through Self::create()
+        pub fn simple_uppercase_with_compiled_data(ch: DiplomatChar) -> DiplomatChar {
+            char::from_u32(ch)
+                .map(|ch| icu_casemap::CaseMapper::new().simple_uppercase(ch) as DiplomatChar)
                 .unwrap_or(ch)
         }
 
@@ -250,6 +268,16 @@ pub mod ffi {
                 .unwrap_or(ch)
         }
 
+        /// Returns the simple titlecase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+        #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::simple_titlecase, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::attr(demo_gen, disable)] // available through Self::create()
+        pub fn simple_titlecase_with_compiled_data(ch: DiplomatChar) -> DiplomatChar {
+            char::from_u32(ch)
+                .map(|ch| icu_casemap::CaseMapper::new().simple_titlecase(ch) as DiplomatChar)
+                .unwrap_or(ch)
+        }
+
         /// Returns the simple casefolding of the given character.
         ///
         /// This function only implements simple folding.
@@ -260,7 +288,18 @@ pub mod ffi {
                 .map(|ch| self.0.as_borrowed().simple_fold(ch) as DiplomatChar)
                 .unwrap_or(ch)
         }
-        /// Returns the simple casefolding of the given character in the Turkic locale
+
+        /// Returns the simple casefolding of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+        #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::simple_fold, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::attr(demo_gen, disable)] // available through Self::create()
+        pub fn simple_fold_with_compiled_data(ch: DiplomatChar) -> DiplomatChar {
+            char::from_u32(ch)
+                .map(|ch| icu_casemap::CaseMapper::new().simple_fold(ch) as DiplomatChar)
+                .unwrap_or(ch)
+        }
+
+        /// Returns the simple casefolding of the given character in the Turkic locale.
         ///
         /// This function only implements simple folding.
         /// For full folding, use `CaseMapperBorrowed::fold_turkic`.
@@ -268,6 +307,16 @@ pub mod ffi {
         pub fn simple_fold_turkic(&self, ch: DiplomatChar) -> DiplomatChar {
             char::from_u32(ch)
                 .map(|ch| self.0.as_borrowed().simple_fold_turkic(ch) as DiplomatChar)
+                .unwrap_or(ch)
+        }
+
+        /// Returns the simple Turkic casefolding of the given character, using compiled data (avoids having to allocate a CaseMapper object)
+        #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::simple_fold_turkic, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        #[diplomat::attr(demo_gen, disable)] // available through Self::create()
+        pub fn simple_fold_turkic_with_compiled_data(ch: DiplomatChar) -> DiplomatChar {
+            char::from_u32(ch)
+                .map(|ch| icu_casemap::CaseMapper::new().simple_fold_turkic(ch) as DiplomatChar)
                 .unwrap_or(ch)
         }
     }

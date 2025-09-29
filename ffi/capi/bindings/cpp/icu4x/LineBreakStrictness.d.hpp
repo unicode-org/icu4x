@@ -1,5 +1,5 @@
-#ifndef icu4x_LineBreakStrictness_D_HPP
-#define icu4x_LineBreakStrictness_D_HPP
+#ifndef ICU4X_LineBreakStrictness_D_HPP
+#define ICU4X_LineBreakStrictness_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -31,26 +31,26 @@ namespace icu4x {
  */
 class LineBreakStrictness {
 public:
-  enum Value {
-    Loose = 0,
-    Normal = 1,
-    Strict = 2,
-    Anywhere = 3,
-  };
+    enum Value {
+        Loose = 0,
+        Normal = 1,
+        Strict = 2,
+        Anywhere = 3,
+    };
 
-  LineBreakStrictness(): value(Value::Strict) {}
+    LineBreakStrictness(): value(Value::Strict) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr LineBreakStrictness(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr LineBreakStrictness(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::LineBreakStrictness AsFFI() const;
-  inline static icu4x::LineBreakStrictness FromFFI(icu4x::capi::LineBreakStrictness c_enum);
+    inline icu4x::capi::LineBreakStrictness AsFFI() const;
+    inline static icu4x::LineBreakStrictness FromFFI(icu4x::capi::LineBreakStrictness c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_LineBreakStrictness_D_HPP
+#endif // ICU4X_LineBreakStrictness_D_HPP

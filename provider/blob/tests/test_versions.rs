@@ -183,7 +183,7 @@ impl DataProvider<HelloWorldV1> for ManyLocalesProvider {
 const LOWERCASE: core::ops::RangeInclusive<u8> = b'a'..=b'z';
 
 impl IterableDataProvider<HelloWorldV1> for ManyLocalesProvider {
-    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
         Ok(LOWERCASE
             .flat_map(|i0| {
                 LOWERCASE.flat_map(move |i1| {

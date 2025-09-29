@@ -1,5 +1,5 @@
-#ifndef icu4x_DecimalLimitError_HPP
-#define icu4x_DecimalLimitError_HPP
+#ifndef ICU4X_DecimalLimitError_HPP
+#define ICU4X_DecimalLimitError_HPP
 
 #include "DecimalLimitError.d.hpp"
 
@@ -11,18 +11,16 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
-    extern "C" {
 
-    } // extern "C"
 } // namespace capi
 } // namespace
 
 
 
 
-#endif // icu4x_DecimalLimitError_HPP
+#endif // ICU4X_DecimalLimitError_HPP

@@ -2,23 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Julian calendar.
-//!
-//! ```rust
-//! use icu::calendar::{cal::Julian, Date};
-//!
-//! let date_iso = Date::try_new_iso(1970, 1, 2)
-//!     .expect("Failed to initialize ISO Date instance.");
-//! let date_julian = Date::new_from_iso(date_iso, Julian);
-//!
-//! assert_eq!(date_julian.era_year().year, 1969);
-//! assert_eq!(date_julian.month().ordinal, 12);
-//! assert_eq!(date_julian.day_of_month().0, 20);
-//! ```
-
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::error::{year_check, DateError};
+use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
+use crate::error::DateError;
+use crate::options::DateFromFieldsOptions;
+use crate::types::DateFields;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
@@ -82,25 +71,57 @@ impl CalendarArithmetic for Julian {
     }
 }
 
+impl DateFieldsResolver for Julian {
+    type YearInfo = i32;
+
+    #[inline]
+    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+        match era {
+            "ad" | "ce" => Ok(era_year),
+            "bc" | "bce" => Ok(1 - era_year),
+            _ => Err(DateError::UnknownEra),
+        }
+    }
+
+    #[inline]
+    fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
+        extended_year
+    }
+
+    #[inline]
+    fn reference_year_from_month_day(
+        &self,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::YearInfo, DateError> {
+        let (ordinal_month, _is_leap) = month_code
+            .parsed()
+            .ok_or(DateError::UnknownMonthCode(month_code))?;
+        // December 31, 1972 occurs on 12th month, 18th day, 1972 Old Style
+        // Note: 1972 is a leap year
+        let julian_year = if ordinal_month < 12 || (ordinal_month == 12 && day <= 18) {
+            1972
+        } else {
+            1971
+        };
+        Ok(julian_year)
+    }
+}
+
 impl crate::cal::scaffold::UnstableSealed for Julian {}
 impl Calendar for Julian {
     type DateInner = JulianDateInner;
     type Year = types::EraYear;
 
-    fn from_codes(
+    fn from_fields(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
-        day: u8,
+        fields: DateFields,
+        options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let year = match era {
-            Some("ce" | "ad") | None => year_check(year, 1..)?,
-            Some("bce" | "bc") => 1 - year_check(year, 1..)?,
-            Some(_) => return Err(DateError::UnknownEra),
-        };
-
-        ArithmeticDate::new_from_codes(self, year, month_code, day).map(JulianDateInner)
+        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
+        ArithmeticDate::try_from_builder(builder, options)
+            .map(JulianDateInner)
+            .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -155,12 +176,13 @@ impl Calendar for Julian {
     /// The calendar-specific year represented by `date`
     /// Julian has the same era scheme as Gregorian
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let extended_year = self.extended_year(date);
+        let extended_year = date.0.extended_year();
         if extended_year > 0 {
             types::EraYear {
                 era: tinystr!(16, "ce"),
                 era_index: Some(1),
                 year: extended_year,
+                extended_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
@@ -168,13 +190,10 @@ impl Calendar for Julian {
                 era: tinystr!(16, "bce"),
                 era_index: Some(0),
                 year: 1_i32.saturating_sub(extended_year),
+                extended_year,
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }
         }
-    }
-
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        date.0.extended_year()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -209,6 +228,11 @@ impl Julian {
     pub fn new() -> Self {
         Self
     }
+
+    /// Returns the date of (Orthodox) Easter in the given year.
+    pub fn easter(year: i32) -> Date<Self> {
+        Date::from_rata_die(calendrical_calculations::julian::easter(year), Self)
+    }
 }
 
 impl Date<Julian> {
@@ -227,7 +251,7 @@ impl Date<Julian> {
     /// assert_eq!(date_julian.day_of_month().0, 20);
     /// ```
     pub fn try_new_julian(year: i32, month: u8, day: u8) -> Result<Date<Julian>, RangeError> {
-        ArithmeticDate::new_from_ordinals(year, month, day)
+        ArithmeticDate::try_from_ymd(year, month, day)
             .map(JulianDateInner)
             .map(|inner| Date::from_raw(inner, Julian))
     }

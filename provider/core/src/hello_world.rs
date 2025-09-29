@@ -235,7 +235,7 @@ impl DynamicDataProvider<BufferMarker> for HelloWorldJsonProvider {
 }
 
 impl IterableDataProvider<HelloWorldV1> for HelloWorldProvider {
-    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
         #[expect(clippy::unwrap_used)] // hello-world
         Ok(Self::DATA
             .iter()
@@ -342,7 +342,7 @@ impl Writeable for FormattedHelloWorld<'_> {
         self.data.message.write_to(sink)
     }
 
-    fn write_to_string(&self) -> Cow<str> {
+    fn write_to_string(&self) -> Cow<'_, str> {
         self.data.message.clone()
     }
 

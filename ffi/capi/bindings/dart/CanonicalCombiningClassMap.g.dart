@@ -23,6 +23,7 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('icu4x_CanonicalCombiningClassMap_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CanonicalCombiningClassMap_destroy_mv1));
 
   /// Construct a new CanonicalCombiningClassMap instance for NFC using compiled data.

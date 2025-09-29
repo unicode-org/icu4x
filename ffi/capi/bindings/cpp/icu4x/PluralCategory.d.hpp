@@ -1,5 +1,5 @@
-#ifndef icu4x_PluralCategory_D_HPP
-#define icu4x_PluralCategory_D_HPP
+#ifndef ICU4X_PluralCategory_D_HPP
+#define ICU4X_PluralCategory_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,11 +9,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 class PluralCategory;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -37,22 +37,22 @@ namespace icu4x {
  */
 class PluralCategory {
 public:
-  enum Value {
-    Zero = 0,
-    One = 1,
-    Two = 2,
-    Few = 3,
-    Many = 4,
-    Other = 5,
-  };
+    enum Value {
+        Zero = 0,
+        One = 1,
+        Two = 2,
+        Few = 3,
+        Many = 4,
+        Other = 5,
+    };
 
-  PluralCategory(): value(Value::Other) {}
+    PluralCategory(): value(Value::Other) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr PluralCategory(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr PluralCategory(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
   /**
    * Construct from a string in the format
@@ -64,11 +64,11 @@ public:
    */
   inline static std::optional<icu4x::PluralCategory> get_for_cldr_string(std::string_view s);
 
-  inline icu4x::capi::PluralCategory AsFFI() const;
-  inline static icu4x::PluralCategory FromFFI(icu4x::capi::PluralCategory c_enum);
+    inline icu4x::capi::PluralCategory AsFFI() const;
+    inline static icu4x::PluralCategory FromFFI(icu4x::capi::PluralCategory c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_PluralCategory_D_HPP
+#endif // ICU4X_PluralCategory_D_HPP

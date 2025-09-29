@@ -32,14 +32,36 @@
     }
   },
   {
+    "locale": "fr",
+    "datetime": "2021-07-11T12:00:00.000+01:00[Africa/Algiers]",
+    "expectations": {
+      "z": "UTC+1",
+      "zzzz": "heure normale d’Europe centrale",
+
+      "v": "heure : Algérie",
+      "vvvv": "heure d’Europe centrale (Algérie)"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2021-07-11T12:00:00.000-06:00[America/Regina]",
+    "expectations": {
+      "z": "CST",
+      "zzzz": "Central Standard Time",
+
+      "v": "CT (Regina)",
+      "vvvv": "Central Time (Regina)"
+    }
+  },
+  {
     "locale": "en",
     "datetime": "2021-07-11T12:00:00.000+01:00[Europe/London]",
     "expectations": {
       "z": "GMT+1",
       "zzzz": "British Summer Time",
 
-      "v": "GMT",
-      "vvvv": "Greenwich Mean Time",
+      "v": "UK Time",
+      "vvvv": "UK Time",
 
       "VVV": "London",
       "VVVV": "UK Time",
@@ -50,13 +72,30 @@
   },
   {
     "locale": "en",
+    "datetime": "2021-07-11T12:00:00.000+00:00[Europe/London]",
+    "expectations": {
+      "z": "GMT",
+      "zzzz": "Greenwich Mean Time",
+
+      "v": "UK Time",
+      "vvvv": "UK Time",
+
+      "VVV": "London",
+      "VVVV": "UK Time",
+
+      "O": "GMT+0",
+      "OOOO": "GMT+00:00"
+    }
+  },
+  {
+    "locale": "en",
     "datetime": "2021-07-11T12:00:00.000+01:00[Europe/Dublin]",
     "expectations": {
       "z": "GMT+1",
       "zzzz": "Irish Standard Time",
 
-      "v": "GMT",
-      "vvvv": "Greenwich Mean Time",
+      "v": "Ireland Time",
+      "vvvv": "Ireland Time",
 
       "VVV": "Dublin",
       "VVVV": "Ireland Time",
@@ -90,7 +129,7 @@
       "zzzz": "Среднее время по Гринвичу",
 
       "v": "Тролль",
-      "vvvv": "Среднее время по Гринвичу",
+      "vvvv": "Тролль",
 
       "VVV": "Тролль",
       "VVVV": "Тролль",
@@ -143,13 +182,34 @@
       "O": "GMT\u200e+3\u200e",
       "OOOO": "GMT\u200e+03:00\u200e"
     }
+  },{
+    "locale": "en-GB",
+    "datetime": "2021-07-11T12:00:00.000+01[Africa/Casablanca]",
+    "expectations": {
+      "z": "GMT+1",
+      "zzzz": "GMT+01:00",
+
+      "v": "Morocco Time",
+      "vvvv": "Morocco Time"
+    }
+  },
+  {
+    "locale": "en-GB",
+    "datetime": "2021-07-11T12:00:00.000+00[Africa/Casablanca]",
+    "expectations": {
+      "z": "GMT+0",
+      "zzzz": "GMT+00:00",
+
+      "v": "Morocco Time",
+      "vvvv": "Morocco Time"
+    }
   },
   {
     "locale": "en",
     "datetime": "2008-02-21T12:00:00.000-04:00[America/Argentina/San_Luis]",
     "expectations": {
       "z": "GMT-4",
-      "zzzz": "San Luis Standard Time",
+      "zzzz": "GMT-04:00",
 
       "v": "San Luis Time",
       "vvvv": "San Luis Time",
@@ -166,6 +226,68 @@
   },
   {
     "locale": "en",
+    "datetime": "2016-09-06T23:59:59.999999999+03[Europe/Istanbul]",
+    "expectations": {
+      "zzzz": "Eastern European Summer Time"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2016-09-07T00:00:00+03[Europe/Istanbul]",
+    "expectations": {
+      "zzzz": "Türkiye Standard Time"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2013-08-15T12:00:00+01[Africa/Windhoek]",
+    "expectations": {
+      "vvvv": "Namibia Time",
+      "zzzz": "West Africa Time"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2013-09-15T12:00:00+02[Africa/Windhoek]",
+    "expectations": {
+      "vvvv": "Namibia Time",
+      "zzzz": "GMT+02:00"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2013-09-15T12:00:00-03[America/Punta_Arenas]",
+    "expectations": {
+      "vvvv": "Chile Time",
+      "zzzz": "Chile Summer Time"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2013-09-15T12:00:00-03[America/Santiago]",
+    "expectations": {
+      "vvvv": "Chile Time",
+      "zzzz": "Chile Summer Time"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2018-09-15T12:00:00-03[America/Punta_Arenas]",
+    "expectations": {
+      "vvvv": "Punta Arenas Time",
+      "zzzz": "GMT-03:00"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2018-09-15T12:00:00-04[America/Santiago]",
+    "expectations": {
+      "vvvv": "Chile Time",
+      "zzzz": "Chile Standard Time"
+    }
+  },
+  {
+    "locale": "en",
     "datetime": "2021-07-11T12:00:00.000-07:00[Etc/Unknown]",
     "expectations": {
       "z": "GMT-7",
@@ -174,7 +296,7 @@
       "v": "GMT-7",
       "vvvv": "GMT-07:00",
 
-      "VVV": "Unknown City",
+      "VVV": "Unknown Location",
       "VVVV": "GMT-07:00",
 
       "O": "GMT-7",
@@ -194,7 +316,7 @@
       "v": "GMT-7",
       "vvvv": "GMT-07:00",
 
-      "VVV": "Unknown City",
+      "VVV": "Unknown Location",
       "VVVV": "GMT-07:00",
 
       "O": "GMT-7",
@@ -214,7 +336,7 @@
       "v": "GMT+?",
       "vvvv": "GMT+?",
 
-      "VVV": "Unknown City",
+      "VVV": "Unknown Location",
       "VVVV": "GMT+?",
 
       "O": "GMT+?",
@@ -234,7 +356,7 @@
       "v": "UTC",
       "vvvv": "Coordinated Universal Time",
 
-      "VVV": "Unknown City",
+      "VVV": "Unknown Location",
       "VVVV": "GMT+00:00",
 
       "O": "GMT+0",
@@ -254,7 +376,7 @@
       "v": "GMT",
       "vvvv": "Greenwich Mean Time",
 
-      "VVV": "Unknown City",
+      "VVV": "Unknown Location",
       "VVVV": "GMT+00:00",
 
       "O": "GMT+0",

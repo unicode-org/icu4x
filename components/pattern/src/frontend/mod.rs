@@ -6,6 +6,9 @@
 mod databake;
 #[cfg(feature = "serde")]
 pub(crate) mod serde;
+#[cfg(feature = "zerovec")]
+mod zerovec;
+
 use crate::common::*;
 #[cfg(feature = "alloc")]
 use crate::Error;
@@ -238,7 +241,7 @@ where
     B: PatternBackend,
 {
     /// Returns an iterator over the [`PatternItem`]s in this pattern.
-    pub fn iter(&self) -> impl Iterator<Item = PatternItem<B::PlaceholderKey<'_>>> + '_ {
+    pub fn iter(&self) -> impl Iterator<Item = PatternItem<'_, B::PlaceholderKey<'_>>> + '_ {
         B::iter_items(&self.store)
     }
 

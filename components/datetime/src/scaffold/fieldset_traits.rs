@@ -7,16 +7,13 @@ use crate::{
     scaffold::*,
 };
 use icu_calendar::{
-    provider::{CalendarChineseV1, CalendarDangiV1, CalendarJapaneseModernV1},
-    types::{DayOfMonth, DayOfYear, MonthInfo, Weekday, YearInfo},
+    provider::CalendarJapaneseModernV1,
+    types::{DayOfMonth, DayOfYear, MonthInfo, RataDie, Weekday, YearInfo},
 };
 use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV1};
 use icu_provider::{marker::NeverMarker, prelude::*};
 use icu_time::{scaffold::IntoOption, zone::ZoneNameTimestamp};
-use icu_time::{
-    zone::{TimeZoneVariant, UtcOffset},
-    Hour, Minute, Nanosecond, Second, TimeZone,
-};
+use icu_time::{zone::UtcOffset, Hour, Minute, Nanosecond, Second, TimeZone};
 
 // TODO(#4340): Add DecimalFormatter optional bindings here
 
@@ -38,6 +35,8 @@ pub trait DateInputMarkers: UnstableSealed {
     type DayOfMonthInput: IntoOption<DayOfMonth>;
     /// Marker for resolving the day-of-year input field.
     type DayOfYearInput: IntoOption<DayOfYear>;
+    /// Marker for resolving the day-of-year input field.
+    type RataDieInput: IntoOption<RataDie>;
     /// Marker for resolving the day-of-week input field.
     type DayOfWeekInput: IntoOption<Weekday>;
 }
@@ -120,8 +119,6 @@ pub trait ZoneMarkers: UnstableSealed {
     type TimeZoneIdInput: IntoOption<TimeZone>;
     /// Marker for resolving the time zone offset input field.
     type TimeZoneOffsetInput: IntoOption<UtcOffset>;
-    /// Marker for resolving the time zone variant input field.
-    type TimeZoneVariantInput: IntoOption<TimeZoneVariant>;
     /// Marker for resolving the time zone non-location display names, which depend on the datetime.
     type TimeZoneNameTimestampInput: IntoOption<ZoneNameTimestamp>;
     /// Marker for loading core time zone data.
@@ -198,13 +195,13 @@ pub trait AllInputMarkers<R: DateTimeMarkers>:
     + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
     + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
     + GetField<<R::D as DateInputMarkers>::DayOfYearInput>
+    + GetField<<R::D as DateInputMarkers>::RataDieInput>
     + GetField<<R::T as TimeMarkers>::HourInput>
     + GetField<<R::T as TimeMarkers>::MinuteInput>
     + GetField<<R::T as TimeMarkers>::SecondInput>
     + GetField<<R::T as TimeMarkers>::NanosecondInput>
     + GetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
     + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
-    + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
     + GetField<<R::Z as ZoneMarkers>::TimeZoneNameTimestampInput>
 where
     R::D: DateInputMarkers,
@@ -224,13 +221,13 @@ where
         + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
         + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
         + GetField<<R::D as DateInputMarkers>::DayOfYearInput>
+        + GetField<<R::D as DateInputMarkers>::RataDieInput>
         + GetField<<R::T as TimeMarkers>::HourInput>
         + GetField<<R::T as TimeMarkers>::MinuteInput>
         + GetField<<R::T as TimeMarkers>::SecondInput>
         + GetField<<R::T as TimeMarkers>::NanosecondInput>
         + GetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
         + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
-        + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
         + GetField<<R::Z as ZoneMarkers>::TimeZoneNameTimestampInput>,
 {
 }
@@ -503,9 +500,7 @@ impl<T> AllFixedCalendarExternalDataMarkers for T where
 /// for datetime formatting with any calendar.
 // This trait is implicitly sealed due to sealed supertraits
 pub trait AllAnyCalendarExternalDataMarkers:
-    DataProvider<CalendarChineseV1>
-    + DataProvider<CalendarDangiV1>
-    + DataProvider<CalendarJapaneseModernV1>
+    DataProvider<CalendarJapaneseModernV1>
     + DataProvider<DecimalSymbolsV1>
     + DataProvider<DecimalDigitsV1>
 {
@@ -513,8 +508,6 @@ pub trait AllAnyCalendarExternalDataMarkers:
 
 impl<T> AllAnyCalendarExternalDataMarkers for T where
     T: ?Sized
-        + DataProvider<CalendarChineseV1>
-        + DataProvider<CalendarDangiV1>
         + DataProvider<CalendarJapaneseModernV1>
         + DataProvider<DecimalSymbolsV1>
         + DataProvider<DecimalDigitsV1>
@@ -526,6 +519,7 @@ impl DateInputMarkers for () {
     type MonthInput = ();
     type DayOfMonthInput = ();
     type DayOfYearInput = ();
+    type RataDieInput = ();
     type DayOfWeekInput = ();
 }
 
@@ -555,7 +549,6 @@ impl TimeMarkers for () {
 impl ZoneMarkers for () {
     type TimeZoneIdInput = ();
     type TimeZoneOffsetInput = ();
-    type TimeZoneVariantInput = ();
     type TimeZoneNameTimestampInput = ();
     type EssentialsV1 = NeverMarker<tz::Essentials<'static>>;
     type LocationsV1 = NeverMarker<tz::Locations<'static>>;
@@ -658,6 +651,9 @@ macro_rules! datetime_marker_helper {
     (@input/day_of_year, yes) => {
         DayOfYear
     };
+    (@input/rata_die, yes) => {
+        RataDie
+    };
     (@input/hour, yes) => {
         Hour
     };
@@ -676,10 +672,7 @@ macro_rules! datetime_marker_helper {
     (@input/timezone/offset, yes) => {
         Option<UtcOffset>
     };
-    (@input/timezone/variant, yes) => {
-        TimeZoneVariant
-    };
-    (@input/timezone/local_time, yes) => {
+    (@input/timezone/timestamp, yes) => {
         ZoneNameTimestamp
     };
     (@input/timezone/$any:ident,) => {

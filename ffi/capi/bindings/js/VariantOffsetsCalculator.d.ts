@@ -11,6 +11,8 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /**
  * See the [Rust documentation for `VariantOffsetsCalculator`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculator.html) for more information.
+ *
+ * @deprecated this API is a bad approximation of a time zone database
  */
 export class VariantOffsetsCalculator {
     /** @internal */
@@ -27,7 +29,12 @@ export class VariantOffsetsCalculator {
     /**
      * See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
      */
-    computeOffsetsFromTimeZoneAndDateTime(timeZone: TimeZone, localDate: IsoDate, localTime: Time): VariantOffsets | null;
+    computeOffsetsFromTimeZoneAndDateTime(timeZone: TimeZone, utcDate: IsoDate, utcTime: Time): VariantOffsets | null;
+
+    /**
+     * See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
+     */
+    computeOffsetsFromTimeZoneAndTimestamp(timeZone: TimeZone, timestamp: bigint): VariantOffsets | null;
 
     /**
      * Construct a new {@link VariantOffsetsCalculator} instance using compiled data.

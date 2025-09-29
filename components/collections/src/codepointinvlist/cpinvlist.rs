@@ -362,7 +362,7 @@ impl<'data> CodePointInversionList<'data> {
     ///
     /// Public only to the crate, not exposed to public
     #[cfg(feature = "alloc")]
-    pub(crate) fn as_inversion_list(&self) -> &ZeroVec<PotentialCodePoint> {
+    pub(crate) fn as_inversion_list(&self) -> &ZeroVec<'_, PotentialCodePoint> {
         &self.inv_list
     }
 

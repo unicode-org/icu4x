@@ -4,15 +4,13 @@
 
 use std::collections::BTreeMap;
 
-use icu::calendar::Date;
 use icu::datetime::{fieldsets, NoCalendarFormatter};
 use icu::locale::locale;
 use icu::time::zone::ZoneNameTimestamp;
-use icu::time::{DateTime, Time};
+use icu_time::zone::UtcOffset;
 
 fn main() {
-    let parser = icu::time::zone::IanaParser::new();
-    let offsets = icu::time::zone::VariantOffsetsCalculator::new();
+    let parser = icu::time::zone::iana::IanaParserExtended::new();
 
     let prefs = locale!("en").into();
 
@@ -23,51 +21,64 @@ fn main() {
     let city_formatter =
         NoCalendarFormatter::try_new(prefs, fieldsets::zone::ExemplarCity).unwrap();
 
-    let reference_date_time = DateTime {
-        date: Date::try_new_iso(2025, 1, 1).unwrap(),
-        time: Time::start_of_day(),
-    };
+    let reference_timestamp = ZoneNameTimestamp::far_in_future();
 
     let mut grouped_tzs = BTreeMap::<_, Vec<_>>::new();
 
     for tz in parser.iter() {
-        if tz.is_unknown() || tz.as_str().starts_with("utc") || tz.as_str() == "gmt" {
+        if tz.time_zone.is_unknown()
+            || tz.time_zone.as_str().starts_with("utc")
+            || tz.time_zone.as_str() == "gmt"
+        {
             continue;
         }
 
-        let offsets = offsets
-            .compute_offsets_from_time_zone_and_name_timestamp(
-                tz,
-                ZoneNameTimestamp::from_date_time_iso(reference_date_time),
-            )
-            .unwrap();
+        let jiff = jiff::tz::TimeZone::get(tz.canonical).unwrap();
+        let curr_offset = jiff.to_offset(jiff::Timestamp::now());
+        let next_offset = jiff
+            .following(jiff::Timestamp::now())
+            .next()
+            .map(|t| t.offset());
+
+        let (lo, hi) = if let Some(next_offset) = next_offset {
+            if next_offset.seconds() < curr_offset.seconds() {
+                (next_offset, Some(curr_offset))
+            } else {
+                (curr_offset, Some(next_offset))
+            }
+        } else {
+            (curr_offset, None)
+        };
 
         let tzi = tz
-            .with_offset(Some(offsets.standard))
-            .at_date_time_iso(reference_date_time);
+            .time_zone
+            .with_offset(Some(UtcOffset::from_seconds_unchecked(lo.seconds())))
+            .with_zone_name_timestamp(reference_timestamp);
 
         grouped_tzs
             .entry(non_location_formatter.format(&tzi).to_string())
             .or_default()
-            .push((offsets, tzi));
+            .push(((lo, hi), tzi));
     }
 
     let mut list = Vec::new();
 
     for (non_location, zones) in grouped_tzs {
-        for (offsets, tzi) in &zones {
+        for ((lo, hi), tzi) in &zones {
             list.push((
-                -offsets.standard.to_seconds(),
+                -lo.seconds(),
                 format!(
                     "({}{})",
                     offset_formatter.format(tzi),
-                    if let Some(daylight) = offsets.daylight {
+                    if let Some(hi) = hi {
                         format!(
                             "/{}",
                             offset_formatter.format(
                                 &tzi.id()
-                                    .with_offset(Some(daylight))
-                                    .at_date_time_iso(reference_date_time)
+                                    .with_offset(Some(UtcOffset::from_seconds_unchecked(
+                                        hi.seconds()
+                                    )))
+                                    .with_zone_name_timestamp(reference_timestamp)
                             )
                         )
                     } else {

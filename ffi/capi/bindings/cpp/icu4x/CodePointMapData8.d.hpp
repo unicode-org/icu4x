@@ -1,5 +1,5 @@
-#ifndef icu4x_CodePointMapData8_D_HPP
-#define icu4x_CodePointMapData8_D_HPP
+#ifndef ICU4X_CodePointMapData8_D_HPP
+#define ICU4X_CodePointMapData8_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,8 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct CodePointMapData8; }
 class CodePointMapData8;
@@ -22,7 +21,8 @@ namespace capi { struct DataProvider; }
 class DataProvider;
 struct GeneralCategoryGroup;
 class DataError;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -100,7 +100,7 @@ public:
    *
    * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.GeneralCategory.html) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_general_category_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_general_category_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `Bidi_Class` property, using compiled data.
@@ -114,7 +114,7 @@ public:
    *
    * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.BidiClass.html) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_bidi_class_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_bidi_class_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `East_Asian_Width` property, using compiled data.
@@ -128,7 +128,7 @@ public:
    *
    * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.EastAsianWidth.html) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_east_asian_width_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_east_asian_width_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `Hangul_Syllable_Type` property, using compiled data.
@@ -142,7 +142,7 @@ public:
    *
    * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_hangul_syllable_type_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_hangul_syllable_type_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `Indic_Syllabic_Property` property, using compiled data.
@@ -156,7 +156,7 @@ public:
    *
    * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_indic_syllabic_category_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_indic_syllabic_category_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `Line_Break` property, using compiled data.
@@ -170,7 +170,7 @@ public:
    *
    * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_line_break_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_line_break_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `Grapheme_Cluster_Break` property, using compiled data.
@@ -184,7 +184,7 @@ public:
    *
    * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_grapheme_cluster_break_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_grapheme_cluster_break_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `Word_Break` property, using compiled data.
@@ -198,7 +198,7 @@ public:
    *
    * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_word_break_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_word_break_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `Sentence_Break` property, using compiled data.
@@ -212,7 +212,7 @@ public:
    *
    * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.SentenceBreak.html) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_sentence_break_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_sentence_break_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `Joining_Type` property, using compiled data.
@@ -226,7 +226,7 @@ public:
    *
    * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.JoiningType.html) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_joining_type_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_joining_type_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `Canonical_Combining_Class` property, using compiled data.
@@ -240,7 +240,7 @@ public:
    *
    * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_canonical_combining_class_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_canonical_combining_class_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `Vertical_Orientation` property, using compiled data.
@@ -254,21 +254,21 @@ public:
    *
    * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.VerticalOrientation.html) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_vertical_orientation_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_vertical_orientation_with_provider(const icu4x::DataProvider& provider);
 
-  inline const icu4x::capi::CodePointMapData8* AsFFI() const;
-  inline icu4x::capi::CodePointMapData8* AsFFI();
-  inline static const icu4x::CodePointMapData8* FromFFI(const icu4x::capi::CodePointMapData8* ptr);
-  inline static icu4x::CodePointMapData8* FromFFI(icu4x::capi::CodePointMapData8* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::CodePointMapData8* AsFFI() const;
+    inline icu4x::capi::CodePointMapData8* AsFFI();
+    inline static const icu4x::CodePointMapData8* FromFFI(const icu4x::capi::CodePointMapData8* ptr);
+    inline static icu4x::CodePointMapData8* FromFFI(icu4x::capi::CodePointMapData8* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  CodePointMapData8() = delete;
-  CodePointMapData8(const icu4x::CodePointMapData8&) = delete;
-  CodePointMapData8(icu4x::CodePointMapData8&&) noexcept = delete;
-  CodePointMapData8 operator=(const icu4x::CodePointMapData8&) = delete;
-  CodePointMapData8 operator=(icu4x::CodePointMapData8&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    CodePointMapData8() = delete;
+    CodePointMapData8(const icu4x::CodePointMapData8&) = delete;
+    CodePointMapData8(icu4x::CodePointMapData8&&) noexcept = delete;
+    CodePointMapData8 operator=(const icu4x::CodePointMapData8&) = delete;
+    CodePointMapData8 operator=(icu4x::CodePointMapData8&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_CodePointMapData8_D_HPP
+#endif // ICU4X_CodePointMapData8_D_HPP

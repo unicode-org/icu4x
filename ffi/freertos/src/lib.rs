@@ -43,6 +43,7 @@ mod stuff {
     extern crate alloc;
 
     use core::panic::PanicInfo;
+    use cortex_m as _;
     use freertos_rust::FreeRtosAllocator;
 
     #[global_allocator]

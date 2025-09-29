@@ -40,6 +40,14 @@ use alloc::borrow::Cow;
 /// This operation normalizes syntax to be well-formed. No legacy subtag replacements is performed.
 /// For validation and canonicalization, see `LocaleCanonicalizer`.
 ///
+/// # Serde
+///
+/// This type implements `serde::Serialize` and `serde::Deserialize` if the
+/// `"serde"` Cargo feature is enabled on the crate.
+///
+/// The value will be serialized as a string and parsed when deserialized.
+/// For tips on efficient storage and retrieval of locales, see [`crate::zerovec`].
+///
 /// # Examples
 ///
 /// Simple example:
@@ -179,7 +187,7 @@ impl LanguageIdentifier {
     /// );
     /// ```
     #[cfg(feature = "alloc")]
-    pub fn normalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
+    pub fn normalize_utf8(input: &[u8]) -> Result<Cow<'_, str>, ParseError> {
         let lang_id = Self::try_from_utf8(input)?;
         Ok(writeable::to_string_or_borrow(&lang_id, input))
     }
@@ -199,7 +207,7 @@ impl LanguageIdentifier {
     /// );
     /// ```
     #[cfg(feature = "alloc")]
-    pub fn normalize(input: &str) -> Result<Cow<str>, ParseError> {
+    pub fn normalize(input: &str) -> Result<Cow<'_, str>, ParseError> {
         Self::normalize_utf8(input.as_bytes())
     }
 

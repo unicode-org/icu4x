@@ -250,7 +250,11 @@ impl<'a> VariableMap<'a> {
     /// Insert a `VariableValue` into the `VariableMap`.
     ///
     /// Returns `Err` with the old value, if it exists, and does not update the map.
-    pub fn insert(&mut self, key: String, value: VariableValue<'a>) -> Result<(), &VariableValue> {
+    pub fn insert(
+        &mut self,
+        key: String,
+        value: VariableValue<'a>,
+    ) -> Result<(), &VariableValue<'_>> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.contains_key(&key) {
             // we just checked that this key exists
@@ -273,7 +277,7 @@ impl<'a> VariableMap<'a> {
     /// Insert a `char` into the `VariableMap`.    
     ///
     /// Returns `Err` with the old value, if it exists, and does not update the map.
-    pub fn insert_char(&mut self, key: String, c: char) -> Result<(), &VariableValue> {
+    pub fn insert_char(&mut self, key: String, c: char) -> Result<(), &VariableValue<'_>> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.contains_key(&key) {
             // we just checked that this key exists
@@ -288,7 +292,7 @@ impl<'a> VariableMap<'a> {
     /// Insert a `String` of any length into the `VariableMap`.
     ///
     /// Returns `Err` with the old value, if it exists, and does not update the map.
-    pub fn insert_string(&mut self, key: String, s: String) -> Result<(), &VariableValue> {
+    pub fn insert_string(&mut self, key: String, s: String) -> Result<(), &VariableValue<'_>> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.contains_key(&key) {
             // we just checked that this key exists
@@ -309,7 +313,7 @@ impl<'a> VariableMap<'a> {
     /// Insert a `&str` of any length into the `VariableMap`.
     ///
     /// Returns `Err` with the old value, if it exists, and does not update the map.
-    pub fn insert_str(&mut self, key: String, s: &'a str) -> Result<(), &VariableValue> {
+    pub fn insert_str(&mut self, key: String, s: &'a str) -> Result<(), &VariableValue<'_>> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.contains_key(&key) {
             // we just checked that this key exists
@@ -334,7 +338,7 @@ impl<'a> VariableMap<'a> {
         &mut self,
         key: String,
         set: CodePointInversionListAndStringList<'a>,
-    ) -> Result<(), &VariableValue> {
+    ) -> Result<(), &VariableValue<'_>> {
         // borrow-checker shenanigans, otherwise we could use if let
         if self.0.contains_key(&key) {
             // we just checked that this key exists

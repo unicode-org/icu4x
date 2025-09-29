@@ -19,11 +19,6 @@ version.workspace = true
 [dependencies]
 icu_locale = { workspace = true }
 icu_provider = { workspace = true, features = ["alloc"] }
-tinystr = { workspace = true, features = ["zerovec"] }
-zerovec = { workspace = true, features = ["yoke"] }
-
-databake = { workspace = true, features = ["derive"], optional = true}
-serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 
 [dev-dependencies]
 icu_provider = { path = "../../provider/core", features = ["deserialize_json"] }
@@ -32,3 +27,7 @@ writeable = { path = "../../utils/writeable" }
 
 [features]
 export = ["icu_provider/export"]
+serde = []
+
+# added by accident
+databake = []

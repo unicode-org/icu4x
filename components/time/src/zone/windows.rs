@@ -69,7 +69,7 @@ impl WindowsParser {
     ///
     /// Using the borrowed version allows one to avoid a small potential
     /// indirection cost when querying the mapper from the owned version.
-    pub fn as_borrowed(&self) -> WindowsParserBorrowed {
+    pub fn as_borrowed(&self) -> WindowsParserBorrowed<'_> {
         WindowsParserBorrowed {
             data: self.data.get(),
         }

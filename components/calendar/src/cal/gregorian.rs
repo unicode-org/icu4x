@@ -2,26 +2,60 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains types and implementations for the Gregorian calendar.
-//!
-//! ```rust
-//! use icu::calendar::{cal::Gregorian, Date};
-//!
-//! let date_iso = Date::try_new_iso(1970, 1, 2)
-//!     .expect("Failed to initialize ISO Date instance.");
-//! let date_gregorian = Date::new_from_iso(date_iso, Gregorian);
-//!
-//! assert_eq!(date_gregorian.era_year().year, 1970);
-//! assert_eq!(date_gregorian.month().ordinal, 1);
-//! assert_eq!(date_gregorian.day_of_month().0, 2);
-//! ```
-
-use crate::cal::iso::{Iso, IsoDateInner};
+use crate::cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears};
 use crate::calendar_arithmetic::ArithmeticDate;
-use crate::error::{year_check, DateError};
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
-use calendrical_calculations::rata_die::RataDie;
+use crate::preferences::CalendarAlgorithm;
+use crate::{types, Date, DateError, RangeError};
 use tinystr::tinystr;
+
+impl_with_abstract_gregorian!(crate::cal::Gregorian, GregorianDateInner, CeBce, _x, CeBce);
+
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub(crate) struct CeBce;
+
+impl GregorianYears for CeBce {
+    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, DateError> {
+        match era {
+            None => Ok(year),
+            Some("ad" | "ce") => Ok(year),
+            Some("bce" | "bc") => Ok(1 - year),
+            Some(_) => Err(DateError::UnknownEra),
+        }
+    }
+
+    fn era_year_from_extended(&self, extended_year: i32, _month: u8, _day: u8) -> types::EraYear {
+        if extended_year > 0 {
+            types::EraYear {
+                era: tinystr!(16, "ce"),
+                era_index: Some(1),
+                year: extended_year,
+                extended_year,
+                ambiguity: match extended_year {
+                    ..=999 => types::YearAmbiguity::EraAndCenturyRequired,
+                    1000..=1949 => types::YearAmbiguity::CenturyRequired,
+                    1950..=2049 => types::YearAmbiguity::Unambiguous,
+                    2050.. => types::YearAmbiguity::CenturyRequired,
+                },
+            }
+        } else {
+            types::EraYear {
+                era: tinystr!(16, "bce"),
+                era_index: Some(0),
+                year: 1_i32.saturating_sub(extended_year),
+                extended_year,
+                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
+            }
+        }
+    }
+
+    fn debug_name(&self) -> &'static str {
+        "Gregorian"
+    }
+
+    fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
+        Some(CalendarAlgorithm::Gregory)
+    }
+}
 
 /// The [(proleptic) Gregorian Calendar](https://en.wikipedia.org/wiki/Proleptic_Gregorian_calendar)
 ///
@@ -40,132 +74,6 @@ use tinystr::tinystr;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Gregorian;
 
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-/// The inner date type used for representing [`Date`]s of [`Gregorian`]. See [`Date`] and [`Gregorian`] for more details.
-pub struct GregorianDateInner(pub(crate) IsoDateInner);
-
-impl crate::cal::scaffold::UnstableSealed for Gregorian {}
-impl Calendar for Gregorian {
-    type DateInner = GregorianDateInner;
-    type Year = types::EraYear;
-    fn from_codes(
-        &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
-        day: u8,
-    ) -> Result<Self::DateInner, DateError> {
-        let year = match era {
-            Some("bce" | "bc") | None => 1 - year_check(year, 1..)?,
-            Some("ad" | "ce") => year_check(year, 1..)?,
-            Some(_) => return Err(DateError::UnknownEra),
-        };
-
-        ArithmeticDate::new_from_codes(self, year, month_code, day)
-            .map(IsoDateInner)
-            .map(GregorianDateInner)
-    }
-
-    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        GregorianDateInner(Iso.from_rata_die(rd))
-    }
-
-    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        Iso.to_rata_die(&date.0)
-    }
-
-    fn from_iso(&self, iso: IsoDateInner) -> GregorianDateInner {
-        GregorianDateInner(iso)
-    }
-
-    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        date.0
-    }
-
-    fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Iso.months_in_year(&date.0)
-    }
-
-    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        Iso.days_in_year(&date.0)
-    }
-
-    fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        Iso.days_in_month(&date.0)
-    }
-
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        Iso.offset_date(&mut date.0, offset.cast_unit())
-    }
-
-    fn until(
-        &self,
-        date1: &Self::DateInner,
-        date2: &Self::DateInner,
-        _calendar2: &Self,
-        largest_unit: DateDurationUnit,
-        smallest_unit: DateDurationUnit,
-    ) -> DateDuration<Self> {
-        Iso.until(&date1.0, &date2.0, &Iso, largest_unit, smallest_unit)
-            .cast_unit()
-    }
-    /// The calendar-specific year represented by `date`
-    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let extended_year = self.extended_year(date);
-        if extended_year > 0 {
-            types::EraYear {
-                era: tinystr!(16, "ce"),
-                era_index: Some(1),
-                year: extended_year,
-                ambiguity: match extended_year {
-                    ..=999 => types::YearAmbiguity::EraAndCenturyRequired,
-                    1000..=1949 => types::YearAmbiguity::CenturyRequired,
-                    1950..=2049 => types::YearAmbiguity::Unambiguous,
-                    2050.. => types::YearAmbiguity::CenturyRequired,
-                },
-            }
-        } else {
-            types::EraYear {
-                era: tinystr!(16, "bce"),
-                era_index: Some(0),
-                year: 1_i32.saturating_sub(extended_year),
-                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
-            }
-        }
-    }
-
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        Iso.extended_year(&date.0)
-    }
-
-    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Iso.is_in_leap_year(&date.0)
-    }
-
-    /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        Iso.month(&date.0)
-    }
-
-    /// The calendar-specific day-of-month represented by `date`
-    fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        Iso.day_of_month(&date.0)
-    }
-
-    /// Information of the day of the year
-    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        date.0 .0.day_of_year()
-    }
-
-    fn debug_name(&self) -> &'static str {
-        "Gregorian"
-    }
-
-    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
-        Some(crate::preferences::CalendarAlgorithm::Gregory)
-    }
-}
-
 impl Date<Gregorian> {
     /// Construct a new Gregorian Date.
     ///
@@ -183,12 +91,22 @@ impl Date<Gregorian> {
     /// assert_eq!(date_gregorian.day_of_month().0, 2);
     /// ```
     pub fn try_new_gregorian(year: i32, month: u8, day: u8) -> Result<Date<Gregorian>, RangeError> {
-        Date::try_new_iso(year, month, day).map(|d| Date::new_from_iso(d, Gregorian))
+        ArithmeticDate::new_gregorian::<CeBce>(year, month, day)
+            .map(GregorianDateInner)
+            .map(|i| Date::from_raw(i, Gregorian))
+    }
+}
+
+impl Gregorian {
+    /// Returns the date of Easter in the given year.
+    pub fn easter(year: i32) -> Date<Self> {
+        Date::from_rata_die(calendrical_calculations::iso::easter(year), Self)
     }
 }
 
 #[cfg(test)]
 mod test {
+    use crate::cal::Iso;
     use calendrical_calculations::rata_die::RataDie;
 
     use super::*;

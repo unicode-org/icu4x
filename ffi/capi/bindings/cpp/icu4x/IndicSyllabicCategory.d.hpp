@@ -1,5 +1,5 @@
-#ifndef icu4x_IndicSyllabicCategory_D_HPP
-#define icu4x_IndicSyllabicCategory_D_HPP
+#ifndef ICU4X_IndicSyllabicCategory_D_HPP
+#define ICU4X_IndicSyllabicCategory_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,11 +9,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 class IndicSyllabicCategory;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -68,53 +68,53 @@ namespace icu4x {
  */
 class IndicSyllabicCategory {
 public:
-  enum Value {
-    Other = 0,
-    Avagraha = 1,
-    Bindu = 2,
-    BrahmiJoiningNumber = 3,
-    CantillationMark = 4,
-    Consonant = 5,
-    ConsonantDead = 6,
-    ConsonantFinal = 7,
-    ConsonantHeadLetter = 8,
-    ConsonantInitialPostfixed = 9,
-    ConsonantKiller = 10,
-    ConsonantMedial = 11,
-    ConsonantPlaceholder = 12,
-    ConsonantPrecedingRepha = 13,
-    ConsonantPrefixed = 14,
-    ConsonantSucceedingRepha = 15,
-    ConsonantSubjoined = 16,
-    ConsonantWithStacker = 17,
-    GeminationMark = 18,
-    InvisibleStacker = 19,
-    Joiner = 20,
-    ModifyingLetter = 21,
-    NonJoiner = 22,
-    Nukta = 23,
-    Number = 24,
-    NumberJoiner = 25,
-    PureKiller = 26,
-    RegisterShifter = 27,
-    SyllableModifier = 28,
-    ToneLetter = 29,
-    ToneMark = 30,
-    Virama = 31,
-    Visarga = 32,
-    Vowel = 33,
-    VowelDependent = 34,
-    VowelIndependent = 35,
-    ReorderingKiller = 36,
-  };
+    enum Value {
+        Other = 0,
+        Avagraha = 1,
+        Bindu = 2,
+        BrahmiJoiningNumber = 3,
+        CantillationMark = 4,
+        Consonant = 5,
+        ConsonantDead = 6,
+        ConsonantFinal = 7,
+        ConsonantHeadLetter = 8,
+        ConsonantInitialPostfixed = 9,
+        ConsonantKiller = 10,
+        ConsonantMedial = 11,
+        ConsonantPlaceholder = 12,
+        ConsonantPrecedingRepha = 13,
+        ConsonantPrefixed = 14,
+        ConsonantSucceedingRepha = 15,
+        ConsonantSubjoined = 16,
+        ConsonantWithStacker = 17,
+        GeminationMark = 18,
+        InvisibleStacker = 19,
+        Joiner = 20,
+        ModifyingLetter = 21,
+        NonJoiner = 22,
+        Nukta = 23,
+        Number = 24,
+        NumberJoiner = 25,
+        PureKiller = 26,
+        RegisterShifter = 27,
+        SyllableModifier = 28,
+        ToneLetter = 29,
+        ToneMark = 30,
+        Virama = 31,
+        Visarga = 32,
+        Vowel = 33,
+        VowelDependent = 34,
+        VowelIndependent = 35,
+        ReorderingKiller = 36,
+    };
 
-  IndicSyllabicCategory(): value(Value::Other) {}
+    IndicSyllabicCategory(): value(Value::Other) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr IndicSyllabicCategory(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr IndicSyllabicCategory(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
   /**
    * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
@@ -135,11 +135,11 @@ public:
    */
   inline static std::optional<icu4x::IndicSyllabicCategory> from_integer_value(uint8_t other);
 
-  inline icu4x::capi::IndicSyllabicCategory AsFFI() const;
-  inline static icu4x::IndicSyllabicCategory FromFFI(icu4x::capi::IndicSyllabicCategory c_enum);
+    inline icu4x::capi::IndicSyllabicCategory AsFFI() const;
+    inline static icu4x::IndicSyllabicCategory FromFFI(icu4x::capi::IndicSyllabicCategory c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_IndicSyllabicCategory_D_HPP
+#endif // ICU4X_IndicSyllabicCategory_D_HPP

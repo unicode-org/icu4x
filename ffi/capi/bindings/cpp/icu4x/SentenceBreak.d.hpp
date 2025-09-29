@@ -1,5 +1,5 @@
-#ifndef icu4x_SentenceBreak_D_HPP
-#define icu4x_SentenceBreak_D_HPP
+#ifndef ICU4X_SentenceBreak_D_HPP
+#define ICU4X_SentenceBreak_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,11 +9,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 class SentenceBreak;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -46,31 +46,31 @@ namespace icu4x {
  */
 class SentenceBreak {
 public:
-  enum Value {
-    Other = 0,
-    ATerm = 1,
-    Close = 2,
-    Format = 3,
-    Lower = 4,
-    Numeric = 5,
-    OLetter = 6,
-    Sep = 7,
-    Sp = 8,
-    STerm = 9,
-    Upper = 10,
-    CR = 11,
-    Extend = 12,
-    LF = 13,
-    SContinue = 14,
-  };
+    enum Value {
+        Other = 0,
+        ATerm = 1,
+        Close = 2,
+        Format = 3,
+        Lower = 4,
+        Numeric = 5,
+        OLetter = 6,
+        Sep = 7,
+        Sp = 8,
+        STerm = 9,
+        Upper = 10,
+        CR = 11,
+        Extend = 12,
+        LF = 13,
+        SContinue = 14,
+    };
 
-  SentenceBreak(): value(Value::Other) {}
+    SentenceBreak(): value(Value::Other) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr SentenceBreak(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr SentenceBreak(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
   /**
    * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
@@ -105,11 +105,11 @@ public:
    */
   inline static std::optional<icu4x::SentenceBreak> from_integer_value(uint8_t other);
 
-  inline icu4x::capi::SentenceBreak AsFFI() const;
-  inline static icu4x::SentenceBreak FromFFI(icu4x::capi::SentenceBreak c_enum);
+    inline icu4x::capi::SentenceBreak AsFFI() const;
+    inline static icu4x::SentenceBreak FromFFI(icu4x::capi::SentenceBreak c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_SentenceBreak_D_HPP
+#endif // ICU4X_SentenceBreak_D_HPP

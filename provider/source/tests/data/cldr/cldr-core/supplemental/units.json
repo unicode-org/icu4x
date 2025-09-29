@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "47"
+      "_cldrVersion": "48"
     },
     "unitPrefixes": {
       "atto": {
@@ -315,6 +315,10 @@
         "_quantity": "night-duration",
         "_status": "simple"
       },
+      "part": {
+        "_quantity": "portion",
+        "_status": "simple"
+      },
       "per-second": {
         "_quantity": "radioactivity"
       },
@@ -324,10 +328,6 @@
       },
       "pixel-per-meter": {
         "_quantity": "resolution"
-      },
-      "portion": {
-        "_quantity": "portion",
-        "_status": "simple"
       },
       "pow4-second-square-ampere-per-kilogram-square-meter": {
         "_quantity": "electric-capacitance"
@@ -364,14 +364,6 @@
       }
     },
     "convertUnits": {
-      "100-kilometer": {
-        "_baseUnit": "meter",
-        "_systems": [
-          "si",
-          "metric"
-        ],
-        "_factor": "100000"
-      },
       "acre": {
         "_baseUnit": "square-meter",
         "_systems": [
@@ -587,6 +579,13 @@
         ],
         "_factor": "gal_to_m3/16"
       },
+      "cup-imperial": {
+        "_baseUnit": "cubic-meter",
+        "_systems": [
+          "uksystem"
+        ],
+        "_factor": "gal_imp_to_m3/16"
+      },
       "cup-jp": {
         "_baseUnit": "cubic-meter",
         "_systems": [
@@ -762,6 +761,13 @@
           "uksystem"
         ],
         "_factor": "gal_imp_to_m3/160"
+      },
+      "fluid-ounce-metric": {
+        "_baseUnit": "cubic-meter",
+        "_systems": [
+          "metric_adjacent"
+        ],
+        "_factor": "0.03*0.001"
       },
       "foodcalorie": {
         "_baseUnit": "kilogram-square-meter-per-square-second",
@@ -942,7 +948,7 @@
         ]
       },
       "karat": {
-        "_baseUnit": "portion",
+        "_baseUnit": "part",
         "_systems": [
           "metric_adjacent",
           "ussystem",
@@ -1192,6 +1198,14 @@
         ],
         "_factor": "meters_per_AU*60*60*180/PI"
       },
+      "part": {
+        "_baseUnit": "part",
+        "_systems": [
+          "metric_adjacent",
+          "ussystem",
+          "uksystem"
+        ]
+      },
       "pascal": {
         "_baseUnit": "kilogram-per-meter-square-second",
         "_systems": [
@@ -1201,7 +1215,7 @@
         ]
       },
       "percent": {
-        "_baseUnit": "portion",
+        "_baseUnit": "part",
         "_systems": [
           "metric_adjacent",
           "ussystem",
@@ -1210,7 +1224,7 @@
         "_factor": "1/100"
       },
       "permille": {
-        "_baseUnit": "portion",
+        "_baseUnit": "part",
         "_systems": [
           "metric_adjacent",
           "ussystem",
@@ -1218,17 +1232,8 @@
         ],
         "_factor": "1/1000"
       },
-      "permillion": {
-        "_baseUnit": "portion",
-        "_systems": [
-          "metric_adjacent",
-          "ussystem",
-          "uksystem"
-        ],
-        "_factor": "1/1000000"
-      },
       "permyriad": {
-        "_baseUnit": "portion",
+        "_baseUnit": "part",
         "_systems": [
           "metric_adjacent",
           "ussystem",
@@ -1281,14 +1286,6 @@
           "uksystem"
         ],
         "_factor": "ft_to_m/864"
-      },
-      "portion": {
-        "_baseUnit": "portion",
-        "_systems": [
-          "metric_adjacent",
-          "ussystem",
-          "uksystem"
-        ]
       },
       "pound": {
         "_baseUnit": "kilogram",

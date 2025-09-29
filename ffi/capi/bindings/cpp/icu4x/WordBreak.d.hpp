@@ -1,5 +1,5 @@
-#ifndef icu4x_WordBreak_D_HPP
-#define icu4x_WordBreak_D_HPP
+#ifndef ICU4X_WordBreak_D_HPP
+#define ICU4X_WordBreak_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,11 +9,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 class WordBreak;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -54,39 +54,39 @@ namespace icu4x {
  */
 class WordBreak {
 public:
-  enum Value {
-    Other = 0,
-    ALetter = 1,
-    Format = 2,
-    Katakana = 3,
-    MidLetter = 4,
-    MidNum = 5,
-    Numeric = 6,
-    ExtendNumLet = 7,
-    CR = 8,
-    Extend = 9,
-    LF = 10,
-    MidNumLet = 11,
-    Newline = 12,
-    RegionalIndicator = 13,
-    HebrewLetter = 14,
-    SingleQuote = 15,
-    DoubleQuote = 16,
-    EBase = 17,
-    EBaseGAZ = 18,
-    EModifier = 19,
-    GlueAfterZwj = 20,
-    ZWJ = 21,
-    WSegSpace = 22,
-  };
+    enum Value {
+        Other = 0,
+        ALetter = 1,
+        Format = 2,
+        Katakana = 3,
+        MidLetter = 4,
+        MidNum = 5,
+        Numeric = 6,
+        ExtendNumLet = 7,
+        CR = 8,
+        Extend = 9,
+        LF = 10,
+        MidNumLet = 11,
+        Newline = 12,
+        RegionalIndicator = 13,
+        HebrewLetter = 14,
+        SingleQuote = 15,
+        DoubleQuote = 16,
+        EBase = 17,
+        EBaseGAZ = 18,
+        EModifier = 19,
+        GlueAfterZwj = 20,
+        ZWJ = 21,
+        WSegSpace = 22,
+    };
 
-  WordBreak(): value(Value::Other) {}
+    WordBreak(): value(Value::Other) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr WordBreak(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr WordBreak(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
   /**
    * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
@@ -121,11 +121,11 @@ public:
    */
   inline static std::optional<icu4x::WordBreak> from_integer_value(uint8_t other);
 
-  inline icu4x::capi::WordBreak AsFFI() const;
-  inline static icu4x::WordBreak FromFFI(icu4x::capi::WordBreak c_enum);
+    inline icu4x::capi::WordBreak AsFFI() const;
+    inline static icu4x::WordBreak FromFFI(icu4x::capi::WordBreak c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_WordBreak_D_HPP
+#endif // ICU4X_WordBreak_D_HPP

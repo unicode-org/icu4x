@@ -7,10 +7,10 @@ use std::collections::{BTreeMap, HashSet};
 use crate::cldr_serde::{self};
 use crate::SourceDataProvider;
 
-use icu::experimental::dimension::provider::units::essentials::{
-    CompoundCount, UnitsEssentials, UnitsEssentialsV1,
-};
-use icu::experimental::dimension::provider::units::patterns::{PatternKey, PowerValue};
+use icu::experimental::dimension::provider::units::essentials::CompoundCount;
+use icu::experimental::dimension::provider::units::essentials::UnitsEssentials;
+use icu::experimental::dimension::provider::units::essentials::UnitsEssentialsV1;
+use icu::experimental::dimension::provider::units::pattern_key::{PatternKey, PowerValue};
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
 use zerovec::ZeroMap;

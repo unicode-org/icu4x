@@ -5,8 +5,9 @@
 use fixed_decimal::Decimal;
 use icu_experimental::relativetime::{
     options::Numeric, RelativeTimeFormatter, RelativeTimeFormatterOptions,
+    RelativeTimeFormatterPreferences,
 };
-use icu_locale_core::locale;
+use icu_locale_core::{extensions::unicode::value, locale};
 use writeable::assert_writeable_eq;
 
 macro_rules! generate_test {
@@ -1243,3 +1244,14 @@ generate_test!(
         (10, "خلال ١٠ سنوات")
     ]
 );
+
+#[test]
+fn test_numbering_system_latn() {
+    let mut prefs = RelativeTimeFormatterPreferences::from(locale!("bn"));
+    let options = RelativeTimeFormatterOptions::default();
+    let formatter_bn = RelativeTimeFormatter::try_new_long_day(prefs, options).unwrap();
+    prefs.numbering_system = Some(value!("latn").try_into().unwrap());
+    let formatter_bn_latn = RelativeTimeFormatter::try_new_long_day(prefs, options).unwrap();
+    assert_writeable_eq!(formatter_bn.format(55.into()), "৫৫ দিনের মধ্যে");
+    assert_writeable_eq!(formatter_bn_latn.format(55.into()), "55 দিনের মধ্যে");
+}

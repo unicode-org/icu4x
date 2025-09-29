@@ -1,5 +1,5 @@
-#ifndef icu4x_BidiInfo_D_HPP
-#define icu4x_BidiInfo_D_HPP
+#ifndef ICU4X_BidiInfo_D_HPP
+#define ICU4X_BidiInfo_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,12 +9,12 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct BidiParagraph; }
 class BidiParagraph;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -56,19 +56,19 @@ public:
    */
   inline uint8_t level_at(size_t pos) const;
 
-  inline const icu4x::capi::BidiInfo* AsFFI() const;
-  inline icu4x::capi::BidiInfo* AsFFI();
-  inline static const icu4x::BidiInfo* FromFFI(const icu4x::capi::BidiInfo* ptr);
-  inline static icu4x::BidiInfo* FromFFI(icu4x::capi::BidiInfo* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::BidiInfo* AsFFI() const;
+    inline icu4x::capi::BidiInfo* AsFFI();
+    inline static const icu4x::BidiInfo* FromFFI(const icu4x::capi::BidiInfo* ptr);
+    inline static icu4x::BidiInfo* FromFFI(icu4x::capi::BidiInfo* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  BidiInfo() = delete;
-  BidiInfo(const icu4x::BidiInfo&) = delete;
-  BidiInfo(icu4x::BidiInfo&&) noexcept = delete;
-  BidiInfo operator=(const icu4x::BidiInfo&) = delete;
-  BidiInfo operator=(icu4x::BidiInfo&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    BidiInfo() = delete;
+    BidiInfo(const icu4x::BidiInfo&) = delete;
+    BidiInfo(icu4x::BidiInfo&&) noexcept = delete;
+    BidiInfo operator=(const icu4x::BidiInfo&) = delete;
+    BidiInfo operator=(icu4x::BidiInfo&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_BidiInfo_D_HPP
+#endif // ICU4X_BidiInfo_D_HPP

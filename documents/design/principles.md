@@ -58,6 +58,24 @@ ICU4C/ICU4J exposes certain pieces of data through user-facing APIs such as Date
 
 Runtime customizability of locale data can sometimes come at a performance or memory cost.
 
+## Locale data from multiple sources works seamlessly
+
+*What:* If data is available for a particular constructor and locale from multiple data providers derived from the same _data source version_ (such as a particular CLDR release), then _i18n correctness_ should not change based on which data provider is used to load the data. Behavior that is _i18n correct_ reflects all locale-specific data and tailorings according to the _data source version_.
+
+*Why:* Locale data can be loaded from multiple sources: for example, some data might be baked into the binary, some might be loaded from the operating system, and some might be downloaded on demand in the form of language packs. These multiple data sources should be _additive_ in nature: they can add features and locales, but they should not impact the i18n correctness of existing features and locales.
+
+Examples that violate this policy:
+
+- A datagen option to remove less-used time zones from a data payload that contains time zone display names for all time zones. Some data sources might make different decisions, resulting in different behavior for the end user depending on how the data loading pipeline was configured and which data was loaded first.\*
+
+Examples that are consistent with this policy:
+
+- A datagen option to tweak the bounds of pre-calculated Chinese year offsets exported into a payload, causing more or fewer years to fall back to expensive calculations at runtime. This impacts performance, but the resulting behavior is the same.
+- A language pack derived from CLDR 50 is loaded into an environment that uses CLDR 49 by default. The CLDR 50 data is obviously allowed to improve (or regress) the i18n correctness if it is loaded with higher priority than the CLDR 49 data.
+- A data marker has a checksum field, and two data providers return different checksums, resulting in an error. This does not impact i18n correctness.
+
+\* If such an optimization is desired, consider using two data payloads, one for "core" and one for "extended", instead of a datagen option. Alternatively, restructure the data to use data marker attributes, which can be safely filtered by datagen.
+
 ## Modular Code and Data with static analysis
 
 *What:* Both the code and the data should be written so that you only bring what you need.  Code and data should be modular not only on a "class" level, but also within a class, such that you don't carry code and data for a feature of a class that you aren't using. Code and data slicing should be able to be determined using static code analysis. We should be able to look at the functions being called, and from that, build exactly the code and data bundle that the app needs.

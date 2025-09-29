@@ -395,7 +395,7 @@ pub struct PluralElementsPackedCow<'data, V: VarULE + ?Sized> {
 /// A bitpacked DST for [`PluralElements`].
 ///
 /// Can be put in a [`Cow`] or a [`VarZeroSlice`].
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq)]
 #[repr(transparent)]
 pub struct PluralElementsPackedULE<V: VarULE + ?Sized> {
     _v: PhantomData<V>,
@@ -414,6 +414,16 @@ pub struct PluralElementsPackedULE<V: VarULE + ?Sized> {
     /// - Bytes 2..(2+L): the default (plural "other") value `V`
     /// - Remainder: [`PluralElementsTupleSliceVarULE`]
     bytes: [u8],
+}
+
+impl<V: VarULE + fmt::Debug + ?Sized> fmt::Debug for PluralElementsPackedULE<V> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let unpacked = self.as_parts();
+        f.debug_struct("PluralElementsPackedULE")
+            .field("parts", &unpacked)
+            .field("bytes", &&self.bytes)
+            .finish()
+    }
 }
 
 impl<V: VarULE + ?Sized> ToOwned for PluralElementsPackedULE<V> {
@@ -477,7 +487,7 @@ where
     /// 2. Bytes corresponding to the default V
     /// 3. Bytes corresponding to the specials slice, if present
     #[inline]
-    fn unpack_bytes(bytes: &[u8]) -> Option<PluralElementsUnpackedBytes> {
+    fn unpack_bytes(bytes: &[u8]) -> Option<PluralElementsUnpackedBytes<'_>> {
         let (lead_byte, remainder) = bytes.split_first()?;
         if lead_byte & 0x80 == 0 {
             Some(PluralElementsUnpackedBytes {
@@ -497,7 +507,7 @@ where
     }
 
     /// Unpacks this structure into the default value and the optional list of specials.
-    fn as_parts(&self) -> PluralElementsUnpacked<V> {
+    fn as_parts(&self) -> PluralElementsUnpacked<'_, V> {
         // Safety: the bytes are valid by invariant
         let unpacked_bytes = unsafe { Self::unpack_bytes(&self.bytes).unwrap_unchecked() };
         let metadata = FourBitMetadata(unpacked_bytes.lead_byte & 0x0F);
@@ -755,6 +765,7 @@ struct PluralElementsPackedBuilder<'a, T> {
 }
 
 /// Internal unpacked and deserialized values from a [`PluralElementsPackedULE`].
+#[derive(Debug)]
 struct PluralElementsUnpacked<'a, V: VarULE + ?Sized> {
     pub default: PluralElementWithMetadata<'a, V>,
     pub specials: Option<&'a PluralElementsTupleSliceVarULE<V>>,

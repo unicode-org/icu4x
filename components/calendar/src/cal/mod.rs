@@ -4,14 +4,14 @@
 
 //! Types for individual calendars
 pub(crate) mod buddhist;
-pub(crate) mod chinese;
-pub(crate) mod chinese_based;
+#[path = "chinese.rs"]
+pub(crate) mod chinese_internal;
 pub(crate) mod coptic;
-pub(crate) mod dangi;
 pub(crate) mod ethiopian;
 pub(crate) mod gregorian;
 pub(crate) mod hebrew;
-pub(crate) mod hijri;
+#[path = "hijri.rs"]
+pub(crate) mod hijri_internal;
 pub(crate) mod indian;
 pub(crate) mod iso;
 pub(crate) mod japanese;
@@ -19,22 +19,53 @@ pub(crate) mod julian;
 pub(crate) mod persian;
 pub(crate) mod roc;
 
+pub(crate) mod abstract_gregorian;
+
 pub use buddhist::Buddhist;
-pub use chinese::Chinese;
+pub use chinese_internal::LunarChinese;
+/// Customizations for the [`LunarChinese`] calendar.
+pub mod chinese {
+    pub use super::chinese_internal::{China, Dangi, LunarChineseYearData, Rules};
+}
 pub use coptic::Coptic;
-pub use dangi::Dangi;
 pub use ethiopian::{Ethiopian, EthiopianEraStyle};
 pub use gregorian::Gregorian;
 pub use hebrew::Hebrew;
-pub use hijri::{
-    HijriSimulated, HijriTabular, HijriTabularEpoch, HijriTabularLeapYears, HijriUmmAlQura,
-};
+pub use hijri_internal::Hijri;
+/// Customizations for the [`Hijri`] calendar.
+pub mod hijri {
+    pub use super::hijri_internal::{
+        AstronomicalSimulation, HijriYearData, Rules, TabularAlgorithm, TabularAlgorithmEpoch,
+        TabularAlgorithmLeapYears, UmmAlQura,
+    };
+}
 pub use indian::Indian;
 pub use iso::Iso;
 pub use japanese::{Japanese, JapaneseExtended};
 pub use julian::Julian;
 pub use persian::Persian;
 pub use roc::Roc;
+
+/// Deprecated
+#[deprecated]
+pub use hijri::{
+    TabularAlgorithmEpoch as HijriTabularEpoch, TabularAlgorithmLeapYears as HijriTabularLeapYears,
+};
+/// Deprecated
+#[deprecated]
+pub type HijriSimulated = Hijri<hijri::AstronomicalSimulation>;
+/// Deprecated
+#[deprecated]
+pub type HijriUmmAlQura = Hijri<hijri::UmmAlQura>;
+/// Deprecated
+#[deprecated]
+pub type HijriTabular = Hijri<hijri::TabularAlgorithm>;
+/// Deprecated
+#[deprecated]
+pub type Dangi = LunarChinese<chinese::Dangi>;
+/// Deprecated
+#[deprecated]
+pub type Chinese = LunarChinese<chinese::China>;
 
 pub use crate::any_calendar::{AnyCalendar, AnyCalendarKind};
 

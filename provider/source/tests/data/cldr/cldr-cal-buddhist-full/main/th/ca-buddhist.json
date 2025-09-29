@@ -100,13 +100,13 @@
             "days": {
               "format": {
                 "abbreviated": {
-                  "sun": "อา.",
-                  "mon": "จ.",
-                  "tue": "อ.",
-                  "wed": "พ.",
-                  "thu": "พฤ.",
-                  "fri": "ศ.",
-                  "sat": "ส."
+                  "sun": "อาทิตย์",
+                  "mon": "จันทร์",
+                  "tue": "อังคาร",
+                  "wed": "พุธ",
+                  "thu": "พฤหัส",
+                  "fri": "ศุกร์",
+                  "sat": "เสาร์"
                 },
                 "narrow": {
                   "sun": "อา",
@@ -138,13 +138,13 @@
               },
               "stand-alone": {
                 "abbreviated": {
-                  "sun": "อา.",
-                  "mon": "จ.",
-                  "tue": "อ.",
-                  "wed": "พ.",
-                  "thu": "พฤ.",
-                  "fri": "ศ.",
-                  "sat": "ส."
+                  "sun": "อาทิตย์",
+                  "mon": "จันทร์",
+                  "tue": "อังคาร",
+                  "wed": "พุธ",
+                  "thu": "พฤหัส",
+                  "fri": "ศุกร์",
+                  "sat": "เสาร์"
                 },
                 "narrow": {
                   "sun": "อา",
@@ -341,15 +341,19 @@
                 "Bhms": "h:mm:ss B",
                 "d": "d",
                 "E": "ccc",
+                "EBh": "E h B",
                 "EBhm": "E h:mm B",
                 "EBhms": "E h:mm:ss B",
                 "Ed": "E d",
+                "Eh": "E h a",
                 "Ehm": "E h:mm a",
                 "EHm": "E HH:mm",
                 "Ehms": "E h:mm:ss a",
                 "EHms": "E HH:mm:ss",
                 "Gy": "G y",
+                "GyM": "M/G y",
                 "GyMd": "d/M/GGGGG y",
+                "GyMEd": "E ที่ d/M/G y",
                 "GyMMM": "MMM G y",
                 "GyMMMd": "d MMM G y",
                 "GyMMMEd": "E d MMM G y",
@@ -360,6 +364,8 @@
                 "Hm": "HH:mm",
                 "hms": "h:mm:ss a",
                 "Hms": "HH:mm:ss",
+                "hv": "h a v",
+                "Hv": "HH'h' v",
                 "M": "L",
                 "Md": "d/M",
                 "MEd": "E d/M",
@@ -550,6 +556,14 @@
               }
             },
             "dateTimeFormats-atTime": {
+              "standard": {
+                "full": "{1} เวลา {0}",
+                "long": "{1} เวลา {0}",
+                "medium": "{1} {0}",
+                "short": "{1} {0}"
+              }
+            },
+            "dateTimeFormats-relative": {
               "standard": {
                 "full": "{1} เวลา {0}",
                 "long": "{1} เวลา {0}",

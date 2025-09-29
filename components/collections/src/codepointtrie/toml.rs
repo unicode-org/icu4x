@@ -71,7 +71,7 @@ impl CodePointTrieToml {
     }
 
     /// Gets the `data` slice.
-    pub fn data_slice(&self) -> Result<CodePointDataSlice, Error> {
+    pub fn data_slice(&self) -> Result<CodePointDataSlice<'_>, Error> {
         if let Some(data_8) = &self.data_8 {
             Ok(CodePointDataSlice::U8(data_8.as_slice()))
         } else if let Some(data_16) = &self.data_16 {

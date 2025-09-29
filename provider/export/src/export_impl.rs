@@ -498,7 +498,7 @@ fn test_collation_filtering() {
     }
 
     impl IterableDataProvider<icu::collator::provider::CollationTailoringV1> for Provider {
-        fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+        fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
             Ok(BTreeSet::from_iter(
                 [
                     (locale!("ko"), "search"),

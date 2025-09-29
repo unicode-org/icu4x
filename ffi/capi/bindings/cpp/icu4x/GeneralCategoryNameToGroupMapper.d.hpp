@@ -1,5 +1,5 @@
-#ifndef icu4x_GeneralCategoryNameToGroupMapper_D_HPP
-#define icu4x_GeneralCategoryNameToGroupMapper_D_HPP
+#ifndef ICU4X_GeneralCategoryNameToGroupMapper_D_HPP
+#define ICU4X_GeneralCategoryNameToGroupMapper_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,8 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
@@ -18,7 +17,8 @@ namespace capi { struct GeneralCategoryNameToGroupMapper; }
 class GeneralCategoryNameToGroupMapper;
 struct GeneralCategoryGroup;
 class DataError;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -68,21 +68,21 @@ public:
    *
    * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::GeneralCategoryNameToGroupMapper>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::GeneralCategoryNameToGroupMapper>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
-  inline const icu4x::capi::GeneralCategoryNameToGroupMapper* AsFFI() const;
-  inline icu4x::capi::GeneralCategoryNameToGroupMapper* AsFFI();
-  inline static const icu4x::GeneralCategoryNameToGroupMapper* FromFFI(const icu4x::capi::GeneralCategoryNameToGroupMapper* ptr);
-  inline static icu4x::GeneralCategoryNameToGroupMapper* FromFFI(icu4x::capi::GeneralCategoryNameToGroupMapper* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::GeneralCategoryNameToGroupMapper* AsFFI() const;
+    inline icu4x::capi::GeneralCategoryNameToGroupMapper* AsFFI();
+    inline static const icu4x::GeneralCategoryNameToGroupMapper* FromFFI(const icu4x::capi::GeneralCategoryNameToGroupMapper* ptr);
+    inline static icu4x::GeneralCategoryNameToGroupMapper* FromFFI(icu4x::capi::GeneralCategoryNameToGroupMapper* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  GeneralCategoryNameToGroupMapper() = delete;
-  GeneralCategoryNameToGroupMapper(const icu4x::GeneralCategoryNameToGroupMapper&) = delete;
-  GeneralCategoryNameToGroupMapper(icu4x::GeneralCategoryNameToGroupMapper&&) noexcept = delete;
-  GeneralCategoryNameToGroupMapper operator=(const icu4x::GeneralCategoryNameToGroupMapper&) = delete;
-  GeneralCategoryNameToGroupMapper operator=(icu4x::GeneralCategoryNameToGroupMapper&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    GeneralCategoryNameToGroupMapper() = delete;
+    GeneralCategoryNameToGroupMapper(const icu4x::GeneralCategoryNameToGroupMapper&) = delete;
+    GeneralCategoryNameToGroupMapper(icu4x::GeneralCategoryNameToGroupMapper&&) noexcept = delete;
+    GeneralCategoryNameToGroupMapper operator=(const icu4x::GeneralCategoryNameToGroupMapper&) = delete;
+    GeneralCategoryNameToGroupMapper operator=(icu4x::GeneralCategoryNameToGroupMapper&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_GeneralCategoryNameToGroupMapper_D_HPP
+#endif // ICU4X_GeneralCategoryNameToGroupMapper_D_HPP

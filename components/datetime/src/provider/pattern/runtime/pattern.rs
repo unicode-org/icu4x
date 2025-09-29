@@ -123,7 +123,7 @@ impl Pattern<'_> {
         }
     }
 
-    pub(crate) fn as_borrowed(&self) -> PatternBorrowed {
+    pub(crate) fn as_borrowed(&self) -> PatternBorrowed<'_> {
         PatternBorrowed {
             items: &self.items,
             metadata: self.metadata,

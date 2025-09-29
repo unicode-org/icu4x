@@ -1,5 +1,5 @@
-#ifndef icu4x_TransformResult_D_HPP
-#define icu4x_TransformResult_D_HPP
+#ifndef ICU4X_TransformResult_D_HPP
+#define ICU4X_TransformResult_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -29,24 +29,24 @@ namespace icu4x {
  */
 class TransformResult {
 public:
-  enum Value {
-    Modified = 0,
-    Unmodified = 1,
-  };
+    enum Value {
+        Modified = 0,
+        Unmodified = 1,
+    };
 
-  TransformResult(): value(Value::Unmodified) {}
+    TransformResult(): value(Value::Unmodified) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr TransformResult(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr TransformResult(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::TransformResult AsFFI() const;
-  inline static icu4x::TransformResult FromFFI(icu4x::capi::TransformResult c_enum);
+    inline icu4x::capi::TransformResult AsFFI() const;
+    inline static icu4x::TransformResult FromFFI(icu4x::capi::TransformResult c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_TransformResult_D_HPP
+#endif // ICU4X_TransformResult_D_HPP

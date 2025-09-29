@@ -4,7 +4,6 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -18,16 +17,19 @@ pub mod ffi {
 
     use writeable::Writeable;
 
+    /// 🚧 This API is experimental and may experience breaking changes outside major releases.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::experimental::displaynames::LocaleDisplayNamesFormatter, Struct)]
     pub struct LocaleDisplayNamesFormatter(
         pub icu_experimental::displaynames::LocaleDisplayNamesFormatter,
     );
 
+    /// 🚧 This API is experimental and may experience breaking changes outside major releases.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::experimental::displaynames::RegionDisplayNames, Struct)]
     pub struct RegionDisplayNames(pub icu_experimental::displaynames::RegionDisplayNames);
 
+    /// 🚧 This API is experimental and may experience breaking changes outside major releases.
     #[diplomat::rust_link(icu::experimental::displaynames::DisplayNamesOptions, Struct)]
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "DisplayNamesOptions")]
     pub struct DisplayNamesOptionsV1 {
@@ -40,6 +42,7 @@ pub mod ffi {
         pub language_display: DiplomatOption<LanguageDisplay>,
     }
 
+    /// 🚧 This API is experimental and may experience breaking changes outside major releases.
     #[diplomat::rust_link(icu::experimental::displaynames::Style, Enum)]
     #[diplomat::enum_convert(icu_experimental::displaynames::Style, needs_wildcard)]
     #[non_exhaustive]
@@ -50,6 +53,7 @@ pub mod ffi {
         Menu,
     }
 
+    /// 🚧 This API is experimental and may experience breaking changes outside major releases.
     #[diplomat::rust_link(icu::experimental::displaynames::Fallback, Enum)]
     #[diplomat::enum_convert(icu_experimental::displaynames::Fallback, needs_wildcard)]
     #[non_exhaustive]
@@ -59,6 +63,7 @@ pub mod ffi {
         None,
     }
 
+    /// 🚧 This API is experimental and may experience breaking changes outside major releases.
     #[diplomat::rust_link(icu::experimental::displaynames::LanguageDisplay, Enum)]
     #[diplomat::enum_convert(icu_experimental::displaynames::LanguageDisplay, needs_wildcard)]
     #[non_exhaustive]
@@ -69,6 +74,8 @@ pub mod ffi {
     }
 
     impl LocaleDisplayNamesFormatter {
+        /// 🚧 This API is experimental and may experience breaking changes outside major releases.
+        ///
         /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using compiled data.
         #[diplomat::rust_link(
             icu::experimental::displaynames::LocaleDisplayNamesFormatter::try_new,
@@ -92,6 +99,8 @@ pub mod ffi {
             )))
         }
 
+        /// 🚧 This API is experimental and may experience breaking changes outside major releases.
+        ///
         /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using a particular data source.
         #[diplomat::rust_link(
             icu::experimental::displaynames::LocaleDisplayNamesFormatter::try_new,
@@ -116,11 +125,16 @@ pub mod ffi {
             )))
         }
 
+        /// 🚧 This API is experimental and may experience breaking changes outside major releases.
+        ///
         /// Returns the locale-specific display name of a locale.
         #[diplomat::rust_link(
             icu::experimental::displaynames::LocaleDisplayNamesFormatter::of,
             FnInStruct
         )]
+
+        /// 🚧 This API is experimental and may experience breaking changes outside major releases.
+        ///
         // Experimental, do not generate in demo:
         #[diplomat::attr(demo_gen, disable)]
         pub fn of(&self, locale: &Locale, write: &mut DiplomatWrite) {
@@ -129,6 +143,8 @@ pub mod ffi {
     }
 
     impl RegionDisplayNames {
+        /// 🚧 This API is experimental and may experience breaking changes outside major releases.
+        ///
         /// Creates a new `RegionDisplayNames` from locale data and an options bag using compiled data.
         #[diplomat::rust_link(
             icu::experimental::displaynames::RegionDisplayNames::try_new,
@@ -149,6 +165,8 @@ pub mod ffi {
             )))
         }
 
+        /// 🚧 This API is experimental and may experience breaking changes outside major releases.
+        ///
         /// Creates a new `RegionDisplayNames` from locale data and an options bag using a particular data source.
         #[diplomat::rust_link(
             icu::experimental::displaynames::RegionDisplayNames::try_new,
@@ -174,6 +192,8 @@ pub mod ffi {
             )))
         }
 
+        /// 🚧 This API is experimental and may experience breaking changes outside major releases.
+        ///
         /// Returns the locale specific display name of a region.
         /// Note that the function returns an empty string in case the display name for a given
         /// region code is not found.

@@ -1,5 +1,5 @@
-#ifndef icu4x_CalendarKind_D_HPP
-#define icu4x_CalendarKind_D_HPP
+#ifndef ICU4X_CalendarKind_D_HPP
+#define ICU4X_CalendarKind_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,13 +9,13 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct Locale; }
 class Locale;
 class CalendarKind;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -53,34 +53,34 @@ namespace icu4x {
  */
 class CalendarKind {
 public:
-  enum Value {
-    Iso = 0,
-    Gregorian = 1,
-    Buddhist = 2,
-    Japanese = 3,
-    JapaneseExtended = 4,
-    Ethiopian = 5,
-    EthiopianAmeteAlem = 6,
-    Indian = 7,
-    Coptic = 8,
-    Dangi = 9,
-    Chinese = 10,
-    Hebrew = 11,
-    HijriTabularTypeIIFriday = 12,
-    HijriSimulatedMecca = 18,
-    HijriTabularTypeIIThursday = 14,
-    HijriUmmAlQura = 15,
-    Persian = 16,
-    Roc = 17,
-  };
+    enum Value {
+        Iso = 0,
+        Gregorian = 1,
+        Buddhist = 2,
+        Japanese = 3,
+        JapaneseExtended = 4,
+        Ethiopian = 5,
+        EthiopianAmeteAlem = 6,
+        Indian = 7,
+        Coptic = 8,
+        Dangi = 9,
+        Chinese = 10,
+        Hebrew = 11,
+        HijriTabularTypeIIFriday = 12,
+        HijriSimulatedMecca = 18,
+        HijriTabularTypeIIThursday = 14,
+        HijriUmmAlQura = 15,
+        Persian = 16,
+        Roc = 17,
+    };
 
-  CalendarKind(): value(Value::Iso) {}
+    CalendarKind(): value(Value::Iso) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr CalendarKind(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr CalendarKind(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
   /**
    * Creates a new {@link CalendarKind} for the specified locale, using compiled data.
@@ -89,11 +89,11 @@ public:
    */
   inline static icu4x::CalendarKind create(const icu4x::Locale& locale);
 
-  inline icu4x::capi::CalendarKind AsFFI() const;
-  inline static icu4x::CalendarKind FromFFI(icu4x::capi::CalendarKind c_enum);
+    inline icu4x::capi::CalendarKind AsFFI() const;
+    inline static icu4x::CalendarKind FromFFI(icu4x::capi::CalendarKind c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_CalendarKind_D_HPP
+#endif // ICU4X_CalendarKind_D_HPP

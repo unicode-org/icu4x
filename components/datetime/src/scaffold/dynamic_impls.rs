@@ -5,10 +5,10 @@
 use super::*;
 use crate::fieldsets::enums::*;
 use crate::provider::{neo::*, time_zones::tz, *};
-use icu_calendar::types::{DayOfMonth, DayOfYear, MonthInfo, Weekday, YearInfo};
+use icu_calendar::types::{DayOfMonth, DayOfYear, MonthInfo, RataDie, Weekday, YearInfo};
 use icu_provider::marker::NeverMarker;
 use icu_time::{
-    zone::{TimeZoneVariant, UtcOffset, ZoneNameTimestamp},
+    zone::{UtcOffset, ZoneNameTimestamp},
     Hour, Minute, Nanosecond, Second, TimeZone,
 };
 
@@ -37,6 +37,7 @@ impl DateInputMarkers for DateFieldSet {
     type MonthInput = datetime_marker_helper!(@input/month, yes);
     type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, yes);
     type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, yes);
+    type RataDieInput = datetime_marker_helper!(@input/rata_die, yes);
     type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, yes);
 }
 
@@ -87,6 +88,7 @@ impl DateInputMarkers for CalendarPeriodFieldSet {
     type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month,);
     type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week,);
     type DayOfYearInput = datetime_marker_helper!(@input/day_of_year,);
+    type RataDieInput = datetime_marker_helper!(@input/rata_die,);
 }
 
 impl<C: CldrCalendar> TypedDateDataMarkers<C> for CalendarPeriodFieldSet {
@@ -196,8 +198,7 @@ impl DateTimeNamesMarker for ZoneFieldSet {
 impl ZoneMarkers for ZoneFieldSet {
     type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, yes);
     type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
-    type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, yes);
-    type TimeZoneNameTimestampInput = datetime_marker_helper!(@input/timezone/local_time, yes);
+    type TimeZoneNameTimestampInput = datetime_marker_helper!(@input/timezone/timestamp, yes);
     type EssentialsV1 = datetime_marker_helper!(@data/zone/essentials, yes);
     type LocationsV1 = datetime_marker_helper!(@data/zone/locations, yes);
     type LocationsRootV1 = datetime_marker_helper!(@data/zone/locations_root, yes);

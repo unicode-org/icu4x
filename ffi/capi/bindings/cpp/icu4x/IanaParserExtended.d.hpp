@@ -1,5 +1,5 @@
-#ifndef icu4x_IanaParserExtended_D_HPP
-#define icu4x_IanaParserExtended_D_HPP
+#ifndef ICU4X_IanaParserExtended_D_HPP
+#define ICU4X_IanaParserExtended_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,8 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
@@ -22,7 +21,8 @@ namespace capi { struct TimeZoneAndCanonicalIterator; }
 class TimeZoneAndCanonicalIterator;
 struct TimeZoneAndCanonicalAndNormalized;
 class DataError;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -55,7 +55,7 @@ public:
    *
    * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::IanaParserExtended>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::IanaParserExtended>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * See the [Rust documentation for `parse`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.parse) for more information.
@@ -72,19 +72,19 @@ public:
    */
   inline std::unique_ptr<icu4x::TimeZoneAndCanonicalAndNormalizedIterator> iter_all() const;
 
-  inline const icu4x::capi::IanaParserExtended* AsFFI() const;
-  inline icu4x::capi::IanaParserExtended* AsFFI();
-  inline static const icu4x::IanaParserExtended* FromFFI(const icu4x::capi::IanaParserExtended* ptr);
-  inline static icu4x::IanaParserExtended* FromFFI(icu4x::capi::IanaParserExtended* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::IanaParserExtended* AsFFI() const;
+    inline icu4x::capi::IanaParserExtended* AsFFI();
+    inline static const icu4x::IanaParserExtended* FromFFI(const icu4x::capi::IanaParserExtended* ptr);
+    inline static icu4x::IanaParserExtended* FromFFI(icu4x::capi::IanaParserExtended* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  IanaParserExtended() = delete;
-  IanaParserExtended(const icu4x::IanaParserExtended&) = delete;
-  IanaParserExtended(icu4x::IanaParserExtended&&) noexcept = delete;
-  IanaParserExtended operator=(const icu4x::IanaParserExtended&) = delete;
-  IanaParserExtended operator=(icu4x::IanaParserExtended&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    IanaParserExtended() = delete;
+    IanaParserExtended(const icu4x::IanaParserExtended&) = delete;
+    IanaParserExtended(icu4x::IanaParserExtended&&) noexcept = delete;
+    IanaParserExtended operator=(const icu4x::IanaParserExtended&) = delete;
+    IanaParserExtended operator=(icu4x::IanaParserExtended&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_IanaParserExtended_D_HPP
+#endif // ICU4X_IanaParserExtended_D_HPP

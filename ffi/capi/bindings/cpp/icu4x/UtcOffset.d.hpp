@@ -1,5 +1,5 @@
-#ifndef icu4x_UtcOffset_D_HPP
-#define icu4x_UtcOffset_D_HPP
+#ifndef ICU4X_UtcOffset_D_HPP
+#define ICU4X_UtcOffset_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,13 +9,13 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct UtcOffset; }
 class UtcOffset;
 struct TimeZoneInvalidOffsetError;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -38,7 +38,7 @@ public:
    *
    * See the [Rust documentation for `try_from_seconds`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.UtcOffset.html#method.try_from_seconds) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::UtcOffset>, icu4x::TimeZoneInvalidOffsetError> from_seconds(int32_t seconds);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::UtcOffset>, icu4x::TimeZoneInvalidOffsetError> from_seconds(int32_t seconds);
 
   /**
    * Creates an offset from a string.
@@ -47,7 +47,7 @@ public:
    *
    * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.UtcOffset.html)
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::UtcOffset>, icu4x::TimeZoneInvalidOffsetError> from_string(std::string_view offset);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::UtcOffset>, icu4x::TimeZoneInvalidOffsetError> from_string(std::string_view offset);
 
   /**
    * Returns the value as offset seconds.
@@ -105,19 +105,19 @@ public:
    */
   inline uint32_t seconds_part() const;
 
-  inline const icu4x::capi::UtcOffset* AsFFI() const;
-  inline icu4x::capi::UtcOffset* AsFFI();
-  inline static const icu4x::UtcOffset* FromFFI(const icu4x::capi::UtcOffset* ptr);
-  inline static icu4x::UtcOffset* FromFFI(icu4x::capi::UtcOffset* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::UtcOffset* AsFFI() const;
+    inline icu4x::capi::UtcOffset* AsFFI();
+    inline static const icu4x::UtcOffset* FromFFI(const icu4x::capi::UtcOffset* ptr);
+    inline static icu4x::UtcOffset* FromFFI(icu4x::capi::UtcOffset* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  UtcOffset() = delete;
-  UtcOffset(const icu4x::UtcOffset&) = delete;
-  UtcOffset(icu4x::UtcOffset&&) noexcept = delete;
-  UtcOffset operator=(const icu4x::UtcOffset&) = delete;
-  UtcOffset operator=(icu4x::UtcOffset&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    UtcOffset() = delete;
+    UtcOffset(const icu4x::UtcOffset&) = delete;
+    UtcOffset(icu4x::UtcOffset&&) noexcept = delete;
+    UtcOffset operator=(const icu4x::UtcOffset&) = delete;
+    UtcOffset operator=(icu4x::UtcOffset&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_UtcOffset_D_HPP
+#endif // ICU4X_UtcOffset_D_HPP

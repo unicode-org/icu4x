@@ -34,13 +34,13 @@ all-features = true
 # ICU components
 icu = { workspace = true, features = ["datagen"] }
 
+icu_time = { workspace = true, features = ["ixdtf"] }
+
 # ICU infrastructure
 calendrical_calculations = { workspace = true }
 icu_codepointtrie_builder = { workspace = true }
-icu_collections = { workspace = true, features = ["serde"] }
 icu_pattern = { workspace = true, features = ["alloc", "serde"] }
 icu_provider = { workspace = true, features = ["std", "logging", "export"]}
-icu_provider_adapters = { workspace = true }
 icu_provider_registry = { workspace = true }
 litemap = { workspace = true, features = ["serde"] }
 tinystr = { workspace = true, features = ["alloc", "serde", "zerovec"] }
@@ -51,7 +51,6 @@ zerovec = { workspace = true, features = ["serde", "yoke", "alloc"] }
 
 # External dependencies
 displaydoc = { workspace = true }
-either = { workspace = true }
 elsa = { workspace = true }
 flate2 = { workspace = true }
 itertools = { workspace = true }
@@ -70,9 +69,6 @@ zip = { workspace = true, features = ["deflate"] }
 ureq = { workspace = true, optional = true}
 
 # `experimental` feature 
-icu_experimental = { workspace = true, features = ["datagen"], optional = true }
-num-bigint = { workspace = true, optional = true }
-num-rational = { workspace = true, optional = true }
 num-traits = { workspace = true, optional = true }
 
 [dev-dependencies]
@@ -82,6 +78,8 @@ icu_provider = { workspace = true, features = ["deserialize_postcard_1"] }
 icu_segmenter = { path = "../../components/segmenter", features = ["lstm"] }
 simple_logger = { workspace = true }
 icu = { path = "../../components/icu", default-features = false, features = ["experimental"] }
+num-bigint = { workspace = true }
+num-rational = { workspace = true }
 
 [features]
 default = ["use_wasm", "networking"]
@@ -95,10 +93,11 @@ use_icu4c = ["icu_codepointtrie_builder/icu4c"]
 networking = ["dep:ureq"]
 experimental = [
     "icu/experimental",
-    "dep:num-bigint",
-    "dep:num-rational",
     "dep:num-traits",
 ]
+
+# added by accident
+icu_experimental = []
 
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check

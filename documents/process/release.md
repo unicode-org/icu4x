@@ -13,6 +13,7 @@ This is a checklist of things that should be done in the weeks leading to the re
 
 * [ ] Verify that the milestone and checklist are complete
 * [ ] Verify with component owners that they're ready for release
+* [ ] Verify that the semver breakages (listed by the build-test job) are acceptable
 * [ ] Take a bird-eye view at:
   * [ ] READMEs
   * [ ] Documentation
@@ -65,7 +66,7 @@ The ICU4X TC may decide to make a patch release of an ICU4X component on an old 
 * Fix the issue on the main branch. Get it reviewed and landed.
   * Include an update to the changelog.
   * If possible, avoid mixing functional changes with generated files (e.g. data or FFI) in the commit that lands on the main branch.
-* For util crates (and other crates not versioned with ICU4X), update their `Cargo.toml`s on `main` to reflect the version you wish to publish, to simplify things for people making ICU4X major/minor releases in the future. Do NOT publish from `main`.
+* If your release also requires uplifting patches to a utils crate (and other crates not versioned with ICU4X), update their `Cargo.toml`s on `main` to reflect the version you wish to publish, to simplify things for people making ICU4X major/minor releases in the future. In this case, try to avoid publishing the util from `main`: it's fine if there have already been out-of-cycle util releases on `main`, but if this is the first util release since the last ICU4X release, cherry pick just the necessary changes onto the release branch.
 * Check out the `release/x.y` branch. On this branch:
   * Cherry-pick the functional change from the main branch
   * Cherry-pick the changelog update if it was a separate commit

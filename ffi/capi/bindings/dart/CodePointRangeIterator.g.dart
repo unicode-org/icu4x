@@ -24,6 +24,7 @@ final class CodePointRangeIterator implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('icu4x_CodePointRangeIterator_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CodePointRangeIterator_destroy_mv1));
 
   /// Advance the iterator by one and return the next range.

@@ -14,8 +14,17 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
+icu::calendar::Date::try_from_fields#FnInStruct
+icu::calendar::options::DateFromFieldsOptions#Struct
+icu::calendar::options::MissingFieldsStrategy#Enum
+icu::calendar::options::Overflow#Enum
+icu::calendar::types::DateFields#Struct
 icu::collator::CollatorBorrowed::compare_latin1#FnInStruct
 icu::collator::CollatorBorrowed::compare_latin1_utf16#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_to#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_utf16_to#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_utf8_to#FnInStruct
+icu::properties::props::IdCompatMathContinue#Struct
+icu::properties::props::IdCompatMathStart#Struct
+icu::properties::props::IdsUnaryOperator#Struct
+icu::properties::props::ModifierCombiningMark#Struct

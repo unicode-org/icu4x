@@ -21,6 +21,7 @@ final class CodePointSetBuilder implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('icu4x_CodePointSetBuilder_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CodePointSetBuilder_destroy_mv1));
 
   /// Make a new set builder containing nothing

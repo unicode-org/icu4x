@@ -11,7 +11,6 @@
 //! 1. The time zone ID
 //! 2. The offset from UTC
 //! 3. A timestamp, as time zone names can change over time
-//! 4. The zone variant, representing concepts such as Standard, Summer, Daylight, and Ramadan time
 //!
 //! ## Time Zone
 //!
@@ -43,18 +42,6 @@
 //! It is not required to set the timestamp on [`TimeZoneInfo`]. If it is not set, some string
 //! formats may be unsupported.
 //!
-//! ## Zone Variant
-//!
-//! Many zones use different names and offsets in the summer than in the winter. In ICU4X,
-//! this is called the _zone variant_.
-//!
-//! CLDR has two zone variants, named `"standard"` and `"daylight"`. However, the mapping of these
-//! variants to specific observed offsets varies from time zone to time zone, and they may not
-//! consistently represent winter versus summer time.
-//!
-//! Note: It is not required to set the zone variant on [`TimeZoneInfo`]. If it is not set, some string
-//! formats may be unsupported.
-//!
 //! # Obtaining time zone information
 //!
 //! This crate does not ship time zone offset information. Other Rust crates such as [`chrono_tz`](https://docs.rs/chrono-tz) or [`jiff`](https://docs.rs/jiff)
@@ -69,7 +56,9 @@ mod zone_name_timestamp;
 pub use offset::InvalidOffsetError;
 pub use offset::UtcOffset;
 pub use offset::VariantOffsets;
+#[allow(deprecated)]
 pub use offset::VariantOffsetsCalculator;
+#[allow(deprecated)]
 pub use offset::VariantOffsetsCalculatorBorrowed;
 
 #[doc(no_inline)]
@@ -134,9 +123,15 @@ pub mod models {
     /// A time zone containing a time zone ID, optional offset, local time, and zone variant.
     #[derive(Debug, PartialEq, Eq)]
     #[non_exhaustive]
+    #[deprecated(
+        since = "2.1.0",
+        note = "creating a `TimeZoneInfo<Full>` is not required for formatting anymore. use `TimeZoneInfo<AtTime>`"
+    )]
     pub struct Full;
 
+    #[allow(deprecated)]
     impl private::Sealed for Full {}
+    #[allow(deprecated)]
     impl TimeZoneModel for Full {
         type TimeZoneVariant = TimeZoneVariant;
         type ZoneNameTimestamp = ZoneNameTimestamp;
@@ -187,39 +182,6 @@ impl TimeZone {
         matches!(self, Self::UNKNOWN)
     }
 }
-
-/// This module exists so we can cleanly reexport TimeZoneVariantULE from the provider module, whilst retaining a public stable TimeZoneVariant type.
-pub(crate) mod ule {
-    /// A time zone variant, such as Standard Time, or Daylight/Summer Time.
-    ///
-    /// This should not generally be constructed by client code. Instead, use
-    /// * [`TimeZoneVariant::from_rearguard_isdst`]
-    /// * [`TimeZoneInfo::infer_variant`](crate::TimeZoneInfo::infer_variant)
-    #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
-    #[zerovec::make_ule(TimeZoneVariantULE)]
-    #[repr(u8)]
-    #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-    #[cfg_attr(feature = "datagen", databake(path = icu_time))]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-    #[non_exhaustive]
-    pub enum TimeZoneVariant {
-        /// The variant corresponding to `"standard"` in CLDR.
-        ///
-        /// The semantics vary from time zone to time zone. The time zone display
-        /// name of this variant may or may not be called "Standard Time".
-        ///
-        /// This is the variant with the lower UTC offset.
-        Standard = 0,
-        /// The variant corresponding to `"daylight"` in CLDR.
-        ///
-        /// The semantics vary from time zone to time zone. The time zone display
-        /// name of this variant may or may not be called "Daylight Time".
-        ///
-        /// This is the variant with the higher UTC offset.
-        Daylight = 1,
-    }
-}
-pub use ule::TimeZoneVariant;
 
 impl Deref for TimeZone {
     type Target = Subtag;
@@ -281,10 +243,6 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 ///     date: Date::try_new_iso(2023, 12, 2).unwrap(),
 ///     time: Time::start_of_day(),
 /// });
-///
-/// // Extend to a TimeZoneInfo<Full> by adding a zone variant
-/// let time_zone_with_variant =
-///     time_zone_at_time.with_variant(TimeZoneVariant::Standard);
 /// ```
 #[derive(Debug, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // these four fields fully cover the needs of UTS 35
@@ -385,14 +343,36 @@ impl TimeZoneInfo<models::Base> {
         }
     }
 
-    /// Sets the [`ZoneNameTimestamp`] to the given local datetime.
+    /// Sets the [`ZoneNameTimestamp`] to the given datetime.
+    ///
+    /// If the offset is knonw, the datetime is interpreted as a local time,
+    /// otherwise as UTC. This produces correct results for the vast majority
+    /// of cases, however close to metazone changes (Eastern Time -> Central Time)
+    /// it might be incorrect if the offset is not known.
+    ///
+    /// Also see [`Self::with_zone_name_timestamp`].
     pub fn at_date_time_iso(self, date_time: DateTime<Iso>) -> TimeZoneInfo<models::AtTime> {
-        Self::with_zone_name_timestamp(self, ZoneNameTimestamp::from_date_time_iso(date_time))
+        Self::with_zone_name_timestamp(
+            self,
+            ZoneNameTimestamp::from_zoned_date_time_iso(crate::ZonedDateTime {
+                date: date_time.date,
+                time: date_time.time,
+                // If we don't have an offset, interpret as UTC. This is incorrect during O(a couple of
+                // hours) since the UNIX epoch (a handful of transitions times the few hours this is too
+                // early/late).
+                zone: self.offset.unwrap_or(UtcOffset::zero()),
+            }),
+        )
     }
 }
 
 impl TimeZoneInfo<models::AtTime> {
     /// Sets a [`TimeZoneVariant`] on this time zone.
+    #[deprecated(
+        since = "2.1.0",
+        note = "creating a `TimeZoneInfo<Full>` is not required for formatting anymore"
+    )]
+    #[allow(deprecated)]
     pub const fn with_variant(self, variant: TimeZoneVariant) -> TimeZoneInfo<models::Full> {
         TimeZoneInfo {
             offset: self.offset,
@@ -405,7 +385,7 @@ impl TimeZoneInfo<models::AtTime> {
     /// Sets the zone variant by calculating it using a [`VariantOffsetsCalculator`].
     ///
     /// If `offset()` is `None`, or if it doesn't match either of the
-    /// timezone's standard or daylight offset around `local_time()`,
+    /// timezone's standard or daylight offset around [`zone_name_timestamp`](Self::zone_name_timestamp),
     /// the variant will be set to [`TimeZoneVariant::Standard`] and the time zone
     /// to [`TimeZone::UNKNOWN`].
     ///
@@ -454,6 +434,11 @@ impl TimeZoneInfo<models::AtTime> {
     /// assert_eq!(info.id(), TimeZone::UNKNOWN);
     /// assert_eq!(info.variant(), TimeZoneVariant::Standard);
     /// ```
+    #[deprecated(
+        since = "2.1.0",
+        note = "creating a `TimeZoneInfo<Full>` is not required for formatting anymore"
+    )]
+    #[allow(deprecated)]
     pub fn infer_variant(
         self,
         calculator: VariantOffsetsCalculatorBorrowed,
@@ -485,6 +470,12 @@ impl TimeZoneInfo<models::AtTime> {
     }
 }
 
+#[deprecated(
+    since = "2.1.0",
+    note = "TimeZoneVariants don't need to be constructed in user code"
+)]
+pub use crate::provider::TimeZoneVariant;
+
 impl TimeZoneVariant {
     /// Creates a zone variant from a TZDB `isdst` flag, if it is known that the TZDB was built with
     /// `DATAFORM=rearguard`.
@@ -497,6 +488,10 @@ impl TimeZoneVariant {
     /// * `Africa/Casablanca` and `Africa/El_Aaiun` since 2018-10-28
     ///
     /// If the TZDB build mode is unknown or variable, use [`TimeZoneInfo::infer_variant`].
+    #[deprecated(
+        since = "2.1.0",
+        note = "TimeZoneVariants don't need to be constructed in user code"
+    )]
     pub const fn from_rearguard_isdst(isdst: bool) -> Self {
         if isdst {
             TimeZoneVariant::Daylight

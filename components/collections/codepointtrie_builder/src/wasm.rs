@@ -95,7 +95,7 @@ impl WasmWrap {
     }
 
     pub(crate) fn read_uerrorcode(&mut self, ptr: &Wasmi32Ptr) -> u32 {
-        let result = self.call_return_i32("read_uerrorcode", &[ptr.0.clone()]);
+        let result = self.call_return_i32("read_uerrorcode", core::slice::from_ref(&ptr.0));
         result.try_into().unwrap()
     }
 
@@ -154,55 +154,62 @@ impl WasmWrap {
     }
 
     pub(crate) fn ucptrie_close(&mut self, ptr: &Wasmi32Ptr) {
-        self.call_return_void("ucptrie_close", &[ptr.0.clone()]);
+        self.call_return_void("ucptrie_close", core::slice::from_ref(&ptr.0));
     }
 
     pub(crate) fn umutablecptrie_close(&mut self, ptr: &Wasmi32Ptr) {
-        self.call_return_void("umutablecptrie_close", &[ptr.0.clone()]);
+        self.call_return_void("umutablecptrie_close", core::slice::from_ref(&ptr.0));
     }
 
     pub(crate) fn read_ucptrie_highStart(&mut self, ptr: &Wasmi32Ptr) -> u32 {
-        let result = self.call_return_i32("read_ucptrie_highStart", &[ptr.0.clone()]);
+        let result = self.call_return_i32("read_ucptrie_highStart", core::slice::from_ref(&ptr.0));
         result.try_into().unwrap()
     }
 
     pub(crate) fn read_ucptrie_shifted12HighStart(&mut self, ptr: &Wasmi32Ptr) -> u16 {
-        let result = self.call_return_i32("read_ucptrie_shifted12HighStart", &[ptr.0.clone()]);
+        let result = self.call_return_i32(
+            "read_ucptrie_shifted12HighStart",
+            core::slice::from_ref(&ptr.0),
+        );
         result.try_into().unwrap()
     }
 
     pub(crate) fn read_ucptrie_index3NullOffset(&mut self, ptr: &Wasmi32Ptr) -> u16 {
-        let result = self.call_return_i32("read_ucptrie_index3NullOffset", &[ptr.0.clone()]);
+        let result = self.call_return_i32(
+            "read_ucptrie_index3NullOffset",
+            core::slice::from_ref(&ptr.0),
+        );
         result.try_into().unwrap()
     }
 
     pub(crate) fn read_ucptrie_dataNullOffset(&mut self, ptr: &Wasmi32Ptr) -> u32 {
-        let result = self.call_return_i32("read_ucptrie_dataNullOffset", &[ptr.0.clone()]);
+        let result =
+            self.call_return_i32("read_ucptrie_dataNullOffset", core::slice::from_ref(&ptr.0));
         result.try_into().unwrap()
     }
 
     pub(crate) fn read_ucptrie_nullValue(&mut self, ptr: &Wasmi32Ptr) -> u32 {
-        let result = self.call_return_i32("read_ucptrie_nullValue", &[ptr.0.clone()]);
+        let result = self.call_return_i32("read_ucptrie_nullValue", core::slice::from_ref(&ptr.0));
         result.try_into().unwrap()
     }
 
     pub(crate) fn get_index_ptr(&mut self, ptr: &Wasmi32Ptr) -> Wasmi32Ptr {
-        let result = self.call_return_value("get_index_ptr", &[ptr.0.clone()]);
+        let result = self.call_return_value("get_index_ptr", core::slice::from_ref(&ptr.0));
         Wasmi32Ptr(result)
     }
 
     pub(crate) fn get_index_length(&mut self, ptr: &Wasmi32Ptr) -> usize {
-        let result = self.call_return_i32("get_index_length", &[ptr.0.clone()]);
+        let result = self.call_return_i32("get_index_length", core::slice::from_ref(&ptr.0));
         result.try_into().unwrap()
     }
 
     pub(crate) fn get_data_ptr(&mut self, ptr: &Wasmi32Ptr) -> Wasmi32Ptr {
-        let result = self.call_return_value("get_data_ptr", &[ptr.0.clone()]);
+        let result = self.call_return_value("get_data_ptr", core::slice::from_ref(&ptr.0));
         Wasmi32Ptr(result)
     }
 
     pub(crate) fn get_data_length(&mut self, ptr: &Wasmi32Ptr) -> usize {
-        let result = self.call_return_i32("get_data_length", &[ptr.0.clone()]);
+        let result = self.call_return_i32("get_data_length", core::slice::from_ref(&ptr.0));
         result.try_into().unwrap()
     }
 }

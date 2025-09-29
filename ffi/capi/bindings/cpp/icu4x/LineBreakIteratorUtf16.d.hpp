@@ -1,5 +1,5 @@
-#ifndef icu4x_LineBreakIteratorUtf16_D_HPP
-#define icu4x_LineBreakIteratorUtf16_D_HPP
+#ifndef ICU4X_LineBreakIteratorUtf16_D_HPP
+#define ICU4X_LineBreakIteratorUtf16_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -33,19 +33,19 @@ public:
    */
   inline int32_t next();
 
-  inline const icu4x::capi::LineBreakIteratorUtf16* AsFFI() const;
-  inline icu4x::capi::LineBreakIteratorUtf16* AsFFI();
-  inline static const icu4x::LineBreakIteratorUtf16* FromFFI(const icu4x::capi::LineBreakIteratorUtf16* ptr);
-  inline static icu4x::LineBreakIteratorUtf16* FromFFI(icu4x::capi::LineBreakIteratorUtf16* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::LineBreakIteratorUtf16* AsFFI() const;
+    inline icu4x::capi::LineBreakIteratorUtf16* AsFFI();
+    inline static const icu4x::LineBreakIteratorUtf16* FromFFI(const icu4x::capi::LineBreakIteratorUtf16* ptr);
+    inline static icu4x::LineBreakIteratorUtf16* FromFFI(icu4x::capi::LineBreakIteratorUtf16* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  LineBreakIteratorUtf16() = delete;
-  LineBreakIteratorUtf16(const icu4x::LineBreakIteratorUtf16&) = delete;
-  LineBreakIteratorUtf16(icu4x::LineBreakIteratorUtf16&&) noexcept = delete;
-  LineBreakIteratorUtf16 operator=(const icu4x::LineBreakIteratorUtf16&) = delete;
-  LineBreakIteratorUtf16 operator=(icu4x::LineBreakIteratorUtf16&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    LineBreakIteratorUtf16() = delete;
+    LineBreakIteratorUtf16(const icu4x::LineBreakIteratorUtf16&) = delete;
+    LineBreakIteratorUtf16(icu4x::LineBreakIteratorUtf16&&) noexcept = delete;
+    LineBreakIteratorUtf16 operator=(const icu4x::LineBreakIteratorUtf16&) = delete;
+    LineBreakIteratorUtf16 operator=(icu4x::LineBreakIteratorUtf16&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_LineBreakIteratorUtf16_D_HPP
+#endif // ICU4X_LineBreakIteratorUtf16_D_HPP

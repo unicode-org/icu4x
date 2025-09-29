@@ -116,7 +116,7 @@ impl Writeable for str {
     /// assert!(matches!(cow, Cow::Borrowed(_)));
     /// ```
     #[inline]
-    fn write_to_string(&self) -> Cow<str> {
+    fn write_to_string(&self) -> Cow<'_, str> {
         Cow::Borrowed(self)
     }
 }
@@ -133,7 +133,7 @@ impl Writeable for String {
     }
 
     #[inline]
-    fn write_to_string(&self) -> Cow<str> {
+    fn write_to_string(&self) -> Cow<'_, str> {
         Cow::Borrowed(self)
     }
 }
@@ -150,7 +150,7 @@ impl Writeable for char {
     }
 
     #[inline]
-    fn write_to_string(&self) -> Cow<str> {
+    fn write_to_string(&self) -> Cow<'_, str> {
         let mut s = String::with_capacity(self.len_utf8());
         s.push(*self);
         Cow::Owned(s)
@@ -174,7 +174,7 @@ impl<T: Writeable + ?Sized> Writeable for &T {
     }
 
     #[inline]
-    fn write_to_string(&self) -> Cow<str> {
+    fn write_to_string(&self) -> Cow<'_, str> {
         (*self).write_to_string()
     }
 }
@@ -195,7 +195,7 @@ macro_rules! impl_write_smart_pointer {
                 core::borrow::Borrow::<T>::borrow(self).writeable_length_hint()
             }
             #[inline]
-            fn write_to_string(&self) -> Cow<str> {
+            fn write_to_string(&self) -> Cow<'_, str> {
                 core::borrow::Borrow::<T>::borrow(self).write_to_string()
             }
         }

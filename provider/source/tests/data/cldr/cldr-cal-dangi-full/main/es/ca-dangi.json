@@ -1087,6 +1087,7 @@
                 "Bhms": "h:mm:ss B",
                 "d": "d",
                 "E": "ccc",
+                "EBh": "E h B",
                 "EBhm": "E h:mm B",
                 "EBhms": "E h:mm:ss B",
                 "Ed": "E d",
@@ -1103,6 +1104,8 @@
                 "Hm": "HH:mm",
                 "hms": "hh:mm:ss a",
                 "Hms": "HH:mm:ss",
+                "hv": "h a v",
+                "Hv": "HH'h' v",
                 "M": "L",
                 "Md": "d-M",
                 "MEd": "E, d-M",
@@ -1248,6 +1251,14 @@
               }
             },
             "dateTimeFormats-atTime": {
+              "standard": {
+                "full": "{1} {0}",
+                "long": "{1} {0}",
+                "medium": "{1} {0}",
+                "short": "{1} {0}"
+              }
+            },
+            "dateTimeFormats-relative": {
               "standard": {
                 "full": "{1} {0}",
                 "long": "{1} {0}",

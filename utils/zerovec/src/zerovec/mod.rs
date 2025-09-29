@@ -167,12 +167,16 @@ impl<U> EyepatchHackVector<U> {
     }
 
     fn truncate(&mut self, max: usize) {
-        // SAFETY: The elements in buf are `ULE`, so they don't need to be dropped
-        // even if we own them.
+        // SAFETY:
+        // - The elements in buf are `ULE`, so they don't need to be dropped even if we own them.
+        // - self.buf is a valid, nonnull slice pointer, since it comes from a NonNull and the struct
+        //   invariant requires validity.
+        // - Because of the `min`, we are guaranteed to be constructing a slice of the same length or
+        //   smaller, from the same pointer, so it will be valid as well, and similarly non-null.
         self.buf = unsafe {
             NonNull::new_unchecked(core::ptr::slice_from_raw_parts_mut(
                 self.buf.as_mut().as_mut_ptr(),
-                core::cmp::max(max, self.buf.as_ref().len()),
+                core::cmp::min(max, self.buf.as_ref().len()),
             ))
         };
     }

@@ -7,7 +7,6 @@
 #[rustfmt::skip]
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
     use writeable::TryWriteable;
@@ -485,9 +484,6 @@ pub mod ffi {
             }
             else {
                 input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::far_in_future())
-            }
-            if let Some(variant) = zone.variant {
-                input.set_time_zone_variant(variant);
             }
             let _infallible = self
                 .0

@@ -1,5 +1,5 @@
-#ifndef icu4x_GeneralCategoryGroup_D_HPP
-#define icu4x_GeneralCategoryGroup_D_HPP
+#ifndef ICU4X_GeneralCategoryGroup_D_HPP
+#define ICU4X_GeneralCategoryGroup_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,12 +9,12 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 struct GeneralCategoryGroup;
 class GeneralCategory;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -35,7 +35,7 @@ namespace icu4x {
  * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
  */
 struct GeneralCategoryGroup {
-  uint32_t mask;
+    uint32_t mask;
 
   /**
    * See the [Rust documentation for `contains`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html#method.contains) for more information.
@@ -107,9 +107,9 @@ struct GeneralCategoryGroup {
    */
   inline static icu4x::GeneralCategoryGroup symbol();
 
-  inline icu4x::capi::GeneralCategoryGroup AsFFI() const;
-  inline static icu4x::GeneralCategoryGroup FromFFI(icu4x::capi::GeneralCategoryGroup c_struct);
+    inline icu4x::capi::GeneralCategoryGroup AsFFI() const;
+    inline static icu4x::GeneralCategoryGroup FromFFI(icu4x::capi::GeneralCategoryGroup c_struct);
 };
 
 } // namespace
-#endif // icu4x_GeneralCategoryGroup_D_HPP
+#endif // ICU4X_GeneralCategoryGroup_D_HPP

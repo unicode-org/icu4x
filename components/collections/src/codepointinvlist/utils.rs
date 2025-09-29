@@ -48,7 +48,7 @@ mod tests {
     use core::char;
     use zerovec::ZeroVec;
 
-    fn make_zv(slice: &[u32]) -> ZeroVec<PotentialCodePoint> {
+    fn make_zv(slice: &[u32]) -> ZeroVec<'_, PotentialCodePoint> {
         slice
             .iter()
             .copied()

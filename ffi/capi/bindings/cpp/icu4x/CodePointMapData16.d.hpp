@@ -1,5 +1,5 @@
-#ifndef icu4x_CodePointMapData16_D_HPP
-#define icu4x_CodePointMapData16_D_HPP
+#ifndef ICU4X_CodePointMapData16_D_HPP
+#define ICU4X_CodePointMapData16_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,8 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct CodePointMapData16; }
 class CodePointMapData16;
@@ -21,7 +20,8 @@ class CodePointSetData;
 namespace capi { struct DataProvider; }
 class DataProvider;
 class DataError;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -85,21 +85,21 @@ public:
    *
    * See the [Rust documentation for `Script`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData16>, icu4x::DataError> create_script_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData16>, icu4x::DataError> create_script_with_provider(const icu4x::DataProvider& provider);
 
-  inline const icu4x::capi::CodePointMapData16* AsFFI() const;
-  inline icu4x::capi::CodePointMapData16* AsFFI();
-  inline static const icu4x::CodePointMapData16* FromFFI(const icu4x::capi::CodePointMapData16* ptr);
-  inline static icu4x::CodePointMapData16* FromFFI(icu4x::capi::CodePointMapData16* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::CodePointMapData16* AsFFI() const;
+    inline icu4x::capi::CodePointMapData16* AsFFI();
+    inline static const icu4x::CodePointMapData16* FromFFI(const icu4x::capi::CodePointMapData16* ptr);
+    inline static icu4x::CodePointMapData16* FromFFI(icu4x::capi::CodePointMapData16* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  CodePointMapData16() = delete;
-  CodePointMapData16(const icu4x::CodePointMapData16&) = delete;
-  CodePointMapData16(icu4x::CodePointMapData16&&) noexcept = delete;
-  CodePointMapData16 operator=(const icu4x::CodePointMapData16&) = delete;
-  CodePointMapData16 operator=(icu4x::CodePointMapData16&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    CodePointMapData16() = delete;
+    CodePointMapData16(const icu4x::CodePointMapData16&) = delete;
+    CodePointMapData16(icu4x::CodePointMapData16&&) noexcept = delete;
+    CodePointMapData16 operator=(const icu4x::CodePointMapData16&) = delete;
+    CodePointMapData16 operator=(icu4x::CodePointMapData16&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_CodePointMapData16_D_HPP
+#endif // ICU4X_CodePointMapData16_D_HPP

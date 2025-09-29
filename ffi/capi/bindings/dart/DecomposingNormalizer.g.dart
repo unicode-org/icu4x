@@ -21,6 +21,7 @@ final class DecomposingNormalizer implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('icu4x_DecomposingNormalizer_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_DecomposingNormalizer_destroy_mv1));
 
   /// Construct a new DecomposingNormalizer instance for NFD using compiled data.

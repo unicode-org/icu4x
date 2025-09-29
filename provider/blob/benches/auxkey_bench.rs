@@ -48,7 +48,7 @@ macro_rules! implement {
             }
         }
         impl IterableDataProvider<$marker> for Baked {
-            fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+            fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
                 const LOCALES: &[LanguageIdentifier] = &[
                     langid!("af"),
                     langid!("am"),

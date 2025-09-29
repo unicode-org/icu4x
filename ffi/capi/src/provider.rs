@@ -4,7 +4,6 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 #[cfg(feature = "buffer_provider")]
 pub mod ffi {
     use alloc::boxed::Box;
@@ -44,6 +43,7 @@ pub mod ffi {
             &self,
         ) -> Result<
             icu_provider::buf::DeserializingBufferProvider<
+                '_,
                 (dyn icu_provider::buf::BufferProvider + 'static),
             >,
             icu_provider::DataError,

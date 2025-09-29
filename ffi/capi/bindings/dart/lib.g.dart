@@ -171,7 +171,8 @@ part 'ZonedDateTimeFormatterGregorian.g.dart';
 part 'ZonedIsoDateTime.g.dart';
 part 'ZonedTimeFormatter.g.dart';
 
-class _DiplomatFfiUse extends meta.RecordUse {
+@meta.RecordUse()
+class _DiplomatFfiUse {
   final String symbol;
 
   const _DiplomatFfiUse(@meta.mustBeConst this.symbol);
@@ -198,13 +199,19 @@ final _callocFree = core.Finalizer(ffi2.calloc.free);
 final _nopFree = core.Finalizer((nothing) => {});
 
 // ignore: unused_element
-final _rustFree = core.Finalizer((({ffi.Pointer<ffi.Void> pointer, int bytes, int align}) record) => _diplomat_free(record.pointer, record.bytes, record.align));
+final _rustFree = core.Finalizer(
+  (({ffi.Pointer<ffi.Void> pointer, int bytes, int align}) record) =>
+      _diplomat_free(record.pointer, record.bytes, record.align),
+);
 
 // ignore: unused_element
 final class _RustAlloc implements ffi.Allocator {
   @override
-  ffi.Pointer<T> allocate<T extends ffi.NativeType>(int byteCount, {int? alignment}) {
-      return _diplomat_alloc(byteCount, alignment ?? 1).cast();
+  ffi.Pointer<T> allocate<T extends ffi.NativeType>(
+    int byteCount, {
+    int? alignment,
+  }) {
+    return _diplomat_alloc(byteCount, alignment ?? 1).cast();
   }
 
   @override
@@ -214,20 +221,27 @@ final class _RustAlloc implements ffi.Allocator {
 }
 
 @_DiplomatFfiUse('diplomat_alloc')
-@ffi.Native<ffi.Pointer<ffi.Void> Function(ffi.Size, ffi.Size)>(symbol: 'diplomat_alloc', isLeaf: true)
+@ffi.Native<ffi.Pointer<ffi.Void> Function(ffi.Size, ffi.Size)>(
+  symbol: 'diplomat_alloc',
+  isLeaf: true,
+)
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Void> _diplomat_alloc(int len, int align);
 
 @_DiplomatFfiUse('diplomat_free')
-@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Void>, ffi.Size, ffi.Size)>(symbol: 'diplomat_free', isLeaf: true)
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Void>, ffi.Size, ffi.Size)>(
+  symbol: 'diplomat_free',
+  isLeaf: true,
+)
 // ignore: non_constant_identifier_names
 external int _diplomat_free(ffi.Pointer<ffi.Void> ptr, int len, int align);
-
 
 // ignore: unused_element
 class _FinalizedArena {
   final ffi2.Arena arena;
-  static final core.Finalizer<ffi2.Arena> _finalizer = core.Finalizer((arena) => arena.releaseAll());
+  static final core.Finalizer<ffi2.Arena> _finalizer = core.Finalizer(
+    (arena) => arena.releaseAll(),
+  );
 
   // ignore: unused_element
   _FinalizedArena() : arena = ffi2.Arena() {
@@ -235,14 +249,14 @@ class _FinalizedArena {
   }
 
   // ignore: unused_element
-  _FinalizedArena.withLifetime(core.List<core.List<Object>> lifetimeAppendArray) : arena = ffi2.Arena() {
+  _FinalizedArena.withLifetime(core.List<core.List<Object>> lifetimeAppendArray)
+    : arena = ffi2.Arena() {
     _finalizer.attach(this, arena);
     for (final edge in lifetimeAppendArray) {
       edge.add(this);
     }
   }
 }
-
 
 final class _ResultDateTimeFfiInt32Union extends ffi.Union {
   external _DateTimeFfi ok;
