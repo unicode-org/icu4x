@@ -12,7 +12,7 @@ use icu::experimental::dimension::provider::units::categorized_display_name::{
     UnitsNamesMassCoreV1, UnitsNamesMassExtendedV1, UnitsNamesMassOutlierV1,
     UnitsNamesVolumeCoreV1, UnitsNamesVolumeExtendedV1, UnitsNamesVolumeOutlierV1,
 };
-use icu::experimental::dimension::provider::units::display_names::UnitsDisplayName;
+use icu::experimental::dimension::provider::units::display_names::UnitsDisplayNames;
 use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
@@ -21,7 +21,7 @@ use std::collections::HashSet;
 impl SourceDataProvider {
     fn get_display_name_payload<M>(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>
     where
-        M: DataMarker<DataStruct = UnitsDisplayName<'static>>,
+        M: DataMarker<DataStruct = UnitsDisplayNames<'static>>,
     {
         let (length, unit) = req
             .id
@@ -57,7 +57,7 @@ impl SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(UnitsDisplayName {
+            payload: DataPayload::from_owned(UnitsDisplayNames {
                 patterns: unit_patterns.try_into_plural_elements_packed_cow()?,
             }),
         })

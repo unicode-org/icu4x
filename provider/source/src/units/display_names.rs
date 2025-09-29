@@ -5,20 +5,20 @@
 use crate::cldr_serde;
 use crate::SourceDataProvider;
 use icu::experimental::dimension::provider::units::display_names::{
-    UnitsDisplayName, UnitsDisplayNameV1,
+    UnitsDisplayNames, UnitsDisplayNamesV1,
 };
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
 use std::collections::HashSet;
 
-impl DataProvider<UnitsDisplayNameV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsDisplayNameV1>, DataError> {
-        self.check_req::<UnitsDisplayNameV1>(req)?;
+impl DataProvider<UnitsDisplayNamesV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsDisplayNamesV1>, DataError> {
+        self.check_req::<UnitsDisplayNamesV1>(req)?;
 
         let (length, unit) = req.id.marker_attributes.split_once('-').ok_or_else(|| {
             DataErrorKind::InvalidRequest
                 .into_error()
-                .with_req(UnitsDisplayNameV1::INFO, req)
+                .with_req(UnitsDisplayNamesV1::INFO, req)
         })?;
 
         let units_format_data: &cldr_serde::units::data::Resource = self
@@ -48,14 +48,14 @@ impl DataProvider<UnitsDisplayNameV1> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(UnitsDisplayName {
+            payload: DataPayload::from_owned(UnitsDisplayNames {
                 patterns: unit_patterns.try_into_plural_elements_packed_cow()?,
             }),
         })
     }
 }
 
-impl crate::IterableDataProviderCached<UnitsDisplayNameV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<UnitsDisplayNamesV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let mut data_locales = HashSet::new();
 
@@ -110,7 +110,7 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let us_locale_long_meter: DataPayload<UnitsDisplayNameV1> = provider
+    let us_locale_long_meter: DataPayload<UnitsDisplayNamesV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("long-meter"),
@@ -127,7 +127,7 @@ fn test_basic() {
     let long = units_us.patterns.get(1.into(), &en_rules).interpolate([1]);
     assert_writeable_eq!(long, "1 meter");
 
-    let us_locale_short_meter: DataPayload<UnitsDisplayNameV1> = provider
+    let us_locale_short_meter: DataPayload<UnitsDisplayNamesV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("short-meter"),
@@ -145,7 +145,7 @@ fn test_basic() {
         .interpolate([5]);
     assert_writeable_eq!(short, "5 m");
 
-    let ar_eg_locale: DataPayload<UnitsDisplayNameV1> = provider
+    let ar_eg_locale: DataPayload<UnitsDisplayNamesV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("long-meter"),
@@ -164,7 +164,7 @@ fn test_basic() {
         .interpolate([1]);
     assert_writeable_eq!(long, "متر");
 
-    let fr_locale: DataPayload<UnitsDisplayNameV1> = provider
+    let fr_locale: DataPayload<UnitsDisplayNamesV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("short-meter"),

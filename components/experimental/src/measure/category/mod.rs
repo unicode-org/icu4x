@@ -15,7 +15,7 @@ use crate::{
             UnitsNamesMassCoreV1, UnitsNamesMassExtendedV1, UnitsNamesMassOutlierV1,
             UnitsNamesVolumeCoreV1, UnitsNamesVolumeExtendedV1, UnitsNamesVolumeOutlierV1,
         },
-        display_names::UnitsDisplayName,
+        display_names::UnitsDisplayNames,
     },
     measure::measureunit::MeasureUnit,
 };
@@ -27,9 +27,9 @@ pub mod mass;
 pub mod volume;
 
 pub trait MeasureUnitCategory {
-    type DataMarkerCore: DynamicDataMarker<DataStruct = UnitsDisplayName<'static>> + DataMarker;
-    type DataMarkerExtended: DynamicDataMarker<DataStruct = UnitsDisplayName<'static>> + DataMarker;
-    type DataMarkerOutlier: DynamicDataMarker<DataStruct = UnitsDisplayName<'static>> + DataMarker;
+    type DataMarkerCore: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>> + DataMarker;
+    type DataMarkerExtended: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>> + DataMarker;
+    type DataMarkerOutlier: DynamicDataMarker<DataStruct = UnitsDisplayNames<'static>> + DataMarker;
 }
 
 /// A [`MeasureUnit`] that is related to a specific category.

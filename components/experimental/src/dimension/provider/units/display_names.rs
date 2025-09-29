@@ -14,9 +14,9 @@ use icu_plurals::provider::PluralElementsPackedCow;
 use icu_provider::prelude::*;
 
 icu_provider::data_marker!(
-    /// `UnitsDisplayNameV1`
-    UnitsDisplayNameV1,
-    UnitsDisplayName<'static>,
+    /// `UnitsDisplayNamesV1`
+    UnitsDisplayNamesV1,
+    UnitsDisplayNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "units"
 );
@@ -25,16 +25,16 @@ icu_provider::data_marker!(
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct UnitsDisplayName<'data> {
+pub struct UnitsDisplayNames<'data> {
     // TODO: use `MeasureUnit` for the units key instead of strings.
     /// Contains the long width patterns for the units.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub patterns: PluralElementsPackedCow<'data, SinglePlaceholderPattern>,
 }
 
-icu_provider::data_struct!(UnitsDisplayName<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_struct!(UnitsDisplayNames<'_>, #[cfg(feature = "datagen")]);
 
-impl<'data> UnitsDisplayName<'data> {
+impl<'data> UnitsDisplayNames<'data> {
     /// Construct an instance directly from a byte slice.
     ///
     /// # Safety
@@ -54,7 +54,7 @@ impl<'data> UnitsDisplayName<'data> {
 }
 
 #[cfg(feature = "datagen")]
-impl databake::Bake for UnitsDisplayName<'_> {
+impl databake::Bake for UnitsDisplayNames<'_> {
     fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
         use zerovec::ule::VarULE;
         ctx.insert("icu_experimental::dimension::provider::units::display_name");
@@ -67,7 +67,7 @@ impl databake::Bake for UnitsDisplayName<'_> {
 }
 
 #[cfg(feature = "datagen")]
-impl databake::BakeSize for UnitsDisplayName<'_> {
+impl databake::BakeSize for UnitsDisplayNames<'_> {
     fn borrows_size(&self) -> usize {
         self.patterns.borrows_size()
     }

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::dimension::provider::units::display_names::UnitsDisplayName;
+use crate::dimension::provider::units::display_names::UnitsDisplayNames;
 
 macro_rules! define_units_data_markers {
     ($($marker:ident, $doc:literal);* $(;)?) => {
@@ -10,7 +10,7 @@ macro_rules! define_units_data_markers {
             icu_provider::data_marker!(
                 #[doc = $doc]
                 $marker,
-                UnitsDisplayName<'static>,
+                UnitsDisplayNames<'static>,
                 #[cfg(feature = "datagen")]
                 attributes_domain = "units"
             );
