@@ -211,6 +211,16 @@ exec --fail-on-error rustup install ${PINNED_CI_NIGHTLY} --profile minimal
 exec --fail-on-error rustup component add rust-src --toolchain ${PINNED_CI_NIGHTLY}
 '''
 
+[tasks.install-llvm-nightly]
+description = "Installs $LLVM_COMPATIBLE_NIGHTLY"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exec --fail-on-error rustup install ${LLVM_COMPATIBLE_NIGHTLY} --profile minimal
+exec --fail-on-error rustup component add rust-src --toolchain ${LLVM_COMPATIBLE_NIGHTLY}
+'''
+
+
 [tasks.install-unknown-linux-nightly]
 description = "Installs the unknown-linux target"
 category = "ICU4X Development"
@@ -222,7 +232,7 @@ args = ["target", "add", "x86_64-unknown-linux-gnu"]
 [tasks.install-unknown-linux-llvm-nightly]
 description = "Installs the unknown-linux target"
 category = "ICU4X Development"
-dependencies = ["install-nightly"]
+dependencies = ["install-llvm-nightly"]
 toolchain = "${LLVM_COMPATIBLE_NIGHTLY}"
 command = "rustup"
 args = ["target", "add", "x86_64-unknown-linux-gnu"]
@@ -246,7 +256,7 @@ args = ["target", "add", "wasm32-unknown-unknown"]
 [tasks.install-wasm-llvm-nightly]
 description = "Installs the wasm target"
 category = "ICU4X Development"
-dependencies = ["install-nightly"]
+dependencies = ["install-llvm-nightly"]
 toolchain = "${LLVM_COMPATIBLE_NIGHTLY}"
 command = "rustup"
 args = ["target", "add", "wasm32-unknown-unknown"]
