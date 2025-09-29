@@ -148,7 +148,7 @@ impl SourceDataProvider {
     }
 }
 
-macro_rules! impl_units_display_name_provider {
+macro_rules! impl_units_display_names_provider {
     ($marker:ty, $unit_type:expr, $category:expr) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
@@ -166,29 +166,29 @@ macro_rules! impl_units_display_name_provider {
 }
 
 // Area
-impl_units_display_name_provider!(UnitsNamesAreaCoreV1, UnitType::Core, "area");
-impl_units_display_name_provider!(UnitsNamesAreaExtendedV1, UnitType::Extended, "area");
-impl_units_display_name_provider!(UnitsNamesAreaOutlierV1, UnitType::Outlier, "area");
+impl_units_display_names_provider!(UnitsNamesAreaCoreV1, UnitType::Core, "area");
+impl_units_display_names_provider!(UnitsNamesAreaExtendedV1, UnitType::Extended, "area");
+impl_units_display_names_provider!(UnitsNamesAreaOutlierV1, UnitType::Outlier, "area");
 
 // Duration
-impl_units_display_name_provider!(UnitsNamesDurationCoreV1, UnitType::Core, "duration");
-impl_units_display_name_provider!(UnitsNamesDurationExtendedV1, UnitType::Extended, "duration");
-impl_units_display_name_provider!(UnitsNamesDurationOutlierV1, UnitType::Outlier, "duration");
+impl_units_display_names_provider!(UnitsNamesDurationCoreV1, UnitType::Core, "duration");
+impl_units_display_names_provider!(UnitsNamesDurationExtendedV1, UnitType::Extended, "duration");
+impl_units_display_names_provider!(UnitsNamesDurationOutlierV1, UnitType::Outlier, "duration");
 
 // Length
-impl_units_display_name_provider!(UnitsNamesLengthCoreV1, UnitType::Core, "length");
-impl_units_display_name_provider!(UnitsNamesLengthExtendedV1, UnitType::Extended, "length");
-impl_units_display_name_provider!(UnitsNamesLengthOutlierV1, UnitType::Outlier, "length");
+impl_units_display_names_provider!(UnitsNamesLengthCoreV1, UnitType::Core, "length");
+impl_units_display_names_provider!(UnitsNamesLengthExtendedV1, UnitType::Extended, "length");
+impl_units_display_names_provider!(UnitsNamesLengthOutlierV1, UnitType::Outlier, "length");
 
 // Mass
-impl_units_display_name_provider!(UnitsNamesMassCoreV1, UnitType::Core, "mass");
-impl_units_display_name_provider!(UnitsNamesMassExtendedV1, UnitType::Extended, "mass");
-impl_units_display_name_provider!(UnitsNamesMassOutlierV1, UnitType::Outlier, "mass");
+impl_units_display_names_provider!(UnitsNamesMassCoreV1, UnitType::Core, "mass");
+impl_units_display_names_provider!(UnitsNamesMassExtendedV1, UnitType::Extended, "mass");
+impl_units_display_names_provider!(UnitsNamesMassOutlierV1, UnitType::Outlier, "mass");
 
 // Volume
-impl_units_display_name_provider!(UnitsNamesVolumeCoreV1, UnitType::Core, "volume");
-impl_units_display_name_provider!(UnitsNamesVolumeExtendedV1, UnitType::Extended, "volume");
-impl_units_display_name_provider!(UnitsNamesVolumeOutlierV1, UnitType::Outlier, "volume");
+impl_units_display_names_provider!(UnitsNamesVolumeCoreV1, UnitType::Core, "volume");
+impl_units_display_names_provider!(UnitsNamesVolumeExtendedV1, UnitType::Extended, "volume");
+impl_units_display_names_provider!(UnitsNamesVolumeOutlierV1, UnitType::Outlier, "volume");
 
 #[test]
 fn test_basic() {
