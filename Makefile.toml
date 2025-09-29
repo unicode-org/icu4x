@@ -18,7 +18,8 @@ default_to_workspace = false
 # The toolchain that CI is being run in. Allows tests to change under beta/nightly.
 CI_TOOLCHAIN = { value = "pinned-stable", condition = { env_not_set = ["CI_TOOLCHAIN"]}}
 # The pinned nightly toolchain for jobs that require a nightly compiler.
-PINNED_CI_NIGHTLY = { value = "nightly-2025-02-17", condition = { env_not_set = ["PINNED_CI_NIGHTLY"] } }
+PINNED_CI_NIGHTLY = { value = "nightly-2025-09-27", condition = { env_not_set = ["PINNED_CI_NIGHTLY"] } }
+LLVM_COMPATIBLE_NIGHTLY = { value = "nightly-2025-02-17", condition = { env_not_set = ["LLVM_COMPATIBLE_NIGHTLY"] } }
 
 [tasks.quick]
 description = "Run quick version of all lints and builds (useful before pushing to GitHub)"

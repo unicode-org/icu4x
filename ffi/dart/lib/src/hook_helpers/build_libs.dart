@@ -62,7 +62,7 @@ Future buildLib(
   final isNoStd = _isNoStdTarget(rustTarget);
 
   final nightly =
-      Platform.environment['PINNED_CI_NIGHTLY'] ?? 'nightly-2025-02-17';
+      Platform.environment['PINNED_CI_NIGHTLY'] ?? 'nightly-2025-09-27';
 
   if (buildStatic || isNoStd) {
     await runProcess('rustup', [
