@@ -57,15 +57,11 @@ impl<'data> UnitsDisplayName<'data> {
 impl databake::Bake for UnitsDisplayName<'_> {
     fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
         use zerovec::ule::VarULE;
-        ctx.insert("icu_experimental::dimension::provider::units::display_names");
+        ctx.insert("icu_experimental::dimension::provider::units::display_name");
         let bytes = self.patterns.elements.as_bytes().bake(ctx);
         // Safety: The bytes are returned by `PluralElementsPackedULE::slice_as_bytes`.
         databake::quote! { unsafe {
-<<<<<<<< HEAD:components/experimental/src/dimension/provider/units/display_names.rs
-            icu_experimental::dimension::provider::units::display_names::UnitsDisplayName::from_bytes_unchecked(#bytes)
-========
             icu_experimental::dimension::provider::units::display_name::UnitsDisplayName::from_bytes_unchecked(#bytes)
->>>>>>>> upstream/main:components/experimental/src/dimension/provider/units/display_name.rs
         }}
     }
 }
