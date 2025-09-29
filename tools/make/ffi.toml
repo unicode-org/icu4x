@@ -15,7 +15,7 @@ args = ["-C", "examples/c", "test"]
 [tasks.test-c-tiny]
 description = "Run C API tests for tiny targets"
 category = "ICU4X Development"
-dependencies = ["install-unknown-linux-nightly"]
+dependencies = ["install-unknown-linux-llvm-nightly"]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
@@ -50,7 +50,7 @@ exec --fail-on-error npm -C examples/npm run start
 [tasks.test-tinywasm]
 description = "Test the Tiny WASM example"
 category = "ICU4X Development"
-dependencies = ["install-wasm-nightly"]
+dependencies = ["install-wasm-llvm-nightly"]
 command = "make"
 args = ["-C", "examples/js-tiny", "test"]
 
@@ -218,6 +218,14 @@ toolchain = "${PINNED_CI_NIGHTLY}"
 command = "rustup"
 args = ["target", "add", "x86_64-unknown-linux-gnu"]
 
+[tasks.install-unknown-linux-llvm-nightly]
+description = "Installs the unknown-linux target"
+category = "ICU4X Development"
+dependencies = ["install-nightly"]
+toolchain = "${LLVM_COMPATIBLE_NIGHTLY}"
+command = "rustup"
+args = ["target", "add", "x86_64-unknown-linux-gnu"]
+
 [tasks.install-emscripten-nightly]
 description = "Installs the emscripten target"
 category = "ICU4X Development"
@@ -231,6 +239,14 @@ description = "Installs the wasm target"
 category = "ICU4X Development"
 dependencies = ["install-nightly"]
 toolchain = "${PINNED_CI_NIGHTLY}"
+command = "rustup"
+args = ["target", "add", "wasm32-unknown-unknown"]
+
+[tasks.install-wasm-llvm-nightly]
+description = "Installs the wasm target"
+category = "ICU4X Development"
+dependencies = ["install-nightly"]
+toolchain = "${LLVM_COMPATIBLE_NIGHTLY}"
 command = "rustup"
 args = ["target", "add", "wasm32-unknown-unknown"]
 

@@ -5,8 +5,7 @@
 .DEFAULT_GOAL := build
 FORCE:
 
-# TODO: Set this back to nightly once the -zwasm-c-abi mess is resolved
-PINNED_CI_NIGHTLY ?= "nightly-2025-02-17"
+PINNED_CI_NIGHTLY ?= "nightly-2025-09-27"
 
 # 100 KiB, working around a bug in older rustc
 # https://github.com/unicode-org/icu4x/issues/2753
@@ -19,7 +18,7 @@ lib/index.mjs: FORCE
 ../../target/wasm32-unknown-unknown/release/icu_capi.wasm: FORCE
 	rustup toolchain install ${PINNED_CI_NIGHTLY}
 	rustup component add rust-src --toolchain ${PINNED_CI_NIGHTLY}
-	RUSTFLAGS="-Cpanic=immediate-abort -Copt-level=s -C link-args=-zstack-size=${WASM_STACK_SIZE} -Clto -Cembed-bitcode -Zwasm-c-abi=spec" \
+	RUSTFLAGS="-Zunstable-options -Cpanic=immediate-abort -Copt-level=s -C link-args=-zstack-size=${WASM_STACK_SIZE} -Clto -Cembed-bitcode -Zwasm-c-abi=spec" \
 	cargo +${PINNED_CI_NIGHTLY} rustc \
 		-Z build-std=std,panic_abort \
 		--target wasm32-unknown-unknown \
