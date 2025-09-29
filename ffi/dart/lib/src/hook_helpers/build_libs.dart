@@ -98,13 +98,12 @@ Future buildLib(
     if (isNoStd) '-Zbuild-std=core,alloc',
     if (buildStatic || isNoStd) ...[
       '-Zbuild-std=std,panic_abort',
-      '-Zbuild-std-features=panic_immediate_abort',
     ],
     '--target=$rustTarget',
     '--',
     '--emit',
     'link=${out.toFilePath(windows: Platform.isWindows)}',
-  ], workingDirectory: workingDirectory);
+  ], workingDirectory: workingDirectory, environment: {"RUSTFLAGS", "-Zunstable-options -Cpanic=immediate-abort"});
 }
 
 bool _isNoStdTarget(String target) =>
@@ -115,6 +114,7 @@ Future<void> runProcess(
   List<String> arguments, {
   Directory? workingDirectory,
   bool dryRun = false,
+  Map<String, String>? environment = null,
 }) async {
   print('----------');
   print('Running `$executable $arguments` in $workingDirectory');

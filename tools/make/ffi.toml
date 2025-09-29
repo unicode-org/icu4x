@@ -97,12 +97,12 @@ description = "Build ICU4X CAPI for Cortex"
 category = "ICU4X FFI"
 dependencies = ["install-cortex-8-nightly"]
 toolchain = "${PINNED_CI_NIGHTLY}"
-env = { RUSTFLAGS = "-Ctarget-cpu=cortex-m33 -Cpanic=abort -Copt-level=s" }
+env = { RUSTFLAGS = "-Zunstable-options -Ctarget-cpu=cortex-m33 -Cpanic=immediate-abort -Copt-level=s" }
 command = "cargo"
 args = ["check", "--package", "icu_freertos",
         "--target", "thumbv8m.main-none-eabihf",
         "--no-default-features", "--features=wearos",
-        "-Zbuild-std=core,alloc", "-Zbuild-std-features=panic_immediate_abort"]
+        "-Zbuild-std=core,alloc"]
 
 [tasks.check-noalloc]
 description = "Build crates that are expected to work in no-alloc mode"
