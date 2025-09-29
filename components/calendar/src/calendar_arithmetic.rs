@@ -295,6 +295,10 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         let months: i32 = self.month as i32 - date2.month as i32;
         let days: i64 = self.day as i64 - date2.day as i64;
         let is_negative = years.is_negative() || months.is_negative() || days.is_negative();
+        #[allow(clippy::panic)]
+        if is_negative && (years.is_positive() || months.is_positive() || days.is_positive()) {
+            panic!("oops, not yet supported");
+        }
         DateDuration {
             is_negative,
             years: years.unsigned_abs(),
