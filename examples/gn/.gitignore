@@ -1,6 +1,0 @@
-out/
-third_party_tools/
-vendor/
-.cargo/config
-icu4x/BUILD.gn
-Cargo.lock

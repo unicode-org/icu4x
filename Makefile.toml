@@ -3,7 +3,6 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 extend = [
-    { path = "./examples/gn/gn.toml"}, #
     { path = "./tools/make/data.toml"}, #
     { path = "./tools/make/valgrind.toml"}, #
     { path = "./tools/make/tidy.toml"}, #
@@ -169,16 +168,6 @@ dependencies = [
     "verify-diplomat-coverage",
 ]
 
-[tasks.ci-job-gn]
-description = "Run all tests for the CI 'gn' job"
-category = "CI"
-dependencies = [
-    "verify-gn-gen",
-    "gn-run",
-    # Until https://github.com/wasmerio/wasmer/issues/5610
-    # "gn-run-wasi",
-]
-
 [tasks.ci-job-msrv-features-1]
 description = "Run all tests for the CI 'msrv-features-1' job"
 category = "CI"
@@ -283,7 +272,6 @@ dependencies = [
     "ci-job-test-c",
     "ci-job-test-js",
     "ci-job-test-dart",
-    "ci-job-gn",
 
     # benchmarking and coverage jobs not included
 ]
