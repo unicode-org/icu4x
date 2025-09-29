@@ -23,7 +23,7 @@ all-features = true
 displaydoc = { workspace = true }
 litemap = { workspace = true, features = ["alloc"] }
 tinystr = { workspace = true, features = ["alloc"] }
-writeable = { workspace = true }
+writeable = { workspace = true, features = ["alloc"] }
 
 databake = { workspace = true, features = ["derive"], optional = true }
 serde = { workspace = true, features = ["alloc"], optional = true }

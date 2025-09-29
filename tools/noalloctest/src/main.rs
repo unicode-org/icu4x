@@ -9,6 +9,7 @@
 use litemap as _;
 use potential_utf as _;
 use tinystr as _;
+use writeable as _;
 use yoke as _;
 use zerofrom as _;
 use zerotrie as _;
