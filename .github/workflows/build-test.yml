@@ -469,12 +469,6 @@ jobs:
     - name: Show the selected Rust toolchain
       run: rustup show
 
-    # Job-specific dependencies
-    - name: Install cargo-rdme
-      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
-      with:
-        tool: cargo-rdme@1.4.2
-
     # Actual job
     - name: Tidy
       run: cargo make ci-job-tidy

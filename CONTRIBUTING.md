@@ -14,11 +14,9 @@ In most cases, the first step is to find or file a new issue related to your pla
 
 ### Installing dependencies
 
-To build ICU4X, you will need the following dependencies:
+ICU4X is written in Rust, so you will need a [Rust toolchain](https://rust-lang.org/tools/install/).
 
- - Rust (and Cargo) installed [via `rustup`](https://doc.rust-lang.org/book/ch01-01-installation.html)
- - `cargo-make` installed via `cargo install cargo-make`
- - `cargo-rdme` installed via `cargo install cargo-rdme`
+We use `cargo-make` for development scripts, install via `cargo install cargo-make`.
 
 Certain tests may need further dependencies, these are documented below in the [Testing](#testing) section.
 
