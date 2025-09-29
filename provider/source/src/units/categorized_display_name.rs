@@ -5,7 +5,7 @@
 use crate::cldr_serde;
 use crate::SourceDataProvider;
 use cldr_serde::units::preferences::UnitType;
-use icu::experimental::dimension::provider::units::categorized_display_name::{
+use icu::experimental::dimension::provider::units::categorized_display_names::{
     UnitsNamesAreaCoreV1, UnitsNamesAreaExtendedV1, UnitsNamesAreaOutlierV1,
     UnitsNamesDurationCoreV1, UnitsNamesDurationExtendedV1, UnitsNamesDurationOutlierV1,
     UnitsNamesLengthCoreV1, UnitsNamesLengthExtendedV1, UnitsNamesLengthOutlierV1,

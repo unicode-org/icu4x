@@ -8,7 +8,7 @@ use icu_provider::{DataMarker, DynamicDataMarker};
 
 use crate::{
     dimension::provider::units::{
-        categorized_display_name::{
+        categorized_display_names::{
             UnitsNamesAreaCoreV1, UnitsNamesAreaExtendedV1, UnitsNamesAreaOutlierV1,
             UnitsNamesDurationCoreV1, UnitsNamesDurationExtendedV1, UnitsNamesDurationOutlierV1,
             UnitsNamesLengthCoreV1, UnitsNamesLengthExtendedV1, UnitsNamesLengthOutlierV1,
