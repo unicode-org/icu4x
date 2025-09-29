@@ -9,7 +9,7 @@ use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
 use crate::provider::hijri::PackedHijriYearInfo;
-use crate::types::{DateFields, EraYear};
+use crate::types::DateFields;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use crate::{AsCalendar, RangeError};
 use calendrical_calculations::islamic::{
@@ -27,26 +27,6 @@ use tinystr::tinystr;
 mod simulated_mecca_data;
 #[path = "hijri/ummalqura_data.rs"]
 mod ummalqura_data;
-
-fn era_year(extended_year: i32) -> EraYear {
-    if extended_year > 0 {
-        types::EraYear {
-            era: tinystr!(16, "ah"),
-            era_index: Some(0),
-            year: extended_year,
-            extended_year,
-            ambiguity: types::YearAmbiguity::CenturyRequired,
-        }
-    } else {
-        types::EraYear {
-            era: tinystr!(16, "bh"),
-            era_index: Some(1),
-            year: 1 - extended_year,
-            extended_year,
-            ambiguity: types::YearAmbiguity::CenturyRequired,
-        }
-    }
-}
 
 /// The [Hijri Calendar](https://en.wikipedia.org/wiki/Islamic_calendar)
 ///
@@ -69,7 +49,15 @@ pub struct Hijri<S>(pub S);
 ///
 /// This crate includes the [`UmmAlQura`], [`AstronomicalSimulation`], and [`TabularAlgorithm`]
 /// rules, other rules can be implemented by users.
-pub trait Rules: Clone + Debug {
+///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it should not be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+///
+/// It is still possible to implement this trait in userland (since `UnstableSealed` is public),
+/// do not do so unless you are prepared for things to occasionally break.
+/// </div>
+pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
     /// Returns data about the given year.
     fn year_data(&self, extended_year: i32) -> HijriYearData;
 
@@ -98,6 +86,7 @@ pub(crate) enum SimulatedLocation {
     Mecca,
 }
 
+impl crate::cal::scaffold::UnstableSealed for AstronomicalSimulation {}
 impl Rules for AstronomicalSimulation {
     fn debug_name(&self) -> &'static str {
         match self.location {
@@ -209,6 +198,7 @@ impl Rules for AstronomicalSimulation {
 #[non_exhaustive]
 pub struct UmmAlQura;
 
+impl crate::cal::scaffold::UnstableSealed for UmmAlQura {}
 impl Rules for UmmAlQura {
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         Some(CalendarAlgorithm::Hijri(Some(
@@ -257,6 +247,7 @@ impl TabularAlgorithm {
     }
 }
 
+impl crate::cal::scaffold::UnstableSealed for TabularAlgorithm {}
 impl Rules for TabularAlgorithm {
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         Some(match (self.epoch, self.leap_years) {
@@ -693,7 +684,24 @@ impl<R: Rules> Calendar for Hijri<R> {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        era_year(date.0.extended_year())
+        let extended_year = date.0.extended_year();
+        if extended_year > 0 {
+            types::EraYear {
+                era: tinystr!(16, "ah"),
+                era_index: Some(0),
+                year: extended_year,
+                extended_year,
+                ambiguity: types::YearAmbiguity::CenturyRequired,
+            }
+        } else {
+            types::EraYear {
+                era: tinystr!(16, "bh"),
+                era_index: Some(1),
+                year: 1 - extended_year,
+                extended_year,
+                ambiguity: types::YearAmbiguity::CenturyRequired,
+            }
+        }
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

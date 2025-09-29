@@ -46,6 +46,7 @@ static HIJRI_IRAN_CASES: [DateCase; 4] = [
 #[derive(Clone, Copy, Debug)]
 struct IranTestSighting;
 
+impl icu_calendar::cal::scaffold::UnstableSealed for IranTestSighting {}
 impl Rules for IranTestSighting {
     fn year_data(&self, extended_year: i32) -> HijriYearData {
         let s = false;
