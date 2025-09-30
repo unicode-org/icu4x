@@ -227,8 +227,8 @@ impl Rules for China {
             (11, true, true) => -2173,
             (12, false, false) => 1971,
             (12, false, true) => 1971,
-            // M12L not possible
-            (12, true, _) => return Err(DateError::InconsistentMonth),
+            (12, true, false) => 1403,
+            (12, true, true) => -180,
             _ => return Err(DateError::UnknownMonthCode(month_code)),
         };
         Ok(self.year_data(extended))
@@ -388,8 +388,8 @@ impl Rules for Dangi {
             (11, true, true) => -2173,
             (12, false, false) => 1971,
             (12, false, true) => 1971,
-            // M12L not possible
-            (12, true, _) => return Err(DateError::InconsistentMonth),
+            (12, true, false) => 1403,
+            (12, true, true) => -180,
             _ => return Err(DateError::UnknownMonthCode(month_code)),
         };
         Ok(self.year_data(extended))
@@ -2288,7 +2288,7 @@ mod test {
     #[ignore]
     fn generate_reference_years() {
         use crate::Date;
-        let calendar = crate::cal::LunarChinese::new_dangi();
+        let calendar = crate::cal::LunarChinese::new_china();
         let reference_year_end = Date::from_rata_die(
             crate::cal::abstract_gregorian::LAST_DAY_OF_REFERENCE_YEAR,
             calendar,
@@ -2301,9 +2301,6 @@ mod test {
             .to_calendar(calendar);
         for month in 1..=12 {
             for leap in [false, true] {
-                if month == 12 && leap {
-                    continue;
-                }
                 'outer: for long in [false, true] {
                     for (start_year, start_month, end_year, end_month, by) in [
                         (
