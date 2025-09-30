@@ -43,7 +43,7 @@ When the nightly cronjob CI fails, ICU4X developers must fix it and ensure it do
 ICU4X pins Rust Nightlies in CI for multiple purposes:
 
  - `diplomat-coverage/src/main.rs`: Running the diplomat-coverage task, which uses unstable Rustdoc JSON output, requiring synchronization between the Rust version and the `rustdoc_types` dependency.
- - `PINNED_CI_NIGHTLY`: Running various FFI CI jobs that need _some_ Rust nightly to use build-std or other nightly features, without becoming beholden to arbitrary specific version constraints.
+ - `PINNED_CI_NIGHTLY`: Running various FFI CI jobs that need a reasonably recent Rust nightly to use build-std or other nightly features, without becoming beholden to arbitrary specific version constraints.
  - `LLVM_COMPATIBLE_NIGHTLY`: Usage of `-Clinker-plugin-lto` in size-optimized tests where Rust and Clang need to be using compatible LLVM versions.
 
  ICU4X also runs its entire CI against the latest nightly once a day, reporting errors to Slack. These errors help us catch upstream breakages early, but ICU4X does not have any particular SLO against these being fixed. We guarantee we build on the latest stable as detailed in the first section of this page.
