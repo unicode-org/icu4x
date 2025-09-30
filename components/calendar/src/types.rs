@@ -43,7 +43,9 @@ pub struct DateFields<'a> {
     pub day: Option<NonZeroU8>,
 }
 
-/// Information about the year. Returned by [`Date::year()`](crate::Date::year)
+/// Information about the year.
+///
+/// Returned by [`Date::year()`](crate::Date::year).
 ///
 /// This enum supports calendars based on eras as well as calendars based on cycles.
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -275,9 +277,9 @@ impl fmt::Display for MonthCode {
     }
 }
 
-/// Representation of a formattable month. 
+/// Representation of a formattable month.
 ///
-/// Returned by [`Date::month()`](crate::Date::month)
+/// Returned by [`Date::month()`](crate::Date::month).
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct MonthInfo {
