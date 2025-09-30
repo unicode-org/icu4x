@@ -14,27 +14,40 @@ use icu_calendar::{
 
 #[derive(Debug, Copy, Clone)]
 struct Duration {
-    days: u32,
-    milliseconds: u32,
+    milliseconds: i64,
 }
 
 impl Duration {
-    fn to_i64(&self) -> i64 {
-        self.days as i64 * MILLISECONDS_IN_DAY as i64 + self.milliseconds as i64
+    const fn new(days: u32, millis_in_day: u32) -> Self {
+        Self {
+            milliseconds: days as i64 * MILLISECONDS_IN_DAY + millis_in_day as i64,
+        }
+    }
+}
+
+impl core::ops::Mul<i64> for Duration {
+    type Output = Self;
+
+    fn mul(self, rhs: i64) -> Self::Output {
+        Self {
+            milliseconds: self.milliseconds * rhs,
+        }
     }
 }
 
 macro_rules! duration_from_day_fraction {
     ($n:tt $(/ $d:tt)+) => {{
         let days = ($n $( / $d)+) as u32;
-        // This works by using exact rounding in the first term, and intermediate rounding in the second term
         let milliseconds = ((MILLISECONDS_IN_DAY as i128 * $n as i128 $( / $d as i128)+) - ($n as i128 $( / $d as i128)+ * MILLISECONDS_IN_DAY as i128)) as u32;
-        Duration { days, milliseconds }
+        Duration::new(days, milliseconds)
     }};
     ($n:tt $(/ $d:tt)+, exact) => {{
-        let d = duration_from_day_fraction!($n $(/ $d)+);
-        assert!((d.milliseconds as i128 $(* $d as i128)+) % MILLISECONDS_IN_DAY as i128 == 0, "inexact");
-        d
+        let days = ($n $( / $d)+) as u32;
+        // This works by using exact rounding in the first term, and intermediate rounding in the second term
+        let milliseconds = ((MILLISECONDS_IN_DAY as i128 * $n as i128 $( / $d as i128)+) - ($n as i128 $( / $d as i128)+ * MILLISECONDS_IN_DAY as i128)) as u32;
+        // milliseconds needs to be a multiple of (MILLISECONDS_IN_DAY / $denominators) to be exact
+        assert!((milliseconds as i128 $(* $d as i128)+) % MILLISECONDS_IN_DAY as i128 == 0, "inexact");
+        Duration::new(days, milliseconds)
     }};
 }
 
@@ -62,55 +75,43 @@ struct LocalMoment {
     local_milliseconds: u32,
 }
 
-impl LocalMoment {
-    /// Adds a specific [`Duration`] to this moment `n` times.
-    fn add_duration_times_n(&self, duration: Duration, n: i64) -> LocalMoment {
-        let temp = self.local_milliseconds as i64 + (duration.milliseconds as i64 * n);
-        let (extra_days, local_milliseconds) = (
-            temp.div_euclid(MILLISECONDS_IN_DAY),
-            temp.rem_euclid(MILLISECONDS_IN_DAY),
-        );
-        let rata_die = self.rata_die + extra_days + (duration.days as i64 * n) as i64;
-        let local_milliseconds = u32::try_from(local_milliseconds).unwrap();
-        Self {
-            rata_die,
-            local_milliseconds,
-        }
-    }
+impl core::ops::Add<Duration> for LocalMoment {
+    type Output = Self;
 
-    /// Converts this moment to an i64 local timestamp in milliseconds (with Rata Die epoch)
-    fn to_i64(&self) -> i64 {
-        (self.rata_die.to_i64_date() * MILLISECONDS_IN_DAY) + self.local_milliseconds as i64
+    fn add(self, duration: Duration) -> Self::Output {
+        let temp = self.local_milliseconds as i64 + duration.milliseconds;
+        Self {
+            rata_die: self.rata_die + temp.div_euclid(MILLISECONDS_IN_DAY),
+            local_milliseconds: temp.rem_euclid(MILLISECONDS_IN_DAY) as u32,
+        }
     }
 }
 
 #[test]
 fn test_local_moment_add() {
+    #![allow(clippy::erasing_op)]
     let local_moment = LocalMoment {
         rata_die: RataDie::new(1000),
         local_milliseconds: 0,
     };
-    let duration = Duration {
-        days: 77,
-        milliseconds: 25000000,
-    };
-    assert_eq!(local_moment.add_duration_times_n(duration, 0), local_moment);
+    let duration = Duration::new(77, 25000000);
+    assert_eq!(local_moment + duration * 0, local_moment);
     assert_eq!(
-        local_moment.add_duration_times_n(duration, 1),
+        local_moment + duration * 1,
         LocalMoment {
             rata_die: RataDie::new(1077),
             local_milliseconds: 25000000
         }
     );
     assert_eq!(
-        local_moment.add_duration_times_n(duration, -1),
+        local_moment + duration * -1,
         LocalMoment {
             rata_die: RataDie::new(922),
             local_milliseconds: 61400000
         }
     );
     assert_eq!(
-        local_moment.add_duration_times_n(duration, -500),
+        local_moment + duration * -500,
         LocalMoment {
             rata_die: RataDie::new(-37645),
             local_milliseconds: 28000000,
@@ -148,13 +149,12 @@ fn periodic_duration_on_or_before(
     duration: Duration,
 ) -> LocalMoment {
     // For now, do math as i64 milliseconds, which covers 600 million years.
-    let upper_bound = LocalMoment {
-        rata_die: rata_die + 1,
-        local_milliseconds: 0,
-    }
-    .to_i64();
-    let num_periods = (upper_bound - base_moment.to_i64() - 1).div_euclid(duration.to_i64());
-    base_moment.add_duration_times_n(duration, num_periods)
+    base_moment
+        + duration
+            * ((rata_die - base_moment.rata_die + 1) * MILLISECONDS_IN_DAY
+                - base_moment.local_milliseconds as i64
+                - 1)
+            .div_euclid(duration.milliseconds)
 }
 
 impl icu_calendar::cal::scaffold::UnstableSealed for FastPingqi {}
@@ -177,12 +177,11 @@ impl chinese::Rules for FastPingqi {
 
         // Skip the months before the year
         while solar_term < 0 {
-            let next_new_moon = new_moon.add_duration_times_n(MEAN_SYNODIC_MONTH_LENGTH, 1);
+            let next_new_moon = new_moon + MEAN_SYNODIC_MONTH_LENGTH;
 
             if major_solar_term.rata_die < next_new_moon.rata_die {
                 solar_term += 1;
-                major_solar_term =
-                    major_solar_term.add_duration_times_n(MEAN_GREGORIAN_SOLAR_TERM_LENGTH, 1);
+                major_solar_term = major_solar_term + MEAN_GREGORIAN_SOLAR_TERM_LENGTH;
             }
 
             new_moon = next_new_moon;
@@ -195,12 +194,11 @@ impl chinese::Rules for FastPingqi {
 
         // Iterate over the 12 solar terms, producing potentially 13 months
         while solar_term < 12 {
-            let next_new_moon = new_moon.add_duration_times_n(MEAN_SYNODIC_MONTH_LENGTH, 1);
+            let next_new_moon = new_moon + MEAN_SYNODIC_MONTH_LENGTH;
 
             if major_solar_term.rata_die < next_new_moon.rata_die {
                 solar_term += 1;
-                major_solar_term =
-                    major_solar_term.add_duration_times_n(MEAN_GREGORIAN_SOLAR_TERM_LENGTH, 1);
+                major_solar_term = major_solar_term + MEAN_GREGORIAN_SOLAR_TERM_LENGTH;
             } else {
                 leap_month = Some(month as u8 + 1);
             }
