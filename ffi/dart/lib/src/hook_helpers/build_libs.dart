@@ -105,7 +105,9 @@ Future buildLib(
       'link=${out.toFilePath(windows: Platform.isWindows)}',
     ],
     workingDirectory: workingDirectory,
-    environment: {if (isNoStd) 'RUSTFLAGS': '-Zunstable-options -Cpanic=immediate-abort'},
+    environment: {
+      if (isNoStd) 'RUSTFLAGS': '-Zunstable-options -Cpanic=immediate-abort',
+    },
   );
 }
 
