@@ -24,7 +24,7 @@ fixed_decimal = { workspace = true }
 icu_provider = { workspace = true }
 icu_locale_core = { workspace = true }
 writeable = { workspace = true }
-zerovec = { workspace = true }
+zerovec = { workspace = true, features = ["alloc"] }
 databake = { workspace = true, features = ["derive"], optional = true}
 serde = { workspace = true, features = ["derive"], optional = true }
 

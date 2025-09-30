@@ -287,6 +287,7 @@ impl<'de> serde::Deserialize<'de> for WeekdaySet {
 }
 
 #[test]
+#[cfg(feature = "datagen")]
 fn test_weekdayset_bake() {
     databake::test_bake!(
         WeekdaySet,

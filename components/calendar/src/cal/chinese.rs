@@ -79,12 +79,19 @@ pub struct LunarChinese<X>(pub X);
 ///
 /// For example, the [`China`] type implements the rules that are used in
 /// China, and the [`Dangi`] type implements the rules used in Korea.
-pub trait Rules: Clone + core::fmt::Debug {
+///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it should not be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+///
+/// It is still possible to implement this trait in userland (since `UnstableSealed` is public),
+/// do not do so unless you are prepared for things to occasionally break.
+/// </div>
+pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed {
     /// Returns data about the given year.
     fn year_data(&self, related_iso: i32) -> LunarChineseYearData;
 
-    /// TODO: Bikshed this function. Is this the right level of abstraction?
-    ///
+    // TODO: Bikshed this function. Is this the right level of abstraction?
     /// Returns the year data for the given month and day.
     fn reference_year_from_month_day(
         &self,
@@ -143,6 +150,7 @@ fn fallback_approximation<CB: ChineseBased>(related_iso: i32) -> LunarChineseYea
 #[non_exhaustive]
 pub struct China;
 
+impl crate::cal::scaffold::UnstableSealed for China {}
 impl Rules for China {
     fn year_data(&self, related_iso: i32) -> LunarChineseYearData {
         if let Some(packed) = (ChineseBasedCache {
@@ -308,6 +316,7 @@ impl LunarChinese<Dangi> {
     }
 }
 
+impl crate::cal::scaffold::UnstableSealed for Dangi {}
 impl Rules for Dangi {
     fn year_data(&self, related_iso: i32) -> LunarChineseYearData {
         if let Some(packed) = (ChineseBasedCache {
@@ -617,7 +626,7 @@ impl<X: Rules> Calendar for LunarChinese<X> {
     }
 
     #[doc(hidden)] // unstable
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
+    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration) {
         date.0.offset_date(offset, self);
     }
 
@@ -633,7 +642,7 @@ impl<X: Rules> Calendar for LunarChinese<X> {
         _calendar2: &Self,
         _largest_unit: DateDurationUnit,
         _smallest_unit: DateDurationUnit,
-    ) -> DateDuration<Self> {
+    ) -> DateDuration {
         date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 

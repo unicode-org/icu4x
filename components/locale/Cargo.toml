@@ -25,7 +25,7 @@ all-features = true
 [dependencies]
 databake = { workspace = true, optional = true, features = ["derive"] }
 icu_locale_core = { workspace = true, features = ["alloc", "zerovec"] }
-icu_provider = { workspace = true }
+icu_provider = { workspace = true, features = ["alloc"] }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 potential_utf = { workspace = true, features = ["alloc", "zerovec"] }

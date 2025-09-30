@@ -329,7 +329,7 @@ impl<'a, V: VarULE + ?Sized + serde::Serialize> serde::Serialize for VarZeroCow<
     }
 }
 
-#[cfg(feature = "serde")]
+#[cfg(all(feature = "serde", feature = "alloc"))]
 impl<'a, 'de: 'a, V: VarULE + ?Sized> serde::Deserialize<'de> for VarZeroCow<'a, V>
 where
     Box<V>: serde::Deserialize<'de>,
