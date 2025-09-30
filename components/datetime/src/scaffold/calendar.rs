@@ -91,7 +91,19 @@ impl CldrCalendar for Indian {
     type SkeletaV1 = DatetimePatternsDateIndianV1;
 }
 
-impl<R: hijri::Rules> CldrCalendar for Hijri<R> {
+impl CldrCalendar for Hijri<hijri::UmmAlQura> {
+    type YearNamesV1 = DatetimeNamesYearHijriV1;
+    type MonthNamesV1 = DatetimeNamesMonthHijriV1;
+    type SkeletaV1 = DatetimePatternsDateHijriV1;
+}
+
+impl CldrCalendar for Hijri<hijri::TabularAlgorithm> {
+    type YearNamesV1 = DatetimeNamesYearHijriV1;
+    type MonthNamesV1 = DatetimeNamesMonthHijriV1;
+    type SkeletaV1 = DatetimePatternsDateHijriV1;
+}
+
+impl CldrCalendar for Hijri<hijri::AstronomicalSimulation> {
     type YearNamesV1 = DatetimeNamesYearHijriV1;
     type MonthNamesV1 = DatetimeNamesMonthHijriV1;
     type SkeletaV1 = DatetimePatternsDateHijriV1;
