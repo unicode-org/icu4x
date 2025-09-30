@@ -751,6 +751,7 @@ macro_rules! impl_value_getter {
         impl $ty:ident {
             $marker_n2e:ident / $singleton_n2e:ident;
             $(
+                $(#[$meta:meta])*
                 $data_struct_s:ident / $marker_e2sn:ident / $singleton_e2sn:ident;
                 $data_struct_l:ident / $marker_e2ln:ident / $singleton_e2ln:ident;
             )?
@@ -763,6 +764,7 @@ macro_rules! impl_value_getter {
         }
 
         $(
+            $(#[$meta])*
             impl NamedEnumeratedProperty for $ty {
                 type DataStructLong = $data_struct_l<'static>;
                 type DataStructShort = $data_struct_s<'static>;
@@ -875,10 +877,11 @@ impl_value_getter! {
     }
 }
 
-#[cfg(feature = "alloc")]
 impl_value_getter! {
     impl CanonicalCombiningClass {
         PropertyNameParseCanonicalCombiningClassV1 / SINGLETON_PROPERTY_NAME_PARSE_CANONICAL_COMBINING_CLASS_V1;
+        #[cfg(feature = "alloc")]
+        /// Requires the `alloc` Cargo feature
         PropertyEnumToValueNameSparseMap / PropertyNameShortCanonicalCombiningClassV1 / SINGLETON_PROPERTY_NAME_SHORT_CANONICAL_COMBINING_CLASS_V1;
         PropertyEnumToValueNameSparseMap / PropertyNameLongCanonicalCombiningClassV1 / SINGLETON_PROPERTY_NAME_LONG_CANONICAL_COMBINING_CLASS_V1;
     }
