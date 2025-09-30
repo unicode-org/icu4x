@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use calendrical_calculations::iso::DAYS_IN_400_YEAR_CYCLE;
 use icu_calendar::{
     cal::{
         chinese::{self},
@@ -23,33 +24,36 @@ impl Duration {
     }
 }
 
-/// The mean solar term length indexed according to the Gregorian solar cycle:
-///
-/// `146097 / 400 / 12`
-///
-/// 146097 days every 400 years, and 12 major solar terms per year. This resolves to an
-/// exact number of seconds.
-///
-/// This could alternatively be defined in terms of the mean tropical year.
-const MEAN_SOLAR_TERM_LENGTH: Duration = Duration {
-    days: 30,
-    milliseconds: 37746000,
-};
+macro_rules! duration_from_day_fraction {
+    ($n:tt $(/ $d:tt)+) => {{
+        let days = ($n $( / $d)+) as u32;
+        // This works by using exact rounding in the first term, and intermediate rounding in the second term
+        let milliseconds = ((MILLISECONDS_IN_DAY as i128 * $n as i128 $( / $d as i128)+) - ($n as i128 $( / $d as i128)+ * MILLISECONDS_IN_DAY as i128)) as u32;
+        Duration { days, milliseconds }
+    }};
+    ($n:tt $(/ $d:tt)+, exact) => {{
+        let d = duration_from_day_fraction!($n $(/ $d)+);
+        assert!((d.milliseconds as i128 $(* $d as i128)+) % MILLISECONDS_IN_DAY as i128 == 0, "inexact");
+        d
+    }};
+}
 
-/// The mean length of a solstice year, which is 12 times MEAN_SOLAR_TERM_LENGTH.
-const MEAN_SOLSTICE_YEAR_LENGTH: Duration = Duration {
-    days: 365,
-    milliseconds: 20952000,
-};
+/// The mean year length according to the Gregorian solar cycle.
+const MEAN_GREGORIAN_YEAR_LENGTH: Duration =
+    duration_from_day_fraction!(DAYS_IN_400_YEAR_CYCLE / 400, exact);
 
-/// The mean synodic length according to Wikipedia.
-const MEAN_SYNODIC_MONTH_LENGTH: Duration = Duration {
-    days: 29,
-    milliseconds: 45842800,
-};
+/// The mean solar term length according to the Gregorian solar cycle
+const MEAN_GREGORIAN_SOLAR_TERM_LENGTH: Duration =
+    duration_from_day_fraction!(DAYS_IN_400_YEAR_CYCLE / 400 / 12, exact);
+
+/// The mean synodic length on Jan 1 2000 according to the [Astronomical Almanac (1992)].
+///
+/// [Astronomical Almanac (1992)]: https://archive.org/details/131123ExplanatorySupplementAstronomicalAlmanac/page/n302/mode/1up
+const MEAN_SYNODIC_MONTH_LENGTH: Duration =
+    duration_from_day_fraction!(295305888531 / 10000000000i64);
 
 /// Number of milliseconds in a day.
-const MILLISECONDS_IN_DAY: i64 = 86400000;
+const MILLISECONDS_IN_DAY: i64 = 24 * 60 * 60 * 1000;
 
 /// A RataDie with a number of milliseconds within that day, in local standard time.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -200,7 +204,7 @@ fn periodic_duration_on_or_before(
 impl FastPingqi {
     /// Calculates the moment of the nearest winter solstice on or before the given rata die
     fn winter_solstice_on_or_before(&self, rata_die: RataDie) -> LocalMoment {
-        periodic_duration_on_or_before(rata_die, self.winter_solstice, MEAN_SOLSTICE_YEAR_LENGTH)
+        periodic_duration_on_or_before(rata_die, self.winter_solstice, MEAN_GREGORIAN_YEAR_LENGTH)
     }
 
     /// Calculates the moment of the nearest new moon on or before the given rata die
@@ -214,7 +218,7 @@ impl FastPingqi {
         let iso_new_year_rd = calendrical_calculations::iso::fixed_from_iso(related_iso, 1, 1);
         let prev_winter_solstice = self.winter_solstice_on_or_before(iso_new_year_rd);
         let next_winter_solstice =
-            prev_winter_solstice.add_duration_times_n(MEAN_SOLAR_TERM_LENGTH, 12);
+            prev_winter_solstice.add_duration_times_n(MEAN_GREGORIAN_SOLAR_TERM_LENGTH, 12);
         let m11_moment = self.new_moon_on_or_before(prev_winter_solstice.rata_die);
         let mut new_moon = m11_moment;
         let mut major_solar_term = prev_winter_solstice;
@@ -239,7 +243,8 @@ impl FastPingqi {
                 potential_leap_month =
                     Some(u8::try_from(12 - month_lengths_iter.as_slice().len()).unwrap());
             } else {
-                major_solar_term = major_solar_term.add_duration_times_n(MEAN_SOLAR_TERM_LENGTH, 1);
+                major_solar_term =
+                    major_solar_term.add_duration_times_n(MEAN_GREGORIAN_SOLAR_TERM_LENGTH, 1);
             }
             new_moon = next_new_moon;
         }
