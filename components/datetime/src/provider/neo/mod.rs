@@ -548,7 +548,7 @@ size_test!(YearNames, year_names_v1_size, 32);
 pub enum YearNames<'data> {
     /// This calendar has a small, fixed set of eras with numeric years, this stores the era names in chronological order.
     ///
-    /// See FormattableEra for a definition of what chronological order is in this context.
+    /// See [`EraYear`](icu_calendar::types::EraYear) for a definition of what chronological order is in this context.
     FixedEras(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
     /// This calendar has a variable set of eras with numeric years, this stores the era names mapped from
     /// era code to the name.

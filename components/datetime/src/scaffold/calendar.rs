@@ -17,15 +17,21 @@ use icu_time::{
     DateTime, Time, TimeZoneInfo, ZonedDateTime,
 };
 
-/// A calendar that can be found in CLDR.
+/// A calendar that can be formatted with CLDR data.
 ///
-/// New implementors of this trait will likely also wish to modify `get_era_code_map()`
-/// in the CLDR transformer to support any new era maps.
+/// When formatting:
+///
+/// - The pattern is loaded from [`Self::SkeletaV1`]
+/// - The era and year names are loaded from [`Self::YearNamesV1`] and accessed based on [`YearInfo`]
+/// - The month name is loaded from [`Self::MonthNamesV1`] and accessed based on [`MonthInfo`]
 ///
 /// <div class="stab unstable">
 /// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
 /// </div>
+///
+/// [`YearInfo`]: icu_calendar::types::YearInfo
+/// [`MonthInfo`]: icu_calendar::types::MonthInfo
 pub trait CldrCalendar: UnstableSealed {
     /// The data marker for loading year symbols for this calendar.
     type YearNamesV1: DataMarker<DataStruct = YearNames<'static>>;
