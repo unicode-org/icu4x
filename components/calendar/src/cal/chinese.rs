@@ -348,7 +348,7 @@ impl Rules for Dangi {
             (2, true, false) => 1947,
             (2, true, true) => 1765,
             (3, false, false) => 1972,
-            (3, false, true) => 1966,
+            (3, false, true) => 1968,
             (3, true, false) => 1966,
             (3, true, true) => 1955,
             (4, false, false) => 1972,
@@ -378,7 +378,7 @@ impl Rules for Dangi {
             (10, false, false) => 1972,
             (10, false, true) => 1972,
             (10, true, false) => 1984,
-            (10, true, true) => -4098,
+            (10, true, true) => -3946,
             // Dec 31, 1972 is 1972-M11-26, dates after that
             // are in the next year
             (11, false, false) if day > 26 => 1971,
@@ -388,8 +388,8 @@ impl Rules for Dangi {
             (11, true, true) => -2173,
             (12, false, false) => 1971,
             (12, false, true) => 1971,
-            (12, true, false) => 1403,
-            (12, true, true) => -180,
+            (12, true, false) => 1889,
+            (12, true, true) => -1182,
             _ => return Err(DateError::UnknownMonthCode(month_code)),
         };
         Ok(self.year_data(extended))
@@ -2287,8 +2287,13 @@ mod test {
     #[test]
     #[ignore]
     fn generate_reference_years() {
+        generate_reference_years_for(China, crate::cal::LunarChinese::new_china());
+        generate_reference_years_for(Dangi, crate::cal::LunarChinese::new_dangi());
+    }
+    fn generate_reference_years_for<R: Rules + Copy>(rules: R, calendar: LunarChinese<R>) {
         use crate::Date;
-        let calendar = crate::cal::LunarChinese::new_china();
+
+        println!("Rules for {rules:?}:");
         let reference_year_end = Date::from_rata_die(
             crate::cal::abstract_gregorian::LAST_DAY_OF_REFERENCE_YEAR,
             calendar,
@@ -2333,7 +2338,7 @@ mod test {
                                 year += by;
                                 continue;
                             }
-                            let data = China.year_data(year);
+                            let data = rules.year_data(year);
                             let leap_month = data.leap_month().unwrap_or(15);
                             let days_in_month = data.days_in_month({
                                 if leap && month + 1 == leap_month {
