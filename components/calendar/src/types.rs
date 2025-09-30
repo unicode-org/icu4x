@@ -58,6 +58,8 @@ pub enum YearInfo {
     /// Information about the year in calendars with cycles.
     ///
     /// This is used by the [`LunarChinese`] calendar.
+    ///
+    /// [`LunarChinese`]: crate::cal::LunarChinese
     Cyclic(CyclicYear),
 }
 
