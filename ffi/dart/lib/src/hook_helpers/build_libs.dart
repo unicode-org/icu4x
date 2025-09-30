@@ -62,7 +62,7 @@ Future buildLib(
   final isNoStd = _isNoStdTarget(rustTarget);
 
   final nightly =
-      Platform.environment['PINNED_CI_NIGHTLY'] ?? 'nightly-2025-02-17';
+      Platform.environment['PINNED_CI_NIGHTLY'] ?? 'nightly-2025-09-27';
 
   if (buildStatic || isNoStd) {
     await runProcess('rustup', [
@@ -85,26 +85,30 @@ Future buildLib(
   final additionalFeatures = isNoStd
       ? ['libc_alloc', 'looping_panic_handler']
       : ['simple_logger'];
-  await runProcess('cargo', [
-    if (buildStatic || isNoStd) '+$nightly',
-    'rustc',
-    '--manifest-path=ffi/capi/Cargo.toml',
-    '--crate-type=${buildStatic ? 'staticlib' : 'cdylib'}',
-    '--release',
-    '--config=profile.release.panic="abort"',
-    '--config=profile.release.codegen-units=1',
-    '--no-default-features',
-    '--features=${{...cargoFeatures, ...additionalFeatures}.join(',')}',
-    if (isNoStd) '-Zbuild-std=core,alloc',
-    if (buildStatic || isNoStd) ...[
-      '-Zbuild-std=std,panic_abort',
-      '-Zbuild-std-features=panic_immediate_abort',
+  await runProcess(
+    'cargo',
+    [
+      if (buildStatic || isNoStd) '+$nightly',
+      'rustc',
+      '--manifest-path=ffi/capi/Cargo.toml',
+      '--crate-type=${buildStatic ? 'staticlib' : 'cdylib'}',
+      '--release',
+      '--config=profile.release.panic="abort"',
+      '--config=profile.release.codegen-units=1',
+      '--no-default-features',
+      '--features=${{...cargoFeatures, ...additionalFeatures}.join(',')}',
+      if (isNoStd) '-Zbuild-std=core,alloc',
+      if (buildStatic || isNoStd) ...['-Zbuild-std=std,panic_abort'],
+      '--target=$rustTarget',
+      '--',
+      '--emit',
+      'link=${out.toFilePath(windows: Platform.isWindows)}',
     ],
-    '--target=$rustTarget',
-    '--',
-    '--emit',
-    'link=${out.toFilePath(windows: Platform.isWindows)}',
-  ], workingDirectory: workingDirectory);
+    workingDirectory: workingDirectory,
+    environment: {
+      if (isNoStd) 'RUSTFLAGS': '-Zunstable-options -Cpanic=immediate-abort',
+    },
+  );
 }
 
 bool _isNoStdTarget(String target) =>
@@ -115,6 +119,7 @@ Future<void> runProcess(
   List<String> arguments, {
   Directory? workingDirectory,
   bool dryRun = false,
+  Map<String, String>? environment,
 }) async {
   print('----------');
   print('Running `$executable $arguments` in $workingDirectory');
