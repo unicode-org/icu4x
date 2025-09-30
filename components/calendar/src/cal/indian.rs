@@ -53,7 +53,7 @@ impl CalendarArithmetic for Indian {
     }
 
     fn provided_year_is_leap(year: i32) -> bool {
-        calendrical_calculations::iso::is_leap_year(year + YEAR_OFFSET)
+        calendrical_calculations::gregorian::is_leap_year(year + YEAR_OFFSET)
     }
 
     fn last_month_day_in_provided_year(_year: i32) -> (u8, u8) {
@@ -138,7 +138,7 @@ impl Calendar for Indian {
     fn from_iso(&self, iso: IsoDateInner) -> IndianDateInner {
         // Get day number in year (1 indexed)
         let day_of_year_iso =
-            calendrical_calculations::iso::days_before_month(iso.0.year, iso.0.month)
+            calendrical_calculations::gregorian::days_before_month(iso.0.year, iso.0.month)
                 + iso.0.day as u16;
         // Convert to Śaka year
         let mut year = iso.0.year - YEAR_OFFSET;

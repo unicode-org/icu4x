@@ -207,7 +207,7 @@ pub struct ZonedDateTime<A: AsCalendar, Z> {
     pub zone: Z,
 }
 
-const UNIX_EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
+const UNIX_EPOCH: RataDie = calendrical_calculations::gregorian::fixed_from_gregorian(1970, 1, 1);
 
 impl Ord for ZonedDateTime<Iso, UtcOffset> {
     fn cmp(&self, other: &Self) -> core::cmp::Ordering {
