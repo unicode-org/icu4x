@@ -55,7 +55,7 @@ pub enum YearInfo {
     Era(EraYear),
     /// Information about the year in calendars with cycles.
     ///
-    /// This is used in the Chinese and Dangi lunisolar calendars.
+    /// This is used by the [`LunarChinese`] calendar.
     Cyclic(CyclicYear),
 }
 
@@ -275,7 +275,9 @@ impl fmt::Display for MonthCode {
     }
 }
 
-/// Representation of a formattable month. Returned by [`Date::month()`](crate::Date::month)
+/// Representation of a formattable month. 
+///
+/// Returned by [`Date::month()`](crate::Date::month)
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct MonthInfo {
