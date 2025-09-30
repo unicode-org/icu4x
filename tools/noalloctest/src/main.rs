@@ -6,7 +6,9 @@
 #![cfg_attr(icu4x_noalloctest, no_std)]
 #![cfg_attr(icu4x_noalloctest, no_main)]
 
+use icu_collections as _;
 use icu_locale_core as _;
+use icu_properties as _;
 use icu_provider as _;
 use litemap as _;
 use potential_utf as _;
