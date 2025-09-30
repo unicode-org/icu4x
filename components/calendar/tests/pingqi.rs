@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use calendrical_calculations::iso::DAYS_IN_400_YEAR_CYCLE;
+use calendrical_calculations::gregorian::DAYS_IN_400_YEAR_CYCLE;
 use icu_calendar::{
     cal::{
         chinese::{self},
@@ -129,50 +129,6 @@ struct FastPingqi {
     pub new_moon: LocalMoment,
 }
 
-/// A "solstice year", also known as a _suì_ (歲).
-///
-/// This is the 12 or 13 month year between two adjacent winter solstices, for internal
-/// calculations only. The first month is M11.
-struct SolsticeYearInfo {
-    /// The first day of M11.
-    m11_rd: RataDie,
-    /// The lengths of the months, starting with M11 (true = 30 days).
-    month_lengths: [bool; 13],
-    /// The 0-based index of the leap month, if any.
-    leap_month: Option<u8>,
-}
-
-impl SolsticeYearInfo {
-    /// Returns the index of the lunar new year (M01) within month_lengths.
-    fn lunar_new_year_index(&self) -> usize {
-        match self.leap_month {
-            None => 2,                 // common year
-            Some(0) => unreachable!(), // the first month contains the winter solstice
-            Some(1) => 3,              // M11L
-            Some(2) => 3,              // M12L
-            Some(_) => 2,              // all other leap months
-        }
-    }
-
-    /// Returns the month_lengths in this solstice year, either 12 or 13.
-    fn valid_month_lengths(&self) -> &[bool] {
-        match self.leap_month {
-            None => &self.month_lengths[0..12],
-            Some(_) => &self.month_lengths,
-        }
-    }
-
-    /// Returns the [`RataDie`] of the linar new year (first day of M01).
-    fn lunar_new_year_rd(&self) -> RataDie {
-        let mut result =
-            self.m11_rd + 58 + self.month_lengths[0] as i64 + self.month_lengths[1] as i64;
-        if self.lunar_new_year_index() == 3 {
-            result += 29 + self.month_lengths[2] as i64;
-        }
-        result
-    }
-}
-
 /// Calculates the last moment that occurs on or before the given rata die that is an
 /// exact multiple of the given duration relative to the base moment.
 ///
@@ -201,115 +157,67 @@ fn periodic_duration_on_or_before(
     base_moment.add_duration_times_n(duration, num_periods)
 }
 
-impl FastPingqi {
-    /// Calculates the moment of the nearest winter solstice on or before the given rata die
-    fn winter_solstice_on_or_before(&self, rata_die: RataDie) -> LocalMoment {
-        periodic_duration_on_or_before(rata_die, self.winter_solstice, MEAN_GREGORIAN_YEAR_LENGTH)
-    }
+impl icu_calendar::cal::scaffold::UnstableSealed for FastPingqi {}
+impl chinese::Rules for FastPingqi {
+    fn year_data(&self, related_iso: i32) -> chinese::LunarChineseYearData {
+        let mut major_solar_term = periodic_duration_on_or_before(
+            calendrical_calculations::gregorian::day_before_year(related_iso),
+            self.winter_solstice,
+            MEAN_GREGORIAN_YEAR_LENGTH,
+        );
 
-    /// Calculates the moment of the nearest new moon on or before the given rata die
-    fn new_moon_on_or_before(&self, rata_die: RataDie) -> LocalMoment {
-        periodic_duration_on_or_before(rata_die, self.new_moon, MEAN_SYNODIC_MONTH_LENGTH)
-    }
+        let mut new_moon = periodic_duration_on_or_before(
+            major_solar_term.rata_die,
+            self.new_moon,
+            MEAN_SYNODIC_MONTH_LENGTH,
+        );
 
-    /// Calculates the [`SolsticeYear`] containing the specified ISO new year, i.e.,
-    /// the one starting in November or December of the previous ISO year.
-    fn solstice_year_for_iso_year(&self, related_iso: i32) -> SolsticeYearInfo {
-        let iso_new_year_rd = calendrical_calculations::iso::fixed_from_iso(related_iso, 1, 1);
-        let prev_winter_solstice = self.winter_solstice_on_or_before(iso_new_year_rd);
-        let next_winter_solstice =
-            prev_winter_solstice.add_duration_times_n(MEAN_GREGORIAN_SOLAR_TERM_LENGTH, 12);
-        let m11_moment = self.new_moon_on_or_before(prev_winter_solstice.rata_die);
-        let mut new_moon = m11_moment;
-        let mut major_solar_term = prev_winter_solstice;
-        let mut month_lengths: [bool; 13] = Default::default();
-        let mut month_lengths_iter = month_lengths.iter_mut();
-        let mut potential_leap_month = None;
-        // Loop over the months to calculate month lengths and identify a leap month:
-        loop {
+        // The solstice is in the month of the 10th solar term of the previous year
+        let mut solar_term = -2;
+
+        // Skip the months before the year
+        while solar_term < 0 {
             let next_new_moon = new_moon.add_duration_times_n(MEAN_SYNODIC_MONTH_LENGTH, 1);
-            if next_new_moon.rata_die > next_winter_solstice.rata_die {
-                break;
-            }
-            if next_new_moon.rata_die - new_moon.rata_die == 30 {
-                *month_lengths_iter.next().unwrap() = true;
-            } else {
-                debug_assert_eq!(next_new_moon.rata_die - new_moon.rata_die, 29);
-                month_lengths_iter.next();
-            }
-            dbg!(new_moon, major_solar_term);
-            if major_solar_term.rata_die >= next_new_moon.rata_die {
-                assert!(potential_leap_month.is_none());
-                potential_leap_month =
-                    Some(u8::try_from(12 - month_lengths_iter.as_slice().len()).unwrap());
-            } else {
+
+            if major_solar_term.rata_die < next_new_moon.rata_die {
+                solar_term += 1;
                 major_solar_term =
                     major_solar_term.add_duration_times_n(MEAN_GREGORIAN_SOLAR_TERM_LENGTH, 1);
             }
+
             new_moon = next_new_moon;
         }
-        match month_lengths_iter.into_slice().len() {
-            1 => SolsticeYearInfo {
-                m11_rd: m11_moment.rata_die,
-                month_lengths,
-                leap_month: None,
-            },
-            0 => SolsticeYearInfo {
-                m11_rd: m11_moment.rata_die,
-                month_lengths,
-                leap_month: Some(potential_leap_month.unwrap()),
-            },
-            _ => unreachable!(),
-        }
-    }
-}
 
-impl chinese::Rules for FastPingqi {
-    fn year_data(&self, related_iso: i32) -> chinese::LunarChineseYearData {
-        // Calculate the two solstice years that occur during the lunar year.
-        let solstice_year_0 = self.solstice_year_for_iso_year(related_iso);
-        let solstice_year_1 = self.solstice_year_for_iso_year(related_iso + 1);
-        // The lunar new year occurs in the first solstice year.
-        let start_day = solstice_year_0.lunar_new_year_rd();
-        // We need to pull 10-11 month lengths from the first solstice year
-        // and 2-3 month lengths from the second solstice year.
-        //
-        // First, we need to figure out if there is a leap month and which solstice year
-        // it comes from.
-        let ny0 = solstice_year_0.lunar_new_year_index();
-        let ny1 = solstice_year_1.lunar_new_year_index();
-        let month_lengths_0 = &solstice_year_0.valid_month_lengths()[ny0..];
-        let month_lengths_1 = &solstice_year_1.month_lengths[..ny1];
-        let num_months = month_lengths_0.len() + month_lengths_1.len();
-        let leap_month = match num_months {
-            12 => None,
-            13 => {
-                match (solstice_year_0.leap_month, solstice_year_1.leap_month) {
-                    (Some(x), None) if x >= 3 => {
-                        // 3 => M01L, 4 => M02L, ...
-                        Some(x - 2)
-                    }
-                    (None, Some(x)) if x <= 2 => {
-                        // 1 => M11L, 2 => M12L
-                        Some(x + 10)
-                    }
-                    _ => unreachable!(),
-                }
+        let start_day = new_moon.rata_die;
+        let mut month_lengths = [false; 13];
+        let mut month = 0;
+        let mut leap_month = None;
+
+        // Iterate over the 12 solar terms, producing potentially 13 months
+        while solar_term < 12 {
+            let next_new_moon = new_moon.add_duration_times_n(MEAN_SYNODIC_MONTH_LENGTH, 1);
+
+            if major_solar_term.rata_die < next_new_moon.rata_die {
+                solar_term += 1;
+                major_solar_term =
+                    major_solar_term.add_duration_times_n(MEAN_GREGORIAN_SOLAR_TERM_LENGTH, 1);
+            } else {
+                leap_month = Some(month as u8 + 1);
             }
-            _ => unreachable!(),
-        };
-        // Now copy over the month lengths.
-        let mut month_lengths: [bool; 13] = Default::default();
-        month_lengths[0..month_lengths_0.len()].copy_from_slice(month_lengths_0);
-        month_lengths[month_lengths_0.len()..num_months].copy_from_slice(month_lengths_1);
-        // All done.
+
+            month_lengths[month] = next_new_moon.rata_die - new_moon.rata_die == 30;
+
+            month += 1;
+            new_moon = next_new_moon;
+        }
+
         chinese::LunarChineseYearData::new(related_iso, start_day, month_lengths, leap_month)
     }
 
     fn reference_year_from_month_day(
         &self,
-        month_code: icu_calendar::types::MonthCode,
-        day: u8,
+        _month_code: icu_calendar::types::MonthCode,
+        _day: u8,
     ) -> Result<chinese::LunarChineseYearData, icu_calendar::DateError> {
         todo!()
     }
@@ -319,11 +227,11 @@ impl chinese::Rules for FastPingqi {
 fn test_fast_pingqi() {
     // From navy.mil, minute resolution
     let winter_solstice_2024 = LocalMoment {
-        rata_die: calendrical_calculations::iso::fixed_from_iso(2024, 12, 21),
+        rata_die: calendrical_calculations::gregorian::fixed_from_gregorian(2024, 12, 21),
         local_milliseconds: 62400000,
     };
     let new_moon_near_winter_solstice_2024 = LocalMoment {
-        rata_die: calendrical_calculations::iso::fixed_from_iso(2024, 12, 1),
+        rata_die: calendrical_calculations::gregorian::fixed_from_gregorian(2024, 12, 1),
         local_milliseconds: 51660000,
     };
     let rules = FastPingqi {
