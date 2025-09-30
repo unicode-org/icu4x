@@ -142,7 +142,9 @@ impl UnstableSealed for Ethiopian {}
 impl UnstableSealed for Gregorian {}
 impl UnstableSealed for Hebrew {}
 impl UnstableSealed for Indian {}
-impl<R: hijri::Rules> UnstableSealed for Hijri<R> {}
+impl UnstableSealed for Hijri<hijri::UmmAlQura> {}
+impl UnstableSealed for Hijri<hijri::TabularAlgorithm> {}
+impl UnstableSealed for Hijri<hijri::AstronomicalSimulation> {}
 impl UnstableSealed for Japanese {}
 impl UnstableSealed for JapaneseExtended {}
 impl UnstableSealed for Persian {}
