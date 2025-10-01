@@ -173,8 +173,8 @@ fn test_reference_year_coptic() {
 }
 
 #[test]
-fn test_reference_year_dangi() {
-    test_reference_year_impl(LunarChinese::new_dangi(), chinese_md_condition)
+fn test_reference_year_korean() {
+    test_reference_year_impl(LunarChinese::new_korea(), chinese_md_condition)
 }
 
 #[test]

@@ -79,7 +79,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
                 }
                 CalendarAlgorithm::Dangi => assert_fixture_element(
                     prefs,
-                    LunarChinese::new_dangi(),
+                    LunarChinese::new_korea(),
                     input,
                     &expected,
                     field_set,

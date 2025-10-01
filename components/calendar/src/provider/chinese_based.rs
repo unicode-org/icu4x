@@ -12,6 +12,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use crate::cal::chinese::LunarChineseYearData;
 #[cfg(debug_assertions)]
 use calendrical_calculations::chinese_based::WELL_BEHAVED_ASTRONOMICAL_RANGE;
 use calendrical_calculations::rata_die::RataDie;
@@ -29,10 +30,14 @@ pub(crate) struct ChineseBasedCache<'data> {
 }
 
 impl ChineseBasedCache<'_> {
-    pub fn get(&self, related_iso: i32) -> Option<PackedChineseBasedYearInfo> {
-        self.data
-            .get(usize::try_from(related_iso - self.first_related_iso_year).ok()?)
-            .copied()
+    pub fn get(&self, related_iso: i32) -> Option<LunarChineseYearData> {
+        Some(LunarChineseYearData {
+            packed: self
+                .data
+                .get(usize::try_from(related_iso - self.first_related_iso_year).ok()?)
+                .copied()?,
+            related_iso,
+        })
     }
 }
 

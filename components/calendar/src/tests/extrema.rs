@@ -32,8 +32,8 @@ fn check_extrema_chinese() {
 }
 
 #[test]
-fn check_extrema_dangi() {
-    check_extrema(LunarChinese::new_dangi())
+fn check_extrema_korean() {
+    check_extrema(LunarChinese::new_korea())
 }
 
 #[test]
