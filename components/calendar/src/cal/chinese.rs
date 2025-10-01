@@ -383,7 +383,7 @@ impl Rules for Dangi {
             // are in the next year
             (11, false, false) if day > 26 => 1971,
             (11, false, false) => 1972,
-            (11, false, true) => 1972,
+            (11, false, true) => 1969,
             (11, true, false) => 2033,
             (11, true, true) => -2173,
             (12, false, false) => 1971,
@@ -2331,8 +2331,8 @@ mod test {
                         ] {
                             let mut year = start_year;
                             while year * by < end_year * by {
-                                if year == start_year && month as i32 * by < start_month as i32 * by
-                                    || year == end_year && month as i32 * by > end_month as i32 * by
+                                if year == start_year && month as i32 * by <= start_month as i32 * by
+                                    || year == end_year && month as i32 * by >= end_month as i32 * by
                                 {
                                     year += by;
                                     continue;
