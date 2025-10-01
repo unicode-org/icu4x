@@ -179,9 +179,9 @@ fn main() -> eyre::Result<()> {
     let mut icuexport_data = Vec::new();
     extract_zip(
         cached(&format!(
-            "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
+            "https://github.com/unicode-org/icu/releases/download/{}/icu4x-exportdata-{}.zip",
             SourceDataProvider::TESTED_ICUEXPORT_TAG,
-            SourceDataProvider::TESTED_ICUEXPORT_TAG.replace('/', "-")
+            SourceDataProvider::TESTED_ICUEXPORT_TAG.replace("release-", "")
         ))
         .with_context(|| "Failed to download ICU ZIP".to_owned())?,
         expand_paths(ICUEXPORTDATA_GLOB, true),

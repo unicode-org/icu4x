@@ -113,7 +113,7 @@ impl SourceDataProvider {
     pub const TESTED_CLDR_TAG: &'static str = "48.0.0-BETA1";
 
     /// The ICU export tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2025-05-21/77.x";
+    pub const TESTED_ICUEXPORT_TAG: &'static str = "release-78.1rc";
 
     /// The segmentation LSTM model tag that has been verified to work with this version of `SourceDataProvider`.
     pub const TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
@@ -234,16 +234,21 @@ impl SourceDataProvider {
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
-    pub fn with_icuexport_for_tag(self, mut tag: &str) -> Self {
-        if tag == "release-71-1" {
-            tag = "icu4x/2022-08-17/71.x";
-        }
+    pub fn with_icuexport_for_tag(self, tag: &str) -> Self {
+        let url = if tag >= "release-78.1" {
+            format!(
+                "https://github.com/unicode-org/icu/releases/download/{tag}/icu4x-exportdata-{}.zip",
+                tag.replace("release-", "")
+            )
+        } else {
+            format!(
+                "https://github.com/unicode-org/icu/releases/download/{tag}/icuexportdata_{}.zip",
+                tag.replace('/', "-")
+            )
+        };
         Self {
-                icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_from_url(format!(
-                    "https://github.com/unicode-org/icu/releases/download/{tag}/icuexportdata_{}.zip",
-                    tag.replace('/', "-")
-                ))))),
-                ..self
+            icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_from_url(url)))),
+            ..self
         }
     }
 
