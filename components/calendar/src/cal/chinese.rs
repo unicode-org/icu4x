@@ -2331,8 +2331,10 @@ mod test {
                         ] {
                             let mut year = start_year;
                             while year * by < end_year * by {
-                                if year == start_year && month as i32 * by <= start_month as i32 * by
-                                    || year == end_year && month as i32 * by >= end_month as i32 * by
+                                if year == start_year
+                                    && month as i32 * by <= start_month as i32 * by
+                                    || year == end_year
+                                        && month as i32 * by >= end_month as i32 * by
                                 {
                                     year += by;
                                     continue;
