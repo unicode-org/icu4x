@@ -6,7 +6,7 @@
 
 use crate::provider::chinese_based::PackedChineseBasedYearInfo;
 
-pub const STARTING_YEAR: i32 = 1901;
+pub const STARTING_YEAR: i32 = 1900;
 
 #[rustfmt::skip]
 pub const DATA: &[PackedChineseBasedYearInfo] = {
@@ -14,17 +14,20 @@ pub const DATA: &[PackedChineseBasedYearInfo] = {
     let l = true; // long
     let s = false; // short
     &[
+        // This data comes from the KASI website
+        // https://astro.kasi.re.kr/life/pageView/5
+        PackedChineseBasedYearInfo::new(1900, [s, l, s, s, l, s, l, l, s, l, l, s, l], Some(9), gregorian(1900, 1, 31)),
         PackedChineseBasedYearInfo::new(1901, [s, l, s, s, l, s, l, s, l, l, l, s, s], None, gregorian(1901, 2, 19)),
         PackedChineseBasedYearInfo::new(1902, [l, s, l, s, s, l, s, l, s, l, l, l, s], None, gregorian(1902, 2, 8)),
-        PackedChineseBasedYearInfo::new(1903, [s, l, s, l, s, s, l, s, s, l, l, l, s], Some(6), gregorian(1903, 1, 29)),
-        PackedChineseBasedYearInfo::new(1904, [l, l, s, l, s, s, l, s, l, s, l, s, s], None, gregorian(1904, 2, 16)),
-        PackedChineseBasedYearInfo::new(1905, [l, l, l, s, l, s, s, l, s, l, s, l, s], None, gregorian(1905, 2, 4)),
+        PackedChineseBasedYearInfo::new(1903, [s, l, s, l, s, s, l, s, s, l, l, s, l], Some(6), gregorian(1903, 1, 29)),
+        PackedChineseBasedYearInfo::new(1904, [l, l, s, l, s, s, l, s, s, l, l, s, s], None, gregorian(1904, 2, 16)),
+        PackedChineseBasedYearInfo::new(1905, [l, l, s, l, l, s, s, l, s, l, s, l, s], None, gregorian(1905, 2, 4)),
         PackedChineseBasedYearInfo::new(1906, [s, l, l, s, l, s, l, s, l, s, l, s, l], Some(5), gregorian(1906, 1, 25)),
         PackedChineseBasedYearInfo::new(1907, [s, l, s, l, s, l, l, s, l, s, l, s, s], None, gregorian(1907, 2, 13)),
-        PackedChineseBasedYearInfo::new(1908, [l, s, l, s, l, s, l, s, l, l, s, l, s], None, gregorian(1908, 2, 2)),
+        PackedChineseBasedYearInfo::new(1908, [l, s, s, l, l, s, l, s, l, l, s, l, s], None, gregorian(1908, 2, 2)),
         PackedChineseBasedYearInfo::new(1909, [s, l, s, s, l, s, l, s, l, l, l, s, l], Some(3), gregorian(1909, 1, 22)),
         PackedChineseBasedYearInfo::new(1910, [s, l, s, s, l, s, l, s, l, l, l, s, s], None, gregorian(1910, 2, 10)),
-        PackedChineseBasedYearInfo::new(1911, [l, s, l, s, s, l, s, s, l, l, l, s, l], Some(7), gregorian(1911, 1, 30)),
+        PackedChineseBasedYearInfo::new(1911, [l, s, l, s, s, l, s, s, l, l, s, l, l], Some(7), gregorian(1911, 1, 30)),
         PackedChineseBasedYearInfo::new(1912, [l, s, l, s, s, l, s, s, l, l, s, l, s], None, gregorian(1912, 2, 18)),
         PackedChineseBasedYearInfo::new(1913, [l, l, s, l, s, s, l, s, s, l, s, l, s], None, gregorian(1913, 2, 6)),
         PackedChineseBasedYearInfo::new(1914, [l, l, s, l, l, s, s, l, s, l, s, s, l], Some(6), gregorian(1914, 1, 26)),
@@ -163,6 +166,7 @@ pub const DATA: &[PackedChineseBasedYearInfo] = {
         PackedChineseBasedYearInfo::new(2047, [l, s, l, l, s, l, s, l, s, s, l, s, l], Some(6), gregorian(2047, 1, 26)),
         PackedChineseBasedYearInfo::new(2048, [s, l, l, s, l, l, s, l, s, l, s, s, s], None, gregorian(2048, 2, 14)),
         PackedChineseBasedYearInfo::new(2049, [l, s, l, s, l, l, s, l, l, s, l, s, s], None, gregorian(2049, 2, 2)),
+        // This data is precomputed using Reingold calculations
         PackedChineseBasedYearInfo::new(2050, [l, s, s, l, s, l, s, l, l, s, l, l, s], Some(4), gregorian(2050, 1, 23)),
         PackedChineseBasedYearInfo::new(2051, [l, s, s, l, s, l, s, l, s, l, l, l, s], None, gregorian(2051, 2, 11)),
         PackedChineseBasedYearInfo::new(2052, [s, l, s, s, l, s, s, l, l, s, l, l, l], Some(9), gregorian(2052, 2, 1)),
