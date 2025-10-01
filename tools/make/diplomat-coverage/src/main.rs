@@ -183,7 +183,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
             false
         }
 
-        if ignored(&path) {
+        if ignored(&path) || item.deprecation.is_some() {
             return;
         }
         match &item.inner {
