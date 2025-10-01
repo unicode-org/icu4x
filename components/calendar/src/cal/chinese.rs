@@ -383,7 +383,7 @@ impl Rules for Dangi {
             // are in the next year
             (11, false, false) if day > 26 => 1971,
             (11, false, false) => 1972,
-            (11, false, true) => 1969,
+            (11, false, true) => 1972,
             (11, true, false) => 2033,
             (11, true, true) => -2173,
             (12, false, false) => 1971,
@@ -2287,76 +2287,76 @@ mod test {
     #[test]
     #[ignore]
     fn generate_reference_years() {
-        generate_reference_years_for(China, crate::cal::LunarChinese::new_china());
-        generate_reference_years_for(Dangi, crate::cal::LunarChinese::new_dangi());
-    }
-    fn generate_reference_years_for<R: Rules + Copy>(rules: R, calendar: LunarChinese<R>) {
-        use crate::Date;
+        generate_reference_years_for(LunarChinese::new_china());
+        generate_reference_years_for(LunarChinese::new_dangi());
+        fn generate_reference_years_for<R: Rules + Copy>(calendar: LunarChinese<R>) {
+            use crate::Date;
 
-        println!("Rules for {rules:?}:");
-        let reference_year_end = Date::from_rata_die(
-            crate::cal::abstract_gregorian::LAST_DAY_OF_REFERENCE_YEAR,
-            calendar,
-        );
-        let year_1900_start = Date::try_new_gregorian(1900, 1, 1)
-            .unwrap()
-            .to_calendar(calendar);
-        let year_2035_end = Date::try_new_gregorian(2035, 12, 31)
-            .unwrap()
-            .to_calendar(calendar);
-        for month in 1..=12 {
-            for leap in [false, true] {
-                'outer: for long in [false, true] {
-                    for (start_year, start_month, end_year, end_month, by) in [
-                        (
-                            reference_year_end.extended_year(),
-                            reference_year_end.month().month_number(),
-                            year_1900_start.extended_year(),
-                            year_1900_start.month().month_number(),
-                            -1,
-                        ),
-                        (
-                            reference_year_end.extended_year(),
-                            reference_year_end.month().month_number(),
-                            year_2035_end.extended_year(),
-                            year_2035_end.month().month_number(),
-                            1,
-                        ),
-                        (
-                            year_1900_start.extended_year(),
-                            year_1900_start.month().month_number(),
-                            -10000,
-                            1,
-                            -1,
-                        ),
-                    ] {
-                        let mut year = start_year;
-                        while year * by < end_year * by {
-                            if year == start_year && month as i32 * by < start_month as i32 * by
-                                || year == end_year && month as i32 * by > end_month as i32 * by
-                            {
-                                year += by;
-                                continue;
-                            }
-                            let data = rules.year_data(year);
-                            let leap_month = data.leap_month().unwrap_or(15);
-                            let days_in_month = data.days_in_month({
-                                if leap && month + 1 == leap_month {
-                                    month + 1
-                                } else {
-                                    month + (month + 1 > leap_month) as u8
+            println!("Reference years for {calendar:?}:");
+            let reference_year_end = Date::from_rata_die(
+                crate::cal::abstract_gregorian::LAST_DAY_OF_REFERENCE_YEAR,
+                calendar,
+            );
+            let year_1900_start = Date::try_new_gregorian(1900, 1, 1)
+                .unwrap()
+                .to_calendar(calendar);
+            let year_2035_end = Date::try_new_gregorian(2035, 12, 31)
+                .unwrap()
+                .to_calendar(calendar);
+            for month in 1..=12 {
+                for leap in [false, true] {
+                    'outer: for long in [false, true] {
+                        for (start_year, start_month, end_year, end_month, by) in [
+                            (
+                                reference_year_end.extended_year(),
+                                reference_year_end.month().month_number(),
+                                year_1900_start.extended_year(),
+                                year_1900_start.month().month_number(),
+                                -1,
+                            ),
+                            (
+                                reference_year_end.extended_year(),
+                                reference_year_end.month().month_number(),
+                                year_2035_end.extended_year(),
+                                year_2035_end.month().month_number(),
+                                1,
+                            ),
+                            (
+                                year_1900_start.extended_year(),
+                                year_1900_start.month().month_number(),
+                                -10000,
+                                1,
+                                -1,
+                            ),
+                        ] {
+                            let mut year = start_year;
+                            while year * by < end_year * by {
+                                if year == start_year && month as i32 * by < start_month as i32 * by
+                                    || year == end_year && month as i32 * by > end_month as i32 * by
+                                {
+                                    year += by;
+                                    continue;
                                 }
-                            });
-                            if (!long || (days_in_month == 30))
-                                && (!leap || month + 1 == leap_month)
-                            {
-                                println!("({month}, {leap:?}, {long:?}) => {year},");
-                                continue 'outer;
+                                let data = calendar.0.year_data(year);
+                                let leap_month = data.leap_month().unwrap_or(15);
+                                let days_in_month = data.days_in_month({
+                                    if leap && month + 1 == leap_month {
+                                        month + 1
+                                    } else {
+                                        month + (month + 1 > leap_month) as u8
+                                    }
+                                });
+                                if (!long || (days_in_month == 30))
+                                    && (!leap || month + 1 == leap_month)
+                                {
+                                    println!("({month}, {leap:?}, {long:?}) => {year},");
+                                    continue 'outer;
+                                }
+                                year += by;
                             }
-                            year += by;
                         }
+                        println!("({month}, {leap:?}, {long:?}) => todo!(),")
                     }
-                    println!("({month}, {leap:?}, {long:?}) => todo!(),")
                 }
             }
         }
