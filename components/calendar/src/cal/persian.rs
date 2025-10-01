@@ -37,8 +37,6 @@ pub struct Persian;
 pub struct PersianDateInner(ArithmeticDate<Persian>);
 
 impl CalendarArithmetic for Persian {
-    type YearInfo = i32;
-
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
         match month {
             1..=6 => 31,
@@ -195,7 +193,7 @@ impl Calendar for Persian {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        date.0.month()
+        self.month_code_from_ordinal(&date.0.year, date.0.month)
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {

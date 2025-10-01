@@ -3,7 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, DateFieldsResolver};
+use crate::calendar_arithmetic::{
+    ArithmeticDate, CalendarArithmetic, DateFieldsResolver, ToExtendedYear,
+};
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, PrecomputedDataSource};
 use crate::error::DateError;
 use crate::options::{DateFromFieldsOptions, Overflow};
@@ -55,9 +57,9 @@ pub(crate) struct HebrewYearInfo {
     value: i32,
 }
 
-impl From<HebrewYearInfo> for i32 {
-    fn from(value: HebrewYearInfo) -> Self {
-        value.value
+impl ToExtendedYear for HebrewYearInfo {
+    fn to_extended_year(&self) -> i32 {
+        self.value
     }
 }
 
@@ -85,8 +87,6 @@ impl HebrewYearInfo {
 //  HEBREW CALENDAR
 
 impl CalendarArithmetic for Hebrew {
-    type YearInfo = HebrewYearInfo;
-
     fn days_in_provided_month(info: HebrewYearInfo, ordinal_month: u8) -> u8 {
         info.keviyah.month_len(ordinal_month)
     }
@@ -226,6 +226,58 @@ impl DateFieldsResolver for Hebrew {
         };
         Ok(ordinal_month)
     }
+
+    fn month_code_from_ordinal(
+        &self,
+        year: &Self::YearInfo,
+        ordinal_month: u8,
+    ) -> types::MonthInfo {
+        let mut ordinal = ordinal_month;
+        let is_leap_year = Self::provided_year_is_leap(*year);
+
+        if is_leap_year {
+            if ordinal == 6 {
+                return types::MonthInfo {
+                    ordinal,
+                    standard_code: types::MonthCode(tinystr!(4, "M05L")),
+                    formatting_code: types::MonthCode(tinystr!(4, "M05L")),
+                };
+            } else if ordinal == 7 {
+                return types::MonthInfo {
+                    ordinal,
+                    // Adar II is the same as Adar and has the same code
+                    standard_code: types::MonthCode(tinystr!(4, "M06")),
+                    formatting_code: types::MonthCode(tinystr!(4, "M06L")),
+                };
+            }
+        }
+
+        if is_leap_year && ordinal > 6 {
+            ordinal -= 1;
+        }
+
+        let code = match ordinal {
+            1 => tinystr!(4, "M01"),
+            2 => tinystr!(4, "M02"),
+            3 => tinystr!(4, "M03"),
+            4 => tinystr!(4, "M04"),
+            5 => tinystr!(4, "M05"),
+            6 => tinystr!(4, "M06"),
+            7 => tinystr!(4, "M07"),
+            8 => tinystr!(4, "M08"),
+            9 => tinystr!(4, "M09"),
+            10 => tinystr!(4, "M10"),
+            11 => tinystr!(4, "M11"),
+            12 => tinystr!(4, "M12"),
+            _ => tinystr!(4, "und"),
+        };
+
+        types::MonthInfo {
+            ordinal: ordinal_month,
+            standard_code: types::MonthCode(code),
+            formatting_code: types::MonthCode(code),
+        }
+    }
 }
 
 impl crate::cal::scaffold::UnstableSealed for Hebrew {}
@@ -320,51 +372,7 @@ impl Calendar for Hebrew {
     }
 
     fn month(&self, date: &Self::DateInner) -> MonthInfo {
-        let mut ordinal = date.0.month;
-        let is_leap_year = Self::provided_year_is_leap(date.0.year);
-
-        if is_leap_year {
-            if ordinal == 6 {
-                return types::MonthInfo {
-                    ordinal,
-                    standard_code: types::MonthCode(tinystr!(4, "M05L")),
-                    formatting_code: types::MonthCode(tinystr!(4, "M05L")),
-                };
-            } else if ordinal == 7 {
-                return types::MonthInfo {
-                    ordinal,
-                    // Adar II is the same as Adar and has the same code
-                    standard_code: types::MonthCode(tinystr!(4, "M06")),
-                    formatting_code: types::MonthCode(tinystr!(4, "M06L")),
-                };
-            }
-        }
-
-        if is_leap_year && ordinal > 6 {
-            ordinal -= 1;
-        }
-
-        let code = match ordinal {
-            1 => tinystr!(4, "M01"),
-            2 => tinystr!(4, "M02"),
-            3 => tinystr!(4, "M03"),
-            4 => tinystr!(4, "M04"),
-            5 => tinystr!(4, "M05"),
-            6 => tinystr!(4, "M06"),
-            7 => tinystr!(4, "M07"),
-            8 => tinystr!(4, "M08"),
-            9 => tinystr!(4, "M09"),
-            10 => tinystr!(4, "M10"),
-            11 => tinystr!(4, "M11"),
-            12 => tinystr!(4, "M12"),
-            _ => tinystr!(4, "und"),
-        };
-
-        types::MonthInfo {
-            ordinal: date.0.month,
-            standard_code: types::MonthCode(code),
-            formatting_code: types::MonthCode(code),
-        }
+        self.month_code_from_ordinal(&date.0.year, date.0.month)
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {

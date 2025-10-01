@@ -3,7 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, CalendarArithmetic};
+use crate::calendar_arithmetic::{
+    ArithmeticDate, ArithmeticDateBuilder, CalendarArithmetic, ToExtendedYear,
+};
 use crate::calendar_arithmetic::{DateFieldsResolver, PrecomputedDataSource};
 use crate::error::DateError;
 use crate::options::{DateFromFieldsOptions, Overflow};
@@ -479,8 +481,6 @@ impl LunarChinese<China> {
 }
 
 impl<X: Rules> CalendarArithmetic for LunarChinese<X> {
-    type YearInfo = LunarChineseYearData;
-
     fn days_in_provided_month(year: LunarChineseYearData, month: u8) -> u8 {
         year.days_in_month(month)
     }
@@ -556,6 +556,14 @@ impl<X: Rules> DateFieldsResolver for LunarChinese<X> {
             }
             _ => Err(DateError::UnknownMonthCode(month_code)),
         }
+    }
+
+    fn month_code_from_ordinal(
+        &self,
+        year: &Self::YearInfo,
+        ordinal_month: u8,
+    ) -> types::MonthInfo {
+        year.month(ordinal_month)
     }
 }
 
@@ -740,9 +748,9 @@ pub struct LunarChineseYearData {
     pub(crate) related_iso: i32,
 }
 
-impl From<LunarChineseYearData> for i32 {
-    fn from(value: LunarChineseYearData) -> Self {
-        value.related_iso
+impl ToExtendedYear for LunarChineseYearData {
+    fn to_extended_year(&self) -> i32 {
+        self.related_iso
     }
 }
 

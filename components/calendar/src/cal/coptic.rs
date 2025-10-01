@@ -39,8 +39,6 @@ pub struct Coptic;
 pub struct CopticDateInner(pub(crate) ArithmeticDate<Coptic>);
 
 impl CalendarArithmetic for Coptic {
-    type YearInfo = i32;
-
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
         if (1..=12).contains(&month) {
             30
@@ -209,7 +207,7 @@ impl Calendar for Coptic {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        date.0.month()
+        self.month_code_from_ordinal(&date.0.year, date.0.month)
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {

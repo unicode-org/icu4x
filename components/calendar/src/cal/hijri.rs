@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
+use crate::calendar_arithmetic::{PrecomputedDataSource, ToExtendedYear};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
 use crate::provider::hijri::PackedHijriYearInfo;
@@ -392,9 +392,9 @@ pub struct HijriYearData {
     extended_year: i32,
 }
 
-impl From<HijriYearData> for i32 {
-    fn from(value: HijriYearData) -> Self {
-        value.extended_year
+impl ToExtendedYear for HijriYearData {
+    fn to_extended_year(&self) -> i32 {
+        self.extended_year
     }
 }
 
@@ -541,8 +541,6 @@ impl<R: Rules> PartialEq for HijriDateInner<R> {
 impl<R: Rules> Eq for HijriDateInner<R> {}
 
 impl<R: Rules> CalendarArithmetic for Hijri<R> {
-    type YearInfo = HijriYearData;
-
     fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8 {
         if year.packed.month_has_30_days(month) {
             30
@@ -709,7 +707,7 @@ impl<R: Rules> Calendar for Hijri<R> {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        date.0.month()
+        self.month_code_from_ordinal(&date.0.year, date.0.month)
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {

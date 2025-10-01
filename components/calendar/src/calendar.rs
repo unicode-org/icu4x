@@ -5,9 +5,10 @@
 use calendrical_calculations::rata_die::RataDie;
 
 use crate::cal::iso::IsoDateInner;
+use crate::duration::{DateAddOptions, DateUntilOptions};
 use crate::error::DateError;
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
-use crate::{types, DateDuration, DateDurationUnit};
+use crate::{types, DateDuration};
 use core::fmt;
 
 /// A calendar implementation
@@ -110,8 +111,13 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear;
 
     #[doc(hidden)] // unstable
-    /// Add `offset` to `date`
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration);
+    /// Add `duration` to `date`
+    fn offset_date(
+        &self,
+        date: &Self::DateInner,
+        duration: DateDuration,
+        options: DateAddOptions,
+    ) -> Self::DateInner;
     #[doc(hidden)] // unstable
     /// Calculate `date2 - date` as a duration
     ///
@@ -121,9 +127,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        calendar2: &Self,
-        largest_unit: DateDurationUnit,
-        smallest_unit: DateDurationUnit,
+        options: DateUntilOptions,
     ) -> DateDuration;
 
     /// Returns the [`CalendarAlgorithm`](crate::preferences::CalendarAlgorithm) that is required to match

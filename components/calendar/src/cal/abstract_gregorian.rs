@@ -6,6 +6,7 @@ use crate::cal::iso::{IsoDateInner, IsoEra};
 use crate::calendar_arithmetic::{
     ArithmeticDate, ArithmeticDateBuilder, CalendarArithmetic, DateFieldsResolver,
 };
+use crate::duration::{DateAddOptions, DateUntilOptions};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
 use crate::preferences::CalendarAlgorithm;
@@ -43,8 +44,6 @@ impl ArithmeticDate<AbstractGregorian<IsoEra>> {
 }
 
 impl CalendarArithmetic for AbstractGregorian<IsoEra> {
-    type YearInfo = i32;
-
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
         // https://www.youtube.com/watch?v=J9KijLyP-yg&t=1394s
         if month == 2 {
@@ -155,19 +154,18 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         date.days_in_month()
     }
 
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration) {
-        date.offset_date(offset, &());
+    fn offset_date(&self, date: &Self::DateInner, duration: DateDuration, options: DateAddOptions) -> Self::DateInner {
+        // TODO: Don't unwrap
+        date.added(duration, self, options).unwrap()
     }
 
     fn until(
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        _calendar2: &Self,
-        _largest_unit: DateDurationUnit,
-        _smallest_unit: DateDurationUnit,
+        options: DateUntilOptions
     ) -> DateDuration {
-        date1.until(*date2, _largest_unit, _smallest_unit)
+        date1.until(date2, self, options)
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
@@ -180,7 +178,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        date.month()
+        self.month_code_from_ordinal(&date.year, date.month)
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {

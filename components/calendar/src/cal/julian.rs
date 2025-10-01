@@ -38,8 +38,6 @@ pub struct Julian;
 pub struct JulianDateInner(pub(crate) ArithmeticDate<Julian>);
 
 impl CalendarArithmetic for Julian {
-    type YearInfo = i32;
-
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
         match month {
             4 | 6 | 9 | 11 => 30,
@@ -202,7 +200,7 @@ impl Calendar for Julian {
 
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        date.0.month()
+        self.month_code_from_ordinal(&date.0.year, date.0.month)
     }
 
     /// The calendar-specific day-of-month represented by `date`

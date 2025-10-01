@@ -5,6 +5,7 @@
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::cal::{abstract_gregorian::AbstractGregorian, iso::IsoEra};
 use crate::calendar_arithmetic::CalendarArithmetic;
+use crate::duration::{DateAddOptions, DateUntilOptions};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
 use crate::types::{CyclicYear, EraYear, IsoWeekOfYear};
@@ -240,9 +241,13 @@ impl<A: AsCalendar> Date<A> {
     #[doc(hidden)] // unstable
     #[inline]
     pub fn add(&mut self, duration: DateDuration) {
-        self.calendar
+        // TODO: Take options
+        let options = DateAddOptions::default();
+        let inner = self
+            .calendar
             .as_calendar()
-            .offset_date(&mut self.inner, duration)
+            .offset_date(&self.inner, duration, options);
+        self.inner = inner;
     }
 
     /// Add a `duration` to this date, returning the new one
@@ -260,15 +265,15 @@ impl<A: AsCalendar> Date<A> {
         &self,
         other: &Date<B>,
         largest_unit: DateDurationUnit,
-        smallest_unit: DateDurationUnit,
+        _smallest_unit: DateDurationUnit,
     ) -> DateDuration {
-        self.calendar.as_calendar().until(
-            self.inner(),
-            other.inner(),
-            other.calendar.as_calendar(),
-            largest_unit,
-            smallest_unit,
-        )
+        // TODO: Remove smallest_unit
+        let options = DateUntilOptions {
+            largest_unit: Some(largest_unit),
+        };
+        self.calendar
+            .as_calendar()
+            .until(self.inner(), other.inner(), options)
     }
 
     /// The calendar-specific year-info.
