@@ -7,7 +7,7 @@ use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, Calendar
 use crate::calendar_arithmetic::{DateFieldsResolver, PrecomputedDataSource};
 use crate::error::DateError;
 use crate::options::{DateFromFieldsOptions, Overflow};
-use crate::provider::chinese_based::{ChineseBasedCache, PackedChineseBasedYearInfo};
+use crate::provider::chinese_based::PackedChineseBasedYearInfo;
 use crate::types::{MonthCode, MonthInfo};
 use crate::AsCalendar;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
@@ -19,10 +19,12 @@ use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorit
 use icu_provider::prelude::*;
 use tinystr::tinystr;
 
-#[path = "chinese/chinese_data.rs"]
-mod chinese_data;
-#[path = "chinese/korean_data.rs"]
-mod korean_data;
+#[path = "chinese/china_data.rs"]
+mod china_data;
+#[path = "chinese/korea_data.rs"]
+mod korea_data;
+#[path = "chinese/qing_data.rs"]
+mod qing_data;
 
 /// The [Chinese Calendar](https://en.wikipedia.org/wiki/Chinese_calendar)
 ///
@@ -35,8 +37,7 @@ mod korean_data;
 /// # Months
 ///
 /// The Chinese calendar is an astronomical calendar which uses the phases of the moon to track months.
-/// Each month starts on the date of the new moon as observed from China, meaning that months last 29
-/// or 30 days.
+/// Each month starts on the date of the new moon, meaning that months last 29 or 30 days.
 ///
 /// One year in the Chinese calendar is typically 12 lunar months; however, because 12 lunar months does
 /// not line up to one solar year, the Chinese calendar will add an intercalary leap month approximately
@@ -50,8 +51,8 @@ mod korean_data;
 /// Unlike the Gregorian calendar, the Chinese calendar does not traditionally count years in an infinitely
 /// increasing sequence. Instead, 10 "celestial stems" and 12 "terrestrial branches" are combined to form a
 /// cycle of year names which repeats every 60 years. However, for the purposes of calendar calculations and
-/// conversions, this calendar also counts years based on the ISO (Gregorian) calendar. This "related ISO year"
-/// marks the ISO year in which a Chinese year begins.
+/// conversions, this calendar also counts years based on the Gregorian (ISO) calendar. This "related ISO year"
+/// marks the Gregorian year in which a Chinese year begins.
 ///
 /// Because the Chinese calendar does not traditionally count years, era codes are not used in this calendar.
 ///
@@ -77,8 +78,7 @@ pub struct LunarChinese<X>(pub X);
 /// The rules for how to perform these calculations, as well as how local
 /// time is determined differ between countries and have changed over time.
 ///
-/// For example, the [`China`] type implements the rules that are used in
-/// China, and the [`Korea`] type implements the rules used in Korea.
+/// This crate currently provides [`Rules`] for [`China`] and [`Korea`].
 ///
 /// <div class="stab unstable">
 /// 🚫 This trait is sealed; it should not be implemented by user code. If an API requests an item that implements this
@@ -110,61 +110,66 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
     }
 }
 
-fn fallback_approximation<CB: ChineseBased>(related_iso: i32) -> LunarChineseYearData {
-    let mid_year = calendrical_calculations::gregorian::fixed_from_gregorian(related_iso, 7, 1);
-    let year_bounds = YearBounds::compute::<CB>(mid_year);
-
-    let YearBounds {
-        new_year,
-        next_new_year,
-        ..
-    } = year_bounds;
-    let (month_lengths, leap_month) =
-        chinese_based::month_structure_for_year::<CB>(new_year, next_new_year);
-
-    LunarChineseYearData {
-        packed: PackedChineseBasedYearInfo::new(related_iso, month_lengths, leap_month, new_year),
-        related_iso,
-    }
-}
-
 /// The [`Rules`] used in China.
 ///
-/// Accurate calculation according to [GB/T 33661-2017] is computationally
-/// [expensive](https://ytliu0.github.io/ChineseCalendar/computation.html#modern),
-/// so this type includes precomputed data for the years 1901-2100.
+/// This type agrees with the official data published by the
+/// [Purple Mountain Observatory for the years 1900-2025], as well as with
+/// the data published by the [Hong Kong Observatory for the years 1901-2100].
 ///
-/// If performance is required beyond 2100, clients can implement their own
-/// [`Rules`] type using data computed by [`LunarChineseYearData::gb_t_33661_2017`],
-/// or from sources like the excellent compilation by
-/// [Yuk Tung Liu](https://ytliu0.github.io/ChineseCalendar/table.html).
+/// For years since 1912, this uses the [GB/T 33661-2017] rules.
+/// As accurate computation is computationally expensive, years until
+/// 2100 are precomputed. If performance beyond 2100 is an issue, clients
+/// can implement their own [`Rules`] type containing more precomputed data.
+/// We note that the calendar is inherently uncertain for some future dates.
 ///
-/// Dates before 1901 are mainly of historical interest, and were calculated
-/// using different [methods](https://ytliu.epizy.com/Shixian/Shixian_summary.html)
-/// than [GB/T 33661-2017]. These algorithms and data are not included for binary
-/// size reasons. If accuracy is required in this range clients can implement their
-/// own [`Rules`] type using the desired data.
+/// Before 1912 [different rules](https://ytliu.epizy.com/Shixian/Shixian_summary.html)
+/// were used. This type produces correct data for the years 1900-1912, and
+/// falls back to [GB/T 33661-2017] proleptically before 1900. If accuracy
+/// is required before 1900, clients can implement their own [`Rules`] type
+/// using data such as from the excellent compilation by [Yuk Tung Liu].
 ///
-/// [GB/T 33661-2017]: https://openstd.samr.gov.cn/bzgk/gb/newGbInfo?hcno=E107EA4DE9725EDF819F33C60A44B296
+/// [Purple Mountain Observatory for the years 1900-2025]: http://www.pmo.cas.cn/xwdt2019/kpdt2019/202203/P020250414456381274062.pdf
+/// [Hong Kong Observatory for the years 1901-2100]: https://www.hko.gov.hk/en/gts/time/conversion.htm
+/// [GB/T 33661-2017]: China::gb_t_33661_2017
+/// [Yuk Tung Liu]: https://ytliu0.github.io/ChineseCalendar/table.html
 #[derive(Copy, Clone, Debug, Default)]
 #[non_exhaustive]
 pub struct China;
 
+impl China {
+    /// Computes [`LunarChineseYearData`] according to [GB/T 33661-2017],
+    /// as implemented by [`calendrical_calculations::chinese_based::Chinese`].
+    ///
+    /// The rules specified in [GB/T 33661-2017] have only been used
+    /// since 1912, applying them proleptically to years before 1912 will not
+    /// necessarily match historical calendars.
+    ///
+    /// Note that for future years there is a small degree of uncertainty, as
+    /// [GB/T 33661-2017] depends on the uncertain future [difference between UT1
+    /// and UTC](https://en.wikipedia.org/wiki/Leap_second#Future).
+    /// As noted by
+    /// [Yuk Tung Liu](https://ytliu0.github.io/ChineseCalendar/computation.html#modern),
+    /// years as early as 2057, 2089, and 2097 have lunar events very close to
+    /// local midnight, which might affect the start of a (single) month if additional
+    /// leap seconds are introduced.
+    ///
+    /// [GB/T 33661-2017]: https://openstd.samr.gov.cn/bzgk/gb/newGbInfo?hcno=E107EA4DE9725EDF819F33C60A44B296
+    pub fn gb_t_33661_2017(related_iso: i32) -> LunarChineseYearData {
+        LunarChineseYearData::calendrical_calculations::<chinese_based::Chinese>(related_iso)
+    }
+}
+
 impl crate::cal::scaffold::UnstableSealed for China {}
 impl Rules for China {
     fn year_data(&self, related_iso: i32) -> LunarChineseYearData {
-        if let Some(packed) = (ChineseBasedCache {
-            first_related_iso_year: chinese_data::STARTING_YEAR,
-            data: chinese_data::DATA,
-        }
-        .get(related_iso))
-        {
-            LunarChineseYearData {
-                packed,
-                related_iso,
-            }
+        if let Some(data) = china_data::DATA.get(related_iso) {
+            data
+        } else if related_iso > china_data::DATA.first_related_iso_year {
+            Self::gb_t_33661_2017(related_iso)
         } else {
-            LunarChineseYearData::gb_t_33661_2017(related_iso)
+            qing_data::DATA
+                .get(related_iso)
+                .unwrap_or_else(|| Self::gb_t_33661_2017(related_iso))
         }
     }
 
@@ -243,14 +248,29 @@ impl Rules for China {
     }
 }
 
-/// The [Traditional Korean (Dangi) Calendar](https://en.wikipedia.org/wiki/Korean_calendar)
+/// The [`Rules`] used in [Korea](https://en.wikipedia.org/wiki/Korean_calendar).
 ///
-/// The Dangi Calendar is a lunisolar calendar used traditionally in North and South Korea.
-/// It is often used today to track important cultural events and holidays like Seollal
-/// (Korean lunar new year). It is similar to the Chinese lunar calendar (see [`China`](super::chinese::China)),
-/// except that observations are based in Korea (currently UTC+9) rather than China (UTC+8).
-/// This can cause some differences; for example, 2012 was a leap year, but in the Dangi
-/// calendar the leap month was 3, while in the Chinese calendar the leap month was 4.
+/// This type agrees with the official data published by the
+/// [Korea Astronomy and Space Science Institute for the years 1900-2050].
+///
+/// For years since 1912, this uses [adapted GB/T 33661-2017] rules,
+/// using Korea time instead of Beijing Time.
+/// As accurate computation is computationally expensive, years until
+/// 2100 are precomputed. If performance beyond 2100 is an issue, clients
+/// can implement their own [`Rules`] type containing more precomputed data.
+/// We note that the calendar is inherently uncertain for some future dates.
+///
+/// Before 1912 [different rules](https://ytliu.epizy.com/Shixian/Shixian_summary.html)
+/// were used (those of Qing-dynasty China). This type produces correct data
+/// for the years 1900-1912, and falls back to [GB/T 33661-2017] proleptically
+/// before 1900. If accuracy is required before 1900, clients can implement
+/// their own [`Rules`] type using data such as from the excellent compilation
+/// by [Yuk Tung Liu].
+///
+/// [Korea Astronomy and Space Science Institute for the years 1900-2050]: https://astro.kasi.re.kr/life/pageView/5
+/// [adapted GB/T 33661-2017]: Korea::adapted_gb_t_33661_2017
+/// [GB/T 33661-2017]: China::gb_t_33661_2017
+/// [Yuk Tung Liu]: https://ytliu0.github.io/ChineseCalendar/table.html
 ///
 /// ```rust
 /// use icu::calendar::cal::LunarChinese;
@@ -275,8 +295,17 @@ impl Rules for China {
 #[non_exhaustive]
 pub struct Korea;
 
+impl Korea {
+    /// A version of [`China::gb_t_33661_2017`] adapted for Korean time.
+    ///
+    /// See [`China::gb_t_33661_2017`] for caveats.
+    pub fn adapted_gb_t_33661_2017(related_iso: i32) -> LunarChineseYearData {
+        LunarChineseYearData::calendrical_calculations::<chinese_based::Dangi>(related_iso)
+    }
+}
+
 impl LunarChinese<Korea> {
-    /// Creates a new [`Korea`] calendar.
+    /// Creates a new calendar using [`Korea`] rules.
     pub const fn new_korea() -> Self {
         Self(Korea)
     }
@@ -314,18 +343,16 @@ impl LunarChinese<Korea> {
 impl crate::cal::scaffold::UnstableSealed for Korea {}
 impl Rules for Korea {
     fn year_data(&self, related_iso: i32) -> LunarChineseYearData {
-        if let Some(packed) = (ChineseBasedCache {
-            first_related_iso_year: korean_data::STARTING_YEAR,
-            data: korean_data::DATA,
-        }
-        .get(related_iso))
-        {
-            LunarChineseYearData {
-                packed,
-                related_iso,
-            }
+        if let Some(data) = korea_data::DATA.get(related_iso) {
+            data
+        } else if related_iso > korea_data::DATA.first_related_iso_year {
+            Self::adapted_gb_t_33661_2017(related_iso)
         } else {
-            fallback_approximation::<calendrical_calculations::chinese_based::Dangi>(related_iso)
+            // Korea used Qing-dynasty rules before 1912
+            // https://github.com/unicode-org/icu4x/issues/6455#issuecomment-3282175550
+            qing_data::DATA
+                .get(related_iso)
+                .unwrap_or_else(|| China::gb_t_33661_2017(related_iso))
         }
     }
 
@@ -378,7 +405,7 @@ impl Rules for Korea {
             (10, false, false) => 1972,
             (10, false, true) => 1972,
             (10, true, false) => 1984,
-            (10, true, true) => -3946,
+            (10, true, true) => -4098,
             // Dec 31, 1972 is 1972-M11-26, dates after that
             // are in the next year
             (11, false, false) if day > 26 => 1971,
@@ -388,8 +415,8 @@ impl Rules for Korea {
             (11, true, true) => -2173,
             (12, false, false) => 1971,
             (12, false, true) => 1971,
-            (12, true, false) => 1889,
-            (12, true, true) => -1182,
+            (12, true, false) => 1403,
+            (12, true, true) => -180,
             _ => return Err(DateError::UnknownMonthCode(month_code)),
         };
         Ok(self.year_data(extended))
@@ -429,7 +456,7 @@ impl<S: Rules> PartialEq for ChineseDateInner<S> {
 impl<S: Rules> Eq for ChineseDateInner<S> {}
 
 impl LunarChinese<China> {
-    /// Creates a new [`LunarChinese`] with some precomputed calendrical calculations.
+    /// Creates a new calendar using [`China`] rules.
     pub const fn new_china() -> Self {
         LunarChinese(China)
     }
@@ -760,24 +787,27 @@ impl LunarChineseYearData {
         }
     }
 
-    /// Computes a [`LunarChineseYearData`] according to [GB/T 33661-2017].
-    ///
-    /// The algorithm specified in [GB/T 33661-2017] has only been used
-    /// since 1912, applying it proleptically to years before 1912 will not
-    /// necessarily match historical calendars.
-    ///
-    /// Note that for future years there is a small degree of uncertainty, as
-    /// [GB/T 33661-2017] depends on the uncertain future [difference between UT1
-    /// and UTC](https://en.wikipedia.org/wiki/Leap_second#Future).
-    /// As noted by
-    /// [Yuk Tung Liu](https://ytliu0.github.io/ChineseCalendar/computation.html#modern),
-    /// years as early as 2057, 2089, and 2097 have lunar events very close to
-    /// local midnight, which might affect the start of a (single) month if additional
-    /// leap seconds are introduced.
-    ///
-    /// [GB/T 33661-2017]: https://openstd.samr.gov.cn/bzgk/gb/newGbInfo?hcno=E107EA4DE9725EDF819F33C60A44B296
-    pub fn gb_t_33661_2017(related_iso: i32) -> Self {
-        fallback_approximation::<calendrical_calculations::chinese_based::Chinese>(related_iso)
+    fn calendrical_calculations<CB: ChineseBased>(related_iso: i32) -> LunarChineseYearData {
+        let mid_year = calendrical_calculations::gregorian::fixed_from_gregorian(related_iso, 7, 1);
+        let year_bounds = YearBounds::compute::<CB>(mid_year);
+
+        let YearBounds {
+            new_year,
+            next_new_year,
+            ..
+        } = year_bounds;
+        let (month_lengths, leap_month) =
+            chinese_based::month_structure_for_year::<CB>(new_year, next_new_year);
+
+        LunarChineseYearData {
+            packed: PackedChineseBasedYearInfo::new(
+                related_iso,
+                month_lengths,
+                leap_month,
+                new_year,
+            ),
+            related_iso,
+        }
     }
 
     /// Get the new year R.D.    
@@ -1322,9 +1352,7 @@ mod test {
             let new_year = chinese_date.inner.0.year.new_year();
             assert_eq!(
                 expected_month,
-                calendrical_calculations::chinese_based::get_leap_month_from_new_year::<
-                    calendrical_calculations::chinese_based::Chinese,
-                >(new_year),
+                chinese_based::get_leap_month_from_new_year::<chinese_based::Chinese>(new_year),
                 "{year} have leap month {expected_month}"
             );
         }
@@ -2281,6 +2309,87 @@ mod test {
                 korean_day, case.expected_day,
                 "Day failed for test case: {case:?}"
             );
+        }
+    }
+
+    #[test]
+    #[ignore] // slow, network
+    fn test_against_hong_kong_observatory_data() {
+        use crate::{
+            cal::{Gregorian, LunarChinese},
+            types::MonthCode,
+            Date,
+        };
+
+        let mut related_iso = 1900;
+        let mut lunar_month = MonthCode::new_normal(11).unwrap();
+
+        for year in 1901..=2100 {
+            println!("Validating year {year}...");
+
+            for line in ureq::get(&format!(
+                "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T{year}e.txt"
+            ))
+            .call()
+            .unwrap()
+            .body_mut()
+            .read_to_string()
+            .unwrap()
+            .split('\n')
+            {
+                if !line.starts_with(['1', '2']) {
+                    // comments or blank lines
+                    continue;
+                }
+
+                let mut fields = line.split_ascii_whitespace();
+
+                let mut gregorian = fields.next().unwrap().split('/');
+                let gregorian = Date::try_new_gregorian(
+                    gregorian.next().unwrap().parse().unwrap(),
+                    gregorian.next().unwrap().parse().unwrap(),
+                    gregorian.next().unwrap().parse().unwrap(),
+                )
+                .unwrap();
+
+                let day_or_lunar_month = fields.next().unwrap();
+
+                let lunar_day = if fields.next().is_some_and(|s| s.contains("Lunar")) {
+                    let new_lunar_month = day_or_lunar_month
+                        // 1st, 2nd, 3rd, nth
+                        .split_once(['s', 'n', 'r', 't'])
+                        .unwrap()
+                        .0
+                        .parse()
+                        .unwrap();
+                    if new_lunar_month == lunar_month.parsed().unwrap().0 {
+                        lunar_month = MonthCode::new_leap(new_lunar_month).unwrap();
+                    } else {
+                        lunar_month = MonthCode::new_normal(new_lunar_month).unwrap();
+                    }
+                    if new_lunar_month == 1 {
+                        related_iso += 1;
+                    }
+                    1
+                } else {
+                    day_or_lunar_month.parse().unwrap()
+                };
+
+                let chinese = Date::try_new_from_codes(
+                    None,
+                    related_iso,
+                    lunar_month,
+                    lunar_day,
+                    LunarChinese::new_china(),
+                )
+                .unwrap();
+
+                assert_eq!(
+                    gregorian,
+                    chinese.to_calendar(Gregorian),
+                    "{line}, {chinese:?}"
+                );
+            }
         }
     }
 

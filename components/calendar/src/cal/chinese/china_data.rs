@@ -2,30 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data obtained from [`calendrical_calculations`], with a fix for
-//! 1906 per <https://github.com/dotnet/runtime/blob/1d1bf92fcf43aa6981804dc53c5174445069c9e4/src/libraries/System.Private.CoreLib/src/System/Globalization/ChineseLunisolarCalendar.cs#L34>.
+//! Data obtained from [`calendrical_calculations`].
 
-use crate::provider::chinese_based::PackedChineseBasedYearInfo;
+use crate::provider::chinese_based::{ChineseBasedCache, PackedChineseBasedYearInfo};
+use calendrical_calculations::gregorian::fixed_from_gregorian as gregorian;
 
-pub const STARTING_YEAR: i32 = 1901;
-
-#[rustfmt::skip]
-pub const DATA: &[PackedChineseBasedYearInfo] = {
-    use calendrical_calculations::gregorian::fixed_from_gregorian as gregorian;
-    let l = true; // long
-    let s = false; // short
-    &[
-        PackedChineseBasedYearInfo::new(1901, [s, l, s, s, l, s, l, s, l, l, l, s, s], None, gregorian(1901, 2, 19)),
-        PackedChineseBasedYearInfo::new(1902, [l, s, l, s, s, l, s, l, s, l, l, l, s], None, gregorian(1902, 2, 8)),
-        PackedChineseBasedYearInfo::new(1903, [s, l, s, l, s, s, l, s, s, l, l, s, l], Some(6), gregorian(1903, 1, 29)),
-        PackedChineseBasedYearInfo::new(1904, [l, l, s, l, s, s, l, s, s, l, l, s, s], None, gregorian(1904, 2, 16)),
-        PackedChineseBasedYearInfo::new(1905, [l, l, s, l, l, s, s, l, s, l, s, l, s], None, gregorian(1905, 2, 4)),
-        PackedChineseBasedYearInfo::new(1906, [s, l, l, s, l, s, l, s, l, s, l, s, l], Some(5), gregorian(1906, 1, 25)),
-        PackedChineseBasedYearInfo::new(1907, [s, l, s, l, s, l, l, s, l, s, l, s, s], None, gregorian(1907, 2, 13)),
-        PackedChineseBasedYearInfo::new(1908, [l, s, s, l, l, s, l, s, l, l, s, l, s], None, gregorian(1908, 2, 2)),
-        PackedChineseBasedYearInfo::new(1909, [s, l, s, s, l, s, l, s, l, l, l, s, l], Some(3), gregorian(1909, 1, 22)),
-        PackedChineseBasedYearInfo::new(1910, [s, l, s, s, l, s, l, s, l, l, l, s, s], None, gregorian(1910, 2, 10)),
-        PackedChineseBasedYearInfo::new(1911, [l, s, l, s, s, l, s, s, l, l, s, l, l], Some(7), gregorian(1911, 1, 30)),
+pub const DATA: ChineseBasedCache = ChineseBasedCache {
+    first_related_iso_year: 1912,
+    #[rustfmt::skip]
+    data: { let l = true; let s = false; &[
         PackedChineseBasedYearInfo::new(1912, [l, s, l, s, s, l, s, s, l, l, s, l, s], None, gregorian(1912, 2, 18)),
         PackedChineseBasedYearInfo::new(1913, [l, l, s, l, s, s, l, s, s, l, s, l, s], None, gregorian(1913, 2, 6)),
         PackedChineseBasedYearInfo::new(1914, [l, l, s, l, s, l, s, l, s, s, l, s, l], Some(6), gregorian(1914, 1, 26)),
@@ -214,120 +199,19 @@ pub const DATA: &[PackedChineseBasedYearInfo] = {
         PackedChineseBasedYearInfo::new(2097, [l, s, l, s, s, s, l, s, l, l, s, l, s], None, gregorian(2097, 2, 12)),
         PackedChineseBasedYearInfo::new(2098, [l, l, s, l, s, s, s, l, s, l, s, l, s], None, gregorian(2098, 2, 1)),
         PackedChineseBasedYearInfo::new(2099, [l, l, s, l, l, s, s, l, s, s, l, s, l], Some(3), gregorian(2099, 1, 21)),
-    ]
+    ]},
 };
 
 #[test]
-#[ignore] // slow, network
-fn test_against_hong_kong_observatory_data() {
-    use crate::{
-        cal::{Gregorian, LunarChinese},
-        types::MonthCode,
-        Date,
-    };
-
-    let mut related_iso = 1900;
-    let mut lunar_month = MonthCode::new_normal(11).unwrap();
-
-    for year in 1901..=2100 {
-        println!("Validating year {year}...");
-
-        for line in ureq::get(&format!(
-            "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T{year}e.txt"
-        ))
-        .call()
-        .unwrap()
-        .body_mut()
-        .read_to_string()
-        .unwrap()
-        .split('\n')
-        {
-            if !line.starts_with(['1', '2']) {
-                // comments or blank lines
-                continue;
-            }
-
-            let mut fields = line.split_ascii_whitespace();
-
-            let mut gregorian = fields.next().unwrap().split('/');
-            let gregorian = Date::try_new_gregorian(
-                gregorian.next().unwrap().parse().unwrap(),
-                gregorian.next().unwrap().parse().unwrap(),
-                gregorian.next().unwrap().parse().unwrap(),
-            )
-            .unwrap();
-
-            let day_or_lunar_month = fields.next().unwrap();
-
-            let lunar_day = if fields.next().is_some_and(|s| s.contains("Lunar")) {
-                let new_lunar_month = day_or_lunar_month
-                    // 1st, 2nd, 3rd, nth
-                    .split_once(['s', 'n', 'r', 't'])
-                    .unwrap()
-                    .0
-                    .parse()
-                    .unwrap();
-                if new_lunar_month == lunar_month.parsed().unwrap().0 {
-                    lunar_month = MonthCode::new_leap(new_lunar_month).unwrap();
-                } else {
-                    lunar_month = MonthCode::new_normal(new_lunar_month).unwrap();
-                }
-                if new_lunar_month == 1 {
-                    related_iso += 1;
-                }
-                1
-            } else {
-                day_or_lunar_month.parse().unwrap()
-            };
-
-            let chinese = Date::try_new_from_codes(
-                None,
-                related_iso,
-                lunar_month,
-                lunar_day,
-                LunarChinese::new_china(),
-            )
-            .unwrap();
-
-            assert_eq!(
-                gregorian,
-                chinese.to_calendar(Gregorian),
-                "{line}, {chinese:?}"
-            );
-        }
-    }
-}
-
-#[test]
 fn test_against_calendrical_calculations() {
-    use calendrical_calculations::chinese_based::{Chinese, YearBounds};
-    for (i, data) in DATA.iter().enumerate() {
-        let year = STARTING_YEAR + i as i32;
-        if year < 1912 {
-            // `calendrical_calculations` implements the modern post-1912 algorithm, see
-            // https://ytliu.epizy.com/Shixian/Shixian_summary.html
-            continue;
-        }
-        let YearBounds {
-            new_year,
-            next_new_year,
-        } = calendrical_calculations::chinese_based::YearBounds::compute::<Chinese>(
-            calendrical_calculations::gregorian::fixed_from_gregorian(year, 7, 1),
+    use calendrical_calculations::chinese_based::Chinese;
+    for (i, &data) in DATA.data.iter().enumerate() {
+        assert_eq!(
+            data,
+            super::LunarChineseYearData::calendrical_calculations::<Chinese>(
+                DATA.first_related_iso_year + i as i32
+            )
+            .packed
         );
-        let (month_lengths, leap_month) =
-            calendrical_calculations::chinese_based::month_structure_for_year::<Chinese>(
-                new_year,
-                next_new_year,
-            );
-
-        assert_eq!(data.leap_month(), leap_month);
-        assert_eq!(data.new_year(year), new_year);
-        for (m, l) in month_lengths.iter().enumerate() {
-            assert_eq!(
-                data.month_has_30_days(m as u8 + 1),
-                *l,
-                "{year}, {month_lengths:?}"
-            );
-        }
     }
 }
