@@ -199,6 +199,7 @@ pub const DATA: ChineseBasedCache = ChineseBasedCache {
         PackedChineseBasedYearInfo::new(2097, [l, s, l, s, s, s, l, s, l, l, s, l, s], None, gregorian(2097, 2, 12)),
         PackedChineseBasedYearInfo::new(2098, [l, l, s, l, s, s, s, l, s, l, s, l, s], None, gregorian(2098, 2, 1)),
         PackedChineseBasedYearInfo::new(2099, [l, l, s, l, l, s, s, l, s, s, l, s, l], Some(3), gregorian(2099, 1, 21)),
+        PackedChineseBasedYearInfo::new(2100, [l, l, s, l, s, l, s, l, s, s, l, s, s], None, gregorian(2100, 2, 9)),
     ]},
 };
 
