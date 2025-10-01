@@ -179,8 +179,6 @@ impl Rules for China {
             LunarChineseYearData::simple(
                 // Future reference time is probably UTC+8
                 day_fraction_to_ms!(8 / 24),
-                // This is required for continuity with the hardcoded data
-                day_fraction_to_ms!((-8) / 24),
                 related_iso,
             )
         } else {
@@ -188,7 +186,6 @@ impl Rules for China {
                 LunarChineseYearData::simple(
                     // Reference time was UTC+(1397/180)
                     day_fraction_to_ms!(1397 / 180 / 24),
-                    Default::default(),
                     related_iso,
                 )
             })
@@ -372,8 +369,6 @@ impl Rules for Korea {
             LunarChineseYearData::simple(
                 // Future reference time is probably UTC+9
                 day_fraction_to_ms!(9 / 24),
-                // This is required for continuity with the hardcoded data
-                day_fraction_to_ms!((-9) / 24),
                 related_iso,
             )
         } else {
@@ -383,7 +378,6 @@ impl Rules for Korea {
                 LunarChineseYearData::simple(
                     // Reference time was UTC+(1397/180)
                     day_fraction_to_ms!(1397 / 180 / 24),
-                    Default::default(),
                     related_iso,
                 )
             })
@@ -1143,14 +1137,7 @@ impl LunarChineseYearData {
     ///
     /// Stays anchored in the Gregorian calendar, even as the Gregorian calendar drifts
     /// from the seasons in the distant future and distant past.
-    ///
-    /// The `new_moon_correction` argument is used to artificially shift the new moon moments,
-    /// and can be used to provide continuity with different calculation methods.
-    fn simple(
-        utc_offset: Milliseconds,
-        new_moon_correction: Milliseconds,
-        related_iso: i32,
-    ) -> LunarChineseYearData {
+    fn simple(utc_offset: Milliseconds, related_iso: i32) -> LunarChineseYearData {
         fn periodic_duration_on_or_before(
             rata_die: RataDie,
             base_moment: LocalMoment,
@@ -1172,7 +1159,7 @@ impl LunarChineseYearData {
 
         let mut new_moon = periodic_duration_on_or_before(
             major_solar_term.rata_die,
-            UTC_NEW_MOON + utc_offset + new_moon_correction,
+            UTC_NEW_MOON + utc_offset,
             MEAN_SYNODIC_MONTH_LENGTH,
         );
 
@@ -1276,15 +1263,15 @@ mod test {
             },
             TestCase {
                 rd: fixed_from_gregorian(2319, 2, 20).to_i64_date(),
-                expected_year: 2319,
-                expected_month: 1,
-                expected_day: 1,
+                expected_year: 2318,
+                expected_month: 13,
+                expected_day: 30,
             },
             TestCase {
                 rd: fixed_from_gregorian(2319, 2, 21).to_i64_date(),
                 expected_year: 2319,
                 expected_month: 1,
-                expected_day: 2,
+                expected_day: 1,
             },
             TestCase {
                 rd: 738718,
