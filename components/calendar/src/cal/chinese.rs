@@ -348,7 +348,7 @@ impl Rules for Dangi {
             (2, true, false) => 1947,
             (2, true, true) => 1765,
             (3, false, false) => 1972,
-            (3, false, true) => 1966,
+            (3, false, true) => 1968,
             (3, true, false) => 1966,
             (3, true, true) => 1955,
             (4, false, false) => 1972,
@@ -378,7 +378,7 @@ impl Rules for Dangi {
             (10, false, false) => 1972,
             (10, false, true) => 1972,
             (10, true, false) => 1984,
-            (10, true, true) => -4098,
+            (10, true, true) => -3946,
             // Dec 31, 1972 is 1972-M11-26, dates after that
             // are in the next year
             (11, false, false) if day > 26 => 1971,
@@ -388,8 +388,8 @@ impl Rules for Dangi {
             (11, true, true) => -2173,
             (12, false, false) => 1971,
             (12, false, true) => 1971,
-            (12, true, false) => 1403,
-            (12, true, true) => -180,
+            (12, true, false) => 1889,
+            (12, true, true) => -1182,
             _ => return Err(DateError::UnknownMonthCode(month_code)),
         };
         Ok(self.year_data(extended))
@@ -2287,71 +2287,78 @@ mod test {
     #[test]
     #[ignore]
     fn generate_reference_years() {
-        use crate::Date;
-        let calendar = crate::cal::LunarChinese::new_china();
-        let reference_year_end = Date::from_rata_die(
-            crate::cal::abstract_gregorian::LAST_DAY_OF_REFERENCE_YEAR,
-            calendar,
-        );
-        let year_1900_start = Date::try_new_gregorian(1900, 1, 1)
-            .unwrap()
-            .to_calendar(calendar);
-        let year_2035_end = Date::try_new_gregorian(2035, 12, 31)
-            .unwrap()
-            .to_calendar(calendar);
-        for month in 1..=12 {
-            for leap in [false, true] {
-                'outer: for long in [false, true] {
-                    for (start_year, start_month, end_year, end_month, by) in [
-                        (
-                            reference_year_end.extended_year(),
-                            reference_year_end.month().month_number(),
-                            year_1900_start.extended_year(),
-                            year_1900_start.month().month_number(),
-                            -1,
-                        ),
-                        (
-                            reference_year_end.extended_year(),
-                            reference_year_end.month().month_number(),
-                            year_2035_end.extended_year(),
-                            year_2035_end.month().month_number(),
-                            1,
-                        ),
-                        (
-                            year_1900_start.extended_year(),
-                            year_1900_start.month().month_number(),
-                            -10000,
-                            1,
-                            -1,
-                        ),
-                    ] {
-                        let mut year = start_year;
-                        while year * by < end_year * by {
-                            if year == start_year && month as i32 * by < start_month as i32 * by
-                                || year == end_year && month as i32 * by > end_month as i32 * by
-                            {
-                                year += by;
-                                continue;
-                            }
-                            let data = China.year_data(year);
-                            let leap_month = data.leap_month().unwrap_or(15);
-                            let days_in_month = data.days_in_month({
-                                if leap && month + 1 == leap_month {
-                                    month + 1
-                                } else {
-                                    month + (month + 1 > leap_month) as u8
+        generate_reference_years_for(LunarChinese::new_china());
+        generate_reference_years_for(LunarChinese::new_dangi());
+        fn generate_reference_years_for<R: Rules + Copy>(calendar: LunarChinese<R>) {
+            use crate::Date;
+
+            println!("Reference years for {calendar:?}:");
+            let reference_year_end = Date::from_rata_die(
+                crate::cal::abstract_gregorian::LAST_DAY_OF_REFERENCE_YEAR,
+                calendar,
+            );
+            let year_1900_start = Date::try_new_gregorian(1900, 1, 1)
+                .unwrap()
+                .to_calendar(calendar);
+            let year_2035_end = Date::try_new_gregorian(2035, 12, 31)
+                .unwrap()
+                .to_calendar(calendar);
+            for month in 1..=12 {
+                for leap in [false, true] {
+                    'outer: for long in [false, true] {
+                        for (start_year, start_month, end_year, end_month, by) in [
+                            (
+                                reference_year_end.extended_year(),
+                                reference_year_end.month().month_number(),
+                                year_1900_start.extended_year(),
+                                year_1900_start.month().month_number(),
+                                -1,
+                            ),
+                            (
+                                reference_year_end.extended_year(),
+                                reference_year_end.month().month_number(),
+                                year_2035_end.extended_year(),
+                                year_2035_end.month().month_number(),
+                                1,
+                            ),
+                            (
+                                year_1900_start.extended_year(),
+                                year_1900_start.month().month_number(),
+                                -10000,
+                                1,
+                                -1,
+                            ),
+                        ] {
+                            let mut year = start_year;
+                            while year * by < end_year * by {
+                                if year == start_year
+                                    && month as i32 * by <= start_month as i32 * by
+                                    || year == end_year
+                                        && month as i32 * by >= end_month as i32 * by
+                                {
+                                    year += by;
+                                    continue;
                                 }
-                            });
-                            if (!long || (days_in_month == 30))
-                                && (!leap || month + 1 == leap_month)
-                            {
-                                println!("({month}, {leap:?}, {long:?}) => {year},");
-                                continue 'outer;
+                                let data = calendar.0.year_data(year);
+                                let leap_month = data.leap_month().unwrap_or(15);
+                                let days_in_month = data.days_in_month({
+                                    if leap && month + 1 == leap_month {
+                                        month + 1
+                                    } else {
+                                        month + (month + 1 > leap_month) as u8
+                                    }
+                                });
+                                if (!long || (days_in_month == 30))
+                                    && (!leap || month + 1 == leap_month)
+                                {
+                                    println!("({month}, {leap:?}, {long:?}) => {year},");
+                                    continue 'outer;
+                                }
+                                year += by;
                             }
-                            year += by;
                         }
+                        println!("({month}, {leap:?}, {long:?}) => todo!(),")
                     }
-                    println!("({month}, {leap:?}, {long:?}) => todo!(),")
                 }
             }
         }
