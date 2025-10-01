@@ -11,9 +11,8 @@ use crate::provider::chinese_based::PackedChineseBasedYearInfo;
 use crate::types::{MonthCode, MonthInfo};
 use crate::AsCalendar;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
-use calendrical_calculations::chinese_based::{
-    self, ChineseBased, YearBounds, WELL_BEHAVED_ASTRONOMICAL_RANGE,
-};
+use calendrical_calculations::chinese_based::{self, ChineseBased, YearBounds};
+use calendrical_calculations::gregorian::DAYS_IN_400_YEAR_CYCLE;
 use calendrical_calculations::rata_die::RataDie;
 use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
 use icu_provider::prelude::*;
@@ -25,6 +24,17 @@ mod china_data;
 mod korea_data;
 #[path = "chinese/qing_data.rs"]
 mod qing_data;
+
+macro_rules! day_fraction_to_ms {
+    ($n:tt $(/ $d:tt)+) => {{
+        Milliseconds((MILLISECONDS_IN_EPHEMERIS_DAY as i128 * $n as i128 $( / $d as i128)+) as i64)
+    }};
+    ($n:tt $(/ $d:tt)+, exact) => {{
+        let d = day_fraction_to_ms!($n $(/ $d)+);
+        assert!((d.0 as i128 $(* $d as i128)+) % MILLISECONDS_IN_EPHEMERIS_DAY as i128 == 0, "inexact");
+        d
+    }};
+}
 
 /// The [Chinese Calendar](https://en.wikipedia.org/wiki/Chinese_calendar)
 ///
@@ -118,14 +128,15 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
 ///
 /// For years since 1912, this uses the [GB/T 33661-2017] rules.
 /// As accurate computation is computationally expensive, years until
-/// 2100 are precomputed. If performance beyond 2100 is an issue, clients
+/// 2100 are precomputed, and after that this type regresses to a simplified
+/// calculation. If accuracy beyond 2100 is required, clients
 /// can implement their own [`Rules`] type containing more precomputed data.
 /// We note that the calendar is inherently uncertain for some future dates.
 ///
 /// Before 1912 [different rules](https://ytliu.epizy.com/Shixian/Shixian_summary.html)
 /// were used. This type produces correct data for the years 1900-1912, and
-/// falls back to [GB/T 33661-2017] proleptically before 1900. If accuracy
-/// is required before 1900, clients can implement their own [`Rules`] type
+/// falls back to a simplified calculation before 1900. If accuracy is
+/// required before 1900, clients can implement their own [`Rules`] type
 /// using data such as from the excellent compilation by [Yuk Tung Liu].
 ///
 /// [Purple Mountain Observatory for the years 1900-2025]: http://www.pmo.cas.cn/xwdt2019/kpdt2019/202203/P020250414456381274062.pdf
@@ -165,11 +176,22 @@ impl Rules for China {
         if let Some(data) = china_data::DATA.get(related_iso) {
             data
         } else if related_iso > china_data::DATA.first_related_iso_year {
-            Self::gb_t_33661_2017(related_iso)
+            LunarChineseYearData::simple(
+                // Future reference time is probably UTC+8
+                day_fraction_to_ms!(8 / 24),
+                // This is required for continuity with the hardcoded data
+                day_fraction_to_ms!((-8) / 24),
+                related_iso,
+            )
         } else {
-            qing_data::DATA
-                .get(related_iso)
-                .unwrap_or_else(|| Self::gb_t_33661_2017(related_iso))
+            qing_data::DATA.get(related_iso).unwrap_or_else(|| {
+                LunarChineseYearData::simple(
+                    // Reference time was UTC+(1397/180)
+                    day_fraction_to_ms!(1397 / 180 / 24),
+                    Default::default(),
+                    related_iso,
+                )
+            })
         }
     }
 
@@ -185,12 +207,12 @@ impl Rules for China {
         let extended = match (number, is_leap, day > 29) {
             (1, false, false) => 1972,
             (1, false, true) => 1970,
-            (1, true, false) => 1651,
-            (1, true, true) => 1461,
+            (1, true, false) => 1879,
+            (1, true, true) => 1879,
             (2, false, false) => 1972,
             (2, false, true) => 1972,
             (2, true, false) => 1947,
-            (2, true, true) => 1765,
+            (2, true, true) => 1860,
             (3, false, false) => 1972,
             (3, false, true) => 1966,
             (3, true, false) => 1966,
@@ -214,26 +236,26 @@ impl Rules for China {
             (8, false, false) => 1972,
             (8, false, true) => 1971,
             (8, true, false) => 1957,
-            (8, true, true) => 1718,
+            (8, true, true) => 1892,
             (9, false, false) => 1972,
             (9, false, true) => 1972,
             (9, true, false) => 2014,
-            (9, true, true) => -5738,
+            (9, true, true) => 1873,
             (10, false, false) => 1972,
             (10, false, true) => 1972,
             (10, true, false) => 1984,
-            (10, true, true) => -4098,
+            (10, true, true) => 1881,
             // Dec 31, 1972 is 1972-M11-26, dates after that
             // are in the next year
             (11, false, false) if day > 26 => 1971,
             (11, false, false) => 1972,
             (11, false, true) => 1969,
             (11, true, false) => 2033,
-            (11, true, true) => -2173,
+            (11, true, true) => 1862,
             (12, false, false) => 1971,
             (12, false, true) => 1971,
-            (12, true, false) => 1403,
-            (12, true, true) => -180,
+            (12, true, false) => 1889,
+            (12, true, true) => 1889,
             _ => return Err(DateError::UnknownMonthCode(month_code)),
         };
         Ok(self.year_data(extended))
@@ -256,13 +278,14 @@ impl Rules for China {
 /// For years since 1912, this uses [adapted GB/T 33661-2017] rules,
 /// using Korea time instead of Beijing Time.
 /// As accurate computation is computationally expensive, years until
-/// 2100 are precomputed. If performance beyond 2100 is an issue, clients
+/// 2100 are precomputed, and after that this type regresses to a simplified
+/// calculation. If accuracy beyond 2100 is required, clients
 /// can implement their own [`Rules`] type containing more precomputed data.
 /// We note that the calendar is inherently uncertain for some future dates.
 ///
 /// Before 1912 [different rules](https://ytliu.epizy.com/Shixian/Shixian_summary.html)
 /// were used (those of Qing-dynasty China). This type produces correct data
-/// for the years 1900-1912, and falls back to [GB/T 33661-2017] proleptically
+/// for the years 1900-1912, and falls back to a simplified calculation
 /// before 1900. If accuracy is required before 1900, clients can implement
 /// their own [`Rules`] type using data such as from the excellent compilation
 /// by [Yuk Tung Liu].
@@ -346,13 +369,24 @@ impl Rules for Korea {
         if let Some(data) = korea_data::DATA.get(related_iso) {
             data
         } else if related_iso > korea_data::DATA.first_related_iso_year {
-            Self::adapted_gb_t_33661_2017(related_iso)
+            LunarChineseYearData::simple(
+                // Future reference time is probably UTC+9
+                day_fraction_to_ms!(9 / 24),
+                // This is required for continuity with the hardcoded data
+                day_fraction_to_ms!((-9) / 24),
+                related_iso,
+            )
         } else {
             // Korea used Qing-dynasty rules before 1912
             // https://github.com/unicode-org/icu4x/issues/6455#issuecomment-3282175550
-            qing_data::DATA
-                .get(related_iso)
-                .unwrap_or_else(|| China::gb_t_33661_2017(related_iso))
+            qing_data::DATA.get(related_iso).unwrap_or_else(|| {
+                LunarChineseYearData::simple(
+                    // Reference time was UTC+(1397/180)
+                    day_fraction_to_ms!(1397 / 180 / 24),
+                    Default::default(),
+                    related_iso,
+                )
+            })
         }
     }
 
@@ -368,12 +402,12 @@ impl Rules for Korea {
         let extended = match (number, is_leap, day > 29) {
             (1, false, false) => 1972,
             (1, false, true) => 1970,
-            (1, true, false) => 1651,
-            (1, true, true) => 1461,
+            (1, true, false) => 1879,
+            (1, true, true) => 1879,
             (2, false, false) => 1972,
             (2, false, true) => 1972,
             (2, true, false) => 1947,
-            (2, true, true) => 1765,
+            (2, true, true) => 1860,
             (3, false, false) => 1972,
             (3, false, true) => 1968,
             (3, true, false) => 1966,
@@ -397,26 +431,26 @@ impl Rules for Korea {
             (8, false, false) => 1972,
             (8, false, true) => 1971,
             (8, true, false) => 1957,
-            (8, true, true) => 1718,
+            (8, true, true) => 1892,
             (9, false, false) => 1972,
             (9, false, true) => 1972,
             (9, true, false) => 2014,
-            (9, true, true) => -5738,
+            (9, true, true) => 1873,
             (10, false, false) => 1972,
             (10, false, true) => 1972,
             (10, true, false) => 1984,
-            (10, true, true) => -4098,
+            (10, true, true) => 1881,
             // Dec 31, 1972 is 1972-M11-26, dates after that
             // are in the next year
             (11, false, false) if day > 26 => 1971,
             (11, false, false) => 1972,
             (11, false, true) => 1969,
             (11, true, false) => 2033,
-            (11, true, true) => -2173,
+            (11, true, true) => 1862,
             (12, false, false) => 1971,
             (12, false, true) => 1971,
-            (12, true, false) => 1403,
-            (12, true, true) => -180,
+            (12, true, false) => 1889,
+            (12, true, true) => 1889,
             _ => return Err(DateError::UnknownMonthCode(month_code)),
         };
         Ok(self.year_data(extended))
@@ -879,15 +913,12 @@ impl LunarChineseYearData {
 
     pub(crate) fn md_from_rd(self, rd: RataDie) -> (u8, u8) {
         debug_assert!(
-            rd < self.next_new_year() || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&rd),
+            rd < self.next_new_year(),
             "Stored date {rd:?} out of bounds!"
         );
         // 1-indexed day of year
         let day_of_year = u16::try_from(rd - self.new_year() + 1);
-        debug_assert!(
-            day_of_year.is_ok() || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&rd),
-            "Somehow got a very large year in data"
-        );
+        debug_assert!(day_of_year.is_ok(), "Somehow got a very large year in data");
         let day_of_year = day_of_year.unwrap_or(1);
         let mut month = 1;
         // TODO(#3933) perhaps use a binary search
@@ -901,9 +932,7 @@ impl LunarChineseYearData {
         debug_assert!((1..=13).contains(&month), "Month out of bounds!");
 
         debug_assert!(
-            month < 13
-                || self.leap_month().is_some()
-                || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&rd),
+            month < 13 || self.leap_month().is_some(),
             "Cannot have 13 months in a non-leap year!"
         );
         let day_before_month_start = self.last_day_of_previous_month(month);
@@ -1051,6 +1080,144 @@ enum ComputedOrdinalMonth {
     NotFound,
 }
 
+/// The mean year length according to the Gregorian solar cycle.
+const MEAN_GREGORIAN_YEAR_LENGTH: Milliseconds =
+    day_fraction_to_ms!(DAYS_IN_400_YEAR_CYCLE / 400, exact);
+
+/// The mean solar term length according to the Gregorian solar cycle
+const MEAN_GREGORIAN_SOLAR_TERM_LENGTH: Milliseconds =
+    day_fraction_to_ms!(DAYS_IN_400_YEAR_CYCLE / 400 / 12, exact);
+
+/// The mean synodic length on Jan 1 2000 according to the [Astronomical Almanac (1992)].
+///
+/// [Astronomical Almanac (1992)]: https://archive.org/details/131123ExplanatorySupplementAstronomicalAlmanac/page/n302/mode/1up
+const MEAN_SYNODIC_MONTH_LENGTH: Milliseconds = day_fraction_to_ms!(295305888531 / 10000000000i64);
+
+/// Number of milliseconds in a day.
+const MILLISECONDS_IN_EPHEMERIS_DAY: i64 = 24 * 60 * 60 * 1000;
+
+// 1999-12-22T07:44, https://aa.usno.navy.mil/calculated/seasons?year=2024&tz=0.00&tz_sign=-1&tz_label=false&dst=false
+const UTC_SOLSTICE: LocalMoment = LocalMoment {
+    rata_die: calendrical_calculations::gregorian::fixed_from_gregorian(1999, 12, 22),
+    local_milliseconds: ((7 * 60) + 44) * 60 * 1000,
+};
+
+// 2000-01-06T18:14 https://aa.usno.navy.mil/calculated/moon/phases?date=2000-01-01&nump=1&format=t
+const UTC_NEW_MOON: LocalMoment = LocalMoment {
+    rata_die: calendrical_calculations::gregorian::fixed_from_gregorian(2000, 1, 6),
+    local_milliseconds: ((18 * 60) + 14) * 60 * 1000,
+};
+
+#[derive(Debug, Copy, Clone, Default)]
+struct Milliseconds(i64);
+
+impl core::ops::Mul<i64> for Milliseconds {
+    type Output = Self;
+
+    fn mul(self, rhs: i64) -> Self::Output {
+        Self(self.0 * rhs)
+    }
+}
+
+#[derive(Debug, Copy, Clone)]
+struct LocalMoment {
+    rata_die: RataDie,
+    local_milliseconds: u32,
+}
+
+impl core::ops::Add<Milliseconds> for LocalMoment {
+    type Output = Self;
+
+    fn add(self, Milliseconds(duration): Milliseconds) -> Self::Output {
+        let temp = self.local_milliseconds as i64 + duration;
+        Self {
+            rata_die: self.rata_die + temp.div_euclid(MILLISECONDS_IN_EPHEMERIS_DAY),
+            local_milliseconds: temp.rem_euclid(MILLISECONDS_IN_EPHEMERIS_DAY) as u32,
+        }
+    }
+}
+
+impl LunarChineseYearData {
+    /// A fast approximation for the Chinese calendar, inspired by the _píngqì_ (平氣) rule
+    /// used in the Ming dynasty.
+    ///
+    /// Stays anchored in the Gregorian calendar, even as the Gregorian calendar drifts
+    /// from the seasons in the distant future and distant past.
+    ///
+    /// The `new_moon_correction` argument is used to artificially shift the new moon moments,
+    /// and can be used to provide continuity with different calculation methods.
+    fn simple(
+        utc_offset: Milliseconds,
+        new_moon_correction: Milliseconds,
+        related_iso: i32,
+    ) -> LunarChineseYearData {
+        fn periodic_duration_on_or_before(
+            rata_die: RataDie,
+            base_moment: LocalMoment,
+            duration: Milliseconds,
+        ) -> LocalMoment {
+            let num_periods = ((rata_die - base_moment.rata_die + 1)
+                * MILLISECONDS_IN_EPHEMERIS_DAY
+                - base_moment.local_milliseconds as i64
+                - 1)
+            .div_euclid(duration.0);
+            base_moment + duration * num_periods
+        }
+
+        let mut major_solar_term = periodic_duration_on_or_before(
+            calendrical_calculations::iso::day_before_year(related_iso),
+            UTC_SOLSTICE + utc_offset,
+            MEAN_GREGORIAN_YEAR_LENGTH,
+        );
+
+        let mut new_moon = periodic_duration_on_or_before(
+            major_solar_term.rata_die,
+            UTC_NEW_MOON + utc_offset + new_moon_correction,
+            MEAN_SYNODIC_MONTH_LENGTH,
+        );
+
+        // The solstice is in the month of the 10th solar term of the previous year
+        let mut solar_term = -2;
+
+        // Skip the months before the year
+        while solar_term < 0 {
+            let next_new_moon = new_moon + MEAN_SYNODIC_MONTH_LENGTH;
+
+            if major_solar_term.rata_die < next_new_moon.rata_die {
+                solar_term += 1;
+                major_solar_term = major_solar_term + MEAN_GREGORIAN_SOLAR_TERM_LENGTH;
+            }
+
+            new_moon = next_new_moon;
+        }
+
+        let start_day = new_moon.rata_die;
+        let mut month_lengths = [false; 13];
+        let mut month = 0;
+        let mut leap_month = None;
+
+        // Iterate over the 12 solar terms, producing potentially 13 months
+        while solar_term < 12 {
+            let next_new_moon = new_moon + MEAN_SYNODIC_MONTH_LENGTH;
+
+            if major_solar_term.rata_die < next_new_moon.rata_die {
+                solar_term += 1;
+                major_solar_term = major_solar_term + MEAN_GREGORIAN_SOLAR_TERM_LENGTH;
+            } else {
+                leap_month = Some(month as u8 + 2);
+            }
+
+            *month_lengths.get_mut(month).unwrap_or(&mut false) =
+                next_new_moon.rata_die - new_moon.rata_die == 30;
+
+            month += 1;
+            new_moon = next_new_moon;
+        }
+
+        LunarChineseYearData::new(related_iso, start_day, month_lengths, leap_month)
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -1109,15 +1276,15 @@ mod test {
             },
             TestCase {
                 rd: fixed_from_gregorian(2319, 2, 20).to_i64_date(),
-                expected_year: 2318,
-                expected_month: 13,
-                expected_day: 30,
+                expected_year: 2319,
+                expected_month: 1,
+                expected_day: 1,
             },
             TestCase {
                 rd: fixed_from_gregorian(2319, 2, 21).to_i64_date(),
                 expected_year: 2319,
                 expected_month: 1,
-                expected_day: 1,
+                expected_day: 2,
             },
             TestCase {
                 rd: 738718,
@@ -1159,13 +1326,13 @@ mod test {
                 rd: 0,
                 expected_year: 0,
                 expected_month: 12,
-                expected_day: 20,
+                expected_day: 19,
             },
             TestCase {
                 rd: -1,
                 expected_year: 0,
                 expected_month: 12,
-                expected_day: 19,
+                expected_day: 18,
             },
             TestCase {
                 rd: -365,
@@ -1302,7 +1469,7 @@ mod test {
                 iso_day: 15,
                 expected_year: -2637,
                 expected_month: 12,
-                expected_day: 30,
+                expected_day: 29,
             },
         ];
 
@@ -1663,6 +1830,9 @@ mod test {
         ];
 
         for case in cases {
+            if !(1900..2100).contains(&case.iso_year) {
+                continue;
+            }
             let iso = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day).unwrap();
             let chinese = iso.to_calendar(LunarChinese::new_china());
             let chinese_rel_iso = chinese.cyclic_year().related_iso;
@@ -2287,6 +2457,9 @@ mod test {
         ];
 
         for case in cases {
+            if !(1900..2100).contains(&case.iso_year) {
+                continue;
+            }
             let iso = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day).unwrap();
             let korean = iso.to_calendar(LunarChinese::new_korea());
             let korean_cyclic = korean.cyclic_year();
