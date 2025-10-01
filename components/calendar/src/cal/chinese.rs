@@ -21,8 +21,8 @@ use tinystr::tinystr;
 
 #[path = "chinese/chinese_data.rs"]
 mod chinese_data;
-#[path = "chinese/dangi_data.rs"]
-mod dangi_data;
+#[path = "chinese/korean_data.rs"]
+mod korean_data;
 
 /// The [Chinese Calendar](https://en.wikipedia.org/wiki/Chinese_calendar)
 ///
@@ -78,7 +78,7 @@ pub struct LunarChinese<X>(pub X);
 /// time is determined differ between countries and have changed over time.
 ///
 /// For example, the [`China`] type implements the rules that are used in
-/// China, and the [`Dangi`] type implements the rules used in Korea.
+/// China, and the [`Korea`] type implements the rules used in Korea.
 ///
 /// <div class="stab unstable">
 /// 🚫 This trait is sealed; it should not be implemented by user code. If an API requests an item that implements this
@@ -258,65 +258,65 @@ impl Rules for China {
 /// use tinystr::tinystr;
 ///
 /// let iso_a = Date::try_new_iso(2012, 4, 23).unwrap();
-/// let dangi_a = iso_a.to_calendar(LunarChinese::new_dangi());
+/// let korean_a = iso_a.to_calendar(LunarChinese::new_korea());
 /// let chinese_a = iso_a.to_calendar(LunarChinese::new_china());
 ///
-/// assert_eq!(dangi_a.month().standard_code.0, tinystr!(4, "M03L"));
+/// assert_eq!(korean_a.month().standard_code.0, tinystr!(4, "M03L"));
 /// assert_eq!(chinese_a.month().standard_code.0, tinystr!(4, "M04"));
 ///
 /// let iso_b = Date::try_new_iso(2012, 5, 23).unwrap();
-/// let dangi_b = iso_b.to_calendar(LunarChinese::new_dangi());
+/// let korean_b = iso_b.to_calendar(LunarChinese::new_korea());
 /// let chinese_b = iso_b.to_calendar(LunarChinese::new_china());
 ///
-/// assert_eq!(dangi_b.month().standard_code.0, tinystr!(4, "M04"));
+/// assert_eq!(korean_b.month().standard_code.0, tinystr!(4, "M04"));
 /// assert_eq!(chinese_b.month().standard_code.0, tinystr!(4, "M04L"));
 /// ```
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
-pub struct Dangi;
+pub struct Korea;
 
-impl LunarChinese<Dangi> {
-    /// Creates a new [`Dangi`] calendar.
-    pub const fn new_dangi() -> Self {
-        Self(Dangi)
+impl LunarChinese<Korea> {
+    /// Creates a new [`Korea`] calendar.
+    pub const fn new_korea() -> Self {
+        Self(Korea)
     }
 
-    /// Use [`Self::new_dangi`].
-    #[deprecated(since = "2.1.0", note = "use `Self::new_dangi()")]
+    /// Use [`Self::new_korea`].
+    #[deprecated(since = "2.1.0", note = "use `Self::new_korea()")]
     pub const fn new() -> Self {
-        Self::new_dangi()
+        Self::new_korea()
     }
 
-    /// Use [`Self::new_dangi`].
+    /// Use [`Self::new_korea`].
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::new)]
-    #[deprecated(since = "2.1.0", note = "use `Self::new_dangi()")]
+    #[deprecated(since = "2.1.0", note = "use `Self::new_korea()")]
     pub fn try_new_with_buffer_provider(
         _provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
-        Ok(Self::new_dangi())
+        Ok(Self::new_korea())
     }
 
-    /// Use [`Self::new_dangi`].
+    /// Use [`Self::new_korea`].
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    #[deprecated(since = "2.1.0", note = "use `Self::new_dangi()")]
+    #[deprecated(since = "2.1.0", note = "use `Self::new_korea()")]
     pub fn try_new_unstable<D: ?Sized>(_provider: &D) -> Result<Self, DataError> {
-        Ok(Self::new_dangi())
+        Ok(Self::new_korea())
     }
 
-    /// Use [`Self::new_dangi`].
-    #[deprecated(since = "2.1.0", note = "use `Self::new_dangi()")]
+    /// Use [`Self::new_korea`].
+    #[deprecated(since = "2.1.0", note = "use `Self::new_korea()")]
     pub fn new_always_calculating() -> Self {
-        Self::new_dangi()
+        Self::new_korea()
     }
 }
 
-impl crate::cal::scaffold::UnstableSealed for Dangi {}
-impl Rules for Dangi {
+impl crate::cal::scaffold::UnstableSealed for Korea {}
+impl Rules for Korea {
     fn year_data(&self, related_iso: i32) -> LunarChineseYearData {
         if let Some(packed) = (ChineseBasedCache {
-            first_related_iso_year: dangi_data::STARTING_YEAR,
-            data: dangi_data::DATA,
+            first_related_iso_year: korean_data::STARTING_YEAR,
+            data: korean_data::DATA,
         }
         .get(related_iso))
         {
@@ -399,11 +399,11 @@ impl Rules for Dangi {
         Some(CalendarAlgorithm::Dangi)
     }
     fn debug_name(&self) -> &'static str {
-        "Dangi"
+        "Korean"
     }
 }
 
-impl<A: AsCalendar<Calendar = LunarChinese<Dangi>>> Date<A> {
+impl<A: AsCalendar<Calendar = LunarChinese<Korea>>> Date<A> {
     /// Use [`Date::try_new_chinese_with_calendar`]
     #[deprecated(since = "2.1.0", note = "use `Date::try_new_chinese_with_calendar`")]
     pub fn try_new_dangi_with_calendar(
@@ -1664,9 +1664,9 @@ mod test {
     fn check_cyclic_and_rel_iso(year: i32) {
         let iso = Date::try_new_iso(year, 6, 6).unwrap();
         let chinese = iso.to_calendar(LunarChinese::new_china());
-        let dangi = iso.to_calendar(LunarChinese::new_dangi());
+        let korean = iso.to_calendar(LunarChinese::new_korea());
         let chinese_year = chinese.cyclic_year();
-        let korean_year = dangi.cyclic_year();
+        let korean_year = korean.cyclic_year();
         assert_eq!(
             chinese_year, korean_year,
             "Cyclic year failed for year: {year}"
@@ -1677,7 +1677,7 @@ mod test {
             chinese_rel_iso, korean_rel_iso,
             "Rel. ISO year equality failed for year: {year}"
         );
-        assert_eq!(korean_rel_iso, year, "Dangi Rel. ISO failed!");
+        assert_eq!(korean_rel_iso, year, "Korean Rel. ISO failed!");
     }
 
     #[test]
@@ -1695,7 +1695,7 @@ mod test {
     }
 
     #[test]
-    fn test_iso_to_dangi_roundtrip() {
+    fn test_iso_to_korean_roundtrip() {
         let mut rd = -1963020;
         let max_rd = 1963020;
         let mut iters = 0;
@@ -1703,11 +1703,11 @@ mod test {
         while rd < max_rd && iters < max_iters {
             let rata_die = RataDie::new(rd);
             let iso = Date::from_rata_die(rata_die, Iso);
-            let dangi = iso.to_calendar(LunarChinese::new_dangi());
-            let result = dangi.to_calendar(Iso);
+            let korean = iso.to_calendar(LunarChinese::new_korea());
+            let result = korean.to_calendar(Iso);
             assert_eq!(
                 iso, result,
-                "Failed roundtrip ISO -> Dangi -> ISO for RD: {rd}"
+                "Failed roundtrip ISO -> Korean -> ISO for RD: {rd}"
             );
 
             rd += 7043;
@@ -1752,7 +1752,7 @@ mod test {
     }
 
     #[test]
-    fn test_dangi_consistent_with_icu() {
+    fn test_korean_consistent_with_icu() {
         // Test cases for this test are derived from existing ICU Intl.DateTimeFormat. If there is a bug in ICU,
         // these test cases may be affected, and this calendar's output may not be entirely valid.
 
@@ -2260,25 +2260,25 @@ mod test {
 
         for case in cases {
             let iso = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day).unwrap();
-            let dangi = iso.to_calendar(LunarChinese::new_dangi());
-            let dangi_cyclic = dangi.cyclic_year();
-            let dangi_month = dangi.month().ordinal;
-            let dangi_day = dangi.day_of_month().0;
+            let korean = iso.to_calendar(LunarChinese::new_korea());
+            let korean_cyclic = korean.cyclic_year();
+            let korean_month = korean.month().ordinal;
+            let korean_day = korean.day_of_month().0;
 
             assert_eq!(
-                dangi_cyclic.related_iso, case.expected_rel_iso,
+                korean_cyclic.related_iso, case.expected_rel_iso,
                 "Related ISO failed for test case: {case:?}"
             );
             assert_eq!(
-                dangi_cyclic.year, case.expected_cyclic,
+                korean_cyclic.year, case.expected_cyclic,
                 "Cyclic year failed for test case: {case:?}"
             );
             assert_eq!(
-                dangi_month, case.expected_month,
+                korean_month, case.expected_month,
                 "Month failed for test case: {case:?}"
             );
             assert_eq!(
-                dangi_day, case.expected_day,
+                korean_day, case.expected_day,
                 "Day failed for test case: {case:?}"
             );
         }
@@ -2288,7 +2288,7 @@ mod test {
     #[ignore]
     fn generate_reference_years() {
         generate_reference_years_for(LunarChinese::new_china());
-        generate_reference_years_for(LunarChinese::new_dangi());
+        generate_reference_years_for(LunarChinese::new_korea());
         fn generate_reference_years_for<R: Rules + Copy>(calendar: LunarChinese<R>) {
             use crate::Date;
 
