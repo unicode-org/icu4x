@@ -11,7 +11,7 @@ use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
 use crate::preferences::CalendarAlgorithm;
 use crate::types::EraYear;
-use crate::{types, Calendar, DateDuration, DateDurationUnit, RangeError};
+use crate::{types, Calendar, DateDuration, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 
@@ -156,7 +156,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     }
 
     fn add(&self, date: &Self::DateInner, duration: DateDuration, options: DateAddOptions) -> Result<Self::DateInner, DateError> {
-        date.added(duration, self, options)
+        date.added(duration, &AbstractGregorian(IsoEra), options)
     }
 
     fn until(
@@ -165,7 +165,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         date2: &Self::DateInner,
         options: DateUntilOptions,
     ) -> Result<DateDuration, Self::UntilError> {
-        Ok(date1.until(date2, self, options))
+        Ok(date1.until(date2, &AbstractGregorian(IsoEra), options))
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
