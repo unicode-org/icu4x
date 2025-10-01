@@ -5,9 +5,10 @@
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
+use crate::duration::{DateAddOptions, DateUntilOptions};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
+use crate::{types, Calendar, Date, DateDuration, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -131,6 +132,8 @@ impl crate::cal::scaffold::UnstableSealed for Coptic {}
 impl Calendar for Coptic {
     type DateInner = CopticDateInner;
     type Year = types::EraYear;
+    type UntilError = core::convert::Infallible;
+
     fn from_fields(
         &self,
         fields: types::DateFields,
@@ -176,19 +179,17 @@ impl Calendar for Coptic {
         date.0.days_in_month()
     }
 
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration) {
-        date.0.offset_date(offset, &());
+    fn add(&self, date: &Self::DateInner, duration: DateDuration, options: DateAddOptions) -> Result<Self::DateInner, DateError> {
+        date.0.added(duration, self, options).map(CopticDateInner)
     }
 
     fn until(
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        _calendar2: &Self,
-        _largest_unit: DateDurationUnit,
-        _smallest_unit: DateDurationUnit,
-    ) -> DateDuration {
-        date1.0.until(date2.0, _largest_unit, _smallest_unit)
+        options: DateUntilOptions,
+    ) -> Result<DateDuration, Self::UntilError> {
+        Ok(date1.0.until(&date2.0, self, options))
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {

@@ -67,7 +67,7 @@ pub type Dangi = LunarChinese<chinese::Dangi>;
 #[deprecated]
 pub type Chinese = LunarChinese<chinese::China>;
 
-pub use crate::any_calendar::{AnyCalendar, AnyCalendarKind};
+pub use crate::any_calendar::{AnyCalendar, AnyCalendarKind, AnyCalendarUntilError};
 
 /// Internal scaffolding types
 pub mod scaffold {

@@ -31,6 +31,8 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     type DateInner: Eq + Copy + fmt::Debug;
     /// The type of YearInfo returned by the date
     type Year: fmt::Debug + Into<types::YearInfo>;
+    /// The type of error returned by `until`
+    type UntilError;
 
     /// Construct a date from era/month codes and fields
     ///
@@ -112,12 +114,13 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
 
     #[doc(hidden)] // unstable
     /// Add `duration` to `date`
-    fn offset_date(
+    fn add(
         &self,
         date: &Self::DateInner,
         duration: DateDuration,
         options: DateAddOptions,
-    ) -> Self::DateInner;
+    ) -> Result<Self::DateInner, DateError>;
+
     #[doc(hidden)] // unstable
     /// Calculate `date2 - date` as a duration
     ///
@@ -128,7 +131,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateUntilOptions,
-    ) -> DateDuration;
+    ) -> Result<DateDuration, Self::UntilError>;
 
     /// Returns the [`CalendarAlgorithm`](crate::preferences::CalendarAlgorithm) that is required to match
     /// when parsing into this calendar.

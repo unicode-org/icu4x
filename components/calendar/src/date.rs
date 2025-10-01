@@ -10,7 +10,7 @@ use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
 use crate::types::{CyclicYear, EraYear, IsoWeekOfYear};
 use crate::week::{RelativeUnit, WeekCalculator, WeekOf};
-use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
+use crate::{types, Calendar, DateDuration, Iso};
 #[cfg(feature = "alloc")]
 use alloc::rc::Rc;
 #[cfg(feature = "alloc")]
@@ -240,22 +240,21 @@ impl<A: AsCalendar> Date<A> {
     /// Add a `duration` to this date, mutating it
     #[doc(hidden)] // unstable
     #[inline]
-    pub fn add(&mut self, duration: DateDuration) {
-        // TODO: Take options
-        let options = DateAddOptions::default();
+    pub fn add(&mut self, duration: DateDuration, options: DateAddOptions) -> Result<(), DateError> {
         let inner = self
             .calendar
             .as_calendar()
-            .offset_date(&self.inner, duration, options);
+            .add(&self.inner, duration, options)?;
         self.inner = inner;
+        Ok(())
     }
 
     /// Add a `duration` to this date, returning the new one
     #[doc(hidden)] // unstable
     #[inline]
-    pub fn added(mut self, duration: DateDuration) -> Self {
-        self.add(duration);
-        self
+    pub fn added(mut self, duration: DateDuration, options: DateAddOptions) -> Result<Self, DateError> {
+        self.add(duration, options)?;
+        Ok(self)
     }
 
     /// Calculating the duration between `other - self`
@@ -264,13 +263,8 @@ impl<A: AsCalendar> Date<A> {
     pub fn until<B: AsCalendar<Calendar = A::Calendar>>(
         &self,
         other: &Date<B>,
-        largest_unit: DateDurationUnit,
-        _smallest_unit: DateDurationUnit,
-    ) -> DateDuration {
-        // TODO: Remove smallest_unit
-        let options = DateUntilOptions {
-            largest_unit: Some(largest_unit),
-        };
+        options: DateUntilOptions
+    ) -> Result<DateDuration, <A::Calendar as Calendar>::UntilError> {
         self.calendar
             .as_calendar()
             .until(self.inner(), other.inner(), options)

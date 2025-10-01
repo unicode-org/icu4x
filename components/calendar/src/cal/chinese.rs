@@ -7,12 +7,13 @@ use crate::calendar_arithmetic::{
     ArithmeticDate, ArithmeticDateBuilder, CalendarArithmetic, ToExtendedYear,
 };
 use crate::calendar_arithmetic::{DateFieldsResolver, PrecomputedDataSource};
+use crate::duration::{DateAddOptions, DateUntilOptions};
 use crate::error::DateError;
 use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::provider::chinese_based::{ChineseBasedCache, PackedChineseBasedYearInfo};
 use crate::types::{MonthCode, MonthInfo};
 use crate::AsCalendar;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
+use crate::{types, Calendar, Date, DateDuration};
 use calendrical_calculations::chinese_based::{
     self, ChineseBased, YearBounds, WELL_BEHAVED_ASTRONOMICAL_RANGE,
 };
@@ -571,6 +572,7 @@ impl<X: Rules> crate::cal::scaffold::UnstableSealed for LunarChinese<X> {}
 impl<X: Rules> Calendar for LunarChinese<X> {
     type DateInner = ChineseDateInner<X>;
     type Year = types::CyclicYear;
+    type UntilError = core::convert::Infallible;
 
     fn from_fields(
         &self,
@@ -633,25 +635,17 @@ impl<X: Rules> Calendar for LunarChinese<X> {
         date.0.days_in_month()
     }
 
-    #[doc(hidden)] // unstable
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration) {
-        date.0.offset_date(offset, self);
+    fn add(&self, date: &Self::DateInner, duration: DateDuration, options: DateAddOptions) -> Result<Self::DateInner, DateError> {
+        date.0.added(duration, self, options).map(ChineseDateInner)
     }
 
-    #[doc(hidden)] // unstable
-    /// Calculate `date2 - date` as a duration
-    ///
-    /// `calendar2` is the calendar object associated with `date2`. In case the specific calendar objects
-    /// differ on date, the date for the first calendar is used, and `date2` may be converted if necessary.
     fn until(
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        _calendar2: &Self,
-        _largest_unit: DateDurationUnit,
-        _smallest_unit: DateDurationUnit,
-    ) -> DateDuration {
-        date1.0.until(date2.0, _largest_unit, _smallest_unit)
+        options: DateUntilOptions,
+    ) -> Result<DateDuration, Self::UntilError> {
+        Ok(date1.0.until(&date2.0, self, options))
     }
 
     /// Obtain a name for the calendar for debug printing

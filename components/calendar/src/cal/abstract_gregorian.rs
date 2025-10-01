@@ -111,6 +111,7 @@ impl<Y: GregorianYears> crate::cal::scaffold::UnstableSealed for AbstractGregori
 impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     type DateInner = ArithmeticDate<AbstractGregorian<IsoEra>>;
     type Year = types::EraYear;
+    type UntilError = core::convert::Infallible;
 
     fn from_fields(
         &self,
@@ -154,18 +155,17 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         date.days_in_month()
     }
 
-    fn offset_date(&self, date: &Self::DateInner, duration: DateDuration, options: DateAddOptions) -> Self::DateInner {
-        // TODO: Don't unwrap
-        date.added(duration, self, options).unwrap()
+    fn add(&self, date: &Self::DateInner, duration: DateDuration, options: DateAddOptions) -> Result<Self::DateInner, DateError> {
+        date.added(duration, self, options)
     }
 
     fn until(
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        options: DateUntilOptions
-    ) -> DateDuration {
-        date1.until(date2, self, options)
+        options: DateUntilOptions,
+    ) -> Result<DateDuration, Self::UntilError> {
+        Ok(date1.until(date2, self, options))
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
@@ -211,6 +211,7 @@ macro_rules! impl_with_abstract_gregorian {
         impl crate::Calendar for $cal_ty {
             type DateInner = $inner_date_ty;
             type Year = types::EraYear;
+            type UntilError = core::convert::Infallible;
             fn from_fields(
                 &self,
                 fields: crate::types::DateFields,
@@ -262,30 +263,19 @@ macro_rules! impl_with_abstract_gregorian {
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr).days_in_month(&date.0)
             }
 
-            fn offset_date(&self, date: &mut Self::DateInner, offset: crate::DateDuration) {
+            fn add(&self, date: &Self::DateInner, duration: crate::duration::DateDuration, options: crate::duration::DateAddOptions) -> Result<Self::DateInner, DateError> {
                 let $self_ident = self;
-                let mut inner = date.0;
-                crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
-                    .offset_date(&mut inner, offset);
-                date.0 = inner;
+                crate::cal::abstract_gregorian::AbstractGregorian($eras_expr).add(&date.0, duration, options).map($inner_date_ty)
             }
 
             fn until(
                 &self,
                 date1: &Self::DateInner,
                 date2: &Self::DateInner,
-                _calendar2: &Self,
-                largest_unit: crate::DateDurationUnit,
-                smallest_unit: crate::DateDurationUnit,
-            ) -> crate::DateDuration {
+                options: crate::duration::DateUntilOptions,
+            ) -> Result<crate::duration::DateDuration, Self::UntilError> {
                 let $self_ident = self;
-                crate::cal::abstract_gregorian::AbstractGregorian($eras_expr).until(
-                    &date1.0,
-                    &date2.0,
-                    &crate::cal::abstract_gregorian::AbstractGregorian($eras_expr),
-                    largest_unit,
-                    smallest_unit,
-                )
+                crate::cal::abstract_gregorian::AbstractGregorian($eras_expr).until(&date1.0, &date2.0, options)
             }
 
             fn year_info(&self, date: &Self::DateInner) -> Self::Year {

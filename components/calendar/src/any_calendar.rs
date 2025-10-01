@@ -182,13 +182,7 @@ macro_rules! match_cal_and_date_date {
                 &AnyDateInner::HijriTabular(ref $date2_matched, sighting2),
             ) if $cal_matched.0 == sighting1 && sighting1 == sighting2 => $(wrap_to!($wrap, AnyDateInner::HijriTabular))? ($e, $(wrap_to!($wrap, sighting1))?),
             // Failure case
-            // TODO: In AnyCalendar, this should return an error result, but how?
-            _ => panic!(
-                "Found AnyCalendar with mixed calendar type {:?} and date types {:?} and {:?}!",
-                $cal.kind().debug_name(),
-                $date1.kind().debug_name(),
-                $date1.kind().debug_name(),
-            ),
+            _ => return Err(AnyCalendarUntilError::MismatchedCalendars),
         }
     };
 }
@@ -250,10 +244,16 @@ macro_rules! match_cal {
     };
 }
 
+#[non_exhaustive]
+pub enum AnyCalendarUntilError {
+    MismatchedCalendars,
+}
+
 impl crate::cal::scaffold::UnstableSealed for AnyCalendar {}
 impl Calendar for AnyCalendar {
     type DateInner = AnyDateInner;
     type Year = YearInfo;
+    type UntilError = AnyCalendarUntilError;
 
     fn from_fields(
         &self,
@@ -291,13 +291,13 @@ impl Calendar for AnyCalendar {
         match_cal_and_date!(match (self, date): (c, d) => c.days_in_month(d)).0
     }
 
-    fn offset_date(
+    fn add(
         &self,
         date: &Self::DateInner,
         duration: DateDuration,
         options: DateAddOptions,
-    ) -> Self::DateInner {
-        match_cal_and_date!(match (self, date): (c, d) wrap => c.offset_date(d, duration, options))
+    ) -> Result<Self::DateInner, DateError> {
+        Ok(match_cal_and_date!(match (self, date): (c, d) wrap => c.add(d, duration, options)?))
     }
 
     fn until(
@@ -305,8 +305,12 @@ impl Calendar for AnyCalendar {
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateUntilOptions
-    ) -> DateDuration {
-        match_cal_and_date_date!(match (self, date1, date2): (c, d1, d2) => c.until(d1, d2, options)).0
+    ) -> Result<DateDuration, Self::UntilError> {
+        let result = match_cal_and_date_date!(match (self, date1, date2): (c, d1, d2) => c.until(d1, d2, options)).0;
+        // map from Result<DateDuration, Infallible> to Result<DateDuration, Self::UntilError>
+        match result {
+            Ok(duration) => Ok(duration)
+        }
     }
 
     fn year_info(&self, date: &Self::DateInner) -> types::YearInfo {

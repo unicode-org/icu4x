@@ -6,11 +6,12 @@ use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
 use crate::calendar_arithmetic::{PrecomputedDataSource, ToExtendedYear};
+use crate::duration::{DateAddOptions, DateUntilOptions};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
 use crate::provider::hijri::PackedHijriYearInfo;
 use crate::types::DateFields;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
+use crate::{types, Calendar, Date, DateDuration};
 use crate::{AsCalendar, RangeError};
 use calendrical_calculations::islamic::{
     ISLAMIC_EPOCH_FRIDAY, ISLAMIC_EPOCH_THURSDAY, WELL_BEHAVED_ASTRONOMICAL_RANGE,
@@ -602,6 +603,8 @@ impl<R: Rules> crate::cal::scaffold::UnstableSealed for Hijri<R> {}
 impl<R: Rules> Calendar for Hijri<R> {
     type DateInner = HijriDateInner<R>;
     type Year = types::EraYear;
+    type UntilError = core::convert::Infallible;
+
     fn from_fields(
         &self,
         fields: DateFields,
@@ -662,19 +665,17 @@ impl<R: Rules> Calendar for Hijri<R> {
         date.0.days_in_month()
     }
 
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration) {
-        date.0.offset_date(offset, self)
+    fn add(&self, date: &Self::DateInner, duration: DateDuration, options: DateAddOptions) -> Result<Self::DateInner, DateError> {
+        date.0.added(duration, self, options).map(HijriDateInner)
     }
 
     fn until(
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        _calendar2: &Self,
-        _largest_unit: DateDurationUnit,
-        _smallest_unit: DateDurationUnit,
-    ) -> DateDuration {
-        date1.0.until(date2.0, _largest_unit, _smallest_unit)
+        options: DateUntilOptions,
+    ) -> Result<DateDuration, Self::UntilError> {
+        Ok(date1.0.until(&date2.0, self, options))
     }
 
     fn debug_name(&self) -> &'static str {

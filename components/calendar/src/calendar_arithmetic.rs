@@ -296,40 +296,6 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    pub fn offset_date(
-        &mut self,
-        offset: DateDuration,
-        data: &impl PrecomputedDataSource<C::YearInfo>,
-    ) {
-        // TODO: THIS IS A TERRIBLE IMPL TO BE REWRITTEN
-        let (years, months, weeks, days) = if offset.is_negative {
-            (
-                -(offset.years as i32),
-                -(offset.months as i32),
-                -(offset.weeks as i32),
-                -(offset.days as i32),
-            )
-        } else {
-            (
-                offset.years as i32,
-                offset.months as i32,
-                offset.weeks as i32,
-                offset.days as i32,
-            )
-        };
-        if years != 0 {
-            // For offset_date to work with lunar calendars, need to handle an edge case where the original month is not valid in the future year.
-            self.year = data.load_or_compute_info(self.year.to_extended_year() + years);
-        }
-
-        self.offset_months(months, data);
-
-        let day_offset = days + weeks * 7 + self.day as i32 - 1;
-        self.day = 1;
-        self.offset_days(day_offset, data);
-    }
-
-    #[inline]
     pub fn days_in_year(&self) -> u16 {
         C::days_in_provided_year(self.year)
     }
