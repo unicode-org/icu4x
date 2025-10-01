@@ -91,13 +91,25 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
     /// Returns data about the given year.
     fn year_data(&self, related_iso: i32) -> LunarChineseYearData;
 
-    // TODO: Bikshed this function. Is this the right level of abstraction?
-    /// Returns the year data for the given month and day.
-    fn reference_year_from_month_day(
+    /// Returns an ECMA reference year that contains the given month-day combination.
+    /// If the day is out of range, it will return a year that contains the given month
+    /// and the maximum day possible for that month. See [the spec][spec] for the
+    /// precise algorithm used.
+    ///
+    /// This API only matters when using [`MissingFieldsStrategy::Ecma`] to compute
+    /// a date without providing a year in [`Date::try_from_fields()`]. The default impl
+    /// will just error, and custom calendars who do not care about ECMA/Temporal
+    /// reference years do not need to override this.
+    ///
+    /// [spec]: https://tc39.es/proposal-temporal/#sec-temporal-nonisomonthdaytoisoreferencedate
+    /// [`MissingFieldsStrategy::Ecma`]: crate::options::MissingFieldsStrategy::Ecma
+    fn ecma_reference_year(
         &self,
-        month_code: types::MonthCode,
-        day: u8,
-    ) -> Result<LunarChineseYearData, DateError>;
+        _month_code: types::MonthCode,
+        _day: u8,
+    ) -> Result<LunarChineseYearData, DateError> {
+        Err(DateError::NotEnoughFields)
+    }
 
     /// The debug name for the calendar defined by these [`Rules`].
     fn debug_name(&self) -> &'static str {
@@ -173,7 +185,7 @@ impl Rules for China {
         }
     }
 
-    fn reference_year_from_month_day(
+    fn ecma_reference_year(
         &self,
         month_code: types::MonthCode,
         day: u8,
@@ -356,7 +368,7 @@ impl Rules for Korea {
         }
     }
 
-    fn reference_year_from_month_day(
+    fn ecma_reference_year(
         &self,
         month_code: types::MonthCode,
         day: u8,
@@ -549,7 +561,7 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, DateError> {
-        self.0.reference_year_from_month_day(month_code, day)
+        self.0.ecma_reference_year(month_code, day)
     }
 
     fn ordinal_month_from_code(
