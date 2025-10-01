@@ -445,7 +445,7 @@ impl<A: AsCalendar<Calendar = LunarChinese<Korea>>> Date<A> {
 
 /// The inner date type used for representing [`Date`]s of [`LunarChinese`].
 #[derive(Debug, Clone)]
-pub struct ChineseDateInner<X: Rules>(ArithmeticDate<LunarChinese<X>>);
+pub struct ChineseDateInner<R: Rules>(ArithmeticDate<LunarChinese<R>>);
 
 impl<S: Rules> Copy for ChineseDateInner<S> {}
 impl<S: Rules> PartialEq for ChineseDateInner<S> {
@@ -489,7 +489,7 @@ impl LunarChinese<China> {
     }
 }
 
-impl<X: Rules> CalendarArithmetic for LunarChinese<X> {
+impl<R: Rules> CalendarArithmetic for LunarChinese<R> {
     type YearInfo = LunarChineseYearData;
 
     fn days_in_provided_month(year: LunarChineseYearData, month: u8) -> u8 {
@@ -523,13 +523,13 @@ impl<X: Rules> CalendarArithmetic for LunarChinese<X> {
     }
 }
 
-impl<X: Rules> PrecomputedDataSource<LunarChineseYearData> for LunarChinese<X> {
+impl<R: Rules> PrecomputedDataSource<LunarChineseYearData> for LunarChinese<R> {
     fn load_or_compute_info(&self, related_iso: i32) -> LunarChineseYearData {
         self.0.year_data(related_iso)
     }
 }
 
-impl<X: Rules> DateFieldsResolver for LunarChinese<X> {
+impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
     type YearInfo = LunarChineseYearData;
 
     #[inline]
@@ -570,9 +570,9 @@ impl<X: Rules> DateFieldsResolver for LunarChinese<X> {
     }
 }
 
-impl<X: Rules> crate::cal::scaffold::UnstableSealed for LunarChinese<X> {}
-impl<X: Rules> Calendar for LunarChinese<X> {
-    type DateInner = ChineseDateInner<X>;
+impl<R: Rules> crate::cal::scaffold::UnstableSealed for LunarChinese<R> {}
+impl<R: Rules> Calendar for LunarChinese<R> {
+    type DateInner = ChineseDateInner<R>;
     type Year = types::CyclicYear;
 
     fn from_fields(
@@ -701,7 +701,7 @@ impl<X: Rules> Calendar for LunarChinese<X> {
     }
 }
 
-impl<X: Rules, A: AsCalendar<Calendar = LunarChinese<X>>> Date<A> {
+impl<R: Rules, A: AsCalendar<Calendar = LunarChinese<R>>> Date<A> {
     /// Construct a new Chinese date from a `year`, `month`, and `day`.
     /// `year` represents the [ISO](crate::Iso) year that roughly matches the Chinese year;
     /// `month` represents the month of the year ordinally (ex. if it is a leap year, the last month will be 13, not 12);
