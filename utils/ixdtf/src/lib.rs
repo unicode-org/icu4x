@@ -393,8 +393,6 @@ mod error;
 pub mod parsers;
 pub mod records;
 
-extern crate alloc;
-
 pub use error::ParseError;
 
 /// This module contains the supported encoding for `ixdtf` parsing.
