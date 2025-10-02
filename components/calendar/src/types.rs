@@ -42,16 +42,23 @@ pub struct DateFields<'a> {
     pub day: Option<NonZeroU8>,
 }
 
-/// The type of year: Calendars like Chinese don't have an era and instead format with cyclic years.
+/// Information about the year.
+///
+/// Returned by [`Date::year()`](crate::Date::year).
+///
+/// This enum supports calendars based on eras as well as calendars based on cycles.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub enum YearInfo {
-    /// An era and a year in that era
-    Era(EraYear),
-    /// A cyclic year, and the related ISO year
+    /// Information about the year in calendars with eras.
     ///
-    /// Knowing the cyclic year is typically not enough to pinpoint a date, however cyclic calendars
-    /// don't typically use eras, so disambiguation can be done by saying things like "Year 甲辰 (2024)"
+    /// A majority of calendars use this variant.
+    Era(EraYear),
+    /// Information about the year in calendars with cycles.
+    ///
+    /// This is used by the [`LunarChinese`] calendar.
+    ///
+    /// [`LunarChinese`]: crate::cal::LunarChinese
     Cyclic(CyclicYear),
 }
 
@@ -143,6 +150,9 @@ pub struct EraYear {
 }
 
 /// Year information for a year that is specified as a cyclic year
+///
+/// Knowing the cyclic year is typically not enough to pinpoint a date, however cyclic calendars
+/// don't typically use eras, so disambiguation can be done by saying things like "Year 甲辰 (2024)"
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct CyclicYear {
@@ -270,6 +280,8 @@ impl fmt::Display for MonthCode {
 }
 
 /// Representation of a formattable month.
+///
+/// Returned by [`Date::month()`](crate::Date::month).
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct MonthInfo {

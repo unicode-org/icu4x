@@ -17,15 +17,21 @@ use icu_time::{
     DateTime, Time, TimeZoneInfo, ZonedDateTime,
 };
 
-/// A calendar that can be found in CLDR.
+/// A calendar that can be formatted with CLDR data.
 ///
-/// New implementors of this trait will likely also wish to modify `get_era_code_map()`
-/// in the CLDR transformer to support any new era maps.
+/// When formatting:
+///
+/// - The pattern is loaded from [`Self::SkeletaV1`]
+/// - The era and year names are loaded from [`Self::YearNamesV1`] and accessed based on [`YearInfo`]
+/// - The month name is loaded from [`Self::MonthNamesV1`] and accessed based on [`MonthInfo`]
 ///
 /// <div class="stab unstable">
-/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
-/// trait, please consider using a type from the implementors listed below.
+/// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
 /// </div>
+///
+/// [`YearInfo`]: icu_calendar::types::YearInfo
+/// [`MonthInfo`]: icu_calendar::types::MonthInfo
 pub trait CldrCalendar: UnstableSealed {
     /// The data marker for loading year symbols for this calendar.
     type YearNamesV1: DataMarker<DataStruct = YearNames<'static>>;
@@ -91,7 +97,19 @@ impl CldrCalendar for Indian {
     type SkeletaV1 = DatetimePatternsDateIndianV1;
 }
 
-impl<R: hijri::Rules> CldrCalendar for Hijri<R> {
+impl CldrCalendar for Hijri<hijri::UmmAlQura> {
+    type YearNamesV1 = DatetimeNamesYearHijriV1;
+    type MonthNamesV1 = DatetimeNamesMonthHijriV1;
+    type SkeletaV1 = DatetimePatternsDateHijriV1;
+}
+
+impl CldrCalendar for Hijri<hijri::TabularAlgorithm> {
+    type YearNamesV1 = DatetimeNamesYearHijriV1;
+    type MonthNamesV1 = DatetimeNamesMonthHijriV1;
+    type SkeletaV1 = DatetimePatternsDateHijriV1;
+}
+
+impl CldrCalendar for Hijri<hijri::AstronomicalSimulation> {
     type YearNamesV1 = DatetimeNamesYearHijriV1;
     type MonthNamesV1 = DatetimeNamesMonthHijriV1;
     type SkeletaV1 = DatetimePatternsDateHijriV1;
@@ -130,7 +148,9 @@ impl UnstableSealed for Ethiopian {}
 impl UnstableSealed for Gregorian {}
 impl UnstableSealed for Hebrew {}
 impl UnstableSealed for Indian {}
-impl<R: hijri::Rules> UnstableSealed for Hijri<R> {}
+impl UnstableSealed for Hijri<hijri::UmmAlQura> {}
+impl UnstableSealed for Hijri<hijri::TabularAlgorithm> {}
+impl UnstableSealed for Hijri<hijri::AstronomicalSimulation> {}
 impl UnstableSealed for Japanese {}
 impl UnstableSealed for JapaneseExtended {}
 impl UnstableSealed for Persian {}
