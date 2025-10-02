@@ -92,26 +92,26 @@ impl CldrCalendar for Indian {
 }
 
 /// [`hijri::Rules`]-specific formatting options.
-/// 
+///
 /// See [`CldrCalendar`].
-/// 
+///
 /// The simplest implementation of this uses the same names
 /// as some provided [`hijri::Rules`]:
-/// 
+///
 /// ```rust
 /// use icu::calendar::cal::hijri;
 /// use icu::datetime::scaffold::FormattableHijriRules;
-/// 
+///
 /// #[derive(Clone, Debug)]
 /// struct MyRules;
-/// 
+///
 /// impl icu::calendar::cal::scaffold::UnstableSealed for MyRules {}
 /// impl icu::datetime::scaffold::UnstableSealed for MyRules {}
-/// 
+///
 /// impl hijri::Rules for MyRules {
 ///     fn year_data(&self, _year: i32) -> hijri::HijriYearData { todo!() }
 /// }
-/// 
+///
 /// impl FormattableHijriRules for MyRules {
 ///     type YearNamesV1 = <hijri::UmmAlQura as FormattableHijriRules>::YearNamesV1;
 ///     type MonthNamesV1 = <hijri::UmmAlQura as FormattableHijriRules>::MonthNamesV1;
