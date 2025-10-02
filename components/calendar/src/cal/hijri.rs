@@ -95,7 +95,7 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
     }
 }
 
-/// [Hijri] rules based on an astronomical simulation for a particular location.
+/// [`Hijri`] [`Rules`] based on an astronomical simulation for a particular location.
 ///
 /// These simulations are known to not necessarily match sightings on the ground,
 /// but are included for completeness.
@@ -214,7 +214,7 @@ impl Rules for AstronomicalSimulation {
     }
 }
 
-/// [Hijri] rules for the [Umm al-Qura](https://en.wikipedia.org/wiki/Islamic_calendar#Saudi_Arabia's_Umm_al-Qura_calendar) calendar.
+/// [`Hijri`] [`Rules`] for the [Umm al-Qura](https://en.wikipedia.org/wiki/Islamic_calendar#Saudi_Arabia's_Umm_al-Qura_calendar) calendar.
 ///
 /// These rules are defined by the [KACST](https://kacst.gov.sa/) and used by the government
 /// of Saudi Arabia for civil purposes.
@@ -282,7 +282,7 @@ impl Rules for UmmAlQura {
     }
 }
 
-/// [Hijri] rules for the [Tabular Hijri Algorithm](https://en.wikipedia.org/wiki/Tabular_Islamic_calendar).
+/// [`Hijri`] [`Rules`] for the [Tabular Hijri Algorithm](https://en.wikipedia.org/wiki/Tabular_Islamic_calendar).
 ///
 /// See [`TabularAlgorithmEpoch`] and [`TabularAlgorithmLeapYears`] for customization.
 ///
