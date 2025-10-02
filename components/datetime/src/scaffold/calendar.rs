@@ -91,10 +91,65 @@ impl CldrCalendar for Indian {
     type SkeletaV1 = DatetimePatternsDateIndianV1;
 }
 
-impl<R: hijri::Rules> CldrCalendar for Hijri<R> {
+/// [`hijri::Rules`]-specific formatting options.
+/// 
+/// See [`CldrCalendar`].
+/// 
+/// The simplest implementation of this uses the same names
+/// as some provided [`hijri::Rules`]:
+/// 
+/// ```rust
+/// use icu::calendar::cal::hijri;
+/// use icu::datetime::scaffold::FormattableHijriRules;
+/// 
+/// #[derive(Clone, Debug)]
+/// struct MyRules;
+/// 
+/// impl icu::calendar::cal::scaffold::UnstableSealed for MyRules {}
+/// impl hijri::Rules for MyRules {
+///     fn year_data(&self, _year: i32) -> hijri::HijriYearData { todo!() }
+/// }
+/// 
+/// impl FormattableHijriRules for MyRules {
+///     type YearNamesV1 = <hijri::UmmAlQura as FormattableHijriRules>::YearNamesV1;
+///     type MonthNamesV1 = <hijri::UmmAlQura as FormattableHijriRules>::MonthNamesV1;
+///     type SkeletaV1 = <hijri::UmmAlQura as FormattableHijriRules>::SkeletaV1;
+/// }
+/// ```
+// TODO: default associated types would be nice (https://github.com/rust-lang/rust/issues/29661)
+pub trait FormattableHijriRules: hijri::Rules {
+    /// The data marker for loading year symbols for this calendar.
+    type YearNamesV1: DataMarker<DataStruct = YearNames<'static>>;
+
+    /// The data marker for loading month symbols for this calendar.
+    type MonthNamesV1: DataMarker<DataStruct = MonthNames<'static>>;
+
+    /// The data marker for loading skeleton patterns for this calendar.
+    type SkeletaV1: DataMarker<DataStruct = PackedPatterns<'static>>;
+}
+
+impl FormattableHijriRules for hijri::TabularAlgorithm {
     type YearNamesV1 = DatetimeNamesYearHijriV1;
     type MonthNamesV1 = DatetimeNamesMonthHijriV1;
     type SkeletaV1 = DatetimePatternsDateHijriV1;
+}
+
+impl FormattableHijriRules for hijri::UmmAlQura {
+    type YearNamesV1 = DatetimeNamesYearHijriV1;
+    type MonthNamesV1 = DatetimeNamesMonthHijriV1;
+    type SkeletaV1 = DatetimePatternsDateHijriV1;
+}
+
+impl FormattableHijriRules for hijri::AstronomicalSimulation {
+    type YearNamesV1 = DatetimeNamesYearHijriV1;
+    type MonthNamesV1 = DatetimeNamesMonthHijriV1;
+    type SkeletaV1 = DatetimePatternsDateHijriV1;
+}
+
+impl<R: FormattableHijriRules> CldrCalendar for Hijri<R> {
+    type YearNamesV1 = R::YearNamesV1;
+    type MonthNamesV1 = R::MonthNamesV1;
+    type SkeletaV1 = R::SkeletaV1;
 }
 
 impl CldrCalendar for Japanese {
