@@ -1340,6 +1340,7 @@ name = "icu_datetime"
 version = "2.0.0"
 dependencies = [
  "bincode",
+ "calendrical_calculations",
  "criterion",
  "databake",
  "displaydoc",
