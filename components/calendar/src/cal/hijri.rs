@@ -95,7 +95,7 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
     }
 }
 
-/// An astronomical simulation for a particular location.
+/// [`Hijri`] [`Rules`] based on an astronomical simulation for a particular location.
 ///
 /// These simulations are known to not necessarily match sightings on the ground,
 /// but are included for completeness.
@@ -214,7 +214,7 @@ impl Rules for AstronomicalSimulation {
     }
 }
 
-/// The [Umm al-Qura rules](https://en.wikipedia.org/wiki/Islamic_calendar#Saudi_Arabia's_Umm_al-Qura_calendar)
+/// [`Hijri`] [`Rules`] for the [Umm al-Qura](https://en.wikipedia.org/wiki/Islamic_calendar#Saudi_Arabia's_Umm_al-Qura_calendar) calendar.
 ///
 /// These rules are defined by the [KACST](https://kacst.gov.sa/) and used by the government
 /// of Saudi Arabia for civil purposes.
@@ -282,7 +282,7 @@ impl Rules for UmmAlQura {
     }
 }
 
-/// The [Tabular Hijri Algorithm](https://en.wikipedia.org/wiki/Tabular_Islamic_calendar)
+/// [`Hijri`] [`Rules`] for the [Tabular Hijri Algorithm](https://en.wikipedia.org/wiki/Tabular_Islamic_calendar).
 ///
 /// See [`TabularAlgorithmEpoch`] and [`TabularAlgorithmLeapYears`] for customization.
 ///
@@ -380,7 +380,7 @@ impl Hijri<AstronomicalSimulation> {
         Self::new_simulated_mecca()
     }
 
-    /// Creates a new [`Hijri`] using simulated sightings at Mecca.
+    /// Creates a [`Hijri`] calendar using simulated sightings at Mecca.
     pub const fn new_simulated_mecca() -> Self {
         Self(AstronomicalSimulation {
             location: SimulatedLocation::Mecca,
@@ -416,7 +416,7 @@ impl Hijri<UmmAlQura> {
         Self(UmmAlQura)
     }
 
-    /// Creates a Hijri calendar using [`UmmAlQura`].
+    /// Creates a [`Hijri`] calendar using [`UmmAlQura`] rules.
     pub const fn new_umm_al_qura() -> Self {
         Self(UmmAlQura)
     }
@@ -459,7 +459,7 @@ impl Hijri<TabularAlgorithm> {
         Hijri::new_tabular(leap_years, epoch)
     }
 
-    /// Construct a new [`Hijri`] with tabular rules and the given leap year rule and epoch.
+    /// Creates a [`Hijri`] calendar with tabular rules and the given leap year rule and epoch.
     pub const fn new_tabular(
         leap_years: TabularAlgorithmLeapYears,
         epoch: TabularAlgorithmEpoch,
