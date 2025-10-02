@@ -80,6 +80,7 @@ impl CalendarArithmetic for AbstractGregorian<IsoEra> {
 }
 
 pub(crate) const REFERENCE_YEAR: i32 = 1972;
+#[cfg(test)]
 pub(crate) const LAST_DAY_OF_REFERENCE_YEAR: RataDie =
     calendrical_calculations::gregorian::day_before_year(REFERENCE_YEAR + 1);
 
