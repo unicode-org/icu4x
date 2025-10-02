@@ -106,6 +106,8 @@ impl CldrCalendar for Indian {
 /// struct MyRules;
 /// 
 /// impl icu::calendar::cal::scaffold::UnstableSealed for MyRules {}
+/// impl icu::datetime::scaffold::UnstableSealed for MyRules {}
+/// 
 /// impl hijri::Rules for MyRules {
 ///     fn year_data(&self, _year: i32) -> hijri::HijriYearData { todo!() }
 /// }
@@ -117,7 +119,7 @@ impl CldrCalendar for Indian {
 /// }
 /// ```
 // TODO: default associated types would be nice (https://github.com/rust-lang/rust/issues/29661)
-pub trait FormattableHijriRules: hijri::Rules {
+pub trait FormattableHijriRules: hijri::Rules + UnstableSealed {
     /// The data marker for loading year symbols for this calendar.
     type YearNamesV1: DataMarker<DataStruct = YearNames<'static>>;
 
@@ -128,18 +130,21 @@ pub trait FormattableHijriRules: hijri::Rules {
     type SkeletaV1: DataMarker<DataStruct = PackedPatterns<'static>>;
 }
 
+impl UnstableSealed for hijri::TabularAlgorithm {}
 impl FormattableHijriRules for hijri::TabularAlgorithm {
     type YearNamesV1 = DatetimeNamesYearHijriV1;
     type MonthNamesV1 = DatetimeNamesMonthHijriV1;
     type SkeletaV1 = DatetimePatternsDateHijriV1;
 }
 
+impl UnstableSealed for hijri::UmmAlQura {}
 impl FormattableHijriRules for hijri::UmmAlQura {
     type YearNamesV1 = DatetimeNamesYearHijriV1;
     type MonthNamesV1 = DatetimeNamesMonthHijriV1;
     type SkeletaV1 = DatetimePatternsDateHijriV1;
 }
 
+impl UnstableSealed for hijri::AstronomicalSimulation {}
 impl FormattableHijriRules for hijri::AstronomicalSimulation {
     type YearNamesV1 = DatetimeNamesYearHijriV1;
     type MonthNamesV1 = DatetimeNamesMonthHijriV1;
