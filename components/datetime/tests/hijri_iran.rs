@@ -107,6 +107,7 @@ impl Rules for IranTestSighting {
 }
 
 // Use the same display names as for UAQ
+impl icu_datetime::scaffold::UnstableSealed for IranTestSighting {}
 impl FormattableHijriRules for IranTestSighting {
     type MonthNamesV1 = <UmmAlQura as FormattableHijriRules>::MonthNamesV1;
     type YearNamesV1 = <UmmAlQura as FormattableHijriRules>::YearNamesV1;
