@@ -497,14 +497,14 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         // 1. Let _parts_ be CalendarISOToDate(_calendar_, _isoDate_).
         // 1. Let _y0_ be _parts_.[[Year]] + _duration_.[[Years]].
         let y0 = cal.year_info_from_extended(duration.add_years_to(self.year.to_extended_year()));
-        // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], ~constrain~)).
+        // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], _overflow_)).
         let base_month_code = cal.month_code_from_ordinal(&y0, self.month).standard_code;
-        let constrain = DateFromFieldsOptions {
-            overflow: Some(Overflow::Constrain),
-            ..Default::default()
-        };
         let m0 = cal
-            .ordinal_month_from_code(&y0, base_month_code, constrain)
+            .ordinal_month_from_code(
+                &y0,
+                base_month_code,
+                DateFromFieldsOptions::from_add_options(options),
+            )
             .expect("valid month code for calendar");
         // 1. Let _endOfMonth_ be BalanceNonISODate(_calendar_, _y0_, _m0_ + _duration_.[[Months]] + 1, 0).
         let end_of_month = Self::new_balanced(y0, duration.add_months_to(m0) + 1, 0, cal);
@@ -517,7 +517,8 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         } else {
             // 1. Else,
             //   1. If _overflow_ is ~reject~, throw a *RangeError* exception.
-            if matches!(options.overflow, None | Some(Overflow::Reject)) {
+            // Note: ICU4X default is constrain here
+            if matches!(options.overflow, Some(Overflow::Reject)) {
                 return Err(DateError::Range {
                     field: "day",
                     value: i32::from(base_day),

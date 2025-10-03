@@ -262,7 +262,7 @@ pub enum AnyCalendarUntilError {
     /// let d2 = Date::try_new_hebrew(5780, 1, 1).unwrap().to_any();
     ///
     /// assert!(matches!(
-    ///     d1.until(&d2, Default::default()),
+    ///     d1.until_with_options(&d2, Default::default()),
     ///     Err(AnyCalendarUntilError::MismatchedCalendars),
     /// ));
     ///
@@ -270,7 +270,7 @@ pub enum AnyCalendarUntilError {
     /// // such as ISO.
     ///
     /// assert!(matches!(
-    ///     d1.to_iso().until(&d2.to_iso(), Default::default()),
+    ///     d1.to_iso().until_with_options(&d2.to_iso(), Default::default()),
     ///     Ok(_)
     /// ));
     /// ```

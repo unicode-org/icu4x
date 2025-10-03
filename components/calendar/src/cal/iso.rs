@@ -365,16 +365,17 @@ mod test {
     #[test]
     fn test_offset_handles_out_of_bound_month_offset() {
         let today = Date::try_new_iso(2021, 1, 31).unwrap();
-        // since 2021/02/31 isn't a valid date, `offset_date` auto-adjusts by adding 3 days to 2021/02/28
-        let today_plus_1_month = Date::try_new_iso(2021, 3, 3).unwrap();
+        // since 2021/02/31 isn't a valid date, `offset_date` auto-adjusts by constraining to the last day in February
+        let today_plus_1_month = Date::try_new_iso(2021, 2, 28).unwrap();
         let offset = today
             .added_with_options(DateDuration::for_months(1), Default::default())
             .unwrap();
         assert_eq!(offset, today_plus_1_month);
 
         let today = Date::try_new_iso(2021, 1, 31).unwrap();
-        // since 2021/02/31 isn't a valid date, `offset_date` auto-adjusts by adding 3 days to 2021/02/28
-        let today_plus_1_month_1_day = Date::try_new_iso(2021, 3, 4).unwrap();
+        // since 2021/02/31 isn't a valid date, `offset_date` auto-adjusts by constraining to the last day in February
+        // and then adding the days
+        let today_plus_1_month_1_day = Date::try_new_iso(2021, 3, 1).unwrap();
         let offset = today
             .added_with_options(
                 DateDuration {
