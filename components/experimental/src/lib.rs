@@ -52,7 +52,7 @@ pub mod provider {
         impl_currency_displayname_v1!(Baked);
         impl_currency_patterns_data_v1!(Baked);
         impl_currency_extended_data_v1!(Baked);
-        impl_units_display_name_v1!(Baked);
+        impl_units_display_names_v1!(Baked);
         impl_units_names_area_core_v1!(Baked);
         impl_units_names_area_extended_v1!(Baked);
         impl_units_names_area_outlier_v1!(Baked);
@@ -123,22 +123,22 @@ pub mod provider {
         super::dimension::provider::currency::extended::CurrencyExtendedDataV1::INFO,
         super::dimension::provider::percent::PercentEssentialsV1::INFO,
         super::dimension::provider::units::essentials::UnitsEssentialsV1::INFO,
-        super::dimension::provider::units::display_name::UnitsDisplayNameV1::INFO,
-        super::dimension::provider::units::categorized_display_name::UnitsNamesAreaCoreV1::INFO,
-        super::dimension::provider::units::categorized_display_name::UnitsNamesAreaExtendedV1::INFO,
-        super::dimension::provider::units::categorized_display_name::UnitsNamesAreaOutlierV1::INFO,
-        super::dimension::provider::units::categorized_display_name::UnitsNamesDurationCoreV1::INFO,
-        super::dimension::provider::units::categorized_display_name::UnitsNamesDurationExtendedV1::INFO,
-        super::dimension::provider::units::categorized_display_name::UnitsNamesDurationOutlierV1::INFO,
-        super::dimension::provider::units::categorized_display_name::UnitsNamesLengthCoreV1::INFO,
-        super::dimension::provider::units::categorized_display_name::UnitsNamesLengthExtendedV1::INFO,
-        super::dimension::provider::units::categorized_display_name::UnitsNamesLengthOutlierV1::INFO,
-        super::dimension::provider::units::categorized_display_name::UnitsNamesMassCoreV1::INFO,
-        super::dimension::provider::units::categorized_display_name::UnitsNamesMassExtendedV1::INFO,
-        super::dimension::provider::units::categorized_display_name::UnitsNamesMassOutlierV1::INFO,
-        super::dimension::provider::units::categorized_display_name::UnitsNamesVolumeCoreV1::INFO,
-        super::dimension::provider::units::categorized_display_name::UnitsNamesVolumeExtendedV1::INFO,
-        super::dimension::provider::units::categorized_display_name::UnitsNamesVolumeOutlierV1::INFO,
+        super::dimension::provider::units::display_names::UnitsDisplayNamesV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesAreaCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesAreaExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesAreaOutlierV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesDurationCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesDurationExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesDurationOutlierV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesLengthCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesLengthExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesLengthOutlierV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesMassCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesMassExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesMassOutlierV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesVolumeCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesVolumeExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesVolumeOutlierV1::INFO,
         super::displaynames::provider::LanguageDisplayNamesV1::INFO,
         super::duration::provider::DigitalDurationDataV1::INFO,
         super::displaynames::provider::LocaleDisplayNamesV1::INFO,
