@@ -7,9 +7,13 @@ use icu_calendar::cal::hijri::Rules;
 use icu_calendar::cal::hijri::TabularAlgorithm;
 use icu_calendar::cal::hijri::TabularAlgorithmEpoch;
 use icu_calendar::cal::hijri::TabularAlgorithmLeapYears;
+use icu_calendar::cal::hijri::UmmAlQura;
 use icu_calendar::cal::Hijri;
 use icu_calendar::types::RataDie;
 use icu_calendar::Date;
+use icu_datetime::fieldsets;
+use icu_datetime::scaffold::FormattableHijriRules;
+use icu_datetime::FixedCalendarDateTimeFormatter;
 
 static TEST_RD: [i64; 4] = [727274, 728714, 744313, 764652];
 
@@ -102,6 +106,14 @@ impl Rules for IranTestSighting {
     }
 }
 
+// Use the same display names as for UAQ
+impl icu_datetime::scaffold::UnstableSealed for IranTestSighting {}
+impl FormattableHijriRules for IranTestSighting {
+    type MonthNamesV1 = <UmmAlQura as FormattableHijriRules>::MonthNamesV1;
+    type YearNamesV1 = <UmmAlQura as FormattableHijriRules>::YearNamesV1;
+    type SkeletaV1 = <UmmAlQura as FormattableHijriRules>::SkeletaV1;
+}
+
 #[test]
 fn test_hijri_iran_from_rd() {
     let calendar = Hijri(IranTestSighting);
@@ -122,4 +134,22 @@ fn test_rd_from_hijri_iran() {
             Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar).unwrap();
         assert_eq!(date.to_rata_die(), RataDie::new(*f_date), "{case:?}");
     }
+}
+
+#[test]
+fn test_format() {
+    let formatter =
+        FixedCalendarDateTimeFormatter::try_new(Default::default(), fieldsets::YMD::long())
+            .unwrap();
+
+    assert_eq!(
+        formatter
+            .format(
+                &Date::try_new_gregorian(2022, 10, 12)
+                    .unwrap()
+                    .to_calendar(Hijri(IranTestSighting))
+            )
+            .to_string(),
+        "AH 1444 Rabiʻ I 16"
+    );
 }

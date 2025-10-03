@@ -11,7 +11,11 @@ use icu_calendar::{
     Calendar, Date, Ref,
 };
 
-fn test_reference_year_impl<C>(cal: C)
+/// Test that a given calendar produces valid monthdays
+///
+/// `valid_md_condition`, given (month_number, is_leap, day_number), should return whether or not
+/// that combination is ever possible in that calendar
+fn test_reference_year_impl<C>(cal: C, valid_md_condition: impl Fn(u8, bool, u8) -> bool)
 where
     C: Calendar + Debug,
 {
@@ -39,6 +43,9 @@ where
     for month_number in 1..=14 {
         for is_leap in [false, true] {
             for day_number in 1..=32 {
+                if !valid_md_condition(month_number, is_leap, day_number) {
+                    continue;
+                }
                 let mut fields = DateFields::default();
                 fields.month_code = match is_leap {
                     false => MonthCode::new_normal(month_number),
@@ -49,9 +56,12 @@ where
                 options.overflow = Some(Overflow::Reject);
                 options.missing_fields_strategy = Some(MissingFieldsStrategy::Ecma);
                 let Ok(reference_date) = Date::try_from_fields(fields, options, Ref(&cal)) else {
-                    // Not every date exists in every calendar
-                    continue;
+                    panic!(
+                        "Could not find any valid reference date for {}-{day_number}",
+                        fields.month_code.unwrap()
+                    );
                 };
+
                 assert_eq!(
                     fields.month_code.unwrap(),
                     reference_date.month().standard_code,
@@ -67,103 +77,209 @@ where
     }
 }
 
+fn gregorian_md_condition(month_number: u8, is_leap: bool, day_number: u8) -> bool {
+    // No leap months
+    if is_leap {
+        return false;
+    }
+
+    match month_number {
+        1 | 3 | 5 | 7 | 8 | 10 | 12 => day_number <= 31,
+        2 => day_number <= 29,
+        4 | 6 | 9 | 11 => day_number <= 30,
+        _ => {
+            assert!(month_number > 12);
+            // No other months
+            false
+        }
+    }
+}
+
+fn chinese_md_condition(month_number: u8, _is_leap: bool, day_number: u8) -> bool {
+    month_number <= 12 && day_number <= 30
+}
+
+fn coptic_md_condition(month_number: u8, is_leap: bool, day_number: u8) -> bool {
+    // No leap months
+    if is_leap {
+        return false;
+    }
+    match month_number {
+        1..=12 => day_number <= 30,
+        13 => day_number <= 6,
+        _ => false,
+    }
+}
+
+fn hijri_md_condition(month_number: u8, is_leap: bool, day_number: u8) -> bool {
+    // No leap months
+    if is_leap {
+        return false;
+    }
+    month_number <= 12 && day_number <= 30
+}
+
+fn hijri_tabular_md_condition(month_number: u8, is_leap: bool, day_number: u8) -> bool {
+    // No leap months
+    if is_leap {
+        return false;
+    }
+
+    if month_number > 12 {
+        return false;
+    }
+
+    // Odd months have 30 days, even months have 29, except for M12 in a leap year
+    if month_number % 2 == 0 {
+        if month_number == 12 {
+            day_number <= 30
+        } else {
+            day_number <= 29
+        }
+    } else {
+        day_number <= 30
+    }
+}
+
+fn hebrew_md_condition(month_number: u8, is_leap: bool, day_number: u8) -> bool {
+    if is_leap {
+        return month_number == 5 && day_number <= 30;
+    }
+    match month_number {
+        1 | 2 | 3 | 5 | 7 | 9 | 11 => day_number <= 30,
+        // Tevet, Adar, Iyar, Tammuz, Elul
+        4 | 6 | 8 | 10 | 12 => day_number <= 29,
+        _ => {
+            assert!(month_number > 12);
+            // No other months
+            false
+        }
+    }
+}
+
 #[test]
 fn test_reference_year_buddhist() {
-    test_reference_year_impl(Buddhist)
+    test_reference_year_impl(Buddhist, gregorian_md_condition)
 }
 
 #[test]
 fn test_reference_year_chinese() {
-    test_reference_year_impl(LunarChinese::new_china())
+    test_reference_year_impl(LunarChinese::new_china(), chinese_md_condition)
 }
 
 #[test]
 fn test_reference_year_coptic() {
-    test_reference_year_impl(Coptic)
+    test_reference_year_impl(Coptic, coptic_md_condition)
 }
 
 #[test]
-fn test_reference_year_dangi() {
-    test_reference_year_impl(LunarChinese::new_dangi())
+fn test_reference_year_korean() {
+    test_reference_year_impl(LunarChinese::new_korea(), chinese_md_condition)
 }
 
 #[test]
 fn test_reference_year_ethiopian() {
-    test_reference_year_impl(Ethiopian::new())
+    test_reference_year_impl(Ethiopian::new(), coptic_md_condition)
 }
 
 #[test]
 fn test_reference_year_ethiopian_amete_alem() {
-    test_reference_year_impl(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem))
+    test_reference_year_impl(
+        Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem),
+        coptic_md_condition,
+    )
 }
 
 #[test]
 fn test_reference_year_gregorian() {
-    test_reference_year_impl(Gregorian)
+    test_reference_year_impl(Gregorian, gregorian_md_condition)
 }
 
 #[test]
 fn test_reference_year_julian() {
-    test_reference_year_impl(Julian)
+    test_reference_year_impl(Julian, gregorian_md_condition)
 }
 
 #[test]
 fn test_reference_year_hebrew() {
-    test_reference_year_impl(Hebrew)
+    test_reference_year_impl(Hebrew, hebrew_md_condition)
 }
 
 #[test]
 fn test_reference_year_indian() {
-    test_reference_year_impl(Indian)
+    test_reference_year_impl(Indian, |month_number, is_leap, day_number| {
+        if is_leap {
+            // No leap months
+            return false;
+        }
+        // First half of the year has long months, second half short
+        if month_number <= 6 {
+            day_number <= 31
+        } else if month_number <= 12 {
+            day_number <= 30
+        } else {
+            // No larger months
+            false
+        }
+    })
 }
 
 #[test]
 fn test_reference_year_hijri_tabular_type_ii_friday() {
-    test_reference_year_impl(Hijri::new_tabular(
-        HijriTabularLeapYears::TypeII,
-        HijriTabularEpoch::Friday,
-    ))
-}
-
-#[test]
-fn test_reference_year_hijri_simulated_mecca() {
-    test_reference_year_impl(Hijri::new_simulated_mecca())
+    test_reference_year_impl(
+        Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday),
+        hijri_tabular_md_condition,
+    )
 }
 
 #[test]
 fn test_reference_year_hijri_tabular_type_ii_thursday() {
-    test_reference_year_impl(Hijri::new_tabular(
-        HijriTabularLeapYears::TypeII,
-        HijriTabularEpoch::Thursday,
-    ))
+    test_reference_year_impl(
+        Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday),
+        hijri_tabular_md_condition,
+    )
 }
 
 #[test]
 fn test_reference_year_hijri_umm_al_qura() {
-    test_reference_year_impl(Hijri::new_umm_al_qura())
+    test_reference_year_impl(Hijri::new_umm_al_qura(), hijri_md_condition)
 }
 
 #[test]
 fn test_reference_year_iso() {
-    test_reference_year_impl(Iso)
+    test_reference_year_impl(Iso, gregorian_md_condition)
 }
 
 #[test]
 fn test_reference_year_japanese() {
-    test_reference_year_impl(Japanese::new())
+    test_reference_year_impl(Japanese::new(), gregorian_md_condition)
 }
 
 #[test]
 fn test_reference_year_japanese_extended() {
-    test_reference_year_impl(JapaneseExtended::new())
+    test_reference_year_impl(JapaneseExtended::new(), gregorian_md_condition)
 }
 
 #[test]
 fn test_reference_year_persian() {
-    test_reference_year_impl(Persian)
+    test_reference_year_impl(Persian, |month_number, is_leap, day_number| {
+        if is_leap {
+            // No leap months
+            return false;
+        }
+        // First half of the year has long months, second half short
+        if month_number <= 6 {
+            day_number <= 31
+        } else if month_number <= 12 {
+            day_number <= 30
+        } else {
+            // No larger months
+            false
+        }
+    })
 }
 
 #[test]
 fn test_reference_year_roc() {
-    test_reference_year_impl(Roc)
+    test_reference_year_impl(Roc, gregorian_md_condition)
 }

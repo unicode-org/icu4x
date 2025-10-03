@@ -154,7 +154,7 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/dangi_cached",
         &fxs,
-        icu::calendar::cal::LunarChinese::new_dangi(),
+        icu::calendar::cal::LunarChinese::new_korea(),
         |y, m, d, c| Date::try_new_chinese_with_calendar(y, m, d, c).unwrap(),
     );
 

@@ -25,7 +25,7 @@ pub use buddhist::Buddhist;
 pub use chinese_internal::LunarChinese;
 /// Customizations for the [`LunarChinese`] calendar.
 pub mod chinese {
-    pub use super::chinese_internal::{China, Dangi, LunarChineseYearData, Rules};
+    pub use super::chinese_internal::{China, Korea, LunarChineseYearData, Rules};
 }
 pub use coptic::Coptic;
 pub use ethiopian::{Ethiopian, EthiopianEraStyle};
@@ -62,7 +62,7 @@ pub type HijriUmmAlQura = Hijri<hijri::UmmAlQura>;
 pub type HijriTabular = Hijri<hijri::TabularAlgorithm>;
 /// Deprecated
 #[deprecated]
-pub type Dangi = LunarChinese<chinese::Dangi>;
+pub type Dangi = LunarChinese<chinese::Korea>;
 /// Deprecated
 #[deprecated]
 pub type Chinese = LunarChinese<chinese::China>;

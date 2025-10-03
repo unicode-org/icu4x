@@ -84,8 +84,8 @@ fn test_coptic_continuity() {
 }
 
 #[test]
-fn test_dangi_continuity() {
-    let cal = crate::cal::LunarChinese::new_dangi();
+fn test_korean_continuity() {
+    let cal = crate::cal::LunarChinese::new_korea();
     let date = Date::try_new_chinese_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap(), 20);
     let date = Date::try_new_chinese_with_calendar(-300, 1, 1, cal);

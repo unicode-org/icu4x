@@ -99,6 +99,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(not(feature = "alloc"), zerovec::skip_derive(ZeroMapKV))]
 pub struct EraStartDate {
     /// The year the era started in
     pub year: i32,

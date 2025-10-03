@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::parser::ParseError;
-#[cfg(feature = "alloc")]
 use crate::parser::SubtagIterator;
 use crate::shortvec::{ShortBoxSlice, ShortBoxSliceIntoIter};
 use crate::subtags::{subtag, Subtag};
@@ -51,14 +50,18 @@ impl Value {
     ///
     /// Value::try_from_str("buddhist").expect("Parsing failed.");
     /// ```
+    ///
+    /// # `alloc` Cargo feature
+    ///
+    /// Without the `alloc` Cargo feature, this only supports parsing
+    /// up to two (non-`true`) subtags, and will return an error for
+    /// longer strings.
     #[inline]
-    #[cfg(feature = "alloc")]
     pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
         Self::try_from_utf8(s.as_bytes())
     }
 
     /// See [`Self::try_from_str`]
-    #[cfg(feature = "alloc")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
         let mut v = ShortBoxSlice::new();
 
@@ -66,7 +69,16 @@ impl Value {
             for chunk in SubtagIterator::new(code_units) {
                 let subtag = Subtag::try_from_utf8(chunk)?;
                 if subtag != TRUE_VALUE {
+                    #[cfg(feature = "alloc")]
                     v.push(subtag);
+                    #[cfg(not(feature = "alloc"))]
+                    if v.is_empty() {
+                        v = ShortBoxSlice::new_single(subtag);
+                    } else if let &[prev] = &*v {
+                        v = ShortBoxSlice::new_double(prev, subtag);
+                    } else {
+                        return Err(ParseError::InvalidSubtag);
+                    }
                 }
             }
         }
@@ -224,6 +236,11 @@ impl Value {
             None | Some(TRUE_VALUE) => Self(ShortBoxSlice::new()),
             Some(val) => Self(ShortBoxSlice::new_single(val)),
         }
+    }
+
+    #[doc(hidden)]
+    pub fn from_two_subtags(f: Subtag, s: Subtag) -> Self {
+        Self(ShortBoxSlice::new_double(f, s))
     }
 
     /// A constructor which takes a pre-sorted list of [`Value`] elements.

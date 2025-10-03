@@ -19,6 +19,7 @@ pub use calendar::ConvertCalendar;
 pub(crate) use calendar::FormattableAnyCalendar;
 pub(crate) use calendar::FormattableAnyCalendarKind;
 pub(crate) use calendar::FormattableAnyCalendarNamesLoader;
+pub use calendar::FormattableHijriRules;
 pub use calendar::FullDataCalMarkers;
 pub use calendar::InFixedCalendar;
 pub use calendar::InSameCalendar;

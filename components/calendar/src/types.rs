@@ -10,7 +10,6 @@ use core::fmt;
 use core::num::NonZeroU8;
 use tinystr::TinyAsciiStr;
 use tinystr::{TinyStr16, TinyStr4};
-use zerovec::maps::ZeroMapKV;
 use zerovec::ule::AsULE;
 
 // Export the duration types from here
@@ -259,7 +258,8 @@ impl AsULE for MonthCode {
     }
 }
 
-impl<'a> ZeroMapKV<'a> for MonthCode {
+#[cfg(feature = "alloc")]
+impl<'a> zerovec::maps::ZeroMapKV<'a> for MonthCode {
     type Container = zerovec::ZeroVec<'a, MonthCode>;
     type Slice = zerovec::ZeroSlice<MonthCode>;
     type GetType = <MonthCode as AsULE>::ULE;
