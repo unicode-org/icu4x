@@ -6,11 +6,11 @@
 
 use crate::cal::iso::IsoDateInner;
 use crate::cal::*;
-use crate::duration::{DateAddOptions, DateUntilOptions};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
+use crate::options::{DateAddOptions, DateUntilOptions};
 use crate::types::{DateFields, YearInfo};
-use crate::{types, AsCalendar, Calendar, Date, DateDuration, Ref};
+use crate::{types, AsCalendar, Calendar, Date, Ref};
 
 use crate::preferences::{CalendarAlgorithm, HijriCalendarAlgorithm};
 use icu_locale_core::preferences::define_preferences;
@@ -244,8 +244,36 @@ macro_rules! match_cal {
     };
 }
 
+/// Error returned when comparing two [`Date`]s with [`AnyCalendar`].
+#[derive(Debug, Copy, Clone)]
 #[non_exhaustive]
 pub enum AnyCalendarUntilError {
+    /// The calendars of the two dates being compared are not equal.
+    ///
+    /// To compare dates in different calendars, convert them to the same calendar first.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::cal::AnyCalendarUntilError;
+    ///
+    /// let d1 = Date::try_new_gregorian(2000, 1, 1).unwrap().to_any();
+    /// let d2 = Date::try_new_hebrew(5780, 1, 1).unwrap().to_any();
+    ///
+    /// assert!(matches!(
+    ///     d1.until(&d2, Default::default()),
+    ///     Err(AnyCalendarUntilError::MismatchedCalendars),
+    /// ));
+    ///
+    /// // To compare the dates, convert them to the same calendar,
+    /// // such as ISO.
+    ///
+    /// assert!(matches!(
+    ///     d1.to_iso().until(&d2.to_iso(), Default::default()),
+    ///     Ok(_)
+    /// ));
+    /// ```
     MismatchedCalendars,
 }
 
@@ -294,7 +322,7 @@ impl Calendar for AnyCalendar {
     fn add(
         &self,
         date: &Self::DateInner,
-        duration: DateDuration,
+        duration: types::DateDuration,
         options: DateAddOptions,
     ) -> Result<Self::DateInner, DateError> {
         Ok(match_cal_and_date!(match (self, date): (c, d) wrap => c.add(d, duration, options)?))
@@ -304,12 +332,12 @@ impl Calendar for AnyCalendar {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        options: DateUntilOptions
-    ) -> Result<DateDuration, Self::UntilError> {
+        options: DateUntilOptions,
+    ) -> Result<types::DateDuration, Self::UntilError> {
         let result = match_cal_and_date_date!(match (self, date1, date2): (c, d1, d2) => c.until(d1, d2, options)).0;
         // map from Result<DateDuration, Infallible> to Result<DateDuration, Self::UntilError>
         match result {
-            Ok(duration) => Ok(duration)
+            Ok(duration) => Ok(duration),
         }
     }
 

@@ -6,12 +6,12 @@ use crate::cal::iso::{IsoDateInner, IsoEra};
 use crate::calendar_arithmetic::{
     ArithmeticDate, ArithmeticDateBuilder, CalendarArithmetic, DateFieldsResolver,
 };
-use crate::duration::{DateAddOptions, DateUntilOptions};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
+use crate::options::{DateAddOptions, DateUntilOptions};
 use crate::preferences::CalendarAlgorithm;
 use crate::types::EraYear;
-use crate::{types, Calendar, DateDuration, RangeError};
+use crate::{types, Calendar, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 
@@ -155,7 +155,12 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         date.days_in_month()
     }
 
-    fn add(&self, date: &Self::DateInner, duration: DateDuration, options: DateAddOptions) -> Result<Self::DateInner, DateError> {
+    fn add(
+        &self,
+        date: &Self::DateInner,
+        duration: types::DateDuration,
+        options: DateAddOptions,
+    ) -> Result<Self::DateInner, DateError> {
         date.added(duration, &AbstractGregorian(IsoEra), options)
     }
 
@@ -164,7 +169,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateUntilOptions,
-    ) -> Result<DateDuration, Self::UntilError> {
+    ) -> Result<types::DateDuration, Self::UntilError> {
         Ok(date1.until(date2, &AbstractGregorian(IsoEra), options))
     }
 
@@ -263,19 +268,27 @@ macro_rules! impl_with_abstract_gregorian {
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr).days_in_month(&date.0)
             }
 
-            fn add(&self, date: &Self::DateInner, duration: crate::duration::DateDuration, options: crate::duration::DateAddOptions) -> Result<Self::DateInner, DateError> {
+            fn add(
+                &self,
+                date: &Self::DateInner,
+                duration: crate::types::DateDuration,
+                options: crate::options::DateAddOptions,
+            ) -> Result<Self::DateInner, DateError> {
                 let $self_ident = self;
-                crate::cal::abstract_gregorian::AbstractGregorian($eras_expr).add(&date.0, duration, options).map($inner_date_ty)
+                crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
+                    .add(&date.0, duration, options)
+                    .map($inner_date_ty)
             }
 
             fn until(
                 &self,
                 date1: &Self::DateInner,
                 date2: &Self::DateInner,
-                options: crate::duration::DateUntilOptions,
-            ) -> Result<crate::duration::DateDuration, Self::UntilError> {
+                options: crate::options::DateUntilOptions,
+            ) -> Result<crate::types::DateDuration, Self::UntilError> {
                 let $self_ident = self;
-                crate::cal::abstract_gregorian::AbstractGregorian($eras_expr).until(&date1.0, &date2.0, options)
+                crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
+                    .until(&date1.0, &date2.0, options)
             }
 
             fn year_info(&self, date: &Self::DateInner) -> Self::Year {

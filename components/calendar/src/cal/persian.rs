@@ -5,11 +5,11 @@
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
-use crate::duration::{DateAddOptions, DateUntilOptions};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
+use crate::options::{DateAddOptions, DateUntilOptions};
 use crate::types::DateFields;
-use crate::{types, Calendar, Date, DateDuration, RangeError};
+use crate::{types, Calendar, Date, RangeError};
 use ::tinystr::tinystr;
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
@@ -164,7 +164,12 @@ impl Calendar for Persian {
         date.0.days_in_month()
     }
 
-    fn add(&self, date: &Self::DateInner, duration: DateDuration, options: DateAddOptions) -> Result<Self::DateInner, DateError> {
+    fn add(
+        &self,
+        date: &Self::DateInner,
+        duration: types::DateDuration,
+        options: DateAddOptions,
+    ) -> Result<Self::DateInner, DateError> {
         date.0.added(duration, self, options).map(PersianDateInner)
     }
 
@@ -173,7 +178,7 @@ impl Calendar for Persian {
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateUntilOptions,
-    ) -> Result<DateDuration, Self::UntilError> {
+    ) -> Result<types::DateDuration, Self::UntilError> {
         Ok(date1.0.until(&date2.0, self, options))
     }
 

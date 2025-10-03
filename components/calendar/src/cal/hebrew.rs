@@ -7,12 +7,12 @@ use crate::calendar_arithmetic::{
     ArithmeticDate, CalendarArithmetic, DateFieldsResolver, ToExtendedYear,
 };
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, PrecomputedDataSource};
-use crate::duration::{DateAddOptions, DateUntilOptions};
 use crate::error::DateError;
+use crate::options::{DateAddOptions, DateUntilOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::types::{DateFields, MonthInfo};
 use crate::RangeError;
-use crate::{types, Calendar, Date, DateDuration};
+use crate::{types, Calendar, Date};
 use ::tinystr::tinystr;
 use calendrical_calculations::hebrew_keviyah::{Keviyah, YearInfo};
 use calendrical_calculations::rata_die::RataDie;
@@ -339,7 +339,12 @@ impl Calendar for Hebrew {
         date.0.days_in_month()
     }
 
-    fn add(&self, date: &Self::DateInner, duration: DateDuration, options: DateAddOptions) -> Result<Self::DateInner, DateError> {
+    fn add(
+        &self,
+        date: &Self::DateInner,
+        duration: types::DateDuration,
+        options: DateAddOptions,
+    ) -> Result<Self::DateInner, DateError> {
         date.0.added(duration, self, options).map(HebrewDateInner)
     }
 
@@ -348,7 +353,7 @@ impl Calendar for Hebrew {
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateUntilOptions,
-    ) -> Result<DateDuration, Self::UntilError> {
+    ) -> Result<types::DateDuration, Self::UntilError> {
         Ok(date1.0.until(&date2.0, self, options))
     }
 

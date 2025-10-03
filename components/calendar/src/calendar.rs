@@ -5,10 +5,10 @@
 use calendrical_calculations::rata_die::RataDie;
 
 use crate::cal::iso::IsoDateInner;
-use crate::duration::{DateAddOptions, DateUntilOptions};
 use crate::error::DateError;
+use crate::options::{DateAddOptions, DateUntilOptions};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
-use crate::{types, DateDuration};
+use crate::types;
 use core::fmt;
 
 /// A calendar implementation
@@ -117,7 +117,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     fn add(
         &self,
         date: &Self::DateInner,
-        duration: DateDuration,
+        duration: types::DateDuration,
         options: DateAddOptions,
     ) -> Result<Self::DateInner, DateError>;
 
@@ -131,7 +131,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateUntilOptions,
-    ) -> Result<DateDuration, Self::UntilError>;
+    ) -> Result<types::DateDuration, Self::UntilError>;
 
     /// Returns the [`CalendarAlgorithm`](crate::preferences::CalendarAlgorithm) that is required to match
     /// when parsing into this calendar.

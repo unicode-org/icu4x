@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::duration::{DateAddOptions, DateUntilOptions};
 use crate::error::range_check_with_overflow;
+use crate::options::{DateAddOptions, DateUntilOptions};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
-use crate::types::{DateFields, DayOfYear, MonthCode};
-use crate::{types, Calendar, DateDuration, DateDurationUnit, DateError, RangeError};
+use crate::types::{DateDuration, DateDurationUnit, DateFields, DayOfYear, MonthCode};
+use crate::{types, Calendar, DateError, RangeError};
 use core::cmp::Ordering;
 use core::convert::TryInto;
 use core::fmt::Debug;
@@ -255,44 +255,6 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         let year = i32::MAX;
         let (month, day) = C::last_month_day_in_provided_year(year);
         ArithmeticDate::new_unchecked(year, month, day)
-    }
-
-    #[inline]
-    fn offset_days(&mut self, mut day_offset: i32, data: &impl PrecomputedDataSource<C::YearInfo>) {
-        while day_offset != 0 {
-            let month_days = C::days_in_provided_month(self.year, self.month);
-            if self.day as i32 + day_offset > month_days as i32 {
-                self.offset_months(1, data);
-                day_offset -= month_days as i32;
-            } else if self.day as i32 + day_offset < 1 {
-                self.offset_months(-1, data);
-                day_offset += C::days_in_provided_month(self.year, self.month) as i32;
-            } else {
-                self.day = (self.day as i32 + day_offset) as u8;
-                day_offset = 0;
-            }
-        }
-    }
-
-    #[inline]
-    fn offset_months(
-        &mut self,
-        mut month_offset: i32,
-        data: &impl PrecomputedDataSource<C::YearInfo>,
-    ) {
-        while month_offset != 0 {
-            let year_months = C::months_in_provided_year(self.year);
-            if self.month as i32 + month_offset > year_months as i32 {
-                self.year = data.load_or_compute_info(self.year.to_extended_year() + 1);
-                month_offset -= year_months as i32;
-            } else if self.month as i32 + month_offset < 1 {
-                self.year = data.load_or_compute_info(self.year.to_extended_year() - 1);
-                month_offset += C::months_in_provided_year(self.year) as i32;
-            } else {
-                self.month = (self.month as i32 + month_offset) as u8;
-                month_offset = 0
-            }
-        }
     }
 
     #[inline]

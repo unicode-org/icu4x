@@ -20,18 +20,22 @@ pub struct Test {
 use criterion::{
     black_box, criterion_group, criterion_main, measurement::WallTime, BenchmarkGroup, Criterion,
 };
-use icu_calendar::{AsCalendar, Calendar, Date, DateDuration};
+use icu_calendar::{types, AsCalendar, Calendar, Date};
 
 fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
     // black_box used to avoid compiler optimization.
     // Arithmetic
-    date.add(DateDuration {
-        is_negative: false,
-        years: black_box(1),
-        months: black_box(2),
-        weeks: black_box(3),
-        days: black_box(4),
-    });
+    date.add_with_options(
+        types::DateDuration {
+            is_negative: false,
+            years: black_box(1),
+            months: black_box(2),
+            weeks: black_box(3),
+            days: black_box(4),
+        },
+        Default::default(),
+    )
+    .unwrap();
 
     // Retrieving vals
     let _ = black_box(date.year());

@@ -6,11 +6,11 @@ use crate::cal::coptic::CopticDateInner;
 use crate::cal::iso::IsoDateInner;
 use crate::cal::Coptic;
 use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, DateFieldsResolver};
-use crate::duration::{DateAddOptions, DateUntilOptions};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
+use crate::options::{DateAddOptions, DateUntilOptions};
 use crate::types::DateFields;
-use crate::{types, Calendar, Date, DateDuration, RangeError};
+use crate::{types, Calendar, Date, RangeError};
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
@@ -146,8 +146,15 @@ impl Calendar for Ethiopian {
         Coptic.days_in_month(&date.0)
     }
 
-    fn add(&self, date: &Self::DateInner, duration: DateDuration, options: DateAddOptions) -> Result<Self::DateInner, DateError> {
-        Coptic.add(&date.0, duration, options).map(EthiopianDateInner)
+    fn add(
+        &self,
+        date: &Self::DateInner,
+        duration: types::DateDuration,
+        options: DateAddOptions,
+    ) -> Result<Self::DateInner, DateError> {
+        Coptic
+            .add(&date.0, duration, options)
+            .map(EthiopianDateInner)
     }
 
     fn until(
@@ -155,7 +162,7 @@ impl Calendar for Ethiopian {
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateUntilOptions,
-    ) -> Result<DateDuration, Self::UntilError> {
+    ) -> Result<types::DateDuration, Self::UntilError> {
         Coptic.until(&date1.0, &date2.0, options)
     }
 

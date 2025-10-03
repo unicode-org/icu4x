@@ -4,14 +4,189 @@
 
 //! Options used by types in this crate
 
+use crate::types;
+
 /// Options bag for [`Date::try_from_fields`](crate::Date::try_from_fields).
 #[derive(Copy, Clone, Debug, PartialEq, Default)]
 #[non_exhaustive]
 pub struct DateFromFieldsOptions {
     /// How to behave with out-of-bounds fields.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::types::DateFields;
+    /// use icu::calendar::options::Overflow;
+    /// use icu::calendar::options::DateFromFieldsOptions;
+    /// use icu::calendar::Iso;
+    ///
+    /// // There is no day 31 in September.
+    /// let mut fields = DateFields::default();
+    /// fields.extended_year = Some(2025);
+    /// fields.ordinal_month = core::num::NonZero::new(9);
+    /// fields.day = core::num::NonZero::new(31);
+    ///
+    /// let options_default = DateFromFieldsOptions::default();
+    /// assert!(Date::try_from_fields(fields, options_default, Iso).is_err());
+    ///
+    /// let mut options_reject = options_default.clone();
+    /// options_reject.overflow = Some(Overflow::Reject);
+    /// assert!(Date::try_from_fields(fields, options_reject, Iso).is_err());
+    ///
+    /// let mut options_constrain = options_default.clone();
+    /// options_constrain.overflow = Some(Overflow::Constrain);
+    /// assert_eq!(
+    ///     Date::try_from_fields(fields, options_constrain, Iso).unwrap(),
+    ///     Date::try_new_iso(2025, 9, 30).unwrap()
+    /// );
+    /// ```
     pub overflow: Option<Overflow>,
     /// How to behave when the fields that are present do not fully constitute a Date.
+    ///
+    /// This option can be used to fill in a missing year given a month and a day according to
+    /// the ECMAScript Temporal specification.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::types::DateFields;
+    /// use icu::calendar::types::MonthCode;
+    /// use icu::calendar::options::MissingFieldsStrategy;
+    /// use icu::calendar::options::DateFromFieldsOptions;
+    /// use icu::calendar::Iso;
+    ///
+    /// // These options are missing a year.
+    /// let mut fields = DateFields::default();
+    /// fields.month_code = MonthCode::new_normal(2);
+    /// fields.day = core::num::NonZero::new(1);
+    ///
+    /// let options_default = DateFromFieldsOptions::default();
+    /// assert!(Date::try_from_fields(fields, options_default, Iso).is_err());
+    ///
+    /// let mut options_reject = options_default.clone();
+    /// options_reject.missing_fields_strategy = Some(MissingFieldsStrategy::Reject);
+    /// assert!(Date::try_from_fields(fields, options_reject, Iso).is_err());
+    ///
+    /// let mut options_ecma = options_default.clone();
+    /// options_ecma.missing_fields_strategy = Some(MissingFieldsStrategy::Ecma);
+    /// assert_eq!(
+    ///     Date::try_from_fields(fields, options_ecma, Iso).unwrap(),
+    ///     Date::try_new_iso(1972, 2, 1).unwrap()
+    /// );
+    /// ```
     pub missing_fields_strategy: Option<MissingFieldsStrategy>,
+}
+
+/// Options for adding a duration to a date.
+#[derive(Copy, Clone, PartialEq, Debug, Default)]
+#[non_exhaustive]
+pub struct DateAddOptions {
+    /// How to behave with out-of-bounds fields during arithmetic.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::types::DateDuration;
+    /// use icu::calendar::options::DateAddOptions;
+    /// use icu::calendar::options::Overflow;
+    ///
+    /// // There is a day 31 in October but not in November.
+    /// let d1 = Date::try_new_iso(2025, 10, 31).unwrap();
+    /// let duration = DateDuration::for_months(1);
+    ///
+    /// let options_default = DateAddOptions::default();
+    /// assert!(d1.added_with_options(duration, options_default).is_err());
+    ///
+    /// let mut options_reject = options_default.clone();
+    /// options_reject.overflow = Some(Overflow::Reject);
+    /// assert!(d1.added_with_options(duration, options_reject).is_err());
+    ///
+    /// let mut options_constrain = options_default.clone();
+    /// options_constrain.overflow = Some(Overflow::Constrain);
+    /// assert_eq!(
+    ///     d1.added_with_options(duration, options_constrain).unwrap(),
+    ///     Date::try_new_iso(2025, 11, 30).unwrap()
+    /// );
+    /// ```
+    pub overflow: Option<Overflow>,
+}
+
+/// Options for taking the difference between two dates.
+#[derive(Copy, Clone, PartialEq, Debug, Default)]
+#[non_exhaustive]
+pub struct DateUntilOptions {
+    /// Which date field to allow as the largest in a duration when taking the difference.
+    ///
+    /// When choosing [`Months`] or [`Years`], the resulting [`DateDuration`] might not be
+    /// associative or commutative in subsequent arithmetic operations, and it might require
+    /// [`Overflow::Constrain`] in addition.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::types::DateDuration;
+    /// use icu::calendar::types::DateDurationUnit;
+    /// use icu::calendar::options::DateUntilOptions;
+    ///
+    /// let d1 = Date::try_new_iso(2025, 3, 31).unwrap();
+    /// let d2 = Date::try_new_iso(2026, 5, 15).unwrap();
+    ///
+    /// let options_default = DateUntilOptions::default();
+    /// assert_eq!(
+    ///     d1.until(&d2, options_default).unwrap(),
+    ///     DateDuration::for_days(410)
+    /// );
+    ///
+    /// let mut options_days = options_default.clone();
+    /// options_days.largest_unit = Some(DateDurationUnit::Days);
+    /// assert_eq!(
+    ///     d1.until(&d2, options_default).unwrap(),
+    ///     DateDuration::for_days(410)
+    /// );
+    ///
+    /// let mut options_weeks = options_default.clone();
+    /// options_weeks.largest_unit = Some(DateDurationUnit::Weeks);
+    /// assert_eq!(
+    ///     d1.until(&d2, options_default).unwrap(),
+    ///     DateDuration {
+    ///         weeks: 58,
+    ///         days: 4,
+    ///         ..Default::default()
+    ///     }
+    /// );
+    ///
+    /// let mut options_months = options_default.clone();
+    /// options_months.largest_unit = Some(DateDurationUnit::Months);
+    /// assert_eq!(
+    ///     d1.until(&d2, options_default).unwrap(),
+    ///     DateDuration {
+    ///         months: 13,
+    ///         days: 15,
+    ///         ..Default::default()
+    ///     }
+    /// );
+    ///
+    /// let mut options_years = options_default.clone();
+    /// options_years.largest_unit = Some(DateDurationUnit::Years);
+    /// assert_eq!(
+    ///     d1.until(&d2, options_default).unwrap(),
+    ///     DateDuration {
+    ///         years: 1,
+    ///         months: 1,
+    ///         days: 15,
+    ///         ..Default::default()
+    ///     }
+    /// );
+    /// ```
+    ///
+    /// [`Months`]: types::DateDurationUnit::Months
+    /// [`Years`]: types::DateDurationUnit::Years
+    /// [`DateDuration`]: types::DateDuration
+    pub largest_unit: Option<types::DateDurationUnit>,
 }
 
 /// Whether to constrain or reject out-of-bounds values when constructing a Date.
@@ -79,7 +254,6 @@ pub enum Overflow {
     /// assert_eq!(date.month().standard_code, MonthCode(tinystr!(4, "M06")));
     /// assert_eq!(date.day_of_month().0, 29);
     /// ```
-    #[default]
     Constrain,
     /// Return an error if any fields are out of bounds.
     ///
@@ -132,6 +306,7 @@ pub enum Overflow {
     /// .expect_err("Month is out of bounds");
     /// assert!(matches!(err, DateError::UnknownMonthCode(_)));
     /// ```
+    #[default]
     Reject,
 }
 

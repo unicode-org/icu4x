@@ -7,13 +7,13 @@ use crate::calendar_arithmetic::{
     ArithmeticDate, ArithmeticDateBuilder, CalendarArithmetic, ToExtendedYear,
 };
 use crate::calendar_arithmetic::{DateFieldsResolver, PrecomputedDataSource};
-use crate::duration::{DateAddOptions, DateUntilOptions};
 use crate::error::DateError;
+use crate::options::{DateAddOptions, DateUntilOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::provider::chinese_based::{ChineseBasedCache, PackedChineseBasedYearInfo};
 use crate::types::{MonthCode, MonthInfo};
 use crate::AsCalendar;
-use crate::{types, Calendar, Date, DateDuration};
+use crate::{types, Calendar, Date};
 use calendrical_calculations::chinese_based::{
     self, ChineseBased, YearBounds, WELL_BEHAVED_ASTRONOMICAL_RANGE,
 };
@@ -635,7 +635,12 @@ impl<X: Rules> Calendar for LunarChinese<X> {
         date.0.days_in_month()
     }
 
-    fn add(&self, date: &Self::DateInner, duration: DateDuration, options: DateAddOptions) -> Result<Self::DateInner, DateError> {
+    fn add(
+        &self,
+        date: &Self::DateInner,
+        duration: types::DateDuration,
+        options: DateAddOptions,
+    ) -> Result<Self::DateInner, DateError> {
         date.0.added(duration, self, options).map(ChineseDateInner)
     }
 
@@ -644,7 +649,7 @@ impl<X: Rules> Calendar for LunarChinese<X> {
         date1: &Self::DateInner,
         date2: &Self::DateInner,
         options: DateUntilOptions,
-    ) -> Result<DateDuration, Self::UntilError> {
+    ) -> Result<types::DateDuration, Self::UntilError> {
         Ok(date1.0.until(&date2.0, self, options))
     }
 

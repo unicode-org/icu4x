@@ -114,8 +114,6 @@ mod ixdtf;
 pub use any_calendar::IntoAnyCalendar;
 pub use calendar::Calendar;
 pub use date::{AsCalendar, Date, Ref};
-#[doc(hidden)] // unstable
-pub use duration::{DateDuration, DateDurationUnit};
 pub use error::{DateError, RangeError};
 #[cfg(feature = "ixdtf")]
 pub use ixdtf::ParseError;

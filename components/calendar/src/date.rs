@@ -5,12 +5,12 @@
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::cal::{abstract_gregorian::AbstractGregorian, iso::IsoEra};
 use crate::calendar_arithmetic::CalendarArithmetic;
-use crate::duration::{DateAddOptions, DateUntilOptions};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
+use crate::options::{DateAddOptions, DateUntilOptions};
 use crate::types::{CyclicYear, EraYear, IsoWeekOfYear};
 use crate::week::{RelativeUnit, WeekCalculator, WeekOf};
-use crate::{types, Calendar, DateDuration, Iso};
+use crate::{types, Calendar, Iso};
 #[cfg(feature = "alloc")]
 use alloc::rc::Rc;
 #[cfg(feature = "alloc")]
@@ -240,7 +240,11 @@ impl<A: AsCalendar> Date<A> {
     /// Add a `duration` to this date, mutating it
     #[doc(hidden)] // unstable
     #[inline]
-    pub fn add(&mut self, duration: DateDuration, options: DateAddOptions) -> Result<(), DateError> {
+    pub fn add_with_options(
+        &mut self,
+        duration: types::DateDuration,
+        options: DateAddOptions,
+    ) -> Result<(), DateError> {
         let inner = self
             .calendar
             .as_calendar()
@@ -252,19 +256,47 @@ impl<A: AsCalendar> Date<A> {
     /// Add a `duration` to this date, returning the new one
     #[doc(hidden)] // unstable
     #[inline]
-    pub fn added(mut self, duration: DateDuration, options: DateAddOptions) -> Result<Self, DateError> {
-        self.add(duration, options)?;
+    pub fn added_with_options(
+        mut self,
+        duration: types::DateDuration,
+        options: DateAddOptions,
+    ) -> Result<Self, DateError> {
+        self.add_with_options(duration, options)?;
         Ok(self)
     }
 
     /// Calculating the duration between `other - self`
+    ///
+    /// Although this returns a [`Result`], with most fixed calendars, this operation can't fail.
+    /// In such cases, the error type is [`Infallible`], and the inner value can be safely
+    /// unwrapped using [`Result::into_ok()`], which is available in nightly Rust as of this
+    /// writing. In stable Rust, the value can be unwrapped using [pattern matching].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::types::DateDuration;
+    ///
+    /// let d1 = Date::try_new_iso(2020, 1, 1).unwrap();
+    /// let d2 = Date::try_new_iso(2025, 10, 2).unwrap();
+    /// let options = Default::default();
+    ///
+    /// // The value can be unwrapped with destructuring syntax:
+    /// let Ok(duration) = d1.until(&d2, options);
+    ///
+    /// assert_eq!(duration, DateDuration::for_days(2102));
+    /// ```
+    ///
+    /// [`Infallible`]: core::convert::Infallible
+    /// [pattern matching]: https://doc.rust-lang.org/book/ch19-03-pattern-syntax.html
     #[doc(hidden)] // unstable
     #[inline]
-    pub fn until<B: AsCalendar<Calendar = A::Calendar>>(
+    pub fn until_with_options<B: AsCalendar<Calendar = A::Calendar>>(
         &self,
         other: &Date<B>,
-        options: DateUntilOptions
-    ) -> Result<DateDuration, <A::Calendar as Calendar>::UntilError> {
+        options: DateUntilOptions,
+    ) -> Result<types::DateDuration, <A::Calendar as Calendar>::UntilError> {
         self.calendar
             .as_calendar()
             .until(self.inner(), other.inner(), options)

@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::options::Overflow;
-
 /// A signed length of time in terms of days, weeks, months, and years.
 ///
 /// This type represents the abstract concept of a date duration. For example, a duration of
@@ -121,20 +119,6 @@ pub enum DateDurationUnit {
     Weeks,
     /// Duration in days
     Days,
-}
-
-/// Options for adding a duration to a date.
-#[derive(Copy, Clone, PartialEq, Debug, Default)]
-#[non_exhaustive]
-pub struct DateAddOptions {
-    pub overflow: Option<Overflow>,
-}
-
-/// Options for taking the difference between two dates.
-#[derive(Copy, Clone, PartialEq, Debug, Default)]
-#[non_exhaustive]
-pub struct DateUntilOptions {
-    pub largest_unit: Option<DateDurationUnit>,
 }
 
 impl DateDuration {

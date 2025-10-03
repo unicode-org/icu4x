@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::*;
+use crate::{types::*, *};
 
 fn check_continuity<A: AsCalendar>(mut date: Date<A>) {
     let duration = DateDuration::for_days(1);
@@ -13,7 +13,9 @@ fn check_continuity<A: AsCalendar>(mut date: Date<A>) {
     let mut is_in_leap_year = date.is_in_leap_year();
 
     for _ in 0..(366 * 20) {
-        let next_date = date.added(duration);
+        let next_date = date
+            .added_with_options(duration, Default::default())
+            .unwrap();
         let next_rata_die = next_date.to_iso().to_rata_die();
         assert_eq!(next_rata_die, rata_die + 1, "{next_date:?}");
         let next_weekday = next_date.day_of_week();
@@ -41,7 +43,9 @@ fn check_every_250_days<A: AsCalendar>(mut date: Date<A>) {
     let mut rata_die = date.to_rata_die();
 
     for _ in 0..2000 {
-        let next_date = date.added(duration);
+        let next_date = date
+            .added_with_options(duration, Default::default())
+            .unwrap();
         let next_iso = next_date.to_iso();
         let next_rata_die = next_iso.to_rata_die();
         assert_eq!(next_rata_die, rata_die + 250, "{next_date:?}");
