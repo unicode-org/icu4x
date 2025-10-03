@@ -541,7 +541,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     pub(crate) fn until(&self, other: &Self, cal: &C, options: DateUntilOptions) -> DateDuration {
         // 1. Let _sign_ be -1 × CompareISODate(_one_, _two_).
         // 1. If _sign_ = 0, return ZeroDateDuration().
-        let sign = match self.cmp(other) {
+        let sign = match other.cmp(self) {
             Ordering::Greater => 1i64,
             Ordering::Equal => return DateDuration::default(),
             Ordering::Less => -1i64,
@@ -623,7 +623,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             candidate_days += sign;
         }
         // 1. Return ! CreateDateDurationRecord(_years_, _months_, _weeks_, _days_).
-        DateDuration::from_signed_ymwd(years, weeks, months, days)
+        DateDuration::from_signed_ymwd(years, months, weeks, days)
     }
 }
 

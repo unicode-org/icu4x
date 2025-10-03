@@ -137,21 +137,21 @@ pub struct DateUntilOptions {
     ///
     /// let options_default = DateUntilOptions::default();
     /// assert_eq!(
-    ///     d1.until(&d2, options_default).unwrap(),
+    ///     d1.until_with_options(&d2, options_default).unwrap(),
     ///     DateDuration::for_days(410)
     /// );
     ///
     /// let mut options_days = options_default.clone();
     /// options_days.largest_unit = Some(DateDurationUnit::Days);
     /// assert_eq!(
-    ///     d1.until(&d2, options_default).unwrap(),
+    ///     d1.until_with_options(&d2, options_default).unwrap(),
     ///     DateDuration::for_days(410)
     /// );
     ///
     /// let mut options_weeks = options_default.clone();
     /// options_weeks.largest_unit = Some(DateDurationUnit::Weeks);
     /// assert_eq!(
-    ///     d1.until(&d2, options_default).unwrap(),
+    ///     d1.until_with_options(&d2, options_weeks).unwrap(),
     ///     DateDuration {
     ///         weeks: 58,
     ///         days: 4,
@@ -162,7 +162,7 @@ pub struct DateUntilOptions {
     /// let mut options_months = options_default.clone();
     /// options_months.largest_unit = Some(DateDurationUnit::Months);
     /// assert_eq!(
-    ///     d1.until(&d2, options_default).unwrap(),
+    ///     d1.until_with_options(&d2, options_months).unwrap(),
     ///     DateDuration {
     ///         months: 13,
     ///         days: 15,
@@ -173,7 +173,7 @@ pub struct DateUntilOptions {
     /// let mut options_years = options_default.clone();
     /// options_years.largest_unit = Some(DateDurationUnit::Years);
     /// assert_eq!(
-    ///     d1.until(&d2, options_default).unwrap(),
+    ///     d1.until_with_options(&d2, options_years).unwrap(),
     ///     DateDuration {
     ///         years: 1,
     ///         months: 1,
@@ -369,7 +369,7 @@ pub enum MissingFieldsStrategy {
 #[cfg(test)]
 mod tests {
     use crate::{
-        types::{DateFields, MonthCode},
+        types::{DateDuration, DateFields, MonthCode},
         Date, DateError, Gregorian,
     };
     use core::num::NonZeroU8;
@@ -502,5 +502,16 @@ mod tests {
                 Err(e) => panic!("Unexpected error: {e} for {fields:?}"),
             }
         }
+    }
+
+    #[test]
+    fn test_basic_until() {
+        let d1 = Date::try_new_iso(2025, 1, 31).unwrap();
+        let d2 = Date::try_new_iso(2025, 3, 15).unwrap();
+        let mut options = DateUntilOptions::default();
+        options.largest_unit = Some(types::DateDurationUnit::Weeks);
+
+        let result = d1.until_with_options(&d2, options);
+        assert_eq!(result.unwrap(), DateDuration::for_days(43));
     }
 }

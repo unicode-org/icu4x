@@ -283,9 +283,9 @@ impl<A: AsCalendar> Date<A> {
     /// let options = Default::default();
     ///
     /// // The value can be unwrapped with destructuring syntax:
-    /// let Ok(duration) = d1.until(&d2, options);
+    /// let Ok(duration) = d1.until_with_options(&d2, options);
     ///
-    /// assert_eq!(duration, DateDuration::for_days(2102));
+    /// assert_eq!(duration, DateDuration::for_days(2101));
     /// ```
     ///
     /// [`Infallible`]: core::convert::Infallible
