@@ -419,9 +419,17 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             overflow: Some(Overflow::Constrain),
             ..Default::default()
         };
-        let m0 = cal
-            .ordinal_month_from_code(&y0, base_month_code, constrain)
-            .expect("valid month code for calendar");
+        let m0_result = cal.ordinal_month_from_code(&y0, base_month_code, constrain);
+        let m0 = match m0_result {
+            Ok(m0) => m0,
+            Err(_) => {
+                debug_assert!(
+                    false,
+                    "valid month code for calendar, and constrained to the year"
+                );
+                1
+            }
+        };
         // 1. Let _endOfMonth_ be BalanceNonISODate(_calendar_, _y0_, _m0_ + _months_ + 1, 0).
         let end_of_month = Self::new_balanced(y0, duration.add_months_to(m0) + 1, 0, cal);
         // 1. Let _baseDay_ be _parts_.[[Day]].
@@ -469,6 +477,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         //   1. If _sign_ × (_m1_ - _calDate2_.[[Month]]) > 0, return *true*.
         // 1. Else if _d1_ ≠ _calDate2_.[[Day]], then
         //   1. If _sign_ × (_d1_ - _calDate2_.[[Day]]) > 0, return *true*.
+        #[allow(clippy::collapsible_if)] // to align with the spec
         if y1 != other.year {
             if sign * (i64::from(y1.to_extended_year()) - i64::from(other.year.to_extended_year()))
                 > 0
@@ -499,13 +508,11 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         let y0 = cal.year_info_from_extended(duration.add_years_to(self.year.to_extended_year()));
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], _overflow_)).
         let base_month_code = cal.month_code_from_ordinal(&y0, self.month).standard_code;
-        let m0 = cal
-            .ordinal_month_from_code(
-                &y0,
-                base_month_code,
-                DateFromFieldsOptions::from_add_options(options),
-            )
-            .expect("valid month code for calendar");
+        let m0 = cal.ordinal_month_from_code(
+            &y0,
+            base_month_code,
+            DateFromFieldsOptions::from_add_options(options),
+        )?;
         // 1. Let _endOfMonth_ be BalanceNonISODate(_calendar_, _y0_, _m0_ + _duration_.[[Months]] + 1, 0).
         let end_of_month = Self::new_balanced(y0, duration.add_months_to(m0) + 1, 0, cal);
         // 1. Let _baseDay_ be _parts_.[[Day]].
