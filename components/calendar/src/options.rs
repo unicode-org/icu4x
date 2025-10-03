@@ -519,4 +519,15 @@ mod tests {
             }
         }
     }
+
+    #[test]
+    fn test_basic_until() {
+        let d1 = Date::try_new_hebrew(5784, 7, 29).unwrap();
+        let d2 = Date::try_new_hebrew(5785, 7, 20).unwrap();
+        let mut options = DateUntilOptions::default();
+        options.largest_unit = Some(types::DateDurationUnit::Years);
+
+        let result = d1.until_with_options(&d2, options);
+        assert_eq!(result.unwrap(), crate::types::DateDuration::for_days(43));
+    }
 }
