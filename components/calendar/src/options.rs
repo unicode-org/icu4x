@@ -519,15 +519,4 @@ mod tests {
             }
         }
     }
-
-    // #[test]
-    // fn test_basic_until() {
-    //     let d1 = Date::try_new_iso(2025, 1, 31).unwrap();
-    //     let d2 = Date::try_new_iso(2025, 3, 15).unwrap();
-    //     let mut options = DateUntilOptions::default();
-    //     options.largest_unit = Some(types::DateDurationUnit::Weeks);
-
-    //     let result = d1.until_with_options(&d2, options);
-    //     assert_eq!(result.unwrap(), DateDuration::for_days(43));
-    // }
 }
