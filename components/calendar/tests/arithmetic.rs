@@ -12,6 +12,7 @@ use icu_calendar::{
 };
 
 #[rustfmt::skip]
+#[allow(clippy::type_complexity)]
 const ISO_DATE_PAIRS: &[(&str, &str, u64, (u32, u64), (u32, u64), (u32, u32, u64))] = &[
     //         d0,           d1, D,    (W, D),   (M, D),   (Y, M, D)
     ("2020-01-03", "2020-02-15", 43,   (6, 1),   (1, 12),  (0, 1, 12)),
@@ -53,7 +54,7 @@ fn check<A>(
     let mut until_options3 = DateUntilOptions::default();
     until_options3.largest_unit = Some(DateDurationUnit::Years);
 
-    let Ok(p0) = d0.until_with_options(&d1, until_options0);
+    let Ok(p0) = d0.until_with_options(d1, until_options0);
     assert_eq!(
         p0,
         DateDuration {
@@ -64,12 +65,12 @@ fn check<A>(
         "{d0:?}/{d1:?}"
     );
     assert_eq!(
-        d0.clone().added_with_options(p0, add_options).unwrap(),
+        d0.added_with_options(p0, add_options).unwrap(),
         *d1,
         "{d0:?}/{d1:?}"
     );
 
-    let Ok(p1) = d0.until_with_options(&d1, until_options1);
+    let Ok(p1) = d0.until_with_options(d1, until_options1);
     assert_eq!(
         p1,
         DateDuration {
@@ -81,12 +82,12 @@ fn check<A>(
         "{d0:?}/{d1:?}"
     );
     assert_eq!(
-        d0.clone().added_with_options(p1, add_options).unwrap(),
+        d0.added_with_options(p1, add_options).unwrap(),
         *d1,
         "{d0:?}/{d1:?}"
     );
 
-    let Ok(p2) = d0.until_with_options(&d1, until_options2);
+    let Ok(p2) = d0.until_with_options(d1, until_options2);
     assert_eq!(
         p2,
         DateDuration {
@@ -98,12 +99,12 @@ fn check<A>(
         "{d0:?}/{d1:?}"
     );
     assert_eq!(
-        d0.clone().added_with_options(p2, add_options).unwrap(),
+        d0.added_with_options(p2, add_options).unwrap(),
         *d1,
         "{d0:?}/{d1:?}"
     );
 
-    let Ok(p3) = d0.until_with_options(&d1, until_options3);
+    let Ok(p3) = d0.until_with_options(d1, until_options3);
     assert_eq!(
         p3,
         DateDuration {
@@ -116,7 +117,7 @@ fn check<A>(
         "{d0:?}/{d1:?}"
     );
     assert_eq!(
-        d0.clone().added_with_options(p3, add_options).unwrap(),
+        d0.added_with_options(p3, add_options).unwrap(),
         *d1,
         "{d0:?}/{d1:?}"
     );
@@ -142,6 +143,7 @@ fn test_hebrew() {
     let m07b_20 = Date::try_new_hebrew(5785, 7, 20).unwrap();
 
     #[rustfmt::skip]
+    #[allow(clippy::type_complexity)]
     let cases: &[(&Date<Hebrew>, &Date<Hebrew>, u64, (u32, u64), (u32, u64), (u32, u32, u64))] = &[
         (&m06z_20, &m05l_15, 348, (49, 5), (11, 25), (0, 11, 25)),
         // (&m06z_20, &m05l_30, 363, (51, 6), (12, 10), (0, 12, 10)), // TODO
