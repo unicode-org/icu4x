@@ -214,10 +214,14 @@ impl Rules for AstronomicalSimulation {
     }
 }
 
-/// [`Hijri`] [`Rules`] for the [Umm al-Qura](https://en.wikipedia.org/wiki/Islamic_calendar#Saudi_Arabia's_Umm_al-Qura_calendar) calendar.
+/// [`Hijri`] [`Rules`] for the [Umm al-Qura](https://en.wikipedia.org/wiki/Islamic_calendar#Saudi_Arabia's_Umm_al-Qura_calendar) calendar from the start of 1300 AH to the end of 1600 AH.
 ///
-/// These rules are defined by the [KACST](https://kacst.gov.sa/) and used by the government
-/// of Saudi Arabia for civil purposes.
+/// From the start of 1300 AH (1882-11-12 ISO) to the end of 1600 AH (2174-11-25), this
+/// `Rules` implementation uses an almanac of Umm al-Qura month lengths obtained from
+/// [KACST](https://kacst.gov.sa/). Outside this range, this implementation falls back to
+/// `TabularAlgorithm` with `TabularAlgorithmLeapYears::TypeII` and `TabularAlgorithmEpoch::Friday`.
+///
+/// Future versions of ICU4X may extend the almanac-based range.
 #[derive(Copy, Clone, Debug, Default)]
 #[non_exhaustive]
 pub struct UmmAlQura;
