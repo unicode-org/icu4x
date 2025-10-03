@@ -5,7 +5,10 @@
 use std::convert::Infallible;
 
 use icu_calendar::{
-    cal::Hebrew, options::{DateAddOptions, DateUntilOptions}, types::{DateDuration, DateDurationUnit}, AsCalendar, Calendar, Date, Iso
+    cal::Hebrew,
+    options::{DateAddOptions, DateUntilOptions},
+    types::{DateDuration, DateDurationUnit},
+    AsCalendar, Calendar, Date, Iso,
 };
 
 #[rustfmt::skip]
@@ -27,7 +30,18 @@ const ISO_DATE_PAIRS: &[(&str, &str, u64, (u32, u64), (u32, u64), (u32, u32, u64
     ("2022-03-01", "2020-02-29", 731,  (104, 3), (24, 1),  (2, 0, 1)),
 ];
 
-fn check<A>(d0: &Date<A>, d1: &Date<A>, exp0: &u64, exp1: &(u32, u64), exp2: &(u32, u64), exp3: &(u32, u32, u64)) where A: AsCalendar + Copy, <A as AsCalendar>::Calendar: Calendar<UntilError = Infallible>, <<A as AsCalendar>::Calendar as Calendar>::DateInner: PartialOrd {
+fn check<A>(
+    d0: &Date<A>,
+    d1: &Date<A>,
+    exp0: &u64,
+    exp1: &(u32, u64),
+    exp2: &(u32, u64),
+    exp3: &(u32, u32, u64),
+) where
+    A: AsCalendar + Copy,
+    <A as AsCalendar>::Calendar: Calendar<UntilError = Infallible>,
+    <<A as AsCalendar>::Calendar as Calendar>::DateInner: PartialOrd,
+{
     let is_negative = d0 > d1;
     let add_options = DateAddOptions::default();
     let mut until_options0 = DateUntilOptions::default();
@@ -110,7 +124,6 @@ fn check<A>(d0: &Date<A>, d1: &Date<A>, exp0: &u64, exp1: &(u32, u64), exp2: &(u
 
 #[test]
 fn test_arithmetic_cases() {
-
     for (d0, d1, exp0, exp1, exp2, exp3) in ISO_DATE_PAIRS {
         let d0 = Date::try_from_str(d0, Iso).unwrap();
         let d1 = Date::try_from_str(d1, Iso).unwrap();
