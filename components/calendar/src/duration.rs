@@ -165,8 +165,16 @@ impl DateDuration {
 
     /// Do NOT pass this function values of mixed signs!
     pub(crate) fn from_signed_ymwd(years: i64, months: i64, weeks: i64, days: i64) -> Self {
-        let is_negative = years.is_negative() || months.is_negative() || days.is_negative();
-        if is_negative && (years.is_positive() || months.is_positive() || days.is_positive()) {
+        let is_negative = years.is_negative()
+            || months.is_negative()
+            || weeks.is_negative()
+            || days.is_negative();
+        if is_negative
+            && (years.is_positive()
+                || months.is_positive()
+                || weeks.is_positive()
+                || days.is_positive())
+        {
             debug_assert!(false, "mixed signs in from_signed_ymd");
         }
         Self {
