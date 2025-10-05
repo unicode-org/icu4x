@@ -249,16 +249,16 @@
             },
             "eras": {
               "eraNames": {
-                "0": "Before R.O.C.",
-                "1": "R.O.C."
+                "0": "BROC",
+                "1": "ROC"
               },
               "eraAbbr": {
-                "0": "Before R.O.C.",
-                "1": "R.O.C."
+                "0": "BROC",
+                "1": "ROC"
               },
               "eraNarrow": {
-                "0": "Before R.O.C.",
-                "1": "R.O.C."
+                "0": "BROC",
+                "1": "ROC"
               }
             },
             "dateFormats": {
