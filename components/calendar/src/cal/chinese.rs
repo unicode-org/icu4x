@@ -2410,7 +2410,7 @@ mod test {
 
         // TODO: query KASI directly
         let uri = "https://gist.githubusercontent.com/Manishearth/d8c94a7df22a9eacefc4472a5805322e/raw/e1ea3b0aa52428686bb3a9cd0f262878515e16c1/resolved.json";
-        
+
         #[derive(serde::Deserialize)]
         struct Golden(BTreeMap<i32, BTreeMap<MonthCode, MonthData>>);
 
