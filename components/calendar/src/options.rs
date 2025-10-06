@@ -328,4 +328,20 @@ mod tests {
             }
         }
     }
+
+    #[test]
+    fn test_constrain_large_months() {
+        let fields = DateFields {
+            extended_year: Some(2004),
+            ordinal_month: NonZeroU8::new(15),
+            day: NonZeroU8::new(1),
+            ..Default::default()
+        };
+        let options = DateFromFieldsOptions {
+            overflow: Some(Overflow::Constrain),
+            ..Default::default()
+        };
+
+        let _ = Date::try_from_fields(fields, options, crate::cal::Persian).unwrap();
+    }
 }
