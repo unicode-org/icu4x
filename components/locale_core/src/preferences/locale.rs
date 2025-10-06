@@ -99,6 +99,7 @@ impl From<&crate::LanguageIdentifier> for LocalePreferences {
     }
 }
 
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 #[cfg(feature = "alloc")]
 impl From<LocalePreferences> for crate::Locale {
     fn from(prefs: LocalePreferences) -> Self {

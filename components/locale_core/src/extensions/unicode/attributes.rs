@@ -57,6 +57,8 @@ impl Attributes {
 
     /// A constructor which takes a str slice, parses it and
     /// produces a well-formed [`Attributes`].
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[inline]
     #[cfg(feature = "alloc")]
     pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
@@ -64,6 +66,8 @@ impl Attributes {
     }
 
     /// See [`Self::try_from_str`]
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
         let mut iter = SubtagIterator::new(code_units);
@@ -72,6 +76,7 @@ impl Attributes {
 
     /// A constructor which takes a pre-sorted list of [`Attribute`] elements.
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -145,6 +150,7 @@ impl Attributes {
     }
 }
 
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 #[cfg(feature = "alloc")]
 impl FromStr for Attributes {
     type Err = ParseError;
