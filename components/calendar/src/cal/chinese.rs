@@ -1063,6 +1063,7 @@ mod test {
     use crate::types::DateFields;
     use crate::types::MonthCode;
     use calendrical_calculations::{gregorian::fixed_from_gregorian, rata_die::RataDie};
+    use std::collections::BTreeMap;
     use tinystr::tinystr;
 
     #[test]
@@ -2393,6 +2394,58 @@ mod test {
                     gregorian,
                     chinese.to_calendar(Gregorian),
                     "{line}, {chinese:?}"
+                );
+            }
+        }
+    }
+
+    #[test]
+    #[ignore] // network
+    fn test_against_kasi_data() {
+        use crate::{
+            cal::{Gregorian, LunarChinese},
+            types::MonthCode,
+            Date,
+        };
+
+        // TODO: query KASI directly
+        let uri = "https://gist.githubusercontent.com/Manishearth/d8c94a7df22a9eacefc4472a5805322e/raw/e1ea3b0aa52428686bb3a9cd0f262878515e16c1/resolved.json";
+
+        #[derive(serde::Deserialize)]
+        struct Golden(BTreeMap<i32, BTreeMap<MonthCode, MonthData>>);
+
+        #[derive(serde::Deserialize)]
+        struct MonthData {
+            start_date: String,
+        }
+
+        let json = ureq::get(uri)
+            .call()
+            .unwrap()
+            .body_mut()
+            .read_to_string()
+            .unwrap();
+
+        let golden = serde_json::from_str::<Golden>(&json).unwrap();
+
+        for (&year, months) in &golden.0 {
+            if year == 1899 || year == 2050 {
+                continue;
+            }
+            for (&month, month_data) in months {
+                let mut gregorian = month_data.start_date.split('-');
+                let gregorian = Date::try_new_gregorian(
+                    gregorian.next().unwrap().parse().unwrap(),
+                    gregorian.next().unwrap().parse().unwrap(),
+                    gregorian.next().unwrap().parse().unwrap(),
+                )
+                .unwrap();
+
+                assert_eq!(
+                    Date::try_new_from_codes(None, year, month, 1, LunarChinese::new_korea())
+                        .unwrap()
+                        .to_calendar(Gregorian),
+                    gregorian
                 );
             }
         }
