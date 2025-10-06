@@ -94,6 +94,8 @@ impl core::fmt::Debug for BlobDataProvider {
 
 impl BlobDataProvider {
     /// Create a [`BlobDataProvider`] from a blob of ICU4X data.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
     pub fn try_new_from_blob(blob: alloc::boxed::Box<[u8]>) -> Result<Self, DataError> {
         Ok(Self {
@@ -151,6 +153,7 @@ impl DynamicDryDataProvider<BufferMarker> for BlobDataProvider {
     }
 }
 
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 #[cfg(feature = "alloc")]
 impl IterableDynamicDataProvider<BufferMarker> for BlobDataProvider {
     fn iter_ids_for_marker(

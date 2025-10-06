@@ -103,6 +103,8 @@ impl LanguageIdentifier {
     /// A constructor which takes a utf8 slice, parses it and
     /// produces a well-formed [`LanguageIdentifier`].
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Examples
     ///
     /// ```
@@ -117,6 +119,8 @@ impl LanguageIdentifier {
     }
 
     /// See [`Self::try_from_str`]
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
         crate::parser::parse_language_identifier(code_units, parser::ParserMode::LanguageIdentifier)
@@ -145,6 +149,8 @@ impl LanguageIdentifier {
 
     /// A constructor which takes a utf8 slice which may contain extension keys,
     /// parses it and produces a well-formed [`LanguageIdentifier`].
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -176,6 +182,8 @@ impl LanguageIdentifier {
     ///
     /// This operation will normalize casing and the separator.
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Examples
     ///
     /// ```
@@ -195,6 +203,8 @@ impl LanguageIdentifier {
     /// Normalize the language identifier (operating on strings)
     ///
     /// This operation will normalize casing and the separator.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -503,6 +513,7 @@ impl core::fmt::Debug for LanguageIdentifier {
     }
 }
 
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 #[cfg(feature = "alloc")]
 impl FromStr for LanguageIdentifier {
     type Err = ParseError;

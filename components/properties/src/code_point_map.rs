@@ -69,6 +69,8 @@ impl<T: TrieValue> CodePointMapData<T> {
     ///
     /// Typically useful for type-erasing maps into maps around integers.
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Panics
     /// Will panic if T and P are different sizes
     ///
@@ -175,6 +177,8 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
 
     /// Get a [`CodePointSetData`] for all elements corresponding to a particular value
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Example
     ///
     /// ```
@@ -268,6 +272,8 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
 
 impl CodePointMapDataBorrowed<'_, GeneralCategory> {
     /// Get a [`CodePointSetData`] for all elements corresponding to a particular value group
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Example
     ///
