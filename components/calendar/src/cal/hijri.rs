@@ -436,9 +436,9 @@ impl Hijri<UmmAlQura> {
 #[non_exhaustive]
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub enum TabularAlgorithmEpoch {
-    /// Thusday July 15, 622 AD (0622-07-18 ISO)
+    /// Thusday July 15, 622 AD Julian (0622-07-18 ISO)
     Thursday,
-    /// Friday July 16, 622 AD (0622-07-19 ISO)
+    /// Friday July 16, 622 AD Julian (0622-07-19 ISO)
     Friday,
 }
 
