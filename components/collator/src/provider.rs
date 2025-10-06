@@ -566,50 +566,26 @@ pub struct CollationSpecialPrimaries<'data> {
     pub numeric_primary: u8,
 }
 
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-pub(crate) struct CollationSpecialPrimariesValidated<'data> {
-    /// The primaries corresponding to `MaxVariable`
-    /// character classes packed so that each fits in
-    /// 16 bits. Length must match the number of enum
-    /// variants in `MaxVariable`, currently 4.
-    pub last_primaries: ZeroVec<'data, u16>,
-    /// The high 8 bits of the numeric primary
-    pub numeric_primary: u8,
-    /// 256 bits (packed in 16 u16s) to classify every possible
-    /// byte into compressible or non-compressible.
-    pub compressible_bytes: [u16; 16],
-}
-
-impl CollationSpecialPrimariesValidated<'static> {
-    pub(crate) const HARDCODED_FALLBACK: &Self = &Self {
-        last_primaries: zerovec::zerovec!(u16; <u16 as AsULE>::ULE::from_aligned; [
-          // Last primaries
-          1286,
-          3072,
-          3488,
-          3840,
-        ]),
-        numeric_primary: 16u8,
-        compressible_bytes: [
-            // Compressible bytes
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b1111_1111_1111_1110,
-            0b1111_1111_1111_1111,
-            0b0000_0000_0000_0001,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0100_0000_0000_0000,
-        ],
-    };
+impl<'a> CollationSpecialPrimaries<'a> {
+    const HARDCODED_FALLBACK: [u16; 16] = [
+        // Compressible bytes
+        0b0000_0000_0000_0000,
+        0b0000_0000_0000_0000,
+        0b0000_0000_0000_0000,
+        0b0000_0000_0000_0000,
+        0b0000_0000_0000_0000,
+        0b0000_0000_0000_0000,
+        0b1111_1111_1111_1110,
+        0b1111_1111_1111_1111,
+        0b0000_0000_0000_0001,
+        0b0000_0000_0000_0000,
+        0b0000_0000_0000_0000,
+        0b0000_0000_0000_0000,
+        0b0000_0000_0000_0000,
+        0b0000_0000_0000_0000,
+        0b0000_0000_0000_0000,
+        0b0100_0000_0000_0000,
+    ];
 }
 
 icu_provider::data_struct!(
@@ -617,7 +593,7 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
-impl CollationSpecialPrimariesValidated<'_> {
+impl CollationSpecialPrimaries<'_> {
     #[expect(clippy::unwrap_used)]
     pub(crate) fn last_primary_for_group(&self, max_variable: MaxVariable) -> u32 {
         // `unwrap` is OK, because `Collator::try_new` validates the length.
@@ -633,7 +609,10 @@ impl CollationSpecialPrimariesValidated<'_> {
         // into Compiler Explorer shows that the panic
         // is optimized away.
         #[expect(clippy::indexing_slicing)]
-        let field = self.compressible_bytes[usize::from(b >> 4)];
+        let field = self
+            .last_primaries
+            .get(MaxVariable::Currency as usize + usize::from(b >> 4))
+            .unwrap_or_else(|| CollationSpecialPrimaries::HARDCODED_FALLBACK[usize::from(b >> 4)]);
         let mask = 1 << (b & 0b1111);
         (field & mask) != 0
     }
