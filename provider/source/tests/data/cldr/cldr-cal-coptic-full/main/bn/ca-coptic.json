@@ -291,13 +291,13 @@
             },
             "eras": {
               "eraNames": {
-                "1": "যুগ ১"
+                "1": "AM"
               },
               "eraAbbr": {
-                "1": "যুগ ১"
+                "1": "AM"
               },
               "eraNarrow": {
-                "1": "যুগ ১"
+                "1": "AM"
               }
             },
             "dateFormats": {

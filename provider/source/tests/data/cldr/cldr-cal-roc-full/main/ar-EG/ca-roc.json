@@ -292,15 +292,15 @@
             },
             "eras": {
               "eraNames": {
-                "0": "Before R.O.C.",
+                "0": "BROC",
                 "1": "جمهورية الصي"
               },
               "eraAbbr": {
-                "0": "Before R.O.C.",
+                "0": "BROC",
                 "1": "جمهورية الصي"
               },
               "eraNarrow": {
-                "0": "Before R.O.C.",
+                "0": "BROC",
                 "1": "جمهورية الصي"
               }
             },

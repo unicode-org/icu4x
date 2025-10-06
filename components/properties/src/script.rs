@@ -624,6 +624,8 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// Returns a [`CodePointInversionList`] for the given [`Script`] which represents all
     /// code points for which `has_script` will return true.
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Examples
     ///
     /// ```

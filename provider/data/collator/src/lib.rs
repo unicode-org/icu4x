@@ -4,7 +4,7 @@
 
 //! Data for the `icu_collator` crate
 //!
-//! This data was generated with CLDR version 48.0.0-BETA1, ICU version release-78.1rc, and
+//! This data was generated with CLDR version 48.0.0-BETA2, ICU version release-78.1rc, and
 //! LSTM segmenter version v0.1.0.
 
 #![no_std]
