@@ -14,8 +14,7 @@ use crate::dimension::provider::units::essentials::CompoundCount;
 
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::pattern_key))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[repr(u8)]
 pub enum PowerValue {
     Two,
@@ -24,8 +23,7 @@ pub enum PowerValue {
 
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::pattern_key))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 pub enum PatternKey {
     Binary(u8),
     Decimal(i8),

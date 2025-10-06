@@ -1,0 +1,42 @@
+{
+  "patterns": {
+    "one": [
+      0,
+      [
+        {
+          "Literal": "ثانية"
+        }
+      ]
+    ],
+    "two": [
+      0,
+      [
+        {
+          "Literal": "ثانيتان"
+        }
+      ]
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ثوان"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ثانية"
+        }
+      ]
+    ]
+  }
+}
