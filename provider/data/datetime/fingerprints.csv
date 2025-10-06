@@ -9837,49 +9837,21 @@ datetime/names/year/chinese/v1, zh-Hant/5, -> ja/3
 datetime/names/year/chinese/v1, zh/3, -> ja/3
 datetime/names/year/chinese/v1, zh/4, -> ja/3
 datetime/names/year/chinese/v1, zh/5, -> ja/3
-datetime/names/year/coptic/v1, <lookup>, 352B, 62 identifiers
-datetime/names/year/coptic/v1, <total>, 1729B, 649B, 36 unique payloads
-datetime/names/year/coptic/v1, bn/3, 47B, 17B, 5bb615c9ed2669f2
-datetime/names/year/coptic/v1, bn/4, -> bn/3
-datetime/names/year/coptic/v1, bn/5, -> bn/3
+datetime/names/year/coptic/v1, <lookup>, 163B, 28 identifiers
+datetime/names/year/coptic/v1, <total>, 909B, 369B, 18 unique payloads
 datetime/names/year/coptic/v1, cv/3, 48B, 18B, ac660a734807f72f
 datetime/names/year/coptic/v1, cv/4, 40B, 10B, 7b3b6082b815c630
 datetime/names/year/coptic/v1, cv/5, 60B, 30B, 9105928fd035acc3
-datetime/names/year/coptic/v1, da/3, 43B, 13B, 5ca56a7a9d08173
-datetime/names/year/coptic/v1, da/4, 39B, 9B, 3e9bbe580d576d75
-datetime/names/year/coptic/v1, da/5, 48B, 18B, e751a1c6777a30f7
 datetime/names/year/coptic/v1, en/5, 47B, 17B, 82147922a4e5457a
-datetime/names/year/coptic/v1, fa/3, 52B, 22B, 52f871577fc0f07e
-datetime/names/year/coptic/v1, fa/4, 40B, 10B, 6a086e94bccd5934
-datetime/names/year/coptic/v1, fa/5, 63B, 33B, 2f5ec1b424b380ae
 datetime/names/year/coptic/v1, ff-Adlm/3, 42B, 12B, c91339f71b6f86cf
 datetime/names/year/coptic/v1, ff-Adlm/4, -> ff-Adlm/3
 datetime/names/year/coptic/v1, ff-Adlm/5, 107B, 77B, e348a4c2339dcbd0
 datetime/names/year/coptic/v1, fr/3, 40B, 10B, 175dc93020ef9cc0
 datetime/names/year/coptic/v1, fr/4, -> fr/3
 datetime/names/year/coptic/v1, fr/5, 52B, 22B, 9592829879f3b615
-datetime/names/year/coptic/v1, gu/3, 44B, 14B, c56b8b164b5f7cbb
-datetime/names/year/coptic/v1, gu/4, -> gu/3
-datetime/names/year/coptic/v1, gu/5, -> gu/3
-datetime/names/year/coptic/v1, he/5, 44B, 14B, 2cfa6fa675f899e2
 datetime/names/year/coptic/v1, lv/3, 45B, 15B, 636000b630a08cc8
 datetime/names/year/coptic/v1, lv/4, -> lv/3
 datetime/names/year/coptic/v1, lv/5, 51B, 21B, a549f5d946080405
-datetime/names/year/coptic/v1, mk/3, 41B, 11B, c8fcb7b0a295c7ed
-datetime/names/year/coptic/v1, mk/4, -> mk/3
-datetime/names/year/coptic/v1, mk/5, -> mk/3
-datetime/names/year/coptic/v1, ml/3, 59B, 29B, 923be5c6eef0d638
-datetime/names/year/coptic/v1, ml/4, -> ml/3
-datetime/names/year/coptic/v1, ml/5, -> ml/3
-datetime/names/year/coptic/v1, mr/3, 44B, 14B, 2664f1d44b6a289a
-datetime/names/year/coptic/v1, mr/4, -> mr/3
-datetime/names/year/coptic/v1, mr/5, -> mr/3
-datetime/names/year/coptic/v1, no/3, 41B, 11B, 77d2fce727b32a15
-datetime/names/year/coptic/v1, no/4, 37B, 7B, 252b08b9d4e67d5e
-datetime/names/year/coptic/v1, no/5, 46B, 16B, 4612ac8d3057bc9d
-datetime/names/year/coptic/v1, pa/3, 44B, 14B, b995954f46491ba3
-datetime/names/year/coptic/v1, pa/4, -> pa/3
-datetime/names/year/coptic/v1, pa/5, -> pa/3
 datetime/names/year/coptic/v1, ro/3, 38B, 8B, ed41fabbfd01d95
 datetime/names/year/coptic/v1, ro/4, -> ro/3
 datetime/names/year/coptic/v1, ro/5, 53B, 23B, ea95ab985ab8568b
@@ -9889,15 +9861,9 @@ datetime/names/year/coptic/v1, ru/5, 61B, 31B, 315fc38b869de8b5
 datetime/names/year/coptic/v1, sc/3, 38B, 8B, 5bba71b332cad109
 datetime/names/year/coptic/v1, sc/4, -> sc/3
 datetime/names/year/coptic/v1, sc/5, 55B, 25B, 30dec75761b0663d
-datetime/names/year/coptic/v1, shn/3, 47B, 17B, 6672b57d43882a9f
-datetime/names/year/coptic/v1, shn/4, -> shn/3
-datetime/names/year/coptic/v1, shn/5, -> shn/3
 datetime/names/year/coptic/v1, und/3, 36B, 6B, 328527ead791b694
 datetime/names/year/coptic/v1, und/4, -> und/3
 datetime/names/year/coptic/v1, und/5, -> und/3
-datetime/names/year/coptic/v1, ur/3, 41B, 11B, 7b45a0f5c20e01bd
-datetime/names/year/coptic/v1, ur/4, -> ur/3
-datetime/names/year/coptic/v1, ur/5, -> ur/3
 datetime/names/year/coptic/v1, zh/3, 46B, 16B, e5f23dfcc56b955e
 datetime/names/year/coptic/v1, zh/4, -> zh/3
 datetime/names/year/coptic/v1, zh/5, -> zh/3
@@ -9940,69 +9906,17 @@ datetime/names/year/dangi/v1, zh-Hant/5, -> ja/3
 datetime/names/year/dangi/v1, zh/3, -> ja/3
 datetime/names/year/dangi/v1, zh/4, -> ja/3
 datetime/names/year/dangi/v1, zh/5, -> ja/3
-datetime/names/year/ethiopian/v1, <lookup>, 346B, 61 identifiers
-datetime/names/year/ethiopian/v1, <total>, 2162B, 1142B, 34 unique payloads
-datetime/names/year/ethiopian/v1, ast/3, 46B, 16B, 815fea36743bed3f
-datetime/names/year/ethiopian/v1, ast/4, 40B, 10B, 6ce0c7ba289f548d
-datetime/names/year/ethiopian/v1, ast/5, 87B, 57B, 2b2537f68cb1a494
-datetime/names/year/ethiopian/v1, bn/3, 62B, 32B, c1f45ba25e4fb254
-datetime/names/year/ethiopian/v1, bn/4, -> bn/3
-datetime/names/year/ethiopian/v1, bn/5, -> bn/3
-datetime/names/year/ethiopian/v1, cv/3, 56B, 26B, 7839b9450a9c561
+datetime/names/year/ethiopian/v1, <lookup>, 77B, 9 identifiers
+datetime/names/year/ethiopian/v1, <total>, 345B, 195B, 5 unique payloads
+datetime/names/year/ethiopian/v1, cv/3, 48B, 18B, 9dd43c1e639b6647
 datetime/names/year/ethiopian/v1, cv/4, -> cv/3
-datetime/names/year/ethiopian/v1, cv/5, 110B, 80B, 321703c6f722b353
-datetime/names/year/ethiopian/v1, da/3, 54B, 24B, 78ac57049bebf2b5
-datetime/names/year/ethiopian/v1, da/4, 46B, 16B, 765ce21b2cf220ee
-datetime/names/year/ethiopian/v1, da/5, 64B, 34B, e669e1c6484d0168
+datetime/names/year/ethiopian/v1, cv/5, 71B, 41B, f747c8f35aef20bf
 datetime/names/year/ethiopian/v1, ff-Adlm/3, 52B, 22B, bbb0e1c0191e93b2
 datetime/names/year/ethiopian/v1, ff-Adlm/4, -> ff-Adlm/3
 datetime/names/year/ethiopian/v1, ff-Adlm/5, 134B, 104B, 444e120d3aea6e67
-datetime/names/year/ethiopian/v1, gu/3, 56B, 26B, a7437d07eee0f50
-datetime/names/year/ethiopian/v1, gu/4, -> gu/3
-datetime/names/year/ethiopian/v1, gu/5, -> gu/3
-datetime/names/year/ethiopian/v1, he/5, 56B, 26B, 6ca93838b29bec5e
-datetime/names/year/ethiopian/v1, is/3, 54B, 24B, 2655ab6c9dc430aa
-datetime/names/year/ethiopian/v1, is/4, -> is/3
-datetime/names/year/ethiopian/v1, is/5, -> is/3
-datetime/names/year/ethiopian/v1, lv/3, 61B, 31B, 4d37ac53b64041f4
-datetime/names/year/ethiopian/v1, lv/4, -> lv/3
-datetime/names/year/ethiopian/v1, lv/5, 91B, 61B, c6020491444675a7
-datetime/names/year/ethiopian/v1, mk/3, 50B, 20B, 2d4ea3cdf089e5e
-datetime/names/year/ethiopian/v1, mk/4, -> mk/3
-datetime/names/year/ethiopian/v1, mk/5, -> mk/3
-datetime/names/year/ethiopian/v1, ml/3, 86B, 56B, 46c99a2a25c73bae
-datetime/names/year/ethiopian/v1, ml/4, -> ml/3
-datetime/names/year/ethiopian/v1, ml/5, -> ml/3
-datetime/names/year/ethiopian/v1, mr/3, 56B, 26B, 318c03cefbe58b55
-datetime/names/year/ethiopian/v1, mr/4, -> mr/3
-datetime/names/year/ethiopian/v1, mr/5, -> mr/3
-datetime/names/year/ethiopian/v1, nl/3, 46B, 16B, 7884dea4b0fcd35c
-datetime/names/year/ethiopian/v1, nl/4, -> nl/3
-datetime/names/year/ethiopian/v1, nl/5, 56B, 26B, 3871a02a6164a047
-datetime/names/year/ethiopian/v1, no/3, 50B, 20B, 223b4b250f4b8f7
-datetime/names/year/ethiopian/v1, no/4, 42B, 12B, b8a59347f1236cb
-datetime/names/year/ethiopian/v1, no/5, 60B, 30B, 4520426342d7e88d
-datetime/names/year/ethiopian/v1, pa/3, 56B, 26B, f19dad4461f56dfe
-datetime/names/year/ethiopian/v1, pa/4, -> pa/3
-datetime/names/year/ethiopian/v1, pa/5, -> pa/3
-datetime/names/year/ethiopian/v1, ro/3, 53B, 23B, 3ad0938fe3a3ca50
-datetime/names/year/ethiopian/v1, ro/4, -> ro/3
-datetime/names/year/ethiopian/v1, ro/5, 74B, 44B, 410167c87a24e0fd
-datetime/names/year/ethiopian/v1, ru/3, 70B, 40B, 15618436baa28d6b
-datetime/names/year/ethiopian/v1, ru/4, -> ru/3
-datetime/names/year/ethiopian/v1, ru/5, 112B, 82B, 711532ca63276406
-datetime/names/year/ethiopian/v1, shn/3, 62B, 32B, 96fe214491c2d2db
-datetime/names/year/ethiopian/v1, shn/4, -> shn/3
-datetime/names/year/ethiopian/v1, shn/5, -> shn/3
-datetime/names/year/ethiopian/v1, und/3, 44B, 14B, 54de65f502923d62
+datetime/names/year/ethiopian/v1, und/3, 40B, 10B, c89ae18d60336cfc
 datetime/names/year/ethiopian/v1, und/4, -> und/3
 datetime/names/year/ethiopian/v1, und/5, -> und/3
-datetime/names/year/ethiopian/v1, ur/3, 50B, 20B, 403eea531ddafd6d
-datetime/names/year/ethiopian/v1, ur/4, -> ur/3
-datetime/names/year/ethiopian/v1, ur/5, -> ur/3
-datetime/names/year/ethiopian/v1, zh/3, 51B, 21B, 47ebb7f28176fc24
-datetime/names/year/ethiopian/v1, zh/4, -> zh/3
-datetime/names/year/ethiopian/v1, zh/5, 75B, 45B, 35e7d0dc7370fc20
 datetime/names/year/gregorian/v1, <lookup>, 2637B, 482 identifiers
 datetime/names/year/gregorian/v1, <total>, 18518B, 9849B, 289 unique payloads
 datetime/names/year/gregorian/v1, af/3, 44B, 14B, 72ce21ac598951ad
@@ -10659,8 +10573,8 @@ datetime/names/year/hijri/v1, zh-Hant/5, -> yue/3
 datetime/names/year/hijri/v1, zh/3, -> yue-Hans/3
 datetime/names/year/hijri/v1, zh/4, -> yue-Hans/3
 datetime/names/year/hijri/v1, zh/5, -> yue-Hans/3
-datetime/names/year/indian/v1, <lookup>, 785B, 146 identifiers
-datetime/names/year/indian/v1, <total>, 1686B, 516B, 39 unique payloads
+datetime/names/year/indian/v1, <lookup>, 788B, 146 identifiers
+datetime/names/year/indian/v1, <total>, 1725B, 525B, 40 unique payloads
 datetime/names/year/indian/v1, as/3, 40B, 10B, c2dcd3e237f537bd
 datetime/names/year/indian/v1, as/4, -> as/3
 datetime/names/year/indian/v1, as/5, -> as/3
@@ -10786,9 +10700,9 @@ datetime/names/year/indian/v1, te/5, -> te/3
 datetime/names/year/indian/v1, th/3, 42B, 12B, 6221181cd23df52
 datetime/names/year/indian/v1, th/4, -> th/3
 datetime/names/year/indian/v1, th/5, -> th/3
-datetime/names/year/indian/v1, und/3, -> es-419/3
-datetime/names/year/indian/v1, und/4, -> es-419/3
-datetime/names/year/indian/v1, und/5, -> es-419/3
+datetime/names/year/indian/v1, und/3, 39B, 9B, a17c2dec699f6971
+datetime/names/year/indian/v1, und/4, -> und/3
+datetime/names/year/indian/v1, und/5, -> und/3
 datetime/names/year/indian/v1, ur/3, -> ks/3
 datetime/names/year/indian/v1, ur/4, -> ks/3
 datetime/names/year/indian/v1, ur/5, -> ks/3
@@ -11841,8 +11755,8 @@ datetime/names/year/persian/v1, zh/3, -> yue-Hans/3
 datetime/names/year/persian/v1, zh/4, -> yue-Hans/3
 datetime/names/year/persian/v1, zh/5, -> yue-Hans/3
 datetime/names/year/roc/v1, <lookup>, 1078B, 201 identifiers
-datetime/names/year/roc/v1, <total>, 5793B, 3123B, 89 unique payloads
-datetime/names/year/roc/v1, ar/3, 72B, 42B, 9f3e944389df1b9d
+datetime/names/year/roc/v1, <total>, 5712B, 3042B, 89 unique payloads
+datetime/names/year/roc/v1, ar/3, 63B, 33B, 2129711fea4dd33
 datetime/names/year/roc/v1, ar/4, -> ar/3
 datetime/names/year/roc/v1, ar/5, -> ar/3
 datetime/names/year/roc/v1, ast/3, 50B, 20B, 534c3fef2461d1c2
@@ -11857,7 +11771,7 @@ datetime/names/year/roc/v1, br/5, 69B, 39B, 7c323aa1bc519579
 datetime/names/year/roc/v1, bs-Cyrl/3, 51B, 21B, ab0bddf0a73864ad
 datetime/names/year/roc/v1, bs-Cyrl/4, -> bs-Cyrl/3
 datetime/names/year/roc/v1, bs-Cyrl/5, -> bs-Cyrl/3
-datetime/names/year/roc/v1, bs/3, 54B, 24B, e17f0f5ee1c0333b
+datetime/names/year/roc/v1, bs/3, 51B, 21B, 7a910909464154e
 datetime/names/year/roc/v1, bs/4, -> bs/3
 datetime/names/year/roc/v1, bs/5, -> bs/3
 datetime/names/year/roc/v1, ca/5, 51B, 21B, 70f9b30f4a4504
@@ -11870,10 +11784,10 @@ datetime/names/year/roc/v1, cv/5, 150B, 120B, 699050989c079222
 datetime/names/year/roc/v1, da/3, 53B, 23B, 74466bd2bbc8262b
 datetime/names/year/roc/v1, da/4, -> da/3
 datetime/names/year/roc/v1, da/5, -> da/3
-datetime/names/year/roc/v1, de/3, 55B, 25B, 18aa604097a6ac04
+datetime/names/year/roc/v1, de/3, 46B, 16B, 9222a9be10acfc3e
 datetime/names/year/roc/v1, de/4, 53B, 23B, 20803a44779ce451
 datetime/names/year/roc/v1, de/5, 65B, 35B, 69a062d54370168d
-datetime/names/year/roc/v1, el/3, 55B, 25B, de7ec4fc8c7097a0
+datetime/names/year/roc/v1, el/3, 52B, 22B, 96cac067242f3254
 datetime/names/year/roc/v1, el/4, -> el/3
 datetime/names/year/roc/v1, el/5, -> el/3
 datetime/names/year/roc/v1, en/3, 50B, 20B, 951d4d79b239d245
@@ -11885,7 +11799,7 @@ datetime/names/year/roc/v1, es-419/5, -> es-419/3
 datetime/names/year/roc/v1, es/3, 54B, 24B, 853bcfeaa3eec262
 datetime/names/year/roc/v1, es/4, -> es/3
 datetime/names/year/roc/v1, es/5, -> es/3
-datetime/names/year/roc/v1, eu/3, 57B, 27B, 23ad994441bb5d35
+datetime/names/year/roc/v1, eu/3, 54B, 24B, 20083c2bd3b8101
 datetime/names/year/roc/v1, eu/4, -> eu/3
 datetime/names/year/roc/v1, eu/5, -> eu/3
 datetime/names/year/roc/v1, fa/3, 75B, 45B, 6a2e640c24983c39
@@ -11912,16 +11826,16 @@ datetime/names/year/roc/v1, gd/5, 59B, 29B, d5a72328c76d447a
 datetime/names/year/roc/v1, gu/3, 91B, 61B, bd282026e906afed
 datetime/names/year/roc/v1, gu/4, -> gu/3
 datetime/names/year/roc/v1, gu/5, -> gu/3
-datetime/names/year/roc/v1, he/3, 56B, 26B, a56f59da87875557
+datetime/names/year/roc/v1, he/3, 53B, 23B, a8ca75afdf507996
 datetime/names/year/roc/v1, he/4, -> he/3
 datetime/names/year/roc/v1, he/5, 118B, 88B, ad8adf871bea18f
 datetime/names/year/roc/v1, hr/3, -> bs/3
 datetime/names/year/roc/v1, hr/4, -> bs/3
 datetime/names/year/roc/v1, hr/5, -> bs/3
-datetime/names/year/roc/v1, hu/3, 55B, 25B, 21eae8c32d28672
+datetime/names/year/roc/v1, hu/3, 52B, 22B, e3a89746f59fe9e2
 datetime/names/year/roc/v1, hu/4, -> hu/3
 datetime/names/year/roc/v1, hu/5, -> hu/3
-datetime/names/year/roc/v1, id/3, 56B, 26B, ba75c08939dc83aa
+datetime/names/year/roc/v1, id/3, 53B, 23B, 11f90f9409f2cb5d
 datetime/names/year/roc/v1, id/4, -> id/3
 datetime/names/year/roc/v1, id/5, -> id/3
 datetime/names/year/roc/v1, is/3, 61B, 31B, a35eaa2686afd092
@@ -11942,10 +11856,10 @@ datetime/names/year/roc/v1, ko/5, -> ko/3
 datetime/names/year/roc/v1, lb/3, -> de/3
 datetime/names/year/roc/v1, lb/4, -> de/3
 datetime/names/year/roc/v1, lb/5, -> de/3
-datetime/names/year/roc/v1, lo/3, 61B, 31B, 69f3fe7cf94de5cf
+datetime/names/year/roc/v1, lo/3, 58B, 28B, bf50ffdef4d1c98b
 datetime/names/year/roc/v1, lo/4, -> lo/3
 datetime/names/year/roc/v1, lo/5, -> lo/3
-datetime/names/year/roc/v1, lt/3, 55B, 25B, a3ba00abf18bce8d
+datetime/names/year/roc/v1, lt/3, 52B, 22B, d5cf08af0d4ce284
 datetime/names/year/roc/v1, lt/4, -> lt/3
 datetime/names/year/roc/v1, lt/5, -> lt/3
 datetime/names/year/roc/v1, lv/3, 58B, 28B, 6da872a521f39488
@@ -11960,8 +11874,8 @@ datetime/names/year/roc/v1, ml/5, 103B, 73B, a6f4a54827a596fe
 datetime/names/year/roc/v1, mr/3, 79B, 49B, 7c8d249040ba270
 datetime/names/year/roc/v1, mr/4, -> mr/3
 datetime/names/year/roc/v1, mr/5, -> mr/3
-datetime/names/year/roc/v1, ms/4, 52B, 22B, 88edc8589f04318d
-datetime/names/year/roc/v1, ms/5, 55B, 25B, f521b9a95481218a
+datetime/names/year/roc/v1, ms/4, 49B, 19B, 9616d0022ec03a7d
+datetime/names/year/roc/v1, ms/5, 52B, 22B, 67ee01660eeb1673
 datetime/names/year/roc/v1, nl/3, 53B, 23B, 2726e4adb01648c5
 datetime/names/year/roc/v1, nl/4, -> nl/3
 datetime/names/year/roc/v1, nl/5, -> nl/3
@@ -12007,10 +11921,10 @@ datetime/names/year/roc/v1, sr/5, -> bs-Cyrl/3
 datetime/names/year/roc/v1, sv/3, 50B, 20B, 6e1882e93c3dc6ed
 datetime/names/year/roc/v1, sv/4, 46B, 16B, 83b7c6050541bf07
 datetime/names/year/roc/v1, sv/5, 63B, 33B, 17815988f8f9a778
-datetime/names/year/roc/v1, ta/3, 70B, 40B, 30c2636a353bbcc
+datetime/names/year/roc/v1, ta/3, 67B, 37B, e9a47a5fd2860924
 datetime/names/year/roc/v1, ta/4, -> ta/3
-datetime/names/year/roc/v1, ta/5, 81B, 51B, 80b63ed684840a6c
-datetime/names/year/roc/v1, te/3, 67B, 37B, f02884fab09d2d9a
+datetime/names/year/roc/v1, ta/5, 78B, 48B, 56381ab80a263623
+datetime/names/year/roc/v1, te/3, 64B, 34B, fe79381d5a112ef0
 datetime/names/year/roc/v1, te/4, -> te/3
 datetime/names/year/roc/v1, te/5, -> te/3
 datetime/names/year/roc/v1, th/3, 96B, 66B, fb285b41b362b272
@@ -12019,16 +11933,16 @@ datetime/names/year/roc/v1, th/5, -> th/3
 datetime/names/year/roc/v1, tr/3, -> de/3
 datetime/names/year/roc/v1, tr/4, -> de/3
 datetime/names/year/roc/v1, tr/5, 56B, 26B, d157339df82d9a4c
-datetime/names/year/roc/v1, ug/3, 59B, 29B, 95a2e9ea02c878f1
+datetime/names/year/roc/v1, ug/3, 50B, 20B, f18721652d537870
 datetime/names/year/roc/v1, ug/4, -> ug/3
 datetime/names/year/roc/v1, ug/5, 86B, 56B, 6a98c1a62f2aa034
-datetime/names/year/roc/v1, und/3, 55B, 25B, 5a74b967605ac1de
+datetime/names/year/roc/v1, und/3, 43B, 13B, c032bcad0d3cfd9d
 datetime/names/year/roc/v1, und/4, -> und/3
 datetime/names/year/roc/v1, und/5, -> und/3
 datetime/names/year/roc/v1, ur/3, 90B, 60B, 9f4c31fc51bb777a
 datetime/names/year/roc/v1, ur/4, -> ur/3
 datetime/names/year/roc/v1, ur/5, -> ur/3
-datetime/names/year/roc/v1, vi/3, 56B, 26B, 889643e81eb87c0f
+datetime/names/year/roc/v1, vi/3, 53B, 23B, 4267fc66f42d99b7
 datetime/names/year/roc/v1, vi/4, -> vi/3
 datetime/names/year/roc/v1, vi/5, -> vi/3
 datetime/names/year/roc/v1, yue-Hans/3, -> ja/3
