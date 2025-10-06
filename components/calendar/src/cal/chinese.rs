@@ -204,12 +204,12 @@ impl Rules for China {
         let extended = match (number, is_leap, day > 29) {
             (1, false, false) => 1972,
             (1, false, true) => 1970,
-            (1, true, false) => 1879,
-            (1, true, true) => 1879,
+            (1, true, false) => 1898,
+            (1, true, true) => 1898,
             (2, false, false) => 1972,
             (2, false, true) => 1972,
             (2, true, false) => 1947,
-            (2, true, true) => 1860,
+            (2, true, true) => 1830,
             (3, false, false) => 1972,
             (3, false, true) => 1966,
             (3, true, false) => 1966,
@@ -233,26 +233,26 @@ impl Rules for China {
             (8, false, false) => 1972,
             (8, false, true) => 1971,
             (8, true, false) => 1957,
-            (8, true, true) => 1892,
+            (8, true, true) => 1691,
             (9, false, false) => 1972,
             (9, false, true) => 1972,
             (9, true, false) => 2014,
-            (9, true, true) => 1873,
+            (9, true, true) => 1843,
             (10, false, false) => 1972,
             (10, false, true) => 1972,
             (10, true, false) => 1984,
-            (10, true, true) => 1881,
+            (10, true, true) => 1737,
             // Dec 31, 1972 is 1972-M11-26, dates after that
             // are in the next year
             (11, false, false) if day > 26 => 1971,
             (11, false, false) => 1972,
             (11, false, true) => 1969,
             (11, true, false) => 2033,
-            (11, true, true) => 1862,
+            (11, true, true) => 1889,
             (12, false, false) => 1971,
             (12, false, true) => 1971,
-            (12, true, false) => 1889,
-            (12, true, true) => 1889,
+            (12, true, false) => 1878,
+            (12, true, true) => 1783,
             _ => return Err(DateError::UnknownMonthCode(month_code)),
         };
         Ok(self.year_data(extended))
@@ -396,12 +396,12 @@ impl Rules for Korea {
         let extended = match (number, is_leap, day > 29) {
             (1, false, false) => 1972,
             (1, false, true) => 1970,
-            (1, true, false) => 1879,
-            (1, true, true) => 1879,
+            (1, true, false) => 1898,
+            (1, true, true) => 1898,
             (2, false, false) => 1972,
             (2, false, true) => 1972,
             (2, true, false) => 1947,
-            (2, true, true) => 1860,
+            (2, true, true) => 1830,
             (3, false, false) => 1972,
             (3, false, true) => 1968,
             (3, true, false) => 1966,
@@ -425,26 +425,26 @@ impl Rules for Korea {
             (8, false, false) => 1972,
             (8, false, true) => 1971,
             (8, true, false) => 1957,
-            (8, true, true) => 1892,
+            (8, true, true) => 1691,
             (9, false, false) => 1972,
             (9, false, true) => 1972,
             (9, true, false) => 2014,
-            (9, true, true) => 1873,
+            (9, true, true) => 1843,
             (10, false, false) => 1972,
             (10, false, true) => 1972,
             (10, true, false) => 1984,
-            (10, true, true) => 1881,
+            (10, true, true) => 1737,
             // Dec 31, 1972 is 1972-M11-26, dates after that
             // are in the next year
             (11, false, false) if day > 26 => 1971,
             (11, false, false) => 1972,
             (11, false, true) => 1969,
             (11, true, false) => 2033,
-            (11, true, true) => 1862,
+            (11, true, true) => 1889,
             (12, false, false) => 1971,
             (12, false, true) => 1971,
-            (12, true, false) => 1889,
-            (12, true, true) => 1889,
+            (12, true, false) => 1878,
+            (12, true, true) => 1783,
             _ => return Err(DateError::UnknownMonthCode(month_code)),
         };
         Ok(self.year_data(extended))
@@ -1163,43 +1163,50 @@ impl LunarChineseYearData {
             MEAN_SYNODIC_MONTH_LENGTH,
         );
 
-        // The solstice is in the month of the 10th solar term of the previous year
+        let mut next_new_moon = new_moon + MEAN_SYNODIC_MONTH_LENGTH;
+
+        // The solstice is in the month of the 11th solar term of the previous year
         let mut solar_term = -2;
+        let mut had_leap_in_sui = false;
 
-        // Skip the months before the year
-        while solar_term < 0 {
-            let next_new_moon = new_moon + MEAN_SYNODIC_MONTH_LENGTH;
-
-            if major_solar_term.rata_die < next_new_moon.rata_die {
+        // Skip the months before the year (M11, maybe M11L, M12, maybe M12L)
+        while solar_term < 0 || next_new_moon.rata_die <= major_solar_term.rata_die {
+            if next_new_moon.rata_die <= major_solar_term.rata_die && !had_leap_in_sui {
+                had_leap_in_sui = true;
+            } else {
                 solar_term += 1;
                 major_solar_term = major_solar_term + MEAN_GREGORIAN_SOLAR_TERM_LENGTH;
             }
 
-            new_moon = next_new_moon;
+            (new_moon, next_new_moon) = (next_new_moon, next_new_moon + MEAN_SYNODIC_MONTH_LENGTH);
         }
+
+        debug_assert_eq!(solar_term, 0);
 
         let start_day = new_moon.rata_die;
         let mut month_lengths = [false; 13];
-        let mut month = 0;
         let mut leap_month = None;
 
         // Iterate over the 12 solar terms, producing potentially 13 months
-        while solar_term < 12 {
-            let next_new_moon = new_moon + MEAN_SYNODIC_MONTH_LENGTH;
+        while solar_term < 12
+            || (next_new_moon.rata_die <= major_solar_term.rata_die && !had_leap_in_sui)
+        {
+            *month_lengths
+                .get_mut(solar_term as usize + leap_month.is_some() as usize)
+                .unwrap_or(&mut false) = next_new_moon.rata_die - new_moon.rata_die == 30;
 
-            if major_solar_term.rata_die < next_new_moon.rata_die {
+            if next_new_moon.rata_die <= major_solar_term.rata_die && !had_leap_in_sui {
+                had_leap_in_sui = true;
+                leap_month = Some(solar_term as u8 + 1);
+            } else {
                 solar_term += 1;
                 major_solar_term = major_solar_term + MEAN_GREGORIAN_SOLAR_TERM_LENGTH;
-            } else {
-                leap_month = Some(month as u8 + 2);
             }
 
-            *month_lengths.get_mut(month).unwrap_or(&mut false) =
-                next_new_moon.rata_die - new_moon.rata_die == 30;
-
-            month += 1;
-            new_moon = next_new_moon;
+            (new_moon, next_new_moon) = (next_new_moon, next_new_moon + MEAN_SYNODIC_MONTH_LENGTH);
         }
+
+        debug_assert_eq!(solar_term, 12);
 
         LunarChineseYearData::new(related_iso, start_day, month_lengths, leap_month)
     }
@@ -1312,13 +1319,13 @@ mod test {
             TestCase {
                 rd: 0,
                 expected_year: 0,
-                expected_month: 12,
+                expected_month: 11,
                 expected_day: 19,
             },
             TestCase {
                 rd: -1,
                 expected_year: 0,
-                expected_month: 12,
+                expected_month: 11,
                 expected_day: 18,
             },
             TestCase {
