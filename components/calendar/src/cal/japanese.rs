@@ -17,7 +17,7 @@ use tinystr::tinystr;
 /// The months and days are identical to that of the Gregorian calendar, however the years are counted
 /// differently using the Japanese era system.
 ///
-/// The [Japanese calendar] was taken into use starting from 6 Meiji (1873 ISO/Gregorian), so years before 6 Meiji are proleptic. This implementation uses the Meiji era proleptically back to and including 1868-10-23 ISO and uses the Gregorian eras for 1868-10-22 ISO and earlier dates. For a variant that uses approximations of historical Japanese eras proleptically, check out [`JapaneseExtended`].
+/// The calendar scheme using months and days identical to the Gregorian calendar was adopted starting with 6 Meiji (1873 CE), so years before 6 Meiji are proleptic. This implementation uses the Meiji era proleptically back to and including 1868-10-23 and uses the Gregorian eras for 1868-10-22 and earlier dates. For a variant that uses approximations of historical Japanese eras proleptically, check out [`JapaneseExtended`].
 ///
 /// This type can be used with [`Date`] to represent dates in this calendar.
 ///
@@ -48,7 +48,7 @@ pub struct Japanese {
 /// The months and days are identical to that of the Gregorian calendar, however the years are counted
 /// differently using the Japanese era system.
 ///
-/// The [Japanese calendar] was taken into use starting from 6 Meiji (1873 ISO/Gregorian), so years before 6 Meiji are proleptic. This implementation uses approximations of earlier Japanese eras proleptically and uses the Gregorian eras for even earlier dates that don't have an approximate Japanese era. For a variant whose Japanese eras start with Meiji, check out [`Japanese`].
+/// The calendar scheme using months and days identical to the Gregorian calendar was adopted starting with 6 Meiji (1873 CE), so years before 6 Meiji are proleptic. This implementation uses approximations of earlier Japanese eras proleptically and uses the Gregorian eras for even earlier dates that don't have an approximate Japanese era. For a variant whose Japanese eras start with Meiji, check out [`Japanese`].
 ///
 /// This type can be used with [`Date`] to represent dates in this calendar.
 ///
