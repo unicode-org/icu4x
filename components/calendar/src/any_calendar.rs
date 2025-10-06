@@ -245,7 +245,7 @@ macro_rules! match_cal {
 }
 
 /// Error returned when comparing two [`Date`]s with [`AnyCalendar`].
-#[derive(Debug, Copy, Clone)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 #[non_exhaustive]
 pub enum AnyCalendarUntilError {
     /// The calendars of the two dates being compared are not equal.
