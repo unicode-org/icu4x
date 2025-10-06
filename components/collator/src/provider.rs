@@ -586,7 +586,7 @@ impl CollationSpecialPrimariesValidated<'static> {
           // Last primaries
           1286,
           3072,
-          3491,
+          3488,
           3840,
         ]),
         numeric_primary: 16u8,
