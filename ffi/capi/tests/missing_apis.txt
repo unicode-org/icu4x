@@ -16,8 +16,8 @@
 
 icu::calendar::Date::try_from_fields#FnInStruct
 icu::calendar::options::DateAddOptions#Struct
-icu::calendar::options::DateFromFieldsOptions#Struct
 icu::calendar::options::DateDifferenceOptions#Struct
+icu::calendar::options::DateFromFieldsOptions#Struct
 icu::calendar::options::MissingFieldsStrategy#Enum
 icu::calendar::options::Overflow#Enum
 icu::calendar::types::DateFields#Struct

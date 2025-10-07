@@ -209,9 +209,11 @@ fn test_tricky_leap_months() {
     assert_eq!(duration1_actual, duration1);
 
     // M05L + 1yr1mo = M07 (leap to common)
-    let mut duration2 = DateDuration::default();
-    duration2.years = 1;
-    duration2.months = 1;
+    let duration2 = DateDuration {
+        years: 1,
+        months: 1,
+        ..Default::default()
+    };
     let date3 = date2
         .try_added_with_options(duration2, add_options)
         .unwrap();
