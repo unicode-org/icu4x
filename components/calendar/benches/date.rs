@@ -20,11 +20,16 @@ pub struct Test {
 use criterion::{
     black_box, criterion_group, criterion_main, measurement::WallTime, BenchmarkGroup, Criterion,
 };
-use icu_calendar::{types, AsCalendar, Calendar, Date};
+use icu_calendar::{
+    options::{DateAddOptions, Overflow},
+    types, AsCalendar, Calendar, Date,
+};
 
 fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
     // black_box used to avoid compiler optimization.
     // Arithmetic
+    let mut options = DateAddOptions::default();
+    options.overflow = Some(Overflow::Constrain);
     date.try_add_with_options(
         types::DateDuration {
             is_negative: false,
@@ -33,7 +38,7 @@ fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
             weeks: black_box(3),
             days: black_box(4),
         },
-        Default::default(),
+        options,
     )
     .unwrap();
 
