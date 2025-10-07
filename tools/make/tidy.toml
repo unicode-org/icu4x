@@ -269,7 +269,7 @@ env = { "RUSTFLAGS" = "-D unused_crate_dependencies" }
 script = '''
 exit_on_error true
 
-exec --fail-on-error cargo check --all-features
+exec --fail-on-error cargo +stable check --all-features # https://github.com/rust-lang/rust/issues/147069
 exec --fail-on-error cargo run --manifest-path tools/make/depcheck/Cargo.toml
 '''
 
