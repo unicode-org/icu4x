@@ -14,7 +14,7 @@ fn check_continuity<A: AsCalendar>(mut date: Date<A>, years_to_check: usize) {
 
     for _ in 0..(366 * years_to_check) {
         let next_date = date
-            .added_with_options(duration, Default::default())
+            .try_added_with_options(duration, Default::default())
             .unwrap();
         let next_rata_die = next_date.to_iso().to_rata_die();
         assert_eq!(next_rata_die, rata_die + 1, "{next_date:?}");
@@ -44,7 +44,7 @@ fn check_every_250_days<A: AsCalendar>(mut date: Date<A>, iters: usize) {
 
     for _ in 0..iters {
         let next_date = date
-            .added_with_options(duration, Default::default())
+            .try_added_with_options(duration, Default::default())
             .unwrap();
         let next_iso = next_date.to_iso();
         let next_rata_die = next_iso.to_rata_die();

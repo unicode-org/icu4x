@@ -7,7 +7,7 @@ use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
-use crate::options::{DateAddOptions, DateUntilOptions};
+use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
 use crate::{types, Calendar, Date, RangeError};
 use ::tinystr::tinystr;
@@ -113,7 +113,7 @@ impl crate::cal::scaffold::UnstableSealed for Persian {}
 impl Calendar for Persian {
     type DateInner = PersianDateInner;
     type Year = types::EraYear;
-    type UntilError = core::convert::Infallible;
+    type DifferenceError = core::convert::Infallible;
 
     fn from_fields(
         &self,
@@ -177,8 +177,8 @@ impl Calendar for Persian {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        options: DateUntilOptions,
-    ) -> Result<types::DateDuration, Self::UntilError> {
+        options: DateDifferenceOptions,
+    ) -> Result<types::DateDuration, Self::DifferenceError> {
         Ok(date1.0.until(&date2.0, self, options))
     }
 

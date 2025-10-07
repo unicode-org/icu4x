@@ -112,18 +112,18 @@ pub struct DateAddOptions {
     ///
     /// let options_default = DateAddOptions::default();
     /// assert_eq!(
-    ///     d1.added_with_options(duration, options_default).unwrap(),
+    ///     d1.try_added_with_options(duration, options_default).unwrap(),
     ///     Date::try_new_iso(2025, 11, 30).unwrap()
     /// );
     ///
     /// let mut options_reject = options_default.clone();
     /// options_reject.overflow = Some(Overflow::Reject);
-    /// assert!(d1.added_with_options(duration, options_reject).is_err());
+    /// assert!(d1.try_added_with_options(duration, options_reject).is_err());
     ///
     /// let mut options_constrain = options_default.clone();
     /// options_constrain.overflow = Some(Overflow::Constrain);
     /// assert_eq!(
-    ///     d1.added_with_options(duration, options_constrain).unwrap(),
+    ///     d1.try_added_with_options(duration, options_constrain).unwrap(),
     ///     Date::try_new_iso(2025, 11, 30).unwrap()
     /// );
     /// ```
@@ -133,7 +133,7 @@ pub struct DateAddOptions {
 /// Options for taking the difference between two dates.
 #[derive(Copy, Clone, PartialEq, Debug, Default)]
 #[non_exhaustive]
-pub struct DateUntilOptions {
+pub struct DateDifferenceOptions {
     /// Which date field to allow as the largest in a duration when taking the difference.
     ///
     /// When choosing [`Months`] or [`Years`], the resulting [`DateDuration`] might not be
@@ -146,28 +146,28 @@ pub struct DateUntilOptions {
     /// use icu::calendar::Date;
     /// use icu::calendar::types::DateDuration;
     /// use icu::calendar::types::DateDurationUnit;
-    /// use icu::calendar::options::DateUntilOptions;
+    /// use icu::calendar::options::DateDifferenceOptions;
     ///
     /// let d1 = Date::try_new_iso(2025, 3, 31).unwrap();
     /// let d2 = Date::try_new_iso(2026, 5, 15).unwrap();
     ///
-    /// let options_default = DateUntilOptions::default();
+    /// let options_default = DateDifferenceOptions::default();
     /// assert_eq!(
-    ///     d1.until_with_options(&d2, options_default).unwrap(),
+    ///     d1.try_until_with_options(&d2, options_default).unwrap(),
     ///     DateDuration::for_days(410)
     /// );
     ///
     /// let mut options_days = options_default.clone();
     /// options_days.largest_unit = Some(DateDurationUnit::Days);
     /// assert_eq!(
-    ///     d1.until_with_options(&d2, options_default).unwrap(),
+    ///     d1.try_until_with_options(&d2, options_default).unwrap(),
     ///     DateDuration::for_days(410)
     /// );
     ///
     /// let mut options_weeks = options_default.clone();
     /// options_weeks.largest_unit = Some(DateDurationUnit::Weeks);
     /// assert_eq!(
-    ///     d1.until_with_options(&d2, options_weeks).unwrap(),
+    ///     d1.try_until_with_options(&d2, options_weeks).unwrap(),
     ///     DateDuration {
     ///         weeks: 58,
     ///         days: 4,
@@ -178,7 +178,7 @@ pub struct DateUntilOptions {
     /// let mut options_months = options_default.clone();
     /// options_months.largest_unit = Some(DateDurationUnit::Months);
     /// assert_eq!(
-    ///     d1.until_with_options(&d2, options_months).unwrap(),
+    ///     d1.try_until_with_options(&d2, options_months).unwrap(),
     ///     DateDuration {
     ///         months: 13,
     ///         days: 15,
@@ -189,7 +189,7 @@ pub struct DateUntilOptions {
     /// let mut options_years = options_default.clone();
     /// options_years.largest_unit = Some(DateDurationUnit::Years);
     /// assert_eq!(
-    ///     d1.until_with_options(&d2, options_years).unwrap(),
+    ///     d1.try_until_with_options(&d2, options_years).unwrap(),
     ///     DateDuration {
     ///         years: 1,
     ///         months: 1,

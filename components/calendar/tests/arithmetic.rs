@@ -6,7 +6,7 @@ use std::convert::Infallible;
 
 use icu_calendar::{
     cal::Hebrew,
-    options::{DateAddOptions, DateUntilOptions, Overflow},
+    options::{DateAddOptions, DateDifferenceOptions, Overflow},
     types::{DateDuration, DateDurationUnit, MonthCode},
     AsCalendar, Calendar, Date, Iso,
 };
@@ -40,22 +40,22 @@ fn check<A>(
     exp3: &(u32, u32, u64),
 ) where
     A: AsCalendar + Copy,
-    <A as AsCalendar>::Calendar: Calendar<UntilError = Infallible>,
+    <A as AsCalendar>::Calendar: Calendar<DifferenceError = Infallible>,
     <<A as AsCalendar>::Calendar as Calendar>::DateInner: PartialOrd,
 {
     let is_negative = d0 > d1;
     let mut add_options = DateAddOptions::default();
     add_options.overflow = Some(Overflow::Constrain);
-    let mut until_options0 = DateUntilOptions::default();
+    let mut until_options0 = DateDifferenceOptions::default();
     until_options0.largest_unit = Some(DateDurationUnit::Days);
-    let mut until_options1 = DateUntilOptions::default();
+    let mut until_options1 = DateDifferenceOptions::default();
     until_options1.largest_unit = Some(DateDurationUnit::Weeks);
-    let mut until_options2 = DateUntilOptions::default();
+    let mut until_options2 = DateDifferenceOptions::default();
     until_options2.largest_unit = Some(DateDurationUnit::Months);
-    let mut until_options3 = DateUntilOptions::default();
+    let mut until_options3 = DateDifferenceOptions::default();
     until_options3.largest_unit = Some(DateDurationUnit::Years);
 
-    let Ok(p0) = d0.until_with_options(d1, until_options0);
+    let Ok(p0) = d0.try_until_with_options(d1, until_options0);
     assert_eq!(
         p0,
         DateDuration {
@@ -66,12 +66,12 @@ fn check<A>(
         "{d0:?}/{d1:?}"
     );
     assert_eq!(
-        d0.added_with_options(p0, add_options).unwrap(),
+        d0.try_added_with_options(p0, add_options).unwrap(),
         *d1,
         "{d0:?}/{d1:?}"
     );
 
-    let Ok(p1) = d0.until_with_options(d1, until_options1);
+    let Ok(p1) = d0.try_until_with_options(d1, until_options1);
     assert_eq!(
         p1,
         DateDuration {
@@ -83,12 +83,12 @@ fn check<A>(
         "{d0:?}/{d1:?}"
     );
     assert_eq!(
-        d0.added_with_options(p1, add_options).unwrap(),
+        d0.try_added_with_options(p1, add_options).unwrap(),
         *d1,
         "{d0:?}/{d1:?}"
     );
 
-    let Ok(p2) = d0.until_with_options(d1, until_options2);
+    let Ok(p2) = d0.try_until_with_options(d1, until_options2);
     assert_eq!(
         p2,
         DateDuration {
@@ -100,12 +100,12 @@ fn check<A>(
         "{d0:?}/{d1:?}"
     );
     assert_eq!(
-        d0.added_with_options(p2, add_options).unwrap(),
+        d0.try_added_with_options(p2, add_options).unwrap(),
         *d1,
         "{d0:?}/{d1:?}"
     );
 
-    let Ok(p3) = d0.until_with_options(d1, until_options3);
+    let Ok(p3) = d0.try_until_with_options(d1, until_options3);
     assert_eq!(
         p3,
         DateDuration {
@@ -118,7 +118,7 @@ fn check<A>(
         "{d0:?}/{d1:?}"
     );
     assert_eq!(
-        d0.added_with_options(p3, add_options).unwrap(),
+        d0.try_added_with_options(p3, add_options).unwrap(),
         *d1,
         "{d0:?}/{d1:?}"
     );
@@ -181,40 +181,49 @@ fn test_hebrew() {
 fn test_tricky_leap_months() {
     let mut add_options = DateAddOptions::default();
     add_options.overflow = Some(Overflow::Constrain);
-    let mut until_options = DateUntilOptions::default();
+    let mut until_options = DateDifferenceOptions::default();
     until_options.largest_unit = Some(DateDurationUnit::Years);
 
     fn hebrew_date(year: i32, month: &str, day: u8) -> Date<Hebrew> {
-        Date::try_new_from_codes(None, year, MonthCode(month.parse().unwrap()), day, Hebrew).unwrap()
+        Date::try_new_from_codes(None, year, MonthCode(month.parse().unwrap()), day, Hebrew)
+            .unwrap()
     }
 
     // M06 + 1yr = M06 (common to leap)
     let date0 = hebrew_date(5783, "M06", 20);
     let duration0 = DateDuration::for_years(1);
-    let date1 = date0.added_with_options(duration0, add_options).unwrap();
+    let date1 = date0
+        .try_added_with_options(duration0, add_options)
+        .unwrap();
     assert_eq!(date1, hebrew_date(5784, "M06", 20));
-    let duration0_actual = date0.until_with_options(&date1, until_options).unwrap();
+    let duration0_actual = date0.try_until_with_options(&date1, until_options).unwrap();
     assert_eq!(duration0_actual, duration0);
 
     // M06 - 1mo = M05L (leap to leap)
     let duration1 = DateDuration::for_months(-1);
-    let date2 = date1.added_with_options(duration1, add_options).unwrap();
+    let date2 = date1
+        .try_added_with_options(duration1, add_options)
+        .unwrap();
     assert_eq!(date2, hebrew_date(5784, "M05L", 20));
-    let duration1_actual = date1.until_with_options(&date2, until_options).unwrap();
+    let duration1_actual = date1.try_until_with_options(&date2, until_options).unwrap();
     assert_eq!(duration1_actual, duration1);
 
     // M05L + 1yr1mo = M07 (leap to common)
     let mut duration2 = DateDuration::default();
     duration2.years = 1;
     duration2.months = 1;
-    let date3 = date2.added_with_options(duration2, add_options).unwrap();
+    let date3 = date2
+        .try_added_with_options(duration2, add_options)
+        .unwrap();
     assert_eq!(date3, hebrew_date(5785, "M07", 20));
-    let duration2_actual = date2.until_with_options(&date3, until_options).unwrap();
+    let duration2_actual = date2.try_until_with_options(&date3, until_options).unwrap();
     assert_eq!(duration2_actual, duration2);
 
     // M06 + 1yr1mo = M07 (leap to common)
-    let date4 = date1.added_with_options(duration2, add_options).unwrap();
+    let date4 = date1
+        .try_added_with_options(duration2, add_options)
+        .unwrap();
     assert_eq!(date4, hebrew_date(5785, "M07", 20));
-    let duration2_actual = date1.until_with_options(&date4, until_options).unwrap();
+    let duration2_actual = date1.try_until_with_options(&date4, until_options).unwrap();
     assert_eq!(duration2_actual, duration2);
 }

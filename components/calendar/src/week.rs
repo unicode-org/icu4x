@@ -458,7 +458,7 @@ mod tests {
 
         let date = Date::try_new_iso(year, month, day)?;
         let previous_month = date
-            .added_with_options(DateDuration::for_months(-1), Default::default())
+            .try_added_with_options(DateDuration::for_months(-1), Default::default())
             .unwrap();
 
         calendar.week_of(

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::range_check_with_overflow;
-use crate::options::{DateAddOptions, DateUntilOptions};
+use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
 use crate::types::{DateDuration, DateDurationUnit, DateFields, DayOfYear, MonthCode};
 use crate::{types, Calendar, DateError, RangeError};
@@ -329,7 +329,10 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 }
 
 impl<C: CalendarArithmetic> ArithmeticDate<C> {
-    /// Implements BalanceNonISODate
+    /// Implements the Temporal abstract operation BalanceNonISODate.
+    ///
+    /// This takes a year, month, and day, where the month and day might be out of range, then
+    /// balances excess months into the year field and excess days into the month field.
     pub(crate) fn new_balanced(year: C::YearInfo, ordinal_month: i64, day: i64, cal: &C) -> Self {
         // 1. Let _resolvedYear_ be _arithmeticYear_.
         // 1. Let _resolvedMonth_ be _ordinalMonth_.
@@ -403,6 +406,11 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         Self::new_unchecked(resolved_year, resolved_month, resolved_day)
     }
 
+    /// Implements the Temporal abstract operation NonISODateSurpasses.
+    ///
+    /// This takes two dates (`self` and `other`), `duration`, and `sign` (either -1 or 1), then
+    /// returns whether adding the duration to `self` results in a year/month/day that exceeds
+    /// `other` in the direction indicated by `sign`, constraining the month but not the day.
     pub(crate) fn surpasses(
         &self,
         other: &Self,
@@ -414,7 +422,9 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         // 1. Let _y0_ be _parts_.[[Year]] + _years_.
         let y0 = cal.year_info_from_extended(duration.add_years_to(self.year.to_extended_year()));
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], ~constrain~)).
-        let base_month_code = cal.month_code_from_ordinal(&self.year, self.month).standard_code;
+        let base_month_code = cal
+            .month_code_from_ordinal(&self.year, self.month)
+            .standard_code;
         let constrain = DateFromFieldsOptions {
             overflow: Some(Overflow::Constrain),
             ..Default::default()
@@ -497,6 +507,10 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         false
     }
 
+    /// Implements the Temporal abstract operation NonISODateAdd.
+    ///
+    /// This takes a date (`self`) and `duration`, then returns a new date resulting from
+    /// adding `duration` to `self`, constrained according to `options`.
     pub(crate) fn added(
         &self,
         duration: DateDuration,
@@ -507,7 +521,9 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         // 1. Let _y0_ be _parts_.[[Year]] + _duration_.[[Years]].
         let y0 = cal.year_info_from_extended(duration.add_years_to(self.year.to_extended_year()));
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], _overflow_)).
-        let base_month_code = cal.month_code_from_ordinal(&self.year, self.month).standard_code;
+        let base_month_code = cal
+            .month_code_from_ordinal(&self.year, self.month)
+            .standard_code;
         let m0 = cal.ordinal_month_from_code(
             &y0,
             base_month_code,
@@ -546,7 +562,16 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         ))
     }
 
-    pub(crate) fn until(&self, other: &Self, cal: &C, options: DateUntilOptions) -> DateDuration {
+    /// Implements the Temporal abstract operation NonISODateUntil.
+    ///
+    /// This takes a duration (`self`) and a date (`other`), then returns a duration that, when
+    /// added to `self`, results in `other`, with largest unit according to `options`.
+    pub(crate) fn until(
+        &self,
+        other: &Self,
+        cal: &C,
+        options: DateDifferenceOptions,
+    ) -> DateDuration {
         // 1. Let _sign_ be -1 × CompareISODate(_one_, _two_).
         // 1. If _sign_ = 0, return ZeroDateDuration().
         let sign = match other.cmp(self) {

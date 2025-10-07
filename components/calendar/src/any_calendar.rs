@@ -8,7 +8,7 @@ use crate::cal::iso::IsoDateInner;
 use crate::cal::*;
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
-use crate::options::{DateAddOptions, DateUntilOptions};
+use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::{DateFields, YearInfo};
 use crate::{types, AsCalendar, Calendar, Date, Ref};
 
@@ -182,7 +182,7 @@ macro_rules! match_cal_and_date_date {
                 &AnyDateInner::HijriTabular(ref $date2_matched, sighting2),
             ) if $cal_matched.0 == sighting1 && sighting1 == sighting2 => $(wrap_to!($wrap, AnyDateInner::HijriTabular))? ($e, $(wrap_to!($wrap, sighting1))?),
             // Failure case
-            _ => return Err(AnyCalendarUntilError::MismatchedCalendars),
+            _ => return Err(AnyCalendarDifferenceError::MismatchedCalendars),
         }
     };
 }
@@ -247,7 +247,7 @@ macro_rules! match_cal {
 /// Error returned when comparing two [`Date`]s with [`AnyCalendar`].
 #[derive(Clone, Copy, PartialEq, Debug)]
 #[non_exhaustive]
-pub enum AnyCalendarUntilError {
+pub enum AnyCalendarDifferenceError {
     /// The calendars of the two dates being compared are not equal.
     ///
     /// To compare dates in different calendars, convert them to the same calendar first.
@@ -256,21 +256,21 @@ pub enum AnyCalendarUntilError {
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::calendar::cal::AnyCalendarUntilError;
+    /// use icu::calendar::cal::AnyCalendarDifferenceError;
     ///
     /// let d1 = Date::try_new_gregorian(2000, 1, 1).unwrap().to_any();
     /// let d2 = Date::try_new_hebrew(5780, 1, 1).unwrap().to_any();
     ///
     /// assert!(matches!(
-    ///     d1.until_with_options(&d2, Default::default()),
-    ///     Err(AnyCalendarUntilError::MismatchedCalendars),
+    ///     d1.try_until_with_options(&d2, Default::default()),
+    ///     Err(AnyCalendarDifferenceError::MismatchedCalendars),
     /// ));
     ///
     /// // To compare the dates, convert them to the same calendar,
     /// // such as ISO.
     ///
     /// assert!(matches!(
-    ///     d1.to_iso().until_with_options(&d2.to_iso(), Default::default()),
+    ///     d1.to_iso().try_until_with_options(&d2.to_iso(), Default::default()),
     ///     Ok(_)
     /// ));
     /// ```
@@ -281,7 +281,7 @@ impl crate::cal::scaffold::UnstableSealed for AnyCalendar {}
 impl Calendar for AnyCalendar {
     type DateInner = AnyDateInner;
     type Year = YearInfo;
-    type UntilError = AnyCalendarUntilError;
+    type DifferenceError = AnyCalendarDifferenceError;
 
     fn from_fields(
         &self,
@@ -332,10 +332,10 @@ impl Calendar for AnyCalendar {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        options: DateUntilOptions,
-    ) -> Result<types::DateDuration, Self::UntilError> {
+        options: DateDifferenceOptions,
+    ) -> Result<types::DateDuration, Self::DifferenceError> {
         let result = match_cal_and_date_date!(match (self, date1, date2): (c, d1, d2) => c.until(d1, d2, options)).0;
-        // map from Result<DateDuration, Infallible> to Result<DateDuration, Self::UntilError>
+        // map from Result<DateDuration, Infallible> to Result<DateDuration, Self::DifferenceError>
         match result {
             Ok(duration) => Ok(duration),
         }

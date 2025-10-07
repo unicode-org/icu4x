@@ -25,7 +25,7 @@ use icu_calendar::{types, AsCalendar, Calendar, Date};
 fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
     // black_box used to avoid compiler optimization.
     // Arithmetic
-    date.add_with_options(
+    date.try_add_with_options(
         types::DateDuration {
             is_negative: false,
             years: black_box(1),

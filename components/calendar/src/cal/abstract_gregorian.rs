@@ -8,7 +8,7 @@ use crate::calendar_arithmetic::{
 };
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
-use crate::options::{DateAddOptions, DateUntilOptions};
+use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::preferences::CalendarAlgorithm;
 use crate::types::EraYear;
 use crate::{types, Calendar, RangeError};
@@ -112,7 +112,7 @@ impl<Y: GregorianYears> crate::cal::scaffold::UnstableSealed for AbstractGregori
 impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     type DateInner = ArithmeticDate<AbstractGregorian<IsoEra>>;
     type Year = types::EraYear;
-    type UntilError = core::convert::Infallible;
+    type DifferenceError = core::convert::Infallible;
 
     fn from_fields(
         &self,
@@ -169,8 +169,8 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        options: DateUntilOptions,
-    ) -> Result<types::DateDuration, Self::UntilError> {
+        options: DateDifferenceOptions,
+    ) -> Result<types::DateDuration, Self::DifferenceError> {
         Ok(date1.until(date2, &AbstractGregorian(IsoEra), options))
     }
 
@@ -217,7 +217,7 @@ macro_rules! impl_with_abstract_gregorian {
         impl crate::Calendar for $cal_ty {
             type DateInner = $inner_date_ty;
             type Year = types::EraYear;
-            type UntilError = core::convert::Infallible;
+            type DifferenceError = core::convert::Infallible;
             fn from_fields(
                 &self,
                 fields: crate::types::DateFields,
@@ -285,8 +285,8 @@ macro_rules! impl_with_abstract_gregorian {
                 &self,
                 date1: &Self::DateInner,
                 date2: &Self::DateInner,
-                options: crate::options::DateUntilOptions,
-            ) -> Result<crate::types::DateDuration, Self::UntilError> {
+                options: crate::options::DateDifferenceOptions,
+            ) -> Result<crate::types::DateDuration, Self::DifferenceError> {
                 let $self_ident = self;
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
                     .until(&date1.0, &date2.0, options)

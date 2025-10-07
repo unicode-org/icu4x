@@ -8,7 +8,7 @@ use crate::cal::Coptic;
 use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
-use crate::options::{DateAddOptions, DateUntilOptions};
+use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
 use crate::{types, Calendar, Date, RangeError};
 use calendrical_calculations::rata_die::RataDie;
@@ -104,7 +104,7 @@ impl crate::cal::scaffold::UnstableSealed for Ethiopian {}
 impl Calendar for Ethiopian {
     type DateInner = EthiopianDateInner;
     type Year = types::EraYear;
-    type UntilError = core::convert::Infallible;
+    type DifferenceError = core::convert::Infallible;
 
     fn from_fields(
         &self,
@@ -161,8 +161,8 @@ impl Calendar for Ethiopian {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        options: DateUntilOptions,
-    ) -> Result<types::DateDuration, Self::UntilError> {
+        options: DateDifferenceOptions,
+    ) -> Result<types::DateDuration, Self::DifferenceError> {
         Coptic.until(&date1.0, &date2.0, options)
     }
 

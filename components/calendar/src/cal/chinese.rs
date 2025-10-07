@@ -8,7 +8,7 @@ use crate::calendar_arithmetic::{
 };
 use crate::calendar_arithmetic::{DateFieldsResolver, PrecomputedDataSource};
 use crate::error::DateError;
-use crate::options::{DateAddOptions, DateUntilOptions};
+use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::provider::chinese_based::PackedChineseBasedYearInfo;
 use crate::types::{MonthCode, MonthInfo};
@@ -588,7 +588,7 @@ impl<R: Rules> crate::cal::scaffold::UnstableSealed for LunarChinese<R> {}
 impl<R: Rules> Calendar for LunarChinese<R> {
     type DateInner = ChineseDateInner<R>;
     type Year = types::CyclicYear;
-    type UntilError = core::convert::Infallible;
+    type DifferenceError = core::convert::Infallible;
 
     fn from_fields(
         &self,
@@ -664,8 +664,8 @@ impl<R: Rules> Calendar for LunarChinese<R> {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        options: DateUntilOptions,
-    ) -> Result<types::DateDuration, Self::UntilError> {
+        options: DateDifferenceOptions,
+    ) -> Result<types::DateDuration, Self::DifferenceError> {
         Ok(date1.0.until(&date2.0, self, options))
     }
 

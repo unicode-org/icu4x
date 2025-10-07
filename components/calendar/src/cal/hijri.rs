@@ -8,7 +8,7 @@ use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
 use crate::calendar_arithmetic::{PrecomputedDataSource, ToExtendedYear};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
-use crate::options::{DateAddOptions, DateUntilOptions};
+use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::provider::hijri::PackedHijriYearInfo;
 use crate::types::DateFields;
 use crate::{types, Calendar, Date};
@@ -709,7 +709,7 @@ impl<R: Rules> crate::cal::scaffold::UnstableSealed for Hijri<R> {}
 impl<R: Rules> Calendar for Hijri<R> {
     type DateInner = HijriDateInner<R>;
     type Year = types::EraYear;
-    type UntilError = core::convert::Infallible;
+    type DifferenceError = core::convert::Infallible;
 
     fn from_fields(
         &self,
@@ -784,8 +784,8 @@ impl<R: Rules> Calendar for Hijri<R> {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        options: DateUntilOptions,
-    ) -> Result<types::DateDuration, Self::UntilError> {
+        options: DateDifferenceOptions,
+    ) -> Result<types::DateDuration, Self::DifferenceError> {
         Ok(date1.0.until(&date2.0, self, options))
     }
 

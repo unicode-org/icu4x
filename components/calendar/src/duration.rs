@@ -15,7 +15,7 @@
 ///
 /// ```rust
 /// use icu::calendar::types::Weekday;
-/// use icu::calendar::options::DateUntilOptions;
+/// use icu::calendar::options::DateDifferenceOptions;
 /// use icu::calendar::Date;
 /// use icu::calendar::types::DateDuration;
 /// use icu::calendar::types::DateDurationUnit;
@@ -34,7 +34,7 @@
 /// assert_eq!(date_iso.days_in_month(), 30);
 ///
 /// // Advancing date in-place by 1 year, 2 months, 3 weeks, 4 days.
-/// date_iso.add_with_options(DateDuration {
+/// date_iso.try_add_with_options(DateDuration {
 ///     is_negative: false,
 ///     years: 1,
 ///     months: 2,
@@ -46,7 +46,7 @@
 /// assert_eq!(date_iso.day_of_month().0, 27);
 ///
 /// // Reverse date advancement.
-/// date_iso.add_with_options(DateDuration {
+/// date_iso.try_add_with_options(DateDuration {
 ///     is_negative: true,
 ///     years: 1,
 ///     months: 2,
@@ -62,9 +62,9 @@
 ///     .expect("Failed to initialize ISO Date instance.");
 ///
 /// // Comparing dates: 2022-01-30 and 1992-09-02.
-/// let mut options = DateUntilOptions::default();
+/// let mut options = DateDifferenceOptions::default();
 /// options.largest_unit = Some(DateDurationUnit::Years);
-/// let Ok(duration) = newer_date_iso.until_with_options(
+/// let Ok(duration) = newer_date_iso.try_until_with_options(
 ///     &date_iso,
 ///     options,
 /// );
@@ -73,7 +73,7 @@
 /// assert_eq!(duration.days, 28);
 ///
 /// // Create new date with date advancement. Reassign to new variable.
-/// let mutated_date_iso = date_iso.added_with_options(DateDuration {
+/// let mutated_date_iso = date_iso.try_added_with_options(DateDuration {
 ///     is_negative: false,
 ///     years: 1,
 ///     months: 2,

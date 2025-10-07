@@ -7,7 +7,7 @@ use crate::cal::{abstract_gregorian::AbstractGregorian, iso::IsoEra};
 use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
-use crate::options::{DateAddOptions, DateUntilOptions};
+use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::{CyclicYear, EraYear, IsoWeekOfYear};
 use crate::week::{RelativeUnit, WeekCalculator, WeekOf};
 use crate::{types, Calendar, Iso};
@@ -240,7 +240,7 @@ impl<A: AsCalendar> Date<A> {
     /// Add a `duration` to this date, mutating it
     #[doc(hidden)] // unstable
     #[inline]
-    pub fn add_with_options(
+    pub fn try_add_with_options(
         &mut self,
         duration: types::DateDuration,
         options: DateAddOptions,
@@ -256,12 +256,12 @@ impl<A: AsCalendar> Date<A> {
     /// Add a `duration` to this date, returning the new one
     #[doc(hidden)] // unstable
     #[inline]
-    pub fn added_with_options(
+    pub fn try_added_with_options(
         mut self,
         duration: types::DateDuration,
         options: DateAddOptions,
     ) -> Result<Self, DateError> {
-        self.add_with_options(duration, options)?;
+        self.try_add_with_options(duration, options)?;
         Ok(self)
     }
 
@@ -283,7 +283,7 @@ impl<A: AsCalendar> Date<A> {
     /// let options = Default::default();
     ///
     /// // The value can be unwrapped with destructuring syntax:
-    /// let Ok(duration) = d1.until_with_options(&d2, options);
+    /// let Ok(duration) = d1.try_until_with_options(&d2, options);
     ///
     /// assert_eq!(duration, DateDuration::for_days(2101));
     /// ```
@@ -292,11 +292,11 @@ impl<A: AsCalendar> Date<A> {
     /// [pattern matching]: https://doc.rust-lang.org/book/ch19-03-pattern-syntax.html
     #[doc(hidden)] // unstable
     #[inline]
-    pub fn until_with_options<B: AsCalendar<Calendar = A::Calendar>>(
+    pub fn try_until_with_options<B: AsCalendar<Calendar = A::Calendar>>(
         &self,
         other: &Date<B>,
-        options: DateUntilOptions,
-    ) -> Result<types::DateDuration, <A::Calendar as Calendar>::UntilError> {
+        options: DateDifferenceOptions,
+    ) -> Result<types::DateDuration, <A::Calendar as Calendar>::DifferenceError> {
         self.calendar
             .as_calendar()
             .until(self.inner(), other.inner(), options)
