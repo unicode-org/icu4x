@@ -414,7 +414,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         // 1. Let _y0_ be _parts_.[[Year]] + _years_.
         let y0 = cal.year_info_from_extended(duration.add_years_to(self.year.to_extended_year()));
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], ~constrain~)).
-        let base_month_code = cal.month_code_from_ordinal(&y0, self.month).standard_code;
+        let base_month_code = cal.month_code_from_ordinal(&self.year, self.month).standard_code;
         let constrain = DateFromFieldsOptions {
             overflow: Some(Overflow::Constrain),
             ..Default::default()
@@ -507,7 +507,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         // 1. Let _y0_ be _parts_.[[Year]] + _duration_.[[Years]].
         let y0 = cal.year_info_from_extended(duration.add_years_to(self.year.to_extended_year()));
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], _overflow_)).
-        let base_month_code = cal.month_code_from_ordinal(&y0, self.month).standard_code;
+        let base_month_code = cal.month_code_from_ordinal(&self.year, self.month).standard_code;
         let m0 = cal.ordinal_month_from_code(
             &y0,
             base_month_code,

@@ -44,7 +44,8 @@ fn check<A>(
     <<A as AsCalendar>::Calendar as Calendar>::DateInner: PartialOrd,
 {
     let is_negative = d0 > d1;
-    let add_options = DateAddOptions::default();
+    let mut add_options = DateAddOptions::default();
+    add_options.overflow = Some(Overflow::Constrain);
     let mut until_options0 = DateUntilOptions::default();
     until_options0.largest_unit = Some(DateDurationUnit::Days);
     let mut until_options1 = DateUntilOptions::default();
@@ -146,10 +147,10 @@ fn test_hebrew() {
     #[allow(clippy::type_complexity)]
     let cases: &[(&Date<Hebrew>, &Date<Hebrew>, u64, (u32, u64), (u32, u64), (u32, u32, u64))] = &[
         (&m06z_20, &m05l_15, 348, (49, 5), (11, 25), (0, 11, 25)),
-        // (&m06z_20, &m05l_30, 363, (51, 6), (12, 10), (0, 12, 10)), // TODO
-        // (&m06z_20, &m06a_29, 392, (56, 0), (13, 9),  (1, 0, 9)), // TODO
-        // (&m06z_20, &m07a_10, 402, (57, 3), (13, 19), (1, 0, 19)), // TODO
-        // (&m06z_20, &m06b_15, 733, (104,5), (24, 25), (1, 11, 25)), // TODO
+        (&m06z_20, &m05l_30, 363, (51, 6), (12, 10), (0, 12, 10)),
+        (&m06z_20, &m06a_29, 392, (56, 0), (13, 9),  (1, 0, 9)),
+        (&m06z_20, &m07a_10, 402, (57, 3), (13, 19), (1, 0, 19)),
+        (&m06z_20, &m06b_15, 733, (104,5), (24, 25), (1, 11, 25)),
         (&m06z_20, &m07b_20, 767, (109,4), (26, 0),  (2, 1, 0)),
 
         (&m05l_15, &m05l_30, 15,  (2, 1),  (0, 15),  (0, 0, 15)),
@@ -165,11 +166,9 @@ fn test_hebrew() {
 
         (&m06a_29, &m07a_10, 10,  (1, 3),  (0, 10),  (0, 0, 10)),
         (&m06a_29, &m06b_15, 341, (48, 5), (11, 16), (0, 11, 16)), // M06 leap year to M06 common year
-        // (&m06a_29, &m07b_20, 375, (53, 4), (12, 20), (1, 0, 20)), // M06 leap year to M07 common year // TODO
-
+        (&m06a_29, &m07b_20, 375, (53, 4), (12, 20), (1, 0, 20)), // M06 leap year to M07 common year
         (&m07a_10, &m06b_15, 331, (47, 2), (11, 5),  (0, 11, 5)), // M07 leap year to M06 common year
-        // (&m07a_10, &m07b_20, 365, (52, 1), (12, 10), (1, 0, 10)), // M07 leap year to M06 common year // TODO
-
+        (&m07a_10, &m07b_20, 365, (52, 1), (12, 10), (1, 0, 10)), // M07 leap year to M06 common year
         (&m06b_15, &m07b_20, 34,  (4, 6), (1, 5),   (0, 1, 5)),
     ];
 
