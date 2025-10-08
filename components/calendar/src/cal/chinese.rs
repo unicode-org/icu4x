@@ -1175,7 +1175,9 @@ impl LunarChineseYearData {
         let mut had_leap_in_sui = false;
 
         // Skip the months before the year (M11, maybe M11L, M12, maybe M12L)
-        while solar_term < 0 || next_new_moon.rata_die <= major_solar_term.rata_die {
+        while solar_term < 0
+            || (next_new_moon.rata_die <= major_solar_term.rata_die && !had_leap_in_sui)
+        {
             if next_new_moon.rata_die <= major_solar_term.rata_die && !had_leap_in_sui {
                 had_leap_in_sui = true;
             } else {
