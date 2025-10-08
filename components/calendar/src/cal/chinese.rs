@@ -101,13 +101,26 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
     /// Returns data about the given year.
     fn year_data(&self, related_iso: i32) -> LunarChineseYearData;
 
-    // TODO: Bikshed this function. Is this the right level of abstraction?
-    /// Returns the year data for the given month and day.
-    fn reference_year_from_month_day(
+    /// Returns an ECMA reference year that contains the given month-day combination.
+    ///
+    /// If the day is out of range, it will return a year that contains the given month
+    /// and the maximum day possible for that month. See [the spec][spec] for the
+    /// precise algorithm used.
+    ///
+    /// This API only matters when using [`MissingFieldsStrategy::Ecma`] to compute
+    /// a date without providing a year in [`Date::try_from_fields()`]. The default impl
+    /// will just error, and custom calendars who do not care about ECMA/Temporal
+    /// reference years do not need to override this.
+    ///
+    /// [spec]: https://tc39.es/proposal-temporal/#sec-temporal-nonisomonthdaytoisoreferencedate
+    /// [`MissingFieldsStrategy::Ecma`]: crate::options::MissingFieldsStrategy::Ecma
+    fn ecma_reference_year(
         &self,
-        month_code: types::MonthCode,
-        day: u8,
-    ) -> Result<LunarChineseYearData, DateError>;
+        _month_code: types::MonthCode,
+        _day: u8,
+    ) -> Result<i32, DateError> {
+        Err(DateError::NotEnoughFields)
+    }
 
     /// The debug name for the calendar defined by these [`Rules`].
     fn debug_name(&self) -> &'static str {
@@ -192,16 +205,12 @@ impl Rules for China {
         }
     }
 
-    fn reference_year_from_month_day(
-        &self,
-        month_code: types::MonthCode,
-        day: u8,
-    ) -> Result<LunarChineseYearData, DateError> {
+    fn ecma_reference_year(&self, month_code: types::MonthCode, day: u8) -> Result<i32, DateError> {
         let Some((number, is_leap)) = month_code.parsed() else {
             return Err(DateError::UnknownMonthCode(month_code));
         };
         // Computed by `generate_reference_years`
-        let extended = match (number, is_leap, day > 29) {
+        Ok(match (number, is_leap, day > 29) {
             (1, false, false) => 1972,
             (1, false, true) => 1970,
             (1, true, false) => 1898,
@@ -254,8 +263,7 @@ impl Rules for China {
             (12, true, false) => 1878,
             (12, true, true) => 1783,
             _ => return Err(DateError::UnknownMonthCode(month_code)),
-        };
-        Ok(self.year_data(extended))
+        })
     }
 
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
@@ -384,16 +392,12 @@ impl Rules for Korea {
         }
     }
 
-    fn reference_year_from_month_day(
-        &self,
-        month_code: types::MonthCode,
-        day: u8,
-    ) -> Result<LunarChineseYearData, DateError> {
+    fn ecma_reference_year(&self, month_code: types::MonthCode, day: u8) -> Result<i32, DateError> {
         let Some((number, is_leap)) = month_code.parsed() else {
             return Err(DateError::UnknownMonthCode(month_code));
         };
         // Computed by `generate_reference_years`
-        let extended = match (number, is_leap, day > 29) {
+        Ok(match (number, is_leap, day > 29) {
             (1, false, false) => 1972,
             (1, false, true) => 1970,
             (1, true, false) => 1898,
@@ -446,8 +450,7 @@ impl Rules for Korea {
             (12, true, false) => 1878,
             (12, true, true) => 1783,
             _ => return Err(DateError::UnknownMonthCode(month_code)),
-        };
-        Ok(self.year_data(extended))
+        })
     }
 
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
@@ -577,7 +580,9 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, DateError> {
-        self.0.reference_year_from_month_day(month_code, day)
+        Ok(self
+            .0
+            .year_data(self.0.ecma_reference_year(month_code, day)?))
     }
 
     fn ordinal_month_from_code(
@@ -1219,6 +1224,7 @@ mod test {
     use crate::types::DateFields;
     use crate::types::MonthCode;
     use calendrical_calculations::{gregorian::fixed_from_gregorian, rata_die::RataDie};
+    use std::collections::BTreeMap;
     use tinystr::tinystr;
 
     #[test]
@@ -2555,6 +2561,58 @@ mod test {
                     gregorian,
                     chinese.to_calendar(Gregorian),
                     "{line}, {chinese:?}"
+                );
+            }
+        }
+    }
+
+    #[test]
+    #[ignore] // network
+    fn test_against_kasi_data() {
+        use crate::{
+            cal::{Gregorian, LunarChinese},
+            types::MonthCode,
+            Date,
+        };
+
+        // TODO: query KASI directly
+        let uri = "https://gist.githubusercontent.com/Manishearth/d8c94a7df22a9eacefc4472a5805322e/raw/e1ea3b0aa52428686bb3a9cd0f262878515e16c1/resolved.json";
+
+        #[derive(serde::Deserialize)]
+        struct Golden(BTreeMap<i32, BTreeMap<MonthCode, MonthData>>);
+
+        #[derive(serde::Deserialize)]
+        struct MonthData {
+            start_date: String,
+        }
+
+        let json = ureq::get(uri)
+            .call()
+            .unwrap()
+            .body_mut()
+            .read_to_string()
+            .unwrap();
+
+        let golden = serde_json::from_str::<Golden>(&json).unwrap();
+
+        for (&year, months) in &golden.0 {
+            if year == 1899 || year == 2050 {
+                continue;
+            }
+            for (&month, month_data) in months {
+                let mut gregorian = month_data.start_date.split('-');
+                let gregorian = Date::try_new_gregorian(
+                    gregorian.next().unwrap().parse().unwrap(),
+                    gregorian.next().unwrap().parse().unwrap(),
+                    gregorian.next().unwrap().parse().unwrap(),
+                )
+                .unwrap();
+
+                assert_eq!(
+                    Date::try_new_from_codes(None, year, month, 1, LunarChinese::new_korea())
+                        .unwrap()
+                        .to_calendar(Gregorian),
+                    gregorian
                 );
             }
         }

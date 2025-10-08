@@ -753,6 +753,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// More specifically, panics if [`ZeroVec::try_into_converted()`] panics when converting
     /// `ZeroVec<T>` into `ZeroVec<P>`, which happens if `T::ULE` and `P::ULE` differ in size.
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Examples
     ///
     /// ```no_run
@@ -792,6 +794,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     ///
     /// If the old and new types are the same size, use the more efficient
     /// [`CodePointTrie::try_into_converted`].
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -1284,6 +1288,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
 
     /// Returns a [`CodePointInversionList`] for the code points that have the given
     /// [`TrieValue`] in the trie.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///

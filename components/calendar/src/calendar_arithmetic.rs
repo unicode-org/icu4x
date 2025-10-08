@@ -383,18 +383,19 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         options: DateFromFieldsOptions,
     ) -> Result<Self, RangeError> {
         let ArithmeticDateBuilder { year, month, day } = builder;
+        let constrained_month = range_check_with_overflow(
+            month,
+            "month",
+            1..=C::months_in_provided_year(year),
+            options.overflow.unwrap_or_default(),
+        )?;
         Ok(Self::new_unchecked(
             year,
-            range_check_with_overflow(
-                month,
-                "month",
-                1..=C::months_in_provided_year(year),
-                options.overflow.unwrap_or_default(),
-            )?,
+            constrained_month,
             range_check_with_overflow(
                 day,
                 "day",
-                1..=C::days_in_provided_month(year, month),
+                1..=C::days_in_provided_month(year, constrained_month),
                 options.overflow.unwrap_or_default(),
             )?,
         ))

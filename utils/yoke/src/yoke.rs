@@ -1482,7 +1482,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         // Safety: safe because the cart is preserved, as it is just wrapped
         unsafe { self.replace_cart(Rc::new) }
     }
-    /// Helper function allowing one to wrap the cart type `C` in an `Rc<T>`.
+    /// Helper function allowing one to wrap the cart type `C` in an `Arc<T>`.
     /// Can be paired with [`Yoke::erase_arc_cart()`], or generally used
     /// to make the [`Yoke`] cloneable.
     ///

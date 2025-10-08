@@ -130,6 +130,8 @@ impl Value {
 
     /// Appends a subtag to the back of a [`Value`].
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Examples
     ///
     /// ```
@@ -245,6 +247,7 @@ impl Value {
 
     /// A constructor which takes a pre-sorted list of [`Value`] elements.
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -300,6 +303,7 @@ impl IntoIterator for Value {
     }
 }
 
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 #[cfg(feature = "alloc")]
 impl FromIterator<Subtag> for Value {
     fn from_iter<T: IntoIterator<Item = Subtag>>(iter: T) -> Self {
@@ -307,6 +311,7 @@ impl FromIterator<Subtag> for Value {
     }
 }
 
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 #[cfg(feature = "alloc")]
 impl Extend<Subtag> for Value {
     fn extend<T: IntoIterator<Item = Subtag>>(&mut self, iter: T) {
@@ -316,6 +321,7 @@ impl Extend<Subtag> for Value {
     }
 }
 
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 #[cfg(feature = "alloc")]
 impl FromStr for Value {
     type Err = ParseError;

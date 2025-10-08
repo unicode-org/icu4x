@@ -233,11 +233,6 @@ fn test_reference_year_hijri_tabular_type_ii_friday() {
 }
 
 #[test]
-fn test_reference_year_hijri_simulated_mecca() {
-    test_reference_year_impl(Hijri::new_simulated_mecca(), hijri_md_condition)
-}
-
-#[test]
 fn test_reference_year_hijri_tabular_type_ii_thursday() {
     test_reference_year_impl(
         Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday),

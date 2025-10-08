@@ -4,7 +4,7 @@
 
 Data for the `icu_plurals` crate
 
-This data was generated with CLDR version 48.0.0-BETA1, ICU version icu4x/2025-05-21/77.x, and
+This data was generated with CLDR version 48.0.0-BETA2, ICU version icu4x/2025-05-21/77.x, and
 LSTM segmenter version v0.1.0.
 
 <!-- cargo-rdme end -->

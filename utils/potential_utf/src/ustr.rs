@@ -71,6 +71,8 @@ impl PotentialUtf8 {
     }
 
     /// Create a [`PotentialUtf8`] from boxed bytes.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[inline]
     #[cfg(feature = "alloc")]
     pub fn from_boxed_bytes(other: Box<[u8]>) -> Box<Self> {
@@ -79,6 +81,8 @@ impl PotentialUtf8 {
     }
 
     /// Create a [`PotentialUtf8`] from a boxed `str`.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[inline]
     #[cfg(feature = "alloc")]
     pub fn from_boxed_str(other: Box<str>) -> Box<Self> {
