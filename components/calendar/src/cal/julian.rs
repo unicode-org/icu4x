@@ -13,13 +13,44 @@ use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
-/// The [Julian Calendar]
+/// The [Julian Calendar](https://en.wikipedia.org/wiki/Julian_calendar).
 ///
-/// The [Julian calendar] is a solar calendar that was used commonly historically, with twelve months.
+/// The Julian calendar is a solar calendar that was introduced in the Roman Republic under
+/// Julius Caesar in 45 BCE, and used in Europe and much of the western world until it was
+/// eventually replaced by the more accurate [`Gregorian`](super::Gregorian) calendar.
 ///
-/// This type can be used with [`Date`] to represent dates in this calendar.
+/// While no country uses the Julian calendar as its civil calendar today, it is still
+/// used by eastern Christian churches to determine lithurgical dates like Christmas and
+/// Easter.
 ///
-/// [Julian calendar]: https://en.wikipedia.org/wiki/Julian_calendar
+/// The Julian calendar has an average year length of 365.25, slightly longer than
+/// the mean siderial year, so this calendar drifts 1 day in ~128 years with
+/// respect to the seasons. This significant drift was the reason for its replacement
+/// by the Gregorian calendar. The Julian calendar is currently 14 days ahead of the
+/// Gregorian calendar and the solar year.
+///
+/// # Historical accuracy
+///
+/// Historically, a variety of year reckoning schemes have been used with the Julian
+/// calendar, such as Roman consular years, regnal years, [indictions](
+/// https://en.wikipedia.org/wiki/Indiction), [Anno Mundi](
+/// https://en.wikipedia.org/wiki/Anno_Mundi#Byzantine_era), the [Diocletian era](
+/// https://en.wikipedia.org/wiki/Era_of_the_Martyrs), [Anno Domini](
+/// https://en.wikipedia.org/wiki/Anno_Domini), and the (equivalent) [Common era](
+/// https://en.wikipedia.org/wiki/Common_Era).
+/// The latter, which is used today and by this implementation, has been used by
+/// western European authorities since the early middle ages, however some eastern
+/// European countries/churches have not adopted it until fairly recently, or, in
+/// some cases, are still using a different year reckoning scheme.
+///
+/// Also during the middle ages, [some countries](https://en.wikipedia.org/wiki/New_Year#Historical_European_new_year_dates)
+/// used different dates for the first day of the year, ranging from late December to
+/// late March. Care has to be taken when interpreting year numbers with dates in this
+/// range.
+///
+/// The calendar was used [incorrectly](https://en.wikipedia.org/wiki/Julian_calendar#Leap_year_error)
+/// for a while after adoption, so the first year where the months align with this proleptic
+/// implementation is probably 4 CE.
 ///
 /// # Era codes
 ///
