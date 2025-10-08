@@ -70,6 +70,8 @@ impl PackedChineseBasedYearInfo {
     ///
     /// According to Reingold & Dershowitz, ch 19.6, Chinese New Year occurs on Jan 21 - Feb 21 inclusive.
     ///
+    /// Our simple approximation sometimes returns Feb 22.
+    ///
     /// We allow it to occur as early as January 19 which is the earliest the second new moon
     /// could occur after the Winter Solstice if the solstice is pinned to December 20.
     const fn earliest_ny(related_iso: i32) -> RataDie {
@@ -108,10 +110,10 @@ impl PackedChineseBasedYearInfo {
             ny_offset >= 0 || out_of_valid_astronomical_range,
             "Year offset too small to store"
         );
-        // The maximum new-year's offset we have found is 33
+        // The maximum new-year's offset we have found is 34
         #[cfg(debug_assertions)]
         debug_assert!(
-            ny_offset < 34 || out_of_valid_astronomical_range,
+            ny_offset < 35 || out_of_valid_astronomical_range,
             "Year offset too big to store"
         );
 
