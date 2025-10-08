@@ -39,8 +39,8 @@ use crate::provider::CollationMetadataV1;
 use crate::provider::CollationReordering;
 use crate::provider::CollationReorderingV1;
 use crate::provider::CollationRootV1;
-use crate::provider::CollationSpecialPrimaries;
 use crate::provider::CollationSpecialPrimariesV1;
+use crate::provider::CollationSpecialPrimariesValidated;
 use crate::provider::CollationTailoringV1;
 use core::cmp::Ordering;
 use core::convert::{Infallible, TryFrom};
@@ -50,6 +50,7 @@ use icu_normalizer::provider::NormalizerNfdDataV1;
 use icu_normalizer::provider::NormalizerNfdTablesV1;
 use icu_normalizer::DecomposingNormalizerBorrowed;
 use icu_normalizer::Decomposition;
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
 use utf16_iter::Utf16CharsEx;
@@ -550,7 +551,7 @@ impl LocaleSpecificDataHolder {
 /// Compares strings according to culturally-relevant ordering.
 #[derive(Debug)]
 pub struct Collator {
-    special_primaries: DataPayload<CollationSpecialPrimariesV1>,
+    special_primaries: DataPayload<ErasedMarker<CollationSpecialPrimariesValidated<'static>>>,
     root: DataPayload<CollationRootV1>,
     tailoring: Option<DataPayload<CollationTailoringV1>>,
     jamo: DataPayload<CollationJamoV1>,
@@ -660,6 +661,28 @@ impl Collator {
         if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {
             return Err(DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO));
         }
+        let special_primaries = special_primaries.map_project(|csp, _| {
+            let compressible_bytes = (csp.last_primaries.len()
+                == MaxVariable::Currency as usize + 16)
+                .then(|| {
+                    csp.last_primaries
+                        .as_maybe_borrowed()?
+                        .as_ule_slice()
+                        .get((MaxVariable::Currency as usize)..)?
+                        .try_into()
+                        .ok()
+                })
+                .flatten()
+                .unwrap_or(
+                    CollationSpecialPrimariesValidated::HARDCODED_COMPRESSIBLE_BYTES_FALLBACK,
+                );
+
+            CollationSpecialPrimariesValidated {
+                last_primaries: csp.last_primaries.truncated(MaxVariable::Currency as usize),
+                numeric_primary: csp.numeric_primary,
+                compressible_bytes,
+            }
+        });
 
         Ok(Collator {
             special_primaries,
@@ -706,7 +729,7 @@ macro_rules! compare {
 /// borrowed version.
 #[derive(Debug)]
 pub struct CollatorBorrowed<'a> {
-    special_primaries: &'a CollationSpecialPrimaries<'a>,
+    special_primaries: &'a CollationSpecialPrimariesValidated<'a>,
     root: &'a CollationData<'a>,
     tailoring: Option<&'a CollationData<'a>>,
     jamo: &'a CollationJamo<'a>,
@@ -746,7 +769,6 @@ impl CollatorBorrowed<'static> {
                 == JAMO_COUNT
         );
 
-        let special_primaries = crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1;
         // `variant_count` isn't stable yet:
         // https://github.com/rust-lang/rust/issues/73662
         const _: () = assert!(
@@ -756,6 +778,53 @@ impl CollatorBorrowed<'static> {
                 .len()
                 > (MaxVariable::Currency as usize)
         );
+
+        let special_primaries = const {
+            &CollationSpecialPrimariesValidated {
+                last_primaries: zerovec::ZeroSlice::from_ule_slice(
+                    crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
+                        .last_primaries
+                        .as_slice()
+                        .as_ule_slice()
+                        .split_at(MaxVariable::Currency as usize)
+                        .0,
+                )
+                .as_zerovec(),
+                numeric_primary: crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
+                    .numeric_primary,
+                compressible_bytes: {
+                    const C: &[<u16 as AsULE>::ULE] =
+                        crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1
+                            .last_primaries
+                            .as_slice()
+                            .as_ule_slice();
+                    if C.len() == MaxVariable::Currency as usize + 16 {
+                        let i = MaxVariable::Currency as usize;
+                        #[allow(clippy::indexing_slicing)] // protected, const
+                        &[
+                            C[i],
+                            C[i + 1],
+                            C[i + 2],
+                            C[i + 3],
+                            C[i + 4],
+                            C[i + 5],
+                            C[i + 6],
+                            C[i + 7],
+                            C[i + 8],
+                            C[i + 9],
+                            C[i + 10],
+                            C[i + 11],
+                            C[i + 12],
+                            C[i + 13],
+                            C[i + 14],
+                            C[i + 15],
+                        ]
+                    } else {
+                        CollationSpecialPrimariesValidated::HARDCODED_COMPRESSIBLE_BYTES_FALLBACK
+                    }
+                },
+            }
+        };
 
         // Attribute belongs closer to `unwrap`, but
         // https://github.com/rust-lang/rust/issues/15701

@@ -21,7 +21,7 @@
 use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
-use zerovec::ule::AsULE;
+use zerovec::ule::{AsULE, RawBytesULE};
 use zerovec::ZeroVec;
 use zerovec::{zeroslice, ZeroSlice};
 
@@ -566,25 +566,38 @@ pub struct CollationSpecialPrimaries<'data> {
     pub numeric_primary: u8,
 }
 
-impl<'a> CollationSpecialPrimaries<'a> {
-    const HARDCODED_FALLBACK: [u16; 16] = [
-        // Compressible bytes
-        0b0000_0000_0000_0000,
-        0b0000_0000_0000_0000,
-        0b0000_0000_0000_0000,
-        0b0000_0000_0000_0000,
-        0b0000_0000_0000_0000,
-        0b0000_0000_0000_0000,
-        0b1111_1111_1111_1110,
-        0b1111_1111_1111_1111,
-        0b0000_0000_0000_0001,
-        0b0000_0000_0000_0000,
-        0b0000_0000_0000_0000,
-        0b0000_0000_0000_0000,
-        0b0000_0000_0000_0000,
-        0b0000_0000_0000_0000,
-        0b0000_0000_0000_0000,
-        0b0100_0000_0000_0000,
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+pub(crate) struct CollationSpecialPrimariesValidated<'data> {
+    /// The primaries corresponding to `MaxVariable`
+    /// character classes packed so that each fits in
+    /// 16 bits. Length must match the number of enum
+    /// variants in `MaxVariable`, currently 4.
+    pub last_primaries: ZeroVec<'data, u16>,
+    /// The high 8 bits of the numeric primary
+    pub numeric_primary: u8,
+    /// 256 bits (packed in 16 u16s) to classify every possible
+    /// byte into compressible or non-compressible.
+    pub compressible_bytes: &'data [<u16 as AsULE>::ULE; 16],
+}
+
+impl CollationSpecialPrimariesValidated<'static> {
+    pub(crate) const HARDCODED_COMPRESSIBLE_BYTES_FALLBACK: &'static [<u16 as AsULE>::ULE; 16] = &[
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b1111_1111_1111_1110u16.to_le_bytes()),
+        RawBytesULE(0b1111_1111_1111_1111u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0001u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0100_0000_0000_0000u16.to_le_bytes()),
     ];
 }
 
@@ -593,7 +606,7 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
-impl CollationSpecialPrimaries<'_> {
+impl CollationSpecialPrimariesValidated<'_> {
     #[expect(clippy::unwrap_used)]
     pub(crate) fn last_primary_for_group(&self, max_variable: MaxVariable) -> u32 {
         // `unwrap` is OK, because `Collator::try_new` validates the length.
@@ -609,10 +622,7 @@ impl CollationSpecialPrimaries<'_> {
         // into Compiler Explorer shows that the panic
         // is optimized away.
         #[expect(clippy::indexing_slicing)]
-        let field = self
-            .last_primaries
-            .get(MaxVariable::Currency as usize + usize::from(b >> 4))
-            .unwrap_or_else(|| CollationSpecialPrimaries::HARDCODED_FALLBACK[usize::from(b >> 4)]);
+        let field = u16::from_unaligned(self.compressible_bytes[usize::from(b >> 4)]);
         let mask = 1 << (b & 0b1111);
         (field & mask) != 0
     }
