@@ -386,6 +386,8 @@ version = "1.2.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8691782945451c1c383942c4874dbe63814f61cb57ef773cda2972682b7bb3c0"
 dependencies = [
+ "jobserver",
+ "libc",
  "shlex",
 ]
 
@@ -1214,6 +1216,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_calendar-fuzz"
+version = "0.0.0"
+dependencies = [
+ "arbitrary",
+ "icu_calendar",
+ "libfuzzer-sys",
+]
+
+[[package]]
 name = "icu_calendar_data"
 version = "2.0.0"
 
@@ -1921,6 +1932,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c1283705eb0a21404d2bfd6eef2a7593d240bc42a0bdb39db0ad6fa2ec026524"
 
 [[package]]
+name = "jobserver"
+version = "0.1.34"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9afb3de4395d6b3e67a780b6de64b51c978ecf11cb9a462c66be7d4ca9039d33"
+dependencies = [
+ "getrandom 0.3.2",
+ "libc",
+]
+
+[[package]]
 name = "js-sys"
 version = "0.3.77"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1953,6 +1974,16 @@ name = "libc_alloc"
 version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7581282928bc99698341d1de7590964c28db747c164eaac9409432a3eaed098a"
+
+[[package]]
+name = "libfuzzer-sys"
+version = "0.4.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5037190e1f70cbeef565bd267599242926f724d3b8a9f510fd7e0b540cfa4404"
+dependencies = [
+ "arbitrary",
+ "cc",
+]
 
 [[package]]
 name = "libm"

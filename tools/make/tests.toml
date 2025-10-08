@@ -38,7 +38,7 @@ category = "ICU4X Development"
 # env = { RUSTFLAGS = "-Cdebuginfo=none -Cdebug-assertions=true", condition = { platforms = ["windows"] } }
 env = { RUSTFLAGS = "--cfg=icu4x_run_size_tests" }
 command = "cargo"
-args = ["test", "--all-features", "--all-targets", "--no-fail-fast"]
+args = ["test", "--all-features", "--all-targets", "--no-fail-fast", "--exclude", "icu_calendar-fuzz"]
 
 [tasks.test-dev-without-assertions]
 description = "Run all Rust unit and integration tests without debug assertions (GIGO mode)"
