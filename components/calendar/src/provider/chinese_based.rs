@@ -13,6 +13,8 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::cal::chinese::LunarChineseYearData;
+#[cfg(debug_assertions)]
+use calendrical_calculations::chinese_based::WELL_BEHAVED_ASTRONOMICAL_RANGE;
 use calendrical_calculations::rata_die::RataDie;
 use icu_provider::prelude::*;
 
@@ -96,11 +98,24 @@ impl PackedChineseBasedYearInfo {
 
         let ny_offset = new_year.since(Self::earliest_ny(related_iso));
 
+        #[cfg(debug_assertions)]
+        let out_of_valid_astronomical_range = WELL_BEHAVED_ASTRONOMICAL_RANGE.start.to_i64_date()
+            > new_year.to_i64_date()
+            || new_year.to_i64_date() > WELL_BEHAVED_ASTRONOMICAL_RANGE.end.to_i64_date();
+
         // Assert the offset is in range, but allow it to be out of
         // range when out_of_valid_astronomical_range=true
-        debug_assert!(ny_offset >= 0, "Year offset too small to store");
+        #[cfg(debug_assertions)]
+        debug_assert!(
+            ny_offset >= 0 || out_of_valid_astronomical_range,
+            "Year offset too small to store"
+        );
         // The maximum new-year's offset we have found is 34
-        debug_assert!(ny_offset < 35, "Year offset too big to store");
+        #[cfg(debug_assertions)]
+        debug_assert!(
+            ny_offset < 35 || out_of_valid_astronomical_range,
+            "Year offset too big to store"
+        );
 
         // Just clamp to something we can represent when things get of range.
         //

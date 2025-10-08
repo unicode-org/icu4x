@@ -11,7 +11,9 @@ use crate::provider::chinese_based::PackedChineseBasedYearInfo;
 use crate::types::{MonthCode, MonthInfo};
 use crate::AsCalendar;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
-use calendrical_calculations::chinese_based::{self, ChineseBased, YearBounds};
+use calendrical_calculations::chinese_based::{
+    self, ChineseBased, YearBounds, WELL_BEHAVED_ASTRONOMICAL_RANGE,
+};
 use calendrical_calculations::rata_die::RataDie;
 use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
 use icu_provider::prelude::*;
@@ -886,12 +888,15 @@ impl LunarChineseYearData {
 
     pub(crate) fn md_from_rd(self, rd: RataDie) -> (u8, u8) {
         debug_assert!(
-            rd < self.next_new_year(),
+            rd < self.next_new_year() || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&rd),
             "Stored date {rd:?} out of bounds!"
         );
         // 1-indexed day of year
         let day_of_year = u16::try_from(rd - self.new_year() + 1);
-        debug_assert!(day_of_year.is_ok(), "Somehow got a very large year in data");
+        debug_assert!(
+            day_of_year.is_ok() || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&rd),
+            "Somehow got a very large year in data"
+        );
         let day_of_year = day_of_year.unwrap_or(1);
         let mut month = 1;
         // TODO(#3933) perhaps use a binary search
@@ -905,7 +910,9 @@ impl LunarChineseYearData {
         debug_assert!((1..=13).contains(&month), "Month out of bounds!");
 
         debug_assert!(
-            month < 13 || self.leap_month().is_some(),
+            month < 13
+                || self.leap_month().is_some()
+                || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&rd),
             "Cannot have 13 months in a non-leap year!"
         );
         let day_before_month_start = self.last_day_of_previous_month(month);
