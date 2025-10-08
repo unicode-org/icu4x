@@ -122,6 +122,14 @@ fn check<A>(
         *d1,
         "{d0:?}/{d1:?}"
     );
+
+    // RataDie addition should be equivalent for largest unit Days and Weeks
+    let rd_diff = d1.to_rata_die() - d0.to_rata_die();
+    if is_negative {
+        assert!(rd_diff.is_negative());
+    }
+    assert_eq!(p0.days, rd_diff.unsigned_abs());
+    assert_eq!(p1.days + u64::from(p1.weeks) * 7, rd_diff.unsigned_abs());
 }
 
 #[test]
