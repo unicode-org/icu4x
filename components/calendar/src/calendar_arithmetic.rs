@@ -187,25 +187,13 @@ pub(crate) trait DateFieldsResolver: Calendar {
         _year: &Self::YearInfo,
         ordinal_month: u8,
     ) -> types::MonthInfo {
-        let code = MonthCode(match ordinal_month {
-            1 => tinystr!(4, "M01"),
-            2 => tinystr!(4, "M02"),
-            3 => tinystr!(4, "M03"),
-            4 => tinystr!(4, "M04"),
-            5 => tinystr!(4, "M05"),
-            6 => tinystr!(4, "M06"),
-            7 => tinystr!(4, "M07"),
-            8 => tinystr!(4, "M08"),
-            9 => tinystr!(4, "M09"),
-            10 => tinystr!(4, "M10"),
-            11 => tinystr!(4, "M11"),
-            12 => tinystr!(4, "M12"),
-            13 => tinystr!(4, "M13"),
-            _ => {
+        let code = match MonthCode::new_normal(ordinal_month) {
+            Some(code) => code,
+            None => {
                 debug_assert!(false, "ordinal month out of range!");
-                tinystr!(4, "und")
+                MonthCode(tinystr!(4, "und"))
             }
-        });
+        };
         types::MonthInfo {
             ordinal: ordinal_month,
             standard_code: code,

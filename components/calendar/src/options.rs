@@ -93,6 +93,7 @@ impl DateFromFieldsOptions {
 /// Options for adding a duration to a date.
 #[derive(Copy, Clone, PartialEq, Debug, Default)]
 #[non_exhaustive]
+#[doc(hidden)] // unstable
 pub struct DateAddOptions {
     /// How to behave with out-of-bounds fields during arithmetic.
     ///
@@ -133,6 +134,7 @@ pub struct DateAddOptions {
 /// Options for taking the difference between two dates.
 #[derive(Copy, Clone, PartialEq, Debug, Default)]
 #[non_exhaustive]
+#[doc(hidden)] // unstable
 pub struct DateDifferenceOptions {
     /// Which date field to allow as the largest in a duration when taking the difference.
     ///
