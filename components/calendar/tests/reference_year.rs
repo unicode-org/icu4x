@@ -5,7 +5,10 @@
 use std::{collections::HashSet, fmt::Debug, num::NonZeroU8};
 
 use icu_calendar::{
-    cal::*, options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow}, types::{DateFields, MonthCode}, Calendar, Date, DateError, Ref
+    cal::*,
+    options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow},
+    types::{DateFields, MonthCode},
+    Calendar, Date, DateError, Ref,
 };
 
 /// Test that a given calendar produces valid monthdays
