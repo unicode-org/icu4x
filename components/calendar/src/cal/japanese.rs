@@ -101,8 +101,6 @@ impl Japanese {
             eras: provider.load(Default::default())?.payload,
         })
     }
-
-    pub(crate) const DEBUG_NAME: &'static str = "Japanese";
 }
 
 impl JapaneseExtended {
@@ -136,8 +134,6 @@ impl JapaneseExtended {
             eras: provider.load(Default::default())?.payload.cast(),
         }))
     }
-
-    pub(crate) const DEBUG_NAME: &'static str = "Japanese (historical era data)";
 }
 
 const MEIJI_START: EraStartDate = EraStartDate {

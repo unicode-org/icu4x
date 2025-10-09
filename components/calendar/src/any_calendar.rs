@@ -149,99 +149,100 @@ pub enum AnyDateInner {
     Roc(<Roc as Calendar>::DateInner),
 }
 
-macro_rules! wrap_to {
-    (wrap, $t:path) => {
-        $t
-    };
-    () => {};
-}
-
+/// Generalized macro that generates a match statement over all AnyCalendar variants.
+/// 
+/// Parameters:
+/// 
+/// 1. `$cal`: The variables to be matched over: for example, `cal`, `(cal, date)`, or `(cal, date1, date2)`.
+/// 2. `$pattern`: The name of a macro that generates a pattern for the match statement. It is passed as arguments:
+///     - `$cal`
+///     - An ident to be used for matching the AnyCalendar, `c`.
+///     - A list of idents to be used for matching AnyDateInners and the Hijri tabular algorithm
+/// 3. `$expr`: The name of a macro that generates an expression for the match statement. It is passed the same
+///     arguments as `$pattern`, except without the Hijri tabular algorithm, since it is contained within `c`.
 #[rustfmt::skip]
-macro_rules! match_cal_and_date_date {
-    (match ($cal:ident, $date1:ident, $date2:ident): ($cal_matched:ident, $date1_matched:ident, $date2_matched:ident) $($wrap:ident)? => $e:expr) => {
-        match ($cal, $date1, $date2) {
-            (&Self::Buddhist(ref $cal_matched), &AnyDateInner::Buddhist(ref $date1_matched), &AnyDateInner::Buddhist(ref $date2_matched)) => $(wrap_to!($wrap, AnyDateInner::Buddhist))? ($e,),
-            (&Self::Chinese(ref $cal_matched), &AnyDateInner::Chinese(ref $date1_matched), &AnyDateInner::Chinese(ref $date2_matched)) => $(wrap_to!($wrap, AnyDateInner::Chinese))? ($e,),
-            (&Self::Coptic(ref $cal_matched), &AnyDateInner::Coptic(ref $date1_matched), &AnyDateInner::Coptic(ref $date2_matched)) => $(wrap_to!($wrap, AnyDateInner::Coptic))? ($e,),
-            (&Self::Dangi(ref $cal_matched), &AnyDateInner::Dangi(ref $date1_matched), &AnyDateInner::Dangi(ref $date2_matched)) => $(wrap_to!($wrap, AnyDateInner::Dangi))? ($e,),
-            (&Self::Ethiopian(ref $cal_matched), &AnyDateInner::Ethiopian(ref $date1_matched), &AnyDateInner::Ethiopian(ref $date2_matched)) => $(wrap_to!($wrap, AnyDateInner::Ethiopian))? ($e,),
-            (&Self::Gregorian(ref $cal_matched), &AnyDateInner::Gregorian(ref $date1_matched), &AnyDateInner::Gregorian(ref $date2_matched)) => $(wrap_to!($wrap, AnyDateInner::Gregorian))? ($e,),
-            (&Self::Hebrew(ref $cal_matched), &AnyDateInner::Hebrew(ref $date1_matched), &AnyDateInner::Hebrew(ref $date2_matched)) => $(wrap_to!($wrap, AnyDateInner::Hebrew))? ($e,),
-            (&Self::Indian(ref $cal_matched), &AnyDateInner::Indian(ref $date1_matched), &AnyDateInner::Indian(ref $date2_matched)) => $(wrap_to!($wrap, AnyDateInner::Indian))? ($e,),
-            (&Self::HijriSimulated(ref $cal_matched), &AnyDateInner::HijriSimulated(ref $date1_matched), &AnyDateInner::HijriSimulated(ref $date2_matched)) => $(wrap_to!($wrap, AnyDateInner::HijriSimulated))? ($e,),
-            (&Self::HijriUmmAlQura(ref $cal_matched), &AnyDateInner::HijriUmmAlQura(ref $date1_matched), &AnyDateInner::HijriUmmAlQura(ref $date2_matched)) => $(wrap_to!($wrap, AnyDateInner::HijriUmmAlQura))? ($e,),
-            (&Self::Iso(ref $cal_matched), &AnyDateInner::Iso(ref $date1_matched), &AnyDateInner::Iso(ref $date2_matched)) => $(wrap_to!($wrap, AnyDateInner::Iso))? ($e,),
-            (&Self::Japanese(ref $cal_matched), &AnyDateInner::Japanese(ref $date1_matched), &AnyDateInner::Japanese(ref $date2_matched)) => $(wrap_to!($wrap, AnyDateInner::Japanese))? ($e,),
-            (&Self::JapaneseExtended(ref $cal_matched), &AnyDateInner::JapaneseExtended(ref $date1_matched), &AnyDateInner::JapaneseExtended(ref $date2_matched)) => $(wrap_to!($wrap, AnyDateInner::JapaneseExtended))? ($e,),
-            (&Self::Persian(ref $cal_matched), &AnyDateInner::Persian(ref $date1_matched), &AnyDateInner::Persian(ref $date2_matched)) => $(wrap_to!($wrap, AnyDateInner::Persian))? ($e,),
-            (&Self::Roc(ref $cal_matched), &AnyDateInner::Roc(ref $date1_matched), &AnyDateInner::Roc(ref $date2_matched)) => $(wrap_to!($wrap, AnyDateInner::Roc))? ($e,),
-            // HijriTabular is special because it has a field
-            (
-                &Self::HijriTabular(ref $cal_matched),
-                &AnyDateInner::HijriTabular(ref $date1_matched, sighting1),
-                &AnyDateInner::HijriTabular(ref $date2_matched, sighting2),
-            ) if $cal_matched.0 == sighting1 && sighting1 == sighting2 => $(wrap_to!($wrap, AnyDateInner::HijriTabular))? ($e, $(wrap_to!($wrap, sighting1))?),
-            // Failure case
-            _ => return Err(AnyCalendarDifferenceError::MismatchedCalendars),
-        }
-    };
-}
-
-#[rustfmt::skip]
-macro_rules! match_cal_and_date {
-    (match ($cal:ident, $date:ident): ($cal_matched:ident, $date_matched:ident) $($wrap:ident)? => $e:expr) => {
-        match ($cal, $date) {
-            (&Self::Buddhist(ref $cal_matched), &AnyDateInner::Buddhist(ref $date_matched)) => $(wrap_to!($wrap, AnyDateInner::Buddhist))? ($e,),
-            (&Self::Chinese(ref $cal_matched), &AnyDateInner::Chinese(ref $date_matched)) => $(wrap_to!($wrap, AnyDateInner::Chinese))? ($e,),
-            (&Self::Coptic(ref $cal_matched), &AnyDateInner::Coptic(ref $date_matched)) => $(wrap_to!($wrap, AnyDateInner::Coptic))? ($e,),
-            (&Self::Dangi(ref $cal_matched), &AnyDateInner::Dangi(ref $date_matched)) => $(wrap_to!($wrap, AnyDateInner::Dangi))? ($e,),
-            (&Self::Ethiopian(ref $cal_matched), &AnyDateInner::Ethiopian(ref $date_matched)) => $(wrap_to!($wrap, AnyDateInner::Ethiopian))? ($e,),
-            (&Self::Gregorian(ref $cal_matched), &AnyDateInner::Gregorian(ref $date_matched)) => $(wrap_to!($wrap, AnyDateInner::Gregorian))? ($e,),
-            (&Self::Hebrew(ref $cal_matched), &AnyDateInner::Hebrew(ref $date_matched)) => $(wrap_to!($wrap, AnyDateInner::Hebrew))? ($e,),
-            (&Self::Indian(ref $cal_matched), &AnyDateInner::Indian(ref $date_matched)) => $(wrap_to!($wrap, AnyDateInner::Indian))? ($e,),
-            (&Self::HijriSimulated(ref $cal_matched), &AnyDateInner::HijriSimulated(ref $date_matched)) => $(wrap_to!($wrap, AnyDateInner::HijriSimulated))? ($e,),
-            (&Self::HijriUmmAlQura(ref $cal_matched), &AnyDateInner::HijriUmmAlQura(ref $date_matched)) => $(wrap_to!($wrap, AnyDateInner::HijriUmmAlQura))? ($e,),
-            (&Self::Iso(ref $cal_matched), &AnyDateInner::Iso(ref $date_matched)) => $(wrap_to!($wrap, AnyDateInner::Iso))? ($e,),
-            (&Self::Japanese(ref $cal_matched), &AnyDateInner::Japanese(ref $date_matched)) => $(wrap_to!($wrap, AnyDateInner::Japanese))? ($e,),
-            (&Self::JapaneseExtended(ref $cal_matched), &AnyDateInner::JapaneseExtended(ref $date_matched)) => $(wrap_to!($wrap, AnyDateInner::JapaneseExtended))? ($e,),
-            (&Self::Persian(ref $cal_matched), &AnyDateInner::Persian(ref $date_matched)) => $(wrap_to!($wrap, AnyDateInner::Persian))? ($e,),
-            (&Self::Roc(ref $cal_matched), &AnyDateInner::Roc(ref $date_matched)) => $(wrap_to!($wrap, AnyDateInner::Roc))? ($e,),
-            // HijriTabular is special because it has a field
-            (
-                &Self::HijriTabular(ref $cal_matched),
-                &AnyDateInner::HijriTabular(ref $date_matched, sighting),
-            ) if $cal_matched.0 == sighting => $(wrap_to!($wrap, AnyDateInner::HijriTabular))? ($e, $(wrap_to!($wrap, sighting))?),
-            // Failure case
-            _ => panic!(
-                "Found AnyCalendar with mixed calendar type {:?} and date type {:?}!",
-                $cal.kind().debug_name(),
-                $date.kind().debug_name()
-            ),
-        }
-    };
-}
-
-macro_rules! match_cal {
-    (match $cal:ident: ($cal_matched:ident) => $e:expr) => {
+macro_rules! match_cal_general {
+    ($cal:expr, $pattern:ident, $expr:ident $(, [$($d:ident, $alg:ident),+], $exhaustive_expr:expr)?) => {
         match $cal {
-            &Self::Buddhist(ref $cal_matched) => AnyDateInner::Buddhist($e),
-            &Self::Chinese(ref $cal_matched) => AnyDateInner::Chinese($e),
-            &Self::Coptic(ref $cal_matched) => AnyDateInner::Coptic($e),
-            &Self::Dangi(ref $cal_matched) => AnyDateInner::Dangi($e),
-            &Self::Ethiopian(ref $cal_matched) => AnyDateInner::Ethiopian($e),
-            &Self::Gregorian(ref $cal_matched) => AnyDateInner::Gregorian($e),
-            &Self::Hebrew(ref $cal_matched) => AnyDateInner::Hebrew($e),
-            &Self::Indian(ref $cal_matched) => AnyDateInner::Indian($e),
-            &Self::HijriSimulated(ref $cal_matched) => AnyDateInner::HijriSimulated($e),
-            &Self::HijriTabular(ref $cal_matched) => AnyDateInner::HijriTabular($e, $cal_matched.0),
-            &Self::HijriUmmAlQura(ref $cal_matched) => AnyDateInner::HijriUmmAlQura($e),
-            &Self::Iso(ref $cal_matched) => AnyDateInner::Iso($e),
-            &Self::Japanese(ref $cal_matched) => AnyDateInner::Japanese($e),
-            &Self::JapaneseExtended(ref $cal_matched) => AnyDateInner::JapaneseExtended($e),
-            &Self::Persian(ref $cal_matched) => AnyDateInner::Persian($e),
-            &Self::Roc(ref $cal_matched) => AnyDateInner::Roc($e),
+            $pattern!(Buddhist, c $(,[$($d),*])?) => $expr!(Buddhist, c $(,[$($d),*])?),
+            $pattern!(Chinese, c $(,[$($d),*])?) => $expr!(Chinese, c $(,[$($d),*])?),
+            $pattern!(Coptic, c $(,[$($d),*])?) => $expr!(Coptic, c $(,[$($d),*])?),
+            $pattern!(Dangi, c $(,[$($d),*])?) => $expr!(Dangi, c $(,[$($d),*])?),
+            $pattern!(Ethiopian, c $(,[$($d),*])?) => $expr!(Ethiopian, c $(,[$($d),*])?),
+            $pattern!(Gregorian, c $(,[$($d),*])?) => $expr!(Gregorian, c $(,[$($d),*])?),
+            $pattern!(Hebrew, c $(,[$($d),*])?) => $expr!(Hebrew, c $(,[$($d),*])?),
+            $pattern!(Indian, c $(,[$($d),*])?) => $expr!(Indian, c $(,[$($d),*])?),
+            $pattern!(HijriSimulated, c $(,[$($d),*])?) => $expr!(HijriSimulated, c $(,[$($d),*])?),
+            $pattern!(HijriUmmAlQura, c $(,[$($d),*])?) => $expr!(HijriUmmAlQura, c $(,[$($d),*])?),
+            $pattern!(Iso, c $(,[$($d),*])?) => $expr!(Iso, c $(,[$($d),*])?),
+            $pattern!(Japanese, c $(,[$($d),*])?) => $expr!(Japanese, c $(,[$($d),*])?),
+            $pattern!(JapaneseExtended, c $(,[$($d),*])?) => $expr!(JapaneseExtended, c $(,[$($d),*])?),
+            $pattern!(Persian, c $(,[$($d),*])?) => $expr!(Persian, c $(,[$($d),*])?),
+            $pattern!(Roc, c $(,[$($d),*])?) => $expr!(Roc, c $(,[$($d),*])?),
+            // HijriTabular is special because the DateInner has an extra field
+            $pattern!(HijriTabular, c $(,[$($d, $alg),*])?) $(if $(c.0 == $alg)&&*)? => $expr!(HijriTabular, c $(,[$($d),*])?),
+            // The exhaustive match is required when matching against DateInner
+            $(_ => $exhaustive_expr)?
         }
     };
+}
+
+/// Macro that generates a pattern match for a calendar only.
+macro_rules! pattern_cal {
+    ($cal:ident, $c:ident) => {
+        &Self::$cal(ref $c)
+    };
+}
+
+/// Macro that generates a pattern match for a calendar and date.
+macro_rules! pattern_cal_date {
+    (HijriTabular, $c:ident, [$d:ident, $alg:ident]) => {
+        (&Self::HijriTabular(ref $c), &AnyDateInner::HijriTabular(ref $d, $alg))
+    };
+    ($cal:ident, $c:ident, [$d:ident]) => {
+        (&Self::$cal(ref $c), &AnyDateInner::$cal(ref $d))
+    };
+}
+
+/// Macro that generates a pattern match for a calendar and two dates.
+macro_rules! pattern_cal_date_date {
+    (HijriTabular, $c:ident, [$d1:ident, $alg1:ident, $d2:ident, $alg2:ident]) => {
+        (&Self::HijriTabular(ref $c), &AnyDateInner::HijriTabular(ref $d1, $alg1), &AnyDateInner::HijriTabular(ref $d2, $alg2))
+    };
+    ($cal:ident, $c:ident, [$d1:ident, $d2:ident]) => {
+        (&Self::$cal(ref $c), &AnyDateInner::$cal(ref $d1), &AnyDateInner::$cal(ref $d2))
+    };
+}
+
+/// Convenience macro that invokes [`match_cal_general`] with common arguments for
+/// matching the calendar only.
+macro_rules! match_cal {
+    ($cal:expr, c.$($call:tt)+) => {{
+        macro_rules! helper {
+            (HijriTabular, $c:ident) => {
+                AnyDateInner::HijriTabular($c.$($call)+, $c.0)
+            };
+            ($cal_inner:ident, $c:ident) => {
+                AnyDateInner::$cal_inner($c.$($call)+)
+            };
+        }
+        match_cal_general!($cal, pattern_cal, helper)
+    }};
+}
+
+/// Convenience macro that invokes [`match_cal_general`] with common arguments for
+/// matching the calendar and one date.
+macro_rules! match_cal_and_date {
+    ($cal:expr, c.$f:tt(d $($extra1:tt)*) $($extra2:tt)*) => {{
+        macro_rules! helper {
+            ($cal_inner:ident, $c:ident, [$d:ident]) => {
+                $c.$f($d $($extra1)*) $($extra2)*
+            };
+        }
+        match_cal_general!($cal, pattern_cal_date, helper, [d, blah], {
+            unreachable!(concat!("AnyCalendar with mismatched date type"))
+        })
+    }};
 }
 
 /// Error returned when comparing two [`Date`]s with [`AnyCalendar`].
@@ -289,35 +290,35 @@ impl Calendar for AnyCalendar {
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        Ok(match_cal!(match self: (c) => c.from_fields(fields, options)?))
+        Ok(match_cal!(self, c.from_fields(fields, options)?))
     }
 
     fn from_iso(&self, iso: IsoDateInner) -> AnyDateInner {
-        match_cal!(match self: (c) => c.from_iso(iso))
+        match_cal!(self, c.from_iso(iso))
     }
 
     fn from_rata_die(&self, rd: calendrical_calculations::rata_die::RataDie) -> Self::DateInner {
-        match_cal!(match self: (c) => c.from_rata_die(rd))
+        match_cal!(self, c.from_rata_die(rd))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> calendrical_calculations::rata_die::RataDie {
-        match_cal_and_date!(match (self, date): (c, d) => c.to_rata_die(d)).0
+        match_cal_and_date!((self, date), c.to_rata_die(d))
     }
 
     fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        match_cal_and_date!(match (self, date): (c, d) => c.to_iso(d)).0
+        match_cal_and_date!((self, date), c.to_iso(d))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        match_cal_and_date!(match (self, date): (c, d) => c.months_in_year(d)).0
+        match_cal_and_date!((self, date), c.months_in_year(d))
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        match_cal_and_date!(match (self, date): (c, d) => c.days_in_year(d)).0
+        match_cal_and_date!((self, date), c.days_in_year(d))
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        match_cal_and_date!(match (self, date): (c, d) => c.days_in_month(d)).0
+        match_cal_and_date!((self, date), c.days_in_month(d))
     }
 
     fn add(
@@ -326,7 +327,25 @@ impl Calendar for AnyCalendar {
         duration: types::DateDuration,
         options: DateAddOptions,
     ) -> Result<Self::DateInner, DateError> {
-        Ok(match_cal_and_date!(match (self, date): (c, d) wrap => c.add(d, duration, options)?))
+        macro_rules! expr_add {
+            (HijriTabular, $c:ident, [$d:ident]) => {
+                Some(AnyDateInner::HijriTabular(
+                    $c.add($d, duration, options)?,
+                    $c.0,
+                ))
+            };
+            ($cal:ident, $c:ident, [$d:ident]) => {
+                Some(AnyDateInner::$cal($c.add($d, duration, options)?))
+            };
+        }
+        let result =
+            match_cal_general!((self, date), pattern_cal_date, expr_add, [d, alg], None);
+        match result {
+            Some(result) => Ok(result),
+            None => {
+                unreachable!("AnyCalendar with mismatched date type")
+            }
+        }
     }
 
     fn until(
@@ -335,35 +354,48 @@ impl Calendar for AnyCalendar {
         date2: &Self::DateInner,
         options: DateDifferenceOptions,
     ) -> Result<types::DateDuration, Self::DifferenceError> {
-        let result = match_cal_and_date_date!(match (self, date1, date2): (c, d1, d2) => c.until(d1, d2, options)).0;
-        // map from Result<DateDuration, Infallible> to Result<DateDuration, Self::DifferenceError>
+        macro_rules! expr_until {
+            ($cal:ident, $c:ident, [$d1:ident, $d2:ident]) => {
+                Some($c.until($d1, $d2, options))
+            };
+        }
+        let result = match_cal_general!(
+            (self, date1, date2),
+            pattern_cal_date_date,
+            expr_until,
+            [d1, alg1, d2, alg2],
+            None
+        );
         match result {
-            Ok(duration) => Ok(duration),
+            Some(Ok(result)) => Ok(result),
+            None => {
+                Err(AnyCalendarDifferenceError::MismatchedCalendars)
+            }
         }
     }
 
     fn year_info(&self, date: &Self::DateInner) -> types::YearInfo {
-        match_cal_and_date!(match (self, date): (c, d) => c.year_info(d).into()).0
+        match_cal_and_date!((self, date), c.year_info(d).into())
     }
 
     /// The calendar-specific check if `date` is in a leap year
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        match_cal_and_date!(match (self, date): (c, d) => c.is_in_leap_year(d)).0
+        match_cal_and_date!((self, date), c.is_in_leap_year(d))
     }
 
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        match_cal_and_date!(match (self, date): (c, d) => c.month(d)).0
+        match_cal_and_date!((self, date), c.month(d))
     }
 
     /// The calendar-specific day-of-month represented by `date`
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        match_cal_and_date!(match (self, date): (c, d) => c.day_of_month(d)).0
+        match_cal_and_date!((self, date), c.day_of_month(d))
     }
 
     /// Information of the day of the year
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        match_cal_and_date!(match (self, date): (c, d) => c.day_of_year(d)).0
+        match_cal_and_date!((self, date), c.day_of_year(d))
     }
 
     fn debug_name(&self) -> &'static str {
@@ -606,42 +638,6 @@ impl<C: AsCalendar<Calendar = AnyCalendar>> Date<C> {
     }
 }
 
-impl AnyDateInner {
-    fn kind(&self) -> AnyCalendarKind {
-        match *self {
-            AnyDateInner::Buddhist(_) => AnyCalendarKind::Buddhist,
-            AnyDateInner::Chinese(_) => AnyCalendarKind::Chinese,
-            AnyDateInner::Coptic(_) => AnyCalendarKind::Coptic,
-            AnyDateInner::Dangi(_) => AnyCalendarKind::Dangi,
-            AnyDateInner::Ethiopian(_) => AnyCalendarKind::Ethiopian,
-            AnyDateInner::Gregorian(_) => AnyCalendarKind::Gregorian,
-            AnyDateInner::Hebrew(_) => AnyCalendarKind::Hebrew,
-            AnyDateInner::Indian(_) => AnyCalendarKind::Indian,
-            AnyDateInner::HijriTabular(
-                _,
-                hijri::TabularAlgorithm {
-                    leap_years: hijri::TabularAlgorithmLeapYears::TypeII,
-                    epoch: hijri::TabularAlgorithmEpoch::Friday,
-                },
-            ) => AnyCalendarKind::HijriTabularTypeIIFriday,
-            AnyDateInner::HijriSimulated(_) => AnyCalendarKind::HijriSimulatedMecca,
-            AnyDateInner::HijriTabular(
-                _,
-                hijri::TabularAlgorithm {
-                    leap_years: hijri::TabularAlgorithmLeapYears::TypeII,
-                    epoch: hijri::TabularAlgorithmEpoch::Thursday,
-                },
-            ) => AnyCalendarKind::HijriTabularTypeIIThursday,
-            AnyDateInner::HijriUmmAlQura(_) => AnyCalendarKind::HijriUmmAlQura,
-            AnyDateInner::Iso(_) => AnyCalendarKind::Iso,
-            AnyDateInner::Japanese(_) => AnyCalendarKind::Japanese,
-            AnyDateInner::JapaneseExtended(_) => AnyCalendarKind::JapaneseExtended,
-            AnyDateInner::Persian(_) => AnyCalendarKind::Persian,
-            AnyDateInner::Roc(_) => AnyCalendarKind::Roc,
-        }
-    }
-}
-
 /// Convenient type for selecting the kind of AnyCalendar to construct
 #[non_exhaustive]
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
@@ -700,41 +696,6 @@ impl AnyCalendarKind {
             AnyCalendarKind::HijriUmmAlQura
         } else {
             AnyCalendarKind::Gregorian
-        }
-    }
-
-    fn debug_name(self) -> &'static str {
-        match self {
-            AnyCalendarKind::Buddhist => Buddhist.debug_name(),
-            AnyCalendarKind::Chinese => LunarChinese::new_china().debug_name(),
-            AnyCalendarKind::Coptic => Coptic.debug_name(),
-            AnyCalendarKind::Dangi => LunarChinese::new_korea().debug_name(),
-            AnyCalendarKind::Ethiopian => {
-                Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret).debug_name()
-            }
-            AnyCalendarKind::EthiopianAmeteAlem => {
-                Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem).debug_name()
-            }
-            AnyCalendarKind::Gregorian => Gregorian.debug_name(),
-            AnyCalendarKind::Hebrew => Hebrew.debug_name(),
-            AnyCalendarKind::Indian => Indian.debug_name(),
-            AnyCalendarKind::HijriTabularTypeIIFriday => Hijri::new_tabular(
-                hijri::TabularAlgorithmLeapYears::TypeII,
-                hijri::TabularAlgorithmEpoch::Friday,
-            )
-            .debug_name(),
-            AnyCalendarKind::HijriSimulatedMecca => Hijri::new_simulated_mecca().debug_name(),
-            AnyCalendarKind::HijriTabularTypeIIThursday => Hijri::new_tabular(
-                hijri::TabularAlgorithmLeapYears::TypeII,
-                hijri::TabularAlgorithmEpoch::Thursday,
-            )
-            .debug_name(),
-            AnyCalendarKind::HijriUmmAlQura => Hijri::new_umm_al_qura().debug_name(),
-            AnyCalendarKind::Iso => Iso.debug_name(),
-            AnyCalendarKind::Japanese => Japanese::DEBUG_NAME,
-            AnyCalendarKind::JapaneseExtended => JapaneseExtended::DEBUG_NAME,
-            AnyCalendarKind::Persian => Persian.debug_name(),
-            AnyCalendarKind::Roc => Roc.debug_name(),
         }
     }
 }
