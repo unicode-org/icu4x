@@ -235,10 +235,10 @@ impl SourceDataProvider {
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
     pub fn with_icuexport_for_tag(self, tag: &str) -> Self {
-        let url = if tag >= "release-78.1" {
+        let url = if tag >= "release-78.1" || tag.starts_with("icu4x-") {
             format!(
-                "https://github.com/unicode-org/icu/releases/download/{tag}/icu4x-exportdata-{}.zip",
-                tag.replace("release-", "")
+                "https://github.com/unicode-org/icu/releases/download/{tag}/icu4x-icuexportdata-{}.zip",
+                tag.replace("release-", "").replace("icu4x-", "")
             )
         } else {
             format!(
