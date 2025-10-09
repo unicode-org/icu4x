@@ -160,6 +160,9 @@ pub enum AnyDateInner {
 ///     - A list of idents to be used for matching AnyDateInners and the Hijri tabular algorithm
 /// 3. `$expr`: The name of a macro that generates an expression for the match statement. It is passed the same
 ///    arguments as `$pattern`, except without the Hijri tabular algorithm, since it is contained within `c`.
+/// 4. `[$d1, $alg1, $d2, $alg2, ...]`: A list of identifiers that are passed into `$pattern` and `$expr`.
+///    There should generally be 2 identifiers per date being matched. Can be omitted if no dates are being matched.
+/// 5. `$exhaustive_expr`: The expression for the `_` pattern. Can be omitted if no dates are being matched.
 #[rustfmt::skip]
 macro_rules! match_cal_general {
     ($cal:expr, $pattern:ident, $expr:ident $(, [$($d:ident, $alg:ident),+], $exhaustive_expr:expr)?) => {
