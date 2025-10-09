@@ -286,16 +286,16 @@
             },
             "eras": {
               "eraNames": {
-                "0": "ERA0",
-                "1": "ERA1"
+                "0": "AA",
+                "1": "AM"
               },
               "eraAbbr": {
-                "0": "ERA0",
-                "1": "ERA1"
+                "0": "AA",
+                "1": "AM"
               },
               "eraNarrow": {
-                "0": "ERA0",
-                "1": "ERA1"
+                "0": "AA",
+                "1": "AM"
               }
             },
             "dateFormats": {

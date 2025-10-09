@@ -96,6 +96,8 @@ impl Keywords {
 
     /// A constructor which takes a str slice, parses it and
     /// produces a well-formed [`Keywords`].
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[inline]
     #[cfg(feature = "alloc")]
     pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
@@ -103,6 +105,8 @@ impl Keywords {
     }
 
     /// See [`Self::try_from_str`]
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
         let mut iter = SubtagIterator::new(code_units);
@@ -175,6 +179,8 @@ impl Keywords {
     ///
     /// Returns `None` if the key doesn't exist or if the key has no value.
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Examples
     ///
     /// ```
@@ -200,6 +206,8 @@ impl Keywords {
 
     /// Sets the specified keyword, returning the old value if it already existed.
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Examples
     ///
     /// ```
@@ -224,6 +232,8 @@ impl Keywords {
     }
 
     /// Removes the specified keyword, returning the old value if it existed.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -260,6 +270,8 @@ impl Keywords {
     }
 
     /// Retains a subset of keywords as specified by the predicate function.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -387,6 +399,7 @@ impl From<LiteMap<Key, Value, ShortBoxSlice<(Key, Value)>>> for Keywords {
     }
 }
 
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 #[cfg(feature = "alloc")]
 impl FromIterator<(Key, Value)> for Keywords {
     fn from_iter<I: IntoIterator<Item = (Key, Value)>>(iter: I) -> Self {
@@ -394,6 +407,7 @@ impl FromIterator<(Key, Value)> for Keywords {
     }
 }
 
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 #[cfg(feature = "alloc")]
 impl FromStr for Keywords {
     type Err = ParseError;

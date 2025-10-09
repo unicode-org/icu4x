@@ -40,7 +40,9 @@ litemap_impl!(not(feature = "alloc"), S);
 
 #[cfg(feature = "alloc")]
 impl<K, V> LiteMap<K, V> {
-    /// Construct a new [`LiteMap`] backed by Vec    
+    /// Construct a new [`LiteMap`] backed by Vec  
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*  
     pub const fn new_vec() -> Self {
         Self {
             values: alloc::vec::Vec::new(),
@@ -66,6 +68,8 @@ impl<K, V, S> LiteMap<K, V, S> {
 #[cfg(feature = "alloc")]
 impl<K, V> LiteMap<K, V, Vec<(K, V)>> {
     /// Convert a [`LiteMap`] into a sorted `Vec<(K, V)>`.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[inline]
     pub fn into_tuple_vec(self) -> Vec<(K, V)> {
         self.values
@@ -146,6 +150,8 @@ where
     ///
     /// The trait bounds allow transforming most slice and string types.
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Examples
     ///
     /// ```
@@ -185,6 +191,8 @@ where
     ///
     /// The trait bounds allow transforming most slice and string types.
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Examples
     ///
     /// ```
@@ -222,6 +230,8 @@ where
     /// Returns a new [`LiteMap`] with cloned keys and owned values.
     ///
     /// The trait bounds allow transforming most slice and string types.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///

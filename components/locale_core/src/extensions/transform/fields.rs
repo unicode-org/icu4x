@@ -141,6 +141,8 @@ impl Fields {
 
     /// Sets the specified keyword, returning the old value if it already existed.
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Examples
     ///
     /// ```
@@ -164,6 +166,8 @@ impl Fields {
     }
 
     /// Retains a subset of fields as specified by the predicate function.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -211,6 +215,7 @@ impl Fields {
     }
 }
 
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 #[cfg(feature = "alloc")]
 impl From<LiteMap<Key, Value>> for Fields {
     fn from(map: LiteMap<Key, Value>) -> Self {
@@ -218,6 +223,7 @@ impl From<LiteMap<Key, Value>> for Fields {
     }
 }
 
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 #[cfg(feature = "alloc")]
 impl core::iter::FromIterator<(Key, Value)> for Fields {
     fn from_iter<I: IntoIterator<Item = (Key, Value)>>(iter: I) -> Self {

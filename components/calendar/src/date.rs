@@ -39,6 +39,7 @@ impl<C: Calendar> AsCalendar for C {
 }
 
 #[cfg(feature = "alloc")]
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 impl<C: AsCalendar> AsCalendar for Rc<C> {
     type Calendar = C::Calendar;
     #[inline]
@@ -48,6 +49,7 @@ impl<C: AsCalendar> AsCalendar for Rc<C> {
 }
 
 #[cfg(feature = "alloc")]
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 impl<C: AsCalendar> AsCalendar for Arc<C> {
     type Calendar = C::Calendar;
     #[inline]
@@ -463,6 +465,8 @@ impl<A: AsCalendar> Date<A> {
     /// Wrap the contained calendar type in `Rc<T>`, making it cheaper to clone.
     ///
     /// Useful when paired with [`Self::to_any()`] to obtain a `Date<Rc<AnyCalendar>>`
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
     pub fn into_ref_counted(self) -> Date<Rc<A>> {
         Date::from_raw(self.inner, Rc::new(self.calendar))
@@ -471,6 +475,8 @@ impl<A: AsCalendar> Date<A> {
     /// Wrap the contained calendar type in `Arc<T>`, making it cheaper to clone in a thread-safe manner.
     ///
     /// Useful when paired with [`Self::to_any()`] to obtain a `Date<Arc<AnyCalendar>>`
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
     pub fn into_atomic_ref_counted(self) -> Date<Arc<A>> {
         Date::from_raw(self.inner, Arc::new(self.calendar))

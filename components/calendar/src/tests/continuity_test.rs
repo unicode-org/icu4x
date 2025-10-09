@@ -73,6 +73,12 @@ fn test_chinese_continuity() {
     check_every_250_days(date.unwrap(), 2000);
     let date = Date::try_new_chinese_with_calendar(-10000, 1, 1, cal);
     check_every_250_days(date.unwrap(), 2000);
+
+    let date = Date::try_new_chinese_with_calendar(1899, 1, 1, cal);
+    check_continuity(date.unwrap(), 20);
+
+    let date = Date::try_new_chinese_with_calendar(2099, 1, 1, cal);
+    check_continuity(date.unwrap(), 20);
 }
 
 #[test]
@@ -90,6 +96,12 @@ fn test_korean_continuity() {
     check_continuity(date.unwrap(), 20);
     let date = Date::try_new_chinese_with_calendar(-300, 1, 1, cal);
     check_every_250_days(date.unwrap(), 2000);
+
+    let date = Date::try_new_chinese_with_calendar(1900, 1, 1, cal);
+    check_continuity(date.unwrap(), 20);
+
+    let date = Date::try_new_chinese_with_calendar(2100, 1, 1, cal);
+    check_continuity(date.unwrap(), 20);
 }
 
 #[test]

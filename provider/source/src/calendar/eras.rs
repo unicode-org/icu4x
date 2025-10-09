@@ -413,40 +413,34 @@ fn test_calendar_eras() {
                 );
             }
 
-            if era.start.is_some() && calendar != "japanese" {
-                assert_eq!(in_era.day_of_year().0, 1, "{calendar:?}");
+            let icu::calendar::types::YearInfo::Era(era_year) = in_era.year() else {
+                continue;
+            };
+
+            // Unless this is the first era and it's not an inverse era, check that the
+            // not_in_era date is in a different era
+            if idx != 0 || era.end.is_some() {
+                assert_ne!(not_in_era.year().era().unwrap().era, era_year.era);
             }
 
-            match in_era.year() {
-                icu::calendar::types::YearInfo::Era(era_year) => {
-                    // Unless this is the first era and it's not an inverse era, check that the
-                    // not_in_era date is in a different era
-                    if idx != 0 || era.end.is_some() {
-                        assert_ne!(not_in_era.year().era().unwrap().era, era_year.era);
-                    }
-
-                    // Check that the correct era code is returned
-                    if let Some(code) = era.code.as_deref() {
-                        assert_eq!(era_year.era, code);
-                    }
-
-                    // Check that the start/end date uses year 1, and minimal/maximal month/day
-                    assert_eq!(era_year.year, 1, "Didn't get correct year for {in_era:?}");
-                }
-                // Cyclic calendars use related_iso for their extended years, which won't
-                // work with the CLDR "default" eras. Skip testing them.
-                icu::calendar::types::YearInfo::Cyclic(_) => (),
-                _ => unreachable!(),
+            // Check that the correct era code is returned
+            if let Some(code) = era.code.as_deref() {
+                assert_eq!(era_year.era, code);
             }
+
+            // Check that the start/end date uses year 1, and minimal/maximal month/day
+            assert_eq!(era_year.year, 1, "Didn't get correct year for {in_era:?}");
 
             if calendar == "japanese" {
-                // Japanese is the only calendar that doesn't have its own months
+                // Japanese is the only calendar that doesn't start eras on a new year
             } else if era.start.is_some() {
                 assert_eq!(in_era.month().ordinal, 1);
                 assert_eq!(in_era.day_of_month().0, 1);
+                assert_eq!(in_era.day_of_year().0, 1);
             } else {
                 assert_eq!(in_era.month().ordinal, in_era.months_in_year());
                 assert_eq!(in_era.day_of_month().0, in_era.days_in_month());
+                assert_eq!(in_era.day_of_year().0, in_era.days_in_year());
             }
         }
     }

@@ -806,6 +806,8 @@ where
     Store: AsRef<[u8]>,
 {
     /// Exports the data from this ZeroTrie into a BTreeMap.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     pub fn to_btreemap(&self) -> BTreeMap<Box<[u8]>, usize> {
         impl_dispatch!(&self, to_btreemap_bytes())
     }

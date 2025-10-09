@@ -24,7 +24,7 @@ use icu_provider::prelude::*;
 /// </div>
 pub use crate::provider::Baked;
 
-use super::pattern_key::PatternKey;
+use crate::dimension::provider::units::pattern_key::PatternKey;
 
 icu_provider::data_marker!(
    /// `UnitsEssentialsV1`

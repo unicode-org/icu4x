@@ -291,13 +291,13 @@
             },
             "eras": {
               "eraNames": {
-                "0": "ERA0"
+                "0": "AA"
               },
               "eraAbbr": {
-                "0": "ERA0"
+                "0": "AA"
               },
               "eraNarrow": {
-                "0": "ERA0"
+                "0": "AA"
               }
             },
             "dateFormats": {
