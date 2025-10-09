@@ -9,16 +9,15 @@ use tinystr::tinystr;
 
 /// The [ISO-8601 Calendar](https://en.wikipedia.org/wiki/ISO_8601#Dates)
 ///
-/// The ISO-8601 Calendar is a standardized solar calendar with twelve months.
-/// It is identical to the [`Gregorian`](super::Gregorian) calendar, except it uses
-/// negative years for years before 1 CE, and may have differing formatting data for a given locale.
-///
-/// This type can be used with [`Date`] to represent dates in this calendar.
+/// This calendar is identical to the [`Gregorian`](super::Gregorian) calendar,
+/// except that it uses a single `default` era instead of `bce` and `ce`.
 ///
 /// # Era codes
 ///
 /// This calendar uses a single era: `default`
-
+/// # Month codes
+///
+/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Iso;

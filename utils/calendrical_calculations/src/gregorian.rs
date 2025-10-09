@@ -13,6 +13,18 @@ use crate::rata_die::RataDie;
 // The Gregorian epoch is equivalent to first day in fixed day measurement
 const EPOCH: RataDie = RataDie::new(1);
 
+const DAYS_IN_YEAR: i64 = 365;
+
+// One leap year every 4 years
+const DAYS_IN_4_YEAR_CYCLE: i64 = DAYS_IN_YEAR * 4 + 1;
+
+// No leap year every 100 years
+const DAYS_IN_100_YEAR_CYCLE: i64 = 25 * DAYS_IN_4_YEAR_CYCLE - 1;
+
+// One extra leap year every 400 years
+/// The number of days in the 400 year cycle.
+pub const DAYS_IN_400_YEAR_CYCLE: i64 = 4 * DAYS_IN_100_YEAR_CYCLE + 1;
+
 /// Whether or not `year` is a leap year
 ///
 /// Inspired by Neri-Schneider <https://www.youtube.com/watch?v=J9KijLyP-yg&t=1239s>
@@ -56,31 +68,27 @@ pub const fn year_from_fixed(date: RataDie) -> Result<i32, I32CastError> {
     // Shouldn't overflow because it's not possbile to construct extreme values of RataDie
     let date = date.since(EPOCH);
 
-    // 400 year cycles have 146097 days
-    let (n_400, date) = (date.div_euclid(146097), date.rem_euclid(146097));
+    let (n_400, date) = (
+        date.div_euclid(DAYS_IN_400_YEAR_CYCLE),
+        date.rem_euclid(DAYS_IN_400_YEAR_CYCLE),
+    );
 
-    // 100 year cycles have 36524 days
-    let (n_100, date) = (date / 36524, date % 36524);
+    let (n_100, date) = (date / DAYS_IN_100_YEAR_CYCLE, date % DAYS_IN_100_YEAR_CYCLE);
 
-    // 4 year cycles have 1461 days
-    let (n_4, date) = (date / 1461, date % 1461);
+    let (n_4, date) = (date / DAYS_IN_4_YEAR_CYCLE, date % DAYS_IN_4_YEAR_CYCLE);
 
-    let n_1 = date / 365;
+    let n_1 = date / DAYS_IN_YEAR;
 
-    let year = 400 * n_400 + 100 * n_100 + 4 * n_4 + n_1;
+    let year = 400 * n_400 + 100 * n_100 + 4 * n_4 + n_1 + (n_100 != 4 && n_1 != 4) as i64;
 
-    if n_100 == 4 || n_1 == 4 {
-        i64_to_i32(year)
-    } else {
-        i64_to_i32(year + 1)
-    }
+    i64_to_i32(year)
 }
 
 /// Calculates the day before Jan 1 of `year`.
 pub const fn day_before_year(year: i32) -> RataDie {
     let prev_year = (year as i64) - 1;
     // Calculate days per year
-    let mut fixed: i64 = 365 * prev_year;
+    let mut fixed: i64 = DAYS_IN_YEAR * prev_year;
     // Adjust for leap year logic. We can avoid the branch of div_euclid by making prev_year positive:
     // YEAR_SHIFT is larger (in magnitude) than any prev_year, and, being divisible by 400,
     // distributes correctly over the calculation on the next line.

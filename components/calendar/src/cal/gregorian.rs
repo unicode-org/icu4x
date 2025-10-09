@@ -57,11 +57,36 @@ impl GregorianYears for CeBce {
     }
 }
 
-/// The [(proleptic) Gregorian Calendar](https://en.wikipedia.org/wiki/Proleptic_Gregorian_calendar)
+/// The [Gregorian Calendar](https://en.wikipedia.org/wiki/Gregorian_calendar)
 ///
-/// The Gregorian calendar is a solar calendar used by most of the world, with twelve months.
+/// The Gregorian calendar is an improvement over the [`Julian`](super::Julian) calendar.
+/// It was adopted under Pope Gregory XIII in 1582 CE by much of Roman Catholic Europe,
+/// and over the following centuries by all other countries that had been using
+/// the Julian calendar. Eventually even countries that had been using other calendars
+/// adopted this calendar, and today it is used as the international civil calendar.
 ///
-/// This type can be used with [`Date`] to represent dates in this calendar.
+/// The Gregorian calendar has an average year length of 365.2425, slightly longer than
+/// the mean siderial year, so this calendar drifts 1 day in ~7700 years with respect
+/// to the seasons.
+///
+/// # Historical accuracy
+///
+/// This type implements the [*proleptic* Gregorian calendar](
+/// https://en.wikipedia.org/wiki/Gregorian_calendar#Proleptic_Gregorian_calendar),
+/// with dates before 1582 CE using the rules projected backwards. Care needs to be taken
+/// when intepreting historical dates before or during the transition from the Julian to
+/// the Gregorian calendar. [Some regions](https://en.wikipedia.org/wiki/Adoption_of_the_Gregorian_calendar)
+/// continued using the Julian calendar as late as the 20th century. Sources often
+/// mark dates as "New Style" (Gregorian) or "Old Style" (Julian) if there is ambiguity.
+///
+/// Historically, the Julian/Gregorian calendars were used with a variety of year reckoning
+/// schemes (see [`Julian`](super::Julian) for more detail). The Gregorian calendar has generally
+/// been used with the [Anno Domini](https://en.wikipedia.org/wiki/Anno_Domini)/[Common era](
+/// https://en.wikipedia.org/wiki/Common_Era) since its inception. However, some countries
+/// that have adopted the Gregorian calendar more recently are still using their traditional
+/// year-reckoning schemes. This crate implements some of these as different types, i.e the Thai
+/// [`Buddhist`](super::Buddhist) calendar, the [`Japanese`](super::Japanese) calendar, and the
+/// Chinese Republican Calendar ([`Roc`](super::Roc)).
 ///
 /// # Era codes
 ///
