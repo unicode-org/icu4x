@@ -125,7 +125,7 @@ impl UtcOffset {
 
     /// Create a [`UtcOffset`] from a seconds input without checking bounds.
     #[inline]
-    pub fn from_seconds_unchecked(seconds: i32) -> Self {
+    pub const fn from_seconds_unchecked(seconds: i32) -> Self {
         Self(seconds)
     }
 
