@@ -525,6 +525,7 @@ impl HijriYearData {
 
     fn md_from_rd(self, rd: RataDie) -> (u8, u8) {
         let day_of_year = (rd - self.start_day()) as u16;
+
         debug_assert!(day_of_year < 360 || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&rd));
         // We divide by 30, not 29, to account for the case where all months before this
         // were length 30 (possible near the beginning of the year)
@@ -732,28 +733,30 @@ impl<R: Rules> Calendar for Hijri<R> {
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
+        // (354 * 30 + 11) / 30 is the mean year length for a tabular year
+        // This is slightly different from the MEAN_YEAR_LENGTH, which is based on
+        // the synodic month.
+        //
         // +1 because the epoch is new year of year 1
-        // truncating instead of flooring does not matter, as this is well-defined for
-        // positive years only
-        let extended_year = ((rd - calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY) as f64
-            / calendrical_calculations::islamic::MEAN_YEAR_LENGTH)
-            as i32
-            + 1;
+        // Before the epoch the division will round up (towards 0), so we need to
+        // subtract 1, which is the same as not adding the 1.
+        let extended_year = (rd - calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY) * 30
+            / (354 * 30 + 11)
+            + (rd > calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY) as i64;
 
-        let year = self.0.year_data(extended_year);
+        let mut year = self.0.year_data(extended_year as i32);
 
-        let y = if rd < year.start_day() {
-            self.0.year_data(extended_year - 1)
+        if rd < year.start_day() {
+            while rd < year.start_day() {
+                year = self.0.year_data(year.extended_year - 1);
+            }
         } else {
-            let next_year = self.0.year_data(extended_year + 1);
-            if rd < next_year.start_day() {
-                year
-            } else {
-                next_year
+            while rd >= year.start_day() + year.last_day_of_month(12) as i64 {
+                year = self.0.year_data(year.extended_year + 1)
             }
         };
-        let (m, d) = y.md_from_rd(rd);
-        HijriDateInner(ArithmeticDate::new_unchecked(y, m, d))
+        let (m, d) = year.md_from_rd(rd);
+        HijriDateInner(ArithmeticDate::new_unchecked(year, m, d))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
@@ -1759,6 +1762,18 @@ mod test {
         assert_eq!(dt.0.day, 1);
         assert_eq!(dt.0.month, 1);
         assert_eq!(dt.0.year.extended_year, -6823);
+    }
+
+    #[test]
+    fn test_regression_7056() {
+        // https://github.com/unicode-org/icu4x/issues/7056
+        let calendar = Hijri::new_tabular(
+            TabularAlgorithmLeapYears::TypeII,
+            TabularAlgorithmEpoch::Friday,
+        );
+        let iso = Date::try_new_iso(-62971, 3, 19).unwrap();
+        let _dt = iso.to_calendar(calendar);
+        let _dt = iso.to_calendar(Hijri::new_umm_al_qura());
     }
 
     #[test]
