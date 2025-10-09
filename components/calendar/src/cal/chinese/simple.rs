@@ -7,11 +7,11 @@ use calendrical_calculations::{gregorian::DAYS_IN_400_YEAR_CYCLE, rata_die::Rata
 
 macro_rules! day_fraction_to_ms {
     ($n:tt $(/ $d:tt)+) => {{
-        Milliseconds((MILLISECONDS_IN_EPHEMERIS_DAY as i128 * $n as i128 $( / $d as i128)+) as i64)
+        Milliseconds((MILLISECONDS_IN_EPHEMERIS_DAY * $n as i128 $( / $d as i128)+))
     }};
     ($n:tt $(/ $d:tt)+, exact) => {{
         let d = day_fraction_to_ms!($n $(/ $d)+);
-        assert!((d.0 as i128 $(* $d as i128)+) % MILLISECONDS_IN_EPHEMERIS_DAY as i128 == 0, "inexact");
+        assert!((d.0 as i128 $(* $d as i128)+) % MILLISECONDS_IN_EPHEMERIS_DAY == 0, "inexact");
         d
     }};
 }
@@ -35,7 +35,7 @@ const MEAN_GREGORIAN_SOLAR_TERM_LENGTH: Milliseconds =
 const MEAN_SYNODIC_MONTH_LENGTH: Milliseconds = day_fraction_to_ms!(295305888531 / 10000000000i64);
 
 /// Number of milliseconds in a day.
-const MILLISECONDS_IN_EPHEMERIS_DAY: i64 = 24 * 60 * 60 * 1000;
+const MILLISECONDS_IN_EPHEMERIS_DAY: i128 = 24 * 60 * 60 * 1000;
 
 // 1999-12-22T07:44, https://aa.usno.navy.mil/calculated/seasons?year=2024&tz=0.00&tz_sign=-1&tz_label=false&dst=false
 const UTC_SOLSTICE: LocalMoment = LocalMoment {
@@ -50,12 +50,12 @@ const UTC_NEW_MOON: LocalMoment = LocalMoment {
 };
 
 #[derive(Debug, Copy, Clone, Default)]
-pub(super) struct Milliseconds(i64);
+pub(super) struct Milliseconds(i128);
 
-impl core::ops::Mul<i64> for Milliseconds {
+impl core::ops::Mul<i128> for Milliseconds {
     type Output = Self;
 
-    fn mul(self, rhs: i64) -> Self::Output {
+    fn mul(self, rhs: i128) -> Self::Output {
         Self(self.0 * rhs)
     }
 }
@@ -70,9 +70,10 @@ impl core::ops::Add<Milliseconds> for LocalMoment {
     type Output = Self;
 
     fn add(self, Milliseconds(duration): Milliseconds) -> Self::Output {
-        let temp = self.local_milliseconds as i64 + duration;
+        let temp = self.local_milliseconds as i128 + duration;
         Self {
-            rata_die: self.rata_die + temp.div_euclid(MILLISECONDS_IN_EPHEMERIS_DAY),
+            rata_die: self.rata_die
+                + i64::try_from(temp.div_euclid(MILLISECONDS_IN_EPHEMERIS_DAY)).unwrap_or(i64::MAX),
             local_milliseconds: temp.rem_euclid(MILLISECONDS_IN_EPHEMERIS_DAY) as u32,
         }
     }
@@ -90,9 +91,9 @@ impl super::LunarChineseYearData {
             base_moment: LocalMoment,
             duration: Milliseconds,
         ) -> LocalMoment {
-            let num_periods = ((rata_die - base_moment.rata_die + 1)
+            let num_periods = ((rata_die - base_moment.rata_die + 1) as i128
                 * MILLISECONDS_IN_EPHEMERIS_DAY
-                - base_moment.local_milliseconds as i64
+                - base_moment.local_milliseconds as i128
                 - 1)
             .div_euclid(duration.0);
             base_moment + duration * num_periods
