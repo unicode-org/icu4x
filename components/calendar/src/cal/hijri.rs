@@ -734,7 +734,7 @@ impl<R: Rules> Calendar for Hijri<R> {
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
         // (354 * 30 + 11) / 30 is the mean year length for a tabular year
-        // This is slightly different from the MEAN_YEAR_LENGTH, which is based on
+        // This is slightly different from the `calendrical_calculations::islamic::MEAN_YEAR_LENGTH`, which is based on
         // the (current) synodic month length.
         // This does not need to be accurate, it's just a performance optimisation
         // to avoid a long linear search. `Rules` also don't need to use this
