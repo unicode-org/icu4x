@@ -273,6 +273,8 @@ serde-aux = { version = "4.0.0", default-features = false }
 toml = { version = "0.8.0", default-features = false, features = ["parse"] }
 
 ## External Deps Group 3: Dev and Datagen deps. Include default features.
+argmin = "0.10"
+argmin-math = "0.4"
 arraystring = "0.3.0"
 askama = "0.14"
 atoi = "2.0.0"

@@ -34,6 +34,9 @@ const MEAN_GREGORIAN_SOLAR_TERM_LENGTH: Milliseconds =
 /// [Astronomical Almanac (1992)]: https://archive.org/details/131123ExplanatorySupplementAstronomicalAlmanac/page/n302/mode/1up
 const MEAN_SYNODIC_MONTH_LENGTH: Milliseconds = day_fraction_to_ms!(295305888531 / 10000000000i64);
 
+#[cfg(test)]
+const MEAN_SYNODIC_MONTH_LENGTH_F64: f64 = 29.5305888531;
+
 /// Number of milliseconds in a day.
 const MILLISECONDS_IN_EPHEMERIS_DAY: i64 = 24 * 60 * 60 * 1000;
 
@@ -158,5 +161,62 @@ impl super::LunarChineseYearData {
         debug_assert_eq!(solar_term, 12);
 
         LunarChineseYearData::new(related_iso, start_day, month_lengths, leap_month)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use argmin::core::{CostFunction, Error, Executor};
+    use argmin::solver::brent::BrentOpt;
+    use calendrical_calculations::astronomy::Astronomical;
+    use calendrical_calculations::rata_die::Moment;
+    use calendrical_calculations::gregorian::fixed_from_gregorian;
+    use super::*;
+
+    struct NewMoons {
+        new_moon_moments: Vec<(i32, Moment)>,
+        mean_synodic_length: f64,
+        center_moment: Moment,
+        new_moon_number: i32,
+    }
+
+    impl CostFunction for NewMoons {
+        type Param = f64;
+        type Output = f64;
+        fn cost(&self, param: &f64) -> Result<f64, Error> {
+            let candidate = self.center_moment + *param;
+            Ok(self.new_moon_moments.iter().map(|(i, x)| (candidate - *x) - self.mean_synodic_length * (self.new_moon_number - i) as f64).map(|v| v * v).sum::<f64>())
+        }
+    }
+
+    #[test]
+    fn calculate_new_moon_and_mean_synodic_month() {
+        let jan1900 = fixed_from_gregorian(1900, 1, 1);
+        let jan2000 = fixed_from_gregorian(2000, 1, 1);
+        let jan2100 = fixed_from_gregorian(2100, 1, 1);
+        let new_moon_0 = Astronomical::num_of_new_moon_at_or_after(Moment::try_from_rata_die(jan1900).unwrap());
+        let new_moon_mid = Astronomical::num_of_new_moon_at_or_after(Moment::try_from_rata_die(jan2000).unwrap());
+        let new_moon_n = Astronomical::num_of_new_moon_at_or_after(Moment::try_from_rata_die(jan2100).unwrap());
+        let new_moon_moments: Vec<(i32, Moment)> = (new_moon_0..=new_moon_n).map(|i| (i, Astronomical::nth_new_moon(i))).collect();
+
+        let cost_fn = NewMoons {
+            new_moon_moments,
+            mean_synodic_length: MEAN_SYNODIC_MONTH_LENGTH_F64,
+            center_moment: Moment::try_from_rata_die(fixed_from_gregorian(2000, 1, 6)).unwrap(),
+            new_moon_number: new_moon_mid,
+        };
+
+        let solver = BrentOpt::new(-5.0, 5.0);
+
+        let res = Executor::new(cost_fn, solver)
+            .configure(|state| state.max_iters(10))
+            .run()
+            .unwrap();
+
+        println!("{res}");
+        panic!();
+
+        // let mean_synodic_length = (new_moon_moments.last().unwrap().1 - new_moon_moments.first().unwrap().1) / (new_moon_moments.len() as f64);
+        // assert_eq!(0.0, mean_synodic_length);
     }
 }

@@ -35,7 +35,8 @@
 )]
 #![warn(missing_docs)]
 
-mod astronomy;
+/// Lower-level astronomical simulation functions
+pub mod astronomy;
 /// Chinese-like lunar calendars (Chinese, Dangi)
 pub mod chinese_based;
 /// The Coptic calendar
