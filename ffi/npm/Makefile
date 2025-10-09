@@ -6,6 +6,7 @@
 FORCE:
 
 PINNED_CI_NIGHTLY ?= "nightly-2025-09-27"
+FEATURES ?= "compiled_data,buffer_provider,default_components,experimental,logging"
 
 # 100 KiB, working around a bug in older rustc
 # https://github.com/unicode-org/icu4x/issues/2753
@@ -25,7 +26,8 @@ lib/index.mjs: FORCE
 		--release \
 		-p icu_capi \
 		--crate-type cdylib \
-		--features buffer_provider,icu_segmenter/lstm,experimental
+		--no-default-features \
+		--features ${FEATURES}
 
 icu_capi.wasm: ../../target/wasm32-unknown-unknown/release/icu_capi.wasm
 	cp ../../target/wasm32-unknown-unknown/release/icu_capi.wasm icu_capi.wasm
