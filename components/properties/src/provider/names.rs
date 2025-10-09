@@ -13,7 +13,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use icu_locale_core::subtags::Script;
-use icu_provider::prelude::*;
+use icu_provider::prelude::{yoke, zerofrom};
 
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ule::NichedOption;
