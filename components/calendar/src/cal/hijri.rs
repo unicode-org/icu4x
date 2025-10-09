@@ -754,7 +754,7 @@ impl<R: Rules> Calendar for Hijri<R> {
             while rd >= year.start_day() + year.last_day_of_month(12) as i64 {
                 year = self.0.year_data(year.extended_year + 1)
             }
-        };
+        }
         let (m, d) = year.md_from_rd(rd);
         HijriDateInner(ArithmeticDate::new_unchecked(year, m, d))
     }
