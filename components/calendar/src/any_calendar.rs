@@ -159,7 +159,7 @@ pub enum AnyDateInner {
 ///     - An ident to be used for matching the AnyCalendar, `c`.
 ///     - A list of idents to be used for matching AnyDateInners and the Hijri tabular algorithm
 /// 3. `$expr`: The name of a macro that generates an expression for the match statement. It is passed the same
-///     arguments as `$pattern`, except without the Hijri tabular algorithm, since it is contained within `c`.
+///    arguments as `$pattern`, except without the Hijri tabular algorithm, since it is contained within `c`.
 #[rustfmt::skip]
 macro_rules! match_cal_general {
     ($cal:expr, $pattern:ident, $expr:ident $(, [$($d:ident, $alg:ident),+], $exhaustive_expr:expr)?) => {
@@ -240,7 +240,7 @@ macro_rules! match_cal_and_date {
             };
         }
         match_cal_general!($cal, pattern_cal_date, helper, [d, blah], {
-            unreachable!(concat!("AnyCalendar with mismatched date type"))
+            unreachable!("AnyCalendar with mismatched date type")
         })
     }};
 }
@@ -338,8 +338,7 @@ impl Calendar for AnyCalendar {
                 Some(AnyDateInner::$cal($c.add($d, duration, options)?))
             };
         }
-        let result =
-            match_cal_general!((self, date), pattern_cal_date, expr_add, [d, alg], None);
+        let result = match_cal_general!((self, date), pattern_cal_date, expr_add, [d, alg], None);
         match result {
             Some(result) => Ok(result),
             None => {
@@ -368,9 +367,7 @@ impl Calendar for AnyCalendar {
         );
         match result {
             Some(Ok(result)) => Ok(result),
-            None => {
-                Err(AnyCalendarDifferenceError::MismatchedCalendars)
-            }
+            None => Err(AnyCalendarDifferenceError::MismatchedCalendars),
         }
     }
 
