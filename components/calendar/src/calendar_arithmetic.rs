@@ -151,7 +151,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
 
     /// Calculates the ordinal month for the given year and month code.
     ///
-    /// The default impl is for non-lunisolar calendars!
+    /// The default impl is for non-lunisolar calendars with 12 months!
     #[inline]
     fn ordinal_month_from_code(
         &self,
@@ -160,7 +160,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
         _options: DateFromFieldsOptions,
     ) -> Result<u8, DateError> {
         match month_code.parsed() {
-            Some((month_number, false)) => Ok(month_number),
+            Some((month_number @ 1..=12, false)) => Ok(month_number),
             _ => Err(DateError::UnknownMonthCode(month_code)),
         }
     }
