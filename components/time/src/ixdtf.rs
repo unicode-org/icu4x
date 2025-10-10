@@ -299,7 +299,7 @@ impl<'a> Intermediate<'a> {
                     .with_offset(None)
             }
             None if self.is_z => TimeZoneInfo::utc(),
-            None => TimeZone::UNKNOWN.with_offset(None),
+            None => TimeZoneInfo::unknown(),
         };
 
         if let Some(offset) = self.offset {
