@@ -46,7 +46,7 @@ where
     }
 }
 
-// TODO(MSRV 1.83): Make this more infallible by calculating the required length,
+// TODO(sffc): Make this more infallible by calculating the required length,
 // heap-allocating the required capacity, and pointing ConstAsciiTrieBuilderStore
 // to the heap buffer.
 // ```

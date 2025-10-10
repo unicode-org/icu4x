@@ -61,9 +61,9 @@ category = "ICU4X Development"
 env = { ICU4X_DATA_DIR = "../stubdata" }
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install 1.82 --profile minimal
+exec --fail-on-error rustup install 1.83 --profile minimal
 # Exclude internal tools (Make sure to skip_package = true in the Cargo.toml for these crates)
-exec --fail-on-error cargo +1.82 check --all-targets --all-features --workspace --exclude diplomat-gen --exclude codegen --exclude bakeddata --exclude depcheck --exclude diplomat-coverage
+exec --fail-on-error cargo +1.83 check --all-targets --all-features --workspace --exclude diplomat-gen --exclude codegen --exclude bakeddata --exclude depcheck --exclude diplomat-coverage
 '''
 
 [tasks.ci-job-msrv-utils]
@@ -175,8 +175,8 @@ category = "CI"
 env = { ICU4X_DATA_DIR = "../stubdata" }
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install 1.82 --profile minimal
-exec --fail-on-error cargo +1.82 make check-all-features-chunked 1
+exec --fail-on-error rustup install 1.83 --profile minimal
+exec --fail-on-error cargo +1.83 make check-all-features-chunked 1
 '''
 
 [tasks.ci-job-msrv-features-2]
@@ -185,8 +185,8 @@ category = "CI"
 env = { ICU4X_DATA_DIR = "../stubdata" }
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install 1.82 --profile minimal
-exec --fail-on-error cargo +1.82 make check-all-features-chunked 2
+exec --fail-on-error rustup install 1.83 --profile minimal
+exec --fail-on-error cargo +1.83 make check-all-features-chunked 2
 '''
 
 [tasks.ci-job-msrv-features-3]
@@ -195,8 +195,8 @@ category = "CI"
 env = { ICU4X_DATA_DIR = "../stubdata" }
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install 1.82 --profile minimal
-exec --fail-on-error cargo +1.82 make check-all-features-chunked 3
+exec --fail-on-error rustup install 1.83 --profile minimal
+exec --fail-on-error cargo +1.83 make check-all-features-chunked 3
 '''
 
 [tasks.ci-job-msrv-features]
