@@ -43,9 +43,7 @@ where
     for month_number in 1..=14 {
         for is_leap in [false, true] {
             let mut valid_day_number = 1;
-            if !valid_md_condition(month_number, is_leap, valid_day_number) {
-                continue;
-            }
+            let is_valid_month = valid_md_condition(month_number, is_leap, valid_day_number);
             for day_number in 1..=32 {
                 if valid_md_condition(month_number, is_leap, day_number) {
                     valid_day_number = day_number;
@@ -59,11 +57,24 @@ where
                 let mut options = DateFromFieldsOptions::default();
                 options.overflow = Some(Overflow::Constrain);
                 options.missing_fields_strategy = Some(MissingFieldsStrategy::Ecma);
-                let Ok(reference_date) = Date::try_from_fields(fields, options, Ref(&cal)) else {
-                    panic!(
-                        "Could not find any valid reference date for {}-{day_number}",
-                        fields.month_code.unwrap()
-                    );
+                let reference_date = match Date::try_from_fields(fields, options, Ref(&cal)) {
+                    Ok(d) => {
+                        assert!(
+                            is_valid_month,
+                            "try_from_fields passed but should have failed: {fields:?} => {d:?}"
+                        );
+                        d
+                    }
+                    Err(DateError::UnknownMonthCode(_)) => {
+                        assert!(
+                            !is_valid_month,
+                            "try_from_fields failed but should have passed: {fields:?}"
+                        );
+                        continue;
+                    }
+                    Err(e) => {
+                        panic!("Unexpected error in month day from fields: {e}");
+                    }
                 };
 
                 // Test round-trip (to valid day number)

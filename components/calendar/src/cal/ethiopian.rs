@@ -97,6 +97,19 @@ impl DateFieldsResolver for Ethiopian {
     ) -> Result<Self::YearInfo, DateError> {
         crate::cal::Coptic::reference_year_from_month_day(month_code, day)
     }
+
+    #[inline]
+    fn ordinal_month_from_code(
+        &self,
+        _year: &Self::YearInfo,
+        month_code: types::MonthCode,
+        _options: DateFromFieldsOptions,
+    ) -> Result<u8, DateError> {
+        match month_code.parsed() {
+            Some((month_number @ 1..=13, false)) => Ok(month_number),
+            _ => Err(DateError::UnknownMonthCode(month_code)),
+        }
+    }
 }
 
 impl crate::cal::scaffold::UnstableSealed for Ethiopian {}
