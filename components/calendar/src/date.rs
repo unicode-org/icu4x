@@ -126,7 +126,7 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// The year is `extended_year` if no era is provided.
     ///
-    /// This function will not accept year/extended_year values that are outside of the range `[-1_000_000, 1_000_000]`,
+    /// This function will not accept year/extended_year values that are outside of the range `[-2²⁷, 2²⁷]`,
     /// regardless of the calendar, instead returning a [`DateError::Range`]. See [`Date::try_from_fields()`] for more
     /// information.
     #[inline]
@@ -149,7 +149,7 @@ impl<A: AsCalendar> Date<A> {
     /// and the month as either ordinal or month code. It can constrain out-of-bounds values
     /// and fill in missing fields. See [`DateFromFieldsOptions`] for more information.
     ///
-    /// This function will not accept year/extended_year values that are outside of the range `[-1_000_000, 1_000_000]`,
+    /// This function will not accept year/extended_year values that are outside of the range `[-2²⁷, 2²⁷]`,
     /// regardless of the calendar, instead returning a [`DateError::Range`]. This is to protect clients
     /// from bugs due to arithmetic overflow. Currently, calendar-specific `Date::try_new_calendarname()` constructors
     /// do not do this, though we may change that behavior in the future.

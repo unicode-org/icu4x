@@ -12,7 +12,11 @@ use core::convert::TryInto;
 use core::fmt::Debug;
 use core::hash::{Hash, Hasher};
 use core::marker::PhantomData;
+use core::ops::RangeInclusive;
 use tinystr::tinystr;
+
+/// The range ±2²⁷. We use i32::MIN since it is -2³¹
+const VALID_YEAR_RANGE: RangeInclusive<i32> = (i32::MIN / 16)..=-(i32::MIN / 16);
 
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
@@ -714,7 +718,7 @@ where
                     },
                 },
                 (Some(era), Some(era_year)) => {
-                    range_check(era_year, "year", -1_000_000..=1_000_000)?;
+                    range_check(era_year, "year", VALID_YEAR_RANGE)?;
                     let era_year_as_year_info = cal.year_info_from_era(era, era_year)?;
                     if let Some(extended_year) = fields.extended_year {
                         if era_year_as_year_info != extended_year_as_year_info(extended_year, cal)?
