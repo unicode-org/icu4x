@@ -50,6 +50,7 @@ pub enum AnyCalendarKind {
     JapaneseExtended,
     Persian,
     Roc,
+    // Note: This doesn't cover Julian, since it's not in AnyCalendar
 }
 
 impl From<AnyCalendarKind> for icu_calendar::AnyCalendarKind {
@@ -100,9 +101,9 @@ fuzz_target!(|data: FuzzInput| {
     };
 
     let mut fields = DateFields::default();
-    // Temporal only cares about validity in ±270k. We generously test a bit outside of that.
+    // Temporal only cares about validity in ±270k. We generously test outside of that.
     // We should error on these dates instead, or otherwise handle them: https://github.com/unicode-org/icu4x/issues/7049
-    fields.extended_year = Some(data.year % i32::MAX / 16);
+    fields.extended_year = Some(data.year % (i32::MAX / 16));
     fields.day = Some(unwrap_or_return!(NonZeroU8::new(data.day)));
     match data.month_interpretation {
         MonthInterpretation::Ordinal => {
