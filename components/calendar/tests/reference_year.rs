@@ -59,11 +59,17 @@ where
                 options.missing_fields_strategy = Some(MissingFieldsStrategy::Ecma);
                 let reference_date = match Date::try_from_fields(fields, options, Ref(&cal)) {
                     Ok(d) => {
-                        assert!(is_valid_month, "try_from_fields passed but should have failed: {fields:?} => {d:?}");
+                        assert!(
+                            is_valid_month,
+                            "try_from_fields passed but should have failed: {fields:?} => {d:?}"
+                        );
                         d
                     }
                     Err(DateError::UnknownMonthCode(_)) => {
-                        assert!(!is_valid_month, "try_from_fields failed but should have passed: {fields:?}");
+                        assert!(
+                            !is_valid_month,
+                            "try_from_fields failed but should have passed: {fields:?}"
+                        );
                         continue;
                     }
                     Err(e) => {
