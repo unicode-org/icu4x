@@ -1434,7 +1434,6 @@ dependencies = [
  "smallvec",
  "tinystr",
  "writeable",
- "zerofrom",
  "zerotrie",
  "zerovec",
 ]

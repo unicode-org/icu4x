@@ -46,7 +46,6 @@ potential_utf = { workspace = true, features = ["zerovec"] }
 writeable = { workspace = true }
 zerotrie = { workspace = true, features = ["yoke", "zerofrom"] }
 zerovec = { workspace = true, features = ["alloc", "derive", "yoke"] }
-zerofrom = { workspace = true }
 
 displaydoc = { workspace = true }
 log = { workspace = true, optional = true }
