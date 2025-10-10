@@ -36,6 +36,7 @@ icu_locale = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
+icu_locale_core = { workspace = true }
 icu_properties = { path = "../properties", features = ["compiled_data"] }
 itertools = { workspace = true }
 ndarray = { workspace = true }
