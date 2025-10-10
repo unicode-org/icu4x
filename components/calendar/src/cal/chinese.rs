@@ -454,10 +454,20 @@ impl<A: AsCalendar<Calendar = LunarChinese<Korea>>> Date<A> {
 #[derive(Debug, Clone)]
 pub struct ChineseDateInner<R: Rules>(ArithmeticDate<LunarChinese<R>>);
 
-impl<S: Rules> Copy for ChineseDateInner<S> {}
-impl<S: Rules> PartialEq for ChineseDateInner<S> {
+impl<R: Rules> Copy for ChineseDateInner<R> {}
+impl<R: Rules> PartialEq for ChineseDateInner<R> {
     fn eq(&self, other: &Self) -> bool {
         self.0 == other.0
+    }
+}
+impl<R: Rules> PartialOrd for ChineseDateInner<R> {
+    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl<R: Rules> Ord for ChineseDateInner<R> {
+    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+        self.0.cmp(&other.0)
     }
 }
 impl<S: Rules> Eq for ChineseDateInner<S> {}

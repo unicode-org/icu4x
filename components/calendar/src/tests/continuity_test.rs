@@ -161,8 +161,6 @@ fn test_hijri_simulated_mecca_continuity() {
     let cal = crate::cal::Hijri::new_simulated_mecca();
     let date = Date::try_new_hijri_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
-    let date = Date::try_new_hijri_with_calendar(-300, 1, 1, cal);
-    check_every_250_days(date.unwrap());
 }
 
 #[test]

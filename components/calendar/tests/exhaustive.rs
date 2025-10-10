@@ -1,0 +1,190 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+use icu_calendar::*;
+
+const LOW: i32 = -270_000;
+const HIGH: i32 = 270_000;
+
+// Check rd -> date -> iso -> date -> rd for whole range
+#[test]
+#[ignore] // takes about 20 seconds in release-with-assertions
+fn check_round_trip() {
+    fn test<C: Calendar>(cal: C) {
+        let cal = Ref(&cal);
+        let low = Date::try_new_iso(LOW, 1, 1).unwrap().to_rata_die();
+        let high = Date::try_new_iso(HIGH, 12, 31).unwrap().to_rata_die();
+        let mut prev = Date::from_rata_die(low, cal);
+        let mut curr = low + 1;
+        while curr <= high {
+            let date = Date::from_rata_die(curr, cal);
+            assert!(prev < date);
+
+            let rd = date.to_rata_die();
+            assert_eq!(rd, curr, "{}", cal.as_calendar().debug_name());
+
+            let date2 = Date::new_from_iso(date.to_iso(), cal);
+            assert_eq!(date, date2, "{:?}", cal.as_calendar().debug_name());
+
+            prev = date;
+            curr += 1;
+        }
+    }
+
+    for_each_calendar!(test);
+}
+
+#[test]
+#[ignore] // take about 10 minutes in release-with-assertions
+fn check_from_fields() {
+    fn test<C: Calendar>(cal: C) {
+        let cal = Ref(&cal);
+        for year in LOW..=HIGH {
+            if year % 50000 == 0 {
+                println!("{} {year:?}", cal.as_calendar().debug_name());
+            }
+            for overflow in [options::Overflow::Constrain, options::Overflow::Reject] {
+                let mut options = options::DateFromFieldsOptions::default();
+                options.overflow = Some(overflow);
+                for mut fields in (1..19)
+                    .flat_map(|i| {
+                        [
+                            types::MonthCode::new_normal(i).unwrap(),
+                            types::MonthCode::new_leap(i).unwrap(),
+                        ]
+                        .into_iter()
+                    })
+                    .map(|m| {
+                        let mut fields = types::DateFields::default();
+                        fields.month_code = Some(m);
+                        fields
+                    })
+                    .chain((1..100).map(|m| {
+                        let mut fields = types::DateFields::default();
+                        fields.ordinal_month = Some(core::num::NonZeroU8::new(m).unwrap());
+                        fields
+                    }))
+                {
+                    for day in 1..100 {
+                        fields.extended_year = Some(year);
+                        fields.day = Some(core::num::NonZeroU8::new(day).unwrap());
+                        let _ = Date::try_from_fields(fields, options, Ref(&cal));
+                    }
+                }
+            }
+        }
+    }
+    for_each_calendar!(test);
+}
+
+macro_rules! for_each_calendar {
+    ($f:ident) => {
+        [
+            || {
+                $f(cal::Buddhist);
+                println!("Buddhist done");
+            },
+            || {
+                $f(cal::LunarChinese(LunarChineseYears::new(
+                    cal::chinese::China::default(),
+                )));
+                println!("Chinese done");
+            },
+            || {
+                $f(cal::Coptic);
+                println!("Coptic done");
+            },
+            || {
+                $f(cal::LunarChinese(LunarChineseYears::new(
+                    cal::chinese::Korea::default(),
+                )));
+                println!("Korean done");
+            },
+            || {
+                $f(cal::Ethiopian::new());
+                println!("Ethiopian done");
+            },
+            || {
+                $f(cal::Ethiopian::new_with_era_style(
+                    cal::EthiopianEraStyle::AmeteAlem,
+                ));
+                println!("Ethiopian (Amete Alem) done");
+            },
+            || {
+                $f(cal::Gregorian);
+                println!("Gregorian done");
+            },
+            || {
+                $f(cal::Hebrew::new());
+                println!("Hebrew done");
+            },
+            || {
+                $f(cal::Hijri::new_tabular(
+                    cal::hijri::TabularAlgorithmLeapYears::TypeII,
+                    cal::hijri::TabularAlgorithmEpoch::Friday,
+                ));
+                println!("Hijri (tabular) done");
+            },
+            || {
+                $f(cal::Hijri::new_tabular(
+                    cal::hijri::TabularAlgorithmLeapYears::TypeII,
+                    cal::hijri::TabularAlgorithmEpoch::Thursday,
+                ));
+                println!("Hijri (astronomical) done");
+            },
+            || {
+                $f(cal::Hijri::new_umm_al_qura());
+                println!("Hijri (UAQ) done");
+            },
+            || {
+                $f(cal::Indian::new());
+                println!("Indian done");
+            },
+            || {
+                $f(cal::Iso::new());
+                println!("Iso done");
+            },
+            || {
+                $f(cal::Julian::new());
+                println!("Julian done");
+            },
+            || {
+                $f(cal::Japanese::new());
+                println!("Japanese done");
+            },
+            || {
+                $f(cal::JapaneseExtended::new());
+                println!("JapaneseExtended done");
+            },
+            || {
+                $f(cal::Persian::new());
+                println!("Persian done");
+            },
+            || {
+                $f(cal::Roc);
+                println!("Roc done");
+            },
+        ]
+        .map(std::thread::spawn)
+        .into_iter()
+        .for_each(|h| h.join().unwrap());
+    };
+}
+use for_each_calendar;
+
+#[derive(Debug, Clone)]
+struct LunarChineseYears(Vec<cal::chinese::LunarChineseYearData>);
+
+impl LunarChineseYears {
+    fn new<R: cal::chinese::Rules>(r: R) -> Self {
+        Self((-270_001..=270_000).map(|i| r.year_data(i)).collect())
+    }
+}
+
+impl cal::scaffold::UnstableSealed for LunarChineseYears {}
+impl cal::chinese::Rules for LunarChineseYears {
+    fn year_data(&self, related_iso: i32) -> cal::chinese::LunarChineseYearData {
+        self.0[(related_iso + 270_001) as usize]
+    }
+}

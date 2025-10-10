@@ -148,6 +148,40 @@ pub enum AnyDateInner {
     Roc(<Roc as Calendar>::DateInner),
 }
 
+impl PartialOrd for AnyDateInner {
+    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+        match (self, other) {
+            (AnyDateInner::Buddhist(d1), AnyDateInner::Buddhist(d2)) => d1.partial_cmp(d2),
+            (AnyDateInner::Chinese(d1), AnyDateInner::Chinese(d2)) => d1.partial_cmp(d2),
+            (AnyDateInner::Coptic(d1), AnyDateInner::Coptic(d2)) => d1.partial_cmp(d2),
+            (AnyDateInner::Dangi(d1), AnyDateInner::Dangi(d2)) => d1.partial_cmp(d2),
+            (AnyDateInner::Ethiopian(d1), AnyDateInner::Ethiopian(d2)) => d1.partial_cmp(d2),
+            (AnyDateInner::Gregorian(d1), AnyDateInner::Gregorian(d2)) => d1.partial_cmp(d2),
+            (AnyDateInner::Hebrew(d1), AnyDateInner::Hebrew(d2)) => d1.partial_cmp(d2),
+            (AnyDateInner::Indian(d1), AnyDateInner::Indian(d2)) => d1.partial_cmp(d2),
+            (&AnyDateInner::HijriTabular(ref d1, s1), &AnyDateInner::HijriTabular(ref d2, s2))
+                if s1 == s2 =>
+            {
+                d1.partial_cmp(d2)
+            }
+            (AnyDateInner::HijriSimulated(d1), AnyDateInner::HijriSimulated(d2)) => {
+                d1.partial_cmp(d2)
+            }
+            (AnyDateInner::HijriUmmAlQura(d1), AnyDateInner::HijriUmmAlQura(d2)) => {
+                d1.partial_cmp(d2)
+            }
+            (AnyDateInner::Iso(d1), AnyDateInner::Iso(d2)) => d1.partial_cmp(d2),
+            (AnyDateInner::Japanese(d1), AnyDateInner::Japanese(d2)) => d1.partial_cmp(d2),
+            (AnyDateInner::JapaneseExtended(d1), AnyDateInner::JapaneseExtended(d2)) => {
+                d1.partial_cmp(d2)
+            }
+            (AnyDateInner::Persian(d1), AnyDateInner::Persian(d2)) => d1.partial_cmp(d2),
+            (AnyDateInner::Roc(d1), AnyDateInner::Roc(d2)) => d1.partial_cmp(d2),
+            _ => None,
+        }
+    }
+}
+
 macro_rules! match_cal_and_date {
     (match ($cal:ident, $date:ident): ($cal_matched:ident, $date_matched:ident) => $e:expr) => {
         match ($cal, $date) {

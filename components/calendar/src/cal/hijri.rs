@@ -100,6 +100,9 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 /// These simulations are unofficial and are known to not necessarily match sightings
 /// on the ground. Unless you know otherwise for sure, instead of this variant, use
 /// [`UmmAlQura`], which uses the results of KACST's Mecca-based calculations.
+///
+/// As floating point arithmetic degenerates for far-away dates, this falls back to
+/// the tabular calendar at some point.
 #[derive(Copy, Clone, Debug)]
 pub struct AstronomicalSimulation {
     pub(crate) location: SimulatedLocation,
@@ -146,7 +149,7 @@ impl Rules for AstronomicalSimulation {
             location,
         );
         match (next_start_day - start_day) as u16 {
-            LONG_YEAR_LEN | SHORT_YEAR_LEN => (),
+            355 | 354 => (),
             353 => {
                 icu_provider::log::trace!(
                     "({}) Found year {extended_year} AH with length {}. See <https://github.com/unicode-org/icu4x/issues/4930>",
@@ -212,6 +215,7 @@ impl Rules for AstronomicalSimulation {
             month_lengths
         };
         HijriYearData::new(extended_year, start_day, month_lengths)
+            .unwrap_or_else(|| UmmAlQura.year_data(extended_year))
     }
 }
 
@@ -357,14 +361,17 @@ impl Rules for TabularAlgorithm {
     }
 
     fn year_data(&self, extended_year: i32) -> HijriYearData {
+        #[allow(clippy::unwrap_used)] // justified, and proven by exhaustive.rs for years +-270_000
         HijriYearData::new(
             extended_year,
+            // this is within 5 days of the mean fixed tabular start day by construction
             calendrical_calculations::islamic::fixed_from_tabular_islamic(
                 extended_year,
                 1,
                 1,
                 self.epoch.rata_die(),
             ),
+            // this produces 6 or 7 leap months
             core::array::from_fn(|m| {
                 m % 2 == 0
                     || m == 11
@@ -375,6 +382,7 @@ impl Rules for TabularAlgorithm {
                         }
             }),
         )
+        .unwrap()
     }
 }
 
@@ -491,22 +499,20 @@ impl From<HijriYearData> for i32 {
     }
 }
 
-const LONG_YEAR_LEN: u16 = 355;
-const SHORT_YEAR_LEN: u16 = 354;
-
 impl HijriYearData {
     /// Creates [`HijriYearData`] from the given parts.
     ///
     /// `start_day` is the date for the first day of the year, see [`Date::to_rata_die`]
-    /// to obtain a [`RataDie`] from a [`Date`] in an arbitrary calendar.
+    /// to obtain a [`RataDie`] from a [`Date`] in an arbitrary calendar. `start_day` has
+    /// to be within 5 days of the start of the year of the [`TabularAlgorithm`].
     ///
     /// `month_lengths[n - 1]` is true if the nth month has 30 days, and false otherwise.
-    /// Either 6 or 7 months should have 30 days.
-    pub fn new(extended_year: i32, start_day: RataDie, month_lengths: [bool; 12]) -> Self {
-        Self {
-            packed: PackedHijriYearInfo::new(extended_year, month_lengths, start_day),
+    /// Either 6 or 7 months need to have 30 days.
+    pub fn new(extended_year: i32, start_day: RataDie, month_lengths: [bool; 12]) -> Option<Self> {
+        Some(Self {
+            packed: PackedHijriYearInfo::new(extended_year, month_lengths, start_day)?,
             extended_year,
-        }
+        })
     }
 
     fn start_day(self) -> RataDie {
@@ -526,7 +532,6 @@ impl HijriYearData {
     fn md_from_rd(self, rd: RataDie) -> (u8, u8) {
         let day_of_year = (rd - self.start_day()) as u16;
 
-        debug_assert!(day_of_year < 360 || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&rd));
         // We divide by 30, not 29, to account for the case where all months before this
         // were length 30 (possible near the beginning of the year)
         let mut month = (day_of_year / 30) as u8 + 1;
@@ -544,12 +549,6 @@ impl HijriYearData {
             last_day_of_prev_month = last_day_of_month;
             last_day_of_month = self.last_day_of_month(month);
         }
-        debug_assert!(
-            day_of_year - last_day_of_prev_month <= 30
-                || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&rd),
-            "Found day {} that doesn't fit in month!",
-            day_of_year - last_day_of_prev_month
-        );
         let day = (day_of_year - last_day_of_prev_month) as u8;
         (month, day)
     }
@@ -656,6 +655,16 @@ impl<R: Rules> PartialEq for HijriDateInner<R> {
     }
 }
 impl<R: Rules> Eq for HijriDateInner<R> {}
+impl<R: Rules> PartialOrd for HijriDateInner<R> {
+    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl<R: Rules> Ord for HijriDateInner<R> {
+    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+        self.0.cmp(&other.0)
+    }
+}
 
 impl<R: Rules> CalendarArithmetic for Hijri<R> {
     type YearInfo = HijriYearData;
@@ -750,13 +759,9 @@ impl<R: Rules> Calendar for Hijri<R> {
         let mut year = self.0.year_data(extended_year as i32);
 
         if rd < year.start_day() {
-            while rd < year.start_day() {
-                year = self.0.year_data(year.extended_year - 1);
-            }
-        } else {
-            while rd >= year.start_day() + year.last_day_of_month(12) as i64 {
-                year = self.0.year_data(year.extended_year + 1)
-            }
+            year = self.0.year_data(year.extended_year - 1);
+        } else if rd >= year.start_day() + year.last_day_of_month(12) as i64 {
+            year = self.0.year_data(year.extended_year + 1)
         }
         let (m, d) = year.md_from_rd(rd);
         HijriDateInner(ArithmeticDate::new_unchecked(year, m, d))

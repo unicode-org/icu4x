@@ -27,7 +27,7 @@ use core::fmt;
 /// </div>
 pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// The internal type used to represent dates
-    type DateInner: Eq + Copy + fmt::Debug;
+    type DateInner: Eq + Copy + PartialOrd + fmt::Debug;
     /// The type of YearInfo returned by the date
     type Year: fmt::Debug + Into<types::YearInfo>;
 
