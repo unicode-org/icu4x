@@ -137,8 +137,8 @@ Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to eac
  - `ci-job-clippy`: Runs `cargo clippy --all-targets --all-features` on all the crates.
  <br/>
 
- - `ci-job-msrv-check`: Runs `cargo check` on all the crates at our minimum supported Rust version (MSRV).
- - `ci-job-msrv-features`: Runs `cargo check-all-features` on all the crates at our MSRV. This checks all features combinations, which is fairly slow.
+ - `ci-job-check`: Runs `cargo check` on all the crates.
+ - `ci-job-features`: Runs `cargo check-all-features` on all the crates. This checks all features combinations, which is fairly slow.
      + Requires `cargo-all-features` to be installed: `cargo install cargo-all-features`.
  - `ci-job-test`: Runs `cargo test` on all the crates. This takes a while but is the main way of ensuring that nothing has been broken.
 <br/>

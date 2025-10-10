@@ -42,8 +42,7 @@ concurrency:
 jobs:
 
   # ci-job-check & ci-job-features
-  # Running at MSRV
-  msrv:
+  check:
     runs-on: ubuntu-latest
     # Defined as a matrix so that features can start immediately, but
     # be killed if check fails.
@@ -70,32 +69,15 @@ jobs:
       with:
         tool: cargo-all-features@1.11.0
 
-    # No toolchain boilerplate as this runs on MSRV
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-ci-toolchain
+    - name: Show the selected Rust toolchain
+      run: rustup show
 
     # Actual job
     - name: Check
-      run: cargo make ci-job-msrv-${{ matrix.behavior }}
-
-  msrv-utils:
-    runs-on: ubuntu-latest
-    # Set CARGO_HTTP_MULTIPLEXING=false to work around crates.io curl bug:
-    # <https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation>
-    env:
-      CARGO_HTTP_MULTIPLEXING: false
-    steps:
-    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-
-    # Cargo-make boilerplate
-    - name: Install cargo-make
-      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
-      with:
-        tool: cargo-make@0.37.13
-
-    # No toolchain boilerplate as this runs on MSRV
-
-    # Actual job
-    - name: Check
-      run: cargo make ci-job-msrv-utils
+      run: cargo make ci-job-${{ matrix.behavior }}
 
   # ci-job-test
   test:
@@ -556,7 +538,7 @@ jobs:
 
   # Notify on slack  
   notify-slack:
-    needs: [msrv, test, testdata, test-docs, full-datagen, test-c, test-js, test-dart, nostd, diplomat, fmt, tidy, clippy, doc]
+    needs: [check, test, testdata, test-docs, full-datagen, test-c, test-js, test-dart, nostd, diplomat, fmt, tidy, clippy, doc]
     if: ${{ always() && contains(needs.*.result, 'failure') && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_name == 'main')) }}
     runs-on: ubuntu-latest
     steps:
