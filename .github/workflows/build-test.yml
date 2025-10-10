@@ -42,7 +42,8 @@ concurrency:
 jobs:
 
   # ci-job-check & ci-job-features
-  check:
+  # Running at MSRV
+  msrv:
     runs-on: ubuntu-latest
     # Defined as a matrix so that features can start immediately, but
     # be killed if check fails.
@@ -68,7 +69,10 @@ jobs:
       uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
       with:
         tool: cargo-all-features@1.11.0
-
+      
+    - name: Set MSRV toolchain
+      run: rustup override set 1.82
+      
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
       run: cargo make set-ci-toolchain
@@ -538,7 +542,7 @@ jobs:
 
   # Notify on slack  
   notify-slack:
-    needs: [check, test, testdata, test-docs, full-datagen, test-c, test-js, test-dart, nostd, diplomat, fmt, tidy, clippy, doc]
+    needs: [msrv, test, testdata, test-docs, full-datagen, test-c, test-js, test-dart, nostd, diplomat, fmt, tidy, clippy, doc]
     if: ${{ always() && contains(needs.*.result, 'failure') && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_name == 'main')) }}
     runs-on: ubuntu-latest
     steps:
