@@ -1434,7 +1434,6 @@ dependencies = [
  "smallvec",
  "tinystr",
  "writeable",
- "zerofrom",
  "zerotrie",
  "zerovec",
 ]
@@ -1781,7 +1780,6 @@ dependencies = [
  "icu",
  "icu_collections",
  "icu_locale",
- "icu_locale_core",
  "icu_properties",
  "icu_provider",
  "icu_segmenter_data",
