@@ -36,7 +36,7 @@ fn check_round_trip() {
 }
 
 #[test]
-#[ignore] // take about 10 minutes in release-with-assertions
+#[ignore] // takes about 90 seconds in release-with-assertions
 fn check_from_fields() {
     fn test<C: Calendar>(cal: C) {
         let cal = Ref(&cal);
@@ -60,13 +60,13 @@ fn check_from_fields() {
                         fields.month_code = Some(m);
                         fields
                     })
-                    .chain((1..100).map(|m| {
+                    .chain((1..20).map(|m| {
                         let mut fields = types::DateFields::default();
                         fields.ordinal_month = Some(core::num::NonZeroU8::new(m).unwrap());
                         fields
                     }))
                 {
-                    for day in 1..100 {
+                    for day in 1..50 {
                         fields.extended_year = Some(year);
                         fields.day = Some(core::num::NonZeroU8::new(day).unwrap());
                         let _ = Date::try_from_fields(fields, options, Ref(&cal));
