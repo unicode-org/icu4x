@@ -181,7 +181,9 @@ fn main() -> eyre::Result<()> {
         cached(&format!(
             "https://github.com/unicode-org/icu/releases/download/{}/icu4x-icuexportdata-{}.zip",
             SourceDataProvider::TESTED_ICUEXPORT_TAG,
-            SourceDataProvider::TESTED_ICUEXPORT_TAG.replace("release-", "").replace("icu4x-", "")
+            SourceDataProvider::TESTED_ICUEXPORT_TAG
+                .replace("release-", "")
+                .replace("icu4x-", "")
         ))
         .with_context(|| "Failed to download ICU ZIP".to_owned())?,
         expand_paths(ICUEXPORTDATA_GLOB, true),
