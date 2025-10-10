@@ -4,7 +4,7 @@
 
 use crate::{
     zone::{iana::IanaParserBorrowed, models, InvalidOffsetError, UtcOffset},
-    DateTime, Time, TimeZone, TimeZoneInfo, ZonedDateTime,
+    DateTime, Time, TimeZoneInfo, ZonedDateTime,
 };
 use core::str::FromStr;
 use icu_calendar::{AnyCalendarKind, AsCalendar, Date, DateError, Iso, RangeError};
