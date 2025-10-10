@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::range_check_with_overflow;
+use crate::error::{range_check, range_check_with_overflow};
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
 use crate::types::{DateDuration, DateDurationUnit, DateFields, DayOfYear, MonthCode};
@@ -641,6 +641,22 @@ pub(crate) struct ArithmeticDateBuilder<YearInfo> {
     pub(crate) day: u8,
 }
 
+fn extended_year_as_year_info<YearInfo, C>(
+    fields: &DateFields,
+    cal: &C,
+) -> Result<Option<YearInfo>, DateError>
+where
+    C: DateFieldsResolver<YearInfo = YearInfo>,
+{
+    if let Some(extended_year) = fields.extended_year {
+        // Check that the year is in range to avoid any arithmetic overflow.
+        range_check(extended_year, "year", -1_000_000..=1_000_000)?;
+        Ok(Some(cal.year_info_from_extended(extended_year)))
+    } else {
+        Ok(None)
+    }
+}
+
 impl<YearInfo> ArithmeticDateBuilder<YearInfo>
 where
     YearInfo: PartialEq + Debug,
@@ -655,14 +671,18 @@ where
     {
         let missing_fields_strategy = options.missing_fields_strategy.unwrap_or_default();
         let maybe_year = {
-            let extended_year_as_year_info = fields
-                .extended_year
-                .map(|extended_year| cal.year_info_from_extended(extended_year));
+            // NOTE: The year/extendedyear range check is important to avoid arithmetic
+            // overflow in `year_info_from_era` and `year_info_from_extended`. It
+            // must happen before they are called.
+            //
+            // To better match the Temporal specification's order of operations, we try
+            // to return structural type errors (`NotEnoughFields`) before checking for range errors.
             match (fields.era, fields.era_year) {
-                (None, None) => extended_year_as_year_info,
+                (None, None) => extended_year_as_year_info(&fields, cal)?,
                 (Some(era), Some(era_year)) => {
+                    range_check(era_year, "year", -1_000_000..=1_000_000)?;
                     let era_year_as_year_info = cal.year_info_from_era(era, era_year)?;
-                    if let Some(other) = extended_year_as_year_info {
+                    if let Some(other) = extended_year_as_year_info(&fields, cal)? {
                         if era_year_as_year_info != other {
                             return Err(DateError::InconsistentYear);
                         }

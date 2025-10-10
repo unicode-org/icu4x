@@ -260,15 +260,24 @@ pub(crate) fn range_check_with_overflow<T: Ord + Into<i32> + Copy>(
     if matches!(overflow, Overflow::Constrain) {
         Ok(value.clamp(*bounds.start(), *bounds.end()))
     } else {
-        if !bounds.contains(&value) {
-            return Err(RangeError {
-                field,
-                value: value.into(),
-                min: (*bounds.start()).into(),
-                max: (*bounds.end()).into(),
-            });
-        }
+        range_check(value, field, bounds)?;
 
         Ok(value)
     }
+}
+
+pub(crate) fn range_check<T: Ord + Into<i32> + Copy>(
+    value: T,
+    field: &'static str,
+    bounds: core::ops::RangeInclusive<T>,
+) -> Result<(), RangeError> {
+    if !bounds.contains(&value) {
+        return Err(RangeError {
+            field,
+            value: value.into(),
+            min: (*bounds.start()).into(),
+            max: (*bounds.end()).into(),
+        });
+    }
+    Ok(())
 }
