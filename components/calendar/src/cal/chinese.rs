@@ -1689,7 +1689,10 @@ mod test {
         };
 
         let cal = LunarChinese::new_china();
-        assert!(Date::try_from_fields(fields, options, cal).is_err());
+        assert!(matches!(
+            Date::try_from_fields(fields, options, cal).unwrap_err(),
+            DateError::Range { .. }
+        ));
     }
 
     #[test]
