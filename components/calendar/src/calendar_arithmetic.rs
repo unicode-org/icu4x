@@ -653,7 +653,12 @@ where
     C: DateFieldsResolver<YearInfo = YearInfo>,
 {
     // Check that the year is in range to avoid any arithmetic overflow.
-    range_check(extended_year, "year", -1_000_000..=1_000_000)?;
+    //
+    // This range is currently global, but may be replaced with
+    // a per-calendar check in the future.
+    //
+    // <https://github.com/unicode-org/icu4x/issues/7076>
+    range_check(extended_year, "year", VALID_YEAR_RANGE)?;
     Ok(cal.year_info_from_extended(extended_year))
 }
 
@@ -689,7 +694,7 @@ where
 
         if fields.month_code.is_none() && fields.ordinal_month.is_none() {
             // We're returning this error early so that we return structural type
-            // errors before range errors, see comment in Range.
+            // errors before range errors, see comment in the year code below.
             return Err(DateError::NotEnoughFields);
         }
 
