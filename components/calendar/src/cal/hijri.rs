@@ -214,7 +214,7 @@ impl Rules for AstronomicalSimulation {
             }
             month_lengths
         };
-        HijriYearData::new(extended_year, start_day, month_lengths)
+        HijriYearData::try_new(extended_year, start_day, month_lengths)
             .unwrap_or_else(|| UmmAlQura.year_data(extended_year))
     }
 }
@@ -362,7 +362,7 @@ impl Rules for TabularAlgorithm {
 
     fn year_data(&self, extended_year: i32) -> HijriYearData {
         #[allow(clippy::unwrap_used)] // justified, and proven by exhaustive.rs for years +-270_000
-        HijriYearData::new(
+        HijriYearData::try_new(
             extended_year,
             // this is within 5 days of the mean fixed tabular start day by construction
             calendrical_calculations::islamic::fixed_from_tabular_islamic(
@@ -508,9 +508,13 @@ impl HijriYearData {
     ///
     /// `month_lengths[n - 1]` is true if the nth month has 30 days, and false otherwise.
     /// Either 6 or 7 months need to have 30 days.
-    pub fn new(extended_year: i32, start_day: RataDie, month_lengths: [bool; 12]) -> Option<Self> {
+    pub fn try_new(
+        extended_year: i32,
+        start_day: RataDie,
+        month_lengths: [bool; 12],
+    ) -> Option<Self> {
         Some(Self {
-            packed: PackedHijriYearInfo::new(extended_year, month_lengths, start_day)?,
+            packed: PackedHijriYearInfo::try_new(extended_year, month_lengths, start_day)?,
             extended_year,
         })
     }

@@ -40,7 +40,7 @@ use zerovec::ule::AsULE;
 pub struct PackedHijriYearInfo(pub u16);
 
 impl PackedHijriYearInfo {
-    pub(crate) const fn new(
+    pub(crate) const fn try_new(
         extended_year: i32,
         month_lengths: [bool; 12],
         start_day: RataDie,
@@ -136,7 +136,7 @@ impl AsULE for PackedHijriYearInfo {
 fn test_hijri_packed_roundtrip() {
     #[track_caller]
     fn single_roundtrip(month_lengths: [bool; 12], start_day: RataDie) -> Option<()> {
-        let packed = PackedHijriYearInfo::new(1600, month_lengths, start_day)?;
+        let packed = PackedHijriYearInfo::try_new(1600, month_lengths, start_day)?;
         for i in 0..12 {
             assert_eq!(packed.month_has_30_days(i + 1), month_lengths[i as usize]);
         }
