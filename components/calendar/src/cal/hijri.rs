@@ -748,9 +748,6 @@ impl<R: Rules> Calendar for Hijri<R> {
         // (354 * 30 + 11) / 30 is the mean year length for a tabular year
         // This is slightly different from the `calendrical_calculations::islamic::MEAN_YEAR_LENGTH`, which is based on
         // the (current) synodic month length.
-        // This does not need to be accurate, it's just a performance optimisation
-        // to avoid a long linear search. `Rules` also don't need to use this
-        // epoch, it'll just search longer if the epoch is very different.
         //
         // +1 because the epoch is new year of year 1
         // Before the epoch the division will round up (towards 0), so we need to
