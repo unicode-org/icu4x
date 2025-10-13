@@ -128,5 +128,16 @@ fuzz_target!(|data: FuzzInput| {
             fields.month_code = Some(unwrap_or_return!(MonthCode::new_leap(data.month)));
         }
     };
-    let _date = Date::try_from_fields(fields, options, calendar);
+    if let Ok(date) = Date::try_from_fields(fields, options, calendar) {
+        let _ = date.day_of_month();
+        let _ = date.day_of_week();
+        let _ = date.day_of_year();
+        let _ = date.days_in_month();
+        let _ = date.days_in_year();
+        let _ = date.extended_year();
+        let _ = date.is_in_leap_year();
+        let _ = date.month();
+        let _ = date.months_in_year();
+        let _ = date.year();
+    }
 });
