@@ -191,8 +191,14 @@ impl<'a, V: VarULE + ?Sized> VarZeroCow<'a, V> {
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
     pub fn new_owned(val: Box<V>) -> Self {
-        let val = ManuallyDrop::new(val);
-        let buf: NonNull<[u8]> = val.as_bytes().into();
+        let len = val.as_bytes().len();
+        let raw_v = Box::into_raw(val) as *mut V;
+        // disallowed?
+        // let raw_u8: *mut u8 = raw_v as *mut [u8] as *mut u8;
+        let raw_u8: *mut u8 = raw_v as *mut () as *mut u8;
+
+        let buf: NonNull<[u8]> =
+            unsafe { NonNull::new_unchecked(core::ptr::slice_from_raw_parts_mut(raw_u8, len)) };
         let raw = RawVarZeroCow {
             // Invariants upheld:
             // 1 & 3: The bytes came from `val` so they're a valid value and byte slice
