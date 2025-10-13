@@ -372,7 +372,7 @@ impl Rules for TabularAlgorithm {
                 || m == 11
                     && match self.leap_years {
                         TabularAlgorithmLeapYears::TypeII => {
-                            (14 + 11 * extended_year).rem_euclid(30) < 11
+                            (14 + 11 * extended_year as i64).rem_euclid(30) < 11
                         }
                     }
         });
