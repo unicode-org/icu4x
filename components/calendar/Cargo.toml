@@ -35,6 +35,7 @@ icu_calendar_data = { workspace = true, optional = true }
 icu_locale = { workspace = true, optional = true }
 
 [dev-dependencies]
+argmin = { workspace = true }
 icu_provider = { path = "../../provider/core", features = ["logging"] }
 icu = { path = "../../components/icu", default-features = false }
 itertools = { workspace = true }

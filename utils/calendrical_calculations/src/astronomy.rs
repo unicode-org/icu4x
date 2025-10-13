@@ -80,7 +80,7 @@ impl Location {
     /// Create a location; latitude is from -90 to 90, and longitude is from -180 to 180;
     /// attempting to create a location outside of these bounds will result in a LocationOutOfBoundsError.
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
-    pub(crate) fn try_new(
+    pub fn try_new(
         latitude: f64,
         longitude: f64,
         elevation: f64,
@@ -109,25 +109,25 @@ impl Location {
 
     /// Get the longitude of a Location
     #[allow(dead_code)]
-    pub(crate) fn longitude(&self) -> f64 {
+    pub fn longitude(&self) -> f64 {
         self.longitude
     }
 
     /// Get the latitude of a Location
     #[allow(dead_code)]
-    pub(crate) fn latitude(&self) -> f64 {
+    pub fn latitude(&self) -> f64 {
         self.latitude
     }
 
     /// Get the elevation of a Location
     #[allow(dead_code)]
-    pub(crate) fn elevation(&self) -> f64 {
+    pub fn elevation(&self) -> f64 {
         self.elevation
     }
 
     /// Get the utc-offset of a Location
     #[allow(dead_code)]
-    pub(crate) fn zone(&self) -> f64 {
+    pub fn zone(&self) -> f64 {
         self.utc_offset
     }
 
@@ -135,7 +135,7 @@ impl Location {
     /// this yields the difference in Moment given a longitude
     /// e.g. a longitude of 90 degrees is 0.25 (90 / 360) days ahead
     /// of a location with a longitude of 0 degrees.
-    pub(crate) fn zone_from_longitude(longitude: f64) -> f64 {
+    pub fn zone_from_longitude(longitude: f64) -> f64 {
         longitude / (360.0)
     }
 
@@ -144,7 +144,7 @@ impl Location {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3501-L3506>
     #[allow(dead_code)]
-    pub(crate) fn standard_from_local(standard_time: Moment, location: Location) -> Moment {
+    pub fn standard_from_local(standard_time: Moment, location: Location) -> Moment {
         Self::standard_from_universal(
             Self::universal_from_local(standard_time, location),
             location,
@@ -155,7 +155,7 @@ impl Location {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3496-L3499>
-    pub(crate) fn universal_from_local(local_time: Moment, location: Location) -> Moment {
+    pub fn universal_from_local(local_time: Moment, location: Location) -> Moment {
         local_time - Self::zone_from_longitude(location.longitude)
     }
 
@@ -164,7 +164,7 @@ impl Location {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3491-L3494>
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
-    pub(crate) fn local_from_universal(universal_time: Moment, location: Location) -> Moment {
+    pub fn local_from_universal(universal_time: Moment, location: Location) -> Moment {
         universal_time + Self::zone_from_longitude(location.longitude)
     }
 
@@ -175,7 +175,7 @@ impl Location {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3479-L3483>
-    pub(crate) fn universal_from_standard(standard_moment: Moment, location: Location) -> Moment {
+    pub fn universal_from_standard(standard_moment: Moment, location: Location) -> Moment {
         debug_assert!(location.utc_offset > MIN_UTC_OFFSET && location.utc_offset < MAX_UTC_OFFSET, "UTC offset {0} was not within the possible range of offsets (see astronomy::MIN_UTC_OFFSET and astronomy::MAX_UTC_OFFSET)", location.utc_offset);
         standard_moment - location.utc_offset
     }
@@ -187,7 +187,7 @@ impl Location {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3473-L3477>
     #[allow(dead_code)]
-    pub(crate) fn standard_from_universal(standard_time: Moment, location: Location) -> Moment {
+    pub fn standard_from_universal(standard_time: Moment, location: Location) -> Moment {
         debug_assert!(location.utc_offset > MIN_UTC_OFFSET && location.utc_offset < MAX_UTC_OFFSET, "UTC offset {0} was not within the possible range of offsets (see astronomy::MIN_UTC_OFFSET and astronomy::MAX_UTC_OFFSET)", location.utc_offset);
         standard_time + location.utc_offset
     }

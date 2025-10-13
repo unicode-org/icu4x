@@ -160,7 +160,7 @@ impl Sub for RataDie {
 /// NOTE: This should not cause overflow errors for most cases, but consider
 /// alternative implementations if necessary.
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
-pub(crate) struct Moment(f64);
+pub struct Moment(f64);
 
 /// Add a number of days to a Moment
 impl Add<f64> for Moment {
@@ -209,7 +209,19 @@ impl Moment {
         self.0
     }
 
-    /// Get the RataDie of a Moment
+    /// Get a Moment for a RataDie.
+    /// Returns None if the RataDie is out of range of Moment.
+    pub fn try_from_rata_die(rata_die: RataDie) -> Option<Self> {
+        // Why is there no impl TryFrom<i64> for f64 ???
+        let value = rata_die.to_i64_date() as f64;
+        if value as i64 != rata_die.to_i64_date() {
+            return None;
+        }
+        Some(Self(value))
+    }
+
+    /// Get the RataDie of a Moment,
+    /// truncating to midnight
     pub fn as_rata_die(self) -> RataDie {
         RataDie::new(self.0.floor() as i64)
     }
