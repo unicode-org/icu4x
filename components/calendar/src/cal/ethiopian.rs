@@ -14,10 +14,10 @@ use crate::{types, Calendar, Date, RangeError};
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
-/// The number of years the Amete Mihret epoch follows the Coptic epoch
+/// The Coptic year of the Amete Mihret epoch
 const AMETE_MIHRET_OFFSET: i32 = -276;
 
-/// The number of years the Amete Alem epoch follows the Coptic epoch
+/// The Coptic year of the Amete Alem epoch
 const AMETE_ALEM_OFFSET: i32 = -5776;
 
 /// Which era style the ethiopian calendar uses
