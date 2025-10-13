@@ -755,15 +755,22 @@ impl<R: Rules> Calendar for Hijri<R> {
         // subtract 1, which is the same as not adding the 1.
         let extended_year = (rd - calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY) * 30
             / (354 * 30 + 11)
-            + (rd > calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY) as i64;
+            + (rd >= calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY) as i64;
 
-        let mut year = self.0.year_data(extended_year as i32);
+        let extended_year = extended_year.clamp(i32::MIN as i64, i32::MAX as i64) as i32;
 
-        if rd < year.start_day() {
-            year = self.0.year_data(year.extended_year - 1);
-        } else if rd >= year.start_day() + year.last_day_of_month(12) as i64 {
+        let mut year = self.0.year_data(extended_year);
+
+        // We rounded the extended year down, so we might need to use the next year
+        if rd >= year.start_day() + year.last_day_of_month(12) as i64 && extended_year < i32::MAX {
             year = self.0.year_data(year.extended_year + 1)
         }
+
+        // Clamp the RD to our year
+        let rd = rd.clamp(
+            year.start_day(),
+            year.start_day() + year.last_day_of_month(12) as i64,
+        );
         let (m, d) = year.md_from_rd(rd);
         HijriDateInner(ArithmeticDate::new_unchecked(year, m, d))
     }
