@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::iso::{Iso, IsoDateInner};
+use crate::calendar_arithmetic::ToExtendedYear;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
-use crate::calendar_arithmetic::{PrecomputedDataSource, ToExtendedYear};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -713,7 +713,7 @@ impl<R: Rules> DateFieldsResolver for Hijri<R> {
 
     #[inline]
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
-        self.load_or_compute_info(extended_year)
+        self.0.year_data(extended_year)
     }
 
     #[inline]
@@ -860,12 +860,6 @@ impl<R: Rules> Calendar for Hijri<R> {
 
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         self.0.calendar_algorithm()
-    }
-}
-
-impl<R: Rules> PrecomputedDataSource<HijriYearData> for Hijri<R> {
-    fn load_or_compute_info(&self, extended_year: i32) -> HijriYearData {
-        self.0.year_data(extended_year)
     }
 }
 
