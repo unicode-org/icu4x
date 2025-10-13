@@ -123,8 +123,8 @@ impl Rules for AstronomicalSimulation {
     }
 
     fn year_data(&self, extended_year: i32) -> HijriYearData {
-        if let Some(&packed) = usize::try_from(extended_year - simulated_mecca_data::STARTING_YEAR)
-            .ok()
+        if let Some(&packed) = Some(extended_year)
+            .and_then(|e| usize::try_from(e.checked_sub(simulated_mecca_data::STARTING_YEAR)?).ok())
             .and_then(|i| simulated_mecca_data::DATA.get(i))
         {
             return HijriYearData {
@@ -275,8 +275,8 @@ impl Rules for UmmAlQura {
     }
 
     fn year_data(&self, extended_year: i32) -> HijriYearData {
-        if let Some(&packed) = usize::try_from(extended_year - ummalqura_data::STARTING_YEAR)
-            .ok()
+        if let Some(&packed) = Some(extended_year)
+            .and_then(|e| usize::try_from(e.checked_sub(ummalqura_data::STARTING_YEAR)?).ok())
             .and_then(|i| ummalqura_data::DATA.get(i))
         {
             HijriYearData {
