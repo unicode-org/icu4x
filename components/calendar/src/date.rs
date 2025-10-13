@@ -124,7 +124,11 @@ pub struct Date<A: AsCalendar> {
 impl<A: AsCalendar> Date<A> {
     /// Construct a date from from era/month codes and fields, and some calendar representation
     ///
-    /// The year is `extended_year` if no era is provided
+    /// The year is `extended_year` if no era is provided.
+    ///
+    /// This function will not accept year/extended_year values that are outside of the range `[-2²⁷, 2²⁷]`,
+    /// regardless of the calendar, instead returning a [`DateError::Range`]. See [`Date::try_from_fields()`] for more
+    /// information.
     #[inline]
     pub fn try_new_from_codes(
         era: Option<&str>,
@@ -144,6 +148,13 @@ impl<A: AsCalendar> Date<A> {
     /// This function allows specifying the year as either extended year or era + era year,
     /// and the month as either ordinal or month code. It can constrain out-of-bounds values
     /// and fill in missing fields. See [`DateFromFieldsOptions`] for more information.
+    ///
+    /// This function will not accept year/extended_year values that are outside of the range `[-2²⁷, 2²⁷]`,
+    /// regardless of the calendar, instead returning a [`DateError::Range`]. This is to prevent
+    /// overflowing behaviors near the extreme values of the `i32` range.
+    /// Currently, calendar-specific `Date::try_new_calendarname()` constructors
+    /// do not do this, and it is possible to obtain such extreme dates via calendar conversion or arithmetic,
+    /// though [we may change that behavior in the future](https://github.com/unicode-org/icu4x/issues/7076).
     ///
     /// # Examples
     ///

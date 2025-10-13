@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::range_check_with_overflow;
+use crate::error::{range_check, range_check_with_overflow};
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
 use crate::types::{DateDuration, DateDurationUnit, DateFields, DayOfYear, MonthCode};
@@ -12,7 +12,11 @@ use core::convert::TryInto;
 use core::fmt::Debug;
 use core::hash::{Hash, Hasher};
 use core::marker::PhantomData;
+use core::ops::RangeInclusive;
 use tinystr::tinystr;
+
+/// The range ±2²⁷. We use i32::MIN since it is -2³¹
+const VALID_YEAR_RANGE: RangeInclusive<i32> = (i32::MIN / 16)..=-(i32::MIN / 16);
 
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
@@ -641,6 +645,23 @@ pub(crate) struct ArithmeticDateBuilder<YearInfo> {
     pub(crate) day: u8,
 }
 
+fn extended_year_as_year_info<YearInfo, C>(
+    extended_year: i32,
+    cal: &C,
+) -> Result<YearInfo, DateError>
+where
+    C: DateFieldsResolver<YearInfo = YearInfo>,
+{
+    // Check that the year is in range to avoid any arithmetic overflow.
+    //
+    // This range is currently global, but may be replaced with
+    // a per-calendar check in the future.
+    //
+    // <https://github.com/unicode-org/icu4x/issues/7076>
+    range_check(extended_year, "year", VALID_YEAR_RANGE)?;
+    Ok(cal.year_info_from_extended(extended_year))
+}
+
 impl<YearInfo> ArithmeticDateBuilder<YearInfo>
 where
     YearInfo: PartialEq + Debug,
@@ -654,49 +675,69 @@ where
         C: DateFieldsResolver<YearInfo = YearInfo>,
     {
         let missing_fields_strategy = options.missing_fields_strategy.unwrap_or_default();
-        let maybe_year = {
-            let extended_year_as_year_info = fields
-                .extended_year
-                .map(|extended_year| cal.year_info_from_extended(extended_year));
+
+        let day = match fields.day {
+            Some(day) => day.get(),
+            None => match missing_fields_strategy {
+                MissingFieldsStrategy::Reject => return Err(DateError::NotEnoughFields),
+                MissingFieldsStrategy::Ecma => {
+                    if fields.extended_year.is_some() || fields.era_year.is_some() {
+                        // The ECMAScript strategy is to pick day 1, always, regardless of whether
+                        // that day exists for the month/year combo
+                        1
+                    } else {
+                        return Err(DateError::NotEnoughFields);
+                    }
+                }
+            },
+        };
+
+        if fields.month_code.is_none() && fields.ordinal_month.is_none() {
+            // We're returning this error early so that we return structural type
+            // errors before range errors, see comment in the year code below.
+            return Err(DateError::NotEnoughFields);
+        }
+
+        let year = {
+            // NOTE: The year/extendedyear range check is important to avoid arithmetic
+            // overflow in `year_info_from_era` and `year_info_from_extended`. It
+            // must happen before they are called.
+            //
+            // To better match the Temporal specification's order of operations, we try
+            // to return structural type errors (`NotEnoughFields`) before checking for range errors.
+            // This isn't behavior we *must* have, but it is not much additional work to maintain
+            // so we make an attempt.
             match (fields.era, fields.era_year) {
-                (None, None) => extended_year_as_year_info,
+                (None, None) => match fields.extended_year {
+                    Some(extended_year) => extended_year_as_year_info(extended_year, cal)?,
+                    None => match missing_fields_strategy {
+                        MissingFieldsStrategy::Reject => return Err(DateError::NotEnoughFields),
+                        MissingFieldsStrategy::Ecma => {
+                            match (fields.month_code, fields.ordinal_month) {
+                                (Some(month_code), None) => {
+                                    cal.reference_year_from_month_day(month_code, day)?
+                                }
+                                _ => return Err(DateError::NotEnoughFields),
+                            }
+                        }
+                    },
+                },
                 (Some(era), Some(era_year)) => {
+                    range_check(era_year, "year", VALID_YEAR_RANGE)?;
                     let era_year_as_year_info = cal.year_info_from_era(era, era_year)?;
-                    if let Some(other) = extended_year_as_year_info {
-                        if era_year_as_year_info != other {
+                    if let Some(extended_year) = fields.extended_year {
+                        if era_year_as_year_info != extended_year_as_year_info(extended_year, cal)?
+                        {
                             return Err(DateError::InconsistentYear);
                         }
                     }
-                    Some(era_year_as_year_info)
+                    era_year_as_year_info
                 }
                 // Era and Era Year must be both or neither
                 (Some(_), None) | (None, Some(_)) => return Err(DateError::NotEnoughFields),
             }
         };
-        let day = match fields.day {
-            Some(day) => day.get(),
-            None => match missing_fields_strategy {
-                MissingFieldsStrategy::Reject => return Err(DateError::NotEnoughFields),
-                MissingFieldsStrategy::Ecma => match maybe_year {
-                    // The ECMAScript strategy is to pick day 1, always, regardless of whether
-                    // that day exists for the month/year combo
-                    Some(_) => 1,
-                    None => return Err(DateError::NotEnoughFields),
-                },
-            },
-        };
-        let year = match maybe_year {
-            Some(year) => year,
-            None => match missing_fields_strategy {
-                MissingFieldsStrategy::Reject => return Err(DateError::NotEnoughFields),
-                MissingFieldsStrategy::Ecma => match (fields.month_code, fields.ordinal_month) {
-                    (Some(month_code), None) => {
-                        cal.reference_year_from_month_day(month_code, day)?
-                    }
-                    _ => return Err(DateError::NotEnoughFields),
-                },
-            },
-        };
+
         let month = {
             let ordinal_month_as_u8 = fields.ordinal_month.map(|x| x.get());
             match fields.month_code {
@@ -711,6 +752,7 @@ where
                 }
                 None => match ordinal_month_as_u8 {
                     Some(month) => month,
+                    // This is technically unreachable since it's checked early above
                     None => return Err(DateError::NotEnoughFields),
                 },
             }

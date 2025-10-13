@@ -1068,6 +1068,7 @@ mod test {
     use crate::types::DateFields;
     use crate::types::MonthCode;
     use calendrical_calculations::{gregorian::fixed_from_gregorian, rata_die::RataDie};
+    use core::num::NonZero;
     use std::collections::BTreeMap;
     use tinystr::tinystr;
 
@@ -1639,7 +1640,7 @@ mod test {
     #[test]
     fn test_from_fields_constrain() {
         let fields = DateFields {
-            day: core::num::NonZero::new(31),
+            day: NonZero::new(31),
             month_code: Some(MonthCode("M01".parse().unwrap())),
             extended_year: Some(1972),
             ..Default::default()
@@ -1659,7 +1660,7 @@ mod test {
 
         // 2022 did not have M01L, the month should be constrained back down
         let fields = DateFields {
-            day: core::num::NonZero::new(1),
+            day: NonZero::new(1),
             month_code: Some(MonthCode("M01L".parse().unwrap())),
             extended_year: Some(2022),
             ..Default::default()
@@ -1670,6 +1671,28 @@ mod test {
             "M01",
             "Month was successfully constrained"
         );
+    }
+
+    #[test]
+    fn test_from_fields_regress_7049() {
+        // We want to make sure that overly large years do not panic
+        // (we just reject them in Date::try_from_fields)
+        let fields = DateFields {
+            extended_year: Some(889192448),
+            ordinal_month: NonZero::new(1),
+            day: NonZero::new(1),
+            ..Default::default()
+        };
+        let options = DateFromFieldsOptions {
+            overflow: Some(Overflow::Reject),
+            ..Default::default()
+        };
+
+        let cal = LunarChinese::new_china();
+        assert!(matches!(
+            Date::try_from_fields(fields, options, cal).unwrap_err(),
+            DateError::Range { .. }
+        ));
     }
 
     #[test]
