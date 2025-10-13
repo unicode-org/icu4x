@@ -52,14 +52,6 @@ const UTC_NEW_MOON: LocalMoment = LocalMoment {
 #[derive(Debug, Copy, Clone, Default)]
 pub(super) struct Milliseconds(i64);
 
-impl core::ops::Mul<i64> for Milliseconds {
-    type Output = Self;
-
-    fn mul(self, rhs: i64) -> Self::Output {
-        Self(self.0 * rhs)
-    }
-}
-
 #[derive(Debug, Copy, Clone)]
 struct LocalMoment {
     rata_die: RataDie,
@@ -85,17 +77,33 @@ impl super::LunarChineseYearData {
     /// Stays anchored in the Gregorian calendar, even as the Gregorian calendar drifts
     /// from the seasons in the distant future and distant past.
     pub(super) fn simple(utc_offset: Milliseconds, related_iso: i32) -> LunarChineseYearData {
+        // calculates the largest moment such that moment = base_moment + n * duration <= rata_die
         fn periodic_duration_on_or_before(
             rata_die: RataDie,
             base_moment: LocalMoment,
             duration: Milliseconds,
         ) -> LocalMoment {
-            let num_periods = ((rata_die - base_moment.rata_die + 1)
-                * MILLISECONDS_IN_EPHEMERIS_DAY
-                - base_moment.local_milliseconds as i64
-                - 1)
-            .div_euclid(duration.0);
-            base_moment + duration * num_periods
+            let diff_millis = (rata_die - base_moment.rata_die) as i128
+                * MILLISECONDS_IN_EPHEMERIS_DAY as i128
+                - base_moment.local_milliseconds as i128;
+
+            let num_periods = (diff_millis + MILLISECONDS_IN_EPHEMERIS_DAY as i128 - 1)
+                .div_euclid(duration.0 as i128);
+
+            let millis = base_moment.rata_die.to_i64_date() as i128
+                * MILLISECONDS_IN_EPHEMERIS_DAY as i128
+                + base_moment.local_milliseconds as i128
+                + num_periods * duration.0 as i128;
+
+            let rata_die =
+                (millis / MILLISECONDS_IN_EPHEMERIS_DAY as i128) as i64 - (millis < 0) as i64;
+            let local_milliseconds = (millis % MILLISECONDS_IN_EPHEMERIS_DAY as i128) as i64
+                + (millis < 0) as i64 * MILLISECONDS_IN_EPHEMERIS_DAY as i64;
+
+            LocalMoment {
+                rata_die: RataDie::new(rata_die),
+                local_milliseconds: local_milliseconds as u32,
+            }
         }
 
         let mut major_solar_term = periodic_duration_on_or_before(
