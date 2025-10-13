@@ -101,20 +101,6 @@ fuzz_target!(|data: FuzzInput| {
     };
 
     let mut fields = DateFields::default();
-    // Temporal only cares about validity in ±270k. We generously test outside of that.
-    // We should error on these dates instead, or otherwise handle them: https://github.com/unicode-org/icu4x/issues/7049
-    const INTERNAL_EXTENDED_YEAR_OFFSETS: &[i32] = &[
-        -5776, // Coptic -> Ethiopian Amete Alem offset
-        -276,  // Coptic -> Ethiopian Amete Mihret offset
-        -543,  // Gregorian -> Buddhist offset
-        1911,  // Gregorian -> ROC offset
-        -1,    // Hebrew as it compute the Keviyah for the previous year
-    ];
-    if data.year < i32::MIN - INTERNAL_EXTENDED_YEAR_OFFSETS.into_iter().min().unwrap()
-        || data.year > i32::MAX - INTERNAL_EXTENDED_YEAR_OFFSETS.into_iter().max().unwrap()
-    {
-        return;
-    }
     fields.extended_year = Some(data.year);
     fields.day = Some(unwrap_or_return!(NonZeroU8::new(data.day)));
     match data.month_interpretation {
