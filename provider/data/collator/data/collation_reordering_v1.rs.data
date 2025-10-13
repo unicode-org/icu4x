@@ -18,9 +18,9 @@
 #[macro_export]
 macro_rules! __impl_collation_reordering_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.82"]
+        #[clippy::msrv = "1.83"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.82"]
+        #[clippy::msrv = "1.83"]
         impl $provider {
             const DATA_COLLATION_REORDERING_V1: icu_provider::baked::zerotrie::Data<icu::collator::provider::CollationReorderingV1> = {
                 const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xD2abcefghjklmnoprstu\x14,/135AKy|\x8E\x91\x94\x9B\x9D\xB1\xBD\xC4mrsz\x01\n\x0B\x80\x81\x1Ecompat\x81\x82\x83\xC4egns\x01\x02\t\x84\x84\x82\x1Etrad\x82\x83-Cyrl\x84hr\x85l\x86a\x81u\x87\xC4eiry\x01\x02\x03\x88\x89\x83\x8Aa\x8B\x1Eunihan\x8B\xC7akmnouy\x01\x08\t\x10\x1D\x1F\x8C\x84-Arab\x81\x8D\x8E\x1Etrad\x8E\x8F\xC2\x1Ek\x07unihan\x8F\x89\x90\0\x84o\x90\x01\xC5klnry\x01\x03\x05\x06\x84\x90\x02\x90\x03\x89\x90\x04e\x90\x05r\x90\x06\xC2as\x02\x90\x07\x81u\x84\xC2ir\t\x90\x08\x1Edict\x90\x08\x84-Latn\x83\xC3aeh\x02\x04\x90\t\x90\n\x90\x0B\xC4gknr\x01\x026\x81\x84d-Han\xC3ist%'\x1E\xC4psuz\x07\x0E\x15inyin\x90\x0Ctroke\x90\rnihan\x90\rhuyin\x90\r\x90\x0C\x90\r\x81" };
@@ -28,7 +28,7 @@ macro_rules! __impl_collation_reordering_v1 {
                 unsafe { icu_provider::baked::zerotrie::Data::from_trie_and_values_unchecked(TRIE, VALUES) }
             };
         }
-        #[clippy::msrv = "1.82"]
+        #[clippy::msrv = "1.83"]
         impl icu_provider::DataProvider<icu::collator::provider::CollationReorderingV1> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::collator::provider::CollationReorderingV1>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -54,7 +54,7 @@ macro_rules! __impl_collation_reordering_v1 {
     };
     ($ provider : ty , ITER) => {
         __impl_collation_reordering_v1!($provider);
-        #[clippy::msrv = "1.82"]
+        #[clippy::msrv = "1.83"]
         impl icu_provider::IterableDataProvider<icu::collator::provider::CollationReorderingV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider::baked::DataStore::iter(&Self::DATA_COLLATION_REORDERING_V1).collect())

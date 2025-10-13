@@ -19,9 +19,9 @@
 #[macro_export]
 macro_rules! __impl_narrow_month_relative_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.82"]
+        #[clippy::msrv = "1.83"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.82"]
+        #[clippy::msrv = "1.83"]
         impl $provider {
             const DATA_NARROW_MONTH_RELATIVE_V1: icu_provider::baked::zerotrie::Data<icu::experimental::relativetime::provider::NarrowMonthRelativeV1> = {
                 const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1zabcdefghijklmnopqrstuvwxyz\0\0\0\0\0\0\0\0\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x02\x02\x14B_q\x9E\xBE\xCE\xF2\x0E\x16Qa\x86\xA0\xA8\xC2\xC5\xDA-Uv\x7F\x82\x8B\xA5\xC6fkmrsz\x01\x02\x03\x04\x07\x80\x81\x82\x83\x84t\x85\x86\xC8aeglnrsu\x08\t\x0C\x0E\x0F\x12\x1B\x87l-Latn\x88\x89\x8Ac\x8Bo\x8C\x8D\x8Ex\x8F\x90\0-Cyrl\x90\x01a\x90\x02\xC6aehsvy\x02\x05\x08\r\x0F\x90\x03b\x90\x04r\x90\x05\x90\x06w\x90\x07\x90\x08\x90\t\xC4aeos\x02\x04\x07\x90\n\x90\x0Bi\x90\x0Cb\x90\r\xC7elnostu\x02\x04\x12\x14\x1B\x1D\x90\x0E\x90\x0F\x90\x10-\xC20C\x0401\x90\x11A\x90\x12\x90\x13\x90\x14-MX\x90\x15\x90\x16\x90\x17\xC6afiory\x02\t\x0E\x10\x12\x90\x18-Adlm\x90\x19\x90\x1Al\x90\x1B\x90\x1C\x90\x1D\x90\x1E\xC4adlu\x02\x04\x06\x90\x1F\x90 \x90!\x90\"\xC7aeirsuy\x02\x04\r\x0F\x12\x14\x90#\x90$\x90%-Latn\x90&\x90\0b\x90'\x90(\x90)\xC7adegist\x02\x04\x06\x08\n\x0C\x90*\x90+\x90,\x90-\x90.\x90/\x900\xC2av\x02\x901\x902\xCAaegkmnosuy\x02\x05\x08\x11\x13\x15!#%\x903a\x904p\x905\x906-Arab\x907\x908\x909\x90:k\x90;-Latn\x90<\x90=\x90>\x90?\xC4botv\x02\x04\x06\x90@\x90A\x90B\x90C\xC9aiklnrsty\x03\x05\x07\t\x0B\r\x0F\x11i\x90D\x90E\x90F\x90G\x90H\x90I\x90J\x90K\x90L\xC6elnoqs\x02\x04\x06\x08\x0B\x90M\x90N\x90O\x90Po\x90Qo\x90R\xC2mr\x02\x90S\x90T\xC5aclst\x02\x05\x07\t\x90Um\x90V\x90W\x90X\x90Y-PT\x90Zu\x90[\xC5amouw\x03\x05\x07\tj\x90\\\x90]\x90^\x90_\x90`\xCDacdhikloqrvwy\x03\x08\x11\x14\x16\x18\x1A\x1C\x1E246h\x90a\x90bn\x90c\x90d-Deva\x90en\x90f\x90g\x90h\x90i\x90j\x90k\x90l-\xC2BL\x03A\x90matn\x90n-BA\x90o\x90p\x90qr\x90r\xCAaeghiknort\x02\x04\x06\x08\n\x0C\x0E\x10\x12\x90s\x90t\x90u\x90v\x90w\x90x\x90y\x90z\x90{\x90|\xC5gknrz\x02\x04\x07\x0E\x90}\x90~d\x90\x7F\x91\0-IN\x91\x01\x91\x02-Cyrl\x91\x03\xC2ei\x03c\x91\x04\x91\x05o\x91\x06\xC2hn\x02\x91\x07r\x91\x08\xC3oru\x07\n\x91\t-BJ\x91\nl\x91\x0Be\x91\x0C-Hans\x91\r\xC2hu\x14\x91\x0E-\xC2HM\n\xC2Ka\x02\x91\x0Fnt\x91\x10O\x91\x0F\x91\x11" };
@@ -1326,7 +1326,7 @@ macro_rules! __impl_narrow_month_relative_v1 {
                 unsafe { icu_provider::baked::zerotrie::Data::from_trie_and_values_unchecked(TRIE, VALUES) }
             };
         }
-        #[clippy::msrv = "1.82"]
+        #[clippy::msrv = "1.83"]
         impl icu_provider::DataProvider<icu::experimental::relativetime::provider::NarrowMonthRelativeV1> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::relativetime::provider::NarrowMonthRelativeV1>, icu_provider::DataError> {
                 let mut metadata = icu_provider::DataResponseMetadata::default();
@@ -1352,7 +1352,7 @@ macro_rules! __impl_narrow_month_relative_v1 {
     };
     ($ provider : ty , ITER) => {
         __impl_narrow_month_relative_v1!($provider);
-        #[clippy::msrv = "1.82"]
+        #[clippy::msrv = "1.83"]
         impl icu_provider::IterableDataProvider<icu::experimental::relativetime::provider::NarrowMonthRelativeV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok(icu_provider::baked::DataStore::iter(&Self::DATA_NARROW_MONTH_RELATIVE_V1).collect())
