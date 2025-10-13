@@ -18,7 +18,7 @@ rust-version.workspace = true
 
 [package.metadata.sources]
 cldr = { tagged = "48.0.0-BETA3" }
-icuexport = { tagged = "icu4x/2025-05-21/77.x" }
+icuexport = { tagged = "release-78.1rc" }
 segmenter_lstm = { tagged = "v0.1.0" }
 
 [lints.rust]

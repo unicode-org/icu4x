@@ -294,7 +294,7 @@ impl Iterator for WeekdaySetIterator {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{types::Weekday, Date, DateDuration, RangeError};
+    use crate::{types::DateDuration, types::Weekday, Date, RangeError};
 
     static ISO_CALENDAR: WeekCalculator = WeekCalculator {
         first_weekday: Weekday::Monday,
@@ -457,11 +457,9 @@ mod tests {
         let day = (yyyymmdd % 100) as u8;
 
         let date = Date::try_new_iso(year, month, day)?;
-        let previous_month = date.added(DateDuration {
-            months: 1,
-            is_negative: true,
-            ..Default::default()
-        });
+        let previous_month = date
+            .try_added_with_options(DateDuration::for_months(-1), Default::default())
+            .unwrap();
 
         calendar.week_of(
             u16::from(previous_month.days_in_month()),

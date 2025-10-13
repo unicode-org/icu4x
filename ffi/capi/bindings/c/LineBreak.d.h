@@ -60,6 +60,7 @@ typedef enum LineBreak {
   LineBreak_AksaraStart = 45,
   LineBreak_ViramaFinal = 46,
   LineBreak_Virama = 47,
+  LineBreak_UnambiguousHyphen = 48,
 } LineBreak;
 
 typedef struct LineBreak_option {union { LineBreak ok; }; bool is_ok; } LineBreak_option;

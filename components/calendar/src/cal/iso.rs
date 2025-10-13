@@ -80,9 +80,8 @@ impl Iso {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::types::{RataDie, Weekday};
+    use crate::types::{DateDuration, RataDie, Weekday};
     use crate::Calendar;
-    use crate::DateDuration;
 
     #[test]
     fn iso_overflow() {
@@ -273,12 +272,16 @@ mod test {
     fn test_offset() {
         let today = Date::try_new_iso(2021, 6, 23).unwrap();
         let today_plus_5000 = Date::try_new_iso(2035, 3, 2).unwrap();
-        let offset = today.added(DateDuration::for_days(5000));
+        let offset = today
+            .try_added_with_options(DateDuration::for_days(5000), Default::default())
+            .unwrap();
         assert_eq!(offset, today_plus_5000);
 
         let today = Date::try_new_iso(2021, 6, 23).unwrap();
         let today_minus_5000 = Date::try_new_iso(2007, 10, 15).unwrap();
-        let offset = today.added(DateDuration::for_days(-5000));
+        let offset = today
+            .try_added_with_options(DateDuration::for_days(-5000), Default::default())
+            .unwrap();
         assert_eq!(offset, today_minus_5000);
     }
 
@@ -286,32 +289,44 @@ mod test {
     fn test_offset_at_month_boundary() {
         let today = Date::try_new_iso(2020, 2, 28).unwrap();
         let today_plus_2 = Date::try_new_iso(2020, 3, 1).unwrap();
-        let offset = today.added(DateDuration::for_days(2));
+        let offset = today
+            .try_added_with_options(DateDuration::for_days(2), Default::default())
+            .unwrap();
         assert_eq!(offset, today_plus_2);
 
         let today = Date::try_new_iso(2020, 2, 28).unwrap();
         let today_plus_3 = Date::try_new_iso(2020, 3, 2).unwrap();
-        let offset = today.added(DateDuration::for_days(3));
+        let offset = today
+            .try_added_with_options(DateDuration::for_days(3), Default::default())
+            .unwrap();
         assert_eq!(offset, today_plus_3);
 
         let today = Date::try_new_iso(2020, 2, 28).unwrap();
         let today_plus_1 = Date::try_new_iso(2020, 2, 29).unwrap();
-        let offset = today.added(DateDuration::for_days(1));
+        let offset = today
+            .try_added_with_options(DateDuration::for_days(1), Default::default())
+            .unwrap();
         assert_eq!(offset, today_plus_1);
 
         let today = Date::try_new_iso(2019, 2, 28).unwrap();
         let today_plus_2 = Date::try_new_iso(2019, 3, 2).unwrap();
-        let offset = today.added(DateDuration::for_days(2));
+        let offset = today
+            .try_added_with_options(DateDuration::for_days(2), Default::default())
+            .unwrap();
         assert_eq!(offset, today_plus_2);
 
         let today = Date::try_new_iso(2019, 2, 28).unwrap();
         let today_plus_1 = Date::try_new_iso(2019, 3, 1).unwrap();
-        let offset = today.added(DateDuration::for_days(1));
+        let offset = today
+            .try_added_with_options(DateDuration::for_days(1), Default::default())
+            .unwrap();
         assert_eq!(offset, today_plus_1);
 
         let today = Date::try_new_iso(2020, 3, 1).unwrap();
         let today_minus_1 = Date::try_new_iso(2020, 2, 29).unwrap();
-        let offset = today.added(DateDuration::for_days(-1));
+        let offset = today
+            .try_added_with_options(DateDuration::for_days(-1), Default::default())
+            .unwrap();
         assert_eq!(offset, today_minus_1);
     }
 
@@ -319,41 +334,57 @@ mod test {
     fn test_offset_handles_negative_month_offset() {
         let today = Date::try_new_iso(2020, 3, 1).unwrap();
         let today_minus_2_months = Date::try_new_iso(2020, 1, 1).unwrap();
-        let offset = today.added(DateDuration::for_months(-2));
+        let offset = today
+            .try_added_with_options(DateDuration::for_months(-2), Default::default())
+            .unwrap();
         assert_eq!(offset, today_minus_2_months);
 
         let today = Date::try_new_iso(2020, 3, 1).unwrap();
         let today_minus_4_months = Date::try_new_iso(2019, 11, 1).unwrap();
-        let offset = today.added(DateDuration::for_months(-4));
+        let offset = today
+            .try_added_with_options(DateDuration::for_months(-4), Default::default())
+            .unwrap();
         assert_eq!(offset, today_minus_4_months);
 
         let today = Date::try_new_iso(2020, 3, 1).unwrap();
         let today_minus_24_months = Date::try_new_iso(2018, 3, 1).unwrap();
-        let offset = today.added(DateDuration::for_months(-24));
+        let offset = today
+            .try_added_with_options(DateDuration::for_months(-24), Default::default())
+            .unwrap();
         assert_eq!(offset, today_minus_24_months);
 
         let today = Date::try_new_iso(2020, 3, 1).unwrap();
         let today_minus_27_months = Date::try_new_iso(2017, 12, 1).unwrap();
-        let offset = today.added(DateDuration::for_months(-27));
+        let offset = today
+            .try_added_with_options(DateDuration::for_months(-27), Default::default())
+            .unwrap();
         assert_eq!(offset, today_minus_27_months);
     }
 
     #[test]
     fn test_offset_handles_out_of_bound_month_offset() {
         let today = Date::try_new_iso(2021, 1, 31).unwrap();
-        // since 2021/02/31 isn't a valid date, `offset_date` auto-adjusts by adding 3 days to 2021/02/28
-        let today_plus_1_month = Date::try_new_iso(2021, 3, 3).unwrap();
-        let offset = today.added(DateDuration::for_months(1));
+        // since 2021/02/31 isn't a valid date, `offset_date` auto-adjusts by constraining to the last day in February
+        let today_plus_1_month = Date::try_new_iso(2021, 2, 28).unwrap();
+        let offset = today
+            .try_added_with_options(DateDuration::for_months(1), Default::default())
+            .unwrap();
         assert_eq!(offset, today_plus_1_month);
 
         let today = Date::try_new_iso(2021, 1, 31).unwrap();
-        // since 2021/02/31 isn't a valid date, `offset_date` auto-adjusts by adding 3 days to 2021/02/28
-        let today_plus_1_month_1_day = Date::try_new_iso(2021, 3, 4).unwrap();
-        let offset = today.added(DateDuration {
-            months: 1,
-            days: 1,
-            ..Default::default()
-        });
+        // since 2021/02/31 isn't a valid date, `offset_date` auto-adjusts by constraining to the last day in February
+        // and then adding the days
+        let today_plus_1_month_1_day = Date::try_new_iso(2021, 3, 1).unwrap();
+        let offset = today
+            .try_added_with_options(
+                DateDuration {
+                    months: 1,
+                    days: 1,
+                    ..Default::default()
+                },
+                Default::default(),
+            )
+            .unwrap();
         assert_eq!(offset, today_plus_1_month_1_day);
     }
 

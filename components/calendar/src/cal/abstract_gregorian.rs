@@ -8,9 +8,10 @@ use crate::calendar_arithmetic::{
 };
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
+use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::preferences::CalendarAlgorithm;
 use crate::types::EraYear;
-use crate::{types, Calendar, DateDuration, DateDurationUnit, RangeError};
+use crate::{types, Calendar, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 
@@ -43,8 +44,6 @@ impl ArithmeticDate<AbstractGregorian<IsoEra>> {
 }
 
 impl CalendarArithmetic for AbstractGregorian<IsoEra> {
-    type YearInfo = i32;
-
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
         // https://www.youtube.com/watch?v=J9KijLyP-yg&t=1394s
         if month == 2 {
@@ -113,6 +112,7 @@ impl<Y: GregorianYears> crate::cal::scaffold::UnstableSealed for AbstractGregori
 impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     type DateInner = ArithmeticDate<AbstractGregorian<IsoEra>>;
     type Year = types::EraYear;
+    type DifferenceError = core::convert::Infallible;
 
     fn from_fields(
         &self,
@@ -156,19 +156,22 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         date.days_in_month()
     }
 
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration) {
-        date.offset_date(offset, &());
+    fn add(
+        &self,
+        date: &Self::DateInner,
+        duration: types::DateDuration,
+        options: DateAddOptions,
+    ) -> Result<Self::DateInner, DateError> {
+        date.added(duration, &AbstractGregorian(IsoEra), options)
     }
 
     fn until(
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        _calendar2: &Self,
-        _largest_unit: DateDurationUnit,
-        _smallest_unit: DateDurationUnit,
-    ) -> DateDuration {
-        date1.until(*date2, _largest_unit, _smallest_unit)
+        options: DateDifferenceOptions,
+    ) -> Result<types::DateDuration, Self::DifferenceError> {
+        Ok(date1.until(date2, &AbstractGregorian(IsoEra), options))
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
@@ -181,7 +184,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        date.month()
+        self.month_code_from_ordinal(&date.year, date.month)
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
@@ -214,6 +217,7 @@ macro_rules! impl_with_abstract_gregorian {
         impl crate::Calendar for $cal_ty {
             type DateInner = $inner_date_ty;
             type Year = types::EraYear;
+            type DifferenceError = core::convert::Infallible;
             fn from_fields(
                 &self,
                 fields: crate::types::DateFields,
@@ -265,30 +269,27 @@ macro_rules! impl_with_abstract_gregorian {
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr).days_in_month(&date.0)
             }
 
-            fn offset_date(&self, date: &mut Self::DateInner, offset: crate::DateDuration) {
+            fn add(
+                &self,
+                date: &Self::DateInner,
+                duration: crate::types::DateDuration,
+                options: crate::options::DateAddOptions,
+            ) -> Result<Self::DateInner, DateError> {
                 let $self_ident = self;
-                let mut inner = date.0;
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
-                    .offset_date(&mut inner, offset);
-                date.0 = inner;
+                    .add(&date.0, duration, options)
+                    .map($inner_date_ty)
             }
 
             fn until(
                 &self,
                 date1: &Self::DateInner,
                 date2: &Self::DateInner,
-                _calendar2: &Self,
-                largest_unit: crate::DateDurationUnit,
-                smallest_unit: crate::DateDurationUnit,
-            ) -> crate::DateDuration {
+                options: crate::options::DateDifferenceOptions,
+            ) -> Result<crate::types::DateDuration, Self::DifferenceError> {
                 let $self_ident = self;
-                crate::cal::abstract_gregorian::AbstractGregorian($eras_expr).until(
-                    &date1.0,
-                    &date2.0,
-                    &crate::cal::abstract_gregorian::AbstractGregorian($eras_expr),
-                    largest_unit,
-                    smallest_unit,
-                )
+                crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
+                    .until(&date1.0, &date2.0, options)
             }
 
             fn year_info(&self, date: &Self::DateInner) -> Self::Year {

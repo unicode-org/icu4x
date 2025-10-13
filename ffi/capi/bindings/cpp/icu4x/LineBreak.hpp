@@ -89,6 +89,7 @@ inline icu4x::LineBreak icu4x::LineBreak::FromFFI(icu4x::capi::LineBreak c_enum)
         case icu4x::capi::LineBreak_AksaraStart:
         case icu4x::capi::LineBreak_ViramaFinal:
         case icu4x::capi::LineBreak_Virama:
+        case icu4x::capi::LineBreak_UnambiguousHyphen:
             return static_cast<icu4x::LineBreak::Value>(c_enum);
         default:
             std::abort();

@@ -8,8 +8,9 @@ use crate::cal::iso::IsoDateInner;
 use crate::cal::*;
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
+use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::{DateFields, YearInfo};
-use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, Ref};
+use crate::{types, AsCalendar, Calendar, Date, Ref};
 
 use crate::preferences::{CalendarAlgorithm, HijriCalendarAlgorithm};
 use icu_locale_core::preferences::define_preferences;
@@ -245,10 +246,45 @@ macro_rules! match_cal {
     };
 }
 
+/// Error returned when comparing two [`Date`]s with [`AnyCalendar`].
+#[derive(Clone, Copy, PartialEq, Debug)]
+#[non_exhaustive]
+#[doc(hidden)] // unstable, not yet graduated
+pub enum AnyCalendarDifferenceError {
+    /// The calendars of the two dates being compared are not equal.
+    ///
+    /// To compare dates in different calendars, convert them to the same calendar first.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::cal::AnyCalendarDifferenceError;
+    ///
+    /// let d1 = Date::try_new_gregorian(2000, 1, 1).unwrap().to_any();
+    /// let d2 = Date::try_new_hebrew(5780, 1, 1).unwrap().to_any();
+    ///
+    /// assert!(matches!(
+    ///     d1.try_until_with_options(&d2, Default::default()),
+    ///     Err(AnyCalendarDifferenceError::MismatchedCalendars),
+    /// ));
+    ///
+    /// // To compare the dates, convert them to the same calendar,
+    /// // such as ISO.
+    ///
+    /// assert!(matches!(
+    ///     d1.to_iso().try_until_with_options(&d2.to_iso(), Default::default()),
+    ///     Ok(_)
+    /// ));
+    /// ```
+    MismatchedCalendars,
+}
+
 impl crate::cal::scaffold::UnstableSealed for AnyCalendar {}
 impl Calendar for AnyCalendar {
     type DateInner = AnyDateInner;
     type Year = YearInfo;
+    type DifferenceError = AnyCalendarDifferenceError;
 
     fn from_fields(
         &self,
@@ -286,34 +322,58 @@ impl Calendar for AnyCalendar {
         match_cal_and_date!(match (self, date): (c, d) => c.days_in_month(d))
     }
 
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration) {
-        match (self, date) {
-            (Self::Buddhist(c), AnyDateInner::Buddhist(ref mut d)) => c.offset_date(d, offset),
-            (Self::Chinese(c), AnyDateInner::Chinese(ref mut d)) => c.offset_date(d, offset),
-            (Self::Coptic(c), AnyDateInner::Coptic(ref mut d)) => c.offset_date(d, offset),
-            (Self::Dangi(c), AnyDateInner::Dangi(ref mut d)) => c.offset_date(d, offset),
-            (Self::Ethiopian(c), AnyDateInner::Ethiopian(ref mut d)) => c.offset_date(d, offset),
-            (Self::Gregorian(c), AnyDateInner::Gregorian(ref mut d)) => c.offset_date(d, offset),
-            (Self::Hebrew(c), AnyDateInner::Hebrew(ref mut d)) => c.offset_date(d, offset),
-            (Self::Indian(c), AnyDateInner::Indian(ref mut d)) => c.offset_date(d, offset),
-            (Self::HijriTabular(c), &mut AnyDateInner::HijriTabular(ref mut d, sighting))
-                if c.0 == sighting =>
+    fn add(
+        &self,
+        date: &Self::DateInner,
+        duration: types::DateDuration,
+        options: DateAddOptions,
+    ) -> Result<Self::DateInner, DateError> {
+        let mut date = *date;
+        match (self, &mut date) {
+            (Self::Buddhist(c), AnyDateInner::Buddhist(ref mut d)) => {
+                *d = c.add(d, duration, options)?
+            }
+            (Self::Chinese(c), AnyDateInner::Chinese(ref mut d)) => {
+                *d = c.add(d, duration, options)?
+            }
+            (Self::Coptic(c), AnyDateInner::Coptic(ref mut d)) => {
+                *d = c.add(d, duration, options)?
+            }
+            (Self::Dangi(c), AnyDateInner::Dangi(ref mut d)) => *d = c.add(d, duration, options)?,
+            (Self::Ethiopian(c), AnyDateInner::Ethiopian(ref mut d)) => {
+                *d = c.add(d, duration, options)?
+            }
+            (Self::Gregorian(c), AnyDateInner::Gregorian(ref mut d)) => {
+                *d = c.add(d, duration, options)?
+            }
+            (Self::Hebrew(c), AnyDateInner::Hebrew(ref mut d)) => {
+                *d = c.add(d, duration, options)?
+            }
+            (Self::Indian(c), AnyDateInner::Indian(ref mut d)) => {
+                *d = c.add(d, duration, options)?
+            }
+            (Self::HijriTabular(c), AnyDateInner::HijriTabular(ref mut d, sighting))
+                if c.0 == *sighting =>
             {
-                c.offset_date(d, offset)
+                *d = c.add(d, duration, options)?
             }
             (Self::HijriSimulated(c), AnyDateInner::HijriSimulated(ref mut d)) => {
-                c.offset_date(d, offset)
+                *d = c.add(d, duration, options)?
             }
             (Self::HijriUmmAlQura(c), AnyDateInner::HijriUmmAlQura(ref mut d)) => {
-                c.offset_date(d, offset)
+                *d = c.add(d, duration, options)?
             }
-            (Self::Iso(c), AnyDateInner::Iso(ref mut d)) => c.offset_date(d, offset),
-            (Self::Japanese(c), AnyDateInner::Japanese(ref mut d)) => c.offset_date(d, offset),
+            (Self::Iso(c), AnyDateInner::Iso(ref mut d)) => *d = c.add(d, duration, options)?,
+            (Self::Japanese(c), AnyDateInner::Japanese(ref mut d)) => {
+                *d = c.add(d, duration, options)?
+            }
             (Self::JapaneseExtended(c), AnyDateInner::JapaneseExtended(ref mut d)) => {
-                c.offset_date(d, offset)
+                *d = c.add(d, duration, options)?
             }
-            (Self::Persian(c), AnyDateInner::Persian(ref mut d)) => c.offset_date(d, offset),
-            (Self::Roc(c), AnyDateInner::Roc(ref mut d)) => c.offset_date(d, offset),
+            (Self::Persian(c), AnyDateInner::Persian(ref mut d)) => {
+                *d = c.add(d, duration, options)?
+            }
+            (Self::Roc(c), AnyDateInner::Roc(ref mut d)) => *d = c.add(d, duration, options)?,
             // This is only reached from misuse of from_raw, a semi-internal api
             #[expect(clippy::panic)]
             (_, d) => panic!(
@@ -322,121 +382,77 @@ impl Calendar for AnyCalendar {
                 d.kind().debug_name()
             ),
         }
+        Ok(date)
     }
 
     fn until(
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        calendar2: &Self,
-        largest_unit: DateDurationUnit,
-        smallest_unit: DateDurationUnit,
-    ) -> DateDuration {
-        match (self, calendar2, date1, date2) {
-            (
-                Self::Buddhist(c1),
-                Self::Buddhist(c2),
-                AnyDateInner::Buddhist(d1),
-                AnyDateInner::Buddhist(d2),
-            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
-            (
-                Self::Chinese(c1),
-                Self::Chinese(c2),
-                AnyDateInner::Chinese(d1),
-                AnyDateInner::Chinese(d2),
-            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
-            (
-                Self::Coptic(c1),
-                Self::Coptic(c2),
-                AnyDateInner::Coptic(d1),
-                AnyDateInner::Coptic(d2),
-            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
-            (
-                Self::Dangi(c1),
-                Self::Dangi(c2),
-                AnyDateInner::Dangi(d1),
-                AnyDateInner::Dangi(d2),
-            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
-            (
-                Self::Ethiopian(c1),
-                Self::Ethiopian(c2),
-                AnyDateInner::Ethiopian(d1),
-                AnyDateInner::Ethiopian(d2),
-            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
-            (
-                Self::Gregorian(c1),
-                Self::Gregorian(c2),
-                AnyDateInner::Gregorian(d1),
-                AnyDateInner::Gregorian(d2),
-            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
-            (
-                Self::Hebrew(c1),
-                Self::Hebrew(c2),
-                AnyDateInner::Hebrew(d1),
-                AnyDateInner::Hebrew(d2),
-            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
-            (
-                Self::Indian(c1),
-                Self::Indian(c2),
-                AnyDateInner::Indian(d1),
-                AnyDateInner::Indian(d2),
-            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
+        options: DateDifferenceOptions,
+    ) -> Result<types::DateDuration, Self::DifferenceError> {
+        let Ok(r) = match (self, date1, date2) {
+            (Self::Buddhist(c1), AnyDateInner::Buddhist(d1), AnyDateInner::Buddhist(d2)) => {
+                c1.until(d1, d2, options)
+            }
+            (Self::Chinese(c1), AnyDateInner::Chinese(d1), AnyDateInner::Chinese(d2)) => {
+                c1.until(d1, d2, options)
+            }
+            (Self::Coptic(c1), AnyDateInner::Coptic(d1), AnyDateInner::Coptic(d2)) => {
+                c1.until(d1, d2, options)
+            }
+            (Self::Dangi(c1), AnyDateInner::Dangi(d1), AnyDateInner::Dangi(d2)) => {
+                c1.until(d1, d2, options)
+            }
+            (Self::Ethiopian(c1), AnyDateInner::Ethiopian(d1), AnyDateInner::Ethiopian(d2)) => {
+                c1.until(d1, d2, options)
+            }
+            (Self::Gregorian(c1), AnyDateInner::Gregorian(d1), AnyDateInner::Gregorian(d2)) => {
+                c1.until(d1, d2, options)
+            }
+            (Self::Hebrew(c1), AnyDateInner::Hebrew(d1), AnyDateInner::Hebrew(d2)) => {
+                c1.until(d1, d2, options)
+            }
+            (Self::Indian(c1), AnyDateInner::Indian(d1), AnyDateInner::Indian(d2)) => {
+                c1.until(d1, d2, options)
+            }
             (
                 Self::HijriTabular(c1),
-                Self::HijriTabular(c2),
                 &AnyDateInner::HijriTabular(ref d1, s1),
                 &AnyDateInner::HijriTabular(ref d2, s2),
-            ) if c1.0 == c2.0 && c2.0 == s1 && s1 == s2 => {
-                c1.until(d1, d2, c2, largest_unit, smallest_unit)
-            }
+            ) if c1.0 == s1 && s1 == s2 => c1.until(d1, d2, options),
             (
                 Self::HijriSimulated(c1),
-                Self::HijriSimulated(c2),
                 AnyDateInner::HijriSimulated(d1),
                 AnyDateInner::HijriSimulated(d2),
-            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
+            ) => c1.until(d1, d2, options),
             (
                 Self::HijriUmmAlQura(c1),
-                Self::HijriUmmAlQura(c2),
                 AnyDateInner::HijriUmmAlQura(d1),
                 AnyDateInner::HijriUmmAlQura(d2),
-            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
-            (Self::Iso(c1), Self::Iso(c2), AnyDateInner::Iso(d1), AnyDateInner::Iso(d2)) => {
-                c1.until(d1, d2, c2, largest_unit, smallest_unit)
+            ) => c1.until(d1, d2, options),
+            (Self::Iso(c1), AnyDateInner::Iso(d1), AnyDateInner::Iso(d2)) => {
+                c1.until(d1, d2, options)
             }
-            (
-                Self::Japanese(c1),
-                Self::Japanese(c2),
-                AnyDateInner::Japanese(d1),
-                AnyDateInner::Japanese(d2),
-            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
+            (Self::Japanese(c1), AnyDateInner::Japanese(d1), AnyDateInner::Japanese(d2)) => {
+                c1.until(d1, d2, options)
+            }
             (
                 Self::JapaneseExtended(c1),
-                Self::JapaneseExtended(c2),
                 AnyDateInner::JapaneseExtended(d1),
                 AnyDateInner::JapaneseExtended(d2),
-            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
-            (
-                Self::Persian(c1),
-                Self::Persian(c2),
-                AnyDateInner::Persian(d1),
-                AnyDateInner::Persian(d2),
-            ) => c1.until(d1, d2, c2, largest_unit, smallest_unit),
-            (Self::Roc(c1), Self::Roc(c2), AnyDateInner::Roc(d1), AnyDateInner::Roc(d2)) => {
-                c1.until(d1, d2, c2, largest_unit, smallest_unit)
+            ) => c1.until(d1, d2, options),
+            (Self::Persian(c1), AnyDateInner::Persian(d1), AnyDateInner::Persian(d2)) => {
+                c1.until(d1, d2, options)
+            }
+            (Self::Roc(c1), AnyDateInner::Roc(d1), AnyDateInner::Roc(d2)) => {
+                c1.until(d1, d2, options)
             }
             _ => {
-                // attempt to convert
-                let iso = calendar2.to_iso(date2);
-
-                match_cal_and_date!(match (self, date1):
-                    (c1, d1) => {
-                        let d2 = c1.from_iso(iso);
-                        c1.until(d1, &d2, c1, largest_unit, smallest_unit)
-                    }
-                )
+                return Err(AnyCalendarDifferenceError::MismatchedCalendars);
             }
-        }
+        };
+        Ok(r)
     }
 
     fn year_info(&self, date: &Self::DateInner) -> types::YearInfo {
