@@ -15,8 +15,8 @@ use core::marker::PhantomData;
 use core::ops::RangeInclusive;
 use tinystr::tinystr;
 
-/// The range ±2³⁰. We use i32::MIN since it is -2³¹
-const VALID_YEAR_RANGE: RangeInclusive<i32> = (i32::MIN / 2)..=-(i32::MIN / 2);
+/// The range ±2²⁷. We use i32::MIN since it is -2³¹
+const VALID_YEAR_RANGE: RangeInclusive<i32> = (i32::MIN / 16)..=-(i32::MIN / 16);
 
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable

@@ -83,22 +83,19 @@ impl super::LunarChineseYearData {
             base_moment: LocalMoment,
             duration: Milliseconds,
         ) -> LocalMoment {
-            let diff_millis = (rata_die - base_moment.rata_die) as i128
-                * MILLISECONDS_IN_EPHEMERIS_DAY as i128
-                - base_moment.local_milliseconds as i128;
+            let diff_millis = (rata_die - base_moment.rata_die) * MILLISECONDS_IN_EPHEMERIS_DAY
+                - base_moment.local_milliseconds as i64;
 
-            let num_periods = (diff_millis + MILLISECONDS_IN_EPHEMERIS_DAY as i128 - 1)
-                .div_euclid(duration.0 as i128);
+            let num_periods =
+                (diff_millis + MILLISECONDS_IN_EPHEMERIS_DAY - 1).div_euclid(duration.0);
 
-            let millis = base_moment.rata_die.to_i64_date() as i128
-                * MILLISECONDS_IN_EPHEMERIS_DAY as i128
-                + base_moment.local_milliseconds as i128
-                + num_periods * duration.0 as i128;
+            let millis = base_moment.rata_die.to_i64_date() * MILLISECONDS_IN_EPHEMERIS_DAY
+                + base_moment.local_milliseconds as i64
+                + num_periods * duration.0;
 
-            let rata_die =
-                (millis / MILLISECONDS_IN_EPHEMERIS_DAY as i128) as i64 - (millis < 0) as i64;
-            let local_milliseconds = (millis % MILLISECONDS_IN_EPHEMERIS_DAY as i128) as i64
-                + (millis < 0) as i64 * MILLISECONDS_IN_EPHEMERIS_DAY as i64;
+            let rata_die = millis / MILLISECONDS_IN_EPHEMERIS_DAY - (millis < 0) as i64;
+            let local_milliseconds = millis % MILLISECONDS_IN_EPHEMERIS_DAY
+                + (millis < 0) as i64 * MILLISECONDS_IN_EPHEMERIS_DAY;
 
             LocalMoment {
                 rata_die: RataDie::new(rata_die),
@@ -167,4 +164,19 @@ impl super::LunarChineseYearData {
 
         LunarChineseYearData::new(related_iso, start_day, month_lengths, leap_month)
     }
+}
+
+#[test]
+fn bounds() {
+    LunarChineseYearData::simple(UTC_PLUS_9, 292_277_025);
+    assert!(
+        std::panic::catch_unwind(|| LunarChineseYearData::simple(UTC_PLUS_9, 292_277_026)).is_err()
+    );
+
+    LunarChineseYearData::simple(BEIJING_UTC_OFFSET, -292_275_024);
+    assert!(std::panic::catch_unwind(|| LunarChineseYearData::simple(
+        BEIJING_UTC_OFFSET,
+        -292_275_025
+    ))
+    .is_err());
 }
