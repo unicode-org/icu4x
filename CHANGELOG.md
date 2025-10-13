@@ -19,21 +19,60 @@
         - All C++ enums now default to a valid value; which is the `Default` impl where there is one, and some semi-logical value otherwise. This has changed defaults in some cases and may cause a behavioral change for people relying on C++ default constructors. (unicode-org#6692)
         - `ListFormatter::format` now takes a `diplomat::span<const diplomat::string_view_for_slice>` instead of a `diplomat::span<std::string_view>` to handle soundness issues on some platforms (unicode-org#6974)
 - Utils
-    - `calendrical_calculations`
-        - Rename the `iso` module to `gregorian` to better align with the book's terminology. (unicode-org#6843)
-    - `yoke`
+    - General
+        - Bump default toolchain (not MSRV) to 1.89 (unicode-org#6818)
+        - Use `#[expect]` for clippy lints (unicode-org#6700)
+        - Update MSRV to 1.83 (unicode-org#7066)
+    - `bies`: `0.2.4 -> 0.2.5`
+        - General changes only
+    - `calendrical_calculations`: `0.2.2 -> 0.2.3`
+        - Add RataDie::in_well_behaved_astronomical_range(), use to avoid panics (#6876)
+    - `crlify`: No change
+    - `databake`: No change
+    - `databake_derive`: `0.2.0 -> 0.2.1`
+        - Require public fields for `Bake` derive (unicode-org#6586)
+    - `fixed_decimal`: `0.7.0 -> 0.7.1`
+        - General changes only
+    - `ixdtf`: `0.6.3 -> 0.6.4`
+        - Add to_static_string for IXDTF errors (unicode-org#6917)
+    - `litemap`: `0.8.0 -> 0.8.1`
+        - Use `serde_core` where possible (unicode-org#6991)
+    - `potential_utf`: `0.1.3 -> 0.1.4`
+        - Use `serde_core` where possible (unicode-org#6991)
+    - `resb`: `0.1.0 -> 0.1.1`
+        - Use `serde_core` where possible (unicode-org#6991)
+    - `tinystr`: `0.8.1 -> 0.8.2`
+        - Add TinyAsciiStr::new_unsigned_decimal (unicode-org#6912)
+        - Use `serde_core` where possible (unicode-org#6991)
+    - `tzif`: `0.4.0 -> 0.4.1`
+        - General changes only
+    - `writeable`: `0.6.1 -> 0.6.2`
+        - Make `writeable` no-alloc (unicode-org#6985)
+    - `yoke`, `yoke_derive`: `0.8.0 -> 0.8.1`
         - Add four `map_with_cart` methods to `yoke::Yoke`, similar to `Yoke::map_project` but
         additionally providing a reference to the cart. (unicode-org#6781)
         - Add `Yoke::with_mut_return`, similar to `Yoke::with_mut` but with a callback that may
             return any `'static` type. (unicode-org#6827)
-    - `zoneinfo64`
+        - Allow clippy::mem_forget in yoke_derive (unicode-org#6891)
+    - `zerofrom`, `zerofrom_derive`: No change
+    - `zerotrie`: `0.2.2 -> 0.2.3`
+        - Use `serde_core` where possible (unicode-org#6991)
+        - Internal docs and lints (#6740)
+        - Fix test failures in zerotrie on 32-bit platforms (#6697)
+    - `zerovec`: `0.11.4 -> 0.11.5`
+        - Write a proper safety comment for ZeroVec::truncate (#6809)
+        - Use `serde_core` where possible (unicode-org#6991)
+    - `zerovec_derive`: `0.11.1 -> 0.11.2`
+        - General changes only
+    - `zoneinfo64`: `0.2.0 -> 0.2.1`
+        - General changes only
 
 ## icu4x 2.0.x
 
 Several crates have had patch releases in the 2.0 stream:
 
 - `icu_calendar`
-  - (2.0.1) Fix chinese day-of-year (unicode-org#6567)
+  - (2.0.1) Fix chinese day-of-year (unicode-org#6567)Allow clippy::mem_forget in yoke_derive (#6891)
   - (2.0.2) Respect `-u-fw` keyword in `WeekInformation` (unicode-org#6615)
   - (2.0.3) Fix extended year for Roc/Ethiopic (unicode-org#6721)
   - (2.0.3) Fix treatment of None era code for Gregorian (unicode-org#6794)
