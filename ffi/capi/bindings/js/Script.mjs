@@ -22,6 +22,7 @@ export class Script {
         ["BassaVah", 134],
         ["Batak", 63],
         ["Bengali", 4],
+        ["BeriaErfe", 208],
         ["Bhaiksuki", 168],
         ["Bopomofo", 5],
         ["Brahmi", 65],
@@ -34,6 +35,7 @@ export class Script {
         ["Chakma", 118],
         ["Cham", 66],
         ["Cherokee", 6],
+        ["Chisoi", 209],
         ["Chorasmian", 189],
         ["Common", 0],
         ["Coptic", 7],
@@ -143,6 +145,7 @@ export class Script {
         ["Sharada", 151],
         ["Shavian", 51],
         ["Siddham", 166],
+        ["Sidetic", 210],
         ["SignWriting", 112],
         ["Sinhala", 33],
         ["Sogdian", 183],
@@ -156,6 +159,7 @@ export class Script {
         ["TaiLe", 52],
         ["TaiTham", 106],
         ["TaiViet", 127],
+        ["TaiYo", 211],
         ["Takri", 153],
         ["Tamil", 35],
         ["Tangsa", 195],
@@ -166,6 +170,7 @@ export class Script {
         ["Tibetan", 39],
         ["Tifinagh", 60],
         ["Tirhuta", 158],
+        ["TolongSiki", 212],
         ["Toto", 196],
         ["Ugaritic", 53],
         ["Unknown", 103],
@@ -236,6 +241,7 @@ export class Script {
         [134]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 134),
         [63]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 63),
         [4]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 4),
+        [208]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 208),
         [168]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 168),
         [5]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 5),
         [65]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 65),
@@ -248,6 +254,7 @@ export class Script {
         [118]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 118),
         [66]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 66),
         [6]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 6),
+        [209]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 209),
         [189]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 189),
         [0]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
         [7]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 7),
@@ -357,6 +364,7 @@ export class Script {
         [151]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 151),
         [51]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 51),
         [166]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 166),
+        [210]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 210),
         [112]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 112),
         [33]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 33),
         [183]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 183),
@@ -370,6 +378,7 @@ export class Script {
         [52]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 52),
         [106]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 106),
         [127]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 127),
+        [211]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 211),
         [153]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 153),
         [35]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 35),
         [195]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 195),
@@ -380,6 +389,7 @@ export class Script {
         [39]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 39),
         [60]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 60),
         [158]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 158),
+        [212]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 212),
         [196]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 196),
         [53]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 53),
         [103]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 103),
@@ -403,6 +413,7 @@ export class Script {
     static BassaVah = Script.#objectValues[134];
     static Batak = Script.#objectValues[63];
     static Bengali = Script.#objectValues[4];
+    static BeriaErfe = Script.#objectValues[208];
     static Bhaiksuki = Script.#objectValues[168];
     static Bopomofo = Script.#objectValues[5];
     static Brahmi = Script.#objectValues[65];
@@ -415,6 +426,7 @@ export class Script {
     static Chakma = Script.#objectValues[118];
     static Cham = Script.#objectValues[66];
     static Cherokee = Script.#objectValues[6];
+    static Chisoi = Script.#objectValues[209];
     static Chorasmian = Script.#objectValues[189];
     static Common = Script.#objectValues[0];
     static Coptic = Script.#objectValues[7];
@@ -524,6 +536,7 @@ export class Script {
     static Sharada = Script.#objectValues[151];
     static Shavian = Script.#objectValues[51];
     static Siddham = Script.#objectValues[166];
+    static Sidetic = Script.#objectValues[210];
     static SignWriting = Script.#objectValues[112];
     static Sinhala = Script.#objectValues[33];
     static Sogdian = Script.#objectValues[183];
@@ -537,6 +550,7 @@ export class Script {
     static TaiLe = Script.#objectValues[52];
     static TaiTham = Script.#objectValues[106];
     static TaiViet = Script.#objectValues[127];
+    static TaiYo = Script.#objectValues[211];
     static Takri = Script.#objectValues[153];
     static Tamil = Script.#objectValues[35];
     static Tangsa = Script.#objectValues[195];
@@ -547,6 +561,7 @@ export class Script {
     static Tibetan = Script.#objectValues[39];
     static Tifinagh = Script.#objectValues[60];
     static Tirhuta = Script.#objectValues[158];
+    static TolongSiki = Script.#objectValues[212];
     static Toto = Script.#objectValues[196];
     static Ugaritic = Script.#objectValues[53];
     static Unknown = Script.#objectValues[103];

@@ -108,7 +108,7 @@ exclude = [
 
 [workspace.package]
 version = "2.0.0"
-rust-version = "1.82"
+rust-version = "1.83"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
@@ -140,7 +140,7 @@ icu_pattern = { version = "0.4.0", path = "components/pattern", default-features
 icu = { version = "~2.0.0", path = "components/icu", default-features = false }
 icu_calendar = { version = "~2.0.0", path = "components/calendar", default-features = false }
 icu_casemap = { version = "~2.0.0", path = "components/casemap", default-features = false }
-icu_collator = { version = "~2.0.0", path = "components/collator", default-features = false }
+icu_collator = { version = "~2.1.0-dev", path = "components/collator", default-features = false }
 icu_collections = { version = "~2.0.0", path = "components/collections", default-features = false }
 icu_codepointtrie_builder = { version = "~0.5.0", path = "components/collections/codepointtrie_builder", default-features = false }
 icu_datetime = { version = "~2.0.0", path = "components/datetime", default-features = false }
@@ -172,7 +172,7 @@ icu_provider_registry = { version = "~2.0.0", path = "provider/registry", defaul
 # Baked data
 icu_calendar_data = { version = "~2.0.0", path = "provider/data/calendar", default-features = false }
 icu_casemap_data = { version = "~2.0.0", path = "provider/data/casemap", default-features = false }
-icu_collator_data = { version = "~2.0.1", path = "provider/data/collator", default-features = false }
+icu_collator_data = { version = "~2.1.0-dev", path = "provider/data/collator", default-features = false }
 icu_datetime_data = { version = "~2.0.0", path = "provider/data/datetime", default-features = false }
 icu_decimal_data = { version = "~2.0.0", path = "provider/data/decimal", default-features = false }
 icu_list_data = { version = "~2.0.0", path = "provider/data/list", default-features = false }

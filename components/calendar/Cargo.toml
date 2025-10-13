@@ -66,5 +66,9 @@ harness = false
 name = "convert"
 harness = false
 
+[[test]]
+name = "arithmetic"
+required-features = ["ixdtf"]
+
 [package.metadata.cargo-semver-checks.lints]
 workspace = true

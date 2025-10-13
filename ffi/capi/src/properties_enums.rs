@@ -249,6 +249,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Script::Bengali, AssociatedConstantInStruct)]
         Bengali = 4,
         #[diplomat::rust_link(
+            icu::properties::props::Script::BeriaErfe,
+            AssociatedConstantInStruct
+        )]
+        BeriaErfe = 208,
+        #[diplomat::rust_link(
             icu::properties::props::Script::Bhaiksuki,
             AssociatedConstantInStruct
         )]
@@ -290,6 +295,8 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         Cherokee = 6,
+        #[diplomat::rust_link(icu::properties::props::Script::Chisoi, AssociatedConstantInStruct)]
+        Chisoi = 209,
         #[diplomat::rust_link(
             icu::properties::props::Script::Chorasmian,
             AssociatedConstantInStruct
@@ -679,6 +686,8 @@ pub mod ffi {
         Shavian = 51,
         #[diplomat::rust_link(icu::properties::props::Script::Siddham, AssociatedConstantInStruct)]
         Siddham = 166,
+        #[diplomat::rust_link(icu::properties::props::Script::Sidetic, AssociatedConstantInStruct)]
+        Sidetic = 210,
         #[diplomat::rust_link(
             icu::properties::props::Script::SignWriting,
             AssociatedConstantInStruct
@@ -720,6 +729,8 @@ pub mod ffi {
         TaiTham = 106,
         #[diplomat::rust_link(icu::properties::props::Script::TaiViet, AssociatedConstantInStruct)]
         TaiViet = 127,
+        #[diplomat::rust_link(icu::properties::props::Script::TaiYo, AssociatedConstantInStruct)]
+        TaiYo = 211,
         #[diplomat::rust_link(icu::properties::props::Script::Takri, AssociatedConstantInStruct)]
         Takri = 153,
         #[diplomat::rust_link(icu::properties::props::Script::Tamil, AssociatedConstantInStruct)]
@@ -743,6 +754,11 @@ pub mod ffi {
         Tifinagh = 60,
         #[diplomat::rust_link(icu::properties::props::Script::Tirhuta, AssociatedConstantInStruct)]
         Tirhuta = 158,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::TolongSiki,
+            AssociatedConstantInStruct
+        )]
+        TolongSiki = 212,
         #[diplomat::rust_link(icu::properties::props::Script::Toto, AssociatedConstantInStruct)]
         Toto = 196,
         #[diplomat::rust_link(
@@ -827,6 +843,7 @@ pub mod ffi {
                 134 => Self::BassaVah,
                 63 => Self::Batak,
                 4 => Self::Bengali,
+                208 => Self::BeriaErfe,
                 168 => Self::Bhaiksuki,
                 5 => Self::Bopomofo,
                 65 => Self::Brahmi,
@@ -839,6 +856,7 @@ pub mod ffi {
                 118 => Self::Chakma,
                 66 => Self::Cham,
                 6 => Self::Cherokee,
+                209 => Self::Chisoi,
                 189 => Self::Chorasmian,
                 0 => Self::Common,
                 7 => Self::Coptic,
@@ -948,6 +966,7 @@ pub mod ffi {
                 151 => Self::Sharada,
                 51 => Self::Shavian,
                 166 => Self::Siddham,
+                210 => Self::Sidetic,
                 112 => Self::SignWriting,
                 33 => Self::Sinhala,
                 183 => Self::Sogdian,
@@ -961,6 +980,7 @@ pub mod ffi {
                 52 => Self::TaiLe,
                 106 => Self::TaiTham,
                 127 => Self::TaiViet,
+                211 => Self::TaiYo,
                 153 => Self::Takri,
                 35 => Self::Tamil,
                 195 => Self::Tangsa,
@@ -971,6 +991,7 @@ pub mod ffi {
                 39 => Self::Tibetan,
                 60 => Self::Tifinagh,
                 158 => Self::Tirhuta,
+                212 => Self::TolongSiki,
                 196 => Self::Toto,
                 53 => Self::Ugaritic,
                 103 => Self::Unknown,
@@ -1363,6 +1384,11 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         Virama = 47,
+        #[diplomat::rust_link(
+            icu::properties::props::LineBreak::UnambiguousHyphen,
+            AssociatedConstantInStruct
+        )]
+        UnambiguousHyphen = 48,
     }
 
     impl LineBreak {
@@ -1446,6 +1472,7 @@ pub mod ffi {
                 45 => Self::AksaraStart,
                 46 => Self::ViramaFinal,
                 47 => Self::Virama,
+                48 => Self::UnambiguousHyphen,
                 _ => return None,
             })
         }

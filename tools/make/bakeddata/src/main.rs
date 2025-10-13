@@ -24,7 +24,7 @@ const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
     (
         "collator",
         icu::collator::provider::MARKERS,
-        r#"version = "2.0.1""#,
+        r#"version = "2.1.0-dev""#,
     ),
     (
         "datetime",

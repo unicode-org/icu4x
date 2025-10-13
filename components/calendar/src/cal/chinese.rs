@@ -3,14 +3,17 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, CalendarArithmetic};
+use crate::calendar_arithmetic::{
+    ArithmeticDate, ArithmeticDateBuilder, CalendarArithmetic, ToExtendedYear,
+};
 use crate::calendar_arithmetic::{DateFieldsResolver, PrecomputedDataSource};
 use crate::error::DateError;
+use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::provider::chinese_based::PackedChineseBasedYearInfo;
 use crate::types::{MonthCode, MonthInfo};
 use crate::AsCalendar;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
+use crate::{types, Calendar, Date};
 use calendrical_calculations::chinese_based::{
     self, ChineseBased, YearBounds, WELL_BEHAVED_ASTRONOMICAL_RANGE,
 };
@@ -497,8 +500,6 @@ impl LunarChinese<China> {
 }
 
 impl<R: Rules> CalendarArithmetic for LunarChinese<R> {
-    type YearInfo = LunarChineseYearData;
-
     fn days_in_provided_month(year: LunarChineseYearData, month: u8) -> u8 {
         year.days_in_month(month)
     }
@@ -577,12 +578,21 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
             _ => Err(DateError::UnknownMonthCode(month_code)),
         }
     }
+
+    fn month_code_from_ordinal(
+        &self,
+        year: &Self::YearInfo,
+        ordinal_month: u8,
+    ) -> types::MonthInfo {
+        year.month(ordinal_month)
+    }
 }
 
 impl<R: Rules> crate::cal::scaffold::UnstableSealed for LunarChinese<R> {}
 impl<R: Rules> Calendar for LunarChinese<R> {
     type DateInner = ChineseDateInner<R>;
     type Year = types::CyclicYear;
+    type DifferenceError = core::convert::Infallible;
 
     fn from_fields(
         &self,
@@ -645,25 +655,22 @@ impl<R: Rules> Calendar for LunarChinese<R> {
         date.0.days_in_month()
     }
 
-    #[doc(hidden)] // unstable
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration) {
-        date.0.offset_date(offset, self);
+    fn add(
+        &self,
+        date: &Self::DateInner,
+        duration: types::DateDuration,
+        options: DateAddOptions,
+    ) -> Result<Self::DateInner, DateError> {
+        date.0.added(duration, self, options).map(ChineseDateInner)
     }
 
-    #[doc(hidden)] // unstable
-    /// Calculate `date2 - date` as a duration
-    ///
-    /// `calendar2` is the calendar object associated with `date2`. In case the specific calendar objects
-    /// differ on date, the date for the first calendar is used, and `date2` may be converted if necessary.
     fn until(
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        _calendar2: &Self,
-        _largest_unit: DateDurationUnit,
-        _smallest_unit: DateDurationUnit,
-    ) -> DateDuration {
-        date1.0.until(date2.0, _largest_unit, _smallest_unit)
+        options: DateDifferenceOptions,
+    ) -> Result<types::DateDuration, Self::DifferenceError> {
+        Ok(date1.0.until(&date2.0, self, options))
     }
 
     /// Obtain a name for the calendar for debug printing
@@ -760,9 +767,9 @@ pub struct LunarChineseYearData {
     pub(crate) related_iso: i32,
 }
 
-impl From<LunarChineseYearData> for i32 {
-    fn from(value: LunarChineseYearData) -> Self {
-        value.related_iso
+impl ToExtendedYear for LunarChineseYearData {
+    fn to_extended_year(&self) -> i32 {
+        self.related_iso
     }
 }
 

@@ -14,7 +14,11 @@
 /// # Example
 ///
 /// ```rust
-/// use icu::calendar::{types::Weekday, Date, DateDuration, DateDurationUnit};
+/// use icu::calendar::types::Weekday;
+/// use icu::calendar::options::DateDifferenceOptions;
+/// use icu::calendar::Date;
+/// use icu::calendar::types::DateDuration;
+/// use icu::calendar::types::DateDurationUnit;
 ///
 /// // Creating ISO date: 1992-09-02.
 /// let mut date_iso = Date::try_new_iso(1992, 9, 2)
@@ -30,25 +34,25 @@
 /// assert_eq!(date_iso.days_in_month(), 30);
 ///
 /// // Advancing date in-place by 1 year, 2 months, 3 weeks, 4 days.
-/// date_iso.add(DateDuration {
+/// date_iso.try_add_with_options(DateDuration {
 ///     is_negative: false,
 ///     years: 1,
 ///     months: 2,
 ///     weeks: 3,
 ///     days: 4
-/// });
+/// }, Default::default()).unwrap();
 /// assert_eq!(date_iso.era_year().year, 1993);
 /// assert_eq!(date_iso.month().ordinal, 11);
 /// assert_eq!(date_iso.day_of_month().0, 27);
 ///
 /// // Reverse date advancement.
-/// date_iso.add(DateDuration {
+/// date_iso.try_add_with_options(DateDuration {
 ///     is_negative: true,
 ///     years: 1,
 ///     months: 2,
 ///     weeks: 3,
 ///     days: 4
-/// });
+/// }, Default::default()).unwrap();
 /// assert_eq!(date_iso.era_year().year, 1992);
 /// assert_eq!(date_iso.month().ordinal, 9);
 /// assert_eq!(date_iso.day_of_month().0, 2);
@@ -58,23 +62,24 @@
 ///     .expect("Failed to initialize ISO Date instance.");
 ///
 /// // Comparing dates: 2022-01-30 and 1992-09-02.
-/// let duration = newer_date_iso.until(
+/// let mut options = DateDifferenceOptions::default();
+/// options.largest_unit = Some(DateDurationUnit::Years);
+/// let Ok(duration) = newer_date_iso.try_until_with_options(
 ///     &date_iso,
-///     DateDurationUnit::Years,
-///     DateDurationUnit::Days,
+///     options,
 /// );
 /// assert_eq!(duration.years, 30);
 /// assert_eq!(duration.months, 1);
 /// assert_eq!(duration.days, 28);
 ///
 /// // Create new date with date advancement. Reassign to new variable.
-/// let mutated_date_iso = date_iso.added(DateDuration {
+/// let mutated_date_iso = date_iso.try_added_with_options(DateDuration {
 ///     is_negative: false,
 ///     years: 1,
 ///     months: 2,
 ///     weeks: 3,
 ///     days: 4
-/// });
+/// }, Default::default()).unwrap();
 /// assert_eq!(mutated_date_iso.era_year().year, 1993);
 /// assert_eq!(mutated_date_iso.month().ordinal, 11);
 /// assert_eq!(mutated_date_iso.day_of_month().0, 27);
@@ -155,6 +160,100 @@ impl DateDuration {
             is_negative: days.is_negative(),
             days: days.unsigned_abs(),
             ..Default::default()
+        }
+    }
+
+    /// Do NOT pass this function values of mixed signs!
+    pub(crate) fn from_signed_ymwd(years: i64, months: i64, weeks: i64, days: i64) -> Self {
+        let is_negative = years.is_negative()
+            || months.is_negative()
+            || weeks.is_negative()
+            || days.is_negative();
+        if is_negative
+            && (years.is_positive()
+                || months.is_positive()
+                || weeks.is_positive()
+                || days.is_positive())
+        {
+            debug_assert!(false, "mixed signs in from_signed_ymd");
+        }
+        Self {
+            is_negative,
+            years: match u32::try_from(years.unsigned_abs()) {
+                Ok(x) => x,
+                Err(_) => {
+                    debug_assert!(false, "years out of range");
+                    u32::MAX
+                }
+            },
+            months: match u32::try_from(months.unsigned_abs()) {
+                Ok(x) => x,
+                Err(_) => {
+                    debug_assert!(false, "months out of range");
+                    u32::MAX
+                }
+            },
+            weeks: match u32::try_from(weeks.unsigned_abs()) {
+                Ok(x) => x,
+                Err(_) => {
+                    debug_assert!(false, "weeks out of range");
+                    u32::MAX
+                }
+            },
+            days: days.unsigned_abs(),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn add_years_to(&self, year: i32) -> i32 {
+        if !self.is_negative {
+            match year.checked_add_unsigned(self.years) {
+                Some(x) => x,
+                None => {
+                    debug_assert!(false, "{year} + {self:?} out of year range");
+                    i32::MAX
+                }
+            }
+        } else {
+            match year.checked_sub_unsigned(self.years) {
+                Some(x) => x,
+                None => {
+                    debug_assert!(false, "{year} - {self:?} out of year range");
+                    i32::MIN
+                }
+            }
+        }
+    }
+
+    #[inline]
+    pub(crate) fn add_months_to(&self, month: u8) -> i64 {
+        if !self.is_negative {
+            i64::from(month) + i64::from(self.months)
+        } else {
+            i64::from(month) - i64::from(self.months)
+        }
+    }
+
+    #[inline]
+    pub(crate) fn add_weeks_and_days_to(&self, day: u8) -> i64 {
+        if !self.is_negative {
+            let day = i64::from(day) + i64::from(self.weeks) * 7;
+            match day.checked_add_unsigned(self.days) {
+                Some(x) => x,
+                None => {
+                    debug_assert!(false, "{day} + {self:?} out of day range");
+                    i64::MAX
+                }
+            }
+        } else {
+            let day = i64::from(day) - i64::from(self.weeks) * 7;
+            match day.checked_sub_unsigned(self.days) {
+                Some(x) => x,
+                None => {
+                    debug_assert!(false, "{day} - {self:?} out of day range");
+                    i64::MIN
+                }
+            }
         }
     }
 }
