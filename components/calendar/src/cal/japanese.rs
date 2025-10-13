@@ -103,8 +103,6 @@ impl Japanese {
             eras: provider.load(Default::default())?.payload,
         })
     }
-
-    pub(crate) const DEBUG_NAME: &'static str = "Japanese";
 }
 
 impl JapaneseExtended {
@@ -138,8 +136,6 @@ impl JapaneseExtended {
             eras: provider.load(Default::default())?.payload.cast(),
         }))
     }
-
-    pub(crate) const DEBUG_NAME: &'static str = "Japanese (historical era data)";
 }
 
 const MEIJI_START: EraStartDate = EraStartDate {
@@ -267,7 +263,7 @@ impl GregorianYears for &'_ Japanese {
 
     fn debug_name(&self) -> &'static str {
         if self.eras.get().dates_to_eras.len() > 10 {
-            "Japanese  (historical era data)"
+            "Japanese (historical era data)"
         } else {
             "Japanese"
         }

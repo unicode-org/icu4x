@@ -180,11 +180,8 @@ macro_rules! match_cal_and_date {
             ) => $e,
             (&Self::Persian(ref $cal_matched), &AnyDateInner::Persian(ref $date_matched)) => $e,
             (&Self::Roc(ref $cal_matched), &AnyDateInner::Roc(ref $date_matched)) => $e,
-            _ => panic!(
-                "Found AnyCalendar with mixed calendar type {:?} and date type {:?}!",
-                $cal.kind().debug_name(),
-                $date.kind().debug_name()
-            ),
+            // This is only reached from misuse of from_raw, a semi-internal api
+            _ => panic!("AnyCalendar with mismatched date type"),
         }
     };
 }
@@ -342,11 +339,7 @@ impl Calendar for AnyCalendar {
             (Self::Roc(c), AnyDateInner::Roc(ref mut d)) => *d = c.add(d, duration, options)?,
             // This is only reached from misuse of from_raw, a semi-internal api
             #[expect(clippy::panic)]
-            (_, d) => panic!(
-                "Found AnyCalendar with mixed calendar type {} and date type {}!",
-                self.kind().debug_name(),
-                d.kind().debug_name()
-            ),
+            _ => panic!("AnyCalendar with mismatched date type"),
         }
         Ok(date)
     }
@@ -685,42 +678,6 @@ impl<C: AsCalendar<Calendar = AnyCalendar>> Date<C> {
     }
 }
 
-impl AnyDateInner {
-    fn kind(&self) -> AnyCalendarKind {
-        match *self {
-            AnyDateInner::Buddhist(_) => AnyCalendarKind::Buddhist,
-            AnyDateInner::Chinese(_) => AnyCalendarKind::Chinese,
-            AnyDateInner::Coptic(_) => AnyCalendarKind::Coptic,
-            AnyDateInner::Dangi(_) => AnyCalendarKind::Dangi,
-            AnyDateInner::Ethiopian(_) => AnyCalendarKind::Ethiopian,
-            AnyDateInner::Gregorian(_) => AnyCalendarKind::Gregorian,
-            AnyDateInner::Hebrew(_) => AnyCalendarKind::Hebrew,
-            AnyDateInner::Indian(_) => AnyCalendarKind::Indian,
-            AnyDateInner::HijriTabular(
-                _,
-                hijri::TabularAlgorithm {
-                    leap_years: hijri::TabularAlgorithmLeapYears::TypeII,
-                    epoch: hijri::TabularAlgorithmEpoch::Friday,
-                },
-            ) => AnyCalendarKind::HijriTabularTypeIIFriday,
-            AnyDateInner::HijriSimulated(_) => AnyCalendarKind::HijriSimulatedMecca,
-            AnyDateInner::HijriTabular(
-                _,
-                hijri::TabularAlgorithm {
-                    leap_years: hijri::TabularAlgorithmLeapYears::TypeII,
-                    epoch: hijri::TabularAlgorithmEpoch::Thursday,
-                },
-            ) => AnyCalendarKind::HijriTabularTypeIIThursday,
-            AnyDateInner::HijriUmmAlQura(_) => AnyCalendarKind::HijriUmmAlQura,
-            AnyDateInner::Iso(_) => AnyCalendarKind::Iso,
-            AnyDateInner::Japanese(_) => AnyCalendarKind::Japanese,
-            AnyDateInner::JapaneseExtended(_) => AnyCalendarKind::JapaneseExtended,
-            AnyDateInner::Persian(_) => AnyCalendarKind::Persian,
-            AnyDateInner::Roc(_) => AnyCalendarKind::Roc,
-        }
-    }
-}
-
 /// Convenient type for selecting the kind of AnyCalendar to construct
 #[non_exhaustive]
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
@@ -779,41 +736,6 @@ impl AnyCalendarKind {
             AnyCalendarKind::HijriUmmAlQura
         } else {
             AnyCalendarKind::Gregorian
-        }
-    }
-
-    fn debug_name(self) -> &'static str {
-        match self {
-            AnyCalendarKind::Buddhist => Buddhist.debug_name(),
-            AnyCalendarKind::Chinese => LunarChinese::new_china().debug_name(),
-            AnyCalendarKind::Coptic => Coptic.debug_name(),
-            AnyCalendarKind::Dangi => LunarChinese::new_korea().debug_name(),
-            AnyCalendarKind::Ethiopian => {
-                Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret).debug_name()
-            }
-            AnyCalendarKind::EthiopianAmeteAlem => {
-                Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem).debug_name()
-            }
-            AnyCalendarKind::Gregorian => Gregorian.debug_name(),
-            AnyCalendarKind::Hebrew => Hebrew.debug_name(),
-            AnyCalendarKind::Indian => Indian.debug_name(),
-            AnyCalendarKind::HijriTabularTypeIIFriday => Hijri::new_tabular(
-                hijri::TabularAlgorithmLeapYears::TypeII,
-                hijri::TabularAlgorithmEpoch::Friday,
-            )
-            .debug_name(),
-            AnyCalendarKind::HijriSimulatedMecca => Hijri::new_simulated_mecca().debug_name(),
-            AnyCalendarKind::HijriTabularTypeIIThursday => Hijri::new_tabular(
-                hijri::TabularAlgorithmLeapYears::TypeII,
-                hijri::TabularAlgorithmEpoch::Thursday,
-            )
-            .debug_name(),
-            AnyCalendarKind::HijriUmmAlQura => Hijri::new_umm_al_qura().debug_name(),
-            AnyCalendarKind::Iso => Iso.debug_name(),
-            AnyCalendarKind::Japanese => Japanese::DEBUG_NAME,
-            AnyCalendarKind::JapaneseExtended => JapaneseExtended::DEBUG_NAME,
-            AnyCalendarKind::Persian => Persian.debug_name(),
-            AnyCalendarKind::Roc => Roc.debug_name(),
         }
     }
 }
