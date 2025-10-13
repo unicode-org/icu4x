@@ -202,20 +202,6 @@ pub(crate) trait DateFieldsResolver: Calendar {
     }
 }
 
-pub(crate) trait PrecomputedDataSource<YearInfo> {
-    /// Given a calendar year, load (or compute) the YearInfo for it
-    ///
-    /// In the future we may pass in an optional previous YearInfo alongside the year
-    /// it matches to allow code to take shortcuts.
-    fn load_or_compute_info(&self, year: i32) -> YearInfo;
-}
-
-impl PrecomputedDataSource<i32> for () {
-    fn load_or_compute_info(&self, year: i32) -> i32 {
-        year
-    }
-}
-
 impl<C: CalendarArithmetic> ArithmeticDate<C> {
     #[inline]
     pub(crate) const fn new_unchecked(year: C::YearInfo, month: u8, day: u8) -> Self {

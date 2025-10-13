@@ -3,10 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::iso::{Iso, IsoDateInner};
+use crate::calendar_arithmetic::ArithmeticDateBuilder;
 use crate::calendar_arithmetic::{
     ArithmeticDate, CalendarArithmetic, DateFieldsResolver, ToExtendedYear,
 };
-use crate::calendar_arithmetic::{ArithmeticDateBuilder, PrecomputedDataSource};
 use crate::error::DateError;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
@@ -110,12 +110,6 @@ impl CalendarArithmetic for Hebrew {
 
     fn last_month_day_in_provided_year(info: HebrewYearInfo) -> (u8, u8) {
         info.keviyah.last_month_day_in_year()
-    }
-}
-
-impl PrecomputedDataSource<HebrewYearInfo> for () {
-    fn load_or_compute_info(&self, h_year: i32) -> HebrewYearInfo {
-        HebrewYearInfo::compute(h_year)
     }
 }
 

@@ -3,10 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::iso::{Iso, IsoDateInner};
+use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::calendar_arithmetic::{
     ArithmeticDate, ArithmeticDateBuilder, CalendarArithmetic, ToExtendedYear,
 };
-use crate::calendar_arithmetic::{DateFieldsResolver, PrecomputedDataSource};
 use crate::error::DateError;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
@@ -531,12 +531,6 @@ impl<R: Rules> CalendarArithmetic for LunarChinese<R> {
     }
 }
 
-impl<R: Rules> PrecomputedDataSource<LunarChineseYearData> for LunarChinese<R> {
-    fn load_or_compute_info(&self, related_iso: i32) -> LunarChineseYearData {
-        self.0.year_data(related_iso)
-    }
-}
-
 impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
     type YearInfo = LunarChineseYearData;
 
@@ -548,7 +542,7 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
 
     #[inline]
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
-        self.load_or_compute_info(extended_year)
+        self.0.year_data(extended_year)
     }
 
     #[inline]
