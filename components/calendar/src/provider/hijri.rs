@@ -134,7 +134,6 @@ impl PackedHijriYearInfo {
     }
 
     pub(crate) fn last_day_of_month(self, month: u8) -> u16 {
-        // debug_assert!(1 <= month && month <= 12, "{month}");
         // month is 1-indexed, so `29 * month` includes the current month
         let mut prev_month_lengths = 29 * month as u16;
         // month is 1-indexed, so `1 << month` is a mask with all zeroes except
