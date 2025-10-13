@@ -163,7 +163,6 @@ impl AsULE for PackedHijriYearInfo {
 
 #[test]
 fn test_hijri_packed_roundtrip() {
-    #[track_caller]
     fn single_roundtrip(month_lengths: [bool; 12], start_day: RataDie) -> Option<()> {
         let packed = PackedHijriYearInfo::try_new(1600, month_lengths, start_day)?;
         for i in 0..12 {

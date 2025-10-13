@@ -173,6 +173,7 @@ macro_rules! for_each_calendar {
 }
 use for_each_calendar;
 
+// Precalculates Chinese years, significant performance improvement
 #[derive(Debug, Clone)]
 struct LunarChineseYears(Vec<cal::chinese::LunarChineseYearData>);
 
