@@ -1288,7 +1288,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator"
-version = "2.0.1"
+version = "2.1.0-dev"
 dependencies = [
  "arraystring",
  "atoi",
@@ -1313,7 +1313,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator_data"
-version = "2.0.1"
+version = "2.1.0-dev"
 
 [[package]]
 name = "icu_collections"

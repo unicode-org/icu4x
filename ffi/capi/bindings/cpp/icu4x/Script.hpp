@@ -52,6 +52,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_BassaVah:
         case icu4x::capi::Script_Batak:
         case icu4x::capi::Script_Bengali:
+        case icu4x::capi::Script_BeriaErfe:
         case icu4x::capi::Script_Bhaiksuki:
         case icu4x::capi::Script_Bopomofo:
         case icu4x::capi::Script_Brahmi:
@@ -64,6 +65,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_Chakma:
         case icu4x::capi::Script_Cham:
         case icu4x::capi::Script_Cherokee:
+        case icu4x::capi::Script_Chisoi:
         case icu4x::capi::Script_Chorasmian:
         case icu4x::capi::Script_Common:
         case icu4x::capi::Script_Coptic:
@@ -173,6 +175,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_Sharada:
         case icu4x::capi::Script_Shavian:
         case icu4x::capi::Script_Siddham:
+        case icu4x::capi::Script_Sidetic:
         case icu4x::capi::Script_SignWriting:
         case icu4x::capi::Script_Sinhala:
         case icu4x::capi::Script_Sogdian:
@@ -186,6 +189,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_TaiLe:
         case icu4x::capi::Script_TaiTham:
         case icu4x::capi::Script_TaiViet:
+        case icu4x::capi::Script_TaiYo:
         case icu4x::capi::Script_Takri:
         case icu4x::capi::Script_Tamil:
         case icu4x::capi::Script_Tangsa:
@@ -196,6 +200,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_Tibetan:
         case icu4x::capi::Script_Tifinagh:
         case icu4x::capi::Script_Tirhuta:
+        case icu4x::capi::Script_TolongSiki:
         case icu4x::capi::Script_Toto:
         case icu4x::capi::Script_Ugaritic:
         case icu4x::capi::Script_Unknown:

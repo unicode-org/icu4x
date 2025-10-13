@@ -47,6 +47,7 @@
     "Aksara_Prebase",
     "Aksara_Start",
     "Virama_Final",
-    "Virama"
+    "Virama",
+    "Unambiguous_Hyphen"
   ]
 }
