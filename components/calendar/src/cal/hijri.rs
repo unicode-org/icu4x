@@ -381,7 +381,7 @@ impl Rules for TabularAlgorithm {
             // start_day is within 5 days of the tabular start day (trivial), and month lengths
             // has either 6 or 7 long months.
             packed: PackedHijriYearInfo::new_unchecked(extended_year, month_lengths, start_day),
-            extended_year: extended_year,
+            extended_year,
         }
     }
 }
