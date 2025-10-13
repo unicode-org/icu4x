@@ -3,14 +3,15 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
+use crate::calendar_arithmetic::{PrecomputedDataSource, ToExtendedYear};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
+use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::provider::hijri::PackedHijriYearInfo;
 use crate::types::DateFields;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
+use crate::{types, Calendar, Date};
 use crate::{AsCalendar, RangeError};
 use calendrical_calculations::islamic::{
     ISLAMIC_EPOCH_FRIDAY, ISLAMIC_EPOCH_THURSDAY, WELL_BEHAVED_ASTRONOMICAL_RANGE,
@@ -485,9 +486,9 @@ pub struct HijriYearData {
     extended_year: i32,
 }
 
-impl From<HijriYearData> for i32 {
-    fn from(value: HijriYearData) -> Self {
-        value.extended_year
+impl ToExtendedYear for HijriYearData {
+    fn to_extended_year(&self) -> i32 {
+        self.extended_year
     }
 }
 
@@ -658,8 +659,6 @@ impl<R: Rules> PartialEq for HijriDateInner<R> {
 impl<R: Rules> Eq for HijriDateInner<R> {}
 
 impl<R: Rules> CalendarArithmetic for Hijri<R> {
-    type YearInfo = HijriYearData;
-
     fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8 {
         if year.packed.month_has_30_days(month) {
             30
@@ -721,6 +720,8 @@ impl<R: Rules> crate::cal::scaffold::UnstableSealed for Hijri<R> {}
 impl<R: Rules> Calendar for Hijri<R> {
     type DateInner = HijriDateInner<R>;
     type Year = types::EraYear;
+    type DifferenceError = core::convert::Infallible;
+
     fn from_fields(
         &self,
         fields: DateFields,
@@ -786,19 +787,22 @@ impl<R: Rules> Calendar for Hijri<R> {
         date.0.days_in_month()
     }
 
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration) {
-        date.0.offset_date(offset, self)
+    fn add(
+        &self,
+        date: &Self::DateInner,
+        duration: types::DateDuration,
+        options: DateAddOptions,
+    ) -> Result<Self::DateInner, DateError> {
+        date.0.added(duration, self, options).map(HijriDateInner)
     }
 
     fn until(
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        _calendar2: &Self,
-        _largest_unit: DateDurationUnit,
-        _smallest_unit: DateDurationUnit,
-    ) -> DateDuration {
-        date1.0.until(date2.0, _largest_unit, _smallest_unit)
+        options: DateDifferenceOptions,
+    ) -> Result<types::DateDuration, Self::DifferenceError> {
+        Ok(date1.0.until(&date2.0, self, options))
     }
 
     fn debug_name(&self) -> &'static str {
@@ -831,7 +835,7 @@ impl<R: Rules> Calendar for Hijri<R> {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        date.0.month()
+        self.month_code_from_ordinal(&date.0.year, date.0.month)
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {

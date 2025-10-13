@@ -6,8 +6,9 @@ use calendrical_calculations::rata_die::RataDie;
 
 use crate::cal::iso::IsoDateInner;
 use crate::error::DateError;
+use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
-use crate::{types, DateDuration, DateDurationUnit};
+use crate::types;
 use core::fmt;
 
 /// A calendar implementation
@@ -30,6 +31,8 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     type DateInner: Eq + Copy + fmt::Debug;
     /// The type of YearInfo returned by the date
     type Year: fmt::Debug + Into<types::YearInfo>;
+    /// The type of error returned by `until`
+    type DifferenceError;
 
     /// Construct a date from era/month codes and fields
     ///
@@ -110,8 +113,14 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear;
 
     #[doc(hidden)] // unstable
-    /// Add `offset` to `date`
-    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration);
+    /// Add `duration` to `date`
+    fn add(
+        &self,
+        date: &Self::DateInner,
+        duration: types::DateDuration,
+        options: DateAddOptions,
+    ) -> Result<Self::DateInner, DateError>;
+
     #[doc(hidden)] // unstable
     /// Calculate `date2 - date` as a duration
     ///
@@ -121,10 +130,8 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         &self,
         date1: &Self::DateInner,
         date2: &Self::DateInner,
-        calendar2: &Self,
-        largest_unit: DateDurationUnit,
-        smallest_unit: DateDurationUnit,
-    ) -> DateDuration;
+        options: DateDifferenceOptions,
+    ) -> Result<types::DateDuration, Self::DifferenceError>;
 
     /// Returns the [`CalendarAlgorithm`](crate::preferences::CalendarAlgorithm) that is required to match
     /// when parsing into this calendar.

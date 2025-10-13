@@ -12,6 +12,10 @@ use tinystr::TinyAsciiStr;
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::ule::AsULE;
 
+// Export the duration types from here
+#[doc(hidden)] // unstable
+pub use crate::duration::{DateDuration, DateDurationUnit};
+
 /// A bag of various ways of expressing the year, month, and/or day.
 ///
 /// Pass this into [`Date::try_from_fields`](crate::Date::try_from_fields).
