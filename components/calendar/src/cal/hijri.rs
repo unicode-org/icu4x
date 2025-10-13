@@ -361,28 +361,27 @@ impl Rules for TabularAlgorithm {
     }
 
     fn year_data(&self, extended_year: i32) -> HijriYearData {
-        #[allow(clippy::unwrap_used)] // justified, and proven by exhaustive.rs for years +-270_000
-        HijriYearData::try_new(
+        let start_day = calendrical_calculations::islamic::fixed_from_tabular_islamic(
             extended_year,
-            // this is within 5 days of the mean fixed tabular start day by construction
-            calendrical_calculations::islamic::fixed_from_tabular_islamic(
-                extended_year,
-                1,
-                1,
-                self.epoch.rata_die(),
-            ),
-            // this produces 6 or 7 leap months
-            core::array::from_fn(|m| {
-                m % 2 == 0
-                    || m == 11
-                        && match self.leap_years {
-                            TabularAlgorithmLeapYears::TypeII => {
-                                (14 + 11 * extended_year).rem_euclid(30) < 11
-                            }
+            1,
+            1,
+            self.epoch.rata_die(),
+        );
+        let month_lengths = core::array::from_fn(|m| {
+            m % 2 == 0
+                || m == 11
+                    && match self.leap_years {
+                        TabularAlgorithmLeapYears::TypeII => {
+                            (14 + 11 * extended_year).rem_euclid(30) < 11
                         }
-            }),
-        )
-        .unwrap()
+                    }
+        });
+        HijriYearData {
+            // start_day is within 5 days of the tabular start day (trivial), and month lengths
+            // has either 6 or 7 long months.
+            packed: PackedHijriYearInfo::new_unchecked(extended_year, month_lengths, start_day),
+            extended_year: extended_year,
+        }
     }
 }
 

@@ -17,6 +17,9 @@ use zerovec::ule::AsULE;
 
 /// The struct containing compiled Hijri YearInfo
 ///
+/// * `start_day` has to be within 5 days of the start of the year of the [`TabularAlgorithm`].
+/// * `month_lengths[n - 1]` has either 6 or 7 long months.
+///
 /// Bit structure
 ///
 /// ```text
@@ -84,6 +87,33 @@ impl PackedHijriYearInfo {
         }
         all |= (start_offset.unsigned_abs() as u16) << 13;
         Some(Self(all))
+    }
+
+    pub(crate) const fn new_unchecked(
+        extended_year: i32,
+        month_lengths: [bool; 12],
+        start_day: RataDie,
+    ) -> Self {
+        let start_offset = start_day.since(Self::mean_tabular_start_day(extended_year));
+
+        let start_offset = start_offset as i8 & 0b1000_0111u8 as i8;
+
+        let mut all = 0u16;
+
+        let mut i = 0;
+        while i < 12 {
+            #[expect(clippy::indexing_slicing)]
+            if month_lengths[i] {
+                all |= 1 << i;
+            }
+            i += 1;
+        }
+
+        if start_offset < 0 {
+            all |= 1 << 12;
+        }
+        all |= (start_offset.unsigned_abs() as u16) << 13;
+        Self(all)
     }
 
     pub(crate) fn start_day(self, extended_year: i32) -> RataDie {
