@@ -573,7 +573,8 @@ mod tests {
     #[test]
     fn test_hebrew_epoch() {
         // page 119 of the Calendrical Calculations book
-        assert_eq!(FIXED_HEBREW_EPOCH, RataDie::new(-1373427));
+        let fixed_hebrew_date = -1373427.0;
+        assert_eq!(FIXED_HEBREW_EPOCH.to_f64_date(), fixed_hebrew_date);
     }
 
     #[test]

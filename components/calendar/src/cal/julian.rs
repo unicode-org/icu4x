@@ -532,6 +532,14 @@ mod test {
     }
 
     #[test]
+    fn test_hebrew_epoch() {
+        assert_eq!(
+            calendrical_calculations::julian::fixed_from_julian_book_version(-3761, 10, 7),
+            RataDie::new(-1373427)
+        );
+    }
+
+    #[test]
     fn test_julian_leap_years() {
         assert!(Julian::provided_year_is_leap(4));
         assert!(Julian::provided_year_is_leap(0));
