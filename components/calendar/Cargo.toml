@@ -55,6 +55,7 @@ logging = ["calendrical_calculations/logging"]
 serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake", "alloc", "icu_provider/export"]
 compiled_data = ["dep:icu_calendar_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
+unstable = []
 
 alloc = ["icu_locale_core/alloc", "tinystr/alloc", "serde?/alloc"]
 

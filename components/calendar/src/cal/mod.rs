@@ -25,7 +25,9 @@ pub use buddhist::Buddhist;
 pub use chinese_internal::LunarChinese;
 /// Customizations for the [`LunarChinese`] calendar.
 pub mod chinese {
-    pub use super::chinese_internal::{China, Korea, LunarChineseYearData, Rules};
+    pub use super::chinese_internal::{China, Korea};
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    pub use super::chinese_internal::{LunarChineseYearData, Rules};
 }
 pub use coptic::Coptic;
 pub use ethiopian::{Ethiopian, EthiopianEraStyle};
@@ -35,9 +37,11 @@ pub use hijri_internal::Hijri;
 /// Customizations for the [`Hijri`] calendar.
 pub mod hijri {
     pub use super::hijri_internal::{
-        AstronomicalSimulation, HijriYearData, Rules, TabularAlgorithm, TabularAlgorithmEpoch,
-        TabularAlgorithmLeapYears, UmmAlQura,
+        AstronomicalSimulation, TabularAlgorithm, TabularAlgorithmEpoch, TabularAlgorithmLeapYears,
+        UmmAlQura,
     };
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    pub use super::hijri_internal::{HijriYearData, Rules};
 }
 pub use indian::Indian;
 pub use iso::Iso;
@@ -70,6 +74,7 @@ pub type Chinese = LunarChinese<chinese::China>;
 pub use crate::any_calendar::{AnyCalendar, AnyCalendarDifferenceError, AnyCalendarKind};
 
 /// Internal scaffolding types
+#[cfg_attr(not(feature = "unstable"), doc(hidden))]
 pub mod scaffold {
     /// Trait marking other traits that are considered unstable and should not generally be
     /// implemented outside of the calendar crate.
