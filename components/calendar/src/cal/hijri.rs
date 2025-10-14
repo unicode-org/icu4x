@@ -36,6 +36,9 @@ mod ummalqura_data;
 ///
 /// This type supports only variants where months are either 29 or 30 days.
 ///
+/// This corresponds to various `"islamic-*"` [CLDR calendars](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier),
+/// see the individual implementors of [`Rules`] ([`TabularAlgorithm`], [`UmmAlQura`], [`AstronomicalSimulation`]) for more information.
+///
 /// # Era codes
 ///
 /// This calendar uses two era codes: `ah`, and `bh`, corresponding to the Anno Hegirae and Before Hijrah eras
@@ -104,6 +107,9 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 ///
 /// As floating point arithmetic degenerates for far-away dates, this falls back to
 /// the tabular calendar at some point.
+///
+/// This corresponds to the `"islamic-rgsa"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier)
+/// if constructed with [`Hijri::new_simulated_mecca()`].
 #[derive(Copy, Clone, Debug)]
 pub struct AstronomicalSimulation {
     pub(crate) location: SimulatedLocation,
@@ -229,6 +235,8 @@ impl Rules for AstronomicalSimulation {
 ///
 /// Future versions of this crate may extend the range that uses month length data from the
 /// calendar authority.
+///
+/// This corresponds to the `"islamic-umalqura"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
 #[derive(Copy, Clone, Debug, Default)]
 #[non_exhaustive]
 pub struct UmmAlQura;
@@ -298,6 +306,9 @@ impl Rules for UmmAlQura {
 /// See [`TabularAlgorithmEpoch`] and [`TabularAlgorithmLeapYears`] for customization.
 ///
 /// The most common version of these rules uses [`TabularAlgorithmEpoch::Friday`] and [`TabularAlgorithmLeapYears::TypeII`].
+///
+/// When constructed with [`TabularAlgorithmLeapYears::TypeII`], and either [`TabularAlgorithmEpoch::Friday`] or [`TabularAlgorithmEpoch::Thursday`],
+/// this corresponds to the `"islamic-civil"` and `"islamic-tbla"` [CLDR calendars](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier) respectively.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct TabularAlgorithm {
     pub(crate) leap_years: TabularAlgorithmLeapYears,

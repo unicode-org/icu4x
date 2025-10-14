@@ -20,6 +20,8 @@ use tinystr::tinystr;
 ///
 /// This type can be used with [`Date`] to represent dates in this calendar.
 ///
+/// This corresponds to the `"coptic"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
+///
 /// [Coptic calendar]: https://en.wikipedia.org/wiki/Coptic_calendar
 ///
 /// # Era codes
@@ -287,7 +289,7 @@ mod tests {
         // with Overflow::Constrain
         let fields = DateFields {
             month_code: Some(MonthCode("M13".parse().unwrap())),
-            day: core::num::NonZero::new(7),
+            day: Some(7),
             ..Default::default()
         };
         let options = DateFromFieldsOptions {

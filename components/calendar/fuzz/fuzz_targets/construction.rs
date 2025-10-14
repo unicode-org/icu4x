@@ -9,7 +9,6 @@ use icu_calendar::options::*;
 use icu_calendar::types::{DateFields, MonthCode};
 use icu_calendar::{AnyCalendar, Date};
 use libfuzzer_sys::fuzz_target;
-use std::num::NonZeroU8;
 
 #[derive(Arbitrary, Debug)]
 struct FuzzInput {
@@ -102,10 +101,10 @@ fuzz_target!(|data: FuzzInput| {
 
     let mut fields = DateFields::default();
     fields.extended_year = Some(data.year);
-    fields.day = Some(unwrap_or_return!(NonZeroU8::new(data.day)));
+    fields.day = Some(data.day);
     match data.month_interpretation {
         MonthInterpretation::Ordinal => {
-            fields.ordinal_month = Some(unwrap_or_return!(NonZeroU8::new(data.month)));
+            fields.ordinal_month = Some(data.month);
         }
         MonthInterpretation::CodeNormal => {
             fields.month_code = Some(unwrap_or_return!(MonthCode::new_normal(data.month)));

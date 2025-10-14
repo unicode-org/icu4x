@@ -163,12 +163,11 @@ impl<A: AsCalendar> Date<A> {
     /// use icu_calendar::DateError;
     /// use icu_calendar::cal::Gregorian;
     /// use icu_calendar::types::DateFields;
-    /// use std::num::NonZeroU8;
     ///
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(2000);
-    /// fields.ordinal_month = NonZeroU8::new(1);
-    /// fields.day = NonZeroU8::new(1);
+    /// fields.ordinal_month = Some(1);
+    /// fields.day = Some(1);
     ///
     /// let d1 = Date::try_from_fields(
     ///     fields,

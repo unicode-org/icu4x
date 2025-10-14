@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::{collections::HashSet, fmt::Debug, num::NonZeroU8};
+use std::{collections::HashSet, fmt::Debug};
 
 use icu_calendar::{
     cal::*,
@@ -27,7 +27,7 @@ where
         let month_day = (date.month().standard_code, date.day_of_month().0);
         let mut fields = DateFields::default();
         fields.month_code = Some(month_day.0);
-        fields.day = NonZeroU8::new(month_day.1);
+        fields.day = Some(month_day.1);
         let mut options = DateFromFieldsOptions::default();
         options.missing_fields_strategy = Some(MissingFieldsStrategy::Ecma);
         let reference_date = Date::try_from_fields(fields, options, Ref(&cal)).unwrap();
@@ -53,7 +53,7 @@ where
                     false => MonthCode::new_normal(month_number),
                     true => MonthCode::new_leap(month_number),
                 };
-                fields.day = NonZeroU8::new(day_number);
+                fields.day = Some(day_number);
                 let mut options = DateFromFieldsOptions::default();
                 options.overflow = Some(Overflow::Constrain);
                 options.missing_fields_strategy = Some(MissingFieldsStrategy::Ecma);
@@ -99,7 +99,7 @@ where
                 }
 
                 // Test that ordinal months cause it to fail (even if the month code is still set)
-                fields.ordinal_month = NonZeroU8::new(month_number);
+                fields.ordinal_month = Some(month_number);
                 let ordinal_result = Date::try_from_fields(fields, options, Ref(&cal));
                 assert!(matches!(ordinal_result, Err(DateError::NotEnoughFields)));
             }

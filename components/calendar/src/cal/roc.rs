@@ -17,6 +17,8 @@ use tinystr::tinystr;
 /// The ROC calendar should not be confused with the Chinese traditional lunar calendar
 /// (see [`Chinese`](crate::cal::Chinese)).
 ///
+/// This corresponds to the `"roc"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
+///
 /// # Era codes
 ///
 /// This calendar uses two era codes: `roc`, corresponding to years in the 民國 era (CE year 1912 and

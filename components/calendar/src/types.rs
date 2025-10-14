@@ -7,7 +7,6 @@
 #[doc(no_inline)]
 pub use calendrical_calculations::rata_die::RataDie;
 use core::fmt;
-use core::num::NonZeroU8;
 use tinystr::TinyAsciiStr;
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::ule::AsULE;
@@ -41,9 +40,9 @@ pub struct DateFields<'a> {
     ///
     /// If both this and [`Self::month_code`] are set, they must refer to
     /// the same month.
-    pub ordinal_month: Option<NonZeroU8>,
+    pub ordinal_month: Option<u8>,
     /// See [`DayOfMonth`].
-    pub day: Option<NonZeroU8>,
+    pub day: Option<u8>,
 }
 
 /// The type of year: Calendars like Chinese don't have an era and instead format with cyclic years.

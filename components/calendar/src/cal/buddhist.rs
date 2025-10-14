@@ -19,6 +19,8 @@ use tinystr::tinystr;
 ///
 /// This type can be used with [`Date`] to represent dates in this calendar.
 ///
+/// This corresponds to the `"buddhist"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
+///
 /// [cal]: https://en.wikipedia.org/wiki/Thai_solar_calendar
 ///
 /// # Era codes

@@ -21,6 +21,8 @@ use calendrical_calculations::rata_die::RataDie;
 ///
 /// This type can be used with [`Date`] to represent dates in this calendar.
 ///
+/// This corresponds to the `"persian"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
+///
 /// # Era codes
 ///
 /// This calendar uses a single era code `ap` (aliases `sh`, `hs`), with Anno Persico/Anno Persarum starting the year of the Hijra. Dates before this era use negative years.

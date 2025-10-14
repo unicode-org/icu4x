@@ -21,6 +21,8 @@ use tinystr::tinystr;
 ///
 /// This type can be used with [`Date`] to represent dates in this calendar.
 ///
+/// This corresponds to the `"japanese"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
+///
 /// [Japanese calendar]: https://en.wikipedia.org/wiki/Japanese_calendar
 ///
 /// # Era codes
@@ -51,6 +53,8 @@ pub struct Japanese {
 /// The Gregorian calendar with Japanese eras was adopted starting with January 1st, 6 Meiji (1873-01-01), so prior dates are proleptic. This implementation uses approximations of earlier Japanese eras proleptically and uses the Gregorian eras for even earlier dates that don't have an approximate Japanese era. For a variant whose Japanese eras start with Meiji, check out [`Japanese`].
 ///
 /// This type can be used with [`Date`] to represent dates in this calendar.
+///
+/// This corresponds to the `"japanext"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
 ///
 /// [Japanese calendar]: https://en.wikipedia.org/wiki/Japanese_calendar
 ///

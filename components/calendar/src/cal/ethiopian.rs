@@ -41,6 +41,9 @@ pub enum EthiopianEraStyle {
 /// It can be constructed in two modes: using the Amete Alem era scheme, or the Amete Mihret era scheme (the default),
 /// see [`EthiopianEraStyle`] for more info.
 ///
+/// This corresponds to the `"ethiopic"` and `"ethioaa"` [CLDR calendars](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier),
+/// with `"ethiopic"` being for [`EthiopianEraStyle::AmeteMihret`]
+///
 /// [Ethiopian calendar]: https://en.wikipedia.org/wiki/Ethiopian_calendar
 ///
 /// # Era codes
