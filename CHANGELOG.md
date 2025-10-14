@@ -72,7 +72,7 @@
 Several crates have had patch releases in the 2.0 stream:
 
 - `icu_calendar`
-  - (2.0.1) Fix chinese day-of-year (unicode-org#6567)Allow clippy::mem_forget in yoke_derive (#6891)
+  - (2.0.1) Fix chinese day-of-year (unicode-org#6567)
   - (2.0.2) Respect `-u-fw` keyword in `WeekInformation` (unicode-org#6615)
   - (2.0.3) Fix extended year for Roc/Ethiopic (unicode-org#6721)
   - (2.0.3) Fix treatment of None era code for Gregorian (unicode-org#6794)
