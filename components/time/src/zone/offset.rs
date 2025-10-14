@@ -130,7 +130,7 @@ impl UtcOffset {
     }
 
     /// Returns the raw offset value in seconds.
-    pub fn to_seconds(self) -> i32 {
+    pub const fn to_seconds(self) -> i32 {
         self.0
     }
 
