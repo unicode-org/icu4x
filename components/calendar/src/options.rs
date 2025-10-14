@@ -278,7 +278,7 @@ pub enum Overflow {
     ///
     /// ```
     /// use icu_calendar::Date;
-    /// use icu_calendar::DateError;
+    /// use icu_calendar::error::DateFromFieldsError;
     /// use icu_calendar::cal::Hebrew;
     /// use icu_calendar::options::DateFromFieldsOptions;
     /// use icu_calendar::options::Overflow;
@@ -301,7 +301,7 @@ pub enum Overflow {
     ///     Hebrew
     /// )
     /// .expect_err("Day is out of bounds");
-    /// assert!(matches!(err, DateError::Range { .. }));
+    /// assert!(matches!(err, DateFromFieldsError::Range { .. }));
     ///
     /// // Set the day to one that exists
     /// fields.day = Some(1);
@@ -320,7 +320,7 @@ pub enum Overflow {
     ///     Hebrew
     /// )
     /// .expect_err("Month is out of bounds");
-    /// assert!(matches!(err, DateError::UnknownMonthCode(_)));
+    /// assert!(matches!(err, DateFromFieldsError::UnknownMonthCodeForYear(_)));
     /// ```
     #[default]
     Reject,
