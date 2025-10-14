@@ -155,11 +155,13 @@ pub enum AnyDateInner {
 /// 
 /// 1. `$cal`: The variables to be matched over: for example, `cal`, `(cal, date)`, or `(cal, date1, date2)`.
 /// 2. `$pattern`: The name of a macro that generates a pattern for the match statement. It is passed as arguments:
-///     - `$cal`
-///     - An ident to be used for matching the AnyCalendar, `c`.
-///     - A list of idents to be used for matching AnyDateInners and the Hijri tabular algorithm
-/// 3. `$expr`: The name of a macro that generates an expression for the match statement. It is passed the same
-///    arguments as `$pattern`, except without the Hijri tabular algorithm, since it is contained within `c`.
+///     - The calendar variant ident (e.g. `Buddhist`).
+///     - An ident to be used for matching the `AnyCalendar` variant, `c`.
+///     - A list of identifiers for `AnyDateInner` variants. For `HijriTabular`, this list also includes identifiers for the algorithm.
+/// 3. `$expr`: The name of a macro that generates an expression for the match statement. It is passed as arguments:
+///     - The calendar variant ident (e.g. `Buddhist`).
+///     - An ident for the `AnyCalendar` variant, `c`.
+///     - A list of identifiers for `AnyDateInner` variants.
 /// 4. `[$d1, $alg1, $d2, $alg2, ...]`: A list of identifiers that are passed into `$pattern` and `$expr`.
 ///    There should generally be 2 identifiers per date being matched. Can be omitted if no dates are being matched.
 /// 5. `$exhaustive_expr`: The expression for the `_` pattern. Can be omitted if no dates are being matched.
@@ -242,7 +244,7 @@ macro_rules! match_cal_and_date {
                 $c.$f($d $($extra1)*) $($extra2)*
             };
         }
-        match_cal_general!($cal, pattern_cal_date, helper, [d, blah], {
+        match_cal_general!($cal, pattern_cal_date, helper, [d, alg], {
             unreachable!("AnyCalendar with mismatched date type")
         })
     }};
