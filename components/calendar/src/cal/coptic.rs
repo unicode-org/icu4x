@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
@@ -39,12 +39,14 @@ pub struct Coptic;
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct CopticDateInner(pub(crate) ArithmeticDate<Coptic>);
 
-impl CalendarArithmetic for Coptic {
+impl DateFieldsResolver for Coptic {
+    type YearInfo = i32;
+
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
         if (1..=12).contains(&month) {
             30
         } else if month == 13 {
-            if Self::provided_year_is_leap(year) {
+            if year.rem_euclid(4) == 3 {
                 6
             } else {
                 5
@@ -57,31 +59,6 @@ impl CalendarArithmetic for Coptic {
     fn months_in_provided_year(_: i32) -> u8 {
         13
     }
-
-    fn provided_year_is_leap(year: i32) -> bool {
-        year.rem_euclid(4) == 3
-    }
-
-    fn last_month_day_in_provided_year(year: i32) -> (u8, u8) {
-        if Self::provided_year_is_leap(year) {
-            (13, 6)
-        } else {
-            (13, 5)
-        }
-    }
-
-    fn days_in_provided_year(year: i32) -> u16 {
-        if Self::provided_year_is_leap(year) {
-            366
-        } else {
-            365
-        }
-    }
-}
-
-impl DateFieldsResolver for Coptic {
-    type YearInfo = i32;
-
     #[inline]
     fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
         match era {
@@ -161,8 +138,8 @@ impl Calendar for Coptic {
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
         CopticDateInner(
             match calendrical_calculations::coptic::coptic_from_fixed(rd) {
-                Err(I32CastError::BelowMin) => ArithmeticDate::min_date(),
-                Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
+                Err(I32CastError::BelowMin) => ArithmeticDate::new_unchecked(i32::MIN, 1, 1),
+                Err(I32CastError::AboveMax) => ArithmeticDate::new_unchecked(i32::MAX, 13, 6),
                 Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
             },
         )
@@ -181,15 +158,19 @@ impl Calendar for Coptic {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        date.0.months_in_year()
+        Self::months_in_provided_year(date.0.year)
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.0.days_in_year()
+        if self.is_in_leap_year(date) {
+            366
+        } else {
+            365
+        }
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        date.0.days_in_month()
+        Self::days_in_provided_month(date.0.year, date.0.month)
     }
 
     fn add(
@@ -211,7 +192,7 @@ impl Calendar for Coptic {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let year = date.0.extended_year();
+        let year = date.0.year;
         types::EraYear {
             era: tinystr!(16, "am"),
             era_index: Some(0),
@@ -222,7 +203,7 @@ impl Calendar for Coptic {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::provided_year_is_leap(date.0.year)
+        date.0.year.rem_euclid(4) == 3
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
@@ -230,11 +211,16 @@ impl Calendar for Coptic {
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        date.0.day_of_month()
+        types::DayOfMonth(date.0.day)
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        date.0.day_of_year()
+        types::DayOfYear(
+            (1..date.0.month)
+                .map(|m| Self::days_in_provided_month(date.0.year, m) as u16)
+                .sum::<u16>()
+                + date.0.day as u16,
+        )
     }
 
     fn debug_name(&self) -> &'static str {
