@@ -5,7 +5,7 @@
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::cal::{abstract_gregorian::AbstractGregorian, iso::IsoEra};
 use crate::calendar_arithmetic::CalendarArithmetic;
-use crate::error::DateError;
+use crate::error::{DateError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::{CyclicYear, EraYear, IsoWeekOfYear};
@@ -150,7 +150,7 @@ impl<A: AsCalendar> Date<A> {
     /// and fill in missing fields. See [`DateFromFieldsOptions`] for more information.
     ///
     /// This function will not accept year/extended_year values that are outside of the range `[-2²⁷, 2²⁷]`,
-    /// regardless of the calendar, instead returning a [`DateError::Range`]. This is to prevent
+    /// regardless of the calendar, instead returning a [`DateFromFieldsError::Range`]. This is to prevent
     /// overflowing behaviors near the extreme values of the `i32` range.
     /// Currently, calendar-specific `Date::try_new_calendarname()` constructors
     /// do not do this, and it is possible to obtain such extreme dates via calendar conversion or arithmetic,
@@ -160,7 +160,6 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// ```
     /// use icu_calendar::Date;
-    /// use icu_calendar::DateError;
     /// use icu_calendar::cal::Gregorian;
     /// use icu_calendar::types::DateFields;
     ///
@@ -180,13 +179,13 @@ impl<A: AsCalendar> Date<A> {
     /// assert_eq!(d1, d2);
     /// ```
     ///
-    /// See [`DateError`] for examples of error conditions.
+    /// See [`DateFromFieldsError`] for examples of error conditions.
     #[inline]
     pub fn try_from_fields(
         fields: types::DateFields,
         options: DateFromFieldsOptions,
         calendar: A,
-    ) -> Result<Self, DateError> {
+    ) -> Result<Self, DateFromFieldsError> {
         let inner = calendar.as_calendar().from_fields(fields, options)?;
         Ok(Date { inner, calendar })
     }

@@ -5,7 +5,7 @@
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
-use crate::error::DateError;
+use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
@@ -79,10 +79,14 @@ impl DateFieldsResolver for Persian {
     type YearInfo = i32;
 
     #[inline]
-    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+    fn year_info_from_era(
+        &self,
+        era: &str,
+        era_year: i32,
+    ) -> Result<Self::YearInfo, UnknownEraError> {
         match era {
             "ap" | "sh" | "hs" => Ok(era_year),
-            _ => Err(DateError::UnknownEra),
+            _ => Err(UnknownEraError),
         }
     }
 
@@ -96,10 +100,8 @@ impl DateFieldsResolver for Persian {
         &self,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::YearInfo, DateError> {
-        let (ordinal_month, _is_leap) = month_code
-            .parsed()
-            .ok_or(DateError::UnknownMonthCode(month_code))?;
+    ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
+        let (ordinal_month, _is_leap) = month_code.parsed_err()?;
         // December 31, 1972 occurs on 10th month, 10th day, 1351 AP
         let persian_year = if ordinal_month < 10 || (ordinal_month == 10 && day <= 10) {
             1351
@@ -121,11 +123,10 @@ impl Calendar for Persian {
         &self,
         fields: DateFields,
         options: DateFromFieldsOptions,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateFromFieldsError> {
         let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        ArithmeticDate::try_from_builder(builder, options)
-            .map(PersianDateInner)
-            .map_err(|e| e.maybe_with_month_code(fields.month_code))
+        let arithmetic_date = ArithmeticDate::try_from_builder(builder, options)?;
+        Ok(PersianDateInner(arithmetic_date))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {

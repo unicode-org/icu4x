@@ -6,9 +6,10 @@ use std::{collections::HashSet, fmt::Debug};
 
 use icu_calendar::{
     cal::*,
+    error::DateFromFieldsError,
     options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow},
     types::{DateFields, MonthCode},
-    Calendar, Date, DateError, Ref,
+    Calendar, Date, Ref,
 };
 
 /// Test that a given calendar produces valid monthdays
@@ -65,7 +66,7 @@ where
                         );
                         d
                     }
-                    Err(DateError::UnknownMonthCode(_)) => {
+                    Err(DateFromFieldsError::UnknownMonthCodeForCalendar(_)) => {
                         assert!(
                             !is_valid_month,
                             "try_from_fields failed but should have passed: {fields:?}"
@@ -95,13 +96,19 @@ where
                 if valid_day_number == day_number {
                     assert_eq!(reject_result, Ok(reference_date));
                 } else {
-                    assert!(matches!(reject_result, Err(DateError::Range { .. })))
+                    assert!(matches!(
+                        reject_result,
+                        Err(DateFromFieldsError::Range { .. })
+                    ))
                 }
 
                 // Test that ordinal months cause it to fail (even if the month code is still set)
                 fields.ordinal_month = Some(month_number);
                 let ordinal_result = Date::try_from_fields(fields, options, Ref(&cal));
-                assert!(matches!(ordinal_result, Err(DateError::NotEnoughFields)));
+                assert!(matches!(
+                    ordinal_result,
+                    Err(DateFromFieldsError::NotEnoughFields)
+                ));
             }
         }
     }

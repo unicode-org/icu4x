@@ -2,11 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Error types for functions in the calendar crate
+
 use crate::{options::Overflow, types::MonthCode};
 use displaydoc::Display;
 
 #[derive(Debug, Copy, Clone, PartialEq, Display)]
-/// Error type for date creation.
+/// Error type for date creation via [`Date::try_new_from_codes`].
+///
+/// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
 #[non_exhaustive]
 pub enum DateError {
     /// A field is out of range for its domain.
@@ -59,6 +63,102 @@ pub enum DateError {
     /// ```
     #[displaydoc("Unknown month code {0:?}")]
     UnknownMonthCode(MonthCode),
+}
+
+impl core::error::Error for DateError {}
+
+/// Error type for date creation via [`Date::try_from_fields`].
+///
+/// [`Date::try_from_fields`]: crate::Date::try_from_fields
+#[derive(Debug, Copy, Clone, PartialEq, Display)]
+#[non_exhaustive]
+pub enum DateFromFieldsError {
+    /// A field is out of range for its domain.
+    #[displaydoc("{0}")]
+    Range(RangeError),
+    /// The era code is invalid for the calendar.
+    #[displaydoc("Unknown era or invalid syntax")]
+    UnknownEra,
+    /// The month code syntax is invalid.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_calendar::Date;
+    /// use icu_calendar::DateFromFieldsError;
+    /// use icu_calendar::Iso;
+    /// use icu_calendar::types::MonthCode;
+    /// use icu_calendar::types::DateFields;
+    /// use tinystr::tinystr;
+    ///
+    /// let mut fields = DateFields::default();
+    /// fields.extended_year = Some(2000);
+    /// fields.month_code = Some(MonthCode(tinystr!(4, "????")));
+    /// fields.day = Some(1);
+    ///
+    /// let err = Date::try_from_fields(
+    ///     fields, Default::default(), Iso
+    /// )
+    /// .expect_err("month code is invalid");
+    ///
+    /// assert!(matches!(err, DateFromFieldsError::InvalidMonthCode(_)));
+    /// ```
+    #[displaydoc("Invalid month code syntax")]
+    InvalidMonthCode,
+    /// The specified month code does not exist in this calendar.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_calendar::Date;
+    /// use icu_calendar::DateError;
+    /// use icu_calendar::cal::Hebrew;
+    /// use icu_calendar::types::DateFields;
+    /// use icu_calendar::types::MonthCode;
+    /// use tinystr::tinystr;
+    ///
+    /// let mut fields = DateFields::default();
+    /// fields.extended_year = Some(5783);
+    /// fields.month_code = Some(MonthCode::new_normal(13));
+    /// fields.day = Some(1);
+    ///
+    /// let err = Date::try_from_fields(
+    ///     fields,
+    ///     Default::default(),
+    ///     Hebrew
+    /// )
+    /// .expect_err("no month M13 in Hebrew");
+    /// assert!(matches!(err, DateError::UnknownMonthCodeForCalendar(_)));
+    /// ```
+    #[displaydoc("Month code does not exist in this calendar: {0:?}")]
+    UnknownMonthCodeForCalendar(MonthCode),
+    /// The specified month code exists in this calendar, but not in the specified year.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_calendar::Date;
+    /// use icu_calendar::DateError;
+    /// use icu_calendar::cal::Hebrew;
+    /// use icu_calendar::types::DateFields;
+    /// use icu_calendar::types::MonthCode;
+    /// use tinystr::tinystr;
+    ///
+    /// let mut fields = DateFields::default();
+    /// fields.extended_year = Some(5783);
+    /// fields.month_code = Some(MonthCode::new_leap(5));
+    /// fields.day = Some(1);
+    ///
+    /// let err = Date::try_from_fields(
+    ///     fields,
+    ///     Default::default(),
+    ///     Hebrew
+    /// )
+    /// .expect_err("no month M05L in Hebrew year 5783");
+    /// assert!(matches!(err, DateError::UnknownMonthCodeForYear(_)));
+    /// ```
+    #[displaydoc("Month code exists in calendar, but not for this year: {0:?}")]
+    UnknownMonthCodeForYear(MonthCode),
     /// The year was specified in multiple inconsistent ways.
     ///
     /// # Examples
@@ -199,7 +299,117 @@ pub enum DateError {
     NotEnoughFields,
 }
 
-impl core::error::Error for DateError {}
+impl core::error::Error for DateFromFieldsError {}
+
+impl From<RangeError> for DateFromFieldsError {
+    #[inline]
+    fn from(value: RangeError) -> Self {
+        DateFromFieldsError::Range(value)
+    }
+}
+
+/// Internal narrow error type for functions that only fail on unknown eras
+pub(crate) struct UnknownEraError;
+
+impl From<UnknownEraError> for DateError {
+    #[inline]
+    fn from(_value: UnknownEraError) -> Self {
+        DateError::UnknownEra
+    }
+}
+
+impl From<UnknownEraError> for DateFromFieldsError {
+    #[inline]
+    fn from(_value: UnknownEraError) -> Self {
+        DateFromFieldsError::UnknownEra
+    }
+}
+
+/// Internal narrow error type for functions that only fail on invalid month codes
+pub(crate) struct InvalidMonthCodeError;
+
+impl From<InvalidMonthCodeError> for EcmaReferenceYearError {
+    #[inline]
+    fn from(_value: InvalidMonthCodeError) -> Self {
+        EcmaReferenceYearError::InvalidMonthCode
+    }
+}
+
+impl From<InvalidMonthCodeError> for MonthCodeError {
+    #[inline]
+    fn from(_value: InvalidMonthCodeError) -> Self {
+        MonthCodeError::InvalidMonthCode
+    }
+}
+
+/// Internal narrow error type for functions that only fail on month code operations
+pub(crate) enum MonthCodeError {
+    InvalidMonthCode,
+    UnknownMonthCodeForCalendar(MonthCode),
+    UnknownMonthCodeForYear(MonthCode),
+}
+
+impl From<MonthCodeError> for DateError {
+    #[inline]
+    fn from(value: MonthCodeError) -> Self {
+        match value {
+            MonthCodeError::InvalidMonthCode => DateError::UnknownMonthCode(MonthCode::SENTINEL),
+            MonthCodeError::UnknownMonthCodeForCalendar(month_code) => {
+                DateError::UnknownMonthCode(month_code)
+            }
+            MonthCodeError::UnknownMonthCodeForYear(month_code) => {
+                DateError::UnknownMonthCode(month_code)
+            }
+        }
+    }
+}
+
+impl From<MonthCodeError> for DateFromFieldsError {
+    #[inline]
+    fn from(value: MonthCodeError) -> Self {
+        match value {
+            MonthCodeError::InvalidMonthCode => DateFromFieldsError::InvalidMonthCode,
+            MonthCodeError::UnknownMonthCodeForCalendar(month_code) => {
+                DateFromFieldsError::UnknownMonthCodeForCalendar(month_code)
+            }
+            MonthCodeError::UnknownMonthCodeForYear(month_code) => {
+                DateFromFieldsError::UnknownMonthCodeForYear(month_code)
+            }
+        }
+    }
+}
+
+mod inner {
+    /// Internal narrow error type for calculating the ECMA reference year
+    ///
+    /// Public but unstable because it is used on hijri::Rules
+    #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+    #[allow(missing_docs)] // TODO: fix when graduating
+    #[non_exhaustive]
+    pub enum EcmaReferenceYearError {
+        InvalidMonthCode,
+        UnknownMonthCodeForCalendar(crate::types::MonthCode),
+        NotEnoughFields,
+    }
+}
+
+#[cfg(feature = "unstable")]
+pub use inner::EcmaReferenceYearError;
+#[cfg(not(feature = "unstable"))]
+pub(crate) use inner::EcmaReferenceYearError;
+
+impl From<EcmaReferenceYearError> for DateFromFieldsError {
+    #[inline]
+    fn from(value: EcmaReferenceYearError) -> Self {
+        match value {
+            EcmaReferenceYearError::InvalidMonthCode => DateFromFieldsError::InvalidMonthCode,
+            EcmaReferenceYearError::UnknownMonthCodeForCalendar(month_code) => {
+                DateFromFieldsError::UnknownMonthCodeForCalendar(month_code)
+            }
+            EcmaReferenceYearError::NotEnoughFields => DateFromFieldsError::NotEnoughFields,
+        }
+    }
+}
 
 #[derive(Debug, Copy, Clone, PartialEq, Display)]
 /// An argument is out of range for its domain.
@@ -214,18 +424,6 @@ pub struct RangeError {
     pub min: i32,
     /// The maximum value (inclusive). This might not be tight.
     pub max: i32,
-}
-
-impl RangeError {
-    #[inline]
-    pub(crate) fn maybe_with_month_code(self, month_code: Option<MonthCode>) -> DateError {
-        if let Some(month_code) = month_code {
-            if self.field == "month" {
-                return DateError::UnknownMonthCode(month_code);
-            }
-        }
-        self.into()
-    }
 }
 
 impl core::error::Error for RangeError {}

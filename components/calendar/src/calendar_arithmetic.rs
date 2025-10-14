@@ -2,7 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::{range_check, range_check_with_overflow};
+use crate::error::{
+    range_check, range_check_with_overflow, DateFromFieldsError, EcmaReferenceYearError,
+    MonthCodeError, UnknownEraError,
+};
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
 use crate::types::{DateDuration, DateDurationUnit, DateFields, DayOfYear, MonthCode};
@@ -147,7 +150,11 @@ pub(crate) trait DateFieldsResolver: Calendar {
 
     /// Converts the era and era year to a YearInfo. If the calendar does not have eras,
     /// this should always return an Err result.
-    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError>;
+    fn year_info_from_era(
+        &self,
+        era: &str,
+        era_year: i32,
+    ) -> Result<Self::YearInfo, UnknownEraError>;
 
     /// Converts an extended year to a YearInfo.
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo;
@@ -162,7 +169,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
         &self,
         month_code: MonthCode,
         day: u8,
-    ) -> Result<Self::YearInfo, DateError>;
+    ) -> Result<Self::YearInfo, EcmaReferenceYearError>;
 
     /// Calculates the ordinal month for the given year and month code.
     ///
@@ -173,10 +180,10 @@ pub(crate) trait DateFieldsResolver: Calendar {
         _year: &Self::YearInfo,
         month_code: MonthCode,
         _options: DateFromFieldsOptions,
-    ) -> Result<u8, DateError> {
-        match month_code.parsed() {
-            Some((month_number @ 1..=12, false)) => Ok(month_number),
-            _ => Err(DateError::UnknownMonthCode(month_code)),
+    ) -> Result<u8, MonthCodeError> {
+        match month_code.parsed_err()? {
+            (month_number @ 1..=12, false) => Ok(month_number),
+            _ => Err(MonthCodeError::UnknownMonthCodeForCalendar(month_code)),
         }
     }
 
@@ -648,7 +655,7 @@ pub(crate) struct ArithmeticDateBuilder<YearInfo> {
 fn extended_year_as_year_info<YearInfo, C>(
     extended_year: i32,
     cal: &C,
-) -> Result<YearInfo, DateError>
+) -> Result<YearInfo, RangeError>
 where
     C: DateFieldsResolver<YearInfo = YearInfo>,
 {
@@ -670,7 +677,7 @@ where
         fields: DateFields,
         cal: &C,
         options: DateFromFieldsOptions,
-    ) -> Result<Self, DateError>
+    ) -> Result<Self, DateFromFieldsError>
     where
         C: DateFieldsResolver<YearInfo = YearInfo>,
     {
@@ -679,14 +686,14 @@ where
         let day = match fields.day {
             Some(day) => day,
             None => match missing_fields_strategy {
-                MissingFieldsStrategy::Reject => return Err(DateError::NotEnoughFields),
+                MissingFieldsStrategy::Reject => return Err(DateFromFieldsError::NotEnoughFields),
                 MissingFieldsStrategy::Ecma => {
                     if fields.extended_year.is_some() || fields.era_year.is_some() {
                         // The ECMAScript strategy is to pick day 1, always, regardless of whether
                         // that day exists for the month/year combo
                         1
                     } else {
-                        return Err(DateError::NotEnoughFields);
+                        return Err(DateFromFieldsError::NotEnoughFields);
                     }
                 }
             },
@@ -695,7 +702,7 @@ where
         if fields.month_code.is_none() && fields.ordinal_month.is_none() {
             // We're returning this error early so that we return structural type
             // errors before range errors, see comment in the year code below.
-            return Err(DateError::NotEnoughFields);
+            return Err(DateFromFieldsError::NotEnoughFields);
         }
 
         let year = {
@@ -711,13 +718,15 @@ where
                 (None, None) => match fields.extended_year {
                     Some(extended_year) => extended_year_as_year_info(extended_year, cal)?,
                     None => match missing_fields_strategy {
-                        MissingFieldsStrategy::Reject => return Err(DateError::NotEnoughFields),
+                        MissingFieldsStrategy::Reject => {
+                            return Err(DateFromFieldsError::NotEnoughFields)
+                        }
                         MissingFieldsStrategy::Ecma => {
                             match (fields.month_code, fields.ordinal_month) {
                                 (Some(month_code), None) => {
                                     cal.reference_year_from_month_day(month_code, day)?
                                 }
-                                _ => return Err(DateError::NotEnoughFields),
+                                _ => return Err(DateFromFieldsError::NotEnoughFields),
                             }
                         }
                     },
@@ -728,13 +737,15 @@ where
                     if let Some(extended_year) = fields.extended_year {
                         if era_year_as_year_info != extended_year_as_year_info(extended_year, cal)?
                         {
-                            return Err(DateError::InconsistentYear);
+                            return Err(DateFromFieldsError::InconsistentYear);
                         }
                     }
                     era_year_as_year_info
                 }
                 // Era and Era Year must be both or neither
-                (Some(_), None) | (None, Some(_)) => return Err(DateError::NotEnoughFields),
+                (Some(_), None) | (None, Some(_)) => {
+                    return Err(DateFromFieldsError::NotEnoughFields)
+                }
             }
         };
 
@@ -744,7 +755,7 @@ where
                     let computed_month = cal.ordinal_month_from_code(&year, month_code, options)?;
                     if let Some(ordinal_month) = fields.ordinal_month {
                         if computed_month != ordinal_month {
-                            return Err(DateError::InconsistentMonth);
+                            return Err(DateFromFieldsError::InconsistentMonth);
                         }
                     }
                     computed_month
@@ -753,7 +764,7 @@ where
                     Some(month) => month,
                     None => {
                         debug_assert!(false, "Already checked above");
-                        return Err(DateError::NotEnoughFields);
+                        return Err(DateFromFieldsError::NotEnoughFields);
                     }
                 },
             }

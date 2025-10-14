@@ -7,13 +7,14 @@
 #[doc(no_inline)]
 pub use calendrical_calculations::rata_die::RataDie;
 use core::fmt;
-use tinystr::TinyAsciiStr;
+use tinystr::{tinystr, TinyAsciiStr};
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::ule::AsULE;
 
 // Export the duration types from here
 #[doc(hidden)] // unstable
 pub use crate::duration::{DateDuration, DateDurationUnit};
+use crate::error::InvalidMonthCodeError;
 
 /// A bag of various ways of expressing the year, month, and/or day.
 ///
@@ -173,6 +174,8 @@ pub struct CyclicYear {
 pub struct MonthCode(pub TinyStr4);
 
 impl MonthCode {
+    pub(crate) const SENTINEL: MonthCode = MonthCode(tinystr!(4, "und"));
+
     /// Returns an option which is `Some` containing the non-month version of a leap month
     /// if the [`MonthCode`] this method is called upon is a leap month, and `None` otherwise.
     /// This method assumes the [`MonthCode`] is valid.
@@ -186,22 +189,25 @@ impl MonthCode {
     }
     /// Get the month number and whether or not it is leap from the month code
     pub fn parsed(self) -> Option<(u8, bool)> {
+        self.parsed_err().ok()
+    }
+    pub(crate) fn parsed_err(self) -> Result<(u8, bool), InvalidMonthCodeError> {
         // Match statements on tinystrs are annoying so instead
         // we calculate it from the bytes directly
 
         let bytes = self.0.all_bytes();
         let is_leap = bytes[3] == b'L';
         if bytes[0] != b'M' {
-            return None;
+            return Err(InvalidMonthCodeError);
         }
         if bytes[1] == b'0' {
             if bytes[2] >= b'1' && bytes[2] <= b'9' {
-                return Some((bytes[2] - b'0', is_leap));
+                return Ok((bytes[2] - b'0', is_leap));
             }
         } else if bytes[1] == b'1' && bytes[2] >= b'0' && bytes[2] <= b'3' {
-            return Some((10 + bytes[2] - b'0', is_leap));
+            return Ok((10 + bytes[2] - b'0', is_leap));
         }
-        None
+        Err(InvalidMonthCodeError)
     }
 
     /// Construct a "normal" month code given a number ("Mxx").

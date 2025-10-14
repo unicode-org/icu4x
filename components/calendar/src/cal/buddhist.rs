@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::error::UnknownEraError;
 use crate::preferences::CalendarAlgorithm;
 use crate::{
     cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears},
@@ -47,10 +48,10 @@ pub(crate) struct BuddhistEra;
 impl GregorianYears for BuddhistEra {
     const EXTENDED_YEAR_OFFSET: i32 = -543;
 
-    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, DateError> {
+    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, UnknownEraError> {
         match era {
             Some("be") | None => Ok(year),
-            _ => Err(DateError::UnknownEra),
+            _ => Err(UnknownEraError),
         }
     }
 

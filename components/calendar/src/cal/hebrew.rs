@@ -7,7 +7,9 @@ use crate::calendar_arithmetic::ArithmeticDateBuilder;
 use crate::calendar_arithmetic::{
     ArithmeticDate, CalendarArithmetic, DateFieldsResolver, ToExtendedYear,
 };
-use crate::error::DateError;
+use crate::error::{
+    DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
+};
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::types::{DateFields, MonthInfo};
@@ -119,10 +121,14 @@ impl DateFieldsResolver for Hebrew {
     type YearInfo = HebrewYearInfo;
 
     #[inline]
-    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+    fn year_info_from_era(
+        &self,
+        era: &str,
+        era_year: i32,
+    ) -> Result<Self::YearInfo, UnknownEraError> {
         match era {
             "am" => Ok(HebrewYearInfo::compute(era_year)),
-            _ => Err(DateError::UnknownEra),
+            _ => Err(UnknownEraError),
         }
     }
 
@@ -135,7 +141,8 @@ impl DateFieldsResolver for Hebrew {
         &self,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::YearInfo, DateError> {
+    ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
+        month_code.parsed_err()?; // return InvalidMonthCode
         let month_code_str = month_code.0.as_str();
         // December 31, 1972 occurs on 4th month, 26th day, 5733 AM
         let hebrew_year = match month_code_str {
@@ -167,7 +174,9 @@ impl DateFieldsResolver for Hebrew {
             "M11" => 5732,
             "M12" => 5732,
             _ => {
-                return Err(DateError::UnknownMonthCode(month_code));
+                return Err(EcmaReferenceYearError::UnknownMonthCodeForCalendar(
+                    month_code,
+                ));
             }
         };
         Ok(HebrewYearInfo::compute(hebrew_year))
@@ -178,8 +187,9 @@ impl DateFieldsResolver for Hebrew {
         year: &Self::YearInfo,
         month_code: types::MonthCode,
         options: DateFromFieldsOptions,
-    ) -> Result<u8, DateError> {
+    ) -> Result<u8, MonthCodeError> {
         let is_leap_year = year.keviyah.is_leap();
+        month_code.parsed_err()?; // return InvalidMonthCode
         let month_code_str = month_code.0.as_str();
         let ordinal_month = if is_leap_year {
             match month_code_str {
@@ -197,7 +207,7 @@ impl DateFieldsResolver for Hebrew {
                 "M11" => 12,
                 "M12" => 13,
                 _ => {
-                    return Err(DateError::UnknownMonthCode(month_code));
+                    return Err(MonthCodeError::UnknownMonthCodeForCalendar(month_code));
                 }
             }
         } else {
@@ -207,8 +217,14 @@ impl DateFieldsResolver for Hebrew {
                 "M03" => 3,
                 "M04" => 4,
                 "M05" => 5,
-                // M05L maps to M06 in a common year
-                "M05L" if matches!(options.overflow, Some(Overflow::Constrain)) => 6,
+                "M05L" => {
+                    // M05L maps to M06 in a common year
+                    if matches!(options.overflow, Some(Overflow::Constrain)) {
+                        6
+                    } else {
+                        return Err(MonthCodeError::UnknownMonthCodeForYear(month_code));
+                    }
+                }
                 "M06" => 6,
                 "M07" => 7,
                 "M08" => 8,
@@ -217,7 +233,7 @@ impl DateFieldsResolver for Hebrew {
                 "M11" => 11,
                 "M12" => 12,
                 _ => {
-                    return Err(DateError::UnknownMonthCode(month_code));
+                    return Err(MonthCodeError::UnknownMonthCodeForCalendar(month_code));
                 }
             }
         };
@@ -287,7 +303,7 @@ impl Calendar for Hebrew {
         &self,
         fields: DateFields,
         options: DateFromFieldsOptions,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateFromFieldsError> {
         let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
         Ok(HebrewDateInner(ArithmeticDate::try_from_builder(
             builder, options,

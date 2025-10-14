@@ -5,7 +5,7 @@
 use calendrical_calculations::rata_die::RataDie;
 
 use crate::cal::iso::IsoDateInner;
-use crate::error::DateError;
+use crate::error::{DateError, DateFromFieldsError};
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
 use crate::types;
@@ -60,7 +60,31 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
             overflow: Some(Overflow::Reject),
             missing_fields_strategy: Some(MissingFieldsStrategy::Reject),
         };
-        self.from_fields(fields, options)
+        self.from_fields(fields, options).map_err(|e| match e {
+            DateFromFieldsError::Range(range_error) => {
+                if range_error.field == "month" {
+                    DateError::UnknownMonthCode(month_code)
+                } else {
+                    range_error.into()
+                }
+            }
+            DateFromFieldsError::UnknownEra => DateError::UnknownEra,
+            DateFromFieldsError::InvalidMonthCode => {
+                DateError::UnknownMonthCode(types::MonthCode::SENTINEL)
+            }
+            DateFromFieldsError::UnknownMonthCodeForCalendar(month_code) => {
+                DateError::UnknownMonthCode(month_code)
+            }
+            DateFromFieldsError::UnknownMonthCodeForYear(month_code) => {
+                DateError::UnknownMonthCode(month_code)
+            }
+            DateFromFieldsError::InconsistentYear
+            | DateFromFieldsError::InconsistentMonth
+            | DateFromFieldsError::NotEnoughFields => {
+                debug_assert!(false, "unreachable error in from_codes: {e}");
+                DateError::UnknownEra
+            }
+        })
     }
 
     /// Construct a date from a bag of date fields.
@@ -69,7 +93,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         &self,
         fields: types::DateFields,
         options: DateFromFieldsOptions,
-    ) -> Result<Self::DateInner, DateError>;
+    ) -> Result<Self::DateInner, DateFromFieldsError>;
 
     /// Construct the date from an ISO date
     #[expect(clippy::wrong_self_convention)]
