@@ -827,12 +827,7 @@ impl<R: Rules> Calendar for Hijri<R> {
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        types::DayOfYear(
-            (1..date.0.month)
-                .map(|m| Self::days_in_provided_month(date.0.year, m) as u16)
-                .sum::<u16>()
-                + date.0.day as u16,
-        )
+        types::DayOfYear(date.0.year.last_day_of_month(date.0.month - 1) + date.0.day as u16)
     }
 
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
