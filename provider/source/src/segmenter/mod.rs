@@ -413,6 +413,25 @@ fn generate_rule_break_data(
                                         if let Some(c) = char::from_u32(i) {
                                             if extended_pictographic.contains(c) {
                                                 properties_map[i as usize] = property_index;
+                                            } else {
+                                                // Line segmenter doesn't use Unicode 17's data,
+                                                // but extended_pictographic is 17.
+                                                // So this is a hack to use old Unicode rules with
+                                                // newer Unicode data.
+                                                // This should be removed when line segmenter uses
+                                                // Unicode 17.
+                                                match i {
+                                                    0x1f774..=0x1f77f => {
+                                                        properties_map[i as usize] = property_index
+                                                    }
+                                                    0x1f8ae..=0x1f8ff => {
+                                                        properties_map[i as usize] = property_index
+                                                    }
+                                                    0x1f947..=0x1faff => {
+                                                        properties_map[i as usize] = property_index
+                                                    }
+                                                    _ => {}
+                                                };
                                             }
                                         }
                                     }
