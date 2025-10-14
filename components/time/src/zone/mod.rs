@@ -302,6 +302,7 @@ impl TimeZone {
     pub const fn with_offset(self, mut offset: Option<UtcOffset>) -> TimeZoneInfo<models::Base> {
         let mut id = self;
 
+        #[allow(clippy::identity_op, clippy::neg_multiply)]
         let correct_offset = match self.0.as_str().as_bytes() {
             b"utc" | b"gmt" => Some(UtcOffset::zero()),
             b"utce01" => Some(UtcOffset::from_seconds_unchecked(1 * 60 * 60)),
