@@ -4,17 +4,16 @@
 
 use icu_calendar::*;
 
-const LOW: i32 = -270_000;
-const HIGH: i32 = 270_000;
+const MAGNITUDE: i32 = 1_000_000;
 
 // Check rd -> date -> iso -> date -> rd for whole range
 #[test]
-#[ignore] // takes about 20 seconds in release-with-assertions
+#[ignore] // takes about 200 seconds in release-with-assertions
 fn check_round_trip() {
     fn test<C: Calendar>(cal: C) {
         let cal = Ref(&cal);
-        let low = Date::try_new_iso(LOW, 1, 1).unwrap().to_rata_die();
-        let high = Date::try_new_iso(HIGH, 12, 31).unwrap().to_rata_die();
+        let low = Date::try_new_iso(-MAGNITUDE, 1, 1).unwrap().to_rata_die();
+        let high = Date::try_new_iso(MAGNITUDE, 12, 31).unwrap().to_rata_die();
         let mut prev = Date::from_rata_die(low, cal);
         let mut curr = low + 1;
         while curr <= high {
@@ -40,7 +39,7 @@ fn check_round_trip() {
 fn check_from_fields() {
     fn test<C: Calendar>(cal: C) {
         let cal = Ref(&cal);
-        for year in LOW..=HIGH {
+        for year in -MAGNITUDE..=MAGNITUDE {
             if year % 50000 == 0 {
                 println!("{} {year:?}", cal.as_calendar().debug_name());
             }
@@ -179,13 +178,17 @@ struct LunarChineseYears(Vec<cal::chinese::LunarChineseYearData>);
 
 impl LunarChineseYears {
     fn new<R: cal::chinese::Rules>(r: R) -> Self {
-        Self((-270_001..=270_000).map(|i| r.year_data(i)).collect())
+        Self(
+            ((-MAGNITUDE - 1)..=MAGNITUDE)
+                .map(|i| r.year_data(i))
+                .collect(),
+        )
     }
 }
 
 impl cal::scaffold::UnstableSealed for LunarChineseYears {}
 impl cal::chinese::Rules for LunarChineseYears {
     fn year_data(&self, related_iso: i32) -> cal::chinese::LunarChineseYearData {
-        self.0[(related_iso + 270_001) as usize]
+        self.0[(related_iso + MAGNITUDE + 1) as usize]
     }
 }
