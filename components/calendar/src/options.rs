@@ -464,9 +464,7 @@ mod tests {
         field_fns.insert("month_code", &|fields| {
             fields.month_code = MonthCode::new_normal(4)
         });
-        field_fns.insert("ordinal_month", &|fields| {
-            fields.ordinal_month = Some(4)
-        });
+        field_fns.insert("ordinal_month", &|fields| fields.ordinal_month = Some(4));
         field_fns.insert("day", &|fields| fields.day = Some(20));
 
         for field_set in field_fns.keys().copied().powerset() {
