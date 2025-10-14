@@ -28,12 +28,10 @@ pub mod chinese {
     pub use super::chinese_internal::{China, Korea};
 
     // TODO(#6962) Stabilize
-    #[cfg_attr(feature = "unstable", doc(hidden))]
-    pub use super::chinese_internal::Rules;
-    #[cfg(feature = "unstable")]
-    pub use super::chinese_internal::{LunarChineseYearData};
     #[cfg(not(feature = "unstable"))]
     pub(crate) use super::chinese_internal::LunarChineseYearData;
+    #[cfg(feature = "unstable")]
+    pub use super::chinese_internal::{LunarChineseYearData, Rules};
 }
 pub use coptic::Coptic;
 pub use ethiopian::{Ethiopian, EthiopianEraStyle};
@@ -48,11 +46,19 @@ pub mod hijri {
     };
 
     // TODO(#6962) Stabilize
-    #[cfg_attr(feature = "unstable", doc(hidden))]
-    pub use super::hijri_internal::Rules;
     #[cfg(feature = "unstable")]
-    pub use super::hijri_internal::{HijriYearData, };
+    pub use super::hijri_internal::HijriYearData;
+    #[cfg(feature = "unstable")]
+    pub use super::hijri_internal::Rules;
+
+    #[doc(hidden)]
+    /// These are unstable traits but we expose them on stable to
+    /// icu_datetime.
+    pub mod unstable_internal {
+        pub use super::super::hijri_internal::Rules;
+    }
 }
+
 pub use indian::Indian;
 pub use iso::Iso;
 pub use japanese::{Japanese, JapaneseExtended};
