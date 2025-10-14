@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
-use crate::types::DateFields;
+use crate::types::{DateFields, MonthCode};
 use crate::Date;
 use crate::DateError;
 
@@ -16,6 +16,8 @@ fn test_from_fields_not_enough_fields() {
     let big_u8 = Some(u8::MAX);
     let small_u8 = Some(1);
     let small_i32 = Some(5000);
+    let valid_month_code = MonthCode::new_normal(1);
+    let invalid_month_code = MonthCode::new_normal(99);
 
     // We want to ensure that most NotEnoughFields cases return NotEnoughFields
     // even when we're providing out-of-range values, so that
@@ -112,6 +114,39 @@ fn test_from_fields_not_enough_fields() {
                 "Test with {options:?}"
             );
 
+            // No year info errors for ordinal months regardless of missing fields strategy
+            assert_eq!(
+                Date::try_from_fields(
+                    DateFields {
+                        era: None,
+                        era_year: None,
+                        extended_year: None,
+                        ordinal_month: small_u8,
+                        month_code: None,
+                        day: big_u8,
+                    },
+                    options,
+                    calendar
+                ),
+                Err(DateError::NotEnoughFields),
+                "Test with {options:?}"
+            );
+            assert_eq!(
+                Date::try_from_fields(
+                    DateFields {
+                        era: None,
+                        era_year: None,
+                        extended_year: None,
+                        ordinal_month: big_u8,
+                        month_code: None,
+                        day: small_u8,
+                    },
+                    options,
+                    calendar
+                ),
+                Err(DateError::NotEnoughFields),
+                "Test with {options:?}"
+            );
             if missing_fields != MissingFieldsStrategy::Ecma {
                 // No year info errors only when there is no missing fields strategy
                 assert_eq!(
@@ -120,8 +155,8 @@ fn test_from_fields_not_enough_fields() {
                             era: None,
                             era_year: None,
                             extended_year: None,
-                            ordinal_month: small_u8,
-                            month_code: None,
+                            ordinal_month: None,
+                            month_code: valid_month_code,
                             day: big_u8,
                         },
                         options,
@@ -136,8 +171,8 @@ fn test_from_fields_not_enough_fields() {
                             era: None,
                             era_year: None,
                             extended_year: None,
-                            ordinal_month: big_u8,
-                            month_code: None,
+                            ordinal_month: None,
+                            month_code: invalid_month_code,
                             day: small_u8,
                         },
                         options,
