@@ -120,6 +120,8 @@ impl Calendar for Indian {
         Iso.to_rata_die(&self.to_iso(date))
     }
 
+    const HAS_CHEAP_ISO_CONVERSION: bool = true;
+
     // Algorithms directly implemented in icu_calendar since they're not from the book
     fn from_iso(&self, iso: IsoDateInner) -> IndianDateInner {
         // Get day number in year (1 indexed)

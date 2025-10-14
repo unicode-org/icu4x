@@ -129,6 +129,8 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         calendrical_calculations::gregorian::fixed_from_gregorian(date.year, date.month, date.day)
     }
 
+    const HAS_CHEAP_ISO_CONVERSION: bool = true;
+
     fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
         iso.0
     }
@@ -236,6 +238,8 @@ macro_rules! impl_with_abstract_gregorian {
                 let $self_ident = self;
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr).to_rata_die(&date.0)
             }
+
+            const HAS_CHEAP_ISO_CONVERSION: bool = true;
 
             fn from_iso(&self, iso: crate::cal::iso::IsoDateInner) -> Self::DateInner {
                 let $self_ident = self;

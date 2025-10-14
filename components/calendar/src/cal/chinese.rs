@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cal::iso::{Iso, IsoDateInner};
+use crate::cal::iso::Iso;
 use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, ToExtendedYear};
 use crate::error::{
@@ -623,24 +623,7 @@ impl<R: Rules> Calendar for LunarChinese<R> {
         date.0.year.rd_from_md(date.0.month, date.0.day)
     }
 
-    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
-        let rd = Iso.to_rata_die(&iso);
-        let y = {
-            let candidate = self.0.year_data(iso.0.year);
-
-            if rd >= candidate.new_year() {
-                candidate
-            } else {
-                self.0.year_data(iso.0.year - 1)
-            }
-        };
-        let (m, d) = y.md_from_rd(rd);
-        ChineseDateInner(ArithmeticDate::new_unchecked(y, m, d))
-    }
-
-    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        Iso.from_rata_die(self.to_rata_die(date))
-    }
+    const HAS_CHEAP_ISO_CONVERSION: bool = false;
 
     // Count the number of months in a given year, specified by providing a date
     // from that year

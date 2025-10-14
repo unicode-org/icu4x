@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::coptic::CopticDateInner;
-use crate::cal::iso::IsoDateInner;
 use crate::cal::Coptic;
 use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::{
@@ -133,8 +132,8 @@ impl DateFieldsResolver for Ethiopian {
 impl crate::cal::scaffold::UnstableSealed for Ethiopian {}
 impl Calendar for Ethiopian {
     type DateInner = EthiopianDateInner;
-    type Year = types::EraYear;
-    type DifferenceError = core::convert::Infallible;
+    type Year = <Coptic as Calendar>::Year;
+    type DifferenceError = <Coptic as Calendar>::DifferenceError;
 
     fn from_fields(
         &self,
@@ -154,13 +153,7 @@ impl Calendar for Ethiopian {
         Coptic.to_rata_die(&date.0)
     }
 
-    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
-        EthiopianDateInner(Coptic.from_iso(iso))
-    }
-
-    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        Coptic.to_iso(&date.0)
-    }
+    const HAS_CHEAP_ISO_CONVERSION: bool = <Coptic as Calendar>::HAS_CHEAP_ISO_CONVERSION;
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
         Coptic.months_in_year(&date.0)
