@@ -69,6 +69,8 @@ impl GregorianYears for CeBce {
 /// the mean siderial year, so this calendar drifts 1 day in ~7700 years with respect
 /// to the seasons.
 ///
+/// This corresponds to the `"gregory"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
+///
 /// # Historical accuracy
 ///
 /// This type implements the [*proleptic* Gregorian calendar](

@@ -24,6 +24,8 @@ use calendrical_calculations::rata_die::RataDie;
 ///
 /// This calendar is the _civil_ Hebrew calendar, with the year starting at in the month of Tishrei.
 ///
+/// This corresponds to the `"hebrew"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
+///
 /// # Era codes
 ///
 /// This calendar uses a single era code `am`, Anno Mundi. Dates before this era use negative years.

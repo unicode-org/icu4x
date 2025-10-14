@@ -12,6 +12,8 @@ use tinystr::tinystr;
 /// This calendar is identical to the [`Gregorian`](super::Gregorian) calendar,
 /// except that it uses a single `default` era instead of `bce` and `ce`.
 ///
+/// This corresponds to the `"iso8601"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
+///
 /// # Era codes
 ///
 /// This calendar uses a single era: `default`

@@ -19,6 +19,8 @@ use tinystr::tinystr;
 ///
 /// This type can be used with [`Date`] to represent dates in this calendar.
 ///
+/// This corresponds to the `"indian"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
+///
 /// # Era codes
 ///
 /// This calendar uses a single era code: `shaka`, with Śaka 0 being 78 CE. Dates before this era use negative years.
