@@ -677,7 +677,7 @@ where
         let missing_fields_strategy = options.missing_fields_strategy.unwrap_or_default();
 
         let day = match fields.day {
-            Some(day) => day.get(),
+            Some(day) => day,
             None => match missing_fields_strategy {
                 MissingFieldsStrategy::Reject => return Err(DateError::NotEnoughFields),
                 MissingFieldsStrategy::Ecma => {
@@ -739,18 +739,17 @@ where
         };
 
         let month = {
-            let ordinal_month_as_u8 = fields.ordinal_month.map(|x| x.get());
             match fields.month_code {
                 Some(month_code) => {
                     let computed_month = cal.ordinal_month_from_code(&year, month_code, options)?;
-                    if let Some(ordinal_month) = ordinal_month_as_u8 {
+                    if let Some(ordinal_month) = fields.ordinal_month {
                         if computed_month != ordinal_month {
                             return Err(DateError::InconsistentMonth);
                         }
                     }
                     computed_month
                 }
-                None => match ordinal_month_as_u8 {
+                None => match fields.ordinal_month {
                     Some(month) => month,
                     // This is technically unreachable since it's checked early above
                     None => return Err(DateError::NotEnoughFields),

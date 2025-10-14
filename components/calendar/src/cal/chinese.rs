@@ -1068,7 +1068,6 @@ mod test {
     use crate::types::DateFields;
     use crate::types::MonthCode;
     use calendrical_calculations::{gregorian::fixed_from_gregorian, rata_die::RataDie};
-    use core::num::NonZero;
     use std::collections::BTreeMap;
     use tinystr::tinystr;
 
@@ -1640,7 +1639,7 @@ mod test {
     #[test]
     fn test_from_fields_constrain() {
         let fields = DateFields {
-            day: NonZero::new(31),
+            day: Some(31),
             month_code: Some(MonthCode("M01".parse().unwrap())),
             extended_year: Some(1972),
             ..Default::default()
@@ -1660,7 +1659,7 @@ mod test {
 
         // 2022 did not have M01L, the month should be constrained back down
         let fields = DateFields {
-            day: NonZero::new(1),
+            day: Some(1),
             month_code: Some(MonthCode("M01L".parse().unwrap())),
             extended_year: Some(2022),
             ..Default::default()
@@ -1679,8 +1678,8 @@ mod test {
         // (we just reject them in Date::try_from_fields)
         let fields = DateFields {
             extended_year: Some(889192448),
-            ordinal_month: NonZero::new(1),
-            day: NonZero::new(1),
+            ordinal_month: Some(1),
+            day: Some(1),
             ..Default::default()
         };
         let options = DateFromFieldsOptions {

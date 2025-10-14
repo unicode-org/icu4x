@@ -68,13 +68,12 @@ pub enum DateError {
     /// use icu_calendar::DateError;
     /// use icu_calendar::cal::Japanese;
     /// use icu_calendar::types::DateFields;
-    /// use std::num::NonZeroU8;
     ///
     /// let mut fields = DateFields::default();
     /// fields.era = Some("reiwa");
     /// fields.era_year = Some(6);
-    /// fields.ordinal_month = NonZeroU8::new(1);
-    /// fields.day = NonZeroU8::new(1);
+    /// fields.ordinal_month = Some(1);
+    /// fields.day = Some(1);
     ///
     /// Date::try_from_fields(
     ///     fields,
@@ -106,14 +105,13 @@ pub enum DateError {
     /// use icu_calendar::cal::Hebrew;
     /// use icu_calendar::types::DateFields;
     /// use icu_calendar::types::MonthCode;
-    /// use std::num::NonZeroU8;
     /// use tinystr::tinystr;
     ///
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(5783);
     /// fields.month_code = Some(MonthCode(tinystr!(4, "M06")));
-    /// fields.ordinal_month = NonZeroU8::new(6);
-    /// fields.day = NonZeroU8::new(1);
+    /// fields.ordinal_month = Some(6);
+    /// fields.day = Some(1);
     ///
     /// Date::try_from_fields(
     ///     fields,
@@ -145,12 +143,11 @@ pub enum DateError {
     /// use icu_calendar::cal::Hebrew;
     /// use icu_calendar::types::DateFields;
     /// use icu_calendar::types::MonthCode;
-    /// use std::num::NonZeroU8;
     /// use tinystr::tinystr;
     ///
     /// let mut fields = DateFields::default();
     ///
-    /// fields.ordinal_month = NonZeroU8::new(3);
+    /// fields.ordinal_month = Some(3);
     ///
     /// let err = Date::try_from_fields(
     ///     fields,
@@ -190,7 +187,7 @@ pub enum DateError {
     /// .expect_err("still missing the day");
     /// assert!(matches!(err, DateError::NotEnoughFields));
     ///
-    /// fields.day = NonZeroU8::new(1);
+    /// fields.day = Some(1);
     /// let date = Date::try_from_fields(
     ///     fields,
     ///     Default::default(),
