@@ -40,7 +40,7 @@ mod simple;
 /// This type can be used with [`Date`] to represent dates in the Chinese calendar.
 ///
 /// This corresponds to the `"chinese"` and `"dangi"` [CLDR calendars](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier)
-/// respectively, when used with the [`China`] and [`Dangi`] [`Rules`] types.
+/// respectively, when used with the [`China`] and [`Korea`] [`Rules`] types.
 ///
 /// # Months
 ///

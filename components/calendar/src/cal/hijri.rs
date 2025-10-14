@@ -106,7 +106,7 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 /// [`UmmAlQura`], which uses the results of KACST's Mecca-based calculations.
 ///
 /// This corresponds to the `"islamic-rgsa"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier)
-/// if constructed with [`AstronomicalSimulation::new_simulated_mecca()`].
+/// if constructed with [`Hijri::new_simulated_mecca()`].
 #[derive(Copy, Clone, Debug)]
 pub struct AstronomicalSimulation {
     pub(crate) location: SimulatedLocation,
