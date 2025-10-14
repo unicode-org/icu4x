@@ -360,9 +360,9 @@ pub enum Overflow {
 #[non_exhaustive]
 pub enum MissingFieldsStrategy {
     /// If the fields that are present do not fully constitute a Date,
-    /// return [`DateError::NotEnoughFields`].
+    /// return [`DateFromFieldsError::NotEnoughFields`].
     ///
-    /// [`DateError::NotEnoughFields`]: crate::DateError::NotEnoughFields
+    /// [`DateFromFieldsError::NotEnoughFields`]: crate::error::DateFromFieldsError::NotEnoughFields
     #[default]
     Reject,
     /// If the fields that are present do not fully constitute a Date,
