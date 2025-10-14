@@ -48,10 +48,6 @@ impl TryWriteable for &'_ PotentialUtf8 {
         // Lower bound is all valid UTF-8, upper bound is all bytes with the high bit, which become replacement characters.
         LengthHint::between(self.0.len(), self.0.len() * 3)
     }
-
-    fn writeable_borrow(&self) -> Option<&str> {
-        core::str::from_utf8(&self.0).ok()
-    }
 }
 
 /// This impl requires enabling the optional `writeable` Cargo feature
