@@ -668,6 +668,16 @@ impl<R: Rules> PartialEq for HijriDateInner<R> {
     }
 }
 impl<R: Rules> Eq for HijriDateInner<R> {}
+impl<R: Rules> PartialOrd for HijriDateInner<R> {
+    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl<R: Rules> Ord for HijriDateInner<R> {
+    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+        self.0.cmp(&other.0)
+    }
+}
 
 impl<R: Rules> CalendarArithmetic for Hijri<R> {
     fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8 {
