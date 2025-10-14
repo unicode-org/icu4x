@@ -36,14 +36,14 @@
     - `ixdtf`: `0.6.3 -> 0.6.4`
         - Add to_static_string for IXDTF errors (unicode-org#6917)
     - `litemap`: `0.8.0 -> 0.8.1`
-        - Use `serde_core` where possible (unicode-org#6991)
+        - Use `serde_core` (unicode-org#6991)
     - `potential_utf`: `0.1.3 -> 0.1.4`
-        - Use `serde_core` where possible (unicode-org#6991)
+        - Use `serde_core` (unicode-org#6991)
     - `resb`: `0.1.0 -> 0.1.1`
-        - Use `serde_core` where possible (unicode-org#6991)
+        - Use `serde_core` (unicode-org#6991)
     - `tinystr`: `0.8.1 -> 0.8.2`
         - Add TinyAsciiStr::new_unsigned_decimal (unicode-org#6912)
-        - Use `serde_core` where possible (unicode-org#6991)
+        - Use `serde_core` (unicode-org#6991)
     - `tzif`: `0.4.0 -> 0.4.1`
         - General changes only
     - `writeable`: `0.6.1 -> 0.6.2`
@@ -56,12 +56,12 @@
         - Allow clippy::mem_forget in yoke_derive (unicode-org#6891)
     - `zerofrom`, `zerofrom_derive`: No change
     - `zerotrie`: `0.2.2 -> 0.2.3`
-        - Use `serde_core` where possible (unicode-org#6991)
+        - Use `serde_core` (unicode-org#6991)
         - Internal docs and lints (#6740)
-        - Fix test failures in zerotrie on 32-bit platforms (#6697)
+        - Fix test failures in zerotrie on 32-bit platforms (unicode-org#6697)
     - `zerovec`: `0.11.4 -> 0.11.5`
-        - Write a proper safety comment for ZeroVec::truncate (#6809)
-        - Use `serde_core` where possible (unicode-org#6991)
+        - Write a proper safety comment for ZeroVec::truncate (unicode-org#6809)
+        - Use `serde_core` (unicode-org#6991)
     - `zerovec_derive`: `0.11.1 -> 0.11.2`
         - General changes only
     - `zoneinfo64`: `0.2.0 -> 0.2.1`
