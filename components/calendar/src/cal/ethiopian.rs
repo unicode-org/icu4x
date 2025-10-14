@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::coptic::CopticDateInner;
-use crate::cal::iso::IsoDateInner;
 use crate::cal::Coptic;
 use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::DateError;
@@ -74,6 +73,14 @@ impl DateFieldsResolver for Ethiopian {
     // Coptic year
     type YearInfo = i32;
 
+    fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8 {
+        Coptic::days_in_provided_month(year, month)
+    }
+
+    fn months_in_provided_year(year: Self::YearInfo) -> u8 {
+        Coptic::months_in_provided_year(year)
+    }
+
     #[inline]
     fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
         match (self.era_style(), era) {
@@ -119,8 +126,8 @@ impl DateFieldsResolver for Ethiopian {
 impl crate::cal::scaffold::UnstableSealed for Ethiopian {}
 impl Calendar for Ethiopian {
     type DateInner = EthiopianDateInner;
-    type Year = types::EraYear;
-    type DifferenceError = core::convert::Infallible;
+    type Year = <Coptic as Calendar>::Year;
+    type DifferenceError = <Coptic as Calendar>::DifferenceError;
 
     fn from_fields(
         &self,
@@ -142,13 +149,7 @@ impl Calendar for Ethiopian {
         Coptic.to_rata_die(&date.0)
     }
 
-    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
-        EthiopianDateInner(Coptic.from_iso(iso))
-    }
-
-    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        Coptic.to_iso(&date.0)
-    }
+    const HAS_CHEAP_ISO_CONVERSION: bool = <Coptic as Calendar>::HAS_CHEAP_ISO_CONVERSION;
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
         Coptic.months_in_year(&date.0)
@@ -183,7 +184,7 @@ impl Calendar for Ethiopian {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let coptic_year = date.0 .0.extended_year();
+        let coptic_year = date.0 .0.year;
         let extended_year = if self.0 == EthiopianEraStyle::AmeteAlem {
             coptic_year + AMETE_ALEM_OFFSET
         } else {

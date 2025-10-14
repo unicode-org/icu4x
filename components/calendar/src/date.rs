@@ -4,7 +4,7 @@
 
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::cal::{abstract_gregorian::AbstractGregorian, iso::IsoEra};
-use crate::calendar_arithmetic::CalendarArithmetic;
+use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::DateError;
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -209,20 +209,27 @@ impl<A: AsCalendar> Date<A> {
     /// Construct a date from an ISO date and some calendar representation
     #[inline]
     pub fn new_from_iso(iso: Date<Iso>, calendar: A) -> Self {
-        let inner = calendar.as_calendar().from_iso(iso.inner);
-        Date { inner, calendar }
+        iso.to_calendar(calendar)
     }
 
     /// Convert the Date to an ISO Date
     #[inline]
     pub fn to_iso(&self) -> Date<Iso> {
-        Date::from_raw(self.calendar.as_calendar().to_iso(self.inner()), Iso)
+        self.to_calendar(Iso)
     }
 
     /// Convert the Date to a date in a different calendar
     #[inline]
     pub fn to_calendar<A2: AsCalendar>(&self, calendar: A2) -> Date<A2> {
-        Date::new_from_iso(self.to_iso(), calendar)
+        let inner =
+            if A::Calendar::HAS_CHEAP_ISO_CONVERSION && A2::Calendar::HAS_CHEAP_ISO_CONVERSION {
+                let iso = self.calendar.as_calendar().to_iso(self.inner());
+                calendar.as_calendar().from_iso(iso)
+            } else {
+                let rd = self.calendar.as_calendar().to_rata_die(self.inner());
+                calendar.as_calendar().from_rata_die(rd)
+            };
+        Date { inner, calendar }
     }
 
     /// The number of months in the year of this date
@@ -434,9 +441,11 @@ impl Date<Iso> {
     pub fn week_of_year(&self) -> IsoWeekOfYear {
         let week_of = WeekCalculator::ISO
             .week_of(
-                AbstractGregorian::<IsoEra>::days_in_provided_year(
+                AbstractGregorian(IsoEra).days_in_year(&ArithmeticDate::new_unchecked(
                     self.inner.0.year.saturating_sub(1),
-                ),
+                    1,
+                    1,
+                )),
                 self.days_in_year(),
                 self.day_of_year().0,
                 self.day_of_week(),

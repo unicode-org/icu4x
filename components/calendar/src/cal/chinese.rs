@@ -2,11 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cal::iso::{Iso, IsoDateInner};
+use crate::cal::iso::Iso;
 use crate::calendar_arithmetic::DateFieldsResolver;
-use crate::calendar_arithmetic::{
-    ArithmeticDate, ArithmeticDateBuilder, CalendarArithmetic, ToExtendedYear,
-};
+use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, ToExtendedYear};
 use crate::error::DateError;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
@@ -512,7 +510,9 @@ impl LunarChinese<China> {
     }
 }
 
-impl<R: Rules> CalendarArithmetic for LunarChinese<R> {
+impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
+    type YearInfo = LunarChineseYearData;
+
     fn days_in_provided_month(year: LunarChineseYearData, month: u8) -> u8 {
         year.days_in_month(month)
     }
@@ -521,31 +521,6 @@ impl<R: Rules> CalendarArithmetic for LunarChinese<R> {
     fn months_in_provided_year(year: LunarChineseYearData) -> u8 {
         year.months_in_year()
     }
-
-    /// Returns true if the given year is a leap year, and false if not.
-    fn provided_year_is_leap(year: LunarChineseYearData) -> bool {
-        year.leap_month().is_some()
-    }
-
-    /// Returns the (month, day) of the last day in a Chinese year (the day before Chinese New Year).
-    /// The last month in a year will always be 12 in a common year or 13 in a leap year. The day is
-    /// determined by finding the day immediately before the next new year and calculating the number
-    /// of days since the last new moon (beginning of the last month in the year).
-    fn last_month_day_in_provided_year(year: LunarChineseYearData) -> (u8, u8) {
-        if year.leap_month().is_some() {
-            (13, year.days_in_month(13))
-        } else {
-            (12, year.days_in_month(12))
-        }
-    }
-
-    fn days_in_provided_year(year: LunarChineseYearData) -> u16 {
-        year.days_in_year()
-    }
-}
-
-impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
-    type YearInfo = LunarChineseYearData;
 
     #[inline]
     fn year_info_from_era(&self, _era: &str, _era_year: i32) -> Result<Self::YearInfo, DateError> {
@@ -615,13 +590,12 @@ impl<R: Rules> Calendar for LunarChinese<R> {
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
         let iso = Iso.from_rata_die(rd);
         let y = {
-            let actual_iso = iso.0.extended_year();
-            let candidate = self.0.year_data(actual_iso);
+            let candidate = self.0.year_data(iso.0.year);
 
             if rd >= candidate.new_year() {
                 candidate
             } else {
-                self.0.year_data(actual_iso - 1)
+                self.0.year_data(iso.0.year - 1)
             }
         };
         let (m, d) = y.md_from_rd(rd);
@@ -632,34 +606,16 @@ impl<R: Rules> Calendar for LunarChinese<R> {
         date.0.year.rd_from_md(date.0.month, date.0.day)
     }
 
-    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
-        let rd = Iso.to_rata_die(&iso);
-        let y = {
-            let actual_iso = iso.0.extended_year();
-            let candidate = self.0.year_data(actual_iso);
-
-            if rd >= candidate.new_year() {
-                candidate
-            } else {
-                self.0.year_data(actual_iso - 1)
-            }
-        };
-        let (m, d) = y.md_from_rd(rd);
-        ChineseDateInner(ArithmeticDate::new_unchecked(y, m, d))
-    }
-
-    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        Iso.from_rata_die(self.to_rata_die(date))
-    }
+    const HAS_CHEAP_ISO_CONVERSION: bool = false;
 
     // Count the number of months in a given year, specified by providing a date
     // from that year
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.0.days_in_year()
+        date.0.year.days_in_year()
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        date.0.days_in_month()
+        Self::days_in_provided_month(date.0.year, date.0.month)
     }
 
     fn add(
@@ -694,7 +650,7 @@ impl<R: Rules> Calendar for LunarChinese<R> {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::provided_year_is_leap(date.0.year)
+        date.0.year.leap_month().is_some()
     }
 
     /// The calendar-specific month code represented by `date`;
@@ -707,7 +663,7 @@ impl<R: Rules> Calendar for LunarChinese<R> {
 
     /// The calendar-specific day-of-month represented by `date`
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        date.0.day_of_month()
+        types::DayOfMonth(date.0.day)
     }
 
     /// Information of the day of the year
@@ -720,7 +676,7 @@ impl<R: Rules> Calendar for LunarChinese<R> {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        date.0.months_in_year()
+        Self::months_in_provided_year(date.0.year)
     }
 }
 
