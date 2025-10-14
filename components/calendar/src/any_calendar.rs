@@ -736,7 +736,7 @@ pub enum AnyCalendarKind {
     HijriUmmAlQura,
     /// The kind of an [`Iso`] calendar
     ///
-    /// This corresponds to the `"is08601"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
+    /// This corresponds to the `"iso8601"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Iso,
     /// The kind of a [`Japanese`] calendar
     ///
