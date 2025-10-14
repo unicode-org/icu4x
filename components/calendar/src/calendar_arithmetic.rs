@@ -751,8 +751,10 @@ where
                 }
                 None => match fields.ordinal_month {
                     Some(month) => month,
-                    // This is technically unreachable since it's checked early above
-                    None => return Err(DateError::NotEnoughFields),
+                    None => {
+                        debug_assert!(false, "Already checked above");
+                        return Err(DateError::NotEnoughFields);
+                    }
                 },
             }
         };
