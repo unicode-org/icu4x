@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
@@ -112,24 +111,14 @@ impl Calendar for Indian {
         Ok(IndianDateInner(arithmetic_date))
     }
 
-    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        self.from_iso(Iso.from_rata_die(rd))
-    }
-
-    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        Iso.to_rata_die(&self.to_iso(date))
-    }
-
-    const HAS_CHEAP_ISO_CONVERSION: bool = true;
-
     // Algorithms directly implemented in icu_calendar since they're not from the book
-    fn from_iso(&self, iso: IsoDateInner) -> IndianDateInner {
+    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
+        let iso_year = calendrical_calculations::gregorian::year_from_fixed(rd).unwrap_or(i32::MIN);
         // Get day number in year (1 indexed)
         let day_of_year_iso =
-            calendrical_calculations::gregorian::days_before_month(iso.0.year, iso.0.month)
-                + iso.0.day as u16;
+            (rd - calendrical_calculations::gregorian::day_before_year(iso_year)) as u16;
         // Convert to Śaka year
-        let mut year = iso.0.year - YEAR_OFFSET;
+        let mut year = iso_year - YEAR_OFFSET;
         // This is in the previous Indian year
         let day_of_year_indian = if day_of_year_iso <= DAY_OFFSET {
             year -= 1;
@@ -163,23 +152,24 @@ impl Calendar for Indian {
     }
 
     // Algorithms directly implemented in icu_calendar since they're not from the book
-    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
         let day_of_year_indian = self.day_of_year(date).0; // 1-indexed
         let days_in_year = self.days_in_year(date);
 
-        let mut year = date.0.year + YEAR_OFFSET;
+        let mut year_iso = date.0.year + YEAR_OFFSET;
         // days_in_year is a valid day of the year, so we check > not >=
         let day_of_year_iso = if day_of_year_indian + DAY_OFFSET > days_in_year {
-            year += 1;
+            year_iso += 1;
             // calculate day of year in next year
             day_of_year_indian + DAY_OFFSET - days_in_year
         } else {
             day_of_year_indian + DAY_OFFSET
         };
 
-        let (month, day) = calendrical_calculations::gregorian::year_day(year, day_of_year_iso);
-        IsoDateInner(ArithmeticDate::new_unchecked(year, month, day))
+        calendrical_calculations::gregorian::day_before_year(year_iso) + day_of_year_iso as i64
     }
+
+    const HAS_CHEAP_ISO_CONVERSION: bool = false;
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
         Self::months_in_provided_year(date.0.year)
@@ -485,10 +475,7 @@ mod tests {
     fn test_roundtrip_near_rd_zero() {
         for i in -1000..=1000 {
             let initial = RataDie::new(i);
-            let result = Date::from_rata_die(initial, Iso)
-                .to_calendar(Indian)
-                .to_iso()
-                .to_rata_die();
+            let result = Date::from_rata_die(initial, Indian).to_rata_die();
             assert_eq!(
                 initial, result,
                 "Roundtrip failed for initial: {initial:?}, result: {result:?}"
@@ -501,10 +488,7 @@ mod tests {
         // Epoch start: RD 28570
         for i in 27570..=29570 {
             let initial = RataDie::new(i);
-            let result = Date::from_rata_die(initial, Iso)
-                .to_calendar(Indian)
-                .to_iso()
-                .to_rata_die();
+            let result = Date::from_rata_die(initial, Indian).to_rata_die();
             assert_eq!(
                 initial, result,
                 "Roundtrip failed for initial: {initial:?}, result: {result:?}"
