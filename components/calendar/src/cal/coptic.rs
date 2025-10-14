@@ -20,6 +20,8 @@ use tinystr::tinystr;
 ///
 /// This type can be used with [`Date`] to represent dates in this calendar.
 ///
+/// This corresponds to the `"coptic"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
+///
 /// [Coptic calendar]: https://en.wikipedia.org/wiki/Coptic_calendar
 ///
 /// # Era codes
