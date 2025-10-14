@@ -150,8 +150,8 @@ impl<A: AsCalendar> Date<A> {
     /// and fill in missing fields. See [`DateFromFieldsOptions`] for more information.
     ///
     /// This function will not accept year/extended_year values that are outside of the range `[-2²⁷, 2²⁷]`,
-    /// regardless of the calendar, instead returning a [`DateError::Range`]. This is to prevent
-    /// overflowing behaviors near the extreme values of the `i32` range.
+    /// regardless of the calendar, instead returning a [`DateError::Range`]. This allows us to to keep
+    /// all operations on [`Date`]s infallible by staying clear of integer limits.
     /// Currently, calendar-specific `Date::try_new_calendarname()` constructors
     /// do not do this, and it is possible to obtain such extreme dates via calendar conversion or arithmetic,
     /// though [we may change that behavior in the future](https://github.com/unicode-org/icu4x/issues/7076).
