@@ -460,8 +460,8 @@ impl<A: AsCalendar<Calendar = LunarChinese<Korea>>> Date<A> {
 #[derive(Debug, Clone)]
 pub struct ChineseDateInner<R: Rules>(ArithmeticDate<LunarChinese<R>>);
 
-impl<R: Rules> Copy for ChineseDateInner<R> {}
-impl<R: Rules> PartialEq for ChineseDateInner<R> {
+impl<S: Rules> Copy for ChineseDateInner<S> {}
+impl<S: Rules> PartialEq for ChineseDateInner<S> {
     fn eq(&self, other: &Self) -> bool {
         self.0 == other.0
     }
