@@ -39,6 +39,11 @@ mod simple;
 ///
 /// This type can be used with [`Date`] to represent dates in the Chinese calendar.
 ///
+/// The type parameter here specifies a particular reckoning/implementation of the Chinese calendar.
+/// It must implement the currently-unstable `Rules` trait, at the moment ICU4X exports two stable
+/// implementors of `Rules`: [`China`] and [`Korea`]. Please comment on [this issue](https://github.com/unicode-org/icu4x/issues/6962)
+/// if you would like to see this trait stabilized.
+///
 /// This corresponds to the `"chinese"` and `"dangi"` [CLDR calendars](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier)
 /// respectively, when used with the [`China`] and [`Korea`] [`Rules`] types.
 ///

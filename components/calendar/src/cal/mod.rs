@@ -26,8 +26,14 @@ pub use chinese_internal::LunarChinese;
 /// Customizations for the [`LunarChinese`] calendar.
 pub mod chinese {
     pub use super::chinese_internal::{China, Korea};
-    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
-    pub use super::chinese_internal::{LunarChineseYearData, Rules};
+
+    // TODO(#6962) Stabilize
+    #[cfg_attr(feature = "unstable", doc(hidden))]
+    pub use super::chinese_internal::Rules;
+    #[cfg(feature = "unstable")]
+    pub use super::chinese_internal::{LunarChineseYearData};
+    #[cfg(not(feature = "unstable"))]
+    pub(crate) use super::chinese_internal::LunarChineseYearData;
 }
 pub use coptic::Coptic;
 pub use ethiopian::{Ethiopian, EthiopianEraStyle};
@@ -40,8 +46,12 @@ pub mod hijri {
         AstronomicalSimulation, TabularAlgorithm, TabularAlgorithmEpoch, TabularAlgorithmLeapYears,
         UmmAlQura,
     };
-    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
-    pub use super::hijri_internal::{HijriYearData, Rules};
+
+    // TODO(#6962) Stabilize
+    #[cfg_attr(feature = "unstable", doc(hidden))]
+    pub use super::hijri_internal::Rules;
+    #[cfg(feature = "unstable")]
+    pub use super::hijri_internal::{HijriYearData, };
 }
 pub use indian::Indian;
 pub use iso::Iso;
