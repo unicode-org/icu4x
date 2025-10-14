@@ -572,7 +572,8 @@ impl<A> Copy for Date<A> where A: AsCalendar + Copy {}
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::types::Weekday;
+    use crate::options::Overflow;
+    use crate::types::{DateFields, Weekday};
 
     #[test]
     fn test_ord() {
@@ -619,6 +620,111 @@ mod tests {
         assert_eq!(
             Date::try_new_iso(2020, 1, 21).unwrap().day_of_week(),
             Weekday::Tuesday,
+        );
+    }
+
+    #[test]
+    fn test_from_fields_not_enough_fields() {
+        let reject = DateFromFieldsOptions {
+            overflow: Some(Overflow::Reject),
+            ..Default::default()
+        };
+
+        // Pick a sufficiently complex calendar.
+        let calendar = crate::cal::Hebrew::new();
+
+        // We want to ensure that most NotEnoughFields cases return NotEnoughFields
+        // even when we're providing out-of-range values, so that
+        // this produces TypeError in Temporal as opposed to RangeError.
+        assert_eq!(
+            Date::try_from_fields(
+                DateFields {
+                    era: Some("hebrew"),
+                    era_year: Some(i32::MAX),
+                    extended_year: None,
+                    ordinal_month: None,
+                    month_code: None,
+                    day: Some(1),
+                },
+                reject,
+                calendar
+            ),
+            Err(DateError::NotEnoughFields)
+        );
+        assert_eq!(
+            Date::try_from_fields(
+                DateFields {
+                    era: Some("hebrew"),
+                    era_year: None,
+                    extended_year: Some(i32::MAX),
+                    ordinal_month: Some(100),
+                    month_code: None,
+                    day: Some(100),
+                },
+                reject,
+                calendar
+            ),
+            Err(DateError::NotEnoughFields)
+        );
+        assert_eq!(
+            Date::try_from_fields(
+                DateFields {
+                    era: None,
+                    era_year: Some(i32::MAX),
+                    extended_year: None,
+                    ordinal_month: Some(100),
+                    month_code: None,
+                    day: Some(100),
+                },
+                reject,
+                calendar
+            ),
+            Err(DateError::NotEnoughFields)
+        );
+        assert_eq!(
+            Date::try_from_fields(
+                DateFields {
+                    era: None,
+                    era_year: Some(i32::MAX),
+                    extended_year: Some(100),
+                    ordinal_month: Some(100),
+                    month_code: None,
+                    day: Some(1),
+                },
+                reject,
+                calendar
+            ),
+            Err(DateError::NotEnoughFields)
+        );
+        assert_eq!(
+            Date::try_from_fields(
+                DateFields {
+                    era: None,
+                    era_year: None,
+                    extended_year: Some(i32::MAX),
+                    ordinal_month: Some(100),
+                    month_code: None,
+                    day: None,
+                },
+                reject,
+                calendar
+            ),
+            Err(DateError::NotEnoughFields)
+        );
+        assert_eq!(
+            Date::try_from_fields(
+                DateFields {
+                    era: None,
+                    era_year: None,
+                    extended_year: None,
+                    ordinal_month: Some(100),
+                    month_code: None,
+                    day: Some(100),
+                },
+                reject,
+                calendar
+            ),
+            Err(DateError::NotEnoughFields)
         );
     }
 }
