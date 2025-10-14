@@ -65,7 +65,7 @@ use tinystr::tinystr;
 pub struct Julian;
 
 /// The inner date type used for representing [`Date`]s of [`Julian`]. See [`Date`] and [`Julian`] for more details.
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 // The inner date type used for representing Date<Julian>
 pub struct JulianDateInner(pub(crate) ArithmeticDate<Julian>);
 
