@@ -77,7 +77,7 @@ impl super::LunarChineseYearData {
     /// Stays anchored in the Gregorian calendar, even as the Gregorian calendar drifts
     /// from the seasons in the distant future and distant past.
     pub(super) fn simple(utc_offset: Milliseconds, related_iso: i32) -> LunarChineseYearData {
-        // calculates the largest moment such that moment = base_moment + n * duration <= rata_die
+        /// calculates the largest moment such that moment = base_moment + n * duration lands on rata_die (< rata_die + 1)
         fn periodic_duration_on_or_before(
             rata_die: RataDie,
             base_moment: LocalMoment,
@@ -93,6 +93,8 @@ impl super::LunarChineseYearData {
                 + base_moment.local_milliseconds as i64
                 + num_periods * duration.0;
 
+            // Note: this is Euclidean div/rem, but this more optimized, because
+            // we know that our divisor is positive
             let rata_die = millis / MILLISECONDS_IN_EPHEMERIS_DAY - (millis < 0) as i64;
             let local_milliseconds = millis % MILLISECONDS_IN_EPHEMERIS_DAY
                 + (millis < 0) as i64 * MILLISECONDS_IN_EPHEMERIS_DAY;
