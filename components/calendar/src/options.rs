@@ -26,8 +26,8 @@ pub struct DateFromFieldsOptions {
     /// // There is no day 31 in September.
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(2025);
-    /// fields.ordinal_month = core::num::NonZero::new(9);
-    /// fields.day = core::num::NonZero::new(31);
+    /// fields.ordinal_month = Some(9);
+    /// fields.day = Some(31);
     ///
     /// let options_default = DateFromFieldsOptions::default();
     /// assert!(Date::try_from_fields(fields, options_default, Iso).is_err());
@@ -62,7 +62,7 @@ pub struct DateFromFieldsOptions {
     /// // These options are missing a year.
     /// let mut fields = DateFields::default();
     /// fields.month_code = MonthCode::new_normal(2);
-    /// fields.day = core::num::NonZero::new(1);
+    /// fields.day = Some(1);
     ///
     /// let options_default = DateFromFieldsOptions::default();
     /// assert!(Date::try_from_fields(fields, options_default, Iso).is_err());
@@ -233,7 +233,6 @@ pub enum Overflow {
     /// use icu_calendar::options::Overflow;
     /// use icu_calendar::types::DateFields;
     /// use icu_calendar::types::MonthCode;
-    /// use std::num::NonZeroU8;
     /// use tinystr::tinystr;
     ///
     /// let mut options = DateFromFieldsOptions::default();
@@ -243,7 +242,7 @@ pub enum Overflow {
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(5784);
     /// fields.month_code = Some(MonthCode(tinystr!(4, "M05L")));
-    /// fields.day = NonZeroU8::new(50);
+    /// fields.day = Some(50);
     ///
     /// let date = Date::try_from_fields(
     ///     fields,
@@ -285,7 +284,6 @@ pub enum Overflow {
     /// use icu_calendar::options::Overflow;
     /// use icu_calendar::types::DateFields;
     /// use icu_calendar::types::MonthCode;
-    /// use std::num::NonZeroU8;
     /// use tinystr::tinystr;
     ///
     /// let mut options = DateFromFieldsOptions::default();
@@ -295,7 +293,7 @@ pub enum Overflow {
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(5784);
     /// fields.month_code = Some(MonthCode(tinystr!(4, "M05L")));
-    /// fields.day = NonZeroU8::new(50);
+    /// fields.day = Some(50);
     ///
     /// let err = Date::try_from_fields(
     ///     fields,
@@ -306,7 +304,7 @@ pub enum Overflow {
     /// assert!(matches!(err, DateError::Range { .. }));
     ///
     /// // Set the day to one that exists
-    /// fields.day = NonZeroU8::new(1);
+    /// fields.day = Some(1);
     /// Date::try_from_fields(
     ///     fields,
     ///     options,
@@ -390,7 +388,6 @@ mod tests {
         types::{DateFields, MonthCode},
         Date, DateError, Gregorian,
     };
-    use core::num::NonZeroU8;
     use itertools::Itertools;
     use std::collections::{BTreeMap, BTreeSet};
 
@@ -467,10 +464,8 @@ mod tests {
         field_fns.insert("month_code", &|fields| {
             fields.month_code = MonthCode::new_normal(4)
         });
-        field_fns.insert("ordinal_month", &|fields| {
-            fields.ordinal_month = NonZeroU8::new(4)
-        });
-        field_fns.insert("day", &|fields| fields.day = NonZeroU8::new(20));
+        field_fns.insert("ordinal_month", &|fields| fields.ordinal_month = Some(4));
+        field_fns.insert("day", &|fields| fields.day = Some(20));
 
         for field_set in field_fns.keys().copied().powerset() {
             let field_set = field_set.into_iter().collect::<BTreeSet<&str>>();
@@ -526,8 +521,8 @@ mod tests {
     fn test_constrain_large_months() {
         let fields = DateFields {
             extended_year: Some(2004),
-            ordinal_month: NonZeroU8::new(15),
-            day: NonZeroU8::new(1),
+            ordinal_month: Some(15),
+            day: Some(1),
             ..Default::default()
         };
         let options = DateFromFieldsOptions {

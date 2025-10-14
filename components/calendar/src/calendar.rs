@@ -53,12 +53,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
             fields.extended_year = Some(year);
         }
         fields.month_code = Some(month_code);
-        fields.day = Some(core::num::NonZeroU8::new(day).ok_or(DateError::Range {
-            field: "day",
-            value: day as i32,
-            min: 1,
-            max: i32::MAX,
-        })?);
+        fields.day = Some(day);
         let options = DateFromFieldsOptions {
             overflow: Some(Overflow::Reject),
             missing_fields_strategy: Some(MissingFieldsStrategy::Reject),
