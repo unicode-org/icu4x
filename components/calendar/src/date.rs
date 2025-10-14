@@ -517,7 +517,6 @@ impl<A: AsCalendar> Eq for Date<A> {}
 impl<C, A, B> PartialOrd<Date<B>> for Date<A>
 where
     C: Calendar,
-    C::DateInner: PartialOrd,
     A: AsCalendar<Calendar = C>,
     B: AsCalendar<Calendar = C>,
 {

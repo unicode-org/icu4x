@@ -466,6 +466,7 @@ impl<R: Rules> PartialEq for ChineseDateInner<R> {
         self.0 == other.0
     }
 }
+impl<S: Rules> Eq for ChineseDateInner<S> {}
 impl<R: Rules> PartialOrd for ChineseDateInner<R> {
     fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
         Some(self.cmp(other))
@@ -476,7 +477,6 @@ impl<R: Rules> Ord for ChineseDateInner<R> {
         self.0.cmp(&other.0)
     }
 }
-impl<S: Rules> Eq for ChineseDateInner<S> {}
 
 impl LunarChinese<China> {
     /// Creates a new calendar using [`China`] rules.
