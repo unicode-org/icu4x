@@ -200,7 +200,7 @@ impl MonthCode {
         }
         let b1 = bytes[1];
         let b2 = bytes[2];
-        if !(b'0'..=b'9').contains(&b1) || !(b'0'..=b'9').contains(&b2) {
+        if !b1.is_ascii_digit() || !b2.is_ascii_digit() {
             return Err(InvalidMonthCodeError);
         }
         Ok(((b1 - b'0') * 10 + b2 - b'0', is_leap))
