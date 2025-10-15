@@ -150,8 +150,8 @@ impl<A: AsCalendar> Date<A> {
     /// and fill in missing fields. See [`DateFromFieldsOptions`] for more information.
     ///
     /// This function will not accept year/extended_year values that are outside of the range `[-2²⁷, 2²⁷]`,
-    /// regardless of the calendar, instead returning a [`DateFromFieldsError::Range`]. This is to prevent
-    /// overflowing behaviors near the extreme values of the `i32` range.
+    /// regardless of the calendar, instead returning a [`DateFromFieldsError::Range`]. This allows us to to keep
+    /// all operations on [`Date`]s infallible by staying clear of integer limits.
     /// Currently, calendar-specific `Date::try_new_calendarname()` constructors
     /// do not do this, and it is possible to obtain such extreme dates via calendar conversion or arithmetic,
     /// though [we may change that behavior in the future](https://github.com/unicode-org/icu4x/issues/7076).
@@ -433,9 +433,7 @@ impl Date<Iso> {
     pub fn week_of_year(&self) -> IsoWeekOfYear {
         let week_of = WeekCalculator::ISO
             .week_of(
-                AbstractGregorian::<IsoEra>::days_in_provided_year(
-                    self.inner.0.year.saturating_sub(1),
-                ),
+                AbstractGregorian::<IsoEra>::days_in_provided_year(self.inner.0.year - 1),
                 self.days_in_year(),
                 self.day_of_year().0,
                 self.day_of_week(),
@@ -453,8 +451,8 @@ impl Date<Iso> {
             week_number: week_of.week,
             iso_year: match week_of.unit {
                 RelativeUnit::Current => self.inner.0.year,
-                RelativeUnit::Next => self.inner.0.year.saturating_add(1),
-                RelativeUnit::Previous => self.inner.0.year.saturating_sub(1),
+                RelativeUnit::Next => self.inner.0.year + 1,
+                RelativeUnit::Previous => self.inner.0.year - 1,
             },
         }
     }

@@ -17,6 +17,9 @@ use zerovec::ule::AsULE;
 
 /// The struct containing compiled Hijri YearInfo
 ///
+/// * `start_day` has to be within 5 days of the start of the year of the [`TabularAlgorithm`].
+/// * `month_lengths[n - 1]` has either 6 or 7 long months.
+///
 /// Bit structure
 ///
 /// ```text
@@ -24,7 +27,7 @@ use zerovec::ule::AsULE;
 /// Value:           [ start day ][ month lengths ]
 /// ```
 ///
-/// The start day is encoded as a signed offset from `Self::mean_synodic_start_day`. This number does not
+/// The start day is encoded as a signed offset from `Self::mean_tabular_start_day`. This number does not
 /// appear to be less than 2, however we use all remaining bits for it in case of drift in the math.
 /// The month lengths are stored as 1 = 30, 0 = 29 for each month including the leap month.
 ///
@@ -40,25 +43,59 @@ use zerovec::ule::AsULE;
 pub struct PackedHijriYearInfo(pub u16);
 
 impl PackedHijriYearInfo {
-    pub(crate) const fn new(
+    pub(crate) const fn try_new(
+        extended_year: i32,
+        month_lengths: [bool; 12],
+        start_day: RataDie,
+    ) -> Option<Self> {
+        let start_offset = start_day.since(Self::mean_tabular_start_day(extended_year));
+
+        if !(-8 < start_offset && start_offset < 8
+            || calendrical_calculations::islamic::WELL_BEHAVED_ASTRONOMICAL_RANGE
+                .start
+                .to_i64_date()
+                > start_day.to_i64_date()
+            || calendrical_calculations::islamic::WELL_BEHAVED_ASTRONOMICAL_RANGE
+                .end
+                .to_i64_date()
+                < start_day.to_i64_date())
+        {
+            return None;
+        }
+        let start_offset = start_offset as i8 & 0b1000_0111u8 as i8;
+
+        let mut all = 0u16;
+
+        let mut num_days = 29 * 12;
+
+        let mut i = 0;
+        while i < 12 {
+            #[expect(clippy::indexing_slicing)]
+            if month_lengths[i] {
+                all |= 1 << i;
+                num_days += 1;
+            }
+            i += 1;
+        }
+
+        if !matches!(num_days, 354 | 355) {
+            return None;
+        }
+
+        if start_offset < 0 {
+            all |= 1 << 12;
+        }
+        all |= (start_offset.unsigned_abs() as u16) << 13;
+        Some(Self(all))
+    }
+
+    pub(crate) const fn new_unchecked(
         extended_year: i32,
         month_lengths: [bool; 12],
         start_day: RataDie,
     ) -> Self {
-        let start_offset = start_day.since(Self::mean_synodic_start_day(extended_year));
+        let start_offset = start_day.since(Self::mean_tabular_start_day(extended_year));
 
-        debug_assert!(
-            -8 < start_offset && start_offset < 8
-                || calendrical_calculations::islamic::WELL_BEHAVED_ASTRONOMICAL_RANGE
-                    .start
-                    .to_i64_date()
-                    > start_day.to_i64_date()
-                || calendrical_calculations::islamic::WELL_BEHAVED_ASTRONOMICAL_RANGE
-                    .end
-                    .to_i64_date()
-                    < start_day.to_i64_date(),
-            "Year offset too big to store"
-        );
         let start_offset = start_offset as i8 & 0b1000_0111u8 as i8;
 
         let mut all = 0u16;
@@ -85,7 +122,7 @@ impl PackedHijriYearInfo {
         } else {
             (self.0 >> 13) as i64
         };
-        Self::mean_synodic_start_day(extended_year) + start_offset
+        Self::mean_tabular_start_day(extended_year) + start_offset
     }
 
     pub(crate) fn month_has_30_days(self, month: u8) -> bool {
@@ -107,13 +144,10 @@ impl PackedHijriYearInfo {
         prev_month_lengths
     }
 
-    const fn mean_synodic_start_day(extended_year: i32) -> RataDie {
+    const fn mean_tabular_start_day(extended_year: i32) -> RataDie {
         // -1 because the epoch is new year of year 1
-        // truncating instead of flooring does not matter, as this is used for positive years only
-        calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY.add(
-            ((extended_year - 1) as f64 * calendrical_calculations::islamic::MEAN_YEAR_LENGTH)
-                as i64,
-        )
+        calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY
+            .add((extended_year as i64 - 1) * (354 * 30 + 11) / 30)
     }
 }
 
@@ -129,12 +163,13 @@ impl AsULE for PackedHijriYearInfo {
 
 #[test]
 fn test_hijri_packed_roundtrip() {
-    fn single_roundtrip(month_lengths: [bool; 12], start_day: RataDie) {
-        let packed = PackedHijriYearInfo::new(1600, month_lengths, start_day);
+    fn single_roundtrip(month_lengths: [bool; 12], start_day: RataDie) -> Option<()> {
+        let packed = PackedHijriYearInfo::try_new(1600, month_lengths, start_day)?;
         for i in 0..12 {
             assert_eq!(packed.month_has_30_days(i + 1), month_lengths[i as usize]);
         }
         assert_eq!(packed.start_day(1600), start_day);
+        Some(())
     }
 
     let l = true;
@@ -144,16 +179,16 @@ fn test_hijri_packed_roundtrip() {
     let mixed1 = [l, s, l, s, l, s, l, s, l, s, l, s];
     let mixed2 = [s, s, l, l, l, s, l, s, s, s, l, l];
 
-    let start_1600 = PackedHijriYearInfo::mean_synodic_start_day(1600);
-    single_roundtrip(all_short, start_1600);
-    single_roundtrip(all_long, start_1600);
-    single_roundtrip(mixed1, start_1600);
-    single_roundtrip(mixed2, start_1600);
+    let start_1600 = PackedHijriYearInfo::mean_tabular_start_day(1600);
+    assert_eq!(single_roundtrip(all_short, start_1600), None);
+    assert_eq!(single_roundtrip(all_long, start_1600), None);
+    single_roundtrip(mixed1, start_1600).unwrap();
+    single_roundtrip(mixed2, start_1600).unwrap();
 
-    single_roundtrip(mixed1, start_1600 - 7);
-    single_roundtrip(mixed2, start_1600 + 7);
-    single_roundtrip(mixed2, start_1600 + 4);
-    single_roundtrip(mixed2, start_1600 + 1);
-    single_roundtrip(mixed2, start_1600 - 1);
-    single_roundtrip(mixed2, start_1600 - 4);
+    single_roundtrip(mixed1, start_1600 - 7).unwrap();
+    single_roundtrip(mixed2, start_1600 + 7).unwrap();
+    single_roundtrip(mixed2, start_1600 + 4).unwrap();
+    single_roundtrip(mixed2, start_1600 + 1).unwrap();
+    single_roundtrip(mixed2, start_1600 - 1).unwrap();
+    single_roundtrip(mixed2, start_1600 - 4).unwrap();
 }
