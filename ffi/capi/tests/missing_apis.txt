@@ -14,6 +14,10 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
+icu::calendar::error::DateError#Enum
+icu::calendar::error::DateFromFieldsError#Enum
+icu::calendar::error::EcmaReferenceYearError#Enum
+icu::calendar::error::RangeError#Struct
 icu::collator::CollatorBorrowed::compare_latin1#FnInStruct
 icu::collator::CollatorBorrowed::compare_latin1_utf16#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_to#FnInStruct
