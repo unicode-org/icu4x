@@ -81,7 +81,7 @@ final class DateFields {
   // assuming that there are no `'other: a`. bounds. In case of such bounds,
   // the caller should take care to also call _fieldsForLifetimeOther
   // ignore: unused_element
-  core.List<Object> get _fieldsForLifetimeA => [era, monthCode];
+  core.List<Object> get _fieldsForLifetimeA => [if (era != null) era!, if (monthCode != null) monthCode!];
 }
 
 // dart format on
