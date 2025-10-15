@@ -44,12 +44,12 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_from_fields`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.try_from_fields) for more information.
   ///
-  /// Throws [CalendarError] on failure.
+  /// Throws [CalendarDateFromFieldsError] on failure.
   factory Date.fromFieldsInCalendar(DateFields fields, DateFromFieldsOptions options, Calendar calendar) {
     final temp = _FinalizedArena();
     final result = _icu4x_Date_from_fields_in_calendar_mv1(fields._toFfi(temp.arena), options._toFfi(temp.arena), calendar._ffi);
     if (!result.isOk) {
-      throw CalendarError.values[result.union.err];
+      throw CalendarDateFromFieldsError.values[result.union.err];
     }
     return Date._fromFfi(result.union.ok, []);
   }

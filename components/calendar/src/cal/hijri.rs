@@ -6,7 +6,7 @@ use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::ToExtendedYear;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
-use crate::error::DateError;
+use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::provider::hijri::PackedHijriYearInfo;
@@ -86,8 +86,8 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
         &self,
         _month_code: types::MonthCode,
         _day: u8,
-    ) -> Result<i32, DateError> {
-        Err(DateError::NotEnoughFields)
+    ) -> Result<i32, EcmaReferenceYearError> {
+        Err(EcmaReferenceYearError::NotEnoughFields)
     }
 
     /// The BCP-47 [`CalendarAlgorithm`] for the Hijri calendar using these rules, if defined.
@@ -251,9 +251,13 @@ impl Rules for UmmAlQura {
         )))
     }
 
-    fn ecma_reference_year(&self, month_code: types::MonthCode, day: u8) -> Result<i32, DateError> {
-        let Some((ordinal_month, false)) = month_code.parsed() else {
-            return Err(DateError::UnknownMonthCode(month_code));
+    fn ecma_reference_year(
+        &self,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<i32, EcmaReferenceYearError> {
+        let (ordinal_month, false) = month_code.try_parse()? else {
+            return Err(EcmaReferenceYearError::UnknownMonthCodeForCalendar);
         };
 
         Ok(match (ordinal_month, day) {
@@ -276,7 +280,7 @@ impl Rules for UmmAlQura {
             (11, _) => 1391,
             (12, 30..) => 1390,
             (12, _) => 1391,
-            _ => return Err(DateError::UnknownMonthCode(month_code)),
+            _ => return Err(EcmaReferenceYearError::UnknownMonthCodeForCalendar),
         })
     }
 
@@ -337,9 +341,13 @@ impl Rules for TabularAlgorithm {
         })
     }
 
-    fn ecma_reference_year(&self, month_code: types::MonthCode, day: u8) -> Result<i32, DateError> {
-        let Some((ordinal_month, false)) = month_code.parsed() else {
-            return Err(DateError::UnknownMonthCode(month_code));
+    fn ecma_reference_year(
+        &self,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<i32, EcmaReferenceYearError> {
+        let (ordinal_month, false) = month_code.try_parse()? else {
+            return Err(EcmaReferenceYearError::UnknownMonthCodeForCalendar);
         };
 
         Ok(match (ordinal_month, day) {
@@ -363,7 +371,7 @@ impl Rules for TabularAlgorithm {
             (11, _) => 1391,
             (12, 30..) => 1390,
             (12, _) => 1391,
-            _ => return Err(DateError::UnknownMonthCode(month_code)),
+            _ => return Err(EcmaReferenceYearError::UnknownMonthCodeForCalendar),
         })
     }
 
@@ -715,11 +723,15 @@ impl<R: Rules> DateFieldsResolver for Hijri<R> {
     type YearInfo = HijriYearData;
 
     #[inline]
-    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+    fn year_info_from_era(
+        &self,
+        era: &str,
+        era_year: i32,
+    ) -> Result<Self::YearInfo, UnknownEraError> {
         let extended_year = match era {
             "ah" => era_year,
             "bh" => 1 - era_year,
-            _ => return Err(DateError::UnknownEra),
+            _ => return Err(UnknownEraError),
         };
         Ok(self.year_info_from_extended(extended_year))
     }
@@ -734,7 +746,7 @@ impl<R: Rules> DateFieldsResolver for Hijri<R> {
         &self,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::YearInfo, DateError> {
+    ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         Ok(self
             .0
             .year_data(self.0.ecma_reference_year(month_code, day)?))
@@ -751,11 +763,10 @@ impl<R: Rules> Calendar for Hijri<R> {
         &self,
         fields: DateFields,
         options: DateFromFieldsOptions,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateFromFieldsError> {
         let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        ArithmeticDate::try_from_builder(builder, options)
-            .map(HijriDateInner)
-            .map_err(|e| e.maybe_with_month_code(fields.month_code))
+        let arithmetic_date = ArithmeticDate::try_from_builder(builder, options)?;
+        Ok(HijriDateInner(arithmetic_date))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {

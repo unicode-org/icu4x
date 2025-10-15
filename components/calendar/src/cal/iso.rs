@@ -4,6 +4,7 @@
 
 use crate::cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears};
 use crate::calendar_arithmetic::ArithmeticDate;
+use crate::error::UnknownEraError;
 use crate::{types, Date, DateError, RangeError};
 use tinystr::tinystr;
 
@@ -30,10 +31,10 @@ impl_with_abstract_gregorian!(crate::cal::Iso, IsoDateInner, IsoEra, _x, IsoEra)
 pub(crate) struct IsoEra;
 
 impl GregorianYears for IsoEra {
-    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, DateError> {
+    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, UnknownEraError> {
         match era {
             Some("default") | None => Ok(year),
-            Some(_) => Err(DateError::UnknownEra),
+            Some(_) => Err(UnknownEraError),
         }
     }
 

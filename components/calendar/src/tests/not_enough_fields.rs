@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::error::DateFromFieldsError;
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
 use crate::types::{DateFields, MonthCode};
 use crate::Date;
-use crate::DateError;
 
 #[test]
 fn test_from_fields_not_enough_fields() {
@@ -44,7 +44,7 @@ fn test_from_fields_not_enough_fields() {
                     options,
                     calendar
                 ),
-                Err(DateError::NotEnoughFields),
+                Err(DateFromFieldsError::NotEnoughFields),
                 "Test with {options:?}"
             );
             assert_eq!(
@@ -60,7 +60,7 @@ fn test_from_fields_not_enough_fields() {
                     options,
                     calendar
                 ),
-                Err(DateError::NotEnoughFields),
+                Err(DateFromFieldsError::NotEnoughFields),
                 "Test with {options:?}"
             );
             assert_eq!(
@@ -76,7 +76,7 @@ fn test_from_fields_not_enough_fields() {
                     options,
                     calendar
                 ),
-                Err(DateError::NotEnoughFields),
+                Err(DateFromFieldsError::NotEnoughFields),
                 "Test with {options:?}"
             );
 
@@ -94,7 +94,7 @@ fn test_from_fields_not_enough_fields() {
                     options,
                     calendar
                 ),
-                Err(DateError::NotEnoughFields),
+                Err(DateFromFieldsError::NotEnoughFields),
                 "Test with {options:?}"
             );
             assert_eq!(
@@ -110,7 +110,7 @@ fn test_from_fields_not_enough_fields() {
                     options,
                     calendar
                 ),
-                Err(DateError::NotEnoughFields),
+                Err(DateFromFieldsError::NotEnoughFields),
                 "Test with {options:?}"
             );
 
@@ -128,7 +128,7 @@ fn test_from_fields_not_enough_fields() {
                     options,
                     calendar
                 ),
-                Err(DateError::NotEnoughFields),
+                Err(DateFromFieldsError::NotEnoughFields),
                 "Test with {options:?}"
             );
             assert_eq!(
@@ -144,7 +144,7 @@ fn test_from_fields_not_enough_fields() {
                     options,
                     calendar
                 ),
-                Err(DateError::NotEnoughFields),
+                Err(DateFromFieldsError::NotEnoughFields),
                 "Test with {options:?}"
             );
             if missing_fields != MissingFieldsStrategy::Ecma {
@@ -162,7 +162,7 @@ fn test_from_fields_not_enough_fields() {
                         options,
                         calendar
                     ),
-                    Err(DateError::NotEnoughFields),
+                    Err(DateFromFieldsError::NotEnoughFields),
                     "Test with {options:?}"
                 );
                 assert_eq!(
@@ -178,7 +178,7 @@ fn test_from_fields_not_enough_fields() {
                         options,
                         calendar
                     ),
-                    Err(DateError::NotEnoughFields),
+                    Err(DateFromFieldsError::NotEnoughFields),
                     "Test with {options:?}"
                 );
 
@@ -196,7 +196,7 @@ fn test_from_fields_not_enough_fields() {
                         options,
                         calendar
                     ),
-                    Err(DateError::NotEnoughFields),
+                    Err(DateFromFieldsError::NotEnoughFields),
                     "Test with {options:?}"
                 );
                 assert_eq!(
@@ -212,7 +212,7 @@ fn test_from_fields_not_enough_fields() {
                         options,
                         calendar
                     ),
-                    Err(DateError::NotEnoughFields),
+                    Err(DateFromFieldsError::NotEnoughFields),
                     "Test with {options:?}"
                 );
                 assert_eq!(
@@ -228,7 +228,7 @@ fn test_from_fields_not_enough_fields() {
                         options,
                         calendar
                     ),
-                    Err(DateError::NotEnoughFields),
+                    Err(DateFromFieldsError::NotEnoughFields),
                     "Test with {options:?}"
                 );
             }

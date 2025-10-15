@@ -6,7 +6,7 @@
 
 use crate::cal::iso::IsoDateInner;
 use crate::cal::*;
-use crate::error::DateError;
+use crate::error::{DateError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::{DateFields, YearInfo};
@@ -279,7 +279,7 @@ impl Calendar for AnyCalendar {
         &self,
         fields: DateFields,
         options: DateFromFieldsOptions,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateFromFieldsError> {
         Ok(match_cal!(match self: (c) => c.from_fields(fields, options)?))
     }
 

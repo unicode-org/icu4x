@@ -14,6 +14,7 @@ use zerovec::ule::AsULE;
 // Export the duration types from here
 #[doc(hidden)] // unstable
 pub use crate::duration::{DateDuration, DateDurationUnit};
+use crate::error::MonthCodeParseError;
 
 /// A bag of various ways of expressing the year, month, and/or day.
 ///
@@ -186,22 +187,23 @@ impl MonthCode {
     }
     /// Get the month number and whether or not it is leap from the month code
     pub fn parsed(self) -> Option<(u8, bool)> {
+        self.try_parse().ok()
+    }
+    pub(crate) fn try_parse(self) -> Result<(u8, bool), MonthCodeParseError> {
         // Match statements on tinystrs are annoying so instead
         // we calculate it from the bytes directly
 
         let bytes = self.0.all_bytes();
         let is_leap = bytes[3] == b'L';
         if bytes[0] != b'M' {
-            return None;
+            return Err(MonthCodeParseError::InvalidMonthCode);
         }
-        if bytes[1] == b'0' {
-            if bytes[2] >= b'1' && bytes[2] <= b'9' {
-                return Some((bytes[2] - b'0', is_leap));
-            }
-        } else if bytes[1] == b'1' && bytes[2] >= b'0' && bytes[2] <= b'3' {
-            return Some((10 + bytes[2] - b'0', is_leap));
+        let b1 = bytes[1];
+        let b2 = bytes[2];
+        if !b1.is_ascii_digit() || !b2.is_ascii_digit() {
+            return Err(MonthCodeParseError::InvalidMonthCode);
         }
-        None
+        Ok(((b1 - b'0') * 10 + b2 - b'0', is_leap))
     }
 
     /// Construct a "normal" month code given a number ("Mxx").

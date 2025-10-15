@@ -260,6 +260,8 @@ export { DisplayNamesStyle } from "./DisplayNamesStyle"
 
 export { LanguageDisplay } from "./LanguageDisplay"
 
+export { CalendarDateFromFieldsError } from "./CalendarDateFromFieldsError"
+
 export { CalendarError } from "./CalendarError"
 
 export { DataError } from "./DataError"

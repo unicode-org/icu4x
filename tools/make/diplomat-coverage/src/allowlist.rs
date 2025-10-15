@@ -330,6 +330,8 @@ lazy_static::lazy_static! {
         // Reexported
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
+        "icu::calendar::error::DateError",
+        "icu::calendar::error::RangeError",
         "icu::casemap::titlecase::TitlecaseMapper",
         "icu::casemap::titlecase::TitlecaseMapperBorrowed",
         "icu::time::zone::IanaParser",

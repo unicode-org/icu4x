@@ -8,6 +8,7 @@
 #include "diplomat_runtime.h"
 
 #include "Calendar.d.h"
+#include "CalendarDateFromFieldsError.d.h"
 #include "CalendarError.d.h"
 #include "DateFields.d.h"
 #include "DateFromFieldsOptions.d.h"
@@ -25,7 +26,7 @@
 typedef struct icu4x_Date_from_iso_in_calendar_mv1_result {union {Date* ok; CalendarError err;}; bool is_ok;} icu4x_Date_from_iso_in_calendar_mv1_result;
 icu4x_Date_from_iso_in_calendar_mv1_result icu4x_Date_from_iso_in_calendar_mv1(int32_t iso_year, uint8_t iso_month, uint8_t iso_day, const Calendar* calendar);
 
-typedef struct icu4x_Date_from_fields_in_calendar_mv1_result {union {Date* ok; CalendarError err;}; bool is_ok;} icu4x_Date_from_fields_in_calendar_mv1_result;
+typedef struct icu4x_Date_from_fields_in_calendar_mv1_result {union {Date* ok; CalendarDateFromFieldsError err;}; bool is_ok;} icu4x_Date_from_fields_in_calendar_mv1_result;
 icu4x_Date_from_fields_in_calendar_mv1_result icu4x_Date_from_fields_in_calendar_mv1(DateFields fields, DateFromFieldsOptions options, const Calendar* calendar);
 
 typedef struct icu4x_Date_from_codes_in_calendar_mv1_result {union {Date* ok; CalendarError err;}; bool is_ok;} icu4x_Date_from_codes_in_calendar_mv1_result;

@@ -6,7 +6,9 @@ use crate::cal::coptic::CopticDateInner;
 use crate::cal::iso::IsoDateInner;
 use crate::cal::Coptic;
 use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, DateFieldsResolver};
-use crate::error::DateError;
+use crate::error::{
+    DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
+};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
@@ -75,11 +77,15 @@ impl DateFieldsResolver for Ethiopian {
     type YearInfo = i32;
 
     #[inline]
-    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+    fn year_info_from_era(
+        &self,
+        era: &str,
+        era_year: i32,
+    ) -> Result<Self::YearInfo, UnknownEraError> {
         match (self.era_style(), era) {
             (EthiopianEraStyle::AmeteMihret, "am") => Ok(era_year + AMETE_MIHRET_OFFSET),
             (_, "aa") => Ok(era_year + AMETE_ALEM_OFFSET),
-            (_, _) => Err(DateError::UnknownEra),
+            (_, _) => Err(UnknownEraError),
         }
     }
 
@@ -98,7 +104,7 @@ impl DateFieldsResolver for Ethiopian {
         &self,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::YearInfo, DateError> {
+    ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         crate::cal::Coptic::reference_year_from_month_day(month_code, day)
     }
 
@@ -108,10 +114,10 @@ impl DateFieldsResolver for Ethiopian {
         _year: &Self::YearInfo,
         month_code: types::MonthCode,
         _options: DateFromFieldsOptions,
-    ) -> Result<u8, DateError> {
-        match month_code.parsed() {
-            Some((month_number @ 1..=13, false)) => Ok(month_number),
-            _ => Err(DateError::UnknownMonthCode(month_code)),
+    ) -> Result<u8, MonthCodeError> {
+        match month_code.try_parse()? {
+            (month_number @ 1..=13, false) => Ok(month_number),
+            _ => Err(MonthCodeError::UnknownMonthCodeForCalendar),
         }
     }
 }
@@ -126,12 +132,10 @@ impl Calendar for Ethiopian {
         &self,
         fields: DateFields,
         options: DateFromFieldsOptions,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateFromFieldsError> {
         let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        ArithmeticDate::try_from_builder(builder, options)
-            .map(CopticDateInner)
-            .map(EthiopianDateInner)
-            .map_err(|e| e.maybe_with_month_code(fields.month_code))
+        let arithmetic_date = ArithmeticDate::try_from_builder(builder, options)?;
+        Ok(EthiopianDateInner(CopticDateInner(arithmetic_date)))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {

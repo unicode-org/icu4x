@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::unstable::errors::ffi::CalendarError;
+use crate::unstable::errors::ffi::CalendarDateFromFieldsError;
 use ffi::IsoWeekOfYear;
 use tinystr::TinyAsciiStr;
 
@@ -16,7 +16,9 @@ pub mod ffi {
     use icu_calendar::Iso;
 
     use crate::unstable::calendar::ffi::Calendar;
-    use crate::unstable::errors::ffi::{CalendarError, Rfc9557ParseError};
+    use crate::unstable::errors::ffi::{
+        CalendarDateFromFieldsError, CalendarError, Rfc9557ParseError,
+    };
 
     use tinystr::TinyAsciiStr;
 
@@ -239,7 +241,7 @@ pub mod ffi {
             fields: DateFields,
             options: DateFromFieldsOptions,
             calendar: &Calendar,
-        ) -> Result<Box<Date>, CalendarError> {
+        ) -> Result<Box<Date>, CalendarDateFromFieldsError> {
             let cal = calendar.0.clone();
             Ok(Box::new(Date(icu_calendar::Date::try_from_fields(
                 fields.try_into()?,
@@ -489,12 +491,12 @@ impl From<ffi::DateFromFieldsOptions> for icu_calendar::options::DateFromFieldsO
 }
 
 impl<'a> TryFrom<ffi::DateFields<'a>> for icu_calendar::types::DateFields<'a> {
-    type Error = CalendarError;
-    fn try_from(other: ffi::DateFields<'a>) -> Result<Self, CalendarError> {
+    type Error = CalendarDateFromFieldsError;
+    fn try_from(other: ffi::DateFields<'a>) -> Result<Self, CalendarDateFromFieldsError> {
         let mut fields = Self::default();
         if let Some(era) = other.era.into_option() {
             let Ok(s) = core::str::from_utf8(era) else {
-                return Err(CalendarError::UnknownEra);
+                return Err(CalendarDateFromFieldsError::UnknownEra);
             };
             fields.era = Some(s);
         }
@@ -502,7 +504,7 @@ impl<'a> TryFrom<ffi::DateFields<'a>> for icu_calendar::types::DateFields<'a> {
         fields.extended_year = other.extended_year.into();
         if let Some(month_code) = other.month_code.into_option() {
             let Ok(code) = TinyAsciiStr::try_from_utf8(month_code) else {
-                return Err(CalendarError::UnknownMonthCode);
+                return Err(CalendarDateFromFieldsError::InvalidMonthCode);
             };
             fields.month_code = Some(icu_calendar::types::MonthCode(code));
         }

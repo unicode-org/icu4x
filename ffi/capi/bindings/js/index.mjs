@@ -258,6 +258,8 @@ export { DisplayNamesStyle } from "./DisplayNamesStyle.mjs"
 
 export { LanguageDisplay } from "./LanguageDisplay.mjs"
 
+export { CalendarDateFromFieldsError } from "./CalendarDateFromFieldsError.mjs"
+
 export { CalendarError } from "./CalendarError.mjs"
 
 export { DataError } from "./DataError.mjs"
