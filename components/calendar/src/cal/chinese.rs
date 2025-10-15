@@ -39,7 +39,8 @@ mod simple;
 ///
 /// This type can be used with [`Date`] to represent dates in the Chinese calendar.
 ///
-/// The type parameter here specifies a particular reckoning/implementation of the Chinese calendar.
+/// The type parameter here specifies a particular set of calculation rules and local
+/// time information for a lunar Chinese calendar.
 /// It must implement the currently-unstable `Rules` trait, at the moment this crate exports two stable
 /// implementors of `Rules`: [`China`] and [`Korea`]. Please comment on [this issue](https://github.com/unicode-org/icu4x/issues/6962)
 /// if you would like to see this trait stabilized.
