@@ -349,21 +349,6 @@ pub(crate) enum MonthCodeError {
     UnknownMonthCodeForYear(MonthCode),
 }
 
-impl From<MonthCodeError> for DateError {
-    #[inline]
-    fn from(value: MonthCodeError) -> Self {
-        match value {
-            MonthCodeError::InvalidMonthCode => DateError::UnknownMonthCode(MonthCode::SENTINEL),
-            MonthCodeError::UnknownMonthCodeForCalendar(month_code) => {
-                DateError::UnknownMonthCode(month_code)
-            }
-            MonthCodeError::UnknownMonthCodeForYear(month_code) => {
-                DateError::UnknownMonthCode(month_code)
-            }
-        }
-    }
-}
-
 impl From<MonthCodeError> for DateFromFieldsError {
     #[inline]
     fn from(value: MonthCodeError) -> Self {

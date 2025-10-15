@@ -70,7 +70,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
             }
             DateFromFieldsError::UnknownEra => DateError::UnknownEra,
             DateFromFieldsError::InvalidMonthCode => {
-                DateError::UnknownMonthCode(types::MonthCode::SENTINEL)
+                DateError::UnknownMonthCode(month_code)
             }
             DateFromFieldsError::UnknownMonthCodeForCalendar(month_code) => {
                 DateError::UnknownMonthCode(month_code)

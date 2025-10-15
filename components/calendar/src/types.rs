@@ -7,7 +7,7 @@
 #[doc(no_inline)]
 pub use calendrical_calculations::rata_die::RataDie;
 use core::fmt;
-use tinystr::{tinystr, TinyAsciiStr};
+use tinystr::TinyAsciiStr;
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::ule::AsULE;
 
@@ -174,8 +174,6 @@ pub struct CyclicYear {
 pub struct MonthCode(pub TinyStr4);
 
 impl MonthCode {
-    pub(crate) const SENTINEL: MonthCode = MonthCode(tinystr!(4, "und"));
-
     /// Returns an option which is `Some` containing the non-month version of a leap month
     /// if the [`MonthCode`] this method is called upon is a leap month, and `None` otherwise.
     /// This method assumes the [`MonthCode`] is valid.
@@ -200,14 +198,12 @@ impl MonthCode {
         if bytes[0] != b'M' {
             return Err(InvalidMonthCodeError);
         }
-        if bytes[1] == b'0' {
-            if bytes[2] >= b'1' && bytes[2] <= b'9' {
-                return Ok((bytes[2] - b'0', is_leap));
-            }
-        } else if bytes[1] == b'1' && bytes[2] >= b'0' && bytes[2] <= b'3' {
-            return Ok((10 + bytes[2] - b'0', is_leap));
+        let b1 = bytes[1];
+        let b2 = bytes[2];
+        if !(b'0'..=b'9').contains(&b1) || !(b'0'..=b'9').contains(&b2) {
+            return Err(InvalidMonthCodeError);
         }
-        Err(InvalidMonthCodeError)
+        Ok(((b1 - b'0') * 10 + b2 - b'0', is_leap))
     }
 
     /// Construct a "normal" month code given a number ("Mxx").

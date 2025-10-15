@@ -514,7 +514,17 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             &y0,
             base_month_code,
             DateFromFieldsOptions::from_add_options(options),
-        )?;
+        ).map_err(|e| {
+            match e {
+                MonthCodeError::InvalidMonthCode => DateError::UnknownMonthCode(base_month_code),
+                MonthCodeError::UnknownMonthCodeForCalendar(month_code) => {
+                    DateError::UnknownMonthCode(month_code)
+                }
+                MonthCodeError::UnknownMonthCodeForYear(month_code) => {
+                    DateError::UnknownMonthCode(month_code)
+                }
+            }
+        })?;
         // 1. Let _endOfMonth_ be BalanceNonISODate(_calendar_, _y0_, _m0_ + _duration_.[[Months]] + 1, 0).
         let end_of_month = Self::new_balanced(y0, duration.add_months_to(m0) + 1, 0, cal);
         // 1. Let _baseDay_ be _parts_.[[Day]].
