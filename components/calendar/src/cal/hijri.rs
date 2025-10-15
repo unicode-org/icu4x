@@ -250,7 +250,7 @@ impl Rules for UmmAlQura {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        let (ordinal_month, false) = month_code.parsed_err()? else {
+        let (ordinal_month, false) = month_code.try_parse()? else {
             return Err(EcmaReferenceYearError::UnknownMonthCodeForCalendar(
                 month_code,
             ));
@@ -346,7 +346,7 @@ impl Rules for TabularAlgorithm {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        let (ordinal_month, false) = month_code.parsed_err()? else {
+        let (ordinal_month, false) = month_code.try_parse()? else {
             return Err(EcmaReferenceYearError::UnknownMonthCodeForCalendar(
                 month_code,
             ));

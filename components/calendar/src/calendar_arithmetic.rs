@@ -181,7 +181,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
         month_code: MonthCode,
         _options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
-        match month_code.parsed_err()? {
+        match month_code.try_parse()? {
             (month_number @ 1..=12, false) => Ok(month_number),
             _ => Err(MonthCodeError::UnknownMonthCodeForCalendar(month_code)),
         }

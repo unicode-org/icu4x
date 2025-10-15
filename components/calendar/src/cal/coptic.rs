@@ -119,7 +119,7 @@ impl DateFieldsResolver for Coptic {
         month_code: types::MonthCode,
         _options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
-        match month_code.parsed_err()? {
+        match month_code.try_parse()? {
             (month_number @ 1..=13, false) => Ok(month_number),
             _ => Err(MonthCodeError::UnknownMonthCodeForCalendar(month_code)),
         }
@@ -131,7 +131,7 @@ impl Coptic {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        let (ordinal_month, _is_leap) = month_code.parsed_err()?;
+        let (ordinal_month, _is_leap) = month_code.try_parse()?;
         // December 31, 1972 occurs on 4th month, 22nd day, 1689 AM
         let anno_martyrum_year = if ordinal_month < 4 || (ordinal_month == 4 && day <= 22) {
             1689

@@ -187,9 +187,9 @@ impl MonthCode {
     }
     /// Get the month number and whether or not it is leap from the month code
     pub fn parsed(self) -> Option<(u8, bool)> {
-        self.parsed_err().ok()
+        self.try_parse().ok()
     }
-    pub(crate) fn parsed_err(self) -> Result<(u8, bool), InvalidMonthCodeError> {
+    pub(crate) fn try_parse(self) -> Result<(u8, bool), InvalidMonthCodeError> {
         // Match statements on tinystrs are annoying so instead
         // we calculate it from the bytes directly
 

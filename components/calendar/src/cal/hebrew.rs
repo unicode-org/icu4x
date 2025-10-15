@@ -142,7 +142,7 @@ impl DateFieldsResolver for Hebrew {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
-        month_code.parsed_err()?; // return InvalidMonthCode
+        month_code.try_parse()?; // return InvalidMonthCode
         let month_code_str = month_code.0.as_str();
         // December 31, 1972 occurs on 4th month, 26th day, 5733 AM
         let hebrew_year = match month_code_str {
@@ -189,7 +189,7 @@ impl DateFieldsResolver for Hebrew {
         options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
         let is_leap_year = year.keviyah.is_leap();
-        month_code.parsed_err()?; // return InvalidMonthCode
+        month_code.try_parse()?; // return InvalidMonthCode
         let month_code_str = month_code.0.as_str();
         let ordinal_month = if is_leap_year {
             match month_code_str {

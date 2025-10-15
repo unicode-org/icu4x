@@ -202,7 +202,7 @@ impl Rules for China {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        let (number, is_leap) = month_code.parsed_err()?;
+        let (number, is_leap) = month_code.try_parse()?;
         // Computed by `generate_reference_years`
         Ok(match (number, is_leap, day > 29) {
             (1, false, false) => 1972,
@@ -387,7 +387,7 @@ impl Rules for Korea {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        let (number, is_leap) = month_code.parsed_err()?;
+        let (number, is_leap) = month_code.try_parse()?;
         // Computed by `generate_reference_years`
         Ok(match (number, is_leap, day > 29) {
             (1, false, false) => 1972,
