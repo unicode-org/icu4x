@@ -5,7 +5,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * Additional information: [1](https://docs.rs/icu/2.0.0/icu/calendar/struct.RangeError.html), [2](https://docs.rs/icu/2.0.0/icu/calendar/enum.DateError.html)
+ * Additional information: [1](https://docs.rs/icu/2.0.0/icu/calendar/error/enum.DateFromFieldsError.html)
  */
 export class CalendarDateFromFieldsError {
     #value = undefined;
