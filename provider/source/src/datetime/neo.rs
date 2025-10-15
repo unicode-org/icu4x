@@ -543,7 +543,11 @@ fn datetimepattern_convert(
 ) -> Result<GluePattern<'static>, DataError> {
     let mut pattern_anchor = None;
     let pattern = match glue_type {
-        GlueType::DateTime => data.datetime_formats.get_pattern(length).get_pattern(),
+        // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
+        GlueType::DateTime => data
+            .datetime_formats_at_time
+            .get_pattern(length)
+            .get_pattern(),
         GlueType::DateZone => {
             // TODO: Use proper appendItem here
             "{1} {2}"
@@ -554,7 +558,7 @@ fn datetimepattern_convert(
         }
         GlueType::DateTimeZone => {
             let pattern = pattern_anchor.insert(
-                data.datetime_formats
+                data.datetime_formats_at_time
                     .get_pattern(length)
                     .get_pattern()
                     .to_string(),
