@@ -117,7 +117,7 @@ impl DateFieldsResolver for Ethiopian {
     ) -> Result<u8, MonthCodeError> {
         match month_code.try_parse()? {
             (month_number @ 1..=13, false) => Ok(month_number),
-            _ => Err(MonthCodeError::UnknownMonthCodeForCalendar(month_code)),
+            _ => Err(MonthCodeError::UnknownMonthCodeForCalendar),
         }
     }
 }

@@ -72,12 +72,10 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
             }
             DateFromFieldsError::UnknownEra => DateError::UnknownEra,
             DateFromFieldsError::InvalidMonthCode => DateError::UnknownMonthCode(month_code),
-            DateFromFieldsError::UnknownMonthCodeForCalendar(month_code) => {
+            DateFromFieldsError::UnknownMonthCodeForCalendar => {
                 DateError::UnknownMonthCode(month_code)
             }
-            DateFromFieldsError::UnknownMonthCodeForYear(month_code) => {
-                DateError::UnknownMonthCode(month_code)
-            }
+            DateFromFieldsError::UnknownMonthCodeForYear => DateError::UnknownMonthCode(month_code),
             DateFromFieldsError::InconsistentYear
             | DateFromFieldsError::InconsistentMonth
             | DateFromFieldsError::NotEnoughFields => {

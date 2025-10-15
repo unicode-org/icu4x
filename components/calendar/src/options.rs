@@ -320,7 +320,7 @@ pub enum Overflow {
     ///     Hebrew
     /// )
     /// .expect_err("Month is out of bounds");
-    /// assert!(matches!(err, DateFromFieldsError::UnknownMonthCodeForYear(_)));
+    /// assert!(matches!(err, DateFromFieldsError::UnknownMonthCodeForYear));
     /// ```
     #[default]
     Reject,

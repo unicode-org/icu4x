@@ -128,10 +128,10 @@ pub enum DateFromFieldsError {
     ///     Hebrew
     /// )
     /// .expect_err("no month M13 in Hebrew");
-    /// assert!(matches!(err, DateFromFieldsError::UnknownMonthCodeForCalendar(_)));
+    /// assert!(matches!(err, DateFromFieldsError::UnknownMonthCodeForCalendar));
     /// ```
-    #[displaydoc("Month code does not exist in this calendar: {0:?}")]
-    UnknownMonthCodeForCalendar(MonthCode),
+    #[displaydoc("The specified month code does not exist in this calendar")]
+    UnknownMonthCodeForCalendar,
     /// The specified month code exists in this calendar, but not in the specified year.
     ///
     /// # Examples
@@ -155,10 +155,10 @@ pub enum DateFromFieldsError {
     ///     Hebrew
     /// )
     /// .expect_err("no month M05L in Hebrew year 5783");
-    /// assert!(matches!(err, DateFromFieldsError::UnknownMonthCodeForYear(_)));
+    /// assert!(matches!(err, DateFromFieldsError::UnknownMonthCodeForYear));
     /// ```
-    #[displaydoc("Month code exists in calendar, but not for this year: {0:?}")]
-    UnknownMonthCodeForYear(MonthCode),
+    #[displaydoc("The specified month code exists in calendar, but not for this year")]
+    UnknownMonthCodeForYear,
     /// The year was specified in multiple inconsistent ways.
     ///
     /// # Examples
@@ -351,8 +351,8 @@ impl From<MonthCodeParseError> for MonthCodeError {
 /// Internal narrow error type for functions that only fail on month code operations
 pub(crate) enum MonthCodeError {
     InvalidMonthCode,
-    UnknownMonthCodeForCalendar(MonthCode),
-    UnknownMonthCodeForYear(MonthCode),
+    UnknownMonthCodeForCalendar,
+    UnknownMonthCodeForYear,
 }
 
 impl From<MonthCodeError> for DateFromFieldsError {
@@ -360,12 +360,10 @@ impl From<MonthCodeError> for DateFromFieldsError {
     fn from(value: MonthCodeError) -> Self {
         match value {
             MonthCodeError::InvalidMonthCode => DateFromFieldsError::InvalidMonthCode,
-            MonthCodeError::UnknownMonthCodeForCalendar(month_code) => {
-                DateFromFieldsError::UnknownMonthCodeForCalendar(month_code)
+            MonthCodeError::UnknownMonthCodeForCalendar => {
+                DateFromFieldsError::UnknownMonthCodeForCalendar
             }
-            MonthCodeError::UnknownMonthCodeForYear(month_code) => {
-                DateFromFieldsError::UnknownMonthCodeForYear(month_code)
-            }
+            MonthCodeError::UnknownMonthCodeForYear => DateFromFieldsError::UnknownMonthCodeForYear,
         }
     }
 }
@@ -379,7 +377,7 @@ mod inner {
     #[non_exhaustive]
     pub enum EcmaReferenceYearError {
         InvalidMonthCode,
-        UnknownMonthCodeForCalendar(crate::types::MonthCode),
+        UnknownMonthCodeForCalendar,
         NotEnoughFields,
     }
 }
@@ -394,8 +392,8 @@ impl From<EcmaReferenceYearError> for DateFromFieldsError {
     fn from(value: EcmaReferenceYearError) -> Self {
         match value {
             EcmaReferenceYearError::InvalidMonthCode => DateFromFieldsError::InvalidMonthCode,
-            EcmaReferenceYearError::UnknownMonthCodeForCalendar(month_code) => {
-                DateFromFieldsError::UnknownMonthCodeForCalendar(month_code)
+            EcmaReferenceYearError::UnknownMonthCodeForCalendar => {
+                DateFromFieldsError::UnknownMonthCodeForCalendar
             }
             EcmaReferenceYearError::NotEnoughFields => DateFromFieldsError::NotEnoughFields,
         }

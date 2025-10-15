@@ -183,7 +183,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
     ) -> Result<u8, MonthCodeError> {
         match month_code.try_parse()? {
             (month_number @ 1..=12, false) => Ok(month_number),
-            _ => Err(MonthCodeError::UnknownMonthCodeForCalendar(month_code)),
+            _ => Err(MonthCodeError::UnknownMonthCodeForCalendar),
         }
     }
 
@@ -522,11 +522,11 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
                     MonthCodeError::InvalidMonthCode => {
                         DateError::UnknownMonthCode(base_month_code)
                     }
-                    MonthCodeError::UnknownMonthCodeForCalendar(month_code) => {
-                        DateError::UnknownMonthCode(month_code)
+                    MonthCodeError::UnknownMonthCodeForCalendar => {
+                        DateError::UnknownMonthCode(base_month_code)
                     }
-                    MonthCodeError::UnknownMonthCodeForYear(month_code) => {
-                        DateError::UnknownMonthCode(month_code)
+                    MonthCodeError::UnknownMonthCodeForYear => {
+                        DateError::UnknownMonthCode(base_month_code)
                     }
                 }
             })?;

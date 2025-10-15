@@ -174,9 +174,7 @@ impl DateFieldsResolver for Hebrew {
             "M11" => 5732,
             "M12" => 5732,
             _ => {
-                return Err(EcmaReferenceYearError::UnknownMonthCodeForCalendar(
-                    month_code,
-                ));
+                return Err(EcmaReferenceYearError::UnknownMonthCodeForCalendar);
             }
         };
         Ok(HebrewYearInfo::compute(hebrew_year))
@@ -207,7 +205,7 @@ impl DateFieldsResolver for Hebrew {
                 "M11" => 12,
                 "M12" => 13,
                 _ => {
-                    return Err(MonthCodeError::UnknownMonthCodeForCalendar(month_code));
+                    return Err(MonthCodeError::UnknownMonthCodeForCalendar);
                 }
             }
         } else {
@@ -222,7 +220,7 @@ impl DateFieldsResolver for Hebrew {
                     if matches!(options.overflow, Some(Overflow::Constrain)) {
                         6
                     } else {
-                        return Err(MonthCodeError::UnknownMonthCodeForYear(month_code));
+                        return Err(MonthCodeError::UnknownMonthCodeForYear);
                     }
                 }
                 "M06" => 6,
@@ -233,7 +231,7 @@ impl DateFieldsResolver for Hebrew {
                 "M11" => 11,
                 "M12" => 12,
                 _ => {
-                    return Err(MonthCodeError::UnknownMonthCodeForCalendar(month_code));
+                    return Err(MonthCodeError::UnknownMonthCodeForCalendar);
                 }
             }
         };
