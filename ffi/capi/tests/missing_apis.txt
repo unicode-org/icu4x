@@ -15,7 +15,6 @@
 
 
 icu::calendar::error::DateError#Enum
-icu::calendar::error::DateFromFieldsError#Enum
 icu::calendar::error::EcmaReferenceYearError#Enum
 icu::calendar::error::RangeError#Struct
 icu::collator::CollatorBorrowed::compare_latin1#FnInStruct
