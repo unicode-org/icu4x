@@ -136,7 +136,7 @@ void main() {
         length: DateTimeLength.long,
         timePrecision: TimePrecision.minute,
       ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
-      'Mittwoch, 15. Radschab 1446 AH, 14:32',
+      'Mittwoch, 15. Radschab 1446 AH um 14:32',
     );
 
     expect(
@@ -185,7 +185,7 @@ void main() {
         length: DateTimeLength.long,
         timePrecision: TimePrecision.minute,
       ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
-      'Mittwoch, 15. Januar 2025, 14:32',
+      'Mittwoch, 15. Januar 2025 um 14:32',
     );
 
     ///// TimeZoneFormatter /////
@@ -264,7 +264,7 @@ void main() {
         zonedDateTimeIso.time,
         zonedDateTimeIso.zone,
       ),
-      '15. Radschab 1446 AH, 14:32:12 MEZ',
+      '15. Radschab 1446 AH um 14:32:12 MEZ',
     );
 
     expect(

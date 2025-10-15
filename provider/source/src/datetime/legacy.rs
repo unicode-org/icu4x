@@ -223,7 +223,7 @@ impl From<&cldr_serde::ca::DateTimeFormats> for LengthPatterns<'_> {
 
 impl From<&cldr_serde::ca::Dates> for DateLengths<'_> {
     fn from(other: &cldr_serde::ca::Dates) -> Self {
-        let length_combinations_v1 = GenericLengthPatterns::from(&other.datetime_formats);
+        let length_combinations_v1 = GenericLengthPatterns::from(&other.datetime_formats_at_time);
 
         Self {
             date: (&other.date_skeletons).into(),
