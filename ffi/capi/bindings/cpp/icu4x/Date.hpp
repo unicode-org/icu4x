@@ -13,6 +13,8 @@
 #include <cstdlib>
 #include "Calendar.hpp"
 #include "CalendarError.hpp"
+#include "DateFields.hpp"
+#include "DateFromFieldsOptions.hpp"
 #include "IsoDate.hpp"
 #include "Rfc9557ParseError.hpp"
 #include "Weekday.hpp"
@@ -25,6 +27,9 @@ namespace capi {
 
     typedef struct icu4x_Date_from_iso_in_calendar_mv1_result {union {icu4x::capi::Date* ok; icu4x::capi::CalendarError err;}; bool is_ok;} icu4x_Date_from_iso_in_calendar_mv1_result;
     icu4x_Date_from_iso_in_calendar_mv1_result icu4x_Date_from_iso_in_calendar_mv1(int32_t iso_year, uint8_t iso_month, uint8_t iso_day, const icu4x::capi::Calendar* calendar);
+
+    typedef struct icu4x_Date_from_fields_in_calendar_mv1_result {union {icu4x::capi::Date* ok; icu4x::capi::CalendarError err;}; bool is_ok;} icu4x_Date_from_fields_in_calendar_mv1_result;
+    icu4x_Date_from_fields_in_calendar_mv1_result icu4x_Date_from_fields_in_calendar_mv1(icu4x::capi::DateFields fields, icu4x::capi::DateFromFieldsOptions options, const icu4x::capi::Calendar* calendar);
 
     typedef struct icu4x_Date_from_codes_in_calendar_mv1_result {union {icu4x::capi::Date* ok; icu4x::capi::CalendarError err;}; bool is_ok;} icu4x_Date_from_codes_in_calendar_mv1_result;
     icu4x_Date_from_codes_in_calendar_mv1_result icu4x_Date_from_codes_in_calendar_mv1(icu4x::diplomat::capi::DiplomatStringView era_code, int32_t year, icu4x::diplomat::capi::DiplomatStringView month_code, uint8_t day, const icu4x::capi::Calendar* calendar);
@@ -79,6 +84,13 @@ inline icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarErro
     auto result = icu4x::capi::icu4x_Date_from_iso_in_calendar_mv1(iso_year,
         iso_month,
         iso_day,
+        calendar.AsFFI());
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::Date>>(std::unique_ptr<icu4x::Date>(icu4x::Date::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError>(icu4x::diplomat::Err<icu4x::CalendarError>(icu4x::CalendarError::FromFFI(result.err)));
+}
+
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError> icu4x::Date::from_fields_in_calendar(icu4x::DateFields fields, icu4x::DateFromFieldsOptions options, const icu4x::Calendar& calendar) {
+    auto result = icu4x::capi::icu4x_Date_from_fields_in_calendar_mv1(fields.AsFFI(),
+        options.AsFFI(),
         calendar.AsFFI());
     return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::Date>>(std::unique_ptr<icu4x::Date>(icu4x::Date::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError>(icu4x::diplomat::Err<icu4x::CalendarError>(icu4x::CalendarError::FromFFI(result.err)));
 }

@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::unstable::errors::ffi::CalendarError;
 use ffi::IsoWeekOfYear;
+use tinystr::TinyAsciiStr;
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
@@ -10,6 +12,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use alloc::sync::Arc;
     use core::fmt::Write;
+    use diplomat_runtime::DiplomatOption;
     use icu_calendar::Iso;
 
     use crate::unstable::calendar::ffi::Calendar;
@@ -173,6 +176,38 @@ pub mod ffi {
         }
     }
 
+    #[diplomat::rust_link(icu::calendar::options::DateFromFieldsOptions, Struct)]
+    pub struct DateFromFieldsOptions {
+        pub overflow: DiplomatOption<DateOverflow>,
+        pub missing_fields_strategy: DiplomatOption<DateMissingFieldsStrategy>,
+    }
+
+    #[diplomat::rust_link(icu::calendar::types::DateFields, Struct)]
+    pub struct DateFields<'a> {
+        pub era: DiplomatOption<&'a DiplomatStr>,
+        pub era_year: DiplomatOption<i32>,
+        pub extended_year: DiplomatOption<i32>,
+        pub month_code: DiplomatOption<&'a DiplomatStr>,
+        pub ordinal_month: DiplomatOption<u8>,
+        pub day: DiplomatOption<u8>,
+    }
+
+    #[diplomat::enum_convert(icu_calendar::options::Overflow, needs_wildcard)]
+    #[diplomat::rust_link(icu::calendar::options::Overflow, Enum)]
+    #[non_exhaustive]
+    pub enum DateOverflow {
+        Constrain,
+        Reject,
+    }
+
+    #[diplomat::enum_convert(icu_calendar::options::MissingFieldsStrategy, needs_wildcard)]
+    #[diplomat::rust_link(icu::calendar::options::MissingFieldsStrategy, Enum)]
+    #[non_exhaustive]
+    pub enum DateMissingFieldsStrategy {
+        Reject,
+        Ecma,
+    }
+
     #[diplomat::opaque]
     #[diplomat::transparent_convert]
     /// An ICU4X Date object capable of containing a date for any calendar.
@@ -195,6 +230,22 @@ pub mod ffi {
             Ok(Box::new(Date(
                 icu_calendar::Date::try_new_iso(iso_year, iso_month, iso_day)?.to_calendar(cal),
             )))
+        }
+
+        /// Creates a new [`Date`] from the given fields, which are interpreted in the given calendar system.
+        #[diplomat::rust_link(icu::calendar::Date::try_from_fields, FnInStruct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        pub fn from_fields_in_calendar(
+            fields: DateFields,
+            options: DateFromFieldsOptions,
+            calendar: &Calendar,
+        ) -> Result<Box<Date>, CalendarError> {
+            let cal = calendar.0.clone();
+            Ok(Box::new(Date(icu_calendar::Date::try_from_fields(
+                fields.try_into()?,
+                options.into(),
+                cal,
+            )?)))
         }
 
         /// Creates a new [`Date`] from the given codes, which are interpreted in the given calendar system
@@ -423,5 +474,41 @@ impl From<icu_calendar::types::IsoWeekOfYear> for IsoWeekOfYear {
             week_number,
             iso_year,
         }
+    }
+}
+
+impl From<ffi::DateFromFieldsOptions> for icu_calendar::options::DateFromFieldsOptions {
+    fn from(other: ffi::DateFromFieldsOptions) -> Self {
+        let mut options = Self::default();
+
+        options.overflow = other.overflow.into_converted_option();
+        options.missing_fields_strategy = other.missing_fields_strategy.into_converted_option();
+
+        options
+    }
+}
+
+impl<'a> TryFrom<ffi::DateFields<'a>> for icu_calendar::types::DateFields<'a> {
+    type Error = CalendarError;
+    fn try_from(other: ffi::DateFields<'a>) -> Result<Self, CalendarError> {
+        let mut fields = Self::default();
+        if let Some(era) = other.era.into_option() {
+            let Ok(s) = core::str::from_utf8(era) else {
+                return Err(CalendarError::UnknownEra);
+            };
+            fields.era = Some(s);
+        }
+        fields.era_year = other.era_year.into();
+        fields.extended_year = other.extended_year.into();
+        if let Some(month_code) = other.month_code.into_option() {
+            let Ok(code) = TinyAsciiStr::try_from_utf8(month_code) else {
+                return Err(CalendarError::UnknownMonthCode);
+            };
+            fields.month_code = Some(icu_calendar::types::MonthCode(code));
+        }
+        fields.ordinal_month = other.ordinal_month.into();
+        fields.day = other.day.into();
+
+        Ok(fields)
     }
 }

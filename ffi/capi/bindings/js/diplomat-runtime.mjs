@@ -329,7 +329,7 @@ export class DiplomatBuf {
         this.size = size;
         this.free = free;
         this.leak = () => { };
-        this.releaseToGarbageCollector = () => DiplomatBufferFinalizer.register(this, this.free);
+        this.releaseToGarbageCollector = () => DiplomatBufferFinalizer.register(this, () => this.free());
     }
 
     splat() {
@@ -367,7 +367,7 @@ export class DiplomatWriteBuf {
     }
 
     releaseToGarbageCollector() {
-        DiplomatBufferFinalizer.register(this, this.free);
+        DiplomatBufferFinalizer.register(this, () => this.free());
     }
 
     readString8() {
@@ -634,7 +634,7 @@ export class CleanupArena {
                 edgeArray.push(self);
             }
         }
-        DiplomatBufferFinalizer.register(self, self.free);
+        DiplomatBufferFinalizer.register(self, () => self.free());
         return self;
     }
 
