@@ -125,10 +125,20 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     }
 
     fn from_rata_die(&self, date: RataDie) -> Self::DateInner {
-        match calendrical_calculations::gregorian::gregorian_from_fixed(date) {
-            Err(I32CastError::BelowMin) => ArithmeticDate::min_date(),
+        let iso = match calendrical_calculations::gregorian::gregorian_from_fixed(date) {
+            Err(I32CastError::BelowMin) => ArithmeticDate::<AbstractGregorian<IsoEra>>::min_date(),
             Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
             Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
+        };
+
+        if iso.year.checked_sub(Y::EXTENDED_YEAR_OFFSET).is_none() {
+            if Y::EXTENDED_YEAR_OFFSET < 0 {
+                ArithmeticDate::new_unchecked(i32::MIN - Y::EXTENDED_YEAR_OFFSET, 1, 1)
+            } else {
+                ArithmeticDate::new_unchecked(i32::MAX - Y::EXTENDED_YEAR_OFFSET, 12, 31)
+            }
+        } else {
+            iso
         }
     }
 

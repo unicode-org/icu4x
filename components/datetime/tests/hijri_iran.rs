@@ -57,46 +57,54 @@ impl Rules for IranTestSighting {
         let l = true;
         use calendrical_calculations::gregorian::fixed_from_gregorian as gregorian;
         match extended_year {
-            1411 => HijriYearData::new(
+            1411 => HijriYearData::try_new(
                 extended_year,
                 gregorian(1990, 7, 24),
                 [l, l, s, l, s, l, s, l, s, l, s, s],
-            ),
-            1412 => HijriYearData::new(
+            )
+            .unwrap(),
+            1412 => HijriYearData::try_new(
                 extended_year,
                 gregorian(1991, 7, 13),
                 [l, l, s, l, s, l, s, l, s, l, l, s],
-            ),
-            1413 => HijriYearData::new(
+            )
+            .unwrap(),
+            1413 => HijriYearData::try_new(
                 extended_year,
                 gregorian(1992, 7, 2),
                 [l, s, l, s, s, l, s, l, s, l, l, l],
-            ),
-            1414 => HijriYearData::new(
+            )
+            .unwrap(),
+            1414 => HijriYearData::try_new(
                 extended_year,
                 gregorian(1993, 6, 22),
                 [s, l, s, s, l, s, l, s, s, l, l, l],
-            ),
-            1415 => HijriYearData::new(
+            )
+            .unwrap(),
+            1415 => HijriYearData::try_new(
                 extended_year,
                 gregorian(1994, 6, 11),
                 [l, l, s, s, s, l, s, s, s, l, l, l],
-            ),
-            1416 => HijriYearData::new(
+            )
+            .unwrap(),
+            1416 => HijriYearData::try_new(
                 extended_year,
                 gregorian(1995, 5, 31),
                 [l, l, s, l, s, s, l, s, s, l, l, s],
-            ),
-            1417 => HijriYearData::new(
+            )
+            .unwrap(),
+            1417 => HijriYearData::try_new(
                 extended_year,
                 gregorian(1996, 5, 19),
                 [l, l, l, s, s, l, s, l, s, l, s, s],
-            ),
-            1418 => HijriYearData::new(
+            )
+            .unwrap(),
+            1418 => HijriYearData::try_new(
                 extended_year,
                 gregorian(1997, 5, 8),
                 [l, l, s, l, l, s, l, s, s, l, l, s],
-            ),
+            )
+            .unwrap(),
             _ => TabularAlgorithm::new(
                 TabularAlgorithmLeapYears::TypeII,
                 TabularAlgorithmEpoch::Friday,

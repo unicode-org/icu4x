@@ -34,7 +34,7 @@ impl ChineseBasedCache<'_> {
         Some(LunarChineseYearData {
             packed: self
                 .data
-                .get(usize::try_from(related_iso - self.first_related_iso_year).ok()?)
+                .get(usize::try_from(related_iso.checked_sub(self.first_related_iso_year)?).ok()?)
                 .copied()?,
             related_iso,
         })
