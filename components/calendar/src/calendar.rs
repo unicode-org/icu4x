@@ -61,6 +61,8 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
             missing_fields_strategy: Some(MissingFieldsStrategy::Reject),
         };
         self.from_fields(fields, options).map_err(|e| match e {
+            // This error mapping is sufficiently bespoke to try_new_from_codes
+            // that it lives here and not in a From impl.
             DateFromFieldsError::Range(range_error) => {
                 if range_error.field == "month" {
                     DateError::UnknownMonthCode(month_code)
@@ -69,9 +71,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
                 }
             }
             DateFromFieldsError::UnknownEra => DateError::UnknownEra,
-            DateFromFieldsError::InvalidMonthCode => {
-                DateError::UnknownMonthCode(month_code)
-            }
+            DateFromFieldsError::InvalidMonthCode => DateError::UnknownMonthCode(month_code),
             DateFromFieldsError::UnknownMonthCodeForCalendar(month_code) => {
                 DateError::UnknownMonthCode(month_code)
             }
