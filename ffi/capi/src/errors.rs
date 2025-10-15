@@ -72,6 +72,24 @@ pub mod ffi {
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
+    #[diplomat::rust_link(icu::calendar::RangeError, Struct, compact)]
+    #[diplomat::rust_link(icu::calendar::DateError, Enum, compact)]
+    #[cfg(feature = "calendar")]
+    #[non_exhaustive]
+    pub enum CalendarDateFromFieldsError {
+        Unknown = 0x00,
+        OutOfRange = 0x01,
+        UnknownEra = 0x02,
+        InvalidMonthCode = 0x03,
+        UnknownMonthCodeForCalendar = 0x04,
+        UnknownMonthCodeForYear = 0x05,
+        InconsistentYear = 0x06,
+        InconsistentMonth = 0x07,
+        NotEnoughFields = 0x08,
+    }
+
+    #[derive(Debug, PartialEq, Eq)]
+    #[repr(C)]
     #[diplomat::rust_link(icu::calendar::ParseError, Enum, compact)]
     #[diplomat::rust_link(icu::time::ParseError, Enum, compact)]
     #[cfg(feature = "calendar")]
@@ -174,6 +192,27 @@ impl From<icu_calendar::DateError> for CalendarError {
             icu_calendar::DateError::Range { .. } => Self::OutOfRange,
             icu_calendar::DateError::UnknownEra => Self::UnknownEra,
             icu_calendar::DateError::UnknownMonthCode(..) => Self::UnknownMonthCode,
+            _ => Self::Unknown,
+        }
+    }
+}
+
+#[cfg(feature = "calendar")]
+impl From<icu_calendar::error::DateFromFieldsError> for CalendarDateFromFieldsError {
+    fn from(e: icu_calendar::error::DateFromFieldsError) -> Self {
+        match e {
+            icu_calendar::error::DateFromFieldsError::Range(_) => Self::OutOfRange,
+            icu_calendar::error::DateFromFieldsError::UnknownEra => Self::UnknownEra,
+            icu_calendar::error::DateFromFieldsError::InvalidMonthCode => Self::InvalidMonthCode,
+            icu_calendar::error::DateFromFieldsError::UnknownMonthCodeForCalendar => {
+                Self::UnknownMonthCodeForCalendar
+            }
+            icu_calendar::error::DateFromFieldsError::UnknownMonthCodeForYear => {
+                Self::UnknownMonthCodeForYear
+            }
+            icu_calendar::error::DateFromFieldsError::InconsistentYear => Self::InconsistentYear,
+            icu_calendar::error::DateFromFieldsError::InconsistentMonth => Self::InconsistentMonth,
+            icu_calendar::error::DateFromFieldsError::NotEnoughFields => Self::NotEnoughFields,
             _ => Self::Unknown,
         }
     }
