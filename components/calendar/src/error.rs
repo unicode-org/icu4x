@@ -325,16 +325,29 @@ impl From<UnknownEraError> for DateFromFieldsError {
     }
 }
 
-/// Internal narrow error type for functions that only fail on invalid month codes
-pub(crate) enum MonthCodeParseError {
-    InvalidMonthCode,
+/// An error when validating a month code.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Display)]
+#[non_exhaustive]
+pub enum MonthCodeParseError {
+    /// The month code had invalid syntax.
+    #[displaydoc("The month code had invalid syntax")]
+    InvalidSyntax,
+}
+
+impl From<MonthCodeParseError> for DateFromFieldsError {
+    #[inline]
+    fn from(value: MonthCodeParseError) -> Self {
+        match value {
+            MonthCodeParseError::InvalidSyntax => DateFromFieldsError::InvalidMonthCode,
+        }
+    }
 }
 
 impl From<MonthCodeParseError> for EcmaReferenceYearError {
     #[inline]
     fn from(value: MonthCodeParseError) -> Self {
         match value {
-            MonthCodeParseError::InvalidMonthCode => EcmaReferenceYearError::InvalidMonthCode,
+            MonthCodeParseError::InvalidSyntax => EcmaReferenceYearError::InvalidMonthCode,
         }
     }
 }
@@ -343,7 +356,7 @@ impl From<MonthCodeParseError> for MonthCodeError {
     #[inline]
     fn from(value: MonthCodeParseError) -> Self {
         match value {
-            MonthCodeParseError::InvalidMonthCode => MonthCodeError::InvalidMonthCode,
+            MonthCodeParseError::InvalidSyntax => MonthCodeError::InvalidMonthCode,
         }
     }
 }
@@ -433,15 +446,6 @@ impl From<RangeError> for DateError {
             max,
         }
     }
-}
-
-/// An error when validating a month code.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Display)]
-#[non_exhaustive]
-pub enum MonthCodeParseError {
-    /// The month code had invalid syntax.
-    #[displaydoc("The month code had invalid syntax")]
-    InvalidSyntax,
 }
 
 pub(crate) fn range_check_with_overflow<T: Ord + Into<i32> + Copy>(

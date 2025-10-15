@@ -8,7 +8,7 @@ use crate::error::{
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
-use crate::types::{DateDuration, DateDurationUnit, DateFields, DayOfYear, MonthCode, ValidMonthCode};
+use crate::types::{DateDuration, DateDurationUnit, DateFields, DayOfYear, ValidMonthCode};
 use crate::{types, Calendar, DateError, RangeError};
 use core::cmp::Ordering;
 use core::convert::TryInto;
@@ -16,7 +16,6 @@ use core::fmt::Debug;
 use core::hash::{Hash, Hasher};
 use core::marker::PhantomData;
 use core::ops::RangeInclusive;
-use tinystr::tinystr;
 
 /// The range ±2²⁷. We use i32::MIN since it is -2³¹
 const VALID_YEAR_RANGE: RangeInclusive<i32> = (i32::MIN / 16)..=-(i32::MIN / 16);
@@ -167,7 +166,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
     /// day for the given month.
     fn reference_year_from_month_day(
         &self,
-        month_code: MonthCode,
+        month_code: ValidMonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError>;
 
@@ -178,10 +177,10 @@ pub(crate) trait DateFieldsResolver: Calendar {
     fn ordinal_month_from_code(
         &self,
         _year: &Self::YearInfo,
-        month_code: MonthCode,
+        month_code: ValidMonthCode,
         _options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
-        match month_code.try_parse()? {
+        match month_code.to_tuple() {
             (month_number @ 1..=12, false) => Ok(month_number),
             _ => Err(MonthCodeError::UnknownMonthCodeForCalendar),
         }
@@ -406,7 +405,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], ~constrain~)).
         let base_month_code = cal
             .month_code_from_ordinal(&self.year, self.month)
-            .standard_code;
+            .valid_standard_code;
         let constrain = DateFromFieldsOptions {
             overflow: Some(Overflow::Constrain),
             ..Default::default()
@@ -503,26 +502,25 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         // 1. Let _y0_ be _parts_.[[Year]] + _duration_.[[Years]].
         let y0 = cal.year_info_from_extended(duration.add_years_to(self.year.to_extended_year()));
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], _overflow_)).
-        let base_month_code = cal
-            .month_code_from_ordinal(&self.year, self.month)
-            .standard_code;
+        let base_month = cal
+            .month_code_from_ordinal(&self.year, self.month);
         let m0 = cal
             .ordinal_month_from_code(
                 &y0,
-                base_month_code,
+                base_month.valid_standard_code,
                 DateFromFieldsOptions::from_add_options(options),
             )
             .map_err(|e| {
                 // TODO: Use a narrower error type here. For now, convert into DateError.
                 match e {
                     MonthCodeError::InvalidMonthCode => {
-                        DateError::UnknownMonthCode(base_month_code)
+                        DateError::UnknownMonthCode(base_month.standard_code)
                     }
                     MonthCodeError::UnknownMonthCodeForCalendar => {
-                        DateError::UnknownMonthCode(base_month_code)
+                        DateError::UnknownMonthCode(base_month.standard_code)
                     }
                     MonthCodeError::UnknownMonthCodeForYear => {
-                        DateError::UnknownMonthCode(base_month_code)
+                        DateError::UnknownMonthCode(base_month.standard_code)
                     }
                 }
             })?;
@@ -716,6 +714,8 @@ where
             return Err(DateFromFieldsError::NotEnoughFields);
         }
 
+        let mut valid_month_code = None;
+
         let year = {
             // NOTE: The year/extendedyear range check is important to avoid arithmetic
             // overflow in `year_info_from_era` and `year_info_from_extended`. It
@@ -735,7 +735,9 @@ where
                         MissingFieldsStrategy::Ecma => {
                             match (fields.month_code, fields.ordinal_month) {
                                 (Some(month_code), None) => {
-                                    cal.reference_year_from_month_day(month_code, day)?
+                                    let validated = month_code.validated()?;
+                                    valid_month_code = Some(validated);
+                                    cal.reference_year_from_month_day(validated, day)?
                                 }
                                 _ => return Err(DateFromFieldsError::NotEnoughFields),
                             }
@@ -763,7 +765,11 @@ where
         let month = {
             match fields.month_code {
                 Some(month_code) => {
-                    let computed_month = cal.ordinal_month_from_code(&year, month_code, options)?;
+                    let validated = match valid_month_code {
+                        Some(validated) => validated,
+                        None => month_code.validated()?,
+                    };
+                    let computed_month = cal.ordinal_month_from_code(&year, validated, options)?;
                     if let Some(ordinal_month) = fields.ordinal_month {
                         if computed_month != ordinal_month {
                             return Err(DateFromFieldsError::InconsistentMonth);

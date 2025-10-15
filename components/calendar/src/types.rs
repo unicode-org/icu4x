@@ -212,7 +212,7 @@ impl MonthCode {
         }
         Ok(ValidMonthCode {
             number: (b1 - b'0') * 10 + b2 - b'0',
-            is_leap
+            is_leap,
         })
     }
 
@@ -294,42 +294,48 @@ pub struct ValidMonthCode {
 
 impl ValidMonthCode {
     /// Create a new ValidMonthCode without checking that the number is between 0 and 99
+    #[inline]
     pub(crate) fn new_unchecked(number: u8, is_leap: bool) -> Self {
         debug_assert!(number <= 99);
-        Self {
-            number, is_leap
-        }
+        Self { number, is_leap }
     }
 
     /// Returns the month number according to the month code.
-    /// 
+    ///
     /// This is NOT the same as the ordinal month!
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::cal::Hebrew;
-    /// 
+    ///
     /// let hebrew_date = Date::try_new_iso(2024, 7, 1).unwrap().to_calendar(Hebrew);
     /// let month_info = hebrew_date.month();
-    /// 
+    ///
     /// // Hebrew year 5784 was a leap year, so the ordinal month and month number diverge.
     /// assert_eq!(month_info.ordinal, 10);
     /// assert_eq!(month_info.valid_month_code.number(), 9);
     /// ```
+    #[inline]
     pub fn number(self) -> u8 {
         self.number
     }
 
     /// Returns whether the month is a leap month.
-    /// 
+    ///
     /// This is true for intercalary months in [`Hebrew`] and [`LunarChinese`].
-    /// 
+    ///
     /// [`Hebrew`]: crate::cal::Hebrew
     /// [`LunarChinese`]: crate::cal::LunarChinese
+    #[inline]
     pub fn is_leap(self) -> bool {
         self.is_leap
+    }
+
+    #[inline]
+    pub(crate) fn to_tuple(self) -> (u8, bool) {
+        (self.number, self.is_leap)
     }
 
     pub(crate) fn to_month_code(self) -> MonthCode {
@@ -339,7 +345,10 @@ impl ValidMonthCode {
             MonthCode::new_normal(self.number)
         };
         option.unwrap_or_else(|| {
-            debug_assert!(false, "ValidMonthCode invariants guarantee conversion to MonthCode");
+            debug_assert!(
+                false,
+                "ValidMonthCode invariants guarantee conversion to MonthCode"
+            );
             MonthCode::SENTINEL
         })
     }
@@ -389,15 +398,12 @@ impl MonthInfo {
     /// if there are leap months in the year, rather it is associated with the Nth month of a "regular"
     /// year. There may be multiple month Ns in a year
     pub fn month_number(self) -> u8 {
-        self.standard_code
-            .parsed()
-            .map(|(i, _)| i)
-            .unwrap_or(self.ordinal)
+        self.valid_standard_code.number()
     }
 
     /// Get whether the month is a leap month
     pub fn is_leap(self) -> bool {
-        self.standard_code.parsed().map(|(_, l)| l).unwrap_or(false)
+        self.valid_standard_code.is_leap()
     }
 }
 

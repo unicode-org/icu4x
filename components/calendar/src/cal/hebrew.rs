@@ -141,10 +141,11 @@ impl DateFieldsResolver for Hebrew {
 
     fn reference_year_from_month_day(
         &self,
-        month_code: types::MonthCode,
+        month_code: types::ValidMonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
-        month_code.try_parse()?; // return InvalidMonthCode
+        // Match statements are more readable with strings.
+        let month_code = month_code.to_month_code();
         let month_code_str = month_code.0.as_str();
         // December 31, 1972 occurs on 4th month, 26th day, 5733 AM
         let hebrew_year = match month_code_str {
@@ -185,11 +186,12 @@ impl DateFieldsResolver for Hebrew {
     fn ordinal_month_from_code(
         &self,
         year: &Self::YearInfo,
-        month_code: types::MonthCode,
+        month_code: types::ValidMonthCode,
         options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
+        // Match statements are more readable with strings.
+        let month_code = month_code.to_month_code();
         let is_leap_year = year.keviyah.is_leap();
-        month_code.try_parse()?; // return InvalidMonthCode
         let month_code_str = month_code.0.as_str();
         let ordinal_month = if is_leap_year {
             match month_code_str {
@@ -250,7 +252,7 @@ impl DateFieldsResolver for Hebrew {
         let valid_month_code = match (ordinal_month.cmp(&6), is_leap_year) {
             (Ordering::Less, _) | (_, false) => ValidMonthCode::new_unchecked(ordinal_month, false),
             (Ordering::Equal, true) => ValidMonthCode::new_unchecked(5, true),
-            (Ordering::Greater, true) => ValidMonthCode::new_unchecked(ordinal_month - 1, false)
+            (Ordering::Greater, true) => ValidMonthCode::new_unchecked(ordinal_month - 1, false),
         };
         let month_code = valid_month_code.to_month_code();
 

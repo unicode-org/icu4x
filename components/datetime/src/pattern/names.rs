@@ -3679,9 +3679,11 @@ impl RawDateTimeNamesBorrowed<'_> {
             .month_names
             .get_with_variables(month_name_length)
             .ok_or(GetNameForMonthError::NotLoaded)?;
-        let Some((month_number, is_leap)) = code.parsed() else {
+        let Ok(valid_month_code) = code.validated() else {
             return Err(GetNameForMonthError::InvalidMonthCode);
         };
+        let month_number = valid_month_code.number();
+        let is_leap = valid_month_code.is_leap();
         let Some(month_index) = month_number.checked_sub(1) else {
             return Err(GetNameForMonthError::InvalidMonthCode);
         };
