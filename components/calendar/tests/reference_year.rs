@@ -320,18 +320,3 @@ fn test_reference_year_persian() {
 fn test_reference_year_roc() {
     test_reference_year_impl(Roc, gregorian_md_condition)
 }
-
-/// <https://github.com/unicode-org/icu4x/issues/7032>
-#[test]
-fn test_constrained_month_regression_7032() {
-    let mut fields = DateFields::default();
-    fields.era = Some("ah");
-    fields.era_year = Some(1600);
-    fields.day = Some(12.try_into().unwrap());
-    fields.ordinal_month = Some(30.try_into().unwrap());
-    let mut options = DateFromFieldsOptions::default();
-    options.overflow = Some(Overflow::Constrain);
-    options.missing_fields_strategy = Some(MissingFieldsStrategy::Ecma);
-    let uaq = Hijri::new_umm_al_qura();
-    let _ = uaq.from_fields(fields, options).unwrap();
-}

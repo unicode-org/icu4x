@@ -830,4 +830,22 @@ mod tests {
         Date::try_new_iso(2024, 1, 0).unwrap_err();
         Date::try_new_iso(2024, 0, 0).unwrap_err();
     }
+
+    /// <https://github.com/unicode-org/icu4x/issues/7032>
+    #[test]
+    fn test_constrained_month_regression_7032() {
+        let fields = DateFields {
+            era: Some("ah"),
+            era_year: Some(1600),
+            day: Some(12.try_into().unwrap()),
+            ordinal_month: Some(30.try_into().unwrap()),
+            ..Default::default()
+        };
+        let options = DateFromFieldsOptions {
+            overflow: Some(Overflow::Constrain),
+            missing_fields_strategy: Some(MissingFieldsStrategy::Ecma),
+        };
+        let uaq = crate::cal::Hijri::new_umm_al_qura();
+        let _ = uaq.from_fields(fields, options).unwrap();
+    }
 }
