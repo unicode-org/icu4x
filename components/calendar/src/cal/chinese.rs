@@ -13,7 +13,7 @@ use crate::error::{
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::provider::chinese_based::PackedChineseBasedYearInfo;
-use crate::types::{MonthCode, MonthInfo};
+use crate::types::{MonthCode, MonthInfo, ValidMonthCode};
 use crate::AsCalendar;
 use crate::{types, Calendar, Date};
 use calendrical_calculations::chinese_based::{
@@ -975,25 +975,11 @@ impl LunarChineseYearData {
         // ordinally `month 2`, zero-indexed)
         // 14 is a sentinel value
         let leap_month = self.leap_month().unwrap_or(14);
-        let code_inner = if leap_month == month {
+        let valid_month_code = if leap_month == month {
             // Month cannot be 1 because a year cannot have a leap month before the first actual month,
             // and the maximum num of months ina leap year is 13.
             debug_assert!((2..=13).contains(&month));
-            match month {
-                2 => tinystr!(4, "M01L"),
-                3 => tinystr!(4, "M02L"),
-                4 => tinystr!(4, "M03L"),
-                5 => tinystr!(4, "M04L"),
-                6 => tinystr!(4, "M05L"),
-                7 => tinystr!(4, "M06L"),
-                8 => tinystr!(4, "M07L"),
-                9 => tinystr!(4, "M08L"),
-                10 => tinystr!(4, "M09L"),
-                11 => tinystr!(4, "M10L"),
-                12 => tinystr!(4, "M11L"),
-                13 => tinystr!(4, "M12L"),
-                _ => tinystr!(4, "und"),
-            }
+            ValidMonthCode::new_unchecked(month - 1, true)
         } else {
             let mut adjusted_ordinal = month;
             if month > leap_month {
@@ -1005,27 +991,14 @@ impl LunarChineseYearData {
                 adjusted_ordinal -= 1;
             }
             debug_assert!((1..=12).contains(&adjusted_ordinal));
-            match adjusted_ordinal {
-                1 => tinystr!(4, "M01"),
-                2 => tinystr!(4, "M02"),
-                3 => tinystr!(4, "M03"),
-                4 => tinystr!(4, "M04"),
-                5 => tinystr!(4, "M05"),
-                6 => tinystr!(4, "M06"),
-                7 => tinystr!(4, "M07"),
-                8 => tinystr!(4, "M08"),
-                9 => tinystr!(4, "M09"),
-                10 => tinystr!(4, "M10"),
-                11 => tinystr!(4, "M11"),
-                12 => tinystr!(4, "M12"),
-                _ => tinystr!(4, "und"),
-            }
+            ValidMonthCode::new_unchecked(adjusted_ordinal, false)
         };
-        let code = MonthCode(code_inner);
+        let month_code = valid_month_code.to_month_code();
         MonthInfo {
             ordinal: month,
-            standard_code: code,
-            formatting_code: code,
+            valid_standard_code: valid_month_code,
+            standard_code: month_code,
+            formatting_code: month_code,
         }
     }
 

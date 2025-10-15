@@ -8,7 +8,7 @@ use crate::error::{
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
-use crate::types::{DateDuration, DateDurationUnit, DateFields, DayOfYear, MonthCode};
+use crate::types::{DateDuration, DateDurationUnit, DateFields, DayOfYear, MonthCode, ValidMonthCode};
 use crate::{types, Calendar, DateError, RangeError};
 use core::cmp::Ordering;
 use core::convert::TryInto;
@@ -198,17 +198,13 @@ pub(crate) trait DateFieldsResolver: Calendar {
         _year: &Self::YearInfo,
         ordinal_month: u8,
     ) -> types::MonthInfo {
-        let code = match MonthCode::new_normal(ordinal_month) {
-            Some(code) => code,
-            None => {
-                debug_assert!(false, "ordinal month out of range!");
-                MonthCode(tinystr!(4, "und"))
-            }
-        };
+        let valid_month_code = ValidMonthCode::new_unchecked(ordinal_month, false);
+        let month_code = valid_month_code.to_month_code();
         types::MonthInfo {
             ordinal: ordinal_month,
-            standard_code: code,
-            formatting_code: code,
+            valid_standard_code: valid_month_code,
+            standard_code: month_code,
+            formatting_code: month_code,
         }
     }
 }

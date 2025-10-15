@@ -435,6 +435,15 @@ impl From<RangeError> for DateError {
     }
 }
 
+/// An error when validating a month code.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Display)]
+#[non_exhaustive]
+pub enum MonthCodeParseError {
+    /// The month code had invalid syntax.
+    #[displaydoc("The month code had invalid syntax")]
+    InvalidSyntax,
+}
+
 pub(crate) fn range_check_with_overflow<T: Ord + Into<i32> + Copy>(
     value: T,
     field: &'static str,
