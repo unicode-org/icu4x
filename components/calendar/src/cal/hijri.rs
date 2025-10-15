@@ -32,7 +32,9 @@ mod ummalqura_data;
 /// The [Hijri Calendar](https://en.wikipedia.org/wiki/Islamic_calendar)
 ///
 /// There are many variants of this calendar, using different lunar observations or calculations
-/// (see [`Rules`]).
+/// (see [`Rules`]). Currently, [`Rules`] is an unstable trait, but some of its implementors
+/// are stable, and can be constructed via the various `Hijri::new_*` constructors. Please comment on [this issue](https://github.com/unicode-org/icu4x/issues/6962)
+/// if you would like to see this the ability to implement custom `Rules` stabilized.
 ///
 /// This type supports only variants where months are either 29 or 30 days.
 ///
