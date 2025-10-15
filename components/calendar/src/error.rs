@@ -326,19 +326,25 @@ impl From<UnknownEraError> for DateFromFieldsError {
 }
 
 /// Internal narrow error type for functions that only fail on invalid month codes
-pub(crate) struct InvalidMonthCodeError;
+pub(crate) enum MonthCodeParseError {
+    InvalidMonthCode,
+}
 
-impl From<InvalidMonthCodeError> for EcmaReferenceYearError {
+impl From<MonthCodeParseError> for EcmaReferenceYearError {
     #[inline]
-    fn from(_value: InvalidMonthCodeError) -> Self {
-        EcmaReferenceYearError::InvalidMonthCode
+    fn from(value: MonthCodeParseError) -> Self {
+        match value {
+            MonthCodeParseError::InvalidMonthCode => EcmaReferenceYearError::InvalidMonthCode,
+        }
     }
 }
 
-impl From<InvalidMonthCodeError> for MonthCodeError {
+impl From<MonthCodeParseError> for MonthCodeError {
     #[inline]
-    fn from(_value: InvalidMonthCodeError) -> Self {
-        MonthCodeError::InvalidMonthCode
+    fn from(value: MonthCodeParseError) -> Self {
+        match value {
+            MonthCodeParseError::InvalidMonthCode => MonthCodeError::InvalidMonthCode,
+        }
     }
 }
 
