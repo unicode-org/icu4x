@@ -76,6 +76,14 @@ impl DateFieldsResolver for Ethiopian {
     // Coptic year
     type YearInfo = i32;
 
+    fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8 {
+        Coptic::days_in_provided_month(year, month)
+    }
+
+    fn months_in_provided_year(year: Self::YearInfo) -> u8 {
+        Coptic::months_in_provided_year(year)
+    }
+
     #[inline]
     fn year_info_from_era(
         &self,
@@ -187,7 +195,7 @@ impl Calendar for Ethiopian {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let coptic_year = date.0 .0.extended_year();
+        let coptic_year = date.0 .0.year;
         let extended_year = if self.0 == EthiopianEraStyle::AmeteAlem {
             coptic_year - AMETE_ALEM_OFFSET
         } else {

@@ -3,9 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::iso::{IsoDateInner, IsoEra};
-use crate::calendar_arithmetic::{
-    ArithmeticDate, ArithmeticDateBuilder, CalendarArithmetic, DateFieldsResolver,
-};
+use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -44,7 +42,15 @@ impl ArithmeticDate<AbstractGregorian<IsoEra>> {
     }
 }
 
-impl CalendarArithmetic for AbstractGregorian<IsoEra> {
+pub(crate) const REFERENCE_YEAR: i32 = 1972;
+#[cfg(test)]
+pub(crate) const LAST_DAY_OF_REFERENCE_YEAR: RataDie =
+    calendrical_calculations::gregorian::day_before_year(REFERENCE_YEAR + 1);
+
+impl<Y: GregorianYears> DateFieldsResolver for AbstractGregorian<Y> {
+    // Gregorian year
+    type YearInfo = i32;
+
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
         // https://www.youtube.com/watch?v=J9KijLyP-yg&t=1394s
         if month == 2 {
@@ -57,36 +63,6 @@ impl CalendarArithmetic for AbstractGregorian<IsoEra> {
     fn months_in_provided_year(_: i32) -> u8 {
         12
     }
-
-    fn provided_year_is_leap(year: i32) -> bool {
-        calendrical_calculations::gregorian::is_leap_year(year)
-    }
-
-    fn last_month_day_in_provided_year(_year: i32) -> (u8, u8) {
-        (12, 31)
-    }
-
-    fn days_in_provided_year(year: i32) -> u16 {
-        365 + calendrical_calculations::gregorian::is_leap_year(year) as u16
-    }
-
-    fn day_of_provided_year(year: Self::YearInfo, month: u8, day: u8) -> u16 {
-        calendrical_calculations::gregorian::days_before_month(year, month) + day as u16
-    }
-
-    fn date_from_provided_year_day(year: Self::YearInfo, year_day: u16) -> (u8, u8) {
-        calendrical_calculations::gregorian::year_day(year, year_day)
-    }
-}
-
-pub(crate) const REFERENCE_YEAR: i32 = 1972;
-#[cfg(test)]
-pub(crate) const LAST_DAY_OF_REFERENCE_YEAR: RataDie =
-    calendrical_calculations::gregorian::day_before_year(REFERENCE_YEAR + 1);
-
-impl<Y: GregorianYears> DateFieldsResolver for AbstractGregorian<Y> {
-    // Gregorian year
-    type YearInfo = i32;
 
     #[inline]
     fn year_info_from_era(
@@ -131,8 +107,10 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
 
     fn from_rata_die(&self, date: RataDie) -> Self::DateInner {
         let iso = match calendrical_calculations::gregorian::gregorian_from_fixed(date) {
-            Err(I32CastError::BelowMin) => ArithmeticDate::<AbstractGregorian<IsoEra>>::min_date(),
-            Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
+            Err(I32CastError::BelowMin) => {
+                ArithmeticDate::<AbstractGregorian<IsoEra>>::new_unchecked(i32::MIN, 1, 1)
+            }
+            Err(I32CastError::AboveMax) => ArithmeticDate::new_unchecked(i32::MAX, 12, 31),
             Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
         };
 
@@ -160,15 +138,15 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        date.months_in_year()
+        AbstractGregorian::<IsoEra>::months_in_provided_year(date.year)
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.days_in_year()
+        365 + calendrical_calculations::gregorian::is_leap_year(date.year) as u16
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        date.days_in_month()
+        AbstractGregorian::<IsoEra>::days_in_provided_month(date.year, date.month)
     }
 
     fn add(
@@ -195,7 +173,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        AbstractGregorian::<IsoEra>::provided_year_is_leap(date.year)
+        calendrical_calculations::gregorian::is_leap_year(date.year)
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
@@ -203,11 +181,14 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        date.day_of_month()
+        types::DayOfMonth(date.day)
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        date.day_of_year()
+        types::DayOfYear(
+            calendrical_calculations::gregorian::days_before_month(date.year, date.month)
+                + date.day as u16,
+        )
     }
 
     fn debug_name(&self) -> &'static str {

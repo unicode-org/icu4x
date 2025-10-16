@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
@@ -69,11 +69,13 @@ pub struct Julian;
 // The inner date type used for representing Date<Julian>
 pub struct JulianDateInner(pub(crate) ArithmeticDate<Julian>);
 
-impl CalendarArithmetic for Julian {
+impl DateFieldsResolver for Julian {
+    type YearInfo = i32;
+
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
         match month {
             4 | 6 | 9 | 11 => 30,
-            2 if Self::provided_year_is_leap(year) => 29,
+            2 if calendrical_calculations::julian::is_leap_year(year) => 29,
             2 => 28,
             1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
             _ => 0,
@@ -83,26 +85,6 @@ impl CalendarArithmetic for Julian {
     fn months_in_provided_year(_: i32) -> u8 {
         12
     }
-
-    fn provided_year_is_leap(year: i32) -> bool {
-        calendrical_calculations::julian::is_leap_year(year)
-    }
-
-    fn last_month_day_in_provided_year(_year: i32) -> (u8, u8) {
-        (12, 31)
-    }
-
-    fn days_in_provided_year(year: i32) -> u16 {
-        if Self::provided_year_is_leap(year) {
-            366
-        } else {
-            365
-        }
-    }
-}
-
-impl DateFieldsResolver for Julian {
-    type YearInfo = i32;
 
     #[inline]
     fn year_info_from_era(
@@ -159,8 +141,8 @@ impl Calendar for Julian {
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
         JulianDateInner(
             match calendrical_calculations::julian::julian_from_fixed(rd) {
-                Err(I32CastError::BelowMin) => ArithmeticDate::min_date(),
-                Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
+                Err(I32CastError::BelowMin) => ArithmeticDate::new_unchecked(i32::MIN, 1, 1),
+                Err(I32CastError::AboveMax) => ArithmeticDate::new_unchecked(i32::MAX, 12, 31),
                 Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
             },
         )
@@ -179,15 +161,19 @@ impl Calendar for Julian {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        date.0.months_in_year()
+        Self::months_in_provided_year(date.0.year)
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.0.days_in_year()
+        if self.is_in_leap_year(date) {
+            366
+        } else {
+            365
+        }
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        date.0.days_in_month()
+        Self::days_in_provided_month(date.0.year, date.0.month)
     }
 
     fn add(
@@ -211,7 +197,7 @@ impl Calendar for Julian {
     /// The calendar-specific year represented by `date`
     /// Julian has the same era scheme as Gregorian
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let extended_year = date.0.extended_year();
+        let extended_year = date.0.year;
         if extended_year > 0 {
             types::EraYear {
                 era: tinystr!(16, "ce"),
@@ -232,7 +218,7 @@ impl Calendar for Julian {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::provided_year_is_leap(date.0.year)
+        calendrical_calculations::julian::is_leap_year(date.0.year)
     }
 
     /// The calendar-specific month represented by `date`
@@ -242,11 +228,16 @@ impl Calendar for Julian {
 
     /// The calendar-specific day-of-month represented by `date`
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        date.0.day_of_month()
+        types::DayOfMonth(date.0.day)
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        date.0.day_of_year()
+        types::DayOfYear(
+            (1..date.0.month)
+                .map(|m| Self::days_in_provided_month(date.0.year, m) as u16)
+                .sum::<u16>()
+                + date.0.day as u16,
+        )
     }
 
     fn debug_name(&self) -> &'static str {
@@ -534,10 +525,9 @@ mod test {
 
     #[test]
     fn test_julian_leap_years() {
-        assert!(Julian::provided_year_is_leap(4));
-        assert!(Julian::provided_year_is_leap(0));
-        assert!(Julian::provided_year_is_leap(-4));
-
+        Date::try_new_julian(4, 2, 29).unwrap();
+        Date::try_new_julian(0, 2, 29).unwrap();
+        Date::try_new_julian(-4, 2, 29).unwrap();
         Date::try_new_julian(2020, 2, 29).unwrap();
     }
 }
