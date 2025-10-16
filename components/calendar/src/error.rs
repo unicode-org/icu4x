@@ -325,12 +325,9 @@ impl From<UnknownEraError> for DateFromFieldsError {
     }
 }
 
-/// An error when validating a month code.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Display)]
-#[non_exhaustive]
-pub enum MonthCodeParseError {
-    /// The month code had invalid syntax.
-    #[displaydoc("The month code had invalid syntax")]
+/// Internal narrow error type for functions that only fail on parsing month codes
+#[derive(Debug)]
+pub(crate) enum MonthCodeParseError {
     InvalidSyntax,
 }
 

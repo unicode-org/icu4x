@@ -188,7 +188,6 @@ impl MonthCode {
         }
     }
     /// Get the month number and whether or not it is leap from the month code
-    #[deprecated(since = "2.1", note = "use validated()")]
     pub fn parsed(self) -> Option<(u8, bool)> {
         let valid_month_code = self.validated().ok()?;
         Some((valid_month_code.number(), valid_month_code.is_leap()))
@@ -196,7 +195,7 @@ impl MonthCode {
 
     /// Validates the syntax and returns a [`ValidMonthCode`], from which the
     /// month number and leap month status can be read.
-    pub fn validated(self) -> Result<ValidMonthCode, MonthCodeParseError> {
+    pub(crate) fn validated(self) -> Result<ValidMonthCode, MonthCodeParseError> {
         // Match statements on tinystrs are annoying so instead
         // we calculate it from the bytes directly
 
@@ -285,7 +284,13 @@ impl fmt::Display for MonthCode {
 }
 
 /// A [`MonthCode`] that has been parsed into its internal representation.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases.
+/// </div>
 #[derive(Copy, Clone, Debug, PartialEq)]
+#[cfg_attr(not(feature = "unstable"), doc(hidden))] // public because of Rules traits
 pub struct ValidMonthCode {
     /// Month number between 0 and 99
     number: u8,
@@ -374,10 +379,10 @@ pub struct MonthInfo {
     ///
     /// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
     /// [`Date::try_from_fields`]: crate::Date::try_from_fields
-    pub valid_standard_code: ValidMonthCode,
-
-    /// Same as [`Self::valid_standard_code`] but without syntax invariants.
     pub standard_code: MonthCode,
+
+    /// Same as [`Self::standard_code`] but with invariants validated.
+    pub(crate) valid_standard_code: ValidMonthCode,
 
     /// A month code, useable for formatting.
     ///
