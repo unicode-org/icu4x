@@ -734,7 +734,7 @@ where
                         MissingFieldsStrategy::Ecma => {
                             match (fields.month_code, fields.ordinal_month) {
                                 (Some(month_code), None) => {
-                                    let validated = month_code.validated()?;
+                                    let validated = ValidMonthCode::from_bytes(month_code)?;
                                     valid_month_code = Some(validated);
                                     cal.reference_year_from_month_day(validated, day)?
                                 }
@@ -766,7 +766,7 @@ where
                 Some(month_code) => {
                     let validated = match valid_month_code {
                         Some(validated) => validated,
-                        None => month_code.validated()?,
+                        None => ValidMonthCode::from_bytes(month_code)?,
                     };
                     let computed_month = cal.ordinal_month_from_code(&year, validated, options)?;
                     if let Some(ordinal_month) = fields.ordinal_month {

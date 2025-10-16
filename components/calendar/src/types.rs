@@ -36,7 +36,7 @@ pub struct DateFields<'a> {
     /// refer to the same year.
     pub extended_year: Option<i32>,
     /// The [`MonthCode`] representing a valid month in this calendar year.
-    pub month_code: Option<MonthCode>,
+    pub month_code: Option<&'a [u8]>,
     /// See [`MonthInfo::ordinal`].
     ///
     /// If both this and [`Self::month_code`] are set, they must refer to
@@ -292,6 +292,15 @@ pub(crate) struct ValidMonthCode {
 }
 
 impl ValidMonthCode {
+    #[inline]
+    pub(crate) fn from_bytes(x: &[u8]) -> Result<Self, MonthCodeParseError> {
+        let Ok(s) = TinyStr4::try_from_utf8(x) else {
+            return Err(MonthCodeParseError::InvalidSyntax);
+        };
+
+        MonthCode(s).validated()
+    }
+
     /// Create a new ValidMonthCode without checking that the number is between 0 and 99
     #[inline]
     pub(crate) fn new_unchecked(number: u8, is_leap: bool) -> Self {
