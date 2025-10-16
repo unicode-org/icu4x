@@ -254,13 +254,18 @@ impl DateFieldsResolver for Hebrew {
             (Ordering::Equal, true) => ValidMonthCode::new_unchecked(5, true),
             (Ordering::Greater, true) => ValidMonthCode::new_unchecked(ordinal_month - 1, false),
         };
-        let month_code = valid_month_code.to_month_code();
+        let standard_code = valid_month_code.to_month_code();
+        let formatting_code = if is_leap_year && ordinal_month == 7 {
+            ValidMonthCode::new_unchecked(6, true).to_month_code() // M06L
+        } else {
+            standard_code
+        };
 
         types::MonthInfo {
             ordinal: ordinal_month,
             valid_standard_code: valid_month_code,
-            standard_code: month_code,
-            formatting_code: month_code,
+            standard_code,
+            formatting_code,
         }
     }
 }
