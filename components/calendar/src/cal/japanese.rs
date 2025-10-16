@@ -169,7 +169,11 @@ const REIWA_START: EraStartDate = EraStartDate {
 };
 
 impl GregorianYears for &'_ Japanese {
-    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, UnknownEraError> {
+    fn extended_from_era_year(
+        &self,
+        era: Option<&[u8]>,
+        year: i32,
+    ) -> Result<i32, UnknownEraError> {
         if let Ok(g) = CeBce.extended_from_era_year(era, year) {
             return Ok(g);
         }
@@ -179,28 +183,32 @@ impl GregorianYears for &'_ Japanese {
         };
 
         // Avoid linear search by trying well known eras
-        if era == "reiwa" {
+        if era == b"reiwa" {
             return Ok(year - 1 + REIWA_START.year);
-        } else if era == "heisei" {
+        } else if era == b"heisei" {
             return Ok(year - 1 + HEISEI_START.year);
-        } else if era == "showa" {
+        } else if era == b"showa" {
             return Ok(year - 1 + SHOWA_START.year);
-        } else if era == "taisho" {
+        } else if era == b"taisho" {
             return Ok(year - 1 + TAISHO_START.year);
-        } else if era == "meiji" {
+        } else if era == b"meiji" {
             return Ok(year - 1 + MEIJI_START.year);
         }
 
         let data = &self.eras.get().dates_to_eras;
 
         // Try to avoid linear search by binary searching for the year suffix
-        if let Some(start_year) = era.split('-').nth(1).and_then(|y| y.parse::<i32>().ok()) {
+        if let Some(start_year) = era
+            .split(|x| *x == b'-')
+            .nth(1)
+            .and_then(|y| core::str::from_utf8(y).ok()?.parse::<i32>().ok())
+        {
             if let Ok(index) = data.binary_search_by(|(d, _)| d.year.cmp(&start_year)) {
                 // There is a slight chance we hit the case where there are two eras in the same year
                 // There are a couple of rare cases of this, but it's not worth writing a range-based binary search
                 // to catch them since this is an optimization
                 #[expect(clippy::unwrap_used)] // binary search
-                if data.get(index).unwrap().1 == era {
+                if data.get(index).unwrap().1.as_bytes() == era {
                     return Ok(start_year + year - 1);
                 }
             }
@@ -210,7 +218,7 @@ impl GregorianYears for &'_ Japanese {
         let era_start = data
             .iter()
             .rev()
-            .find_map(|(s, e)| (e == era).then_some(s))
+            .find_map(|(s, e)| (e.as_bytes() == era).then_some(s))
             .ok_or(UnknownEraError)?;
         Ok(era_start.year + year - 1)
     }
@@ -341,7 +349,7 @@ impl Date<Japanese> {
     ) -> Result<Date<A>, DateError> {
         let extended = japanese_calendar
             .as_calendar()
-            .extended_from_era_year(Some(era), year)?;
+            .extended_from_era_year(Some(era.as_bytes()), year)?;
         Ok(Date::from_raw(
             JapaneseDateInner(ArithmeticDate::new_gregorian::<&Japanese>(
                 extended, month, day,
@@ -392,8 +400,8 @@ impl Date<JapaneseExtended> {
         day: u8,
         japanext_calendar: A,
     ) -> Result<Date<A>, DateError> {
-        let extended =
-            (&japanext_calendar.as_calendar().0).extended_from_era_year(Some(era), year)?;
+        let extended = (&japanext_calendar.as_calendar().0)
+            .extended_from_era_year(Some(era.as_bytes()), year)?;
         Ok(Date::from_raw(
             JapaneseExtendedDateInner(ArithmeticDate::new_gregorian::<&Japanese>(
                 extended, month, day,

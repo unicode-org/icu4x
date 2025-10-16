@@ -22,7 +22,8 @@ pub(crate) trait GregorianYears: Clone + core::fmt::Debug {
     // Positive if after 0 CE
     const EXTENDED_YEAR_OFFSET: i32 = 0;
 
-    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, UnknownEraError>;
+    fn extended_from_era_year(&self, era: Option<&[u8]>, year: i32)
+        -> Result<i32, UnknownEraError>;
 
     fn era_year_from_extended(&self, extended_year: i32, month: u8, day: u8) -> EraYear;
 
@@ -90,7 +91,7 @@ impl<Y: GregorianYears> DateFieldsResolver for AbstractGregorian<Y> {
     #[inline]
     fn year_info_from_era(
         &self,
-        era: &str,
+        era: &[u8],
         era_year: i32,
     ) -> Result<Self::YearInfo, UnknownEraError> {
         Ok(self.0.extended_from_era_year(Some(era), era_year)? + Y::EXTENDED_YEAR_OFFSET)

@@ -494,12 +494,7 @@ impl<'a> TryFrom<ffi::DateFields<'a>> for icu_calendar::types::DateFields<'a> {
     type Error = CalendarDateFromFieldsError;
     fn try_from(other: ffi::DateFields<'a>) -> Result<Self, CalendarDateFromFieldsError> {
         let mut fields = Self::default();
-        if let Some(era) = other.era.into_option() {
-            let Ok(s) = core::str::from_utf8(era) else {
-                return Err(CalendarDateFromFieldsError::UnknownEra);
-            };
-            fields.era = Some(s);
-        }
+        fields.era = other.era.into_option();
         fields.era_year = other.era_year.into();
         fields.extended_year = other.extended_year.into();
         if let Some(month_code) = other.month_code.into_option() {

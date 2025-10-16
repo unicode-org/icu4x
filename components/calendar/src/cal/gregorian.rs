@@ -15,11 +15,15 @@ impl_with_abstract_gregorian!(crate::cal::Gregorian, GregorianDateInner, CeBce, 
 pub(crate) struct CeBce;
 
 impl GregorianYears for CeBce {
-    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, UnknownEraError> {
+    fn extended_from_era_year(
+        &self,
+        era: Option<&[u8]>,
+        year: i32,
+    ) -> Result<i32, UnknownEraError> {
         match era {
             None => Ok(year),
-            Some("ad" | "ce") => Ok(year),
-            Some("bce" | "bc") => Ok(1 - year),
+            Some(b"ad" | b"ce") => Ok(year),
+            Some(b"bce" | b"bc") => Ok(1 - year),
             Some(_) => Err(UnknownEraError),
         }
     }

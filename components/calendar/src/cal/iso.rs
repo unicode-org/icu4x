@@ -31,9 +31,13 @@ impl_with_abstract_gregorian!(crate::cal::Iso, IsoDateInner, IsoEra, _x, IsoEra)
 pub(crate) struct IsoEra;
 
 impl GregorianYears for IsoEra {
-    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, UnknownEraError> {
+    fn extended_from_era_year(
+        &self,
+        era: Option<&[u8]>,
+        year: i32,
+    ) -> Result<i32, UnknownEraError> {
         match era {
-            Some("default") | None => Ok(year),
+            Some(b"default") | None => Ok(year),
             Some(_) => Err(UnknownEraError),
         }
     }

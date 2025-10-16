@@ -48,9 +48,13 @@ pub(crate) struct BuddhistEra;
 impl GregorianYears for BuddhistEra {
     const EXTENDED_YEAR_OFFSET: i32 = -543;
 
-    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, UnknownEraError> {
+    fn extended_from_era_year(
+        &self,
+        era: Option<&[u8]>,
+        year: i32,
+    ) -> Result<i32, UnknownEraError> {
         match era {
-            Some("be") | None => Ok(year),
+            Some(b"be") | None => Ok(year),
             _ => Err(UnknownEraError),
         }
     }

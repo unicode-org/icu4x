@@ -81,11 +81,11 @@ impl DateFieldsResolver for Persian {
     #[inline]
     fn year_info_from_era(
         &self,
-        era: &str,
+        era: &[u8],
         era_year: i32,
     ) -> Result<Self::YearInfo, UnknownEraError> {
         match era {
-            "ap" | "sh" | "hs" => Ok(era_year),
+            b"ap" | b"sh" | b"hs" => Ok(era_year),
             _ => Err(UnknownEraError),
         }
     }
