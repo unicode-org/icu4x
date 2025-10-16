@@ -459,7 +459,7 @@ mod tests {
 
         // A map from field names to a function that sets that field
         let mut field_fns = BTreeMap::<&str, &dyn Fn(&mut DateFields)>::new();
-        field_fns.insert("era", &|fields| fields.era = Some("ad"));
+        field_fns.insert("era", &|fields| fields.era = Some("ad".into()));
         field_fns.insert("era_year", &|fields| fields.era_year = Some(2000));
         field_fns.insert("extended_year", &|fields| fields.extended_year = Some(2000));
         field_fns.insert("month_code", &|fields| {

@@ -7,6 +7,7 @@ use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::UnknownEraError;
 use crate::preferences::CalendarAlgorithm;
 use crate::{types, Date, DateError, RangeError};
+use potential_utf::PotentialUtf8;
 use tinystr::tinystr;
 
 /// The [Republic of China Calendar](https://en.wikipedia.org/wiki/Republic_of_China_calendar)
@@ -41,8 +42,12 @@ pub(crate) struct RocEra;
 impl GregorianYears for RocEra {
     const EXTENDED_YEAR_OFFSET: i32 = 1911;
 
-    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, UnknownEraError> {
-        match era {
+    fn extended_from_era_year(
+        &self,
+        era: Option<&PotentialUtf8>,
+        year: i32,
+    ) -> Result<i32, UnknownEraError> {
+        match era.and_then(|s| s.try_as_str().ok()) {
             None => Ok(year),
             Some("roc") => Ok(year),
             Some("broc") => Ok(1 - year),

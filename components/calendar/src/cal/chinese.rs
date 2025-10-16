@@ -22,6 +22,7 @@ use calendrical_calculations::chinese_based::{
 use calendrical_calculations::rata_die::RataDie;
 use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
 use icu_provider::prelude::*;
+use potential_utf::PotentialUtf8;
 use tinystr::tinystr;
 
 #[path = "chinese/china_data.rs"]
@@ -562,7 +563,7 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
     #[inline]
     fn year_info_from_era(
         &self,
-        _era: &str,
+        _era: &PotentialUtf8,
         _era_year: i32,
     ) -> Result<Self::YearInfo, UnknownEraError> {
         // This calendar has no era codes

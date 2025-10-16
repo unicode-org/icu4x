@@ -7,6 +7,7 @@ use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::UnknownEraError;
 use crate::preferences::CalendarAlgorithm;
 use crate::{types, Date, DateError, RangeError};
+use potential_utf::PotentialUtf8;
 use tinystr::tinystr;
 
 impl_with_abstract_gregorian!(crate::cal::Gregorian, GregorianDateInner, CeBce, _x, CeBce);
@@ -15,8 +16,12 @@ impl_with_abstract_gregorian!(crate::cal::Gregorian, GregorianDateInner, CeBce, 
 pub(crate) struct CeBce;
 
 impl GregorianYears for CeBce {
-    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, UnknownEraError> {
-        match era {
+    fn extended_from_era_year(
+        &self,
+        era: Option<&PotentialUtf8>,
+        year: i32,
+    ) -> Result<i32, UnknownEraError> {
+        match era.and_then(|s| s.try_as_str().ok()) {
             None => Ok(year),
             Some("ad" | "ce") => Ok(year),
             Some("bce" | "bc") => Ok(1 - year),

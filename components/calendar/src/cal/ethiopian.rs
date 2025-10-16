@@ -14,6 +14,7 @@ use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
 use crate::{types, Calendar, Date, RangeError};
 use calendrical_calculations::rata_die::RataDie;
+use potential_utf::PotentialUtf8;
 use tinystr::tinystr;
 
 /// The Coptic year of the Amete Mihret epoch
@@ -79,12 +80,12 @@ impl DateFieldsResolver for Ethiopian {
     #[inline]
     fn year_info_from_era(
         &self,
-        era: &str,
+        era: &PotentialUtf8,
         era_year: i32,
     ) -> Result<Self::YearInfo, UnknownEraError> {
-        match (self.era_style(), era) {
-            (EthiopianEraStyle::AmeteMihret, "am") => Ok(era_year + AMETE_MIHRET_OFFSET),
-            (_, "aa") => Ok(era_year + AMETE_ALEM_OFFSET),
+        match (self.era_style(), era.try_as_str()) {
+            (EthiopianEraStyle::AmeteMihret, Ok("am")) => Ok(era_year + AMETE_MIHRET_OFFSET),
+            (_, Ok("aa")) => Ok(era_year + AMETE_ALEM_OFFSET),
             (_, _) => Err(UnknownEraError),
         }
     }

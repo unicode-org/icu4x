@@ -25,6 +25,7 @@ displaydoc = { workspace = true }
 icu_provider = { workspace = true }
 icu_locale_core = { workspace = true }
 ixdtf = { workspace = true, optional = true }
+potential_utf = { workspace = true }
 tinystr = { workspace = true, features = ["zerovec"] }
 zerovec = { workspace = true, features = ["derive"] }
 

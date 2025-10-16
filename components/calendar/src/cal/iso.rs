@@ -6,6 +6,7 @@ use crate::cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYear
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::UnknownEraError;
 use crate::{types, Date, DateError, RangeError};
+use potential_utf::PotentialUtf8;
 use tinystr::tinystr;
 
 /// The [ISO-8601 Calendar](https://en.wikipedia.org/wiki/ISO_8601#Dates)
@@ -31,8 +32,12 @@ impl_with_abstract_gregorian!(crate::cal::Iso, IsoDateInner, IsoEra, _x, IsoEra)
 pub(crate) struct IsoEra;
 
 impl GregorianYears for IsoEra {
-    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, UnknownEraError> {
-        match era {
+    fn extended_from_era_year(
+        &self,
+        era: Option<&PotentialUtf8>,
+        year: i32,
+    ) -> Result<i32, UnknownEraError> {
+        match era.and_then(|s| s.try_as_str().ok()) {
             Some("default") | None => Ok(year),
             Some(_) => Err(UnknownEraError),
         }
