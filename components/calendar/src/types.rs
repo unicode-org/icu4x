@@ -19,7 +19,7 @@ use crate::error::MonthCodeParseError;
 /// A bag of various ways of expressing the year, month, and/or day.
 ///
 /// Pass this into [`Date::try_from_fields`](crate::Date::try_from_fields).
-#[derive(Copy, Clone, Debug, PartialEq, Default)]
+#[derive(Copy, Clone, PartialEq, Default)]
 #[non_exhaustive]
 pub struct DateFields<'a> {
     /// The era code as defined by CLDR.
@@ -35,7 +35,9 @@ pub struct DateFields<'a> {
     /// If both this and [`Self::era`]/[`Self::era_year`] are set, they must
     /// refer to the same year.
     pub extended_year: Option<i32>,
-    /// The [`MonthCode`] representing a valid month in this calendar year.
+    /// The month code representing a valid month in this calendar year.
+    ///
+    /// See [`MonthCode`] for information on the syntax.
     pub month_code: Option<&'a [u8]>,
     /// See [`MonthInfo::ordinal`].
     ///
@@ -44,6 +46,37 @@ pub struct DateFields<'a> {
     pub ordinal_month: Option<u8>,
     /// See [`DayOfMonth`].
     pub day: Option<u8>,
+}
+
+// Custom impl to stringify era and month_code where possible.
+impl fmt::Debug for DateFields<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // Ensures we catch future fields
+        let Self {
+            era,
+            era_year,
+            extended_year,
+            month_code,
+            ordinal_month,
+            day,
+        } = *self;
+        let mut builder = f.debug_struct("DateFields");
+        if let Some(s) = era.and_then(|s| core::str::from_utf8(s).ok()) {
+            builder.field("era", &Some(s));
+        } else {
+            builder.field("era", &era);
+        }
+        builder.field("era_year", &era_year);
+        builder.field("extended_year", &extended_year);
+        if let Some(s) = month_code.and_then(|s| core::str::from_utf8(s).ok()) {
+            builder.field("month_code", &Some(s));
+        } else {
+            builder.field("month_code", &month_code);
+        }
+        builder.field("ordinal_month", &ordinal_month);
+        builder.field("day", &day);
+        builder.finish()
+    }
 }
 
 /// The type of year: Calendars like Chinese don't have an era and instead format with cyclic years.
