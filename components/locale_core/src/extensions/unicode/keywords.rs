@@ -386,6 +386,27 @@ impl Keywords {
         Ok(())
     }
 
+    /// Extends the `Keywords` with values from  another `Keywords`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::locale::extensions::unicode::Keywords;
+    ///
+    /// let mut kw: Keywords = "ab-cd-ca-buddhist".parse().unwrap();
+    /// let kw2: Keywords = "ca-gregory-hc-h12".parse().unwrap();
+    ///
+    /// kw.extend(kw2);
+    ///
+    /// assert_eq!(kw, "ab-cd-ca-gregory-hc-h12".parse().unwrap());
+    /// ```
+    #[cfg(feature = "alloc")]
+    pub fn extend(&mut self, other: Keywords) {
+        for (key, value) in other.0 {
+            self.0.insert(key, value);
+        }
+    }
+
     /// This needs to be its own method to help with type inference in helpers.rs
     #[cfg(test)]
     pub(crate) fn from_tuple_vec(v: Vec<(Key, Value)>) -> Self {
