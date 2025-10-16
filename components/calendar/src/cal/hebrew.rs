@@ -123,11 +123,11 @@ impl DateFieldsResolver for Hebrew {
     #[inline]
     fn year_info_from_era(
         &self,
-        era: &str,
+        era: &[u8],
         era_year: i32,
     ) -> Result<Self::YearInfo, UnknownEraError> {
         match era {
-            "am" => Ok(HebrewYearInfo::compute(era_year)),
+            b"am" => Ok(HebrewYearInfo::compute(era_year)),
             _ => Err(UnknownEraError),
         }
     }

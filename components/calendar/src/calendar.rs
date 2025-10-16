@@ -49,7 +49,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     ) -> Result<Self::DateInner, DateError> {
         let mut fields = types::DateFields::default();
         if era.is_some() {
-            fields.era = era;
+            fields.era = era.map(|e| e.as_bytes());
             fields.era_year = Some(year);
         } else {
             fields.extended_year = Some(year);
