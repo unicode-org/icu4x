@@ -340,15 +340,6 @@ impl From<MonthCodeParseError> for DateFromFieldsError {
     }
 }
 
-impl From<MonthCodeParseError> for EcmaReferenceYearError {
-    #[inline]
-    fn from(value: MonthCodeParseError) -> Self {
-        match value {
-            MonthCodeParseError::InvalidSyntax => EcmaReferenceYearError::InvalidMonthCode,
-        }
-    }
-}
-
 impl From<MonthCodeParseError> for MonthCodeError {
     #[inline]
     fn from(value: MonthCodeParseError) -> Self {
@@ -386,9 +377,8 @@ mod inner {
     #[allow(missing_docs)] // TODO: fix when graduating
     #[non_exhaustive]
     pub enum EcmaReferenceYearError {
-        InvalidMonthCode,
+        Unimplemented,
         UnknownMonthCodeForCalendar,
-        NotEnoughFields,
     }
 }
 
@@ -401,11 +391,10 @@ impl From<EcmaReferenceYearError> for DateFromFieldsError {
     #[inline]
     fn from(value: EcmaReferenceYearError) -> Self {
         match value {
-            EcmaReferenceYearError::InvalidMonthCode => DateFromFieldsError::InvalidMonthCode,
+            EcmaReferenceYearError::Unimplemented => DateFromFieldsError::NotEnoughFields,
             EcmaReferenceYearError::UnknownMonthCodeForCalendar => {
                 DateFromFieldsError::UnknownMonthCodeForCalendar
             }
-            EcmaReferenceYearError::NotEnoughFields => DateFromFieldsError::NotEnoughFields,
         }
     }
 }

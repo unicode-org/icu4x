@@ -121,10 +121,11 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
     /// [`MissingFieldsStrategy::Ecma`]: crate::options::MissingFieldsStrategy::Ecma
     fn ecma_reference_year(
         &self,
-        _month_code: types::ValidMonthCode,
+        // TODO: Consider accepting ValidMonthCode
+        _month_code: (u8, bool),
         _day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        Err(EcmaReferenceYearError::NotEnoughFields)
+        Err(EcmaReferenceYearError::Unimplemented)
     }
 
     /// The debug name for the calendar defined by these [`Rules`].
@@ -204,12 +205,12 @@ impl Rules for China {
 
     fn ecma_reference_year(
         &self,
-        month_code: types::ValidMonthCode,
+        month_code: (u8, bool),
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        let (number, is_leap) = month_code.to_tuple();
+        let (number, is_leap) = month_code;
         // Computed by `generate_reference_years`
-        Ok(match (number, is_leap, day > 29) {
+        let extended_year = match (number, is_leap, day > 29) {
             (1, false, false) => 1972,
             (1, false, true) => 1970,
             (1, true, false) => 1898,
@@ -262,7 +263,8 @@ impl Rules for China {
             (12, true, false) => 1878,
             (12, true, true) => 1783,
             _ => return Err(EcmaReferenceYearError::UnknownMonthCodeForCalendar),
-        })
+        };
+        Ok(extended_year)
     }
 
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
@@ -385,12 +387,12 @@ impl Rules for Korea {
 
     fn ecma_reference_year(
         &self,
-        month_code: types::ValidMonthCode,
+        month_code: (u8, bool),
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        let (number, is_leap) = month_code.to_tuple();
+        let (number, is_leap) = month_code;
         // Computed by `generate_reference_years`
-        Ok(match (number, is_leap, day > 29) {
+        let extended_year = match (number, is_leap, day > 29) {
             (1, false, false) => 1972,
             (1, false, true) => 1970,
             (1, true, false) => 1898,
@@ -443,7 +445,8 @@ impl Rules for Korea {
             (12, true, false) => 1878,
             (12, true, true) => 1783,
             _ => return Err(EcmaReferenceYearError::UnknownMonthCodeForCalendar),
-        })
+        };
+        Ok(extended_year)
     }
 
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
@@ -579,9 +582,9 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
         month_code: types::ValidMonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
-        Ok(self
-            .0
-            .year_data(self.0.ecma_reference_year(month_code, day)?))
+        self.0
+            .ecma_reference_year(month_code.to_tuple(), day)
+            .map(|y| self.0.year_data(y))
     }
 
     fn ordinal_month_from_code(
@@ -1550,10 +1553,6 @@ mod test {
         let non_leap_year = 4659;
         let leap_year = 4660;
         let invalid_codes = [
-            (non_leap_year, tinystr!(4, "M2")),
-            (leap_year, tinystr!(4, "M0")),
-            (non_leap_year, tinystr!(4, "J01")),
-            (leap_year, tinystr!(4, "3M")),
             (non_leap_year, tinystr!(4, "M04L")),
             (leap_year, tinystr!(4, "M04L")),
             (non_leap_year, tinystr!(4, "M13")),

@@ -502,8 +502,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         // 1. Let _y0_ be _parts_.[[Year]] + _duration_.[[Years]].
         let y0 = cal.year_info_from_extended(duration.add_years_to(self.year.to_extended_year()));
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], _overflow_)).
-        let base_month = cal
-            .month_code_from_ordinal(&self.year, self.month);
+        let base_month = cal.month_code_from_ordinal(&self.year, self.month);
         let m0 = cal
             .ordinal_month_from_code(
                 &y0,

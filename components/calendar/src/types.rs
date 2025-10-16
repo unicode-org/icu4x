@@ -284,14 +284,8 @@ impl fmt::Display for MonthCode {
 }
 
 /// A [`MonthCode`] that has been parsed into its internal representation.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases.
-/// </div>
 #[derive(Copy, Clone, Debug, PartialEq)]
-#[cfg_attr(not(feature = "unstable"), doc(hidden))] // public because of Rules traits
-pub struct ValidMonthCode {
+pub(crate) struct ValidMonthCode {
     /// Month number between 0 and 99
     number: u8,
     is_leap: bool,
@@ -311,7 +305,7 @@ impl ValidMonthCode {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use icu::calendar::Date;
     /// use icu::calendar::cal::Hebrew;
     ///
