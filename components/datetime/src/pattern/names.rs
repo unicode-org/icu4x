@@ -922,7 +922,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     ///         date: Date::try_new_gregorian(2025, 2, 13).unwrap(),
     ///         time: Time::start_of_day(),
     ///     }),
-    ///     "13 de febrero de 2025, 12:00 a.m."
+    ///     "13 de febrero de 2025 a las 12:00 a.m."
     /// );
     /// ```
     pub fn from_formatter(
@@ -1123,7 +1123,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
     ///         date: Date::try_new_iso(2025, 2, 13).unwrap(),
     ///         time: Time::start_of_day(),
     ///     }),
-    ///     "13 de febrero de 2025, 12:00 a.m."
+    ///     "13 de febrero de 2025 a las 12:00 a.m."
     /// );
     /// ```
     pub fn from_formatter(

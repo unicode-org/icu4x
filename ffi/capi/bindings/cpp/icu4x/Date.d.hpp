@@ -17,6 +17,9 @@ namespace capi { struct Date; }
 class Date;
 namespace capi { struct IsoDate; }
 class IsoDate;
+struct DateFields;
+struct DateFromFieldsOptions;
+class CalendarDateFromFieldsError;
 class CalendarError;
 class Rfc9557ParseError;
 class Weekday;
@@ -46,6 +49,13 @@ public:
    * See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError> from_iso_in_calendar(int32_t iso_year, uint8_t iso_month, uint8_t iso_day, const icu4x::Calendar& calendar);
+
+  /**
+   * Creates a new {@link Date} from the given fields, which are interpreted in the given calendar system.
+   *
+   * See the [Rust documentation for `try_from_fields`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.try_from_fields) for more information.
+   */
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarDateFromFieldsError> from_fields_in_calendar(icu4x::DateFields fields, icu4x::DateFromFieldsOptions options, const icu4x::Calendar& calendar);
 
   /**
    * Creates a new {@link Date} from the given codes, which are interpreted in the given calendar system

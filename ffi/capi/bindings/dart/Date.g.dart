@@ -40,6 +40,20 @@ final class Date implements ffi.Finalizable {
     return Date._fromFfi(result.union.ok, []);
   }
 
+  /// Creates a new [Date] from the given fields, which are interpreted in the given calendar system.
+  ///
+  /// See the [Rust documentation for `try_from_fields`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.try_from_fields) for more information.
+  ///
+  /// Throws [CalendarDateFromFieldsError] on failure.
+  factory Date.fromFieldsInCalendar(DateFields fields, DateFromFieldsOptions options, Calendar calendar) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_Date_from_fields_in_calendar_mv1(fields._toFfi(temp.arena), options._toFfi(temp.arena), calendar._ffi);
+    if (!result.isOk) {
+      throw CalendarDateFromFieldsError.values[result.union.err];
+    }
+    return Date._fromFfi(result.union.ok, []);
+  }
+
   /// Creates a new [Date] from the given codes, which are interpreted in the given calendar system
   ///
   /// An empty era code will treat the year as an extended year
@@ -251,6 +265,11 @@ external void _icu4x_Date_destroy_mv1(ffi.Pointer<ffi.Void> self);
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Int32, ffi.Uint8, ffi.Uint8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_from_iso_in_calendar_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Date_from_iso_in_calendar_mv1(int isoYear, int isoMonth, int isoDay, ffi.Pointer<ffi.Opaque> calendar);
+
+@_DiplomatFfiUse('icu4x_Date_from_fields_in_calendar_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(_DateFieldsFfi, _DateFromFieldsOptionsFfi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_from_fields_in_calendar_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_Date_from_fields_in_calendar_mv1(_DateFieldsFfi fields, _DateFromFieldsOptionsFfi options, ffi.Pointer<ffi.Opaque> calendar);
 
 @_DiplomatFfiUse('icu4x_Date_from_codes_in_calendar_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8, ffi.Int32, _SliceUtf8, ffi.Uint8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_from_codes_in_calendar_mv1')

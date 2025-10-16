@@ -4,11 +4,10 @@
 
 use crate::{
     zone::{iana::IanaParserBorrowed, models, InvalidOffsetError, UtcOffset},
-    DateTime, Time, TimeZone, TimeZoneInfo, ZonedDateTime,
+    DateTime, Time, TimeZoneInfo, ZonedDateTime,
 };
 use core::str::FromStr;
 use icu_calendar::{AnyCalendarKind, AsCalendar, Date, DateError, Iso, RangeError};
-use icu_locale_core::subtags::subtag;
 use ixdtf::{
     encoding::Utf8,
     parsers::IxdtfParser,
@@ -281,12 +280,8 @@ impl<'a> Intermediate<'a> {
         let id = iana_parser.parse_from_utf8(iana_identifier);
         let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
         let time = Time::try_from_time_record(&self.time)?;
-        let offset = match id.as_str() {
-            "utc" | "gmt" => Some(UtcOffset::zero()),
-            _ => None,
-        };
         Ok(id
-            .with_offset(offset)
+            .with_offset(None)
             .at_date_time_iso(DateTime { date, time }))
     }
 
@@ -294,34 +289,29 @@ impl<'a> Intermediate<'a> {
         self,
         iana_parser: IanaParserBorrowed<'_>,
     ) -> Result<TimeZoneInfo<models::AtTime>, ParseError> {
-        let id = match self.iana_identifier {
+        let mut zone = match self.iana_identifier {
             Some(iana_identifier) => {
                 if self.is_z {
                     return Err(ParseError::RequiresCalculation);
                 }
-                iana_parser.parse_from_utf8(iana_identifier)
+                iana_parser
+                    .parse_from_utf8(iana_identifier)
+                    .with_offset(None)
             }
-            None if self.is_z => TimeZone(subtag!("utc")),
-            None => TimeZone::UNKNOWN,
+            None if self.is_z => TimeZoneInfo::utc(),
+            None => TimeZoneInfo::unknown(),
         };
-        let offset = match self.offset {
-            Some(offset) => {
-                if self.is_z && offset != UtcOffsetRecord::zero() {
-                    return Err(ParseError::RequiresCalculation);
-                }
-                Some(UtcOffset::try_from_utc_offset_record(offset)?)
+
+        if let Some(offset) = self.offset {
+            let offset = UtcOffset::try_from_utc_offset_record(offset)?;
+            if zone.offset().is_some_and(|i| i != offset) {
+                return Err(ParseError::RequiresCalculation);
             }
-            None => match id.as_str() {
-                "utc" | "gmt" => Some(UtcOffset::zero()),
-                _ if self.is_z => Some(UtcOffset::zero()),
-                _ => None,
-            },
-        };
+            zone = zone.id().with_offset(Some(offset));
+        }
         let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
         let time = Time::try_from_time_record(&self.time)?;
-        Ok(id
-            .with_offset(offset)
-            .at_date_time_iso(DateTime { date, time }))
+        Ok(zone.at_date_time_iso(DateTime { date, time }))
     }
 
     #[allow(deprecated)]

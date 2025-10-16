@@ -5,7 +5,9 @@
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, ToExtendedYear};
-use crate::error::DateError;
+use crate::error::{
+    DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
+};
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::provider::chinese_based::PackedChineseBasedYearInfo;
@@ -36,6 +38,15 @@ mod simple;
 /// cultural events and holidays like the Chinese Lunar New Year.
 ///
 /// This type can be used with [`Date`] to represent dates in the Chinese calendar.
+///
+/// The type parameter here specifies a particular set of calculation rules and local
+/// time information for a lunar Chinese calendar.
+/// It must implement the currently-unstable `Rules` trait, at the moment this crate exports two stable
+/// implementors of `Rules`: [`China`] and [`Korea`]. Please comment on [this issue](https://github.com/unicode-org/icu4x/issues/6962)
+/// if you would like to see this trait stabilized.
+///
+/// This corresponds to the `"chinese"` and `"dangi"` [CLDR calendars](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier)
+/// respectively, when used with the [`China`] and [`Korea`] [`Rules`] types.
 ///
 /// # Months
 ///
@@ -111,8 +122,8 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
         &self,
         _month_code: types::MonthCode,
         _day: u8,
-    ) -> Result<i32, DateError> {
-        Err(DateError::NotEnoughFields)
+    ) -> Result<i32, EcmaReferenceYearError> {
+        Err(EcmaReferenceYearError::NotEnoughFields)
     }
 
     /// The debug name for the calendar defined by these [`Rules`].
@@ -190,10 +201,12 @@ impl Rules for China {
         }
     }
 
-    fn ecma_reference_year(&self, month_code: types::MonthCode, day: u8) -> Result<i32, DateError> {
-        let Some((number, is_leap)) = month_code.parsed() else {
-            return Err(DateError::UnknownMonthCode(month_code));
-        };
+    fn ecma_reference_year(
+        &self,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<i32, EcmaReferenceYearError> {
+        let (number, is_leap) = month_code.try_parse()?;
         // Computed by `generate_reference_years`
         Ok(match (number, is_leap, day > 29) {
             (1, false, false) => 1972,
@@ -247,7 +260,7 @@ impl Rules for China {
             (12, false, true) => 1971,
             (12, true, false) => 1878,
             (12, true, true) => 1783,
-            _ => return Err(DateError::UnknownMonthCode(month_code)),
+            _ => return Err(EcmaReferenceYearError::UnknownMonthCodeForCalendar),
         })
     }
 
@@ -369,10 +382,12 @@ impl Rules for Korea {
         }
     }
 
-    fn ecma_reference_year(&self, month_code: types::MonthCode, day: u8) -> Result<i32, DateError> {
-        let Some((number, is_leap)) = month_code.parsed() else {
-            return Err(DateError::UnknownMonthCode(month_code));
-        };
+    fn ecma_reference_year(
+        &self,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<i32, EcmaReferenceYearError> {
+        let (number, is_leap) = month_code.try_parse()?;
         // Computed by `generate_reference_years`
         Ok(match (number, is_leap, day > 29) {
             (1, false, false) => 1972,
@@ -426,7 +441,7 @@ impl Rules for Korea {
             (12, false, true) => 1971,
             (12, true, false) => 1878,
             (12, true, true) => 1783,
-            _ => return Err(DateError::UnknownMonthCode(month_code)),
+            _ => return Err(EcmaReferenceYearError::UnknownMonthCodeForCalendar),
         })
     }
 
@@ -462,6 +477,16 @@ impl<S: Rules> PartialEq for ChineseDateInner<S> {
     }
 }
 impl<S: Rules> Eq for ChineseDateInner<S> {}
+impl<R: Rules> PartialOrd for ChineseDateInner<R> {
+    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl<R: Rules> Ord for ChineseDateInner<R> {
+    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+        self.0.cmp(&other.0)
+    }
+}
 
 impl LunarChinese<China> {
     /// Creates a new calendar using [`China`] rules.
@@ -510,9 +535,13 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
     }
 
     #[inline]
-    fn year_info_from_era(&self, _era: &str, _era_year: i32) -> Result<Self::YearInfo, DateError> {
+    fn year_info_from_era(
+        &self,
+        _era: &str,
+        _era_year: i32,
+    ) -> Result<Self::YearInfo, UnknownEraError> {
         // This calendar has no era codes
-        Err(DateError::UnknownEra)
+        Err(UnknownEraError)
     }
 
     #[inline]
@@ -525,7 +554,7 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
         &self,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::YearInfo, DateError> {
+    ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         Ok(self
             .0
             .year_data(self.0.ecma_reference_year(month_code, day)?))
@@ -536,15 +565,17 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
         year: &Self::YearInfo,
         month_code: types::MonthCode,
         options: DateFromFieldsOptions,
-    ) -> Result<u8, DateError> {
+    ) -> Result<u8, MonthCodeError> {
         match year.parse_month_code(month_code) {
             ComputedOrdinalMonth::Exact(val) => Ok(val),
-            ComputedOrdinalMonth::LeapToNormal(val)
-                if options.overflow == Some(Overflow::Constrain) =>
-            {
-                Ok(val)
+            ComputedOrdinalMonth::LeapToNormal(val) => {
+                if options.overflow == Some(Overflow::Constrain) {
+                    Ok(val)
+                } else {
+                    Err(MonthCodeError::UnknownMonthCodeForYear)
+                }
             }
-            _ => Err(DateError::UnknownMonthCode(month_code)),
+            ComputedOrdinalMonth::NotFound => Err(MonthCodeError::UnknownMonthCodeForCalendar),
         }
     }
 
@@ -567,11 +598,10 @@ impl<R: Rules> Calendar for LunarChinese<R> {
         &self,
         fields: types::DateFields,
         options: DateFromFieldsOptions,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateFromFieldsError> {
         let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        Ok(ChineseDateInner(ArithmeticDate::try_from_builder(
-            builder, options,
-        )?))
+        let arithmetic_date = ArithmeticDate::try_from_builder(builder, options)?;
+        Ok(ChineseDateInner(arithmetic_date))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -1663,7 +1693,7 @@ mod test {
         let cal = LunarChinese::new_china();
         assert!(matches!(
             Date::try_from_fields(fields, options, cal).unwrap_err(),
-            DateError::Range { .. }
+            DateFromFieldsError::Range { .. }
         ));
     }
 

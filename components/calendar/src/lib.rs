@@ -106,7 +106,7 @@ pub mod week;
 mod calendar;
 mod calendar_arithmetic;
 mod duration;
-mod error;
+pub mod error;
 #[cfg(feature = "ixdtf")]
 mod ixdtf;
 

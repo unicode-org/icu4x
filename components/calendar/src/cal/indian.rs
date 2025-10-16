@@ -5,7 +5,7 @@
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
-use crate::error::DateError;
+use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
@@ -18,6 +18,8 @@ use tinystr::tinystr;
 /// The Indian National calendar is a solar calendar used by the Indian government, with twelve months.
 ///
 /// This type can be used with [`Date`] to represent dates in this calendar.
+///
+/// This corresponds to the `"indian"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
 ///
 /// # Era codes
 ///
@@ -60,10 +62,14 @@ impl DateFieldsResolver for Indian {
     }
 
     #[inline]
-    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+    fn year_info_from_era(
+        &self,
+        era: &str,
+        era_year: i32,
+    ) -> Result<Self::YearInfo, UnknownEraError> {
         match era {
             "shaka" => Ok(era_year),
-            _ => Err(DateError::UnknownEra),
+            _ => Err(UnknownEraError),
         }
     }
 
@@ -77,10 +83,8 @@ impl DateFieldsResolver for Indian {
         &self,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::YearInfo, DateError> {
-        let (ordinal_month, _is_leap) = month_code
-            .parsed()
-            .ok_or(DateError::UnknownMonthCode(month_code))?;
+    ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
+        let (ordinal_month, _is_leap) = month_code.try_parse()?;
         // December 31, 1972 occurs on 10th month, 10th day, 1894 Shaka
         // Note: 1894 Shaka is also a leap year
         let shaka_year = if ordinal_month < 10 || (ordinal_month == 10 && day <= 10) {
@@ -102,11 +106,10 @@ impl Calendar for Indian {
         &self,
         fields: DateFields,
         options: DateFromFieldsOptions,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateFromFieldsError> {
         let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        ArithmeticDate::try_from_builder(builder, options)
-            .map(IndianDateInner)
-            .map_err(|e| e.maybe_with_month_code(fields.month_code))
+        let arithmetic_date = ArithmeticDate::try_from_builder(builder, options)?;
+        Ok(IndianDateInner(arithmetic_date))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {

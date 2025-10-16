@@ -4,6 +4,10 @@ export { TitlecaseOptions } from "./TitlecaseOptions.mjs"
 
 export { CollatorOptions } from "./CollatorOptions.mjs"
 
+export { DateFields } from "./DateFields.mjs"
+
+export { DateFromFieldsOptions } from "./DateFromFieldsOptions.mjs"
+
 export { IsoWeekOfYear } from "./IsoWeekOfYear.mjs"
 
 export { DisplayNamesOptions } from "./DisplayNamesOptions.mjs"
@@ -232,6 +236,10 @@ export { CollatorNumericOrdering } from "./CollatorNumericOrdering.mjs"
 
 export { CollatorStrength } from "./CollatorStrength.mjs"
 
+export { DateMissingFieldsStrategy } from "./DateMissingFieldsStrategy.mjs"
+
+export { DateOverflow } from "./DateOverflow.mjs"
+
 export { Weekday } from "./Weekday.mjs"
 
 export { DateTimeAlignment } from "./DateTimeAlignment.mjs"
@@ -249,6 +257,8 @@ export { DisplayNamesFallback } from "./DisplayNamesFallback.mjs"
 export { DisplayNamesStyle } from "./DisplayNamesStyle.mjs"
 
 export { LanguageDisplay } from "./LanguageDisplay.mjs"
+
+export { CalendarDateFromFieldsError } from "./CalendarDateFromFieldsError.mjs"
 
 export { CalendarError } from "./CalendarError.mjs"
 

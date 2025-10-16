@@ -4,7 +4,7 @@
 
 use crate::cal::iso::{IsoDateInner, IsoEra};
 use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, DateFieldsResolver};
-use crate::error::DateError;
+use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::preferences::CalendarAlgorithm;
@@ -20,7 +20,7 @@ pub(crate) trait GregorianYears: Clone + core::fmt::Debug {
     // Positive if after 0 CE
     const EXTENDED_YEAR_OFFSET: i32 = 0;
 
-    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, DateError>;
+    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, UnknownEraError>;
 
     fn era_year_from_extended(&self, extended_year: i32, month: u8, day: u8) -> EraYear;
 
@@ -64,7 +64,11 @@ impl<Y: GregorianYears> DateFieldsResolver for AbstractGregorian<Y> {
     }
 
     #[inline]
-    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+    fn year_info_from_era(
+        &self,
+        era: &str,
+        era_year: i32,
+    ) -> Result<Self::YearInfo, UnknownEraError> {
         Ok(self.0.extended_from_era_year(Some(era), era_year)? + Y::EXTENDED_YEAR_OFFSET)
     }
 
@@ -78,7 +82,7 @@ impl<Y: GregorianYears> DateFieldsResolver for AbstractGregorian<Y> {
         &self,
         _month_code: types::MonthCode,
         _day: u8,
-    ) -> Result<Self::YearInfo, DateError> {
+    ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         Ok(REFERENCE_YEAR)
     }
 }
@@ -94,17 +98,29 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         &self,
         fields: types::DateFields,
         options: DateFromFieldsOptions,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateFromFieldsError> {
         let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        ArithmeticDate::try_from_builder(builder, options)
-            .map_err(|e| e.maybe_with_month_code(fields.month_code))
+        let arithmetic_date = ArithmeticDate::try_from_builder(builder, options)?;
+        Ok(arithmetic_date)
     }
 
     fn from_rata_die(&self, date: RataDie) -> Self::DateInner {
-        match calendrical_calculations::gregorian::gregorian_from_fixed(date) {
-            Err(I32CastError::BelowMin) => ArithmeticDate::new_unchecked(i32::MIN, 1, 1),
+        let iso = match calendrical_calculations::gregorian::gregorian_from_fixed(date) {
+            Err(I32CastError::BelowMin) => {
+                ArithmeticDate::<AbstractGregorian<IsoEra>>::new_unchecked(i32::MIN, 1, 1)
+            }
             Err(I32CastError::AboveMax) => ArithmeticDate::new_unchecked(i32::MAX, 12, 31),
             Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
+        };
+
+        if iso.year.checked_sub(Y::EXTENDED_YEAR_OFFSET).is_none() {
+            if Y::EXTENDED_YEAR_OFFSET < 0 {
+                ArithmeticDate::new_unchecked(i32::MIN - Y::EXTENDED_YEAR_OFFSET, 1, 1)
+            } else {
+                ArithmeticDate::new_unchecked(i32::MAX - Y::EXTENDED_YEAR_OFFSET, 12, 31)
+            }
+        } else {
+            iso
         }
     }
 
@@ -201,7 +217,7 @@ macro_rules! impl_with_abstract_gregorian {
                 &self,
                 fields: crate::types::DateFields,
                 options: crate::options::DateFromFieldsOptions,
-            ) -> Result<Self::DateInner, DateError> {
+            ) -> Result<Self::DateInner, crate::error::DateFromFieldsError> {
                 let $self_ident = self;
                 crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
                     .from_fields(fields, options)

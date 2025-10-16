@@ -119,7 +119,7 @@ impl CldrCalendar for Indian {
 /// }
 /// ```
 // TODO: default associated types would be nice (https://github.com/rust-lang/rust/issues/29661)
-pub trait FormattableHijriRules: hijri::Rules + UnstableSealed {
+pub trait FormattableHijriRules: hijri::unstable_internal::Rules + UnstableSealed {
     /// The data marker for loading year symbols for this calendar.
     type YearNamesV1: DataMarker<DataStruct = YearNames<'static>>;
 
@@ -190,7 +190,7 @@ impl UnstableSealed for Ethiopian {}
 impl UnstableSealed for Gregorian {}
 impl UnstableSealed for Hebrew {}
 impl UnstableSealed for Indian {}
-impl<R: hijri::Rules> UnstableSealed for Hijri<R> {}
+impl<R: hijri::unstable_internal::Rules> UnstableSealed for Hijri<R> {}
 impl UnstableSealed for Japanese {}
 impl UnstableSealed for JapaneseExtended {}
 impl UnstableSealed for Persian {}

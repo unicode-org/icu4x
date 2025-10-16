@@ -1042,7 +1042,7 @@ impl_date_marker!(
     description = "day of month and weekday",
     sample_length = long,
     sample = "17 Friday",
-    sample_time = "17 Friday, 3:47:50 PM",
+    sample_time = "17 Friday at 3:47:50 PM",
     weekdays = yes,
     input_day_of_month = yes,
     input_day_of_week = yes,

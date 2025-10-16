@@ -149,7 +149,8 @@ impl SourceDataProvider {
     ) -> Result<PackedPatterns<'static>, DataError> {
         let data = self.get_datetime_resources(locale, calendar)?;
 
-        let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats);
+        // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
+        let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats_at_time);
         let skeleton_patterns =
             DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
 
@@ -442,26 +443,30 @@ fn preferred_hour_cycle(other: &cldr_serde::ca::Dates, locale: &DataLocale) -> C
     preferred_hour_cycle.expect("Could not find a preferred hour cycle.")
 }
 
-impl From<&cldr_serde::ca::DateTimeFormats> for GenericLengthPatterns<'_> {
-    fn from(other: &cldr_serde::ca::DateTimeFormats) -> Self {
+impl From<&cldr_serde::ca::DateTimeFormatsVariant> for GenericLengthPatterns<'_> {
+    fn from(other: &cldr_serde::ca::DateTimeFormatsVariant) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
             full: other
+                .standard
                 .full
                 .get_pattern()
                 .parse()
                 .expect("Failed to parse pattern"),
             long: other
+                .standard
                 .long
                 .get_pattern()
                 .parse()
                 .expect("Failed to parse pattern"),
             medium: other
+                .standard
                 .medium
                 .get_pattern()
                 .parse()
                 .expect("Failed to parse pattern"),
             short: other
+                .standard
                 .short
                 .get_pattern()
                 .parse()
@@ -947,7 +952,7 @@ mod date_skeleton_consistency_tests {
     ) -> usize {
         let mut num_problems = 0;
         let data = provider.get_datetime_resources(locale, Some(cal)).unwrap();
-        let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats);
+        let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats_at_time);
         let skeleton_patterns =
             DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
         let skeleton_pattern_set = data

@@ -14,11 +14,7 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
-icu::calendar::Date::try_from_fields#FnInStruct
-icu::calendar::options::DateFromFieldsOptions#Struct
-icu::calendar::options::MissingFieldsStrategy#Enum
-icu::calendar::options::Overflow#Enum
-icu::calendar::types::DateFields#Struct
+icu::calendar::error::EcmaReferenceYearError#Enum
 icu::collator::CollatorBorrowed::compare_latin1#FnInStruct
 icu::collator::CollatorBorrowed::compare_latin1_utf16#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_to#FnInStruct

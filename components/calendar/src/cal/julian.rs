@@ -5,7 +5,7 @@
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
-use crate::error::DateError;
+use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
@@ -65,7 +65,7 @@ use tinystr::tinystr;
 pub struct Julian;
 
 /// The inner date type used for representing [`Date`]s of [`Julian`]. See [`Date`] and [`Julian`] for more details.
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 // The inner date type used for representing Date<Julian>
 pub struct JulianDateInner(pub(crate) ArithmeticDate<Julian>);
 
@@ -87,11 +87,15 @@ impl DateFieldsResolver for Julian {
     }
 
     #[inline]
-    fn year_info_from_era(&self, era: &str, era_year: i32) -> Result<Self::YearInfo, DateError> {
+    fn year_info_from_era(
+        &self,
+        era: &str,
+        era_year: i32,
+    ) -> Result<Self::YearInfo, UnknownEraError> {
         match era {
             "ad" | "ce" => Ok(era_year),
             "bc" | "bce" => Ok(1 - era_year),
-            _ => Err(DateError::UnknownEra),
+            _ => Err(UnknownEraError),
         }
     }
 
@@ -105,10 +109,8 @@ impl DateFieldsResolver for Julian {
         &self,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::YearInfo, DateError> {
-        let (ordinal_month, _is_leap) = month_code
-            .parsed()
-            .ok_or(DateError::UnknownMonthCode(month_code))?;
+    ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
+        let (ordinal_month, _is_leap) = month_code.try_parse()?;
         // December 31, 1972 occurs on 12th month, 18th day, 1972 Old Style
         // Note: 1972 is a leap year
         let julian_year = if ordinal_month < 12 || (ordinal_month == 12 && day <= 18) {
@@ -130,11 +132,10 @@ impl Calendar for Julian {
         &self,
         fields: DateFields,
         options: DateFromFieldsOptions,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateFromFieldsError> {
         let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        ArithmeticDate::try_from_builder(builder, options)
-            .map(JulianDateInner)
-            .map_err(|e| e.maybe_with_month_code(fields.month_code))
+        let arithmetic_date = ArithmeticDate::try_from_builder(builder, options)?;
+        Ok(JulianDateInner(arithmetic_date))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -209,7 +210,7 @@ impl Calendar for Julian {
             types::EraYear {
                 era: tinystr!(16, "bce"),
                 era_index: Some(0),
-                year: 1_i32.saturating_sub(extended_year),
+                year: 1 - extended_year,
                 extended_year,
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }
@@ -520,14 +521,6 @@ mod test {
                 );
             }
         }
-    }
-
-    #[test]
-    fn test_hebrew_epoch() {
-        assert_eq!(
-            calendrical_calculations::julian::fixed_from_julian_book_version(-3761, 10, 7),
-            RataDie::new(-1373427)
-        );
     }
 
     #[test]

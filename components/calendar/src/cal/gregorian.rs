@@ -4,6 +4,7 @@
 
 use crate::cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears};
 use crate::calendar_arithmetic::ArithmeticDate;
+use crate::error::UnknownEraError;
 use crate::preferences::CalendarAlgorithm;
 use crate::{types, Date, DateError, RangeError};
 use tinystr::tinystr;
@@ -14,12 +15,12 @@ impl_with_abstract_gregorian!(crate::cal::Gregorian, GregorianDateInner, CeBce, 
 pub(crate) struct CeBce;
 
 impl GregorianYears for CeBce {
-    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, DateError> {
+    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, UnknownEraError> {
         match era {
             None => Ok(year),
             Some("ad" | "ce") => Ok(year),
             Some("bce" | "bc") => Ok(1 - year),
-            Some(_) => Err(DateError::UnknownEra),
+            Some(_) => Err(UnknownEraError),
         }
     }
 
@@ -41,7 +42,7 @@ impl GregorianYears for CeBce {
             types::EraYear {
                 era: tinystr!(16, "bce"),
                 era_index: Some(0),
-                year: 1_i32.saturating_sub(extended_year),
+                year: 1 - extended_year,
                 extended_year,
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }
@@ -68,6 +69,8 @@ impl GregorianYears for CeBce {
 /// The Gregorian calendar has an average year length of 365.2425, slightly longer than
 /// the mean siderial year, so this calendar drifts 1 day in ~7700 years with respect
 /// to the seasons.
+///
+/// This corresponds to the `"gregory"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
 ///
 /// # Historical accuracy
 ///

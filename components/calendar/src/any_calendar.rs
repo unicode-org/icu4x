@@ -6,7 +6,7 @@
 
 use crate::cal::iso::IsoDateInner;
 use crate::cal::*;
-use crate::error::DateError;
+use crate::error::{DateError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::{DateFields, YearInfo};
@@ -149,6 +149,32 @@ pub enum AnyDateInner {
     Roc(<Roc as Calendar>::DateInner),
 }
 
+impl PartialOrd for AnyDateInner {
+    #[rustfmt::skip]
+    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+        use AnyDateInner::*;
+        match (self, other) {
+            (Buddhist(d1), Buddhist(d2)) => d1.partial_cmp(d2),
+            (Chinese(d1), Chinese(d2)) => d1.partial_cmp(d2),
+            (Coptic(d1), Coptic(d2)) => d1.partial_cmp(d2),
+            (Dangi(d1), Dangi(d2)) => d1.partial_cmp(d2),
+            (Ethiopian(d1), Ethiopian(d2)) => d1.partial_cmp(d2),
+            (Gregorian(d1), Gregorian(d2)) => d1.partial_cmp(d2),
+            (Hebrew(d1), Hebrew(d2)) => d1.partial_cmp(d2),
+            (Indian(d1), Indian(d2)) => d1.partial_cmp(d2),
+            (&HijriTabular(ref d1, s1), &HijriTabular(ref d2, s2)) if s1 == s2 => d1.partial_cmp(d2),
+            (HijriSimulated(d1), HijriSimulated(d2)) => d1.partial_cmp(d2),
+            (HijriUmmAlQura(d1), HijriUmmAlQura(d2)) => d1.partial_cmp(d2),
+            (Iso(d1), Iso(d2)) => d1.partial_cmp(d2),
+            (Japanese(d1), Japanese(d2)) => d1.partial_cmp(d2),
+            (JapaneseExtended(d1), JapaneseExtended(d2)) => d1.partial_cmp(d2),
+            (Persian(d1), Persian(d2)) => d1.partial_cmp(d2),
+            (Roc(d1), Roc(d2)) => d1.partial_cmp(d2),
+            _ => None,
+        }
+    }
+}
+
 macro_rules! match_cal_and_date {
     (match ($cal:ident, $date:ident): ($cal_matched:ident, $date_matched:ident) => $e:expr) => {
         match ($cal, $date) {
@@ -253,7 +279,7 @@ impl Calendar for AnyCalendar {
         &self,
         fields: DateFields,
         options: DateFromFieldsOptions,
-    ) -> Result<Self::DateInner, DateError> {
+    ) -> Result<Self::DateInner, DateFromFieldsError> {
         Ok(match_cal!(match self: (c) => c.from_fields(fields, options)?))
     }
 
@@ -683,40 +709,76 @@ impl<C: AsCalendar<Calendar = AnyCalendar>> Date<C> {
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
 pub enum AnyCalendarKind {
     /// The kind of a [`Buddhist`] calendar
+    ///
+    /// This corresponds to the `"buddhist"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Buddhist,
     /// The kind of a [`Chinese`] calendar
+    ///
+    /// This corresponds to the `"chinese"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Chinese,
     /// The kind of a [`Coptic`] calendar
+    ///
+    /// This corresponds to the `"coptic"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Coptic,
     /// The kind of a [`Dangi`] calendar
+    ///
+    /// This corresponds to the `"dangi"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Dangi,
     /// The kind of an [`Ethiopian`] calendar, with Amete Mihret era
+    ///
+    /// This corresponds to the `"ethiopic"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Ethiopian,
     /// The kind of an [`Ethiopian`] calendar, with Amete Alem era
+    ///
+    /// This corresponds to the `"ethioaa"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     EthiopianAmeteAlem,
     /// The kind of a [`Gregorian`] calendar
+    ///
+    /// This corresponds to the `"gregory"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Gregorian,
     /// The kind of a [`Hebrew`] calendar
+    ///
+    /// This corresponds to the `"hebrew"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Hebrew,
     /// The kind of a [`Indian`] calendar
+    ///
+    /// This corresponds to the `"indian"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Indian,
     /// The kind of an [`HijriTabular`] calendar using [`HijriTabularLeapYears::TypeII`] and [`HijriTabularEpoch::Friday`]
+    ///
+    /// This corresponds to the `"islamic-civil"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     HijriTabularTypeIIFriday,
     /// The kind of an [`HijriSimulated`], Mecca calendar
+    ///
+    /// This corresponds to the `"islamic-rgsa"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     HijriSimulatedMecca,
     /// The kind of an [`HijriTabular`] calendar using [`HijriTabularLeapYears::TypeII`] and [`HijriTabularEpoch::Thursday`]
+    ///
+    /// This corresponds to the `"islamic-tbla"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     HijriTabularTypeIIThursday,
     /// The kind of an [`HijriUmmAlQura`] calendar
+    ///
+    /// This corresponds to the `"islamic-umalqura"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     HijriUmmAlQura,
     /// The kind of an [`Iso`] calendar
+    ///
+    /// This corresponds to the `"iso8601"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Iso,
     /// The kind of a [`Japanese`] calendar
+    ///
+    /// This corresponds to the `"japanese"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Japanese,
     /// The kind of a [`JapaneseExtended`] calendar
+    ///
+    /// This corresponds to the `"japanext"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     JapaneseExtended,
     /// The kind of a [`Persian`] calendar
+    ///
+    /// This corresponds to the `"persian"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Persian,
     /// The kind of a [`Roc`] calendar
+    ///
+    /// This corresponds to the `"roc"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Roc,
 }
 

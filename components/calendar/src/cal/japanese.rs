@@ -5,7 +5,7 @@
 use crate::cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears};
 use crate::cal::gregorian::CeBce;
 use crate::calendar_arithmetic::ArithmeticDate;
-use crate::error::DateError;
+use crate::error::{DateError, UnknownEraError};
 use crate::provider::{CalendarJapaneseExtendedV1, CalendarJapaneseModernV1, EraStartDate};
 use crate::{types, AsCalendar, Date};
 use icu_provider::prelude::*;
@@ -20,6 +20,8 @@ use tinystr::tinystr;
 /// The Gregorian calendar with Japanese eras was adopted starting with January 1st, 6 Meiji (1873-01-01), so prior dates are proleptic. This implementation uses the Meiji era proleptically back to and including 1868-10-23 and uses the Gregorian eras for 1868-10-22 and earlier dates. For a variant that uses approximations of historical Japanese eras proleptically, check out [`JapaneseExtended`].
 ///
 /// This type can be used with [`Date`] to represent dates in this calendar.
+///
+/// This corresponds to the `"japanese"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
 ///
 /// [Japanese calendar]: https://en.wikipedia.org/wiki/Japanese_calendar
 ///
@@ -51,6 +53,8 @@ pub struct Japanese {
 /// The Gregorian calendar with Japanese eras was adopted starting with January 1st, 6 Meiji (1873-01-01), so prior dates are proleptic. This implementation uses approximations of earlier Japanese eras proleptically and uses the Gregorian eras for even earlier dates that don't have an approximate Japanese era. For a variant whose Japanese eras start with Meiji, check out [`Japanese`].
 ///
 /// This type can be used with [`Date`] to represent dates in this calendar.
+///
+/// This corresponds to the `"japanext"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
 ///
 /// [Japanese calendar]: https://en.wikipedia.org/wiki/Japanese_calendar
 ///
@@ -165,13 +169,13 @@ const REIWA_START: EraStartDate = EraStartDate {
 };
 
 impl GregorianYears for &'_ Japanese {
-    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, DateError> {
+    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, UnknownEraError> {
         if let Ok(g) = CeBce.extended_from_era_year(era, year) {
             return Ok(g);
         }
         let Some(era) = era else {
             // unreachable, handled by CeBce
-            return Err(DateError::UnknownEra);
+            return Err(UnknownEraError);
         };
 
         // Avoid linear search by trying well known eras
@@ -207,7 +211,7 @@ impl GregorianYears for &'_ Japanese {
             .iter()
             .rev()
             .find_map(|(s, e)| (e == era).then_some(s))
-            .ok_or(DateError::UnknownEra)?;
+            .ok_or(UnknownEraError)?;
         Ok(era_start.year + year - 1)
     }
 

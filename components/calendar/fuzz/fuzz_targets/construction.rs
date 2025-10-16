@@ -100,9 +100,7 @@ fuzz_target!(|data: FuzzInput| {
     };
 
     let mut fields = DateFields::default();
-    // Temporal only cares about validity in ±270k. We generously test outside of that.
-    // We should error on these dates instead, or otherwise handle them: https://github.com/unicode-org/icu4x/issues/7049
-    fields.extended_year = Some(data.year % (i32::MAX / 16));
+    fields.extended_year = Some(data.year);
     fields.day = Some(data.day);
     match data.month_interpretation {
         MonthInterpretation::Ordinal => {
@@ -115,5 +113,16 @@ fuzz_target!(|data: FuzzInput| {
             fields.month_code = Some(unwrap_or_return!(MonthCode::new_leap(data.month)));
         }
     };
-    let _date = Date::try_from_fields(fields, options, calendar);
+    if let Ok(date) = Date::try_from_fields(fields, options, calendar) {
+        let _ = date.day_of_month();
+        let _ = date.day_of_week();
+        let _ = date.day_of_year();
+        let _ = date.days_in_month();
+        let _ = date.days_in_year();
+        let _ = date.extended_year();
+        let _ = date.is_in_leap_year();
+        let _ = date.month();
+        let _ = date.months_in_year();
+        let _ = date.year();
+    }
 });
