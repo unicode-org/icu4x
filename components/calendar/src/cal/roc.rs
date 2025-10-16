@@ -41,11 +41,15 @@ pub(crate) struct RocEra;
 impl GregorianYears for RocEra {
     const EXTENDED_YEAR_OFFSET: i32 = 1911;
 
-    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, UnknownEraError> {
+    fn extended_from_era_year(
+        &self,
+        era: Option<&[u8]>,
+        year: i32,
+    ) -> Result<i32, UnknownEraError> {
         match era {
             None => Ok(year),
-            Some("roc") => Ok(year),
-            Some("broc") => Ok(1 - year),
+            Some(b"roc") => Ok(year),
+            Some(b"broc") => Ok(1 - year),
             Some(_) => Err(UnknownEraError),
         }
     }
