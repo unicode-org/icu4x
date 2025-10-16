@@ -16,6 +16,7 @@ use core::fmt::Debug;
 use core::hash::{Hash, Hasher};
 use core::marker::PhantomData;
 use core::ops::RangeInclusive;
+use potential_utf::PotentialUtf8;
 use tinystr::tinystr;
 
 /// The range ±2²⁷. We use i32::MIN since it is -2³¹
@@ -152,7 +153,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
     /// this should always return an Err result.
     fn year_info_from_era(
         &self,
-        era: &str,
+        era: &PotentialUtf8,
         era_year: i32,
     ) -> Result<Self::YearInfo, UnknownEraError>;
 

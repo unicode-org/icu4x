@@ -9,6 +9,7 @@ use crate::error::{DateError, UnknownEraError};
 use crate::provider::{CalendarJapaneseExtendedV1, CalendarJapaneseModernV1, EraStartDate};
 use crate::{types, AsCalendar, Date};
 use icu_provider::prelude::*;
+use potential_utf::PotentialUtf8;
 use tinystr::tinystr;
 
 /// The [Japanese Calendar] (with modern eras only)
@@ -169,11 +170,15 @@ const REIWA_START: EraStartDate = EraStartDate {
 };
 
 impl GregorianYears for &'_ Japanese {
-    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, UnknownEraError> {
+    fn extended_from_era_year(
+        &self,
+        era: Option<&PotentialUtf8>,
+        year: i32,
+    ) -> Result<i32, UnknownEraError> {
         if let Ok(g) = CeBce.extended_from_era_year(era, year) {
             return Ok(g);
         }
-        let Some(era) = era else {
+        let Some(era) = era.and_then(|s| s.try_as_str().ok()) else {
             // unreachable, handled by CeBce
             return Err(UnknownEraError);
         };
@@ -341,7 +346,7 @@ impl Date<Japanese> {
     ) -> Result<Date<A>, DateError> {
         let extended = japanese_calendar
             .as_calendar()
-            .extended_from_era_year(Some(era), year)?;
+            .extended_from_era_year(Some(era.into()), year)?;
         Ok(Date::from_raw(
             JapaneseDateInner(ArithmeticDate::new_gregorian::<&Japanese>(
                 extended, month, day,
@@ -393,7 +398,7 @@ impl Date<JapaneseExtended> {
         japanext_calendar: A,
     ) -> Result<Date<A>, DateError> {
         let extended =
-            (&japanext_calendar.as_calendar().0).extended_from_era_year(Some(era), year)?;
+            (&japanext_calendar.as_calendar().0).extended_from_era_year(Some(era.into()), year)?;
         Ok(Date::from_raw(
             JapaneseExtendedDateInner(ArithmeticDate::new_gregorian::<&Japanese>(
                 extended, month, day,

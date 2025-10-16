@@ -22,6 +22,7 @@ use icu_locale_core::preferences::extensions::unicode::keywords::{
     CalendarAlgorithm, HijriCalendarAlgorithm,
 };
 use icu_provider::prelude::*;
+use potential_utf::PotentialUtf8;
 use tinystr::tinystr;
 
 #[path = "hijri/simulated_mecca_data.rs"]
@@ -725,12 +726,12 @@ impl<R: Rules> DateFieldsResolver for Hijri<R> {
     #[inline]
     fn year_info_from_era(
         &self,
-        era: &str,
+        era: &PotentialUtf8,
         era_year: i32,
     ) -> Result<Self::YearInfo, UnknownEraError> {
-        let extended_year = match era {
-            "ah" => era_year,
-            "bh" => 1 - era_year,
+        let extended_year = match era.try_as_str() {
+            Ok("ah") => era_year,
+            Ok("bh") => 1 - era_year,
             _ => return Err(UnknownEraError),
         };
         Ok(self.year_info_from_extended(extended_year))

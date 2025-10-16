@@ -11,6 +11,7 @@ use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
 use crate::{types, Calendar, Date, RangeError};
 use calendrical_calculations::rata_die::RataDie;
+use potential_utf::PotentialUtf8;
 use tinystr::tinystr;
 
 /// The [Indian National (Śaka) Calendar](https://en.wikipedia.org/wiki/Indian_national_calendar)
@@ -82,11 +83,11 @@ impl DateFieldsResolver for Indian {
     #[inline]
     fn year_info_from_era(
         &self,
-        era: &str,
+        era: &PotentialUtf8,
         era_year: i32,
     ) -> Result<Self::YearInfo, UnknownEraError> {
-        match era {
-            "shaka" => Ok(era_year),
+        match era.try_as_str() {
+            Ok("shaka") => Ok(era_year),
             _ => Err(UnknownEraError),
         }
     }

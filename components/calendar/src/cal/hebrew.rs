@@ -18,6 +18,7 @@ use crate::{types, Calendar, Date};
 use ::tinystr::tinystr;
 use calendrical_calculations::hebrew_keviyah::{Keviyah, YearInfo};
 use calendrical_calculations::rata_die::RataDie;
+use potential_utf::PotentialUtf8;
 
 /// The [Hebrew Calendar](https://en.wikipedia.org/wiki/Hebrew_calendar)
 ///
@@ -123,11 +124,11 @@ impl DateFieldsResolver for Hebrew {
     #[inline]
     fn year_info_from_era(
         &self,
-        era: &str,
+        era: &PotentialUtf8,
         era_year: i32,
     ) -> Result<Self::YearInfo, UnknownEraError> {
-        match era {
-            "am" => Ok(HebrewYearInfo::compute(era_year)),
+        match era.try_as_str() {
+            Ok("am") => Ok(HebrewYearInfo::compute(era_year)),
             _ => Err(UnknownEraError),
         }
     }

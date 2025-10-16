@@ -12,6 +12,7 @@ use crate::types::DateFields;
 use crate::{types, Calendar, Date, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
+use potential_utf::PotentialUtf8;
 use tinystr::tinystr;
 
 /// The [Julian Calendar](https://en.wikipedia.org/wiki/Julian_calendar).
@@ -107,12 +108,12 @@ impl DateFieldsResolver for Julian {
     #[inline]
     fn year_info_from_era(
         &self,
-        era: &str,
+        era: &PotentialUtf8,
         era_year: i32,
     ) -> Result<Self::YearInfo, UnknownEraError> {
-        match era {
-            "ad" | "ce" => Ok(era_year),
-            "bc" | "bce" => Ok(1 - era_year),
+        match era.try_as_str() {
+            Ok("ad") | Ok("ce") => Ok(era_year),
+            Ok("bc") | Ok("bce") => Ok(1 - era_year),
             _ => Err(UnknownEraError),
         }
     }

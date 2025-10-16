@@ -34,7 +34,7 @@ fn test_from_fields_not_enough_fields() {
             assert_eq!(
                 Date::try_from_fields(
                     DateFields {
-                        era: Some("hebrew"),
+                        era: Some("am".into()),
                         era_year: big_i32,
                         extended_year: None,
                         ordinal_month: None,
@@ -50,7 +50,7 @@ fn test_from_fields_not_enough_fields() {
             assert_eq!(
                 Date::try_from_fields(
                     DateFields {
-                        era: Some("hebrew"),
+                        era: Some("am".into()),
                         era_year: small_i32,
                         extended_year: None,
                         ordinal_month: None,
@@ -84,7 +84,7 @@ fn test_from_fields_not_enough_fields() {
             assert_eq!(
                 Date::try_from_fields(
                     DateFields {
-                        era: Some("hebrew"),
+                        era: Some("am".into()),
                         era_year: None,
                         extended_year: None,
                         ordinal_month: big_u8,
@@ -100,7 +100,7 @@ fn test_from_fields_not_enough_fields() {
             assert_eq!(
                 Date::try_from_fields(
                     DateFields {
-                        era: Some("hebrew"),
+                        era: Some("am".into()),
                         era_year: None,
                         extended_year: None,
                         ordinal_month: small_u8,
@@ -202,7 +202,7 @@ fn test_from_fields_not_enough_fields() {
                 assert_eq!(
                     Date::try_from_fields(
                         DateFields {
-                            era: Some("hebrew"),
+                            era: Some("am".into()),
                             era_year: big_i32,
                             extended_year: None,
                             ordinal_month: small_u8,
@@ -218,7 +218,7 @@ fn test_from_fields_not_enough_fields() {
                 assert_eq!(
                     Date::try_from_fields(
                         DateFields {
-                            era: Some("hebrew"),
+                            era: Some("am".into()),
                             era_year: small_i32,
                             extended_year: None,
                             ordinal_month: big_u8,

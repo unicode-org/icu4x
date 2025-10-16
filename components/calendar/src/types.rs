@@ -7,6 +7,7 @@
 #[doc(no_inline)]
 pub use calendrical_calculations::rata_die::RataDie;
 use core::fmt;
+use potential_utf::PotentialUtf8;
 use tinystr::TinyAsciiStr;
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::ule::AsULE;
@@ -25,7 +26,7 @@ pub struct DateFields<'a> {
     /// The era code as defined by CLDR.
     ///
     /// If set, [`Self::era_year`] must also be set.
-    pub era: Option<&'a str>,
+    pub era: Option<&'a PotentialUtf8>,
     /// The numeric year in [`Self::era`].
     ///
     /// If set, [`Self::era`] must also be set.

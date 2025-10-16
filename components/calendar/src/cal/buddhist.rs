@@ -9,6 +9,7 @@ use crate::{
     calendar_arithmetic::ArithmeticDate,
     types, Date, DateError, RangeError,
 };
+use potential_utf::PotentialUtf8;
 use tinystr::tinystr;
 
 #[derive(Copy, Clone, Debug, Default)]
@@ -48,8 +49,12 @@ pub(crate) struct BuddhistEra;
 impl GregorianYears for BuddhistEra {
     const EXTENDED_YEAR_OFFSET: i32 = -543;
 
-    fn extended_from_era_year(&self, era: Option<&str>, year: i32) -> Result<i32, UnknownEraError> {
-        match era {
+    fn extended_from_era_year(
+        &self,
+        era: Option<&PotentialUtf8>,
+        year: i32,
+    ) -> Result<i32, UnknownEraError> {
+        match era.and_then(|s| s.try_as_str().ok()) {
             Some("be") | None => Ok(year),
             _ => Err(UnknownEraError),
         }

@@ -13,6 +13,7 @@ use crate::{types, Calendar, Date, RangeError};
 use ::tinystr::tinystr;
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
+use potential_utf::PotentialUtf8;
 
 /// The [Persian Calendar](https://en.wikipedia.org/wiki/Solar_Hijri_calendar)
 ///
@@ -81,11 +82,11 @@ impl DateFieldsResolver for Persian {
     #[inline]
     fn year_info_from_era(
         &self,
-        era: &str,
+        era: &PotentialUtf8,
         era_year: i32,
     ) -> Result<Self::YearInfo, UnknownEraError> {
-        match era {
-            "ap" | "sh" | "hs" => Ok(era_year),
+        match era.try_as_str() {
+            Ok("ap") | Ok("sh") | Ok("hs") => Ok(era_year),
             _ => Err(UnknownEraError),
         }
     }
