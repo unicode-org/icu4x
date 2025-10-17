@@ -39,6 +39,12 @@ use tinystr::tinystr;
 /// # Month codes
 ///
 /// This calendar supports 12 solar month codes (`M01` - `M12`)
+///
+/// # Precise definition and limits
+///
+/// This calendar is defined algorithmically as a solar calendar that is identical to the proleptic Gregorian calendar in everything
+/// except year numbering. This happens to be the civil calendar used in Japan from 1873, this calendar extends proleptically
+/// before that.
 #[derive(Clone, Debug, Default)]
 pub struct Japanese {
     eras: DataPayload<CalendarJapaneseModernV1>,

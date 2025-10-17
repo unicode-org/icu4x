@@ -102,6 +102,13 @@ impl GregorianYears for CeBce {
 /// # Month codes
 ///
 /// This calendar supports 12 solar month codes (`"M01" - "M12"`)
+///
+/// # Precise definition and limits
+///
+/// This calendar is defined algorithmically as a solar calendar that has 12 months, with a leap day in the
+/// 2nd month every 4 and 400 years (but not every 100 years). As of 2025 it is a widely used civil calendar
+/// in most countries, including the UN. The Gregorian calendar was adopted gradually starting in the 1500s,
+/// this calendar extends proleptically before that.
 #[derive(Copy, Clone, Debug, Default)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Gregorian;
