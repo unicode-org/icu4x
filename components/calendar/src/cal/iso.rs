@@ -21,6 +21,11 @@ use tinystr::tinystr;
 /// # Month codes
 ///
 /// This calendar supports 12 solar month codes (`"M01" - "M12"`)
+///
+/// # Precise definition and limits
+///
+/// This calendar is defined algorithmically as a solar calendar that is identical to the proleptic Gregorian calendar
+/// in everything except the way eras are handled.
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Iso;

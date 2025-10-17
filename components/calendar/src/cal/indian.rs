@@ -27,6 +27,13 @@ use tinystr::tinystr;
 /// # Month codes
 ///
 /// This calendar supports 12 solar month codes (`"M01" - "M12"`)
+///
+/// # Precise definition and limits
+///
+/// This calendar is defined algorithmically as a solar calendar that has 12 months, as used alongside the
+/// Gregorian calendar by the Government of India by the name "Śaka calendar" as of 2025.`
+///
+/// The Śaka calendar was introduced in 1957, but this calendar extends proleptically before that.
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Indian;

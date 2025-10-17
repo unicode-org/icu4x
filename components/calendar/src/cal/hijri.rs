@@ -47,6 +47,16 @@ mod ummalqura_data;
 ///
 /// This calendar is a pure lunar calendar with no leap months. It uses month codes
 /// `"M01" - "M12"`.
+///
+/// # Precise definition and limits
+///
+/// This calendar generically covers any pure lunar calendar used ecclesiastically in Islam,
+/// with 12 months each of length 29 or 30, with an epoch intended to mark the Hijrah in 622 CE.
+///
+/// In practice, this calendar can be backed by a precise algorithm, an algorithm with official tables,
+/// astronomical simulation, or pure observation.
+///
+/// Further details can be found on individual calendar types.
 #[derive(Clone, Debug, Default, Copy)]
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct Hijri<S>(pub S);
@@ -111,6 +121,14 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 ///
 /// This corresponds to the `"islamic-rgsa"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier)
 /// if constructed with [`Hijri::new_simulated_mecca()`].
+///
+/// # Precise definition and limits
+///
+/// This calendar simulates the lunar cycle for a given location. This currently
+/// simulates the calendar for all time using the same calculations, but we may
+/// in the future introduce approximations for non-modern dates.
+///
+/// The precise behavior of this calendar for any and all dates may change in the future.
 #[derive(Copy, Clone, Debug)]
 pub struct AstronomicalSimulation {
     pub(crate) location: SimulatedLocation,
@@ -236,6 +254,20 @@ impl Rules for AstronomicalSimulation {
 /// calendar authority.
 ///
 /// This corresponds to the `"islamic-umalqura"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
+///
+/// # Precise definition and limits
+///
+/// This calendar is intended to match the Umm al-Qura calendar defined and published by the Kingdom of Saudi Arabia,
+/// with the source of truth being government published data/almanacs.
+///
+/// Outside the range 1300 AH (1882-11-12 ISO) to the end of 1600 AH (2174-11-25 ISO) it falls back
+/// to a tabular approximation. These ranges may change in the future.
+///
+/// The precise behavior of this calendar may change in the future if:
+/// - The ground truth in Saudi Arabia changes, either through published government sources or most almanacs
+/// - Future data is published that we wish to incorporate
+/// - We decide to tweak the simplified calculation
+/// - We decide to expand the range where we are handling past dates.
 #[derive(Copy, Clone, Debug, Default)]
 #[non_exhaustive]
 pub struct UmmAlQura;
@@ -311,6 +343,11 @@ impl Rules for UmmAlQura {
 ///
 /// When constructed with [`TabularAlgorithmLeapYears::TypeII`], and either [`TabularAlgorithmEpoch::Friday`] or [`TabularAlgorithmEpoch::Thursday`],
 /// this corresponds to the `"islamic-civil"` and `"islamic-tbla"` [CLDR calendars](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier) respectively.
+///
+/// # Precise definition and limits
+///
+/// This calendar is defined algorithmically based on the algorithm selected by the choice of [`TabularAlgorithmLeapYears`],
+/// and the epoch selected by the choice of [`TabularAlgorithmEpoch`].
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct TabularAlgorithm {
     pub(crate) leap_years: TabularAlgorithmLeapYears,

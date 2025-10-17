@@ -29,6 +29,20 @@ use calendrical_calculations::rata_die::RataDie;
 /// # Month codes
 ///
 /// This calendar supports 12 solar month codes (`"M01" - "M12"`)
+///
+/// # Precise definition and limits
+///
+/// This calendar is defined as a solar calendar which uses the astronomical vernal equinox as its new year, and
+/// is the official calendar of the Islamic Republic of Iran as of 2025. This calendar was introduced in Iran in 1925,
+/// but the astronomical calculations are extended proleptically before that.
+///
+/// As these are pure solar computations, the astronomical calculations can be treated as a relatively
+/// precise algorithm and there is much less need to match ground truth. Nevertheless, in the event that the calculations
+/// disagree with the ground truth of calendar usage in Iran, the ground truth will prevail.
+///
+/// The underlying implementation uses a cyclic approximation with overrides to match the precise astronomic calculations
+/// for the years 1500-3000 CE. Outside of that range one can expect this calendar implementation to no longer
+/// accurately match the astronomical calculations.
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
 pub struct Persian;

@@ -34,6 +34,12 @@ use tinystr::tinystr;
 ///
 /// This calendar supports 13 solar month codes (`"M01" - "M13"`), with `"M13"` being used for the short epagomenal month
 /// at the end of the year.
+///
+/// # Precise definition and limits
+///
+/// This calendar is defined algorithmically as a solar calendar that has 13 months, with a leap day in
+/// the 13th month every 4 years, as used by the Coptic orthodox church as of 2025. This calendar extends proleptically
+/// before the time of its introduction.
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Coptic;

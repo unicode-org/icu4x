@@ -57,6 +57,12 @@ pub enum EthiopianEraStyle {
 ///
 /// This calendar supports 13 solar month codes (`"M01" - "M13"`), with `"M13"` being used for the short epagomenal month
 /// at the end of the year.
+///
+/// # Precise definition and limits
+///
+/// This calendar is defined algorithmically as a solar calendar that has 13 months,
+/// as used as a civil calendar in Ethiopia as of 2025. This calendar extends proleptically
+/// before the time of its introduction.
 // The bool specifies whether dates should be in the Amete Alem era scheme
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct Ethiopian(EthiopianEraStyle);

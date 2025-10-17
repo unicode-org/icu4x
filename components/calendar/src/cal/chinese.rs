@@ -80,6 +80,11 @@ mod simple;
 ///
 /// This calendar is currently in a preview state: formatting for this calendar is not
 /// going to be perfect.
+///
+/// # Precise definition and limits
+///
+/// This calendar generically covers any East Asian-style lunisolar calendar with twelve months, and leap months possible
+/// after any month. Individual variants [`China`] and [`Korea`] contain more information.
 #[derive(Clone, Debug, Default, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct LunarChinese<X>(pub X);
@@ -138,11 +143,17 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
 
 /// The [`Rules`] used in China.
 ///
-/// This type agrees with the official data published by the
+/// # Precise definition and limits
+///
+/// This calendar is intended to represent the traditional Chinese lunar calendar as used
+/// officially in the People's Republic of China as of 2025. This takes a best-effort approach
+/// to match past and future dates as used in the region for the year 1900 onwards.
+///
+/// This calendar agrees with the official data published by the
 /// [Purple Mountain Observatory for the years 1900-2025], as well as with
 /// the data published by the [Hong Kong Observatory for the years 1901-2100].
 ///
-/// For years since 1912, this uses the [GB/T 33661-2017] rules.
+/// For years since 1912, this uses official the [GB/T 33661-2017] rules.
 /// As accurate computation is computationally expensive, years until
 /// 2100 are precomputed, and after that this type regresses to a simplified
 /// calculation. If accuracy beyond 2100 is required, clients
@@ -154,6 +165,12 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
 /// falls back to a simplified calculation before 1900. If accuracy is
 /// required before 1900, clients can implement their own [`Rules`] type
 /// using data such as from the excellent compilation by [Yuk Tung Liu].
+///
+/// The precise behavior of this calendar may change in the future if:
+/// - The ground truth in China changes, either through published government sources or most almanacs
+/// - Future data is published that we wish to incorporate
+/// - We decide to tweak the simplified calculation
+/// - We decide to expand the range where we are handling past dates.
 ///
 /// [Purple Mountain Observatory for the years 1900-2025]: http://www.pmo.cas.cn/xwdt2019/kpdt2019/202203/P020250414456381274062.pdf
 /// [Hong Kong Observatory for the years 1901-2100]: https://www.hko.gov.hk/en/gts/time/conversion.htm
@@ -279,6 +296,12 @@ impl Rules for China {
 
 /// The [`Rules`] used in [Korea](https://en.wikipedia.org/wiki/Korean_calendar).
 ///
+/// # Precise definition and limits
+///
+/// This calendar is intended to represent the traditional Korean lunar calendar as used
+/// officially in the Republic of Korea as of 2025. This takes a best-effort approach
+/// to match past and future dates as used in the region for the year 1900 onwards.
+///
 /// This type agrees with the official data published by the
 /// [Korea Astronomy and Space Science Institute for the years 1900-2050].
 ///
@@ -297,10 +320,18 @@ impl Rules for China {
 /// their own [`Rules`] type using data such as from the excellent compilation
 /// by [Yuk Tung Liu].
 ///
+/// The precise behavior of this calendar may change in the future if:
+/// - The ground truth in South Korea changes, either through published government sources or most almanacs
+/// - Future data is published that we wish to incorporate
+/// - We decide to tweak the simplified calculation
+/// - We decide to expand the range where we are handling past dates.
+///
 /// [Korea Astronomy and Space Science Institute for the years 1900-2050]: https://astro.kasi.re.kr/life/pageView/5
 /// [adapted GB/T 33661-2017]: Korea::adapted_gb_t_33661_2017
 /// [GB/T 33661-2017]: China::gb_t_33661_2017
 /// [Yuk Tung Liu]: https://ytliu0.github.io/ChineseCalendar/table.html
+///
+/// # Example
 ///
 /// ```rust
 /// use icu::calendar::cal::LunarChinese;

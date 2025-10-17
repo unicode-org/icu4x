@@ -59,6 +59,11 @@ use tinystr::tinystr;
 /// # Month codes
 ///
 /// This calendar supports 12 solar month codes (`"M01" - "M12"`)
+///
+/// # Precise definition and limits
+///
+/// This calendar is defined algorithmically as a solar calendar with a leap month every 4 years, as used
+/// by the Roman Empire since 1 CE.
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Julian;

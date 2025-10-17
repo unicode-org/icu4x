@@ -36,6 +36,16 @@ use calendrical_calculations::rata_die::RataDie;
 /// [`MonthInfo`] has slightly divergent behavior: because the regular month Adar is formatted
 /// as "Adar II" in a leap year, this calendar will produce the special code `"M06L"` in any [`MonthInfo`]
 /// objects it creates.
+///
+/// # Precise definition and limits
+///
+/// This calendar is defined algorithmically as a lunar calendar with a leap 6th month every
+/// 3rd, 6th, 8th, 11th, 14th, 17th, and 19th years, as used as an ecclesiastical calendar in Judaism
+/// as of 2025 (using the "civil new year" variant where Tishrei is the first month of the year).
+/// The precise algorithm used has [changed over time], with the modern one being in place
+/// since about 776 CE. This calendar extends that algorithm proleptically before that.
+///
+/// [changed over time]: https://hakirah.org/vol20AjdlerAppendices.pdf
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord, Default)]
 #[allow(clippy::exhaustive_structs)] // unit struct
 pub struct Hebrew;
