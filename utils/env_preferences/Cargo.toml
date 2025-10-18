@@ -7,7 +7,7 @@ name = "env_preferences"
 version = "0.1.0"
 publish = false
 
-rust-version.workspace = true
+rust-version = "1.82"
 authors.workspace = true
 edition.workspace = true
 repository.workspace = true

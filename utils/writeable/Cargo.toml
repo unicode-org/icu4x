@@ -12,7 +12,7 @@ edition.workspace = true
 include.workspace = true
 license.workspace = true
 repository.workspace = true
-rust-version.workspace = true
+rust-version = "1.82"
 
 [package.metadata.workspaces]
 independent = true

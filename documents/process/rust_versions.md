@@ -18,11 +18,9 @@ The main ICU4X library does not use nightly; however nightly is required for bui
 
 Our "utils" crates (yoke, zerovec, zerofrom, etc) are not versioned alongside ICU4X: they may have major version updates between minor ICU4X releases, and they may choose to have minor version updates between major ICU4X releases.
 
-By default, these crates have the same MSRV as their corresponding ICU4X release, however at times we may give them a lower MSRV for a wider range of compatability.
+We intend for these crates to gain wider adoption than just ICU4X. As such, these crates don't change their MSRV unless there is a need for it.
 
-This is done on an as-requested basis and is best-effort.
-
-Currently, `zerofrom` is the only crate with a lower MSRV.
+When an ICU4X developer needs to use a new Rust API/feature in such a crate, they may update the MSRV to any Rust version at least six Rust versions before the current stable Rust (and also less than or equal to the current ICU4X MSRV).
  
 ## For ICU4X developers
 
