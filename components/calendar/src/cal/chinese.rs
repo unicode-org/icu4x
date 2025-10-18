@@ -153,7 +153,7 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
 /// [Purple Mountain Observatory for the years 1900-2025], as well as with
 /// the data published by the [Hong Kong Observatory for the years 1901-2100].
 ///
-/// For years since 1912, this uses official the [GB/T 33661-2017] rules.
+/// For years since 1912, this uses the official [GB/T 33661-2017] rules.
 /// As accurate computation is computationally expensive, years until
 /// 2100 are precomputed, and after that this type regresses to a simplified
 /// calculation. If accuracy beyond 2100 is required, clients
