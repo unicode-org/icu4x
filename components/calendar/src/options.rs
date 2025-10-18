@@ -54,14 +54,13 @@ pub struct DateFromFieldsOptions {
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::types::DateFields;
-    /// use icu::calendar::types::MonthCode;
     /// use icu::calendar::options::MissingFieldsStrategy;
     /// use icu::calendar::options::DateFromFieldsOptions;
     /// use icu::calendar::Iso;
     ///
     /// // These options are missing a year.
     /// let mut fields = DateFields::default();
-    /// fields.month_code = MonthCode::new_normal(2);
+    /// fields.month_code = Some(b"M02");
     /// fields.day = Some(1);
     ///
     /// let options_default = DateFromFieldsOptions::default();
@@ -232,8 +231,6 @@ pub enum Overflow {
     /// use icu_calendar::options::DateFromFieldsOptions;
     /// use icu_calendar::options::Overflow;
     /// use icu_calendar::types::DateFields;
-    /// use icu_calendar::types::MonthCode;
-    /// use tinystr::tinystr;
     ///
     /// let mut options = DateFromFieldsOptions::default();
     /// options.overflow = Some(Overflow::Constrain);
@@ -241,7 +238,7 @@ pub enum Overflow {
     /// // 5784, a leap year, contains M05L, but the day is too big.
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(5784);
-    /// fields.month_code = Some(MonthCode(tinystr!(4, "M05L")));
+    /// fields.month_code = Some(b"M05L");
     /// fields.day = Some(50);
     ///
     /// let date = Date::try_from_fields(
@@ -253,7 +250,7 @@ pub enum Overflow {
     ///
     /// // Constrained to the 30th day of M05L of year 5784
     /// assert_eq!(date.year().extended_year(), 5784);
-    /// assert_eq!(date.month().standard_code, MonthCode(tinystr!(4, "M05L")));
+    /// assert_eq!(date.month().standard_code.0, "M05L");
     /// assert_eq!(date.day_of_month().0, 30);
     ///
     /// // 5785, a common year, does not contain M05L.
@@ -268,7 +265,7 @@ pub enum Overflow {
     ///
     /// // Constrained to the 29th day of M06 of year 5785
     /// assert_eq!(date.year().extended_year(), 5785);
-    /// assert_eq!(date.month().standard_code, MonthCode(tinystr!(4, "M06")));
+    /// assert_eq!(date.month().standard_code.0, "M06");
     /// assert_eq!(date.day_of_month().0, 29);
     /// ```
     Constrain,
@@ -283,7 +280,6 @@ pub enum Overflow {
     /// use icu_calendar::options::DateFromFieldsOptions;
     /// use icu_calendar::options::Overflow;
     /// use icu_calendar::types::DateFields;
-    /// use icu_calendar::types::MonthCode;
     /// use tinystr::tinystr;
     ///
     /// let mut options = DateFromFieldsOptions::default();
@@ -292,7 +288,7 @@ pub enum Overflow {
     /// // 5784, a leap year, contains M05L, but the day is too big.
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(5784);
-    /// fields.month_code = Some(MonthCode(tinystr!(4, "M05L")));
+    /// fields.month_code = Some(b"M05L");
     /// fields.day = Some(50);
     ///
     /// let err = Date::try_from_fields(
@@ -384,11 +380,7 @@ pub enum MissingFieldsStrategy {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        error::DateFromFieldsError,
-        types::{DateFields, MonthCode},
-        Date, Gregorian,
-    };
+    use crate::{error::DateFromFieldsError, types::DateFields, Date, Gregorian};
     use itertools::Itertools;
     use std::collections::{BTreeMap, BTreeSet};
 
@@ -462,9 +454,7 @@ mod tests {
         field_fns.insert("era", &|fields| fields.era = Some(b"ad"));
         field_fns.insert("era_year", &|fields| fields.era_year = Some(2000));
         field_fns.insert("extended_year", &|fields| fields.extended_year = Some(2000));
-        field_fns.insert("month_code", &|fields| {
-            fields.month_code = MonthCode::new_normal(4)
-        });
+        field_fns.insert("month_code", &|fields| fields.month_code = Some(b"M04"));
         field_fns.insert("ordinal_month", &|fields| fields.ordinal_month = Some(4));
         field_fns.insert("day", &|fields| fields.day = Some(20));
 

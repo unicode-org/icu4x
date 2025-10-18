@@ -54,7 +54,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         } else {
             fields.extended_year = Some(year);
         }
-        fields.month_code = Some(month_code);
+        fields.month_code = Some(month_code.0.as_bytes());
         fields.day = Some(day);
         let options = DateFromFieldsOptions {
             overflow: Some(Overflow::Reject),

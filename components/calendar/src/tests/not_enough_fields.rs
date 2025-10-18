@@ -4,7 +4,7 @@
 
 use crate::error::DateFromFieldsError;
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
-use crate::types::{DateFields, MonthCode};
+use crate::types::DateFields;
 use crate::Date;
 
 #[test]
@@ -16,8 +16,8 @@ fn test_from_fields_not_enough_fields() {
     let big_u8 = Some(u8::MAX);
     let small_u8 = Some(1);
     let small_i32 = Some(5000);
-    let valid_month_code = MonthCode::new_normal(1);
-    let invalid_month_code = MonthCode::new_normal(99);
+    let valid_month_code: Option<&[_]> = Some(b"M01");
+    let invalid_month_code: Option<&[_]> = Some(b"M99");
 
     // We want to ensure that most NotEnoughFields cases return NotEnoughFields
     // even when we're providing out-of-range values, so that

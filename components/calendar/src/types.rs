@@ -19,7 +19,7 @@ use crate::error::MonthCodeParseError;
 /// A bag of various ways of expressing the year, month, and/or day.
 ///
 /// Pass this into [`Date::try_from_fields`](crate::Date::try_from_fields).
-#[derive(Copy, Clone, Debug, PartialEq, Default)]
+#[derive(Copy, Clone, PartialEq, Default)]
 #[non_exhaustive]
 pub struct DateFields<'a> {
     /// The era code as defined by CLDR.
@@ -35,8 +35,10 @@ pub struct DateFields<'a> {
     /// If both this and [`Self::era`]/[`Self::era_year`] are set, they must
     /// refer to the same year.
     pub extended_year: Option<i32>,
-    /// The [`MonthCode`] representing a valid month in this calendar year.
-    pub month_code: Option<MonthCode>,
+    /// The month code representing a valid month in this calendar year.
+    ///
+    /// See [`MonthCode`] for information on the syntax.
+    pub month_code: Option<&'a [u8]>,
     /// See [`MonthInfo::ordinal`].
     ///
     /// If both this and [`Self::month_code`] are set, they must refer to
@@ -44,6 +46,37 @@ pub struct DateFields<'a> {
     pub ordinal_month: Option<u8>,
     /// See [`DayOfMonth`].
     pub day: Option<u8>,
+}
+
+// Custom impl to stringify era and month_code where possible.
+impl fmt::Debug for DateFields<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // Ensures we catch future fields
+        let Self {
+            era,
+            era_year,
+            extended_year,
+            month_code,
+            ordinal_month,
+            day,
+        } = *self;
+        let mut builder = f.debug_struct("DateFields");
+        if let Some(s) = era.and_then(|s| core::str::from_utf8(s).ok()) {
+            builder.field("era", &Some(s));
+        } else {
+            builder.field("era", &era);
+        }
+        builder.field("era_year", &era_year);
+        builder.field("extended_year", &extended_year);
+        if let Some(s) = month_code.and_then(|s| core::str::from_utf8(s).ok()) {
+            builder.field("month_code", &Some(s));
+        } else {
+            builder.field("month_code", &month_code);
+        }
+        builder.field("ordinal_month", &ordinal_month);
+        builder.field("day", &day);
+        builder.finish()
+    }
 }
 
 /// The type of year: Calendars like Chinese don't have an era and instead format with cyclic years.
@@ -174,6 +207,8 @@ pub struct CyclicYear {
 pub struct MonthCode(pub TinyStr4);
 
 impl MonthCode {
+    pub(crate) const SENTINEL: MonthCode = MonthCode(tinystr::tinystr!(4, "und"));
+
     /// Returns an option which is `Some` containing the non-month version of a leap month
     /// if the [`MonthCode`] this method is called upon is a leap month, and `None` otherwise.
     /// This method assumes the [`MonthCode`] is valid.
@@ -187,23 +222,30 @@ impl MonthCode {
     }
     /// Get the month number and whether or not it is leap from the month code
     pub fn parsed(self) -> Option<(u8, bool)> {
-        self.try_parse().ok()
+        let valid_month_code = self.validated().ok()?;
+        Some((valid_month_code.number(), valid_month_code.is_leap()))
     }
-    pub(crate) fn try_parse(self) -> Result<(u8, bool), MonthCodeParseError> {
+
+    /// Validates the syntax and returns a [`ValidMonthCode`], from which the
+    /// month number and leap month status can be read.
+    pub(crate) fn validated(self) -> Result<ValidMonthCode, MonthCodeParseError> {
         // Match statements on tinystrs are annoying so instead
         // we calculate it from the bytes directly
 
         let bytes = self.0.all_bytes();
         let is_leap = bytes[3] == b'L';
         if bytes[0] != b'M' {
-            return Err(MonthCodeParseError::InvalidMonthCode);
+            return Err(MonthCodeParseError::InvalidSyntax);
         }
         let b1 = bytes[1];
         let b2 = bytes[2];
         if !b1.is_ascii_digit() || !b2.is_ascii_digit() {
-            return Err(MonthCodeParseError::InvalidMonthCode);
+            return Err(MonthCodeParseError::InvalidSyntax);
         }
-        Ok(((b1 - b'0') * 10 + b2 - b'0', is_leap))
+        Ok(ValidMonthCode {
+            number: (b1 - b'0') * 10 + b2 - b'0',
+            is_leap,
+        })
     }
 
     /// Construct a "normal" month code given a number ("Mxx").
@@ -274,6 +316,85 @@ impl fmt::Display for MonthCode {
     }
 }
 
+/// A [`MonthCode`] that has been parsed into its internal representation.
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub(crate) struct ValidMonthCode {
+    /// Month number between 0 and 99
+    number: u8,
+    is_leap: bool,
+}
+
+impl ValidMonthCode {
+    #[inline]
+    pub(crate) fn from_bytes(x: &[u8]) -> Result<Self, MonthCodeParseError> {
+        let Ok(s) = TinyStr4::try_from_utf8(x) else {
+            return Err(MonthCodeParseError::InvalidSyntax);
+        };
+
+        MonthCode(s).validated()
+    }
+
+    /// Create a new ValidMonthCode without checking that the number is between 0 and 99
+    #[inline]
+    pub(crate) fn new_unchecked(number: u8, is_leap: bool) -> Self {
+        debug_assert!(number <= 99);
+        Self { number, is_leap }
+    }
+
+    /// Returns the month number according to the month code.
+    ///
+    /// This is NOT the same as the ordinal month!
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// use icu::calendar::Date;
+    /// use icu::calendar::cal::Hebrew;
+    ///
+    /// let hebrew_date = Date::try_new_iso(2024, 7, 1).unwrap().to_calendar(Hebrew);
+    /// let month_info = hebrew_date.month();
+    ///
+    /// // Hebrew year 5784 was a leap year, so the ordinal month and month number diverge.
+    /// assert_eq!(month_info.ordinal, 10);
+    /// assert_eq!(month_info.valid_month_code.number(), 9);
+    /// ```
+    #[inline]
+    pub fn number(self) -> u8 {
+        self.number
+    }
+
+    /// Returns whether the month is a leap month.
+    ///
+    /// This is true for intercalary months in [`Hebrew`] and [`LunarChinese`].
+    ///
+    /// [`Hebrew`]: crate::cal::Hebrew
+    /// [`LunarChinese`]: crate::cal::LunarChinese
+    #[inline]
+    pub fn is_leap(self) -> bool {
+        self.is_leap
+    }
+
+    #[inline]
+    pub(crate) fn to_tuple(self) -> (u8, bool) {
+        (self.number, self.is_leap)
+    }
+
+    pub(crate) fn to_month_code(self) -> MonthCode {
+        let option = if self.is_leap {
+            MonthCode::new_leap(self.number)
+        } else {
+            MonthCode::new_normal(self.number)
+        };
+        option.unwrap_or_else(|| {
+            debug_assert!(
+                false,
+                "ValidMonthCode invariants guarantee conversion to MonthCode"
+            );
+            MonthCode::SENTINEL
+        })
+    }
+}
+
 /// Representation of a formattable month.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
@@ -296,6 +417,9 @@ pub struct MonthInfo {
     /// [`Date::try_from_fields`]: crate::Date::try_from_fields
     pub standard_code: MonthCode,
 
+    /// Same as [`Self::standard_code`] but with invariants validated.
+    pub(crate) valid_standard_code: ValidMonthCode,
+
     /// A month code, useable for formatting.
     ///
     /// Does NOT necessarily round-trip through `Date` constructors like [`Date::try_new_from_codes`] and [`Date::try_from_fields`].
@@ -315,15 +439,12 @@ impl MonthInfo {
     /// if there are leap months in the year, rather it is associated with the Nth month of a "regular"
     /// year. There may be multiple month Ns in a year
     pub fn month_number(self) -> u8 {
-        self.standard_code
-            .parsed()
-            .map(|(i, _)| i)
-            .unwrap_or(self.ordinal)
+        self.valid_standard_code.number()
     }
 
     /// Get whether the month is a leap month
     pub fn is_leap(self) -> bool {
-        self.standard_code.parsed().map(|(_, l)| l).unwrap_or(false)
+        self.valid_standard_code.is_leap()
     }
 }
 

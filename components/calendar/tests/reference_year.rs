@@ -27,7 +27,7 @@ where
         let date = Date::from_rata_die(rd, Ref(&cal));
         let month_day = (date.month().standard_code, date.day_of_month().0);
         let mut fields = DateFields::default();
-        fields.month_code = Some(month_day.0);
+        fields.month_code = Some(month_day.0 .0.as_bytes());
         fields.day = Some(month_day.1);
         let mut options = DateFromFieldsOptions::default();
         options.missing_fields_strategy = Some(MissingFieldsStrategy::Ecma);
@@ -50,10 +50,11 @@ where
                     valid_day_number = day_number;
                 }
                 let mut fields = DateFields::default();
-                fields.month_code = match is_leap {
+                let mc = match is_leap {
                     false => MonthCode::new_normal(month_number),
                     true => MonthCode::new_leap(month_number),
                 };
+                fields.month_code = mc.as_ref().map(|m| m.0.as_bytes());
                 fields.day = Some(day_number);
                 let mut options = DateFromFieldsOptions::default();
                 options.overflow = Some(Overflow::Constrain);
@@ -81,7 +82,7 @@ where
                 // Test round-trip (to valid day number)
                 assert_eq!(
                     fields.month_code.unwrap(),
-                    reference_date.month().standard_code,
+                    reference_date.month().standard_code.0.as_bytes(),
                     "{fields:?} {cal:?}"
                 );
                 assert_eq!(

@@ -89,11 +89,10 @@ pub enum DateFromFieldsError {
     /// use icu_calendar::Iso;
     /// use icu_calendar::types::MonthCode;
     /// use icu_calendar::types::DateFields;
-    /// use tinystr::tinystr;
     ///
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(2000);
-    /// fields.month_code = Some(MonthCode(tinystr!(4, "????")));
+    /// fields.month_code = Some(b"????");
     /// fields.day = Some(1);
     ///
     /// let err = Date::try_from_fields(
@@ -114,12 +113,10 @@ pub enum DateFromFieldsError {
     /// use icu_calendar::error::DateFromFieldsError;
     /// use icu_calendar::cal::Hebrew;
     /// use icu_calendar::types::DateFields;
-    /// use icu_calendar::types::MonthCode;
-    /// use tinystr::tinystr;
     ///
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(5783);
-    /// fields.month_code = Some(MonthCode::new_normal(13).unwrap());
+    /// fields.month_code = Some(b"M13");
     /// fields.day = Some(1);
     ///
     /// let err = Date::try_from_fields(
@@ -141,12 +138,10 @@ pub enum DateFromFieldsError {
     /// use icu_calendar::error::DateFromFieldsError;
     /// use icu_calendar::cal::Hebrew;
     /// use icu_calendar::types::DateFields;
-    /// use icu_calendar::types::MonthCode;
-    /// use tinystr::tinystr;
     ///
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(5783);
-    /// fields.month_code = Some(MonthCode::new_leap(5).unwrap());
+    /// fields.month_code = Some(b"M05L");
     /// fields.day = Some(1);
     ///
     /// let err = Date::try_from_fields(
@@ -204,12 +199,11 @@ pub enum DateFromFieldsError {
     /// use icu_calendar::error::DateFromFieldsError;
     /// use icu_calendar::cal::Hebrew;
     /// use icu_calendar::types::DateFields;
-    /// use icu_calendar::types::MonthCode;
     /// use tinystr::tinystr;
     ///
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(5783);
-    /// fields.month_code = Some(MonthCode(tinystr!(4, "M06")));
+    /// fields.month_code = Some(b"M06");
     /// fields.ordinal_month = Some(6);
     /// fields.day = Some(1);
     ///
@@ -242,7 +236,6 @@ pub enum DateFromFieldsError {
     /// use icu_calendar::error::DateFromFieldsError;
     /// use icu_calendar::cal::Hebrew;
     /// use icu_calendar::types::DateFields;
-    /// use icu_calendar::types::MonthCode;
     /// use tinystr::tinystr;
     ///
     /// let mut fields = DateFields::default();
@@ -325,16 +318,17 @@ impl From<UnknownEraError> for DateFromFieldsError {
     }
 }
 
-/// Internal narrow error type for functions that only fail on invalid month codes
+/// Internal narrow error type for functions that only fail on parsing month codes
+#[derive(Debug)]
 pub(crate) enum MonthCodeParseError {
-    InvalidMonthCode,
+    InvalidSyntax,
 }
 
-impl From<MonthCodeParseError> for EcmaReferenceYearError {
+impl From<MonthCodeParseError> for DateFromFieldsError {
     #[inline]
     fn from(value: MonthCodeParseError) -> Self {
         match value {
-            MonthCodeParseError::InvalidMonthCode => EcmaReferenceYearError::InvalidMonthCode,
+            MonthCodeParseError::InvalidSyntax => DateFromFieldsError::InvalidMonthCode,
         }
     }
 }
@@ -343,7 +337,7 @@ impl From<MonthCodeParseError> for MonthCodeError {
     #[inline]
     fn from(value: MonthCodeParseError) -> Self {
         match value {
-            MonthCodeParseError::InvalidMonthCode => MonthCodeError::InvalidMonthCode,
+            MonthCodeParseError::InvalidSyntax => MonthCodeError::InvalidMonthCode,
         }
     }
 }
@@ -376,9 +370,8 @@ mod inner {
     #[allow(missing_docs)] // TODO: fix when graduating
     #[non_exhaustive]
     pub enum EcmaReferenceYearError {
-        InvalidMonthCode,
+        Unimplemented,
         UnknownMonthCodeForCalendar,
-        NotEnoughFields,
     }
 }
 
@@ -391,11 +384,10 @@ impl From<EcmaReferenceYearError> for DateFromFieldsError {
     #[inline]
     fn from(value: EcmaReferenceYearError) -> Self {
         match value {
-            EcmaReferenceYearError::InvalidMonthCode => DateFromFieldsError::InvalidMonthCode,
+            EcmaReferenceYearError::Unimplemented => DateFromFieldsError::NotEnoughFields,
             EcmaReferenceYearError::UnknownMonthCodeForCalendar => {
                 DateFromFieldsError::UnknownMonthCodeForCalendar
             }
-            EcmaReferenceYearError::NotEnoughFields => DateFromFieldsError::NotEnoughFields,
         }
     }
 }
