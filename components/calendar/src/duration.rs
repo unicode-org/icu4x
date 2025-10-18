@@ -11,6 +11,8 @@
 /// Use [`DateDuration`] for calculating the difference between two [`Date`]s and adding
 /// date units to a [`Date`].
 ///
+/// [`Date`]: crate::Date
+///
 /// # Example
 ///
 /// ```rust
