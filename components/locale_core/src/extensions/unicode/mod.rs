@@ -214,6 +214,26 @@ impl Unicode {
         }
         Ok(())
     }
+
+    /// Extends the `Unicode` with values from  another `Unicode`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::locale::extensions::unicode::Unicode;
+    ///
+    /// let mut ue: Unicode = "u-foobar-ca-buddhist".parse().unwrap();
+    /// let ue2: Unicode = "u-ca-gregory-hc-h12".parse().unwrap();
+    ///
+    /// ue.extend(ue2);
+    ///
+    /// assert_eq!(ue, "u-foobar-ca-gregory-hc-h12".parse().unwrap());
+    /// ```
+    #[cfg(feature = "alloc")]
+    pub fn extend(&mut self, other: Unicode) {
+        self.keywords.extend(other.keywords);
+        self.attributes.extend(other.attributes);
+    }
 }
 
 /// ✨ *Enabled with the `alloc` Cargo feature.*
