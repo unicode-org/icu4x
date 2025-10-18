@@ -25,7 +25,7 @@ use calendrical_calculations::rata_die::RataDie;
 ///
 /// # Era codes
 ///
-/// This calendar uses a single era code `ap` (aliases `sh`, `hs`), with Anno Persico/Anno Persarum starting the year of the Hijra. Dates before this era use negative years.
+/// This calendar uses a single era code `ap`, with Anno Persico/Anno Persarum starting the year of the Hijra. Dates before this era use negative years.
 ///
 /// # Month codes
 ///
@@ -85,7 +85,7 @@ impl DateFieldsResolver for Persian {
         era_year: i32,
     ) -> Result<Self::YearInfo, UnknownEraError> {
         match era {
-            b"ap" | b"sh" | b"hs" => Ok(era_year),
+            b"ap" => Ok(era_year),
             _ => Err(UnknownEraError),
         }
     }
