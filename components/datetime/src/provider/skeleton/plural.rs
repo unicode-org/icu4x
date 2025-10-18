@@ -143,6 +143,10 @@ impl From<&PatternPlurals<'_>> for components::Bag {
 
 #[allow(missing_docs)]
 impl<'data> PatternPlurals<'data> {
+    #[allow(
+        unreachable_code,
+        reason = "Uninhabited MultipleVariants (due to pivot_field), see #7118"
+    )]
     pub fn into_owned(self) -> PatternPlurals<'static> {
         match self {
             Self::SinglePattern(pattern) => PatternPlurals::SinglePattern(pattern.into_owned()),
