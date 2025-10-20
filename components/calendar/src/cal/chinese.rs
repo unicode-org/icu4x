@@ -10,7 +10,7 @@ use crate::error::{
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
-use crate::types::{MonthCode, MonthInfo};
+use crate::types::{MonthInfo, ValidMonthCode};
 use crate::AsCalendar;
 use crate::{types, Calendar, Date};
 use calendrical_calculations::chinese_based::{
@@ -19,7 +19,6 @@ use calendrical_calculations::chinese_based::{
 use calendrical_calculations::rata_die::RataDie;
 use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
 use icu_provider::prelude::*;
-use tinystr::tinystr;
 
 #[path = "chinese/china_data.rs"]
 mod china_data;
@@ -119,10 +118,11 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
     /// [`MissingFieldsStrategy::Ecma`]: crate::options::MissingFieldsStrategy::Ecma
     fn ecma_reference_year(
         &self,
-        _month_code: types::MonthCode,
+        // TODO: Consider accepting ValidMonthCode
+        _month_code: (u8, bool),
         _day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        Err(EcmaReferenceYearError::NotEnoughFields)
+        Err(EcmaReferenceYearError::Unimplemented)
     }
 
     /// The debug name for the calendar defined by these [`Rules`].
@@ -206,12 +206,12 @@ impl Rules for China {
 
     fn ecma_reference_year(
         &self,
-        month_code: types::MonthCode,
+        month_code: (u8, bool),
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        let (number, is_leap) = month_code.try_parse()?;
+        let (number, is_leap) = month_code;
         // Computed by `generate_reference_years`
-        Ok(match (number, is_leap, day > 29) {
+        let extended_year = match (number, is_leap, day > 29) {
             (1, false, false) => 1972,
             (1, false, true) => 1970,
             (1, true, false) => 1898,
@@ -264,7 +264,8 @@ impl Rules for China {
             (12, true, false) => 1878,
             (12, true, true) => 1783,
             _ => return Err(EcmaReferenceYearError::UnknownMonthCodeForCalendar),
-        })
+        };
+        Ok(extended_year)
     }
 
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
@@ -391,12 +392,12 @@ impl Rules for Korea {
 
     fn ecma_reference_year(
         &self,
-        month_code: types::MonthCode,
+        month_code: (u8, bool),
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        let (number, is_leap) = month_code.try_parse()?;
+        let (number, is_leap) = month_code;
         // Computed by `generate_reference_years`
-        Ok(match (number, is_leap, day > 29) {
+        let extended_year = match (number, is_leap, day > 29) {
             (1, false, false) => 1972,
             (1, false, true) => 1970,
             (1, true, false) => 1898,
@@ -449,7 +450,8 @@ impl Rules for Korea {
             (12, true, false) => 1878,
             (12, true, true) => 1783,
             _ => return Err(EcmaReferenceYearError::UnknownMonthCodeForCalendar),
-        })
+        };
+        Ok(extended_year)
     }
 
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
@@ -559,18 +561,18 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        month_code: types::MonthCode,
+        month_code: types::ValidMonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
-        Ok(self
-            .0
-            .year_data(self.0.ecma_reference_year(month_code, day)?))
+        self.0
+            .ecma_reference_year(month_code.to_tuple(), day)
+            .map(|y| self.0.year_data(y))
     }
 
     fn ordinal_month_from_code(
         &self,
         year: &Self::YearInfo,
-        month_code: types::MonthCode,
+        month_code: types::ValidMonthCode,
         options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
         match year.parse_month_code(month_code) {
@@ -977,25 +979,11 @@ impl LunarChineseYearData {
         // ordinally `month 2`, zero-indexed)
         // 14 is a sentinel value
         let leap_month = self.leap_month().unwrap_or(14);
-        let code_inner = if leap_month == month {
+        let valid_month_code = if leap_month == month {
             // Month cannot be 1 because a year cannot have a leap month before the first actual month,
             // and the maximum num of months ina leap year is 13.
             debug_assert!((2..=13).contains(&month));
-            match month {
-                2 => tinystr!(4, "M01L"),
-                3 => tinystr!(4, "M02L"),
-                4 => tinystr!(4, "M03L"),
-                5 => tinystr!(4, "M04L"),
-                6 => tinystr!(4, "M05L"),
-                7 => tinystr!(4, "M06L"),
-                8 => tinystr!(4, "M07L"),
-                9 => tinystr!(4, "M08L"),
-                10 => tinystr!(4, "M09L"),
-                11 => tinystr!(4, "M10L"),
-                12 => tinystr!(4, "M11L"),
-                13 => tinystr!(4, "M12L"),
-                _ => tinystr!(4, "und"),
-            }
+            ValidMonthCode::new_unchecked(month - 1, true)
         } else {
             let mut adjusted_ordinal = month;
             if month > leap_month {
@@ -1007,27 +995,14 @@ impl LunarChineseYearData {
                 adjusted_ordinal -= 1;
             }
             debug_assert!((1..=12).contains(&adjusted_ordinal));
-            match adjusted_ordinal {
-                1 => tinystr!(4, "M01"),
-                2 => tinystr!(4, "M02"),
-                3 => tinystr!(4, "M03"),
-                4 => tinystr!(4, "M04"),
-                5 => tinystr!(4, "M05"),
-                6 => tinystr!(4, "M06"),
-                7 => tinystr!(4, "M07"),
-                8 => tinystr!(4, "M08"),
-                9 => tinystr!(4, "M09"),
-                10 => tinystr!(4, "M10"),
-                11 => tinystr!(4, "M11"),
-                12 => tinystr!(4, "M12"),
-                _ => tinystr!(4, "und"),
-            }
+            ValidMonthCode::new_unchecked(adjusted_ordinal, false)
         };
-        let code = MonthCode(code_inner);
+        let month_code = valid_month_code.to_month_code();
         MonthInfo {
             ordinal: month,
-            standard_code: code,
-            formatting_code: code,
+            valid_standard_code: valid_month_code,
+            standard_code: month_code,
+            formatting_code: month_code,
         }
     }
 
@@ -1058,12 +1033,12 @@ impl LunarChineseYearData {
     }
 
     /// Get the ordinal lunar month from a code for chinese-based calendars.
-    fn parse_month_code(self, code: MonthCode) -> ComputedOrdinalMonth {
+    fn parse_month_code(self, code: ValidMonthCode) -> ComputedOrdinalMonth {
         // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
         // it is impossible to actually have 14 months in a year.
         let leap_month = self.leap_month().unwrap_or(14);
 
-        let Some((unadjusted @ 1..13, leap)) = code.parsed() else {
+        let (unadjusted @ 1..13, leap) = code.to_tuple() else {
             return ComputedOrdinalMonth::NotFound;
         };
 
@@ -1698,12 +1673,13 @@ mod test {
             (13, tinystr!(4, "M12")),
         ];
         for ordinal_code_pair in codes {
-            let code = MonthCode(ordinal_code_pair.1);
-            let ordinal = year.parse_month_code(code);
+            let print_code = ordinal_code_pair.1;
+            let valid_code = MonthCode(ordinal_code_pair.1).validated().unwrap();
+            let ordinal = year.parse_month_code(valid_code);
             assert_eq!(
                 ordinal,
                 ComputedOrdinalMonth::Exact(ordinal_code_pair.0),
-                "Code to ordinal failed for year: {}, code: {code}",
+                "Code to ordinal failed for year: {}, code: {print_code}",
                 year.related_iso
             );
         }
@@ -1714,10 +1690,6 @@ mod test {
         let non_leap_year = 4659;
         let leap_year = 4660;
         let invalid_codes = [
-            (non_leap_year, tinystr!(4, "M2")),
-            (leap_year, tinystr!(4, "M0")),
-            (non_leap_year, tinystr!(4, "J01")),
-            (leap_year, tinystr!(4, "3M")),
             (non_leap_year, tinystr!(4, "M04L")),
             (leap_year, tinystr!(4, "M04L")),
             (non_leap_year, tinystr!(4, "M13")),
@@ -1726,8 +1698,8 @@ mod test {
         for (year, code) in invalid_codes {
             // construct using ::default() to force recomputation
             let year = LunarChinese::new_china().0.year_data(year);
-            let code = MonthCode(code);
-            let ordinal = year.parse_month_code(code);
+            let valid_code = MonthCode(code).validated().unwrap();
+            let ordinal = year.parse_month_code(valid_code);
             assert!(
                 !matches!(ordinal, ComputedOrdinalMonth::Exact(_)),
                 "Invalid month code failed for year: {}, code: {code}",
@@ -1911,7 +1883,7 @@ mod test {
                         .0
                         .parse()
                         .unwrap();
-                    if new_lunar_month == lunar_month.parsed().unwrap().0 {
+                    if new_lunar_month == lunar_month.validated().unwrap().number() {
                         lunar_month = MonthCode::new_leap(new_lunar_month).unwrap();
                     } else {
                         lunar_month = MonthCode::new_normal(new_lunar_month).unwrap();

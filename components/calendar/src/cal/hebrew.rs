@@ -9,7 +9,7 @@ use crate::error::{
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
-use crate::types::{DateFields, MonthInfo};
+use crate::types::{DateFields, MonthInfo, ValidMonthCode};
 use crate::RangeError;
 use crate::{types, Calendar, Date};
 use ::tinystr::tinystr;
@@ -121,10 +121,11 @@ impl DateFieldsResolver for Hebrew {
 
     fn reference_year_from_month_day(
         &self,
-        month_code: types::MonthCode,
+        month_code: types::ValidMonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
-        month_code.try_parse()?; // return InvalidMonthCode
+        // Match statements are more readable with strings.
+        let month_code = month_code.to_month_code();
         let month_code_str = month_code.0.as_str();
         // December 31, 1972 occurs on 4th month, 26th day, 5733 AM
         let hebrew_year = match month_code_str {
@@ -165,11 +166,12 @@ impl DateFieldsResolver for Hebrew {
     fn ordinal_month_from_code(
         &self,
         year: &Self::YearInfo,
-        month_code: types::MonthCode,
+        month_code: types::ValidMonthCode,
         options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
+        // Match statements are more readable with strings.
+        let month_code = month_code.to_month_code();
         let is_leap_year = year.keviyah.is_leap();
-        month_code.try_parse()?; // return InvalidMonthCode
         let month_code_str = month_code.0.as_str();
         let ordinal_month = if is_leap_year {
             match month_code_str {
@@ -225,50 +227,25 @@ impl DateFieldsResolver for Hebrew {
         year: &Self::YearInfo,
         ordinal_month: u8,
     ) -> types::MonthInfo {
-        let mut ordinal = ordinal_month;
         let is_leap_year = year.keviyah.is_leap();
 
-        if is_leap_year {
-            if ordinal == 6 {
-                return types::MonthInfo {
-                    ordinal,
-                    standard_code: types::MonthCode(tinystr!(4, "M05L")),
-                    formatting_code: types::MonthCode(tinystr!(4, "M05L")),
-                };
-            } else if ordinal == 7 {
-                return types::MonthInfo {
-                    ordinal,
-                    // Adar II is the same as Adar and has the same code
-                    standard_code: types::MonthCode(tinystr!(4, "M06")),
-                    formatting_code: types::MonthCode(tinystr!(4, "M06L")),
-                };
-            }
-        }
-
-        if is_leap_year && ordinal > 6 {
-            ordinal -= 1;
-        }
-
-        let code = match ordinal {
-            1 => tinystr!(4, "M01"),
-            2 => tinystr!(4, "M02"),
-            3 => tinystr!(4, "M03"),
-            4 => tinystr!(4, "M04"),
-            5 => tinystr!(4, "M05"),
-            6 => tinystr!(4, "M06"),
-            7 => tinystr!(4, "M07"),
-            8 => tinystr!(4, "M08"),
-            9 => tinystr!(4, "M09"),
-            10 => tinystr!(4, "M10"),
-            11 => tinystr!(4, "M11"),
-            12 => tinystr!(4, "M12"),
-            _ => tinystr!(4, "und"),
+        let valid_month_code = match (ordinal_month, is_leap_year) {
+            (..6, _) | (_, false) => ValidMonthCode::new_unchecked(ordinal_month, false),
+            (6, true) => ValidMonthCode::new_unchecked(5, true),
+            (7.., true) => ValidMonthCode::new_unchecked(ordinal_month - 1, false),
+        };
+        let standard_code = valid_month_code.to_month_code();
+        let formatting_code = if is_leap_year && ordinal_month == 7 {
+            ValidMonthCode::new_unchecked(6, true).to_month_code() // M06L
+        } else {
+            standard_code
         };
 
         types::MonthInfo {
             ordinal: ordinal_month,
-            standard_code: types::MonthCode(code),
-            formatting_code: types::MonthCode(code),
+            valid_standard_code: valid_month_code,
+            standard_code,
+            formatting_code,
         }
     }
 }
