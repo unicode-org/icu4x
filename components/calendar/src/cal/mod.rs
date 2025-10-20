@@ -28,8 +28,6 @@ pub mod chinese {
     pub use super::chinese_internal::{China, Korea};
 
     // TODO(#6962) Stabilize
-    #[cfg(not(feature = "unstable"))]
-    pub(crate) use super::chinese_internal::LunarChineseYearData;
     #[cfg(feature = "unstable")]
     pub use super::chinese_internal::{LunarChineseYearData, Rules};
 }
@@ -47,9 +45,7 @@ pub mod hijri {
 
     // TODO(#6962) Stabilize
     #[cfg(feature = "unstable")]
-    pub use super::hijri_internal::HijriYearData;
-    #[cfg(feature = "unstable")]
-    pub use super::hijri_internal::Rules;
+    pub use super::hijri_internal::{HijriYearData, Rules};
 
     #[doc(hidden)]
     /// These are unstable traits but we expose them on stable to

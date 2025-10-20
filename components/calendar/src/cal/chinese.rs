@@ -192,14 +192,18 @@ impl China {
 impl crate::cal::scaffold::UnstableSealed for China {}
 impl Rules for China {
     fn year_data(&self, related_iso: i32) -> LunarChineseYearData {
-        if let Some(data) = china_data::DATA.get(related_iso) {
-            data
-        } else if related_iso > china_data::DATA.first_related_iso_year {
+        if let Some(year) =
+            LunarChineseYearData::lookup(related_iso, china_data::STARTING_YEAR, china_data::DATA)
+        {
+            year
+        } else if related_iso > china_data::STARTING_YEAR {
             LunarChineseYearData::simple(simple::UTC_PLUS_8, related_iso)
+        } else if let Some(year) =
+            LunarChineseYearData::lookup(related_iso, qing_data::STARTING_YEAR, qing_data::DATA)
+        {
+            year
         } else {
-            qing_data::DATA.get(related_iso).unwrap_or_else(|| {
-                LunarChineseYearData::simple(simple::BEIJING_UTC_OFFSET, related_iso)
-            })
+            LunarChineseYearData::simple(simple::BEIJING_UTC_OFFSET, related_iso)
         }
     }
 
@@ -371,16 +375,20 @@ impl LunarChinese<Korea> {
 impl crate::cal::scaffold::UnstableSealed for Korea {}
 impl Rules for Korea {
     fn year_data(&self, related_iso: i32) -> LunarChineseYearData {
-        if let Some(data) = korea_data::DATA.get(related_iso) {
-            data
-        } else if related_iso > korea_data::DATA.first_related_iso_year {
+        if let Some(year) =
+            LunarChineseYearData::lookup(related_iso, korea_data::STARTING_YEAR, korea_data::DATA)
+        {
+            year
+        } else if related_iso > korea_data::STARTING_YEAR {
             LunarChineseYearData::simple(simple::UTC_PLUS_9, related_iso)
-        } else {
+        } else if let Some(year) =
+            LunarChineseYearData::lookup(related_iso, qing_data::STARTING_YEAR, qing_data::DATA)
+        {
             // Korea used Qing-dynasty rules before 1912
             // https://github.com/unicode-org/icu4x/issues/6455#issuecomment-3282175550
-            qing_data::DATA.get(related_iso).unwrap_or_else(|| {
-                LunarChineseYearData::simple(simple::BEIJING_UTC_OFFSET, related_iso)
-            })
+            year
+        } else {
+            LunarChineseYearData::simple(simple::BEIJING_UTC_OFFSET, related_iso)
         }
     }
 
@@ -825,6 +833,20 @@ impl LunarChineseYearData {
             ),
             related_iso,
         }
+    }
+
+    fn lookup(
+        related_iso: i32,
+        starting_year: i32,
+        data: &[PackedChineseBasedYearInfo],
+    ) -> Option<Self> {
+        Some(related_iso)
+            .and_then(|e| usize::try_from(e.checked_sub(starting_year)?).ok())
+            .and_then(|i| data.get(i))
+            .map(|&packed| Self {
+                related_iso,
+                packed,
+            })
     }
 
     fn calendrical_calculations<CB: ChineseBased>(related_iso: i32) -> LunarChineseYearData {

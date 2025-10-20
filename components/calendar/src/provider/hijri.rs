@@ -2,18 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! 🚧 \[Unstable\] Data provider struct definitions for chinese-based calendars.
-//!
-//! <div class="stab unstable">
-//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
-//! to be stable, their Rust representation might not be. Use with caution.
-//! </div>
-//!
-//! Read more about data providers: [`icu_provider`]
-
 use calendrical_calculations::rata_die::RataDie;
-use zerovec::ule::AsULE;
 
 /// The struct containing compiled Hijri YearInfo
 ///
@@ -37,10 +26,7 @@ use zerovec::ule::AsULE;
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd, Ord, Debug)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct PackedHijriYearInfo(pub u16);
+pub(crate) struct PackedHijriYearInfo(u16);
 
 impl PackedHijriYearInfo {
     pub(crate) const fn try_new(
@@ -148,16 +134,6 @@ impl PackedHijriYearInfo {
         // -1 because the epoch is new year of year 1
         calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY
             .add((extended_year as i64 - 1) * (354 * 30 + 11) / 30)
-    }
-}
-
-impl AsULE for PackedHijriYearInfo {
-    type ULE = <u16 as AsULE>::ULE;
-    fn from_unaligned(unaligned: Self::ULE) -> Self {
-        Self(<u16 as AsULE>::from_unaligned(unaligned))
-    }
-    fn to_unaligned(self) -> Self::ULE {
-        <u16 as AsULE>::to_unaligned(self.0)
     }
 }
 

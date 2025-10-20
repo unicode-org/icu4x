@@ -5,13 +5,17 @@
 //! This data is confirmed by both the [Korea Astronomy and Space Science Institute](https://astro.kasi.re.kr/life/pageView/5),
 //! as well as the [Hong Kong Observatory](https://www.hko.gov.hk/en/gts/time/conversion.htm).
 
-use crate::provider::chinese_based::{ChineseBasedCache, PackedChineseBasedYearInfo};
-use calendrical_calculations::gregorian::fixed_from_gregorian as gregorian;
+use crate::provider::chinese_based::PackedChineseBasedYearInfo;
 
-pub const DATA: ChineseBasedCache = ChineseBasedCache {
-    first_related_iso_year: 1900,
-    #[rustfmt::skip]
-    data: { let l = true; let s = false; &[
+pub const STARTING_YEAR: i32 = 1900;
+
+#[rustfmt::skip]
+#[allow(clippy::unwrap_used)] // const
+pub const DATA: &[PackedChineseBasedYearInfo] = {
+    use calendrical_calculations::gregorian::fixed_from_gregorian as gregorian;
+    let l = true; // long
+    let s = false; // short
+    &[
         PackedChineseBasedYearInfo::new(1900, [s, l, s, s, l, s, l, l, s, l, l, s, l], Some(9), gregorian(1900, 1, 31)),
         PackedChineseBasedYearInfo::new(1901, [s, l, s, s, l, s, l, s, l, l, l, s, s], None, gregorian(1901, 2, 19)),
         PackedChineseBasedYearInfo::new(1902, [l, s, l, s, s, l, s, l, s, l, l, l, s], None, gregorian(1902, 2, 8)),
@@ -24,5 +28,5 @@ pub const DATA: ChineseBasedCache = ChineseBasedCache {
         PackedChineseBasedYearInfo::new(1909, [s, l, s, s, l, s, l, s, l, l, l, s, l], Some(3), gregorian(1909, 1, 22)),
         PackedChineseBasedYearInfo::new(1910, [s, l, s, s, l, s, l, s, l, l, l, s, s], None, gregorian(1910, 2, 10)),
         PackedChineseBasedYearInfo::new(1911, [l, s, l, s, s, l, s, s, l, l, s, l, l], Some(7), gregorian(1911, 1, 30)),
-    ]},
+    ]
 };

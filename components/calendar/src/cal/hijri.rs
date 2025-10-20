@@ -131,14 +131,12 @@ impl Rules for AstronomicalSimulation {
     }
 
     fn year_data(&self, extended_year: i32) -> HijriYearData {
-        if let Some(&packed) = Some(extended_year)
-            .and_then(|e| usize::try_from(e.checked_sub(simulated_mecca_data::STARTING_YEAR)?).ok())
-            .and_then(|i| simulated_mecca_data::DATA.get(i))
-        {
-            return HijriYearData {
-                packed,
-                extended_year,
-            };
+        if let Some(data) = HijriYearData::lookup(
+            extended_year,
+            simulated_mecca_data::STARTING_YEAR,
+            simulated_mecca_data::DATA,
+        ) {
+            return data;
         }
 
         let location = match self.location {
@@ -289,14 +287,12 @@ impl Rules for UmmAlQura {
     }
 
     fn year_data(&self, extended_year: i32) -> HijriYearData {
-        if let Some(&packed) = Some(extended_year)
-            .and_then(|e| usize::try_from(e.checked_sub(ummalqura_data::STARTING_YEAR)?).ok())
-            .and_then(|i| ummalqura_data::DATA.get(i))
-        {
-            HijriYearData {
-                packed,
-                extended_year,
-            }
+        if let Some(data) = HijriYearData::lookup(
+            extended_year,
+            ummalqura_data::STARTING_YEAR,
+            ummalqura_data::DATA,
+        ) {
+            data
         } else {
             TabularAlgorithm {
                 leap_years: TabularAlgorithmLeapYears::TypeII,
@@ -538,6 +534,20 @@ impl HijriYearData {
             packed: PackedHijriYearInfo::try_new(extended_year, month_lengths, start_day)?,
             extended_year,
         })
+    }
+
+    fn lookup(
+        extended_year: i32,
+        starting_year: i32,
+        data: &[PackedHijriYearInfo],
+    ) -> Option<Self> {
+        Some(extended_year)
+            .and_then(|e| usize::try_from(e.checked_sub(starting_year)?).ok())
+            .and_then(|i| data.get(i))
+            .map(|&packed| Self {
+                extended_year,
+                packed,
+            })
     }
 
     fn start_day(self) -> RataDie {

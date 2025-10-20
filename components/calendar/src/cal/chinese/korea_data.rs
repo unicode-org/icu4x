@@ -4,13 +4,17 @@
 
 //! Data obtained from [`calendrical_calculations`].
 
-use crate::provider::chinese_based::{ChineseBasedCache, PackedChineseBasedYearInfo};
-use calendrical_calculations::gregorian::fixed_from_gregorian as gregorian;
+use crate::provider::chinese_based::PackedChineseBasedYearInfo;
 
-pub const DATA: ChineseBasedCache = ChineseBasedCache {
-    first_related_iso_year: 1912,
-    #[rustfmt::skip]
-    data: { let l = true; let s = false; &[
+pub const STARTING_YEAR: i32 = 1912;
+
+#[rustfmt::skip]
+#[allow(clippy::unwrap_used)] // const
+pub const DATA: &[PackedChineseBasedYearInfo] = {
+    use calendrical_calculations::gregorian::fixed_from_gregorian as gregorian;
+    let l = true; // long
+    let s = false; // short
+    &[
         PackedChineseBasedYearInfo::new(1912, [l, s, l, s, s, l, s, s, l, l, s, l, s], None, gregorian(1912, 2, 18)),
         PackedChineseBasedYearInfo::new(1913, [l, l, s, l, s, s, l, s, s, l, s, l, s], None, gregorian(1913, 2, 6)),
         PackedChineseBasedYearInfo::new(1914, [l, l, s, l, l, s, s, l, s, l, s, s, l], Some(6), gregorian(1914, 1, 26)),
@@ -203,17 +207,17 @@ pub const DATA: ChineseBasedCache = ChineseBasedCache {
         // Extra two years of correct data because the simple calculation lines up at the beginning of 2103
         PackedChineseBasedYearInfo::new(2101, [l, l, s, l, l, s, l, s, l, s, l, s, s], Some(8), gregorian(2101, 1, 29)),
         PackedChineseBasedYearInfo::new(2102, [l, s, l, l, s, l, s, l, l, s, l, s, s], None, gregorian(2102, 2, 17)),
-    ]},
+    ]
 };
 
 #[test]
 fn test_against_calendrical_calculations() {
     use calendrical_calculations::chinese_based::Dangi;
-    for (i, &data) in DATA.data.iter().enumerate() {
+    for (i, &data) in DATA.iter().enumerate() {
         assert_eq!(
             data,
             super::LunarChineseYearData::calendrical_calculations::<Dangi>(
-                DATA.first_related_iso_year + i as i32
+                STARTING_YEAR + i as i32
             )
             .packed
         );

@@ -2,44 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! 🚧 \[Unstable\] Data provider struct definitions for chinese-based calendars.
-//!
-//! <div class="stab unstable">
-//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
-//! to be stable, their Rust representation might not be. Use with caution.
-//! </div>
-//!
-//! Read more about data providers: [`icu_provider`]
-
-use crate::cal::chinese::LunarChineseYearData;
 #[cfg(debug_assertions)]
 use calendrical_calculations::chinese_based::WELL_BEHAVED_ASTRONOMICAL_RANGE;
 use calendrical_calculations::rata_die::RataDie;
-use icu_provider::prelude::*;
-
-/// Cached/precompiled data for a certain range of years for a chinese-based
-/// calendar. Avoids the need to perform lunar calendar arithmetic for most calendrical
-/// operations.
-#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-pub(crate) struct ChineseBasedCache<'data> {
-    /// The ISO year corresponding to the first data entry for this year
-    pub first_related_iso_year: i32,
-    /// A list of precomputed data for each year beginning with first_related_iso_year
-    pub data: &'data [PackedChineseBasedYearInfo],
-}
-
-impl ChineseBasedCache<'_> {
-    pub fn get(&self, related_iso: i32) -> Option<LunarChineseYearData> {
-        Some(LunarChineseYearData {
-            packed: self
-                .data
-                .get(usize::try_from(related_iso.checked_sub(self.first_related_iso_year)?).ok()?)
-                .copied()?,
-            related_iso,
-        })
-    }
-}
 
 /// The struct containing compiled ChineseData
 ///
@@ -62,8 +27,7 @@ impl ChineseBasedCache<'_> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-#[repr(C, packed)]
-pub(crate) struct PackedChineseBasedYearInfo(pub u8, pub u8, pub u8);
+pub(crate) struct PackedChineseBasedYearInfo(u8, u8, u8);
 
 impl PackedChineseBasedYearInfo {
     /// The first day on which Chinese New Year may occur
@@ -177,10 +141,8 @@ impl PackedChineseBasedYearInfo {
     }
 }
 
-#[cfg(test)]
-mod test {
-    use super::*;
-
+#[test]
+fn test_roundtrip_packed() {
     fn packed_roundtrip_single(
         month_lengths: [bool; 13],
         leap_month_idx: Option<u8>,
@@ -206,36 +168,33 @@ mod test {
         );
     }
 
-    #[test]
-    fn test_roundtrip_packed() {
-        const SHORT: [bool; 13] = [false; 13];
-        const LONG: [bool; 13] = [true; 13];
-        const ALTERNATING1: [bool; 13] = [
-            false, true, false, true, false, true, false, true, false, true, false, true, false,
-        ];
-        const ALTERNATING2: [bool; 13] = [
-            true, false, true, false, true, false, true, false, true, false, true, false, false,
-        ];
-        const RANDOM1: [bool; 13] = [
-            true, true, false, false, true, true, false, true, true, true, true, false, false,
-        ];
-        const RANDOM2: [bool; 13] = [
-            false, true, true, true, true, false, true, true, true, false, false, true, false,
-        ];
-        packed_roundtrip_single(SHORT, None, 18 + 5);
-        packed_roundtrip_single(SHORT, None, 18 + 10);
-        packed_roundtrip_single(SHORT, Some(11), 18 + 15);
-        packed_roundtrip_single(LONG, Some(12), 18 + 15);
-        packed_roundtrip_single(ALTERNATING1, None, 18 + 2);
-        packed_roundtrip_single(ALTERNATING1, Some(3), 18 + 5);
-        packed_roundtrip_single(ALTERNATING2, None, 18 + 9);
-        packed_roundtrip_single(ALTERNATING2, Some(7), 18 + 26);
-        packed_roundtrip_single(RANDOM1, None, 18 + 29);
-        packed_roundtrip_single(RANDOM1, Some(12), 18 + 29);
-        packed_roundtrip_single(RANDOM1, Some(2), 18 + 21);
-        packed_roundtrip_single(RANDOM2, None, 18 + 25);
-        packed_roundtrip_single(RANDOM2, Some(2), 18 + 19);
-        packed_roundtrip_single(RANDOM2, Some(5), 18 + 2);
-        packed_roundtrip_single(RANDOM2, Some(12), 18 + 5);
-    }
+    const SHORT: [bool; 13] = [false; 13];
+    const LONG: [bool; 13] = [true; 13];
+    const ALTERNATING1: [bool; 13] = [
+        false, true, false, true, false, true, false, true, false, true, false, true, false,
+    ];
+    const ALTERNATING2: [bool; 13] = [
+        true, false, true, false, true, false, true, false, true, false, true, false, false,
+    ];
+    const RANDOM1: [bool; 13] = [
+        true, true, false, false, true, true, false, true, true, true, true, false, false,
+    ];
+    const RANDOM2: [bool; 13] = [
+        false, true, true, true, true, false, true, true, true, false, false, true, false,
+    ];
+    packed_roundtrip_single(SHORT, None, 18 + 5);
+    packed_roundtrip_single(SHORT, None, 18 + 10);
+    packed_roundtrip_single(SHORT, Some(11), 18 + 15);
+    packed_roundtrip_single(LONG, Some(12), 18 + 15);
+    packed_roundtrip_single(ALTERNATING1, None, 18 + 2);
+    packed_roundtrip_single(ALTERNATING1, Some(3), 18 + 5);
+    packed_roundtrip_single(ALTERNATING2, None, 18 + 9);
+    packed_roundtrip_single(ALTERNATING2, Some(7), 18 + 26);
+    packed_roundtrip_single(RANDOM1, None, 18 + 29);
+    packed_roundtrip_single(RANDOM1, Some(12), 18 + 29);
+    packed_roundtrip_single(RANDOM1, Some(2), 18 + 21);
+    packed_roundtrip_single(RANDOM2, None, 18 + 25);
+    packed_roundtrip_single(RANDOM2, Some(2), 18 + 19);
+    packed_roundtrip_single(RANDOM2, Some(5), 18 + 2);
+    packed_roundtrip_single(RANDOM2, Some(12), 18 + 5);
 }
