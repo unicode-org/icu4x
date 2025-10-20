@@ -62,8 +62,9 @@ use tinystr::tinystr;
 ///
 /// # Precise definition and limits
 ///
-/// This calendar is defined algorithmically as a solar calendar with a leap month every 4 years, as used
-/// by the Roman Empire since 1 CE.
+/// This calendar is defined algorithmically as a solar calendar with a leap month every 4 years, as was used
+/// by the Roman empire in 4 CE. That algorithm is extended proleptically before and after its period of use.
+///
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Julian;

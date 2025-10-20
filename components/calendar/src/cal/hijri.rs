@@ -50,7 +50,7 @@ mod ummalqura_data;
 ///
 /// # Precise definition and limits
 ///
-/// This calendar generically covers any pure lunar calendar used ecclesiastically in Islam,
+/// This calendar generically covers any pure lunar calendar used liturgically in Islam,
 /// with 12 months each of length 29 or 30, with an epoch intended to mark the Hijrah in 622 CE.
 ///
 /// In practice, this calendar can be backed by a precise algorithm, an algorithm with official tables,

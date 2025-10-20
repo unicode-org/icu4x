@@ -35,7 +35,7 @@ use tinystr::tinystr;
 /// # Precise definition and limits
 ///
 /// This calendar is defined algorithmically as a solar calendar that is identical to the proleptic Gregorian calendar in everything
-/// except year numbering. This is the civil calendar used in Thailand from the year 1912 onwards,
+/// except year numbering. This is the civil calendar used in Thailand from the year 1941 onwards,
 /// but the algorithm is extended proleptically before that.
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Buddhist;

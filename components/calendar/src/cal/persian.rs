@@ -41,7 +41,7 @@ use calendrical_calculations::rata_die::RataDie;
 /// disagree with the ground truth of calendar usage in Iran, the ground truth will prevail.
 ///
 /// The underlying implementation uses a cyclic approximation with overrides to match the precise astronomic calculations
-/// for the years 1500-3000 CE. Outside of that range one can expect this calendar implementation to no longer
+/// for the years 1178-3500 AP. Outside of that range one can expect this calendar implementation to no longer
 /// accurately match the astronomical calculations.
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]

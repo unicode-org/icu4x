@@ -31,7 +31,7 @@ use tinystr::tinystr;
 /// # Precise definition and limits
 ///
 /// This calendar is defined algorithmically as a solar calendar that has 12 months, as used alongside the
-/// Gregorian calendar by the Government of India by the name "Śaka calendar" as of 2025.`
+/// Gregorian calendar by the Government of India by the name "Śaka calendar" as of publication date of this crate.
 ///
 /// The Śaka calendar was introduced in 1957, but this calendar extends proleptically before that.
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
