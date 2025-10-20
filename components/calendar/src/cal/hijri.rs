@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::iso::{Iso, IsoDateInner};
+use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::ToExtendedYear;
-use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
@@ -608,7 +608,7 @@ fn computer_reference_years() {
         year_info_from_extended: impl Fn(i32) -> C::YearInfo,
     ) -> Result<C::YearInfo, DateError>
     where
-        C: CalendarArithmetic,
+        C: DateFieldsResolver,
     {
         let (ordinal_month, _is_leap) = month_code
             .parsed()
@@ -691,7 +691,9 @@ impl<R: Rules> Ord for HijriDateInner<R> {
     }
 }
 
-impl<R: Rules> CalendarArithmetic for Hijri<R> {
+impl<R: Rules> DateFieldsResolver for Hijri<R> {
+    type YearInfo = HijriYearData;
+
     fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8 {
         if year.packed.month_has_30_days(month) {
             30
@@ -703,24 +705,6 @@ impl<R: Rules> CalendarArithmetic for Hijri<R> {
     fn months_in_provided_year(_year: Self::YearInfo) -> u8 {
         12
     }
-
-    fn days_in_provided_year(year: Self::YearInfo) -> u16 {
-        year.last_day_of_month(12)
-    }
-
-    fn provided_year_is_leap(year: Self::YearInfo) -> bool {
-        year.packed.is_leap()
-    }
-
-    fn last_month_day_in_provided_year(year: Self::YearInfo) -> (u8, u8) {
-        let days = Self::days_in_provided_month(year, 12);
-
-        (12, days)
-    }
-}
-
-impl<R: Rules> DateFieldsResolver for Hijri<R> {
-    type YearInfo = HijriYearData;
 
     #[inline]
     fn year_info_from_era(
@@ -812,15 +796,15 @@ impl<R: Rules> Calendar for Hijri<R> {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        date.0.months_in_year()
+        Self::months_in_provided_year(date.0.year)
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.0.days_in_year()
+        date.0.year.last_day_of_month(12)
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        date.0.days_in_month()
+        Self::days_in_provided_month(date.0.year, date.0.month)
     }
 
     fn add(
@@ -846,7 +830,7 @@ impl<R: Rules> Calendar for Hijri<R> {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let extended_year = date.0.extended_year();
+        let extended_year = date.0.year.extended_year;
         if extended_year > 0 {
             types::EraYear {
                 era: tinystr!(16, "ah"),
@@ -867,7 +851,7 @@ impl<R: Rules> Calendar for Hijri<R> {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::provided_year_is_leap(date.0.year)
+        date.0.year.packed.is_leap()
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
@@ -875,11 +859,11 @@ impl<R: Rules> Calendar for Hijri<R> {
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        date.0.day_of_month()
+        types::DayOfMonth(date.0.day)
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        date.0.day_of_year()
+        types::DayOfYear(date.0.year.last_day_of_month(date.0.month - 1) + date.0.day as u16)
     }
 
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {

@@ -3,8 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
-use crate::cal::{abstract_gregorian::AbstractGregorian, iso::IsoEra};
-use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::error::{DateError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -433,7 +431,8 @@ impl Date<Iso> {
     pub fn week_of_year(&self) -> IsoWeekOfYear {
         let week_of = WeekCalculator::ISO
             .week_of(
-                AbstractGregorian::<IsoEra>::days_in_provided_year(self.inner.0.year - 1),
+                365 + calendrical_calculations::gregorian::is_leap_year(self.inner.0.year - 1)
+                    as u16,
                 self.days_in_year(),
                 self.day_of_year().0,
                 self.day_of_week(),
