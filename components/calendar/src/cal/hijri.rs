@@ -84,10 +84,11 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
     /// [`MissingFieldsStrategy::Ecma`]: crate::options::MissingFieldsStrategy::Ecma
     fn ecma_reference_year(
         &self,
-        _month_code: types::MonthCode,
+        // TODO: Consider accepting ValidMonthCode
+        _month_code: (u8, bool),
         _day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        Err(EcmaReferenceYearError::NotEnoughFields)
+        Err(EcmaReferenceYearError::Unimplemented)
     }
 
     /// The BCP-47 [`CalendarAlgorithm`] for the Hijri calendar using these rules, if defined.
@@ -253,14 +254,14 @@ impl Rules for UmmAlQura {
 
     fn ecma_reference_year(
         &self,
-        month_code: types::MonthCode,
+        month_code: (u8, bool),
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        let (ordinal_month, false) = month_code.try_parse()? else {
+        let (ordinal_month, false) = month_code else {
             return Err(EcmaReferenceYearError::UnknownMonthCodeForCalendar);
         };
 
-        Ok(match (ordinal_month, day) {
+        let extended_year = match (ordinal_month, day) {
             (1, _) => 1392,
             (2, 30..) => 1390,
             (2, _) => 1392,
@@ -281,7 +282,8 @@ impl Rules for UmmAlQura {
             (12, 30..) => 1390,
             (12, _) => 1391,
             _ => return Err(EcmaReferenceYearError::UnknownMonthCodeForCalendar),
-        })
+        };
+        Ok(extended_year)
     }
 
     fn debug_name(&self) -> &'static str {
@@ -343,10 +345,10 @@ impl Rules for TabularAlgorithm {
 
     fn ecma_reference_year(
         &self,
-        month_code: types::MonthCode,
+        month_code: (u8, bool),
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        let (ordinal_month, false) = month_code.try_parse()? else {
+        let (ordinal_month, false) = month_code else {
             return Err(EcmaReferenceYearError::UnknownMonthCodeForCalendar);
         };
 
@@ -610,9 +612,7 @@ fn computer_reference_years() {
     where
         C: CalendarArithmetic,
     {
-        let (ordinal_month, _is_leap) = month_code
-            .parsed()
-            .ok_or(DateError::UnknownMonthCode(month_code))?;
+        let ordinal_month = month_code.validated().unwrap().number();
         let dec_31 = Date::from_rata_die(
             crate::cal::abstract_gregorian::LAST_DAY_OF_REFERENCE_YEAR,
             crate::Ref(cal),
@@ -744,12 +744,12 @@ impl<R: Rules> DateFieldsResolver for Hijri<R> {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        month_code: types::MonthCode,
+        month_code: types::ValidMonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
-        Ok(self
-            .0
-            .year_data(self.0.ecma_reference_year(month_code, day)?))
+        self.0
+            .ecma_reference_year(month_code.to_tuple(), day)
+            .map(|y| self.0.year_data(y))
     }
 }
 
