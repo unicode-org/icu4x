@@ -6,8 +6,8 @@ use calendrical_calculations::rata_die::RataDie;
 
 use crate::cal::iso::IsoDateInner;
 use crate::error::{DateError, DateFromFieldsError};
+use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
-use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
 use crate::{types, Iso};
 use core::fmt;
 
@@ -46,44 +46,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, DateError> {
-        let mut fields = types::DateFields::default();
-        if era.is_some() {
-            fields.era = era.map(|e| e.as_bytes());
-            fields.era_year = Some(year);
-        } else {
-            fields.extended_year = Some(year);
-        }
-        fields.month_code = Some(month_code);
-        fields.day = Some(day);
-        let options = DateFromFieldsOptions {
-            overflow: Some(Overflow::Reject),
-            missing_fields_strategy: Some(MissingFieldsStrategy::Reject),
-        };
-        self.from_fields(fields, options).map_err(|e| match e {
-            // This error mapping is sufficiently bespoke to try_new_from_codes
-            // that it lives here and not in a From impl.
-            DateFromFieldsError::Range(range_error) => {
-                if range_error.field == "month" {
-                    DateError::UnknownMonthCode(month_code)
-                } else {
-                    range_error.into()
-                }
-            }
-            DateFromFieldsError::UnknownEra => DateError::UnknownEra,
-            DateFromFieldsError::InvalidMonthCode => DateError::UnknownMonthCode(month_code),
-            DateFromFieldsError::UnknownMonthCodeForCalendar => {
-                DateError::UnknownMonthCode(month_code)
-            }
-            DateFromFieldsError::UnknownMonthCodeForYear => DateError::UnknownMonthCode(month_code),
-            DateFromFieldsError::InconsistentYear
-            | DateFromFieldsError::InconsistentMonth
-            | DateFromFieldsError::NotEnoughFields => {
-                debug_assert!(false, "unreachable error in from_codes: {e}");
-                DateError::UnknownEra
-            }
-        })
-    }
+    ) -> Result<Self::DateInner, DateError>;
 
     /// Construct a date from a bag of date fields.
     #[expect(clippy::wrong_self_convention)]

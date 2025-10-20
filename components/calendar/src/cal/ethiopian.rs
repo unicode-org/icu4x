@@ -4,7 +4,7 @@
 
 use crate::cal::coptic::CopticDateInner;
 use crate::cal::Coptic;
-use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, DateFieldsResolver};
+use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver};
 use crate::error::{
     DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
 };
@@ -135,14 +135,28 @@ impl Calendar for Ethiopian {
     type Year = <Coptic as Calendar>::Year;
     type DifferenceError = <Coptic as Calendar>::DifferenceError;
 
+    fn from_codes(
+        &self,
+        era: Option<&str>,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateError> {
+        ArithmeticDate::from_codes(era, year, month_code, day, self)
+            .map(ArithmeticDate::cast)
+            .map(CopticDateInner)
+            .map(EthiopianDateInner)
+    }
+
     fn from_fields(
         &self,
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateFromFieldsError> {
-        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        let arithmetic_date = ArithmeticDate::try_from_builder(builder, options)?;
-        Ok(EthiopianDateInner(CopticDateInner(arithmetic_date)))
+        ArithmeticDate::from_fields(fields, options, self)
+            .map(ArithmeticDate::cast)
+            .map(CopticDateInner)
+            .map(EthiopianDateInner)
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {

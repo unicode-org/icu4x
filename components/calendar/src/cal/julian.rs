@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::calendar_arithmetic::ArithmeticDate;
-use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
+use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -127,14 +127,22 @@ impl Calendar for Julian {
     type Year = types::EraYear;
     type DifferenceError = core::convert::Infallible;
 
+    fn from_codes(
+        &self,
+        era: Option<&str>,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateError> {
+        ArithmeticDate::from_codes(era, year, month_code, day, self).map(JulianDateInner)
+    }
+
     fn from_fields(
         &self,
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateFromFieldsError> {
-        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        let arithmetic_date = ArithmeticDate::try_from_builder(builder, options)?;
-        Ok(JulianDateInner(arithmetic_date))
+        ArithmeticDate::from_fields(fields, options, self).map(JulianDateInner)
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {

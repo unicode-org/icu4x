@@ -17,6 +17,11 @@ use core::ops::RangeInclusive;
 use tinystr::tinystr;
 
 /// The range ±2²⁷. We use i32::MIN since it is -2³¹
+///
+/// This range is currently global, and applied to both era years and
+/// extended years, but may be replaced with a per-calendar check in the future.
+///
+/// <https://github.com/unicode-org/icu4x/issues/7076>
 const VALID_YEAR_RANGE: RangeInclusive<i32> = (i32::MIN / 16)..=-(i32::MIN / 16);
 
 #[derive(Debug)]
@@ -169,13 +174,142 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         ArithmeticDate { year, month, day }
     }
 
-    /// Construct a new arithmetic date from a year, month ordinal, and day, bounds checking
-    /// the month and day according to the overflow parameter.
-    pub(crate) fn try_from_builder(
-        builder: ArithmeticDateBuilder<C::YearInfo>,
+    pub(crate) const fn cast<C2: DateFieldsResolver<YearInfo = C::YearInfo>>(
+        self,
+    ) -> ArithmeticDate<C2> {
+        ArithmeticDate {
+            year: self.year,
+            month: self.month,
+            day: self.day,
+        }
+    }
+
+    pub(crate) fn from_codes(
+        era: Option<&str>,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+        calendar: &C,
+    ) -> Result<Self, DateError> {
+        let year = range_check(year, "year", VALID_YEAR_RANGE)?;
+        let year = if let Some(era) = era {
+            calendar.year_info_from_era(era.as_bytes(), year)?
+        } else {
+            calendar.year_info_from_extended(year)
+        };
+        let month = calendar
+            .ordinal_month_from_code(&year, month_code, Default::default())
+            .map_err(|e| match e {
+                MonthCodeError::InvalidMonthCode
+                | MonthCodeError::UnknownMonthCodeForCalendar
+                | MonthCodeError::UnknownMonthCodeForYear => {
+                    DateError::UnknownMonthCode(month_code)
+                }
+            })?;
+
+        let day = range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
+
+        Ok(ArithmeticDate::new_unchecked(year, month, day))
+    }
+
+    pub(crate) fn from_fields(
+        fields: DateFields,
         options: DateFromFieldsOptions,
-    ) -> Result<Self, RangeError> {
-        let ArithmeticDateBuilder { year, month, day } = builder;
+        calendar: &C,
+    ) -> Result<Self, DateFromFieldsError> {
+        let missing_fields_strategy = options.missing_fields_strategy.unwrap_or_default();
+
+        let day = match fields.day {
+            Some(day) => day,
+            None => match missing_fields_strategy {
+                MissingFieldsStrategy::Reject => return Err(DateFromFieldsError::NotEnoughFields),
+                MissingFieldsStrategy::Ecma => {
+                    if fields.extended_year.is_some() || fields.era_year.is_some() {
+                        // The ECMAScript strategy is to pick day 1, always, regardless of whether
+                        // that day exists for the month/year combo
+                        1
+                    } else {
+                        return Err(DateFromFieldsError::NotEnoughFields);
+                    }
+                }
+            },
+        };
+
+        if fields.month_code.is_none() && fields.ordinal_month.is_none() {
+            // We're returning this error early so that we return structural type
+            // errors before range errors, see comment in the year code below.
+            return Err(DateFromFieldsError::NotEnoughFields);
+        }
+
+        // NOTE: The year/extendedyear range check is important to avoid arithmetic
+        // overflow in `year_info_from_era` and `year_info_from_extended`. It
+        // must happen before they are called.
+        //
+        // To better match the Temporal specification's order of operations, we try
+        // to return structural type errors (`NotEnoughFields`) before checking for range errors.
+        // This isn't behavior we *must* have, but it is not much additional work to maintain
+        // so we make an attempt.
+        let year = match (fields.era, fields.era_year) {
+            (None, None) => match fields.extended_year {
+                Some(extended_year) => calendar.year_info_from_extended(range_check(
+                    extended_year,
+                    "year",
+                    VALID_YEAR_RANGE,
+                )?),
+                None => match missing_fields_strategy {
+                    MissingFieldsStrategy::Reject => {
+                        return Err(DateFromFieldsError::NotEnoughFields)
+                    }
+                    MissingFieldsStrategy::Ecma => {
+                        match (fields.month_code, fields.ordinal_month) {
+                            (Some(month_code), None) => {
+                                calendar.reference_year_from_month_day(month_code, day)?
+                            }
+                            _ => return Err(DateFromFieldsError::NotEnoughFields),
+                        }
+                    }
+                },
+            },
+            (Some(era), Some(era_year)) => {
+                let era_year_as_year_info = calendar
+                    .year_info_from_era(era, range_check(era_year, "year", VALID_YEAR_RANGE)?)?;
+                if let Some(extended_year) = fields.extended_year {
+                    if era_year_as_year_info
+                        != calendar.year_info_from_extended(range_check(
+                            extended_year,
+                            "year",
+                            VALID_YEAR_RANGE,
+                        )?)
+                    {
+                        return Err(DateFromFieldsError::InconsistentYear);
+                    }
+                }
+                era_year_as_year_info
+            }
+            // Era and Era Year must be both or neither
+            (Some(_), None) | (None, Some(_)) => return Err(DateFromFieldsError::NotEnoughFields),
+        };
+
+        let month = match fields.month_code {
+            Some(month_code) => {
+                let computed_month =
+                    calendar.ordinal_month_from_code(&year, month_code, options)?;
+                if let Some(ordinal_month) = fields.ordinal_month {
+                    if computed_month != ordinal_month {
+                        return Err(DateFromFieldsError::InconsistentMonth);
+                    }
+                }
+                computed_month
+            }
+            None => match fields.ordinal_month {
+                Some(month) => month,
+                None => {
+                    debug_assert!(false, "Already checked above");
+                    return Err(DateFromFieldsError::NotEnoughFields);
+                }
+            },
+        };
+
         let constrained_month = range_check_with_overflow(
             month,
             "month",
@@ -195,14 +329,9 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     }
 
     pub(crate) fn try_from_ymd(year: C::YearInfo, month: u8, day: u8) -> Result<Self, RangeError> {
-        let builder = ArithmeticDateBuilder { year, month, day };
-        Self::try_from_builder(
-            builder,
-            DateFromFieldsOptions {
-                overflow: Some(Overflow::Reject),
-                ..Default::default()
-            },
-        )
+        range_check(month, "month", 1..=C::months_in_provided_year(year))?;
+        range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
+        Ok(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     /// Implements the Temporal abstract operation BalanceNonISODate.
@@ -548,134 +677,6 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         }
         // 1. Return ! CreateDateDurationRecord(_years_, _months_, _weeks_, _days_).
         DateDuration::from_signed_ymwd(years, months, weeks, days)
-    }
-}
-
-pub(crate) struct ArithmeticDateBuilder<YearInfo> {
-    pub(crate) year: YearInfo,
-    pub(crate) month: u8,
-    pub(crate) day: u8,
-}
-
-fn extended_year_as_year_info<YearInfo, C>(
-    extended_year: i32,
-    cal: &C,
-) -> Result<YearInfo, RangeError>
-where
-    C: DateFieldsResolver<YearInfo = YearInfo>,
-{
-    // Check that the year is in range to avoid any arithmetic overflow.
-    //
-    // This range is currently global, but may be replaced with
-    // a per-calendar check in the future.
-    //
-    // <https://github.com/unicode-org/icu4x/issues/7076>
-    range_check(extended_year, "year", VALID_YEAR_RANGE)?;
-    Ok(cal.year_info_from_extended(extended_year))
-}
-
-impl<YearInfo> ArithmeticDateBuilder<YearInfo>
-where
-    YearInfo: PartialEq + Debug,
-{
-    pub(crate) fn try_from_fields<C>(
-        fields: DateFields,
-        cal: &C,
-        options: DateFromFieldsOptions,
-    ) -> Result<Self, DateFromFieldsError>
-    where
-        C: DateFieldsResolver<YearInfo = YearInfo>,
-    {
-        let missing_fields_strategy = options.missing_fields_strategy.unwrap_or_default();
-
-        let day = match fields.day {
-            Some(day) => day,
-            None => match missing_fields_strategy {
-                MissingFieldsStrategy::Reject => return Err(DateFromFieldsError::NotEnoughFields),
-                MissingFieldsStrategy::Ecma => {
-                    if fields.extended_year.is_some() || fields.era_year.is_some() {
-                        // The ECMAScript strategy is to pick day 1, always, regardless of whether
-                        // that day exists for the month/year combo
-                        1
-                    } else {
-                        return Err(DateFromFieldsError::NotEnoughFields);
-                    }
-                }
-            },
-        };
-
-        if fields.month_code.is_none() && fields.ordinal_month.is_none() {
-            // We're returning this error early so that we return structural type
-            // errors before range errors, see comment in the year code below.
-            return Err(DateFromFieldsError::NotEnoughFields);
-        }
-
-        let year = {
-            // NOTE: The year/extendedyear range check is important to avoid arithmetic
-            // overflow in `year_info_from_era` and `year_info_from_extended`. It
-            // must happen before they are called.
-            //
-            // To better match the Temporal specification's order of operations, we try
-            // to return structural type errors (`NotEnoughFields`) before checking for range errors.
-            // This isn't behavior we *must* have, but it is not much additional work to maintain
-            // so we make an attempt.
-            match (fields.era, fields.era_year) {
-                (None, None) => match fields.extended_year {
-                    Some(extended_year) => extended_year_as_year_info(extended_year, cal)?,
-                    None => match missing_fields_strategy {
-                        MissingFieldsStrategy::Reject => {
-                            return Err(DateFromFieldsError::NotEnoughFields)
-                        }
-                        MissingFieldsStrategy::Ecma => {
-                            match (fields.month_code, fields.ordinal_month) {
-                                (Some(month_code), None) => {
-                                    cal.reference_year_from_month_day(month_code, day)?
-                                }
-                                _ => return Err(DateFromFieldsError::NotEnoughFields),
-                            }
-                        }
-                    },
-                },
-                (Some(era), Some(era_year)) => {
-                    range_check(era_year, "year", VALID_YEAR_RANGE)?;
-                    let era_year_as_year_info = cal.year_info_from_era(era, era_year)?;
-                    if let Some(extended_year) = fields.extended_year {
-                        if era_year_as_year_info != extended_year_as_year_info(extended_year, cal)?
-                        {
-                            return Err(DateFromFieldsError::InconsistentYear);
-                        }
-                    }
-                    era_year_as_year_info
-                }
-                // Era and Era Year must be both or neither
-                (Some(_), None) | (None, Some(_)) => {
-                    return Err(DateFromFieldsError::NotEnoughFields)
-                }
-            }
-        };
-
-        let month = {
-            match fields.month_code {
-                Some(month_code) => {
-                    let computed_month = cal.ordinal_month_from_code(&year, month_code, options)?;
-                    if let Some(ordinal_month) = fields.ordinal_month {
-                        if computed_month != ordinal_month {
-                            return Err(DateFromFieldsError::InconsistentMonth);
-                        }
-                    }
-                    computed_month
-                }
-                None => match fields.ordinal_month {
-                    Some(month) => month,
-                    None => {
-                        debug_assert!(false, "Already checked above");
-                        return Err(DateFromFieldsError::NotEnoughFields);
-                    }
-                },
-            }
-        };
-
-        Ok(Self { year, month, day })
     }
 }
 

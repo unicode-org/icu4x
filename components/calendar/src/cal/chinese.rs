@@ -4,13 +4,12 @@
 
 use crate::cal::iso::Iso;
 use crate::calendar_arithmetic::DateFieldsResolver;
-use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, ToExtendedYear};
+use crate::calendar_arithmetic::{ArithmeticDate, ToExtendedYear};
 use crate::error::{
     DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
-use crate::provider::chinese_based::PackedChineseBasedYearInfo;
 use crate::types::{MonthCode, MonthInfo};
 use crate::AsCalendar;
 use crate::{types, Calendar, Date};
@@ -190,14 +189,18 @@ impl China {
 impl crate::cal::scaffold::UnstableSealed for China {}
 impl Rules for China {
     fn year_data(&self, related_iso: i32) -> LunarChineseYearData {
-        if let Some(data) = china_data::DATA.get(related_iso) {
-            data
-        } else if related_iso > china_data::DATA.first_related_iso_year {
+        if let Some(year) =
+            LunarChineseYearData::lookup(related_iso, china_data::STARTING_YEAR, china_data::DATA)
+        {
+            year
+        } else if related_iso > china_data::STARTING_YEAR {
             LunarChineseYearData::simple(simple::UTC_PLUS_8, related_iso)
+        } else if let Some(year) =
+            LunarChineseYearData::lookup(related_iso, qing_data::STARTING_YEAR, qing_data::DATA)
+        {
+            year
         } else {
-            qing_data::DATA.get(related_iso).unwrap_or_else(|| {
-                LunarChineseYearData::simple(simple::BEIJING_UTC_OFFSET, related_iso)
-            })
+            LunarChineseYearData::simple(simple::BEIJING_UTC_OFFSET, related_iso)
         }
     }
 
@@ -369,16 +372,20 @@ impl LunarChinese<Korea> {
 impl crate::cal::scaffold::UnstableSealed for Korea {}
 impl Rules for Korea {
     fn year_data(&self, related_iso: i32) -> LunarChineseYearData {
-        if let Some(data) = korea_data::DATA.get(related_iso) {
-            data
-        } else if related_iso > korea_data::DATA.first_related_iso_year {
+        if let Some(year) =
+            LunarChineseYearData::lookup(related_iso, korea_data::STARTING_YEAR, korea_data::DATA)
+        {
+            year
+        } else if related_iso > korea_data::STARTING_YEAR {
             LunarChineseYearData::simple(simple::UTC_PLUS_9, related_iso)
-        } else {
+        } else if let Some(year) =
+            LunarChineseYearData::lookup(related_iso, qing_data::STARTING_YEAR, qing_data::DATA)
+        {
             // Korea used Qing-dynasty rules before 1912
             // https://github.com/unicode-org/icu4x/issues/6455#issuecomment-3282175550
-            qing_data::DATA.get(related_iso).unwrap_or_else(|| {
-                LunarChineseYearData::simple(simple::BEIJING_UTC_OFFSET, related_iso)
-            })
+            year
+        } else {
+            LunarChineseYearData::simple(simple::BEIJING_UTC_OFFSET, related_iso)
         }
     }
 
@@ -594,14 +601,22 @@ impl<R: Rules> Calendar for LunarChinese<R> {
     type Year = types::CyclicYear;
     type DifferenceError = core::convert::Infallible;
 
+    fn from_codes(
+        &self,
+        era: Option<&str>,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateError> {
+        ArithmeticDate::from_codes(era, year, month_code, day, self).map(ChineseDateInner)
+    }
+
     fn from_fields(
         &self,
         fields: types::DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateFromFieldsError> {
-        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        let arithmetic_date = ArithmeticDate::try_from_builder(builder, options)?;
-        Ok(ChineseDateInner(arithmetic_date))
+        ArithmeticDate::from_fields(fields, options, self).map(ChineseDateInner)
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -743,8 +758,8 @@ pub struct LunarChineseYearData {
     /// - length of each month in the year
     /// - whether or not there is a leap month, and which month it is
     /// - the date of Chinese New Year in the related ISO year
-    pub(crate) packed: PackedChineseBasedYearInfo,
-    pub(crate) related_iso: i32,
+    packed: PackedLunarChineseYearData,
+    related_iso: i32,
 }
 
 impl ToExtendedYear for LunarChineseYearData {
@@ -773,7 +788,7 @@ impl LunarChineseYearData {
         leap_month: Option<u8>,
     ) -> Self {
         Self {
-            packed: PackedChineseBasedYearInfo::new(
+            packed: PackedLunarChineseYearData::new(
                 related_iso,
                 month_lengths,
                 leap_month,
@@ -781,6 +796,20 @@ impl LunarChineseYearData {
             ),
             related_iso,
         }
+    }
+
+    fn lookup(
+        related_iso: i32,
+        starting_year: i32,
+        data: &[PackedLunarChineseYearData],
+    ) -> Option<Self> {
+        Some(related_iso)
+            .and_then(|e| usize::try_from(e.checked_sub(starting_year)?).ok())
+            .and_then(|i| data.get(i))
+            .map(|&packed| Self {
+                related_iso,
+                packed,
+            })
     }
 
     fn calendrical_calculations<CB: ChineseBased>(related_iso: i32) -> LunarChineseYearData {
@@ -796,7 +825,7 @@ impl LunarChineseYearData {
             chinese_based::month_structure_for_year::<CB>(new_year, next_new_year);
 
         LunarChineseYearData {
-            packed: PackedChineseBasedYearInfo::new(
+            packed: PackedLunarChineseYearData::new(
                 related_iso,
                 month_lengths,
                 leap_month,
@@ -807,12 +836,12 @@ impl LunarChineseYearData {
     }
 
     /// Get the new year R.D.    
-    pub(crate) fn new_year(self) -> RataDie {
+    fn new_year(self) -> RataDie {
         self.packed.new_year(self.related_iso)
     }
 
     /// Get the next new year R.D.
-    pub(crate) fn next_new_year(self) -> RataDie {
+    fn next_new_year(self) -> RataDie {
         self.new_year() + i64::from(self.days_in_year())
     }
 
@@ -820,7 +849,7 @@ impl LunarChineseYearData {
     /// that is the leap month (not the ordinal month). In other words, for
     /// a year with an M05L, this will return Some(5). Note that the regular month precedes
     /// the leap month.
-    pub(crate) fn leap_month(self) -> Option<u8> {
+    fn leap_month(self) -> Option<u8> {
         self.packed.leap_month()
     }
 
@@ -830,7 +859,7 @@ impl LunarChineseYearData {
     ///
     /// Will be zero for the first month as the last day of the previous month
     /// is not in this year
-    pub(crate) fn last_day_of_previous_month(self, month: u8) -> u16 {
+    fn last_day_of_previous_month(self, month: u8) -> u16 {
         debug_assert!((1..=13).contains(&month), "Month out of bounds!");
         // Get the last day of the previous month.
         // Since `month` is 1-indexed, this needs to check if the month is 1 for the zero case
@@ -841,12 +870,12 @@ impl LunarChineseYearData {
         }
     }
 
-    pub(crate) fn days_in_year(self) -> u16 {
+    fn days_in_year(self) -> u16 {
         self.last_day_of_month(self.months_in_year())
     }
 
     /// Return the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
-    pub(crate) fn months_in_year(self) -> u8 {
+    fn months_in_year(self) -> u8 {
         if self.leap_month().is_some() {
             13
         } else {
@@ -860,12 +889,12 @@ impl LunarChineseYearData {
     ///
     /// Will be zero for the first month as the last day of the previous month
     /// is not in this year
-    pub(crate) fn last_day_of_month(self, month: u8) -> u16 {
+    fn last_day_of_month(self, month: u8) -> u16 {
         debug_assert!((1..=13).contains(&month), "Month out of bounds!");
         self.packed.last_day_of_month(month)
     }
 
-    pub(crate) fn days_in_month(self, month: u8) -> u8 {
+    fn days_in_month(self, month: u8) -> u8 {
         if self.packed.month_has_30_days(month) {
             30
         } else {
@@ -873,7 +902,7 @@ impl LunarChineseYearData {
         }
     }
 
-    pub(crate) fn md_from_rd(self, rd: RataDie) -> (u8, u8) {
+    fn md_from_rd(self, rd: RataDie) -> (u8, u8) {
         debug_assert!(
             rd < self.next_new_year() || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&rd),
             "Stored date {rd:?} out of bounds!"
@@ -911,13 +940,13 @@ impl LunarChineseYearData {
         (month, day_of_month)
     }
 
-    pub(crate) fn rd_from_md(self, month: u8, day: u8) -> RataDie {
+    fn rd_from_md(self, month: u8, day: u8) -> RataDie {
         self.new_year() + self.day_of_year(month, day) as i64 - 1
     }
 
     /// Calculate the number of days in the year so far for a ChineseBasedDate;
     /// similar to `CalendarArithmetic::day_of_year`
-    pub(crate) fn day_of_year(self, month: u8, day: u8) -> u16 {
+    fn day_of_year(self, month: u8, day: u8) -> u16 {
         self.last_day_of_previous_month(month) + day as u16
     }
 
@@ -925,7 +954,7 @@ impl LunarChineseYearData {
     /// since the Chinese calendar has leap months, an "L" is appended to the month code for
     /// leap months. For example, in a year where an intercalary month is added after the second
     /// month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
-    pub(crate) fn month(self, month: u8) -> MonthInfo {
+    fn month(self, month: u8) -> MonthInfo {
         // 1 indexed leap month name. This is also the ordinal for the leap month
         // in the year (e.g. in `M01, M01L, M02, ..`, the leap month is for month 1, and it is also
         // ordinally `month 2`, zero-indexed)
@@ -988,7 +1017,7 @@ impl LunarChineseYearData {
     /// Create a new arithmetic date from a year, month ordinal, and day with bounds checking; returns the
     /// result of creating this arithmetic date, as well as a ChineseBasedYearInfo - either the one passed in
     /// optionally as an argument, or a new ChineseBasedYearInfo for the given year, month, and day args.
-    pub(crate) fn validate_md(self, month: u8, day: u8) -> Result<(), DateError> {
+    fn validate_md(self, month: u8, day: u8) -> Result<(), DateError> {
         let max_month = self.months_in_year();
         if month == 0 || !(1..=max_month).contains(&month) {
             return Err(DateError::Range {
@@ -1032,6 +1061,141 @@ impl LunarChineseYearData {
         } else {
             ComputedOrdinalMonth::Exact(adjusted)
         }
+    }
+}
+
+/// The struct containing compiled ChineseData
+///
+/// Bit structure (little endian: note that shifts go in the opposite direction!)
+///
+/// ```text
+/// Bit:             0   1   2   3   4   5   6   7
+/// Byte 0:          [  month lengths .............
+/// Byte 1:         .. month lengths ] | [ leap month index ..
+/// Byte 2:          ] | [   NY offset       ] | unused
+/// ```
+///
+/// Where the New Year Offset is the offset from ISO Jan 19 of that year for Chinese New Year,
+/// the month lengths are stored as 1 = 30, 0 = 29 for each month including the leap month.
+/// The largest possible offset is 33, which requires 6 bits of storage.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+struct PackedLunarChineseYearData(u8, u8, u8);
+
+impl PackedLunarChineseYearData {
+    /// The first day on which Chinese New Year may occur
+    ///
+    /// According to Reingold & Dershowitz, ch 19.6, Chinese New Year occurs on Jan 21 - Feb 21 inclusive.
+    ///
+    /// Our simple approximation sometimes returns Feb 22.
+    ///
+    /// We allow it to occur as early as January 19 which is the earliest the second new moon
+    /// could occur after the Winter Solstice if the solstice is pinned to December 20.
+    const fn earliest_ny(related_iso: i32) -> RataDie {
+        calendrical_calculations::gregorian::fixed_from_gregorian(related_iso, 1, 19)
+    }
+
+    /// It clamps some values to avoid debug assertions on calendrical invariants.
+    const fn new(
+        related_iso: i32,
+        month_lengths: [bool; 13],
+        leap_month: Option<u8>,
+        new_year: RataDie,
+    ) -> Self {
+        // These assertions are API correctness assertions and even bad calendar arithmetic
+        // should not produce this
+        if let Some(l) = leap_month {
+            debug_assert!(2 <= l && l <= 13, "Leap month indices must be 2 <= i <= 13");
+        } else {
+            debug_assert!(
+                !month_lengths[12],
+                "Last month length should not be set for non-leap years"
+            )
+        }
+
+        let ny_offset = new_year.since(Self::earliest_ny(related_iso));
+
+        #[cfg(debug_assertions)]
+        let out_of_valid_astronomical_range = WELL_BEHAVED_ASTRONOMICAL_RANGE.start.to_i64_date()
+            > new_year.to_i64_date()
+            || new_year.to_i64_date() > WELL_BEHAVED_ASTRONOMICAL_RANGE.end.to_i64_date();
+
+        // Assert the offset is in range, but allow it to be out of
+        // range when out_of_valid_astronomical_range=true
+        #[cfg(debug_assertions)]
+        debug_assert!(
+            ny_offset >= 0 || out_of_valid_astronomical_range,
+            "Year offset too small to store"
+        );
+        // The maximum new-year's offset we have found is 34
+        #[cfg(debug_assertions)]
+        debug_assert!(
+            ny_offset < 35 || out_of_valid_astronomical_range,
+            "Year offset too big to store"
+        );
+
+        // Just clamp to something we can represent when things get of range.
+        //
+        // This will typically happen when out_of_valid_astronomical_range
+        // is true.
+        //
+        // We can store up to 6 bytes for ny_offset, even if our
+        // maximum asserted value is otherwise 33.
+        let ny_offset = ny_offset & (0x40 - 1);
+
+        let mut all = 0u32; // last byte unused
+
+        let mut month = 0;
+        while month < month_lengths.len() {
+            #[allow(clippy::indexing_slicing)] // const iteration
+            if month_lengths[month] {
+                all |= 1 << month as u32;
+            }
+            month += 1;
+        }
+        let leap_month_idx = if let Some(leap_month_idx) = leap_month {
+            leap_month_idx
+        } else {
+            0
+        };
+        all |= (leap_month_idx as u32) << (8 + 5);
+        all |= (ny_offset as u32) << (16 + 1);
+        let le = all.to_le_bytes();
+        Self(le[0], le[1], le[2])
+    }
+
+    fn new_year(self, related_iso: i32) -> RataDie {
+        Self::earliest_ny(related_iso) + (self.2 as i64 >> 1)
+    }
+
+    fn leap_month(self) -> Option<u8> {
+        let bits = (self.1 >> 5) + ((self.2 & 0b1) << 3);
+
+        (bits != 0).then_some(bits)
+    }
+
+    // Whether a particular month has 30 days (month is 1-indexed)
+    fn month_has_30_days(self, month: u8) -> bool {
+        let months = u16::from_le_bytes([self.0, self.1]);
+        months & (1 << (month - 1) as u16) != 0
+    }
+
+    // Which day of year is the last day of a month (month is 1-indexed)
+    fn last_day_of_month(self, month: u8) -> u16 {
+        let months = u16::from_le_bytes([self.0, self.1]);
+        // month is 1-indexed, so `29 * month` includes the current month
+        let mut prev_month_lengths = 29 * month as u16;
+        // month is 1-indexed, so `1 << month` is a mask with all zeroes except
+        // for a 1 at the bit index at the next month. Subtracting 1 from it gets us
+        // a bitmask for all months up to now
+        let long_month_bits = months & ((1 << month as u16) - 1);
+        prev_month_lengths += long_month_bits.count_ones().try_into().unwrap_or(0);
+        prev_month_lengths
     }
 }
 
@@ -1891,5 +2055,64 @@ mod test {
                 }
             }
         }
+    }
+
+    #[test]
+    fn test_roundtrip_packed() {
+        fn packed_roundtrip_single(
+            month_lengths: [bool; 13],
+            leap_month_idx: Option<u8>,
+            ny_offset: i64,
+        ) {
+            let ny =
+                calendrical_calculations::gregorian::fixed_from_gregorian(1000, 1, 1) + ny_offset;
+            let packed = PackedLunarChineseYearData::new(1000, month_lengths, leap_month_idx, ny);
+
+            assert_eq!(
+                ny,
+                packed.new_year(1000),
+                "Roundtrip with {month_lengths:?}, {leap_month_idx:?}, {ny_offset}"
+            );
+            assert_eq!(
+                leap_month_idx,
+                packed.leap_month(),
+                "Roundtrip with {month_lengths:?}, {leap_month_idx:?}, {ny_offset}"
+            );
+            assert_eq!(
+                month_lengths,
+                core::array::from_fn(|i| packed.month_has_30_days(i as u8 + 1)),
+                "Roundtrip with {month_lengths:?}, {leap_month_idx:?}, {ny_offset}"
+            );
+        }
+
+        const SHORT: [bool; 13] = [false; 13];
+        const LONG: [bool; 13] = [true; 13];
+        const ALTERNATING1: [bool; 13] = [
+            false, true, false, true, false, true, false, true, false, true, false, true, false,
+        ];
+        const ALTERNATING2: [bool; 13] = [
+            true, false, true, false, true, false, true, false, true, false, true, false, false,
+        ];
+        const RANDOM1: [bool; 13] = [
+            true, true, false, false, true, true, false, true, true, true, true, false, false,
+        ];
+        const RANDOM2: [bool; 13] = [
+            false, true, true, true, true, false, true, true, true, false, false, true, false,
+        ];
+        packed_roundtrip_single(SHORT, None, 18 + 5);
+        packed_roundtrip_single(SHORT, None, 18 + 10);
+        packed_roundtrip_single(SHORT, Some(11), 18 + 15);
+        packed_roundtrip_single(LONG, Some(12), 18 + 15);
+        packed_roundtrip_single(ALTERNATING1, None, 18 + 2);
+        packed_roundtrip_single(ALTERNATING1, Some(3), 18 + 5);
+        packed_roundtrip_single(ALTERNATING2, None, 18 + 9);
+        packed_roundtrip_single(ALTERNATING2, Some(7), 18 + 26);
+        packed_roundtrip_single(RANDOM1, None, 18 + 29);
+        packed_roundtrip_single(RANDOM1, Some(12), 18 + 29);
+        packed_roundtrip_single(RANDOM1, Some(2), 18 + 21);
+        packed_roundtrip_single(RANDOM2, None, 18 + 25);
+        packed_roundtrip_single(RANDOM2, Some(2), 18 + 19);
+        packed_roundtrip_single(RANDOM2, Some(5), 18 + 2);
+        packed_roundtrip_single(RANDOM2, Some(12), 18 + 5);
     }
 }
