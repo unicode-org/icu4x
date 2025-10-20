@@ -5,7 +5,7 @@
 //! Data obtained from ICU4C:
 //! <https://github.com/unicode-org/icu/blob/1bf6bf774dbc8c6c2051963a81100ea1114b497f/icu4c/source/i18n/islamcal.cpp#L264>
 
-use crate::provider::hijri::PackedHijriYearInfo;
+use super::PackedHijriYearInfo;
 
 pub const STARTING_YEAR: i32 = 1300;
 

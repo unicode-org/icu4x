@@ -4,7 +4,7 @@
 
 //! Data obtained from [`calendrical_calculations`].
 
-use crate::provider::hijri::PackedHijriYearInfo;
+use super::PackedHijriYearInfo;
 
 pub const STARTING_YEAR: i32 = 1317;
 

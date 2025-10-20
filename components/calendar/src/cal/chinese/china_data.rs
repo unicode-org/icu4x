@@ -4,7 +4,7 @@
 
 //! Data obtained from [`calendrical_calculations`].
 
-use crate::provider::chinese_based::PackedChineseBasedYearInfo;
+use super::PackedChineseBasedYearInfo;
 
 pub const STARTING_YEAR: i32 = 1912;
 

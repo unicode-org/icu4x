@@ -5,7 +5,7 @@
 //! This data is confirmed by both the [Korea Astronomy and Space Science Institute](https://astro.kasi.re.kr/life/pageView/5),
 //! as well as the [Hong Kong Observatory](https://www.hko.gov.hk/en/gts/time/conversion.htm).
 
-use crate::provider::chinese_based::PackedChineseBasedYearInfo;
+use super::PackedChineseBasedYearInfo;
 
 pub const STARTING_YEAR: i32 = 1900;
 
