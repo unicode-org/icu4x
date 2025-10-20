@@ -249,10 +249,10 @@ impl DateFieldsResolver for Hebrew {
     ) -> types::MonthInfo {
         let is_leap_year = Self::provided_year_is_leap(*year);
 
-        let valid_month_code = match (ordinal_month.cmp(&6), is_leap_year) {
-            (Ordering::Less, _) | (_, false) => ValidMonthCode::new_unchecked(ordinal_month, false),
-            (Ordering::Equal, true) => ValidMonthCode::new_unchecked(5, true),
-            (Ordering::Greater, true) => ValidMonthCode::new_unchecked(ordinal_month - 1, false),
+        let valid_month_code = match (ordinal_month, is_leap_year) {
+            (..6, _) | (_, false) => ValidMonthCode::new_unchecked(ordinal_month, false),
+            (6, true) => ValidMonthCode::new_unchecked(5, true),
+            (7.., true) => ValidMonthCode::new_unchecked(ordinal_month - 1, false),
         };
         let standard_code = valid_month_code.to_month_code();
         let formatting_code = if is_leap_year && ordinal_month == 7 {
