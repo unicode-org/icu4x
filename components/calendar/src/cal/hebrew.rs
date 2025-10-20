@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::ArithmeticDateBuilder;
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, ToExtendedYear};
 use crate::error::{
     DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
@@ -280,15 +279,22 @@ impl Calendar for Hebrew {
     type Year = types::EraYear;
     type DifferenceError = core::convert::Infallible;
 
+    fn from_codes(
+        &self,
+        era: Option<&str>,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateError> {
+        ArithmeticDate::from_codes(era, year, month_code, day, self).map(HebrewDateInner)
+    }
+
     fn from_fields(
         &self,
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateFromFieldsError> {
-        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        Ok(HebrewDateInner(ArithmeticDate::try_from_builder(
-            builder, options,
-        )?))
+        ArithmeticDate::from_fields(fields, options, self).map(HebrewDateInner)
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {

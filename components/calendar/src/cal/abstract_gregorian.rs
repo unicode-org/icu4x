@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::iso::{IsoDateInner, IsoEra};
-use crate::calendar_arithmetic::{ArithmeticDate, ArithmeticDateBuilder, DateFieldsResolver};
+use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver};
 use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -95,14 +95,22 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     type Year = types::EraYear;
     type DifferenceError = core::convert::Infallible;
 
+    fn from_codes(
+        &self,
+        era: Option<&str>,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateError> {
+        ArithmeticDate::from_codes(era, year, month_code, day, self).map(ArithmeticDate::cast)
+    }
+
     fn from_fields(
         &self,
         fields: types::DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateFromFieldsError> {
-        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        let arithmetic_date = ArithmeticDate::try_from_builder(builder, options)?;
-        Ok(arithmetic_date)
+        ArithmeticDate::from_fields(fields, options, self).map(ArithmeticDate::cast)
     }
 
     fn from_rata_die(&self, date: RataDie) -> Self::DateInner {
@@ -214,6 +222,20 @@ macro_rules! impl_with_abstract_gregorian {
             type DateInner = $inner_date_ty;
             type Year = types::EraYear;
             type DifferenceError = core::convert::Infallible;
+
+            fn from_codes(
+                &self,
+                era: Option<&str>,
+                year: i32,
+                month_code: types::MonthCode,
+                day: u8,
+            ) -> Result<Self::DateInner, crate::error::DateError> {
+                let $self_ident = self;
+                crate::cal::abstract_gregorian::AbstractGregorian($eras_expr)
+                    .from_codes(era, year, month_code, day)
+                    .map($inner_date_ty)
+            }
+
             fn from_fields(
                 &self,
                 fields: crate::types::DateFields,
