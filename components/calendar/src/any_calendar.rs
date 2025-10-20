@@ -41,7 +41,7 @@ define_preferences!(
 ///
 /// There are many ways of constructing an AnyCalendar'd date:
 /// ```
-/// use icu::calendar::{AnyCalendar, AnyCalendarKind, Date, cal::Japanese, types::MonthCode};
+/// use icu::calendar::{AnyCalendar, AnyCalendarKind, Date, cal::{Japanese, Gregorian}, types::MonthCode};
 /// use icu::locale::locale;
 /// use tinystr::tinystr;
 /// # use std::rc::Rc;
@@ -49,26 +49,26 @@ define_preferences!(
 /// let locale = locale!("en-u-ca-japanese"); // English with the Japanese calendar
 ///
 /// let calendar = AnyCalendar::new(AnyCalendarKind::new(locale.into()));
-/// let calendar = Rc::new(calendar); // Avoid cloning it each time
-///                                   // If everything is a local reference, you may use icu::calendar::Ref instead.
 ///
-/// // construct from era code, year, month code, day, and a calendar
-/// // This is March 28, 15 Heisei
-/// let manual_date = Date::try_new_from_codes(Some("heisei"), 15, MonthCode(tinystr!(4, "M03")), 28, calendar.clone())
-///                     .expect("Failed to construct Date manually");
-///
-///
-/// // construct another date by converting from ISO
-/// let iso_date = Date::try_new_iso(2020, 9, 1)
-///     .expect("Failed to construct ISO Date.");
-/// let iso_converted = iso_date.to_calendar(calendar);
+/// // This is a Date<AnyCalendar>
+/// let any_japanese_date = Date::try_new_gregorian(2020, 9, 1)
+///     .expect("Failed to construct Gregorian Date.")
+///     .to_calendar(calendar)
+///     .to_any();
 ///
 /// // Construct a date in the appropriate typed calendar and convert
 /// let japanese_calendar = Japanese::new();
-/// let japanese_date = Date::try_new_japanese_with_calendar("heisei", 15, 3, 28,
+/// let japanese_date = Date::try_new_japanese_with_calendar("reiwa", 2, 9, 1,
 ///                                                         japanese_calendar).unwrap();
-/// // This is a Date<AnyCalendar>
-/// let any_japanese_date = japanese_date.to_any();
+/// assert_eq!(japanese_date.to_any(), any_japanese_date);
+///
+/// // this is also Date<AnyCalendar>, but it uses a different calendar
+/// let any_gregorian_date = any_japanese_date.to_calendar(Gregorian).to_any();
+///
+/// // Date<AnyCalendar> does not have a total order
+/// assert!(any_gregorian_date <= any_gregorian_date);
+/// assert!(any_japanese_date <= any_japanese_date);
+/// assert!(!(any_gregorian_date <= any_japanese_date) && !(any_japanese_date <= any_gregorian_date));
 /// ```
 #[derive(Debug, Clone)]
 #[non_exhaustive]
