@@ -9,6 +9,7 @@ use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
 use crate::{types, Calendar, Date, RangeError};
+use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
@@ -113,7 +114,8 @@ impl Calendar for Indian {
 
     // Algorithms directly implemented in icu_calendar since they're not from the book
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        let iso_year = calendrical_calculations::gregorian::year_from_fixed(rd).unwrap_or(i32::MIN);
+        let iso_year = calendrical_calculations::gregorian::year_from_fixed(rd)
+            .unwrap_or_else(|e| e.saturate());
         // Get day number in year (1 indexed)
         let day_of_year_iso =
             (rd - calendrical_calculations::gregorian::day_before_year(iso_year)) as u16;
