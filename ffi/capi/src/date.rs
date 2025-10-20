@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::unstable::errors::ffi::CalendarDateFromFieldsError;
 use ffi::IsoWeekOfYear;
-use tinystr::TinyAsciiStr;
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
@@ -244,7 +242,7 @@ pub mod ffi {
         ) -> Result<Box<Date>, CalendarDateFromFieldsError> {
             let cal = calendar.0.clone();
             Ok(Box::new(Date(icu_calendar::Date::try_from_fields(
-                fields.try_into()?,
+                fields.into(),
                 options.into(),
                 cal,
             )?)))
@@ -490,22 +488,16 @@ impl From<ffi::DateFromFieldsOptions> for icu_calendar::options::DateFromFieldsO
     }
 }
 
-impl<'a> TryFrom<ffi::DateFields<'a>> for icu_calendar::types::DateFields<'a> {
-    type Error = CalendarDateFromFieldsError;
-    fn try_from(other: ffi::DateFields<'a>) -> Result<Self, CalendarDateFromFieldsError> {
+impl<'a> From<ffi::DateFields<'a>> for icu_calendar::types::DateFields<'a> {
+    fn from(other: ffi::DateFields<'a>) -> Self {
         let mut fields = Self::default();
         fields.era = other.era.into_option();
         fields.era_year = other.era_year.into();
         fields.extended_year = other.extended_year.into();
-        if let Some(month_code) = other.month_code.into_option() {
-            let Ok(code) = TinyAsciiStr::try_from_utf8(month_code) else {
-                return Err(CalendarDateFromFieldsError::InvalidMonthCode);
-            };
-            fields.month_code = Some(icu_calendar::types::MonthCode(code));
-        }
+        fields.month_code = other.month_code.into_option();
         fields.ordinal_month = other.ordinal_month.into();
         fields.day = other.day.into();
 
-        Ok(fields)
+        fields
     }
 }

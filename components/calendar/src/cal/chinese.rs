@@ -1779,7 +1779,7 @@ mod test {
     fn test_from_fields_constrain() {
         let fields = DateFields {
             day: Some(31),
-            month_code: Some(MonthCode("M01".parse().unwrap())),
+            month_code: Some(b"M01"),
             extended_year: Some(1972),
             ..Default::default()
         };
@@ -1799,7 +1799,7 @@ mod test {
         // 2022 did not have M01L, the month should be constrained back down
         let fields = DateFields {
             day: Some(1),
-            month_code: Some(MonthCode("M01L".parse().unwrap())),
+            month_code: Some(b"M01L"),
             extended_year: Some(2022),
             ..Default::default()
         };

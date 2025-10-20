@@ -39,6 +39,16 @@ fn check_round_trip() {
 fn check_from_fields() {
     fn test<C: Calendar>(cal: C) {
         let cal = Ref(&cal);
+
+        let codes = (1..19)
+            .flat_map(|i| {
+                [
+                    types::MonthCode::new_normal(i).unwrap(),
+                    types::MonthCode::new_leap(i).unwrap(),
+                ]
+                .into_iter()
+            })
+            .collect::<Vec<_>>();
         for year in -MAGNITUDE..=MAGNITUDE {
             if year % 50000 == 0 {
                 println!("{} {year:?}", cal.as_calendar().debug_name());
@@ -46,17 +56,11 @@ fn check_from_fields() {
             for overflow in [options::Overflow::Constrain, options::Overflow::Reject] {
                 let mut options = options::DateFromFieldsOptions::default();
                 options.overflow = Some(overflow);
-                for mut fields in (1..19)
-                    .flat_map(|i| {
-                        [
-                            types::MonthCode::new_normal(i).unwrap(),
-                            types::MonthCode::new_leap(i).unwrap(),
-                        ]
-                        .into_iter()
-                    })
+                for mut fields in codes
+                    .iter()
                     .map(|m| {
                         let mut fields = types::DateFields::default();
-                        fields.month_code = Some(m);
+                        fields.month_code = Some(m.0.as_bytes());
                         fields
                     })
                     .chain((1..20).map(|m| {
