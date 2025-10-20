@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::cmp::Ordering;
-
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, ToExtendedYear};
 use crate::error::{
@@ -229,7 +227,6 @@ impl DateFieldsResolver for Hebrew {
         year: &Self::YearInfo,
         ordinal_month: u8,
     ) -> types::MonthInfo {
-        let mut ordinal = ordinal_month;
         let is_leap_year = year.keviyah.is_leap();
 
         let valid_month_code = match (ordinal_month, is_leap_year) {
