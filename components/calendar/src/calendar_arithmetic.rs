@@ -191,6 +191,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         day: u8,
         calendar: &C,
     ) -> Result<Self, DateError> {
+        let year = range_check(year, "year", VALID_YEAR_RANGE)?;
         let year = if let Some(era) = era {
             calendar.year_info_from_era(era.as_bytes(), year)?
         } else {
@@ -198,7 +199,13 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         };
         let month = calendar
             .ordinal_month_from_code(&year, month_code, Default::default())
-            .map_err(|_| DateError::UnknownMonthCode(month_code))?;
+            .map_err(|e| match e {
+                MonthCodeError::InvalidMonthCode
+                | MonthCodeError::UnknownMonthCodeForCalendar
+                | MonthCodeError::UnknownMonthCodeForYear => {
+                    DateError::UnknownMonthCode(month_code)
+                }
+            })?;
 
         let day = range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
 
