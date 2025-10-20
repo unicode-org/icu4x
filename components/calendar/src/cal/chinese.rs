@@ -794,7 +794,7 @@ pub struct LunarChineseYearData {
     /// - length of each month in the year
     /// - whether or not there is a leap month, and which month it is
     /// - the date of Chinese New Year in the related ISO year
-    packed: PackedChineseBasedYearInfo,
+    packed: PackedLunarChineseYearData,
     related_iso: i32,
 }
 
@@ -824,7 +824,7 @@ impl LunarChineseYearData {
         leap_month: Option<u8>,
     ) -> Self {
         Self {
-            packed: PackedChineseBasedYearInfo::new(
+            packed: PackedLunarChineseYearData::new(
                 related_iso,
                 month_lengths,
                 leap_month,
@@ -837,7 +837,7 @@ impl LunarChineseYearData {
     fn lookup(
         related_iso: i32,
         starting_year: i32,
-        data: &[PackedChineseBasedYearInfo],
+        data: &[PackedLunarChineseYearData],
     ) -> Option<Self> {
         Some(related_iso)
             .and_then(|e| usize::try_from(e.checked_sub(starting_year)?).ok())
@@ -861,7 +861,7 @@ impl LunarChineseYearData {
             chinese_based::month_structure_for_year::<CB>(new_year, next_new_year);
 
         LunarChineseYearData {
-            packed: PackedChineseBasedYearInfo::new(
+            packed: PackedLunarChineseYearData::new(
                 related_iso,
                 month_lengths,
                 leap_month,
@@ -1121,9 +1121,9 @@ impl LunarChineseYearData {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-struct PackedChineseBasedYearInfo(u8, u8, u8);
+struct PackedLunarChineseYearData(u8, u8, u8);
 
-impl PackedChineseBasedYearInfo {
+impl PackedLunarChineseYearData {
     /// The first day on which Chinese New Year may occur
     ///
     /// According to Reingold & Dershowitz, ch 19.6, Chinese New Year occurs on Jan 21 - Feb 21 inclusive.
@@ -2102,7 +2102,7 @@ mod test {
         ) {
             let ny =
                 calendrical_calculations::gregorian::fixed_from_gregorian(1000, 1, 1) + ny_offset;
-            let packed = PackedChineseBasedYearInfo::new(1000, month_lengths, leap_month_idx, ny);
+            let packed = PackedLunarChineseYearData::new(1000, month_lengths, leap_month_idx, ny);
 
             assert_eq!(
                 ny,

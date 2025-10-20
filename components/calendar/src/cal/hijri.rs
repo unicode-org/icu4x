@@ -396,7 +396,7 @@ impl Rules for TabularAlgorithm {
         HijriYearData {
             // start_day is within 5 days of the tabular start day (trivial), and month lengths
             // has either 6 or 7 long months.
-            packed: PackedHijriYearInfo::new_unchecked(extended_year, month_lengths, start_day),
+            packed: PackedHijriYearData::new_unchecked(extended_year, month_lengths, start_day),
             extended_year,
         }
     }
@@ -505,7 +505,7 @@ impl Hijri<TabularAlgorithm> {
 /// Information about a Hijri year.
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct HijriYearData {
-    packed: PackedHijriYearInfo,
+    packed: PackedHijriYearData,
     extended_year: i32,
 }
 
@@ -530,7 +530,7 @@ impl HijriYearData {
         month_lengths: [bool; 12],
     ) -> Option<Self> {
         Some(Self {
-            packed: PackedHijriYearInfo::try_new(extended_year, month_lengths, start_day)?,
+            packed: PackedHijriYearData::try_new(extended_year, month_lengths, start_day)?,
             extended_year,
         })
     }
@@ -538,7 +538,7 @@ impl HijriYearData {
     fn lookup(
         extended_year: i32,
         starting_year: i32,
-        data: &[PackedHijriYearInfo],
+        data: &[PackedHijriYearData],
     ) -> Option<Self> {
         Some(extended_year)
             .and_then(|e| usize::try_from(e.checked_sub(starting_year)?).ok())
@@ -615,9 +615,9 @@ impl HijriYearData {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd, Ord, Debug)]
-struct PackedHijriYearInfo(u16);
+struct PackedHijriYearData(u16);
 
-impl PackedHijriYearInfo {
+impl PackedHijriYearData {
     const fn try_new(
         extended_year: i32,
         month_lengths: [bool; 12],
@@ -1999,7 +1999,7 @@ mod test {
     #[test]
     fn test_hijri_packed_roundtrip() {
         fn single_roundtrip(month_lengths: [bool; 12], start_day: RataDie) -> Option<()> {
-            let packed = PackedHijriYearInfo::try_new(1600, month_lengths, start_day)?;
+            let packed = PackedHijriYearData::try_new(1600, month_lengths, start_day)?;
             for i in 0..12 {
                 assert_eq!(packed.month_has_30_days(i + 1), month_lengths[i as usize]);
             }
@@ -2014,7 +2014,7 @@ mod test {
         let mixed1 = [l, s, l, s, l, s, l, s, l, s, l, s];
         let mixed2 = [s, s, l, l, l, s, l, s, s, s, l, l];
 
-        let start_1600 = PackedHijriYearInfo::mean_tabular_start_day(1600);
+        let start_1600 = PackedHijriYearData::mean_tabular_start_day(1600);
         assert_eq!(single_roundtrip(all_short, start_1600), None);
         assert_eq!(single_roundtrip(all_long, start_1600), None);
         single_roundtrip(mixed1, start_1600).unwrap();
