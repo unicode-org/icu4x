@@ -4,8 +4,8 @@
 
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::ArithmeticDate;
+use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::calendar_arithmetic::ToExtendedYear;
-use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
 use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -743,14 +743,22 @@ impl<R: Rules> Calendar for Hijri<R> {
     type Year = types::EraYear;
     type DifferenceError = core::convert::Infallible;
 
+    fn from_codes(
+        &self,
+        era: Option<&str>,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateError> {
+        ArithmeticDate::from_codes(era, year, month_code, day, self).map(HijriDateInner)
+    }
+
     fn from_fields(
         &self,
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateFromFieldsError> {
-        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        let arithmetic_date = ArithmeticDate::try_from_builder(builder, options)?;
-        Ok(HijriDateInner(arithmetic_date))
+        ArithmeticDate::from_fields(fields, options, self).map(HijriDateInner)
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {

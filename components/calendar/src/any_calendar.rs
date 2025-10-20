@@ -275,6 +275,16 @@ impl Calendar for AnyCalendar {
     type Year = YearInfo;
     type DifferenceError = AnyCalendarDifferenceError;
 
+    fn from_codes(
+        &self,
+        era: Option<&str>,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateError> {
+        Ok(match_cal!(match self: (c) => c.from_codes(era, year, month_code, day)?))
+    }
+
     fn from_fields(
         &self,
         fields: DateFields,

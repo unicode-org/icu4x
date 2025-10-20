@@ -169,13 +169,44 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         ArithmeticDate { year, month, day }
     }
 
-    /// Construct a new arithmetic date from a year, month ordinal, and day, bounds checking
-    /// the month and day according to the overflow parameter.
-    pub(crate) fn try_from_builder(
-        builder: ArithmeticDateBuilder<C::YearInfo>,
+    pub(crate) const fn cast<C2: DateFieldsResolver<YearInfo = C::YearInfo>>(
+        self,
+    ) -> ArithmeticDate<C2> {
+        ArithmeticDate {
+            year: self.year,
+            month: self.month,
+            day: self.day,
+        }
+    }
+
+    pub(crate) fn from_codes(
+        era: Option<&str>,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+        calendar: &C,
+    ) -> Result<Self, DateError> {
+        let year = if let Some(era) = era {
+            calendar.year_info_from_era(era.as_bytes(), year)?
+        } else {
+            calendar.year_info_from_extended(year)
+        };
+        let month = calendar
+            .ordinal_month_from_code(&year, month_code, Default::default())
+            .map_err(|_| DateError::UnknownMonthCode(month_code))?;
+
+        range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
+
+        Ok(ArithmeticDate::new_unchecked(year, month, day))
+    }
+
+    pub(crate) fn from_fields(
+        fields: DateFields,
         options: DateFromFieldsOptions,
-    ) -> Result<Self, RangeError> {
-        let ArithmeticDateBuilder { year, month, day } = builder;
+        calendar: &C,
+    ) -> Result<Self, DateFromFieldsError> {
+        let ArithmeticDateBuilder { year, month, day } =
+            ArithmeticDateBuilder::try_from_fields(fields, calendar, options)?;
         let constrained_month = range_check_with_overflow(
             month,
             "month",
@@ -195,14 +226,9 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     }
 
     pub(crate) fn try_from_ymd(year: C::YearInfo, month: u8, day: u8) -> Result<Self, RangeError> {
-        let builder = ArithmeticDateBuilder { year, month, day };
-        Self::try_from_builder(
-            builder,
-            DateFromFieldsOptions {
-                overflow: Some(Overflow::Reject),
-                ..Default::default()
-            },
-        )
+        range_check(month, "month", 1..=C::months_in_provided_year(year))?;
+        range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
+        Ok(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     /// Implements the Temporal abstract operation BalanceNonISODate.
@@ -551,10 +577,10 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     }
 }
 
-pub(crate) struct ArithmeticDateBuilder<YearInfo> {
-    pub(crate) year: YearInfo,
-    pub(crate) month: u8,
-    pub(crate) day: u8,
+struct ArithmeticDateBuilder<YearInfo> {
+    year: YearInfo,
+    month: u8,
+    day: u8,
 }
 
 fn extended_year_as_year_info<YearInfo, C>(
@@ -578,7 +604,7 @@ impl<YearInfo> ArithmeticDateBuilder<YearInfo>
 where
     YearInfo: PartialEq + Debug,
 {
-    pub(crate) fn try_from_fields<C>(
+    fn try_from_fields<C>(
         fields: DateFields,
         cal: &C,
         options: DateFromFieldsOptions,
