@@ -7,10 +7,7 @@ Current changelog is accurate up to 8371b92075c90a689b6eb0a094bc6f15c19f364a
 - Components
     - General
         - Update MSRV to 1.83 (unicode-org#7066)
-        - Bump default toolchain (not MSRV) to 1.89 (unicode-org#6818)
         - Remove unused dependencies (unicode-org#6978)
-        - Use `#[expect]` for clippy lints (unicode-org#6700)
-        - Use `serde_core` where possible (unicode-org#6991)
     - `icu_calendar`
         - Add `Date::try_from_fields` for flexibly building Temporal dates (unicode-org#6910)
         - (unstable) Implement date arithmetic according to Temporal specification (unicode-org#6992, unicode-org#7012)
@@ -19,16 +16,13 @@ Current changelog is accurate up to 8371b92075c90a689b6eb0a094bc6f15c19f364a
         - Add a lot more documentation on individual calendars (unicode-org#7016, unicode-org#7033, unicode-org#7036, unicode-org#7037, unicode-org#7047, unicode-org#7082)
         - Add Easter holiday to `Gregorian` and `Julian` (unicode-org#6899)
         - Implement `PartialOrd` for `Date` unconditionally (unicode-org#7090)
-        - Add first weekday preference to week preferences (unicode-org#6615)
-        - Make `extended_year` quite consistent (unicode-org#6800, unicode-org#6937)
+        - Make `extended_year` have consistent behavior across calendars, matching specced behavior in Temporal (unicode-org#6800, unicode-org#6937)
         - Fix `und-SA-u-ca-islamic` (unicode-org#6736)
-        - Add RataDie::in_well_behaved_astronomical_range(), use to avoid panics (unicode-org#6876)
+        - Avoid panics for large past/future dates in astronomical calendars (unicode-org#6876)
         - Improve some Gregorian calendar code (unicode-org#6870)
-        - Hardcode precomputed calendar data (unicode-org#6934, unicode-org#7008)
+        - Switch Chinese and Korean calendars to no longer being data-driven, hardcoding their data (unicode-org#6934, unicode-org#7008)
         - Compare Chinese calendar against Hong Kong observatory (unicode-org#6944)
         - Test Korean calendar against KASI (unicode-org#7041)
-        - Implement Ethiopian in terms of Coptic (unicode-org#6952)
-        - Unify implementations of Iso, Gregorian, ROC, Buddhist, Japanese (unicode-org#6975)
         - Optimise `day_of_provided_year`, `date_from_provided_year_day` for ISO/Gregorian (unicode-org#6883)
     - `icu_casemap`
         - General changes only
@@ -40,7 +34,7 @@ Current changelog is accurate up to 8371b92075c90a689b6eb0a094bc6f15c19f364a
         - Port BOCSU algorithm from ICU4C for identical level sort keys (unicode-org#6823)
         - Avoid double-validating `char`s (unicode-org#6924)
     - `icu_collections`
-        - Allow building without the `alloc` crate (unicode-org#6997)
+        - Fix building without the `alloc` crate (unicode-org#6997)
         - Optimize `CodePointTrie` by hoisting fast path bound checks to constructor (unicode-org#6863)
         - Make trivial constructors for Char16Trie / Char16TrieIterator inline-eligible (unicode-org#6864)
     - `icu_datetime`
@@ -49,7 +43,6 @@ Current changelog is accurate up to 8371b92075c90a689b6eb0a094bc6f15c19f364a
         - Fix `und-SA-u-ca-islamic` (unicode-org#6736)
         - Use atTime patterns where available (unicode-org#7106)
         - Disambiguate inconsistent metazones (unicode-org#6755)
-        - Remove Western Africa Time variant names (unicode-org#6779)
         - Implement `u` and `g` fields (unicode-org#6930)
         - Use accurate `ZoneNameTimestamps` (unicode-org#6942)
         - Improve formatting for Etc/GMT+X zones (unicode-org#7055)
@@ -77,7 +70,7 @@ Current changelog is accurate up to 8371b92075c90a689b6eb0a094bc6f15c19f364a
     - `icu_locale`
         - General changes only
     - `icu_locale_core`
-        - Allow building without the `alloc` crate (unicode-org#6997)
+        - Fix building without the `alloc` crate (unicode-org#6997)
         - Implement Serialize and Deserialize for Locale (unicode-org#6829)
         - Add `Preferences::from_locale_strict` (unicode-org#6737)
     - `icu_normalizer`
@@ -89,7 +82,7 @@ Current changelog is accurate up to 8371b92075c90a689b6eb0a094bc6f15c19f364a
     - `icu_plurals`
         - Change debug output of PluralElementsPackedULE (unicode-org#6841)
     - `icu_properties`
-        - Allow building without the `alloc` crate (unicode-org#6997)
+        - Fix building without the `alloc` crate (unicode-org#6997)
         - Optimize property map lookups (unicode-org#6886)
         - Add support for missing binary properties:
             - ID_Compat_Math_Continue
@@ -97,36 +90,32 @@ Current changelog is accurate up to 8371b92075c90a689b6eb0a094bc6f15c19f364a
             - IDS_Unary_Operator
             - Modifier_Combining_Mark
     - `icu_segmenter`
-        - Experimental (internal) code for convolutional neural network segmenter (unicode-org#6877)
+        - General changes only
     - `icu_time`
         - Deprecate `VariantOffsetCalculator` (unicode-org#6905)
         - Deprecate time zone variant APIs (unicode-org#6754)
         - Move `TimeZoneVariant` to provider module (unicode-org#6822)
         - Treat `Etc/GMT+x` as a raw offset, improve formatting (unicode-org#7055)
-        - Store offset periods as UTC (unicode-org#6746)
-        - Align rearguard metazone variant overrides with CLDR (unicode-org#6896)
+        - Store `ZoneNameTimestamp` as UTC (unicode-org#6746)
         - Use accurate `ZoneNameTimestamps` (unicode-org#6942)
         - Optimize DST offsets using a lookup table (unicode-org#6765)
-        - Model `America/Punta_Arenas` as permanent DST in Chile metazone (unicode-org#6772)
 - Data model and providers
     - `icu_provider_baked`
         - Expose const structs in baked data (unicode-org#6652)
     - `icu_provider`
-        - Allow building in no-alloc mode (unicode-org#6997)
+        - Fix building without the `alloc` crate (unicode-org#6997)
     - `icu4x-datagen`
         - Don't require sources to be set in `icu4x-datagen` (unicode-org#6892)
     - `icu_provider_source`
         - Update to CLDR 48 CLDR (unicode-org#6793, #6989, #7046)
         - Don't complain about not covering `Factory` timezone in datagen (unicode-org#6768)
-        - Fix rearguard difference detection logic (unicode-org#6943)
-        - Detect rearguard TZDB differences (unicode-org#6749)
+        - Detect rearguard TZDB differences (unicode-org#6943, unicode-org#6749)
         - Include metazone periods before the horizon if the metazone is included anyway (unicode-org#6747)
         - Handle locales without `territories.json`, locales with inconsistent patterns (unicode-org#6709)
 - FFI
     - `icu_capi`
         - All C++ enums now default to a valid value; which is the `Default` impl where there is one, and some semi-logical value otherwise. This has changed defaults in some cases and may cause a behavioral change for people relying on C++ default constructors. (unicode-org#6692)
         - Wasm code now uses the stable standard `wasm-c-abi=spec` (unicode-org#6679)
-        - DataProvider constructor for JS/Dart (unicode-org#6596)
         - Enable experimental code in NPM (unicode-org#6743)
         - Allow consumers to determine bindings directories (unicode-org#6887)
         - Document deprecated APIs (unicode-org#6890)
@@ -134,11 +123,8 @@ Current changelog is accurate up to 8371b92075c90a689b6eb0a094bc6f15c19f364a
         - `ListFormatter::format` now takes a `diplomat::span<const diplomat::string_view_for_slice>` instead of a `diplomat::span<std::string_view>` to handle soundness issues on some platforms (unicode-org#6974)
 - Utils
     - General
-        - Bump default toolchain (not MSRV) to 1.89 (unicode-org#6818)
-        - Use `#[expect]` for clippy lints (unicode-org#6700)
-        - Update MSRV to 1.83 (unicode-org#7066)
     - `bies`: `0.2.4 -> 0.2.5`
-        - General changes only
+        - Minor internal changes
     - `calendrical_calculations`: `0.2.2 -> 0.2.3`
         - Add RataDie::in_well_behaved_astronomical_range(), use to avoid panics (unicode-org#6876)
     - `crlify`: No change
@@ -146,7 +132,7 @@ Current changelog is accurate up to 8371b92075c90a689b6eb0a094bc6f15c19f364a
     - `databake_derive`: `0.2.0 -> 0.2.1`
         - Require public fields for `Bake` derive (unicode-org#6586)
     - `fixed_decimal`: `0.7.0 -> 0.7.1`
-        - General changes only
+        - Minor internal changes
     - `ixdtf`: `0.6.3 -> 0.6.4`
         - Add to_static_string for IXDTF errors (unicode-org#6917)
     - `litemap`: `0.8.0 -> 0.8.1`
@@ -159,9 +145,9 @@ Current changelog is accurate up to 8371b92075c90a689b6eb0a094bc6f15c19f364a
         - Add TinyAsciiStr::new_unsigned_decimal (unicode-org#6912)
         - Use `serde_core` (unicode-org#6991)
     - `tzif`: `0.4.0 -> 0.4.1`
-        - General changes only
+        - Minor internal changes
     - `writeable`: `0.6.1 -> 0.6.2`
-        - Allow building without the `alloc` crate (unicode-org#6985)
+        - Fix building without the `alloc` crate (unicode-org#6985)
     - `yoke`, `yoke_derive`: `0.8.0 -> 0.8.1`
         - Add four `map_with_cart` methods to `yoke::Yoke`, similar to `Yoke::map_project` but
         additionally providing a reference to the cart. (unicode-org#6781)
@@ -177,9 +163,9 @@ Current changelog is accurate up to 8371b92075c90a689b6eb0a094bc6f15c19f364a
         - Write a proper safety comment for ZeroVec::truncate (unicode-org#6809)
         - Use `serde_core` (unicode-org#6991)
     - `zerovec_derive`: `0.11.1 -> 0.11.2`
-        - General changes only
+        - Minor internal changes
     - `zoneinfo64`: `0.2.0 -> 0.2.1`
-        - General changes only
+        - Minor internal changes
 
 ## icu4x 2.0.x
 
