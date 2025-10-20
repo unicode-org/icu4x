@@ -182,7 +182,10 @@ impl Bag {
         }
 
         if let Some(week) = self.week {
-            #[allow(unreachable_code)]
+            #[allow(
+                unreachable_code,
+                reason = "Uninhabited MultipleVariants (due to pivot_field), see #7118"
+            )]
             fields.push(Field {
                 symbol: FieldSymbol::Week(match week {
                     Week::WeekOfMonth => unimplemented!("#5643 fields::Week::WeekOfMonth"),

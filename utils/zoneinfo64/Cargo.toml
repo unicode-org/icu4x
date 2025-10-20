@@ -7,7 +7,7 @@ name = "zoneinfo64"
 description = "Working with ICU zoneinfo64.res timezone data bundles"
 version = "0.2.0"
 
-rust-version.workspace = true
+rust-version = "1.82"
 authors.workspace = true
 edition.workspace = true
 repository.workspace = true

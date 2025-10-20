@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::calendar_arithmetic::{ArithmeticDateBuilder, DateFieldsResolver};
+use crate::calendar_arithmetic::ArithmeticDate;
+use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -36,10 +36,18 @@ pub struct Indian;
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct IndianDateInner(ArithmeticDate<Indian>);
 
-impl CalendarArithmetic for Indian {
+/// The Śaka era starts on the 81st day of the Gregorian year (March 22 or 21)
+/// which is an 80 day offset. This number should be subtracted from Gregorian dates
+const DAY_OFFSET: u16 = 80;
+/// The Śaka era is 78 years behind Gregorian. This number should be added to Gregorian dates
+const YEAR_OFFSET: i32 = 78;
+
+impl DateFieldsResolver for Indian {
+    type YearInfo = i32;
+
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
         if month == 1 {
-            30 + Self::provided_year_is_leap(year) as u8
+            30 + calendrical_calculations::gregorian::is_leap_year(year + YEAR_OFFSET) as u8
         } else if (2..=6).contains(&month) {
             31
         } else if (7..=12).contains(&month) {
@@ -53,40 +61,14 @@ impl CalendarArithmetic for Indian {
         12
     }
 
-    fn provided_year_is_leap(year: i32) -> bool {
-        calendrical_calculations::gregorian::is_leap_year(year + YEAR_OFFSET)
-    }
-
-    fn last_month_day_in_provided_year(_year: i32) -> (u8, u8) {
-        (12, 30)
-    }
-
-    fn days_in_provided_year(year: i32) -> u16 {
-        if Self::provided_year_is_leap(year) {
-            366
-        } else {
-            365
-        }
-    }
-}
-
-/// The Śaka era starts on the 81st day of the Gregorian year (March 22 or 21)
-/// which is an 80 day offset. This number should be subtracted from Gregorian dates
-const DAY_OFFSET: u16 = 80;
-/// The Śaka era is 78 years behind Gregorian. This number should be added to Gregorian dates
-const YEAR_OFFSET: i32 = 78;
-
-impl DateFieldsResolver for Indian {
-    type YearInfo = i32;
-
     #[inline]
     fn year_info_from_era(
         &self,
-        era: &str,
+        era: &[u8],
         era_year: i32,
     ) -> Result<Self::YearInfo, UnknownEraError> {
         match era {
-            "shaka" => Ok(era_year),
+            b"shaka" => Ok(era_year),
             _ => Err(UnknownEraError),
         }
     }
@@ -120,14 +102,22 @@ impl Calendar for Indian {
     type Year = types::EraYear;
     type DifferenceError = core::convert::Infallible;
 
+    fn from_codes(
+        &self,
+        era: Option<&str>,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateError> {
+        ArithmeticDate::from_codes(era, year, month_code, day, self).map(IndianDateInner)
+    }
+
     fn from_fields(
         &self,
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateFromFieldsError> {
-        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        let arithmetic_date = ArithmeticDate::try_from_builder(builder, options)?;
-        Ok(IndianDateInner(arithmetic_date))
+        ArithmeticDate::from_fields(fields, options, self).map(IndianDateInner)
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -149,20 +139,39 @@ impl Calendar for Indian {
         // This is in the previous Indian year
         let day_of_year_indian = if day_of_year_iso <= DAY_OFFSET {
             year -= 1;
-            let n_days = Self::days_in_provided_year(year);
+            let n_days = if calendrical_calculations::gregorian::is_leap_year(year + YEAR_OFFSET) {
+                366
+            } else {
+                365
+            };
 
             // calculate day of year in previous year
             n_days + day_of_year_iso - DAY_OFFSET
         } else {
             day_of_year_iso - DAY_OFFSET
         };
-        IndianDateInner(ArithmeticDate::date_from_year_day(year, day_of_year_indian))
+        let mut month = 1;
+        let mut day = day_of_year_indian as i32;
+        while month <= 12 {
+            let month_days = Self::days_in_provided_month(year, month) as i32;
+            if day <= month_days {
+                break;
+            } else {
+                day -= month_days;
+                month += 1;
+            }
+        }
+
+        debug_assert!(day <= Self::days_in_provided_month(year, month) as i32);
+        let day = day.try_into().unwrap_or(1);
+
+        IndianDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     // Algorithms directly implemented in icu_calendar since they're not from the book
     fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        let day_of_year_indian = date.0.day_of_year().0; // 1-indexed
-        let days_in_year = date.0.days_in_year();
+        let day_of_year_indian = self.day_of_year(date).0; // 1-indexed
+        let days_in_year = self.days_in_year(date);
 
         let mut year = date.0.year + YEAR_OFFSET;
         // days_in_year is a valid day of the year, so we check > not >=
@@ -174,19 +183,24 @@ impl Calendar for Indian {
             day_of_year_indian + DAY_OFFSET
         };
 
-        IsoDateInner(ArithmeticDate::date_from_year_day(year, day_of_year_iso))
+        let (month, day) = calendrical_calculations::gregorian::year_day(year, day_of_year_iso);
+        IsoDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        date.0.months_in_year()
+        Self::months_in_provided_year(date.0.year)
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.0.days_in_year()
+        if self.is_in_leap_year(date) {
+            366
+        } else {
+            365
+        }
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        date.0.days_in_month()
+        Self::days_in_provided_month(date.0.year, date.0.month)
     }
 
     fn add(
@@ -208,7 +222,7 @@ impl Calendar for Indian {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let extended_year = date.0.extended_year();
+        let extended_year = date.0.year;
         types::EraYear {
             era_index: Some(0),
             era: tinystr!(16, "shaka"),
@@ -219,7 +233,7 @@ impl Calendar for Indian {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::provided_year_is_leap(date.0.year)
+        calendrical_calculations::gregorian::is_leap_year(date.0.year + YEAR_OFFSET)
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
@@ -227,11 +241,16 @@ impl Calendar for Indian {
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        date.0.day_of_month()
+        types::DayOfMonth(date.0.day)
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        date.0.day_of_year()
+        types::DayOfYear(
+            (1..date.0.month)
+                .map(|m| Self::days_in_provided_month(date.0.year, m) as u16)
+                .sum::<u16>()
+                + date.0.day as u16,
+        )
     }
 
     fn debug_name(&self) -> &'static str {

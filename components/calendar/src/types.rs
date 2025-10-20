@@ -25,7 +25,7 @@ pub struct DateFields<'a> {
     /// The era code as defined by CLDR.
     ///
     /// If set, [`Self::era_year`] must also be set.
-    pub era: Option<&'a str>,
+    pub era: Option<&'a [u8]>,
     /// The numeric year in [`Self::era`].
     ///
     /// If set, [`Self::era`] must also be set.

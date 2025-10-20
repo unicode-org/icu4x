@@ -5,10 +5,7 @@
 use core::cmp::Ordering;
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::ArithmeticDateBuilder;
-use crate::calendar_arithmetic::{
-    ArithmeticDate, CalendarArithmetic, DateFieldsResolver, ToExtendedYear,
-};
+use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, ToExtendedYear};
 use crate::error::{
     DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
 };
@@ -93,7 +90,8 @@ impl HebrewYearInfo {
 }
 //  HEBREW CALENDAR
 
-impl CalendarArithmetic for Hebrew {
+impl DateFieldsResolver for Hebrew {
+    type YearInfo = HebrewYearInfo;
     fn days_in_provided_month(info: HebrewYearInfo, ordinal_month: u8) -> u8 {
         info.keviyah.month_len(ordinal_month)
     }
@@ -106,30 +104,14 @@ impl CalendarArithmetic for Hebrew {
         }
     }
 
-    fn days_in_provided_year(info: HebrewYearInfo) -> u16 {
-        info.keviyah.year_length()
-    }
-
-    fn provided_year_is_leap(info: HebrewYearInfo) -> bool {
-        info.keviyah.is_leap()
-    }
-
-    fn last_month_day_in_provided_year(info: HebrewYearInfo) -> (u8, u8) {
-        info.keviyah.last_month_day_in_year()
-    }
-}
-
-impl DateFieldsResolver for Hebrew {
-    type YearInfo = HebrewYearInfo;
-
     #[inline]
     fn year_info_from_era(
         &self,
-        era: &str,
+        era: &[u8],
         era_year: i32,
     ) -> Result<Self::YearInfo, UnknownEraError> {
         match era {
-            "am" => Ok(HebrewYearInfo::compute(era_year)),
+            b"am" => Ok(HebrewYearInfo::compute(era_year)),
             _ => Err(UnknownEraError),
         }
     }
@@ -247,7 +229,8 @@ impl DateFieldsResolver for Hebrew {
         year: &Self::YearInfo,
         ordinal_month: u8,
     ) -> types::MonthInfo {
-        let is_leap_year = Self::provided_year_is_leap(*year);
+        let mut ordinal = ordinal_month;
+        let is_leap_year = year.keviyah.is_leap();
 
         let valid_month_code = match (ordinal_month, is_leap_year) {
             (..6, _) | (_, false) => ValidMonthCode::new_unchecked(ordinal_month, false),
@@ -276,15 +259,22 @@ impl Calendar for Hebrew {
     type Year = types::EraYear;
     type DifferenceError = core::convert::Infallible;
 
+    fn from_codes(
+        &self,
+        era: Option<&str>,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateError> {
+        ArithmeticDate::from_codes(era, year, month_code, day, self).map(HebrewDateInner)
+    }
+
     fn from_fields(
         &self,
         fields: DateFields,
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateFromFieldsError> {
-        let builder = ArithmeticDateBuilder::try_from_fields(fields, self, options)?;
-        Ok(HebrewDateInner(ArithmeticDate::try_from_builder(
-            builder, options,
-        )?))
+        ArithmeticDate::from_fields(fields, options, self).map(HebrewDateInner)
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -317,15 +307,15 @@ impl Calendar for Hebrew {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        date.0.months_in_year()
+        Self::months_in_provided_year(date.0.year)
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.0.days_in_year()
+        date.0.year.keviyah.year_length()
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        date.0.days_in_month()
+        Self::days_in_provided_month(date.0.year, date.0.month)
     }
 
     fn add(
@@ -351,7 +341,7 @@ impl Calendar for Hebrew {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let extended_year = date.0.extended_year();
+        let extended_year = date.0.year.value;
         types::EraYear {
             era_index: Some(0),
             era: tinystr!(16, "am"),
@@ -362,7 +352,7 @@ impl Calendar for Hebrew {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::provided_year_is_leap(date.0.year)
+        date.0.year.keviyah.is_leap()
     }
 
     fn month(&self, date: &Self::DateInner) -> MonthInfo {
@@ -370,11 +360,11 @@ impl Calendar for Hebrew {
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        date.0.day_of_month()
+        types::DayOfMonth(date.0.day)
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        date.0.day_of_year()
+        types::DayOfYear(date.0.year.keviyah.days_preceding(date.0.month) + date.0.day as u16)
     }
 
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
