@@ -145,7 +145,7 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
 ///
 /// # Precise definition and limits
 ///
-/// This calendar is represents the traditional Chinese lunar calendar as used
+/// This calendar is the traditional Chinese lunar calendar as used
 /// in China as of the publication date of this crate.
 /// This takes a best-effort approach future dates as used in the region.
 ///
@@ -298,7 +298,7 @@ impl Rules for China {
 ///
 /// # Precise definition and limits
 ///
-/// This calendar represents the traditional Korean lunar calendar as used
+/// This calendar is the traditional Korean lunar calendar as used
 /// officially in Korea as of the publication date of this crate.
 /// This takes a best-effort approach future dates as used in the region.
 ///

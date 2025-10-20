@@ -257,17 +257,16 @@ impl Rules for AstronomicalSimulation {
 ///
 /// # Precise definition and limits
 ///
-/// This calendar is intended to match the Umm al-Qura calendar defined and published by the Kingdom of Saudi Arabia,
-/// with the source of truth being government published data/almanacs.
+/// This calendar represents the Umm al-Qura calendar defined by the Kingdom of Saudi Arabia.
 ///
-/// Outside the range 1300 AH (1882-11-12 ISO) to the end of 1600 AH (2174-11-25 ISO) it falls back
-/// to a tabular approximation. These ranges may change in the future.
+/// This calendar agrees with official data published for the years 1300 AH through 1600 AH.
+/// Outside that range (1882-11-12 through 2174-11-25), it falls back to a tabular approximation.
 ///
 /// The precise behavior of this calendar may change in the future if:
 /// - The ground truth in Saudi Arabia changes, either through published government sources or most almanacs
 /// - Future data is published that we wish to incorporate
 /// - We decide to tweak the simplified calculation
-/// - We decide to expand the range where we are handling past dates.
+/// - We decide to expand or reduce the range where we are handling past dates.
 #[derive(Copy, Clone, Debug, Default)]
 #[non_exhaustive]
 pub struct UmmAlQura;

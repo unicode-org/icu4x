@@ -33,7 +33,7 @@ use calendrical_calculations::rata_die::RataDie;
 /// # Precise definition and limits
 ///
 /// This calendar is defined as a solar calendar which uses the astronomical vernal equinox as its new year, and
-/// is the official calendar of the Islamic Republic of Iran as of 2025. This calendar was introduced in Iran in 1925,
+/// is the official calendar of the Islamic Republic of Iran as of the publication date of this crate. This calendar was introduced in Iran in 1925,
 /// but the astronomical calculations are extended proleptically before that.
 ///
 /// As these are pure solar computations, the astronomical calculations can be treated as a relatively
