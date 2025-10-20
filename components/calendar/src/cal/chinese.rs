@@ -872,12 +872,12 @@ impl LunarChineseYearData {
     }
 
     /// Get the new year R.D.    
-    pub(crate) fn new_year(self) -> RataDie {
+    fn new_year(self) -> RataDie {
         self.packed.new_year(self.related_iso)
     }
 
     /// Get the next new year R.D.
-    pub(crate) fn next_new_year(self) -> RataDie {
+    fn next_new_year(self) -> RataDie {
         self.new_year() + i64::from(self.days_in_year())
     }
 
@@ -885,7 +885,7 @@ impl LunarChineseYearData {
     /// that is the leap month (not the ordinal month). In other words, for
     /// a year with an M05L, this will return Some(5). Note that the regular month precedes
     /// the leap month.
-    pub(crate) fn leap_month(self) -> Option<u8> {
+    fn leap_month(self) -> Option<u8> {
         self.packed.leap_month()
     }
 
@@ -895,7 +895,7 @@ impl LunarChineseYearData {
     ///
     /// Will be zero for the first month as the last day of the previous month
     /// is not in this year
-    pub(crate) fn last_day_of_previous_month(self, month: u8) -> u16 {
+    fn last_day_of_previous_month(self, month: u8) -> u16 {
         debug_assert!((1..=13).contains(&month), "Month out of bounds!");
         // Get the last day of the previous month.
         // Since `month` is 1-indexed, this needs to check if the month is 1 for the zero case
@@ -906,12 +906,12 @@ impl LunarChineseYearData {
         }
     }
 
-    pub(crate) fn days_in_year(self) -> u16 {
+    fn days_in_year(self) -> u16 {
         self.last_day_of_month(self.months_in_year())
     }
 
     /// Return the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
-    pub(crate) fn months_in_year(self) -> u8 {
+    fn months_in_year(self) -> u8 {
         if self.leap_month().is_some() {
             13
         } else {
@@ -925,12 +925,12 @@ impl LunarChineseYearData {
     ///
     /// Will be zero for the first month as the last day of the previous month
     /// is not in this year
-    pub(crate) fn last_day_of_month(self, month: u8) -> u16 {
+    fn last_day_of_month(self, month: u8) -> u16 {
         debug_assert!((1..=13).contains(&month), "Month out of bounds!");
         self.packed.last_day_of_month(month)
     }
 
-    pub(crate) fn days_in_month(self, month: u8) -> u8 {
+    fn days_in_month(self, month: u8) -> u8 {
         if self.packed.month_has_30_days(month) {
             30
         } else {
@@ -938,7 +938,7 @@ impl LunarChineseYearData {
         }
     }
 
-    pub(crate) fn md_from_rd(self, rd: RataDie) -> (u8, u8) {
+    fn md_from_rd(self, rd: RataDie) -> (u8, u8) {
         debug_assert!(
             rd < self.next_new_year() || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&rd),
             "Stored date {rd:?} out of bounds!"
@@ -976,13 +976,13 @@ impl LunarChineseYearData {
         (month, day_of_month)
     }
 
-    pub(crate) fn rd_from_md(self, month: u8, day: u8) -> RataDie {
+    fn rd_from_md(self, month: u8, day: u8) -> RataDie {
         self.new_year() + self.day_of_year(month, day) as i64 - 1
     }
 
     /// Calculate the number of days in the year so far for a ChineseBasedDate;
     /// similar to `CalendarArithmetic::day_of_year`
-    pub(crate) fn day_of_year(self, month: u8, day: u8) -> u16 {
+    fn day_of_year(self, month: u8, day: u8) -> u16 {
         self.last_day_of_previous_month(month) + day as u16
     }
 
@@ -990,7 +990,7 @@ impl LunarChineseYearData {
     /// since the Chinese calendar has leap months, an "L" is appended to the month code for
     /// leap months. For example, in a year where an intercalary month is added after the second
     /// month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
-    pub(crate) fn month(self, month: u8) -> MonthInfo {
+    fn month(self, month: u8) -> MonthInfo {
         // 1 indexed leap month name. This is also the ordinal for the leap month
         // in the year (e.g. in `M01, M01L, M02, ..`, the leap month is for month 1, and it is also
         // ordinally `month 2`, zero-indexed)
@@ -1053,7 +1053,7 @@ impl LunarChineseYearData {
     /// Create a new arithmetic date from a year, month ordinal, and day with bounds checking; returns the
     /// result of creating this arithmetic date, as well as a ChineseBasedYearInfo - either the one passed in
     /// optionally as an argument, or a new ChineseBasedYearInfo for the given year, month, and day args.
-    pub(crate) fn validate_md(self, month: u8, day: u8) -> Result<(), DateError> {
+    fn validate_md(self, month: u8, day: u8) -> Result<(), DateError> {
         let max_month = self.months_in_year();
         if month == 0 || !(1..=max_month).contains(&month) {
             return Err(DateError::Range {
