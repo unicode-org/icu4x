@@ -89,12 +89,12 @@ impl DateFieldsResolver for Julian {
     #[inline]
     fn year_info_from_era(
         &self,
-        era: &str,
+        era: &[u8],
         era_year: i32,
     ) -> Result<Self::YearInfo, UnknownEraError> {
         match era {
-            "ad" | "ce" => Ok(era_year),
-            "bc" | "bce" => Ok(1 - era_year),
+            b"ad" | b"ce" => Ok(era_year),
+            b"bc" | b"bce" => Ok(1 - era_year),
             _ => Err(UnknownEraError),
         }
     }

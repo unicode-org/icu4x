@@ -102,7 +102,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
     /// this should always return an Err result.
     fn year_info_from_era(
         &self,
-        era: &str,
+        era: &[u8],
         era_year: i32,
     ) -> Result<Self::YearInfo, UnknownEraError>;
 

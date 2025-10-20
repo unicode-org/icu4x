@@ -170,7 +170,7 @@ pub enum DateFromFieldsError {
     /// use icu_calendar::types::DateFields;
     ///
     /// let mut fields = DateFields::default();
-    /// fields.era = Some("reiwa");
+    /// fields.era = Some(b"reiwa");
     /// fields.era_year = Some(6);
     /// fields.ordinal_month = Some(1);
     /// fields.day = Some(1);
@@ -277,7 +277,7 @@ pub enum DateFromFieldsError {
     /// .expect_err("era year still needs an era");
     /// assert!(matches!(err, DateFromFieldsError::NotEnoughFields));
     ///
-    /// fields.era = Some("am");
+    /// fields.era = Some(b"am");
     ///
     /// let date = Date::try_from_fields(
     ///     fields,

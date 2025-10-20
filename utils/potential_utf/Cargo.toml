@@ -6,7 +6,7 @@
 name = "potential_utf"
 description = "Unvalidated string and character types"
 version = "0.1.3"
-rust-version.workspace = true
+rust-version = "1.82"
 authors.workspace = true
 edition.workspace = true
 repository.workspace = true

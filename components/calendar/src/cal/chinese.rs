@@ -537,7 +537,7 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
     #[inline]
     fn year_info_from_era(
         &self,
-        _era: &str,
+        _era: &[u8],
         _era_year: i32,
     ) -> Result<Self::YearInfo, UnknownEraError> {
         // This calendar has no era codes
