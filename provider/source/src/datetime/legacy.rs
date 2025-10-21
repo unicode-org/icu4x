@@ -246,6 +246,7 @@ impl<'a> From<&months::Symbols<'a>> for MonthNames<'a> {
                 // Only calendar that uses this is hebrew, we can assume it is 12-month
                 let mut vec = vec![""; 24];
 
+                #[allow(deprecated)]
                 for (k, v) in zero_map.iter() {
                     let Some((number, leap)) = MonthCode(*k).parsed() else {
                         debug_assert!(false, "Found unknown month code {k}");
