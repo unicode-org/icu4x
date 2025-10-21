@@ -140,11 +140,21 @@ mod unstable {
         ///
         /// assert!(matches!(
         ///     err,
-        ///     DateFromFieldsError::Range(RangeError { field: "month", .. })
-        /// ));
+        ///     DateFromFieldsError::Range { field: "month", .. })
+        /// );
         /// ```
-        #[displaydoc("{0}")]
-        Range(RangeError),
+        #[displaydoc("The {field} = {value} argument is out of range {min}..={max}")]
+        #[non_exhaustive]
+        Range {
+            /// The field that is out of range, such as "year"
+            field: &'static str,
+            /// The actual value
+            value: i32,
+            /// The minimum value (inclusive). This might not be tight.
+            min: i32,
+            /// The maximum value (inclusive). This might not be tight.
+            max: i32,
+        },
         /// The era code is invalid for the calendar.
         #[displaydoc("Unknown era or invalid syntax")]
         UnknownEra,
@@ -318,7 +328,18 @@ mod unstable {
     impl From<RangeError> for DateFromFieldsError {
         #[inline]
         fn from(value: RangeError) -> Self {
-            DateFromFieldsError::Range(value)
+            let RangeError {
+                field,
+                value,
+                min,
+                max,
+            } = value;
+            DateFromFieldsError::Range {
+                field,
+                value,
+                min,
+                max,
+            }
         }
     }
 }

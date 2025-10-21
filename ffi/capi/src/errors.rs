@@ -216,7 +216,7 @@ impl From<icu_calendar::DateError> for CalendarError {
 impl From<icu_calendar::error::DateFromFieldsError> for CalendarDateFromFieldsError {
     fn from(e: icu_calendar::error::DateFromFieldsError) -> Self {
         match e {
-            icu_calendar::error::DateFromFieldsError::Range(_) => Self::OutOfRange,
+            icu_calendar::error::DateFromFieldsError::Range { .. } => Self::OutOfRange,
             icu_calendar::error::DateFromFieldsError::UnknownEra => Self::UnknownEra,
             icu_calendar::error::DateFromFieldsError::MonthCodeInvalidSyntax => {
                 Self::MonthCodeInvalidSyntax
