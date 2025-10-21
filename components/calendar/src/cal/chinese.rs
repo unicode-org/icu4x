@@ -84,7 +84,7 @@ mod simple;
 /// # Precise definition and limits
 ///
 /// This calendar generically covers any Chinese-style lunisolar calendar with twelve months, and leap months possible
-/// after any month. Individual variants [`China`] and [`Korea`] contain more information.
+/// after any month (at most once per year). Individual variants [`China`] and [`Korea`] contain more information.
 #[derive(Clone, Debug, Default, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct LunarChinese<X>(pub X);
@@ -167,8 +167,7 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
 /// using data such as from the excellent compilation by [Yuk Tung Liu].
 ///
 /// The precise behavior of this calendar may change in the future if:
-/// - New ground truth in China is established, either through published government sources or most almanacs
-/// - Future data is published that we wish to incorporate
+/// - New ground truth is established by published government sources
 /// - We decide to tweak the simplified calculation
 /// - We decide to expand or reduce the range where we are handling past dates.
 ///
@@ -299,7 +298,7 @@ impl Rules for China {
 /// # Precise definition and limits
 ///
 /// This calendar is the traditional Korean lunar calendar as used
-/// officially in Korea as of the publication date of this crate.
+/// in Korea as of the publication date of this crate.
 /// This takes a best-effort approach future dates as used in the region.
 ///
 /// This type agrees with the official data published by the
@@ -321,8 +320,7 @@ impl Rules for China {
 /// by [Yuk Tung Liu].
 ///
 /// The precise behavior of this calendar may change in the future if:
-/// - New ground truth in South Korea is established, either through published government sources or most almanacs
-/// - Future data is published that we wish to incorporate
+/// - New ground truth is established by published government sources
 /// - We decide to tweak the simplified calculation
 /// - We decide to expand/reduce the range where we are handling past dates.
 ///

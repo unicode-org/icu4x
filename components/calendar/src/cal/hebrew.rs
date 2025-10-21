@@ -40,7 +40,7 @@ use calendrical_calculations::rata_die::RataDie;
 /// # Precise definition and limits
 ///
 /// This calendar is defined algorithmically as a lunar calendar with a leap 6th month every
-/// 3rd, 6th, 8th, 11th, 14th, 17th, and 19th years (in a 19-year Metonic cycle), used as a
+/// 3rd, 6th, 8th, 11th, 14th, 17th, and 19th years (in a 19-year Metonic cycle). It is used as a
 /// liturgical calendar in Judaism as of the publication date of this crate.
 /// This calendar uses the the "civil new year" variant where Tishrei is the first month of the year.
 /// The precise algorithm used has [changed over time], with the modern one being in place

@@ -53,7 +53,7 @@ mod ummalqura_data;
 /// This calendar generically covers any pure lunar calendar used liturgically in Islam,
 /// with 12 months each of length 29 or 30, with an epoch intended to mark the Hijrah in 622 CE.
 ///
-/// In practice, this calendar can be backed by a precise algorithm, an algorithm with official tables,
+/// In practice, this calendar can be backed by a precise algorithm, a lookup in official tables,
 /// astronomical simulation, or pure observation.
 ///
 /// Further details can be found on individual calendar types.
@@ -245,26 +245,19 @@ impl Rules for AstronomicalSimulation {
 
 /// [`Hijri`] [`Rules`] for the [Umm al-Qura](https://en.wikipedia.org/wiki/Islamic_calendar#Saudi_Arabia's_Umm_al-Qura_calendar) calendar.
 ///
-/// From the start of 1300 AH (1882-11-12 ISO) to the end of 1600 AH (2174-11-25 ISO), this
-/// `Rules` implementation uses Umm al-Qura month lengths obtained from
-/// [KACST](https://kacst.gov.sa/). Outside this range, this implementation falls back to
-/// [`TabularAlgorithm`] with [`TabularAlgorithmLeapYears::TypeII`] and [`TabularAlgorithmEpoch::Friday`].
-///
-/// Future versions of this crate may extend the range that uses month length data from the
-/// calendar authority.
-///
 /// This corresponds to the `"islamic-umalqura"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
 ///
 /// # Precise definition and limits
 ///
 /// This calendar represents the Umm al-Qura calendar defined by the Kingdom of Saudi Arabia.
 ///
-/// This calendar agrees with official data published for the years 1300 AH through 1600 AH.
-/// Outside that range (1882-11-12 through 2174-11-25), it falls back to a tabular approximation.
+/// From the start of 1300 AH (1882-11-12 ISO) to the end of 1600 AH (2174-11-25 ISO), this
+/// `Rules` implementation uses Umm al-Qura month lengths obtained from
+/// [KACST](https://kacst.gov.sa/). Outside this range, this implementation falls back to
+/// [`TabularAlgorithm`] with [`TabularAlgorithmLeapYears::TypeII`] and [`TabularAlgorithmEpoch::Friday`].
 ///
 /// The precise behavior of this calendar may change in the future if:
-/// - The ground truth in Saudi Arabia changes, either through published government sources or most almanacs
-/// - Future data is published that we wish to incorporate
+/// - New ground truth is established by published government sources
 /// - We decide to tweak the simplified calculation
 /// - We decide to expand or reduce the range where we are handling past dates.
 #[derive(Copy, Clone, Debug, Default)]
