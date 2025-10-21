@@ -16,7 +16,7 @@ Current changelog is accurate up to 8371b92075c90a689b6eb0a094bc6f15c19f364a
         - Add a lot more documentation on individual calendars (unicode-org#7016, unicode-org#7033, unicode-org#7036, unicode-org#7037, unicode-org#7047, unicode-org#7082)
         - Add Easter holiday to `Gregorian` and `Julian` (unicode-org#6899)
         - Implement `PartialOrd` for `Date` unconditionally (unicode-org#7090)
-        - Make `extended_year` have consistent behavior across calendars, matching specced behavior in Temporal (unicode-org#6800, unicode-org#6937)
+        - Make `extended_year` have consistent behavior across calendars, matching specced behavior in CLDR and Temporal (unicode-org#6800, unicode-org#6937)
         - Fix `und-SA-u-ca-islamic` (unicode-org#6736)
         - Avoid panics for large past/future dates in astronomical calendars (unicode-org#6876)
         - Improve some Gregorian calendar code (unicode-org#6870)
