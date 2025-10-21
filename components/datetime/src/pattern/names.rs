@@ -3680,10 +3680,10 @@ impl RawDateTimeNamesBorrowed<'_> {
             .get_with_variables(month_name_length)
             .ok_or(GetNameForMonthError::NotLoaded)?;
         let Some((month_number, is_leap)) = code.parsed() else {
-            return Err(GetNameForMonthError::MonthCodeInvalidSyntax);
+            return Err(GetNameForMonthError::InvalidMonthCode);
         };
         let Some(month_index) = month_number.checked_sub(1) else {
-            return Err(GetNameForMonthError::MonthCodeInvalidSyntax);
+            return Err(GetNameForMonthError::InvalidMonthCode);
         };
         let month_index = usize::from(month_index);
         let name = match month_names {
@@ -3715,7 +3715,7 @@ impl RawDateTimeNamesBorrowed<'_> {
         // Note: Always return `false` for the second argument since neo MonthNames
         // knows how to handle leap months and we don't need the fallback logic
         name.map(MonthPlaceholderValue::PlainString)
-            .ok_or(GetNameForMonthError::MonthCodeInvalidSyntax)
+            .ok_or(GetNameForMonthError::InvalidMonthCode)
     }
 
     pub(crate) fn get_name_for_weekday(

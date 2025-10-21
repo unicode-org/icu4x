@@ -43,7 +43,7 @@ use icu_decimal::DecimalFormatter;
 use writeable::TryWriteable;
 
 pub(crate) enum GetNameForMonthError {
-    MonthCodeInvalidSyntax,
+    InvalidMonthCode,
     InvalidFieldLength,
     NotLoaded,
 }
@@ -145,17 +145,17 @@ pub enum FormattedDateTimePatternError {
     ///
     /// The output will contain the raw [`MonthCode`] as a fallback value.
     #[displaydoc("Invalid month {0:?}")]
-    MonthCodeInvalidSyntax(MonthCode),
+    InvalidMonthCode(MonthCode),
     /// The era code of the input is not valid for this calendar.
     ///
-    /// Same error conditions as [`FormattedDateTimePatternError::MonthCodeInvalidSyntax`].
+    /// Same error conditions as [`FormattedDateTimePatternError::InvalidMonthCode`].
     ///
     /// The output will contain the era code as the fallback.
     #[displaydoc("Invalid era {0:?}")]
     InvalidEra(TinyStr16),
     /// The [`CyclicYear::year`] of the input is not valid for this calendar.
     ///
-    /// Same error conditions as [`FormattedDateTimePatternError::MonthCodeInvalidSyntax`].
+    /// Same error conditions as [`FormattedDateTimePatternError::InvalidMonthCode`].
     ///
     /// The output will contain [`CyclicYear::related_iso`] as a fallback value.
     #[displaydoc("Invalid cyclic year {value} (maximum {max})")]
