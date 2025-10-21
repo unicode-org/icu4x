@@ -188,9 +188,9 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         let month = calendar
             .ordinal_month_from_code(&year, validated, Default::default())
             .map_err(|e| match e {
-                MonthCodeError::InvalidSyntax
-                | MonthCodeError::NotInCalendar
-                | MonthCodeError::NotInYear => DateError::UnknownMonthCode(month_code),
+                MonthCodeError::NotInCalendar | MonthCodeError::NotInYear => {
+                    DateError::UnknownMonthCode(month_code)
+                }
             })?;
 
         let day = range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
@@ -527,9 +527,6 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             .map_err(|e| {
                 // TODO: Use a narrower error type here. For now, convert into DateError.
                 match e {
-                    MonthCodeError::InvalidSyntax => {
-                        DateError::UnknownMonthCode(base_month.to_month_code())
-                    }
                     MonthCodeError::NotInCalendar => {
                         DateError::UnknownMonthCode(base_month.to_month_code())
                     }
