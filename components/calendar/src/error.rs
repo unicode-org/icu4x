@@ -74,6 +74,28 @@ impl core::error::Error for DateError {}
 #[non_exhaustive]
 pub enum DateFromFieldsError {
     /// A field is out of range for its domain.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_calendar::Date;
+    /// use icu_calendar::error::DateFromFieldsError;
+    /// use icu_calendar::error::RangeError;
+    /// use icu_calendar::Iso;
+    /// use icu_calendar::types::DateFields;
+    ///
+    /// let mut fields = DateFields::default();
+    /// fields.extended_year = Some(2000);
+    /// fields.ordinal_month = Some(13);
+    /// fields.day = Some(1);
+    ///
+    /// let err = Date::try_from_fields(
+    ///     fields, Default::default(), Iso
+    /// )
+    /// .expect_err("no month 13 in the ISO calendar");
+    ///
+    /// assert!(matches!(err, DateFromFieldsError::Range(RangeError { field: "month", .. })));
+    /// ```
     #[displaydoc("{0}")]
     Range(RangeError),
     /// The era code is invalid for the calendar.
@@ -87,7 +109,6 @@ pub enum DateFromFieldsError {
     /// use icu_calendar::Date;
     /// use icu_calendar::error::DateFromFieldsError;
     /// use icu_calendar::Iso;
-    /// use icu_calendar::types::MonthCode;
     /// use icu_calendar::types::DateFields;
     ///
     /// let mut fields = DateFields::default();
