@@ -14,9 +14,9 @@ export class CalendarDateFromFieldsError {
         ["Unknown", 0],
         ["OutOfRange", 1],
         ["UnknownEra", 2],
-        ["InvalidMonthCode", 3],
-        ["UnknownMonthCodeForCalendar", 4],
-        ["UnknownMonthCodeForYear", 5],
+        ["MonthCodeInvalidSyntax", 3],
+        ["MonthCodeNotInCalendar", 4],
+        ["MonthCodeNotInYear", 5],
         ["InconsistentYear", 6],
         ["InconsistentMonth", 7],
         ["NotEnoughFields", 8]
@@ -79,9 +79,9 @@ export class CalendarDateFromFieldsError {
     static Unknown = CalendarDateFromFieldsError.#objectValues[0];
     static OutOfRange = CalendarDateFromFieldsError.#objectValues[1];
     static UnknownEra = CalendarDateFromFieldsError.#objectValues[2];
-    static InvalidMonthCode = CalendarDateFromFieldsError.#objectValues[3];
-    static UnknownMonthCodeForCalendar = CalendarDateFromFieldsError.#objectValues[4];
-    static UnknownMonthCodeForYear = CalendarDateFromFieldsError.#objectValues[5];
+    static MonthCodeInvalidSyntax = CalendarDateFromFieldsError.#objectValues[3];
+    static MonthCodeNotInCalendar = CalendarDateFromFieldsError.#objectValues[4];
+    static MonthCodeNotInYear = CalendarDateFromFieldsError.#objectValues[5];
     static InconsistentYear = CalendarDateFromFieldsError.#objectValues[6];
     static InconsistentMonth = CalendarDateFromFieldsError.#objectValues[7];
     static NotEnoughFields = CalendarDateFromFieldsError.#objectValues[8];

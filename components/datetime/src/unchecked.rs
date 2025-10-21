@@ -219,8 +219,8 @@ impl TryWriteable for FormattedDateTimeUnchecked<'_> {
             Ok(Err(err)) => err,
         };
         Ok(Err(match err {
-            FormattedDateTimePatternError::InvalidMonthCode(month_code) => {
-                Self::Error::InvalidMonthCode(month_code)
+            FormattedDateTimePatternError::MonthCodeInvalidSyntax(month_code) => {
+                Self::Error::MonthCodeInvalidSyntax(month_code)
             }
             FormattedDateTimePatternError::InvalidEra(tiny_ascii_str) => {
                 Self::Error::InvalidEra(tiny_ascii_str)
@@ -323,17 +323,17 @@ pub enum FormattedDateTimeUncheckedError {
     ///
     /// [`set_date_fields_unchecked`]: DateTimeInputUnchecked::set_date_fields_unchecked
     #[displaydoc("Invalid month {0:?}")]
-    InvalidMonthCode(MonthCode),
+    MonthCodeInvalidSyntax(MonthCode),
     /// The era code of the input is not valid for this calendar.
     ///
-    /// Same error conditions as [`FormattedDateTimeUncheckedError::InvalidMonthCode`].
+    /// Same error conditions as [`FormattedDateTimeUncheckedError::MonthCodeInvalidSyntax`].
     ///
     /// The output will contain the era code as the fallback.
     #[displaydoc("Invalid era {0:?}")]
     InvalidEra(TinyStr16),
     /// The [`CyclicYear::year`] of the input is not valid for this calendar.
     ///
-    /// Same error conditions as [`FormattedDateTimeUncheckedError::InvalidMonthCode`].
+    /// Same error conditions as [`FormattedDateTimeUncheckedError::MonthCodeInvalidSyntax`].
     ///
     /// The output will contain [`CyclicYear::related_iso`] as a fallback value.
     #[displaydoc("Invalid cyclic year {value} (maximum {max})")]

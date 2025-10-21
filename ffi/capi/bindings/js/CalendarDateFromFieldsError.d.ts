@@ -19,9 +19,9 @@ export class CalendarDateFromFieldsError {
     static Unknown : CalendarDateFromFieldsError;
     static OutOfRange : CalendarDateFromFieldsError;
     static UnknownEra : CalendarDateFromFieldsError;
-    static InvalidMonthCode : CalendarDateFromFieldsError;
-    static UnknownMonthCodeForCalendar : CalendarDateFromFieldsError;
-    static UnknownMonthCodeForYear : CalendarDateFromFieldsError;
+    static MonthCodeInvalidSyntax : CalendarDateFromFieldsError;
+    static MonthCodeNotInCalendar : CalendarDateFromFieldsError;
+    static MonthCodeNotInYear : CalendarDateFromFieldsError;
     static InconsistentYear : CalendarDateFromFieldsError;
     static InconsistentMonth : CalendarDateFromFieldsError;
     static NotEnoughFields : CalendarDateFromFieldsError;

@@ -275,8 +275,8 @@ where
                         w.with_part(Part::ERROR, |w| w.write_str(&month.formatting_code.0))
                     })?;
                     Err(match e {
-                        GetNameForMonthError::InvalidMonthCode => {
-                            FormattedDateTimePatternError::InvalidMonthCode(month.formatting_code)
+                        GetNameForMonthError::MonthCodeInvalidSyntax => {
+                            FormattedDateTimePatternError::MonthCodeInvalidSyntax(month.formatting_code)
                         }
                         GetNameForMonthError::InvalidFieldLength => {
                             FormattedDateTimePatternError::UnsupportedLength(ErrorField(field))

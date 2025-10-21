@@ -100,10 +100,10 @@ pub enum DateFromFieldsError {
     /// )
     /// .expect_err("month code is invalid");
     ///
-    /// assert!(matches!(err, DateFromFieldsError::InvalidMonthCode));
+    /// assert!(matches!(err, DateFromFieldsError::MonthCodeInvalidSyntax));
     /// ```
     #[displaydoc("Invalid month code syntax")]
-    InvalidMonthCode,
+    MonthCodeInvalidSyntax,
     /// The specified month code does not exist in this calendar.
     ///
     /// # Examples
@@ -125,10 +125,10 @@ pub enum DateFromFieldsError {
     ///     Hebrew
     /// )
     /// .expect_err("no month M13 in Hebrew");
-    /// assert!(matches!(err, DateFromFieldsError::UnknownMonthCodeForCalendar));
+    /// assert!(matches!(err, DateFromFieldsError::MonthCodeNotInCalendar));
     /// ```
     #[displaydoc("The specified month code does not exist in this calendar")]
-    UnknownMonthCodeForCalendar,
+    MonthCodeNotInCalendar,
     /// The specified month code exists in this calendar, but not in the specified year.
     ///
     /// # Examples
@@ -150,10 +150,10 @@ pub enum DateFromFieldsError {
     ///     Hebrew
     /// )
     /// .expect_err("no month M05L in Hebrew year 5783");
-    /// assert!(matches!(err, DateFromFieldsError::UnknownMonthCodeForYear));
+    /// assert!(matches!(err, DateFromFieldsError::MonthCodeNotInYear));
     /// ```
     #[displaydoc("The specified month code exists in calendar, but not for this year")]
-    UnknownMonthCodeForYear,
+    MonthCodeNotInYear,
     /// The year was specified in multiple inconsistent ways.
     ///
     /// # Examples
@@ -328,7 +328,7 @@ impl From<MonthCodeParseError> for DateFromFieldsError {
     #[inline]
     fn from(value: MonthCodeParseError) -> Self {
         match value {
-            MonthCodeParseError::InvalidSyntax => DateFromFieldsError::InvalidMonthCode,
+            MonthCodeParseError::InvalidSyntax => DateFromFieldsError::MonthCodeInvalidSyntax,
         }
     }
 }
@@ -337,27 +337,25 @@ impl From<MonthCodeParseError> for MonthCodeError {
     #[inline]
     fn from(value: MonthCodeParseError) -> Self {
         match value {
-            MonthCodeParseError::InvalidSyntax => MonthCodeError::InvalidMonthCode,
+            MonthCodeParseError::InvalidSyntax => MonthCodeError::MonthCodeInvalidSyntax,
         }
     }
 }
 
 /// Internal narrow error type for functions that only fail on month code operations
 pub(crate) enum MonthCodeError {
-    InvalidMonthCode,
-    UnknownMonthCodeForCalendar,
-    UnknownMonthCodeForYear,
+    MonthCodeInvalidSyntax,
+    MonthCodeNotInCalendar,
+    MonthCodeNotInYear,
 }
 
 impl From<MonthCodeError> for DateFromFieldsError {
     #[inline]
     fn from(value: MonthCodeError) -> Self {
         match value {
-            MonthCodeError::InvalidMonthCode => DateFromFieldsError::InvalidMonthCode,
-            MonthCodeError::UnknownMonthCodeForCalendar => {
-                DateFromFieldsError::UnknownMonthCodeForCalendar
-            }
-            MonthCodeError::UnknownMonthCodeForYear => DateFromFieldsError::UnknownMonthCodeForYear,
+            MonthCodeError::MonthCodeInvalidSyntax => DateFromFieldsError::MonthCodeInvalidSyntax,
+            MonthCodeError::MonthCodeNotInCalendar => DateFromFieldsError::MonthCodeNotInCalendar,
+            MonthCodeError::MonthCodeNotInYear => DateFromFieldsError::MonthCodeNotInYear,
         }
     }
 }
@@ -371,7 +369,7 @@ mod inner {
     #[non_exhaustive]
     pub enum EcmaReferenceYearError {
         Unimplemented,
-        UnknownMonthCodeForCalendar,
+        MonthCodeNotInCalendar,
     }
 }
 
@@ -385,8 +383,8 @@ impl From<EcmaReferenceYearError> for DateFromFieldsError {
     fn from(value: EcmaReferenceYearError) -> Self {
         match value {
             EcmaReferenceYearError::Unimplemented => DateFromFieldsError::NotEnoughFields,
-            EcmaReferenceYearError::UnknownMonthCodeForCalendar => {
-                DateFromFieldsError::UnknownMonthCodeForCalendar
+            EcmaReferenceYearError::MonthCodeNotInCalendar => {
+                DateFromFieldsError::MonthCodeNotInCalendar
             }
         }
     }
