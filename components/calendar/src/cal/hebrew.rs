@@ -317,7 +317,9 @@ impl Calendar for Hebrew {
         ny + i64::from(days_preceding) + i64::from(date.0.day) - 1
     }
 
-    const HAS_CHEAP_ISO_CONVERSION: bool = false;
+    fn has_cheap_iso_conversion(&self) -> bool {
+        false
+    }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
         Self::months_in_provided_year(date.0.year)

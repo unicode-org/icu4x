@@ -638,7 +638,9 @@ impl<R: Rules> Calendar for LunarChinese<R> {
         date.0.year.rd_from_md(date.0.month, date.0.day)
     }
 
-    const HAS_CHEAP_ISO_CONVERSION: bool = false;
+    fn has_cheap_iso_conversion(&self) -> bool {
+        false
+    }
 
     // Count the number of months in a given year, specified by providing a date
     // from that year

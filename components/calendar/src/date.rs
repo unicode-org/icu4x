@@ -218,14 +218,13 @@ impl<A: AsCalendar> Date<A> {
     /// Convert the Date to a date in a different calendar
     #[inline]
     pub fn to_calendar<A2: AsCalendar>(&self, calendar: A2) -> Date<A2> {
-        let inner =
-            if A::Calendar::HAS_CHEAP_ISO_CONVERSION && A2::Calendar::HAS_CHEAP_ISO_CONVERSION {
-                let iso = self.calendar.as_calendar().to_iso(self.inner());
-                calendar.as_calendar().from_iso(iso)
-            } else {
-                let rd = self.calendar.as_calendar().to_rata_die(self.inner());
-                calendar.as_calendar().from_rata_die(rd)
-            };
+        let c1 = self.calendar.as_calendar();
+        let c2 = calendar.as_calendar();
+        let inner = if c1.has_cheap_iso_conversion() && c2.has_cheap_iso_conversion() {
+            c2.from_iso(c1.to_iso(self.inner()))
+        } else {
+            c2.from_rata_die(c1.to_rata_die(self.inner()))
+        };
         Date { inner, calendar }
     }
 

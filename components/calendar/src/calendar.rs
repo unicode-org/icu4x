@@ -58,7 +58,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
 
     /// Whether `from_iso`/`to_iso` is more efficient
     /// than `from_rata_die`/`to_rata_die`.
-    const HAS_CHEAP_ISO_CONVERSION: bool;
+    fn has_cheap_iso_conversion(&self) -> bool;
 
     /// Construct the date from an ISO date.
     ///

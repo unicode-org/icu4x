@@ -167,7 +167,9 @@ impl Calendar for Ethiopian {
         Coptic.to_rata_die(&date.0)
     }
 
-    const HAS_CHEAP_ISO_CONVERSION: bool = <Coptic as Calendar>::HAS_CHEAP_ISO_CONVERSION;
+    fn has_cheap_iso_conversion(&self) -> bool {
+        false
+    }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
         Coptic.months_in_year(&date.0)

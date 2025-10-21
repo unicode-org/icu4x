@@ -159,7 +159,9 @@ impl Calendar for Julian {
         calendrical_calculations::julian::fixed_from_julian(date.0.year, date.0.month, date.0.day)
     }
 
-    const HAS_CHEAP_ISO_CONVERSION: bool = false;
+    fn has_cheap_iso_conversion(&self) -> bool {
+        false
+    }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
         Self::months_in_provided_year(date.0.year)

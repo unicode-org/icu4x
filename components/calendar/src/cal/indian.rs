@@ -178,7 +178,9 @@ impl Calendar for Indian {
         calendrical_calculations::gregorian::day_before_year(year_iso) + day_of_year_iso as i64
     }
 
-    const HAS_CHEAP_ISO_CONVERSION: bool = false;
+    fn has_cheap_iso_conversion(&self) -> bool {
+        false
+    }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
         Self::months_in_provided_year(date.0.year)
