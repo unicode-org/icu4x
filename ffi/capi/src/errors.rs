@@ -69,6 +69,8 @@ pub mod ffi {
         OutOfRange = 0x01,
         UnknownEra = 0x02,
         UnknownMonthCode = 0x03,
+        MonthCodeNotInCalendar = 0x04,
+        MonthCodeNotInYear = 0x05,
     }
 
     #[derive(Debug, PartialEq, Eq)]
@@ -202,6 +204,8 @@ impl From<icu_calendar::DateError> for CalendarError {
             icu_calendar::DateError::Range { .. } => Self::OutOfRange,
             icu_calendar::DateError::UnknownEra => Self::UnknownEra,
             icu_calendar::DateError::UnknownMonthCode(..) => Self::UnknownMonthCode,
+            icu_calendar::DateError::MonthNotInCalendar => Self::MonthCodeNotInCalendar,
+            icu_calendar::DateError::MonthNotInYear => Self::MonthCodeNotInYear,
             _ => Self::Unknown,
         }
     }

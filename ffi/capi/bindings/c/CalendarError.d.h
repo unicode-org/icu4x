@@ -16,6 +16,8 @@ typedef enum CalendarError {
   CalendarError_OutOfRange = 1,
   CalendarError_UnknownEra = 2,
   CalendarError_UnknownMonthCode = 3,
+  CalendarError_MonthCodeNotInCalendar = 4,
+  CalendarError_MonthCodeNotInYear = 5,
 } CalendarError;
 
 typedef struct CalendarError_option {union { CalendarError ok; }; bool is_ok; } CalendarError_option;

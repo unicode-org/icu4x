@@ -20,6 +20,8 @@ export class CalendarError {
     static OutOfRange : CalendarError;
     static UnknownEra : CalendarError;
     static UnknownMonthCode : CalendarError;
+    static MonthCodeNotInCalendar : CalendarError;
+    static MonthCodeNotInYear : CalendarError;
 
 
     constructor(value: CalendarError | string );

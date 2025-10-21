@@ -16,7 +16,13 @@ enum CalendarError {
   unknownEra,
 
   // ignore: public_member_api_docs
-  unknownMonthCode;
+  unknownMonthCode,
+
+  // ignore: public_member_api_docs
+  monthCodeNotInCalendar,
+
+  // ignore: public_member_api_docs
+  monthCodeNotInYear;
 
 }
 

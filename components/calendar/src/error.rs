@@ -14,6 +14,20 @@ use displaydoc::Display;
 #[non_exhaustive]
 pub enum DateError {
     /// A field is out of range for its domain.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::DateError;
+    /// use icu::calendar::Iso;
+    /// use icu::calendar::types::MonthCode;
+    ///
+    /// let err = Date::try_new_from_codes(None, 2000, MonthCode::new_normal(2).unwrap(), 30, Iso)
+    /// .expect_err("no Feb 30 in the ISO calendar");
+    ///
+    /// assert!(matches!(err, DateError::Range { field: "day", .. }));
+    /// ```
     #[displaydoc("The {field} = {value} argument is out of range {min}..={max}")]
     Range {
         /// The field that is out of range, such as "year"
@@ -26,41 +40,60 @@ pub enum DateError {
         max: i32,
     },
     /// The era code is invalid for the calendar.
-    #[displaydoc("Unknown era")]
+    #[displaydoc("Unknown era or invalid syntax")]
     UnknownEra,
-    /// The month code is invalid for the calendar or year.
+    /// The month code syntax is invalid.
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::cal::Hebrew;
-    /// use icu::calendar::types::Month;
+    /// use icu::calendar::error::DateError;
+    /// use icu::calendar::types::MonthCode;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::Iso;
+    ///
+    /// let err = Date::try_new_from_codes(None, 2000, MonthCode("Jan".parse().unwrap()), 1, Iso)
+    /// .expect_err("month code is invalid");
+    ///
+    /// assert!(matches!(err, DateError::UnknownMonthCode(..)));
+    /// ```
+    #[displaydoc("Invalid month code syntax")]
+    UnknownMonthCode(MonthCode),
+    /// The specified month code does not exist in this calendar.
+    ///
+    /// # Examples
+    ///
+    /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::DateError;
-    /// use tinystr::tinystr;
+    /// use icu::calendar::cal::Hebrew;
+    /// use icu::calendar::types::Month;
     ///
-    /// Date::try_new_from_codes(
-    ///     None,
-    ///     5784,
-    ///     Month::leap(5).code(),
-    ///     1,
-    ///     Hebrew,
-    /// )
-    /// .expect("5784 is a leap year");
-    ///
-    /// let err = Date::try_new_from_codes(
-    ///     None,
-    ///     5785,
-    ///     Month::leap(5).code(),
-    ///     1,
-    ///     Hebrew,
-    /// )
-    /// .expect_err("5785 is a common year");
-    ///
-    /// assert!(matches!(err, DateError::UnknownMonthCode(_)));
+    /// let err = Date::try_new_from_codes(None, 5783, Month::new(13).code(), 1, Hebrew)
+    ///     .expect_err("no month `M13` in Hebrew");
+    /// assert_eq!(err, DateError::MonthNotInCalendar);
     /// ```
-    #[displaydoc("Unknown month code {0:?}")]
-    UnknownMonthCode(MonthCode),
+    #[displaydoc("The specified month code does not exist in this calendar")]
+    MonthNotInCalendar,
+    /// The specified month code does not exist in this calendar.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::DateError;
+    /// use icu::calendar::cal::Hebrew;
+    /// use icu::calendar::types::Month;
+    ///
+    /// Date::try_new_from_codes(None, 5784, Month::leap(5).code(), 1, Hebrew)
+    ///     .expect("5784 is a leap year");
+    ///
+    /// let err = Date::try_new_from_codes(None, 5785, Month::leap(5).code(), 1, Hebrew)
+    ///     .expect_err("5785 is a common year");
+    /// assert_eq!(err, DateError::MonthNotInYear);
+    /// ```
+    #[displaydoc("The specified month code exists in calendar, but not for this year")]
+    MonthNotInYear,
 }
 
 impl core::error::Error for DateError {}
@@ -217,7 +250,6 @@ mod unstable {
         /// use icu::calendar::error::DateFromFieldsError;
         /// use icu::calendar::types::DateFields;
         /// use icu::calendar::Date;
-        /// use tinystr::tinystr;
         ///
         /// let mut fields = DateFields::default();
         /// fields.extended_year = Some(5783);
@@ -246,7 +278,6 @@ mod unstable {
         /// use icu::calendar::error::DateFromFieldsError;
         /// use icu::calendar::types::DateFields;
         /// use icu::calendar::Date;
-        /// use tinystr::tinystr;
         ///
         /// let mut fields = DateFields::default();
         ///
@@ -331,6 +362,16 @@ impl From<MonthCodeParseError> for DateFromFieldsError {
 pub(crate) enum MonthCodeError {
     NotInCalendar,
     NotInYear,
+}
+
+impl From<MonthCodeError> for DateError {
+    #[inline]
+    fn from(value: MonthCodeError) -> Self {
+        match value {
+            MonthCodeError::NotInCalendar => DateError::MonthNotInCalendar,
+            MonthCodeError::NotInYear => DateError::MonthNotInYear,
+        }
+    }
 }
 
 impl From<MonthCodeError> for DateFromFieldsError {

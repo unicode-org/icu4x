@@ -30,6 +30,8 @@ inline icu4x::CalendarError icu4x::CalendarError::FromFFI(icu4x::capi::CalendarE
         case icu4x::capi::CalendarError_OutOfRange:
         case icu4x::capi::CalendarError_UnknownEra:
         case icu4x::capi::CalendarError_UnknownMonthCode:
+        case icu4x::capi::CalendarError_MonthCodeNotInCalendar:
+        case icu4x::capi::CalendarError_MonthCodeNotInYear:
             return static_cast<icu4x::CalendarError::Value>(c_enum);
         default:
             std::abort();

@@ -19,6 +19,8 @@ namespace capi {
       CalendarError_OutOfRange = 1,
       CalendarError_UnknownEra = 2,
       CalendarError_UnknownMonthCode = 3,
+      CalendarError_MonthCodeNotInCalendar = 4,
+      CalendarError_MonthCodeNotInYear = 5,
     };
 
     typedef struct CalendarError_option {union { CalendarError ok; }; bool is_ok; } CalendarError_option;
@@ -36,6 +38,8 @@ public:
         OutOfRange = 1,
         UnknownEra = 2,
         UnknownMonthCode = 3,
+        MonthCodeNotInCalendar = 4,
+        MonthCodeNotInYear = 5,
     };
 
     CalendarError(): value(Value::Unknown) {}
