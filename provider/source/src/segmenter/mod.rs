@@ -420,6 +420,7 @@ fn generate_rule_break_data(
                                                 // newer Unicode data.
                                                 // This should be removed when line segmenter uses
                                                 // Unicode 17.
+                                                // (https://github.com/unicode-org/icu4x/issues/7134)
                                                 match i {
                                                     0x1f774..=0x1f77f => {
                                                         properties_map[i as usize] = property_index
