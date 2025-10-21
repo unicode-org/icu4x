@@ -121,7 +121,7 @@ pub enum DateFromFieldsError {
     /// )
     /// .expect_err("month code is invalid");
     ///
-    /// assert!(matches!(err, DateFromFieldsError::MonthCodeInvalidSyntax));
+    /// assert_eq!(err, DateFromFieldsError::MonthCodeInvalidSyntax);
     /// ```
     #[displaydoc("Invalid month code syntax")]
     MonthCodeInvalidSyntax,
@@ -146,7 +146,7 @@ pub enum DateFromFieldsError {
     ///     Hebrew
     /// )
     /// .expect_err("no month M13 in Hebrew");
-    /// assert!(matches!(err, DateFromFieldsError::MonthCodeNotInCalendar));
+    /// assert_eq!(err, DateFromFieldsError::MonthCodeNotInCalendar);
     /// ```
     #[displaydoc("The specified month code does not exist in this calendar")]
     MonthCodeNotInCalendar,
@@ -171,7 +171,7 @@ pub enum DateFromFieldsError {
     ///     Hebrew
     /// )
     /// .expect_err("no month M05L in Hebrew year 5783");
-    /// assert!(matches!(err, DateFromFieldsError::MonthCodeNotInYear));
+    /// assert_eq!(err, DateFromFieldsError::MonthCodeNotInYear);
     /// ```
     #[displaydoc("The specified month code exists in calendar, but not for this year")]
     MonthCodeNotInYear,
@@ -207,7 +207,7 @@ pub enum DateFromFieldsError {
     /// )
     /// .expect_err("year 1900 is not the same as 6 Reiwa");
     ///
-    /// assert!(matches!(err, DateFromFieldsError::InconsistentYear));
+    /// assert_eq!(err, DateFromFieldsError::InconsistentYear);
     /// ```
     #[displaydoc("Inconsistent year")]
     InconsistentYear,
@@ -244,7 +244,7 @@ pub enum DateFromFieldsError {
     /// )
     /// .expect_err("month M06 is not the 6th month in leap year 5784");
     ///
-    /// assert!(matches!(err, DateFromFieldsError::InconsistentMonth));
+    /// assert_eq!(err, DateFromFieldsError::InconsistentMonth);
     /// ```
     #[displaydoc("Inconsistent month")]
     InconsistentMonth,
@@ -269,7 +269,7 @@ pub enum DateFromFieldsError {
     ///     Hebrew
     /// )
     /// .expect_err("need more than just an ordinal month");
-    /// assert!(matches!(err, DateFromFieldsError::NotEnoughFields));
+    /// assert_eq!(err, DateFromFieldsError::NotEnoughFields);
     ///
     /// fields.era_year = Some(5783);
     ///
@@ -279,7 +279,7 @@ pub enum DateFromFieldsError {
     ///     Hebrew
     /// )
     /// .expect_err("need more than an ordinal month and an era year");
-    /// assert!(matches!(err, DateFromFieldsError::NotEnoughFields));
+    /// assert_eq!(err, DateFromFieldsError::NotEnoughFields);
     ///
     /// fields.extended_year = Some(5783);
     ///
@@ -289,7 +289,7 @@ pub enum DateFromFieldsError {
     ///     Hebrew
     /// )
     /// .expect_err("era year still needs an era");
-    /// assert!(matches!(err, DateFromFieldsError::NotEnoughFields));
+    /// assert_eq!(err, DateFromFieldsError::NotEnoughFields);
     ///
     /// fields.era = Some(b"am");
     ///
@@ -299,7 +299,7 @@ pub enum DateFromFieldsError {
     ///     Hebrew
     /// )
     /// .expect_err("still missing the day");
-    /// assert!(matches!(err, DateFromFieldsError::NotEnoughFields));
+    /// assert_eq!(err, DateFromFieldsError::NotEnoughFields);
     ///
     /// fields.day = Some(1);
     /// let date = Date::try_from_fields(
