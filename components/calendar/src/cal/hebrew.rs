@@ -189,7 +189,7 @@ impl DateFieldsResolver for Hebrew {
                 "M11" => 12,
                 "M12" => 13,
                 _ => {
-                    return Err(MonthCodeError::MonthCodeNotInCalendar);
+                    return Err(MonthCodeError::NotInCalendar);
                 }
             }
         } else {
@@ -204,7 +204,7 @@ impl DateFieldsResolver for Hebrew {
                     if matches!(options.overflow, Some(Overflow::Constrain)) {
                         6
                     } else {
-                        return Err(MonthCodeError::MonthCodeNotInYear);
+                        return Err(MonthCodeError::NotInYear);
                     }
                 }
                 "M06" => 6,
@@ -215,7 +215,7 @@ impl DateFieldsResolver for Hebrew {
                 "M11" => 11,
                 "M12" => 12,
                 _ => {
-                    return Err(MonthCodeError::MonthCodeNotInCalendar);
+                    return Err(MonthCodeError::NotInCalendar);
                 }
             }
         };

@@ -202,7 +202,9 @@ impl From<icu_calendar::error::DateFromFieldsError> for CalendarDateFromFieldsEr
         match e {
             icu_calendar::error::DateFromFieldsError::Range(_) => Self::OutOfRange,
             icu_calendar::error::DateFromFieldsError::UnknownEra => Self::UnknownEra,
-            icu_calendar::error::DateFromFieldsError::MonthCodeInvalidSyntax => Self::MonthCodeInvalidSyntax,
+            icu_calendar::error::DateFromFieldsError::MonthCodeInvalidSyntax => {
+                Self::MonthCodeInvalidSyntax
+            }
             icu_calendar::error::DateFromFieldsError::MonthCodeNotInCalendar => {
                 Self::MonthCodeNotInCalendar
             }

@@ -337,25 +337,25 @@ impl From<MonthCodeParseError> for MonthCodeError {
     #[inline]
     fn from(value: MonthCodeParseError) -> Self {
         match value {
-            MonthCodeParseError::InvalidSyntax => MonthCodeError::MonthCodeInvalidSyntax,
+            MonthCodeParseError::InvalidSyntax => MonthCodeError::InvalidSyntax,
         }
     }
 }
 
 /// Internal narrow error type for functions that only fail on month code operations
 pub(crate) enum MonthCodeError {
-    MonthCodeInvalidSyntax,
-    MonthCodeNotInCalendar,
-    MonthCodeNotInYear,
+    InvalidSyntax,
+    NotInCalendar,
+    NotInYear,
 }
 
 impl From<MonthCodeError> for DateFromFieldsError {
     #[inline]
     fn from(value: MonthCodeError) -> Self {
         match value {
-            MonthCodeError::MonthCodeInvalidSyntax => DateFromFieldsError::MonthCodeInvalidSyntax,
-            MonthCodeError::MonthCodeNotInCalendar => DateFromFieldsError::MonthCodeNotInCalendar,
-            MonthCodeError::MonthCodeNotInYear => DateFromFieldsError::MonthCodeNotInYear,
+            MonthCodeError::InvalidSyntax => DateFromFieldsError::MonthCodeInvalidSyntax,
+            MonthCodeError::NotInCalendar => DateFromFieldsError::MonthCodeNotInCalendar,
+            MonthCodeError::NotInYear => DateFromFieldsError::MonthCodeNotInYear,
         }
     }
 }

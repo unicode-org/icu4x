@@ -581,10 +581,10 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
                 if options.overflow == Some(Overflow::Constrain) {
                     Ok(val)
                 } else {
-                    Err(MonthCodeError::MonthCodeNotInYear)
+                    Err(MonthCodeError::NotInYear)
                 }
             }
-            ComputedOrdinalMonth::NotFound => Err(MonthCodeError::MonthCodeNotInCalendar),
+            ComputedOrdinalMonth::NotFound => Err(MonthCodeError::NotInCalendar),
         }
     }
 
