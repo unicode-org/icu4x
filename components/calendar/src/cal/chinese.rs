@@ -263,7 +263,7 @@ impl Rules for China {
             (12, false, true) => 1971,
             (12, true, false) => 1878,
             (12, true, true) => 1783,
-            _ => return Err(EcmaReferenceYearError::UnknownMonthCodeForCalendar),
+            _ => return Err(EcmaReferenceYearError::MonthCodeNotInCalendar),
         };
         Ok(extended_year)
     }
@@ -449,7 +449,7 @@ impl Rules for Korea {
             (12, false, true) => 1971,
             (12, true, false) => 1878,
             (12, true, true) => 1783,
-            _ => return Err(EcmaReferenceYearError::UnknownMonthCodeForCalendar),
+            _ => return Err(EcmaReferenceYearError::MonthCodeNotInCalendar),
         };
         Ok(extended_year)
     }
@@ -581,10 +581,10 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
                 if options.overflow == Some(Overflow::Constrain) {
                     Ok(val)
                 } else {
-                    Err(MonthCodeError::UnknownMonthCodeForYear)
+                    Err(MonthCodeError::NotInYear)
                 }
             }
-            ComputedOrdinalMonth::NotFound => Err(MonthCodeError::UnknownMonthCodeForCalendar),
+            ComputedOrdinalMonth::NotFound => Err(MonthCodeError::NotInCalendar),
         }
     }
 

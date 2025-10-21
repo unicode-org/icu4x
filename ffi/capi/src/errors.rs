@@ -79,9 +79,9 @@ pub mod ffi {
         Unknown = 0x00,
         OutOfRange = 0x01,
         UnknownEra = 0x02,
-        InvalidMonthCode = 0x03,
-        UnknownMonthCodeForCalendar = 0x04,
-        UnknownMonthCodeForYear = 0x05,
+        MonthCodeInvalidSyntax = 0x03,
+        MonthCodeNotInCalendar = 0x04,
+        MonthCodeNotInYear = 0x05,
         InconsistentYear = 0x06,
         InconsistentMonth = 0x07,
         NotEnoughFields = 0x08,
@@ -202,12 +202,14 @@ impl From<icu_calendar::error::DateFromFieldsError> for CalendarDateFromFieldsEr
         match e {
             icu_calendar::error::DateFromFieldsError::Range(_) => Self::OutOfRange,
             icu_calendar::error::DateFromFieldsError::UnknownEra => Self::UnknownEra,
-            icu_calendar::error::DateFromFieldsError::InvalidMonthCode => Self::InvalidMonthCode,
-            icu_calendar::error::DateFromFieldsError::UnknownMonthCodeForCalendar => {
-                Self::UnknownMonthCodeForCalendar
+            icu_calendar::error::DateFromFieldsError::MonthCodeInvalidSyntax => {
+                Self::MonthCodeInvalidSyntax
             }
-            icu_calendar::error::DateFromFieldsError::UnknownMonthCodeForYear => {
-                Self::UnknownMonthCodeForYear
+            icu_calendar::error::DateFromFieldsError::MonthCodeNotInCalendar => {
+                Self::MonthCodeNotInCalendar
+            }
+            icu_calendar::error::DateFromFieldsError::MonthCodeNotInYear => {
+                Self::MonthCodeNotInYear
             }
             icu_calendar::error::DateFromFieldsError::InconsistentYear => Self::InconsistentYear,
             icu_calendar::error::DateFromFieldsError::InconsistentMonth => Self::InconsistentMonth,

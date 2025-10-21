@@ -137,7 +137,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
     ) -> Result<u8, MonthCodeError> {
         match month_code.to_tuple() {
             (month_number @ 1..=12, false) => Ok(month_number),
-            _ => Err(MonthCodeError::UnknownMonthCodeForCalendar),
+            _ => Err(MonthCodeError::NotInCalendar),
         }
     }
 
@@ -198,11 +198,9 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         let month = calendar
             .ordinal_month_from_code(&year, validated, Default::default())
             .map_err(|e| match e {
-                MonthCodeError::InvalidMonthCode
-                | MonthCodeError::UnknownMonthCodeForCalendar
-                | MonthCodeError::UnknownMonthCodeForYear => {
-                    DateError::UnknownMonthCode(month_code)
-                }
+                MonthCodeError::InvalidSyntax
+                | MonthCodeError::NotInCalendar
+                | MonthCodeError::NotInYear => DateError::UnknownMonthCode(month_code),
             })?;
 
         let day = range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
@@ -541,13 +539,13 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             .map_err(|e| {
                 // TODO: Use a narrower error type here. For now, convert into DateError.
                 match e {
-                    MonthCodeError::InvalidMonthCode => {
+                    MonthCodeError::InvalidSyntax => {
                         DateError::UnknownMonthCode(base_month.standard_code)
                     }
-                    MonthCodeError::UnknownMonthCodeForCalendar => {
+                    MonthCodeError::NotInCalendar => {
                         DateError::UnknownMonthCode(base_month.standard_code)
                     }
-                    MonthCodeError::UnknownMonthCodeForYear => {
+                    MonthCodeError::NotInYear => {
                         DateError::UnknownMonthCode(base_month.standard_code)
                     }
                 }

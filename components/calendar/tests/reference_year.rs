@@ -67,7 +67,7 @@ where
                         );
                         d
                     }
-                    Err(DateFromFieldsError::UnknownMonthCodeForCalendar) => {
+                    Err(DateFromFieldsError::MonthCodeNotInCalendar) => {
                         assert!(
                             !is_valid_month,
                             "try_from_fields failed but should have passed: {fields:?}"

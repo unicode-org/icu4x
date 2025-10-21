@@ -12,11 +12,11 @@ enum CalendarDateFromFieldsError {
 
   unknownEra,
 
-  invalidMonthCode,
+  monthCodeInvalidSyntax,
 
-  unknownMonthCodeForCalendar,
+  monthCodeNotInCalendar,
 
-  unknownMonthCodeForYear,
+  monthCodeNotInYear,
 
   inconsistentYear,
 
