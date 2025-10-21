@@ -185,7 +185,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        types::MonthInfo::for_ordinal(date.month)
+        types::MonthInfo::non_lunisolar(date.month)
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {

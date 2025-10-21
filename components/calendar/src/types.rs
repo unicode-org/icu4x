@@ -553,8 +553,8 @@ pub struct MonthInfo {
 }
 
 impl MonthInfo {
-    pub(crate) fn for_ordinal(ordinal: u8) -> Self {
-        Self::for_code_and_ordinal(ValidMonthCode::new_unchecked(ordinal, false), ordinal)
+    pub(crate) fn non_lunisolar(number: u8) -> Self {
+        Self::for_code_and_ordinal(ValidMonthCode::new_unchecked(number, false), number)
     }
 
     pub(crate) fn for_code_and_ordinal(code: ValidMonthCode, ordinal: u8) -> Self {
