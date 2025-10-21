@@ -22,13 +22,13 @@ use crate::error::MonthCodeParseError;
 #[derive(Copy, Clone, PartialEq, Default)]
 #[non_exhaustive]
 pub struct DateFields<'a> {
-    /// The era code as defined by CLDR, represented as ASCII bytes.
+    /// The era code as defined by CLDR, represented as UTF-8 code units.
     ///
     /// If set, [`Self::era_year`] must also be set.
     ///
     /// # Examples
     ///
-    /// To set the era field, convert an ASCII string to bytes:
+    /// To set the era field, use a byte string:
     ///
     /// ```
     /// use icu_calendar::types::DateFields;
@@ -98,13 +98,13 @@ pub struct DateFields<'a> {
     /// ```
     pub extended_year: Option<i32>,
     /// The month code representing a valid month in this calendar year,
-    /// represented as ASCII bytes.
+    /// represented as UTF-8 code units.
     ///
     /// See [`MonthCode`] for information on the syntax.
     ///
     /// # Examples
     ///
-    /// To set the month code field, convert an ASCII string to bytes:
+    /// To set the month code field, use a byte string:
     ///
     /// ```
     /// use icu_calendar::types::DateFields;
