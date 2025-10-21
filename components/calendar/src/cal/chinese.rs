@@ -10,7 +10,7 @@ use crate::error::{
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
-use crate::types::{MonthInfo, ValidMonthCode};
+use crate::types::ValidMonthCode;
 use crate::AsCalendar;
 use crate::{types, Calendar, Date};
 use calendrical_calculations::chinese_based::{
@@ -588,12 +588,34 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
         }
     }
 
-    fn month_code_from_ordinal(
-        &self,
-        year: &Self::YearInfo,
-        ordinal_month: u8,
-    ) -> types::MonthInfo {
-        year.month(ordinal_month)
+    // The calendar-specific month code represented by `month`;
+    // since the Chinese calendar has leap months, an "L" is appended to the month code for
+    // leap months. For example, in a year where an intercalary month is added after the second
+    // month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
+    fn month_code_from_ordinal(&self, year: &Self::YearInfo, ordinal_month: u8) -> ValidMonthCode {
+        // 1 indexed leap month name. This is also the ordinal for the leap month
+        // in the year (e.g. in `M01, M01L, M02, ..`, the leap month is for month 1, and it is also
+        // ordinally `month 2`, zero-indexed)
+        // 14 is a sentinel value
+        let leap_month = year.leap_month().unwrap_or(14);
+        if leap_month == ordinal_month {
+            // Month cannot be 1 because a year cannot have a leap month before the first actual month,
+            // and the maximum num of months ina leap year is 13.
+            debug_assert!((2..=13).contains(&ordinal_month));
+            ValidMonthCode::new_unchecked(ordinal_month - 1, true)
+        } else {
+            let mut adjusted_ordinal = ordinal_month;
+            if ordinal_month > leap_month {
+                // Before adjusting for leap month, if ordinal > leap_month,
+                // the month cannot be 1 because this implies the leap month is < 1, which is impossible;
+                // cannot be 2 because that implies the leap month is = 1, which is impossible,
+                // and cannot be more than 13 because max number of months in a year is 13.
+                debug_assert!((2..=13).contains(&ordinal_month));
+                adjusted_ordinal -= 1;
+            }
+            debug_assert!((1..=12).contains(&adjusted_ordinal));
+            ValidMonthCode::new_unchecked(adjusted_ordinal, false)
+        }
     }
 }
 
@@ -709,7 +731,10 @@ impl<R: Rules> Calendar for LunarChinese<R> {
     /// leap months. For example, in a year where an intercalary month is added after the second
     /// month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        date.0.year.month(date.0.month)
+        types::MonthInfo::for_code_and_ordinal(
+            self.month_code_from_ordinal(&date.0.year, date.0.month),
+            date.0.month,
+        )
     }
 
     /// The calendar-specific day-of-month represented by `date`
@@ -969,43 +994,6 @@ impl LunarChineseYearData {
         self.last_day_of_previous_month(month) + day as u16
     }
 
-    /// The calendar-specific month code represented by `month`;
-    /// since the Chinese calendar has leap months, an "L" is appended to the month code for
-    /// leap months. For example, in a year where an intercalary month is added after the second
-    /// month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
-    fn month(self, month: u8) -> MonthInfo {
-        // 1 indexed leap month name. This is also the ordinal for the leap month
-        // in the year (e.g. in `M01, M01L, M02, ..`, the leap month is for month 1, and it is also
-        // ordinally `month 2`, zero-indexed)
-        // 14 is a sentinel value
-        let leap_month = self.leap_month().unwrap_or(14);
-        let valid_month_code = if leap_month == month {
-            // Month cannot be 1 because a year cannot have a leap month before the first actual month,
-            // and the maximum num of months ina leap year is 13.
-            debug_assert!((2..=13).contains(&month));
-            ValidMonthCode::new_unchecked(month - 1, true)
-        } else {
-            let mut adjusted_ordinal = month;
-            if month > leap_month {
-                // Before adjusting for leap month, if ordinal > leap_month,
-                // the month cannot be 1 because this implies the leap month is < 1, which is impossible;
-                // cannot be 2 because that implies the leap month is = 1, which is impossible,
-                // and cannot be more than 13 because max number of months in a year is 13.
-                debug_assert!((2..=13).contains(&month));
-                adjusted_ordinal -= 1;
-            }
-            debug_assert!((1..=12).contains(&adjusted_ordinal));
-            ValidMonthCode::new_unchecked(adjusted_ordinal, false)
-        };
-        let month_code = valid_month_code.to_month_code();
-        MonthInfo {
-            ordinal: month,
-            valid_standard_code: valid_month_code,
-            standard_code: month_code,
-            formatting_code: month_code,
-        }
-    }
-
     /// Create a new arithmetic date from a year, month ordinal, and day with bounds checking; returns the
     /// result of creating this arithmetic date, as well as a ChineseBasedYearInfo - either the one passed in
     /// optionally as an argument, or a new ChineseBasedYearInfo for the given year, month, and day args.
@@ -1208,10 +1196,8 @@ mod test {
     use super::*;
     use crate::options::{DateFromFieldsOptions, Overflow};
     use crate::types::DateFields;
-    use crate::types::MonthCode;
     use calendrical_calculations::{gregorian::fixed_from_gregorian, rata_die::RataDie};
     use std::collections::BTreeMap;
-    use tinystr::tinystr;
 
     #[test]
     fn test_chinese_from_rd() {
@@ -1655,31 +1641,28 @@ mod test {
 
     #[test]
     fn test_month_code_to_ordinal() {
-        // construct using ::default() to force recomputation
         let year = LunarChinese::new_china().0.year_data(2023);
         let codes = [
-            (1, tinystr!(4, "M01")),
-            (2, tinystr!(4, "M02")),
-            (3, tinystr!(4, "M02L")),
-            (4, tinystr!(4, "M03")),
-            (5, tinystr!(4, "M04")),
-            (6, tinystr!(4, "M05")),
-            (7, tinystr!(4, "M06")),
-            (8, tinystr!(4, "M07")),
-            (9, tinystr!(4, "M08")),
-            (10, tinystr!(4, "M09")),
-            (11, tinystr!(4, "M10")),
-            (12, tinystr!(4, "M11")),
-            (13, tinystr!(4, "M12")),
+            (1, "M01"),
+            (2, "M02"),
+            (3, "M02L"),
+            (4, "M03"),
+            (5, "M04"),
+            (6, "M05"),
+            (7, "M06"),
+            (8, "M07"),
+            (9, "M08"),
+            (10, "M09"),
+            (11, "M10"),
+            (12, "M11"),
+            (13, "M12"),
         ];
-        for ordinal_code_pair in codes {
-            let print_code = ordinal_code_pair.1;
-            let valid_code = MonthCode(ordinal_code_pair.1).validated().unwrap();
-            let ordinal = year.parse_month_code(valid_code);
+        for (ordinal, code) in codes {
+            let valid_code = ValidMonthCode::from_bytes(code.as_bytes()).unwrap();
             assert_eq!(
-                ordinal,
-                ComputedOrdinalMonth::Exact(ordinal_code_pair.0),
-                "Code to ordinal failed for year: {}, code: {print_code}",
+                year.parse_month_code(valid_code),
+                ComputedOrdinalMonth::Exact(ordinal),
+                "Code to ordinal failed for year: {}, code: {ordinal}",
                 year.related_iso
             );
         }
@@ -1690,15 +1673,15 @@ mod test {
         let non_leap_year = 4659;
         let leap_year = 4660;
         let invalid_codes = [
-            (non_leap_year, tinystr!(4, "M04L")),
-            (leap_year, tinystr!(4, "M04L")),
-            (non_leap_year, tinystr!(4, "M13")),
-            (leap_year, tinystr!(4, "M13")),
+            (non_leap_year, "M04L"),
+            (leap_year, "M04L"),
+            (non_leap_year, "M13"),
+            (leap_year, "M13"),
         ];
         for (year, code) in invalid_codes {
             // construct using ::default() to force recomputation
             let year = LunarChinese::new_china().0.year_data(year);
-            let valid_code = MonthCode(code).validated().unwrap();
+            let valid_code = ValidMonthCode::from_bytes(code.as_bytes()).unwrap();
             let ordinal = year.parse_month_code(valid_code);
             assert!(
                 !matches!(ordinal, ComputedOrdinalMonth::Exact(_)),
@@ -1838,12 +1821,11 @@ mod test {
     fn test_against_hong_kong_observatory_data() {
         use crate::{
             cal::{Gregorian, LunarChinese},
-            types::MonthCode,
             Date,
         };
 
         let mut related_iso = 1900;
-        let mut lunar_month = MonthCode::new_normal(11).unwrap();
+        let mut lunar_month = ValidMonthCode::new_unchecked(11, false);
 
         for year in 1901..=2100 {
             println!("Validating year {year}...");
@@ -1883,11 +1865,10 @@ mod test {
                         .0
                         .parse()
                         .unwrap();
-                    if new_lunar_month == lunar_month.validated().unwrap().number() {
-                        lunar_month = MonthCode::new_leap(new_lunar_month).unwrap();
-                    } else {
-                        lunar_month = MonthCode::new_normal(new_lunar_month).unwrap();
-                    }
+                    lunar_month = ValidMonthCode::new_unchecked(
+                        new_lunar_month,
+                        new_lunar_month == lunar_month.number(),
+                    );
                     if new_lunar_month == 1 {
                         related_iso += 1;
                     }
@@ -1899,7 +1880,7 @@ mod test {
                 let chinese = Date::try_new_from_codes(
                     None,
                     related_iso,
-                    lunar_month,
+                    lunar_month.to_month_code(),
                     lunar_day,
                     LunarChinese::new_china(),
                 )

@@ -191,7 +191,7 @@ impl Calendar for Persian {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        self.month_code_from_ordinal(&date.0.year, date.0.month)
+        types::MonthInfo::for_ordinal(date.0.month)
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {

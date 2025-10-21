@@ -746,7 +746,7 @@ fn computer_reference_years() {
     let rules = UmmAlQura;
 
     fn compute_hijri_reference_year<C>(
-        month_code: types::MonthCode,
+        ordinal_month: u8,
         day: u8,
         cal: &C,
         year_info_from_extended: impl Fn(i32) -> C::YearInfo,
@@ -754,7 +754,6 @@ fn computer_reference_years() {
     where
         C: DateFieldsResolver,
     {
-        let ordinal_month = month_code.validated().unwrap().number();
         let dec_31 = Date::from_rata_die(
             crate::cal::abstract_gregorian::LAST_DAY_OF_REFERENCE_YEAR,
             crate::Ref(cal),
@@ -785,21 +784,16 @@ fn computer_reference_years() {
         if day <= 29 {
             debug_assert!(
                 day <= C::days_in_provided_month(year_info, ordinal_month),
-                "{month_code:?}/{day}"
+                "{ordinal_month}/{day}"
             );
         }
         Ok(year_info)
     }
     for month in 1..=12 {
         for day in [30, 29] {
-            let y = compute_hijri_reference_year(
-                types::MonthCode::new_normal(month).unwrap(),
-                day,
-                &Hijri(rules),
-                |e| rules.year_data(e),
-            )
-            .unwrap()
-            .extended_year;
+            let y = compute_hijri_reference_year(month, day, &Hijri(rules), |e| rules.year_data(e))
+                .unwrap()
+                .extended_year;
 
             if day == 30 {
                 println!("({month}, {day}) => {y},")
@@ -1005,7 +999,7 @@ impl<R: Rules> Calendar for Hijri<R> {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        self.month_code_from_ordinal(&date.0.year, date.0.month)
+        types::MonthInfo::for_ordinal(date.0.month)
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {

@@ -226,27 +226,12 @@ impl DateFieldsResolver for Hebrew {
         &self,
         year: &Self::YearInfo,
         ordinal_month: u8,
-    ) -> types::MonthInfo {
-        let is_leap_year = year.keviyah.is_leap();
-
-        let valid_month_code = match (ordinal_month, is_leap_year) {
-            (..6, _) | (_, false) => ValidMonthCode::new_unchecked(ordinal_month, false),
-            (6, true) => ValidMonthCode::new_unchecked(5, true),
-            (7.., true) => ValidMonthCode::new_unchecked(ordinal_month - 1, false),
-        };
-        let standard_code = valid_month_code.to_month_code();
-        let formatting_code = if is_leap_year && ordinal_month == 7 {
-            ValidMonthCode::new_unchecked(6, true).to_month_code() // M06L
-        } else {
-            standard_code
-        };
-
-        types::MonthInfo {
-            ordinal: ordinal_month,
-            valid_standard_code: valid_month_code,
-            standard_code,
-            formatting_code,
-        }
+    ) -> types::ValidMonthCode {
+        let is_leap = year.keviyah.is_leap();
+        ValidMonthCode::new_unchecked(
+            ordinal_month - (is_leap && ordinal_month >= 6) as u8,
+            ordinal_month == 6 && is_leap,
+        )
     }
 }
 
@@ -353,7 +338,21 @@ impl Calendar for Hebrew {
     }
 
     fn month(&self, date: &Self::DateInner) -> MonthInfo {
-        self.month_code_from_ordinal(&date.0.year, date.0.month)
+        let valid_standard_code = self.month_code_from_ordinal(&date.0.year, date.0.month);
+
+        let valid_formatting_code = if valid_standard_code.number() == 6 && date.0.month == 7 {
+            ValidMonthCode::new_unchecked(6, true) // M06L
+        } else {
+            valid_standard_code
+        };
+
+        types::MonthInfo {
+            ordinal: date.0.month,
+            standard_code: valid_standard_code.to_month_code(),
+            valid_standard_code,
+            formatting_code: valid_formatting_code.to_month_code(),
+            valid_formatting_code,
+        }
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {

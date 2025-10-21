@@ -147,19 +147,8 @@ pub(crate) trait DateFieldsResolver: Calendar {
     ///
     /// The default impl is for non-lunisolar calendars!
     #[inline]
-    fn month_code_from_ordinal(
-        &self,
-        _year: &Self::YearInfo,
-        ordinal_month: u8,
-    ) -> types::MonthInfo {
-        let valid_month_code = ValidMonthCode::new_unchecked(ordinal_month, false);
-        let month_code = valid_month_code.to_month_code();
-        types::MonthInfo {
-            ordinal: ordinal_month,
-            valid_standard_code: valid_month_code,
-            standard_code: month_code,
-            formatting_code: month_code,
-        }
+    fn month_code_from_ordinal(&self, _year: &Self::YearInfo, ordinal_month: u8) -> ValidMonthCode {
+        ValidMonthCode::new_unchecked(ordinal_month, false)
     }
 }
 
@@ -192,9 +181,10 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         } else {
             calendar.year_info_from_extended(year)
         };
-        let validated = month_code.validated().map_err(|e| match e {
-            MonthCodeParseError::InvalidSyntax => DateError::UnknownMonthCode(month_code),
-        })?;
+        let validated =
+            ValidMonthCode::from_bytes(month_code.0.as_bytes()).map_err(|e| match e {
+                MonthCodeParseError::InvalidSyntax => DateError::UnknownMonthCode(month_code),
+            })?;
         let month = calendar
             .ordinal_month_from_code(&year, validated, Default::default())
             .map_err(|e| match e {
@@ -430,9 +420,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // 1. Let _y0_ be _parts_.[[Year]] + _years_.
         let y0 = cal.year_info_from_extended(duration.add_years_to(self.year.to_extended_year()));
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], ~constrain~)).
-        let base_month_code = cal
-            .month_code_from_ordinal(&self.year, self.month)
-            .valid_standard_code;
+        let base_month_code = cal.month_code_from_ordinal(&self.year, self.month);
         let constrain = DateFromFieldsOptions {
             overflow: Some(Overflow::Constrain),
             ..Default::default()
@@ -533,20 +521,20 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         let m0 = cal
             .ordinal_month_from_code(
                 &y0,
-                base_month.valid_standard_code,
+                base_month,
                 DateFromFieldsOptions::from_add_options(options),
             )
             .map_err(|e| {
                 // TODO: Use a narrower error type here. For now, convert into DateError.
                 match e {
                     MonthCodeError::InvalidSyntax => {
-                        DateError::UnknownMonthCode(base_month.standard_code)
+                        DateError::UnknownMonthCode(base_month.to_month_code())
                     }
                     MonthCodeError::NotInCalendar => {
-                        DateError::UnknownMonthCode(base_month.standard_code)
+                        DateError::UnknownMonthCode(base_month.to_month_code())
                     }
                     MonthCodeError::NotInYear => {
-                        DateError::UnknownMonthCode(base_month.standard_code)
+                        DateError::UnknownMonthCode(base_month.to_month_code())
                     }
                 }
             })?;
