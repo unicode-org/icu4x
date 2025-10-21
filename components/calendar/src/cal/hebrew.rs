@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, ToExtendedYear};
 use crate::error::{
     DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
@@ -295,12 +294,8 @@ impl Calendar for Hebrew {
         ny + i64::from(days_preceding) + i64::from(date.0.day) - 1
     }
 
-    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
-        self.from_rata_die(Iso.to_rata_die(&iso))
-    }
-
-    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        Iso.from_rata_die(self.to_rata_die(date))
+    fn has_cheap_iso_conversion(&self) -> bool {
+        false
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -479,7 +474,7 @@ mod tests {
 
             let iso_to_hebrew = iso_date.to_calendar(Hebrew);
 
-            let hebrew_to_iso = hebrew_date.to_calendar(Iso);
+            let hebrew_to_iso = hebrew_date.to_iso();
 
             assert_eq!(
                 hebrew_to_iso, iso_date,

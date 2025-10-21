@@ -8,7 +8,7 @@ use crate::cal::iso::IsoDateInner;
 use crate::error::{DateError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
-use crate::types;
+use crate::{types, Iso};
 use core::fmt;
 
 /// A calendar implementation
@@ -56,11 +56,23 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateFromFieldsError>;
 
-    /// Construct the date from an ISO date
+    /// Whether `from_iso`/`to_iso` is more efficient
+    /// than `from_rata_die`/`to_rata_die`.
+    fn has_cheap_iso_conversion(&self) -> bool;
+
+    /// Construct the date from an ISO date.
+    ///
+    /// Only called if `HAS_CHEAP_ISO_CONVERSION` is set.
     #[expect(clippy::wrong_self_convention)]
-    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner;
-    /// Obtain an ISO date from this date
-    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner;
+    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
+        self.from_rata_die(Iso.to_rata_die(&iso))
+    }
+    /// Obtain an ISO date from this date.
+    ///
+    /// Only called if `HAS_CHEAP_ISO_CONVERSION` is set.
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+        Iso.from_rata_die(self.to_rata_die(date))
+    }
 
     /// Construct the date from a [`RataDie`]
     #[expect(clippy::wrong_self_convention)]

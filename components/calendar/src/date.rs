@@ -206,20 +206,26 @@ impl<A: AsCalendar> Date<A> {
     /// Construct a date from an ISO date and some calendar representation
     #[inline]
     pub fn new_from_iso(iso: Date<Iso>, calendar: A) -> Self {
-        let inner = calendar.as_calendar().from_iso(iso.inner);
-        Date { inner, calendar }
+        iso.to_calendar(calendar)
     }
 
     /// Convert the Date to an ISO Date
     #[inline]
     pub fn to_iso(&self) -> Date<Iso> {
-        Date::from_raw(self.calendar.as_calendar().to_iso(self.inner()), Iso)
+        self.to_calendar(Iso)
     }
 
     /// Convert the Date to a date in a different calendar
     #[inline]
     pub fn to_calendar<A2: AsCalendar>(&self, calendar: A2) -> Date<A2> {
-        Date::new_from_iso(self.to_iso(), calendar)
+        let c1 = self.calendar.as_calendar();
+        let c2 = calendar.as_calendar();
+        let inner = if c1.has_cheap_iso_conversion() && c2.has_cheap_iso_conversion() {
+            c2.from_iso(c1.to_iso(self.inner()))
+        } else {
+            c2.from_rata_die(c1.to_rata_die(self.inner()))
+        };
+        Date { inner, calendar }
     }
 
     /// The number of months in the year of this date

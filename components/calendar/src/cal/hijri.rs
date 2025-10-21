@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::calendar_arithmetic::ToExtendedYear;
@@ -937,12 +936,8 @@ impl<R: Rules> Calendar for Hijri<R> {
         date.0.year.md_to_rd(date.0.month, date.0.day)
     }
 
-    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
-        self.from_rata_die(Iso.to_rata_die(&iso))
-    }
-
-    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        Iso.from_rata_die(self.to_rata_die(date))
+    fn has_cheap_iso_conversion(&self) -> bool {
+        false
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -1773,7 +1768,7 @@ mod test {
         for (case, f_date) in SIMULATED_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
                 .unwrap();
-            let iso = Date::from_rata_die(RataDie::new(*f_date), Iso);
+            let iso = Date::from_rata_die(RataDie::new(*f_date), crate::Iso);
 
             assert_eq!(iso.to_calendar(calendar).inner, date.inner, "{case:?}");
         }

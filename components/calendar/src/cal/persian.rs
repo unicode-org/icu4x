@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
@@ -133,12 +132,8 @@ impl Calendar for Persian {
         )
     }
 
-    fn from_iso(&self, iso: IsoDateInner) -> PersianDateInner {
-        self.from_rata_die(Iso.to_rata_die(&iso))
-    }
-
-    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        Iso.from_rata_die(self.to_rata_die(date))
+    fn has_cheap_iso_conversion(&self) -> bool {
+        false
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -733,7 +728,7 @@ mod tests {
         for &(p_year, leap, iso_year, iso_month, iso_day) in CALENDAR_UT_AC_IR_TEST_DATA.iter() {
             let persian_date = Date::try_new_persian(p_year, 1, 1).unwrap();
             assert_eq!(persian_date.is_in_leap_year(), leap);
-            let iso_date = persian_date.to_calendar(Iso);
+            let iso_date = persian_date.to_iso();
             assert_eq!(iso_date.era_year().year, iso_year);
             assert_eq!(iso_date.month().ordinal, iso_month);
             assert_eq!(iso_date.day_of_month().0, iso_day);

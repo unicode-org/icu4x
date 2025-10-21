@@ -293,8 +293,33 @@ impl Calendar for AnyCalendar {
         Ok(match_cal!(match self: (c) => c.from_fields(fields, options)?))
     }
 
+    fn has_cheap_iso_conversion(&self) -> bool {
+        match self {
+            Self::Buddhist(ref c) => c.has_cheap_iso_conversion(),
+            Self::Chinese(ref c) => c.has_cheap_iso_conversion(),
+            Self::Coptic(ref c) => c.has_cheap_iso_conversion(),
+            Self::Dangi(ref c) => c.has_cheap_iso_conversion(),
+            Self::Ethiopian(ref c) => c.has_cheap_iso_conversion(),
+            Self::Gregorian(ref c) => c.has_cheap_iso_conversion(),
+            Self::Hebrew(ref c) => c.has_cheap_iso_conversion(),
+            Self::Indian(ref c) => c.has_cheap_iso_conversion(),
+            Self::HijriSimulated(ref c) => c.has_cheap_iso_conversion(),
+            Self::HijriTabular(ref c) => c.has_cheap_iso_conversion(),
+            Self::HijriUmmAlQura(ref c) => c.has_cheap_iso_conversion(),
+            Self::Iso(ref c) => c.has_cheap_iso_conversion(),
+            Self::Japanese(ref c) => c.has_cheap_iso_conversion(),
+            Self::JapaneseExtended(ref c) => c.has_cheap_iso_conversion(),
+            Self::Persian(ref c) => c.has_cheap_iso_conversion(),
+            Self::Roc(ref c) => c.has_cheap_iso_conversion(),
+        }
+    }
+
     fn from_iso(&self, iso: IsoDateInner) -> AnyDateInner {
         match_cal!(match self: (c) => c.from_iso(iso))
+    }
+
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+        match_cal_and_date!(match (self, date): (c, d) => c.to_iso(d))
     }
 
     fn from_rata_die(&self, rd: calendrical_calculations::rata_die::RataDie) -> Self::DateInner {
@@ -303,10 +328,6 @@ impl Calendar for AnyCalendar {
 
     fn to_rata_die(&self, date: &Self::DateInner) -> calendrical_calculations::rata_die::RataDie {
         match_cal_and_date!(match (self, date): (c, d) => c.to_rata_die(d))
-    }
-
-    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        match_cal_and_date!(match (self, date): (c, d) => c.to_iso(d))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
