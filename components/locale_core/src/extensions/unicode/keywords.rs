@@ -396,12 +396,12 @@ impl Keywords {
     /// let mut kw: Keywords = "ab-cd-ca-buddhist".parse().unwrap();
     /// let kw2: Keywords = "ca-gregory-hc-h12".parse().unwrap();
     ///
-    /// kw.extend(kw2);
+    /// kw.extend_from_keywords(kw2);
     ///
     /// assert_eq!(kw, "ab-cd-ca-gregory-hc-h12".parse().unwrap());
     /// ```
     #[cfg(feature = "alloc")]
-    pub fn extend(&mut self, other: Keywords) {
+    pub fn extend_from_keywords(&mut self, other: Keywords) {
         for (key, value) in other.0 {
             self.0.insert(key, value);
         }

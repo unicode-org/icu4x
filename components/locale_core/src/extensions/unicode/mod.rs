@@ -231,8 +231,8 @@ impl Unicode {
     /// ```
     #[cfg(feature = "alloc")]
     pub fn extend(&mut self, other: Unicode) {
-        self.keywords.extend(other.keywords);
-        self.attributes.extend(other.attributes);
+        self.keywords.extend_from_keywords(other.keywords);
+        self.attributes.extend_from_attributes(other.attributes);
     }
 }
 

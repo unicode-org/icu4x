@@ -159,12 +159,12 @@ impl Attributes {
     /// let mut attrs: Attributes = "foobar-foobaz".parse().unwrap();
     /// let attrs2: Attributes = "foobar-fooqux".parse().unwrap();
     ///
-    /// attrs.extend(attrs2);
+    /// attrs.extend_from_attributes(attrs2);
     ///
     /// assert_eq!(attrs, "foobar-foobaz-fooqux".parse().unwrap());
     /// ```
     #[cfg(feature = "alloc")]
-    pub fn extend(&mut self, other: Attributes) {
+    pub fn extend_from_attributes(&mut self, other: Attributes) {
         for attr in other.0 {
             if let Err(idx) = self.binary_search(&attr) {
                 self.0.insert(idx, attr);
