@@ -57,12 +57,12 @@ derive_usize_iterator_with_type!(SentenceBreakIterator, 'data);
 ///
 /// # Content Locale
 ///
-/// You can optionally provide a _content locale_ to the [`WordSegmenter`] constructor. If you
+/// You can optionally provide a _content locale_ to the [`SentenceSegmenter`] constructor. If you
 /// have information on the language of the text being segmented, providing this hint can
 /// produce higher-quality results.
 ///
-/// If you have a content locale, use [`WordBreakOptions`] and a constructor begining with `new`.
-/// If you do not have a content locale use [`WordBreakInvariantOptions`] and a constructor
+/// If you have a content locale, use [`SentenceBreakOptions`] and a constructor begining with `new`.
+/// If you do not have a content locale use [`SentenceBreakInvariantOptions`] and a constructor
 /// beginning with `try_new`.
 ///
 /// # Examples
