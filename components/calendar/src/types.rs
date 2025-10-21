@@ -436,12 +436,12 @@ pub(crate) struct ValidMonthCode {
 impl ValidMonthCode {
     #[inline]
     pub(crate) fn from_bytes(bytes: &[u8]) -> Result<Self, MonthCodeParseError> {
-        match bytes {
-            &[b'M', tens, ones] => Ok(Self {
+        match *bytes {
+            [b'M', tens, ones] => Ok(Self {
                 number: (tens - b'0') * 10 + ones - b'0',
                 is_leap: false,
             }),
-            &[b'M', tens, ones, b'L'] => Ok(Self {
+            [b'M', tens, ones, b'L'] => Ok(Self {
                 number: (tens - b'0') * 10 + ones - b'0',
                 is_leap: true,
             }),
@@ -452,7 +452,7 @@ impl ValidMonthCode {
     /// Create a new ValidMonthCode without checking that the number is between 1 and 99
     #[inline]
     pub(crate) fn new_unchecked(number: u8, is_leap: bool) -> Self {
-        debug_assert!(1 <= number && number <= 99);
+        debug_assert!((1..=99).contains(&number));
         Self { number, is_leap }
     }
 
