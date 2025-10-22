@@ -143,13 +143,25 @@ fn test_arithmetic_cases() {
 
 #[test]
 fn test_hebrew() {
-    let m06z_20 = Date::try_new_hebrew(5783, 6, 20).unwrap();
-    let m05l_15 = Date::try_new_hebrew(5784, 6, 15).unwrap();
-    let m05l_30 = Date::try_new_hebrew(5784, 6, 30).unwrap();
-    let m06a_29 = Date::try_new_hebrew(5784, 7, 29).unwrap();
-    let m07a_10 = Date::try_new_hebrew(5784, 8, 10).unwrap();
-    let m06b_15 = Date::try_new_hebrew(5785, 6, 15).unwrap();
-    let m07b_20 = Date::try_new_hebrew(5785, 7, 20).unwrap();
+    let m06z_20 =
+        Date::try_new_from_codes(None, 5783, MonthCode::new_normal(6).unwrap(), 20, Hebrew)
+            .unwrap();
+    let m05l_15 =
+        Date::try_new_from_codes(None, 5784, MonthCode::new_leap(5).unwrap(), 15, Hebrew).unwrap();
+    let m05l_30 =
+        Date::try_new_from_codes(None, 5784, MonthCode::new_leap(5).unwrap(), 30, Hebrew).unwrap();
+    let m06a_29 =
+        Date::try_new_from_codes(None, 5784, MonthCode::new_normal(6).unwrap(), 29, Hebrew)
+            .unwrap();
+    let m07a_10 =
+        Date::try_new_from_codes(None, 5784, MonthCode::new_normal(7).unwrap(), 10, Hebrew)
+            .unwrap();
+    let m06b_15 =
+        Date::try_new_from_codes(None, 5785, MonthCode::new_normal(6).unwrap(), 15, Hebrew)
+            .unwrap();
+    let m07b_20 =
+        Date::try_new_from_codes(None, 5785, MonthCode::new_normal(7).unwrap(), 20, Hebrew)
+            .unwrap();
 
     #[rustfmt::skip]
     #[allow(clippy::type_complexity)]
