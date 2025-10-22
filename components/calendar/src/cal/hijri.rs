@@ -550,47 +550,8 @@ impl HijriYearData {
             })
     }
 
-    fn start_day(self) -> RataDie {
-        self.packed.start_day(self.extended_year)
-    }
-
-    /// Get the date's R.D. given (m, d) in this info's year
-    fn md_to_rd(self, month: u8, day: u8) -> RataDie {
-        let month_offset = if month == 1 {
-            0
-        } else {
-            self.last_day_of_month(month - 1)
-        };
-        self.start_day() + month_offset as i64 + (day - 1) as i64
-    }
-
-    fn md_from_rd(self, rd: RataDie) -> (u8, u8) {
-        let day_of_year = (rd - self.start_day()) as u16;
-
-        // We divide by 30, not 29, to account for the case where all months before this
-        // were length 30 (possible near the beginning of the year)
-        let mut month = (day_of_year / 30) as u8 + 1;
-
-        let day_of_year = day_of_year + 1;
-        let mut last_day_of_month = self.last_day_of_month(month);
-        let mut last_day_of_prev_month = if month == 1 {
-            0
-        } else {
-            self.last_day_of_month(month - 1)
-        };
-
-        while day_of_year > last_day_of_month && month <= 12 {
-            month += 1;
-            last_day_of_prev_month = last_day_of_month;
-            last_day_of_month = self.last_day_of_month(month);
-        }
-        let day = (day_of_year - last_day_of_prev_month) as u8;
-        (month, day)
-    }
-
-    // Which day of year is the last day of a month (month is 1-indexed)
-    fn last_day_of_month(self, month: u8) -> u16 {
-        self.packed.last_day_of_month(month)
+    fn new_year(self) -> RataDie {
+        self.packed.new_year(self.extended_year)
     }
 }
 
@@ -692,7 +653,7 @@ impl PackedHijriYearData {
         Self(all)
     }
 
-    fn start_day(self, extended_year: i32) -> RataDie {
+    fn new_year(self, extended_year: i32) -> RataDie {
         let start_offset = if (self.0 & 0b1_0000_0000_0000) != 0 {
             -((self.0 >> 13) as i64)
         } else {
@@ -709,6 +670,7 @@ impl PackedHijriYearData {
         (self.0 & ((1 << 12) - 1)).count_ones() == 7
     }
 
+    // month is 1-indexed, but 0 is a valid input, producing 0
     fn last_day_of_month(self, month: u8) -> u16 {
         // month is 1-indexed, so `29 * month` includes the current month
         let mut prev_month_lengths = 29 * month as u16;
@@ -718,6 +680,10 @@ impl PackedHijriYearData {
         let long_month_bits = self.0 & ((1 << month as u16) - 1);
         prev_month_lengths += long_month_bits.count_ones().try_into().unwrap_or(0);
         prev_month_lengths
+    }
+
+    fn days_in_year(self) -> u16 {
+        self.last_day_of_month(12)
     }
 
     const fn mean_tabular_start_day(extended_year: i32) -> RataDie {
@@ -830,11 +796,7 @@ impl<R: Rules> DateFieldsResolver for Hijri<R> {
     type YearInfo = HijriYearData;
 
     fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8 {
-        if year.packed.month_has_30_days(month) {
-            30
-        } else {
-            29
-        }
+        29 + year.packed.month_has_30_days(month) as u8
     }
 
     fn months_in_provided_year(_year: Self::YearInfo) -> u8 {
@@ -913,21 +875,39 @@ impl<R: Rules> Calendar for Hijri<R> {
         let mut year = self.0.year_data(extended_year);
 
         // We rounded the extended year down, so we might need to use the next year
-        if rd >= year.start_day() + year.last_day_of_month(12) as i64 && extended_year < i32::MAX {
+        if rd >= year.new_year() + year.packed.days_in_year() as i64 && extended_year < i32::MAX {
             year = self.0.year_data(year.extended_year + 1)
         }
 
         // Clamp the RD to our year
         let rd = rd.clamp(
-            year.start_day(),
-            year.start_day() + year.last_day_of_month(12) as i64,
+            year.new_year(),
+            year.new_year() + year.packed.days_in_year() as i64,
         );
-        let (m, d) = year.md_from_rd(rd);
-        HijriDateInner(ArithmeticDate::new_unchecked(year, m, d))
+
+        let day_of_year = (rd - year.new_year()) as u16;
+
+        // We divide by 30, not 29, to account for the case where all months before this
+        // were length 30 (possible near the beginning of the year)
+        let mut month = (day_of_year / 30) as u8 + 1;
+        let mut last_day_of_month = year.packed.last_day_of_month(month);
+        let mut last_day_of_prev_month = year.packed.last_day_of_month(month - 1);
+
+        while day_of_year >= last_day_of_month {
+            month += 1;
+            last_day_of_prev_month = last_day_of_month;
+            last_day_of_month = year.packed.last_day_of_month(month);
+        }
+
+        let day = (day_of_year + 1 - last_day_of_prev_month) as u8;
+
+        HijriDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        date.0.year.md_to_rd(date.0.month, date.0.day)
+        date.0.year.new_year()
+            + date.0.year.packed.last_day_of_month(date.0.month - 1) as i64
+            + (date.0.day - 1) as i64
     }
 
     fn has_cheap_iso_conversion(&self) -> bool {
@@ -939,7 +919,7 @@ impl<R: Rules> Calendar for Hijri<R> {
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.0.year.last_day_of_month(12)
+        date.0.year.packed.days_in_year()
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
@@ -1002,7 +982,7 @@ impl<R: Rules> Calendar for Hijri<R> {
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        types::DayOfYear(date.0.year.last_day_of_month(date.0.month - 1) + date.0.day as u16)
+        types::DayOfYear(date.0.year.packed.last_day_of_month(date.0.month - 1) + date.0.day as u16)
     }
 
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
@@ -1867,7 +1847,8 @@ mod test {
                 Hijri::new_simulated_mecca()
                     .0
                     .year_data(year)
-                    .last_day_of_month(12) as i64
+                    .packed
+                    .days_in_year() as i64
             })
             .sum();
         let expected_number_of_days = Date::try_new_hijri_with_calendar(END_YEAR, 1, 1, calendar)
@@ -1891,7 +1872,7 @@ mod test {
         // -1245 1 1 = -214528 (R.D Date)
         // 1518 1 1 = 764588 (R.D Date)
         let sum_days_in_year: i64 = (START_YEAR..END_YEAR)
-            .map(|year| calendar.0.year_data(year).last_day_of_month(12) as i64)
+            .map(|year| calendar.0.year_data(year).packed.days_in_year() as i64)
             .sum();
         let expected_number_of_days = Date::try_new_hijri_with_calendar(END_YEAR, 1, 1, calendar)
             .unwrap()
@@ -1984,7 +1965,7 @@ mod test {
             for i in 0..12 {
                 assert_eq!(packed.month_has_30_days(i + 1), month_lengths[i as usize]);
             }
-            assert_eq!(packed.start_day(1600), start_day);
+            assert_eq!(packed.new_year(1600), start_day);
             Some(())
         }
 
