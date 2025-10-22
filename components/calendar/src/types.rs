@@ -371,7 +371,7 @@ impl MonthCode {
     pub fn new_normal(number: u8) -> Option<Self> {
         (1..=99)
             .contains(&number)
-            .then(|| Month::new_unchecked(number, false).to_month_code())
+            .then(|| Month::new(number).code())
     }
 
     /// Construct a "leap" month code given a number ("MxxL").
@@ -380,7 +380,7 @@ impl MonthCode {
     pub fn new_leap(number: u8) -> Option<Self> {
         (1..=99)
             .contains(&number)
-            .then(|| Month::new_unchecked(number, true).to_month_code())
+            .then(|| Month::leap(number).code())
     }
 }
 
@@ -427,17 +427,42 @@ impl fmt::Display for MonthCode {
     }
 }
 
-/// A [`MonthCode`] that has been parsed into its internal representation.
-#[derive(Copy, Clone, Debug, PartialEq)]
-pub(crate) struct Month {
+/// A representation of a month.
+#[derive(Copy, Clone, Debug, PartialEq, Hash, Eq)]
+pub struct Month {
     /// Month number between 0 and 99
     number: u8,
     is_leap: bool,
 }
 
 impl Month {
-    #[inline]
-    pub(crate) fn try_from_utf8(bytes: &[u8]) -> Result<Self, MonthCodeParseError> {
+    /// Constructs a non-leap with with the given number.
+    ///
+    /// The input saturates at 99.
+    pub const fn new(number: u8) -> Self {
+        Self {
+            number: if number > 99 { 99 } else { number },
+            is_leap: false,
+        }
+    }
+
+    /// Constructs a non-leap with with the given number.
+    ///
+    /// The input saturates at 99.
+    pub const fn leap(number: u8) -> Self {
+        Self {
+            number,
+            is_leap: true,
+        }
+    }
+
+    /// Parses Temporal month code syntax
+    pub fn try_from_str(s: &str) -> Result<Self, MonthCodeParseError> {
+        Self::try_from_utf8(s.as_bytes())
+    }
+
+    /// Parses Temporal month code syntax
+    pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, MonthCodeParseError> {
         match *bytes {
             [b'M', tens, ones] => Ok(Self {
                 number: (tens - b'0') * 10 + ones - b'0',
@@ -452,19 +477,22 @@ impl Month {
     }
 
     /// Create a new ValidMonthCode without checking that the number is between 1 and 99
-    #[inline]
     pub(crate) const fn new_unchecked(number: u8, is_leap: bool) -> Self {
         debug_assert!(1 <= number && number <= 99);
         Self { number, is_leap }
     }
 
-    /// Returns the month number according to the month code.
+    /// Returns the month number.
+    ///
+    /// A month number N is not necessarily the Nth month in the year if there are leap
+    /// months in the year, rather it is associated with the Nth month of a "regular"
+    /// year. There may be multiple month Ns in a year.
     ///
     /// This is NOT the same as the ordinal month!
     ///
     /// # Examples
     ///
-    /// ```ignore
+    /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::cal::Hebrew;
     ///
@@ -473,25 +501,24 @@ impl Month {
     ///
     /// // Hebrew year 5784 was a leap year, so the ordinal month and month number diverge.
     /// assert_eq!(month_info.ordinal, 10);
-    /// assert_eq!(month_info.valid_month_code.number(), 9);
+    /// assert_eq!(month_info.number(), 9);
     /// ```
-    #[inline]
     pub fn number(self) -> u8 {
         self.number
     }
 
     /// Returns whether the month is a leap month.
     ///
-    /// This is true for intercalary months in [`Hebrew`] and [`LunarChinese`].
+    /// This is true for intercalary months in [`Hebrew`] and [`EastAsianTraditional`].
     ///
     /// [`Hebrew`]: crate::cal::Hebrew
-    /// [`LunarChinese`]: crate::cal::LunarChinese
-    #[inline]
+    /// [`EastAsianTraditional`]: crate::cal::east_asian_traditional::EastAsianTraditional
     pub fn is_leap(self) -> bool {
         self.is_leap
     }
 
-    pub(crate) fn to_month_code(self) -> MonthCode {
+    /// Returns the [`MonthCode`] for this month.
+    pub fn code(self) -> MonthCode {
         #[allow(clippy::unwrap_used)] // by construction
         MonthCode(
             TinyAsciiStr::try_from_raw([
@@ -547,39 +574,45 @@ pub struct MonthInfo {
     pub(crate) formatting: Month,
 }
 
+impl core::ops::Deref for MonthInfo {
+    type Target = Month;
+
+    fn deref(&self) -> &Self::Target {
+        &self.standard
+    }
+}
+
 impl MonthInfo {
     pub(crate) fn non_lunisolar(number: u8) -> Self {
-        Self::for_month_and_ordinal(Month::new_unchecked(number, false), number)
+        Self::for_month_and_ordinal(Month::new(number), number)
     }
 
     pub(crate) fn for_month_and_ordinal(month: Month, ordinal: u8) -> Self {
         Self {
             ordinal,
-            standard_code: month.to_month_code(),
+            standard_code: month.code(),
             standard: month,
-            formatting_code: month.to_month_code(),
+            formatting_code: month.code(),
             formatting: month,
         }
     }
 
-    /// Gets the month number. A month number N is not necessarily the Nth month in the year
-    /// if there are leap months in the year, rather it is associated with the Nth month of a "regular"
-    /// year. There may be multiple month Ns in a year
+    #[doc(hidden)] // available through Deref<Target = Month>
     pub fn month_number(self) -> u8 {
         self.standard.number()
     }
 
-    /// Get whether the month is a leap month
+    #[doc(hidden)] // available through Deref<Target = Month>
     pub fn is_leap(self) -> bool {
         self.standard.is_leap()
     }
 
-    #[doc(hidden)]
+    #[doc(hidden)] // for formatting
     pub fn formatting_month_number(self) -> u8 {
         self.formatting.number()
     }
 
-    #[doc(hidden)]
+    #[doc(hidden)] // for formatting
     pub fn formatting_is_leap(self) -> bool {
         self.formatting.is_leap()
     }

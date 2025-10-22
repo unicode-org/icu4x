@@ -309,9 +309,11 @@ impl From<UnknownEraError> for DateFromFieldsError {
     }
 }
 
-/// Internal narrow error type for functions that only fail on parsing month codes
+/// Error for [`Month`](crate::types::Month) parsing
 #[derive(Debug)]
-pub(crate) enum MonthCodeParseError {
+#[non_exhaustive]
+pub enum MonthCodeParseError {
+    /// Invalid syntax
     InvalidSyntax,
 }
 

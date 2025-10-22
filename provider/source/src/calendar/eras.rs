@@ -7,7 +7,8 @@ use crate::cldr_serde::eras::EraData;
 use crate::datetime::DatagenCalendar;
 use crate::SourceDataProvider;
 use icu::calendar::provider::*;
-use icu::calendar::{types::MonthCode, AnyCalendar, Date};
+use icu::calendar::types::Month;
+use icu::calendar::{AnyCalendar, Date};
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
@@ -106,7 +107,7 @@ impl SourceDataProvider {
                                 data.icu4x_era_index = Date::try_new_from_codes(
                                     Some(code),
                                     1,
-                                    MonthCode::new_normal(1).unwrap(),
+                                    Month::new(1).code(),
                                     1,
                                     icu::calendar::Ref(&calendar),
                                 )
@@ -277,15 +278,12 @@ impl crate::IterableDataProviderCached<CalendarJapaneseExtendedV1> for SourceDat
 // We use a single data struct for both Ethiopic calendars, make sure their indices agree
 #[test]
 pub fn ethiopic_and_ethioaa_are_compatible() {
-    use icu::calendar::{
-        cal::{Ethiopian, EthiopianEraStyle},
-        types::MonthCode,
-    };
+    use icu::calendar::cal::{Ethiopian, EthiopianEraStyle};
     assert_eq!(
         Date::try_new_from_codes(
             Some("aa"),
             1,
-            MonthCode::new_normal(1).unwrap(),
+            Month::new(1).code(),
             1,
             Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)
         )
@@ -295,7 +293,7 @@ pub fn ethiopic_and_ethioaa_are_compatible() {
         Date::try_new_from_codes(
             Some("aa"),
             1,
-            MonthCode::new_normal(1).unwrap(),
+            Month::new(1).code(),
             1,
             Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)
         )

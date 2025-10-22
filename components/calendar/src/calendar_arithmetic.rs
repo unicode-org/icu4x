@@ -184,7 +184,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
     /// The default impl is for non-lunisolar calendars!
     #[inline]
     fn month_from_ordinal(&self, _year: &Self::YearInfo, ordinal_month: u8) -> Month {
-        Month::new_unchecked(ordinal_month, false)
+        Month::new(ordinal_month)
     }
 }
 
@@ -573,12 +573,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             .map_err(|e| {
                 // TODO: Use a narrower error type here. For now, convert into DateError.
                 match e {
-                    MonthCodeError::NotInCalendar => {
-                        DateError::UnknownMonthCode(base_month.to_month_code())
-                    }
-                    MonthCodeError::NotInYear => {
-                        DateError::UnknownMonthCode(base_month.to_month_code())
-                    }
+                    MonthCodeError::NotInCalendar => DateError::UnknownMonthCode(base_month.code()),
+                    MonthCodeError::NotInYear => DateError::UnknownMonthCode(base_month.code()),
                 }
             })?;
         // 1. Let _endOfMonth_ be BalanceNonISODate(_calendar_, _y0_, _m0_ + _duration_.[[Months]] + 1, 0).

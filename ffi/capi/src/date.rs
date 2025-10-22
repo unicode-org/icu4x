@@ -19,8 +19,6 @@ pub mod ffi {
     use crate::unstable::errors::ffi::CalendarDateFromFieldsError;
     use crate::unstable::errors::ffi::{CalendarError, Rfc9557ParseError};
 
-    use tinystr::TinyAsciiStr;
-
     #[diplomat::enum_convert(icu_calendar::types::Weekday)]
     #[diplomat::rust_link(icu::calendar::types::Weekday, Enum)]
     #[non_exhaustive]
@@ -278,10 +276,7 @@ pub mod ffi {
             } else {
                 None
             };
-            let month = icu_calendar::types::MonthCode(
-                TinyAsciiStr::try_from_utf8(month_code)
-                    .map_err(|_| CalendarError::UnknownMonthCode)?,
-            );
+            let month = icu_calendar::types::Month::try_from_utf8(month_code)?.code();
             let cal = calendar.0.clone();
             Ok(Box::new(Date(icu_calendar::Date::try_new_from_codes(
                 era, year, month, day, cal,
@@ -389,7 +384,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::types::MonthInfo::month_number, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn month_number(&self) -> u8 {
-            self.0.month().month_number()
+            self.0.month().number()
         }
 
         /// Returns whether the month is a leap month.

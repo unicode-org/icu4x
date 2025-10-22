@@ -26,6 +26,14 @@ icu::calendar::types::DateDuration::for_months#FnInStruct
 icu::calendar::types::DateDuration::for_weeks#FnInStruct
 icu::calendar::types::DateDuration::for_years#FnInStruct
 icu::calendar::types::DateDurationUnit#Enum
+icu::calendar::types::Month#Struct
+icu::calendar::types::Month::code#FnInStruct
+icu::calendar::types::Month::is_leap#FnInStruct
+icu::calendar::types::Month::leap#FnInStruct
+icu::calendar::types::Month::new#FnInStruct
+icu::calendar::types::Month::number#FnInStruct
+icu::calendar::types::Month::try_from_str#FnInStruct
+icu::calendar::types::Month::try_from_utf8#FnInStruct
 icu::collator::CollationKeySink::finish#FnInTrait
 icu::collator::CollationKeySink::write#FnInTrait
 icu::collator::CollationKeySink::write_byte#FnInTrait

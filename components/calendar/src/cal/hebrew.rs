@@ -326,16 +326,16 @@ impl Calendar for Hebrew {
         let standard = self.month_from_ordinal(&date.0.year(), date.0.month());
 
         let formatting = if standard.number() == 6 && date.0.month() == 7 {
-            Month::new_unchecked(6, true) // M06L
+            Month::leap(6)
         } else {
             standard
         };
 
         types::MonthInfo {
             ordinal: date.0.month(),
-            standard_code: standard.to_month_code(),
+            standard_code: standard.code(),
             standard,
-            formatting_code: formatting.to_month_code(),
+            formatting_code: formatting.code(),
             formatting,
         }
     }
@@ -377,19 +377,19 @@ mod tests {
     use super::*;
     use crate::types::MonthCode;
 
-    pub const TISHREI: Month = Month::new_unchecked(1, false);
-    pub const ḤESHVAN: Month = Month::new_unchecked(2, false);
-    pub const KISLEV: Month = Month::new_unchecked(3, false);
-    pub const TEVET: Month = Month::new_unchecked(4, false);
-    pub const SHEVAT: Month = Month::new_unchecked(5, false);
-    pub const ADARI: Month = Month::new_unchecked(5, true);
-    pub const ADAR: Month = Month::new_unchecked(6, false);
-    pub const NISAN: Month = Month::new_unchecked(7, false);
-    pub const IYYAR: Month = Month::new_unchecked(8, false);
-    pub const SIVAN: Month = Month::new_unchecked(9, false);
-    pub const TAMMUZ: Month = Month::new_unchecked(10, false);
-    pub const AV: Month = Month::new_unchecked(11, false);
-    pub const ELUL: Month = Month::new_unchecked(12, false);
+    pub const TISHREI: Month = Month::new(1);
+    pub const ḤESHVAN: Month = Month::new(2);
+    pub const KISLEV: Month = Month::new(3);
+    pub const TEVET: Month = Month::new(4);
+    pub const SHEVAT: Month = Month::new(5);
+    pub const ADARI: Month = Month::leap(5);
+    pub const ADAR: Month = Month::new(6);
+    pub const NISAN: Month = Month::new(7);
+    pub const IYYAR: Month = Month::new(8);
+    pub const SIVAN: Month = Month::new(9);
+    pub const TAMMUZ: Month = Month::new(10);
+    pub const AV: Month = Month::new(11);
+    pub const ELUL: Month = Month::new(12);
 
     /// The leap years used in the tests below
     const LEAP_YEARS_IN_TESTS: [i32; 1] = [5782];
@@ -452,7 +452,7 @@ mod tests {
     fn test_conversions() {
         for ((iso_y, iso_m, iso_d), (y, m, d)) in ISO_HEBREW_DATE_PAIRS.into_iter() {
             let iso_date = Date::try_new_iso(iso_y, iso_m, iso_d).unwrap();
-            let hebrew_date = Date::try_new_from_codes(Some("am"), y, m.to_month_code(), d, Hebrew)
+            let hebrew_date = Date::try_new_from_codes(Some("am"), y, m.code(), d, Hebrew)
                 .expect("Date should parse");
 
             let iso_to_hebrew = iso_date.to_calendar(Hebrew);

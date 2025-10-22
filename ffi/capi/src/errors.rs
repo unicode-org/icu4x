@@ -61,6 +61,7 @@ pub mod ffi {
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::RangeError, Struct, compact)]
     #[diplomat::rust_link(icu::calendar::DateError, Enum, compact)]
+    #[diplomat::rust_link(icu::calendar::error::MonthCodeParseError, Enum, compact)]
     #[cfg(feature = "calendar")]
     #[non_exhaustive]
     pub enum CalendarError {

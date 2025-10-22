@@ -613,7 +613,7 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
 
         // leap_month identifies the ordinal month number of the leap month,
         // so its month number will be leap_month - 1
-        if month == Month::new_unchecked(leap_month - 1, true) {
+        if month == Month::leap(leap_month - 1) {
             return Ok(leap_month);
         }
 
@@ -1535,11 +1535,8 @@ mod test {
         for year in [4659, 4660] {
             let year = cal.year_info_from_extended(year);
             for (month, error) in [
-                (Month::new_unchecked(4, true), MonthCodeError::NotInYear),
-                (
-                    Month::new_unchecked(13, false),
-                    MonthCodeError::NotInCalendar,
-                ),
+                (Month::leap(4), MonthCodeError::NotInYear),
+                (Month::new(13), MonthCodeError::NotInCalendar),
             ] {
                 assert_eq!(
                     cal.ordinal_from_month(&year, month, reject),
@@ -1682,7 +1679,7 @@ mod test {
         use crate::{cal::Gregorian, Date};
 
         let mut related_iso = 1900;
-        let mut lunar_month = Month::new_unchecked(11, false);
+        let mut lunar_month = Month::new(11);
 
         for year in 1901..=2100 {
             println!("Validating year {year}...");
@@ -1737,7 +1734,7 @@ mod test {
                 let chinese = Date::try_new_from_codes(
                     None,
                     related_iso,
-                    lunar_month.to_month_code(),
+                    lunar_month.code(),
                     lunar_day,
                     ChineseTraditional::new(),
                 )
@@ -1825,21 +1822,21 @@ mod test {
                         for (start_year, start_month, end_year, end_month, by) in [
                             (
                                 reference_year_end.extended_year(),
-                                reference_year_end.month().month_number(),
+                                reference_year_end.month().number(),
                                 year_1900_start.extended_year(),
-                                year_1900_start.month().month_number(),
+                                year_1900_start.month().number(),
                                 -1,
                             ),
                             (
                                 reference_year_end.extended_year(),
-                                reference_year_end.month().month_number(),
+                                reference_year_end.month().number(),
                                 year_2035_end.extended_year(),
-                                year_2035_end.month().month_number(),
+                                year_2035_end.month().number(),
                                 1,
                             ),
                             (
                                 year_1900_start.extended_year(),
-                                year_1900_start.month().month_number(),
+                                year_1900_start.month().number(),
                                 -10000,
                                 1,
                                 -1,
