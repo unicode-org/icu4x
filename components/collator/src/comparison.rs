@@ -2298,8 +2298,9 @@ impl CollatorBorrowed<'_> {
             sink.write(state, &[LEVEL_SEPARATOR_BYTE])?;
 
             // Write pairs of nibbles as bytes, except separator bytes as themselves.
+            let length = cases.buf.len() - 1; // Ignore the trailing NO_CE.
             let mut b = 0;
-            for c in &cases.buf {
+            for c in &cases.buf[..length] {
                 debug_assert_eq!(*c & 0xf, 0);
                 debug_assert_ne!(*c, 0);
                 if b == 0 {
@@ -2597,6 +2598,7 @@ where
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::options::CaseLevel;
     use icu_locale::locale;
 
     type Key = Vec<u8>;
@@ -2608,8 +2610,32 @@ mod test {
         Collator::try_new(locale, options).unwrap()
     }
 
+    fn collator_en_with_case_level(
+        strength: Strength,
+        case_level: CaseLevel,
+    ) -> CollatorBorrowed<'static> {
+        let locale = locale!("en").into();
+        let mut options = CollatorOptions::default();
+        options.strength = Some(strength);
+        options.case_level = Some(case_level);
+        Collator::try_new(locale, options).unwrap()
+    }
+
     fn keys(strength: Strength) -> (Key, Key, Key) {
         let collator = collator_en(strength);
+
+        let mut k0 = Vec::new();
+        let Ok(()) = collator.write_sort_key_to("aabc", &mut k0);
+        let mut k1 = Vec::new();
+        let Ok(()) = collator.write_sort_key_to("aAbc", &mut k1);
+        let mut k2 = Vec::new();
+        let Ok(()) = collator.write_sort_key_to("áAbc", &mut k2);
+
+        (k0, k1, k2)
+    }
+
+    fn keys_with_case_level(strength: Strength, case_level: CaseLevel) -> (Key, Key, Key) {
+        let collator = collator_en_with_case_level(strength, case_level);
 
         let mut k0 = Vec::new();
         let Ok(()) = collator.write_sort_key_to("aabc", &mut k0);
@@ -2638,6 +2664,21 @@ mod test {
     #[test]
     fn sort_key_tertiary() {
         let (k0, k1, k2) = keys(Strength::Tertiary);
+        assert!(k0 < k1);
+        assert!(k1 < k2);
+    }
+
+    #[test]
+    fn sort_key_primary_case_level_on() {
+        let (k0, k1, k2) = keys_with_case_level(Strength::Primary, CaseLevel::On);
+        assert!(k0 < k1);
+        assert_eq!(k1, k2);
+        assert!(k0 < k2);
+    }
+
+    #[test]
+    fn sort_key_secondary_case_level_on() {
+        let (k0, k1, k2) = keys_with_case_level(Strength::Secondary, CaseLevel::On);
         assert!(k0 < k1);
         assert!(k1 < k2);
     }
