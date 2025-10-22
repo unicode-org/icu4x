@@ -4,19 +4,18 @@
 
 use icu_calendar::Date;
 use icu_datetime::{fieldsets, input::Time, DateTimeFormatter};
-use icu_host_info::HostInfo;
 use icu_locale_core::Locale;
 use icu_time::DateTime;
 
 fn main() {
-    let mut locale = HostInfo::requested_locales()
+    let mut locale = icu_host_info::requested_locales()
         .unwrap()
         .first()
         .cloned()
         .unwrap_or(Locale::UNKNOWN);
 
     locale.extensions.unicode =
-        HostInfo::unicode_extensions().expect("Failed to retrieve host info");
+        icu_host_info::unicode_extensions().expect("Failed to retrieve host info");
 
     let dtf = DateTimeFormatter::try_new(
         locale.into(),

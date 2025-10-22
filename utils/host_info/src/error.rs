@@ -16,7 +16,7 @@ pub enum HostInfoError {
     #[displaydoc("Error creating a `CString` from a buffer with a null terminator")]
     FromVecWithNul(FromVecWithNulError),
 
-    #[displaydoc("No backend matching backend have been identified")]
+    #[displaydoc("No matching backend has been identified")]
     UnavailableBackend,
 
     #[displaydoc("Unknown category when retrieving locale category for linux")]

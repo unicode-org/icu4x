@@ -2,30 +2,34 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_host_info::HostInfo;
-
 fn main() {
-    println!("resolved backend: {:?}", HostInfo::resolved_backend());
+    println!("resolved backend: {:?}", icu_host_info::resolved_backend());
     println!("-----");
-    println!("requested locales: {:?}", HostInfo::requested_locales());
-    println!("calendar: {:?}", HostInfo::calendar());
-    println!("region: {:?}", HostInfo::region());
-    println!("hour_cycle: {:?}", HostInfo::hour_cycle());
-    println!("measurement_system: {:?}", HostInfo::measurement_system());
+    println!(
+        "requested locales: {:?}",
+        icu_host_info::requested_locales()
+    );
+    println!("calendar: {:?}", icu_host_info::calendar());
+    println!("region: {:?}", icu_host_info::region());
+    println!("hour_cycle: {:?}", icu_host_info::hour_cycle());
+    println!(
+        "measurement_system: {:?}",
+        icu_host_info::measurement_system()
+    );
     println!(
         "measurement_unit_override: {:?}",
-        HostInfo::measurement_unit_override()
+        icu_host_info::measurement_unit_override()
     );
-    println!("first_day: {:?}", HostInfo::first_day_of_week());
-    println!("collation: {:?}", HostInfo::collation());
+    println!("first_day: {:?}", icu_host_info::first_day_of_week());
+    println!("collation: {:?}", icu_host_info::collation());
     println!("-----");
     println!(
         "unicode_extensions: {:?}",
-        HostInfo::unicode_extensions().unwrap().to_string()
+        icu_host_info::unicode_extensions().unwrap().to_string()
     );
     #[cfg(feature = "datetime")]
     println!(
         "datetimeformatter_preferences: {:#?}",
-        HostInfo::datetime_preferences()
+        icu_host_info::datetime_preferences()
     );
 }

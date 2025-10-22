@@ -10,7 +10,7 @@ use std::{collections::HashMap, ffi::CStr, ptr, str::FromStr};
 use crate::error::HostInfoError;
 
 #[derive(Hash, Eq, PartialEq, Debug, Clone, Copy)]
-pub enum LocaleCategory {
+pub(crate) enum LocaleCategory {
     Character, // LC_CTYPE
     Number,    // LC_NUMERIC
     Time,      // LC_TIME

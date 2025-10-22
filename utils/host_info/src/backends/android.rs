@@ -3,9 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    backends::{HostInfoBackend, RawHostInfoBackend},
+    backends::{
+        shared::posix::{raw_locale_categories, LocaleCategory},
+        HostInfoBackend, RawHostInfoBackend,
+    },
     error::HostInfoError,
-    posix::{raw_locale_categories, LocaleCategory},
 };
 
 pub struct AndroidHostInfoBackend;

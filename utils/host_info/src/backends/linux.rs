@@ -3,9 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    backends::{HostInfoBackend, RawHostInfoBackend},
+    backends::{shared::posix::PosixLocale, HostInfoBackend, RawHostInfoBackend},
     error::HostInfoError,
-    locale::PosixLocale,
 };
 use icu_locale_core::{preferences::extensions::unicode::keywords::HourCycle, Locale};
 

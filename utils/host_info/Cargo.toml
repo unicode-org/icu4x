@@ -7,19 +7,29 @@ name = "icu_host_info"
 version = "0.1.0"
 publish = false
 
-rust-version = "1.82"
-authors.workspace = true
-edition.workspace = true
-repository.workspace = true
-homepage.workspace = true
-license.workspace = true
-categories.workspace = true
-include.workspace = true
+rust-version = "1.83"
+authors = ["The ICU4X Project Developers"]
+edition = "2021"
+repository = "https://github.com/unicode-org/icu4x"
+homepage = "https://icu4x.unicode.org"
+license = "Unicode-3.0"
+categories = ["internationalization"]
+include = [
+    "data/**/*",
+    "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
+    "tests/**/*",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md",
+    "build.rs",
+]
 
 [dependencies]
-displaydoc = { workspace = true }
-icu_locale_core = { workspace = true, features = ["alloc"] }
-icu_datetime = { workspace = true, optional = true }
+displaydoc = { version = "0.2.3", default-features = false }
+icu_locale_core = { version = "~2.0.0", path = "../../components/locale_core", features = ["alloc"] }
+icu_datetime = { version = "~2.0.0", path = "../../components/datetime", optional = true }
 libc = "0.2.175"
 
 [target.'cfg(target_os = "linux")'.dependencies]
@@ -30,7 +40,7 @@ core-foundation-sys = { version = "0.8.6" }
 core-foundation = { version = "0.10.1" }
 
 [target.'cfg(target_os = "windows")'.dependencies.windows]
-version = "0.60.0"
+version = "0.60"
 features = [
     "System",
     "Foundation",
@@ -44,9 +54,9 @@ features = [
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
-icu_datetime = { workspace = true, features = ["compiled_data"] }
-icu_calendar = { workspace = true }
-icu_time = { workspace = true, features = ["compiled_data"] }
+icu_datetime = { version = "~2.0.0", path = "../../components/datetime", features = ["compiled_data"] }
+icu_calendar = { version = "~2.0.0", path = "../../components/calendar" }
+icu_time = { version = "~2.0.0", path = "../../components/time", features = ["compiled_data"] }
 
 [features]
 default = []

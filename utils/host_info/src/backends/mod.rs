@@ -32,6 +32,8 @@ use icu_locale_core::{
 
 use crate::error::HostInfoError;
 
+mod shared;
+
 #[cfg(target_os = "android")]
 #[doc(hidden)]
 pub mod android;
@@ -179,7 +181,7 @@ pub trait HostInfoBackend: RawHostInfoBackend {
 /// did not explicitly set a value for any of the preferences.
 /// For example, if the user set `en-US` as their preferred locale, and did not manually set `HourCycle`
 /// to any value, the host API may return hour cycle default value for en-US.
-/// If possible, the implementation should attempt to distinguish between explicity set value that matches
+/// If possible, the implementation should attempt to distinguish between explicitly set value that matches
 /// default for a given locale, from lack of explicit value set.
 ///
 /// If that is not possible, the API should return the value retrieved from the system for each field getter.
@@ -221,7 +223,7 @@ pub trait RawHostInfoBackend {
         Ok(None)
     }
 
-    /// Attempt to retrieve measurement unut override set in the host regional preferences by the user.
+    /// Attempt to retrieve measurement unit override set in the host regional preferences by the user.
     ///
     /// This should retrieve `temperature` unit.
     fn raw_measurement_unit_override() -> Result<Option<String>, HostInfoError> {

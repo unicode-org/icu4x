@@ -4,11 +4,10 @@
 
 use icu_calendar::Date;
 use icu_datetime::{fieldsets, input::Time, DateTimeFormatter};
-use icu_host_info::HostInfo;
 use icu_time::DateTime;
 
 fn main() {
-    let prefs = HostInfo::datetime_preferences().expect("Failed to retrieve host info");
+    let prefs = icu_host_info::datetime_preferences().expect("Failed to retrieve host info");
     let dtf = DateTimeFormatter::try_new(
         prefs,
         fieldsets::YMDT::long().with_alignment(icu_datetime::options::Alignment::Column),
