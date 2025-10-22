@@ -9,7 +9,7 @@ use crate::error::{
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
-use crate::types::ValidMonthCode;
+use crate::types::Month;
 use crate::AsCalendar;
 use crate::{types, Calendar, Date};
 use calendrical_calculations::chinese_based;
@@ -112,7 +112,7 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
     fn ecma_reference_year(
         &self,
         // TODO: Consider accepting ValidMonthCode
-        _month_code: (u8, bool),
+        _month: (u8, bool),
         _day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
         Err(EcmaReferenceYearError::Unimplemented)
@@ -215,10 +215,10 @@ impl Rules for China {
 
     fn ecma_reference_year(
         &self,
-        month_code: (u8, bool),
+        month: (u8, bool),
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        let (number, is_leap) = month_code;
+        let (number, is_leap) = month;
         // Computed by `generate_reference_years`
         let extended_year = match (number, is_leap, day > 29) {
             (1, false, false) => 1972,
@@ -408,10 +408,10 @@ impl Rules for Korea {
 
     fn ecma_reference_year(
         &self,
-        month_code: (u8, bool),
+        month: (u8, bool),
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        let (number, is_leap) = month_code;
+        let (number, is_leap) = month;
         // Computed by `generate_reference_years`
         let extended_year = match (number, is_leap, day > 29) {
             (1, false, false) => 1972,
@@ -608,18 +608,18 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        month_code: types::ValidMonthCode,
+        month: types::Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         self.0
-            .ecma_reference_year(month_code.to_tuple(), day)
+            .ecma_reference_year(month.to_tuple(), day)
             .map(|y| self.0.year_data(y))
     }
 
-    fn ordinal_month_from_code(
+    fn ordinal_from_month(
         &self,
         year: &Self::YearInfo,
-        month_code: types::ValidMonthCode,
+        month: types::Month,
         options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
         // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
@@ -628,11 +628,11 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
 
         // leap_month identifies the ordinal month number of the leap month,
         // so its month number will be leap_month - 1
-        if month_code == ValidMonthCode::new_unchecked(leap_month - 1, true) {
+        if month == Month::new_unchecked(leap_month - 1, true) {
             return Ok(leap_month);
         }
 
-        let (number @ 1..13, leap) = month_code.to_tuple() else {
+        let (number @ 1..13, leap) = month.to_tuple() else {
             return Err(MonthCodeError::NotInCalendar);
         };
 
@@ -645,11 +645,11 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
         Ok(number + (number >= leap_month) as u8)
     }
 
-    fn month_code_from_ordinal(&self, year: &Self::YearInfo, ordinal_month: u8) -> ValidMonthCode {
+    fn month_from_ordinal(&self, year: &Self::YearInfo, ordinal_month: u8) -> Month {
         // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
         // it is impossible to actually have 14 months in a year.
         let leap_month = year.packed.leap_month().unwrap_or(14);
-        ValidMonthCode::new_unchecked(
+        Month::new_unchecked(
             // subtract one if there was a leap month before
             ordinal_month - (ordinal_month >= leap_month) as u8,
             ordinal_month == leap_month,
@@ -783,8 +783,8 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     /// leap months. For example, in a year where an intercalary month is added after the second
     /// month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        types::MonthInfo::for_code_and_ordinal(
-            self.month_code_from_ordinal(&date.0.year(), date.0.month()),
+        types::MonthInfo::for_month_and_ordinal(
+            self.month_from_ordinal(&date.0.year(), date.0.month()),
             date.0.month(),
         )
     }
@@ -1518,7 +1518,7 @@ mod test {
     }
 
     #[test]
-    fn test_month_code_to_ordinal() {
+    fn test_month_to_ordinal() {
         let cal = ChineseTraditional::new();
         let reject = DateFromFieldsOptions {
             overflow: Some(Overflow::Reject),
@@ -1527,12 +1527,12 @@ mod test {
         let year = cal.year_info_from_extended(2023);
         let leap_month = year.packed.leap_month().unwrap();
         for ordinal in 1..=13 {
-            let code = ValidMonthCode::new_unchecked(
+            let month = Month::new_unchecked(
                 ordinal - (ordinal >= leap_month) as u8,
                 ordinal == leap_month,
             );
             assert_eq!(
-                cal.ordinal_month_from_code(&year, code, reject),
+                cal.ordinal_from_month(&year, month, reject),
                 Ok(ordinal),
                 "Code to ordinal failed for year: {}, code: {ordinal}",
                 year.related_iso
@@ -1541,7 +1541,7 @@ mod test {
     }
 
     #[test]
-    fn check_invalid_month_code_to_ordinal() {
+    fn check_invalid_month_to_ordinal() {
         let cal = ChineseTraditional::new();
         let reject = DateFromFieldsOptions {
             overflow: Some(Overflow::Reject),
@@ -1549,20 +1549,17 @@ mod test {
         };
         for year in [4659, 4660] {
             let year = cal.year_info_from_extended(year);
-            for (code, error) in [
+            for (month, error) in [
+                (Month::new_unchecked(4, true), MonthCodeError::NotInYear),
                 (
-                    ValidMonthCode::new_unchecked(4, true),
-                    MonthCodeError::NotInYear,
-                ),
-                (
-                    ValidMonthCode::new_unchecked(13, false),
+                    Month::new_unchecked(13, false),
                     MonthCodeError::NotInCalendar,
                 ),
             ] {
                 assert_eq!(
-                    cal.ordinal_month_from_code(&year, code, reject),
+                    cal.ordinal_from_month(&year, month, reject),
                     Err(error),
-                    "Invalid month code failed for year: {}, code: {code:?}",
+                    "Invalid month code failed for year: {}, code: {month:?}",
                     year.related_iso,
                 );
             }
@@ -1700,7 +1697,7 @@ mod test {
         use crate::{cal::Gregorian, Date};
 
         let mut related_iso = 1900;
-        let mut lunar_month = ValidMonthCode::new_unchecked(11, false);
+        let mut lunar_month = Month::new_unchecked(11, false);
 
         for year in 1901..=2100 {
             println!("Validating year {year}...");
@@ -1740,7 +1737,7 @@ mod test {
                         .0
                         .parse()
                         .unwrap();
-                    lunar_month = ValidMonthCode::new_unchecked(
+                    lunar_month = Month::new_unchecked(
                         new_lunar_month,
                         new_lunar_month == lunar_month.number(),
                     );

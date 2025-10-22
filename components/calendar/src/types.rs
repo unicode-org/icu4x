@@ -360,9 +360,9 @@ impl MonthCode {
     #[deprecated(since = "2.1.0")]
     /// Get the month number and whether or not it is leap from the month code
     pub fn parsed(self) -> Option<(u8, bool)> {
-        ValidMonthCode::try_from_utf8(self.0.as_bytes())
+        Month::try_from_utf8(self.0.as_bytes())
             .ok()
-            .map(ValidMonthCode::to_tuple)
+            .map(Month::to_tuple)
     }
 
     /// Construct a "normal" month code given a number ("Mxx").
@@ -371,7 +371,7 @@ impl MonthCode {
     pub fn new_normal(number: u8) -> Option<Self> {
         (1..=99)
             .contains(&number)
-            .then(|| ValidMonthCode::new_unchecked(number, false).to_month_code())
+            .then(|| Month::new_unchecked(number, false).to_month_code())
     }
 
     /// Construct a "leap" month code given a number ("MxxL").
@@ -380,7 +380,7 @@ impl MonthCode {
     pub fn new_leap(number: u8) -> Option<Self> {
         (1..=99)
             .contains(&number)
-            .then(|| ValidMonthCode::new_unchecked(number, true).to_month_code())
+            .then(|| Month::new_unchecked(number, true).to_month_code())
     }
 }
 
@@ -429,13 +429,13 @@ impl fmt::Display for MonthCode {
 
 /// A [`MonthCode`] that has been parsed into its internal representation.
 #[derive(Copy, Clone, Debug, PartialEq)]
-pub(crate) struct ValidMonthCode {
+pub(crate) struct Month {
     /// Month number between 0 and 99
     number: u8,
     is_leap: bool,
 }
 
-impl ValidMonthCode {
+impl Month {
     #[inline]
     pub(crate) fn try_from_utf8(bytes: &[u8]) -> Result<Self, MonthCodeParseError> {
         match *bytes {
@@ -533,7 +533,7 @@ pub struct MonthInfo {
     pub standard_code: MonthCode,
 
     /// Same as [`Self::standard_code`] but with invariants validated.
-    pub(crate) valid_standard_code: ValidMonthCode,
+    pub(crate) standard: Month,
 
     /// A month code, useable for formatting.
     ///
@@ -549,21 +549,21 @@ pub struct MonthInfo {
     pub formatting_code: MonthCode,
 
     /// Same as [`Self::formatting_code`] but with invariants validated.
-    pub(crate) valid_formatting_code: ValidMonthCode,
+    pub(crate) formatting: Month,
 }
 
 impl MonthInfo {
     pub(crate) fn non_lunisolar(number: u8) -> Self {
-        Self::for_code_and_ordinal(ValidMonthCode::new_unchecked(number, false), number)
+        Self::for_month_and_ordinal(Month::new_unchecked(number, false), number)
     }
 
-    pub(crate) fn for_code_and_ordinal(code: ValidMonthCode, ordinal: u8) -> Self {
+    pub(crate) fn for_month_and_ordinal(month: Month, ordinal: u8) -> Self {
         Self {
             ordinal,
-            standard_code: code.to_month_code(),
-            valid_standard_code: code,
-            formatting_code: code.to_month_code(),
-            valid_formatting_code: code,
+            standard_code: month.to_month_code(),
+            standard: month,
+            formatting_code: month.to_month_code(),
+            formatting: month,
         }
     }
 
@@ -571,22 +571,22 @@ impl MonthInfo {
     /// if there are leap months in the year, rather it is associated with the Nth month of a "regular"
     /// year. There may be multiple month Ns in a year
     pub fn month_number(self) -> u8 {
-        self.valid_standard_code.number()
+        self.standard.number()
     }
 
     /// Get whether the month is a leap month
     pub fn is_leap(self) -> bool {
-        self.valid_standard_code.is_leap()
+        self.standard.is_leap()
     }
 
     #[doc(hidden)]
     pub fn formatting_month_number(self) -> u8 {
-        self.valid_formatting_code.number()
+        self.formatting.number()
     }
 
     #[doc(hidden)]
     pub fn formatting_is_leap(self) -> bool {
-        self.valid_formatting_code.is_leap()
+        self.formatting.is_leap()
     }
 }
 

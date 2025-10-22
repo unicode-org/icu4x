@@ -120,20 +120,20 @@ impl DateFieldsResolver for Ethiopian {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        month_code: types::ValidMonthCode,
+        month: types::Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
-        crate::cal::Coptic::reference_year_from_month_day(month_code, day)
+        crate::cal::Coptic::reference_year_from_month_day(month, day)
     }
 
     #[inline]
-    fn ordinal_month_from_code(
+    fn ordinal_from_month(
         &self,
         _year: &Self::YearInfo,
-        month_code: types::ValidMonthCode,
+        month: types::Month,
         _options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
-        match month_code.to_tuple() {
+        match month.to_tuple() {
             (month_number @ 1..=13, false) => Ok(month_number),
             _ => Err(MonthCodeError::NotInCalendar),
         }

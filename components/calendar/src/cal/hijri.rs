@@ -99,7 +99,7 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
     fn ecma_reference_year(
         &self,
         // TODO: Consider accepting ValidMonthCode
-        _month_code: (u8, bool),
+        _month: (u8, bool),
         _day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
         Err(EcmaReferenceYearError::Unimplemented)
@@ -272,10 +272,10 @@ impl Rules for UmmAlQura {
 
     fn ecma_reference_year(
         &self,
-        month_code: (u8, bool),
+        month: (u8, bool),
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        let (ordinal_month, false) = month_code else {
+        let (ordinal_month, false) = month else {
             return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
         };
 
@@ -361,10 +361,10 @@ impl Rules for TabularAlgorithm {
 
     fn ecma_reference_year(
         &self,
-        month_code: (u8, bool),
+        month: (u8, bool),
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        let (ordinal_month, false) = month_code else {
+        let (ordinal_month, false) = month else {
             return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
         };
 
@@ -875,11 +875,11 @@ impl<R: Rules> DateFieldsResolver for Hijri<R> {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        month_code: types::ValidMonthCode,
+        month: types::Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         self.0
-            .ecma_reference_year(month_code.to_tuple(), day)
+            .ecma_reference_year(month.to_tuple(), day)
             .map(|y| self.0.year_data(y))
     }
 }

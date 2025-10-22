@@ -116,10 +116,10 @@ impl DateFieldsResolver for Julian {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        month_code: types::ValidMonthCode,
+        month: types::Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
-        let (ordinal_month, false) = month_code.to_tuple() else {
+        let (ordinal_month, false) = month.to_tuple() else {
             return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
         };
         // December 31, 1972 occurs on 12th month, 18th day, 1972 Old Style
@@ -143,10 +143,10 @@ impl Calendar for Julian {
         &self,
         era: Option<&str>,
         year: i32,
-        month_code: types::MonthCode,
+        month: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_codes(era, year, month_code, day, self).map(JulianDateInner)
+        ArithmeticDate::from_codes(era, year, month, day, self).map(JulianDateInner)
     }
 
     #[cfg(feature = "unstable")]

@@ -92,20 +92,20 @@ impl DateFieldsResolver for Coptic {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        month_code: types::ValidMonthCode,
+        month: types::Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
-        Coptic::reference_year_from_month_day(month_code, day)
+        Coptic::reference_year_from_month_day(month, day)
     }
 
     #[inline]
-    fn ordinal_month_from_code(
+    fn ordinal_from_month(
         &self,
         _year: &Self::YearInfo,
-        month_code: types::ValidMonthCode,
+        month: types::Month,
         _options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
-        match month_code.to_tuple() {
+        match month.to_tuple() {
             (month_number @ 1..=13, false) => Ok(month_number),
             _ => Err(MonthCodeError::NotInCalendar),
         }
@@ -114,10 +114,10 @@ impl DateFieldsResolver for Coptic {
 
 impl Coptic {
     pub(crate) fn reference_year_from_month_day(
-        month_code: types::ValidMonthCode,
+        month: types::Month,
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        let (ordinal_month, false) = month_code.to_tuple() else {
+        let (ordinal_month, false) = month.to_tuple() else {
             return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
         };
         // December 31, 1972 occurs on 4th month, 22nd day, 1689 AM

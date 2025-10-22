@@ -91,7 +91,7 @@ impl<Y: GregorianYears> DateFieldsResolver for AbstractGregorian<Y> {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        _month_code: types::ValidMonthCode,
+        _month: types::Month,
         _day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         Ok(REFERENCE_YEAR)
