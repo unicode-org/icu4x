@@ -182,7 +182,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             calendar.year_info_from_extended(year)
         };
         let validated =
-            ValidMonthCode::from_bytes(month_code.0.as_bytes()).map_err(|e| match e {
+            ValidMonthCode::try_from_utf8(month_code.0.as_bytes()).map_err(|e| match e {
                 MonthCodeParseError::InvalidSyntax => DateError::UnknownMonthCode(month_code),
             })?;
         let month = calendar
@@ -251,7 +251,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                     MissingFieldsStrategy::Ecma => {
                         match (fields.month_code, fields.ordinal_month) {
                             (Some(month_code), None) => {
-                                let validated = ValidMonthCode::from_bytes(month_code)?;
+                                let validated = ValidMonthCode::try_from_utf8(month_code)?;
                                 valid_month_code = Some(validated);
                                 calendar.reference_year_from_month_day(validated, day)?
                             }
@@ -284,7 +284,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             Some(month_code) => {
                 let validated = match valid_month_code {
                     Some(validated) => validated,
-                    None => ValidMonthCode::from_bytes(month_code)?,
+                    None => ValidMonthCode::try_from_utf8(month_code)?,
                 };
                 let computed_month = calendar.ordinal_month_from_code(&year, validated, options)?;
                 if let Some(ordinal_month) = fields.ordinal_month {

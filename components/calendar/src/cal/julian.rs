@@ -109,7 +109,9 @@ impl DateFieldsResolver for Julian {
         month_code: types::ValidMonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
-        let ordinal_month = month_code.number();
+        let (ordinal_month, false) = month_code.to_tuple() else {
+            return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
+        };
         // December 31, 1972 occurs on 12th month, 18th day, 1972 Old Style
         // Note: 1972 is a leap year
         let julian_year = if ordinal_month < 12 || (ordinal_month == 12 && day <= 18) {

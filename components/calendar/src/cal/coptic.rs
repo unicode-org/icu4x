@@ -107,7 +107,9 @@ impl Coptic {
         month_code: types::ValidMonthCode,
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        let ordinal_month = month_code.number();
+        let (ordinal_month, false) = month_code.to_tuple() else {
+            return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
+        };
         // December 31, 1972 occurs on 4th month, 22nd day, 1689 AM
         let anno_martyrum_year = if ordinal_month < 4 || (ordinal_month == 4 && day <= 22) {
             1689

@@ -111,38 +111,28 @@ impl DateFieldsResolver for Hebrew {
         month_code: types::ValidMonthCode,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
-        // Match statements are more readable with strings.
-        let month_code = month_code.to_month_code();
-        let month_code_str = month_code.0.as_str();
         // December 31, 1972 occurs on 4th month, 26th day, 5733 AM
-        let hebrew_year = match month_code_str {
-            "M01" => 5733,
-            "M02" => match day {
+        let hebrew_year = match month_code.to_tuple() {
+            (1, false) => 5733,
+            (2, false) => match day {
                 // There is no day 30 in 5733 (there is in 5732)
-                1..=29 => 5733,
+                ..=29 => 5733,
                 // Note (here and below): this must be > 29, not just == 30,
                 // since we have not yet applied a potential Overflow::Constrain.
                 _ => 5732,
             },
-            "M03" => match day {
+            (3, false) => match day {
                 // There is no day 30 in 5733 (there is in 5732)
-                1..=29 => 5733,
+                ..=29 => 5733,
                 _ => 5732,
             },
-            "M04" => match day {
-                1..=26 => 5733,
+            (4, false) => match day {
+                ..=26 => 5733,
                 _ => 5732,
             },
-            "M05" => 5732,
+            (5..=12, false) => 5732,
             // Neither 5731 nor 5732 is a leap year
-            "M05L" => 5730,
-            "M06" => 5732,
-            "M07" => 5732,
-            "M08" => 5732,
-            "M09" => 5732,
-            "M10" => 5732,
-            "M11" => 5732,
-            "M12" => 5732,
+            (5, true) => 5730,
             _ => {
                 return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
             }
@@ -156,55 +146,20 @@ impl DateFieldsResolver for Hebrew {
         month_code: types::ValidMonthCode,
         options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
-        // Match statements are more readable with strings.
-        let month_code = month_code.to_month_code();
         let is_leap_year = year.keviyah.is_leap();
-        let month_code_str = month_code.0.as_str();
-        let ordinal_month = if is_leap_year {
-            match month_code_str {
-                "M01" => 1,
-                "M02" => 2,
-                "M03" => 3,
-                "M04" => 4,
-                "M05" => 5,
-                "M05L" => 6,
-                "M06" => 7,
-                "M07" => 8,
-                "M08" => 9,
-                "M09" => 10,
-                "M10" => 11,
-                "M11" => 12,
-                "M12" => 13,
-                _ => {
-                    return Err(MonthCodeError::NotInCalendar);
-                }
-            }
-        } else {
-            match month_code_str {
-                "M01" => 1,
-                "M02" => 2,
-                "M03" => 3,
-                "M04" => 4,
-                "M05" => 5,
-                "M05L" => {
+        let ordinal_month = match month_code.to_tuple() {
+            (n @ 1..=12, false) => n + (n >= 6 && is_leap_year) as u8,
+            (5, true) => {
+                if is_leap_year {
+                    6
+                } else if matches!(options.overflow, Some(Overflow::Constrain)) {
                     // M05L maps to M06 in a common year
-                    if matches!(options.overflow, Some(Overflow::Constrain)) {
-                        6
-                    } else {
-                        return Err(MonthCodeError::NotInYear);
-                    }
-                }
-                "M06" => 6,
-                "M07" => 7,
-                "M08" => 8,
-                "M09" => 9,
-                "M10" => 10,
-                "M11" => 11,
-                "M12" => 12,
-                _ => {
-                    return Err(MonthCodeError::NotInCalendar);
+                    6
+                } else {
+                    return Err(MonthCodeError::NotInYear);
                 }
             }
+            _ => return Err(MonthCodeError::NotInCalendar),
         };
         Ok(ordinal_month)
     }
@@ -379,13 +334,20 @@ mod tests {
 
     use super::*;
     use crate::types::MonthCode;
-    use calendrical_calculations::hebrew_keviyah::*;
 
-    // Sentinel value for Adar I
-    // We're using normalized month values here so that we can use constants. These do not
-    // distinguish between the different Adars. We add an out-of-range sentinel value of 13 to
-    // specifically talk about Adar I in a leap year
-    const ADARI: u8 = 13;
+    pub const TISHREI: ValidMonthCode = ValidMonthCode::new_unchecked(1, false);
+    pub const ḤESHVAN: ValidMonthCode = ValidMonthCode::new_unchecked(2, false);
+    pub const KISLEV: ValidMonthCode = ValidMonthCode::new_unchecked(3, false);
+    pub const TEVET: ValidMonthCode = ValidMonthCode::new_unchecked(4, false);
+    pub const SHEVAT: ValidMonthCode = ValidMonthCode::new_unchecked(5, false);
+    pub const ADARI: ValidMonthCode = ValidMonthCode::new_unchecked(5, true);
+    pub const ADAR: ValidMonthCode = ValidMonthCode::new_unchecked(6, false);
+    pub const NISAN: ValidMonthCode = ValidMonthCode::new_unchecked(7, false);
+    pub const IYYAR: ValidMonthCode = ValidMonthCode::new_unchecked(8, false);
+    pub const SIVAN: ValidMonthCode = ValidMonthCode::new_unchecked(9, false);
+    pub const TAMMUZ: ValidMonthCode = ValidMonthCode::new_unchecked(10, false);
+    pub const AV: ValidMonthCode = ValidMonthCode::new_unchecked(11, false);
+    pub const ELUL: ValidMonthCode = ValidMonthCode::new_unchecked(12, false);
 
     /// The leap years used in the tests below
     const LEAP_YEARS_IN_TESTS: [i32; 1] = [5782];
@@ -393,7 +355,7 @@ mod tests {
     /// are leap years please add them to LEAP_YEARS_IN_TESTS (we have this manually
     /// so we don't end up exercising potentially buggy codepaths to test this)
     #[expect(clippy::type_complexity)]
-    const ISO_HEBREW_DATE_PAIRS: [((i32, u8, u8), (i32, u8, u8)); 48] = [
+    const ISO_HEBREW_DATE_PAIRS: [((i32, u8, u8), (i32, ValidMonthCode, u8)); 48] = [
         ((2021, 1, 10), (5781, TEVET, 26)),
         ((2021, 1, 25), (5781, SHEVAT, 12)),
         ((2021, 2, 10), (5781, SHEVAT, 28)),
@@ -448,12 +410,7 @@ mod tests {
     fn test_conversions() {
         for ((iso_y, iso_m, iso_d), (y, m, d)) in ISO_HEBREW_DATE_PAIRS.into_iter() {
             let iso_date = Date::try_new_iso(iso_y, iso_m, iso_d).unwrap();
-            let month_code = if m == ADARI {
-                MonthCode(tinystr!(4, "M05L"))
-            } else {
-                MonthCode::new_normal(m).unwrap()
-            };
-            let hebrew_date = Date::try_new_from_codes(Some("am"), y, month_code, d, Hebrew)
+            let hebrew_date = Date::try_new_from_codes(Some("am"), y, m.to_month_code(), d, Hebrew)
                 .expect("Date should parse");
 
             let iso_to_hebrew = iso_date.to_calendar(Hebrew);
@@ -469,17 +426,13 @@ mod tests {
                 "Failed comparing to-hebrew value for {iso_date:?} => {hebrew_date:?}"
             );
 
-            let ordinal_month = if LEAP_YEARS_IN_TESTS.contains(&y) {
-                if m == ADARI {
-                    ADAR
-                } else if m >= ADAR {
-                    m + 1
-                } else {
-                    m
-                }
+            let ordinal_month = if (m == ADARI || m.number() >= ADAR.number())
+                && LEAP_YEARS_IN_TESTS.contains(&y)
+            {
+                m.number() + 1
             } else {
                 assert!(m != ADARI);
-                m
+                m.number()
             };
 
             #[allow(deprecated)] // should still test
@@ -517,7 +470,7 @@ mod tests {
         // https://github.com/unicode-org/icu4x/issues/4893
         let cal = Hebrew::new();
         let era = "am";
-        let month_code = MonthCode(tinystr!(4, "M01"));
+        let month_code = MonthCode::new_normal(1).unwrap();
         let dt = Date::try_new_from_codes(Some(era), 3760, month_code, 1, cal).unwrap();
 
         // Should be Saturday per:

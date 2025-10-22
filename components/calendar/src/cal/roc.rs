@@ -99,7 +99,7 @@ impl Date<Roc> {
     /// let date_roc = Date::try_new_roc(1, 2, 3)
     ///     .expect("Failed to initialize ROC Date instance.");
     ///
-    /// assert_eq!(date_roc.era_year().era, tinystr!(16, "roc"));
+    /// assert_eq!(date_roc.era_year().era, "roc");
     /// assert_eq!(date_roc.era_year().year, 1, "ROC year check failed!");
     /// assert_eq!(date_roc.month().ordinal, 2, "ROC month check failed!");
     /// assert_eq!(date_roc.day_of_month().0, 3, "ROC day of month check failed!");
