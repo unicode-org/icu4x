@@ -33,10 +33,10 @@ pub enum DateError {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::DateError;
-    /// use icu_calendar::cal::Hebrew;
-    /// use icu_calendar::types::MonthCode;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::DateError;
+    /// use icu::calendar::cal::Hebrew;
+    /// use icu::calendar::types::MonthCode;
     /// use tinystr::tinystr;
     ///
     /// let month_code = MonthCode(tinystr!(4, "M05L"));
@@ -78,11 +78,11 @@ pub enum DateFromFieldsError {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::error::DateFromFieldsError;
-    /// use icu_calendar::error::RangeError;
-    /// use icu_calendar::Iso;
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::DateFromFieldsError;
+    /// use icu::calendar::error::RangeError;
+    /// use icu::calendar::Iso;
+    /// use icu::calendar::types::DateFields;
     ///
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(2000);
@@ -106,10 +106,10 @@ pub enum DateFromFieldsError {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::error::DateFromFieldsError;
-    /// use icu_calendar::Iso;
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::DateFromFieldsError;
+    /// use icu::calendar::Iso;
+    /// use icu::calendar::types::DateFields;
     ///
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(2000);
@@ -121,7 +121,7 @@ pub enum DateFromFieldsError {
     /// )
     /// .expect_err("month code is invalid");
     ///
-    /// assert!(matches!(err, DateFromFieldsError::MonthCodeInvalidSyntax));
+    /// assert_eq!(err, DateFromFieldsError::MonthCodeInvalidSyntax);
     /// ```
     #[displaydoc("Invalid month code syntax")]
     MonthCodeInvalidSyntax,
@@ -130,10 +130,10 @@ pub enum DateFromFieldsError {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::error::DateFromFieldsError;
-    /// use icu_calendar::cal::Hebrew;
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::DateFromFieldsError;
+    /// use icu::calendar::cal::Hebrew;
+    /// use icu::calendar::types::DateFields;
     ///
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(5783);
@@ -146,7 +146,7 @@ pub enum DateFromFieldsError {
     ///     Hebrew
     /// )
     /// .expect_err("no month M13 in Hebrew");
-    /// assert!(matches!(err, DateFromFieldsError::MonthCodeNotInCalendar));
+    /// assert_eq!(err, DateFromFieldsError::MonthCodeNotInCalendar);
     /// ```
     #[displaydoc("The specified month code does not exist in this calendar")]
     MonthCodeNotInCalendar,
@@ -155,10 +155,10 @@ pub enum DateFromFieldsError {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::error::DateFromFieldsError;
-    /// use icu_calendar::cal::Hebrew;
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::DateFromFieldsError;
+    /// use icu::calendar::cal::Hebrew;
+    /// use icu::calendar::types::DateFields;
     ///
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(5783);
@@ -171,7 +171,7 @@ pub enum DateFromFieldsError {
     ///     Hebrew
     /// )
     /// .expect_err("no month M05L in Hebrew year 5783");
-    /// assert!(matches!(err, DateFromFieldsError::MonthCodeNotInYear));
+    /// assert_eq!(err, DateFromFieldsError::MonthCodeNotInYear);
     /// ```
     #[displaydoc("The specified month code exists in calendar, but not for this year")]
     MonthCodeNotInYear,
@@ -180,10 +180,10 @@ pub enum DateFromFieldsError {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::error::DateFromFieldsError;
-    /// use icu_calendar::cal::Japanese;
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::DateFromFieldsError;
+    /// use icu::calendar::cal::Japanese;
+    /// use icu::calendar::types::DateFields;
     ///
     /// let mut fields = DateFields::default();
     /// fields.era = Some(b"reiwa");
@@ -207,7 +207,7 @@ pub enum DateFromFieldsError {
     /// )
     /// .expect_err("year 1900 is not the same as 6 Reiwa");
     ///
-    /// assert!(matches!(err, DateFromFieldsError::InconsistentYear));
+    /// assert_eq!(err, DateFromFieldsError::InconsistentYear);
     /// ```
     #[displaydoc("Inconsistent year")]
     InconsistentYear,
@@ -216,10 +216,10 @@ pub enum DateFromFieldsError {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::error::DateFromFieldsError;
-    /// use icu_calendar::cal::Hebrew;
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::DateFromFieldsError;
+    /// use icu::calendar::cal::Hebrew;
+    /// use icu::calendar::types::DateFields;
     /// use tinystr::tinystr;
     ///
     /// let mut fields = DateFields::default();
@@ -244,7 +244,7 @@ pub enum DateFromFieldsError {
     /// )
     /// .expect_err("month M06 is not the 6th month in leap year 5784");
     ///
-    /// assert!(matches!(err, DateFromFieldsError::InconsistentMonth));
+    /// assert_eq!(err, DateFromFieldsError::InconsistentMonth);
     /// ```
     #[displaydoc("Inconsistent month")]
     InconsistentMonth,
@@ -253,10 +253,10 @@ pub enum DateFromFieldsError {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::error::DateFromFieldsError;
-    /// use icu_calendar::cal::Hebrew;
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::DateFromFieldsError;
+    /// use icu::calendar::cal::Hebrew;
+    /// use icu::calendar::types::DateFields;
     /// use tinystr::tinystr;
     ///
     /// let mut fields = DateFields::default();
@@ -269,7 +269,7 @@ pub enum DateFromFieldsError {
     ///     Hebrew
     /// )
     /// .expect_err("need more than just an ordinal month");
-    /// assert!(matches!(err, DateFromFieldsError::NotEnoughFields));
+    /// assert_eq!(err, DateFromFieldsError::NotEnoughFields);
     ///
     /// fields.era_year = Some(5783);
     ///
@@ -279,7 +279,7 @@ pub enum DateFromFieldsError {
     ///     Hebrew
     /// )
     /// .expect_err("need more than an ordinal month and an era year");
-    /// assert!(matches!(err, DateFromFieldsError::NotEnoughFields));
+    /// assert_eq!(err, DateFromFieldsError::NotEnoughFields);
     ///
     /// fields.extended_year = Some(5783);
     ///
@@ -289,7 +289,7 @@ pub enum DateFromFieldsError {
     ///     Hebrew
     /// )
     /// .expect_err("era year still needs an era");
-    /// assert!(matches!(err, DateFromFieldsError::NotEnoughFields));
+    /// assert_eq!(err, DateFromFieldsError::NotEnoughFields);
     ///
     /// fields.era = Some(b"am");
     ///
@@ -299,7 +299,7 @@ pub enum DateFromFieldsError {
     ///     Hebrew
     /// )
     /// .expect_err("still missing the day");
-    /// assert!(matches!(err, DateFromFieldsError::NotEnoughFields));
+    /// assert_eq!(err, DateFromFieldsError::NotEnoughFields);
     ///
     /// fields.day = Some(1);
     /// let date = Date::try_from_fields(
@@ -354,18 +354,8 @@ impl From<MonthCodeParseError> for DateFromFieldsError {
     }
 }
 
-impl From<MonthCodeParseError> for MonthCodeError {
-    #[inline]
-    fn from(value: MonthCodeParseError) -> Self {
-        match value {
-            MonthCodeParseError::InvalidSyntax => MonthCodeError::InvalidSyntax,
-        }
-    }
-}
-
 /// Internal narrow error type for functions that only fail on month code operations
 pub(crate) enum MonthCodeError {
-    InvalidSyntax,
     NotInCalendar,
     NotInYear,
 }
@@ -374,7 +364,6 @@ impl From<MonthCodeError> for DateFromFieldsError {
     #[inline]
     fn from(value: MonthCodeError) -> Self {
         match value {
-            MonthCodeError::InvalidSyntax => DateFromFieldsError::MonthCodeInvalidSyntax,
             MonthCodeError::NotInCalendar => DateFromFieldsError::MonthCodeNotInCalendar,
             MonthCodeError::NotInYear => DateFromFieldsError::MonthCodeNotInYear,
         }

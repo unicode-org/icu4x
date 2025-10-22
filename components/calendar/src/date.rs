@@ -157,9 +157,9 @@ impl<A: AsCalendar> Date<A> {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::cal::Gregorian;
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::cal::Gregorian;
+    /// use icu::calendar::types::DateFields;
     ///
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(2000);
