@@ -54,7 +54,6 @@ impl Hebrew {
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
 pub(crate) struct HebrewYearInfo {
     keviyah: Keviyah,
-    prev_keviyah: Keviyah,
     value: i32,
 }
 
@@ -67,25 +66,14 @@ impl ToExtendedYear for HebrewYearInfo {
 impl HebrewYearInfo {
     /// Convenience method to compute for a given year. Don't use this if you actually need
     /// a YearInfo that you want to call .new_year() on.
-    ///
-    /// This can potentially be optimized with adjacent-year knowledge, but it's complex
     #[inline]
-    fn compute(h_year: i32) -> Self {
-        let keviyah = YearInfo::compute_for(h_year).keviyah;
-        Self::compute_with_keviyah(keviyah, h_year)
-    }
-    /// Compute for a given year when the keviyah is already known
-    #[inline]
-    fn compute_with_keviyah(keviyah: Keviyah, h_year: i32) -> Self {
-        let prev_keviyah = YearInfo::compute_for(h_year - 1).keviyah;
+    fn compute(value: i32) -> Self {
         Self {
-            keviyah,
-            prev_keviyah,
-            value: h_year,
+            keviyah: YearInfo::compute_for(value).keviyah,
+            value,
         }
     }
 }
-//  HEBREW CALENDAR
 
 impl DateFieldsResolver for Hebrew {
     type YearInfo = HebrewYearInfo;
@@ -259,21 +247,26 @@ impl Calendar for Hebrew {
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        let (year, h_year) = YearInfo::year_containing_rd(rd);
-        // Obtaining a 1-indexed day-in-year value
-        let day = rd - year.new_year() + 1;
-        let day = u16::try_from(day).unwrap_or(u16::MAX);
+        let (year_info, year) = YearInfo::year_containing_rd(rd);
+        let keviyah = year_info.keviyah;
 
-        let year = HebrewYearInfo::compute_with_keviyah(year.keviyah, h_year);
-        let (month, day) = year.keviyah.month_day_for(day);
-        HebrewDateInner(ArithmeticDate::new_unchecked(year, month, day))
+        // Obtaining a 1-indexed day-in-year value
+        let day_in_year = u16::try_from(rd - year_info.new_year() + 1).unwrap_or(u16::MAX);
+        let (month, day) = keviyah.month_day_for(day_in_year);
+
+        HebrewDateInner(ArithmeticDate::new_unchecked(
+            HebrewYearInfo {
+                keviyah,
+                value: year,
+            },
+            month,
+            day,
+        ))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        let year = date.0.year.keviyah.year_info(date.0.year.value);
-
-        let ny = year.new_year();
-        let days_preceding = year.keviyah.days_preceding(date.0.month);
+        let ny = date.0.year.keviyah.year_info(date.0.year.value).new_year();
+        let days_preceding = date.0.year.keviyah.days_preceding(date.0.month);
 
         // Need to subtract 1 since the new year is itself in this year
         ny + i64::from(days_preceding) + i64::from(date.0.day) - 1
