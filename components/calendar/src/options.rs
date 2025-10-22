@@ -225,12 +225,12 @@ pub enum Overflow {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::DateError;
-    /// use icu_calendar::cal::Hebrew;
-    /// use icu_calendar::options::DateFromFieldsOptions;
-    /// use icu_calendar::options::Overflow;
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::DateError;
+    /// use icu::calendar::cal::Hebrew;
+    /// use icu::calendar::options::DateFromFieldsOptions;
+    /// use icu::calendar::options::Overflow;
+    /// use icu::calendar::types::DateFields;
     ///
     /// let mut options = DateFromFieldsOptions::default();
     /// options.overflow = Some(Overflow::Constrain);
@@ -274,12 +274,12 @@ pub enum Overflow {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::error::DateFromFieldsError;
-    /// use icu_calendar::cal::Hebrew;
-    /// use icu_calendar::options::DateFromFieldsOptions;
-    /// use icu_calendar::options::Overflow;
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::DateFromFieldsError;
+    /// use icu::calendar::cal::Hebrew;
+    /// use icu::calendar::options::DateFromFieldsOptions;
+    /// use icu::calendar::options::Overflow;
+    /// use icu::calendar::types::DateFields;
     /// use tinystr::tinystr;
     ///
     /// let mut options = DateFromFieldsOptions::default();

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains various types used by `icu_calendar` and `icu::datetime`
+//! This module contains various types used by `icu::calendar` and `icu::datetime`
 
 #[doc(no_inline)]
 pub use calendrical_calculations::rata_die::RataDie;
@@ -31,7 +31,7 @@ pub struct DateFields<'a> {
     /// To set the era field, convert an ASCII string to bytes:
     ///
     /// ```
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::types::DateFields;
     ///
     /// let mut fields = DateFields::default();
     ///
@@ -60,9 +60,9 @@ pub struct DateFields<'a> {
     /// Either `extended_year` or `era` + `era_year` can be used in DateFields:
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::cal::Japanese;
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::cal::Japanese;
+    /// use icu::calendar::types::DateFields;
     ///
     /// let mut fields1 = DateFields::default();
     /// fields1.era = Some(b"reiwa");
@@ -107,7 +107,7 @@ pub struct DateFields<'a> {
     /// To set the month code field, convert an ASCII string to bytes:
     ///
     /// ```
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::types::DateFields;
     ///
     /// let mut fields = DateFields::default();
     ///
@@ -134,9 +134,9 @@ pub struct DateFields<'a> {
     /// might not resolve to the same month number:
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::cal::LunarChinese;
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::cal::LunarChinese;
+    /// use icu::calendar::types::DateFields;
     ///
     /// // The 2023 Year of the Rabbit had a leap month after the 2nd month.
     /// let mut fields1 = DateFields::default();

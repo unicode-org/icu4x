@@ -33,10 +33,10 @@ pub enum DateError {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::DateError;
-    /// use icu_calendar::cal::Hebrew;
-    /// use icu_calendar::types::MonthCode;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::DateError;
+    /// use icu::calendar::cal::Hebrew;
+    /// use icu::calendar::types::MonthCode;
     /// use tinystr::tinystr;
     ///
     /// let month_code = MonthCode(tinystr!(4, "M05L"));
@@ -78,11 +78,11 @@ pub enum DateFromFieldsError {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::error::DateFromFieldsError;
-    /// use icu_calendar::error::RangeError;
-    /// use icu_calendar::Iso;
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::DateFromFieldsError;
+    /// use icu::calendar::error::RangeError;
+    /// use icu::calendar::Iso;
+    /// use icu::calendar::types::DateFields;
     ///
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(2000);
@@ -106,10 +106,10 @@ pub enum DateFromFieldsError {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::error::DateFromFieldsError;
-    /// use icu_calendar::Iso;
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::DateFromFieldsError;
+    /// use icu::calendar::Iso;
+    /// use icu::calendar::types::DateFields;
     ///
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(2000);
@@ -130,10 +130,10 @@ pub enum DateFromFieldsError {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::error::DateFromFieldsError;
-    /// use icu_calendar::cal::Hebrew;
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::DateFromFieldsError;
+    /// use icu::calendar::cal::Hebrew;
+    /// use icu::calendar::types::DateFields;
     ///
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(5783);
@@ -155,10 +155,10 @@ pub enum DateFromFieldsError {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::error::DateFromFieldsError;
-    /// use icu_calendar::cal::Hebrew;
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::DateFromFieldsError;
+    /// use icu::calendar::cal::Hebrew;
+    /// use icu::calendar::types::DateFields;
     ///
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(5783);
@@ -180,10 +180,10 @@ pub enum DateFromFieldsError {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::error::DateFromFieldsError;
-    /// use icu_calendar::cal::Japanese;
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::DateFromFieldsError;
+    /// use icu::calendar::cal::Japanese;
+    /// use icu::calendar::types::DateFields;
     ///
     /// let mut fields = DateFields::default();
     /// fields.era = Some(b"reiwa");
@@ -216,10 +216,10 @@ pub enum DateFromFieldsError {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::error::DateFromFieldsError;
-    /// use icu_calendar::cal::Hebrew;
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::DateFromFieldsError;
+    /// use icu::calendar::cal::Hebrew;
+    /// use icu::calendar::types::DateFields;
     /// use tinystr::tinystr;
     ///
     /// let mut fields = DateFields::default();
@@ -253,10 +253,10 @@ pub enum DateFromFieldsError {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::Date;
-    /// use icu_calendar::error::DateFromFieldsError;
-    /// use icu_calendar::cal::Hebrew;
-    /// use icu_calendar::types::DateFields;
+    /// use icu::calendar::Date;
+    /// use icu::calendar::error::DateFromFieldsError;
+    /// use icu::calendar::cal::Hebrew;
+    /// use icu::calendar::types::DateFields;
     /// use tinystr::tinystr;
     ///
     /// let mut fields = DateFields::default();

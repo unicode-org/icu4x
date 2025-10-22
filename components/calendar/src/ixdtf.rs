@@ -11,7 +11,7 @@ use ixdtf::parsers::IxdtfParser;
 use ixdtf::records::IxdtfParseRecord;
 use ixdtf::ParseError as Rfc9557Error;
 
-/// An error returned from parsing an RFC 9557 string to an `icu_calendar` type.
+/// An error returned from parsing an RFC 9557 string to an `icu::calendar` type.
 #[derive(Debug, displaydoc::Display)]
 #[non_exhaustive]
 pub enum ParseError {
