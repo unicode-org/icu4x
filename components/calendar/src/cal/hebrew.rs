@@ -364,26 +364,18 @@ impl Calendar for Hebrew {
 }
 
 impl Date<Hebrew> {
-    /// Construct new Hebrew Date.
+    /// This method uses an ordinal month, which is probably not what you want.
     ///
-    /// This date will not use any precomputed calendrical calculations,
-    /// one that loads such data from a provider will be added in the future (#3933)
-    ///
-    ///
-    /// ```rust
-    /// use icu::calendar::Date;
-    ///
-    /// let date_hebrew = Date::try_new_hebrew(3425, 4, 25)
-    ///     .expect("Failed to initialize Hebrew Date instance.");
-    ///
-    /// assert_eq!(date_hebrew.era_year().year, 3425);
-    /// assert_eq!(date_hebrew.month().ordinal, 4);
-    /// assert_eq!(date_hebrew.day_of_month().0, 25);
-    /// ```
-    pub fn try_new_hebrew(year: i32, month: u8, day: u8) -> Result<Date<Hebrew>, RangeError> {
+    /// Use [`Date::try_new_from_codes`]
+    #[deprecated(since = "2.1.0", note = "use `Date::try_new_from_codes`")]
+    pub fn try_new_hebrew(
+        year: i32,
+        ordinal_month: u8,
+        day: u8,
+    ) -> Result<Date<Hebrew>, RangeError> {
         let year = HebrewYearInfo::compute(year);
 
-        ArithmeticDate::try_from_ymd(year, month, day)
+        ArithmeticDate::try_from_ymd(year, ordinal_month, day)
             .map(HebrewDateInner)
             .map(|inner| Date::from_raw(inner, Hebrew))
     }
@@ -497,6 +489,7 @@ mod tests {
                 m
             };
 
+            #[allow(deprecated)] // should still test
             let ordinal_hebrew_date = Date::try_new_hebrew(y, ordinal_month, d)
                 .expect("Construction of date must succeed");
 

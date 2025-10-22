@@ -463,15 +463,24 @@ impl Rules for Korea {
 }
 
 impl<A: AsCalendar<Calendar = LunarChinese<Korea>>> Date<A> {
-    /// Use [`Date::try_new_chinese_with_calendar`]
-    #[deprecated(since = "2.1.0", note = "use `Date::try_new_chinese_with_calendar`")]
+    /// This method uses an ordinal month, which is probably not what you want.
+    ///
+    /// Use [`Date::try_new_from_codes`]
+    #[deprecated(since = "2.1.0", note = "use `Date::try_new_from_codes`")]
     pub fn try_new_dangi_with_calendar(
         related_iso_year: i32,
-        month: u8,
+        ordinal_month: u8,
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, DateError> {
-        Date::try_new_chinese_with_calendar(related_iso_year, month, day, calendar)
+        ArithmeticDate::try_from_ymd(
+            calendar.as_calendar().0.year_data(related_iso_year),
+            ordinal_month,
+            day,
+        )
+        .map(ChineseDateInner)
+        .map(|inner| Date::from_raw(inner, calendar))
+        .map_err(Into::into)
     }
 }
 
@@ -741,41 +750,25 @@ impl<R: Rules> Calendar for LunarChinese<R> {
     }
 }
 
-impl<R: Rules, A: AsCalendar<Calendar = LunarChinese<R>>> Date<A> {
-    /// Construct a new Chinese date from a `year`, `month`, and `day`.
-    /// `year` represents the [ISO](crate::Iso) year that roughly matches the Chinese year;
-    /// `month` represents the month of the year ordinally (ex. if it is a leap year, the last month will be 13, not 12);
-    /// `day` indicates the day of month
+impl<A: AsCalendar<Calendar = LunarChinese<China>>> Date<A> {
+    /// This method uses an ordinal month, which is probably not what you want.
     ///
-    /// This date will not use any precomputed calendrical calculations,
-    /// one that loads such data from a provider will be added in the future (#3933)
-    ///
-    /// ```rust
-    /// use icu::calendar::{cal::Chinese, Date};
-    ///
-    /// let chinese = Chinese::new_china();
-    ///
-    /// let date_chinese =
-    ///     Date::try_new_chinese_with_calendar(2023, 6, 11, chinese)
-    ///         .expect("Failed to initialize Chinese Date instance.");
-    ///
-    /// assert_eq!(date_chinese.cyclic_year().related_iso, 2023);
-    /// assert_eq!(date_chinese.cyclic_year().year, 40);
-    /// assert_eq!(date_chinese.month().ordinal, 6);
-    /// assert_eq!(date_chinese.day_of_month().0, 11);
-    /// ```
+    /// Use [`Date::try_new_from_codes`]
+    #[deprecated(since = "2.1.0", note = "use `Date::try_new_from_codes`")]
     pub fn try_new_chinese_with_calendar(
         related_iso_year: i32,
-        month: u8,
+        ordinal_month: u8,
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, DateError> {
-        let year = calendar.as_calendar().0.year_data(related_iso_year);
-        year.validate_md(month, day)?;
-        Ok(Date::from_raw(
-            ChineseDateInner(ArithmeticDate::new_unchecked(year, month, day)),
-            calendar,
-        ))
+        ArithmeticDate::try_from_ymd(
+            calendar.as_calendar().0.year_data(related_iso_year),
+            ordinal_month,
+            day,
+        )
+        .map(ChineseDateInner)
+        .map(|inner| Date::from_raw(inner, calendar))
+        .map_err(Into::into)
     }
 }
 
@@ -977,32 +970,6 @@ impl LunarChineseYearData {
     /// similar to `CalendarArithmetic::day_of_year`
     fn day_of_year(self, month: u8, day: u8) -> u16 {
         self.last_day_of_previous_month(month) + day as u16
-    }
-
-    /// Create a new arithmetic date from a year, month ordinal, and day with bounds checking; returns the
-    /// result of creating this arithmetic date, as well as a ChineseBasedYearInfo - either the one passed in
-    /// optionally as an argument, or a new ChineseBasedYearInfo for the given year, month, and day args.
-    fn validate_md(self, month: u8, day: u8) -> Result<(), DateError> {
-        let max_month = self.months_in_year();
-        if month == 0 || !(1..=max_month).contains(&month) {
-            return Err(DateError::Range {
-                field: "month",
-                value: month as i32,
-                min: 1,
-                max: max_month as i32,
-            });
-        }
-
-        let max_day = self.days_in_month(month);
-        if day == 0 || day > max_day {
-            return Err(DateError::Range {
-                field: "day",
-                value: day as i32,
-                min: 1,
-                max: max_day as i32,
-            });
-        }
-        Ok(())
     }
 
     /// Get the ordinal lunar month from a code for chinese-based calendars.
@@ -1332,7 +1299,8 @@ mod test {
         #[derive(Debug)]
         struct TestCase {
             year: i32,
-            month: u8,
+            ordinal_month: u8,
+            month_code: types::MonthCode,
             day: u8,
             expected: i64,
         }
@@ -1340,27 +1308,42 @@ mod test {
         let cases = [
             TestCase {
                 year: 2023,
-                month: 6,
+                ordinal_month: 6,
+                month_code: types::MonthCode::new_normal(5).unwrap(),
                 day: 6,
                 // June 23 2023
                 expected: 738694,
             },
             TestCase {
                 year: -2636,
-                month: 1,
+                ordinal_month: 1,
+                month_code: types::MonthCode::new_normal(1).unwrap(),
                 day: 1,
                 expected: -963099,
             },
         ];
 
         for case in cases {
-            let date = Date::try_new_chinese_with_calendar(
+            let date = Date::try_new_from_codes(
+                None,
                 case.year,
-                case.month,
+                case.month_code,
                 case.day,
                 LunarChinese::new_china(),
             )
             .unwrap();
+            #[allow(deprecated)] // should still test
+            {
+                assert_eq!(
+                    Date::try_new_chinese_with_calendar(
+                        case.year,
+                        case.ordinal_month,
+                        case.day,
+                        LunarChinese::new_china()
+                    ),
+                    Ok(date)
+                );
+            }
             let rd = date.to_rata_die().to_i64_date();
             let expected = case.expected;
             assert_eq!(rd, expected, "RD from Chinese failed, with expected: {expected} and calculated: {rd}, for test case: {case:?}");

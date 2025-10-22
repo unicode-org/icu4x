@@ -152,7 +152,10 @@ fn date_benches(c: &mut Criterion) {
         "calendar/chinese_cached",
         &fxs,
         icu::calendar::cal::LunarChinese::new_china(),
-        |y, m, d, c| Date::try_new_chinese_with_calendar(y, m, d, c).unwrap(),
+        |y, m, d, c| {
+            Date::try_new_from_codes(None, y, types::MonthCode::new_normal(m).unwrap(), d, c)
+                .unwrap()
+        },
     );
 
     bench_calendar(
@@ -160,7 +163,10 @@ fn date_benches(c: &mut Criterion) {
         "calendar/dangi_cached",
         &fxs,
         icu::calendar::cal::LunarChinese::new_korea(),
-        |y, m, d, c| Date::try_new_chinese_with_calendar(y, m, d, c).unwrap(),
+        |y, m, d, c| {
+            Date::try_new_from_codes(None, y, types::MonthCode::new_normal(m).unwrap(), d, c)
+                .unwrap()
+        },
     );
 
     bench_calendar(
@@ -168,7 +174,10 @@ fn date_benches(c: &mut Criterion) {
         "calendar/hebrew",
         &fxs,
         icu::calendar::cal::Hebrew,
-        |y, m, d, _| Date::try_new_hebrew(y, m, d).unwrap(),
+        |y, m, d, c| {
+            Date::try_new_from_codes(None, y, types::MonthCode::new_normal(m).unwrap(), d, c)
+                .unwrap()
+        },
     );
 
     bench_calendar(
