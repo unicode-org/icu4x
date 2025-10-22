@@ -601,7 +601,7 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
             return Err(MonthCodeError::NotInYear);
         }
 
-        // add one if we're after the leap month if
+        // add one if there was a leap month before
         Ok(number + (number >= leap_month) as u8)
     }
 
