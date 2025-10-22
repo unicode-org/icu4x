@@ -67,17 +67,17 @@ fn test_buddhist_continuity() {
 #[test]
 fn test_chinese_continuity() {
     let cal = crate::cal::LunarChinese::new_china();
-    let date = Date::try_new_chinese_with_calendar(-10, 1, 1, cal);
+    let date = Date::try_new_from_codes(None, -10, MonthCode::new_normal(1).unwrap(), 1, cal);
     check_continuity(date.unwrap(), 20);
-    let date = Date::try_new_chinese_with_calendar(-300, 1, 1, cal);
+    let date = Date::try_new_from_codes(None, -300, MonthCode::new_normal(1).unwrap(), 1, cal);
     check_every_250_days(date.unwrap(), 2000);
-    let date = Date::try_new_chinese_with_calendar(-10000, 1, 1, cal);
+    let date = Date::try_new_from_codes(None, -10000, MonthCode::new_normal(1).unwrap(), 1, cal);
     check_every_250_days(date.unwrap(), 2000);
 
-    let date = Date::try_new_chinese_with_calendar(1899, 1, 1, cal);
+    let date = Date::try_new_from_codes(None, 1899, MonthCode::new_normal(1).unwrap(), 1, cal);
     check_continuity(date.unwrap(), 20);
 
-    let date = Date::try_new_chinese_with_calendar(2099, 1, 1, cal);
+    let date = Date::try_new_from_codes(None, 2099, MonthCode::new_normal(1).unwrap(), 1, cal);
     check_continuity(date.unwrap(), 20);
 }
 
@@ -91,22 +91,22 @@ fn test_coptic_continuity() {
 
 #[test]
 fn test_korean_continuity() {
-    let cal = crate::cal::LunarChinese::new_korea();
-    let date = Date::try_new_chinese_with_calendar(-10, 1, 1, cal);
+    let cal = cal::LunarChinese::new_korea();
+    let date = Date::try_new_from_codes(None, -10, MonthCode::new_normal(1).unwrap(), 1, cal);
     check_continuity(date.unwrap(), 20);
-    let date = Date::try_new_chinese_with_calendar(-300, 1, 1, cal);
+    let date = Date::try_new_from_codes(None, -300, MonthCode::new_normal(1).unwrap(), 1, cal);
     check_every_250_days(date.unwrap(), 2000);
 
-    let date = Date::try_new_chinese_with_calendar(1900, 1, 1, cal);
+    let date = Date::try_new_from_codes(None, 1900, MonthCode::new_normal(1).unwrap(), 1, cal);
     check_continuity(date.unwrap(), 20);
 
-    let date = Date::try_new_chinese_with_calendar(2100, 1, 1, cal);
+    let date = Date::try_new_from_codes(None, 2100, MonthCode::new_normal(1).unwrap(), 1, cal);
     check_continuity(date.unwrap(), 20);
 }
 
 #[test]
 fn test_ethiopian_continuity() {
-    use crate::cal::EthiopianEraStyle::*;
+    use cal::EthiopianEraStyle::*;
     let date = Date::try_new_ethiopian(AmeteMihret, -10, 1, 1);
     check_continuity(date.unwrap(), 20);
     let date = Date::try_new_ethiopian(AmeteMihret, -300, 1, 1);
@@ -115,7 +115,7 @@ fn test_ethiopian_continuity() {
 
 #[test]
 fn test_ethiopian_amete_alem_continuity() {
-    use crate::cal::EthiopianEraStyle::*;
+    use cal::EthiopianEraStyle::*;
     let date = Date::try_new_ethiopian(AmeteAlem, -10, 1, 1);
     check_continuity(date.unwrap(), 20);
     let date = Date::try_new_ethiopian(AmeteAlem, -300, 1, 1);
@@ -132,9 +132,16 @@ fn test_gregorian_continuity() {
 
 #[test]
 fn test_hebrew_continuity() {
-    let date = Date::try_new_hebrew(-10, 1, 1);
+    let date =
+        Date::try_new_from_codes(None, -10, MonthCode::new_normal(1).unwrap(), 1, cal::Hebrew);
     check_continuity(date.unwrap(), 20);
-    let date = Date::try_new_hebrew(-300, 1, 1);
+    let date = Date::try_new_from_codes(
+        None,
+        -300,
+        MonthCode::new_normal(1).unwrap(),
+        1,
+        cal::Hebrew,
+    );
     check_every_250_days(date.unwrap(), 2000);
 }
 
@@ -148,9 +155,9 @@ fn test_indian_continuity() {
 
 #[test]
 fn test_hijri_civil_continuity() {
-    let cal = crate::cal::Hijri::new_tabular(
-        crate::cal::hijri::TabularAlgorithmLeapYears::TypeII,
-        crate::cal::hijri::TabularAlgorithmEpoch::Friday,
+    let cal = cal::Hijri::new_tabular(
+        cal::hijri::TabularAlgorithmLeapYears::TypeII,
+        cal::hijri::TabularAlgorithmEpoch::Friday,
     );
     let date = Date::try_new_hijri_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap(), 20);
@@ -162,7 +169,7 @@ fn test_hijri_civil_continuity() {
 fn test_hijri_simulated_mecca_continuity() {
     #[cfg(feature = "logging")]
     let _ = simple_logger::SimpleLogger::new().env().init();
-    let cal = crate::cal::Hijri::new_simulated_mecca();
+    let cal = cal::Hijri::new_simulated_mecca();
     let date = Date::try_new_hijri_with_calendar(-10, 1, 1, cal);
     // This test is slow since it is doing astronomical calculations, so check only 3 years
     check_continuity(date.unwrap(), 3);
@@ -173,9 +180,9 @@ fn test_hijri_simulated_mecca_continuity() {
 
 #[test]
 fn test_hijri_tabular_continuity() {
-    let cal = crate::cal::Hijri::new_tabular(
-        crate::cal::hijri::TabularAlgorithmLeapYears::TypeII,
-        crate::cal::hijri::TabularAlgorithmEpoch::Thursday,
+    let cal = cal::Hijri::new_tabular(
+        cal::hijri::TabularAlgorithmLeapYears::TypeII,
+        cal::hijri::TabularAlgorithmEpoch::Thursday,
     );
     let date = Date::try_new_hijri_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap(), 20);
@@ -187,7 +194,7 @@ fn test_hijri_tabular_continuity() {
 fn test_hijri_umm_al_qura_continuity() {
     #[cfg(feature = "logging")]
     let _ = simple_logger::SimpleLogger::new().env().init();
-    let cal = crate::cal::Hijri::new_umm_al_qura();
+    let cal = cal::Hijri::new_umm_al_qura();
     let date = Date::try_new_hijri_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap(), 20);
     let date = Date::try_new_hijri_with_calendar(1290, 1, 1, cal);
@@ -208,7 +215,7 @@ fn test_iso_continuity() {
 
 #[test]
 fn test_japanese_continuity() {
-    let cal = crate::cal::Japanese::new();
+    let cal = cal::Japanese::new();
     let cal = Ref(&cal);
     let date = Date::try_new_japanese_with_calendar("heisei", 20, 1, 1, cal);
     check_continuity(date.unwrap(), 20);
@@ -218,7 +225,7 @@ fn test_japanese_continuity() {
 
 #[test]
 fn test_japanese_extended_continuity() {
-    let cal = crate::cal::JapaneseExtended::new();
+    let cal = cal::JapaneseExtended::new();
     let cal = Ref(&cal);
     let date = Date::try_new_japanese_extended_with_calendar("heisei", 20, 1, 1, cal);
     check_continuity(date.unwrap(), 20);
