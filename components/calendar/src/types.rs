@@ -22,7 +22,9 @@ use crate::error::MonthCodeParseError;
 #[derive(Copy, Clone, PartialEq, Default)]
 #[non_exhaustive]
 pub struct DateFields<'a> {
-    /// The era code as defined by CLDR, represented as UTF-8 code units.
+    /// The era code as a UTF-8 string.
+    ///
+    /// The acceptable codes are defined by CLDR and documented on each calendar.
     ///
     /// If set, [`Self::era_year`] must also be set.
     ///
