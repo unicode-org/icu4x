@@ -587,21 +587,22 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
         // it is impossible to actually have 14 months in a year.
         let leap_month = year.leap_month().unwrap_or(14);
 
-        let (unadjusted @ 1..13, leap) = month_code.to_tuple() else {
-            return Err(MonthCodeError::NotInCalendar);
-        };
-
-        let adjusted = unadjusted + (unadjusted >= leap_month) as u8;
-
-        if leap && unadjusted + 1 == leap_month {
+        // leap_month is the ordinal of the second month, so subtract 1 to get the code
+        if month_code == ValidMonthCode::new_unchecked(leap_month - 1, true) {
             return Ok(leap_month);
         }
 
+        let (number @ 1..13, leap) = month_code.to_tuple() else {
+            return Err(MonthCodeError::NotInCalendar);
+        };
+
         if leap && options.overflow != Some(Overflow::Constrain) {
+            // wrong leap month and not constraining
             return Err(MonthCodeError::NotInYear);
         }
 
-        Ok(adjusted)
+        // add one if we're after the leap month if
+        Ok(number + (number >= leap_month) as u8)
     }
 
     fn month_code_from_ordinal(&self, year: &Self::YearInfo, ordinal_month: u8) -> ValidMonthCode {
@@ -609,6 +610,7 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
         // it is impossible to actually have 14 months in a year.
         let leap_month = year.leap_month().unwrap_or(14);
         ValidMonthCode::new_unchecked(
+            // subtract one if there was a leap month before
             ordinal_month - (ordinal_month >= leap_month) as u8,
             ordinal_month == leap_month,
         )
