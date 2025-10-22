@@ -8,7 +8,6 @@
 pub use calendrical_calculations::rata_die::RataDie;
 use core::fmt;
 use tinystr::TinyAsciiStr;
-use tinystr::{TinyStr16, TinyStr4};
 use zerovec::ule::AsULE;
 
 // Export the duration types from here
@@ -167,7 +166,7 @@ pub struct DateFields<'a> {
     ///
     /// let month_info = date1.month();
     /// assert_eq!(month_info.ordinal, 3);
-    /// assert_eq!(month_info.standard_code.0.as_str(), "M02L");
+    /// assert_eq!(month_info.standard_code.0, "M02L");
     /// ```
     pub ordinal_month: Option<u8>,
     /// See [`DayOfMonth`].
@@ -293,7 +292,7 @@ pub struct EraYear {
     /// See [`YearInfo::extended_year()`]
     pub extended_year: i32,
     /// The era code as defined by CLDR, expect for cases where CLDR does not define a code.
-    pub era: TinyStr16,
+    pub era: TinyAsciiStr<16>,
     /// An era index, for calendars with a small set of eras.
     ///
     /// The only guarantee we make is that these values are stable. These do *not*
@@ -330,11 +329,9 @@ pub struct CyclicYear {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::types))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct MonthCode(pub TinyStr4);
+pub struct MonthCode(pub TinyAsciiStr<4>);
 
 impl MonthCode {
-    pub(crate) const SENTINEL: MonthCode = MonthCode(tinystr::tinystr!(4, "und"));
-
     /// Returns an option which is `Some` containing the non-month version of a leap month
     /// if the [`MonthCode`] this method is called upon is a leap month, and `None` otherwise.
     /// This method assumes the [`MonthCode`] is valid.
@@ -351,7 +348,7 @@ impl MonthCode {
     #[deprecated(since = "2.1.0")]
     /// Get the month number and whether or not it is leap from the month code
     pub fn parsed(self) -> Option<(u8, bool)> {
-        ValidMonthCode::from_bytes(self.0.as_bytes())
+        ValidMonthCode::try_from_utf8(self.0.as_bytes())
             .ok()
             .map(ValidMonthCode::to_tuple)
     }
@@ -360,53 +357,46 @@ impl MonthCode {
     ///
     /// Returns an error for months greater than 99
     pub fn new_normal(number: u8) -> Option<Self> {
-        let tens = number / 10;
-        let ones = number % 10;
-        if tens > 9 {
-            return None;
-        }
-
-        let bytes = [b'M', b'0' + tens, b'0' + ones, 0];
-        Some(MonthCode(TinyAsciiStr::try_from_raw(bytes).ok()?))
+        (1..=99)
+            .contains(&number)
+            .then(|| ValidMonthCode::new_unchecked(number, false).to_month_code())
     }
 
     /// Construct a "leap" month code given a number ("MxxL").
     ///
     /// Returns an error for months greater than 99
     pub fn new_leap(number: u8) -> Option<Self> {
-        let tens = number / 10;
-        let ones = number % 10;
-        if tens > 9 {
-            return None;
-        }
-
-        let bytes = [b'M', b'0' + tens, b'0' + ones, b'L'];
-        Some(MonthCode(TinyAsciiStr::try_from_raw(bytes).ok()?))
+        (1..=99)
+            .contains(&number)
+            .then(|| ValidMonthCode::new_unchecked(number, true).to_month_code())
     }
 }
 
 #[test]
 fn test_get_normal_month_code_if_leap() {
     #![allow(deprecated)]
-    let mc1 = MonthCode(tinystr::tinystr!(4, "M01L"));
-    let result1 = mc1.get_normal_if_leap();
-    assert_eq!(result1, Some(MonthCode(tinystr::tinystr!(4, "M01"))));
+    assert_eq!(
+        MonthCode::new_leap(1).unwrap().get_normal_if_leap(),
+        MonthCode::new_normal(1)
+    );
 
-    let mc2 = MonthCode(tinystr::tinystr!(4, "M11L"));
-    let result2 = mc2.get_normal_if_leap();
-    assert_eq!(result2, Some(MonthCode(tinystr::tinystr!(4, "M11"))));
+    assert_eq!(
+        MonthCode::new_leap(11).unwrap().get_normal_if_leap(),
+        MonthCode::new_normal(11)
+    );
 
-    let mc_invalid = MonthCode(tinystr::tinystr!(4, "M10"));
-    let result_invalid = mc_invalid.get_normal_if_leap();
-    assert_eq!(result_invalid, None);
+    assert_eq!(
+        MonthCode::new_normal(10).unwrap().get_normal_if_leap(),
+        None
+    );
 }
 
 impl AsULE for MonthCode {
-    type ULE = TinyStr4;
-    fn to_unaligned(self) -> TinyStr4 {
+    type ULE = TinyAsciiStr<4>;
+    fn to_unaligned(self) -> TinyAsciiStr<4> {
         self.0
     }
-    fn from_unaligned(u: TinyStr4) -> Self {
+    fn from_unaligned(u: TinyAsciiStr<4>) -> Self {
         Self(u)
     }
 }
@@ -435,7 +425,7 @@ pub(crate) struct ValidMonthCode {
 
 impl ValidMonthCode {
     #[inline]
-    pub(crate) fn from_bytes(bytes: &[u8]) -> Result<Self, MonthCodeParseError> {
+    pub(crate) fn try_from_utf8(bytes: &[u8]) -> Result<Self, MonthCodeParseError> {
         match *bytes {
             [b'M', tens, ones] => Ok(Self {
                 number: (tens - b'0') * 10 + ones - b'0',
@@ -451,8 +441,8 @@ impl ValidMonthCode {
 
     /// Create a new ValidMonthCode without checking that the number is between 1 and 99
     #[inline]
-    pub(crate) fn new_unchecked(number: u8, is_leap: bool) -> Self {
-        debug_assert!((1..=99).contains(&number));
+    pub(crate) const fn new_unchecked(number: u8, is_leap: bool) -> Self {
+        debug_assert!(1 <= number && number <= 99);
         Self { number, is_leap }
     }
 
@@ -495,18 +485,16 @@ impl ValidMonthCode {
     }
 
     pub(crate) fn to_month_code(self) -> MonthCode {
-        let option = if self.is_leap {
-            MonthCode::new_leap(self.number)
-        } else {
-            MonthCode::new_normal(self.number)
-        };
-        option.unwrap_or_else(|| {
-            debug_assert!(
-                false,
-                "ValidMonthCode invariants guarantee conversion to MonthCode"
-            );
-            MonthCode::SENTINEL
-        })
+        #[allow(clippy::unwrap_used)] // by construction
+        MonthCode(
+            TinyAsciiStr::try_from_raw([
+                b'M',
+                b'0' + self.number / 10,
+                b'0' + self.number % 10,
+                if self.is_leap { b'L' } else { 0 },
+            ])
+            .unwrap(),
+        )
     }
 }
 

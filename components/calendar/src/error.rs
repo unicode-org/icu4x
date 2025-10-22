@@ -39,12 +39,10 @@ pub enum DateError {
     /// use icu_calendar::types::MonthCode;
     /// use tinystr::tinystr;
     ///
-    /// let month_code = MonthCode(tinystr!(4, "M05L"));
-    ///
     /// Date::try_new_from_codes(
     ///     None,
     ///     5784,
-    ///     month_code,
+    ///     MonthCode::new_leap(5).unwrap(),
     ///     1,
     ///     Hebrew
     /// )
@@ -53,7 +51,7 @@ pub enum DateError {
     /// let err = Date::try_new_from_codes(
     ///     None,
     ///     5785,
-    ///     month_code,
+    ///     MonthCode::new_leap(5).unwrap(),
     ///     1,
     ///     Hebrew
     /// )
@@ -364,6 +362,7 @@ impl From<MonthCodeParseError> for MonthCodeError {
 }
 
 /// Internal narrow error type for functions that only fail on month code operations
+#[derive(Debug, PartialEq)]
 pub(crate) enum MonthCodeError {
     InvalidSyntax,
     NotInCalendar,
