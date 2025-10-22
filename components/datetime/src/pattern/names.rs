@@ -19,7 +19,7 @@ use crate::{external_loaders::*, DateTimeFormatterPreferences};
 use crate::{scaffold::*, DateTimeFormatter, DateTimeFormatterLoadError};
 use core::fmt;
 use core::marker::PhantomData;
-use icu_calendar::types::{EraYear, MonthCode};
+use icu_calendar::types::EraYear;
 use icu_calendar::AnyCalendar;
 use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
@@ -3671,7 +3671,8 @@ impl RawDateTimeNamesBorrowed<'_> {
         &self,
         field_symbol: fields::Month,
         field_length: FieldLength,
-        code: MonthCode,
+        ordinal_index: u8,
+        is_leap: bool,
     ) -> Result<MonthPlaceholderValue<'_>, GetNameForMonthError> {
         let month_name_length = MonthNameLength::from_field(field_symbol, field_length)
             .ok_or(GetNameForMonthError::InvalidFieldLength)?;
@@ -3679,13 +3680,7 @@ impl RawDateTimeNamesBorrowed<'_> {
             .month_names
             .get_with_variables(month_name_length)
             .ok_or(GetNameForMonthError::NotLoaded)?;
-        let Some((month_number, is_leap)) = code.parsed() else {
-            return Err(GetNameForMonthError::InvalidMonthCode);
-        };
-        let Some(month_index) = month_number.checked_sub(1) else {
-            return Err(GetNameForMonthError::InvalidMonthCode);
-        };
-        let month_index = usize::from(month_index);
+        let month_index = usize::from(ordinal_index);
         let name = match month_names {
             MonthNames::Linear(linear) => {
                 if is_leap {

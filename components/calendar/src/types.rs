@@ -338,6 +338,7 @@ impl MonthCode {
     /// Returns an option which is `Some` containing the non-month version of a leap month
     /// if the [`MonthCode`] this method is called upon is a leap month, and `None` otherwise.
     /// This method assumes the [`MonthCode`] is valid.
+    #[deprecated(since = "2.1.0")]
     pub fn get_normal_if_leap(self) -> Option<MonthCode> {
         let bytes = self.0.all_bytes();
         if bytes[3] == b'L' {
@@ -346,32 +347,13 @@ impl MonthCode {
             None
         }
     }
+
+    #[deprecated(since = "2.1.0")]
     /// Get the month number and whether or not it is leap from the month code
     pub fn parsed(self) -> Option<(u8, bool)> {
-        let valid_month_code = self.validated().ok()?;
-        Some((valid_month_code.number(), valid_month_code.is_leap()))
-    }
-
-    /// Validates the syntax and returns a [`ValidMonthCode`], from which the
-    /// month number and leap month status can be read.
-    pub(crate) fn validated(self) -> Result<ValidMonthCode, MonthCodeParseError> {
-        // Match statements on tinystrs are annoying so instead
-        // we calculate it from the bytes directly
-
-        let bytes = self.0.all_bytes();
-        let is_leap = bytes[3] == b'L';
-        if bytes[0] != b'M' {
-            return Err(MonthCodeParseError::InvalidSyntax);
-        }
-        let b1 = bytes[1];
-        let b2 = bytes[2];
-        if !b1.is_ascii_digit() || !b2.is_ascii_digit() {
-            return Err(MonthCodeParseError::InvalidSyntax);
-        }
-        Ok(ValidMonthCode {
-            number: (b1 - b'0') * 10 + b2 - b'0',
-            is_leap,
-        })
+        ValidMonthCode::from_bytes(self.0.as_bytes())
+            .ok()
+            .map(ValidMonthCode::to_tuple)
     }
 
     /// Construct a "normal" month code given a number ("Mxx").
@@ -405,6 +387,7 @@ impl MonthCode {
 
 #[test]
 fn test_get_normal_month_code_if_leap() {
+    #![allow(deprecated)]
     let mc1 = MonthCode(tinystr::tinystr!(4, "M01L"));
     let result1 = mc1.get_normal_if_leap();
     assert_eq!(result1, Some(MonthCode(tinystr::tinystr!(4, "M01"))));
@@ -452,18 +435,24 @@ pub(crate) struct ValidMonthCode {
 
 impl ValidMonthCode {
     #[inline]
-    pub(crate) fn from_bytes(x: &[u8]) -> Result<Self, MonthCodeParseError> {
-        let Ok(s) = TinyStr4::try_from_utf8(x) else {
-            return Err(MonthCodeParseError::InvalidSyntax);
-        };
-
-        MonthCode(s).validated()
+    pub(crate) fn from_bytes(bytes: &[u8]) -> Result<Self, MonthCodeParseError> {
+        match *bytes {
+            [b'M', tens, ones] => Ok(Self {
+                number: (tens - b'0') * 10 + ones - b'0',
+                is_leap: false,
+            }),
+            [b'M', tens, ones, b'L'] => Ok(Self {
+                number: (tens - b'0') * 10 + ones - b'0',
+                is_leap: true,
+            }),
+            _ => Err(MonthCodeParseError::InvalidSyntax),
+        }
     }
 
-    /// Create a new ValidMonthCode without checking that the number is between 0 and 99
+    /// Create a new ValidMonthCode without checking that the number is between 1 and 99
     #[inline]
     pub(crate) fn new_unchecked(number: u8, is_leap: bool) -> Self {
-        debug_assert!(number <= 99);
+        debug_assert!((1..=99).contains(&number));
         Self { number, is_leap }
     }
 
@@ -558,9 +547,26 @@ pub struct MonthInfo {
     /// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
     /// [`Date::try_from_fields`]: crate::Date::try_from_fields
     pub formatting_code: MonthCode,
+
+    /// Same as [`Self::formatting_code`] but with invariants validated.
+    pub(crate) valid_formatting_code: ValidMonthCode,
 }
 
 impl MonthInfo {
+    pub(crate) fn non_lunisolar(number: u8) -> Self {
+        Self::for_code_and_ordinal(ValidMonthCode::new_unchecked(number, false), number)
+    }
+
+    pub(crate) fn for_code_and_ordinal(code: ValidMonthCode, ordinal: u8) -> Self {
+        Self {
+            ordinal,
+            standard_code: code.to_month_code(),
+            valid_standard_code: code,
+            formatting_code: code.to_month_code(),
+            valid_formatting_code: code,
+        }
+    }
+
     /// Gets the month number. A month number N is not necessarily the Nth month in the year
     /// if there are leap months in the year, rather it is associated with the Nth month of a "regular"
     /// year. There may be multiple month Ns in a year
@@ -571,6 +577,16 @@ impl MonthInfo {
     /// Get whether the month is a leap month
     pub fn is_leap(self) -> bool {
         self.valid_standard_code.is_leap()
+    }
+
+    #[doc(hidden)]
+    pub fn formatting_month_number(self) -> u8 {
+        self.valid_formatting_code.number()
+    }
+
+    #[doc(hidden)]
+    pub fn formatting_is_leap(self) -> bool {
+        self.valid_formatting_code.is_leap()
     }
 }
 

@@ -235,7 +235,12 @@ where
         (FieldSymbol::Month(symbol), l) => {
             const PART: Part = parts::MONTH;
             input!(PART, Month, month = input.month);
-            match datetime_names.get_name_for_month(symbol, l, month.formatting_code) {
+            match datetime_names.get_name_for_month(
+                symbol,
+                l,
+                month.formatting_month_number() - 1,
+                month.formatting_is_leap(),
+            ) {
                 Ok(MonthPlaceholderValue::PlainString(symbol)) => {
                     w.with_part(PART, |w| w.write_str(symbol))?;
                     Ok(())

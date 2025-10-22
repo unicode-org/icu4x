@@ -226,7 +226,7 @@ impl Calendar for Julian {
 
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        self.month_code_from_ordinal(&date.0.year, date.0.month)
+        types::MonthInfo::non_lunisolar(date.0.month)
     }
 
     /// The calendar-specific day-of-month represented by `date`
