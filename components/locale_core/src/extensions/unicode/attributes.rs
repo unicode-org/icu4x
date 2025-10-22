@@ -148,6 +148,29 @@ impl Attributes {
     {
         self.deref().iter().map(|t| t.as_str()).try_for_each(f)
     }
+
+    /// Extends the `Attributes` with values from another `Attributes`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::locale::extensions::unicode::Attributes;
+    ///
+    /// let mut attrs: Attributes = "foobar-foobaz".parse().unwrap();
+    /// let attrs2: Attributes = "foobar-fooqux".parse().unwrap();
+    ///
+    /// attrs.extend_from_attributes(attrs2);
+    ///
+    /// assert_eq!(attrs, "foobar-foobaz-fooqux".parse().unwrap());
+    /// ```
+    #[cfg(feature = "alloc")]
+    pub fn extend_from_attributes(&mut self, other: Attributes) {
+        for attr in other.0 {
+            if let Err(idx) = self.binary_search(&attr) {
+                self.0.insert(idx, attr);
+            }
+        }
+    }
 }
 
 /// ✨ *Enabled with the `alloc` Cargo feature.*
