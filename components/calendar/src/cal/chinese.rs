@@ -587,7 +587,8 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
         // it is impossible to actually have 14 months in a year.
         let leap_month = year.leap_month().unwrap_or(14);
 
-        // leap_month is the ordinal of the second month, so subtract 1 to get the code
+        // leap_month identifies the ordinal month number of the leap month,
+        // so its month number will be leap_month - 1
         if month_code == ValidMonthCode::new_unchecked(leap_month - 1, true) {
             return Ok(leap_month);
         }
