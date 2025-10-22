@@ -100,7 +100,7 @@ pub struct DateFields<'a> {
     /// ```
     pub extended_year: Option<i32>,
     /// The month code representing a valid month in this calendar year,
-    /// represented as UTF-8 code units.
+    /// as a UTF-8 string.
     ///
     /// See [`MonthCode`] for information on the syntax.
     ///
