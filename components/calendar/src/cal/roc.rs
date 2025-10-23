@@ -13,7 +13,7 @@ use tinystr::tinystr;
 ///
 /// The ROC Calendar is a variant of the [`Gregorian`](crate::cal::Gregorian) calendar
 /// created by the government of the Republic of China. It is identical to the Gregorian
-/// calendar expect that is uses the ROC/Minguo/民国/民國 Era (1912 CE) instead of the Common Era.
+/// calendar except that is uses the ROC/Minguo/民国/民國 Era (1912 CE) instead of the Common Era.
 ///
 /// This implementation extends proleptically for dates before the calendar's creation
 /// in 1 Minguo (1912 CE).

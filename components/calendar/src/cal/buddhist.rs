@@ -15,7 +15,7 @@ use tinystr::tinystr;
 /// The [Thai Solar Buddhist Calendar](https://en.wikipedia.org/wiki/Thai_solar_calendar)
 ///
 /// The Thai Solar Buddhist Calendar is a variant of the [`Gregorian`](crate::cal::Gregorian) calendar
-/// created by the Thai government. It is identical to the Gregorian calendar expect that is uses
+/// created by the Thai government. It is identical to the Gregorian calendar except that is uses
 /// the Buddhist Era (-543 CE) instead of the Common Era.
 ///
 /// This implementation extends proleptically for dates before the calendar's creation

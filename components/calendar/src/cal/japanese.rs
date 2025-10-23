@@ -14,7 +14,7 @@ use tinystr::tinystr;
 /// The [Japanese Calendar] (with modern eras only)
 ///
 /// The [Japanese Calendar] is a variant of the [`Gregorian`](crate::cal::Gregorian) calendar
-/// created by the Japanese government. It is identical to the Gregorian calendar expect that
+/// created by the Japanese government. It is identical to the Gregorian calendar except that
 /// is uses Japanese eras instead of the Common Era.
 ///
 /// This implementation extends proleptically for dates before the calendar's creation
@@ -45,7 +45,7 @@ pub struct Japanese {
 /// The [Japanese Calendar] (with historical eras)
 ///
 /// The [Japanese Calendar] is a variant of the [`Gregorian`](crate::cal::Gregorian) calendar
-/// created by the Japanese government. It is identical to the Gregorian calendar expect that
+/// created by the Japanese government. It is identical to the Gregorian calendar except that
 /// is uses Japanese eras instead of the Common Era.
 ///
 /// This implementation extends proleptically for dates before the calendar's creation
