@@ -45,25 +45,25 @@ mod simple;
 ///
 /// # Months
 ///
-/// The East-Asian lunisolar calendar is an astronomical calendar which uses the phases of the moon to track months.
+/// The traditional East-Asian calendar is an astronomical calendar which uses the phases of the moon to track months.
 /// Each month starts on the date of the new moon, meaning that months last 29 or 30 days.
 ///
-/// One year in the East-Asian lunisolar calendar is typically 12 lunar months; however, because 12 lunar months does
-/// not line up to one solar year, the East-Asian lunisolar calendar will add an intercalary leap month approximately
-/// every three years to keep East-Asian lunisolar calendar months in line with the solar year.
+/// One year in the traditional East-Asian calendar is typically 12 lunar months; however, because 12 lunar months does
+/// not line up to one solar year, the traditional East-Asian calendar will add an intercalary leap month approximately
+/// every three years to keep traditional East-Asian calendar months in line with the solar year.
 ///
 /// Leap months can happen after any month; the month in which a leap month occurs is based on the alignment
 /// of months with 24 solar terms into which the solar year is divided.
 ///
 /// # Year and Era codes
 ///
-/// Unlike the Gregorian calendar, the East-Asian lunisolar calendar does not traditionally count years in an infinitely
+/// Unlike the Gregorian calendar, the traditional East-Asian calendar does not traditionally count years in an infinitely
 /// increasing sequence. Instead, 10 "celestial stems" and 12 "terrestrial branches" are combined to form a
 /// cycle of year names which repeats every 60 years. However, for the purposes of calendar calculations and
 /// conversions, this calendar also counts years based on the Gregorian (ISO) calendar. This "related ISO year"
-/// marks the Gregorian year in which a East-Asian lunisolar year begins.
+/// marks the Gregorian year in which a traditional East-Asian year begins.
 ///
-/// Because the East-Asian lunisolar calendar does not traditionally count years, era codes are not used in this calendar.
+/// Because the traditional East-Asian calendar does not traditionally count years, era codes are not used in this calendar.
 ///
 /// For more information, suggested reading materials include:
 /// * _Calendrical Calculations_ by Reingold & Dershowitz
@@ -79,7 +79,7 @@ mod simple;
 /// going to be perfect.
 #[derive(Clone, Debug, Default, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // newtype
-pub struct EastAsianTraditional<X>(pub X);
+pub struct EastAsianTraditional<R>(pub R);
 
 /// The rules for the [`EastAsianTraditional`] calendar.
 ///
@@ -157,51 +157,6 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
 /// [GB/T 33661-2017]: China::gb_t_33661_2017
 /// [Yuk Tung Liu]: https://ytliu0.github.io/ChineseCalendar/table.html
 pub type ChineseTraditional = EastAsianTraditional<China>;
-
-/// The [Korean](https://en.wikipedia.org/wiki/Korean_calendar) variant of the [`EastAsianTraditional`] calendar.
-///
-/// This type agrees with the official data published by the
-/// [Korea Astronomy and Space Science Institute for the years 1900-2050].
-///
-/// For years since 1912, this uses [adapted GB/T 33661-2017] rules,
-/// using Korea time instead of Beijing Time.
-/// As accurate computation is computationally expensive, years until
-/// 2100 are precomputed, and after that this type regresses to a simplified
-/// calculation. If accuracy beyond 2100 is required, clients
-/// can implement their own [`Rules`] type containing more precomputed data.
-/// We note that the calendar is inherently uncertain for some future dates.
-///
-/// Before 1912 [different rules](https://ytliu.epizy.com/Shixian/Shixian_summary.html)
-/// were used (those of Qing-dynasty China). This type produces correct data
-/// for the years 1900-1912, and falls back to a simplified calculation
-/// before 1900. If accuracy is required before 1900, clients can implement
-/// their own [`Rules`] type using data such as from the excellent compilation
-/// by [Yuk Tung Liu].
-///
-/// [Korea Astronomy and Space Science Institute for the years 1900-2050]: https://astro.kasi.re.kr/life/pageView/5
-/// [adapted GB/T 33661-2017]: Korea::adapted_gb_t_33661_2017
-/// [GB/T 33661-2017]: China::gb_t_33661_2017
-/// [Yuk Tung Liu]: https://ytliu0.github.io/ChineseCalendar/table.html
-///
-/// ```rust
-/// use icu::calendar::cal::{KoreanTraditional, ChineseTraditional};
-/// use icu::calendar::Date;
-///
-/// let iso_a = Date::try_new_iso(2012, 4, 23).unwrap();
-/// let korean_a = iso_a.to_calendar(KoreanTraditional::new());
-/// let chinese_a = iso_a.to_calendar(ChineseTraditional::new());
-///
-/// assert_eq!(korean_a.month().standard_code.0, "M03L");
-/// assert_eq!(chinese_a.month().standard_code.0, "M04");
-///
-/// let iso_b = Date::try_new_iso(2012, 5, 23).unwrap();
-/// let korean_b = iso_b.to_calendar(KoreanTraditional::new());
-/// let chinese_b = iso_b.to_calendar(ChineseTraditional::new());
-///
-/// assert_eq!(korean_b.month().standard_code.0, "M04");
-/// assert_eq!(chinese_b.month().standard_code.0, "M04L");
-/// ```
-pub type KoreanTraditional = EastAsianTraditional<Korea>;
 
 /// The [`Rules`] used in China.
 ///
@@ -329,6 +284,51 @@ impl Rules for China {
         "Chinese"
     }
 }
+
+/// The [Korean](https://en.wikipedia.org/wiki/Korean_calendar) variant of the [`EastAsianTraditional`] calendar.
+///
+/// This type agrees with the official data published by the
+/// [Korea Astronomy and Space Science Institute for the years 1900-2050].
+///
+/// For years since 1912, this uses [adapted GB/T 33661-2017] rules,
+/// using Korea time instead of Beijing Time.
+/// As accurate computation is computationally expensive, years until
+/// 2100 are precomputed, and after that this type regresses to a simplified
+/// calculation. If accuracy beyond 2100 is required, clients
+/// can implement their own [`Rules`] type containing more precomputed data.
+/// We note that the calendar is inherently uncertain for some future dates.
+///
+/// Before 1912 [different rules](https://ytliu.epizy.com/Shixian/Shixian_summary.html)
+/// were used (those of Qing-dynasty China). This type produces correct data
+/// for the years 1900-1912, and falls back to a simplified calculation
+/// before 1900. If accuracy is required before 1900, clients can implement
+/// their own [`Rules`] type using data such as from the excellent compilation
+/// by [Yuk Tung Liu].
+///
+/// [Korea Astronomy and Space Science Institute for the years 1900-2050]: https://astro.kasi.re.kr/life/pageView/5
+/// [adapted GB/T 33661-2017]: Korea::adapted_gb_t_33661_2017
+/// [GB/T 33661-2017]: China::gb_t_33661_2017
+/// [Yuk Tung Liu]: https://ytliu0.github.io/ChineseCalendar/table.html
+///
+/// ```rust
+/// use icu::calendar::cal::{KoreanTraditional, ChineseTraditional};
+/// use icu::calendar::Date;
+///
+/// let iso_a = Date::try_new_iso(2012, 4, 23).unwrap();
+/// let korean_a = iso_a.to_calendar(KoreanTraditional::new());
+/// let chinese_a = iso_a.to_calendar(ChineseTraditional::new());
+///
+/// assert_eq!(korean_a.month().standard_code.0, "M03L");
+/// assert_eq!(chinese_a.month().standard_code.0, "M04");
+///
+/// let iso_b = Date::try_new_iso(2012, 5, 23).unwrap();
+/// let korean_b = iso_b.to_calendar(KoreanTraditional::new());
+/// let chinese_b = iso_b.to_calendar(ChineseTraditional::new());
+///
+/// assert_eq!(korean_b.month().standard_code.0, "M04");
+/// assert_eq!(chinese_b.month().standard_code.0, "M04L");
+/// ```
+pub type KoreanTraditional = EastAsianTraditional<Korea>;
 
 /// The [`Rules`] used in Korea.
 ///
