@@ -8,6 +8,8 @@ final class _DateFromFieldsOptionsFfi extends ffi.Struct {
   external _ResultInt32Void missingFieldsStrategy;
 }
 
+/// 🚧 This API is experimental and may experience breaking changes outside major releases.
+///
 /// See the [Rust documentation for `DateFromFieldsOptions`](https://docs.rs/icu/2.0.0/icu/calendar/options/struct.DateFromFieldsOptions.html) for more information.
 final class DateFromFieldsOptions {
   DateOverflow? overflow;
