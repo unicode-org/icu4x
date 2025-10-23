@@ -543,12 +543,12 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
     type YearInfo = LunarChineseYearData;
 
     fn days_in_provided_month(year: LunarChineseYearData, month: u8) -> u8 {
-        year.days_in_month(month)
+        29 + year.packed.month_has_30_days(month) as u8
     }
 
     /// Returns the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
     fn months_in_provided_year(year: LunarChineseYearData) -> u8 {
-        year.months_in_year()
+        12 + year.packed.leap_month().is_some() as u8
     }
 
     #[inline]
@@ -585,7 +585,7 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
     ) -> Result<u8, MonthCodeError> {
         // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
         // it is impossible to actually have 14 months in a year.
-        let leap_month = year.leap_month().unwrap_or(14);
+        let leap_month = year.packed.leap_month().unwrap_or(14);
 
         // leap_month identifies the ordinal month number of the leap month,
         // so its month number will be leap_month - 1
@@ -609,7 +609,7 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
     fn month_code_from_ordinal(&self, year: &Self::YearInfo, ordinal_month: u8) -> ValidMonthCode {
         // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
         // it is impossible to actually have 14 months in a year.
-        let leap_month = year.leap_month().unwrap_or(14);
+        let leap_month = year.packed.leap_month().unwrap_or(14);
         ValidMonthCode::new_unchecked(
             // subtract one if there was a leap month before
             ordinal_month - (ordinal_month >= leap_month) as u8,
@@ -644,7 +644,7 @@ impl<R: Rules> Calendar for LunarChinese<R> {
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
         let iso = Iso.from_rata_die(rd);
-        let y = {
+        let year = {
             let candidate = self.0.year_data(iso.0.year);
 
             if rd >= candidate.new_year() {
@@ -653,12 +653,36 @@ impl<R: Rules> Calendar for LunarChinese<R> {
                 self.0.year_data(iso.0.year - 1)
             }
         };
-        let (m, d) = y.md_from_rd(rd);
-        ChineseDateInner(ArithmeticDate::new_unchecked(y, m, d))
+
+        // Clamp the RD to our year
+        let rd = rd.clamp(
+            year.new_year(),
+            year.new_year() + year.packed.days_in_year() as i64,
+        );
+
+        let day_of_year = (rd - year.new_year()) as u16;
+
+        // We divide by 30, not 29, to account for the case where all months before this
+        // were length 30 (possible near the beginning of the year)
+        let mut month = (day_of_year / 30) as u8 + 1;
+        let mut last_day_of_month = year.packed.last_day_of_month(month);
+        let mut last_day_of_prev_month = year.packed.last_day_of_month(month - 1);
+
+        while day_of_year >= last_day_of_month {
+            month += 1;
+            last_day_of_prev_month = last_day_of_month;
+            last_day_of_month = year.packed.last_day_of_month(month);
+        }
+
+        let day = (day_of_year + 1 - last_day_of_prev_month) as u8;
+
+        ChineseDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        date.0.year.rd_from_md(date.0.month, date.0.day)
+        date.0.year.new_year()
+            + date.0.year.packed.last_day_of_month(date.0.month - 1) as i64
+            + (date.0.day - 1) as i64
     }
 
     fn has_cheap_iso_conversion(&self) -> bool {
@@ -668,7 +692,7 @@ impl<R: Rules> Calendar for LunarChinese<R> {
     // Count the number of months in a given year, specified by providing a date
     // from that year
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.0.year.days_in_year()
+        date.0.year.packed.days_in_year()
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
@@ -707,7 +731,7 @@ impl<R: Rules> Calendar for LunarChinese<R> {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        date.0.year.leap_month().is_some()
+        date.0.year.packed.leap_month().is_some()
     }
 
     /// The calendar-specific month code represented by `date`;
@@ -728,7 +752,7 @@ impl<R: Rules> Calendar for LunarChinese<R> {
 
     /// Information of the day of the year
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        types::DayOfYear(date.0.year.day_of_year(date.0.month, date.0.day))
+        types::DayOfYear(date.0.year.packed.last_day_of_month(date.0.month - 1) + date.0.day as u16)
     }
 
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
@@ -850,116 +874,6 @@ impl LunarChineseYearData {
     /// Get the new year R.D.    
     fn new_year(self) -> RataDie {
         self.packed.new_year(self.related_iso)
-    }
-
-    /// Get the next new year R.D.
-    fn next_new_year(self) -> RataDie {
-        self.new_year() + i64::from(self.days_in_year())
-    }
-
-    /// Get which month is the leap month. This produces the month *number*
-    /// that is the leap month (not the ordinal month). In other words, for
-    /// a year with an M05L, this will return Some(5). Note that the regular month precedes
-    /// the leap month.
-    fn leap_month(self) -> Option<u8> {
-        self.packed.leap_month()
-    }
-
-    /// The last day of year in the previous month.
-    /// `month` is 1-indexed, and the returned value is also
-    /// a 1-indexed day of year
-    ///
-    /// Will be zero for the first month as the last day of the previous month
-    /// is not in this year
-    fn last_day_of_previous_month(self, month: u8) -> u16 {
-        debug_assert!((1..=13).contains(&month), "Month out of bounds!");
-        // Get the last day of the previous month.
-        // Since `month` is 1-indexed, this needs to check if the month is 1 for the zero case
-        if month == 1 {
-            0
-        } else {
-            self.packed.last_day_of_month(month - 1)
-        }
-    }
-
-    fn days_in_year(self) -> u16 {
-        self.last_day_of_month(self.months_in_year())
-    }
-
-    /// Return the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
-    fn months_in_year(self) -> u8 {
-        if self.leap_month().is_some() {
-            13
-        } else {
-            12
-        }
-    }
-
-    /// The last day of year in the current month.
-    /// `month` is 1-indexed, and the returned value is also
-    /// a 1-indexed day of year
-    ///
-    /// Will be zero for the first month as the last day of the previous month
-    /// is not in this year
-    fn last_day_of_month(self, month: u8) -> u16 {
-        debug_assert!((1..=13).contains(&month), "Month out of bounds!");
-        self.packed.last_day_of_month(month)
-    }
-
-    fn days_in_month(self, month: u8) -> u8 {
-        if self.packed.month_has_30_days(month) {
-            30
-        } else {
-            29
-        }
-    }
-
-    fn md_from_rd(self, rd: RataDie) -> (u8, u8) {
-        debug_assert!(
-            rd < self.next_new_year() || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&rd),
-            "Stored date {rd:?} out of bounds!"
-        );
-        // 1-indexed day of year
-        let day_of_year = u16::try_from(rd - self.new_year() + 1);
-        debug_assert!(
-            day_of_year.is_ok() || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&rd),
-            "Somehow got a very large year in data"
-        );
-        let day_of_year = day_of_year.unwrap_or(1);
-        let mut month = 1;
-        // TODO(#3933) perhaps use a binary search
-        for iter_month in 1..=13 {
-            month = iter_month;
-            if self.last_day_of_month(iter_month) >= day_of_year {
-                break;
-            }
-        }
-
-        debug_assert!((1..=13).contains(&month), "Month out of bounds!");
-
-        debug_assert!(
-            month < 13
-                || self.leap_month().is_some()
-                || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&rd),
-            "Cannot have 13 months in a non-leap year!"
-        );
-        let day_before_month_start = self.last_day_of_previous_month(month);
-        let day_of_month = day_of_year - day_before_month_start;
-        let day_of_month = u8::try_from(day_of_month);
-        debug_assert!(day_of_month.is_ok(), "Month too big!");
-        let day_of_month = day_of_month.unwrap_or(1);
-
-        (month, day_of_month)
-    }
-
-    fn rd_from_md(self, month: u8, day: u8) -> RataDie {
-        self.new_year() + self.day_of_year(month, day) as i64 - 1
-    }
-
-    /// Calculate the number of days in the year so far for a ChineseBasedDate;
-    /// similar to `CalendarArithmetic::day_of_year`
-    fn day_of_year(self, month: u8, day: u8) -> u16 {
-        self.last_day_of_previous_month(month) + day as u16
     }
 }
 
@@ -1084,7 +998,7 @@ impl PackedLunarChineseYearData {
         months & (1 << (month - 1) as u16) != 0
     }
 
-    // Which day of year is the last day of a month (month is 1-indexed)
+    // month is 1-indexed, but 0 is a valid input, producing 0
     fn last_day_of_month(self, month: u8) -> u16 {
         let months = u16::from_le_bytes([self.0, self.1]);
         // month is 1-indexed, so `29 * month` includes the current month
@@ -1095,6 +1009,10 @@ impl PackedLunarChineseYearData {
         let long_month_bits = months & ((1 << month as u16) - 1);
         prev_month_lengths += long_month_bits.count_ones().try_into().unwrap_or(0);
         prev_month_lengths
+    }
+
+    fn days_in_year(self) -> u16 {
+        self.last_day_of_month(12 + self.leap_month().is_some() as u8)
     }
 }
 
@@ -1439,7 +1357,7 @@ mod test {
             (13, 30),
         ];
         for case in cases {
-            let days_in_month = year.days_in_month(case.0);
+            let days_in_month = LunarChinese::<China>::days_in_provided_month(year, case.0);
             assert_eq!(
                 case.1, days_in_month,
                 "month_days test failed for case: {case:?}"
@@ -1570,7 +1488,7 @@ mod test {
             ..Default::default()
         };
         let year = cal.year_info_from_extended(2023);
-        let leap_month = year.leap_month().unwrap();
+        let leap_month = year.packed.leap_month().unwrap();
         for ordinal in 1..=13 {
             let code = ValidMonthCode::new_unchecked(
                 ordinal - (ordinal >= leap_month) as u8,
@@ -1926,15 +1844,13 @@ mod test {
                                     continue;
                                 }
                                 let data = calendar.0.year_data(year);
-                                let leap_month = data.leap_month().unwrap_or(15);
-                                let days_in_month = data.days_in_month({
-                                    if leap && month + 1 == leap_month {
-                                        month + 1
-                                    } else {
-                                        month + (month + 1 > leap_month) as u8
-                                    }
-                                });
-                                if (!long || (days_in_month == 30))
+                                let leap_month = data.packed.leap_month().unwrap_or(15);
+                                let ordinal_month = if leap && month + 1 == leap_month {
+                                    month + 1
+                                } else {
+                                    month + (month + 1 > leap_month) as u8
+                                };
+                                if (!long || data.packed.month_has_30_days(ordinal_month))
                                     && (!leap || month + 1 == leap_month)
                                 {
                                     println!("({month}, {leap:?}, {long:?}) => {year},");
