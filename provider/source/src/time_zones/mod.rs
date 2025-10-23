@@ -305,8 +305,8 @@ impl SourceDataProvider {
                                 let kind = if os.daylight.is_some() && golden_os.daylight.is_none() {
                                     MetazoneMembershipKind::CustomVariants
                                 } else if os.daylight.is_none() && golden_os.daylight.is_some() || Some(os.standard) == os.daylight {
-                                    // TODO: this needs to look at actual transitions
-                                    MetazoneMembershipKind::CustomTransitions
+                                    // TODO: detect custom transitions
+                                    MetazoneMembershipKind::BehavesLikeGolden
                                 } else {
                                     MetazoneMembershipKind::BehavesLikeGolden
                                 };

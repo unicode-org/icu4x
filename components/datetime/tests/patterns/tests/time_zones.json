@@ -39,7 +39,7 @@
       "zzzz": "heure normale d’Europe centrale",
 
       "v": "heure : Algérie",
-      "vvvv": "heure d’Europe centrale (Algérie)"
+      "vvvv": "heure d’Europe centrale"
     }
   },
   {
@@ -49,8 +49,8 @@
       "z": "CST",
       "zzzz": "Central Standard Time",
 
-      "v": "CT (Regina)",
-      "vvvv": "Central Time (Regina)"
+      "v": "CT",
+      "vvvv": "Central Time"
     }
   },
   {
