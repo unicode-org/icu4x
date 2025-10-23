@@ -819,6 +819,7 @@ impl AnyCalendarKind {
             return kind;
         }
 
+        // This is tested to be consistent with CLDR in icu_provider_source::calendar::test_calendar_resolution
         match (
             prefs.calendar_algorithm,
             prefs
