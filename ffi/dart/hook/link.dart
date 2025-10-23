@@ -65,10 +65,13 @@ const _diplomatFfiUseIdentifier = record_use.Identifier(
 
 extension on LinkInput {
   record_use.RecordedUsages? get usages {
-    if (recordedUsagesFile == null) {
+    // the hooks package is pinned
+    // ignore: experimental_member_use
+    final records = recordedUsagesFile;
+    if (records == null) {
       return null;
     }
-    final usagesContent = File.fromUri(recordedUsagesFile!).readAsStringSync();
+    final usagesContent = File.fromUri(records).readAsStringSync();
     final usagesJson = jsonDecode(usagesContent) as Map<String, dynamic>;
     return record_use.RecordedUsages.fromJson(usagesJson);
   }

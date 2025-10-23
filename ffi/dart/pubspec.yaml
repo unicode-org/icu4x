@@ -21,16 +21,17 @@ environment:
 
 dependencies:
   args: ^2.7.0
-  code_assets: ^0.19.7
+  code_assets: ^0.19.9
   collection: ^1.19.1
   crypto: ^3.0.6
   ffi: ^2.1.4
-  hooks: ^0.20.1
+  # Pinned as we use unstable APIs
+  hooks: '>=0.20.4 <0.20.5'
   logging: ^1.3.0
   meta: ^1.17.0
-  native_toolchain_c: ^0.17.1
+  native_toolchain_c: ^0.17.2
   path: ^1.9.1
-  record_use: ^0.4.1
+  record_use: ^0.4.2
 
 dev_dependencies:
   dart_flutter_team_lints: ^3.5.2
