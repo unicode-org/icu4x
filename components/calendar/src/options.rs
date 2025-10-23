@@ -233,9 +233,9 @@ mod unstable {
         /// );
         /// ```
         ///
-        /// [`Months`]: types::DateDurationUnit::Months
-        /// [`Years`]: types::DateDurationUnit::Years
-        /// [`DateDuration`]: types::DateDuration
+        /// [`Months`]: crate::types::DateDurationUnit::Months
+        /// [`Years`]: crate::types::DateDurationUnit::Years
+        /// [`DateDuration`]: crate::types::DateDuration
         pub largest_unit: Option<crate::duration::DateDurationUnit>,
     }
 

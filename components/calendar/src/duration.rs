@@ -103,7 +103,7 @@ pub struct DateDuration {
     /// Whether the duration is negative.
     ///
     /// A negative duration is an abstract concept that could result, for example, from
-    /// taking the difference between two [`Date`]s.
+    /// taking the difference between two [`Date`](crate::Date)s.
     ///
     /// The fields of the duration are either all positive or all negative. Mixed signs
     /// are not allowed.

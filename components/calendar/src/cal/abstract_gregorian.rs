@@ -104,6 +104,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     ) -> Result<Self::DateInner, DateError> {
         ArithmeticDate::from_codes(era, year, month_code, day, self).map(ArithmeticDate::cast)
     }
+
     #[cfg(feature = "unstable")]
     fn from_fields(
         &self,
@@ -160,6 +161,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
         AbstractGregorian::<IsoEra>::days_in_provided_month(date.year, date.month)
     }
+
     #[cfg(feature = "unstable")]
     fn add(
         &self,
@@ -169,6 +171,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     ) -> Result<Self::DateInner, DateError> {
         date.added(duration, &AbstractGregorian(IsoEra), options)
     }
+
     #[cfg(feature = "unstable")]
     fn until(
         &self,
