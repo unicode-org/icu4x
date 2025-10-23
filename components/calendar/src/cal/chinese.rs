@@ -61,12 +61,11 @@ mod simple;
 ///
 /// # Months and days
 ///
-/// The 12 months are called Zōuyuè (`M01`), Xìngyuè (`M02`), Táoyuè (`M03`),
-/// Méiyuè (`M04`), Liúyuè (`M05`), Héyuè (`M06`), Lányuè (`M07`), Guìyuè (`M08`),
-/// Júyuè (`M09`), Lùyuè (`M10`), Dōngyuè (`M11`), Bīngyuè (`M12`).
+/// The 12 months (`M01`-`M12`) don't use names in modern usage, instead they are referred to as
+/// e.g. 三月 (third month) using Chinese characters.
 ///
 /// As a lunar calendar, the lengths of the months depend on the lunar cycle (a month starts on the day of
-/// local new moon), and will be either 29 or 30 days. As the lunar and solar month do not line up, a leap
+/// local new moon), and will be either 29 or 30 days. As 12 such months fall short of a solar year, a leap
 /// month is inserted roughly every 3 years; this can be after any month (e.g. `M02L`).
 ///
 /// Both the lengths of the months and the occurence of leap months are determined by the
