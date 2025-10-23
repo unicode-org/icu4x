@@ -45,7 +45,7 @@ fn test_calendar_resolution() {
             .iter()
             .map(|a| match a.as_str() {
                 "gregorian" => CalendarAlgorithm::Gregory,
-                a => CalendarAlgorithm::try_from(&Value::try_from_str(&a).unwrap()).unwrap(),
+                a => CalendarAlgorithm::try_from(&Value::try_from_str(a).unwrap()).unwrap(),
             })
             .collect::<Vec<_>>();
 
