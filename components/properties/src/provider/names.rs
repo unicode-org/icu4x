@@ -80,6 +80,12 @@ icu_provider::data_marker!(
     is_singleton = true
 );
 icu_provider::data_marker!(
+    /// `PropertyNameParseNumericTypeV1`
+    PropertyNameParseNumericTypeV1,
+    PropertyValueNameToEnumMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
     /// `PropertyNameParseScriptV1`
     PropertyNameParseScriptV1,
     PropertyValueNameToEnumMap<'static>,
@@ -192,6 +198,18 @@ icu_provider::data_marker!(
     PropertyNameLongLineBreakV1,
     PropertyEnumToValueNameLinearMap<'static>,
     is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyNameLongNumericTypeV1`
+    PropertyNameLongNumericTypeV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// `PropertyNameShortNumericTypeV1`
+    PropertyNameShortNumericTypeV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true,
 );
 icu_provider::data_marker!(
     /// `PropertyNameShortLineBreakV1`

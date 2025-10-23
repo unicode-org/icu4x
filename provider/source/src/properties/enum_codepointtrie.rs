@@ -467,6 +467,15 @@ expand!(
         "bc"
     ),
     (
+        PropertyEnumNumericTypeV1,
+        PropertyNameParseNumericTypeV1,
+        (
+            linear: PropertyNameShortNumericTypeV1,
+            PropertyNameLongNumericTypeV1
+        ),
+        "nt"
+    ),
+    (
         PropertyEnumScriptV1,
         PropertyNameParseScriptV1,
         (
