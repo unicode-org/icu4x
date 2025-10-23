@@ -250,7 +250,7 @@ pub enum AnyCalendarDifferenceError {
     /// use icu::calendar::cal::AnyCalendarDifferenceError;
     ///
     /// let d1 = Date::try_new_gregorian(2000, 1, 1).unwrap().to_any();
-    /// let d2 = Date::try_new_hebrew(5780, 1, 1).unwrap().to_any();
+    /// let d2 = Date::try_new_persian(1562, 1, 1).unwrap().to_any();
     ///
     /// assert!(matches!(
     ///     d1.try_until_with_options(&d2, Default::default()),
