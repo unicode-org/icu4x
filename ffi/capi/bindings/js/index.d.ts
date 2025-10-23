@@ -314,6 +314,8 @@ export { JoiningType } from "./JoiningType"
 
 export { LineBreak } from "./LineBreak"
 
+export { NumericType } from "./NumericType"
+
 export { Script } from "./Script"
 
 export { SentenceBreak } from "./SentenceBreak"

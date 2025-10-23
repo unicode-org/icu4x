@@ -40,6 +40,11 @@ CodePointMapData8* icu4x_CodePointMapData8_create_bidi_class_mv1(void);
 typedef struct icu4x_CodePointMapData8_create_bidi_class_with_provider_mv1_result {union {CodePointMapData8* ok; DataError err;}; bool is_ok;} icu4x_CodePointMapData8_create_bidi_class_with_provider_mv1_result;
 icu4x_CodePointMapData8_create_bidi_class_with_provider_mv1_result icu4x_CodePointMapData8_create_bidi_class_with_provider_mv1(const DataProvider* provider);
 
+CodePointMapData8* icu4x_CodePointMapData8_create_numeric_type_mv1(void);
+
+typedef struct icu4x_CodePointMapData8_create_numeric_type_with_provider_mv1_result {union {CodePointMapData8* ok; DataError err;}; bool is_ok;} icu4x_CodePointMapData8_create_numeric_type_with_provider_mv1_result;
+icu4x_CodePointMapData8_create_numeric_type_with_provider_mv1_result icu4x_CodePointMapData8_create_numeric_type_with_provider_mv1(const DataProvider* provider);
+
 CodePointMapData8* icu4x_CodePointMapData8_create_east_asian_width_mv1(void);
 
 typedef struct icu4x_CodePointMapData8_create_east_asian_width_with_provider_mv1_result {union {CodePointMapData8* ok; DataError err;}; bool is_ok;} icu4x_CodePointMapData8_create_east_asian_width_with_provider_mv1_result;

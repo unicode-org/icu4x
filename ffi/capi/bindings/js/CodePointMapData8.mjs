@@ -239,6 +239,47 @@ export class CodePointMapData8 {
     }
 
     /**
+     * Create a map for the `Numeric_Type` property, using compiled data.
+     *
+     * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
+     */
+    static createNumericType() {
+
+        const result = wasm.icu4x_CodePointMapData8_create_numeric_type_mv1();
+
+        try {
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, result, []);
+        }
+
+        finally {
+        }
+    }
+
+    /**
+     * Create a map for the `Bidi_Class` property, using a particular data source.
+     *
+     * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
+     */
+    static createNumericTypeWithProvider(provider) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_CodePointMapData8_create_numeric_type_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
+            }
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    /**
      * Create a map for the `East_Asian_Width` property, using compiled data.
      *
      * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.

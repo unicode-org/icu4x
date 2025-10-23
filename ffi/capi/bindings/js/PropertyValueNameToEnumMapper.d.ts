@@ -96,6 +96,20 @@ export class PropertyValueNameToEnumMapper {
     static createBidiClassWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
 
     /**
+     * Create a name-to-enum mapper for the `Numeric_Type` property, using compiled data.
+     *
+     * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
+     */
+    static createNumericType(): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `Numeric_Type` property, using a particular data source.
+     *
+     * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
+     */
+    static createNumericTypeWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
+
+    /**
      * Create a name-to-enum mapper for the `Indic_Syllabic_Category` property, using compiled data.
      *
      * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.

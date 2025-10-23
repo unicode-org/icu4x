@@ -312,6 +312,8 @@ export { JoiningType } from "./JoiningType.mjs"
 
 export { LineBreak } from "./LineBreak.mjs"
 
+export { NumericType } from "./NumericType.mjs"
+
 export { Script } from "./Script.mjs"
 
 export { SentenceBreak } from "./SentenceBreak.mjs"

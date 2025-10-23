@@ -114,6 +114,20 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> create_bidi_class_with_provider(const icu4x::DataProvider& provider);
 
   /**
+   * Create a name-to-enum mapper for the `Numeric_Type` property, using compiled data.
+   *
+   * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
+   */
+  inline static std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> create_numeric_type();
+
+  /**
+   * Create a name-to-enum mapper for the `Numeric_Type` property, using a particular data source.
+   *
+   * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
+   */
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> create_numeric_type_with_provider(const icu4x::DataProvider& provider);
+
+  /**
    * Create a name-to-enum mapper for the `Indic_Syllabic_Category` property, using compiled data.
    *
    * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
