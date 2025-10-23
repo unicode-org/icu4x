@@ -14,7 +14,6 @@ use crate::{types, AsCalendar, Calendar, Date, Ref};
 
 use crate::preferences::{CalendarAlgorithm, HijriCalendarAlgorithm};
 use icu_locale_core::preferences::define_preferences;
-use icu_locale_core::subtags::region;
 use icu_provider::prelude::*;
 
 use core::fmt;
@@ -816,19 +815,25 @@ pub enum AnyCalendarKind {
 impl AnyCalendarKind {
     /// Selects the [`AnyCalendarKind`] appropriate for the given [`CalendarPreferences`].
     pub fn new(prefs: CalendarPreferences) -> Self {
-        let algo = prefs.calendar_algorithm;
-        let region = prefs.locale_preferences.region();
-        if let Some(kind) = algo.and_then(|a| a.try_into().ok()) {
+        if let Some(kind) = prefs.calendar_algorithm.and_then(|a| a.try_into().ok()) {
             return kind;
         }
-        if region == Some(region!("TH")) {
-            AnyCalendarKind::Buddhist
-        } else if region == Some(region!("AF")) || region == Some(region!("IR")) {
-            AnyCalendarKind::Persian
-        } else if region == Some(region!("SA")) && algo == Some(CalendarAlgorithm::Hijri(None)) {
-            AnyCalendarKind::HijriUmmAlQura
-        } else {
-            AnyCalendarKind::Gregorian
+
+        match (
+            prefs.calendar_algorithm,
+            prefs
+                .locale_preferences
+                .region()
+                .as_ref()
+                .map(|r| r.as_str()),
+        ) {
+            (Some(CalendarAlgorithm::Hijri(None)), Some("AE" | "BH" | "KW" | "QA" | "SA")) => {
+                AnyCalendarKind::HijriUmmAlQura
+            }
+            (Some(CalendarAlgorithm::Hijri(None)), _) => AnyCalendarKind::HijriTabularTypeIIFriday,
+            (_, Some("TH")) => AnyCalendarKind::Buddhist,
+            (_, Some("AF" | "IR")) => AnyCalendarKind::Persian,
+            _ => AnyCalendarKind::Gregorian,
         }
     }
 }
