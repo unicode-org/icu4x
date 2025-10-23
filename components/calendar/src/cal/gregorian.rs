@@ -89,10 +89,10 @@ impl GregorianYears for CeBce {
 ///
 /// Standard years thus have 365 days, and leap years 366.
 ///
-/// # Siderial drift
+/// # Calendar drift
 ///
 /// The Gregorian calendar has an average year length of 365.2425, slightly longer than
-/// the mean siderial year, so this calendar drifts 1 day in ~7700 years with respect
+/// the mean solar year, so this calendar drifts 1 day in ~7700 years with respect
 /// to the seasons.
 ///
 /// # Historical accuracy

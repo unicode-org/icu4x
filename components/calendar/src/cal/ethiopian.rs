@@ -64,11 +64,11 @@ pub enum EthiopianEraStyle {
 ///
 /// Standard years thus have 365 days, and leap years 366.
 ///
-/// # Siderial drift
+/// # Calendar drift
 ///
 /// The Ethiopian calendar has the same year lengths and leap year rules as the [`Coptic`] and
-/// [`Julian`](crate::cal::Julian) calendars, so it experiences the same siderial drift of 1
-/// day in ~128 years with respect to the seasons.
+/// [`Julian`](crate::cal::Julian) calendars, so it experiences the same drift of 1 day in ~128
+/// years with respect to the seasons.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct Ethiopian(EthiopianEraStyle);
 

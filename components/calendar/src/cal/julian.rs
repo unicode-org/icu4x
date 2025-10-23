@@ -40,10 +40,10 @@ use tinystr::tinystr;
 ///
 /// Standard years thus have 365 days, and leap years 366.
 ///
-/// # Siderial drift
+/// # Calendar drift
 ///
 /// The Julian calendar has an average year length of 365.25, slightly longer than
-/// the mean siderial year, so this calendar drifts 1 day in ~128 years with
+/// the mean solar year, so this calendar drifts 1 day in ~128 years with
 /// respect to the seasons. This significant drift was the reason for its replacement
 /// by the Gregorian calendar. The Julian calendar is currently 14 days ahead of the
 /// Gregorian calendar and the solar year.

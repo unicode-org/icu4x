@@ -38,9 +38,10 @@ use calendrical_calculations::rata_die::RataDie;
 ///
 /// Standard years thus have 365 days, and leap years 366.
 ///
-/// # Siderial drift
+/// # Calendar drift
 ///
-/// As leap years are determined with respect to the siderial year, this calendar does not experience siderial drift.
+/// As leap years are determined with respect to the solar year, this calendar stays anchored
+/// to the seasons.
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
 pub struct Persian;

@@ -38,10 +38,10 @@ use tinystr::tinystr;
 ///
 /// Standard years thus have 365 days, and leap years 366.
 ///
-/// # Siderial drift
+/// # Calendar drift
 ///
 /// The Indian calendar has the same year lengths and leap year rules as the Gregorian calendar,
-/// so it experiences the same siderial drift of 1 day in ~7700 years with respect to the seasons.
+/// so it experiences the same drift of 1 day in ~7700 years with respect to the seasons.
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Indian;

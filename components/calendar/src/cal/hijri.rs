@@ -58,9 +58,9 @@ mod ummalqura_data;
 ///
 /// There are either 6 or 7 30-day months, so the length of the year is 354 or 355 days.
 ///
-/// # Siderial drift
+/// # Calendar drift
 ///
-/// As a lunar calendar, this calendar does not intend to follow the siderial year, and drifts more
+/// As a lunar calendar, this calendar does not intend to follow the solar year, and drifts more
 /// than 10 days per year with respect to the seasons.
 #[derive(Clone, Debug, Default, Copy)]
 #[allow(clippy::exhaustive_structs)] // newtype

@@ -66,7 +66,7 @@ mod simple;
 /// Júyuè (`M09`), Lùyuè (`M10`), Dōngyuè (`M11`), Bīngyuè (`M12`).
 ///
 /// As a lunar calendar, the lengths of the months depend on the lunar cycle (a month starts on the day of
-/// local new moon), and will be either 29 or 30 days. As the lunar and siderial month do not line up, a leap
+/// local new moon), and will be either 29 or 30 days. As the lunar and solar month do not line up, a leap
 /// month is inserted roughly every 3 years; this can be after any month (e.g. `M02L`).
 ///
 /// Both the lengths of the months and the occurence of leap months are determined by the
@@ -74,9 +74,10 @@ mod simple;
 ///
 /// The length of the year is 353-355 days, and the length of the leap year 383-385 days.
 ///
-/// # Siderial drift
+/// # Calendar drift
 ///
-/// As leap months are determined with respect to the siderial year, this calendar does not experience siderial drift.
+/// As leap months are determined with respect to the solar year, this calendar stays anchored
+/// to the seasons.
 #[derive(Clone, Debug, Default, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct LunarChinese<X>(pub X);

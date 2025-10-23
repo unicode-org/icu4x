@@ -41,10 +41,10 @@ use tinystr::tinystr;
 ///
 /// Standard years thus have 365 days, and leap years 366.
 ///
-/// # Siderial drift
+/// # Calendar drift
 ///
 /// The Coptic calendar has the same year lengths and leap year rules as the Julian calendar,
-/// so it experiences the same siderial drift of 1 day in ~128 years with respect to the seasons.
+/// so it experiences the same drift of 1 day in ~128 years with respect to the seasons.
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Coptic;
