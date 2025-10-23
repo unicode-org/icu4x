@@ -649,6 +649,7 @@ impl SourceDataProvider {
                         ("uprops/small/nfdinert.toml", include_bytes!("../../tests/data/icuexport/uprops/small/nfdinert.toml").as_slice()),
                         ("uprops/small/nfkcinert.toml", include_bytes!("../../tests/data/icuexport/uprops/small/nfkcinert.toml").as_slice()),
                         ("uprops/small/nfkdinert.toml", include_bytes!("../../tests/data/icuexport/uprops/small/nfkdinert.toml").as_slice()),
+                        ("uprops/small/nt.toml", include_bytes!("../../tests/data/icuexport/uprops/small/nt.toml").as_slice()),
                         ("uprops/small/Pat_Syn.toml", include_bytes!("../../tests/data/icuexport/uprops/small/Pat_Syn.toml").as_slice()),
                         ("uprops/small/Pat_WS.toml", include_bytes!("../../tests/data/icuexport/uprops/small/Pat_WS.toml").as_slice()),
                         ("uprops/small/PCM.toml", include_bytes!("../../tests/data/icuexport/uprops/small/PCM.toml").as_slice()),
