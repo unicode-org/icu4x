@@ -18,9 +18,6 @@ use tinystr::tinystr;
 /// # Era codes
 ///
 /// This calendar uses a single era: `default`
-/// # Month codes
-///
-/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Iso;

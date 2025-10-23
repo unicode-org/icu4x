@@ -35,8 +35,6 @@ mod simple;
 /// countries particularly in East Asia. It is often used today to track important
 /// cultural events and holidays like the Chinese Lunar New Year.
 ///
-/// This type can be used with [`Date`] to represent dates in the Chinese calendar.
-///
 /// The type parameter here specifies a particular set of calculation rules and local
 /// time information for a lunar Chinese calendar.
 /// It must implement the currently-unstable `Rules` trait, at the moment this crate exports two stable
@@ -46,25 +44,13 @@ mod simple;
 /// This corresponds to the `"chinese"` and `"dangi"` [CLDR calendars](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier)
 /// respectively, when used with the [`China`] and [`Korea`] [`Rules`] types.
 ///
-/// # Months
-///
-/// The Chinese calendar is an astronomical calendar which uses the phases of the moon to track months.
-/// Each month starts on the date of the new moon, meaning that months last 29 or 30 days.
-///
-/// One year in the Chinese calendar is typically 12 lunar months; however, because 12 lunar months does
-/// not line up to one solar year, the Chinese calendar will add an intercalary leap month approximately
-/// every three years to keep Chinese calendar months in line with the solar year.
-///
-/// Leap months can happen after any month; the month in which a leap month occurs is based on the alignment
-/// of months with 24 solar terms into which the solar year is divided.
-///
 /// # Year and Era codes
 ///
-/// Unlike the Gregorian calendar, the Chinese calendar does not traditionally count years in an infinitely
+/// Unlike most calendars, the Chinese calendar does not traditionally count years in an infinitely
 /// increasing sequence. Instead, 10 "celestial stems" and 12 "terrestrial branches" are combined to form a
 /// cycle of year names which repeats every 60 years. However, for the purposes of calendar calculations and
-/// conversions, this calendar also counts years based on the Gregorian (ISO) calendar. This "related ISO year"
-/// marks the Gregorian year in which a Chinese year begins.
+/// conversions, this calendar also counts years based on the [`Gregorian`](crate::cal::Gregorian) (ISO) calendar.
+/// This "related ISO year" marks the Gregorian year in which a Chinese year begins.
 ///
 /// Because the Chinese calendar does not traditionally count years, era codes are not used in this calendar.
 ///
@@ -73,13 +59,24 @@ mod simple;
 /// * _The Mathematics of the Chinese Calendar_ by Helmer Aslaksen <https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.139.9311&rep=rep1&type=pdf>
 /// * Wikipedia: <https://en.wikipedia.org/wiki/Chinese_calendar>
 ///
-/// # Month codes
+/// # Months and days
 ///
-/// This calendar is a lunisolar calendar. It supports regular month codes `"M01" - "M12"` as well
-/// as leap month codes `"M01L" - "M12L"`.
+/// The 12 months are called Zōuyuè (`M01`), Xìngyuè (`M02`), Táoyuè (`M03`),
+/// Méiyuè (`M04`), Liúyuè (`M05`), Héyuè (`M06`), Lányuè (`M07`), Guìyuè (`M08`),
+/// Júyuè (`M09`), Lùyuè (`M10`), Dōngyuè (`M11`), Bīngyuè (`M12`).
 ///
-/// This calendar is currently in a preview state: formatting for this calendar is not
-/// going to be perfect.
+/// As a lunar calendar, the lengths of the months depend on the lunar cycle (a month starts on the day of
+/// local new moon), and will be either 29 or 30 days. As the lunar and siderial month do not line up, a leap
+/// month is inserted roughly every 3 years; this can be after any month (e.g. `M02L`).
+///
+/// Both the lengths of the months and the occurence of leap months are determined by the
+/// concrete [`Rules`] implementation.
+///
+/// The length of the year is 353-355 days, and the length of the leap year 383-385 days.
+///
+/// # Siderial drift
+///
+/// As leap months are determined with respect to the siderial year, this calendar does not experience siderial drift.
 #[derive(Clone, Debug, Default, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct LunarChinese<X>(pub X);
