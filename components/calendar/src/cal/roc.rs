@@ -18,8 +18,8 @@ use tinystr::tinystr;
 /// This implementation extends proleptically for dates before the calendar's creation
 /// in 1 Minguo (1912 CE).
 ///
-/// The ROC calendar should not be confused with the traditional Chinese lunisolar calendar
-/// (see [`LunarChinese`](crate::cal::LunarChinese)).
+/// The ROC calendar should not be confused with the [`ChineseTraditional`](crate::cal::ChineseTraditional)
+/// lunisolar calendar.
 ///
 /// This corresponds to the `"roc"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
 ///
