@@ -12,25 +12,20 @@ use crate::{
 use tinystr::tinystr;
 
 #[derive(Copy, Clone, Debug, Default)]
-/// The [Thai Solar Buddhist Calendar][cal]
+/// The [Thai Solar Buddhist Calendar](https://en.wikipedia.org/wiki/Thai_solar_calendar)
 ///
-/// The [Thai Solar Buddhist Calendar][cal] is a solar calendar used in Thailand, with twelve months.
-/// The months and days are identical to that of the Gregorian calendar, however the years are counted
-/// differently using the Buddhist Era.
+/// The Thai Solar Buddhist Calendar is a variant of the [`Gregorian`](crate::cal::Gregorian) calendar
+/// created by the Thai government. It is identical to the Gregorian calendar except that is uses
+/// the Buddhist Era (-543 CE) instead of the Common Era.
 ///
-/// This type can be used with [`Date`] to represent dates in this calendar.
+/// This implementation extends proleptically for dates before the calendar's creation
+/// in 2484 BE (1941 CE).
 ///
 /// This corresponds to the `"buddhist"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
-///
-/// [cal]: https://en.wikipedia.org/wiki/Thai_solar_calendar
 ///
 /// # Era codes
 ///
 /// This calendar uses a single era code `be`, with 1 Buddhist Era being 543 BCE. Dates before this era use negative years.
-///
-/// # Month codes
-///
-/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Buddhist;
 

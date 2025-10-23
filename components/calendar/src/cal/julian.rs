@@ -19,12 +19,31 @@ use tinystr::tinystr;
 /// Julius Caesar in 45 BCE, and used in Europe and much of the western world until it was
 /// eventually replaced by the more accurate [`Gregorian`](super::Gregorian) calendar.
 ///
+/// This implementation extends proleptically for dates before the calendar's creation.
+///
 /// While no country uses the Julian calendar as its civil calendar today, it is still
 /// used by eastern Christian churches to determine lithurgical dates like Christmas and
 /// Easter.
 ///
+/// # Era codes
+///
+/// This calendar uses two era codes: `bce` (alias `bc`), and `ce` (alias `ad`), corresponding to the BCE and CE eras.
+///
+/// # Months and days
+///
+/// The 12 months are called January (`M01`, 31 days), February (`M02`, 28 days),
+/// March (`M03`, 31 days), April (`M04`, 30 days), May (`M05`, 31 days), June (`M06`, 30 days),
+/// July (`M07`, 31 days), August (`M08`, 31 days), September (`M09`, 30 days),
+/// October (`M10`, 31 days), November (`M11`, 30 days), December (`M12`, 31 days).
+///
+/// In leap years (years divisible by 4), February gains a 29th day.
+///
+/// Standard years thus have 365 days, and leap years 366.
+///
+/// # Calendar drift
+///
 /// The Julian calendar has an average year length of 365.25, slightly longer than
-/// the mean siderial year, so this calendar drifts 1 day in ~128 years with
+/// the mean solar year, so this calendar drifts 1 day in ~128 years with
 /// respect to the seasons. This significant drift was the reason for its replacement
 /// by the Gregorian calendar. The Julian calendar is currently 14 days ahead of the
 /// Gregorian calendar and the solar year.
@@ -51,14 +70,6 @@ use tinystr::tinystr;
 /// The calendar was used [incorrectly](https://en.wikipedia.org/wiki/Julian_calendar#Leap_year_error)
 /// for a while after adoption, so the first year where the months align with this proleptic
 /// implementation is probably 4 CE.
-///
-/// # Era codes
-///
-/// This calendar uses two era codes: `bce` (alias `bc`), and `ce` (alias `ad`), corresponding to the BCE and CE eras.
-///
-/// # Month codes
-///
-/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Julian;

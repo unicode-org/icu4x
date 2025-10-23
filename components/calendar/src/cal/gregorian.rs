@@ -70,11 +70,30 @@ impl GregorianYears for CeBce {
 /// the Julian calendar. Eventually even countries that had been using other calendars
 /// adopted this calendar, and today it is used as the international civil calendar.
 ///
-/// The Gregorian calendar has an average year length of 365.2425, slightly longer than
-/// the mean siderial year, so this calendar drifts 1 day in ~7700 years with respect
-/// to the seasons.
+/// This implementation extends proleptically for dates before the calendar's creation.
 ///
 /// This corresponds to the `"gregory"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
+///
+/// # Era codes
+///
+/// This calendar uses two era codes: `bce` (alias `bc`), and `ce` (alias `ad`), corresponding to the BCE and CE eras.
+///
+/// # Months and days
+///
+/// The 12 months are called January (`M01`, 31 days), February (`M02`, 28 days),
+/// March (`M03`, 31 days), April (`M04`, 30 days), May (`M05`, 31 days), June (`M06`, 30 days),
+/// July (`M07`, 31 days), August (`M08`, 31 days), September (`M09`, 30 days),
+/// October (`M10`, 31 days), November (`M11`, 30 days), December (`M12`, 31 days).
+///
+/// In leap years (years divisible by 4 but not 100 except when divisble by 400), February gains a 29th day.
+///
+/// Standard years thus have 365 days, and leap years 366.
+///
+/// # Calendar drift
+///
+/// The Gregorian calendar has an average year length of 365.2425, slightly longer than
+/// the mean solar year, so this calendar drifts 1 day in ~7700 years with respect
+/// to the seasons.
 ///
 /// # Historical accuracy
 ///
@@ -94,14 +113,6 @@ impl GregorianYears for CeBce {
 /// year-reckoning schemes. This crate implements some of these as different types, i.e the Thai
 /// [`Buddhist`](super::Buddhist) calendar, the [`Japanese`](super::Japanese) calendar, and the
 /// Chinese Republican Calendar ([`Roc`](super::Roc)).
-///
-/// # Era codes
-///
-/// This calendar uses two era codes: `bce` (alias `bc`), and `ce` (alias `ad`), corresponding to the BCE and CE eras.
-///
-/// # Month codes
-///
-/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 #[derive(Copy, Clone, Debug, Default)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Gregorian;

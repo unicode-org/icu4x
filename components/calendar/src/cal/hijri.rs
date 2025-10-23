@@ -31,10 +31,11 @@ mod ummalqura_data;
 ///
 /// There are many variants of this calendar, using different lunar observations or calculations
 /// (see [`Rules`]). Currently, [`Rules`] is an unstable trait, but some of its implementors
-/// are stable, and can be constructed via the various `Hijri::new_*` constructors. Please comment on [this issue](https://github.com/unicode-org/icu4x/issues/6962)
-/// if you would like to see this the ability to implement custom `Rules` stabilized.
+/// are stable, and can be constructed via the various `Hijri::new_*` constructors. Please comment
+/// on [this issue](https://github.com/unicode-org/icu4x/issues/6962)
+/// if you would like to see this the ability to implement custom [`Rules`] stabilized.
 ///
-/// This type supports only variants where months are either 29 or 30 days.
+/// This implementation supports only variants where months are either 29 or 30 days.
 ///
 /// This corresponds to various `"islamic-*"` [CLDR calendars](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier),
 /// see the individual implementors of [`Rules`] ([`TabularAlgorithm`], [`UmmAlQura`], [`AstronomicalSimulation`]) for more information.
@@ -43,10 +44,24 @@ mod ummalqura_data;
 ///
 /// This calendar uses two era codes: `ah`, and `bh`, corresponding to the Anno Hegirae and Before Hijrah eras
 ///
-/// # Month codes
+/// # Months and days
 ///
-/// This calendar is a pure lunar calendar with no leap months. It uses month codes
-/// `"M01" - "M12"`.
+/// The 12 months are called al-Muḥarram (`M01`), Ṣafar (`M02`), Rabīʿ al-ʾAwwal (`M03`),
+/// Rabīʿ ath-Thānī or Rabīʿ al-ʾĀkhir (`M04`), Jumādā al-ʾŪlā (`M05`), Jumādā ath-Thāniyah
+/// or Jumādā al-ʾĀkhirah (`M06`), Rajab (`M07`), Shaʿbān (`M08`), Ramaḍān (`M09`), Shawwāl (`M10`),
+/// Ḏū al-Qaʿdah (`M11`), Ḏū al-Ḥijjah (`M12`).
+///
+/// As a true lunar calendar, the lengths of the months depend on the lunar cycle (a month starts on the day
+/// where the waxing crescent is first observed), and will be either 29 or 30 days.
+///
+/// The lengths of the months are determined by the concrete [`Rules`] implementation.
+///
+/// There are either 6 or 7 30-day months, so the length of the year is 354 or 355 days.
+///
+/// # Calendar drift
+///
+/// As a lunar calendar, this calendar does not intend to follow the solar year, and drifts more
+/// than 10 days per year with respect to the seasons.
 #[derive(Clone, Debug, Default, Copy)]
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct Hijri<S>(pub S);

@@ -32,32 +32,43 @@ pub enum EthiopianEraStyle {
     AmeteAlem,
 }
 
-/// The [Ethiopian Calendar]
+/// The [Ethiopian Calendar](https://en.wikipedia.org/wiki/Ethiopian_calendar)
 ///
-/// The [Ethiopian calendar] is a solar calendar used by the Coptic Orthodox Church, with twelve normal months
-/// and a thirteenth small epagomenal month.
+/// The Ethiopian calendar is a variant of the [`Coptic`] calendar. It differs
+/// from the Coptic calendar by the names of the months as well as the era.
 ///
-/// This type can be used with [`Date`] to represent dates in this calendar.
+/// This implementation can be constructed in two modes: using the Amete Alem era
+/// scheme, or the Amete Mihret era scheme (the default), see [`EthiopianEraStyle`]
+/// for more info.
 ///
-/// It can be constructed in two modes: using the Amete Alem era scheme, or the Amete Mihret era scheme (the default),
-/// see [`EthiopianEraStyle`] for more info.
+/// This implementation extends proleptically for dates before the calendar's creation.
 ///
 /// This corresponds to the `"ethiopic"` and `"ethioaa"` [CLDR calendars](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier),
 /// with `"ethiopic"` being for [`EthiopianEraStyle::AmeteMihret`]
-///
-/// [Ethiopian calendar]: https://en.wikipedia.org/wiki/Ethiopian_calendar
 ///
 /// # Era codes
 ///
 /// This calendar always uses the `aa` era, where 1 Amete Alem is 5493 BCE. Dates before this era use negative years.
 /// Dates before that use negative year numbers.
+///
 /// In the Amete Mihret scheme it uses the additional `am` era, 1 Amete Mihret is 9 CE.
 ///
-/// # Month codes
+/// # Months and days
 ///
-/// This calendar supports 13 solar month codes (`"M01" - "M13"`), with `"M13"` being used for the short epagomenal month
-/// at the end of the year.
-// The bool specifies whether dates should be in the Amete Alem era scheme
+/// The 13 months are called Mäskäräm (`M01`, 30 days), Ṭəqəmt (`M02`, 30 days),
+/// Ḫədar (`M03`, 30 days), Taḫśaś (`M04`, 30 days), Ṭərr (`M05`, 30 days), Yäkatit (`M06`, 30 days),
+/// Mägabit (`M07`, 30 days), Miyazya (`M08`, 30 days), Gənbo (`M09`, 30 days),
+/// Säne (`M10`, 30 days), Ḥamle (`M11`, 30 days), Nähase (`M12`, 30 days), Ṗagʷəmen (`M13`, 5 days).
+///
+/// In leap years (years divisible by 4), Ṗagʷəmen gains a 6th day.
+///
+/// Standard years thus have 365 days, and leap years 366.
+///
+/// # Calendar drift
+///
+/// The Ethiopian calendar has the same year lengths and leap year rules as the [`Coptic`] and
+/// [`Julian`](crate::cal::Julian) calendars, so it experiences the same drift of 1 day in ~128
+/// years with respect to the seasons.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct Ethiopian(EthiopianEraStyle);
 

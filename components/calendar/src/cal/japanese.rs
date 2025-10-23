@@ -13,13 +13,15 @@ use tinystr::tinystr;
 
 /// The [Japanese Calendar] (with modern eras only)
 ///
-/// The [Japanese calendar] is a solar calendar used in Japan, with twelve months.
-/// The months and days are identical to that of the Gregorian calendar, however the years are counted
-/// differently using the Japanese era system.
+/// The [Japanese Calendar] is a variant of the [`Gregorian`](crate::cal::Gregorian) calendar
+/// created by the Japanese government. It is identical to the Gregorian calendar except that
+/// is uses Japanese eras instead of the Common Era.
 ///
-/// The Gregorian calendar with Japanese eras was adopted starting with January 1st, 6 Meiji (1873-01-01), so prior dates are proleptic. This implementation uses the Meiji era proleptically back to and including 1868-10-23 and uses the Gregorian eras for 1868-10-22 and earlier dates. For a variant that uses approximations of historical Japanese eras proleptically, check out [`JapaneseExtended`].
+/// This implementation extends proleptically for dates before the calendar's creation
+/// in 6 Meiji (1873 CE).
+/// The Meiji era is used proleptically back to and including 1868-10-23, Gregorian eras are used before that.
 ///
-/// This type can be used with [`Date`] to represent dates in this calendar.
+/// For a variant that uses approximations of historical Japanese eras proleptically, check out [`JapaneseExtended`].
 ///
 /// This corresponds to the `"japanese"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
 ///
@@ -27,18 +29,14 @@ use tinystr::tinystr;
 ///
 /// # Era codes
 ///
-/// This calendar currently supports seven era codes. It supports the five post-Meiji eras
-/// (`meiji`, `taisho`, `showa`, `heisei`, `reiwa`), as well as using the Gregorian
-/// `bce` (alias `bc`), and `ce` (alias `ad`) for dates before the Meiji era.
+/// This calendar currently supports seven era codes. It supports the five eras since its
+/// introduction (`meiji`, `taisho`, `showa`, `heisei`, `reiwa`), as well as the Gregorian
+/// `bce` (alias `bc`), and `ce` (alias `ad`) for earlier dates.
 ///
 /// Future eras will also be added to this type when they are decided.
 ///
 /// These eras are loaded from data, requiring a data provider capable of providing [`CalendarJapaneseModernV1`]
 /// data.
-///
-/// # Month codes
-///
-/// This calendar supports 12 solar month codes (`M01` - `M12`)
 #[derive(Clone, Debug, Default)]
 pub struct Japanese {
     eras: DataPayload<CalendarJapaneseModernV1>,
@@ -46,13 +44,16 @@ pub struct Japanese {
 
 /// The [Japanese Calendar] (with historical eras)
 ///
-/// The [Japanese calendar] is a solar calendar used in Japan, with twelve months.
-/// The months and days are identical to that of the Gregorian calendar, however the years are counted
-/// differently using the Japanese era system.
+/// The [Japanese Calendar] is a variant of the [`Gregorian`](crate::cal::Gregorian) calendar
+/// created by the Japanese government. It is identical to the Gregorian calendar except that
+/// is uses Japanese eras instead of the Common Era.
 ///
-/// The Gregorian calendar with Japanese eras was adopted starting with January 1st, 6 Meiji (1873-01-01), so prior dates are proleptic. This implementation uses approximations of earlier Japanese eras proleptically and uses the Gregorian eras for even earlier dates that don't have an approximate Japanese era. For a variant whose Japanese eras start with Meiji, check out [`Japanese`].
+/// This implementation extends proleptically for dates before the calendar's creation
+/// in 6 Meiji (1873 CE).
+/// This implementation uses approximations of earlier Japanese eras proleptically and uses the Gregorian eras for
+/// even earlier dates that don't have an approximate Japanese era.
 ///
-/// This type can be used with [`Date`] to represent dates in this calendar.
+/// For a variant whose Japanese eras start with Meiji, check out [`Japanese`].
 ///
 /// This corresponds to the `"japanext"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
 ///
@@ -60,19 +61,15 @@ pub struct Japanese {
 ///
 /// # Era codes
 ///
-/// This calendar supports a large number of era codes. It supports the five post-Meiji eras
-/// (`meiji`, `taisho`, `showa`, `heisei`, `reiwa`). Pre-Meiji eras are represented
-/// with their names converted to lowercase ascii and followed by their start year. E.g. the *Ten'ō*
+/// This calendar supports a large number of era codes. It supports the five eras since its introduction
+/// (`meiji`, `taisho`, `showa`, `heisei`, `reiwa`). Proleptic eras are represented
+/// with their names converted to lowercase ASCII and followed by their start year. E.g. the *Ten'ō*
 /// era (781 - 782 CE) has the code `teno-781`. The  Gregorian `bce` (alias `bc`), and `ce` (alias `ad`)
 /// are used for dates before the first known era era.
 ///
 ///
 /// These eras are loaded from data, requiring a data provider capable of providing [`CalendarJapaneseExtendedV1`]
 /// data.
-///
-/// # Month codes
-///
-/// This calendar supports 12 solar month codes (`M01` - `M12`)
 #[derive(Clone, Debug, Default)]
 pub struct JapaneseExtended(Japanese);
 

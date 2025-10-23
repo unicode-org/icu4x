@@ -14,26 +14,37 @@ use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
-/// The [Coptic Calendar]
+/// The [Coptic Calendar](https://en.wikipedia.org/wiki/Coptic_calendar)
 ///
-/// The [Coptic calendar] is a solar calendar used by the Coptic Orthodox Church, with twelve normal months
-/// and a thirteenth small epagomenal month.
+/// The Coptic calendar, also called the Alexandrian Calendar, is a solar calendar that
+/// is influenced by both the ancient Egpytian calendar and the [`Julian`](crate::cal::Julian)
+/// calendar. It was introduced in Egypt under Roman rule in the first century BCE, and
+/// replaced for civil use in 1875, however continues to be used liturgically.
 ///
-/// This type can be used with [`Date`] to represent dates in this calendar.
+/// This implementation extends proleptically for dates before the calendar's creation.
 ///
 /// This corresponds to the `"coptic"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
-///
-/// [Coptic calendar]: https://en.wikipedia.org/wiki/Coptic_calendar
 ///
 /// # Era codes
 ///
 /// This calendar uses a single code: `am`, corresponding to the After Diocletian/Anno Martyrum
 /// era. 1 A.M. is equivalent to 284 C.E.
 ///
-/// # Month codes
+/// # Months and days
 ///
-/// This calendar supports 13 solar month codes (`"M01" - "M13"`), with `"M13"` being used for the short epagomenal month
-/// at the end of the year.
+/// The 13 months are called Thout (`M01`, 30 days), Paopi (`M02`, 30 days), Hathor (`M03`, 30 days),
+/// Koiak (`M04`, 30 days), Tobi (`M05`, 30 days), Meshir (`M06`, 30 days), Paremhat (`M07`, 30 days),
+/// Parmouti (`M08`, 30 days), Pashons (`M09`, 30 days), Paoni (`M10`, 30 days), Epip (`M11`, 30 days),
+/// Mesori (`M12`, 30 days), Pi Kogi Enavot (`M13`, 5 days).
+///
+/// In leap years (years divisible by 4), Pi Kogi Enavot gains a 6th day.
+///
+/// Standard years thus have 365 days, and leap years 366.
+///
+/// # Calendar drift
+///
+/// The Coptic calendar has the same year lengths and leap year rules as the Julian calendar,
+/// so it experiences the same drift of 1 day in ~128 years with respect to the seasons.
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Coptic;

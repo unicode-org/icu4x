@@ -43,25 +43,13 @@ mod simple;
 /// This corresponds to the `"chinese"` and `"dangi"` [CLDR calendars](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier)
 /// respectively, when used with the [`China`] and [`Korea`] [`Rules`] types.
 ///
-/// # Months
-///
-/// The traditional East-Asian calendar is an astronomical calendar which uses the phases of the moon to track months.
-/// Each month starts on the date of the new moon, meaning that months last 29 or 30 days.
-///
-/// One year in the traditional East-Asian calendar is typically 12 lunar months; however, because 12 lunar months does
-/// not line up to one solar year, the traditional East-Asian calendar will add an intercalary leap month approximately
-/// every three years to keep traditional East-Asian calendar months in line with the solar year.
-///
-/// Leap months can happen after any month; the month in which a leap month occurs is based on the alignment
-/// of months with 24 solar terms into which the solar year is divided.
-///
 /// # Year and Era codes
 ///
-/// Unlike the Gregorian calendar, the traditional East-Asian calendar does not traditionally count years in an infinitely
+/// Unlike most calendars, the traditional East-Asian calendar does not traditionally count years in an infinitely
 /// increasing sequence. Instead, 10 "celestial stems" and 12 "terrestrial branches" are combined to form a
 /// cycle of year names which repeats every 60 years. However, for the purposes of calendar calculations and
-/// conversions, this calendar also counts years based on the Gregorian (ISO) calendar. This "related ISO year"
-/// marks the Gregorian year in which a traditional East-Asian year begins.
+/// conversions, this calendar also counts years based on the [`Gregorian`](crate::cal::Gregorian) (ISO) calendar.
+/// This "related ISO year" marks the Gregorian year in which a traditional East-Asian year begins.
 ///
 /// Because the traditional East-Asian calendar does not traditionally count years, era codes are not used in this calendar.
 ///
@@ -70,13 +58,24 @@ mod simple;
 /// * _The Mathematics of the Chinese Calendar_ by Helmer Aslaksen <https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.139.9311&rep=rep1&type=pdf>
 /// * Wikipedia: <https://en.wikipedia.org/wiki/Chinese_calendar>
 ///
-/// # Month codes
+/// # Months and days
 ///
-/// This calendar is a lunisolar calendar. It supports regular month codes `"M01" - "M12"` as well
-/// as leap month codes `"M01L" - "M12L"`.
+/// The 12 months (`M01`-`M12`) don't use names in modern usage, instead they are referred to as
+/// e.g. 三月 (third month) using Chinese characters.
 ///
-/// This calendar is currently in a preview state: formatting for this calendar is not
-/// going to be perfect.
+/// As a lunar calendar, the lengths of the months depend on the lunar cycle (a month starts on the day of
+/// local new moon), and will be either 29 or 30 days. As 12 such months fall short of a solar year, a leap
+/// month is inserted roughly every 3 years; this can be after any month (e.g. `M02L`).
+///
+/// Both the lengths of the months and the occurence of leap months are determined by the
+/// concrete [`Rules`] implementation.
+///
+/// The length of the year is 353-355 days, and the length of the leap year 383-385 days.
+///
+/// # Calendar drift
+///
+/// As leap months are determined with respect to the solar year, this calendar stays anchored
+/// to the seasons.
 #[derive(Clone, Debug, Default, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct EastAsianTraditional<R>(pub R);

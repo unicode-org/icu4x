@@ -14,9 +14,10 @@ use tinystr::tinystr;
 
 /// The [Indian National (Śaka) Calendar](https://en.wikipedia.org/wiki/Indian_national_calendar)
 ///
-/// The Indian National calendar is a solar calendar used by the Indian government, with twelve months.
+/// The Indian National calendar is a solar calendar created by the Indian government.
 ///
-/// This type can be used with [`Date`] to represent dates in this calendar.
+/// This implementation extends proleptically for dates before the calendar's creation
+/// in 1879 Śaka (1957 CE).
 ///
 /// This corresponds to the `"indian"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
 ///
@@ -24,9 +25,23 @@ use tinystr::tinystr;
 ///
 /// This calendar uses a single era code: `shaka`, with Śaka 0 being 78 CE. Dates before this era use negative years.
 ///
-/// # Month codes
+/// # Months and days
 ///
-/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
+/// The 12 months are called Chaitra (`M01`, 30 days), Vaisakha (`M02`, 31 days),
+/// Jyaishtha (`M03`, 31 days), Ashadha (`M04`, 31 days), Sravana (`M05`, 31 days),
+/// Bhadra (`M06`, 31 days), Asvina (`M07`, 30 days), Kartika (`M08`, 30 days),
+/// Agrahayana or Margasirsha (`M09`, 30 days), Pausha (`M10`, 30 days), Magha (`M11`, 30 days),
+/// Phalguna (`M12`, 30 days).
+///
+/// In leap years (years where the concurrent [`Gregorian`](crate::cal::Gregorian) year (`year + 78`) is leap),
+/// Chaitra gains a 31st day.
+///
+/// Standard years thus have 365 days, and leap years 366.
+///
+/// # Calendar drift
+///
+/// The Indian calendar has the same year lengths and leap year rules as the Gregorian calendar,
+/// so it experiences the same drift of 1 day in ~7700 years with respect to the seasons.
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Indian;

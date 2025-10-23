@@ -15,10 +15,11 @@ use calendrical_calculations::rata_die::RataDie;
 
 /// The [Persian Calendar](https://en.wikipedia.org/wiki/Solar_Hijri_calendar)
 ///
-/// The Persian Calendar is a solar calendar used officially by the countries of Iran and Afghanistan and many Persian-speaking regions.
-/// It has 12 months and other similarities to the [`Gregorian`](super::Gregorian) Calendar.
+/// The Persian Calendar is a solar calendar used officially by the countries of Iran and
+/// Afghanistan and many Persian-speaking regions.
 ///
-/// This type can be used with [`Date`] to represent dates in this calendar.
+/// This implementation extends proleptically for dates before the calendar's creation
+/// in 458 AP (1079 CE).
 ///
 /// This corresponds to the `"persian"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
 ///
@@ -26,9 +27,21 @@ use calendrical_calculations::rata_die::RataDie;
 ///
 /// This calendar uses a single era code `ap`, with Anno Persico/Anno Persarum starting the year of the Hijra. Dates before this era use negative years.
 ///
-/// # Month codes
+/// # Months and days
 ///
-/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
+/// The 12 months are called Farvardin (`M01`, 31 days), Ordibehesht (`M02`, 31 days),
+/// Khordad (`M03`, 31 days), Tir (`M04`, 31 days), Mordad (`M05`, 31 days), Shahrivar (`M06`, 31 days),
+/// Mehr (`M07`, 30 days), Aban (`M08`, 30 days), Azar (`M09`, 30 days),
+/// Dey (`M10`, 30 days), Bahman (`M11`, 30 days), Esfand (`M12`, 29 days).
+///
+/// In leap years (determined astronomically with respect to the vernal equinox), Esfand gains a 30th day.
+///
+/// Standard years thus have 365 days, and leap years 366.
+///
+/// # Calendar drift
+///
+/// As leap years are determined with respect to the solar year, this calendar stays anchored
+/// to the seasons.
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
 pub struct Persian;

@@ -11,12 +11,15 @@ use tinystr::tinystr;
 
 /// The [Republic of China Calendar](https://en.wikipedia.org/wiki/Republic_of_China_calendar)
 ///
-/// The ROC calendar is a solar calendar used in Taiwan and Penghu, as well as by overseas diaspora from
-/// those locations. Months and days are identical to the [`Gregorian`](super::Gregorian) calendar, while years are counted
-/// with 1912, the year of the establishment of the Republic of China, as year 1 of the ROC/Minguo/民国/民國 era.
+/// The ROC Calendar is a variant of the [`Gregorian`](crate::cal::Gregorian) calendar
+/// created by the government of the Republic of China. It is identical to the Gregorian
+/// calendar except that is uses the ROC/Minguo/民国/民國 Era (1912 CE) instead of the Common Era.
 ///
-/// The ROC calendar should not be confused with the Chinese traditional lunar calendar
-/// (see [`Chinese`](crate::cal::Chinese)).
+/// This implementation extends proleptically for dates before the calendar's creation
+/// in 1 Minguo (1912 CE).
+///
+/// The ROC calendar should not be confused with the [`ChineseTraditional`](crate::cal::ChineseTraditional)
+/// lunisolar calendar.
 ///
 /// This corresponds to the `"roc"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
 ///
@@ -24,11 +27,6 @@ use tinystr::tinystr;
 ///
 /// This calendar uses two era codes: `roc`, corresponding to years in the 民國 era (CE year 1912 and
 /// after), and `broc`, corresponding to years before the 民國 era (CE year 1911 and before).
-///
-///
-/// # Month codes
-///
-/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 #[derive(Copy, Clone, Debug, Default)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Roc;

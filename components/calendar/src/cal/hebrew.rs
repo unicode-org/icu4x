@@ -20,7 +20,13 @@ use calendrical_calculations::rata_die::RataDie;
 /// The Hebrew calendar is a lunisolar calendar used as the Jewish liturgical calendar
 /// as well as an official calendar in Israel.
 ///
-/// This calendar is the _civil_ Hebrew calendar, with the year starting at in the month of Tishrei.
+/// This implementation uses civil month numbering, where Tishrei is the first month of the year.
+///
+/// The precise algorithm used to calculate the Hebrew Calendar has [changed over time], with
+/// the modern one being in place since about 4536 AM (776 CE). This implementation extends
+/// proleptically for dates before that.
+///
+/// [changed over time]: https://hakirah.org/vol20AjdlerAppendices.pdf
 ///
 /// This corresponds to the `"hebrew"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
 ///
@@ -28,14 +34,20 @@ use calendrical_calculations::rata_die::RataDie;
 ///
 /// This calendar uses a single era code `am`, Anno Mundi. Dates before this era use negative years.
 ///
-/// # Month codes
+/// # Months and days
 ///
-/// This calendar is a lunisolar calendar and thus has a leap month. It supports codes `"M01"-"M12"`
-/// for regular months, and the leap month Adar I being coded as `"M05L"`.
+/// The 12 months are called Tishrei (`M01`, 30 days), Ḥešvan (`M02`, 29/30 days),
+/// Kīslev (`M03`, 30/29 days), Ṭevet (`M04`, 29 days), Šəvaṭ (`M05`, 30 days), ʾĂdār (`M06`, 29 days),
+/// Nīsān (`M07`, 30 days), ʾĪyyar (`M08`, 29 days), Sivan (`M09`, 30 days), Tammūz (`M10`, 29 days),
+/// ʾAv (`M11`, 30 days), ʾElūl (`M12`, 29 days).
 ///
-/// [`MonthInfo`] has slightly divergent behavior: because the regular month Adar is formatted
-/// as "Adar II" in a leap year, this calendar will produce the special code `"M06L"` in any [`MonthInfo`]
-/// objects it creates.
+/// Due to Rosh Hashanah postponement rules, Ḥešvan and Kislev vary in length.
+///  
+/// In leap years (years 3, 6, 8, 11, 17, 19 in a 19-year cycle), the leap month Adar I (`M05L`, 30 days)
+/// is inserted before Adar, and Adar is called Adar II (the `formatting_code` returned by [`MonthInfo`]
+/// will be `M06L` to mark this, while the `standard_code` remains `M06`).
+///
+/// Standard years thus have 353-355 days, and leap years 383-385.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord, Default)]
 #[allow(clippy::exhaustive_structs)] // unit struct
 pub struct Hebrew;
