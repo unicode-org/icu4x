@@ -20,6 +20,7 @@ use crate::error::MonthCodeParseError;
 /// Pass this into [`Date::try_from_fields`](crate::Date::try_from_fields).
 #[derive(Copy, Clone, PartialEq, Default)]
 #[non_exhaustive]
+#[doc(hidden)] // unstable
 pub struct DateFields<'a> {
     /// The era code as a UTF-8 string.
     ///

@@ -9,6 +9,7 @@ use crate::types;
 /// Options bag for [`Date::try_from_fields`](crate::Date::try_from_fields).
 #[derive(Copy, Clone, Debug, PartialEq, Default)]
 #[non_exhaustive]
+#[doc(hidden)] // unstable
 pub struct DateFromFieldsOptions {
     /// How to behave with out-of-bounds fields.
     ///
@@ -211,6 +212,7 @@ pub struct DateDifferenceOptions {
 /// The behavior conforms to the ECMAScript Temporal specification.
 #[derive(Copy, Clone, Debug, PartialEq, Default)]
 #[non_exhaustive]
+#[doc(hidden)] // unstable
 pub enum Overflow {
     /// Constrain out-of-bounds fields to the nearest in-bounds value.
     ///
@@ -354,6 +356,7 @@ pub enum Overflow {
 /// are handled by other errors).
 #[derive(Copy, Clone, Debug, PartialEq, Default)]
 #[non_exhaustive]
+#[doc(hidden)] // unstable
 pub enum MissingFieldsStrategy {
     /// If the fields that are present do not fully constitute a Date,
     /// return [`DateFromFieldsError::NotEnoughFields`].

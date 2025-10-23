@@ -50,6 +50,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
 
     /// Construct a date from a bag of date fields.
     #[expect(clippy::wrong_self_convention)]
+    #[doc(hidden)] // unstable
     fn from_fields(
         &self,
         fields: types::DateFields,

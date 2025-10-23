@@ -178,6 +178,7 @@ impl<A: AsCalendar> Date<A> {
     /// ```
     ///
     /// See [`DateFromFieldsError`] for examples of error conditions.
+    #[doc(hidden)] // unstable
     #[inline]
     pub fn try_from_fields(
         fields: types::DateFields,
