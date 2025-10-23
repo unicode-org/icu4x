@@ -889,7 +889,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::cal::Hebrew;
+    /// use icu::calendar::cal::Persian;
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::input::Date;
     /// use icu::datetime::DateTimeFormatter;
@@ -897,22 +897,22 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let formatter = DateTimeFormatter::try_new(
-    ///     locale!("en-u-ca-hebrew").into(),
+    ///     locale!("en-u-ca-persian").into(),
     ///     YMD::long(),
     /// )
     /// .unwrap()
-    /// .try_into_typed_formatter::<Hebrew>()
+    /// .try_into_typed_formatter::<Persian>()
     /// .unwrap();
     ///
-    /// let date = Date::try_new_hebrew(5785, 1, 12).unwrap();
+    /// let date = Date::try_new_persian(1584, 1, 12).unwrap();
     ///
-    /// assert_writeable_eq!(formatter.format(&date), "12 Tishri 5785");
+    /// assert_writeable_eq!(formatter.format(&date), "Farvardin 12, 1584 AP");
     /// ```
     ///
     /// An error occurs if the calendars don't match:
     ///
     /// ```
-    /// use icu::calendar::cal::Hebrew;
+    /// use icu::calendar::cal::Persian;
     /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::input::Date;
     /// use icu::datetime::DateTimeFormatter;
@@ -924,7 +924,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     ///     YMD::long(),
     /// )
     /// .unwrap()
-    /// .try_into_typed_formatter::<Hebrew>();
+    /// .try_into_typed_formatter::<Persian>();
     ///
     /// assert!(matches!(result, Err(MismatchedCalendarError { .. })));
     /// ```
