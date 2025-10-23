@@ -380,7 +380,7 @@ fn test_calendar_fallback() {
     );
     assert_eq!(
         FormattableAnyCalendarKind::from_preferences(locale!("en-IL-u-ca-islamic").into()),
-        FormattableAnyCalendarKind::Gregorian
+        FormattableAnyCalendarKind::HijriTabularTypeIIFriday
     );
 }
 
