@@ -117,7 +117,6 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear;
 
     /// Add `duration` to `date`
-    #[cfg(feature = "unstable")]
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -127,6 +126,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// </div>
     ///
     /// ✨ *Enabled with the `unstable` Cargo feature.*
+    #[cfg(feature = "unstable")]
     fn add(
         &self,
         date: &Self::DateInner,
@@ -138,7 +138,6 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     ///
     /// `calendar2` is the calendar object associated with `date2`. In case the specific calendar objects
     /// differ on data, the data for the first calendar is used, and `date2` may be converted if necessary.
-    #[cfg(feature = "unstable")]
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -148,6 +147,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// </div>
     ///
     /// ✨ *Enabled with the `unstable` Cargo feature.*
+    #[cfg(feature = "unstable")]
     fn until(
         &self,
         date1: &Self::DateInner,

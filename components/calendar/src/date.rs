@@ -178,6 +178,15 @@ impl<A: AsCalendar> Date<A> {
     /// ```
     ///
     /// See [`DateFromFieldsError`] for examples of error conditions.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+    ///
+    /// Graduation tracking issue: [issue #7161](https://github.com/unicode-org/icu4x/issues/7161).
+    /// </div>
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
     #[cfg(feature = "unstable")]
     #[inline]
     pub fn try_from_fields(
