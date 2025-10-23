@@ -88,6 +88,9 @@
     )
 )]
 #![warn(missing_docs)]
+// It's not worth it to try and maintain clean import lists for both
+// stable and unstable mode when the code is so entangled.
+#![cfg_attr(not(feature = "unstable"), allow(unused))]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;

@@ -178,7 +178,7 @@ impl<A: AsCalendar> Date<A> {
     /// ```
     ///
     /// See [`DateFromFieldsError`] for examples of error conditions.
-    #[doc(hidden)] // unstable
+    #[cfg(feature = "unstable")]
     #[inline]
     pub fn try_from_fields(
         fields: types::DateFields,
@@ -254,7 +254,16 @@ impl<A: AsCalendar> Date<A> {
     }
 
     /// Add a `duration` to this date, mutating it
-    #[doc(hidden)] // unstable
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+    ///
+    /// Graduation tracking issue: [issue #3964](https://github.com/unicode-org/icu4x/issues/3964).
+    /// </div>
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
+    #[cfg(feature = "unstable")]
     #[inline]
     pub fn try_add_with_options(
         &mut self,
@@ -270,7 +279,16 @@ impl<A: AsCalendar> Date<A> {
     }
 
     /// Add a `duration` to this date, returning the new one
-    #[doc(hidden)] // unstable
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+    ///
+    /// Graduation tracking issue: [issue #3964](https://github.com/unicode-org/icu4x/issues/3964).
+    /// </div>
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
+    #[cfg(feature = "unstable")]
     #[inline]
     pub fn try_added_with_options(
         mut self,
@@ -306,7 +324,16 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// [`Infallible`]: core::convert::Infallible
     /// [pattern matching]: https://doc.rust-lang.org/book/ch19-03-pattern-syntax.html
-    #[doc(hidden)] // unstable
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+    ///
+    /// Graduation tracking issue: [issue #3964](https://github.com/unicode-org/icu4x/issues/3964).
+    /// </div>
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
+    #[cfg(feature = "unstable")]
     #[inline]
     pub fn try_until_with_options<B: AsCalendar<Calendar = A::Calendar>>(
         &self,

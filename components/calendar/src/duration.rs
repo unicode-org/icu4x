@@ -88,9 +88,17 @@
 /// ```
 ///
 /// Currently unstable for ICU4X 1.0
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+///
+/// Graduation tracking issue: [issue #3964](https://github.com/unicode-org/icu4x/issues/3964).
+/// </div>
+///
+/// ✨ *Enabled with the `unstable` Cargo feature.*
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Default)]
 #[allow(clippy::exhaustive_structs)] // spec-defined in Temporal
-#[doc(hidden)] // unstable
 pub struct DateDuration {
     /// Whether the duration is negative.
     ///
@@ -114,9 +122,17 @@ pub struct DateDuration {
 
 /// A "duration unit" used to specify the minimum or maximum duration of time to
 /// care about
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+///
+/// Graduation tracking issue: [issue #3964](https://github.com/unicode-org/icu4x/issues/3964).
+/// </div>
+///
+/// ✨ *Enabled with the `unstable` Cargo feature.*
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[allow(clippy::exhaustive_enums)] // this type should be stable
-#[doc(hidden)] // unstable
 pub enum DateDurationUnit {
     /// Duration in years
     Years,

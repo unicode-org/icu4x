@@ -11,199 +11,215 @@ use tinystr::TinyAsciiStr;
 use zerovec::ule::AsULE;
 
 // Export the duration types from here
-#[doc(hidden)] // unstable
+#[cfg(feature = "unstable")]
 pub use crate::duration::{DateDuration, DateDurationUnit};
 use crate::error::MonthCodeParseError;
 
-/// A bag of various ways of expressing the year, month, and/or day.
-///
-/// Pass this into [`Date::try_from_fields`](crate::Date::try_from_fields).
-#[derive(Copy, Clone, PartialEq, Default)]
-#[non_exhaustive]
-#[doc(hidden)] // unstable
-pub struct DateFields<'a> {
-    /// The era code as a UTF-8 string.
-    ///
-    /// The acceptable codes are defined by CLDR and documented on each calendar.
-    ///
-    /// If set, [`Self::era_year`] must also be set.
-    ///
-    /// # Examples
-    ///
-    /// To set the era field, use a byte string:
-    ///
-    /// ```
-    /// use icu::calendar::types::DateFields;
-    ///
-    /// let mut fields = DateFields::default();
-    ///
-    /// // As a byte string literal:
-    /// fields.era = Some(b"reiwa");
-    ///
-    /// // Using str::as_bytes:
-    /// fields.era = Some("reiwa".as_bytes());
-    /// ```
-    ///
-    /// For a full example, see [`Self::extended_year`].
-    pub era: Option<&'a [u8]>,
-    /// The numeric year in [`Self::era`].
-    ///
-    /// If set, [`Self::era`] must also be set.
-    ///
-    /// For an example, see [`Self::extended_year`].
-    pub era_year: Option<i32>,
-    /// See [`Date::extended_year()`](crate::Date::extended_year).
-    ///
-    /// If both this and [`Self::era`]/[`Self::era_year`] are set, they must
-    /// refer to the same year.
-    ///
-    /// # Examples
-    ///
-    /// Either `extended_year` or `era` + `era_year` can be used in DateFields:
-    ///
-    /// ```
-    /// use icu::calendar::Date;
-    /// use icu::calendar::cal::Japanese;
-    /// use icu::calendar::types::DateFields;
-    ///
-    /// let mut fields1 = DateFields::default();
-    /// fields1.era = Some(b"reiwa");
-    /// fields1.era_year = Some(7);
-    /// fields1.ordinal_month = Some(1);
-    /// fields1.day = Some(1);
-    ///
-    /// let date1 = Date::try_from_fields(
-    ///     fields1,
-    ///     Default::default(),
-    ///     Japanese::new()
-    /// )
-    /// .expect("a well-defined Japanese date from era year");
-    ///
-    /// let mut fields2 = DateFields::default();
-    /// fields2.extended_year = Some(2025);
-    /// fields2.ordinal_month = Some(1);
-    /// fields2.day = Some(1);
-    ///
-    /// let date2 = Date::try_from_fields(
-    ///     fields2,
-    ///     Default::default(),
-    ///     Japanese::new()
-    /// )
-    /// .expect("a well-defined Japanese date from extended year");
-    ///
-    /// assert_eq!(date1, date2);
-    ///
-    /// let year_info = date1.year().era().unwrap();
-    /// assert_eq!(year_info.year, 7);
-    /// assert_eq!(year_info.era.as_str(), "reiwa");
-    /// assert_eq!(year_info.extended_year, 2025);
-    /// ```
-    pub extended_year: Option<i32>,
-    /// The month code representing a valid month in this calendar year,
-    /// as a UTF-8 string.
-    ///
-    /// See [`MonthCode`] for information on the syntax.
-    ///
-    /// # Examples
-    ///
-    /// To set the month code field, use a byte string:
-    ///
-    /// ```
-    /// use icu::calendar::types::DateFields;
-    ///
-    /// let mut fields = DateFields::default();
-    ///
-    /// // As a byte string literal:
-    /// fields.era = Some(b"M02L");
-    ///
-    /// // Using str::as_bytes:
-    /// fields.era = Some("M02L".as_bytes());
-    /// ```
-    ///
-    /// For a full example, see [`Self::ordinal_month`].
-    pub month_code: Option<&'a [u8]>,
-    /// See [`MonthInfo::ordinal`].
-    ///
-    /// If both this and [`Self::month_code`] are set, they must refer to
-    /// the same month.
-    ///
-    /// Note: using [`Self::month_code`] is recommended, because the ordinal month numbers
-    /// can vary from year to year, as illustrated in the following example.
-    ///
-    /// # Examples
-    ///
-    /// Either `month_code` or `ordinal_month` can be used in DateFields, but they
-    /// might not resolve to the same month number:
-    ///
-    /// ```
-    /// use icu::calendar::Date;
-    /// use icu::calendar::cal::ChineseTraditional;
-    /// use icu::calendar::types::DateFields;
-    ///
-    /// // The 2023 Year of the Rabbit had a leap month after the 2nd month.
-    /// let mut fields1 = DateFields::default();
-    /// fields1.extended_year = Some(2023);
-    /// fields1.month_code = Some(b"M02L");
-    /// fields1.day = Some(1);
-    ///
-    /// let date1 = Date::try_from_fields(
-    ///     fields1,
-    ///     Default::default(),
-    ///     ChineseTraditional::new()
-    /// )
-    /// .expect("a well-defined Chinese date from month code");
-    ///
-    /// let mut fields2 = DateFields::default();
-    /// fields2.extended_year = Some(2023);
-    /// fields2.ordinal_month = Some(3);
-    /// fields2.day = Some(1);
-    ///
-    /// let date2 = Date::try_from_fields(
-    ///     fields2,
-    ///     Default::default(),
-    ///     ChineseTraditional::new()
-    /// )
-    /// .expect("a well-defined Chinese date from ordinal month");
-    ///
-    /// assert_eq!(date1, date2);
-    ///
-    /// let month_info = date1.month();
-    /// assert_eq!(month_info.ordinal, 3);
-    /// assert_eq!(month_info.standard_code.0, "M02L");
-    /// ```
-    pub ordinal_month: Option<u8>,
-    /// See [`DayOfMonth`].
-    pub day: Option<u8>,
-}
+#[cfg(feature = "unstable")]
+pub use unstable::DateFields;
+#[cfg(not(feature = "unstable"))]
+pub(crate) use unstable::DateFields;
 
-// Custom impl to stringify era and month_code where possible.
-impl fmt::Debug for DateFields<'_> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // Ensures we catch future fields
-        let Self {
-            era,
-            era_year,
-            extended_year,
-            month_code,
-            ordinal_month,
-            day,
-        } = *self;
-        let mut builder = f.debug_struct("DateFields");
-        if let Some(s) = era.and_then(|s| core::str::from_utf8(s).ok()) {
-            builder.field("era", &Some(s));
-        } else {
-            builder.field("era", &era);
+mod unstable {
+    use super::*;
+    /// A bag of various ways of expressing the year, month, and/or day.
+    ///
+    /// Pass this into [`Date::try_from_fields`](crate::Date::try_from_fields).
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+    ///
+    /// Graduation tracking issue: [issue #7161](https://github.com/unicode-org/icu4x/issues/7161).
+    /// </div>
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
+    #[derive(Copy, Clone, PartialEq, Default)]
+    #[non_exhaustive]
+    pub struct DateFields<'a> {
+        /// The era code as a UTF-8 string.
+        ///
+        /// The acceptable codes are defined by CLDR and documented on each calendar.
+        ///
+        /// If set, [`Self::era_year`] must also be set.
+        ///
+        /// # Examples
+        ///
+        /// To set the era field, use a byte string:
+        ///
+        /// ```
+        /// use icu::calendar::types::DateFields;
+        ///
+        /// let mut fields = DateFields::default();
+        ///
+        /// // As a byte string literal:
+        /// fields.era = Some(b"reiwa");
+        ///
+        /// // Using str::as_bytes:
+        /// fields.era = Some("reiwa".as_bytes());
+        /// ```
+        ///
+        /// For a full example, see [`Self::extended_year`].
+        pub era: Option<&'a [u8]>,
+        /// The numeric year in [`Self::era`].
+        ///
+        /// If set, [`Self::era`] must also be set.
+        ///
+        /// For an example, see [`Self::extended_year`].
+        pub era_year: Option<i32>,
+        /// See [`Date::extended_year()`](crate::Date::extended_year).
+        ///
+        /// If both this and [`Self::era`]/[`Self::era_year`] are set, they must
+        /// refer to the same year.
+        ///
+        /// # Examples
+        ///
+        /// Either `extended_year` or `era` + `era_year` can be used in DateFields:
+        ///
+        /// ```
+        /// use icu::calendar::Date;
+        /// use icu::calendar::cal::Japanese;
+        /// use icu::calendar::types::DateFields;
+        ///
+        /// let mut fields1 = DateFields::default();
+        /// fields1.era = Some(b"reiwa");
+        /// fields1.era_year = Some(7);
+        /// fields1.ordinal_month = Some(1);
+        /// fields1.day = Some(1);
+        ///
+        /// let date1 = Date::try_from_fields(
+        ///     fields1,
+        ///     Default::default(),
+        ///     Japanese::new()
+        /// )
+        /// .expect("a well-defined Japanese date from era year");
+        ///
+        /// let mut fields2 = DateFields::default();
+        /// fields2.extended_year = Some(2025);
+        /// fields2.ordinal_month = Some(1);
+        /// fields2.day = Some(1);
+        ///
+        /// let date2 = Date::try_from_fields(
+        ///     fields2,
+        ///     Default::default(),
+        ///     Japanese::new()
+        /// )
+        /// .expect("a well-defined Japanese date from extended year");
+        ///
+        /// assert_eq!(date1, date2);
+        ///
+        /// let year_info = date1.year().era().unwrap();
+        /// assert_eq!(year_info.year, 7);
+        /// assert_eq!(year_info.era.as_str(), "reiwa");
+        /// assert_eq!(year_info.extended_year, 2025);
+        /// ```
+        pub extended_year: Option<i32>,
+        /// The month code representing a valid month in this calendar year,
+        /// as a UTF-8 string.
+        ///
+        /// See [`MonthCode`] for information on the syntax.
+        ///
+        /// # Examples
+        ///
+        /// To set the month code field, use a byte string:
+        ///
+        /// ```
+        /// use icu::calendar::types::DateFields;
+        ///
+        /// let mut fields = DateFields::default();
+        ///
+        /// // As a byte string literal:
+        /// fields.era = Some(b"M02L");
+        ///
+        /// // Using str::as_bytes:
+        /// fields.era = Some("M02L".as_bytes());
+        /// ```
+        ///
+        /// For a full example, see [`Self::ordinal_month`].
+        pub month_code: Option<&'a [u8]>,
+        /// See [`MonthInfo::ordinal`].
+        ///
+        /// If both this and [`Self::month_code`] are set, they must refer to
+        /// the same month.
+        ///
+        /// Note: using [`Self::month_code`] is recommended, because the ordinal month numbers
+        /// can vary from year to year, as illustrated in the following example.
+        ///
+        /// # Examples
+        ///
+        /// Either `month_code` or `ordinal_month` can be used in DateFields, but they
+        /// might not resolve to the same month number:
+        ///
+        /// ```
+        /// use icu::calendar::Date;
+        /// use icu::calendar::cal::ChineseTraditional;
+        /// use icu::calendar::types::DateFields;
+        ///
+        /// // The 2023 Year of the Rabbit had a leap month after the 2nd month.
+        /// let mut fields1 = DateFields::default();
+        /// fields1.extended_year = Some(2023);
+        /// fields1.month_code = Some(b"M02L");
+        /// fields1.day = Some(1);
+        ///
+        /// let date1 = Date::try_from_fields(
+        ///     fields1,
+        ///     Default::default(),
+        ///     ChineseTraditional::new()
+        /// )
+        /// .expect("a well-defined Chinese date from month code");
+        ///
+        /// let mut fields2 = DateFields::default();
+        /// fields2.extended_year = Some(2023);
+        /// fields2.ordinal_month = Some(3);
+        /// fields2.day = Some(1);
+        ///
+        /// let date2 = Date::try_from_fields(
+        ///     fields2,
+        ///     Default::default(),
+        ///     ChineseTraditional::new()
+        /// )
+        /// .expect("a well-defined Chinese date from ordinal month");
+        ///
+        /// assert_eq!(date1, date2);
+        ///
+        /// let month_info = date1.month();
+        /// assert_eq!(month_info.ordinal, 3);
+        /// assert_eq!(month_info.standard_code.0, "M02L");
+        /// ```
+        pub ordinal_month: Option<u8>,
+        /// See [`DayOfMonth`].
+        pub day: Option<u8>,
+    }
+
+    // Custom impl to stringify era and month_code where possible.
+    impl fmt::Debug for DateFields<'_> {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            // Ensures we catch future fields
+            let Self {
+                era,
+                era_year,
+                extended_year,
+                month_code,
+                ordinal_month,
+                day,
+            } = *self;
+            let mut builder = f.debug_struct("DateFields");
+            if let Some(s) = era.and_then(|s| core::str::from_utf8(s).ok()) {
+                builder.field("era", &Some(s));
+            } else {
+                builder.field("era", &era);
+            }
+            builder.field("era_year", &era_year);
+            builder.field("extended_year", &extended_year);
+            if let Some(s) = month_code.and_then(|s| core::str::from_utf8(s).ok()) {
+                builder.field("month_code", &Some(s));
+            } else {
+                builder.field("month_code", &month_code);
+            }
+            builder.field("ordinal_month", &ordinal_month);
+            builder.field("day", &day);
+            builder.finish()
         }
-        builder.field("era_year", &era_year);
-        builder.field("extended_year", &extended_year);
-        if let Some(s) = month_code.and_then(|s| core::str::from_utf8(s).ok()) {
-            builder.field("month_code", &Some(s));
-        } else {
-            builder.field("month_code", &month_code);
-        }
-        builder.field("ordinal_month", &ordinal_month);
-        builder.field("day", &day);
-        builder.finish()
     }
 }
 

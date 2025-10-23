@@ -49,8 +49,17 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     ) -> Result<Self::DateInner, DateError>;
 
     /// Construct a date from a bag of date fields.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+    ///
+    /// Graduation tracking issue: [issue #7161](https://github.com/unicode-org/icu4x/issues/7161).
+    /// </div>
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
     #[expect(clippy::wrong_self_convention)]
-    #[doc(hidden)] // unstable
+    #[cfg(feature = "unstable")]
     fn from_fields(
         &self,
         fields: types::DateFields,
@@ -107,8 +116,17 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// Information of the day of the year
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear;
 
-    #[doc(hidden)] // unstable
     /// Add `duration` to `date`
+    #[cfg(feature = "unstable")]
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+    ///
+    /// Graduation tracking issue: [issue #3964](https://github.com/unicode-org/icu4x/issues/3964).
+    /// </div>
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
     fn add(
         &self,
         date: &Self::DateInner,
@@ -116,11 +134,20 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         options: DateAddOptions,
     ) -> Result<Self::DateInner, DateError>;
 
-    #[doc(hidden)] // unstable
     /// Calculate `date2 - date` as a duration
     ///
     /// `calendar2` is the calendar object associated with `date2`. In case the specific calendar objects
     /// differ on data, the data for the first calendar is used, and `date2` may be converted if necessary.
+    #[cfg(feature = "unstable")]
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+    ///
+    /// Graduation tracking issue: [issue #3964](https://github.com/unicode-org/icu4x/issues/3964).
+    /// </div>
+    ///
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
     fn until(
         &self,
         date1: &Self::DateInner,

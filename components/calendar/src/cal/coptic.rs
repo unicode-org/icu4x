@@ -151,7 +151,7 @@ impl Calendar for Coptic {
     ) -> Result<Self::DateInner, DateError> {
         ArithmeticDate::from_codes(era, year, month_code, day, self).map(CopticDateInner)
     }
-
+    #[cfg(feature = "unstable")]
     fn from_fields(
         &self,
         fields: types::DateFields,
@@ -193,7 +193,7 @@ impl Calendar for Coptic {
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
         Self::days_in_provided_month(date.0.year, date.0.month)
     }
-
+    #[cfg(feature = "unstable")]
     fn add(
         &self,
         date: &Self::DateInner,
@@ -202,7 +202,7 @@ impl Calendar for Coptic {
     ) -> Result<Self::DateInner, DateError> {
         date.0.added(duration, self, options).map(CopticDateInner)
     }
-
+    #[cfg(feature = "unstable")]
     fn until(
         &self,
         date1: &Self::DateInner,

@@ -283,7 +283,7 @@ impl Calendar for AnyCalendar {
     ) -> Result<Self::DateInner, DateError> {
         Ok(match_cal!(match self: (c) => c.from_codes(era, year, month_code, day)?))
     }
-
+    #[cfg(feature = "unstable")]
     fn from_fields(
         &self,
         fields: DateFields,
@@ -340,7 +340,7 @@ impl Calendar for AnyCalendar {
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
         match_cal_and_date!(match (self, date): (c, d) => c.days_in_month(d))
     }
-
+    #[cfg(feature = "unstable")]
     fn add(
         &self,
         date: &Self::DateInner,
@@ -399,7 +399,7 @@ impl Calendar for AnyCalendar {
         }
         Ok(date)
     }
-
+    #[cfg(feature = "unstable")]
     fn until(
         &self,
         date1: &Self::DateInner,
