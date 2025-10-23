@@ -151,7 +151,7 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/chinese_cached",
         &fxs,
-        icu::calendar::cal::LunarChinese::new_china(),
+        icu::calendar::cal::ChineseTraditional::new(),
         |y, m, d, c| {
             Date::try_new_from_codes(None, y, types::MonthCode::new_normal(m).unwrap(), d, c)
                 .unwrap()
@@ -162,7 +162,7 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/dangi_cached",
         &fxs,
-        icu::calendar::cal::LunarChinese::new_korea(),
+        icu::calendar::cal::KoreanTraditional::new(),
         |y, m, d, c| {
             Date::try_new_from_codes(None, y, types::MonthCode::new_normal(m).unwrap(), d, c)
                 .unwrap()

@@ -60,6 +60,14 @@ args = ["-C", "examples/js-tiny", "test"]
 [tasks.test-dart]
 description = "Run Dart tests"
 category = "ICU4X Development"
+dependencies = [
+    "test-dart-lib",
+    "test-dart-example",
+]
+
+[tasks.test-dart-lib]
+description = "Run Dart tests"
+category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
 cd ffi/dart
@@ -67,8 +75,13 @@ exec --fail-on-error dart pub get
 exec --fail-on-error dart format --set-exit-if-changed .
 exec --fail-on-error dart analyze
 exec --fail-on-error dart --enable-experiment=record-use test
-cd ../..
+'''
 
+[tasks.test-dart-example]
+description = "Run Dart tests"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
 cd examples/dart
 exec --fail-on-error dart pub get
 exec --fail-on-error dart format --set-exit-if-changed .

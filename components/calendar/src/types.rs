@@ -136,7 +136,7 @@ pub struct DateFields<'a> {
     ///
     /// ```
     /// use icu::calendar::Date;
-    /// use icu::calendar::cal::LunarChinese;
+    /// use icu::calendar::cal::ChineseTraditional;
     /// use icu::calendar::types::DateFields;
     ///
     /// // The 2023 Year of the Rabbit had a leap month after the 2nd month.
@@ -148,7 +148,7 @@ pub struct DateFields<'a> {
     /// let date1 = Date::try_from_fields(
     ///     fields1,
     ///     Default::default(),
-    ///     LunarChinese::new_china()
+    ///     ChineseTraditional::new()
     /// )
     /// .expect("a well-defined Chinese date from month code");
     ///
@@ -160,7 +160,7 @@ pub struct DateFields<'a> {
     /// let date2 = Date::try_from_fields(
     ///     fields2,
     ///     Default::default(),
-    ///     LunarChinese::new_china()
+    ///     ChineseTraditional::new()
     /// )
     /// .expect("a well-defined Chinese date from ordinal month");
     ///

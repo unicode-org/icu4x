@@ -66,7 +66,7 @@ fn test_buddhist_continuity() {
 
 #[test]
 fn test_chinese_continuity() {
-    let cal = crate::cal::LunarChinese::new_china();
+    let cal = crate::cal::ChineseTraditional::new();
     let date = Date::try_new_from_codes(None, -10, MonthCode::new_normal(1).unwrap(), 1, cal);
     check_continuity(date.unwrap(), 20);
     let date = Date::try_new_from_codes(None, -300, MonthCode::new_normal(1).unwrap(), 1, cal);
@@ -91,7 +91,7 @@ fn test_coptic_continuity() {
 
 #[test]
 fn test_korean_continuity() {
-    let cal = cal::LunarChinese::new_korea();
+    let cal = cal::KoreanTraditional::new();
     let date = Date::try_new_from_codes(None, -10, MonthCode::new_normal(1).unwrap(), 1, cal);
     check_continuity(date.unwrap(), 20);
     let date = Date::try_new_from_codes(None, -300, MonthCode::new_normal(1).unwrap(), 1, cal);
