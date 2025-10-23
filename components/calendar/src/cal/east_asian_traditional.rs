@@ -20,25 +20,22 @@ use calendrical_calculations::rata_die::RataDie;
 use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
 use icu_provider::prelude::*;
 
-#[path = "chinese/china_data.rs"]
+#[path = "east_asian_traditional/china_data.rs"]
 mod china_data;
-#[path = "chinese/korea_data.rs"]
+#[path = "east_asian_traditional/korea_data.rs"]
 mod korea_data;
-#[path = "chinese/qing_data.rs"]
+#[path = "east_asian_traditional/qing_data.rs"]
 mod qing_data;
-#[path = "chinese/simple.rs"]
+#[path = "east_asian_traditional/simple.rs"]
 mod simple;
 
-/// The [Chinese Calendar](https://en.wikipedia.org/wiki/Chinese_calendar)
+/// The traditional East-Asian lunisolar calendar.
 ///
-/// The Chinese Calendar is a lunisolar calendar used traditionally in China as well as in other
-/// countries particularly in East Asia. It is often used today to track important
-/// cultural events and holidays like the Chinese Lunar New Year.
+/// This calendar used traditionally in China as well as in other countries in East Asia is
+/// often used today to track important cultural events and holidays like the Lunar New Year.
 ///
-/// This type can be used with [`Date`] to represent dates in the Chinese calendar.
-///
-/// The type parameter here specifies a particular set of calculation rules and local
-/// time information for a lunar Chinese calendar.
+/// The type parameter specifies a particular set of calculation rules and local
+/// time information, which differs by country and over time.
 /// It must implement the currently-unstable `Rules` trait, at the moment this crate exports two stable
 /// implementors of `Rules`: [`China`] and [`Korea`]. Please comment on [this issue](https://github.com/unicode-org/icu4x/issues/6962)
 /// if you would like to see this trait stabilized.
@@ -48,25 +45,25 @@ mod simple;
 ///
 /// # Months
 ///
-/// The Chinese calendar is an astronomical calendar which uses the phases of the moon to track months.
+/// The traditional East-Asian calendar is an astronomical calendar which uses the phases of the moon to track months.
 /// Each month starts on the date of the new moon, meaning that months last 29 or 30 days.
 ///
-/// One year in the Chinese calendar is typically 12 lunar months; however, because 12 lunar months does
-/// not line up to one solar year, the Chinese calendar will add an intercalary leap month approximately
-/// every three years to keep Chinese calendar months in line with the solar year.
+/// One year in the traditional East-Asian calendar is typically 12 lunar months; however, because 12 lunar months does
+/// not line up to one solar year, the traditional East-Asian calendar will add an intercalary leap month approximately
+/// every three years to keep traditional East-Asian calendar months in line with the solar year.
 ///
 /// Leap months can happen after any month; the month in which a leap month occurs is based on the alignment
 /// of months with 24 solar terms into which the solar year is divided.
 ///
 /// # Year and Era codes
 ///
-/// Unlike the Gregorian calendar, the Chinese calendar does not traditionally count years in an infinitely
+/// Unlike the Gregorian calendar, the traditional East-Asian calendar does not traditionally count years in an infinitely
 /// increasing sequence. Instead, 10 "celestial stems" and 12 "terrestrial branches" are combined to form a
 /// cycle of year names which repeats every 60 years. However, for the purposes of calendar calculations and
 /// conversions, this calendar also counts years based on the Gregorian (ISO) calendar. This "related ISO year"
-/// marks the Gregorian year in which a Chinese year begins.
+/// marks the Gregorian year in which a traditional East-Asian year begins.
 ///
-/// Because the Chinese calendar does not traditionally count years, era codes are not used in this calendar.
+/// Because the traditional East-Asian calendar does not traditionally count years, era codes are not used in this calendar.
 ///
 /// For more information, suggested reading materials include:
 /// * _Calendrical Calculations_ by Reingold & Dershowitz
@@ -82,9 +79,9 @@ mod simple;
 /// going to be perfect.
 #[derive(Clone, Debug, Default, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // newtype
-pub struct LunarChinese<X>(pub X);
+pub struct EastAsianTraditional<R>(pub R);
 
-/// The rules for the [`LunarChinese`] calendar.
+/// The rules for the [`EastAsianTraditional`] calendar.
 ///
 /// The calendar depends on both astronomical calculations and local time.
 /// The rules for how to perform these calculations, as well as how local
@@ -101,7 +98,7 @@ pub struct LunarChinese<X>(pub X);
 /// </div>
 pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed {
     /// Returns data about the given year.
-    fn year_data(&self, related_iso: i32) -> LunarChineseYearData;
+    fn year_data(&self, related_iso: i32) -> EastAsianTraditionalYearData;
 
     /// Returns an ECMA reference year that contains the given month-day combination.
     ///
@@ -136,7 +133,7 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
     }
 }
 
-/// The [`Rules`] used in China.
+/// The [Chinese](https://en.wikipedia.org/wiki/Chinese_calendar) variant of the [`EastAsianTraditional`] calendar.
 ///
 /// This type agrees with the official data published by the
 /// [Purple Mountain Observatory for the years 1900-2025], as well as with
@@ -159,12 +156,17 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
 /// [Hong Kong Observatory for the years 1901-2100]: https://www.hko.gov.hk/en/gts/time/conversion.htm
 /// [GB/T 33661-2017]: China::gb_t_33661_2017
 /// [Yuk Tung Liu]: https://ytliu0.github.io/ChineseCalendar/table.html
+pub type ChineseTraditional = EastAsianTraditional<China>;
+
+/// The [`Rules`] used in China.
+///
+/// See [`ChineseTraditional`] for more information.
 #[derive(Copy, Clone, Debug, Default)]
 #[non_exhaustive]
 pub struct China;
 
 impl China {
-    /// Computes [`LunarChineseYearData`] according to [GB/T 33661-2017],
+    /// Computes [`EastAsianTraditionalYearData`] according to [GB/T 33661-2017],
     /// as implemented by [`calendrical_calculations::chinese_based::Chinese`].
     ///
     /// The rules specified in [GB/T 33661-2017] have only been used
@@ -181,26 +183,32 @@ impl China {
     /// leap seconds are introduced.
     ///
     /// [GB/T 33661-2017]: https://openstd.samr.gov.cn/bzgk/gb/newGbInfo?hcno=E107EA4DE9725EDF819F33C60A44B296
-    pub fn gb_t_33661_2017(related_iso: i32) -> LunarChineseYearData {
-        LunarChineseYearData::calendrical_calculations::<chinese_based::Chinese>(related_iso)
+    pub fn gb_t_33661_2017(related_iso: i32) -> EastAsianTraditionalYearData {
+        EastAsianTraditionalYearData::calendrical_calculations::<chinese_based::Chinese>(
+            related_iso,
+        )
     }
 }
 
 impl crate::cal::scaffold::UnstableSealed for China {}
 impl Rules for China {
-    fn year_data(&self, related_iso: i32) -> LunarChineseYearData {
-        if let Some(year) =
-            LunarChineseYearData::lookup(related_iso, china_data::STARTING_YEAR, china_data::DATA)
-        {
+    fn year_data(&self, related_iso: i32) -> EastAsianTraditionalYearData {
+        if let Some(year) = EastAsianTraditionalYearData::lookup(
+            related_iso,
+            china_data::STARTING_YEAR,
+            china_data::DATA,
+        ) {
             year
         } else if related_iso > china_data::STARTING_YEAR {
-            LunarChineseYearData::simple(simple::UTC_PLUS_8, related_iso)
-        } else if let Some(year) =
-            LunarChineseYearData::lookup(related_iso, qing_data::STARTING_YEAR, qing_data::DATA)
-        {
+            EastAsianTraditionalYearData::simple(simple::UTC_PLUS_8, related_iso)
+        } else if let Some(year) = EastAsianTraditionalYearData::lookup(
+            related_iso,
+            qing_data::STARTING_YEAR,
+            qing_data::DATA,
+        ) {
             year
         } else {
-            LunarChineseYearData::simple(simple::BEIJING_UTC_OFFSET, related_iso)
+            EastAsianTraditionalYearData::simple(simple::BEIJING_UTC_OFFSET, related_iso)
         }
     }
 
@@ -277,7 +285,7 @@ impl Rules for China {
     }
 }
 
-/// The [`Rules`] used in [Korea](https://en.wikipedia.org/wiki/Korean_calendar).
+/// The [Korean](https://en.wikipedia.org/wiki/Korean_calendar) variant of the [`EastAsianTraditional`] calendar.
 ///
 /// This type agrees with the official data published by the
 /// [Korea Astronomy and Space Science Institute for the years 1900-2050].
@@ -303,23 +311,28 @@ impl Rules for China {
 /// [Yuk Tung Liu]: https://ytliu0.github.io/ChineseCalendar/table.html
 ///
 /// ```rust
-/// use icu::calendar::cal::LunarChinese;
+/// use icu::calendar::cal::{KoreanTraditional, ChineseTraditional};
 /// use icu::calendar::Date;
 ///
 /// let iso_a = Date::try_new_iso(2012, 4, 23).unwrap();
-/// let korean_a = iso_a.to_calendar(LunarChinese::new_korea());
-/// let chinese_a = iso_a.to_calendar(LunarChinese::new_china());
+/// let korean_a = iso_a.to_calendar(KoreanTraditional::new());
+/// let chinese_a = iso_a.to_calendar(ChineseTraditional::new());
 ///
 /// assert_eq!(korean_a.month().standard_code.0, "M03L");
 /// assert_eq!(chinese_a.month().standard_code.0, "M04");
 ///
 /// let iso_b = Date::try_new_iso(2012, 5, 23).unwrap();
-/// let korean_b = iso_b.to_calendar(LunarChinese::new_korea());
-/// let chinese_b = iso_b.to_calendar(LunarChinese::new_china());
+/// let korean_b = iso_b.to_calendar(KoreanTraditional::new());
+/// let chinese_b = iso_b.to_calendar(ChineseTraditional::new());
 ///
 /// assert_eq!(korean_b.month().standard_code.0, "M04");
 /// assert_eq!(chinese_b.month().standard_code.0, "M04L");
 /// ```
+pub type KoreanTraditional = EastAsianTraditional<Korea>;
+
+/// The [`Rules`] used in Korea.
+///
+/// See [`KoreanTraditional`] for more information.
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub struct Korea;
@@ -328,64 +341,62 @@ impl Korea {
     /// A version of [`China::gb_t_33661_2017`] adapted for Korean time.
     ///
     /// See [`China::gb_t_33661_2017`] for caveats.
-    pub fn adapted_gb_t_33661_2017(related_iso: i32) -> LunarChineseYearData {
-        LunarChineseYearData::calendrical_calculations::<chinese_based::Dangi>(related_iso)
+    pub fn adapted_gb_t_33661_2017(related_iso: i32) -> EastAsianTraditionalYearData {
+        EastAsianTraditionalYearData::calendrical_calculations::<chinese_based::Dangi>(related_iso)
     }
 }
 
-impl LunarChinese<Korea> {
-    /// Creates a new calendar using [`Korea`] rules.
-    pub const fn new_korea() -> Self {
+impl KoreanTraditional {
+    /// Creates a new [`KoreanTraditional`] calendar.
+    pub const fn new() -> Self {
         Self(Korea)
     }
 
-    /// Use [`Self::new_korea`].
-    #[deprecated(since = "2.1.0", note = "use `Self::new_korea()")]
-    pub const fn new() -> Self {
-        Self::new_korea()
-    }
-
-    /// Use [`Self::new_korea`].
+    /// Use [`Self::new`].
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::new)]
-    #[deprecated(since = "2.1.0", note = "use `Self::new_korea()")]
+    #[deprecated(since = "2.1.0", note = "use `Self::new()")]
     pub fn try_new_with_buffer_provider(
         _provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
-        Ok(Self::new_korea())
+        Ok(Self::new())
     }
 
-    /// Use [`Self::new_korea`].
+    /// Use [`Self::new`].
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    #[deprecated(since = "2.1.0", note = "use `Self::new_korea()")]
+    #[deprecated(since = "2.1.0", note = "use `Self::new()")]
     pub fn try_new_unstable<D: ?Sized>(_provider: &D) -> Result<Self, DataError> {
-        Ok(Self::new_korea())
+        Ok(Self::new())
     }
 
-    /// Use [`Self::new_korea`].
-    #[deprecated(since = "2.1.0", note = "use `Self::new_korea()")]
+    /// Use [`Self::new`].
+    #[deprecated(since = "2.1.0", note = "use `Self::new()")]
     pub fn new_always_calculating() -> Self {
-        Self::new_korea()
+        Self::new()
     }
 }
 
 impl crate::cal::scaffold::UnstableSealed for Korea {}
 impl Rules for Korea {
-    fn year_data(&self, related_iso: i32) -> LunarChineseYearData {
-        if let Some(year) =
-            LunarChineseYearData::lookup(related_iso, korea_data::STARTING_YEAR, korea_data::DATA)
-        {
+    fn year_data(&self, related_iso: i32) -> EastAsianTraditionalYearData {
+        if let Some(year) = EastAsianTraditionalYearData::lookup(
+            related_iso,
+            korea_data::STARTING_YEAR,
+            korea_data::DATA,
+        ) {
             year
         } else if related_iso > korea_data::STARTING_YEAR {
-            LunarChineseYearData::simple(simple::UTC_PLUS_9, related_iso)
-        } else if let Some(year) =
-            LunarChineseYearData::lookup(related_iso, qing_data::STARTING_YEAR, qing_data::DATA)
-        {
+            EastAsianTraditionalYearData::simple(simple::UTC_PLUS_9, related_iso)
+        } else if let Some(year) = EastAsianTraditionalYearData::lookup(
+            related_iso,
+            qing_data::STARTING_YEAR,
+            qing_data::DATA,
+        ) {
             // Korea used Qing-dynasty rules before 1912
             // https://github.com/unicode-org/icu4x/issues/6455#issuecomment-3282175550
             year
         } else {
-            LunarChineseYearData::simple(simple::BEIJING_UTC_OFFSET, related_iso)
+            EastAsianTraditionalYearData::simple(simple::BEIJING_UTC_OFFSET, related_iso)
         }
     }
 
@@ -461,7 +472,7 @@ impl Rules for Korea {
     }
 }
 
-impl<A: AsCalendar<Calendar = LunarChinese<Korea>>> Date<A> {
+impl<A: AsCalendar<Calendar = KoreanTraditional>> Date<A> {
     /// This method uses an ordinal month, which is probably not what you want.
     ///
     /// Use [`Date::try_new_from_codes`]
@@ -483,17 +494,17 @@ impl<A: AsCalendar<Calendar = LunarChinese<Korea>>> Date<A> {
     }
 }
 
-/// The inner date type used for representing [`Date`]s of [`LunarChinese`].
+/// The inner date type used for representing [`Date`]s of [`EastAsianTraditional`].
 #[derive(Debug, Clone)]
-pub struct ChineseDateInner<R: Rules>(ArithmeticDate<LunarChinese<R>>);
+pub struct ChineseDateInner<R: Rules>(ArithmeticDate<EastAsianTraditional<R>>);
 
-impl<S: Rules> Copy for ChineseDateInner<S> {}
-impl<S: Rules> PartialEq for ChineseDateInner<S> {
+impl<R: Rules> Copy for ChineseDateInner<R> {}
+impl<R: Rules> PartialEq for ChineseDateInner<R> {
     fn eq(&self, other: &Self) -> bool {
         self.0 == other.0
     }
 }
-impl<S: Rules> Eq for ChineseDateInner<S> {}
+impl<R: Rules> Eq for ChineseDateInner<R> {}
 impl<R: Rules> PartialOrd for ChineseDateInner<R> {
     fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
         Some(self.cmp(other))
@@ -505,49 +516,43 @@ impl<R: Rules> Ord for ChineseDateInner<R> {
     }
 }
 
-impl LunarChinese<China> {
-    /// Creates a new calendar using [`China`] rules.
-    pub const fn new_china() -> Self {
-        LunarChinese(China)
-    }
-
-    /// Use [`Self::new_china()`].
-    #[deprecated(since = "2.1.0", note = "use `Self::new_china()")]
+impl ChineseTraditional {
+    /// Creates a new [`ChineseTraditional`] calendar.
     pub const fn new() -> Self {
-        Self::new_china()
+        EastAsianTraditional(China)
     }
 
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::new)]
-    #[deprecated(since = "2.1.0", note = "use `Self::new_china()")]
+    #[deprecated(since = "2.1.0", note = "use `Self::new()")]
     pub fn try_new_with_buffer_provider(
         _provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
-        Ok(Self::new_china())
+        Ok(Self::new())
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    #[deprecated(since = "2.1.0", note = "use `Self::new_china()")]
+    #[deprecated(since = "2.1.0", note = "use `Self::new()")]
     pub fn try_new_unstable<D: ?Sized>(_provider: &D) -> Result<Self, DataError> {
-        Ok(Self::new_china())
+        Ok(Self::new())
     }
 
-    /// Use [`Self::new_china()`].
-    #[deprecated(since = "2.1.0", note = "use `Self::new_china()")]
+    /// Use [`Self::new()`].
+    #[deprecated(since = "2.1.0", note = "use `Self::new()")]
     pub fn new_always_calculating() -> Self {
-        Self::new_china()
+        Self::new()
     }
 }
 
-impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
-    type YearInfo = LunarChineseYearData;
+impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
+    type YearInfo = EastAsianTraditionalYearData;
 
-    fn days_in_provided_month(year: LunarChineseYearData, month: u8) -> u8 {
+    fn days_in_provided_month(year: EastAsianTraditionalYearData, month: u8) -> u8 {
         29 + year.packed.month_has_30_days(month) as u8
     }
 
     /// Returns the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
-    fn months_in_provided_year(year: LunarChineseYearData) -> u8 {
+    fn months_in_provided_year(year: EastAsianTraditionalYearData) -> u8 {
         12 + year.packed.leap_month().is_some() as u8
     }
 
@@ -618,8 +623,8 @@ impl<R: Rules> DateFieldsResolver for LunarChinese<R> {
     }
 }
 
-impl<R: Rules> crate::cal::scaffold::UnstableSealed for LunarChinese<R> {}
-impl<R: Rules> Calendar for LunarChinese<R> {
+impl<R: Rules> crate::cal::scaffold::UnstableSealed for EastAsianTraditional<R> {}
+impl<R: Rules> Calendar for EastAsianTraditional<R> {
     type DateInner = ChineseDateInner<R>;
     type Year = types::CyclicYear;
     type DifferenceError = core::convert::Infallible;
@@ -764,7 +769,7 @@ impl<R: Rules> Calendar for LunarChinese<R> {
     }
 }
 
-impl<A: AsCalendar<Calendar = LunarChinese<China>>> Date<A> {
+impl<A: AsCalendar<Calendar = ChineseTraditional>> Date<A> {
     /// This method uses an ordinal month, which is probably not what you want.
     ///
     /// Use [`Date::try_new_from_codes`]
@@ -786,26 +791,26 @@ impl<A: AsCalendar<Calendar = LunarChinese<China>>> Date<A> {
     }
 }
 
-/// Information about a [`LunarChinese`] year.
+/// Information about a [`EastAsianTraditional`] year.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
 // TODO(#3933): potentially make this smaller
-pub struct LunarChineseYearData {
+pub struct EastAsianTraditionalYearData {
     /// Contains:
     /// - length of each month in the year
     /// - whether or not there is a leap month, and which month it is
     /// - the date of Chinese New Year in the related ISO year
-    packed: PackedLunarChineseYearData,
+    packed: PackedEastAsianTraditionalYearData,
     related_iso: i32,
 }
 
-impl ToExtendedYear for LunarChineseYearData {
+impl ToExtendedYear for EastAsianTraditionalYearData {
     fn to_extended_year(&self) -> i32 {
         self.related_iso
     }
 }
 
-impl LunarChineseYearData {
-    /// Creates [`LunarChineseYearData`] from the given parts.
+impl EastAsianTraditionalYearData {
+    /// Creates [`EastAsianTraditionalYearData`] from the given parts.
     ///
     /// `start_day` is the date for the first day of the year, see [`Date::to_rata_die`]
     /// to obtain a [`RataDie`] from a [`Date`] in an arbitrary calendar.
@@ -824,7 +829,7 @@ impl LunarChineseYearData {
         leap_month: Option<u8>,
     ) -> Self {
         Self {
-            packed: PackedLunarChineseYearData::new(
+            packed: PackedEastAsianTraditionalYearData::new(
                 related_iso,
                 month_lengths,
                 leap_month,
@@ -837,7 +842,7 @@ impl LunarChineseYearData {
     fn lookup(
         related_iso: i32,
         starting_year: i32,
-        data: &[PackedLunarChineseYearData],
+        data: &[PackedEastAsianTraditionalYearData],
     ) -> Option<Self> {
         Some(related_iso)
             .and_then(|e| usize::try_from(e.checked_sub(starting_year)?).ok())
@@ -848,7 +853,9 @@ impl LunarChineseYearData {
             })
     }
 
-    fn calendrical_calculations<CB: ChineseBased>(related_iso: i32) -> LunarChineseYearData {
+    fn calendrical_calculations<CB: ChineseBased>(
+        related_iso: i32,
+    ) -> EastAsianTraditionalYearData {
         let mid_year = calendrical_calculations::gregorian::fixed_from_gregorian(related_iso, 7, 1);
         let year_bounds = YearBounds::compute::<CB>(mid_year);
 
@@ -860,8 +867,8 @@ impl LunarChineseYearData {
         let (month_lengths, leap_month) =
             chinese_based::month_structure_for_year::<CB>(new_year, next_new_year);
 
-        LunarChineseYearData {
-            packed: PackedLunarChineseYearData::new(
+        EastAsianTraditionalYearData {
+            packed: PackedEastAsianTraditionalYearData::new(
                 related_iso,
                 month_lengths,
                 leap_month,
@@ -898,9 +905,9 @@ impl LunarChineseYearData {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-struct PackedLunarChineseYearData(u8, u8, u8);
+struct PackedEastAsianTraditionalYearData(u8, u8, u8);
 
-impl PackedLunarChineseYearData {
+impl PackedEastAsianTraditionalYearData {
     /// The first day on which Chinese New Year may occur
     ///
     /// According to Reingold & Dershowitz, ch 19.6, Chinese New Year occurs on Jan 21 - Feb 21 inclusive.
@@ -1148,7 +1155,7 @@ mod test {
         for case in cases {
             let rata_die = RataDie::new(case.rd);
 
-            let chinese = Date::from_rata_die(rata_die, LunarChinese::new_china());
+            let chinese = Date::from_rata_die(rata_die, ChineseTraditional::new());
             assert_eq!(
                 case.expected_year,
                 chinese.extended_year(),
@@ -1202,7 +1209,7 @@ mod test {
                 case.year,
                 case.month_code,
                 case.day,
-                LunarChinese::new_china(),
+                ChineseTraditional::new(),
             )
             .unwrap();
             #[allow(deprecated)] // should still test
@@ -1212,7 +1219,7 @@ mod test {
                         case.year,
                         case.ordinal_month,
                         case.day,
-                        LunarChinese::new_china()
+                        ChineseTraditional::new()
                     ),
                     Ok(date)
                 );
@@ -1232,7 +1239,7 @@ mod test {
         while rd < max_rd && iters < max_iters {
             let rata_die = RataDie::new(rd);
 
-            let chinese = Date::from_rata_die(rata_die, LunarChinese::new_china());
+            let chinese = Date::from_rata_die(rata_die, ChineseTraditional::new());
             let result = chinese.to_rata_die();
             assert_eq!(result, rata_die, "Failed roundtrip RD -> Chinese -> RD for RD: {rata_die:?}, with calculated: {result:?} from Chinese date:\n{chinese:?}");
 
@@ -1245,7 +1252,7 @@ mod test {
     fn test_chinese_epoch() {
         let iso = Date::try_new_iso(-2636, 2, 15).unwrap();
 
-        let chinese = iso.to_calendar(LunarChinese::new_china());
+        let chinese = iso.to_calendar(ChineseTraditional::new());
 
         assert_eq!(chinese.cyclic_year().related_iso, -2636);
         assert_eq!(chinese.month().ordinal, 1);
@@ -1289,7 +1296,7 @@ mod test {
         for case in cases {
             let iso = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day).unwrap();
 
-            let chinese = iso.to_calendar(LunarChinese::new_china());
+            let chinese = iso.to_calendar(ChineseTraditional::new());
             assert_eq!(
                 case.expected_year,
                 chinese.cyclic_year().related_iso,
@@ -1324,7 +1331,7 @@ mod test {
             let expected_month = case.1;
             let iso = Date::try_new_iso(year, 6, 1).unwrap();
 
-            let chinese_date = iso.to_calendar(LunarChinese::new_china());
+            let chinese_date = iso.to_calendar(ChineseTraditional::new());
             assert!(
                 chinese_date.is_in_leap_year(),
                 "{year} should be a leap year"
@@ -1340,7 +1347,7 @@ mod test {
 
     #[test]
     fn test_month_days() {
-        let year = LunarChinese::new_china().0.year_data(2023);
+        let year = ChineseTraditional::new().0.year_data(2023);
         let cases = [
             (1, 29),
             (2, 30),
@@ -1357,7 +1364,7 @@ mod test {
             (13, 30),
         ];
         for case in cases {
-            let days_in_month = LunarChinese::<China>::days_in_provided_month(year, case.0);
+            let days_in_month = EastAsianTraditional::<China>::days_in_provided_month(year, case.0);
             assert_eq!(
                 case.1, days_in_month,
                 "month_days test failed for case: {case:?}"
@@ -1470,7 +1477,7 @@ mod test {
 
         for case in cases {
             let iso = Date::try_new_iso(case.year, case.month, case.day).unwrap();
-            let chinese = iso.to_calendar(LunarChinese::new_china());
+            let chinese = iso.to_calendar(ChineseTraditional::new());
             let result_code = chinese.month().standard_code.0;
             let expected_code = case.expected_code.to_string();
             assert_eq!(
@@ -1482,7 +1489,7 @@ mod test {
 
     #[test]
     fn test_month_code_to_ordinal() {
-        let cal = LunarChinese::new_china();
+        let cal = ChineseTraditional::new();
         let reject = DateFromFieldsOptions {
             overflow: Some(Overflow::Reject),
             ..Default::default()
@@ -1505,7 +1512,7 @@ mod test {
 
     #[test]
     fn check_invalid_month_code_to_ordinal() {
-        let cal = LunarChinese::new_china();
+        let cal = ChineseTraditional::new();
         let reject = DateFromFieldsOptions {
             overflow: Some(Overflow::Reject),
             ..Default::default()
@@ -1539,7 +1546,7 @@ mod test {
             let month = i as u8 % 12 + 1;
             let day = i as u8 % 28 + 1;
             let iso = Date::try_new_iso(year, month, day).unwrap();
-            let chinese = iso.to_calendar(LunarChinese::new_china());
+            let chinese = iso.to_calendar(ChineseTraditional::new());
             let result = chinese.to_calendar(Iso);
             assert_eq!(iso, result, "ISO to Chinese roundtrip failed!\nIso: {iso:?}\nChinese: {chinese:?}\nResult: {result:?}");
         }
@@ -1547,8 +1554,8 @@ mod test {
 
     fn check_cyclic_and_rel_iso(year: i32) {
         let iso = Date::try_new_iso(year, 6, 6).unwrap();
-        let chinese = iso.to_calendar(LunarChinese::new_china());
-        let korean = iso.to_calendar(LunarChinese::new_korea());
+        let chinese = iso.to_calendar(ChineseTraditional::new());
+        let korean = iso.to_calendar(KoreanTraditional::new());
         let chinese_year = chinese.cyclic_year();
         let korean_year = korean.cyclic_year();
         assert_eq!(
@@ -1587,7 +1594,7 @@ mod test {
         while rd < max_rd && iters < max_iters {
             let rata_die = RataDie::new(rd);
             let iso = Date::from_rata_die(rata_die, Iso);
-            let korean = iso.to_calendar(LunarChinese::new_korea());
+            let korean = iso.to_calendar(KoreanTraditional::new());
             let result = korean.to_calendar(Iso);
             assert_eq!(
                 iso, result,
@@ -1612,7 +1619,7 @@ mod test {
             ..Default::default()
         };
 
-        let cal = LunarChinese::new_china();
+        let cal = ChineseTraditional::new();
         let date = Date::try_from_fields(fields, options, cal).unwrap();
         assert_eq!(
             date.day_of_month().0,
@@ -1650,7 +1657,7 @@ mod test {
             ..Default::default()
         };
 
-        let cal = LunarChinese::new_china();
+        let cal = ChineseTraditional::new();
         assert!(matches!(
             Date::try_from_fields(fields, options, cal).unwrap_err(),
             DateFromFieldsError::Range { .. }
@@ -1660,10 +1667,7 @@ mod test {
     #[test]
     #[ignore] // slow, network
     fn test_against_hong_kong_observatory_data() {
-        use crate::{
-            cal::{Gregorian, LunarChinese},
-            Date,
-        };
+        use crate::{cal::Gregorian, Date};
 
         let mut related_iso = 1900;
         let mut lunar_month = ValidMonthCode::new_unchecked(11, false);
@@ -1723,7 +1727,7 @@ mod test {
                     related_iso,
                     lunar_month.to_month_code(),
                     lunar_day,
-                    LunarChinese::new_china(),
+                    ChineseTraditional::new(),
                 )
                 .unwrap();
 
@@ -1739,11 +1743,7 @@ mod test {
     #[test]
     #[ignore] // network
     fn test_against_kasi_data() {
-        use crate::{
-            cal::{Gregorian, LunarChinese},
-            types::MonthCode,
-            Date,
-        };
+        use crate::{cal::Gregorian, types::MonthCode, Date};
 
         // TODO: query KASI directly
         let uri = "https://gist.githubusercontent.com/Manishearth/d8c94a7df22a9eacefc4472a5805322e/raw/e1ea3b0aa52428686bb3a9cd0f262878515e16c1/resolved.json";
@@ -1779,7 +1779,7 @@ mod test {
                 .unwrap();
 
                 assert_eq!(
-                    Date::try_new_from_codes(None, year, month, 1, LunarChinese::new_korea())
+                    Date::try_new_from_codes(None, year, month, 1, KoreanTraditional::new())
                         .unwrap()
                         .to_calendar(Gregorian),
                     gregorian
@@ -1791,9 +1791,9 @@ mod test {
     #[test]
     #[ignore]
     fn generate_reference_years() {
-        generate_reference_years_for(LunarChinese::new_china());
-        generate_reference_years_for(LunarChinese::new_korea());
-        fn generate_reference_years_for<R: Rules + Copy>(calendar: LunarChinese<R>) {
+        generate_reference_years_for(ChineseTraditional::new());
+        generate_reference_years_for(KoreanTraditional::new());
+        fn generate_reference_years_for<R: Rules + Copy>(calendar: EastAsianTraditional<R>) {
             use crate::Date;
 
             println!("Reference years for {calendar:?}:");
@@ -1875,7 +1875,8 @@ mod test {
         ) {
             let ny =
                 calendrical_calculations::gregorian::fixed_from_gregorian(1000, 1, 1) + ny_offset;
-            let packed = PackedLunarChineseYearData::new(1000, month_lengths, leap_month_idx, ny);
+            let packed =
+                PackedEastAsianTraditionalYearData::new(1000, month_lengths, leap_month_idx, ny);
 
             assert_eq!(
                 ny,

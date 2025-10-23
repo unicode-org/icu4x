@@ -89,9 +89,9 @@ macro_rules! for_each_calendar {
                 println!("Buddhist done");
             },
             || {
-                $f(cal::LunarChinese(LunarChineseYears::new(
-                    cal::chinese::China::default(),
-                )));
+                $f(cal::east_asian_traditional::EastAsianTraditional(
+                    EastAsianTraditionalYears::new(cal::east_asian_traditional::China::default()),
+                ));
                 println!("Chinese done");
             },
             || {
@@ -99,9 +99,9 @@ macro_rules! for_each_calendar {
                 println!("Coptic done");
             },
             || {
-                $f(cal::LunarChinese(LunarChineseYears::new(
-                    cal::chinese::Korea::default(),
-                )));
+                $f(cal::east_asian_traditional::EastAsianTraditional(
+                    EastAsianTraditionalYears::new(cal::east_asian_traditional::Korea::default()),
+                ));
                 println!("Korean done");
             },
             || {
@@ -178,10 +178,10 @@ use for_each_calendar;
 
 // Precalculates Chinese years, significant performance improvement
 #[derive(Debug, Clone)]
-struct LunarChineseYears(Vec<cal::chinese::LunarChineseYearData>);
+struct EastAsianTraditionalYears(Vec<cal::east_asian_traditional::EastAsianTraditionalYearData>);
 
-impl LunarChineseYears {
-    fn new<R: cal::chinese::Rules>(r: R) -> Self {
+impl EastAsianTraditionalYears {
+    fn new<R: cal::east_asian_traditional::Rules>(r: R) -> Self {
         Self(
             ((-MAGNITUDE - 1)..=MAGNITUDE)
                 .map(|i| r.year_data(i))
@@ -190,9 +190,12 @@ impl LunarChineseYears {
     }
 }
 
-impl cal::scaffold::UnstableSealed for LunarChineseYears {}
-impl cal::chinese::Rules for LunarChineseYears {
-    fn year_data(&self, related_iso: i32) -> cal::chinese::LunarChineseYearData {
+impl cal::scaffold::UnstableSealed for EastAsianTraditionalYears {}
+impl cal::east_asian_traditional::Rules for EastAsianTraditionalYears {
+    fn year_data(
+        &self,
+        related_iso: i32,
+    ) -> cal::east_asian_traditional::EastAsianTraditionalYearData {
         self.0[(related_iso + MAGNITUDE + 1) as usize]
     }
 }

@@ -49,7 +49,7 @@ impl CldrCalendar for Buddhist {
     type SkeletaV1 = DatetimePatternsDateBuddhistV1;
 }
 
-impl CldrCalendar for LunarChinese<chinese::China> {
+impl CldrCalendar for ChineseTraditional {
     type YearNamesV1 = DatetimeNamesYearChineseV1;
     type MonthNamesV1 = DatetimeNamesMonthChineseV1;
     type SkeletaV1 = DatetimePatternsDateChineseV1;
@@ -61,7 +61,7 @@ impl CldrCalendar for Coptic {
     type SkeletaV1 = DatetimePatternsDateCopticV1;
 }
 
-impl CldrCalendar for LunarChinese<chinese::Korea> {
+impl CldrCalendar for KoreanTraditional {
     type YearNamesV1 = DatetimeNamesYearDangiV1;
     type MonthNamesV1 = DatetimeNamesMonthDangiV1;
     type SkeletaV1 = DatetimePatternsDateDangiV1;
@@ -183,9 +183,9 @@ impl CldrCalendar for Roc {
 
 impl UnstableSealed for () {}
 impl UnstableSealed for Buddhist {}
-impl UnstableSealed for LunarChinese<chinese::China> {}
+impl UnstableSealed for ChineseTraditional {}
 impl UnstableSealed for Coptic {}
-impl UnstableSealed for LunarChinese<chinese::Korea> {}
+impl UnstableSealed for KoreanTraditional {}
 impl UnstableSealed for Ethiopian {}
 impl UnstableSealed for Gregorian {}
 impl UnstableSealed for Hebrew {}
@@ -276,9 +276,9 @@ pub trait IntoFormattableAnyCalendar: CldrCalendar + IntoAnyCalendar {}
 
 // keep in sync with FormattableAnyCalendarKind
 impl IntoFormattableAnyCalendar for Buddhist {}
-impl IntoFormattableAnyCalendar for LunarChinese<chinese::China> {}
+impl IntoFormattableAnyCalendar for ChineseTraditional {}
 impl IntoFormattableAnyCalendar for Coptic {}
-impl IntoFormattableAnyCalendar for LunarChinese<chinese::Korea> {}
+impl IntoFormattableAnyCalendar for KoreanTraditional {}
 impl IntoFormattableAnyCalendar for Ethiopian {}
 impl IntoFormattableAnyCalendar for Gregorian {}
 impl IntoFormattableAnyCalendar for Hebrew {}
@@ -417,9 +417,9 @@ impl FormattableAnyCalendar {
         use FormattableAnyCalendarKind::*;
         let any_calendar = match kind {
             Buddhist => AnyCalendar::Buddhist(cal::Buddhist),
-            Chinese => AnyCalendar::Chinese(cal::LunarChinese::new_china()),
+            Chinese => AnyCalendar::Chinese(cal::ChineseTraditional::new()),
             Coptic => AnyCalendar::Coptic(cal::Coptic),
-            Dangi => AnyCalendar::Dangi(cal::LunarChinese::new_korea()),
+            Dangi => AnyCalendar::Dangi(cal::KoreanTraditional::new()),
             Ethiopian => AnyCalendar::Ethiopian(cal::Ethiopian::new()),
             EthiopianAmeteAlem => AnyCalendar::Ethiopian(cal::Ethiopian::new_with_era_style(
                 cal::EthiopianEraStyle::AmeteAlem,
@@ -454,9 +454,9 @@ impl FormattableAnyCalendar {
         use FormattableAnyCalendarKind::*;
         let any_calendar = match kind {
             Buddhist => AnyCalendar::Buddhist(cal::Buddhist),
-            Chinese => AnyCalendar::Chinese(cal::LunarChinese::new_china()),
+            Chinese => AnyCalendar::Chinese(cal::ChineseTraditional::new()),
             Coptic => AnyCalendar::Coptic(cal::Coptic),
-            Dangi => AnyCalendar::Dangi(cal::LunarChinese::new_korea()),
+            Dangi => AnyCalendar::Dangi(cal::KoreanTraditional::new()),
             Ethiopian => AnyCalendar::Ethiopian(cal::Ethiopian::new()),
             EthiopianAmeteAlem => AnyCalendar::Ethiopian(cal::Ethiopian::new_with_era_style(
                 cal::EthiopianEraStyle::AmeteAlem,
@@ -492,9 +492,9 @@ impl FormattableAnyCalendar {
         use FormattableAnyCalendarKind::*;
         let any_calendar = match kind {
             Buddhist => AnyCalendar::Buddhist(cal::Buddhist),
-            Chinese => AnyCalendar::Chinese(cal::LunarChinese::new_china()),
+            Chinese => AnyCalendar::Chinese(cal::ChineseTraditional::new()),
             Coptic => AnyCalendar::Coptic(cal::Coptic),
-            Dangi => AnyCalendar::Dangi(cal::LunarChinese::new_korea()),
+            Dangi => AnyCalendar::Dangi(cal::KoreanTraditional::new()),
             Ethiopian => AnyCalendar::Ethiopian(cal::Ethiopian::new()),
             EthiopianAmeteAlem => AnyCalendar::Ethiopian(cal::Ethiopian::new_with_era_style(
                 cal::EthiopianEraStyle::AmeteAlem,
@@ -632,9 +632,9 @@ where
 
 impl CalMarkers<YearNamesV1> for FullDataCalMarkers {
     type Buddhist = <Buddhist as CldrCalendar>::YearNamesV1;
-    type Chinese = <LunarChinese<chinese::China> as CldrCalendar>::YearNamesV1;
+    type Chinese = <ChineseTraditional as CldrCalendar>::YearNamesV1;
     type Coptic = <Coptic as CldrCalendar>::YearNamesV1;
-    type Dangi = <LunarChinese<chinese::Korea> as CldrCalendar>::YearNamesV1;
+    type Dangi = <KoreanTraditional as CldrCalendar>::YearNamesV1;
     type Ethiopian = <Ethiopian as CldrCalendar>::YearNamesV1;
     type Gregorian = <Gregorian as CldrCalendar>::YearNamesV1;
     type Hebrew = <Hebrew as CldrCalendar>::YearNamesV1;
@@ -647,9 +647,9 @@ impl CalMarkers<YearNamesV1> for FullDataCalMarkers {
 
 impl CalMarkers<MonthNamesV1> for FullDataCalMarkers {
     type Buddhist = <Buddhist as CldrCalendar>::MonthNamesV1;
-    type Chinese = <LunarChinese<chinese::China> as CldrCalendar>::MonthNamesV1;
+    type Chinese = <ChineseTraditional as CldrCalendar>::MonthNamesV1;
     type Coptic = <Coptic as CldrCalendar>::MonthNamesV1;
-    type Dangi = <LunarChinese<chinese::Korea> as CldrCalendar>::MonthNamesV1;
+    type Dangi = <KoreanTraditional as CldrCalendar>::MonthNamesV1;
     type Ethiopian = <Ethiopian as CldrCalendar>::MonthNamesV1;
     type Gregorian = <Gregorian as CldrCalendar>::MonthNamesV1;
     type Hebrew = <Hebrew as CldrCalendar>::MonthNamesV1;
@@ -662,9 +662,9 @@ impl CalMarkers<MonthNamesV1> for FullDataCalMarkers {
 
 impl CalMarkers<ErasedPackedPatterns> for FullDataCalMarkers {
     type Buddhist = <Buddhist as CldrCalendar>::SkeletaV1;
-    type Chinese = <LunarChinese<chinese::China> as CldrCalendar>::SkeletaV1;
+    type Chinese = <ChineseTraditional as CldrCalendar>::SkeletaV1;
     type Coptic = <Coptic as CldrCalendar>::SkeletaV1;
-    type Dangi = <LunarChinese<chinese::Korea> as CldrCalendar>::SkeletaV1;
+    type Dangi = <KoreanTraditional as CldrCalendar>::SkeletaV1;
     type Ethiopian = <Ethiopian as CldrCalendar>::SkeletaV1;
     type Gregorian = <Gregorian as CldrCalendar>::SkeletaV1;
     type Hebrew = <Hebrew as CldrCalendar>::SkeletaV1;

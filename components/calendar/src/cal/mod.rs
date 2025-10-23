@@ -4,9 +4,9 @@
 
 //! Types for individual calendars
 pub(crate) mod buddhist;
-#[path = "chinese.rs"]
-pub(crate) mod chinese_internal;
 pub(crate) mod coptic;
+#[path = "east_asian_traditional.rs"]
+pub(crate) mod east_asian_traditional_internal;
 pub(crate) mod ethiopian;
 pub(crate) mod gregorian;
 pub(crate) mod hebrew;
@@ -22,16 +22,16 @@ pub(crate) mod roc;
 pub(crate) mod abstract_gregorian;
 
 pub use buddhist::Buddhist;
-pub use chinese_internal::LunarChinese;
-/// Customizations for the [`LunarChinese`] calendar.
-pub mod chinese {
-    pub use super::chinese_internal::{China, Korea};
+/// Customizations for the [`EastAsianTraditional`](east_asian_traditional::EastAsianTraditional) calendar.
+pub mod east_asian_traditional {
+    pub use super::east_asian_traditional_internal::{China, EastAsianTraditional, Korea};
 
     // TODO(#6962) Stabilize
     #[cfg(feature = "unstable")]
-    pub use super::chinese_internal::{LunarChineseYearData, Rules};
+    pub use super::east_asian_traditional_internal::{EastAsianTraditionalYearData, Rules};
 }
 pub use coptic::Coptic;
+pub use east_asian_traditional_internal::{ChineseTraditional, KoreanTraditional};
 pub use ethiopian::{Ethiopian, EthiopianEraStyle};
 pub use gregorian::Gregorian;
 pub use hebrew::Hebrew;
@@ -76,12 +76,12 @@ pub type HijriUmmAlQura = Hijri<hijri::UmmAlQura>;
 /// Deprecated
 #[deprecated]
 pub type HijriTabular = Hijri<hijri::TabularAlgorithm>;
-/// Deprecated
-#[deprecated]
-pub type Dangi = LunarChinese<chinese::Korea>;
-/// Deprecated
-#[deprecated]
-pub type Chinese = LunarChinese<chinese::China>;
+/// Use [`KoreanTraditional`]
+#[deprecated(since = "2.1.0", note = "use `KoreanTraditional`")]
+pub type Dangi = KoreanTraditional;
+/// Use [`ChineseTraditional`]
+#[deprecated(since = "2.1.0", note = "use `ChineseTraditional`")]
+pub type Chinese = ChineseTraditional;
 
 pub use crate::any_calendar::{AnyCalendar, AnyCalendarDifferenceError, AnyCalendarKind};
 

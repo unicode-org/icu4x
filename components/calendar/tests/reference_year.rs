@@ -202,7 +202,7 @@ fn test_reference_year_buddhist() {
 
 #[test]
 fn test_reference_year_chinese() {
-    test_reference_year_impl(LunarChinese::new_china(), chinese_md_condition)
+    test_reference_year_impl(ChineseTraditional::new(), chinese_md_condition)
 }
 
 #[test]
@@ -212,7 +212,7 @@ fn test_reference_year_coptic() {
 
 #[test]
 fn test_reference_year_korean() {
-    test_reference_year_impl(LunarChinese::new_korea(), chinese_md_condition)
+    test_reference_year_impl(KoreanTraditional::new(), chinese_md_condition)
 }
 
 #[test]
