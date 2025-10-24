@@ -3,6 +3,8 @@
 
 part of 'lib.g.dart';
 
+/// 🚧 This API is experimental and may experience breaking changes outside major releases.
+///
 /// See the [Rust documentation for `MissingFieldsStrategy`](https://docs.rs/icu/2.0.0/icu/calendar/options/enum.MissingFieldsStrategy.html) for more information.
 enum DateMissingFieldsStrategy {
 

@@ -2,13 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::duration::{DateDuration, DateDurationUnit};
 use crate::error::{
     range_check, range_check_with_overflow, DateFromFieldsError, EcmaReferenceYearError,
     MonthCodeError, MonthCodeParseError, UnknownEraError,
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
-use crate::types::{DateDuration, DateDurationUnit, DateFields, ValidMonthCode};
+use crate::types::{DateFields, ValidMonthCode};
 use crate::{types, Calendar, DateError, RangeError};
 use core::cmp::Ordering;
 use core::fmt::Debug;

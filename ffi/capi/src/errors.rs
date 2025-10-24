@@ -73,7 +73,7 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::error::DateFromFieldsError, Enum, compact)]
-    #[cfg(feature = "calendar")]
+    #[cfg(all(feature = "unstable", feature = "calendar"))]
     #[non_exhaustive]
     pub enum CalendarDateFromFieldsError {
         Unknown = 0x00,
@@ -197,6 +197,7 @@ impl From<icu_calendar::DateError> for CalendarError {
 }
 
 #[cfg(feature = "calendar")]
+#[cfg(all(feature = "unstable", feature = "calendar"))]
 impl From<icu_calendar::error::DateFromFieldsError> for CalendarDateFromFieldsError {
     fn from(e: icu_calendar::error::DateFromFieldsError) -> Self {
         match e {

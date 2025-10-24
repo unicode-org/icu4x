@@ -10,13 +10,14 @@ pub mod ffi {
     use alloc::boxed::Box;
     use alloc::sync::Arc;
     use core::fmt::Write;
+    #[cfg(feature = "unstable")]
     use diplomat_runtime::DiplomatOption;
     use icu_calendar::Iso;
 
     use crate::unstable::calendar::ffi::Calendar;
-    use crate::unstable::errors::ffi::{
-        CalendarDateFromFieldsError, CalendarError, Rfc9557ParseError,
-    };
+    #[cfg(feature = "unstable")]
+    use crate::unstable::errors::ffi::CalendarDateFromFieldsError;
+    use crate::unstable::errors::ffi::{CalendarError, Rfc9557ParseError};
 
     use tinystr::TinyAsciiStr;
 
@@ -176,13 +177,17 @@ pub mod ffi {
         }
     }
 
+    /// 🚧 This API is experimental and may experience breaking changes outside major releases.
     #[diplomat::rust_link(icu::calendar::options::DateFromFieldsOptions, Struct)]
+    #[cfg(feature = "unstable")]
     pub struct DateFromFieldsOptions {
         pub overflow: DiplomatOption<DateOverflow>,
         pub missing_fields_strategy: DiplomatOption<DateMissingFieldsStrategy>,
     }
 
+    /// 🚧 This API is experimental and may experience breaking changes outside major releases.
     #[diplomat::rust_link(icu::calendar::types::DateFields, Struct)]
+    #[cfg(feature = "unstable")]
     pub struct DateFields<'a> {
         pub era: DiplomatOption<&'a DiplomatStr>,
         pub era_year: DiplomatOption<i32>,
@@ -192,17 +197,21 @@ pub mod ffi {
         pub day: DiplomatOption<u8>,
     }
 
+    /// 🚧 This API is experimental and may experience breaking changes outside major releases.
     #[diplomat::enum_convert(icu_calendar::options::Overflow, needs_wildcard)]
     #[diplomat::rust_link(icu::calendar::options::Overflow, Enum)]
     #[non_exhaustive]
+    #[cfg(feature = "unstable")]
     pub enum DateOverflow {
         Constrain,
         Reject,
     }
 
+    /// 🚧 This API is experimental and may experience breaking changes outside major releases.
     #[diplomat::enum_convert(icu_calendar::options::MissingFieldsStrategy, needs_wildcard)]
     #[diplomat::rust_link(icu::calendar::options::MissingFieldsStrategy, Enum)]
     #[non_exhaustive]
+    #[cfg(feature = "unstable")]
     pub enum DateMissingFieldsStrategy {
         Reject,
         Ecma,
@@ -233,8 +242,11 @@ pub mod ffi {
         }
 
         /// Creates a new [`Date`] from the given fields, which are interpreted in the given calendar system.
+        ///
+        /// 🚧 This API is experimental and may experience breaking changes outside major releases.
         #[diplomat::rust_link(icu::calendar::Date::try_from_fields, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        #[cfg(feature = "unstable")]
         pub fn from_fields_in_calendar(
             fields: DateFields,
             options: DateFromFieldsOptions,
@@ -477,6 +489,7 @@ impl From<icu_calendar::types::IsoWeekOfYear> for IsoWeekOfYear {
     }
 }
 
+#[cfg(feature = "unstable")]
 impl From<ffi::DateFromFieldsOptions> for icu_calendar::options::DateFromFieldsOptions {
     fn from(other: ffi::DateFromFieldsOptions) -> Self {
         let mut options = Self::default();
@@ -488,6 +501,7 @@ impl From<ffi::DateFromFieldsOptions> for icu_calendar::options::DateFromFieldsO
     }
 }
 
+#[cfg(feature = "unstable")]
 impl<'a> From<ffi::DateFields<'a>> for icu_calendar::types::DateFields<'a> {
     fn from(other: ffi::DateFields<'a>) -> Self {
         let mut fields = Self::default();

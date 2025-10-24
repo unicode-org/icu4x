@@ -76,6 +76,8 @@ export class Date {
     /**
      * Creates a new {@link Date} from the given fields, which are interpreted in the given calendar system.
      *
+     * 🚧 This API is experimental and may experience breaking changes outside major releases.
+     *
      * See the [Rust documentation for `try_from_fields`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.try_from_fields) for more information.
      */
     static fromFieldsInCalendar(fields, options, calendar) {

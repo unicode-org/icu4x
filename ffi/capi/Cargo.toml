@@ -89,6 +89,9 @@ properties = ["dep:icu_properties", "dep:icu_collections", "dep:unicode-bidi"]
 segmenter = ["dep:icu_segmenter"]
 timezone = ["calendar"]
 
+# Unstable features on individual components
+unstable = ["icu_calendar?/unstable"]
+
 compiled_data = [
     "icu_calendar?/compiled_data",
     "icu_casemap?/compiled_data",

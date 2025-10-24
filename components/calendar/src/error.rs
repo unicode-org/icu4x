@@ -64,259 +64,275 @@ pub enum DateError {
 }
 
 impl core::error::Error for DateError {}
+#[cfg(feature = "unstable")]
+pub use unstable::DateFromFieldsError;
+#[cfg(not(feature = "unstable"))]
+pub(crate) use unstable::DateFromFieldsError;
 
-/// Error type for date creation via [`Date::try_from_fields`].
-///
-/// [`Date::try_from_fields`]: crate::Date::try_from_fields
-#[derive(Debug, Copy, Clone, PartialEq, Display)]
-#[non_exhaustive]
-pub enum DateFromFieldsError {
-    /// A field is out of range for its domain.
+mod unstable {
+    pub use super::*;
+    /// Error type for date creation via [`Date::try_from_fields`].
     ///
-    /// # Examples
+    /// [`Date::try_from_fields`]: crate::Date::try_from_fields
     ///
-    /// ```
-    /// use icu::calendar::Date;
-    /// use icu::calendar::error::DateFromFieldsError;
-    /// use icu::calendar::error::RangeError;
-    /// use icu::calendar::Iso;
-    /// use icu::calendar::types::DateFields;
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
     ///
-    /// let mut fields = DateFields::default();
-    /// fields.extended_year = Some(2000);
-    /// fields.ordinal_month = Some(13);
-    /// fields.day = Some(1);
+    /// Graduation tracking issue: [issue #7161](https://github.com/unicode-org/icu4x/issues/7161).
+    /// </div>
     ///
-    /// let err = Date::try_from_fields(
-    ///     fields, Default::default(), Iso
-    /// )
-    /// .expect_err("no month 13 in the ISO calendar");
-    ///
-    /// assert!(matches!(err, DateFromFieldsError::Range(RangeError { field: "month", .. })));
-    /// ```
-    #[displaydoc("{0}")]
-    Range(RangeError),
-    /// The era code is invalid for the calendar.
-    #[displaydoc("Unknown era or invalid syntax")]
-    UnknownEra,
-    /// The month code syntax is invalid.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::Date;
-    /// use icu::calendar::error::DateFromFieldsError;
-    /// use icu::calendar::Iso;
-    /// use icu::calendar::types::DateFields;
-    ///
-    /// let mut fields = DateFields::default();
-    /// fields.extended_year = Some(2000);
-    /// fields.month_code = Some(b"????");
-    /// fields.day = Some(1);
-    ///
-    /// let err = Date::try_from_fields(
-    ///     fields, Default::default(), Iso
-    /// )
-    /// .expect_err("month code is invalid");
-    ///
-    /// assert_eq!(err, DateFromFieldsError::MonthCodeInvalidSyntax);
-    /// ```
-    #[displaydoc("Invalid month code syntax")]
-    MonthCodeInvalidSyntax,
-    /// The specified month code does not exist in this calendar.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::Date;
-    /// use icu::calendar::error::DateFromFieldsError;
-    /// use icu::calendar::cal::Hebrew;
-    /// use icu::calendar::types::DateFields;
-    ///
-    /// let mut fields = DateFields::default();
-    /// fields.extended_year = Some(5783);
-    /// fields.month_code = Some(b"M13");
-    /// fields.day = Some(1);
-    ///
-    /// let err = Date::try_from_fields(
-    ///     fields,
-    ///     Default::default(),
-    ///     Hebrew
-    /// )
-    /// .expect_err("no month M13 in Hebrew");
-    /// assert_eq!(err, DateFromFieldsError::MonthCodeNotInCalendar);
-    /// ```
-    #[displaydoc("The specified month code does not exist in this calendar")]
-    MonthCodeNotInCalendar,
-    /// The specified month code exists in this calendar, but not in the specified year.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::Date;
-    /// use icu::calendar::error::DateFromFieldsError;
-    /// use icu::calendar::cal::Hebrew;
-    /// use icu::calendar::types::DateFields;
-    ///
-    /// let mut fields = DateFields::default();
-    /// fields.extended_year = Some(5783);
-    /// fields.month_code = Some(b"M05L");
-    /// fields.day = Some(1);
-    ///
-    /// let err = Date::try_from_fields(
-    ///     fields,
-    ///     Default::default(),
-    ///     Hebrew
-    /// )
-    /// .expect_err("no month M05L in Hebrew year 5783");
-    /// assert_eq!(err, DateFromFieldsError::MonthCodeNotInYear);
-    /// ```
-    #[displaydoc("The specified month code exists in calendar, but not for this year")]
-    MonthCodeNotInYear,
-    /// The year was specified in multiple inconsistent ways.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::Date;
-    /// use icu::calendar::error::DateFromFieldsError;
-    /// use icu::calendar::cal::Japanese;
-    /// use icu::calendar::types::DateFields;
-    ///
-    /// let mut fields = DateFields::default();
-    /// fields.era = Some(b"reiwa");
-    /// fields.era_year = Some(6);
-    /// fields.ordinal_month = Some(1);
-    /// fields.day = Some(1);
-    ///
-    /// Date::try_from_fields(
-    ///     fields,
-    ///     Default::default(),
-    ///     Japanese::new()
-    /// )
-    /// .expect("a well-defined Japanese date");
-    ///
-    /// fields.extended_year = Some(1900);
-    ///
-    /// let err = Date::try_from_fields(
-    ///     fields,
-    ///     Default::default(),
-    ///     Japanese::new()
-    /// )
-    /// .expect_err("year 1900 is not the same as 6 Reiwa");
-    ///
-    /// assert_eq!(err, DateFromFieldsError::InconsistentYear);
-    /// ```
-    #[displaydoc("Inconsistent year")]
-    InconsistentYear,
-    /// The month was specified in multiple inconsistent ways.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::Date;
-    /// use icu::calendar::error::DateFromFieldsError;
-    /// use icu::calendar::cal::Hebrew;
-    /// use icu::calendar::types::DateFields;
-    /// use tinystr::tinystr;
-    ///
-    /// let mut fields = DateFields::default();
-    /// fields.extended_year = Some(5783);
-    /// fields.month_code = Some(b"M06");
-    /// fields.ordinal_month = Some(6);
-    /// fields.day = Some(1);
-    ///
-    /// Date::try_from_fields(
-    ///     fields,
-    ///     Default::default(),
-    ///     Hebrew
-    /// )
-    /// .expect("a well-defined Hebrew date in a common year");
-    ///
-    /// fields.extended_year = Some(5784);
-    ///
-    /// let err = Date::try_from_fields(
-    ///     fields,
-    ///     Default::default(),
-    ///     Hebrew
-    /// )
-    /// .expect_err("month M06 is not the 6th month in leap year 5784");
-    ///
-    /// assert_eq!(err, DateFromFieldsError::InconsistentMonth);
-    /// ```
-    #[displaydoc("Inconsistent month")]
-    InconsistentMonth,
-    /// Not enough fields were specified to form a well-defined date.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::Date;
-    /// use icu::calendar::error::DateFromFieldsError;
-    /// use icu::calendar::cal::Hebrew;
-    /// use icu::calendar::types::DateFields;
-    /// use tinystr::tinystr;
-    ///
-    /// let mut fields = DateFields::default();
-    ///
-    /// fields.ordinal_month = Some(3);
-    ///
-    /// let err = Date::try_from_fields(
-    ///     fields,
-    ///     Default::default(),
-    ///     Hebrew
-    /// )
-    /// .expect_err("need more than just an ordinal month");
-    /// assert_eq!(err, DateFromFieldsError::NotEnoughFields);
-    ///
-    /// fields.era_year = Some(5783);
-    ///
-    /// let err = Date::try_from_fields(
-    ///     fields,
-    ///     Default::default(),
-    ///     Hebrew
-    /// )
-    /// .expect_err("need more than an ordinal month and an era year");
-    /// assert_eq!(err, DateFromFieldsError::NotEnoughFields);
-    ///
-    /// fields.extended_year = Some(5783);
-    ///
-    /// let err = Date::try_from_fields(
-    ///     fields,
-    ///     Default::default(),
-    ///     Hebrew
-    /// )
-    /// .expect_err("era year still needs an era");
-    /// assert_eq!(err, DateFromFieldsError::NotEnoughFields);
-    ///
-    /// fields.era = Some(b"am");
-    ///
-    /// let date = Date::try_from_fields(
-    ///     fields,
-    ///     Default::default(),
-    ///     Hebrew
-    /// )
-    /// .expect_err("still missing the day");
-    /// assert_eq!(err, DateFromFieldsError::NotEnoughFields);
-    ///
-    /// fields.day = Some(1);
-    /// let date = Date::try_from_fields(
-    ///     fields,
-    ///     Default::default(),
-    ///     Hebrew
-    /// )
-    /// .expect("we have enough fields!");
-    /// ```
-    #[displaydoc("Not enough fields")]
-    NotEnoughFields,
-}
+    /// ✨ *Enabled with the `unstable` Cargo feature.*
+    #[derive(Debug, Copy, Clone, PartialEq, Display)]
+    #[non_exhaustive]
+    pub enum DateFromFieldsError {
+        /// A field is out of range for its domain.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::Date;
+        /// use icu::calendar::error::DateFromFieldsError;
+        /// use icu::calendar::error::RangeError;
+        /// use icu::calendar::Iso;
+        /// use icu::calendar::types::DateFields;
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.extended_year = Some(2000);
+        /// fields.ordinal_month = Some(13);
+        /// fields.day = Some(1);
+        ///
+        /// let err = Date::try_from_fields(
+        ///     fields, Default::default(), Iso
+        /// )
+        /// .expect_err("no month 13 in the ISO calendar");
+        ///
+        /// assert!(matches!(err, DateFromFieldsError::Range(RangeError { field: "month", .. })));
+        /// ```
+        #[displaydoc("{0}")]
+        Range(RangeError),
+        /// The era code is invalid for the calendar.
+        #[displaydoc("Unknown era or invalid syntax")]
+        UnknownEra,
+        /// The month code syntax is invalid.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::Date;
+        /// use icu::calendar::error::DateFromFieldsError;
+        /// use icu::calendar::Iso;
+        /// use icu::calendar::types::DateFields;
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.extended_year = Some(2000);
+        /// fields.month_code = Some(b"????");
+        /// fields.day = Some(1);
+        ///
+        /// let err = Date::try_from_fields(
+        ///     fields, Default::default(), Iso
+        /// )
+        /// .expect_err("month code is invalid");
+        ///
+        /// assert_eq!(err, DateFromFieldsError::MonthCodeInvalidSyntax);
+        /// ```
+        #[displaydoc("Invalid month code syntax")]
+        MonthCodeInvalidSyntax,
+        /// The specified month code does not exist in this calendar.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::Date;
+        /// use icu::calendar::error::DateFromFieldsError;
+        /// use icu::calendar::cal::Hebrew;
+        /// use icu::calendar::types::DateFields;
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.extended_year = Some(5783);
+        /// fields.month_code = Some(b"M13");
+        /// fields.day = Some(1);
+        ///
+        /// let err = Date::try_from_fields(
+        ///     fields,
+        ///     Default::default(),
+        ///     Hebrew
+        /// )
+        /// .expect_err("no month M13 in Hebrew");
+        /// assert_eq!(err, DateFromFieldsError::MonthCodeNotInCalendar);
+        /// ```
+        #[displaydoc("The specified month code does not exist in this calendar")]
+        MonthCodeNotInCalendar,
+        /// The specified month code exists in this calendar, but not in the specified year.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::Date;
+        /// use icu::calendar::error::DateFromFieldsError;
+        /// use icu::calendar::cal::Hebrew;
+        /// use icu::calendar::types::DateFields;
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.extended_year = Some(5783);
+        /// fields.month_code = Some(b"M05L");
+        /// fields.day = Some(1);
+        ///
+        /// let err = Date::try_from_fields(
+        ///     fields,
+        ///     Default::default(),
+        ///     Hebrew
+        /// )
+        /// .expect_err("no month M05L in Hebrew year 5783");
+        /// assert_eq!(err, DateFromFieldsError::MonthCodeNotInYear);
+        /// ```
+        #[displaydoc("The specified month code exists in calendar, but not for this year")]
+        MonthCodeNotInYear,
+        /// The year was specified in multiple inconsistent ways.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::Date;
+        /// use icu::calendar::error::DateFromFieldsError;
+        /// use icu::calendar::cal::Japanese;
+        /// use icu::calendar::types::DateFields;
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.era = Some(b"reiwa");
+        /// fields.era_year = Some(6);
+        /// fields.ordinal_month = Some(1);
+        /// fields.day = Some(1);
+        ///
+        /// Date::try_from_fields(
+        ///     fields,
+        ///     Default::default(),
+        ///     Japanese::new()
+        /// )
+        /// .expect("a well-defined Japanese date");
+        ///
+        /// fields.extended_year = Some(1900);
+        ///
+        /// let err = Date::try_from_fields(
+        ///     fields,
+        ///     Default::default(),
+        ///     Japanese::new()
+        /// )
+        /// .expect_err("year 1900 is not the same as 6 Reiwa");
+        ///
+        /// assert_eq!(err, DateFromFieldsError::InconsistentYear);
+        /// ```
+        #[displaydoc("Inconsistent year")]
+        InconsistentYear,
+        /// The month was specified in multiple inconsistent ways.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::Date;
+        /// use icu::calendar::error::DateFromFieldsError;
+        /// use icu::calendar::cal::Hebrew;
+        /// use icu::calendar::types::DateFields;
+        /// use tinystr::tinystr;
+        ///
+        /// let mut fields = DateFields::default();
+        /// fields.extended_year = Some(5783);
+        /// fields.month_code = Some(b"M06");
+        /// fields.ordinal_month = Some(6);
+        /// fields.day = Some(1);
+        ///
+        /// Date::try_from_fields(
+        ///     fields,
+        ///     Default::default(),
+        ///     Hebrew
+        /// )
+        /// .expect("a well-defined Hebrew date in a common year");
+        ///
+        /// fields.extended_year = Some(5784);
+        ///
+        /// let err = Date::try_from_fields(
+        ///     fields,
+        ///     Default::default(),
+        ///     Hebrew
+        /// )
+        /// .expect_err("month M06 is not the 6th month in leap year 5784");
+        ///
+        /// assert_eq!(err, DateFromFieldsError::InconsistentMonth);
+        /// ```
+        #[displaydoc("Inconsistent month")]
+        InconsistentMonth,
+        /// Not enough fields were specified to form a well-defined date.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::calendar::Date;
+        /// use icu::calendar::error::DateFromFieldsError;
+        /// use icu::calendar::cal::Hebrew;
+        /// use icu::calendar::types::DateFields;
+        /// use tinystr::tinystr;
+        ///
+        /// let mut fields = DateFields::default();
+        ///
+        /// fields.ordinal_month = Some(3);
+        ///
+        /// let err = Date::try_from_fields(
+        ///     fields,
+        ///     Default::default(),
+        ///     Hebrew
+        /// )
+        /// .expect_err("need more than just an ordinal month");
+        /// assert_eq!(err, DateFromFieldsError::NotEnoughFields);
+        ///
+        /// fields.era_year = Some(5783);
+        ///
+        /// let err = Date::try_from_fields(
+        ///     fields,
+        ///     Default::default(),
+        ///     Hebrew
+        /// )
+        /// .expect_err("need more than an ordinal month and an era year");
+        /// assert_eq!(err, DateFromFieldsError::NotEnoughFields);
+        ///
+        /// fields.extended_year = Some(5783);
+        ///
+        /// let err = Date::try_from_fields(
+        ///     fields,
+        ///     Default::default(),
+        ///     Hebrew
+        /// )
+        /// .expect_err("era year still needs an era");
+        /// assert_eq!(err, DateFromFieldsError::NotEnoughFields);
+        ///
+        /// fields.era = Some(b"am");
+        ///
+        /// let date = Date::try_from_fields(
+        ///     fields,
+        ///     Default::default(),
+        ///     Hebrew
+        /// )
+        /// .expect_err("still missing the day");
+        /// assert_eq!(err, DateFromFieldsError::NotEnoughFields);
+        ///
+        /// fields.day = Some(1);
+        /// let date = Date::try_from_fields(
+        ///     fields,
+        ///     Default::default(),
+        ///     Hebrew
+        /// )
+        /// .expect("we have enough fields!");
+        /// ```
+        #[displaydoc("Not enough fields")]
+        NotEnoughFields,
+    }
 
-impl core::error::Error for DateFromFieldsError {}
+    impl core::error::Error for DateFromFieldsError {}
 
-impl From<RangeError> for DateFromFieldsError {
-    #[inline]
-    fn from(value: RangeError) -> Self {
-        DateFromFieldsError::Range(value)
+    impl From<RangeError> for DateFromFieldsError {
+        #[inline]
+        fn from(value: RangeError) -> Self {
+            DateFromFieldsError::Range(value)
+        }
     }
 }
 

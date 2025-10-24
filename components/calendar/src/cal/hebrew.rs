@@ -205,6 +205,7 @@ impl Calendar for Hebrew {
         ArithmeticDate::from_codes(era, year, month_code, day, self).map(HebrewDateInner)
     }
 
+    #[cfg(feature = "unstable")]
     fn from_fields(
         &self,
         fields: DateFields,
@@ -255,6 +256,7 @@ impl Calendar for Hebrew {
         Self::days_in_provided_month(date.0.year, date.0.month)
     }
 
+    #[cfg(feature = "unstable")]
     fn add(
         &self,
         date: &Self::DateInner,
@@ -264,6 +266,7 @@ impl Calendar for Hebrew {
         date.0.added(duration, self, options).map(HebrewDateInner)
     }
 
+    #[cfg(feature = "unstable")]
     fn until(
         &self,
         date1: &Self::DateInner,
