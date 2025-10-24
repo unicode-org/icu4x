@@ -116,7 +116,7 @@ mod unstable {
         /// The month code representing a valid month in this calendar year,
         /// as a UTF-8 string.
         ///
-        /// See [`MonthCode`] for information on the syntax.
+        /// See [`MonthCode`](crate::types::MonthCode) for information on the syntax.
         ///
         /// # Examples
         ///
@@ -136,7 +136,7 @@ mod unstable {
         ///
         /// For a full example, see [`Self::ordinal_month`].
         pub month_code: Option<&'a [u8]>,
-        /// See [`MonthInfo::ordinal`].
+        /// See [`MonthInfo::ordinal`](crate::types::MonthInfo::ordinal).
         ///
         /// If both this and [`Self::month_code`] are set, they must refer to
         /// the same month.
@@ -186,7 +186,7 @@ mod unstable {
         /// assert_eq!(month_info.standard_code.0, "M02L");
         /// ```
         pub ordinal_month: Option<u8>,
-        /// See [`DayOfMonth`].
+        /// See [`DayOfMonth`](crate::types::DayOfMonth).
         pub day: Option<u8>,
     }
 }
