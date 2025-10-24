@@ -2,28 +2,31 @@
 
 ## Unreleased
 
-Current changelog is accurate up to 8371b92075c90a689b6eb0a094bc6f15c19f364a
+Current changelog is accurate up to bf12a54eb3
 
 - Components
     - General
         - Update MSRV to 1.83 (unicode-org#7066)
         - Remove unused dependencies (unicode-org#6978)
     - `icu_calendar`
-        - Add `Date::try_from_fields` for flexibly building Temporal dates (unicode-org#6910)
-        - (unstable) Implement date arithmetic according to Temporal specification (unicode-org#6992, unicode-org#7012)
-        - Collapse `Dangi` and `Chinese` into `LunarChinese`, expose (unstable) customization trait (unicode-org#6938)
+        - Collapse `Dangi` and `Chinese` into `EastAsianTraditional`, expose (unstable) customization trait (unicode-org#6938, unicode-org#7159)
         - Collapse Hijri calendar types, expose (unstable) `Rules` trait for customization (unicode-org#6935)
-        - Add a lot more documentation on individual calendars (unicode-org#7016, unicode-org#7033, unicode-org#7036, unicode-org#7037, unicode-org#7047, unicode-org#7082)
         - Add Easter holiday to `Gregorian` and `Julian` (unicode-org#6899)
         - Implement `PartialOrd` for `Date` unconditionally (unicode-org#7090)
+        - Switch Chinese and Korean calendars to no longer being data-driven, hardcoding their data (unicode-org#6934, unicode-org#7008)
+        - (unstable) Add `Date::try_from_fields` for flexibly building Temporal dates (unicode-org#6910, unicode-org#7116, unicode-org#7163)
+        - (unstable) Implement date arithmetic according to Temporal specification (unicode-org#6992, unicode-org#7012)
         - Make `extended_year` have consistent behavior across calendars, matching specced behavior in CLDR and Temporal (unicode-org#6800, unicode-org#6937)
+        - Remove era aliases for Persian (unicode-org#7124)
         - Fix `und-SA-u-ca-islamic` (unicode-org#6736)
+        - Fix calendar preference resolution (unicode-org#7158)
+        - Deprecate convenience constructors of lunisolar calendars (unicode-org#7143)
         - Avoid panics for large past/future dates in astronomical calendars (unicode-org#6876)
         - Improve some Gregorian calendar code (unicode-org#6870)
-        - Switch Chinese and Korean calendars to no longer being data-driven, hardcoding their data (unicode-org#6934, unicode-org#7008)
+        - Optimise `day_of_provided_year`, `date_from_provided_year_day` for ISO/Gregorian (unicode-org#6883)
+        - Add a lot more documentation on individual calendars (unicode-org#7016, unicode-org#7033, unicode-org#7036, unicode-org#7037, unicode-org#7047, unicode-org#7082, unicode-org#7151)
         - Compare Chinese calendar against Hong Kong observatory (unicode-org#6944)
         - Test Korean calendar against KASI (unicode-org#7041)
-        - Optimise `day_of_provided_year`, `date_from_provided_year_day` for ISO/Gregorian (unicode-org#6883)
     - `icu_casemap`
         - General changes only
     - `icu_collator`
@@ -42,7 +45,7 @@ Current changelog is accurate up to 8371b92075c90a689b6eb0a094bc6f15c19f364a
         - Change short localized offset format to use +0 (unicode-org#6729)
         - Fix `und-SA-u-ca-islamic` (unicode-org#6736)
         - Use atTime patterns where available (unicode-org#7106)
-        - Disambiguate inconsistent metazones (unicode-org#6755)
+        - Disambiguate inconsistent metazones (unicode-org#6755, unicode-org#7160)
         - Implement `u` and `g` fields (unicode-org#6930)
         - Use accurate `ZoneNameTimestamps` (unicode-org#6942)
         - Improve formatting for Etc/GMT+X zones (unicode-org#7055)
@@ -68,7 +71,7 @@ Current changelog is accurate up to 8371b92075c90a689b6eb0a094bc6f15c19f364a
     - `icu_list`
         - General changes only
     - `icu_locale`
-        - General changes only
+        - Add `extend` to Unicode Extensions (unicode-org#7112)
     - `icu_locale_core`
         - Fix building without the `alloc` crate (unicode-org#6997)
         - Implement Serialize and Deserialize for Locale (unicode-org#6829)
@@ -107,7 +110,7 @@ Current changelog is accurate up to 8371b92075c90a689b6eb0a094bc6f15c19f364a
     - `icu4x-datagen`
         - Don't require sources to be set in `icu4x-datagen` (unicode-org#6892)
     - `icu_provider_source`
-        - Update to CLDR 48 CLDR (unicode-org#6793, #6989, #7046)
+        - Update to CLDR 48 (unicode-org#6793, unicode-org#6989, unicode-org#7046)
         - Don't complain about not covering `Factory` timezone in datagen (unicode-org#6768)
         - Detect rearguard TZDB differences (unicode-org#6943, unicode-org#6749)
         - Include metazone periods before the horizon if the metazone is included anyway (unicode-org#6747)
@@ -123,6 +126,7 @@ Current changelog is accurate up to 8371b92075c90a689b6eb0a094bc6f15c19f364a
         - `ListFormatter::format` now takes a `diplomat::span<const diplomat::string_view_for_slice>` instead of a `diplomat::span<std::string_view>` to handle soundness issues on some platforms (unicode-org#6974)
 - Utils
     - General
+        - Util MSRV is decoupled from ICU4X MSRV; uniformly set to 1.82 for now (unicode-org#7125)
     - `bies`: `0.2.4 -> 0.2.5`
         - Minor internal changes
     - `calendrical_calculations`: `0.2.2 -> 0.2.3`
