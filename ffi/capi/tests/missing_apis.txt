@@ -14,7 +14,18 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
+icu::calendar::Date::try_add_with_options#FnInStruct
+icu::calendar::Date::try_added_with_options#FnInStruct
+icu::calendar::Date::try_until_with_options#FnInStruct
 icu::calendar::error::EcmaReferenceYearError#Enum
+icu::calendar::options::DateAddOptions#Struct
+icu::calendar::options::DateDifferenceOptions#Struct
+icu::calendar::types::DateDuration#Struct
+icu::calendar::types::DateDuration::for_days#FnInStruct
+icu::calendar::types::DateDuration::for_months#FnInStruct
+icu::calendar::types::DateDuration::for_weeks#FnInStruct
+icu::calendar::types::DateDuration::for_years#FnInStruct
+icu::calendar::types::DateDurationUnit#Enum
 icu::collator::CollatorBorrowed::compare_latin1#FnInStruct
 icu::collator::CollatorBorrowed::compare_latin1_utf16#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_to#FnInStruct

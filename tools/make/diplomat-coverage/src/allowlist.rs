@@ -292,14 +292,6 @@ lazy_static::lazy_static! {
         "icu::plurals::PluralRulesWithRanges::try_new_cardinal",
         "icu::plurals::PluralRulesWithRanges::try_new_ordinal",
 
-        "icu::calendar::Date::try_add_with_options",
-        "icu::calendar::Date::try_added_with_options",
-        "icu::calendar::Date::try_until_with_options",
-        "icu::calendar::options::DateAddOptions",
-        "icu::calendar::options::DateDifferenceOptions",
-        "icu::calendar::types::DateDuration",
-        "icu::calendar::types::DateDurationUnit",
-
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
         // and markers and newtypes

@@ -80,7 +80,7 @@ collator = ["dep:icu_collator"]
 # collections = ["dep:icu_collections"] # Not useful on its own: use properties
 datetime = ["calendar", "dep:icu_datetime", "icu_datetime/experimental"]
 decimal = ["dep:icu_decimal", "dep:fixed_decimal", "dep:zerovec"]
-experimental = ["dep:icu_experimental", "icu_calendar?/unstable"]
+experimental = ["dep:icu_experimental"]
 list = ["dep:icu_list", "dep:potential_utf"]
 locale = ["dep:icu_locale"]
 normalizer = ["dep:icu_normalizer", "icu_normalizer?/utf8_iter", "icu_normalizer?/utf16_iter"]
@@ -88,6 +88,9 @@ plurals = ["dep:icu_plurals", "dep:fixed_decimal"]
 properties = ["dep:icu_properties", "dep:icu_collections", "dep:unicode-bidi"]
 segmenter = ["dep:icu_segmenter"]
 timezone = ["calendar"]
+
+# Unstable features on individual components
+unstable = ["icu_calendar?/unstable"]
 
 compiled_data = [
     "icu_calendar?/compiled_data",
