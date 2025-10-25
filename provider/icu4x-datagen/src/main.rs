@@ -169,6 +169,20 @@ struct Cli {
     #[arg(help = "Analyzes the binary and only includes markers that are used by the binary.")]
     markers_for_bin: Option<PathBuf>,
 
+    #[arg(long, num_args = 2.., value_names = ["DOMAIN", "ATTRIBUTES"])]
+    #[arg(
+        help = "Filter attributes on markers for a domain. Accepts two or more arguments.\n\
+                The attributes are selected in the output."
+    )]
+    attribute_allowlist: Vec<String>,
+
+    #[arg(long, num_args = 2.., value_names = ["DOMAIN", "ATTRIBUTES"])]
+    #[arg(
+        help = "Filter out attributes on markers for a domain. Accepts two or more arguments.\n\
+                The attributes are excluded in the output."
+    )]
+    attribute_denylist: Vec<String>,
+
     #[arg(long, short, num_args = 0..)]
     #[cfg_attr(feature = "provider", arg(default_value = "recommended"))]
     #[arg(
@@ -526,6 +540,42 @@ fn main() -> eyre::Result<()> {
         ])
     } else {
         driver.with_segmenter_models(cli.segmenter_models.clone())
+    };
+
+    if !cli.attribute_allowlist.is_empty() {
+        driver = driver.with_marker_attributes_filter(
+            &cli.attribute_allowlist[0].clone(),
+            move |attrs| {
+                let (_prefix, unit) = attrs
+                    .as_str()
+                    .split_once('-')
+                    .unwrap_or(("", attrs.as_str()));
+
+                cli.attribute_allowlist
+                    .clone()
+                    .iter()
+                    .skip(1)
+                    .any(|attr| attr == unit)
+            },
+        );
+    };
+
+    if !cli.attribute_denylist.is_empty() {
+        driver = driver.with_marker_attributes_filter(
+            &cli.attribute_denylist[0].clone(),
+            move |attrs| {
+                let (_prefix, unit) = attrs
+                    .as_str()
+                    .split_once('-')
+                    .unwrap_or(("", attrs.as_str()));
+
+                !cli.attribute_denylist
+                    .clone()
+                    .iter()
+                    .skip(1)
+                    .any(|attr| attr == unit)
+            },
+        );
     };
 
     let metadata: Result<ExportMetadata, DataError> = match cli.format {
