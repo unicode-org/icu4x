@@ -17,8 +17,8 @@ This is a checklist of things that should be done in the weeks leading to the re
 * [ ] Take a bird-eye view at:
   * [ ] READMEs
   * [ ] Documentation
-  * [ ] Coverage
-  * [ ] Performance / Memory / Size benchmarks
+  * [ ] Coverage ([coveralls](https://coveralls.io/github/unicode-org/icu4x?branch=main) and [codecov](https://app.codecov.io/gh/unicode-org/icu4x/tree/main))
+  * [ ] [Performance / Memory / Size benchmarks](https://unicode-org.github.io/icu4x/benchmarks/index.html)
   * [ ] Cargo.toml files
     * [ ] All dependencies from the workspace should use `workspace = true` rather than their version number or path 
     * [ ] Cargo.toml files need to specify versions for each non-workspace entry in `dependencies`, or use `workspace = true`.
@@ -26,12 +26,11 @@ This is a checklist of things that should be done in the weeks leading to the re
     * [ ] Ensure that the Cargo.toml file includes a set of fields consistent with other ICU4X packages.
         * These should mostly use workspace inheritance
 * [ ] Run `cargo +nightly fmt -- --config=format_code_in_doc_comments=true --config=doc_comment_code_block_width=80` to prettify our docs
-* [ ] Run `cargo update` for each `Cargo.lock` file to update our CI to freshest dependencies
-* [ ] Go through `ffi/capi/tests/missing_apis.txt` and verify that it is empty. If it is not, component owners should either add FFI APIs, add `rust_link` annotations, or allowlist the relevant APIs as having been punted to the future
+* [ ] Run `cargo update` for each `Cargo.lock` file to update our CI to freshest dependencies. A helpful snippet is `find . -name Cargo.lock | while read lockfile; do cd $(dirname $lockfile); cargo update; done`, though it is best run from `examples/` since you may have other lockfiles in target/cargo-semver-checks directories.
+* [ ] Go through `ffi/capi/tests/missing_apis.txt` and verify that it is empty. If it is not, component owners should either add FFI APIs, add `rust_link` annotations, or allowlist the relevant APIs as having been punted to the future. In case of unstable APIs, it is okay to leave things in the missing_apis file for now, see unicode-org#7181.
 * [ ] Verify that `ffi/capi` depends on a released (not Git) version of Diplomat. Get it published (ask manishearth or sffc) otherwise.
 * [ ] Get all contributors to complete the changelog (see below)
 * [ ] Draft the text for the GitHub release. This text will be sent to GitHub subscribers and can also be used for the mailing list email and blog post.
-* [ ] Prepare a PR to update tutorials using the upcoming release. The PR should pass `cargo make test-tutorials-local`, but can fail `cargo make test-tutorials-cratesio` prior to release
 
 ## Release steps
 
