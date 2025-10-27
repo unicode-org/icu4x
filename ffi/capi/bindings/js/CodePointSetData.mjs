@@ -2013,6 +2013,122 @@ export class CodePointSetData {
     }
 
     /**
+     * Get the `ID_Compat_Math_Continue` value for a given character, using compiled data
+     *
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     */
+    static idCompatMathContinueForChar(ch) {
+
+        const result = wasm.icu4x_CodePointSetData_id_compat_math_continue_for_char_mv1(ch);
+
+        try {
+            return result;
+        }
+
+        finally {
+        }
+    }
+
+    /**
+     * Create a set for the `ID_Compat_Math_Continue` property, using compiled data.
+     *
+     * See the [Rust documentation for `IdCompatMathContinue`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdCompatMathContinue.html) for more information.
+     */
+    static createIdCompatMathContinue() {
+
+        const result = wasm.icu4x_CodePointSetData_create_id_compat_math_continue_mv1();
+
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+
+        finally {
+        }
+    }
+
+    /**
+     * Create a set for the `ID_Compat_Math_Continue` property, using a particular data source.
+     *
+     * See the [Rust documentation for `IdCompatMathContinue`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdCompatMathContinue.html) for more information.
+     */
+    static createIdCompatMathContinueWithProvider(provider) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_CodePointSetData_create_id_compat_math_continue_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
+            }
+            return new CodePointSetData(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    /**
+     * Get the `ID_Compat_Math_Start` value for a given character, using compiled data
+     *
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     */
+    static idCompatMathStartForChar(ch) {
+
+        const result = wasm.icu4x_CodePointSetData_id_compat_math_start_for_char_mv1(ch);
+
+        try {
+            return result;
+        }
+
+        finally {
+        }
+    }
+
+    /**
+     * Create a set for the `ID_Compat_Math_Start` property, using compiled data.
+     *
+     * See the [Rust documentation for `IdCompatMathStart`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdCompatMathStart.html) for more information.
+     */
+    static createIdCompatMathStart() {
+
+        const result = wasm.icu4x_CodePointSetData_create_id_compat_math_start_mv1();
+
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+
+        finally {
+        }
+    }
+
+    /**
+     * Create a set for the `ID_Compat_Math_Start` property, using a particular data source.
+     *
+     * See the [Rust documentation for `IdCompatMathStart`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdCompatMathStart.html) for more information.
+     */
+    static createIdCompatMathStartWithProvider(provider) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_CodePointSetData_create_id_compat_math_start_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
+            }
+            return new CodePointSetData(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    /**
      * Get the `Id_Continue` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
@@ -2303,6 +2419,64 @@ export class CodePointSetData {
     }
 
     /**
+     * Get the `Ids_Unary_Operator` value for a given character, using compiled data
+     *
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     */
+    static idsUnaryOperatorForChar(ch) {
+
+        const result = wasm.icu4x_CodePointSetData_ids_unary_operator_for_char_mv1(ch);
+
+        try {
+            return result;
+        }
+
+        finally {
+        }
+    }
+
+    /**
+     * Create a set for the `Ids_Unary_Operator` property, using compiled data.
+     *
+     * See the [Rust documentation for `IdsUnaryOperator`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdsUnaryOperator.html) for more information.
+     */
+    static createIdsUnaryOperator() {
+
+        const result = wasm.icu4x_CodePointSetData_create_ids_unary_operator_mv1();
+
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+
+        finally {
+        }
+    }
+
+    /**
+     * Create a set for the `Ids_Unary_Operator` property, using a particular data source.
+     *
+     * See the [Rust documentation for `IdsUnaryOperator`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdsUnaryOperator.html) for more information.
+     */
+    static createIdsUnaryOperatorWithProvider(provider) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_CodePointSetData_create_ids_unary_operator_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
+            }
+            return new CodePointSetData(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    /**
      * Get the `Join_Control` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
@@ -2520,6 +2694,64 @@ export class CodePointSetData {
 
 
         const result = wasm.icu4x_CodePointSetData_create_math_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
+            }
+            return new CodePointSetData(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    /**
+     * Get the `Modifier_Combining_mark` value for a given character, using compiled data
+     *
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     */
+    static modifierCombiningMarkForChar(ch) {
+
+        const result = wasm.icu4x_CodePointSetData_modifier_combining_mark_for_char_mv1(ch);
+
+        try {
+            return result;
+        }
+
+        finally {
+        }
+    }
+
+    /**
+     * Create a set for the `Modifier_Combining_mark` property, using compiled data.
+     *
+     * See the [Rust documentation for `ModifierCombiningMark`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.ModifierCombiningMark.html) for more information.
+     */
+    static createModifierCombiningMark() {
+
+        const result = wasm.icu4x_CodePointSetData_create_modifier_combining_mark_mv1();
+
+        try {
+            return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
+        }
+
+        finally {
+        }
+    }
+
+    /**
+     * Create a set for the `Modifier_Combining_mark` property, using a particular data source.
+     *
+     * See the [Rust documentation for `ModifierCombiningMark`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.ModifierCombiningMark.html) for more information.
+     */
+    static createModifierCombiningMarkWithProvider(provider) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_CodePointSetData_create_modifier_combining_mark_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
 
         try {
             if (!diplomatReceive.resultFlag) {

@@ -257,6 +257,20 @@ namespace capi {
     typedef struct icu4x_CodePointSetData_create_hyphen_with_provider_mv1_result {union {icu4x::capi::CodePointSetData* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CodePointSetData_create_hyphen_with_provider_mv1_result;
     icu4x_CodePointSetData_create_hyphen_with_provider_mv1_result icu4x_CodePointSetData_create_hyphen_with_provider_mv1(const icu4x::capi::DataProvider* provider);
 
+    bool icu4x_CodePointSetData_id_compat_math_continue_for_char_mv1(char32_t ch);
+
+    icu4x::capi::CodePointSetData* icu4x_CodePointSetData_create_id_compat_math_continue_mv1(void);
+
+    typedef struct icu4x_CodePointSetData_create_id_compat_math_continue_with_provider_mv1_result {union {icu4x::capi::CodePointSetData* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CodePointSetData_create_id_compat_math_continue_with_provider_mv1_result;
+    icu4x_CodePointSetData_create_id_compat_math_continue_with_provider_mv1_result icu4x_CodePointSetData_create_id_compat_math_continue_with_provider_mv1(const icu4x::capi::DataProvider* provider);
+
+    bool icu4x_CodePointSetData_id_compat_math_start_for_char_mv1(char32_t ch);
+
+    icu4x::capi::CodePointSetData* icu4x_CodePointSetData_create_id_compat_math_start_mv1(void);
+
+    typedef struct icu4x_CodePointSetData_create_id_compat_math_start_with_provider_mv1_result {union {icu4x::capi::CodePointSetData* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CodePointSetData_create_id_compat_math_start_with_provider_mv1_result;
+    icu4x_CodePointSetData_create_id_compat_math_start_with_provider_mv1_result icu4x_CodePointSetData_create_id_compat_math_start_with_provider_mv1(const icu4x::capi::DataProvider* provider);
+
     bool icu4x_CodePointSetData_id_continue_for_char_mv1(char32_t ch);
 
     icu4x::capi::CodePointSetData* icu4x_CodePointSetData_create_id_continue_mv1(void);
@@ -292,6 +306,13 @@ namespace capi {
     typedef struct icu4x_CodePointSetData_create_ids_trinary_operator_with_provider_mv1_result {union {icu4x::capi::CodePointSetData* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CodePointSetData_create_ids_trinary_operator_with_provider_mv1_result;
     icu4x_CodePointSetData_create_ids_trinary_operator_with_provider_mv1_result icu4x_CodePointSetData_create_ids_trinary_operator_with_provider_mv1(const icu4x::capi::DataProvider* provider);
 
+    bool icu4x_CodePointSetData_ids_unary_operator_for_char_mv1(char32_t ch);
+
+    icu4x::capi::CodePointSetData* icu4x_CodePointSetData_create_ids_unary_operator_mv1(void);
+
+    typedef struct icu4x_CodePointSetData_create_ids_unary_operator_with_provider_mv1_result {union {icu4x::capi::CodePointSetData* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CodePointSetData_create_ids_unary_operator_with_provider_mv1_result;
+    icu4x_CodePointSetData_create_ids_unary_operator_with_provider_mv1_result icu4x_CodePointSetData_create_ids_unary_operator_with_provider_mv1(const icu4x::capi::DataProvider* provider);
+
     bool icu4x_CodePointSetData_join_control_for_char_mv1(char32_t ch);
 
     icu4x::capi::CodePointSetData* icu4x_CodePointSetData_create_join_control_mv1(void);
@@ -319,6 +340,13 @@ namespace capi {
 
     typedef struct icu4x_CodePointSetData_create_math_with_provider_mv1_result {union {icu4x::capi::CodePointSetData* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CodePointSetData_create_math_with_provider_mv1_result;
     icu4x_CodePointSetData_create_math_with_provider_mv1_result icu4x_CodePointSetData_create_math_with_provider_mv1(const icu4x::capi::DataProvider* provider);
+
+    bool icu4x_CodePointSetData_modifier_combining_mark_for_char_mv1(char32_t ch);
+
+    icu4x::capi::CodePointSetData* icu4x_CodePointSetData_create_modifier_combining_mark_mv1(void);
+
+    typedef struct icu4x_CodePointSetData_create_modifier_combining_mark_with_provider_mv1_result {union {icu4x::capi::CodePointSetData* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CodePointSetData_create_modifier_combining_mark_with_provider_mv1_result;
+    icu4x_CodePointSetData_create_modifier_combining_mark_with_provider_mv1_result icu4x_CodePointSetData_create_modifier_combining_mark_with_provider_mv1(const icu4x::capi::DataProvider* provider);
 
     bool icu4x_CodePointSetData_noncharacter_code_point_for_char_mv1(char32_t ch);
 
@@ -1007,6 +1035,36 @@ inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::
     return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointSetData>>(std::unique_ptr<icu4x::CodePointSetData>(icu4x::CodePointSetData::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
+inline bool icu4x::CodePointSetData::id_compat_math_continue_for_char(char32_t ch) {
+    auto result = icu4x::capi::icu4x_CodePointSetData_id_compat_math_continue_for_char_mv1(ch);
+    return result;
+}
+
+inline std::unique_ptr<icu4x::CodePointSetData> icu4x::CodePointSetData::create_id_compat_math_continue() {
+    auto result = icu4x::capi::icu4x_CodePointSetData_create_id_compat_math_continue_mv1();
+    return std::unique_ptr<icu4x::CodePointSetData>(icu4x::CodePointSetData::FromFFI(result));
+}
+
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> icu4x::CodePointSetData::create_id_compat_math_continue_with_provider(const icu4x::DataProvider& provider) {
+    auto result = icu4x::capi::icu4x_CodePointSetData_create_id_compat_math_continue_with_provider_mv1(provider.AsFFI());
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointSetData>>(std::unique_ptr<icu4x::CodePointSetData>(icu4x::CodePointSetData::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+}
+
+inline bool icu4x::CodePointSetData::id_compat_math_start_for_char(char32_t ch) {
+    auto result = icu4x::capi::icu4x_CodePointSetData_id_compat_math_start_for_char_mv1(ch);
+    return result;
+}
+
+inline std::unique_ptr<icu4x::CodePointSetData> icu4x::CodePointSetData::create_id_compat_math_start() {
+    auto result = icu4x::capi::icu4x_CodePointSetData_create_id_compat_math_start_mv1();
+    return std::unique_ptr<icu4x::CodePointSetData>(icu4x::CodePointSetData::FromFFI(result));
+}
+
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> icu4x::CodePointSetData::create_id_compat_math_start_with_provider(const icu4x::DataProvider& provider) {
+    auto result = icu4x::capi::icu4x_CodePointSetData_create_id_compat_math_start_with_provider_mv1(provider.AsFFI());
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointSetData>>(std::unique_ptr<icu4x::CodePointSetData>(icu4x::CodePointSetData::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+}
+
 inline bool icu4x::CodePointSetData::id_continue_for_char(char32_t ch) {
     auto result = icu4x::capi::icu4x_CodePointSetData_id_continue_for_char_mv1(ch);
     return result;
@@ -1082,6 +1140,21 @@ inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::
     return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointSetData>>(std::unique_ptr<icu4x::CodePointSetData>(icu4x::CodePointSetData::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
+inline bool icu4x::CodePointSetData::ids_unary_operator_for_char(char32_t ch) {
+    auto result = icu4x::capi::icu4x_CodePointSetData_ids_unary_operator_for_char_mv1(ch);
+    return result;
+}
+
+inline std::unique_ptr<icu4x::CodePointSetData> icu4x::CodePointSetData::create_ids_unary_operator() {
+    auto result = icu4x::capi::icu4x_CodePointSetData_create_ids_unary_operator_mv1();
+    return std::unique_ptr<icu4x::CodePointSetData>(icu4x::CodePointSetData::FromFFI(result));
+}
+
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> icu4x::CodePointSetData::create_ids_unary_operator_with_provider(const icu4x::DataProvider& provider) {
+    auto result = icu4x::capi::icu4x_CodePointSetData_create_ids_unary_operator_with_provider_mv1(provider.AsFFI());
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointSetData>>(std::unique_ptr<icu4x::CodePointSetData>(icu4x::CodePointSetData::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+}
+
 inline bool icu4x::CodePointSetData::join_control_for_char(char32_t ch) {
     auto result = icu4x::capi::icu4x_CodePointSetData_join_control_for_char_mv1(ch);
     return result;
@@ -1139,6 +1212,21 @@ inline std::unique_ptr<icu4x::CodePointSetData> icu4x::CodePointSetData::create_
 
 inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> icu4x::CodePointSetData::create_math_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_CodePointSetData_create_math_with_provider_mv1(provider.AsFFI());
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointSetData>>(std::unique_ptr<icu4x::CodePointSetData>(icu4x::CodePointSetData::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+}
+
+inline bool icu4x::CodePointSetData::modifier_combining_mark_for_char(char32_t ch) {
+    auto result = icu4x::capi::icu4x_CodePointSetData_modifier_combining_mark_for_char_mv1(ch);
+    return result;
+}
+
+inline std::unique_ptr<icu4x::CodePointSetData> icu4x::CodePointSetData::create_modifier_combining_mark() {
+    auto result = icu4x::capi::icu4x_CodePointSetData_create_modifier_combining_mark_mv1();
+    return std::unique_ptr<icu4x::CodePointSetData>(icu4x::CodePointSetData::FromFFI(result));
+}
+
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> icu4x::CodePointSetData::create_modifier_combining_mark_with_provider(const icu4x::DataProvider& provider) {
+    auto result = icu4x::capi::icu4x_CodePointSetData_create_modifier_combining_mark_with_provider_mv1(provider.AsFFI());
     return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointSetData>>(std::unique_ptr<icu4x::CodePointSetData>(icu4x::CodePointSetData::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 

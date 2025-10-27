@@ -738,6 +738,48 @@ export class CodePointSetData {
     static createHyphenWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
+     * Get the `ID_Compat_Math_Continue` value for a given character, using compiled data
+     *
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     */
+    static idCompatMathContinueForChar(ch: codepoint): boolean;
+
+    /**
+     * Create a set for the `ID_Compat_Math_Continue` property, using compiled data.
+     *
+     * See the [Rust documentation for `IdCompatMathContinue`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdCompatMathContinue.html) for more information.
+     */
+    static createIdCompatMathContinue(): CodePointSetData;
+
+    /**
+     * Create a set for the `ID_Compat_Math_Continue` property, using a particular data source.
+     *
+     * See the [Rust documentation for `IdCompatMathContinue`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdCompatMathContinue.html) for more information.
+     */
+    static createIdCompatMathContinueWithProvider(provider: DataProvider): CodePointSetData;
+
+    /**
+     * Get the `ID_Compat_Math_Start` value for a given character, using compiled data
+     *
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     */
+    static idCompatMathStartForChar(ch: codepoint): boolean;
+
+    /**
+     * Create a set for the `ID_Compat_Math_Start` property, using compiled data.
+     *
+     * See the [Rust documentation for `IdCompatMathStart`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdCompatMathStart.html) for more information.
+     */
+    static createIdCompatMathStart(): CodePointSetData;
+
+    /**
+     * Create a set for the `ID_Compat_Math_Start` property, using a particular data source.
+     *
+     * See the [Rust documentation for `IdCompatMathStart`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdCompatMathStart.html) for more information.
+     */
+    static createIdCompatMathStartWithProvider(provider: DataProvider): CodePointSetData;
+
+    /**
      * Get the `Id_Continue` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
@@ -843,6 +885,27 @@ export class CodePointSetData {
     static createIdsTrinaryOperatorWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
+     * Get the `Ids_Unary_Operator` value for a given character, using compiled data
+     *
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     */
+    static idsUnaryOperatorForChar(ch: codepoint): boolean;
+
+    /**
+     * Create a set for the `Ids_Unary_Operator` property, using compiled data.
+     *
+     * See the [Rust documentation for `IdsUnaryOperator`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdsUnaryOperator.html) for more information.
+     */
+    static createIdsUnaryOperator(): CodePointSetData;
+
+    /**
+     * Create a set for the `Ids_Unary_Operator` property, using a particular data source.
+     *
+     * See the [Rust documentation for `IdsUnaryOperator`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdsUnaryOperator.html) for more information.
+     */
+    static createIdsUnaryOperatorWithProvider(provider: DataProvider): CodePointSetData;
+
+    /**
      * Get the `Join_Control` value for a given character, using compiled data
      *
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
@@ -925,6 +988,27 @@ export class CodePointSetData {
      * See the [Rust documentation for `Math`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Math.html) for more information.
      */
     static createMathWithProvider(provider: DataProvider): CodePointSetData;
+
+    /**
+     * Get the `Modifier_Combining_mark` value for a given character, using compiled data
+     *
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+     */
+    static modifierCombiningMarkForChar(ch: codepoint): boolean;
+
+    /**
+     * Create a set for the `Modifier_Combining_mark` property, using compiled data.
+     *
+     * See the [Rust documentation for `ModifierCombiningMark`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.ModifierCombiningMark.html) for more information.
+     */
+    static createModifierCombiningMark(): CodePointSetData;
+
+    /**
+     * Create a set for the `Modifier_Combining_mark` property, using a particular data source.
+     *
+     * See the [Rust documentation for `ModifierCombiningMark`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.ModifierCombiningMark.html) for more information.
+     */
+    static createModifierCombiningMarkWithProvider(provider: DataProvider): CodePointSetData;
 
     /**
      * Get the `Noncharacter_Code_Point` value for a given character, using compiled data
