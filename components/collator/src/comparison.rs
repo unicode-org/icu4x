@@ -1809,6 +1809,10 @@ impl CollatorBorrowed<'_> {
 
     /// Given valid UTF-8, write the sort key bytes up to the collator's strength.
     ///
+    /// The bytes are written to an implementor of [`CollationKeySink`], a no-std version of `std::io::Write`.
+    /// This trait is currently unstable, but it is implemented by `Vec<u8>`, `VecDeque<u8>`,
+    /// `SmallVec<[u8; N]>`, and `&mut [u8]` (returning an error if the slice is too small).
+    ///
     /// If two sort keys generated at the same strength are compared bytewise, the result is
     /// the same as a collation comparison of the original strings at that strength.
     ///
@@ -2340,6 +2344,16 @@ impl TooSmall {
 /// A [`std::io::Write`]-like trait for writing to a buffer-like object.
 ///
 /// (This crate does not have access to [`std`].)
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not implement or call methods on this trait
+/// unless you are prepared for things to occasionally break.
+///
+/// Graduation tracking issue: [issue #7178](https://github.com/unicode-org/icu4x/issues/7178).
+/// </div>
+///
+/// ✨ *Enabled with the `unstable` Cargo feature.*
 pub trait CollationKeySink {
     /// The type of error the sink may return.
     type Error;

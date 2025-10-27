@@ -327,6 +327,9 @@ pub use comparison::Collator;
 pub use comparison::CollatorBorrowed;
 pub use comparison::CollatorPreferences;
 
+#[cfg(feature = "unstable")]
+pub use comparison::CollationKeySink;
+
 /// Locale preferences used by this crate
 pub mod preferences {
     /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
