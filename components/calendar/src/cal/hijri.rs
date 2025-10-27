@@ -126,7 +126,7 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 ///
 /// The precise behavior of this calendar may change in the future if:
 /// - We decide to tweak the precise astronomical simulation used
-/// - We decide to expand or reduce the range where we applying an astronomical simulation.
+/// - We decide to expand or reduce the range where we are using the astronomical simulation.
 ///
 /// This corresponds to the `"islamic-rgsa"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier)
 /// if constructed with [`Hijri::new_simulated_mecca()`].
