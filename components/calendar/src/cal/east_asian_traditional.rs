@@ -310,7 +310,7 @@ impl Rules for China {
 /// [Yuk Tung Liu]: https://ytliu0.github.io/ChineseCalendar/table.html
 ///
 /// ```rust
-/// use icu::calendar::cal::{KoreanTraditional, ChineseTraditional};
+/// use icu::calendar::cal::{ChineseTraditional, KoreanTraditional};
 /// use icu::calendar::Date;
 ///
 /// let iso_a = Date::try_new_iso(2012, 4, 23).unwrap();

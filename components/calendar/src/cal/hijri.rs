@@ -1017,9 +1017,8 @@ impl<A: AsCalendar<Calendar = Hijri<R>>, R: Rules> Date<A> {
     ///
     /// let hijri = Hijri::new_simulated_mecca();
     ///
-    /// let date_hijri =
-    ///     Date::try_new_hijri_with_calendar(1392, 4, 25, hijri)
-    ///         .expect("Failed to initialize Hijri Date instance.");
+    /// let date_hijri = Date::try_new_hijri_with_calendar(1392, 4, 25, hijri)
+    ///     .expect("Failed to initialize Hijri Date instance.");
     ///
     /// assert_eq!(date_hijri.era_year().year, 1392);
     /// assert_eq!(date_hijri.month().ordinal, 4);

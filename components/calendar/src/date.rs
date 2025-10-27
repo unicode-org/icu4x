@@ -157,21 +157,17 @@ impl<A: AsCalendar> Date<A> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Date;
     /// use icu::calendar::cal::Gregorian;
     /// use icu::calendar::types::DateFields;
+    /// use icu::calendar::Date;
     ///
     /// let mut fields = DateFields::default();
     /// fields.extended_year = Some(2000);
     /// fields.ordinal_month = Some(1);
     /// fields.day = Some(1);
     ///
-    /// let d1 = Date::try_from_fields(
-    ///     fields,
-    ///     Default::default(),
-    ///     Gregorian
-    /// )
-    /// .expect("Jan 1 in year 2000");
+    /// let d1 = Date::try_from_fields(fields, Default::default(), Gregorian)
+    ///     .expect("Jan 1 in year 2000");
     ///
     /// let d2 = Date::try_new_gregorian(2000, 1, 1).unwrap();
     /// assert_eq!(d1, d2);
@@ -318,8 +314,8 @@ impl<A: AsCalendar> Date<A> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Date;
     /// use icu::calendar::types::DateDuration;
+    /// use icu::calendar::Date;
     ///
     /// let d1 = Date::try_new_iso(2020, 1, 1).unwrap();
     /// let d2 = Date::try_new_iso(2025, 10, 2).unwrap();

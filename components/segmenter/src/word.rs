@@ -32,8 +32,7 @@ pub struct WordBreakOptions<'a> {
     ///
     /// let segmenter = WordSegmenter::new_auto(Default::default());
     ///
-    /// let breakpoints: Vec<usize> =
-    ///     segmenter.segment_str("EU:ssa").collect();
+    /// let breakpoints: Vec<usize> = segmenter.segment_str("EU:ssa").collect();
     /// assert_eq!(&breakpoints, &[0, 2, 3, 6]);
     /// ```
     ///
@@ -188,8 +187,10 @@ impl<Y: RuleBreakType> Iterator for WordBreakIteratorWithWordType<'_, '_, Y> {
 /// options.content_locale = Some(&langid);
 /// let segmenter = WordSegmenter::try_new_auto(options).unwrap();
 ///
-/// let breakpoints: Vec<usize> =
-///     segmenter.as_borrowed().segment_latin1(b"Hello World").collect();
+/// let breakpoints: Vec<usize> = segmenter
+///     .as_borrowed()
+///     .segment_latin1(b"Hello World")
+///     .collect();
 /// assert_eq!(&breakpoints, &[0, 5, 6, 11]);
 /// ```
 ///

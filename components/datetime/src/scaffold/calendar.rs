@@ -109,12 +109,16 @@ impl CldrCalendar for Indian {
 /// impl icu::datetime::scaffold::UnstableSealed for MyRules {}
 ///
 /// impl hijri::Rules for MyRules {
-///     fn year_data(&self, _year: i32) -> hijri::HijriYearData { todo!() }
+///     fn year_data(&self, _year: i32) -> hijri::HijriYearData {
+///         todo!()
+///     }
 /// }
 ///
 /// impl FormattableHijriRules for MyRules {
-///     type YearNamesV1 = <hijri::UmmAlQura as FormattableHijriRules>::YearNamesV1;
-///     type MonthNamesV1 = <hijri::UmmAlQura as FormattableHijriRules>::MonthNamesV1;
+///     type YearNamesV1 =
+///         <hijri::UmmAlQura as FormattableHijriRules>::YearNamesV1;
+///     type MonthNamesV1 =
+///         <hijri::UmmAlQura as FormattableHijriRules>::MonthNamesV1;
 ///     type SkeletaV1 = <hijri::UmmAlQura as FormattableHijriRules>::SkeletaV1;
 /// }
 /// ```

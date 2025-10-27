@@ -29,24 +29,32 @@ use crate::{zone::UtcOffset, DateTime, ZonedDateTime};
 ///
 /// ```
 /// use icu::calendar::Iso;
+/// use icu::datetime::fieldsets::zone::GenericLong;
+/// use icu::datetime::NoCalendarFormatter;
+/// use icu::locale::locale;
 /// use icu::time::zone::IanaParser;
 /// use icu::time::zone::ZoneNameTimestamp;
 /// use icu::time::ZonedDateTime;
-/// use icu::datetime::NoCalendarFormatter;
-/// use icu::datetime::fieldsets::zone::GenericLong;
-/// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
 /// let metlakatla = IanaParser::new().parse("America/Metlakatla");
 ///
-/// let zone_formatter = NoCalendarFormatter::try_new(
-///     locale!("en-US").into(),
-///     GenericLong,
-/// )
-/// .unwrap();
+/// let zone_formatter =
+///     NoCalendarFormatter::try_new(locale!("en-US").into(), GenericLong)
+///         .unwrap();
 ///
-/// let time_zone_info_2010 = metlakatla.without_offset().with_zone_name_timestamp(ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("2010-01-01T00:00Z", Iso).unwrap()));
-/// let time_zone_info_2025 = metlakatla.without_offset().with_zone_name_timestamp(ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("2025-01-01T00:00Z", Iso).unwrap()));
+/// let time_zone_info_2010 = metlakatla
+///     .without_offset()
+///     .with_zone_name_timestamp(ZoneNameTimestamp::from_zoned_date_time_iso(
+///         ZonedDateTime::try_offset_only_from_str("2010-01-01T00:00Z", Iso)
+///             .unwrap(),
+///     ));
+/// let time_zone_info_2025 = metlakatla
+///     .without_offset()
+///     .with_zone_name_timestamp(ZoneNameTimestamp::from_zoned_date_time_iso(
+///         ZonedDateTime::try_offset_only_from_str("2025-01-01T00:00Z", Iso)
+///             .unwrap(),
+///     ));
 ///
 /// // Check the display names:
 /// let name_2010 = zone_formatter.format(&time_zone_info_2010);

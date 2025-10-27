@@ -91,8 +91,10 @@ derive_usize_iterator_with_type!(SentenceBreakIterator, 'data);
 /// options.content_locale = Some(&langid);
 /// let segmenter = SentenceSegmenter::try_new(options).unwrap();
 ///
-/// let breakpoints: Vec<usize> =
-///     segmenter.as_borrowed().segment_latin1(b"Hello World").collect();
+/// let breakpoints: Vec<usize> = segmenter
+///     .as_borrowed()
+///     .segment_latin1(b"Hello World")
+///     .collect();
 /// assert_eq!(&breakpoints, &[0, 11]);
 /// ```
 ///
