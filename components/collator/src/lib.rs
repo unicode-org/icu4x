@@ -326,6 +326,7 @@ pub mod provider;
 pub use comparison::Collator;
 pub use comparison::CollatorBorrowed;
 pub use comparison::CollatorPreferences;
+pub use comparison::CollationKeySink;
 
 /// Locale preferences used by this crate
 pub mod preferences {
