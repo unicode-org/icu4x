@@ -52,6 +52,7 @@ serde = ["dep:serde", "zerovec/serde", "icu_properties/serde", "icu_normalizer/s
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_properties/datagen", "icu_normalizer/datagen", "icu_collections/databake", "icu_provider/export"]
 compiled_data = ["dep:icu_collator_data", "icu_normalizer/compiled_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 latin1 = []
+unstable = []
 
 [[bench]]
 name = "bench"
