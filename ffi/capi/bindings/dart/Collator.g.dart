@@ -64,6 +64,30 @@ final class Collator implements ffi.Finalizable {
     return result;
   }
 
+  /// Compare two strings.
+  ///
+  /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+  /// to the WHATWG Encoding Standard.
+  ///
+  /// See the [Rust documentation for `compare_latin1`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.compare_latin1) for more information.
+  int compareLatin1(core.List<int> left, core.List<int> right) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_Collator_compare_latin1_mv1(_ffi, left._uint8AllocIn(temp.arena), right._uint8AllocIn(temp.arena));
+    return result;
+  }
+
+  /// Compare two strings.
+  ///
+  /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+  /// to the WHATWG Encoding Standard.
+  ///
+  /// See the [Rust documentation for `compare_latin1_utf16`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.compare_latin1_utf16) for more information.
+  int compareLatin1Utf16(core.List<int> left, String right) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_Collator_compare_latin1_utf16_mv1(_ffi, left._uint8AllocIn(temp.arena), right._utf16AllocIn(temp.arena));
+    return result;
+  }
+
   /// The resolved options showing how the default options, the requested options,
   /// and the options from locale data were combined. None of the struct fields
   /// will have `Auto` as the value.
@@ -72,6 +96,24 @@ final class Collator implements ffi.Finalizable {
   CollatorResolvedOptions get resolvedOptions {
     final result = _icu4x_Collator_resolved_options_v1_mv1(_ffi);
     return CollatorResolvedOptions._fromFfi(result);
+  }
+
+  /// Produce the sort key for a given UTF-8 encoded string up to this collator's strength
+  ///
+  /// See the [Rust documentation for `write_sort_key_utf8_to`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.write_sort_key_utf8_to) for more information.
+  CollationSortKey writeSortKeyUtf8To(String s) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_Collator_write_sort_key_utf8_to_mv1(_ffi, s._utf8AllocIn(temp.arena));
+    return CollationSortKey._fromFfi(result, []);
+  }
+
+  /// Produce the sort key for a given UTF-16 encoded string up to this collator's strength
+  ///
+  /// See the [Rust documentation for `write_sort_key_utf16_to`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.write_sort_key_utf16_to) for more information.
+  CollationSortKey writeSortKeyUtf16To(String s) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_Collator_write_sort_key_utf16_to_mv1(_ffi, s._utf16AllocIn(temp.arena));
+    return CollationSortKey._fromFfi(result, []);
   }
 
 }
@@ -96,9 +138,29 @@ external _ResultOpaqueInt32 _icu4x_Collator_create_v1_with_provider_mv1(ffi.Poin
 // ignore: non_constant_identifier_names
 external int _icu4x_Collator_compare_utf16_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf16 left, _SliceUtf16 right);
 
+@_DiplomatFfiUse('icu4x_Collator_compare_latin1_mv1')
+@ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, _SliceUint8, _SliceUint8)>(isLeaf: true, symbol: 'icu4x_Collator_compare_latin1_mv1')
+// ignore: non_constant_identifier_names
+external int _icu4x_Collator_compare_latin1_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUint8 left, _SliceUint8 right);
+
+@_DiplomatFfiUse('icu4x_Collator_compare_latin1_utf16_mv1')
+@ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>, _SliceUint8, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_Collator_compare_latin1_utf16_mv1')
+// ignore: non_constant_identifier_names
+external int _icu4x_Collator_compare_latin1_utf16_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUint8 left, _SliceUtf16 right);
+
 @_DiplomatFfiUse('icu4x_Collator_resolved_options_v1_mv1')
 @ffi.Native<_CollatorResolvedOptionsFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Collator_resolved_options_v1_mv1')
 // ignore: non_constant_identifier_names
 external _CollatorResolvedOptionsFfi _icu4x_Collator_resolved_options_v1_mv1(ffi.Pointer<ffi.Opaque> self);
+
+@_DiplomatFfiUse('icu4x_Collator_write_sort_key_utf8_to_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Collator_write_sort_key_utf8_to_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_Collator_write_sort_key_utf8_to_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s);
+
+@_DiplomatFfiUse('icu4x_Collator_write_sort_key_utf16_to_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_Collator_write_sort_key_utf16_to_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_Collator_write_sort_key_utf16_to_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf16 s);
 
 // dart format on

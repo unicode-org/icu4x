@@ -128,7 +128,7 @@ diplomat-runtime = { workspace = true }
 fixed_decimal = { workspace = true, features = ["ryu"] , optional = true }
 icu_calendar = { workspace = true, features = ["alloc", "ixdtf"], optional = true }
 icu_casemap = { workspace = true, optional = true }
-icu_collator = { workspace = true, optional = true }
+icu_collator = { workspace = true, optional = true, features = ["latin1"] }
 icu_collections = { workspace = true, optional = true }
 icu_datetime = { workspace = true, optional = true }
 icu_decimal = { workspace = true, optional = true }

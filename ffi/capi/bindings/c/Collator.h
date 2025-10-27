@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
+#include "CollationSortKey.d.h"
 #include "CollatorOptionsV1.d.h"
 #include "CollatorResolvedOptionsV1.d.h"
 #include "DataError.d.h"
@@ -30,7 +31,15 @@ int8_t icu4x_Collator_compare_utf8_mv1(const Collator* self, DiplomatStringView 
 
 int8_t icu4x_Collator_compare_utf16_mv1(const Collator* self, DiplomatString16View left, DiplomatString16View right);
 
+int8_t icu4x_Collator_compare_latin1_mv1(const Collator* self, DiplomatU8View left, DiplomatU8View right);
+
+int8_t icu4x_Collator_compare_latin1_utf16_mv1(const Collator* self, DiplomatU8View left, DiplomatString16View right);
+
 CollatorResolvedOptionsV1 icu4x_Collator_resolved_options_v1_mv1(const Collator* self);
+
+CollationSortKey* icu4x_Collator_write_sort_key_utf8_to_mv1(const Collator* self, DiplomatStringView s);
+
+CollationSortKey* icu4x_Collator_write_sort_key_utf16_to_mv1(const Collator* self, DiplomatString16View s);
 
 void icu4x_Collator_destroy_mv1(Collator* self);
 

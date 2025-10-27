@@ -11,6 +11,8 @@
 #include <cstdlib>
 #include "diplomat_runtime.hpp"
 namespace icu4x {
+namespace capi { struct CollationSortKey; }
+class CollationSortKey;
 namespace capi { struct Collator; }
 class Collator;
 namespace capi { struct DataProvider; }
@@ -72,6 +74,26 @@ public:
   inline int8_t compare16(std::u16string_view left, std::u16string_view right) const;
 
   /**
+   * Compare two strings.
+   *
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+   * to the WHATWG Encoding Standard.
+   *
+   * See the [Rust documentation for `compare_latin1`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.compare_latin1) for more information.
+   */
+  inline int8_t compare_latin1(icu4x::diplomat::span<const uint8_t> left, icu4x::diplomat::span<const uint8_t> right) const;
+
+  /**
+   * Compare two strings.
+   *
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+   * to the WHATWG Encoding Standard.
+   *
+   * See the [Rust documentation for `compare_latin1_utf16`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.compare_latin1_utf16) for more information.
+   */
+  inline int8_t compare_latin1_utf16(icu4x::diplomat::span<const uint8_t> left, std::u16string_view right) const;
+
+  /**
    * The resolved options showing how the default options, the requested options,
    * and the options from locale data were combined. None of the struct fields
    * will have `Auto` as the value.
@@ -79,6 +101,20 @@ public:
    * See the [Rust documentation for `resolved_options`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.resolved_options) for more information.
    */
   inline icu4x::CollatorResolvedOptionsV1 resolved_options_v1() const;
+
+  /**
+   * Produce the sort key for a given UTF-8 encoded string up to this collator's strength
+   *
+   * See the [Rust documentation for `write_sort_key_utf8_to`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.write_sort_key_utf8_to) for more information.
+   */
+  inline std::unique_ptr<icu4x::CollationSortKey> write_sort_key_utf8_to(std::string_view s) const;
+
+  /**
+   * Produce the sort key for a given UTF-16 encoded string up to this collator's strength
+   *
+   * See the [Rust documentation for `write_sort_key_utf16_to`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.write_sort_key_utf16_to) for more information.
+   */
+  inline std::unique_ptr<icu4x::CollationSortKey> write_sort_key_utf16_to(std::u16string_view s) const;
 
     inline const icu4x::capi::Collator* AsFFI() const;
     inline icu4x::capi::Collator* AsFFI();

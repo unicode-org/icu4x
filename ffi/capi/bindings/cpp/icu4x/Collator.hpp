@@ -11,6 +11,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
+#include "CollationSortKey.hpp"
 #include "CollatorOptionsV1.hpp"
 #include "CollatorResolvedOptionsV1.hpp"
 #include "DataError.hpp"
@@ -33,7 +34,15 @@ namespace capi {
 
     int8_t icu4x_Collator_compare_utf16_mv1(const icu4x::capi::Collator* self, icu4x::diplomat::capi::DiplomatString16View left, icu4x::diplomat::capi::DiplomatString16View right);
 
+    int8_t icu4x_Collator_compare_latin1_mv1(const icu4x::capi::Collator* self, icu4x::diplomat::capi::DiplomatU8View left, icu4x::diplomat::capi::DiplomatU8View right);
+
+    int8_t icu4x_Collator_compare_latin1_utf16_mv1(const icu4x::capi::Collator* self, icu4x::diplomat::capi::DiplomatU8View left, icu4x::diplomat::capi::DiplomatString16View right);
+
     icu4x::capi::CollatorResolvedOptionsV1 icu4x_Collator_resolved_options_v1_mv1(const icu4x::capi::Collator* self);
+
+    icu4x::capi::CollationSortKey* icu4x_Collator_write_sort_key_utf8_to_mv1(const icu4x::capi::Collator* self, icu4x::diplomat::capi::DiplomatStringView s);
+
+    icu4x::capi::CollationSortKey* icu4x_Collator_write_sort_key_utf16_to_mv1(const icu4x::capi::Collator* self, icu4x::diplomat::capi::DiplomatString16View s);
 
     void icu4x_Collator_destroy_mv1(Collator* self);
 
@@ -68,9 +77,35 @@ inline int8_t icu4x::Collator::compare16(std::u16string_view left, std::u16strin
     return result;
 }
 
+inline int8_t icu4x::Collator::compare_latin1(icu4x::diplomat::span<const uint8_t> left, icu4x::diplomat::span<const uint8_t> right) const {
+    auto result = icu4x::capi::icu4x_Collator_compare_latin1_mv1(this->AsFFI(),
+        {left.data(), left.size()},
+        {right.data(), right.size()});
+    return result;
+}
+
+inline int8_t icu4x::Collator::compare_latin1_utf16(icu4x::diplomat::span<const uint8_t> left, std::u16string_view right) const {
+    auto result = icu4x::capi::icu4x_Collator_compare_latin1_utf16_mv1(this->AsFFI(),
+        {left.data(), left.size()},
+        {right.data(), right.size()});
+    return result;
+}
+
 inline icu4x::CollatorResolvedOptionsV1 icu4x::Collator::resolved_options_v1() const {
     auto result = icu4x::capi::icu4x_Collator_resolved_options_v1_mv1(this->AsFFI());
     return icu4x::CollatorResolvedOptionsV1::FromFFI(result);
+}
+
+inline std::unique_ptr<icu4x::CollationSortKey> icu4x::Collator::write_sort_key_utf8_to(std::string_view s) const {
+    auto result = icu4x::capi::icu4x_Collator_write_sort_key_utf8_to_mv1(this->AsFFI(),
+        {s.data(), s.size()});
+    return std::unique_ptr<icu4x::CollationSortKey>(icu4x::CollationSortKey::FromFFI(result));
+}
+
+inline std::unique_ptr<icu4x::CollationSortKey> icu4x::Collator::write_sort_key_utf16_to(std::u16string_view s) const {
+    auto result = icu4x::capi::icu4x_Collator_write_sort_key_utf16_to_mv1(this->AsFFI(),
+        {s.data(), s.size()});
+    return std::unique_ptr<icu4x::CollationSortKey>(icu4x::CollationSortKey::FromFFI(result));
 }
 
 inline const icu4x::capi::Collator* icu4x::Collator::AsFFI() const {

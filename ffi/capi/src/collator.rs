@@ -8,6 +8,7 @@ use icu_collator::options::{CollatorOptions, ResolvedCollatorOptions};
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
     use alloc::boxed::Box;
+    use alloc::vec::Vec;
 
     #[cfg(feature = "buffer_provider")]
     use crate::unstable::provider::ffi::DataProvider;
@@ -170,6 +171,28 @@ pub mod ffi {
             self.0.as_borrowed().compare_utf16(left, right)
         }
 
+        /// Compare two strings.
+        ///
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
+        #[diplomat::rust_link(icu::collator::CollatorBorrowed::compare_latin1, FnInStruct)]
+        pub fn compare_latin1(&self, left: &[u8], right: &[u8]) -> core::cmp::Ordering {
+            self.0.as_borrowed().compare_latin1(left, right)
+        }
+
+        /// Compare two strings.
+        ///
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
+        #[diplomat::rust_link(icu::collator::CollatorBorrowed::compare_latin1_utf16, FnInStruct)]
+        pub fn compare_latin1_utf16(
+            &self,
+            left: &[u8],
+            right: &DiplomatStr16,
+        ) -> core::cmp::Ordering {
+            self.0.as_borrowed().compare_latin1_utf16(left, right)
+        }
+
         /// The resolved options showing how the default options, the requested options,
         /// and the options from locale data were combined. None of the struct fields
         /// will have `Auto` as the value.
@@ -178,6 +201,35 @@ pub mod ffi {
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "resolved_options")]
         pub fn resolved_options_v1(&self) -> CollatorResolvedOptionsV1 {
             self.0.as_borrowed().resolved_options().into()
+        }
+
+        /// Produce the sort key for a given UTF-8 encoded string up to this collator's strength
+        #[diplomat::rust_link(icu::collator::CollatorBorrowed::write_sort_key_utf8_to, FnInStruct)]
+        #[diplomat::rust_link(icu::collator::CollationKeySink::write_byte, FnInTrait, hidden)]
+        #[diplomat::rust_link(icu::collator::CollationKeySink::write, FnInTrait, hidden)]
+        #[diplomat::rust_link(icu::collator::CollationKeySink::finish, FnInTrait, hidden)]
+        pub fn write_sort_key_utf8_to(&self, s: &DiplomatStr) -> Box<CollationSortKey> {
+            let mut sink = Vec::new();
+            let _ = self.0.as_borrowed().write_sort_key_utf8_to(s, &mut sink);
+            Box::new(CollationSortKey(sink))
+        }
+
+        /// Produce the sort key for a given UTF-16 encoded string up to this collator's strength
+        #[diplomat::rust_link(icu::collator::CollatorBorrowed::write_sort_key_utf16_to, FnInStruct)]
+        pub fn write_sort_key_utf16_to(&self, s: &DiplomatStr16) -> Box<CollationSortKey> {
+            let mut sink = Vec::new();
+            let _ = self.0.as_borrowed().write_sort_key_utf16_to(s, &mut sink);
+            Box::new(CollationSortKey(sink))
+        }
+    }
+
+    #[diplomat::opaque]
+    #[diplomat::rust_link(icu::collator::CollatorBorrowed::write_sort_key_to, FnInStruct)]
+    pub struct CollationSortKey(Vec<u8>);
+
+    impl CollationSortKey {
+        pub fn as_bytes<'a>(&'a self) -> &'a [u8] {
+            &self.0
         }
     }
 }

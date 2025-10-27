@@ -34,6 +34,7 @@ part 'CodePointRangeIterator.g.dart';
 part 'CodePointRangeIteratorResult.g.dart';
 part 'CodePointSetBuilder.g.dart';
 part 'CodePointSetData.g.dart';
+part 'CollationSortKey.g.dart';
 part 'Collator.g.dart';
 part 'CollatorAlternateHandling.g.dart';
 part 'CollatorCaseFirst.g.dart';

@@ -337,6 +337,130 @@ let termini = Object.assign({
         ]
     },
 
+    "Collator.compareLatin1": {
+        func: (selfLocaleName, selfOptionsStrength, selfOptionsAlternateHandling, selfOptionsMaxVariable, selfOptionsCaseLevel, left, right) => new icu.Collator(icu.Locale.fromString(selfLocaleName), icu.CollatorOptions.fromFields({
+            strength: selfOptionsStrength,
+            alternateHandling: selfOptionsAlternateHandling,
+            maxVariable: selfOptionsMaxVariable,
+            caseLevel: selfOptionsCaseLevel
+        })).compareLatin1(left, right),
+        // For avoiding webpacking minifying issues:
+        funcName: "Collator.compareLatin1",
+        expr: (selfLocaleName, selfOptionsStrength, selfOptionsAlternateHandling, selfOptionsMaxVariable, selfOptionsCaseLevel, left, right) => "new icu.Collator(icu.Locale.fromString(selfLocaleName), icu.CollatorOptions.fromFields({\n    strength: selfOptionsStrength,\n    alternateHandling: selfOptionsAlternateHandling,\n    maxVariable: selfOptionsMaxVariable,\n    caseLevel: selfOptionsCaseLevel\n})).compareLatin1(left, right)".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])selfOptionsStrength([,\) \n])/, '$1' + selfOptionsStrength + '$2').replace(/([\( ])selfOptionsAlternateHandling([,\) \n])/, '$1' + selfOptionsAlternateHandling + '$2').replace(/([\( ])selfOptionsMaxVariable([,\) \n])/, '$1' + selfOptionsMaxVariable + '$2').replace(/([\( ])selfOptionsCaseLevel([,\) \n])/, '$1' + selfOptionsCaseLevel + '$2').replace(/([\( ])left([,\) \n])/, '$1' + left + '$2').replace(/([\( ])right([,\) \n])/, '$1' + right + '$2'),
+        display: displayOrdering,
+        parameters: [
+            
+            {
+                name: "self_locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "self_options_strength",
+                type: "CollatorStrength",
+                typeUse: "enumerator",
+                values: ["Primary", "Secondary", "Tertiary", "Quaternary", "Identical"]
+            },
+            
+            {
+                name: "self_options_alternateHandling",
+                type: "CollatorAlternateHandling",
+                typeUse: "enumerator",
+                values: ["NonIgnorable", "Shifted"]
+            },
+            
+            {
+                name: "self_options_maxVariable",
+                type: "CollatorMaxVariable",
+                typeUse: "enumerator",
+                values: ["Space", "Punctuation", "Symbol", "Currency"]
+            },
+            
+            {
+                name: "self_options_caseLevel",
+                type: "CollatorCaseLevel",
+                typeUse: "enumerator",
+                values: ["Off", "On"]
+            },
+            
+            {
+                name: "left",
+                type: "Array<number>",
+                typeUse: "Array<number>"
+            },
+            
+            {
+                name: "right",
+                type: "Array<number>",
+                typeUse: "Array<number>"
+            }
+            
+        ]
+    },
+
+    "Collator.compareLatin1Utf16": {
+        func: (selfLocaleName, selfOptionsStrength, selfOptionsAlternateHandling, selfOptionsMaxVariable, selfOptionsCaseLevel, left, right) => new icu.Collator(icu.Locale.fromString(selfLocaleName), icu.CollatorOptions.fromFields({
+            strength: selfOptionsStrength,
+            alternateHandling: selfOptionsAlternateHandling,
+            maxVariable: selfOptionsMaxVariable,
+            caseLevel: selfOptionsCaseLevel
+        })).compareLatin1Utf16(left, right),
+        // For avoiding webpacking minifying issues:
+        funcName: "Collator.compareLatin1Utf16",
+        expr: (selfLocaleName, selfOptionsStrength, selfOptionsAlternateHandling, selfOptionsMaxVariable, selfOptionsCaseLevel, left, right) => "new icu.Collator(icu.Locale.fromString(selfLocaleName), icu.CollatorOptions.fromFields({\n    strength: selfOptionsStrength,\n    alternateHandling: selfOptionsAlternateHandling,\n    maxVariable: selfOptionsMaxVariable,\n    caseLevel: selfOptionsCaseLevel\n})).compareLatin1Utf16(left, right)".replace(/([\( ])selfLocaleName([,\) \n])/, '$1' + selfLocaleName + '$2').replace(/([\( ])selfOptionsStrength([,\) \n])/, '$1' + selfOptionsStrength + '$2').replace(/([\( ])selfOptionsAlternateHandling([,\) \n])/, '$1' + selfOptionsAlternateHandling + '$2').replace(/([\( ])selfOptionsMaxVariable([,\) \n])/, '$1' + selfOptionsMaxVariable + '$2').replace(/([\( ])selfOptionsCaseLevel([,\) \n])/, '$1' + selfOptionsCaseLevel + '$2').replace(/([\( ])left([,\) \n])/, '$1' + left + '$2').replace(/([\( ])right([,\) \n])/, '$1' + right + '$2'),
+        display: displayOrdering,
+        parameters: [
+            
+            {
+                name: "self_locale_name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "self_options_strength",
+                type: "CollatorStrength",
+                typeUse: "enumerator",
+                values: ["Primary", "Secondary", "Tertiary", "Quaternary", "Identical"]
+            },
+            
+            {
+                name: "self_options_alternateHandling",
+                type: "CollatorAlternateHandling",
+                typeUse: "enumerator",
+                values: ["NonIgnorable", "Shifted"]
+            },
+            
+            {
+                name: "self_options_maxVariable",
+                type: "CollatorMaxVariable",
+                typeUse: "enumerator",
+                values: ["Space", "Punctuation", "Symbol", "Currency"]
+            },
+            
+            {
+                name: "self_options_caseLevel",
+                type: "CollatorCaseLevel",
+                typeUse: "enumerator",
+                values: ["Off", "On"]
+            },
+            
+            {
+                name: "left",
+                type: "Array<number>",
+                typeUse: "Array<number>"
+            },
+            
+            {
+                name: "right",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "Date.rataDie": {
         func: (selfIsoYear, selfIsoMonth, selfIsoDay, selfCalendarKind) => icu.Date.fromIsoInCalendar(selfIsoYear, selfIsoMonth, selfIsoDay, new icu.Calendar(selfCalendarKind)).rataDie,
         // For avoiding webpacking minifying issues:

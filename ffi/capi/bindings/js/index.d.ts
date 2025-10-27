@@ -66,6 +66,8 @@ export { CaseMapper } from "./CaseMapper"
 
 export { TitlecaseMapper } from "./TitlecaseMapper"
 
+export { CollationSortKey } from "./CollationSortKey"
+
 export { Collator } from "./Collator"
 
 export { CodePointSetBuilder } from "./CodePointSetBuilder"

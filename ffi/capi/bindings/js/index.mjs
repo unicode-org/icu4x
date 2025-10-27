@@ -64,6 +64,8 @@ export { CaseMapper } from "./CaseMapper.mjs"
 
 export { TitlecaseMapper } from "./TitlecaseMapper.mjs"
 
+export { CollationSortKey } from "./CollationSortKey.mjs"
+
 export { Collator } from "./Collator.mjs"
 
 export { CodePointSetBuilder } from "./CodePointSetBuilder.mjs"
