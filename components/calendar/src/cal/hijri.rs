@@ -253,7 +253,7 @@ impl Rules for AstronomicalSimulation {
 ///
 /// The precise behavior of this calendar may change in the future if:
 /// - New ground truth is established by published government sources
-/// - We decide to tweak the simplified calculation
+/// - We decide to use a different algorithm outside the KACST range
 /// - We decide to expand or reduce the range where we are correctly handling past dates.
 ///
 /// This corresponds to the `"islamic-umalqura"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
