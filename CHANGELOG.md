@@ -30,7 +30,7 @@ Current changelog is accurate up to bf12a54eb3
     - `icu_casemap`
         - General changes only
     - `icu_collator`
-        - Add `CollatorBorrowed::write_sort_key_to; to support generating sort keys (unicode-org#6537, unicode-org#6656, unicode-org#6708)
+        - Add `CollatorBorrowed::write_sort_key_to`; to support generating sort keys (unicode-org#6537, unicode-org#6656, unicode-org#6708)
         - Make merge separator compare less than U+0000 on the identical strength (unicode-org#6814, unicode-org#6823)
         - Add Latin1 comparisons to the collator (unicode-org#6674)
         - Avoid double-validating `char`s (unicode-org#6924)
