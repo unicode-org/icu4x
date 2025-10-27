@@ -4,7 +4,6 @@
 
 This crate contains the `extern "C"` FFI for ICU4X, as well as the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
 C, C++, Dart, JavaScript, and TypeScript bindings.
-
 <p style='font-weight: bold; font-size: 24px;'> 🔗 See the <a target='_blank' href='https://icu4x.unicode.org/
 '>ICU4X website</a> for FFI docs and examples</p>
 
