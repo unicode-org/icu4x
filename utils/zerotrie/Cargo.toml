@@ -5,7 +5,7 @@
 [package]
 name = "zerotrie"
 description = "A data structure that efficiently maps strings to integers"
-version = "0.2.2"
+version = "0.2.3"
 
 authors.workspace = true
 categories.workspace = true
