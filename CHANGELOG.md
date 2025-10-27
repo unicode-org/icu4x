@@ -110,7 +110,7 @@ Current changelog is accurate up to bf12a54eb3
     - `icu4x-datagen`
         - Don't require sources to be set in `icu4x-datagen` (unicode-org#6892)
     - `icu_provider_source`
-        - Update to CLDR 48 (unicode-org#6793, unicode-org#6989, unicode-org#7046)
+        - Update to CLDR 48 (unicode-org#6793, unicode-org#6989, unicode-org#7046, unicode-org#7167)
         - Don't complain about not covering `Factory` timezone in datagen (unicode-org#6768)
         - Detect rearguard TZDB differences (unicode-org#6943, unicode-org#6749)
         - Include metazone periods before the horizon if the metazone is included anyway (unicode-org#6747)
