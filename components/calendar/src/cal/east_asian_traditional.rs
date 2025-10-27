@@ -151,6 +151,11 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
 /// required before 1900, clients can implement their own [`Rules`] type
 /// using data such as from the excellent compilation by [Yuk Tung Liu].
 ///
+/// The precise behavior of this calendar may change in the future if:
+/// - New ground truth is established by published government sources
+/// - We decide to tweak the simplified calculation
+/// - We decide to expand or reduce the range where we are correctly handling past dates.
+///
 /// [Purple Mountain Observatory for the years 1900-2025]: http://www.pmo.cas.cn/xwdt2019/kpdt2019/202203/P020250414456381274062.pdf
 /// [Hong Kong Observatory for the years 1901-2100]: https://www.hko.gov.hk/en/gts/time/conversion.htm
 /// [GB/T 33661-2017]: China::gb_t_33661_2017
@@ -303,6 +308,11 @@ impl Rules for China {
 /// before 1900. If accuracy is required before 1900, clients can implement
 /// their own [`Rules`] type using data such as from the excellent compilation
 /// by [Yuk Tung Liu].
+///
+/// The precise behavior of this calendar may change in the future if:
+/// - New ground truth is established by published government sources
+/// - We decide to tweak the simplified calculation
+/// - We decide to expand or reduce the range where we are correctly handling past dates.
 ///
 /// [Korea Astronomy and Space Science Institute for the years 1900-2050]: https://astro.kasi.re.kr/life/pageView/5
 /// [adapted GB/T 33661-2017]: Korea::adapted_gb_t_33661_2017
