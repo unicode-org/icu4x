@@ -756,6 +756,48 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_hyphen_with_provider(const icu4x::DataProvider& provider);
 
   /**
+   * Get the `ID_Compat_Math_Continue` value for a given character, using compiled data
+   *
+   * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+   */
+  inline static bool id_compat_math_continue_for_char(char32_t ch);
+
+  /**
+   * Create a set for the `ID_Compat_Math_Continue` property, using compiled data.
+   *
+   * See the [Rust documentation for `IdCompatMathContinue`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdCompatMathContinue.html) for more information.
+   */
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_id_compat_math_continue();
+
+  /**
+   * Create a set for the `ID_Compat_Math_Continue` property, using a particular data source.
+   *
+   * See the [Rust documentation for `IdCompatMathContinue`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdCompatMathContinue.html) for more information.
+   */
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_id_compat_math_continue_with_provider(const icu4x::DataProvider& provider);
+
+  /**
+   * Get the `ID_Compat_Math_Start` value for a given character, using compiled data
+   *
+   * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+   */
+  inline static bool id_compat_math_start_for_char(char32_t ch);
+
+  /**
+   * Create a set for the `ID_Compat_Math_Start` property, using compiled data.
+   *
+   * See the [Rust documentation for `IdCompatMathStart`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdCompatMathStart.html) for more information.
+   */
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_id_compat_math_start();
+
+  /**
+   * Create a set for the `ID_Compat_Math_Start` property, using a particular data source.
+   *
+   * See the [Rust documentation for `IdCompatMathStart`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdCompatMathStart.html) for more information.
+   */
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_id_compat_math_start_with_provider(const icu4x::DataProvider& provider);
+
+  /**
    * Get the `Id_Continue` value for a given character, using compiled data
    *
    * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
@@ -861,6 +903,27 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_ids_trinary_operator_with_provider(const icu4x::DataProvider& provider);
 
   /**
+   * Get the `Ids_Unary_Operator` value for a given character, using compiled data
+   *
+   * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+   */
+  inline static bool ids_unary_operator_for_char(char32_t ch);
+
+  /**
+   * Create a set for the `Ids_Unary_Operator` property, using compiled data.
+   *
+   * See the [Rust documentation for `IdsUnaryOperator`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdsUnaryOperator.html) for more information.
+   */
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_ids_unary_operator();
+
+  /**
+   * Create a set for the `Ids_Unary_Operator` property, using a particular data source.
+   *
+   * See the [Rust documentation for `IdsUnaryOperator`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdsUnaryOperator.html) for more information.
+   */
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_ids_unary_operator_with_provider(const icu4x::DataProvider& provider);
+
+  /**
    * Get the `Join_Control` value for a given character, using compiled data
    *
    * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
@@ -943,6 +1006,27 @@ public:
    * See the [Rust documentation for `Math`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Math.html) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_math_with_provider(const icu4x::DataProvider& provider);
+
+  /**
+   * Get the `Modifier_Combining_mark` value for a given character, using compiled data
+   *
+   * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+   */
+  inline static bool modifier_combining_mark_for_char(char32_t ch);
+
+  /**
+   * Create a set for the `Modifier_Combining_mark` property, using compiled data.
+   *
+   * See the [Rust documentation for `ModifierCombiningMark`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.ModifierCombiningMark.html) for more information.
+   */
+  inline static std::unique_ptr<icu4x::CodePointSetData> create_modifier_combining_mark();
+
+  /**
+   * Create a set for the `Modifier_Combining_mark` property, using a particular data source.
+   *
+   * See the [Rust documentation for `ModifierCombiningMark`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.ModifierCombiningMark.html) for more information.
+   */
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointSetData>, icu4x::DataError> create_modifier_combining_mark_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Get the `Noncharacter_Code_Point` value for a given character, using compiled data

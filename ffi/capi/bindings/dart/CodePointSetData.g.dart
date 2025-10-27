@@ -1014,6 +1014,64 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `ID_Compat_Math_Continue` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool idCompatMathContinueForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_id_compat_math_continue_for_char_mv1(ch);
+    return result;
+  }
+
+  /// Create a set for the `ID_Compat_Math_Continue` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `IdCompatMathContinue`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdCompatMathContinue.html) for more information.
+  factory CodePointSetData.idCompatMathContinue() {
+    final result = _icu4x_CodePointSetData_create_id_compat_math_continue_mv1();
+    return CodePointSetData._fromFfi(result, []);
+  }
+
+  /// Create a set for the `ID_Compat_Math_Continue` property, using a particular data source.
+  ///
+  /// See the [Rust documentation for `IdCompatMathContinue`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdCompatMathContinue.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory CodePointSetData.idCompatMathContinueWithProvider(DataProvider provider) {
+    final result = _icu4x_CodePointSetData_create_id_compat_math_continue_with_provider_mv1(provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `ID_Compat_Math_Start` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool idCompatMathStartForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_id_compat_math_start_for_char_mv1(ch);
+    return result;
+  }
+
+  /// Create a set for the `ID_Compat_Math_Start` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `IdCompatMathStart`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdCompatMathStart.html) for more information.
+  factory CodePointSetData.idCompatMathStart() {
+    final result = _icu4x_CodePointSetData_create_id_compat_math_start_mv1();
+    return CodePointSetData._fromFfi(result, []);
+  }
+
+  /// Create a set for the `ID_Compat_Math_Start` property, using a particular data source.
+  ///
+  /// See the [Rust documentation for `IdCompatMathStart`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdCompatMathStart.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory CodePointSetData.idCompatMathStartWithProvider(DataProvider provider) {
+    final result = _icu4x_CodePointSetData_create_id_compat_math_start_with_provider_mv1(provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
   /// Get the `Id_Continue` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
@@ -1159,6 +1217,35 @@ final class CodePointSetData implements ffi.Finalizable {
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Ids_Unary_Operator` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool idsUnaryOperatorForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_ids_unary_operator_for_char_mv1(ch);
+    return result;
+  }
+
+  /// Create a set for the `Ids_Unary_Operator` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `IdsUnaryOperator`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdsUnaryOperator.html) for more information.
+  factory CodePointSetData.idsUnaryOperator() {
+    final result = _icu4x_CodePointSetData_create_ids_unary_operator_mv1();
+    return CodePointSetData._fromFfi(result, []);
+  }
+
+  /// Create a set for the `Ids_Unary_Operator` property, using a particular data source.
+  ///
+  /// See the [Rust documentation for `IdsUnaryOperator`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IdsUnaryOperator.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory CodePointSetData.idsUnaryOperatorWithProvider(DataProvider provider) {
+    final result = _icu4x_CodePointSetData_create_ids_unary_operator_with_provider_mv1(provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
   /// Get the `Join_Control` value for a given character, using compiled data
   ///
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
@@ -1269,6 +1356,35 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Throws [DataError] on failure.
   factory CodePointSetData.mathWithProvider(DataProvider provider) {
     final result = _icu4x_CodePointSetData_create_math_with_provider_mv1(provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return CodePointSetData._fromFfi(result.union.ok, []);
+  }
+
+  /// Get the `Modifier_Combining_mark` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.BinaryProperty.html#tymethod.for_char) for more information.
+  static bool modifierCombiningMarkForChar(Rune ch) {
+    final result = _icu4x_CodePointSetData_modifier_combining_mark_for_char_mv1(ch);
+    return result;
+  }
+
+  /// Create a set for the `Modifier_Combining_mark` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `ModifierCombiningMark`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.ModifierCombiningMark.html) for more information.
+  factory CodePointSetData.modifierCombiningMark() {
+    final result = _icu4x_CodePointSetData_create_modifier_combining_mark_mv1();
+    return CodePointSetData._fromFfi(result, []);
+  }
+
+  /// Create a set for the `Modifier_Combining_mark` property, using a particular data source.
+  ///
+  /// See the [Rust documentation for `ModifierCombiningMark`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.ModifierCombiningMark.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory CodePointSetData.modifierCombiningMarkWithProvider(DataProvider provider) {
+    final result = _icu4x_CodePointSetData_create_modifier_combining_mark_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -2511,6 +2627,36 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_hyphen_mv1();
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_hyphen_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_id_compat_math_continue_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_id_compat_math_continue_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_id_compat_math_continue_for_char_mv1(Rune ch);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_create_id_compat_math_continue_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_id_compat_math_continue_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_id_compat_math_continue_mv1();
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_create_id_compat_math_continue_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_id_compat_math_continue_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_id_compat_math_continue_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_id_compat_math_start_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_id_compat_math_start_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_id_compat_math_start_for_char_mv1(Rune ch);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_create_id_compat_math_start_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_id_compat_math_start_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_id_compat_math_start_mv1();
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_create_id_compat_math_start_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_id_compat_math_start_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_id_compat_math_start_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_id_continue_for_char_mv1')
 @ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_id_continue_for_char_mv1')
 // ignore: non_constant_identifier_names
@@ -2586,6 +2732,21 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_ids_trinary_oper
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_ids_trinary_operator_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
+@_DiplomatFfiUse('icu4x_CodePointSetData_ids_unary_operator_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_ids_unary_operator_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_ids_unary_operator_for_char_mv1(Rune ch);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_create_ids_unary_operator_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_ids_unary_operator_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_ids_unary_operator_mv1();
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_create_ids_unary_operator_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_ids_unary_operator_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_ids_unary_operator_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
 @_DiplomatFfiUse('icu4x_CodePointSetData_join_control_for_char_mv1')
 @ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_join_control_for_char_mv1')
 // ignore: non_constant_identifier_names
@@ -2645,6 +2806,21 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_math_mv1();
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_math_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_math_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_modifier_combining_mark_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_modifier_combining_mark_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_CodePointSetData_modifier_combining_mark_for_char_mv1(Rune ch);
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_create_modifier_combining_mark_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_modifier_combining_mark_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_CodePointSetData_create_modifier_combining_mark_mv1();
+
+@_DiplomatFfiUse('icu4x_CodePointSetData_create_modifier_combining_mark_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_create_modifier_combining_mark_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_CodePointSetData_create_modifier_combining_mark_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_noncharacter_code_point_for_char_mv1')
 @ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CodePointSetData_noncharacter_code_point_for_char_mv1')

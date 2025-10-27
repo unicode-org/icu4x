@@ -31,5 +31,3 @@ icu::collator::CollatorBorrowed::compare_latin1_utf16#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_to#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_utf16_to#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_utf8_to#FnInStruct
-icu::properties::props::IdsUnaryOperator#Struct
-icu::properties::props::ModifierCombiningMark#Struct
