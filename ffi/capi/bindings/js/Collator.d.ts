@@ -69,14 +69,14 @@ export class Collator {
      *
      * See the [Rust documentation for `write_sort_key_utf8_to`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.write_sort_key_utf8_to) for more information.
      */
-    writeSortKeyUtf8To(s: string): CollationSortKey;
+    sortKeyUtf8To(s: string): CollationSortKey;
 
     /**
      * Produce the sort key for a given UTF-16 encoded string up to this collator's strength
      *
      * See the [Rust documentation for `write_sort_key_utf16_to`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.write_sort_key_utf16_to) for more information.
      */
-    writeSortKeyUtf16To(s: string): CollationSortKey;
+    sortKeyUtf16To(s: string): CollationSortKey;
 
     /**
      * Construct a new Collator instance using compiled data.

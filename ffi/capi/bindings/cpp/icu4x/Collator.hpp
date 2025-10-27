@@ -40,9 +40,9 @@ namespace capi {
 
     icu4x::capi::CollatorResolvedOptionsV1 icu4x_Collator_resolved_options_v1_mv1(const icu4x::capi::Collator* self);
 
-    icu4x::capi::CollationSortKey* icu4x_Collator_write_sort_key_utf8_to_mv1(const icu4x::capi::Collator* self, icu4x::diplomat::capi::DiplomatStringView s);
+    icu4x::capi::CollationSortKey* icu4x_Collator_sort_key_utf8_to_mv1(const icu4x::capi::Collator* self, icu4x::diplomat::capi::DiplomatStringView s);
 
-    icu4x::capi::CollationSortKey* icu4x_Collator_write_sort_key_utf16_to_mv1(const icu4x::capi::Collator* self, icu4x::diplomat::capi::DiplomatString16View s);
+    icu4x::capi::CollationSortKey* icu4x_Collator_sort_key_utf16_to_mv1(const icu4x::capi::Collator* self, icu4x::diplomat::capi::DiplomatString16View s);
 
     void icu4x_Collator_destroy_mv1(Collator* self);
 
@@ -96,14 +96,14 @@ inline icu4x::CollatorResolvedOptionsV1 icu4x::Collator::resolved_options_v1() c
     return icu4x::CollatorResolvedOptionsV1::FromFFI(result);
 }
 
-inline std::unique_ptr<icu4x::CollationSortKey> icu4x::Collator::write_sort_key_utf8_to(std::string_view s) const {
-    auto result = icu4x::capi::icu4x_Collator_write_sort_key_utf8_to_mv1(this->AsFFI(),
+inline std::unique_ptr<icu4x::CollationSortKey> icu4x::Collator::sort_key_utf8_to(std::string_view s) const {
+    auto result = icu4x::capi::icu4x_Collator_sort_key_utf8_to_mv1(this->AsFFI(),
         {s.data(), s.size()});
     return std::unique_ptr<icu4x::CollationSortKey>(icu4x::CollationSortKey::FromFFI(result));
 }
 
-inline std::unique_ptr<icu4x::CollationSortKey> icu4x::Collator::write_sort_key_utf16_to(std::u16string_view s) const {
-    auto result = icu4x::capi::icu4x_Collator_write_sort_key_utf16_to_mv1(this->AsFFI(),
+inline std::unique_ptr<icu4x::CollationSortKey> icu4x::Collator::sort_key_utf16_to(std::u16string_view s) const {
+    auto result = icu4x::capi::icu4x_Collator_sort_key_utf16_to_mv1(this->AsFFI(),
         {s.data(), s.size()});
     return std::unique_ptr<icu4x::CollationSortKey>(icu4x::CollationSortKey::FromFFI(result));
 }

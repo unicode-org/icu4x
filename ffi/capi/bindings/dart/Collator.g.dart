@@ -101,18 +101,18 @@ final class Collator implements ffi.Finalizable {
   /// Produce the sort key for a given UTF-8 encoded string up to this collator's strength
   ///
   /// See the [Rust documentation for `write_sort_key_utf8_to`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.write_sort_key_utf8_to) for more information.
-  CollationSortKey writeSortKeyUtf8To(String s) {
+  CollationSortKey sortKeyUtf8To(String s) {
     final temp = _FinalizedArena();
-    final result = _icu4x_Collator_write_sort_key_utf8_to_mv1(_ffi, s._utf8AllocIn(temp.arena));
+    final result = _icu4x_Collator_sort_key_utf8_to_mv1(_ffi, s._utf8AllocIn(temp.arena));
     return CollationSortKey._fromFfi(result, []);
   }
 
   /// Produce the sort key for a given UTF-16 encoded string up to this collator's strength
   ///
   /// See the [Rust documentation for `write_sort_key_utf16_to`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.write_sort_key_utf16_to) for more information.
-  CollationSortKey writeSortKeyUtf16To(String s) {
+  CollationSortKey sortKeyUtf16To(String s) {
     final temp = _FinalizedArena();
-    final result = _icu4x_Collator_write_sort_key_utf16_to_mv1(_ffi, s._utf16AllocIn(temp.arena));
+    final result = _icu4x_Collator_sort_key_utf16_to_mv1(_ffi, s._utf16AllocIn(temp.arena));
     return CollationSortKey._fromFfi(result, []);
   }
 
@@ -153,14 +153,14 @@ external int _icu4x_Collator_compare_latin1_utf16_mv1(ffi.Pointer<ffi.Opaque> se
 // ignore: non_constant_identifier_names
 external _CollatorResolvedOptionsFfi _icu4x_Collator_resolved_options_v1_mv1(ffi.Pointer<ffi.Opaque> self);
 
-@_DiplomatFfiUse('icu4x_Collator_write_sort_key_utf8_to_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Collator_write_sort_key_utf8_to_mv1')
+@_DiplomatFfiUse('icu4x_Collator_sort_key_utf8_to_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Collator_sort_key_utf8_to_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_Collator_write_sort_key_utf8_to_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s);
+external ffi.Pointer<ffi.Opaque> _icu4x_Collator_sort_key_utf8_to_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s);
 
-@_DiplomatFfiUse('icu4x_Collator_write_sort_key_utf16_to_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_Collator_write_sort_key_utf16_to_mv1')
+@_DiplomatFfiUse('icu4x_Collator_sort_key_utf16_to_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_Collator_sort_key_utf16_to_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_Collator_write_sort_key_utf16_to_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf16 s);
+external ffi.Pointer<ffi.Opaque> _icu4x_Collator_sort_key_utf16_to_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf16 s);
 
 // dart format on

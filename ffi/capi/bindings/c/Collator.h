@@ -37,9 +37,9 @@ int8_t icu4x_Collator_compare_latin1_utf16_mv1(const Collator* self, DiplomatU8V
 
 CollatorResolvedOptionsV1 icu4x_Collator_resolved_options_v1_mv1(const Collator* self);
 
-CollationSortKey* icu4x_Collator_write_sort_key_utf8_to_mv1(const Collator* self, DiplomatStringView s);
+CollationSortKey* icu4x_Collator_sort_key_utf8_to_mv1(const Collator* self, DiplomatStringView s);
 
-CollationSortKey* icu4x_Collator_write_sort_key_utf16_to_mv1(const Collator* self, DiplomatString16View s);
+CollationSortKey* icu4x_Collator_sort_key_utf16_to_mv1(const Collator* self, DiplomatString16View s);
 
 void icu4x_Collator_destroy_mv1(Collator* self);
 

@@ -14,7 +14,7 @@ pub mod ffi {
     use crate::unstable::provider::ffi::DataProvider;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::unstable::{errors::ffi::DataError, locale_core::ffi::Locale};
-    use diplomat_runtime::DiplomatOption;
+    use diplomat_runtime::{DiplomatByte, DiplomatOption};
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::collator::Collator, Struct)]
@@ -208,27 +208,27 @@ pub mod ffi {
         #[diplomat::rust_link(icu::collator::CollationKeySink::write_byte, FnInTrait, hidden)]
         #[diplomat::rust_link(icu::collator::CollationKeySink::write, FnInTrait, hidden)]
         #[diplomat::rust_link(icu::collator::CollationKeySink::finish, FnInTrait, hidden)]
-        pub fn write_sort_key_utf8_to(&self, s: &DiplomatStr) -> Box<CollationSortKey> {
+        pub fn sort_key_utf8_to(&self, s: &DiplomatStr) -> Box<CollationSortKey> {
             let mut sink = Vec::new();
             let _ = self.0.as_borrowed().write_sort_key_utf8_to(s, &mut sink);
-            Box::new(CollationSortKey(sink))
+            Box::new(CollationSortKey(sink.into_boxed_slice()))
         }
 
         /// Produce the sort key for a given UTF-16 encoded string up to this collator's strength
         #[diplomat::rust_link(icu::collator::CollatorBorrowed::write_sort_key_utf16_to, FnInStruct)]
-        pub fn write_sort_key_utf16_to(&self, s: &DiplomatStr16) -> Box<CollationSortKey> {
+        pub fn sort_key_utf16_to(&self, s: &DiplomatStr16) -> Box<CollationSortKey> {
             let mut sink = Vec::new();
             let _ = self.0.as_borrowed().write_sort_key_utf16_to(s, &mut sink);
-            Box::new(CollationSortKey(sink))
+            Box::new(CollationSortKey(sink.into_boxed_slice()))
         }
     }
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::collator::CollatorBorrowed::write_sort_key_to, FnInStruct)]
-    pub struct CollationSortKey(Vec<u8>);
+    pub struct CollationSortKey(Box<[u8]>);
 
     impl CollationSortKey {
-        pub fn as_bytes<'a>(&'a self) -> &'a [u8] {
+        pub fn as_bytes<'a>(&'a self) -> &'a [DiplomatByte] {
             &self.0
         }
     }

@@ -205,12 +205,12 @@ export class Collator {
      *
      * See the [Rust documentation for `write_sort_key_utf8_to`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.write_sort_key_utf8_to) for more information.
      */
-    writeSortKeyUtf8To(s) {
+    sortKeyUtf8To(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
         const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
 
-        const result = wasm.icu4x_Collator_write_sort_key_utf8_to_mv1(this.ffiValue, sSlice.ptr);
+        const result = wasm.icu4x_Collator_sort_key_utf8_to_mv1(this.ffiValue, sSlice.ptr);
 
         try {
             return new CollationSortKey(diplomatRuntime.internalConstructor, result, []);
@@ -227,12 +227,12 @@ export class Collator {
      *
      * See the [Rust documentation for `write_sort_key_utf16_to`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.write_sort_key_utf16_to) for more information.
      */
-    writeSortKeyUtf16To(s) {
+    sortKeyUtf16To(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
         const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str16(wasm, s)));
 
-        const result = wasm.icu4x_Collator_write_sort_key_utf16_to_mv1(this.ffiValue, sSlice.ptr);
+        const result = wasm.icu4x_Collator_sort_key_utf16_to_mv1(this.ffiValue, sSlice.ptr);
 
         try {
             return new CollationSortKey(diplomatRuntime.internalConstructor, result, []);

@@ -107,14 +107,14 @@ public:
    *
    * See the [Rust documentation for `write_sort_key_utf8_to`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.write_sort_key_utf8_to) for more information.
    */
-  inline std::unique_ptr<icu4x::CollationSortKey> write_sort_key_utf8_to(std::string_view s) const;
+  inline std::unique_ptr<icu4x::CollationSortKey> sort_key_utf8_to(std::string_view s) const;
 
   /**
    * Produce the sort key for a given UTF-16 encoded string up to this collator's strength
    *
    * See the [Rust documentation for `write_sort_key_utf16_to`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.write_sort_key_utf16_to) for more information.
    */
-  inline std::unique_ptr<icu4x::CollationSortKey> write_sort_key_utf16_to(std::u16string_view s) const;
+  inline std::unique_ptr<icu4x::CollationSortKey> sort_key_utf16_to(std::u16string_view s) const;
 
     inline const icu4x::capi::Collator* AsFFI() const;
     inline icu4x::capi::Collator* AsFFI();

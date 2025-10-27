@@ -24,7 +24,7 @@ final class CollationSortKey implements ffi.Finalizable {
   @_DiplomatFfiUse('icu4x_CollationSortKey_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CollationSortKey_destroy_mv1));
 
-  core.List<int> asBytes() {
+  ByteBuffer asBytes() {
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this];
     final result = _icu4x_CollationSortKey_as_bytes_mv1(_ffi);

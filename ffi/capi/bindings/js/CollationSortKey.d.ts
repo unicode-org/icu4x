@@ -13,5 +13,5 @@ export class CollationSortKey {
     constructor();
 
 
-    asBytes(): Array<number>;
+    asBytes(): Uint8Array;
 }
