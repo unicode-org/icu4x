@@ -458,9 +458,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// use icu::calendar::cal::Hebrew;
     /// use icu::locale::subtags::subtag;
     /// use icu::time::{
-    ///     zone::{
-    ///         IanaParser, TimeZoneVariant, UtcOffset, VariantOffsetsCalculator,
-    ///     },
+    ///     zone::{IanaParser, TimeZoneVariant, UtcOffset},
     ///     TimeZone, TimeZoneInfo, ZonedDateTime,
     /// };
     ///

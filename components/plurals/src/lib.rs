@@ -447,7 +447,7 @@ impl PluralRules {
     /// # let pr = PluralRules::try_new(locale!("en").into(), Default::default())
     /// #     .expect("locale should be present");
     ///
-    /// let operands = PluralOperands::try_from(-5).expect("Failed to parse to operands.");
+    /// let operands = PluralOperands::from(-5);
     /// let operands2: PluralOperands = "5.10".parse().expect("Failed to parse to operands.");
     ///
     /// assert_eq!(pr.category_for(operands), PluralCategory::Other);

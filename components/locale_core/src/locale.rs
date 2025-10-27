@@ -90,7 +90,7 @@ use core::str::FromStr;
 /// assert_eq!(loc.id.script, "Latn".parse::<Script>().ok());
 /// assert_eq!(loc.id.region, "US".parse::<Region>().ok());
 /// assert_eq!(
-///     loc.id.variants.get(0),
+///     loc.id.variants.first(),
 ///     "valencia".parse::<Variant>().ok().as_ref()
 /// );
 /// ```

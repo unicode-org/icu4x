@@ -252,19 +252,18 @@ pub enum AnyCalendarDifferenceError {
     /// let d1 = Date::try_new_gregorian(2000, 1, 1).unwrap().to_any();
     /// let d2 = Date::try_new_persian(1562, 1, 1).unwrap().to_any();
     ///
-    /// assert!(matches!(
-    ///     d1.try_until_with_options(&d2, Default::default()),
-    ///     Err(AnyCalendarDifferenceError::MismatchedCalendars),
-    /// ));
+    /// assert_eq!(
+    ///     d1.try_until_with_options(&d2, Default::default())
+    ///         .unwrap_err(),
+    ///     AnyCalendarDifferenceError::MismatchedCalendars,
+    /// );
     ///
     /// // To compare the dates, convert them to the same calendar,
     /// // such as ISO.
     ///
-    /// assert!(matches!(
-    ///     d1.to_iso()
-    ///         .try_until_with_options(&d2.to_iso(), Default::default()),
-    ///     Ok(_)
-    /// ));
+    /// d1.to_iso()
+    ///     .try_until_with_options(&d2.to_iso(), Default::default())
+    ///     .unwrap();
     /// ```
     MismatchedCalendars,
 }

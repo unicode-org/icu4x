@@ -184,7 +184,7 @@ impl Value {
     /// use icu::locale::{extensions::unicode::Value, subtags::subtag};
     ///
     /// let mut v = Value::default();
-    /// assert_eq!(v.is_empty(), true);
+    /// assert!(v.is_empty());
     /// ```
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()

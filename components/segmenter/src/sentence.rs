@@ -88,7 +88,7 @@ derive_usize_iterator_with_type!(SentenceBreakIterator, 'data);
 ///
 /// let mut options = SentenceBreakOptions::default();
 /// let langid = &langid!("en");
-/// options.content_locale = Some(&langid);
+/// options.content_locale = Some(langid);
 /// let segmenter = SentenceSegmenter::try_new(options).unwrap();
 ///
 /// let breakpoints: Vec<usize> = segmenter

@@ -79,7 +79,7 @@ use alloc::borrow::Cow;
 /// assert_eq!(li.language, language!("en"));
 /// assert_eq!(li.script, Some(script!("Latn")));
 /// assert_eq!(li.region, Some(region!("US")));
-/// assert_eq!(li.variants.get(0), Some(&variant!("valencia")));
+/// assert_eq!(li.variants.first(), Some(&variant!("valencia")));
 /// ```
 ///
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier

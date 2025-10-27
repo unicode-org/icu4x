@@ -49,11 +49,11 @@ mod unstable {
         /// let options_default = DateFromFieldsOptions::default();
         /// assert!(Date::try_from_fields(fields, options_default, Iso).is_err());
         ///
-        /// let mut options_reject = options_default.clone();
+        /// let mut options_reject = options_default;
         /// options_reject.overflow = Some(Overflow::Reject);
         /// assert!(Date::try_from_fields(fields, options_reject, Iso).is_err());
         ///
-        /// let mut options_constrain = options_default.clone();
+        /// let mut options_constrain = options_default;
         /// options_constrain.overflow = Some(Overflow::Constrain);
         /// assert_eq!(
         ///     Date::try_from_fields(fields, options_constrain, Iso).unwrap(),
@@ -83,12 +83,12 @@ mod unstable {
         /// let options_default = DateFromFieldsOptions::default();
         /// assert!(Date::try_from_fields(fields, options_default, Iso).is_err());
         ///
-        /// let mut options_reject = options_default.clone();
+        /// let mut options_reject = options_default;
         /// options_reject.missing_fields_strategy =
         ///     Some(MissingFieldsStrategy::Reject);
         /// assert!(Date::try_from_fields(fields, options_reject, Iso).is_err());
         ///
-        /// let mut options_ecma = options_default.clone();
+        /// let mut options_ecma = options_default;
         /// options_ecma.missing_fields_strategy = Some(MissingFieldsStrategy::Ecma);
         /// assert_eq!(
         ///     Date::try_from_fields(fields, options_ecma, Iso).unwrap(),
@@ -143,11 +143,11 @@ mod unstable {
         ///     Date::try_new_iso(2025, 11, 30).unwrap()
         /// );
         ///
-        /// let mut options_reject = options_default.clone();
+        /// let mut options_reject = options_default;
         /// options_reject.overflow = Some(Overflow::Reject);
         /// assert!(d1.try_added_with_options(duration, options_reject).is_err());
         ///
-        /// let mut options_constrain = options_default.clone();
+        /// let mut options_constrain = options_default;
         /// options_constrain.overflow = Some(Overflow::Constrain);
         /// assert_eq!(
         ///     d1.try_added_with_options(duration, options_constrain)
@@ -194,14 +194,14 @@ mod unstable {
         ///     DateDuration::for_days(410)
         /// );
         ///
-        /// let mut options_days = options_default.clone();
+        /// let mut options_days = options_default;
         /// options_days.largest_unit = Some(DateDurationUnit::Days);
         /// assert_eq!(
         ///     d1.try_until_with_options(&d2, options_default).unwrap(),
         ///     DateDuration::for_days(410)
         /// );
         ///
-        /// let mut options_weeks = options_default.clone();
+        /// let mut options_weeks = options_default;
         /// options_weeks.largest_unit = Some(DateDurationUnit::Weeks);
         /// assert_eq!(
         ///     d1.try_until_with_options(&d2, options_weeks).unwrap(),
@@ -212,7 +212,7 @@ mod unstable {
         ///     }
         /// );
         ///
-        /// let mut options_months = options_default.clone();
+        /// let mut options_months = options_default;
         /// options_months.largest_unit = Some(DateDurationUnit::Months);
         /// assert_eq!(
         ///     d1.try_until_with_options(&d2, options_months).unwrap(),
@@ -223,7 +223,7 @@ mod unstable {
         ///     }
         /// );
         ///
-        /// let mut options_years = options_default.clone();
+        /// let mut options_years = options_default;
         /// options_years.largest_unit = Some(DateDurationUnit::Years);
         /// assert_eq!(
         ///     d1.try_until_with_options(&d2, options_years).unwrap(),

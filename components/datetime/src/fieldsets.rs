@@ -1752,7 +1752,7 @@ pub mod zone {
         /// For example, a raw [`UtcOffset`] cannot be used here.
         ///
         /// ```compile_fail,E0277
-        /// use icu::datetime::input::{DateTime, Iso};
+        /// use icu::datetime::input::DateTime;
         /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::Location;
         /// use icu::datetime::input::UtcOffset;
@@ -1787,7 +1787,7 @@ pub mod zone {
         /// For example, a raw [`UtcOffset`] cannot be used here.
         ///
         /// ```compile_fail,E0277
-        /// use icu::datetime::input::{DateTime, Iso};
+        /// use icu::datetime::input::DateTime;
         /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::ExemplarCity;
         /// use icu::datetime::input::UtcOffset;

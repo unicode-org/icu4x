@@ -337,9 +337,8 @@ impl From<LineBreakOptions<'_>> for ResolvedLineBreakOptions {
 ///
 /// let mandatory_breaks: Vec<usize> = segmenter
 ///     .segment_str(text)
-///     .into_iter()
 ///     .filter(|&i| {
-///         text[..i].chars().next_back().map_or(false, |c| {
+///         text[..i].chars().next_back().is_some_and(|c| {
 ///             matches!(
 ///                 CodePointMapData::<LineBreak>::new().get(c),
 ///                 LineBreak::MandatoryBreak
