@@ -124,6 +124,10 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 /// As floating point arithmetic degenerates for far-away dates, this falls back to
 /// the tabular calendar at some point.
 ///
+/// The precise behavior of this calendar may change in the future if:
+/// - We decide to tweak the precise astronomical simulation used
+/// - We decide to expand or reduce the range where we are using the astronomical simulation.
+///
 /// This corresponds to the `"islamic-rgsa"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier)
 /// if constructed with [`Hijri::new_simulated_mecca()`].
 #[derive(Copy, Clone, Debug)]
@@ -247,8 +251,10 @@ impl Rules for AstronomicalSimulation {
 /// [KACST](https://kacst.gov.sa/). Outside this range, this implementation falls back to
 /// [`TabularAlgorithm`] with [`TabularAlgorithmLeapYears::TypeII`] and [`TabularAlgorithmEpoch::Friday`].
 ///
-/// Future versions of this crate may extend the range that uses month length data from the
-/// calendar authority.
+/// The precise behavior of this calendar may change in the future if:
+/// - New ground truth is established by published government sources
+/// - We decide to use a different algorithm outside the KACST range
+/// - We decide to expand or reduce the range where we are correctly handling past dates.
 ///
 /// This corresponds to the `"islamic-umalqura"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
 #[derive(Copy, Clone, Debug, Default)]
