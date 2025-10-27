@@ -30,11 +30,10 @@ Current changelog is accurate up to bf12a54eb3
     - `icu_casemap`
         - General changes only
     - `icu_collator`
+        - Implement sort keys (unicode-org#6537, unicode-org#6708, unicode-org#6823)
         - Make merge separator compare less than U+0000 on the identical strength (unicode-org#6814)
-        - Fix several incorrect type inferences in sort key code (unicode-org#6708)
         - Add Latin1 comparisons to the collator (unicode-org#6674)
         - Minor collation key improvements (unicode-org#6656)
-        - Port BOCSU algorithm from ICU4C for identical level sort keys (unicode-org#6823)
         - Avoid double-validating `char`s (unicode-org#6924)
     - `icu_collections`
         - Fix building without the `alloc` crate (unicode-org#6997)
