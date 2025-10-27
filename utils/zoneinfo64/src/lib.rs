@@ -11,7 +11,7 @@
 //! let resb = resb::include_bytes_as_u32!("./data/zoneinfo64.res");
 //! // Then we parse the data
 //! let zoneinfo = ZoneInfo64::try_from_u32s(resb)
-//!            .expect("Error processing resource bundle file");
+//!     .expect("Error processing resource bundle file");
 //!
 //! let pacific = zoneinfo.get("America/Los_Angeles").unwrap();
 //! // Calculate the timezone offset for 2024-01-01
@@ -23,11 +23,20 @@
 //! // This is during a DST switchover and is ambiguous
 //! let possible = pacific.for_date_time(2025, 11, 2, 1, 0, 0);
 //! let offset_eight = UtcOffset::from_seconds(-8 * 3600);
-//! assert_eq!(possible, PossibleOffset::Ambiguous {
-//!     before: Offset { offset: offset_seven, rule_applies: true },
-//!     after: Offset { offset: offset_eight, rule_applies: false },
-//!     transition: 1762074000,
-//! });
+//! assert_eq!(
+//!     possible,
+//!     PossibleOffset::Ambiguous {
+//!         before: Offset {
+//!             offset: offset_seven,
+//!             rule_applies: true
+//!         },
+//!         after: Offset {
+//!             offset: offset_eight,
+//!             rule_applies: false
+//!         },
+//!         transition: 1762074000,
+//!     }
+//! );
 //! ```
 
 use std::fmt::Debug;

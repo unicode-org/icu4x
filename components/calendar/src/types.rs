@@ -76,9 +76,9 @@ mod unstable {
         /// Either `extended_year` or `era` + `era_year` can be used in DateFields:
         ///
         /// ```
-        /// use icu::calendar::Date;
         /// use icu::calendar::cal::Japanese;
         /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::Date;
         ///
         /// let mut fields1 = DateFields::default();
         /// fields1.era = Some(b"reiwa");
@@ -86,24 +86,18 @@ mod unstable {
         /// fields1.ordinal_month = Some(1);
         /// fields1.day = Some(1);
         ///
-        /// let date1 = Date::try_from_fields(
-        ///     fields1,
-        ///     Default::default(),
-        ///     Japanese::new()
-        /// )
-        /// .expect("a well-defined Japanese date from era year");
+        /// let date1 =
+        ///     Date::try_from_fields(fields1, Default::default(), Japanese::new())
+        ///         .expect("a well-defined Japanese date from era year");
         ///
         /// let mut fields2 = DateFields::default();
         /// fields2.extended_year = Some(2025);
         /// fields2.ordinal_month = Some(1);
         /// fields2.day = Some(1);
         ///
-        /// let date2 = Date::try_from_fields(
-        ///     fields2,
-        ///     Default::default(),
-        ///     Japanese::new()
-        /// )
-        /// .expect("a well-defined Japanese date from extended year");
+        /// let date2 =
+        ///     Date::try_from_fields(fields2, Default::default(), Japanese::new())
+        ///         .expect("a well-defined Japanese date from extended year");
         ///
         /// assert_eq!(date1, date2);
         ///
@@ -150,9 +144,9 @@ mod unstable {
         /// might not resolve to the same month number:
         ///
         /// ```
-        /// use icu::calendar::Date;
         /// use icu::calendar::cal::ChineseTraditional;
         /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::Date;
         ///
         /// // The 2023 Year of the Rabbit had a leap month after the 2nd month.
         /// let mut fields1 = DateFields::default();
@@ -163,7 +157,7 @@ mod unstable {
         /// let date1 = Date::try_from_fields(
         ///     fields1,
         ///     Default::default(),
-        ///     ChineseTraditional::new()
+        ///     ChineseTraditional::new(),
         /// )
         /// .expect("a well-defined Chinese date from month code");
         ///
@@ -175,7 +169,7 @@ mod unstable {
         /// let date2 = Date::try_from_fields(
         ///     fields2,
         ///     Default::default(),
-        ///     ChineseTraditional::new()
+        ///     ChineseTraditional::new(),
         /// )
         /// .expect("a well-defined Chinese date from ordinal month");
         ///

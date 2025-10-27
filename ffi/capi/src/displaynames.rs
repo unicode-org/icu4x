@@ -134,7 +134,6 @@ pub mod ffi {
         )]
 
         /// 🚧 This API is experimental and may experience breaking changes outside major releases.
-        ///
         // Experimental, do not generate in demo:
         #[diplomat::attr(demo_gen, disable)]
         pub fn of(&self, locale: &Locale, write: &mut DiplomatWrite) {

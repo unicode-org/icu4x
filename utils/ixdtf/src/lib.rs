@@ -20,8 +20,8 @@
 //!
 //! ```
 //! use ixdtf::{
-//!     records::{Sign, TimeZoneRecord},
 //!     parsers::IxdtfParser,
+//!     records::{Sign, TimeZoneRecord},
 //! };
 //!
 //! let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";

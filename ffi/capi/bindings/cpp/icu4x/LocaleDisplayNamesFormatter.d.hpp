@@ -62,7 +62,6 @@ public:
    * Returns the locale-specific display name of a locale.
    * 🚧 This API is experimental and may experience breaking changes outside major releases.
    *
-   *
    * See the [Rust documentation for `of`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
    */
   inline std::string of(const icu4x::Locale& locale) const;

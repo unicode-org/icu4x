@@ -1835,8 +1835,11 @@ impl CollatorBorrowed<'_> {
     /// # Example
     ///
     /// ```
+    /// use icu_collator::{
+    ///     options::{CollatorOptions, Strength},
+    ///     Collator,
+    /// };
     /// use icu_locale::locale;
-    /// use icu_collator::{Collator, options::{CollatorOptions, Strength}};
     /// let locale = locale!("utf").into();
     /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Primary);

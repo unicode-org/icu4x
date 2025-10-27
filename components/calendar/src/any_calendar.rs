@@ -246,8 +246,8 @@ pub enum AnyCalendarDifferenceError {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Date;
     /// use icu::calendar::cal::AnyCalendarDifferenceError;
+    /// use icu::calendar::Date;
     ///
     /// let d1 = Date::try_new_gregorian(2000, 1, 1).unwrap().to_any();
     /// let d2 = Date::try_new_persian(1562, 1, 1).unwrap().to_any();
@@ -261,7 +261,8 @@ pub enum AnyCalendarDifferenceError {
     /// // such as ISO.
     ///
     /// assert!(matches!(
-    ///     d1.to_iso().try_until_with_options(&d2.to_iso(), Default::default()),
+    ///     d1.to_iso()
+    ///         .try_until_with_options(&d2.to_iso(), Default::default()),
     ///     Ok(_)
     /// ));
     /// ```

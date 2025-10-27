@@ -34,10 +34,10 @@ mod unstable {
         /// # Examples
         ///
         /// ```
-        /// use icu::calendar::Date;
-        /// use icu::calendar::types::DateFields;
-        /// use icu::calendar::options::Overflow;
         /// use icu::calendar::options::DateFromFieldsOptions;
+        /// use icu::calendar::options::Overflow;
+        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::Date;
         /// use icu::calendar::Iso;
         ///
         /// // There is no day 31 in September.
@@ -69,10 +69,10 @@ mod unstable {
         /// # Examples
         ///
         /// ```
-        /// use icu::calendar::Date;
-        /// use icu::calendar::types::DateFields;
-        /// use icu::calendar::options::MissingFieldsStrategy;
         /// use icu::calendar::options::DateFromFieldsOptions;
+        /// use icu::calendar::options::MissingFieldsStrategy;
+        /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::Date;
         /// use icu::calendar::Iso;
         ///
         /// // These options are missing a year.
@@ -84,7 +84,8 @@ mod unstable {
         /// assert!(Date::try_from_fields(fields, options_default, Iso).is_err());
         ///
         /// let mut options_reject = options_default.clone();
-        /// options_reject.missing_fields_strategy = Some(MissingFieldsStrategy::Reject);
+        /// options_reject.missing_fields_strategy =
+        ///     Some(MissingFieldsStrategy::Reject);
         /// assert!(Date::try_from_fields(fields, options_reject, Iso).is_err());
         ///
         /// let mut options_ecma = options_default.clone();
@@ -126,10 +127,10 @@ mod unstable {
         /// # Examples
         ///
         /// ```
-        /// use icu::calendar::Date;
-        /// use icu::calendar::types::DateDuration;
         /// use icu::calendar::options::DateAddOptions;
         /// use icu::calendar::options::Overflow;
+        /// use icu::calendar::types::DateDuration;
+        /// use icu::calendar::Date;
         ///
         /// // There is a day 31 in October but not in November.
         /// let d1 = Date::try_new_iso(2025, 10, 31).unwrap();
@@ -137,7 +138,8 @@ mod unstable {
         ///
         /// let options_default = DateAddOptions::default();
         /// assert_eq!(
-        ///     d1.try_added_with_options(duration, options_default).unwrap(),
+        ///     d1.try_added_with_options(duration, options_default)
+        ///         .unwrap(),
         ///     Date::try_new_iso(2025, 11, 30).unwrap()
         /// );
         ///
@@ -148,7 +150,8 @@ mod unstable {
         /// let mut options_constrain = options_default.clone();
         /// options_constrain.overflow = Some(Overflow::Constrain);
         /// assert_eq!(
-        ///     d1.try_added_with_options(duration, options_constrain).unwrap(),
+        ///     d1.try_added_with_options(duration, options_constrain)
+        ///         .unwrap(),
         ///     Date::try_new_iso(2025, 11, 30).unwrap()
         /// );
         /// ```
@@ -177,10 +180,10 @@ mod unstable {
         /// # Examples
         ///
         /// ```
-        /// use icu::calendar::Date;
+        /// use icu::calendar::options::DateDifferenceOptions;
         /// use icu::calendar::types::DateDuration;
         /// use icu::calendar::types::DateDurationUnit;
-        /// use icu::calendar::options::DateDifferenceOptions;
+        /// use icu::calendar::Date;
         ///
         /// let d1 = Date::try_new_iso(2025, 3, 31).unwrap();
         /// let d2 = Date::try_new_iso(2026, 5, 15).unwrap();
@@ -267,12 +270,12 @@ mod unstable {
         /// # Examples
         ///
         /// ```
-        /// use icu::calendar::Date;
-        /// use icu::calendar::DateError;
         /// use icu::calendar::cal::Hebrew;
         /// use icu::calendar::options::DateFromFieldsOptions;
         /// use icu::calendar::options::Overflow;
         /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::Date;
+        /// use icu::calendar::DateError;
         ///
         /// let mut options = DateFromFieldsOptions::default();
         /// options.overflow = Some(Overflow::Constrain);
@@ -283,12 +286,7 @@ mod unstable {
         /// fields.month_code = Some(b"M05L");
         /// fields.day = Some(50);
         ///
-        /// let date = Date::try_from_fields(
-        ///     fields,
-        ///     options,
-        ///     Hebrew
-        /// )
-        /// .unwrap();
+        /// let date = Date::try_from_fields(fields, options, Hebrew).unwrap();
         ///
         /// // Constrained to the 30th day of M05L of year 5784
         /// assert_eq!(date.year().extended_year(), 5784);
@@ -298,12 +296,7 @@ mod unstable {
         /// // 5785, a common year, does not contain M05L.
         /// fields.extended_year = Some(5785);
         ///
-        /// let date = Date::try_from_fields(
-        ///     fields,
-        ///     options,
-        ///     Hebrew
-        /// )
-        /// .unwrap();
+        /// let date = Date::try_from_fields(fields, options, Hebrew).unwrap();
         ///
         /// // Constrained to the 29th day of M06 of year 5785
         /// assert_eq!(date.year().extended_year(), 5785);
@@ -316,12 +309,12 @@ mod unstable {
         /// # Examples
         ///
         /// ```
-        /// use icu::calendar::Date;
-        /// use icu::calendar::error::DateFromFieldsError;
         /// use icu::calendar::cal::Hebrew;
+        /// use icu::calendar::error::DateFromFieldsError;
         /// use icu::calendar::options::DateFromFieldsOptions;
         /// use icu::calendar::options::Overflow;
         /// use icu::calendar::types::DateFields;
+        /// use icu::calendar::Date;
         /// use tinystr::tinystr;
         ///
         /// let mut options = DateFromFieldsOptions::default();
@@ -333,31 +326,20 @@ mod unstable {
         /// fields.month_code = Some(b"M05L");
         /// fields.day = Some(50);
         ///
-        /// let err = Date::try_from_fields(
-        ///     fields,
-        ///     options,
-        ///     Hebrew
-        /// )
-        /// .expect_err("Day is out of bounds");
+        /// let err = Date::try_from_fields(fields, options, Hebrew)
+        ///     .expect_err("Day is out of bounds");
         /// assert!(matches!(err, DateFromFieldsError::Range { .. }));
         ///
         /// // Set the day to one that exists
         /// fields.day = Some(1);
-        /// Date::try_from_fields(
-        ///     fields,
-        ///     options,
-        ///     Hebrew
-        /// ).expect("A valid Hebrew date");
+        /// Date::try_from_fields(fields, options, Hebrew)
+        ///     .expect("A valid Hebrew date");
         ///
         /// // 5785, a common year, does not contain M05L.
         /// fields.extended_year = Some(5785);
         ///
-        /// let err = Date::try_from_fields(
-        ///     fields,
-        ///     options,
-        ///     Hebrew
-        /// )
-        /// .expect_err("Month is out of bounds");
+        /// let err = Date::try_from_fields(fields, options, Hebrew)
+        ///     .expect_err("Month is out of bounds");
         /// assert!(matches!(err, DateFromFieldsError::MonthCodeNotInYear));
         /// ```
         #[default]

@@ -28,7 +28,6 @@
 
 //! This crate contains the `extern "C"` FFI for ICU4X, as well as the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
 //! C, C++, Dart, JavaScript, and TypeScript bindings.
-//!
 #![allow(rustdoc::invalid_html_tags)]
 // attribute split over three lines because `cargo generate-readmes` does not evaluate `#![doc = ]` docs
 //! <p style='font-weight: bold; font-size: 24px;'> 🔗 See the <a target='_blank' href='https://icu4x.unicode.org/
@@ -46,7 +45,6 @@
 //! The <code>extern "C"</code> APIs exposed by this crate, while not directly documented, are stable within the same major
 //! semver version, as are the bindings in the <code>bindings</code> folder.
 //! </div>
-//!
 
 // Renamed so you can't accidentally use it
 #[cfg(target_arch = "wasm32")]

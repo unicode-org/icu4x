@@ -74,7 +74,10 @@ impl RataDie {
     /// ```
     /// use calendrical_calculations::julian::fixed_from_julian;
     ///
-    /// assert_eq!(fixed_from_julian(1930, 2, 2).since(fixed_from_julian(1930, 1, 1)), 32);
+    /// assert_eq!(
+    ///     fixed_from_julian(1930, 2, 2).since(fixed_from_julian(1930, 1, 1)),
+    ///     32
+    /// );
     /// ```
     pub const fn since(self, rhs: Self) -> i64 {
         self.0 - rhs.0
@@ -85,7 +88,10 @@ impl RataDie {
     /// ```
     /// use calendrical_calculations::julian::fixed_from_julian;
     ///
-    /// assert_eq!(fixed_from_julian(1930, 1, 1).until(fixed_from_julian(1930, 2, 2)), 32);
+    /// assert_eq!(
+    ///     fixed_from_julian(1930, 1, 1).until(fixed_from_julian(1930, 2, 2)),
+    ///     32
+    /// );
     /// ```
     pub const fn until(self, rhs: Self) -> i64 {
         rhs.0 - self.0

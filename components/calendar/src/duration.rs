@@ -16,11 +16,11 @@
 /// # Example
 ///
 /// ```rust
-/// use icu::calendar::types::Weekday;
 /// use icu::calendar::options::DateDifferenceOptions;
-/// use icu::calendar::Date;
 /// use icu::calendar::types::DateDuration;
 /// use icu::calendar::types::DateDurationUnit;
+/// use icu::calendar::types::Weekday;
+/// use icu::calendar::Date;
 ///
 /// // Creating ISO date: 1992-09-02.
 /// let mut date_iso = Date::try_new_iso(1992, 9, 2)
@@ -36,25 +36,35 @@
 /// assert_eq!(date_iso.days_in_month(), 30);
 ///
 /// // Advancing date in-place by 1 year, 2 months, 3 weeks, 4 days.
-/// date_iso.try_add_with_options(DateDuration {
-///     is_negative: false,
-///     years: 1,
-///     months: 2,
-///     weeks: 3,
-///     days: 4
-/// }, Default::default()).unwrap();
+/// date_iso
+///     .try_add_with_options(
+///         DateDuration {
+///             is_negative: false,
+///             years: 1,
+///             months: 2,
+///             weeks: 3,
+///             days: 4,
+///         },
+///         Default::default(),
+///     )
+///     .unwrap();
 /// assert_eq!(date_iso.era_year().year, 1993);
 /// assert_eq!(date_iso.month().ordinal, 11);
 /// assert_eq!(date_iso.day_of_month().0, 27);
 ///
 /// // Reverse date advancement.
-/// date_iso.try_add_with_options(DateDuration {
-///     is_negative: true,
-///     years: 1,
-///     months: 2,
-///     weeks: 3,
-///     days: 4
-/// }, Default::default()).unwrap();
+/// date_iso
+///     .try_add_with_options(
+///         DateDuration {
+///             is_negative: true,
+///             years: 1,
+///             months: 2,
+///             weeks: 3,
+///             days: 4,
+///         },
+///         Default::default(),
+///     )
+///     .unwrap();
 /// assert_eq!(date_iso.era_year().year, 1992);
 /// assert_eq!(date_iso.month().ordinal, 9);
 /// assert_eq!(date_iso.day_of_month().0, 2);
@@ -66,22 +76,25 @@
 /// // Comparing dates: 2022-01-30 and 1992-09-02.
 /// let mut options = DateDifferenceOptions::default();
 /// options.largest_unit = Some(DateDurationUnit::Years);
-/// let Ok(duration) = newer_date_iso.try_until_with_options(
-///     &date_iso,
-///     options,
-/// );
+/// let Ok(duration) =
+///     newer_date_iso.try_until_with_options(&date_iso, options);
 /// assert_eq!(duration.years, 30);
 /// assert_eq!(duration.months, 1);
 /// assert_eq!(duration.days, 28);
 ///
 /// // Create new date with date advancement. Reassign to new variable.
-/// let mutated_date_iso = date_iso.try_added_with_options(DateDuration {
-///     is_negative: false,
-///     years: 1,
-///     months: 2,
-///     weeks: 3,
-///     days: 4
-/// }, Default::default()).unwrap();
+/// let mutated_date_iso = date_iso
+///     .try_added_with_options(
+///         DateDuration {
+///             is_negative: false,
+///             years: 1,
+///             months: 2,
+///             weeks: 3,
+///             days: 4,
+///         },
+///         Default::default(),
+///     )
+///     .unwrap();
 /// assert_eq!(mutated_date_iso.era_year().year, 1993);
 /// assert_eq!(mutated_date_iso.month().ordinal, 11);
 /// assert_eq!(mutated_date_iso.day_of_month().0, 27);

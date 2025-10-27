@@ -1269,10 +1269,7 @@ where
     ///     y: Yoke<&'static [u8], Rc<[u8]>>,
     /// ) -> Result<Yoke<P<'static>, Rc<[u8]>>, Utf8Error> {
     ///     y.try_map_with_cart(move |bytes, cart| {
-    ///         Ok((
-    ///             str::from_utf8(bytes)?,
-    ///             bytes.first(),
-    ///         ))
+    ///         Ok((str::from_utf8(bytes)?, bytes.first()))
     ///     })
     /// }
     /// ```
@@ -1937,7 +1934,8 @@ const _: () = ();
 /// let cart: Rc<[u8]> = Rc::from(&*backing);
 ///
 /// let yoke: Yoke<&[u8], Rc<[u8]>> = Yoke::attach_to_cart(cart, |cart| &*cart);
-/// let yoke: Yoke<&[u8], Rc<[u8]>> = yoke.map_with_cart(|_, cart: &[u8]| &*cart);
+/// let yoke: Yoke<&[u8], Rc<[u8]>> =
+///     yoke.map_with_cart(|_, cart: &[u8]| &*cart);
 /// println!("{:?}", yoke.get());
 /// ```
 ///
@@ -1968,7 +1966,8 @@ const _: () = ();
 /// type Contra<'a> = fn(&'a ());
 ///
 /// let local = String::from("Hello World!");
-/// let yoke: Yoke<&'static str, Option<Rc<Contra<'_>>>> = Yoke::new_owned("hi");
+/// let yoke: Yoke<&'static str, Option<Rc<Contra<'_>>>> =
+///     Yoke::new_owned("hi");
 /// println!("{:?}", yoke.get());
 /// ```
 ///
@@ -2000,10 +1999,13 @@ const _: () = ();
 ///
 /// fn scope<'b>() {
 ///     let local = String::from("Hello World!");
-///     let yoke: Yoke<&'static str, Option<Rc<Contra<'b>>>> = Yoke::new_owned("hi");
-///     let yoke: Yoke<&'static str, Rc<Option<Rc<Contra<'b>>>>> = yoke.wrap_cart_in_rc();
+///     let yoke: Yoke<&'static str, Option<Rc<Contra<'b>>>> =
+///         Yoke::new_owned("hi");
+///     let yoke: Yoke<&'static str, Rc<Option<Rc<Contra<'b>>>>> =
+///         yoke.wrap_cart_in_rc();
 ///     let yoke: Yoke<&'static str, Rc<Option<Rc<Contra<'static>>>>> = yoke;
-///     let yoke: Yoke<&'static str, Rc<Option<Rc<Contra<'static>>>>> = yoke.map_with_cart(|yoke, _| yoke);
+///     let yoke: Yoke<&'static str, Rc<Option<Rc<Contra<'static>>>>> =
+///         yoke.map_with_cart(|yoke, _| yoke);
 ///     println!("{:?}", yoke.get());
 /// }
 /// ```
@@ -2022,29 +2024,23 @@ const _: () = ();
 /// fn foo_to_bar(
 ///     foo: Yoke<Foo<'static>, Rc<str>>,
 /// ) -> Yoke<Bar<'static>, Rc<str>> {
-///     foo.map_with_cart(|foo, cart| {
-///         (foo, cart.lines().next_back())
-///     })
+///     foo.map_with_cart(|foo, cart| (foo, cart.lines().next_back()))
 /// }
 ///
 /// fn foo_to_bar_cloned(
 ///     foo: &Yoke<Foo<'static>, Rc<str>>,
 /// ) -> Yoke<Bar<'static>, Rc<str>> {
-///     foo.map_with_cart_cloned(|foo, cart| {
-///         (*foo, cart.lines().next_back())
-///     })
+///     foo.map_with_cart_cloned(|foo, cart| (*foo, cart.lines().next_back()))
 /// }
 ///
 /// fn bar_to_foo(
 ///     bar: Yoke<Bar<'static>, Rc<str>>,
 /// ) -> Yoke<Foo<'static>, Rc<str>> {
-///     bar.map_project(|bar, _| {
-///         (bar.0)
-///     })
+///     bar.map_project(|bar, _| (bar.0))
 /// }
 ///
 /// fn main() {
-///     fn assert_hello_world(bar: &Yoke::<Bar<'static>, Rc<str>>) {
+///     fn assert_hello_world(bar: &Yoke<Bar<'static>, Rc<str>>) {
 ///         assert_eq!(bar.get().0, Some("hello"));
 ///         assert_eq!(bar.get().1, Some("world"));
 ///     }
