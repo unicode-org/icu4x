@@ -107,7 +107,7 @@ exclude = [
 ]
 
 [workspace.package]
-version = "2.0.0"
+version = "2.1.0"
 rust-version = "1.83"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
@@ -137,52 +137,52 @@ icu_provider = { version = "2.0.0", path = "provider/core", default-features = f
 icu_pattern = { version = "0.4.0", path = "components/pattern", default-features = false }
 
 # Components
-icu = { version = "~2.0.0", path = "components/icu", default-features = false }
-icu_calendar = { version = "~2.0.0", path = "components/calendar", default-features = false }
-icu_casemap = { version = "~2.0.0", path = "components/casemap", default-features = false }
-icu_collator = { version = "~2.1.0-dev", path = "components/collator", default-features = false }
-icu_collections = { version = "~2.0.0", path = "components/collections", default-features = false }
+icu = { version = "~2.1.0", path = "components/icu", default-features = false }
+icu_calendar = { version = "~2.1.0", path = "components/calendar", default-features = false }
+icu_casemap = { version = "~2.1.0", path = "components/casemap", default-features = false }
+icu_collator = { version = "~2.1.0", path = "components/collator", default-features = false }
+icu_collections = { version = "~2.1.0", path = "components/collections", default-features = false }
 icu_codepointtrie_builder = { version = "~0.5.0", path = "components/collections/codepointtrie_builder", default-features = false }
-icu_datetime = { version = "~2.0.0", path = "components/datetime", default-features = false }
-icu_decimal = { version = "~2.0.0", path = "components/decimal", default-features = false }
-icu_experimental = { version = "~0.4.0-dev.1", path = "components/experimental", default-features = false }
-icu_list = { version = "~2.0.0", path = "components/list", default-features = false }
-icu_locale = { version = "~2.0.0", path = "components/locale", default-features = false }
-icu_normalizer = { version = "~2.0.0", path = "components/normalizer", default-features = false }
-icu_plurals = { version = "~2.0.0", path = "components/plurals", default-features = false }
-icu_properties = { version = "~2.0.0", path = "components/properties", default-features = false }
-icu_segmenter = { version = "~2.0.0", path = "components/segmenter", default-features = false }
-icu_time = { version = "~2.0.0", path = "components/time", default-features = false }
+icu_datetime = { version = "~2.1.0", path = "components/datetime", default-features = false }
+icu_decimal = { version = "~2.1.0", path = "components/decimal", default-features = false }
+icu_experimental = { version = "~0.4.0", path = "components/experimental", default-features = false }
+icu_list = { version = "~2.1.0", path = "components/list", default-features = false }
+icu_locale = { version = "~2.1.0", path = "components/locale", default-features = false }
+icu_normalizer = { version = "~2.1.0", path = "components/normalizer", default-features = false }
+icu_plurals = { version = "~2.1.0", path = "components/plurals", default-features = false }
+icu_properties = { version = "~2.1.0", path = "components/properties", default-features = false }
+icu_segmenter = { version = "~2.1.0", path = "components/segmenter", default-features = false }
+icu_time = { version = "~2.1.0", path = "components/time", default-features = false }
 
 # FFI
-icu_capi = { version = "~2.0.0", path = "ffi/capi", default-features = false }
+icu_capi = { version = "~2.1.0", path = "ffi/capi", default-features = false }
 # icu4x_ecma402 never used as a dep
 # icu_freertos never used as a dep
 # icu_harfbuzz never used as a dep
 
 # Provider
-icu_provider_export = { version = "~2.0.0", path = "provider/export", default-features = false }
-icu_provider_source = { version = "~2.0.0", path = "provider/source", default-features = false }
-icu_provider_adapters = { version = "~2.0.0", path = "provider/adapters", default-features = false }
-icu_provider_baked = { version = "~2.0.0", path = "provider/baked", default-features = false }
-icu_provider_blob = { version = "~2.0.0", path = "provider/blob", default-features = false }
-icu_provider_fs = { version = "~2.0.0", path = "provider/fs", default-features = false }
-icu_provider_registry = { version = "~2.0.0", path = "provider/registry", default-features = false }
+icu_provider_export = { version = "~2.1.0", path = "provider/export", default-features = false }
+icu_provider_source = { version = "~2.1.0", path = "provider/source", default-features = false }
+icu_provider_adapters = { version = "~2.1.0", path = "provider/adapters", default-features = false }
+icu_provider_baked = { version = "~2.1.0", path = "provider/baked", default-features = false }
+icu_provider_blob = { version = "~2.1.0", path = "provider/blob", default-features = false }
+icu_provider_fs = { version = "~2.1.0", path = "provider/fs", default-features = false }
+icu_provider_registry = { version = "~2.1.0", path = "provider/registry", default-features = false }
 
 # Baked data
-icu_calendar_data = { version = "~2.0.0", path = "provider/data/calendar", default-features = false }
-icu_casemap_data = { version = "~2.0.0", path = "provider/data/casemap", default-features = false }
-icu_collator_data = { version = "~2.1.0-dev", path = "provider/data/collator", default-features = false }
-icu_datetime_data = { version = "~2.0.0", path = "provider/data/datetime", default-features = false }
-icu_decimal_data = { version = "~2.0.0", path = "provider/data/decimal", default-features = false }
-icu_list_data = { version = "~2.0.0", path = "provider/data/list", default-features = false }
-icu_locale_data = { version = "~2.0.0", path = "provider/data/locale", default-features = false }
-icu_normalizer_data = { version = "~2.0.0", path = "provider/data/normalizer", default-features = false }
-icu_plurals_data = { version = "~2.0.0", path = "provider/data/plurals", default-features = false }
-icu_properties_data = { version = "~2.0.0", path = "provider/data/properties", default-features = false }
-icu_segmenter_data = { version = "~2.0.0", path = "provider/data/segmenter", default-features = false }
-icu_time_data = { version = "~2.0.0", path = "provider/data/time", default-features = false }
-icu_experimental_data = { version = "~0.3.0", path = "provider/data/experimental", default-features = false }
+icu_calendar_data = { version = "~2.1.0", path = "provider/data/calendar", default-features = false }
+icu_casemap_data = { version = "~2.1.0", path = "provider/data/casemap", default-features = false }
+icu_collator_data = { version = "~2.1.0", path = "provider/data/collator", default-features = false }
+icu_datetime_data = { version = "~2.1.0", path = "provider/data/datetime", default-features = false }
+icu_decimal_data = { version = "~2.1.0", path = "provider/data/decimal", default-features = false }
+icu_list_data = { version = "~2.1.0", path = "provider/data/list", default-features = false }
+icu_locale_data = { version = "~2.1.0", path = "provider/data/locale", default-features = false }
+icu_normalizer_data = { version = "~2.1.0", path = "provider/data/normalizer", default-features = false }
+icu_plurals_data = { version = "~2.1.0", path = "provider/data/plurals", default-features = false }
+icu_properties_data = { version = "~2.1.0", path = "provider/data/properties", default-features = false }
+icu_segmenter_data = { version = "~2.1.0", path = "provider/data/segmenter", default-features = false }
+icu_time_data = { version = "~2.1.0", path = "provider/data/time", default-features = false }
+icu_experimental_data = { version = "~0.4.0", path = "provider/data/experimental", default-features = false }
 
 # Utils
 bies = { version = "0.2.2", path = "utils/bies", default-features = false }
