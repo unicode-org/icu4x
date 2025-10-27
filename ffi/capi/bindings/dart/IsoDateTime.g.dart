@@ -10,7 +10,7 @@ final class _IsoDateTimeFfi extends ffi.Struct {
 
 /// An ICU4X DateTime object capable of containing a ISO-8601 date and time.
 ///
-/// See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.0.0/icu/time/struct.DateTime.html) for more information.
+/// See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.1.0/icu/time/struct.DateTime.html) for more information.
 final class IsoDateTime {
   // ignore: public_member_api_docs
   final IsoDate date;
@@ -37,7 +37,7 @@ final class IsoDateTime {
 
   /// Creates a new [IsoDateTime] from an IXDTF string.
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.DateTime.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.0/icu/time/struct.DateTime.html#method.try_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
   factory IsoDateTime.fromString(String v) {

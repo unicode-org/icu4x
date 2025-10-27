@@ -37,11 +37,11 @@ namespace icu4x {
  *
  * For properties whose values fit into 8 bits.
  *
- * See the [Rust documentation for `properties`](https://docs.rs/icu/2.0.0/icu/properties/index.html) for more information.
+ * See the [Rust documentation for `properties`](https://docs.rs/icu/2.1.0/icu/properties/index.html) for more information.
  *
- * See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapData.html) for more information.
+ * See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/2.1.0/icu/properties/struct.CodePointMapData.html) for more information.
  *
- * See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
+ * See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/2.1.0/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
  */
 class CodePointMapData8 {
 public:
@@ -49,21 +49,21 @@ public:
   /**
    * Gets the value for a code point.
    *
-   * See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
+   * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
    */
   inline uint8_t operator[](char32_t cp) const;
 
   /**
    * Produces an iterator over ranges of code points that map to `value`
    *
-   * See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
+   * See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.1.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
    */
   inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_value(uint8_t value) const;
 
   /**
    * Produces an iterator over ranges of code points that do not map to `value`
    *
-   * See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
+   * See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.1.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
    */
   inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_value_complemented(uint8_t value) const;
 
@@ -77,182 +77,182 @@ public:
    * Should only be used on maps for properties with values less than 32 (like Generak_Category),
    * other maps will have unpredictable results
    *
-   * See the [Rust documentation for `iter_ranges_for_group`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group) for more information.
+   * See the [Rust documentation for `iter_ranges_for_group`](https://docs.rs/icu/2.1.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group) for more information.
    */
   inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_group(icu4x::GeneralCategoryGroup group) const;
 
   /**
    * Gets a {@link CodePointSetData} representing all entries in this map that map to the given value
    *
-   * See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
+   * See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.1.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
    */
   inline std::unique_ptr<icu4x::CodePointSetData> get_set_for_value(uint8_t value) const;
 
   /**
    * Create a map for the `General_Category` property, using compiled data.
    *
-   * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.GeneralCategory.html) for more information.
+   * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.0/icu/properties/props/enum.GeneralCategory.html) for more information.
    */
   inline static std::unique_ptr<icu4x::CodePointMapData8> create_general_category();
 
   /**
    * Create a map for the `General_Category` property, using a particular data source
    *
-   * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.GeneralCategory.html) for more information.
+   * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.0/icu/properties/props/enum.GeneralCategory.html) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_general_category_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `Bidi_Class` property, using compiled data.
    *
-   * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.BidiClass.html) for more information.
+   * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.BidiClass.html) for more information.
    */
   inline static std::unique_ptr<icu4x::CodePointMapData8> create_bidi_class();
 
   /**
    * Create a map for the `Bidi_Class` property, using a particular data source.
    *
-   * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.BidiClass.html) for more information.
+   * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.BidiClass.html) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_bidi_class_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `East_Asian_Width` property, using compiled data.
    *
-   * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.EastAsianWidth.html) for more information.
+   * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.EastAsianWidth.html) for more information.
    */
   inline static std::unique_ptr<icu4x::CodePointMapData8> create_east_asian_width();
 
   /**
    * Create a map for the `East_Asian_Width` property, using a particular data source.
    *
-   * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.EastAsianWidth.html) for more information.
+   * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.EastAsianWidth.html) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_east_asian_width_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `Hangul_Syllable_Type` property, using compiled data.
    *
-   * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
+   * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
    */
   inline static std::unique_ptr<icu4x::CodePointMapData8> create_hangul_syllable_type();
 
   /**
    * Create a map for the `Hangul_Syllable_Type` property, using a particular data source.
    *
-   * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
+   * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_hangul_syllable_type_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `Indic_Syllabic_Property` property, using compiled data.
    *
-   * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+   * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
    */
   inline static std::unique_ptr<icu4x::CodePointMapData8> create_indic_syllabic_category();
 
   /**
    * Create a map for the `Indic_Syllabic_Property` property, using a particular data source.
    *
-   * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+   * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_indic_syllabic_category_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `Line_Break` property, using compiled data.
    *
-   * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html) for more information.
+   * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.LineBreak.html) for more information.
    */
   inline static std::unique_ptr<icu4x::CodePointMapData8> create_line_break();
 
   /**
    * Create a map for the `Line_Break` property, using a particular data source.
    *
-   * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html) for more information.
+   * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.LineBreak.html) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_line_break_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `Grapheme_Cluster_Break` property, using compiled data.
    *
-   * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
+   * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
    */
   inline static std::unique_ptr<icu4x::CodePointMapData8> create_grapheme_cluster_break();
 
   /**
    * Create a map for the `Grapheme_Cluster_Break` property, using a particular data source.
    *
-   * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
+   * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_grapheme_cluster_break_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `Word_Break` property, using compiled data.
    *
-   * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html) for more information.
+   * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html) for more information.
    */
   inline static std::unique_ptr<icu4x::CodePointMapData8> create_word_break();
 
   /**
    * Create a map for the `Word_Break` property, using a particular data source.
    *
-   * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html) for more information.
+   * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_word_break_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `Sentence_Break` property, using compiled data.
    *
-   * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.SentenceBreak.html) for more information.
+   * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html) for more information.
    */
   inline static std::unique_ptr<icu4x::CodePointMapData8> create_sentence_break();
 
   /**
    * Create a map for the `Sentence_Break` property, using a particular data source.
    *
-   * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.SentenceBreak.html) for more information.
+   * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_sentence_break_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `Joining_Type` property, using compiled data.
    *
-   * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.JoiningType.html) for more information.
+   * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.JoiningType.html) for more information.
    */
   inline static std::unique_ptr<icu4x::CodePointMapData8> create_joining_type();
 
   /**
    * Create a map for the `Joining_Type` property, using a particular data source.
    *
-   * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.JoiningType.html) for more information.
+   * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.JoiningType.html) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_joining_type_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `Canonical_Combining_Class` property, using compiled data.
    *
-   * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
+   * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
    */
   inline static std::unique_ptr<icu4x::CodePointMapData8> create_canonical_combining_class();
 
   /**
    * Create a map for the `Canonical_Combining_Class` property, using a particular data source.
    *
-   * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
+   * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_canonical_combining_class_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Create a map for the `Vertical_Orientation` property, using compiled data.
    *
-   * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.VerticalOrientation.html) for more information.
+   * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.VerticalOrientation.html) for more information.
    */
   inline static std::unique_ptr<icu4x::CodePointMapData8> create_vertical_orientation();
 
   /**
    * Create a map for the `Vertical_Orientation` property, using a particular data source.
    *
-   * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.VerticalOrientation.html) for more information.
+   * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.VerticalOrientation.html) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_vertical_orientation_with_provider(const icu4x::DataProvider& provider);
 

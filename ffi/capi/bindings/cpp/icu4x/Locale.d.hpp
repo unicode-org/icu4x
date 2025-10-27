@@ -28,7 +28,7 @@ namespace icu4x {
 /**
  * An ICU4X Locale, capable of representing strings like `"en-US"`.
  *
- * See the [Rust documentation for `Locale`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html) for more information.
+ * See the [Rust documentation for `Locale`](https://docs.rs/icu/2.1.0/icu/locale/struct.Locale.html) for more information.
  */
 class Locale {
 public:
@@ -40,21 +40,21 @@ public:
    * performance are critical and the locale is of a known shape (such as
    * `aa-BB`) use `create_und`, `set_language`, `set_script`, and `set_region`.
    *
-   * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
+   * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::Locale>, icu4x::LocaleParseError> from_string(std::string_view name);
 
   /**
    * Construct a unknown {@link Locale} "und".
    *
-   * See the [Rust documentation for `UNKNOWN`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#associatedconstant.UNKNOWN) for more information.
+   * See the [Rust documentation for `UNKNOWN`](https://docs.rs/icu/2.1.0/icu/locale/struct.Locale.html#associatedconstant.UNKNOWN) for more information.
    */
   inline static std::unique_ptr<icu4x::Locale> unknown();
 
   /**
    * Clones the {@link Locale}.
    *
-   * See the [Rust documentation for `Locale`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html) for more information.
+   * See the [Rust documentation for `Locale`](https://docs.rs/icu/2.1.0/icu/locale/struct.Locale.html) for more information.
    */
   inline std::unique_ptr<icu4x::Locale> clone() const;
 
@@ -62,7 +62,7 @@ public:
    * Returns a string representation of the `LanguageIdentifier` part of
    * {@link Locale}.
    *
-   * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
+   * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.0/icu/locale/struct.Locale.html#structfield.id) for more information.
    */
   inline std::string basename() const;
   template<typename W>
@@ -71,7 +71,7 @@ public:
   /**
    * Returns a string representation of the unicode extension.
    *
-   * See the [Rust documentation for `extensions`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.extensions) for more information.
+   * See the [Rust documentation for `extensions`](https://docs.rs/icu/2.1.0/icu/locale/struct.Locale.html#structfield.extensions) for more information.
    */
   inline std::optional<std::string> get_unicode_extension(std::string_view s) const;
   template<typename W>
@@ -80,14 +80,14 @@ public:
   /**
    * Set a Unicode extension.
    *
-   * See the [Rust documentation for `extensions`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.extensions) for more information.
+   * See the [Rust documentation for `extensions`](https://docs.rs/icu/2.1.0/icu/locale/struct.Locale.html#structfield.extensions) for more information.
    */
   inline std::optional<std::monostate> set_unicode_extension(std::string_view k, std::string_view v);
 
   /**
    * Returns a string representation of {@link Locale} language.
    *
-   * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
+   * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.0/icu/locale/struct.Locale.html#structfield.id) for more information.
    */
   inline std::string language() const;
   template<typename W>
@@ -96,14 +96,14 @@ public:
   /**
    * Set the language part of the {@link Locale}.
    *
-   * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
+   * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
    */
   inline icu4x::diplomat::result<std::monostate, icu4x::LocaleParseError> set_language(std::string_view s);
 
   /**
    * Returns a string representation of {@link Locale} region.
    *
-   * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
+   * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.0/icu/locale/struct.Locale.html#structfield.id) for more information.
    */
   inline std::optional<std::string> region() const;
   template<typename W>
@@ -112,14 +112,14 @@ public:
   /**
    * Set the region part of the {@link Locale}.
    *
-   * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
+   * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
    */
   inline icu4x::diplomat::result<std::monostate, icu4x::LocaleParseError> set_region(std::string_view s);
 
   /**
    * Returns a string representation of {@link Locale} script.
    *
-   * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
+   * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.0/icu/locale/struct.Locale.html#structfield.id) for more information.
    */
   inline std::optional<std::string> script() const;
   template<typename W>
@@ -128,14 +128,14 @@ public:
   /**
    * Set the script part of the {@link Locale}. Pass an empty string to remove the script.
    *
-   * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
+   * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
    */
   inline icu4x::diplomat::result<std::monostate, icu4x::LocaleParseError> set_script(std::string_view s);
 
   /**
    * Normalizes a locale string.
    *
-   * See the [Rust documentation for `normalize`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.normalize) for more information.
+   * See the [Rust documentation for `normalize`](https://docs.rs/icu/2.1.0/icu/locale/struct.Locale.html#method.normalize) for more information.
    */
   inline static icu4x::diplomat::result<std::string, icu4x::LocaleParseError> normalize(std::string_view s);
   template<typename W>
@@ -144,24 +144,24 @@ public:
   /**
    * Returns a string representation of {@link Locale}.
    *
-   * See the [Rust documentation for `write_to`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.write_to) for more information.
+   * See the [Rust documentation for `write_to`](https://docs.rs/icu/2.1.0/icu/locale/struct.Locale.html#method.write_to) for more information.
    */
   inline std::string to_string() const;
   template<typename W>
   inline void to_string_write(W& writeable_output) const;
 
   /**
-   * See the [Rust documentation for `normalizing_eq`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.normalizing_eq) for more information.
+   * See the [Rust documentation for `normalizing_eq`](https://docs.rs/icu/2.1.0/icu/locale/struct.Locale.html#method.normalizing_eq) for more information.
    */
   inline bool normalizing_eq(std::string_view other) const;
 
   /**
-   * See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.strict_cmp) for more information.
+   * See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/2.1.0/icu/locale/struct.Locale.html#method.strict_cmp) for more information.
    */
   inline int8_t compare_to_string(std::string_view other) const;
 
   /**
-   * See the [Rust documentation for `total_cmp`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.total_cmp) for more information.
+   * See the [Rust documentation for `total_cmp`](https://docs.rs/icu/2.1.0/icu/locale/struct.Locale.html#method.total_cmp) for more information.
    */
   inline int8_t compare_to(const icu4x::Locale& other) const;
   inline bool operator==(const icu4x::Locale& other) const;

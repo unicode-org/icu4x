@@ -10,7 +10,7 @@ const Calendar_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 /**
- * See the [Rust documentation for `AnyCalendar`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendar.html) for more information.
+ * See the [Rust documentation for `AnyCalendar`](https://docs.rs/icu/2.1.0/icu/calendar/enum.AnyCalendar.html) for more information.
  */
 export class Calendar {
     // Internal ptr reference:
@@ -44,7 +44,7 @@ export class Calendar {
     /**
      * Creates a new {@link Calendar} for the specified kind, using compiled data.
      *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
      */
     #defaultConstructor(kind) {
 
@@ -61,7 +61,7 @@ export class Calendar {
     /**
      * Creates a new {@link Calendar} for the specified kind, using a particular data source.
      *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
      */
     static createWithProvider(provider, kind) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -85,7 +85,7 @@ export class Calendar {
     /**
      * Returns the kind of this calendar
      *
-     * See the [Rust documentation for `kind`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendar.html#method.kind) for more information.
+     * See the [Rust documentation for `kind`](https://docs.rs/icu/2.1.0/icu/calendar/enum.AnyCalendar.html#method.kind) for more information.
      */
     get kind() {
 
@@ -102,7 +102,7 @@ export class Calendar {
     /**
      * Creates a new {@link Calendar} for the specified kind, using compiled data.
      *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
      */
     constructor(kind) {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {

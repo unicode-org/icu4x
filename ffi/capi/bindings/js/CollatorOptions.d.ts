@@ -15,7 +15,7 @@ export type CollatorOptions_obj = {
 
 
 /**
- * See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/2.0.0/icu/collator/options/struct.CollatorOptions.html) for more information.
+ * See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/2.1.0/icu/collator/options/struct.CollatorOptions.html) for more information.
  */
 export class CollatorOptions {
     get strength(): CollatorStrength | null;

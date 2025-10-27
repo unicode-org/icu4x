@@ -7,7 +7,7 @@ part of 'lib.g.dart';
 ///
 /// Currently never returned by any API.
 ///
-/// Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/unchecked/enum.FormattedDateTimeUncheckedError.html)
+/// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/unchecked/enum.FormattedDateTimeUncheckedError.html)
 enum DateTimeWriteError {
 
   // ignore: public_member_api_docs

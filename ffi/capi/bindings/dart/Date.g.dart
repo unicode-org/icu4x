@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 
 /// An ICU4X Date object capable of containing a date for any calendar.
 ///
-/// See the [Rust documentation for `Date`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html) for more information.
+/// See the [Rust documentation for `Date`](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html) for more information.
 final class Date implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -29,7 +29,7 @@ final class Date implements ffi.Finalizable {
   /// Creates a new [Date] representing the ISO date
   /// given but in a given calendar
   ///
-  /// See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
+  /// See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
   ///
   /// Throws [CalendarError] on failure.
   factory Date.fromIsoInCalendar(int isoYear, int isoMonth, int isoDay, Calendar calendar) {
@@ -44,7 +44,7 @@ final class Date implements ffi.Finalizable {
   ///
   /// 🚧 This API is experimental and may experience breaking changes outside major releases.
   ///
-  /// See the [Rust documentation for `try_from_fields`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.try_from_fields) for more information.
+  /// See the [Rust documentation for `try_from_fields`](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html#method.try_from_fields) for more information.
   ///
   /// Throws [CalendarDateFromFieldsError] on failure.
   factory Date.fromFieldsInCalendar(DateFields fields, DateFromFieldsOptions options, Calendar calendar) {
@@ -60,7 +60,7 @@ final class Date implements ffi.Finalizable {
   ///
   /// An empty era code will treat the year as an extended year
   ///
-  /// See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.try_new_from_codes) for more information.
+  /// See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html#method.try_new_from_codes) for more information.
   ///
   /// Throws [CalendarError] on failure.
   factory Date.fromCodesInCalendar(String eraCode, int year, String monthCode, int day, Calendar calendar) {
@@ -74,7 +74,7 @@ final class Date implements ffi.Finalizable {
 
   /// Creates a new [Date] from the given Rata Die
   ///
-  /// See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
+  /// See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
   ///
   /// Throws [CalendarError] on failure.
   factory Date.fromRataDie(int rd, Calendar calendar) {
@@ -87,7 +87,7 @@ final class Date implements ffi.Finalizable {
 
   /// Creates a new [Date] from an IXDTF string.
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html#method.try_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
   factory Date.fromString(String v, Calendar calendar) {
@@ -101,7 +101,7 @@ final class Date implements ffi.Finalizable {
 
   /// Convert this date to one in a different calendar
   ///
-  /// See the [Rust documentation for `to_calendar`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.to_calendar) for more information.
+  /// See the [Rust documentation for `to_calendar`](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html#method.to_calendar) for more information.
   Date toCalendar(Calendar calendar) {
     final result = _icu4x_Date_to_calendar_mv1(_ffi, calendar._ffi);
     return Date._fromFfi(result, []);
@@ -109,7 +109,7 @@ final class Date implements ffi.Finalizable {
 
   /// Converts this date to ISO
   ///
-  /// See the [Rust documentation for `to_iso`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.to_iso) for more information.
+  /// See the [Rust documentation for `to_iso`](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html#method.to_iso) for more information.
   IsoDate toIso() {
     final result = _icu4x_Date_to_iso_mv1(_ffi);
     return IsoDate._fromFfi(result, []);
@@ -117,7 +117,7 @@ final class Date implements ffi.Finalizable {
 
   /// Returns this date's Rata Die
   ///
-  /// See the [Rust documentation for `to_rata_die`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.to_rata_die) for more information.
+  /// See the [Rust documentation for `to_rata_die`](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html#method.to_rata_die) for more information.
   int get rataDie {
     final result = _icu4x_Date_to_rata_die_mv1(_ffi);
     return result;
@@ -125,7 +125,7 @@ final class Date implements ffi.Finalizable {
 
   /// Returns the 1-indexed day in the year for this date
   ///
-  /// See the [Rust documentation for `day_of_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.day_of_year) for more information.
+  /// See the [Rust documentation for `day_of_year`](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html#method.day_of_year) for more information.
   int get dayOfYear {
     final result = _icu4x_Date_day_of_year_mv1(_ffi);
     return result;
@@ -133,7 +133,7 @@ final class Date implements ffi.Finalizable {
 
   /// Returns the 1-indexed day in the month for this date
   ///
-  /// See the [Rust documentation for `day_of_month`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.day_of_month) for more information.
+  /// See the [Rust documentation for `day_of_month`](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html#method.day_of_month) for more information.
   int get dayOfMonth {
     final result = _icu4x_Date_day_of_month_mv1(_ffi);
     return result;
@@ -141,7 +141,7 @@ final class Date implements ffi.Finalizable {
 
   /// Returns the day in the week for this day
   ///
-  /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.day_of_week) for more information.
+  /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html#method.day_of_week) for more information.
   Weekday get dayOfWeek {
     final result = _icu4x_Date_day_of_week_mv1(_ffi);
     return Weekday.values.firstWhere((v) => v._ffi == result);
@@ -153,9 +153,9 @@ final class Date implements ffi.Finalizable {
   /// having the same ordinal month across years; use month_code if you care
   /// about month identity.
   ///
-  /// See the [Rust documentation for `month`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.month) for more information.
+  /// See the [Rust documentation for `month`](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html#method.month) for more information.
   ///
-  /// See the [Rust documentation for `ordinal`](https://docs.rs/icu/2.0.0/icu/calendar/types/struct.MonthInfo.html#structfield.ordinal) for more information.
+  /// See the [Rust documentation for `ordinal`](https://docs.rs/icu/2.1.0/icu/calendar/types/struct.MonthInfo.html#structfield.ordinal) for more information.
   int get ordinalMonth {
     final result = _icu4x_Date_ordinal_month_mv1(_ffi);
     return result;
@@ -164,9 +164,9 @@ final class Date implements ffi.Finalizable {
   /// Returns the month code for this date. Typically something
   /// like "M01", "M02", but can be more complicated for lunar calendars.
   ///
-  /// See the [Rust documentation for `standard_code`](https://docs.rs/icu/2.0.0/icu/calendar/types/struct.MonthInfo.html#structfield.standard_code) for more information.
+  /// See the [Rust documentation for `standard_code`](https://docs.rs/icu/2.1.0/icu/calendar/types/struct.MonthInfo.html#structfield.standard_code) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.month)
+  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html#method.month)
   String get monthCode {
     final write = _Write();
     _icu4x_Date_month_code_mv1(_ffi, write._ffi);
@@ -175,7 +175,7 @@ final class Date implements ffi.Finalizable {
 
   /// Returns the month number of this month.
   ///
-  /// See the [Rust documentation for `month_number`](https://docs.rs/icu/2.0.0/icu/calendar/types/struct.MonthInfo.html#method.month_number) for more information.
+  /// See the [Rust documentation for `month_number`](https://docs.rs/icu/2.1.0/icu/calendar/types/struct.MonthInfo.html#method.month_number) for more information.
   int get monthNumber {
     final result = _icu4x_Date_month_number_mv1(_ffi);
     return result;
@@ -183,7 +183,7 @@ final class Date implements ffi.Finalizable {
 
   /// Returns whether the month is a leap month.
   ///
-  /// See the [Rust documentation for `is_leap`](https://docs.rs/icu/2.0.0/icu/calendar/types/struct.MonthInfo.html#method.is_leap) for more information.
+  /// See the [Rust documentation for `is_leap`](https://docs.rs/icu/2.1.0/icu/calendar/types/struct.MonthInfo.html#method.is_leap) for more information.
   bool get monthIsLeap {
     final result = _icu4x_Date_month_is_leap_mv1(_ffi);
     return result;
@@ -193,9 +193,9 @@ final class Date implements ffi.Finalizable {
   ///
   /// For calendars without an era, returns the related ISO year.
   ///
-  /// See the [Rust documentation for `era_year_or_related_iso`](https://docs.rs/icu/2.0.0/icu/calendar/types/enum.YearInfo.html#method.era_year_or_related_iso) for more information.
+  /// See the [Rust documentation for `era_year_or_related_iso`](https://docs.rs/icu/2.1.0/icu/calendar/types/enum.YearInfo.html#method.era_year_or_related_iso) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/calendar/types/struct.EraYear.html#structfield.year), [2](https://docs.rs/icu/2.0.0/icu/calendar/types/struct.CyclicYear.html#structfield.related_iso), [3](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.year)
+  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/calendar/types/struct.EraYear.html#structfield.year), [2](https://docs.rs/icu/2.1.0/icu/calendar/types/struct.CyclicYear.html#structfield.related_iso), [3](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html#method.year)
   int get eraYearOrRelatedIso {
     final result = _icu4x_Date_era_year_or_related_iso_mv1(_ffi);
     return result;
@@ -207,7 +207,7 @@ final class Date implements ffi.Finalizable {
   /// of the year, and can be meaningfully compared with extended years from other
   /// eras or used in arithmetic.
   ///
-  /// See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.extended_year) for more information.
+  /// See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html#method.extended_year) for more information.
   int get extendedYear {
     final result = _icu4x_Date_extended_year_mv1(_ffi);
     return result;
@@ -215,9 +215,9 @@ final class Date implements ffi.Finalizable {
 
   /// Returns the era for this date, or an empty string
   ///
-  /// See the [Rust documentation for `era`](https://docs.rs/icu/2.0.0/icu/calendar/types/struct.EraYear.html#structfield.era) for more information.
+  /// See the [Rust documentation for `era`](https://docs.rs/icu/2.1.0/icu/calendar/types/struct.EraYear.html#structfield.era) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.year)
+  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html#method.year)
   String get era {
     final write = _Write();
     _icu4x_Date_era_mv1(_ffi, write._ffi);
@@ -226,7 +226,7 @@ final class Date implements ffi.Finalizable {
 
   /// Returns the number of months in the year represented by this date
   ///
-  /// See the [Rust documentation for `months_in_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.months_in_year) for more information.
+  /// See the [Rust documentation for `months_in_year`](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html#method.months_in_year) for more information.
   int get monthsInYear {
     final result = _icu4x_Date_months_in_year_mv1(_ffi);
     return result;
@@ -234,7 +234,7 @@ final class Date implements ffi.Finalizable {
 
   /// Returns the number of days in the month represented by this date
   ///
-  /// See the [Rust documentation for `days_in_month`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.days_in_month) for more information.
+  /// See the [Rust documentation for `days_in_month`](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html#method.days_in_month) for more information.
   int get daysInMonth {
     final result = _icu4x_Date_days_in_month_mv1(_ffi);
     return result;
@@ -242,7 +242,7 @@ final class Date implements ffi.Finalizable {
 
   /// Returns the number of days in the year represented by this date
   ///
-  /// See the [Rust documentation for `days_in_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.days_in_year) for more information.
+  /// See the [Rust documentation for `days_in_year`](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html#method.days_in_year) for more information.
   int get daysInYear {
     final result = _icu4x_Date_days_in_year_mv1(_ffi);
     return result;
@@ -250,7 +250,7 @@ final class Date implements ffi.Finalizable {
 
   /// Returns the [Calendar] object backing this date
   ///
-  /// See the [Rust documentation for `calendar`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.calendar) for more information.
+  /// See the [Rust documentation for `calendar`](https://docs.rs/icu/2.1.0/icu/calendar/struct.Date.html#method.calendar) for more information.
   Calendar get calendar {
     final result = _icu4x_Date_calendar_mv1(_ffi);
     return Calendar._fromFfi(result, []);

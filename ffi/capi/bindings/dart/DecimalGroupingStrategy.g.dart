@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `GroupingStrategy`](https://docs.rs/icu/2.0.0/icu/decimal/options/enum.GroupingStrategy.html) for more information.
+/// See the [Rust documentation for `GroupingStrategy`](https://docs.rs/icu/2.1.0/icu/decimal/options/enum.GroupingStrategy.html) for more information.
 enum DecimalGroupingStrategy {
 
   // ignore: public_member_api_docs

@@ -24,13 +24,13 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `TimeZoneAndCanonicalIter`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html) for more information.
+ * See the [Rust documentation for `TimeZoneAndCanonicalIter`](https://docs.rs/icu/2.1.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html) for more information.
  */
 class TimeZoneAndCanonicalIterator {
 public:
 
   /**
-   * See the [Rust documentation for `next`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html#method.next) for more information.
+   * See the [Rust documentation for `next`](https://docs.rs/icu/2.1.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalIter.html#method.next) for more information.
    */
   inline std::optional<icu4x::TimeZoneAndCanonical> next();
 

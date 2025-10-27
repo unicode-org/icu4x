@@ -197,7 +197,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `Script`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html) for more information.
+ * See the [Rust documentation for `Script`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html) for more information.
  */
 class Script {
 public:
@@ -383,35 +383,35 @@ public:
     explicit operator bool() const = delete;
 
   /**
-   * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+   * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
    */
   inline static icu4x::Script for_char(char32_t ch);
 
   /**
    * Get the "long" name of this property value (returns empty if property value is unknown)
    *
-   * See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+   * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
    */
   inline std::optional<std::string_view> long_name() const;
 
   /**
    * Get the "short" name of this property value (returns empty if property value is unknown)
    *
-   * See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+   * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
    */
   inline std::optional<std::string_view> short_name() const;
 
   /**
    * Convert to an integer value usable with ICU4C and CodePointMapData
    *
-   * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#method.to_icu4c_value) for more information.
+   * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#method.to_icu4c_value) for more information.
    */
   inline uint16_t to_integer_value() const;
 
   /**
    * Convert from an integer value from ICU4C or CodePointMapData
    *
-   * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#method.from_icu4c_value) for more information.
+   * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#method.from_icu4c_value) for more information.
    */
   inline static std::optional<icu4x::Script> from_integer_value(uint16_t other);
 

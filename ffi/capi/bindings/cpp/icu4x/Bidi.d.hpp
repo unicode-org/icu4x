@@ -34,7 +34,7 @@ namespace icu4x {
 /**
  * An ICU4X Bidi object, containing loaded bidi data
  *
- * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.BidiClass.html) for more information.
+ * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.BidiClass.html) for more information.
  */
 class Bidi {
 public:

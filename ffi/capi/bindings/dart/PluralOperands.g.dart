@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/2.0.0/icu/plurals/struct.PluralOperands.html) for more information.
+/// See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/2.1.0/icu/plurals/struct.PluralOperands.html) for more information.
 final class PluralOperands implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -26,7 +26,7 @@ final class PluralOperands implements ffi.Finalizable {
 
   /// Construct for a given string representing a number
   ///
-  /// See the [Rust documentation for `from_str`](https://docs.rs/icu/2.0.0/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
+  /// See the [Rust documentation for `from_str`](https://docs.rs/icu/2.1.0/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
   ///
   /// Throws [DecimalParseError] on failure.
   factory PluralOperands.fromString(String s) {

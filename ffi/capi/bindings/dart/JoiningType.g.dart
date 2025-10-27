@@ -3,28 +3,28 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.JoiningType.html) for more information.
+/// See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.JoiningType.html) for more information.
 enum JoiningType {
-  /// See the [Rust documentation for `NonJoining`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.JoiningType.html#associatedconstant.NonJoining) for more information.
+  /// See the [Rust documentation for `NonJoining`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.JoiningType.html#associatedconstant.NonJoining) for more information.
   // ignore: public_member_api_docs
   nonJoining,
-  /// See the [Rust documentation for `JoinCausing`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.JoiningType.html#associatedconstant.JoinCausing) for more information.
+  /// See the [Rust documentation for `JoinCausing`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.JoiningType.html#associatedconstant.JoinCausing) for more information.
   // ignore: public_member_api_docs
   joinCausing,
-  /// See the [Rust documentation for `DualJoining`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.JoiningType.html#associatedconstant.DualJoining) for more information.
+  /// See the [Rust documentation for `DualJoining`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.JoiningType.html#associatedconstant.DualJoining) for more information.
   // ignore: public_member_api_docs
   dualJoining,
-  /// See the [Rust documentation for `LeftJoining`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.JoiningType.html#associatedconstant.LeftJoining) for more information.
+  /// See the [Rust documentation for `LeftJoining`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.JoiningType.html#associatedconstant.LeftJoining) for more information.
   // ignore: public_member_api_docs
   leftJoining,
-  /// See the [Rust documentation for `RightJoining`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.JoiningType.html#associatedconstant.RightJoining) for more information.
+  /// See the [Rust documentation for `RightJoining`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.JoiningType.html#associatedconstant.RightJoining) for more information.
   // ignore: public_member_api_docs
   rightJoining,
-  /// See the [Rust documentation for `Transparent`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.JoiningType.html#associatedconstant.Transparent) for more information.
+  /// See the [Rust documentation for `Transparent`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.JoiningType.html#associatedconstant.Transparent) for more information.
   // ignore: public_member_api_docs
   transparent;
 
-  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static JoiningType forChar(Rune ch) {
     final result = _icu4x_JoiningType_for_char_mv1(ch);
     return JoiningType.values[result];
@@ -32,7 +32,7 @@ enum JoiningType {
 
   /// Get the "long" name of this property value (returns empty if property value is unknown)
   ///
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
   String? longName() {
     final result = _icu4x_JoiningType_long_name_mv1(index);
     if (!result.isOk) {
@@ -43,7 +43,7 @@ enum JoiningType {
 
   /// Get the "short" name of this property value (returns empty if property value is unknown)
   ///
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
   String? shortName() {
     final result = _icu4x_JoiningType_short_name_mv1(index);
     if (!result.isOk) {
@@ -54,7 +54,7 @@ enum JoiningType {
 
   /// Convert to an integer value usable with ICU4C and CodePointMapData
   ///
-  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.JoiningType.html#method.to_icu4c_value) for more information.
+  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.JoiningType.html#method.to_icu4c_value) for more information.
   int toIntegerValue() {
     final result = _icu4x_JoiningType_to_integer_value_mv1(index);
     return result;
@@ -62,7 +62,7 @@ enum JoiningType {
 
   /// Convert from an integer value from ICU4C or CodePointMapData
   ///
-  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.JoiningType.html#method.from_icu4c_value) for more information.
+  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.JoiningType.html#method.from_icu4c_value) for more information.
   static JoiningType? fromIntegerValue(int other) {
     final result = _icu4x_JoiningType_from_integer_value_mv1(other);
     if (!result.isOk) {

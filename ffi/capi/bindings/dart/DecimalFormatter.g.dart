@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 
 /// An ICU4X Decimal Format object, capable of formatting a [Decimal] as a string.
 ///
-/// See the [Rust documentation for `DecimalFormatter`](https://docs.rs/icu/2.0.0/icu/decimal/struct.DecimalFormatter.html) for more information.
+/// See the [Rust documentation for `DecimalFormatter`](https://docs.rs/icu/2.1.0/icu/decimal/struct.DecimalFormatter.html) for more information.
 final class DecimalFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -28,7 +28,7 @@ final class DecimalFormatter implements ffi.Finalizable {
 
   /// Creates a new [DecimalFormatter], using compiled data
   ///
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory DecimalFormatter.withGroupingStrategy(Locale locale, [DecimalGroupingStrategy? groupingStrategy]) {
@@ -41,7 +41,7 @@ final class DecimalFormatter implements ffi.Finalizable {
 
   /// Creates a new [DecimalFormatter], using a particular data source.
   ///
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory DecimalFormatter.withGroupingStrategyAndProvider(DataProvider provider, Locale locale, [DecimalGroupingStrategy? groupingStrategy]) {
@@ -54,7 +54,7 @@ final class DecimalFormatter implements ffi.Finalizable {
 
   /// Creates a new [DecimalFormatter] from preconstructed locale data.
   ///
-  /// See the [Rust documentation for `DecimalSymbolsV1`](https://docs.rs/icu/2.0.0/icu/decimal/provider/struct.DecimalSymbolsV1.html) for more information.
+  /// See the [Rust documentation for `DecimalSymbolsV1`](https://docs.rs/icu/2.1.0/icu/decimal/provider/struct.DecimalSymbolsV1.html) for more information.
   ///
   /// Throws [DataError] on failure.
   static DecimalFormatter createWithManualData(String plusSignPrefix, String plusSignSuffix, String minusSignPrefix, String minusSignSuffix, String decimalSeparator, String groupingSeparator, int primaryGroupSize, int secondaryGroupSize, int minGroupSize, core.List<Rune> digits, [DecimalGroupingStrategy? groupingStrategy]) {
@@ -68,7 +68,7 @@ final class DecimalFormatter implements ffi.Finalizable {
 
   /// Formats a [Decimal] to a string.
   ///
-  /// See the [Rust documentation for `format`](https://docs.rs/icu/2.0.0/icu/decimal/struct.DecimalFormatter.html#method.format) for more information.
+  /// See the [Rust documentation for `format`](https://docs.rs/icu/2.1.0/icu/decimal/struct.DecimalFormatter.html#method.format) for more information.
   String format(Decimal value) {
     final write = _Write();
     _icu4x_DecimalFormatter_format_mv1(_ffi, value._ffi, write._ffi);

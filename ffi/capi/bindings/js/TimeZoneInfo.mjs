@@ -14,7 +14,7 @@ const TimeZoneInfo_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 /**
- * See the [Rust documentation for `TimeZoneInfo`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html) for more information.
+ * See the [Rust documentation for `TimeZoneInfo`](https://docs.rs/icu/2.1.0/icu/time/struct.TimeZoneInfo.html) for more information.
  */
 export class TimeZoneInfo {
     // Internal ptr reference:
@@ -48,7 +48,7 @@ export class TimeZoneInfo {
     /**
      * Creates a time zone for UTC (Coordinated Universal Time).
      *
-     * See the [Rust documentation for `utc`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.utc) for more information.
+     * See the [Rust documentation for `utc`](https://docs.rs/icu/2.1.0/icu/time/struct.TimeZoneInfo.html#method.utc) for more information.
      */
     static utc() {
 
@@ -84,7 +84,7 @@ export class TimeZoneInfo {
     }
 
     /**
-     * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.id) for more information.
+     * See the [Rust documentation for `id`](https://docs.rs/icu/2.1.0/icu/time/struct.TimeZoneInfo.html#method.id) for more information.
      */
     get id() {
 
@@ -109,9 +109,9 @@ export class TimeZoneInfo {
      * - The constraints are the same as with `ZoneNameTimestamp` in Rust.
      * - Set to year 1000 or 9999 for a reference far in the past or future.
      *
-     * See the [Rust documentation for `at_date_time_iso`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.at_date_time_iso) for more information.
+     * See the [Rust documentation for `at_date_time_iso`](https://docs.rs/icu/2.1.0/icu/time/struct.TimeZoneInfo.html#method.at_date_time_iso) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.ZoneNameTimestamp.html)
+     * Additional information: [1](https://docs.rs/icu/2.1.0/icu/time/zone/struct.ZoneNameTimestamp.html)
      */
     atDateTimeIso(date, time) {
 
@@ -134,9 +134,9 @@ export class TimeZoneInfo {
      * - If not set, the formatting datetime is used if possible.
      * - The constraints are the same as with `ZoneNameTimestamp` in Rust.
      *
-     * See the [Rust documentation for `with_zone_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_zone_name_timestamp) for more information.
+     * See the [Rust documentation for `with_zone_name_timestamp`](https://docs.rs/icu/2.1.0/icu/time/struct.TimeZoneInfo.html#method.with_zone_name_timestamp) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.ZoneNameTimestamp.html#method.from_zoned_date_time_iso), [2](https://docs.rs/icu/2.0.0/icu/time/zone/struct.ZoneNameTimestamp.html)
+     * Additional information: [1](https://docs.rs/icu/2.1.0/icu/time/zone/struct.ZoneNameTimestamp.html#method.from_zoned_date_time_iso), [2](https://docs.rs/icu/2.1.0/icu/time/zone/struct.ZoneNameTimestamp.html)
      */
     atTimestamp(timestamp) {
 
@@ -153,7 +153,7 @@ export class TimeZoneInfo {
     /**
      * Returns the DateTime for the UTC zone name reference time
      *
-     * See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
+     * See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/2.1.0/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
      */
     get zoneNameDateTime() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
@@ -174,7 +174,7 @@ export class TimeZoneInfo {
     }
 
     /**
-     * See the [Rust documentation for `with_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
+     * See the [Rust documentation for `with_variant`](https://docs.rs/icu/2.1.0/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
      *
      * @deprecated returns unmodified copy
      */
@@ -191,7 +191,7 @@ export class TimeZoneInfo {
     }
 
     /**
-     * See the [Rust documentation for `offset`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.offset) for more information.
+     * See the [Rust documentation for `offset`](https://docs.rs/icu/2.1.0/icu/time/struct.TimeZoneInfo.html#method.offset) for more information.
      */
     get offset() {
 
@@ -206,9 +206,9 @@ export class TimeZoneInfo {
     }
 
     /**
-     * See the [Rust documentation for `infer_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.infer_variant) for more information.
+     * See the [Rust documentation for `infer_variant`](https://docs.rs/icu/2.1.0/icu/time/struct.TimeZoneInfo.html#method.infer_variant) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/enum.TimeZoneVariant.html)
+     * Additional information: [1](https://docs.rs/icu/2.1.0/icu/time/zone/enum.TimeZoneVariant.html)
      *
      * @deprecated does nothing
      */
@@ -225,7 +225,7 @@ export class TimeZoneInfo {
     }
 
     /**
-     * See the [Rust documentation for `variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.variant) for more information.
+     * See the [Rust documentation for `variant`](https://docs.rs/icu/2.1.0/icu/time/struct.TimeZoneInfo.html#method.variant) for more information.
      *
      * @deprecated always returns null
      */

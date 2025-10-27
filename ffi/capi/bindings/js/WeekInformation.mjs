@@ -14,7 +14,7 @@ const WeekInformation_box_destroy_registry = new FinalizationRegistry((ptr) => {
 /**
  * A Week calculator, useful to be passed in to `week_of_year()` on Date and DateTime types
  *
- * See the [Rust documentation for `WeekInformation`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html) for more information.
+ * See the [Rust documentation for `WeekInformation`](https://docs.rs/icu/2.1.0/icu/calendar/week/struct.WeekInformation.html) for more information.
  */
 export class WeekInformation {
     // Internal ptr reference:
@@ -48,7 +48,7 @@ export class WeekInformation {
     /**
      * Creates a new {@link WeekInformation} from locale data using compiled data.
      *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
      */
     #defaultConstructor(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -72,7 +72,7 @@ export class WeekInformation {
     /**
      * Creates a new {@link WeekInformation} from locale data using a particular data source.
      *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
      */
     static createWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -96,7 +96,7 @@ export class WeekInformation {
     /**
      * Returns the weekday that starts the week for this object's locale
      *
-     * See the [Rust documentation for `first_weekday`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#structfield.first_weekday) for more information.
+     * See the [Rust documentation for `first_weekday`](https://docs.rs/icu/2.1.0/icu/calendar/week/struct.WeekInformation.html#structfield.first_weekday) for more information.
      */
     get firstWeekday() {
 
@@ -111,9 +111,9 @@ export class WeekInformation {
     }
 
     /**
-     * See the [Rust documentation for `weekend`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#structfield.weekend) for more information.
+     * See the [Rust documentation for `weekend`](https://docs.rs/icu/2.1.0/icu/calendar/week/struct.WeekInformation.html#structfield.weekend) for more information.
      *
-     * See the [Rust documentation for `contains`](https://docs.rs/icu/2.0.0/icu/calendar/provider/struct.WeekdaySet.html#method.contains) for more information.
+     * See the [Rust documentation for `contains`](https://docs.rs/icu/2.1.0/icu/calendar/provider/struct.WeekdaySet.html#method.contains) for more information.
      */
     isWeekend(day) {
 
@@ -128,7 +128,7 @@ export class WeekInformation {
     }
 
     /**
-     * See the [Rust documentation for `weekend`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#method.weekend) for more information.
+     * See the [Rust documentation for `weekend`](https://docs.rs/icu/2.1.0/icu/calendar/week/struct.WeekInformation.html#method.weekend) for more information.
      */
     get weekend() {
 
@@ -145,7 +145,7 @@ export class WeekInformation {
     /**
      * Creates a new {@link WeekInformation} from locale data using compiled data.
      *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
      */
     constructor(locale) {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {

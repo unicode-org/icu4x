@@ -34,7 +34,7 @@ namespace icu4x {
 /**
  * 🚧 This API is experimental and may experience breaking changes outside major releases.
  *
- * See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html) for more information.
+ * See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/2.1.0/icu/experimental/displaynames/struct.RegionDisplayNames.html) for more information.
  */
 class RegionDisplayNames {
 public:
@@ -44,7 +44,7 @@ public:
    *
    * Creates a new `RegionDisplayNames` from locale data and an options bag using compiled data.
    *
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::RegionDisplayNames>, icu4x::DataError> create_v1(const icu4x::Locale& locale, icu4x::DisplayNamesOptionsV1 options);
 
@@ -53,7 +53,7 @@ public:
    *
    * Creates a new `RegionDisplayNames` from locale data and an options bag using a particular data source.
    *
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::RegionDisplayNames>, icu4x::DataError> create_v1_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DisplayNamesOptionsV1 options);
 
@@ -64,7 +64,7 @@ public:
    * Note that the function returns an empty string in case the display name for a given
    * region code is not found.
    *
-   * See the [Rust documentation for `of`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
+   * See the [Rust documentation for `of`](https://docs.rs/icu/2.1.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
    */
   inline icu4x::diplomat::result<std::string, icu4x::LocaleParseError> of(std::string_view region) const;
   template<typename W>

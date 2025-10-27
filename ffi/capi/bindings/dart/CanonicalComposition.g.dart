@@ -7,7 +7,7 @@ part of 'lib.g.dart';
 ///
 /// Callers should generally use ComposingNormalizer unless they specifically need raw composition operations
 ///
-/// See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
+/// See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/2.1.0/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
 final class CanonicalComposition implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -30,7 +30,7 @@ final class CanonicalComposition implements ffi.Finalizable {
 
   /// Construct a new CanonicalComposition instance for NFC using compiled data.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
   factory CanonicalComposition() {
     final result = _icu4x_CanonicalComposition_create_mv1();
     return CanonicalComposition._fromFfi(result, []);
@@ -38,7 +38,7 @@ final class CanonicalComposition implements ffi.Finalizable {
 
   /// Construct a new CanonicalComposition instance for NFC using a particular data source.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CanonicalComposition.withProvider(DataProvider provider) {
@@ -52,7 +52,7 @@ final class CanonicalComposition implements ffi.Finalizable {
   /// Performs canonical composition (including Hangul) on a pair of characters
   /// or returns NUL if these characters don’t compose. Composition exclusions are taken into account.
   ///
-  /// See the [Rust documentation for `compose`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalCompositionBorrowed.html#method.compose) for more information.
+  /// See the [Rust documentation for `compose`](https://docs.rs/icu/2.1.0/icu/normalizer/properties/struct.CanonicalCompositionBorrowed.html#method.compose) for more information.
   Rune compose(Rune starter, Rune second) {
     final result = _icu4x_CanonicalComposition_compose_mv1(_ffi, starter, second);
     return result;

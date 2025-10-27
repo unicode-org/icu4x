@@ -11,7 +11,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/2.0.0/icu/collator/options/struct.ResolvedCollatorOptions.html) for more information.
+ * See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/2.1.0/icu/collator/options/struct.ResolvedCollatorOptions.html) for more information.
  */
 export class CollatorResolvedOptions {
     #strength;

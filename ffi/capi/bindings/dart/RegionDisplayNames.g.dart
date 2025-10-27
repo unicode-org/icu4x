@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 
 /// 🚧 This API is experimental and may experience breaking changes outside major releases.
 ///
-/// See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html) for more information.
+/// See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/2.1.0/icu/experimental/displaynames/struct.RegionDisplayNames.html) for more information.
 final class RegionDisplayNames implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -30,7 +30,7 @@ final class RegionDisplayNames implements ffi.Finalizable {
   ///
   /// Creates a new `RegionDisplayNames` from locale data and an options bag using compiled data.
   ///
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory RegionDisplayNames(Locale locale, DisplayNamesOptions options) {
@@ -46,7 +46,7 @@ final class RegionDisplayNames implements ffi.Finalizable {
   ///
   /// Creates a new `RegionDisplayNames` from locale data and an options bag using a particular data source.
   ///
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory RegionDisplayNames.createWithProvider(DataProvider provider, Locale locale, DisplayNamesOptions options) {
@@ -64,7 +64,7 @@ final class RegionDisplayNames implements ffi.Finalizable {
   /// Note that the function returns an empty string in case the display name for a given
   /// region code is not found.
   ///
-  /// See the [Rust documentation for `of`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
+  /// See the [Rust documentation for `of`](https://docs.rs/icu/2.1.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
   ///
   /// Throws [LocaleParseError] on failure.
   String of(String region) {

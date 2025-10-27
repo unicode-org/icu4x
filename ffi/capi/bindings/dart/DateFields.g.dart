@@ -14,7 +14,7 @@ final class _DateFieldsFfi extends ffi.Struct {
 
 /// 🚧 This API is experimental and may experience breaking changes outside major releases.
 ///
-/// See the [Rust documentation for `DateFields`](https://docs.rs/icu/2.0.0/icu/calendar/types/struct.DateFields.html) for more information.
+/// See the [Rust documentation for `DateFields`](https://docs.rs/icu/2.1.0/icu/calendar/types/struct.DateFields.html) for more information.
 final class DateFields {
   // ignore: public_member_api_docs
   String? era;

@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 
 /// 🚧 This API is experimental and may experience breaking changes outside major releases.
 ///
-/// See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/enum.LanguageDisplay.html) for more information.
+/// See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/2.1.0/icu/experimental/displaynames/enum.LanguageDisplay.html) for more information.
 enum LanguageDisplay {
 
   // ignore: public_member_api_docs
