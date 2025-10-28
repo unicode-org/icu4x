@@ -13,6 +13,7 @@ pub mod ffi {
     use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     #[non_exhaustive]
+    #[diplomat::rust_link(unicode_bidi::Direction, Enum)]
     pub enum BidiDirection {
         // This is an output type, so the default mostly impacts deferred initialization.
         // We pick Ltr since the algorithm defaults to Ltr in the absence of other info.

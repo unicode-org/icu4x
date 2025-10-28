@@ -51,7 +51,7 @@ final class Bidi implements ffi.Finalizable {
   BidiInfo forText(String text, [int? defaultLevel]) {
     final textArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'text
-    core.List<Object> textEdges = [textArena];
+    final textEdges = [textArena];
     final result = _icu4x_Bidi_for_text_valid_utf8_mv1(_ffi, text._utf8AllocIn(textArena.arena), defaultLevel != null ? _ResultUint8Void.ok(defaultLevel) : _ResultUint8Void.err());
     return BidiInfo._fromFfi(result, [], textEdges);
   }

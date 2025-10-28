@@ -6,10 +6,13 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `WordType`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.WordType.html) for more information.
 enum SegmenterWordType {
 
+  // ignore: public_member_api_docs
   none,
 
+  // ignore: public_member_api_docs
   number,
 
+  // ignore: public_member_api_docs
   letter;
 
   /// See the [Rust documentation for `is_word_like`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.

@@ -20,8 +20,11 @@ final class _CodePointRangeIteratorResultFfi extends ffi.Struct {
 /// iteration will NOT produce a range `done=true`, in other words `start` and `end` are useful
 /// values if and only if `done=false`.
 final class CodePointRangeIteratorResult {
+  // ignore: public_member_api_docs
   final Rune start;
+  // ignore: public_member_api_docs
   final Rune end;
+  // ignore: public_member_api_docs
   final bool done;
 
   // This struct contains borrowed fields, so this takes in a list of

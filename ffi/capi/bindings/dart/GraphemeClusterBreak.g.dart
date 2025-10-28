@@ -6,40 +6,58 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
 enum GraphemeClusterBreak {
   /// See the [Rust documentation for `Other`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Other) for more information.
+  // ignore: public_member_api_docs
   other,
   /// See the [Rust documentation for `Control`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Control) for more information.
+  // ignore: public_member_api_docs
   control,
   /// See the [Rust documentation for `CR`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.CR) for more information.
+  // ignore: public_member_api_docs
   cr,
   /// See the [Rust documentation for `Extend`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Extend) for more information.
+  // ignore: public_member_api_docs
   extend,
   /// See the [Rust documentation for `L`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.L) for more information.
+  // ignore: public_member_api_docs
   l,
   /// See the [Rust documentation for `LF`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.LF) for more information.
+  // ignore: public_member_api_docs
   lf,
   /// See the [Rust documentation for `LV`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.LV) for more information.
+  // ignore: public_member_api_docs
   lv,
   /// See the [Rust documentation for `LVT`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.LVT) for more information.
+  // ignore: public_member_api_docs
   lvt,
   /// See the [Rust documentation for `T`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.T) for more information.
+  // ignore: public_member_api_docs
   t,
   /// See the [Rust documentation for `V`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.V) for more information.
+  // ignore: public_member_api_docs
   v,
   /// See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.SpacingMark) for more information.
+  // ignore: public_member_api_docs
   spacingMark,
   /// See the [Rust documentation for `Prepend`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Prepend) for more information.
+  // ignore: public_member_api_docs
   prepend,
   /// See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.RegionalIndicator) for more information.
+  // ignore: public_member_api_docs
   regionalIndicator,
   /// See the [Rust documentation for `EBase`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.EBase) for more information.
+  // ignore: public_member_api_docs
   eBase,
   /// See the [Rust documentation for `EBaseGAZ`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.EBaseGAZ) for more information.
+  // ignore: public_member_api_docs
   eBaseGaz,
   /// See the [Rust documentation for `EModifier`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.EModifier) for more information.
+  // ignore: public_member_api_docs
   eModifier,
   /// See the [Rust documentation for `GlueAfterZwj`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.GlueAfterZwj) for more information.
+  // ignore: public_member_api_docs
   glueAfterZwj,
   /// See the [Rust documentation for `ZWJ`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.ZWJ) for more information.
+  // ignore: public_member_api_docs
   zwj;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.

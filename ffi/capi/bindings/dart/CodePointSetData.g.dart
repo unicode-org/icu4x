@@ -43,7 +43,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `iter_ranges`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointSetDataBorrowed.html#method.iter_ranges) for more information.
   CodePointRangeIterator iterRanges() {
     // This lifetime edge depends on lifetimes: 'a
-    core.List<Object> aEdges = [this];
+    final aEdges = [this];
     final result = _icu4x_CodePointSetData_iter_ranges_mv1(_ffi);
     return CodePointRangeIterator._fromFfi(result, [], aEdges);
   }
@@ -53,7 +53,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `iter_ranges_complemented`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointSetDataBorrowed.html#method.iter_ranges_complemented) for more information.
   CodePointRangeIterator iterRangesComplemented() {
     // This lifetime edge depends on lifetimes: 'a
-    core.List<Object> aEdges = [this];
+    final aEdges = [this];
     final result = _icu4x_CodePointSetData_iter_ranges_complemented_mv1(_ffi);
     return CodePointRangeIterator._fromFfi(result, [], aEdges);
   }

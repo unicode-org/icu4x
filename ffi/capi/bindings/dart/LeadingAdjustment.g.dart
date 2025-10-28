@@ -6,10 +6,13 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `LeadingAdjustment`](https://docs.rs/icu/2.0.0/icu/casemap/options/enum.LeadingAdjustment.html) for more information.
 enum LeadingAdjustment {
 
+  // ignore: public_member_api_docs
   auto,
 
+  // ignore: public_member_api_docs
   none,
 
+  // ignore: public_member_api_docs
   toCased;
 
 }

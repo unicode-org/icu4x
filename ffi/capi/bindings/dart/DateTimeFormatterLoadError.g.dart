@@ -6,30 +6,43 @@ part of 'lib.g.dart';
 /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/2.0.0/icu/datetime/pattern/enum.PatternLoadError.html), [3](https://docs.rs/icu_provider/2.0.0/icu_provider/struct.DataError.html), [4](https://docs.rs/icu_provider/2.0.0/icu_provider/enum.DataErrorKind.html)
 enum DateTimeFormatterLoadError {
 
+  // ignore: public_member_api_docs
   unknown,
 
+  // ignore: public_member_api_docs
   invalidDateFields,
 
+  // ignore: public_member_api_docs
   unsupportedLength,
 
+  // ignore: public_member_api_docs
   conflictingField,
 
+  // ignore: public_member_api_docs
   formatterTooSpecific,
 
+  // ignore: public_member_api_docs
   dataMarkerNotFound,
 
+  // ignore: public_member_api_docs
   dataIdentifierNotFound,
 
+  // ignore: public_member_api_docs
   dataInvalidRequest,
 
+  // ignore: public_member_api_docs
   dataInconsistentData,
 
+  // ignore: public_member_api_docs
   dataDowncast,
 
+  // ignore: public_member_api_docs
   dataDeserialize,
 
+  // ignore: public_member_api_docs
   dataCustom,
 
+  // ignore: public_member_api_docs
   dataIo;
 
   int get _ffi {

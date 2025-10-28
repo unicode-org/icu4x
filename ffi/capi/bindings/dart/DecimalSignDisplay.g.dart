@@ -8,14 +8,19 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `SignDisplay`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.SignDisplay.html) for more information.
 enum DecimalSignDisplay {
 
+  // ignore: public_member_api_docs
   auto,
 
+  // ignore: public_member_api_docs
   never,
 
+  // ignore: public_member_api_docs
   always,
 
+  // ignore: public_member_api_docs
   exceptZero,
 
+  // ignore: public_member_api_docs
   negative;
 
 }

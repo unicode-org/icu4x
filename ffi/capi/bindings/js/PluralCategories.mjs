@@ -4,6 +4,9 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 
+/**
+ * See the [Rust documentation for `categories`](https://docs.rs/icu/2.0.0/icu/plurals/struct.PluralRules.html#method.categories) for more information.
+ */
 export class PluralCategories {
     #zero;
     get zero() {

@@ -76,6 +76,9 @@ export class TimeZoneInfo {
      */
     withVariant(timeVariant: TimeZoneVariant): TimeZoneInfo;
 
+    /**
+     * See the [Rust documentation for `offset`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.offset) for more information.
+     */
     get offset(): UtcOffset | null;
 
     /**

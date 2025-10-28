@@ -40,7 +40,7 @@ final class TimeZoneAndCanonicalAndNormalizedIterator implements ffi.Finalizable
   /// See the [Rust documentation for `next`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalizedIter.html#method.next) for more information.
   TimeZoneAndCanonicalAndNormalized? _iteratorNext() {
     // This lifetime edge depends on lifetimes: 'a
-    core.List<Object> aEdges = [this];
+    final aEdges = [this];
     final result = _icu4x_TimeZoneAndCanonicalAndNormalizedIterator_next_mv1(_ffi);
     if (!result.isOk) {
       return null;

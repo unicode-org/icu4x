@@ -12,11 +12,16 @@ final class _CollatorOptionsFfi extends ffi.Struct {
 
 /// See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/2.0.0/icu/collator/options/struct.CollatorOptions.html) for more information.
 final class CollatorOptions {
+  // ignore: public_member_api_docs
   CollatorStrength? strength;
+  // ignore: public_member_api_docs
   CollatorAlternateHandling? alternateHandling;
+  // ignore: public_member_api_docs
   CollatorMaxVariable? maxVariable;
+  // ignore: public_member_api_docs
   CollatorCaseLevel? caseLevel;
 
+  // ignore: public_member_api_docs
   CollatorOptions({this.strength, this.alternateHandling, this.maxVariable, this.caseLevel});
 
   // This struct contains borrowed fields, so this takes in a list of
@@ -34,13 +39,13 @@ final class CollatorOptions {
   // ignore: unused_element
   _CollatorOptionsFfi _toFfi(ffi.Allocator temp) {
     final struct = ffi.Struct.create<_CollatorOptionsFfi>();
-    CollatorStrength? strength = this.strength;
+    final strength = this.strength;
     struct.strength = strength != null ? _ResultInt32Void.ok(strength.index) : _ResultInt32Void.err();
-    CollatorAlternateHandling? alternateHandling = this.alternateHandling;
+    final alternateHandling = this.alternateHandling;
     struct.alternateHandling = alternateHandling != null ? _ResultInt32Void.ok(alternateHandling.index) : _ResultInt32Void.err();
-    CollatorMaxVariable? maxVariable = this.maxVariable;
+    final maxVariable = this.maxVariable;
     struct.maxVariable = maxVariable != null ? _ResultInt32Void.ok(maxVariable.index) : _ResultInt32Void.err();
-    CollatorCaseLevel? caseLevel = this.caseLevel;
+    final caseLevel = this.caseLevel;
     struct.caseLevel = caseLevel != null ? _ResultInt32Void.ok(caseLevel.index) : _ResultInt32Void.err();
     return struct;
   }

@@ -6,16 +6,22 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
 enum HangulSyllableType {
   /// See the [Rust documentation for `NotApplicable`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.NotApplicable) for more information.
+  // ignore: public_member_api_docs
   notApplicable,
   /// See the [Rust documentation for `LeadingJamo`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingJamo) for more information.
+  // ignore: public_member_api_docs
   leadingJamo,
   /// See the [Rust documentation for `VowelJamo`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.VowelJamo) for more information.
+  // ignore: public_member_api_docs
   vowelJamo,
   /// See the [Rust documentation for `TrailingJamo`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.TrailingJamo) for more information.
+  // ignore: public_member_api_docs
   trailingJamo,
   /// See the [Rust documentation for `LeadingVowelSyllable`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelSyllable) for more information.
+  // ignore: public_member_api_docs
   leadingVowelSyllable,
   /// See the [Rust documentation for `LeadingVowelTrailingSyllable`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelTrailingSyllable) for more information.
+  // ignore: public_member_api_docs
   leadingVowelTrailingSyllable;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.

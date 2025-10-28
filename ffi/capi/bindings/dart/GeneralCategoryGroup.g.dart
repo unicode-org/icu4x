@@ -12,8 +12,10 @@ final class _GeneralCategoryGroupFfi extends ffi.Struct {
 ///
 /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
 final class GeneralCategoryGroup {
+  // ignore: public_member_api_docs
   int mask;
 
+  // ignore: public_member_api_docs
   GeneralCategoryGroup({required this.mask});
 
   // This struct contains borrowed fields, so this takes in a list of

@@ -6,10 +6,13 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `YearStyle`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.YearStyle.html) for more information.
 enum YearStyle {
 
+  // ignore: public_member_api_docs
   auto,
 
+  // ignore: public_member_api_docs
   full,
 
+  // ignore: public_member_api_docs
   withEra;
 
 }

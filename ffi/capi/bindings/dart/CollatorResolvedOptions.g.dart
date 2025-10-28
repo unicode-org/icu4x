@@ -20,11 +20,17 @@ final class _CollatorResolvedOptionsFfi extends ffi.Struct {
 
 /// See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/2.0.0/icu/collator/options/struct.ResolvedCollatorOptions.html) for more information.
 final class CollatorResolvedOptions {
+  // ignore: public_member_api_docs
   final CollatorStrength strength;
+  // ignore: public_member_api_docs
   final CollatorAlternateHandling alternateHandling;
+  // ignore: public_member_api_docs
   final CollatorCaseFirst caseFirst;
+  // ignore: public_member_api_docs
   final CollatorMaxVariable maxVariable;
+  // ignore: public_member_api_docs
   final CollatorCaseLevel caseLevel;
+  // ignore: public_member_api_docs
   final CollatorNumericOrdering numeric;
 
   // This struct contains borrowed fields, so this takes in a list of

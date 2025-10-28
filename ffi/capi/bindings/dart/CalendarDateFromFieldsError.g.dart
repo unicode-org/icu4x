@@ -6,22 +6,31 @@ part of 'lib.g.dart';
 /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/calendar/error/enum.DateFromFieldsError.html)
 enum CalendarDateFromFieldsError {
 
+  // ignore: public_member_api_docs
   unknown,
 
+  // ignore: public_member_api_docs
   outOfRange,
 
+  // ignore: public_member_api_docs
   unknownEra,
 
+  // ignore: public_member_api_docs
   monthCodeInvalidSyntax,
 
+  // ignore: public_member_api_docs
   monthCodeNotInCalendar,
 
+  // ignore: public_member_api_docs
   monthCodeNotInYear,
 
+  // ignore: public_member_api_docs
   inconsistentYear,
 
+  // ignore: public_member_api_docs
   inconsistentMonth,
 
+  // ignore: public_member_api_docs
   notEnoughFields;
 
 }

@@ -6,12 +6,16 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `LineBreakStrictness`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.LineBreakStrictness.html) for more information.
 enum LineBreakStrictness {
 
+  // ignore: public_member_api_docs
   loose,
 
+  // ignore: public_member_api_docs
   normal,
 
+  // ignore: public_member_api_docs
   strict,
 
+  // ignore: public_member_api_docs
   anywhere;
 
 }

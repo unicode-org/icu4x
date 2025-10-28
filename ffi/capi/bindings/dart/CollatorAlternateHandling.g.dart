@@ -6,8 +6,10 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `AlternateHandling`](https://docs.rs/icu/2.0.0/icu/collator/options/enum.AlternateHandling.html) for more information.
 enum CollatorAlternateHandling {
 
+  // ignore: public_member_api_docs
   nonIgnorable,
 
+  // ignore: public_member_api_docs
   shifted;
 
 }

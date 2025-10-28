@@ -13,10 +13,14 @@ final class _BidiMirroringGlyphFfi extends ffi.Struct {
 
 /// See the [Rust documentation for `BidiMirroringGlyph`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.BidiMirroringGlyph.html) for more information.
 final class BidiMirroringGlyph {
+  // ignore: public_member_api_docs
   Rune? mirroringGlyph;
+  // ignore: public_member_api_docs
   bool mirrored;
+  // ignore: public_member_api_docs
   BidiPairedBracketType pairedBracketType;
 
+  // ignore: public_member_api_docs
   BidiMirroringGlyph({this.mirroringGlyph, required this.mirrored, required this.pairedBracketType});
 
   // This struct contains borrowed fields, so this takes in a list of
@@ -33,7 +37,7 @@ final class BidiMirroringGlyph {
   // ignore: unused_element
   _BidiMirroringGlyphFfi _toFfi(ffi.Allocator temp) {
     final struct = ffi.Struct.create<_BidiMirroringGlyphFfi>();
-    Rune? mirroringGlyph = this.mirroringGlyph;
+    final mirroringGlyph = this.mirroringGlyph;
     struct.mirroringGlyph = mirroringGlyph != null ? _ResultUint32Void.ok(mirroringGlyph) : _ResultUint32Void.err();
     struct.mirrored = mirrored;
     struct.pairedBracketType = pairedBracketType.index;

@@ -6,120 +6,178 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
 enum CanonicalCombiningClass {
   /// See the [Rust documentation for `NotReordered`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.NotReordered) for more information.
+  // ignore: public_member_api_docs
   notReordered,
   /// See the [Rust documentation for `Overlay`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.Overlay) for more information.
+  // ignore: public_member_api_docs
   overlay,
   /// See the [Rust documentation for `HanReading`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.HanReading) for more information.
+  // ignore: public_member_api_docs
   hanReading,
   /// See the [Rust documentation for `Nukta`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.Nukta) for more information.
+  // ignore: public_member_api_docs
   nukta,
   /// See the [Rust documentation for `KanaVoicing`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.KanaVoicing) for more information.
+  // ignore: public_member_api_docs
   kanaVoicing,
   /// See the [Rust documentation for `Virama`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.Virama) for more information.
+  // ignore: public_member_api_docs
   virama,
   /// See the [Rust documentation for `CCC10`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC10) for more information.
+  // ignore: public_member_api_docs
   ccc10,
   /// See the [Rust documentation for `CCC11`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC11) for more information.
+  // ignore: public_member_api_docs
   ccc11,
   /// See the [Rust documentation for `CCC12`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC12) for more information.
+  // ignore: public_member_api_docs
   ccc12,
   /// See the [Rust documentation for `CCC13`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC13) for more information.
+  // ignore: public_member_api_docs
   ccc13,
   /// See the [Rust documentation for `CCC14`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC14) for more information.
+  // ignore: public_member_api_docs
   ccc14,
   /// See the [Rust documentation for `CCC15`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC15) for more information.
+  // ignore: public_member_api_docs
   ccc15,
   /// See the [Rust documentation for `CCC16`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC16) for more information.
+  // ignore: public_member_api_docs
   ccc16,
   /// See the [Rust documentation for `CCC17`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC17) for more information.
+  // ignore: public_member_api_docs
   ccc17,
   /// See the [Rust documentation for `CCC18`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC18) for more information.
+  // ignore: public_member_api_docs
   ccc18,
   /// See the [Rust documentation for `CCC19`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC19) for more information.
+  // ignore: public_member_api_docs
   ccc19,
   /// See the [Rust documentation for `CCC20`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC20) for more information.
+  // ignore: public_member_api_docs
   ccc20,
   /// See the [Rust documentation for `CCC21`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC21) for more information.
+  // ignore: public_member_api_docs
   ccc21,
   /// See the [Rust documentation for `CCC22`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC22) for more information.
+  // ignore: public_member_api_docs
   ccc22,
   /// See the [Rust documentation for `CCC23`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC23) for more information.
+  // ignore: public_member_api_docs
   ccc23,
   /// See the [Rust documentation for `CCC24`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC24) for more information.
+  // ignore: public_member_api_docs
   ccc24,
   /// See the [Rust documentation for `CCC25`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC25) for more information.
+  // ignore: public_member_api_docs
   ccc25,
   /// See the [Rust documentation for `CCC26`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC26) for more information.
+  // ignore: public_member_api_docs
   ccc26,
   /// See the [Rust documentation for `CCC27`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC27) for more information.
+  // ignore: public_member_api_docs
   ccc27,
   /// See the [Rust documentation for `CCC28`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC28) for more information.
+  // ignore: public_member_api_docs
   ccc28,
   /// See the [Rust documentation for `CCC29`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC29) for more information.
+  // ignore: public_member_api_docs
   ccc29,
   /// See the [Rust documentation for `CCC30`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC30) for more information.
+  // ignore: public_member_api_docs
   ccc30,
   /// See the [Rust documentation for `CCC31`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC31) for more information.
+  // ignore: public_member_api_docs
   ccc31,
   /// See the [Rust documentation for `CCC32`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC32) for more information.
+  // ignore: public_member_api_docs
   ccc32,
   /// See the [Rust documentation for `CCC33`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC33) for more information.
+  // ignore: public_member_api_docs
   ccc33,
   /// See the [Rust documentation for `CCC34`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC34) for more information.
+  // ignore: public_member_api_docs
   ccc34,
   /// See the [Rust documentation for `CCC35`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC35) for more information.
+  // ignore: public_member_api_docs
   ccc35,
   /// See the [Rust documentation for `CCC36`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC36) for more information.
+  // ignore: public_member_api_docs
   ccc36,
   /// See the [Rust documentation for `CCC84`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC84) for more information.
+  // ignore: public_member_api_docs
   ccc84,
   /// See the [Rust documentation for `CCC91`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC91) for more information.
+  // ignore: public_member_api_docs
   ccc91,
   /// See the [Rust documentation for `CCC103`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC103) for more information.
+  // ignore: public_member_api_docs
   ccc103,
   /// See the [Rust documentation for `CCC107`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC107) for more information.
+  // ignore: public_member_api_docs
   ccc107,
   /// See the [Rust documentation for `CCC118`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC118) for more information.
+  // ignore: public_member_api_docs
   ccc118,
   /// See the [Rust documentation for `CCC122`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC122) for more information.
+  // ignore: public_member_api_docs
   ccc122,
   /// See the [Rust documentation for `CCC129`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC129) for more information.
+  // ignore: public_member_api_docs
   ccc129,
   /// See the [Rust documentation for `CCC130`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC130) for more information.
+  // ignore: public_member_api_docs
   ccc130,
   /// See the [Rust documentation for `CCC132`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC132) for more information.
+  // ignore: public_member_api_docs
   ccc132,
   /// See the [Rust documentation for `CCC133`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC133) for more information.
+  // ignore: public_member_api_docs
   ccc133,
   /// See the [Rust documentation for `AttachedBelowLeft`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.AttachedBelowLeft) for more information.
+  // ignore: public_member_api_docs
   attachedBelowLeft,
   /// See the [Rust documentation for `AttachedBelow`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.AttachedBelow) for more information.
+  // ignore: public_member_api_docs
   attachedBelow,
   /// See the [Rust documentation for `AttachedAbove`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.AttachedAbove) for more information.
+  // ignore: public_member_api_docs
   attachedAbove,
   /// See the [Rust documentation for `AttachedAboveRight`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.AttachedAboveRight) for more information.
+  // ignore: public_member_api_docs
   attachedAboveRight,
   /// See the [Rust documentation for `BelowLeft`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.BelowLeft) for more information.
+  // ignore: public_member_api_docs
   belowLeft,
   /// See the [Rust documentation for `Below`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.Below) for more information.
+  // ignore: public_member_api_docs
   below,
   /// See the [Rust documentation for `BelowRight`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.BelowRight) for more information.
+  // ignore: public_member_api_docs
   belowRight,
   /// See the [Rust documentation for `Left`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.Left) for more information.
+  // ignore: public_member_api_docs
   left,
   /// See the [Rust documentation for `Right`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.Right) for more information.
+  // ignore: public_member_api_docs
   right,
   /// See the [Rust documentation for `AboveLeft`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.AboveLeft) for more information.
+  // ignore: public_member_api_docs
   aboveLeft,
   /// See the [Rust documentation for `Above`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.Above) for more information.
+  // ignore: public_member_api_docs
   above,
   /// See the [Rust documentation for `AboveRight`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.AboveRight) for more information.
+  // ignore: public_member_api_docs
   aboveRight,
   /// See the [Rust documentation for `DoubleBelow`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.DoubleBelow) for more information.
+  // ignore: public_member_api_docs
   doubleBelow,
   /// See the [Rust documentation for `DoubleAbove`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.DoubleAbove) for more information.
+  // ignore: public_member_api_docs
   doubleAbove,
   /// See the [Rust documentation for `IotaSubscript`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.IotaSubscript) for more information.
+  // ignore: public_member_api_docs
   iotaSubscript;
 
   int get _ffi {

@@ -42,7 +42,7 @@ final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
   /// See the [Rust documentation for `get_script_extensions_val`](https://docs.rs/icu/2.0.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_val) for more information.
   ScriptExtensionsSet getScriptExtensionsVal(Rune ch) {
     // This lifetime edge depends on lifetimes: 'a
-    core.List<Object> aEdges = [this];
+    final aEdges = [this];
     final result = _icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(_ffi, ch);
     return ScriptExtensionsSet._fromFfi(result, [], aEdges);
   }

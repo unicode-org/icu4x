@@ -45,7 +45,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   /// See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
   CodePointRangeIterator iterRangesForValue(int value) {
     // This lifetime edge depends on lifetimes: 'a
-    core.List<Object> aEdges = [this];
+    final aEdges = [this];
     final result = _icu4x_CodePointMapData8_iter_ranges_for_value_mv1(_ffi, value);
     return CodePointRangeIterator._fromFfi(result, [], aEdges);
   }
@@ -55,7 +55,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   /// See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
   CodePointRangeIterator iterRangesForValueComplemented(int value) {
     // This lifetime edge depends on lifetimes: 'a
-    core.List<Object> aEdges = [this];
+    final aEdges = [this];
     final result = _icu4x_CodePointMapData8_iter_ranges_for_value_complemented_mv1(_ffi, value);
     return CodePointRangeIterator._fromFfi(result, [], aEdges);
   }
@@ -73,7 +73,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   CodePointRangeIterator iterRangesForGroup(GeneralCategoryGroup group) {
     final temp = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'a
-    core.List<Object> aEdges = [this];
+    final aEdges = [this];
     final result = _icu4x_CodePointMapData8_iter_ranges_for_group_mv1(_ffi, group._toFfi(temp.arena));
     return CodePointRangeIterator._fromFfi(result, [], aEdges);
   }

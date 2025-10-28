@@ -37,7 +37,7 @@ final class BidiInfo implements ffi.Finalizable {
   /// Get the nth paragraph, returning `None` if out of bounds
   BidiParagraph? paragraphAt(int n) {
     // This lifetime edge depends on lifetimes: 'text
-    core.List<Object> textEdges = [this];
+    final textEdges = [this];
     final result = _icu4x_BidiInfo_paragraph_at_mv1(_ffi, n);
     return result.address == 0 ? null : BidiParagraph._fromFfi(result, [], textEdges);
   }
