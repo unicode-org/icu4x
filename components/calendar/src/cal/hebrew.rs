@@ -42,7 +42,7 @@ use calendrical_calculations::rata_die::RataDie;
 /// ʾAv (`M11`, 30 days), ʾElūl (`M12`, 29 days).
 ///
 /// Due to Rosh Hashanah postponement rules, Ḥešvan and Kislev vary in length.
-///  
+///
 /// In leap years (years 3, 6, 8, 11, 17, 19 in a 19-year cycle), the leap month Adar I (`M05L`, 30 days)
 /// is inserted before Adar, and Adar is called Adar II (the `formatting_code` returned by [`MonthInfo`]
 /// will be `M06L` to mark this, while the `standard_code` remains `M06`).
