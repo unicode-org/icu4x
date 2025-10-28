@@ -2306,15 +2306,20 @@ impl CollatorBorrowed<'_> {
 
             // Write pairs of nibbles as bytes, except separator bytes as themselves.
             let mut b = 0;
-            for c in &cases.buf {
-                debug_assert_eq!(*c & 0xf, 0);
-                debug_assert_ne!(*c, 0);
-                if b == 0 {
-                    b = *c;
-                } else {
-                    sink.write_byte(state, b | (*c >> 4))?;
-                    b = 0;
+            if let Some((last, head)) = cases.buf.split_last() {
+                debug_assert_eq!(*last, 1); // The trailing NO_CE
+                for c in head {
+                    debug_assert_eq!(*c & 0xf, 0);
+                    debug_assert_ne!(*c, 0);
+                    if b == 0 {
+                        b = *c;
+                    } else {
+                        sink.write_byte(state, b | (*c >> 4))?;
+                        b = 0;
+                    }
                 }
+            } else {
+                debug_assert!(false);
             }
             if b != 0 {
                 sink.write_byte(state, b)?;
@@ -2625,6 +2630,14 @@ mod test {
         Collator::try_new(locale, options).unwrap()
     }
 
+    fn collator_en_case_level(strength: Strength) -> CollatorBorrowed<'static> {
+        let locale = locale!("en").into();
+        let mut options = CollatorOptions::default();
+        options.strength = Some(strength);
+        options.case_level = Some(crate::options::CaseLevel::On);
+        Collator::try_new(locale, options).unwrap()
+    }
+
     fn keys(strength: Strength) -> (Key, Key, Key) {
         let collator = collator_en(strength);
 
@@ -2810,6 +2823,20 @@ mod test {
         let collator = collator_en(Strength::Secondary);
         let mut k = Vec::new();
         let Ok(()) = collator.write_sort_key_to(&"a".repeat(300), &mut k);
+    }
+
+    #[test]
+    fn sort_key_case_level() {
+        let collator = collator_en_case_level(Strength::Tertiary);
+        let mut k = Vec::new();
+        let Ok(()) = collator.write_sort_key_to("aBc", &mut k);
+    }
+
+    #[test]
+    fn sort_key_case_level_empty() {
+        let collator = collator_en_case_level(Strength::Tertiary);
+        let mut k = Vec::new();
+        let Ok(()) = collator.write_sort_key_to("", &mut k);
     }
 
     fn check_sort_key_less(a: &[u16], b: &[u16]) {
