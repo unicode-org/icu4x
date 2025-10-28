@@ -5,7 +5,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * See the [Rust documentation for `LineBreakWordOption`](https://docs.rs/icu/2.1.0/icu/segmenter/options/enum.LineBreakWordOption.html) for more information.
+ * See the [Rust documentation for `LineBreakWordOption`](https://docs.rs/icu/2.1.1/icu/segmenter/options/enum.LineBreakWordOption.html) for more information.
  */
 export class LineBreakWordOption {
     #value = undefined;

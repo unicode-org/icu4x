@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `TransformResult`](https://docs.rs/icu/2.1.0/icu/locale/enum.TransformResult.html) for more information.
+/// See the [Rust documentation for `TransformResult`](https://docs.rs/icu/2.1.1/icu/locale/enum.TransformResult.html) for more information.
 enum TransformResult {
 
   // ignore: public_member_api_docs

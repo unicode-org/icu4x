@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `VariantOffsetsCalculator`](https://docs.rs/icu/2.1.0/icu/time/zone/struct.VariantOffsetsCalculator.html) for more information.
+/// See the [Rust documentation for `VariantOffsetsCalculator`](https://docs.rs/icu/2.1.1/icu/time/zone/struct.VariantOffsetsCalculator.html) for more information.
 @core.Deprecated('this API is a bad approximation of a time zone database')
 final class VariantOffsetsCalculator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
@@ -27,7 +27,7 @@ final class VariantOffsetsCalculator implements ffi.Finalizable {
 
   /// Construct a new [VariantOffsetsCalculator] instance using compiled data.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/time/zone/struct.VariantOffsetsCalculator.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/time/zone/struct.VariantOffsetsCalculator.html#method.new) for more information.
   factory VariantOffsetsCalculator() {
     final result = _icu4x_VariantOffsetsCalculator_create_mv1();
     return VariantOffsetsCalculator._fromFfi(result, []);
@@ -35,7 +35,7 @@ final class VariantOffsetsCalculator implements ffi.Finalizable {
 
   /// Construct a new [VariantOffsetsCalculator] instance using a particular data source.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/time/zone/struct.VariantOffsetsCalculator.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/time/zone/struct.VariantOffsetsCalculator.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory VariantOffsetsCalculator.withProvider(DataProvider provider) {
@@ -46,7 +46,7 @@ final class VariantOffsetsCalculator implements ffi.Finalizable {
     return VariantOffsetsCalculator._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/2.1.0/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
+  /// See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/2.1.1/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
   VariantOffsets? computeOffsetsFromTimeZoneAndDateTime(TimeZone timeZone, IsoDate utcDate, Time utcTime) {
     final result = _icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1(_ffi, timeZone._ffi, utcDate._ffi, utcTime._ffi);
     if (!result.isOk) {
@@ -55,7 +55,7 @@ final class VariantOffsetsCalculator implements ffi.Finalizable {
     return VariantOffsets._fromFfi(result.union.ok);
   }
 
-  /// See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/2.1.0/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
+  /// See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/2.1.1/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
   VariantOffsets? computeOffsetsFromTimeZoneAndTimestamp(TimeZone timeZone, int timestamp) {
     final result = _icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_timestamp_mv1(_ffi, timeZone._ffi, timestamp);
     if (!result.isOk) {

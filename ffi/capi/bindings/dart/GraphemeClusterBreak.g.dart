@@ -3,64 +3,64 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
+/// See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
 enum GraphemeClusterBreak {
-  /// See the [Rust documentation for `Other`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Other) for more information.
+  /// See the [Rust documentation for `Other`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.Other) for more information.
   // ignore: public_member_api_docs
   other,
-  /// See the [Rust documentation for `Control`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Control) for more information.
+  /// See the [Rust documentation for `Control`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.Control) for more information.
   // ignore: public_member_api_docs
   control,
-  /// See the [Rust documentation for `CR`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.LineBreak.html#associatedconstant.CR) for more information.
+  /// See the [Rust documentation for `CR`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.CR) for more information.
   // ignore: public_member_api_docs
   cr,
-  /// See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Extend) for more information.
+  /// See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.Extend) for more information.
   // ignore: public_member_api_docs
   extend,
-  /// See the [Rust documentation for `L`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.LineBreak.html#associatedconstant.L) for more information.
+  /// See the [Rust documentation for `L`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.L) for more information.
   // ignore: public_member_api_docs
   l,
-  /// See the [Rust documentation for `LF`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.LineBreak.html#associatedconstant.LF) for more information.
+  /// See the [Rust documentation for `LF`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.LF) for more information.
   // ignore: public_member_api_docs
   lf,
-  /// See the [Rust documentation for `LV`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.LineBreak.html#associatedconstant.LV) for more information.
+  /// See the [Rust documentation for `LV`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.LV) for more information.
   // ignore: public_member_api_docs
   lv,
-  /// See the [Rust documentation for `LVT`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.LineBreak.html#associatedconstant.LVT) for more information.
+  /// See the [Rust documentation for `LVT`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.LVT) for more information.
   // ignore: public_member_api_docs
   lvt,
-  /// See the [Rust documentation for `T`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.LineBreak.html#associatedconstant.T) for more information.
+  /// See the [Rust documentation for `T`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.T) for more information.
   // ignore: public_member_api_docs
   t,
-  /// See the [Rust documentation for `V`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.LineBreak.html#associatedconstant.V) for more information.
+  /// See the [Rust documentation for `V`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.V) for more information.
   // ignore: public_member_api_docs
   v,
-  /// See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.LineBreak.html#associatedconstant.SpacingMark) for more information.
+  /// See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.SpacingMark) for more information.
   // ignore: public_member_api_docs
   spacingMark,
-  /// See the [Rust documentation for `Prepend`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Prepend) for more information.
+  /// See the [Rust documentation for `Prepend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.Prepend) for more information.
   // ignore: public_member_api_docs
   prepend,
-  /// See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.LineBreak.html#associatedconstant.RegionalIndicator) for more information.
+  /// See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.RegionalIndicator) for more information.
   // ignore: public_member_api_docs
   regionalIndicator,
-  /// See the [Rust documentation for `EBase`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.LineBreak.html#associatedconstant.EBase) for more information.
+  /// See the [Rust documentation for `EBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.EBase) for more information.
   // ignore: public_member_api_docs
   eBase,
-  /// See the [Rust documentation for `EBaseGAZ`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.LineBreak.html#associatedconstant.EBaseGAZ) for more information.
+  /// See the [Rust documentation for `EBaseGAZ`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.EBaseGAZ) for more information.
   // ignore: public_member_api_docs
   eBaseGaz,
-  /// See the [Rust documentation for `EModifier`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.LineBreak.html#associatedconstant.EModifier) for more information.
+  /// See the [Rust documentation for `EModifier`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.EModifier) for more information.
   // ignore: public_member_api_docs
   eModifier,
-  /// See the [Rust documentation for `GlueAfterZwj`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.LineBreak.html#associatedconstant.GlueAfterZwj) for more information.
+  /// See the [Rust documentation for `GlueAfterZwj`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.GlueAfterZwj) for more information.
   // ignore: public_member_api_docs
   glueAfterZwj,
-  /// See the [Rust documentation for `ZWJ`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.LineBreak.html#associatedconstant.ZWJ) for more information.
+  /// See the [Rust documentation for `ZWJ`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.ZWJ) for more information.
   // ignore: public_member_api_docs
   zwj;
 
-  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static GraphemeClusterBreak forChar(Rune ch) {
     final result = _icu4x_GraphemeClusterBreak_for_char_mv1(ch);
     return GraphemeClusterBreak.values[result];
@@ -68,7 +68,7 @@ enum GraphemeClusterBreak {
 
   /// Convert to an integer value usable with ICU4C and CodePointMapData
   ///
-  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.GraphemeClusterBreak.html#method.to_icu4c_value) for more information.
+  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#method.to_icu4c_value) for more information.
   int toIntegerValue() {
     final result = _icu4x_GraphemeClusterBreak_to_integer_value_mv1(index);
     return result;
@@ -76,7 +76,7 @@ enum GraphemeClusterBreak {
 
   /// Convert from an integer value from ICU4C or CodePointMapData
   ///
-  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.GraphemeClusterBreak.html#method.from_icu4c_value) for more information.
+  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#method.from_icu4c_value) for more information.
   static GraphemeClusterBreak? fromIntegerValue(int other) {
     final result = _icu4x_GraphemeClusterBreak_from_integer_value_mv1(other);
     if (!result.isOk) {

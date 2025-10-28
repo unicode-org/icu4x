@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `ListLength`](https://docs.rs/icu/2.1.0/icu/list/options/enum.ListLength.html) for more information.
+/// See the [Rust documentation for `ListLength`](https://docs.rs/icu/2.1.1/icu/list/options/enum.ListLength.html) for more information.
 enum ListLength {
 
   // ignore: public_member_api_docs

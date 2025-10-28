@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `Direction`](https://docs.rs/icu/2.1.0/icu/locale/enum.Direction.html) for more information.
+/// See the [Rust documentation for `Direction`](https://docs.rs/icu/2.1.1/icu/locale/enum.Direction.html) for more information.
 enum LocaleDirection {
 
   // ignore: public_member_api_docs

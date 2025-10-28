@@ -7,7 +7,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /**
  * 🚧 This API is experimental and may experience breaking changes outside major releases.
  *
- * See the [Rust documentation for `DateFields`](https://docs.rs/icu/2.1.0/icu/calendar/types/struct.DateFields.html) for more information.
+ * See the [Rust documentation for `DateFields`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.DateFields.html) for more information.
  */
 export class DateFields {
     #era;

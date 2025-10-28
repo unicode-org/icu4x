@@ -14,7 +14,7 @@ const DecimalFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => 
 /**
  * An ICU4X Decimal Format object, capable of formatting a {@link Decimal} as a string.
  *
- * See the [Rust documentation for `DecimalFormatter`](https://docs.rs/icu/2.1.0/icu/decimal/struct.DecimalFormatter.html) for more information.
+ * See the [Rust documentation for `DecimalFormatter`](https://docs.rs/icu/2.1.1/icu/decimal/struct.DecimalFormatter.html) for more information.
  */
 export class DecimalFormatter {
     // Internal ptr reference:
@@ -48,7 +48,7 @@ export class DecimalFormatter {
     /**
      * Creates a new {@link DecimalFormatter}, using compiled data
      *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
      */
     static createWithGroupingStrategy(locale, groupingStrategy) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -76,7 +76,7 @@ export class DecimalFormatter {
     /**
      * Creates a new {@link DecimalFormatter}, using a particular data source.
      *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
      */
     static createWithGroupingStrategyAndProvider(provider, locale, groupingStrategy) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -104,7 +104,7 @@ export class DecimalFormatter {
     /**
      * Creates a new {@link DecimalFormatter} from preconstructed locale data.
      *
-     * See the [Rust documentation for `DecimalSymbolsV1`](https://docs.rs/icu/2.1.0/icu/decimal/provider/struct.DecimalSymbolsV1.html) for more information.
+     * See the [Rust documentation for `DecimalSymbolsV1`](https://docs.rs/icu/2.1.1/icu/decimal/provider/struct.DecimalSymbolsV1.html) for more information.
      */
     static createWithManualData(plusSignPrefix, plusSignSuffix, minusSignPrefix, minusSignSuffix, decimalSeparator, groupingSeparator, primaryGroupSize, secondaryGroupSize, minGroupSize, digits, groupingStrategy) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -139,7 +139,7 @@ export class DecimalFormatter {
     /**
      * Formats a {@link Decimal} to a string.
      *
-     * See the [Rust documentation for `format`](https://docs.rs/icu/2.1.0/icu/decimal/struct.DecimalFormatter.html#method.format) for more information.
+     * See the [Rust documentation for `format`](https://docs.rs/icu/2.1.1/icu/decimal/struct.DecimalFormatter.html#method.format) for more information.
      */
     format(value) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);

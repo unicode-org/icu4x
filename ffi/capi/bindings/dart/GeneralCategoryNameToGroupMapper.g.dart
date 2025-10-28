@@ -5,9 +5,9 @@ part of 'lib.g.dart';
 
 /// A type capable of looking up General Category Group values from a string name.
 ///
-/// See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/2.1.0/icu/properties/struct.PropertyParser.html) for more information.
+/// See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyParser.html) for more information.
 ///
-/// See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.0/icu/properties/props/enum.GeneralCategory.html) for more information.
+/// See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
 final class GeneralCategoryNameToGroupMapper implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -32,7 +32,7 @@ final class GeneralCategoryNameToGroupMapper implements ffi.Finalizable {
   ///
   /// Returns 0 if the name is unknown for this property
   ///
-  /// See the [Rust documentation for `get_strict`](https://docs.rs/icu/2.1.0/icu/properties/struct.PropertyParserBorrowed.html#method.get_strict) for more information.
+  /// See the [Rust documentation for `get_strict`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyParserBorrowed.html#method.get_strict) for more information.
   GeneralCategoryGroup getStrict(String name) {
     final temp = _FinalizedArena();
     final result = _icu4x_GeneralCategoryNameToGroupMapper_get_strict_mv1(_ffi, name._utf8AllocIn(temp.arena));
@@ -43,7 +43,7 @@ final class GeneralCategoryNameToGroupMapper implements ffi.Finalizable {
   ///
   /// Returns 0 if the name is unknown for this property
   ///
-  /// See the [Rust documentation for `get_loose`](https://docs.rs/icu/2.1.0/icu/properties/struct.PropertyParserBorrowed.html#method.get_loose) for more information.
+  /// See the [Rust documentation for `get_loose`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyParserBorrowed.html#method.get_loose) for more information.
   GeneralCategoryGroup getLoose(String name) {
     final temp = _FinalizedArena();
     final result = _icu4x_GeneralCategoryNameToGroupMapper_get_loose_mv1(_ffi, name._utf8AllocIn(temp.arena));
@@ -52,7 +52,7 @@ final class GeneralCategoryNameToGroupMapper implements ffi.Finalizable {
 
   /// Create a name-to-mask mapper for the `General_Category` property, using compiled data.
   ///
-  /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+  /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
   factory GeneralCategoryNameToGroupMapper() {
     final result = _icu4x_GeneralCategoryNameToGroupMapper_create_mv1();
     return GeneralCategoryNameToGroupMapper._fromFfi(result, []);
@@ -60,7 +60,7 @@ final class GeneralCategoryNameToGroupMapper implements ffi.Finalizable {
 
   /// Create a name-to-mask mapper for the `General_Category` property, using a particular data source.
   ///
-  /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+  /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory GeneralCategoryNameToGroupMapper.withProvider(DataProvider provider) {

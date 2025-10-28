@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `LineBreakStrictness`](https://docs.rs/icu/2.1.0/icu/segmenter/options/enum.LineBreakStrictness.html) for more information.
+/// See the [Rust documentation for `LineBreakStrictness`](https://docs.rs/icu/2.1.1/icu/segmenter/options/enum.LineBreakStrictness.html) for more information.
 enum LineBreakStrictness {
 
   // ignore: public_member_api_docs

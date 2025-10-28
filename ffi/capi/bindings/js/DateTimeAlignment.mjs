@@ -5,7 +5,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * See the [Rust documentation for `Alignment`](https://docs.rs/icu/2.1.0/icu/datetime/options/enum.Alignment.html) for more information.
+ * See the [Rust documentation for `Alignment`](https://docs.rs/icu/2.1.1/icu/datetime/options/enum.Alignment.html) for more information.
  */
 export class DateTimeAlignment {
     #value = undefined;

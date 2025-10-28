@@ -15,11 +15,11 @@ const CodePointMapData16_box_destroy_registry = new FinalizationRegistry((ptr) =
  *
  * For properties whose values fit into 16 bits.
  *
- * See the [Rust documentation for `properties`](https://docs.rs/icu/2.1.0/icu/properties/index.html) for more information.
+ * See the [Rust documentation for `properties`](https://docs.rs/icu/2.1.1/icu/properties/index.html) for more information.
  *
- * See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/2.1.0/icu/properties/struct.CodePointMapData.html) for more information.
+ * See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapData.html) for more information.
  *
- * See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/2.1.0/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
+ * See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
  */
 export class CodePointMapData16 {
     // Internal ptr reference:
@@ -53,7 +53,7 @@ export class CodePointMapData16 {
     /**
      * Gets the value for a code point.
      *
-     * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
      */
     get(cp) {
 
@@ -70,7 +70,7 @@ export class CodePointMapData16 {
     /**
      * Produces an iterator over ranges of code points that map to `value`
      *
-     * See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.1.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
+     * See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
      */
     iterRangesForValue(value) {
         // This lifetime edge depends on lifetimes 'a
@@ -90,7 +90,7 @@ export class CodePointMapData16 {
     /**
      * Produces an iterator over ranges of code points that do not map to `value`
      *
-     * See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.1.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
+     * See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
      */
     iterRangesForValueComplemented(value) {
         // This lifetime edge depends on lifetimes 'a
@@ -110,7 +110,7 @@ export class CodePointMapData16 {
     /**
      * Gets a {@link CodePointSetData} representing all entries in this map that map to the given value
      *
-     * See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.1.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
+     * See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.1.1/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
      */
     getSetForValue(value) {
 
@@ -127,7 +127,7 @@ export class CodePointMapData16 {
     /**
      * Create a map for the `Script` property, using compiled data.
      *
-     * See the [Rust documentation for `Script`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html) for more information.
+     * See the [Rust documentation for `Script`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html) for more information.
      */
     static createScript() {
 
@@ -144,7 +144,7 @@ export class CodePointMapData16 {
     /**
      * Create a map for the `Script` property, using a particular data source.
      *
-     * See the [Rust documentation for `Script`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html) for more information.
+     * See the [Rust documentation for `Script`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html) for more information.
      */
     static createScriptWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);

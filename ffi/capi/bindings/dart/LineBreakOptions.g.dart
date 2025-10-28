@@ -8,7 +8,7 @@ final class _LineBreakOptionsFfi extends ffi.Struct {
   external _ResultInt32Void wordOption;
 }
 
-/// See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/2.1.0/icu/segmenter/options/struct.LineBreakOptions.html) for more information.
+/// See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/2.1.1/icu/segmenter/options/struct.LineBreakOptions.html) for more information.
 final class LineBreakOptions {
   // ignore: public_member_api_docs
   LineBreakStrictness? strictness;

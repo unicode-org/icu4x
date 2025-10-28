@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `Strength`](https://docs.rs/icu/2.1.0/icu/collator/options/enum.Strength.html) for more information.
+/// See the [Rust documentation for `Strength`](https://docs.rs/icu/2.1.1/icu/collator/options/enum.Strength.html) for more information.
 enum CollatorStrength {
 
   // ignore: public_member_api_docs

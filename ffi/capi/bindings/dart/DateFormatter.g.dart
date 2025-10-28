@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html) for more information.
+/// See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html) for more information.
 final class DateFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -24,11 +24,11 @@ final class DateFormatter implements ffi.Finalizable {
   @_DiplomatFfiUse('icu4x_DateFormatter_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_DateFormatter_destroy_mv1));
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `D`](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.D.html) for more information.
+  /// See the [Rust documentation for `D`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.D.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.D.html#method.with_alignment), [2](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.D.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.D.html#method.with_alignment), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.D.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.d(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
@@ -39,11 +39,11 @@ final class DateFormatter implements ffi.Finalizable {
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `D`](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.D.html) for more information.
+  /// See the [Rust documentation for `D`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.D.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.D.html#method.with_alignment), [2](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.D.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.D.html#method.with_alignment), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.D.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.dWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
@@ -54,11 +54,11 @@ final class DateFormatter implements ffi.Finalizable {
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `MD`](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.MD.html) for more information.
+  /// See the [Rust documentation for `MD`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MD.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.MD.html#method.with_alignment), [2](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.MD.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MD.html#method.with_alignment), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MD.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.md(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
@@ -69,11 +69,11 @@ final class DateFormatter implements ffi.Finalizable {
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `MD`](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.MD.html) for more information.
+  /// See the [Rust documentation for `MD`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MD.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.MD.html#method.with_alignment), [2](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.MD.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MD.html#method.with_alignment), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MD.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.mdWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
@@ -84,11 +84,11 @@ final class DateFormatter implements ffi.Finalizable {
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `YMD`](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YMD.html) for more information.
+  /// See the [Rust documentation for `YMD`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMD.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YMD.html#method.with_alignment), [2](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YMD.html#method.with_year_style), [3](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YMD.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMD.html#method.with_alignment), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMD.html#method.with_year_style), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMD.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.ymd(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
@@ -99,11 +99,11 @@ final class DateFormatter implements ffi.Finalizable {
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `YMD`](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YMD.html) for more information.
+  /// See the [Rust documentation for `YMD`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMD.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YMD.html#method.with_alignment), [2](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YMD.html#method.with_year_style), [3](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YMD.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMD.html#method.with_alignment), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMD.html#method.with_year_style), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMD.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.ymdWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
@@ -114,11 +114,11 @@ final class DateFormatter implements ffi.Finalizable {
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `DE`](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.DE.html) for more information.
+  /// See the [Rust documentation for `DE`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DE.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.DE.html#method.with_alignment), [2](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.DE.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DE.html#method.with_alignment), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DE.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.de(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
@@ -129,11 +129,11 @@ final class DateFormatter implements ffi.Finalizable {
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `DE`](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.DE.html) for more information.
+  /// See the [Rust documentation for `DE`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DE.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.DE.html#method.with_alignment), [2](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.DE.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DE.html#method.with_alignment), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.DE.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.deWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
@@ -144,11 +144,11 @@ final class DateFormatter implements ffi.Finalizable {
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `MDE`](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.MDE.html) for more information.
+  /// See the [Rust documentation for `MDE`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDE.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.MDE.html#method.with_alignment), [2](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.MDE.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDE.html#method.with_alignment), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDE.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.mde(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
@@ -159,11 +159,11 @@ final class DateFormatter implements ffi.Finalizable {
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `MDE`](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.MDE.html) for more information.
+  /// See the [Rust documentation for `MDE`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDE.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.MDE.html#method.with_alignment), [2](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.MDE.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDE.html#method.with_alignment), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.MDE.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.mdeWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
@@ -174,11 +174,11 @@ final class DateFormatter implements ffi.Finalizable {
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `YMDE`](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YMDE.html) for more information.
+  /// See the [Rust documentation for `YMDE`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDE.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YMDE.html#method.with_alignment), [2](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YMDE.html#method.with_year_style), [3](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YMDE.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDE.html#method.with_alignment), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDE.html#method.with_year_style), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDE.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.ymde(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
@@ -189,11 +189,11 @@ final class DateFormatter implements ffi.Finalizable {
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `YMDE`](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YMDE.html) for more information.
+  /// See the [Rust documentation for `YMDE`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDE.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YMDE.html#method.with_alignment), [2](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YMDE.html#method.with_year_style), [3](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YMDE.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDE.html#method.with_alignment), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDE.html#method.with_year_style), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YMDE.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.ymdeWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
@@ -204,11 +204,11 @@ final class DateFormatter implements ffi.Finalizable {
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `E`](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.E.html) for more information.
+  /// See the [Rust documentation for `E`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.E.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.E.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.E.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.e(Locale locale, [DateTimeLength? length]) {
@@ -219,11 +219,11 @@ final class DateFormatter implements ffi.Finalizable {
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `E`](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.E.html) for more information.
+  /// See the [Rust documentation for `E`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.E.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.E.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.E.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.eWithProvider(DataProvider provider, Locale locale, [DateTimeLength? length]) {
@@ -234,11 +234,11 @@ final class DateFormatter implements ffi.Finalizable {
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `M`](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.M.html) for more information.
+  /// See the [Rust documentation for `M`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.M.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.M.html#method.with_alignment), [2](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.M.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.M.html#method.with_alignment), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.M.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.m(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
@@ -249,11 +249,11 @@ final class DateFormatter implements ffi.Finalizable {
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `M`](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.M.html) for more information.
+  /// See the [Rust documentation for `M`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.M.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.M.html#method.with_alignment), [2](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.M.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.M.html#method.with_alignment), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.M.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.mWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
@@ -264,11 +264,11 @@ final class DateFormatter implements ffi.Finalizable {
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `YM`](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YM.html) for more information.
+  /// See the [Rust documentation for `YM`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YM.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YM.html#method.with_alignment), [2](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YM.html#method.with_year_style), [3](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YM.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YM.html#method.with_alignment), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YM.html#method.with_year_style), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YM.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.ym(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
@@ -279,11 +279,11 @@ final class DateFormatter implements ffi.Finalizable {
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `YM`](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YM.html) for more information.
+  /// See the [Rust documentation for `YM`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YM.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YM.html#method.with_alignment), [2](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YM.html#method.with_year_style), [3](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.YM.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YM.html#method.with_alignment), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YM.html#method.with_year_style), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.YM.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.ymWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
@@ -294,11 +294,11 @@ final class DateFormatter implements ffi.Finalizable {
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `Y`](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.Y.html) for more information.
+  /// See the [Rust documentation for `Y`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.Y.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.Y.html#method.with_alignment), [2](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.Y.html#method.with_year_style), [3](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.Y.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.Y.html#method.with_alignment), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.Y.html#method.with_year_style), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.Y.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.y(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
@@ -309,11 +309,11 @@ final class DateFormatter implements ffi.Finalizable {
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
   ///
-  /// See the [Rust documentation for `Y`](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.Y.html) for more information.
+  /// See the [Rust documentation for `Y`](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.Y.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.Y.html#method.with_alignment), [2](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.Y.html#method.with_year_style), [3](https://docs.rs/icu/2.1.0/icu/datetime/fieldsets/struct.Y.html#method.for_length)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.Y.html#method.with_alignment), [2](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.Y.html#method.with_year_style), [3](https://docs.rs/icu/2.1.1/icu/datetime/fieldsets/struct.Y.html#method.for_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatter.yWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
@@ -324,14 +324,14 @@ final class DateFormatter implements ffi.Finalizable {
     return DateFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `format`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
+  /// See the [Rust documentation for `format`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
   String formatIso(IsoDate isoDate) {
     final write = _Write();
     _icu4x_DateFormatter_format_iso_mv1(_ffi, isoDate._ffi, write._ffi);
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `format_same_calendar`](https://docs.rs/icu/2.1.0/icu/datetime/struct.DateTimeFormatter.html#method.format_same_calendar) for more information.
+  /// See the [Rust documentation for `format_same_calendar`](https://docs.rs/icu/2.1.1/icu/datetime/struct.DateTimeFormatter.html#method.format_same_calendar) for more information.
   ///
   /// Throws [DateTimeMismatchedCalendarError] on failure.
   String formatSameCalendar(Date date) {

@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `CaseMapCloser`](https://docs.rs/icu/2.1.0/icu/casemap/struct.CaseMapCloser.html) for more information.
+/// See the [Rust documentation for `CaseMapCloser`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapCloser.html) for more information.
 final class CaseMapCloser implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -26,7 +26,7 @@ final class CaseMapCloser implements ffi.Finalizable {
 
   /// Construct a new CaseMapCloser instance using compiled data.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CaseMapCloser() {
@@ -39,7 +39,7 @@ final class CaseMapCloser implements ffi.Finalizable {
 
   /// Construct a new CaseMapCloser instance using a particular data source.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CaseMapCloser.withProvider(DataProvider provider) {
@@ -53,7 +53,7 @@ final class CaseMapCloser implements ffi.Finalizable {
   /// Adds all simple case mappings and the full case folding for `c` to `builder`.
   /// Also adds special case closure mappings.
   ///
-  /// See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/2.1.0/icu/casemap/struct.CaseMapCloserBorrowed.html#method.add_case_closure_to) for more information.
+  /// See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapCloserBorrowed.html#method.add_case_closure_to) for more information.
   void addCaseClosureTo(Rune c, CodePointSetBuilder builder) {
     _icu4x_CaseMapCloser_add_case_closure_to_mv1(_ffi, c, builder._ffi);
   }
@@ -63,7 +63,7 @@ final class CaseMapCloser implements ffi.Finalizable {
   ///
   /// Returns true if the string was found
   ///
-  /// See the [Rust documentation for `add_string_case_closure_to`](https://docs.rs/icu/2.1.0/icu/casemap/struct.CaseMapCloserBorrowed.html#method.add_string_case_closure_to) for more information.
+  /// See the [Rust documentation for `add_string_case_closure_to`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapCloserBorrowed.html#method.add_string_case_closure_to) for more information.
   bool addStringCaseClosureTo(String s, CodePointSetBuilder builder) {
     final temp = _FinalizedArena();
     final result = _icu4x_CaseMapCloser_add_string_case_closure_to_mv1(_ffi, s._utf8AllocIn(temp.arena), builder._ffi);

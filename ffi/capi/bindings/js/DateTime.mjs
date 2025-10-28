@@ -11,7 +11,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /**
  * An ICU4X DateTime object capable of containing a date and time for any calendar.
  *
- * See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.1.0/icu/time/struct.DateTime.html) for more information.
+ * See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.1.1/icu/time/struct.DateTime.html) for more information.
  */
 export class DateTime {
     #date;
@@ -104,7 +104,7 @@ export class DateTime {
     /**
      * Creates a new {@link DateTime} from an IXDTF string.
      *
-     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.0/icu/time/struct.DateTime.html#method.try_from_str) for more information.
+     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.DateTime.html#method.try_from_str) for more information.
      */
     static fromString(v, calendar) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();

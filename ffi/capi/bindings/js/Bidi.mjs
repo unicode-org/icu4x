@@ -13,7 +13,7 @@ const Bidi_box_destroy_registry = new FinalizationRegistry((ptr) => {
 /**
  * An ICU4X Bidi object, containing loaded bidi data
  *
- * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.BidiClass.html) for more information.
+ * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html) for more information.
  */
 export class Bidi {
     // Internal ptr reference:

@@ -58,7 +58,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.0/icu/properties/props/enum.GeneralCategory.html) for more information.
+ * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
  */
 class GeneralCategory {
 public:
@@ -104,7 +104,7 @@ public:
     explicit operator bool() const = delete;
 
   /**
-   * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+   * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
    */
   inline static icu4x::GeneralCategory for_char(char32_t ch);
 
@@ -112,14 +112,14 @@ public:
    * Convert to an integer using the ICU4C integer mappings for `General_Category`
    * Get the "long" name of this property value (returns empty if property value is unknown)
    *
-   * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+   * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
    */
   inline std::optional<std::string_view> long_name() const;
 
   /**
    * Get the "short" name of this property value (returns empty if property value is unknown)
    *
-   * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+   * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
    */
   inline std::optional<std::string_view> short_name() const;
 
@@ -131,7 +131,7 @@ public:
   /**
    * Produces a GeneralCategoryGroup mask that can represent a group of general categories
    *
-   * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+   * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
    */
   inline icu4x::GeneralCategoryGroup to_group() const;
 

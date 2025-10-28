@@ -3,79 +3,79 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html) for more information.
+/// See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html) for more information.
 enum WordBreak {
-  /// See the [Rust documentation for `Other`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.Other) for more information.
+  /// See the [Rust documentation for `Other`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.Other) for more information.
   // ignore: public_member_api_docs
   other,
-  /// See the [Rust documentation for `ALetter`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.ALetter) for more information.
+  /// See the [Rust documentation for `ALetter`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.ALetter) for more information.
   // ignore: public_member_api_docs
   aLetter,
-  /// See the [Rust documentation for `Format`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.Format) for more information.
+  /// See the [Rust documentation for `Format`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.Format) for more information.
   // ignore: public_member_api_docs
   format,
-  /// See the [Rust documentation for `Katakana`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.Katakana) for more information.
+  /// See the [Rust documentation for `Katakana`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.Katakana) for more information.
   // ignore: public_member_api_docs
   katakana,
-  /// See the [Rust documentation for `MidLetter`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.MidLetter) for more information.
+  /// See the [Rust documentation for `MidLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.MidLetter) for more information.
   // ignore: public_member_api_docs
   midLetter,
-  /// See the [Rust documentation for `MidNum`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.MidNum) for more information.
+  /// See the [Rust documentation for `MidNum`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.MidNum) for more information.
   // ignore: public_member_api_docs
   midNum,
-  /// See the [Rust documentation for `Numeric`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.Numeric) for more information.
+  /// See the [Rust documentation for `Numeric`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.Numeric) for more information.
   // ignore: public_member_api_docs
   numeric,
-  /// See the [Rust documentation for `ExtendNumLet`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.ExtendNumLet) for more information.
+  /// See the [Rust documentation for `ExtendNumLet`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.ExtendNumLet) for more information.
   // ignore: public_member_api_docs
   extendNumLet,
-  /// See the [Rust documentation for `CR`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.CR) for more information.
+  /// See the [Rust documentation for `CR`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.CR) for more information.
   // ignore: public_member_api_docs
   cr,
-  /// See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.Extend) for more information.
+  /// See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.Extend) for more information.
   // ignore: public_member_api_docs
   extend,
-  /// See the [Rust documentation for `LF`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.LF) for more information.
+  /// See the [Rust documentation for `LF`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.LF) for more information.
   // ignore: public_member_api_docs
   lf,
-  /// See the [Rust documentation for `MidNumLet`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.MidNumLet) for more information.
+  /// See the [Rust documentation for `MidNumLet`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.MidNumLet) for more information.
   // ignore: public_member_api_docs
   midNumLet,
-  /// See the [Rust documentation for `Newline`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.Newline) for more information.
+  /// See the [Rust documentation for `Newline`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.Newline) for more information.
   // ignore: public_member_api_docs
   newline,
-  /// See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.RegionalIndicator) for more information.
+  /// See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.RegionalIndicator) for more information.
   // ignore: public_member_api_docs
   regionalIndicator,
-  /// See the [Rust documentation for `HebrewLetter`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.HebrewLetter) for more information.
+  /// See the [Rust documentation for `HebrewLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.HebrewLetter) for more information.
   // ignore: public_member_api_docs
   hebrewLetter,
-  /// See the [Rust documentation for `SingleQuote`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.SingleQuote) for more information.
+  /// See the [Rust documentation for `SingleQuote`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.SingleQuote) for more information.
   // ignore: public_member_api_docs
   singleQuote,
-  /// See the [Rust documentation for `DoubleQuote`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.DoubleQuote) for more information.
+  /// See the [Rust documentation for `DoubleQuote`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.DoubleQuote) for more information.
   // ignore: public_member_api_docs
   doubleQuote,
-  /// See the [Rust documentation for `EBase`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.EBase) for more information.
+  /// See the [Rust documentation for `EBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.EBase) for more information.
   // ignore: public_member_api_docs
   eBase,
-  /// See the [Rust documentation for `EBaseGAZ`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.EBaseGAZ) for more information.
+  /// See the [Rust documentation for `EBaseGAZ`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.EBaseGAZ) for more information.
   // ignore: public_member_api_docs
   eBaseGaz,
-  /// See the [Rust documentation for `EModifier`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.EModifier) for more information.
+  /// See the [Rust documentation for `EModifier`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.EModifier) for more information.
   // ignore: public_member_api_docs
   eModifier,
-  /// See the [Rust documentation for `GlueAfterZwj`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.GlueAfterZwj) for more information.
+  /// See the [Rust documentation for `GlueAfterZwj`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.GlueAfterZwj) for more information.
   // ignore: public_member_api_docs
   glueAfterZwj,
-  /// See the [Rust documentation for `ZWJ`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.ZWJ) for more information.
+  /// See the [Rust documentation for `ZWJ`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.ZWJ) for more information.
   // ignore: public_member_api_docs
   zwj,
-  /// See the [Rust documentation for `WSegSpace`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#associatedconstant.WSegSpace) for more information.
+  /// See the [Rust documentation for `WSegSpace`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.WSegSpace) for more information.
   // ignore: public_member_api_docs
   wSegSpace;
 
-  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static WordBreak forChar(Rune ch) {
     final result = _icu4x_WordBreak_for_char_mv1(ch);
     return WordBreak.values[result];
@@ -83,7 +83,7 @@ enum WordBreak {
 
   /// Get the "long" name of this property value (returns empty if property value is unknown)
   ///
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
   String? longName() {
     final result = _icu4x_WordBreak_long_name_mv1(index);
     if (!result.isOk) {
@@ -94,7 +94,7 @@ enum WordBreak {
 
   /// Get the "short" name of this property value (returns empty if property value is unknown)
   ///
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
   String? shortName() {
     final result = _icu4x_WordBreak_short_name_mv1(index);
     if (!result.isOk) {
@@ -105,7 +105,7 @@ enum WordBreak {
 
   /// Convert to an integer value usable with ICU4C and CodePointMapData
   ///
-  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#method.to_icu4c_value) for more information.
+  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#method.to_icu4c_value) for more information.
   int toIntegerValue() {
     final result = _icu4x_WordBreak_to_integer_value_mv1(index);
     return result;
@@ -113,7 +113,7 @@ enum WordBreak {
 
   /// Convert from an integer value from ICU4C or CodePointMapData
   ///
-  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.WordBreak.html#method.from_icu4c_value) for more information.
+  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#method.from_icu4c_value) for more information.
   static WordBreak? fromIntegerValue(int other) {
     final result = _icu4x_WordBreak_from_integer_value_mv1(other);
     if (!result.isOk) {

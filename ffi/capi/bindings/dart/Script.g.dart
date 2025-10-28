@@ -3,516 +3,516 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `Script`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html) for more information.
+/// See the [Rust documentation for `Script`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html) for more information.
 enum Script {
-  /// See the [Rust documentation for `Adlam`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Adlam) for more information.
+  /// See the [Rust documentation for `Adlam`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Adlam) for more information.
   // ignore: public_member_api_docs
   adlam,
-  /// See the [Rust documentation for `Ahom`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Ahom) for more information.
+  /// See the [Rust documentation for `Ahom`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Ahom) for more information.
   // ignore: public_member_api_docs
   ahom,
-  /// See the [Rust documentation for `AnatolianHieroglyphs`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.AnatolianHieroglyphs) for more information.
+  /// See the [Rust documentation for `AnatolianHieroglyphs`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.AnatolianHieroglyphs) for more information.
   // ignore: public_member_api_docs
   anatolianHieroglyphs,
-  /// See the [Rust documentation for `Arabic`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Arabic) for more information.
+  /// See the [Rust documentation for `Arabic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Arabic) for more information.
   // ignore: public_member_api_docs
   arabic,
-  /// See the [Rust documentation for `Armenian`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Armenian) for more information.
+  /// See the [Rust documentation for `Armenian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Armenian) for more information.
   // ignore: public_member_api_docs
   armenian,
-  /// See the [Rust documentation for `Avestan`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Avestan) for more information.
+  /// See the [Rust documentation for `Avestan`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Avestan) for more information.
   // ignore: public_member_api_docs
   avestan,
-  /// See the [Rust documentation for `Balinese`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Balinese) for more information.
+  /// See the [Rust documentation for `Balinese`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Balinese) for more information.
   // ignore: public_member_api_docs
   balinese,
-  /// See the [Rust documentation for `Bamum`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Bamum) for more information.
+  /// See the [Rust documentation for `Bamum`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Bamum) for more information.
   // ignore: public_member_api_docs
   bamum,
-  /// See the [Rust documentation for `BassaVah`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.BassaVah) for more information.
+  /// See the [Rust documentation for `BassaVah`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.BassaVah) for more information.
   // ignore: public_member_api_docs
   bassaVah,
-  /// See the [Rust documentation for `Batak`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Batak) for more information.
+  /// See the [Rust documentation for `Batak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Batak) for more information.
   // ignore: public_member_api_docs
   batak,
-  /// See the [Rust documentation for `Bengali`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Bengali) for more information.
+  /// See the [Rust documentation for `Bengali`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Bengali) for more information.
   // ignore: public_member_api_docs
   bengali,
-  /// See the [Rust documentation for `BeriaErfe`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.BeriaErfe) for more information.
+  /// See the [Rust documentation for `BeriaErfe`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.BeriaErfe) for more information.
   // ignore: public_member_api_docs
   beriaErfe,
-  /// See the [Rust documentation for `Bhaiksuki`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Bhaiksuki) for more information.
+  /// See the [Rust documentation for `Bhaiksuki`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Bhaiksuki) for more information.
   // ignore: public_member_api_docs
   bhaiksuki,
-  /// See the [Rust documentation for `Bopomofo`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Bopomofo) for more information.
+  /// See the [Rust documentation for `Bopomofo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Bopomofo) for more information.
   // ignore: public_member_api_docs
   bopomofo,
-  /// See the [Rust documentation for `Brahmi`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Brahmi) for more information.
+  /// See the [Rust documentation for `Brahmi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Brahmi) for more information.
   // ignore: public_member_api_docs
   brahmi,
-  /// See the [Rust documentation for `Braille`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Braille) for more information.
+  /// See the [Rust documentation for `Braille`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Braille) for more information.
   // ignore: public_member_api_docs
   braille,
-  /// See the [Rust documentation for `Buginese`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Buginese) for more information.
+  /// See the [Rust documentation for `Buginese`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Buginese) for more information.
   // ignore: public_member_api_docs
   buginese,
-  /// See the [Rust documentation for `Buhid`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Buhid) for more information.
+  /// See the [Rust documentation for `Buhid`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Buhid) for more information.
   // ignore: public_member_api_docs
   buhid,
-  /// See the [Rust documentation for `CanadianAboriginal`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.CanadianAboriginal) for more information.
+  /// See the [Rust documentation for `CanadianAboriginal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.CanadianAboriginal) for more information.
   // ignore: public_member_api_docs
   canadianAboriginal,
-  /// See the [Rust documentation for `Carian`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Carian) for more information.
+  /// See the [Rust documentation for `Carian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Carian) for more information.
   // ignore: public_member_api_docs
   carian,
-  /// See the [Rust documentation for `CaucasianAlbanian`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.CaucasianAlbanian) for more information.
+  /// See the [Rust documentation for `CaucasianAlbanian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.CaucasianAlbanian) for more information.
   // ignore: public_member_api_docs
   caucasianAlbanian,
-  /// See the [Rust documentation for `Chakma`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Chakma) for more information.
+  /// See the [Rust documentation for `Chakma`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Chakma) for more information.
   // ignore: public_member_api_docs
   chakma,
-  /// See the [Rust documentation for `Cham`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Cham) for more information.
+  /// See the [Rust documentation for `Cham`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Cham) for more information.
   // ignore: public_member_api_docs
   cham,
-  /// See the [Rust documentation for `Cherokee`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Cherokee) for more information.
+  /// See the [Rust documentation for `Cherokee`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Cherokee) for more information.
   // ignore: public_member_api_docs
   cherokee,
-  /// See the [Rust documentation for `Chisoi`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Chisoi) for more information.
+  /// See the [Rust documentation for `Chisoi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Chisoi) for more information.
   // ignore: public_member_api_docs
   chisoi,
-  /// See the [Rust documentation for `Chorasmian`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Chorasmian) for more information.
+  /// See the [Rust documentation for `Chorasmian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Chorasmian) for more information.
   // ignore: public_member_api_docs
   chorasmian,
-  /// See the [Rust documentation for `Common`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Common) for more information.
+  /// See the [Rust documentation for `Common`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Common) for more information.
   // ignore: public_member_api_docs
   common,
-  /// See the [Rust documentation for `Coptic`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Coptic) for more information.
+  /// See the [Rust documentation for `Coptic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Coptic) for more information.
   // ignore: public_member_api_docs
   coptic,
-  /// See the [Rust documentation for `Cuneiform`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Cuneiform) for more information.
+  /// See the [Rust documentation for `Cuneiform`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Cuneiform) for more information.
   // ignore: public_member_api_docs
   cuneiform,
-  /// See the [Rust documentation for `Cypriot`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Cypriot) for more information.
+  /// See the [Rust documentation for `Cypriot`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Cypriot) for more information.
   // ignore: public_member_api_docs
   cypriot,
-  /// See the [Rust documentation for `CyproMinoan`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.CyproMinoan) for more information.
+  /// See the [Rust documentation for `CyproMinoan`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.CyproMinoan) for more information.
   // ignore: public_member_api_docs
   cyproMinoan,
-  /// See the [Rust documentation for `Cyrillic`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Cyrillic) for more information.
+  /// See the [Rust documentation for `Cyrillic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Cyrillic) for more information.
   // ignore: public_member_api_docs
   cyrillic,
-  /// See the [Rust documentation for `Deseret`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Deseret) for more information.
+  /// See the [Rust documentation for `Deseret`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Deseret) for more information.
   // ignore: public_member_api_docs
   deseret,
-  /// See the [Rust documentation for `Devanagari`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Devanagari) for more information.
+  /// See the [Rust documentation for `Devanagari`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Devanagari) for more information.
   // ignore: public_member_api_docs
   devanagari,
-  /// See the [Rust documentation for `DivesAkuru`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.DivesAkuru) for more information.
+  /// See the [Rust documentation for `DivesAkuru`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.DivesAkuru) for more information.
   // ignore: public_member_api_docs
   divesAkuru,
-  /// See the [Rust documentation for `Dogra`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Dogra) for more information.
+  /// See the [Rust documentation for `Dogra`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Dogra) for more information.
   // ignore: public_member_api_docs
   dogra,
-  /// See the [Rust documentation for `Duployan`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Duployan) for more information.
+  /// See the [Rust documentation for `Duployan`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Duployan) for more information.
   // ignore: public_member_api_docs
   duployan,
-  /// See the [Rust documentation for `EgyptianHieroglyphs`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.EgyptianHieroglyphs) for more information.
+  /// See the [Rust documentation for `EgyptianHieroglyphs`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.EgyptianHieroglyphs) for more information.
   // ignore: public_member_api_docs
   egyptianHieroglyphs,
-  /// See the [Rust documentation for `Elbasan`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Elbasan) for more information.
+  /// See the [Rust documentation for `Elbasan`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Elbasan) for more information.
   // ignore: public_member_api_docs
   elbasan,
-  /// See the [Rust documentation for `Elymaic`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Elymaic) for more information.
+  /// See the [Rust documentation for `Elymaic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Elymaic) for more information.
   // ignore: public_member_api_docs
   elymaic,
-  /// See the [Rust documentation for `Ethiopian`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Ethiopian) for more information.
+  /// See the [Rust documentation for `Ethiopian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Ethiopian) for more information.
   // ignore: public_member_api_docs
   ethiopian,
-  /// See the [Rust documentation for `Georgian`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Georgian) for more information.
+  /// See the [Rust documentation for `Georgian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Georgian) for more information.
   // ignore: public_member_api_docs
   georgian,
-  /// See the [Rust documentation for `Glagolitic`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Glagolitic) for more information.
+  /// See the [Rust documentation for `Glagolitic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Glagolitic) for more information.
   // ignore: public_member_api_docs
   glagolitic,
-  /// See the [Rust documentation for `Gothic`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Gothic) for more information.
+  /// See the [Rust documentation for `Gothic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Gothic) for more information.
   // ignore: public_member_api_docs
   gothic,
-  /// See the [Rust documentation for `Grantha`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Grantha) for more information.
+  /// See the [Rust documentation for `Grantha`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Grantha) for more information.
   // ignore: public_member_api_docs
   grantha,
-  /// See the [Rust documentation for `Greek`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Greek) for more information.
+  /// See the [Rust documentation for `Greek`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Greek) for more information.
   // ignore: public_member_api_docs
   greek,
-  /// See the [Rust documentation for `Gujarati`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Gujarati) for more information.
+  /// See the [Rust documentation for `Gujarati`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Gujarati) for more information.
   // ignore: public_member_api_docs
   gujarati,
-  /// See the [Rust documentation for `GunjalaGondi`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.GunjalaGondi) for more information.
+  /// See the [Rust documentation for `GunjalaGondi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.GunjalaGondi) for more information.
   // ignore: public_member_api_docs
   gunjalaGondi,
-  /// See the [Rust documentation for `Gurmukhi`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Gurmukhi) for more information.
+  /// See the [Rust documentation for `Gurmukhi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Gurmukhi) for more information.
   // ignore: public_member_api_docs
   gurmukhi,
-  /// See the [Rust documentation for `Han`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Han) for more information.
+  /// See the [Rust documentation for `Han`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Han) for more information.
   // ignore: public_member_api_docs
   han,
-  /// See the [Rust documentation for `Hangul`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Hangul) for more information.
+  /// See the [Rust documentation for `Hangul`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Hangul) for more information.
   // ignore: public_member_api_docs
   hangul,
-  /// See the [Rust documentation for `HanifiRohingya`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.HanifiRohingya) for more information.
+  /// See the [Rust documentation for `HanifiRohingya`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.HanifiRohingya) for more information.
   // ignore: public_member_api_docs
   hanifiRohingya,
-  /// See the [Rust documentation for `Hanunoo`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Hanunoo) for more information.
+  /// See the [Rust documentation for `Hanunoo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Hanunoo) for more information.
   // ignore: public_member_api_docs
   hanunoo,
-  /// See the [Rust documentation for `Hatran`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Hatran) for more information.
+  /// See the [Rust documentation for `Hatran`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Hatran) for more information.
   // ignore: public_member_api_docs
   hatran,
-  /// See the [Rust documentation for `Hebrew`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Hebrew) for more information.
+  /// See the [Rust documentation for `Hebrew`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Hebrew) for more information.
   // ignore: public_member_api_docs
   hebrew,
-  /// See the [Rust documentation for `Hiragana`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Hiragana) for more information.
+  /// See the [Rust documentation for `Hiragana`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Hiragana) for more information.
   // ignore: public_member_api_docs
   hiragana,
-  /// See the [Rust documentation for `ImperialAramaic`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.ImperialAramaic) for more information.
+  /// See the [Rust documentation for `ImperialAramaic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.ImperialAramaic) for more information.
   // ignore: public_member_api_docs
   imperialAramaic,
-  /// See the [Rust documentation for `Inherited`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Inherited) for more information.
+  /// See the [Rust documentation for `Inherited`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Inherited) for more information.
   // ignore: public_member_api_docs
   inherited,
-  /// See the [Rust documentation for `InscriptionalPahlavi`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.InscriptionalPahlavi) for more information.
+  /// See the [Rust documentation for `InscriptionalPahlavi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.InscriptionalPahlavi) for more information.
   // ignore: public_member_api_docs
   inscriptionalPahlavi,
-  /// See the [Rust documentation for `InscriptionalParthian`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.InscriptionalParthian) for more information.
+  /// See the [Rust documentation for `InscriptionalParthian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.InscriptionalParthian) for more information.
   // ignore: public_member_api_docs
   inscriptionalParthian,
-  /// See the [Rust documentation for `Javanese`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Javanese) for more information.
+  /// See the [Rust documentation for `Javanese`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Javanese) for more information.
   // ignore: public_member_api_docs
   javanese,
-  /// See the [Rust documentation for `Kaithi`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Kaithi) for more information.
+  /// See the [Rust documentation for `Kaithi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Kaithi) for more information.
   // ignore: public_member_api_docs
   kaithi,
-  /// See the [Rust documentation for `Kannada`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Kannada) for more information.
+  /// See the [Rust documentation for `Kannada`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Kannada) for more information.
   // ignore: public_member_api_docs
   kannada,
-  /// See the [Rust documentation for `Katakana`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Katakana) for more information.
+  /// See the [Rust documentation for `Katakana`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Katakana) for more information.
   // ignore: public_member_api_docs
   katakana,
-  /// See the [Rust documentation for `Kawi`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Kawi) for more information.
+  /// See the [Rust documentation for `Kawi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Kawi) for more information.
   // ignore: public_member_api_docs
   kawi,
-  /// See the [Rust documentation for `KayahLi`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.KayahLi) for more information.
+  /// See the [Rust documentation for `KayahLi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.KayahLi) for more information.
   // ignore: public_member_api_docs
   kayahLi,
-  /// See the [Rust documentation for `Kharoshthi`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Kharoshthi) for more information.
+  /// See the [Rust documentation for `Kharoshthi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Kharoshthi) for more information.
   // ignore: public_member_api_docs
   kharoshthi,
-  /// See the [Rust documentation for `KhitanSmallScript`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.KhitanSmallScript) for more information.
+  /// See the [Rust documentation for `KhitanSmallScript`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.KhitanSmallScript) for more information.
   // ignore: public_member_api_docs
   khitanSmallScript,
-  /// See the [Rust documentation for `Khmer`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Khmer) for more information.
+  /// See the [Rust documentation for `Khmer`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Khmer) for more information.
   // ignore: public_member_api_docs
   khmer,
-  /// See the [Rust documentation for `Khojki`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Khojki) for more information.
+  /// See the [Rust documentation for `Khojki`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Khojki) for more information.
   // ignore: public_member_api_docs
   khojki,
-  /// See the [Rust documentation for `Khudawadi`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Khudawadi) for more information.
+  /// See the [Rust documentation for `Khudawadi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Khudawadi) for more information.
   // ignore: public_member_api_docs
   khudawadi,
-  /// See the [Rust documentation for `Lao`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Lao) for more information.
+  /// See the [Rust documentation for `Lao`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Lao) for more information.
   // ignore: public_member_api_docs
   lao,
-  /// See the [Rust documentation for `Latin`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Latin) for more information.
+  /// See the [Rust documentation for `Latin`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Latin) for more information.
   // ignore: public_member_api_docs
   latin,
-  /// See the [Rust documentation for `Lepcha`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Lepcha) for more information.
+  /// See the [Rust documentation for `Lepcha`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Lepcha) for more information.
   // ignore: public_member_api_docs
   lepcha,
-  /// See the [Rust documentation for `Limbu`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Limbu) for more information.
+  /// See the [Rust documentation for `Limbu`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Limbu) for more information.
   // ignore: public_member_api_docs
   limbu,
-  /// See the [Rust documentation for `LinearA`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.LinearA) for more information.
+  /// See the [Rust documentation for `LinearA`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.LinearA) for more information.
   // ignore: public_member_api_docs
   linearA,
-  /// See the [Rust documentation for `LinearB`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.LinearB) for more information.
+  /// See the [Rust documentation for `LinearB`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.LinearB) for more information.
   // ignore: public_member_api_docs
   linearB,
-  /// See the [Rust documentation for `Lisu`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Lisu) for more information.
+  /// See the [Rust documentation for `Lisu`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Lisu) for more information.
   // ignore: public_member_api_docs
   lisu,
-  /// See the [Rust documentation for `Lycian`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Lycian) for more information.
+  /// See the [Rust documentation for `Lycian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Lycian) for more information.
   // ignore: public_member_api_docs
   lycian,
-  /// See the [Rust documentation for `Lydian`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Lydian) for more information.
+  /// See the [Rust documentation for `Lydian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Lydian) for more information.
   // ignore: public_member_api_docs
   lydian,
-  /// See the [Rust documentation for `Mahajani`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Mahajani) for more information.
+  /// See the [Rust documentation for `Mahajani`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Mahajani) for more information.
   // ignore: public_member_api_docs
   mahajani,
-  /// See the [Rust documentation for `Makasar`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Makasar) for more information.
+  /// See the [Rust documentation for `Makasar`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Makasar) for more information.
   // ignore: public_member_api_docs
   makasar,
-  /// See the [Rust documentation for `Malayalam`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Malayalam) for more information.
+  /// See the [Rust documentation for `Malayalam`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Malayalam) for more information.
   // ignore: public_member_api_docs
   malayalam,
-  /// See the [Rust documentation for `Mandaic`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Mandaic) for more information.
+  /// See the [Rust documentation for `Mandaic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Mandaic) for more information.
   // ignore: public_member_api_docs
   mandaic,
-  /// See the [Rust documentation for `Manichaean`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Manichaean) for more information.
+  /// See the [Rust documentation for `Manichaean`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Manichaean) for more information.
   // ignore: public_member_api_docs
   manichaean,
-  /// See the [Rust documentation for `Marchen`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Marchen) for more information.
+  /// See the [Rust documentation for `Marchen`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Marchen) for more information.
   // ignore: public_member_api_docs
   marchen,
-  /// See the [Rust documentation for `MasaramGondi`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.MasaramGondi) for more information.
+  /// See the [Rust documentation for `MasaramGondi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.MasaramGondi) for more information.
   // ignore: public_member_api_docs
   masaramGondi,
-  /// See the [Rust documentation for `Medefaidrin`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Medefaidrin) for more information.
+  /// See the [Rust documentation for `Medefaidrin`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Medefaidrin) for more information.
   // ignore: public_member_api_docs
   medefaidrin,
-  /// See the [Rust documentation for `MeeteiMayek`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.MeeteiMayek) for more information.
+  /// See the [Rust documentation for `MeeteiMayek`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.MeeteiMayek) for more information.
   // ignore: public_member_api_docs
   meeteiMayek,
-  /// See the [Rust documentation for `MendeKikakui`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.MendeKikakui) for more information.
+  /// See the [Rust documentation for `MendeKikakui`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.MendeKikakui) for more information.
   // ignore: public_member_api_docs
   mendeKikakui,
-  /// See the [Rust documentation for `MeroiticCursive`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.MeroiticCursive) for more information.
+  /// See the [Rust documentation for `MeroiticCursive`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.MeroiticCursive) for more information.
   // ignore: public_member_api_docs
   meroiticCursive,
-  /// See the [Rust documentation for `MeroiticHieroglyphs`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.MeroiticHieroglyphs) for more information.
+  /// See the [Rust documentation for `MeroiticHieroglyphs`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.MeroiticHieroglyphs) for more information.
   // ignore: public_member_api_docs
   meroiticHieroglyphs,
-  /// See the [Rust documentation for `Miao`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Miao) for more information.
+  /// See the [Rust documentation for `Miao`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Miao) for more information.
   // ignore: public_member_api_docs
   miao,
-  /// See the [Rust documentation for `Modi`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Modi) for more information.
+  /// See the [Rust documentation for `Modi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Modi) for more information.
   // ignore: public_member_api_docs
   modi,
-  /// See the [Rust documentation for `Mongolian`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Mongolian) for more information.
+  /// See the [Rust documentation for `Mongolian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Mongolian) for more information.
   // ignore: public_member_api_docs
   mongolian,
-  /// See the [Rust documentation for `Mro`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Mro) for more information.
+  /// See the [Rust documentation for `Mro`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Mro) for more information.
   // ignore: public_member_api_docs
   mro,
-  /// See the [Rust documentation for `Multani`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Multani) for more information.
+  /// See the [Rust documentation for `Multani`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Multani) for more information.
   // ignore: public_member_api_docs
   multani,
-  /// See the [Rust documentation for `Myanmar`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Myanmar) for more information.
+  /// See the [Rust documentation for `Myanmar`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Myanmar) for more information.
   // ignore: public_member_api_docs
   myanmar,
-  /// See the [Rust documentation for `Nabataean`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Nabataean) for more information.
+  /// See the [Rust documentation for `Nabataean`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Nabataean) for more information.
   // ignore: public_member_api_docs
   nabataean,
-  /// See the [Rust documentation for `NagMundari`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.NagMundari) for more information.
+  /// See the [Rust documentation for `NagMundari`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.NagMundari) for more information.
   // ignore: public_member_api_docs
   nagMundari,
-  /// See the [Rust documentation for `Nandinagari`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Nandinagari) for more information.
+  /// See the [Rust documentation for `Nandinagari`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Nandinagari) for more information.
   // ignore: public_member_api_docs
   nandinagari,
-  /// See the [Rust documentation for `Nastaliq`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Nastaliq) for more information.
+  /// See the [Rust documentation for `Nastaliq`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Nastaliq) for more information.
   // ignore: public_member_api_docs
   nastaliq,
-  /// See the [Rust documentation for `NewTaiLue`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.NewTaiLue) for more information.
+  /// See the [Rust documentation for `NewTaiLue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.NewTaiLue) for more information.
   // ignore: public_member_api_docs
   newTaiLue,
-  /// See the [Rust documentation for `Newa`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Newa) for more information.
+  /// See the [Rust documentation for `Newa`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Newa) for more information.
   // ignore: public_member_api_docs
   newa,
-  /// See the [Rust documentation for `Nko`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Nko) for more information.
+  /// See the [Rust documentation for `Nko`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Nko) for more information.
   // ignore: public_member_api_docs
   nko,
-  /// See the [Rust documentation for `Nushu`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Nushu) for more information.
+  /// See the [Rust documentation for `Nushu`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Nushu) for more information.
   // ignore: public_member_api_docs
   nushu,
-  /// See the [Rust documentation for `NyiakengPuachueHmong`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.NyiakengPuachueHmong) for more information.
+  /// See the [Rust documentation for `NyiakengPuachueHmong`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.NyiakengPuachueHmong) for more information.
   // ignore: public_member_api_docs
   nyiakengPuachueHmong,
-  /// See the [Rust documentation for `Ogham`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Ogham) for more information.
+  /// See the [Rust documentation for `Ogham`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Ogham) for more information.
   // ignore: public_member_api_docs
   ogham,
-  /// See the [Rust documentation for `OlChiki`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.OlChiki) for more information.
+  /// See the [Rust documentation for `OlChiki`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OlChiki) for more information.
   // ignore: public_member_api_docs
   olChiki,
-  /// See the [Rust documentation for `OldHungarian`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.OldHungarian) for more information.
+  /// See the [Rust documentation for `OldHungarian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldHungarian) for more information.
   // ignore: public_member_api_docs
   oldHungarian,
-  /// See the [Rust documentation for `OldItalic`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.OldItalic) for more information.
+  /// See the [Rust documentation for `OldItalic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldItalic) for more information.
   // ignore: public_member_api_docs
   oldItalic,
-  /// See the [Rust documentation for `OldNorthArabian`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.OldNorthArabian) for more information.
+  /// See the [Rust documentation for `OldNorthArabian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldNorthArabian) for more information.
   // ignore: public_member_api_docs
   oldNorthArabian,
-  /// See the [Rust documentation for `OldPermic`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.OldPermic) for more information.
+  /// See the [Rust documentation for `OldPermic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldPermic) for more information.
   // ignore: public_member_api_docs
   oldPermic,
-  /// See the [Rust documentation for `OldPersian`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.OldPersian) for more information.
+  /// See the [Rust documentation for `OldPersian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldPersian) for more information.
   // ignore: public_member_api_docs
   oldPersian,
-  /// See the [Rust documentation for `OldSogdian`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.OldSogdian) for more information.
+  /// See the [Rust documentation for `OldSogdian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldSogdian) for more information.
   // ignore: public_member_api_docs
   oldSogdian,
-  /// See the [Rust documentation for `OldSouthArabian`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.OldSouthArabian) for more information.
+  /// See the [Rust documentation for `OldSouthArabian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldSouthArabian) for more information.
   // ignore: public_member_api_docs
   oldSouthArabian,
-  /// See the [Rust documentation for `OldTurkic`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.OldTurkic) for more information.
+  /// See the [Rust documentation for `OldTurkic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldTurkic) for more information.
   // ignore: public_member_api_docs
   oldTurkic,
-  /// See the [Rust documentation for `OldUyghur`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.OldUyghur) for more information.
+  /// See the [Rust documentation for `OldUyghur`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldUyghur) for more information.
   // ignore: public_member_api_docs
   oldUyghur,
-  /// See the [Rust documentation for `Oriya`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Oriya) for more information.
+  /// See the [Rust documentation for `Oriya`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Oriya) for more information.
   // ignore: public_member_api_docs
   oriya,
-  /// See the [Rust documentation for `Osage`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Osage) for more information.
+  /// See the [Rust documentation for `Osage`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Osage) for more information.
   // ignore: public_member_api_docs
   osage,
-  /// See the [Rust documentation for `Osmanya`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Osmanya) for more information.
+  /// See the [Rust documentation for `Osmanya`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Osmanya) for more information.
   // ignore: public_member_api_docs
   osmanya,
-  /// See the [Rust documentation for `PahawhHmong`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.PahawhHmong) for more information.
+  /// See the [Rust documentation for `PahawhHmong`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.PahawhHmong) for more information.
   // ignore: public_member_api_docs
   pahawhHmong,
-  /// See the [Rust documentation for `Palmyrene`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Palmyrene) for more information.
+  /// See the [Rust documentation for `Palmyrene`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Palmyrene) for more information.
   // ignore: public_member_api_docs
   palmyrene,
-  /// See the [Rust documentation for `PauCinHau`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.PauCinHau) for more information.
+  /// See the [Rust documentation for `PauCinHau`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.PauCinHau) for more information.
   // ignore: public_member_api_docs
   pauCinHau,
-  /// See the [Rust documentation for `PhagsPa`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.PhagsPa) for more information.
+  /// See the [Rust documentation for `PhagsPa`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.PhagsPa) for more information.
   // ignore: public_member_api_docs
   phagsPa,
-  /// See the [Rust documentation for `Phoenician`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Phoenician) for more information.
+  /// See the [Rust documentation for `Phoenician`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Phoenician) for more information.
   // ignore: public_member_api_docs
   phoenician,
-  /// See the [Rust documentation for `PsalterPahlavi`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.PsalterPahlavi) for more information.
+  /// See the [Rust documentation for `PsalterPahlavi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.PsalterPahlavi) for more information.
   // ignore: public_member_api_docs
   psalterPahlavi,
-  /// See the [Rust documentation for `Rejang`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Rejang) for more information.
+  /// See the [Rust documentation for `Rejang`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Rejang) for more information.
   // ignore: public_member_api_docs
   rejang,
-  /// See the [Rust documentation for `Runic`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Runic) for more information.
+  /// See the [Rust documentation for `Runic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Runic) for more information.
   // ignore: public_member_api_docs
   runic,
-  /// See the [Rust documentation for `Samaritan`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Samaritan) for more information.
+  /// See the [Rust documentation for `Samaritan`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Samaritan) for more information.
   // ignore: public_member_api_docs
   samaritan,
-  /// See the [Rust documentation for `Saurashtra`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Saurashtra) for more information.
+  /// See the [Rust documentation for `Saurashtra`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Saurashtra) for more information.
   // ignore: public_member_api_docs
   saurashtra,
-  /// See the [Rust documentation for `Sharada`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Sharada) for more information.
+  /// See the [Rust documentation for `Sharada`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Sharada) for more information.
   // ignore: public_member_api_docs
   sharada,
-  /// See the [Rust documentation for `Shavian`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Shavian) for more information.
+  /// See the [Rust documentation for `Shavian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Shavian) for more information.
   // ignore: public_member_api_docs
   shavian,
-  /// See the [Rust documentation for `Siddham`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Siddham) for more information.
+  /// See the [Rust documentation for `Siddham`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Siddham) for more information.
   // ignore: public_member_api_docs
   siddham,
-  /// See the [Rust documentation for `Sidetic`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Sidetic) for more information.
+  /// See the [Rust documentation for `Sidetic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Sidetic) for more information.
   // ignore: public_member_api_docs
   sidetic,
-  /// See the [Rust documentation for `SignWriting`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.SignWriting) for more information.
+  /// See the [Rust documentation for `SignWriting`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.SignWriting) for more information.
   // ignore: public_member_api_docs
   signWriting,
-  /// See the [Rust documentation for `Sinhala`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Sinhala) for more information.
+  /// See the [Rust documentation for `Sinhala`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Sinhala) for more information.
   // ignore: public_member_api_docs
   sinhala,
-  /// See the [Rust documentation for `Sogdian`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Sogdian) for more information.
+  /// See the [Rust documentation for `Sogdian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Sogdian) for more information.
   // ignore: public_member_api_docs
   sogdian,
-  /// See the [Rust documentation for `SoraSompeng`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.SoraSompeng) for more information.
+  /// See the [Rust documentation for `SoraSompeng`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.SoraSompeng) for more information.
   // ignore: public_member_api_docs
   soraSompeng,
-  /// See the [Rust documentation for `Soyombo`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Soyombo) for more information.
+  /// See the [Rust documentation for `Soyombo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Soyombo) for more information.
   // ignore: public_member_api_docs
   soyombo,
-  /// See the [Rust documentation for `Sundanese`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Sundanese) for more information.
+  /// See the [Rust documentation for `Sundanese`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Sundanese) for more information.
   // ignore: public_member_api_docs
   sundanese,
-  /// See the [Rust documentation for `SylotiNagri`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.SylotiNagri) for more information.
+  /// See the [Rust documentation for `SylotiNagri`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.SylotiNagri) for more information.
   // ignore: public_member_api_docs
   sylotiNagri,
-  /// See the [Rust documentation for `Syriac`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Syriac) for more information.
+  /// See the [Rust documentation for `Syriac`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Syriac) for more information.
   // ignore: public_member_api_docs
   syriac,
-  /// See the [Rust documentation for `Tagalog`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Tagalog) for more information.
+  /// See the [Rust documentation for `Tagalog`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Tagalog) for more information.
   // ignore: public_member_api_docs
   tagalog,
-  /// See the [Rust documentation for `Tagbanwa`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Tagbanwa) for more information.
+  /// See the [Rust documentation for `Tagbanwa`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Tagbanwa) for more information.
   // ignore: public_member_api_docs
   tagbanwa,
-  /// See the [Rust documentation for `TaiLe`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.TaiLe) for more information.
+  /// See the [Rust documentation for `TaiLe`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.TaiLe) for more information.
   // ignore: public_member_api_docs
   taiLe,
-  /// See the [Rust documentation for `TaiTham`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.TaiTham) for more information.
+  /// See the [Rust documentation for `TaiTham`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.TaiTham) for more information.
   // ignore: public_member_api_docs
   taiTham,
-  /// See the [Rust documentation for `TaiViet`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.TaiViet) for more information.
+  /// See the [Rust documentation for `TaiViet`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.TaiViet) for more information.
   // ignore: public_member_api_docs
   taiViet,
-  /// See the [Rust documentation for `TaiYo`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.TaiYo) for more information.
+  /// See the [Rust documentation for `TaiYo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.TaiYo) for more information.
   // ignore: public_member_api_docs
   taiYo,
-  /// See the [Rust documentation for `Takri`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Takri) for more information.
+  /// See the [Rust documentation for `Takri`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Takri) for more information.
   // ignore: public_member_api_docs
   takri,
-  /// See the [Rust documentation for `Tamil`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Tamil) for more information.
+  /// See the [Rust documentation for `Tamil`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Tamil) for more information.
   // ignore: public_member_api_docs
   tamil,
-  /// See the [Rust documentation for `Tangsa`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Tangsa) for more information.
+  /// See the [Rust documentation for `Tangsa`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Tangsa) for more information.
   // ignore: public_member_api_docs
   tangsa,
-  /// See the [Rust documentation for `Tangut`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Tangut) for more information.
+  /// See the [Rust documentation for `Tangut`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Tangut) for more information.
   // ignore: public_member_api_docs
   tangut,
-  /// See the [Rust documentation for `Telugu`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Telugu) for more information.
+  /// See the [Rust documentation for `Telugu`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Telugu) for more information.
   // ignore: public_member_api_docs
   telugu,
-  /// See the [Rust documentation for `Thaana`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Thaana) for more information.
+  /// See the [Rust documentation for `Thaana`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Thaana) for more information.
   // ignore: public_member_api_docs
   thaana,
-  /// See the [Rust documentation for `Thai`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Thai) for more information.
+  /// See the [Rust documentation for `Thai`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Thai) for more information.
   // ignore: public_member_api_docs
   thai,
-  /// See the [Rust documentation for `Tibetan`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Tibetan) for more information.
+  /// See the [Rust documentation for `Tibetan`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Tibetan) for more information.
   // ignore: public_member_api_docs
   tibetan,
-  /// See the [Rust documentation for `Tifinagh`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Tifinagh) for more information.
+  /// See the [Rust documentation for `Tifinagh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Tifinagh) for more information.
   // ignore: public_member_api_docs
   tifinagh,
-  /// See the [Rust documentation for `Tirhuta`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Tirhuta) for more information.
+  /// See the [Rust documentation for `Tirhuta`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Tirhuta) for more information.
   // ignore: public_member_api_docs
   tirhuta,
-  /// See the [Rust documentation for `TolongSiki`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.TolongSiki) for more information.
+  /// See the [Rust documentation for `TolongSiki`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.TolongSiki) for more information.
   // ignore: public_member_api_docs
   tolongSiki,
-  /// See the [Rust documentation for `Toto`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Toto) for more information.
+  /// See the [Rust documentation for `Toto`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Toto) for more information.
   // ignore: public_member_api_docs
   toto,
-  /// See the [Rust documentation for `Ugaritic`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Ugaritic) for more information.
+  /// See the [Rust documentation for `Ugaritic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Ugaritic) for more information.
   // ignore: public_member_api_docs
   ugaritic,
-  /// See the [Rust documentation for `Unknown`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Unknown) for more information.
+  /// See the [Rust documentation for `Unknown`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Unknown) for more information.
   // ignore: public_member_api_docs
   unknown,
-  /// See the [Rust documentation for `Vai`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Vai) for more information.
+  /// See the [Rust documentation for `Vai`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Vai) for more information.
   // ignore: public_member_api_docs
   vai,
-  /// See the [Rust documentation for `Vithkuqi`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Vithkuqi) for more information.
+  /// See the [Rust documentation for `Vithkuqi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Vithkuqi) for more information.
   // ignore: public_member_api_docs
   vithkuqi,
-  /// See the [Rust documentation for `Wancho`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Wancho) for more information.
+  /// See the [Rust documentation for `Wancho`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Wancho) for more information.
   // ignore: public_member_api_docs
   wancho,
-  /// See the [Rust documentation for `WarangCiti`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.WarangCiti) for more information.
+  /// See the [Rust documentation for `WarangCiti`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.WarangCiti) for more information.
   // ignore: public_member_api_docs
   warangCiti,
-  /// See the [Rust documentation for `Yezidi`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Yezidi) for more information.
+  /// See the [Rust documentation for `Yezidi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Yezidi) for more information.
   // ignore: public_member_api_docs
   yezidi,
-  /// See the [Rust documentation for `Yi`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.Yi) for more information.
+  /// See the [Rust documentation for `Yi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Yi) for more information.
   // ignore: public_member_api_docs
   yi,
-  /// See the [Rust documentation for `ZanabazarSquare`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#associatedconstant.ZanabazarSquare) for more information.
+  /// See the [Rust documentation for `ZanabazarSquare`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.ZanabazarSquare) for more information.
   // ignore: public_member_api_docs
   zanabazarSquare;
 
@@ -861,7 +861,7 @@ enum Script {
     }
   }
 
-  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static Script forChar(Rune ch) {
     final result = _icu4x_Script_for_char_mv1(ch);
     return Script.values.firstWhere((v) => v._ffi == result);
@@ -869,7 +869,7 @@ enum Script {
 
   /// Get the "long" name of this property value (returns empty if property value is unknown)
   ///
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
   String? longName() {
     final result = _icu4x_Script_long_name_mv1(_ffi);
     if (!result.isOk) {
@@ -880,7 +880,7 @@ enum Script {
 
   /// Get the "short" name of this property value (returns empty if property value is unknown)
   ///
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
   String? shortName() {
     final result = _icu4x_Script_short_name_mv1(_ffi);
     if (!result.isOk) {
@@ -891,7 +891,7 @@ enum Script {
 
   /// Convert to an integer value usable with ICU4C and CodePointMapData
   ///
-  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#method.to_icu4c_value) for more information.
+  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#method.to_icu4c_value) for more information.
   int toIntegerValue() {
     final result = _icu4x_Script_to_integer_value_mv1(_ffi);
     return result;
@@ -899,7 +899,7 @@ enum Script {
 
   /// Convert from an integer value from ICU4C or CodePointMapData
   ///
-  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.Script.html#method.from_icu4c_value) for more information.
+  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#method.from_icu4c_value) for more information.
   static Script? fromIntegerValue(int other) {
     final result = _icu4x_Script_from_integer_value_mv1(other);
     if (!result.isOk) {

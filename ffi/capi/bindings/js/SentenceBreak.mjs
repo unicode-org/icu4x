@@ -5,7 +5,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html) for more information.
+ * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html) for more information.
  */
 export class SentenceBreak {
     #value = undefined;
@@ -106,7 +106,7 @@ export class SentenceBreak {
 
 
     /**
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
      */
     static forChar(ch) {
 
@@ -123,7 +123,7 @@ export class SentenceBreak {
     /**
      * Get the "long" name of this property value (returns empty if property value is unknown)
      *
-     * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
      */
     longName() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
@@ -146,7 +146,7 @@ export class SentenceBreak {
     /**
      * Get the "short" name of this property value (returns empty if property value is unknown)
      *
-     * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
      */
     shortName() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
@@ -169,7 +169,7 @@ export class SentenceBreak {
     /**
      * Convert to an integer value usable with ICU4C and CodePointMapData
      *
-     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html#method.to_icu4c_value) for more information.
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#method.to_icu4c_value) for more information.
      */
     toIntegerValue() {
 
@@ -186,7 +186,7 @@ export class SentenceBreak {
     /**
      * Convert from an integer value from ICU4C or CodePointMapData
      *
-     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html#method.from_icu4c_value) for more information.
+     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#method.from_icu4c_value) for more information.
      */
     static fromIntegerValue(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);

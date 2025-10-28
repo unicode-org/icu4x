@@ -5,7 +5,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * See the [Rust documentation for `GroupingStrategy`](https://docs.rs/icu/2.1.0/icu/decimal/options/enum.GroupingStrategy.html) for more information.
+ * See the [Rust documentation for `GroupingStrategy`](https://docs.rs/icu/2.1.1/icu/decimal/options/enum.GroupingStrategy.html) for more information.
  */
 export class DecimalGroupingStrategy {
     #value = undefined;

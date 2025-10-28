@@ -6,7 +6,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /**
- * See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/2.1.0/icu/plurals/struct.PluralOperands.html) for more information.
+ * See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralOperands.html) for more information.
  */
 export class PluralOperands {
     /** @internal */
@@ -18,7 +18,7 @@ export class PluralOperands {
     /**
      * Construct for a given string representing a number
      *
-     * See the [Rust documentation for `from_str`](https://docs.rs/icu/2.1.0/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
+     * See the [Rust documentation for `from_str`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
      */
     static fromString(s: string): PluralOperands;
 

@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// This mapper supports two-way mapping, but it is optimized for the case of IANA to BCP-47.
 /// It also supports normalizing and canonicalizing the IANA strings.
 ///
-/// See the [Rust documentation for `IanaParser`](https://docs.rs/icu/2.1.0/icu/time/zone/iana/struct.IanaParser.html) for more information.
+/// See the [Rust documentation for `IanaParser`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.IanaParser.html) for more information.
 final class IanaParser implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -31,7 +31,7 @@ final class IanaParser implements ffi.Finalizable {
 
   /// Create a new [IanaParser] using compiled data
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/time/zone/iana/struct.IanaParser.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.IanaParser.html#method.new) for more information.
   factory IanaParser() {
     final result = _icu4x_IanaParser_create_mv1();
     return IanaParser._fromFfi(result, []);
@@ -39,7 +39,7 @@ final class IanaParser implements ffi.Finalizable {
 
   /// Create a new [IanaParser] using a particular data source
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/time/zone/iana/struct.IanaParser.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.IanaParser.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory IanaParser.withProvider(DataProvider provider) {
@@ -50,14 +50,14 @@ final class IanaParser implements ffi.Finalizable {
     return IanaParser._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `parse`](https://docs.rs/icu/2.1.0/icu/time/zone/iana/struct.IanaParserBorrowed.html#method.parse) for more information.
+  /// See the [Rust documentation for `parse`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.IanaParserBorrowed.html#method.parse) for more information.
   TimeZone parse(String value) {
     final temp = _FinalizedArena();
     final result = _icu4x_IanaParser_parse_mv1(_ffi, value._utf8AllocIn(temp.arena));
     return TimeZone._fromFfi(result, []);
   }
 
-  /// See the [Rust documentation for `iter`](https://docs.rs/icu/2.1.0/icu/time/zone/iana/struct.IanaParserBorrowed.html#method.iter) for more information.
+  /// See the [Rust documentation for `iter`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.IanaParserBorrowed.html#method.iter) for more information.
   TimeZoneIterator iter() {
     // This lifetime edge depends on lifetimes: 'a
     final aEdges = [this];
