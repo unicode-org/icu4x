@@ -4,4 +4,4 @@
 
 // ignore_for_file: public_member_api_docs
 
-const version = 'ffi-artifacts/2025-08-13';
+const version = 'icu@2.1.0';
