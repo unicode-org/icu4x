@@ -25,12 +25,11 @@ script = '''
 exit_on_error true
 
 # Check files matching these patterns.
-glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml" "./**/*.rst" "./**/*.bat" "./**/*.c" "./**/*.cpp" "./**/*.hpp" "./**/*.h" "./**/*.mjs" "./**/*.ts" "./**/*.*.dart"
+glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.yaml" "./**/*.toml" "./**/*.c" "./**/*.cpp" "./**/*.hpp" "./**/*.h" "./**/*.mjs" "./**/*.ts" "./**/*.js" "./**/*.*.dart"
 
-files = exec --fail-on-error git ls-files --cached --others --exclude-standard
+glob_skip_pattern_array = array "ffi/capi/bindings/**/*" "**/data/**/*" "tools/web-demo/gen/**/*"
 
-# Skip the files matching these patterns.
-glob_skip_pattern_array = array "ffi/capi/bindings/**/*" "ffi/npm/lib/**/*" "ffi/dart/lib/src/**/*" "tools/web-demo/gen/**/*" "**/target/**/*" "**/node_modules/**/*" "**/data/**/*" "examples/gn/vendor/**/*" "examples/gn/third_party_tools/**/*" "ffi/capi/tests/tinyc/*/baked_data/**/*"
+output = exec --fail-on-error git ls-files --cached --others --exclude-standard
 
 blank_line = set ""
 
@@ -82,20 +81,24 @@ license_apache_slash_line_6 = set "// <https://www.apache.org/licenses/LICENSE-2
 license_apache_slash_array = array ${license_apache_slash_line_1} ${license_apache_slash_line_2} ${license_apache_slash_line_3} ${license_apache_slash_line_4} ${license_apache_slash_line_5} ${license_apache_slash_line_6}
 license_apache_hash_str = array_join ${license_apache_slash_array} "\n"
 
-skip_paths = set_new
+paths = set_new
+files = split ${output.stdout} "\n"
+for path in ${files}
+    set_put ${paths} ${path}
+end
+
 for skip_pattern in ${glob_skip_pattern_array}
     echo "License header check skipped in files match ${skip_pattern}"
-    paths = glob_array ${skip_pattern}
-    for p in ${paths}
-        set_put ${skip_paths} ${p}
+    skip = glob_array ${skip_pattern}
+    for p in ${skip}
+        set_remove ${paths} ${p}
     end
 end
 
 for pattern in ${glob_pattern_array}
     handle = glob_array ${pattern}
     for path in ${handle}
-        should_skip = set_contains ${skip_paths} ${path}
-        should_check_header = eq ${should_skip} false
+        should_check_header = set_contains ${paths} ${path}
         if ${should_check_header}
             text = readfile ${path}
             if starts_with ${path} "utils/calendrical_calculations"
