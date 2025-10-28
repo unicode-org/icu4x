@@ -10,7 +10,9 @@ final class _TitlecaseOptionsFfi extends ffi.Struct {
 
 /// See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/2.0.0/icu/casemap/options/struct.TitlecaseOptions.html) for more information.
 final class TitlecaseOptions {
+  // ignore: public_member_api_docs
   LeadingAdjustment? leadingAdjustment;
+  // ignore: public_member_api_docs
   TrailingCase? trailingCase;
 
   // This struct contains borrowed fields, so this takes in a list of
@@ -26,9 +28,9 @@ final class TitlecaseOptions {
   // ignore: unused_element
   _TitlecaseOptionsFfi _toFfi(ffi.Allocator temp) {
     final struct = ffi.Struct.create<_TitlecaseOptionsFfi>();
-    LeadingAdjustment? leadingAdjustment = this.leadingAdjustment;
+    final leadingAdjustment = this.leadingAdjustment;
     struct.leadingAdjustment = leadingAdjustment != null ? _ResultInt32Void.ok(leadingAdjustment.index) : _ResultInt32Void.err();
-    TrailingCase? trailingCase = this.trailingCase;
+    final trailingCase = this.trailingCase;
     struct.trailingCase = trailingCase != null ? _ResultInt32Void.ok(trailingCase.index) : _ResultInt32Void.err();
     return struct;
   }

@@ -6,10 +6,13 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `LineBreakWordOption`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.LineBreakWordOption.html) for more information.
 enum LineBreakWordOption {
 
+  // ignore: public_member_api_docs
   normal,
 
+  // ignore: public_member_api_docs
   breakAll,
 
+  // ignore: public_member_api_docs
   keepAll;
 
 }

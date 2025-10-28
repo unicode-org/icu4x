@@ -18,12 +18,19 @@ final class _PluralCategoriesFfi extends ffi.Struct {
   external bool other;
 }
 
+/// See the [Rust documentation for `categories`](https://docs.rs/icu/2.0.0/icu/plurals/struct.PluralRules.html#method.categories) for more information.
 final class PluralCategories {
+  // ignore: public_member_api_docs
   final bool zero;
+  // ignore: public_member_api_docs
   final bool one;
+  // ignore: public_member_api_docs
   final bool two;
+  // ignore: public_member_api_docs
   final bool few;
+  // ignore: public_member_api_docs
   final bool many;
+  // ignore: public_member_api_docs
   final bool other;
 
   // This struct contains borrowed fields, so this takes in a list of

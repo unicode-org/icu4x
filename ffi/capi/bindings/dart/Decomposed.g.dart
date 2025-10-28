@@ -16,7 +16,9 @@ final class _DecomposedFfi extends ffi.Struct {
 ///
 /// See the [Rust documentation for `Decomposed`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/enum.Decomposed.html) for more information.
 final class Decomposed {
+  // ignore: public_member_api_docs
   final Rune first;
+  // ignore: public_member_api_docs
   final Rune second;
 
   // This struct contains borrowed fields, so this takes in a list of

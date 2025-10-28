@@ -13,10 +13,14 @@ final class _DisplayNamesOptionsFfi extends ffi.Struct {
 ///
 /// See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.DisplayNamesOptions.html) for more information.
 final class DisplayNamesOptions {
+  // ignore: public_member_api_docs
   DisplayNamesStyle? style;
+  // ignore: public_member_api_docs
   DisplayNamesFallback? fallback;
+  // ignore: public_member_api_docs
   LanguageDisplay? languageDisplay;
 
+  // ignore: public_member_api_docs
   DisplayNamesOptions({this.style, this.fallback, this.languageDisplay});
 
   // This struct contains borrowed fields, so this takes in a list of
@@ -33,11 +37,11 @@ final class DisplayNamesOptions {
   // ignore: unused_element
   _DisplayNamesOptionsFfi _toFfi(ffi.Allocator temp) {
     final struct = ffi.Struct.create<_DisplayNamesOptionsFfi>();
-    DisplayNamesStyle? style = this.style;
+    final style = this.style;
     struct.style = style != null ? _ResultInt32Void.ok(style.index) : _ResultInt32Void.err();
-    DisplayNamesFallback? fallback = this.fallback;
+    final fallback = this.fallback;
     struct.fallback = fallback != null ? _ResultInt32Void.ok(fallback.index) : _ResultInt32Void.err();
-    LanguageDisplay? languageDisplay = this.languageDisplay;
+    final languageDisplay = this.languageDisplay;
     struct.languageDisplay = languageDisplay != null ? _ResultInt32Void.ok(languageDisplay.index) : _ResultInt32Void.err();
     return struct;
   }

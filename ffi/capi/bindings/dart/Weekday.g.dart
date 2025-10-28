@@ -3,20 +3,28 @@
 
 part of 'lib.g.dart';
 
+/// See the [Rust documentation for `Weekday`](https://docs.rs/icu/2.0.0/icu/calendar/types/enum.Weekday.html) for more information.
 enum Weekday {
 
+  // ignore: public_member_api_docs
   monday,
 
+  // ignore: public_member_api_docs
   tuesday,
 
+  // ignore: public_member_api_docs
   wednesday,
 
+  // ignore: public_member_api_docs
   thursday,
 
+  // ignore: public_member_api_docs
   friday,
 
+  // ignore: public_member_api_docs
   saturday,
 
+  // ignore: public_member_api_docs
   sunday;
 
   int get _ffi {

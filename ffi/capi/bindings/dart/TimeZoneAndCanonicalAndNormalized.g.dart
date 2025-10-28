@@ -11,8 +11,11 @@ final class _TimeZoneAndCanonicalAndNormalizedFfi extends ffi.Struct {
 
 /// See the [Rust documentation for `TimeZoneAndCanonicalAndNormalized`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalized.html) for more information.
 final class TimeZoneAndCanonicalAndNormalized {
+  // ignore: public_member_api_docs
   final TimeZone timeZone;
+  // ignore: public_member_api_docs
   final String canonical;
+  // ignore: public_member_api_docs
   final String normalized;
 
   // ignore: unused_element

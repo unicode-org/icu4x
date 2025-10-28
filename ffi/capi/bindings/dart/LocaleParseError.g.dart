@@ -6,12 +6,16 @@ part of 'lib.g.dart';
 /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/locale/enum.ParseError.html)
 enum LocaleParseError {
 
+  // ignore: public_member_api_docs
   unknown,
 
+  // ignore: public_member_api_docs
   language,
 
+  // ignore: public_member_api_docs
   subtag,
 
+  // ignore: public_member_api_docs
   extension;
 
 }

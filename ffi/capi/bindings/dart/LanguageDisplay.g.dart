@@ -8,8 +8,10 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/enum.LanguageDisplay.html) for more information.
 enum LanguageDisplay {
 
+  // ignore: public_member_api_docs
   dialect,
 
+  // ignore: public_member_api_docs
   standard;
 
 }

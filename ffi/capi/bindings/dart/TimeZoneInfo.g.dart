@@ -98,6 +98,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
     return TimeZoneInfo._fromFfi(result, []);
   }
 
+  /// See the [Rust documentation for `offset`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.offset) for more information.
   UtcOffset? get offset {
     final result = _icu4x_TimeZoneInfo_offset_mv1(_ffi);
     return result.address == 0 ? null : UtcOffset._fromFfi(result, []);

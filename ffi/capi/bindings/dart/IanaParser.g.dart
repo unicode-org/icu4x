@@ -60,7 +60,7 @@ final class IanaParser implements ffi.Finalizable {
   /// See the [Rust documentation for `iter`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserBorrowed.html#method.iter) for more information.
   TimeZoneIterator iter() {
     // This lifetime edge depends on lifetimes: 'a
-    core.List<Object> aEdges = [this];
+    final aEdges = [this];
     final result = _icu4x_IanaParser_iter_mv1(_ffi);
     return TimeZoneIterator._fromFfi(result, [], aEdges);
   }

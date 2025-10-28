@@ -35,7 +35,7 @@ final class LocaleFallbackerWithConfig implements ffi.Finalizable {
   /// See the [Rust documentation for `fallback_for`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.fallback_for) for more information.
   LocaleFallbackIterator fallbackForLocale(Locale locale) {
     // This lifetime edge depends on lifetimes: 'a, 'b
-    core.List<Object> aEdges = [this];
+    final aEdges = [this];
     final result = _icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1(_ffi, locale._ffi);
     return LocaleFallbackIterator._fromFfi(result, [], aEdges);
   }

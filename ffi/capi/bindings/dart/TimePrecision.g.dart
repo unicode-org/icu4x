@@ -8,30 +8,43 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `SubsecondDigits`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.SubsecondDigits.html) for more information.
 enum TimePrecision {
 
+  // ignore: public_member_api_docs
   hour,
 
+  // ignore: public_member_api_docs
   minute,
 
+  // ignore: public_member_api_docs
   minuteOptional,
 
+  // ignore: public_member_api_docs
   second,
 
+  // ignore: public_member_api_docs
   subsecond1,
 
+  // ignore: public_member_api_docs
   subsecond2,
 
+  // ignore: public_member_api_docs
   subsecond3,
 
+  // ignore: public_member_api_docs
   subsecond4,
 
+  // ignore: public_member_api_docs
   subsecond5,
 
+  // ignore: public_member_api_docs
   subsecond6,
 
+  // ignore: public_member_api_docs
   subsecond7,
 
+  // ignore: public_member_api_docs
   subsecond8,
 
+  // ignore: public_member_api_docs
   subsecond9;
 
   /// See the [Rust documentation for `try_from_int`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.SubsecondDigits.html#method.try_from_int) for more information.

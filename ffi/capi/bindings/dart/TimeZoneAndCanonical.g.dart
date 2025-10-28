@@ -10,7 +10,9 @@ final class _TimeZoneAndCanonicalFfi extends ffi.Struct {
 
 /// See the [Rust documentation for `TimeZoneAndCanonical`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneAndCanonical.html) for more information.
 final class TimeZoneAndCanonical {
+  // ignore: public_member_api_docs
   final TimeZone timeZone;
+  // ignore: public_member_api_docs
   final String canonical;
 
   // ignore: unused_element

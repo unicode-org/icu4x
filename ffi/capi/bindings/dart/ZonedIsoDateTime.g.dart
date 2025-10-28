@@ -13,8 +13,11 @@ final class _ZonedIsoDateTimeFfi extends ffi.Struct {
 ///
 /// See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html) for more information.
 final class ZonedIsoDateTime {
+  // ignore: public_member_api_docs
   final IsoDate date;
+  // ignore: public_member_api_docs
   final Time time;
+  // ignore: public_member_api_docs
   final TimeZoneInfo zone;
 
   // This struct contains borrowed fields, so this takes in a list of

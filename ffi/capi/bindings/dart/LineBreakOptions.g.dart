@@ -10,9 +10,12 @@ final class _LineBreakOptionsFfi extends ffi.Struct {
 
 /// See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/2.0.0/icu/segmenter/options/struct.LineBreakOptions.html) for more information.
 final class LineBreakOptions {
+  // ignore: public_member_api_docs
   LineBreakStrictness? strictness;
+  // ignore: public_member_api_docs
   LineBreakWordOption? wordOption;
 
+  // ignore: public_member_api_docs
   LineBreakOptions({this.strictness, this.wordOption});
 
   // This struct contains borrowed fields, so this takes in a list of
@@ -28,9 +31,9 @@ final class LineBreakOptions {
   // ignore: unused_element
   _LineBreakOptionsFfi _toFfi(ffi.Allocator temp) {
     final struct = ffi.Struct.create<_LineBreakOptionsFfi>();
-    LineBreakStrictness? strictness = this.strictness;
+    final strictness = this.strictness;
     struct.strictness = strictness != null ? _ResultInt32Void.ok(strictness.index) : _ResultInt32Void.err();
-    LineBreakWordOption? wordOption = this.wordOption;
+    final wordOption = this.wordOption;
     struct.wordOption = wordOption != null ? _ResultInt32Void.ok(wordOption.index) : _ResultInt32Void.err();
     return struct;
   }

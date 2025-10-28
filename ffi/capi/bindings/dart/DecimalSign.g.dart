@@ -8,10 +8,13 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `Sign`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.Sign.html) for more information.
 enum DecimalSign {
   /// No sign (implicitly positive, e.g., 1729).
+  // ignore: public_member_api_docs
   none,
   /// A negative sign, e.g., -1729.
+  // ignore: public_member_api_docs
   negative,
   /// An explicit positive sign, e.g., +1729.
+  // ignore: public_member_api_docs
   positive;
 
 }

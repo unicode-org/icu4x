@@ -6,102 +6,151 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html) for more information.
 enum LineBreak {
   /// See the [Rust documentation for `Unknown`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Unknown) for more information.
+  // ignore: public_member_api_docs
   unknown,
   /// See the [Rust documentation for `Ambiguous`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Ambiguous) for more information.
+  // ignore: public_member_api_docs
   ambiguous,
   /// See the [Rust documentation for `Alphabetic`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Alphabetic) for more information.
+  // ignore: public_member_api_docs
   alphabetic,
   /// See the [Rust documentation for `BreakBoth`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.BreakBoth) for more information.
+  // ignore: public_member_api_docs
   breakBoth,
   /// See the [Rust documentation for `BreakAfter`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.BreakAfter) for more information.
+  // ignore: public_member_api_docs
   breakAfter,
   /// See the [Rust documentation for `BreakBefore`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.BreakBefore) for more information.
+  // ignore: public_member_api_docs
   breakBefore,
   /// See the [Rust documentation for `MandatoryBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.MandatoryBreak) for more information.
+  // ignore: public_member_api_docs
   mandatoryBreak,
   /// See the [Rust documentation for `ContingentBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.ContingentBreak) for more information.
+  // ignore: public_member_api_docs
   contingentBreak,
   /// See the [Rust documentation for `ClosePunctuation`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.ClosePunctuation) for more information.
+  // ignore: public_member_api_docs
   closePunctuation,
   /// See the [Rust documentation for `CombiningMark`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.CombiningMark) for more information.
+  // ignore: public_member_api_docs
   combiningMark,
   /// See the [Rust documentation for `CarriageReturn`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.CarriageReturn) for more information.
+  // ignore: public_member_api_docs
   carriageReturn,
   /// See the [Rust documentation for `Exclamation`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Exclamation) for more information.
+  // ignore: public_member_api_docs
   exclamation,
   /// See the [Rust documentation for `Glue`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Glue) for more information.
+  // ignore: public_member_api_docs
   glue,
   /// See the [Rust documentation for `Hyphen`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Hyphen) for more information.
+  // ignore: public_member_api_docs
   hyphen,
   /// See the [Rust documentation for `Ideographic`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Ideographic) for more information.
+  // ignore: public_member_api_docs
   ideographic,
   /// See the [Rust documentation for `Inseparable`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Inseparable) for more information.
+  // ignore: public_member_api_docs
   inseparable,
   /// See the [Rust documentation for `InfixNumeric`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.InfixNumeric) for more information.
+  // ignore: public_member_api_docs
   infixNumeric,
   /// See the [Rust documentation for `LineFeed`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.LineFeed) for more information.
+  // ignore: public_member_api_docs
   lineFeed,
   /// See the [Rust documentation for `Nonstarter`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Nonstarter) for more information.
+  // ignore: public_member_api_docs
   nonstarter,
   /// See the [Rust documentation for `Numeric`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Numeric) for more information.
+  // ignore: public_member_api_docs
   numeric,
   /// See the [Rust documentation for `OpenPunctuation`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.OpenPunctuation) for more information.
+  // ignore: public_member_api_docs
   openPunctuation,
   /// See the [Rust documentation for `PostfixNumeric`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.PostfixNumeric) for more information.
+  // ignore: public_member_api_docs
   postfixNumeric,
   /// See the [Rust documentation for `PrefixNumeric`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.PrefixNumeric) for more information.
+  // ignore: public_member_api_docs
   prefixNumeric,
   /// See the [Rust documentation for `Quotation`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Quotation) for more information.
+  // ignore: public_member_api_docs
   quotation,
   /// See the [Rust documentation for `ComplexContext`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.ComplexContext) for more information.
+  // ignore: public_member_api_docs
   complexContext,
   /// See the [Rust documentation for `Surrogate`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Surrogate) for more information.
+  // ignore: public_member_api_docs
   surrogate,
   /// See the [Rust documentation for `Space`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Space) for more information.
+  // ignore: public_member_api_docs
   space,
   /// See the [Rust documentation for `BreakSymbols`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.BreakSymbols) for more information.
+  // ignore: public_member_api_docs
   breakSymbols,
   /// See the [Rust documentation for `ZWSpace`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.ZWSpace) for more information.
+  // ignore: public_member_api_docs
   zwSpace,
   /// See the [Rust documentation for `NextLine`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.NextLine) for more information.
+  // ignore: public_member_api_docs
   nextLine,
   /// See the [Rust documentation for `WordJoiner`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.WordJoiner) for more information.
+  // ignore: public_member_api_docs
   wordJoiner,
   /// See the [Rust documentation for `H2`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.H2) for more information.
+  // ignore: public_member_api_docs
   h2,
   /// See the [Rust documentation for `H3`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.H3) for more information.
+  // ignore: public_member_api_docs
   h3,
   /// See the [Rust documentation for `JL`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.JL) for more information.
+  // ignore: public_member_api_docs
   jl,
   /// See the [Rust documentation for `JT`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.JT) for more information.
+  // ignore: public_member_api_docs
   jt,
   /// See the [Rust documentation for `JV`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.JV) for more information.
+  // ignore: public_member_api_docs
   jv,
   /// See the [Rust documentation for `CloseParenthesis`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.CloseParenthesis) for more information.
+  // ignore: public_member_api_docs
   closeParenthesis,
   /// See the [Rust documentation for `ConditionalJapaneseStarter`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.ConditionalJapaneseStarter) for more information.
+  // ignore: public_member_api_docs
   conditionalJapaneseStarter,
   /// See the [Rust documentation for `HebrewLetter`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.HebrewLetter) for more information.
+  // ignore: public_member_api_docs
   hebrewLetter,
   /// See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.RegionalIndicator) for more information.
+  // ignore: public_member_api_docs
   regionalIndicator,
   /// See the [Rust documentation for `EBase`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.EBase) for more information.
+  // ignore: public_member_api_docs
   eBase,
   /// See the [Rust documentation for `EModifier`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.EModifier) for more information.
+  // ignore: public_member_api_docs
   eModifier,
   /// See the [Rust documentation for `ZWJ`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.ZWJ) for more information.
+  // ignore: public_member_api_docs
   zwj,
   /// See the [Rust documentation for `Aksara`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Aksara) for more information.
+  // ignore: public_member_api_docs
   aksara,
   /// See the [Rust documentation for `AksaraPrebase`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.AksaraPrebase) for more information.
+  // ignore: public_member_api_docs
   aksaraPrebase,
   /// See the [Rust documentation for `AksaraStart`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.AksaraStart) for more information.
+  // ignore: public_member_api_docs
   aksaraStart,
   /// See the [Rust documentation for `ViramaFinal`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.ViramaFinal) for more information.
+  // ignore: public_member_api_docs
   viramaFinal,
   /// See the [Rust documentation for `Virama`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Virama) for more information.
+  // ignore: public_member_api_docs
   virama,
   /// See the [Rust documentation for `UnambiguousHyphen`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.UnambiguousHyphen) for more information.
+  // ignore: public_member_api_docs
   unambiguousHyphen;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.

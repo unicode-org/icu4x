@@ -10,8 +10,10 @@ part of 'lib.g.dart';
 /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/unchecked/enum.FormattedDateTimeUncheckedError.html)
 enum DateTimeWriteError {
 
+  // ignore: public_member_api_docs
   unknown,
   /// Unused
+  // ignore: public_member_api_docs
   missingTimeZoneVariant;
 
 }

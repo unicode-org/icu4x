@@ -11,9 +11,12 @@ final class _DateTimeMismatchedCalendarErrorFfi extends ffi.Struct {
 
 /// See the [Rust documentation for `MismatchedCalendarError`](https://docs.rs/icu/2.0.0/icu/datetime/struct.MismatchedCalendarError.html) for more information.
 final class DateTimeMismatchedCalendarError {
+  // ignore: public_member_api_docs
   CalendarKind thisKind;
+  // ignore: public_member_api_docs
   CalendarKind? dateKind;
 
+  // ignore: public_member_api_docs
   DateTimeMismatchedCalendarError({required this.thisKind, this.dateKind});
 
   // This struct contains borrowed fields, so this takes in a list of
@@ -30,7 +33,7 @@ final class DateTimeMismatchedCalendarError {
   _DateTimeMismatchedCalendarErrorFfi _toFfi(ffi.Allocator temp) {
     final struct = ffi.Struct.create<_DateTimeMismatchedCalendarErrorFfi>();
     struct.thisKind = thisKind._ffi;
-    CalendarKind? dateKind = this.dateKind;
+    final dateKind = this.dateKind;
     struct.dateKind = dateKind != null ? _ResultInt32Void.ok(dateKind._ffi) : _ResultInt32Void.err();
     return struct;
   }

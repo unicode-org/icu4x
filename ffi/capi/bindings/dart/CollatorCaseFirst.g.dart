@@ -6,10 +6,13 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `CollationCaseFirst`](https://docs.rs/icu/2.0.0/icu/collator/preferences/enum.CollationCaseFirst.html) for more information.
 enum CollatorCaseFirst {
 
+  // ignore: public_member_api_docs
   off,
 
+  // ignore: public_member_api_docs
   lower,
 
+  // ignore: public_member_api_docs
   upper;
 
 }

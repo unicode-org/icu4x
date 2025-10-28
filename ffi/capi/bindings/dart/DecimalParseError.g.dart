@@ -6,10 +6,13 @@ part of 'lib.g.dart';
 /// Additional information: [1](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.ParseError.html)
 enum DecimalParseError {
 
+  // ignore: public_member_api_docs
   unknown,
 
+  // ignore: public_member_api_docs
   limit,
 
+  // ignore: public_member_api_docs
   syntax;
 
 }

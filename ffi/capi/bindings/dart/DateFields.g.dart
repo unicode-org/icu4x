@@ -16,13 +16,20 @@ final class _DateFieldsFfi extends ffi.Struct {
 ///
 /// See the [Rust documentation for `DateFields`](https://docs.rs/icu/2.0.0/icu/calendar/types/struct.DateFields.html) for more information.
 final class DateFields {
+  // ignore: public_member_api_docs
   String? era;
+  // ignore: public_member_api_docs
   int? eraYear;
+  // ignore: public_member_api_docs
   int? extendedYear;
+  // ignore: public_member_api_docs
   String? monthCode;
+  // ignore: public_member_api_docs
   int? ordinalMonth;
+  // ignore: public_member_api_docs
   int? day;
 
+  // ignore: public_member_api_docs
   DateFields({this.era, this.eraYear, this.extendedYear, this.monthCode, this.ordinalMonth, this.day});
 
   // ignore: unused_element
@@ -41,17 +48,17 @@ final class DateFields {
   // ignore: unused_element
   _DateFieldsFfi _toFfi(ffi.Allocator temp, {core.List<core.List<Object>> aAppendArray = const []}) {
     final struct = ffi.Struct.create<_DateFieldsFfi>();
-    String? era = this.era;
+    final era = this.era;
     struct.era = era != null ? _ResultSliceUtf8Void.ok(era._utf8AllocIn(aAppendArray.isNotEmpty ? _FinalizedArena.withLifetime(aAppendArray).arena : temp)) : _ResultSliceUtf8Void.err();
-    int? eraYear = this.eraYear;
+    final eraYear = this.eraYear;
     struct.eraYear = eraYear != null ? _ResultInt32Void.ok(eraYear) : _ResultInt32Void.err();
-    int? extendedYear = this.extendedYear;
+    final extendedYear = this.extendedYear;
     struct.extendedYear = extendedYear != null ? _ResultInt32Void.ok(extendedYear) : _ResultInt32Void.err();
-    String? monthCode = this.monthCode;
+    final monthCode = this.monthCode;
     struct.monthCode = monthCode != null ? _ResultSliceUtf8Void.ok(monthCode._utf8AllocIn(aAppendArray.isNotEmpty ? _FinalizedArena.withLifetime(aAppendArray).arena : temp)) : _ResultSliceUtf8Void.err();
-    int? ordinalMonth = this.ordinalMonth;
+    final ordinalMonth = this.ordinalMonth;
     struct.ordinalMonth = ordinalMonth != null ? _ResultUint8Void.ok(ordinalMonth) : _ResultUint8Void.err();
-    int? day = this.day;
+    final day = this.day;
     struct.day = day != null ? _ResultUint8Void.ok(day) : _ResultUint8Void.err();
     return struct;
   }

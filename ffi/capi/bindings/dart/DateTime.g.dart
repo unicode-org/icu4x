@@ -12,7 +12,9 @@ final class _DateTimeFfi extends ffi.Struct {
 ///
 /// See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.0.0/icu/time/struct.DateTime.html) for more information.
 final class DateTime {
+  // ignore: public_member_api_docs
   final Date date;
+  // ignore: public_member_api_docs
   final Time time;
 
   // This struct contains borrowed fields, so this takes in a list of

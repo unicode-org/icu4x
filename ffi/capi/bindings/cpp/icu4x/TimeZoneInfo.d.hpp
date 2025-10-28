@@ -108,6 +108,9 @@ public:
   [[deprecated("returns unmodified copy")]]
   inline std::unique_ptr<icu4x::TimeZoneInfo> with_variant(icu4x::TimeZoneVariant _time_variant) const;
 
+  /**
+   * See the [Rust documentation for `offset`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.offset) for more information.
+   */
   inline std::unique_ptr<icu4x::UtcOffset> offset() const;
 
   /**

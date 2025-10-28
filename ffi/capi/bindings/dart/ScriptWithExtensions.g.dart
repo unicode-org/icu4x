@@ -68,7 +68,7 @@ final class ScriptWithExtensions implements ffi.Finalizable {
   /// See the [Rust documentation for `as_borrowed`](https://docs.rs/icu/2.0.0/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed) for more information.
   ScriptWithExtensionsBorrowed get asBorrowed {
     // This lifetime edge depends on lifetimes: 'a
-    core.List<Object> aEdges = [this];
+    final aEdges = [this];
     final result = _icu4x_ScriptWithExtensions_as_borrowed_mv1(_ffi);
     return ScriptWithExtensionsBorrowed._fromFfi(result, [], aEdges);
   }
@@ -78,7 +78,7 @@ final class ScriptWithExtensions implements ffi.Finalizable {
   /// See the [Rust documentation for `get_script_extensions_ranges`](https://docs.rs/icu/2.0.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges) for more information.
   CodePointRangeIterator iterRangesForScript(int script) {
     // This lifetime edge depends on lifetimes: 'a
-    core.List<Object> aEdges = [this];
+    final aEdges = [this];
     final result = _icu4x_ScriptWithExtensions_iter_ranges_for_script_mv1(_ffi, script);
     return CodePointRangeIterator._fromFfi(result, [], aEdges);
   }

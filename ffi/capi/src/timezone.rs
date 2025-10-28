@@ -59,6 +59,7 @@ pub mod ffi {
     }
 
     #[diplomat::enum_convert(icu_time::zone::TimeZoneVariant, needs_wildcard)]
+    #[diplomat::rust_link(icu::time::zone::TimeZoneVariant, Enum)]
     #[non_exhaustive]
     #[deprecated(note = "type not needed anymore")]
     pub enum TimeZoneVariant {
@@ -73,7 +74,6 @@ pub mod ffi {
     impl TimeZoneVariant {
         #[diplomat::rust_link(icu::time::zone::TimeZoneVariant::from_rearguard_isdst, FnInEnum)]
         #[diplomat::rust_link(icu::time::TimeZoneInfo::with_variant, FnInStruct)]
-        #[diplomat::rust_link(icu::time::zone::TimeZoneVariant, Enum, compact)]
         #[deprecated(note = "type not needed anymore")]
         #[allow(deprecated)] // remove in 3.0
         pub fn from_rearguard_isdst(isdst: bool) -> Self {
@@ -225,6 +225,7 @@ pub mod ffi {
         }
 
         #[diplomat::attr(auto, getter)]
+        #[diplomat::rust_link(icu::time::TimeZoneInfo::offset, FnInStruct)]
         pub fn offset(&self) -> Option<Box<UtcOffset>> {
             self.offset.map(UtcOffset).map(Box::new)
         }

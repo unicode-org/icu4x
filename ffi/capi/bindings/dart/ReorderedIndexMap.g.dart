@@ -31,7 +31,7 @@ final class ReorderedIndexMap implements ffi.Finalizable {
   /// Get this as a slice/array of indices
   core.List<int> get asSlice {
     // This lifetime edge depends on lifetimes: 'a
-    core.List<Object> aEdges = [this];
+    final aEdges = [this];
     final result = _icu4x_ReorderedIndexMap_as_slice_mv1(_ffi);
     return result._toDart(aEdges);
   }

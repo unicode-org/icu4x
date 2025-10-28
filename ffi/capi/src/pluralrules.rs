@@ -157,6 +157,7 @@ pub mod ffi {
     }
 
     #[diplomat::out]
+    #[diplomat::rust_link(icu::plurals::PluralRules::categories, FnInStruct)]
     pub struct PluralCategories {
         pub zero: bool,
         pub one: bool,

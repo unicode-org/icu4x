@@ -22,6 +22,7 @@ pub mod ffi {
     use tinystr::TinyAsciiStr;
 
     #[diplomat::enum_convert(icu_calendar::types::Weekday)]
+    #[diplomat::rust_link(icu::calendar::types::Weekday, Enum)]
     #[non_exhaustive]
     pub enum Weekday {
         Monday = 1,
@@ -469,6 +470,7 @@ pub mod ffi {
         }
     }
 
+    #[diplomat::rust_link(icu::calendar::types::IsoWeekOfYear, Struct)]
     pub struct IsoWeekOfYear {
         pub week_number: u8,
         pub iso_year: i32,

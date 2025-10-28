@@ -137,7 +137,7 @@ final class LineSegmenter implements ffi.Finalizable {
   LineBreakIteratorUtf16 segment(String input) {
     final inputArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'a
-    core.List<Object> aEdges = [this, inputArena];
+    final aEdges = [this, inputArena];
     final result = _icu4x_LineSegmenter_segment_utf16_mv1(_ffi, input._utf16AllocIn(inputArena.arena));
     return LineBreakIteratorUtf16._fromFfi(result, [], aEdges);
   }

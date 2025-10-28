@@ -8,12 +8,16 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `RoundingIncrement`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.RoundingIncrement.html) for more information.
 enum DecimalRoundingIncrement {
 
+  // ignore: public_member_api_docs
   multiplesOf1,
 
+  // ignore: public_member_api_docs
   multiplesOf2,
 
+  // ignore: public_member_api_docs
   multiplesOf5,
 
+  // ignore: public_member_api_docs
   multiplesOf25;
 
 }

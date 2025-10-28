@@ -12,8 +12,10 @@ final class _LocaleFallbackConfigFfi extends ffi.Struct {
 ///
 /// See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/2.0.0/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
 final class LocaleFallbackConfig {
+  // ignore: public_member_api_docs
   LocaleFallbackPriority priority;
 
+  // ignore: public_member_api_docs
   LocaleFallbackConfig({required this.priority});
 
   // This struct contains borrowed fields, so this takes in a list of

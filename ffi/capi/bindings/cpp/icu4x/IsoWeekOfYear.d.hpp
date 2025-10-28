@@ -25,6 +25,9 @@ namespace capi {
 
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `IsoWeekOfYear`](https://docs.rs/icu/2.0.0/icu/calendar/types/struct.IsoWeekOfYear.html) for more information.
+ */
 struct IsoWeekOfYear {
     uint8_t week_number;
     int32_t iso_year;

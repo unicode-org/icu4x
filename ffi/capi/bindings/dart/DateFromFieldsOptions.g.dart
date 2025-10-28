@@ -12,9 +12,12 @@ final class _DateFromFieldsOptionsFfi extends ffi.Struct {
 ///
 /// See the [Rust documentation for `DateFromFieldsOptions`](https://docs.rs/icu/2.0.0/icu/calendar/options/struct.DateFromFieldsOptions.html) for more information.
 final class DateFromFieldsOptions {
+  // ignore: public_member_api_docs
   DateOverflow? overflow;
+  // ignore: public_member_api_docs
   DateMissingFieldsStrategy? missingFieldsStrategy;
 
+  // ignore: public_member_api_docs
   DateFromFieldsOptions({this.overflow, this.missingFieldsStrategy});
 
   // This struct contains borrowed fields, so this takes in a list of
@@ -30,9 +33,9 @@ final class DateFromFieldsOptions {
   // ignore: unused_element
   _DateFromFieldsOptionsFfi _toFfi(ffi.Allocator temp) {
     final struct = ffi.Struct.create<_DateFromFieldsOptionsFfi>();
-    DateOverflow? overflow = this.overflow;
+    final overflow = this.overflow;
     struct.overflow = overflow != null ? _ResultInt32Void.ok(overflow.index) : _ResultInt32Void.err();
-    DateMissingFieldsStrategy? missingFieldsStrategy = this.missingFieldsStrategy;
+    final missingFieldsStrategy = this.missingFieldsStrategy;
     struct.missingFieldsStrategy = missingFieldsStrategy != null ? _ResultInt32Void.ok(missingFieldsStrategy.index) : _ResultInt32Void.err();
     return struct;
   }
