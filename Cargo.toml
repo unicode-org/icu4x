@@ -132,9 +132,9 @@ include = [
 
 # ICU4X core
 # These use non-tilde deps, see https://github.com/unicode-org/icu4x/issues/4343
-icu_locale_core = { version = "2.0.0", path = "components/locale_core", default-features = false }
-icu_provider = { version = "2.0.0", path = "provider/core", default-features = false }
-icu_pattern = { version = "0.4.0", path = "components/pattern", default-features = false }
+icu_locale_core = { version = "2.1.0", path = "components/locale_core", default-features = false }
+icu_provider = { version = "2.1.0", path = "provider/core", default-features = false }
+icu_pattern = { version = "0.4.1", path = "components/pattern", default-features = false }
 
 # Components
 icu = { version = "~2.1.0", path = "components/icu", default-features = false }
