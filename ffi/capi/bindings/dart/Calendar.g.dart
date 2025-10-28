@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `AnyCalendar`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendar.html) for more information.
+/// See the [Rust documentation for `AnyCalendar`](https://docs.rs/icu/2.1.0/icu/calendar/enum.AnyCalendar.html) for more information.
 final class Calendar implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -26,7 +26,7 @@ final class Calendar implements ffi.Finalizable {
 
   /// Creates a new [Calendar] for the specified kind, using compiled data.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
   factory Calendar(CalendarKind kind) {
     final result = _icu4x_Calendar_create_mv1(kind._ffi);
     return Calendar._fromFfi(result, []);
@@ -34,7 +34,7 @@ final class Calendar implements ffi.Finalizable {
 
   /// Creates a new [Calendar] for the specified kind, using a particular data source.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory Calendar.newWithProvider(DataProvider provider, CalendarKind kind) {
@@ -47,7 +47,7 @@ final class Calendar implements ffi.Finalizable {
 
   /// Returns the kind of this calendar
   ///
-  /// See the [Rust documentation for `kind`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendar.html#method.kind) for more information.
+  /// See the [Rust documentation for `kind`](https://docs.rs/icu/2.1.0/icu/calendar/enum.AnyCalendar.html#method.kind) for more information.
   CalendarKind get kind {
     final result = _icu4x_Calendar_kind_mv1(_ffi);
     return CalendarKind.values.firstWhere((v) => v._ffi == result);

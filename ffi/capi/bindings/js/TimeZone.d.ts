@@ -6,7 +6,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /**
- * See the [Rust documentation for `TimeZone`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZone.html) for more information.
+ * See the [Rust documentation for `TimeZone`](https://docs.rs/icu/2.1.0/icu/time/struct.TimeZone.html) for more information.
  */
 export class TimeZone {
     /** @internal */
@@ -18,14 +18,14 @@ export class TimeZone {
     /**
      * The unknown time zone.
      *
-     * See the [Rust documentation for `unknown`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.unknown) for more information.
+     * See the [Rust documentation for `unknown`](https://docs.rs/icu/2.1.0/icu/time/struct.TimeZoneInfo.html#method.unknown) for more information.
      */
     static unknown(): TimeZone;
 
     /**
      * Whether the time zone is the unknown zone.
      *
-     * See the [Rust documentation for `is_unknown`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZone.html#method.is_unknown) for more information.
+     * See the [Rust documentation for `is_unknown`](https://docs.rs/icu/2.1.0/icu/time/struct.TimeZone.html#method.is_unknown) for more information.
      */
     isUnknown(): boolean;
 
@@ -34,17 +34,17 @@ export class TimeZone {
      *
      * Returns the unknown time zone if the string is not a valid BCP-47 subtag.
      *
-     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZone.html)
+     * Additional information: [1](https://docs.rs/icu/2.1.0/icu/time/struct.TimeZone.html)
      */
     static createFromBcp47(id: string): TimeZone;
 
     /**
-     * See the [Rust documentation for `with_offset`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZone.html#method.with_offset) for more information.
+     * See the [Rust documentation for `with_offset`](https://docs.rs/icu/2.1.0/icu/time/struct.TimeZone.html#method.with_offset) for more information.
      */
     withOffset(offset: UtcOffset): TimeZoneInfo;
 
     /**
-     * See the [Rust documentation for `without_offset`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZone.html#method.without_offset) for more information.
+     * See the [Rust documentation for `without_offset`](https://docs.rs/icu/2.1.0/icu/time/struct.TimeZone.html#method.without_offset) for more information.
      */
     withoutOffset(): TimeZoneInfo;
 }

@@ -8,7 +8,7 @@ final class _TitlecaseOptionsFfi extends ffi.Struct {
   external _ResultInt32Void trailingCase;
 }
 
-/// See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/2.0.0/icu/casemap/options/struct.TitlecaseOptions.html) for more information.
+/// See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/2.1.0/icu/casemap/options/struct.TitlecaseOptions.html) for more information.
 final class TitlecaseOptions {
   // ignore: public_member_api_docs
   LeadingAdjustment? leadingAdjustment;
@@ -35,7 +35,7 @@ final class TitlecaseOptions {
     return struct;
   }
 
-  /// See the [Rust documentation for `default`](https://docs.rs/icu/2.0.0/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
+  /// See the [Rust documentation for `default`](https://docs.rs/icu/2.1.0/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
   factory TitlecaseOptions({LeadingAdjustment? leadingAdjustment, TrailingCase? trailingCase}) {
     final result = _icu4x_TitlecaseOptionsV1_default_mv1();
     final dart = TitlecaseOptions._fromFfi(result);

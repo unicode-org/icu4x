@@ -10,7 +10,7 @@ final class _DateTimeFfi extends ffi.Struct {
 
 /// An ICU4X DateTime object capable of containing a date and time for any calendar.
 ///
-/// See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.0.0/icu/time/struct.DateTime.html) for more information.
+/// See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.1.0/icu/time/struct.DateTime.html) for more information.
 final class DateTime {
   // ignore: public_member_api_docs
   final Date date;
@@ -37,7 +37,7 @@ final class DateTime {
 
   /// Creates a new [DateTime] from an IXDTF string.
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.DateTime.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.0/icu/time/struct.DateTime.html#method.try_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
   factory DateTime.fromString(String v, Calendar calendar) {

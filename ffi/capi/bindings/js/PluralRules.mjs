@@ -13,7 +13,7 @@ const PluralRules_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 /**
- * See the [Rust documentation for `PluralRules`](https://docs.rs/icu/2.0.0/icu/plurals/struct.PluralRules.html) for more information.
+ * See the [Rust documentation for `PluralRules`](https://docs.rs/icu/2.1.0/icu/plurals/struct.PluralRules.html) for more information.
  */
 export class PluralRules {
     // Internal ptr reference:
@@ -47,7 +47,7 @@ export class PluralRules {
     /**
      * Construct an {@link PluralRules} for the given locale, for cardinal numbers, using compiled data.
      *
-     * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.0.0/icu/plurals/struct.PluralRules.html#method.try_new_cardinal) for more information.
+     * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.1.0/icu/plurals/struct.PluralRules.html#method.try_new_cardinal) for more information.
      */
     static createCardinal(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -71,7 +71,7 @@ export class PluralRules {
     /**
      * Construct an {@link PluralRules} for the given locale, for cardinal numbers, using a particular data source.
      *
-     * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.0.0/icu/plurals/struct.PluralRules.html#method.try_new_cardinal) for more information.
+     * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.1.0/icu/plurals/struct.PluralRules.html#method.try_new_cardinal) for more information.
      */
     static createCardinalWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -95,7 +95,7 @@ export class PluralRules {
     /**
      * Construct an {@link PluralRules} for the given locale, for ordinal numbers, using compiled data.
      *
-     * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.0.0/icu/plurals/struct.PluralRules.html#method.try_new_ordinal) for more information.
+     * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.1.0/icu/plurals/struct.PluralRules.html#method.try_new_ordinal) for more information.
      */
     static createOrdinal(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -119,7 +119,7 @@ export class PluralRules {
     /**
      * Construct an {@link PluralRules} for the given locale, for ordinal numbers, using a particular data source.
      *
-     * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.0.0/icu/plurals/struct.PluralRules.html#method.try_new_ordinal) for more information.
+     * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.1.0/icu/plurals/struct.PluralRules.html#method.try_new_ordinal) for more information.
      */
     static createOrdinalWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -143,7 +143,7 @@ export class PluralRules {
     /**
      * Get the category for a given number represented as operands
      *
-     * See the [Rust documentation for `category_for`](https://docs.rs/icu/2.0.0/icu/plurals/struct.PluralRules.html#method.category_for) for more information.
+     * See the [Rust documentation for `category_for`](https://docs.rs/icu/2.1.0/icu/plurals/struct.PluralRules.html#method.category_for) for more information.
      */
     categoryFor(op) {
 
@@ -160,7 +160,7 @@ export class PluralRules {
     /**
      * Get all of the categories needed in the current locale
      *
-     * See the [Rust documentation for `categories`](https://docs.rs/icu/2.0.0/icu/plurals/struct.PluralRules.html#method.categories) for more information.
+     * See the [Rust documentation for `categories`](https://docs.rs/icu/2.1.0/icu/plurals/struct.PluralRules.html#method.categories) for more information.
      */
     get categories() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 6, 1, false);

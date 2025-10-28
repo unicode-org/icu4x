@@ -8,7 +8,7 @@ final class _VariantOffsetsFfi extends ffi.Struct {
   external ffi.Pointer<ffi.Opaque> daylight;
 }
 
-/// See the [Rust documentation for `VariantOffsets`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsets.html) for more information.
+/// See the [Rust documentation for `VariantOffsets`](https://docs.rs/icu/2.1.0/icu/time/zone/struct.VariantOffsets.html) for more information.
 final class VariantOffsets {
   // ignore: public_member_api_docs
   final UtcOffset standard;

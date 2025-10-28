@@ -8,7 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /**
  * The various calendar types currently supported by {@link Calendar}
  *
- * See the [Rust documentation for `AnyCalendarKind`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendarKind.html) for more information.
+ * See the [Rust documentation for `AnyCalendarKind`](https://docs.rs/icu/2.1.0/icu/calendar/enum.AnyCalendarKind.html) for more information.
  */
 export class CalendarKind {
     #value = undefined;
@@ -124,7 +124,7 @@ export class CalendarKind {
     /**
      * Creates a new {@link CalendarKind} for the specified locale, using compiled data.
      *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendarKind.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/calendar/enum.AnyCalendarKind.html#method.new) for more information.
      */
     static create(locale) {
 

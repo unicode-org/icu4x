@@ -10,7 +10,7 @@ final class _IsoWeekOfYearFfi extends ffi.Struct {
   external int isoYear;
 }
 
-/// See the [Rust documentation for `IsoWeekOfYear`](https://docs.rs/icu/2.0.0/icu/calendar/types/struct.IsoWeekOfYear.html) for more information.
+/// See the [Rust documentation for `IsoWeekOfYear`](https://docs.rs/icu/2.1.0/icu/calendar/types/struct.IsoWeekOfYear.html) for more information.
 final class IsoWeekOfYear {
   // ignore: public_member_api_docs
   int weekNumber;

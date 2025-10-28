@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `Length`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.Length.html) for more information.
+/// See the [Rust documentation for `Length`](https://docs.rs/icu/2.1.0/icu/datetime/options/enum.Length.html) for more information.
 enum DateTimeLength {
 
   // ignore: public_member_api_docs

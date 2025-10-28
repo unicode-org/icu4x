@@ -5,7 +5,7 @@
 [package]
 name = "fixed_decimal"
 description = "An API for representing numbers in a human-readable form"
-version = "0.7.0"
+version = "0.7.1"
 
 authors.workspace = true
 categories.workspace = true

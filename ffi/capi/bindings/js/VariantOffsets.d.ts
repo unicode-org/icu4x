@@ -5,7 +5,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /**
- * See the [Rust documentation for `VariantOffsets`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsets.html) for more information.
+ * See the [Rust documentation for `VariantOffsets`](https://docs.rs/icu/2.1.0/icu/time/zone/struct.VariantOffsets.html) for more information.
  */
 export class VariantOffsets {
     get standard(): UtcOffset;

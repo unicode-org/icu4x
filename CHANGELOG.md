@@ -1,8 +1,6 @@
 # Changelog
 
-## Unreleased
-
-Current changelog is accurate up to bf12a54eb3
+## icu4x 2.1
 
 - Components
     - General
@@ -78,7 +76,7 @@ Current changelog is accurate up to bf12a54eb3
         - Permit enabling optimizations when the data is known at compile time to always be a fast trie (unicode-org#6906)
         - Performance work counteracting a compiler regression (unicode-org#6825)
         - Jump forward throwing away work instead of panic in release builds (unicode-org#6816)
-    - `icu_pattern`
+    - `icu_pattern`: `0.4.0 -> 0.4.1`
         - General changes only
     - `icu_plurals`
         - Change debug output of PluralElementsPackedULE (unicode-org#6841)

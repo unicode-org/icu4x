@@ -11,9 +11,9 @@ const LocaleFallbackerWithConfig_box_destroy_registry = new FinalizationRegistry
 /**
  * An object that runs the ICU4X locale fallback algorithm with specific configurations.
  *
- * See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html) for more information.
+ * See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu_locale/2.1.0/icu_locale/struct.LocaleFallbacker.html) for more information.
  *
- * See the [Rust documentation for `LocaleFallbackerWithConfig`](https://docs.rs/icu/2.0.0/icu/locale/fallback/struct.LocaleFallbackerWithConfig.html) for more information.
+ * See the [Rust documentation for `LocaleFallbackerWithConfig`](https://docs.rs/icu/2.1.0/icu/locale/fallback/struct.LocaleFallbackerWithConfig.html) for more information.
  */
 export class LocaleFallbackerWithConfig {
     // Internal ptr reference:
@@ -49,7 +49,7 @@ export class LocaleFallbackerWithConfig {
     /**
      * Creates an iterator from a locale with each step of fallback.
      *
-     * See the [Rust documentation for `fallback_for`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.fallback_for) for more information.
+     * See the [Rust documentation for `fallback_for`](https://docs.rs/icu_locale/2.1.0/icu_locale/struct.LocaleFallbacker.html#method.fallback_for) for more information.
      */
     fallbackForLocale(locale) {
         // This lifetime edge depends on lifetimes 'a, 'b

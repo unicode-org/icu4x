@@ -21,7 +21,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.InvalidOffsetError.html)
+ * Additional information: [1](https://docs.rs/icu/2.1.0/icu/time/zone/struct.InvalidOffsetError.html)
  */
 struct TimeZoneInvalidOffsetError {
 

@@ -7,7 +7,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 /**
  * Documents which days of the week are considered to be a part of the weekend
  *
- * See the [Rust documentation for `WeekdaySetIterator`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekdaySetIterator.html) for more information.
+ * See the [Rust documentation for `WeekdaySetIterator`](https://docs.rs/icu/2.1.0/icu/calendar/week/struct.WeekdaySetIterator.html) for more information.
  */
 export class WeekdaySetIterator {
     /** @internal */

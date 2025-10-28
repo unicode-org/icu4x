@@ -5,7 +5,7 @@
 [package]
 name = "icu_collator"
 description = "API for comparing strings according to language-dependent conventions"
-version = "2.1.0-dev"
+version.workspace = true
 
 authors.workspace = true
 categories.workspace = true

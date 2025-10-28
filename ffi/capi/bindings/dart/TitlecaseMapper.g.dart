@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `TitlecaseMapper`](https://docs.rs/icu/2.0.0/icu/casemap/struct.TitlecaseMapper.html) for more information.
+/// See the [Rust documentation for `TitlecaseMapper`](https://docs.rs/icu/2.1.0/icu/casemap/struct.TitlecaseMapper.html) for more information.
 final class TitlecaseMapper implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -26,7 +26,7 @@ final class TitlecaseMapper implements ffi.Finalizable {
 
   /// Construct a new `TitlecaseMapper` instance using compiled data.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory TitlecaseMapper() {
@@ -39,7 +39,7 @@ final class TitlecaseMapper implements ffi.Finalizable {
 
   /// Construct a new `TitlecaseMapper` instance using a particular data source.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory TitlecaseMapper.withProvider(DataProvider provider) {
@@ -54,7 +54,7 @@ final class TitlecaseMapper implements ffi.Finalizable {
   ///
   /// The `v1` refers to the version of the options struct, which may change as we add more options
   ///
-  /// See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/2.0.0/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
+  /// See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/2.1.0/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
   String titlecaseSegment(String s, Locale locale, TitlecaseOptions options) {
     final temp = _FinalizedArena();
     final write = _Write();
@@ -66,7 +66,7 @@ final class TitlecaseMapper implements ffi.Finalizable {
   ///
   /// The `v1` refers to the version of the options struct, which may change as we add more options
   ///
-  /// See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/2.0.0/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
+  /// See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/2.1.0/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
   static String titlecaseSegmentWithCompiledData(String s, Locale locale, TitlecaseOptions options) {
     final temp = _FinalizedArena();
     final write = _Write();

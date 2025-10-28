@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 
 /// Priority mode for the ICU4X fallback algorithm.
 ///
-/// See the [Rust documentation for `LocaleFallbackPriority`](https://docs.rs/icu/2.0.0/icu/locale/fallback/enum.LocaleFallbackPriority.html) for more information.
+/// See the [Rust documentation for `LocaleFallbackPriority`](https://docs.rs/icu/2.1.0/icu/locale/fallback/enum.LocaleFallbackPriority.html) for more information.
 enum LocaleFallbackPriority {
 
   // ignore: public_member_api_docs

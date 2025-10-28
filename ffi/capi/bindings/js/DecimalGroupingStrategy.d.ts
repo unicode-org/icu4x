@@ -4,7 +4,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /**
- * See the [Rust documentation for `GroupingStrategy`](https://docs.rs/icu/2.0.0/icu/decimal/options/enum.GroupingStrategy.html) for more information.
+ * See the [Rust documentation for `GroupingStrategy`](https://docs.rs/icu/2.1.0/icu/decimal/options/enum.GroupingStrategy.html) for more information.
  */
 export class DecimalGroupingStrategy {
 

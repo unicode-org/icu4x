@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// Additional information: [1](https://docs.rs/icu/2.0.0/icu/calendar/enum.ParseError.html), [2](https://docs.rs/icu/2.0.0/icu/time/enum.ParseError.html)
+/// Additional information: [1](https://docs.rs/icu/2.1.0/icu/calendar/enum.ParseError.html), [2](https://docs.rs/icu/2.1.0/icu/time/enum.ParseError.html)
 enum Rfc9557ParseError {
 
   // ignore: public_member_api_docs

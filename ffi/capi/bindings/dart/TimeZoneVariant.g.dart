@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `TimeZoneVariant`](https://docs.rs/icu/2.0.0/icu/time/zone/enum.TimeZoneVariant.html) for more information.
+/// See the [Rust documentation for `TimeZoneVariant`](https://docs.rs/icu/2.1.0/icu/time/zone/enum.TimeZoneVariant.html) for more information.
 @core.Deprecated('type not needed anymore')
 enum TimeZoneVariant {
 
@@ -13,9 +13,9 @@ enum TimeZoneVariant {
   // ignore: public_member_api_docs
   daylight;
 
-  /// See the [Rust documentation for `from_rearguard_isdst`](https://docs.rs/icu/2.0.0/icu/time/zone/enum.TimeZoneVariant.html#method.from_rearguard_isdst) for more information.
+  /// See the [Rust documentation for `from_rearguard_isdst`](https://docs.rs/icu/2.1.0/icu/time/zone/enum.TimeZoneVariant.html#method.from_rearguard_isdst) for more information.
   ///
-  /// See the [Rust documentation for `with_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
+  /// See the [Rust documentation for `with_variant`](https://docs.rs/icu/2.1.0/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
   @core.Deprecated('type not needed anymore')
   static TimeZoneVariant fromRearguardIsdst(bool isdst) {
     final result = _icu4x_TimeZoneVariant_from_rearguard_isdst_mv1(isdst);
