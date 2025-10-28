@@ -1,4 +1,4 @@
-.dart_tool/
+.dart_tool
 doc
 pubspec.lock
 build
