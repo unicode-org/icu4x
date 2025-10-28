@@ -19,7 +19,7 @@ use std::io;
 /// use icu_provider_fs::export::serializers;
 /// use icu_provider_fs::export::FilesystemExporter;
 ///
-/// let serializer = serializers::Postcard::default();
+/// let serializer = serializers::Postcard;
 ///
 /// // Then pass it to a FilesystemExporter:
 /// let demo_path = std::env::temp_dir().join("icu4x_postcard_serializer_demo");

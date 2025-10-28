@@ -1715,8 +1715,7 @@ const _: () = ();
 /// use yoke::Yoke;
 ///
 /// let cart = vec![1, 2, 3, 4].into_boxed_slice();
-/// let local = vec![4, 5, 6, 7];
-/// let yoke: Yoke<&[u8], &[u8]> = Yoke::attach_to_cart(&cart, |c| &*c);
+/// let yoke: Yoke<&[u8], &[u8]> = Yoke::attach_to_cart(&cart, |c| c);
 /// ```
 ///
 /// Here's an `attach_to_cart()` that attempts to borrow from a longer-lived local due to
@@ -1903,8 +1902,8 @@ const _: () = ();
 /// let local = vec![4, 5, 6, 7];
 /// let local: Rc<[u8]> = Rc::from(&*local);
 ///
-/// let yoke: Yoke<&[u8], Rc<[u8]>> = Yoke::attach_to_cart(cart, |cart| &*cart);
-/// let yoke: Yoke<&[u8], Rc<[u8]>> = yoke.map_with_cart(|_, cart| &*cart);
+/// let yoke: Yoke<&[u8], Rc<[u8]>> = Yoke::attach_to_cart(cart, |cart| cart);
+/// let yoke: Yoke<&[u8], Rc<[u8]>> = yoke.map_with_cart(|_, cart| cart);
 /// ```
 ///
 /// ```rust,compile_fail
@@ -1933,9 +1932,8 @@ const _: () = ();
 /// let backing = vec![1_u8, 2, 3, 4];
 /// let cart: Rc<[u8]> = Rc::from(&*backing);
 ///
-/// let yoke: Yoke<&[u8], Rc<[u8]>> = Yoke::attach_to_cart(cart, |cart| &*cart);
-/// let yoke: Yoke<&[u8], Rc<[u8]>> =
-///     yoke.map_with_cart(|_, cart: &[u8]| &*cart);
+/// let yoke: Yoke<&[u8], Rc<[u8]>> = Yoke::attach_to_cart(cart, |cart| cart);
+/// let yoke: Yoke<&[u8], Rc<[u8]>> = yoke.map_with_cart(|_, cart: &[u8]| cart);
 /// println!("{:?}", yoke.get());
 /// ```
 ///

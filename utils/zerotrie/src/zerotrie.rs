@@ -107,7 +107,7 @@ pub(crate) enum ZeroTrieFlavor<Store> {
 /// // A trie with two values: "abc" and "abcdef"
 /// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
 ///
-/// assert!(matches!(trie.get(b"ab\xFF"), None));
+/// assert!(trie.get(b"ab\xFF").is_none());
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]

@@ -92,7 +92,7 @@ pub struct MonthNamesGIGO {
 
 impl MonthNamesGIGO {
     pub fn get_first_month_name(&self) -> &str {
-        match self.month_names.get(0) {
+        match self.month_names.first() {
             Some(v) => v,
             None => {
                 debug_assert!(false, "month_names is empty");

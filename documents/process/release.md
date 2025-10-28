@@ -25,6 +25,7 @@ This is a checklist of things that should be done in the weeks leading to the re
     * [ ] Ensure that any new packages have version number `0.0.0`, this will making bumping during the release easier.
     * [ ] Ensure that the Cargo.toml file includes a set of fields consistent with other ICU4X packages.
         * These should mostly use workspace inheritance
+* [ ] Run `RUSTDOCFLAGS="--no-run --nocapture --test-builder clippy-driver -Z unstable-options" cargo +nightly test --doc --all-features --no-fail-fast` and fix relevant Clippy issues in the docs (deprecated APIs, unused imports, etc.)
 * [ ] Run `cargo +nightly fmt -- --config=format_code_in_doc_comments=true --config=doc_comment_code_block_width=80` to prettify our docs
 * [ ] Run `cargo update` for each `Cargo.lock` file to update our CI to freshest dependencies. A helpful snippet is `find . -name Cargo.lock | while read lockfile; do cd $(dirname $lockfile); cargo update; done`, though it is best run from `examples/` since you may have other lockfiles in target/cargo-semver-checks directories.
 * [ ] Go through `ffi/capi/tests/missing_apis.txt` and verify that it is empty. If it is not, component owners should either add FFI APIs, add `rust_link` annotations, or allowlist the relevant APIs as having been punted to the future. In case of unstable APIs, it is okay to leave things in the missing_apis file for now, see unicode-org#7181.

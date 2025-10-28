@@ -45,7 +45,7 @@ pub struct WordBreakOptions<'a> {
     ///
     /// let mut options = WordBreakOptions::default();
     /// let langid = &langid!("fi");
-    /// options.content_locale = Some(&langid);
+    /// options.content_locale = Some(langid);
     /// let segmenter = WordSegmenter::try_new_auto(options).unwrap();
     ///
     /// let breakpoints: Vec<usize> =
@@ -184,7 +184,7 @@ impl<Y: RuleBreakType> Iterator for WordBreakIteratorWithWordType<'_, '_, Y> {
 ///
 /// let mut options = WordBreakOptions::default();
 /// let langid = &langid!("en");
-/// options.content_locale = Some(&langid);
+/// options.content_locale = Some(langid);
 /// let segmenter = WordSegmenter::try_new_auto(options).unwrap();
 ///
 /// let breakpoints: Vec<usize> = segmenter

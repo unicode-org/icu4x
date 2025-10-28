@@ -124,7 +124,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     ///     TinyAsciiStr::<3>::try_from_raw(*b"USD"),
     ///     Ok(tinystr!(3, "USD"))
     /// );
-    /// assert!(matches!(TinyAsciiStr::<3>::try_from_raw(*b"\0A\0"), Err(_)));
+    /// assert!(TinyAsciiStr::<3>::try_from_raw(*b"\0A\0").is_err());
     /// ```
     pub const fn try_from_raw(raw: [u8; N]) -> Result<Self, ParseError> {
         Self::try_from_utf8_inner(&raw, true)

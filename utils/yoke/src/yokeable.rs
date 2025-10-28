@@ -214,7 +214,7 @@ pub unsafe trait Yokeable<'a>: 'static {
     ///     cow: Cow<'static, str>,
     /// }
     ///
-    /// fn sound<'a>(foo: &'a mut Foo) {
+    /// fn sound(foo: &mut Foo) {
     ///     foo.cow.transform_mut(move |cow| cow.to_mut().push('a'));
     /// }
     /// ```
