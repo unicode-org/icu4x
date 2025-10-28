@@ -1,8 +1,6 @@
 # Changelog
 
-## Unreleased
-
-Current changelog is accurate up to bf12a54eb3
+## icu4x 2.1
 
 - Components
     - General
