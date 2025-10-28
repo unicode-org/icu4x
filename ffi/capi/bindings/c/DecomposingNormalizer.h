@@ -29,11 +29,11 @@ icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1_result icu4x_Decomposi
 
 void icu4x_DecomposingNormalizer_normalize_mv1(const DecomposingNormalizer* self, DiplomatStringView s, DiplomatWrite* write);
 
-bool icu4x_DecomposingNormalizer_is_normalized_mv1(const DecomposingNormalizer* self, DiplomatStringView s);
+bool icu4x_DecomposingNormalizer_is_normalized_utf8_mv1(const DecomposingNormalizer* self, DiplomatStringView s);
 
 bool icu4x_DecomposingNormalizer_is_normalized_utf16_mv1(const DecomposingNormalizer* self, DiplomatString16View s);
 
-size_t icu4x_DecomposingNormalizer_is_normalized_up_to_mv1(const DecomposingNormalizer* self, DiplomatStringView s);
+size_t icu4x_DecomposingNormalizer_is_normalized_utf8_up_to_mv1(const DecomposingNormalizer* self, DiplomatStringView s);
 
 size_t icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(const DecomposingNormalizer* self, DiplomatString16View s);
 
