@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// This mapper supports two-way mapping, but it is optimized for the case of Windows to BCP-47.
 /// It also supports normalizing and canonicalizing the Windows strings.
 ///
-/// See the [Rust documentation for `WindowsParser`](https://docs.rs/icu/2.1.0/icu/time/zone/windows/struct.WindowsParser.html) for more information.
+/// See the [Rust documentation for `WindowsParser`](https://docs.rs/icu/2.1.1/icu/time/zone/windows/struct.WindowsParser.html) for more information.
 final class WindowsParser implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -31,7 +31,7 @@ final class WindowsParser implements ffi.Finalizable {
 
   /// Create a new [WindowsParser] using compiled data
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
   factory WindowsParser() {
     final result = _icu4x_WindowsParser_create_mv1();
     return WindowsParser._fromFfi(result, []);
@@ -39,7 +39,7 @@ final class WindowsParser implements ffi.Finalizable {
 
   /// Create a new [WindowsParser] using a particular data source
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory WindowsParser.withProvider(DataProvider provider) {
@@ -50,7 +50,7 @@ final class WindowsParser implements ffi.Finalizable {
     return WindowsParser._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `parse`](https://docs.rs/icu/2.1.0/icu/time/zone/windows/struct.WindowsParserBorrowed.html#method.parse) for more information.
+  /// See the [Rust documentation for `parse`](https://docs.rs/icu/2.1.1/icu/time/zone/windows/struct.WindowsParserBorrowed.html#method.parse) for more information.
   TimeZone? parse(String value, String region) {
     final temp = _FinalizedArena();
     final result = _icu4x_WindowsParser_parse_mv1(_ffi, value._utf8AllocIn(temp.arena), region._utf8AllocIn(temp.arena));

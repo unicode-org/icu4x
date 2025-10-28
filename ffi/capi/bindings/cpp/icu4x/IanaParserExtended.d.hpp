@@ -38,7 +38,7 @@ namespace icu4x {
  * This mapper supports two-way mapping, but it is optimized for the case of IANA to BCP-47.
  * It also supports normalizing and canonicalizing the IANA strings.
  *
- * See the [Rust documentation for `IanaParserExtended`](https://docs.rs/icu/2.1.0/icu/time/zone/iana/struct.IanaParserExtended.html) for more information.
+ * See the [Rust documentation for `IanaParserExtended`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.IanaParserExtended.html) for more information.
  */
 class IanaParserExtended {
 public:
@@ -46,29 +46,29 @@ public:
   /**
    * Create a new {@link IanaParserExtended} using compiled data
    *
-   * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
    */
   inline static std::unique_ptr<icu4x::IanaParserExtended> create();
 
   /**
    * Create a new {@link IanaParserExtended} using a particular data source
    *
-   * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::IanaParserExtended>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   /**
-   * See the [Rust documentation for `parse`](https://docs.rs/icu/2.1.0/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.parse) for more information.
+   * See the [Rust documentation for `parse`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.parse) for more information.
    */
   inline icu4x::TimeZoneAndCanonicalAndNormalized parse(std::string_view value) const;
 
   /**
-   * See the [Rust documentation for `iter`](https://docs.rs/icu/2.1.0/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter) for more information.
+   * See the [Rust documentation for `iter`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter) for more information.
    */
   inline std::unique_ptr<icu4x::TimeZoneAndCanonicalIterator> iter() const;
 
   /**
-   * See the [Rust documentation for `iter_all`](https://docs.rs/icu/2.1.0/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter_all) for more information.
+   * See the [Rust documentation for `iter_all`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter_all) for more information.
    */
   inline std::unique_ptr<icu4x::TimeZoneAndCanonicalAndNormalizedIterator> iter_all() const;
 

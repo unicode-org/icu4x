@@ -5,7 +5,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * See the [Rust documentation for `Length`](https://docs.rs/icu/2.1.0/icu/datetime/options/enum.Length.html) for more information.
+ * See the [Rust documentation for `Length`](https://docs.rs/icu/2.1.1/icu/datetime/options/enum.Length.html) for more information.
  */
 export class DateTimeLength {
     #value = undefined;

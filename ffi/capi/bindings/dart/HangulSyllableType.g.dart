@@ -3,28 +3,28 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
+/// See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
 enum HangulSyllableType {
-  /// See the [Rust documentation for `NotApplicable`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.NotApplicable) for more information.
+  /// See the [Rust documentation for `NotApplicable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.NotApplicable) for more information.
   // ignore: public_member_api_docs
   notApplicable,
-  /// See the [Rust documentation for `LeadingJamo`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingJamo) for more information.
+  /// See the [Rust documentation for `LeadingJamo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingJamo) for more information.
   // ignore: public_member_api_docs
   leadingJamo,
-  /// See the [Rust documentation for `VowelJamo`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.VowelJamo) for more information.
+  /// See the [Rust documentation for `VowelJamo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.VowelJamo) for more information.
   // ignore: public_member_api_docs
   vowelJamo,
-  /// See the [Rust documentation for `TrailingJamo`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.TrailingJamo) for more information.
+  /// See the [Rust documentation for `TrailingJamo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.TrailingJamo) for more information.
   // ignore: public_member_api_docs
   trailingJamo,
-  /// See the [Rust documentation for `LeadingVowelSyllable`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelSyllable) for more information.
+  /// See the [Rust documentation for `LeadingVowelSyllable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelSyllable) for more information.
   // ignore: public_member_api_docs
   leadingVowelSyllable,
-  /// See the [Rust documentation for `LeadingVowelTrailingSyllable`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelTrailingSyllable) for more information.
+  /// See the [Rust documentation for `LeadingVowelTrailingSyllable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelTrailingSyllable) for more information.
   // ignore: public_member_api_docs
   leadingVowelTrailingSyllable;
 
-  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static HangulSyllableType forChar(Rune ch) {
     final result = _icu4x_HangulSyllableType_for_char_mv1(ch);
     return HangulSyllableType.values[result];
@@ -32,7 +32,7 @@ enum HangulSyllableType {
 
   /// Convert to an integer value usable with ICU4C and CodePointMapData
   ///
-  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.HangulSyllableType.html#method.to_icu4c_value) for more information.
+  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#method.to_icu4c_value) for more information.
   int toIntegerValue() {
     final result = _icu4x_HangulSyllableType_to_integer_value_mv1(index);
     return result;
@@ -40,7 +40,7 @@ enum HangulSyllableType {
 
   /// Convert from an integer value from ICU4C or CodePointMapData
   ///
-  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.HangulSyllableType.html#method.from_icu4c_value) for more information.
+  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#method.from_icu4c_value) for more information.
   static HangulSyllableType? fromIntegerValue(int other) {
     final result = _icu4x_HangulSyllableType_from_integer_value_mv1(other);
     if (!result.isOk) {

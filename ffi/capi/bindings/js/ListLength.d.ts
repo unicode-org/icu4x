@@ -4,7 +4,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /**
- * See the [Rust documentation for `ListLength`](https://docs.rs/icu/2.1.0/icu/list/options/enum.ListLength.html) for more information.
+ * See the [Rust documentation for `ListLength`](https://docs.rs/icu/2.1.1/icu/list/options/enum.ListLength.html) for more information.
  */
 export class ListLength {
 

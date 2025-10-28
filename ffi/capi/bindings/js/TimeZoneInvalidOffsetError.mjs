@@ -5,7 +5,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * Additional information: [1](https://docs.rs/icu/2.1.0/icu/time/zone/struct.InvalidOffsetError.html)
+ * Additional information: [1](https://docs.rs/icu/2.1.1/icu/time/zone/struct.InvalidOffsetError.html)
  */
 export class TimeZoneInvalidOffsetError {
 

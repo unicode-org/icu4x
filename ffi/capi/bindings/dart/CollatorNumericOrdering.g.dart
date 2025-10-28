@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `CollationNumericOrdering`](https://docs.rs/icu/2.1.0/icu/collator/preferences/enum.CollationNumericOrdering.html) for more information.
+/// See the [Rust documentation for `CollationNumericOrdering`](https://docs.rs/icu/2.1.1/icu/collator/preferences/enum.CollationNumericOrdering.html) for more information.
 enum CollatorNumericOrdering {
 
   // ignore: public_member_api_docs

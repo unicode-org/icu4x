@@ -28,7 +28,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/2.1.0/icu/plurals/struct.PluralOperands.html) for more information.
+ * See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralOperands.html) for more information.
  */
 class PluralOperands {
 public:
@@ -36,7 +36,7 @@ public:
   /**
    * Construct for a given string representing a number
    *
-   * See the [Rust documentation for `from_str`](https://docs.rs/icu/2.1.0/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
+   * See the [Rust documentation for `from_str`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::DecimalParseError> from_string(std::string_view s);
 

@@ -3,55 +3,55 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html) for more information.
+/// See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html) for more information.
 enum SentenceBreak {
-  /// See the [Rust documentation for `Other`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Other) for more information.
+  /// See the [Rust documentation for `Other`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Other) for more information.
   // ignore: public_member_api_docs
   other,
-  /// See the [Rust documentation for `ATerm`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html#associatedconstant.ATerm) for more information.
+  /// See the [Rust documentation for `ATerm`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.ATerm) for more information.
   // ignore: public_member_api_docs
   aTerm,
-  /// See the [Rust documentation for `Close`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Close) for more information.
+  /// See the [Rust documentation for `Close`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Close) for more information.
   // ignore: public_member_api_docs
   close,
-  /// See the [Rust documentation for `Format`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Format) for more information.
+  /// See the [Rust documentation for `Format`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Format) for more information.
   // ignore: public_member_api_docs
   format,
-  /// See the [Rust documentation for `Lower`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Lower) for more information.
+  /// See the [Rust documentation for `Lower`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Lower) for more information.
   // ignore: public_member_api_docs
   lower,
-  /// See the [Rust documentation for `Numeric`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Numeric) for more information.
+  /// See the [Rust documentation for `Numeric`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Numeric) for more information.
   // ignore: public_member_api_docs
   numeric,
-  /// See the [Rust documentation for `OLetter`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html#associatedconstant.OLetter) for more information.
+  /// See the [Rust documentation for `OLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.OLetter) for more information.
   // ignore: public_member_api_docs
   oLetter,
-  /// See the [Rust documentation for `Sep`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Sep) for more information.
+  /// See the [Rust documentation for `Sep`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Sep) for more information.
   // ignore: public_member_api_docs
   sep,
-  /// See the [Rust documentation for `Sp`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Sp) for more information.
+  /// See the [Rust documentation for `Sp`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Sp) for more information.
   // ignore: public_member_api_docs
   sp,
-  /// See the [Rust documentation for `STerm`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html#associatedconstant.STerm) for more information.
+  /// See the [Rust documentation for `STerm`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.STerm) for more information.
   // ignore: public_member_api_docs
   sTerm,
-  /// See the [Rust documentation for `Upper`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Upper) for more information.
+  /// See the [Rust documentation for `Upper`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Upper) for more information.
   // ignore: public_member_api_docs
   upper,
-  /// See the [Rust documentation for `CR`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html#associatedconstant.CR) for more information.
+  /// See the [Rust documentation for `CR`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.CR) for more information.
   // ignore: public_member_api_docs
   cr,
-  /// See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Extend) for more information.
+  /// See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Extend) for more information.
   // ignore: public_member_api_docs
   extend,
-  /// See the [Rust documentation for `LF`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html#associatedconstant.LF) for more information.
+  /// See the [Rust documentation for `LF`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.LF) for more information.
   // ignore: public_member_api_docs
   lf,
-  /// See the [Rust documentation for `SContinue`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html#associatedconstant.SContinue) for more information.
+  /// See the [Rust documentation for `SContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.SContinue) for more information.
   // ignore: public_member_api_docs
   sContinue;
 
-  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static SentenceBreak forChar(Rune ch) {
     final result = _icu4x_SentenceBreak_for_char_mv1(ch);
     return SentenceBreak.values[result];
@@ -59,7 +59,7 @@ enum SentenceBreak {
 
   /// Get the "long" name of this property value (returns empty if property value is unknown)
   ///
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
   String? longName() {
     final result = _icu4x_SentenceBreak_long_name_mv1(index);
     if (!result.isOk) {
@@ -70,7 +70,7 @@ enum SentenceBreak {
 
   /// Get the "short" name of this property value (returns empty if property value is unknown)
   ///
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
   String? shortName() {
     final result = _icu4x_SentenceBreak_short_name_mv1(index);
     if (!result.isOk) {
@@ -81,7 +81,7 @@ enum SentenceBreak {
 
   /// Convert to an integer value usable with ICU4C and CodePointMapData
   ///
-  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html#method.to_icu4c_value) for more information.
+  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#method.to_icu4c_value) for more information.
   int toIntegerValue() {
     final result = _icu4x_SentenceBreak_to_integer_value_mv1(index);
     return result;
@@ -89,7 +89,7 @@ enum SentenceBreak {
 
   /// Convert from an integer value from ICU4C or CodePointMapData
   ///
-  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.SentenceBreak.html#method.from_icu4c_value) for more information.
+  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#method.from_icu4c_value) for more information.
   static SentenceBreak? fromIntegerValue(int other) {
     final result = _icu4x_SentenceBreak_from_integer_value_mv1(other);
     if (!result.isOk) {

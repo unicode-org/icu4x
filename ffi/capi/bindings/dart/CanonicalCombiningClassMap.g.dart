@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 
 /// Lookup of the Canonical_Combining_Class Unicode property
 ///
-/// See the [Rust documentation for `CanonicalCombiningClassMap`](https://docs.rs/icu/2.1.0/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html) for more information.
+/// See the [Rust documentation for `CanonicalCombiningClassMap`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html) for more information.
 final class CanonicalCombiningClassMap implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -28,7 +28,7 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
 
   /// Construct a new CanonicalCombiningClassMap instance for NFC using compiled data.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
   factory CanonicalCombiningClassMap() {
     final result = _icu4x_CanonicalCombiningClassMap_create_mv1();
     return CanonicalCombiningClassMap._fromFfi(result, []);
@@ -36,7 +36,7 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
 
   /// Construct a new CanonicalCombiningClassMap instance for NFC using a particular data source.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.0/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CanonicalCombiningClassMap.withProvider(DataProvider provider) {
@@ -47,9 +47,9 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
     return CanonicalCombiningClassMap._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.0/icu/normalizer/properties/struct.CanonicalCombiningClassMapBorrowed.html#method.get) for more information.
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/normalizer/properties/struct.CanonicalCombiningClassMapBorrowed.html#method.get) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.1.0/icu/properties/props/struct.CanonicalCombiningClass.html)
+  /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CanonicalCombiningClass.html)
   int operator [](Rune ch) {
     final result = _icu4x_CanonicalCombiningClassMap_get_mv1(_ffi, ch);
     return result;

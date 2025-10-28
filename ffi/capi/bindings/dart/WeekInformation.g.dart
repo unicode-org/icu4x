@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 
 /// A Week calculator, useful to be passed in to `week_of_year()` on Date and DateTime types
 ///
-/// See the [Rust documentation for `WeekInformation`](https://docs.rs/icu/2.1.0/icu/calendar/week/struct.WeekInformation.html) for more information.
+/// See the [Rust documentation for `WeekInformation`](https://docs.rs/icu/2.1.1/icu/calendar/week/struct.WeekInformation.html) for more information.
 final class WeekInformation implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -28,7 +28,7 @@ final class WeekInformation implements ffi.Finalizable {
 
   /// Creates a new [WeekInformation] from locale data using compiled data.
   ///
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory WeekInformation(Locale locale) {
@@ -41,7 +41,7 @@ final class WeekInformation implements ffi.Finalizable {
 
   /// Creates a new [WeekInformation] from locale data using a particular data source.
   ///
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory WeekInformation.withProvider(DataProvider provider, Locale locale) {
@@ -54,21 +54,21 @@ final class WeekInformation implements ffi.Finalizable {
 
   /// Returns the weekday that starts the week for this object's locale
   ///
-  /// See the [Rust documentation for `first_weekday`](https://docs.rs/icu/2.1.0/icu/calendar/week/struct.WeekInformation.html#structfield.first_weekday) for more information.
+  /// See the [Rust documentation for `first_weekday`](https://docs.rs/icu/2.1.1/icu/calendar/week/struct.WeekInformation.html#structfield.first_weekday) for more information.
   Weekday get firstWeekday {
     final result = _icu4x_WeekInformation_first_weekday_mv1(_ffi);
     return Weekday.values.firstWhere((v) => v._ffi == result);
   }
 
-  /// See the [Rust documentation for `weekend`](https://docs.rs/icu/2.1.0/icu/calendar/week/struct.WeekInformation.html#structfield.weekend) for more information.
+  /// See the [Rust documentation for `weekend`](https://docs.rs/icu/2.1.1/icu/calendar/week/struct.WeekInformation.html#structfield.weekend) for more information.
   ///
-  /// See the [Rust documentation for `contains`](https://docs.rs/icu/2.1.0/icu/calendar/provider/struct.WeekdaySet.html#method.contains) for more information.
+  /// See the [Rust documentation for `contains`](https://docs.rs/icu/2.1.1/icu/calendar/provider/struct.WeekdaySet.html#method.contains) for more information.
   bool isWeekend(Weekday day) {
     final result = _icu4x_WeekInformation_is_weekend_mv1(_ffi, day._ffi);
     return result;
   }
 
-  /// See the [Rust documentation for `weekend`](https://docs.rs/icu/2.1.0/icu/calendar/week/struct.WeekInformation.html#method.weekend) for more information.
+  /// See the [Rust documentation for `weekend`](https://docs.rs/icu/2.1.1/icu/calendar/week/struct.WeekInformation.html#method.weekend) for more information.
   WeekdaySetIterator get weekend {
     final result = _icu4x_WeekInformation_weekend_mv1(_ffi);
     return WeekdaySetIterator._fromFfi(result, []);

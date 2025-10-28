@@ -10,7 +10,7 @@ final class _CollatorOptionsFfi extends ffi.Struct {
   external _ResultInt32Void caseLevel;
 }
 
-/// See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/2.1.0/icu/collator/options/struct.CollatorOptions.html) for more information.
+/// See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/2.1.1/icu/collator/options/struct.CollatorOptions.html) for more information.
 final class CollatorOptions {
   // ignore: public_member_api_docs
   CollatorStrength? strength;

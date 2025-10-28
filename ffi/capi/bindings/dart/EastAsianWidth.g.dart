@@ -3,28 +3,28 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.EastAsianWidth.html) for more information.
+/// See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
 enum EastAsianWidth {
-  /// See the [Rust documentation for `Neutral`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Neutral) for more information.
+  /// See the [Rust documentation for `Neutral`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Neutral) for more information.
   // ignore: public_member_api_docs
   neutral,
-  /// See the [Rust documentation for `Ambiguous`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Ambiguous) for more information.
+  /// See the [Rust documentation for `Ambiguous`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Ambiguous) for more information.
   // ignore: public_member_api_docs
   ambiguous,
-  /// See the [Rust documentation for `Halfwidth`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Halfwidth) for more information.
+  /// See the [Rust documentation for `Halfwidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Halfwidth) for more information.
   // ignore: public_member_api_docs
   halfwidth,
-  /// See the [Rust documentation for `Fullwidth`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Fullwidth) for more information.
+  /// See the [Rust documentation for `Fullwidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Fullwidth) for more information.
   // ignore: public_member_api_docs
   fullwidth,
-  /// See the [Rust documentation for `Narrow`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Narrow) for more information.
+  /// See the [Rust documentation for `Narrow`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Narrow) for more information.
   // ignore: public_member_api_docs
   narrow,
-  /// See the [Rust documentation for `Wide`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Wide) for more information.
+  /// See the [Rust documentation for `Wide`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Wide) for more information.
   // ignore: public_member_api_docs
   wide;
 
-  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static EastAsianWidth forChar(Rune ch) {
     final result = _icu4x_EastAsianWidth_for_char_mv1(ch);
     return EastAsianWidth.values[result];
@@ -32,7 +32,7 @@ enum EastAsianWidth {
 
   /// Get the "long" name of this property value (returns empty if property value is unknown)
   ///
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
   String? longName() {
     final result = _icu4x_EastAsianWidth_long_name_mv1(index);
     if (!result.isOk) {
@@ -43,7 +43,7 @@ enum EastAsianWidth {
 
   /// Get the "short" name of this property value (returns empty if property value is unknown)
   ///
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
   String? shortName() {
     final result = _icu4x_EastAsianWidth_short_name_mv1(index);
     if (!result.isOk) {
@@ -54,7 +54,7 @@ enum EastAsianWidth {
 
   /// Convert to an integer value usable with ICU4C and CodePointMapData
   ///
-  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.EastAsianWidth.html#method.to_icu4c_value) for more information.
+  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#method.to_icu4c_value) for more information.
   int toIntegerValue() {
     final result = _icu4x_EastAsianWidth_to_integer_value_mv1(index);
     return result;
@@ -62,7 +62,7 @@ enum EastAsianWidth {
 
   /// Convert from an integer value from ICU4C or CodePointMapData
   ///
-  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.0/icu/properties/props/struct.EastAsianWidth.html#method.from_icu4c_value) for more information.
+  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#method.from_icu4c_value) for more information.
   static EastAsianWidth? fromIntegerValue(int other) {
     final result = _icu4x_EastAsianWidth_from_integer_value_mv1(other);
     if (!result.isOk) {

@@ -7,7 +7,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/2.1.0/icu/casemap/options/struct.TitlecaseOptions.html) for more information.
+ * See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/2.1.1/icu/casemap/options/struct.TitlecaseOptions.html) for more information.
  */
 export class TitlecaseOptions {
     #leadingAdjustment;
@@ -106,7 +106,7 @@ export class TitlecaseOptions {
 
 
     /**
-     * See the [Rust documentation for `default`](https://docs.rs/icu/2.1.0/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
+     * See the [Rust documentation for `default`](https://docs.rs/icu/2.1.1/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
      */
     #defaultConstructor() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 16, 4, false);
@@ -124,7 +124,7 @@ export class TitlecaseOptions {
     }
 
     /**
-     * See the [Rust documentation for `default`](https://docs.rs/icu/2.1.0/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
+     * See the [Rust documentation for `default`](https://docs.rs/icu/2.1.1/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
      */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {

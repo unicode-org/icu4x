@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `TimeZoneAndCanonicalAndNormalizedIter`](https://docs.rs/icu/2.1.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalizedIter.html) for more information.
+/// See the [Rust documentation for `TimeZoneAndCanonicalAndNormalizedIter`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalizedIter.html) for more information.
 final class TimeZoneAndCanonicalAndNormalizedIterator implements ffi.Finalizable, core.Iterator<TimeZoneAndCanonicalAndNormalized> {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -37,7 +37,7 @@ final class TimeZoneAndCanonicalAndNormalizedIterator implements ffi.Finalizable
     return _current != null;
   }
 
-  /// See the [Rust documentation for `next`](https://docs.rs/icu/2.1.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalizedIter.html#method.next) for more information.
+  /// See the [Rust documentation for `next`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalizedIter.html#method.next) for more information.
   TimeZoneAndCanonicalAndNormalized? _iteratorNext() {
     // This lifetime edge depends on lifetimes: 'a
     final aEdges = [this];
