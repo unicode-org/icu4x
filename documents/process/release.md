@@ -48,10 +48,18 @@ Once the release checklist is complete, the assigned release driver will perform
   * Use `cargo workspaces publish --from-git` to automatically publish the crates in the correct order if you would like
   * Add `icu4x-release` group as owners to each new component you're publishing
     * `cargo owner -a github:unicode-org:icu4x-release`
-* Merge the tutorials PR. `cargo make test-tuturials-cratesio` should now pass
-  * If there are any errors, please fix them before advertising the release
 * [Tag the Release](https://github.com/unicode-org/icu4x/releases) with the text drafted above
-* Create a branch named `release/x.y` on the release tag and push it to the upstream
+* Update and publish FFI packages
+  * Dart
+    * update version in `ffi/dart/pubspec.yaml`
+    * update the artifacts tag in `ffi/dart/lib/src/hook_helpers/version.dart` to the tag created above
+    * get this checked in, then `cd ffi/dart && dart pub publish`
+  * JS
+    * update version in `icu4x/ffi/npm/package.json`
+    * get this checked in, then `cd ffi/npm && npm publish`
+* Create a branch named `release/x.y` including the release tag and FFI commits and push it to the upstream
+* Update the website
+  * In the `icu4x-docs` repo, run `node tools/github-to-astro.ts` and follow the instructions
 * Announce the release to public
   * (All releases) Send an email to [icu4x-announce](https://groups.google.com/u/0/a/unicode.org/g/icu4x-announce)
   * (All releases) Blog post on Unicode blog
