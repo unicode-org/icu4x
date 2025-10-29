@@ -5,6 +5,7 @@
 [package]
 name = "icu_segmenter"
 description = "Unicode line breaking and text segmentation algorithms for text boundaries analysis"
+version = "2.0.1"
 
 authors.workspace = true
 categories.workspace = true
@@ -14,7 +15,6 @@ include.workspace = true
 license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -23,7 +23,7 @@ all-features = true
 displaydoc = { workspace = true }
 icu_collections = { workspace = true }
 icu_locale_core = { workspace = true }
-icu_provider = { workspace = true }
+icu_provider = { workspace = true, features = ["alloc"] }
 utf8_iter = { workspace = true }
 zerovec = { workspace = true, features = ["alloc", "yoke"] }
 

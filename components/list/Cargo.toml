@@ -5,6 +5,7 @@
 [package]
 name = "icu_list"
 description = "ECMA-402 ListFormatter"
+version = "2.0.1"
 
 license.workspace = true
 authors.workspace = true
@@ -13,14 +14,13 @@ edition.workspace = true
 homepage.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
 displaydoc = { workspace = true }
-icu_provider = { workspace = true }
+icu_provider = { workspace = true, features = ["alloc"] }
 regex-automata = { workspace = true, features = ["dfa-search"] }
 writeable = { workspace = true }
 zerovec = { workspace = true }

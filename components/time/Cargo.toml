@@ -5,6 +5,7 @@
 [package]
 name = "icu_time"
 description = "Processing of dates, times, and time zones with a focus on i18n and interop"
+version = "2.0.1"
 
 authors.workspace = true
 categories.workspace = true
@@ -14,7 +15,6 @@ include.workspace = true
 license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -23,7 +23,7 @@ all-features = true
 calendrical_calculations = { workspace = true }
 displaydoc = { workspace = true }
 icu_calendar = { workspace = true }
-icu_provider = { workspace = true }
+icu_provider = { workspace = true, features = ["alloc"] }
 icu_locale_core = { workspace = true, features = ["zerovec"] }
 ixdtf = { workspace = true, optional = true }
 tinystr = { workspace = true, features = ["zerovec"] }

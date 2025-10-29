@@ -1174,7 +1174,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "2.0.5"
+version = "2.0.6"
 dependencies = [
  "calendrical_calculations",
  "criterion",
@@ -1237,7 +1237,7 @@ dependencies = [
 
 [[package]]
 name = "icu_casemap"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "criterion",
  "databake",
@@ -1322,7 +1322,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "bincode",
  "criterion",
@@ -1358,7 +1358,7 @@ version = "2.0.1"
 
 [[package]]
 name = "icu_decimal"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "criterion",
  "databake",
@@ -1386,7 +1386,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_experimental"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "criterion",
  "databake",
@@ -1451,7 +1451,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1518,7 +1518,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_normalizer"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "arraystring",
  "arrayvec",
@@ -1588,7 +1588,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_properties"
-version = "2.0.1"
+version = "2.0.2"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1777,7 +1777,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "core_maths",
  "criterion",
@@ -1804,7 +1804,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_time"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "calendrical_calculations",
  "databake",

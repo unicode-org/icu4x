@@ -5,7 +5,7 @@
 [package]
 name = "icu_calendar"
 description = "Date APIs for Gregorian and non-Gregorian calendars"
-version = "2.0.5"
+version = "2.0.6"
 
 authors.workspace = true
 categories.workspace = true
@@ -22,7 +22,7 @@ all-features = true
 [dependencies]
 calendrical_calculations = { workspace = true }
 displaydoc = { workspace = true }
-icu_provider = { workspace = true }
+icu_provider = { workspace = true, features = ["alloc"] }
 icu_locale_core = { workspace = true, features = ["alloc"]}
 ixdtf = { workspace = true, optional = true }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }

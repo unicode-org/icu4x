@@ -5,7 +5,7 @@
 [package]
 name = "icu_properties"
 description = "Definitions for Unicode properties"
-version = "2.0.1"
+version = "2.0.2"
 
 authors.workspace = true
 categories.workspace = true
@@ -22,7 +22,7 @@ all-features = true
 [dependencies]
 displaydoc = { workspace = true }
 icu_collections = { workspace = true }
-icu_provider = { workspace = true }
+icu_provider = { workspace = true, features = ["alloc"] }
 zerovec = { workspace = true, features = ["derive", "yoke"] }
 zerotrie = { workspace = true, features = ["yoke", "zerofrom"] }
 databake = { workspace = true, features = ["derive"], optional = true}
