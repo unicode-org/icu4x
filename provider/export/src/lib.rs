@@ -7,7 +7,7 @@
 //!
 //! For command-line usage, see the [`icu4x-datagen` binary](https://crates.io/crate/icu4x-datagen).
 //!
-//! Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/tutorials/data-management.md).
+//! See our [tutorials](https://github.com/unicode-org/icu4x/blob/main/tutorials) for more information about different data providers.
 //!
 //! # Examples
 //!

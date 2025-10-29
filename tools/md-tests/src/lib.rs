@@ -10,12 +10,12 @@ mod readme {}
 mod tutorials {
     #[doc = include_str!("../../../tutorials/quickstart.md")]
     mod quickstart_md {}
-    #[doc = include_str!("../../../tutorials/date-picker.md")]
-    mod date_picker_md {}
+    #[doc = include_str!("../../../tutorials/data-packs.md")]
+    mod data_packs_md {}
     #[doc = include_str!("../../../tutorials/data-provider-runtime.md")]
     mod data_provider_runtime_md {}
-    #[doc = include_str!("../../../tutorials/data-management.md")]
-    mod data_management_md {}
+    #[doc = include_str!("../../../tutorials/data-slimming.md")]
+    mod data_slimming_md {}
 }
 
 mod documents {

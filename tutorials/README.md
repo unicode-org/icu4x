@@ -8,7 +8,7 @@ Welcome! We're glad you want to try out ICU4X! This page serves as a landing pag
 
 If new to ICU4X, we recommend reading through [the introduction tutorial](quickstart.md): it walks through the process of using ICU4X as a Rust dependency, and some of the basics common to most ICU4X components.
 
-It leads in to the [Data management tutorial](data-management.md), which covers how internationalization data can be generated and loaded into ICU4X. Users needing more control over their flow of locale data can then read [the data provider tutorial](data-provider-runtime.md).
+It leads in to the [data slimming](data-slimming.md) and [data packs](data-packs.md) tutorials, which cover how internationalization data can be generated and loaded into ICU4X. Users needing more control over their flow of locale data can then read [the runtime data provider tutorial](data-provider-runtime.md).
 
 After going through that, you can take a look at [the ICU4X root docs][icu-crate-docs] and check out the various components, each of which covers some area of internationalization and has usage docs for doing so.
 
