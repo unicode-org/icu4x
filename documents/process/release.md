@@ -31,7 +31,7 @@ This is a checklist of things that should be done in the weeks leading to the re
 * [ ] Go through `ffi/capi/tests/missing_apis.txt` and verify that it is empty. If it is not, component owners should either add FFI APIs, add `rust_link` annotations, or allowlist the relevant APIs as having been punted to the future. In case of unstable APIs, it is okay to leave things in the missing_apis file for now, see unicode-org#7181.
 * [ ] Verify that `ffi/capi` depends on a released (not Git) version of Diplomat. Get it published (ask manishearth or sffc) otherwise.
 * [ ] Get all contributors to complete the changelog (see below)
-* [ ] Draft the text for the GitHub release. This text will be sent to GitHub subscribers and can also be used for the mailing list email and blog post.
+* [ ] Draft the text for the GitHub release and circulate to the WG at least 18 hours in advance of the release, but ideally sooner. This text will be sent to GitHub subscribers and can also be used for the mailing list email and blog post.
 
 ## Release steps
 
