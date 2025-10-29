@@ -53,6 +53,14 @@ lazy_static::lazy_static! {
         "Unpin",
         "UnwindSafe",
 
+        // harfbuzz-traits
+        "CombiningClassFunc",
+        "ComposeFunc",
+        "DecomposeFunc",
+        "GeneralCategoryFunc",
+        "MirroringFunc",
+        "ScriptFunc",
+
         // yoke/zerovec/etc internals
         "ULE",
         "AsULE",

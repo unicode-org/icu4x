@@ -8,5 +8,8 @@ edition = "2021"
 publish = false
 
 [dependencies]
-icu_harfbuzz = { version = "0.2.0", features = ["compiled_data"] }
+icu_normalizer = { version = "2.0", features = ["harfbuzz_traits", "serde"] }
+icu_properties = { version = "2.0", features = ["harfbuzz_traits", "serde"] }
+icu_provider = { version = "2.0", features = ["serde"] }
+harfbuzz-traits = { version = "0.6.0" }
 harfbuzz = { version = "0.6.0" }
