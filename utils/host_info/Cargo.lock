@@ -10,7 +10,7 @@ checksum = "812e12b5285cc515a9c72a5c1d3b6d46a19dac5acfef5265968c166106e31dd3"
 
 [[package]]
 name = "calendrical_calculations"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "core_maths",
  "displaydoc",
@@ -76,7 +76,7 @@ checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
 
 [[package]]
 name = "fixed_decimal"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "displaydoc",
  "smallvec",
@@ -245,7 +245,7 @@ checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
 
 [[package]]
 name = "icu"
-version = "2.0.0"
+version = "2.1.1"
 dependencies = [
  "icu_calendar",
  "icu_casemap",
@@ -265,7 +265,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "2.0.4"
+version = "2.1.1"
 dependencies = [
  "calendrical_calculations",
  "displaydoc",
@@ -281,11 +281,11 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar_data"
-version = "2.0.0"
+version = "2.1.1"
 
 [[package]]
 name = "icu_casemap"
-version = "2.0.0"
+version = "2.1.1"
 dependencies = [
  "icu_collections",
  "icu_locale_core",
@@ -298,7 +298,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator"
-version = "2.1.0-dev"
+version = "2.1.1"
 dependencies = [
  "icu_collections",
  "icu_locale_core",
@@ -313,7 +313,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collections"
-version = "2.0.0"
+version = "2.1.1"
 dependencies = [
  "displaydoc",
  "potential_utf",
@@ -325,7 +325,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime"
-version = "2.0.0"
+version = "2.1.1"
 dependencies = [
  "displaydoc",
  "fixed_decimal",
@@ -346,11 +346,11 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "2.0.2"
+version = "2.1.1"
 
 [[package]]
 name = "icu_decimal"
-version = "2.0.0"
+version = "2.1.1"
 dependencies = [
  "fixed_decimal",
  "icu_decimal_data",
@@ -364,7 +364,7 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal_data"
-version = "2.0.0"
+version = "2.1.1"
 
 [[package]]
 name = "icu_host_info"
@@ -385,7 +385,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list"
-version = "2.0.0"
+version = "2.1.1"
 dependencies = [
  "icu_provider",
  "regex-automata",
@@ -396,7 +396,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locale"
-version = "2.0.0"
+version = "2.1.1"
 dependencies = [
  "icu_collections",
  "icu_locale_core",
@@ -409,7 +409,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locale_core"
-version = "2.0.0"
+version = "2.1.1"
 dependencies = [
  "displaydoc",
  "litemap",
@@ -421,11 +421,11 @@ dependencies = [
 
 [[package]]
 name = "icu_locale_data"
-version = "2.0.0"
+version = "2.1.1"
 
 [[package]]
 name = "icu_normalizer"
-version = "2.0.0"
+version = "2.1.1"
 dependencies = [
  "icu_collections",
  "icu_provider",
@@ -438,7 +438,7 @@ dependencies = [
 
 [[package]]
 name = "icu_pattern"
-version = "0.4.0"
+version = "0.4.1"
 dependencies = [
  "displaydoc",
  "either",
@@ -449,7 +449,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals"
-version = "2.0.0"
+version = "2.1.1"
 dependencies = [
  "fixed_decimal",
  "icu_locale",
@@ -460,11 +460,11 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals_data"
-version = "2.0.0"
+version = "2.1.1"
 
 [[package]]
 name = "icu_properties"
-version = "2.0.1"
+version = "2.1.1"
 dependencies = [
  "icu_collections",
  "icu_locale_core",
@@ -476,7 +476,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider"
-version = "2.0.0"
+version = "2.1.1"
 dependencies = [
  "displaydoc",
  "icu_locale_core",
@@ -491,7 +491,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter"
-version = "2.0.0"
+version = "2.1.1"
 dependencies = [
  "icu_collections",
  "icu_provider",
@@ -502,7 +502,7 @@ dependencies = [
 
 [[package]]
 name = "icu_time"
-version = "2.0.0"
+version = "2.1.1"
 dependencies = [
  "calendrical_calculations",
  "displaydoc",
@@ -518,7 +518,7 @@ dependencies = [
 
 [[package]]
 name = "icu_time_data"
-version = "2.0.2"
+version = "2.1.1"
 
 [[package]]
 name = "indexmap"
@@ -532,7 +532,7 @@ dependencies = [
 
 [[package]]
 name = "ixdtf"
-version = "0.6.3"
+version = "0.6.4"
 
 [[package]]
 name = "libc"
@@ -548,7 +548,7 @@ checksum = "f9fbbcab51052fe104eb5e5d351cf728d30a5be1fe14d9be8a3b097481fb97de"
 
 [[package]]
 name = "litemap"
-version = "0.8.0"
+version = "0.8.1"
 
 [[package]]
 name = "memchr"
@@ -576,7 +576,7 @@ checksum = "7edddbd0b52d732b21ad9a5fab5c704c14cd949e5e9a1ec5929a24fded1b904c"
 
 [[package]]
 name = "potential_utf"
-version = "0.1.3"
+version = "0.1.4"
 dependencies = [
  "serde_core",
  "writeable",
@@ -716,7 +716,7 @@ checksum = "e502f78cdbb8ba4718f566c418c52bc729126ffd16baee5baa718cf25dd5a69a"
 
 [[package]]
 name = "tinystr"
-version = "0.8.1"
+version = "0.8.2"
 dependencies = [
  "displaydoc",
  "serde_core",
@@ -800,54 +800,54 @@ checksum = "852e951cb7832cb45cb1169900d19760cfa39b82bc0ea9c0e5a14ae88411c98b"
 
 [[package]]
 name = "windows"
-version = "0.60.0"
+version = "0.62.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ddf874e74c7a99773e62b1c671427abf01a425e77c3d3fb9fb1e4883ea934529"
+checksum = "527fadee13e0c05939a6a05d5bd6eec6cd2e3dbd648b9f8e447c6518133d8580"
 dependencies = [
  "windows-collections",
  "windows-core",
  "windows-future",
- "windows-link 0.1.3",
  "windows-numerics",
 ]
 
 [[package]]
 name = "windows-collections"
-version = "0.1.1"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5467f79cc1ba3f52ebb2ed41dbb459b8e7db636cc3429458d9a852e15bc24dec"
+checksum = "23b2d95af1a8a14a3c7367e1ed4fc9c20e0a26e79551b1454d72583c97cc6610"
 dependencies = [
  "windows-core",
 ]
 
 [[package]]
 name = "windows-core"
-version = "0.60.1"
+version = "0.62.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ca21a92a9cae9bf4ccae5cf8368dce0837100ddf6e6d57936749e85f152f6247"
+checksum = "b8e83a14d34d0623b51dce9581199302a221863196a1dde71a7663a4c2be9deb"
 dependencies = [
  "windows-implement",
  "windows-interface",
- "windows-link 0.1.3",
+ "windows-link",
  "windows-result",
  "windows-strings",
 ]
 
 [[package]]
 name = "windows-future"
-version = "0.1.1"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a787db4595e7eb80239b74ce8babfb1363d8e343ab072f2ffe901400c03349f0"
+checksum = "e1d6f90251fe18a279739e78025bd6ddc52a7e22f921070ccdc67dde84c605cb"
 dependencies = [
  "windows-core",
- "windows-link 0.1.3",
+ "windows-link",
+ "windows-threading",
 ]
 
 [[package]]
 name = "windows-implement"
-version = "0.59.0"
+version = "0.60.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "83577b051e2f49a058c308f17f273b570a6a758386fc291b5f6a934dd84e48c1"
+checksum = "053e2e040ab57b9dc951b72c264860db7eb3b0200ba345b4e4c3b14f67855ddf"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -867,42 +867,36 @@ dependencies = [
 
 [[package]]
 name = "windows-link"
-version = "0.1.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5e6ad25900d524eaabdbbb96d20b4311e1e7ae1699af4fb28c17ae66c80d798a"
-
-[[package]]
-name = "windows-link"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
 
 [[package]]
 name = "windows-numerics"
-version = "0.1.1"
+version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "005dea54e2f6499f2cee279b8f703b3cf3b5734a2d8d21867c8f44003182eeed"
+checksum = "6e2e40844ac143cdb44aead537bbf727de9b044e107a0f1220392177d15b0f26"
 dependencies = [
  "windows-core",
- "windows-link 0.1.3",
+ "windows-link",
 ]
 
 [[package]]
 name = "windows-result"
-version = "0.3.4"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "56f42bd332cc6c8eac5af113fc0c1fd6a8fd2aa08a0119358686e5160d0586c6"
+checksum = "7781fa89eaf60850ac3d2da7af8e5242a5ea78d1a11c49bf2910bb5a73853eb5"
 dependencies = [
- "windows-link 0.1.3",
+ "windows-link",
 ]
 
 [[package]]
 name = "windows-strings"
-version = "0.3.1"
+version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "87fa48cc5d406560701792be122a10132491cff9d0aeb23583cc2dcafc847319"
+checksum = "7837d08f69c77cf6b07689544538e017c1bfcf57e34b4c0ff58e6c2cd3b37091"
 dependencies = [
- "windows-link 0.1.3",
+ "windows-link",
 ]
 
 [[package]]
@@ -911,7 +905,16 @@ version = "0.61.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc"
 dependencies = [
- "windows-link 0.2.1",
+ "windows-link",
+]
+
+[[package]]
+name = "windows-threading"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3949bd5b99cafdf1c7ca86b43ca564028dfe27d66958f2470940f73d86d75b37"
+dependencies = [
+ "windows-link",
 ]
 
 [[package]]
@@ -931,14 +934,14 @@ checksum = "d1890f4022759daae28ed4fe62859b1236caebfc61ede2f63ed4e695f3f6d936"
 
 [[package]]
 name = "writeable"
-version = "0.6.1"
+version = "0.6.2"
 dependencies = [
  "either",
 ]
 
 [[package]]
 name = "yoke"
-version = "0.8.0"
+version = "0.8.1"
 dependencies = [
  "stable_deref_trait",
  "yoke-derive",
@@ -947,7 +950,7 @@ dependencies = [
 
 [[package]]
 name = "yoke-derive"
-version = "0.8.0"
+version = "0.8.1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -974,7 +977,7 @@ dependencies = [
 
 [[package]]
 name = "zerotrie"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "displaydoc",
  "yoke",
@@ -983,7 +986,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.11.4"
+version = "0.11.5"
 dependencies = [
  "serde",
  "yoke",
@@ -993,7 +996,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.11.1"
+version = "0.11.2"
 dependencies = [
  "proc-macro2",
  "quote",
