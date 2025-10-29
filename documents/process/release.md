@@ -30,8 +30,9 @@ This is a checklist of things that should be done in the weeks leading to the re
 * [ ] Run `cargo update` for each `Cargo.lock` file to update our CI to freshest dependencies. A helpful snippet is `find . -name Cargo.lock | while read lockfile; do cd $(dirname $lockfile); cargo update; done`, though it is best run from `examples/` since you may have other lockfiles in target/cargo-semver-checks directories.
 * [ ] Go through `ffi/capi/tests/missing_apis.txt` and verify that it is empty. If it is not, component owners should either add FFI APIs, add `rust_link` annotations, or allowlist the relevant APIs as having been punted to the future. In case of unstable APIs, it is okay to leave things in the missing_apis file for now, see unicode-org#7181.
 * [ ] Verify that `ffi/capi` depends on a released (not Git) version of Diplomat. Get it published (ask manishearth or sffc) otherwise.
-* [ ] Get all contributors to complete the changelog (see below)
+* [ ] Draft the changelog (see below).
 * [ ] Draft the text for the GitHub release and circulate to the WG at least 18 hours in advance of the release, but ideally sooner. This text will be sent to GitHub subscribers and can also be used for the mailing list email and blog post.
+* [ ] Obtain ICU4X TC approval on the changelog and release text.
 
 ## Release steps
 
@@ -106,6 +107,8 @@ This can all be done in a separate PR to chunk out the work but there should be 
 ## Writing a changelog
 
 In general, the *Unreleased* section of the changelog should be updated with each changelog-worthy PR. However, as this might be forgotten, before a release you should ping all major contributors, and ask them to complete their parts of the changelog. Before the release, rename the *Unreleased* section to the appropriate version.
+
+The changelog must contain all public stable APIs that were added in the release, including Cargo features and trait impls, or link to another document containing the list.
 
 Out-of-cycle changelogs should use a single entry for each individual crate released, e.g. something like this:
 
