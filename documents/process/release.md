@@ -63,7 +63,7 @@ Once the release checklist is complete, the assigned release driver will perform
 * [ ] Update and publish FFI packages
   * [ ] Dart
     * [ ] update version in `ffi/dart/pubspec.yaml`
-    * [ ] update the artifacts tag in `ffi/dart/lib/src/hook_helpers/version.dart` to the tag created above
+    * [ ] update the artifacts tag in `ffi/dart/lib/src/hook_helpers/version.dart` to the tag created above, and run `regenerate_hashes.dart`
     * [ ] get this checked in, then `cd ffi/dart && dart pub publish`
   * [ ] JS
     * [ ] update version in `icu4x/ffi/npm/package.json`
