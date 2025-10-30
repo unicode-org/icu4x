@@ -74,63 +74,25 @@ impl DatagenCalendar {
 }
 
 impl SourceDataProvider {
-    fn get_datetime_resources(
+    pub(crate) fn get_dates_resource(
         &self,
         locale: &DataLocale,
         calendar: Option<DatagenCalendar>,
-    ) -> Result<cldr_serde::ca::Dates, DataError> {
+    ) -> Result<&cldr_serde::ca::Dates, DataError> {
         let cldr_cal = calendar
             .map(DatagenCalendar::cldr_name)
             .unwrap_or("generic");
 
-        let resource: &cldr_serde::ca::Resource = self
+        Ok(self
             .cldr()?
             .dates(cldr_cal)
-            .read_and_parse(locale, &format!("ca-{cldr_cal}.json"))?;
-
-        let mut data = resource
+            .read_and_parse::<cldr_serde::ca::Resource>(locale, &format!("ca-{cldr_cal}.json"))?
             .main
             .value
             .dates
             .calendars
             .get(cldr_cal)
-            .expect("CLDR file contains the expected calendar")
-            .clone();
-
-        if cldr_cal == "japanese" {
-            let eras = data.eras.as_mut().expect("japanese must have eras");
-            // Filter out non-modern eras
-            if calendar == Some(DatagenCalendar::JapaneseModern) {
-                let modern_japanese_eras = self.all_eras()?[&DatagenCalendar::JapaneseModern]
-                    .iter()
-                    .map(|&(s, _)| s.to_string())
-                    .collect::<std::collections::BTreeSet<_>>();
-                eras.names.retain(|e, _| modern_japanese_eras.contains(e));
-                eras.abbr.retain(|e, _| modern_japanese_eras.contains(e));
-                eras.narrow.retain(|e, _| modern_japanese_eras.contains(e));
-            }
-
-            // Splice in gregorian data for pre-meiji
-            let greg_eras = self
-                .cldr()?
-                .dates(DatagenCalendar::Gregorian.cldr_name())
-                .read_and_parse::<cldr_serde::ca::Resource>(locale, "ca-gregorian.json")?
-                .main
-                .value
-                .dates
-                .calendars
-                .get(DatagenCalendar::Gregorian.cldr_name())
-                .expect("CLDR file contains a gregorian calendar")
-                .eras
-                .as_ref()
-                .expect("gregorian must have eras");
-
-            eras.names.extend(greg_eras.names.clone());
-            eras.abbr.extend(greg_eras.names.clone());
-            eras.narrow.extend(greg_eras.names.clone());
-        }
-
-        Ok(data)
+            .expect("CLDR file contains the expected calendar"))
     }
 }
 
@@ -149,8 +111,9 @@ mod test {
         use icu::plurals::PluralCategory;
         use std::convert::TryFrom;
 
-        let data = SourceDataProvider::new_testing()
-            .get_datetime_resources(&langid!("fil").into(), Some(DatagenCalendar::Gregorian))
+        let provider = SourceDataProvider::new_testing();
+        let data = provider
+            .get_dates_resource(&langid!("fil").into(), Some(DatagenCalendar::Gregorian))
             .unwrap();
 
         let skeletons = DateSkeletonPatterns::from(&data.datetime_formats.available_formats).0;
