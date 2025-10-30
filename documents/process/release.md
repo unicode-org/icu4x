@@ -54,9 +54,14 @@ Once the release checklist is complete, the assigned release driver will perform
     * [ ] For utils that have had substantiative changes (new APIs, etc), update them in `workspace.dependencies`. When unsure, just update.
 * [ ] Get this PR reviewed and checked in.
 * [ ] Perform the release.
-  * The best way to do this is to use `cargo workspaces publish --from-git`.
-  * If the release fails at some point and needs a fix, make a new commit for the fix. After a full successful release, make a PR with these commits and merge it with a merge commit. You may need to temporarily change branch protection rules.
-  * You can run `cargo publish` on individual folders if you need, but be sure to run it from a clean Git tree. You may need to occasionally temporarily remove "cyclic" devdeps to get things to publish.
+  * The best way to do this is to use `cargo workspaces publish --from-git --no-remove-dev-deps`.
+  * If the release fails at some point and needs a fix, make a PR for the fix and get it merged. You *may* bypass requirements if necessary, but prefer to wait for most CI and an approval.
+  * `cargo publish` does not like cyclic dev-deps and [will fail](https://github.com/rust-lang/cargo/issues/4242) on some crates.
+    * `cargo workspaces publish` will automatically edit out dev-deps to handle this. Unfortunately, it [dirties the tree](https://github.com/pksunkara/cargo-workspaces/issues/202) when it does this. Hopefully that issue is fixed.
+    * If not, you can instead perform a release by running `cargo publish` on individual folders (going back to `cargo workspaces publish` after the problematic crate is published)
+    * When required to remove a dev-dependency, make a commit that replaces it with a path dependency, and then `cargo publish` from the clean git tree.
+    * Be sure to push such commits to `main` (you may need to temporarily change branch protection to do so: do not change the ruleset, just remove the default branch from our branch protection ruleset).
+    * It is very important to only publish from commits that are reachable from `main` (or other repo branches). It is less important to ensure that the publishes are not "dirty", but it is ideal to try and maintain that.
 * [ ] Add the `icu4x-release` group as owners to each brand new crate that was published
   * `cargo owner -a github:unicode-org:icu4x-release`
 * [ ] [Tag the Release](https://github.com/unicode-org/icu4x/releases) with the text drafted above
