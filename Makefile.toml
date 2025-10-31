@@ -111,6 +111,7 @@ description = "Run all tests for the CI 'test-c' job"
 category = "CI"
 dependencies = [
     "test-c",
+    "test-cargo-c",
     "test-c-tiny",
     "test-cpp",
 ]

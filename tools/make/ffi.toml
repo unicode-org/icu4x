@@ -12,6 +12,12 @@ category = "ICU4X Development"
 command = "make"
 args = ["-C", "examples/c", "test"]
 
+[tasks.test-cargo-c]
+description = "Run Cargo with C API tests"
+category = "ICU4X Development"
+command = "cargo"
+args = ["--manifest-path", "examples/cargo-c/Cargo.toml"]
+
 [tasks.test-c-tiny]
 description = "Run C API tests for tiny targets"
 category = "ICU4X Development"
