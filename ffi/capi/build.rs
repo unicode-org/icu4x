@@ -7,7 +7,7 @@ use std::path::PathBuf;
 
 /// Inform cargo of the include directories as metadata key value pairs
 ///
-/// Cargo will make the values available to consumers via `DEP_ICU_CAPI_<KEY>`.
+/// Cargo will make the values available to consumers via `DEP_ICU_CAPI1_<KEY>`.
 /// See <https://doc.rust-lang.org/cargo/reference/build-scripts.html#the-links-manifest-key>
 /// for more information.
 fn add_bindings_to_cargo_metadata() {

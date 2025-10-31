@@ -24,6 +24,10 @@ repository.workspace = true
 rust-version.workspace = true
 version = "1.5.1"
 
+# This exists to workaround a limitation in cargo:
+# https://github.com/rust-lang/cargo/issues/3544
+links = "icu_capi1"
+
 [package.metadata.docs.rs]
 all-features = true
 
