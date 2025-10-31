@@ -41,14 +41,9 @@ impl From<DateDuration> for icu_calendar::types::DateDuration {
     }
 }
 
-const TWO_POWER_FIFTY_THREE: i128 = 9_007_199_254_740_992;
-const SECONDS_PER_DAY: i128 = 24 * 60 * 60;
-
 impl DateDuration {
-    /// Temporal caps y/m/weeks within u32, units of days and below are capped within
-    /// the maximum safe seconds value, which is 2⁵³ s.
-    ///
-    /// <https://tc39.es/proposal-temporal/#sec-isvalidduration>
+    /// Temporal doesn't care about dates outside of -271821-04-20 to +275760-09-13
+    /// and will not let you attempt to add up to them even with overflow: constrain.
     ///
     /// We should eventually be applying some limits to this code in ICU4X.
     /// We currently do not and `Date::try_added()` will panic for large `days` values.
@@ -56,8 +51,37 @@ impl DateDuration {
     /// <https://github.com/unicode-org/icu4x/issues/3964>
     ///
     /// For now, fuzz what we can for Temporal's needs.
+    ///
+    /// This code is copied from <https://github.com/boa-dev/temporal/pull/615>
+    /// so that we are testing temporal_rs behavior.
     fn is_valid_for_temporal(&self) -> bool {
-        (self.days as i128).saturating_mul(SECONDS_PER_DAY) < TWO_POWER_FIFTY_THREE
+        // Temporal range is -271821-04-20 to +275760-09-13
+        // This is (roughly) the maximum year duration that can exist for ISO
+        const TEMPORAL_MAX_ISO_YEAR_DURATION: u32 = 275760 + 271821;
+        // Double it. No calendar has years that are half the size of ISO years.
+        const YEAR_DURATION: u32 = 2 * TEMPORAL_MAX_ISO_YEAR_DURATION;
+        // Assume every year is a leap year, calculate a month range
+        const MONTH_DURATION: u32 = YEAR_DURATION * 13;
+        // Our longest year is 390 days
+        const DAY_DURATION: u32 = YEAR_DURATION * 390;
+        const WEEK_DURATION: u32 = DAY_DURATION / 7;
+
+
+        if self.years > YEAR_DURATION {
+            return false;
+        }
+        if self.months > MONTH_DURATION {
+            return false;
+        }
+        if self.weeks > WEEK_DURATION {
+            return false;
+        }
+        if self.days > DAY_DURATION.into() {
+            return false;
+        }
+
+        true
+
     }
 }
 
