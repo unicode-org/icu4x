@@ -5,6 +5,7 @@
 [package]
 name = "icu_locale_core"
 description = "API for managing Unicode Language and Locale Identifiers"
+version = "2.0.1"
 
 authors.workspace = true
 categories.workspace = true
@@ -14,7 +15,6 @@ include.workspace = true
 license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -23,7 +23,7 @@ all-features = true
 displaydoc = { workspace = true }
 litemap = { workspace = true, features = ["alloc"] }
 tinystr = { workspace = true, features = ["alloc"] }
-writeable = { workspace = true }
+writeable = { workspace = true, features = ["alloc"] }
 
 databake = { workspace = true, features = ["derive"], optional = true }
 serde = { workspace = true, features = ["alloc", "derive"], optional = true }

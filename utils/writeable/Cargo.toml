@@ -33,6 +33,9 @@ criterion = { workspace = true }
 [features]
 either = ["dep:either"]
 
+# 2.0 Branch Hack: Add an alloc feature
+alloc = []
+
 [lib]
 bench = false  # This option is required for Benchmark CI
 
