@@ -24,6 +24,10 @@ homepage.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 
+# This exists to workaround a limitation in cargo:
+# https://github.com/rust-lang/cargo/issues/3544
+links = "icu_capi_2"
+
 [package.metadata.docs.rs]
 all-features = true
 
