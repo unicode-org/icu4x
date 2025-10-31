@@ -11,42 +11,49 @@ use icu_provider::prelude::*;
 
 use harfbuzz_traits::{GeneralCategoryFunc, MirroringFunc, ScriptFunc};
 
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 impl GeneralCategoryFunc for CodePointMapDataBorrowed<'_, GeneralCategory> {
     fn general_category(&self, ch: char) -> harfbuzz_traits::GeneralCategory {
         self.get(ch).into()
     }
 }
 
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 impl GeneralCategoryFunc for CodePointMapData<GeneralCategory> {
     fn general_category(&self, ch: char) -> harfbuzz_traits::GeneralCategory {
         GeneralCategoryFunc::general_category(&self.as_borrowed(), ch)
     }
 }
 
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 impl GeneralCategoryFunc for &'_ CodePointMapData<GeneralCategory> {
     fn general_category(&self, ch: char) -> harfbuzz_traits::GeneralCategory {
         GeneralCategoryFunc::general_category(&self.as_borrowed(), ch)
     }
 }
 
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 impl MirroringFunc for CodePointMapDataBorrowed<'_, BidiMirroringGlyph> {
     fn mirroring(&self, ch: char) -> char {
         self.get(ch).mirroring_glyph.unwrap_or(ch)
     }
 }
 
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 impl MirroringFunc for CodePointMapData<BidiMirroringGlyph> {
     fn mirroring(&self, ch: char) -> char {
         MirroringFunc::mirroring(&self.as_borrowed(), ch)
     }
 }
 
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 impl MirroringFunc for &'_ CodePointMapData<BidiMirroringGlyph> {
     fn mirroring(&self, ch: char) -> char {
         MirroringFunc::mirroring(&self.as_borrowed(), ch)
     }
 }
 
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 impl ScriptFunc for HarfbuzzScriptDataBorrowed<'_> {
     fn script(&self, ch: char) -> [u8; 4] {
         let script = self.script.get(ch);
@@ -57,18 +64,21 @@ impl ScriptFunc for HarfbuzzScriptDataBorrowed<'_> {
     }
 }
 
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 impl ScriptFunc for HarfbuzzScriptData {
     fn script(&self, ch: char) -> [u8; 4] {
         ScriptFunc::script(&self.as_borrowed(), ch)
     }
 }
 
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 impl ScriptFunc for &'_ HarfbuzzScriptData {
     fn script(&self, ch: char) -> [u8; 4] {
         ScriptFunc::script(&self.as_borrowed(), ch)
     }
 }
 
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 impl From<GeneralCategory> for harfbuzz_traits::GeneralCategory {
     fn from(val: GeneralCategory) -> Self {
         use GeneralCategory::*;
@@ -108,6 +118,8 @@ impl From<GeneralCategory> for harfbuzz_traits::GeneralCategory {
 }
 
 /// Harfbuzz data for the [`ScriptFunc`] implementation
+///
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 #[derive(Debug)]
 pub struct HarfbuzzScriptDataBorrowed<'a> {
     script: CodePointMapDataBorrowed<'a, Script>,
@@ -115,6 +127,8 @@ pub struct HarfbuzzScriptDataBorrowed<'a> {
 }
 
 /// Harfbuzz data for the [`ScriptFunc`] implementation
+///
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 #[derive(Debug)]
 pub struct HarfbuzzScriptData {
     script: CodePointMapData<Script>,
@@ -122,8 +136,10 @@ pub struct HarfbuzzScriptData {
 }
 
 impl HarfbuzzScriptData {
-    #[cfg(feature = "compiled_data")]
     /// Construct a new [`HarfbuzzScriptData`] using compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
     #[expect(clippy::new_ret_no_self)]
     pub fn new() -> HarfbuzzScriptDataBorrowed<'static> {
         HarfbuzzScriptDataBorrowed {

@@ -9,24 +9,28 @@ use crate::properties::{
 };
 use harfbuzz_traits::{CombiningClassFunc, ComposeFunc, DecomposeFunc};
 
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 impl ComposeFunc for CanonicalCompositionBorrowed<'_> {
     fn compose(&self, a: char, b: char) -> Option<char> {
         CanonicalCompositionBorrowed::compose(*self, a, b)
     }
 }
 
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 impl ComposeFunc for CanonicalComposition {
     fn compose(&self, a: char, b: char) -> Option<char> {
         ComposeFunc::compose(&self.as_borrowed(), a, b)
     }
 }
 
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 impl ComposeFunc for &'_ CanonicalComposition {
     fn compose(&self, a: char, b: char) -> Option<char> {
         ComposeFunc::compose(&self.as_borrowed(), a, b)
     }
 }
 
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 impl DecomposeFunc for CanonicalDecompositionBorrowed<'_> {
     fn decompose(&self, ab: char) -> Option<(char, char)> {
         match CanonicalDecompositionBorrowed::decompose(self, ab) {
@@ -37,30 +41,35 @@ impl DecomposeFunc for CanonicalDecompositionBorrowed<'_> {
     }
 }
 
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 impl DecomposeFunc for CanonicalDecomposition {
     fn decompose(&self, ab: char) -> Option<(char, char)> {
         DecomposeFunc::decompose(&self.as_borrowed(), ab)
     }
 }
 
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 impl DecomposeFunc for &'_ CanonicalDecomposition {
     fn decompose(&self, ab: char) -> Option<(char, char)> {
         DecomposeFunc::decompose(&self.as_borrowed(), ab)
     }
 }
 
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 impl CombiningClassFunc for CanonicalCombiningClassMapBorrowed<'_> {
     fn combining_class(&self, ch: char) -> u8 {
         self.get_u8(ch)
     }
 }
 
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 impl CombiningClassFunc for CanonicalCombiningClassMap {
     fn combining_class(&self, ch: char) -> u8 {
         CombiningClassFunc::combining_class(&self.as_borrowed(), ch)
     }
 }
 
+/// ✨ *Enabled with the `harfbuzz_traits` Cargo feature.*
 impl CombiningClassFunc for &'_ CanonicalCombiningClassMap {
     fn combining_class(&self, ch: char) -> u8 {
         CombiningClassFunc::combining_class(&self.as_borrowed(), ch)
