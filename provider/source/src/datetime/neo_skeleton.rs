@@ -147,7 +147,7 @@ impl SourceDataProvider {
             &cldr_serde::ca::Dates,
         ) -> components::Bag,
     ) -> Result<PackedPatterns<'static>, DataError> {
-        let data = self.get_datetime_resources(locale, calendar)?;
+        let data = self.get_dates_resource(locale, calendar)?;
 
         // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
         let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats_at_time);
@@ -211,9 +211,9 @@ impl SourceDataProvider {
         }
 
         let [long, medium, short] = [Length::Long, Length::Medium, Length::Short]
-            .map(|length| to_components_bag(length, attributes, &data))
+            .map(|length| to_components_bag(length, attributes, data))
             .map(|components| {
-                let preferred_hour_cycle = preferred_hour_cycle(&data, locale);
+                let preferred_hour_cycle = preferred_hour_cycle(data, locale);
                 // TODO: Use a Skeleton here in order to retain 'E' vs 'c'
                 let pattern = expand_pp_to_pe(select_pattern(
                     components,
@@ -951,7 +951,7 @@ mod date_skeleton_consistency_tests {
         strictness: TestStrictness,
     ) -> usize {
         let mut num_problems = 0;
-        let data = provider.get_datetime_resources(locale, Some(cal)).unwrap();
+        let data = provider.get_dates_resource(locale, Some(cal)).unwrap();
         let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats_at_time);
         let skeleton_patterns =
             DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
@@ -972,7 +972,7 @@ mod date_skeleton_consistency_tests {
             .collect::<HashSet<_>>();
         let test_case_data = TestCaseFixedArgs {
             skeleton_patterns: &skeleton_patterns,
-            preferred_hour_cycle: preferred_hour_cycle(&data, locale),
+            preferred_hour_cycle: preferred_hour_cycle(data, locale),
             length_combinations_v1: &length_combinations_v1,
             cal,
             locale,

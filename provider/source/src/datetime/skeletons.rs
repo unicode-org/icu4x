@@ -94,8 +94,9 @@ mod test {
     fn get_data_payload() -> DateSkeletonPatterns<'static> {
         let locale = locale!("en").into();
 
-        let data = SourceDataProvider::new_testing()
-            .get_datetime_resources(&locale, Some(DatagenCalendar::Gregorian))
+        let provider = SourceDataProvider::new_testing();
+        let data = provider
+            .get_dates_resource(&locale, Some(DatagenCalendar::Gregorian))
             .unwrap();
         DateSkeletonPatterns::from(&data.datetime_formats.available_formats)
     }
