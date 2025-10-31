@@ -7,9 +7,11 @@ use super::runtime;
 use super::{reference, PatternItem};
 use crate::provider::fields;
 #[cfg(feature = "datagen")]
-use crate::provider::{self, skeleton};
+use crate::provider::{self, pattern::runtime::Pattern, skeleton::{self, reference::Skeleton}};
 #[cfg(feature = "datagen")]
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
+#[cfg(feature = "datagen")]
+use icu_plurals::PluralElements;
 use icu_provider::prelude::*;
 
 /// Used to represent either H11/H12, or H23. Skeletons only store these
@@ -61,7 +63,7 @@ impl CoarseHourCycle {
     pub fn apply_on_pattern<'data>(
         &self,
         date_time: &provider::skeleton::GenericLengthPatterns<'data>,
-        skeletons: &provider::skeleton::DateSkeletonPatterns<'data>,
+        skeletons: &alloc::collections::BTreeMap<Skeleton, PluralElements<Pattern<'data>>>,
         pattern_str: &str,
         mut pattern: reference::Pattern,
     ) -> Option<reference::Pattern> {
@@ -106,9 +108,11 @@ impl CoarseHourCycle {
         ) {
             skeleton::BestSkeleton::AllFieldsMatch(patterns, _)
             | skeleton::BestSkeleton::MissingOrExtraFields(patterns, _) => {
-                Some(reference::Pattern::from(&patterns.expect_pattern(
-                    "Only week-of patterns have plural variants",
-                )))
+                Some(reference::Pattern::from(
+                    &patterns
+                        .try_into_other()
+                        .expect("Only week-of patterns have plural variants"),
+                ))
             }
             skeleton::BestSkeleton::NoMatch => None,
         }

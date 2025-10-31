@@ -603,7 +603,7 @@ fn test_missing_append_items_support() {
         .get_dates_resource(&langid!("en").into(), Some(DatagenCalendar::Gregorian))
         .unwrap();
     let patterns = DateLengths::from(data);
-    let skeletons = DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
+    let skeletons = data.datetime_formats.available_formats.parse_skeletons();
 
     match create_best_pattern_for_fields(
         &skeletons,
@@ -616,7 +616,8 @@ fn test_missing_append_items_support() {
             // TODO - Append items are needed here.
             assert_eq!(
                 available_format_pattern
-                    .expect_pattern("pattern should not have plural variants")
+                    .try_into_other()
+                    .expect("pattern should not have plural variants")
                     .to_string()
                     .as_str(),
                 "MMMM d, y vvvv"

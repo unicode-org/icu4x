@@ -99,49 +99,38 @@ impl SourceDataProvider {
 #[cfg(test)]
 mod test {
     use super::*;
-    use icu::datetime::provider::skeleton::{DateSkeletonPatterns, SkeletonData};
-    use icu::locale::langid;
+    use icu::{
+        datetime::provider::skeleton::reference::Skeleton, locale::langid, plurals::PluralElements,
+    };
 
     #[test]
     #[ignore] // TODO(#5643)
-    #[allow(unreachable_code, unused_variables, unused_mut)]
     fn test_datetime_skeletons() {
-        use icu::datetime::provider::pattern::runtime::Pattern;
-        use icu::datetime::provider::skeleton::PluralPattern;
-        use icu::plurals::PluralCategory;
-        use std::convert::TryFrom;
-
-        let provider = SourceDataProvider::new_testing();
-        let data = provider
+        let skeletons = SourceDataProvider::new_testing()
             .get_dates_resource(&langid!("fil").into(), Some(DatagenCalendar::Gregorian))
-            .unwrap();
-
-        let skeletons = DateSkeletonPatterns::from(&data.datetime_formats.available_formats).0;
+            .unwrap()
+            .datetime_formats
+            .available_formats
+            .parse_skeletons();
 
         assert_eq!(
-            Some(
-                &"L".parse::<Pattern>()
-                    .expect("Failed to create pattern")
-                    .into()
-            ),
-            skeletons.get(&SkeletonData::try_from("M").expect("Failed to create Skeleton"))
+            Some(&PluralElements::new("L".parse().expect("Failed to create pattern"))),
+            skeletons.get(&Skeleton::try_from("M").expect("Failed to create Skeleton"))
         );
 
-        let mut expected = PluralPattern::new(
+        let expected = PluralElements::new(
             "'linggo' w 'ng' Y"
                 .parse()
                 .expect("Failed to create pattern"),
         )
-        .expect("Failed to create PatternPlurals");
-        expected.maybe_set_variant(
-            PluralCategory::One,
+        .with_one_value(Some(
             "'ika'-w 'linggo' 'ng' Y"
                 .parse()
                 .expect("Failed to create pattern"),
-        );
+        ));
         assert_eq!(
-            Some(&expected.into()),
-            skeletons.get(&SkeletonData::try_from("yw").expect("Failed to create Skeleton"))
+            Some(&expected),
+            skeletons.get(&Skeleton::try_from("yw").expect("Failed to create Skeleton"))
         );
     }
 }
