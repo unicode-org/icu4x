@@ -12,12 +12,52 @@ use libfuzzer_sys::fuzz_target;
 
 #[derive(Arbitrary, Debug)]
 struct FuzzInput {
+    ymd: Ymd,
+    overflow_constrain: bool,
+    cal: AnyCalendarKind,
+}
+
+#[derive(Arbitrary, Debug)]
+struct Ymd {
     year: i32,
     month: u8,
     day: u8,
     month_interpretation: MonthInterpretation,
-    overflow_constrain: bool,
-    cal: AnyCalendarKind,
+}
+
+impl Ymd {
+    pub fn to_date(self, kind: AnyCalendarKind, overflow_constrain: bool) -> Option<Date<AnyCalendar>> {
+        let calendar = AnyCalendar::new(kind.into());
+
+        let mut options = DateFromFieldsOptions::default();
+
+        options.overflow = if overflow_constrain {
+            Some(Overflow::Constrain)
+        } else {
+            Some(Overflow::Reject)
+        };
+
+        let code: MonthCode;
+
+        let mut fields = DateFields::default();
+        fields.extended_year = Some(self.year);
+        fields.day = Some(self.day);
+        match self.month_interpretation {
+            MonthInterpretation::Ordinal => {
+                fields.ordinal_month = Some(self.month);
+            }
+            MonthInterpretation::CodeNormal => {
+                code = MonthCode::new_normal(self.month)?;
+                fields.month_code = Some(code.0.as_bytes());
+            }
+            MonthInterpretation::CodeLeap => {
+                code = MonthCode::new_leap(self.month)?;
+                fields.month_code = Some(code.0.as_bytes());
+            }
+        };
+
+        Date::try_from_fields(fields, options, calendar).ok()
+    }
 }
 
 #[derive(Arbitrary, Debug)]
@@ -77,43 +117,9 @@ impl From<AnyCalendarKind> for icu_calendar::AnyCalendarKind {
     }
 }
 
-macro_rules! unwrap_or_return(
-    ($e:expr) => {
-        {
-            let Some(r) = $e else {
-                return;
-            };
-            r
-        }
-    }
-);
 
 fuzz_target!(|data: FuzzInput| {
-    let calendar = AnyCalendar::new(data.cal.into());
-
-    let mut options = DateFromFieldsOptions::default();
-
-    options.overflow = if data.overflow_constrain {
-        Some(Overflow::Constrain)
-    } else {
-        Some(Overflow::Reject)
-    };
-
-    let mut fields = DateFields::default();
-    fields.extended_year = Some(data.year);
-    fields.day = Some(data.day);
-    match data.month_interpretation {
-        MonthInterpretation::Ordinal => {
-            fields.ordinal_month = Some(data.month);
-        }
-        MonthInterpretation::CodeNormal => {
-            fields.month_code = Some(unwrap_or_return!(MonthCode::new_normal(data.month)));
-        }
-        MonthInterpretation::CodeLeap => {
-            fields.month_code = Some(unwrap_or_return!(MonthCode::new_leap(data.month)));
-        }
-    };
-    if let Ok(date) = Date::try_from_fields(fields, options, calendar) {
+    if let Some(date) = data.ymd.to_date(data.cal, data.overflow_constrain) {
         let _ = date.day_of_month();
         let _ = date.day_of_week();
         let _ = date.day_of_year();

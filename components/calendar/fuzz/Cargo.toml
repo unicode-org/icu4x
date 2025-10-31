@@ -14,7 +14,7 @@ cargo-fuzz = true
 [dependencies]
 libfuzzer-sys = "0.4"
 arbitrary = { version = "1.4", features = ["derive"] }
-icu_calendar = { path = "..", features = ["compiled_data"] }
+icu_calendar = { path = "..", features = ["compiled_data", "unstable"] }
 
 # Prevent this from interfering with workspaces
 [workspace]
