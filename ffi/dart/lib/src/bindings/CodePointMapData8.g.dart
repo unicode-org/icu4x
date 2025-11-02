@@ -296,6 +296,27 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
+  /// Create a map for the `Joining_Group` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
+  factory CodePointMapData8.joiningGroup() {
+    final result = _icu4x_CodePointMapData8_create_joining_group_mv1();
+    return CodePointMapData8._fromFfi(result, []);
+  }
+
+  /// Create a map for the `Joining_Group` property, using a particular data source.
+  ///
+  /// See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory CodePointMapData8.joiningGroupWithProvider(DataProvider provider) {
+    final result = _icu4x_CodePointMapData8_create_joining_group_with_provider_mv1(provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return CodePointMapData8._fromFfi(result.union.ok, []);
+  }
+
   /// Create a map for the `Joining_Type` property, using compiled data.
   ///
   /// See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.
@@ -490,6 +511,16 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData8_create_sentence_break_
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_create_sentence_break_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointMapData8_create_sentence_break_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointMapData8_create_joining_group_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_create_joining_group_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData8_create_joining_group_mv1();
+
+@_DiplomatFfiUse('icu4x_CodePointMapData8_create_joining_group_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_create_joining_group_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_CodePointMapData8_create_joining_group_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('icu4x_CodePointMapData8_create_joining_type_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_create_joining_type_mv1')

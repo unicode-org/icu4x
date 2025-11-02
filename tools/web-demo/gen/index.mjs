@@ -2673,6 +2673,23 @@ let termini = Object.assign({
         ]
     },
 
+    "JoiningGroup.forChar": {
+        func: (ch) => icu.JoiningGroup.forChar(ch),
+        // For avoiding webpacking minifying issues:
+        funcName: "JoiningGroup.forChar",
+        expr: (ch) => "icu.JoiningGroup.forChar(ch)".replace(/([\( ])ch([,\) \n])/, '$1' + ch + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "ch",
+                type: "codepoint",
+                typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
     "JoiningType.forChar": {
         func: (ch) => icu.JoiningType.forChar(ch),
         // For avoiding webpacking minifying issues:

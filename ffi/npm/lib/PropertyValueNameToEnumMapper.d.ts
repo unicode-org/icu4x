@@ -206,4 +206,18 @@ export class PropertyValueNameToEnumMapper {
      * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
      */
     static createVerticalOrientationWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `JoiningGroup` property, using compiled data.
+     *
+     * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
+     */
+    static createJoiningGroup(): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `JoiningGroup` property, using a particular data source.
+     *
+     * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
+     */
+    static createJoiningGroupWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
 }
