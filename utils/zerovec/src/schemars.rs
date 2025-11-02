@@ -60,3 +60,44 @@ impl<T: AsULE + JsonSchema> JsonSchema for ZeroSlice<T> {
         })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{VarZeroVec, ZeroSlice, ZeroVec};
+
+    #[test]
+    #[cfg(feature = "schemars")]
+    fn schema_zerovec_u32() {
+        let generator = schemars::SchemaGenerator::default();
+        let schema = generator.into_root_schema_for::<ZeroVec<u32>>();
+
+        insta::assert_json_snapshot!(schema);
+    }
+
+    #[test]
+    #[cfg(feature = "schemars")]
+    fn schema_zerovec_char() {
+        let generator = schemars::SchemaGenerator::default();
+        let schema = generator.into_root_schema_for::<ZeroVec<char>>();
+
+        insta::assert_json_snapshot!(schema);
+    }
+
+    #[test]
+    #[cfg(feature = "schemars")]
+    fn schema_varzerovec_str() {
+        let generator = schemars::SchemaGenerator::default();
+        let schema = generator.into_root_schema_for::<VarZeroVec<str>>();
+
+        insta::assert_json_snapshot!(schema);
+    }
+
+    #[test]
+    #[cfg(feature = "schemars")]
+    fn schema_varzerovec_zeroslice() {
+        let generator = schemars::SchemaGenerator::default();
+        let schema = generator.into_root_schema_for::<VarZeroVec<ZeroSlice<u32>>>();
+
+        insta::assert_json_snapshot!(schema);
+    }
+}
