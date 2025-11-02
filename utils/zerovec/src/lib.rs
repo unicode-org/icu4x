@@ -224,6 +224,8 @@ mod map;
 mod map2d;
 #[cfg(test)]
 pub mod samples;
+#[cfg(feature = "schemars")]
+mod schemars;
 mod varzerovec;
 mod zerovec;
 

@@ -32,6 +32,7 @@ serde = { workspace = true, features = ["derive"], optional = true }
 
 yoke = { workspace = true, optional = true }
 twox-hash = { workspace = true, optional = true }
+schemars = { workspace = true, optional = true }
 
 [dev-dependencies]
 bincode = { workspace = true }
@@ -57,6 +58,7 @@ derive = ["dep:zerovec-derive"]
 hashmap = ["dep:twox-hash", "alloc"]
 yoke = ["dep:yoke"]
 serde = ["dep:serde"]
+schemars = ["dep:schemars", "alloc"]
 databake = ["dep:databake"]
 alloc = ["serde?/alloc"]
 # No longer does anything
