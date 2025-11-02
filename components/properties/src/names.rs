@@ -912,6 +912,14 @@ impl_value_getter! {
 }
 
 impl_value_getter! {
+    impl JoiningGroup {
+        PropertyNameParseJoiningGroupV1 / SINGLETON_PROPERTY_NAME_PARSE_JOINING_GROUP_V1;
+        PropertyEnumToValueNameLinearMap / PropertyNameShortJoiningGroupV1 / SINGLETON_PROPERTY_NAME_SHORT_JOINING_GROUP_V1;
+        PropertyEnumToValueNameLinearMap / PropertyNameLongJoiningGroupV1 / SINGLETON_PROPERTY_NAME_LONG_JOINING_GROUP_V1;
+    }
+}
+
+impl_value_getter! {
     impl JoiningType {
         PropertyNameParseJoiningTypeV1 / SINGLETON_PROPERTY_NAME_PARSE_JOINING_TYPE_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameShortJoiningTypeV1 / SINGLETON_PROPERTY_NAME_SHORT_JOINING_TYPE_V1;
