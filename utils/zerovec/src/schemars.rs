@@ -3,9 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
+    map::ZeroMapKV,
     ule::{AsULE, VarULE},
     vecs::VarZeroVecFormat,
-    VarZeroVec, ZeroSlice, ZeroVec,
+    VarZeroVec, ZeroMap, ZeroSlice, ZeroVec,
 };
 use alloc::{borrow::Cow, format};
 use schemars::JsonSchema;
@@ -61,9 +62,31 @@ impl<T: AsULE + JsonSchema> JsonSchema for ZeroSlice<T> {
     }
 }
 
+impl<'a, K, V> JsonSchema for ZeroMap<'a, K, V>
+where
+    K: ZeroMapKV<'a> + ?Sized + JsonSchema,
+    V: ZeroMapKV<'a> + ?Sized + JsonSchema,
+{
+    fn inline_schema() -> bool {
+        true
+    }
+
+    fn schema_name() -> Cow<'static, str> {
+        format!("ZeroMap<{}, {}>", K::schema_name(), V::schema_name()).into()
+    }
+
+    fn json_schema(generator: &mut schemars::SchemaGenerator) -> schemars::Schema {
+        // forward to the BTreeMap impl, as the impl is quite complex
+        //
+        // as the impl for the BTreeMap requires its arguments to be Sized, i cannot forward
+        // K and V directly, but since schemars simply forwards &T impls to T, this is fine
+        <alloc::collections::BTreeMap<&K, &V> as JsonSchema>::json_schema(generator)
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{VarZeroVec, ZeroSlice, ZeroVec};
+    use crate::{VarZeroVec, ZeroMap, ZeroSlice, ZeroVec};
 
     #[test]
     #[cfg(feature = "schemars")]
@@ -97,6 +120,14 @@ mod tests {
     fn schema_varzerovec_zeroslice() {
         let generator = schemars::SchemaGenerator::default();
         let schema = generator.into_root_schema_for::<VarZeroVec<ZeroSlice<u32>>>();
+
+        insta::assert_json_snapshot!(schema);
+    }
+
+    #[test]
+    fn schema_zeromap_u32_str() {
+        let generator = schemars::SchemaGenerator::default();
+        let schema = generator.into_root_schema_for::<ZeroMap<u32, str>>();
 
         insta::assert_json_snapshot!(schema);
     }
