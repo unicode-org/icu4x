@@ -391,6 +391,31 @@ pub mod ffi {
                 .erase(),
             )))
         }
+        /// Create a name-to-enum mapper for the `JoiningType` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::JoiningType, Struct)]
+        #[diplomat::attr(auto, named_constructor = "joining_type")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_joining_type() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
+                icu_properties::PropertyParser::<icu_properties::props::JoiningType>::new()
+                    .static_to_owned()
+                    .erase(),
+            ))
+        }
+        /// Create a name-to-enum mapper for the `JoiningType` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::JoiningType, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "joining_type_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_joining_type_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
+                icu_properties::PropertyParser::<icu_properties::props::JoiningType>::try_new_unstable(
+                    &provider.get_unstable()?,
+                )?
+                .erase(),
+            )))
+        }
     }
 
     /// A type capable of looking up General Category Group values from a string name.

@@ -627,6 +627,47 @@ export class PropertyValueNameToEnumMapper {
         }
     }
 
+    /**
+     * Create a name-to-enum mapper for the `JoiningType` property, using compiled data.
+     *
+     * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.
+     */
+    static createJoiningType() {
+
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_joining_type_mv1();
+
+        try {
+            return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
+        }
+
+        finally {
+        }
+    }
+
+    /**
+     * Create a name-to-enum mapper for the `JoiningType` property, using a particular data source.
+     *
+     * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.
+     */
+    static createJoiningTypeWithProvider(provider) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_joining_type_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
+            }
+            return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
     constructor(symbol, ptr, selfEdge) {
         return this.#internalConstructor(...arguments)
     }

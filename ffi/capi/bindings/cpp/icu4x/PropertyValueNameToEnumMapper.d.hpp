@@ -239,6 +239,20 @@ public:
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> create_joining_group_with_provider(const icu4x::DataProvider& provider);
 
+  /**
+   * Create a name-to-enum mapper for the `JoiningType` property, using compiled data.
+   *
+   * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.
+   */
+  inline static std::unique_ptr<icu4x::PropertyValueNameToEnumMapper> create_joining_type();
+
+  /**
+   * Create a name-to-enum mapper for the `JoiningType` property, using a particular data source.
+   *
+   * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.
+   */
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::PropertyValueNameToEnumMapper>, icu4x::DataError> create_joining_type_with_provider(const icu4x::DataProvider& provider);
+
     inline const icu4x::capi::PropertyValueNameToEnumMapper* AsFFI() const;
     inline icu4x::capi::PropertyValueNameToEnumMapper* AsFFI();
     inline static const icu4x::PropertyValueNameToEnumMapper* FromFFI(const icu4x::capi::PropertyValueNameToEnumMapper* ptr);
