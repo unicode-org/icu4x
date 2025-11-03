@@ -5,7 +5,7 @@
 `icu` is the main meta-crate of the `ICU4X` project.
 
 It provides a comprehensive selection of functionality found in
-[International Components for Unicode](http://icu.unicode.org/)
+[International Components for Unicode](https://icu.unicode.org/)
 in their canonical configurations intended to enable software
 internationalization capabilities.
 
@@ -112,7 +112,7 @@ Experimental, unstable functionality can be found in the `icu::experimental` cra
 are on track to be eventually stabilized into this crate.
 
 
-[CLDR]: http://cldr.unicode.org/
+[CLDR]: https://cldr.unicode.org/
 [`DataProvider`]: icu_provider::DataProvider
 [`FsDataProvider`]: https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html
 [`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html
