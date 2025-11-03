@@ -236,9 +236,8 @@ pub fn create_best_pattern_for_fields<'data>(
             BestSkeleton::NoMatch => (None, true, SkeletonQuality(REQUESTED_SYMBOL_MISSING)),
         };
     let time_pattern: Option<runtime::Pattern<'data>> = time_patterns.map(|pattern| {
-        let mut pattern = pattern
-            .try_into_other()
-            .expect("Only date patterns can contain plural variants");
+        #[allow(clippy::unwrap_used)] // only date patterns can contain plural variants
+        let mut pattern = pattern.try_into_other().unwrap();
         naively_apply_preferences(&mut pattern, components.hour_cycle);
         naively_apply_time_zone_name(&mut pattern, components.time_zone_name);
         apply_subseconds(&mut pattern, components.subsecond);

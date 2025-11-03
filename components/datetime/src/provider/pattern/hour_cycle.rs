@@ -7,7 +7,11 @@ use super::runtime;
 use super::{reference, PatternItem};
 use crate::provider::fields;
 #[cfg(feature = "datagen")]
-use crate::provider::{self, pattern::runtime::Pattern, skeleton::{self, reference::Skeleton}};
+use crate::provider::{
+    self,
+    pattern::runtime::Pattern,
+    skeleton::{self, reference::Skeleton},
+};
 #[cfg(feature = "datagen")]
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 #[cfg(feature = "datagen")]
@@ -109,9 +113,8 @@ impl CoarseHourCycle {
             skeleton::BestSkeleton::AllFieldsMatch(patterns, _)
             | skeleton::BestSkeleton::MissingOrExtraFields(patterns, _) => {
                 Some(reference::Pattern::from(
-                    &patterns
-                        .try_into_other()
-                        .expect("Only week-of patterns have plural variants"),
+                    #[allow(clippy::unwrap_used)] // only week-of patterns have plural variants
+                    &patterns.try_into_other().unwrap(),
                 ))
             }
             skeleton::BestSkeleton::NoMatch => None,

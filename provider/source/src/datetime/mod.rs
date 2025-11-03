@@ -114,7 +114,9 @@ mod test {
             .parse_skeletons();
 
         assert_eq!(
-            Some(&PluralElements::new("L".parse().expect("Failed to create pattern"))),
+            Some(&PluralElements::new(
+                "L".parse().expect("Failed to create pattern")
+            )),
             skeletons.get(&Skeleton::try_from("M").expect("Failed to create Skeleton"))
         );
 
