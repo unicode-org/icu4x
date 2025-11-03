@@ -12,7 +12,7 @@ use crate::types::{DateFields, MonthInfo, ValidMonthCode};
 use crate::RangeError;
 use crate::{types, Calendar, Date};
 use ::tinystr::tinystr;
-use calendrical_calculations::hebrew_keviyah::{Keviyah, YearInfo};
+use calendrical_calculations::hebrew_keviyah::{Keviyah, YearInfo, YearType};
 use calendrical_calculations::rata_die::RataDie;
 
 /// The [Hebrew Calendar](https://en.wikipedia.org/wiki/Hebrew_calendar)
@@ -85,20 +85,60 @@ impl HebrewYearInfo {
             value,
         }
     }
+
+    fn new_year(self) -> RataDie {
+        self.keviyah.year_info(self.value).new_year()
+    }
+
+    // this function is branch-free
+    fn month_has_30_days(self, ordinal_month: u8) -> bool {
+        let year_type = self.keviyah.year_type();
+        let is_leap = self.keviyah.is_leap();
+
+        // In a leap year, ordinals after Adar correspond to the previous month number.
+        let month_number = ordinal_month - (is_leap && ordinal_month >= 6) as u8;
+
+        (
+            // Months with odd month numbers are long.
+            month_number % 2
+            // Ḥeshvan is long in complete years
+            + (ordinal_month == 2 && year_type == YearType::Complete) as u8
+            // Kislev is short in deficient years
+            - (ordinal_month == 3 && year_type == YearType::Deficient) as u8
+        ) == 1
+    }
+
+    // month is 1-indexed, but 0 is a valid input, producing 0
+    // this function is branch-free
+    fn last_day_of_month(self, ordinal_month: u8) -> u16 {
+        let year_type = self.keviyah.year_type();
+        let is_leap = self.keviyah.is_leap();
+
+        // In a leap year, ordinals after Adar correspond to the previous month number.
+        let month_number = ordinal_month - (is_leap && ordinal_month >= 6) as u8;
+
+        29 * (ordinal_month as u16)
+            + (
+                // Months with odd month numbers are long.
+                month_number.div_ceil(2)
+                // Adar I is long
+                + (is_leap && ordinal_month >= 6) as u8
+                // Ḥeshvan is long in complete years
+                + (ordinal_month >= 2 && year_type == YearType::Complete) as u8
+                // Kislev is short in deficient years
+                - (ordinal_month >= 3 && year_type == YearType::Deficient) as u8
+            ) as u16
+    }
 }
 
 impl DateFieldsResolver for Hebrew {
     type YearInfo = HebrewYearInfo;
-    fn days_in_provided_month(info: HebrewYearInfo, ordinal_month: u8) -> u8 {
-        info.keviyah.month_len(ordinal_month)
+    fn days_in_provided_month(year: HebrewYearInfo, ordinal_month: u8) -> u8 {
+        29 + year.month_has_30_days(ordinal_month) as u8
     }
 
-    fn months_in_provided_year(info: HebrewYearInfo) -> u8 {
-        if info.keviyah.is_leap() {
-            13
-        } else {
-            12
-        }
+    fn months_in_provided_year(year: HebrewYearInfo) -> u8 {
+        12 + year.keviyah.is_leap() as u8
     }
 
     #[inline]
@@ -112,7 +152,6 @@ impl DateFieldsResolver for Hebrew {
             _ => Err(UnknownEraError),
         }
     }
-
     #[inline]
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
         HebrewYearInfo::compute(extended_year)
@@ -154,7 +193,7 @@ impl DateFieldsResolver for Hebrew {
 
     fn ordinal_month_from_code(
         &self,
-        year: &Self::YearInfo,
+        year: Self::YearInfo,
         month_code: types::ValidMonthCode,
         options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
@@ -178,7 +217,7 @@ impl DateFieldsResolver for Hebrew {
 
     fn month_code_from_ordinal(
         &self,
-        year: &Self::YearInfo,
+        year: Self::YearInfo,
         ordinal_month: u8,
     ) -> types::ValidMonthCode {
         let is_leap = year.keviyah.is_leap();
@@ -215,29 +254,54 @@ impl Calendar for Hebrew {
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        let (year_info, year) = YearInfo::year_containing_rd(rd);
-        let keviyah = year_info.keviyah;
+        // 35975351/98496 is the mean year length for a Hebrew year
+        //
+        // +1 because the epoch is new year of year 1
+        // Before the epoch the division will round up (towards 0), so we need to
+        // subtract 1, which is the same as not adding the 1.
+        let extended_year = (rd - calendrical_calculations::hebrew_keviyah::HEBREW_CALENDAR_EPOCH)
+            * 98496
+            / 35975351
+            + (rd >= calendrical_calculations::hebrew_keviyah::HEBREW_CALENDAR_EPOCH) as i64;
 
-        // Obtaining a 1-indexed day-in-year value
-        let day_in_year = u16::try_from(rd - year_info.new_year() + 1).unwrap_or(u16::MAX);
-        let (month, day) = keviyah.month_day_for(day_in_year);
+        let extended_year = extended_year.clamp(i32::MIN as i64, i32::MAX as i64) as i32;
 
-        HebrewDateInner(ArithmeticDate::new_unchecked(
-            HebrewYearInfo {
-                keviyah,
-                value: year,
-            },
-            month,
-            day,
-        ))
+        let mut year = HebrewYearInfo::compute(extended_year);
+
+        // We rounded the extended year down, so we might need to use the next year
+        if rd >= year.new_year() + year.keviyah.year_length() as i64 && extended_year < i32::MAX {
+            year = HebrewYearInfo::compute(extended_year + 1)
+        }
+
+        // Clamp the RD to our year
+        let rd = rd.clamp(
+            year.new_year(),
+            year.new_year() + year.keviyah.year_length() as i64,
+        );
+
+        let day_of_year = (rd - year.new_year()) as u16;
+
+        // We divide by 30, not 29, to account for the case where all months before this
+        // were length 30 (possible near the beginning of the year)
+        let mut month = (day_of_year / 30) as u8 + 1;
+        let mut last_day_of_month = year.last_day_of_month(month);
+        let mut last_day_of_prev_month = year.last_day_of_month(month - 1);
+
+        while day_of_year >= last_day_of_month {
+            month += 1;
+            last_day_of_prev_month = last_day_of_month;
+            last_day_of_month = year.last_day_of_month(month);
+        }
+
+        let day = (day_of_year + 1 - last_day_of_prev_month) as u8;
+
+        HebrewDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        let ny = date.0.year.keviyah.year_info(date.0.year.value).new_year();
-        let days_preceding = date.0.year.keviyah.days_preceding(date.0.month);
-
-        // Need to subtract 1 since the new year is itself in this year
-        ny + i64::from(days_preceding) + i64::from(date.0.day) - 1
+        date.0.year.new_year()
+            + date.0.year.last_day_of_month(date.0.month - 1) as i64
+            + (date.0.day - 1) as i64
     }
 
     fn has_cheap_iso_conversion(&self) -> bool {
@@ -296,7 +360,7 @@ impl Calendar for Hebrew {
     }
 
     fn month(&self, date: &Self::DateInner) -> MonthInfo {
-        let valid_standard_code = self.month_code_from_ordinal(&date.0.year, date.0.month);
+        let valid_standard_code = self.month_code_from_ordinal(date.0.year, date.0.month);
 
         let valid_formatting_code = if valid_standard_code.number() == 6 && date.0.month == 7 {
             ValidMonthCode::new_unchecked(6, true) // M06L
@@ -318,7 +382,7 @@ impl Calendar for Hebrew {
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        types::DayOfYear(date.0.year.keviyah.days_preceding(date.0.month) + date.0.day as u16)
+        types::DayOfYear(date.0.year.last_day_of_month(date.0.month - 1) + date.0.day as u16)
     }
 
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {

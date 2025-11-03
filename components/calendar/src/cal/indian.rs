@@ -62,17 +62,9 @@ impl DateFieldsResolver for Indian {
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
         if month == 1 {
             30 + calendrical_calculations::gregorian::is_leap_year(year + YEAR_OFFSET) as u8
-        } else if (2..=6).contains(&month) {
-            31
-        } else if (7..=12).contains(&month) {
-            30
         } else {
-            0
+            30 + (month <= 6) as u8
         }
-    }
-
-    fn months_in_provided_year(_: i32) -> u8 {
-        12
     }
 
     #[inline]
@@ -261,10 +253,14 @@ impl Calendar for Indian {
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
         types::DayOfYear(
-            (1..date.0.month)
-                .map(|m| Self::days_in_provided_month(date.0.year, m) as u16)
-                .sum::<u16>()
-                + date.0.day as u16,
+            (
+                // 30 day months
+                30 * (date.0.month as u16 - 1)
+                // First six months are 31 days
+                + if date.0.month - 1 < 6 { date.0.month as u16 - 1 } else { 6 }
+                // Except month 1 outside a leap year
+                - (date.0.month > 1 && !calendrical_calculations::gregorian::is_leap_year(date.0.year + YEAR_OFFSET)) as u16
+            ) + date.0.day as u16,
         )
     }
 

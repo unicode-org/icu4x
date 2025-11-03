@@ -820,10 +820,6 @@ impl<R: Rules> DateFieldsResolver for Hijri<R> {
         29 + year.packed.month_has_30_days(month) as u8
     }
 
-    fn months_in_provided_year(_year: Self::YearInfo) -> u8 {
-        12
-    }
-
     #[inline]
     fn year_info_from_era(
         &self,

@@ -52,16 +52,12 @@ impl<Y: GregorianYears> DateFieldsResolver for AbstractGregorian<Y> {
     type YearInfo = i32;
 
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
-        // https://www.youtube.com/watch?v=J9KijLyP-yg&t=1394s
         if month == 2 {
             28 + calendrical_calculations::gregorian::is_leap_year(year) as u8
         } else {
+            // https://www.youtube.com/watch?v=J9KijLyP-yg&t=1394s
             30 | month ^ (month >> 3)
         }
-    }
-
-    fn months_in_provided_year(_: i32) -> u8 {
-        12
     }
 
     #[inline]

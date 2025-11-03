@@ -174,7 +174,8 @@ const ḤALAKIM_IN_WEEK: i64 = 1080 * 24 * 7;
 /// the same as the Molad Beherad.
 ///
 /// (note that the molad Beherad occurs on standard Sunday, but because it happens after 6PM it is still Hebrew Monday)
-const HEBREW_CALENDAR_EPOCH: RataDie = crate::julian::fixed_from_julian_book_version(-3761, 10, 7);
+pub const HEBREW_CALENDAR_EPOCH: RataDie =
+    crate::julian::fixed_from_julian_book_version(-3761, 10, 7);
 
 /// The minumum hebrew year supported by this code (this is the minimum value for i32)
 pub const HEBREW_MIN_YEAR: i32 = i32::MIN;

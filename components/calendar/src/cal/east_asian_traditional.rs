@@ -593,7 +593,7 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
 
     fn ordinal_month_from_code(
         &self,
-        year: &Self::YearInfo,
+        year: Self::YearInfo,
         month_code: types::ValidMonthCode,
         options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
@@ -620,7 +620,7 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
         Ok(number + (number >= leap_month) as u8)
     }
 
-    fn month_code_from_ordinal(&self, year: &Self::YearInfo, ordinal_month: u8) -> ValidMonthCode {
+    fn month_code_from_ordinal(&self, year: Self::YearInfo, ordinal_month: u8) -> ValidMonthCode {
         // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
         // it is impossible to actually have 14 months in a year.
         let leap_month = year.packed.leap_month().unwrap_or(14);
@@ -757,7 +757,7 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     /// month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
         types::MonthInfo::for_code_and_ordinal(
-            self.month_code_from_ordinal(&date.0.year, date.0.month),
+            self.month_code_from_ordinal(date.0.year, date.0.month),
             date.0.month,
         )
     }
@@ -1514,7 +1514,7 @@ mod test {
                 ordinal == leap_month,
             );
             assert_eq!(
-                cal.ordinal_month_from_code(&year, code, reject),
+                cal.ordinal_month_from_code(year, code, reject),
                 Ok(ordinal),
                 "Code to ordinal failed for year: {}, code: {ordinal}",
                 year.related_iso
@@ -1542,7 +1542,7 @@ mod test {
                 ),
             ] {
                 assert_eq!(
-                    cal.ordinal_month_from_code(&year, code, reject),
+                    cal.ordinal_month_from_code(year, code, reject),
                     Err(error),
                     "Invalid month code failed for year: {}, code: {code:?}",
                     year.related_iso,
