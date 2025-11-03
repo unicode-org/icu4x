@@ -27,7 +27,6 @@ components/segmenter/             @aethanyc @makotokato @sffc
 components/time/              @nekevss @robertbastian @sffc
 ffi/capi/                         @Manishearth
 ffi/ecma402/                      @filmil
-ffi/harfbuzz/                     @hsivonen
 provider/blob/                    @sffc @Manishearth
 provider/core/                    @sffc @Manishearth
 provider/source/                  @sffc @robertbastian @Manishearth

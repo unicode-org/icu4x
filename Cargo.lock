@@ -1458,16 +1458,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_harfbuzz"
-version = "0.3.0"
-dependencies = [
- "harfbuzz-traits",
- "icu_normalizer",
- "icu_properties",
- "icu_provider",
-]
-
-[[package]]
 name = "icu_list"
 version = "2.1.1"
 dependencies = [
@@ -1542,6 +1532,7 @@ dependencies = [
  "criterion",
  "databake",
  "detone",
+ "harfbuzz-traits",
  "icu",
  "icu_collections",
  "icu_normalizer_data",
@@ -1605,6 +1596,7 @@ name = "icu_properties"
 version = "2.1.1"
 dependencies = [
  "databake",
+ "harfbuzz-traits",
  "icu",
  "icu_collections",
  "icu_locale_core",

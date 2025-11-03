@@ -28,6 +28,7 @@ databake = { workspace = true, features = ["derive"], optional = true}
 serde = { workspace = true, features = ["derive"], optional = true }
 icu_locale_core = { workspace = true, features = ["zerovec"] }
 
+harfbuzz-traits = { workspace = true, optional = true }
 unicode-bidi = { workspace = true, optional = true }
 
 icu_properties_data = { workspace = true, optional = true }
@@ -39,6 +40,7 @@ icu = { path = "../../components/icu", default-features = false }
 default = ["compiled_data"]
 serde = ["dep:serde", "icu_locale_core/serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde", "zerotrie/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake", "icu_locale_core/databake", "zerotrie/databake", "icu_provider/export"]
-unicode_bidi = [ "dep:unicode-bidi" ]
+unicode_bidi = ["dep:unicode-bidi"]
+harfbuzz_traits = ["dep:harfbuzz-traits"]
 compiled_data = ["dep:icu_properties_data", "icu_provider/baked"]
 alloc = ["zerovec/alloc", "icu_collections/alloc", "serde?/alloc"]

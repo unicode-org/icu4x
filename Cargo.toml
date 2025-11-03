@@ -34,7 +34,6 @@ members = [
     "ffi/capi",
     "ffi/ecma402",
     "ffi/freertos",
-    "ffi/harfbuzz",
 
     # Provider
     "provider/adapters",
@@ -158,7 +157,6 @@ icu_time = { version = "~2.1.1", path = "components/time", default-features = fa
 icu_capi = { version = "~2.1.1", path = "ffi/capi", default-features = false }
 # icu4x_ecma402 never used as a dep
 # icu_freertos never used as a dep
-# icu_harfbuzz never used as a dep
 
 # Provider
 icu_provider_export = { version = "~2.1.1", path = "provider/export", default-features = false }
@@ -245,6 +243,7 @@ arrayvec = { version = "0.7.2", default-features = false }
 core_maths = { version = "0.1.0", default-features = false }
 displaydoc = { version = "0.2.3", default-features = false }
 either = { version = "1.9.0", default-features = false }
+harfbuzz-traits = { version = "0.6.0", default-features = false }
 libc_alloc = { version = "1.0.6", default-features = false }
 log = { version = "0.4.17", default-features = false }
 memchr = { version = "2.6.0", default-features = false }

@@ -16,6 +16,9 @@ use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_provider::prelude::*;
 use zerovec::{ule::AsULE, ZeroSlice};
 
+#[cfg(feature = "harfbuzz_traits")]
+pub use crate::harfbuzz::{HarfbuzzScriptData, HarfbuzzScriptDataBorrowed};
+
 /// The number of bits at the low-end of a `ScriptWithExt` value used for
 /// storing the `Script` value (or `extensions` index).
 const SCRIPT_VAL_LENGTH: u16 = 10;
