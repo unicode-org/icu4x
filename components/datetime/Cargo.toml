@@ -32,7 +32,9 @@ icu_time = { workspace = true, features = ["alloc"] }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 potential_utf = { workspace = true, features = ["alloc", "zerovec"] }
 writeable = { workspace = true }
+zerofrom = { workspace = true }
 zerovec = { workspace = true, features = ["alloc", "yoke"] }
+yoke = { workspace = true, features = ["alloc"] }
 
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 zerotrie = { workspace = true, features = ["alloc"], optional = true }
@@ -70,7 +72,6 @@ serde = [
     "icu_decimal/serde",
     "icu_pattern/serde",
     "icu_plurals/serde",
-    "icu_provider/alloc",
     "icu_provider/serde",
     "icu_time/serde",
     "litemap?/serde",

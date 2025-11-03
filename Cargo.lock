@@ -1273,6 +1273,7 @@ dependencies = [
  "potential_utf",
  "serde",
  "writeable",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -1370,6 +1371,8 @@ dependencies = [
  "smallvec",
  "tinystr",
  "writeable",
+ "yoke",
+ "zerofrom",
  "zerotrie",
  "zerovec",
 ]
@@ -1436,9 +1439,11 @@ dependencies = [
  "num-traits",
  "potential_utf",
  "serde",
+ "serde_borrow_utils",
  "smallvec",
  "tinystr",
  "writeable",
+ "yoke",
  "zerotrie",
  "zerovec",
 ]
@@ -1472,6 +1477,7 @@ dependencies = [
  "serde",
  "serde_json",
  "writeable",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -1495,6 +1501,7 @@ dependencies = [
  "serde_json",
  "tinystr",
  "writeable",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -2836,6 +2843,14 @@ checksum = "f3a1a3341211875ef120e117ea7fd5228530ae7e7036a779fdc9117be6b3282c"
 dependencies = [
  "ordered-float",
  "serde",
+]
+
+[[package]]
+name = "serde_borrow_utils"
+version = "0.0.0"
+dependencies = [
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

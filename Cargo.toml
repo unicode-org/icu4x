@@ -70,6 +70,7 @@ members = [
     "utils/litemap",
     "utils/resb",
     "utils/env_preferences",
+     "utils/serde_borrow_utils",
     "utils/tinystr",
     "utils/tzif",
     "utils/potential_utf",
@@ -193,6 +194,7 @@ ixdtf = { version = "0.6.0", path = "utils/ixdtf", default-features = false }
 litemap = { version = "0.8.0", path = "utils/litemap", default-features = false }
 potential_utf = { version = "0.1.3", path = "utils/potential_utf", default-features = false }
 resb = { version = "0.1.0", path = "utils/resb", default-features = false }
+serde_borrow_utils = { version = "0.0.0", path = "utils/serde_borrow_utils", default-features = false }
 tzif = { version = "0.4.0", path = "utils/tzif", default-features = false }
 tinystr = { version = "0.8.0", path = "utils/tinystr", default-features = false }
 writeable = { version = "0.6.0", path = "utils/writeable", default-features = false }

@@ -12,8 +12,6 @@ use alloc::borrow::Cow;
 use core::fmt::{Debug, Formatter};
 
 use icu_provider::prelude::*;
-#[cfg(feature = "serde")]
-use icu_provider::serde_borrow_de_utils::option_of_cow;
 use zerovec::VarZeroVec;
 
 use crate::personnames::api::FormattingFormality;
@@ -61,21 +59,21 @@ pub struct PersonNamesFormat<'data> {
     pub given_first_locales: VarZeroVec<'data, str>,
 
     /// foreignSpaceReplacement element.
-    #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "option_of_cow"))]
+    #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "serde_borrow_utils::option_of_cow"))]
     pub foreign_space_replacement: Option<Cow<'data, str>>,
 
     /// Equivalent of initialPattern tag + initial
     /// ```xml
     /// <initialPattern type="initial">{0}.</initialPattern>
     /// ```
-    #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "option_of_cow"))]
+    #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "serde_borrow_utils::option_of_cow"))]
     pub initial_pattern: Option<Cow<'data, str>>,
 
     /// Equivalent of initialPattern tag + initialSequence
     /// ```xml
     /// <initialPattern type="initialSequence">{0} {1}</initialPattern>
     /// ```
-    #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "option_of_cow"))]
+    #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "serde_borrow_utils::option_of_cow"))]
     pub initial_pattern_sequence: Option<Cow<'data, str>>,
 
     /// Equivalent of PersonNames
