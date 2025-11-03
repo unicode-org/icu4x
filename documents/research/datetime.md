@@ -1,6 +1,6 @@
 # Rust Date and Time API Request
 
-In ICU4X 0.1 we introduce a `DateTimeFormat` API for formatting date and time into human readable formats. That API is shaped after [`ICU4C`](http://userguide.icu-project.org/formatparse/datetime), [`ICU4J`](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/com/ibm/icu/text/DateFormat.html) and [`ECMA-402`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat).
+In ICU4X 0.1 we introduce a `DateTimeFormat` API for formatting date and time into human readable formats. That API is shaped after [`ICU4C`](https://unicode-org.github.io/icu/userguide/format_parse/datetime/), [`ICU4J`](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/com/ibm/icu/text/DateFormat.html) and [`ECMA-402`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat).
 
 In order to clearly separate the concerns, we are leaving a challenging task of designing a complete solution for date and time management to the Rust community, and we can only formulate the request for what API ICU4X will need to format such structure.
 
@@ -12,7 +12,7 @@ We want to help the community understand the intended separation of concerns -- 
 
 Both tasks are very challenging and the history of Software Industry is filled with half-finished or badly designed APIs that attempted to "start small" and "scale" - a model which unfortunately doesn't work well for either of the two tasks.
 
-We believe ICU4X DateTimeFormat will handle the formatting portion correctly with ergonomics, performance and quality backed by [`Unicode`](https://home.unicode.org/) and [`CLDR`](http://cldr.unicode.org/) projects.
+We believe ICU4X DateTimeFormat will handle the formatting portion correctly with ergonomics, performance and quality backed by [`Unicode`](https://home.unicode.org/) and [`CLDR`](https://cldr.unicode.org/) projects.
 
 In ICU4X, we also intend to implement a low-level, performance-focused API for calendrical calculations, enabling the conversion of dates between calendar systems. However, we do not intend to design a high-level API for this step; we intend to leave the ergonomic datetime arithmetic API to the community.
 

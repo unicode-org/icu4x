@@ -88,7 +88,7 @@ Often, we do this in ICU4X out of an abundance of caution so that we can change 
 
 An *identifier* is a universally understood space of numbers or strings, where a particular number or string represents a particular entity.
 
-Identifiers are also discussed and defined in [Unicode Technical Standard #39](http://unicode.org/reports/tr39/):
+Identifiers are also discussed and defined in [Unicode Technical Standard #39](https://unicode.org/reports/tr39/):
 
 > Identifiers ("IDs") are strings used in application contexts to refer to specific entities of certain significance in the given application. In a given application, an identifier will map to at most one specific entity.
 

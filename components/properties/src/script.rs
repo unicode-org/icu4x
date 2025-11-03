@@ -513,7 +513,7 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// whether the Script property value matches.
     ///
     /// Some characters are commonly used in multiple scripts. For more information,
-    /// see UAX #24: <http://www.unicode.org/reports/tr24/>.
+    /// see UAX #24: <https://www.unicode.org/reports/tr24/>.
     ///
     /// # Examples
     ///

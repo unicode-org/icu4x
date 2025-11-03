@@ -16,7 +16,7 @@
 //! ## Creating a `CodePointInversionList`
 //!
 //! `CodePointSets` are created from either serialized [`CodePointSets`](CodePointInversionList),
-//! represented by [inversion lists](http://userguide.icu-project.org/strings/properties),
+//! represented by [inversion lists](https://unicode-org.github.io/icu/userguide/strings/properties.html),
 //! the [`CodePointInversionListBuilder`], or from the Properties API.
 //!
 //! ```

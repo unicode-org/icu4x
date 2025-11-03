@@ -126,7 +126,7 @@ fn maybe_filter_value<T: TrieValue>(value: T, trie_null_value: T, null_value: T)
 /// ICU binary data.
 ///
 /// For more information:
-/// - [ICU Site design doc](http://site.icu-project.org/design/struct/utrie)
+/// - [ICU Site design doc](https://unicode-org.github.io/icu/design/struct/utrie)
 /// - [ICU User Guide section on Properties lookup](https://unicode-org.github.io/icu/userguide/strings/properties.html#lookup)
 // serde impls in crate::serde
 #[derive(Debug, Eq, PartialEq, Yokeable, ZeroFrom)]

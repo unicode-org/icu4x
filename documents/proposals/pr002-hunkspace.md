@@ -21,7 +21,7 @@ more general and open to independent third party extensions.
 > The terminology proposed in [ICU4X Locale Data Pipeline][icudp] is used.  Any
 > inconsistent word use is a bug, and should be fixed.
 
-[cldr]: http://cldr.unicode.org
+[cldr]: https://cldr.unicode.org
 [dp]: https://github.com/unicode-org/icu4x/blob/main/documents/design/data_pipeline.md
 [ff]: https://github.com/filmil
 [hunk]: https://github.com/unicode-org/icu4x/blob/main/documents/design/data_pipeline.md
@@ -478,8 +478,8 @@ the file `//source/browser/components/preferences/preferences.xhtml`.
 
 ```html
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-        xmlns:html="http://www.w3.org/1999/xhtml"
+<html xmlns="https://www.w3.org/1999/xhtml"
+        xmlns:html="https://www.w3.org/1999/xhtml"
         role="document"
         id="preferences-root">
 <head>
@@ -500,7 +500,7 @@ the following, with some details omitted for brevity:
 ```
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
 -facebook-container-brand-name = Facebook Container
 -lockwise-brand-name = Firefox Lockwise
 -lockwise-brand-short-name = Lockwise

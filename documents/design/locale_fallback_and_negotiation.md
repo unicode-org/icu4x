@@ -182,7 +182,7 @@ Instead of `ar-DZ` → `ar` → `root` it might go `ar-DZ` → `ar` → `ar-*` �
 
 Language negotiation (or language matching) is a known problem, and over the years it has been addressed in proprietary ways by various frameworks, OSes, applications.
 
-In recent years Unicode recognized the need and the complexity of the problem and addressed it in the standard: [Unicode Technical Standard #35 (UTS #35) – 4.4 Language Matching](http://unicode.org/reports/tr35/#LanguageMatching).
+In recent years Unicode recognized the need and the complexity of the problem and addressed it in the standard: [Unicode Technical Standard #35 (UTS #35) – 4.4 Language Matching](https://unicode.org/reports/tr35/#LanguageMatching).
 
 For ICU4X we have already explained the three kinds of operations that requires one to go through a list of languages to find a match: vertical fallback, horizontal fallback, and language matching.
 
