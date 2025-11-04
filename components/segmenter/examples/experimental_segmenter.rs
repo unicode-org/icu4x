@@ -8,10 +8,10 @@ mod adaboost;
 #[path = "../tests/cnn/main.rs"]
 mod cnn;
 
-use std::time::SystemTime;
-use icu_segmenter::{WordSegmenter, WordSegmenterBorrowed, options::WordBreakOptions};
 use adaboost::Predictor;
-use cnn::{RawCnnData, CnnSegmenter};
+use cnn::{CnnSegmenter, RawCnnData};
+use icu_segmenter::{options::WordBreakOptions, WordSegmenter, WordSegmenterBorrowed};
+use std::time::SystemTime;
 
 const REPETITIONS: usize = 1000;
 
@@ -48,7 +48,8 @@ fn main_cnn(args: &[String]) {
     let rawcnndata = RawCnnData::for_test();
     let cnndata = rawcnndata
         .try_convert()
-        .map_err(|_| "validation/conversion failed".to_string()).unwrap();
+        .map_err(|_| "validation/conversion failed".to_string())
+        .unwrap();
     let segmenter = CnnSegmenter::new(&cnndata);
     let s = &args[0];
     let start_time = SystemTime::now();
@@ -103,6 +104,6 @@ fn main() {
         "dict" | "dictionary" => main_dict(&args[2..]),
         "cnn" => main_cnn(&args[2..]),
         "lstm" => main_lstm(&args[2..]),
-        _ => panic!("not a valid model selection")
+        _ => panic!("not a valid model selection"),
     }
 }
