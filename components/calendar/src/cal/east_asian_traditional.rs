@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cal::iso::Iso;
 use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::calendar_arithmetic::{ArithmeticDate, ToExtendedYear};
 use crate::error::{
@@ -98,6 +97,20 @@ pub struct EastAsianTraditional<R>(pub R);
 pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed {
     /// Returns data about the given year.
     fn year_data(&self, related_iso: i32) -> EastAsianTraditionalYearData;
+
+    /// Returns data for the year containing the given [`RataDie`].
+    fn year_containing_rd(&self, rd: RataDie) -> EastAsianTraditionalYearData {
+        let related_iso = calendrical_calculations::gregorian::year_from_fixed(rd)
+            .unwrap_or_else(|e| e.saturate());
+
+        let mut year = self.year_data(related_iso);
+
+        if rd < year.new_year() {
+            year = self.year_data(related_iso - 1)
+        }
+
+        year
+    }
 
     /// Returns an ECMA reference year that contains the given month-day combination.
     ///
@@ -557,7 +570,7 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
     type YearInfo = EastAsianTraditionalYearData;
 
     fn days_in_provided_month(year: EastAsianTraditionalYearData, month: u8) -> u8 {
-        29 + year.packed.month_has_30_days(month) as u8
+        year.packed.month_len(month)
     }
 
     /// Returns the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
@@ -658,16 +671,7 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        let iso = Iso.from_rata_die(rd);
-        let year = {
-            let candidate = self.0.year_data(iso.0.year);
-
-            if rd >= candidate.new_year() {
-                candidate
-            } else {
-                self.0.year_data(iso.0.year - 1)
-            }
-        };
+        let year = self.0.year_containing_rd(rd);
 
         // Clamp the RD to our year
         let rd = rd.clamp(
@@ -675,28 +679,14 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
             year.new_year() + year.packed.days_in_year() as i64,
         );
 
-        let day_of_year = (rd - year.new_year()) as u16;
-
-        // We divide by 30, not 29, to account for the case where all months before this
-        // were length 30 (possible near the beginning of the year)
-        let mut month = (day_of_year / 30) as u8 + 1;
-        let mut last_day_of_month = year.packed.last_day_of_month(month);
-        let mut last_day_of_prev_month = year.packed.last_day_of_month(month - 1);
-
-        while day_of_year >= last_day_of_month {
-            month += 1;
-            last_day_of_prev_month = last_day_of_month;
-            last_day_of_month = year.packed.last_day_of_month(month);
-        }
-
-        let day = (day_of_year + 1 - last_day_of_prev_month) as u8;
+        let (month, day) = year.month_day_for((rd - year.new_year()) as u16);
 
         ChineseDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
         date.0.year.new_year()
-            + date.0.year.packed.last_day_of_month(date.0.month - 1) as i64
+            + date.0.year.packed.days_before_month(date.0.month) as i64
             + (date.0.day - 1) as i64
     }
 
@@ -769,7 +759,7 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
 
     /// Information of the day of the year
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        types::DayOfYear(date.0.year.packed.last_day_of_month(date.0.month - 1) + date.0.day as u16)
+        types::DayOfYear(date.0.year.packed.days_before_month(date.0.month) + date.0.day as u16)
     }
 
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
@@ -888,6 +878,22 @@ impl EastAsianTraditionalYearData {
             ),
             related_iso,
         }
+    }
+
+    fn month_day_for(self, day_of_year: u16) -> (u8, u8) {
+        // We divide by 30, not 29, to account for the case where all months before this
+        // were length 30 (possible near the beginning of the year)
+        let mut month = (day_of_year / 30) as u8 + 1;
+        let mut days_before_month = self.packed.days_before_month(month);
+        let mut last_day_of_month = self.packed.days_before_month(month + 1);
+
+        while day_of_year >= last_day_of_month {
+            month += 1;
+            days_before_month = last_day_of_month;
+            last_day_of_month = self.packed.days_before_month(month + 1);
+        }
+
+        (month, (day_of_year + 1 - days_before_month) as u8)
     }
 
     /// Get the new year R.D.    
@@ -1012,32 +1018,33 @@ impl PackedEastAsianTraditionalYearData {
     }
 
     // Whether a particular month has 30 days (month is 1-indexed)
-    fn month_has_30_days(self, month: u8) -> bool {
+    fn month_len(self, month: u8) -> u8 {
         let months = u16::from_le_bytes([self.0, self.1]);
-        months & (1 << (month - 1) as u16) != 0
+        29 + (months >> (month - 1) & 1) as u8
     }
 
-    // month is 1-indexed, but 0 is a valid input, producing 0
-    fn last_day_of_month(self, month: u8) -> u16 {
+    // month is 1-indexed
+    fn days_before_month(self, month: u8) -> u16 {
         let months = u16::from_le_bytes([self.0, self.1]);
         // month is 1-indexed, so `29 * month` includes the current month
-        let mut prev_month_lengths = 29 * month as u16;
+        let mut prev_month_lengths = 29 * (month - 1) as u16;
         // month is 1-indexed, so `1 << month` is a mask with all zeroes except
         // for a 1 at the bit index at the next month. Subtracting 1 from it gets us
         // a bitmask for all months up to now
-        let long_month_bits = months & ((1 << month as u16) - 1);
+        let long_month_bits = months & ((1 << (month - 1) as u16) - 1);
         prev_month_lengths += long_month_bits.count_ones().try_into().unwrap_or(0);
         prev_month_lengths
     }
 
     fn days_in_year(self) -> u16 {
-        self.last_day_of_month(12 + self.leap_month().is_some() as u8)
+        self.days_before_month(13 + self.leap_month().is_some() as u8)
     }
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::cal::Iso;
     use crate::options::{DateFromFieldsOptions, Overflow};
     use crate::types::DateFields;
     use calendrical_calculations::{gregorian::fixed_from_gregorian, rata_die::RataDie};
@@ -1862,7 +1869,7 @@ mod test {
                                 } else {
                                     month + (month + 1 > leap_month) as u8
                                 };
-                                if (!long || data.packed.month_has_30_days(ordinal_month))
+                                if (!long || data.packed.month_len(ordinal_month) == 30)
                                     && (!leap || month + 1 == leap_month)
                                 {
                                     println!("({month}, {leap:?}, {long:?}) => {year},");
@@ -1902,7 +1909,7 @@ mod test {
             );
             assert_eq!(
                 month_lengths,
-                core::array::from_fn(|i| packed.month_has_30_days(i as u8 + 1)),
+                core::array::from_fn(|i| packed.month_len(i as u8 + 1) == 30),
                 "Roundtrip with {month_lengths:?}, {leap_month_idx:?}, {ny_offset}"
             );
         }
