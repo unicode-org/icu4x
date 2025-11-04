@@ -2,19 +2,35 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::{error::Error, time::SystemTime};
-use icu_segmenter::{WordSegmenter, options::WordBreakOptions};
-
 #[path = "../tests/adaboost/main.rs"]
 mod adaboost;
 
 #[path = "../tests/cnn/main.rs"]
 mod cnn;
 
+use std::time::SystemTime;
+use icu_segmenter::{WordSegmenter, WordSegmenterBorrowed, options::WordBreakOptions};
+use adaboost::Predictor;
+use cnn::{RawCnnData, CnnSegmenter};
+
 const REPETITIONS: usize = 1000;
 
 fn main_adaboost(args: &[String]) {
-    todo!()
+    let segmenter = Predictor::for_test();
+    let s = &args[0];
+    let start_time = SystemTime::now();
+    for _ in 0..REPETITIONS {
+        segmenter.predict(s);
+    }
+    let elapsed = start_time.elapsed().unwrap();
+    println!("Output:");
+    let mut prev = 0;
+    for breakpoint in segmenter.predict_breakpoints(s) {
+        print!("{}|", &s[prev..breakpoint]);
+        prev = breakpoint;
+    }
+    println!();
+    println!("{} repetitions done in: {:?}", REPETITIONS, elapsed);
 }
 
 fn main_dict(mut args: &[String]) {
@@ -25,9 +41,43 @@ fn main_dict(mut args: &[String]) {
         args = &args[1..];
     }
     let segmenter = WordSegmenter::try_new_dictionary(options).unwrap();
-    let segmenter = segmenter.as_borrowed();
+    run_word_segmenter(segmenter.as_borrowed(), &args[0]);
+}
 
+fn main_cnn(args: &[String]) {
+    let rawcnndata = RawCnnData::for_test();
+    let cnndata = rawcnndata
+        .try_convert()
+        .map_err(|_| "validation/conversion failed".to_string()).unwrap();
+    let segmenter = CnnSegmenter::new(&cnndata);
     let s = &args[0];
+    let start_time = SystemTime::now();
+    for _ in 0..REPETITIONS {
+        segmenter.segment_str(s);
+    }
+    let elapsed = start_time.elapsed().unwrap();
+    println!("Output:");
+    let mut prev = 0;
+    for breakpoint in segmenter.segment_str(s).to_breakpoints() {
+        print!("{}|", &s[prev..breakpoint]);
+        prev = breakpoint;
+    }
+    println!();
+    println!("{} repetitions done in: {:?}", REPETITIONS, elapsed);
+}
+
+fn main_lstm(mut args: &[String]) {
+    let mut options = WordBreakOptions::default();
+    let mut langid = None;
+    if args.len() > 1 {
+        options.content_locale = Some(langid.insert(args[0].parse().unwrap()));
+        args = &args[1..];
+    }
+    let segmenter = WordSegmenter::try_new_lstm(options).unwrap();
+    run_word_segmenter(segmenter.as_borrowed(), &args[0]);
+}
+
+fn run_word_segmenter(segmenter: WordSegmenterBorrowed, s: &str) {
     let start_time = SystemTime::now();
     for _ in 0..REPETITIONS {
         segmenter.segment_str(s).count(); // consume the iterator
@@ -41,14 +91,6 @@ fn main_dict(mut args: &[String]) {
     }
     println!();
     println!("{} repetitions done in: {:?}", REPETITIONS, elapsed);
-}
-
-fn main_cnn(args: &[String]) {
-    todo!()
-}
-
-fn main_lstm(args: &[String]) {
-    todo!()
 }
 
 fn main() {
