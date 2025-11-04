@@ -3,9 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::collections::HashMap;
-use std::fs;
-use std::iter::Peekable;
-use std::str::Chars;
 
 static MODEL_FOR_TEST: &str = include_str!("model.json");
 
@@ -44,12 +41,6 @@ pub struct Predictor {
     pub model: HashMap<String, HashMap<String, i16>>,
 }
 
-pub struct PredictionIterator<'a> {
-    predictor: &'a Predictor,
-    prev_char: Option<char>,
-    chars: Peekable<Chars<'a>>,
-}
-
 impl Predictor {
     pub fn from_json(json: &str) -> Result<Self, Box<dyn std::error::Error>> {
         let model: HashMap<String, HashMap<String, i16>> =
@@ -59,10 +50,6 @@ impl Predictor {
 
     pub(crate) fn for_test() -> Self {
         Self::from_json(MODEL_FOR_TEST).unwrap()
-    }
-
-    pub fn iter<'a>(&'a self, sentence: &'a str) -> PredictionIterator<'a> {
-        PredictionIterator { predictor: &self, prev_char: None, chars: sentence.chars().peekable() }
     }
 
     pub fn predict(&self, sentence: &str) -> Vec<bool> {
@@ -148,19 +135,6 @@ impl Predictor {
             }
         }
         breakpoints
-    }
-}
-
-impl PredictionIterator<'_> {
-    /// Returns true if the step succeeded.
-    /// Returns false if the iterator is empty.
-    pub fn step(&mut self) -> bool {
-        self.prev_char = self.chars.next();
-        if self.chars.peek().is_some() {
-            true
-        } else {
-            false
-        }
     }
 }
 
