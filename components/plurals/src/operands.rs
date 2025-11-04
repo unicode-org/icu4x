@@ -4,11 +4,11 @@
 
 use fixed_decimal::{CompactDecimal, Decimal};
 
-/// A full plural operands representation of a number. See [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules) for complete operands description.
+/// A full plural operands representation of a number. See [CLDR Plural Rules](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules) for complete operands description.
 ///
-/// Plural operands in compliance with [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules).
+/// Plural operands in compliance with [CLDR Plural Rules](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules).
 ///
-/// See [full operands description](http://unicode.org/reports/tr35/tr35-numbers.html#Operands).
+/// See [full operands description](https://unicode.org/reports/tr35/tr35-numbers.html#Operands).
 ///
 /// # Data Types
 ///

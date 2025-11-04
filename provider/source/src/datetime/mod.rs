@@ -74,111 +74,65 @@ impl DatagenCalendar {
 }
 
 impl SourceDataProvider {
-    fn get_datetime_resources(
+    pub(crate) fn get_dates_resource(
         &self,
         locale: &DataLocale,
         calendar: Option<DatagenCalendar>,
-    ) -> Result<cldr_serde::ca::Dates, DataError> {
+    ) -> Result<&cldr_serde::ca::Dates, DataError> {
         let cldr_cal = calendar
             .map(DatagenCalendar::cldr_name)
             .unwrap_or("generic");
 
-        let resource: &cldr_serde::ca::Resource = self
+        Ok(self
             .cldr()?
             .dates(cldr_cal)
-            .read_and_parse(locale, &format!("ca-{cldr_cal}.json"))?;
-
-        let mut data = resource
+            .read_and_parse::<cldr_serde::ca::Resource>(locale, &format!("ca-{cldr_cal}.json"))?
             .main
             .value
             .dates
             .calendars
             .get(cldr_cal)
-            .expect("CLDR file contains the expected calendar")
-            .clone();
-
-        if cldr_cal == "japanese" {
-            let eras = data.eras.as_mut().expect("japanese must have eras");
-            // Filter out non-modern eras
-            if calendar == Some(DatagenCalendar::JapaneseModern) {
-                let modern_japanese_eras = self.all_eras()?[&DatagenCalendar::JapaneseModern]
-                    .iter()
-                    .map(|&(s, _)| s.to_string())
-                    .collect::<std::collections::BTreeSet<_>>();
-                eras.names.retain(|e, _| modern_japanese_eras.contains(e));
-                eras.abbr.retain(|e, _| modern_japanese_eras.contains(e));
-                eras.narrow.retain(|e, _| modern_japanese_eras.contains(e));
-            }
-
-            // Splice in gregorian data for pre-meiji
-            let greg_eras = self
-                .cldr()?
-                .dates(DatagenCalendar::Gregorian.cldr_name())
-                .read_and_parse::<cldr_serde::ca::Resource>(locale, "ca-gregorian.json")?
-                .main
-                .value
-                .dates
-                .calendars
-                .get(DatagenCalendar::Gregorian.cldr_name())
-                .expect("CLDR file contains a gregorian calendar")
-                .eras
-                .as_ref()
-                .expect("gregorian must have eras");
-
-            eras.names.extend(greg_eras.names.clone());
-            eras.abbr.extend(greg_eras.names.clone());
-            eras.narrow.extend(greg_eras.names.clone());
-        }
-
-        Ok(data)
+            .expect("CLDR file contains the expected calendar"))
     }
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
-    use icu::datetime::provider::skeleton::{DateSkeletonPatterns, SkeletonData};
-    use icu::locale::langid;
+    use icu::{
+        datetime::provider::skeleton::reference::Skeleton, locale::langid, plurals::PluralElements,
+    };
 
     #[test]
     #[ignore] // TODO(#5643)
-    #[allow(unreachable_code, unused_variables, unused_mut)]
     fn test_datetime_skeletons() {
-        use icu::datetime::provider::pattern::runtime::Pattern;
-        use icu::datetime::provider::skeleton::PluralPattern;
-        use icu::plurals::PluralCategory;
-        use std::convert::TryFrom;
-
-        let data = SourceDataProvider::new_testing()
-            .get_datetime_resources(&langid!("fil").into(), Some(DatagenCalendar::Gregorian))
-            .unwrap();
-
-        let skeletons = DateSkeletonPatterns::from(&data.datetime_formats.available_formats).0;
+        let skeletons = SourceDataProvider::new_testing()
+            .get_dates_resource(&langid!("fil").into(), Some(DatagenCalendar::Gregorian))
+            .unwrap()
+            .datetime_formats
+            .available_formats
+            .parse_skeletons();
 
         assert_eq!(
-            Some(
-                &"L".parse::<Pattern>()
-                    .expect("Failed to create pattern")
-                    .into()
-            ),
-            skeletons.get(&SkeletonData::try_from("M").expect("Failed to create Skeleton"))
+            Some(&PluralElements::new(
+                "L".parse().expect("Failed to create pattern")
+            )),
+            skeletons.get(&Skeleton::try_from("M").expect("Failed to create Skeleton"))
         );
 
-        let mut expected = PluralPattern::new(
+        let expected = PluralElements::new(
             "'linggo' w 'ng' Y"
                 .parse()
                 .expect("Failed to create pattern"),
         )
-        .expect("Failed to create PatternPlurals");
-        expected.maybe_set_variant(
-            PluralCategory::One,
+        .with_one_value(Some(
             "'ika'-w 'linggo' 'ng' Y"
                 .parse()
                 .expect("Failed to create pattern"),
-        );
+        ));
         assert_eq!(
-            Some(&expected.into()),
-            skeletons.get(&SkeletonData::try_from("yw").expect("Failed to create Skeleton"))
+            Some(&expected),
+            skeletons.get(&Skeleton::try_from("yw").expect("Failed to create Skeleton"))
         );
     }
 }

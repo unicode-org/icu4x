@@ -8,7 +8,7 @@ We are thrilled to introduce a new project in the Software Internationalization 
 * Performance, memory, safety and size
 * Universal access from programming languages and ecosystems ([FFI](https://en.wikipedia.org/wiki/Foreign_function_interface))
 
-`ICU4X` draws from the experience of projects such as [ICU4C](http://site.icu-project.org/home), [ICU4J](http://site.icu-project.org/home), [ECMA-402](https://www.ecma-international.org/publications/standards/Ecma-402.htm), [CLDR](http://cldr.unicode.org/) and [Unicode](https://home.unicode.org/) and is primarily developed in [Rust](https://www.rust-lang.org/).
+`ICU4X` draws from the experience of projects such as [ICU4C](https://icu.unicode.org/), [ICU4J](https://icu.unicode.org/), [ECMA-402](https://www.ecma-international.org/publications/standards/Ecma-402.htm), [CLDR](https://cldr.unicode.org/) and [Unicode](https://home.unicode.org/) and is primarily developed in [Rust](https://www.rust-lang.org/).
 
 ## Design
 

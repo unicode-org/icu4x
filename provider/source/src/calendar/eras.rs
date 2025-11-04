@@ -28,20 +28,7 @@ impl SourceDataProvider {
                 // The Japanese era codes depend on the Latin romanizations of the eras, found
                 // in the root locale.
                 let japanese_names = &self
-                    .cldr()?
-                    .dates("japanese")
-                    .read_and_parse::<cldr_serde::ca::Resource>(
-                        Default::default(),
-                        "ca-japanese.json",
-                    )?
-                    .main
-                    .value
-                    .dates
-                    .calendars
-                    .get("japanese")
-                    .ok_or(DataError::custom(
-                        "ca-japanese.json does not contain 'japanese' calendar",
-                    ))?
+                    .get_dates_resource(Default::default(), Some(DatagenCalendar::JapaneseModern))?
                     .eras
                     .as_ref()
                     .expect("japanese must have eras")

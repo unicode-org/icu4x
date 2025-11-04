@@ -74,26 +74,6 @@ const GLUE_PATTERN_KEY_LENGTHS: &[&DataMarkerAttributes] = &[
 ];
 
 impl SourceDataProvider {
-    fn load_calendar_dates(
-        &self,
-        locale: &DataLocale,
-        calendar: DatagenCalendar,
-    ) -> Result<&ca::Dates, DataError> {
-        let resource: &ca::Resource = self
-            .cldr()?
-            .dates(calendar.cldr_name())
-            .read_and_parse(locale, &format!("ca-{}.json", calendar.cldr_name()))?;
-
-        let data = resource
-            .main
-            .value
-            .dates
-            .calendars
-            .get(calendar.cldr_name())
-            .expect("CLDR file contains the expected calendar");
-        Ok(data)
-    }
-
     fn load_neo_key<M: DataMarker>(
         &self,
         req: DataRequest,
@@ -105,7 +85,7 @@ impl SourceDataProvider {
     {
         self.check_req::<M>(req)?;
 
-        let data = self.load_calendar_dates(req.id.locale, calendar)?;
+        let data = self.get_dates_resource(req.id.locale, Some(calendar))?;
         let data = conversion(req.id, data)?;
 
         Ok(DataResponse {
@@ -235,28 +215,20 @@ fn dayperiods_convert(
 }
 
 fn eras_convert(
-    datagen: &SourceDataProvider,
+    provider: &SourceDataProvider,
     locale: &DataLocale,
     eras: &ca::Eras,
     calendar: DatagenCalendar,
     length: Length,
 ) -> Result<YearNames<'static>, DataError> {
     let eras = eras.load(length);
-    let all_eras = &datagen.all_eras()?[&calendar];
+    let all_eras = &provider.all_eras()?[&calendar];
     if matches!(
         calendar,
         DatagenCalendar::JapaneseModern | DatagenCalendar::JapaneseExtended
     ) {
-        let greg_eras = datagen
-            .cldr()?
-            .dates(DatagenCalendar::Gregorian.cldr_name())
-            .read_and_parse::<ca::Resource>(locale, "ca-gregorian.json")?
-            .main
-            .value
-            .dates
-            .calendars
-            .get(DatagenCalendar::Gregorian.cldr_name())
-            .expect("CLDR gregorian.json contains the expected calendar")
+        let greg_eras = provider
+            .get_dates_resource(locale, Some(DatagenCalendar::Gregorian))?
             .eras
             .as_ref()
             .expect("gregorian must have eras")

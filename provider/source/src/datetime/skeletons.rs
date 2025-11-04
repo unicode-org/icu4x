@@ -3,28 +3,29 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
+use icu::datetime::provider::pattern::runtime::Pattern;
 use icu::datetime::provider::skeleton::reference::Skeleton;
 use icu::datetime::provider::skeleton::*;
-use icu::plurals::PluralCategory;
-use std::collections::HashMap;
+use icu::plurals::{PluralCategory, PluralElements};
+use std::collections::BTreeMap;
 use std::convert::TryFrom;
 
-impl From<&cldr_serde::ca::AvailableFormats> for DateSkeletonPatterns<'_> {
-    fn from(other: &cldr_serde::ca::AvailableFormats) -> Self {
-        let mut patterns: HashMap<String, HashMap<String, String>> = HashMap::new();
+impl cldr_serde::ca::AvailableFormats {
+    pub fn parse_skeletons(&self) -> BTreeMap<Skeleton, PluralElements<Pattern<'static>>> {
+        let mut patterns: BTreeMap<String, BTreeMap<PluralCategory, String>> = BTreeMap::new();
 
         // The CLDR keys for available_formats can have duplicate skeletons with either
         // an additional variant, or with multiple variants for different plurals.
-        for (skeleton_str, pattern_str) in other.0.iter() {
-            let (skeleton_str, plural_form_str) = match skeleton_str.split_once("-count-") {
-                Some((s, v)) => (s, v),
-                None => (skeleton_str.as_ref(), "other"),
+        for (skeleton_str, pattern_str) in self.0.iter() {
+            let (skeleton, plural_category) = match skeleton_str.split_once("-count-") {
+                Some((s, v)) => (s, PluralCategory::get_for_cldr_string(v).unwrap()),
+                None => (skeleton_str.as_ref(), PluralCategory::Other),
             };
 
             patterns
-                .entry(skeleton_str.to_string())
+                .entry(skeleton.to_string())
                 .or_default()
-                .insert(plural_form_str.to_string(), pattern_str.to_string());
+                .insert(plural_category, pattern_str.to_string());
         }
 
         let skeletons = patterns
@@ -38,44 +39,28 @@ impl From<&cldr_serde::ca::AvailableFormats> for DateSkeletonPatterns<'_> {
                         "Unexpected skeleton error while parsing skeleton {skeleton_str:?} {err}"
                     ),
                 };
-                let pattern_str = patterns.get("other").expect("Other variant must exist");
-                let pattern = pattern_str.parse().expect("Unable to parse a pattern");
 
-                #[allow(unreachable_code, unused_variables, unused_mut)] // TODO(#5643)
-                let mut pattern_plurals = if patterns.len() == 1 {
-                    PatternPlurals::SinglePattern(pattern)
-                } else {
-                    let mut plural_pattern =
-                        PluralPattern::new(pattern).expect("Unable to construct PluralPattern");
+                let patterns = PluralElements::new(&patterns[&PluralCategory::Other])
+                    .with_zero_value(patterns.get(&PluralCategory::Zero))
+                    .with_one_value(patterns.get(&PluralCategory::One))
+                    .with_two_value(patterns.get(&PluralCategory::Two))
+                    .with_few_value(patterns.get(&PluralCategory::Few))
+                    .with_many_value(patterns.get(&PluralCategory::Many))
+                    .map(|s| s.parse().expect(s));
 
-                    for (key, pattern_str) in patterns {
-                        if key == "other" {
-                            continue;
-                        }
-                        let cat = PluralCategory::get_for_cldr_string(key)
-                            .expect("Failed to retrieve plural category");
-                        let pattern = pattern_str.parse().expect("Unable to parse a pattern");
-                        plural_pattern.maybe_set_variant(cat, pattern);
-                    }
-                    PatternPlurals::MultipleVariants(plural_pattern)
-                };
-                // In some cases we may encounter duplicated patterns, which will
-                // get deduplicated and result in a single-variant `MultiVariant` branch
-                // here. The following `normalize` will turn those cases to `SingleVariant`.
-                pattern_plurals.normalize();
-
-                Some((SkeletonData(skeleton), pattern_plurals))
+                Some((skeleton, patterns))
             })
             .collect();
 
         // TODO(#308): Support numbering system variations. We currently throw them away.
-        Self(skeletons)
+        skeletons
     }
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
+
     use core::convert::TryFrom;
     use core::str::FromStr;
     use icu::datetime::provider::fields::components;
@@ -86,18 +71,19 @@ mod test {
     };
     use icu::locale::locale;
     use icu::locale::preferences::extensions::unicode::keywords::HourCycle;
-    use litemap::LiteMap;
+    use std::collections::BTreeMap;
 
     use crate::datetime::DatagenCalendar;
     use crate::SourceDataProvider;
 
-    fn get_data_payload() -> DateSkeletonPatterns<'static> {
+    fn get_data_payload() -> BTreeMap<Skeleton, PluralElements<Pattern<'static>>> {
         let locale = locale!("en").into();
 
-        let data = SourceDataProvider::new_testing()
-            .get_datetime_resources(&locale, Some(DatagenCalendar::Gregorian))
+        let provider = SourceDataProvider::new_testing();
+        let data = provider
+            .get_dates_resource(&locale, Some(DatagenCalendar::Gregorian))
             .unwrap();
-        DateSkeletonPatterns::from(&data.datetime_formats.available_formats)
+        data.datetime_formats.available_formats.parse_skeletons()
     }
 
     /// This is an initial smoke test to verify the skeleton machinery is working. For more in-depth
@@ -121,7 +107,8 @@ mod test {
             | BestSkeleton::MissingOrExtraFields(available_format_pattern, _) => {
                 assert_eq!(
                     available_format_pattern
-                        .expect_pattern("pattern should not have plural variants")
+                        .try_into_other()
+                        .expect("pattern should not have plural variants")
                         .to_string()
                         .as_str(),
                     "H:m:s"
@@ -145,7 +132,8 @@ mod test {
             BestSkeleton::MissingOrExtraFields(available_format_pattern, _) => {
                 assert_eq!(
                     available_format_pattern
-                        .expect_pattern("pattern should not have plural variants")
+                        .try_into_other()
+                        .expect("pattern should not have plural variants")
                         .to_string()
                         .as_str(),
                     // CLDR has ("yw", "MMMMW", "ccc"). The first two result in 1 missing & 1 extra symbol vs just
@@ -177,12 +165,11 @@ mod test {
         components.time_zone_name = Some(components::TimeZoneName::LongSpecific);
         let requested_fields = components.to_vec_fields(HourCycle::H23);
         // Construct a set of skeletons that do not use the hour nor time zone symbols.
-        let mut skeletons = LiteMap::new();
+        let mut skeletons = BTreeMap::new();
         skeletons.insert(
-            SkeletonData::try_from("EEEE").unwrap(),
-            runtime::Pattern::from_str("weekday EEEE").unwrap().into(),
+            Skeleton::try_from("EEEE").unwrap(),
+            PluralElements::new(runtime::Pattern::from_str("weekday EEEE").unwrap()),
         );
-        let skeletons = DateSkeletonPatterns(skeletons);
 
         assert_eq!(
             get_best_available_format_pattern(&skeletons, &requested_fields, false),
@@ -340,7 +327,8 @@ mod test {
             BestSkeleton::AllFieldsMatch(available_format_pattern, _) => {
                 assert_eq!(
                     available_format_pattern
-                        .expect_pattern("pattern should not have plural variants")
+                        .try_into_other()
+                        .expect("pattern should not have plural variants")
                         .to_string()
                         .as_str(),
                     // Requesting E, CLDR has ccc, should not be shortened to c
@@ -363,7 +351,8 @@ mod test {
             BestSkeleton::AllFieldsMatch(available_format_pattern, _) => {
                 assert_eq!(
                     available_format_pattern
-                        .expect_pattern("pattern should not have plural variants")
+                        .try_into_other()
+                        .expect("pattern should not have plural variants")
                         .to_string()
                         .as_str(),
                     // Requesting EEEE, CLDR has ccc, should be lengthened to cccc

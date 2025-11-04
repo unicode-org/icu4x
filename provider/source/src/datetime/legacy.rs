@@ -527,10 +527,10 @@ fn test_basic_symbols() {
     let provider = SourceDataProvider::new_testing();
 
     let data = provider
-        .get_datetime_resources(&langid!("cs").into(), Some(DatagenCalendar::Gregorian))
+        .get_dates_resource(&langid!("cs").into(), Some(DatagenCalendar::Gregorian))
         .unwrap();
 
-    let cs_dates = convert_dates(&data, DatagenCalendar::Gregorian);
+    let cs_dates = convert_dates(data, DatagenCalendar::Gregorian);
 
     assert_eq!(
         "srpna",
@@ -550,10 +550,10 @@ fn unalias_contexts() {
     let provider = SourceDataProvider::new_testing();
 
     let data = provider
-        .get_datetime_resources(&langid!("cs").into(), Some(DatagenCalendar::Gregorian))
+        .get_dates_resource(&langid!("cs").into(), Some(DatagenCalendar::Gregorian))
         .unwrap();
 
-    let cs_dates = convert_dates(&data, DatagenCalendar::Gregorian);
+    let cs_dates = convert_dates(data, DatagenCalendar::Gregorian);
 
     // Czech months are not unaliased because `wide` differs.
     assert!(cs_dates.months.stand_alone.is_some());
@@ -598,11 +598,12 @@ fn test_missing_append_items_support() {
     components.time_zone_name = Some(components::TimeZoneName::LongSpecific);
     let requested_fields = components.to_vec_fields(HourCycle::H23);
 
-    let data = SourceDataProvider::new_testing()
-        .get_datetime_resources(&langid!("en").into(), Some(DatagenCalendar::Gregorian))
+    let provider = SourceDataProvider::new_testing();
+    let data = provider
+        .get_dates_resource(&langid!("en").into(), Some(DatagenCalendar::Gregorian))
         .unwrap();
-    let patterns = DateLengths::from(&data);
-    let skeletons = DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
+    let patterns = DateLengths::from(data);
+    let skeletons = data.datetime_formats.available_formats.parse_skeletons();
 
     match create_best_pattern_for_fields(
         &skeletons,
@@ -615,7 +616,8 @@ fn test_missing_append_items_support() {
             // TODO - Append items are needed here.
             assert_eq!(
                 available_format_pattern
-                    .expect_pattern("pattern should not have plural variants")
+                    .try_into_other()
+                    .expect("pattern should not have plural variants")
                     .to_string()
                     .as_str(),
                 "MMMM d, y vvvv"
@@ -627,22 +629,24 @@ fn test_missing_append_items_support() {
 
 #[test]
 fn test_basic_patterns() {
-    let data = SourceDataProvider::new_testing()
-        .get_datetime_resources(&langid!("cs").into(), Some(DatagenCalendar::Gregorian))
+    let provider = SourceDataProvider::new_testing();
+    let data = provider
+        .get_dates_resource(&langid!("cs").into(), Some(DatagenCalendar::Gregorian))
         .unwrap();
 
-    let cs_dates = DateLengths::from(&data);
+    let cs_dates = DateLengths::from(data);
 
     assert_eq!("yMd", cs_dates.date.medium.to_string());
 }
 
 #[test]
 fn test_with_numbering_system() {
-    let data = SourceDataProvider::new_testing()
-        .get_datetime_resources(&langid!("haw").into(), Some(DatagenCalendar::Gregorian))
+    let provider = SourceDataProvider::new_testing();
+    let data = provider
+        .get_dates_resource(&langid!("haw").into(), Some(DatagenCalendar::Gregorian))
         .unwrap();
 
-    let haw_dates = DateLengths::from(&data);
+    let haw_dates = DateLengths::from(data);
 
     assert_eq!("yMMMd", haw_dates.date.medium.to_string());
     // TODO(#308): Support numbering system variations. We currently throw them away.

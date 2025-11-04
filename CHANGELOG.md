@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Utils
+  - Retire the `icu_harfbuzz` crate. The `icu_properties` and `icu_normalizer` types now directly implement the `harfbuzz-traits`
+
 ## icu4x 2.1
 
 - Components

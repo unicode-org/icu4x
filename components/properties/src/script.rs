@@ -16,6 +16,9 @@ use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_provider::prelude::*;
 use zerovec::{ule::AsULE, ZeroSlice};
 
+#[cfg(feature = "harfbuzz_traits")]
+pub use crate::harfbuzz::{HarfbuzzScriptData, HarfbuzzScriptDataBorrowed};
+
 /// The number of bits at the low-end of a `ScriptWithExt` value used for
 /// storing the `Script` value (or `extensions` index).
 const SCRIPT_VAL_LENGTH: u16 = 10;
@@ -510,7 +513,7 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// whether the Script property value matches.
     ///
     /// Some characters are commonly used in multiple scripts. For more information,
-    /// see UAX #24: <http://www.unicode.org/reports/tr24/>.
+    /// see UAX #24: <https://www.unicode.org/reports/tr24/>.
     ///
     /// # Examples
     ///

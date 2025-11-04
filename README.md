@@ -16,7 +16,7 @@
 [![Coverage Status (Codecov)](https://codecov.io/gh/unicode-org/icu4x/branch/main/graph/badge.svg)](https://app.codecov.io/gh/unicode-org/icu4x/tree/main)
 
 ICU4X provides components enabling wide range of software internationalization.
-It draws deeply from the experience of [ICU4C/J](https://github.com/unicode-org/icu), [ECMA-402](https://github.com/tc39/ecma402/) and relies on data from the [CLDR](http://cldr.unicode.org/) project.
+It draws deeply from the experience of [ICU4C/J](https://github.com/unicode-org/icu), [ECMA-402](https://github.com/tc39/ecma402/) and relies on data from the [CLDR](https://cldr.unicode.org/) project.
 
 ICU4X is fully implemented in the [Rust programming language](https://rust-lang.org).
 

@@ -2,22 +2,23 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 
+use super::DatagenCalendar;
 use crate::debug_provider::DebugProvider;
 use crate::{cldr_serde, IterableDataProviderCached, SourceDataProvider};
 use icu::datetime::fieldsets::enums::*;
 use icu::datetime::options::Length;
 use icu::datetime::pattern::{ErrorField, FixedCalendarDateTimeNames};
 use icu::datetime::provider::fields::components;
+use icu::datetime::provider::pattern::runtime::Pattern;
 use icu::datetime::provider::pattern::{reference, runtime, CoarseHourCycle};
+use icu::datetime::provider::skeleton::reference::Skeleton;
 use icu::datetime::provider::skeleton::*;
 use icu::datetime::provider::*;
 use icu::plurals::PluralElements;
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use icu_provider::prelude::*;
-
-use super::DatagenCalendar;
 
 type VariantPatternsElement<'a> = PatternsWithDistance<PluralElements<runtime::Pattern<'a>>>;
 
@@ -51,12 +52,6 @@ struct PatternsWithDistance<T> {
 }
 
 impl<T> PatternsWithDistance<T> {
-    pub fn map<V>(self, mut f: impl FnMut(T) -> V) -> PatternsWithDistance<V> {
-        PatternsWithDistance {
-            inner: f(self.inner),
-            distance: self.distance,
-        }
-    }
     pub fn inner(&self) -> &T {
         &self.inner
     }
@@ -67,12 +62,11 @@ impl<T> PatternsWithDistance<T> {
 
 fn select_pattern<'data>(
     bag: components::Bag,
-    skeletons: &DateSkeletonPatterns<'data>,
+    skeletons: &BTreeMap<Skeleton, PluralElements<Pattern<'data>>>,
     preferred_hour_cycle: CoarseHourCycle,
     length_patterns: &GenericLengthPatterns<'data>,
-) -> PatternsWithDistance<PatternPlurals<'data>> {
+) -> PatternsWithDistance<PluralElements<Pattern<'data>>> {
     use icu::datetime::provider::pattern::{runtime, PatternItem};
-    use icu::datetime::provider::skeleton::{create_best_pattern_for_fields, BestSkeleton};
     use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 
     let default_hour_cycle = match preferred_hour_cycle {
@@ -99,7 +93,7 @@ fn select_pattern<'data>(
                 .collect::<Vec<_>>();
             let pattern = runtime::Pattern::from(pattern_items);
             PatternsWithDistance {
-                inner: PatternPlurals::SinglePattern(pattern),
+                inner: PluralElements::new(pattern),
                 distance: SkeletonQuality::worst(),
             }
         }
@@ -147,26 +141,11 @@ impl SourceDataProvider {
             &cldr_serde::ca::Dates,
         ) -> components::Bag,
     ) -> Result<PackedPatterns<'static>, DataError> {
-        let data = self.get_datetime_resources(locale, calendar)?;
+        let data = self.get_dates_resource(locale, calendar)?;
 
         // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
         let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats_at_time);
-        let skeleton_patterns =
-            DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
-
-        fn expand_pp_to_pe(
-            value: PatternsWithDistance<PatternPlurals>,
-        ) -> PatternsWithDistance<PluralElements<runtime::Pattern>> {
-            value.map(|pp| match pp {
-                PatternPlurals::MultipleVariants(variants) => PluralElements::new(variants.other)
-                    .with_zero_value(variants.zero.clone())
-                    .with_one_value(variants.one.clone())
-                    .with_two_value(variants.two.clone())
-                    .with_few_value(variants.few.clone())
-                    .with_many_value(variants.many.clone()),
-                PatternPlurals::SinglePattern(pattern) => PluralElements::new(pattern),
-            })
-        }
+        let skeleton_patterns = data.datetime_formats.available_formats.parse_skeletons();
 
         fn enforce_consistent_field_lengths(
             trio: &mut VariantPatterns,
@@ -211,16 +190,16 @@ impl SourceDataProvider {
         }
 
         let [long, medium, short] = [Length::Long, Length::Medium, Length::Short]
-            .map(|length| to_components_bag(length, attributes, &data))
+            .map(|length| to_components_bag(length, attributes, data))
             .map(|components| {
-                let preferred_hour_cycle = preferred_hour_cycle(&data, locale);
+                let preferred_hour_cycle = preferred_hour_cycle(data, locale);
                 // TODO: Use a Skeleton here in order to retain 'E' vs 'c'
-                let pattern = expand_pp_to_pe(select_pattern(
+                let pattern = select_pattern(
                     components,
                     &skeleton_patterns,
                     preferred_hour_cycle,
                     &length_combinations_v1,
-                ));
+                );
                 match components {
                     components::Bag {
                         era: None,
@@ -236,18 +215,18 @@ impl SourceDataProvider {
                         components_with_era.era = Some(components::Text::Short);
                         VariantPatterns {
                             standard: pattern,
-                            variant0: Some(expand_pp_to_pe(select_pattern(
+                            variant0: Some(select_pattern(
                                 components_with_full_year,
                                 &skeleton_patterns,
                                 preferred_hour_cycle,
                                 &length_combinations_v1,
-                            ))),
-                            variant1: Some(expand_pp_to_pe(select_pattern(
+                            )),
+                            variant1: Some(select_pattern(
                                 components_with_era,
                                 &skeleton_patterns,
                                 preferred_hour_cycle,
                                 &length_combinations_v1,
-                            ))),
+                            )),
                         }
                     }
                     components::Bag { hour: Some(_), .. } => {
@@ -258,18 +237,18 @@ impl SourceDataProvider {
                         components_with_second.second = Some(components::Numeric::Numeric);
                         VariantPatterns {
                             standard: pattern,
-                            variant0: Some(expand_pp_to_pe(select_pattern(
+                            variant0: Some(select_pattern(
                                 components_with_minute,
                                 &skeleton_patterns,
                                 preferred_hour_cycle,
                                 &length_combinations_v1,
-                            ))),
-                            variant1: Some(expand_pp_to_pe(select_pattern(
+                            )),
+                            variant1: Some(select_pattern(
                                 components_with_second,
                                 &skeleton_patterns,
                                 preferred_hour_cycle,
                                 &length_combinations_v1,
-                            ))),
+                            )),
                         }
                     }
                     _ => VariantPatterns {
@@ -800,7 +779,7 @@ mod date_skeleton_consistency_tests {
 
     #[derive(Copy, Clone)]
     struct TestCaseFixedArgs<'a> {
-        skeleton_patterns: &'a DateSkeletonPatterns<'a>,
+        skeleton_patterns: &'a BTreeMap<Skeleton, PluralElements<runtime::Pattern<'static>>>,
         preferred_hour_cycle: CoarseHourCycle,
         length_combinations_v1: &'a GenericLengthPatterns<'a>,
         cal: DatagenCalendar,
@@ -891,17 +870,15 @@ mod date_skeleton_consistency_tests {
         // TODO: Use a Skeleton here in order to retain 'E' vs 'c'
         let parsed_skeleton: reference::Pattern = info.skeleton.parse().unwrap();
         let components = components::Bag::from(&parsed_skeleton);
-        let selected_pattern = match select_pattern(
+        let selected_pattern = select_pattern(
             components,
             data.skeleton_patterns,
             data.preferred_hour_cycle,
             data.length_combinations_v1,
         )
         .into_inner()
-        {
-            PatternPlurals::SinglePattern(x) => x,
-            PatternPlurals::MultipleVariants(_) => unreachable!(),
-        };
+        .try_into_other()
+        .unwrap();
 
         // Canonicalize the two patterns to make comparison more precise
         let mut selected_pattern = reference::Pattern::from(&selected_pattern);
@@ -951,10 +928,9 @@ mod date_skeleton_consistency_tests {
         strictness: TestStrictness,
     ) -> usize {
         let mut num_problems = 0;
-        let data = provider.get_datetime_resources(locale, Some(cal)).unwrap();
+        let data = provider.get_dates_resource(locale, Some(cal)).unwrap();
         let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats_at_time);
-        let skeleton_patterns =
-            DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
+        let skeleton_patterns = data.datetime_formats.available_formats.parse_skeletons();
         let skeleton_pattern_set = data
             .datetime_formats
             .available_formats
@@ -972,7 +948,7 @@ mod date_skeleton_consistency_tests {
             .collect::<HashSet<_>>();
         let test_case_data = TestCaseFixedArgs {
             skeleton_patterns: &skeleton_patterns,
-            preferred_hour_cycle: preferred_hour_cycle(&data, locale),
+            preferred_hour_cycle: preferred_hour_cycle(data, locale),
             length_combinations_v1: &length_combinations_v1,
             cal,
             locale,

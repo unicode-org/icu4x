@@ -10,7 +10,7 @@ This tutorial assumes you have finished the [introductory tutorial](quickstart.m
 
 ## 2. Generating data
 
-Data generation is done using the `icu4x-datagen` tool, which pulls in data from [Unicode's *Common Locale Data Repository* (*CLDR*)](http://cldr.unicode.org/index/downloads) and from `ICU4C` releases to generate `ICU4X` data.
+Data generation is done using the `icu4x-datagen` tool, which pulls in data from [Unicode's *Common Locale Data Repository* (*CLDR*)](https://cldr.unicode.org/index/downloads) and from `ICU4C` releases to generate `ICU4X` data.
 
 First we will need to install the binary:
 

@@ -6,7 +6,7 @@ So, let's add some data for Chakma.
 
 ## 1. Installing `icu4x-datagen`
 
-Data generation is done using the `icu4x-datagen` tool, which pulls data from [Unicode's *Common Locale Data Repository* (*CLDR*)](http://cldr.unicode.org/index/downloads) and from `ICU4C` releases.
+Data generation is done using the `icu4x-datagen` tool, which pulls data from [Unicode's *Common Locale Data Repository* (*CLDR*)](https://cldr.unicode.org/index/downloads) and from `ICU4C` releases.
 
 Verify that Rust is installed. If it's not, you can install it in a few seconds from [https://rustup.rs/](https://rustup.rs/).
 
