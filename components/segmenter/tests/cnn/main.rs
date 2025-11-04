@@ -6,11 +6,12 @@ use ndarray::{Array, Array1, Array2, Array3, ArrayBase, Dim, Dimension, OwnedRep
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::fmt::Debug;
-use std::fs;
 use zerovec::ZeroVec;
 
 mod helper;
 use helper::*;
+
+static MODEL_FOR_TEST: &str = include_str!("sample.json");
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 pub enum ModelType {
@@ -179,6 +180,10 @@ struct RawCnnData {
 }
 
 impl RawCnnData {
+    pub(crate) fn for_test() -> Self {
+        serde_json::from_str(MODEL_FOR_TEST).unwrap()
+    }
+
     fn try_convert(&self) -> Result<CnnData<'static>, String> {
         let embedding = self.embedding.to_ndarray2()?;
         // let mut cnn_w1 = self.cnn_w1.to_ndarray3()?;
@@ -532,10 +537,7 @@ impl<'data> CnnSegmenter<'data> {
 
 #[test]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let path = "tests/cnn/sample.json".to_string();
-    let json = fs::read_to_string(&path)?;
-
-    let rawcnndata: RawCnnData = serde_json::from_str(&json)?;
+    let rawcnndata = RawCnnData::for_test();
     let cnndata = rawcnndata
         .try_convert()
         .map_err(|_| "validation/conversion failed".to_string())?;
