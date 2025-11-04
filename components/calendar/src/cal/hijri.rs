@@ -84,22 +84,15 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 
     /// Returns data for the year containing the given [`RataDie`].
     fn year_containing_rd(&self, rd: RataDie) -> HijriYearData {
-        // (354 * 30 + 11) / 30 is the mean year length for a tabular year
-        // This is slightly different from the `calendrical_calculations::islamic::MEAN_YEAR_LENGTH`, which is based on
-        // the (current) synodic month length.
-        //
-        // +1 because the epoch is new year of year 1
-        // Before the epoch the division will round up (towards 0), so we need to
-        // subtract 1, which is the same as not adding the 1.
-        let extended_year = (rd - calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY) * 30
-            / (354 * 30 + 11)
-            + (rd >= calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY) as i64;
-
-        let extended_year = extended_year.clamp(i32::MIN as i64, i32::MAX as i64) as i32;
+        let extended_year = calendrical_calculations::islamic::tabular_year_from_fixed(
+            // give an allowance of 5 days before the tabular new year
+            rd - 5,
+            calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY,
+        );
 
         let mut year = self.year_data(extended_year);
 
-        // We rounded the extended year down, so we might need to use the next year
+        // we might need to use the next year
         if rd >= year.new_year() + year.packed.days_in_year() as i64 && extended_year < i32::MAX {
             year = self.year_data(year.extended_year + 1)
         }
