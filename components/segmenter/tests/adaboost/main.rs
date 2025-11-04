@@ -44,7 +44,7 @@ pub struct Predictor {
 impl Predictor {
     pub fn from_json(json: &str) -> Result<Self, Box<dyn std::error::Error>> {
         let model: HashMap<String, HashMap<String, i16>> =
-            serde_json::from_str(&json).unwrap_or_default();
+            serde_json::from_str(json).unwrap_or_default();
         Ok(Self { model })
     }
 
