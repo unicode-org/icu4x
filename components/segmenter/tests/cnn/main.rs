@@ -34,31 +34,6 @@ pub struct CnnDataFloat32<'data> {
 
 impl<'data> CnnDataFloat32<'data> {
     #[allow(clippy::too_many_arguments)]
-    pub const fn from_parts_unchecked(
-        model: ModelType,
-        dic: HashMap<String, u16>,
-        embedding: CnnMatrix2<'data>,
-        cnn_w1: CnnMatrix3<'data>,
-        cnn_b1: CnnMatrix1<'data>,
-        cnn_w2: CnnMatrix3<'data>,
-        cnn_b2: CnnMatrix1<'data>,
-        softmax_w: CnnMatrix2<'data>,
-        softmax_b: CnnMatrix1<'data>,
-    ) -> Self {
-        Self {
-            model,
-            dic,
-            embedding,
-            cnn_w1,
-            cnn_b1,
-            cnn_w2,
-            cnn_b2,
-            softmax_w,
-            softmax_b,
-        }
-    }
-
-    #[allow(clippy::too_many_arguments)]
     pub fn try_from_parts(
         model: ModelType,
         dic: HashMap<String, u16>,
@@ -236,13 +211,6 @@ macro_rules! cnn_matrix {
                 } else {
                     Ok(Self { dims, data })
                 }
-            }
-
-            pub const fn from_parts_unchecked(
-                dims: [u16; $generic],
-                data: ZeroVec<'data, f32>,
-            ) -> Self {
-                Self { dims, data }
             }
         }
     };
