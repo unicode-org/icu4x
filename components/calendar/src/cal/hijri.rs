@@ -80,21 +80,21 @@ pub struct Hijri<S>(pub S);
 /// </div>
 pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
     /// Returns data about the given year.
-    fn year_data(&self, extended_year: i32) -> HijriYearData;
+    fn year(&self, extended_year: i32) -> HijriYear;
 
     /// Returns data for the year containing the given [`RataDie`].
-    fn year_containing_rd(&self, rd: RataDie) -> HijriYearData {
+    fn year_containing_rd(&self, rd: RataDie) -> HijriYear {
         let extended_year = calendrical_calculations::islamic::tabular_year_from_fixed(
             // give an allowance of 5 days before the tabular new year
             rd - 5,
             calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY,
         );
 
-        let mut year = self.year_data(extended_year);
+        let mut year = self.year(extended_year);
 
         // we might need to use the next year
         if rd >= year.new_year() + year.packed.days_in_year() as i64 && extended_year < i32::MAX {
-            year = self.year_data(year.extended_year + 1)
+            year = self.year(year.extended_year + 1)
         }
 
         year
@@ -166,8 +166,8 @@ impl Rules for AstronomicalSimulation {
         }
     }
 
-    fn year_data(&self, extended_year: i32) -> HijriYearData {
-        if let Some(data) = HijriYearData::lookup(
+    fn year(&self, extended_year: i32) -> HijriYear {
+        if let Some(data) = HijriYear::lookup(
             extended_year,
             simulated_mecca_data::STARTING_YEAR,
             simulated_mecca_data::DATA,
@@ -257,8 +257,8 @@ impl Rules for AstronomicalSimulation {
             }
             month_lengths
         };
-        HijriYearData::try_new(extended_year, start_day, month_lengths)
-            .unwrap_or_else(|| UmmAlQura.year_data(extended_year))
+        HijriYear::try_new(extended_year, start_day, month_lengths)
+            .unwrap_or_else(|| UmmAlQura.year(extended_year))
     }
 }
 
@@ -325,8 +325,8 @@ impl Rules for UmmAlQura {
         "Hijri (Umm al-Qura)"
     }
 
-    fn year_data(&self, extended_year: i32) -> HijriYearData {
-        if let Some(data) = HijriYearData::lookup(
+    fn year(&self, extended_year: i32) -> HijriYear {
+        if let Some(data) = HijriYear::lookup(
             extended_year,
             ummalqura_data::STARTING_YEAR,
             ummalqura_data::DATA,
@@ -337,7 +337,7 @@ impl Rules for UmmAlQura {
                 leap_years: TabularAlgorithmLeapYears::TypeII,
                 epoch: TabularAlgorithmEpoch::Friday,
             }
-            .year_data(extended_year)
+            .year(extended_year)
         }
     }
 }
@@ -417,7 +417,7 @@ impl Rules for TabularAlgorithm {
         }
     }
 
-    fn year_data(&self, extended_year: i32) -> HijriYearData {
+    fn year(&self, extended_year: i32) -> HijriYear {
         let start_day = calendrical_calculations::islamic::fixed_from_tabular_islamic(
             extended_year,
             1,
@@ -433,7 +433,7 @@ impl Rules for TabularAlgorithm {
                         }
                     }
         });
-        HijriYearData {
+        HijriYear {
             // start_day is within 5 days of the tabular start day (trivial), and month lengths
             // has either 6 or 7 long months.
             packed: PackedHijriYearData::new_unchecked(extended_year, month_lengths, start_day),
@@ -544,19 +544,19 @@ impl Hijri<TabularAlgorithm> {
 
 /// Information about a Hijri year.
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
-pub struct HijriYearData {
+pub struct HijriYear {
     packed: PackedHijriYearData,
     extended_year: i32,
 }
 
-impl ToExtendedYear for HijriYearData {
+impl ToExtendedYear for HijriYear {
     fn to_extended_year(&self) -> i32 {
         self.extended_year
     }
 }
 
-impl HijriYearData {
-    /// Creates [`HijriYearData`] from the given parts.
+impl HijriYear {
+    /// Creates [`HijriYear`] from the given parts.
     ///
     /// `start_day` is the date for the first day of the year, see [`Date::to_rata_die`]
     /// to obtain a [`RataDie`] from a [`Date`] in an arbitrary calendar. `start_day` has
@@ -811,7 +811,7 @@ fn computer_reference_years() {
     }
     for month in 1..=12 {
         for day in [30, 29] {
-            let y = compute_hijri_reference_year(month, day, &Hijri(rules), |e| rules.year_data(e))
+            let y = compute_hijri_reference_year(month, day, &Hijri(rules), |e| rules.year(e))
                 .unwrap()
                 .extended_year;
 
@@ -848,7 +848,7 @@ impl<R: Rules> Ord for HijriDateInner<R> {
 }
 
 impl<R: Rules> DateFieldsResolver for Hijri<R> {
-    type YearInfo = HijriYearData;
+    type YearInfo = HijriYear;
 
     fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8 {
         year.packed.month_len(month)
@@ -870,7 +870,7 @@ impl<R: Rules> DateFieldsResolver for Hijri<R> {
 
     #[inline]
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
-        self.0.year_data(extended_year)
+        self.0.year(extended_year)
     }
 
     #[inline]
@@ -881,7 +881,7 @@ impl<R: Rules> DateFieldsResolver for Hijri<R> {
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         self.0
             .ecma_reference_year(month_code.to_tuple(), day)
-            .map(|y| self.0.year_data(y))
+            .map(|y| self.0.year(y))
     }
 }
 
@@ -1034,7 +1034,7 @@ impl<A: AsCalendar<Calendar = Hijri<R>>, R: Rules> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Self, RangeError> {
-        let y = calendar.as_calendar().0.year_data(year);
+        let y = calendar.as_calendar().0.year(year);
         Ok(Date::from_raw(
             HijriDateInner(ArithmeticDate::try_from_ymd(y, month, day)?),
             calendar,
@@ -1867,7 +1867,7 @@ mod test {
             .map(|year| {
                 Hijri::new_simulated_mecca()
                     .0
-                    .year_data(year)
+                    .year(year)
                     .packed
                     .days_in_year() as i64
             })
@@ -1893,7 +1893,7 @@ mod test {
         // -1245 1 1 = -214528 (R.D Date)
         // 1518 1 1 = 764588 (R.D Date)
         let sum_days_in_year: i64 = (START_YEAR..END_YEAR)
-            .map(|year| calendar.0.year_data(year).packed.days_in_year() as i64)
+            .map(|year| calendar.0.year(year).packed.days_in_year() as i64)
             .sum();
         let expected_number_of_days = Date::try_new_hijri_with_calendar(END_YEAR, 1, 1, calendar)
             .unwrap()

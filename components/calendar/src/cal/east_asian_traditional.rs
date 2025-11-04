@@ -96,17 +96,17 @@ pub struct EastAsianTraditional<R>(pub R);
 /// </div>
 pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed {
     /// Returns data about the given year.
-    fn year_data(&self, related_iso: i32) -> EastAsianTraditionalYearData;
+    fn year(&self, related_iso: i32) -> EastAsianTraditionalYear;
 
     /// Returns data for the year containing the given [`RataDie`].
-    fn year_containing_rd(&self, rd: RataDie) -> EastAsianTraditionalYearData {
+    fn year_containing_rd(&self, rd: RataDie) -> EastAsianTraditionalYear {
         let related_iso = calendrical_calculations::gregorian::year_from_fixed(rd)
             .unwrap_or_else(|e| e.saturate());
 
-        let mut year = self.year_data(related_iso);
+        let mut year = self.year(related_iso);
 
         if rd < year.new_year() {
-            year = self.year_data(related_iso - 1)
+            year = self.year(related_iso - 1)
         }
 
         year
@@ -183,7 +183,7 @@ pub type ChineseTraditional = EastAsianTraditional<China>;
 pub struct China;
 
 impl China {
-    /// Computes [`EastAsianTraditionalYearData`] according to [GB/T 33661-2017],
+    /// Computes [`EastAsianTraditionalYear`] according to [GB/T 33661-2017],
     /// as implemented by [`calendrical_calculations::chinese_based::Chinese`].
     ///
     /// The rules specified in [GB/T 33661-2017] have only been used
@@ -200,32 +200,28 @@ impl China {
     /// leap seconds are introduced.
     ///
     /// [GB/T 33661-2017]: https://openstd.samr.gov.cn/bzgk/gb/newGbInfo?hcno=E107EA4DE9725EDF819F33C60A44B296
-    pub fn gb_t_33661_2017(related_iso: i32) -> EastAsianTraditionalYearData {
-        EastAsianTraditionalYearData::calendrical_calculations::<chinese_based::Chinese>(
-            related_iso,
-        )
+    pub fn gb_t_33661_2017(related_iso: i32) -> EastAsianTraditionalYear {
+        EastAsianTraditionalYear::calendrical_calculations::<chinese_based::Chinese>(related_iso)
     }
 }
 
 impl crate::cal::scaffold::UnstableSealed for China {}
 impl Rules for China {
-    fn year_data(&self, related_iso: i32) -> EastAsianTraditionalYearData {
-        if let Some(year) = EastAsianTraditionalYearData::lookup(
+    fn year(&self, related_iso: i32) -> EastAsianTraditionalYear {
+        if let Some(year) = EastAsianTraditionalYear::lookup(
             related_iso,
             china_data::STARTING_YEAR,
             china_data::DATA,
         ) {
             year
         } else if related_iso > china_data::STARTING_YEAR {
-            EastAsianTraditionalYearData::simple(simple::UTC_PLUS_8, related_iso)
-        } else if let Some(year) = EastAsianTraditionalYearData::lookup(
-            related_iso,
-            qing_data::STARTING_YEAR,
-            qing_data::DATA,
-        ) {
+            EastAsianTraditionalYear::simple(simple::UTC_PLUS_8, related_iso)
+        } else if let Some(year) =
+            EastAsianTraditionalYear::lookup(related_iso, qing_data::STARTING_YEAR, qing_data::DATA)
+        {
             year
         } else {
-            EastAsianTraditionalYearData::simple(simple::BEIJING_UTC_OFFSET, related_iso)
+            EastAsianTraditionalYear::simple(simple::BEIJING_UTC_OFFSET, related_iso)
         }
     }
 
@@ -363,8 +359,8 @@ impl Korea {
     /// A version of [`China::gb_t_33661_2017`] adapted for Korean time.
     ///
     /// See [`China::gb_t_33661_2017`] for caveats.
-    pub fn adapted_gb_t_33661_2017(related_iso: i32) -> EastAsianTraditionalYearData {
-        EastAsianTraditionalYearData::calendrical_calculations::<chinese_based::Dangi>(related_iso)
+    pub fn adapted_gb_t_33661_2017(related_iso: i32) -> EastAsianTraditionalYear {
+        EastAsianTraditionalYear::calendrical_calculations::<chinese_based::Dangi>(related_iso)
     }
 }
 
@@ -400,25 +396,23 @@ impl KoreanTraditional {
 
 impl crate::cal::scaffold::UnstableSealed for Korea {}
 impl Rules for Korea {
-    fn year_data(&self, related_iso: i32) -> EastAsianTraditionalYearData {
-        if let Some(year) = EastAsianTraditionalYearData::lookup(
+    fn year(&self, related_iso: i32) -> EastAsianTraditionalYear {
+        if let Some(year) = EastAsianTraditionalYear::lookup(
             related_iso,
             korea_data::STARTING_YEAR,
             korea_data::DATA,
         ) {
             year
         } else if related_iso > korea_data::STARTING_YEAR {
-            EastAsianTraditionalYearData::simple(simple::UTC_PLUS_9, related_iso)
-        } else if let Some(year) = EastAsianTraditionalYearData::lookup(
-            related_iso,
-            qing_data::STARTING_YEAR,
-            qing_data::DATA,
-        ) {
+            EastAsianTraditionalYear::simple(simple::UTC_PLUS_9, related_iso)
+        } else if let Some(year) =
+            EastAsianTraditionalYear::lookup(related_iso, qing_data::STARTING_YEAR, qing_data::DATA)
+        {
             // Korea used Qing-dynasty rules before 1912
             // https://github.com/unicode-org/icu4x/issues/6455#issuecomment-3282175550
             year
         } else {
-            EastAsianTraditionalYearData::simple(simple::BEIJING_UTC_OFFSET, related_iso)
+            EastAsianTraditionalYear::simple(simple::BEIJING_UTC_OFFSET, related_iso)
         }
     }
 
@@ -506,7 +500,7 @@ impl<A: AsCalendar<Calendar = KoreanTraditional>> Date<A> {
         calendar: A,
     ) -> Result<Date<A>, DateError> {
         ArithmeticDate::try_from_ymd(
-            calendar.as_calendar().0.year_data(related_iso_year),
+            calendar.as_calendar().0.year(related_iso_year),
             ordinal_month,
             day,
         )
@@ -567,14 +561,14 @@ impl ChineseTraditional {
 }
 
 impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
-    type YearInfo = EastAsianTraditionalYearData;
+    type YearInfo = EastAsianTraditionalYear;
 
-    fn days_in_provided_month(year: EastAsianTraditionalYearData, month: u8) -> u8 {
+    fn days_in_provided_month(year: EastAsianTraditionalYear, month: u8) -> u8 {
         year.packed.month_len(month)
     }
 
     /// Returns the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
-    fn months_in_provided_year(year: EastAsianTraditionalYearData) -> u8 {
+    fn months_in_provided_year(year: EastAsianTraditionalYear) -> u8 {
         12 + year.packed.leap_month().is_some() as u8
     }
 
@@ -590,7 +584,7 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
 
     #[inline]
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
-        self.0.year_data(extended_year)
+        self.0.year(extended_year)
     }
 
     #[inline]
@@ -601,7 +595,7 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         self.0
             .ecma_reference_year(month_code.to_tuple(), day)
-            .map(|y| self.0.year_data(y))
+            .map(|y| self.0.year(y))
     }
 
     fn ordinal_month_from_code(
@@ -783,7 +777,7 @@ impl<A: AsCalendar<Calendar = ChineseTraditional>> Date<A> {
         calendar: A,
     ) -> Result<Date<A>, DateError> {
         ArithmeticDate::try_from_ymd(
-            calendar.as_calendar().0.year_data(related_iso_year),
+            calendar.as_calendar().0.year(related_iso_year),
             ordinal_month,
             day,
         )
@@ -796,7 +790,7 @@ impl<A: AsCalendar<Calendar = ChineseTraditional>> Date<A> {
 /// Information about a [`EastAsianTraditional`] year.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
 // TODO(#3933): potentially make this smaller
-pub struct EastAsianTraditionalYearData {
+pub struct EastAsianTraditionalYear {
     /// Contains:
     /// - length of each month in the year
     /// - whether or not there is a leap month, and which month it is
@@ -805,14 +799,14 @@ pub struct EastAsianTraditionalYearData {
     related_iso: i32,
 }
 
-impl ToExtendedYear for EastAsianTraditionalYearData {
+impl ToExtendedYear for EastAsianTraditionalYear {
     fn to_extended_year(&self) -> i32 {
         self.related_iso
     }
 }
 
-impl EastAsianTraditionalYearData {
-    /// Creates [`EastAsianTraditionalYearData`] from the given parts.
+impl EastAsianTraditionalYear {
+    /// Creates [`EastAsianTraditionalYear`] from the given parts.
     ///
     /// `start_day` is the date for the first day of the year, see [`Date::to_rata_die`]
     /// to obtain a [`RataDie`] from a [`Date`] in an arbitrary calendar.
@@ -855,9 +849,7 @@ impl EastAsianTraditionalYearData {
             })
     }
 
-    fn calendrical_calculations<CB: ChineseBased>(
-        related_iso: i32,
-    ) -> EastAsianTraditionalYearData {
+    fn calendrical_calculations<CB: ChineseBased>(related_iso: i32) -> EastAsianTraditionalYear {
         let mid_year = calendrical_calculations::gregorian::fixed_from_gregorian(related_iso, 7, 1);
         let year_bounds = YearBounds::compute::<CB>(mid_year);
 
@@ -869,7 +861,7 @@ impl EastAsianTraditionalYearData {
         let (month_lengths, leap_month) =
             chinese_based::month_structure_for_year::<CB>(new_year, next_new_year);
 
-        EastAsianTraditionalYearData {
+        EastAsianTraditionalYear {
             packed: PackedEastAsianTraditionalYearData::new(
                 related_iso,
                 month_lengths,
@@ -1366,7 +1358,7 @@ mod test {
 
     #[test]
     fn test_month_days() {
-        let year = ChineseTraditional::new().0.year_data(2023);
+        let year = ChineseTraditional::new().0.year(2023);
         let cases = [
             (1, 29),
             (2, 30),
@@ -1862,7 +1854,7 @@ mod test {
                                     year += by;
                                     continue;
                                 }
-                                let data = calendar.0.year_data(year);
+                                let data = calendar.0.year(year);
                                 let leap_month = data.packed.leap_month().unwrap_or(15);
                                 let ordinal_month = if leap && month + 1 == leap_month {
                                     month + 1

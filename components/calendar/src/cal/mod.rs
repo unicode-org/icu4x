@@ -28,7 +28,7 @@ pub mod east_asian_traditional {
 
     // TODO(#6962) Stabilize
     #[cfg(feature = "unstable")]
-    pub use super::east_asian_traditional_internal::{EastAsianTraditionalYearData, Rules};
+    pub use super::east_asian_traditional_internal::{EastAsianTraditionalYear, Rules};
 }
 pub use coptic::Coptic;
 pub use east_asian_traditional_internal::{ChineseTraditional, KoreanTraditional};
@@ -45,7 +45,7 @@ pub mod hijri {
 
     // TODO(#6962) Stabilize
     #[cfg(feature = "unstable")]
-    pub use super::hijri_internal::{HijriYearData, Rules};
+    pub use super::hijri_internal::{HijriYear, Rules};
 
     #[doc(hidden)]
     /// These are unstable traits but we expose them on stable to

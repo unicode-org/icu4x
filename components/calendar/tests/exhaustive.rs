@@ -178,24 +178,17 @@ use for_each_calendar;
 
 // Precalculates Chinese years, significant performance improvement
 #[derive(Debug, Clone)]
-struct EastAsianTraditionalYears(Vec<cal::east_asian_traditional::EastAsianTraditionalYearData>);
+struct EastAsianTraditionalYears(Vec<cal::east_asian_traditional::EastAsianTraditionalYear>);
 
 impl EastAsianTraditionalYears {
     fn new<R: cal::east_asian_traditional::Rules>(r: R) -> Self {
-        Self(
-            ((-MAGNITUDE - 1)..=MAGNITUDE)
-                .map(|i| r.year_data(i))
-                .collect(),
-        )
+        Self(((-MAGNITUDE - 1)..=MAGNITUDE).map(|i| r.year(i)).collect())
     }
 }
 
 impl cal::scaffold::UnstableSealed for EastAsianTraditionalYears {}
 impl cal::east_asian_traditional::Rules for EastAsianTraditionalYears {
-    fn year_data(
-        &self,
-        related_iso: i32,
-    ) -> cal::east_asian_traditional::EastAsianTraditionalYearData {
+    fn year(&self, related_iso: i32) -> cal::east_asian_traditional::EastAsianTraditionalYear {
         self.0[(related_iso + MAGNITUDE + 1) as usize]
     }
 }

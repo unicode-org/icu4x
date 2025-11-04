@@ -64,18 +64,18 @@ impl Hebrew {
 }
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
-pub(crate) struct HebrewYearInfo {
+pub(crate) struct HebrewYear {
     keviyah: Keviyah,
     value: i32,
 }
 
-impl ToExtendedYear for HebrewYearInfo {
+impl ToExtendedYear for HebrewYear {
     fn to_extended_year(&self) -> i32 {
         self.value
     }
 }
 
-impl HebrewYearInfo {
+impl HebrewYear {
     /// Convenience method to compute for a given year. Don't use this if you actually need
     /// a YearInfo that you want to call .new_year() on.
     fn compute(value: i32) -> Self {
@@ -85,7 +85,7 @@ impl HebrewYearInfo {
         }
     }
 
-    fn year_containing_rd(rd: RataDie) -> Self {
+    fn for_rd(rd: RataDie) -> Self {
         let (year, value) = YearInfo::year_containing_rd(rd);
         Self {
             keviyah: year.keviyah,
@@ -99,12 +99,12 @@ impl HebrewYearInfo {
 }
 
 impl DateFieldsResolver for Hebrew {
-    type YearInfo = HebrewYearInfo;
-    fn days_in_provided_month(info: HebrewYearInfo, ordinal_month: u8) -> u8 {
-        info.keviyah.month_len(ordinal_month)
+    type YearInfo = HebrewYear;
+    fn days_in_provided_month(year: HebrewYear, ordinal_month: u8) -> u8 {
+        year.keviyah.month_len(ordinal_month)
     }
 
-    fn months_in_provided_year(year: HebrewYearInfo) -> u8 {
+    fn months_in_provided_year(year: HebrewYear) -> u8 {
         12 + year.keviyah.is_leap() as u8
     }
 
@@ -115,13 +115,13 @@ impl DateFieldsResolver for Hebrew {
         era_year: i32,
     ) -> Result<Self::YearInfo, UnknownEraError> {
         match era {
-            b"am" => Ok(HebrewYearInfo::compute(era_year)),
+            b"am" => Ok(HebrewYear::compute(era_year)),
             _ => Err(UnknownEraError),
         }
     }
     #[inline]
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
-        HebrewYearInfo::compute(extended_year)
+        HebrewYear::compute(extended_year)
     }
 
     fn reference_year_from_month_day(
@@ -155,7 +155,7 @@ impl DateFieldsResolver for Hebrew {
                 return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
             }
         };
-        Ok(HebrewYearInfo::compute(hebrew_year))
+        Ok(HebrewYear::compute(hebrew_year))
     }
 
     fn ordinal_month_from_code(
@@ -221,7 +221,7 @@ impl Calendar for Hebrew {
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        let year = HebrewYearInfo::year_containing_rd(rd);
+        let year = HebrewYear::for_rd(rd);
 
         // Clamp the RD to our year
         let rd = rd.clamp(
@@ -336,7 +336,7 @@ impl Date<Hebrew> {
         ordinal_month: u8,
         day: u8,
     ) -> Result<Date<Hebrew>, RangeError> {
-        let year = HebrewYearInfo::compute(year);
+        let year = HebrewYear::compute(year);
 
         ArithmeticDate::try_from_ymd(year, ordinal_month, day)
             .map(HebrewDateInner)
@@ -460,7 +460,7 @@ mod tests {
 
     #[test]
     fn test_icu_bug_22441() {
-        let yi = HebrewYearInfo::compute(88369);
+        let yi = HebrewYear::compute(88369);
         assert_eq!(yi.keviyah.year_length(), 383);
     }
 
