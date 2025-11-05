@@ -88,12 +88,12 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
 
     /// Construct the date from a [`RataDie`]
     ///
-    /// Precondition: RataDie needs to be in the [`VALID_RD_RANGE`]
+    /// Precondition: RataDie needs to be in the [`VALID_RD_RANGE`](crate::VALID_RD_RANGE)
     #[expect(clippy::wrong_self_convention)]
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner;
     /// Obtain a [`RataDie`] from this date
     ///
-    /// The result is guaranteed to be in [`VALID_RD_RANGE`]
+    /// The result is guaranteed to be in [`VALID_RD_RANGE`](crate::VALID_RD_RANGE)
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie;
 
     /// Count the number of months in a given year, specified by providing a date

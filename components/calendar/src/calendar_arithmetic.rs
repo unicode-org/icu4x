@@ -21,7 +21,7 @@ use core::ops::RangeInclusive;
 /// This is checked by constructors. Internally we don't care about this invariant.
 pub const VALID_YEAR_RANGE: RangeInclusive<i32> = -1_000_000..=1_000_000;
 
-/// This is a fundamental invariant of [`ArithmeticDate`] and by extension all our
+/// This is a fundamental invariant of `ArithmeticDate` and by extension all our
 /// date types. Because this range slightly exceeds the [`VALID_YEAR_RANGE`], only
 /// the valid year range is checked in constructors. Only the `Date::from_rata_die`
 /// constructor actually uses this, but for clamping instead of erroring.
