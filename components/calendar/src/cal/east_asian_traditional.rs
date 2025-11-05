@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cal::iso::Iso;
 use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::calendar_arithmetic::{ArithmeticDate, ToExtendedYear};
 use crate::error::{
@@ -13,9 +12,7 @@ use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::types::ValidMonthCode;
 use crate::AsCalendar;
 use crate::{types, Calendar, Date};
-use calendrical_calculations::chinese_based::{
-    self, ChineseBased, YearBounds, WELL_BEHAVED_ASTRONOMICAL_RANGE,
-};
+use calendrical_calculations::chinese_based;
 use calendrical_calculations::rata_die::RataDie;
 use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
 use icu_provider::prelude::*;
@@ -658,14 +655,15 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        let iso = Iso.from_rata_die(rd);
+        #[allow(clippy::unwrap_used)] // by precondition the year cannot exceed i32
+        let related_iso = calendrical_calculations::gregorian::year_from_fixed(rd).unwrap();
         let year = {
-            let candidate = self.0.year_data(iso.0.year);
+            let candidate = self.0.year_data(related_iso);
 
             if rd >= candidate.new_year() {
                 candidate
             } else {
-                self.0.year_data(iso.0.year - 1)
+                self.0.year_data(related_iso - 1)
             }
         };
 
@@ -691,6 +689,7 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
 
         let day = (day_of_year + 1 - last_day_of_prev_month) as u8;
 
+        // date is in the valid RD range
         ChineseDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
@@ -865,13 +864,13 @@ impl EastAsianTraditionalYearData {
             })
     }
 
-    fn calendrical_calculations<CB: ChineseBased>(
+    fn calendrical_calculations<CB: chinese_based::ChineseBased>(
         related_iso: i32,
     ) -> EastAsianTraditionalYearData {
         let mid_year = calendrical_calculations::gregorian::fixed_from_gregorian(related_iso, 7, 1);
-        let year_bounds = YearBounds::compute::<CB>(mid_year);
+        let year_bounds = chinese_based::YearBounds::compute::<CB>(mid_year);
 
-        let YearBounds {
+        let chinese_based::YearBounds {
             new_year,
             next_new_year,
             ..
@@ -952,24 +951,12 @@ impl PackedEastAsianTraditionalYearData {
 
         let ny_offset = new_year.since(Self::earliest_ny(related_iso));
 
-        #[cfg(debug_assertions)]
-        let out_of_valid_astronomical_range = WELL_BEHAVED_ASTRONOMICAL_RANGE.start.to_i64_date()
-            > new_year.to_i64_date()
-            || new_year.to_i64_date() > WELL_BEHAVED_ASTRONOMICAL_RANGE.end.to_i64_date();
-
         // Assert the offset is in range, but allow it to be out of
         // range when out_of_valid_astronomical_range=true
-        #[cfg(debug_assertions)]
-        debug_assert!(
-            ny_offset >= 0 || out_of_valid_astronomical_range,
-            "Year offset too small to store"
-        );
+        debug_assert!(ny_offset >= 0, "Year offset too small to store");
+
         // The maximum new-year's offset we have found is 34
-        #[cfg(debug_assertions)]
-        debug_assert!(
-            ny_offset < 35 || out_of_valid_astronomical_range,
-            "Year offset too big to store"
-        );
+        debug_assert!(ny_offset < 35, "Year offset too big to store");
 
         // Just clamp to something we can represent when things get of range.
         //
@@ -1038,6 +1025,7 @@ impl PackedEastAsianTraditionalYearData {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::cal::iso::Iso;
     use crate::options::{DateFromFieldsOptions, Overflow};
     use crate::types::DateFields;
     use calendrical_calculations::{gregorian::fixed_from_gregorian, rata_die::RataDie};

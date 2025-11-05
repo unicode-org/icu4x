@@ -222,6 +222,7 @@ impl Calendar for Hebrew {
         let day_in_year = u16::try_from(rd - year_info.new_year() + 1).unwrap_or(u16::MAX);
         let (month, day) = keviyah.month_day_for(day_in_year);
 
+        // date is in the valid RD range
         HebrewDateInner(ArithmeticDate::new_unchecked(
             HebrewYearInfo {
                 keviyah,

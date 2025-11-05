@@ -10,7 +10,6 @@ use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
 use crate::{types, Calendar, Date, RangeError};
 use ::tinystr::tinystr;
-use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 
 /// The [Persian Calendar](https://en.wikipedia.org/wiki/Solar_Hijri_calendar)
@@ -131,13 +130,12 @@ impl Calendar for Persian {
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        PersianDateInner(
-            match calendrical_calculations::persian::fast_persian_from_fixed(rd) {
-                Err(I32CastError::BelowMin) => ArithmeticDate::new_unchecked(i32::MIN, 1, 1),
-                Err(I32CastError::AboveMax) => ArithmeticDate::new_unchecked(i32::MAX, 12, 29),
-                Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
-            },
-        )
+        #[allow(clippy::unwrap_used)] // by precondition the year cannot exceed i32
+        let (year, month, day) =
+            calendrical_calculations::persian::fast_persian_from_fixed(rd).unwrap();
+
+        // date is in the valid RD range
+        PersianDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
@@ -436,8 +434,8 @@ mod tests {
         for (case, f_date) in CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_persian(case.year, case.month, case.day).unwrap();
             assert_eq!(
-                Persian.from_rata_die(RataDie::new(*f_date)),
-                date.inner,
+                Date::from_rata_die(RataDie::new(*f_date), Persian),
+                date,
                 "{case:?}"
             );
         }

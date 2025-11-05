@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
+use crate::calendar_arithmetic::VALID_RD_RANGE;
 use crate::error::{DateError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -197,6 +198,7 @@ impl<A: AsCalendar> Date<A> {
     /// Construct a date from a [`RataDie`] and some calendar representation
     #[inline]
     pub fn from_rata_die(rd: RataDie, calendar: A) -> Self {
+        let rd = rd.clamp(*VALID_RD_RANGE.start(), *VALID_RD_RANGE.end());
         Date {
             inner: calendar.as_calendar().from_rata_die(rd),
             calendar,
@@ -229,6 +231,7 @@ impl<A: AsCalendar> Date<A> {
         let inner = if c1.has_cheap_iso_conversion() && c2.has_cheap_iso_conversion() {
             c2.from_iso(c1.to_iso(self.inner()))
         } else {
+            // `from_rata_die` precondition is satified by `to_rata_die`
             c2.from_rata_die(c1.to_rata_die(self.inner()))
         };
         Date { inner, calendar }

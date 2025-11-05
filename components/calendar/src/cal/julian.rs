@@ -9,7 +9,6 @@ use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
 use crate::{types, Calendar, Date, RangeError};
-use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
@@ -160,13 +159,11 @@ impl Calendar for Julian {
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        JulianDateInner(
-            match calendrical_calculations::julian::julian_from_fixed(rd) {
-                Err(I32CastError::BelowMin) => ArithmeticDate::new_unchecked(i32::MIN, 1, 1),
-                Err(I32CastError::AboveMax) => ArithmeticDate::new_unchecked(i32::MAX, 12, 31),
-                Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
-            },
-        )
+        #[allow(clippy::unwrap_used)] // by precondition the year cannot exceed i32
+        let (year, month, day) = calendrical_calculations::julian::julian_from_fixed(rd).unwrap();
+
+        // date is in the valid RD range
+        JulianDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
