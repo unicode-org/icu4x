@@ -486,23 +486,19 @@ impl Keviyah {
 
     /// Given a 1-indexed day of the year, return the ordinal month and day as (month, day).
     pub fn month_day_for(self, day_of_year: u16) -> (u8, u8) {
-        // this method should take a zero-indexed day-of-year, as that is the result of rd - new_year.
-        // however, it does not. to use the same code as Hijri and EastAsianLunar, we make it 0-indexed
-        // here, when this is inlined this will cancel out with the +1 to make rd - new_year 1-indexed.
-        let day_of_year = day_of_year - 1;
         // We divide by 30, not 29, to account for the case where all months before this
         // were length 30 (possible near the beginning of the year)
-        let mut month = (day_of_year / 30) as u8 + 1;
+        let mut month = ((day_of_year - 1) / 30) as u8 + 1;
         let mut days_before_month = self.days_preceding(month);
         let mut last_day_of_month = self.days_preceding(month + 1);
 
-        while day_of_year >= last_day_of_month {
+        while day_of_year > last_day_of_month {
             month += 1;
             days_before_month = last_day_of_month;
             last_day_of_month = self.days_preceding(month + 1);
         }
 
-        (month, (day_of_year + 1 - days_before_month) as u8)
+        (month, (day_of_year - days_before_month) as u8)
     }
 
     /// Return the last ordinal month and day in this year as (month, day)

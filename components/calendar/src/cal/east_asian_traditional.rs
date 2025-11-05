@@ -673,7 +673,7 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
             year.new_year() + year.packed.days_in_year() as i64,
         );
 
-        let (month, day) = year.month_day_for((rd - year.new_year()) as u16);
+        let (month, day) = year.month_day_for((rd - year.new_year()) as u16 + 1);
 
         ChineseDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
@@ -872,20 +872,21 @@ impl EastAsianTraditionalYear {
         }
     }
 
+    // 1-based day of year
     fn month_day_for(self, day_of_year: u16) -> (u8, u8) {
         // We divide by 30, not 29, to account for the case where all months before this
         // were length 30 (possible near the beginning of the year)
-        let mut month = (day_of_year / 30) as u8 + 1;
+        let mut month = ((day_of_year - 1) / 30) as u8 + 1;
         let mut days_before_month = self.packed.days_before_month(month);
         let mut last_day_of_month = self.packed.days_before_month(month + 1);
 
-        while day_of_year >= last_day_of_month {
+        while day_of_year > last_day_of_month {
             month += 1;
             days_before_month = last_day_of_month;
             last_day_of_month = self.packed.days_before_month(month + 1);
         }
 
-        (month, (day_of_year + 1 - days_before_month) as u8)
+        (month, (day_of_year - days_before_month) as u8)
     }
 
     /// Get the new year R.D.    
