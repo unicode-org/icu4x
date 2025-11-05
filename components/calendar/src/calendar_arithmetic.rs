@@ -34,13 +34,7 @@ pub const VALID_RD_RANGE: RangeInclusive<RataDie> =
 
 // Invariant: VALID_RD_RANGE contains the date
 #[derive(Debug)]
-pub(crate) struct ArithmeticDate<C: DateFieldsResolver> {
-    year: C::YearInfo,
-    /// 1-based month of year
-    month: u8,
-    /// 1-based day of month
-    day: u8,
-}
+pub(crate) struct ArithmeticDate<C: DateFieldsResolver>(<C::YearInfo as Pack>::Packed);
 
 // Manual impls since the derive will introduce a C: Trait bound
 // and only the year value should be compared
@@ -102,11 +96,43 @@ impl ToExtendedYear for i32 {
     }
 }
 
+pub trait Pack: Copy {
+    type Packed: Copy + Debug;
+
+    fn pack(self, month: u8, day: u8) -> Self::Packed;
+    fn unpack_year(packed: Self::Packed) -> Self;
+    fn unpack_month(packed: Self::Packed) -> u8;
+    fn unpack_day(packed: Self::Packed) -> u8;
+}
+
+impl Pack for i32 {
+    type Packed = [u8; 4];
+
+    fn pack(self, month: u8, day: u8) -> Self::Packed {
+        (self << 9 | (month as i32) << 5 | day as i32).to_le_bytes()
+    }
+
+    fn unpack_year(packed: Self::Packed) -> Self {
+        let packed = i32::from_le_bytes(packed);
+        packed >> 9
+    }
+
+    fn unpack_month(packed: Self::Packed) -> u8 {
+        let packed = i32::from_le_bytes(packed);
+        (packed >> 5 & 0b1111) as u8
+    }
+
+    fn unpack_day(packed: Self::Packed) -> u8 {
+        let packed = i32::from_le_bytes(packed);
+        (packed & 0b11111) as u8
+    }
+}
+
 /// Trait for converting from era codes, month codes, and other fields to year/month/day ordinals.
 pub(crate) trait DateFieldsResolver: Calendar {
     /// This stores the year as either an i32, or a type containing more
     /// useful computational information.
-    type YearInfo: Copy + Debug + PartialEq + ToExtendedYear;
+    type YearInfo: Copy + Debug + PartialEq + ToExtendedYear + Pack;
 
     fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8;
 
@@ -163,27 +189,25 @@ pub(crate) trait DateFieldsResolver: Calendar {
 }
 
 impl<C: DateFieldsResolver> ArithmeticDate<C> {
-    pub(crate) const fn day(self) -> u8 {
-        self.day
+    pub(crate) fn year(self) -> C::YearInfo {
+        C::YearInfo::unpack_year(self.0)
     }
 
-    pub(crate) const fn month(self) -> u8 {
-        self.month
+    pub(crate) fn month(self) -> u8 {
+        C::YearInfo::unpack_month(self.0)
     }
 
-    pub(crate) const fn year(self) -> C::YearInfo {
-        self.year
+    pub(crate) fn day(self) -> u8 {
+        C::YearInfo::unpack_day(self.0)
     }
 
     // Precondition: the date is in the VALID_RD_RANGE
     #[inline]
-    pub(crate) const fn new_unchecked(year: C::YearInfo, month: u8, day: u8) -> Self {
-        ArithmeticDate { year, month, day }
+    pub(crate) fn new_unchecked(year: C::YearInfo, month: u8, day: u8) -> Self {
+        ArithmeticDate(C::YearInfo::pack(year, month, day))
     }
 
-    pub(crate) const fn cast<C2: DateFieldsResolver<YearInfo = C::YearInfo>>(
-        self,
-    ) -> ArithmeticDate<C2> {
+    pub(crate) fn cast<C2: DateFieldsResolver<YearInfo = C::YearInfo>>(self) -> ArithmeticDate<C2> {
         ArithmeticDate::new_unchecked(self.year(), self.month(), self.day())
     }
 

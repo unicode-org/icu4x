@@ -4,6 +4,7 @@
 
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::DateFieldsResolver;
+use crate::calendar_arithmetic::Pack;
 use crate::calendar_arithmetic::ToExtendedYear;
 use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
@@ -711,6 +712,33 @@ impl PackedHijriYearData {
         // -1 because the epoch is new year of year 1
         calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY
             .add((extended_year as i64 - 1) * (354 * 30 + 11) / 30)
+    }
+}
+
+impl Pack for HijriYearData {
+    type Packed = [u8; 6];
+
+    fn pack(self, month: u8, day: u8) -> Self::Packed {
+        let [a, b] = self.packed.0.to_le_bytes();
+        let [c, d, e, f] = self.extended_year.pack(month, day);
+        [a, b, c, d, e, f]
+    }
+
+    fn unpack_year([a, b, c, d, e, f]: Self::Packed) -> Self {
+        let packed = PackedHijriYearData(u16::from_le_bytes([a, b]));
+        let extended_year = i32::unpack_year([c, d, e, f]);
+        Self {
+            extended_year,
+            packed,
+        }
+    }
+
+    fn unpack_month([_, _, c, d, e, f]: Self::Packed) -> u8 {
+        i32::unpack_month([c, d, e, f])
+    }
+
+    fn unpack_day([_, _, c, d, e, f]: Self::Packed) -> u8 {
+        i32::unpack_day([c, d, e, f])
     }
 }
 

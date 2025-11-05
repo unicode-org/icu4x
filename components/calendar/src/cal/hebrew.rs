@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, ToExtendedYear};
+use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, Pack, ToExtendedYear};
 use crate::error::{
     DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
 };
@@ -67,6 +67,30 @@ impl Hebrew {
 pub(crate) struct HebrewYearInfo {
     keviyah: Keviyah,
     value: i32,
+}
+
+impl Pack for HebrewYearInfo {
+    type Packed = [u8; 5];
+
+    fn pack(self, month: u8, day: u8) -> Self::Packed {
+        let a = self.keviyah as u8;
+        let [b, c, d, e] = self.value.pack(month, day);
+        [a, b, c, d, e]
+    }
+
+    fn unpack_year([a, b, c, d, e]: Self::Packed) -> Self {
+        let value = i32::unpack_year([b, c, d, e]);
+        let keviyah = Keviyah::from_integer(a);
+        Self { keviyah, value }
+    }
+
+    fn unpack_month([_, b, c, d, e]: Self::Packed) -> u8 {
+        i32::unpack_month([b, c, d, e])
+    }
+
+    fn unpack_day([_, b, c, d, e]: Self::Packed) -> u8 {
+        i32::unpack_day([b, c, d, e])
+    }
 }
 
 impl ToExtendedYear for HebrewYearInfo {

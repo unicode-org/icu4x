@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::calendar_arithmetic::{ArithmeticDate, ToExtendedYear};
+use crate::calendar_arithmetic::{DateFieldsResolver, Pack};
 use crate::error::{
     DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
 };
@@ -547,6 +547,33 @@ impl ChineseTraditional {
     #[deprecated(since = "2.1.0", note = "use `Self::new()")]
     pub fn new_always_calculating() -> Self {
         Self::new()
+    }
+}
+
+impl Pack for EastAsianTraditionalYearData {
+    type Packed = [u8; 7];
+
+    fn pack(self, month: u8, day: u8) -> Self::Packed {
+        let PackedEastAsianTraditionalYearData(a, b, c) = self.packed;
+        let [d, e, f, g] = self.related_iso.pack(month, day);
+        [a, b, c, d, e, f, g]
+    }
+
+    fn unpack_year([a, b, c, d, e, f, g]: Self::Packed) -> Self {
+        let related_iso = i32::unpack_year([d, e, f, g]);
+        let packed = PackedEastAsianTraditionalYearData(a, b, c);
+        Self {
+            packed,
+            related_iso,
+        }
+    }
+
+    fn unpack_month([_, _, _c, d, e, f, g]: Self::Packed) -> u8 {
+        i32::unpack_month([d, e, f, g])
+    }
+
+    fn unpack_day([_, _, _c, d, e, f, g]: Self::Packed) -> u8 {
+        i32::unpack_day([d, e, f, g])
     }
 }
 
