@@ -716,6 +716,7 @@ impl PackedHijriYearData {
 }
 
 impl Pack for HijriYearData {
+    /// The first two bytes are the [`PackedHijriYearData`], the remaining four the YMD as encoded by [`i32::pack`].
     type Packed = [u8; 6];
 
     fn pack(self, month: u8, day: u8) -> Self::Packed {

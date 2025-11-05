@@ -70,6 +70,7 @@ pub(crate) struct HebrewYearInfo {
 }
 
 impl Pack for HebrewYearInfo {
+    /// The first byte is the [`Keviyah`], the remaining four the YMD as encoded by [`i32::pack`].
     type Packed = [u8; 5];
 
     fn pack(self, month: u8, day: u8) -> Self::Packed {

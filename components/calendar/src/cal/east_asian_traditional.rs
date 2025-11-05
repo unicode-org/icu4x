@@ -551,6 +551,7 @@ impl ChineseTraditional {
 }
 
 impl Pack for EastAsianTraditionalYearData {
+    /// The first three bytes are the [`PackedEastAsianTraditionalYearData`], the remaining four the YMD as encoded by [`i32::pack`].
     type Packed = [u8; 7];
 
     fn pack(self, month: u8, day: u8) -> Self::Packed {
