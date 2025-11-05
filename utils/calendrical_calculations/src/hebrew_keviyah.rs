@@ -251,8 +251,10 @@ impl YearInfo {
 
         let mut year = Self::compute_for(h_year);
 
-        // We rounded the year down, so we might need to use the next year
-        if date >= year.new_year() + year.keviyah.year_length() as i64 && h_year < i32::MAX {
+        if date < year.new_year() {
+            h_year -= 1;
+            year = Self::compute_for(h_year)
+        } else if date >= year.new_year() + year.keviyah.year_length() as i64 && h_year < i32::MAX {
             h_year += 1;
             year = Self::compute_for(h_year)
         }
@@ -482,8 +484,12 @@ impl Keviyah {
             ) as u16
     }
 
-    /// Given a day of the year, return the ordinal month and day as (month, day).
+    /// Given a 1-indexed day of the year, return the ordinal month and day as (month, day).
     pub fn month_day_for(self, day_of_year: u16) -> (u8, u8) {
+        // this method should take a zero-indexed day-of-year, as that is the result of rd - new_year.
+        // however, it does not. to use the same code as Hijri and EastAsianLunar, we make it 0-indexed
+        // here, when this is inlined this will cancel out with the +1 to make rd - new_year 1-indexed.
+        let day_of_year = day_of_year - 1;
         // We divide by 30, not 29, to account for the case where all months before this
         // were length 30 (possible near the beginning of the year)
         let mut month = (day_of_year / 30) as u8 + 1;
@@ -725,7 +731,7 @@ fn keviyah_for(year_type: MetonicCycleType, ḥalakim: i32) -> Keviyah {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::hebrew::{self, BookHebrew};
+    use crate::hebrew::BookHebrew;
 
     #[test]
     fn test_consts() {

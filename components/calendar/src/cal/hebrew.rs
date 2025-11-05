@@ -229,7 +229,9 @@ impl Calendar for Hebrew {
             year.new_year() + year.keviyah.year_length() as i64,
         );
 
-        let (month, day) = year.keviyah.month_day_for((rd - year.new_year()) as u16);
+        let (month, day) = year
+            .keviyah
+            .month_day_for((rd - year.new_year()) as u16 + 1);
 
         HebrewDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
