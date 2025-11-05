@@ -655,8 +655,8 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        #[allow(clippy::unwrap_used)] // by precondition the year cannot exceed i32
-        let related_iso = calendrical_calculations::gregorian::year_from_fixed(rd).unwrap();
+        // by precondition the year cannot exceed i32, so the error case is unreachable
+        let related_iso = calendrical_calculations::gregorian::year_from_fixed(rd).unwrap_or(1);
         let year = {
             let candidate = self.0.year_data(related_iso);
 

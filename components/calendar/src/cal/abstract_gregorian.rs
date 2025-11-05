@@ -125,9 +125,9 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     }
 
     fn from_rata_die(&self, date: RataDie) -> Self::DateInner {
-        #[allow(clippy::unwrap_used)] // by precondition the year cannot exceed i32
+        // by precondition the year cannot exceed i32, so the error case is unreachable
         let (year, month, day) =
-            calendrical_calculations::gregorian::gregorian_from_fixed(date).unwrap();
+            calendrical_calculations::gregorian::gregorian_from_fixed(date).unwrap_or((1, 1, 1));
 
         // date is in the valid RD range
         ArithmeticDate::new_unchecked(year, month, day)

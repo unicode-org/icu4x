@@ -130,9 +130,9 @@ impl Calendar for Persian {
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        #[allow(clippy::unwrap_used)] // by precondition the year cannot exceed i32
+        // by precondition the year cannot exceed i32, so the error case is unreachable
         let (year, month, day) =
-            calendrical_calculations::persian::fast_persian_from_fixed(rd).unwrap();
+            calendrical_calculations::persian::fast_persian_from_fixed(rd).unwrap_or((1, 1, 1));
 
         // date is in the valid RD range
         PersianDateInner(ArithmeticDate::new_unchecked(year, month, day))

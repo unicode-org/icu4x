@@ -159,8 +159,8 @@ impl Calendar for Julian {
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        #[allow(clippy::unwrap_used)] // by precondition the year cannot exceed i32
-        let (year, month, day) = calendrical_calculations::julian::julian_from_fixed(rd).unwrap();
+        // by precondition the year cannot exceed i32, so the error case is unreachable
+        let (year, month, day) = calendrical_calculations::julian::julian_from_fixed(rd).unwrap_or((1,1,1));
 
         // date is in the valid RD range
         JulianDateInner(ArithmeticDate::new_unchecked(year, month, day))

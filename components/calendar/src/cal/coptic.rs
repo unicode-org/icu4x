@@ -161,8 +161,8 @@ impl Calendar for Coptic {
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        #[allow(clippy::unwrap_used)] // by precondition the year cannot exceed i32
-        let (year, month, day) = calendrical_calculations::coptic::coptic_from_fixed(rd).unwrap();
+        // by precondition the year cannot exceed i32, so the error case is unreachable
+        let (year, month, day) = calendrical_calculations::coptic::coptic_from_fixed(rd).unwrap_or((1,1,1));
 
         // date is in the valid RD range
         CopticDateInner(ArithmeticDate::new_unchecked(year, month, day))
