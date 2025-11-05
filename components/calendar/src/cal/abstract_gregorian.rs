@@ -10,7 +10,6 @@ use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::preferences::CalendarAlgorithm;
 use crate::types::EraYear;
 use crate::{types, Calendar, RangeError};
-use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -38,7 +37,18 @@ impl ArithmeticDate<AbstractGregorian<IsoEra>> {
         month: u8,
         day: u8,
     ) -> Result<Self, RangeError> {
-        ArithmeticDate::try_from_ymd(year + Y::EXTENDED_YEAR_OFFSET, month, day)
+        ArithmeticDate::try_from_ymd(year + Y::EXTENDED_YEAR_OFFSET, month, day).map_err(|e| {
+            if e.field == "year" {
+                RangeError {
+                    value: e.value - Y::EXTENDED_YEAR_OFFSET,
+                    min: e.min - Y::EXTENDED_YEAR_OFFSET,
+                    max: e.max - Y::EXTENDED_YEAR_OFFSET,
+                    ..e
+                }
+            } else {
+                e
+            }
+        })
     }
 }
 
@@ -115,23 +125,12 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     }
 
     fn from_rata_die(&self, date: RataDie) -> Self::DateInner {
-        let iso = match calendrical_calculations::gregorian::gregorian_from_fixed(date) {
-            Err(I32CastError::BelowMin) => {
-                ArithmeticDate::<AbstractGregorian<IsoEra>>::new_unchecked(i32::MIN, 1, 1)
-            }
-            Err(I32CastError::AboveMax) => ArithmeticDate::new_unchecked(i32::MAX, 12, 31),
-            Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
-        };
+        // by precondition the year cannot exceed i32, so the error case is unreachable
+        let (year, month, day) =
+            calendrical_calculations::gregorian::gregorian_from_fixed(date).unwrap_or((1, 1, 1));
 
-        if iso.year.checked_sub(Y::EXTENDED_YEAR_OFFSET).is_none() {
-            if Y::EXTENDED_YEAR_OFFSET < 0 {
-                ArithmeticDate::new_unchecked(i32::MIN - Y::EXTENDED_YEAR_OFFSET, 1, 1)
-            } else {
-                ArithmeticDate::new_unchecked(i32::MAX - Y::EXTENDED_YEAR_OFFSET, 12, 31)
-            }
-        } else {
-            iso
-        }
+        // date is in the valid RD range
+        ArithmeticDate::new_unchecked(year, month, day)
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {

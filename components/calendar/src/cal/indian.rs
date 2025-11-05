@@ -175,6 +175,7 @@ impl Calendar for Indian {
         debug_assert!(day <= Self::days_in_provided_month(year, month) as i32);
         let day = day.try_into().unwrap_or(1);
 
+        // date is in the valid RD range
         IndianDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 

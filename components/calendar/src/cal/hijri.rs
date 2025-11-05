@@ -901,12 +901,6 @@ impl<R: Rules> Calendar for Hijri<R> {
             year = self.0.year_data(year.extended_year + 1)
         }
 
-        // Clamp the RD to our year
-        let rd = rd.clamp(
-            year.new_year(),
-            year.new_year() + year.packed.days_in_year() as i64,
-        );
-
         let day_of_year = (rd - year.new_year()) as u16;
 
         // We divide by 30, not 29, to account for the case where all months before this
@@ -923,6 +917,7 @@ impl<R: Rules> Calendar for Hijri<R> {
 
         let day = (day_of_year + 1 - last_day_of_prev_month) as u8;
 
+        // date is in the valid RD range
         HijriDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 

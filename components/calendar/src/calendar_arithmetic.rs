@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use calendrical_calculations::rata_die::RataDie;
+
 use crate::duration::{DateDuration, DateDurationUnit};
 use crate::error::{
     range_check, range_check_with_overflow, DateFromFieldsError, EcmaReferenceYearError,
@@ -16,14 +18,21 @@ use core::fmt::Debug;
 use core::hash::{Hash, Hasher};
 use core::ops::RangeInclusive;
 
-/// The range ±2²⁷. We use i32::MIN since it is -2³¹
-///
-/// This range is currently global, and applied to both era years and
-/// extended years, but may be replaced with a per-calendar check in the future.
-///
-/// <https://github.com/unicode-org/icu4x/issues/7076>
-const VALID_YEAR_RANGE: RangeInclusive<i32> = (i32::MIN / 16)..=-(i32::MIN / 16);
+/// This is checked by constructors. Internally we don't care about this invariant.
+pub const VALID_YEAR_RANGE: RangeInclusive<i32> = -1_000_000..=1_000_000;
 
+/// This is a fundamental invariant of `ArithmeticDate` and by extension all our
+/// date types. Because this range slightly exceeds the [`VALID_YEAR_RANGE`], only
+/// the valid year range is checked in constructors. Only the `Date::from_rata_die`
+/// constructor actually uses this, but for clamping instead of erroring.
+///
+/// The longest average year length is 365.25 (Julian, Coptic). We round up to 366 to make
+/// it round and capture year offsets from the Gregorian calendar, which underlies RD.
+pub const VALID_RD_RANGE: RangeInclusive<RataDie> =
+    RataDie::new(*VALID_YEAR_RANGE.start() as i64 * 366)
+        ..=RataDie::new(*VALID_YEAR_RANGE.end() as i64 * 366);
+
+// Invariant: VALID_RD_RANGE contains the date
 #[derive(Debug)]
 pub(crate) struct ArithmeticDate<C: DateFieldsResolver> {
     pub year: C::YearInfo,
@@ -154,6 +163,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
 }
 
 impl<C: DateFieldsResolver> ArithmeticDate<C> {
+    // Precondition: the date is in the VALID_RD_RANGE
     #[inline]
     pub(crate) const fn new_unchecked(year: C::YearInfo, month: u8, day: u8) -> Self {
         ArithmeticDate { year, month, day }
@@ -196,6 +206,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
 
         let day = range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
 
+        // date is in the valid year range, and therefore in the valid RD range
         Ok(ArithmeticDate::new_unchecked(year, month, day))
     }
 
@@ -310,21 +321,22 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             1..=C::months_in_provided_year(year),
             options.overflow.unwrap_or_default(),
         )?;
-        Ok(Self::new_unchecked(
-            year,
-            constrained_month,
-            range_check_with_overflow(
-                day,
-                "day",
-                1..=C::days_in_provided_month(year, constrained_month),
-                options.overflow.unwrap_or_default(),
-            )?,
-        ))
+
+        let day = range_check_with_overflow(
+            day,
+            "day",
+            1..=C::days_in_provided_month(year, constrained_month),
+            options.overflow.unwrap_or_default(),
+        )?;
+        // date is in the valid year range, and therefore in the valid RD range
+        Ok(Self::new_unchecked(year, constrained_month, day))
     }
 
     pub(crate) fn try_from_ymd(year: C::YearInfo, month: u8, day: u8) -> Result<Self, RangeError> {
+        range_check(year.to_extended_year(), "year", VALID_YEAR_RANGE)?;
         range_check(month, "month", 1..=C::months_in_provided_year(year))?;
         range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
+        // date is in the valid year range, and therefore in the valid RD range
         Ok(ArithmeticDate::new_unchecked(year, month, day))
     }
 
@@ -402,6 +414,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         debug_assert!(u8::try_from(resolved_day).is_ok());
         let resolved_day = resolved_day as u8;
         // 1. Return the Record { [[Year]]: _resolvedYear_, [[Month]]: _resolvedMonth_, [[Day]]: _resolvedDay_ }.
+        // TODO: does not obey precondition
         Self::new_unchecked(resolved_year, resolved_month, resolved_day)
     }
 

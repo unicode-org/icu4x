@@ -10,7 +10,6 @@ use crate::error::{
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::{types, Calendar, Date, RangeError};
-use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
@@ -162,13 +161,12 @@ impl Calendar for Coptic {
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        CopticDateInner(
-            match calendrical_calculations::coptic::coptic_from_fixed(rd) {
-                Err(I32CastError::BelowMin) => ArithmeticDate::new_unchecked(i32::MIN, 1, 1),
-                Err(I32CastError::AboveMax) => ArithmeticDate::new_unchecked(i32::MAX, 13, 6),
-                Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
-            },
-        )
+        // by precondition the year cannot exceed i32, so the error case is unreachable
+        let (year, month, day) =
+            calendrical_calculations::coptic::coptic_from_fixed(rd).unwrap_or((1, 1, 1));
+
+        // date is in the valid RD range
+        CopticDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
