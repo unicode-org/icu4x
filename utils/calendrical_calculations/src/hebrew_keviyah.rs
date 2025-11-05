@@ -251,7 +251,7 @@ impl YearInfo {
 
         let mut year = Self::compute_for(h_year);
 
-        if date < year.new_year() {
+        if date < year.new_year() && h_year > i32::MIN {
             h_year -= 1;
             year = Self::compute_for(h_year)
         } else if date >= year.new_year() + year.keviyah.year_length() as i64 && h_year < i32::MAX {
