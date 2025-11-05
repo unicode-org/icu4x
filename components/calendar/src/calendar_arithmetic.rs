@@ -35,11 +35,11 @@ pub const VALID_RD_RANGE: RangeInclusive<RataDie> =
 // Invariant: VALID_RD_RANGE contains the date
 #[derive(Debug)]
 pub(crate) struct ArithmeticDate<C: DateFieldsResolver> {
-    pub year: C::YearInfo,
+    year: C::YearInfo,
     /// 1-based month of year
-    pub month: u8,
+    month: u8,
     /// 1-based day of month
-    pub day: u8,
+    day: u8,
 }
 
 // Manual impls since the derive will introduce a C: Trait bound
@@ -53,9 +53,9 @@ impl<C: DateFieldsResolver> Clone for ArithmeticDate<C> {
 
 impl<C: DateFieldsResolver> PartialEq for ArithmeticDate<C> {
     fn eq(&self, other: &Self) -> bool {
-        self.year.to_extended_year() == other.year.to_extended_year()
-            && self.month == other.month
-            && self.day == other.day
+        self.year().to_extended_year() == other.year().to_extended_year()
+            && self.month() == other.month()
+            && self.day() == other.day()
     }
 }
 
@@ -63,11 +63,11 @@ impl<C: DateFieldsResolver> Eq for ArithmeticDate<C> {}
 
 impl<C: DateFieldsResolver> Ord for ArithmeticDate<C> {
     fn cmp(&self, other: &Self) -> Ordering {
-        self.year
+        self.year()
             .to_extended_year()
-            .cmp(&other.year.to_extended_year())
-            .then(self.month.cmp(&other.month))
-            .then(self.day.cmp(&other.day))
+            .cmp(&other.year().to_extended_year())
+            .then(self.month().cmp(&other.month()))
+            .then(self.day().cmp(&other.day()))
     }
 }
 
@@ -82,9 +82,9 @@ impl<C: DateFieldsResolver> Hash for ArithmeticDate<C> {
     where
         H: Hasher,
     {
-        self.year.to_extended_year().hash(state);
-        self.month.hash(state);
-        self.day.hash(state);
+        self.year().to_extended_year().hash(state);
+        self.month().hash(state);
+        self.day().hash(state);
     }
 }
 
@@ -163,6 +163,18 @@ pub(crate) trait DateFieldsResolver: Calendar {
 }
 
 impl<C: DateFieldsResolver> ArithmeticDate<C> {
+    pub(crate) const fn day(self) -> u8 {
+        self.day
+    }
+
+    pub(crate) const fn month(self) -> u8 {
+        self.month
+    }
+
+    pub(crate) const fn year(self) -> C::YearInfo {
+        self.year
+    }
+
     // Precondition: the date is in the VALID_RD_RANGE
     #[inline]
     pub(crate) const fn new_unchecked(year: C::YearInfo, month: u8, day: u8) -> Self {
@@ -172,11 +184,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     pub(crate) const fn cast<C2: DateFieldsResolver<YearInfo = C::YearInfo>>(
         self,
     ) -> ArithmeticDate<C2> {
-        ArithmeticDate {
-            year: self.year,
-            month: self.month,
-            day: self.day,
-        }
+        ArithmeticDate::new_unchecked(self.year(), self.month(), self.day())
     }
 
     pub(crate) fn from_codes(
@@ -432,9 +440,9 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     ) -> bool {
         // 1. Let _parts_ be CalendarISOToDate(_calendar_, _fromIsoDate_).
         // 1. Let _y0_ be _parts_.[[Year]] + _years_.
-        let y0 = cal.year_info_from_extended(duration.add_years_to(self.year.to_extended_year()));
+        let y0 = cal.year_info_from_extended(duration.add_years_to(self.year().to_extended_year()));
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], ~constrain~)).
-        let base_month_code = cal.month_code_from_ordinal(&self.year, self.month);
+        let base_month_code = cal.month_code_from_ordinal(&self.year(), self.month());
         let constrain = DateFromFieldsOptions {
             overflow: Some(Overflow::Constrain),
             ..Default::default()
@@ -453,7 +461,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // 1. Let _endOfMonth_ be BalanceNonISODate(_calendar_, _y0_, _m0_ + _months_ + 1, 0).
         let end_of_month = Self::new_balanced(y0, duration.add_months_to(m0) + 1, 0, cal);
         // 1. Let _baseDay_ be _parts_.[[Day]].
-        let base_day = self.day;
+        let base_day = self.day();
         let y1;
         let m1;
         let d1;
@@ -463,31 +471,31 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             //     1. Let _regulatedDay_ be _baseDay_.
             //   1. Else,
             //     1. Let _regulatedDay_ be _endOfMonth_.[[Day]].
-            let regulated_day = if base_day < end_of_month.day {
+            let regulated_day = if base_day < end_of_month.day() {
                 base_day
             } else {
-                end_of_month.day
+                end_of_month.day()
             };
             //   1. Let _balancedDate_ be BalanceNonISODate(_calendar_, _endOfMonth_.[[Year]], _endOfMonth_.[[Month]], _regulatedDay_ + 7 * _weeks_ + _days_).
             //   1. Let _y1_ be _balancedDate_.[[Year]].
             //   1. Let _m1_ be _balancedDate_.[[Month]].
             //   1. Let _d1_ be _balancedDate_.[[Day]].
             let balanced_date = Self::new_balanced(
-                end_of_month.year,
-                i64::from(end_of_month.month),
+                end_of_month.year(),
+                i64::from(end_of_month.month()),
                 duration.add_weeks_and_days_to(regulated_day),
                 cal,
             );
-            y1 = balanced_date.year;
-            m1 = balanced_date.month;
-            d1 = balanced_date.day;
+            y1 = balanced_date.year();
+            m1 = balanced_date.month();
+            d1 = balanced_date.day();
         } else {
             // 1. Else,
             //   1. Let _y1_ be _endOfMonth_.[[Year]].
             //   1. Let _m1_ be _endOfMonth_.[[Month]].
             //   1. Let _d1_ be _baseDay_.
-            y1 = end_of_month.year;
-            m1 = end_of_month.month;
+            y1 = end_of_month.year();
+            m1 = end_of_month.month();
             d1 = base_day;
         }
         // 1. Let _calDate2_ be CalendarISOToDate(_calendar_, _toIsoDate_).
@@ -498,18 +506,19 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // 1. Else if _d1_ ≠ _calDate2_.[[Day]], then
         //   1. If _sign_ × (_d1_ - _calDate2_.[[Day]]) > 0, return *true*.
         #[allow(clippy::collapsible_if)] // to align with the spec
-        if y1 != other.year {
-            if sign * (i64::from(y1.to_extended_year()) - i64::from(other.year.to_extended_year()))
+        if y1 != other.year() {
+            if sign
+                * (i64::from(y1.to_extended_year()) - i64::from(other.year().to_extended_year()))
                 > 0
             {
                 return true;
             }
-        } else if m1 != other.month {
-            if sign * (i64::from(m1) - i64::from(other.month)) > 0 {
+        } else if m1 != other.month() {
+            if sign * (i64::from(m1) - i64::from(other.month())) > 0 {
                 return true;
             }
-        } else if d1 != other.day {
-            if sign * (i64::from(d1) - i64::from(other.day)) > 0 {
+        } else if d1 != other.day() {
+            if sign * (i64::from(d1) - i64::from(other.day())) > 0 {
                 return true;
             }
         }
@@ -529,9 +538,9 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     ) -> Result<Self, DateError> {
         // 1. Let _parts_ be CalendarISOToDate(_calendar_, _isoDate_).
         // 1. Let _y0_ be _parts_.[[Year]] + _duration_.[[Years]].
-        let y0 = cal.year_info_from_extended(duration.add_years_to(self.year.to_extended_year()));
+        let y0 = cal.year_info_from_extended(duration.add_years_to(self.year().to_extended_year()));
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], _overflow_)).
-        let base_month = cal.month_code_from_ordinal(&self.year, self.month);
+        let base_month = cal.month_code_from_ordinal(&self.year(), self.month());
         let m0 = cal
             .ordinal_month_from_code(
                 &y0,
@@ -552,10 +561,10 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // 1. Let _endOfMonth_ be BalanceNonISODate(_calendar_, _y0_, _m0_ + _duration_.[[Months]] + 1, 0).
         let end_of_month = Self::new_balanced(y0, duration.add_months_to(m0) + 1, 0, cal);
         // 1. Let _baseDay_ be _parts_.[[Day]].
-        let base_day = self.day;
+        let base_day = self.day();
         // 1. If _baseDay_ &lt; _endOfMonth_.[[Day]], then
         //   1. Let _regulatedDay_ be _baseDay_.
-        let regulated_day = if base_day < end_of_month.day {
+        let regulated_day = if base_day < end_of_month.day() {
             base_day
         } else {
             // 1. Else,
@@ -566,17 +575,17 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                     field: "day",
                     value: i32::from(base_day),
                     min: 1,
-                    max: i32::from(end_of_month.day),
+                    max: i32::from(end_of_month.day()),
                 });
             }
-            end_of_month.day
+            end_of_month.day()
         };
         // 1. Let _balancedDate_ be BalanceNonISODate(_calendar_, _endOfMonth_.[[Year]], _endOfMonth_.[[Month]], _regulatedDay_ + 7 * _duration_.[[Weeks]] + _duration_.[[Days]]).
         // 1. Let _result_ be ? CalendarIntegersToISO(_calendar_, _balancedDate_.[[Year]], _balancedDate_.[[Month]], _balancedDate_.[[Day]]).
         // 1. Return _result_.
         Ok(Self::new_balanced(
-            end_of_month.year,
-            i64::from(end_of_month.month),
+            end_of_month.year(),
+            i64::from(end_of_month.month()),
             duration.add_weeks_and_days_to(regulated_day),
             cal,
         ))

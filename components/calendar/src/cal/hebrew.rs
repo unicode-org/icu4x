@@ -234,11 +234,16 @@ impl Calendar for Hebrew {
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        let ny = date.0.year.keviyah.year_info(date.0.year.value).new_year();
-        let days_preceding = date.0.year.keviyah.days_preceding(date.0.month);
+        let ny = date
+            .0
+            .year()
+            .keviyah
+            .year_info(date.0.year().value)
+            .new_year();
+        let days_preceding = date.0.year().keviyah.days_preceding(date.0.month());
 
         // Need to subtract 1 since the new year is itself in this year
-        ny + i64::from(days_preceding) + i64::from(date.0.day) - 1
+        ny + i64::from(days_preceding) + i64::from(date.0.day()) - 1
     }
 
     fn has_cheap_iso_conversion(&self) -> bool {
@@ -246,15 +251,15 @@ impl Calendar for Hebrew {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Self::months_in_provided_year(date.0.year)
+        Self::months_in_provided_year(date.0.year())
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.0.year.keviyah.year_length()
+        date.0.year().keviyah.year_length()
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        Self::days_in_provided_month(date.0.year, date.0.month)
+        Self::days_in_provided_month(date.0.year(), date.0.month())
     }
 
     #[cfg(feature = "unstable")]
@@ -282,7 +287,7 @@ impl Calendar for Hebrew {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let extended_year = date.0.year.value;
+        let extended_year = date.0.year().value;
         types::EraYear {
             era_index: Some(0),
             era: tinystr!(16, "am"),
@@ -293,20 +298,20 @@ impl Calendar for Hebrew {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        date.0.year.keviyah.is_leap()
+        date.0.year().keviyah.is_leap()
     }
 
     fn month(&self, date: &Self::DateInner) -> MonthInfo {
-        let valid_standard_code = self.month_code_from_ordinal(&date.0.year, date.0.month);
+        let valid_standard_code = self.month_code_from_ordinal(&date.0.year(), date.0.month());
 
-        let valid_formatting_code = if valid_standard_code.number() == 6 && date.0.month == 7 {
+        let valid_formatting_code = if valid_standard_code.number() == 6 && date.0.month() == 7 {
             ValidMonthCode::new_unchecked(6, true) // M06L
         } else {
             valid_standard_code
         };
 
         types::MonthInfo {
-            ordinal: date.0.month,
+            ordinal: date.0.month(),
             standard_code: valid_standard_code.to_month_code(),
             valid_standard_code,
             formatting_code: valid_formatting_code.to_month_code(),
@@ -315,11 +320,11 @@ impl Calendar for Hebrew {
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        types::DayOfMonth(date.0.day)
+        types::DayOfMonth(date.0.day())
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        types::DayOfYear(date.0.year.keviyah.days_preceding(date.0.month) + date.0.day as u16)
+        types::DayOfYear(date.0.year().keviyah.days_preceding(date.0.month()) + date.0.day() as u16)
     }
 
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
@@ -469,13 +474,13 @@ mod tests {
     fn test_negative_era_years() {
         let greg_date = Date::try_new_gregorian(-5000, 1, 1).unwrap();
         let greg_year = greg_date.era_year();
-        assert_eq!(greg_date.inner.0.year, -5000);
+        assert_eq!(greg_date.inner.0.year(), -5000);
         assert_eq!(greg_year.era, "bce");
         // In Gregorian, era year is 1 - extended year
         assert_eq!(greg_year.year, 5001);
         let hebr_date = greg_date.to_calendar(Hebrew);
         let hebr_year = hebr_date.era_year();
-        assert_eq!(hebr_date.inner.0.year.value, -1240);
+        assert_eq!(hebr_date.inner.0.year().value, -1240);
         assert_eq!(hebr_year.era, "am");
         // In Hebrew, there is no inverse era, so negative extended years are negative era years
         assert_eq!(hebr_year.year, -1240);
