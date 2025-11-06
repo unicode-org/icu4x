@@ -238,8 +238,8 @@ where
             match datetime_names.get_name_for_month(
                 symbol,
                 l,
-                month.formatting_month_number() - 1,
-                month.formatting_is_leap(),
+                month.formatting().number() - 1,
+                month.formatting().is_leap(),
             ) {
                 Ok(MonthPlaceholderValue::PlainString(symbol)) => {
                     w.with_part(PART, |w| w.write_str(symbol))?;

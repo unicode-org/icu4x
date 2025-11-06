@@ -632,14 +632,9 @@ impl MonthInfo {
         self.standard.number()
     }
 
-    #[doc(hidden)] // for formatting
-    pub fn formatting_month_number(self) -> u8 {
-        self.formatting.number()
-    }
-
-    #[doc(hidden)] // for formatting
-    pub fn formatting_is_leap(self) -> bool {
-        self.formatting.is_leap()
+    #[doc(hidden)]
+    pub fn formatting(self) -> Month {
+        self.formatting
     }
 }
 

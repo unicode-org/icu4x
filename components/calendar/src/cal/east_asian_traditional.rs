@@ -314,15 +314,15 @@ impl Rules for China {
 /// let korean_a = iso_a.to_calendar(KoreanTraditional::new());
 /// let chinese_a = iso_a.to_calendar(ChineseTraditional::new());
 ///
-/// assert_eq!((korean_a.month().month_number(), korean_a.month().is_leap()), (3, true));
-/// assert_eq!((chinese_a.month().month_number(), chinese_a.month().is_leap()), (4, false));
+/// assert_eq!((korean_a.month().number(), korean_a.month().is_leap()), (3, true));
+/// assert_eq!((chinese_a.month().number(), chinese_a.month().is_leap()), (4, false));
 ///
 /// let iso_b = Date::try_new_iso(2012, 5, 23).unwrap();
 /// let korean_b = iso_b.to_calendar(KoreanTraditional::new());
 /// let chinese_b = iso_b.to_calendar(ChineseTraditional::new());
 ///
-/// assert_eq!((korean_b.month().month_number(), korean_b.month().is_leap()), (4, false));
-/// assert_eq!((chinese_b.month().month_number(), chinese_b.month().is_leap()), (4, true));
+/// assert_eq!((korean_b.month().number(), korean_b.month().is_leap()), (4, false));
+/// assert_eq!((chinese_b.month().number(), chinese_b.month().is_leap()), (4, true));
 /// ```
 pub type KoreanTraditional = EastAsianTraditional<Korea>;
 
