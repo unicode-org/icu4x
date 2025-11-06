@@ -624,7 +624,10 @@ impl MonthInfo {
         self.standard.is_leap()
     }
 
-    #[doc(hidden)] // exposed, not a great name
+    /// Gets the month number. A month number N is not necessarily the Nth month in the year
+    /// if there are leap months in the year, rather it is associated with the Nth month of a "regular"
+    /// year. There may be multiple month Ns in a year
+    #[deprecated(since = "2.2.0", note = "use `number`")]
     pub fn month_number(self) -> u8 {
         self.standard.number()
     }
