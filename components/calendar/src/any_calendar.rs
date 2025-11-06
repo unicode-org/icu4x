@@ -1628,43 +1628,9 @@ mod tests {
     }
 
     #[test]
-    fn test_any_construction() {
+    fn buddhist() {
         let buddhist = AnyCalendar::new(AnyCalendarKind::Buddhist);
-        let chinese = AnyCalendar::new(AnyCalendarKind::Chinese);
-        let coptic = AnyCalendar::new(AnyCalendarKind::Coptic);
-        let dangi = AnyCalendar::new(AnyCalendarKind::Dangi);
-        let ethioaa = AnyCalendar::new(AnyCalendarKind::EthiopianAmeteAlem);
-        let ethiopian = AnyCalendar::new(AnyCalendarKind::Ethiopian);
-        let gregorian = AnyCalendar::new(AnyCalendarKind::Gregorian);
-        let hebrew = AnyCalendar::new(AnyCalendarKind::Hebrew);
-        let indian = AnyCalendar::new(AnyCalendarKind::Indian);
-        let hijri_civil: AnyCalendar = AnyCalendar::new(AnyCalendarKind::HijriTabularTypeIIFriday);
-        let hijri_simulated: AnyCalendar = AnyCalendar::new(AnyCalendarKind::HijriSimulatedMecca);
-        let hijri_astronomical: AnyCalendar =
-            AnyCalendar::new(AnyCalendarKind::HijriTabularTypeIIThursday);
-        let hijri_umm_al_qura: AnyCalendar = AnyCalendar::new(AnyCalendarKind::HijriUmmAlQura);
-        let japanese = AnyCalendar::new(AnyCalendarKind::Japanese);
-        let japanext = AnyCalendar::new(AnyCalendarKind::JapaneseExtended);
-        let persian = AnyCalendar::new(AnyCalendarKind::Persian);
-        let roc = AnyCalendar::new(AnyCalendarKind::Roc);
         let buddhist = Ref(&buddhist);
-        let chinese = Ref(&chinese);
-        let coptic = Ref(&coptic);
-        let dangi = Ref(&dangi);
-        let ethioaa = Ref(&ethioaa);
-        let ethiopian = Ref(&ethiopian);
-        let gregorian = Ref(&gregorian);
-        let hebrew = Ref(&hebrew);
-        let indian = Ref(&indian);
-        let hijri_civil = Ref(&hijri_civil);
-        let hijri_simulated = Ref(&hijri_simulated);
-        let hijri_astronomical = Ref(&hijri_astronomical);
-        let hijri_umm_al_qura = Ref(&hijri_umm_al_qura);
-        let japanese = Ref(&japanese);
-        let japanext = Ref(&japanext);
-        let persian = Ref(&persian);
-        let roc = Ref(&roc);
-
         single_test_roundtrip(buddhist, Some(("be", Some(0))), 100, "M03", 1);
         single_test_roundtrip(buddhist, None, 100, "M03", 1);
         single_test_roundtrip(buddhist, None, -100, "M03", 1);
@@ -1677,7 +1643,12 @@ mod tests {
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
+    }
 
+    #[test]
+    fn coptic() {
+        let coptic = AnyCalendar::new(AnyCalendarKind::Coptic);
+        let coptic = Ref(&coptic);
         single_test_roundtrip(coptic, Some(("am", Some(0))), 100, "M03", 1);
         single_test_roundtrip(coptic, None, 2000, "M03", 1);
         single_test_roundtrip(coptic, None, -100, "M03", 1);
@@ -1691,7 +1662,12 @@ mod tests {
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M14"))),
         );
+    }
 
+    #[test]
+    fn ethiopian() {
+        let ethiopian = AnyCalendar::new(AnyCalendarKind::Ethiopian);
+        let ethiopian = Ref(&ethiopian);
         single_test_roundtrip(ethiopian, Some(("am", Some(1))), 100, "M03", 1);
         single_test_roundtrip(ethiopian, None, 2000, "M03", 1);
         single_test_roundtrip(ethiopian, None, -100, "M03", 1);
@@ -1734,20 +1710,30 @@ mod tests {
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M14"))),
         );
+    }
 
-        single_test_roundtrip(ethioaa, Some(("aa", Some(0))), 7000, "M13", 1);
-        single_test_roundtrip(ethioaa, None, 7000, "M13", 1);
-        single_test_roundtrip(ethioaa, None, -100, "M13", 1);
-        single_test_roundtrip(ethioaa, Some(("aa", Some(0))), 100, "M03", 1);
+    #[test]
+    fn ethiopian_amete_alem() {
+        let ethiopian_amete_alem = AnyCalendar::new(AnyCalendarKind::EthiopianAmeteAlem);
+        let ethiopian_amete_alem = Ref(&ethiopian_amete_alem);
+        single_test_roundtrip(ethiopian_amete_alem, Some(("aa", Some(0))), 7000, "M13", 1);
+        single_test_roundtrip(ethiopian_amete_alem, None, 7000, "M13", 1);
+        single_test_roundtrip(ethiopian_amete_alem, None, -100, "M13", 1);
+        single_test_roundtrip(ethiopian_amete_alem, Some(("aa", Some(0))), 100, "M03", 1);
         single_test_error(
-            ethiopian,
+            ethiopian_amete_alem,
             Some(("aa", Some(0))),
             100,
             "M14",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M14"))),
         );
+    }
 
+    #[test]
+    fn gregorian() {
+        let gregorian = AnyCalendar::new(AnyCalendarKind::Gregorian);
+        let gregorian = Ref(&gregorian);
         single_test_roundtrip(gregorian, Some(("ce", Some(1))), 100, "M03", 1);
         single_test_roundtrip(gregorian, None, 2000, "M03", 1);
         single_test_roundtrip(gregorian, None, -100, "M03", 1);
@@ -1789,7 +1775,12 @@ mod tests {
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
+    }
 
+    #[test]
+    fn indian() {
+        let indian = AnyCalendar::new(AnyCalendarKind::Indian);
+        let indian = Ref(&indian);
         single_test_roundtrip(indian, Some(("shaka", Some(0))), 100, "M03", 1);
         single_test_roundtrip(indian, None, 2000, "M12", 1);
         single_test_roundtrip(indian, None, -100, "M03", 1);
@@ -1802,31 +1793,46 @@ mod tests {
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
+    }
 
-        single_test_roundtrip(chinese, None, 400, "M02", 5);
-        single_test_roundtrip(chinese, None, 4660, "M07", 29);
-        single_test_roundtrip(chinese, None, -100, "M11", 12);
+    #[test]
+    fn chinese_traditional() {
+        let chinese_traditional = AnyCalendar::new(AnyCalendarKind::Chinese);
+        let chinese_traditional = Ref(&chinese_traditional);
+        single_test_roundtrip(chinese_traditional, None, 400, "M02", 5);
+        single_test_roundtrip(chinese_traditional, None, 4660, "M07", 29);
+        single_test_roundtrip(chinese_traditional, None, -100, "M11", 12);
         single_test_error(
-            chinese,
+            chinese_traditional,
             None,
             4658,
             "M13",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
+    }
 
-        single_test_roundtrip(dangi, None, 400, "M02", 5);
-        single_test_roundtrip(dangi, None, 4660, "M08", 29);
-        single_test_roundtrip(dangi, None, -1300, "M11", 12);
+    #[test]
+    fn korean_traditional() {
+        let korean_traditional = AnyCalendar::new(AnyCalendarKind::Dangi);
+        let korean_traditional = Ref(&korean_traditional);
+        single_test_roundtrip(korean_traditional, None, 400, "M02", 5);
+        single_test_roundtrip(korean_traditional, None, 4660, "M08", 29);
+        single_test_roundtrip(korean_traditional, None, -1300, "M11", 12);
         single_test_error(
-            dangi,
+            korean_traditional,
             None,
             10393,
             "M00L",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M00L"))),
         );
+    }
 
+    #[test]
+    fn japanese() {
+        let japanese = AnyCalendar::new(AnyCalendarKind::Japanese);
+        let japanese = Ref(&japanese);
         single_test_roundtrip(japanese, Some(("reiwa", None)), 3, "M03", 1);
         single_test_roundtrip(japanese, Some(("heisei", None)), 6, "M12", 1);
         single_test_roundtrip(japanese, Some(("meiji", None)), 10, "M03", 1);
@@ -1872,13 +1878,24 @@ mod tests {
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
+    }
 
-        single_test_roundtrip(japanext, Some(("reiwa", None)), 3, "M03", 1);
-        single_test_roundtrip(japanext, Some(("heisei", None)), 6, "M12", 1);
-        single_test_roundtrip(japanext, Some(("meiji", None)), 10, "M03", 1);
-        single_test_roundtrip(japanext, Some(("tenpyokampo-749", None)), 1, "M04", 20);
-        single_test_roundtrip(japanext, Some(("ce", None)), 100, "M03", 1);
-        single_test_roundtrip(japanext, Some(("bce", None)), 10, "M03", 1);
+    #[test]
+    fn japanese_extended() {
+        let japanese_extended = AnyCalendar::new(AnyCalendarKind::JapaneseExtended);
+        let japanese_extended = Ref(&japanese_extended);
+        single_test_roundtrip(japanese_extended, Some(("reiwa", None)), 3, "M03", 1);
+        single_test_roundtrip(japanese_extended, Some(("heisei", None)), 6, "M12", 1);
+        single_test_roundtrip(japanese_extended, Some(("meiji", None)), 10, "M03", 1);
+        single_test_roundtrip(
+            japanese_extended,
+            Some(("tenpyokampo-749", None)),
+            1,
+            "M04",
+            20,
+        );
+        single_test_roundtrip(japanese_extended, Some(("ce", None)), 100, "M03", 1);
+        single_test_roundtrip(japanese_extended, Some(("bce", None)), 10, "M03", 1);
         // Since #6910, the era range is not enforced in try_from_codes
         /*
         single_test_error(
@@ -1909,14 +1926,19 @@ mod tests {
         );
         */
         single_test_error(
-            japanext,
+            japanese_extended,
             Some(("reiwa", None)),
             2,
             "M13",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
+    }
 
+    #[test]
+    fn persian() {
+        let persian = AnyCalendar::new(AnyCalendarKind::Persian);
+        let persian = Ref(&persian);
         single_test_roundtrip(persian, Some(("ap", Some(0))), 477, "M03", 1);
         single_test_roundtrip(persian, None, 2083, "M07", 21);
         single_test_roundtrip(persian, None, -100, "M07", 21);
@@ -1929,7 +1951,12 @@ mod tests {
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
+    }
 
+    #[test]
+    fn hebrew() {
+        let hebrew = AnyCalendar::new(AnyCalendarKind::Hebrew);
+        let hebrew = Ref(&hebrew);
         single_test_roundtrip(hebrew, Some(("am", Some(0))), 5773, "M03", 1);
         single_test_roundtrip(hebrew, None, 4993, "M07", 21);
         single_test_roundtrip(hebrew, None, -100, "M07", 21);
@@ -1942,12 +1969,19 @@ mod tests {
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
+    }
 
+    #[test]
+    fn roc() {
+        let roc = AnyCalendar::new(AnyCalendarKind::Roc);
+        let roc = Ref(&roc);
         single_test_roundtrip(roc, Some(("roc", Some(1))), 10, "M05", 3);
         single_test_roundtrip(roc, Some(("broc", Some(0))), 15, "M01", 10);
         single_test_roundtrip(roc, None, 100, "M10", 30);
         single_test_roundtrip(roc, None, -100, "M10", 30);
 
+        let hijri_simulated: AnyCalendar = AnyCalendar::new(AnyCalendarKind::HijriSimulatedMecca);
+        let hijri_simulated = Ref(&hijri_simulated);
         single_test_roundtrip(hijri_simulated, Some(("ah", Some(0))), 477, "M03", 1);
         single_test_roundtrip(hijri_simulated, None, 2083, "M07", 21);
         single_test_roundtrip(hijri_simulated, None, -100, "M07", 21);
@@ -1960,20 +1994,31 @@ mod tests {
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
+    }
 
-        single_test_roundtrip(hijri_civil, Some(("ah", Some(0))), 477, "M03", 1);
-        single_test_roundtrip(hijri_civil, None, 2083, "M07", 21);
-        single_test_roundtrip(hijri_civil, None, -100, "M07", 21);
-        single_test_roundtrip(hijri_civil, Some(("ah", Some(0))), 1600, "M12", 20);
+    #[test]
+    fn hijri_tabular_friday() {
+        let hijri_tabular_friday: AnyCalendar =
+            AnyCalendar::new(AnyCalendarKind::HijriTabularTypeIIFriday);
+        let hijri_tabular_friday = Ref(&hijri_tabular_friday);
+        single_test_roundtrip(hijri_tabular_friday, Some(("ah", Some(0))), 477, "M03", 1);
+        single_test_roundtrip(hijri_tabular_friday, None, 2083, "M07", 21);
+        single_test_roundtrip(hijri_tabular_friday, None, -100, "M07", 21);
+        single_test_roundtrip(hijri_tabular_friday, Some(("ah", Some(0))), 1600, "M12", 20);
         single_test_error(
-            hijri_civil,
+            hijri_tabular_friday,
             Some(("ah", Some(0))),
             100,
             "M9",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
+    }
 
+    #[test]
+    fn hijri_umm_al_qura() {
+        let hijri_umm_al_qura: AnyCalendar = AnyCalendar::new(AnyCalendarKind::HijriUmmAlQura);
+        let hijri_umm_al_qura = Ref(&hijri_umm_al_qura);
         single_test_roundtrip(hijri_umm_al_qura, Some(("ah", Some(0))), 477, "M03", 1);
         single_test_roundtrip(hijri_umm_al_qura, None, 2083, "M07", 21);
         single_test_roundtrip(hijri_umm_al_qura, None, -100, "M07", 21);
@@ -1986,13 +2031,25 @@ mod tests {
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
+    }
 
-        single_test_roundtrip(hijri_astronomical, Some(("ah", Some(0))), 477, "M03", 1);
-        single_test_roundtrip(hijri_astronomical, None, 2083, "M07", 21);
-        single_test_roundtrip(hijri_astronomical, None, -100, "M07", 21);
-        single_test_roundtrip(hijri_astronomical, Some(("ah", Some(0))), 1600, "M12", 20);
+    #[test]
+    fn hijri_tabular_thursday() {
+        let hijri_tabular_thursday: AnyCalendar =
+            AnyCalendar::new(AnyCalendarKind::HijriTabularTypeIIThursday);
+        let hijri_tabular_thursday = Ref(&hijri_tabular_thursday);
+        single_test_roundtrip(hijri_tabular_thursday, Some(("ah", Some(0))), 477, "M03", 1);
+        single_test_roundtrip(hijri_tabular_thursday, None, 2083, "M07", 21);
+        single_test_roundtrip(hijri_tabular_thursday, None, -100, "M07", 21);
+        single_test_roundtrip(
+            hijri_tabular_thursday,
+            Some(("ah", Some(0))),
+            1600,
+            "M12",
+            20,
+        );
         single_test_error(
-            hijri_astronomical,
+            hijri_tabular_thursday,
             Some(("ah", Some(0))),
             100,
             "M9",
