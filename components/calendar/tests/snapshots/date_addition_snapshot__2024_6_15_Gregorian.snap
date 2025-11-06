@@ -1,0 +1,10 @@
+---
+source: components/calendar/tests/date_addition_snapshot.rs
+expression: "(format!(\"Start: {:?}-{:?}-{:?}\", y, m, d),\nformat!(\"Calendar: {:?}\", cal_kind),\nformat!(\"Duration added: {:?}\", duration),\nformat!(\"Resulting ISO date: {:?}\", result_iso))"
+---
+(
+    "Start: 2024-6-15",
+    "Calendar: Gregorian",
+    "Duration added: DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+    "Resulting ISO date: Date(2025-9-30, default era, for calendar ISO)",
+)

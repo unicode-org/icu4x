@@ -1,0 +1,5 @@
+---
+source: components/calendar/tests/single_test.rs
+expression: result
+---
+Date(2024-11-15, default era, for calendar ISO)
