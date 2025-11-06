@@ -90,7 +90,7 @@ impl DateFieldsResolver for Persian {
         month: types::Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
-        let (ordinal_month, false) = month.to_tuple() else {
+        let (ordinal_month, false) = (month.number(), month.is_leap()) else {
             return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
         };
         // December 31, 1972 occurs on 10th month, 10th day, 1351 AP

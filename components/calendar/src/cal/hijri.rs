@@ -10,6 +10,7 @@ use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, Unkno
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
+use crate::types::Month;
 use crate::{types, Calendar, Date};
 use crate::{AsCalendar, RangeError};
 use calendrical_calculations::islamic::{
@@ -96,12 +97,7 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
     ///
     /// [spec]: https://tc39.es/proposal-temporal/#sec-temporal-nonisomonthdaytoisoreferencedate
     /// [`MissingFieldsStrategy::Ecma`]: crate::options::MissingFieldsStrategy::Ecma
-    fn ecma_reference_year(
-        &self,
-        // TODO: Consider accepting ValidMonthCode
-        _month: (u8, bool),
-        _day: u8,
-    ) -> Result<i32, EcmaReferenceYearError> {
+    fn ecma_reference_year(&self, _month: Month, _day: u8) -> Result<i32, EcmaReferenceYearError> {
         Err(EcmaReferenceYearError::Unimplemented)
     }
 
@@ -270,16 +266,12 @@ impl Rules for UmmAlQura {
         )))
     }
 
-    fn ecma_reference_year(
-        &self,
-        month: (u8, bool),
-        day: u8,
-    ) -> Result<i32, EcmaReferenceYearError> {
-        let (ordinal_month, false) = month else {
+    fn ecma_reference_year(&self, month: Month, day: u8) -> Result<i32, EcmaReferenceYearError> {
+        if month.is_leap() {
             return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
-        };
+        }
 
-        let extended_year = match (ordinal_month, day) {
+        let extended_year = match (month.number(), day) {
             (1, _) => 1392,
             (2, 30..) => 1390,
             (2, _) => 1392,
@@ -359,16 +351,12 @@ impl Rules for TabularAlgorithm {
         })
     }
 
-    fn ecma_reference_year(
-        &self,
-        month: (u8, bool),
-        day: u8,
-    ) -> Result<i32, EcmaReferenceYearError> {
-        let (ordinal_month, false) = month else {
+    fn ecma_reference_year(&self, month: Month, day: u8) -> Result<i32, EcmaReferenceYearError> {
+        if month.is_leap() {
             return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
-        };
+        }
 
-        Ok(match (ordinal_month, day) {
+        Ok(match (month.number(), day) {
             (1, _) => 1392,
             (2, 30..) => 1389,
             (2, _) => 1392,
@@ -879,7 +867,7 @@ impl<R: Rules> DateFieldsResolver for Hijri<R> {
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         self.0
-            .ecma_reference_year(month.to_tuple(), day)
+            .ecma_reference_year(month, day)
             .map(|y| self.0.year_data(y))
     }
 }

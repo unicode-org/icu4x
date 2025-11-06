@@ -171,7 +171,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
         month: Month,
         _options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
-        match month.to_tuple() {
+        match (month.number(), month.is_leap()) {
             (month_number @ 1..=12, false) => Ok(month_number),
             _ => Err(MonthCodeError::NotInCalendar),
         }

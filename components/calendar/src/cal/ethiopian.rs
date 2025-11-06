@@ -133,7 +133,7 @@ impl DateFieldsResolver for Ethiopian {
         month: types::Month,
         _options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
-        match month.to_tuple() {
+        match (month.number(), month.is_leap()) {
             (month_number @ 1..=13, false) => Ok(month_number),
             _ => Err(MonthCodeError::NotInCalendar),
         }

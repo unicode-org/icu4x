@@ -105,7 +105,7 @@ impl DateFieldsResolver for Coptic {
         month: types::Month,
         _options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
-        match month.to_tuple() {
+        match (month.number(), month.is_leap()) {
             (month_number @ 1..=13, false) => Ok(month_number),
             _ => Err(MonthCodeError::NotInCalendar),
         }
@@ -117,7 +117,7 @@ impl Coptic {
         month: types::Month,
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        let (ordinal_month, false) = month.to_tuple() else {
+        let (ordinal_month, false) = (month.number(), month.is_leap()) else {
             return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
         };
         // December 31, 1972 occurs on 4th month, 22nd day, 1689 AM

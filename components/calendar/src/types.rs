@@ -362,7 +362,7 @@ impl MonthCode {
     pub fn parsed(self) -> Option<(u8, bool)> {
         Month::try_from_utf8(self.0.as_bytes())
             .ok()
-            .map(Month::to_tuple)
+            .map(|m| (m.number(), m.is_leap()))
     }
 
     /// Construct a "normal" month code given a number ("Mxx").
@@ -489,11 +489,6 @@ impl Month {
     #[inline]
     pub fn is_leap(self) -> bool {
         self.is_leap
-    }
-
-    #[inline]
-    pub(crate) fn to_tuple(self) -> (u8, bool) {
-        (self.number, self.is_leap)
     }
 
     pub(crate) fn to_month_code(self) -> MonthCode {

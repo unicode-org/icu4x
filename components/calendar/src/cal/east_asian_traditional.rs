@@ -109,12 +109,7 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
     ///
     /// [spec]: https://tc39.es/proposal-temporal/#sec-temporal-nonisomonthdaytoisoreferencedate
     /// [`MissingFieldsStrategy::Ecma`]: crate::options::MissingFieldsStrategy::Ecma
-    fn ecma_reference_year(
-        &self,
-        // TODO: Consider accepting ValidMonthCode
-        _month: (u8, bool),
-        _day: u8,
-    ) -> Result<i32, EcmaReferenceYearError> {
+    fn ecma_reference_year(&self, _month: Month, _day: u8) -> Result<i32, EcmaReferenceYearError> {
         Err(EcmaReferenceYearError::Unimplemented)
     }
 
@@ -213,14 +208,9 @@ impl Rules for China {
         }
     }
 
-    fn ecma_reference_year(
-        &self,
-        month: (u8, bool),
-        day: u8,
-    ) -> Result<i32, EcmaReferenceYearError> {
-        let (number, is_leap) = month;
+    fn ecma_reference_year(&self, month: Month, day: u8) -> Result<i32, EcmaReferenceYearError> {
         // Computed by `generate_reference_years`
-        let extended_year = match (number, is_leap, day > 29) {
+        let extended_year = match (month.number(), month.is_leap(), day > 29) {
             (1, false, false) => 1972,
             (1, false, true) => 1970,
             (1, true, false) => 1898,
@@ -406,14 +396,9 @@ impl Rules for Korea {
         }
     }
 
-    fn ecma_reference_year(
-        &self,
-        month: (u8, bool),
-        day: u8,
-    ) -> Result<i32, EcmaReferenceYearError> {
-        let (number, is_leap) = month;
+    fn ecma_reference_year(&self, month: Month, day: u8) -> Result<i32, EcmaReferenceYearError> {
         // Computed by `generate_reference_years`
-        let extended_year = match (number, is_leap, day > 29) {
+        let extended_year = match (month.number(), month.is_leap(), day > 29) {
             (1, false, false) => 1972,
             (1, false, true) => 1970,
             (1, true, false) => 1898,
@@ -612,7 +597,7 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         self.0
-            .ecma_reference_year(month.to_tuple(), day)
+            .ecma_reference_year(month, day)
             .map(|y| self.0.year_data(y))
     }
 
@@ -632,7 +617,7 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
             return Ok(leap_month);
         }
 
-        let (number @ 1..13, leap) = month.to_tuple() else {
+        let (number @ 1..13, leap) = (month.number(), month.is_leap()) else {
             return Err(MonthCodeError::NotInCalendar);
         };
 
