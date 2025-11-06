@@ -752,7 +752,7 @@ mod tests {
 
     #[test]
     fn test_validity_ranges() {
-        use crate::{cal::*, types::MonthCode, Date};
+        use crate::{cal::*, Date};
 
         #[rustfmt::skip]
         let lowest_years = [
@@ -796,42 +796,42 @@ mod tests {
 
         #[rustfmt::skip]
         let lowest_rds = [
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Buddhist).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, ChineseTraditional::new()).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Coptic).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Gregorian).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Hebrew).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Hijri::new_umm_al_qura()).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday)).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Indian).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Iso).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Japanese::new()).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Julian).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, KoreanTraditional::new()).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Persian).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Roc).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Buddhist).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, ChineseTraditional::new()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Coptic).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Gregorian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Hebrew).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Hijri::new_umm_al_qura()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday)).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Indian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Iso).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Japanese::new()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Julian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, KoreanTraditional::new()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Persian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Roc).unwrap().to_rata_die(),
         ];
 
         #[rustfmt::skip]
         let highest_rds = [
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Buddhist).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, ChineseTraditional::new()).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(13).unwrap(), 5, Coptic).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(13).unwrap(), 5, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(13).unwrap(), 5, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Gregorian).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 29, Hebrew).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, Hijri::new_umm_al_qura()).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday)).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, Indian).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Iso).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Japanese::new()).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Julian).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, KoreanTraditional::new()).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, Persian).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Roc).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 31, Buddhist).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 30, ChineseTraditional::new()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(13).code(), 5, Coptic).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(13).code(), 5, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(13).code(), 5, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 31, Gregorian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 29, Hebrew).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 30, Hijri::new_umm_al_qura()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 30, Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday)).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 30, Indian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 31, Iso).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 31, Japanese::new()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 31, Julian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 30, KoreanTraditional::new()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 30, Persian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 31, Roc).unwrap().to_rata_die(),
         ];
 
         // RD range is tight
