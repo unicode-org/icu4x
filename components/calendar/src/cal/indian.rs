@@ -60,11 +60,12 @@ impl DateFieldsResolver for Indian {
     type YearInfo = i32;
 
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
-        if month == 1 {
-            30 + calendrical_calculations::gregorian::is_leap_year(year + YEAR_OFFSET) as u8
-        } else {
-            30 + (month <= 6) as u8
-        }
+        // months are 30 days
+        30 
+            // except for the first 6, which are 31
+            + (month <= 6) as u8
+            // except for the first one in non-leap years
+            - (month == 1 && !calendrical_calculations::gregorian::is_leap_year(year + YEAR_OFFSET)) as u8
     }
 
     #[inline]
