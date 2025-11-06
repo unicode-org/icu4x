@@ -802,8 +802,6 @@ pub enum AnyCalendarKind {
     /// This corresponds to the `"japanese"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Japanese,
     /// The kind of a [`JapaneseExtended`] calendar
-    ///
-    /// This corresponds to the `"japanext"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     JapaneseExtended,
     /// The kind of a [`Persian`] calendar
     ///
