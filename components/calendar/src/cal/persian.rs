@@ -55,7 +55,7 @@ impl DateFieldsResolver for Persian {
 
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
         // months are 30 days
-        30 
+        30
             // except for the first 6, which are 31
             + (month <= 6) as u8
             // and the last one, which is 29 in non-leap years
