@@ -400,8 +400,8 @@ pub(super) struct MatrixZero<'a, const D: usize> {
     dims: [usize; D],
 }
 
-// impl<'a> From<&'a crate::provider::LstmMatrix1<'a>> for MatrixZero<'a, 1> {
-//     fn from(other: &'a crate::provider::LstmMatrix1<'a>) -> Self {
+// impl<'a> From<&'a super::provider::LstmMatrix1<'a>> for MatrixZero<'a, 1> {
+//     fn from(other: &'a super::provider::LstmMatrix1<'a>) -> Self {
 //         Self {
 //             data: &other.data,
 //             dims: other.dims.map(|x| x as usize),
@@ -409,8 +409,8 @@ pub(super) struct MatrixZero<'a, const D: usize> {
 //     }
 // }
 
-// impl<'a> From<&'a crate::provider::LstmMatrix2<'a>> for MatrixZero<'a, 2> {
-//     fn from(other: &'a crate::provider::LstmMatrix2<'a>) -> Self {
+// impl<'a> From<&'a super::provider::LstmMatrix2<'a>> for MatrixZero<'a, 2> {
+//     fn from(other: &'a super::provider::LstmMatrix2<'a>) -> Self {
 //         Self {
 //             data: &other.data,
 //             dims: other.dims.map(|x| x as usize),
@@ -418,8 +418,8 @@ pub(super) struct MatrixZero<'a, const D: usize> {
 //     }
 // }
 
-// impl<'a> From<&'a crate::provider::LstmMatrix3<'a>> for MatrixZero<'a, 3> {
-//     fn from(other: &'a crate::provider::LstmMatrix3<'a>) -> Self {
+// impl<'a> From<&'a super::provider::LstmMatrix3<'a>> for MatrixZero<'a, 3> {
+//     fn from(other: &'a super::provider::LstmMatrix3<'a>) -> Self {
 //         Self {
 //             data: &other.data,
 //             dims: other.dims.map(|x| x as usize),
@@ -427,24 +427,24 @@ pub(super) struct MatrixZero<'a, const D: usize> {
 //     }
 // }
 
-impl<'a> From<&'a crate::CnnMatrix1<'a>> for MatrixZero<'a, 1> {
-    fn from(m: &'a crate::CnnMatrix1<'a>) -> Self {
+impl<'a> From<&'a super::CnnMatrix1<'a>> for MatrixZero<'a, 1> {
+    fn from(m: &'a super::CnnMatrix1<'a>) -> Self {
         Self {
             data: &m.data,
             dims: m.dims.map(|x| x as usize),
         }
     }
 }
-impl<'a> From<&'a crate::CnnMatrix2<'a>> for MatrixZero<'a, 2> {
-    fn from(m: &'a crate::CnnMatrix2<'a>) -> Self {
+impl<'a> From<&'a super::CnnMatrix2<'a>> for MatrixZero<'a, 2> {
+    fn from(m: &'a super::CnnMatrix2<'a>) -> Self {
         Self {
             data: &m.data,
             dims: m.dims.map(|x| x as usize),
         }
     }
 }
-impl<'a> From<&'a crate::CnnMatrix3<'a>> for MatrixZero<'a, 3> {
-    fn from(m: &'a crate::CnnMatrix3<'a>) -> Self {
+impl<'a> From<&'a super::CnnMatrix3<'a>> for MatrixZero<'a, 3> {
+    fn from(m: &'a super::CnnMatrix3<'a>) -> Self {
         Self {
             data: &m.data,
             dims: m.dims.map(|x| x as usize),
