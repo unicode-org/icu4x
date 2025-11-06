@@ -6,6 +6,7 @@
 //! exported from ICU.
 
 use crate::SourceDataProvider;
+use crate::TrieType;
 use icu::collections::char16trie::Char16Trie;
 use icu::collections::codepointtrie::CodePointTrie;
 use icu::normalizer::provider::*;
@@ -26,7 +27,11 @@ macro_rules! normalization_provider {
                 let $toml_data: &normalizer_serde::$serde_struct =
                     self.icuexport()?.read_and_parse_toml(&format!(
                         "norm/{}/{}.toml",
-                        self.trie_type(),
+                        if $file_name == "nfd" || $file_name == "nfkd" {
+                            TrieType::Fast
+                        } else {
+                            self.trie_type()
+                        },
                         $file_name
                     ))?;
 
