@@ -36,10 +36,10 @@ use calendrical_calculations::rata_die::RataDie;
 ///
 /// # Months and days
 ///
-/// The 12 months are called Tishrei (`M01`, 30 days), Ḥešvan (`M02`, 29/30 days),
-/// Kīslev (`M03`, 30/29 days), Ṭevet (`M04`, 29 days), Šəvaṭ (`M05`, 30 days), ʾĂdār (`M06`, 29 days),
-/// Nīsān (`M07`, 30 days), ʾĪyyar (`M08`, 29 days), Sivan (`M09`, 30 days), Tammūz (`M10`, 29 days),
-/// ʾAv (`M11`, 30 days), ʾElūl (`M12`, 29 days).
+/// The 12 months are called Tishri (`M01`, 30 days), Heshvan (`M02`, 29/30 days),
+/// Kislev (`M03`, 30/29 days), Tevet (`M04`, 29 days), Shevat (`M05`, 30 days), Adar (`M06`, 29 days),
+/// Nisan (`M07`, 30 days), Iyar (`M08`, 29 days), Sivan (`M09`, 30 days), Tamuz (`M10`, 29 days),
+/// Av (`M11`, 30 days), Elul (`M12`, 29 days).
 ///
 /// Due to Rosh Hashanah postponement rules, Ḥešvan and Kislev vary in length.
 ///
@@ -361,24 +361,27 @@ impl Date<Hebrew> {
     }
 }
 
+#[allow(missing_docs)]
+impl Month {
+    pub const TISHRI: Month = Month::new(1);
+    pub const HESHVAN: Month = Month::new(2);
+    pub const KISLEV: Month = Month::new(3);
+    pub const TEVET: Month = Month::new(4);
+    pub const SHEVAT: Month = Month::new(5);
+    pub const ADAR_I: Month = Month::leap(5);
+    pub const ADAR: Month = Month::new(6);
+    pub const NISAN: Month = Month::new(7);
+    pub const IYAR: Month = Month::new(8);
+    pub const SIVAN: Month = Month::new(9);
+    pub const TAMUZ: Month = Month::new(10);
+    pub const AV: Month = Month::new(11);
+    pub const ELUL: Month = Month::new(12);
+}
+
 #[cfg(test)]
 mod tests {
 
     use super::*;
-
-    pub const TISHREI: Month = Month::new(1);
-    pub const ḤESHVAN: Month = Month::new(2);
-    pub const KISLEV: Month = Month::new(3);
-    pub const TEVET: Month = Month::new(4);
-    pub const SHEVAT: Month = Month::new(5);
-    pub const ADARI: Month = Month::leap(5);
-    pub const ADAR: Month = Month::new(6);
-    pub const NISAN: Month = Month::new(7);
-    pub const IYYAR: Month = Month::new(8);
-    pub const SIVAN: Month = Month::new(9);
-    pub const TAMMUZ: Month = Month::new(10);
-    pub const AV: Month = Month::new(11);
-    pub const ELUL: Month = Month::new(12);
 
     /// The leap years used in the tests below
     const LEAP_YEARS_IN_TESTS: [i32; 1] = [5782];
@@ -387,54 +390,54 @@ mod tests {
     /// so we don't end up exercising potentially buggy codepaths to test this)
     #[expect(clippy::type_complexity)]
     const ISO_HEBREW_DATE_PAIRS: [((i32, u8, u8), (i32, Month, u8)); 48] = [
-        ((2021, 1, 10), (5781, TEVET, 26)),
-        ((2021, 1, 25), (5781, SHEVAT, 12)),
-        ((2021, 2, 10), (5781, SHEVAT, 28)),
-        ((2021, 2, 25), (5781, ADAR, 13)),
-        ((2021, 3, 10), (5781, ADAR, 26)),
-        ((2021, 3, 25), (5781, NISAN, 12)),
-        ((2021, 4, 10), (5781, NISAN, 28)),
-        ((2021, 4, 25), (5781, IYYAR, 13)),
-        ((2021, 5, 10), (5781, IYYAR, 28)),
-        ((2021, 5, 25), (5781, SIVAN, 14)),
-        ((2021, 6, 10), (5781, SIVAN, 30)),
-        ((2021, 6, 25), (5781, TAMMUZ, 15)),
-        ((2021, 7, 10), (5781, AV, 1)),
-        ((2021, 7, 25), (5781, AV, 16)),
-        ((2021, 8, 10), (5781, ELUL, 2)),
-        ((2021, 8, 25), (5781, ELUL, 17)),
-        ((2021, 9, 10), (5782, TISHREI, 4)),
-        ((2021, 9, 25), (5782, TISHREI, 19)),
-        ((2021, 10, 10), (5782, ḤESHVAN, 4)),
-        ((2021, 10, 25), (5782, ḤESHVAN, 19)),
-        ((2021, 11, 10), (5782, KISLEV, 6)),
-        ((2021, 11, 25), (5782, KISLEV, 21)),
-        ((2021, 12, 10), (5782, TEVET, 6)),
-        ((2021, 12, 25), (5782, TEVET, 21)),
-        ((2022, 1, 10), (5782, SHEVAT, 8)),
-        ((2022, 1, 25), (5782, SHEVAT, 23)),
-        ((2022, 2, 10), (5782, ADARI, 9)),
-        ((2022, 2, 25), (5782, ADARI, 24)),
-        ((2022, 3, 10), (5782, ADAR, 7)),
-        ((2022, 3, 25), (5782, ADAR, 22)),
-        ((2022, 4, 10), (5782, NISAN, 9)),
-        ((2022, 4, 25), (5782, NISAN, 24)),
-        ((2022, 5, 10), (5782, IYYAR, 9)),
-        ((2022, 5, 25), (5782, IYYAR, 24)),
-        ((2022, 6, 10), (5782, SIVAN, 11)),
-        ((2022, 6, 25), (5782, SIVAN, 26)),
-        ((2022, 7, 10), (5782, TAMMUZ, 11)),
-        ((2022, 7, 25), (5782, TAMMUZ, 26)),
-        ((2022, 8, 10), (5782, AV, 13)),
-        ((2022, 8, 25), (5782, AV, 28)),
-        ((2022, 9, 10), (5782, ELUL, 14)),
-        ((2022, 9, 25), (5782, ELUL, 29)),
-        ((2022, 10, 10), (5783, TISHREI, 15)),
-        ((2022, 10, 25), (5783, TISHREI, 30)),
-        ((2022, 11, 10), (5783, ḤESHVAN, 16)),
-        ((2022, 11, 25), (5783, KISLEV, 1)),
-        ((2022, 12, 10), (5783, KISLEV, 16)),
-        ((2022, 12, 25), (5783, TEVET, 1)),
+        ((2021, 1, 10), (5781, Month::TEVET, 26)),
+        ((2021, 1, 25), (5781, Month::SHEVAT, 12)),
+        ((2021, 2, 10), (5781, Month::SHEVAT, 28)),
+        ((2021, 2, 25), (5781, Month::ADAR, 13)),
+        ((2021, 3, 10), (5781, Month::ADAR, 26)),
+        ((2021, 3, 25), (5781, Month::NISAN, 12)),
+        ((2021, 4, 10), (5781, Month::NISAN, 28)),
+        ((2021, 4, 25), (5781, Month::IYAR, 13)),
+        ((2021, 5, 10), (5781, Month::IYAR, 28)),
+        ((2021, 5, 25), (5781, Month::SIVAN, 14)),
+        ((2021, 6, 10), (5781, Month::SIVAN, 30)),
+        ((2021, 6, 25), (5781, Month::TAMUZ, 15)),
+        ((2021, 7, 10), (5781, Month::AV, 1)),
+        ((2021, 7, 25), (5781, Month::AV, 16)),
+        ((2021, 8, 10), (5781, Month::ELUL, 2)),
+        ((2021, 8, 25), (5781, Month::ELUL, 17)),
+        ((2021, 9, 10), (5782, Month::TISHRI, 4)),
+        ((2021, 9, 25), (5782, Month::TISHRI, 19)),
+        ((2021, 10, 10), (5782, Month::HESHVAN, 4)),
+        ((2021, 10, 25), (5782, Month::HESHVAN, 19)),
+        ((2021, 11, 10), (5782, Month::KISLEV, 6)),
+        ((2021, 11, 25), (5782, Month::KISLEV, 21)),
+        ((2021, 12, 10), (5782, Month::TEVET, 6)),
+        ((2021, 12, 25), (5782, Month::TEVET, 21)),
+        ((2022, 1, 10), (5782, Month::SHEVAT, 8)),
+        ((2022, 1, 25), (5782, Month::SHEVAT, 23)),
+        ((2022, 2, 10), (5782, Month::ADAR_I, 9)),
+        ((2022, 2, 25), (5782, Month::ADAR_I, 24)),
+        ((2022, 3, 10), (5782, Month::ADAR, 7)),
+        ((2022, 3, 25), (5782, Month::ADAR, 22)),
+        ((2022, 4, 10), (5782, Month::NISAN, 9)),
+        ((2022, 4, 25), (5782, Month::NISAN, 24)),
+        ((2022, 5, 10), (5782, Month::IYAR, 9)),
+        ((2022, 5, 25), (5782, Month::IYAR, 24)),
+        ((2022, 6, 10), (5782, Month::SIVAN, 11)),
+        ((2022, 6, 25), (5782, Month::SIVAN, 26)),
+        ((2022, 7, 10), (5782, Month::TAMUZ, 11)),
+        ((2022, 7, 25), (5782, Month::TAMUZ, 26)),
+        ((2022, 8, 10), (5782, Month::AV, 13)),
+        ((2022, 8, 25), (5782, Month::AV, 28)),
+        ((2022, 9, 10), (5782, Month::ELUL, 14)),
+        ((2022, 9, 25), (5782, Month::ELUL, 29)),
+        ((2022, 10, 10), (5783, Month::TISHRI, 15)),
+        ((2022, 10, 25), (5783, Month::TISHRI, 30)),
+        ((2022, 11, 10), (5783, Month::HESHVAN, 16)),
+        ((2022, 11, 25), (5783, Month::KISLEV, 1)),
+        ((2022, 12, 10), (5783, Month::KISLEV, 16)),
+        ((2022, 12, 25), (5783, Month::TEVET, 1)),
     ];
 
     #[test]
@@ -457,12 +460,12 @@ mod tests {
                 "Failed comparing to-hebrew value for {iso_date:?} => {hebrew_date:?}"
             );
 
-            let ordinal_month = if (m == ADARI || m.number() >= ADAR.number())
+            let ordinal_month = if (m == Month::ADAR_I || m.number() >= Month::ADAR.number())
                 && LEAP_YEARS_IN_TESTS.contains(&y)
             {
                 m.number() + 1
             } else {
-                assert!(m != ADARI);
+                assert!(m != Month::ADAR_I);
                 m.number()
             };
 
@@ -501,8 +504,7 @@ mod tests {
         // https://github.com/unicode-org/icu4x/issues/4893
         let cal = Hebrew::new();
         let era = "am";
-        let month = Month::new(1);
-        let dt = Date::try_new_from_codes(Some(era), 3760, month.code(), 1, cal).unwrap();
+        let dt = Date::try_new_from_codes(Some(era), 3760, Month::TISHRI.code(), 1, cal).unwrap();
 
         // Should be Saturday per:
         // https://www.hebcal.com/converter?hd=1&hm=Tishrei&hy=3760&h2g=1

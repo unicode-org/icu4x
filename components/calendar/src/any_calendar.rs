@@ -1624,10 +1624,10 @@ mod tests {
     fn buddhist() {
         let buddhist = AnyCalendar::new(AnyCalendarKind::Buddhist);
         let buddhist = Ref(&buddhist);
-        single_test_roundtrip(buddhist, Some(("be", Some(0))), 100, Month::new(3), 1);
-        single_test_roundtrip(buddhist, None, 100, Month::new(3), 1);
-        single_test_roundtrip(buddhist, None, -100, Month::new(3), 1);
-        single_test_roundtrip(buddhist, Some(("be", Some(0))), -100, Month::new(3), 1);
+        single_test_roundtrip(buddhist, Some(("be", Some(0))), 100, Month::MARCH, 1);
+        single_test_roundtrip(buddhist, None, 100, Month::MARCH, 1);
+        single_test_roundtrip(buddhist, None, -100, Month::MARCH, 1);
+        single_test_roundtrip(buddhist, Some(("be", Some(0))), -100, Month::MARCH, 1);
         single_test_error(
             buddhist,
             Some(("be", Some(0))),
@@ -1642,11 +1642,11 @@ mod tests {
     fn coptic() {
         let coptic = AnyCalendar::new(AnyCalendarKind::Coptic);
         let coptic = Ref(&coptic);
-        single_test_roundtrip(coptic, Some(("am", Some(0))), 100, Month::new(3), 1);
-        single_test_roundtrip(coptic, None, 2000, Month::new(3), 1);
-        single_test_roundtrip(coptic, None, -100, Month::new(3), 1);
-        single_test_roundtrip(coptic, Some(("am", Some(0))), -99, Month::new(3), 1);
-        single_test_roundtrip(coptic, Some(("am", Some(0))), 100, Month::new(13), 1);
+        single_test_roundtrip(coptic, Some(("am", Some(0))), 100, Month::HATOR, 1);
+        single_test_roundtrip(coptic, None, 2000, Month::HATOR, 1);
+        single_test_roundtrip(coptic, None, -100, Month::HATOR, 1);
+        single_test_roundtrip(coptic, Some(("am", Some(0))), -99, Month::HATOR, 1);
+        single_test_roundtrip(coptic, Some(("am", Some(0))), 100, Month::NASIE, 1);
         single_test_error(
             coptic,
             Some(("am", Some(0))),
@@ -1661,18 +1661,18 @@ mod tests {
     fn ethiopian() {
         let ethiopian = AnyCalendar::new(AnyCalendarKind::Ethiopian);
         let ethiopian = Ref(&ethiopian);
-        single_test_roundtrip(ethiopian, Some(("am", Some(1))), 100, Month::new(3), 1);
-        single_test_roundtrip(ethiopian, None, 2000, Month::new(3), 1);
-        single_test_roundtrip(ethiopian, None, -100, Month::new(3), 1);
-        single_test_roundtrip(ethiopian, Some(("am", Some(1))), 2000, Month::new(13), 1);
-        single_test_roundtrip(ethiopian, Some(("aa", Some(0))), 5400, Month::new(3), 1);
+        single_test_roundtrip(ethiopian, Some(("am", Some(1))), 100, Month::HEDAR, 1);
+        single_test_roundtrip(ethiopian, None, 2000, Month::HEDAR, 1);
+        single_test_roundtrip(ethiopian, None, -100, Month::HEDAR, 1);
+        single_test_roundtrip(ethiopian, Some(("am", Some(1))), 2000, Month::PAGUMEN, 1);
+        single_test_roundtrip(ethiopian, Some(("aa", Some(0))), 5400, Month::HEDAR, 1);
         // Since #6910, the era range is not enforced in try_from_codes
         /*
         single_test_error(
             ethiopian,
             Some(("am", Some(0))),
             0,
-            Month::new(3),
+            Month::HEDAR,
             1,
             DateError::Range {
                 field: "year",
@@ -1685,7 +1685,7 @@ mod tests {
             ethiopian,
             Some(("aa", Some(0))),
             5600,
-            Month::new(3),
+            Month::HEDAR,
             1,
             DateError::Range {
                 field: "year",
@@ -1713,16 +1713,16 @@ mod tests {
             ethiopian_amete_alem,
             Some(("aa", Some(0))),
             7000,
-            Month::new(13),
+            Month::PAGUMEN,
             1,
         );
-        single_test_roundtrip(ethiopian_amete_alem, None, 7000, Month::new(13), 1);
-        single_test_roundtrip(ethiopian_amete_alem, None, -100, Month::new(13), 1);
+        single_test_roundtrip(ethiopian_amete_alem, None, 7000, Month::PAGUMEN, 1);
+        single_test_roundtrip(ethiopian_amete_alem, None, -100, Month::PAGUMEN, 1);
         single_test_roundtrip(
             ethiopian_amete_alem,
             Some(("aa", Some(0))),
             100,
-            Month::new(3),
+            Month::HEDAR,
             1,
         );
         single_test_error(
@@ -1739,17 +1739,17 @@ mod tests {
     fn gregorian() {
         let gregorian = AnyCalendar::new(AnyCalendarKind::Gregorian);
         let gregorian = Ref(&gregorian);
-        single_test_roundtrip(gregorian, Some(("ce", Some(1))), 100, Month::new(3), 1);
-        single_test_roundtrip(gregorian, None, 2000, Month::new(3), 1);
-        single_test_roundtrip(gregorian, None, -100, Month::new(3), 1);
-        single_test_roundtrip(gregorian, Some(("bce", Some(0))), 100, Month::new(3), 1);
+        single_test_roundtrip(gregorian, Some(("ce", Some(1))), 100, Month::MARCH, 1);
+        single_test_roundtrip(gregorian, None, 2000, Month::MARCH, 1);
+        single_test_roundtrip(gregorian, None, -100, Month::MARCH, 1);
+        single_test_roundtrip(gregorian, Some(("bce", Some(0))), 100, Month::MARCH, 1);
         // Since #6910, the era range is not enforced in try_from_codes
         /*
         single_test_error(
             gregorian,
             Some(("ce", Some(1))),
             0,
-            Month::new(3),
+            Month::MARCH,
             1,
             DateError::Range {
                 field: "year",
@@ -1762,7 +1762,7 @@ mod tests {
             gregorian,
             Some(("bce", Some(0))),
             0,
-            Month::new(3),
+            Month::MARCH,
             1,
             DateError::Range {
                 field: "year",
@@ -1786,10 +1786,10 @@ mod tests {
     fn indian() {
         let indian = AnyCalendar::new(AnyCalendarKind::Indian);
         let indian = Ref(&indian);
-        single_test_roundtrip(indian, Some(("shaka", Some(0))), 100, Month::new(3), 1);
-        single_test_roundtrip(indian, None, 2000, Month::new(12), 1);
-        single_test_roundtrip(indian, None, -100, Month::new(3), 1);
-        single_test_roundtrip(indian, Some(("shaka", Some(0))), 0, Month::new(3), 1);
+        single_test_roundtrip(indian, Some(("shaka", Some(0))), 100, Month::JYAISHTHA, 1);
+        single_test_roundtrip(indian, None, 2000, Month::PHALGUNA, 1);
+        single_test_roundtrip(indian, None, -100, Month::JYAISHTHA, 1);
+        single_test_roundtrip(indian, Some(("shaka", Some(0))), 0, Month::JYAISHTHA, 1);
         single_test_error(
             indian,
             Some(("shaka", Some(0))),
@@ -1838,21 +1838,21 @@ mod tests {
     fn japanese() {
         let japanese = AnyCalendar::new(AnyCalendarKind::Japanese);
         let japanese = Ref(&japanese);
-        single_test_roundtrip(japanese, Some(("reiwa", None)), 3, Month::new(3), 1);
-        single_test_roundtrip(japanese, Some(("heisei", None)), 6, Month::new(12), 1);
-        single_test_roundtrip(japanese, Some(("meiji", None)), 10, Month::new(3), 1);
-        single_test_roundtrip(japanese, Some(("ce", None)), 1000, Month::new(3), 1);
-        single_test_roundtrip(japanese, None, 1000, Month::new(3), 1);
-        single_test_roundtrip(japanese, None, -100, Month::new(3), 1);
-        single_test_roundtrip(japanese, None, 2024, Month::new(3), 1);
-        single_test_roundtrip(japanese, Some(("bce", None)), 10, Month::new(3), 1);
+        single_test_roundtrip(japanese, Some(("reiwa", None)), 3, Month::MARCH, 1);
+        single_test_roundtrip(japanese, Some(("heisei", None)), 6, Month::DECEMBER, 1);
+        single_test_roundtrip(japanese, Some(("meiji", None)), 10, Month::MARCH, 1);
+        single_test_roundtrip(japanese, Some(("ce", None)), 1000, Month::MARCH, 1);
+        single_test_roundtrip(japanese, None, 1000, Month::MARCH, 1);
+        single_test_roundtrip(japanese, None, -100, Month::MARCH, 1);
+        single_test_roundtrip(japanese, None, 2024, Month::MARCH, 1);
+        single_test_roundtrip(japanese, Some(("bce", None)), 10, Month::MARCH, 1);
         // Since #6910, the era range is not enforced in try_from_codes
         /*
         single_test_error(
             japanese,
             Some(("ce", None)),
             0,
-            Month::new(3),
+            Month::MARCH,
             1,
             DateError::Range {
                 field: "year",
@@ -1865,7 +1865,7 @@ mod tests {
             japanese,
             Some(("bce", Some(0))),
             0,
-            Month::new(3),
+            Month::MARCH,
             1,
             DateError::Range {
                 field: "year",
@@ -1889,43 +1889,37 @@ mod tests {
     fn japanese_extended() {
         let japanese_extended = AnyCalendar::new(AnyCalendarKind::JapaneseExtended);
         let japanese_extended = Ref(&japanese_extended);
-        single_test_roundtrip(
-            japanese_extended,
-            Some(("reiwa", None)),
-            3,
-            Month::new(3),
-            1,
-        );
+        single_test_roundtrip(japanese_extended, Some(("reiwa", None)), 3, Month::MARCH, 1);
         single_test_roundtrip(
             japanese_extended,
             Some(("heisei", None)),
             6,
-            Month::new(12),
+            Month::DECEMBER,
             1,
         );
         single_test_roundtrip(
             japanese_extended,
             Some(("meiji", None)),
             10,
-            Month::new(3),
+            Month::MARCH,
             1,
         );
         single_test_roundtrip(
             japanese_extended,
             Some(("tenpyokampo-749", None)),
             1,
-            Month::new(4),
+            Month::APRIL,
             20,
         );
-        single_test_roundtrip(japanese_extended, Some(("ce", None)), 100, Month::new(3), 1);
-        single_test_roundtrip(japanese_extended, Some(("bce", None)), 10, Month::new(3), 1);
+        single_test_roundtrip(japanese_extended, Some(("ce", None)), 100, Month::MARCH, 1);
+        single_test_roundtrip(japanese_extended, Some(("bce", None)), 10, Month::MARCH, 1);
         // Since #6910, the era range is not enforced in try_from_codes
         /*
         single_test_error(
             japanext,
             Some(("ce", None)),
             0,
-            Month::new(3),
+            Month::MARCH,
             1,
             DateError::Range {
                 field: "year",
@@ -1938,7 +1932,7 @@ mod tests {
             japanext,
             Some(("bce", Some(0))),
             0,
-            Month::new(3),
+            Month::MARCH,
             1,
             DateError::Range {
                 field: "year",
@@ -1962,10 +1956,10 @@ mod tests {
     fn persian() {
         let persian = AnyCalendar::new(AnyCalendarKind::Persian);
         let persian = Ref(&persian);
-        single_test_roundtrip(persian, Some(("ap", Some(0))), 477, Month::new(3), 1);
-        single_test_roundtrip(persian, None, 2083, Month::new(7), 21);
-        single_test_roundtrip(persian, None, -100, Month::new(7), 21);
-        single_test_roundtrip(persian, Some(("ap", Some(0))), 1600, Month::new(12), 20);
+        single_test_roundtrip(persian, Some(("ap", Some(0))), 477, Month::KHORDAD, 1);
+        single_test_roundtrip(persian, None, 2083, Month::MEHR, 21);
+        single_test_roundtrip(persian, None, -100, Month::MEHR, 21);
+        single_test_roundtrip(persian, Some(("ap", Some(0))), 1600, Month::ESFAND, 20);
         single_test_error(
             persian,
             Some(("ap", Some(0))),
@@ -1980,10 +1974,10 @@ mod tests {
     fn hebrew() {
         let hebrew = AnyCalendar::new(AnyCalendarKind::Hebrew);
         let hebrew = Ref(&hebrew);
-        single_test_roundtrip(hebrew, Some(("am", Some(0))), 5773, Month::new(3), 1);
-        single_test_roundtrip(hebrew, None, 4993, Month::new(7), 21);
-        single_test_roundtrip(hebrew, None, -100, Month::new(7), 21);
-        single_test_roundtrip(hebrew, Some(("am", Some(0))), 5012, Month::new(12), 20);
+        single_test_roundtrip(hebrew, Some(("am", Some(0))), 5773, Month::KISLEV, 1);
+        single_test_roundtrip(hebrew, None, 4993, Month::NISAN, 21);
+        single_test_roundtrip(hebrew, None, -100, Month::NISAN, 21);
+        single_test_roundtrip(hebrew, Some(("am", Some(0))), 5012, Month::ELUL, 20);
         single_test_error(
             hebrew,
             Some(("am", Some(0))),
@@ -1998,27 +1992,30 @@ mod tests {
     fn roc() {
         let roc = AnyCalendar::new(AnyCalendarKind::Roc);
         let roc = Ref(&roc);
-        single_test_roundtrip(roc, Some(("roc", Some(1))), 10, Month::new(5), 3);
-        single_test_roundtrip(roc, Some(("broc", Some(0))), 15, Month::new(1), 10);
-        single_test_roundtrip(roc, None, 100, Month::new(10), 30);
-        single_test_roundtrip(roc, None, -100, Month::new(10), 30);
+        single_test_roundtrip(roc, Some(("roc", Some(1))), 10, Month::MAY, 3);
+        single_test_roundtrip(roc, Some(("broc", Some(0))), 15, Month::JANUARY, 10);
+        single_test_roundtrip(roc, None, 100, Month::OCTOBER, 30);
+        single_test_roundtrip(roc, None, -100, Month::OCTOBER, 30);
+    }
 
+    #[test]
+    fn hijri_simulated() {
         let hijri_simulated: AnyCalendar = AnyCalendar::new(AnyCalendarKind::HijriSimulatedMecca);
         let hijri_simulated = Ref(&hijri_simulated);
         single_test_roundtrip(
             hijri_simulated,
             Some(("ah", Some(0))),
             477,
-            Month::new(3),
+            Month::RABI_I,
             1,
         );
-        single_test_roundtrip(hijri_simulated, None, 2083, Month::new(7), 21);
-        single_test_roundtrip(hijri_simulated, None, -100, Month::new(7), 21);
+        single_test_roundtrip(hijri_simulated, None, 2083, Month::RAJAB, 21);
+        single_test_roundtrip(hijri_simulated, None, -100, Month::RAJAB, 21);
         single_test_roundtrip(
             hijri_simulated,
             Some(("ah", Some(0))),
             1600,
-            Month::new(12),
+            Month::DHUL_HIJJAH,
             20,
         );
         single_test_error(
@@ -2040,16 +2037,16 @@ mod tests {
             hijri_tabular_friday,
             Some(("ah", Some(0))),
             477,
-            Month::new(3),
+            Month::RABI_I,
             1,
         );
-        single_test_roundtrip(hijri_tabular_friday, None, 2083, Month::new(7), 21);
-        single_test_roundtrip(hijri_tabular_friday, None, -100, Month::new(7), 21);
+        single_test_roundtrip(hijri_tabular_friday, None, 2083, Month::RAJAB, 21);
+        single_test_roundtrip(hijri_tabular_friday, None, -100, Month::RAJAB, 21);
         single_test_roundtrip(
             hijri_tabular_friday,
             Some(("ah", Some(0))),
             1600,
-            Month::new(12),
+            Month::DHUL_HIJJAH,
             20,
         );
         single_test_error(
@@ -2070,16 +2067,16 @@ mod tests {
             hijri_umm_al_qura,
             Some(("ah", Some(0))),
             477,
-            Month::new(3),
+            Month::RABI_I,
             1,
         );
-        single_test_roundtrip(hijri_umm_al_qura, None, 2083, Month::new(7), 21);
-        single_test_roundtrip(hijri_umm_al_qura, None, -100, Month::new(7), 21);
+        single_test_roundtrip(hijri_umm_al_qura, None, 2083, Month::RAJAB, 21);
+        single_test_roundtrip(hijri_umm_al_qura, None, -100, Month::RAJAB, 21);
         single_test_roundtrip(
             hijri_umm_al_qura,
             Some(("ah", Some(0))),
             1600,
-            Month::new(12),
+            Month::DHUL_HIJJAH,
             20,
         );
         single_test_error(
@@ -2101,16 +2098,16 @@ mod tests {
             hijri_tabular_thursday,
             Some(("ah", Some(0))),
             477,
-            Month::new(3),
+            Month::RABI_I,
             1,
         );
-        single_test_roundtrip(hijri_tabular_thursday, None, 2083, Month::new(7), 21);
-        single_test_roundtrip(hijri_tabular_thursday, None, -100, Month::new(7), 21);
+        single_test_roundtrip(hijri_tabular_thursday, None, 2083, Month::RAJAB, 21);
+        single_test_roundtrip(hijri_tabular_thursday, None, -100, Month::RAJAB, 21);
         single_test_roundtrip(
             hijri_tabular_thursday,
             Some(("ah", Some(0))),
             1600,
-            Month::new(12),
+            Month::DHUL_HIJJAH,
             20,
         );
         single_test_error(
@@ -2127,10 +2124,10 @@ mod tests {
     fn iso() {
         let iso = AnyCalendar::new(AnyCalendarKind::Iso);
         let iso = Ref(&iso);
-        single_test_roundtrip(iso, Some(("default", Some(0))), 100, Month::new(3), 1);
-        single_test_roundtrip(iso, None, 2000, Month::new(3), 1);
-        single_test_roundtrip(iso, None, -100, Month::new(3), 1);
-        single_test_roundtrip(iso, Some(("default", Some(0))), -100, Month::new(3), 1);
+        single_test_roundtrip(iso, Some(("default", Some(0))), 100, Month::MARCH, 1);
+        single_test_roundtrip(iso, None, 2000, Month::MARCH, 1);
+        single_test_roundtrip(iso, None, -100, Month::MARCH, 1);
+        single_test_roundtrip(iso, Some(("default", Some(0))), -100, Month::MARCH, 1);
         single_test_error(
             iso,
             Some(("default", Some(0))),

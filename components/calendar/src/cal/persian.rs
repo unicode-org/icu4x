@@ -8,6 +8,7 @@ use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, Unkno
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
+use crate::types::Month;
 use crate::{types, Calendar, Date, RangeError};
 use ::tinystr::tinystr;
 use calendrical_calculations::rata_die::RataDie;
@@ -218,6 +219,22 @@ impl Calendar for Persian {
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         Some(crate::preferences::CalendarAlgorithm::Persian)
     }
+}
+
+#[allow(missing_docs)]
+impl Month {
+    pub const FARVARDIN: Month = Month::new(1);
+    pub const ORDIBEHESHT: Month = Month::new(2);
+    pub const KHORDAD: Month = Month::new(3);
+    pub const TIR: Month = Month::new(4);
+    pub const MORDAD: Month = Month::new(5);
+    pub const SHAHRIVAR: Month = Month::new(6);
+    pub const MEHR: Month = Month::new(7);
+    pub const ABAN: Month = Month::new(8);
+    pub const AZAR: Month = Month::new(9);
+    pub const DEY: Month = Month::new(10);
+    pub const BAHMAN: Month = Month::new(11);
+    pub const ESFAND: Month = Month::new(12);
 }
 
 impl Persian {

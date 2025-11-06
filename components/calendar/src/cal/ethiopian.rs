@@ -8,7 +8,7 @@ use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver};
 use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
-use crate::types::DateFields;
+use crate::types::{DateFields, Month};
 use crate::{types, Calendar, Date, RangeError};
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -53,12 +53,12 @@ pub enum EthiopianEraStyle {
 ///
 /// # Months and days
 ///
-/// The 13 months are called Mäskäräm (`M01`, 30 days), Ṭəqəmt (`M02`, 30 days),
-/// Ḫədar (`M03`, 30 days), Taḫśaś (`M04`, 30 days), Ṭərr (`M05`, 30 days), Yäkatit (`M06`, 30 days),
-/// Mägabit (`M07`, 30 days), Miyazya (`M08`, 30 days), Gənbo (`M09`, 30 days),
-/// Säne (`M10`, 30 days), Ḥamle (`M11`, 30 days), Nähase (`M12`, 30 days), Ṗagʷəmen (`M13`, 5 days).
+/// The 13 months are called Meskerem (`M01`, 30 days), Tekemt (`M02`, 30 days),
+/// Hedar (`M03`, 30 days), Tahsas (`M04`, 30 days), Ter (`M05`, 30 days), Yekatit (`M06`, 30 days),
+/// Megabit (`M07`, 30 days), Miazia (`M08`, 30 days), Genbot (`M09`, 30 days),
+/// Sene (`M10`, 30 days), Hamle (`M11`, 30 days), Nehasse (`M12`, 30 days), Pagumen (`M13`, 5 days).
 ///
-/// In leap years (years divisible by 4), Ṗagʷəmen gains a 6th day.
+/// In leap years (years divisible by 4), Pagumen gains a 6th day.
 ///
 /// Standard years thus have 365 days, and leap years 366.
 ///
@@ -252,6 +252,23 @@ impl Calendar for Ethiopian {
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         Some(crate::preferences::CalendarAlgorithm::Ethiopic)
     }
+}
+
+#[allow(missing_docs)]
+impl Month {
+    pub const MESKEREM: Month = Month::new(1);
+    pub const TEKEMT: Month = Month::new(2);
+    pub const HEDAR: Month = Month::new(3);
+    pub const TAHSAS: Month = Month::new(4);
+    pub const TER: Month = Month::new(5);
+    pub const YEKATIT: Month = Month::new(6);
+    pub const MEGABIT: Month = Month::new(7);
+    pub const MIAZIA: Month = Month::new(8);
+    pub const GENBOT: Month = Month::new(9);
+    pub const SENE: Month = Month::new(10);
+    pub const HAMLE: Month = Month::new(11);
+    pub const NÄHASE: Month = Month::new(12);
+    pub const PAGUMEN: Month = Month::new(13);
 }
 
 impl Ethiopian {

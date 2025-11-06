@@ -48,10 +48,10 @@ mod ummalqura_data;
 ///
 /// # Months and days
 ///
-/// The 12 months are called al-Muḥarram (`M01`), Ṣafar (`M02`), Rabīʿ al-ʾAwwal (`M03`),
-/// Rabīʿ ath-Thānī or Rabīʿ al-ʾĀkhir (`M04`), Jumādā al-ʾŪlā (`M05`), Jumādā ath-Thāniyah
-/// or Jumādā al-ʾĀkhirah (`M06`), Rajab (`M07`), Shaʿbān (`M08`), Ramaḍān (`M09`), Shawwāl (`M10`),
-/// Ḏū al-Qaʿdah (`M11`), Ḏū al-Ḥijjah (`M12`).
+/// The 12 months are called Muharram (`M01`), Safar (`M02`), Rabiʻ I (`M03`),
+/// Rabiʻ II (`M04`), Jumada I (`M05`), Jumada II (`M06`), Rajab (`M07`),
+/// Shaʻban (`M08`), Ramadan (`M09`), Shawwal (`M10`), Dhuʻl-Qiʻdah (`M11`),
+/// Dhuʻl-Hijjah (`M12`).
 ///
 /// As a true lunar calendar, the lengths of the months depend on the lunar cycle (a month starts on the day
 /// where the waxing crescent is first observed), and will be either 29 or 30 days.
@@ -1027,6 +1027,22 @@ impl<R: Rules> Calendar for Hijri<R> {
     }
 }
 
+#[allow(missing_docs)]
+impl Month {
+    pub const MUHARRAM: Month = Month::new(1);
+    pub const SAFAR: Month = Month::new(2);
+    pub const RABI_I: Month = Month::new(3);
+    pub const RABI_II: Month = Month::new(4);
+    pub const JUMADA_I: Month = Month::new(5);
+    pub const JUMADA_II: Month = Month::new(6);
+    pub const RAJAB: Month = Month::new(7);
+    pub const SHABAN: Month = Month::new(8);
+    pub const RAMADAN: Month = Month::new(9);
+    pub const SHAWWAL: Month = Month::new(10);
+    pub const DHUL_QI_DAH: Month = Month::new(11);
+    pub const DHUL_HIJJAH: Month = Month::new(12);
+}
+
 impl<A: AsCalendar<Calendar = Hijri<R>>, R: Rules> Date<A> {
     /// Construct new Hijri Date.
     ///
@@ -1932,7 +1948,7 @@ mod test {
     fn test_regression_4914() {
         // https://github.com/unicode-org/icu4x/issues/4914
         let dt = Hijri::new_umm_al_qura()
-            .from_codes(Some("bh"), 6824, Month::new(1).code(), 1)
+            .from_codes(Some("bh"), 6824, Month::MUHARRAM.code(), 1)
             .unwrap();
         assert_eq!(dt.0.day(), 1);
         assert_eq!(dt.0.month(), 1);

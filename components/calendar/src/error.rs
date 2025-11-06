@@ -42,7 +42,7 @@ pub enum DateError {
     /// Date::try_new_from_codes(
     ///     None,
     ///     5784,
-    ///     Month::leap(5).code(),
+    ///     Month::ADAR_I.code(),
     ///     1,
     ///     Hebrew,
     /// )
@@ -51,7 +51,7 @@ pub enum DateError {
     /// let err = Date::try_new_from_codes(
     ///     None,
     ///     5785,
-    ///     Month::leap(5).code(),
+    ///     Month::ADAR_I.code(),
     ///     1,
     ///     Hebrew,
     /// )

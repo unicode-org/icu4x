@@ -8,7 +8,7 @@ use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, Unkno
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::preferences::CalendarAlgorithm;
-use crate::types::EraYear;
+use crate::types::{EraYear, Month};
 use crate::{types, Calendar, RangeError};
 use calendrical_calculations::rata_die::RataDie;
 
@@ -215,6 +215,22 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         self.0.calendar_algorithm()
     }
+}
+
+#[allow(missing_docs)]
+impl Month {
+    pub const JANUARY: Month = Month::new(1);
+    pub const FEBRUARY: Month = Month::new(2);
+    pub const MARCH: Month = Month::new(3);
+    pub const APRIL: Month = Month::new(4);
+    pub const MAY: Month = Month::new(5);
+    pub const JUNE: Month = Month::new(6);
+    pub const JULY: Month = Month::new(7);
+    pub const AUGUST: Month = Month::new(8);
+    pub const SEPTEMBER: Month = Month::new(9);
+    pub const OCTOBER: Month = Month::new(10);
+    pub const NOVEMBER: Month = Month::new(11);
+    pub const DECEMBER: Month = Month::new(12);
 }
 
 macro_rules! impl_with_abstract_gregorian {

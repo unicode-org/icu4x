@@ -7,6 +7,7 @@ use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
+use crate::types::Month;
 use crate::{types, Calendar, Date, RangeError};
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -29,12 +30,12 @@ use tinystr::tinystr;
 ///
 /// # Months and days
 ///
-/// The 13 months are called Thout (`M01`, 30 days), Paopi (`M02`, 30 days), Hathor (`M03`, 30 days),
-/// Koiak (`M04`, 30 days), Tobi (`M05`, 30 days), Meshir (`M06`, 30 days), Paremhat (`M07`, 30 days),
-/// Parmouti (`M08`, 30 days), Pashons (`M09`, 30 days), Paoni (`M10`, 30 days), Epip (`M11`, 30 days),
-/// Mesori (`M12`, 30 days), Pi Kogi Enavot (`M13`, 5 days).
+/// The 13 months are called Thout (`M01`, 30 days), Baba (`M02`, 30 days), Hator (`M03`, 30 days),
+/// Kiahk (`M04`, 30 days), Toba (`M05`, 30 days), Amshir (`M06`, 30 days), Baramhat (`M07`, 30 days),
+/// Baramouda (`M08`, 30 days), Bashans (`M09`, 30 days), Paona (`M10`, 30 days), Epep (`M11`, 30 days),
+/// Mesra (`M12`, 30 days), Nasie (`M13`, 5 days).
 ///
-/// In leap years (years divisible by 4), Pi Kogi Enavot gains a 6th day.
+/// In leap years (years divisible by 4), Nasie gains a 6th day.
 ///
 /// Standard years thus have 365 days, and leap years 366.
 ///
@@ -233,6 +234,23 @@ impl Calendar for Coptic {
     }
 }
 
+#[allow(missing_docs)]
+impl Month {
+    pub const THOUT: Month = Month::new(1);
+    pub const BABA: Month = Month::new(2);
+    pub const HATOR: Month = Month::new(3);
+    pub const KIAHK: Month = Month::new(4);
+    pub const TOBA: Month = Month::new(5);
+    pub const AMSHIR: Month = Month::new(6);
+    pub const BARAMHAT: Month = Month::new(7);
+    pub const BARAMOUDA: Month = Month::new(8);
+    pub const BASHANS: Month = Month::new(9);
+    pub const PAONA: Month = Month::new(10);
+    pub const EPEP: Month = Month::new(11);
+    pub const MESRA: Month = Month::new(12);
+    pub const NASIE: Month = Month::new(13);
+}
+
 impl Date<Coptic> {
     /// Construct new Coptic Date.
     ///
@@ -272,7 +290,7 @@ mod tests {
     fn test_from_fields_monthday_constrain() {
         // M13-7 is not a real day, however this should resolve to M13-6
         // with Overflow::Constrain
-        let month = Month::new(13).code();
+        let month = Month::NASIE.code();
         let fields = DateFields {
             month_code: Some(month.0.as_bytes()),
             day: Some(7),

@@ -8,6 +8,7 @@ use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, Unkno
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
+use crate::types::Month;
 use crate::{types, Calendar, Date, RangeError};
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -273,6 +274,22 @@ impl Calendar for Indian {
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         Some(crate::preferences::CalendarAlgorithm::Indian)
     }
+}
+
+#[allow(missing_docs)]
+impl Month {
+    pub const CHAITRA: Month = Month::new(1);
+    pub const VAISAKHA: Month = Month::new(2);
+    pub const JYAISHTHA: Month = Month::new(3);
+    pub const ASHADHA: Month = Month::new(4);
+    pub const SRAVANA: Month = Month::new(5);
+    pub const BHADRA: Month = Month::new(6);
+    pub const ASVINA: Month = Month::new(7);
+    pub const KARTIKA: Month = Month::new(8);
+    pub const AGRAHAYANA: Month = Month::new(9);
+    pub const PAUSHA: Month = Month::new(10);
+    pub const MAGHA: Month = Month::new(11);
+    pub const PHALGUNA: Month = Month::new(12);
 }
 
 impl Indian {

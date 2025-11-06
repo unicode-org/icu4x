@@ -132,9 +132,9 @@ fn test_gregorian_continuity() {
 
 #[test]
 fn test_hebrew_continuity() {
-    let date = Date::try_new_from_codes(None, -10, Month::new(1).code(), 1, cal::Hebrew);
+    let date = Date::try_new_from_codes(None, -10, Month::TISHRI.code(), 1, cal::Hebrew);
     check_continuity(date.unwrap(), 20);
-    let date = Date::try_new_from_codes(None, -300, Month::new(1).code(), 1, cal::Hebrew);
+    let date = Date::try_new_from_codes(None, -300, Month::TISHRI.code(), 1, cal::Hebrew);
     check_every_250_days(date.unwrap(), 2000);
 }
 
