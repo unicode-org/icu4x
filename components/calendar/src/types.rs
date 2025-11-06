@@ -574,14 +574,6 @@ pub struct MonthInfo {
     pub(crate) formatting: Month,
 }
 
-impl core::ops::Deref for MonthInfo {
-    type Target = Month;
-
-    fn deref(&self) -> &Self::Target {
-        &self.standard
-    }
-}
-
 impl MonthInfo {
     pub(crate) fn non_lunisolar(number: u8) -> Self {
         Self::for_month_and_ordinal(Month::new(number), number)
@@ -597,14 +589,44 @@ impl MonthInfo {
         }
     }
 
-    #[doc(hidden)] // available through Deref<Target = Month>
-    pub fn month_number(self) -> u8 {
+    /// Returns the month number.
+    ///
+    /// A month number N is not necessarily the Nth month in the year if there are leap
+    /// months in the year, rather it is associated with the Nth month of a "regular"
+    /// year. There may be multiple month Ns in a year.
+    ///
+    /// This is NOT the same as the ordinal month!
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::cal::Hebrew;
+    ///
+    /// let hebrew_date = Date::try_new_iso(2024, 7, 1).unwrap().to_calendar(Hebrew);
+    /// let month_info = hebrew_date.month();
+    ///
+    /// // Hebrew year 5784 was a leap year, so the ordinal month and month number diverge.
+    /// assert_eq!(month_info.ordinal, 10);
+    /// assert_eq!(month_info.number(), 9);
+    /// ```
+    pub fn number(self) -> u8 {
         self.standard.number()
     }
 
-    #[doc(hidden)] // available through Deref<Target = Month>
+    /// Returns whether the month is a leap month.
+    ///
+    /// This is true for intercalary months in [`Hebrew`] and [`EastAsianTraditional`].
+    ///
+    /// [`Hebrew`]: crate::cal::Hebrew
+    /// [`EastAsianTraditional`]: crate::cal::east_asian_traditional::EastAsianTraditional
     pub fn is_leap(self) -> bool {
         self.standard.is_leap()
+    }
+
+    #[doc(hidden)] // exposed, not a great name
+    pub fn month_number(self) -> u8 {
+        self.standard.number()
     }
 
     #[doc(hidden)] // for formatting
