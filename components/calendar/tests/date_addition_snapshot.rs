@@ -1,7 +1,5 @@
 use icu_calendar::{
-    AnyCalendar, AnyCalendarKind, Date,
-    types::DateDuration,
-    options::DateAddOptions,
+    options::DateAddOptions, types::DateDuration, AnyCalendar, AnyCalendarKind, Date,
 };
 use insta::assert_debug_snapshot;
 
@@ -13,17 +11,37 @@ fn test_date_add_across_calendars_and_durations() {
         AnyCalendarKind::Buddhist,
     ];
 
-    let iso_dates = vec![
-        (2023, 1, 1),
-        (2024, 6, 15),
-        (2025, 12, 31),
-    ];
+    let iso_dates = vec![(2023, 1, 1), (2024, 6, 15), (2025, 12, 31)];
 
     let durations = vec![
-        DateDuration { years: 0, months: 0, weeks: 0, days: 10, is_negative: false },
-        DateDuration { years: 0, months: 2, weeks: 0, days: 0, is_negative: false },
-        DateDuration { years: 1, months: 0, weeks: 0, days: 0, is_negative: false },
-        DateDuration { years: 1, months: 3, weeks: 0, days: 15, is_negative: false },
+        DateDuration {
+            years: 0,
+            months: 0,
+            weeks: 0,
+            days: 10,
+            is_negative: false,
+        },
+        DateDuration {
+            years: 0,
+            months: 2,
+            weeks: 0,
+            days: 0,
+            is_negative: false,
+        },
+        DateDuration {
+            years: 1,
+            months: 0,
+            weeks: 0,
+            days: 0,
+            is_negative: false,
+        },
+        DateDuration {
+            years: 1,
+            months: 3,
+            weeks: 0,
+            days: 15,
+            is_negative: false,
+        },
     ];
 
     let opts = DateAddOptions::default();
@@ -37,7 +55,8 @@ fn test_date_add_across_calendars_and_durations() {
                     .expect("Valid ISO date")
                     .to_calendar(cal.clone());
 
-                date.try_add_with_options(duration.clone(), opts)
+                date.try_add_with_options(*duration, opts)
+
                     .expect("Addition should succeed");
 
                 let result_iso = date.to_iso();

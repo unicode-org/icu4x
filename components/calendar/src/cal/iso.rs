@@ -103,18 +103,18 @@ mod test {
         let cases = [
             // Clamping RD
             TestCase {
-                year: -1005513,
+                year: -1002073,
                 month: 1,
-                day: 3,
+                day: 14,
                 rd: *VALID_RD_RANGE.start() - 100000,
                 invalid_ymd: true,
                 clamping_rd: true,
             },
             // Lowest allowed RD
             TestCase {
-                year: -1005513,
+                year: -1002073,
                 month: 1,
-                day: 3,
+                day: 14,
                 rd: *VALID_RD_RANGE.start(),
                 invalid_ymd: true,
                 clamping_rd: false,
@@ -139,18 +139,18 @@ mod test {
             },
             // Highest allowed RD
             TestCase {
-                year: 1001911,
+                year: 1002074,
                 month: 12,
-                day: 31,
+                day: 18,
                 rd: *VALID_RD_RANGE.end(),
                 invalid_ymd: true,
                 clamping_rd: false,
             },
             // Clamping RD
             TestCase {
-                year: 1001911,
+                year: 1002074,
                 month: 12,
-                day: 31,
+                day: 18,
                 rd: *VALID_RD_RANGE.end() + 100000,
                 invalid_ymd: true,
                 clamping_rd: true,

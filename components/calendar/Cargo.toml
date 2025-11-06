@@ -27,6 +27,8 @@ icu_locale_core = { workspace = true }
 ixdtf = { workspace = true, optional = true }
 tinystr = { workspace = true, features = ["zerovec"] }
 zerovec = { workspace = true, features = ["derive"] }
+insta = { version = "1.43.2", features = ["glob"] }
+
 
 databake = { workspace = true, features = ["derive"], optional = true }
 serde = { workspace = true, features = ["derive"], optional = true }
@@ -44,6 +46,8 @@ simple_logger = { workspace = true }
 ureq = { workspace = true }
 
 
+
+
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = { workspace = true }
 
@@ -56,6 +60,7 @@ serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake", "alloc", "icu_provider/export"]
 compiled_data = ["dep:icu_calendar_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 unstable = []
+
 
 alloc = ["icu_locale_core/alloc", "tinystr/alloc", "serde?/alloc"]
 

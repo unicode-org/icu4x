@@ -184,7 +184,7 @@ impl Calendar for Indian {
         let day_of_year_indian = self.day_of_year(date).0; // 1-indexed
         let days_in_year = self.days_in_year(date);
 
-        let mut year_iso = date.0.year() + YEAR_OFFSET;
+        let mut year_iso = date.0.year + YEAR_OFFSET;
         // days_in_year is a valid day of the year, so we check > not >=
         let day_of_year_iso = if day_of_year_indian + DAY_OFFSET > days_in_year {
             year_iso += 1;
@@ -202,7 +202,7 @@ impl Calendar for Indian {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Self::months_in_provided_year(date.0.year())
+        Self::months_in_provided_year(date.0.year)
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
@@ -214,7 +214,7 @@ impl Calendar for Indian {
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        Self::days_in_provided_month(date.0.year(), date.0.month())
+        Self::days_in_provided_month(date.0.year, date.0.month)
     }
 
     #[cfg(feature = "unstable")]
@@ -238,7 +238,7 @@ impl Calendar for Indian {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let extended_year = date.0.year();
+        let extended_year = date.0.year;
         types::EraYear {
             era_index: Some(0),
             era: tinystr!(16, "shaka"),
@@ -249,23 +249,23 @@ impl Calendar for Indian {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        calendrical_calculations::gregorian::is_leap_year(date.0.year() + YEAR_OFFSET)
+        calendrical_calculations::gregorian::is_leap_year(date.0.year + YEAR_OFFSET)
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        types::MonthInfo::non_lunisolar(date.0.month())
+        types::MonthInfo::non_lunisolar(date.0.month)
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        types::DayOfMonth(date.0.day())
+        types::DayOfMonth(date.0.day)
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
         types::DayOfYear(
-            (1..date.0.month())
-                .map(|m| Self::days_in_provided_month(date.0.year(), m) as u16)
+            (1..date.0.month)
+                .map(|m| Self::days_in_provided_month(date.0.year, m) as u16)
                 .sum::<u16>()
-                + date.0.day() as u16,
+                + date.0.day as u16,
         )
     }
 

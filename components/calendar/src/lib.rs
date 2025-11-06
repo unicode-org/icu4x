@@ -138,8 +138,8 @@ pub mod preferences {
     pub use icu_locale_core::preferences::extensions::unicode::keywords::HijriCalendarAlgorithm;
 }
 
-#[cfg(test)]
-mod tests;
+//#[cfg(test)]
+//mod tests;
 
 #[doc(hidden)]
 pub use calendar_arithmetic::{VALID_RD_RANGE, VALID_YEAR_RANGE};

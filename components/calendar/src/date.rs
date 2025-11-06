@@ -659,4 +659,24 @@ mod tests {
             Weekday::Tuesday,
         );
     }
+
+    #[cfg(feature = "unstable")]
+    #[test]
+    fn test_date_add_until_snap() {
+        use crate::options::{DateAddOptions, DateDifferenceOptions};
+        use crate::types::DateDuration;
+        use insta::assert_debug_snapshot;
+
+        let mut d1 = Date::try_new_iso(2020, 1, 1).unwrap();
+        let d2 = Date::try_new_iso(2020, 1, 15).unwrap();
+
+        let dur = DateDuration::for_days(10);
+        let opts = DateAddOptions::default();
+        d1.try_add_with_options(dur, opts).unwrap();
+
+        let diff_opts = DateDifferenceOptions::default();
+        let diff = d1.try_until_with_options(&d2, diff_opts).unwrap();
+
+        assert_debug_snapshot!((d1, diff));
+    }
 }
