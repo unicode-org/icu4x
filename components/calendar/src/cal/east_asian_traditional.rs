@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::calendar_arithmetic::DateFieldsResolver;
 use crate::calendar_arithmetic::{ArithmeticDate, ToExtendedYear};
+use crate::calendar_arithmetic::{DateFieldsResolver, PackWithMD};
 use crate::error::{
     DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
 };
@@ -12,9 +12,7 @@ use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::types::ValidMonthCode;
 use crate::AsCalendar;
 use crate::{types, Calendar, Date};
-use calendrical_calculations::chinese_based::{
-    self, ChineseBased, YearBounds, WELL_BEHAVED_ASTRONOMICAL_RANGE,
-};
+use calendrical_calculations::chinese_based;
 use calendrical_calculations::rata_die::RataDie;
 use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
 use icu_provider::prelude::*;
@@ -560,6 +558,34 @@ impl ChineseTraditional {
     }
 }
 
+impl PackWithMD for EastAsianTraditionalYear {
+    /// The first three bytes are the [`PackedEastAsianTraditionalYearData`], the remaining four the YMD as encoded by [`i32::pack`].
+    type Packed = [u8; 7];
+
+    fn pack(self, month: u8, day: u8) -> Self::Packed {
+        let PackedEastAsianTraditionalYearData(a, b, c) = self.packed;
+        let [d, e, f, g] = self.related_iso.pack(month, day);
+        [a, b, c, d, e, f, g]
+    }
+
+    fn unpack_year([a, b, c, d, e, f, g]: Self::Packed) -> Self {
+        let related_iso = i32::unpack_year([d, e, f, g]);
+        let packed = PackedEastAsianTraditionalYearData(a, b, c);
+        Self {
+            packed,
+            related_iso,
+        }
+    }
+
+    fn unpack_month([_, _, _c, d, e, f, g]: Self::Packed) -> u8 {
+        i32::unpack_month([d, e, f, g])
+    }
+
+    fn unpack_day([_, _, _c, d, e, f, g]: Self::Packed) -> u8 {
+        i32::unpack_day([d, e, f, g])
+    }
+}
+
 impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
     type YearInfo = EastAsianTraditionalYear;
 
@@ -675,13 +701,14 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
 
         let (month, day) = year.month_day_for((rd - year.new_year()) as u16 + 1);
 
+        // date is in the valid RD range
         ChineseDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        date.0.year.new_year()
-            + date.0.year.packed.days_before_month(date.0.month) as i64
-            + (date.0.day - 1) as i64
+        date.0.year().new_year()
+            + date.0.year().packed.days_before_month(date.0.month()) as i64
+            + (date.0.day() - 1) as i64
     }
 
     fn has_cheap_iso_conversion(&self) -> bool {
@@ -691,11 +718,11 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     // Count the number of months in a given year, specified by providing a date
     // from that year
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.0.year.packed.days_in_year()
+        date.0.year().packed.days_in_year()
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        Self::days_in_provided_month(date.0.year, date.0.month)
+        Self::days_in_provided_month(date.0.year(), date.0.month())
     }
 
     #[cfg(feature = "unstable")]
@@ -724,7 +751,7 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let year = date.0.year;
+        let year = date.0.year();
         types::CyclicYear {
             year: (year.related_iso - 4).rem_euclid(60) as u8 + 1,
             related_iso: year.related_iso,
@@ -732,7 +759,7 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        date.0.year.packed.leap_month().is_some()
+        date.0.year().packed.leap_month().is_some()
     }
 
     /// The calendar-specific month code represented by `date`;
@@ -741,19 +768,21 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     /// month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
         types::MonthInfo::for_code_and_ordinal(
-            self.month_code_from_ordinal(date.0.year, date.0.month),
-            date.0.month,
+            self.month_code_from_ordinal(date.0.year(), date.0.month()),
+            date.0.month(),
         )
     }
 
     /// The calendar-specific day-of-month represented by `date`
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        types::DayOfMonth(date.0.day)
+        types::DayOfMonth(date.0.day())
     }
 
     /// Information of the day of the year
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        types::DayOfYear(date.0.year.packed.days_before_month(date.0.month) + date.0.day as u16)
+        types::DayOfYear(
+            date.0.year().packed.days_before_month(date.0.month()) + date.0.day() as u16,
+        )
     }
 
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
@@ -761,7 +790,7 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Self::months_in_provided_year(date.0.year)
+        Self::months_in_provided_year(date.0.year())
     }
 }
 
@@ -849,11 +878,13 @@ impl EastAsianTraditionalYear {
             })
     }
 
-    fn calendrical_calculations<CB: ChineseBased>(related_iso: i32) -> EastAsianTraditionalYear {
+    fn calendrical_calculations<CB: chinese_based::ChineseBased>(
+        related_iso: i32,
+    ) -> EastAsianTraditionalYear {
         let mid_year = calendrical_calculations::gregorian::fixed_from_gregorian(related_iso, 7, 1);
-        let year_bounds = YearBounds::compute::<CB>(mid_year);
+        let year_bounds = chinese_based::YearBounds::compute::<CB>(mid_year);
 
-        let YearBounds {
+        let chinese_based::YearBounds {
             new_year,
             next_new_year,
             ..
@@ -951,24 +982,12 @@ impl PackedEastAsianTraditionalYearData {
 
         let ny_offset = new_year.since(Self::earliest_ny(related_iso));
 
-        #[cfg(debug_assertions)]
-        let out_of_valid_astronomical_range = WELL_BEHAVED_ASTRONOMICAL_RANGE.start.to_i64_date()
-            > new_year.to_i64_date()
-            || new_year.to_i64_date() > WELL_BEHAVED_ASTRONOMICAL_RANGE.end.to_i64_date();
-
         // Assert the offset is in range, but allow it to be out of
         // range when out_of_valid_astronomical_range=true
-        #[cfg(debug_assertions)]
-        debug_assert!(
-            ny_offset >= 0 || out_of_valid_astronomical_range,
-            "Year offset too small to store"
-        );
+        debug_assert!(ny_offset >= 0, "Year offset too small to store");
+
         // The maximum new-year's offset we have found is 34
-        #[cfg(debug_assertions)]
-        debug_assert!(
-            ny_offset < 35 || out_of_valid_astronomical_range,
-            "Year offset too big to store"
-        );
+        debug_assert!(ny_offset < 35, "Year offset too big to store");
 
         // Just clamp to something we can represent when things get of range.
         //
@@ -1348,7 +1367,7 @@ mod test {
                 chinese_date.is_in_leap_year(),
                 "{year} should be a leap year"
             );
-            let new_year = chinese_date.inner.0.year.new_year();
+            let new_year = chinese_date.inner.0.year().new_year();
             assert_eq!(
                 expected_month,
                 chinese_based::get_leap_month_from_new_year::<chinese_based::Chinese>(new_year),

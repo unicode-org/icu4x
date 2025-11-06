@@ -140,3 +140,6 @@ pub mod preferences {
 
 #[cfg(test)]
 mod tests;
+
+#[doc(hidden)]
+pub use calendar_arithmetic::{VALID_RD_RANGE, VALID_YEAR_RANGE};

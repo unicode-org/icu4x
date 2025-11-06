@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, ToExtendedYear};
+use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD, ToExtendedYear};
 use crate::error::{
     DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
 };
@@ -67,6 +67,31 @@ impl Hebrew {
 pub(crate) struct HebrewYear {
     keviyah: Keviyah,
     value: i32,
+}
+
+impl PackWithMD for HebrewYear {
+    /// The first byte is the [`Keviyah`], the remaining four the YMD as encoded by [`i32::pack`].
+    type Packed = [u8; 5];
+
+    fn pack(self, month: u8, day: u8) -> Self::Packed {
+        let a = self.keviyah as u8;
+        let [b, c, d, e] = self.value.pack(month, day);
+        [a, b, c, d, e]
+    }
+
+    fn unpack_year([a, b, c, d, e]: Self::Packed) -> Self {
+        let value = i32::unpack_year([b, c, d, e]);
+        let keviyah = Keviyah::from_integer(a);
+        Self { keviyah, value }
+    }
+
+    fn unpack_month([_, b, c, d, e]: Self::Packed) -> u8 {
+        i32::unpack_month([b, c, d, e])
+    }
+
+    fn unpack_day([_, b, c, d, e]: Self::Packed) -> u8 {
+        i32::unpack_day([b, c, d, e])
+    }
 }
 
 impl ToExtendedYear for HebrewYear {
@@ -233,13 +258,14 @@ impl Calendar for Hebrew {
             .keviyah
             .month_day_for((rd - year.new_year()) as u16 + 1);
 
+        // date is in the valid RD range
         HebrewDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        date.0.year.new_year()
-            + date.0.year.keviyah.days_preceding(date.0.month) as i64
-            + (date.0.day - 1) as i64
+        date.0.year().new_year()
+            + date.0.year().keviyah.days_preceding(date.0.month()) as i64
+            + (date.0.day() - 1) as i64
     }
 
     fn has_cheap_iso_conversion(&self) -> bool {
@@ -247,15 +273,15 @@ impl Calendar for Hebrew {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Self::months_in_provided_year(date.0.year)
+        Self::months_in_provided_year(date.0.year())
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.0.year.keviyah.year_length()
+        date.0.year().keviyah.year_length()
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        Self::days_in_provided_month(date.0.year, date.0.month)
+        Self::days_in_provided_month(date.0.year(), date.0.month())
     }
 
     #[cfg(feature = "unstable")]
@@ -283,7 +309,7 @@ impl Calendar for Hebrew {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let extended_year = date.0.year.value;
+        let extended_year = date.0.year().value;
         types::EraYear {
             era_index: Some(0),
             era: tinystr!(16, "am"),
@@ -294,20 +320,20 @@ impl Calendar for Hebrew {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        date.0.year.keviyah.is_leap()
+        date.0.year().keviyah.is_leap()
     }
 
     fn month(&self, date: &Self::DateInner) -> MonthInfo {
-        let valid_standard_code = self.month_code_from_ordinal(date.0.year, date.0.month);
+        let valid_standard_code = self.month_code_from_ordinal(date.0.year(), date.0.month());
 
-        let valid_formatting_code = if valid_standard_code.number() == 6 && date.0.month == 7 {
+        let valid_formatting_code = if valid_standard_code.number() == 6 && date.0.month() == 7 {
             ValidMonthCode::new_unchecked(6, true) // M06L
         } else {
             valid_standard_code
         };
 
         types::MonthInfo {
-            ordinal: date.0.month,
+            ordinal: date.0.month(),
             standard_code: valid_standard_code.to_month_code(),
             valid_standard_code,
             formatting_code: valid_formatting_code.to_month_code(),
@@ -316,11 +342,11 @@ impl Calendar for Hebrew {
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        types::DayOfMonth(date.0.day)
+        types::DayOfMonth(date.0.day())
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        types::DayOfYear(date.0.year.keviyah.days_preceding(date.0.month) + date.0.day as u16)
+        types::DayOfYear(date.0.year().keviyah.days_preceding(date.0.month()) + date.0.day() as u16)
     }
 
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
@@ -470,13 +496,13 @@ mod tests {
     fn test_negative_era_years() {
         let greg_date = Date::try_new_gregorian(-5000, 1, 1).unwrap();
         let greg_year = greg_date.era_year();
-        assert_eq!(greg_date.inner.0.year, -5000);
+        assert_eq!(greg_date.inner.0.year(), -5000);
         assert_eq!(greg_year.era, "bce");
         // In Gregorian, era year is 1 - extended year
         assert_eq!(greg_year.year, 5001);
         let hebr_date = greg_date.to_calendar(Hebrew);
         let hebr_year = hebr_date.era_year();
-        assert_eq!(hebr_date.inner.0.year.value, -1240);
+        assert_eq!(hebr_date.inner.0.year().value, -1240);
         assert_eq!(hebr_year.era, "am");
         // In Hebrew, there is no inverse era, so negative extended years are negative era years
         assert_eq!(hebr_year.year, -1240);

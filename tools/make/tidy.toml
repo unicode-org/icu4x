@@ -58,11 +58,6 @@ license_rem_line_3 = set "REM (online at: https://github.com/unicode-org/icu4x/b
 license_rem_array = array ${license_rem_line_1} ${license_rem_line_2} ${license_rem_line_3} ${blank_line}
 license_rem_str = array_join ${license_rem_array} "\n"
 
-license_unicode_hash_line_1 = set "# Copyright (C) 2021 and later: Unicode, Inc. and others."
-license_unicode_hash_line_2 = set "# License & terms of use: http://www.unicode.org/copyright.html"
-license_unicode_hash_array = array ${license_unicode_hash_line_1} ${license_unicode_hash_line_2}
-license_unicode_hash_str = array_join ${license_unicode_hash_array} "\n"
-
 license_apache_hash_line_1 = set "# This file is part of ICU4X."
 license_apache_hash_line_2 = set "#"
 license_apache_hash_line_3 = set "# This file is licensed under the Apache License, Version 2.0,"
@@ -115,13 +110,11 @@ for pattern in ${glob_pattern_array}
                 result_slash = starts_with ${text} ${license_slash_str}
                 result_rst = starts_with ${text} ${license_rst_str}
                 result_rem = starts_with ${text} ${license_rem_str}
-                result_unicode_hash = starts_with ${text} ${license_unicode_hash_str}
                 not_result_hash = not ${result_hash}
                 not_result_slash = not ${result_slash}
                 not_result_rst = not ${result_rst}
                 not_result_rem = not ${result_rem}
-                not_result_unicode_hash = not ${result_unicode_hash}
-                if ${not_result_hash} and ${not_result_slash} and ${not_result_rst} and ${not_result_rem} and ${not_result_unicode_hash}
+                if ${not_result_hash} and ${not_result_slash} and ${not_result_rst} and ${not_result_rem}
                   echo "License header missing in ${path}"
                   trigger_error "License header missing or misformatted in ${path}."
                 end

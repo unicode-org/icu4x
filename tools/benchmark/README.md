@@ -35,7 +35,7 @@ official support.
 ### Packages used:
 
 * [dhat-rs](https://github.com/nnethercote/dhat-rs) for instrumentation.
-* [benchmarking action](https://github.com/gregtatum/github-action-benchmark) – This is a fork that allows collecting [ndjson](http://ndjson.org/) benchmark data.
+* [benchmarking action](https://github.com/gregtatum/github-action-benchmark) – This is a fork that allows collecting ndjson benchmark data.
 
 ## Valgrind / Callgrind
 

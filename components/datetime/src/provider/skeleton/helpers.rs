@@ -2,18 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::collections::BTreeMap;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
+use icu_plurals::PluralElements;
 
-use super::plural::PatternPlurals;
-use super::DateSkeletonPatterns;
 use crate::{
     options::SubsecondDigits,
     provider::{
         fields::{self, components, Field, FieldLength, FieldSymbol},
         pattern::{naively_apply_preferences, runtime, PatternItem, TimeGranularity},
-        skeleton::{FullLongMediumShort, GenericLengthPatterns},
+        skeleton::{reference, FullLongMediumShort, GenericLengthPatterns},
     },
 };
 
@@ -180,23 +180,23 @@ fn naively_apply_time_zone_name(
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 pub fn create_best_pattern_for_fields<'data>(
-    skeletons: &DateSkeletonPatterns<'data>,
+    skeletons: &BTreeMap<reference::Skeleton, PluralElements<runtime::Pattern<'data>>>,
     length_patterns: &GenericLengthPatterns<'data>,
     fields: &[Field],
     components: &components::Bag,
     prefer_matched_pattern: bool,
-) -> BestSkeleton<PatternPlurals<'data>> {
+) -> BestSkeleton<PluralElements<runtime::Pattern<'data>>> {
     let first_pattern_match =
         get_best_available_format_pattern(skeletons, fields, prefer_matched_pattern);
 
     // Try to match a skeleton to all of the fields.
-    if let BestSkeleton::AllFieldsMatch(mut pattern_plurals, d) = first_pattern_match {
-        pattern_plurals.for_each_mut(|pattern| {
+    if let BestSkeleton::AllFieldsMatch(mut pattern, d) = first_pattern_match {
+        pattern.for_each_mut(|pattern| {
             naively_apply_preferences(pattern, components.hour_cycle);
             naively_apply_time_zone_name(pattern, components.time_zone_name);
             apply_subseconds(pattern, components.subsecond);
         });
-        return BestSkeleton::AllFieldsMatch(pattern_plurals, d);
+        return BestSkeleton::AllFieldsMatch(pattern, d);
     }
 
     let FieldsByType { date, time } = group_fields_by_type(fields);
@@ -206,15 +206,15 @@ pub fn create_best_pattern_for_fields<'data>(
             BestSkeleton::AllFieldsMatch(_, _) => {
                 unreachable!("Logic error in implementation. AllFieldsMatch handled above.")
             }
-            BestSkeleton::MissingOrExtraFields(mut pattern_plurals, d) => {
+            BestSkeleton::MissingOrExtraFields(mut pattern, d) => {
                 if date.is_empty() {
-                    pattern_plurals.for_each_mut(|pattern| {
+                    pattern.for_each_mut(|pattern| {
                         naively_apply_preferences(pattern, components.hour_cycle);
                         naively_apply_time_zone_name(pattern, components.time_zone_name);
                         apply_subseconds(pattern, components.subsecond);
                     });
                 }
-                BestSkeleton::MissingOrExtraFields(pattern_plurals, d)
+                BestSkeleton::MissingOrExtraFields(pattern, d)
             }
             BestSkeleton::NoMatch => BestSkeleton::NoMatch,
         };
@@ -222,28 +222,22 @@ pub fn create_best_pattern_for_fields<'data>(
 
     // Match the date and time, and then simplify the combinatorial logic of the results into
     // an optional values of the results, and a boolean value.
-    let (date_patterns, date_missing_or_extra, date_distance): (
-        Option<PatternPlurals<'data>>,
-        bool,
-        SkeletonQuality,
-    ) = match get_best_available_format_pattern(skeletons, &date, prefer_matched_pattern) {
-        BestSkeleton::MissingOrExtraFields(fields, d) => (Some(fields), true, d),
-        BestSkeleton::AllFieldsMatch(fields, d) => (Some(fields), false, d),
-        BestSkeleton::NoMatch => (None, true, SkeletonQuality(REQUESTED_SYMBOL_MISSING)),
-    };
+    let (date_patterns, date_missing_or_extra, date_distance) =
+        match get_best_available_format_pattern(skeletons, &date, prefer_matched_pattern) {
+            BestSkeleton::MissingOrExtraFields(fields, d) => (Some(fields), true, d),
+            BestSkeleton::AllFieldsMatch(fields, d) => (Some(fields), false, d),
+            BestSkeleton::NoMatch => (None, true, SkeletonQuality(REQUESTED_SYMBOL_MISSING)),
+        };
 
-    let (time_patterns, time_missing_or_extra, time_distance): (
-        Option<PatternPlurals<'data>>,
-        bool,
-        SkeletonQuality,
-    ) = match get_best_available_format_pattern(skeletons, &time, prefer_matched_pattern) {
-        BestSkeleton::MissingOrExtraFields(fields, d) => (Some(fields), true, d),
-        BestSkeleton::AllFieldsMatch(fields, d) => (Some(fields), false, d),
-        BestSkeleton::NoMatch => (None, true, SkeletonQuality(REQUESTED_SYMBOL_MISSING)),
-    };
-    let time_pattern: Option<runtime::Pattern<'data>> = time_patterns.map(|pattern_plurals| {
-        let mut pattern =
-            pattern_plurals.expect_pattern("Only date patterns can contain plural variants");
+    let (time_patterns, time_missing_or_extra, time_distance) =
+        match get_best_available_format_pattern(skeletons, &time, prefer_matched_pattern) {
+            BestSkeleton::MissingOrExtraFields(fields, d) => (Some(fields), true, d),
+            BestSkeleton::AllFieldsMatch(fields, d) => (Some(fields), false, d),
+            BestSkeleton::NoMatch => (None, true, SkeletonQuality(REQUESTED_SYMBOL_MISSING)),
+        };
+    let time_pattern: Option<runtime::Pattern<'data>> = time_patterns.map(|pattern| {
+        #[allow(clippy::unwrap_used)] // only date patterns can contain plural variants
+        let mut pattern = pattern.try_into_other().unwrap();
         naively_apply_preferences(&mut pattern, components.hour_cycle);
         naively_apply_time_zone_name(&mut pattern, components.time_zone_name);
         apply_subseconds(&mut pattern, components.subsecond);
@@ -251,7 +245,7 @@ pub fn create_best_pattern_for_fields<'data>(
     });
 
     // Determine how to combine the date and time.
-    let patterns: Option<PatternPlurals<'data>> = match (date_patterns, time_pattern) {
+    let patterns = match (date_patterns, time_pattern) {
         (Some(mut date_patterns), Some(time_pattern)) => {
             let month_field = fields
                 .iter()
@@ -305,7 +299,7 @@ pub fn create_best_pattern_for_fields<'data>(
             });
             Some(date_patterns)
         }
-        (None, Some(pattern)) => Some(pattern.into()),
+        (None, Some(pattern)) => Some(PluralElements::new(pattern)),
         (Some(patterns), None) => Some(patterns),
         (None, None) => None,
     };
@@ -454,17 +448,17 @@ fn apply_subseconds(pattern: &mut runtime::Pattern, subseconds: Option<Subsecond
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 pub fn get_best_available_format_pattern<'data>(
-    skeletons: &DateSkeletonPatterns<'data>,
+    skeletons: &BTreeMap<reference::Skeleton, PluralElements<runtime::Pattern<'data>>>,
     fields: &[Field],
     prefer_matched_pattern: bool,
-) -> BestSkeleton<PatternPlurals<'data>> {
+) -> BestSkeleton<PluralElements<runtime::Pattern<'data>>> {
     let mut closest_format_pattern = None;
     let mut closest_distance: u32 = u32::MAX;
     let mut closest_missing_fields = 0;
 
-    for (skeleton, pattern) in skeletons.0.iter() {
+    for (skeleton, pattern) in skeletons.iter() {
         debug_assert!(
-            skeleton.0.fields_len() <= MAX_SKELETON_FIELDS as usize,
+            skeleton.fields_len() <= MAX_SKELETON_FIELDS as usize,
             "The distance mechanism assumes skeletons are less than MAX_SKELETON_FIELDS in length."
         );
         let mut missing_fields = 0;
@@ -472,7 +466,7 @@ pub fn get_best_available_format_pattern<'data>(
         // The distance should fit into a u32.
 
         let mut requested_fields = fields.iter().peekable();
-        let mut skeleton_fields = skeleton.0.fields_iter().peekable();
+        let mut skeleton_fields = skeleton.fields_iter().peekable();
 
         loop {
             let next = (requested_fields.peek(), skeleton_fields.peek());
@@ -548,7 +542,7 @@ pub fn get_best_available_format_pattern<'data>(
             // A single field was requested and the best pattern either includes extra fields or can't be adjusted to match
             // (e.g. text vs numeric). We return the field instead of the matched pattern.
             return BestSkeleton::AllFieldsMatch(
-                runtime::Pattern::from(vec![PatternItem::Field(*field)]).into(),
+                PluralElements::new(runtime::Pattern::from(vec![PatternItem::Field(*field)])),
                 SkeletonQuality(closest_distance),
             );
         }

@@ -4,6 +4,7 @@
 
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::DateFieldsResolver;
+use crate::calendar_arithmetic::PackWithMD;
 use crate::calendar_arithmetic::ToExtendedYear;
 use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
@@ -749,6 +750,34 @@ impl PackedHijriYearData {
     }
 }
 
+impl PackWithMD for HijriYear {
+    /// The first two bytes are the [`PackedHijriYearData`], the remaining four the YMD as encoded by [`i32::pack`].
+    type Packed = [u8; 6];
+
+    fn pack(self, month: u8, day: u8) -> Self::Packed {
+        let [a, b] = self.packed.0.to_le_bytes();
+        let [c, d, e, f] = self.extended_year.pack(month, day);
+        [a, b, c, d, e, f]
+    }
+
+    fn unpack_year([a, b, c, d, e, f]: Self::Packed) -> Self {
+        let packed = PackedHijriYearData(u16::from_le_bytes([a, b]));
+        let extended_year = i32::unpack_year([c, d, e, f]);
+        Self {
+            extended_year,
+            packed,
+        }
+    }
+
+    fn unpack_month([_, _, c, d, e, f]: Self::Packed) -> u8 {
+        i32::unpack_month([c, d, e, f])
+    }
+
+    fn unpack_day([_, _, c, d, e, f]: Self::Packed) -> u8 {
+        i32::unpack_day([c, d, e, f])
+    }
+}
+
 impl<A: AsCalendar<Calendar = Hijri<AstronomicalSimulation>>> Date<A> {
     /// Deprecated
     #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar`")]
@@ -914,21 +943,16 @@ impl<R: Rules> Calendar for Hijri<R> {
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
         let year = self.0.year_containing_rd(rd);
 
-        // Clamp the RD to our year
-        let rd = rd.clamp(
-            year.new_year(),
-            year.new_year() + year.packed.days_in_year() as i64,
-        );
-
         let (month, day) = year.month_day_for((rd - year.new_year()) as u16 + 1);
 
+        // date is in the valid RD range
         HijriDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        date.0.year.new_year()
-            + date.0.year.packed.days_before_month(date.0.month) as i64
-            + (date.0.day - 1) as i64
+        date.0.year().new_year()
+            + date.0.year().packed.days_before_month(date.0.month()) as i64
+            + (date.0.day() - 1) as i64
     }
 
     fn has_cheap_iso_conversion(&self) -> bool {
@@ -936,15 +960,15 @@ impl<R: Rules> Calendar for Hijri<R> {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Self::months_in_provided_year(date.0.year)
+        Self::months_in_provided_year(date.0.year())
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.0.year.packed.days_in_year()
+        date.0.year().packed.days_in_year()
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        Self::days_in_provided_month(date.0.year, date.0.month)
+        Self::days_in_provided_month(date.0.year(), date.0.month())
     }
 
     #[cfg(feature = "unstable")]
@@ -972,7 +996,7 @@ impl<R: Rules> Calendar for Hijri<R> {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let extended_year = date.0.year.extended_year;
+        let extended_year = date.0.year().extended_year;
         if extended_year > 0 {
             types::EraYear {
                 era: tinystr!(16, "ah"),
@@ -993,19 +1017,21 @@ impl<R: Rules> Calendar for Hijri<R> {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        date.0.year.packed.is_leap()
+        date.0.year().packed.is_leap()
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        types::MonthInfo::non_lunisolar(date.0.month)
+        types::MonthInfo::non_lunisolar(date.0.month())
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        types::DayOfMonth(date.0.day)
+        types::DayOfMonth(date.0.day())
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        types::DayOfYear(date.0.year.packed.days_before_month(date.0.month) + date.0.day as u16)
+        types::DayOfYear(
+            date.0.year().packed.days_before_month(date.0.month()) + date.0.day() as u16,
+        )
     }
 
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
@@ -1922,9 +1948,9 @@ mod test {
         let dt = Hijri::new_umm_al_qura()
             .from_codes(Some("bh"), 6824, MonthCode::new_normal(1).unwrap(), 1)
             .unwrap();
-        assert_eq!(dt.0.day, 1);
-        assert_eq!(dt.0.month, 1);
-        assert_eq!(dt.0.year.extended_year, -6823);
+        assert_eq!(dt.0.day(), 1);
+        assert_eq!(dt.0.month(), 1);
+        assert_eq!(dt.0.year().extended_year, -6823);
     }
 
     #[test]

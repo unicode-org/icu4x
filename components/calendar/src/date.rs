@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
+use crate::calendar_arithmetic::VALID_RD_RANGE;
 use crate::error::{DateError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
@@ -197,6 +198,7 @@ impl<A: AsCalendar> Date<A> {
     /// Construct a date from a [`RataDie`] and some calendar representation
     #[inline]
     pub fn from_rata_die(rd: RataDie, calendar: A) -> Self {
+        let rd = rd.clamp(*VALID_RD_RANGE.start(), *VALID_RD_RANGE.end());
         Date {
             inner: calendar.as_calendar().from_rata_die(rd),
             calendar,
@@ -229,6 +231,7 @@ impl<A: AsCalendar> Date<A> {
         let inner = if c1.has_cheap_iso_conversion() && c2.has_cheap_iso_conversion() {
             c2.from_iso(c1.to_iso(self.inner()))
         } else {
+            // `from_rata_die` precondition is satified by `to_rata_die`
             c2.from_rata_die(c1.to_rata_die(self.inner()))
         };
         Date { inner, calendar }
@@ -470,7 +473,7 @@ impl Date<Iso> {
     pub fn week_of_year(&self) -> IsoWeekOfYear {
         let week_of = WeekCalculator::ISO
             .week_of(
-                365 + calendrical_calculations::gregorian::is_leap_year(self.inner.0.year - 1)
+                365 + calendrical_calculations::gregorian::is_leap_year(self.inner.0.year() - 1)
                     as u16,
                 self.days_in_year(),
                 self.day_of_year().0,
@@ -488,9 +491,9 @@ impl Date<Iso> {
         IsoWeekOfYear {
             week_number: week_of.week,
             iso_year: match week_of.unit {
-                RelativeUnit::Current => self.inner.0.year,
-                RelativeUnit::Next => self.inner.0.year + 1,
-                RelativeUnit::Previous => self.inner.0.year - 1,
+                RelativeUnit::Current => self.inner.0.year(),
+                RelativeUnit::Next => self.inner.0.year() + 1,
+                RelativeUnit::Previous => self.inner.0.year() - 1,
             },
         }
     }

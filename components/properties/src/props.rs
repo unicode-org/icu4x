@@ -685,7 +685,7 @@ impl From<GeneralCategoryGroup> for u32 {
 /// determine whether a code point belongs to a certain script, you should use
 /// [`ScriptWithExtensionsBorrowed::has_script`].
 ///
-/// For more information, see UAX #24: <http://www.unicode.org/reports/tr24/>.
+/// For more information, see UAX #24: <https://www.unicode.org/reports/tr24/>.
 /// See `UScriptCode` in ICU4C.
 ///
 /// # Example

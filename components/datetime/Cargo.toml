@@ -37,9 +37,7 @@ zerovec = { workspace = true, features = ["alloc", "yoke"] }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 zerotrie = { workspace = true, features = ["alloc"], optional = true }
 databake = { workspace = true, features = ["derive"], optional = true}
-either = { workspace = true, optional = true }
 smallvec = { workspace = true, optional = true }
-litemap = { workspace = true, optional = true }
 
 icu_datetime_data = { workspace = true, optional = true }
 icu_locale = { workspace = true, optional = true }
@@ -52,7 +50,6 @@ icu_calendar = { path = "../calendar", features = ["ixdtf", "unstable"] }
 icu_provider_adapters = { path = "../../provider/adapters" }
 icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }
 icu_time = { path = "../time", features = ["ixdtf", "alloc"] }
-litemap = { path = "../../utils/litemap" }
 
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
@@ -73,7 +70,6 @@ serde = [
     "icu_provider/alloc",
     "icu_provider/serde",
     "icu_time/serde",
-    "litemap?/serde",
     "smallvec?/serde",
     "tinystr/serde",
     "potential_utf/serde",
@@ -82,8 +78,6 @@ serde = [
 ]
 datagen = [
     "dep:databake",
-    "dep:either",
-    "dep:litemap",
     "dep:smallvec",
     "icu_calendar/datagen",
     "icu_pattern/databake",

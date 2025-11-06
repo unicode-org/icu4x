@@ -4,16 +4,14 @@
 
 use icu_calendar::*;
 
-const MAGNITUDE: i32 = 1_000_000;
-
 // Check rd -> date -> iso -> date -> rd for whole range
 #[test]
 #[ignore] // takes about 200 seconds in release-with-assertions
 fn check_round_trip() {
     fn test<C: Calendar>(cal: C) {
         let cal = Ref(&cal);
-        let low = Date::try_new_iso(-MAGNITUDE, 1, 1).unwrap().to_rata_die();
-        let high = Date::try_new_iso(MAGNITUDE, 12, 31).unwrap().to_rata_die();
+        let low = *VALID_RD_RANGE.start();
+        let high = *VALID_RD_RANGE.end();
         let mut prev = Date::from_rata_die(low, cal);
         let mut curr = low + 1;
         while curr <= high {
@@ -49,7 +47,7 @@ fn check_from_fields() {
                 .into_iter()
             })
             .collect::<Vec<_>>();
-        for year in -MAGNITUDE..=MAGNITUDE {
+        for year in VALID_YEAR_RANGE {
             if year % 50000 == 0 {
                 println!("{} {year:?}", cal.as_calendar().debug_name());
             }
@@ -182,13 +180,13 @@ struct EastAsianTraditionalYears(Vec<cal::east_asian_traditional::EastAsianTradi
 
 impl EastAsianTraditionalYears {
     fn new<R: cal::east_asian_traditional::Rules>(r: R) -> Self {
-        Self(((-MAGNITUDE - 1)..=MAGNITUDE).map(|i| r.year(i)).collect())
+        Self((-1100000..=1100000).map(|i| r.year(i)).collect())
     }
 }
 
 impl cal::scaffold::UnstableSealed for EastAsianTraditionalYears {}
 impl cal::east_asian_traditional::Rules for EastAsianTraditionalYears {
     fn year(&self, related_iso: i32) -> cal::east_asian_traditional::EastAsianTraditionalYear {
-        self.0[(related_iso + MAGNITUDE + 1) as usize]
+        self.0[(related_iso + 1100000) as usize]
     }
 }
