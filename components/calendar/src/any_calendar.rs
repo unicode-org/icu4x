@@ -2057,4 +2057,22 @@ mod tests {
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
     }
+
+    #[test]
+    fn iso() {
+        let iso = AnyCalendar::new(AnyCalendarKind::Iso);
+        let iso = Ref(&iso);
+        single_test_roundtrip(iso, Some(("default", Some(0))), 100, "M03", 1);
+        single_test_roundtrip(iso, None, 2000, "M03", 1);
+        single_test_roundtrip(iso, None, -100, "M03", 1);
+        single_test_roundtrip(iso, Some(("default", Some(0))), -100, "M03", 1);
+        single_test_error(
+            iso,
+            Some(("default", Some(0))),
+            100,
+            "M13",
+            1,
+            DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
+        );
+    }
 }
