@@ -25,22 +25,14 @@ pub const VALID_YEAR_RANGE: RangeInclusive<i32> = -1_000_000..=1_000_000;
 /// date types. Because this range slightly exceeds the [`VALID_YEAR_RANGE`], only
 /// the valid year range is checked in constructors. Only the `Date::from_rata_die`
 /// constructor actually uses this, but for clamping instead of erroring.
-///
-/// The longest average year length is 365.25 (Julian, Coptic). We round up to 366 to make
-/// it round and capture year offsets from the Gregorian calendar, which underlies RD.
+// This range is the tightest possible range that includes all valid years for all
+// calendars, this is asserted in [`test_validity_ranges`].
 pub const VALID_RD_RANGE: RangeInclusive<RataDie> =
-    RataDie::new(*VALID_YEAR_RANGE.start() as i64 * 366)
-        ..=RataDie::new(*VALID_YEAR_RANGE.end() as i64 * 366);
+    RataDie::new(-367256444)..=RataDie::new(365940477);
 
 // Invariant: VALID_RD_RANGE contains the date
 #[derive(Debug)]
-pub(crate) struct ArithmeticDate<C: DateFieldsResolver> {
-    pub year: C::YearInfo,
-    /// 1-based month of year
-    pub month: u8,
-    /// 1-based day of month
-    pub day: u8,
-}
+pub(crate) struct ArithmeticDate<C: DateFieldsResolver>(<C::YearInfo as PackWithMD>::Packed);
 
 // Manual impls since the derive will introduce a C: Trait bound
 // and only the year value should be compared
@@ -53,9 +45,9 @@ impl<C: DateFieldsResolver> Clone for ArithmeticDate<C> {
 
 impl<C: DateFieldsResolver> PartialEq for ArithmeticDate<C> {
     fn eq(&self, other: &Self) -> bool {
-        self.year.to_extended_year() == other.year.to_extended_year()
-            && self.month == other.month
-            && self.day == other.day
+        self.year().to_extended_year() == other.year().to_extended_year()
+            && self.month() == other.month()
+            && self.day() == other.day()
     }
 }
 
@@ -63,11 +55,11 @@ impl<C: DateFieldsResolver> Eq for ArithmeticDate<C> {}
 
 impl<C: DateFieldsResolver> Ord for ArithmeticDate<C> {
     fn cmp(&self, other: &Self) -> Ordering {
-        self.year
+        self.year()
             .to_extended_year()
-            .cmp(&other.year.to_extended_year())
-            .then(self.month.cmp(&other.month))
-            .then(self.day.cmp(&other.day))
+            .cmp(&other.year().to_extended_year())
+            .then(self.month().cmp(&other.month()))
+            .then(self.day().cmp(&other.day()))
     }
 }
 
@@ -82,9 +74,9 @@ impl<C: DateFieldsResolver> Hash for ArithmeticDate<C> {
     where
         H: Hasher,
     {
-        self.year.to_extended_year().hash(state);
-        self.month.hash(state);
-        self.day.hash(state);
+        self.year().to_extended_year().hash(state);
+        self.month().hash(state);
+        self.day().hash(state);
     }
 }
 
@@ -102,11 +94,45 @@ impl ToExtendedYear for i32 {
     }
 }
 
+pub(crate) trait PackWithMD: Copy {
+    type Packed: Copy + Debug;
+
+    fn pack(self, month: u8, day: u8) -> Self::Packed;
+    fn unpack_year(packed: Self::Packed) -> Self;
+    fn unpack_month(packed: Self::Packed) -> u8;
+    fn unpack_day(packed: Self::Packed) -> u8;
+}
+
+impl PackWithMD for i32 {
+    /// 2 bits unused, 21 bits year (test_validity_ranges),
+    /// 4 bits month (1..13), 5 bits day (1..31)
+    type Packed = [u8; 4];
+
+    fn pack(self, month: u8, day: u8) -> Self::Packed {
+        (self << 9 | (month as i32) << 5 | day as i32).to_le_bytes()
+    }
+
+    fn unpack_year(packed: Self::Packed) -> Self {
+        let packed = i32::from_le_bytes(packed);
+        packed >> 9
+    }
+
+    fn unpack_month(packed: Self::Packed) -> u8 {
+        let packed = i32::from_le_bytes(packed);
+        (packed >> 5 & 0b1111) as u8
+    }
+
+    fn unpack_day(packed: Self::Packed) -> u8 {
+        let packed = i32::from_le_bytes(packed);
+        (packed & 0b11111) as u8
+    }
+}
+
 /// Trait for converting from era codes, month codes, and other fields to year/month/day ordinals.
 pub(crate) trait DateFieldsResolver: Calendar {
     /// This stores the year as either an i32, or a type containing more
     /// useful computational information.
-    type YearInfo: Copy + Debug + PartialEq + ToExtendedYear;
+    type YearInfo: Copy + Debug + PartialEq + ToExtendedYear + PackWithMD;
 
     fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8;
 
@@ -163,20 +189,26 @@ pub(crate) trait DateFieldsResolver: Calendar {
 }
 
 impl<C: DateFieldsResolver> ArithmeticDate<C> {
-    // Precondition: the date is in the VALID_RD_RANGE
-    #[inline]
-    pub(crate) const fn new_unchecked(year: C::YearInfo, month: u8, day: u8) -> Self {
-        ArithmeticDate { year, month, day }
+    pub(crate) fn year(self) -> C::YearInfo {
+        C::YearInfo::unpack_year(self.0)
     }
 
-    pub(crate) const fn cast<C2: DateFieldsResolver<YearInfo = C::YearInfo>>(
-        self,
-    ) -> ArithmeticDate<C2> {
-        ArithmeticDate {
-            year: self.year,
-            month: self.month,
-            day: self.day,
-        }
+    pub(crate) fn month(self) -> u8 {
+        C::YearInfo::unpack_month(self.0)
+    }
+
+    pub(crate) fn day(self) -> u8 {
+        C::YearInfo::unpack_day(self.0)
+    }
+
+    // Precondition: the date is in the VALID_RD_RANGE
+    #[inline]
+    pub(crate) fn new_unchecked(year: C::YearInfo, month: u8, day: u8) -> Self {
+        ArithmeticDate(C::YearInfo::pack(year, month, day))
+    }
+
+    pub(crate) fn cast<C2: DateFieldsResolver<YearInfo = C::YearInfo>>(self) -> ArithmeticDate<C2> {
+        ArithmeticDate::new_unchecked(self.year(), self.month(), self.day())
     }
 
     pub(crate) fn from_codes(
@@ -432,9 +464,9 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     ) -> bool {
         // 1. Let _parts_ be CalendarISOToDate(_calendar_, _fromIsoDate_).
         // 1. Let _y0_ be _parts_.[[Year]] + _years_.
-        let y0 = cal.year_info_from_extended(duration.add_years_to(self.year.to_extended_year()));
+        let y0 = cal.year_info_from_extended(duration.add_years_to(self.year().to_extended_year()));
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], ~constrain~)).
-        let base_month_code = cal.month_code_from_ordinal(&self.year, self.month);
+        let base_month_code = cal.month_code_from_ordinal(&self.year(), self.month());
         let constrain = DateFromFieldsOptions {
             overflow: Some(Overflow::Constrain),
             ..Default::default()
@@ -453,7 +485,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // 1. Let _endOfMonth_ be BalanceNonISODate(_calendar_, _y0_, _m0_ + _months_ + 1, 0).
         let end_of_month = Self::new_balanced(y0, duration.add_months_to(m0) + 1, 0, cal);
         // 1. Let _baseDay_ be _parts_.[[Day]].
-        let base_day = self.day;
+        let base_day = self.day();
         let y1;
         let m1;
         let d1;
@@ -463,31 +495,31 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             //     1. Let _regulatedDay_ be _baseDay_.
             //   1. Else,
             //     1. Let _regulatedDay_ be _endOfMonth_.[[Day]].
-            let regulated_day = if base_day < end_of_month.day {
+            let regulated_day = if base_day < end_of_month.day() {
                 base_day
             } else {
-                end_of_month.day
+                end_of_month.day()
             };
             //   1. Let _balancedDate_ be BalanceNonISODate(_calendar_, _endOfMonth_.[[Year]], _endOfMonth_.[[Month]], _regulatedDay_ + 7 * _weeks_ + _days_).
             //   1. Let _y1_ be _balancedDate_.[[Year]].
             //   1. Let _m1_ be _balancedDate_.[[Month]].
             //   1. Let _d1_ be _balancedDate_.[[Day]].
             let balanced_date = Self::new_balanced(
-                end_of_month.year,
-                i64::from(end_of_month.month),
+                end_of_month.year(),
+                i64::from(end_of_month.month()),
                 duration.add_weeks_and_days_to(regulated_day),
                 cal,
             );
-            y1 = balanced_date.year;
-            m1 = balanced_date.month;
-            d1 = balanced_date.day;
+            y1 = balanced_date.year();
+            m1 = balanced_date.month();
+            d1 = balanced_date.day();
         } else {
             // 1. Else,
             //   1. Let _y1_ be _endOfMonth_.[[Year]].
             //   1. Let _m1_ be _endOfMonth_.[[Month]].
             //   1. Let _d1_ be _baseDay_.
-            y1 = end_of_month.year;
-            m1 = end_of_month.month;
+            y1 = end_of_month.year();
+            m1 = end_of_month.month();
             d1 = base_day;
         }
         // 1. Let _calDate2_ be CalendarISOToDate(_calendar_, _toIsoDate_).
@@ -498,18 +530,19 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // 1. Else if _d1_ ≠ _calDate2_.[[Day]], then
         //   1. If _sign_ × (_d1_ - _calDate2_.[[Day]]) > 0, return *true*.
         #[allow(clippy::collapsible_if)] // to align with the spec
-        if y1 != other.year {
-            if sign * (i64::from(y1.to_extended_year()) - i64::from(other.year.to_extended_year()))
+        if y1 != other.year() {
+            if sign
+                * (i64::from(y1.to_extended_year()) - i64::from(other.year().to_extended_year()))
                 > 0
             {
                 return true;
             }
-        } else if m1 != other.month {
-            if sign * (i64::from(m1) - i64::from(other.month)) > 0 {
+        } else if m1 != other.month() {
+            if sign * (i64::from(m1) - i64::from(other.month())) > 0 {
                 return true;
             }
-        } else if d1 != other.day {
-            if sign * (i64::from(d1) - i64::from(other.day)) > 0 {
+        } else if d1 != other.day() {
+            if sign * (i64::from(d1) - i64::from(other.day())) > 0 {
                 return true;
             }
         }
@@ -529,9 +562,9 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     ) -> Result<Self, DateError> {
         // 1. Let _parts_ be CalendarISOToDate(_calendar_, _isoDate_).
         // 1. Let _y0_ be _parts_.[[Year]] + _duration_.[[Years]].
-        let y0 = cal.year_info_from_extended(duration.add_years_to(self.year.to_extended_year()));
+        let y0 = cal.year_info_from_extended(duration.add_years_to(self.year().to_extended_year()));
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], _overflow_)).
-        let base_month = cal.month_code_from_ordinal(&self.year, self.month);
+        let base_month = cal.month_code_from_ordinal(&self.year(), self.month());
         let m0 = cal
             .ordinal_month_from_code(
                 &y0,
@@ -552,10 +585,10 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // 1. Let _endOfMonth_ be BalanceNonISODate(_calendar_, _y0_, _m0_ + _duration_.[[Months]] + 1, 0).
         let end_of_month = Self::new_balanced(y0, duration.add_months_to(m0) + 1, 0, cal);
         // 1. Let _baseDay_ be _parts_.[[Day]].
-        let base_day = self.day;
+        let base_day = self.day();
         // 1. If _baseDay_ &lt; _endOfMonth_.[[Day]], then
         //   1. Let _regulatedDay_ be _baseDay_.
-        let regulated_day = if base_day < end_of_month.day {
+        let regulated_day = if base_day < end_of_month.day() {
             base_day
         } else {
             // 1. Else,
@@ -566,17 +599,17 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                     field: "day",
                     value: i32::from(base_day),
                     min: 1,
-                    max: i32::from(end_of_month.day),
+                    max: i32::from(end_of_month.day()),
                 });
             }
-            end_of_month.day
+            end_of_month.day()
         };
         // 1. Let _balancedDate_ be BalanceNonISODate(_calendar_, _endOfMonth_.[[Year]], _endOfMonth_.[[Month]], _regulatedDay_ + 7 * _duration_.[[Weeks]] + _duration_.[[Days]]).
         // 1. Let _result_ be ? CalendarIntegersToISO(_calendar_, _balancedDate_.[[Year]], _balancedDate_.[[Month]], _balancedDate_.[[Day]]).
         // 1. Return _result_.
         Ok(Self::new_balanced(
-            end_of_month.year,
-            i64::from(end_of_month.month),
+            end_of_month.year(),
+            i64::from(end_of_month.month()),
             duration.add_weeks_and_days_to(regulated_day),
             cal,
         ))
@@ -720,5 +753,108 @@ mod tests {
         Date::try_new_iso(2024, 0, 1).unwrap_err();
         Date::try_new_iso(2024, 1, 0).unwrap_err();
         Date::try_new_iso(2024, 0, 0).unwrap_err();
+    }
+
+    #[test]
+    fn test_validity_ranges() {
+        use crate::{cal::*, types::MonthCode, Date};
+
+        #[rustfmt::skip]
+        let lowest_years = [
+            Date::from_rata_die(*VALID_RD_RANGE.start(), Buddhist).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.start(), ChineseTraditional::new()).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.start(), Coptic).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.start(), Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.start(), Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.start(), Gregorian).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.start(), Hebrew).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.start(), Hijri::new_umm_al_qura()).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.start(), Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday)).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.start(), Indian).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.start(), Iso).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.start(), Japanese::new()).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.start(), Julian).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.start(), KoreanTraditional::new()).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.start(), Persian).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.start(), Roc).year().extended_year(),
+        ];
+
+        #[rustfmt::skip]
+        let highest_years = [
+            Date::from_rata_die(*VALID_RD_RANGE.end(), Buddhist).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.end(), ChineseTraditional::new()).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.end(), Coptic).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.end(), Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.end(), Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.end(), Gregorian).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.end(), Hebrew).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.end(), Hijri::new_umm_al_qura()).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.end(), Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday)).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.end(), Indian).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.end(), Iso).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.end(), Japanese::new()).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.end(), Julian).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.end(), KoreanTraditional::new()).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.end(), Persian).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.end(), Roc).year().extended_year(),
+        ];
+
+        #[rustfmt::skip]
+        let lowest_rds = [
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Buddhist).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, ChineseTraditional::new()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Coptic).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Gregorian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Hebrew).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Hijri::new_umm_al_qura()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday)).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Indian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Iso).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Japanese::new()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Julian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, KoreanTraditional::new()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Persian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Roc).unwrap().to_rata_die(),
+        ];
+
+        #[rustfmt::skip]
+        let highest_rds = [
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Buddhist).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, ChineseTraditional::new()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(13).unwrap(), 5, Coptic).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(13).unwrap(), 5, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(13).unwrap(), 5, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Gregorian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 29, Hebrew).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, Hijri::new_umm_al_qura()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday)).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, Indian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Iso).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Japanese::new()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Julian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, KoreanTraditional::new()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, Persian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Roc).unwrap().to_rata_die(),
+        ];
+
+        // RD range is tight
+        assert_eq!(
+            lowest_rds.iter().copied().min().unwrap(),
+            *VALID_RD_RANGE.start()
+        );
+        assert_eq!(
+            highest_rds.iter().copied().max().unwrap(),
+            *VALID_RD_RANGE.end()
+        );
+
+        // Valid RDs can represent all valid years
+        assert!(lowest_years.iter().all(|y| y <= VALID_YEAR_RANGE.start()));
+        assert!(highest_years.iter().all(|y| y >= VALID_YEAR_RANGE.end()));
+
+        // All years are 21-bits
+        assert!(-lowest_years.iter().copied().min().unwrap() < 1 << 20);
+        assert!(highest_years.iter().copied().max().unwrap() < 1 << 20);
     }
 }

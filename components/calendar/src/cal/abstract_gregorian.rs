@@ -134,7 +134,11 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        calendrical_calculations::gregorian::fixed_from_gregorian(date.year, date.month, date.day)
+        calendrical_calculations::gregorian::fixed_from_gregorian(
+            date.year(),
+            date.month(),
+            date.day(),
+        )
     }
 
     fn has_cheap_iso_conversion(&self) -> bool {
@@ -150,15 +154,15 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        AbstractGregorian::<IsoEra>::months_in_provided_year(date.year)
+        AbstractGregorian::<IsoEra>::months_in_provided_year(date.year())
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        365 + calendrical_calculations::gregorian::is_leap_year(date.year) as u16
+        365 + calendrical_calculations::gregorian::is_leap_year(date.year()) as u16
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        AbstractGregorian::<IsoEra>::days_in_provided_month(date.year, date.month)
+        AbstractGregorian::<IsoEra>::days_in_provided_month(date.year(), date.month())
     }
 
     #[cfg(feature = "unstable")]
@@ -182,26 +186,29 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        self.0
-            .era_year_from_extended(date.year - Y::EXTENDED_YEAR_OFFSET, date.month, date.day)
+        self.0.era_year_from_extended(
+            date.year() - Y::EXTENDED_YEAR_OFFSET,
+            date.month(),
+            date.day(),
+        )
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        calendrical_calculations::gregorian::is_leap_year(date.year)
+        calendrical_calculations::gregorian::is_leap_year(date.year())
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        types::MonthInfo::non_lunisolar(date.month)
+        types::MonthInfo::non_lunisolar(date.month())
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        types::DayOfMonth(date.day)
+        types::DayOfMonth(date.day())
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
         types::DayOfYear(
-            calendrical_calculations::gregorian::days_before_month(date.year, date.month)
-                + date.day as u16,
+            calendrical_calculations::gregorian::days_before_month(date.year(), date.month())
+                + date.day() as u16,
         )
     }
 

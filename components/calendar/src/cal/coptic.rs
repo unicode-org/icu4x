@@ -170,7 +170,11 @@ impl Calendar for Coptic {
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        calendrical_calculations::coptic::fixed_from_coptic(date.0.year, date.0.month, date.0.day)
+        calendrical_calculations::coptic::fixed_from_coptic(
+            date.0.year(),
+            date.0.month(),
+            date.0.day(),
+        )
     }
 
     fn has_cheap_iso_conversion(&self) -> bool {
@@ -178,7 +182,7 @@ impl Calendar for Coptic {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Self::months_in_provided_year(date.0.year)
+        Self::months_in_provided_year(date.0.year())
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
@@ -190,7 +194,7 @@ impl Calendar for Coptic {
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        Self::days_in_provided_month(date.0.year, date.0.month)
+        Self::days_in_provided_month(date.0.year(), date.0.month())
     }
 
     #[cfg(feature = "unstable")]
@@ -214,7 +218,7 @@ impl Calendar for Coptic {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let year = date.0.year;
+        let year = date.0.year();
         types::EraYear {
             era: tinystr!(16, "am"),
             era_index: Some(0),
@@ -225,19 +229,19 @@ impl Calendar for Coptic {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        date.0.year.rem_euclid(4) == 3
+        date.0.year().rem_euclid(4) == 3
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        types::MonthInfo::non_lunisolar(date.0.month)
+        types::MonthInfo::non_lunisolar(date.0.month())
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        types::DayOfMonth(date.0.day)
+        types::DayOfMonth(date.0.day())
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        types::DayOfYear(30 * (date.0.month as u16 - 1) + date.0.day as u16)
+        types::DayOfYear(30 * (date.0.month() as u16 - 1) + date.0.day() as u16)
     }
 
     fn debug_name(&self) -> &'static str {
