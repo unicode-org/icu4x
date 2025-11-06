@@ -100,6 +100,8 @@ pub enum AnyCalendar {
     Japanese(Japanese),
     /// A [`JapaneseExtended`] calendar
     JapaneseExtended(JapaneseExtended),
+    /// A [`Julian`] calendar
+    Julian(Julian),
     /// A [`Persian`] calendar
     Persian(Persian),
     /// A [`Roc`] calendar
@@ -142,6 +144,8 @@ pub enum AnyDateInner {
     Japanese(<Japanese as Calendar>::DateInner),
     /// A date for a [`JapaneseExtended`] calendar
     JapaneseExtended(<JapaneseExtended as Calendar>::DateInner),
+    /// A date for a [`Julian`] calendar
+    Julian(<Julian as Calendar>::DateInner),
     /// A date for a [`Persian`] calendar
     Persian(<Persian as Calendar>::DateInner),
     /// A date for a [`Roc`] calendar
@@ -167,6 +171,7 @@ impl PartialOrd for AnyDateInner {
             (Iso(d1), Iso(d2)) => d1.partial_cmp(d2),
             (Japanese(d1), Japanese(d2)) => d1.partial_cmp(d2),
             (JapaneseExtended(d1), JapaneseExtended(d2)) => d1.partial_cmp(d2),
+            (Julian(d1), Julian(d2)) => d1.partial_cmp(d2),
             (Persian(d1), Persian(d2)) => d1.partial_cmp(d2),
             (Roc(d1), Roc(d2)) => d1.partial_cmp(d2),
             _ => None,
@@ -203,6 +208,7 @@ macro_rules! match_cal_and_date {
                 &Self::JapaneseExtended(ref $cal_matched),
                 &AnyDateInner::JapaneseExtended(ref $date_matched),
             ) => $e,
+            (&Self::Julian(ref $cal_matched), &AnyDateInner::Julian(ref $date_matched)) => $e,
             (&Self::Persian(ref $cal_matched), &AnyDateInner::Persian(ref $date_matched)) => $e,
             (&Self::Roc(ref $cal_matched), &AnyDateInner::Roc(ref $date_matched)) => $e,
             // This is only reached from misuse of from_raw, a semi-internal api
@@ -228,6 +234,7 @@ macro_rules! match_cal {
             &Self::Iso(ref $cal_matched) => AnyDateInner::Iso($e),
             &Self::Japanese(ref $cal_matched) => AnyDateInner::Japanese($e),
             &Self::JapaneseExtended(ref $cal_matched) => AnyDateInner::JapaneseExtended($e),
+            &Self::Julian(ref $cal_matched) => AnyDateInner::Julian($e),
             &Self::Persian(ref $cal_matched) => AnyDateInner::Persian($e),
             &Self::Roc(ref $cal_matched) => AnyDateInner::Roc($e),
         }
@@ -309,6 +316,7 @@ impl Calendar for AnyCalendar {
             Self::Iso(ref c) => c.has_cheap_iso_conversion(),
             Self::Japanese(ref c) => c.has_cheap_iso_conversion(),
             Self::JapaneseExtended(ref c) => c.has_cheap_iso_conversion(),
+            Self::Julian(ref c) => c.has_cheap_iso_conversion(),
             Self::Persian(ref c) => c.has_cheap_iso_conversion(),
             Self::Roc(ref c) => c.has_cheap_iso_conversion(),
         }
@@ -391,6 +399,9 @@ impl Calendar for AnyCalendar {
             (Self::JapaneseExtended(c), AnyDateInner::JapaneseExtended(ref mut d)) => {
                 *d = c.add(d, duration, options)?
             }
+            (Self::Julian(c), AnyDateInner::Julian(ref mut d)) => {
+                *d = c.add(d, duration, options)?
+            }
             (Self::Persian(c), AnyDateInner::Persian(ref mut d)) => {
                 *d = c.add(d, duration, options)?
             }
@@ -460,6 +471,9 @@ impl Calendar for AnyCalendar {
                 AnyDateInner::JapaneseExtended(d1),
                 AnyDateInner::JapaneseExtended(d2),
             ) => c1.until(d1, d2, options),
+            (Self::Julian(c1), AnyDateInner::Julian(d1), AnyDateInner::Julian(d2)) => {
+                c1.until(d1, d2, options)
+            }
             (Self::Persian(c1), AnyDateInner::Persian(d1), AnyDateInner::Persian(d2)) => {
                 c1.until(d1, d2, options)
             }
@@ -519,6 +533,7 @@ impl Calendar for AnyCalendar {
             AnyCalendarKind::Iso => "AnyCalendar (Iso)",
             AnyCalendarKind::Japanese => "AnyCalendar (Japanese)",
             AnyCalendarKind::JapaneseExtended => "AnyCalendar (Japanese, historical era data)",
+            AnyCalendarKind::Julian => "AnyCalendar (Julian)",
             AnyCalendarKind::Persian => "AnyCalendar (Persian)",
             AnyCalendarKind::Roc => "AnyCalendar (Roc)",
         }
@@ -540,6 +555,7 @@ impl Calendar for AnyCalendar {
             Self::Iso(ref c) => c.calendar_algorithm(),
             Self::Japanese(ref c) => c.calendar_algorithm(),
             Self::JapaneseExtended(ref c) => c.calendar_algorithm(),
+            Self::Julian(ref c) => c.calendar_algorithm(),
             Self::Persian(ref c) => c.calendar_algorithm(),
             Self::Roc(ref c) => c.calendar_algorithm(),
         }
@@ -591,6 +607,7 @@ impl AnyCalendar {
             AnyCalendarKind::JapaneseExtended => {
                 AnyCalendar::JapaneseExtended(JapaneseExtended::new())
             }
+            AnyCalendarKind::Julian => AnyCalendar::Julian(Julian),
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
         }
@@ -644,6 +661,7 @@ impl AnyCalendar {
             AnyCalendarKind::JapaneseExtended => AnyCalendar::JapaneseExtended(
                 JapaneseExtended::try_new_with_buffer_provider(provider)?,
             ),
+            AnyCalendarKind::Julian => AnyCalendar::Julian(Julian),
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
         })
@@ -695,6 +713,7 @@ impl AnyCalendar {
             AnyCalendarKind::JapaneseExtended => {
                 AnyCalendar::JapaneseExtended(JapaneseExtended::try_new_unstable(provider)?)
             }
+            AnyCalendarKind::Julian => AnyCalendar::Julian(Julian),
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
         })
@@ -717,6 +736,7 @@ impl AnyCalendar {
             Self::Iso(_) => AnyCalendarKind::Iso,
             Self::Japanese(_) => AnyCalendarKind::Japanese,
             Self::JapaneseExtended(_) => AnyCalendarKind::JapaneseExtended,
+            Self::Julian(_) => AnyCalendarKind::Julian,
             Self::Persian(_) => AnyCalendarKind::Persian,
             Self::Roc(_) => AnyCalendarKind::Roc,
         }
@@ -803,6 +823,8 @@ pub enum AnyCalendarKind {
     Japanese,
     /// The kind of a [`JapaneseExtended`] calendar
     JapaneseExtended,
+    /// The kind of a [`Julian`] calendar
+    Julian,
     /// The kind of a [`Persian`] calendar
     ///
     /// This corresponds to the `"persian"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
@@ -1466,6 +1488,43 @@ impl From<JapaneseExtended> for AnyCalendar {
     }
 }
 
+impl IntoAnyCalendar for Julian {
+    #[inline]
+    fn to_any(self) -> AnyCalendar {
+        AnyCalendar::Julian(self)
+    }
+    #[inline]
+    fn kind(&self) -> AnyCalendarKind {
+        AnyCalendarKind::Julian
+    }
+    #[inline]
+    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
+        if let AnyCalendar::Julian(cal) = any {
+            Ok(cal)
+        } else {
+            Err(any)
+        }
+    }
+    #[inline]
+    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
+        if let AnyCalendar::Julian(cal) = any {
+            Some(cal)
+        } else {
+            None
+        }
+    }
+    #[inline]
+    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
+        AnyDateInner::Julian(*d)
+    }
+}
+
+impl From<Julian> for AnyCalendar {
+    fn from(value: Julian) -> AnyCalendar {
+        value.to_any()
+    }
+}
+
 impl IntoAnyCalendar for Persian {
     #[inline]
     fn to_any(self) -> AnyCalendar {
@@ -2069,6 +2128,24 @@ mod tests {
         single_test_error(
             iso,
             Some(("default", Some(0))),
+            100,
+            "M13",
+            1,
+            DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
+        );
+    }
+
+    #[test]
+    fn julian() {
+        let julian = AnyCalendar::new(AnyCalendarKind::Julian);
+        let julian = Ref(&julian);
+        single_test_roundtrip(julian, Some(("ce", Some(1))), 100, "M03", 1);
+        single_test_roundtrip(julian, None, 2000, "M03", 1);
+        single_test_roundtrip(julian, None, -100, "M03", 1);
+        single_test_roundtrip(julian, Some(("bce", Some(0))), 100, "M03", 1);
+        single_test_error(
+            julian,
+            Some(("bce", Some(0))),
             100,
             "M13",
             1,
