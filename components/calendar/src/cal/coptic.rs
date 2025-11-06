@@ -277,7 +277,7 @@ impl Date<Coptic> {
 mod tests {
     use super::*;
     use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
-    use crate::types::DateFields;
+    use crate::types::{DateFields, Month};
 
     #[test]
     fn test_coptic_regression() {
@@ -290,10 +290,11 @@ mod tests {
 
     #[test]
     fn test_from_fields_monthday_constrain() {
-        // M13-7 is not a real day, however this should resolve to M12-6
+        // M13-7 is not a real day, however this should resolve to M13-6
         // with Overflow::Constrain
+        let month = Month::new(13).code();
         let fields = DateFields {
-            month_code: Some(b"M13"),
+            month_code: Some(month.0.as_bytes()),
             day: Some(7),
             ..Default::default()
         };

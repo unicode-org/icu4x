@@ -375,7 +375,6 @@ impl Date<Hebrew> {
 mod tests {
 
     use super::*;
-    use crate::types::MonthCode;
 
     pub const TISHREI: Month = Month::new(1);
     pub const ḤESHVAN: Month = Month::new(2);
@@ -512,8 +511,8 @@ mod tests {
         // https://github.com/unicode-org/icu4x/issues/4893
         let cal = Hebrew::new();
         let era = "am";
-        let month_code = MonthCode::new_normal(1).unwrap();
-        let dt = Date::try_new_from_codes(Some(era), 3760, month_code, 1, cal).unwrap();
+        let month = Month::new(1);
+        let dt = Date::try_new_from_codes(Some(era), 3760, month.code(), 1, cal).unwrap();
 
         // Should be Saturday per:
         // https://www.hebcal.com/converter?hd=1&hm=Tishrei&hy=3760&h2g=1

@@ -186,6 +186,16 @@ impl From<icu_calendar::RangeError> for CalendarError {
 }
 
 #[cfg(feature = "calendar")]
+impl From<icu_calendar::error::MonthCodeParseError> for CalendarError {
+    fn from(value: icu_calendar::error::MonthCodeParseError) -> Self {
+        match value {
+            icu_calendar::error::MonthCodeParseError::InvalidSyntax => Self::UnknownMonthCode,
+            _ => Self::Unknown,
+        }
+    }
+}
+
+#[cfg(feature = "calendar")]
 impl From<icu_calendar::DateError> for CalendarError {
     fn from(e: icu_calendar::DateError) -> Self {
         match e {

@@ -1081,8 +1081,6 @@ impl<A: AsCalendar<Calendar = Hijri<TabularAlgorithm>>> Date<A> {
 
 #[cfg(test)]
 mod test {
-    use types::MonthCode;
-
     use super::*;
 
     const START_YEAR: i32 = -1245;
@@ -1935,7 +1933,7 @@ mod test {
     fn test_regression_4914() {
         // https://github.com/unicode-org/icu4x/issues/4914
         let dt = Hijri::new_umm_al_qura()
-            .from_codes(Some("bh"), 6824, MonthCode::new_normal(1).unwrap(), 1)
+            .from_codes(Some("bh"), 6824, Month::new(1).code(), 1)
             .unwrap();
         assert_eq!(dt.0.day(), 1);
         assert_eq!(dt.0.month(), 1);
