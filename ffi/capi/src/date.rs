@@ -381,7 +381,8 @@ pub mod ffi {
         }
 
         /// Returns the month number of this month.
-        #[diplomat::rust_link(icu::calendar::types::MonthInfo::month_number, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::MonthInfo::number, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::MonthInfo::month_number, FnInStruct, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn month_number(&self) -> u8 {
             self.0.month().number()

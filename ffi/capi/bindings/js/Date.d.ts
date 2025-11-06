@@ -133,7 +133,7 @@ export class Date {
     /**
      * Returns the month number of this month.
      *
-     * See the [Rust documentation for `month_number`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.MonthInfo.html#method.month_number) for more information.
+     * See the [Rust documentation for `number`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.MonthInfo.html#method.number) for more information.
      */
     get monthNumber(): number;
 

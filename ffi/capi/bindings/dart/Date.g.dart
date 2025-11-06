@@ -175,7 +175,7 @@ final class Date implements ffi.Finalizable {
 
   /// Returns the month number of this month.
   ///
-  /// See the [Rust documentation for `month_number`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.MonthInfo.html#method.month_number) for more information.
+  /// See the [Rust documentation for `number`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.MonthInfo.html#method.number) for more information.
   int get monthNumber {
     final result = _icu4x_Date_month_number_mv1(_ffi);
     return result;
