@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::calendar_arithmetic::{ArithmeticDate, ToExtendedYear};
-use crate::calendar_arithmetic::{DateFieldsResolver, Pack};
+use crate::calendar_arithmetic::{DateFieldsResolver, PackWithMD};
 use crate::error::{
     DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
 };
@@ -550,7 +550,7 @@ impl ChineseTraditional {
     }
 }
 
-impl Pack for EastAsianTraditionalYearData {
+impl PackWithMD for EastAsianTraditionalYearData {
     /// The first three bytes are the [`PackedEastAsianTraditionalYearData`], the remaining four the YMD as encoded by [`i32::pack`].
     type Packed = [u8; 7];
 

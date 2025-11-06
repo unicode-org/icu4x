@@ -32,7 +32,7 @@ pub const VALID_RD_RANGE: RangeInclusive<RataDie> =
 
 // Invariant: VALID_RD_RANGE contains the date
 #[derive(Debug)]
-pub(crate) struct ArithmeticDate<C: DateFieldsResolver>(<C::YearInfo as Pack>::Packed);
+pub(crate) struct ArithmeticDate<C: DateFieldsResolver>(<C::YearInfo as PackWithMD>::Packed);
 
 // Manual impls since the derive will introduce a C: Trait bound
 // and only the year value should be compared
@@ -94,7 +94,7 @@ impl ToExtendedYear for i32 {
     }
 }
 
-pub(crate) trait Pack: Copy {
+pub(crate) trait PackWithMD: Copy {
     type Packed: Copy + Debug;
 
     fn pack(self, month: u8, day: u8) -> Self::Packed;
@@ -103,14 +103,12 @@ pub(crate) trait Pack: Copy {
     fn unpack_day(packed: Self::Packed) -> u8;
 }
 
-impl Pack for i32 {
-    /// 23 bytes year, 4 bytes month, 5 bytes day
+impl PackWithMD for i32 {
+    /// 2 bits unused, 21 bits year (test_validity_ranges),
+    /// 4 bits month (1..13), 5 bits day (1..31)
     type Packed = [u8; 4];
 
     fn pack(self, month: u8, day: u8) -> Self::Packed {
-        // valid years need 23 bits, see test_validity_ranges
-        // month is in 1..13, so it fits in 4 bits
-        // day is in 1..31, so it fits in 5 bits
         (self << 9 | (month as i32) << 5 | day as i32).to_le_bytes()
     }
 
@@ -134,7 +132,7 @@ impl Pack for i32 {
 pub(crate) trait DateFieldsResolver: Calendar {
     /// This stores the year as either an i32, or a type containing more
     /// useful computational information.
-    type YearInfo: Copy + Debug + PartialEq + ToExtendedYear + Pack;
+    type YearInfo: Copy + Debug + PartialEq + ToExtendedYear + PackWithMD;
 
     fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8;
 
@@ -764,16 +762,19 @@ mod tests {
         #[rustfmt::skip]
         let lowest_years = [
             Date::from_rata_die(*VALID_RD_RANGE.start(), Buddhist).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.start(), ChineseTraditional::new()).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.start(), Coptic).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.start(), Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.start(), Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.start(), Gregorian).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.start(), Hebrew).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.start(), Hijri::new_umm_al_qura()).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.start(), Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday)).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.start(), Indian).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.start(), Iso).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.start(), Japanese::new()).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.start(), Julian).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.start(), KoreanTraditional::new()).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.start(), Persian).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.start(), Roc).year().extended_year(),
         ];
@@ -781,16 +782,19 @@ mod tests {
         #[rustfmt::skip]
         let highest_years = [
             Date::from_rata_die(*VALID_RD_RANGE.end(), Buddhist).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.end(), ChineseTraditional::new()).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.end(), Coptic).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.end(), Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.end(), Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.end(), Gregorian).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.end(), Hebrew).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.end(), Hijri::new_umm_al_qura()).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.end(), Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday)).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.end(), Indian).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.end(), Iso).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.end(), Japanese::new()).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.end(), Julian).year().extended_year(),
+            Date::from_rata_die(*VALID_RD_RANGE.end(), KoreanTraditional::new()).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.end(), Persian).year().extended_year(),
             Date::from_rata_die(*VALID_RD_RANGE.end(), Roc).year().extended_year(),
         ];
@@ -798,16 +802,19 @@ mod tests {
         #[rustfmt::skip]
         let lowest_rds = [
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Buddhist).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, ChineseTraditional::new()).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Coptic).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Gregorian).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Hebrew).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Hijri::new_umm_al_qura()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday)).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Indian).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Iso).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Japanese::new()).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Julian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, KoreanTraditional::new()).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Persian).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Roc).unwrap().to_rata_die(),
         ];
@@ -815,16 +822,19 @@ mod tests {
         #[rustfmt::skip]
         let highest_rds = [
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Buddhist).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, ChineseTraditional::new()).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(13).unwrap(), 5, Coptic).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(13).unwrap(), 5, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(13).unwrap(), 5, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Gregorian).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 29, Hebrew).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, Hijri::new_umm_al_qura()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday)).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, Indian).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Iso).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Japanese::new()).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Julian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, KoreanTraditional::new()).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, Persian).unwrap().to_rata_die(),
             Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Roc).unwrap().to_rata_die(),
         ];
@@ -840,11 +850,11 @@ mod tests {
         );
 
         // Valid RDs can represent all valid years
-        assert!(lowest_years.iter().copied().max().unwrap() <= *VALID_YEAR_RANGE.start());
-        assert!(highest_years.iter().copied().min().unwrap() >= *VALID_YEAR_RANGE.end());
+        assert!(lowest_years.iter().all(|y| y <= VALID_YEAR_RANGE.start()));
+        assert!(highest_years.iter().all(|y| y >= VALID_YEAR_RANGE.end()));
 
-        // All years are 23-bits
-        assert!(-lowest_years.iter().copied().min().unwrap() < 1 << 22);
-        assert!(lowest_years.iter().copied().max().unwrap() < 1 << 22);
+        // All years are 21-bits
+        assert!(-lowest_years.iter().copied().min().unwrap() < 1 << 20);
+        assert!(highest_years.iter().copied().max().unwrap() < 1 << 20);
     }
 }

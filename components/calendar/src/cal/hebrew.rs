@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, Pack, ToExtendedYear};
+use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver, PackWithMD, ToExtendedYear};
 use crate::error::{
     DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
 };
@@ -69,7 +69,7 @@ pub(crate) struct HebrewYearInfo {
     value: i32,
 }
 
-impl Pack for HebrewYearInfo {
+impl PackWithMD for HebrewYearInfo {
     /// The first byte is the [`Keviyah`], the remaining four the YMD as encoded by [`i32::pack`].
     type Packed = [u8; 5];
 

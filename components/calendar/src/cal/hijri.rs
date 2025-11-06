@@ -4,7 +4,7 @@
 
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::DateFieldsResolver;
-use crate::calendar_arithmetic::Pack;
+use crate::calendar_arithmetic::PackWithMD;
 use crate::calendar_arithmetic::ToExtendedYear;
 use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
@@ -715,7 +715,7 @@ impl PackedHijriYearData {
     }
 }
 
-impl Pack for HijriYearData {
+impl PackWithMD for HijriYearData {
     /// The first two bytes are the [`PackedHijriYearData`], the remaining four the YMD as encoded by [`i32::pack`].
     type Packed = [u8; 6];
 
