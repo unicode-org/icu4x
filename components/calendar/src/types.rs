@@ -611,8 +611,7 @@ impl MonthInfo {
     /// Returns the month number of the `standard` [`Month`].
     ///
     /// A month number N is not necessarily the Nth month in the year if there are leap
-    /// months in the year, rather it is associated with the Nth month of a "regular"
-    /// year. There may be multiple month Ns in a year.
+    /// months in the year. There may be multiple month N in a year.
     ///
     /// This is NOT the same as the ordinal month!
     ///
