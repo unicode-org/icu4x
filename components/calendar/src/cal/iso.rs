@@ -184,7 +184,7 @@ mod test {
             assert_eq!(
                 (
                     date_from_rd.era_year().year,
-                    date_from_rd.month().month_number(),
+                    date_from_rd.month().number(),
                     date_from_rd.day_of_month().0
                 ),
                 (case.year, case.month, case.day),

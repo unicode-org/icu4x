@@ -19,7 +19,7 @@ use crate::{external_loaders::*, DateTimeFormatterPreferences};
 use crate::{scaffold::*, DateTimeFormatter, DateTimeFormatterLoadError};
 use core::fmt;
 use core::marker::PhantomData;
-use icu_calendar::types::EraYear;
+use icu_calendar::types::{EraYear, MonthInfo};
 use icu_calendar::AnyCalendar;
 use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
@@ -3659,8 +3659,7 @@ impl RawDateTimeNamesBorrowed<'_> {
         &self,
         field_symbol: fields::Month,
         field_length: FieldLength,
-        ordinal_index: u8,
-        is_leap: bool,
+        month: MonthInfo,
     ) -> Result<MonthPlaceholderValue<'_>, GetNameForMonthError> {
         let month_name_length = MonthNameLength::from_field(field_symbol, field_length)
             .ok_or(GetNameForMonthError::InvalidFieldLength)?;
@@ -3668,10 +3667,10 @@ impl RawDateTimeNamesBorrowed<'_> {
             .month_names
             .get_with_variables(month_name_length)
             .ok_or(GetNameForMonthError::NotLoaded)?;
-        let month_index = usize::from(ordinal_index);
+        let month_index = usize::from(month.number() - 1);
         let name = match month_names {
             MonthNames::Linear(linear) => {
-                if is_leap {
+                if month.is_formatting_leap() {
                     None
                 } else {
                     linear.get(month_index)
@@ -3679,16 +3678,17 @@ impl RawDateTimeNamesBorrowed<'_> {
             }
             MonthNames::LeapLinear(leap_linear) => {
                 let num_months = leap_linear.len() / 2;
-                if is_leap {
+                if month.is_formatting_leap() {
                     leap_linear.get(month_index + num_months)
                 } else if month_index < num_months {
                     leap_linear.get(month_index)
                 } else {
                     None
                 }
+                .filter(|s| !s.is_empty())
             }
             MonthNames::LeapNumeric(leap_numeric) => {
-                if is_leap {
+                if month.is_formatting_leap() {
                     return Ok(MonthPlaceholderValue::NumericPattern(leap_numeric));
                 } else {
                     return Ok(MonthPlaceholderValue::Numeric);
