@@ -229,10 +229,10 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     ) -> Result<Self, DateError> {
         let year = if let Some(era) = era {
             let year = calendar.year_info_from_era(era.as_bytes(), year)?;
-            range_check(year.to_extended_year(), "year", VALID_YEAR_RANGE)?;
+            range_check(year.to_extended_year(), "era_year", VALID_YEAR_RANGE)?;
             year
         } else {
-            calendar.year_info_from_extended(range_check(year, "year", VALID_YEAR_RANGE)?)
+            calendar.year_info_from_extended(range_check(year, "extended_year", VALID_YEAR_RANGE)?)
         };
         let validated =
             ValidMonthCode::try_from_utf8(month_code.0.as_bytes()).map_err(|e| match e {
@@ -395,12 +395,15 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         day: u8,
         cal: &C,
     ) -> Result<Self, DateError> {
-        let year_info = cal.year_info_from_era(era.as_bytes(), year)?;
+        let year_info = cal.year_info_from_era(
+            era.as_bytes(),
+            range_check(year, "era_year", VALID_YEAR_RANGE)?,
+        )?;
         // check the extended year in terms of the year
         let offset = year - year_info.to_extended_year();
         range_check(
             year, // == year_info.to_extended_year() + offset
-            "year",
+            "extended_year",
             (VALID_YEAR_RANGE.start() + offset)..=(VALID_YEAR_RANGE.end() + offset),
         )?;
         range_check(month, "month", 1..=C::months_in_provided_year(year_info))?;

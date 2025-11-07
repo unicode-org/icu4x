@@ -308,7 +308,8 @@ impl Date<Japanese> {
     ///
     /// However, dates may always be specified in "bce" or "ce" and they will be adjusted as necessary.
     ///
-    /// This function accepts years that correspond to Gregorian years in the range `-1,000,000..=1,000,000`.
+    /// This function accepts years in the range `-1,000,000..=1,000,000`, where the Gregorian year
+    /// is also in the range `-1,000,000..=1,000,000`.
     ///
     /// ```rust
     /// use icu::calendar::cal::Japanese;
@@ -370,7 +371,8 @@ impl Date<JapaneseExtended> {
     ///
     /// However, dates may always be specified in "bce" or "ce" and they will be adjusted as necessary.
     ///
-    /// This function accepts years that correspond to Gregorian years in the range `-1,000,000..=1,000,000`.
+    /// This function accepts years in the range `-1,000,000..=1,000,000`, where the Gregorian year
+    /// is also in the range `-1,000,000..=1,000,000`.
     ///
     /// ```rust
     /// use icu::calendar::cal::JapaneseExtended;
@@ -404,20 +406,16 @@ impl Date<JapaneseExtended> {
         day: u8,
         japanext_calendar: A,
     ) -> Result<Date<A>, DateError> {
-        let extended = (&japanext_calendar.as_calendar().0)
-            .extended_from_era_year(Some(era.as_bytes()), year)?;
-        Ok(Date::from_raw(
-            JapaneseExtendedDateInner(
-                ArithmeticDate::from_year_month_day(
-                    extended,
-                    month,
-                    day,
-                    &super::abstract_gregorian::AbstractGregorian(years),
-                )
-                .map(ArithmeticDate::cast)?,
-            ),
-            japanext_calendar,
-        ))
+        ArithmeticDate::from_era_year_month_day(
+            era,
+            year,
+            month,
+            day,
+            &AbstractGregorian(&japanext_calendar.as_calendar().0),
+        )
+        .map(ArithmeticDate::cast)
+        .map(JapaneseExtendedDateInner)
+        .map(|i| Date::from_raw(i, japanext_calendar))
     }
 }
 

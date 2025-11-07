@@ -64,8 +64,9 @@ mod unstable {
         ///
         /// If set, [`Self::era`] must also be set.
         ///
-        /// [`Date::try_from_fields`](crate::Date::try_from_fields) accepts years that correspond to
-        /// `extended_year`s in the range `-1,000,000..=1,000,000`.
+        /// [`Date::try_from_fields`](crate::Date::try_from_fields)  accepts years in
+        /// the range `-1,000,000..=1,000,000`, where the `extended_year` is also in
+        /// the range `-1,000,000..=1,000,000`.
         ///
         /// For an example, see [`Self::extended_year`].
         pub era_year: Option<i32>,
