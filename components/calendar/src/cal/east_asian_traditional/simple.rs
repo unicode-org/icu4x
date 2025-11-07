@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::EastAsianTraditionalYearData;
+use super::EastAsianTraditionalYear;
 use calendrical_calculations::{gregorian::DAYS_IN_400_YEAR_CYCLE, rata_die::RataDie};
 
 macro_rules! day_fraction_to_ms {
@@ -70,16 +70,13 @@ impl core::ops::Add<Milliseconds> for LocalMoment {
     }
 }
 
-impl super::EastAsianTraditionalYearData {
+impl super::EastAsianTraditionalYear {
     /// A fast approximation for the Chinese calendar, inspired by the _píngqì_ (平氣) rule
     /// used in the Ming dynasty.
     ///
     /// Stays anchored in the Gregorian calendar, even as the Gregorian calendar drifts
     /// from the seasons in the distant future and distant past.
-    pub(super) fn simple(
-        utc_offset: Milliseconds,
-        related_iso: i32,
-    ) -> EastAsianTraditionalYearData {
+    pub(super) fn simple(utc_offset: Milliseconds, related_iso: i32) -> EastAsianTraditionalYear {
         /// calculates the largest moment such that moment = base_moment + n * duration lands on rata_die (< rata_die + 1)
         fn periodic_duration_on_or_before(
             rata_die: RataDie,
@@ -167,21 +164,21 @@ impl super::EastAsianTraditionalYearData {
 
         debug_assert_eq!(solar_term, 12);
 
-        EastAsianTraditionalYearData::new(related_iso, start_day, month_lengths, leap_month)
+        EastAsianTraditionalYear::new(related_iso, start_day, month_lengths, leap_month)
     }
 }
 
 #[test]
 fn bounds() {
-    EastAsianTraditionalYearData::simple(UTC_PLUS_9, 292_277_025);
+    EastAsianTraditionalYear::simple(UTC_PLUS_9, 292_277_025);
     assert!(
-        std::panic::catch_unwind(|| EastAsianTraditionalYearData::simple(UTC_PLUS_9, 292_277_026))
+        std::panic::catch_unwind(|| EastAsianTraditionalYear::simple(UTC_PLUS_9, 292_277_026))
             .is_err()
     );
 
-    EastAsianTraditionalYearData::simple(BEIJING_UTC_OFFSET, -292_275_024);
+    EastAsianTraditionalYear::simple(BEIJING_UTC_OFFSET, -292_275_024);
     assert!(
-        std::panic::catch_unwind(|| EastAsianTraditionalYearData::simple(
+        std::panic::catch_unwind(|| EastAsianTraditionalYear::simple(
             BEIJING_UTC_OFFSET,
             -292_275_025
         ))

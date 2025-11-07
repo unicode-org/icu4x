@@ -136,8 +136,6 @@ pub(crate) trait DateFieldsResolver: Calendar {
 
     fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8;
 
-    fn months_in_provided_year(year: Self::YearInfo) -> u8;
-
     /// Converts the era and era year to a YearInfo. If the calendar does not have eras,
     /// this should always return an Err result.
     fn year_info_from_era(
@@ -161,18 +159,29 @@ pub(crate) trait DateFieldsResolver: Calendar {
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError>;
 
-    /// Calculates the ordinal month for the given year and month code.
+    /// The number of months for the given year.
     ///
     /// The default impl is for non-lunisolar calendars with 12 months!
+    fn months_in_provided_year(_year: Self::YearInfo) -> u8 {
+        12
+    }
+
+    /// Calculates the ordinal month for the given year and month code.
+    ///
+    /// The default impl is for non-lunisolar calendars!
     #[inline]
     fn ordinal_from_month(
         &self,
-        _year: &Self::YearInfo,
+        year: Self::YearInfo,
         month: Month,
         _options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
         match (month.number(), month.is_leap()) {
-            (month_number @ 1..=12, false) => Ok(month_number),
+            (month_number, false)
+                if (1..=Self::months_in_provided_year(year)).contains(&month_number) =>
+            {
+                Ok(month_number)
+            }
             _ => Err(MonthCodeError::NotInCalendar),
         }
     }
@@ -183,7 +192,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
     ///
     /// The default impl is for non-lunisolar calendars!
     #[inline]
-    fn month_from_ordinal(&self, _year: &Self::YearInfo, ordinal_month: u8) -> Month {
+    fn month_from_ordinal(&self, _year: Self::YearInfo, ordinal_month: u8) -> Month {
         Month::new(ordinal_month)
     }
 }
@@ -228,7 +237,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             MonthCodeParseError::InvalidSyntax => DateError::UnknownMonthCode(month_code),
         })?;
         let month = calendar
-            .ordinal_from_month(&year, validated, Default::default())
+            .ordinal_from_month(year, validated, Default::default())
             .map_err(|e| match e {
                 MonthCodeError::NotInCalendar | MonthCodeError::NotInYear => {
                     DateError::UnknownMonthCode(month_code)
@@ -329,7 +338,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                     Some(validated) => validated,
                     None => Month::try_from_utf8(month_code)?,
                 };
-                let computed_month = calendar.ordinal_from_month(&year, validated, options)?;
+                let computed_month = calendar.ordinal_from_month(year, validated, options)?;
                 if let Some(ordinal_month) = fields.ordinal_month {
                     if computed_month != ordinal_month {
                         return Err(DateFromFieldsError::InconsistentMonth);
@@ -465,12 +474,12 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // 1. Let _y0_ be _parts_.[[Year]] + _years_.
         let y0 = cal.year_info_from_extended(duration.add_years_to(self.year().to_extended_year()));
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], ~constrain~)).
-        let base_month = cal.month_from_ordinal(&self.year(), self.month());
+        let base_month = cal.month_from_ordinal(self.year(), self.month());
         let constrain = DateFromFieldsOptions {
             overflow: Some(Overflow::Constrain),
             ..Default::default()
         };
-        let m0_result = cal.ordinal_from_month(&y0, base_month, constrain);
+        let m0_result = cal.ordinal_from_month(y0, base_month, constrain);
         let m0 = match m0_result {
             Ok(m0) => m0,
             Err(_) => {
@@ -563,10 +572,10 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // 1. Let _y0_ be _parts_.[[Year]] + _duration_.[[Years]].
         let y0 = cal.year_info_from_extended(duration.add_years_to(self.year().to_extended_year()));
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], _overflow_)).
-        let base_month = cal.month_from_ordinal(&self.year(), self.month());
+        let base_month = cal.month_from_ordinal(self.year(), self.month());
         let m0 = cal
             .ordinal_from_month(
-                &y0,
+                y0,
                 base_month,
                 DateFromFieldsOptions::from_add_options(options),
             )

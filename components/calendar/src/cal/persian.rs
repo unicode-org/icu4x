@@ -54,17 +54,12 @@ impl DateFieldsResolver for Persian {
     type YearInfo = i32;
 
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
-        match month {
-            1..=6 => 31,
-            7..=11 => 30,
-            12 if calendrical_calculations::persian::is_leap_year(year) => 30,
-            12 => 29,
-            _ => 0,
-        }
-    }
-
-    fn months_in_provided_year(_: i32) -> u8 {
-        12
+        // months are 30 days
+        30
+            // except for the first 6, which are 31
+            + (month <= 6) as u8
+            // and the last one, which is 29 in non-leap years
+            - (month == 12 && !calendrical_calculations::persian::is_leap_year(year)) as u8
     }
 
     #[inline]

@@ -28,7 +28,7 @@ define_preferences!(
     }
 );
 
-/// This is a calendar that encompasses all formattable calendars supported by this crate
+/// This is a calendar that encompasses a selection of calendars from this crate.
 ///
 /// This allows for the construction of [`Date`] objects that have their calendar known at runtime.
 ///

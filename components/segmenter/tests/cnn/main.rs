@@ -6,11 +6,12 @@ use ndarray::{Array, Array1, Array2, Array3, ArrayBase, Dim, Dimension, OwnedRep
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::fmt::Debug;
-use std::fs;
 use zerovec::ZeroVec;
 
 mod helper;
 use helper::*;
+
+static MODEL_FOR_TEST: &str = include_str!("sample.json");
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 pub enum ModelType {
@@ -32,31 +33,6 @@ pub struct CnnDataFloat32<'data> {
 }
 
 impl<'data> CnnDataFloat32<'data> {
-    #[allow(clippy::too_many_arguments)]
-    pub const fn from_parts_unchecked(
-        model: ModelType,
-        dic: HashMap<String, u16>,
-        embedding: CnnMatrix2<'data>,
-        cnn_w1: CnnMatrix3<'data>,
-        cnn_b1: CnnMatrix1<'data>,
-        cnn_w2: CnnMatrix3<'data>,
-        cnn_b2: CnnMatrix1<'data>,
-        softmax_w: CnnMatrix2<'data>,
-        softmax_b: CnnMatrix1<'data>,
-    ) -> Self {
-        Self {
-            model,
-            dic,
-            embedding,
-            cnn_w1,
-            cnn_b1,
-            cnn_w2,
-            cnn_b2,
-            softmax_w,
-            softmax_b,
-        }
-    }
-
     #[allow(clippy::too_many_arguments)]
     pub fn try_from_parts(
         model: ModelType,
@@ -159,7 +135,7 @@ impl RawCnnMatrix {
 }
 
 #[derive(Deserialize, Debug)]
-struct RawCnnData {
+pub struct RawCnnData {
     model: String,
     dic: HashMap<String, u16>,
     #[serde(rename = "mat1")]
@@ -179,7 +155,11 @@ struct RawCnnData {
 }
 
 impl RawCnnData {
-    fn try_convert(&self) -> Result<CnnData<'static>, String> {
+    pub(crate) fn for_test() -> Self {
+        serde_json::from_str(MODEL_FOR_TEST).unwrap()
+    }
+
+    pub fn try_convert(&self) -> Result<CnnData<'static>, String> {
         let embedding = self.embedding.to_ndarray2()?;
         // let mut cnn_w1 = self.cnn_w1.to_ndarray3()?;
         let cnn_w1 = self.cnn_w1.to_ndarray3()?;
@@ -231,13 +211,6 @@ macro_rules! cnn_matrix {
                 } else {
                     Ok(Self { dims, data })
                 }
-            }
-
-            pub const fn from_parts_unchecked(
-                dims: [u16; $generic],
-                data: ZeroVec<'data, f32>,
-            ) -> Self {
-                Self { dims, data }
             }
         }
     };
@@ -430,20 +403,15 @@ fn argmax(slice: &[f32]) -> usize {
     bi
 }
 
-pub struct CnnSegmenterIterator<'s, 'data> {
-    _input: &'s str,
-    _pos_utf8: usize,
-    bies: BiesIterator<'s, 'data>,
-}
-
-struct BiesIterator<'l, 'data> {
+pub struct BiesList<'l, 'data> {
     _segmenter: &'l CnnSegmenter<'data>,
     _input_seq: core::iter::Enumerate<std::vec::IntoIter<u16>>,
-    pub probs: MatrixOwned<2>,
+    input_str: &'l str,
+    probs: MatrixOwned<2>,
 }
 
-impl<'l, 'data> BiesIterator<'l, 'data> {
-    fn new(segmenter: &'l CnnSegmenter<'data>, input_seq: Vec<u16>) -> Self {
+impl<'l, 'data> BiesList<'l, 'data> {
+    fn new(segmenter: &'l CnnSegmenter<'data>, input_str: &'l str, input_seq: Vec<u16>) -> Self {
         let l = input_seq.len();
         let embed_zero: MatrixZero<'_, 2> = segmenter.embedding;
         let embed = embed_zero.to_owned();
@@ -481,8 +449,34 @@ impl<'l, 'data> BiesIterator<'l, 'data> {
         Self {
             _segmenter: segmenter,
             _input_seq: input_seq.into_iter().enumerate(),
+            input_str,
             probs,
         }
+    }
+
+    pub fn to_bies_tags(&self) -> String {
+        let (l, c) = self.probs.as_borrowed().dim();
+        let flat = self.probs.as_borrowed().as_slice();
+
+        let mut tags = String::with_capacity(l);
+        for t in 0..l {
+            let row = &flat[t * c..(t + 1) * c];
+            let idx = argmax(row);
+            tags.push(class_idx_to_bies(idx));
+        }
+        tags
+    }
+
+    pub fn to_breakpoints(&self) -> Vec<usize> {
+        let mut breakpoints = vec![0];
+        let mut offset = 0;
+        for (tag, ch) in self.to_bies_tags().chars().zip(self.input_str.chars()) {
+            offset += ch.len_utf8();
+            if tag == 'e' || tag == 's' {
+                breakpoints.push(offset);
+            }
+        }
+        breakpoints
     }
 }
 
@@ -512,7 +506,7 @@ impl<'data> CnnSegmenter<'data> {
         }
     }
 
-    pub fn segment_str<'a>(&'a self, input: &'a str) -> CnnSegmenterIterator<'a, 'data> {
+    pub fn segment_str<'a>(&'a self, input: &'a str) -> BiesList<'a, 'data> {
         let input_seq = input
             .chars()
             .map(|c| {
@@ -522,20 +516,13 @@ impl<'data> CnnSegmenter<'data> {
                     .unwrap_or(self.dic.len() as u16)
             })
             .collect();
-        CnnSegmenterIterator {
-            _input: input,
-            _pos_utf8: 0,
-            bies: BiesIterator::new(self, input_seq),
-        }
+        BiesList::new(self, input, input_seq)
     }
 }
 
 #[test]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let path = "tests/cnn/sample.json".to_string();
-    let json = fs::read_to_string(&path)?;
-
-    let rawcnndata: RawCnnData = serde_json::from_str(&json)?;
+    let rawcnndata = RawCnnData::for_test();
     let cnndata = rawcnndata
         .try_convert()
         .map_err(|_| "validation/conversion failed".to_string())?;
@@ -545,16 +532,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Input: {}", thai);
     let out = segmenter.segment_str(&thai);
 
-    let (l, c) = out.bies.probs.as_borrowed().dim();
-    let flat = out.bies.probs.as_borrowed().as_slice();
-
-    let mut tags = String::with_capacity(l);
-    for t in 0..l {
-        let row = &flat[t * c..(t + 1) * c];
-        let idx = argmax(row);
-        tags.push(class_idx_to_bies(idx));
-    }
-
+    let tags = out.to_bies_tags();
     println!("BIES: {}", tags);
     Ok(())
 }

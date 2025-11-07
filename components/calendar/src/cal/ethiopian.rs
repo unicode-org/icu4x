@@ -5,9 +5,7 @@
 use crate::cal::coptic::CopticDateInner;
 use crate::cal::Coptic;
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver};
-use crate::error::{
-    DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
-};
+use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
@@ -124,19 +122,6 @@ impl DateFieldsResolver for Ethiopian {
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         crate::cal::Coptic::reference_year_from_month_day(month, day)
-    }
-
-    #[inline]
-    fn ordinal_from_month(
-        &self,
-        _year: &Self::YearInfo,
-        month: types::Month,
-        _options: DateFromFieldsOptions,
-    ) -> Result<u8, MonthCodeError> {
-        match (month.number(), month.is_leap()) {
-            (month_number @ 1..=13, false) => Ok(month_number),
-            _ => Err(MonthCodeError::NotInCalendar),
-        }
     }
 }
 

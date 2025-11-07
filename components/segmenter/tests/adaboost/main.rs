@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::collections::HashMap;
-use std::fs;
+
+static MODEL_FOR_TEST: &str = include_str!("model.json");
 
 static CODEPOINTS: &[u16] = &[
     20008, 20022, 20031, 20057, 20101, 20108, 20128, 20154, 20799, 20837, 20843, 20866, 20886,
@@ -41,11 +42,14 @@ pub struct Predictor {
 }
 
 impl Predictor {
-    pub fn from_path(path: &str) -> Result<Self, Box<dyn std::error::Error>> {
-        let json = fs::read_to_string(path).expect("Error");
+    pub fn from_json(json: &str) -> Result<Self, Box<dyn std::error::Error>> {
         let model: HashMap<String, HashMap<String, i16>> =
-            serde_json::from_str(&json).unwrap_or_default();
+            serde_json::from_str(json).unwrap_or_default();
         Ok(Self { model })
+    }
+
+    pub(crate) fn for_test() -> Self {
+        Self::from_json(MODEL_FOR_TEST).unwrap()
     }
 
     pub fn predict(&self, sentence: &str) -> Vec<bool> {
@@ -120,12 +124,23 @@ impl Predictor {
 
         mask
     }
+
+    pub fn predict_breakpoints(&self, sentence: &str) -> Vec<usize> {
+        let mut breakpoints = vec![0];
+        let mut offset = 0;
+        for (tag, ch) in self.predict(sentence).iter().zip(sentence.chars()) {
+            offset += ch.len_utf8();
+            if *tag {
+                breakpoints.push(offset);
+            }
+        }
+        breakpoints
+    }
 }
 
 #[test]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let path = "tests/adaboost/model.json".to_string();
-    let predictor = Predictor::from_path(&path)?;
+    let predictor = Predictor::for_test();
 
     let sentence =
         "香港國際機場繼上月停電後，前日再發生冷氣故障，經濟發展及勞工局長葉澍堃形容這是警號"
