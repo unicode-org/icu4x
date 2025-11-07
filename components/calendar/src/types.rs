@@ -457,8 +457,6 @@ impl Month {
         Self {
             number: if number > 99 {
                 99
-            } else if number == 0 {
-                1
             } else {
                 number
             },
@@ -473,8 +471,6 @@ impl Month {
         Self {
             number: if number > 99 {
                 99
-            } else if number == 0 {
-                1
             } else {
                 number
             },
