@@ -62,6 +62,8 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_new_from_codes) for more information.
   ///
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.Month.html#method.try_from_str) for more information.
+  ///
   /// Throws [CalendarError] on failure.
   factory Date.fromCodesInCalendar(String eraCode, int year, String monthCode, int day, Calendar calendar) {
     final temp = _FinalizedArena();
@@ -164,6 +166,8 @@ final class Date implements ffi.Finalizable {
   /// Returns the month code for this date. Typically something
   /// like "M01", "M02", but can be more complicated for lunar calendars.
   ///
+  /// See the [Rust documentation for `code`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.Month.html#method.code) for more information.
+  ///
   /// See the [Rust documentation for `standard_code`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.MonthInfo.html#structfield.standard_code) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.month)
@@ -175,7 +179,7 @@ final class Date implements ffi.Finalizable {
 
   /// Returns the month number of this month.
   ///
-  /// See the [Rust documentation for `number`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.MonthInfo.html#method.number) for more information.
+  /// See the [Rust documentation for `number`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.Month.html#method.number) for more information.
   int get monthNumber {
     final result = _icu4x_Date_month_number_mv1(_ffi);
     return result;
@@ -183,7 +187,7 @@ final class Date implements ffi.Finalizable {
 
   /// Returns whether the month is a leap month.
   ///
-  /// See the [Rust documentation for `is_leap`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.MonthInfo.html#method.is_leap) for more information.
+  /// See the [Rust documentation for `is_leap`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.Month.html#method.is_leap) for more information.
   bool get monthIsLeap {
     final result = _icu4x_Date_month_is_leap_mv1(_ffi);
     return result;

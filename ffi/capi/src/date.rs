@@ -263,6 +263,8 @@ pub mod ffi {
         ///
         /// An empty era code will treat the year as an extended year
         #[diplomat::rust_link(icu::calendar::Date::try_new_from_codes, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::Month::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::Month::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_codes_in_calendar(
             era_code: &DiplomatStr,
@@ -365,14 +367,16 @@ pub mod ffi {
 
         /// Returns the month code for this date. Typically something
         /// like "M01", "M02", but can be more complicated for lunar calendars.
+        #[diplomat::rust_link(icu::calendar::types::Month::code, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::types::MonthInfo::standard_code, StructField)]
         #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::calendar::types::MonthInfo, Struct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::Month::formatting_code, FnInStruct, hidden)]
         #[diplomat::rust_link(
             icu::calendar::types::MonthInfo::formatting_code,
             StructField,
             hidden
         )]
+        #[diplomat::rust_link(icu::calendar::types::Month, Struct, hidden)]
         #[diplomat::rust_link(icu::calendar::types::MonthInfo, Struct, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn month_code(&self, write: &mut diplomat_runtime::DiplomatWrite) {
@@ -381,7 +385,8 @@ pub mod ffi {
         }
 
         /// Returns the month number of this month.
-        #[diplomat::rust_link(icu::calendar::types::MonthInfo::number, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::Month::number, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::MonthInfo::number, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::calendar::types::MonthInfo::month_number, FnInStruct, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn month_number(&self) -> u8 {
@@ -389,7 +394,14 @@ pub mod ffi {
         }
 
         /// Returns whether the month is a leap month.
-        #[diplomat::rust_link(icu::calendar::types::MonthInfo::is_leap, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::Month::is_leap, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::MonthInfo::is_leap, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::Month::is_formatting_leap, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::calendar::types::MonthInfo::is_formatting_leap,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(auto, getter)]
         pub fn month_is_leap(&self) -> bool {
             self.0.month().is_leap()
