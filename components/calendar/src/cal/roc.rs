@@ -82,11 +82,10 @@ impl GregorianYears for RocEra {
 }
 
 impl Date<Roc> {
-    /// Construct a new Republic of China calendar Date.
+    /// Construct a new Republic of China calendar [`Date`].
     ///
-    /// Years are specified in the "roc" era. This function accepts an extended year in that era, so dates
-    /// before Minguo are negative and year 0 is 1 Before Minguo. To specify dates using explicit era
-    /// codes, use [`Date::try_new_from_codes()`].
+    /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
+    /// valid range of `-1,000,000..=1,000,000`.
     ///
     /// ```rust
     /// use icu::calendar::Date;

@@ -228,9 +228,10 @@ impl Persian {
 }
 
 impl Date<Persian> {
-    /// Construct new Persian Date.
+    /// Construct new Persian [`Date`].
     ///
-    /// Has no negative years, only era is the AH/AP.
+    /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
+    /// valid range of `-1,000,000..=1,000,000`.
     ///
     /// ```rust
     /// use icu::calendar::Date;

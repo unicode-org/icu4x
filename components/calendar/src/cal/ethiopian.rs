@@ -272,7 +272,12 @@ impl Ethiopian {
 }
 
 impl Date<Ethiopian> {
-    /// Construct new Ethiopian Date.
+    /// Construct new Ethiopian [`Date`].
+    ///
+    /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
+    /// valid range of `-1,000,000..=1,000,000`.
+    ///
+    /// Years are interpreted according to the provided `era_style`.
     ///
     /// ```rust
     /// use icu::calendar::cal::EthiopianEraStyle;

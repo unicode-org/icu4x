@@ -234,7 +234,10 @@ impl Calendar for Coptic {
 }
 
 impl Date<Coptic> {
-    /// Construct new Coptic Date.
+    /// Construct new Coptic [`Date`].
+    ///
+    /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
+    /// valid range of `-1,000,000..=1,000,000`.
     ///
     /// ```rust
     /// use icu::calendar::Date;

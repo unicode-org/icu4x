@@ -74,9 +74,10 @@ impl GregorianYears for BuddhistEra {
 }
 
 impl Date<Buddhist> {
-    /// Construct a new Buddhist Date.
+    /// Construct a new Buddhist [`Date`].
     ///
-    /// Years are specified as BE years.
+    /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
+    /// valid range of `-1,000,000..=1,000,000`.
     ///
     /// ```rust
     /// use icu::calendar::Date;

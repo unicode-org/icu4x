@@ -118,9 +118,10 @@ impl GregorianYears for CeBce {
 pub struct Gregorian;
 
 impl Date<Gregorian> {
-    /// Construct a new Gregorian Date.
+    /// Construct a new Gregorian [`Date`].
     ///
-    /// Years are specified as ISO years.
+    /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
+    /// valid range of `-1,000,000..=1,000,000`.
     ///
     /// ```rust
     /// use icu::calendar::Date;

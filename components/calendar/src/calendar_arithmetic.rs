@@ -227,11 +227,12 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         day: u8,
         calendar: &C,
     ) -> Result<Self, DateError> {
-        let year = range_check(year, "year", VALID_YEAR_RANGE)?;
         let year = if let Some(era) = era {
-            calendar.year_info_from_era(era.as_bytes(), year)?
+            let year = calendar.year_info_from_era(era.as_bytes(), year)?;
+            range_check(year.to_extended_year(), "year", VALID_YEAR_RANGE)?;
+            year
         } else {
-            calendar.year_info_from_extended(year)
+            calendar.year_info_from_extended(range_check(year, "year", VALID_YEAR_RANGE)?)
         };
         let validated =
             ValidMonthCode::try_from_utf8(month_code.0.as_bytes()).map_err(|e| match e {
@@ -314,20 +315,14 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 },
             },
             (Some(era), Some(era_year)) => {
-                let era_year_as_year_info = calendar
-                    .year_info_from_era(era, range_check(era_year, "year", VALID_YEAR_RANGE)?)?;
+                let year = calendar.year_info_from_era(era, era_year)?;
+                range_check(year.to_extended_year(), "year", VALID_YEAR_RANGE)?;
                 if let Some(extended_year) = fields.extended_year {
-                    if era_year_as_year_info
-                        != calendar.year_info_from_extended(range_check(
-                            extended_year,
-                            "year",
-                            VALID_YEAR_RANGE,
-                        )?)
-                    {
+                    if year.to_extended_year() != extended_year {
                         return Err(DateFromFieldsError::InconsistentYear);
                     }
                 }
-                era_year_as_year_info
+                year
             }
             // Era and Era Year must be both or neither
             (Some(_), None) | (None, Some(_)) => return Err(DateFromFieldsError::NotEnoughFields),

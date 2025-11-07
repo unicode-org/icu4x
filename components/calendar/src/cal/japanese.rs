@@ -298,13 +298,15 @@ impl_with_abstract_gregorian!(
 );
 
 impl Date<Japanese> {
-    /// Construct a new Japanese Date.
+    /// Construct a new Japanese [`Date`].
     ///
     /// Years are specified in the era provided, and must be in range for Japanese
     /// eras (e.g. dates past April 30 Heisei 31 must be in Reiwa; "Jun 5 Heisei 31" and "Jan 1 Heisei 32"
     /// will not be adjusted to being in Reiwa 1 and 2 respectively)
     ///
     /// However, dates may always be specified in "bce" or "ce" and they will be adjusted as necessary.
+    ///
+    /// This function accepts years that correspond to Gregorian years in the range `-1,000,000..=1,000,000`.
     ///
     /// ```rust
     /// use icu::calendar::cal::Japanese;
@@ -364,6 +366,8 @@ impl Date<JapaneseExtended> {
     /// will not be adjusted to being in Reiwa 1 and 2 respectively)
     ///
     /// However, dates may always be specified in "bce" or "ce" and they will be adjusted as necessary.
+    ///
+    /// This function accepts years that correspond to Gregorian years in the range `-1,000,000..=1,000,000`.
     ///
     /// ```rust
     /// use icu::calendar::cal::JapaneseExtended;
