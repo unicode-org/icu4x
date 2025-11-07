@@ -1970,9 +1970,9 @@ mod tests {
             persian,
             Some(("ap", Some(0))),
             100,
-            Month::new(0),
+            Month::new(50),
             1,
-            DateError::UnknownMonthCode(Month::new(0).code()),
+            DateError::UnknownMonthCode(Month::new(50).code()),
         );
     }
 
@@ -1988,9 +1988,9 @@ mod tests {
             hebrew,
             Some(("am", Some(0))),
             100,
-            Month::new(0),
+            Month::new(50),
             1,
-            DateError::UnknownMonthCode(Month::new(0).code()),
+            DateError::UnknownMonthCode(Month::new(50).code()),
         );
     }
 
@@ -2025,9 +2025,9 @@ mod tests {
             hijri_simulated,
             Some(("ah", Some(0))),
             100,
-            Month::new(0),
+            Month::new(50),
             1,
-            DateError::UnknownMonthCode(Month::new(0).code()),
+            DateError::UnknownMonthCode(Month::new(50).code()),
         );
     }
 
@@ -2056,9 +2056,9 @@ mod tests {
             hijri_tabular_friday,
             Some(("ah", Some(0))),
             100,
-            Month::new(0),
+            Month::new(50),
             1,
-            DateError::UnknownMonthCode(Month::new(0).code()),
+            DateError::UnknownMonthCode(Month::new(50).code()),
         );
     }
 
@@ -2086,9 +2086,9 @@ mod tests {
             hijri_umm_al_qura,
             Some(("ah", Some(0))),
             100,
-            Month::new(0),
+            Month::new(50),
             1,
-            DateError::UnknownMonthCode(Month::new(0).code()),
+            DateError::UnknownMonthCode(Month::new(50).code()),
         );
     }
 
@@ -2117,9 +2117,9 @@ mod tests {
             hijri_tabular_thursday,
             Some(("ah", Some(0))),
             100,
-            Month::new(0),
+            Month::new(50),
             1,
-            DateError::UnknownMonthCode(Month::new(0).code()),
+            DateError::UnknownMonthCode(Month::new(50).code()),
         );
     }
 
