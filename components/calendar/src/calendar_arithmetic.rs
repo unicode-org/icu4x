@@ -220,7 +220,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         ArithmeticDate::new_unchecked(self.year(), self.month(), self.day())
     }
 
-    pub(crate) fn from_codes(
+    pub(crate) fn from_era_year_month_code_day(
         era: Option<&str>,
         year: i32,
         month_code: types::MonthCode,
@@ -368,12 +368,45 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         Ok(Self::new_unchecked(year, constrained_month, day))
     }
 
-    pub(crate) fn try_from_ymd(year: C::YearInfo, month: u8, day: u8) -> Result<Self, RangeError> {
-        range_check(year.to_extended_year(), "year", VALID_YEAR_RANGE)?;
-        range_check(month, "month", 1..=C::months_in_provided_year(year))?;
-        range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
+    pub(crate) fn from_year_month_day(
+        year: i32,
+        month: u8,
+        day: u8,
+        cal: &C,
+    ) -> Result<Self, RangeError> {
+        let year_info = cal.year_info_from_extended(year);
+        // check the extended year in terms of the year
+        let offset = year - year_info.to_extended_year();
+        range_check(
+            year, // == year_info.to_extended_year() + offset
+            "year",
+            (VALID_YEAR_RANGE.start() + offset)..=(VALID_YEAR_RANGE.end() + offset),
+        )?;
+        range_check(month, "month", 1..=C::months_in_provided_year(year_info))?;
+        range_check(day, "day", 1..=C::days_in_provided_month(year_info, month))?;
         // date is in the valid year range, and therefore in the valid RD range
-        Ok(ArithmeticDate::new_unchecked(year, month, day))
+        Ok(ArithmeticDate::new_unchecked(year_info, month, day))
+    }
+
+    pub(crate) fn from_era_year_month_day(
+        era: &str,
+        year: i32,
+        month: u8,
+        day: u8,
+        cal: &C,
+    ) -> Result<Self, DateError> {
+        let year_info = cal.year_info_from_era(era.as_bytes(), year)?;
+        // check the extended year in terms of the year
+        let offset = year - year_info.to_extended_year();
+        range_check(
+            year, // == year_info.to_extended_year() + offset
+            "year",
+            (VALID_YEAR_RANGE.start() + offset)..=(VALID_YEAR_RANGE.end() + offset),
+        )?;
+        range_check(month, "month", 1..=C::months_in_provided_year(year_info))?;
+        range_check(day, "day", 1..=C::days_in_provided_month(year_info, month))?;
+        // date is in the valid year range, and therefore in the valid RD range
+        Ok(ArithmeticDate::new_unchecked(year_info, month, day))
     }
 
     /// Implements the Temporal abstract operation BalanceNonISODate.

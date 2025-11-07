@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears};
+use crate::cal::abstract_gregorian::{
+    impl_with_abstract_gregorian, AbstractGregorian, GregorianYears,
+};
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::UnknownEraError;
 use crate::{types, Date, DateError, RangeError};
@@ -71,7 +73,8 @@ impl Date<Iso> {
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
     pub fn try_new_iso(year: i32, month: u8, day: u8) -> Result<Date<Iso>, RangeError> {
-        ArithmeticDate::new_gregorian::<IsoEra>(year, month, day)
+        ArithmeticDate::from_year_month_day(year, month, day, &AbstractGregorian(IsoEra))
+            .map(ArithmeticDate::cast)
             .map(IsoDateInner)
             .map(|i| Date::from_raw(i, Iso))
     }

@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears};
+use crate::cal::abstract_gregorian::{
+    impl_with_abstract_gregorian, AbstractGregorian, GregorianYears,
+};
 use crate::cal::gregorian::CeBce;
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::{DateError, UnknownEraError};
@@ -346,15 +348,16 @@ impl Date<Japanese> {
         day: u8,
         japanese_calendar: A,
     ) -> Result<Date<A>, DateError> {
-        let extended = japanese_calendar
-            .as_calendar()
-            .extended_from_era_year(Some(era.as_bytes()), year)?;
-        Ok(Date::from_raw(
-            JapaneseDateInner(ArithmeticDate::new_gregorian::<&Japanese>(
-                extended, month, day,
-            )?),
-            japanese_calendar,
-        ))
+        ArithmeticDate::from_era_year_month_day(
+            era,
+            year,
+            month,
+            day,
+            &AbstractGregorian(japanese_calendar.as_calendar()),
+        )
+        .map(ArithmeticDate::cast)
+        .map(JapaneseDateInner)
+        .map(|i| Date::from_raw(i, japanese_calendar))
     }
 }
 
@@ -404,9 +407,15 @@ impl Date<JapaneseExtended> {
         let extended = (&japanext_calendar.as_calendar().0)
             .extended_from_era_year(Some(era.as_bytes()), year)?;
         Ok(Date::from_raw(
-            JapaneseExtendedDateInner(ArithmeticDate::new_gregorian::<&Japanese>(
-                extended, month, day,
-            )?),
+            JapaneseExtendedDateInner(
+                ArithmeticDate::from_year_month_day(
+                    extended,
+                    month,
+                    day,
+                    &super::abstract_gregorian::AbstractGregorian(years),
+                )
+                .map(ArithmeticDate::cast)?,
+            ),
             japanext_calendar,
         ))
     }

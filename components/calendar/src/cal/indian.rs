@@ -118,7 +118,8 @@ impl Calendar for Indian {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_codes(era, year, month_code, day, self).map(IndianDateInner)
+        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
+            .map(IndianDateInner)
     }
 
     #[cfg(feature = "unstable")]
@@ -299,7 +300,7 @@ impl Date<Indian> {
     /// assert_eq!(date_indian.day_of_month().0, 12);
     /// ```
     pub fn try_new_indian(year: i32, month: u8, day: u8) -> Result<Date<Indian>, RangeError> {
-        ArithmeticDate::try_from_ymd(year, month, day)
+        ArithmeticDate::from_year_month_day(year, month, day, &Indian)
             .map(IndianDateInner)
             .map(|inner| Date::from_raw(inner, Indian))
     }

@@ -112,7 +112,8 @@ impl Calendar for Persian {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_codes(era, year, month_code, day, self).map(PersianDateInner)
+        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
+            .map(PersianDateInner)
     }
 
     #[cfg(feature = "unstable")]
@@ -244,7 +245,7 @@ impl Date<Persian> {
     /// assert_eq!(date_persian.day_of_month().0, 25);
     /// ```
     pub fn try_new_persian(year: i32, month: u8, day: u8) -> Result<Date<Persian>, RangeError> {
-        ArithmeticDate::try_from_ymd(year, month, day)
+        ArithmeticDate::from_year_month_day(year, month, day, &Persian)
             .map(PersianDateInner)
             .map(|inner| Date::from_raw(inner, Persian))
     }

@@ -928,7 +928,8 @@ impl<R: Rules> Calendar for Hijri<R> {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_codes(era, year, month_code, day, self).map(HijriDateInner)
+        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
+            .map(HijriDateInner)
     }
 
     #[cfg(feature = "unstable")]
@@ -1064,11 +1065,9 @@ impl<A: AsCalendar<Calendar = Hijri<R>>, R: Rules> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Self, RangeError> {
-        let y = calendar.as_calendar().0.year(year);
-        Ok(Date::from_raw(
-            HijriDateInner(ArithmeticDate::try_from_ymd(y, month, day)?),
-            calendar,
-        ))
+        ArithmeticDate::from_year_month_day(year, month, day, calendar.as_calendar())
+            .map(HijriDateInner)
+            .map(|inner| Date::from_raw(inner, calendar))
     }
 }
 

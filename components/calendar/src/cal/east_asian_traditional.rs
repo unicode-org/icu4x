@@ -500,10 +500,11 @@ impl<A: AsCalendar<Calendar = KoreanTraditional>> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, DateError> {
-        ArithmeticDate::try_from_ymd(
-            calendar.as_calendar().0.year(related_iso_year),
+        ArithmeticDate::from_year_month_day(
+            related_iso_year,
             ordinal_month,
             day,
+            calendar.as_calendar(),
         )
         .map(ChineseDateInner)
         .map(|inner| Date::from_raw(inner, calendar))
@@ -681,7 +682,8 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_codes(era, year, month_code, day, self).map(ChineseDateInner)
+        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
+            .map(ChineseDateInner)
     }
 
     #[cfg(feature = "unstable")]
@@ -811,10 +813,11 @@ impl<A: AsCalendar<Calendar = ChineseTraditional>> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, DateError> {
-        ArithmeticDate::try_from_ymd(
-            calendar.as_calendar().0.year(related_iso_year),
+        ArithmeticDate::from_year_month_day(
+            related_iso_year,
             ordinal_month,
             day,
+            calendar.as_calendar(),
         )
         .map(ChineseDateInner)
         .map(|inner| Date::from_raw(inner, calendar))

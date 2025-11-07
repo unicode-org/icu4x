@@ -31,27 +31,6 @@ pub(crate) trait GregorianYears: Clone + core::fmt::Debug {
     fn debug_name(&self) -> &'static str;
 }
 
-impl ArithmeticDate<AbstractGregorian<IsoEra>> {
-    pub(crate) fn new_gregorian<Y: GregorianYears>(
-        year: i32,
-        month: u8,
-        day: u8,
-    ) -> Result<Self, RangeError> {
-        ArithmeticDate::try_from_ymd(year + Y::EXTENDED_YEAR_OFFSET, month, day).map_err(|e| {
-            if e.field == "year" {
-                RangeError {
-                    value: e.value - Y::EXTENDED_YEAR_OFFSET,
-                    min: e.min - Y::EXTENDED_YEAR_OFFSET,
-                    max: e.max - Y::EXTENDED_YEAR_OFFSET,
-                    ..e
-                }
-            } else {
-                e
-            }
-        })
-    }
-}
-
 pub(crate) const REFERENCE_YEAR: i32 = 1972;
 #[cfg(test)]
 pub(crate) const LAST_DAY_OF_REFERENCE_YEAR: RataDie =
@@ -108,7 +87,8 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_codes(era, year, month_code, day, self).map(ArithmeticDate::cast)
+        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
+            .map(ArithmeticDate::cast)
     }
 
     #[cfg(feature = "unstable")]
