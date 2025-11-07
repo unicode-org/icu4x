@@ -243,16 +243,60 @@ impl<A: AsCalendar> Date<A> {
         Date { inner, calendar }
     }
 
-    /// The number of months in the year of this date.
+    /// The day-of-month of this date.
     #[inline]
-    pub fn months_in_year(&self) -> u8 {
-        self.calendar.as_calendar().months_in_year(self.inner())
+    pub fn day_of_month(&self) -> types::DayOfMonth {
+        self.calendar.as_calendar().day_of_month(&self.inner)
     }
 
-    /// The number of days in the year of this date.
+    /// The day-of-month of this date.
     #[inline]
-    pub fn days_in_year(&self) -> u16 {
-        self.calendar.as_calendar().days_in_year(self.inner())
+    pub fn day_of_year(&self) -> types::DayOfYear {
+        self.calendar.as_calendar().day_of_year(&self.inner)
+    }
+
+    /// The day of the week of this date.
+    #[inline]
+    pub fn day_of_week(&self) -> types::Weekday {
+        self.to_rata_die().into()
+    }
+
+    /// The month of this date.
+    #[inline]
+    pub fn month(&self) -> types::MonthInfo {
+        self.calendar.as_calendar().month(&self.inner)
+    }
+
+    /// The year of this date.
+    ///
+    /// This returns an enum, see [`Date::era_year()`] and [`Date::cyclic_year()`] which are available
+    /// for concrete calendar types and return concrete types.
+    #[inline]
+    pub fn year(&self) -> types::YearInfo {
+        self.calendar.as_calendar().year_info(&self.inner).into()
+    }
+
+    /// The "extended year" of this date.
+    ///
+    /// This year number can be used when you need a simple numeric representation
+    /// of the year, and can be meaningfully compared with extended years from other
+    /// eras or used in arithmetic.
+    ///
+    /// For calendars defined in Temporal, this will match the "arithmetic year"
+    /// as defined in <https://tc39.es/proposal-intl-era-monthcode/>.
+    /// This is typically anchored with year 1 as the year 1 of either the most modern or
+    /// otherwise some "major" era for the calendar.
+    ///
+    /// See [`Self::year()`] for more information about the year.
+    #[inline]
+    pub fn extended_year(&self) -> i32 {
+        self.year().extended_year()
+    }
+
+    /// Whether this date is in a leap year.
+    #[inline]
+    pub fn is_in_leap_year(&self) -> bool {
+        self.calendar.as_calendar().is_in_leap_year(&self.inner)
     }
 
     /// The number of days in the month of this date.
@@ -261,10 +305,16 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().days_in_month(self.inner())
     }
 
-    /// The day of the week of this date.
+    /// The number of days in the year of this date.
     #[inline]
-    pub fn day_of_week(&self) -> types::Weekday {
-        self.to_rata_die().into()
+    pub fn days_in_year(&self) -> u16 {
+        self.calendar.as_calendar().days_in_year(self.inner())
+    }
+
+    /// The number of months in the year of this date.
+    #[inline]
+    pub fn months_in_year(&self) -> u8 {
+        self.calendar.as_calendar().months_in_year(self.inner())
     }
 
     /// Add a `duration` to this date, mutating it
@@ -357,56 +407,6 @@ impl<A: AsCalendar> Date<A> {
         self.calendar
             .as_calendar()
             .until(self.inner(), other.inner(), options)
-    }
-
-    /// The year of this date.
-    ///
-    /// This returns an enum, see [`Date::era_year()`] and [`Date::cyclic_year()`] which are available
-    /// for concrete calendar types and return concrete types.
-    #[inline]
-    pub fn year(&self) -> types::YearInfo {
-        self.calendar.as_calendar().year_info(&self.inner).into()
-    }
-
-    /// The "extended year" of this date.
-    ///
-    /// This year number can be used when you need a simple numeric representation
-    /// of the year, and can be meaningfully compared with extended years from other
-    /// eras or used in arithmetic.
-    ///
-    /// For calendars defined in Temporal, this will match the "arithmetic year"
-    /// as defined in <https://tc39.es/proposal-intl-era-monthcode/>.
-    /// This is typically anchored with year 1 as the year 1 of either the most modern or
-    /// otherwise some "major" era for the calendar.
-    ///
-    /// See [`Self::year()`] for more information about the year.
-    #[inline]
-    pub fn extended_year(&self) -> i32 {
-        self.year().extended_year()
-    }
-
-    /// Whether this date is in a leap year.
-    #[inline]
-    pub fn is_in_leap_year(&self) -> bool {
-        self.calendar.as_calendar().is_in_leap_year(&self.inner)
-    }
-
-    /// The month of this date.
-    #[inline]
-    pub fn month(&self) -> types::MonthInfo {
-        self.calendar.as_calendar().month(&self.inner)
-    }
-
-    /// The day-of-month of this date.
-    #[inline]
-    pub fn day_of_month(&self) -> types::DayOfMonth {
-        self.calendar.as_calendar().day_of_month(&self.inner)
-    }
-
-    /// The day-of-month of this date.
-    #[inline]
-    pub fn day_of_year(&self) -> types::DayOfYear {
-        self.calendar.as_calendar().day_of_year(&self.inner)
     }
 
     /// Construct a date from raw values for a given calendar. This does not check any
