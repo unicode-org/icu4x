@@ -561,7 +561,7 @@ impl Month {
 
     /// Returns whether the [`Month`] is a formatting-leap month
     ///
-    /// This is true for months that should format as leap months, even if they are not
+    /// This is true for months that format differently during leap years, even if they are not
     /// considered leap months.
     pub fn is_formatting_leap(self) -> bool {
         self.leap_status == LeapStatus::Leap || self.leap_status == LeapStatus::FormattingLeap
