@@ -49,6 +49,13 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
         .iter()
         .map(|ty| ty.ident.clone())
         .collect::<Vec<_>>();
+    let wherebounds = input
+        .generics
+        .where_clause
+        .iter()
+        .flat_map(|wc| wc.predicates.iter())
+        .filter(|p| matches!(p, WherePredicate::Type(_)))
+        .collect::<Vec<_>>();
     // We require all type parameters be 'static, otherwise
     // the Yokeable impl becomes really unweildy to generate safely
     let static_bounds: Vec<WherePredicate> = typarams
@@ -60,7 +67,12 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
         let name = &input.ident;
         quote! {
             // This is safe because there are no lifetime parameters.
-            unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<#(#typarams),*> where #(#static_bounds,)* Self: Sized {
+            unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<#(#typarams),*>
+            where
+                #(#static_bounds,)*
+                #(#wherebounds,)*
+                Self: Sized
+            {
                 type Output = Self;
                 #[inline]
                 fn transform(&self) -> &Self::Output {
@@ -170,8 +182,11 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             });
             return quote! {
                 unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<'static, #(#typarams),*>
-                    where #(#static_bounds,)*
-                    #(#yoke_bounds,)* {
+                where
+                    #(#static_bounds,)*
+                    #(#wherebounds,)*
+                    #(#yoke_bounds,)*
+                {
                     type Output = #name<'a, #(#typarams),*>;
                     #[inline]
                     fn transform(&'a self) -> &'a Self::Output {
