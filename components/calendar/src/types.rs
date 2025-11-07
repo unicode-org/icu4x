@@ -452,11 +452,11 @@ pub(crate) enum LeapStatus {
 impl Month {
     /// Constructs a non-leap [`Month`] with with the given number.
     ///
-    /// The input saturates to the range `1..13`.
+    /// The input saturates at 99.
     pub const fn new(number: u8) -> Self {
         Self {
-            number: if number > 13 {
-                13
+            number: if number > 99 {
+                99
             } else if number == 0 {
                 1
             } else {
@@ -468,11 +468,11 @@ impl Month {
 
     /// Constructs a leap [`Month`] with with the given number.
     ///
-    /// The input saturates to the range `1..13`.
+    /// The input saturates at 99.
     pub const fn leap(number: u8) -> Self {
         Self {
-            number: if number > 13 {
-                13
+            number: if number > 99 {
+                99
             } else if number == 0 {
                 1
             } else {
