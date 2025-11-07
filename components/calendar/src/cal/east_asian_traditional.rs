@@ -752,10 +752,7 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     /// leap months. For example, in a year where an intercalary month is added after the second
     /// month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        types::MonthInfo::for_month_and_ordinal(
-            self.month_from_ordinal(date.0.year(), date.0.month()),
-            date.0.month(),
-        )
+        types::MonthInfo::new_standard(self, date.0)
     }
 
     /// The calendar-specific day-of-month represented by `date`

@@ -246,7 +246,7 @@ impl Calendar for Indian {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        types::MonthInfo::non_lunisolar(date.0.month())
+        types::MonthInfo::new_standard(self, date.0)
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {

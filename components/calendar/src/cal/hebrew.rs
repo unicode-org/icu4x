@@ -320,21 +320,23 @@ impl Calendar for Hebrew {
     }
 
     fn month(&self, date: &Self::DateInner) -> MonthInfo {
-        let standard = self.month_from_ordinal(date.0.year(), date.0.month());
-
-        let formatting = if standard.number() == 6 && date.0.month() == 7 {
-            Month::leap(6)
+        let ordinal = date.0.month();
+        let standard = self.month_from_ordinal(date.0.year(), ordinal);
+        let formatting = if standard.number() == 6 && ordinal == 7 {
+            const { Month::leap(6) }
         } else {
             standard
         };
 
-        #[allow(deprecated)]
+        #[allow(deprecated)] // field-level allows don't work at 1.83 MSRV
         types::MonthInfo {
-            ordinal: date.0.month(),
-            standard_code: standard.code(),
+            ordinal,
             standard,
-            formatting_code: formatting.code(),
             formatting,
+            #[allow(deprecated)]
+            standard_code: standard.code(),
+            #[allow(deprecated)]
+            formatting_code: formatting.code(),
         }
     }
 

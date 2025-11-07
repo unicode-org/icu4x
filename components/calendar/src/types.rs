@@ -13,7 +13,7 @@ use zerovec::ule::AsULE;
 // Export the duration types from here
 #[cfg(feature = "unstable")]
 pub use crate::duration::{DateDuration, DateDurationUnit};
-use crate::error::MonthCodeParseError;
+use crate::{calendar_arithmetic::ArithmeticDate, error::MonthCodeParseError};
 
 #[cfg(feature = "unstable")]
 pub use unstable::DateFields;
@@ -326,16 +326,7 @@ pub struct CyclicYear {
     pub related_iso: i32,
 }
 
-/// Representation of a month in a year
-///
-/// Month codes typically look like `M01`, `M02`, etc, but can handle leap months
-/// (`M03L`) in lunar calendars. Solar calendars will have codes between `M01` and `M12`
-/// potentially with an `M13` for epagomenal months. Check the docs for a particular calendar
-/// for details on what its month codes are.
-///
-/// Month codes are shared with Temporal, [see Temporal proposal][era-proposal].
-///
-/// [era-proposal]: https://tc39.es/proposal-intl-era-monthcode/
+/// String representation of a [`Month`]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -365,22 +356,20 @@ impl MonthCode {
             .map(|m| (m.number(), m.is_leap()))
     }
 
-    /// Construct a "normal" month code given a number ("Mxx").
-    ///
-    /// Returns an error for months greater than 99
+    /// Deprecated, use `Month::new(m).code()`
+    #[deprecated(since = "2.2.0", note = "use `Month::new(m).code()`")]
     pub fn new_normal(number: u8) -> Option<Self> {
         (1..=99)
             .contains(&number)
-            .then(|| Month::new(number).code())
+            .then(|| Month::new_unchecked(number, false).code())
     }
 
-    /// Construct a "leap" month code given a number ("MxxL").
-    ///
-    /// Returns an error for months greater than 99
+    /// Deprecated, use `Month::leap(m).code()`
+    #[deprecated(since = "2.2.0", note = "use `Month::leap(m).code()`")]
     pub fn new_leap(number: u8) -> Option<Self> {
         (1..=99)
             .contains(&number)
-            .then(|| Month::leap(number).code())
+            .then(|| Month::new_unchecked(number, true).code())
     }
 }
 
@@ -427,7 +416,25 @@ impl fmt::Display for MonthCode {
     }
 }
 
-/// A representation of a month.
+/// Representation of a month in a year
+///
+/// A month has a "number" and "leap flag". In calendars without leap months (non-lunisolar
+/// calendars), the month with number n is always the nth month of the year (_ordinal month_),
+/// for example the Gregorian September is `Month:new(9)` and the 9th month of the year.
+/// However, in calendars with leap months (lunisolar calendars), such as the Hebrew calendar,
+/// a month might repeat (leap) without affecting the number of each subsequent month (but
+/// obviously affecting their _ordinal number_). For example, the Hebrew month Nisan
+/// (`Month::new(7)`) might be the 7th or 8th month of the year, depending if the month
+/// Adar was repeated or not.
+///
+/// Check the docs for a particular calendar for details on what its months are.
+///
+/// This concept of months matches the "month code" in [Temporal], and borrows its string
+/// representation:
+/// * `Month::new(7)` = `M07`
+/// * `Month::leap(2)` = `M02L`
+///
+/// [Temporal]: https://tc39.es/proposal-intl-era-monthcode/
 #[derive(Copy, Clone, Debug, PartialEq, Hash, Eq)]
 pub struct Month {
     /// Month number between 0 and 99
@@ -436,7 +443,7 @@ pub struct Month {
 }
 
 impl Month {
-    /// Constructs a non-leap with with the given number.
+    /// Constructs a non-leap [`Month`] with with the given number.
     ///
     /// The input saturates at 99.
     pub const fn new(number: u8) -> Self {
@@ -446,7 +453,7 @@ impl Month {
         }
     }
 
-    /// Constructs a non-leap with with the given number.
+    /// Constructs a leap [`Month`] with with the given number.
     ///
     /// The input saturates at 99.
     pub const fn leap(number: u8) -> Self {
@@ -456,12 +463,26 @@ impl Month {
         }
     }
 
-    /// Parses Temporal month code syntax
+    /// Creates a [`Month`] from a Temporal month code string.
+    ///
+    /// # Example
+    /// ```rust
+    /// use icu::calendar::types::Month;
+    ///
+    /// let month = Month::try_from_str("M07L").unwrap();
+    ///
+    /// assert_eq!(month.number(), 7);
+    /// assert!(month.is_leap());
+    ///
+    /// Month::try_from_str("sep").unwrap_err();
+    /// ```
     pub fn try_from_str(s: &str) -> Result<Self, MonthCodeParseError> {
         Self::try_from_utf8(s.as_bytes())
     }
 
-    /// Parses Temporal month code syntax
+    /// Creates a [`Month`] from a Temporal month code string.
+    ///
+    /// See [`Self::try_from_str()`].
     pub fn try_from_utf8(bytes: &[u8]) -> Result<Self, MonthCodeParseError> {
         match *bytes {
             [b'M', tens, ones] => Ok(Self {
@@ -476,7 +497,7 @@ impl Month {
         }
     }
 
-    /// Create a new ValidMonthCode without checking that the number is between 1 and 99
+    // precondition: number <= 99
     pub(crate) const fn new_unchecked(number: u8, is_leap: bool) -> Self {
         debug_assert!(1 <= number && number <= 99);
         Self { number, is_leap }
@@ -577,18 +598,23 @@ pub struct MonthInfo {
 }
 
 impl MonthInfo {
-    pub(crate) fn non_lunisolar(number: u8) -> Self {
-        Self::for_month_and_ordinal(Month::new(number), number)
-    }
-
-    pub(crate) fn for_month_and_ordinal(month: Month, ordinal: u8) -> Self {
-        #[allow(deprecated)]
+    /// Construct a [`MonthInfo`] with the same standard and formatting month
+    pub(crate) fn new_standard<C: crate::calendar_arithmetic::DateFieldsResolver>(
+        c: &C,
+        date: ArithmeticDate<C>,
+    ) -> Self {
+        let ordinal = date.month();
+        let standard = c.month_from_ordinal(date.year(), ordinal);
+        let standard_code = standard.code();
+        #[allow(deprecated)] // field-level allows don't work at 1.83 MSRV
         Self {
             ordinal,
-            standard_code: month.code(),
-            standard: month,
-            formatting_code: month.code(),
-            formatting: month,
+            standard,
+            formatting: standard,
+            #[allow(deprecated)]
+            standard_code,
+            #[allow(deprecated)]
+            formatting_code: standard_code,
         }
     }
 

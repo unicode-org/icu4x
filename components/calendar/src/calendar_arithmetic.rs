@@ -193,7 +193,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
     /// The default impl is for non-lunisolar calendars!
     #[inline]
     fn month_from_ordinal(&self, _year: Self::YearInfo, ordinal_month: u8) -> Month {
-        Month::new(ordinal_month)
+        Month::new_unchecked(ordinal_month, false)
     }
 }
 
