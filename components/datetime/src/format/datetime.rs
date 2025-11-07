@@ -238,8 +238,8 @@ where
             match datetime_names.get_name_for_month(
                 symbol,
                 l,
-                month.formatting().number() - 1,
-                month.formatting().is_leap(),
+                month.formatting.number() - 1,
+                month.formatting.is_leap(),
             ) {
                 Ok(MonthPlaceholderValue::PlainString(symbol)) => {
                     w.with_part(PART, |w| w.write_str(symbol))?;
@@ -277,11 +277,11 @@ where
                 }
                 Err(e) => {
                     w.with_part(PART, |w| {
-                        w.with_part(Part::ERROR, |w| w.write_str(&month.formatting_code.0))
+                        w.with_part(Part::ERROR, |w| w.write_str(&month.formatting.code().0))
                     })?;
                     Err(match e {
                         GetNameForMonthError::InvalidMonthCode => {
-                            FormattedDateTimePatternError::InvalidMonthCode(month.formatting_code)
+                            FormattedDateTimePatternError::InvalidMonthCode(month.formatting.code())
                         }
                         GetNameForMonthError::InvalidFieldLength => {
                             FormattedDateTimePatternError::UnsupportedLength(ErrorField(field))

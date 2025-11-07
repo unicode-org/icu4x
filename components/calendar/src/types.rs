@@ -536,42 +536,44 @@ impl Month {
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct MonthInfo {
-    /// The month number in this given year. For calendars with leap months, all months after
+    /// The ordinal month number in this given year. For calendars with leap months, all months after
     /// the leap month will end up with an incremented number.
     ///
-    /// In general, prefer using the month code in generic code.
+    /// In general, prefer using [`Month`]s in generic code.
     pub ordinal: u8,
 
-    /// The month code, used to distinguish months during leap years.
+    /// The [`Month`], used to distinguish months during leap years.
     ///
     /// Round-trips through `Date` constructors like [`Date::try_new_from_codes`] and [`Date::try_from_fields`].
     ///
     /// This follows [Temporal's specification](https://tc39.es/proposal-intl-era-monthcode/#table-additional-month-codes).
-    /// Months considered the "same" have the same code: This means that the Hebrew months "Adar" and "Adar II" ("Adar, but during a leap year")
-    /// are considered the same month and have the code M05.
+    /// Months considered the "same" are equal: This means that the Hebrew months "Adar" and "Adar II" ("Adar, but during a leap year")
+    /// are considered the same month, `Month::new(6)`.
     ///
     /// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
     /// [`Date::try_from_fields`]: crate::Date::try_from_fields
-    pub standard_code: MonthCode,
+    pub standard: Month,
 
-    /// Same as [`Self::standard_code`] but with invariants validated.
-    pub(crate) standard: Month,
-
-    /// A month code, useable for formatting.
+    /// A [`Month`] useable for formatting.
     ///
     /// Does NOT necessarily round-trip through `Date` constructors like [`Date::try_new_from_codes`] and [`Date::try_from_fields`].
     ///
-    /// This may not necessarily be the canonical month code for a month in cases where a month has different
+    /// This may not necessarily be the canonical month for a month in cases where a month has different
     /// formatting in a leap year, for example Adar/Adar II in the Hebrew calendar in a leap year has
-    /// the standard code M06, but for formatting specifically the Hebrew calendar will return M06L since it is formatted
-    /// differently.
+    /// the standard month `Month::new(6)`, but for formatting specifically the Hebrew calendar will return
+    /// `Month::leap(6)`, since it is formatted differently.
     ///
     /// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
     /// [`Date::try_from_fields`]: crate::Date::try_from_fields
-    pub formatting_code: MonthCode,
+    pub formatting: Month,
 
-    /// Same as [`Self::formatting_code`] but with invariants validated.
-    pub(crate) formatting: Month,
+    /// The [`Month::code()`] of [`Self::standard`].
+    #[deprecated(since = "2.2.0", note = "use `standard.code()")]
+    pub standard_code: MonthCode,
+
+    /// The [`Month::code()`] of [`Self::formatting`].
+    #[deprecated(since = "2.2.0", note = "use `formatting.code()")]
+    pub formatting_code: MonthCode,
 }
 
 impl MonthInfo {
@@ -580,6 +582,7 @@ impl MonthInfo {
     }
 
     pub(crate) fn for_month_and_ordinal(month: Month, ordinal: u8) -> Self {
+        #[allow(deprecated)]
         Self {
             ordinal,
             standard_code: month.code(),
@@ -589,7 +592,7 @@ impl MonthInfo {
         }
     }
 
-    /// Returns the month number.
+    /// Returns the month number of the `standard` [`Month`].
     ///
     /// A month number N is not necessarily the Nth month in the year if there are leap
     /// months in the year, rather it is associated with the Nth month of a "regular"
@@ -614,7 +617,7 @@ impl MonthInfo {
         self.standard.number()
     }
 
-    /// Returns whether the month is a leap month.
+    /// Returns whether the `standard` [`Month`] is a leap month.
     ///
     /// This is true for intercalary months in [`Hebrew`] and [`EastAsianTraditional`].
     ///
@@ -630,11 +633,6 @@ impl MonthInfo {
     #[deprecated(since = "2.2.0", note = "use `number`")]
     pub fn month_number(self) -> u8 {
         self.standard.number()
-    }
-
-    #[doc(hidden)]
-    pub fn formatting(self) -> Month {
-        self.formatting
     }
 }
 

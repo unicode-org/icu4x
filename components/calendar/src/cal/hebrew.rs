@@ -331,6 +331,7 @@ impl Calendar for Hebrew {
             standard
         };
 
+        #[allow(deprecated)]
         types::MonthInfo {
             ordinal: date.0.month(),
             standard_code: standard.code(),
