@@ -455,11 +455,7 @@ impl Month {
     /// The input saturates at 99.
     pub const fn new(number: u8) -> Self {
         Self {
-            number: if number > 99 {
-                99
-            } else {
-                number
-            },
+            number: if number > 99 { 99 } else { number },
             leap_status: LeapStatus::Normal,
         }
     }
@@ -469,11 +465,7 @@ impl Month {
     /// The input saturates at 99.
     pub const fn leap(number: u8) -> Self {
         Self {
-            number: if number > 99 {
-                99
-            } else {
-                number
-            },
+            number: if number > 99 { 99 } else { number },
             leap_status: LeapStatus::Leap,
         }
     }
