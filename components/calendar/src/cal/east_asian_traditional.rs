@@ -1269,7 +1269,7 @@ mod test {
 
         assert_eq!(chinese.cyclic_year().related_iso, -2636);
         assert_eq!(chinese.month().ordinal, 1);
-        assert_eq!(chinese.month().standard, Month::new(1));
+        assert_eq!(chinese.month().value, Month::new(1));
         assert_eq!(chinese.day_of_month().0, 1);
         assert_eq!(chinese.cyclic_year().year, 1);
         assert_eq!(chinese.cyclic_year().related_iso, -2636);
@@ -1492,7 +1492,7 @@ mod test {
             let iso = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day).unwrap();
             let chinese = iso.to_calendar(ChineseTraditional::new());
             assert_eq!(
-                chinese.month().standard,
+                chinese.month().value,
                 case.month,
                 "Month codes did not match for test case: {case:?}"
             );
@@ -1644,7 +1644,7 @@ mod test {
         };
         let date = Date::try_from_fields(fields, options, cal).unwrap();
         assert_eq!(
-            date.month().standard,
+            date.month().value,
             Month::new(1),
             "Month was successfully constrained"
         );

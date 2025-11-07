@@ -573,27 +573,17 @@ pub struct MonthInfo {
     ///
     /// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
     /// [`Date::try_from_fields`]: crate::Date::try_from_fields
-    pub standard: Month,
+    pub value: Month,
 
-    /// A [`Month`] useable for formatting.
-    ///
-    /// Does NOT necessarily round-trip through `Date` constructors like [`Date::try_new_from_codes`] and [`Date::try_from_fields`].
-    ///
-    /// This may not necessarily be the canonical month for a month in cases where a month has different
-    /// formatting in a leap year, for example Adar/Adar II in the Hebrew calendar in a leap year has
-    /// the standard month `Month::new(6)`, but for formatting specifically the Hebrew calendar will return
-    /// `Month::leap(6)`, since it is formatted differently.
-    ///
-    /// [`Date::try_new_from_codes`]: crate::Date::try_new_from_codes
-    /// [`Date::try_from_fields`]: crate::Date::try_from_fields
-    pub formatting: Month,
+    #[doc(hidden)]
+    pub format_as_leap: bool,
 
-    /// The [`Month::code()`] of [`Self::standard`].
-    #[deprecated(since = "2.2.0", note = "use `standard.code()")]
+    /// The [`Month::code()`] of [`Self::value`].
+    #[deprecated(since = "2.2.0", note = "use `value.code()")]
     pub standard_code: MonthCode,
 
-    /// The [`Month::code()`] of [`Self::formatting`].
-    #[deprecated(since = "2.2.0", note = "use `formatting.code()")]
+    /// The [`Month::code()`] of [`Self::value`].
+    #[deprecated(since = "2.2.0", note = "use `value.code()")]
     pub formatting_code: MonthCode,
 }
 
@@ -609,8 +599,8 @@ impl MonthInfo {
         #[allow(deprecated)] // field-level allows don't work at 1.83 MSRV
         Self {
             ordinal,
-            standard,
-            formatting: standard,
+            value: standard,
+            format_as_leap: false,
             #[allow(deprecated)]
             standard_code,
             #[allow(deprecated)]
@@ -640,7 +630,7 @@ impl MonthInfo {
     /// assert_eq!(month_info.number(), 9);
     /// ```
     pub fn number(self) -> u8 {
-        self.standard.number()
+        self.value.number()
     }
 
     /// Returns whether the `standard` [`Month`] is a leap month.
@@ -650,7 +640,7 @@ impl MonthInfo {
     /// [`Hebrew`]: crate::cal::Hebrew
     /// [`EastAsianTraditional`]: crate::cal::east_asian_traditional::EastAsianTraditional
     pub fn is_leap(self) -> bool {
-        self.standard.is_leap()
+        self.value.is_leap()
     }
 
     /// Gets the month number. A month number N is not necessarily the Nth month in the year
@@ -658,7 +648,7 @@ impl MonthInfo {
     /// year. There may be multiple month Ns in a year
     #[deprecated(since = "2.2.0", note = "use `number`")]
     pub fn month_number(self) -> u8 {
-        self.standard.number()
+        self.value.number()
     }
 }
 

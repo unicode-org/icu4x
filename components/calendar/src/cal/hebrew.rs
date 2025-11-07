@@ -322,21 +322,18 @@ impl Calendar for Hebrew {
     fn month(&self, date: &Self::DateInner) -> MonthInfo {
         let ordinal = date.0.month();
         let standard = self.month_from_ordinal(date.0.year(), ordinal);
-        let formatting = if standard.number() == 6 && ordinal == 7 {
-            const { Month::leap(6) }
-        } else {
-            standard
-        };
+        let standard_code = standard.code();
 
         #[allow(deprecated)] // field-level allows don't work at 1.83 MSRV
         types::MonthInfo {
             ordinal,
-            standard,
-            formatting,
+            value: standard,
+            // Use the leap name for Adar in a leap year
+            format_as_leap: standard.number() == 6 && ordinal == 7,
             #[allow(deprecated)]
-            standard_code: standard.code(),
+            standard_code,
             #[allow(deprecated)]
-            formatting_code: formatting.code(),
+            formatting_code: standard_code,
         }
     }
 

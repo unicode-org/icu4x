@@ -235,12 +235,7 @@ where
         (FieldSymbol::Month(symbol), l) => {
             const PART: Part = parts::MONTH;
             input!(PART, Month, month = input.month);
-            match datetime_names.get_name_for_month(
-                symbol,
-                l,
-                month.formatting.number() - 1,
-                month.formatting.is_leap(),
-            ) {
+            match datetime_names.get_name_for_month(symbol, l, month) {
                 Ok(MonthPlaceholderValue::PlainString(symbol)) => {
                     w.with_part(PART, |w| w.write_str(symbol))?;
                     Ok(())
@@ -277,11 +272,11 @@ where
                 }
                 Err(e) => {
                     w.with_part(PART, |w| {
-                        w.with_part(Part::ERROR, |w| w.write_str(&month.formatting.code().0))
+                        w.with_part(Part::ERROR, |w| w.write_str(&month.value.code().0))
                     })?;
                     Err(match e {
                         GetNameForMonthError::InvalidMonthCode => {
-                            FormattedDateTimePatternError::InvalidMonthCode(month.formatting.code())
+                            FormattedDateTimePatternError::InvalidMonthCode(month.value.code())
                         }
                         GetNameForMonthError::InvalidFieldLength => {
                             FormattedDateTimePatternError::UnsupportedLength(ErrorField(field))

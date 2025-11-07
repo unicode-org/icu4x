@@ -25,7 +25,7 @@ where
     let mut rd = Date::try_new_iso(1972, 12, 31).unwrap().to_rata_die();
     for _ in 1..2000 {
         let date = Date::from_rata_die(rd, Ref(&cal));
-        let month_day = (date.month().standard.code(), date.day_of_month().0);
+        let month_day = (date.month().value.code(), date.day_of_month().0);
         let mut fields = DateFields::default();
         fields.month_code = Some(month_day.0 .0.as_bytes());
         fields.day = Some(month_day.1);
@@ -83,7 +83,7 @@ where
                 // Test round-trip (to valid day number)
                 assert_eq!(
                     fields.month_code.unwrap(),
-                    reference_date.month().standard.code().0.as_bytes(),
+                    reference_date.month().value.code().0.as_bytes(),
                     "{fields:?} {cal:?}"
                 );
                 assert_eq!(

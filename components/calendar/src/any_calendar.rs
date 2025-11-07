@@ -1562,7 +1562,7 @@ mod tests {
             });
 
         let roundtrip_year = date.year();
-        let roundtrip_month = date.month().standard;
+        let roundtrip_month = date.month().value;
         let roundtrip_day = date.day_of_month().0;
 
         assert_eq!(

@@ -376,7 +376,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::types::MonthInfo, Struct, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn month_code(&self, write: &mut diplomat_runtime::DiplomatWrite) {
-            let code = self.0.month().standard.code();
+            let code = self.0.month().value.code();
             let _infallible = write.write_str(&code.0);
         }
 
