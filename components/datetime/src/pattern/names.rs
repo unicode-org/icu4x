@@ -3668,10 +3668,9 @@ impl RawDateTimeNamesBorrowed<'_> {
             .get_with_variables(month_name_length)
             .ok_or(GetNameForMonthError::NotLoaded)?;
         let month_index = usize::from(month.number() - 1);
-        let is_leap = month.is_leap() || month.format_as_leap;
         let name = match month_names {
             MonthNames::Linear(linear) => {
-                if is_leap {
+                if month.is_formatting_leap() {
                     None
                 } else {
                     linear.get(month_index)
@@ -3679,7 +3678,7 @@ impl RawDateTimeNamesBorrowed<'_> {
             }
             MonthNames::LeapLinear(leap_linear) => {
                 let num_months = leap_linear.len() / 2;
-                if is_leap {
+                if month.is_formatting_leap() {
                     leap_linear.get(month_index + num_months)
                 } else if month_index < num_months {
                     leap_linear.get(month_index)
@@ -3689,7 +3688,7 @@ impl RawDateTimeNamesBorrowed<'_> {
                 .filter(|s| !s.is_empty())
             }
             MonthNames::LeapNumeric(leap_numeric) => {
-                if is_leap {
+                if month.is_formatting_leap() {
                     return Ok(MonthPlaceholderValue::NumericPattern(leap_numeric));
                 } else {
                     return Ok(MonthPlaceholderValue::Numeric);

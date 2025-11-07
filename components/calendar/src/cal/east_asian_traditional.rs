@@ -645,7 +645,11 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
         Month::new_unchecked(
             // subtract one if there was a leap month before
             ordinal_month - (ordinal_month >= leap_month) as u8,
-            ordinal_month == leap_month,
+            if ordinal_month == leap_month {
+                types::LeapStatus::Leap
+            } else {
+                types::LeapStatus::Normal
+            },
         )
     }
 }
@@ -752,7 +756,7 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     /// leap months. For example, in a year where an intercalary month is added after the second
     /// month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        types::MonthInfo::new_standard(self, date.0)
+        types::MonthInfo::new(self, date.0)
     }
 
     /// The calendar-specific day-of-month represented by `date`
@@ -1507,12 +1511,25 @@ mod test {
             ..Default::default()
         };
         let year = cal.year_info_from_extended(2023);
-        let leap_month = year.packed.leap_month().unwrap();
-        for ordinal in 1..=13 {
-            let month = Month::new_unchecked(
-                ordinal - (ordinal >= leap_month) as u8,
-                ordinal == leap_month,
-            );
+        for (ordinal, month) in [
+            Month::new(1),
+            Month::new(2),
+            Month::leap(2),
+            Month::new(3),
+            Month::new(4),
+            Month::new(5),
+            Month::new(6),
+            Month::new(7),
+            Month::new(8),
+            Month::new(9),
+            Month::new(10),
+            Month::new(11),
+            Month::new(12),
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            let ordinal = ordinal as u8 + 1;
             assert_eq!(
                 cal.ordinal_from_month(year, month, reject),
                 Ok(ordinal),
@@ -1718,10 +1735,11 @@ mod test {
                         .0
                         .parse()
                         .unwrap();
-                    lunar_month = Month::new_unchecked(
-                        new_lunar_month,
-                        new_lunar_month == lunar_month.number(),
-                    );
+                    lunar_month = if new_lunar_month == lunar_month.number() {
+                        Month::leap(new_lunar_month)
+                    } else {
+                        Month::new(new_lunar_month)
+                    };
                     if new_lunar_month == 1 {
                         related_iso += 1;
                     }

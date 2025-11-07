@@ -194,7 +194,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        types::MonthInfo::new_standard(self, date.cast())
+        types::MonthInfo::new(self, date.cast())
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {

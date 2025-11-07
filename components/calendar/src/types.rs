@@ -361,7 +361,7 @@ impl MonthCode {
     pub fn new_normal(number: u8) -> Option<Self> {
         (1..=99)
             .contains(&number)
-            .then(|| Month::new_unchecked(number, false).code())
+            .then(|| Month::new_unchecked(number, LeapStatus::Normal).code())
     }
 
     /// Deprecated, use `Month::leap(m).code()`
@@ -369,7 +369,7 @@ impl MonthCode {
     pub fn new_leap(number: u8) -> Option<Self> {
         (1..=99)
             .contains(&number)
-            .then(|| Month::new_unchecked(number, true).code())
+            .then(|| Month::new_unchecked(number, LeapStatus::Leap).code())
     }
 }
 
@@ -439,7 +439,14 @@ impl fmt::Display for MonthCode {
 pub struct Month {
     /// Month number between 0 and 99
     number: u8,
-    is_leap: bool,
+    leap_status: LeapStatus,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Hash, Eq)]
+pub(crate) enum LeapStatus {
+    Normal,
+    Leap,
+    FormattingLeap,
 }
 
 impl Month {
@@ -455,7 +462,7 @@ impl Month {
             } else {
                 number
             },
-            is_leap: false,
+            leap_status: LeapStatus::Normal,
         }
     }
 
@@ -471,7 +478,7 @@ impl Month {
             } else {
                 number
             },
-            is_leap: true,
+            leap_status: LeapStatus::Leap,
         }
     }
 
@@ -499,27 +506,29 @@ impl Month {
         match *bytes {
             [b'M', tens, ones] => Ok(Self {
                 number: (tens - b'0') * 10 + ones - b'0',
-                is_leap: false,
+                leap_status: LeapStatus::Normal,
             }),
             [b'M', tens, ones, b'L'] => Ok(Self {
                 number: (tens - b'0') * 10 + ones - b'0',
-                is_leap: true,
+                leap_status: LeapStatus::Leap,
             }),
             _ => Err(MonthCodeParseError::InvalidSyntax),
         }
     }
 
     // precondition: number <= 99
-    pub(crate) const fn new_unchecked(number: u8, is_leap: bool) -> Self {
+    pub(crate) const fn new_unchecked(number: u8, leap_status: LeapStatus) -> Self {
         debug_assert!(1 <= number && number <= 99);
-        Self { number, is_leap }
+        Self {
+            number,
+            leap_status,
+        }
     }
 
     /// Returns the month number.
     ///
     /// A month number N is not necessarily the Nth month in the year if there are leap
-    /// months in the year, rather it is associated with the Nth month of a "regular"
-    /// year. There may be multiple month Ns in a year.
+    /// months in the year. There may be multiple month N in a year.
     ///
     /// This is NOT the same as the ordinal month!
     ///
@@ -547,7 +556,15 @@ impl Month {
     /// [`Hebrew`]: crate::cal::Hebrew
     /// [`EastAsianTraditional`]: crate::cal::east_asian_traditional::EastAsianTraditional
     pub fn is_leap(self) -> bool {
-        self.is_leap
+        self.leap_status == LeapStatus::Leap
+    }
+
+    /// Returns whether the [`Month`] is a formatting-leap month
+    ///
+    /// This is true for months that should format as leap months, even if they are not
+    /// considered leap months.
+    pub fn is_formatting_leap(self) -> bool {
+        self.leap_status == LeapStatus::Leap || self.leap_status == LeapStatus::FormattingLeap
     }
 
     /// Returns the [`MonthCode`] for this month.
@@ -558,7 +575,23 @@ impl Month {
                 b'M',
                 b'0' + self.number / 10,
                 b'0' + self.number % 10,
-                if self.is_leap { b'L' } else { 0 },
+                if self.is_leap() { b'L' } else { 0 },
+            ])
+            .unwrap(),
+        )
+    }
+
+    /// Returns the formatting [`MonthCode`] for this month.
+    ///
+    /// See [`Self::is_formatting_leap`].
+    pub fn formatting_code(self) -> MonthCode {
+        #[allow(clippy::unwrap_used)] // by construction
+        MonthCode(
+            TinyAsciiStr::try_from_raw([
+                b'M',
+                b'0' + self.number / 10,
+                b'0' + self.number % 10,
+                if self.is_formatting_leap() { b'L' } else { 0 },
             ])
             .unwrap(),
         )
@@ -587,40 +620,34 @@ pub struct MonthInfo {
     /// [`Date::try_from_fields`]: crate::Date::try_from_fields
     pub value: Month,
 
-    #[doc(hidden)]
-    pub format_as_leap: bool,
-
     /// The [`Month::code()`] of [`Self::value`].
     #[deprecated(since = "2.2.0", note = "use `value.code()")]
     pub standard_code: MonthCode,
 
-    /// The [`Month::code()`] of [`Self::value`].
-    #[deprecated(since = "2.2.0", note = "use `value.code()")]
+    /// The [`Month::formatting_code()`] of [`Self::value`].
+    #[deprecated(since = "2.2.0", note = "use `value.formatting_code()")]
     pub formatting_code: MonthCode,
 }
 
 impl MonthInfo {
-    /// Construct a [`MonthInfo`] with the same standard and formatting month
-    pub(crate) fn new_standard<C: crate::calendar_arithmetic::DateFieldsResolver>(
+    pub(crate) fn new<C: crate::calendar_arithmetic::DateFieldsResolver>(
         c: &C,
         date: ArithmeticDate<C>,
     ) -> Self {
         let ordinal = date.month();
-        let standard = c.month_from_ordinal(date.year(), ordinal);
-        let standard_code = standard.code();
+        let value = c.month_from_ordinal(date.year(), ordinal);
         #[allow(deprecated)] // field-level allows don't work at 1.83 MSRV
         Self {
             ordinal,
-            value: standard,
-            format_as_leap: false,
+            value,
             #[allow(deprecated)]
-            standard_code,
+            standard_code: value.code(),
             #[allow(deprecated)]
-            formatting_code: standard_code,
+            formatting_code: value.code(),
         }
     }
 
-    /// Returns the month number of the `standard` [`Month`].
+    /// Returns the month number of the [`Month`].
     ///
     /// A month number N is not necessarily the Nth month in the year if there are leap
     /// months in the year. There may be multiple month N in a year.
@@ -644,7 +671,7 @@ impl MonthInfo {
         self.value.number()
     }
 
-    /// Returns whether the `standard` [`Month`] is a leap month.
+    /// Returns whether the [`Month`] is a leap month.
     ///
     /// This is true for intercalary months in [`Hebrew`] and [`EastAsianTraditional`].
     ///
@@ -652,6 +679,14 @@ impl MonthInfo {
     /// [`EastAsianTraditional`]: crate::cal::east_asian_traditional::EastAsianTraditional
     pub fn is_leap(self) -> bool {
         self.value.is_leap()
+    }
+
+    /// Returns whether the [`Month`] is a formatting-leap month
+    ///
+    /// This is true for months that should format as leap months, even if they are not
+    /// considered leap months.
+    pub fn is_formatting_leap(self) -> bool {
+        self.value.is_formatting_leap()
     }
 
     /// Gets the month number. A month number N is not necessarily the Nth month in the year

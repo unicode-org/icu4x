@@ -8,7 +8,7 @@ use crate::error::{
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
-use crate::types::{DateFields, Month, MonthInfo};
+use crate::types::{DateFields, LeapStatus, Month, MonthInfo};
 use crate::RangeError;
 use crate::{types, Calendar, Date};
 use ::tinystr::tinystr;
@@ -211,7 +211,14 @@ impl DateFieldsResolver for Hebrew {
         let is_leap = year.keviyah.is_leap();
         Month::new_unchecked(
             ordinal_month - (is_leap && ordinal_month >= 6) as u8,
-            ordinal_month == 6 && is_leap,
+            if ordinal_month == 6 && is_leap {
+                types::LeapStatus::Leap
+            } else if ordinal_month == 7 && is_leap {
+                // Use the leap name for Adar in a leap year
+                LeapStatus::FormattingLeap
+            } else {
+                LeapStatus::Normal
+            },
         )
     }
 }
@@ -320,21 +327,7 @@ impl Calendar for Hebrew {
     }
 
     fn month(&self, date: &Self::DateInner) -> MonthInfo {
-        let ordinal = date.0.month();
-        let standard = self.month_from_ordinal(date.0.year(), ordinal);
-        let standard_code = standard.code();
-
-        #[allow(deprecated)] // field-level allows don't work at 1.83 MSRV
-        types::MonthInfo {
-            ordinal,
-            value: standard,
-            // Use the leap name for Adar in a leap year
-            format_as_leap: standard.number() == 6 && ordinal == 7,
-            #[allow(deprecated)]
-            standard_code,
-            #[allow(deprecated)]
-            formatting_code: standard_code,
-        }
+        MonthInfo::new(self, date.0)
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
