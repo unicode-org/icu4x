@@ -82,17 +82,12 @@ impl DateFieldsResolver for Julian {
     type YearInfo = i32;
 
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
-        match month {
-            4 | 6 | 9 | 11 => 30,
-            2 if calendrical_calculations::julian::is_leap_year(year) => 29,
-            2 => 28,
-            1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
-            _ => 0,
+        if month == 2 {
+            28 + calendrical_calculations::julian::is_leap_year(year) as u8
+        } else {
+            // https://www.youtube.com/watch?v=J9KijLyP-yg&t=1394s
+            30 | month ^ (month >> 3)
         }
-    }
-
-    fn months_in_provided_year(_: i32) -> u8 {
-        12
     }
 
     #[inline]
@@ -184,11 +179,7 @@ impl Calendar for Julian {
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        if self.is_in_leap_year(date) {
-            366
-        } else {
-            365
-        }
+        365 + calendrical_calculations::julian::is_leap_year(date.0.year()) as u16
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
@@ -242,21 +233,17 @@ impl Calendar for Julian {
         calendrical_calculations::julian::is_leap_year(date.0.year())
     }
 
-    /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
         types::MonthInfo::non_lunisolar(date.0.month())
     }
 
-    /// The calendar-specific day-of-month represented by `date`
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
         types::DayOfMonth(date.0.day())
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
         types::DayOfYear(
-            (1..date.0.month())
-                .map(|m| Self::days_in_provided_month(date.0.year(), m) as u16)
-                .sum::<u16>()
+            calendrical_calculations::julian::days_before_month(date.0.year(), date.0.month())
                 + date.0.day() as u16,
         )
     }

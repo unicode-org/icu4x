@@ -109,7 +109,7 @@ impl CldrCalendar for Indian {
 /// impl icu::datetime::scaffold::UnstableSealed for MyRules {}
 ///
 /// impl hijri::Rules for MyRules {
-///     fn year_data(&self, _year: i32) -> hijri::HijriYearData {
+///     fn year(&self, _year: i32) -> hijri::HijriYear {
 ///         todo!()
 ///     }
 /// }

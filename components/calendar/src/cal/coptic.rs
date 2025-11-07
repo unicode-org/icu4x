@@ -4,9 +4,7 @@
 
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::DateFieldsResolver;
-use crate::error::{
-    DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
-};
+use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::{types, Calendar, Date, RangeError};
@@ -56,22 +54,17 @@ impl DateFieldsResolver for Coptic {
     type YearInfo = i32;
 
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
-        if (1..=12).contains(&month) {
-            30
-        } else if month == 13 {
-            if year.rem_euclid(4) == 3 {
-                6
-            } else {
-                5
-            }
+        if month == 13 {
+            5 + calendrical_calculations::coptic::is_leap_year(year) as u8
         } else {
-            0
+            30
         }
     }
 
     fn months_in_provided_year(_: i32) -> u8 {
         13
     }
+
     #[inline]
     fn year_info_from_era(
         &self,
@@ -96,19 +89,6 @@ impl DateFieldsResolver for Coptic {
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         Coptic::reference_year_from_month_day(month_code, day)
-    }
-
-    #[inline]
-    fn ordinal_month_from_code(
-        &self,
-        _year: &Self::YearInfo,
-        month_code: types::ValidMonthCode,
-        _options: DateFromFieldsOptions,
-    ) -> Result<u8, MonthCodeError> {
-        match month_code.to_tuple() {
-            (month_number @ 1..=13, false) => Ok(month_number),
-            _ => Err(MonthCodeError::NotInCalendar),
-        }
     }
 }
 
