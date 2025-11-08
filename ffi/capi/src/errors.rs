@@ -61,6 +61,7 @@ pub mod ffi {
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::RangeError, Struct, compact)]
     #[diplomat::rust_link(icu::calendar::DateError, Enum, compact)]
+    #[diplomat::rust_link(icu::calendar::error::MonthCodeParseError, Enum, compact)]
     #[cfg(feature = "calendar")]
     #[non_exhaustive]
     pub enum CalendarError {
@@ -181,6 +182,16 @@ impl From<icu_provider::DataError> for DataError {
 impl From<icu_calendar::RangeError> for CalendarError {
     fn from(_: icu_calendar::RangeError) -> Self {
         Self::OutOfRange
+    }
+}
+
+#[cfg(feature = "calendar")]
+impl From<icu_calendar::error::MonthCodeParseError> for CalendarError {
+    fn from(value: icu_calendar::error::MonthCodeParseError) -> Self {
+        match value {
+            icu_calendar::error::MonthCodeParseError::InvalidSyntax => Self::UnknownMonthCode,
+            _ => Self::Unknown,
+        }
     }
 }
 

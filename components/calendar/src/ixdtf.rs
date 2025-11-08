@@ -69,7 +69,7 @@ impl<A: AsCalendar> Date<A> {
     ///     Date::try_from_str("2024-07-17[u-ca=hebrew]", Gregorian).unwrap_err();
     ///
     /// assert_eq!(date.era_year().year, 2024);
-    /// assert_eq!(date.month().standard_code.0, "M07");
+    /// assert_eq!(date.month().number(), 7);
     /// assert_eq!(date.day_of_month().0, 17);
     /// ```
     pub fn try_from_str(rfc_9557_str: &str, calendar: A) -> Result<Self, ParseError> {

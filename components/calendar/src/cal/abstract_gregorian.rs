@@ -87,7 +87,7 @@ impl<Y: GregorianYears> DateFieldsResolver for AbstractGregorian<Y> {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        _month_code: types::ValidMonthCode,
+        _month: types::Month,
         _day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         Ok(REFERENCE_YEAR)
@@ -194,7 +194,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        types::MonthInfo::non_lunisolar(date.month())
+        types::MonthInfo::new(self, date.cast())
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
