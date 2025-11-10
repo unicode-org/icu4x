@@ -60,7 +60,6 @@ fn test_date_add_across_calendars_and_durations() {
                 let _ = date.try_add_with_options(*duration, opts);
                 let result_iso = date.to_iso();
 
-                // Append to big string instead of making multiple snapshots
                 writeln!(
                     &mut output,
                     "Start: {:?}-{:?}-{:?}\nCalendar: {:?}\nDuration: {:?}\nResult: {:?}\n",
