@@ -228,7 +228,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         calendar: &C,
     ) -> Result<Self, DateError> {
         let year = if let Some(era) = era {
-            let year = calendar.year_info_from_era(era.as_bytes(), year)?;
+            let year = calendar
+                .year_info_from_era(era.as_bytes(), range_check(year, "year", VALID_YEAR_RANGE)?)?;
             range_check(year.to_extended_year(), "era_year", VALID_YEAR_RANGE)?;
             year
         } else {
@@ -315,8 +316,11 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 },
             },
             (Some(era), Some(era_year)) => {
-                let year = calendar.year_info_from_era(era, era_year)?;
-                range_check(year.to_extended_year(), "year", VALID_YEAR_RANGE)?;
+                let year = calendar.year_info_from_era(
+                    era,
+                    range_check(era_year.to_extended_year(), "year", VALID_YEAR_RANGE)?,
+                )?;
+                range_check(year.to_extended_year(), "extended_year", VALID_YEAR_RANGE)?;
                 if let Some(extended_year) = fields.extended_year {
                     if year.to_extended_year() != extended_year {
                         return Err(DateFromFieldsError::InconsistentYear);
