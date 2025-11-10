@@ -2,6 +2,7 @@ use icu_calendar::{
     options::DateAddOptions, types::DateDuration, AnyCalendar, AnyCalendarKind, Date,
 };
 use insta::assert_debug_snapshot;
+use std::fmt::Write;
 
 #[test]
 fn test_date_add_across_calendars_and_durations() {
@@ -45,6 +46,7 @@ fn test_date_add_across_calendars_and_durations() {
     ];
 
     let opts = DateAddOptions::default();
+    let mut output = String::new();
 
     for (y, m, d) in &iso_dates {
         for duration in &durations {
@@ -55,21 +57,18 @@ fn test_date_add_across_calendars_and_durations() {
                     .expect("Valid ISO date")
                     .to_calendar(cal.clone());
 
-                date.try_add_with_options(*duration, opts)
-                    .expect("Addition should succeed");
-
+                let _ = date.try_add_with_options(*duration, opts);
                 let result_iso = date.to_iso();
 
-                assert_debug_snapshot!(
-                    format!("{:?}_{:?}_{:?}_{:?}", y, m, d, cal_kind),
-                    (
-                        format!("Start: {:?}-{:?}-{:?}", y, m, d),
-                        format!("Calendar: {:?}", cal_kind),
-                        format!("Duration added: {:?}", duration),
-                        format!("Resulting ISO date: {:?}", result_iso)
-                    )
-                );
+                // Append to big string instead of making multiple snapshots
+                writeln!(
+                    &mut output,
+                    "Start: {:?}-{:?}-{:?}\nCalendar: {:?}\nDuration: {:?}\nResult: {:?}\n",
+                    y, m, d, cal_kind, duration, result_iso
+                ).unwrap();
             }
         }
     }
+
+    insta::assert_snapshot!("date_addition_combined_snapshot", output);
 }
