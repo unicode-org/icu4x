@@ -10,8 +10,8 @@ use icu_calendar::*;
 fn check_round_trip() {
     fn test<C: Calendar>(cal: C) {
         let cal = Ref(&cal);
-        let low = *VALID_RD_RANGE.start();
-        let high = *VALID_RD_RANGE.end();
+        let low = Date::<C>::LOWEST_RATA_DIE;
+        let high = Date::<C>::HIGHEST_RATA_DIE;
         let mut prev = Date::from_rata_die(low, cal);
         let mut curr = low + 1;
         while curr <= high {
@@ -47,7 +47,7 @@ fn check_from_fields() {
                 .into_iter()
             })
             .collect::<Vec<_>>();
-        for year in VALID_YEAR_RANGE {
+        for year in -1000000..1000000 {
             if year % 50000 == 0 {
                 println!("{} {year:?}", cal.as_calendar().debug_name());
             }
