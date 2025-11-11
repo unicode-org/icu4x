@@ -46,6 +46,7 @@ use std::str::FromStr;
 struct Filter {
     domain: String,
     regex: Regex,
+    inverted: bool,
 }
 
 #[derive(Debug, Display)]
@@ -73,6 +74,11 @@ impl FromStr for Filter {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let (domain, regex) = s.split_once('=').ok_or(FilterError::NoFilter)?;
 
+        let (regex, inverted) = regex
+            .strip_prefix('-')
+            .map(|regex| (regex, true))
+            .unwrap_or((regex, false));
+
         let regex = regex.strip_prefix('/').ok_or(FilterError::NoOpeningSlash)?;
         let regex = regex.strip_suffix('/').ok_or(FilterError::NoClosingSlash)?;
 
@@ -83,6 +89,7 @@ impl FromStr for Filter {
         Ok(Filter {
             domain: domain.to_owned(),
             regex,
+            inverted,
         })
     }
 }
@@ -580,18 +587,20 @@ fn main() -> eyre::Result<()> {
         driver.with_segmenter_models(cli.segmenter_models.clone())
     };
 
-    let attribute_filters =
-        cli.attribute_filter
-            .iter()
-            .fold(HashMap::<&_, Vec<Regex>>::new(), |mut map, filter| {
-                map.entry(&filter.domain)
-                    .or_default()
-                    .push(filter.regex.clone());
-                map
-            });
+    let attribute_filters = cli.attribute_filter.iter().fold(
+        HashMap::<&_, Vec<(Regex, bool)>>::new(),
+        |mut map, filter| {
+            map.entry(&filter.domain)
+                .or_default()
+                .push((filter.regex.clone(), filter.inverted));
+            map
+        },
+    );
     for (domain, filters) in attribute_filters {
         driver = driver.with_marker_attributes_filter(domain, move |attr| {
-            filters.iter().all(|regex| regex.is_match(attr))
+            filters
+                .iter()
+                .all(|(regex, inverted)| regex.is_match(attr) ^ inverted)
         })
     }
 
