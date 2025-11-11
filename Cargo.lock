@@ -1165,6 +1165,7 @@ name = "icu4x-datagen"
 version = "2.1.1"
 dependencies = [
  "clap",
+ "displaydoc",
  "eyre",
  "icu",
  "icu_provider",
@@ -1173,6 +1174,7 @@ dependencies = [
  "icu_provider_registry",
  "icu_provider_source",
  "log",
+ "regex",
  "simple_logger",
 ]
 

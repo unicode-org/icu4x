@@ -27,6 +27,7 @@
 )]
 
 use clap::{Parser, ValueEnum};
+use displaydoc::Display;
 use eyre::WrapErr;
 use icu_provider::export::ExportableProvider;
 use icu_provider::hello_world::HelloWorldV1;
@@ -35,9 +36,54 @@ use icu_provider_export::prelude::*;
 use icu_provider_export::ExportMetadata;
 #[cfg(feature = "provider")]
 use icu_provider_source::SourceDataProvider;
+use regex::Regex;
 use simple_logger::SimpleLogger;
 use std::collections::HashMap;
 use std::path::PathBuf;
+use std::str::FromStr;
+
+#[derive(Clone)]
+struct Filter {
+    domain: String,
+    regex: Regex,
+}
+
+#[derive(Debug, Display)]
+enum FilterError {
+    #[displaydoc("no filter found. specify one after an =")]
+    NoFilter,
+    #[displaydoc("opening / delimiter for regex not found")]
+    NoOpeningSlash,
+    #[displaydoc("closing / delimiter for regex not found")]
+    NoClosingSlash,
+    #[displaydoc("{0}")]
+    Regex(regex::Error),
+}
+
+impl From<regex::Error> for FilterError {
+    fn from(value: regex::Error) -> Self {
+        FilterError::Regex(value)
+    }
+}
+
+impl std::error::Error for FilterError {}
+
+impl FromStr for Filter {
+    type Err = FilterError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let (domain, regex) = s.split_once('=').ok_or(FilterError::NoFilter)?;
+
+        let regex = regex.strip_prefix('/').ok_or(FilterError::NoOpeningSlash)?;
+        let regex = regex.strip_suffix('/').ok_or(FilterError::NoClosingSlash)?;
+
+        let regex = Regex::new(regex)?;
+
+        Ok(Filter {
+            domain: domain.to_owned(),
+            regex,
+        })
+    }
+}
 
 #[derive(Parser)]
 #[command(name = "icu4x-datagen")]
@@ -168,6 +214,10 @@ struct Cli {
     #[arg(long, value_name = "BINARY")]
     #[arg(help = "Analyzes the binary and only includes markers that are used by the binary.")]
     markers_for_bin: Option<PathBuf>,
+
+    #[arg(long, value_name = "FILTER")]
+    #[arg(help = "Filter attributes on markers for a domain. Accepts form `domain=/regex/`.")]
+    attribute_filter: Vec<Filter>,
 
     #[arg(long, short, num_args = 0..)]
     #[cfg_attr(feature = "provider", arg(default_value = "recommended"))]
@@ -527,6 +577,21 @@ fn main() -> eyre::Result<()> {
     } else {
         driver.with_segmenter_models(cli.segmenter_models.clone())
     };
+
+    let attribute_filters =
+        cli.attribute_filter
+            .iter()
+            .fold(HashMap::<&_, Vec<Regex>>::new(), |mut map, filter| {
+                map.entry(&filter.domain)
+                    .or_default()
+                    .push(filter.regex.clone());
+                map
+            });
+    for (domain, filters) in attribute_filters {
+        driver = driver.with_marker_attributes_filter(domain, move |attr| {
+            filters.iter().all(|regex| regex.is_match(attr))
+        })
+    }
 
     let metadata: Result<ExportMetadata, DataError> = match cli.format {
         #[cfg(not(feature = "fs_exporter"))]
