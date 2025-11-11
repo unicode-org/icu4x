@@ -50,7 +50,7 @@ pub mod ffi {
         /// Gets the value for a code point.
         #[diplomat::rust_link(icu::properties::CodePointMapDataBorrowed::get, FnInStruct)]
         #[diplomat::rust_link(icu::properties::CodePointMapDataBorrowed::get32, FnInStruct, hidden)]
-        #[diplomat::attr(auto, indexer)]
+        #[diplomat::attr(all(supports = indexing, not(kotlin)), indexer)] // Kotlin doesn't support non-integral indexers
         pub fn get(&self, cp: DiplomatChar) -> u8 {
             self.0.as_borrowed().get32(cp)
         }
@@ -393,7 +393,7 @@ pub mod ffi {
         /// Gets the value for a code point.
         #[diplomat::rust_link(icu::properties::CodePointMapDataBorrowed::get, FnInStruct)]
         #[diplomat::rust_link(icu::properties::CodePointMapDataBorrowed::get32, FnInStruct, hidden)]
-        #[diplomat::attr(auto, indexer)]
+        #[diplomat::attr(all(supports = indexing, not(kotlin)), indexer)] // Kotlin doesn't support non-integral indexers
         pub fn get(&self, cp: DiplomatChar) -> u16 {
             self.0.as_borrowed().get32(cp)
         }
