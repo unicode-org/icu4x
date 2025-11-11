@@ -76,7 +76,9 @@ impl FromStr for Filter {
         let regex = regex.strip_prefix('/').ok_or(FilterError::NoOpeningSlash)?;
         let regex = regex.strip_suffix('/').ok_or(FilterError::NoClosingSlash)?;
 
-        let regex = Regex::new(regex)?;
+        // add an implicit `^(?:)$` around the regex
+        let regex = format!("^(?:{})$", regex);
+        let regex = Regex::new(&regex)?;
 
         Ok(Filter {
             domain: domain.to_owned(),
