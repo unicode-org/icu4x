@@ -48,21 +48,28 @@ fn test_date_add_across_calendars_and_durations() {
         writeln!(&mut output, "{}-{}-{}", y, m, d).unwrap();
 
         for cal_kind in &calendars {
-            writeln!(&mut output, "  {:?}", cal_kind).unwrap();
-
             let cal = AnyCalendar::new(*cal_kind);
+            // Compute per-calendar starting date
+            let start_date = Date::try_new_iso(*y, *m, *d)
+                .expect("Valid ISO date")
+                .to_calendar(cal.clone());
+
+            writeln!(
+                &mut output,
+                "  {:?} (start: {:?})",
+                cal_kind,
+                start_date
+            )
+                .unwrap();
 
             for duration in &durations {
-                let mut date = Date::try_new_iso(*y, *m, *d)
-                    .expect("Valid ISO date")
-                    .to_calendar(cal.clone());
+                let mut date = start_date.clone();
 
                 date.try_add_with_options(*duration, opts)
                     .expect("Addition should succeed");
 
                 let result_iso = date.to_iso();
 
-                // Cleaner duration formatting
                 let duration_str = format!(
                     "{}{}{}{}",
                     if duration.years != 0 { format!("{}y ", duration.years) } else { "".into() },
@@ -78,12 +85,13 @@ fn test_date_add_across_calendars_and_durations() {
                     "    +{} → {:?}",
                     duration_str,
                     result_iso
-                ).unwrap();
+                )
+                    .unwrap();
             }
         }
 
         writeln!(&mut output).unwrap();
     }
 
-    assert_snapshot!("date_addition_readable_nested_snapshot", output);
+    assert_snapshot!("date_addition_readable_nested_snapshot_with_starts", output);
 }
