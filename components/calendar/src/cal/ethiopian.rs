@@ -267,7 +267,7 @@ impl Month {
     pub const GENBOT: Month = Month::new(9);
     pub const SENE: Month = Month::new(10);
     pub const HAMLE: Month = Month::new(11);
-    pub const NÄHASE: Month = Month::new(12);
+    pub const NEHASSE: Month = Month::new(12);
     pub const PAGUMEN: Month = Month::new(13);
 }
 
