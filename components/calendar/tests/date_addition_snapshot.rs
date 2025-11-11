@@ -1,4 +1,3 @@
-
 use icu_calendar::{
     options::DateAddOptions, types::DateDuration, AnyCalendar, AnyCalendarKind, Date,
 };
@@ -49,11 +48,11 @@ fn test_date_add_across_calendars_and_durations() {
 
         for cal_kind in &calendars {
             let cal = AnyCalendar::new(*cal_kind);
-            // Compute per-calendar starting date
             let start_date = Date::try_new_iso(*y, *m, *d)
                 .expect("Valid ISO date")
                 .to_calendar(cal.clone());
 
+            // Print the calendar name and its localized starting date
             writeln!(
                 &mut output,
                 "  {:?} (start: {:?})",
@@ -68,8 +67,7 @@ fn test_date_add_across_calendars_and_durations() {
                 date.try_add_with_options(*duration, opts)
                     .expect("Addition should succeed");
 
-                let result_iso = date.to_iso();
-
+                // Now output the result *in that same calendar*, not ISO
                 let duration_str = format!(
                     "{}{}{}{}",
                     if duration.years != 0 { format!("{}y ", duration.years) } else { "".into() },
@@ -84,7 +82,7 @@ fn test_date_add_across_calendars_and_durations() {
                     &mut output,
                     "    +{} → {:?}",
                     duration_str,
-                    result_iso
+                    date
                 )
                     .unwrap();
             }
