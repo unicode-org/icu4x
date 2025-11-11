@@ -1,0 +1,984 @@
+---
+source: components/calendar/tests/date_addition_snapshot.rs
+expression: output
+---
+{
+    "2023-1-1": {
+        "Buddhist": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2023-1-11, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2023-3-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2024-1-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2024-4-16, default era, for calendar ISO)",
+            ),
+        ],
+        "Chinese": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2023-1-11, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2023-3-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2024-1-20, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2024-5-3, default era, for calendar ISO)",
+            ),
+        ],
+        "Coptic": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2023-1-11, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2023-3-2, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2024-1-2, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2024-4-16, default era, for calendar ISO)",
+            ),
+        ],
+        "Dangi": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2023-1-11, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2023-3-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2024-1-20, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2024-5-3, default era, for calendar ISO)",
+            ),
+        ],
+        "Ethiopian": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2023-1-11, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2023-3-2, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2024-1-2, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2024-4-16, default era, for calendar ISO)",
+            ),
+        ],
+        "EthiopianAmeteAlem": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2023-1-11, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2023-3-2, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2024-1-2, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2024-4-16, default era, for calendar ISO)",
+            ),
+        ],
+        "Gregorian": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2023-1-11, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2023-3-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2024-1-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2024-4-16, default era, for calendar ISO)",
+            ),
+        ],
+        "Hebrew": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2023-1-11, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2023-3-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2023-12-20, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2024-4-2, default era, for calendar ISO)",
+            ),
+        ],
+        "HijriSimulatedMecca": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2023-1-11, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2023-3-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2023-12-22, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2024-4-3, default era, for calendar ISO)",
+            ),
+        ],
+        "HijriTabularTypeIIFriday": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2023-1-11, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2023-3-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2023-12-21, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2024-4-2, default era, for calendar ISO)",
+            ),
+        ],
+        "HijriTabularTypeIIThursday": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2023-1-11, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2023-3-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2023-12-21, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2024-4-2, default era, for calendar ISO)",
+            ),
+        ],
+        "HijriUmmAlQura": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2023-1-11, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2023-2-28, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2023-12-21, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2024-4-2, default era, for calendar ISO)",
+            ),
+        ],
+        "Indian": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2023-1-11, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2023-3-2, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2024-1-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2024-4-15, default era, for calendar ISO)",
+            ),
+        ],
+        "Iso": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2023-1-11, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2023-3-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2024-1-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2024-4-16, default era, for calendar ISO)",
+            ),
+        ],
+        "Japanese": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2023-1-11, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2023-3-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2024-1-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2024-4-16, default era, for calendar ISO)",
+            ),
+        ],
+        "JapaneseExtended": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2023-1-11, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2023-3-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2024-1-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2024-4-16, default era, for calendar ISO)",
+            ),
+        ],
+        "Persian": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2023-1-11, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2023-3-2, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2024-1-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2024-4-14, default era, for calendar ISO)",
+            ),
+        ],
+        "Roc": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2023-1-11, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2023-3-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2024-1-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2024-4-16, default era, for calendar ISO)",
+            ),
+        ],
+    },
+    "2024-6-15": {
+        "Buddhist": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2024-6-25, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2024-8-15, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2025-6-15, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2025-9-30, default era, for calendar ISO)",
+            ),
+        ],
+        "Chinese": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2024-6-25, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2024-8-13, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2025-6-5, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2025-9-16, default era, for calendar ISO)",
+            ),
+        ],
+        "Coptic": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2024-6-25, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2024-8-14, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2025-6-15, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2025-9-25, default era, for calendar ISO)",
+            ),
+        ],
+        "Dangi": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2024-6-25, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2024-8-13, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2025-6-5, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2025-9-16, default era, for calendar ISO)",
+            ),
+        ],
+        "Ethiopian": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2024-6-25, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2024-8-14, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2025-6-15, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2025-9-25, default era, for calendar ISO)",
+            ),
+        ],
+        "EthiopianAmeteAlem": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2024-6-25, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2024-8-14, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2025-6-15, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2025-9-25, default era, for calendar ISO)",
+            ),
+        ],
+        "Gregorian": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2024-6-25, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2024-8-15, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2025-6-15, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2025-9-30, default era, for calendar ISO)",
+            ),
+        ],
+        "Hebrew": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2024-6-25, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2024-8-13, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2025-6-5, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2025-9-17, default era, for calendar ISO)",
+            ),
+        ],
+        "HijriSimulatedMecca": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2024-6-25, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2024-8-13, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2025-6-5, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2025-9-16, default era, for calendar ISO)",
+            ),
+        ],
+        "HijriTabularTypeIIFriday": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2024-6-25, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2024-8-14, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2025-6-5, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2025-9-16, default era, for calendar ISO)",
+            ),
+        ],
+        "HijriTabularTypeIIThursday": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2024-6-25, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2024-8-14, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2025-6-5, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2025-9-16, default era, for calendar ISO)",
+            ),
+        ],
+        "HijriUmmAlQura": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2024-6-25, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2024-8-13, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2025-6-5, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2025-9-16, default era, for calendar ISO)",
+            ),
+        ],
+        "Indian": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2024-6-25, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2024-8-16, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2025-6-15, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2025-10-1, default era, for calendar ISO)",
+            ),
+        ],
+        "Iso": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2024-6-25, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2024-8-15, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2025-6-15, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2025-9-30, default era, for calendar ISO)",
+            ),
+        ],
+        "Japanese": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2024-6-25, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2024-8-15, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2025-6-15, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2025-9-30, default era, for calendar ISO)",
+            ),
+        ],
+        "JapaneseExtended": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2024-6-25, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2024-8-15, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2025-6-15, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2025-9-30, default era, for calendar ISO)",
+            ),
+        ],
+        "Persian": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2024-6-25, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2024-8-16, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2025-6-16, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2025-10-2, default era, for calendar ISO)",
+            ),
+        ],
+        "Roc": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2024-6-25, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2024-8-15, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2025-6-15, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2025-9-30, default era, for calendar ISO)",
+            ),
+        ],
+    },
+    "2025-12-31": {
+        "Buddhist": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2026-1-10, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2026-2-28, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2026-12-31, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2027-4-15, default era, for calendar ISO)",
+            ),
+        ],
+        "Chinese": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2026-1-10, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2026-2-28, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2026-12-20, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2027-4-3, default era, for calendar ISO)",
+            ),
+        ],
+        "Coptic": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2026-1-10, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2026-3-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2026-12-31, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2027-4-15, default era, for calendar ISO)",
+            ),
+        ],
+        "Dangi": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2026-1-10, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2026-2-28, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2026-12-20, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2027-4-3, default era, for calendar ISO)",
+            ),
+        ],
+        "Ethiopian": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2026-1-10, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2026-3-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2026-12-31, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2027-4-15, default era, for calendar ISO)",
+            ),
+        ],
+        "EthiopianAmeteAlem": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2026-1-10, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2026-3-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2026-12-31, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2027-4-15, default era, for calendar ISO)",
+            ),
+        ],
+        "Gregorian": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2026-1-10, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2026-2-28, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2026-12-31, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2027-4-15, default era, for calendar ISO)",
+            ),
+        ],
+        "Hebrew": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2026-1-10, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2026-2-28, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2026-12-21, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2027-4-4, default era, for calendar ISO)",
+            ),
+        ],
+        "HijriSimulatedMecca": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2026-1-10, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2026-2-28, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2026-12-20, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2027-4-3, default era, for calendar ISO)",
+            ),
+        ],
+        "HijriTabularTypeIIFriday": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2026-1-10, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2026-2-28, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2026-12-21, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2027-4-4, default era, for calendar ISO)",
+            ),
+        ],
+        "HijriTabularTypeIIThursday": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2026-1-10, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2026-2-28, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2026-12-21, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2027-4-4, default era, for calendar ISO)",
+            ),
+        ],
+        "HijriUmmAlQura": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2026-1-10, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2026-2-28, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2026-12-20, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2027-4-3, default era, for calendar ISO)",
+            ),
+        ],
+        "Indian": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2026-1-10, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2026-3-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2026-12-31, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2027-4-15, default era, for calendar ISO)",
+            ),
+        ],
+        "Iso": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2026-1-10, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2026-2-28, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2026-12-31, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2027-4-15, default era, for calendar ISO)",
+            ),
+        ],
+        "Japanese": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2026-1-10, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2026-2-28, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2026-12-31, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2027-4-15, default era, for calendar ISO)",
+            ),
+        ],
+        "JapaneseExtended": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2026-1-10, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2026-2-28, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2026-12-31, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2027-4-15, default era, for calendar ISO)",
+            ),
+        ],
+        "Persian": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2026-1-10, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2026-3-1, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2026-12-31, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2027-4-14, default era, for calendar ISO)",
+            ),
+        ],
+        "Roc": [
+            (
+                "DateDuration { is_negative: false, years: 0, months: 0, weeks: 0, days: 10 }",
+                "Date(2026-1-10, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 0, months: 2, weeks: 0, days: 0 }",
+                "Date(2026-2-28, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 0, weeks: 0, days: 0 }",
+                "Date(2026-12-31, default era, for calendar ISO)",
+            ),
+            (
+                "DateDuration { is_negative: false, years: 1, months: 3, weeks: 0, days: 15 }",
+                "Date(2027-4-15, default era, for calendar ISO)",
+            ),
+        ],
+    },
+}
