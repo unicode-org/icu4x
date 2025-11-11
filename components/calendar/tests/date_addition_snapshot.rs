@@ -1,8 +1,9 @@
+
 use icu_calendar::{
     options::DateAddOptions, types::DateDuration, AnyCalendar, AnyCalendarKind, Date,
 };
-use std::collections::BTreeMap;
-use insta::assert_debug_snapshot;
+use std::fmt::Write;
+use insta::assert_snapshot;
 
 #[test]
 fn test_date_add_across_calendars_and_durations() {
@@ -27,7 +28,11 @@ fn test_date_add_across_calendars_and_durations() {
         AnyCalendarKind::Roc,
     ];
 
-    let iso_dates = vec![(2023, 1, 1), (2024, 6, 15), (2025, 12, 31)];
+    let iso_dates = vec![
+        (2023, 1, 1),
+        (2024, 6, 15),
+        (2025, 12, 31),
+    ];
 
     let durations = vec![
         DateDuration { years: 0, months: 0, weeks: 0, days: 10, is_negative: false },
@@ -37,15 +42,15 @@ fn test_date_add_across_calendars_and_durations() {
     ];
 
     let opts = DateAddOptions::default();
-
-    let mut output = BTreeMap::new();
+    let mut output = String::new();
 
     for (y, m, d) in &iso_dates {
-        let mut cal_map = BTreeMap::new();
+        writeln!(&mut output, "{}-{}-{}", y, m, d).unwrap();
 
         for cal_kind in &calendars {
+            writeln!(&mut output, "  {:?}", cal_kind).unwrap();
+
             let cal = AnyCalendar::new(*cal_kind);
-            let mut results = Vec::new();
 
             for duration in &durations {
                 let mut date = Date::try_new_iso(*y, *m, *d)
@@ -57,17 +62,28 @@ fn test_date_add_across_calendars_and_durations() {
 
                 let result_iso = date.to_iso();
 
-                results.push((
-                    format!("{:?}", duration),
-                    format!("{:?}", result_iso),
-                ));
-            }
+                // Cleaner duration formatting
+                let duration_str = format!(
+                    "{}{}{}{}",
+                    if duration.years != 0 { format!("{}y ", duration.years) } else { "".into() },
+                    if duration.months != 0 { format!("{}m ", duration.months) } else { "".into() },
+                    if duration.weeks != 0 { format!("{}w ", duration.weeks) } else { "".into() },
+                    if duration.days != 0 { format!("{}d", duration.days) } else { "".into() },
+                )
+                    .trim()
+                    .to_string();
 
-            cal_map.insert(format!("{:?}", cal_kind), results);
+                writeln!(
+                    &mut output,
+                    "    +{} → {:?}",
+                    duration_str,
+                    result_iso
+                ).unwrap();
+            }
         }
 
-        output.insert(format!("{}-{}-{}", y, m, d), cal_map);
+        writeln!(&mut output).unwrap();
     }
 
-    assert_debug_snapshot!("date_addition_nested_snapshot", output);
+    assert_snapshot!("date_addition_readable_nested_snapshot", output);
 }
