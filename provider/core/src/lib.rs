@@ -107,6 +107,11 @@ pub mod export;
 #[cfg(feature = "alloc")]
 pub mod hello_world;
 
+// TODO: put this in a separate crate
+#[cfg(all(feature = "serde", feature = "alloc"))]
+#[doc(hidden)]
+pub mod serde_borrow_de_utils;
+
 mod data_provider;
 pub use data_provider::{
     BoundDataProvider, DataProvider, DataProviderWithMarker, DryDataProvider, DynamicDataProvider,

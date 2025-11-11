@@ -1439,7 +1439,6 @@ dependencies = [
  "num-traits",
  "potential_utf",
  "serde",
- "serde_borrow_utils",
  "smallvec",
  "tinystr",
  "writeable",
@@ -2843,14 +2842,6 @@ checksum = "f3a1a3341211875ef120e117ea7fd5228530ae7e7036a779fdc9117be6b3282c"
 dependencies = [
  "ordered-float",
  "serde",
-]
-
-[[package]]
-name = "serde_borrow_utils"
-version = "0.0.0"
-dependencies = [
- "serde",
- "serde_json",
 ]
 
 [[package]]

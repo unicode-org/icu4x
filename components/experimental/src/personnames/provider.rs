@@ -59,21 +59,21 @@ pub struct PersonNamesFormat<'data> {
     pub given_first_locales: VarZeroVec<'data, str>,
 
     /// foreignSpaceReplacement element.
-    #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "serde_borrow_utils::option_of_cow"))]
+    #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "option_of_cow"))]
     pub foreign_space_replacement: Option<Cow<'data, str>>,
 
     /// Equivalent of initialPattern tag + initial
     /// ```xml
     /// <initialPattern type="initial">{0}.</initialPattern>
     /// ```
-    #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "serde_borrow_utils::option_of_cow"))]
+    #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "option_of_cow"))]
     pub initial_pattern: Option<Cow<'data, str>>,
 
     /// Equivalent of initialPattern tag + initialSequence
     /// ```xml
     /// <initialPattern type="initialSequence">{0} {1}</initialPattern>
     /// ```
-    #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "serde_borrow_utils::option_of_cow"))]
+    #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "option_of_cow"))]
     pub initial_pattern_sequence: Option<Cow<'data, str>>,
 
     /// Equivalent of PersonNames
@@ -82,6 +82,20 @@ pub struct PersonNamesFormat<'data> {
     /// ```
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub person_names_patterns: VarZeroVec<'data, PersonNamesFormattingDataVarULE>,
+}
+
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[serde(transparent)]
+// Cows fail to borrow in some situations (array, option), but structs of Cows don't.
+struct CowWrap<'data>(#[serde(borrow)] Cow<'data, str>);
+
+#[cfg(feature = "serde")]
+fn option_of_cow<'de, D>(deserializer: D) -> Result<Option<Cow<'de, str>>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    use serde::Deserialize;
+    <Option<CowWrap<'de>>>::deserialize(deserializer).map(|opt| opt.map(|wrap| wrap.0))
 }
 
 icu_provider::data_struct!(PersonNamesFormat<'_>, #[cfg(feature = "datagen")]);
