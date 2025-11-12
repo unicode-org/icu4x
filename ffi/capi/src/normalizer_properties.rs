@@ -79,7 +79,7 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::rust_link(icu::properties::props::CanonicalCombiningClass, Struct, compact)]
-        #[diplomat::attr(auto, indexer)]
+        #[diplomat::attr(all(supports = indexing, not(kotlin)), indexer)] // Kotlin doesn't support non-integral indexers
         pub fn get(&self, ch: DiplomatChar) -> u8 {
             self.0.as_borrowed().get32_u8(ch)
         }

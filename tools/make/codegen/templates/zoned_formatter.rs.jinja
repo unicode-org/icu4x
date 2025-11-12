@@ -56,6 +56,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rustlink() }}, {{ formatter_kind.rustlink_doctype() }})]
+    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct {{ ffi_type }}(
         pub  icu_datetime::{{ formatter_kind.rust_type() }}<
             {%- if formatter_kind.is_fixed_calendar %}
