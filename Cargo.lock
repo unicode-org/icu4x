@@ -1785,6 +1785,7 @@ dependencies = [
  "criterion",
  "databake",
  "icu",
+ "icu_benchmark_macros",
  "icu_collections",
  "icu_locale",
  "icu_locale_core",
