@@ -49,6 +49,9 @@ exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1 --locales
 
 # Baked
 exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1 --locales full --format baked --pretty --overwrite --no-internal-fallback --deduplication none --out provider/baked/tests/data
+
+# Filtered
+exec --fail-on-error target/debug/icu4x-datagen --markers HelloWorldV1 --locales full --attribute-filter hello=/r.*?|.*?case/ --attribute-filter hello=-/lowercase/ --attribute-filter hello=-/.*3/ --format fs --syntax json --out provider/fs/tests/filter --overwrite
 '''
 
 [tasks.testdata-check]
