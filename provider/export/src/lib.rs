@@ -186,7 +186,7 @@ impl ExportDriver {
         .with_additional_collations([])
     }
 
-    /// Adds a filter on a [`DataMarkerAttributes`].
+    /// Sets the filter on a particular `domain` of [`DataMarkerAttributes`].
     ///
     /// These are keyed by a `domain`, which is [`DataMarkerInfo::attributes_domain`] and
     /// can thus apply to multiple data markers at once.
