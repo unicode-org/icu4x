@@ -62,6 +62,8 @@ data_marker!(
     HelloWorldV1,
     HelloWorld<'static>,
     has_checksum = true,
+    #[cfg(feature = "export")]
+    attributes_domain = "hello",
 );
 
 /// A data provider returning Hello World strings in different languages.
@@ -114,6 +116,8 @@ impl HelloWorldProvider {
         ("bn", "", "ওহে বিশ্ব"),
         ("cs", "", "Ahoj světe"),
         ("de", "", "Hallo Welt"),
+        ("de", "lowercase", "hallo welt"),
+        ("de", "uppercase", "HALLO WELT"),
         ("de-AT", "", "Servus Welt"),
         ("el", "", "Καλημέρα κόσμε"),
         ("en", "", "Hello World"),
@@ -129,7 +133,12 @@ impl HelloWorldProvider {
         ("en-GB", "", "Hello from 🇬🇧"),
         // ENGLAND
         ("en-GB-u-sd-gbeng", "", "Hello from 🏴󠁧󠁢󠁥󠁮󠁧󠁿"),
+        ("en", "lowercase", "hello world"),
         ("en", "reverse", "Olleh Dlrow"),
+        ("en", "rotate1", "dHello Worl"),
+        ("en", "rotate2", "ldHello Wor"),
+        ("en", "rotate3", "rldHello Wo"),
+        ("en", "uppercase", "HELLO WORLD"),
         ("eo", "", "Saluton, Mondo"),
         ("fa", "", "سلام دنیا‎"),
         ("fi", "", "hei maailma"),
@@ -144,6 +153,7 @@ impl HelloWorldProvider {
         ("sr-Latn", "", "Pozdrav svete"),
         ("vi", "", "Xin chào thế giới"),
         ("zh", "", "你好世界"),
+        // tests for the attribute filter tests
     ];
 
     /// Converts this provider into a [`BufferProvider`] that uses JSON serialization.
@@ -365,6 +375,14 @@ fn test_iter() {
             DataIdentifierCow::from_locale(locale!("bn").into()),
             DataIdentifierCow::from_locale(locale!("cs").into()),
             DataIdentifierCow::from_locale(locale!("de").into()),
+            DataIdentifierCow::from_borrowed_and_owned(
+                DataMarkerAttributes::from_str_or_panic("lowercase"),
+                locale!("de").into()
+            ),
+            DataIdentifierCow::from_borrowed_and_owned(
+                DataMarkerAttributes::from_str_or_panic("uppercase"),
+                locale!("de").into()
+            ),
             DataIdentifierCow::from_locale(locale!("de-AT").into()),
             DataIdentifierCow::from_locale(locale!("el").into()),
             DataIdentifierCow::from_locale(locale!("en").into()),
@@ -375,7 +393,27 @@ fn test_iter() {
             DataIdentifierCow::from_locale(locale!("en-GB").into()),
             DataIdentifierCow::from_locale(locale!("en-GB-u-sd-gbeng").into()),
             DataIdentifierCow::from_borrowed_and_owned(
+                DataMarkerAttributes::from_str_or_panic("lowercase"),
+                locale!("en").into()
+            ),
+            DataIdentifierCow::from_borrowed_and_owned(
                 DataMarkerAttributes::from_str_or_panic("reverse"),
+                locale!("en").into()
+            ),
+            DataIdentifierCow::from_borrowed_and_owned(
+                DataMarkerAttributes::from_str_or_panic("rotate1"),
+                locale!("en").into()
+            ),
+            DataIdentifierCow::from_borrowed_and_owned(
+                DataMarkerAttributes::from_str_or_panic("rotate2"),
+                locale!("en").into()
+            ),
+            DataIdentifierCow::from_borrowed_and_owned(
+                DataMarkerAttributes::from_str_or_panic("rotate3"),
+                locale!("en").into()
+            ),
+            DataIdentifierCow::from_borrowed_and_owned(
+                DataMarkerAttributes::from_str_or_panic("uppercase"),
                 locale!("en").into()
             ),
             DataIdentifierCow::from_locale(locale!("eo").into()),
