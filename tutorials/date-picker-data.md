@@ -99,9 +99,9 @@ function load_blob(url, callback) {
 }
 
 if (localeStr == "ccp") {
-    load_blob("https://storage.googleapis.com/static-493776/icu4x_2023-11-03/ccp.blob", (blob) => {
+    load_blob("https://storage.googleapis.com/static-493776/icu4x_2025-11-11/ccp.blob", (blob) => {
         let dateTimeFormatter = DateTimeFormatter.createYmdtWithProvider(
-            DataProvider.createFromBlob(blob),
+            DataProvider.fromByteSlice(blob),
             locale,
             DateTimeLength.Long,
         );
