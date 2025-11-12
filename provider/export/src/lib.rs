@@ -195,8 +195,12 @@ impl ExportDriver {
         domain: &str,
         filter: impl Fn(&DataMarkerAttributes) -> bool + Send + Sync + 'static,
     ) -> Self {
-        self.attributes_filters
+        let old_value = self
+            .attributes_filters
             .insert(String::from(domain), Arc::new(Box::new(filter)));
+        if old_value.is_some() {
+            log::warn!("Filter applied to domain '{domain}' multiple times; ignoring all but the last filter");
+        }
         self
     }
 
