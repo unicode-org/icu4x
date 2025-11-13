@@ -378,7 +378,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         day: u8,
         cal: &C,
     ) -> Result<Self, RangeError> {
-        let year_info = cal.year_info_from_extended(year);
+        let year_info = cal.year_info_from_extended(range_check(year, "year", VALID_YEAR_RANGE)?);
         // check the extended year in terms of the year
         let offset = year - year_info.to_extended_year();
         range_check(

@@ -190,22 +190,19 @@ impl<A: AsCalendar> Date<A> {
         Ok(Date { inner, calendar })
     }
 
-    /// The lowest [`RataDie`] that will round-trip through [`Date::from_rata_die`]
-    /// and [`Date::to_rata_die`].
-    pub const LOWEST_RATA_DIE: RataDie = *VALID_RD_RANGE.start();
-
-    /// The highest [`RataDie`] that will round-trip through [`Date::from_rata_die`]
-    /// and [`Date::to_rata_die`].
-    pub const HIGHEST_RATA_DIE: RataDie = *VALID_RD_RANGE.end();
-
     /// Construct a date from a [`RataDie`] and a calendar.
     ///
-    /// This method is guaranteed to round trip with [`Date::to_rata_die`]. Values
-    /// smaller than [`Date::LOWEST_RATA_DIE`] or larger than [`Date::HIGHEST_RATA_DIE`]
-    /// will be clamped to that range.
+    /// This method is guaranteed to round trip with [`Date::to_rata_die`]. Inputs
+    /// that were not produced by [`Date::from_rata_die`] might be clamped:
+    /// ```rust
+    /// use icu::calendar::{Date, Gregorian, types::RataDie};
+    ///
+    /// let rd = RataDie::new(1_000_000_000);
+    /// assert_ne!(Date::from_rata_die(rd, Gregorian).to_rata_die(), rd);
+    /// ```
     #[inline]
     pub fn from_rata_die(rd: RataDie, calendar: A) -> Self {
-        let rd = rd.clamp(Self::LOWEST_RATA_DIE, Self::HIGHEST_RATA_DIE);
+        let rd = rd.clamp(*VALID_RD_RANGE.start(), *VALID_RD_RANGE.end());
         Date {
             inner: calendar.as_calendar().from_rata_die(rd),
             calendar,

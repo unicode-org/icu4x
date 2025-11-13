@@ -614,6 +614,7 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
 
     #[inline]
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
+        debug_assert!(crate::calendar_arithmetic::VALID_YEAR_RANGE.contains(&extended_year));
         self.0.year(extended_year)
     }
 
@@ -1059,6 +1060,27 @@ impl PackedEastAsianTraditionalYearData {
 
     fn days_in_year(self) -> u16 {
         self.days_before_month(13 + self.leap_month().is_some() as u8)
+    }
+}
+
+// Precalculates Chinese years, significant performance improvement for big tests
+#[cfg(test)]
+#[derive(Debug, Clone)]
+pub(crate) struct EastAsianTraditionalYears(Vec<EastAsianTraditionalYear>);
+
+#[cfg(test)]
+impl EastAsianTraditionalYears {
+    pub fn new<R: Rules>(r: R) -> Self {
+        Self((-1100000..=1100000).map(|i| r.year(i)).collect())
+    }
+}
+
+#[cfg(test)]
+impl crate::cal::scaffold::UnstableSealed for EastAsianTraditionalYears {}
+#[cfg(test)]
+impl Rules for EastAsianTraditionalYears {
+    fn year(&self, related_iso: i32) -> EastAsianTraditionalYear {
+        self.0[(related_iso + 1100000) as usize]
     }
 }
 

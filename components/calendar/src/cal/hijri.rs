@@ -900,6 +900,7 @@ impl<R: Rules> DateFieldsResolver for Hijri<R> {
 
     #[inline]
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
+        debug_assert!(crate::calendar_arithmetic::VALID_YEAR_RANGE.contains(&extended_year));
         self.0.year(extended_year)
     }
 
