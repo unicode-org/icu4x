@@ -146,3 +146,167 @@ super::test_all_cals!(
         }
     }
 );
+
+mod check_convenience_constructors {
+    use crate::{
+        cal::{
+            ChineseTraditional, EthiopianEraStyle, Hijri, HijriTabularEpoch, HijriTabularLeapYears,
+            Japanese, JapaneseExtended, KoreanTraditional,
+        },
+        Ref,
+    };
+
+    use super::*;
+    #[test]
+    fn buddhist() {
+        Date::try_new_buddhist(*VALID_YEAR_RANGE.start() - 1, 1, 1).unwrap_err();
+        Date::try_new_buddhist(*VALID_YEAR_RANGE.end() + 1, 1, 1).unwrap_err();
+    }
+    #[test]
+    #[allow(deprecated)]
+    fn chinese_traditional() {
+        let c = ChineseTraditional::new();
+        Date::try_new_chinese_with_calendar(*VALID_YEAR_RANGE.start() - 1, 1, 1, Ref(&c))
+            .unwrap_err();
+        Date::try_new_chinese_with_calendar(*VALID_YEAR_RANGE.end() + 1, 1, 1, Ref(&c))
+            .unwrap_err();
+    }
+    #[test]
+    fn coptic() {
+        Date::try_new_coptic(*VALID_YEAR_RANGE.start() - 1, 1, 1).unwrap_err();
+        Date::try_new_coptic(*VALID_YEAR_RANGE.end() + 1, 1, 1).unwrap_err();
+    }
+    #[test]
+    #[allow(deprecated)]
+    fn korean_traditional() {
+        let c = KoreanTraditional::new();
+        Date::try_new_dangi_with_calendar(*VALID_YEAR_RANGE.start() - 1, 1, 1, Ref(&c))
+            .unwrap_err();
+        Date::try_new_dangi_with_calendar(*VALID_YEAR_RANGE.end() + 1, 1, 1, Ref(&c)).unwrap_err();
+    }
+    #[test]
+    fn ethiopian() {
+        Date::try_new_ethiopian(
+            EthiopianEraStyle::AmeteMihret,
+            *VALID_YEAR_RANGE.start() - 1,
+            1,
+            1,
+        )
+        .unwrap_err();
+        Date::try_new_ethiopian(
+            EthiopianEraStyle::AmeteMihret,
+            *VALID_YEAR_RANGE.end() + 1,
+            1,
+            1,
+        )
+        .unwrap_err();
+    }
+    #[test]
+    fn ethiopian_amete_alem() {
+        Date::try_new_ethiopian(
+            EthiopianEraStyle::AmeteAlem,
+            *VALID_YEAR_RANGE.start() - 1,
+            1,
+            1,
+        )
+        .unwrap_err();
+        Date::try_new_ethiopian(
+            EthiopianEraStyle::AmeteAlem,
+            *VALID_YEAR_RANGE.end() + 1,
+            1,
+            1,
+        )
+        .unwrap_err();
+    }
+    #[test]
+    fn gregorian() {
+        Date::try_new_gregorian(*VALID_YEAR_RANGE.start() - 1, 1, 1).unwrap_err();
+        Date::try_new_gregorian(*VALID_YEAR_RANGE.end() + 1, 1, 1).unwrap_err();
+    }
+    #[test]
+    #[allow(deprecated)]
+    fn hebrew() {
+        Date::try_new_hebrew(*VALID_YEAR_RANGE.start() - 1, 1, 1).unwrap_err();
+        Date::try_new_hebrew(*VALID_YEAR_RANGE.end() + 1, 1, 1).unwrap_err();
+    }
+    #[test]
+    fn hijri_tabular_friday() {
+        let c = Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday);
+        Date::try_new_hijri_with_calendar(*VALID_YEAR_RANGE.start() - 1, 1, 1, Ref(&c))
+            .unwrap_err();
+        Date::try_new_hijri_with_calendar(*VALID_YEAR_RANGE.end() + 1, 1, 1, Ref(&c)).unwrap_err();
+    }
+    #[test]
+    fn hijri_tabular_thursday() {
+        let c = Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday);
+        Date::try_new_hijri_with_calendar(*VALID_YEAR_RANGE.start() - 1, 1, 1, Ref(&c))
+            .unwrap_err();
+        Date::try_new_hijri_with_calendar(*VALID_YEAR_RANGE.end() + 1, 1, 1, Ref(&c)).unwrap_err();
+    }
+    #[test]
+    fn hijri_uaq() {
+        let c = Hijri::new_umm_al_qura();
+        Date::try_new_hijri_with_calendar(*VALID_YEAR_RANGE.start() - 1, 1, 1, Ref(&c))
+            .unwrap_err();
+        Date::try_new_hijri_with_calendar(*VALID_YEAR_RANGE.end() + 1, 1, 1, Ref(&c)).unwrap_err();
+    }
+    #[test]
+    fn indian() {
+        Date::try_new_indian(*VALID_YEAR_RANGE.start() - 1, 1, 1).unwrap_err();
+        Date::try_new_indian(*VALID_YEAR_RANGE.end() + 1, 1, 1).unwrap_err();
+    }
+    #[test]
+    fn iso() {
+        Date::try_new_iso(*VALID_YEAR_RANGE.start() - 1, 1, 1).unwrap_err();
+        Date::try_new_iso(*VALID_YEAR_RANGE.end() + 1, 1, 1).unwrap_err();
+    }
+    #[test]
+    fn julian() {
+        Date::try_new_julian(*VALID_YEAR_RANGE.start() - 1, 1, 1).unwrap_err();
+        Date::try_new_julian(*VALID_YEAR_RANGE.end() + 1, 1, 1).unwrap_err();
+    }
+    #[test]
+    fn japanese() {
+        let cal = Japanese::new();
+        Date::try_new_japanese_with_calendar(
+            "reiwa",
+            *VALID_YEAR_RANGE.start() - 1,
+            1,
+            1,
+            Ref(&cal),
+        )
+        .unwrap_err();
+        Date::try_new_japanese_with_calendar("reiwa", *VALID_YEAR_RANGE.end() + 1, 1, 1, Ref(&cal))
+            .unwrap_err();
+    }
+    #[test]
+    fn japanese_extended() {
+        let cal = JapaneseExtended::new();
+        Date::try_new_japanese_extended_with_calendar(
+            "reiwa",
+            *VALID_YEAR_RANGE.start() - 1,
+            1,
+            1,
+            Ref(&cal),
+        )
+        .unwrap_err();
+        Date::try_new_japanese_extended_with_calendar(
+            "reiwa",
+            *VALID_YEAR_RANGE.end() + 1,
+            1,
+            1,
+            Ref(&cal),
+        )
+        .unwrap_err();
+    }
+    #[test]
+    fn persian() {
+        Date::try_new_persian(*VALID_YEAR_RANGE.start() - 1, 1, 1).unwrap_err();
+        Date::try_new_persian(*VALID_YEAR_RANGE.end() + 1, 1, 1).unwrap_err();
+    }
+    #[test]
+    fn roc() {
+        Date::try_new_roc(*VALID_YEAR_RANGE.start() - 1, 1, 1).unwrap_err();
+        Date::try_new_roc(*VALID_YEAR_RANGE.end() + 1, 1, 1).unwrap_err();
+    }
+}
