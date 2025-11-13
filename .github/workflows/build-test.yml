@@ -334,7 +334,7 @@ jobs:
     - uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
       with:
         # Keep in sync with artifacts-build.yml
-        sdk: ${{ github.event_name == 'schedule' && github.event.schedule == '0 14 * * *' && 'dev' || '3.10.0-186.0.dev' }}
+        sdk: ${{ github.event_name == 'schedule' && github.event.schedule == '0 14 * * *' && 'dev' || '3.11.0-46.0.dev' }}
     - name: Install yq if Windows
       if: ${{ matrix.os == 'windows-latest' }}
       run: choco install yq
