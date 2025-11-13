@@ -1,6 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 use crate::calendar_arithmetic::{VALID_RD_RANGE, VALID_YEAR_RANGE};
 use crate::*;
 
@@ -39,6 +40,7 @@ super::test_all_cals!(
                 println!("{} {year:?}", cal.as_calendar().debug_name());
             }
             for overflow in [options::Overflow::Constrain, options::Overflow::Reject] {
+                #![allow(clippy::field_reassign_with_default)] // use public API
                 let mut options = options::DateFromFieldsOptions::default();
                 options.overflow = Some(overflow);
                 for mut fields in months
