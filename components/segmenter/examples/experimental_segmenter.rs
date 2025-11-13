@@ -102,6 +102,7 @@ fn main() {
     let args = std::env::args().collect::<Vec<String>>();
     if args.len() == 1 || args[1] == "--help" {
         println!("Usage: experimental_segmenter <model> [<locale>] <text>");
+        return;
     }
     match args[1].as_str() {
         "adaboost" => main_adaboost(&args[2..]),
