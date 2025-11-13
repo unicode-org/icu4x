@@ -591,17 +591,17 @@ fn run(cli: Cli) -> eyre::Result<()> {
         driver.with_segmenter_models(cli.segmenter_models.clone())
     };
 
-    let attribute_filters = cli.attribute_filter.iter().fold(
-        HashMap::<&_, Vec<(Regex, bool)>>::new(),
+    let attribute_filters = cli.attribute_filter.into_iter().fold(
+        HashMap::<_, Vec<(Regex, bool)>>::new(),
         |mut map, filter| {
-            map.entry(&filter.domain)
+            map.entry(filter.domain)
                 .or_default()
-                .push((filter.regex.clone(), filter.inverted));
+                .push((filter.regex, filter.inverted));
             map
         },
     );
     for (domain, filters) in attribute_filters {
-        driver = driver.with_marker_attributes_filter(domain, move |attr| {
+        driver = driver.with_marker_attributes_filter(&domain, move |attr| {
             filters
                 .iter()
                 .all(|(regex, inverted)| regex.is_match(attr) ^ inverted)
