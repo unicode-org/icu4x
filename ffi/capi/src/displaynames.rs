@@ -20,6 +20,7 @@ pub mod ffi {
     /// 🚧 This API is experimental and may experience breaking changes outside major releases.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::experimental::displaynames::LocaleDisplayNamesFormatter, Struct)]
+    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct LocaleDisplayNamesFormatter(
         pub icu_experimental::displaynames::LocaleDisplayNamesFormatter,
     );
@@ -27,11 +28,13 @@ pub mod ffi {
     /// 🚧 This API is experimental and may experience breaking changes outside major releases.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::experimental::displaynames::RegionDisplayNames, Struct)]
+    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct RegionDisplayNames(pub icu_experimental::displaynames::RegionDisplayNames);
 
     /// 🚧 This API is experimental and may experience breaking changes outside major releases.
     #[diplomat::rust_link(icu::experimental::displaynames::DisplayNamesOptions, Struct)]
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "DisplayNamesOptions")]
+    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct DisplayNamesOptionsV1 {
         /// The optional formatting style to use for display name.
         pub style: DiplomatOption<DisplayNamesStyle>,

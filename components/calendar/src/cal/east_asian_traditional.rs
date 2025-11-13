@@ -9,7 +9,7 @@ use crate::error::{
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
-use crate::types::ValidMonthCode;
+use crate::types::Month;
 use crate::AsCalendar;
 use crate::{types, Calendar, Date};
 use calendrical_calculations::chinese_based;
@@ -123,12 +123,7 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
     ///
     /// [spec]: https://tc39.es/proposal-temporal/#sec-temporal-nonisomonthdaytoisoreferencedate
     /// [`MissingFieldsStrategy::Ecma`]: crate::options::MissingFieldsStrategy::Ecma
-    fn ecma_reference_year(
-        &self,
-        // TODO: Consider accepting ValidMonthCode
-        _month_code: (u8, bool),
-        _day: u8,
-    ) -> Result<i32, EcmaReferenceYearError> {
+    fn ecma_reference_year(&self, _month: Month, _day: u8) -> Result<i32, EcmaReferenceYearError> {
         Err(EcmaReferenceYearError::Unimplemented)
     }
 
@@ -223,14 +218,9 @@ impl Rules for China {
         }
     }
 
-    fn ecma_reference_year(
-        &self,
-        month_code: (u8, bool),
-        day: u8,
-    ) -> Result<i32, EcmaReferenceYearError> {
-        let (number, is_leap) = month_code;
+    fn ecma_reference_year(&self, month: Month, day: u8) -> Result<i32, EcmaReferenceYearError> {
         // Computed by `generate_reference_years`
-        let extended_year = match (number, is_leap, day > 29) {
+        let extended_year = match (month.number(), month.is_leap(), day > 29) {
             (1, false, false) => 1972,
             (1, false, true) => 1970,
             (1, true, false) => 1898,
@@ -334,15 +324,15 @@ impl Rules for China {
 /// let korean_a = iso_a.to_calendar(KoreanTraditional::new());
 /// let chinese_a = iso_a.to_calendar(ChineseTraditional::new());
 ///
-/// assert_eq!(korean_a.month().standard_code.0, "M03L");
-/// assert_eq!(chinese_a.month().standard_code.0, "M04");
+/// assert_eq!((korean_a.month().number(), korean_a.month().is_leap()), (3, true));
+/// assert_eq!((chinese_a.month().number(), chinese_a.month().is_leap()), (4, false));
 ///
 /// let iso_b = Date::try_new_iso(2012, 5, 23).unwrap();
 /// let korean_b = iso_b.to_calendar(KoreanTraditional::new());
 /// let chinese_b = iso_b.to_calendar(ChineseTraditional::new());
 ///
-/// assert_eq!(korean_b.month().standard_code.0, "M04");
-/// assert_eq!(chinese_b.month().standard_code.0, "M04L");
+/// assert_eq!((korean_b.month().number(), korean_b.month().is_leap()), (4, false));
+/// assert_eq!((chinese_b.month().number(), chinese_b.month().is_leap()), (4, true));
 /// ```
 pub type KoreanTraditional = EastAsianTraditional<Korea>;
 
@@ -414,14 +404,9 @@ impl Rules for Korea {
         }
     }
 
-    fn ecma_reference_year(
-        &self,
-        month_code: (u8, bool),
-        day: u8,
-    ) -> Result<i32, EcmaReferenceYearError> {
-        let (number, is_leap) = month_code;
+    fn ecma_reference_year(&self, month: Month, day: u8) -> Result<i32, EcmaReferenceYearError> {
         // Computed by `generate_reference_years`
-        let extended_year = match (number, is_leap, day > 29) {
+        let extended_year = match (month.number(), month.is_leap(), day > 29) {
             (1, false, false) => 1972,
             (1, false, true) => 1970,
             (1, true, false) => 1898,
@@ -621,18 +606,18 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        month_code: types::ValidMonthCode,
+        month: types::Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         self.0
-            .ecma_reference_year(month_code.to_tuple(), day)
+            .ecma_reference_year(month, day)
             .map(|y| self.0.year(y))
     }
 
-    fn ordinal_month_from_code(
+    fn ordinal_from_month(
         &self,
         year: Self::YearInfo,
-        month_code: types::ValidMonthCode,
+        month: types::Month,
         options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
         // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
@@ -641,11 +626,11 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
 
         // leap_month identifies the ordinal month number of the leap month,
         // so its month number will be leap_month - 1
-        if month_code == ValidMonthCode::new_unchecked(leap_month - 1, true) {
+        if month == Month::leap(leap_month - 1) {
             return Ok(leap_month);
         }
 
-        let (number @ 1..13, leap) = month_code.to_tuple() else {
+        let (number @ 1..13, leap) = (month.number(), month.is_leap()) else {
             return Err(MonthCodeError::NotInCalendar);
         };
 
@@ -658,14 +643,18 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
         Ok(number + (number >= leap_month) as u8)
     }
 
-    fn month_code_from_ordinal(&self, year: Self::YearInfo, ordinal_month: u8) -> ValidMonthCode {
+    fn month_from_ordinal(&self, year: Self::YearInfo, ordinal_month: u8) -> Month {
         // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
         // it is impossible to actually have 14 months in a year.
         let leap_month = year.packed.leap_month().unwrap_or(14);
-        ValidMonthCode::new_unchecked(
+        Month::new_unchecked(
             // subtract one if there was a leap month before
             ordinal_month - (ordinal_month >= leap_month) as u8,
-            ordinal_month == leap_month,
+            if ordinal_month == leap_month {
+                types::LeapStatus::Leap
+            } else {
+                types::LeapStatus::Normal
+            },
         )
     }
 }
@@ -773,10 +762,7 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     /// leap months. For example, in a year where an intercalary month is added after the second
     /// month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        types::MonthInfo::for_code_and_ordinal(
-            self.month_code_from_ordinal(date.0.year(), date.0.month()),
-            date.0.month(),
-        )
+        types::MonthInfo::new(self, date.0)
     }
 
     /// The calendar-specific day-of-month represented by `date`
@@ -1242,7 +1228,7 @@ mod test {
         struct TestCase {
             year: i32,
             ordinal_month: u8,
-            month_code: types::MonthCode,
+            month: Month,
             day: u8,
             expected: i64,
         }
@@ -1251,7 +1237,7 @@ mod test {
             TestCase {
                 year: 2023,
                 ordinal_month: 6,
-                month_code: types::MonthCode::new_normal(5).unwrap(),
+                month: Month::new(5),
                 day: 6,
                 // June 23 2023
                 expected: 738694,
@@ -1259,7 +1245,7 @@ mod test {
             TestCase {
                 year: -2636,
                 ordinal_month: 1,
-                month_code: types::MonthCode::new_normal(1).unwrap(),
+                month: Month::new(1),
                 day: 1,
                 expected: -963099,
             },
@@ -1269,7 +1255,7 @@ mod test {
             let date = Date::try_new_from_codes(
                 None,
                 case.year,
-                case.month_code,
+                case.month.code(),
                 case.day,
                 ChineseTraditional::new(),
             )
@@ -1318,7 +1304,7 @@ mod test {
 
         assert_eq!(chinese.cyclic_year().related_iso, -2636);
         assert_eq!(chinese.month().ordinal, 1);
-        assert_eq!(chinese.month().standard_code.0, "M01");
+        assert_eq!(chinese.month().value, Month::new(1));
         assert_eq!(chinese.day_of_month().0, 1);
         assert_eq!(chinese.cyclic_year().year, 1);
         assert_eq!(chinese.cyclic_year().related_iso, -2636);
@@ -1435,136 +1421,148 @@ mod test {
     }
 
     #[test]
-    fn test_ordinal_to_month_code() {
+    fn test_ordinal_to_month() {
         #[derive(Debug)]
         struct TestCase {
-            year: i32,
-            month: u8,
-            day: u8,
-            expected_code: &'static str,
+            iso_year: i32,
+            iso_month: u8,
+            iso_day: u8,
+            month: Month,
         }
 
         let cases = [
             TestCase {
-                year: 2023,
-                month: 1,
-                day: 9,
-                expected_code: "M12",
+                iso_year: 2023,
+                iso_month: 1,
+                iso_day: 9,
+                month: Month::new(12),
             },
             TestCase {
-                year: 2023,
-                month: 2,
-                day: 9,
-                expected_code: "M01",
+                iso_year: 2023,
+                iso_month: 2,
+                iso_day: 9,
+                month: Month::new(1),
             },
             TestCase {
-                year: 2023,
-                month: 3,
-                day: 9,
-                expected_code: "M02",
+                iso_year: 2023,
+                iso_month: 3,
+                iso_day: 9,
+                month: Month::new(2),
             },
             TestCase {
-                year: 2023,
-                month: 4,
-                day: 9,
-                expected_code: "M02L",
+                iso_year: 2023,
+                iso_month: 4,
+                iso_day: 9,
+                month: Month::leap(2),
             },
             TestCase {
-                year: 2023,
-                month: 5,
-                day: 9,
-                expected_code: "M03",
+                iso_year: 2023,
+                iso_month: 5,
+                iso_day: 9,
+                month: Month::new(3),
             },
             TestCase {
-                year: 2023,
-                month: 6,
-                day: 9,
-                expected_code: "M04",
+                iso_year: 2023,
+                iso_month: 6,
+                iso_day: 9,
+                month: Month::new(4),
             },
             TestCase {
-                year: 2023,
-                month: 7,
-                day: 9,
-                expected_code: "M05",
+                iso_year: 2023,
+                iso_month: 7,
+                iso_day: 9,
+                month: Month::new(5),
             },
             TestCase {
-                year: 2023,
-                month: 8,
-                day: 9,
-                expected_code: "M06",
+                iso_year: 2023,
+                iso_month: 8,
+                iso_day: 9,
+                month: Month::new(6),
             },
             TestCase {
-                year: 2023,
-                month: 9,
-                day: 9,
-                expected_code: "M07",
+                iso_year: 2023,
+                iso_month: 9,
+                iso_day: 9,
+                month: Month::new(7),
             },
             TestCase {
-                year: 2023,
-                month: 10,
-                day: 9,
-                expected_code: "M08",
+                iso_year: 2023,
+                iso_month: 10,
+                iso_day: 9,
+                month: Month::new(8),
             },
             TestCase {
-                year: 2023,
-                month: 11,
-                day: 9,
-                expected_code: "M09",
+                iso_year: 2023,
+                iso_month: 11,
+                iso_day: 9,
+                month: Month::new(9),
             },
             TestCase {
-                year: 2023,
-                month: 12,
-                day: 9,
-                expected_code: "M10",
+                iso_year: 2023,
+                iso_month: 12,
+                iso_day: 9,
+                month: Month::new(10),
             },
             TestCase {
-                year: 2024,
-                month: 1,
-                day: 9,
-                expected_code: "M11",
+                iso_year: 2024,
+                iso_month: 1,
+                iso_day: 9,
+                month: Month::new(11),
             },
             TestCase {
-                year: 2024,
-                month: 2,
-                day: 9,
-                expected_code: "M12",
+                iso_year: 2024,
+                iso_month: 2,
+                iso_day: 9,
+                month: Month::new(12),
             },
             TestCase {
-                year: 2024,
-                month: 2,
-                day: 10,
-                expected_code: "M01",
+                iso_year: 2024,
+                iso_month: 2,
+                iso_day: 10,
+                month: Month::new(1),
             },
         ];
 
         for case in cases {
-            let iso = Date::try_new_iso(case.year, case.month, case.day).unwrap();
+            let iso = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day).unwrap();
             let chinese = iso.to_calendar(ChineseTraditional::new());
-            let result_code = chinese.month().standard_code.0;
-            let expected_code = case.expected_code.to_string();
             assert_eq!(
-                expected_code, result_code,
+                chinese.month().value,
+                case.month,
                 "Month codes did not match for test case: {case:?}"
             );
         }
     }
 
     #[test]
-    fn test_month_code_to_ordinal() {
+    fn test_month_to_ordinal() {
         let cal = ChineseTraditional::new();
         let reject = DateFromFieldsOptions {
             overflow: Some(Overflow::Reject),
             ..Default::default()
         };
         let year = cal.year_info_from_extended(2023);
-        let leap_month = year.packed.leap_month().unwrap();
-        for ordinal in 1..=13 {
-            let code = ValidMonthCode::new_unchecked(
-                ordinal - (ordinal >= leap_month) as u8,
-                ordinal == leap_month,
-            );
+        for (ordinal, month) in [
+            Month::new(1),
+            Month::new(2),
+            Month::leap(2),
+            Month::new(3),
+            Month::new(4),
+            Month::new(5),
+            Month::new(6),
+            Month::new(7),
+            Month::new(8),
+            Month::new(9),
+            Month::new(10),
+            Month::new(11),
+            Month::new(12),
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            let ordinal = ordinal as u8 + 1;
             assert_eq!(
-                cal.ordinal_month_from_code(year, code, reject),
+                cal.ordinal_from_month(year, month, reject),
                 Ok(ordinal),
                 "Code to ordinal failed for year: {}, code: {ordinal}",
                 year.related_iso
@@ -1573,7 +1571,7 @@ mod test {
     }
 
     #[test]
-    fn check_invalid_month_code_to_ordinal() {
+    fn check_invalid_month_to_ordinal() {
         let cal = ChineseTraditional::new();
         let reject = DateFromFieldsOptions {
             overflow: Some(Overflow::Reject),
@@ -1581,20 +1579,14 @@ mod test {
         };
         for year in [4659, 4660] {
             let year = cal.year_info_from_extended(year);
-            for (code, error) in [
-                (
-                    ValidMonthCode::new_unchecked(4, true),
-                    MonthCodeError::NotInYear,
-                ),
-                (
-                    ValidMonthCode::new_unchecked(13, false),
-                    MonthCodeError::NotInCalendar,
-                ),
+            for (month, error) in [
+                (Month::leap(4), MonthCodeError::NotInYear),
+                (Month::new(13), MonthCodeError::NotInCalendar),
             ] {
                 assert_eq!(
-                    cal.ordinal_month_from_code(year, code, reject),
+                    cal.ordinal_from_month(year, month, reject),
                     Err(error),
-                    "Invalid month code failed for year: {}, code: {code:?}",
+                    "Invalid month code failed for year: {}, code: {month:?}",
                     year.related_iso,
                 );
             }
@@ -1670,9 +1662,10 @@ mod test {
 
     #[test]
     fn test_from_fields_constrain() {
+        let month = Month::new(1).code();
         let fields = DateFields {
             day: Some(31),
-            month_code: Some(b"M01"),
+            month_code: Some(month.0.as_bytes()),
             extended_year: Some(1972),
             ..Default::default()
         };
@@ -1690,16 +1683,17 @@ mod test {
         );
 
         // 2022 did not have M01L, the month should be constrained back down
+        let month = Month::leap(1).code();
         let fields = DateFields {
             day: Some(1),
-            month_code: Some(b"M01L"),
+            month_code: Some(month.0.as_bytes()),
             extended_year: Some(2022),
             ..Default::default()
         };
         let date = Date::try_from_fields(fields, options, cal).unwrap();
         assert_eq!(
-            date.month().standard_code.0,
-            "M01",
+            date.month().value,
+            Month::new(1),
             "Month was successfully constrained"
         );
     }
@@ -1732,7 +1726,7 @@ mod test {
         use crate::{cal::Gregorian, Date};
 
         let mut related_iso = 1900;
-        let mut lunar_month = ValidMonthCode::new_unchecked(11, false);
+        let mut lunar_month = Month::new(11);
 
         for year in 1901..=2100 {
             println!("Validating year {year}...");
@@ -1772,10 +1766,11 @@ mod test {
                         .0
                         .parse()
                         .unwrap();
-                    lunar_month = ValidMonthCode::new_unchecked(
-                        new_lunar_month,
-                        new_lunar_month == lunar_month.number(),
-                    );
+                    lunar_month = if new_lunar_month == lunar_month.number() {
+                        Month::leap(new_lunar_month)
+                    } else {
+                        Month::new(new_lunar_month)
+                    };
                     if new_lunar_month == 1 {
                         related_iso += 1;
                     }
@@ -1787,7 +1782,7 @@ mod test {
                 let chinese = Date::try_new_from_codes(
                     None,
                     related_iso,
-                    lunar_month.to_month_code(),
+                    lunar_month.code(),
                     lunar_day,
                     ChineseTraditional::new(),
                 )
@@ -1875,21 +1870,21 @@ mod test {
                         for (start_year, start_month, end_year, end_month, by) in [
                             (
                                 reference_year_end.extended_year(),
-                                reference_year_end.month().month_number(),
+                                reference_year_end.month().number(),
                                 year_1900_start.extended_year(),
-                                year_1900_start.month().month_number(),
+                                year_1900_start.month().number(),
                                 -1,
                             ),
                             (
                                 reference_year_end.extended_year(),
-                                reference_year_end.month().month_number(),
+                                reference_year_end.month().number(),
                                 year_2035_end.extended_year(),
-                                year_2035_end.month().month_number(),
+                                year_2035_end.month().number(),
                                 1,
                             ),
                             (
                                 year_1900_start.extended_year(),
-                                year_1900_start.month().month_number(),
+                                year_1900_start.month().number(),
                                 -10000,
                                 1,
                                 -1,

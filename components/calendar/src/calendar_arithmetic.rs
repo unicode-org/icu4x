@@ -11,7 +11,7 @@ use crate::error::{
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
-use crate::types::{DateFields, ValidMonthCode};
+use crate::types::{DateFields, Month};
 use crate::{types, Calendar, DateError, RangeError};
 use core::cmp::Ordering;
 use core::fmt::Debug;
@@ -155,7 +155,7 @@ pub(crate) trait DateFieldsResolver: Calendar {
     /// day for the given month.
     fn reference_year_from_month_day(
         &self,
-        month_code: ValidMonthCode,
+        month: Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError>;
 
@@ -170,13 +170,13 @@ pub(crate) trait DateFieldsResolver: Calendar {
     ///
     /// The default impl is for non-lunisolar calendars!
     #[inline]
-    fn ordinal_month_from_code(
+    fn ordinal_from_month(
         &self,
         year: Self::YearInfo,
-        month_code: ValidMonthCode,
+        month: Month,
         _options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
-        match month_code.to_tuple() {
+        match (month.number(), month.is_leap()) {
             (month_number, false)
                 if (1..=Self::months_in_provided_year(year)).contains(&month_number) =>
             {
@@ -192,8 +192,8 @@ pub(crate) trait DateFieldsResolver: Calendar {
     ///
     /// The default impl is for non-lunisolar calendars!
     #[inline]
-    fn month_code_from_ordinal(&self, _year: Self::YearInfo, ordinal_month: u8) -> ValidMonthCode {
-        ValidMonthCode::new_unchecked(ordinal_month, false)
+    fn month_from_ordinal(&self, _year: Self::YearInfo, ordinal_month: u8) -> Month {
+        Month::new_unchecked(ordinal_month, types::LeapStatus::Normal)
     }
 }
 
@@ -235,12 +235,11 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         } else {
             calendar.year_info_from_extended(range_check(year, "extended_year", VALID_YEAR_RANGE)?)
         };
-        let validated =
-            ValidMonthCode::try_from_utf8(month_code.0.as_bytes()).map_err(|e| match e {
-                MonthCodeParseError::InvalidSyntax => DateError::UnknownMonthCode(month_code),
-            })?;
+        let validated = Month::try_from_utf8(month_code.0.as_bytes()).map_err(|e| match e {
+            MonthCodeParseError::InvalidSyntax => DateError::UnknownMonthCode(month_code),
+        })?;
         let month = calendar
-            .ordinal_month_from_code(year, validated, Default::default())
+            .ordinal_from_month(year, validated, Default::default())
             .map_err(|e| match e {
                 MonthCodeError::NotInCalendar | MonthCodeError::NotInYear => {
                     DateError::UnknownMonthCode(month_code)
@@ -306,7 +305,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                     MissingFieldsStrategy::Ecma => {
                         match (fields.month_code, fields.ordinal_month) {
                             (Some(month_code), None) => {
-                                let validated = ValidMonthCode::try_from_utf8(month_code)?;
+                                let validated = Month::try_from_utf8(month_code)?;
                                 valid_month_code = Some(validated);
                                 calendar.reference_year_from_month_day(validated, day)?
                             }
@@ -336,9 +335,9 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             Some(month_code) => {
                 let validated = match valid_month_code {
                     Some(validated) => validated,
-                    None => ValidMonthCode::try_from_utf8(month_code)?,
+                    None => Month::try_from_utf8(month_code)?,
                 };
-                let computed_month = calendar.ordinal_month_from_code(year, validated, options)?;
+                let computed_month = calendar.ordinal_from_month(year, validated, options)?;
                 if let Some(ordinal_month) = fields.ordinal_month {
                     if computed_month != ordinal_month {
                         return Err(DateFromFieldsError::InconsistentMonth);
@@ -510,12 +509,12 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // 1. Let _y0_ be _parts_.[[Year]] + _years_.
         let y0 = cal.year_info_from_extended(duration.add_years_to(self.year().to_extended_year()));
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], ~constrain~)).
-        let base_month_code = cal.month_code_from_ordinal(self.year(), self.month());
+        let base_month = cal.month_from_ordinal(self.year(), self.month());
         let constrain = DateFromFieldsOptions {
             overflow: Some(Overflow::Constrain),
             ..Default::default()
         };
-        let m0_result = cal.ordinal_month_from_code(y0, base_month_code, constrain);
+        let m0_result = cal.ordinal_from_month(y0, base_month, constrain);
         let m0 = match m0_result {
             Ok(m0) => m0,
             Err(_) => {
@@ -608,9 +607,9 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         // 1. Let _y0_ be _parts_.[[Year]] + _duration_.[[Years]].
         let y0 = cal.year_info_from_extended(duration.add_years_to(self.year().to_extended_year()));
         // 1. Let _m0_ be MonthCodeToOrdinal(_calendar_, _y0_, ! ConstrainMonthCode(_calendar_, _y0_, _parts_.[[MonthCode]], _overflow_)).
-        let base_month = cal.month_code_from_ordinal(self.year(), self.month());
+        let base_month = cal.month_from_ordinal(self.year(), self.month());
         let m0 = cal
-            .ordinal_month_from_code(
+            .ordinal_from_month(
                 y0,
                 base_month,
                 DateFromFieldsOptions::from_add_options(options),
@@ -618,12 +617,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             .map_err(|e| {
                 // TODO: Use a narrower error type here. For now, convert into DateError.
                 match e {
-                    MonthCodeError::NotInCalendar => {
-                        DateError::UnknownMonthCode(base_month.to_month_code())
-                    }
-                    MonthCodeError::NotInYear => {
-                        DateError::UnknownMonthCode(base_month.to_month_code())
-                    }
+                    MonthCodeError::NotInCalendar => DateError::UnknownMonthCode(base_month.code()),
+                    MonthCodeError::NotInYear => DateError::UnknownMonthCode(base_month.code()),
                 }
             })?;
         // 1. Let _endOfMonth_ be BalanceNonISODate(_calendar_, _y0_, _m0_ + _duration_.[[Months]] + 1, 0).
@@ -801,7 +796,7 @@ mod tests {
 
     #[test]
     fn test_validity_ranges() {
-        use crate::{cal::*, types::MonthCode, Date};
+        use crate::{cal::*, Date};
 
         #[rustfmt::skip]
         let lowest_years = [
@@ -845,42 +840,42 @@ mod tests {
 
         #[rustfmt::skip]
         let lowest_rds = [
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Buddhist).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, ChineseTraditional::new()).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Coptic).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Gregorian).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Hebrew).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Hijri::new_umm_al_qura()).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday)).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Indian).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Iso).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Japanese::new()).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Julian).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, KoreanTraditional::new()).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Persian).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), MonthCode::new_normal(1).unwrap(), 1, Roc).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Buddhist).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, ChineseTraditional::new()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Coptic).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Gregorian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Hebrew).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Hijri::new_umm_al_qura()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday)).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Indian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Iso).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Japanese::new()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Julian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, KoreanTraditional::new()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Persian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.start(), Month::new(1).code(), 1, Roc).unwrap().to_rata_die(),
         ];
 
         #[rustfmt::skip]
         let highest_rds = [
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Buddhist).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, ChineseTraditional::new()).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(13).unwrap(), 5, Coptic).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(13).unwrap(), 5, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(13).unwrap(), 5, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Gregorian).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 29, Hebrew).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, Hijri::new_umm_al_qura()).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday)).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, Indian).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Iso).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Japanese::new()).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Julian).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, KoreanTraditional::new()).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 30, Persian).unwrap().to_rata_die(),
-            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), MonthCode::new_normal(12).unwrap(), 31, Roc).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 31, Buddhist).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 30, ChineseTraditional::new()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(13).code(), 5, Coptic).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(13).code(), 5, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(13).code(), 5, Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 31, Gregorian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 29, Hebrew).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 30, Hijri::new_umm_al_qura()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 30, Hijri::new_tabular(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday)).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 30, Indian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 31, Iso).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 31, Japanese::new()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 31, Julian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 30, KoreanTraditional::new()).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 30, Persian).unwrap().to_rata_die(),
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(12).code(), 31, Roc).unwrap().to_rata_die(),
         ];
 
         // RD range is tight

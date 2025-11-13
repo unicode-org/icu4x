@@ -8,7 +8,7 @@ use icu_calendar::{
     cal::*,
     error::DateFromFieldsError,
     options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow},
-    types::{DateFields, MonthCode},
+    types::{DateFields, Month},
     Calendar, Date, Ref,
 };
 
@@ -25,7 +25,7 @@ where
     let mut rd = Date::try_new_iso(1972, 12, 31).unwrap().to_rata_die();
     for _ in 1..2000 {
         let date = Date::from_rata_die(rd, Ref(&cal));
-        let month_day = (date.month().standard_code, date.day_of_month().0);
+        let month_day = (date.month().value.code(), date.day_of_month().0);
         let mut fields = DateFields::default();
         fields.month_code = Some(month_day.0 .0.as_bytes());
         fields.day = Some(month_day.1);
@@ -51,10 +51,11 @@ where
                 }
                 let mut fields = DateFields::default();
                 let mc = match is_leap {
-                    false => MonthCode::new_normal(month_number),
-                    true => MonthCode::new_leap(month_number),
-                };
-                fields.month_code = mc.as_ref().map(|m| m.0.as_bytes());
+                    false => Month::new(month_number),
+                    true => Month::leap(month_number),
+                }
+                .code();
+                fields.month_code = Some(mc.0.as_bytes());
                 fields.day = Some(day_number);
                 let mut options = DateFromFieldsOptions::default();
                 options.overflow = Some(Overflow::Constrain);
@@ -82,7 +83,7 @@ where
                 // Test round-trip (to valid day number)
                 assert_eq!(
                     fields.month_code.unwrap(),
-                    reference_date.month().standard_code.0.as_bytes(),
+                    reference_date.month().value.code().0.as_bytes(),
                     "{fields:?} {cal:?}"
                 );
                 assert_eq!(

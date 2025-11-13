@@ -22,6 +22,7 @@ pub mod ffi {
     /// An ICU4X Decimal Format object, capable of formatting a [`Decimal`] as a string.
     #[diplomat::rust_link(icu::decimal::DecimalFormatter, Struct)]
     #[diplomat::rust_link(icu::decimal::FormattedDecimal, Struct, hidden)]
+    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct DecimalFormatter(pub icu_decimal::DecimalFormatter);
 
     #[diplomat::rust_link(icu::decimal::options::GroupingStrategy, Enum)]

@@ -7,7 +7,7 @@ use std::convert::Infallible;
 use icu_calendar::{
     cal::Hebrew,
     options::{DateAddOptions, DateDifferenceOptions, Overflow},
-    types::{DateDuration, DateDurationUnit, MonthCode},
+    types::{DateDuration, DateDurationUnit, Month},
     AsCalendar, Calendar, Date, Iso,
 };
 
@@ -143,25 +143,13 @@ fn test_arithmetic_cases() {
 
 #[test]
 fn test_hebrew() {
-    let m06z_20 =
-        Date::try_new_from_codes(None, 5783, MonthCode::new_normal(6).unwrap(), 20, Hebrew)
-            .unwrap();
-    let m05l_15 =
-        Date::try_new_from_codes(None, 5784, MonthCode::new_leap(5).unwrap(), 15, Hebrew).unwrap();
-    let m05l_30 =
-        Date::try_new_from_codes(None, 5784, MonthCode::new_leap(5).unwrap(), 30, Hebrew).unwrap();
-    let m06a_29 =
-        Date::try_new_from_codes(None, 5784, MonthCode::new_normal(6).unwrap(), 29, Hebrew)
-            .unwrap();
-    let m07a_10 =
-        Date::try_new_from_codes(None, 5784, MonthCode::new_normal(7).unwrap(), 10, Hebrew)
-            .unwrap();
-    let m06b_15 =
-        Date::try_new_from_codes(None, 5785, MonthCode::new_normal(6).unwrap(), 15, Hebrew)
-            .unwrap();
-    let m07b_20 =
-        Date::try_new_from_codes(None, 5785, MonthCode::new_normal(7).unwrap(), 20, Hebrew)
-            .unwrap();
+    let m06z_20 = Date::try_new_from_codes(None, 5783, Month::new(6).code(), 20, Hebrew).unwrap();
+    let m05l_15 = Date::try_new_from_codes(None, 5784, Month::leap(5).code(), 15, Hebrew).unwrap();
+    let m05l_30 = Date::try_new_from_codes(None, 5784, Month::leap(5).code(), 30, Hebrew).unwrap();
+    let m06a_29 = Date::try_new_from_codes(None, 5784, Month::new(6).code(), 29, Hebrew).unwrap();
+    let m07a_10 = Date::try_new_from_codes(None, 5784, Month::new(7).code(), 10, Hebrew).unwrap();
+    let m06b_15 = Date::try_new_from_codes(None, 5785, Month::new(6).code(), 15, Hebrew).unwrap();
+    let m07b_20 = Date::try_new_from_codes(None, 5785, Month::new(7).code(), 20, Hebrew).unwrap();
 
     #[rustfmt::skip]
     #[allow(clippy::type_complexity)]
@@ -204,18 +192,17 @@ fn test_tricky_leap_months() {
     let mut until_options = DateDifferenceOptions::default();
     until_options.largest_unit = Some(DateDurationUnit::Years);
 
-    fn hebrew_date(year: i32, month: &str, day: u8) -> Date<Hebrew> {
-        Date::try_new_from_codes(None, year, MonthCode(month.parse().unwrap()), day, Hebrew)
-            .unwrap()
+    fn hebrew_date(year: i32, month: Month, day: u8) -> Date<Hebrew> {
+        Date::try_new_from_codes(None, year, month.code(), day, Hebrew).unwrap()
     }
 
     // M06 + 1yr = M06 (common to leap)
-    let date0 = hebrew_date(5783, "M06", 20);
+    let date0 = hebrew_date(5783, Month::new(6), 20);
     let duration0 = DateDuration::for_years(1);
     let date1 = date0
         .try_added_with_options(duration0, add_options)
         .unwrap();
-    assert_eq!(date1, hebrew_date(5784, "M06", 20));
+    assert_eq!(date1, hebrew_date(5784, Month::new(6), 20));
     let duration0_actual = date0.try_until_with_options(&date1, until_options).unwrap();
     assert_eq!(duration0_actual, duration0);
 
@@ -224,7 +211,7 @@ fn test_tricky_leap_months() {
     let date2 = date1
         .try_added_with_options(duration1, add_options)
         .unwrap();
-    assert_eq!(date2, hebrew_date(5784, "M05L", 20));
+    assert_eq!(date2, hebrew_date(5784, Month::leap(5), 20));
     let duration1_actual = date1.try_until_with_options(&date2, until_options).unwrap();
     assert_eq!(duration1_actual, duration1);
 
@@ -237,7 +224,7 @@ fn test_tricky_leap_months() {
     let date3 = date2
         .try_added_with_options(duration2, add_options)
         .unwrap();
-    assert_eq!(date3, hebrew_date(5785, "M07", 20));
+    assert_eq!(date3, hebrew_date(5785, Month::new(7), 20));
     let duration2_actual = date2.try_until_with_options(&date3, until_options).unwrap();
     assert_eq!(duration2_actual, duration2);
 
@@ -245,7 +232,7 @@ fn test_tricky_leap_months() {
     let date4 = date1
         .try_added_with_options(duration2, add_options)
         .unwrap();
-    assert_eq!(date4, hebrew_date(5785, "M07", 20));
+    assert_eq!(date4, hebrew_date(5785, Month::new(7), 20));
     let duration2_actual = date1.try_until_with_options(&date4, until_options).unwrap();
     assert_eq!(duration2_actual, duration2);
 }

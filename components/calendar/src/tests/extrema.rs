@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::calendar_arithmetic::{VALID_RD_RANGE, VALID_YEAR_RANGE};
-use crate::types::MonthCode;
+use crate::types::Month;
 use crate::Date;
 use calendrical_calculations::gregorian::fixed_from_gregorian;
 use calendrical_calculations::rata_die::RataDie;
@@ -57,25 +57,19 @@ super::test_all_cals!(
         Date::try_new_from_codes(
             None,
             *VALID_YEAR_RANGE.start(),
-            MonthCode::new_normal(1).unwrap(),
+            Month::new(1).code(),
             1,
             cal,
         )
         .unwrap();
-        Date::try_new_from_codes(
-            None,
-            *VALID_YEAR_RANGE.end(),
-            MonthCode::new_normal(1).unwrap(),
-            1,
-            cal,
-        )
-        .unwrap();
+        Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(1).code(), 1, cal)
+            .unwrap();
 
         // Error
         Date::try_new_from_codes(
             None,
             *VALID_YEAR_RANGE.start() - 1,
-            MonthCode::new_normal(1).unwrap(),
+            Month::new(1).code(),
             1,
             cal,
         )
@@ -83,7 +77,7 @@ super::test_all_cals!(
         Date::try_new_from_codes(
             None,
             *VALID_YEAR_RANGE.end() + 1,
-            MonthCode::new_normal(1).unwrap(),
+            Month::new(1).code(),
             1,
             cal,
         )
@@ -92,7 +86,7 @@ super::test_all_cals!(
         if let crate::types::YearInfo::Era(y) = Date::try_new_from_codes(
             None,
             *VALID_YEAR_RANGE.start(),
-            MonthCode::new_normal(1).unwrap(),
+            Month::new(1).code(),
             1,
             cal,
         )
@@ -102,7 +96,7 @@ super::test_all_cals!(
             Date::try_new_from_codes(
                 Some(&y.era),
                 *VALID_YEAR_RANGE.start() - 1,
-                MonthCode::new_normal(1).unwrap(),
+                Month::new(1).code(),
                 1,
                 cal,
             )
@@ -110,27 +104,22 @@ super::test_all_cals!(
             Date::try_new_from_codes(
                 Some(&y.era),
                 *VALID_YEAR_RANGE.end() + 1,
-                MonthCode::new_normal(1).unwrap(),
+                Month::new(1).code(),
                 1,
                 cal,
             )
             .unwrap_err();
         }
 
-        if let crate::types::YearInfo::Era(y) = Date::try_new_from_codes(
-            None,
-            *VALID_YEAR_RANGE.end(),
-            MonthCode::new_normal(1).unwrap(),
-            1,
-            cal,
-        )
-        .unwrap()
-        .year()
+        if let crate::types::YearInfo::Era(y) =
+            Date::try_new_from_codes(None, *VALID_YEAR_RANGE.end(), Month::new(1).code(), 1, cal)
+                .unwrap()
+                .year()
         {
             Date::try_new_from_codes(
                 Some(&y.era),
                 *VALID_YEAR_RANGE.start() - 1,
-                MonthCode::new_normal(1).unwrap(),
+                Month::new(1).code(),
                 1,
                 cal,
             )
@@ -138,7 +127,7 @@ super::test_all_cals!(
             Date::try_new_from_codes(
                 Some(&y.era),
                 *VALID_YEAR_RANGE.end() + 1,
-                MonthCode::new_normal(1).unwrap(),
+                Month::new(1).code(),
                 1,
                 cal,
             )
