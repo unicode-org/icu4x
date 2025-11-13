@@ -348,6 +348,10 @@ fn main() -> eyre::Result<()> {
             .unwrap()
     }
 
+    run(cli)
+}
+
+fn run(cli: Cli) -> eyre::Result<()> {
     let markers = if !cli.markers.is_empty() {
         match cli.markers.as_slice() {
             [x] if x == "none" => Default::default(),
@@ -776,4 +780,39 @@ where
     fn iter_ids(&self) -> Result<std::collections::BTreeSet<DataIdentifierCow<'_>>, DataError> {
         self.0.iter_ids_for_marker(M::INFO)
     }
+}
+
+#[test]
+fn test_attributes_regex() {
+    let out = std::env::temp_dir().join("icu4x-datagen_test_attributes_regex_out");
+    let _ = std::fs::remove_dir_all(&out);
+
+    let mut args = Cli::parse_from([
+        "bin",
+        "--markers",
+        "HelloWorldV1",
+        "--locales",
+        "full",
+        "--format",
+        "fs",
+        "--attribute-filter",
+        "hello=/r.*?|.*?case/",
+        "--attribute-filter",
+        "hello=-/lowercase/",
+        "--attribute-filter",
+        "hello=-/.*3/",
+    ]);
+
+    args.output = Some(out.clone());
+
+    run(args).unwrap();
+
+    assert!(std::fs::exists(out.join("hello/world/v1/reverse")).unwrap());
+
+    assert!(std::fs::exists(out.join("hello/world/v1/rotate1")).unwrap());
+    assert!(std::fs::exists(out.join("hello/world/v1/rotate2")).unwrap());
+    assert!(!std::fs::exists(out.join("hello/world/v1/rotate3")).unwrap());
+
+    assert!(std::fs::exists(out.join("hello/world/v1/uppercase")).unwrap());
+    assert!(!std::fs::exists(out.join("hello/world/v1/lowercase")).unwrap());
 }
