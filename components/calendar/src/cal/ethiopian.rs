@@ -5,9 +5,7 @@
 use crate::cal::coptic::CopticDateInner;
 use crate::cal::Coptic;
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver};
-use crate::error::{
-    DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
-};
+use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
@@ -120,23 +118,10 @@ impl DateFieldsResolver for Ethiopian {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        month_code: types::ValidMonthCode,
+        month: types::Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
-        crate::cal::Coptic::reference_year_from_month_day(month_code, day)
-    }
-
-    #[inline]
-    fn ordinal_month_from_code(
-        &self,
-        _year: &Self::YearInfo,
-        month_code: types::ValidMonthCode,
-        _options: DateFromFieldsOptions,
-    ) -> Result<u8, MonthCodeError> {
-        match month_code.to_tuple() {
-            (month_number @ 1..=13, false) => Ok(month_number),
-            _ => Err(MonthCodeError::NotInCalendar),
-        }
+        crate::cal::Coptic::reference_year_from_month_day(month, day)
     }
 }
 
@@ -218,7 +203,7 @@ impl Calendar for Ethiopian {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let coptic_year = date.0 .0.year;
+        let coptic_year = date.0 .0.year();
         let extended_year = if self.0 == EthiopianEraStyle::AmeteAlem {
             coptic_year - AMETE_ALEM_OFFSET
         } else {

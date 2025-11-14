@@ -4,9 +4,7 @@
 
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::calendar_arithmetic::DateFieldsResolver;
-use crate::error::{
-    DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
-};
+use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::{types, Calendar, Date, RangeError};
@@ -56,22 +54,17 @@ impl DateFieldsResolver for Coptic {
     type YearInfo = i32;
 
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
-        if (1..=12).contains(&month) {
-            30
-        } else if month == 13 {
-            if year.rem_euclid(4) == 3 {
-                6
-            } else {
-                5
-            }
+        if month == 13 {
+            5 + calendrical_calculations::coptic::is_leap_year(year) as u8
         } else {
-            0
+            30
         }
     }
 
     fn months_in_provided_year(_: i32) -> u8 {
         13
     }
+
     #[inline]
     fn year_info_from_era(
         &self,
@@ -92,32 +85,19 @@ impl DateFieldsResolver for Coptic {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        month_code: types::ValidMonthCode,
+        month: types::Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
-        Coptic::reference_year_from_month_day(month_code, day)
-    }
-
-    #[inline]
-    fn ordinal_month_from_code(
-        &self,
-        _year: &Self::YearInfo,
-        month_code: types::ValidMonthCode,
-        _options: DateFromFieldsOptions,
-    ) -> Result<u8, MonthCodeError> {
-        match month_code.to_tuple() {
-            (month_number @ 1..=13, false) => Ok(month_number),
-            _ => Err(MonthCodeError::NotInCalendar),
-        }
+        Coptic::reference_year_from_month_day(month, day)
     }
 }
 
 impl Coptic {
     pub(crate) fn reference_year_from_month_day(
-        month_code: types::ValidMonthCode,
+        month: types::Month,
         day: u8,
     ) -> Result<i32, EcmaReferenceYearError> {
-        let (ordinal_month, false) = month_code.to_tuple() else {
+        let (ordinal_month, false) = (month.number(), month.is_leap()) else {
             return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
         };
         // December 31, 1972 occurs on 4th month, 22nd day, 1689 AM
@@ -170,7 +150,11 @@ impl Calendar for Coptic {
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        calendrical_calculations::coptic::fixed_from_coptic(date.0.year, date.0.month, date.0.day)
+        calendrical_calculations::coptic::fixed_from_coptic(
+            date.0.year(),
+            date.0.month(),
+            date.0.day(),
+        )
     }
 
     fn has_cheap_iso_conversion(&self) -> bool {
@@ -178,7 +162,7 @@ impl Calendar for Coptic {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Self::months_in_provided_year(date.0.year)
+        Self::months_in_provided_year(date.0.year())
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
@@ -190,7 +174,7 @@ impl Calendar for Coptic {
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        Self::days_in_provided_month(date.0.year, date.0.month)
+        Self::days_in_provided_month(date.0.year(), date.0.month())
     }
 
     #[cfg(feature = "unstable")]
@@ -214,7 +198,7 @@ impl Calendar for Coptic {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let year = date.0.year;
+        let year = date.0.year();
         types::EraYear {
             era: tinystr!(16, "am"),
             era_index: Some(0),
@@ -225,19 +209,19 @@ impl Calendar for Coptic {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        date.0.year.rem_euclid(4) == 3
+        date.0.year().rem_euclid(4) == 3
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        types::MonthInfo::non_lunisolar(date.0.month)
+        types::MonthInfo::new(self, date.0)
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        types::DayOfMonth(date.0.day)
+        types::DayOfMonth(date.0.day())
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        types::DayOfYear(30 * (date.0.month as u16 - 1) + date.0.day as u16)
+        types::DayOfYear(30 * (date.0.month() as u16 - 1) + date.0.day() as u16)
     }
 
     fn debug_name(&self) -> &'static str {
@@ -273,7 +257,7 @@ impl Date<Coptic> {
 mod tests {
     use super::*;
     use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
-    use crate::types::DateFields;
+    use crate::types::{DateFields, Month};
 
     #[test]
     fn test_coptic_regression() {
@@ -286,10 +270,11 @@ mod tests {
 
     #[test]
     fn test_from_fields_monthday_constrain() {
-        // M13-7 is not a real day, however this should resolve to M12-6
+        // M13-7 is not a real day, however this should resolve to M13-6
         // with Overflow::Constrain
+        let month = Month::new(13).code();
         let fields = DateFields {
-            month_code: Some(b"M13"),
+            month_code: Some(month.0.as_bytes()),
             day: Some(7),
             ..Default::default()
         };

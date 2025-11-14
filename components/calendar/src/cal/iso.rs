@@ -103,18 +103,18 @@ mod test {
         let cases = [
             // Clamping RD
             TestCase {
-                year: -1002073,
+                year: -1005513,
                 month: 1,
-                day: 14,
+                day: 3,
                 rd: *VALID_RD_RANGE.start() - 100000,
                 invalid_ymd: true,
                 clamping_rd: true,
             },
             // Lowest allowed RD
             TestCase {
-                year: -1002073,
+                year: -1005513,
                 month: 1,
-                day: 14,
+                day: 3,
                 rd: *VALID_RD_RANGE.start(),
                 invalid_ymd: true,
                 clamping_rd: false,
@@ -139,18 +139,18 @@ mod test {
             },
             // Highest allowed RD
             TestCase {
-                year: 1002074,
+                year: 1001911,
                 month: 12,
-                day: 18,
+                day: 31,
                 rd: *VALID_RD_RANGE.end(),
                 invalid_ymd: true,
                 clamping_rd: false,
             },
             // Clamping RD
             TestCase {
-                year: 1002074,
+                year: 1001911,
                 month: 12,
-                day: 18,
+                day: 31,
                 rd: *VALID_RD_RANGE.end() + 100000,
                 invalid_ymd: true,
                 clamping_rd: true,
@@ -184,7 +184,7 @@ mod test {
             assert_eq!(
                 (
                     date_from_rd.era_year().year,
-                    date_from_rd.month().month_number(),
+                    date_from_rd.month().number(),
                     date_from_rd.day_of_month().0
                 ),
                 (case.year, case.month, case.day),

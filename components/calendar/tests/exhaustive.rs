@@ -38,14 +38,8 @@ fn check_from_fields() {
     fn test<C: Calendar>(cal: C) {
         let cal = Ref(&cal);
 
-        let codes = (1..19)
-            .flat_map(|i| {
-                [
-                    types::MonthCode::new_normal(i).unwrap(),
-                    types::MonthCode::new_leap(i).unwrap(),
-                ]
-                .into_iter()
-            })
+        let months = (1..19)
+            .flat_map(|i| [types::Month::new(i).code(), types::Month::leap(i).code()].into_iter())
             .collect::<Vec<_>>();
         for year in VALID_YEAR_RANGE {
             if year % 50000 == 0 {
@@ -54,7 +48,7 @@ fn check_from_fields() {
             for overflow in [options::Overflow::Constrain, options::Overflow::Reject] {
                 let mut options = options::DateFromFieldsOptions::default();
                 options.overflow = Some(overflow);
-                for mut fields in codes
+                for mut fields in months
                     .iter()
                     .map(|m| {
                         let mut fields = types::DateFields::default();
@@ -176,20 +170,17 @@ use for_each_calendar;
 
 // Precalculates Chinese years, significant performance improvement
 #[derive(Debug, Clone)]
-struct EastAsianTraditionalYears(Vec<cal::east_asian_traditional::EastAsianTraditionalYearData>);
+struct EastAsianTraditionalYears(Vec<cal::east_asian_traditional::EastAsianTraditionalYear>);
 
 impl EastAsianTraditionalYears {
     fn new<R: cal::east_asian_traditional::Rules>(r: R) -> Self {
-        Self((-1100000..=1100000).map(|i| r.year_data(i)).collect())
+        Self((-1100000..=1100000).map(|i| r.year(i)).collect())
     }
 }
 
 impl cal::scaffold::UnstableSealed for EastAsianTraditionalYears {}
 impl cal::east_asian_traditional::Rules for EastAsianTraditionalYears {
-    fn year_data(
-        &self,
-        related_iso: i32,
-    ) -> cal::east_asian_traditional::EastAsianTraditionalYearData {
+    fn year(&self, related_iso: i32) -> cal::east_asian_traditional::EastAsianTraditionalYear {
         self.0[(related_iso + 1100000) as usize]
     }
 }

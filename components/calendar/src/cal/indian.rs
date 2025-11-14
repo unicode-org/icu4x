@@ -60,19 +60,12 @@ impl DateFieldsResolver for Indian {
     type YearInfo = i32;
 
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
-        if month == 1 {
-            30 + calendrical_calculations::gregorian::is_leap_year(year + YEAR_OFFSET) as u8
-        } else if (2..=6).contains(&month) {
-            31
-        } else if (7..=12).contains(&month) {
-            30
-        } else {
-            0
-        }
-    }
-
-    fn months_in_provided_year(_: i32) -> u8 {
-        12
+        // months are 30 days
+        30
+            // except for the first 6, which are 31
+            + (month <= 6) as u8
+            // except for the first one in non-leap years
+            - (month == 1 && !calendrical_calculations::gregorian::is_leap_year(year + YEAR_OFFSET)) as u8
     }
 
     #[inline]
@@ -95,10 +88,10 @@ impl DateFieldsResolver for Indian {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        month_code: types::ValidMonthCode,
+        month: types::Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
-        let (ordinal_month, false) = month_code.to_tuple() else {
+        let (ordinal_month, false) = (month.number(), month.is_leap()) else {
             return Err(EcmaReferenceYearError::MonthCodeNotInCalendar);
         };
         // December 31, 1972 occurs on 10th month, 10th day, 1894 Shaka
@@ -184,7 +177,7 @@ impl Calendar for Indian {
         let day_of_year_indian = self.day_of_year(date).0; // 1-indexed
         let days_in_year = self.days_in_year(date);
 
-        let mut year_iso = date.0.year + YEAR_OFFSET;
+        let mut year_iso = date.0.year() + YEAR_OFFSET;
         // days_in_year is a valid day of the year, so we check > not >=
         let day_of_year_iso = if day_of_year_indian + DAY_OFFSET > days_in_year {
             year_iso += 1;
@@ -202,7 +195,7 @@ impl Calendar for Indian {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        Self::months_in_provided_year(date.0.year)
+        Self::months_in_provided_year(date.0.year())
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
@@ -214,7 +207,7 @@ impl Calendar for Indian {
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        Self::days_in_provided_month(date.0.year, date.0.month)
+        Self::days_in_provided_month(date.0.year(), date.0.month())
     }
 
     #[cfg(feature = "unstable")]
@@ -238,7 +231,7 @@ impl Calendar for Indian {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let extended_year = date.0.year;
+        let extended_year = date.0.year();
         types::EraYear {
             era_index: Some(0),
             era: tinystr!(16, "shaka"),
@@ -249,23 +242,27 @@ impl Calendar for Indian {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        calendrical_calculations::gregorian::is_leap_year(date.0.year + YEAR_OFFSET)
+        calendrical_calculations::gregorian::is_leap_year(date.0.year() + YEAR_OFFSET)
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        types::MonthInfo::non_lunisolar(date.0.month)
+        types::MonthInfo::new(self, date.0)
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        types::DayOfMonth(date.0.day)
+        types::DayOfMonth(date.0.day())
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
         types::DayOfYear(
-            (1..date.0.month)
-                .map(|m| Self::days_in_provided_month(date.0.year, m) as u16)
-                .sum::<u16>()
-                + date.0.day as u16,
+            (
+                // 30 day months
+                30 * (date.0.month() as u16 - 1)
+                // First six months are 31 days
+                + if date.0.month() - 1 < 6 { date.0.month() as u16 - 1 } else { 6 }
+                // Except month 1 outside a leap year
+                - (date.0.month() > 1 && !calendrical_calculations::gregorian::is_leap_year(date.0.year() + YEAR_OFFSET)) as u16
+            ) + date.0.day() as u16,
         )
     }
 
