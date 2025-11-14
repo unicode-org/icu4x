@@ -149,14 +149,12 @@ part 'TimeZoneFormatter.g.dart';
 part 'TimeZoneInfo.g.dart';
 part 'TimeZoneInvalidOffsetError.g.dart';
 part 'TimeZoneIterator.g.dart';
-part 'TimeZoneVariant.g.dart';
 part 'TitlecaseMapper.g.dart';
 part 'TitlecaseOptions.g.dart';
 part 'TrailingCase.g.dart';
 part 'TransformResult.g.dart';
 part 'UtcOffset.g.dart';
 part 'VariantOffsets.g.dart';
-part 'VariantOffsetsCalculator.g.dart';
 part 'VerticalOrientation.g.dart';
 part 'WeekInformation.g.dart';
 part 'Weekday.g.dart';
@@ -611,32 +609,6 @@ final class _ResultUint8Void extends ffi.Struct {
   // ignore: unused_element
   factory _ResultUint8Void.err() {
     final struct = ffi.Struct.create<_ResultUint8Void>();
-    struct.isOk = false;
-    return struct;
-  }
-}
-
-final class _ResultVariantOffsetsFfiVoidUnion extends ffi.Union {
-  external _VariantOffsetsFfi ok;
-
-}
-
-final class _ResultVariantOffsetsFfiVoid extends ffi.Struct {
-  external _ResultVariantOffsetsFfiVoidUnion union;
-
-  @ffi.Bool()
-  external bool isOk;
-
-  // ignore: unused_element
-  factory _ResultVariantOffsetsFfiVoid.ok(_VariantOffsetsFfi val) {
-    final struct = ffi.Struct.create<_ResultVariantOffsetsFfiVoid>();
-    struct.isOk = true;
-    struct.union.ok = val;
-    return struct;
-  }
-  // ignore: unused_element
-  factory _ResultVariantOffsetsFfiVoid.err() {
-    final struct = ffi.Struct.create<_ResultVariantOffsetsFfiVoid>();
     struct.isOk = false;
     return struct;
   }

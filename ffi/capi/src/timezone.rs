@@ -62,6 +62,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::time::zone::TimeZoneVariant, Enum)]
     #[non_exhaustive]
     #[deprecated(note = "type not needed anymore")]
+    #[diplomat::attr(dart, disable)]
     pub enum TimeZoneVariant {
         // TimeZoneVariant in Rust doesn't have a default, but it is useful to have one
         // here for consistent behavior.
@@ -108,6 +109,7 @@ pub mod ffi {
         #[diplomat::attr(auto, constructor)]
         #[allow(deprecated)]
         #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
+        #[diplomat::attr(dart, disable)]
         pub fn from_parts(
             id: &TimeZone,
             offset: Option<&UtcOffset>,
@@ -220,6 +222,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::time::TimeZoneInfo::with_variant, FnInStruct)]
         #[deprecated(note = "returns unmodified copy")]
+        #[diplomat::attr(dart, disable)]
         #[allow(deprecated)]
         pub fn with_variant(&self, _time_variant: TimeZoneVariant) -> Box<Self> {
             Box::new(*self)
@@ -232,6 +235,7 @@ pub mod ffi {
         }
 
         #[deprecated(note = "does nothing")]
+        #[diplomat::attr(dart, disable)]
         #[diplomat::rust_link(icu::time::TimeZoneInfo::infer_variant, FnInStruct)]
         #[diplomat::rust_link(icu::time::zone::TimeZoneVariant, Enum, compact)]
         #[allow(deprecated)]
@@ -245,6 +249,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::TimeZoneInfo::variant, FnInStruct)]
         #[diplomat::attr(demo_gen, disable)] // this just returns a constructor argument
         #[deprecated(note = "always returns null")]
+        #[diplomat::attr(dart, disable)]
         #[allow(deprecated)]
         pub fn variant(&self) -> Option<TimeZoneVariant> {
             None

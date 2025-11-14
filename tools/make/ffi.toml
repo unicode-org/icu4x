@@ -74,7 +74,7 @@ cd ffi/dart
 exec --fail-on-error dart pub get
 exec --fail-on-error dart format --set-exit-if-changed .
 exec --fail-on-error dart analyze
-exec --fail-on-error dart --enable-experiment=record-use test
+exec --fail-on-error dart test
 '''
 
 [tasks.test-dart-example]
