@@ -28,6 +28,9 @@ macro_rules! normalization_provider {
                     self.icuexport()?.read_and_parse_toml(&format!(
                         "norm/{}/{}.toml",
                         if $file_name == "nfd" || $file_name == "nfkd" {
+                            // Always use fast tries for these to unblock optimizations
+                            // that depend being able to assume the fast trie type at compile
+                            // time. See https://github.com/unicode-org/icu4x/pull/7222#issuecomment-3531679175
                             TrieType::Fast
                         } else {
                             self.trie_type()
