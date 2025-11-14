@@ -20,6 +20,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::time::zone::VariantOffsetsCalculatorBorrowed, Struct, hidden)]
     #[diplomat::opaque]
     #[deprecated(note = "this API is a bad approximation of a time zone database")]
+    #[diplomat::attr(dart, disable)]
     #[allow(deprecated)]
     pub struct VariantOffsetsCalculator(pub icu_time::zone::VariantOffsetsCalculator);
 

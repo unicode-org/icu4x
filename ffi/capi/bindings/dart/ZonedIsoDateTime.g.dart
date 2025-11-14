@@ -54,21 +54,6 @@ final class ZonedIsoDateTime {
     return ZonedIsoDateTime._fromFfi(result.union.ok);
   }
 
-  /// Creates a new [ZonedIsoDateTime] from an IXDTF string.
-  ///
-  /// See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
-  ///
-  /// Throws [Rfc9557ParseError] on failure.
-  @core.Deprecated('use strict_from_string')
-  factory ZonedIsoDateTime.fullFromString(String v, IanaParser ianaParser, VariantOffsetsCalculator offsetCalculator) {
-    final temp = _FinalizedArena();
-    final result = _icu4x_ZonedIsoDateTime_full_from_string_mv1(v._utf8AllocIn(temp.arena), ianaParser._ffi, offsetCalculator._ffi);
-    if (!result.isOk) {
-      throw Rfc9557ParseError.values[result.union.err];
-    }
-    return ZonedIsoDateTime._fromFfi(result.union.ok);
-  }
-
   /// Creates a new [ZonedIsoDateTime] from milliseconds since epoch (timestamp) and a UTC offset.
   ///
   /// Note: [ZonedIsoDateTime]s created with this constructor can only be formatted using localized offset zone styles.
@@ -99,11 +84,6 @@ final class ZonedIsoDateTime {
 @ffi.Native<_ResultZonedIsoDateTimeFfiInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedIsoDateTime_strict_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultZonedIsoDateTimeFfiInt32 _icu4x_ZonedIsoDateTime_strict_from_string_mv1(_SliceUtf8 v, ffi.Pointer<ffi.Opaque> ianaParser);
-
-@_DiplomatFfiUse('icu4x_ZonedIsoDateTime_full_from_string_mv1')
-@ffi.Native<_ResultZonedIsoDateTimeFfiInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedIsoDateTime_full_from_string_mv1')
-// ignore: non_constant_identifier_names
-external _ResultZonedIsoDateTimeFfiInt32 _icu4x_ZonedIsoDateTime_full_from_string_mv1(_SliceUtf8 v, ffi.Pointer<ffi.Opaque> ianaParser, ffi.Pointer<ffi.Opaque> offsetCalculator);
 
 @_DiplomatFfiUse('icu4x_ZonedIsoDateTime_from_epoch_milliseconds_and_utc_offset_mv1')
 @ffi.Native<_ZonedIsoDateTimeFfi Function(ffi.Int64, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedIsoDateTime_from_epoch_milliseconds_and_utc_offset_mv1')
