@@ -142,7 +142,8 @@ struct Cli {
     #[arg(
         help = "Whether to optimize CodePointTrie data structures for size (\"small\") or speed (\"fast\").\n\
                   Using \"fast\" mode increases performance of CJK text processing and segmentation. For more\n\
-                  information, see the TrieType enum."
+                  information, see the TrieType enum. The tries for the core (UAX #15 but not UAX #46)\n\
+                  normalization forms use the fast trie type regardless of this setting."
     )]
     #[cfg(feature = "provider")]
     trie_type: TrieType,
