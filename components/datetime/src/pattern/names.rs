@@ -91,6 +91,9 @@ impl YearNameLength {
 }
 
 /// Choices for loading month names.
+///
+/// This enum covers both the length (abbreviated, wide, or narrow)
+/// and the formatting context (format or standalone).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum MonthNameLength {
@@ -169,6 +172,9 @@ impl MonthNameLength {
 }
 
 /// Choices for loading weekday names.
+///
+/// This enum covers both the length (abbreviated, wide, narrow, or short)
+/// and the formatting context (format or standalone).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum WeekdayNameLength {
