@@ -74,7 +74,7 @@ cd ffi/dart
 exec --fail-on-error dart pub get
 exec --fail-on-error dart format --set-exit-if-changed .
 exec --fail-on-error dart analyze
-exec --fail-on-error dart --enable-experiment=record-use test
+exec --fail-on-error dart test
 '''
 
 [tasks.test-dart-example]
@@ -142,6 +142,7 @@ dependencies = [
     "diplomat-gen-js",
     "diplomat-gen-dart",
     "diplomat-gen-demo",
+    "diplomat-gen-kotlin",
 ]
 
 [tasks.verify-diplomat-gen]
@@ -188,6 +189,12 @@ description = "Generate Dart bindings for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
 args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "dart"]
+
+[tasks.diplomat-gen-kotlin]
+description = "Generate Kotlin bindings for the FFI with Diplomat"
+category = "ICU4X Development"
+command = "cargo"
+args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "kotlin"]
 
 # Diplomat coverage
 

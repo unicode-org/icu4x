@@ -11,3 +11,8 @@ module-name = "icu"
 # lib-name becomes a namespace, we don't want to clash
 # with ICU4C
 lib-name = "icu4x"
+
+[kotlin]
+domain = "org.unicode"
+# org.unicode.icu is ICU4J
+lib-name = "icu4x"

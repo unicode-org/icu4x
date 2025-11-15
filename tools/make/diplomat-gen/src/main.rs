@@ -90,7 +90,12 @@ fn main() -> std::io::Result<()> {
                 root.join("tools/web-demo/gen")
             };
 
-            std::fs::remove_dir_all(&include)?;
+            let dir_to_remove = if lang == "kotlin" {
+                include.join("src/main")
+            } else {
+                include.clone()
+            };
+            std::fs::remove_dir_all(&dir_to_remove)?;
             if lang == "cpp" {
                 include = include.join("icu4x");
             }

@@ -33,6 +33,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::NoCalendarFormatter, Typedef)]
+    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct ZonedTimeFormatter(
         pub  icu_datetime::FixedCalendarDateTimeFormatter<
             (),
