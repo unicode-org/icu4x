@@ -789,8 +789,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     ///
     /// For example, this can transform a formatter for [`YMD`] to one for [`DateFieldSet`].
     ///
-    /// [`YMD`]: crate::fieldsets::YMD
-    /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
+    /// To learn why this function is useful, see [`DateTimeFormatter::cast_into_fset`].
     ///
     /// # Examples
     ///
@@ -818,6 +817,10 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     /// // Test that it still works:
     /// assert_writeable_eq!(general_formatter.format(&date), "20 déc. 2024");
     /// ```
+    ///
+    /// [`MD`]: crate::fieldsets::MD
+    /// [`YMD`]: crate::fieldsets::YMD
+    /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
     pub fn cast_into_fset<FSet2: DateTimeNamesFrom<FSet>>(
         self,
     ) -> FixedCalendarDateTimeFormatter<C, FSet2> {
@@ -951,8 +954,15 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     ///
     /// For example, this can transform a formatter for [`YMD`] to one for [`DateFieldSet`].
     ///
-    /// [`YMD`]: crate::fieldsets::YMD
-    /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
+    /// # Why do you need this function?
+    ///
+    /// The constructor is optimized to link only the data required for the chosen field set.
+    /// This function is useful if you want to work with multiple field sets, but not all of
+    /// them.
+    ///
+    /// For example, to support date formatting with variable fields but not weekdays,
+    /// you can use field-set-specific constructors for [`MD`] and [`YMD`] and then use this
+    /// function to convert the formatter to [`DateFields`].
     ///
     /// # Examples
     ///
@@ -978,6 +988,10 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// // Test that it still works:
     /// assert_writeable_eq!(general_formatter.format(&date), "20 déc. 2024");
     /// ```
+    ///
+    /// [`MD`]: crate::fieldsets::MD
+    /// [`YMD`]: crate::fieldsets::YMD
+    /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
     pub fn cast_into_fset<FSet2: DateTimeNamesFrom<FSet>>(self) -> DateTimeFormatter<FSet2> {
         DateTimeFormatter {
             selection: self.selection,
