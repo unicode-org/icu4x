@@ -2,6 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![no_main] // https://github.com/unicode-org/icu4x/issues/395
+icu_benchmark_macros::instrument!();
+use icu_benchmark_macros::println;
+
 #[path = "../tests/adaboost/main.rs"]
 mod adaboost;
 
@@ -29,7 +33,7 @@ fn main_adaboost(args: &[String]) {
         print!("{}|", &s[prev..breakpoint]);
         prev = breakpoint;
     }
-    println!();
+    println!("");
     println!("{} repetitions done in: {:?}", REPETITIONS, elapsed);
 }
 
@@ -63,7 +67,7 @@ fn main_cnn(args: &[String]) {
         print!("{}|", &s[prev..breakpoint]);
         prev = breakpoint;
     }
-    println!();
+    println!("");
     println!("{} repetitions done in: {:?}", REPETITIONS, elapsed);
 }
 
@@ -90,7 +94,7 @@ fn run_word_segmenter(segmenter: WordSegmenterBorrowed, s: &str) {
         print!("{}|", &s[prev..breakpoint]);
         prev = breakpoint;
     }
-    println!();
+    println!("");
     println!("{} repetitions done in: {:?}", REPETITIONS, elapsed);
 }
 
@@ -98,6 +102,7 @@ fn main() {
     let args = std::env::args().collect::<Vec<String>>();
     if args.len() == 1 || args[1] == "--help" {
         println!("Usage: experimental_segmenter <model> [<locale>] <text>");
+        return;
     }
     match args[1].as_str() {
         "adaboost" => main_adaboost(&args[2..]),
