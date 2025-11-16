@@ -32,11 +32,11 @@ namespace capi {
 
     void icu4x_DecomposingNormalizer_normalize_mv1(const icu4x::capi::DecomposingNormalizer* self, icu4x::diplomat::capi::DiplomatStringView s, icu4x::diplomat::capi::DiplomatWrite* write);
 
-    bool icu4x_DecomposingNormalizer_is_normalized_mv1(const icu4x::capi::DecomposingNormalizer* self, icu4x::diplomat::capi::DiplomatStringView s);
+    bool icu4x_DecomposingNormalizer_is_normalized_utf8_mv1(const icu4x::capi::DecomposingNormalizer* self, icu4x::diplomat::capi::DiplomatStringView s);
 
     bool icu4x_DecomposingNormalizer_is_normalized_utf16_mv1(const icu4x::capi::DecomposingNormalizer* self, icu4x::diplomat::capi::DiplomatString16View s);
 
-    size_t icu4x_DecomposingNormalizer_is_normalized_up_to_mv1(const icu4x::capi::DecomposingNormalizer* self, icu4x::diplomat::capi::DiplomatStringView s);
+    size_t icu4x_DecomposingNormalizer_is_normalized_utf8_up_to_mv1(const icu4x::capi::DecomposingNormalizer* self, icu4x::diplomat::capi::DiplomatStringView s);
 
     size_t icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(const icu4x::capi::DecomposingNormalizer* self, icu4x::diplomat::capi::DiplomatString16View s);
 
@@ -83,7 +83,7 @@ inline void icu4x::DecomposingNormalizer::normalize_write(std::string_view s, W&
 }
 
 inline bool icu4x::DecomposingNormalizer::is_normalized(std::string_view s) const {
-    auto result = icu4x::capi::icu4x_DecomposingNormalizer_is_normalized_mv1(this->AsFFI(),
+    auto result = icu4x::capi::icu4x_DecomposingNormalizer_is_normalized_utf8_mv1(this->AsFFI(),
         {s.data(), s.size()});
     return result;
 }
@@ -95,7 +95,7 @@ inline bool icu4x::DecomposingNormalizer::is_normalized16(std::u16string_view s)
 }
 
 inline size_t icu4x::DecomposingNormalizer::is_normalized_up_to(std::string_view s) const {
-    auto result = icu4x::capi::icu4x_DecomposingNormalizer_is_normalized_up_to_mv1(this->AsFFI(),
+    auto result = icu4x::capi::icu4x_DecomposingNormalizer_is_normalized_utf8_up_to_mv1(this->AsFFI(),
         {s.data(), s.size()});
     return result;
 }
