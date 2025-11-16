@@ -233,16 +233,10 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         } else {
             calendar.year_info_from_extended(year)
         };
-        let validated = Month::try_from_utf8(month_code.0.as_bytes()).map_err(|e| match e {
+        let month_code = Month::try_from_utf8(month_code.0.as_bytes()).map_err(|e| match e {
             MonthCodeParseError::InvalidSyntax => DateError::UnknownMonthCode(month_code),
         })?;
-        let month = calendar
-            .ordinal_from_month(year, validated, Default::default())
-            .map_err(|e| match e {
-                MonthCodeError::NotInCalendar | MonthCodeError::NotInYear => {
-                    DateError::UnknownMonthCode(month_code)
-                }
-            })?;
+        let month = calendar.ordinal_from_month(year, month_code, Default::default())?;
 
         let day = range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
 
@@ -579,13 +573,8 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 base_month,
                 DateFromFieldsOptions::from_add_options(options),
             )
-            .map_err(|e| {
-                // TODO: Use a narrower error type here. For now, convert into DateError.
-                match e {
-                    MonthCodeError::NotInCalendar => DateError::UnknownMonthCode(base_month.code()),
-                    MonthCodeError::NotInYear => DateError::UnknownMonthCode(base_month.code()),
-                }
-            })?;
+            // TODO: Use a narrower error type here. For now, convert into DateError.
+            .map_err(DateError::from)?;
         // 1. Let _endOfMonth_ be BalanceNonISODate(_calendar_, _y0_, _m0_ + _duration_.[[Months]] + 1, 0).
         let end_of_month = Self::new_balanced(y0, duration.add_months_to(m0) + 1, 0, cal);
         // 1. Let _baseDay_ be _parts_.[[Day]].
