@@ -992,6 +992,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// [`MD`]: crate::fieldsets::MD
     /// [`YMD`]: crate::fieldsets::YMD
     /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
+    /// [`DateFields`]: crate::fieldsets::builder::DateFields
     pub fn cast_into_fset<FSet2: DateTimeNamesFrom<FSet>>(self) -> DateTimeFormatter<FSet2> {
         DateTimeFormatter {
             selection: self.selection,
