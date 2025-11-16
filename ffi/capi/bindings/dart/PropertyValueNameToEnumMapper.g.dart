@@ -136,6 +136,27 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
 
+  /// Create a name-to-enum mapper for the `Numeric_Type` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
+  factory PropertyValueNameToEnumMapper.numericType() {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_numeric_type_mv1();
+    return PropertyValueNameToEnumMapper._fromFfi(result, []);
+  }
+
+  /// Create a name-to-enum mapper for the `Numeric_Type` property, using a particular data source.
+  ///
+  /// See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory PropertyValueNameToEnumMapper.numericTypeWithProvider(DataProvider provider) {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_numeric_type_with_provider_mv1(provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
+  }
+
   /// Create a name-to-enum mapper for the `Indic_Syllabic_Category` property, using compiled data.
   ///
   /// See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
@@ -339,6 +360,16 @@ external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_bid
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_bidi_class_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_bidi_class_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_numeric_type_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_numeric_type_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_numeric_type_mv1();
+
+@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_numeric_type_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_numeric_type_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_numeric_type_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_mv1')

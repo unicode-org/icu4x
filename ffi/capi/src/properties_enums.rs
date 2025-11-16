@@ -210,6 +210,60 @@ pub mod ffi {
         }
     }
 
+    #[diplomat::rust_link(icu::properties::props::NumericType, Struct)]
+    #[diplomat::enum_convert(icu_properties::props::NumericType, needs_wildcard)]
+    #[non_exhaustive]
+    pub enum NumericType {
+        #[diplomat::rust_link(
+            icu::properties::props::NumericType::None,
+            AssociatedConstantInStruct
+        )]
+        None = 0,
+        #[diplomat::rust_link(
+            icu::properties::props::NumericType::Decimal,
+            AssociatedConstantInStruct
+        )]
+        Decimal = 1,
+        #[diplomat::rust_link(
+            icu::properties::props::NumericType::Digit,
+            AssociatedConstantInStruct
+        )]
+        Digit = 2,
+        #[diplomat::rust_link(
+            icu::properties::props::NumericType::Numeric,
+            AssociatedConstantInStruct
+        )]
+        Numeric = 3,
+    }
+
+    impl NumericType {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::NumericType>::new()
+                .get32(ch)
+                .into()
+        }
+        #[diplomat::rust_link(icu::properties::props::NumericType::to_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
+            self as u8
+        }
+        #[diplomat::rust_link(icu::properties::props::NumericType::from_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
+            Some(match other {
+                0 => Self::None,
+                1 => Self::Decimal,
+                2 => Self::Digit,
+                3 => Self::Numeric,
+                _ => return None,
+            })
+        }
+    }
+
     #[diplomat::rust_link(icu::properties::props::Script, Struct)]
     #[diplomat::enum_convert(icu_properties::props::Script, needs_wildcard)]
     #[non_exhaustive]
@@ -3027,6 +3081,13 @@ mod test {
                 .expect("Found BidiClass value not supported in ffi");
             assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::BidiClass::from(ffi_prop));
+        }
+
+        for prop in props::NumericType::ALL_VALUES {
+            let ffi_prop = NumericType::from_integer_value(prop.to_icu4c_value())
+                .expect("Found NumericType value not supported in ffi");
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
+            assert_eq!(*prop, props::NumericType::from(ffi_prop));
         }
 
         for prop in props::Script::ALL_VALUES {

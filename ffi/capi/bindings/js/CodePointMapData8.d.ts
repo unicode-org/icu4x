@@ -98,6 +98,20 @@ export class CodePointMapData8 {
     static createBidiClassWithProvider(provider: DataProvider): CodePointMapData8;
 
     /**
+     * Create a map for the `Numeric_Type` property, using compiled data.
+     *
+     * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
+     */
+    static createNumericType(): CodePointMapData8;
+
+    /**
+     * Create a map for the `Bidi_Class` property, using a particular data source.
+     *
+     * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
+     */
+    static createNumericTypeWithProvider(provider: DataProvider): CodePointMapData8;
+
+    /**
      * Create a map for the `East_Asian_Width` property, using compiled data.
      *
      * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.

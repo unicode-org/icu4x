@@ -175,6 +175,7 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "uprops/small/nfdinert.toml",
     "uprops/small/nfkcinert.toml",
     "uprops/small/nfkdinert.toml",
+    "uprops/small/nt.toml",
     "uprops/small/Pat_Syn.toml",
     "uprops/small/Pat_WS.toml",
     "uprops/small/PCM.toml",
