@@ -1287,6 +1287,7 @@ dependencies = [
  "potential_utf",
  "serde",
  "writeable",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -1382,6 +1383,8 @@ dependencies = [
  "smallvec",
  "tinystr",
  "writeable",
+ "yoke",
+ "zerofrom",
  "zerotrie",
  "zerovec",
 ]
@@ -1451,6 +1454,7 @@ dependencies = [
  "smallvec",
  "tinystr",
  "writeable",
+ "yoke",
  "zerotrie",
  "zerovec",
 ]
@@ -1484,6 +1488,7 @@ dependencies = [
  "serde",
  "serde_json",
  "writeable",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -1507,6 +1512,7 @@ dependencies = [
  "serde_json",
  "tinystr",
  "writeable",
+ "zerofrom",
  "zerovec",
 ]
 
