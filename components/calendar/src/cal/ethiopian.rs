@@ -138,7 +138,7 @@ impl Calendar for Ethiopian {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_codes(era, year, month_code, day, self)
+        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
             .map(ArithmeticDate::cast)
             .map(CopticDateInner)
             .map(EthiopianDateInner)
@@ -272,7 +272,12 @@ impl Ethiopian {
 }
 
 impl Date<Ethiopian> {
-    /// Construct new Ethiopian Date.
+    /// Construct new Ethiopian [`Date`].
+    ///
+    /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
+    /// valid range of `-1,000,000..=1,000,000`.
+    ///
+    /// Years are interpreted according to the provided `era_style`.
     ///
     /// ```rust
     /// use icu::calendar::cal::EthiopianEraStyle;
@@ -292,8 +297,8 @@ impl Date<Ethiopian> {
         month: u8,
         day: u8,
     ) -> Result<Date<Ethiopian>, RangeError> {
-        let year = Ethiopian(era_style).year_info_from_extended(year);
-        ArithmeticDate::try_from_ymd(year, month, day)
+        ArithmeticDate::from_year_month_day(year, month, day, &Ethiopian(era_style))
+            .map(ArithmeticDate::cast)
             .map(CopticDateInner)
             .map(EthiopianDateInner)
             .map(|inner| Date::from_raw(inner, Ethiopian(era_style)))

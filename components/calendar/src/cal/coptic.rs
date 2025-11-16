@@ -128,7 +128,8 @@ impl Calendar for Coptic {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_codes(era, year, month_code, day, self).map(CopticDateInner)
+        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
+            .map(CopticDateInner)
     }
 
     #[cfg(feature = "unstable")]
@@ -234,7 +235,10 @@ impl Calendar for Coptic {
 }
 
 impl Date<Coptic> {
-    /// Construct new Coptic Date.
+    /// Construct new Coptic [`Date`].
+    ///
+    /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
+    /// valid range of `-1,000,000..=1,000,000`.
     ///
     /// ```rust
     /// use icu::calendar::Date;
@@ -247,7 +251,7 @@ impl Date<Coptic> {
     /// assert_eq!(date_coptic.day_of_month().0, 6);
     /// ```
     pub fn try_new_coptic(year: i32, month: u8, day: u8) -> Result<Date<Coptic>, RangeError> {
-        ArithmeticDate::try_from_ymd(year, month, day)
+        ArithmeticDate::from_year_month_day(year, month, day, &Coptic)
             .map(CopticDateInner)
             .map(|inner| Date::from_raw(inner, Coptic))
     }

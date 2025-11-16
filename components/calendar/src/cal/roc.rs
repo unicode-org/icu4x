@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears};
+use crate::cal::abstract_gregorian::{
+    impl_with_abstract_gregorian, AbstractGregorian, GregorianYears,
+};
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::UnknownEraError;
 use crate::preferences::CalendarAlgorithm;
@@ -82,11 +84,10 @@ impl GregorianYears for RocEra {
 }
 
 impl Date<Roc> {
-    /// Construct a new Republic of China calendar Date.
+    /// Construct a new Republic of China calendar [`Date`].
     ///
-    /// Years are specified in the "roc" era. This function accepts an extended year in that era, so dates
-    /// before Minguo are negative and year 0 is 1 Before Minguo. To specify dates using explicit era
-    /// codes, use [`Date::try_new_from_codes()`].
+    /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
+    /// valid range of `-1,000,000..=1,000,000`.
     ///
     /// ```rust
     /// use icu::calendar::Date;
@@ -109,7 +110,8 @@ impl Date<Roc> {
     /// assert_eq!(date_gregorian.month().ordinal, 2, "Gregorian from ROC month check failed!");
     /// assert_eq!(date_gregorian.day_of_month().0, 3, "Gregorian from ROC day of month check failed!");
     pub fn try_new_roc(year: i32, month: u8, day: u8) -> Result<Date<Roc>, RangeError> {
-        ArithmeticDate::new_gregorian::<RocEra>(year, month, day)
+        ArithmeticDate::from_year_month_day(year, month, day, &AbstractGregorian(RocEra))
+            .map(ArithmeticDate::cast)
             .map(RocDateInner)
             .map(|i| Date::from_raw(i, Roc))
     }

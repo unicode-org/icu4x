@@ -64,6 +64,10 @@ mod unstable {
         ///
         /// If set, [`Self::era`] must also be set.
         ///
+        /// [`Date::try_from_fields`](crate::Date::try_from_fields)  accepts years in
+        /// the range `-1,000,000..=1,000,000`, where the `extended_year` is also in
+        /// the range `-1,000,000..=1,000,000`.
+        ///
         /// For an example, see [`Self::extended_year`].
         pub era_year: Option<i32>,
         /// See [`Date::extended_year()`](crate::Date::extended_year).
@@ -71,9 +75,12 @@ mod unstable {
         /// If both this and [`Self::era`]/[`Self::era_year`] are set, they must
         /// refer to the same year.
         ///
+        /// [`Date::try_from_fields`](crate::Date::try_from_fields) accepts extended years
+        /// in the range `-1,000,000..=1,000,000`.
+        ///
         /// # Examples
         ///
-        /// Either `extended_year` or `era` + `era_year` can be used in DateFields:
+        /// Either `extended_year` or `era` + `era_year` can be used in `DateFields`:
         ///
         /// ```
         /// use icu::calendar::cal::Japanese;

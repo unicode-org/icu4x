@@ -474,6 +474,9 @@ impl Rules for Korea {
 impl<A: AsCalendar<Calendar = KoreanTraditional>> Date<A> {
     /// This method uses an ordinal month, which is probably not what you want.
     ///
+    /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
+    /// valid range of `-1,000,000..=1,000,000`.
+    ///
     /// Use [`Date::try_new_from_codes`]
     #[deprecated(since = "2.1.0", note = "use `Date::try_new_from_codes`")]
     pub fn try_new_dangi_with_calendar(
@@ -482,10 +485,11 @@ impl<A: AsCalendar<Calendar = KoreanTraditional>> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, DateError> {
-        ArithmeticDate::try_from_ymd(
-            calendar.as_calendar().0.year(related_iso_year),
+        ArithmeticDate::from_year_month_day(
+            related_iso_year,
             ordinal_month,
             day,
+            calendar.as_calendar(),
         )
         .map(ChineseDateInner)
         .map(|inner| Date::from_raw(inner, calendar))
@@ -595,6 +599,7 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
 
     #[inline]
     fn year_info_from_extended(&self, extended_year: i32) -> Self::YearInfo {
+        debug_assert!(crate::calendar_arithmetic::VALID_YEAR_RANGE.contains(&extended_year));
         self.0.year(extended_year)
     }
 
@@ -667,7 +672,8 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_codes(era, year, month_code, day, self).map(ChineseDateInner)
+        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
+            .map(ChineseDateInner)
     }
 
     #[cfg(feature = "unstable")]
@@ -783,6 +789,9 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
 impl<A: AsCalendar<Calendar = ChineseTraditional>> Date<A> {
     /// This method uses an ordinal month, which is probably not what you want.
     ///
+    /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
+    /// valid range of `-1,000,000..=1,000,000`.
+    ///
     /// Use [`Date::try_new_from_codes`]
     #[deprecated(since = "2.1.0", note = "use `Date::try_new_from_codes`")]
     pub fn try_new_chinese_with_calendar(
@@ -791,10 +800,11 @@ impl<A: AsCalendar<Calendar = ChineseTraditional>> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, DateError> {
-        ArithmeticDate::try_from_ymd(
-            calendar.as_calendar().0.year(related_iso_year),
+        ArithmeticDate::from_year_month_day(
+            related_iso_year,
             ordinal_month,
             day,
+            calendar.as_calendar(),
         )
         .map(ChineseDateInner)
         .map(|inner| Date::from_raw(inner, calendar))
@@ -1036,6 +1046,27 @@ impl PackedEastAsianTraditionalYearData {
 
     fn days_in_year(self) -> u16 {
         self.days_before_month(13 + self.leap_month().is_some() as u8)
+    }
+}
+
+// Precalculates Chinese years, significant performance improvement for big tests
+#[cfg(test)]
+#[derive(Debug, Clone)]
+pub(crate) struct EastAsianTraditionalYears(Vec<EastAsianTraditionalYear>);
+
+#[cfg(test)]
+impl EastAsianTraditionalYears {
+    pub fn new<R: Rules>(r: R) -> Self {
+        Self((-1100000..=1100000).map(|i| r.year(i)).collect())
+    }
+}
+
+#[cfg(test)]
+impl crate::cal::scaffold::UnstableSealed for EastAsianTraditionalYears {}
+#[cfg(test)]
+impl Rules for EastAsianTraditionalYears {
+    fn year(&self, related_iso: i32) -> EastAsianTraditionalYear {
+        self.0[(related_iso + 1100000) as usize]
     }
 }
 

@@ -141,7 +141,8 @@ impl Calendar for Julian {
         month: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_codes(era, year, month, day, self).map(JulianDateInner)
+        ArithmeticDate::from_era_year_month_code_day(era, year, month, day, self)
+            .map(JulianDateInner)
     }
 
     #[cfg(feature = "unstable")]
@@ -270,9 +271,10 @@ impl Julian {
 }
 
 impl Date<Julian> {
-    /// Construct new Julian Date.
+    /// Construct new Julian [`Date`].
     ///
-    /// Years are arithmetic, meaning there is a year 0. Zero and negative years are in BC, with year 0 = 1 BC
+    /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
+    /// valid range of `-1,000,000..=1,000,000`.
     ///
     /// ```rust
     /// use icu::calendar::Date;
@@ -285,7 +287,7 @@ impl Date<Julian> {
     /// assert_eq!(date_julian.day_of_month().0, 20);
     /// ```
     pub fn try_new_julian(year: i32, month: u8, day: u8) -> Result<Date<Julian>, RangeError> {
-        ArithmeticDate::try_from_ymd(year, month, day)
+        ArithmeticDate::from_year_month_day(year, month, day, &Julian)
             .map(JulianDateInner)
             .map(|inner| Date::from_raw(inner, Julian))
     }

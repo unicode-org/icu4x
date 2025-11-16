@@ -220,18 +220,20 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         ArithmeticDate::new_unchecked(self.year(), self.month(), self.day())
     }
 
-    pub(crate) fn from_codes(
+    pub(crate) fn from_era_year_month_code_day(
         era: Option<&str>,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
         calendar: &C,
     ) -> Result<Self, DateError> {
-        let year = range_check(year, "year", VALID_YEAR_RANGE)?;
         let year = if let Some(era) = era {
-            calendar.year_info_from_era(era.as_bytes(), year)?
+            let year = calendar
+                .year_info_from_era(era.as_bytes(), range_check(year, "year", VALID_YEAR_RANGE)?)?;
+            range_check(year.to_extended_year(), "era_year", VALID_YEAR_RANGE)?;
+            year
         } else {
-            calendar.year_info_from_extended(year)
+            calendar.year_info_from_extended(range_check(year, "extended_year", VALID_YEAR_RANGE)?)
         };
         let validated = Month::try_from_utf8(month_code.0.as_bytes()).map_err(|e| match e {
             MonthCodeParseError::InvalidSyntax => DateError::UnknownMonthCode(month_code),
@@ -313,20 +315,17 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
                 },
             },
             (Some(era), Some(era_year)) => {
-                let era_year_as_year_info = calendar
-                    .year_info_from_era(era, range_check(era_year, "year", VALID_YEAR_RANGE)?)?;
+                let year = calendar.year_info_from_era(
+                    era,
+                    range_check(era_year.to_extended_year(), "year", VALID_YEAR_RANGE)?,
+                )?;
+                range_check(year.to_extended_year(), "extended_year", VALID_YEAR_RANGE)?;
                 if let Some(extended_year) = fields.extended_year {
-                    if era_year_as_year_info
-                        != calendar.year_info_from_extended(range_check(
-                            extended_year,
-                            "year",
-                            VALID_YEAR_RANGE,
-                        )?)
-                    {
+                    if year.to_extended_year() != extended_year {
                         return Err(DateFromFieldsError::InconsistentYear);
                     }
                 }
-                era_year_as_year_info
+                year
             }
             // Era and Era Year must be both or neither
             (Some(_), None) | (None, Some(_)) => return Err(DateFromFieldsError::NotEnoughFields),
@@ -372,12 +371,48 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         Ok(Self::new_unchecked(year, constrained_month, day))
     }
 
-    pub(crate) fn try_from_ymd(year: C::YearInfo, month: u8, day: u8) -> Result<Self, RangeError> {
-        range_check(year.to_extended_year(), "year", VALID_YEAR_RANGE)?;
-        range_check(month, "month", 1..=C::months_in_provided_year(year))?;
-        range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
+    pub(crate) fn from_year_month_day(
+        year: i32,
+        month: u8,
+        day: u8,
+        cal: &C,
+    ) -> Result<Self, RangeError> {
+        let year_info = cal.year_info_from_extended(range_check(year, "year", VALID_YEAR_RANGE)?);
+        // check the extended year in terms of the year
+        let offset = year - year_info.to_extended_year();
+        range_check(
+            year, // == year_info.to_extended_year() + offset
+            "year",
+            (VALID_YEAR_RANGE.start() + offset)..=(VALID_YEAR_RANGE.end() + offset),
+        )?;
+        range_check(month, "month", 1..=C::months_in_provided_year(year_info))?;
+        range_check(day, "day", 1..=C::days_in_provided_month(year_info, month))?;
         // date is in the valid year range, and therefore in the valid RD range
-        Ok(ArithmeticDate::new_unchecked(year, month, day))
+        Ok(ArithmeticDate::new_unchecked(year_info, month, day))
+    }
+
+    pub(crate) fn from_era_year_month_day(
+        era: &str,
+        year: i32,
+        month: u8,
+        day: u8,
+        cal: &C,
+    ) -> Result<Self, DateError> {
+        let year_info = cal.year_info_from_era(
+            era.as_bytes(),
+            range_check(year, "era_year", VALID_YEAR_RANGE)?,
+        )?;
+        // check the extended year in terms of the year
+        let offset = year - year_info.to_extended_year();
+        range_check(
+            year, // == year_info.to_extended_year() + offset
+            "extended_year",
+            (VALID_YEAR_RANGE.start() + offset)..=(VALID_YEAR_RANGE.end() + offset),
+        )?;
+        range_check(month, "month", 1..=C::months_in_provided_year(year_info))?;
+        range_check(day, "day", 1..=C::days_in_provided_month(year_info, month))?;
+        // date is in the valid year range, and therefore in the valid RD range
+        Ok(ArithmeticDate::new_unchecked(year_info, month, day))
     }
 
     /// Implements the Temporal abstract operation BalanceNonISODate.
