@@ -520,6 +520,16 @@ impl<'data> CnnSegmenter<'data> {
     }
 }
 
+#[cfg(test)]
+fn python_test_output() -> Vec<f32> {
+    const PYTHON_OUTPUT: &str = include_str!("python_test_output.txt");
+    PYTHON_OUTPUT
+        .split_whitespace()
+        .filter(|s| !s.is_empty())
+        .map(|s| s.parse::<f32>().expect("failed to parse reference float"))
+        .collect()
+}
+
 #[test]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let rawcnndata = RawCnnData::for_test();
@@ -534,5 +544,31 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let tags = out.to_bies_tags();
     println!("BIES: {}", tags);
+    Ok(())
+}
+
+#[test]
+fn rust_matches_python_probs() -> Result<(), Box<dyn std::error::Error>> {
+    let python = python_test_output();
+    let rawcnndata = RawCnnData::for_test();
+    let cnndata = rawcnndata
+        .try_convert()
+        .map_err(|_| "validation/conversion failed".to_string())?;
+    let segmenter = CnnSegmenter::new(&cnndata);
+
+    let thai = "ปัญหาความแตกต่างที่เกิดขึ้นระหว่างความเป็นธรรมในทางสังคมกับความเป็นธรรมทางกฎหมาย".to_string();
+    let out = segmenter.segment_str(&thai);
+    let probs = out.probs.as_flat_slice();
+
+    assert_eq!(probs.len(), python.len());
+
+    let tol = 1e-6_f32;
+    for (i, (&got, &expected)) in probs.iter().zip(python.iter()).enumerate() {
+        let diff = (got - expected).abs();
+        assert!(
+            diff <= tol,
+            "mismatch at index {i}: got={got:.8e}, expected={expected:.8e}, diff={diff:.3e}"
+        );
+    }
     Ok(())
 }
