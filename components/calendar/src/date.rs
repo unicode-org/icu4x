@@ -193,7 +193,7 @@ impl<A: AsCalendar> Date<A> {
     /// Construct a date from a [`RataDie`] and a calendar.
     ///
     /// This method is guaranteed to round trip with [`Date::to_rata_die`]. Inputs
-    /// that were not produced by [`Date::from_rata_die`] might be clamped:
+    /// that were not produced by [`Date::to_rata_die`] might be clamped:
     /// ```rust
     /// use icu::calendar::{Date, Gregorian, types::RataDie};
     ///
@@ -211,7 +211,7 @@ impl<A: AsCalendar> Date<A> {
 
     /// Convert the date to a [`RataDie`]
     ///
-    /// This method is guaranteed to round trip with [`Date::to_rata_die`].
+    /// This method is guaranteed to round trip with [`Date::from_rata_die`].
     #[inline]
     pub fn to_rata_die(&self) -> RataDie {
         self.calendar.as_calendar().to_rata_die(self.inner())
