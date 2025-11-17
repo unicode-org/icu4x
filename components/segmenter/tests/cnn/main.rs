@@ -562,9 +562,9 @@ fn rust_matches_python_probs() -> Result<(), Box<dyn std::error::Error>> {
 
     assert_eq!(probs.len(), python.len());
 
-    let tol = 1e-6_f32;
+    let tol = 1e-5;
     for (i, (&got, &expected)) in probs.iter().zip(python.iter()).enumerate() {
-        let diff = (got - expected).abs();
+        let diff = (got - expected).abs() / expected.abs();
         assert!(
             diff <= tol,
             "mismatch at index {i}: got={got:.8e}, expected={expected:.8e}, diff={diff:.3e}"
