@@ -63,6 +63,7 @@ pub use yoke_derive::Yokeable;
 
 pub use crate::yoke::{CloneableCart, Yoke};
 pub use crate::yokeable::Yokeable;
+pub use stable_deref_trait;
 
 #[cfg(feature = "zerofrom")]
 use zerofrom::ZeroFrom;
