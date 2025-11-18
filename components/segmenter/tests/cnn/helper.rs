@@ -29,6 +29,11 @@ impl<const D: usize> MatrixOwned<D> {
         }
     }
 
+    #[cfg(test)]
+    pub fn as_flat_slice(&self) -> &[f32] {
+        &self.data
+    }
+
     pub(super) fn new_zero(dims: [usize; D]) -> Self {
         let total_len = dims.iter().product::<usize>();
         MatrixOwned {

@@ -52,7 +52,7 @@ impl Predictor {
         Self::from_json(MODEL_FOR_TEST).unwrap()
     }
 
-    pub fn predict(&self, sentence: &str) -> Vec<bool> {
+    pub fn predict(&self, sentence: &str) -> Vec<i16> {
         let chars: Vec<char> = sentence.chars().collect();
         if chars.is_empty() {
             return Vec::new();
@@ -118,9 +118,8 @@ impl Predictor {
                 }
             }
 
-            mask.push(score > 0);
+            mask.push(score);
         }
-        mask.push(true);
 
         mask
     }
@@ -128,9 +127,9 @@ impl Predictor {
     pub fn predict_breakpoints(&self, sentence: &str) -> Vec<usize> {
         let mut breakpoints = vec![0];
         let mut offset = 0;
-        for (tag, ch) in self.predict(sentence).iter().zip(sentence.chars()) {
+        for (&score, ch) in self.predict(sentence).iter().zip(sentence.chars()) {
             offset += ch.len_utf8();
-            if *tag {
+            if score > 0 {
                 breakpoints.push(offset);
             }
         }
@@ -138,16 +137,49 @@ impl Predictor {
     }
 }
 
+#[cfg(test)]
+fn python_test_output() -> Vec<i16> {
+    const PYTHON_OUTPUT: &str = include_str!("python_test_output.txt");
+    PYTHON_OUTPUT
+        .split_whitespace()
+        .filter(|s| !s.is_empty())
+        .map(|s| s.parse::<i16>().expect("failed to parse reference float"))
+        .collect()
+}
+
 #[test]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let predictor = Predictor::for_test();
 
     let sentence =
-        "香港國際機場繼上月停電後，前日再發生冷氣故障，經濟發展及勞工局長葉澍堃形容這是警號"
+        "根据最新的财报数据显示，该公司的市盈率已经达到了历史最低点，但是其核心竞争力依然保持稳定增长的态势。"
             .to_string();
     let mask = predictor.predict(&sentence);
 
     println!("Input: {}", sentence);
     println!("Output: {:?}", mask);
+    Ok(())
+}
+
+#[test]
+fn rust_matches_python_probs() -> Result<(), Box<dyn std::error::Error>> {
+    let python = python_test_output();
+    let predictor = Predictor::for_test();
+
+    let sentence =
+        "根据最新的财报数据显示，该公司的市盈率已经达到了历史最低点，但是其核心竞争力依然保持稳定增长的态势。"
+            .to_string();
+    let mask = predictor.predict(&sentence);
+
+    assert_eq!(mask.len(), python.len());
+
+    let tol = 0;
+    for (i, (&got, &expected)) in mask.iter().zip(python.iter()).enumerate() {
+        let diff = (got - expected).abs();
+        assert!(
+            diff <= tol,
+            "mismatch at index {i}: got={got:}, expected={expected:}, diff={diff:}"
+        );
+    }
     Ok(())
 }
