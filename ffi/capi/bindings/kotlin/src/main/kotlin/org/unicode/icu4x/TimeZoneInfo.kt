@@ -156,7 +156,7 @@ class TimeZoneInfo internal constructor (
     fun inferVariant(offsetCalculator: VariantOffsetsCalculator): Unit? {
         
         val returnVal = lib.icu4x_TimeZoneInfo_infer_variant_mv1(handle, offsetCalculator.handle);
-        returnVal.option() ?: return null
+        return returnVal.option()
     }
     
     /** See the [Rust documentation for `variant`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZoneInfo.html#method.variant) for more information.

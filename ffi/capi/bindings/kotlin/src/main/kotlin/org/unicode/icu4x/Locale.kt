@@ -157,7 +157,7 @@ class Locale internal constructor (
         val (vMem, vSlice) = PrimitiveArrayTools.borrowUtf8(v)
         
         val returnVal = lib.icu4x_Locale_set_unicode_extension_mv1(handle, kSlice, vSlice);
-        returnVal.option() ?: return null
+        return returnVal.option()
     }
     
     /** Returns a string representation of [Locale] language.

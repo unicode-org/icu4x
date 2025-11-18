@@ -630,7 +630,7 @@ internal class ResultDateTimeNativeIntUnion: Union() {
     @JvmField
     internal var ok: DateTimeNative = DateTimeNative()
     @JvmField
-    internal var err: Int = Rfc9557ParseError.default().toNative()
+    internal var err: Int = 0
 }
 
 class ResultDateTimeNativeInt: Structure(), Structure.ByValue  {
@@ -649,7 +649,7 @@ internal class ResultIsoDateTimeNativeIntUnion: Union() {
     @JvmField
     internal var ok: IsoDateTimeNative = IsoDateTimeNative()
     @JvmField
-    internal var err: Int = Rfc9557ParseError.default().toNative()
+    internal var err: Int = 0
 }
 
 class ResultIsoDateTimeNativeInt: Structure(), Structure.ByValue  {
@@ -685,83 +685,7 @@ internal class ResultPointerIntUnion: Union() {
     @JvmField
     internal var ok: Pointer = Pointer(0)
     @JvmField
-    internal var err: Int = CalendarError.default().toNative()
-}
-
-class ResultPointerInt: Structure(), Structure.ByValue  {
-    @JvmField
-    internal var union: ResultPointerIntUnion = ResultPointerIntUnion()
-
-    @JvmField
-    internal var isOk: Byte = 0
-
-    // Define the fields of the struct
-    override fun getFieldOrder(): List<String> {
-        return listOf("union", "isOk")
-    }
-}
-internal class ResultPointerIntUnion: Union() {
-    @JvmField
-    internal var ok: Pointer = Pointer(0)
-    @JvmField
-    internal var err: Int = DataError.default().toNative()
-}
-
-class ResultPointerInt: Structure(), Structure.ByValue  {
-    @JvmField
-    internal var union: ResultPointerIntUnion = ResultPointerIntUnion()
-
-    @JvmField
-    internal var isOk: Byte = 0
-
-    // Define the fields of the struct
-    override fun getFieldOrder(): List<String> {
-        return listOf("union", "isOk")
-    }
-}
-internal class ResultPointerIntUnion: Union() {
-    @JvmField
-    internal var ok: Pointer = Pointer(0)
-    @JvmField
-    internal var err: Int = DecimalParseError.default().toNative()
-}
-
-class ResultPointerInt: Structure(), Structure.ByValue  {
-    @JvmField
-    internal var union: ResultPointerIntUnion = ResultPointerIntUnion()
-
-    @JvmField
-    internal var isOk: Byte = 0
-
-    // Define the fields of the struct
-    override fun getFieldOrder(): List<String> {
-        return listOf("union", "isOk")
-    }
-}
-internal class ResultPointerIntUnion: Union() {
-    @JvmField
-    internal var ok: Pointer = Pointer(0)
-    @JvmField
-    internal var err: Int = LocaleParseError.default().toNative()
-}
-
-class ResultPointerInt: Structure(), Structure.ByValue  {
-    @JvmField
-    internal var union: ResultPointerIntUnion = ResultPointerIntUnion()
-
-    @JvmField
-    internal var isOk: Byte = 0
-
-    // Define the fields of the struct
-    override fun getFieldOrder(): List<String> {
-        return listOf("union", "isOk")
-    }
-}
-internal class ResultPointerIntUnion: Union() {
-    @JvmField
-    internal var ok: Pointer = Pointer(0)
-    @JvmField
-    internal var err: Int = Rfc9557ParseError.default().toNative()
+    internal var err: Int = 0
 }
 
 class ResultPointerInt: Structure(), Structure.ByValue  {
@@ -795,24 +719,7 @@ class ResultPointerTimeZoneInvalidOffsetErrorNative: Structure(), Structure.ByVa
 }
 internal class ResultUnitIntUnion: Union() {
     @JvmField
-    internal var err: Int = DataError.default().toNative()
-}
-
-class ResultUnitInt: Structure(), Structure.ByValue  {
-    @JvmField
-    internal var union: ResultUnitIntUnion = ResultUnitIntUnion()
-
-    @JvmField
-    internal var isOk: Byte = 0
-
-    // Define the fields of the struct
-    override fun getFieldOrder(): List<String> {
-        return listOf("union", "isOk")
-    }
-}
-internal class ResultUnitIntUnion: Union() {
-    @JvmField
-    internal var err: Int = LocaleParseError.default().toNative()
+    internal var err: Int = 0
 }
 
 class ResultUnitInt: Structure(), Structure.ByValue  {
@@ -846,7 +753,7 @@ internal class ResultZonedDateTimeNativeIntUnion: Union() {
     @JvmField
     internal var ok: ZonedDateTimeNative = ZonedDateTimeNative()
     @JvmField
-    internal var err: Int = Rfc9557ParseError.default().toNative()
+    internal var err: Int = 0
 }
 
 class ResultZonedDateTimeNativeInt: Structure(), Structure.ByValue  {
@@ -865,7 +772,7 @@ internal class ResultZonedIsoDateTimeNativeIntUnion: Union() {
     @JvmField
     internal var ok: ZonedIsoDateTimeNative = ZonedIsoDateTimeNative()
     @JvmField
-    internal var err: Int = Rfc9557ParseError.default().toNative()
+    internal var err: Int = 0
 }
 
 class ResultZonedIsoDateTimeNativeInt: Structure(), Structure.ByValue  {
@@ -904,7 +811,7 @@ internal class OptionFFIUint16: Structure(), Structure.ByValue  {
 }
 internal class OptionInt: Structure(), Structure.ByValue  {
     @JvmField
-    internal var value: Int = Int()
+    internal var value: Int = 0
 
     @JvmField
     internal var isOk: Byte = 0
