@@ -236,7 +236,8 @@ impl Calendar for Hebrew {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_codes(era, year, month_code, day, self).map(HebrewDateInner)
+        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
+            .map(HebrewDateInner)
     }
 
     #[cfg(feature = "unstable")]
@@ -346,6 +347,9 @@ impl Calendar for Hebrew {
 impl Date<Hebrew> {
     /// This method uses an ordinal month, which is probably not what you want.
     ///
+    /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
+    /// valid range of `-1,000,000..=1,000,000`.
+    ///
     /// Use [`Date::try_new_from_codes`]
     #[deprecated(since = "2.1.0", note = "use `Date::try_new_from_codes`")]
     pub fn try_new_hebrew(
@@ -353,9 +357,7 @@ impl Date<Hebrew> {
         ordinal_month: u8,
         day: u8,
     ) -> Result<Date<Hebrew>, RangeError> {
-        let year = HebrewYear::compute(year);
-
-        ArithmeticDate::try_from_ymd(year, ordinal_month, day)
+        ArithmeticDate::from_year_month_day(year, ordinal_month, day, &Hebrew)
             .map(HebrewDateInner)
             .map(|inner| Date::from_raw(inner, Hebrew))
     }
