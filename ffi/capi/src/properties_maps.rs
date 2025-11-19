@@ -9,8 +9,8 @@ pub mod ffi {
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use icu_properties::props::{
         BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak,
-        HangulSyllableType, IndicSyllabicCategory, JoiningType, LineBreak, Script, SentenceBreak,
-        VerticalOrientation, WordBreak,
+        HangulSyllableType, IndicSyllabicCategory, JoiningType, LineBreak, NumericType, Script,
+        SentenceBreak, VerticalOrientation, WordBreak,
     };
 
     use crate::unstable::properties_enums::ffi::GeneralCategoryGroup;
@@ -164,6 +164,29 @@ pub mod ffi {
                 )?,
             ))
         }
+
+        /// Create a map for the `Numeric_Type` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::NumericType, Struct)]
+        #[diplomat::attr(auto, named_constructor = "numeric_type")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_numeric_type() -> Box<CodePointMapData8> {
+            convert_8(icu_properties::CodePointMapData::<NumericType>::new().static_to_owned())
+        }
+
+        /// Create a map for the `Bidi_Class` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::NumericType, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "numeric_type_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_numeric_type_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointMapData8>, DataError> {
+            Ok(convert_8(
+                icu_properties::CodePointMapData::<NumericType>::try_new_unstable(
+                    &provider.get_unstable()?,
+                )?,
+            ))
+        }
+
         /// Create a map for the `East_Asian_Width` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::EastAsianWidth, Struct)]
         #[diplomat::attr(auto, named_constructor = "east_asian_width")]
