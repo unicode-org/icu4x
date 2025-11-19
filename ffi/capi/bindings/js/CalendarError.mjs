@@ -14,7 +14,9 @@ export class CalendarError {
         ["Unknown", 0],
         ["OutOfRange", 1],
         ["UnknownEra", 2],
-        ["UnknownMonthCode", 3]
+        ["UnknownMonthCode", 3],
+        ["MonthCodeNotInCalendar", 4],
+        ["MonthCodeNotInYear", 5]
     ]);
 
     static getAllEntries() {
@@ -64,12 +66,16 @@ export class CalendarError {
         new CalendarError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
         new CalendarError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
         new CalendarError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
+        new CalendarError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 4),
+        new CalendarError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 5),
     ];
 
     static Unknown = CalendarError.#objectValues[0];
     static OutOfRange = CalendarError.#objectValues[1];
     static UnknownEra = CalendarError.#objectValues[2];
     static UnknownMonthCode = CalendarError.#objectValues[3];
+    static MonthCodeNotInCalendar = CalendarError.#objectValues[4];
+    static MonthCodeNotInYear = CalendarError.#objectValues[5];
 
 
     constructor(value) {
