@@ -59,7 +59,11 @@ impl<'s> Iterator for LanguageIterator<'s> {
     fn next(&mut self) -> Option<Self::Item> {
         let mut indices = self.rest.char_indices();
         let lang = get_language(indices.next()?.1 as u32);
-        match indices.find(|&(_, ch)| get_language(ch as u32) != lang) {
+        match indices.find(|&(_, ch)| {
+            let ch_lang = get_language(ch as u32);
+            !(ch_lang == Language::Unknown && ch.is_whitespace())
+                && ch_lang != lang
+        }) {
             Some((i, _)) => {
                 let (result, rest) = self.rest.split_at(i);
                 self.rest = rest;
@@ -88,7 +92,12 @@ impl<'s> Iterator for LanguageIteratorUtf16<'s> {
         match self
             .rest
             .iter()
-            .position(|&ch| get_language(ch as u32) != lang)
+            .position(|&ch| {
+                let ch_lang = get_language(ch as u32);
+                !(ch_lang == Language::Unknown 
+                  && (ch == 0x20 || ch == 0x09 || ch == 0x0A || ch == 0x0D))
+                    && ch_lang != lang
+            })
         {
             Some(i) => {
                 let (result, rest) = self.rest.split_at(i);
