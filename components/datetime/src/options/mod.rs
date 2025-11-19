@@ -333,7 +333,7 @@ impl IntoOption<YearStyle> for YearStyle {
 /// use icu::datetime::fieldsets::T;
 /// use icu::datetime::options::SubsecondDigits;
 /// use icu::datetime::options::TimePrecision;
-/// use icu::datetime::FixedCalendarDateTimeFormatter;
+/// use icu::datetime::NoCalendarFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
@@ -345,7 +345,7 @@ impl IntoOption<YearStyle> for YearStyle {
 ///     TimePrecision::MinuteOptional,
 /// ]
 /// .map(|time_precision| {
-///     FixedCalendarDateTimeFormatter::<(), _>::try_new(
+///     NoCalendarFormatter::try_new(
 ///         locale!("en-US").into(),
 ///         T::short().with_time_precision(time_precision),
 ///     )

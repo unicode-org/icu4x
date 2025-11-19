@@ -91,6 +91,9 @@ impl YearNameLength {
 }
 
 /// Choices for loading month names.
+///
+/// This enum covers both the length (abbreviated, wide, or narrow)
+/// and the formatting context (format or standalone).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum MonthNameLength {
@@ -169,6 +172,9 @@ impl MonthNameLength {
 }
 
 /// Choices for loading weekday names.
+///
+/// This enum covers both the length (abbreviated, wide, narrow, or short)
+/// and the formatting context (format or standalone).
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum WeekdayNameLength {
@@ -2658,6 +2664,8 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// For example, this can transform a formatter for [`DateFieldSet`] to one for
     /// [`CompositeDateTimeFieldSet`].
     ///
+    /// To learn why this function is useful, see [`DateTimeFormatter::cast_into_fset`].
+    ///
     /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
     /// [`CompositeDateTimeFieldSet`]: crate::fieldsets::enums::CompositeDateTimeFieldSet
     ///
@@ -2736,6 +2744,8 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
     ///
     /// For example, this can transform a formatter for [`DateFieldSet`] to one for
     /// [`CompositeDateTimeFieldSet`].
+    ///
+    /// To learn why this function is useful, see [`DateTimeFormatter::cast_into_fset`].
     ///
     /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
     /// [`CompositeDateTimeFieldSet`]: crate::fieldsets::enums::CompositeDateTimeFieldSet
