@@ -103,6 +103,17 @@ if not ${is_local} # local dylib is not treeshaken
 end
 '''
 
+[tasks.test-kotlin]
+description = "Run Kotlin tests"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+cd ffi/kotlin_experimental
+exec --fail-on-error make
+echo "Running mvn test"
+exec --fail-on-error mvn test
+'''
+
 # no_std tasks
 
 [tasks.check-freertos-wearos]

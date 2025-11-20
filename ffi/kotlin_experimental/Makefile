@@ -10,16 +10,19 @@ FEATURES ?= "compiled_data,default_components,logging"
 
 ifeq ($(OS),Windows_NT)
   DYLIB_EXT = "dll"
+  DYLIB_PREFIX = ""
 else
 	UNAME := $(shell uname)
-	ifeq ($(OS), Darwin)
+	ifeq ($(UNAME), Darwin)
   	DYLIB_EXT = "dylib"
+  	DYLIB_PREFIX = "lib"
   else
   	DYLIB_EXT = "so"
+  	DYLIB_PREFIX = "lib"
   endif
 endif
 
-../../target/release/libicu_capi.$(DYLIB_EXT): FORCE
+../../target/release/$(DYLIB_PREFIX)icu_capi.$(DYLIB_EXT): FORCE
 	cargo rustc \
 		--release \
 		-p icu_capi \
@@ -27,7 +30,7 @@ endif
 		--no-default-features \
 		--features ${FEATURES}
 
-src/main/native/icu4x.$(DYLIB_EXT): ../../target/release/libicu_capi.$(DYLIB_EXT)
-	cp ../../target/release/libicu_capi.$(DYLIB_EXT) src/main/native/icu4x.$(DYLIB_EXT)
+src/main/native/$(DYLIB_PREFIX)icu4x.$(DYLIB_EXT): ../../target/release/$(DYLIB_PREFIX)icu_capi.$(DYLIB_EXT)
+	cp ../../target/release/$(DYLIB_PREFIX)icu_capi.$(DYLIB_EXT) src/main/native/$(DYLIB_PREFIX)icu4x.$(DYLIB_EXT)
 
-build: src/main/native/icu4x.$(DYLIB_EXT)
+build: src/main/native/$(DYLIB_PREFIX)icu4x.$(DYLIB_EXT)
