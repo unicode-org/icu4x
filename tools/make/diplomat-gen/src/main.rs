@@ -85,7 +85,11 @@ fn main() -> std::io::Result<()> {
         lang.as_str(),
         &{
             let mut include = if lang != "demo_gen" {
-                root.join("ffi/capi/bindings").join(&lang)
+                if lang == "kotlin" {
+                    root.join("ffi/capi/bindings/kotlin_experimental")
+                } else {
+                    root.join("ffi/capi/bindings").join(&lang)
+                }
             } else {
                 root.join("tools/web-demo/gen")
             };

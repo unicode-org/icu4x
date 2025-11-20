@@ -130,6 +130,13 @@ dependencies = [
     "test-dart",
 ]
 
+[tasks.ci-job-test-kotlin]
+description = "Run all tests for the CI 'test-kotlin' job"
+category = "CI"
+dependencies = [
+    "test-kotlin",
+]
+
 [tasks.ci-job-nostd]
 description = "Run all tests for the CI 'test-nostd' job"
 env = { ICU4X_DATA_DIR = "../stubdata" }
