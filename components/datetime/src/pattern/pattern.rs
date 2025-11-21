@@ -17,6 +17,9 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// It assumes that the pattern is already localized for the customer's locale. Most clients
 /// should use [`DateTimeFormatter`] instead of directly formatting with patterns.
 ///
+/// This type can be created by parsing a UTS 35 datetime picture string, and it can be
+/// stringified back into that syntax.
+///
 /// There are two ways to make one of these:
 ///
 /// 1. From a custom pattern string: [`DateTimePattern::try_from_pattern_str`]

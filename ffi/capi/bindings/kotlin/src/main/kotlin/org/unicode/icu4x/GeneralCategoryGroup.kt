@@ -7,7 +7,7 @@ import com.sun.jna.Pointer
 import com.sun.jna.Structure
 
 internal interface GeneralCategoryGroupLib: Library {
-    fun icu4x_GeneralCategoryGroup_contains_mv1(nativeStruct: GeneralCategoryGroupNative, val: Int): Byte
+    fun icu4x_GeneralCategoryGroup_contains_mv1(nativeStruct: GeneralCategoryGroupNative, val_: Int): Byte
     fun icu4x_GeneralCategoryGroup_complement_mv1(nativeStruct: GeneralCategoryGroupNative): GeneralCategoryGroupNative
     fun icu4x_GeneralCategoryGroup_all_mv1(): GeneralCategoryGroupNative
     fun icu4x_GeneralCategoryGroup_empty_mv1(): GeneralCategoryGroupNative
@@ -159,9 +159,9 @@ class GeneralCategoryGroup internal constructor (
     
     /** See the [Rust documentation for `contains`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html#method.contains) for more information.
     */
-    fun contains(val: GeneralCategory): Boolean {
+    fun contains(val_: GeneralCategory): Boolean {
         
-        val returnVal = lib.icu4x_GeneralCategoryGroup_contains_mv1(nativeStruct, val.toNative());
+        val returnVal = lib.icu4x_GeneralCategoryGroup_contains_mv1(nativeStruct, val_.toNative());
         return (returnVal > 0)
     }
     
