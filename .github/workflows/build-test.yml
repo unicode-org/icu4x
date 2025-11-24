@@ -393,6 +393,7 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-test-kotlin`
+      run: cargo make ci-job-test-kotlin
 
   # ci-job-nostd
   nostd:
