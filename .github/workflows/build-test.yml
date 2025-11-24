@@ -366,7 +366,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # No Windows for now, somehow Windows is unable to find the maven binary
         os: [ ubuntu-latest, macos-latest ]
     runs-on: ${{ matrix.os }}
 
@@ -389,15 +388,11 @@ jobs:
     # Job-specific dependencies
     - name: Setup Maven Action
       uses: s4u/setup-maven-action@v1.19.0
-
-
-    # Actual job
     - name: Maven version
       run: mvn -version
+
+    # Actual job
     - name: Run `cargo make ci-job-test-kotlin`
-      run: cargo make ci-job-test-kotlin
-
-
 
   # ci-job-nostd
   nostd:

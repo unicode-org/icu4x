@@ -85,21 +85,12 @@ fn main() -> std::io::Result<()> {
         lang.as_str(),
         &{
             let mut include = if lang != "demo_gen" {
-                if lang == "kotlin" {
-                    root.join("ffi/capi/bindings/kotlin_experimental")
-                } else {
-                    root.join("ffi/capi/bindings").join(&lang)
-                }
+                root.join("ffi/capi/bindings").join(&lang)
             } else {
                 root.join("tools/web-demo/gen")
             };
 
-            let dir_to_remove = if lang == "kotlin" {
-                include.join("src/main")
-            } else {
-                include.clone()
-            };
-            std::fs::remove_dir_all(&dir_to_remove)?;
+            std::fs::remove_dir_all(&include)?;
             if lang == "cpp" {
                 include = include.join("icu4x");
             }

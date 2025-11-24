@@ -108,7 +108,7 @@ description = "Run Kotlin tests"
 category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
-cd ffi/kotlin_experimental
+cd ffi/mvn
 exec --fail-on-error make
 echo "Running mvn test"
 exec --fail-on-error mvn test
