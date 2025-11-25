@@ -1,7 +1,6 @@
-// © 2024 Unicode, Inc.
-// This file is part of the ICU4X project and is licensed under the
-// Apache License, Version 2.0 with LLVM Exceptions.
-// See the LICENSE file for details.
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_calendar::{
     options::DateAddOptions, types::DateDuration, AnyCalendar, AnyCalendarKind, Date,
