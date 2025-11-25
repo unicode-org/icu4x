@@ -1,8 +1,12 @@
+// © 2024 Unicode, Inc.
+// This file is part of the ICU4X project and is licensed under the
+// Apache License, Version 2.0 with LLVM Exceptions.
+// See the LICENSE file for details.
 use icu_calendar::{
     options::DateAddOptions, types::DateDuration, AnyCalendar, AnyCalendarKind, Date,
 };
-use std::fmt::Write;
 use insta::assert_snapshot;
+use std::fmt::Write;
 
 #[test]
 fn test_date_add_across_calendars_and_durations() {
@@ -27,17 +31,37 @@ fn test_date_add_across_calendars_and_durations() {
         AnyCalendarKind::Roc,
     ];
 
-    let iso_dates = vec![
-        (2023, 1, 1),
-        (2024, 6, 15),
-        (2025, 12, 31),
-    ];
+    let iso_dates = vec![(2023, 1, 1), (2024, 6, 15), (2025, 12, 31)];
 
     let durations = vec![
-        DateDuration { years: 0, months: 0, weeks: 0, days: 10, is_negative: false },
-        DateDuration { years: 0, months: 2, weeks: 0, days: 0, is_negative: false },
-        DateDuration { years: 1, months: 0, weeks: 0, days: 0, is_negative: false },
-        DateDuration { years: 1, months: 3, weeks: 0, days: 15, is_negative: false },
+        DateDuration {
+            years: 0,
+            months: 0,
+            weeks: 0,
+            days: 10,
+            is_negative: false,
+        },
+        DateDuration {
+            years: 0,
+            months: 2,
+            weeks: 0,
+            days: 0,
+            is_negative: false,
+        },
+        DateDuration {
+            years: 1,
+            months: 0,
+            weeks: 0,
+            days: 0,
+            is_negative: false,
+        },
+        DateDuration {
+            years: 1,
+            months: 3,
+            weeks: 0,
+            days: 15,
+            is_negative: false,
+        },
     ];
 
     let opts = DateAddOptions::default();
@@ -52,14 +76,7 @@ fn test_date_add_across_calendars_and_durations() {
                 .expect("Valid ISO date")
                 .to_calendar(cal.clone());
 
-            // Print the calendar name and its localized starting date
-            writeln!(
-                &mut output,
-                "  {:?} (start: {:?})",
-                cal_kind,
-                start_date
-            )
-                .unwrap();
+            writeln!(&mut output, "  {:?} (start: {:?})", cal_kind, start_date).unwrap();
 
             for duration in &durations {
                 let mut date = start_date.clone();
@@ -67,24 +84,34 @@ fn test_date_add_across_calendars_and_durations() {
                 date.try_add_with_options(*duration, opts)
                     .expect("Addition should succeed");
 
-                // Now output the result *in that same calendar*, not ISO
+                // output logic
                 let duration_str = format!(
                     "{}{}{}{}",
-                    if duration.years != 0 { format!("{}y ", duration.years) } else { "".into() },
-                    if duration.months != 0 { format!("{}m ", duration.months) } else { "".into() },
-                    if duration.weeks != 0 { format!("{}w ", duration.weeks) } else { "".into() },
-                    if duration.days != 0 { format!("{}d", duration.days) } else { "".into() },
+                    if duration.years != 0 {
+                        format!("{}y ", duration.years)
+                    } else {
+                        "".into()
+                    },
+                    if duration.months != 0 {
+                        format!("{}m ", duration.months)
+                    } else {
+                        "".into()
+                    },
+                    if duration.weeks != 0 {
+                        format!("{}w ", duration.weeks)
+                    } else {
+                        "".into()
+                    },
+                    if duration.days != 0 {
+                        format!("{}d", duration.days)
+                    } else {
+                        "".into()
+                    },
                 )
-                    .trim()
-                    .to_string();
+                .trim()
+                .to_string();
 
-                writeln!(
-                    &mut output,
-                    "    +{} → {:?}",
-                    duration_str,
-                    date
-                )
-                    .unwrap();
+                writeln!(&mut output, "    +{} → {:?}", duration_str, date).unwrap();
             }
         }
 
