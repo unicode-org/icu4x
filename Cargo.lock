@@ -1218,6 +1218,7 @@ dependencies = [
  "icu_locale",
  "icu_locale_core",
  "icu_provider",
+ "insta",
  "itertools 0.14.0",
  "ixdtf",
  "serde",
