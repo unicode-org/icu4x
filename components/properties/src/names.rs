@@ -808,6 +808,14 @@ impl_value_getter! {
 }
 
 impl_value_getter! {
+    impl NumericType {
+        PropertyNameParseNumericTypeV1 / SINGLETON_PROPERTY_NAME_PARSE_NUMERIC_TYPE_V1;
+        PropertyEnumToValueNameLinearMap / PropertyNameShortNumericTypeV1 / SINGLETON_PROPERTY_NAME_SHORT_NUMERIC_TYPE_V1;
+        PropertyEnumToValueNameLinearMap / PropertyNameLongNumericTypeV1 / SINGLETON_PROPERTY_NAME_LONG_NUMERIC_TYPE_V1;
+    }
+}
+
+impl_value_getter! {
     impl GeneralCategory {
         PropertyNameParseGeneralCategoryV1 / SINGLETON_PROPERTY_NAME_PARSE_GENERAL_CATEGORY_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameShortGeneralCategoryV1 / SINGLETON_PROPERTY_NAME_SHORT_GENERAL_CATEGORY_V1;

@@ -210,6 +210,71 @@ make_enumerated_property! {
     ule_ty: u8;
 }
 
+/// Enumerated property Numeric_Type.
+///
+/// See Section 4.6, Numeric Value in The Unicode Standard for the summary of
+/// each property value.
+///
+/// # Example
+///
+/// ```
+/// use icu::properties::{props::NumericType, CodePointMapData};
+///
+/// assert_eq!(
+///     CodePointMapData::<NumericType>::new().get('0'),
+///     NumericType::Decimal,
+/// ); // U+0030
+/// assert_eq!(
+///     CodePointMapData::<NumericType>::new().get('½'),
+///     NumericType::Numeric,
+/// ); // U+00BD
+/// ```
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[allow(clippy::exhaustive_structs)] // newtype
+#[repr(transparent)]
+pub struct NumericType(pub(crate) u8);
+
+impl NumericType {
+    /// Returns an ICU4C `UNumericType` value.
+    pub const fn to_icu4c_value(self) -> u8 {
+        self.0
+    }
+    /// Constructor from an ICU4C `UNumericType` value.
+    pub const fn from_icu4c_value(value: u8) -> Self {
+        Self(value)
+    }
+}
+
+create_const_array! {
+#[allow(non_upper_case_globals)]
+impl NumericType {
+    /// Characters without numeric value
+    pub const None: NumericType = NumericType(0);
+    /// (`De`) Characters of positional decimal systems
+    ///
+    /// These are coextensive with [`GeneralCategory::DecimalNumber`].
+    pub const Decimal: NumericType = NumericType(1);
+    /// (`Di`) Variants of positional or sequences thereof.
+    ///
+    /// The distinction between [`NumericType::Digit`] and [`NumericType::Numeric`]
+    /// has not proven to be useful, so no further characters will be added to
+    /// this type.
+    pub const Digit: NumericType = NumericType(2);
+    /// (`Nu`) Other characters with numeric value
+    pub const Numeric: NumericType = NumericType(3);
+}
+}
+
+make_enumerated_property! {
+    name: "Numeric_Type";
+    short_name: "nt";
+    ident: NumericType;
+    data_marker: crate::provider::PropertyEnumNumericTypeV1;
+    singleton: SINGLETON_PROPERTY_ENUM_NUMERIC_TYPE_V1;
+    ule_ty: u8;
+}
+
 // This exists to encapsulate GeneralCategoryULE so that it can exist in the provider module rather than props
 pub(crate) mod gc {
     /// Enumerated property General_Category.
@@ -3300,6 +3365,14 @@ mod test_enumerated_property_completeness {
         check_enum(
             crate::provider::Baked::SINGLETON_PROPERTY_NAME_PARSE_BIDI_CLASS_V1,
             BidiClass::ALL_VALUES,
+        );
+    }
+
+    #[test]
+    fn test_nt() {
+        check_enum(
+            crate::provider::Baked::SINGLETON_PROPERTY_NAME_PARSE_NUMERIC_TYPE_V1,
+            NumericType::ALL_VALUES,
         );
     }
 
