@@ -625,9 +625,9 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         let end_of_month = Self::new_balanced(y0, duration.add_months_to(m0) + 1, 0, cal);
         // 1. Let _baseDay_ be _parts_.[[Day]].
         let base_day = self.day();
-        // 1. If _baseDay_ &lt; _endOfMonth_.[[Day]], then
+        // 1. If _baseDay_ &le; _endOfMonth_.[[Day]], then
         //   1. Let _regulatedDay_ be _baseDay_.
-        let regulated_day = if base_day < end_of_month.day() {
+        let regulated_day = if base_day <= end_of_month.day() {
             base_day
         } else {
             // 1. Else,

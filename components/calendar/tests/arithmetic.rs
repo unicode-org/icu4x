@@ -186,6 +186,16 @@ fn test_hebrew() {
 }
 
 #[test]
+fn test_gregory_leap_addition() {
+    let leap_day = Date::try_new_gregorian(2020, 2, 29).unwrap();
+    let mut options = DateAddOptions::default();
+    options.overflow = Some(Overflow::Reject);
+    let y4 = DateDuration::for_years(4);
+    let result = leap_day.try_added_with_options(y4, options).unwrap();
+    assert_eq!(result, Date::try_new_gregorian(2024, 2, 29).unwrap());
+}
+
+#[test]
 fn test_tricky_leap_months() {
     let mut add_options = DateAddOptions::default();
     add_options.overflow = Some(Overflow::Constrain);
