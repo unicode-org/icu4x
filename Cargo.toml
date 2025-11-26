@@ -214,10 +214,10 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Diplomat must be published preceding a new ICU4X release but may use git versions in between
-diplomat = { version = "0.14.0", default-features = false }
-diplomat-runtime = { version = "0.14.0", default-features = false }
-diplomat_core = { version = "0.14.0", default-features = false }
-diplomat-tool = { version = "0.14.1" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "0cb25653909d2328c758a1e51049f59a6de051a0", default-features = false }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "0cb25653909d2328c758a1e51049f59a6de051a0", default-features = false }
+diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "0cb25653909d2328c758a1e51049f59a6de051a0", default-features = false }
+diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "0cb25653909d2328c758a1e51049f59a6de051a0" }
 
 # EXTERNAL DEPENDENCIES
 #
@@ -299,6 +299,7 @@ rand = "0.9"
 rand_distr = "0.5"
 rand_pcg = "0.9"
 rayon = "1.3.0"
+regex = "1.12.2"
 rkyv = "0.7"
 rmp-serde = "1.2.0"
 serde_json = "1.0.45"
@@ -342,4 +343,5 @@ debug = true
 type_method_marked_deprecated.level = "allow" # allow deprecation in patch releases
 trait_method_marked_deprecated.level = "allow" # allow deprecation in patch releases
 type_marked_deprecated.level = "allow" # allow deprecation in patch releases
+struct_field_marked_deprecated = "allow" # allow deprecation in patch releases
 enum_no_repr_variant_discriminant_changed = "allow" # we don't consider this breaking https://github.com/obi1kenobi/cargo-semver-checks/issues/1376

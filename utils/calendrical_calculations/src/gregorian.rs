@@ -96,7 +96,7 @@ pub const fn day_before_year(year: i32) -> RataDie {
     fixed += (prev_year + YEAR_SHIFT) / 4 - (prev_year + YEAR_SHIFT) / 100
         + (prev_year + YEAR_SHIFT) / 400
         - const { YEAR_SHIFT / 4 - YEAR_SHIFT / 100 + YEAR_SHIFT / 400 };
-    RataDie::new(fixed)
+    EPOCH.add(fixed - 1)
 }
 
 /// Calculates the month/day from the 1-based day of the year

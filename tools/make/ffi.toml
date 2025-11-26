@@ -74,7 +74,7 @@ cd ffi/dart
 exec --fail-on-error dart pub get
 exec --fail-on-error dart format --set-exit-if-changed .
 exec --fail-on-error dart analyze
-exec --fail-on-error dart --enable-experiment=record-use test
+exec --fail-on-error dart test
 '''
 
 [tasks.test-dart-example]
@@ -101,6 +101,17 @@ if not ${is_local} # local dylib is not treeshaken
         trigger_error "Dart example binary >10MB"
     end
 end
+'''
+
+[tasks.test-kotlin]
+description = "Run Kotlin tests"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+cd ffi/mvn
+exec --fail-on-error make
+echo "Running mvn test"
+exec --fail-on-error mvn test
 '''
 
 # no_std tasks
@@ -142,6 +153,7 @@ dependencies = [
     "diplomat-gen-js",
     "diplomat-gen-dart",
     "diplomat-gen-demo",
+    "diplomat-gen-kotlin",
 ]
 
 [tasks.verify-diplomat-gen]
@@ -188,6 +200,12 @@ description = "Generate Dart bindings for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
 args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "dart"]
+
+[tasks.diplomat-gen-kotlin]
+description = "Generate Kotlin bindings for the FFI with Diplomat"
+category = "ICU4X Development"
+command = "cargo"
+args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "kotlin"]
 
 # Diplomat coverage
 

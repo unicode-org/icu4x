@@ -334,7 +334,7 @@ jobs:
     - uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
       with:
         # Keep in sync with artifacts-build.yml
-        sdk: ${{ github.event_name == 'schedule' && github.event.schedule == '0 14 * * *' && 'dev' || '3.10.0-186.0.dev' }}
+        sdk: ${{ github.event_name == 'schedule' && github.event.schedule == '0 14 * * *' && 'dev' || '3.11.0-46.0.dev' }}
     - name: Install yq if Windows
       if: ${{ matrix.os == 'windows-latest' }}
       run: choco install yq
@@ -361,6 +361,39 @@ jobs:
         yq -i ".hooks.user_defines.icu4x.buildMode = \"fetch\"" examples/dart/pubspec.yaml
         cargo make ci-job-test-dart
  
+   # ci-job-test-kotlin
+  test-kotlin:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+    # Cargo-make boilerplate
+    - name: Install cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
+
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-ci-toolchain
+
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Job-specific dependencies
+    - name: Setup Maven Action
+      uses: s4u/setup-maven-action@v1.19.0
+    - name: Maven version
+      run: mvn -version
+
+    # Actual job
+    - name: Run `cargo make ci-job-test-kotlin`
+      run: cargo make ci-job-test-kotlin
 
   # ci-job-nostd
   nostd:

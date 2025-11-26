@@ -121,13 +121,12 @@ pub struct Date<A: AsCalendar> {
 }
 
 impl<A: AsCalendar> Date<A> {
-    /// Construct a date from from era/month codes and fields, and some calendar representation
+    /// Construct a [`Date`] from from era, year, month, and day fields, and a calendar.
     ///
-    /// The year is `extended_year` if no era is provided.
+    /// The year is interpreted as an [`extended_year`](Date::extended_year) if no era is provided.
     ///
-    /// This function will not accept year/extended_year values that are outside of the range `[-2²⁷, 2²⁷]`,
-    /// regardless of the calendar, instead returning a [`DateError::Range`]. See [`Date::try_from_fields()`] for more
-    /// information.
+    /// This function accepts years in the range `-1,000,000..=1,000,000`, where the `extended_year`
+    /// is also in the range `-1,000,000..=1,000,000`.
     #[inline]
     pub fn try_new_from_codes(
         era: Option<&str>,
@@ -142,18 +141,14 @@ impl<A: AsCalendar> Date<A> {
         Ok(Date { inner, calendar })
     }
 
-    /// Construct a date from from a bag of fields.
+    /// Construct a [`Date`] from from a bag of fields and a calendar.
     ///
     /// This function allows specifying the year as either extended year or era + era year,
     /// and the month as either ordinal or month code. It can constrain out-of-bounds values
     /// and fill in missing fields. See [`DateFromFieldsOptions`] for more information.
     ///
-    /// This function will not accept year/extended_year values that are outside of the range `[-2²⁷, 2²⁷]`,
-    /// regardless of the calendar, instead returning a [`DateFromFieldsError::Range`]. This allows us to to keep
-    /// all operations on [`Date`]s infallible by staying clear of integer limits.
-    /// Currently, calendar-specific `Date::try_new_calendarname()` constructors
-    /// do not do this, and it is possible to obtain such extreme dates via calendar conversion or arithmetic,
-    /// though [we may change that behavior in the future](https://github.com/unicode-org/icu4x/issues/7076).
+    /// This function accepts years in the range `-1,000,000..=1,000,000`, where the `extended_year`
+    /// is also in the range `-1,000,000..=1,000,000`.
     ///
     /// # Examples
     ///
@@ -195,7 +190,16 @@ impl<A: AsCalendar> Date<A> {
         Ok(Date { inner, calendar })
     }
 
-    /// Construct a date from a [`RataDie`] and some calendar representation
+    /// Construct a date from a [`RataDie`] and a calendar.
+    ///
+    /// This method is guaranteed to round trip with [`Date::to_rata_die`]. Inputs
+    /// that were not produced by [`Date::to_rata_die`] might be clamped:
+    /// ```rust
+    /// use icu::calendar::{Date, Gregorian, types::RataDie};
+    ///
+    /// let rd = RataDie::new(1_000_000_000);
+    /// assert_ne!(Date::from_rata_die(rd, Gregorian).to_rata_die(), rd);
+    /// ```
     #[inline]
     pub fn from_rata_die(rd: RataDie, calendar: A) -> Self {
         let rd = rd.clamp(*VALID_RD_RANGE.start(), *VALID_RD_RANGE.end());
@@ -206,24 +210,26 @@ impl<A: AsCalendar> Date<A> {
     }
 
     /// Convert the date to a [`RataDie`]
+    ///
+    /// This method is guaranteed to round trip with [`Date::from_rata_die`].
     #[inline]
     pub fn to_rata_die(&self) -> RataDie {
         self.calendar.as_calendar().to_rata_die(self.inner())
     }
 
-    /// Construct a date from an ISO date and some calendar representation
+    /// Construct a [`Date`] from an ISO date and a calendar.
     #[inline]
     pub fn new_from_iso(iso: Date<Iso>, calendar: A) -> Self {
         iso.to_calendar(calendar)
     }
 
-    /// Convert the Date to an ISO Date
+    /// Convert the [`Date`] to an ISO Date
     #[inline]
     pub fn to_iso(&self) -> Date<Iso> {
         self.to_calendar(Iso)
     }
 
-    /// Convert the Date to a date in a different calendar
+    /// Convert the [`Date`] to a different calendar
     #[inline]
     pub fn to_calendar<A2: AsCalendar>(&self, calendar: A2) -> Date<A2> {
         let c1 = self.calendar.as_calendar();
@@ -237,25 +243,25 @@ impl<A: AsCalendar> Date<A> {
         Date { inner, calendar }
     }
 
-    /// The number of months in the year of this date
+    /// The number of months in the year of this date.
     #[inline]
     pub fn months_in_year(&self) -> u8 {
         self.calendar.as_calendar().months_in_year(self.inner())
     }
 
-    /// The number of days in the year of this date
+    /// The number of days in the year of this date.
     #[inline]
     pub fn days_in_year(&self) -> u16 {
         self.calendar.as_calendar().days_in_year(self.inner())
     }
 
-    /// The number of days in the month of this date
+    /// The number of days in the month of this date.
     #[inline]
     pub fn days_in_month(&self) -> u8 {
         self.calendar.as_calendar().days_in_month(self.inner())
     }
 
-    /// The day of the week for this date
+    /// The day of the week of this date.
     #[inline]
     pub fn day_of_week(&self) -> types::Weekday {
         self.to_rata_die().into()
@@ -353,7 +359,7 @@ impl<A: AsCalendar> Date<A> {
             .until(self.inner(), other.inner(), options)
     }
 
-    /// The calendar-specific year-info.
+    /// The year of this date.
     ///
     /// This returns an enum, see [`Date::era_year()`] and [`Date::cyclic_year()`] which are available
     /// for concrete calendar types and return concrete types.
@@ -362,7 +368,7 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().year_info(&self.inner).into()
     }
 
-    /// The "extended year".
+    /// The "extended year" of this date.
     ///
     /// This year number can be used when you need a simple numeric representation
     /// of the year, and can be meaningfully compared with extended years from other
@@ -379,25 +385,25 @@ impl<A: AsCalendar> Date<A> {
         self.year().extended_year()
     }
 
-    /// Returns whether `self` is in a calendar-specific leap year
+    /// Whether this date is in a leap year.
     #[inline]
     pub fn is_in_leap_year(&self) -> bool {
         self.calendar.as_calendar().is_in_leap_year(&self.inner)
     }
 
-    /// The calendar-specific month represented by `self`
+    /// The month of this date.
     #[inline]
     pub fn month(&self) -> types::MonthInfo {
         self.calendar.as_calendar().month(&self.inner)
     }
 
-    /// The calendar-specific day-of-month represented by `self`
+    /// The day-of-month of this date.
     #[inline]
     pub fn day_of_month(&self) -> types::DayOfMonth {
         self.calendar.as_calendar().day_of_month(&self.inner)
     }
 
-    /// The calendar-specific day-of-month represented by `self`
+    /// The day-of-month of this date.
     #[inline]
     pub fn day_of_year(&self) -> types::DayOfYear {
         self.calendar.as_calendar().day_of_year(&self.inner)
@@ -438,14 +444,14 @@ impl<A: AsCalendar> Date<A> {
 }
 
 impl<A: AsCalendar<Calendar = C>, C: Calendar<Year = EraYear>> Date<A> {
-    /// Returns information about the era for calendars using eras.
+    /// The year and era of this date.
     pub fn era_year(&self) -> EraYear {
         self.calendar.as_calendar().year_info(self.inner())
     }
 }
 
 impl<A: AsCalendar<Calendar = C>, C: Calendar<Year = CyclicYear>> Date<A> {
-    /// Returns information about the year cycle, for cyclic calendars.
+    /// The cyclic year of this date.
     pub fn cyclic_year(&self) -> CyclicYear {
         self.calendar.as_calendar().year_info(self.inner())
     }
@@ -473,7 +479,7 @@ impl Date<Iso> {
     pub fn week_of_year(&self) -> IsoWeekOfYear {
         let week_of = WeekCalculator::ISO
             .week_of(
-                365 + calendrical_calculations::gregorian::is_leap_year(self.inner.0.year - 1)
+                365 + calendrical_calculations::gregorian::is_leap_year(self.inner.0.year() - 1)
                     as u16,
                 self.days_in_year(),
                 self.day_of_year().0,
@@ -491,9 +497,9 @@ impl Date<Iso> {
         IsoWeekOfYear {
             week_number: week_of.week,
             iso_year: match week_of.unit {
-                RelativeUnit::Current => self.inner.0.year,
-                RelativeUnit::Next => self.inner.0.year + 1,
-                RelativeUnit::Previous => self.inner.0.year - 1,
+                RelativeUnit::Current => self.inner.0.year(),
+                RelativeUnit::Next => self.inner.0.year() + 1,
+                RelativeUnit::Previous => self.inner.0.year() - 1,
             },
         }
     }

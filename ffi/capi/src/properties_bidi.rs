@@ -9,6 +9,7 @@ pub mod ffi {
     use icu_properties::props;
 
     #[diplomat::rust_link(icu::properties::props::BidiMirroringGlyph, Struct)]
+    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct BidiMirroringGlyph {
         /// The mirroring glyph
         pub mirroring_glyph: DiplomatOption<DiplomatChar>,

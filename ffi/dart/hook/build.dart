@@ -7,19 +7,13 @@ import 'dart:io';
 import 'package:code_assets/code_assets.dart';
 import 'package:crypto/crypto.dart' show sha256;
 import 'package:hooks/hooks.dart';
-import 'package:icu4x/src/hook_helpers/build_libs.dart' show buildLib;
-import 'package:icu4x/src/hook_helpers/build_options.dart'
-    show BuildModeEnum, BuildOptions;
-import 'package:icu4x/src/hook_helpers/hashes.dart' show fileHashes;
-import 'package:icu4x/src/hook_helpers/shared.dart' show assetId, package;
-import 'package:icu4x/src/hook_helpers/version.dart' show version;
+import 'package:icu4x/src/hook_helpers/hashes.dart' show fileHashes, version;
 
 void main(List<String> args) async {
   await build(args, (input, output) async {
     BuildOptions buildOptions;
     try {
       buildOptions = BuildOptions.fromDefines(input.userDefines);
-      print('Got build options: ${buildOptions.toJson()}');
     } catch (e) {
       throw ArgumentError('''
 Error: $e
@@ -55,7 +49,7 @@ hooks:
 
 ''');
     }
-    print('Read build options: ${buildOptions.toJson()}');
+    print('Read build options: $buildOptions');
     final buildMode = switch (buildOptions.buildMode) {
       BuildModeEnum.local => LocalMode(input, buildOptions.localPath),
       BuildModeEnum.checkout => CheckoutMode(input, buildOptions.checkoutPath),
@@ -66,20 +60,41 @@ hooks:
 
     output.assets.code.add(
       CodeAsset(
-        package: package,
-        name: assetId,
+        package: input.packageName,
+        name: 'src/bindings/lib.g.dart',
         linkMode: DynamicLoadingBundled(),
         file: builtLibrary,
       ),
       routing:
           buildOptions.buildMode != BuildModeEnum.local &&
               input.config.linkingEnabled
-          ? const ToLinkHook(package)
+          ? ToLinkHook(input.packageName)
           : const ToAppBundle(),
     );
     output.dependencies.addAll(buildMode.dependencies);
     output.dependencies.add(input.packageRoot.resolve('pubspec.yaml'));
   });
+}
+
+enum BuildModeEnum { local, checkout, fetch }
+
+class BuildOptions {
+  final BuildModeEnum buildMode;
+  final Uri? localPath;
+  final Uri? checkoutPath;
+
+  BuildOptions({required this.buildMode, this.localPath, this.checkoutPath});
+
+  factory BuildOptions.fromDefines(HookInputUserDefines defines) {
+    return BuildOptions(
+      buildMode: BuildModeEnum.values.firstWhere(
+        (element) => element.name == defines['buildMode'],
+        orElse: () => BuildModeEnum.fetch,
+      ),
+      localPath: defines.path('localPath'),
+      checkoutPath: defines.path('checkoutPath'),
+    );
+  }
 }
 
 sealed class BuildMode {
@@ -108,12 +123,12 @@ final class FetchMode extends BuildMode {
       'https://github.com/unicode-org/icu4x/releases/'
       'download/$version/icu4x-2-$libraryType-$rustTarget',
     );
-    final library = await fetchToFile(
-      dylibRemoteUri,
-      input.outputDirectory.resolve(input.config.filename('icu4x')),
-    );
-
-    final bytes = await library.readAsBytes();
+    final request = await httpClient.getUrl(dylibRemoteUri);
+    final response = await request.close();
+    if (response.statusCode != 200) {
+      throw ArgumentError('The request to $dylibRemoteUri failed');
+    }
+    final bytes = await response.fold<List<int>>([], (a, b) => a..addAll(b));
     final fileHash = sha256.convert(bytes).toString();
     final expectedFileHash = fileHashes[(rustTarget, libraryType)];
     if (fileHash != expectedFileHash) {
@@ -123,19 +138,11 @@ final class FetchMode extends BuildMode {
         '$expectedFileHash fixed in the build hook of package:icu4x.',
       );
     }
+    final library = File.fromUri(
+      input.outputDirectory.resolve(input.config.filename('icu4x')),
+    );
+    await library.writeAsBytes(bytes);
     return library.uri;
-  }
-
-  Future<File> fetchToFile(Uri uri, Uri fileUri) async {
-    final request = await httpClient.getUrl(uri);
-    final response = await request.close();
-    if (response.statusCode != 200) {
-      throw ArgumentError('The request to $uri failed');
-    }
-    final file = File.fromUri(fileUri);
-    await file.create();
-    await response.pipe(file.openWrite());
-    return file;
   }
 
   @override
@@ -196,18 +203,62 @@ final class CheckoutMode extends BuildMode {
       );
     }
     final out = input.outputDirectory.resolve(input.config.filename('icu4x'));
-    await buildLib(
-      _asRustTarget(input.config.code),
-      input.config.buildStatic,
-      Directory.fromUri(checkoutPath!),
-      [
-        'default_components',
-        'experimental',
+    final rustTarget = _asRustTarget(input.config.code);
+    final buildStatic = input.config.buildStatic;
+    final workingDirectory = Directory.fromUri(checkoutPath!);
 
-        'buffer_provider',
-        'compiled_data',
+    final isNoStd = _isNoStdTarget(rustTarget);
+
+    final nightly =
+        Platform.environment['PINNED_CI_NIGHTLY'] ?? 'nightly-2025-09-27';
+
+    if (buildStatic || isNoStd) {
+      await runProcess('rustup', [
+        'toolchain',
+        'install',
+        '--no-self-update',
+        nightly,
+        '--component',
+        'rust-src',
+      ], workingDirectory: workingDirectory);
+    }
+
+    await runProcess('rustup', [
+      'target',
+      'add',
+      rustTarget,
+      if (buildStatic || isNoStd) ...['--toolchain', nightly],
+    ], workingDirectory: workingDirectory);
+
+    final additionalFeatures = isNoStd
+        ? ['libc_alloc', 'looping_panic_handler']
+        : ['simple_logger'];
+    await runProcess(
+      'cargo',
+      [
+        if (buildStatic || isNoStd) '+$nightly',
+        'rustc',
+        '--manifest-path=ffi/capi/Cargo.toml',
+        '--crate-type=${buildStatic ? 'staticlib' : 'cdylib'}',
+        '--release',
+        '--config=profile.release.panic="abort"',
+        '--config=profile.release.codegen-units=1',
+        '--no-default-features',
+        '--features=${{
+          ...['default_components', 'experimental', 'buffer_provider', 'compiled_data'],
+          ...additionalFeatures,
+        }.join(',')}',
+        if (isNoStd) '-Zbuild-std=core,alloc',
+        if (buildStatic || isNoStd) ...['-Zbuild-std=std,panic_abort'],
+        '--target=$rustTarget',
+        '--',
+        '--emit',
+        'link=${out.toFilePath(windows: Platform.isWindows)}',
       ],
-      out,
+      workingDirectory: workingDirectory,
+      environment: {
+        if (isNoStd) 'RUSTFLAGS': '-Zunstable-options -Cpanic=immediate-abort',
+      },
     );
     return out;
   }
@@ -215,6 +266,9 @@ final class CheckoutMode extends BuildMode {
   @override
   List<Uri> get dependencies => [checkoutPath!.resolve('Cargo.lock')];
 }
+
+bool _isNoStdTarget(String target) =>
+    ['riscv64-linux-android', 'riscv64gc-unknown-linux-gnu'].contains(target);
 
 String _asRustTarget(CodeConfig code) {
   if (code.targetOS == OS.iOS &&
@@ -254,4 +308,34 @@ extension on BuildConfig {
   String Function(String) get filename => buildStatic
       ? code.targetOS.staticlibFileName
       : code.targetOS.dylibFileName;
+}
+
+Future<void> runProcess(
+  String executable,
+  List<String> arguments, {
+  Directory? workingDirectory,
+  bool dryRun = false,
+  Map<String, String>? environment,
+}) async {
+  print('----------');
+  print('Running `$executable $arguments` in $workingDirectory');
+  if (!dryRun) {
+    final processResult = await Process.run(
+      executable,
+      arguments,
+      workingDirectory: workingDirectory?.path,
+    );
+    print('stdout:');
+    print(processResult.stdout);
+    if ((processResult.stderr as String).isNotEmpty) {
+      print('stderr:');
+      print(processResult.stderr);
+    }
+    if (processResult.exitCode != 0) {
+      throw ProcessException(executable, arguments, '', processResult.exitCode);
+    }
+  } else {
+    print('Not running, as --dry-run is set.');
+  }
+  print('==========');
 }

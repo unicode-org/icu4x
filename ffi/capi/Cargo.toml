@@ -9,6 +9,7 @@ license = "Unicode-3.0"
 include = [
     "bindings/**/*",
     "!bindings/dart/**/*", # not yet stable
+    "!bindings/kotlin/**/*", # not yet stable
     "src/**/*",
     "tests/**/*",
     "Cargo.toml",

@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears};
+use crate::cal::abstract_gregorian::{
+    impl_with_abstract_gregorian, AbstractGregorian, GregorianYears,
+};
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::UnknownEraError;
 use crate::{types, Date, DateError, RangeError};
@@ -55,7 +57,10 @@ impl GregorianYears for IsoEra {
 }
 
 impl Date<Iso> {
-    /// Construct a new ISO date from integers.
+    /// Construct a new ISO [`Date`].
+    ///
+    /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
+    /// valid range of `-1,000,000..=1,000,000`.
     ///
     /// ```rust
     /// use icu::calendar::Date;
@@ -68,7 +73,8 @@ impl Date<Iso> {
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
     pub fn try_new_iso(year: i32, month: u8, day: u8) -> Result<Date<Iso>, RangeError> {
-        ArithmeticDate::new_gregorian::<IsoEra>(year, month, day)
+        ArithmeticDate::from_year_month_day(year, month, day, &AbstractGregorian(IsoEra))
+            .map(ArithmeticDate::cast)
             .map(IsoDateInner)
             .map(|i| Date::from_raw(i, Iso))
     }
@@ -103,18 +109,18 @@ mod test {
         let cases = [
             // Clamping RD
             TestCase {
-                year: -1002073,
+                year: -1005513,
                 month: 1,
-                day: 14,
+                day: 3,
                 rd: *VALID_RD_RANGE.start() - 100000,
                 invalid_ymd: true,
                 clamping_rd: true,
             },
             // Lowest allowed RD
             TestCase {
-                year: -1002073,
+                year: -1005513,
                 month: 1,
-                day: 14,
+                day: 3,
                 rd: *VALID_RD_RANGE.start(),
                 invalid_ymd: true,
                 clamping_rd: false,
@@ -139,18 +145,18 @@ mod test {
             },
             // Highest allowed RD
             TestCase {
-                year: 1002074,
+                year: 1001911,
                 month: 12,
-                day: 18,
+                day: 31,
                 rd: *VALID_RD_RANGE.end(),
                 invalid_ymd: true,
                 clamping_rd: false,
             },
             // Clamping RD
             TestCase {
-                year: 1002074,
+                year: 1001911,
                 month: 12,
-                day: 18,
+                day: 31,
                 rd: *VALID_RD_RANGE.end() + 100000,
                 invalid_ymd: true,
                 clamping_rd: true,
@@ -184,7 +190,7 @@ mod test {
             assert_eq!(
                 (
                     date_from_rd.era_year().year,
-                    date_from_rd.month().month_number(),
+                    date_from_rd.month().number(),
                     date_from_rd.day_of_month().0
                 ),
                 (case.year, case.month, case.day),

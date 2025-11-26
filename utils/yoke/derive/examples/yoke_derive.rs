@@ -75,6 +75,22 @@ pub struct MaybeSizedWrap<T, Q: ?Sized, U: ?Sized> {
     q: Q,
 }
 
+pub trait Trait {}
+impl Trait for u32 {}
+
+#[derive(Yokeable)]
+pub struct WithTraitBounds<T: Trait> {
+    x: T,
+}
+
+#[derive(Yokeable)]
+pub struct WithTraitBoundsInWhere<T>
+where
+    T: Trait,
+{
+    x: T,
+}
+
 // TODO(#4119): Make this example compile
 /*
 #[derive(Yokeable)]
@@ -101,6 +117,8 @@ pub struct AssertYokeable {
     map_gen1: Yoke<ZeroMapGenericExample<'static, u32>, Box<[u8]>>,
     map_gen2: Yoke<ZeroMapGenericExample<'static, str>, Box<[u8]>>,
     maybe_sized_wrap: Yoke<MaybeSizedWrap<usize, usize, str>, Box<[u8]>>,
+    trait_bounds: Yoke<WithTraitBounds<u32>, Box<[u8]>>,
+    trait_bounds_where: Yoke<WithTraitBoundsInWhere<u32>, Box<[u8]>>,
     // TODO(#4119): Make this example compile
     // maybe_sized_wrap_with_lt: Yoke<MaybeSizedWrapWithLifetime<'static, usize, usize, str>, Box<[u8]>>,
 }

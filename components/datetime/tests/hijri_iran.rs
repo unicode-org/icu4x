@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::cal::hijri::HijriYearData;
+use icu_calendar::cal::hijri::HijriYear;
 use icu_calendar::cal::hijri::Rules;
 use icu_calendar::cal::hijri::TabularAlgorithm;
 use icu_calendar::cal::hijri::TabularAlgorithmEpoch;
@@ -52,54 +52,54 @@ struct IranTestSighting;
 
 impl icu_calendar::cal::scaffold::UnstableSealed for IranTestSighting {}
 impl Rules for IranTestSighting {
-    fn year_data(&self, extended_year: i32) -> HijriYearData {
+    fn year(&self, extended_year: i32) -> HijriYear {
         let s = false;
         let l = true;
         use calendrical_calculations::gregorian::fixed_from_gregorian as gregorian;
         match extended_year {
-            1411 => HijriYearData::try_new(
+            1411 => HijriYear::try_new(
                 extended_year,
                 gregorian(1990, 7, 24),
                 [l, l, s, l, s, l, s, l, s, l, s, s],
             )
             .unwrap(),
-            1412 => HijriYearData::try_new(
+            1412 => HijriYear::try_new(
                 extended_year,
                 gregorian(1991, 7, 13),
                 [l, l, s, l, s, l, s, l, s, l, l, s],
             )
             .unwrap(),
-            1413 => HijriYearData::try_new(
+            1413 => HijriYear::try_new(
                 extended_year,
                 gregorian(1992, 7, 2),
                 [l, s, l, s, s, l, s, l, s, l, l, l],
             )
             .unwrap(),
-            1414 => HijriYearData::try_new(
+            1414 => HijriYear::try_new(
                 extended_year,
                 gregorian(1993, 6, 22),
                 [s, l, s, s, l, s, l, s, s, l, l, l],
             )
             .unwrap(),
-            1415 => HijriYearData::try_new(
+            1415 => HijriYear::try_new(
                 extended_year,
                 gregorian(1994, 6, 11),
                 [l, l, s, s, s, l, s, s, s, l, l, l],
             )
             .unwrap(),
-            1416 => HijriYearData::try_new(
+            1416 => HijriYear::try_new(
                 extended_year,
                 gregorian(1995, 5, 31),
                 [l, l, s, l, s, s, l, s, s, l, l, s],
             )
             .unwrap(),
-            1417 => HijriYearData::try_new(
+            1417 => HijriYear::try_new(
                 extended_year,
                 gregorian(1996, 5, 19),
                 [l, l, l, s, s, l, s, l, s, l, s, s],
             )
             .unwrap(),
-            1418 => HijriYearData::try_new(
+            1418 => HijriYear::try_new(
                 extended_year,
                 gregorian(1997, 5, 8),
                 [l, l, s, l, l, s, l, s, s, l, l, s],
@@ -109,7 +109,7 @@ impl Rules for IranTestSighting {
                 TabularAlgorithmLeapYears::TypeII,
                 TabularAlgorithmEpoch::Friday,
             )
-            .year_data(extended_year),
+            .year(extended_year),
         }
     }
 }
