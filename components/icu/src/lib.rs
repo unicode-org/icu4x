@@ -150,8 +150,28 @@ pub use icu_casemap as casemap;
 #[doc(inline)]
 pub use icu_collator as collator;
 
-#[doc(inline)]
-pub use icu_datetime as datetime;
+/// Locale preferences used by this crate
+pub mod datetime {
+    #[doc(inline)]
+    pub use icu_datetime::*;
+
+    /// Locale preferences used by this crate
+    pub mod preferences {
+        /// **This is a reexport of a type in [`icu::locale`](icu_locale::preferences::extensions::unicode::keywords)**.
+        #[doc = "\n"] // prevent autoformatting
+        pub use icu_locale::preferences::extensions::unicode::keywords::CalendarAlgorithm;
+        /// **This is a reexport of a type in [`icu::locale`](icu_locale::preferences::extensions::unicode::keywords)**.
+        #[doc = "\n"] // prevent autoformatting
+        pub use icu_locale::preferences::extensions::unicode::keywords::HijriCalendarAlgorithm;
+        /// **This is a reexport of a type in [`icu::locale`](icu_locale::preferences::extensions::unicode::keywords)**.
+        #[doc = "\n"] // prevent autoformatting
+        pub use icu_locale::preferences::extensions::unicode::keywords::HourCycle;
+        /// **This is a reexport of a type in [`icu::locale`](icu_locale::preferences::extensions::unicode::keywords)**.
+        #[doc = "\n"] // prevent autoformatting
+        pub use icu_locale::preferences::extensions::unicode::keywords::NumberingSystem;
+    }
+}
+
 
 #[doc(inline)]
 pub use icu_decimal as decimal;
