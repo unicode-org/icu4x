@@ -172,7 +172,6 @@ pub mod datetime {
     }
 }
 
-
 #[doc(inline)]
 pub use icu_decimal as decimal;
 
