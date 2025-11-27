@@ -21,7 +21,7 @@ BASEDIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 lib/index.mjs: $(ALL_HEADERS)
 	rm -rf lib;
-	cp -r ${HEADERS} lib
+	cp -rL ${HEADERS} lib
 
 diplomat.config.mjs:
 	echo "export default { wasm_path: new URL('target/wasm32-unknown-unknown/release/icu_capi.wasm', import.meta.url) };" > diplomat.config.mjs
