@@ -27,7 +27,7 @@ exit_on_error true
 # Check files matching these patterns.
 glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.yaml" "./**/*.toml" "./**/*.c" "./**/*.cpp" "./**/*.hpp" "./**/*.h" "./**/*.mjs" "./**/*.ts" "./**/*.js" "./**/*.*.dart"
 
-glob_skip_pattern_array = array "ffi/capi/bindings/**/*" "**/data/**/*" "tools/web-demo/gen/**/*"
+glob_skip_pattern_array = array "ffi/capi/bindings/**/*" "**/data/**/*" "tools/web-demo/gen/**/*" "ffi/dart/lib/src/bindings/**/*" "ffi/npm/lib/**/*" "ffi/nvm/src/kotlin/**/*"
 
 output = exec --fail-on-error git ls-files --cached --others --exclude-standard
 

@@ -76,7 +76,7 @@
 
     </dependencies>
     <build>
-        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+        <sourceDirectory>${project.basedir}/src/main/kotlin/src/main/kotlin</sourceDirectory>
         <resources>
           <resource>
             <!-- Ideally this can be taught to run cargo build. Use basedir for now so that it does the same thing

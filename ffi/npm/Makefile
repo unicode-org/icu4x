@@ -11,10 +11,6 @@ FEATURES ?= "compiled_data,buffer_provider,default_components,experimental,loggi
 # 100 KiB, working around a bug in older rustc
 # https://github.com/unicode-org/icu4x/issues/2753
 WASM_STACK_SIZE := 100000
- 
-lib/index.mjs: FORCE
-	rm -rf lib
-	cp -r ../capi/bindings/js lib
 
 ../../target/wasm32-unknown-unknown/release/icu_capi.wasm: FORCE
 	rustup toolchain install ${PINNED_CI_NIGHTLY}
@@ -32,4 +28,4 @@ lib/index.mjs: FORCE
 icu_capi.wasm: ../../target/wasm32-unknown-unknown/release/icu_capi.wasm
 	cp ../../target/wasm32-unknown-unknown/release/icu_capi.wasm icu_capi.wasm
 
-build: lib/index.mjs icu_capi.wasm
+build: icu_capi.wasm
