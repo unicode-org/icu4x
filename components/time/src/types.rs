@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::{types::RataDie, AsCalendar, Date, Iso, RangeError};
+use icu_calendar::{types::RataDie, AsCalendar, Calendar, Date, Iso, RangeError};
 
 use crate::zone::UtcOffset;
 
@@ -184,7 +184,7 @@ impl Time {
 /// A date and time for a given calendar.
 ///
 /// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DateTime<A: AsCalendar> {
     /// The date
@@ -193,10 +193,34 @@ pub struct DateTime<A: AsCalendar> {
     pub time: Time,
 }
 
+impl<C, A, B> PartialEq<DateTime<B>> for DateTime<A>
+where
+    C: Calendar,
+    A: AsCalendar<Calendar = C>,
+    B: AsCalendar<Calendar = C>,
+{
+    fn eq(&self, other: &DateTime<B>) -> bool {
+        self.date.eq(&other.date) && self.time.eq(&other.time)
+    }
+}
+
+impl<A: AsCalendar> Eq for DateTime<A> {}
+
+impl<A: AsCalendar + Clone> Clone for DateTime<A> {
+    fn clone(&self) -> Self {
+        Self {
+            date: self.date.clone(),
+            time: self.time,
+        }
+    }
+}
+
+impl<A> Copy for DateTime<A> where A: AsCalendar + Copy {}
+
 /// A date and time for a given calendar, local to a specified time zone.
 ///
 /// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ZonedDateTime<A: AsCalendar, Z> {
     /// The date, local to the time zone
@@ -206,6 +230,31 @@ pub struct ZonedDateTime<A: AsCalendar, Z> {
     /// The time zone
     pub zone: Z,
 }
+
+impl<C, A, B, Z: PartialEq> PartialEq<ZonedDateTime<B, Z>> for ZonedDateTime<A, Z>
+where
+    C: Calendar,
+    A: AsCalendar<Calendar = C>,
+    B: AsCalendar<Calendar = C>,
+{
+    fn eq(&self, other: &ZonedDateTime<B, Z>) -> bool {
+        self.date.eq(&other.date) && self.time.eq(&other.time) && self.zone.eq(&other.zone)
+    }
+}
+
+impl<A: AsCalendar, Z: Eq> Eq for ZonedDateTime<A, Z> {}
+
+impl<A: AsCalendar + Clone, Z: Clone> Clone for ZonedDateTime<A, Z> {
+    fn clone(&self) -> Self {
+        Self {
+            date: self.date.clone(),
+            time: self.time,
+            zone: self.zone.clone(),
+        }
+    }
+}
+
+impl<A, Z: Copy> Copy for ZonedDateTime<A, Z> where A: AsCalendar + Copy {}
 
 const UNIX_EPOCH: RataDie = calendrical_calculations::gregorian::fixed_from_gregorian(1970, 1, 1);
 
