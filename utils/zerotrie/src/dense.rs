@@ -6,6 +6,10 @@
 //! more efficiently.
 
 use crate::ZeroTrieSimpleAscii;
+use zerovec::ule::tuplevar::Tuple3VarULE;
+use zerovec::ule::vartuple::VarTuple;
+use zerovec::ule::vartuple::VarTupleULE;
+use zerovec::ule::EncodeAsVarULE;
 use zerovec::ZeroSlice;
 use zerovec::ZeroVec;
 
@@ -17,7 +21,7 @@ pub(crate) type DenseType = u16;
 /// A data structure designed for 2-dimensional ASCII keys with a fixed
 /// delimiter that exhibit a mix of density and sparsity.
 #[cfg(feature = "alloc")]
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct DenseSparse2dAsciiWithFixedDelimiterOwned {
     pub(crate) primary: ZeroTrieSimpleAscii<Vec<u8>>,
     pub(crate) suffixes: ZeroTrieSimpleAscii<Vec<u8>>,
@@ -28,7 +32,12 @@ pub struct DenseSparse2dAsciiWithFixedDelimiterOwned {
 
 /// A data structure designed for 2-dimensional ASCII keys with a fixed
 /// delimiter that exhibit a mix of density and sparsity.
-#[derive(Debug)]
+pub type DenseSparse2dAsciiWithFixedDelimiterVarULE =
+    VarTupleULE<(u16, u8), Tuple3VarULE<ZeroSlice<u8>, ZeroSlice<u8>, ZeroSlice<u16>>>;
+
+/// A data structure designed for 2-dimensional ASCII keys with a fixed
+/// delimiter that exhibit a mix of density and sparsity.
+#[derive(Debug, PartialEq, Eq)]
 pub struct DenseSparse2dAsciiWithFixedDelimiterBorrowed<'a> {
     primary: &'a ZeroTrieSimpleAscii<[u8]>,
     suffixes: &'a ZeroTrieSimpleAscii<[u8]>,
@@ -47,6 +56,36 @@ impl DenseSparse2dAsciiWithFixedDelimiterOwned {
             dense: self.dense.as_slice(),
             suffix_count: self.suffix_count,
             delimiter: self.delimiter,
+        }
+    }
+
+    /// Borrows the structure for encoding into [`zerovec`].
+    pub fn as_encodeable(
+        &self,
+    ) -> impl EncodeAsVarULE<DenseSparse2dAsciiWithFixedDelimiterVarULE> + '_ {
+        VarTuple {
+            sized: (self.suffix_count, self.delimiter),
+            variable: (
+                self.primary.as_bytes(),
+                self.suffixes.as_bytes(),
+                self.dense.as_slice(),
+            ),
+        }
+    }
+}
+
+impl<'a> From<&'a DenseSparse2dAsciiWithFixedDelimiterVarULE>
+    for DenseSparse2dAsciiWithFixedDelimiterBorrowed<'a>
+{
+    fn from(
+        ule: &DenseSparse2dAsciiWithFixedDelimiterVarULE,
+    ) -> DenseSparse2dAsciiWithFixedDelimiterBorrowed<'_> {
+        DenseSparse2dAsciiWithFixedDelimiterBorrowed {
+            primary: ZeroTrieSimpleAscii::from_bytes(ule.variable.a().as_ule_slice()),
+            suffixes: ZeroTrieSimpleAscii::from_bytes(ule.variable.b().as_ule_slice()),
+            dense: ule.variable.c(),
+            suffix_count: ule.sized.0.as_unsigned_int(),
+            delimiter: ule.sized.1,
         }
     }
 }

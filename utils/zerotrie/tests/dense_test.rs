@@ -3,7 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::collections::BTreeMap;
+use zerotrie::dense::DenseSparse2dAsciiWithFixedDelimiterBorrowed;
 use zerotrie::dense::DenseSparse2dAsciiWithFixedDelimiterOwned;
+use zerotrie::dense::DenseSparse2dAsciiWithFixedDelimiterVarULE;
+use zerovec::VarZeroCow;
 
 const SIMPLE_DATA: &[&str] = &[
     "ar/FR", "ar/IR", "ar/SA", "ar/UK", "ar/US", "en/AU", "en/FR", "en/UK", "en/US", "fr/FR",
@@ -33,4 +36,10 @@ fn test_simple() {
             );
         }
     }
+    let ule = VarZeroCow::<DenseSparse2dAsciiWithFixedDelimiterVarULE>::from_encodeable(
+        &dense.as_encodeable(),
+    );
+    let decoded = DenseSparse2dAsciiWithFixedDelimiterBorrowed::from(&*ule);
+    assert_eq!(decoded, dense.as_borrowed());
+    assert_eq!(ule.as_bytes().len(), 102);
 }
