@@ -151,6 +151,7 @@
 
 mod branch_meta;
 pub(crate) mod bytestr;
+pub(crate) mod dense;
 pub(crate) mod konst;
 #[cfg(feature = "litemap")]
 mod litemap;
