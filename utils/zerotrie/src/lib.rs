@@ -57,7 +57,7 @@ extern crate alloc;
 mod builder;
 mod byte_phf;
 pub mod cursor;
-#[cfg(feature = "zerovec")]
+#[cfg(feature = "dense")]
 pub mod dense;
 mod error;
 #[macro_use]

@@ -52,10 +52,12 @@ bench = false  # This option is required for Benchmark CI
 default = []
 alloc = ["zerovec?/alloc"]
 databake = ["dep:databake", "zerovec?/databake"]
+dense = ["dep:zerovec"]
 litemap = ["dep:litemap", "alloc"]
 serde = ["dep:serde_core", "dep:litemap", "alloc", "litemap/serde", "zerovec?/serde"]
 yoke = ["dep:yoke"]
 zerofrom = ["dep:zerofrom"]
+zerovec = ["dep:zerovec"]
 
 [[bench]]
 name = "overview"
@@ -69,6 +71,10 @@ required-features = ["alloc", "litemap"]
 [[test]]
 name = "builder_test"
 required-features = ["alloc", "litemap"]
+
+[[test]]
+name = "dense_test"
+required-features = ["alloc", "dense"]
 
 [[test]]
 name = "locale_aux_test"
