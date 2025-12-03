@@ -513,6 +513,66 @@ impl WordSegmenter {
             },
         })
     }
+
+    /// Construct a [`WordSegmenter`] with an invariant locale and no support for
+    /// complex scripts (Chinese, Japanese, Khmer, Lao, Myanmar, and Thai).
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub fn new_non_complex(_options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
+        WordSegmenterBorrowed {
+            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
+            complex: ComplexPayloadsBorrowed::empty(),
+            locale_override: None,
+        }
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (options: WordBreakOptions) -> error: DataError,
+        functions: [
+            try_new_non_complex,
+            try_new_non_complex_with_buffer_provider,
+            try_new_non_complex_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_non_complex)]
+    pub fn try_new_non_complex_unstable<D>(
+        provider: &D,
+        options: WordBreakOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: DataProvider<SegmenterBreakWordV1>
+            + DataProvider<SegmenterBreakWordOverrideV1>
+            + DataProvider<SegmenterBreakGraphemeClusterV1>
+            + ?Sized,
+    {
+        Ok(Self {
+            payload: provider.load(Default::default())?.payload,
+            complex: ComplexPayloads::try_new_empty(provider)?,
+            payload_locale_override: if let Some(locale) = options.content_locale {
+                let locale = DataLocale::from(locale);
+                let req = DataRequest {
+                    id: DataIdentifierBorrowed::for_locale(&locale),
+                    metadata: {
+                        let mut metadata = DataRequestMetadata::default();
+                        metadata.silent = true;
+                        metadata
+                    },
+                };
+                provider
+                    .load(req)
+                    .allow_identifier_not_found()?
+                    .map(|r| r.payload)
+            } else {
+                None
+            },
+        })
+    }
+
     /// Constructs a borrowed version of this type for more efficient querying.
     ///
     /// Most useful methods for segmentation are on this type.

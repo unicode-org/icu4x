@@ -468,8 +468,6 @@ impl LineSegmenter {
     /// The dictionary model uses a list of words to determine appropriate breakpoints. It is
     /// faster than the LSTM model but requires more data.
     ///
-    /// See also [`Self::new_dictionary`].
-    ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
@@ -519,6 +517,48 @@ impl LineSegmenter {
             // [1]: https://www.unicode.org/reports/tr14/#ID
             // [2]: https://www.unicode.org/reports/tr14/#SA
             complex: ComplexPayloads::try_new_southeast_asian(provider)?,
+        })
+    }
+
+    /// Constructs a [`LineSegmenter`] with an invariant locale, custom [`LineBreakOptions`], and
+    /// no support for complex scripts (Khmer, Lao, Myanmar, Thai).
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub fn new_non_complex(options: LineBreakOptions) -> LineSegmenterBorrowed<'static> {
+        LineSegmenterBorrowed {
+            options: options.into(),
+            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
+            complex: ComplexPayloadsBorrowed::empty(),
+        }
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (options: LineBreakOptions) -> error: DataError,
+        functions: [
+            new_non_complex: skip,
+            try_new_non_complex_with_buffer_provider,
+            try_new_non_complex_unstable,
+            Self,
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_non_complex)]
+    pub fn try_new_non_complex_unstable<D>(
+        provider: &D,
+        options: LineBreakOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: DataProvider<SegmenterBreakLineV1>
+            + DataProvider<SegmenterBreakGraphemeClusterV1>
+            + ?Sized,
+    {
+        Ok(Self {
+            options: options.into(),
+            payload: provider.load(Default::default())?.payload,
+            complex: ComplexPayloads::try_new_empty(provider)?,
         })
     }
 

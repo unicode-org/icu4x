@@ -256,6 +256,18 @@ impl ComplexPayloadsBorrowed<'static> {
         }
     }
 
+    #[cfg(feature = "compiled_data")]
+    pub(crate) fn empty() -> Self {
+        Self {
+            grapheme: GraphemeClusterSegmenter::new(),
+            my: None,
+            km: None,
+            lo: None,
+            th: None,
+            ja: None,
+        }
+    }
+
     pub(crate) fn static_to_owned(self) -> ComplexPayloads {
         ComplexPayloads {
             grapheme: self.grapheme.static_to_owned(),
@@ -376,6 +388,20 @@ impl ComplexPayloads {
             th: try_load::<SegmenterDictionaryExtendedV1, _>(provider, TH_DICT)?
                 .map(DataPayload::cast)
                 .map(DictOrLstm::Dict),
+            ja: None,
+        })
+    }
+
+    pub(crate) fn try_new_empty<D>(provider: &D) -> Result<Self, DataError>
+    where
+        D: DataProvider<SegmenterBreakGraphemeClusterV1> + ?Sized,
+    {
+        Ok(Self {
+            grapheme: GraphemeClusterSegmenter::try_new_unstable(provider)?,
+            my: None,
+            km: None,
+            lo: None,
+            th: None,
             ja: None,
         })
     }

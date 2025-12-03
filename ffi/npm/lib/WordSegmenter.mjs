@@ -45,7 +45,7 @@ export class WordSegmenter {
 
 
     /**
-     * Construct an {@link WordSegmenter} with automatically selecting the best available LSTM
+     * Construct a {@link WordSegmenter} with automatically selecting the best available LSTM
      * or dictionary payload data, using compiled data. This does not assume any content locale.
      *
      * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -66,7 +66,7 @@ export class WordSegmenter {
     }
 
     /**
-     * Construct an {@link WordSegmenter} with automatically selecting the best available LSTM
+     * Construct a {@link WordSegmenter} with automatically selecting the best available LSTM
      * or dictionary payload data, using compiled data.
      *
      * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -94,7 +94,7 @@ export class WordSegmenter {
     }
 
     /**
-     * Construct an {@link WordSegmenter} with automatically selecting the best available LSTM
+     * Construct a {@link WordSegmenter} with automatically selecting the best available LSTM
      * or dictionary payload data, using a particular data source.
      *
      * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -122,8 +122,8 @@ export class WordSegmenter {
     }
 
     /**
-     * Construct an {@link WordSegmenter} with LSTM payload data for Burmese, Khmer, Lao, and
-     * Thai, using compiled data.  This does not assume any content locale.
+     * Construct a {@link WordSegmenter} with LSTM payload data for Burmese, Khmer, Lao, and
+     * Thai, using compiled data. This does not assume any content locale.
      *
      * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
      * Khmer, Lao, and Thai.
@@ -143,7 +143,7 @@ export class WordSegmenter {
     }
 
     /**
-     * Construct an {@link WordSegmenter} with LSTM payload data for Burmese, Khmer, Lao, and
+     * Construct a {@link WordSegmenter} with LSTM payload data for Burmese, Khmer, Lao, and
      * Thai, using compiled data.
      *
      * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -171,7 +171,7 @@ export class WordSegmenter {
     }
 
     /**
-     * Construct an {@link WordSegmenter} with LSTM payload data for Burmese, Khmer, Lao, and
+     * Construct a {@link WordSegmenter} with LSTM payload data for Burmese, Khmer, Lao, and
      * Thai, using a particular data source.
      *
      * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -199,8 +199,8 @@ export class WordSegmenter {
     }
 
     /**
-     * Construct an {@link WordSegmenter} with with dictionary payload data for Chinese, Japanese,
-     * Burmese, Khmer, Lao, and Thai, using compiled data.  This does not assume any content locale.
+     * Construct a {@link WordSegmenter} with dictionary payload data for Chinese, Japanese,
+     * Burmese, Khmer, Lao, and Thai, using compiled data. This does not assume any content locale.
      *
      * Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
      * Khmer, Lao, and Thai.
@@ -220,7 +220,7 @@ export class WordSegmenter {
     }
 
     /**
-     * Construct an {@link WordSegmenter} with dictionary payload data for Chinese, Japanese,
+     * Construct a {@link WordSegmenter} with dictionary payload data for Chinese, Japanese,
      * Burmese, Khmer, Lao, and Thai, using compiled data.
      *
      * Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
@@ -248,7 +248,7 @@ export class WordSegmenter {
     }
 
     /**
-     * Construct an {@link WordSegmenter} with dictionary payload data for Chinese, Japanese,
+     * Construct a {@link WordSegmenter} with dictionary payload data for Chinese, Japanese,
      * Burmese, Khmer, Lao, and Thai, using a particular data source.
      *
      * Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
@@ -261,6 +261,74 @@ export class WordSegmenter {
 
 
         const result = wasm.icu4x_WordSegmenter_create_dictionary_with_content_locale_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
+            }
+            return new WordSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    /**
+     * Construct a {@link WordSegmenter} with no support for complex scripts (Chinese, Japanese,
+     * Burmese, Khmer, Lao, and Thai), using compiled data. This does not assume any content locale.
+     *
+     * See the [Rust documentation for `new_non_complex`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.new_non_complex) for more information.
+     */
+    static createNonComplex() {
+
+        const result = wasm.icu4x_WordSegmenter_create_non_complex_mv1();
+
+        try {
+            return new WordSegmenter(diplomatRuntime.internalConstructor, result, []);
+        }
+
+        finally {
+        }
+    }
+
+    /**
+     * Construct a {@link WordSegmenter} with no support for complex scripts (Chinese, Japanese,
+     * Burmese, Khmer, Lao, and Thai), using compiled data.
+     *
+     * See the [Rust documentation for `try_new_non_complex`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_non_complex) for more information.
+     */
+    static createNonComplexWithContentLocale(locale) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_WordSegmenter_create_non_complex_with_content_locale_mv1(diplomatReceive.buffer, locale.ffiValue);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
+            }
+            return new WordSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    /**
+     * Construct a {@link WordSegmenter} with no support for complex scripts (Chinese, Japanese,
+     * Burmese, Khmer, Lao, and Thai), using a particular data source.
+     *
+     * See the [Rust documentation for `try_new_non_complex`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_non_complex) for more information.
+     */
+    static createNonComplexWithContentLocaleAndProvider(provider, locale) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_WordSegmenter_create_non_complex_with_content_locale_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
 
         try {
             if (!diplomatReceive.resultFlag) {
