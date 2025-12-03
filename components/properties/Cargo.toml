@@ -30,6 +30,7 @@ icu_locale_core = { workspace = true, features = ["zerovec"] }
 
 harfbuzz-traits = { workspace = true, optional = true }
 unicode-bidi = { workspace = true, optional = true }
+unicode-script = { git = "https://github.com/unicode-rs/unicode-script.git", rev = "72c7ca92b3821c83344b7e76b19096f67af3e6da", optional = true }
 
 icu_properties_data = { workspace = true, optional = true }
 
@@ -42,5 +43,6 @@ serde = ["dep:serde", "icu_locale_core/serde", "zerovec/serde", "icu_collections
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake", "icu_locale_core/databake", "zerotrie/databake", "icu_provider/export"]
 unicode_bidi = ["dep:unicode-bidi"]
 harfbuzz_traits = ["dep:harfbuzz-traits"]
+unicode_script = ["dep:unicode-script"]
 compiled_data = ["dep:icu_properties_data", "icu_provider/baked"]
 alloc = ["zerovec/alloc", "icu_collections/alloc", "serde?/alloc"]

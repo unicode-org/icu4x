@@ -742,7 +742,6 @@ impl Script {
     pub const Chakma: Script = Script(118);
     pub const Cham: Script = Script(66);
     pub const Cherokee: Script = Script(6);
-    pub const Chisoi: Script = Script(209);
     pub const Chorasmian: Script = Script(189);
     pub const Common: Script = Script(0);
     pub const Coptic: Script = Script(7);
@@ -759,6 +758,7 @@ impl Script {
     pub const Elbasan: Script = Script(136);
     pub const Elymaic: Script = Script(185);
     pub const Ethiopian: Script = Script(11);
+    pub const Garay: Script = Script(201);
     pub const Georgian: Script = Script(12);
     pub const Glagolitic: Script = Script(56);
     pub const Gothic: Script = Script(13);
@@ -767,6 +767,7 @@ impl Script {
     pub const Gujarati: Script = Script(15);
     pub const GunjalaGondi: Script = Script(179);
     pub const Gurmukhi: Script = Script(16);
+    pub const GurungKhema: Script = Script(202);
     pub const Han: Script = Script(17);
     pub const Hangul: Script = Script(18);
     pub const HanifiRohingya: Script = Script(182);
@@ -789,6 +790,7 @@ impl Script {
     pub const Khmer: Script = Script(23);
     pub const Khojki: Script = Script(157);
     pub const Khudawadi: Script = Script(145);
+    pub const KiratRai: Script = Script(203);
     pub const Lao: Script = Script(24);
     pub const Latin: Script = Script(25);
     pub const Lepcha: Script = Script(82);
@@ -836,6 +838,7 @@ impl Script {
     pub const OldSouthArabian: Script = Script(133);
     pub const OldTurkic: Script = Script(88);
     pub const OldUyghur: Script = Script(194);
+    pub const OlOnal: Script = Script(204);
     pub const Oriya: Script = Script(31);
     pub const Osage: Script = Script(171);
     pub const Osmanya: Script = Script(50);
@@ -852,13 +855,14 @@ impl Script {
     pub const Sharada: Script = Script(151);
     pub const Shavian: Script = Script(51);
     pub const Siddham: Script = Script(166);
-    pub const Sidetic: Script = Script(210);
+    pub const Sidetic: Script = Script(209);
     pub const SignWriting: Script = Script(112);
     pub const Sinhala: Script = Script(33);
     pub const Sogdian: Script = Script(183);
     pub const SoraSompeng: Script = Script(152);
     pub const Soyombo: Script = Script(176);
     pub const Sundanese: Script = Script(113);
+    pub const Sunuwar: Script = Script(205);
     pub const SylotiNagri: Script = Script(58);
     pub const Syriac: Script = Script(34);
     pub const Tagalog: Script = Script(42);
@@ -866,7 +870,7 @@ impl Script {
     pub const TaiLe: Script = Script(52);
     pub const TaiTham: Script = Script(106);
     pub const TaiViet: Script = Script(127);
-    pub const TaiYo: Script = Script(211);
+    pub const TaiYo: Script = Script(210);
     pub const Takri: Script = Script(153);
     pub const Tamil: Script = Script(35);
     pub const Tangsa: Script = Script(195);
@@ -877,8 +881,10 @@ impl Script {
     pub const Tibetan: Script = Script(39);
     pub const Tifinagh: Script = Script(60);
     pub const Tirhuta: Script = Script(158);
-    pub const TolongSiki: Script = Script(212);
+    pub const Todhri: Script = Script(206);
+    pub const TolongSiki: Script = Script(211);
     pub const Toto: Script = Script(196);
+    pub const TuluTigalari: Script = Script(207);
     pub const Ugaritic: Script = Script(53);
     pub const Unknown: Script = Script(103);
     pub const Vai: Script = Script(99);
@@ -889,6 +895,427 @@ impl Script {
     pub const Yi: Script = Script(41);
     pub const ZanabazarSquare: Script = Script(177);
 }
+}
+
+impl Script {
+    // Doesn't actually exist!
+    #[doc(hidden)]
+    #[allow(non_upper_case_globals)]
+    #[deprecated]
+    pub const Chisoi: Script = Self(254);
+}
+
+#[cfg(feature = "compiled_data")]
+impl From<Script> for icu_locale_core::subtags::Script {
+    fn from(value: Script) -> Self {
+        crate::PropertyNamesShort::new()
+            .get_locale_script(value)
+            .unwrap_or(icu_locale_core::subtags::script!("Zzzz"))
+    }
+}
+
+#[cfg(feature = "compiled_data")]
+impl From<icu_locale_core::subtags::Script> for Script {
+    fn from(value: icu_locale_core::subtags::Script) -> Self {
+        crate::PropertyParser::new()
+            .get_strict(value.as_str())
+            .unwrap_or(Self::Unknown)
+    }
+}
+
+#[cfg(feature = "unicode_script")]
+impl From<unicode_script::Script> for Script {
+    fn from(value: unicode_script::Script) -> Self {
+        match value {
+            unicode_script::Script::Adlam => Self::Adlam,
+            unicode_script::Script::Ahom => Self::Ahom,
+            unicode_script::Script::Anatolian_Hieroglyphs => Self::AnatolianHieroglyphs,
+            unicode_script::Script::Arabic => Self::Arabic,
+            unicode_script::Script::Armenian => Self::Armenian,
+            unicode_script::Script::Avestan => Self::Avestan,
+            unicode_script::Script::Balinese => Self::Balinese,
+            unicode_script::Script::Bamum => Self::Bamum,
+            unicode_script::Script::Bassa_Vah => Self::BassaVah,
+            unicode_script::Script::Batak => Self::Batak,
+            unicode_script::Script::Bengali => Self::Bengali,
+            unicode_script::Script::Beria_Erfe => Self::BeriaErfe,
+            unicode_script::Script::Bhaiksuki => Self::Bhaiksuki,
+            unicode_script::Script::Bopomofo => Self::Bopomofo,
+            unicode_script::Script::Brahmi => Self::Brahmi,
+            unicode_script::Script::Braille => Self::Braille,
+            unicode_script::Script::Buginese => Self::Buginese,
+            unicode_script::Script::Buhid => Self::Buhid,
+            unicode_script::Script::Canadian_Aboriginal => Self::CanadianAboriginal,
+            unicode_script::Script::Carian => Self::Carian,
+            unicode_script::Script::Caucasian_Albanian => Self::CaucasianAlbanian,
+            unicode_script::Script::Chakma => Self::Chakma,
+            unicode_script::Script::Cham => Self::Cham,
+            unicode_script::Script::Cherokee => Self::Cherokee,
+            unicode_script::Script::Chorasmian => Self::Chorasmian,
+            unicode_script::Script::Common => Self::Common,
+            unicode_script::Script::Coptic => Self::Coptic,
+            unicode_script::Script::Cuneiform => Self::Cuneiform,
+            unicode_script::Script::Cypriot => Self::Cypriot,
+            unicode_script::Script::Cypro_Minoan => Self::CyproMinoan,
+            unicode_script::Script::Cyrillic => Self::Cyrillic,
+            unicode_script::Script::Deseret => Self::Deseret,
+            unicode_script::Script::Devanagari => Self::Devanagari,
+            unicode_script::Script::Dives_Akuru => Self::DivesAkuru,
+            unicode_script::Script::Dogra => Self::Dogra,
+            unicode_script::Script::Duployan => Self::Duployan,
+            unicode_script::Script::Egyptian_Hieroglyphs => Self::EgyptianHieroglyphs,
+            unicode_script::Script::Elbasan => Self::Elbasan,
+            unicode_script::Script::Elymaic => Self::Elymaic,
+            unicode_script::Script::Ethiopic => Self::Ethiopian,
+            unicode_script::Script::Garay => Self::Garay,
+            unicode_script::Script::Georgian => Self::Georgian,
+            unicode_script::Script::Glagolitic => Self::Glagolitic,
+            unicode_script::Script::Gothic => Self::Gothic,
+            unicode_script::Script::Grantha => Self::Grantha,
+            unicode_script::Script::Greek => Self::Greek,
+            unicode_script::Script::Gujarati => Self::Gujarati,
+            unicode_script::Script::Gunjala_Gondi => Self::GunjalaGondi,
+            unicode_script::Script::Gurmukhi => Self::Gurmukhi,
+            unicode_script::Script::Gurung_Khema => Self::GurungKhema,
+            unicode_script::Script::Han => Self::Han,
+            unicode_script::Script::Hangul => Self::Hangul,
+            unicode_script::Script::Hanifi_Rohingya => Self::HanifiRohingya,
+            unicode_script::Script::Hanunoo => Self::Hanunoo,
+            unicode_script::Script::Hatran => Self::Hatran,
+            unicode_script::Script::Hebrew => Self::Hebrew,
+            unicode_script::Script::Hiragana => Self::Hiragana,
+            unicode_script::Script::Imperial_Aramaic => Self::ImperialAramaic,
+            unicode_script::Script::Inherited => Self::Inherited,
+            unicode_script::Script::Inscriptional_Pahlavi => Self::InscriptionalPahlavi,
+            unicode_script::Script::Inscriptional_Parthian => Self::InscriptionalParthian,
+            unicode_script::Script::Javanese => Self::Javanese,
+            unicode_script::Script::Kaithi => Self::Kaithi,
+            unicode_script::Script::Kannada => Self::Kannada,
+            unicode_script::Script::Katakana => Self::Katakana,
+            unicode_script::Script::Kawi => Self::Kawi,
+            unicode_script::Script::Kayah_Li => Self::KayahLi,
+            unicode_script::Script::Kharoshthi => Self::Kharoshthi,
+            unicode_script::Script::Khitan_Small_Script => Self::KhitanSmallScript,
+            unicode_script::Script::Khmer => Self::Khmer,
+            unicode_script::Script::Khojki => Self::Khojki,
+            unicode_script::Script::Khudawadi => Self::Khudawadi,
+            unicode_script::Script::Kirat_Rai => Self::KiratRai,
+            unicode_script::Script::Lao => Self::Lao,
+            unicode_script::Script::Latin => Self::Latin,
+            unicode_script::Script::Lepcha => Self::Lepcha,
+            unicode_script::Script::Limbu => Self::Limbu,
+            unicode_script::Script::Linear_A => Self::LinearA,
+            unicode_script::Script::Linear_B => Self::LinearB,
+            unicode_script::Script::Lisu => Self::Lisu,
+            unicode_script::Script::Lycian => Self::Lycian,
+            unicode_script::Script::Lydian => Self::Lydian,
+            unicode_script::Script::Mahajani => Self::Mahajani,
+            unicode_script::Script::Makasar => Self::Makasar,
+            unicode_script::Script::Malayalam => Self::Malayalam,
+            unicode_script::Script::Mandaic => Self::Mandaic,
+            unicode_script::Script::Manichaean => Self::Manichaean,
+            unicode_script::Script::Marchen => Self::Marchen,
+            unicode_script::Script::Masaram_Gondi => Self::MasaramGondi,
+            unicode_script::Script::Medefaidrin => Self::Medefaidrin,
+            unicode_script::Script::Meetei_Mayek => Self::MeeteiMayek,
+            unicode_script::Script::Mende_Kikakui => Self::MendeKikakui,
+            unicode_script::Script::Meroitic_Cursive => Self::MeroiticCursive,
+            unicode_script::Script::Meroitic_Hieroglyphs => Self::MeroiticHieroglyphs,
+            unicode_script::Script::Miao => Self::Miao,
+            unicode_script::Script::Modi => Self::Modi,
+            unicode_script::Script::Mongolian => Self::Mongolian,
+            unicode_script::Script::Mro => Self::Mro,
+            unicode_script::Script::Multani => Self::Multani,
+            unicode_script::Script::Myanmar => Self::Myanmar,
+            unicode_script::Script::Nabataean => Self::Nabataean,
+            unicode_script::Script::Nag_Mundari => Self::NagMundari,
+            unicode_script::Script::Nandinagari => Self::Nandinagari,
+            unicode_script::Script::New_Tai_Lue => Self::NewTaiLue,
+            unicode_script::Script::Newa => Self::Newa,
+            unicode_script::Script::Nko => Self::Nko,
+            unicode_script::Script::Nushu => Self::Nushu,
+            unicode_script::Script::Nyiakeng_Puachue_Hmong => Self::NyiakengPuachueHmong,
+            unicode_script::Script::Ogham => Self::Ogham,
+            unicode_script::Script::Ol_Chiki => Self::OlChiki,
+            unicode_script::Script::Ol_Onal => Self::OlOnal,
+            unicode_script::Script::Old_Hungarian => Self::OldHungarian,
+            unicode_script::Script::Old_Italic => Self::OldItalic,
+            unicode_script::Script::Old_North_Arabian => Self::OldNorthArabian,
+            unicode_script::Script::Old_Permic => Self::OldPermic,
+            unicode_script::Script::Old_Persian => Self::OldPersian,
+            unicode_script::Script::Old_Sogdian => Self::OldSogdian,
+            unicode_script::Script::Old_South_Arabian => Self::OldSouthArabian,
+            unicode_script::Script::Old_Turkic => Self::OldTurkic,
+            unicode_script::Script::Old_Uyghur => Self::OldUyghur,
+            unicode_script::Script::Oriya => Self::Oriya,
+            unicode_script::Script::Osage => Self::Osage,
+            unicode_script::Script::Osmanya => Self::Osmanya,
+            unicode_script::Script::Pahawh_Hmong => Self::PahawhHmong,
+            unicode_script::Script::Palmyrene => Self::Palmyrene,
+            unicode_script::Script::Pau_Cin_Hau => Self::PauCinHau,
+            unicode_script::Script::Phags_Pa => Self::PhagsPa,
+            unicode_script::Script::Phoenician => Self::Phoenician,
+            unicode_script::Script::Psalter_Pahlavi => Self::PsalterPahlavi,
+            unicode_script::Script::Rejang => Self::Rejang,
+            unicode_script::Script::Runic => Self::Runic,
+            unicode_script::Script::Samaritan => Self::Samaritan,
+            unicode_script::Script::Saurashtra => Self::Saurashtra,
+            unicode_script::Script::Sharada => Self::Sharada,
+            unicode_script::Script::Shavian => Self::Shavian,
+            unicode_script::Script::Siddham => Self::Siddham,
+            unicode_script::Script::Sidetic => Self::Sidetic,
+            unicode_script::Script::SignWriting => Self::SignWriting,
+            unicode_script::Script::Sinhala => Self::Sinhala,
+            unicode_script::Script::Sogdian => Self::Sogdian,
+            unicode_script::Script::Sora_Sompeng => Self::SoraSompeng,
+            unicode_script::Script::Soyombo => Self::Soyombo,
+            unicode_script::Script::Sundanese => Self::Sundanese,
+            unicode_script::Script::Sunuwar => Self::Sunuwar,
+            unicode_script::Script::Syloti_Nagri => Self::SylotiNagri,
+            unicode_script::Script::Syriac => Self::Syriac,
+            unicode_script::Script::Tagalog => Self::Tagalog,
+            unicode_script::Script::Tagbanwa => Self::Tagbanwa,
+            unicode_script::Script::Tai_Le => Self::TaiLe,
+            unicode_script::Script::Tai_Tham => Self::TaiTham,
+            unicode_script::Script::Tai_Viet => Self::TaiViet,
+            unicode_script::Script::Tai_Yo => Self::TaiYo,
+            unicode_script::Script::Takri => Self::Takri,
+            unicode_script::Script::Tamil => Self::Tamil,
+            unicode_script::Script::Tangsa => Self::Tangsa,
+            unicode_script::Script::Tangut => Self::Tangut,
+            unicode_script::Script::Telugu => Self::Telugu,
+            unicode_script::Script::Thaana => Self::Thaana,
+            unicode_script::Script::Thai => Self::Thai,
+            unicode_script::Script::Tibetan => Self::Tibetan,
+            unicode_script::Script::Tifinagh => Self::Tifinagh,
+            unicode_script::Script::Tirhuta => Self::Tirhuta,
+            unicode_script::Script::Todhri => Self::Todhri,
+            unicode_script::Script::Tolong_Siki => Self::TolongSiki,
+            unicode_script::Script::Toto => Self::Toto,
+            unicode_script::Script::Tulu_Tigalari => Self::TuluTigalari,
+            unicode_script::Script::Ugaritic => Self::Ugaritic,
+            unicode_script::Script::Vai => Self::Vai,
+            unicode_script::Script::Vithkuqi => Self::Vithkuqi,
+            unicode_script::Script::Wancho => Self::Wancho,
+            unicode_script::Script::Warang_Citi => Self::WarangCiti,
+            unicode_script::Script::Yezidi => Self::Yezidi,
+            unicode_script::Script::Yi => Self::Yi,
+            unicode_script::Script::Zanabazar_Square => Self::ZanabazarSquare,
+            _ => Self::Unknown,
+        }
+    }
+}
+
+#[cfg(feature = "unicode_script")]
+impl From<Script> for unicode_script::Script {
+    fn from(value: Script) -> Self {
+        match value {
+            Script::Adlam => Self::Adlam,
+            Script::Ahom => Self::Ahom,
+            Script::AnatolianHieroglyphs => Self::Anatolian_Hieroglyphs,
+            Script::Arabic => Self::Arabic,
+            Script::Armenian => Self::Armenian,
+            Script::Avestan => Self::Avestan,
+            Script::Balinese => Self::Balinese,
+            Script::Bamum => Self::Bamum,
+            Script::BassaVah => Self::Bassa_Vah,
+            Script::Batak => Self::Batak,
+            Script::Bengali => Self::Bengali,
+            Script::BeriaErfe => Self::Beria_Erfe,
+            Script::Bhaiksuki => Self::Bhaiksuki,
+            Script::Bopomofo => Self::Bopomofo,
+            Script::Brahmi => Self::Brahmi,
+            Script::Braille => Self::Braille,
+            Script::Buginese => Self::Buginese,
+            Script::Buhid => Self::Buhid,
+            Script::CanadianAboriginal => Self::Canadian_Aboriginal,
+            Script::Carian => Self::Carian,
+            Script::CaucasianAlbanian => Self::Caucasian_Albanian,
+            Script::Chakma => Self::Chakma,
+            Script::Cham => Self::Cham,
+            Script::Cherokee => Self::Cherokee,
+            Script::Chorasmian => Self::Chorasmian,
+            Script::Common => Self::Common,
+            Script::Coptic => Self::Coptic,
+            Script::Cuneiform => Self::Cuneiform,
+            Script::Cypriot => Self::Cypriot,
+            Script::CyproMinoan => Self::Cypro_Minoan,
+            Script::Cyrillic => Self::Cyrillic,
+            Script::Deseret => Self::Deseret,
+            Script::Devanagari => Self::Devanagari,
+            Script::DivesAkuru => Self::Dives_Akuru,
+            Script::Dogra => Self::Dogra,
+            Script::Duployan => Self::Duployan,
+            Script::EgyptianHieroglyphs => Self::Egyptian_Hieroglyphs,
+            Script::Elbasan => Self::Elbasan,
+            Script::Elymaic => Self::Elymaic,
+            Script::Ethiopian => Self::Ethiopic,
+            Script::Garay => Self::Garay,
+            Script::Georgian => Self::Georgian,
+            Script::Glagolitic => Self::Glagolitic,
+            Script::Gothic => Self::Gothic,
+            Script::Grantha => Self::Grantha,
+            Script::Greek => Self::Greek,
+            Script::Gujarati => Self::Gujarati,
+            Script::GunjalaGondi => Self::Gunjala_Gondi,
+            Script::Gurmukhi => Self::Gurmukhi,
+            Script::GurungKhema => Self::Gurung_Khema,
+            Script::Han => Self::Han,
+            Script::Hangul => Self::Hangul,
+            Script::HanifiRohingya => Self::Hanifi_Rohingya,
+            Script::Hanunoo => Self::Hanunoo,
+            Script::Hatran => Self::Hatran,
+            Script::Hebrew => Self::Hebrew,
+            Script::Hiragana => Self::Hiragana,
+            Script::ImperialAramaic => Self::Imperial_Aramaic,
+            Script::Inherited => Self::Inherited,
+            Script::InscriptionalPahlavi => Self::Inscriptional_Pahlavi,
+            Script::InscriptionalParthian => Self::Inscriptional_Parthian,
+            Script::Javanese => Self::Javanese,
+            Script::Kaithi => Self::Kaithi,
+            Script::Kannada => Self::Kannada,
+            Script::Katakana => Self::Katakana,
+            Script::Kawi => Self::Kawi,
+            Script::KayahLi => Self::Kayah_Li,
+            Script::Kharoshthi => Self::Kharoshthi,
+            Script::KhitanSmallScript => Self::Khitan_Small_Script,
+            Script::Khmer => Self::Khmer,
+            Script::Khojki => Self::Khojki,
+            Script::Khudawadi => Self::Khudawadi,
+            Script::KiratRai => Self::Kirat_Rai,
+            Script::Lao => Self::Lao,
+            Script::Latin => Self::Latin,
+            Script::Lepcha => Self::Lepcha,
+            Script::Limbu => Self::Limbu,
+            Script::LinearA => Self::Linear_A,
+            Script::LinearB => Self::Linear_B,
+            Script::Lisu => Self::Lisu,
+            Script::Lycian => Self::Lycian,
+            Script::Lydian => Self::Lydian,
+            Script::Mahajani => Self::Mahajani,
+            Script::Makasar => Self::Makasar,
+            Script::Malayalam => Self::Malayalam,
+            Script::Mandaic => Self::Mandaic,
+            Script::Manichaean => Self::Manichaean,
+            Script::Marchen => Self::Marchen,
+            Script::MasaramGondi => Self::Masaram_Gondi,
+            Script::Medefaidrin => Self::Medefaidrin,
+            Script::MeeteiMayek => Self::Meetei_Mayek,
+            Script::MendeKikakui => Self::Mende_Kikakui,
+            Script::MeroiticCursive => Self::Meroitic_Cursive,
+            Script::MeroiticHieroglyphs => Self::Meroitic_Hieroglyphs,
+            Script::Miao => Self::Miao,
+            Script::Modi => Self::Modi,
+            Script::Mongolian => Self::Mongolian,
+            Script::Mro => Self::Mro,
+            Script::Multani => Self::Multani,
+            Script::Myanmar => Self::Myanmar,
+            Script::Nabataean => Self::Nabataean,
+            Script::NagMundari => Self::Nag_Mundari,
+            Script::Nandinagari => Self::Nandinagari,
+            Script::Newa => Self::Newa,
+            Script::NewTaiLue => Self::New_Tai_Lue,
+            Script::Nko => Self::Nko,
+            Script::Nushu => Self::Nushu,
+            Script::NyiakengPuachueHmong => Self::Nyiakeng_Puachue_Hmong,
+            Script::Ogham => Self::Ogham,
+            Script::OlChiki => Self::Ol_Chiki,
+            Script::OldHungarian => Self::Old_Hungarian,
+            Script::OldItalic => Self::Old_Italic,
+            Script::OldNorthArabian => Self::Old_North_Arabian,
+            Script::OldPermic => Self::Old_Permic,
+            Script::OldPersian => Self::Old_Persian,
+            Script::OldSogdian => Self::Old_Sogdian,
+            Script::OldSouthArabian => Self::Old_South_Arabian,
+            Script::OldTurkic => Self::Old_Turkic,
+            Script::OldUyghur => Self::Old_Uyghur,
+            Script::OlOnal => Self::Ol_Onal,
+            Script::Oriya => Self::Oriya,
+            Script::Osage => Self::Osage,
+            Script::Osmanya => Self::Osmanya,
+            Script::PahawhHmong => Self::Pahawh_Hmong,
+            Script::Palmyrene => Self::Palmyrene,
+            Script::PauCinHau => Self::Pau_Cin_Hau,
+            Script::PhagsPa => Self::Phags_Pa,
+            Script::Phoenician => Self::Phoenician,
+            Script::PsalterPahlavi => Self::Psalter_Pahlavi,
+            Script::Rejang => Self::Rejang,
+            Script::Runic => Self::Runic,
+            Script::Samaritan => Self::Samaritan,
+            Script::Saurashtra => Self::Saurashtra,
+            Script::Sharada => Self::Sharada,
+            Script::Shavian => Self::Shavian,
+            Script::Siddham => Self::Siddham,
+            Script::Sidetic => Self::Sidetic,
+            Script::SignWriting => Self::SignWriting,
+            Script::Sinhala => Self::Sinhala,
+            Script::Sogdian => Self::Sogdian,
+            Script::SoraSompeng => Self::Sora_Sompeng,
+            Script::Soyombo => Self::Soyombo,
+            Script::Sundanese => Self::Sundanese,
+            Script::Sunuwar => Self::Sunuwar,
+            Script::SylotiNagri => Self::Syloti_Nagri,
+            Script::Syriac => Self::Syriac,
+            Script::Tagalog => Self::Tagalog,
+            Script::Tagbanwa => Self::Tagbanwa,
+            Script::TaiLe => Self::Tai_Le,
+            Script::TaiTham => Self::Tai_Tham,
+            Script::TaiViet => Self::Tai_Viet,
+            Script::TaiYo => Self::Tai_Yo,
+            Script::Takri => Self::Takri,
+            Script::Tamil => Self::Tamil,
+            Script::Tangsa => Self::Tangsa,
+            Script::Tangut => Self::Tangut,
+            Script::Telugu => Self::Telugu,
+            Script::Thaana => Self::Thaana,
+            Script::Thai => Self::Thai,
+            Script::Tibetan => Self::Tibetan,
+            Script::Tifinagh => Self::Tifinagh,
+            Script::Tirhuta => Self::Tirhuta,
+            Script::Todhri => Self::Todhri,
+            Script::TolongSiki => Self::Tolong_Siki,
+            Script::Toto => Self::Toto,
+            Script::TuluTigalari => Self::Tulu_Tigalari,
+            Script::Ugaritic => Self::Ugaritic,
+            Script::Vai => Self::Vai,
+            Script::Vithkuqi => Self::Vithkuqi,
+            Script::Wancho => Self::Wancho,
+            Script::WarangCiti => Self::Warang_Citi,
+            Script::Yezidi => Self::Yezidi,
+            Script::Yi => Self::Yi,
+            Script::ZanabazarSquare => Self::Zanabazar_Square,
+            _ => Self::Unknown,
+        }
+    }
+}
+
+#[test]
+fn unicode_script_conversion() {
+    for a in b'A'..=b'Z' {
+        for b in b'a'..=b'z' {
+            for c in b'a'..=b'z' {
+                for d in b'a'..=b'z' {
+                    let name = &[a, b, c, d];
+                    let name = core::str::from_utf8(name).unwrap();
+                    let script = crate::PropertyParser::<Script>::new()
+                        .get_strict(name)
+                        .unwrap_or(Script::Unknown);
+                    let unicode_script = unicode_script::Script::from_short_name(name)
+                        .unwrap_or(unicode_script::Script::Unknown);
+                    if crate::PropertyNamesShort::<Script>::new()
+                        .get(script)
+                        .unwrap()
+                        != unicode_script.short_name()
+                    {
+                        // Script not supported by both types
+                        continue;
+                    }
+                    assert_eq!(script, unicode_script.into(), "{name}");
+                    assert_eq!(unicode_script, script.into(), "{name}");
+                }
+            }
+        }
+    }
 }
 
 make_enumerated_property! {

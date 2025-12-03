@@ -121,8 +121,15 @@ impl unicode_bidi::data_source::BidiDataSource
     for crate::CodePointMapDataBorrowed<'_, crate::props::BidiClass>
 {
     fn bidi_class(&self, c: char) -> unicode_bidi::BidiClass {
+        self.get(c).into()
+    }
+}
+
+#[cfg(feature = "unicode_bidi")]
+impl From<crate::props::BidiClass> for unicode_bidi::BidiClass {
+    fn from(value: crate::props::BidiClass) -> Self {
         use crate::props::BidiClass;
-        match self.get(c) {
+        match value {
             BidiClass::LeftToRight => unicode_bidi::BidiClass::L,
             BidiClass::RightToLeft => unicode_bidi::BidiClass::R,
             BidiClass::EuropeanNumber => unicode_bidi::BidiClass::EN,
