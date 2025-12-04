@@ -296,7 +296,7 @@ pub mod ffi {
         )]
         Cherokee = 6,
         #[diplomat::rust_link(icu::properties::props::Script::Chisoi, AssociatedConstantInStruct)]
-        Chisoi = 209,
+        Chisoi = 254,
         #[diplomat::rust_link(
             icu::properties::props::Script::Chorasmian,
             AssociatedConstantInStruct
@@ -356,6 +356,8 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         Ethiopian = 11,
+        #[diplomat::rust_link(icu::properties::props::Script::Garay, AssociatedConstantInStruct)]
+        Garay = 201,
         #[diplomat::rust_link(
             icu::properties::props::Script::Georgian,
             AssociatedConstantInStruct
@@ -387,6 +389,11 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         Gurmukhi = 16,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::GurungKhema,
+            AssociatedConstantInStruct
+        )]
+        GurungKhema = 202,
         #[diplomat::rust_link(icu::properties::props::Script::Han, AssociatedConstantInStruct)]
         Han = 17,
         #[diplomat::rust_link(icu::properties::props::Script::Hangul, AssociatedConstantInStruct)]
@@ -464,6 +471,11 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         Khudawadi = 145,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::KiratRai,
+            AssociatedConstantInStruct
+        )]
+        KiratRai = 203,
         #[diplomat::rust_link(icu::properties::props::Script::Lao, AssociatedConstantInStruct)]
         Lao = 24,
         #[diplomat::rust_link(icu::properties::props::Script::Latin, AssociatedConstantInStruct)]
@@ -633,6 +645,8 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         OldUyghur = 194,
+        #[diplomat::rust_link(icu::properties::props::Script::OlOnal, AssociatedConstantInStruct)]
+        OlOnal = 204,
         #[diplomat::rust_link(icu::properties::props::Script::Oriya, AssociatedConstantInStruct)]
         Oriya = 31,
         #[diplomat::rust_link(icu::properties::props::Script::Osage, AssociatedConstantInStruct)]
@@ -687,7 +701,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Script::Siddham, AssociatedConstantInStruct)]
         Siddham = 166,
         #[diplomat::rust_link(icu::properties::props::Script::Sidetic, AssociatedConstantInStruct)]
-        Sidetic = 210,
+        Sidetic = 209,
         #[diplomat::rust_link(
             icu::properties::props::Script::SignWriting,
             AssociatedConstantInStruct
@@ -709,6 +723,8 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         Sundanese = 113,
+        #[diplomat::rust_link(icu::properties::props::Script::Sunuwar, AssociatedConstantInStruct)]
+        Sunuwar = 205,
         #[diplomat::rust_link(
             icu::properties::props::Script::SylotiNagri,
             AssociatedConstantInStruct
@@ -730,7 +746,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Script::TaiViet, AssociatedConstantInStruct)]
         TaiViet = 127,
         #[diplomat::rust_link(icu::properties::props::Script::TaiYo, AssociatedConstantInStruct)]
-        TaiYo = 211,
+        TaiYo = 210,
         #[diplomat::rust_link(icu::properties::props::Script::Takri, AssociatedConstantInStruct)]
         Takri = 153,
         #[diplomat::rust_link(icu::properties::props::Script::Tamil, AssociatedConstantInStruct)]
@@ -754,13 +770,20 @@ pub mod ffi {
         Tifinagh = 60,
         #[diplomat::rust_link(icu::properties::props::Script::Tirhuta, AssociatedConstantInStruct)]
         Tirhuta = 158,
+        #[diplomat::rust_link(icu::properties::props::Script::Todhri, AssociatedConstantInStruct)]
+        Todhri = 206,
         #[diplomat::rust_link(
             icu::properties::props::Script::TolongSiki,
             AssociatedConstantInStruct
         )]
-        TolongSiki = 212,
+        TolongSiki = 211,
         #[diplomat::rust_link(icu::properties::props::Script::Toto, AssociatedConstantInStruct)]
         Toto = 196,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::TuluTigalari,
+            AssociatedConstantInStruct
+        )]
+        TuluTigalari = 207,
         #[diplomat::rust_link(
             icu::properties::props::Script::Ugaritic,
             AssociatedConstantInStruct
@@ -856,7 +879,7 @@ pub mod ffi {
                 118 => Self::Chakma,
                 66 => Self::Cham,
                 6 => Self::Cherokee,
-                209 => Self::Chisoi,
+                254 => Self::Chisoi,
                 189 => Self::Chorasmian,
                 0 => Self::Common,
                 7 => Self::Coptic,
@@ -873,6 +896,7 @@ pub mod ffi {
                 136 => Self::Elbasan,
                 185 => Self::Elymaic,
                 11 => Self::Ethiopian,
+                201 => Self::Garay,
                 12 => Self::Georgian,
                 56 => Self::Glagolitic,
                 13 => Self::Gothic,
@@ -881,6 +905,7 @@ pub mod ffi {
                 15 => Self::Gujarati,
                 179 => Self::GunjalaGondi,
                 16 => Self::Gurmukhi,
+                202 => Self::GurungKhema,
                 17 => Self::Han,
                 18 => Self::Hangul,
                 182 => Self::HanifiRohingya,
@@ -903,6 +928,7 @@ pub mod ffi {
                 23 => Self::Khmer,
                 157 => Self::Khojki,
                 145 => Self::Khudawadi,
+                203 => Self::KiratRai,
                 24 => Self::Lao,
                 25 => Self::Latin,
                 82 => Self::Lepcha,
@@ -950,6 +976,7 @@ pub mod ffi {
                 133 => Self::OldSouthArabian,
                 88 => Self::OldTurkic,
                 194 => Self::OldUyghur,
+                204 => Self::OlOnal,
                 31 => Self::Oriya,
                 171 => Self::Osage,
                 50 => Self::Osmanya,
@@ -966,13 +993,14 @@ pub mod ffi {
                 151 => Self::Sharada,
                 51 => Self::Shavian,
                 166 => Self::Siddham,
-                210 => Self::Sidetic,
+                209 => Self::Sidetic,
                 112 => Self::SignWriting,
                 33 => Self::Sinhala,
                 183 => Self::Sogdian,
                 152 => Self::SoraSompeng,
                 176 => Self::Soyombo,
                 113 => Self::Sundanese,
+                205 => Self::Sunuwar,
                 58 => Self::SylotiNagri,
                 34 => Self::Syriac,
                 42 => Self::Tagalog,
@@ -980,7 +1008,7 @@ pub mod ffi {
                 52 => Self::TaiLe,
                 106 => Self::TaiTham,
                 127 => Self::TaiViet,
-                211 => Self::TaiYo,
+                210 => Self::TaiYo,
                 153 => Self::Takri,
                 35 => Self::Tamil,
                 195 => Self::Tangsa,
@@ -991,8 +1019,10 @@ pub mod ffi {
                 39 => Self::Tibetan,
                 60 => Self::Tifinagh,
                 158 => Self::Tirhuta,
-                212 => Self::TolongSiki,
+                206 => Self::Todhri,
+                211 => Self::TolongSiki,
                 196 => Self::Toto,
+                207 => Self::TuluTigalari,
                 53 => Self::Ugaritic,
                 103 => Self::Unknown,
                 99 => Self::Vai,

@@ -57,6 +57,7 @@ export class Script {
     static Elbasan : Script;
     static Elymaic : Script;
     static Ethiopian : Script;
+    static Garay : Script;
     static Georgian : Script;
     static Glagolitic : Script;
     static Gothic : Script;
@@ -65,6 +66,7 @@ export class Script {
     static Gujarati : Script;
     static GunjalaGondi : Script;
     static Gurmukhi : Script;
+    static GurungKhema : Script;
     static Han : Script;
     static Hangul : Script;
     static HanifiRohingya : Script;
@@ -87,6 +89,7 @@ export class Script {
     static Khmer : Script;
     static Khojki : Script;
     static Khudawadi : Script;
+    static KiratRai : Script;
     static Lao : Script;
     static Latin : Script;
     static Lepcha : Script;
@@ -134,6 +137,7 @@ export class Script {
     static OldSouthArabian : Script;
     static OldTurkic : Script;
     static OldUyghur : Script;
+    static OlOnal : Script;
     static Oriya : Script;
     static Osage : Script;
     static Osmanya : Script;
@@ -157,6 +161,7 @@ export class Script {
     static SoraSompeng : Script;
     static Soyombo : Script;
     static Sundanese : Script;
+    static Sunuwar : Script;
     static SylotiNagri : Script;
     static Syriac : Script;
     static Tagalog : Script;
@@ -175,8 +180,10 @@ export class Script {
     static Tibetan : Script;
     static Tifinagh : Script;
     static Tirhuta : Script;
+    static Todhri : Script;
     static TolongSiki : Script;
     static Toto : Script;
+    static TuluTigalari : Script;
     static Ugaritic : Script;
     static Unknown : Script;
     static Vai : Script;
