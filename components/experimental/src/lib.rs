@@ -121,6 +121,7 @@ pub mod provider {
         super::dimension::provider::currency::essentials::CurrencyEssentialsV1::INFO,
         super::dimension::provider::currency::patterns::CurrencyPatternsDataV1::INFO,
         super::dimension::provider::currency::extended::CurrencyExtendedDataV1::INFO,
+        super::dimension::provider::currency::fractions::CurrencyFractionsV1::INFO,
         super::dimension::provider::percent::PercentEssentialsV1::INFO,
         super::dimension::provider::units::essentials::UnitsEssentialsV1::INFO,
         super::dimension::provider::units::display_names::UnitsDisplayNamesV1::INFO,
