@@ -71,8 +71,6 @@ pub enum BidiPairedBracketType {
 #[cfg(feature = "unicode_bidi")]
 use crate::props::BidiClass;
 
-/// Implements [`unicode_bidi::BidiDataSource`] on [`CodePointMapDataBorrowed<BidiClass>`](crate::CodePointMapDataBorrowed).
-///
 /// ✨ *Enabled with the `unicode_bidi` Cargo feature.*
 ///
 /// # Examples
