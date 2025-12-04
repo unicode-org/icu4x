@@ -905,6 +905,7 @@ impl Script {
     pub const Chisoi: Script = Self(254);
 }
 
+/// ✨ *Enabled with the `compiled_data` Cargo feature.*
 #[cfg(feature = "compiled_data")]
 impl From<Script> for icu_locale_core::subtags::Script {
     fn from(value: Script) -> Self {
@@ -914,6 +915,7 @@ impl From<Script> for icu_locale_core::subtags::Script {
     }
 }
 
+/// ✨ *Enabled with the `compiled_data` Cargo feature.*
 #[cfg(feature = "compiled_data")]
 impl From<icu_locale_core::subtags::Script> for Script {
     fn from(value: icu_locale_core::subtags::Script) -> Self {
