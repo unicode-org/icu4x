@@ -905,6 +905,26 @@ impl Script {
     pub const Chisoi: Script = Self(254);
 }
 
+/// ✨ *Enabled with the `compiled_data` Cargo feature.*
+#[cfg(feature = "compiled_data")]
+impl From<Script> for icu_locale_core::subtags::Script {
+    fn from(value: Script) -> Self {
+        crate::PropertyNamesShort::new()
+            .get_locale_script(value)
+            .unwrap_or(icu_locale_core::subtags::script!("Zzzz"))
+    }
+}
+
+/// ✨ *Enabled with the `compiled_data` Cargo feature.*
+#[cfg(feature = "compiled_data")]
+impl From<icu_locale_core::subtags::Script> for Script {
+    fn from(value: icu_locale_core::subtags::Script) -> Self {
+        crate::PropertyParser::new()
+            .get_strict(value.as_str())
+            .unwrap_or(Self::Unknown)
+    }
+}
+
 make_enumerated_property! {
     name: "Script";
     short_name: "sc";
