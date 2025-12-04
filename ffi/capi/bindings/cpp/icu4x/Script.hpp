@@ -82,6 +82,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_Elbasan:
         case icu4x::capi::Script_Elymaic:
         case icu4x::capi::Script_Ethiopian:
+        case icu4x::capi::Script_Garay:
         case icu4x::capi::Script_Georgian:
         case icu4x::capi::Script_Glagolitic:
         case icu4x::capi::Script_Gothic:
@@ -90,6 +91,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_Gujarati:
         case icu4x::capi::Script_GunjalaGondi:
         case icu4x::capi::Script_Gurmukhi:
+        case icu4x::capi::Script_GurungKhema:
         case icu4x::capi::Script_Han:
         case icu4x::capi::Script_Hangul:
         case icu4x::capi::Script_HanifiRohingya:
@@ -112,6 +114,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_Khmer:
         case icu4x::capi::Script_Khojki:
         case icu4x::capi::Script_Khudawadi:
+        case icu4x::capi::Script_KiratRai:
         case icu4x::capi::Script_Lao:
         case icu4x::capi::Script_Latin:
         case icu4x::capi::Script_Lepcha:
@@ -159,6 +162,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_OldSouthArabian:
         case icu4x::capi::Script_OldTurkic:
         case icu4x::capi::Script_OldUyghur:
+        case icu4x::capi::Script_OlOnal:
         case icu4x::capi::Script_Oriya:
         case icu4x::capi::Script_Osage:
         case icu4x::capi::Script_Osmanya:
@@ -182,6 +186,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_SoraSompeng:
         case icu4x::capi::Script_Soyombo:
         case icu4x::capi::Script_Sundanese:
+        case icu4x::capi::Script_Sunuwar:
         case icu4x::capi::Script_SylotiNagri:
         case icu4x::capi::Script_Syriac:
         case icu4x::capi::Script_Tagalog:
@@ -200,8 +205,10 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_Tibetan:
         case icu4x::capi::Script_Tifinagh:
         case icu4x::capi::Script_Tirhuta:
+        case icu4x::capi::Script_Todhri:
         case icu4x::capi::Script_TolongSiki:
         case icu4x::capi::Script_Toto:
+        case icu4x::capi::Script_TuluTigalari:
         case icu4x::capi::Script_Ugaritic:
         case icu4x::capi::Script_Unknown:
         case icu4x::capi::Script_Vai:

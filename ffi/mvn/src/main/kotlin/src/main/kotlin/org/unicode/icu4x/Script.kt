@@ -40,7 +40,7 @@ enum class Script(val inner: Int) {
     Chakma(118),
     Cham(66),
     Cherokee(6),
-    Chisoi(209),
+    Chisoi(254),
     Chorasmian(189),
     Common(0),
     Coptic(7),
@@ -57,6 +57,7 @@ enum class Script(val inner: Int) {
     Elbasan(136),
     Elymaic(185),
     Ethiopian(11),
+    Garay(201),
     Georgian(12),
     Glagolitic(56),
     Gothic(13),
@@ -65,6 +66,7 @@ enum class Script(val inner: Int) {
     Gujarati(15),
     GunjalaGondi(179),
     Gurmukhi(16),
+    GurungKhema(202),
     Han(17),
     Hangul(18),
     HanifiRohingya(182),
@@ -87,6 +89,7 @@ enum class Script(val inner: Int) {
     Khmer(23),
     Khojki(157),
     Khudawadi(145),
+    KiratRai(203),
     Lao(24),
     Latin(25),
     Lepcha(82),
@@ -134,6 +137,7 @@ enum class Script(val inner: Int) {
     OldSouthArabian(133),
     OldTurkic(88),
     OldUyghur(194),
+    OlOnal(204),
     Oriya(31),
     Osage(171),
     Osmanya(50),
@@ -150,13 +154,14 @@ enum class Script(val inner: Int) {
     Sharada(151),
     Shavian(51),
     Siddham(166),
-    Sidetic(210),
+    Sidetic(209),
     SignWriting(112),
     Sinhala(33),
     Sogdian(183),
     SoraSompeng(152),
     Soyombo(176),
     Sundanese(113),
+    Sunuwar(205),
     SylotiNagri(58),
     Syriac(34),
     Tagalog(42),
@@ -164,7 +169,7 @@ enum class Script(val inner: Int) {
     TaiLe(52),
     TaiTham(106),
     TaiViet(127),
-    TaiYo(211),
+    TaiYo(210),
     Takri(153),
     Tamil(35),
     Tangsa(195),
@@ -175,8 +180,10 @@ enum class Script(val inner: Int) {
     Tibetan(39),
     Tifinagh(60),
     Tirhuta(158),
-    TolongSiki(212),
+    Todhri(206),
+    TolongSiki(211),
     Toto(196),
+    TuluTigalari(207),
     Ugaritic(53),
     Unknown(103),
     Vai(99),
@@ -221,7 +228,7 @@ enum class Script(val inner: Int) {
                 118 -> Chakma
                 66 -> Cham
                 6 -> Cherokee
-                209 -> Chisoi
+                254 -> Chisoi
                 189 -> Chorasmian
                 0 -> Common
                 7 -> Coptic
@@ -238,6 +245,7 @@ enum class Script(val inner: Int) {
                 136 -> Elbasan
                 185 -> Elymaic
                 11 -> Ethiopian
+                201 -> Garay
                 12 -> Georgian
                 56 -> Glagolitic
                 13 -> Gothic
@@ -246,6 +254,7 @@ enum class Script(val inner: Int) {
                 15 -> Gujarati
                 179 -> GunjalaGondi
                 16 -> Gurmukhi
+                202 -> GurungKhema
                 17 -> Han
                 18 -> Hangul
                 182 -> HanifiRohingya
@@ -268,6 +277,7 @@ enum class Script(val inner: Int) {
                 23 -> Khmer
                 157 -> Khojki
                 145 -> Khudawadi
+                203 -> KiratRai
                 24 -> Lao
                 25 -> Latin
                 82 -> Lepcha
@@ -315,6 +325,7 @@ enum class Script(val inner: Int) {
                 133 -> OldSouthArabian
                 88 -> OldTurkic
                 194 -> OldUyghur
+                204 -> OlOnal
                 31 -> Oriya
                 171 -> Osage
                 50 -> Osmanya
@@ -331,13 +342,14 @@ enum class Script(val inner: Int) {
                 151 -> Sharada
                 51 -> Shavian
                 166 -> Siddham
-                210 -> Sidetic
+                209 -> Sidetic
                 112 -> SignWriting
                 33 -> Sinhala
                 183 -> Sogdian
                 152 -> SoraSompeng
                 176 -> Soyombo
                 113 -> Sundanese
+                205 -> Sunuwar
                 58 -> SylotiNagri
                 34 -> Syriac
                 42 -> Tagalog
@@ -345,7 +357,7 @@ enum class Script(val inner: Int) {
                 52 -> TaiLe
                 106 -> TaiTham
                 127 -> TaiViet
-                211 -> TaiYo
+                210 -> TaiYo
                 153 -> Takri
                 35 -> Tamil
                 195 -> Tangsa
@@ -356,8 +368,10 @@ enum class Script(val inner: Int) {
                 39 -> Tibetan
                 60 -> Tifinagh
                 158 -> Tirhuta
-                212 -> TolongSiki
+                206 -> Todhri
+                211 -> TolongSiki
                 196 -> Toto
+                207 -> TuluTigalari
                 53 -> Ugaritic
                 103 -> Unknown
                 99 -> Vai
