@@ -44,3 +44,6 @@ unicode_bidi = ["dep:unicode-bidi"]
 harfbuzz_traits = ["dep:harfbuzz-traits"]
 compiled_data = ["dep:icu_properties_data", "icu_provider/baked"]
 alloc = ["zerovec/alloc", "icu_collections/alloc", "serde?/alloc"]
+
+[package.metadata.cargo-semver-checks.lints]
+workspace = true

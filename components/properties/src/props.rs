@@ -742,7 +742,6 @@ impl Script {
     pub const Chakma: Script = Script(118);
     pub const Cham: Script = Script(66);
     pub const Cherokee: Script = Script(6);
-    pub const Chisoi: Script = Script(209);
     pub const Chorasmian: Script = Script(189);
     pub const Common: Script = Script(0);
     pub const Coptic: Script = Script(7);
@@ -759,6 +758,7 @@ impl Script {
     pub const Elbasan: Script = Script(136);
     pub const Elymaic: Script = Script(185);
     pub const Ethiopian: Script = Script(11);
+    pub const Garay: Script = Script(201);
     pub const Georgian: Script = Script(12);
     pub const Glagolitic: Script = Script(56);
     pub const Gothic: Script = Script(13);
@@ -767,6 +767,7 @@ impl Script {
     pub const Gujarati: Script = Script(15);
     pub const GunjalaGondi: Script = Script(179);
     pub const Gurmukhi: Script = Script(16);
+    pub const GurungKhema: Script = Script(202);
     pub const Han: Script = Script(17);
     pub const Hangul: Script = Script(18);
     pub const HanifiRohingya: Script = Script(182);
@@ -789,6 +790,7 @@ impl Script {
     pub const Khmer: Script = Script(23);
     pub const Khojki: Script = Script(157);
     pub const Khudawadi: Script = Script(145);
+    pub const KiratRai: Script = Script(203);
     pub const Lao: Script = Script(24);
     pub const Latin: Script = Script(25);
     pub const Lepcha: Script = Script(82);
@@ -836,6 +838,7 @@ impl Script {
     pub const OldSouthArabian: Script = Script(133);
     pub const OldTurkic: Script = Script(88);
     pub const OldUyghur: Script = Script(194);
+    pub const OlOnal: Script = Script(204);
     pub const Oriya: Script = Script(31);
     pub const Osage: Script = Script(171);
     pub const Osmanya: Script = Script(50);
@@ -852,13 +855,14 @@ impl Script {
     pub const Sharada: Script = Script(151);
     pub const Shavian: Script = Script(51);
     pub const Siddham: Script = Script(166);
-    pub const Sidetic: Script = Script(210);
+    pub const Sidetic: Script = Script(209);
     pub const SignWriting: Script = Script(112);
     pub const Sinhala: Script = Script(33);
     pub const Sogdian: Script = Script(183);
     pub const SoraSompeng: Script = Script(152);
     pub const Soyombo: Script = Script(176);
     pub const Sundanese: Script = Script(113);
+    pub const Sunuwar: Script = Script(205);
     pub const SylotiNagri: Script = Script(58);
     pub const Syriac: Script = Script(34);
     pub const Tagalog: Script = Script(42);
@@ -866,7 +870,7 @@ impl Script {
     pub const TaiLe: Script = Script(52);
     pub const TaiTham: Script = Script(106);
     pub const TaiViet: Script = Script(127);
-    pub const TaiYo: Script = Script(211);
+    pub const TaiYo: Script = Script(210);
     pub const Takri: Script = Script(153);
     pub const Tamil: Script = Script(35);
     pub const Tangsa: Script = Script(195);
@@ -877,8 +881,10 @@ impl Script {
     pub const Tibetan: Script = Script(39);
     pub const Tifinagh: Script = Script(60);
     pub const Tirhuta: Script = Script(158);
-    pub const TolongSiki: Script = Script(212);
+    pub const Todhri: Script = Script(206);
+    pub const TolongSiki: Script = Script(211);
     pub const Toto: Script = Script(196);
+    pub const TuluTigalari: Script = Script(207);
     pub const Ugaritic: Script = Script(53);
     pub const Unknown: Script = Script(103);
     pub const Vai: Script = Script(99);
@@ -889,6 +895,14 @@ impl Script {
     pub const Yi: Script = Script(41);
     pub const ZanabazarSquare: Script = Script(177);
 }
+}
+
+impl Script {
+    // Doesn't actually exist!
+    #[doc(hidden)]
+    #[allow(non_upper_case_globals)]
+    #[deprecated]
+    pub const Chisoi: Script = Self(254);
 }
 
 #[cfg(feature = "compiled_data")]
