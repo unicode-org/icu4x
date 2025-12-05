@@ -38,6 +38,8 @@ macro_rules! create_const_array {
         impl $enum_ty:ident {
             $( $(#[$const_meta:meta])* $v:vis const $i:ident: $t:ty = $e:expr; )*
         }
+        #[test]
+        fn $consts_test:ident();
     ) => {
         $( #[$meta] )*
         impl $enum_ty {
@@ -71,6 +73,25 @@ macro_rules! create_const_array {
             fn from(other: $enum_ty) -> Self {
                 other.0 as u16
             }
+        }
+
+        #[test]
+        fn $consts_test() {
+            $(
+                assert_eq!(
+                    crate::names::PropertyNamesLong::<$enum_ty>::new().get($enum_ty::$i).unwrap()
+                        // Rust identifiers use camel case
+                        .replace('_', "")
+                        // We use Ethiopian
+                        .replace("Ethiopic", "Ethiopian")
+                        // Nastaliq is missing a long name?
+                        .replace("Aran", "Nastaliq")
+                        // We spell these out
+                        .replace("LVSyllable", "LeadingVowelSyllable")
+                        .replace("LVTSyllable", "LeadingVowelTrailingSyllable"),
+                    stringify!($i)
+                );
+            )*
         }
     }
 }
@@ -199,6 +220,8 @@ impl BidiClass {
     /// (`PDI`) U+2069: terminates an isolate control
     pub const PopDirectionalIsolate: BidiClass = BidiClass(22);
 }
+#[test]
+fn bidi_props_consts();
 }
 
 make_enumerated_property! {
@@ -351,6 +374,20 @@ impl GeneralCategory {
         GeneralCategory::ModifierSymbol,
         GeneralCategory::OtherSymbol,
     ];
+}
+
+#[test]
+fn gc_variants() {
+    for &variant in GeneralCategory::ALL_VALUES {
+        assert_eq!(
+            crate::names::PropertyNamesLong::<GeneralCategory>::new()
+                .get(variant)
+                .unwrap()
+                // Rust identifiers use camel case
+                .replace('_', ""),
+            format!("{variant:?}")
+        );
+    }
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Debug, Hash, Default)]
@@ -895,6 +932,8 @@ impl Script {
     pub const Yi: Script = Script(41);
     pub const ZanabazarSquare: Script = Script(177);
 }
+#[test]
+fn script_consts();
 }
 
 impl Script {
@@ -988,6 +1027,8 @@ impl HangulSyllableType {
     /// (`LVT`) a precomposed syllable with a leading consonant, a vowel, and a trailing consonant.
     pub const LeadingVowelTrailingSyllable: HangulSyllableType = HangulSyllableType(5);
 }
+#[test]
+fn hangul_syllable_type_consts();
 }
 
 make_enumerated_property! {
@@ -1047,6 +1088,8 @@ impl EastAsianWidth {
     pub const Narrow: EastAsianWidth = EastAsianWidth(4); //name="Na"
     pub const Wide: EastAsianWidth = EastAsianWidth(5); //name="W"
 }
+#[test]
+fn east_asian_width_consts();
 }
 
 make_enumerated_property! {
@@ -1156,6 +1199,8 @@ impl LineBreak {
     // Added in ICU 78:
     pub const UnambiguousHyphen: LineBreak = LineBreak(48); // name="HH"
 }
+#[test]
+fn line_break_consts();
 }
 
 make_enumerated_property! {
@@ -1233,6 +1278,8 @@ impl GraphemeClusterBreak {
     pub const GlueAfterZwj: GraphemeClusterBreak = GraphemeClusterBreak(16); // name="GAZ"
     pub const ZWJ: GraphemeClusterBreak = GraphemeClusterBreak(17); // name="ZWJ"
 }
+#[test]
+fn gcb_consts();
 }
 
 make_enumerated_property! {
@@ -1315,6 +1362,8 @@ impl WordBreak {
     pub const ZWJ: WordBreak = WordBreak(21); // name="ZWJ"
     pub const WSegSpace: WordBreak = WordBreak(22); // name="WSegSpace"
 }
+#[test]
+fn word_break_consts();
 }
 
 make_enumerated_property! {
@@ -1385,6 +1434,8 @@ impl SentenceBreak {
     pub const LF: SentenceBreak = SentenceBreak(13); // name="LF"
     pub const SContinue: SentenceBreak = SentenceBreak(14); // name="SC"
 }
+#[test]
+fn sentence_break_consts();
 }
 
 make_enumerated_property! {
@@ -1506,6 +1557,8 @@ impl CanonicalCombiningClass {
     pub const DoubleAbove: CanonicalCombiningClass = CanonicalCombiningClass(234); // name="DA"
     pub const IotaSubscript: CanonicalCombiningClass = CanonicalCombiningClass(240); // name="IS"
 }
+#[test]
+fn ccc_consts();
 }
 
 make_enumerated_property! {
@@ -1569,6 +1622,8 @@ impl IndicConjunctBreak {
     pub const Extend: IndicConjunctBreak = IndicConjunctBreak(2);
     pub const Linker: IndicConjunctBreak = IndicConjunctBreak(3);
 }
+#[test]
+fn indic_conjunct_break_consts();
 }
 
 make_enumerated_property! {
@@ -1634,8 +1689,8 @@ impl IndicSyllabicCategory {
     pub const ConsonantPlaceholder: IndicSyllabicCategory = IndicSyllabicCategory(12);
     pub const ConsonantPrecedingRepha: IndicSyllabicCategory = IndicSyllabicCategory(13);
     pub const ConsonantPrefixed: IndicSyllabicCategory = IndicSyllabicCategory(14);
-    pub const ConsonantSucceedingRepha: IndicSyllabicCategory = IndicSyllabicCategory(15);
-    pub const ConsonantSubjoined: IndicSyllabicCategory = IndicSyllabicCategory(16);
+    pub const ConsonantSubjoined: IndicSyllabicCategory = IndicSyllabicCategory(15);
+    pub const ConsonantSucceedingRepha: IndicSyllabicCategory = IndicSyllabicCategory(16);
     pub const ConsonantWithStacker: IndicSyllabicCategory = IndicSyllabicCategory(17);
     pub const GeminationMark: IndicSyllabicCategory = IndicSyllabicCategory(18);
     pub const InvisibleStacker: IndicSyllabicCategory = IndicSyllabicCategory(19);
@@ -1657,6 +1712,8 @@ impl IndicSyllabicCategory {
     pub const VowelIndependent: IndicSyllabicCategory = IndicSyllabicCategory(35);
     pub const ReorderingKiller: IndicSyllabicCategory = IndicSyllabicCategory(36);
 }
+#[test]
+fn indic_syllabic_category_consts();
 }
 
 make_enumerated_property! {
@@ -1715,6 +1772,8 @@ impl JoiningType {
     pub const RightJoining: JoiningType = JoiningType(4); // name="R"
     pub const Transparent: JoiningType = JoiningType(5); // name="T"
 }
+#[test]
+fn joining_type_consts();
 }
 
 make_enumerated_property! {
@@ -1779,6 +1838,8 @@ impl VerticalOrientation {
     pub const TransformedUpright: VerticalOrientation = VerticalOrientation(2); // name="Tu"
     pub const Upright: VerticalOrientation = VerticalOrientation(3); // name="U"
 }
+#[test]
+fn vertical_orientation_consts();
 }
 
 make_enumerated_property! {

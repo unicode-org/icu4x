@@ -50,8 +50,8 @@ inline icu4x::IndicSyllabicCategory icu4x::IndicSyllabicCategory::FromFFI(icu4x:
         case icu4x::capi::IndicSyllabicCategory_ConsonantPlaceholder:
         case icu4x::capi::IndicSyllabicCategory_ConsonantPrecedingRepha:
         case icu4x::capi::IndicSyllabicCategory_ConsonantPrefixed:
-        case icu4x::capi::IndicSyllabicCategory_ConsonantSucceedingRepha:
         case icu4x::capi::IndicSyllabicCategory_ConsonantSubjoined:
+        case icu4x::capi::IndicSyllabicCategory_ConsonantSucceedingRepha:
         case icu4x::capi::IndicSyllabicCategory_ConsonantWithStacker:
         case icu4x::capi::IndicSyllabicCategory_GeminationMark:
         case icu4x::capi::IndicSyllabicCategory_InvisibleStacker:

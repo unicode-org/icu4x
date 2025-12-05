@@ -31,8 +31,8 @@ export class IndicSyllabicCategory {
     static ConsonantPlaceholder : IndicSyllabicCategory;
     static ConsonantPrecedingRepha : IndicSyllabicCategory;
     static ConsonantPrefixed : IndicSyllabicCategory;
-    static ConsonantSucceedingRepha : IndicSyllabicCategory;
     static ConsonantSubjoined : IndicSyllabicCategory;
+    static ConsonantSucceedingRepha : IndicSyllabicCategory;
     static ConsonantWithStacker : IndicSyllabicCategory;
     static GeminationMark : IndicSyllabicCategory;
     static InvisibleStacker : IndicSyllabicCategory;
