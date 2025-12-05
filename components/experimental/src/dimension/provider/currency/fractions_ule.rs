@@ -5,57 +5,56 @@
 use super::fractions::FractionInfo;
 use zerovec::{
     maps::ZeroMapKV,
-    ule::{AsULE, UleError, ULE},
+    ule::{AsULE, RawBytesULE},
 };
 
 /// Marker value indicating None for cash_digits and cash_rounding fields.
-const NONE_MARKER: u8 = 255;
+const NONE_MARKER: u8 = 15;
 
 /// ULE type for FractionInfo - packed into 4 bytes.
 ///
-/// Byte layout:
-/// - Byte 0: digits
-/// - Byte 1: rounding
-/// - Byte 2: cash_digits (255 = None)
-/// - Byte 3: cash_rounding (255 = None)
-#[derive(Copy, Clone, Debug, PartialEq)]
-#[repr(transparent)]
-pub struct FractionInfoULE([u8; 4]);
-
-// Safety (based on the safety checklist on the ULE trait):
-//  1. FractionInfoULE does not include any uninitialized or padding bytes.
-//     (achieved by `#[repr(transparent)]` on a ULE type)
-//  2. FractionInfoULE is aligned to 1 byte.
-//     (achieved by `#[repr(transparent)]` on a ULE type)
-//  3. The impl of validate_bytes() returns an error if any byte is not valid.
-//  4. The impl of validate_bytes() returns an error if there are extra bytes.
-//  5. The other ULE methods use the default impl.
-//  6. FractionInfoULE byte equality is semantic equality.
-unsafe impl ULE for FractionInfoULE {
-    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
-        if bytes.len() % 4 != 0 {
-            return Err(UleError::length::<Self>(bytes.len()));
-        }
-        Ok(())
-    }
-}
+/// Data layout:
+/// - Byte 0, bits 0-3: digits (lower nibble)
+/// - Byte 0, bits 4-7: rounding (upper nibble)
+/// - Byte 1, bits 0-3: cash_digits (lower nibble, 15 = None)
+/// - Byte 1, bits 4-7: cash_rounding (upper nibble, 15 = None)
+type FractionInfoULE = RawBytesULE<2>;
 
 impl AsULE for FractionInfo {
     type ULE = FractionInfoULE;
 
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
-        FractionInfoULE([
-            self.digits,
-            self.rounding,
-            self.cash_digits.unwrap_or(NONE_MARKER),
-            self.cash_rounding.unwrap_or(NONE_MARKER),
+        debug_assert!(self.digits < 16);
+        debug_assert!(self.rounding < 16);
+
+        let cash_digits = self.cash_digits.unwrap_or(NONE_MARKER);
+        debug_assert!(cash_digits < 16);
+
+        let cash_rounding = match self.cash_rounding {
+            None => 15,
+            Some(50) => 14,
+            Some(n) => {
+                debug_assert!(n < 14);
+                n
+            }
+        };
+
+        RawBytesULE([
+            (self.digits & 0x0f) | (self.rounding << 4),
+            (cash_digits & 0x0f) | (cash_rounding << 4),
         ])
     }
 
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        let [digits, rounding, cash_digits, cash_rounding] = unaligned.0;
+        let [b0, b1] = unaligned.0;
+
+        let digits = b0 & 0x0f;
+        let rounding = b0 >> 4;
+        let cash_digits = b1 & 0x0f;
+        let cash_rounding = b1 >> 4;
+
         FractionInfo {
             digits,
             rounding,
@@ -64,10 +63,10 @@ impl AsULE for FractionInfo {
             } else {
                 Some(cash_digits)
             },
-            cash_rounding: if cash_rounding == NONE_MARKER {
-                None
-            } else {
-                Some(cash_rounding)
+            cash_rounding: match cash_rounding {
+                14 => Some(50),
+                15 => None,
+                n => Some(n),
             },
         }
     }
