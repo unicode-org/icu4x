@@ -727,7 +727,7 @@ impl<C: AsCalendar<Calendar = AnyCalendar>> Date<C> {
     /// Convert this `Date<AnyCalendar>` to another `AnyCalendar`, if conversion is needed
     pub fn convert_any<'a>(&self, calendar: &'a AnyCalendar) -> Date<Ref<'a, AnyCalendar>> {
         if calendar.kind() != self.calendar.as_calendar().kind() {
-            Date::new_from_iso(self.to_iso(), Ref(calendar))
+            self.to_calendar(Ref(calendar))
         } else {
             Date {
                 inner: self.inner,
@@ -1605,10 +1605,9 @@ mod tests {
             );
         }
 
-        let iso = date.to_iso();
-        let reconstructed = Date::new_from_iso(iso, calendar);
         assert_eq!(
-            date, reconstructed,
+            date.to_calendar(Iso).to_calendar(calendar),
+            date,
             "Failed to roundtrip via iso with {era:?}, {year}, {month:?}, {day}"
         )
     }

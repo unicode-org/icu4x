@@ -1083,6 +1083,8 @@ impl<A: AsCalendar<Calendar = Hijri<TabularAlgorithm>>> Date<A> {
 
 #[cfg(test)]
 mod test {
+    use crate::Iso;
+
     use super::*;
 
     const START_YEAR: i32 = -1245;
@@ -1960,7 +1962,7 @@ mod test {
 
         let dt = Date::try_new_hijri_with_calendar(1391, 1, 29, calendar).unwrap();
 
-        assert_eq!(dt.to_iso().to_calendar(calendar), dt);
+        assert_eq!(dt.to_calendar(Iso).to_calendar(calendar), dt);
     }
 
     #[test]
@@ -1969,7 +1971,7 @@ mod test {
 
         let dt = Date::try_new_hijri_with_calendar(1390, 1, 30, cal).unwrap();
 
-        assert_eq!(dt.to_iso().to_calendar(cal), dt);
+        assert_eq!(dt.to_calendar(Iso).to_calendar(cal), dt);
 
         let dt = Date::try_new_iso(2000, 5, 5).unwrap();
 

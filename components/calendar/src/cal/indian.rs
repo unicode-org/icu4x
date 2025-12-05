@@ -308,12 +308,14 @@ impl Date<Indian> {
 
 #[cfg(test)]
 mod tests {
+    use crate::Iso;
+
     use super::*;
     use calendrical_calculations::rata_die::RataDie;
     fn assert_roundtrip(y: i32, m: u8, d: u8, iso_y: i32, iso_m: u8, iso_d: u8) {
         let indian =
             Date::try_new_indian(y, m, d).expect("Indian date should construct successfully");
-        let iso = indian.to_iso();
+        let iso = indian.to_calendar(Iso);
 
         assert_eq!(
             iso.era_year().year,

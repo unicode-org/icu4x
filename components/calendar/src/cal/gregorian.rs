@@ -191,7 +191,7 @@ mod test {
         let iso_date_man: Date<Iso> =
             Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day)
                 .expect("Failed to initialize ISO date for {case:?}");
-        let greg_date_man: Date<Gregorian> = Date::new_from_iso(iso_date_man, Gregorian);
+        let greg_date_man = iso_date_man.to_calendar(Gregorian);
         assert_eq!(iso_from_rd, iso_date_man,
             "ISO from RD not equal to ISO generated from manually-input ymd\nCase: {case:?}\nRD: {iso_from_rd:?}\nMan: {iso_date_man:?}");
         assert_eq!(greg_date_from_rd, greg_date_man,
