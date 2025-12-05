@@ -1904,8 +1904,8 @@ make_binary_property! {
 }
 
 make_binary_property! {
-    name: "Alnum";
-    short_name: "Alnum";
+    name: "alnum";
+    short_name: "alnum";
     ident: Alnum;
     data_marker: crate::provider::PropertyBinaryAlnumV1;
     singleton: SINGLETON_PROPERTY_BINARY_ALNUM_V1;
@@ -1986,8 +1986,8 @@ make_binary_property! {
 }
 
 make_binary_property! {
-    name: "Blank";
-    short_name: "Blank";
+    name: "blank";
+    short_name: "blank";
     ident: Blank;
     data_marker: crate::provider::PropertyBinaryBlankV1;
     singleton: SINGLETON_PROPERTY_BINARY_BLANK_V1;
@@ -2430,8 +2430,8 @@ make_binary_property! {
 }
 
 make_binary_property! {
-    name: "Graph";
-    short_name: "Graph";
+    name: "graph";
+    short_name: "graph";
     ident: Graph;
     data_marker: crate::provider::PropertyBinaryGraphV1;
     singleton: SINGLETON_PROPERTY_BINARY_GRAPH_V1;
@@ -2562,7 +2562,7 @@ make_binary_property! {
 }
 
 make_binary_property! {
-    name: "Id_Continue";
+    name: "ID_Continue";
     short_name: "IDC";
     ident: IdContinue;
     data_marker: crate::provider::PropertyBinaryIdContinueV1;
@@ -2614,7 +2614,7 @@ make_binary_property! {
 }
 
 make_binary_property! {
-    name: "Id_Start";
+    name: "ID_Start";
     short_name: "IDS";
     ident: IdStart;
     data_marker: crate::provider::PropertyBinaryIdStartV1;
@@ -2643,7 +2643,7 @@ make_binary_property! {
 }
 
 make_binary_property! {
-    name: "Ids_Binary_Operator";
+    name: "IDS_Binary_Operator";
     short_name: "IDSB";
     ident: IdsBinaryOperator;
     data_marker: crate::provider::PropertyBinaryIdsBinaryOperatorV1;
@@ -2664,7 +2664,7 @@ make_binary_property! {
 }
 
 make_binary_property! {
-    name: "Ids_Trinary_Operator";
+    name: "IDS_Trinary_Operator";
     short_name: "IDST";
     ident: IdsTrinaryOperator;
     data_marker: crate::provider::PropertyBinaryIdsTrinaryOperatorV1;
@@ -2819,7 +2819,7 @@ make_binary_property! {
 
 make_binary_property! {
     name: "NFC_Inert";
-    short_name: "NFC_Inert";
+    short_name: "nfcinert";
     ident: NfcInert;
     data_marker: crate::provider::PropertyBinaryNfcInertV1;
     singleton: SINGLETON_PROPERTY_BINARY_NFC_INERT_V1;
@@ -2828,7 +2828,7 @@ make_binary_property! {
 
 make_binary_property! {
     name: "NFD_Inert";
-    short_name: "NFD_Inert";
+    short_name: "nfdinert";
     ident: NfdInert;
     data_marker: crate::provider::PropertyBinaryNfdInertV1;
     singleton: SINGLETON_PROPERTY_BINARY_NFD_INERT_V1;
@@ -2837,7 +2837,7 @@ make_binary_property! {
 
 make_binary_property! {
     name: "NFKC_Inert";
-    short_name: "NFKC_Inert";
+    short_name: "nfkcinert";
     ident: NfkcInert;
     data_marker: crate::provider::PropertyBinaryNfkcInertV1;
     singleton: SINGLETON_PROPERTY_BINARY_NFKC_INERT_V1;
@@ -2846,7 +2846,7 @@ make_binary_property! {
 
 make_binary_property! {
     name: "NFKD_Inert";
-    short_name: "NFKD_Inert";
+    short_name: "nfkdinert";
     ident: NfkdInert;
     data_marker: crate::provider::PropertyBinaryNfkdInertV1;
     singleton: SINGLETON_PROPERTY_BINARY_NFKD_INERT_V1;
@@ -2917,8 +2917,8 @@ make_binary_property! {
 }
 
 make_binary_property! {
-    name: "Print";
-    short_name: "Print";
+    name: "print";
+    short_name: "print";
     ident: Print;
     data_marker: crate::provider::PropertyBinaryPrintV1;
     singleton: SINGLETON_PROPERTY_BINARY_PRINT_V1;
@@ -3018,7 +3018,7 @@ make_binary_property! {
 
 make_binary_property! {
     name: "Segment_Starter";
-    short_name: "Segment_Starter";
+    short_name: "segstart";
     ident: SegmentStarter;
     data_marker: crate::provider::PropertyBinarySegmentStarterV1;
     singleton: SINGLETON_PROPERTY_BINARY_SEGMENT_STARTER_V1;
@@ -3028,7 +3028,7 @@ make_binary_property! {
 
 make_binary_property! {
     name: "Case_Sensitive";
-    short_name: "Case_Sensitive";
+    short_name: "Sensitive";
     ident: CaseSensitive;
     data_marker: crate::provider::PropertyBinaryCaseSensitiveV1;
     singleton: SINGLETON_PROPERTY_BINARY_CASE_SENSITIVE_V1;
@@ -3153,7 +3153,7 @@ make_binary_property! {
 
 make_binary_property! {
     name: "White_Space";
-    short_name: "space";
+    short_name: "WSpace";
     ident: WhiteSpace;
     data_marker: crate::provider::PropertyBinaryWhiteSpaceV1;
     singleton: SINGLETON_PROPERTY_BINARY_WHITE_SPACE_V1;
@@ -3176,8 +3176,8 @@ make_binary_property! {
 }
 
 make_binary_property! {
-    name: "Xdigit";
-    short_name: "Xdigit";
+    name: "xdigit";
+    short_name: "xdigit";
     ident: Xdigit;
     data_marker: crate::provider::PropertyBinaryXdigitV1;
     singleton: SINGLETON_PROPERTY_BINARY_XDIGIT_V1;
@@ -3247,6 +3247,8 @@ pub use crate::emoji::EmojiSet;
 
 macro_rules! make_emoji_set {
     (
+        name: $name:literal;
+        short_name: $short_name:literal;
         ident: $ident:ident;
         data_marker: $data_marker:ty;
         singleton: $singleton:ident;
@@ -3264,11 +3266,15 @@ macro_rules! make_emoji_set {
             #[cfg(feature = "compiled_data")]
             const SINGLETON: &'static crate::provider::PropertyUnicodeSet<'static> =
                 &crate::provider::Baked::$singleton;
+            const NAME: &'static [u8] = $name.as_bytes();
+            const SHORT_NAME: &'static [u8] = $short_name.as_bytes();
         }
     }
 }
 
 make_emoji_set! {
+    name: "Basic_Emoji";
+    short_name: "Basic_Emoji";
     ident: BasicEmoji;
     data_marker: crate::provider::PropertyBinaryBasicEmojiV1;
     singleton: SINGLETON_PROPERTY_BINARY_BASIC_EMOJI_V1;
