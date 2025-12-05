@@ -52,6 +52,7 @@ pub mod provider {
         impl_currency_displayname_v1!(Baked);
         impl_currency_patterns_data_v1!(Baked);
         impl_currency_extended_data_v1!(Baked);
+        impl_currency_fractions_v1!(Baked);
         impl_units_display_names_v1!(Baked);
         impl_units_names_area_core_v1!(Baked);
         impl_units_names_area_extended_v1!(Baked);
