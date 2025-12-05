@@ -2549,6 +2549,66 @@ pub mod ffi {
         }
     }
 
+    #[diplomat::rust_link(icu::properties::props::IndicConjunctBreak, Struct)]
+    #[diplomat::enum_convert(icu_properties::props::IndicConjunctBreak, needs_wildcard)]
+    #[non_exhaustive]
+    pub enum IndicConjunctBreak {
+        #[diplomat::rust_link(
+            icu::properties::props::IndicConjunctBreak::None,
+            AssociatedConstantInStruct
+        )]
+        None = 0,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicConjunctBreak::Consonant,
+            AssociatedConstantInStruct
+        )]
+        Consonant = 1,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicConjunctBreak::Extend,
+            AssociatedConstantInStruct
+        )]
+        Extend = 2,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicConjunctBreak::Linker,
+            AssociatedConstantInStruct
+        )]
+        Linker = 3,
+    }
+
+    impl IndicConjunctBreak {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::IndicConjunctBreak>::new()
+                .get32(ch)
+                .into()
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::IndicConjunctBreak::to_icu4c_value,
+            FnInStruct
+        )]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
+            self as u8
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::IndicConjunctBreak::from_icu4c_value,
+            FnInStruct
+        )]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
+            Some(match other {
+                0 => Self::None,
+                1 => Self::Consonant,
+                2 => Self::Extend,
+                3 => Self::Linker,
+                _ => return None,
+            })
+        }
+    }
+
     #[diplomat::rust_link(icu::properties::props::JoiningType, Struct)]
     #[diplomat::enum_convert(icu_properties::props::JoiningType, needs_wildcard)]
     #[non_exhaustive]
@@ -3083,6 +3143,12 @@ mod test {
                 .expect("Found IndicSyllabicCategory value not supported in ffi");
             assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::IndicSyllabicCategory::from(ffi_prop));
+        }
+        for prop in props::IndicConjunctBreak::ALL_VALUES {
+            let ffi_prop = IndicConjunctBreak::from_integer_value(prop.to_icu4c_value())
+                .expect("Found IndicConjunctBreak value not supported in ffi");
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
+            assert_eq!(*prop, props::IndicConjunctBreak::from(ffi_prop));
         }
         for prop in props::JoiningType::ALL_VALUES {
             let ffi_prop = JoiningType::from_integer_value(prop.to_icu4c_value())
