@@ -1509,7 +1509,6 @@ make_enumerated_property! {
 ///     IndicConjunctBreak::Extend
 /// );
 /// ```
-#[doc(hidden)] // draft API in ICU4C
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // newtype
@@ -1528,7 +1527,7 @@ impl IndicConjunctBreak {
 }
 
 create_const_array! {
-#[doc(hidden)] // draft API in ICU4C
+#[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
 impl IndicConjunctBreak {
     pub const None: IndicConjunctBreak = IndicConjunctBreak(0);

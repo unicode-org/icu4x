@@ -48,12 +48,19 @@ impl SourceDataProvider {
 
 fn get_prop_values_map<F>(
     values: &[super::uprops_serde::PropertyValue],
+    ranges: Option<&[super::uprops_serde::enumerated::EnumeratedPropertyMapRange]>,
     transform_u32: F,
 ) -> Result<PropertyValueNameToEnumMap<'static>, DataError>
 where
     F: Fn(u32) -> Result<u16, DataError>,
 {
     let mut map = BTreeMap::new();
+
+    for range in ranges.into_iter().flatten() {
+        let discr = transform_u32(range.v)? as usize;
+        map.insert(range.name.as_bytes(), discr);
+    }
+
     for value in values {
         let discr = transform_u32(value.discr)? as usize;
         map.insert(value.long.as_bytes(), discr);
@@ -121,6 +128,12 @@ fn load_values_to_names(
     is_short: bool,
 ) -> Result<BTreeMap<u16, &str>, DataError> {
     let mut map: BTreeMap<_, &str> = BTreeMap::new();
+
+    for range in &data.ranges {
+        let discr = u16::try_from(range.v)
+            .map_err(|_| DataError::custom("Found value larger than u16 for property"))?;
+        map.insert(discr, &range.name);
+    }
 
     for value in &data.values {
         let discr = u16::try_from(value.discr)
@@ -257,7 +270,7 @@ macro_rules! expand {
                         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
                                                         Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
 
-                    let data_struct = get_prop_values_map(&data.values, |v| u16::try_from(v).map_err(|_| DataError::custom(concat!("Found value larger than u16 for property ", $prop_name))))?;
+                    let data_struct = get_prop_values_map(&data.values, Some(&data.ranges), |v| u16::try_from(v).map_err(|_| DataError::custom(concat!("Found value larger than u16 for property ", $prop_name))))?;
                     Ok(DataResponse {
                         metadata: Default::default(),
                         payload: DataPayload::from_owned(data_struct),
@@ -384,7 +397,7 @@ impl DataProvider<PropertyNameParseGeneralCategoryMaskV1> for SourceDataProvider
         self.check_req::<PropertyNameParseGeneralCategoryMaskV1>(req)?;
 
         let data = self.get_mask_prop("gcm")?;
-        let data_struct = get_prop_values_map(&data.values, |v| {
+        let data_struct = get_prop_values_map(&data.values, None, |v| {
             let value: GeneralCategoryGroup = v.into();
             let ule = value.to_unaligned();
             let packed = u16::from_unaligned(ule);
@@ -407,33 +420,6 @@ impl crate::IterableDataProviderCached<PropertyNameParseGeneralCategoryMaskV1>
 {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         self.get_mask_prop("gcm")?;
-        Ok(HashSet::from_iter([Default::default()]))
-    }
-}
-
-// Special handling for IndicConjunctBreak
-impl DataProvider<PropertyEnumIndicConjunctBreakV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<PropertyEnumIndicConjunctBreakV1>, DataError> {
-        self.check_req::<PropertyEnumIndicConjunctBreakV1>(req)?;
-        let source_cpt_data = &self.get_enumerated_prop("InCB")?.code_point_trie;
-
-        let code_point_trie = CodePointTrie::try_from(source_cpt_data).map_err(|e| {
-            DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
-        })?;
-        let data_struct = PropertyCodePointMap::CodePointTrie(code_point_trie);
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(data_struct),
-        })
-    }
-}
-
-impl crate::IterableDataProviderCached<PropertyEnumIndicConjunctBreakV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        self.get_enumerated_prop("InCB")?;
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
@@ -501,6 +487,15 @@ expand!(
             PropertyNameLongIndicSyllabicCategoryV1
         ),
         "InSC"
+    ),
+    (
+        PropertyEnumIndicConjunctBreakV1,
+        PropertyNameParseIndicConjunctBreakV1,
+        (
+            linear: PropertyNameShortIndicConjunctBreakV1,
+            PropertyNameLongIndicConjunctBreakV1
+        ),
+        "InCB"
     ),
     (
         PropertyEnumLineBreakV1,
