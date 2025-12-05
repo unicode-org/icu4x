@@ -2401,15 +2401,15 @@ pub mod ffi {
         )]
         ConsonantPrefixed = 14,
         #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::ConsonantSucceedingRepha,
-            AssociatedConstantInStruct
-        )]
-        ConsonantSucceedingRepha = 15,
-        #[diplomat::rust_link(
             icu::properties::props::IndicSyllabicCategory::ConsonantSubjoined,
             AssociatedConstantInStruct
         )]
-        ConsonantSubjoined = 16,
+        ConsonantSubjoined = 15,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::ConsonantSucceedingRepha,
+            AssociatedConstantInStruct
+        )]
+        ConsonantSucceedingRepha = 16,
         #[diplomat::rust_link(
             icu::properties::props::IndicSyllabicCategory::ConsonantWithStacker,
             AssociatedConstantInStruct
@@ -2552,8 +2552,8 @@ pub mod ffi {
                 12 => Self::ConsonantPlaceholder,
                 13 => Self::ConsonantPrecedingRepha,
                 14 => Self::ConsonantPrefixed,
-                15 => Self::ConsonantSucceedingRepha,
-                16 => Self::ConsonantSubjoined,
+                15 => Self::ConsonantSubjoined,
+                16 => Self::ConsonantSucceedingRepha,
                 17 => Self::ConsonantWithStacker,
                 18 => Self::GeminationMark,
                 19 => Self::InvisibleStacker,

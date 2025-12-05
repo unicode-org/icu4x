@@ -26,8 +26,8 @@ export class IndicSyllabicCategory {
         ["ConsonantPlaceholder", 12],
         ["ConsonantPrecedingRepha", 13],
         ["ConsonantPrefixed", 14],
-        ["ConsonantSucceedingRepha", 15],
-        ["ConsonantSubjoined", 16],
+        ["ConsonantSubjoined", 15],
+        ["ConsonantSucceedingRepha", 16],
         ["ConsonantWithStacker", 17],
         ["GeminationMark", 18],
         ["InvisibleStacker", 19],
@@ -147,8 +147,8 @@ export class IndicSyllabicCategory {
     static ConsonantPlaceholder = IndicSyllabicCategory.#objectValues[12];
     static ConsonantPrecedingRepha = IndicSyllabicCategory.#objectValues[13];
     static ConsonantPrefixed = IndicSyllabicCategory.#objectValues[14];
-    static ConsonantSucceedingRepha = IndicSyllabicCategory.#objectValues[15];
-    static ConsonantSubjoined = IndicSyllabicCategory.#objectValues[16];
+    static ConsonantSubjoined = IndicSyllabicCategory.#objectValues[15];
+    static ConsonantSucceedingRepha = IndicSyllabicCategory.#objectValues[16];
     static ConsonantWithStacker = IndicSyllabicCategory.#objectValues[17];
     static GeminationMark = IndicSyllabicCategory.#objectValues[18];
     static InvisibleStacker = IndicSyllabicCategory.#objectValues[19];
