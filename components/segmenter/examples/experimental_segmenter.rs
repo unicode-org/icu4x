@@ -4,7 +4,6 @@
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 icu_benchmark_macros::instrument!();
-use icu_benchmark_macros::println;
 
 #[path = "../tests/adaboost/main.rs"]
 mod adaboost;
@@ -33,7 +32,7 @@ fn main_adaboost(args: &[String]) {
         print!("{}|", &s[prev..breakpoint]);
         prev = breakpoint;
     }
-    println!("");
+    println!();
     println!("{} repetitions done in: {:?}", REPETITIONS, elapsed);
 }
 
@@ -67,7 +66,7 @@ fn main_cnn(args: &[String]) {
         print!("{}|", &s[prev..breakpoint]);
         prev = breakpoint;
     }
-    println!("");
+    println!();
     println!("{} repetitions done in: {:?}", REPETITIONS, elapsed);
 }
 
@@ -94,7 +93,7 @@ fn run_word_segmenter(segmenter: WordSegmenterBorrowed, s: &str) {
         print!("{}|", &s[prev..breakpoint]);
         prev = breakpoint;
     }
-    println!("");
+    println!();
     println!("{} repetitions done in: {:?}", REPETITIONS, elapsed);
 }
 

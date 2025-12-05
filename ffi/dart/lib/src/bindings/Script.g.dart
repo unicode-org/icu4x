@@ -128,6 +128,9 @@ enum Script {
   /// See the [Rust documentation for `Ethiopian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Ethiopian) for more information.
   // ignore: public_member_api_docs
   ethiopian,
+  /// See the [Rust documentation for `Garay`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Garay) for more information.
+  // ignore: public_member_api_docs
+  garay,
   /// See the [Rust documentation for `Georgian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Georgian) for more information.
   // ignore: public_member_api_docs
   georgian,
@@ -152,6 +155,9 @@ enum Script {
   /// See the [Rust documentation for `Gurmukhi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Gurmukhi) for more information.
   // ignore: public_member_api_docs
   gurmukhi,
+  /// See the [Rust documentation for `GurungKhema`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.GurungKhema) for more information.
+  // ignore: public_member_api_docs
+  gurungKhema,
   /// See the [Rust documentation for `Han`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Han) for more information.
   // ignore: public_member_api_docs
   han,
@@ -218,6 +224,9 @@ enum Script {
   /// See the [Rust documentation for `Khudawadi`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Khudawadi) for more information.
   // ignore: public_member_api_docs
   khudawadi,
+  /// See the [Rust documentation for `KiratRai`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.KiratRai) for more information.
+  // ignore: public_member_api_docs
+  kiratRai,
   /// See the [Rust documentation for `Lao`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Lao) for more information.
   // ignore: public_member_api_docs
   lao,
@@ -359,6 +368,9 @@ enum Script {
   /// See the [Rust documentation for `OldUyghur`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldUyghur) for more information.
   // ignore: public_member_api_docs
   oldUyghur,
+  /// See the [Rust documentation for `OlOnal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OlOnal) for more information.
+  // ignore: public_member_api_docs
+  olOnal,
   /// See the [Rust documentation for `Oriya`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Oriya) for more information.
   // ignore: public_member_api_docs
   oriya,
@@ -428,6 +440,9 @@ enum Script {
   /// See the [Rust documentation for `Sundanese`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Sundanese) for more information.
   // ignore: public_member_api_docs
   sundanese,
+  /// See the [Rust documentation for `Sunuwar`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Sunuwar) for more information.
+  // ignore: public_member_api_docs
+  sunuwar,
   /// See the [Rust documentation for `SylotiNagri`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.SylotiNagri) for more information.
   // ignore: public_member_api_docs
   sylotiNagri,
@@ -482,12 +497,18 @@ enum Script {
   /// See the [Rust documentation for `Tirhuta`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Tirhuta) for more information.
   // ignore: public_member_api_docs
   tirhuta,
+  /// See the [Rust documentation for `Todhri`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Todhri) for more information.
+  // ignore: public_member_api_docs
+  todhri,
   /// See the [Rust documentation for `TolongSiki`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.TolongSiki) for more information.
   // ignore: public_member_api_docs
   tolongSiki,
   /// See the [Rust documentation for `Toto`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Toto) for more information.
   // ignore: public_member_api_docs
   toto,
+  /// See the [Rust documentation for `TuluTigalari`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.TuluTigalari) for more information.
+  // ignore: public_member_api_docs
+  tuluTigalari,
   /// See the [Rust documentation for `Ugaritic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Ugaritic) for more information.
   // ignore: public_member_api_docs
   ugaritic,
@@ -567,7 +588,7 @@ enum Script {
       case cherokee:
         return 6;
       case chisoi:
-        return 209;
+        return 254;
       case chorasmian:
         return 189;
       case common:
@@ -600,6 +621,8 @@ enum Script {
         return 185;
       case ethiopian:
         return 11;
+      case garay:
+        return 201;
       case georgian:
         return 12;
       case glagolitic:
@@ -616,6 +639,8 @@ enum Script {
         return 179;
       case gurmukhi:
         return 16;
+      case gurungKhema:
+        return 202;
       case han:
         return 17;
       case hangul:
@@ -660,6 +685,8 @@ enum Script {
         return 157;
       case khudawadi:
         return 145;
+      case kiratRai:
+        return 203;
       case lao:
         return 24;
       case latin:
@@ -754,6 +781,8 @@ enum Script {
         return 88;
       case oldUyghur:
         return 194;
+      case olOnal:
+        return 204;
       case oriya:
         return 31;
       case osage:
@@ -787,7 +816,7 @@ enum Script {
       case siddham:
         return 166;
       case sidetic:
-        return 210;
+        return 209;
       case signWriting:
         return 112;
       case sinhala:
@@ -800,6 +829,8 @@ enum Script {
         return 176;
       case sundanese:
         return 113;
+      case sunuwar:
+        return 205;
       case sylotiNagri:
         return 58;
       case syriac:
@@ -815,7 +846,7 @@ enum Script {
       case taiViet:
         return 127;
       case taiYo:
-        return 211;
+        return 210;
       case takri:
         return 153;
       case tamil:
@@ -836,10 +867,14 @@ enum Script {
         return 60;
       case tirhuta:
         return 158;
+      case todhri:
+        return 206;
       case tolongSiki:
-        return 212;
+        return 211;
       case toto:
         return 196;
+      case tuluTigalari:
+        return 207;
       case ugaritic:
         return 53;
       case unknown:

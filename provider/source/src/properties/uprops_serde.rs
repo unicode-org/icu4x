@@ -39,10 +39,8 @@ pub(crate) mod enumerated {
         pub(crate) _a: u32,
         #[serde(rename = "b")]
         pub(crate) _b: u32,
-        #[serde(rename = "v")]
-        pub(crate) _v: u32,
-        #[serde(rename = "name")]
-        pub(crate) _name: String,
+        pub(crate) v: u32,
+        pub(crate) name: String,
     }
 
     #[derive(serde::Deserialize)]
@@ -52,8 +50,7 @@ pub(crate) mod enumerated {
         #[serde(rename = "short_name")]
         pub(crate) _short_name: String,
         pub(crate) values: Vec<super::PropertyValue>,
-        #[serde(rename = "ranges")]
-        pub(crate) _ranges: Vec<EnumeratedPropertyMapRange>,
+        pub(crate) ranges: Vec<EnumeratedPropertyMapRange>,
         pub(crate) code_point_trie: super::CodePointTrieToml,
     }
 
