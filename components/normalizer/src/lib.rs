@@ -58,29 +58,10 @@
 
 extern crate alloc;
 
-// TODO: The plan is to replace
-// `#[cfg(not(icu4x_unstable_fast_trie_only))]`
-// with
-// `#[cfg(feature = "serde")]`
-// and
-// `#[cfg(icu4x_unstable_fast_trie_only)]`
-// with
-// `#[cfg(not(feature = "serde"))]`
-//
-// Before doing so:
-// * The type of the UTS 46 trie needs to be
-//   disentangled from the type of the NFD/NFKD tries.
-//   This will involve a more generic iterator hidden
-//   inside the public iterator types.
-// * datagen needs to emit fast-mode tries for the
-//   NFD and NFKD tries.
-// * The markers and possibly the data struct type
-//   for NFD and NFKD need to be revised per policy.
-
-#[cfg(not(icu4x_unstable_fast_trie_only))]
+#[cfg(feature = "serde")]
 type Trie<'trie> = CodePointTrie<'trie, u32>;
 
-#[cfg(icu4x_unstable_fast_trie_only)]
+#[cfg(not(feature = "serde"))]
 type Trie<'trie> = FastCodePointTrie<'trie, u32>;
 
 // We don't depend on icu_properties to minimize deps, but we want to be able
@@ -111,15 +92,14 @@ use crate::provider::NormalizerUts46DataV1;
 use alloc::borrow::Cow;
 use alloc::string::String;
 use core::char::REPLACEMENT_CHARACTER;
+use core::marker::PhantomData;
 use icu_collections::char16trie::Char16Trie;
 use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::char16trie::TrieResult;
-#[cfg(not(icu4x_unstable_fast_trie_only))]
+use icu_collections::codepointtrie::AbstractCodePointTrie;
 use icu_collections::codepointtrie::CodePointTrie;
-#[cfg(icu4x_unstable_fast_trie_only)]
+#[cfg(not(feature = "serde"))]
 use icu_collections::codepointtrie::FastCodePointTrie;
-#[cfg(icu4x_unstable_fast_trie_only)]
-use icu_collections::codepointtrie::TypedCodePointTrie;
 #[cfg(feature = "icu_properties")]
 use icu_properties::props::CanonicalCombiningClass;
 use icu_provider::prelude::*;
@@ -145,12 +125,12 @@ use zerovec::{zeroslice, ZeroSlice};
 // See https://github.com/rust-lang/hashbrown/commit/64bd7db1d1b148594edfde112cdb6d6260e2cfc3#commitcomment-164768806
 // for permission to relicense under Unicode-3.0.
 
-#[cfg(all(icu4x_unstable_fast_trie_only, feature = "utf16_iter"))]
+#[cfg(all(not(feature = "serde"), feature = "utf16_iter"))]
 #[inline(always)]
 #[cold]
 fn cold_path() {}
 
-#[cfg(all(icu4x_unstable_fast_trie_only, feature = "utf16_iter"))]
+#[cfg(all(not(feature = "serde"), feature = "utf16_iter"))]
 #[inline(always)]
 pub(crate) fn likely(b: bool) -> bool {
     if b {
@@ -164,7 +144,7 @@ pub(crate) fn likely(b: bool) -> bool {
 // End import from https://github.com/rust-lang/hashbrown/commit/64bd7db1d1b148594edfde112cdb6d6260e2cfc3 .
 
 /// No-op for typed trie case.
-#[cfg(all(not(icu4x_unstable_fast_trie_only), feature = "utf16_iter"))]
+#[cfg(all(feature = "serde", feature = "utf16_iter"))]
 #[inline(always)]
 fn likely(b: bool) -> bool {
     b
@@ -199,6 +179,17 @@ enum IgnorableBehavior {
     /// Ignorables are treated as singleton decompositions
     /// to the REPLACEMENT CHARACTER.
     ReplacementCharacter,
+}
+
+pub(crate) trait IteratorPolicy {
+    const IGNORABLE_BEHAVIOR: IgnorableBehavior;
+}
+
+#[derive(Debug)]
+struct Uax15Policy;
+
+impl IteratorPolicy for Uax15Policy {
+    const IGNORABLE_BEHAVIOR: IgnorableBehavior = IgnorableBehavior::Unsupported;
 }
 
 /// Marker for UTS 46 ignorables.
@@ -499,7 +490,7 @@ impl CharacterAndTrieValue {
 #[derive(Debug)]
 struct CharacterAndClass(u32);
 
-impl CharacterAndClass {
+impl<'data> CharacterAndClass {
     pub fn new(c: char, ccc: CanonicalCombiningClass) -> Self {
         CharacterAndClass(u32::from(c) | (u32::from(ccc.to_icu4c_value()) << 24))
     }
@@ -515,7 +506,7 @@ impl CharacterAndClass {
     /// This method must exist for Pernosco to apply its special rendering.
     /// Also, this must not be dead code!
     pub fn character(&self) -> char {
-        // Safe, because the low 24 bits came from a `char`
+        // SAFETY: Safe, because the low 24 bits came from a `char`
         // originally.
         unsafe { char::from_u32_unchecked(self.0 & 0xFFFFFF) }
     }
@@ -527,31 +518,21 @@ impl CharacterAndClass {
     pub fn character_and_ccc(&self) -> (char, CanonicalCombiningClass) {
         (self.character(), self.ccc())
     }
-    pub fn set_ccc_from_trie_if_not_already_set(&mut self, trie: &Trie) {
+    pub fn set_ccc_from_trie_if_not_already_set<T: AbstractCodePointTrie<'data, u32>>(
+        &mut self,
+        trie: &'data T,
+    ) {
         if self.0 >> 24 != 0xFF {
             return;
         }
         let scalar = self.0 & 0xFFFFFF;
-        self.0 =
-            ((ccc_from_trie_value(trie.get32_u32(scalar)).to_icu4c_value() as u32) << 24) | scalar;
+        // SAFETY: Safe, because the low 24 bits came from a `char`
+        // originally.
+        self.0 = ((ccc_from_trie_value(trie.scalar(unsafe { char::from_u32_unchecked(scalar) }))
+            .to_icu4c_value() as u32)
+            << 24)
+            | scalar;
     }
-}
-
-// This function exists as a borrow check helper.
-#[inline(always)]
-fn sort_slice_by_ccc(slice: &mut [CharacterAndClass], trie: &Trie) {
-    // We don't look up the canonical combining class for starters
-    // of for single combining characters between starters. When
-    // there's more than one combining character between starters,
-    // we look up the canonical combining class for each character
-    // exactly once.
-    if slice.len() < 2 {
-        return;
-    }
-    slice
-        .iter_mut()
-        .for_each(|cc| cc.set_ccc_from_trie_if_not_already_set(trie));
-    slice.sort_by_key(|cc| cc.ccc());
 }
 
 /// An iterator adaptor that turns an `Iterator` over `char` into
@@ -561,29 +542,7 @@ pub struct Decomposition<'data, I>
 where
     I: Iterator<Item = char>,
 {
-    delegate: I,
-    buffer: SmallVec<[CharacterAndClass; 17]>, // Enough to hold NFKD for U+FDFA
-    /// The index of the next item to be read from `buffer`.
-    /// The purpose if this index is to avoid having to move
-    /// the rest upon every read.
-    buffer_pos: usize,
-    // At the start of `next()` if not `None`, this is a pending unnormalized
-    // starter. When `Decomposition` appears alone, this is never a non-starter.
-    // However, when `Decomposition` appears inside a `Composition`, this
-    // may become a non-starter before `decomposing_next()` is called.
-    pending: Option<CharacterAndTrieValue>, // None at end of stream
-    // See trie-value-format.md
-    trie: &'data Trie<'data>,
-    scalars16: &'data ZeroSlice<u16>,
-    scalars24: &'data ZeroSlice<char>,
-    supplementary_scalars16: &'data ZeroSlice<u16>,
-    supplementary_scalars24: &'data ZeroSlice<char>,
-    /// The lowest character for which either of the following does
-    /// not hold:
-    /// 1. Decomposes to self.
-    /// 2. Decomposition starts with a non-starter
-    decomposition_passthrough_bound: u32, // never above 0xC0
-    ignorable_behavior: IgnorableBehavior, // Arguably should be a type parameter
+    inner: DecompositionInner<'data, I, Trie<'data>, Uax15Policy>,
 }
 
 impl<'data, I> Decomposition<'data, I>
@@ -605,16 +564,69 @@ where
         decompositions: &'data DecompositionData,
         tables: &'data DecompositionTables,
     ) -> Self {
-        Self::new_with_supplements(
-            delegate,
-            decompositions,
-            tables,
-            None,
-            0xC0,
-            IgnorableBehavior::Unsupported,
-        )
+        Self {
+            inner: DecompositionInner::new_with_supplements(
+                delegate,
+                decompositions,
+                tables,
+                None,
+                0xC0,
+            ),
+        }
     }
+}
 
+impl<I> Iterator for Decomposition<'_, I>
+where
+    I: Iterator<Item = char>,
+{
+    type Item = char;
+
+    fn next(&mut self) -> Option<char> {
+        self.inner.next()
+    }
+}
+
+#[derive(Debug)]
+struct DecompositionInner<'data, I, T, P>
+where
+    I: Iterator<Item = char>,
+    T: AbstractCodePointTrie<'data, u32>,
+    &'data T: TryFrom<&'data CodePointTrie<'data, u32>>,
+    P: IteratorPolicy,
+{
+    delegate: I,
+    buffer: SmallVec<[CharacterAndClass; 17]>, // Enough to hold NFKD for U+FDFA
+    /// The index of the next item to be read from `buffer`.
+    /// The purpose if this index is to avoid having to move
+    /// the rest upon every read.
+    buffer_pos: usize,
+    // At the start of `next()` if not `None`, this is a pending unnormalized
+    // starter. When `Decomposition` appears alone, this is never a non-starter.
+    // However, when `Decomposition` appears inside a `Composition`, this
+    // may become a non-starter before `decomposing_next()` is called.
+    pending: Option<CharacterAndTrieValue>, // None at end of stream
+    // See trie-value-format.md
+    trie: &'data T,
+    scalars16: &'data ZeroSlice<u16>,
+    scalars24: &'data ZeroSlice<char>,
+    supplementary_scalars16: &'data ZeroSlice<u16>,
+    supplementary_scalars24: &'data ZeroSlice<char>,
+    /// The lowest character for which either of the following does
+    /// not hold:
+    /// 1. Decomposes to self.
+    /// 2. Decomposition starts with a non-starter
+    decomposition_passthrough_bound: u32, // never above 0xC0
+    _phantom: PhantomData<P>,
+}
+
+impl<'data, I, T, P> DecompositionInner<'data, I, T, P>
+where
+    I: Iterator<Item = char>,
+    T: AbstractCodePointTrie<'data, u32>,
+    &'data T: TryFrom<&'data CodePointTrie<'data, u32>>,
+    P: IteratorPolicy,
+{
     /// Constructs a decomposing iterator adapter from a delegate
     /// iterator and references to the necessary data, including
     /// supplementary data.
@@ -627,9 +639,8 @@ where
         tables: &'data DecompositionTables,
         supplementary_tables: Option<&'data DecompositionTables>,
         decomposition_passthrough_bound: u8,
-        ignorable_behavior: IgnorableBehavior,
     ) -> Self {
-        let mut ret = Decomposition::<I> {
+        let mut ret = DecompositionInner::<I, T, P> {
             delegate,
             buffer: SmallVec::new(), // Normalized
             buffer_pos: 0,
@@ -637,7 +648,7 @@ where
             // the real stream starts with a non-starter.
             pending: Some(CharacterAndTrieValue::new('\u{FFFF}', 0)),
             #[allow(clippy::useless_conversion, clippy::expect_used)] // Expectation always succeeds when untyped tries are in use
-            trie: <&Trie>::try_from(&decompositions.trie).expect("Unexpected trie type in data"),
+            trie: <&T>::try_from(&decompositions.trie).unwrap_or_else(|_| unreachable!("Incompatible data")),
             scalars16: &tables.scalars16,
             scalars24: &tables.scalars24,
             supplementary_scalars16: if let Some(supplementary) = supplementary_tables {
@@ -651,7 +662,7 @@ where
                 EMPTY_CHAR
             },
             decomposition_passthrough_bound: u32::from(decomposition_passthrough_bound),
-            ignorable_behavior,
+            _phantom: PhantomData,
         };
         let _ = ret.next(); // Remove the U+FFFF placeholder
         ret
@@ -687,7 +698,7 @@ where
             let mut combining_start = 0;
             for u in tail.iter() {
                 let ch = char_from_u16(u);
-                let trie_value = self.trie.get(ch);
+                let trie_value = self.trie.scalar(ch);
                 self.buffer.push(CharacterAndClass::new_with_trie_value(
                     CharacterAndTrieValue::new(ch, trie_value),
                 ));
@@ -726,7 +737,7 @@ where
             let mut i = 0;
             let mut combining_start = 0;
             for ch in tail.iter() {
-                let trie_value = self.trie.get(ch);
+                let trie_value = self.trie.scalar(ch);
                 self.buffer.push(CharacterAndClass::new_with_trie_value(
                     CharacterAndTrieValue::new(ch, trie_value),
                 ));
@@ -743,7 +754,7 @@ where
 
     #[inline(always)]
     fn attach_trie_value(&self, c: char) -> CharacterAndTrieValue {
-        CharacterAndTrieValue::new(c, self.trie.get(c))
+        CharacterAndTrieValue::new(c, self.trie.scalar(c))
     }
 
     fn delegate_next_no_pending(&mut self) -> Option<CharacterAndTrieValue> {
@@ -756,11 +767,11 @@ where
                 return Some(CharacterAndTrieValue::new(c, 0));
             }
 
-            let trie_val = self.trie.get(c);
+            let trie_val = self.trie.scalar(c);
             // TODO: Can we do something better about the cost of this branch in the
             // non-UTS 46 case?
             if trie_val == IGNORABLE_MARKER {
-                match self.ignorable_behavior {
+                match P::IGNORABLE_BEHAVIOR {
                     IgnorableBehavior::Unsupported => {
                         debug_assert!(false);
                     }
@@ -925,6 +936,23 @@ where
         starter
     }
 
+    // This function exists as a borrow check helper.
+    #[inline(always)]
+    fn sort_slice_by_ccc(slice: &mut [CharacterAndClass], trie: &'data T) {
+        // We don't look up the canonical combining class for starters
+        // of for single combining characters between starters. When
+        // there's more than one combining character between starters,
+        // we look up the canonical combining class for each character
+        // exactly once.
+        if slice.len() < 2 {
+            return;
+        }
+        slice
+            .iter_mut()
+            .for_each(|cc| cc.set_ccc_from_trie_if_not_already_set(trie));
+        slice.sort_by_key(|cc| cc.ccc());
+    }
+
     fn gather_and_sort_combining(&mut self, combining_start: usize) {
         // Not a `for` loop to avoid holding a mutable reference to `self` across
         // the loop body.
@@ -996,13 +1024,16 @@ where
         // Slicing succeeds by construction; we've always ensured that `combining_start`
         // is in permissible range.
         #[expect(clippy::indexing_slicing)]
-        sort_slice_by_ccc(&mut self.buffer[combining_start..], self.trie);
+        Self::sort_slice_by_ccc(&mut self.buffer[combining_start..], self.trie);
     }
 }
 
-impl<I> Iterator for Decomposition<'_, I>
+impl<'data, I, T, P> Iterator for DecompositionInner<'data, I, T, P>
 where
     I: Iterator<Item = char>,
+    T: AbstractCodePointTrie<'data, u32>,
+    &'data T: TryFrom<&'data CodePointTrie<'data, u32>>,
+    P: IteratorPolicy,
 {
     type Item = char;
 
@@ -1028,9 +1059,31 @@ pub struct Composition<'data, I>
 where
     I: Iterator<Item = char>,
 {
+    inner: CompositionInner<'data, I, Trie<'data>, Uax15Policy>,
+}
+
+impl<I> Iterator for Composition<'_, I>
+where
+    I: Iterator<Item = char>,
+{
+    type Item = char;
+
+    fn next(&mut self) -> Option<char> {
+        self.inner.next()
+    }
+}
+
+#[derive(Debug)]
+struct CompositionInner<'data, I, T, P>
+where
+    I: Iterator<Item = char>,
+    T: AbstractCodePointTrie<'data, u32>,
+    &'data T: TryFrom<&'data CodePointTrie<'data, u32>>,
+    P: IteratorPolicy,
+{
     /// The decomposing part of the normalizer than operates before
     /// the canonical composition is performed on its output.
-    decomposition: Decomposition<'data, I>,
+    decomposition: DecompositionInner<'data, I, T, P>,
     /// Non-Hangul canonical composition data.
     canonical_compositions: Char16Trie<'data>,
     /// To make `next()` yield in cases where there's a non-composing
@@ -1046,12 +1099,15 @@ where
     composition_passthrough_bound: u32,
 }
 
-impl<'data, I> Composition<'data, I>
+impl<'data, I, T, P> CompositionInner<'data, I, T, P>
 where
     I: Iterator<Item = char>,
+    T: AbstractCodePointTrie<'data, u32>,
+    &'data T: TryFrom<&'data CodePointTrie<'data, u32>>,
+    P: IteratorPolicy,
 {
     fn new(
-        decomposition: Decomposition<'data, I>,
+        decomposition: DecompositionInner<'data, I, T, P>,
         canonical_compositions: Char16Trie<'data>,
         composition_passthrough_bound: u16,
     ) -> Self {
@@ -1080,9 +1136,12 @@ where
     }
 }
 
-impl<I> Iterator for Composition<'_, I>
+impl<'data, I, T, P> Iterator for CompositionInner<'data, I, T, P>
 where
     I: Iterator<Item = char>,
+    T: AbstractCodePointTrie<'data, u32>,
+    &'data T: TryFrom<&'data CodePointTrie<'data, u32>>,
+    P: IteratorPolicy,
 {
     type Item = char;
 
@@ -1291,8 +1350,7 @@ macro_rules! composing_normalize_to {
             $sink: &mut W,
         ) -> core::fmt::Result {
             $prolog
-            let mut $composition = self.normalize_iter($text.chars());
-            debug_assert_eq!($composition.decomposition.ignorable_behavior, IgnorableBehavior::Unsupported);
+            let mut $composition = self.normalize_iter_private::<_, Trie, Uax15Policy>($text.chars());
             for cc in $composition.decomposition.buffer.drain(..) {
                 $sink.write_char(cc.character())?;
             }
@@ -1476,8 +1534,7 @@ macro_rules! decomposing_normalize_to {
         ) -> core::fmt::Result {
             $prolog
 
-            let mut $decomposition = self.normalize_iter($text.chars());
-            debug_assert_eq!($decomposition.ignorable_behavior, IgnorableBehavior::Unsupported);
+            let mut $decomposition = self.normalize_iter_private::<_, Trie, Uax15Policy>($text.chars());
 
             // Try to get the compiler to hoist the bound to a register.
             let $decomposition_passthrough_bound = $decomposition.decomposition_passthrough_bound;
@@ -1836,13 +1893,28 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
     /// Wraps a delegate iterator into a decomposing iterator
     /// adapter by using the data already held by this normalizer.
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Decomposition<'data, I> {
-        Decomposition::new_with_supplements(
+        Decomposition {
+            inner: self.normalize_iter_private(iter),
+        }
+    }
+
+    fn normalize_iter_private<
+        I: Iterator<Item = char>,
+        T: AbstractCodePointTrie<'data, u32>,
+        P: IteratorPolicy,
+    >(
+        &self,
+        iter: I,
+    ) -> DecompositionInner<'data, I, T, P>
+    where
+        &'data T: TryFrom<&'data CodePointTrie<'data, u32>>,
+    {
+        DecompositionInner::new_with_supplements(
             iter,
             self.decompositions,
             self.tables,
             self.supplementary_tables,
             self.decomposition_passthrough_bound,
-            IgnorableBehavior::Unsupported,
         )
     }
 
@@ -2083,7 +2155,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                         }
                         // We might be doing a trie lookup by surrogate. Surrogates get
                         // a decomposition to U+FFFD.
-                        let mut trie_value = decomposition.trie.get16(upcoming_code_unit);
+                        let mut trie_value = decomposition.trie.bmp(upcoming_code_unit);
                         if starter_and_decomposes_to_self_impl(trie_value) {
                             continue 'fast;
                         }
@@ -2127,10 +2199,10 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                                             // case due to unintuitive optimizer effects. If you care about the
                                             // perf of the untyped trie case and have better ideas, please try
                                             // something better.
-                                            #[cfg(not(icu4x_unstable_fast_trie_only))]
-                                            {decomposition.trie.get32(upcoming32)}
-                                            #[cfg(icu4x_unstable_fast_trie_only)]
-                                            {decomposition.trie.get32_supplementary(upcoming32)}
+                                            #[cfg(feature = "serde")]
+                                            {decomposition.trie.code_point(upcoming32)}
+                                            #[cfg(not(feature = "serde"))]
+                                            {decomposition.trie.supplementary(upcoming32)}
                                         };
                                         if likely(starter_and_decomposes_to_self_impl(trie_value)) {
                                             continue 'fast;
@@ -2482,22 +2554,29 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
     /// Wraps a delegate iterator into a composing iterator
     /// adapter by using the data already held by this normalizer.
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Composition<'data, I> {
-        self.normalize_iter_private(iter, IgnorableBehavior::Unsupported)
+        Composition {
+            inner: self.normalize_iter_private(iter),
+        }
     }
 
-    fn normalize_iter_private<I: Iterator<Item = char>>(
+    fn normalize_iter_private<
+        I: Iterator<Item = char>,
+        T: AbstractCodePointTrie<'data, u32>,
+        P: IteratorPolicy,
+    >(
         &self,
         iter: I,
-        ignorable_behavior: IgnorableBehavior,
-    ) -> Composition<'data, I> {
-        Composition::new(
-            Decomposition::new_with_supplements(
+    ) -> CompositionInner<'data, I, T, P>
+    where
+        &'data T: TryFrom<&'data CodePointTrie<'data, u32>>,
+    {
+        CompositionInner::new(
+            DecompositionInner::new_with_supplements(
                 iter,
                 self.decomposing_normalizer.decompositions,
                 self.decomposing_normalizer.tables,
                 self.decomposing_normalizer.supplementary_tables,
                 self.decomposing_normalizer.decomposition_passthrough_bound,
-                ignorable_behavior,
             ),
             self.canonical_compositions.canonical_compositions.clone(),
             self.decomposing_normalizer.composition_passthrough_bound,
@@ -2734,7 +2813,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                         }
                         // We might be doing a trie lookup by surrogate. Surrogates get
                         // a decomposition to U+FFFD.
-                        let mut trie_value = composition.decomposition.trie.get16(upcoming_code_unit);
+                        let mut trie_value = composition.decomposition.trie.bmp(upcoming_code_unit);
                         if potential_passthrough_and_cannot_combine_backwards_impl(trie_value) {
                             // Can't combine backwards, hence a plain (non-backwards-combining)
                             // starter albeit past `composition_passthrough_bound`
@@ -2778,10 +2857,10 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                                             // case due to unintuitive optimizer effects. If you care about the
                                             // perf of the untyped trie case and have better ideas, please try
                                             // something better.
-                                            #[cfg(not(icu4x_unstable_fast_trie_only))]
-                                            {composition.decomposition.trie.get32(upcoming32)}
-                                            #[cfg(icu4x_unstable_fast_trie_only)]
-                                            {composition.decomposition.trie.get32_supplementary(upcoming32)}
+                                            #[cfg(feature = "serde")]
+                                            {composition.decomposition.trie.code_point(upcoming32)}
+                                            #[cfg(not(feature = "serde"))]
+                                            {composition.decomposition.trie.supplementary(upcoming32)}
                                         };
                                         if likely(potential_passthrough_and_cannot_combine_backwards_impl(trie_value)) {
                                             // Fast-track succeeded!
