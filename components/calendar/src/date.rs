@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::calendar_arithmetic::VALID_RD_RANGE;
 use crate::error::{DateError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
@@ -511,16 +510,6 @@ impl Date<Iso> {
                 RelativeUnit::Previous => self.inner.0.year() - 1,
             },
         }
-    }
-}
-
-impl<C: IntoAnyCalendar> Date<C> {
-    /// Type-erase the date, converting it to a date for [`AnyCalendar`]
-    pub fn to_any(self) -> Date<AnyCalendar> {
-        Date::from_raw(
-            self.calendar.date_to_any(&self.inner),
-            self.calendar.to_any(),
-        )
     }
 }
 
