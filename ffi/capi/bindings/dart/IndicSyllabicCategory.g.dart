@@ -50,12 +50,12 @@ enum IndicSyllabicCategory {
   /// See the [Rust documentation for `ConsonantPrefixed`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ConsonantPrefixed) for more information.
   // ignore: public_member_api_docs
   consonantPrefixed,
-  /// See the [Rust documentation for `ConsonantSucceedingRepha`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ConsonantSucceedingRepha) for more information.
-  // ignore: public_member_api_docs
-  consonantSucceedingRepha,
   /// See the [Rust documentation for `ConsonantSubjoined`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ConsonantSubjoined) for more information.
   // ignore: public_member_api_docs
   consonantSubjoined,
+  /// See the [Rust documentation for `ConsonantSucceedingRepha`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ConsonantSucceedingRepha) for more information.
+  // ignore: public_member_api_docs
+  consonantSucceedingRepha,
   /// See the [Rust documentation for `ConsonantWithStacker`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ConsonantWithStacker) for more information.
   // ignore: public_member_api_docs
   consonantWithStacker,
