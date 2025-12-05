@@ -218,12 +218,14 @@ impl<A: AsCalendar> Date<A> {
 
     /// Construct a [`Date`] from an ISO date and a calendar.
     #[inline]
+    #[deprecated(since = "2.2.0", note = "use `iso.to_calendar(calendar)")]
     pub fn new_from_iso(iso: Date<Iso>, calendar: A) -> Self {
         iso.to_calendar(calendar)
     }
 
     /// Convert the [`Date`] to an ISO Date
     #[inline]
+    #[deprecated(since = "2.2.0", note = "use `date.to_calendar(Iso)")]
     pub fn to_iso(&self) -> Date<Iso> {
         self.to_calendar(Iso)
     }
