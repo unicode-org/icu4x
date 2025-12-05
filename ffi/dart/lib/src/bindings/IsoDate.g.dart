@@ -141,7 +141,7 @@ final class IsoDate implements ffi.Finalizable {
   ///
   /// For calendars without an era, returns the extended year
   ///
-  /// See the [Rust documentation for `year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.year) for more information.
+  /// See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.1.1/icu/calendar/types/enum.YearInfo.html#method.extended_year) for more information.
   int get year {
     final result = _icu4x_IsoDate_year_mv1(_ffi);
     return result;
