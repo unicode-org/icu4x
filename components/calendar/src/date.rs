@@ -255,8 +255,17 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().day_of_year(&self.inner)
     }
 
-    /// The day of the week of this date.
+    /// The weekday of this date.
     #[inline]
+    pub fn weekday(&self) -> types::Weekday {
+        self.to_rata_die().into()
+    }
+
+    /// The weekday of this date.
+    ///
+    /// This is *not* the day of the week, an ordinal number that is locale
+    /// dependent.
+    #[deprecated(since = "2.2.0", note = "use `Date::weekday")]
     pub fn day_of_week(&self) -> types::Weekday {
         self.to_rata_die().into()
     }
@@ -483,7 +492,7 @@ impl Date<Iso> {
                     as u16,
                 self.days_in_year(),
                 self.day_of_year().0,
-                self.day_of_week(),
+                self.weekday(),
             )
             .unwrap_or_else(|_| {
                 // ISO calendar has more than 14 days per year
@@ -648,20 +657,20 @@ mod tests {
     }
 
     #[test]
-    fn test_day_of_week() {
+    fn test_weekday() {
         // June 23, 2021 is a Wednesday
         assert_eq!(
-            Date::try_new_iso(2021, 6, 23).unwrap().day_of_week(),
+            Date::try_new_iso(2021, 6, 23).unwrap().weekday(),
             Weekday::Wednesday,
         );
         // Feb 2, 1983 was a Wednesday
         assert_eq!(
-            Date::try_new_iso(1983, 2, 2).unwrap().day_of_week(),
+            Date::try_new_iso(1983, 2, 2).unwrap().weekday(),
             Weekday::Wednesday,
         );
         // Jan 21, 2021 was a Tuesday
         assert_eq!(
-            Date::try_new_iso(2020, 1, 21).unwrap().day_of_week(),
+            Date::try_new_iso(2020, 1, 21).unwrap().weekday(),
             Weekday::Tuesday,
         );
     }

@@ -35,7 +35,7 @@ pub struct DateTimeInputUnchecked {
     /// The day-of-month, required for field sets with days (`D`).
     pub(crate) day_of_month: Option<DayOfMonth>,
     /// The weekday, required for field sets with weekdays (`E`).
-    pub(crate) iso_weekday: Option<Weekday>,
+    pub(crate) weekday: Option<Weekday>,
     /// The day-of-year, required for field sets with weeks.
     pub(crate) day_of_year: Option<DayOfYear>,
     /// The RataDie of the day
@@ -71,7 +71,7 @@ impl DateTimeInputUnchecked {
         self.year = Some(date_in_calendar.year());
         self.month = Some(date_in_calendar.month());
         self.day_of_month = Some(date_in_calendar.day_of_month());
-        self.iso_weekday = Some(date_in_calendar.day_of_week());
+        self.weekday = Some(date_in_calendar.weekday());
         self.day_of_year = Some(date_in_calendar.day_of_year());
     }
 
@@ -112,7 +112,7 @@ impl DateTimeInputUnchecked {
             + GetField<D::YearInput>
             + GetField<D::MonthInput>
             + GetField<D::DayOfMonthInput>
-            + GetField<D::DayOfWeekInput>
+            + GetField<D::WeekdayInput>
             + GetField<D::DayOfYearInput>
             + GetField<D::RataDieInput>
             + GetField<T::HourInput>
@@ -127,7 +127,7 @@ impl DateTimeInputUnchecked {
             year: GetField::<D::YearInput>::get_field(input).into_option(),
             month: GetField::<D::MonthInput>::get_field(input).into_option(),
             day_of_month: GetField::<D::DayOfMonthInput>::get_field(input).into_option(),
-            iso_weekday: GetField::<D::DayOfWeekInput>::get_field(input).into_option(),
+            weekday: GetField::<D::WeekdayInput>::get_field(input).into_option(),
             day_of_year: GetField::<D::DayOfYearInput>::get_field(input).into_option(),
             rata_die: GetField::<D::RataDieInput>::get_field(input).into_option(),
             hour: GetField::<T::HourInput>::get_field(input).into_option(),
