@@ -20,6 +20,9 @@ pub enum ZeroTrieBuildError {
     /// Mixed-case data was added to a case-insensitive trie.
     #[displaydoc("Mixed-case data added to case-insensitive trie")]
     MixedCase,
+    /// Strings were added to a trie containing the delimiter.
+    #[displaydoc("Delimiter is contained in one or more strings")]
+    IllegalDelimiter,
 }
 
 impl core::error::Error for ZeroTrieBuildError {}

@@ -151,6 +151,8 @@
 
 mod branch_meta;
 pub(crate) mod bytestr;
+#[cfg(all(feature = "alloc", feature = "dense"))]
+pub(crate) mod dense;
 pub(crate) mod konst;
 #[cfg(feature = "litemap")]
 mod litemap;
