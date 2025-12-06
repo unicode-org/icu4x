@@ -21,6 +21,7 @@ use criterion::{
     black_box, criterion_group, criterion_main, measurement::WallTime, BenchmarkGroup, Criterion,
 };
 use icu_calendar::{
+    cal::Iso,
     options::{DateAddOptions, Overflow},
     types, AsCalendar, Calendar, Date,
 };
@@ -48,7 +49,7 @@ fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
     let _ = black_box(date.day_of_month());
 
     // Conversion to ISO.
-    let _ = black_box(date.to_iso());
+    let _ = black_box(date.to_calendar(Iso));
 }
 
 fn bench_calendar<C: Clone + Calendar>(
@@ -67,7 +68,7 @@ fn bench_calendar<C: Clone + Calendar>(
 
                 // Conversion from ISO
                 let date_iso = Date::try_new_iso(fx.year, fx.month, fx.day).unwrap();
-                let mut converted_date_calendar = Date::new_from_iso(date_iso, calendar.clone());
+                let mut converted_date_calendar = date_iso.to_calendar(calendar.clone());
 
                 bench_date(&mut instantiated_date_calendar);
                 bench_date(&mut converted_date_calendar);

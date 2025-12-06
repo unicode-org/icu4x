@@ -69,9 +69,21 @@ export class IsoDate {
     /**
      * Returns the day in the week for this day
      *
+     * This is *not* the day of the week, an ordinal number that is locale
+     * dependent.
+     *
      * See the [Rust documentation for `day_of_week`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.day_of_week) for more information.
+     *
+     * @deprecated use `weekday`
      */
     get dayOfWeek(): Weekday;
+
+    /**
+     * Returns the day in the week for this day
+     *
+     * See the [Rust documentation for `weekday`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.weekday) for more information.
+     */
+    get weekday(): Weekday;
 
     /**
      * Returns the week number in this year, using week data
@@ -94,7 +106,7 @@ export class IsoDate {
      *
      * For calendars without an era, returns the extended year
      *
-     * See the [Rust documentation for `year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.year) for more information.
+     * See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.1.1/icu/calendar/types/enum.YearInfo.html#method.extended_year) for more information.
      */
     get year(): number;
 

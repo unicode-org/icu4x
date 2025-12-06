@@ -109,10 +109,8 @@ mod test {
     fn test_buddhist_roundtrip_near_rd_zero() {
         for i in -10000..=10000 {
             let rd = RataDie::new(i);
-            let iso1 = Date::from_rata_die(rd, Iso);
-            let buddhist = iso1.to_calendar(Buddhist);
-            let iso2 = buddhist.to_calendar(Iso);
-            let result = iso2.to_rata_die();
+            let buddhist = Date::from_rata_die(rd, Buddhist);
+            let result = buddhist.to_rata_die();
             assert_eq!(rd, result);
         }
     }
@@ -122,10 +120,8 @@ mod test {
         // Buddhist epoch start RD: -198326
         for i in -208326..=-188326 {
             let rd = RataDie::new(i);
-            let iso1 = Date::from_rata_die(rd, Iso);
-            let buddhist = iso1.to_calendar(Buddhist);
-            let iso2 = buddhist.to_calendar(Iso);
-            let result = iso2.to_rata_die();
+            let buddhist = Date::from_rata_die(rd, Buddhist);
+            let result = buddhist.to_rata_die();
             assert_eq!(rd, result);
         }
     }
@@ -137,8 +133,8 @@ mod test {
                 let iso_i = Date::from_rata_die(RataDie::new(i), Iso);
                 let iso_j = Date::from_rata_die(RataDie::new(j), Iso);
 
-                let buddhist_i = Date::new_from_iso(iso_i, Buddhist);
-                let buddhist_j = Date::new_from_iso(iso_j, Buddhist);
+                let buddhist_i = iso_i.to_calendar(Buddhist);
+                let buddhist_j = iso_j.to_calendar(Buddhist);
 
                 assert_eq!(
                     i.cmp(&j),
@@ -163,8 +159,8 @@ mod test {
                 let iso_i = Date::from_rata_die(RataDie::new(i), Iso);
                 let iso_j = Date::from_rata_die(RataDie::new(j), Iso);
 
-                let buddhist_i = Date::new_from_iso(iso_i, Buddhist);
-                let buddhist_j = Date::new_from_iso(iso_j, Buddhist);
+                let buddhist_i = iso_i.to_calendar(Buddhist);
+                let buddhist_j = iso_j.to_calendar(Buddhist);
 
                 assert_eq!(
                     i.cmp(&j),

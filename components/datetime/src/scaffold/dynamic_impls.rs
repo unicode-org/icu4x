@@ -38,7 +38,7 @@ impl DateInputMarkers for DateFieldSet {
     type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, yes);
     type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, yes);
     type RataDieInput = datetime_marker_helper!(@input/rata_die, yes);
-    type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, yes);
+    type WeekdayInput = datetime_marker_helper!(@input/weekday, yes);
 }
 
 impl<C: CldrCalendar> TypedDateDataMarkers<C> for DateFieldSet {
@@ -86,7 +86,7 @@ impl DateInputMarkers for CalendarPeriodFieldSet {
     type YearInput = datetime_marker_helper!(@input/year, yes);
     type MonthInput = datetime_marker_helper!(@input/month, yes);
     type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month,);
-    type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week,);
+    type WeekdayInput = datetime_marker_helper!(@input/weekday,);
     type DayOfYearInput = datetime_marker_helper!(@input/day_of_year,);
     type RataDieInput = datetime_marker_helper!(@input/rata_die,);
 }

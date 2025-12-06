@@ -122,9 +122,22 @@ public:
   /**
    * Returns the day in the week for this day
    *
+   * This is *not* the day of the week, an ordinal number that is locale
+   * dependent.
+   *
    * See the [Rust documentation for `day_of_week`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.day_of_week) for more information.
+   *
+   * \deprecated use `weekday`
    */
+  [[deprecated("use `weekday`")]]
   inline icu4x::Weekday day_of_week() const;
+
+  /**
+   * Returns the day in the week for this day
+   *
+   * See the [Rust documentation for `weekday`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.weekday) for more information.
+   */
+  inline icu4x::Weekday weekday() const;
 
   /**
    * Returns 1-indexed number of the month of this date in its year
@@ -185,7 +198,7 @@ public:
    * of the year, and can be meaningfully compared with extended years from other
    * eras or used in arithmetic.
    *
-   * See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.extended_year) for more information.
+   * See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.1.1/icu/calendar/types/enum.YearInfo.html#method.extended_year) for more information.
    */
   inline int32_t extended_year() const;
 

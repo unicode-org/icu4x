@@ -20,7 +20,7 @@ super::test_all_cals!(
             let rd = date.to_rata_die();
             assert_eq!(rd, curr, "{}", cal.as_calendar().debug_name());
 
-            let date2 = Date::new_from_iso(date.to_iso(), cal);
+            let date2 = date.to_calendar(Iso).to_calendar(cal);
             assert_eq!(date, date2, "{:?}", cal.as_calendar().debug_name());
 
             prev = date;

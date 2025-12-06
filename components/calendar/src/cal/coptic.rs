@@ -262,14 +262,13 @@ mod tests {
     use super::*;
     use crate::options::{DateFromFieldsOptions, MissingFieldsStrategy, Overflow};
     use crate::types::{DateFields, Month};
+    use crate::Iso;
 
     #[test]
     fn test_coptic_regression() {
         // https://github.com/unicode-org/icu4x/issues/2254
         let iso_date = Date::try_new_iso(-100, 3, 3).unwrap();
-        let coptic = iso_date.to_calendar(Coptic);
-        let recovered_iso = coptic.to_iso();
-        assert_eq!(iso_date, recovered_iso);
+        assert_eq!(iso_date.to_calendar(Coptic).to_calendar(Iso), iso_date);
     }
 
     #[test]

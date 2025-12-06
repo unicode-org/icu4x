@@ -367,6 +367,7 @@ impl Date<Hebrew> {
 mod tests {
 
     use super::*;
+    use crate::Iso;
 
     pub const TISHREI: Month = Month::new(1);
     pub const ḤESHVAN: Month = Month::new(2);
@@ -448,7 +449,7 @@ mod tests {
 
             let iso_to_hebrew = iso_date.to_calendar(Hebrew);
 
-            let hebrew_to_iso = hebrew_date.to_iso();
+            let hebrew_to_iso = hebrew_date.to_calendar(Iso);
 
             assert_eq!(
                 hebrew_to_iso, iso_date,
@@ -508,6 +509,6 @@ mod tests {
 
         // Should be Saturday per:
         // https://www.hebcal.com/converter?hd=1&hm=Tishrei&hy=3760&h2g=1
-        assert_eq!(6, dt.day_of_week() as usize);
+        assert_eq!(6, dt.weekday() as usize);
     }
 }

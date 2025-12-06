@@ -295,34 +295,36 @@ impl Date<Julian> {
 
 #[cfg(test)]
 mod test {
+    use crate::Iso;
+
     use super::*;
 
     #[test]
     fn test_day_iso_to_julian() {
         // March 1st 200 is same on both calendars
         let iso_date = Date::try_new_iso(200, 3, 1).unwrap();
-        let julian_date = Date::new_from_iso(iso_date, Julian).inner;
+        let julian_date = iso_date.to_calendar(Julian).inner;
         assert_eq!(julian_date.0.year(), 200);
         assert_eq!(julian_date.0.month(), 3);
         assert_eq!(julian_date.0.day(), 1);
 
         // Feb 28th, 200 (iso) = Feb 29th, 200 (julian)
         let iso_date = Date::try_new_iso(200, 2, 28).unwrap();
-        let julian_date = Date::new_from_iso(iso_date, Julian).inner;
+        let julian_date = iso_date.to_calendar(Julian).inner;
         assert_eq!(julian_date.0.year(), 200);
         assert_eq!(julian_date.0.month(), 2);
         assert_eq!(julian_date.0.day(), 29);
 
         // March 1st 400 (iso) = Feb 29th, 400 (julian)
         let iso_date = Date::try_new_iso(400, 3, 1).unwrap();
-        let julian_date = Date::new_from_iso(iso_date, Julian).inner;
+        let julian_date = iso_date.to_calendar(Julian).inner;
         assert_eq!(julian_date.0.year(), 400);
         assert_eq!(julian_date.0.month(), 2);
         assert_eq!(julian_date.0.day(), 29);
 
         // Jan 1st, 2022 (iso) = Dec 19, 2021 (julian)
         let iso_date = Date::try_new_iso(2022, 1, 1).unwrap();
-        let julian_date = Date::new_from_iso(iso_date, Julian).inner;
+        let julian_date = iso_date.to_calendar(Julian).inner;
         assert_eq!(julian_date.0.year(), 2021);
         assert_eq!(julian_date.0.month(), 12);
         assert_eq!(julian_date.0.day(), 19);
@@ -331,43 +333,44 @@ mod test {
     #[test]
     fn test_day_julian_to_iso() {
         // March 1st 200 is same on both calendars
-        let julian_date = Date::try_new_julian(200, 3, 1).unwrap();
-        let iso_date = julian_date.to_iso();
-        let iso_expected_date = Date::try_new_iso(200, 3, 1).unwrap();
-        assert_eq!(iso_date, iso_expected_date);
+        assert_eq!(
+            Date::try_new_julian(200, 3, 1).unwrap().to_calendar(Iso),
+            Date::try_new_iso(200, 3, 1).unwrap()
+        );
 
         // Feb 28th, 200 (iso) = Feb 29th, 200 (julian)
-        let julian_date = Date::try_new_julian(200, 2, 29).unwrap();
-        let iso_date = julian_date.to_iso();
-        let iso_expected_date = Date::try_new_iso(200, 2, 28).unwrap();
-        assert_eq!(iso_date, iso_expected_date);
+        assert_eq!(
+            Date::try_new_julian(200, 2, 29).unwrap().to_calendar(Iso),
+            Date::try_new_iso(200, 2, 28).unwrap()
+        );
 
         // March 1st 400 (iso) = Feb 29th, 400 (julian)
-        let julian_date = Date::try_new_julian(400, 2, 29).unwrap();
-        let iso_date = julian_date.to_iso();
-        let iso_expected_date = Date::try_new_iso(400, 3, 1).unwrap();
-        assert_eq!(iso_date, iso_expected_date);
+        assert_eq!(
+            Date::try_new_julian(400, 2, 29).unwrap().to_calendar(Iso),
+            Date::try_new_iso(400, 3, 1).unwrap()
+        );
 
         // Jan 1st, 2022 (iso) = Dec 19, 2021 (julian)
-        let julian_date = Date::try_new_julian(2021, 12, 19).unwrap();
-        let iso_date = julian_date.to_iso();
-        let iso_expected_date = Date::try_new_iso(2022, 1, 1).unwrap();
-        assert_eq!(iso_date, iso_expected_date);
+        assert_eq!(
+            Date::try_new_julian(2021, 12, 19).unwrap().to_calendar(Iso),
+            Date::try_new_iso(2022, 1, 1).unwrap()
+        );
 
         // March 1st, 2022 (iso) = Feb 16, 2022 (julian)
-        let julian_date = Date::try_new_julian(2022, 2, 16).unwrap();
-        let iso_date = julian_date.to_iso();
-        let iso_expected_date = Date::try_new_iso(2022, 3, 1).unwrap();
-        assert_eq!(iso_date, iso_expected_date);
+        assert_eq!(
+            Date::try_new_julian(2022, 2, 16).unwrap().to_calendar(Iso),
+            Date::try_new_iso(2022, 3, 1).unwrap()
+        );
     }
 
     #[test]
     fn test_roundtrip_negative() {
         // https://github.com/unicode-org/icu4x/issues/2254
         let iso_date = Date::try_new_iso(-1000, 3, 3).unwrap();
-        let julian = iso_date.to_calendar(Julian::new());
-        let recovered_iso = julian.to_iso();
-        assert_eq!(iso_date, recovered_iso);
+        assert_eq!(
+            iso_date.to_calendar(Julian::new()).to_calendar(Iso),
+            iso_date
+        );
     }
 
     #[test]
@@ -494,7 +497,7 @@ mod test {
 
             let iso_date_man = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day)
                 .expect("Failed to initialize ISO date for {case:?}");
-            let julian_date_man = Date::new_from_iso(iso_date_man, Julian);
+            let julian_date_man = iso_date_man.to_calendar(Julian);
             assert_eq!(iso_from_rd, iso_date_man,
                 "ISO from RD not equal to ISO generated from manually-input ymd\nCase: {case:?}\nRD: {iso_from_rd:?}\nMan: {iso_date_man:?}");
             assert_eq!(julian_from_rd, julian_date_man,

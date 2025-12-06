@@ -150,7 +150,7 @@ mod test {
             "Failed era check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
         );
         assert_eq!(
-            roc_from_rd.extended_year(),
+            roc_from_rd.year().extended_year(),
             if case.expected_era == "roc" {
                 case.expected_year
             } else {
@@ -168,7 +168,7 @@ mod test {
 
         let iso_from_case = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day)
             .expect("Failed to initialize ISO date for {case:?}");
-        let roc_from_case = Date::new_from_iso(iso_from_case, Roc);
+        let roc_from_case = iso_from_case.to_calendar(Roc);
         assert_eq!(iso_from_rd, iso_from_case,
             "ISO from RD not equal to ISO generated from manually-input ymd\nCase: {case:?}\nRD: {iso_from_rd:?}\nManual: {iso_from_case:?}");
         assert_eq!(roc_from_rd, roc_from_case,

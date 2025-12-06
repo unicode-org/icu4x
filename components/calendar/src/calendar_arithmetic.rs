@@ -755,26 +755,26 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::cal::{abstract_gregorian::AbstractGregorian, iso::IsoEra};
+    use crate::cal::Coptic;
 
     #[test]
     fn test_ord() {
         let dates_in_order = [
-            ArithmeticDate::<AbstractGregorian<IsoEra>>::new_unchecked(-10, 1, 1),
-            ArithmeticDate::<AbstractGregorian<IsoEra>>::new_unchecked(-10, 1, 2),
-            ArithmeticDate::<AbstractGregorian<IsoEra>>::new_unchecked(-10, 2, 1),
-            ArithmeticDate::<AbstractGregorian<IsoEra>>::new_unchecked(-1, 1, 1),
-            ArithmeticDate::<AbstractGregorian<IsoEra>>::new_unchecked(-1, 1, 2),
-            ArithmeticDate::<AbstractGregorian<IsoEra>>::new_unchecked(-1, 2, 1),
-            ArithmeticDate::<AbstractGregorian<IsoEra>>::new_unchecked(0, 1, 1),
-            ArithmeticDate::<AbstractGregorian<IsoEra>>::new_unchecked(0, 1, 2),
-            ArithmeticDate::<AbstractGregorian<IsoEra>>::new_unchecked(0, 2, 1),
-            ArithmeticDate::<AbstractGregorian<IsoEra>>::new_unchecked(1, 1, 1),
-            ArithmeticDate::<AbstractGregorian<IsoEra>>::new_unchecked(1, 1, 2),
-            ArithmeticDate::<AbstractGregorian<IsoEra>>::new_unchecked(1, 2, 1),
-            ArithmeticDate::<AbstractGregorian<IsoEra>>::new_unchecked(10, 1, 1),
-            ArithmeticDate::<AbstractGregorian<IsoEra>>::new_unchecked(10, 1, 2),
-            ArithmeticDate::<AbstractGregorian<IsoEra>>::new_unchecked(10, 2, 1),
+            ArithmeticDate::<Coptic>::new_unchecked(-10, 1, 1),
+            ArithmeticDate::<Coptic>::new_unchecked(-10, 1, 2),
+            ArithmeticDate::<Coptic>::new_unchecked(-10, 2, 1),
+            ArithmeticDate::<Coptic>::new_unchecked(-1, 1, 1),
+            ArithmeticDate::<Coptic>::new_unchecked(-1, 1, 2),
+            ArithmeticDate::<Coptic>::new_unchecked(-1, 2, 1),
+            ArithmeticDate::<Coptic>::new_unchecked(0, 1, 1),
+            ArithmeticDate::<Coptic>::new_unchecked(0, 1, 2),
+            ArithmeticDate::<Coptic>::new_unchecked(0, 2, 1),
+            ArithmeticDate::<Coptic>::new_unchecked(1, 1, 1),
+            ArithmeticDate::<Coptic>::new_unchecked(1, 1, 2),
+            ArithmeticDate::<Coptic>::new_unchecked(1, 2, 1),
+            ArithmeticDate::<Coptic>::new_unchecked(10, 1, 1),
+            ArithmeticDate::<Coptic>::new_unchecked(10, 1, 2),
+            ArithmeticDate::<Coptic>::new_unchecked(10, 2, 1),
         ];
         for (i, i_date) in dates_in_order.iter().enumerate() {
             for (j, j_date) in dates_in_order.iter().enumerate() {
