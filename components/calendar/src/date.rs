@@ -249,7 +249,7 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().day_of_month(&self.inner)
     }
 
-    /// The day-of-month of this date.
+    /// The day-of-year of this date.
     #[inline]
     pub fn day_of_year(&self) -> types::DayOfYear {
         self.calendar.as_calendar().day_of_year(&self.inner)
