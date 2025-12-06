@@ -339,9 +339,9 @@ fn test_i64_to_saturated_i32() {
 }
 
 /// returns the weekday (0-6) after (strictly) the fixed date
-pub(crate) const fn k_day_after(weekday: i64, fixed: RataDie) -> RataDie {
-    let day_of_week = fixed.to_i64_date().rem_euclid(7);
-    let beginning_of_week = fixed.to_i64_date() - day_of_week;
-    let day = beginning_of_week + weekday;
-    RataDie::new(day + if weekday <= day_of_week { 7 } else { 0 })
+pub(crate) const fn k_day_after(desired_weekday: i64, fixed: RataDie) -> RataDie {
+    let weekday = fixed.to_i64_date().rem_euclid(7);
+    let beginning_of_week = fixed.to_i64_date() - weekday;
+    let day = beginning_of_week + desired_weekday;
+    RataDie::new(day + if desired_weekday <= weekday { 7 } else { 0 })
 }

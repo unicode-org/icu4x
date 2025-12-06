@@ -314,7 +314,7 @@ mod test {
         // 11th September 2023 in gregorian is 6/13/2015 in ethiopian
         let iso_date = Date::try_new_iso(2023, 9, 11).unwrap();
         let date_ethiopian = Date::new_from_iso(iso_date, Ethiopian::new());
-        assert_eq!(date_ethiopian.extended_year(), 2015);
+        assert_eq!(date_ethiopian.year().extended_year(), 2015);
         assert_eq!(date_ethiopian.month().ordinal, 13);
         assert_eq!(date_ethiopian.day_of_month().0, 6);
     }
@@ -324,7 +324,7 @@ mod test {
         let iso_date = Date::try_new_iso(1970, 1, 2).unwrap();
         let date_ethiopian = Date::new_from_iso(iso_date, Ethiopian::new());
 
-        assert_eq!(date_ethiopian.extended_year(), 1962);
+        assert_eq!(date_ethiopian.year().extended_year(), 1962);
         assert_eq!(date_ethiopian.month().ordinal, 4);
         assert_eq!(date_ethiopian.day_of_month().0, 24);
 
@@ -339,7 +339,7 @@ mod test {
         let iso_date = Date::try_new_iso(1970, 1, 2).unwrap();
         let date_ethiopian = Date::new_from_iso(iso_date, Ethiopian(EthiopianEraStyle::AmeteAlem));
 
-        assert_eq!(date_ethiopian.extended_year(), 7462);
+        assert_eq!(date_ethiopian.year().extended_year(), 7462);
         assert_eq!(date_ethiopian.month().ordinal, 4);
         assert_eq!(date_ethiopian.day_of_month().0, 24);
 
@@ -365,6 +365,7 @@ mod test {
                 Date::try_new_iso(-5500 + 9, 1, 1).unwrap(),
                 Ethiopian(EthiopianEraStyle::AmeteAlem)
             )
+            .year()
             .extended_year(),
             1
         );
@@ -373,6 +374,7 @@ mod test {
                 Date::try_new_iso(9, 1, 1).unwrap(),
                 Ethiopian(EthiopianEraStyle::AmeteAlem)
             )
+            .year()
             .extended_year(),
             5501
         );
@@ -382,6 +384,7 @@ mod test {
                 Date::try_new_iso(-5500 + 9, 1, 1).unwrap(),
                 Ethiopian(EthiopianEraStyle::AmeteMihret)
             )
+            .year()
             .extended_year(),
             -5499
         );
@@ -390,6 +393,7 @@ mod test {
                 Date::try_new_iso(9, 1, 1).unwrap(),
                 Ethiopian(EthiopianEraStyle::AmeteMihret)
             )
+            .year()
             .extended_year(),
             1
         );

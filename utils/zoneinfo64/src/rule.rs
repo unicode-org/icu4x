@@ -32,14 +32,14 @@ struct TzRuleDate {
     /// A 1-indexed day number
     day: u8,
     /// A day of the week (0 = Sunday)
-    day_of_week: u8,
+    weekday: u8,
     /// A 1-indexed month number
     month: u8,
     /// The time in the day (in seconds) that the transition occurs
     transition_time: u32,
     /// How to interpret transition_time
     time_mode: TimeMode,
-    /// How to interpret day, day_of_week, and month
+    /// How to interpret day, weekday, and month
     mode: RuleMode,
 }
 
@@ -86,9 +86,9 @@ enum TimeMode {
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 #[allow(non_camel_case_types, clippy::upper_case_acronyms)]
-/// How to interpret `{day}` `{day_of_week}` and `{month}`
+/// How to interpret `{day}` `{weekday}` and `{month}`
 enum RuleMode {
-    /// The {day}th {day_of_week} in {month}
+    /// The {day}th {weekday} in {month}
     ///
     /// Current zoneinfo64 does not use this, instead
     /// choosing to represent this as DOW_GEQ_DOM with day = 1/8/15/22
@@ -97,9 +97,9 @@ enum RuleMode {
     ///
     /// Current zoneinfo64 does not use this
     DOM,
-    /// The first {day_of_week} on or after {month} {day}
+    /// The first {weekday} on or after {month} {day}
     DOW_GEQ_DOM,
-    /// The first {day_of_week} on or before {month} {day}
+    /// The first {weekday} on or before {month} {day}
     ///
     /// Typically, this represents rules like "Last Sunday in March" (Europe/London)
     DOW_LEQ_DOM,
@@ -136,7 +136,7 @@ impl TzRule {
 impl TzRuleDate {
     fn new(
         mut day: i8,
-        mut day_of_week: i8,
+        mut weekday: i8,
         zero_based_month: u8,
         transition_time: u32,
         time_mode: i8,
@@ -162,13 +162,13 @@ impl TzRuleDate {
 
         let mode;
 
-        if day_of_week == 0 {
+        if weekday == 0 {
             mode = RuleMode::DOM;
         } else {
-            if day_of_week > 0 {
+            if weekday > 0 {
                 mode = RuleMode::DOW_IN_MONTH
             } else {
-                day_of_week = -day_of_week;
+                weekday = -weekday;
                 if day > 0 {
                     mode = RuleMode::DOW_GEQ_DOM;
                 } else {
@@ -176,7 +176,7 @@ impl TzRuleDate {
                     mode = RuleMode::DOW_LEQ_DOM;
                 }
             }
-            if day_of_week > 7 {
+            if weekday > 7 {
                 return None;
             }
         }
@@ -198,7 +198,7 @@ impl TzRuleDate {
 
         Some(Self {
             day: u8::try_from(day).unwrap_or_default(),
-            day_of_week: u8::try_from(day_of_week - 1).unwrap_or_default(),
+            weekday: u8::try_from(weekday - 1).unwrap_or_default(),
             month: zero_based_month + 1,
             transition_time,
             time_mode,
@@ -225,12 +225,12 @@ impl TzRuleDate {
         let day_of_month = match self.mode {
             RuleMode::DOM | // unreachable
             RuleMode::DOW_IN_MONTH => {
-                // First we calculate the first {day_of_week} of the month
-                let first_weekday = if self.day_of_week > weekday_before_month {
+                // First we calculate the first {weekday} of the month
+                let first_weekday = if self.weekday > weekday_before_month {
                     0
                 } else {
                     7
-                } + self.day_of_week - weekday_before_month;
+                } + self.weekday - weekday_before_month;
 
                 // Then we add additional weeks to it if desired
                 first_weekday + (self.day - 1) * 7
@@ -238,20 +238,20 @@ impl TzRuleDate {
             // These two compute after/before an "anchor" day in the month
             RuleMode::DOW_GEQ_DOM => {
                 let weekday_of_anchor = (weekday_before_month + self.day) % 7;
-                let days_to_add = if self.day_of_week >= weekday_of_anchor {
+                let days_to_add = if self.weekday >= weekday_of_anchor {
                     0
                 } else {
                     7
-                } + self.day_of_week - weekday_of_anchor;
+                } + self.weekday - weekday_of_anchor;
                 self.day + days_to_add
             }
             RuleMode::DOW_LEQ_DOM => {
                 let weekday_of_anchor = (weekday_before_month + self.day) % 7;
-                let days_to_subtract = if self.day_of_week <= weekday_of_anchor {
+                let days_to_subtract = if self.weekday <= weekday_of_anchor {
                     0
                 } else {
                     7
-                } + weekday_of_anchor - self.day_of_week;
+                } + weekday_of_anchor - self.weekday;
                 self.day - days_to_subtract
             }
         };
@@ -659,13 +659,13 @@ mod tests {
 
     // DOW_IN_MONTH is not exercised by TZDB
     #[test]
-    fn day_of_week_in_month() {
+    fn weekday_in_month() {
         // First Wednesday in August 2025
         assert_eq!(
             TzRuleDate {
                 mode: RuleMode::DOW_IN_MONTH,
                 day: 1,
-                day_of_week: 3,
+                weekday: 3,
                 month: 8,
                 transition_time: 0,
                 time_mode: TimeMode::Utc,
@@ -682,7 +682,7 @@ mod tests {
             TzRuleDate {
                 mode: RuleMode::DOW_IN_MONTH,
                 day: 3,
-                day_of_week: 6,
+                weekday: 6,
                 month: 8,
                 transition_time: 0,
                 time_mode: TimeMode::Utc,
