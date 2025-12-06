@@ -10,6 +10,7 @@ internal interface LineSegmenterLib: Library {
     fun icu4x_LineSegmenter_create_auto_mv1(): Pointer
     fun icu4x_LineSegmenter_create_lstm_mv1(): Pointer
     fun icu4x_LineSegmenter_create_dictionary_mv1(): Pointer
+    fun icu4x_LineSegmenter_create_non_complex_mv1(): Pointer
     fun icu4x_LineSegmenter_segment_utf16_mv1(handle: Pointer, input: Slice): Pointer
 }
 /** An ICU4X line-break segmenter, capable of finding breakpoints in strings.
@@ -74,6 +75,22 @@ class LineSegmenter internal constructor (
         fun createDictionary(): LineSegmenter {
             
             val returnVal = lib.icu4x_LineSegmenter_create_dictionary_mv1();
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = LineSegmenter(handle, selfEdges)
+            CLEANER.register(returnOpaque, LineSegmenter.LineSegmenterCleaner(handle, LineSegmenter.lib));
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Construct a [LineSegmenter] with default options (no locale-based tailoring) and no support for complex languages
+        *(Burmese, Khmer, Lao, and Thai), using compiled data
+        *
+        *See the [Rust documentation for `new_non_complex`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_non_complex) for more information.
+        */
+        fun createNonComplex(): LineSegmenter {
+            
+            val returnVal = lib.icu4x_LineSegmenter_create_non_complex_mv1();
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
             val returnOpaque = LineSegmenter(handle, selfEdges)
