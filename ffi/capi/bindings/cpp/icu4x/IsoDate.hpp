@@ -44,6 +44,8 @@ namespace capi {
 
     icu4x::capi::Weekday icu4x_IsoDate_day_of_week_mv1(const icu4x::capi::IsoDate* self);
 
+    icu4x::capi::Weekday icu4x_IsoDate_weekday_mv1(const icu4x::capi::IsoDate* self);
+
     icu4x::capi::IsoWeekOfYear icu4x_IsoDate_week_of_year_mv1(const icu4x::capi::IsoDate* self);
 
     uint8_t icu4x_IsoDate_month_mv1(const icu4x::capi::IsoDate* self);
@@ -109,6 +111,11 @@ inline uint8_t icu4x::IsoDate::day_of_month() const {
 
 inline icu4x::Weekday icu4x::IsoDate::day_of_week() const {
     auto result = icu4x::capi::icu4x_IsoDate_day_of_week_mv1(this->AsFFI());
+    return icu4x::Weekday::FromFFI(result);
+}
+
+inline icu4x::Weekday icu4x::IsoDate::weekday() const {
+    auto result = icu4x::capi::icu4x_IsoDate_weekday_mv1(this->AsFFI());
     return icu4x::Weekday::FromFFI(result);
 }
 

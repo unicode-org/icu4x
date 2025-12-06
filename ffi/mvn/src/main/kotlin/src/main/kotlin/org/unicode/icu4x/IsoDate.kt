@@ -16,6 +16,7 @@ internal interface IsoDateLib: Library {
     fun icu4x_IsoDate_day_of_year_mv1(handle: Pointer): FFIUint16
     fun icu4x_IsoDate_day_of_month_mv1(handle: Pointer): FFIUint8
     fun icu4x_IsoDate_day_of_week_mv1(handle: Pointer): Int
+    fun icu4x_IsoDate_weekday_mv1(handle: Pointer): Int
     fun icu4x_IsoDate_week_of_year_mv1(handle: Pointer): IsoWeekOfYearNative
     fun icu4x_IsoDate_month_mv1(handle: Pointer): FFIUint8
     fun icu4x_IsoDate_year_mv1(handle: Pointer): Int
@@ -159,11 +160,24 @@ class IsoDate internal constructor (
     
     /** Returns the day in the week for this day
     *
+    *This is *not* the day of the week, an ordinal number that is locale
+    *dependent.
+    *
     *See the [Rust documentation for `day_of_week`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.day_of_week) for more information.
     */
     fun dayOfWeek(): Weekday {
         
         val returnVal = lib.icu4x_IsoDate_day_of_week_mv1(handle);
+        return (Weekday.fromNative(returnVal))
+    }
+    
+    /** Returns the day in the week for this day
+    *
+    *See the [Rust documentation for `weekday`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.weekday) for more information.
+    */
+    fun weekday(): Weekday {
+        
+        val returnVal = lib.icu4x_IsoDate_weekday_mv1(handle);
         return (Weekday.fromNative(returnVal))
     }
     

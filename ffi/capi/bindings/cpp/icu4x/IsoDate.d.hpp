@@ -97,9 +97,22 @@ public:
   /**
    * Returns the day in the week for this day
    *
+   * This is *not* the day of the week, an ordinal number that is locale
+   * dependent.
+   *
    * See the [Rust documentation for `day_of_week`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.day_of_week) for more information.
+   *
+   * \deprecated use `weekday`
    */
+  [[deprecated("use `weekday`")]]
   inline icu4x::Weekday day_of_week() const;
+
+  /**
+   * Returns the day in the week for this day
+   *
+   * See the [Rust documentation for `weekday`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.weekday) for more information.
+   */
+  inline icu4x::Weekday weekday() const;
 
   /**
    * Returns the week number in this year, using week data

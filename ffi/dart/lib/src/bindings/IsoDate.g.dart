@@ -101,9 +101,21 @@ final class IsoDate implements ffi.Finalizable {
 
   /// Returns the day in the week for this day
   ///
+  /// This is *not* the day of the week, an ordinal number that is locale
+  /// dependent.
+  ///
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.day_of_week) for more information.
+  @core.Deprecated('use `weekday`')
   Weekday get dayOfWeek {
     final result = _icu4x_IsoDate_day_of_week_mv1(_ffi);
+    return Weekday.values.firstWhere((v) => v._ffi == result);
+  }
+
+  /// Returns the day in the week for this day
+  ///
+  /// See the [Rust documentation for `weekday`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.weekday) for more information.
+  Weekday get weekday {
+    final result = _icu4x_IsoDate_weekday_mv1(_ffi);
     return Weekday.values.firstWhere((v) => v._ffi == result);
   }
 
@@ -218,6 +230,11 @@ external int _icu4x_IsoDate_day_of_month_mv1(ffi.Pointer<ffi.Opaque> self);
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_day_of_week_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IsoDate_day_of_week_mv1(ffi.Pointer<ffi.Opaque> self);
+
+@_DiplomatFfiUse('icu4x_IsoDate_weekday_mv1')
+@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_weekday_mv1')
+// ignore: non_constant_identifier_names
+external int _icu4x_IsoDate_weekday_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('icu4x_IsoDate_week_of_year_mv1')
 @ffi.Native<_IsoWeekOfYearFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_week_of_year_mv1')

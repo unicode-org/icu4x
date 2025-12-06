@@ -8,7 +8,7 @@ fn check_continuity<A: AsCalendar>(mut date: Date<A>, years_to_check: usize) {
     let duration = DateDuration::for_days(1);
 
     let mut rata_die = date.to_rata_die();
-    let mut weekday = date.day_of_week();
+    let mut weekday = date.weekday();
     let mut year = date.year();
     let mut is_in_leap_year = date.is_in_leap_year();
 
@@ -18,7 +18,7 @@ fn check_continuity<A: AsCalendar>(mut date: Date<A>, years_to_check: usize) {
             .unwrap();
         let next_rata_die = next_date.to_iso().to_rata_die();
         assert_eq!(next_rata_die, rata_die + 1, "{next_date:?}");
-        let next_weekday = next_date.day_of_week();
+        let next_weekday = next_date.weekday();
         let next_year = next_date.year();
         let next_is_in_leap_year = next_date.is_in_leap_year();
         assert_eq!(

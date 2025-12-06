@@ -62,7 +62,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfMonth> for Date<A> 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Weekday> for Date<A> {
     #[inline]
     fn get_field(&self) -> Weekday {
-        self.day_of_week()
+        self.weekday()
     }
 }
 
@@ -136,7 +136,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfMonth> for DateTime
 impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Weekday> for DateTime<A> {
     #[inline]
     fn get_field(&self) -> Weekday {
-        self.date.day_of_week()
+        self.date.weekday()
     }
 }
 
@@ -208,7 +208,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<DayOfMonth> for Zoned
 impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<Weekday> for ZonedDateTime<A, Z> {
     #[inline]
     fn get_field(&self) -> Weekday {
-        self.date.day_of_week()
+        self.date.weekday()
     }
 }
 

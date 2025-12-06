@@ -243,16 +243,69 @@ impl<A: AsCalendar> Date<A> {
         Date { inner, calendar }
     }
 
-    /// The number of months in the year of this date.
+    /// The day-of-month of this date.
     #[inline]
-    pub fn months_in_year(&self) -> u8 {
-        self.calendar.as_calendar().months_in_year(self.inner())
+    pub fn day_of_month(&self) -> types::DayOfMonth {
+        self.calendar.as_calendar().day_of_month(&self.inner)
     }
 
-    /// The number of days in the year of this date.
+    /// The day-of-year of this date.
     #[inline]
-    pub fn days_in_year(&self) -> u16 {
-        self.calendar.as_calendar().days_in_year(self.inner())
+    pub fn day_of_year(&self) -> types::DayOfYear {
+        self.calendar.as_calendar().day_of_year(&self.inner)
+    }
+
+    /// The weekday of this date.
+    #[inline]
+    pub fn weekday(&self) -> types::Weekday {
+        self.to_rata_die().into()
+    }
+
+    /// The weekday of this date.
+    ///
+    /// This is *not* the day of the week, an ordinal number that is locale
+    /// dependent.
+    #[deprecated(since = "2.2.0", note = "use `Date::weekday")]
+    pub fn day_of_week(&self) -> types::Weekday {
+        self.to_rata_die().into()
+    }
+
+    /// The month of this date.
+    #[inline]
+    pub fn month(&self) -> types::MonthInfo {
+        self.calendar.as_calendar().month(&self.inner)
+    }
+
+    /// The year of this date.
+    ///
+    /// This returns an enum, see [`Date::era_year()`] and [`Date::cyclic_year()`] which are available
+    /// for concrete calendar types and return concrete types.
+    #[inline]
+    pub fn year(&self) -> types::YearInfo {
+        self.calendar.as_calendar().year_info(&self.inner).into()
+    }
+
+    /// The "extended year" of this date.
+    ///
+    /// This year number can be used when you need a simple numeric representation
+    /// of the year, and can be meaningfully compared with extended years from other
+    /// eras or used in arithmetic.
+    ///
+    /// For calendars defined in Temporal, this will match the "arithmetic year"
+    /// as defined in <https://tc39.es/proposal-intl-era-monthcode/>.
+    /// This is typically anchored with year 1 as the year 1 of either the most modern or
+    /// otherwise some "major" era for the calendar.
+    ///
+    /// See [`Self::year()`] for more information about the year.
+    #[inline]
+    pub fn extended_year(&self) -> i32 {
+        self.year().extended_year()
+    }
+
+    /// Whether this date is in a leap year.
+    #[inline]
+    pub fn is_in_leap_year(&self) -> bool {
+        self.calendar.as_calendar().is_in_leap_year(&self.inner)
     }
 
     /// The number of days in the month of this date.
@@ -261,10 +314,16 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().days_in_month(self.inner())
     }
 
-    /// The day of the week of this date.
+    /// The number of days in the year of this date.
     #[inline]
-    pub fn day_of_week(&self) -> types::Weekday {
-        self.to_rata_die().into()
+    pub fn days_in_year(&self) -> u16 {
+        self.calendar.as_calendar().days_in_year(self.inner())
+    }
+
+    /// The number of months in the year of this date.
+    #[inline]
+    pub fn months_in_year(&self) -> u8 {
+        self.calendar.as_calendar().months_in_year(self.inner())
     }
 
     /// Add a `duration` to this date, mutating it
@@ -359,56 +418,6 @@ impl<A: AsCalendar> Date<A> {
             .until(self.inner(), other.inner(), options)
     }
 
-    /// The year of this date.
-    ///
-    /// This returns an enum, see [`Date::era_year()`] and [`Date::cyclic_year()`] which are available
-    /// for concrete calendar types and return concrete types.
-    #[inline]
-    pub fn year(&self) -> types::YearInfo {
-        self.calendar.as_calendar().year_info(&self.inner).into()
-    }
-
-    /// The "extended year" of this date.
-    ///
-    /// This year number can be used when you need a simple numeric representation
-    /// of the year, and can be meaningfully compared with extended years from other
-    /// eras or used in arithmetic.
-    ///
-    /// For calendars defined in Temporal, this will match the "arithmetic year"
-    /// as defined in <https://tc39.es/proposal-intl-era-monthcode/>.
-    /// This is typically anchored with year 1 as the year 1 of either the most modern or
-    /// otherwise some "major" era for the calendar.
-    ///
-    /// See [`Self::year()`] for more information about the year.
-    #[inline]
-    pub fn extended_year(&self) -> i32 {
-        self.year().extended_year()
-    }
-
-    /// Whether this date is in a leap year.
-    #[inline]
-    pub fn is_in_leap_year(&self) -> bool {
-        self.calendar.as_calendar().is_in_leap_year(&self.inner)
-    }
-
-    /// The month of this date.
-    #[inline]
-    pub fn month(&self) -> types::MonthInfo {
-        self.calendar.as_calendar().month(&self.inner)
-    }
-
-    /// The day-of-month of this date.
-    #[inline]
-    pub fn day_of_month(&self) -> types::DayOfMonth {
-        self.calendar.as_calendar().day_of_month(&self.inner)
-    }
-
-    /// The day-of-month of this date.
-    #[inline]
-    pub fn day_of_year(&self) -> types::DayOfYear {
-        self.calendar.as_calendar().day_of_year(&self.inner)
-    }
-
     /// Construct a date from raw values for a given calendar. This does not check any
     /// invariants for the date and calendar, and should only be called by calendar implementations.
     ///
@@ -483,7 +492,7 @@ impl Date<Iso> {
                     as u16,
                 self.days_in_year(),
                 self.day_of_year().0,
-                self.day_of_week(),
+                self.weekday(),
             )
             .unwrap_or_else(|_| {
                 // ISO calendar has more than 14 days per year
@@ -648,20 +657,20 @@ mod tests {
     }
 
     #[test]
-    fn test_day_of_week() {
+    fn test_weekday() {
         // June 23, 2021 is a Wednesday
         assert_eq!(
-            Date::try_new_iso(2021, 6, 23).unwrap().day_of_week(),
+            Date::try_new_iso(2021, 6, 23).unwrap().weekday(),
             Weekday::Wednesday,
         );
         // Feb 2, 1983 was a Wednesday
         assert_eq!(
-            Date::try_new_iso(1983, 2, 2).unwrap().day_of_week(),
+            Date::try_new_iso(1983, 2, 2).unwrap().weekday(),
             Weekday::Wednesday,
         );
         // Jan 21, 2021 was a Tuesday
         assert_eq!(
-            Date::try_new_iso(2020, 1, 21).unwrap().day_of_week(),
+            Date::try_new_iso(2020, 1, 21).unwrap().weekday(),
             Weekday::Tuesday,
         );
     }

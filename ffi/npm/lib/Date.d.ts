@@ -105,9 +105,21 @@ export class Date {
     /**
      * Returns the day in the week for this day
      *
+     * This is *not* the day of the week, an ordinal number that is locale
+     * dependent.
+     *
      * See the [Rust documentation for `day_of_week`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.day_of_week) for more information.
+     *
+     * @deprecated use `weekday`
      */
     get dayOfWeek(): Weekday;
+
+    /**
+     * Returns the day in the week for this day
+     *
+     * See the [Rust documentation for `weekday`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.weekday) for more information.
+     */
+    get weekday(): Weekday;
 
     /**
      * Returns 1-indexed number of the month of this date in its year
