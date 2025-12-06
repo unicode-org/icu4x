@@ -12,8 +12,6 @@ use alloc::borrow::Cow;
 use core::fmt::{Debug, Formatter};
 
 use icu_provider::prelude::*;
-#[cfg(feature = "serde")]
-use icu_provider::serde_borrow_de_utils::option_of_cow;
 use zerovec::VarZeroVec;
 
 use crate::personnames::api::FormattingFormality;
@@ -84,6 +82,20 @@ pub struct PersonNamesFormat<'data> {
     /// ```
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub person_names_patterns: VarZeroVec<'data, PersonNamesFormattingDataVarULE>,
+}
+
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[serde(transparent)]
+// Cows fail to borrow in some situations (array, option), but structs of Cows don't.
+struct CowWrap<'data>(#[serde(borrow)] Cow<'data, str>);
+
+#[cfg(feature = "serde")]
+fn option_of_cow<'de, D>(deserializer: D) -> Result<Option<Cow<'de, str>>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    use serde::Deserialize;
+    <Option<CowWrap<'de>>>::deserialize(deserializer).map(|opt| opt.map(|wrap| wrap.0))
 }
 
 icu_provider::data_struct!(PersonNamesFormat<'_>, #[cfg(feature = "datagen")]);
