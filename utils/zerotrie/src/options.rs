@@ -73,6 +73,15 @@ pub(crate) enum CaseSensitivity {
     IgnoreCase,
 }
 
+/// How to handle lookup for strings with mixed ASCII case. Only used in ignore-case tries
+#[derive(Copy, Clone)]
+pub(crate) enum LookupStrictness {
+    /// Select strings that differ in case so long as their `to_ascii_lowercase` matches
+    Normal,
+    /// Select strings only if they match exactly
+    Strict,
+}
+
 impl CaseSensitivity {
     #[cfg(feature = "serde")]
     const fn to_u8_flag(self) -> u8 {
@@ -89,6 +98,7 @@ pub(crate) struct ZeroTrieBuilderOptions {
     pub ascii_mode: AsciiMode,
     pub capacity_mode: CapacityMode,
     pub case_sensitivity: CaseSensitivity,
+    pub lookup_strictness: LookupStrictness,
 }
 
 impl ZeroTrieBuilderOptions {
@@ -113,6 +123,7 @@ impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTrieSimpleAscii<S> {
         ascii_mode: AsciiMode::AsciiOnly,
         capacity_mode: CapacityMode::Normal,
         case_sensitivity: CaseSensitivity::Sensitive,
+        lookup_strictness: LookupStrictness::Normal,
     };
 }
 
@@ -129,6 +140,22 @@ impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroAsciiIgnoreCaseTrie<S> {
         ascii_mode: AsciiMode::AsciiOnly,
         capacity_mode: CapacityMode::Normal,
         case_sensitivity: CaseSensitivity::IgnoreCase,
+        lookup_strictness: LookupStrictness::Normal,
+    };
+}
+
+impl<S: ?Sized> crate::ZeroAsciiIgnoreCaseTrie<S> {
+    #[cfg(feature = "serde")]
+    pub(crate) const FLAGS: u8 = Self::OPTIONS.to_u8_flags();
+}
+
+/// Internal struct to power `get_strict`
+pub(crate) struct ZeroAsciiIgnoreCaseStrictTrie;
+
+impl ZeroTrieWithOptions for ZeroAsciiIgnoreCaseStrictTrie {
+    const OPTIONS: ZeroTrieBuilderOptions = ZeroTrieBuilderOptions {
+        lookup_strictness: LookupStrictness::Strict,
+        ..crate::ZeroAsciiIgnoreCaseTrie::OPTIONS
     };
 }
 
@@ -139,6 +166,7 @@ impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTriePerfectHash<S> {
         ascii_mode: AsciiMode::BinarySpans,
         capacity_mode: CapacityMode::Normal,
         case_sensitivity: CaseSensitivity::Sensitive,
+        lookup_strictness: LookupStrictness::Normal,
     };
 }
 
@@ -149,5 +177,6 @@ impl<S: ?Sized> ZeroTrieWithOptions for crate::ZeroTrieExtendedCapacity<S> {
         ascii_mode: AsciiMode::BinarySpans,
         capacity_mode: CapacityMode::Extended,
         case_sensitivity: CaseSensitivity::Sensitive,
+        lookup_strictness: LookupStrictness::Normal,
     };
 }
