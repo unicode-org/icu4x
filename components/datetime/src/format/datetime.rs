@@ -295,7 +295,7 @@ where
         (FieldSymbol::Week(w), _) => match w {},
         (FieldSymbol::Weekday(weekday), l) => {
             const PART: Part = parts::WEEKDAY;
-            input!(PART, Weekday, iso_weekday = input.iso_weekday);
+            input!(PART, Weekday, iso_weekday = input.weekday);
             match datetime_names
                 .get_name_for_weekday(weekday, l, iso_weekday)
                 .map_err(|e| match e {

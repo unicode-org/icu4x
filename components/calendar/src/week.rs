@@ -103,11 +103,11 @@ impl WeekCalculator {
         num_days_in_previous_unit: u16,
         num_days_in_unit: u16,
         day: u16,
-        week_day: Weekday,
+        weekday: Weekday,
     ) -> Result<WeekOf, RangeError> {
         let current = UnitInfo::new(
             // The first day of this month/year is (day - 1) days from `day`.
-            add_to_weekday(week_day, 1 - i32::from(day)),
+            add_to_weekday(weekday, 1 - i32::from(day)),
             num_days_in_unit,
         )?;
 
@@ -465,7 +465,7 @@ mod tests {
             u16::from(previous_month.days_in_month()),
             u16::from(date.days_in_month()),
             u16::from(day),
-            date.day_of_week(),
+            date.weekday(),
         )
     }
 

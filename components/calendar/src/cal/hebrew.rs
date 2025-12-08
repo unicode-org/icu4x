@@ -365,8 +365,8 @@ impl Date<Hebrew> {
 
 #[cfg(test)]
 mod tests {
-
     use super::*;
+    use crate::types::Weekday;
 
     pub const TISHREI: Month = Month::new(1);
     pub const ḤESHVAN: Month = Month::new(2);
@@ -508,6 +508,6 @@ mod tests {
 
         // Should be Saturday per:
         // https://www.hebcal.com/converter?hd=1&hm=Tishrei&hy=3760&h2g=1
-        assert_eq!(6, dt.day_of_week() as usize);
+        assert_eq!(dt.weekday(), Weekday::Saturday);
     }
 }
