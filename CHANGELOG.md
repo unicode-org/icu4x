@@ -1,5 +1,16 @@
 # Changelog
 
+## icu 2.1.x
+
+Several crates have had patch releases in the 2.1 stream:
+
+- Components
+    - (2.1.1) General
+        - Fix `icu_locale_core` dependency (unicode-org#7191)
+    - (2.1.2)`icu_properties`
+        - Fix some property constants (unicode-org#7269, unicode-org#7281, unicode-org#7284)
+        - Add `IndicConjunctBreak` (unicode-org#7280)
+
 ## icu4x 2.1
 
 - Components

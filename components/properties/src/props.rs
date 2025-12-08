@@ -941,7 +941,8 @@ impl Script {
     #[doc(hidden)]
     #[allow(non_upper_case_globals)]
     #[deprecated]
-    pub const Chisoi: Script = Self(254);
+    // Some high value that ICU4C will not use anytime soon
+    pub const Chisoi: Script = Self(60_000);
 }
 
 make_enumerated_property! {
