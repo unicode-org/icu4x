@@ -8,29 +8,29 @@ use icu_calendar::{
 use insta::assert_snapshot;
 use std::fmt::Write;
 
-#[test]
-fn test_date_add_across_calendars_and_durations() {
-    let calendars = vec![
-        AnyCalendarKind::Iso,
-        AnyCalendarKind::Gregorian,
-        AnyCalendarKind::Buddhist,
-        AnyCalendarKind::Chinese,
-        AnyCalendarKind::Coptic,
-        AnyCalendarKind::Dangi,
-        AnyCalendarKind::Ethiopian,
-        AnyCalendarKind::EthiopianAmeteAlem,
-        AnyCalendarKind::Hebrew,
-        AnyCalendarKind::HijriSimulatedMecca,
-        AnyCalendarKind::HijriTabularTypeIIFriday,
-        AnyCalendarKind::HijriTabularTypeIIThursday,
-        AnyCalendarKind::HijriUmmAlQura,
-        AnyCalendarKind::Indian,
-        AnyCalendarKind::Japanese,
-        AnyCalendarKind::JapaneseExtended,
-        AnyCalendarKind::Persian,
-        AnyCalendarKind::Roc,
-    ];
+const CALENDARS: &[AnyCalendarKind] = &[
+    AnyCalendarKind::Iso,
+    AnyCalendarKind::Gregorian,
+    AnyCalendarKind::Buddhist,
+    AnyCalendarKind::Chinese,
+    AnyCalendarKind::Coptic,
+    AnyCalendarKind::Dangi,
+    AnyCalendarKind::Ethiopian,
+    AnyCalendarKind::EthiopianAmeteAlem,
+    AnyCalendarKind::Hebrew,
+    AnyCalendarKind::HijriSimulatedMecca,
+    AnyCalendarKind::HijriTabularTypeIIFriday,
+    AnyCalendarKind::HijriTabularTypeIIThursday,
+    AnyCalendarKind::HijriUmmAlQura,
+    AnyCalendarKind::Indian,
+    AnyCalendarKind::Japanese,
+    AnyCalendarKind::JapaneseExtended,
+    AnyCalendarKind::Persian,
+    AnyCalendarKind::Roc,
+];
 
+#[test]
+fn test_date_add_snapshot() {
     let iso_dates = vec![(2023, 1, 1), (2024, 6, 15), (2025, 12, 31)];
 
     let durations = vec![
@@ -70,7 +70,7 @@ fn test_date_add_across_calendars_and_durations() {
     for (y, m, d) in &iso_dates {
         writeln!(&mut output, "{}-{}-{}", y, m, d).unwrap();
 
-        for cal_kind in &calendars {
+        for cal_kind in CALENDARS {
             let cal = AnyCalendar::new(*cal_kind);
             let start_date = Date::try_new_iso(*y, *m, *d)
                 .expect("Valid ISO date")
@@ -118,5 +118,5 @@ fn test_date_add_across_calendars_and_durations() {
         writeln!(&mut output).unwrap();
     }
 
-    assert_snapshot!("date_addition_readable_nested_snapshot_with_starts", output);
+    assert_snapshot!("date_add_snapshot", output);
 }

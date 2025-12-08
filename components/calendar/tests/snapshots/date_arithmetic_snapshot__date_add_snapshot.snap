@@ -1,5 +1,5 @@
 ---
-source: components/calendar/tests/date_addition_snapshot.rs
+source: components/calendar/tests/date_arithmetic_snapshot.rs
 expression: output
 ---
 2023-1-1
