@@ -16,7 +16,7 @@ fn check_continuity<A: AsCalendar>(mut date: Date<A>, years_to_check: usize) {
         let next_date = date
             .try_added_with_options(duration, Default::default())
             .unwrap();
-        let next_rata_die = next_date.to_iso().to_rata_die();
+        let next_rata_die = next_date.to_rata_die();
         assert_eq!(next_rata_die, rata_die + 1, "{next_date:?}");
         let next_weekday = next_date.weekday();
         let next_year = next_date.year();
@@ -46,10 +46,9 @@ fn check_every_250_days<A: AsCalendar>(mut date: Date<A>, iters: usize) {
         let next_date = date
             .try_added_with_options(duration, Default::default())
             .unwrap();
-        let next_iso = next_date.to_iso();
-        let next_rata_die = next_iso.to_rata_die();
+        let next_rata_die = next_date.to_rata_die();
         assert_eq!(next_rata_die, rata_die + 250, "{next_date:?}");
-        let next_date_roundtrip = next_iso.to_calendar(Ref(next_date.calendar()));
+        let next_date_roundtrip = Date::from_rata_die(next_rata_die, Ref(next_date.calendar()));
         assert_eq!(next_date, next_date_roundtrip, "{next_date:?}");
         date = next_date;
         rata_die = next_rata_die;

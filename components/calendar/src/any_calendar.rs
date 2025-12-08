@@ -1561,13 +1561,9 @@ mod tests {
                 )
             });
 
-        let roundtrip_year = date.year();
-        let roundtrip_month = date.month().value;
-        let roundtrip_day = date.day_of_month().0;
-
         assert_eq!(
             (month, day),
-            (roundtrip_month, roundtrip_day),
+            (date.month().value, date.day_of_month().0),
             "Failed to roundtrip for calendar {}",
             calendar.debug_name()
         );
@@ -1575,13 +1571,12 @@ mod tests {
         if let Some((era_code, era_index)) = era {
             let roundtrip_era_year = date.year().era().expect("year type should be era");
 
-            let roundtrip_year = roundtrip_year.era_year_or_related_iso();
             assert_eq!(
                 (era_code, era_index, year),
                 (
                     roundtrip_era_year.era.as_str(),
                     roundtrip_era_year.era_index,
-                    roundtrip_year
+                    roundtrip_era_year.year,
                 ),
                 "Failed to roundtrip era for calendar {}",
                 calendar.debug_name()
@@ -1595,10 +1590,9 @@ mod tests {
             );
         }
 
-        let iso = date.to_iso();
-        let reconstructed = Date::new_from_iso(iso, calendar);
         assert_eq!(
-            date, reconstructed,
+            Date::from_rata_die(date.to_rata_die(), calendar),
+            date,
             "Failed to roundtrip via iso with {era:?}, {year}, {month:?}, {day}"
         )
     }

@@ -266,10 +266,8 @@ mod tests {
     #[test]
     fn test_coptic_regression() {
         // https://github.com/unicode-org/icu4x/issues/2254
-        let iso_date = Date::try_new_iso(-100, 3, 3).unwrap();
-        let coptic = iso_date.to_calendar(Coptic);
-        let recovered_iso = coptic.to_iso();
-        assert_eq!(iso_date, recovered_iso);
+        let rd = Date::try_new_iso(-100, 3, 3).unwrap().to_rata_die();
+        assert_eq!(Date::from_rata_die(rd, Coptic).to_rata_die(), rd);
     }
 
     #[test]
