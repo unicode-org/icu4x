@@ -38,7 +38,7 @@ pub trait DateInputMarkers: UnstableSealed {
     /// Marker for resolving the day-of-year input field.
     type RataDieInput: IntoOption<RataDie>;
     /// Marker for resolving the weekday input field.
-    type WeekdayInput: IntoOption<Weekday>;
+    type DayOfWeekInput: IntoOption<Weekday>;
 }
 
 /// A trait associating types for date formatting in a specific calendar
@@ -193,7 +193,7 @@ pub trait AllInputMarkers<R: DateTimeMarkers>:
     GetField<<R::D as DateInputMarkers>::YearInput>
     + GetField<<R::D as DateInputMarkers>::MonthInput>
     + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
-    + GetField<<R::D as DateInputMarkers>::WeekdayInput>
+    + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
     + GetField<<R::D as DateInputMarkers>::DayOfYearInput>
     + GetField<<R::D as DateInputMarkers>::RataDieInput>
     + GetField<<R::T as TimeMarkers>::HourInput>
@@ -219,7 +219,7 @@ where
     T: GetField<<R::D as DateInputMarkers>::YearInput>
         + GetField<<R::D as DateInputMarkers>::MonthInput>
         + GetField<<R::D as DateInputMarkers>::DayOfMonthInput>
-        + GetField<<R::D as DateInputMarkers>::WeekdayInput>
+        + GetField<<R::D as DateInputMarkers>::DayOfWeekInput>
         + GetField<<R::D as DateInputMarkers>::DayOfYearInput>
         + GetField<<R::D as DateInputMarkers>::RataDieInput>
         + GetField<<R::T as TimeMarkers>::HourInput>
@@ -520,7 +520,7 @@ impl DateInputMarkers for () {
     type DayOfMonthInput = ();
     type DayOfYearInput = ();
     type RataDieInput = ();
-    type WeekdayInput = ();
+    type DayOfWeekInput = ();
 }
 
 impl<C> TypedDateDataMarkers<C> for () {

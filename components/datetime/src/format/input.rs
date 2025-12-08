@@ -112,7 +112,7 @@ impl DateTimeInputUnchecked {
             + GetField<D::YearInput>
             + GetField<D::MonthInput>
             + GetField<D::DayOfMonthInput>
-            + GetField<D::WeekdayInput>
+            + GetField<D::DayOfWeekInput>
             + GetField<D::DayOfYearInput>
             + GetField<D::RataDieInput>
             + GetField<T::HourInput>
@@ -127,7 +127,7 @@ impl DateTimeInputUnchecked {
             year: GetField::<D::YearInput>::get_field(input).into_option(),
             month: GetField::<D::MonthInput>::get_field(input).into_option(),
             day_of_month: GetField::<D::DayOfMonthInput>::get_field(input).into_option(),
-            weekday: GetField::<D::WeekdayInput>::get_field(input).into_option(),
+            weekday: GetField::<D::DayOfWeekInput>::get_field(input).into_option(),
             day_of_year: GetField::<D::DayOfYearInput>::get_field(input).into_option(),
             rata_die: GetField::<D::RataDieInput>::get_field(input).into_option(),
             hour: GetField::<T::HourInput>::get_field(input).into_option(),

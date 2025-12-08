@@ -535,7 +535,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, $($day_of_month_yes)?);
             type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, $($day_of_year_yes)?);
             type RataDieInput = datetime_marker_helper!(@input/rata_die, $($rata_die_yes)?);
-            type WeekdayInput = datetime_marker_helper!(@input/weekday, $($weekday_yes)?);
+            type DayOfWeekInput = datetime_marker_helper!(@input/weekday, $($weekday_yes)?);
         }
         impl<C: CldrCalendar> TypedDateDataMarkers<C> for $type {
             type DateSkeletonPatternsV1 = datetime_marker_helper!(@dates/typed, yes);
@@ -699,7 +699,7 @@ macro_rules! impl_date_marker {
             type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, $($day_of_month_yes)?);
             type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, $($day_of_year_yes)?);
             type RataDieInput = datetime_marker_helper!(@input/rata_die, $($rata_die_yes)?);
-            type WeekdayInput = datetime_marker_helper!(@input/weekday, $($weekday_yes)?);
+            type DayOfWeekInput = datetime_marker_helper!(@input/weekday, $($weekday_yes)?);
         }
         impl<C: CldrCalendar> TypedDateDataMarkers<C> for $type_time {
             type DateSkeletonPatternsV1 = datetime_marker_helper!(@dates/typed, yes);
