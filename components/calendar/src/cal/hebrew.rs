@@ -365,8 +365,8 @@ impl Date<Hebrew> {
 
 #[cfg(test)]
 mod tests {
-    use crate::types::Weekday;
     use super::*;
+    use crate::types::Weekday;
 
     pub const TISHREI: Month = Month::new(1);
     pub const ḤESHVAN: Month = Month::new(2);

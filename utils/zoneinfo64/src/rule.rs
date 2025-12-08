@@ -31,7 +31,7 @@ pub(crate) struct TzRule {
 struct TzRuleDate {
     /// A 1-indexed day number
     day: u8,
-    /// A day of the week (0 = Sunday)
+    /// A weekday (0 = Sunday)
     weekday: u8,
     /// A 1-indexed month number
     month: u8,

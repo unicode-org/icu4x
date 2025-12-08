@@ -437,7 +437,7 @@ macro_rules! impl_date_or_calendar_period_marker {
         $(input_month = $month_yes:ident,)?
         // Whether the input should contain the day of the month.
         $(input_day_of_month = $day_of_month_yes:ident,)?
-        // Whether the input should contain the day of the week.
+        // Whether the input should contain the weekday.
         $(input_weekday = $weekday_yes:ident,)?
         // Whether the input should contain the day of the year.
         $(input_day_of_year = $day_of_year_yes:ident,)?
