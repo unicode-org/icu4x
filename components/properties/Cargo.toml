@@ -5,7 +5,7 @@
 [package]
 name = "icu_properties"
 description = "Definitions for Unicode properties"
-version.workspace = true
+version = "2.1.2"
 
 authors.workspace = true
 categories.workspace = true
