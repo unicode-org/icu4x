@@ -238,9 +238,6 @@ jobs:
 
     - name: Install Dart
       uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
-      with:
-        # Keep in sync with build-test.yml
-        sdk: 3.10.0-186.0.dev
         
     - name: Build docs
       run: |
@@ -267,6 +264,55 @@ jobs:
       run: |
         echo "📖 Dart docs"
         echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/dartdoc/index.html"
+
+  kotlin-docs:
+    name: "Kotlin docs"
+    needs: credentials
+    runs-on: "ubuntu-latest"
+    steps:
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+    # GCP Boilerplate for jobs in main or forked repository (needs credentials)
+    - id: gcp-auth
+      if: github.ref != 'refs/heads/main' || github.repository != 'unicode-org/icu4x'
+      name: "Authenticate to Google Cloud with JSON Credentials"
+      uses: google-github-actions/auth@71fee32a0bb7e97b4d33d548e7d957010649d8fa # v2.1.3
+      with:
+        credentials_json: '${{ secrets.ICU4X_GCP_SA_KEY }}'
+    - id: gcp-auth-main
+      if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      name: "Authenticate to Google Cloud with Workload Identity Provider"
+      uses: google-github-actions/auth@71fee32a0bb7e97b4d33d548e7d957010649d8fa # v2.1.3
+      with:
+        workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
+        service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
+    - name: "Set up Google Cloud SDK"
+      uses: google-github-actions/setup-gcloud@98ddc00a17442e89a24bbf282954a3b65ce6d200 # v2.1.0
+        
+    - name: Build docs
+      run: |
+        cd ffi/mvn
+        mvn dokka:dokka
+        cd ../..
+
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: kdoc
+        path: ffi/mvn/target/dokka
+
+    - name: Upload docs to Google Cloud Storage (non-main)
+      run: |
+        gsutil -m cp -r ffi/mvn/target/dokka gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/kdoc
+    
+    - name: Upload docs to Google Cloud Storage (main)
+      if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      run: |
+        gsutil -m cp -r ffi/mvn/target/dokka/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/kdoc
+
+    - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
+      run: |
+        echo "📖 Kotlin docs"
+        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/kdoc/index.html"
 
   wasm-demo:
     # This is too expensive to run on every push, so only run it on main.

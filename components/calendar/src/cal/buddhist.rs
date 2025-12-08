@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cal::abstract_gregorian::AbstractGregorian;
 use crate::error::UnknownEraError;
 use crate::preferences::CalendarAlgorithm;
 use crate::{
@@ -74,9 +75,10 @@ impl GregorianYears for BuddhistEra {
 }
 
 impl Date<Buddhist> {
-    /// Construct a new Buddhist Date.
+    /// Construct a new Buddhist [`Date`].
     ///
-    /// Years are specified as BE years.
+    /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
+    /// valid range of `-1,000,000..=1,000,000`.
     ///
     /// ```rust
     /// use icu::calendar::Date;
@@ -89,7 +91,8 @@ impl Date<Buddhist> {
     /// assert_eq!(date_buddhist.day_of_month().0, 2);
     /// ```
     pub fn try_new_buddhist(year: i32, month: u8, day: u8) -> Result<Date<Buddhist>, RangeError> {
-        ArithmeticDate::new_gregorian::<BuddhistEra>(year, month, day)
+        ArithmeticDate::from_year_month_day(year, month, day, &AbstractGregorian(BuddhistEra))
+            .map(ArithmeticDate::cast)
             .map(BuddhistDateInner)
             .map(|i| Date::from_raw(i, Buddhist))
     }

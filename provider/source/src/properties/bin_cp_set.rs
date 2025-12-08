@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceDataProvider;
-use icu::collections::codepointinvlist::CodePointInversionListBuilder;
+use icu::collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+use icu::properties::props::BinaryProperty;
 use icu::properties::provider::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -12,22 +13,42 @@ impl SourceDataProvider {
     // get the source data for a Unicode binary property that only defines values for code points
     pub(super) fn get_binary_prop_for_code_point_set<'a>(
         &'a self,
-        key: &str,
+        name: &str,
+        short_name: &str,
     ) -> Result<&'a super::uprops_serde::binary::BinaryProperty, DataError> {
-        self.icuexport()?
+        let data = self
+            .icuexport()?
             .read_and_parse_toml::<super::uprops_serde::binary::Main>(&format!(
                 "uprops/{}/{}.toml",
                 self.trie_type(),
-                key
+                short_name
             ))?
             .binary_property
             .first()
-            .ok_or_else(|| DataErrorKind::MarkerNotFound.into_error())
+            .ok_or_else(|| DataErrorKind::MarkerNotFound.into_error())?;
+
+        if name != data.long_name
+            || short_name != data.short_name.as_ref().unwrap_or(&data.long_name)
+        {
+            return Err(DataError::custom("Property name mismatch").with_display_context(name));
+        }
+
+        Ok(data)
+    }
+}
+
+impl super::uprops_serde::binary::BinaryProperty {
+    pub(crate) fn build_inversion_list(&self) -> CodePointInversionList<'static> {
+        let mut builder = CodePointInversionListBuilder::new();
+        for (start, end) in &self.ranges {
+            builder.add_range32(start..=end);
+        }
+        builder.build()
     }
 }
 
 macro_rules! expand {
-    ($(($marker:ident, $prop_name:literal)),+) => {
+    ($(($prop:ty, $marker:ident)),+) => {
         $(
             impl DataProvider<$marker> for SourceDataProvider {
                 fn load(
@@ -35,27 +56,20 @@ macro_rules! expand {
                     req: DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
-                    let data = self.get_binary_prop_for_code_point_set($prop_name)?;
-
-                    let mut builder = CodePointInversionListBuilder::new();
-                    for (start, end) in &data.ranges {
-                        builder.add_range32(start..=end);
-                    }
-                    let inv_list = builder.build();
+                    let data = self.get_binary_prop_for_code_point_set(
+                        core::str::from_utf8(<$prop as BinaryProperty>::NAME).unwrap(),
+                        core::str::from_utf8(<$prop as BinaryProperty>::SHORT_NAME).unwrap()
+                    )?;
 
                     Ok(DataResponse {
                         metadata: Default::default(),
-                        payload: DataPayload::from_owned(
-                            PropertyCodePointSet::InversionList(inv_list),
-                        ),
+                        payload: DataPayload::from_owned(PropertyCodePointSet::InversionList(data.build_inversion_list()))
                     })
                 }
             }
 
             impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
                 fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-                    self.get_binary_prop_for_code_point_set($prop_name)?;
-
                     Ok(HashSet::from_iter([Default::default()]))
                 }
             }
@@ -64,78 +78,216 @@ macro_rules! expand {
 }
 
 expand!(
-    (PropertyBinaryAsciiHexDigitV1, "AHex"),
-    (PropertyBinaryAlnumV1, "alnum"),
-    (PropertyBinaryAlphabeticV1, "Alpha"),
-    (PropertyBinaryBidiControlV1, "Bidi_C"),
-    (PropertyBinaryBidiMirroredV1, "Bidi_M"),
-    (PropertyBinaryBlankV1, "blank"),
-    (PropertyBinaryCasedV1, "Cased"),
-    (PropertyBinaryCaseIgnorableV1, "CI"),
-    (PropertyBinaryFullCompositionExclusionV1, "Comp_Ex"),
-    (PropertyBinaryChangesWhenCasefoldedV1, "CWCF"),
-    (PropertyBinaryChangesWhenCasemappedV1, "CWCM"),
-    (PropertyBinaryChangesWhenNfkcCasefoldedV1, "CWKCF"),
-    (PropertyBinaryChangesWhenLowercasedV1, "CWL"),
-    (PropertyBinaryChangesWhenTitlecasedV1, "CWT"),
-    (PropertyBinaryChangesWhenUppercasedV1, "CWU"),
-    (PropertyBinaryDashV1, "Dash"),
-    (PropertyBinaryDeprecatedV1, "Dep"),
-    (PropertyBinaryDefaultIgnorableCodePointV1, "DI"),
-    (PropertyBinaryDiacriticV1, "Dia"),
-    (PropertyBinaryEmojiModifierBaseV1, "EBase"),
-    (PropertyBinaryEmojiComponentV1, "EComp"),
-    (PropertyBinaryEmojiModifierV1, "EMod"),
-    (PropertyBinaryEmojiV1, "Emoji"),
-    (PropertyBinaryEmojiPresentationV1, "EPres"),
-    (PropertyBinaryExtenderV1, "Ext"),
-    (PropertyBinaryExtendedPictographicV1, "ExtPict"),
-    (PropertyBinaryGraphV1, "graph"),
-    (PropertyBinaryGraphemeBaseV1, "Gr_Base"),
-    (PropertyBinaryGraphemeExtendV1, "Gr_Ext"),
-    (PropertyBinaryGraphemeLinkV1, "Gr_Link"),
-    (PropertyBinaryHexDigitV1, "Hex"),
-    (PropertyBinaryHyphenV1, "Hyphen"),
     (
-        PropertyBinaryIdCompatMathContinueV1,
-        "ID_Compat_Math_Continue"
+        icu::properties::props::AsciiHexDigit,
+        PropertyBinaryAsciiHexDigitV1
     ),
-    (PropertyBinaryIdCompatMathStartV1, "ID_Compat_Math_Start"),
-    (PropertyBinaryIdContinueV1, "IDC"),
-    (PropertyBinaryIdeographicV1, "Ideo"),
-    (PropertyBinaryIdStartV1, "IDS"),
-    (PropertyBinaryIdsBinaryOperatorV1, "IDSB"),
-    (PropertyBinaryIdsTrinaryOperatorV1, "IDST"),
-    (PropertyBinaryIdsUnaryOperatorV1, "IDSU"),
-    (PropertyBinaryJoinControlV1, "Join_C"),
-    (PropertyBinaryLogicalOrderExceptionV1, "LOE"),
-    (PropertyBinaryLowercaseV1, "Lower"),
-    (PropertyBinaryMathV1, "Math"),
-    (PropertyBinaryModifierCombiningMarkV1, "MCM"),
-    (PropertyBinaryNoncharacterCodePointV1, "NChar"),
-    (PropertyBinaryNfcInertV1, "nfcinert"),
-    (PropertyBinaryNfdInertV1, "nfdinert"),
-    (PropertyBinaryNfkcInertV1, "nfkcinert"),
-    (PropertyBinaryNfkdInertV1, "nfkdinert"),
-    (PropertyBinaryPatternSyntaxV1, "Pat_Syn"),
-    (PropertyBinaryPatternWhiteSpaceV1, "Pat_WS"),
-    (PropertyBinaryPrependedConcatenationMarkV1, "PCM"),
-    (PropertyBinaryPrintV1, "print"),
-    (PropertyBinaryQuotationMarkV1, "QMark"),
-    (PropertyBinaryRadicalV1, "Radical"),
-    (PropertyBinaryRegionalIndicatorV1, "RI"),
-    (PropertyBinarySoftDottedV1, "SD"),
-    (PropertyBinarySegmentStarterV1, "segstart"),
-    (PropertyBinaryCaseSensitiveV1, "Sensitive"),
-    (PropertyBinarySentenceTerminalV1, "STerm"),
-    (PropertyBinaryTerminalPunctuationV1, "Term"),
-    (PropertyBinaryUnifiedIdeographV1, "UIdeo"),
-    (PropertyBinaryUppercaseV1, "Upper"),
-    (PropertyBinaryVariationSelectorV1, "VS"),
-    (PropertyBinaryWhiteSpaceV1, "WSpace"),
-    (PropertyBinaryXdigitV1, "xdigit"),
-    (PropertyBinaryXidContinueV1, "XIDC"),
-    (PropertyBinaryXidStartV1, "XIDS")
+    (icu::properties::props::Alnum, PropertyBinaryAlnumV1),
+    (
+        icu::properties::props::Alphabetic,
+        PropertyBinaryAlphabeticV1
+    ),
+    (
+        icu::properties::props::BidiControl,
+        PropertyBinaryBidiControlV1
+    ),
+    (
+        icu::properties::props::BidiMirrored,
+        PropertyBinaryBidiMirroredV1
+    ),
+    (icu::properties::props::Blank, PropertyBinaryBlankV1),
+    (icu::properties::props::Cased, PropertyBinaryCasedV1),
+    (
+        icu::properties::props::CaseIgnorable,
+        PropertyBinaryCaseIgnorableV1
+    ),
+    (
+        icu::properties::props::FullCompositionExclusion,
+        PropertyBinaryFullCompositionExclusionV1
+    ),
+    (
+        icu::properties::props::ChangesWhenCasefolded,
+        PropertyBinaryChangesWhenCasefoldedV1
+    ),
+    (
+        icu::properties::props::ChangesWhenCasemapped,
+        PropertyBinaryChangesWhenCasemappedV1
+    ),
+    (
+        icu::properties::props::ChangesWhenNfkcCasefolded,
+        PropertyBinaryChangesWhenNfkcCasefoldedV1
+    ),
+    (
+        icu::properties::props::ChangesWhenLowercased,
+        PropertyBinaryChangesWhenLowercasedV1
+    ),
+    (
+        icu::properties::props::ChangesWhenTitlecased,
+        PropertyBinaryChangesWhenTitlecasedV1
+    ),
+    (
+        icu::properties::props::ChangesWhenUppercased,
+        PropertyBinaryChangesWhenUppercasedV1
+    ),
+    (icu::properties::props::Dash, PropertyBinaryDashV1),
+    (
+        icu::properties::props::Deprecated,
+        PropertyBinaryDeprecatedV1
+    ),
+    (
+        icu::properties::props::DefaultIgnorableCodePoint,
+        PropertyBinaryDefaultIgnorableCodePointV1
+    ),
+    (icu::properties::props::Diacritic, PropertyBinaryDiacriticV1),
+    (
+        icu::properties::props::EmojiModifierBase,
+        PropertyBinaryEmojiModifierBaseV1
+    ),
+    (
+        icu::properties::props::EmojiComponent,
+        PropertyBinaryEmojiComponentV1
+    ),
+    (
+        icu::properties::props::EmojiModifier,
+        PropertyBinaryEmojiModifierV1
+    ),
+    (icu::properties::props::Emoji, PropertyBinaryEmojiV1),
+    (
+        icu::properties::props::EmojiPresentation,
+        PropertyBinaryEmojiPresentationV1
+    ),
+    (icu::properties::props::Extender, PropertyBinaryExtenderV1),
+    (
+        icu::properties::props::ExtendedPictographic,
+        PropertyBinaryExtendedPictographicV1
+    ),
+    (icu::properties::props::Graph, PropertyBinaryGraphV1),
+    (
+        icu::properties::props::GraphemeBase,
+        PropertyBinaryGraphemeBaseV1
+    ),
+    (
+        icu::properties::props::GraphemeExtend,
+        PropertyBinaryGraphemeExtendV1
+    ),
+    (
+        icu::properties::props::GraphemeLink,
+        PropertyBinaryGraphemeLinkV1
+    ),
+    (icu::properties::props::HexDigit, PropertyBinaryHexDigitV1),
+    (icu::properties::props::Hyphen, PropertyBinaryHyphenV1),
+    (
+        icu::properties::props::IdCompatMathContinue,
+        PropertyBinaryIdCompatMathContinueV1
+    ),
+    (
+        icu::properties::props::IdCompatMathStart,
+        PropertyBinaryIdCompatMathStartV1
+    ),
+    (
+        icu::properties::props::IdContinue,
+        PropertyBinaryIdContinueV1
+    ),
+    (
+        icu::properties::props::Ideographic,
+        PropertyBinaryIdeographicV1
+    ),
+    (icu::properties::props::IdStart, PropertyBinaryIdStartV1),
+    (
+        icu::properties::props::IdsBinaryOperator,
+        PropertyBinaryIdsBinaryOperatorV1
+    ),
+    (
+        icu::properties::props::IdsTrinaryOperator,
+        PropertyBinaryIdsTrinaryOperatorV1
+    ),
+    (
+        icu::properties::props::IdsUnaryOperator,
+        PropertyBinaryIdsUnaryOperatorV1
+    ),
+    (
+        icu::properties::props::JoinControl,
+        PropertyBinaryJoinControlV1
+    ),
+    (
+        icu::properties::props::LogicalOrderException,
+        PropertyBinaryLogicalOrderExceptionV1
+    ),
+    (icu::properties::props::Lowercase, PropertyBinaryLowercaseV1),
+    (icu::properties::props::Math, PropertyBinaryMathV1),
+    (
+        icu::properties::props::ModifierCombiningMark,
+        PropertyBinaryModifierCombiningMarkV1
+    ),
+    (
+        icu::properties::props::NoncharacterCodePoint,
+        PropertyBinaryNoncharacterCodePointV1
+    ),
+    (icu::properties::props::NfcInert, PropertyBinaryNfcInertV1),
+    (icu::properties::props::NfdInert, PropertyBinaryNfdInertV1),
+    (icu::properties::props::NfkcInert, PropertyBinaryNfkcInertV1),
+    (icu::properties::props::NfkdInert, PropertyBinaryNfkdInertV1),
+    (
+        icu::properties::props::PatternSyntax,
+        PropertyBinaryPatternSyntaxV1
+    ),
+    (
+        icu::properties::props::PatternWhiteSpace,
+        PropertyBinaryPatternWhiteSpaceV1
+    ),
+    (
+        icu::properties::props::PrependedConcatenationMark,
+        PropertyBinaryPrependedConcatenationMarkV1
+    ),
+    (icu::properties::props::Print, PropertyBinaryPrintV1),
+    (
+        icu::properties::props::QuotationMark,
+        PropertyBinaryQuotationMarkV1
+    ),
+    (icu::properties::props::Radical, PropertyBinaryRadicalV1),
+    (
+        icu::properties::props::RegionalIndicator,
+        PropertyBinaryRegionalIndicatorV1
+    ),
+    (
+        icu::properties::props::SoftDotted,
+        PropertyBinarySoftDottedV1
+    ),
+    (
+        icu::properties::props::SegmentStarter,
+        PropertyBinarySegmentStarterV1
+    ),
+    (
+        icu::properties::props::CaseSensitive,
+        PropertyBinaryCaseSensitiveV1
+    ),
+    (
+        icu::properties::props::SentenceTerminal,
+        PropertyBinarySentenceTerminalV1
+    ),
+    (
+        icu::properties::props::TerminalPunctuation,
+        PropertyBinaryTerminalPunctuationV1
+    ),
+    (
+        icu::properties::props::UnifiedIdeograph,
+        PropertyBinaryUnifiedIdeographV1
+    ),
+    (icu::properties::props::Uppercase, PropertyBinaryUppercaseV1),
+    (
+        icu::properties::props::VariationSelector,
+        PropertyBinaryVariationSelectorV1
+    ),
+    (
+        icu::properties::props::WhiteSpace,
+        PropertyBinaryWhiteSpaceV1
+    ),
+    (icu::properties::props::Xdigit, PropertyBinaryXdigitV1),
+    (
+        icu::properties::props::XidContinue,
+        PropertyBinaryXidContinueV1
+    ),
+    (icu::properties::props::XidStart, PropertyBinaryXidStartV1)
 );
 
 #[test]

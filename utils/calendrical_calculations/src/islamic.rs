@@ -144,17 +144,27 @@ pub fn fixed_from_tabular_islamic(year: i32, month: u8, day: u8, epoch: RataDie)
 }
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2090>
 pub fn tabular_islamic_from_fixed(date: RataDie, epoch: RataDie) -> (i32, u8, u8) {
-    let year = i64_to_saturated_i32(((date - epoch) * 30 + 10646).div_euclid(10631));
-    let prior_days =
-        date.to_f64_date() - fixed_from_tabular_islamic(year, 1, 1, epoch).to_f64_date();
-    debug_assert!(prior_days >= 0.0);
-    debug_assert!(prior_days <= 354.);
-    let month = (((prior_days * 11.0) + 330.0) / 325.0) as u8; // Prior days is maximum 354 (when year length is 355), making the value always less than 12
+    let year = tabular_year_from_fixed(date, epoch);
+    let prior_days = date - fixed_from_tabular_islamic(year, 1, 1, epoch);
+    debug_assert!(prior_days >= 0);
+    debug_assert!(prior_days <= 354);
+    let month = (((prior_days * 11) + 330) / 325) as u8; // Prior days is maximum 354 (when year length is 355), making the value always less than 12
     debug_assert!(month <= 12);
-    let day = (date.to_f64_date() - fixed_from_tabular_islamic(year, month, 1, epoch).to_f64_date()
-        + 1.0) as u8; // The value will always be number between 1-30 because of the difference between the date and lunar ordinals function.
+    let day = (date - fixed_from_tabular_islamic(year, month, 1, epoch) + 1) as u8; // The value will always be number between 1-30 because of the difference between the date and lunar ordinals function.
 
     (year, month, day)
+}
+
+/// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2090>
+pub fn tabular_year_from_fixed(date: RataDie, epoch: RataDie) -> i32 {
+    // (354 * 30 + 11) / 30 is the mean year length for a tabular year
+    // This is slightly different from the `calendrical_calculations::islamic::MEAN_YEAR_LENGTH`, which is based on
+    // the (current) synodic month length.
+    //
+    // +1 because the epoch is new year of year 1
+    // Before the epoch the division will round up (towards 0), so we need to
+    // subtract 1, which is the same as not adding the 1.
+    i64_to_saturated_i32((date - epoch) * 30 / (354 * 30 + 11) + (date >= epoch) as i64)
 }
 
 /// The number of days in a month for the observational islamic calendar

@@ -118,7 +118,7 @@ dt_unit!(
     /// Must be within inclusive bounds `[0, 999_999_999]`."
 );
 
-/// A representation of a time in hours, minutes, seconds, and nanoseconds
+/// A representation of a time-of-day in hours, minutes, seconds, and nanoseconds
 ///
 /// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
 ///
@@ -184,6 +184,20 @@ impl Time {
 /// A date and time for a given calendar.
 ///
 /// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
+///
+/// This type exists as an input type for datetime formatting and should only be constructed
+/// to pass to a datetime formatter.
+///
+/// # Semantics
+///
+/// This type represents the date and time that are *displayed* to a user. It does not identify
+/// the absolute time that an event happens, nor does it represent the general concept of a
+/// "local date time", which would require time zone and leap second information for operations
+/// like validation, arithmetic, and comparisons.
+///
+/// Hence, while this type implements [`PartialEq`]/[`Eq`] (equal [`DateTime`]s will *display*
+/// equally), it does not implement [`PartialOrd`]/[`Ord`], arithmetic, and it is possible to
+/// create [`DateTime`]s that do not exist for a particular timezone.
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DateTime<A: AsCalendar> {
@@ -196,6 +210,24 @@ pub struct DateTime<A: AsCalendar> {
 /// A date and time for a given calendar, local to a specified time zone.
 ///
 /// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
+///
+/// This type exists as an input type for datetime formatting and should only be constructed
+/// to pass to a datetime formatter.
+///
+/// # Semantics
+///
+/// This type represents the date, time, and time zone that are *displayed* to a user.
+/// It does not identify the absolute time that an event happens, nor does it represent
+/// the general concept of a "zoned date time", which would require time zone and leap
+/// second information for operations like validation, arithmetic, and comparisons[^1].
+///
+/// Hence, while this type implements [`PartialEq`]/[`Eq`] (equal [`ZonedDateTime`]s will
+/// *display* equally), it does not implement [`PartialOrd`]/[`Ord`], arithmetic, and it
+/// is possible to create [`ZonedDateTime`]s that do not exist.
+///
+/// [^1]: [`ZonedDateTime<UtcOffset>`] is an exception to this, as the whole time zone
+///       identity is part of the type, and there are no local time discontinuities.
+///       Therefore it actually identifies an absolute time and implements [`PartialOrd`].
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ZonedDateTime<A: AsCalendar, Z> {

@@ -29,6 +29,11 @@ impl DataProvider<PropertyScriptWithExtensionsV1> for SourceDataProvider {
             .first()
             .ok_or_else(|| DataError::custom("Could not parse Script_Extensions data from TOML"))?;
 
+        if scx_data.long_name != "Script_Extensions" || scx_data.short_name != "scx" {
+            return Err(DataError::custom("Property name mismatch")
+                .with_marker(PropertyScriptWithExtensionsV1::INFO));
+        }
+
         let cpt_data = &scx_data.code_point_trie;
         let scx_array_data = &scx_data.script_code_array;
 

@@ -344,7 +344,10 @@ impl SourceDataProvider {
         self.tzdb_paths.as_deref().ok_or(Self::MISSING_TZDB_ERROR)
     }
 
-    /// Set this to use tries optimized for speed instead of data size
+    /// Set this to use tries optimized for speed instead of data size.
+    ///
+    /// The tries for the core (UAX #15 but not UAX #46) normalization
+    /// forms use the fast trie type regardless of this setting.
     pub fn with_fast_tries(self) -> Self {
         Self {
             trie_type: TrieType::Fast,

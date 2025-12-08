@@ -65,6 +65,8 @@ public:
    * An empty era code will treat the year as an extended year
    *
    * See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.try_new_from_codes) for more information.
+   *
+   * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.Month.html#method.try_from_str) for more information.
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError> from_codes_in_calendar(std::string_view era_code, int32_t year, std::string_view month_code, uint8_t day, const icu4x::Calendar& calendar);
 
@@ -141,6 +143,8 @@ public:
    * Returns the month code for this date. Typically something
    * like "M01", "M02", but can be more complicated for lunar calendars.
    *
+   * See the [Rust documentation for `code`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.Month.html#method.code) for more information.
+   *
    * See the [Rust documentation for `standard_code`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.MonthInfo.html#structfield.standard_code) for more information.
    *
    * Additional information: [1](https://docs.rs/icu/2.1.1/icu/calendar/struct.Date.html#method.month)
@@ -152,14 +156,14 @@ public:
   /**
    * Returns the month number of this month.
    *
-   * See the [Rust documentation for `month_number`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.MonthInfo.html#method.month_number) for more information.
+   * See the [Rust documentation for `number`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.Month.html#method.number) for more information.
    */
   inline uint8_t month_number() const;
 
   /**
    * Returns whether the month is a leap month.
    *
-   * See the [Rust documentation for `is_leap`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.MonthInfo.html#method.is_leap) for more information.
+   * See the [Rust documentation for `is_leap`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.Month.html#method.is_leap) for more information.
    */
   inline bool month_is_leap() const;
 

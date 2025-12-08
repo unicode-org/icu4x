@@ -7,8 +7,9 @@ name = "icu_capi"
 description = "C interface to ICU4X"
 license = "Unicode-3.0"
 include = [
-    "bindings/**/*",
-    "!bindings/dart/**/*", # not yet stable
+    "bindings/c/**/*",
+    "bindings/cpp/**/*",
+    "bindings/js/**/*", # todo: remove, published through NPM
     "src/**/*",
     "tests/**/*",
     "Cargo.toml",

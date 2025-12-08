@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::cal::abstract_gregorian::{impl_with_abstract_gregorian, GregorianYears};
+use crate::cal::abstract_gregorian::{
+    impl_with_abstract_gregorian, AbstractGregorian, GregorianYears,
+};
 use crate::cal::gregorian::CeBce;
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::{DateError, UnknownEraError};
@@ -298,13 +300,16 @@ impl_with_abstract_gregorian!(
 );
 
 impl Date<Japanese> {
-    /// Construct a new Japanese Date.
+    /// Construct a new Japanese [`Date`].
     ///
     /// Years are specified in the era provided, and must be in range for Japanese
     /// eras (e.g. dates past April 30 Heisei 31 must be in Reiwa; "Jun 5 Heisei 31" and "Jan 1 Heisei 32"
     /// will not be adjusted to being in Reiwa 1 and 2 respectively)
     ///
     /// However, dates may always be specified in "bce" or "ce" and they will be adjusted as necessary.
+    ///
+    /// This function accepts years in the range `-1,000,000..=1,000,000`, where the Gregorian year
+    /// is also in the range `-1,000,000..=1,000,000`.
     ///
     /// ```rust
     /// use icu::calendar::cal::Japanese;
@@ -344,15 +349,16 @@ impl Date<Japanese> {
         day: u8,
         japanese_calendar: A,
     ) -> Result<Date<A>, DateError> {
-        let extended = japanese_calendar
-            .as_calendar()
-            .extended_from_era_year(Some(era.as_bytes()), year)?;
-        Ok(Date::from_raw(
-            JapaneseDateInner(ArithmeticDate::new_gregorian::<&Japanese>(
-                extended, month, day,
-            )?),
-            japanese_calendar,
-        ))
+        ArithmeticDate::from_era_year_month_day(
+            era,
+            year,
+            month,
+            day,
+            &AbstractGregorian(japanese_calendar.as_calendar()),
+        )
+        .map(ArithmeticDate::cast)
+        .map(JapaneseDateInner)
+        .map(|i| Date::from_raw(i, japanese_calendar))
     }
 }
 
@@ -364,6 +370,9 @@ impl Date<JapaneseExtended> {
     /// will not be adjusted to being in Reiwa 1 and 2 respectively)
     ///
     /// However, dates may always be specified in "bce" or "ce" and they will be adjusted as necessary.
+    ///
+    /// This function accepts years in the range `-1,000,000..=1,000,000`, where the Gregorian year
+    /// is also in the range `-1,000,000..=1,000,000`.
     ///
     /// ```rust
     /// use icu::calendar::cal::JapaneseExtended;
@@ -397,14 +406,16 @@ impl Date<JapaneseExtended> {
         day: u8,
         japanext_calendar: A,
     ) -> Result<Date<A>, DateError> {
-        let extended = (&japanext_calendar.as_calendar().0)
-            .extended_from_era_year(Some(era.as_bytes()), year)?;
-        Ok(Date::from_raw(
-            JapaneseExtendedDateInner(ArithmeticDate::new_gregorian::<&Japanese>(
-                extended, month, day,
-            )?),
-            japanext_calendar,
-        ))
+        ArithmeticDate::from_era_year_month_day(
+            era,
+            year,
+            month,
+            day,
+            &AbstractGregorian(&japanext_calendar.as_calendar().0),
+        )
+        .map(ArithmeticDate::cast)
+        .map(JapaneseExtendedDateInner)
+        .map(|i| Date::from_raw(i, japanext_calendar))
     }
 }
 

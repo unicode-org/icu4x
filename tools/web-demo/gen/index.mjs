@@ -2639,6 +2639,23 @@ let termini = Object.assign({
         ]
     },
 
+    "IndicConjunctBreak.forChar": {
+        func: (ch) => icu.IndicConjunctBreak.forChar(ch),
+        // For avoiding webpacking minifying issues:
+        funcName: "IndicConjunctBreak.forChar",
+        expr: (ch) => "icu.IndicConjunctBreak.forChar(ch)".replace(/([\( ])ch([,\) \n])/, '$1' + ch + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "ch",
+                type: "codepoint",
+                typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
     "IndicSyllabicCategory.forChar": {
         func: (ch) => icu.IndicSyllabicCategory.forChar(ch),
         // For avoiding webpacking minifying issues:

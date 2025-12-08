@@ -5,9 +5,7 @@
 use crate::cal::coptic::CopticDateInner;
 use crate::cal::Coptic;
 use crate::calendar_arithmetic::{ArithmeticDate, DateFieldsResolver};
-use crate::error::{
-    DateError, DateFromFieldsError, EcmaReferenceYearError, MonthCodeError, UnknownEraError,
-};
+use crate::error::{DateError, DateFromFieldsError, EcmaReferenceYearError, UnknownEraError};
 use crate::options::DateFromFieldsOptions;
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::types::DateFields;
@@ -120,23 +118,10 @@ impl DateFieldsResolver for Ethiopian {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        month_code: types::ValidMonthCode,
+        month: types::Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
-        crate::cal::Coptic::reference_year_from_month_day(month_code, day)
-    }
-
-    #[inline]
-    fn ordinal_month_from_code(
-        &self,
-        _year: &Self::YearInfo,
-        month_code: types::ValidMonthCode,
-        _options: DateFromFieldsOptions,
-    ) -> Result<u8, MonthCodeError> {
-        match month_code.to_tuple() {
-            (month_number @ 1..=13, false) => Ok(month_number),
-            _ => Err(MonthCodeError::NotInCalendar),
-        }
+        crate::cal::Coptic::reference_year_from_month_day(month, day)
     }
 }
 
@@ -153,7 +138,7 @@ impl Calendar for Ethiopian {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        ArithmeticDate::from_codes(era, year, month_code, day, self)
+        ArithmeticDate::from_era_year_month_code_day(era, year, month_code, day, self)
             .map(ArithmeticDate::cast)
             .map(CopticDateInner)
             .map(EthiopianDateInner)
@@ -218,7 +203,7 @@ impl Calendar for Ethiopian {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let coptic_year = date.0 .0.year;
+        let coptic_year = date.0 .0.year();
         let extended_year = if self.0 == EthiopianEraStyle::AmeteAlem {
             coptic_year - AMETE_ALEM_OFFSET
         } else {
@@ -287,7 +272,12 @@ impl Ethiopian {
 }
 
 impl Date<Ethiopian> {
-    /// Construct new Ethiopian Date.
+    /// Construct new Ethiopian [`Date`].
+    ///
+    /// Years are arithmetic, meaning there is a year 0 preceded by negative years, with a
+    /// valid range of `-1,000,000..=1,000,000`.
+    ///
+    /// Years are interpreted according to the provided `era_style`.
     ///
     /// ```rust
     /// use icu::calendar::cal::EthiopianEraStyle;
@@ -307,8 +297,8 @@ impl Date<Ethiopian> {
         month: u8,
         day: u8,
     ) -> Result<Date<Ethiopian>, RangeError> {
-        let year = Ethiopian(era_style).year_info_from_extended(year);
-        ArithmeticDate::try_from_ymd(year, month, day)
+        ArithmeticDate::from_year_month_day(year, month, day, &Ethiopian(era_style))
+            .map(ArithmeticDate::cast)
             .map(CopticDateInner)
             .map(EthiopianDateInner)
             .map(|inner| Date::from_raw(inner, Ethiopian(era_style)))
