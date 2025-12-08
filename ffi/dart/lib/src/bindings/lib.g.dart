@@ -120,6 +120,7 @@ part 'LocaleFallbacker.g.dart';
 part 'LocaleFallbackerWithConfig.g.dart';
 part 'LocaleParseError.g.dart';
 part 'Logger.g.dart';
+part 'NumericType.g.dart';
 part 'PluralCategories.g.dart';
 part 'PluralCategory.g.dart';
 part 'PluralOperands.g.dart';

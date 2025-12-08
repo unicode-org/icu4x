@@ -43,6 +43,11 @@ namespace capi {
     typedef struct icu4x_CodePointMapData8_create_bidi_class_with_provider_mv1_result {union {icu4x::capi::CodePointMapData8* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CodePointMapData8_create_bidi_class_with_provider_mv1_result;
     icu4x_CodePointMapData8_create_bidi_class_with_provider_mv1_result icu4x_CodePointMapData8_create_bidi_class_with_provider_mv1(const icu4x::capi::DataProvider* provider);
 
+    icu4x::capi::CodePointMapData8* icu4x_CodePointMapData8_create_numeric_type_mv1(void);
+
+    typedef struct icu4x_CodePointMapData8_create_numeric_type_with_provider_mv1_result {union {icu4x::capi::CodePointMapData8* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CodePointMapData8_create_numeric_type_with_provider_mv1_result;
+    icu4x_CodePointMapData8_create_numeric_type_with_provider_mv1_result icu4x_CodePointMapData8_create_numeric_type_with_provider_mv1(const icu4x::capi::DataProvider* provider);
+
     icu4x::capi::CodePointMapData8* icu4x_CodePointMapData8_create_east_asian_width_mv1(void);
 
     typedef struct icu4x_CodePointMapData8_create_east_asian_width_with_provider_mv1_result {union {icu4x::capi::CodePointMapData8* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CodePointMapData8_create_east_asian_width_with_provider_mv1_result;
@@ -146,6 +151,16 @@ inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::creat
 
 inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_bidi_class_with_provider(const icu4x::DataProvider& provider) {
     auto result = icu4x::capi::icu4x_CodePointMapData8_create_bidi_class_with_provider_mv1(provider.AsFFI());
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+}
+
+inline std::unique_ptr<icu4x::CodePointMapData8> icu4x::CodePointMapData8::create_numeric_type() {
+    auto result = icu4x::capi::icu4x_CodePointMapData8_create_numeric_type_mv1();
+    return std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result));
+}
+
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> icu4x::CodePointMapData8::create_numeric_type_with_provider(const icu4x::DataProvider& provider) {
+    auto result = icu4x::capi::icu4x_CodePointMapData8_create_numeric_type_with_provider_mv1(provider.AsFFI());
     return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::CodePointMapData8>>(std::unique_ptr<icu4x::CodePointMapData8>(icu4x::CodePointMapData8::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 

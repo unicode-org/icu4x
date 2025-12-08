@@ -2707,6 +2707,23 @@ let termini = Object.assign({
         ]
     },
 
+    "NumericType.forChar": {
+        func: (ch) => icu.NumericType.forChar(ch),
+        // For avoiding webpacking minifying issues:
+        funcName: "NumericType.forChar",
+        expr: (ch) => "icu.NumericType.forChar(ch)".replace(/([\( ])ch([,\) \n])/, '$1' + ch + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "ch",
+                type: "codepoint",
+                typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
     "Script.forChar": {
         func: (ch) => icu.Script.forChar(ch),
         // For avoiding webpacking minifying issues:

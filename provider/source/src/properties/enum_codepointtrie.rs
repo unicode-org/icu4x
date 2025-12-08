@@ -395,6 +395,13 @@ expand!(
         PropertyNameLongBidiClassV1[convert_linear]
     ),
     (
+        icu::properties::props::NumericType,
+        PropertyEnumNumericTypeV1,
+        PropertyNameParseNumericTypeV1,
+        PropertyNameShortNumericTypeV1[convert_linear],
+        PropertyNameLongNumericTypeV1[convert_linear]
+    ),
+    (
         icu::properties::props::Script,
         PropertyEnumScriptV1,
         PropertyNameParseScriptV1,
