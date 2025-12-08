@@ -616,7 +616,11 @@ impl<A> Copy for Date<A> where A: AsCalendar + Copy {}
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::types::Weekday;
+    use crate::{
+        cal::{Buddhist, Hebrew},
+        types::Weekday,
+        Gregorian,
+    };
 
     #[test]
     fn test_ord() {
@@ -664,5 +668,16 @@ mod tests {
             Date::try_new_iso(2020, 1, 21).unwrap().weekday(),
             Weekday::Tuesday,
         );
+    }
+
+    #[test]
+    fn test_to_calendar() {
+        let date = Date::try_new_gregorian(2025, 12, 9).unwrap();
+        // These conversions use the AbstractGregorian fast path
+        let date2 = date.to_calendar(Buddhist).to_calendar(Gregorian);
+        // These conversions go through RataDie
+        let date3 = date.to_calendar(Hebrew).to_calendar(Gregorian);
+        assert_eq!(date, date2);
+        assert_eq!(date2, date3);
     }
 }
