@@ -28,7 +28,7 @@ impl EnumeratedProperty for BidiMirroringGlyph {
     const SINGLETON: &'static crate::provider::PropertyCodePointMap<'static, Self> =
         crate::provider::Baked::SINGLETON_PROPERTY_ENUM_BIDI_MIRRORING_GLYPH_V1;
     const NAME: &'static [u8] = b"Bidi_Mirroring_Glyph";
-    const SHORT_NAME: &'static [u8] = b"Bidi_Mirroring_Glyph";
+    const SHORT_NAME: &'static [u8] = b"bmg";
 }
 
 impl crate::private::Sealed for BidiMirroringGlyph {}
