@@ -57,12 +57,29 @@ pub struct WordBreakOptions<'a> {
     pub invariant_options: WordBreakInvariantOptions,
 }
 
+impl WordBreakOptions<'_> {
+    /// `const` version of [`Default::default`]
+    pub const fn default() -> Self {
+        Self {
+            content_locale: None,
+            invariant_options: WordBreakInvariantOptions::default(),
+        }
+    }
+}
+
 /// Locale-independent options to tailor word breaking behavior
 ///
 /// Currently empty but may grow in the future
 #[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
 pub struct WordBreakInvariantOptions {}
+
+impl WordBreakInvariantOptions {
+    /// `const` version of [`Default::default`]
+    pub const fn default() -> Self {
+        Self {}
+    }
+}
 
 /// Implements the [`Iterator`] trait over the word boundaries of the given string.
 ///
@@ -521,7 +538,9 @@ impl WordSegmenter {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn new_non_complex(_options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
+    pub const fn new_non_complex(
+        _options: WordBreakInvariantOptions,
+    ) -> WordSegmenterBorrowed<'static> {
         WordSegmenterBorrowed {
             data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
             complex: ComplexPayloadsBorrowed::empty(),

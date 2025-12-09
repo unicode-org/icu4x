@@ -257,7 +257,7 @@ impl ComplexPayloadsBorrowed<'static> {
     }
 
     #[cfg(feature = "compiled_data")]
-    pub(crate) fn empty() -> Self {
+    pub(crate) const fn empty() -> Self {
         Self {
             grapheme: GraphemeClusterSegmenter::new(),
             my: None,

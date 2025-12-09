@@ -44,6 +44,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::segmenter::options::LineBreakOptions, Struct)]
+    #[diplomat::rust_link(icu::segmenter::options::LineBreakOptions::default, FnInStruct, hidden)]
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "LineBreakOptions")]
     #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct LineBreakOptionsV2 {

@@ -67,6 +67,11 @@ pub mod ffi {
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_auto, FnInStruct)]
         #[diplomat::rust_link(icu::segmenter::options::WordBreakInvariantOptions, Struct, hidden)]
+        #[diplomat::rust_link(
+            icu::segmenter::options::WordBreakInvariantOptions::default,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(auto, named_constructor = "auto")]
         #[cfg(feature = "compiled_data")]
         pub fn create_auto() -> Box<WordSegmenter> {
@@ -82,6 +87,11 @@ pub mod ffi {
         /// Khmer, Lao, and Thai.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_auto, FnInStruct)]
         #[diplomat::rust_link(icu::segmenter::options::WordBreakOptions, Struct, hidden)]
+        #[diplomat::rust_link(
+            icu::segmenter::options::WordBreakOptions::default,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "auto_with_content_locale")]
         #[cfg(feature = "compiled_data")]
         pub fn create_auto_with_content_locale(
