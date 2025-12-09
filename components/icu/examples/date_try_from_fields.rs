@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #![no_main]
+use icu::calendar::Ref;
 icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
 use icu_calendar::types::DateFields;
@@ -26,7 +27,7 @@ fn main() {
         fields.month_code = Some(b"M07");
         fields.day = Some(8);
 
-        let date = Date::try_from_fields(fields, Default::default(), cal.clone()).unwrap();
+        let date = Date::try_from_fields(fields, Default::default(), Ref(&cal));
 
         println!("Constructed date for {:?} = {:?}", kind, date);
     }
