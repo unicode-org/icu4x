@@ -30,12 +30,9 @@ fn main() {
 
         let date = Date::try_from_fields(fields, Default::default(), Ref(&cal));
 
-        let kind_str = format!("{:?}", kind);
-        let date_str = match date {
-            Ok(date) => format!("{:?}", date),
-            Err(err) => format!("Error: {:?}", err),
-        };
-
-        println!("Constructed date for {:?} = {:?}", kind_str, date_str);
+        match date {
+            Ok(date) => println!("The day is {}", date.day_of_month().0),
+            Err(_e) => println!("Not a valid date"),
+        }
     }
 }
