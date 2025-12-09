@@ -1214,7 +1214,6 @@ dependencies = [
  "databake",
  "displaydoc",
  "icu",
- "icu_benchmark_macros",
  "icu_calendar_data",
  "icu_locale",
  "icu_locale_core",
@@ -1227,7 +1226,6 @@ dependencies = [
  "simple_logger",
  "tinystr",
  "ureq",
- "writeable",
  "zerovec",
 ]
 
