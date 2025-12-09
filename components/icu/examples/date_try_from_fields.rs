@@ -6,8 +6,8 @@
 icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
 
-use icu_calendar::types::DateFields;
-use icu_calendar::{AnyCalendar, AnyCalendarKind, Date};
+use icu::calendar::types::DateFields;
+use icu::calendar::{AnyCalendar, AnyCalendarKind, Date};
 
 const CALENDAR_KINDS: &[AnyCalendarKind] = &[
     AnyCalendarKind::Buddhist,
