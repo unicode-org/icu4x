@@ -10,6 +10,8 @@ Several crates have had patch releases in the 2.1 stream:
     - (2.1.2)`icu_properties`
         - Fix some property constants (unicode-org#7269, unicode-org#7281, unicode-org#7284)
         - Add `IndicConjunctBreak` (unicode-org#7280)
+        - Add conversion between `icu::properties::props::Script` and `icu::locale::subtags:Script` (unicode-org#7270)
+        - Add conversion between `icu::properties::props::BidiClass` and `unicode_bidi::BidiClass` (unicode-org#7272)
 
 ## icu4x 2.1
 

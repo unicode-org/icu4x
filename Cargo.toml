@@ -179,7 +179,7 @@ icu_list_data = { version = "~2.1.1", path = "provider/data/list", default-featu
 icu_locale_data = { version = "~2.1.1", path = "provider/data/locale", default-features = false }
 icu_normalizer_data = { version = "~2.1.1", path = "provider/data/normalizer", default-features = false }
 icu_plurals_data = { version = "~2.1.1", path = "provider/data/plurals", default-features = false }
-icu_properties_data = { version = "~2.1.1", path = "provider/data/properties", default-features = false }
+icu_properties_data = { version = "~2.1.2", path = "provider/data/properties", default-features = false }
 icu_segmenter_data = { version = "~2.1.1", path = "provider/data/segmenter", default-features = false }
 icu_time_data = { version = "~2.1.1", path = "provider/data/time", default-features = false }
 icu_experimental_data = { version = "~0.4.0", path = "provider/data/experimental", default-features = false }
