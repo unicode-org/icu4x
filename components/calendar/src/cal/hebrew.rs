@@ -442,37 +442,49 @@ mod tests {
     #[test]
     fn test_conversions() {
         for ((iso_y, iso_m, iso_d), (y, m, d)) in ISO_HEBREW_DATE_PAIRS.into_iter() {
-            let iso_date = Date::try_new_iso(iso_y, iso_m, iso_d).unwrap();
-            let hebrew_date = Date::try_new_from_codes(Some("am"), y, m.code(), d, Hebrew)
-                .expect("Date should parse");
+            let rd = Date::try_new_iso(iso_y, iso_m, iso_d)
+                .unwrap()
+                .to_rata_die();
 
-            let iso_to_hebrew = iso_date.to_calendar(Hebrew);
+            let date = Date::from_rata_die(rd, Hebrew);
 
-            let hebrew_to_iso = hebrew_date.to_iso();
+            assert_eq!(date.to_rata_die(), rd, "{date:?}");
+
+            assert_eq!(date.era_year().year, y, "{date:?}");
+            assert_eq!(
+                date.month().ordinal,
+                if (m == ADARI || m.number() >= ADAR.number()) && LEAP_YEARS_IN_TESTS.contains(&y) {
+                    m.number() + 1
+                } else {
+                    assert!(m != ADARI);
+                    m.number()
+                },
+                "{date:?}"
+            );
+            assert_eq!(date.day_of_month().0, d, "{date:?}");
 
             assert_eq!(
-                hebrew_to_iso, iso_date,
-                "Failed comparing to-ISO value for {hebrew_date:?} => {iso_date:?}"
+                Date::try_new_from_codes(
+                    Some(&date.era_year().era),
+                    date.era_year().year,
+                    date.month().value.code(),
+                    date.day_of_month().0,
+                    Hebrew
+                ),
+                Ok(date)
             );
-            assert_eq!(
-                iso_to_hebrew, hebrew_date,
-                "Failed comparing to-hebrew value for {iso_date:?} => {hebrew_date:?}"
-            );
-
-            let ordinal_month = if (m == ADARI || m.number() >= ADAR.number())
-                && LEAP_YEARS_IN_TESTS.contains(&y)
-            {
-                m.number() + 1
-            } else {
-                assert!(m != ADARI);
-                m.number()
-            };
 
             #[allow(deprecated)] // should still test
-            let ordinal_hebrew_date = Date::try_new_hebrew(y, ordinal_month, d)
-                .expect("Construction of date must succeed");
-
-            assert_eq!(ordinal_hebrew_date, hebrew_date, "Hebrew date construction from codes and ordinals should work the same for {hebrew_date:?}");
+            {
+                assert_eq!(
+                    Date::try_new_hebrew(
+                        date.era_year().extended_year,
+                        date.month().ordinal,
+                        date.day_of_month().0
+                    ),
+                    Ok(date)
+                );
+            }
         }
     }
 

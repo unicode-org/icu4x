@@ -337,7 +337,7 @@ pub mod ffi {
         /// Converts this date to ISO
         #[diplomat::rust_link(icu::calendar::Date::to_iso, FnInStruct)]
         pub fn to_iso(&self) -> Box<IsoDate> {
-            Box::new(IsoDate(self.0.to_iso()))
+            Box::new(IsoDate(self.0.to_calendar(Iso)))
         }
 
         /// Returns this date's Rata Die

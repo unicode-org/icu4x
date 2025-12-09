@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::calendar_arithmetic::VALID_RD_RANGE;
 use crate::error::{DateError, DateFromFieldsError};
 use crate::options::DateFromFieldsOptions;
@@ -219,12 +218,14 @@ impl<A: AsCalendar> Date<A> {
 
     /// Construct a [`Date`] from an ISO date and a calendar.
     #[inline]
+    #[deprecated(since = "2.2.0", note = "use `iso.to_calendar(calendar)")]
     pub fn new_from_iso(iso: Date<Iso>, calendar: A) -> Self {
         iso.to_calendar(calendar)
     }
 
     /// Convert the [`Date`] to an ISO Date
     #[inline]
+    #[deprecated(since = "2.2.0", note = "use `date.to_calendar(Iso)")]
     pub fn to_iso(&self) -> Date<Iso> {
         self.to_calendar(Iso)
     }
@@ -514,16 +515,6 @@ impl Date<Iso> {
     }
 }
 
-impl<C: IntoAnyCalendar> Date<C> {
-    /// Type-erase the date, converting it to a date for [`AnyCalendar`]
-    pub fn to_any(self) -> Date<AnyCalendar> {
-        Date::from_raw(
-            self.calendar.date_to_any(&self.inner),
-            self.calendar.to_any(),
-        )
-    }
-}
-
 impl<A: AsCalendar> Date<A> {
     /// Wrap the contained calendar type in `Rc<T>`, making it cheaper to clone.
     ///
@@ -625,7 +616,11 @@ impl<A> Copy for Date<A> where A: AsCalendar + Copy {}
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::types::Weekday;
+    use crate::{
+        cal::{Buddhist, Hebrew},
+        types::Weekday,
+        Gregorian,
+    };
 
     #[test]
     fn test_ord() {
@@ -673,5 +668,16 @@ mod tests {
             Date::try_new_iso(2020, 1, 21).unwrap().weekday(),
             Weekday::Tuesday,
         );
+    }
+
+    #[test]
+    fn test_to_calendar() {
+        let date = Date::try_new_gregorian(2025, 12, 9).unwrap();
+        // These conversions use the AbstractGregorian fast path
+        let date2 = date.to_calendar(Buddhist).to_calendar(Gregorian);
+        // These conversions go through RataDie
+        let date3 = date.to_calendar(Hebrew).to_calendar(Gregorian);
+        assert_eq!(date, date2);
+        assert_eq!(date2, date3);
     }
 }

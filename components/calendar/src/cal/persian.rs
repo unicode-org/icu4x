@@ -739,12 +739,10 @@ mod tests {
     #[test]
     fn test_calendar_ut_ac_ir_data() {
         for &(p_year, leap, iso_year, iso_month, iso_day) in CALENDAR_UT_AC_IR_TEST_DATA.iter() {
+            let iso_date = Date::try_new_iso(iso_year, iso_month, iso_day).unwrap();
             let persian_date = Date::try_new_persian(p_year, 1, 1).unwrap();
             assert_eq!(persian_date.is_in_leap_year(), leap);
-            let iso_date = persian_date.to_iso();
-            assert_eq!(iso_date.era_year().year, iso_year);
-            assert_eq!(iso_date.month().ordinal, iso_month);
-            assert_eq!(iso_date.day_of_month().0, iso_day);
+            assert_eq!(iso_date.to_calendar(Persian), persian_date);
         }
     }
 }

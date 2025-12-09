@@ -429,8 +429,7 @@ mod tests {
             .unwrap_or_else(|e| {
                 panic!("Failed to construct date with {era:?}, {year}, {month}, {day}: {e:?}")
             });
-        let iso = date.to_iso();
-        let reconstructed = Date::new_from_iso(iso, calendar);
+        let reconstructed = Date::from_rata_die(date.to_rata_die(), calendar);
         assert_eq!(
             date, reconstructed,
             "Failed to roundtrip with {era:?}, {year}, {month}, {day}"
@@ -452,15 +451,15 @@ mod tests {
             .unwrap_or_else(|e| {
                 panic!("Failed to construct date with {era:?}, {year}, {month}, {day}: {e:?}")
             });
-        let iso = date.to_iso();
-        let reconstructed = Date::new_from_iso(iso, calendar);
+        let rd = date.to_rata_die();
+        let reconstructed = Date::from_rata_die(rd, calendar);
         assert_eq!(
             date, reconstructed,
             "Failed to roundtrip with {era:?}, {year}, {month}, {day}"
         )
     }
 
-    // test that out-of-range era values roundtrip to other eras
+    // test that out-of-range era values convert to other eras
     fn single_test_era_range_roundtrip(
         calendar: Ref<Japanese>,
         era: &str,
@@ -481,11 +480,9 @@ mod tests {
             .unwrap_or_else(|e| {
                 panic!("Failed to construct date with {era:?}, {year}, {month}, {day}: {e:?}")
             });
-        let iso = date.to_iso();
-        let reconstructed = Date::new_from_iso(iso, calendar);
         assert_eq!(
-            expected, reconstructed,
-            "Failed to roundtrip with {era:?}, {year}, {month}, {day} == {era2:?}, {year}"
+            expected, date,
+            "Failed to convert with {era:?}, {year}, {month}, {day}"
         )
     }
     fn single_test_era_range_roundtrip_ext(
@@ -508,11 +505,9 @@ mod tests {
             .unwrap_or_else(|e| {
                 panic!("Failed to construct date with {era:?}, {year}, {month}, {day}: {e:?}")
             });
-        let iso = date.to_iso();
-        let reconstructed = Date::new_from_iso(iso, calendar);
         assert_eq!(
-            expected, reconstructed,
-            "Failed to roundtrip with {era:?}, {year}, {month}, {day} == {era2:?}, {year}"
+            expected, date,
+            "Failed to convert with {era:?}, {year}, {month}, {day}"
         )
     }
 
