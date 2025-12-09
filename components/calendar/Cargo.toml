@@ -36,7 +36,7 @@ icu_locale = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu_provider = { path = "../../provider/core", features = ["logging"] }
-writeable = { workspace = true, optional = true } 
+writeable = { workspace = true,} 
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu = { path = "../../components/icu", default-features = false }
 itertools = { workspace = true }
