@@ -28,6 +28,7 @@ ixdtf = { workspace = true, optional = true }
 tinystr = { workspace = true, features = ["zerovec"] }
 zerovec = { workspace = true, features = ["derive"] }
 
+writeable = { workspace = true, optional = true } 
 databake = { workspace = true, features = ["derive"], optional = true }
 serde = { workspace = true, features = ["derive"], optional = true }
 
@@ -36,6 +37,7 @@ icu_locale = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu_provider = { path = "../../provider/core", features = ["logging"] }
+icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu = { path = "../../components/icu", default-features = false }
 itertools = { workspace = true }
 serde = { workspace = true, features = ["derive", "alloc"] }
