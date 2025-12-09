@@ -153,7 +153,6 @@ impl Gregorian {
 
 #[cfg(test)]
 mod test {
-    use crate::cal::Iso;
     use calendrical_calculations::rata_die::RataDie;
 
     use super::*;
@@ -161,41 +160,37 @@ mod test {
     #[derive(Debug)]
     struct TestCase {
         rd: RataDie,
-        iso_year: i32,
-        iso_month: u8,
-        iso_day: u8,
-        expected_year: i32,
-        expected_era: &'static str,
-        expected_month: u8,
-        expected_day: u8,
+        extended_year: i32,
+        month: u8,
+        day: u8,
+        era_year: i32,
+        era: &'static str,
     }
 
     fn check_test_case(case: TestCase) {
-        let iso_from_rd = Date::from_rata_die(case.rd, Iso);
-        let greg_date_from_rd = Date::from_rata_die(case.rd, Gregorian);
-        assert_eq!(greg_date_from_rd.era_year().year, case.expected_year,
-            "Failed year check from RD: {case:?}\nISO: {iso_from_rd:?}\nGreg: {greg_date_from_rd:?}");
-        assert_eq!(
-            greg_date_from_rd.era_year().era,
-            case.expected_era,
-            "Failed era check from RD: {case:?}\nISO: {iso_from_rd:?}\nGreg: {greg_date_from_rd:?}"
-        );
-        assert_eq!(greg_date_from_rd.month().ordinal, case.expected_month,
-            "Failed month check from RD: {case:?}\nISO: {iso_from_rd:?}\nGreg: {greg_date_from_rd:?}");
-        assert_eq!(
-            greg_date_from_rd.day_of_month().0,
-            case.expected_day,
-            "Failed day check from RD: {case:?}\nISO: {iso_from_rd:?}\nGreg: {greg_date_from_rd:?}"
-        );
+        let date = Date::from_rata_die(case.rd, Gregorian);
 
-        let iso_date_man: Date<Iso> =
-            Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day)
-                .expect("Failed to initialize ISO date for {case:?}");
-        let greg_date_man: Date<Gregorian> = Date::new_from_iso(iso_date_man, Gregorian);
-        assert_eq!(iso_from_rd, iso_date_man,
-            "ISO from RD not equal to ISO generated from manually-input ymd\nCase: {case:?}\nRD: {iso_from_rd:?}\nMan: {iso_date_man:?}");
-        assert_eq!(greg_date_from_rd, greg_date_man,
-            "Greg. date from RD not equal to Greg. generated from manually-input ymd\nCase: {case:?}\nRD: {greg_date_from_rd:?}\nMan: {greg_date_man:?}");
+        assert_eq!(date.to_rata_die(), case.rd, "{case:?}");
+
+        assert_eq!(date.era_year().year, case.era_year, "{case:?}");
+        assert_eq!(
+            date.era_year().extended_year,
+            case.extended_year,
+            "{case:?}"
+        );
+        assert_eq!(date.era_year().era, case.era, "{case:?}");
+        assert_eq!(date.month().ordinal, case.month, "{case:?}");
+        assert_eq!(date.day_of_month().0, case.day, "{case:?}");
+
+        assert_eq!(
+            Date::try_new_gregorian(
+                date.era_year().extended_year,
+                date.month().ordinal,
+                date.day_of_month().0
+            ),
+            Ok(date),
+            "{case:?}"
+        );
     }
 
     #[test]
@@ -206,53 +201,43 @@ mod test {
         let cases = [
             TestCase {
                 rd: RataDie::new(1),
-                iso_year: 1,
-                iso_month: 1,
-                iso_day: 1,
-                expected_year: 1,
-                expected_era: "ce",
-                expected_month: 1,
-                expected_day: 1,
+                extended_year: 1,
+                month: 1,
+                day: 1,
+                era_year: 1,
+                era: "ce",
             },
             TestCase {
                 rd: RataDie::new(181),
-                iso_year: 1,
-                iso_month: 6,
-                iso_day: 30,
-                expected_year: 1,
-                expected_era: "ce",
-                expected_month: 6,
-                expected_day: 30,
+                extended_year: 1,
+                month: 6,
+                day: 30,
+                era_year: 1,
+                era: "ce",
             },
             TestCase {
                 rd: RataDie::new(1155),
-                iso_year: 4,
-                iso_month: 2,
-                iso_day: 29,
-                expected_year: 4,
-                expected_era: "ce",
-                expected_month: 2,
-                expected_day: 29,
+                extended_year: 4,
+                month: 2,
+                day: 29,
+                era_year: 4,
+                era: "ce",
             },
             TestCase {
                 rd: RataDie::new(1344),
-                iso_year: 4,
-                iso_month: 9,
-                iso_day: 5,
-                expected_year: 4,
-                expected_era: "ce",
-                expected_month: 9,
-                expected_day: 5,
+                extended_year: 4,
+                month: 9,
+                day: 5,
+                era_year: 4,
+                era: "ce",
             },
             TestCase {
                 rd: RataDie::new(36219),
-                iso_year: 100,
-                iso_month: 3,
-                iso_day: 1,
-                expected_year: 100,
-                expected_era: "ce",
-                expected_month: 3,
-                expected_day: 1,
+                extended_year: 100,
+                month: 3,
+                day: 1,
+                era_year: 100,
+                era: "ce",
             },
         ];
 
@@ -269,53 +254,43 @@ mod test {
         let cases = [
             TestCase {
                 rd: RataDie::new(0),
-                iso_year: 0,
-                iso_month: 12,
-                iso_day: 31,
-                expected_year: 1,
-                expected_era: "bce",
-                expected_month: 12,
-                expected_day: 31,
+                extended_year: 0,
+                month: 12,
+                day: 31,
+                era_year: 1,
+                era: "bce",
             },
             TestCase {
                 rd: RataDie::new(-365), // This is a leap year
-                iso_year: 0,
-                iso_month: 1,
-                iso_day: 1,
-                expected_year: 1,
-                expected_era: "bce",
-                expected_month: 1,
-                expected_day: 1,
+                extended_year: 0,
+                month: 1,
+                day: 1,
+                era_year: 1,
+                era: "bce",
             },
             TestCase {
                 rd: RataDie::new(-366),
-                iso_year: -1,
-                iso_month: 12,
-                iso_day: 31,
-                expected_year: 2,
-                expected_era: "bce",
-                expected_month: 12,
-                expected_day: 31,
+                extended_year: -1,
+                month: 12,
+                day: 31,
+                era_year: 2,
+                era: "bce",
             },
             TestCase {
                 rd: RataDie::new(-1461),
-                iso_year: -4,
-                iso_month: 12,
-                iso_day: 31,
-                expected_year: 5,
-                expected_era: "bce",
-                expected_month: 12,
-                expected_day: 31,
+                extended_year: -4,
+                month: 12,
+                day: 31,
+                era_year: 5,
+                era: "bce",
             },
             TestCase {
                 rd: RataDie::new(-1826),
-                iso_year: -4,
-                iso_month: 1,
-                iso_day: 1,
-                expected_year: 5,
-                expected_era: "bce",
-                expected_month: 1,
-                expected_day: 1,
+                extended_year: -4,
+                month: 1,
+                day: 1,
+                era_year: 5,
+                era: "bce",
             },
         ];
 
@@ -331,17 +306,9 @@ mod test {
         // than the other, without exception.
         for i in -100..100 {
             for j in -100..100 {
-                let iso_i = Date::from_rata_die(RataDie::new(i), Iso);
-                let iso_j = Date::from_rata_die(RataDie::new(j), Iso);
+                let greg_i = Date::from_rata_die(RataDie::new(i), Gregorian);
+                let greg_j = Date::from_rata_die(RataDie::new(j), Gregorian);
 
-                let greg_i = iso_i.to_calendar(Gregorian);
-                let greg_j = iso_j.to_calendar(Gregorian);
-
-                assert_eq!(
-                    i.cmp(&j),
-                    iso_i.cmp(&iso_j),
-                    "ISO directionality inconsistent with directionality for i: {i}, j: {j}"
-                );
                 assert_eq!(
                     i.cmp(&j),
                     greg_i.cmp(&greg_j),

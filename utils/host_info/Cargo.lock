@@ -464,7 +464,7 @@ version = "2.1.1"
 
 [[package]]
 name = "icu_properties"
-version = "2.1.1"
+version = "2.1.2"
 dependencies = [
  "icu_collections",
  "icu_locale_core",

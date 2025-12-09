@@ -16,6 +16,8 @@ internal interface CodePointMapData8Lib: Library {
     fun icu4x_CodePointMapData8_create_general_category_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_CodePointMapData8_create_bidi_class_mv1(): Pointer
     fun icu4x_CodePointMapData8_create_bidi_class_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_CodePointMapData8_create_numeric_type_mv1(): Pointer
+    fun icu4x_CodePointMapData8_create_numeric_type_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_CodePointMapData8_create_east_asian_width_mv1(): Pointer
     fun icu4x_CodePointMapData8_create_east_asian_width_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_CodePointMapData8_create_hangul_syllable_type_mv1(): Pointer
@@ -121,6 +123,40 @@ class CodePointMapData8 internal constructor (
         fun createBidiClassWithProvider(provider: DataProvider): Result<CodePointMapData8> {
             
             val returnVal = lib.icu4x_CodePointMapData8_create_bidi_class_with_provider_mv1(provider.handle);
+            if (returnVal.isOk == 1.toByte()) {
+                val selfEdges: List<Any> = listOf()
+                val handle = returnVal.union.ok 
+                val returnOpaque = CodePointMapData8(handle, selfEdges)
+                CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
+                return returnOpaque.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+            }
+        }
+        @JvmStatic
+        
+        /** Create a map for the `Numeric_Type` property, using compiled data.
+        *
+        *See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
+        */
+        fun createNumericType(): CodePointMapData8 {
+            
+            val returnVal = lib.icu4x_CodePointMapData8_create_numeric_type_mv1();
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = CodePointMapData8(handle, selfEdges)
+            CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Create a map for the `Bidi_Class` property, using a particular data source.
+        *
+        *See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
+        */
+        fun createNumericTypeWithProvider(provider: DataProvider): Result<CodePointMapData8> {
+            
+            val returnVal = lib.icu4x_CodePointMapData8_create_numeric_type_with_provider_mv1(provider.handle);
             if (returnVal.isOk == 1.toByte()) {
                 val selfEdges: List<Any> = listOf()
                 val handle = returnVal.union.ok 

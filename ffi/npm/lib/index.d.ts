@@ -308,11 +308,15 @@ export { GraphemeClusterBreak } from "./GraphemeClusterBreak"
 
 export { HangulSyllableType } from "./HangulSyllableType"
 
+export { IndicConjunctBreak } from "./IndicConjunctBreak"
+
 export { IndicSyllabicCategory } from "./IndicSyllabicCategory"
 
 export { JoiningType } from "./JoiningType"
 
 export { LineBreak } from "./LineBreak"
+
+export { NumericType } from "./NumericType"
 
 export { Script } from "./Script"
 

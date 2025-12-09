@@ -117,16 +117,16 @@ pub enum DateFields {
     /// The year, month, and day of the month, as in
     /// “January 1st, 2000”.
     YMD,
-    /// The day of the month and day of the week, as in
+    /// The day of the month and weekday, as in
     /// “Saturday 1st”.
     DE,
-    /// The month, day of the month, and day of the week, as in
+    /// The month, day of the month, and weekday, as in
     /// “Saturday, January 1st”.
     MDE,
-    /// The year, month, day of the month, and day of the week, as in
+    /// The year, month, day of the month, and weekday, as in
     /// “Saturday, January 1st, 2000”.
     YMDE,
-    /// The day of the week alone, as in
+    /// The weekday alone, as in
     /// “Saturday”.
     E,
     /// A standalone month, as in

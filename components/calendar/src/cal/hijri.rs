@@ -1777,11 +1777,11 @@ mod test {
     fn test_simulated_hijri_from_rd() {
         let calendar = Hijri::new_simulated_mecca();
         for (case, f_date) in SIMULATED_CASES.iter().zip(TEST_RD.iter()) {
-            let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
-                .unwrap();
-            let iso = Date::from_rata_die(RataDie::new(*f_date), crate::Iso);
-
-            assert_eq!(iso.to_calendar(calendar).inner, date.inner, "{case:?}");
+            assert_eq!(
+                Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar),
+                Ok(Date::from_rata_die(RataDie::new(*f_date), calendar)),
+                "{case:?}"
+            );
         }
     }
 
@@ -1923,12 +1923,13 @@ mod test {
     #[test]
     fn test_regression_3868() {
         // This date used to panic on creation
-        let iso = Date::try_new_iso(2011, 4, 4).unwrap();
-        let hijri = iso.to_calendar(Hijri::new_umm_al_qura());
+        let date = Date::try_new_iso(2011, 4, 4)
+            .unwrap()
+            .to_calendar(Hijri::new_umm_al_qura());
         // Data from https://www.ummulqura.org.sa/Index.aspx
-        assert_eq!(hijri.day_of_month().0, 30);
-        assert_eq!(hijri.month().ordinal, 4);
-        assert_eq!(hijri.era_year().year, 1432);
+        assert_eq!(date.day_of_month().0, 30);
+        assert_eq!(date.month().ordinal, 4);
+        assert_eq!(date.era_year().year, 1432);
     }
 
     #[test]
@@ -1949,9 +1950,9 @@ mod test {
             TabularAlgorithmLeapYears::TypeII,
             TabularAlgorithmEpoch::Friday,
         );
-        let iso = Date::try_new_iso(-62971, 3, 19).unwrap();
-        let _dt = iso.to_calendar(calendar);
-        let _dt = iso.to_calendar(Hijri::new_umm_al_qura());
+        let _dt = Date::try_new_iso(-62971, 3, 19)
+            .unwrap()
+            .to_calendar(calendar);
     }
 
     #[test]
@@ -1960,7 +1961,7 @@ mod test {
 
         let dt = Date::try_new_hijri_with_calendar(1391, 1, 29, calendar).unwrap();
 
-        assert_eq!(dt.to_iso().to_calendar(calendar), dt);
+        assert_eq!(Date::from_rata_die(dt.to_rata_die(), calendar), dt);
     }
 
     #[test]
@@ -1969,20 +1970,20 @@ mod test {
 
         let dt = Date::try_new_hijri_with_calendar(1390, 1, 30, cal).unwrap();
 
-        assert_eq!(dt.to_iso().to_calendar(cal), dt);
+        assert_eq!(Date::from_rata_die(dt.to_rata_die(), cal), dt);
 
-        let dt = Date::try_new_iso(2000, 5, 5).unwrap();
+        let dt = Date::try_new_iso(2000, 5, 5).unwrap().to_calendar(cal);
 
-        assert!(dt.to_calendar(cal).day_of_month().0 > 0);
+        assert!(dt.day_of_month().0 > 0);
     }
 
     #[test]
     fn test_regression_6197() {
         let calendar = Hijri::new_umm_al_qura();
 
-        let iso = Date::try_new_iso(2025, 2, 26).unwrap();
-
-        let date = iso.to_calendar(calendar);
+        let date = Date::try_new_iso(2025, 2, 26)
+            .unwrap()
+            .to_calendar(calendar);
 
         // Data from https://www.ummulqura.org.sa/
         assert_eq!(

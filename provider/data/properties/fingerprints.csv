@@ -79,6 +79,7 @@ property/enum/indic/conjunct/break/v1, <singleton>, 7228B, 7171B, 94e0a1eb991ecb
 property/enum/indic/syllabic/category/v1, <singleton>, 6288B, 6229B, c0084799788acd9c
 property/enum/joining/type/v1, <singleton>, 7136B, 7079B, 39f05bd0b9931b55
 property/enum/line/break/v1, <singleton>, 15328B, 15272B, d392409dfdd00a74
+property/enum/numeric/type/v1, <singleton>, 5900B, 5842B, 9ffe79ebbb54f863
 property/enum/script/v1, <singleton>, 25902B, 25847B, 1b972fe75ad7b369
 property/enum/sentence/break/v1, <singleton>, 13964B, 13907B, 36e6dafc005907f8
 property/enum/vertical/orientation/v1, <singleton>, 3280B, 3222B, 36f945b6b4d90bc8
@@ -89,9 +90,11 @@ property/name/long/east/asian/width/v1, <singleton>, 80B, 57B, 9444c688fd2242aa
 property/name/long/general/category/v1, <singleton>, 506B, 484B, ff6477ec3729edf4
 property/name/long/grapheme/cluster/break/v1, <singleton>, 169B, 147B, 882e84c4c5082a5a
 property/name/long/hangul/syllable/type/v1, <singleton>, 108B, 85B, 739628a2dc2347a5
+property/name/long/indic/conjunct/break/v1, <singleton>, 57B, 34B, 262279ba503c825d
 property/name/long/indic/syllabic/category/v1, <singleton>, 622B, 600B, 9664fa6930864c55
 property/name/long/joining/type/v1, <singleton>, 107B, 84B, 67264eb9f128eed3
 property/name/long/line/break/v1, <singleton>, 636B, 614B, 52eebfc0e663e772
+property/name/long/numeric/type/v1, <singleton>, 55B, 32B, b458c91f3aeac354
 property/name/long/script/v1, <singleton>, 2103B, 2081B, d388e3f594c6bcff
 property/name/long/sentence/break/v1, <singleton>, 128B, 105B, 5070087b62744fab
 property/name/long/vertical/orientation/v1, <singleton>, 84B, 61B, 36a3f40d2a644910
@@ -103,9 +106,11 @@ property/name/parse/general/category/mask/v1, <singleton>, 744B, 723B, a0acd137d
 property/name/parse/general/category/v1, <singleton>, 619B, 598B, fc71812cb4e744a7
 property/name/parse/grapheme/cluster/break/v1, <singleton>, 194B, 173B, 723a51eaaf05233e
 property/name/parse/hangul/syllable/type/v1, <singleton>, 116B, 94B, 70df5ae746d5b32f
+property/name/parse/indic/conjunct/break/v1, <singleton>, 57B, 35B, d9c8f95fc1591bcf
 property/name/parse/indic/syllabic/category/v1, <singleton>, 510B, 489B, 543dd0a1fa40fe58
 property/name/parse/joining/type/v1, <singleton>, 117B, 95B, 4a919456a9260ca7
 property/name/parse/line/break/v1, <singleton>, 804B, 783B, a9ba4f0de536a3b
+property/name/parse/numeric/type/v1, <singleton>, 58B, 36B, 1e89fc370a6ae5ef
 property/name/parse/script/v1, <singleton>, 2673B, 2652B, b93cb0229f21d94c
 property/name/parse/sentence/break/v1, <singleton>, 164B, 143B, 7a8e570bdbb11805
 property/name/parse/vertical/orientation/v1, <singleton>, 80B, 58B, 1b5772c217084ff
@@ -116,9 +121,11 @@ property/name/short/east/asian/width/v1, <singleton>, 43B, 20B, d949f2e523fb2e7d
 property/name/short/general/category/v1, <singleton>, 144B, 121B, 5459db34538b2181
 property/name/short/grapheme/cluster/break/v1, <singleton>, 97B, 74B, 690edf19931f003f
 property/name/short/hangul/syllable/type/v1, <singleton>, 46B, 23B, 7b01686176b2ed0a
+property/name/short/indic/conjunct/break/v1, <singleton>, 57B, 34B, 262279ba503c825d
 property/name/short/indic/syllabic/category/v1, <singleton>, 622B, 600B, 9664fa6930864c55
 property/name/short/joining/type/v1, <singleton>, 42B, 19B, 162afda01b84cd1f
 property/name/short/line/break/v1, <singleton>, 221B, 199B, d7df5d8b133bf645
+property/name/short/numeric/type/v1, <singleton>, 42B, 19B, 63ce845cffd73411
 property/name/short/script/v1, <singleton>, 876B, 854B, dde0d91e1aaa9bdb
 property/name/short/sentence/break/v1, <singleton>, 84B, 61B, 317ae9daab3bfd00
 property/name/short/vertical/orientation/v1, <singleton>, 38B, 15B, 4a8372161d54b5a5

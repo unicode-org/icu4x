@@ -677,13 +677,13 @@ impl Week {
 field_type!(
     /// An enum for the possible symbols of a weekday field in a date pattern.
     Weekday;  {
-        /// Field symbol for day of week (text format only).
+        /// Field symbol for the weekday (text format only).
         'E' => Format = 0,
-        /// Field symbol for day of week; numeric formats produce a locale-dependent ordinal weekday number.
+        /// Field symbol for the weekday; numeric formats produce a locale-dependent ordinal weekday number.
         ///
         /// For example, in de-DE, Monday is the 1st day of the week.
         'e' => Local = 1,
-        /// Field symbol for stand-alone local day of week number/name.
+        /// Field symbol for stand-alone local weekday number/name.
         ///
         /// The stand-alone weekday name is used when the weekday is displayed by itself. This may differ from the standard form based on the language and context.
         'c' => StandAlone = 2,

@@ -727,7 +727,7 @@ impl<C: AsCalendar<Calendar = AnyCalendar>> Date<C> {
     /// Convert this `Date<AnyCalendar>` to another `AnyCalendar`, if conversion is needed
     pub fn convert_any<'a>(&self, calendar: &'a AnyCalendar) -> Date<Ref<'a, AnyCalendar>> {
         if calendar.kind() != self.calendar.as_calendar().kind() {
-            Date::new_from_iso(self.to_iso(), Ref(calendar))
+            self.to_calendar(Ref(calendar))
         } else {
             Date {
                 inner: self.inner,
@@ -1540,6 +1540,16 @@ impl From<Roc> for AnyCalendar {
     }
 }
 
+impl<C: IntoAnyCalendar> Date<C> {
+    /// Type-erase the date, converting it to a date for [`AnyCalendar`]
+    pub fn to_any(self) -> Date<AnyCalendar> {
+        Date::from_raw(
+            self.calendar.date_to_any(&self.inner),
+            self.calendar.to_any(),
+        )
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1561,13 +1571,9 @@ mod tests {
                 )
             });
 
-        let roundtrip_year = date.year();
-        let roundtrip_month = date.month().value;
-        let roundtrip_day = date.day_of_month().0;
-
         assert_eq!(
             (month, day),
-            (roundtrip_month, roundtrip_day),
+            (date.month().value, date.day_of_month().0),
             "Failed to roundtrip for calendar {}",
             calendar.debug_name()
         );
@@ -1575,13 +1581,12 @@ mod tests {
         if let Some((era_code, era_index)) = era {
             let roundtrip_era_year = date.year().era().expect("year type should be era");
 
-            let roundtrip_year = roundtrip_year.era_year_or_related_iso();
             assert_eq!(
                 (era_code, era_index, year),
                 (
                     roundtrip_era_year.era.as_str(),
                     roundtrip_era_year.era_index,
-                    roundtrip_year
+                    roundtrip_era_year.year,
                 ),
                 "Failed to roundtrip era for calendar {}",
                 calendar.debug_name()
@@ -1595,10 +1600,9 @@ mod tests {
             );
         }
 
-        let iso = date.to_iso();
-        let reconstructed = Date::new_from_iso(iso, calendar);
         assert_eq!(
-            date, reconstructed,
+            Date::from_rata_die(date.to_rata_die(), calendar),
+            date,
             "Failed to roundtrip via iso with {era:?}, {year}, {month:?}, {day}"
         )
     }

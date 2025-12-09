@@ -25,20 +25,23 @@ pub use names::{
 pub use names::{
     PropertyNameLongBidiClassV1, PropertyNameLongEastAsianWidthV1,
     PropertyNameLongGeneralCategoryV1, PropertyNameLongGraphemeClusterBreakV1,
-    PropertyNameLongHangulSyllableTypeV1, PropertyNameLongIndicSyllabicCategoryV1,
-    PropertyNameLongJoiningTypeV1, PropertyNameLongLineBreakV1, PropertyNameLongScriptV1,
+    PropertyNameLongHangulSyllableTypeV1, PropertyNameLongIndicConjunctBreakV1,
+    PropertyNameLongIndicSyllabicCategoryV1, PropertyNameLongJoiningTypeV1,
+    PropertyNameLongLineBreakV1, PropertyNameLongNumericTypeV1, PropertyNameLongScriptV1,
     PropertyNameLongSentenceBreakV1, PropertyNameLongVerticalOrientationV1,
     PropertyNameLongWordBreakV1, PropertyNameParseBidiClassV1,
     PropertyNameParseCanonicalCombiningClassV1, PropertyNameParseEastAsianWidthV1,
     PropertyNameParseGeneralCategoryMaskV1, PropertyNameParseGeneralCategoryV1,
     PropertyNameParseGraphemeClusterBreakV1, PropertyNameParseHangulSyllableTypeV1,
-    PropertyNameParseIndicSyllabicCategoryV1, PropertyNameParseJoiningTypeV1,
-    PropertyNameParseLineBreakV1, PropertyNameParseScriptV1, PropertyNameParseSentenceBreakV1,
+    PropertyNameParseIndicConjunctBreakV1, PropertyNameParseIndicSyllabicCategoryV1,
+    PropertyNameParseJoiningTypeV1, PropertyNameParseLineBreakV1, PropertyNameParseNumericTypeV1,
+    PropertyNameParseScriptV1, PropertyNameParseSentenceBreakV1,
     PropertyNameParseVerticalOrientationV1, PropertyNameParseWordBreakV1,
     PropertyNameShortBidiClassV1, PropertyNameShortEastAsianWidthV1,
     PropertyNameShortGeneralCategoryV1, PropertyNameShortGraphemeClusterBreakV1,
-    PropertyNameShortHangulSyllableTypeV1, PropertyNameShortIndicSyllabicCategoryV1,
-    PropertyNameShortJoiningTypeV1, PropertyNameShortLineBreakV1, PropertyNameShortScriptV1,
+    PropertyNameShortHangulSyllableTypeV1, PropertyNameShortIndicConjunctBreakV1,
+    PropertyNameShortIndicSyllabicCategoryV1, PropertyNameShortJoiningTypeV1,
+    PropertyNameShortLineBreakV1, PropertyNameShortNumericTypeV1, PropertyNameShortScriptV1,
     PropertyNameShortSentenceBreakV1, PropertyNameShortVerticalOrientationV1,
     PropertyNameShortWordBreakV1,
 };
@@ -155,6 +158,7 @@ const _: () = {
     impl_property_enum_indic_syllabic_category_v1!(Baked);
     impl_property_enum_joining_type_v1!(Baked);
     impl_property_enum_line_break_v1!(Baked);
+    impl_property_enum_numeric_type_v1!(Baked);
     impl_property_enum_script_v1!(Baked);
     impl_property_enum_sentence_break_v1!(Baked);
     impl_property_enum_vertical_orientation_v1!(Baked);
@@ -167,8 +171,10 @@ const _: () = {
     impl_property_name_long_grapheme_cluster_break_v1!(Baked);
     impl_property_name_long_hangul_syllable_type_v1!(Baked);
     impl_property_name_long_indic_syllabic_category_v1!(Baked);
+    impl_property_name_long_indic_conjunct_break_v1!(Baked);
     impl_property_name_long_joining_type_v1!(Baked);
     impl_property_name_long_line_break_v1!(Baked);
+    impl_property_name_long_numeric_type_v1!(Baked);
     impl_property_name_long_script_v1!(Baked);
     impl_property_name_long_sentence_break_v1!(Baked);
     impl_property_name_long_vertical_orientation_v1!(Baked);
@@ -181,8 +187,10 @@ const _: () = {
     impl_property_name_parse_grapheme_cluster_break_v1!(Baked);
     impl_property_name_parse_hangul_syllable_type_v1!(Baked);
     impl_property_name_parse_indic_syllabic_category_v1!(Baked);
+    impl_property_name_parse_indic_conjunct_break_v1!(Baked);
     impl_property_name_parse_joining_type_v1!(Baked);
     impl_property_name_parse_line_break_v1!(Baked);
+    impl_property_name_parse_numeric_type_v1!(Baked);
     impl_property_name_parse_script_v1!(Baked);
     impl_property_name_parse_sentence_break_v1!(Baked);
     impl_property_name_parse_vertical_orientation_v1!(Baked);
@@ -195,8 +203,10 @@ const _: () = {
     impl_property_name_short_grapheme_cluster_break_v1!(Baked);
     impl_property_name_short_hangul_syllable_type_v1!(Baked);
     impl_property_name_short_indic_syllabic_category_v1!(Baked);
+    impl_property_name_short_indic_conjunct_break_v1!(Baked);
     impl_property_name_short_joining_type_v1!(Baked);
     impl_property_name_short_line_break_v1!(Baked);
+    impl_property_name_short_numeric_type_v1!(Baked);
     impl_property_name_short_script_v1!(Baked);
     impl_property_name_short_sentence_break_v1!(Baked);
     impl_property_name_short_vertical_orientation_v1!(Baked);
@@ -679,6 +689,12 @@ icu_provider::data_marker!(
     is_singleton = true,
 );
 icu_provider::data_marker!(
+    /// Data marker for the 'NumericValue' Unicode property
+    PropertyEnumNumericTypeV1,
+    PropertyCodePointMap<'static, crate::props::NumericType>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
     /// Data marker for the 'Script' Unicode property
     PropertyEnumScriptV1,
     PropertyCodePointMap<'static, crate::props::Script>,
@@ -731,8 +747,10 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     PropertyNameLongGraphemeClusterBreakV1::INFO,
     PropertyNameLongHangulSyllableTypeV1::INFO,
     PropertyNameLongIndicSyllabicCategoryV1::INFO,
+    PropertyNameLongIndicConjunctBreakV1::INFO,
     PropertyNameLongJoiningTypeV1::INFO,
     PropertyNameLongLineBreakV1::INFO,
+    PropertyNameLongNumericTypeV1::INFO,
     PropertyNameLongScriptV1::INFO,
     PropertyNameLongSentenceBreakV1::INFO,
     PropertyNameLongVerticalOrientationV1::INFO,
@@ -745,8 +763,10 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     PropertyNameParseGraphemeClusterBreakV1::INFO,
     PropertyNameParseHangulSyllableTypeV1::INFO,
     PropertyNameParseIndicSyllabicCategoryV1::INFO,
+    PropertyNameParseIndicConjunctBreakV1::INFO,
     PropertyNameParseJoiningTypeV1::INFO,
     PropertyNameParseLineBreakV1::INFO,
+    PropertyNameParseNumericTypeV1::INFO,
     PropertyNameParseScriptV1::INFO,
     PropertyNameParseSentenceBreakV1::INFO,
     PropertyNameParseVerticalOrientationV1::INFO,
@@ -759,8 +779,10 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     PropertyNameShortGraphemeClusterBreakV1::INFO,
     PropertyNameShortHangulSyllableTypeV1::INFO,
     PropertyNameShortIndicSyllabicCategoryV1::INFO,
+    PropertyNameShortIndicConjunctBreakV1::INFO,
     PropertyNameShortJoiningTypeV1::INFO,
     PropertyNameShortLineBreakV1::INFO,
+    PropertyNameShortNumericTypeV1::INFO,
     PropertyNameShortScriptV1::INFO,
     PropertyNameShortSentenceBreakV1::INFO,
     PropertyNameShortVerticalOrientationV1::INFO,
@@ -844,6 +866,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     PropertyEnumIndicSyllabicCategoryV1::INFO,
     PropertyEnumJoiningTypeV1::INFO,
     PropertyEnumLineBreakV1::INFO,
+    PropertyEnumNumericTypeV1::INFO,
     PropertyEnumScriptV1::INFO,
     PropertyEnumSentenceBreakV1::INFO,
     PropertyEnumVerticalOrientationV1::INFO,

@@ -210,6 +210,60 @@ pub mod ffi {
         }
     }
 
+    #[diplomat::rust_link(icu::properties::props::NumericType, Struct)]
+    #[diplomat::enum_convert(icu_properties::props::NumericType, needs_wildcard)]
+    #[non_exhaustive]
+    pub enum NumericType {
+        #[diplomat::rust_link(
+            icu::properties::props::NumericType::None,
+            AssociatedConstantInStruct
+        )]
+        None = 0,
+        #[diplomat::rust_link(
+            icu::properties::props::NumericType::Decimal,
+            AssociatedConstantInStruct
+        )]
+        Decimal = 1,
+        #[diplomat::rust_link(
+            icu::properties::props::NumericType::Digit,
+            AssociatedConstantInStruct
+        )]
+        Digit = 2,
+        #[diplomat::rust_link(
+            icu::properties::props::NumericType::Numeric,
+            AssociatedConstantInStruct
+        )]
+        Numeric = 3,
+    }
+
+    impl NumericType {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::NumericType>::new()
+                .get32(ch)
+                .into()
+        }
+        #[diplomat::rust_link(icu::properties::props::NumericType::to_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
+            self as u8
+        }
+        #[diplomat::rust_link(icu::properties::props::NumericType::from_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
+            Some(match other {
+                0 => Self::None,
+                1 => Self::Decimal,
+                2 => Self::Digit,
+                3 => Self::Numeric,
+                _ => return None,
+            })
+        }
+    }
+
     #[diplomat::rust_link(icu::properties::props::Script, Struct)]
     #[diplomat::enum_convert(icu_properties::props::Script, needs_wildcard)]
     #[non_exhaustive]
@@ -296,7 +350,7 @@ pub mod ffi {
         )]
         Cherokee = 6,
         #[diplomat::rust_link(icu::properties::props::Script::Chisoi, AssociatedConstantInStruct)]
-        Chisoi = 209,
+        Chisoi = 254,
         #[diplomat::rust_link(
             icu::properties::props::Script::Chorasmian,
             AssociatedConstantInStruct
@@ -356,6 +410,8 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         Ethiopian = 11,
+        #[diplomat::rust_link(icu::properties::props::Script::Garay, AssociatedConstantInStruct)]
+        Garay = 201,
         #[diplomat::rust_link(
             icu::properties::props::Script::Georgian,
             AssociatedConstantInStruct
@@ -387,6 +443,11 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         Gurmukhi = 16,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::GurungKhema,
+            AssociatedConstantInStruct
+        )]
+        GurungKhema = 202,
         #[diplomat::rust_link(icu::properties::props::Script::Han, AssociatedConstantInStruct)]
         Han = 17,
         #[diplomat::rust_link(icu::properties::props::Script::Hangul, AssociatedConstantInStruct)]
@@ -464,6 +525,11 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         Khudawadi = 145,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::KiratRai,
+            AssociatedConstantInStruct
+        )]
+        KiratRai = 203,
         #[diplomat::rust_link(icu::properties::props::Script::Lao, AssociatedConstantInStruct)]
         Lao = 24,
         #[diplomat::rust_link(icu::properties::props::Script::Latin, AssociatedConstantInStruct)]
@@ -633,6 +699,8 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         OldUyghur = 194,
+        #[diplomat::rust_link(icu::properties::props::Script::OlOnal, AssociatedConstantInStruct)]
+        OlOnal = 204,
         #[diplomat::rust_link(icu::properties::props::Script::Oriya, AssociatedConstantInStruct)]
         Oriya = 31,
         #[diplomat::rust_link(icu::properties::props::Script::Osage, AssociatedConstantInStruct)]
@@ -687,7 +755,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Script::Siddham, AssociatedConstantInStruct)]
         Siddham = 166,
         #[diplomat::rust_link(icu::properties::props::Script::Sidetic, AssociatedConstantInStruct)]
-        Sidetic = 210,
+        Sidetic = 209,
         #[diplomat::rust_link(
             icu::properties::props::Script::SignWriting,
             AssociatedConstantInStruct
@@ -709,6 +777,8 @@ pub mod ffi {
             AssociatedConstantInStruct
         )]
         Sundanese = 113,
+        #[diplomat::rust_link(icu::properties::props::Script::Sunuwar, AssociatedConstantInStruct)]
+        Sunuwar = 205,
         #[diplomat::rust_link(
             icu::properties::props::Script::SylotiNagri,
             AssociatedConstantInStruct
@@ -730,7 +800,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Script::TaiViet, AssociatedConstantInStruct)]
         TaiViet = 127,
         #[diplomat::rust_link(icu::properties::props::Script::TaiYo, AssociatedConstantInStruct)]
-        TaiYo = 211,
+        TaiYo = 210,
         #[diplomat::rust_link(icu::properties::props::Script::Takri, AssociatedConstantInStruct)]
         Takri = 153,
         #[diplomat::rust_link(icu::properties::props::Script::Tamil, AssociatedConstantInStruct)]
@@ -754,13 +824,20 @@ pub mod ffi {
         Tifinagh = 60,
         #[diplomat::rust_link(icu::properties::props::Script::Tirhuta, AssociatedConstantInStruct)]
         Tirhuta = 158,
+        #[diplomat::rust_link(icu::properties::props::Script::Todhri, AssociatedConstantInStruct)]
+        Todhri = 206,
         #[diplomat::rust_link(
             icu::properties::props::Script::TolongSiki,
             AssociatedConstantInStruct
         )]
-        TolongSiki = 212,
+        TolongSiki = 211,
         #[diplomat::rust_link(icu::properties::props::Script::Toto, AssociatedConstantInStruct)]
         Toto = 196,
+        #[diplomat::rust_link(
+            icu::properties::props::Script::TuluTigalari,
+            AssociatedConstantInStruct
+        )]
+        TuluTigalari = 207,
         #[diplomat::rust_link(
             icu::properties::props::Script::Ugaritic,
             AssociatedConstantInStruct
@@ -856,7 +933,7 @@ pub mod ffi {
                 118 => Self::Chakma,
                 66 => Self::Cham,
                 6 => Self::Cherokee,
-                209 => Self::Chisoi,
+                254 => Self::Chisoi,
                 189 => Self::Chorasmian,
                 0 => Self::Common,
                 7 => Self::Coptic,
@@ -873,6 +950,7 @@ pub mod ffi {
                 136 => Self::Elbasan,
                 185 => Self::Elymaic,
                 11 => Self::Ethiopian,
+                201 => Self::Garay,
                 12 => Self::Georgian,
                 56 => Self::Glagolitic,
                 13 => Self::Gothic,
@@ -881,6 +959,7 @@ pub mod ffi {
                 15 => Self::Gujarati,
                 179 => Self::GunjalaGondi,
                 16 => Self::Gurmukhi,
+                202 => Self::GurungKhema,
                 17 => Self::Han,
                 18 => Self::Hangul,
                 182 => Self::HanifiRohingya,
@@ -903,6 +982,7 @@ pub mod ffi {
                 23 => Self::Khmer,
                 157 => Self::Khojki,
                 145 => Self::Khudawadi,
+                203 => Self::KiratRai,
                 24 => Self::Lao,
                 25 => Self::Latin,
                 82 => Self::Lepcha,
@@ -950,6 +1030,7 @@ pub mod ffi {
                 133 => Self::OldSouthArabian,
                 88 => Self::OldTurkic,
                 194 => Self::OldUyghur,
+                204 => Self::OlOnal,
                 31 => Self::Oriya,
                 171 => Self::Osage,
                 50 => Self::Osmanya,
@@ -966,13 +1047,14 @@ pub mod ffi {
                 151 => Self::Sharada,
                 51 => Self::Shavian,
                 166 => Self::Siddham,
-                210 => Self::Sidetic,
+                209 => Self::Sidetic,
                 112 => Self::SignWriting,
                 33 => Self::Sinhala,
                 183 => Self::Sogdian,
                 152 => Self::SoraSompeng,
                 176 => Self::Soyombo,
                 113 => Self::Sundanese,
+                205 => Self::Sunuwar,
                 58 => Self::SylotiNagri,
                 34 => Self::Syriac,
                 42 => Self::Tagalog,
@@ -980,7 +1062,7 @@ pub mod ffi {
                 52 => Self::TaiLe,
                 106 => Self::TaiTham,
                 127 => Self::TaiViet,
-                211 => Self::TaiYo,
+                210 => Self::TaiYo,
                 153 => Self::Takri,
                 35 => Self::Tamil,
                 195 => Self::Tangsa,
@@ -991,8 +1073,10 @@ pub mod ffi {
                 39 => Self::Tibetan,
                 60 => Self::Tifinagh,
                 158 => Self::Tirhuta,
-                212 => Self::TolongSiki,
+                206 => Self::Todhri,
+                211 => Self::TolongSiki,
                 196 => Self::Toto,
+                207 => Self::TuluTigalari,
                 53 => Self::Ugaritic,
                 103 => Self::Unknown,
                 99 => Self::Vai,
@@ -2371,15 +2455,15 @@ pub mod ffi {
         )]
         ConsonantPrefixed = 14,
         #[diplomat::rust_link(
-            icu::properties::props::IndicSyllabicCategory::ConsonantSucceedingRepha,
-            AssociatedConstantInStruct
-        )]
-        ConsonantSucceedingRepha = 15,
-        #[diplomat::rust_link(
             icu::properties::props::IndicSyllabicCategory::ConsonantSubjoined,
             AssociatedConstantInStruct
         )]
-        ConsonantSubjoined = 16,
+        ConsonantSubjoined = 15,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::ConsonantSucceedingRepha,
+            AssociatedConstantInStruct
+        )]
+        ConsonantSucceedingRepha = 16,
         #[diplomat::rust_link(
             icu::properties::props::IndicSyllabicCategory::ConsonantWithStacker,
             AssociatedConstantInStruct
@@ -2522,8 +2606,8 @@ pub mod ffi {
                 12 => Self::ConsonantPlaceholder,
                 13 => Self::ConsonantPrecedingRepha,
                 14 => Self::ConsonantPrefixed,
-                15 => Self::ConsonantSucceedingRepha,
-                16 => Self::ConsonantSubjoined,
+                15 => Self::ConsonantSubjoined,
+                16 => Self::ConsonantSucceedingRepha,
                 17 => Self::ConsonantWithStacker,
                 18 => Self::GeminationMark,
                 19 => Self::InvisibleStacker,
@@ -2544,6 +2628,66 @@ pub mod ffi {
                 34 => Self::VowelDependent,
                 35 => Self::VowelIndependent,
                 36 => Self::ReorderingKiller,
+                _ => return None,
+            })
+        }
+    }
+
+    #[diplomat::rust_link(icu::properties::props::IndicConjunctBreak, Struct)]
+    #[diplomat::enum_convert(icu_properties::props::IndicConjunctBreak, needs_wildcard)]
+    #[non_exhaustive]
+    pub enum IndicConjunctBreak {
+        #[diplomat::rust_link(
+            icu::properties::props::IndicConjunctBreak::None,
+            AssociatedConstantInStruct
+        )]
+        None = 0,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicConjunctBreak::Consonant,
+            AssociatedConstantInStruct
+        )]
+        Consonant = 1,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicConjunctBreak::Extend,
+            AssociatedConstantInStruct
+        )]
+        Extend = 2,
+        #[diplomat::rust_link(
+            icu::properties::props::IndicConjunctBreak::Linker,
+            AssociatedConstantInStruct
+        )]
+        Linker = 3,
+    }
+
+    impl IndicConjunctBreak {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::IndicConjunctBreak>::new()
+                .get32(ch)
+                .into()
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::IndicConjunctBreak::to_icu4c_value,
+            FnInStruct
+        )]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
+            self as u8
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::IndicConjunctBreak::from_icu4c_value,
+            FnInStruct
+        )]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
+            Some(match other {
+                0 => Self::None,
+                1 => Self::Consonant,
+                2 => Self::Extend,
+                3 => Self::Linker,
                 _ => return None,
             })
         }
@@ -3029,6 +3173,13 @@ mod test {
             assert_eq!(*prop, props::BidiClass::from(ffi_prop));
         }
 
+        for prop in props::NumericType::ALL_VALUES {
+            let ffi_prop = NumericType::from_integer_value(prop.to_icu4c_value())
+                .expect("Found NumericType value not supported in ffi");
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
+            assert_eq!(*prop, props::NumericType::from(ffi_prop));
+        }
+
         for prop in props::Script::ALL_VALUES {
             let ffi_prop = Script::from_integer_value(prop.to_icu4c_value())
                 .expect("Found Script value not supported in ffi");
@@ -3083,6 +3234,12 @@ mod test {
                 .expect("Found IndicSyllabicCategory value not supported in ffi");
             assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::IndicSyllabicCategory::from(ffi_prop));
+        }
+        for prop in props::IndicConjunctBreak::ALL_VALUES {
+            let ffi_prop = IndicConjunctBreak::from_integer_value(prop.to_icu4c_value())
+                .expect("Found IndicConjunctBreak value not supported in ffi");
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
+            assert_eq!(*prop, props::IndicConjunctBreak::from(ffi_prop));
         }
         for prop in props::JoiningType::ALL_VALUES {
             let ffi_prop = JoiningType::from_integer_value(prop.to_icu4c_value())

@@ -109,11 +109,23 @@ pub mod ffi {
         }
 
         /// Returns the day in the week for this day
+        ///
+        /// This is *not* the day of the week, an ordinal number that is locale
+        /// dependent.
         #[diplomat::rust_link(icu::calendar::Date::day_of_week, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         #[diplomat::attr(demo_gen, disable)] // covered by Date
+        #[deprecated(note = "use `weekday`")]
         pub fn day_of_week(&self) -> Weekday {
-            self.0.day_of_week().into()
+            self.weekday()
+        }
+
+        /// Returns the day in the week for this day
+        #[diplomat::rust_link(icu::calendar::Date::weekday, FnInStruct)]
+        #[diplomat::attr(auto, getter)]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
+        pub fn weekday(&self) -> Weekday {
+            self.0.weekday().into()
         }
 
         /// Returns the week number in this year, using week data
@@ -325,7 +337,7 @@ pub mod ffi {
         /// Converts this date to ISO
         #[diplomat::rust_link(icu::calendar::Date::to_iso, FnInStruct)]
         pub fn to_iso(&self) -> Box<IsoDate> {
-            Box::new(IsoDate(self.0.to_iso()))
+            Box::new(IsoDate(self.0.to_calendar(Iso)))
         }
 
         /// Returns this date's Rata Die
@@ -350,10 +362,23 @@ pub mod ffi {
         }
 
         /// Returns the day in the week for this day
+        ///
+        /// This is *not* the day of the week, an ordinal number that is locale
+        /// dependent.
         #[diplomat::rust_link(icu::calendar::Date::day_of_week, FnInStruct)]
         #[diplomat::attr(auto, getter)]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
+        #[deprecated(note = "use `weekday`")]
         pub fn day_of_week(&self) -> Weekday {
-            self.0.day_of_week().into()
+            self.weekday()
+        }
+
+        /// Returns the day in the week for this day
+        #[diplomat::rust_link(icu::calendar::Date::weekday, FnInStruct)]
+        #[diplomat::attr(auto, getter)]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
+        pub fn weekday(&self) -> Weekday {
+            self.0.weekday().into()
         }
 
         /// Returns 1-indexed number of the month of this date in its year

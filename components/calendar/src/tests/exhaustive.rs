@@ -17,11 +17,12 @@ super::test_all_cals!(
             let date = Date::from_rata_die(curr, cal);
             assert!(prev < date);
 
-            let rd = date.to_rata_die();
-            assert_eq!(rd, curr, "{}", cal.as_calendar().debug_name());
-
-            let date2 = Date::new_from_iso(date.to_iso(), cal);
-            assert_eq!(date, date2, "{:?}", cal.as_calendar().debug_name());
+            assert_eq!(
+                date.to_rata_die(),
+                curr,
+                "{}",
+                cal.as_calendar().debug_name()
+            );
 
             prev = date;
             curr += 1;

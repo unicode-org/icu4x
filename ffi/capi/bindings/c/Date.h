@@ -50,6 +50,8 @@ uint8_t icu4x_Date_day_of_month_mv1(const Date* self);
 
 Weekday icu4x_Date_day_of_week_mv1(const Date* self);
 
+Weekday icu4x_Date_weekday_mv1(const Date* self);
+
 uint8_t icu4x_Date_ordinal_month_mv1(const Date* self);
 
 void icu4x_Date_month_code_mv1(const Date* self, DiplomatWrite* write);

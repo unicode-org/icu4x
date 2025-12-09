@@ -1,0 +1,430 @@
+{
+  "fractions": {
+    "ADP": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "AFN": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "ALL": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "AMD": {
+      "digits": 2,
+      "rounding": 0,
+      "cash_digits": 0,
+      "cash_rounding": 0
+    },
+    "BHD": {
+      "digits": 3,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "BIF": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "BYR": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "CAD": {
+      "digits": 2,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": 5
+    },
+    "CHF": {
+      "digits": 2,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": 5
+    },
+    "CLF": {
+      "digits": 4,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "CLP": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "COP": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "CRC": {
+      "digits": 2,
+      "rounding": 0,
+      "cash_digits": 0,
+      "cash_rounding": 0
+    },
+    "CZK": {
+      "digits": 2,
+      "rounding": 0,
+      "cash_digits": 0,
+      "cash_rounding": 0
+    },
+    "DJF": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "DKK": {
+      "digits": 2,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": 50
+    },
+    "ESP": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "GNF": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "GYD": {
+      "digits": 2,
+      "rounding": 0,
+      "cash_digits": 0,
+      "cash_rounding": 0
+    },
+    "HUF": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": 5
+    },
+    "IDR": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "IQD": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "IRR": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "ISK": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "ITL": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "JOD": {
+      "digits": 3,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "JPY": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "KMF": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "KPW": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "KRW": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "KWD": {
+      "digits": 3,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "LAK": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "LBP": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "LUF": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "LYD": {
+      "digits": 3,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "MGA": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "MGF": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "MMK": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "MNT": {
+      "digits": 2,
+      "rounding": 0,
+      "cash_digits": 0,
+      "cash_rounding": 0
+    },
+    "MRO": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "MUR": {
+      "digits": 2,
+      "rounding": 0,
+      "cash_digits": 0,
+      "cash_rounding": 0
+    },
+    "NOK": {
+      "digits": 2,
+      "rounding": 0,
+      "cash_digits": 0,
+      "cash_rounding": 0
+    },
+    "OMR": {
+      "digits": 3,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "PKR": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "PYG": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "RSD": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "RWF": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "SEK": {
+      "digits": 2,
+      "rounding": 0,
+      "cash_digits": 0,
+      "cash_rounding": 0
+    },
+    "SLL": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "SOS": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "STD": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "SYP": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "TMM": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "TND": {
+      "digits": 3,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "TRL": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "TWD": {
+      "digits": 2,
+      "rounding": 0,
+      "cash_digits": 0,
+      "cash_rounding": 0
+    },
+    "TZS": {
+      "digits": 2,
+      "rounding": 0,
+      "cash_digits": 0,
+      "cash_rounding": 0
+    },
+    "UGX": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "UYI": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "UYW": {
+      "digits": 4,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "UZS": {
+      "digits": 2,
+      "rounding": 0,
+      "cash_digits": 0,
+      "cash_rounding": 0
+    },
+    "VEF": {
+      "digits": 2,
+      "rounding": 0,
+      "cash_digits": 0,
+      "cash_rounding": 0
+    },
+    "VND": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "VUV": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "XAF": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "XOF": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "XPF": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "YER": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "ZMK": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    },
+    "ZWD": {
+      "digits": 0,
+      "rounding": 0,
+      "cash_digits": null,
+      "cash_rounding": null
+    }
+  },
+  "default": {
+    "digits": 2,
+    "rounding": 0,
+    "cash_digits": null,
+    "cash_rounding": null
+  }
+}

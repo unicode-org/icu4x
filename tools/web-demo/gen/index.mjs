@@ -442,42 +442,6 @@ let termini = Object.assign({
         ]
     },
 
-    "Date.dayOfWeek": {
-        func: (selfIsoYear, selfIsoMonth, selfIsoDay, selfCalendarKind) => icu.Date.fromIsoInCalendar(selfIsoYear, selfIsoMonth, selfIsoDay, new icu.Calendar(selfCalendarKind)).dayOfWeek,
-        // For avoiding webpacking minifying issues:
-        funcName: "Date.dayOfWeek",
-        expr: (selfIsoYear, selfIsoMonth, selfIsoDay, selfCalendarKind) => "icu.Date.fromIsoInCalendar(selfIsoYear, selfIsoMonth, selfIsoDay, new icu.Calendar(selfCalendarKind)).dayOfWeek".replace(/([\( ])selfIsoYear([,\) \n])/, '$1' + selfIsoYear + '$2').replace(/([\( ])selfIsoMonth([,\) \n])/, '$1' + selfIsoMonth + '$2').replace(/([\( ])selfIsoDay([,\) \n])/, '$1' + selfIsoDay + '$2').replace(/([\( ])selfCalendarKind([,\) \n])/, '$1' + selfCalendarKind + '$2'),
-        display: displayOptionalEnum,
-        parameters: [
-            
-            {
-                name: "self_isoYear",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "self_isoMonth",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "self_isoDay",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "self_calendar_kind",
-                type: "CalendarKind",
-                typeUse: "enumerator",
-                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
-            }
-            
-        ]
-    },
-
     "Date.ordinalMonth": {
         func: (selfIsoYear, selfIsoMonth, selfIsoDay, selfCalendarKind) => icu.Date.fromIsoInCalendar(selfIsoYear, selfIsoMonth, selfIsoDay, new icu.Calendar(selfCalendarKind)).ordinalMonth,
         // For avoiding webpacking minifying issues:
@@ -2639,6 +2603,23 @@ let termini = Object.assign({
         ]
     },
 
+    "IndicConjunctBreak.forChar": {
+        func: (ch) => icu.IndicConjunctBreak.forChar(ch),
+        // For avoiding webpacking minifying issues:
+        funcName: "IndicConjunctBreak.forChar",
+        expr: (ch) => "icu.IndicConjunctBreak.forChar(ch)".replace(/([\( ])ch([,\) \n])/, '$1' + ch + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "ch",
+                type: "codepoint",
+                typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
     "IndicSyllabicCategory.forChar": {
         func: (ch) => icu.IndicSyllabicCategory.forChar(ch),
         // For avoiding webpacking minifying issues:
@@ -2678,6 +2659,23 @@ let termini = Object.assign({
         // For avoiding webpacking minifying issues:
         funcName: "LineBreak.forChar",
         expr: (ch) => "icu.LineBreak.forChar(ch)".replace(/([\( ])ch([,\) \n])/, '$1' + ch + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "ch",
+                type: "codepoint",
+                typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "NumericType.forChar": {
+        func: (ch) => icu.NumericType.forChar(ch),
+        // For avoiding webpacking minifying issues:
+        funcName: "NumericType.forChar",
+        expr: (ch) => "icu.NumericType.forChar(ch)".replace(/([\( ])ch([,\) \n])/, '$1' + ch + '$2'),
         display: displayOptionalEnum,
         parameters: [
             
