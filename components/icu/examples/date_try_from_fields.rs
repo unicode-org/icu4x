@@ -6,6 +6,7 @@
 use icu::calendar::Ref;
 icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
+
 use icu_calendar::types::DateFields;
 use icu_calendar::{AnyCalendar, AnyCalendarKind, Date};
 
@@ -29,6 +30,12 @@ fn main() {
 
         let date = Date::try_from_fields(fields, Default::default(), Ref(&cal));
 
-        println!("Constructed date for {:?} = {:?}", kind, date);
+        let kind_str = format!("{:?}", kind);
+        let date_str = match date {
+            Ok(date) => format!("{:?}", date),
+            Err(err) => format!("Error: {:?}", err),
+        };
+
+        println!("Constructed date for {:?} = {:?}", kind_str, date_str);
     }
 }
