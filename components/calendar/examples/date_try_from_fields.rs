@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![no_main] 
+#![no_main]
 icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
 use icu_calendar::error::DateFromFieldsError;
@@ -12,28 +12,23 @@ use icu_calendar::{AnyCalendar, AnyCalendarKind, Date};
 const CALENDAR_KINDS: &[AnyCalendarKind] = &[
     AnyCalendarKind::Buddhist,
     AnyCalendarKind::Chinese,
-    AnyCalendarKind::Gregorian, 
+    AnyCalendarKind::Gregorian,
     AnyCalendarKind::Indian,
     AnyCalendarKind::Japanese,
     AnyCalendarKind::Ethiopian,
 ];
 
 fn main() {
-
     for &kind in CALENDAR_KINDS {
-    let cal = AnyCalendar::new(kind); 
+        let cal = AnyCalendar::new(kind);
 
-    let mut fields = DateFields::default();
-    fields.extended_year = Some(2025);
-    fields.month_code = Some(b"M07");
-    fields.day = Some(8);
+        let mut fields = DateFields::default();
+        fields.extended_year = Some(2025);
+        fields.month_code = Some(b"M07");
+        fields.day = Some(8);
 
         let date = Date::try_from_fields(fields, Default::default(), cal.clone()).unwrap();
 
-
-    println!("Constructed date for {:?} = {:?}", kind, date);
-
-}
-
-    
+        println!("Constructed date for {:?} = {:?}", kind, date);
+    }
 }
