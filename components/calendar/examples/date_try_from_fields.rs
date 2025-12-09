@@ -5,7 +5,6 @@
 #![no_main]
 icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
-use icu_calendar::error::DateFromFieldsError;
 use icu_calendar::types::DateFields;
 use icu_calendar::{AnyCalendar, AnyCalendarKind, Date};
 
