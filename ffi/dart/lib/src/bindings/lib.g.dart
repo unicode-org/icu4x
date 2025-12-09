@@ -94,6 +94,7 @@ part 'IndicSyllabicCategory.g.dart';
 part 'IsoDate.g.dart';
 part 'IsoDateTime.g.dart';
 part 'IsoWeekOfYear.g.dart';
+part 'JoiningGroup.g.dart';
 part 'JoiningType.g.dart';
 part 'LanguageDisplay.g.dart';
 part 'LeadingAdjustment.g.dart';

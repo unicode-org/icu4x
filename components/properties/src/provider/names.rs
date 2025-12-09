@@ -74,6 +74,12 @@ icu_provider::data_marker!(
     is_singleton = true
 );
 icu_provider::data_marker!(
+    /// `PropertyNameParseJoiningGroupV1`
+    PropertyNameParseJoiningGroupV1,
+    PropertyValueNameToEnumMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
     /// `PropertyNameParseJoiningTypeV1`
     PropertyNameParseJoiningTypeV1,
     PropertyValueNameToEnumMap<'static>,
@@ -196,6 +202,18 @@ icu_provider::data_marker!(
 icu_provider::data_marker!(
     /// `PropertyNameShortIndicConjunctBreakV1`
     PropertyNameShortIndicConjunctBreakV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyNameLongJoiningGroupV1`
+    PropertyNameLongJoiningGroupV1,
+    PropertyEnumToValueNameLinearMap<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyNameShortJoiningGroupV1`
+    PropertyNameShortJoiningGroupV1,
     PropertyEnumToValueNameLinearMap<'static>,
     is_singleton = true
 );

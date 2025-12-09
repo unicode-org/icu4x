@@ -210,6 +210,20 @@ export class CodePointMapData8 {
     static createSentenceBreakWithProvider(provider: DataProvider): CodePointMapData8;
 
     /**
+     * Create a map for the `Joining_Group` property, using compiled data.
+     *
+     * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
+     */
+    static createJoiningGroup(): CodePointMapData8;
+
+    /**
+     * Create a map for the `Joining_Group` property, using a particular data source.
+     *
+     * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
+     */
+    static createJoiningGroupWithProvider(provider: DataProvider): CodePointMapData8;
+
+    /**
      * Create a map for the `Joining_Type` property, using compiled data.
      *
      * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.

@@ -637,6 +637,7 @@ impl SourceDataProvider {
                         ("uprops/small/IDSU.toml", include_bytes!("../../tests/data/icuexport/uprops/small/IDSU.toml").as_slice()),
                         ("uprops/small/InCB.toml", include_bytes!("../../tests/data/icuexport/uprops/small/InCB.toml").as_slice()),
                         ("uprops/small/InSC.toml", include_bytes!("../../tests/data/icuexport/uprops/small/InSC.toml").as_slice()),
+                        ("uprops/small/jg.toml", include_bytes!("../../tests/data/icuexport/uprops/small/jg.toml").as_slice()),
                         ("uprops/small/Join_C.toml", include_bytes!("../../tests/data/icuexport/uprops/small/Join_C.toml").as_slice()),
                         ("uprops/small/jt.toml", include_bytes!("../../tests/data/icuexport/uprops/small/jt.toml").as_slice()),
                         ("uprops/small/lb.toml", include_bytes!("../../tests/data/icuexport/uprops/small/lb.toml").as_slice()),

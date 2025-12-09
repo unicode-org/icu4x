@@ -567,6 +567,47 @@ export class CodePointMapData8 {
     }
 
     /**
+     * Create a map for the `Joining_Group` property, using compiled data.
+     *
+     * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
+     */
+    static createJoiningGroup() {
+
+        const result = wasm.icu4x_CodePointMapData8_create_joining_group_mv1();
+
+        try {
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, result, []);
+        }
+
+        finally {
+        }
+    }
+
+    /**
+     * Create a map for the `Joining_Group` property, using a particular data source.
+     *
+     * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
+     */
+    static createJoiningGroupWithProvider(provider) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_CodePointMapData8_create_joining_group_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
+            }
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    /**
      * Create a map for the `Joining_Type` property, using compiled data.
      *
      * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.

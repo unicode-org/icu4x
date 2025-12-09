@@ -312,6 +312,8 @@ export { IndicConjunctBreak } from "./IndicConjunctBreak"
 
 export { IndicSyllabicCategory } from "./IndicSyllabicCategory"
 
+export { JoiningGroup } from "./JoiningGroup"
+
 export { JoiningType } from "./JoiningType"
 
 export { LineBreak } from "./LineBreak"
