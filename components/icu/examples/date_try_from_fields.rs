@@ -2,8 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![no_main]
-use icu::calendar::Ref;
+#![no_main] // https://github.com/unicode-org/icu4x/issues/395
 icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
 
@@ -28,11 +27,8 @@ fn main() {
         fields.month_code = Some(b"M07");
         fields.day = Some(8);
 
-        let date = Date::try_from_fields(fields, Default::default(), Ref(&cal));
+        let date = Date::try_from_fields(fields, Default::default(), cal).unwrap();
 
-        match date {
-            Ok(date) => println!("The day is {}", date.day_of_month().0),
-            Err(_e) => println!("Not a valid date"),
-        }
+        println!("The day is {}", date.day_of_month().0);
     }
 }
