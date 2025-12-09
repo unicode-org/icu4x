@@ -9,7 +9,6 @@ use icu::properties::provider::{names::*, *};
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
-use std::convert::TryFrom;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ule::NichedOption;
 
@@ -67,21 +66,34 @@ impl SourceDataProvider {
 }
 
 impl super::uprops_serde::enumerated::EnumeratedPropertyMap {
-    pub(crate) fn build_codepointtrie<T: TrieValue>(
+    pub(crate) fn build_codepointtrie<T: TrieValue + Copy>(
         &self,
     ) -> Result<CodePointTrie<'static, T>, DataError> {
-        let code_point_trie = CodePointTrie::try_from(&self.code_point_trie)
-            .map_err(|e| DataError::custom("CPT").with_display_context(&e))?;
-
-        for (cpt_range, raw_range) in code_point_trie.iter_ranges().zip(&self.ranges) {
-            if (cpt_range.range, TrieValue::to_u32(cpt_range.value))
-                != (raw_range.a..=raw_range.b, raw_range.v as u32)
-            {
-                return Err(DataError::custom("precomputed CPT doesn't match ranges"));
-            }
+        let values = self.ranges.iter().flat_map(|r| {
+            let v = T::try_from_u32(r.v as u32).ok().unwrap();
+            (r.a..=r.b).map(move |x| (x, v))
+        });
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        {
+            drop(values);
+            return Err(DataError::custom(
+                "icu_provider_source must be built with `use_icu4c` or `use_wasm` to enumerated properties data",
+            ));
         }
 
-        Ok(code_point_trie)
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        {
+            use icu::collections::codepointtrie::TrieType;
+            use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
+
+            Ok(CodePointTrieBuilder {
+                data: CodePointTrieBuilderData::Map(values.collect()),
+                default_value: T::try_from_u32(0).ok().unwrap(),
+                error_value: T::try_from_u32(0).ok().unwrap(),
+                trie_type: TrieType::Small,
+            }
+            .build())
+        }
     }
 
     pub(crate) fn names_to_values(&self) -> BTreeMap<&str, u16> {
