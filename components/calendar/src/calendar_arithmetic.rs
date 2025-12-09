@@ -197,21 +197,35 @@ pub(crate) trait DateFieldsResolver: Calendar {
     }
 }
 
-#[derive(Debug)]
-struct PreDateFields {
-    extended_year: i32,
-    validated_month_code: Option<Month>,
-    ordinal_month: Option<u8>,
-    day: u8,
+#[derive(Copy, Clone)]
+enum ValidatedYearInput<'a> {
+    Extended(i32),
+    Era(&'a [u8], i32),
+    EcmaReference { month: Month, day: u8 },
 }
 
+#[derive(Copy, Clone)]
+enum ValidatedMonthInput {
+    Resolve(Month),
+    UseOrdinal(u8),
+}
 
-fn preprocess_date_fields(
-    fields: &DateFields,
-    missing: MissingFieldsStrategy,
-) -> Result<PreDateFields, DateFromFieldsError> {
+struct Preparation<'a> {
+    year_input: ValidatedYearInput<'a>,
+    month_input: ValidatedMonthInput,
+    day: u8,
+    overflow: Overflow,
+    check_era_consistency: Option<i32>,
+    check_month_consistency: Option<u8>,
+}
 
-    // day
+#[inline(never)]
+fn prepare_from_fields<'a>(
+    fields: &'a DateFields,
+    options: DateFromFieldsOptions,
+) -> Result<Preparation<'a>, DateFromFieldsError> {
+    let missing = options.missing_fields_strategy.unwrap_or_default();
+
     let day = match fields.day {
         Some(d) => d,
         None => match missing {
@@ -230,92 +244,84 @@ fn preprocess_date_fields(
         return Err(DateFromFieldsError::NotEnoughFields);
     }
 
-    let validated_month_code = match fields.month_code {
-        Some(mc) => Some(Month::try_from_utf8(mc)?),
-        None => None,
+    let validated_month_code = fields.month_code.map(Month::try_from_utf8).transpose()?;
+
+    let (year_input, check_era_consistency) = match (fields.era, fields.era_year) {
+        (None, None) => match fields.extended_year {
+            Some(y) => {
+                let checked = range_check(y, "year", VALID_YEAR_RANGE)?;
+                (ValidatedYearInput::Extended(checked), None)
+            }
+            None => match missing {
+                MissingFieldsStrategy::Reject => return Err(DateFromFieldsError::NotEnoughFields),
+                MissingFieldsStrategy::Ecma => match (validated_month_code, fields.ordinal_month) {
+                    (Some(mc), None) => {
+                        (ValidatedYearInput::EcmaReference { month: mc, day }, None)
+                    }
+                    _ => return Err(DateFromFieldsError::NotEnoughFields),
+                },
+            },
+        },
+        (Some(era), Some(era_year)) => {
+            let checked_era = range_check(era_year.to_extended_year(), "year", VALID_YEAR_RANGE)?;
+            (
+                ValidatedYearInput::Era(era, checked_era),
+                fields.extended_year,
+            )
+        }
+        _ => return Err(DateFromFieldsError::NotEnoughFields),
     };
 
-    
-    let extended_year = fields.extended_year.unwrap_or(0);
+    let month_input = if let Some(mc) = validated_month_code {
+        ValidatedMonthInput::Resolve(mc)
+    } else {
+        ValidatedMonthInput::UseOrdinal(fields.ordinal_month.unwrap_or(1))
+    };
 
-    Ok(PreDateFields {
-        extended_year,
-        validated_month_code,
-        ordinal_month: fields.ordinal_month,
+    let check_month_consistency = if validated_month_code.is_some() {
+        fields.ordinal_month
+    } else {
+        None
+    };
+
+    Ok(Preparation {
+        year_input,
+        month_input,
         day,
+        overflow: options.overflow.unwrap_or_default(),
+        check_era_consistency,
+        check_month_consistency,
     })
 }
 
-struct ResolvedFields {
-    extended_year: i32,
-    month_code: Option<Month>,
-    ordinal_month: Option<u8>,
-    day: u8,
-}
-
-fn resolve_fields_non_generic(
-    fields: &DateFields,
-    pre: PreDateFields,
-    missing: MissingFieldsStrategy,
-) -> Result<ResolvedFields, DateFromFieldsError> {
-   
-    let day = pre.day;
-
-    
-    let month_code = pre.validated_month_code;
-    let ordinal_month = pre.ordinal_month;
-
-    if month_code.is_none() && ordinal_month.is_none() {
-        return Err(DateFromFieldsError::NotEnoughFields);
+#[inline(never)]
+fn finalize_from_fields(
+    computed_year: i32,
+    computed_month: u8,
+    max_month: u8,
+    max_day: u8,
+    prep: &Preparation,
+) -> Result<(u8, u8), DateFromFieldsError> {
+    if let Some(req_ext) = prep.check_era_consistency {
+        if computed_year != req_ext {
+            return Err(DateFromFieldsError::InconsistentYear);
+        }
     }
 
-   
+    range_check(computed_year, "extended_year", VALID_YEAR_RANGE)?;
 
-    let extended_year = match (fields.era, fields.era_year) {
-        (None, None) => {
-            match fields.extended_year {
-                Some(y) => y,
-                None => match missing {
-                    MissingFieldsStrategy::Reject => {
-                        return Err(DateFromFieldsError::NotEnoughFields)
-                    }
-                    MissingFieldsStrategy::Ecma => {
-                        // Valid only if month_code is present AND ordinal_month is absent
-                        match (fields.month_code, fields.ordinal_month) {
-                            (Some(_), None) => {
-                               
-                                0
-                            }
-                            _ => return Err(DateFromFieldsError::NotEnoughFields),
-                        }
-                    }
-                }
-            }
+    if let Some(expected) = prep.check_month_consistency {
+        if computed_month != expected {
+            return Err(DateFromFieldsError::InconsistentMonth);
         }
+    }
 
-        (Some(_era), Some(era_year)) => {
-            if let Some(ext) = fields.extended_year {
-                if ext != era_year.to_extended_year() {
-                    return Err(DateFromFieldsError::InconsistentYear);
-                }
-            }
-            era_year.to_extended_year()
-        }
+    let final_month =
+        range_check_with_overflow(computed_month, "month", 1..=max_month, prep.overflow)?;
+    let final_day = range_check_with_overflow(prep.day, "day", 1..=max_day, prep.overflow)?;
 
-        (Some(_), None) | (None, Some(_)) => {
-            return Err(DateFromFieldsError::NotEnoughFields)
-        }
-    };
-
-    Ok(ResolvedFields {
-        extended_year,
-        month_code,
-        ordinal_month,
-        day,
-    })
+    Ok((final_month, final_day))
 }
-
-
 
 impl<C: DateFieldsResolver> ArithmeticDate<C> {
     pub(crate) fn year(self) -> C::YearInfo {
@@ -377,36 +383,36 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         options: DateFromFieldsOptions,
         calendar: &C,
     ) -> Result<Self, DateFromFieldsError> {
-        let missing = options.missing_fields_strategy.unwrap_or_default();
+        let prep = prepare_from_fields(&fields, options)?;
 
-        let pre = preprocess_date_fields(&fields, missing)?;
-        let resolved = resolve_fields_non_generic(&fields, pre, missing)?;
-
-        let year = calendar.year_info_from_extended(resolved.extended_year);
-        let month = match resolved.month_code {
-            Some(mc) => calendar.ordinal_from_month(year, mc, options)?,
-            None => resolved.ordinal_month.unwrap(),
+        let year_info = match prep.year_input {
+            ValidatedYearInput::Extended(y) => calendar.year_info_from_extended(y),
+            ValidatedYearInput::Era(era_slice, y) => calendar.year_info_from_era(era_slice, y)?,
+            ValidatedYearInput::EcmaReference { month, day } => {
+                calendar.reference_year_from_month_day(month, day)?
+            }
         };
-        let day = resolved.day;
 
-        let month = range_check_with_overflow(
-            month,
-            "month",
-            1..=C::months_in_provided_year(year),
-            options.overflow.unwrap_or_default(),
+        let raw_month = match prep.month_input {
+            ValidatedMonthInput::Resolve(mc) => {
+                calendar.ordinal_from_month(year_info, mc, options)?
+            }
+            ValidatedMonthInput::UseOrdinal(ord) => ord,
+        };
+
+        let max_month = C::months_in_provided_year(year_info);
+        let max_day = C::days_in_provided_month(year_info, raw_month.clamp(1, max_month));
+
+        let (final_month, final_day) = finalize_from_fields(
+            year_info.to_extended_year(),
+            raw_month,
+            max_month,
+            max_day,
+            &prep,
         )?;
 
-        let day = range_check_with_overflow(
-            day,
-            "day",
-            1..=C::days_in_provided_month(year, month),
-            options.overflow.unwrap_or_default(),
-        )?;
-
-        Ok(Self::new_unchecked(year, month, day))
+        Ok(Self::new_unchecked(year_info, final_month, final_day))
     }
-
-
 
     pub(crate) fn from_year_month_day(
         year: i32,
