@@ -13,6 +13,10 @@ const SIMPLE_DATA: &[&str] = &[
     "fr/SA", "fr/UK", "fr/US", "it/IT",
 ];
 
+const NON_EXISTENT_SIMPLE_DATA: &[&str] = &[
+    "ar/IT", "en/ZA", "it/FR", "zh/UK"
+];
+
 fn strings_to_2d_btreemap<'a>(strings: &[&'a str]) -> BTreeMap<&'a str, BTreeMap<&'a str, usize>> {
     let mut map = BTreeMap::<&str, BTreeMap<&str, usize>>::default();
     for (value, (prefix, suffix)) in strings.iter().flat_map(|s| s.split_once('/')).enumerate() {
@@ -32,6 +36,16 @@ fn test_simple() {
             assert_eq!(
                 dense.as_borrowed().get(prefix, suffix),
                 Some(*value),
+                "{prefix}/{suffix}"
+            );
+        }
+    }
+    let non_existent_data_as_map = strings_to_2d_btreemap(&NON_EXISTENT_SIMPLE_DATA);
+    for (prefix, values) in non_existent_data_as_map.iter() {
+        for (suffix, _) in values.iter() {
+            assert_eq!(
+                dense.as_borrowed().get(prefix, suffix),
+                None,
                 "{prefix}/{suffix}"
             );
         }

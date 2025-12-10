@@ -16,7 +16,7 @@ use zerovec::ZeroVec;
 struct Row<'a> {
     prefix: &'a str,
     row_value_offset: usize,
-    offsets: Vec<u16>,
+    offsets: Vec<DenseType>,
 }
 
 #[derive(Default)]
@@ -40,10 +40,11 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
             min = core::cmp::min(min, *value);
             max = core::cmp::max(max, *value);
         }
-        if max - min > usize::from(DenseType::MAX) {
+        // >= because DenseType::MAX is the sentinel
+        if max - min >= usize::from(DenseType::MAX) {
             todo!("need to handle this case: pick the best dense row offset");
         }
-        let sentinel = min + usize::from(u16::MAX);
+        let sentinel = min + usize::from(DenseType::MAX);
         // Partition the entries based on whether they can be encoded as dense
         let (dense_or_sparse, sparse_only) = values
             .iter()
@@ -64,12 +65,12 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
                 .iter()
                 .map(|suffix| {
                     let value = sub_trie.get(suffix).unwrap_or(sentinel);
-                    let Ok(offset) = u16::try_from(value - min) else {
+                    let Ok(offset) = DenseType::try_from(value - min) else {
                         panic!("this should have been handled earlier");
                     };
                     offset
                 })
-                .collect::<Vec<u16>>();
+                .collect::<Vec<DenseType>>();
             self.dense.push(Row {
                 prefix,
                 row_value_offset: min,
@@ -92,7 +93,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
         mut self,
     ) -> Result<DenseSparse2dAsciiWithFixedDelimiterOwned, ZeroTrieBuildError> {
         self.dense.sort();
-        let Ok(suffix_count) = u16::try_from(self.suffixes.len()) else {
+        let Ok(suffix_count) = DenseType::try_from(self.suffixes.len()) else {
             return Err(ZeroTrieBuildError::CapacityExceeded);
         };
         let delimiter = self.delimiter as char;
@@ -107,7 +108,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
             delimited.push_str(suffix);
             primary_contents.insert(delimited, *value);
         }
-        let mut dense = Vec::<u16>::with_capacity(self.dense.len() * self.suffixes.len());
+        let mut dense = Vec::<DenseType>::with_capacity(self.dense.len() * self.suffixes.len());
         for (
             row_index,
             Row {

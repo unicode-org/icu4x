@@ -33,7 +33,7 @@ pub struct DenseSparse2dAsciiWithFixedDelimiterOwned {
 /// A data structure designed for 2-dimensional ASCII keys with a fixed
 /// delimiter that exhibit a mix of density and sparsity.
 pub type DenseSparse2dAsciiWithFixedDelimiterVarULE =
-    VarTupleULE<(u16, u8), Tuple3VarULE<ZeroSlice<u8>, ZeroSlice<u8>, ZeroSlice<u16>>>;
+    VarTupleULE<(u16, u8), Tuple3VarULE<ZeroSlice<u8>, ZeroSlice<u8>, ZeroSlice<DenseType>>>;
 
 /// A data structure designed for 2-dimensional ASCII keys with a fixed
 /// delimiter that exhibit a mix of density and sparsity.
@@ -128,6 +128,10 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBorrowed<'a> {
             debug_assert!(false);
             return None;
         };
+        if offset == DenseType::MAX {
+            // There is an entry in the dense matrix but it is a None value
+            return None;
+        }
         Some(usize::from(offset) + usize::from(row_value_offset))
     }
 }
