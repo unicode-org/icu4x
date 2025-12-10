@@ -4,6 +4,8 @@
 
 //! Data structures combining [`ZeroTrie`] and [`ZeroVec`] to store data
 //! more efficiently.
+//!
+//! [`ZeroTrie`]: crate::ZeroTrie
 
 use crate::ZeroTrieSimpleAscii;
 use zerovec::ule::tuplevar::Tuple3VarULE;
