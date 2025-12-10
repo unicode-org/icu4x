@@ -3938,6 +3938,7 @@ dependencies = [
  "displaydoc",
  "icu_benchmark_macros",
  "icu_locale_core",
+ "itertools 0.14.0",
  "litemap",
  "postcard",
  "rand",

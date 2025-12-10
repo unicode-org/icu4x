@@ -33,6 +33,7 @@ bincode = { workspace = true }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 litemap = { path = "../../utils/litemap" }
 postcard = { workspace = true, features = ["alloc"] }
+itertools = { workspace = true }
 rand = { workspace = true }
 rand_pcg = { workspace = true }
 rmp-serde = { workspace = true }

@@ -15,6 +15,7 @@ use zerovec::ZeroVec;
 
 #[cfg(feature = "alloc")]
 use alloc::vec::Vec;
+use zerovec::vecs::Index32;
 
 pub(crate) type DenseType = u16;
 
@@ -32,8 +33,10 @@ pub struct DenseSparse2dAsciiWithFixedDelimiterOwned {
 
 /// A data structure designed for 2-dimensional ASCII keys with a fixed
 /// delimiter that exhibit a mix of density and sparsity.
-pub type DenseSparse2dAsciiWithFixedDelimiterVarULE =
-    VarTupleULE<(u16, u8), Tuple3VarULE<ZeroSlice<u8>, ZeroSlice<u8>, ZeroSlice<DenseType>>>;
+pub type DenseSparse2dAsciiWithFixedDelimiterVarULE = VarTupleULE<
+    (u16, u8),
+    Tuple3VarULE<ZeroSlice<u8>, ZeroSlice<u8>, ZeroSlice<DenseType>, Index32>,
+>;
 
 /// A data structure designed for 2-dimensional ASCII keys with a fixed
 /// delimiter that exhibit a mix of density and sparsity.
@@ -56,20 +59,6 @@ impl DenseSparse2dAsciiWithFixedDelimiterOwned {
             dense: self.dense.as_slice(),
             suffix_count: self.suffix_count,
             delimiter: self.delimiter,
-        }
-    }
-
-    /// Borrows the structure for encoding into [`zerovec`].
-    pub fn as_encodeable(
-        &self,
-    ) -> impl EncodeAsVarULE<DenseSparse2dAsciiWithFixedDelimiterVarULE> + '_ {
-        VarTuple {
-            sized: (self.suffix_count, self.delimiter),
-            variable: (
-                self.primary.as_bytes(),
-                self.suffixes.as_bytes(),
-                self.dense.as_slice(),
-            ),
         }
     }
 }
@@ -133,5 +122,19 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBorrowed<'a> {
             return None;
         }
         Some(usize::from(offset) + usize::from(row_value_offset))
+    }
+
+    /// Borrows the structure for encoding into [`zerovec`].
+    pub fn as_encodeable(
+        &self,
+    ) -> impl EncodeAsVarULE<DenseSparse2dAsciiWithFixedDelimiterVarULE> + '_ {
+        VarTuple {
+            sized: (self.suffix_count, self.delimiter),
+            variable: (
+                self.primary.as_bytes(),
+                self.suffixes.as_bytes(),
+                self.dense,
+            ),
+        }
     }
 }
