@@ -12,12 +12,13 @@ use zerovec::ule::tuplevar::Tuple3VarULE;
 use zerovec::ule::vartuple::VarTuple;
 use zerovec::ule::vartuple::VarTupleULE;
 use zerovec::ule::EncodeAsVarULE;
+use zerovec::vecs::Index32;
 use zerovec::ZeroSlice;
-use zerovec::ZeroVec;
 
 #[cfg(feature = "alloc")]
 use alloc::vec::Vec;
-use zerovec::vecs::Index32;
+#[cfg(feature = "alloc")]
+use zerovec::ZeroVec;
 
 pub(crate) type DenseType = u16;
 
