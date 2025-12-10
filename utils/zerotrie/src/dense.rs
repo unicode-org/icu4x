@@ -26,7 +26,7 @@ pub(crate) type DenseType = u16;
 /// delimiter that exhibit a mix of density and sparsity.
 #[cfg(feature = "alloc")]
 #[derive(Debug, PartialEq, Eq)]
-pub struct DenseSparse2dAsciiWithFixedDelimiterOwned {
+pub struct ZeroAsciiDenseSparse2dTrieOwned {
     pub(crate) primary: ZeroTrieSimpleAscii<Vec<u8>>,
     pub(crate) suffixes: ZeroTrieSimpleAscii<Vec<u8>>,
     pub(crate) dense: ZeroVec<'static, DenseType>,
@@ -36,7 +36,7 @@ pub struct DenseSparse2dAsciiWithFixedDelimiterOwned {
 
 /// A data structure designed for 2-dimensional ASCII keys with a fixed
 /// delimiter that exhibit a mix of density and sparsity.
-pub type DenseSparse2dAsciiWithFixedDelimiterVarULE = VarTupleULE<
+pub type ZeroAsciiDenseSparse2dTrieVarULE = VarTupleULE<
     (u16, u8),
     Tuple3VarULE<ZeroSlice<u8>, ZeroSlice<u8>, ZeroSlice<DenseType>, Index32>,
 >;
@@ -44,7 +44,7 @@ pub type DenseSparse2dAsciiWithFixedDelimiterVarULE = VarTupleULE<
 /// A data structure designed for 2-dimensional ASCII keys with a fixed
 /// delimiter that exhibit a mix of density and sparsity.
 #[derive(Debug, PartialEq, Eq)]
-pub struct DenseSparse2dAsciiWithFixedDelimiterBorrowed<'a> {
+pub struct ZeroAsciiDenseSparse2dTrieBorrowed<'a> {
     primary: &'a ZeroTrieSimpleAscii<[u8]>,
     suffixes: &'a ZeroTrieSimpleAscii<[u8]>,
     dense: &'a ZeroSlice<DenseType>,
@@ -53,10 +53,10 @@ pub struct DenseSparse2dAsciiWithFixedDelimiterBorrowed<'a> {
 }
 
 #[cfg(feature = "alloc")]
-impl DenseSparse2dAsciiWithFixedDelimiterOwned {
+impl ZeroAsciiDenseSparse2dTrieOwned {
     /// Borrows the structure for querying.
-    pub fn as_borrowed(&self) -> DenseSparse2dAsciiWithFixedDelimiterBorrowed<'_> {
-        DenseSparse2dAsciiWithFixedDelimiterBorrowed {
+    pub fn as_borrowed(&self) -> ZeroAsciiDenseSparse2dTrieBorrowed<'_> {
+        ZeroAsciiDenseSparse2dTrieBorrowed {
             primary: self.primary.as_borrowed(),
             suffixes: self.suffixes.as_borrowed(),
             dense: self.dense.as_slice(),
@@ -66,13 +66,9 @@ impl DenseSparse2dAsciiWithFixedDelimiterOwned {
     }
 }
 
-impl<'a> From<&'a DenseSparse2dAsciiWithFixedDelimiterVarULE>
-    for DenseSparse2dAsciiWithFixedDelimiterBorrowed<'a>
-{
-    fn from(
-        ule: &DenseSparse2dAsciiWithFixedDelimiterVarULE,
-    ) -> DenseSparse2dAsciiWithFixedDelimiterBorrowed<'_> {
-        DenseSparse2dAsciiWithFixedDelimiterBorrowed {
+impl<'a> From<&'a ZeroAsciiDenseSparse2dTrieVarULE> for ZeroAsciiDenseSparse2dTrieBorrowed<'a> {
+    fn from(ule: &ZeroAsciiDenseSparse2dTrieVarULE) -> ZeroAsciiDenseSparse2dTrieBorrowed<'_> {
+        ZeroAsciiDenseSparse2dTrieBorrowed {
             primary: ZeroTrieSimpleAscii::from_bytes(ule.variable.a().as_ule_slice()),
             suffixes: ZeroTrieSimpleAscii::from_bytes(ule.variable.b().as_ule_slice()),
             dense: ule.variable.c(),
@@ -82,7 +78,7 @@ impl<'a> From<&'a DenseSparse2dAsciiWithFixedDelimiterVarULE>
     }
 }
 
-impl<'a> DenseSparse2dAsciiWithFixedDelimiterBorrowed<'a> {
+impl<'a> ZeroAsciiDenseSparse2dTrieBorrowed<'a> {
     /// Queries the data structure for a value
     pub fn get(&self, prefix: &str, suffix: &str) -> Option<usize> {
         let mut cursor = self.primary.cursor();
@@ -128,9 +124,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBorrowed<'a> {
     }
 
     /// Borrows the structure for encoding into [`zerovec`].
-    pub fn as_encodeable(
-        &self,
-    ) -> impl EncodeAsVarULE<DenseSparse2dAsciiWithFixedDelimiterVarULE> + '_ {
+    pub fn as_encodeable(&self) -> impl EncodeAsVarULE<ZeroAsciiDenseSparse2dTrieVarULE> + '_ {
         VarTuple {
             sized: (self.suffix_count, self.delimiter),
             variable: (

@@ -7,9 +7,9 @@ use itertools::Itertools;
 use rand::Rng;
 use rand::SeedableRng;
 use std::collections::BTreeMap;
-use zerotrie::dense::DenseSparse2dAsciiWithFixedDelimiterBorrowed;
-use zerotrie::dense::DenseSparse2dAsciiWithFixedDelimiterOwned;
-use zerotrie::dense::DenseSparse2dAsciiWithFixedDelimiterVarULE;
+use zerotrie::dense::ZeroAsciiDenseSparse2dTrieBorrowed;
+use zerotrie::dense::ZeroAsciiDenseSparse2dTrieOwned;
+use zerotrie::dense::ZeroAsciiDenseSparse2dTrieVarULE;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroCow;
 
@@ -41,7 +41,7 @@ fn strings_to_2d_btreemap<'a>(
 
 fn check_data(
     data: &BTreeMap<&str, BTreeMap<&str, usize>>,
-    trie: DenseSparse2dAsciiWithFixedDelimiterBorrowed,
+    trie: ZeroAsciiDenseSparse2dTrieBorrowed,
     polarity: bool,
 ) {
     for (prefix, values) in data.iter() {
@@ -56,11 +56,10 @@ fn check_data(
 }
 
 #[must_use]
-fn check_encoding(trie: DenseSparse2dAsciiWithFixedDelimiterBorrowed) -> usize {
-    let ule = VarZeroCow::<DenseSparse2dAsciiWithFixedDelimiterVarULE>::from_encodeable(
-        &trie.as_encodeable(),
-    );
-    let decoded = DenseSparse2dAsciiWithFixedDelimiterBorrowed::from(&*ule);
+fn check_encoding(trie: ZeroAsciiDenseSparse2dTrieBorrowed) -> usize {
+    let ule =
+        VarZeroCow::<ZeroAsciiDenseSparse2dTrieVarULE>::from_encodeable(&trie.as_encodeable());
+    let decoded = ZeroAsciiDenseSparse2dTrieBorrowed::from(&*ule);
     assert_eq!(decoded, trie);
     ule.as_bytes().len()
 }
@@ -82,8 +81,7 @@ fn make_simple_ascii_trie(
 fn test_basic() {
     let data_as_map = strings_to_2d_btreemap(BASIC_DATA, "/");
     let dense =
-        DenseSparse2dAsciiWithFixedDelimiterOwned::try_from_btree_map_str(&data_as_map, b'/')
-            .unwrap();
+        ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data_as_map, b'/').unwrap();
     check_data(&data_as_map, dense.as_borrowed(), true);
     let non_existent_data_as_map = strings_to_2d_btreemap(NON_EXISTENT_BASIC_DATA, "/");
     check_data(&non_existent_data_as_map, dense.as_borrowed(), false);
@@ -97,8 +95,7 @@ fn test_basic() {
 fn test_locales_with_aux() {
     let data_as_map = strings_to_2d_btreemap(testdata::locales_with_aux::STRINGS, "-x-");
     let dense =
-        DenseSparse2dAsciiWithFixedDelimiterOwned::try_from_btree_map_str(&data_as_map, b'/')
-            .unwrap();
+        ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data_as_map, b'/').unwrap();
     check_data(&data_as_map, dense.as_borrowed(), true);
     let byte_len = check_encoding(dense.as_borrowed());
     assert_eq!(byte_len, 4045);
@@ -133,8 +130,7 @@ fn test_short_subtags() {
         }
     }
     assert_eq!(data.values().map(|m| m.len()).sum::<usize>(), 175306);
-    let dense =
-        DenseSparse2dAsciiWithFixedDelimiterOwned::try_from_btree_map_str(&data, b'/').unwrap();
+    let dense = ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/').unwrap();
     check_data(&data, dense.as_borrowed(), true);
     let byte_len = check_encoding(dense.as_borrowed());
     assert_eq!(byte_len, 555240);

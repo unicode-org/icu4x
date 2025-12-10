@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::dense::DenseSparse2dAsciiWithFixedDelimiterOwned;
 use crate::dense::DenseType;
+use crate::dense::ZeroAsciiDenseSparse2dTrieOwned;
 use crate::ZeroTrieBuildError;
 use crate::ZeroTrieSimpleAscii;
 use alloc::collections::BTreeMap;
@@ -89,9 +89,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
         }
     }
 
-    pub(crate) fn build(
-        mut self,
-    ) -> Result<DenseSparse2dAsciiWithFixedDelimiterOwned, ZeroTrieBuildError> {
+    pub(crate) fn build(mut self) -> Result<ZeroAsciiDenseSparse2dTrieOwned, ZeroTrieBuildError> {
         self.dense.sort();
         let Ok(suffix_count) = DenseType::try_from(self.suffixes.len()) else {
             return Err(ZeroTrieBuildError::CapacityExceeded);
@@ -131,7 +129,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
             .enumerate()
             .map(|(column_index, suffix)| (*suffix, column_index))
             .collect::<BTreeMap<&str, usize>>();
-        Ok(DenseSparse2dAsciiWithFixedDelimiterOwned {
+        Ok(ZeroAsciiDenseSparse2dTrieOwned {
             primary: ZeroTrieSimpleAscii::try_from_btree_map_str(&primary_contents)?,
             suffixes: ZeroTrieSimpleAscii::try_from_btree_map_str(&suffixes)?,
             dense: ZeroVec::from_slice_or_alloc(dense.as_slice()).into_owned(),
@@ -141,7 +139,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
     }
 }
 
-impl DenseSparse2dAsciiWithFixedDelimiterOwned {
+impl ZeroAsciiDenseSparse2dTrieOwned {
     /// Builds one of these from a two-dimensional BTreeMap.
     pub fn try_from_btree_map_str(
         entries: &BTreeMap<&str, BTreeMap<&str, usize>>,
