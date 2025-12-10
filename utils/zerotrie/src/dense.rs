@@ -23,26 +23,64 @@ use zerovec::ZeroVec;
 pub(crate) type DenseType = u16;
 
 /// A data structure designed for 2-dimensional ASCII keys with a fixed
-/// delimiter that exhibit a mix of density and sparsity.
+/// delimiter that exhibit a mix of density and sparsity (owned version).
+///
+/// It stores prefixes and suffixes separated by a delimiter, which must not
+/// occur in any of the prefix or suffix strings.
+///
+/// This type can deliver data size savings if the suffixes are commonly
+/// repeated. If they are mostly unique, a simple trie is likely better.
+///
+/// # Examples
+///
+/// ```
+/// use std::collections::BTreeMap;
+/// use zerotrie::dense::ZeroAsciiDenseSparse2dTrieOwned;
+///
+/// let mut data: BTreeMap<&str, BTreeMap<&str, usize>> = BTreeMap::new();
+///
+/// data.entry("aaa").or_default().insert("BBB", 1);
+/// data.entry("aaa").or_default().insert("CCC", 2);
+/// data.entry("ddd").or_default().insert("BBB", 3);
+/// data.entry("ddd").or_default().insert("EEE", 4);
+/// data.entry("fff").or_default().insert("BBB", 5);
+///
+/// let trie = ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/').unwrap();
+/// let trie = trie.as_borrowed();
+///
+/// assert_eq!(trie.get("aaa", "CCC"), Some(2));
+/// assert_eq!(trie.get("aaa", "EEE"), None);
+/// ```
 #[cfg(feature = "alloc")]
 #[derive(Debug, PartialEq, Eq)]
 pub struct ZeroAsciiDenseSparse2dTrieOwned {
+    /// The main trie, including all data that isn't in the dense matrix.
+    ///
+    /// There are three types of values stored here:
+    ///
+    /// 1. Prefix: value is row index
+    /// 2. Prefix followed by delimiter: value is row value offset
+    /// 3. Prefix followed by delimiter followed by suffix: a value not in the dense matrix
     pub(crate) primary: ZeroTrieSimpleAscii<Vec<u8>>,
+    /// A trie mapping suffixes to column IDs in the dense matrix.
     pub(crate) suffixes: ZeroTrieSimpleAscii<Vec<u8>>,
+    /// The dense matrix.
     pub(crate) dense: ZeroVec<'static, DenseType>,
+    /// The number of columns in the dense matrix.
     pub(crate) suffix_count: u16,
+    /// The delimiter byte.
     pub(crate) delimiter: u8,
 }
 
 /// A data structure designed for 2-dimensional ASCII keys with a fixed
-/// delimiter that exhibit a mix of density and sparsity.
+/// delimiter that exhibit a mix of density and sparsity (ULE version).
 pub type ZeroAsciiDenseSparse2dTrieVarULE = VarTupleULE<
     (u16, u8),
     Tuple3VarULE<ZeroSlice<u8>, ZeroSlice<u8>, ZeroSlice<DenseType>, Index32>,
 >;
 
 /// A data structure designed for 2-dimensional ASCII keys with a fixed
-/// delimiter that exhibit a mix of density and sparsity.
+/// delimiter that exhibit a mix of density and sparsity (borrowed version).
 #[derive(Debug, PartialEq, Eq)]
 pub struct ZeroAsciiDenseSparse2dTrieBorrowed<'a> {
     primary: &'a ZeroTrieSimpleAscii<[u8]>,

@@ -28,6 +28,7 @@ pub(crate) struct DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
 }
 
 impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
+    /// Add a prefix and all values associated with the prefix to the builder.
     pub(crate) fn add_prefix(
         &mut self,
         prefix: &'a str,
@@ -89,6 +90,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
         }
     }
 
+    /// Assemble the intermediate structures into the final layout.
     pub(crate) fn build(mut self) -> Result<ZeroAsciiDenseSparse2dTrieOwned, ZeroTrieBuildError> {
         self.dense.sort();
         let Ok(suffix_count) = DenseType::try_from(self.suffixes.len()) else {
@@ -98,6 +100,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
         let mut primary_contents = BTreeMap::new();
         for (prefix, suffix, value) in self.primary.iter() {
             if prefix.contains(delimiter) || suffix.contains(delimiter) {
+                debug_assert!(false, "handled earlier");
                 return Err(ZeroTrieBuildError::IllegalDelimiter);
             }
             let mut delimited = String::with_capacity(prefix.len() + suffix.len() + 1);
@@ -140,7 +143,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
 }
 
 impl ZeroAsciiDenseSparse2dTrieOwned {
-    /// Builds one of these from a two-dimensional BTreeMap.
+    /// Builds one of these from a two-dimensional BTreeMap and a delimiter.
     pub fn try_from_btree_map_str(
         entries: &BTreeMap<&str, BTreeMap<&str, usize>>,
         delimiter: u8,
@@ -155,8 +158,18 @@ impl ZeroAsciiDenseSparse2dTrieOwned {
             .values()
             .flat_map(|inner| inner.keys())
             .copied()
-            .collect();
+            .map(|s| {
+                if s.contains(delimiter as char) {
+                    Err(ZeroTrieBuildError::IllegalDelimiter)
+                } else {
+                    Ok(s)
+                }
+            })
+            .collect::<Result<_, ZeroTrieBuildError>>()?;
         for (prefix, values) in entries.iter() {
+            if prefix.contains(delimiter as char) {
+                return Err(ZeroTrieBuildError::IllegalDelimiter);
+            }
             builder.add_prefix(prefix, values)?;
         }
         builder.build()
