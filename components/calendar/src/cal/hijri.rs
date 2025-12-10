@@ -13,9 +13,6 @@ use crate::types::DateFields;
 use crate::types::Month;
 use crate::{types, Calendar, Date};
 use crate::{AsCalendar, RangeError};
-use calendrical_calculations::islamic::{
-    ISLAMIC_EPOCH_FRIDAY, ISLAMIC_EPOCH_THURSDAY, WELL_BEHAVED_ASTRONOMICAL_RANGE,
-};
 use calendrical_calculations::rata_die::RataDie;
 use core::fmt::Debug;
 use icu_locale_core::preferences::extensions::unicode::keywords::{
@@ -166,96 +163,21 @@ impl Rules for AstronomicalSimulation {
     fn year(&self, extended_year: i32) -> HijriYear {
         if let Some(data) = HijriYear::lookup(
             extended_year,
-            simulated_mecca_data::STARTING_YEAR,
-            simulated_mecca_data::DATA,
+            match self.location {
+                SimulatedLocation::Mecca => simulated_mecca_data::STARTING_YEAR,
+            },
+            match self.location {
+                SimulatedLocation::Mecca => simulated_mecca_data::DATA,
+            },
         ) {
-            return data;
+            data
+        } else {
+            TabularAlgorithm {
+                leap_years: TabularAlgorithmLeapYears::TypeII,
+                epoch: TabularAlgorithmEpoch::Friday,
+            }
+            .year(extended_year)
         }
-
-        let location = match self.location {
-            SimulatedLocation::Mecca => calendrical_calculations::islamic::MECCA,
-        };
-
-        let start_day = calendrical_calculations::islamic::fixed_from_observational_islamic(
-            extended_year,
-            1,
-            1,
-            location,
-        );
-        let next_start_day = calendrical_calculations::islamic::fixed_from_observational_islamic(
-            extended_year + 1,
-            1,
-            1,
-            location,
-        );
-        match (next_start_day - start_day) as u16 {
-            355 | 354 => (),
-            353 => {
-                icu_provider::log::trace!(
-                    "({}) Found year {extended_year} AH with length {}. See <https://github.com/unicode-org/icu4x/issues/4930>",
-                    self.debug_name(),
-                    next_start_day - start_day
-                );
-            }
-            other => {
-                debug_assert!(
-                    !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&start_day),
-                    "({}) Found year {extended_year} AH with length {}!",
-                    self.debug_name(),
-                    other
-                )
-            }
-        }
-
-        let month_lengths = {
-            let mut excess_days = 0;
-            let mut month_lengths = core::array::from_fn(|month_idx| {
-                let days_in_month =
-                    calendrical_calculations::islamic::observational_islamic_month_days(
-                        extended_year,
-                        month_idx as u8 + 1,
-                        location,
-                    );
-                match days_in_month {
-                    29 => false,
-                    30 => true,
-                    31 => {
-                        icu_provider::log::trace!(
-                            "({}) Found year {extended_year} AH with month length {days_in_month} for month {}.",
-                            self.debug_name(),
-                            month_idx + 1
-                        );
-                        excess_days += 1;
-                        true
-                    }
-                    _ => {
-                        debug_assert!(
-                            !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&start_day),
-                            "({}) Found year {extended_year} AH with month length {days_in_month} for month {}!",
-                            self.debug_name(),
-                            month_idx + 1
-                        );
-                        false
-                    }
-                }
-            });
-            // To maintain invariants for calendar arithmetic, if astronomy finds
-            // a 31-day month, "move" the day to the first 29-day month in the
-            // same year to maintain all months at 29 or 30 days.
-            if excess_days != 0 {
-                debug_assert!(
-                    excess_days == 1 || !WELL_BEHAVED_ASTRONOMICAL_RANGE.contains(&start_day),
-                    "({}) Found year {extended_year} AH with more than one excess day!",
-                    self.debug_name()
-                );
-                if let Some(l) = month_lengths.iter_mut().find(|l| !(**l)) {
-                    *l = true;
-                }
-            }
-            month_lengths
-        };
-        HijriYear::try_new(extended_year, start_day, month_lengths)
-            .unwrap_or_else(|| UmmAlQura.year(extended_year))
     }
 }
 
@@ -498,8 +420,8 @@ pub enum TabularAlgorithmEpoch {
 impl TabularAlgorithmEpoch {
     fn rata_die(self) -> RataDie {
         match self {
-            Self::Thursday => ISLAMIC_EPOCH_THURSDAY,
-            Self::Friday => ISLAMIC_EPOCH_FRIDAY,
+            Self::Thursday => calendrical_calculations::islamic::ISLAMIC_EPOCH_THURSDAY,
+            Self::Friday => calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY,
         }
     }
 }
@@ -1273,27 +1195,27 @@ mod test {
         DateCase {
             year: -1245,
             month: 12,
-            day: 10,
+            day: 9,
         },
         DateCase {
             year: -813,
             month: 2,
-            day: 25,
+            day: 23,
         },
         DateCase {
             year: -568,
             month: 4,
-            day: 2,
+            day: 1,
         },
         DateCase {
             year: -501,
             month: 4,
-            day: 7,
+            day: 6,
         },
         DateCase {
             year: -157,
             month: 10,
-            day: 18,
+            day: 17,
         },
         DateCase {
             year: -47,
@@ -1328,7 +1250,7 @@ mod test {
         DateCase {
             year: 687,
             month: 2,
-            day: 21,
+            day: 20,
         },
         DateCase {
             year: 697,
@@ -1337,8 +1259,8 @@ mod test {
         },
         DateCase {
             year: 793,
-            month: 6,
-            day: 29,
+            month: 7,
+            day: 1,
         },
         DateCase {
             year: 839,
@@ -1348,7 +1270,7 @@ mod test {
         DateCase {
             year: 897,
             month: 6,
-            day: 2,
+            day: 1,
         },
         DateCase {
             year: 960,
@@ -1368,7 +1290,7 @@ mod test {
         DateCase {
             year: 1091,
             month: 6,
-            day: 3,
+            day: 2,
         },
         DateCase {
             year: 1128,
@@ -1378,7 +1300,7 @@ mod test {
         DateCase {
             year: 1182,
             month: 2,
-            day: 4,
+            day: 3,
         },
         DateCase {
             year: 1234,
