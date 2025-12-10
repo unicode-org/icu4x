@@ -85,7 +85,7 @@ fn test_basic() {
         DenseSparse2dAsciiWithFixedDelimiterOwned::try_from_btree_map_str(&data_as_map, b'/')
             .unwrap();
     check_data(&data_as_map, dense.as_borrowed(), true);
-    let non_existent_data_as_map = strings_to_2d_btreemap(&NON_EXISTENT_BASIC_DATA, "/");
+    let non_existent_data_as_map = strings_to_2d_btreemap(NON_EXISTENT_BASIC_DATA, "/");
     check_data(&non_existent_data_as_map, dense.as_borrowed(), false);
     let byte_len = check_encoding(dense.as_borrowed());
     assert_eq!(byte_len, 106);

@@ -121,7 +121,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBorrowed<'a> {
             // There is an entry in the dense matrix but it is a None value
             return None;
         }
-        Some(usize::from(offset) + usize::from(row_value_offset))
+        Some(usize::from(offset) + row_value_offset)
     }
 
     /// Borrows the structure for encoding into [`zerovec`].

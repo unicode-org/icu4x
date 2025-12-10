@@ -66,7 +66,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
                 .map(|suffix| {
                     let value = sub_trie.get(suffix).unwrap_or(sentinel);
                     let Ok(offset) = DenseType::try_from(value - min) else {
-                        panic!("this should have been handled earlier");
+                        unreachable!("this should have been handled earlier");
                     };
                     offset
                 })
@@ -147,8 +147,10 @@ impl DenseSparse2dAsciiWithFixedDelimiterOwned {
         entries: &BTreeMap<&str, BTreeMap<&str, usize>>,
         delimiter: u8,
     ) -> Result<Self, ZeroTrieBuildError> {
-        let mut builder = DenseSparse2dAsciiWithFixedDelimiterBuilder::default();
-        builder.delimiter = delimiter;
+        let mut builder = DenseSparse2dAsciiWithFixedDelimiterBuilder {
+            delimiter,
+            ..Default::default()
+        };
         // TODO: Prune low-frequency suffixes.
         // For now, build with all suffixes.
         builder.suffixes = entries
