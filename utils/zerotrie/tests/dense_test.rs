@@ -149,9 +149,9 @@ fn test_dense_sparse_window_selection() {
 
     let mut inner = BTreeMap::new();
     inner.insert("low", far_low);
-    inner.insert("a", cluster_vals[0]);
-    inner.insert("b", cluster_vals[1]);
-    inner.insert("c", cluster_vals[2]);
+    inner.insert("a", cluster_vals.get(0));
+    inner.insert("b", cluster_vals.get(1));
+    inner.insert("c", cluster_vals.get(2));
     inner.insert("high", far_high);
 
     let mut data = BTreeMap::new();
@@ -162,9 +162,9 @@ fn test_dense_sparse_window_selection() {
         ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/').unwrap();
     let trie = dense.as_borrowed();
 
-    assert_eq!(trie.get("p", "a"), Some(cluster_vals[0]));
-    assert_eq!(trie.get("p", "b"), Some(cluster_vals[1]));
-    assert_eq!(trie.get("p", "c"), Some(cluster_vals[2]));
+    assert_eq!(trie.get("p", "a"), Some(cluster_vals.get(0)));
+    assert_eq!(trie.get("p", "b"), Some(cluster_vals.get(1)));
+    assert_eq!(trie.get("p", "c"), Some(cluster_vals.get(2)));
     assert_eq!(trie.get("p", "low"), Some(far_low));
     assert_eq!(trie.get("p", "high"), Some(far_high));
 

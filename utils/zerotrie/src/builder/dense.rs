@@ -39,7 +39,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
         let mut best = 0;
         let mut best_index = 0;
         for top in 0..sorted_vals.len() {
-            while bot <= top && sorted_vals[top] - sorted_vals[bot] >= row_width {
+            while bot <= top && sorted_vals.get(top) - sorted_vals.get(bot) >= row_width {
                 bot += 1;
             }
             if (top - bot + 1) > best {
@@ -47,7 +47,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
                 best_index = bot;
             }
         }
-        sorted_vals[best_index]
+        sorted_vals.get(best_index)
     }
     
     /// Add a prefix and all values associated with the prefix to the builder.
