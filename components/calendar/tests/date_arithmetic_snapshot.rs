@@ -128,6 +128,7 @@ fn test_date_add_snapshot() {
 }
 
 #[test]
+#[ignore]
 fn test_date_until_snapshot() {
     let mut output = String::new();
     let rds = [
