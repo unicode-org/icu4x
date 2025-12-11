@@ -43,7 +43,10 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
         }
         // >= because DenseType::MAX is the sentinel
         if max - min >= usize::from(DenseType::MAX) {
-            todo!("need to handle this case: pick the best dense row offset");
+            // How to implement this when we need it:
+            // 1. Select the row offset that gets the greatest number of values into the dense matrix.
+            // 2. Put all out-of-range values into the primary trie, as we do with sparse rows.
+            todo!("values in row are not in a sufficiently compact range");
         }
         let sentinel = min + usize::from(DenseType::MAX);
         // Partition the entries based on whether they can be encoded as dense
@@ -61,12 +64,13 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
             .collect::<ZeroTrieSimpleAscii<Vec<u8>>>();
         if sub_trie.byte_len() > self.suffixes.len() * core::mem::size_of::<DenseType>() {
             // Create a dense prefix
+            let row_value_offset = min;
             let offsets = self
                 .suffixes
                 .iter()
                 .map(|suffix| {
                     let value = sub_trie.get(suffix).unwrap_or(sentinel);
-                    let Ok(offset) = DenseType::try_from(value - min) else {
+                    let Ok(offset) = DenseType::try_from(value - row_value_offset) else {
                         unreachable!("this should have been handled earlier");
                     };
                     offset
@@ -74,7 +78,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
                 .collect::<Vec<DenseType>>();
             self.dense.push(Row {
                 prefix,
-                row_value_offset: min,
+                row_value_offset,
                 offsets,
             });
             for (suffix, value) in sparse_only.iter() {
@@ -144,6 +148,11 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
 
 impl ZeroAsciiDenseSparse2dTrieOwned {
     /// Builds one of these from a two-dimensional BTreeMap and a delimiter.
+    ///
+    /// Keep in mind the recommendations for optimal data size described in
+    /// the [class docs].
+    ///
+    /// [class docs]: ZeroAsciiDenseSparse2dTrieOwned
     pub fn try_from_btree_map_str(
         entries: &BTreeMap<&str, BTreeMap<&str, usize>>,
         delimiter: u8,

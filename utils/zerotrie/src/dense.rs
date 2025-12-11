@@ -22,14 +22,30 @@ use zerovec::ZeroVec;
 
 pub(crate) type DenseType = u16;
 
-/// A data structure designed for 2-dimensional ASCII keys with a fixed
-/// delimiter that exhibit a mix of density and sparsity (owned version).
+/// A data structure designed for 2-dimensional ASCII keys that exhibit a mix
+/// of density and sparsity.
 ///
-/// It stores prefixes and suffixes separated by a delimiter, which must not
-/// occur in any of the prefix or suffix strings.
+/// This structure is best for data with the following properties:
 ///
-/// This type can deliver data size savings if the suffixes are commonly
-/// repeated. If they are mostly unique, a simple trie is likely better.
+/// 1. Suffixes are commonly repeated. For example, the two-dimentional keys
+///    "aa/ZZ" and "bb/ZZ" have the same suffix (second-level key).
+/// 1. Some prefixes are sparse (contain just a few suffixes) while others are
+///    dense (contain many/most of the suffixes).
+/// 1. Values are mostly in a compact range within a prefix. For example, for
+///    the keys "qq/AA", "qq/BB", and "qq/CC", the values 100, 101, and 103
+///    are in a compact range, but the values 1, 500, and 7e8 are not.
+///
+/// Instead of having a pluggable store like [`ZeroTrie`], there are three
+/// separate versions of this type:
+///
+/// 1. [`ZeroAsciiDenseSparse2dTrieOwned`], which owns its data
+/// 1. [`ZeroAsciiDenseSparse2dTrieBorrowed`], which borrows its data
+/// 1. [`ZeroAsciiDenseSparse2dTrieVarULE`], for zero-copy storage as bytes
+///
+/// Internally, the structure stores prefixes and suffixes separated by a
+/// delimiter, which must not occur in any of the prefix or suffix strings.
+///
+/// ✨ *Enabled with the `alloc` and `dense` Cargo features.*
 ///
 /// # Examples
 ///
@@ -64,7 +80,25 @@ pub struct ZeroAsciiDenseSparse2dTrieOwned {
     pub(crate) primary: ZeroTrieSimpleAscii<Vec<u8>>,
     /// A trie mapping suffixes to column IDs in the dense matrix.
     pub(crate) suffixes: ZeroTrieSimpleAscii<Vec<u8>>,
-    /// The dense matrix.
+    /// The dense matrix. To look up a value from the dense matrix:
+    ///
+    /// 1. Find the row index and row value offset from [`Self::primary`]
+    /// 2. Find the column index from [`Self::suffixes`]
+    /// 3. Find the number of columns from [`Self::suffix_count`]
+    /// 4. Select the entry from the matrix based on the row and column index.
+    /// 5. Add the row value offset to recover the original value.
+    ///
+    /// The row value offset exists in order to allow storage of rows with
+    /// values that are tight in a certain range, but when that range exceeds
+    /// the capacity of [`DenseType`], such as 100000, 100001, and 100002.
+    ///
+    /// For example: suppose you are looking up "ddd/ZZ".
+    ///
+    /// 1. Check the primary matrix. Row index is 4, row value offset 100.
+    /// 2. Check the suffixes matrix. Column index is 19.
+    /// 3. Check the number of columns. There are 30 columns.
+    /// 4. Select the value at index (30*4)+19 = 139. It is 15.
+    /// 5. Add 100 to recover the original value. Return 115.
     pub(crate) dense: ZeroVec<'static, DenseType>,
     /// The number of columns in the dense matrix.
     pub(crate) suffix_count: u16,
@@ -72,15 +106,23 @@ pub struct ZeroAsciiDenseSparse2dTrieOwned {
     pub(crate) delimiter: u8,
 }
 
-/// A data structure designed for 2-dimensional ASCII keys with a fixed
-/// delimiter that exhibit a mix of density and sparsity (ULE version).
+/// A data structure designed for 2-dimensional ASCII keys that exhibit a mix
+/// of density and sparsity.
+///
+/// For more details, see [`ZeroAsciiDenseSparse2dTrieOwned`].
+///
+/// ✨ *Enabled with the `dense` Cargo feature.*
 pub type ZeroAsciiDenseSparse2dTrieVarULE = VarTupleULE<
     (u16, u8),
     Tuple3VarULE<ZeroSlice<u8>, ZeroSlice<u8>, ZeroSlice<DenseType>, Index32>,
 >;
 
-/// A data structure designed for 2-dimensional ASCII keys with a fixed
-/// delimiter that exhibit a mix of density and sparsity (borrowed version).
+/// A data structure designed for 2-dimensional ASCII keys that exhibit a mix
+/// of density and sparsity.
+///
+/// For more details, see [`ZeroAsciiDenseSparse2dTrieOwned`].
+///
+/// ✨ *Enabled with the `dense` Cargo feature.*
 #[derive(Debug, PartialEq, Eq)]
 pub struct ZeroAsciiDenseSparse2dTrieBorrowed<'a> {
     primary: &'a ZeroTrieSimpleAscii<[u8]>,
