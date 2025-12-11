@@ -29,6 +29,27 @@ pub(crate) struct DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
 
 impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
     /// Add a prefix and all values associated with the prefix to the builder.
+    fn find_window(
+        values: &BTreeMap<&'a str, usize>
+    ) -> usize {
+        let mut sorted_vals: Vec<usize> = values.values().cloned().collect();
+        let row_width = usize::from(DenseType::MAX);
+        sorted_vals.sort_unstable();
+        let mut bot = 0;
+        let mut best = 0;
+        let mut best_index = 0;
+        for top in 0..sorted_vals.len() {
+            while bot <= top && sorted_vals[top] - sorted_vals[bot] >= row_width {
+                bot += 1;
+            }
+            if (top - bot + 1) > best {
+                best = top - bot + 1;
+                best_index = bot;
+            }
+        }
+        sorted_vals[best_index]
+    }
+    
     pub(crate) fn add_prefix(
         &mut self,
         prefix: &'a str,
@@ -42,20 +63,17 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
             max = core::cmp::max(max, *value);
         }
         // >= because DenseType::MAX is the sentinel
+        let mut row_value_offset = min;
         if max - min >= usize::from(DenseType::MAX) {
-            // TODO(#7303): How to implement this when we need it:
-            // 1. Select the row offset that gets the greatest number of values into the dense matrix.
-            // 2. Put all out-of-range values into the primary trie, as we do with sparse rows.
-            todo!("values in row are not in a sufficiently compact range");
+            row_value_offset = Self::find_window(values);
         }
-        let sentinel = min + usize::from(DenseType::MAX);
+        let sentinel = row_value_offset + usize::from(DenseType::MAX);
         // Partition the entries based on whether they can be encoded as dense
         let (dense_or_sparse, sparse_only) = values
             .iter()
             .map(|(suffix, value)| (*suffix, *value))
-            .partition::<BTreeMap<&'a str, usize>, _>(|(suffix, _value)| {
-                // TODO(#7303): Also filter for suffixes that are out of range of the dense row offset
-                self.suffixes.contains(suffix)
+            .partition::<BTreeMap<&'a str, usize>, _>(|(suffix, value)| {
+                self.suffixes.contains(suffix) && *value >= row_value_offset && *value < row_value_offset + usize::from(DenseType::MAX)
             });
         // Check whether the sparse trie is smaller than the dense row
         let sub_trie = dense_or_sparse
@@ -64,7 +82,6 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
             .collect::<ZeroTrieSimpleAscii<Vec<u8>>>();
         if sub_trie.byte_len() > self.suffixes.len() * core::mem::size_of::<DenseType>() {
             // Create a dense prefix
-            let row_value_offset = min;
             let offsets = self
                 .suffixes
                 .iter()
