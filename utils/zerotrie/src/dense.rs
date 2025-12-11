@@ -67,6 +67,8 @@ pub(crate) type DenseType = u16;
 /// assert_eq!(trie.get("aaa", "CCC"), Some(2));
 /// assert_eq!(trie.get("aaa", "EEE"), None);
 /// ```
+///
+/// [`ZeroTrie`]: crate::ZeroTrie
 #[cfg(feature = "alloc")]
 #[derive(Debug, PartialEq, Eq)]
 pub struct ZeroAsciiDenseSparse2dTrieOwned {
