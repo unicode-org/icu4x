@@ -2,31 +2,37 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::{
-    options::DateAddOptions, types::DateDuration, AnyCalendar, AnyCalendarKind, Date,
-};
+use icu_calendar::options::{DateAddOptions, DateDifferenceOptions};
+use icu_calendar::types::{DateDuration, DateDurationUnit, RataDie};
+use icu_calendar::{AnyCalendar, AnyCalendarKind, Date, Ref};
 use insta::assert_snapshot;
 use std::fmt::Write;
 
-const CALENDARS: &[AnyCalendarKind] = &[
-    AnyCalendarKind::Iso,
-    AnyCalendarKind::Gregorian,
-    AnyCalendarKind::Buddhist,
-    AnyCalendarKind::Chinese,
-    AnyCalendarKind::Coptic,
-    AnyCalendarKind::Dangi,
-    AnyCalendarKind::Ethiopian,
-    AnyCalendarKind::EthiopianAmeteAlem,
-    AnyCalendarKind::Hebrew,
-    AnyCalendarKind::HijriSimulatedMecca,
-    AnyCalendarKind::HijriTabularTypeIIFriday,
-    AnyCalendarKind::HijriTabularTypeIIThursday,
-    AnyCalendarKind::HijriUmmAlQura,
-    AnyCalendarKind::Indian,
-    AnyCalendarKind::Japanese,
-    AnyCalendarKind::JapaneseExtended,
-    AnyCalendarKind::Persian,
-    AnyCalendarKind::Roc,
+const CALENDARS: &[AnyCalendar] = &[
+    AnyCalendar::new(AnyCalendarKind::Iso),
+    AnyCalendar::new(AnyCalendarKind::Gregorian),
+    AnyCalendar::new(AnyCalendarKind::Buddhist),
+    AnyCalendar::new(AnyCalendarKind::Chinese),
+    AnyCalendar::new(AnyCalendarKind::Coptic),
+    AnyCalendar::new(AnyCalendarKind::Dangi),
+    AnyCalendar::new(AnyCalendarKind::Ethiopian),
+    AnyCalendar::new(AnyCalendarKind::EthiopianAmeteAlem),
+    AnyCalendar::new(AnyCalendarKind::Hebrew),
+    AnyCalendar::new(AnyCalendarKind::HijriTabularTypeIIFriday),
+    AnyCalendar::new(AnyCalendarKind::HijriTabularTypeIIThursday),
+    AnyCalendar::new(AnyCalendarKind::HijriUmmAlQura),
+    AnyCalendar::new(AnyCalendarKind::Indian),
+    AnyCalendar::new(AnyCalendarKind::Japanese),
+    AnyCalendar::new(AnyCalendarKind::JapaneseExtended),
+    AnyCalendar::new(AnyCalendarKind::Persian),
+    AnyCalendar::new(AnyCalendarKind::Roc),
+];
+
+const UNITS: &[DateDurationUnit] = &[
+    DateDurationUnit::Years,
+    DateDurationUnit::Months,
+    DateDurationUnit::Weeks,
+    DateDurationUnit::Days,
 ];
 
 #[test]
@@ -70,16 +76,16 @@ fn test_date_add_snapshot() {
     for (y, m, d) in &iso_dates {
         writeln!(&mut output, "{}-{}-{}", y, m, d).unwrap();
 
-        for cal_kind in CALENDARS {
-            let cal = AnyCalendar::new(*cal_kind);
+        for cal in CALENDARS {
+            let cal = Ref(cal);
             let start_date = Date::try_new_iso(*y, *m, *d)
                 .expect("Valid ISO date")
-                .to_calendar(cal.clone());
+                .to_calendar(cal);
 
-            writeln!(&mut output, "  {:?} (start: {:?})", cal_kind, start_date).unwrap();
+            writeln!(&mut output, "  {:?} (start: {:?})", cal.kind(), start_date).unwrap();
 
             for duration in &durations {
-                let mut date = start_date.clone();
+                let mut date = start_date;
 
                 date.try_add_with_options(*duration, opts)
                     .expect("Addition should succeed");
@@ -119,4 +125,33 @@ fn test_date_add_snapshot() {
     }
 
     assert_snapshot!("date_add_snapshot", output);
+}
+
+#[test]
+fn test_date_until_snapshot() {
+    let mut output = String::new();
+    let rds = [
+        -1000, 0, 10000, 25145, 25317, 25340, 25344, 25345, 25355, 25356, 25700,
+    ]
+    .map(RataDie::new);
+    for date1 in rds {
+        for date2 in rds {
+            writeln!(&mut output, "{date2:?} - {date1:?}").unwrap();
+            for calendar in CALENDARS {
+                let kind = calendar.kind();
+                let cal = Ref(calendar);
+                let date1 = Date::from_rata_die(date1, cal);
+                let date2 = Date::from_rata_die(date2, cal);
+                writeln!(&mut output, " {kind}: {date2:?} - {date1:?}").unwrap();
+                for unit in UNITS {
+                    let mut options = DateDifferenceOptions::default();
+                    options.largest_unit = Some(*unit);
+                    let until = date1.try_until_with_options(&date2, options).unwrap();
+                    writeln!(&mut output, "  {unit:?}: {until:?}").unwrap();
+                }
+            }
+        }
+    }
+
+    assert_snapshot!("date_until_snapshot", output);
 }
