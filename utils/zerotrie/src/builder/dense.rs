@@ -54,7 +54,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
             .iter()
             .map(|(suffix, value)| (*suffix, *value))
             .partition::<BTreeMap<&'a str, usize>, _>(|(suffix, _value)| {
-                // TODO(#7302): Also filter for suffixes that are out of range of the dense row offset
+                // TODO(#7303): Also filter for suffixes that are out of range of the dense row offset
                 self.suffixes.contains(suffix)
             });
         // Check whether the sparse trie is smaller than the dense row
