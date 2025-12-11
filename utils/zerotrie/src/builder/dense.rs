@@ -12,6 +12,10 @@ use alloc::string::String;
 use alloc::vec::Vec;
 use zerovec::ZeroVec;
 
+// === Dense suffix filtering tuning constants 
+const MIN_DENSE_PERCENT: usize = 2; // Require suffix to appear in >=2% of prefixes
+const FALLBACK_TOP_K: usize = 64;   // Fallback count when threshold selects none
+
 #[derive(PartialEq, Eq, PartialOrd, Ord)]
 struct Row<'a> {
     prefix: &'a str,
@@ -146,13 +150,18 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
     }
 }
 
+
+
+
 impl ZeroAsciiDenseSparse2dTrieOwned {
     /// Builds one of these from a two-dimensional BTreeMap and a delimiter.
     ///
-    /// Keep in mind the recommendations for optimal data size described in
-    /// the [class docs].
-    ///
-    /// [class docs]: ZeroAsciiDenseSparse2dTrieOwned
+    /// TODO(#7302): Prune low-frequency suffixes from the dense matrix.
+    /// The heuristic below selects suffixes that appear in at least
+    /// `max(2, ceil(total_prefixes * MIN_DENSE_PERCENT / 100))` distinct prefixes.
+    /// If none qualify, it falls back to top-FALLBACK_TOP_K suffixes by prefix count,
+    /// then uses lexicographic ordering for stable dense matrix columns.
+
     pub fn try_from_btree_map_str(
         entries: &BTreeMap<&str, BTreeMap<&str, usize>>,
         delimiter: u8,
@@ -161,26 +170,68 @@ impl ZeroAsciiDenseSparse2dTrieOwned {
             delimiter,
             ..Default::default()
         };
-        // TODO(#7302): Prune low-frequency suffixes.
-        // For now, build with all suffixes.
-        builder.suffixes = entries
-            .values()
-            .flat_map(|inner| inner.keys())
-            .copied()
-            .map(|s| {
-                if s.contains(delimiter as char) {
-                    Err(ZeroTrieBuildError::IllegalDelimiter)
-                } else {
-                    Ok(s)
-                }
-            })
-            .collect::<Result<_, ZeroTrieBuildError>>()?;
-        for (prefix, values) in entries.iter() {
+
+        // Validate prefixes
+        for prefix in entries.keys() {
             if prefix.contains(delimiter as char) {
                 return Err(ZeroTrieBuildError::IllegalDelimiter);
             }
+        }
+
+        // Count how many prefixes each suffix appears in
+        let mut suffix_prefix_count: BTreeMap<&str, usize> = BTreeMap::new();
+        for (_prefix, inner) in entries.iter() {
+            for suffix in inner.keys() {
+                *suffix_prefix_count.entry(*suffix).or_insert(0) += 1;
+            }
+        }
+
+        let total_prefixes = entries.len();
+
+        let computed_min =
+            (total_prefixes.saturating_mul(MIN_DENSE_PERCENT) + 99) / 100;
+
+        let min_prefixes = core::cmp::max(2usize, computed_min);
+
+        // Select suffixes meeting the threshold
+        let mut dense_candidates: Vec<(&str, usize)> = suffix_prefix_count
+            .iter()
+            .map(|(&s, &cnt)| (s, cnt))
+            .filter(|&(_s, cnt)| cnt >= min_prefixes)
+            .collect();
+
+        // Fallback: top-K suffixes by prefix count
+        if dense_candidates.is_empty() {
+            let mut all_suffixes: Vec<(&str, usize)> =
+                suffix_prefix_count.into_iter().collect();
+
+            all_suffixes.sort_by(|a, b| {
+                b.1.cmp(&a.1).then_with(|| a.0.cmp(b.0)) // deterministic
+            });
+
+            dense_candidates = all_suffixes
+                .into_iter()
+                .take(FALLBACK_TOP_K)
+                .collect();
+        }
+
+        // Final deterministic ordering
+        dense_candidates.sort_by(|a, b| a.0.cmp(b.0));
+
+        // Store selected suffixes
+        for (suffix, _) in dense_candidates.into_iter() {
+            if suffix.contains(delimiter as char) {
+                return Err(ZeroTrieBuildError::IllegalDelimiter);
+            }
+            builder.suffixes.insert(suffix);
+        }
+
+        // Build rows
+        for (prefix, values) in entries.iter() {
             builder.add_prefix(prefix, values)?;
         }
+
         builder.build()
     }
 }
+
