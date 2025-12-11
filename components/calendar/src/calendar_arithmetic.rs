@@ -195,9 +195,17 @@ pub(crate) trait DateFieldsResolver: Calendar {
     fn month_from_ordinal(&self, _year: Self::YearInfo, ordinal_month: u8) -> Month {
         Month::new_unchecked(ordinal_month, types::LeapStatus::Normal)
     }
+
+    // Date-to-RD conversion
+    // Used internally for implementing date arithmetic
+    fn to_rata_die_inner(year: Self::YearInfo, month: u8, day: u8) -> RataDie;
 }
 
 impl<C: DateFieldsResolver> ArithmeticDate<C> {
+    pub(crate) fn to_rata_die(self) -> RataDie {
+        C::to_rata_die_inner(self.year(), self.month(), self.day())
+    }
+
     pub(crate) fn year(self) -> C::YearInfo {
         C::YearInfo::unpack_year(self.0)
     }

@@ -221,6 +221,10 @@ impl DateFieldsResolver for Hebrew {
             },
         )
     }
+
+    fn to_rata_die_inner(year: Self::YearInfo, month: u8, day: u8) -> RataDie {
+        year.new_year() + year.keviyah.days_preceding(month) as i64 + (day - 1) as i64
+    }
 }
 
 impl crate::cal::scaffold::UnstableSealed for Hebrew {}
@@ -267,9 +271,7 @@ impl Calendar for Hebrew {
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        date.0.year().new_year()
-            + date.0.year().keviyah.days_preceding(date.0.month()) as i64
-            + (date.0.day() - 1) as i64
+        date.0.to_rata_die()
     }
 
     fn has_cheap_iso_conversion(&self) -> bool {
