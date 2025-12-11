@@ -28,7 +28,7 @@ pub(crate) struct DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
 }
 
 impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
-    /// Add a prefix and all values associated with the prefix to the builder.
+    ///Helper function: finds best row offset when value range too large for dense matrix
     fn find_window(
         values: &BTreeMap<&'a str, usize>
     ) -> usize {
@@ -50,6 +50,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
         sorted_vals[best_index]
     }
     
+    /// Add a prefix and all values associated with the prefix to the builder.
     pub(crate) fn add_prefix(
         &mut self,
         prefix: &'a str,
