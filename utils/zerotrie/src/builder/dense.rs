@@ -34,7 +34,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
         prefix: &'a str,
         values: &BTreeMap<&'a str, usize>,
     ) -> Result<(), ZeroTrieBuildError> {
-        // TODO: Is there a more Rusty way to compute min and max together?
+        // Is there a more Rusty way to compute min and max together?
         let mut min = usize::MAX;
         let mut max = 0;
         for value in values.values() {
@@ -43,7 +43,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
         }
         // >= because DenseType::MAX is the sentinel
         if max - min >= usize::from(DenseType::MAX) {
-            // How to implement this when we need it:
+            // TODO(#7303): How to implement this when we need it:
             // 1. Select the row offset that gets the greatest number of values into the dense matrix.
             // 2. Put all out-of-range values into the primary trie, as we do with sparse rows.
             todo!("values in row are not in a sufficiently compact range");
@@ -54,7 +54,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
             .iter()
             .map(|(suffix, value)| (*suffix, *value))
             .partition::<BTreeMap<&'a str, usize>, _>(|(suffix, _value)| {
-                // TODO: Also filter for suffixes that are out of range of the dense row offset
+                // TODO(#7303): Also filter for suffixes that are out of range of the dense row offset
                 self.suffixes.contains(suffix)
             });
         // Check whether the sparse trie is smaller than the dense row
@@ -161,7 +161,7 @@ impl ZeroAsciiDenseSparse2dTrieOwned {
             delimiter,
             ..Default::default()
         };
-        // TODO: Prune low-frequency suffixes.
+        // TODO(#7302): Prune low-frequency suffixes.
         // For now, build with all suffixes.
         builder.suffixes = entries
             .values()
