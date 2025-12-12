@@ -227,6 +227,7 @@ impl icu_provider::ule::MaybeEncodeAsVarULE for PackedPatterns<'_> {
 }
 
 impl<'a> ZeroFrom<'a, PackedPatternsVarULE> for PackedPatterns<'a> {
+    #[inline]
     fn zero_from(other: &'a PackedPatternsVarULE) -> Self {
         PackedPatterns {
             header: other.sized.as_unsigned_int(),
