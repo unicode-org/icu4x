@@ -17,7 +17,7 @@ use icu_plurals::{
 use icu_provider::prelude::{zerofrom::ZeroFrom, *};
 #[cfg(feature = "datagen")]
 use zerovec::ule::vartuple::VarTuple;
-use zerovec::{VarZeroSlice, VarZeroVec, ZeroSlice, ule::vartuple::VarTupleULE};
+use zerovec::{ule::vartuple::VarTupleULE, VarZeroSlice, VarZeroVec, ZeroSlice};
 
 /// A field of [`PackedPatternsBuilder`].
 #[derive(Debug, Clone, PartialEq, Eq)]

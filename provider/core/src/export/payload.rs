@@ -10,8 +10,8 @@ use crate::{dynutil::UpcastDataPayload, ule::MaybeAsVarULE};
 use alloc::sync::Arc;
 use databake::{Bake, BakeSize, CrateEnv, TokenStream};
 use yoke::*;
-use zerovec::VarZeroVec;
 use zerovec::vecs::Index32;
+use zerovec::VarZeroVec;
 
 #[cfg(doc)]
 use zerovec::ule::VarULE;
@@ -78,7 +78,8 @@ where
             }))
             .collect();
         let vzv: VarZeroVec<
-            <<M::DataStruct as Yokeable<'_>>::Output as MaybeAsVarULE>::EncodedStruct, Index32
+            <<M::DataStruct as Yokeable<'_>>::Output as MaybeAsVarULE>::EncodedStruct,
+            Index32,
         > = VarZeroVec::from(&recovered_vec);
         let vzs = vzv.as_slice();
         Some(vzs.bake(ctx))
