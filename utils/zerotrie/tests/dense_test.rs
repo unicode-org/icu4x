@@ -149,7 +149,7 @@ fn test_dense_sparse_window_selection() {
 
     let mut inner = BTreeMap::new();
     inner.insert("low", far_low);
-    inner.insert("a", cluster_vals.get(0).copied().unwrap_or(0));
+    inner.insert("a", cluster_vals.first().copied().unwrap_or(0));
     inner.insert("c", cluster_vals.get(2).copied().unwrap_or(0));
     inner.insert("d", cluster_start + row_width - 3);
     inner.insert("e", cluster_start + row_width - 2);
