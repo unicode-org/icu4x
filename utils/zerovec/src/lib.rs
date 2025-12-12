@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![feature(ptr_metadata)]
 //! Zero-copy vector abstractions for arbitrary types, backed by byte slices.
 //!
 //! `zerovec` enables a far wider range of types — beyond just `&[u8]` and `&str` — to participate in
