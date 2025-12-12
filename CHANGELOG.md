@@ -132,7 +132,7 @@
         - Document deprecated APIs (unicode-org#6890)
         - FFI for most new APIs
         - `ListFormatter::format` now takes a `diplomat::span<const diplomat::string_view_for_slice>` instead of a `diplomat::span<std::string_view>` to handle soundness issues on some platforms (unicode-org#6974)
-    - Dart version `2.1.0-dev.0`
+    - Dart version `2.1.0-dev.0`, `2.1.0-dev.1`
     - NPM version `2.1.0`
 - Utils
     - General

@@ -5,7 +5,7 @@
 name: icu4x
 description: > 
   Dart bindings for the Rust `icu` internationalization crate.
-version: 2.1.0-dev.0
+version: 2.1.0-dev.1
 repository: https://github.com/unicode-org/icu4x/tree/main/ffi/dart
 issue_tracker: https://github.com/unicode-org/icu4x/issues?q=is%3Aissue%20is%3Aopen%20label%3AU-flutter
 
