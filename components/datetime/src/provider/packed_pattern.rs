@@ -14,8 +14,10 @@ use icu_plurals::{
     provider::{FourBitMetadata, PluralElementsPackedULE},
     PluralElements,
 };
-use icu_provider::prelude::*;
-use zerovec::{VarZeroVec, ZeroSlice};
+use icu_provider::prelude::{zerofrom::ZeroFrom, *};
+#[cfg(feature = "datagen")]
+use zerovec::ule::vartuple::{VarTuple, VarTupleULE};
+use zerovec::{VarZeroSlice, VarZeroVec, ZeroSlice};
 
 /// A field of [`PackedPatternsBuilder`].
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -199,10 +201,40 @@ pub struct PackedPatterns<'data> {
     pub elements: VarZeroVec<'data, PluralElementsPackedULE<ZeroSlice<PatternItem>>>,
 }
 
-icu_provider::data_struct!(
-    PackedPatterns<'_>,
-    #[cfg(feature = "datagen")]
-);
+type PackedPatternsVarULE =
+    VarTupleULE<u32, VarZeroSlice<PluralElementsPackedULE<ZeroSlice<PatternItem>>>>;
+
+type PackedPatternsEncodeable<'a> =
+    VarTuple<u32, &'a VarZeroSlice<PluralElementsPackedULE<ZeroSlice<PatternItem>>>>;
+
+impl icu_provider::ule::MaybeAsVarULE for PackedPatterns<'_> {
+    type EncodedStruct = PackedPatternsVarULE;
+}
+
+#[cfg(feature = "datagen")]
+impl icu_provider::ule::MaybeEncodeAsVarULE for PackedPatterns<'_> {
+    type EncodeableStruct<'a>
+        = PackedPatternsEncodeable<'a>
+    where
+        Self: 'a;
+    fn maybe_as_encodeable<'a>(&'a self) -> Option<Self::EncodeableStruct<'a>> {
+        Some(VarTuple {
+            sized: self.header,
+            variable: &self.elements,
+        })
+    }
+}
+
+impl<'a> ZeroFrom<'a, PackedPatternsVarULE> for PackedPatterns<'a> {
+    fn zero_from(other: &'a PackedPatternsVarULE) -> Self {
+        PackedPatterns {
+            header: other.sized.as_unsigned_int(),
+            elements: other.variable.as_varzerovec(),
+        }
+    }
+}
+
+icu_provider::data_struct!(PackedPatterns<'_>, manual_varule);
 
 mod constants {
     /// Value when standard long, medium, and short are all the same
