@@ -55,6 +55,7 @@ impl icu_provider::ule::MaybeAsVarULE for HelloWorld<'_> {
     type EncodedStruct = str;
 }
 
+#[cfg(feature = "export")]
 impl icu_provider::ule::MaybeEncodeAsVarULE for HelloWorld<'_> {
     type EncodeableStruct<'a>
         = &'a str
