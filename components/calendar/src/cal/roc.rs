@@ -146,7 +146,7 @@ mod test {
             "Failed era check from RD: {case:?}\nROC: {roc_from_rd:?}"
         );
         assert_eq!(
-            roc_from_rd.extended_year(),
+            roc_from_rd.year().extended_year(),
             if case.era == "roc" {
                 case.year
             } else {
@@ -166,7 +166,7 @@ mod test {
         );
 
         let roc_from_case = Date::try_new_roc(
-            roc_from_rd.extended_year(),
+            roc_from_rd.year().extended_year(),
             roc_from_rd.month().ordinal,
             roc_from_rd.day_of_month().0,
         )

@@ -44,7 +44,7 @@ fn test_extended_year() {
             Date::try_new_from_codes(None, 0, m_01.code(), 1, calendar.clone()).unwrap();
         let iso_date_in_epoch_year = date_in_epoch_year.to_calendar(iso);
         assert_eq!(
-            iso_date_in_epoch_year.extended_year(),
+            iso_date_in_epoch_year.year().extended_year(),
             *extended_epoch,
             "Extended year for {date_in_epoch_year:?} should be {extended_epoch}"
         );
@@ -67,7 +67,7 @@ fn test_extended_year() {
             AnyCalendarKind::Japanese | AnyCalendarKind::JapaneseExtended
         ) {
             assert_eq!(
-                date_in_2025.extended_year(),
+                date_in_2025.year().extended_year(),
                 2025,
                 "Extended year for {date_in_2025:?} should be 2025"
             );
@@ -76,7 +76,7 @@ fn test_extended_year() {
             // These two function calls are not equivalent in general.
             let expected = date_in_2025.year().era_year_or_related_iso();
             assert_eq!(
-                date_in_2025.extended_year(),
+                date_in_2025.year().extended_year(),
                 expected,
                 "Extended year for {date_in_2025:?} should be {expected}"
             );
