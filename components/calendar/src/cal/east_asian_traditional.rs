@@ -657,6 +657,10 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
             },
         )
     }
+
+    fn to_rata_die_inner(year: Self::YearInfo, month: u8, day: u8) -> RataDie {
+        year.new_year() + year.packed.days_before_month(month) as i64 + (day - 1) as i64
+    }
 }
 
 impl<R: Rules> crate::cal::scaffold::UnstableSealed for EastAsianTraditional<R> {}
@@ -701,9 +705,7 @@ impl<R: Rules> Calendar for EastAsianTraditional<R> {
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        date.0.year().new_year()
-            + date.0.year().packed.days_before_month(date.0.month()) as i64
-            + (date.0.day() - 1) as i64
+        date.0.to_rata_die()
     }
 
     fn has_cheap_iso_conversion(&self) -> bool {

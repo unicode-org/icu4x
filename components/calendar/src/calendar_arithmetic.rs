@@ -195,9 +195,17 @@ pub(crate) trait DateFieldsResolver: Calendar {
     fn month_from_ordinal(&self, _year: Self::YearInfo, ordinal_month: u8) -> Month {
         Month::new_unchecked(ordinal_month, types::LeapStatus::Normal)
     }
+
+    // Date-to-RD conversion
+    // Used internally for implementing date arithmetic
+    fn to_rata_die_inner(year: Self::YearInfo, month: u8, day: u8) -> RataDie;
 }
 
 impl<C: DateFieldsResolver> ArithmeticDate<C> {
+    pub(crate) fn to_rata_die(self) -> RataDie {
+        C::to_rata_die_inner(self.year(), self.month(), self.day())
+    }
+
     pub(crate) fn year(self) -> C::YearInfo {
         C::YearInfo::unpack_year(self.0)
     }
@@ -664,6 +672,30 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         cal: &C,
         options: DateDifferenceOptions,
     ) -> DateDuration {
+        // Fast path for day/week diffs
+        // Avoids quadratic behavior in surpasses() for days/weeks
+        if matches!(
+            options.largest_unit,
+            Some(DateDurationUnit::Days) | Some(DateDurationUnit::Weeks)
+        ) {
+            let from = self.to_rata_die();
+            let to = other.to_rata_die();
+            let diff = to - from;
+            if matches!(options.largest_unit, Some(DateDurationUnit::Weeks)) {
+                let weeks = (diff / 7) as i32;
+                let days = diff % 7;
+                let duration = DateDuration {
+                    is_negative: diff.is_negative(),
+                    weeks: weeks.unsigned_abs(),
+                    days: days.unsigned_abs(),
+                    ..Default::default()
+                };
+                return duration;
+            } else {
+                return DateDuration::for_days(diff);
+            }
+        }
+
         // 1. Let _sign_ be -1 × CompareISODate(_one_, _two_).
         // 1. If _sign_ = 0, return ZeroDateDuration().
         let sign = match other.cmp(self) {
