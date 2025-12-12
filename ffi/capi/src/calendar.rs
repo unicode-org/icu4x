@@ -7,7 +7,6 @@
 pub mod ffi {
     use super::CalendarInner;
     use alloc::boxed::Box;
-    use alloc::sync::Arc;
     use icu_calendar::preferences::CalendarPreferences;
 
     #[cfg(feature = "buffer_provider")]
@@ -99,7 +98,7 @@ pub mod ffi {
     #[diplomat::opaque]
     #[diplomat::transparent_convert]
     #[diplomat::rust_link(icu::calendar::AnyCalendar, Enum)]
-    pub struct Calendar(pub Arc<CalendarInner>);
+    pub struct Calendar(pub CalendarInner);
 
     impl Calendar {
         /// Creates a new [`Calendar`] for the specified kind, using compiled data.
@@ -107,15 +106,75 @@ pub mod ffi {
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create(kind: CalendarKind) -> Box<Calendar> {
-            Box::new(Calendar(Arc::new(match kind {
+            Box::new(Calendar(match kind {
                 CalendarKind::Iso => CalendarInner::Iso(icu_calendar::cal::Iso),
                 CalendarKind::Gregorian => CalendarInner::Gregorian(icu_calendar::cal::Gregorian),
                 CalendarKind::Buddhist => CalendarInner::Buddhist(icu_calendar::cal::Buddhist),
-                CalendarKind::Japanese => {
-                    CalendarInner::Japanese(icu_calendar::cal::Japanese::new())
+                CalendarKind::Japanese => CalendarInner::Japanese(alloc::sync::Arc::new(
+                    icu_calendar::cal::Japanese::new(),
+                )),
+                CalendarKind::JapaneseExtended => CalendarInner::JapaneseExtended(
+                    alloc::sync::Arc::new(icu_calendar::cal::JapaneseExtended::new()),
+                ),
+                CalendarKind::Ethiopian => {
+                    CalendarInner::Ethiopian(icu_calendar::cal::Ethiopian::new())
                 }
+                CalendarKind::EthiopianAmeteAlem => {
+                    CalendarInner::Ethiopian(icu_calendar::cal::Ethiopian::new_with_era_style(
+                        icu_calendar::cal::EthiopianEraStyle::AmeteAlem,
+                    ))
+                }
+                CalendarKind::Indian => CalendarInner::Indian(icu_calendar::cal::Indian),
+                CalendarKind::Coptic => CalendarInner::Coptic(icu_calendar::cal::Coptic),
+                CalendarKind::Dangi => {
+                    CalendarInner::Dangi(icu_calendar::cal::KoreanTraditional::new())
+                }
+                CalendarKind::Chinese => {
+                    CalendarInner::Chinese(icu_calendar::cal::ChineseTraditional::new())
+                }
+                CalendarKind::Hebrew => CalendarInner::Hebrew(icu_calendar::cal::Hebrew),
+                #[allow(deprecated)]
+                CalendarKind::HijriTabularTypeIIFriday | CalendarKind::HijriSimulatedMecca => {
+                    CalendarInner::HijriTabular(icu_calendar::cal::Hijri::new_tabular(
+                        icu_calendar::cal::HijriTabularLeapYears::TypeII,
+                        icu_calendar::cal::HijriTabularEpoch::Friday,
+                    ))
+                }
+                CalendarKind::HijriTabularTypeIIThursday => {
+                    CalendarInner::HijriTabular(icu_calendar::cal::Hijri::new_tabular(
+                        icu_calendar::cal::HijriTabularLeapYears::TypeII,
+                        icu_calendar::cal::HijriTabularEpoch::Thursday,
+                    ))
+                }
+                CalendarKind::HijriUmmAlQura => {
+                    CalendarInner::HijriUmmAlQura(icu_calendar::cal::Hijri::new_umm_al_qura())
+                }
+                CalendarKind::Persian => CalendarInner::Persian(icu_calendar::cal::Persian),
+                CalendarKind::Roc => CalendarInner::Roc(icu_calendar::cal::Roc),
+            }))
+        }
+
+        /// Creates a new [`Calendar`] for the specified kind, using a particular data source.
+        #[diplomat::rust_link(icu::calendar::AnyCalendar::new, FnInEnum)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "new_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_with_provider(
+            provider: &DataProvider,
+            kind: CalendarKind,
+        ) -> Result<Box<Calendar>, DataError> {
+            Ok(Box::new(Calendar(match kind {
+                CalendarKind::Iso => CalendarInner::Iso(icu_calendar::cal::Iso),
+                CalendarKind::Gregorian => CalendarInner::Gregorian(icu_calendar::cal::Gregorian),
+                CalendarKind::Buddhist => CalendarInner::Buddhist(icu_calendar::cal::Buddhist),
+                CalendarKind::Japanese => CalendarInner::Japanese(alloc::sync::Arc::new(
+                    icu_calendar::cal::Japanese::try_new_with_buffer_provider(provider.get()?)?,
+                )),
                 CalendarKind::JapaneseExtended => {
-                    CalendarInner::JapaneseExtended(icu_calendar::cal::JapaneseExtended::new())
+                    CalendarInner::JapaneseExtended(alloc::sync::Arc::new(
+                        icu_calendar::cal::JapaneseExtended::try_new_with_buffer_provider(
+                            provider.get()?,
+                        )?,
+                    ))
                 }
                 CalendarKind::Ethiopian => {
                     CalendarInner::Ethiopian(icu_calendar::cal::Ethiopian::new())
@@ -155,71 +214,13 @@ pub mod ffi {
             })))
         }
 
-        /// Creates a new [`Calendar`] for the specified kind, using a particular data source.
-        #[diplomat::rust_link(icu::calendar::AnyCalendar::new, FnInEnum)]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "new_with_provider")]
-        #[cfg(feature = "buffer_provider")]
-        pub fn create_with_provider(
-            provider: &DataProvider,
-            kind: CalendarKind,
-        ) -> Result<Box<Calendar>, DataError> {
-            Ok(Box::new(Calendar(Arc::new(match kind {
-                CalendarKind::Iso => CalendarInner::Iso(icu_calendar::cal::Iso),
-                CalendarKind::Gregorian => CalendarInner::Gregorian(icu_calendar::cal::Gregorian),
-                CalendarKind::Buddhist => CalendarInner::Buddhist(icu_calendar::cal::Buddhist),
-                CalendarKind::Japanese => CalendarInner::Japanese(
-                    icu_calendar::cal::Japanese::try_new_with_buffer_provider(provider.get()?)?,
-                ),
-                CalendarKind::JapaneseExtended => CalendarInner::JapaneseExtended(
-                    icu_calendar::cal::JapaneseExtended::try_new_with_buffer_provider(
-                        provider.get()?,
-                    )?,
-                ),
-                CalendarKind::Ethiopian => {
-                    CalendarInner::Ethiopian(icu_calendar::cal::Ethiopian::new())
-                }
-                CalendarKind::EthiopianAmeteAlem => {
-                    CalendarInner::Ethiopian(icu_calendar::cal::Ethiopian::new_with_era_style(
-                        icu_calendar::cal::EthiopianEraStyle::AmeteAlem,
-                    ))
-                }
-                CalendarKind::Indian => CalendarInner::Indian(icu_calendar::cal::Indian),
-                CalendarKind::Coptic => CalendarInner::Coptic(icu_calendar::cal::Coptic),
-                CalendarKind::Dangi => {
-                    CalendarInner::Dangi(icu_calendar::cal::KoreanTraditional::new())
-                }
-                CalendarKind::Chinese => {
-                    CalendarInner::Chinese(icu_calendar::cal::ChineseTraditional::new())
-                }
-                CalendarKind::Hebrew => CalendarInner::Hebrew(icu_calendar::cal::Hebrew),
-                #[allow(deprecated)]
-                CalendarKind::HijriTabularTypeIIFriday | CalendarKind::HijriSimulatedMecca => {
-                    CalendarInner::HijriTabular(icu_calendar::cal::Hijri::new_tabular(
-                        icu_calendar::cal::HijriTabularLeapYears::TypeII,
-                        icu_calendar::cal::HijriTabularEpoch::Friday,
-                    ))
-                }
-                CalendarKind::HijriTabularTypeIIThursday => {
-                    CalendarInner::HijriTabular(icu_calendar::cal::Hijri::new_tabular(
-                        icu_calendar::cal::HijriTabularLeapYears::TypeII,
-                        icu_calendar::cal::HijriTabularEpoch::Thursday,
-                    ))
-                }
-                CalendarKind::HijriUmmAlQura => {
-                    CalendarInner::HijriUmmAlQura(icu_calendar::cal::Hijri::new_umm_al_qura())
-                }
-                CalendarKind::Persian => CalendarInner::Persian(icu_calendar::cal::Persian),
-                CalendarKind::Roc => CalendarInner::Roc(icu_calendar::cal::Roc),
-            }))))
-        }
-
         /// Returns the kind of this calendar
         #[diplomat::rust_link(icu::calendar::AnyCalendar::kind, FnInEnum)]
         #[diplomat::attr(auto, getter)]
         #[diplomat::attr(demo_gen, disable)] // this just returns the single constructor argument
         pub fn kind(&self) -> CalendarKind {
-            use icu_calendar::{AsCalendar, IntoAnyCalendar};
-            self.0.as_calendar().kind().into()
+            use icu_calendar::IntoAnyCalendar;
+            self.0.kind().into()
         }
     }
 }
@@ -241,8 +242,8 @@ icu_calendar::make_any_calendar!(
     HijriUmmAlQura(icu_calendar::cal::Hijri<icu_calendar::cal::hijri::UmmAlQura>),
     Indian(icu_calendar::cal::Indian),
     Iso(icu_calendar::cal::Iso),
-    Japanese(icu_calendar::cal::Japanese),
-    JapaneseExtended(icu_calendar::cal::JapaneseExtended),
+    Japanese(alloc::sync::Arc<icu_calendar::cal::Japanese>),
+    JapaneseExtended(alloc::sync::Arc<icu_calendar::cal::JapaneseExtended>),
     Persian(icu_calendar::cal::Persian),
     Roc(icu_calendar::cal::Roc),
 );
