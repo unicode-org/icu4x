@@ -783,12 +783,9 @@ impl fmt::Display for AnyCalendarKind {
     }
 }
 
-/// TODO
 pub trait AnyCalendarable: Calendar + Sized {
-    /// TODO
     type Identity: PartialEq + Eq + Copy;
 
-    /// TODO
     fn identity(&self) -> Self::Identity;
 }
 
