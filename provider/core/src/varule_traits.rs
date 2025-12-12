@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "export")]
+use zerovec::ule::EncodeAsVarULE;
 use zerovec::ule::VarULE;
 
 #[cfg(feature = "alloc")]
@@ -30,9 +32,13 @@ pub trait MaybeAsVarULE {
 /// ✨ *Enabled with the `export` Cargo feature.*
 #[cfg(feature = "export")]
 pub trait MaybeEncodeAsVarULE: MaybeAsVarULE {
-    /// Returns the [`MaybeAsVarULE::EncodedStruct`] that represents this data struct,
-    /// or `None` if the data struct does not support this representation.
-    fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct>;
+    /// The type returned by [`Self::maybe_as_encodeable`].
+    type EncodeableStruct<'a>: EncodeAsVarULE<Self::EncodedStruct>
+    where
+        Self: 'a;
+    /// Returns something encodeable to the [`MaybeAsVarULE::EncodedStruct`] that represents
+    /// this data struct, or `None` if the data struct does not support this representation.
+    fn maybe_as_encodeable<'a>(&'a self) -> Option<Self::EncodeableStruct<'a>>;
 }
 
 /// Implements required traits on data structs, such as [`MaybeEncodeAsVarULE`].
@@ -44,7 +50,8 @@ macro_rules! data_struct {
         }
         $($(#[$attr])*)?
         impl<$generic: $bound> $crate::ule::MaybeEncodeAsVarULE for $ty {
-            fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct> {
+            type EncodeableStruct<'b> = &'b [()] where Self: 'b;
+            fn maybe_as_encodeable<'b>(&'b self) -> Option<Self::EncodeableStruct<'b>> {
                 None
             }
         }
@@ -55,28 +62,16 @@ macro_rules! data_struct {
         }
         $($(#[$attr])*)?
         impl $crate::ule::MaybeEncodeAsVarULE for $ty {
-            fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct> {
+            type EncodeableStruct<'b> = &'b [()] where Self: 'b;
+            fn maybe_as_encodeable<'b>(&'b self) -> Option<Self::EncodeableStruct<'b>> {
                 None
             }
         }
     };
     (
         $ty:ty,
-        varule: $varule:ty,
-        $(#[$attr:meta])*
-        encode_as_varule: $encode_as_varule:expr
+        manual_varule
     ) => {
-        impl<'data> $crate::ule::MaybeAsVarULE for $ty {
-            type EncodedStruct = $varule;
-        }
-        $(#[$attr])*
-        impl<'data> $crate::ule::MaybeEncodeAsVarULE for $ty {
-            fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct> {
-                // Workaround for <https://rust-lang.github.io/rfcs/3216-closure-lifetime-binder.html>
-                fn bind_lifetimes<F>(f: F) -> F where F: for<'data> Fn(&'data $ty) -> &'data $varule { f }
-                Some(bind_lifetimes($encode_as_varule)(self))
-            }
-        }
     };
 }
 
@@ -102,7 +97,11 @@ where
     K0: ?Sized,
     V: ?Sized,
 {
-    fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct> {
+    type EncodeableStruct<'b>
+        = &'b [()]
+    where
+        Self: 'b;
+    fn maybe_as_encodeable<'b>(&'b self) -> Option<Self::EncodeableStruct<'b>> {
         None
     }
 }
@@ -131,7 +130,11 @@ where
     K1: ?Sized,
     V: ?Sized,
 {
-    fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct> {
+    type EncodeableStruct<'b>
+        = &'b [()]
+    where
+        Self: 'b;
+    fn maybe_as_encodeable<'b>(&'b self) -> Option<Self::EncodeableStruct<'b>> {
         None
     }
 }
@@ -142,7 +145,11 @@ impl<T, const N: usize> MaybeAsVarULE for [T; N] {
 
 #[cfg(feature = "export")]
 impl<T, const N: usize> MaybeEncodeAsVarULE for [T; N] {
-    fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct> {
+    type EncodeableStruct<'a>
+        = &'a [()]
+    where
+        Self: 'a;
+    fn maybe_as_encodeable<'a>(&'a self) -> Option<Self::EncodeableStruct<'a>> {
         None
     }
 }
@@ -153,7 +160,11 @@ impl MaybeAsVarULE for u16 {
 
 #[cfg(feature = "export")]
 impl MaybeEncodeAsVarULE for u16 {
-    fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct> {
+    type EncodeableStruct<'a>
+        = &'a [()]
+    where
+        Self: 'a;
+    fn maybe_as_encodeable<'a>(&'a self) -> Option<Self::EncodeableStruct<'a>> {
         None
     }
 }
