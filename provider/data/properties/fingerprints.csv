@@ -68,7 +68,7 @@ property/binary/white/space/v1, <singleton>, 92B, 62B, 8f045d65fbaa6724
 property/binary/xdigit/v1, <singleton>, 488B, 459B, 334cc78d29ee5f0e
 property/binary/xid/continue/v1, <singleton>, 4868B, 4839B, 386b045eb6522e2f
 property/binary/xid/start/v1, <singleton>, 4178B, 4149B, 5090f2f1b95a3480
-property/enum/bidi/class/v1, <singleton>, 9884B, 9828B, 327160efebade591
+property/enum/bidi/class/v1, <singleton>, 9888B, 9832B, 6e461ef365a53dcc
 property/enum/bidi/mirroring/glyph/v1, <singleton>, 4739B, 4673B, 34ba0898d34a25fb
 property/enum/canonical/combining/class/v1, <singleton>, 5452B, 5394B, 6c5392d6fc5f2889
 property/enum/east/asian/width/v1, <singleton>, 5004B, 4947B, 881a7ee1402b1937
@@ -81,7 +81,7 @@ property/enum/joining/group/v1, <singleton>, 1428B, 1370B, a24c126ff86065d8
 property/enum/joining/type/v1, <singleton>, 7136B, 7079B, 39f05bd0b9931b55
 property/enum/line/break/v1, <singleton>, 15328B, 15272B, d392409dfdd00a74
 property/enum/numeric/type/v1, <singleton>, 5900B, 5842B, 9ffe79ebbb54f863
-property/enum/script/v1, <singleton>, 25902B, 25847B, 1b972fe75ad7b369
+property/enum/script/v1, <singleton>, 25900B, 25845B, f1ad61c965485250
 property/enum/sentence/break/v1, <singleton>, 13964B, 13907B, 36e6dafc005907f8
 property/enum/vertical/orientation/v1, <singleton>, 3280B, 3222B, 36f945b6b4d90bc8
 property/enum/word/break/v1, <singleton>, 11136B, 11079B, ae4831ff49f66415

@@ -45,7 +45,6 @@ pub(crate) mod enumerated {
         #[serde(default)]
         pub(crate) values: Vec<super::PropertyValue<u16>>,
         pub(crate) ranges: Vec<EnumeratedPropertyMapRange<u16>>,
-        pub(crate) code_point_trie: super::CodePointTrieToml,
     }
 
     #[derive(serde::Deserialize)]
