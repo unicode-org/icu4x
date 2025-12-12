@@ -49,21 +49,12 @@ impl<'a> ZeroFrom<'a, str> for HelloWorld<'a> {
     }
 }
 
-crate::data_struct!(HelloWorld<'data>, manual_varule);
-
-impl icu_provider::ule::MaybeAsVarULE for HelloWorld<'_> {
-    type EncodedStruct = str;
-}
-
-impl icu_provider::ule::MaybeEncodeAsVarULE for HelloWorld<'_> {
-    type EncodeableStruct<'a>
-        = &'a str
-    where
-        Self: 'a;
-    fn maybe_as_encodeable<'a>(&'a self) -> Option<Self::EncodeableStruct<'a>> {
-        Some(&*self.message)
-    }
-}
+crate::data_struct!(
+    HelloWorld<'data>,
+    varule: str,
+    #[cfg(feature = "export")]
+    encode_as_varule: |v: &HelloWorld<'_>| &*v.message
+);
 
 data_marker!(
     /// Marker type for [`HelloWorld`].
