@@ -16,8 +16,8 @@ use icu_plurals::{
 };
 use icu_provider::prelude::{zerofrom::ZeroFrom, *};
 #[cfg(feature = "datagen")]
-use zerovec::ule::vartuple::{VarTuple, VarTupleULE};
-use zerovec::{VarZeroSlice, VarZeroVec, ZeroSlice};
+use zerovec::ule::vartuple::VarTuple;
+use zerovec::{VarZeroSlice, VarZeroVec, ZeroSlice, ule::vartuple::VarTupleULE};
 
 /// A field of [`PackedPatternsBuilder`].
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -204,6 +204,7 @@ pub struct PackedPatterns<'data> {
 type PackedPatternsVarULE =
     VarTupleULE<u32, VarZeroSlice<PluralElementsPackedULE<ZeroSlice<PatternItem>>>>;
 
+#[cfg(feature = "datagen")]
 type PackedPatternsEncodeable<'a> =
     VarTuple<u32, &'a VarZeroSlice<PluralElementsPackedULE<ZeroSlice<PatternItem>>>>;
 
