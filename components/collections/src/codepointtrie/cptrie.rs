@@ -590,7 +590,11 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     }
 
     #[inline(always)]
-    unsafe fn get_bit_prefix_suffix_assuming_fast_index(&self, bit_prefix: usize, bit_suffix: usize) -> T {
+    unsafe fn get_bit_prefix_suffix_assuming_fast_index(
+        &self,
+        bit_prefix: usize,
+        bit_suffix: usize,
+    ) -> T {
         debug_assert!(bit_prefix < self.index.len());
         // SAFETY: Relying on the length invariant of `self.index` having
         // been checked and on the unchangedness invariant of `self.index`
@@ -750,9 +754,9 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         debug_assert!(low_six <= 0b111_111); // Safety invariant.
         debug_assert!(high_five <= 0b11_111); // Safety invariant.
         debug_assert!(high_five > 0b1); // Non-shortest form; not safety invariant.
-        // SAFETY: The highest character representable as a two-byte
-        // UTF-8 sequence is U+07FF, eleven binary ones, which is below
-        // both `SMALL_TYPE_FAST_INDEXING_MAX` and `FAST_TYPE_FAST_INDEXING_MAX`.
+                                        // SAFETY: The highest character representable as a two-byte
+                                        // UTF-8 sequence is U+07FF, eleven binary ones, which is below
+                                        // both `SMALL_TYPE_FAST_INDEXING_MAX` and `FAST_TYPE_FAST_INDEXING_MAX`.
         self.get_bit_prefix_suffix_assuming_fast_index(high_five as usize, low_six as usize)
     }
 
@@ -1699,9 +1703,11 @@ pub trait TypedCodePointTrie<'trie, T: TrieValue>: Seal {
             // SAFETY: The caller is responsible for upholding the safety
             // invariant for `low_six` and we just checked the safety
             // invariant of `high_ten`.
-            self.as_untyped_ref().get_bit_prefix_suffix_assuming_fast_index(high_ten as usize, low_six as usize)
+            self.as_untyped_ref()
+                .get_bit_prefix_suffix_assuming_fast_index(high_ten as usize, low_six as usize)
         } else {
-            self.as_untyped_ref().get32_by_small_index_cold((high_ten << 6) | low_six)
+            self.as_untyped_ref()
+                .get32_by_small_index_cold((high_ten << 6) | low_six)
         }
     }
 
@@ -1781,9 +1787,9 @@ impl<'trie, T: TrieValue> TypedCodePointTrie<'trie, T> for FastCodePointTrie<'tr
         debug_assert_eq!(self.as_untyped_ref().header.trie_type, TrieType::Fast);
         // SAFETY: The highest character representable as a three-byte
         // UTF-8 sequence is U+FFFF, which is `FAST_TYPE_FAST_INDEXING_MAX`.
-        self.inner.get_bit_prefix_suffix_assuming_fast_index(high_ten as usize, low_six as usize)
+        self.inner
+            .get_bit_prefix_suffix_assuming_fast_index(high_ten as usize, low_six as usize)
     }
-
 }
 
 impl<'trie, T: TrieValue> Seal for FastCodePointTrie<'trie, T> {}
