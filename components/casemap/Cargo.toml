@@ -23,9 +23,10 @@ all-features = true
 icu_collections = { workspace = true, features = ["alloc"] }
 icu_locale_core = { workspace = true, features = ["alloc"] }
 icu_properties = { workspace = true }
-icu_provider = { workspace = true, features = ["alloc"] }
+icu_provider = { workspace = true }
 potential_utf = { workspace = true, features = ["alloc", "zerovec"] }
 writeable = { workspace = true }
+zerofrom = { workspace = true, features = ["alloc"] }
 zerovec = { workspace = true, features = ["alloc", "yoke"] }
 
 databake = { workspace = true, features = ["derive"], optional = true}

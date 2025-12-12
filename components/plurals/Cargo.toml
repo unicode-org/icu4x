@@ -21,7 +21,7 @@ all-features = true
 
 [dependencies]
 fixed_decimal = { workspace = true }
-icu_provider = { workspace = true, features = ["alloc"] }
+icu_provider = { workspace = true }
 zerovec = { workspace = true, features = ["alloc", "yoke"] }
 
 databake = { workspace = true, features = ["derive"], optional = true}
