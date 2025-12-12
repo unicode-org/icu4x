@@ -29,9 +29,7 @@ pub(crate) struct DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
 
 impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
     ///Helper function: finds best row offset when value range too large for dense matrix
-    fn find_window(
-        values: &BTreeMap<&'a str, usize>
-    ) -> usize {
+    fn find_window(values: &BTreeMap<&'a str, usize>) -> usize {
         let mut sorted_vals: Vec<usize> = values.values().cloned().collect();
         let row_width = usize::from(DenseType::MAX);
         sorted_vals.sort_unstable();
@@ -39,17 +37,22 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
         let mut best = 0;
         let mut best_index = 0;
         for top in 0..sorted_vals.len() {
-            while bot <= top && sorted_vals.get(top) - sorted_vals.get(bot) >= row_width {
-                bot += 1;
+            while bot < top {
+                let top_val = sorted_vals.get(top).copied().unwrap_or(0);
+                let bot_val = sorted_vals.get(bot).copied().unwrap_or(0);
+                if top_val - bot_val >= row_width {
+                    bot += 1;
+                } else {
+                    break;
+                }
             }
             if (top - bot + 1) > best {
                 best = top - bot + 1;
                 best_index = bot;
             }
         }
-        sorted_vals.get(best_index)
+        sorted_vals.get(best_index).copied().unwrap_or(0)
     }
-    
     /// Add a prefix and all values associated with the prefix to the builder.
     pub(crate) fn add_prefix(
         &mut self,
@@ -74,7 +77,9 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
             .iter()
             .map(|(suffix, value)| (*suffix, *value))
             .partition::<BTreeMap<&'a str, usize>, _>(|(suffix, value)| {
-                self.suffixes.contains(suffix) && *value >= row_value_offset && *value < row_value_offset + usize::from(DenseType::MAX)
+                self.suffixes.contains(suffix)
+                    && *value >= row_value_offset
+                    && *value < row_value_offset + usize::from(DenseType::MAX)
             });
         // Check whether the sparse trie is smaller than the dense row
         let sub_trie = dense_or_sparse

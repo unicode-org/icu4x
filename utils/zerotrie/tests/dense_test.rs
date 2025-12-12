@@ -149,27 +149,30 @@ fn test_dense_sparse_window_selection() {
 
     let mut inner = BTreeMap::new();
     inner.insert("low", far_low);
-    inner.insert("a", cluster_vals.get(0));
-    inner.insert("b", cluster_vals.get(1));
-    inner.insert("c", cluster_vals.get(2));
+    inner.insert("a", cluster_vals.get(0).copied().unwrap_or(0));
+    inner.insert("c", cluster_vals.get(2).copied().unwrap_or(0));
+    inner.insert("d", cluster_start + row_width - 3);
+    inner.insert("e", cluster_start + row_width - 2);
+    inner.insert("f", cluster_start + row_width - 1);
+    inner.insert("c2", cluster_vals.get(2).copied().unwrap_or(0));
+    inner.insert("g", cluster_start + row_width);
+    inner.insert("h", cluster_start + row_width + 1);
+    inner.insert("b", cluster_vals.get(1).copied().unwrap_or(0));
     inner.insert("high", far_high);
+    inner.insert("c3", cluster_vals.get(2).copied().unwrap_or(0));
+    inner.insert("low2", far_low);
 
     let mut data = BTreeMap::new();
     data.insert("p", inner);
 
     // Build the 2d trie.
-    let dense =
-        ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/').unwrap();
+    let dense = ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/').unwrap();
     let trie = dense.as_borrowed();
 
-    assert_eq!(trie.get("p", "a"), Some(cluster_vals.get(0)));
-    assert_eq!(trie.get("p", "b"), Some(cluster_vals.get(1)));
-    assert_eq!(trie.get("p", "c"), Some(cluster_vals.get(2)));
-    assert_eq!(trie.get("p", "low"), Some(far_low));
-    assert_eq!(trie.get("p", "high"), Some(far_high));
+    check_data(&data, trie, true);
 
-    let dense_size = check_encoding(trie);
-    let simple_size = make_simple_ascii_trie(&data).byte_len();
-
-    println!("Dense size: {}, Simple size: {}", dense_size, simple_size);
+    let byte_len = check_encoding(dense.as_borrowed());
+    assert_eq!(byte_len, 102);
+    let simple_trie = make_simple_ascii_trie(&data);
+    assert_eq!(simple_trie.byte_len(), 60);
 }
