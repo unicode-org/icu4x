@@ -60,9 +60,9 @@ where
         rest: &[&DataPayload<ExportMarker>],
         ctx: &CrateEnv,
     ) -> Option<TokenStream> {
-        let first_varule = self.get().maybe_encode_as_varule()?;
+        let first_varule = self.get().maybe_as_encodeable()?;
         let recovered_vec: Vec<
-            &<<M::DataStruct as Yokeable<'_>>::Output as MaybeAsVarULE>::EncodedStruct,
+            <<M::DataStruct as Yokeable<'_>>::Output as MaybeEncodeAsVarULE>::EncodeableStruct<'_>,
         > = core::iter::once(first_varule)
             .chain(rest.iter().map(|v| {
                 #[expect(clippy::expect_used)] // exporter code
@@ -72,7 +72,7 @@ where
                     .downcast_ref::<Self>()
                     .expect("payloads expected to be same type")
                     .get()
-                    .maybe_encode_as_varule()
+                    .maybe_as_encodeable()
                     .expect("MaybeEncodeAsVarULE impl should be symmetric")
             }))
             .collect();
