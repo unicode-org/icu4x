@@ -28,7 +28,6 @@ fn test_generate_dates_and_durations_for_review() {
         AnyCalendarKind::Roc,
     ];
 
-   
     let iso_dates = vec![
         (2000, 1, 1),
         (2000, 2, 28),
@@ -41,7 +40,6 @@ fn test_generate_dates_and_durations_for_review() {
         (2004, 12, 31),
     ];
 
-    
     let mut durations: Vec<(i32, i32, i32)> = Vec::new();
 
     for d in -65..=65 {
@@ -53,7 +51,13 @@ fn test_generate_dates_and_durations_for_review() {
     }
 
     for md in -30..=30 {
-        let day = if md < 0 { -1 } else if md == 0 { 0 } else { 1 };
+        let day = if md < 0 {
+            -1
+        } else if md == 0 {
+            0
+        } else {
+            1
+        };
         durations.push((0, md, day));
     }
 
@@ -62,21 +66,38 @@ fn test_generate_dates_and_durations_for_review() {
     }
 
     for ym in -10..=10 {
-        let month = if ym < 0 { -1 } else if ym == 0 { 0 } else { 1 };
+        let month = if ym < 0 {
+            -1
+        } else if ym == 0 {
+            0
+        } else {
+            1
+        };
         durations.push((ym, month, 0));
     }
 
     for yd in -10..=10 {
-        let day = if yd < 0 { -1 } else if yd == 0 { 0 } else { 1 };
+        let day = if yd < 0 {
+            -1
+        } else if yd == 0 {
+            0
+        } else {
+            1
+        };
         durations.push((yd, 0, day));
     }
 
     for ymd in -10..=10 {
-        let (month, day) = if ymd < 0 { (-1, -1) } else if ymd == 0 { (0, 0) } else { (1, 1) };
+        let (month, day) = if ymd < 0 {
+            (-1, -1)
+        } else if ymd == 0 {
+            (0, 0)
+        } else {
+            (1, 1)
+        };
         durations.push((ymd, month, day));
     }
 
-  
     let mut output = String::new();
 
     writeln!(&mut output, "Durations total: {}", durations.len()).unwrap();
@@ -87,21 +108,33 @@ fn test_generate_dates_and_durations_for_review() {
         writeln!(&mut output, "Calendar: {:?}", cal_kind).unwrap();
 
         for (y, m, d) in &iso_dates {
-
             let start_date = Date::try_new_iso(*y, *m, *d)
                 .expect("Valid ISO date")
                 .to_calendar(cal.clone());
 
-            writeln!(&mut output, "  START: {:04}-{:02}-{:02} -> {:?}", y, m, d, start_date)
-                .unwrap();
+            writeln!(
+                &mut output,
+                "  START: {:04}-{:02}-{:02} -> {:?}",
+                y, m, d, start_date
+            )
+            .unwrap();
 
-            
             let show_n = 8usize;
             for (i, dur) in durations.iter().enumerate() {
                 if i < show_n || i + show_n >= durations.len() {
-                    writeln!(&mut output, "    +{:>4}Y {:>4}M {:>4}D", dur.0, dur.1, dur.2).unwrap();
+                    writeln!(
+                        &mut output,
+                        "    +{:>4}Y {:>4}M {:>4}D",
+                        dur.0, dur.1, dur.2
+                    )
+                    .unwrap();
                 } else if i == show_n {
-                    writeln!(&mut output, "    ... {} omitted ...", durations.len() - (show_n * 2)).unwrap();
+                    writeln!(
+                        &mut output,
+                        "    ... {} omitted ...",
+                        durations.len() - (show_n * 2)
+                    )
+                    .unwrap();
                 }
             }
 
@@ -111,7 +144,6 @@ fn test_generate_dates_and_durations_for_review() {
         writeln!(&mut output).unwrap();
     }
 
-   
     assert!(!output.is_empty());
 
     println!("{}", output);
