@@ -39,10 +39,10 @@ wasm = ["dep:wasmi", "dep:wat", "dep:zerovec"]
 icu4c = ["dep:zerovec"]
 
 [dependencies]
-icu_collections = { workspace = true, features = ["serde"] }
-zerovec = { workspace = true, optional = true }
+icu_collections = { workspace = true }
 wasmi = { workspace = true, optional = true }
 wat = { workspace = true, optional = true }
+zerovec = { workspace = true, optional = true, features = ["alloc"] }
 
 [dev-dependencies]
 icu = { path = "../../icu" }
