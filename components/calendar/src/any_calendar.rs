@@ -88,7 +88,7 @@ macro_rules! make_any_calendar {
         impl $crate::Calendar for $any_calendar_ident {
             type DateInner = $any_date_ident;
             type Year = $crate::types::YearInfo;
-            type DifferenceError = AnyCalendarDifferenceError;
+            type DifferenceError = $crate::cal::AnyCalendarDifferenceError;
 
             fn from_codes(
                 &self,
@@ -279,7 +279,7 @@ macro_rules! make_any_calendar {
                         }
                     )+
                     _ => {
-                        return Err(AnyCalendarDifferenceError::MismatchedCalendars);
+                        return Err($crate::cal::AnyCalendarDifferenceError::MismatchedCalendars);
                     }
                 };
                 Ok(r)
@@ -298,17 +298,6 @@ macro_rules! make_any_calendar {
                     $(
                         Self::$variant(ref c) => c.calendar_algorithm(),
                     )+
-                }
-            }
-        }
-
-        impl $any_calendar_ident {
-            #[doc = concat!("Convert a `Date<", stringify!($any_calendar_ident), ">` to this `", stringify!($any_calendar_ident), "`, if conversion is needed")]
-            pub fn convert_any_date<'a, C: AsCalendar<Calendar = $any_calendar_ident>>(&'a self, date: &Date<C>) -> Date<Ref<'a, Self>> {
-                if self == date.calendar() {
-                    Date::from_raw(*date.inner(), Ref(self))
-                } else {
-                    date.to_calendar(Ref(self))
                 }
             }
         }
@@ -636,7 +625,11 @@ impl AnyCalendar {
 impl<C: AsCalendar<Calendar = AnyCalendar>> Date<C> {
     /// Convert this `Date<AnyCalendar>` to another `AnyCalendar`, if conversion is needed
     pub fn convert_any<'a>(&self, calendar: &'a AnyCalendar) -> Date<Ref<'a, AnyCalendar>> {
-        calendar.convert_any_date(self)
+        if calendar == self.calendar() {
+            Date::from_raw(*self.inner(), Ref(calendar))
+        } else {
+            self.to_calendar(Ref(calendar))
+        }
     }
 }
 
