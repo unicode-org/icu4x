@@ -344,5 +344,6 @@ type_method_marked_deprecated.level = "allow" # allow deprecation in patch relea
 trait_method_marked_deprecated.level = "allow" # allow deprecation in patch releases
 type_marked_deprecated.level = "allow" # allow deprecation in patch releases
 struct_field_marked_deprecated = "allow" # allow deprecation in patch releases
+enum_variant_marked_deprecated = "allow" # allow deprecation in patch releases
 type_associated_const_marked_deprecated = "allow" # allow deprecation in patch releases
 enum_no_repr_variant_discriminant_changed = "allow" # we don't consider this breaking https://github.com/obi1kenobi/cargo-semver-checks/issues/1376

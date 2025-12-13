@@ -96,6 +96,7 @@ lazy_static::lazy_static! {
         // Rust-specific conversion trait
         "AsCalendar",
         "IntoAnyCalendar",
+        "AnyCalendarable",
         "GetField",
         "IntoOption",
         "DateTimeNamesFrom",
@@ -133,6 +134,8 @@ lazy_static::lazy_static! {
         // but we don't need a separate Gregorian Date.
         "icu::calendar::cal",
         "icu::calendar::IntoAnyCalendar",
+        "icu::calendar::AnyCalendarable",
+        "icu::calendar::make_any_calendar",
         "icu::calendar::Date::try_new_buddhist",
         "icu::calendar::Date::try_new_chinese_with_calendar",
         "icu::calendar::Date::try_new_coptic",

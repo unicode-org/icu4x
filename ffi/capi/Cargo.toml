@@ -127,7 +127,7 @@ diplomat-runtime = { workspace = true }
 
 # Optional ICU4X components and their dependent utils
 fixed_decimal = { workspace = true, features = ["ryu"] , optional = true }
-icu_calendar = { workspace = true, features = ["alloc", "ixdtf"], optional = true }
+icu_calendar = { workspace = true, features = ["alloc", "ixdtf", "unstable"], optional = true }
 icu_casemap = { workspace = true, optional = true }
 icu_collator = { workspace = true, optional = true }
 icu_collections = { workspace = true, optional = true }
