@@ -388,17 +388,15 @@
     )
 )]
 
-pub(crate) mod core;
 mod error;
+
+pub(crate) mod core;
+
+pub mod encoding;
 pub mod parsers;
 pub mod records;
 
 pub use error::ParseError;
-
-/// This module contains the supported encoding for `ixdtf` parsing.
-pub mod encoding {
-    pub use crate::core::{Utf16, Utf8};
-}
 
 /// The `ixdtf` crate's Result type.
 pub type ParserResult<T> = Result<T, ParseError>;
