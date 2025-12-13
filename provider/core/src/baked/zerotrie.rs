@@ -15,7 +15,7 @@ use crate::{
     ule::MaybeAsVarULE,
 };
 pub use zerotrie::ZeroTrieSimpleAscii;
-use zerovec::VarZeroSlice;
+use zerovec::{vecs::Index32, VarZeroSlice};
 
 fn get_index(
     trie: ZeroTrieSimpleAscii<&'static [u8]>,
@@ -162,7 +162,7 @@ where
 {
     // Unsafe invariant: actual values contained MUST be valid indices into `values`
     trie: ZeroTrieSimpleAscii<&'static [u8]>,
-    values: &'static VarZeroSlice<<M::DataStruct as MaybeAsVarULE>::EncodedStruct>,
+    values: &'static VarZeroSlice<<M::DataStruct as MaybeAsVarULE>::EncodedStruct, Index32>,
 }
 
 impl<M: DataMarker> super::private::Sealed for DataForVarULEs<M>
@@ -183,7 +183,7 @@ where
     /// The actual values contained in the trie must be valid indices into `values`
     pub const unsafe fn from_trie_and_values_unchecked(
         trie: ZeroTrieSimpleAscii<&'static [u8]>,
-        values: &'static VarZeroSlice<<M::DataStruct as MaybeAsVarULE>::EncodedStruct>,
+        values: &'static VarZeroSlice<<M::DataStruct as MaybeAsVarULE>::EncodedStruct, Index32>,
     ) -> Self {
         Self { trie, values }
     }
