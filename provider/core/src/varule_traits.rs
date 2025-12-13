@@ -70,6 +70,25 @@ macro_rules! data_struct {
     };
     (
         $ty:ty,
+        varule: $varule:ty,
+        $(#[$attr:meta])*
+        encode_as_varule: $encode_as_varule:expr
+    ) => {
+        impl<'data> $crate::ule::MaybeAsVarULE for $ty {
+            type EncodedStruct = $varule;
+        }
+        $(#[$attr])*
+        impl<'data> $crate::ule::MaybeEncodeAsVarULE for $ty {
+            type EncodeableStruct<'b> = &'b $varule where Self: 'b;
+            fn maybe_as_encodeable<'b>(&'b self) -> Option<Self::EncodeableStruct<'b>> {
+                // Workaround for <https://rust-lang.github.io/rfcs/3216-closure-lifetime-binder.html>
+                fn bind_lifetimes<F>(f: F) -> F where F: for<'data> Fn(&'data $ty) -> &'data $varule { f }
+                Some(bind_lifetimes($encode_as_varule)(self))
+            }
+        }
+    };
+    (
+        $ty:ty,
         manual_varule
     ) => {
     };
