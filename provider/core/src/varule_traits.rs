@@ -87,6 +87,11 @@ macro_rules! data_struct {
             }
         }
     };
+    (
+        $ty:ty,
+        manual_varule
+    ) => {
+    };
 }
 
 //=== Standard impls ===//
