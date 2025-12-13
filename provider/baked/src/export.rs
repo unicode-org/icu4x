@@ -640,7 +640,7 @@ impl DataExporter for BakedExporter {
                     // Safety invariant upheld: see above
                     const #data_ident: icu_provider::baked::zerotrie::DataForVarULEs<#marker_bake> = {
                         const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked:: #baked_trie;
-                        const VALUES: &'static zerovec::VarZeroSlice<<<#marker_bake as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::ule::MaybeAsVarULE>::EncodedStruct> = #vzv_tokens;
+                        const VALUES: &'static zerovec::VarZeroSlice<<<#marker_bake as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::ule::MaybeAsVarULE>::EncodedStruct, zerovec::vecs::Index32> = #vzv_tokens;
                         unsafe {
                             icu_provider::baked::zerotrie::DataForVarULEs::from_trie_and_values_unchecked(TRIE, VALUES)
                         }
