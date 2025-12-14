@@ -145,12 +145,12 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 ///
 /// This corresponds to the `"islamic-rgsa"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier)
 /// if constructed with [`Hijri::new_simulated_mecca()`].
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct AstronomicalSimulation {
     pub(crate) location: SimulatedLocation,
 }
 
-#[derive(Clone, Debug, Copy, PartialEq)]
+#[derive(Clone, Debug, Copy, PartialEq, Eq)]
 pub(crate) enum SimulatedLocation {
     Mecca,
 }
