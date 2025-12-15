@@ -682,15 +682,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
             let to = other.to_rata_die();
             let diff = to - from;
             if matches!(options.largest_unit, Some(DateDurationUnit::Weeks)) {
-                let weeks = (diff / 7) as i32;
-                let days = diff % 7;
-                let duration = DateDuration {
-                    is_negative: diff.is_negative(),
-                    weeks: weeks.unsigned_abs(),
-                    days: days.unsigned_abs(),
-                    ..Default::default()
-                };
-                return duration;
+                return DateDuration::for_weeks_and_days(diff);
             } else {
                 return DateDuration::for_days(diff);
             }
