@@ -14,16 +14,20 @@ mod private {
 /// and implementing functionality that is encoding
 /// sensitive / specific.
 pub trait EncodingType: private::Sealed {
+    /// The code unit for the current encoding.
     type CodeUnit: PartialEq + core::fmt::Debug + Clone;
 
     /// Get a slice from the underlying source using for start..end
+    #[doc(hidden)]
     fn slice(source: &[Self::CodeUnit], start: usize, end: usize) -> Option<&[Self::CodeUnit]>;
 
     /// Retrieve the provided code unit index and returns the value as an ASCII byte
     /// or None if the value is not ASCII representable.
+    #[doc(hidden)]
     fn get_ascii(source: &[Self::CodeUnit], index: usize) -> ParserResult<Option<u8>>;
 
     /// Checks for the known calendar annotation key `u-ca`.
+    #[doc(hidden)]
     fn check_calendar_key(key: &[Self::CodeUnit]) -> bool;
 }
 
