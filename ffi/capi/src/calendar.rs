@@ -7,7 +7,9 @@
 pub mod ffi {
     use super::CalendarInner;
     use alloc::boxed::Box;
-    use icu_calendar::preferences::CalendarPreferences;
+    use icu_calendar::preferences::{
+        CalendarAlgorithm, CalendarPreferences, HijriCalendarAlgorithm,
+    };
 
     #[cfg(feature = "buffer_provider")]
     use crate::unstable::errors::ffi::DataError;
@@ -219,8 +221,30 @@ pub mod ffi {
         #[diplomat::attr(auto, getter)]
         #[diplomat::attr(demo_gen, disable)] // this just returns the single constructor argument
         pub fn kind(&self) -> CalendarKind {
-            use icu_calendar::IntoAnyCalendar;
-            self.0.kind().into()
+            match &self.0 {
+                CalendarInner::Buddhist(_) => CalendarKind::Buddhist,
+                CalendarInner::Chinese(_) => CalendarKind::Chinese,
+                CalendarInner::Coptic(_) => CalendarKind::Coptic,
+                CalendarInner::Dangi(_) => CalendarKind::Dangi,
+                CalendarInner::Ethiopian(_) => CalendarKind::Ethiopian,
+                CalendarInner::Gregorian(_) => CalendarKind::Gregorian,
+                CalendarInner::Hebrew(_) => CalendarKind::Hebrew,
+                CalendarInner::HijriTabular(c) => {
+                    match icu_calendar::Calendar::calendar_algorithm(c) {
+                        Some(CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil))) => {
+                            CalendarKind::HijriTabularTypeIIFriday
+                        }
+                        _ => CalendarKind::HijriTabularTypeIIThursday,
+                    }
+                }
+                CalendarInner::HijriUmmAlQura(_) => CalendarKind::HijriUmmAlQura,
+                CalendarInner::Indian(_) => CalendarKind::Indian,
+                CalendarInner::Iso(_) => CalendarKind::Iso,
+                CalendarInner::Japanese(_) => CalendarKind::Japanese,
+                CalendarInner::JapaneseExtended(_) => CalendarKind::JapaneseExtended,
+                CalendarInner::Persian(_) => CalendarKind::Persian,
+                CalendarInner::Roc(_) => CalendarKind::Roc,
+            }
         }
     }
 }
@@ -247,47 +271,3 @@ icu_calendar::make_any_calendar!(
     Persian(icu_calendar::cal::Persian),
     Roc(icu_calendar::cal::Roc),
 );
-
-use icu_calendar::IntoAnyCalendar;
-
-// For when we need to get the `AnyCalendarKind`
-impl IntoAnyCalendar for CalendarInner {
-    fn kind(&self) -> icu_calendar::AnyCalendarKind {
-        match self {
-            CalendarInner::Buddhist(c) => c.kind(),
-            CalendarInner::Chinese(c) => c.kind(),
-            CalendarInner::Coptic(c) => c.kind(),
-            CalendarInner::Dangi(c) => c.kind(),
-            CalendarInner::Ethiopian(c) => c.kind(),
-            CalendarInner::Gregorian(c) => c.kind(),
-            CalendarInner::Hebrew(c) => c.kind(),
-            CalendarInner::HijriTabular(c) => c.kind(),
-            CalendarInner::HijriUmmAlQura(c) => c.kind(),
-            CalendarInner::Indian(c) => c.kind(),
-            CalendarInner::Iso(c) => c.kind(),
-            CalendarInner::Japanese(c) => c.kind(),
-            CalendarInner::JapaneseExtended(c) => c.kind(),
-            CalendarInner::Persian(c) => c.kind(),
-            CalendarInner::Roc(c) => c.kind(),
-        }
-    }
-
-    fn date_to_any(
-        &self,
-        _: &Self::DateInner,
-    ) -> <icu_calendar::AnyCalendar as icu_calendar::Calendar>::DateInner {
-        unreachable!()
-    }
-
-    fn from_any(_: icu_calendar::AnyCalendar) -> Result<Self, icu_calendar::AnyCalendar> {
-        unreachable!()
-    }
-
-    fn from_any_ref(_: &icu_calendar::AnyCalendar) -> Option<&Self> {
-        unreachable!()
-    }
-
-    fn to_any(self) -> icu_calendar::AnyCalendar {
-        unreachable!()
-    }
-}

@@ -9,7 +9,10 @@ use crate::scaffold::UnstableSealed;
 use crate::{DateTimeFormatterPreferences, MismatchedCalendarError};
 use core::marker::PhantomData;
 use icu_calendar::cal::{self, *};
-use icu_calendar::{AnyCalendar, AnyCalendarKind, AsCalendar, Date, IntoAnyCalendar, Ref};
+use icu_calendar::preferences::{CalendarAlgorithm, HijriCalendarAlgorithm};
+use icu_calendar::{
+    AnyCalendar, AnyCalendarKind, AsCalendar, Calendar, Date, IntoAnyCalendar, Ref,
+};
 use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
 use icu_time::{
@@ -688,7 +691,7 @@ pub trait ConvertCalendar {
     fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a>;
 }
 
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for Date<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> ConvertCalendar for Date<A> {
     type Converted<'a> = Date<Ref<'a, AnyCalendar>>;
     #[inline]
     fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
@@ -704,7 +707,7 @@ impl ConvertCalendar for Time {
     }
 }
 
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for DateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> ConvertCalendar for DateTime<A> {
     type Converted<'a> = DateTime<Ref<'a, AnyCalendar>>;
     #[inline]
     fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
@@ -715,9 +718,7 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for DateTi
     }
 }
 
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>, Z: Copy> ConvertCalendar
-    for ZonedDateTime<A, Z>
-{
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z: Copy> ConvertCalendar for ZonedDateTime<A, Z> {
     type Converted<'a> = ZonedDateTime<Ref<'a, AnyCalendar>, Z>;
     #[inline]
     fn to_calendar<'a>(&self, calendar: &'a AnyCalendar) -> Self::Converted<'a> {
@@ -749,18 +750,47 @@ pub trait InSameCalendar {
     ) -> Result<(), MismatchedCalendarError>;
 }
 
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> InSameCalendar for Date<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> InSameCalendar for Date<A> {
     #[inline]
     fn check_any_calendar_kind(
         &self,
-        any_calendar_kind: AnyCalendarKind,
+        any_calendar_kind: icu_calendar::AnyCalendarKind,
     ) -> Result<(), MismatchedCalendarError> {
-        if self.calendar().kind() == any_calendar_kind {
+        let calendar_algorithm = match any_calendar_kind {
+            AnyCalendarKind::Buddhist => Some(CalendarAlgorithm::Buddhist),
+            AnyCalendarKind::Chinese => Some(CalendarAlgorithm::Chinese),
+            AnyCalendarKind::Coptic => Some(CalendarAlgorithm::Coptic),
+            AnyCalendarKind::Dangi => Some(CalendarAlgorithm::Dangi),
+            AnyCalendarKind::EthiopianAmeteAlem => Some(CalendarAlgorithm::Ethioaa),
+            AnyCalendarKind::Ethiopian => Some(CalendarAlgorithm::Ethiopic),
+            AnyCalendarKind::Gregorian => Some(CalendarAlgorithm::Gregory),
+            AnyCalendarKind::Hebrew => Some(CalendarAlgorithm::Hebrew),
+            AnyCalendarKind::Indian => Some(CalendarAlgorithm::Indian),
+            AnyCalendarKind::HijriUmmAlQura => Some(CalendarAlgorithm::Hijri(Some(
+                HijriCalendarAlgorithm::Umalqura,
+            ))),
+            AnyCalendarKind::HijriTabularTypeIIThursday => {
+                Some(CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Tbla)))
+            }
+            AnyCalendarKind::HijriTabularTypeIIFriday => Some(CalendarAlgorithm::Hijri(Some(
+                HijriCalendarAlgorithm::Civil,
+            ))),
+            AnyCalendarKind::HijriSimulatedMecca => {
+                Some(CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Rgsa)))
+            }
+            AnyCalendarKind::Iso => Some(CalendarAlgorithm::Iso8601),
+            AnyCalendarKind::Japanese => Some(CalendarAlgorithm::Japanese),
+            AnyCalendarKind::Persian => Some(CalendarAlgorithm::Persian),
+            AnyCalendarKind::Roc => Some(CalendarAlgorithm::Roc),
+            _ => None,
+        };
+        let date_algorithm = self.calendar().calendar_algorithm();
+        if calendar_algorithm.is_some() && calendar_algorithm == date_algorithm {
             Ok(())
         } else {
             Err(MismatchedCalendarError {
                 this_kind: any_calendar_kind,
-                date_kind: Some(self.calendar().kind()),
+                date_kind: date_algorithm.and_then(|c| c.try_into().ok()),
             })
         }
     }
@@ -773,7 +803,7 @@ impl InSameCalendar for Time {
     }
 }
 
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> InSameCalendar for DateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> InSameCalendar for DateTime<A> {
     #[inline]
     fn check_any_calendar_kind(
         &self,
@@ -783,7 +813,7 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> InSameCalendar for DateTim
     }
 }
 
-impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>, Z> InSameCalendar for ZonedDateTime<A, Z> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> InSameCalendar for ZonedDateTime<A, Z> {
     #[inline]
     fn check_any_calendar_kind(
         &self,
