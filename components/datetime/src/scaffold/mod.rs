@@ -25,7 +25,6 @@ pub use calendar::InFixedCalendar;
 pub use calendar::InSameCalendar;
 pub use calendar::IntoFormattableAnyCalendar;
 pub use calendar::NoDataCalMarkers;
-pub(crate) use calendar::UntaggedFormattableAnyCalendar;
 
 pub(crate) use fieldset_traits::datetime_marker_helper;
 pub use fieldset_traits::AllAnyCalendarExternalDataMarkers;
