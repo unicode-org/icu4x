@@ -250,7 +250,7 @@ impl Calendar for Ethiopian {
     }
 
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
-        match self.era_style() {
+        match self.0 {
             EthiopianEraStyle::AmeteMihret => Some(crate::preferences::CalendarAlgorithm::Ethiopic),
             EthiopianEraStyle::AmeteAlem => Some(crate::preferences::CalendarAlgorithm::Ethioaa),
         }
