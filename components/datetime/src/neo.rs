@@ -425,7 +425,7 @@ size_test!(
 pub struct DateTimeFormatter<FSet: DateTimeNamesMarker> {
     pub(crate) selection: DateTimeZonePatternSelectionData,
     pub(crate) names: RawDateTimeNames<FSet>,
-    pub(crate) calendar: UntaggedFormattableAnyCalendar,
+    pub(crate) calendar: FormattableAnyCalendar,
 }
 
 impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet>
@@ -605,7 +605,7 @@ where
         Ok(Self {
             selection,
             names,
-            calendar: calendar.into_untagged(),
+            calendar,
         })
     }
 }
@@ -781,7 +781,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
         DateTimeFormatter {
             selection: self.selection,
             names: self.names,
-            calendar: FormattableAnyCalendar::from_calendar(calendar).into_untagged(),
+            calendar: FormattableAnyCalendar::from_calendar(calendar),
         }
     }
 

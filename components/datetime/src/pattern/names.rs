@@ -1137,10 +1137,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
         formatter: DateTimeFormatter<FSet>,
     ) -> Self {
         let metadata = DateTimeNamesMetadata::new_from_previous(&formatter.names);
-        Self::from_parts(
-            prefs,
-            (formatter.calendar.into_tagged(), formatter.names, metadata),
-        )
+        Self::from_parts(prefs, (formatter.calendar, formatter.names, metadata))
     }
 
     fn from_parts(
