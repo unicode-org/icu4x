@@ -90,6 +90,10 @@ impl DateFieldsResolver for Coptic {
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         Coptic::reference_year_from_month_day(month, day)
     }
+
+    fn to_rata_die_inner(year: Self::YearInfo, month: u8, day: u8) -> RataDie {
+        calendrical_calculations::coptic::fixed_from_coptic(year, month, day)
+    }
 }
 
 impl Coptic {
@@ -151,11 +155,7 @@ impl Calendar for Coptic {
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        calendrical_calculations::coptic::fixed_from_coptic(
-            date.0.year(),
-            date.0.month(),
-            date.0.day(),
-        )
+        date.0.to_rata_die()
     }
 
     fn has_cheap_iso_conversion(&self) -> bool {
