@@ -1079,9 +1079,8 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
         prefs: DateTimeFormatterPreferences,
         calendar: AnyCalendar,
     ) -> Result<Self, UnsupportedCalendarError> {
-        let kind = calendar.kind();
         let calendar = FormattableAnyCalendar::try_from_any_calendar(calendar)
-            .ok_or(UnsupportedCalendarError { kind })?;
+            .map_err(|c| UnsupportedCalendarError { kind: c.kind() })?;
         Ok(Self {
             inner: FixedCalendarDateTimeNames::new_without_number_formatting(prefs),
             calendar,

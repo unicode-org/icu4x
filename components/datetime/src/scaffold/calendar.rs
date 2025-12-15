@@ -392,9 +392,11 @@ impl FormattableAnyCalendar {
         }
     }
 
-    pub(crate) fn try_from_any_calendar(any_calendar: AnyCalendar) -> Option<Self> {
-        let _kind = FormattableAnyCalendarKind::try_from_any_calendar_kind(any_calendar.kind())?;
-        Some(Self { any_calendar })
+    pub(crate) fn try_from_any_calendar(any_calendar: AnyCalendar) -> Result<Self, AnyCalendar> {
+        match FormattableAnyCalendarKind::try_from_any_calendar_kind(any_calendar.kind()) {
+            Some(_) => Ok(Self { any_calendar }),
+            None => Err(any_calendar),
+        }
     }
 
     pub(crate) fn any_calendar(&self) -> &AnyCalendar {
@@ -566,23 +568,23 @@ impl FormattableAnyCalendar {
     }
 }
 
-pub(crate) struct FormattableAnyCalendarNamesLoader<H, P> {
+pub(crate) struct FormattableAnyCalendarNamesLoader<'a, H, P> {
     provider: P,
-    kind: FormattableAnyCalendarKind,
+    calendar: &'a FormattableAnyCalendar,
     _helper: PhantomData<H>,
 }
 
-impl<H, P> FormattableAnyCalendarNamesLoader<H, P> {
-    pub(crate) fn new(provider: P, kind: FormattableAnyCalendarKind) -> Self {
+impl<'a, H, P> FormattableAnyCalendarNamesLoader<'a, H, P> {
+    pub(crate) fn new(provider: P, calendar: &'a FormattableAnyCalendar) -> Self {
         Self {
             provider,
-            kind,
+            calendar,
             _helper: PhantomData,
         }
     }
 }
 
-impl<M, H, P> BoundDataProvider<M> for FormattableAnyCalendarNamesLoader<H, P>
+impl<M, H, P> BoundDataProvider<M> for FormattableAnyCalendarNamesLoader<'_, H, P>
 where
     M: DynamicDataMarker,
     H: CalMarkers<M>,
@@ -603,7 +605,7 @@ where
     fn load_bound(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         use FormattableAnyCalendarKind::*;
         let p = &self.provider;
-        match self.kind {
+        match self.calendar.kind() {
             Buddhist => H::Buddhist::bind(p).load_bound(req),
             Chinese => H::Chinese::bind(p).load_bound(req),
             Coptic => H::Coptic::bind(p).load_bound(req),
@@ -622,7 +624,7 @@ where
     }
     fn bound_marker(&self) -> DataMarkerInfo {
         use FormattableAnyCalendarKind::*;
-        match self.kind {
+        match self.calendar.kind() {
             Buddhist => H::Buddhist::INFO,
             Chinese => H::Chinese::INFO,
             Coptic => H::Coptic::INFO,
