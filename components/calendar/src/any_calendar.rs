@@ -28,6 +28,15 @@ define_preferences!(
 #[cfg_attr(feature = "unstable", macro_export)]
 #[doc(hidden)]
 /// Creates an enum calendar with the given variants.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+///
+/// Graduation tracking issue: [issue #3964](https://github.com/unicode-org/icu4x/issues/3964).
+/// </div>
+///
+/// ✨ *Enabled with the `unstable` Cargo feature.*
 macro_rules! __make_any_calendar {
     (
         $(#[$any_calendar_meta:meta])*
@@ -790,6 +799,15 @@ impl fmt::Display for AnyCalendarKind {
 }
 
 /// A [`Calendar`] that can be used with the [`make_any_calendar`] macro.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Do not use this type unless you are prepared for things to occasionally break.
+///
+/// Graduation tracking issue: [issue #3964](https://github.com/unicode-org/icu4x/issues/3964).
+/// </div>
+///
+/// ✨ *Enabled with the `unstable` Cargo feature.*
 pub trait AnyCalendarable: Calendar + Sized {
     /// The parameterization of the calendar.
     ///
