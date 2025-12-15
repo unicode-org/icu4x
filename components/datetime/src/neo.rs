@@ -548,8 +548,7 @@ where
     {
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &FormattableAnyCalendarNamesLoader::<<FSet::D as DateDataMarkers>::Skel, _>::new(
-                provider_p,
-                calendar.kind(),
+                provider_p, &calendar,
             ),
             &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1::bind(provider_p),
             &FSet::GluePatternV1::bind(provider_p),
@@ -567,12 +566,10 @@ where
         };
         let result = names.load_for_pattern(
             &FormattableAnyCalendarNamesLoader::<<FSet::D as DateDataMarkers>::Year, _>::new(
-                provider,
-                calendar.kind(),
+                provider, &calendar,
             ),
             &FormattableAnyCalendarNamesLoader::<<FSet::D as DateDataMarkers>::Month, _>::new(
-                provider,
-                calendar.kind(),
+                provider, &calendar,
             ),
             &<FSet::D as DateDataMarkers>::WeekdayNamesV1::bind(provider),
             &<FSet::T as TimeMarkers>::DayPeriodNamesV1::bind(provider),
