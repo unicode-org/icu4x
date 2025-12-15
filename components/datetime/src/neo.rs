@@ -503,8 +503,7 @@ where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
         L: DecimalFormatterLoader + FormattableAnyCalendarLoader,
     {
-        let kind = FormattableAnyCalendarKind::from_preferences(prefs);
-        let calendar = FormattableAnyCalendarLoader::load(loader, kind)?;
+        let calendar = FormattableAnyCalendarLoader::load(loader, (&prefs).into())?;
         let names = RawDateTimeNames::new_without_number_formatting();
         Self::try_new_internal_with_calendar_and_names(
             provider,
