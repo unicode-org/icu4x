@@ -6,6 +6,7 @@ use icu_calendar::{AnyCalendar, AnyCalendarKind, Date};
 use std::fmt::Write;
 
 #[test]
+#[ignore = "Snapshot not committed; run locally when requested"]
 fn test_generate_dates_and_durations_for_review() {
     let calendars = vec![
         AnyCalendarKind::Iso,
