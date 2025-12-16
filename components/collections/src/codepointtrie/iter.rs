@@ -627,6 +627,7 @@ where
 
 /// Wraps an `Iterator<Item = char>` with a reference to
 /// an `AbstractCodePointTrie`.
+#[derive(Debug)]
 pub struct CharIterWithTrie<'trie, T, V, I>
 where
     V: TrieValue,

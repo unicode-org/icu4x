@@ -16,6 +16,7 @@ use crate::NormalizerNfcV1;
 use crate::NormalizerNfdTablesV1;
 use crate::NormalizerNfkdTablesV1;
 use crate::NormalizerUts46DataV1;
+use icu_collections::codepointtrie::CharIterWithTrie;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::DataError;
 use icu_provider::DataProvider;
@@ -109,7 +110,10 @@ impl Uts46MapperBorrowed<'_> {
         iter: I,
     ) -> impl Iterator<Item = char> + 'delegate {
         self.normalizer
-            .normalize_iter_private::<I, Trie46, Uts46MapNormalizePolicy>(iter)
+            .normalize_iter_private::<_, Trie46, Uts46MapNormalizePolicy>(CharIterWithTrie::new(
+                iter,
+                self.normalizer.trie::<Trie46<'_>>(),
+            ))
     }
 
     /// Returns an iterator adaptor that turns an `Iterator` over `char`
@@ -145,7 +149,9 @@ impl Uts46MapperBorrowed<'_> {
         iter: I,
     ) -> impl Iterator<Item = char> + 'delegate {
         self.normalizer
-            .normalize_iter_private::<I, Trie46, Uts46NormalizeValidatePolicy>(iter)
+            .normalize_iter_private::<_, Trie46, Uts46NormalizeValidatePolicy>(
+                CharIterWithTrie::new(iter, self.normalizer.trie::<Trie46<'_>>()),
+            )
     }
 }
 

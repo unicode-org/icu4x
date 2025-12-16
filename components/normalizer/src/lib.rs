@@ -97,9 +97,12 @@ use icu_collections::char16trie::Char16Trie;
 use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::char16trie::TrieResult;
 use icu_collections::codepointtrie::AbstractCodePointTrie;
+use icu_collections::codepointtrie::CharIterWithTrie;
+use icu_collections::codepointtrie::CharsWithTrieEx;
 use icu_collections::codepointtrie::CodePointTrie;
 #[cfg(not(feature = "serde"))]
 use icu_collections::codepointtrie::FastCodePointTrie;
+use icu_collections::codepointtrie::WithTrie;
 #[cfg(feature = "icu_properties")]
 use icu_properties::props::CanonicalCombiningClass;
 use icu_provider::prelude::*;
@@ -110,8 +113,12 @@ use provider::NormalizerNfkdTablesV1;
 use smallvec::SmallVec;
 #[cfg(feature = "utf16_iter")]
 use utf16_iter::Utf16CharsEx;
+#[cfg(feature = "utf16_iter")]
+use utf16_iter::Utf16CharsWithTrieEx;
 #[cfg(feature = "utf8_iter")]
 use utf8_iter::Utf8CharsEx;
+#[cfg(feature = "utf8_iter")]
+use utf8_iter::Utf8CharsWithTrieEx;
 use zerovec::{zeroslice, ZeroSlice};
 
 // The optimizations in the area where `likely` is used
@@ -542,7 +549,12 @@ pub struct Decomposition<'data, I>
 where
     I: Iterator<Item = char>,
 {
-    inner: DecompositionInner<'data, I, Trie<'data>, Uax15Policy>,
+    inner: DecompositionInner<
+        'data,
+        CharIterWithTrie<'data, Trie<'data>, u32, I>,
+        Trie<'data>,
+        Uax15Policy,
+    >,
 }
 
 impl<'data, I> Decomposition<'data, I>
@@ -558,7 +570,7 @@ where
     ///
     /// Public but hidden in order to be able to use this from the
     /// collator.
-    #[doc(hidden)] // used in collator
+    #[doc(hidden)] // used in older versions of collator
     pub fn new(
         delegate: I,
         decompositions: &'data DecompositionData,
@@ -566,7 +578,11 @@ where
     ) -> Self {
         Self {
             inner: DecompositionInner::new_with_supplements(
-                delegate,
+                CharIterWithTrie::new(
+                    delegate,
+                    <&Trie<'data>>::try_from(&decompositions.trie)
+                        .unwrap_or_else(|_| unreachable!("Incompatible data")),
+                ),
                 decompositions,
                 tables,
                 None,
@@ -590,7 +606,7 @@ where
 #[derive(Debug)]
 struct DecompositionInner<'data, I, T, P>
 where
-    I: Iterator<Item = char>,
+    I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32>,
     T: AbstractCodePointTrie<'data, u32>,
     &'data T: TryFrom<&'data CodePointTrie<'data, u32>>,
     P: IteratorPolicy,
@@ -622,7 +638,7 @@ where
 
 impl<'data, I, T, P> DecompositionInner<'data, I, T, P>
 where
-    I: Iterator<Item = char>,
+    I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32>,
     T: AbstractCodePointTrie<'data, u32>,
     &'data T: TryFrom<&'data CodePointTrie<'data, u32>>,
     P: IteratorPolicy,
@@ -760,16 +776,8 @@ where
     fn delegate_next_no_pending(&mut self) -> Option<CharacterAndTrieValue> {
         debug_assert!(self.pending.is_none());
         loop {
-            let c = self.delegate.next()?;
+            let (c, trie_val) = self.delegate.next()?;
 
-            // TODO(#2384): Measure if this check is actually an optimization.
-            if u32::from(c) < self.decomposition_passthrough_bound {
-                return Some(CharacterAndTrieValue::new(c, 0));
-            }
-
-            let trie_val = self.trie.scalar(c);
-            // TODO: Can we do something better about the cost of this branch in the
-            // non-UTS 46 case?
             if trie_val == IGNORABLE_MARKER {
                 match P::IGNORABLE_BEHAVIOR {
                     IgnorableBehavior::Unsupported => {
@@ -1030,7 +1038,7 @@ where
 
 impl<'data, I, T, P> Iterator for DecompositionInner<'data, I, T, P>
 where
-    I: Iterator<Item = char>,
+    I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32>,
     T: AbstractCodePointTrie<'data, u32>,
     &'data T: TryFrom<&'data CodePointTrie<'data, u32>>,
     P: IteratorPolicy,
@@ -1059,7 +1067,12 @@ pub struct Composition<'data, I>
 where
     I: Iterator<Item = char>,
 {
-    inner: CompositionInner<'data, I, Trie<'data>, Uax15Policy>,
+    inner: CompositionInner<
+        'data,
+        CharIterWithTrie<'data, Trie<'data>, u32, I>,
+        Trie<'data>,
+        Uax15Policy,
+    >,
 }
 
 impl<I> Iterator for Composition<'_, I>
@@ -1076,7 +1089,7 @@ where
 #[derive(Debug)]
 struct CompositionInner<'data, I, T, P>
 where
-    I: Iterator<Item = char>,
+    I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32>,
     T: AbstractCodePointTrie<'data, u32>,
     &'data T: TryFrom<&'data CodePointTrie<'data, u32>>,
     P: IteratorPolicy,
@@ -1101,7 +1114,7 @@ where
 
 impl<'data, I, T, P> CompositionInner<'data, I, T, P>
 where
-    I: Iterator<Item = char>,
+    I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32>,
     T: AbstractCodePointTrie<'data, u32>,
     &'data T: TryFrom<&'data CodePointTrie<'data, u32>>,
     P: IteratorPolicy,
@@ -1138,7 +1151,7 @@ where
 
 impl<'data, I, T, P> Iterator for CompositionInner<'data, I, T, P>
 where
-    I: Iterator<Item = char>,
+    I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32>,
     T: AbstractCodePointTrie<'data, u32>,
     &'data T: TryFrom<&'data CodePointTrie<'data, u32>>,
     P: IteratorPolicy,
@@ -1350,7 +1363,7 @@ macro_rules! composing_normalize_to {
             $sink: &mut W,
         ) -> core::fmt::Result {
             $prolog
-            let mut $composition = self.normalize_iter_private::<_, Trie, Uax15Policy>($text.chars());
+            let mut $composition = self.normalize_iter_private::<_, Trie, Uax15Policy>($text.chars_with_trie(self.trie()));
             for cc in $composition.decomposition.buffer.drain(..) {
                 $sink.write_char(cc.character())?;
             }
@@ -1534,7 +1547,7 @@ macro_rules! decomposing_normalize_to {
         ) -> core::fmt::Result {
             $prolog
 
-            let mut $decomposition = self.normalize_iter_private::<_, Trie, Uax15Policy>($text.chars());
+            let mut $decomposition = self.normalize_iter_private::<_, Trie, Uax15Policy>($text.chars_with_trie(self.trie()));
 
             // Try to get the compiler to hoist the bound to a register.
             let $decomposition_passthrough_bound = $decomposition.decomposition_passthrough_bound;
@@ -1894,12 +1907,12 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
     /// adapter by using the data already held by this normalizer.
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Decomposition<'data, I> {
         Decomposition {
-            inner: self.normalize_iter_private(iter),
+            inner: self.normalize_iter_private(CharIterWithTrie::new(iter, self.trie())),
         }
     }
 
     fn normalize_iter_private<
-        I: Iterator<Item = char>,
+        I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32>,
         T: AbstractCodePointTrie<'data, u32>,
         P: IteratorPolicy,
     >(
@@ -1916,6 +1929,14 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
             self.supplementary_tables,
             self.decomposition_passthrough_bound,
         )
+    }
+
+    fn trie<T: AbstractCodePointTrie<'data, u32>>(&self) -> &'data T
+    where
+        &'data T: TryFrom<&'data CodePointTrie<'data, u32>>,
+    {
+        <&T>::try_from(&self.decompositions.trie)
+            .unwrap_or_else(|_| unreachable!("Incompatible data"))
     }
 
     normalizer_methods!();
@@ -1948,7 +1969,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                         // This deliberately isn't panic-free, since the code pattern
                         // that was OK for the composing counterpart regressed
                         // English and French performance if done here, too.
-                        decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars();
+                        decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars_with_trie(decomposition.delegate.trie());
                         break 'fastest;
                     }
                     // End of stream
@@ -1958,8 +1979,8 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
 
                 // `unwrap()` OK, because the slice is valid UTF-8 and we know there
                 // is an upcoming byte.
-                let upcoming = decomposition.delegate.next().unwrap();
-                let upcoming_with_trie_value = decomposition.attach_trie_value(upcoming);
+                let (upcoming, trie_val) = decomposition.delegate.next().unwrap();
+                let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_val);
                 if upcoming_with_trie_value.starter_and_decomposes_to_self() {
                     continue 'fast;
                 }
@@ -1970,7 +1991,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
 
                 // Now let's figure out if we got a starter or a non-starter.
                 if decomposition_starts_with_non_starter(
-                    upcoming_with_trie_value.trie_val,
+                    trie_val,
                 ) {
                     // Let this trie value to be reprocessed in case it is
                     // one of the rare decomposing ones.
@@ -2013,6 +2034,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                 let mut code_unit_iter = decomposition.delegate.as_slice().iter();
                 'fastest: loop {
                     if let Some(&upcoming_byte) = code_unit_iter.next() {
+                        // TODO: Unclear if this is still an optimization.
                         if upcoming_byte < decomposition_passthrough_byte_bound {
                             // Fast-track succeeded!
                             continue 'fastest;
@@ -2024,13 +2046,13 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                     return Ok(());
                 }
                 #[expect(clippy::indexing_slicing)]
-                {decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars();}
+                {decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars_with_trie(decomposition.delegate.trie());}
 
                 // `unwrap()` OK, because the slice is valid UTF-8 and we know there
                 // is an upcoming byte.
                 #[expect(clippy::unwrap_used)]
-                let upcoming = decomposition.delegate.next().unwrap();
-                let upcoming_with_trie_value = decomposition.attach_trie_value(upcoming);
+                let (upcoming, trie_val) = decomposition.delegate.next().unwrap();
+                let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_val);
                 if upcoming_with_trie_value.starter_and_decomposes_to_self_except_replacement() {
                     // Note: The trie value of the REPLACEMENT CHARACTER is
                     // intentionally formatted to fail the
@@ -2243,7 +2265,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                             // decomposition.delegate = code_unit_iter.as_slice().chars();
                             // SAFETY: `ptr` and `end` have been derived from the same allocation
                             // and `ptr` is never greater than `end`.
-                            decomposition.delegate = unsafe { core::slice::from_raw_parts(ptr, end.offset_from(ptr) as usize) }.chars();
+                            decomposition.delegate = unsafe { core::slice::from_raw_parts(ptr, end.offset_from(ptr) as usize) }.chars_with_trie(decomposition.delegate.trie());
                             // Let this trie value to be reprocessed in case it is
                             // one of the rare decomposing ones.
                             decomposition.pending = Some(upcoming_with_trie_value);
@@ -2262,7 +2284,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                 // decomposition.delegate = code_unit_iter.as_slice().chars();
                 // SAFETY: `ptr` and `end` have been derived from the same allocation
                 // and `ptr` is never greater than `end`.
-                decomposition.delegate = unsafe { core::slice::from_raw_parts(ptr, end.offset_from(ptr) as usize) }.chars();
+                decomposition.delegate = unsafe { core::slice::from_raw_parts(ptr, end.offset_from(ptr) as usize) }.chars_with_trie(decomposition.delegate.trie());
                 break 'fastwrap;
             }
         },
@@ -2555,12 +2577,12 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
     /// adapter by using the data already held by this normalizer.
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Composition<'data, I> {
         Composition {
-            inner: self.normalize_iter_private(iter),
+            inner: self.normalize_iter_private(CharIterWithTrie::new(iter, self.trie())),
         }
     }
 
     fn normalize_iter_private<
-        I: Iterator<Item = char>,
+        I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32>,
         T: AbstractCodePointTrie<'data, u32>,
         P: IteratorPolicy,
     >(
@@ -2581,6 +2603,13 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
             self.canonical_compositions.canonical_compositions.clone(),
             self.decomposing_normalizer.composition_passthrough_bound,
         )
+    }
+
+    fn trie<T: AbstractCodePointTrie<'data, u32>>(&self) -> &'data T
+    where
+        &'data T: TryFrom<&'data CodePointTrie<'data, u32>>,
+    {
+        self.decomposing_normalizer.trie()
     }
 
     normalizer_methods!();
@@ -2613,13 +2642,16 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                             // Fast-track succeeded!
                             continue 'fastest;
                         }
+                        // TODO: We know `upcoming_byte` is a non-ASCII lead byte of a well-formed
+                        // UTF-8 sequence. That's enough to inline code from `CharsWithTrie` here
+                        // with confidence that `unsafe` and complexity isn't excessive.
                         let Some(remaining_slice) = pending_slice.get(pending_slice.len() - code_unit_iter.as_slice().len() - 1..) else {
                             // If we ever come here, it's an internal bug. Let's avoid panic code paths in release builds.
                             debug_assert!(false);
                             // Throw away the fastest-path result in case of an internal bug.
                             break 'fastest;
                         };
-                        composition.decomposition.delegate = remaining_slice.chars();
+                        composition.decomposition.delegate = remaining_slice.chars_with_trie(composition.decomposition.delegate.trie());
                         break 'fastest;
                     }
                     // End of stream
@@ -2628,8 +2660,8 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                 }
                 // `unwrap()` OK, because the slice is valid UTF-8 and we know there
                 // is an upcoming byte.
-                let upcoming = composition.decomposition.delegate.next().unwrap();
-                let upcoming_with_trie_value = composition.decomposition.attach_trie_value(upcoming);
+                let (upcoming, trie_val) = composition.decomposition.delegate.next().unwrap();
+                let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_val);
                 if upcoming_with_trie_value.potential_passthrough_and_cannot_combine_backwards() {
                     // Can't combine backwards, hence a plain (non-backwards-combining)
                     // starter albeit past `composition_passthrough_bound`
@@ -2641,9 +2673,10 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                 composition.decomposition.pending = Some(upcoming_with_trie_value);
 
                 // slicing and unwrap OK, because we've just evidently read enough previously.
-                let mut consumed_so_far = pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_str().len() - upcoming.len_utf8()].chars();
+                let mut consumed_so_far = pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_str().len() - upcoming.len_utf8()].chars_with_trie(composition.decomposition.delegate.trie());
                 // `unwrap` OK, because we've previously manage to read the previous character
-                undecomposed_starter = composition.decomposition.attach_trie_value(consumed_so_far.next_back().unwrap());
+                let (undecomposed, undecomposed_trie_val) = consumed_so_far.next_back().unwrap();
+                undecomposed_starter = CharacterAndTrieValue::new(undecomposed, undecomposed_trie_val);
                 let consumed_so_far_slice = consumed_so_far.as_str();
                 sink.write_str(consumed_so_far_slice)?;
                 break 'fast;
@@ -2675,13 +2708,17 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
         as_slice,
         {
             'fast: loop {
-                if let Some(upcoming) = composition.decomposition.delegate.next() {
+                if let Some((upcoming, trie_val)) = composition.decomposition.delegate.next() {
                     if u32::from(upcoming) < composition_passthrough_bound {
+                        // XXX Figure out what's an optimization and what is not. We already
+                        // read from the trie above. Does this branch even make sense anymore?
+                        // On the other hand, should we still seek to have some kind of fast-path
+                        // that doesn't read from the trie? For ASCII only perhaps?
+
                         // Fast-track succeeded!
                         continue 'fast;
                     }
-                    // TODO: Be statically aware of fast/small trie.
-                    let upcoming_with_trie_value = composition.decomposition.attach_trie_value(upcoming);
+                    let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_val);
                     if upcoming_with_trie_value.potential_passthrough_and_cannot_combine_backwards() {
                         // Note: The trie value of the REPLACEMENT CHARACTER is
                         // intentionally formatted to fail the
@@ -2895,8 +2932,8 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                             // Throw away the results of the fast path.
                             break 'fastwrap;
                         };
-                        let mut consumed_so_far = consumed_so_far_slice.chars();
-                        let Some(c_from_back) = consumed_so_far.next_back() else {
+                        let mut consumed_so_far = consumed_so_far_slice.chars_with_trie(composition.decomposition.delegate.trie());
+                        let Some((c_from_back, trie_val_from_back)) = consumed_so_far.next_back() else {
                             // If we ever come here, it's a bug, but let's avoid panic code paths in release builds.
                             debug_assert!(false);
                             // Throw away the results of the fast path.
@@ -2907,7 +2944,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                         // the most-recent trie value. Need to measure what's more expensive:
                         // Remembering the trie value on each iteration or re-reading the
                         // last one after the fast-track run.
-                        undecomposed_starter = composition.decomposition.attach_trie_value(c_from_back);
+                        undecomposed_starter = CharacterAndTrieValue::new(c_from_back, trie_val_from_back);
                         sink.write_slice(consumed_so_far.as_slice())?;
                         break 'fast;
                     }
@@ -2919,7 +2956,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                 // composition.decomposition.delegate = code_unit_iter.as_slice().chars();
                 // SAFETY: `ptr` and `end` have been derive from the same allocation
                 // and `ptr` is never greater than `end`.
-                composition.decomposition.delegate = unsafe { core::slice::from_raw_parts(ptr, end.offset_from(ptr) as usize) }.chars();
+                composition.decomposition.delegate = unsafe { core::slice::from_raw_parts(ptr, end.offset_from(ptr) as usize) }.chars_with_trie(composition.decomposition.delegate.trie());
                 break 'fastwrap;
             }
         },

@@ -25,8 +25,8 @@ icu_collections = { workspace = true }
 icu_properties = { workspace = true, optional = true }
 icu_provider = { workspace = true }
 smallvec = { workspace = true } # alloc
-utf16_iter = { workspace = true, optional = true }
-utf8_iter = { workspace = true, optional = true }
+utf16_iter = { path = "../../../utf16_iter", features = ["icu_collections"], optional = true }
+utf8_iter = { path = "../../../utf8_iter", features = ["icu_collections"], optional = true }
 write16 = { workspace = true, features = ["alloc"], optional = true }
 zerovec = { workspace = true }
 
