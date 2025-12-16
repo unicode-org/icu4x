@@ -341,7 +341,10 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-test-dart`
-      run: cargo make ci-job-test-dart
+      shell: bash
+      run: |
+        export PATH=$PATH:/c/Program\ Files/Git/bin # make bash available on Windows
+        cargo make ci-job-test-dart
 
     - name: Run `cargo make ci-job-test-dart` in local mode
       run: |
