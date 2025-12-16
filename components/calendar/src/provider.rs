@@ -18,7 +18,7 @@
 use crate::types::Weekday;
 use icu_provider::fallback::{LocaleFallbackConfig, LocaleFallbackPriority};
 use icu_provider::prelude::*;
-use tinystr::TinyStr16;
+use tinystr::TinyAsciiStr;
 use zerovec::ZeroVec;
 
 #[cfg(feature = "compiled_data")]
@@ -50,7 +50,7 @@ icu_provider::data_marker!(
     /// Modern Japanese era names
     CalendarJapaneseModernV1,
     "calendar/japanese/modern/v1",
-    JapaneseEras<'static>,
+    PackedEra,
     is_singleton = true
 );
 icu_provider::data_marker!(
@@ -98,11 +98,11 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(not(feature = "alloc"), zerovec::skip_derive(ZeroMapKV))]
 pub struct EraStartDate {
-    /// The year the era started in
+    /// The Gregorian year the era started in
     pub year: i32,
-    /// The month the era started in
+    /// The Gregorian month the era started in
     pub month: u8,
-    /// The day the era started in
+    /// The Gregorian day the era started in
     pub day: u8,
 }
 
@@ -121,11 +121,98 @@ pub struct EraStartDate {
 pub struct JapaneseEras<'data> {
     /// A map from era start dates to their era codes
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
+    pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyAsciiStr<16>)>,
 }
 
 icu_provider::data_struct!(
     JapaneseEras<'_>,
+    #[cfg(feature = "datagen")]
+);
+
+/// A type to represent a modern (post 2000 CE, 8-byte code) era.
+#[derive(Debug, PartialEq, Copy, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+pub struct PackedEra {
+    /// The year the era started in, with the epoch 2000 CE
+    pub year: u8,
+    /// The Gregorian month the era started in
+    pub month: u8,
+    /// The Gregorian day the era started in
+    pub day: u8,
+    /// The era code
+    pub name: TinyAsciiStr<8>,
+}
+
+impl PackedEra {
+    /// Construct a `PackedEra` from a tuple
+    pub const fn pack(v: (EraStartDate, TinyAsciiStr<16>)) -> Self {
+        Self {
+            year: (v.0.year - 2000) as u8,
+            month: v.0.month,
+            day: v.0.day,
+            name: v.1.resize(),
+        }
+    }
+
+    /// Convert a `PackedEra` into a tuple
+    pub const fn unpack(self) -> (EraStartDate, TinyAsciiStr<16>) {
+        (
+            EraStartDate {
+                year: self.year as i32 + 2000,
+                month: self.month,
+                day: self.day,
+            },
+            self.name.resize(),
+        )
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl serde::Serialize for PackedEra {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        JapaneseEras {
+            dates_to_eras: ZeroVec::from_iter([self.unpack()]),
+        }
+        .serialize(serializer)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for PackedEra {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        use serde::de::Error;
+        JapaneseEras::deserialize(deserializer)?
+            .dates_to_eras
+            .last()
+            .ok_or(D::Error::custom("empty eras"))
+            .map(Self::pack)
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl databake::Bake for PackedEra {
+    fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
+        let e = self.unpack().bake(ctx);
+        databake::quote! {
+            icu_calendar::provider::PackedEra::pack(#e)
+        }
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl databake::BakeSize for PackedEra {
+    fn borrows_size(&self) -> usize {
+        0
+    }
+}
+
+icu_provider::data_struct!(
+    PackedEra,
     #[cfg(feature = "datagen")]
 );
 

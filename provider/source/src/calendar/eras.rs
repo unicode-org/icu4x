@@ -66,20 +66,54 @@ impl SourceDataProvider {
                         .map(|c| DatagenCalendar::from_cldr_name(&c.calendar));
 
                     struct EmptyProvider;
-                    impl<M: DataMarker<DataStruct = JapaneseEras<'static>>> DataProvider<M> for EmptyProvider {
-                        fn load(&self, _req: DataRequest) -> Result<DataResponse<M>, DataError> {
+                    impl DataProvider<CalendarJapaneseExtendedV1> for EmptyProvider {
+                        fn load(
+                            &self,
+                            _req: DataRequest,
+                        ) -> Result<DataResponse<CalendarJapaneseExtendedV1>, DataError>
+                        {
                             Ok(DataResponse {
                                 metadata: Default::default(),
-                                payload: DataPayload::from_owned(
-                                    JapaneseEras {
-                                        dates_to_eras: [(EraStartDate { year: 3000, month: 1, day: 1 }, tinystr::tinystr!(16, "dummy"))].into_iter().collect(),
+                                payload: DataPayload::from_owned(JapaneseEras {
+                                    dates_to_eras: [(
+                                        EraStartDate {
+                                            year: 3000,
+                                            month: 1,
+                                            day: 1,
+                                        },
+                                        tinystr::tinystr!(16, "dummy"),
+                                    )]
+                                    .into_iter()
+                                    .collect(),
+                                }),
+                            })
+                        }
+                    }
+                    impl DataProvider<CalendarJapaneseModernV1> for EmptyProvider {
+                        fn load(
+                            &self,
+                            _req: DataRequest,
+                        ) -> Result<DataResponse<CalendarJapaneseModernV1>, DataError>
+                        {
+                            Ok(DataResponse {
+                                metadata: Default::default(),
+                                payload: DataPayload::from_owned(PackedEra::pack((
+                                    EraStartDate {
+                                        year: 3000,
+                                        month: 1,
+                                        day: 1,
                                     },
-                                ),
+                                    tinystr::tinystr!(16, "dummy"),
+                                ))),
                             })
                         }
                     }
 
-                    let any_cal = AnyCalendar::try_new_unstable(&EmptyProvider, cal.canonical_any_calendar_kind()).unwrap();
+                    let any_cal = AnyCalendar::try_new_unstable(
+                        &EmptyProvider,
+                        cal.canonical_any_calendar_kind(),
+                    )
+                    .unwrap();
 
                     let mut vec = era_dates_map[cal.cldr_name()]
                         .eras
@@ -96,7 +130,9 @@ impl SourceDataProvider {
                                     }
                                 }
                                 _ => {
-                                    if cal == DatagenCalendar::JapaneseModern && data.start.unwrap().year < 1868 {
+                                    if cal == DatagenCalendar::JapaneseModern
+                                        && data.start.unwrap().year < 1868
+                                    {
                                         return None;
                                     }
                                     let date = data.start.or(data.end).unwrap();
@@ -159,17 +195,18 @@ impl DataProvider<CalendarJapaneseModernV1> for SourceDataProvider {
 
         let (inherit, ref eras) = self.all_eras()?[&DatagenCalendar::JapaneseModern];
 
-        let dates_to_eras = inherit
+        let last_era = inherit
             .iter()
             .flat_map(|i| self.all_eras().unwrap()[i].1.iter())
             .chain(eras)
             .filter(|(_, data)| !matches!(data.code.as_str(), "bce" | "ce"))
+            .max_by_key(|(_, data)| data.start.unwrap())
             .map(|(_, data)| (data.start.unwrap(), data.code.parse().unwrap()))
-            .collect();
+            .unwrap();
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(JapaneseEras { dates_to_eras }),
+            payload: DataPayload::from_owned(PackedEra::pack(last_era)),
         })
     }
 }
@@ -305,14 +342,8 @@ pub fn japanese_and_japanext_are_compatible() {
         .unwrap()
         .payload;
     assert_eq!(
-        japanext
-            .get()
-            .dates_to_eras
-            .iter()
-            .rev()
-            .zip(japanese.get().dates_to_eras.iter().rev())
-            .find(|(e, a)| e != a),
-        None,
+        japanext.get().dates_to_eras.last(),
+        Some(japanese.get().unpack()),
         "{japanext:?} - {japanese:?}"
     );
 }
