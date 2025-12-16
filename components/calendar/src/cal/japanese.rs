@@ -213,24 +213,27 @@ impl GregorianYears for &'_ Japanese {
     fn era_year_from_extended(&self, year: i32, month: u8, day: u8) -> types::EraYear {
         let date: EraStartDate = EraStartDate { year, month, day };
 
-        if let Some((start, era)) = [self.last_era.unpack(), REIWA, HEISEI, SHOWA, TAISHO, MEIJI]
-            .into_iter()
-            .find(|&(start, _)| date >= start)
+        if let Some((idx, (start, era))) = [
+            (7, self.last_era.unpack()),
+            (6, REIWA),
+            (5, HEISEI),
+            (4, SHOWA),
+            (3, TAISHO),
+            (2, MEIJI),
+        ]
+        .into_iter()
+        .skip((self.last_era == const { PackedEra::pack(REIWA) }) as usize)
+        .find(|&(_, (start, _))| date >= start)
         {
             types::EraYear {
                 era,
-                // TODO: return era indices?
-                era_index: None,
+                era_index: Some(idx),
                 year: year - start.year + 1,
                 extended_year: year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
-            types::EraYear {
-                // TODO: return era indices?
-                era_index: None,
-                ..CeBce.era_year_from_extended(year, month, day)
-            }
+            CeBce.era_year_from_extended(year, month, day)
         }
     }
 

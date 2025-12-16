@@ -1,22 +1,11 @@
 {
-  "VariableEras": [
-    [
-      "bce",
-      "ce",
-      "heisei",
-      "meiji",
-      "reiwa",
-      "showa",
-      "taisho"
-    ],
-    [
-      "pre nove ere",
-      "nove ere",
-      "Haisei",
-      "Meiđi",
-      "Reiva",
-      "Šova",
-      "Taišo"
-    ]
+  "FixedEras": [
+    "pre nove ere",
+    "nove ere",
+    "Meiđi",
+    "Taišo",
+    "Šova",
+    "Haisei",
+    "Reiva"
   ]
 }

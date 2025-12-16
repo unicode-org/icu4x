@@ -1612,14 +1612,14 @@ mod tests {
     fn japanese() {
         let japanese = AnyCalendar::new(AnyCalendarKind::Japanese);
         let japanese = Ref(&japanese);
-        single_test_roundtrip(japanese, Some(("reiwa", None)), 3, Month::new(3), 1);
-        single_test_roundtrip(japanese, Some(("heisei", None)), 6, Month::new(12), 1);
-        single_test_roundtrip(japanese, Some(("meiji", None)), 10, Month::new(3), 1);
-        single_test_roundtrip(japanese, Some(("ce", None)), 1000, Month::new(3), 1);
+        single_test_roundtrip(japanese, Some(("reiwa", Some(6))), 3, Month::new(3), 1);
+        single_test_roundtrip(japanese, Some(("heisei", Some(5))), 6, Month::new(12), 1);
+        single_test_roundtrip(japanese, Some(("meiji", Some(2))), 10, Month::new(3), 1);
+        single_test_roundtrip(japanese, Some(("ce", Some(1))), 1000, Month::new(3), 1);
         single_test_roundtrip(japanese, None, 1000, Month::new(3), 1);
         single_test_roundtrip(japanese, None, -100, Month::new(3), 1);
         single_test_roundtrip(japanese, None, 2024, Month::new(3), 1);
-        single_test_roundtrip(japanese, Some(("bce", None)), 10, Month::new(3), 1);
+        single_test_roundtrip(japanese, Some(("bce", Some(0))), 10, Month::new(3), 1);
         // Since #6910, the era range is not enforced in try_from_codes
         /*
         single_test_error(
