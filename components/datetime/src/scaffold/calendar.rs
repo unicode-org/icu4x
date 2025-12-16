@@ -354,24 +354,24 @@ impl FormattableAnyCalendarKind {
 fn test_calendar_fallback() {
     use icu_locale_core::{locale, Locale};
     assert_eq!(
-        FormattableAnyCalendar::new(locale!("en-TH-u-ca-iso8601").into()),
-        FormattableAnyCalendar::new(locale!("und-u-ca-buddhist").into()),
+        FormattableAnyCalendar::try_new(locale!("en-TH-u-ca-iso8601").into()),
+        FormattableAnyCalendar::try_new(locale!("und-u-ca-buddhist").into()),
     );
     assert_eq!(
-        FormattableAnyCalendar::new(locale!("en-TH").into()),
-        FormattableAnyCalendar::new(locale!("und-u-ca-buddhist").into()),
+        FormattableAnyCalendar::try_new(locale!("en-TH").into()),
+        FormattableAnyCalendar::try_new(locale!("und-u-ca-buddhist").into()),
     );
     assert_eq!(
-        FormattableAnyCalendar::new(locale!("en-SA-u-ca-islamic").into()),
-        FormattableAnyCalendar::new(
+        FormattableAnyCalendar::try_new(locale!("en-SA-u-ca-islamic").into()),
+        FormattableAnyCalendar::try_new(
             Locale::try_from_str("und-u-ca-islamic-umalqura")
                 .unwrap()
                 .into()
         ),
     );
     assert_eq!(
-        FormattableAnyCalendar::new(locale!("en-IL-u-ca-islamic").into()),
-        FormattableAnyCalendar::new(
+        FormattableAnyCalendar::try_new(locale!("en-IL-u-ca-islamic").into()),
+        FormattableAnyCalendar::try_new(
             Locale::try_from_str("und-u-ca-islamic-civil")
                 .unwrap()
                 .into()
@@ -417,103 +417,19 @@ impl FormattableAnyCalendar {
     }
 
     #[cfg(feature = "compiled_data")]
-    pub(crate) fn new(mut prefs: CalendarPreferences) -> Self {
-        use CalendarAlgorithm::*;
-        let any_calendar = match prefs.resolved_algorithm() {
-            Buddhist => AnyCalendar::Buddhist(cal::Buddhist),
-            Chinese => AnyCalendar::Chinese(cal::ChineseTraditional::new()),
-            Coptic => AnyCalendar::Coptic(cal::Coptic),
-            Dangi => AnyCalendar::Dangi(cal::KoreanTraditional::new()),
-            Ethiopic => AnyCalendar::Ethiopian(cal::Ethiopian::new()),
-            Ethioaa => AnyCalendar::Ethiopian(cal::Ethiopian::new_with_era_style(
-                cal::EthiopianEraStyle::AmeteAlem,
-            )),
-            Gregory => AnyCalendar::Gregorian(cal::Gregorian),
-            Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
-            Indian => AnyCalendar::Indian(cal::Indian),
-            Hijri(Some(HijriCalendarAlgorithm::Civil)) => {
-                AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
-                    hijri::TabularAlgorithmLeapYears::TypeII,
-                    hijri::TabularAlgorithmEpoch::Friday,
-                ))
-            }
-            Hijri(Some(HijriCalendarAlgorithm::Tbla)) => {
-                AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
-                    hijri::TabularAlgorithmLeapYears::TypeII,
-                    hijri::TabularAlgorithmEpoch::Thursday,
-                ))
-            }
-            Hijri(Some(HijriCalendarAlgorithm::Umalqura)) => {
-                AnyCalendar::HijriUmmAlQura(cal::Hijri::new_umm_al_qura())
-            }
-            Japanese => AnyCalendar::Japanese(cal::Japanese::new()),
-            Persian => AnyCalendar::Persian(cal::Persian),
-            Roc => AnyCalendar::Roc(cal::Roc),
-            Iso8601 | Hijri(_) => {
-                // unsupported
-                prefs.calendar_algorithm = None;
-                return Self::new(prefs);
-            }
-            _ => {
-                // unknown
-                AnyCalendar::Gregorian(Gregorian)
-            }
-        };
-        Self { any_calendar }
+    pub(crate) fn try_new(prefs: CalendarPreferences) -> Result<Self, DataError> {
+        Self::try_new_unstable(&icu_calendar::provider::Baked, prefs)
     }
 
     #[cfg(feature = "serde")]
     pub(crate) fn try_new_with_buffer_provider<P>(
         provider: &P,
-        mut prefs: CalendarPreferences,
+        prefs: CalendarPreferences,
     ) -> Result<Self, DataError>
     where
         P: ?Sized + BufferProvider,
     {
-        use CalendarAlgorithm::*;
-        let any_calendar = match prefs.resolved_algorithm() {
-            Buddhist => AnyCalendar::Buddhist(cal::Buddhist),
-            Chinese => AnyCalendar::Chinese(cal::ChineseTraditional::new()),
-            Coptic => AnyCalendar::Coptic(cal::Coptic),
-            Dangi => AnyCalendar::Dangi(cal::KoreanTraditional::new()),
-            Ethiopic => AnyCalendar::Ethiopian(cal::Ethiopian::new()),
-            Ethioaa => AnyCalendar::Ethiopian(cal::Ethiopian::new_with_era_style(
-                cal::EthiopianEraStyle::AmeteAlem,
-            )),
-            Gregory => AnyCalendar::Gregorian(cal::Gregorian),
-            Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
-            Indian => AnyCalendar::Indian(cal::Indian),
-            Hijri(Some(HijriCalendarAlgorithm::Civil)) => {
-                AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
-                    hijri::TabularAlgorithmLeapYears::TypeII,
-                    hijri::TabularAlgorithmEpoch::Friday,
-                ))
-            }
-            Hijri(Some(HijriCalendarAlgorithm::Tbla)) => {
-                AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
-                    hijri::TabularAlgorithmLeapYears::TypeII,
-                    hijri::TabularAlgorithmEpoch::Thursday,
-                ))
-            }
-            Hijri(Some(HijriCalendarAlgorithm::Umalqura)) => {
-                AnyCalendar::HijriUmmAlQura(cal::Hijri::new_umm_al_qura())
-            }
-            Japanese => {
-                AnyCalendar::Japanese(cal::Japanese::try_new_with_buffer_provider(provider)?)
-            }
-            Persian => AnyCalendar::Persian(cal::Persian),
-            Roc => AnyCalendar::Roc(cal::Roc),
-            Iso8601 | Hijri(_) => {
-                // unsupported
-                prefs.calendar_algorithm = None;
-                return Self::try_new_with_buffer_provider(provider, prefs);
-            }
-            _ => {
-                // unknown
-                AnyCalendar::Gregorian(Gregorian)
-            }
-        };
-        Ok(Self { any_calendar })
+        Self::try_new_unstable(&provider.as_deserializing(), prefs)
     }
 
     pub(crate) fn try_new_unstable<P>(

@@ -49,7 +49,7 @@ impl DecimalFormatterLoader for ExternalLoaderCompiledData {
 impl FormattableAnyCalendarLoader for ExternalLoaderCompiledData {
     #[inline]
     fn load(&self, prefs: CalendarPreferences) -> Result<FormattableAnyCalendar, DataError> {
-        Ok(FormattableAnyCalendar::new(prefs))
+        FormattableAnyCalendar::try_new(prefs)
     }
 }
 
