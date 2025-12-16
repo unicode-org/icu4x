@@ -35,17 +35,18 @@ macro_rules! make_any_calendar {
         #[$unstable_cfg:meta],
 
         $(
-            $variant:ident($ty:ty),
+            // Allow multiple variants for the same calendar
+            $($variant:ident)~+($ty:ty),
         )+
     ) => {
         $(#[$any_calendar_meta])*
         #[derive(Debug, Clone)]
         // TODO(#3469): Decide on the best way to implement Ord.
         pub enum $any_calendar_ident {
-            $(
+            $($(
                 #[doc = concat!("A [`", stringify!($ty), "`] calendar")]
                 $variant($ty),
-            )+
+            )+)+
         }
 
         impl PartialEq for $any_calendar_ident {
@@ -53,9 +54,9 @@ macro_rules! make_any_calendar {
             fn eq(&self, other: &Self) -> bool {
                 use $any_calendar_ident::*;
                 match (self, other) {
-                    $(
+                    $($(
                         ($variant(c1), $variant(c2)) => AnyCalendarable::identity(c1) == AnyCalendarable::identity(c2),
-                    )+
+                    )+)+
                     _ => false,
                 }
             }
@@ -65,10 +66,10 @@ macro_rules! make_any_calendar {
         #[doc = concat!("The inner date type for [`", stringify!($any_calendar_ident), "`]")]
         #[derive(Clone, PartialEq, Eq, Debug, Copy)]
         pub enum $any_date_ident {
-            $(
+            $($(
                 #[doc = concat!("A date for a [`", stringify!($ty), "`] calendar")]
                 $variant(<$ty as $crate::Calendar>::DateInner, <$ty as AnyCalendarable>::Identity),
-            )+
+            )+)+
         }
 
         impl PartialOrd for $any_date_ident {
@@ -76,9 +77,9 @@ macro_rules! make_any_calendar {
             fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
                 use $any_date_ident::*;
                 match (self, other) {
-                    $(
+                    $($(
                         ($variant(d1, q1), $variant(d2, q2)) if q1 == q2 => d1.partial_cmp(d2),
-                    )+
+                    )+)+
                     _ => None,
                 }
             }
@@ -98,9 +99,9 @@ macro_rules! make_any_calendar {
                 day: u8,
             ) -> Result<Self::DateInner, $crate::DateError> {
                 Ok(match self {
-                    $(
+                    $($(
                         &Self::$variant(ref c) => $any_date_ident::$variant(c.from_codes(era, year, month_code, day)?, AnyCalendarable::identity(c)),
-                    )+
+                    )+)+
                 })
             }
 
@@ -111,33 +112,33 @@ macro_rules! make_any_calendar {
                 options: $crate::options::DateFromFieldsOptions,
             ) -> Result<Self::DateInner, $crate::error::DateFromFieldsError> {
                 Ok(match self {
-                    $(
+                    $($(
                         &Self::$variant(ref c) => $any_date_ident::$variant(c.from_fields(fields, options)?, AnyCalendarable::identity(c)),
-                    )+
+                    )+)+
                 })
             }
 
             fn has_cheap_iso_conversion(&self) -> bool {
                 match self {
-                    $(
+                    $($(
                         Self::$variant(ref c) => c.has_cheap_iso_conversion(),
-                    )+
+                    )+)+
                 }
             }
 
             fn from_iso(&self, iso: <$crate::Iso as $crate::Calendar>::DateInner) -> Self::DateInner {
                 match self {
-                    $(
+                    $($(
                         &Self::$variant(ref c) => $any_date_ident::$variant(c.from_iso(iso), AnyCalendarable::identity(c)),
-                    )+
+                    )+)+
                 }
             }
 
             fn to_iso(&self, date: &Self::DateInner) -> <$crate::Iso as $crate::Calendar>::DateInner {
                 match (self, date) {
-                    $(
+                    $($(
                         (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.to_iso(&d),
-                    )+
+                    )+)+
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -145,17 +146,17 @@ macro_rules! make_any_calendar {
 
             fn from_rata_die(&self, rd: $crate::types::RataDie) -> Self::DateInner {
                 match self {
-                    $(
+                    $($(
                         &Self::$variant(ref c) => $any_date_ident::$variant(c.from_rata_die(rd), AnyCalendarable::identity(c)),
-                    )+
+                    )+)+
                 }
             }
 
             fn to_rata_die(&self, date: &Self::DateInner) -> $crate::types::RataDie {
                 match (self, date) {
-                    $(
+                    $($(
                         (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.to_rata_die(&d),
-                    )+
+                    )+)+
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -163,9 +164,9 @@ macro_rules! make_any_calendar {
 
             fn months_in_year(&self, date: &Self::DateInner) -> u8 {
                 match (self, date) {
-                    $(
+                    $($(
                         (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.months_in_year(&d),
-                    )+
+                    )+)+
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -173,9 +174,9 @@ macro_rules! make_any_calendar {
 
             fn days_in_year(&self, date: &Self::DateInner) -> u16 {
                 match (self, date) {
-                    $(
+                    $($(
                         (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.days_in_year(&d),
-                    )+
+                    )+)+
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -183,9 +184,9 @@ macro_rules! make_any_calendar {
 
             fn days_in_month(&self, date: &Self::DateInner) -> u8 {
                 match (self, date) {
-                    $(
+                    $($(
                         (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.days_in_month(&d),
-                    )+
+                    )+)+
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -193,9 +194,9 @@ macro_rules! make_any_calendar {
 
             fn year_info(&self, date: &Self::DateInner) -> $crate::types::YearInfo {
                 match (self, date) {
-                    $(
+                    $($(
                         (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.year_info(&d).into(),
-                    )+
+                    )+)+
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -204,9 +205,9 @@ macro_rules! make_any_calendar {
             /// The calendar-specific check if `date` is in a leap year
             fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
                 match (self, date) {
-                    $(
+                    $($(
                         (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.is_in_leap_year(&d),
-                    )+
+                    )+)+
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -215,9 +216,9 @@ macro_rules! make_any_calendar {
             /// The calendar-specific month represented by `date`
             fn month(&self, date: &Self::DateInner) -> $crate::types::MonthInfo {
                 match (self, date) {
-                    $(
+                    $($(
                         (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.month(&d),
-                    )+
+                    )+)+
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -226,9 +227,9 @@ macro_rules! make_any_calendar {
             /// The calendar-specific day-of-month represented by `date`
             fn day_of_month(&self, date: &Self::DateInner) -> $crate::types::DayOfMonth {
                 match (self, date) {
-                    $(
+                    $($(
                         (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.day_of_month(&d),
-                    )+
+                    )+)+
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -237,9 +238,9 @@ macro_rules! make_any_calendar {
             /// Information of the day of the year
             fn day_of_year(&self, date: &Self::DateInner) -> $crate::types::DayOfYear {
                 match (self, date) {
-                    $(
+                    $($(
                         (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.day_of_year(&d),
-                    )+
+                    )+)+
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -254,11 +255,11 @@ macro_rules! make_any_calendar {
             ) -> Result<Self::DateInner, $crate::DateError> {
                 let mut date = *date;
                 match (self, &mut date) {
-                    $(
+                    $($(
                         (&Self::$variant(ref c), $any_date_ident::$variant(ref mut d, q)) if AnyCalendarable::identity(c) == *q => {
                             *d = c.add(d, duration, options)?;
                         },
-                    )+
+                    )+)+
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -273,11 +274,11 @@ macro_rules! make_any_calendar {
                 options: $crate::options::DateDifferenceOptions,
             ) -> Result<$crate::types::DateDuration, Self::DifferenceError> {
                 let Ok(r) = match (self, date1, date2) {
-                    $(
+                    $($(
                         (Self::$variant(ref c1), $any_date_ident::$variant(d1, q1), $any_date_ident::$variant(d2, q2)) if AnyCalendarable::identity(c1) == *q1 && q1 == q2 => {
                             c1.until(d1, d2, options)
                         }
-                    )+
+                    )+)+
                     _ => {
                         return Err($crate::cal::AnyCalendarDifferenceError::MismatchedCalendars);
                     }
@@ -287,17 +288,17 @@ macro_rules! make_any_calendar {
 
             fn debug_name(&self) -> &'static str {
                 match self {
-                    $(
+                    $($(
                         &Self::$variant(_) => concat!(stringify!($any_calendar_ident), " (", stringify!($variant), ")"),
-                    )+
+                    )+)+
                 }
             }
 
             fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
                 match self {
-                    $(
+                    $($(
                         Self::$variant(ref c) => c.calendar_algorithm(),
-                    )+
+                    )+)+
                 }
             }
         }
@@ -305,39 +306,43 @@ macro_rules! make_any_calendar {
         $(
             impl From<$ty> for $any_calendar_ident {
                 fn from(value: $ty) -> Self {
-                    Self::$variant(value)
+                    #![allow(unreachable_code)] // returns the first variant
+                    return $(Self::$variant(value));+
                 }
             }
 
             impl PartialEq<$ty> for $any_calendar_ident {
                 fn eq(&self, other: &$ty) -> bool {
-                    if let Self::$variant(ref c) = self {
-                        AnyCalendarable::identity(c) == AnyCalendarable::identity(other)
-                    } else {
-                        false
-                    }
+                    $(
+                        if let Self::$variant(ref c) = self {
+                            return AnyCalendarable::identity(c) == AnyCalendarable::identity(other);
+                        }
+                    )+
+                    false
                 }
             }
 
             impl TryFrom<$any_calendar_ident> for $ty {
                 type Error = $any_calendar_ident;
                 fn try_from(value: $any_calendar_ident) -> Result<Self, Self::Error> {
-                    if let $any_calendar_ident::$variant(c) = value {
-                        Ok(c)
-                    } else {
-                        Err(value)
-                    }
+                    $(
+                        if let $any_calendar_ident::$variant(c) = value {
+                            return Ok(c);
+                        }
+                    )+
+                    Err(value)
                 }
             }
 
             impl<'a> TryFrom<&'a $any_calendar_ident> for &'a $ty {
                 type Error = &'a $any_calendar_ident;
                 fn try_from(value: &'a $any_calendar_ident) -> Result<Self, Self::Error> {
-                    if let $any_calendar_ident::$variant(ref c) = value {
-                        Ok(c)
-                    } else {
-                        Err(value)
-                    }
+                    $(
+                        if let $any_calendar_ident::$variant(ref c) = value {
+                            return Ok(c);
+                        }
+                    )+
+                    Err(value)
                 }
             }
         )+
@@ -405,8 +410,7 @@ make_any_calendar!(
     HijriUmmAlQura(Hijri<hijri::UmmAlQura>),
     Indian(Indian),
     Iso(Iso),
-    Japanese(Japanese),
-    JapaneseExtended(JapaneseExtended),
+    Japanese~JapaneseExtended(Japanese),
     Persian(Persian),
     Roc(Roc),
 );
@@ -487,9 +491,7 @@ impl AnyCalendar {
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Japanese => AnyCalendar::Japanese(Japanese::new()),
-            AnyCalendarKind::JapaneseExtended => {
-                AnyCalendar::JapaneseExtended(JapaneseExtended::new())
-            }
+            AnyCalendarKind::JapaneseExtended => AnyCalendar::JapaneseExtended(Japanese::new()),
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
         }
@@ -540,9 +542,9 @@ impl AnyCalendar {
             AnyCalendarKind::Japanese => {
                 AnyCalendar::Japanese(Japanese::try_new_with_buffer_provider(provider)?)
             }
-            AnyCalendarKind::JapaneseExtended => AnyCalendar::JapaneseExtended(
-                JapaneseExtended::try_new_with_buffer_provider(provider)?,
-            ),
+            AnyCalendarKind::JapaneseExtended => {
+                AnyCalendar::JapaneseExtended(Japanese::try_new_with_buffer_provider(provider)?)
+            }
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
         })
@@ -551,9 +553,7 @@ impl AnyCalendar {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P, kind: AnyCalendarKind) -> Result<Self, DataError>
     where
-        P: DataProvider<crate::provider::CalendarJapaneseModernV1>
-            + DataProvider<crate::provider::CalendarJapaneseExtendedV1>
-            + ?Sized,
+        P: DataProvider<crate::provider::CalendarJapaneseModernV1> + ?Sized,
     {
         Ok(match kind {
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
@@ -592,7 +592,7 @@ impl AnyCalendar {
                 AnyCalendar::Japanese(Japanese::try_new_unstable(provider)?)
             }
             AnyCalendarKind::JapaneseExtended => {
-                AnyCalendar::JapaneseExtended(JapaneseExtended::try_new_unstable(provider)?)
+                AnyCalendar::JapaneseExtended(Japanese::try_new_unstable(provider)?)
             }
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
@@ -615,7 +615,7 @@ impl AnyCalendar {
             Self::Indian(ref c) => IntoAnyCalendar::kind(c),
             Self::Iso(ref c) => IntoAnyCalendar::kind(c),
             Self::Japanese(ref c) => IntoAnyCalendar::kind(c),
-            Self::JapaneseExtended(ref c) => IntoAnyCalendar::kind(c),
+            Self::JapaneseExtended(_) => AnyCalendarKind::JapaneseExtended,
             Self::Persian(ref c) => IntoAnyCalendar::kind(c),
             Self::Roc(ref c) => IntoAnyCalendar::kind(c),
         }
@@ -855,11 +855,6 @@ impl AnyCalendarable for Iso {
     fn identity(&self) -> Self::Identity {}
 }
 impl AnyCalendarable for Japanese {
-    type Identity = ();
-
-    fn identity(&self) -> Self::Identity {}
-}
-impl AnyCalendarable for JapaneseExtended {
     type Identity = ();
 
     fn identity(&self) -> Self::Identity {}
@@ -1238,29 +1233,6 @@ impl IntoAnyCalendar for Japanese {
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Japanese(*d, self.identity())
-    }
-}
-
-impl IntoAnyCalendar for JapaneseExtended {
-    #[inline]
-    fn to_any(self) -> AnyCalendar {
-        self.into()
-    }
-    #[inline]
-    fn kind(&self) -> AnyCalendarKind {
-        AnyCalendarKind::JapaneseExtended
-    }
-    #[inline]
-    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        any.try_into()
-    }
-    #[inline]
-    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        any.try_into().ok()
-    }
-    #[inline]
-    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::JapaneseExtended(*d, self.identity())
     }
 }
 
@@ -1651,79 +1623,6 @@ mod tests {
         */
         single_test_error(
             japanese,
-            Some(("reiwa", None)),
-            2,
-            Month::new(13),
-            1,
-            DateError::UnknownMonthCode(Month::new(13).code()),
-        );
-    }
-
-    #[test]
-    fn japanese_extended() {
-        let japanese_extended = AnyCalendar::new(AnyCalendarKind::JapaneseExtended);
-        let japanese_extended = Ref(&japanese_extended);
-        single_test_roundtrip(
-            japanese_extended,
-            Some(("reiwa", None)),
-            3,
-            Month::new(3),
-            1,
-        );
-        single_test_roundtrip(
-            japanese_extended,
-            Some(("heisei", None)),
-            6,
-            Month::new(12),
-            1,
-        );
-        single_test_roundtrip(
-            japanese_extended,
-            Some(("meiji", None)),
-            10,
-            Month::new(3),
-            1,
-        );
-        single_test_roundtrip(
-            japanese_extended,
-            Some(("tenpyokampo-749", None)),
-            1,
-            Month::new(4),
-            20,
-        );
-        single_test_roundtrip(japanese_extended, Some(("ce", None)), 100, Month::new(3), 1);
-        single_test_roundtrip(japanese_extended, Some(("bce", None)), 10, Month::new(3), 1);
-        // Since #6910, the era range is not enforced in try_from_codes
-        /*
-        single_test_error(
-            japanext,
-            Some(("ce", None)),
-            0,
-            Month::new(3),
-            1,
-            DateError::Range {
-                field: "year",
-                value: 0,
-                min: 1,
-                max: i32::MAX,
-            },
-        );
-        single_test_error(
-            japanext,
-            Some(("bce", Some(0))),
-            0,
-            Month::new(3),
-            1,
-            DateError::Range {
-                field: "year",
-                value: 0,
-                min: 1,
-                max: i32::MAX,
-            },
-        );
-        */
-        single_test_error(
-            japanese_extended,
             Some(("reiwa", None)),
             2,
             Month::new(13),

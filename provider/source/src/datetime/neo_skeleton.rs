@@ -616,14 +616,7 @@ impl_neo_skeleton_datagen!(DatetimePatternsDateGregorianV1, DatagenCalendar::Gre
 impl_neo_skeleton_datagen!(DatetimePatternsDateHebrewV1, DatagenCalendar::Hebrew);
 impl_neo_skeleton_datagen!(DatetimePatternsDateIndianV1, DatagenCalendar::Indian);
 impl_neo_skeleton_datagen!(DatetimePatternsDateHijriV1, DatagenCalendar::Hijri);
-impl_neo_skeleton_datagen!(
-    DatetimePatternsDateJapaneseV1,
-    DatagenCalendar::JapaneseModern
-);
-impl_neo_skeleton_datagen!(
-    DatetimePatternsDateJapanextV1,
-    DatagenCalendar::JapaneseExtended
-);
+impl_neo_skeleton_datagen!(DatetimePatternsDateJapaneseV1, DatagenCalendar::Japanese);
 impl_neo_skeleton_datagen!(DatetimePatternsDatePersianV1, DatagenCalendar::Persian);
 impl_neo_skeleton_datagen!(DatetimePatternsDateRocV1, DatagenCalendar::Roc);
 
@@ -1025,19 +1018,8 @@ mod date_skeleton_consistency_tests {
         let mut num_problems = 0;
         use DatagenCalendar::*;
         for cal in [
-            Buddhist,
-            Chinese,
-            Coptic,
-            Dangi,
-            Ethiopic,
-            Gregorian,
-            Hebrew,
-            Indian,
-            Hijri,
-            JapaneseExtended,
-            JapaneseModern,
-            Persian,
-            Roc,
+            Buddhist, Chinese, Coptic, Dangi, Ethiopic, Gregorian, Hebrew, Indian, Hijri, Japanese,
+            Persian, Roc,
         ] {
             for locale in provider
                 .locales_for_coverage_levels([CoverageLevel::Modern])

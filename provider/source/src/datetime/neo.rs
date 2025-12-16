@@ -316,8 +316,7 @@ fn calendar_months(cal: DatagenCalendar) -> (usize, bool) {
         DatagenCalendar::Coptic | DatagenCalendar::Ethiopic => (13, false),
         DatagenCalendar::Gregorian
         | DatagenCalendar::Buddhist
-        | DatagenCalendar::JapaneseModern
-        | DatagenCalendar::JapaneseExtended
+        | DatagenCalendar::Japanese
         | DatagenCalendar::Indian
         | DatagenCalendar::Persian
         | DatagenCalendar::Hijri
@@ -634,13 +633,7 @@ impl_symbols_datagen!(
 );
 impl_symbols_datagen!(
     DatetimeNamesYearJapaneseV1,
-    DatagenCalendar::JapaneseModern,
-    YEARS_KEY_LENGTHS,
-    years_convert
-);
-impl_symbols_datagen!(
-    DatetimeNamesYearJapanextV1,
-    DatagenCalendar::JapaneseExtended,
+    DatagenCalendar::Japanese,
     YEARS_KEY_LENGTHS,
     years_convert
 );
@@ -714,13 +707,7 @@ impl_symbols_datagen!(
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthJapaneseV1,
-    DatagenCalendar::JapaneseModern,
-    NORMAL_KEY_LENGTHS,
-    months_convert
-);
-impl_symbols_datagen!(
-    DatetimeNamesMonthJapanextV1,
-    DatagenCalendar::JapaneseExtended,
+    DatagenCalendar::Japanese,
     NORMAL_KEY_LENGTHS,
     months_convert
 );

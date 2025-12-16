@@ -57,7 +57,7 @@ pub mod hijri {
 
 pub use indian::Indian;
 pub use iso::Iso;
-pub use japanese::{Japanese, JapaneseExtended};
+pub use japanese::{Japanese, Japanese as JapaneseExtended};
 pub use julian::Julian;
 pub use persian::Persian;
 pub use roc::Roc;

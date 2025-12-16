@@ -30,7 +30,7 @@ pub mod ffi {
         Buddhist = 2,
         /// The kind of a Japanese calendar with modern eras
         Japanese = 3,
-        /// The kind of a Japanese calendar with modern and historic eras
+        /// The kind of a Japanese calendar with modern eras
         JapaneseExtended = 4,
         /// The kind of an Ethiopian calendar, with Amete Mihret era
         Ethiopian = 5,
