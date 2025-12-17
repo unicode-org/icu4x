@@ -129,12 +129,18 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 
 /// [`Hijri`] [`Rules`] based on an astronomical simulation for a particular location.
 ///
-/// These simulations are unofficial and are known to not necessarily match sightings
-/// on the ground. Unless you know otherwise for sure, instead of this variant, use
-/// [`UmmAlQura`], which uses the results of KACST's Mecca-based calculations.
+/// The simulations use the relative positions of the Earth, moon, and sun to predict the
+/// exact moment a new moon occurs. Because this is rarely the instant when a crescent
+/// sighting occurs, the month start dates preducted by these rules will often be one or
+/// more days earlier than actually observed. Applications using these rules should have
+/// a method for adjusting the month start date based on human sightings.
 ///
-/// As floating point arithmetic degenerates for far-away dates, this falls back to
-/// the tabular calendar at some point.
+/// If you don't have a way to inject human sighting adjustments, you should probably use
+/// [`UmmAlQura`], which uses the results of KACST's Mecca-based calculations and matches
+/// ground truth in Saudi Arabia.
+///
+/// The simulations are pre-computed for Gregorian years 1900 to 2140, falling back to
+/// a tabular approximation outside that range.
 ///
 /// The precise behavior of this calendar may change in the future if:
 /// - We decide to tweak the precise astronomical simulation used
