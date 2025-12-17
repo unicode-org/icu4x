@@ -57,6 +57,19 @@ mod ummalqura_data;
 ///
 /// There are either 6 or 7 30-day months, so the length of the year is 354 or 355 days.
 ///
+/// # Crescent moon visibility
+///
+/// Islam says that months begin when an observer first sees the crescent moon.
+///
+/// For centuries, astronomers have been developing criteria for predicting crescent moon
+/// visibility. However, in most regions, atmospheric phenomena can impact visibility, making
+/// such predictions only an approximation of ground truth. Hijri calendar applications should
+/// therefore include the ability to specify a crescent sighting adjustment.
+///
+/// The primary exception is Saudi Arabia, where the KACST uses sophisticated telescopes to
+/// make the observations more reliable. They publish predictions covering multiple centuries;
+/// see [`UmmAlQura`].
+///
 /// # Calendar drift
 ///
 /// As a lunar calendar, this calendar does not intend to follow the solar year, and drifts more
@@ -129,11 +142,14 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 
 /// [`Hijri`] [`Rules`] based on an astronomical simulation for a particular location.
 ///
-/// The simulations use the relative positions of the Earth, moon, and sun to predict the
-/// exact moment a new moon occurs. Because this is rarely the instant when a crescent
-/// sighting occurs, the month start dates preducted by these rules will often be one or
-/// more days earlier than actually observed. Applications using these rules should have
-/// a method for adjusting the month start date based on human sightings.
+/// These rules use the relative positions of the Earth, moon, and sun to predict the
+/// exact moment of a new moon, and then apply a criterion proposed by S. K. Shaukat in
+/// 1996 to determine crescent moon visibility.
+///
+/// These rules can form the basis of a custom [`Rules`] implementation that includes data
+/// based on human sightings. As discussed in the [`Hijri`] documentation,  using these
+/// rules without allowing for adjustments will produce dates that are only approximations
+/// of the ground truth.
 ///
 /// If you don't have a way to inject human sighting adjustments, you should probably use
 /// [`UmmAlQura`], which uses the results of KACST's Mecca-based calculations and matches
