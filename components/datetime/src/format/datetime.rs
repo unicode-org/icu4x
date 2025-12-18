@@ -175,7 +175,16 @@ where
         (FieldSymbol::Year(Year::Cyclic), l) => {
             const PART: Part = parts::YEAR_NAME;
             input!(PART, Year, year = input.year);
-            input!(PART, YearCyclic, cyclic = year.cyclic());
+
+            let Some(cyclic) = year.cyclic() else {
+                return try_write_number(
+                    PART,
+                    w,
+                    decimal_formatter,
+                    year.era_year_or_related_iso().into(),
+                    FieldLength::One,
+                );
+            };
 
             match datetime_names.get_name_for_cyclic(l, cyclic.year) {
                 Ok(name) => Ok(w.with_part(PART, |w| w.write_str(name))?),
