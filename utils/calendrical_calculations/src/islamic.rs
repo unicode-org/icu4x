@@ -55,7 +55,13 @@ pub fn fixed_from_observational_islamic(
         - 1
 }
 
+/// Calculates an Islamic date from a [`RataDie`] and [`Location`].
+///
+/// This uses the phasis criterion proposed by S. K. Shaukat[^1], explained in Reingold section 14.9.
+///
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L6983-L6995>
+///
+/// [^1]: K. Abdali, O. Afzal, I. A. Ahmad, M. Durrani, A. Salama, and S. K. Shaukat, “Crescent Moon Visibility: Consensus on Moon-Sighting and Determination of an Islamic Calendar,” manuscript, 1996.
 pub fn observational_islamic_from_fixed(date: RataDie, location: Location) -> (i32, u8, u8) {
     let lunar_phase = Astronomical::calculate_new_moon_at_or_before(date);
     let crescent = Astronomical::phasis_on_or_before(date, location, Some(lunar_phase));
