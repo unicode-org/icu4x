@@ -133,8 +133,8 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 /// on the ground. Unless you know otherwise for sure, instead of this variant, use
 /// [`UmmAlQura`], which uses the results of KACST's Mecca-based calculations.
 ///
-/// As floating point arithmetic degenerates for far-away dates, this falls back to
-/// the tabular calendar at some point.
+/// The simulations are pre-computed for Gregorian years 1900 to 2140, falling back to
+/// a tabular approximation outside that range.
 ///
 /// The precise behavior of this calendar may change in the future if:
 /// - We decide to tweak the precise astronomical simulation used
