@@ -1793,6 +1793,164 @@ make_enumerated_property! {
     ule_ty: u8;
 }
 
+/// Enumerated property Joining_Group.
+///
+/// See Section 9.2, Arabic Joining Groups in The Unicode Standard for the summary of
+/// each property value.
+///
+/// ```
+/// use icu::properties::{props::JoiningGroup, CodePointMapData};
+///
+/// assert_eq!(
+///     CodePointMapData::<JoiningGroup>::new().get('ع'),
+///     JoiningGroup::Ain,
+/// ); // U+0639: Arabic Letter Ain
+/// assert_eq!(
+///     CodePointMapData::<JoiningGroup>::new().get('ظ'),
+///     JoiningGroup::Tah,
+/// ); // U+0638: Arabic Letter Zah
+/// ```
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[allow(clippy::exhaustive_structs)] // newtype
+#[repr(transparent)]
+pub struct JoiningGroup(pub(crate) u8);
+
+impl JoiningGroup {
+    /// Returns an ICU4C `UJoiningType` value.
+    pub const fn to_icu4c_value(self) -> u8 {
+        self.0
+    }
+    /// Constructor from an ICU4C `UJoiningType` value.
+    pub const fn from_icu4c_value(value: u8) -> Self {
+        Self(value)
+    }
+}
+
+create_const_array! {
+#[allow(missing_docs)] // These constants don't need individual documentation.
+#[allow(non_upper_case_globals)]
+impl JoiningGroup {
+    pub const NoJoiningGroup: JoiningGroup = JoiningGroup(0);
+    pub const Ain: JoiningGroup = JoiningGroup(1);
+    pub const Alaph: JoiningGroup = JoiningGroup(2);
+    pub const Alef: JoiningGroup = JoiningGroup(3);
+    pub const Beh: JoiningGroup = JoiningGroup(4);
+    pub const Beth: JoiningGroup = JoiningGroup(5);
+    pub const Dal: JoiningGroup = JoiningGroup(6);
+    pub const DalathRish: JoiningGroup = JoiningGroup(7);
+    pub const E: JoiningGroup = JoiningGroup(8);
+    pub const Feh: JoiningGroup = JoiningGroup(9);
+    pub const FinalSemkath: JoiningGroup = JoiningGroup(10);
+    pub const Gaf: JoiningGroup = JoiningGroup(11);
+    pub const Gamal: JoiningGroup = JoiningGroup(12);
+    pub const Hah: JoiningGroup = JoiningGroup(13);
+    pub const TehMarbutaGoal: JoiningGroup = JoiningGroup(14);
+    pub const He: JoiningGroup = JoiningGroup(15);
+    pub const Heh: JoiningGroup = JoiningGroup(16);
+    pub const HehGoal: JoiningGroup = JoiningGroup(17);
+    pub const Heth: JoiningGroup = JoiningGroup(18);
+    pub const Kaf: JoiningGroup = JoiningGroup(19);
+    pub const Kaph: JoiningGroup = JoiningGroup(20);
+    pub const KnottedHeh: JoiningGroup = JoiningGroup(21);
+    pub const Lam: JoiningGroup = JoiningGroup(22);
+    pub const Lamadh: JoiningGroup = JoiningGroup(23);
+    pub const Meem: JoiningGroup = JoiningGroup(24);
+    pub const Mim: JoiningGroup = JoiningGroup(25);
+    pub const Noon: JoiningGroup = JoiningGroup(26);
+    pub const Nun: JoiningGroup = JoiningGroup(27);
+    pub const Pe: JoiningGroup = JoiningGroup(28);
+    pub const Qaf: JoiningGroup = JoiningGroup(29);
+    pub const Qaph: JoiningGroup = JoiningGroup(30);
+    pub const Reh: JoiningGroup = JoiningGroup(31);
+    pub const ReversedPe: JoiningGroup = JoiningGroup(32);
+    pub const Sad: JoiningGroup = JoiningGroup(33);
+    pub const Sadhe: JoiningGroup = JoiningGroup(34);
+    pub const Seen: JoiningGroup = JoiningGroup(35);
+    pub const Semkath: JoiningGroup = JoiningGroup(36);
+    pub const Shin: JoiningGroup = JoiningGroup(37);
+    pub const SwashKaf: JoiningGroup = JoiningGroup(38);
+    pub const SyriacWaw: JoiningGroup = JoiningGroup(39);
+    pub const Tah: JoiningGroup = JoiningGroup(40);
+    pub const Taw: JoiningGroup = JoiningGroup(41);
+    pub const TehMarbuta: JoiningGroup = JoiningGroup(42);
+    pub const Teth: JoiningGroup = JoiningGroup(43);
+    pub const Waw: JoiningGroup = JoiningGroup(44);
+    pub const Yeh: JoiningGroup = JoiningGroup(45);
+    pub const YehBarree: JoiningGroup = JoiningGroup(46);
+    pub const YehWithTail: JoiningGroup = JoiningGroup(47);
+    pub const Yudh: JoiningGroup = JoiningGroup(48);
+    pub const YudhHe: JoiningGroup = JoiningGroup(49);
+    pub const Zain: JoiningGroup = JoiningGroup(50);
+    pub const Fe: JoiningGroup = JoiningGroup(51);
+    pub const Khaph: JoiningGroup = JoiningGroup(52);
+    pub const Zhain: JoiningGroup = JoiningGroup(53);
+    pub const BurushaskiYehBarree: JoiningGroup = JoiningGroup(54);
+    pub const FarsiYeh: JoiningGroup = JoiningGroup(55);
+    pub const Nya: JoiningGroup = JoiningGroup(56);
+    pub const RohingyaYeh: JoiningGroup = JoiningGroup(57);
+    pub const ManichaeanAleph: JoiningGroup = JoiningGroup(58);
+    pub const ManichaeanAyin: JoiningGroup = JoiningGroup(59);
+    pub const ManichaeanBeth: JoiningGroup = JoiningGroup(60);
+    pub const ManichaeanDaleth: JoiningGroup = JoiningGroup(61);
+    pub const ManichaeanDhamedh: JoiningGroup = JoiningGroup(62);
+    pub const ManichaeanFive: JoiningGroup = JoiningGroup(63);
+    pub const ManichaeanGimel: JoiningGroup = JoiningGroup(64);
+    pub const ManichaeanHeth: JoiningGroup = JoiningGroup(65);
+    pub const ManichaeanHundred: JoiningGroup = JoiningGroup(66);
+    pub const ManichaeanKaph: JoiningGroup = JoiningGroup(67);
+    pub const ManichaeanLamedh: JoiningGroup = JoiningGroup(68);
+    pub const ManichaeanMem: JoiningGroup = JoiningGroup(69);
+    pub const ManichaeanNun: JoiningGroup = JoiningGroup(70);
+    pub const ManichaeanOne: JoiningGroup = JoiningGroup(71);
+    pub const ManichaeanPe: JoiningGroup = JoiningGroup(72);
+    pub const ManichaeanQoph: JoiningGroup = JoiningGroup(73);
+    pub const ManichaeanResh: JoiningGroup = JoiningGroup(74);
+    pub const ManichaeanSadhe: JoiningGroup = JoiningGroup(75);
+    pub const ManichaeanSamekh: JoiningGroup = JoiningGroup(76);
+    pub const ManichaeanTaw: JoiningGroup = JoiningGroup(77);
+    pub const ManichaeanTen: JoiningGroup = JoiningGroup(78);
+    pub const ManichaeanTeth: JoiningGroup = JoiningGroup(79);
+    pub const ManichaeanThamedh: JoiningGroup = JoiningGroup(80);
+    pub const ManichaeanTwenty: JoiningGroup = JoiningGroup(81);
+    pub const ManichaeanWaw: JoiningGroup = JoiningGroup(82);
+    pub const ManichaeanYodh: JoiningGroup = JoiningGroup(83);
+    pub const ManichaeanZayin: JoiningGroup = JoiningGroup(84);
+    pub const StraightWaw: JoiningGroup = JoiningGroup(85);
+    pub const AfricanFeh: JoiningGroup = JoiningGroup(86);
+    pub const AfricanNoon: JoiningGroup = JoiningGroup(87);
+    pub const AfricanQaf: JoiningGroup = JoiningGroup(88);
+    pub const MalayalamBha: JoiningGroup = JoiningGroup(89);
+    pub const MalayalamJa: JoiningGroup = JoiningGroup(90);
+    pub const MalayalamLla: JoiningGroup = JoiningGroup(91);
+    pub const MalayalamLlla: JoiningGroup = JoiningGroup(92);
+    pub const MalayalamNga: JoiningGroup = JoiningGroup(93);
+    pub const MalayalamNna: JoiningGroup = JoiningGroup(94);
+    pub const MalayalamNnna: JoiningGroup = JoiningGroup(95);
+    pub const MalayalamNya: JoiningGroup = JoiningGroup(96);
+    pub const MalayalamRa: JoiningGroup = JoiningGroup(97);
+    pub const MalayalamSsa: JoiningGroup = JoiningGroup(98);
+    pub const MalayalamTta: JoiningGroup = JoiningGroup(99);
+    pub const HanifiRohingyaKinnaYa: JoiningGroup = JoiningGroup(100);
+    pub const HanifiRohingyaPa: JoiningGroup = JoiningGroup(101);
+    pub const ThinYeh: JoiningGroup = JoiningGroup(102);
+    pub const VerticalTail: JoiningGroup = JoiningGroup(103);
+    pub const KashmiriYeh: JoiningGroup = JoiningGroup(104);
+    pub const ThinNoon: JoiningGroup = JoiningGroup(105);
+}
+#[test]
+fn joining_group_consts();
+}
+
+make_enumerated_property! {
+    name: "Joining_Group";
+    short_name: "jg";
+    ident: JoiningGroup;
+    data_marker: crate::provider::PropertyEnumJoiningGroupV1;
+    singleton: SINGLETON_PROPERTY_ENUM_JOINING_GROUP_V1;
+    ule_ty: u8;
+}
+
 /// Enumerated property Joining_Type.
 ///
 /// See Section 9.2, Arabic Cursive Joining in The Unicode Standard for the summary of

@@ -1619,7 +1619,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties_data"
-version = "2.1.1"
+version = "2.1.2"
 
 [[package]]
 name = "icu_provider"
@@ -3938,6 +3938,7 @@ dependencies = [
  "displaydoc",
  "icu_benchmark_macros",
  "icu_locale_core",
+ "itertools 0.14.0",
  "litemap",
  "postcard",
  "rand",

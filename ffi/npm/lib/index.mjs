@@ -310,6 +310,8 @@ export { IndicConjunctBreak } from "./IndicConjunctBreak.mjs"
 
 export { IndicSyllabicCategory } from "./IndicSyllabicCategory.mjs"
 
+export { JoiningGroup } from "./JoiningGroup.mjs"
+
 export { JoiningType } from "./JoiningType.mjs"
 
 export { LineBreak } from "./LineBreak.mjs"

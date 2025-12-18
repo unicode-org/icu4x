@@ -6,6 +6,9 @@
         - Fix some property constants (unicode-org#7269, unicode-org#7281, unicode-org#7284)
         - Add conversions for `unicode_bidi::BidiClass` (unicode-org#7272)
         - Add `IndicConjunctBreak` (unicode-org#7280)
+        - Add conversion between `icu::properties::props::Script` and `icu::locale::subtags:Script` (unicode-org#7270)
+        - Add conversion between `icu::properties::props::BidiClass` and `unicode_bidi::BidiClass` (unicode-org#7272)
+        - Constify `PropertyNamesLong`/`PropertNamesShort`/`PropertyParser` constructors (unicode-org#7294)
 - Utils
   - Retire the `icu_harfbuzz` crate. The `icu_properties` and `icu_normalizer` types now directly implement the `harfbuzz-traits`
 
@@ -129,7 +132,7 @@
         - Document deprecated APIs (unicode-org#6890)
         - FFI for most new APIs
         - `ListFormatter::format` now takes a `diplomat::span<const diplomat::string_view_for_slice>` instead of a `diplomat::span<std::string_view>` to handle soundness issues on some platforms (unicode-org#6974)
-    - Dart version `2.1.0-dev.0`
+    - Dart version `2.1.0-dev.0`, `2.1.0-dev.1`
     - NPM version `2.1.0`
 - Utils
     - General

@@ -4,9 +4,9 @@
 # 2009-05-17 by Arthur David Olson.
 
 # This file is by no means authoritative; if you think you know better,
-# go ahead and edit the file (and please send any changes to
-# tz@iana.org for general use in the future).  For more, please see
-# the file CONTRIBUTING in the tz distribution.
+# go ahead and edit the file, and please send any changes to
+# the public mailing list tz@iana.org for general use in the future.
+# For more, please see the file CONTRIBUTING in the tz distribution.
 
 # From Paul Eggert (2018-05-27):
 #
@@ -115,8 +115,9 @@ Zone Atlantic/Cape_Verde -1:34:04 -	LMT	1912 Jan 01  2:00u # Praia
 			-1:00	-	-01
 
 # Chad
+# Fort-Lamy was renamed to N’Djamena on 1973-04-06.
 # Zone	NAME		STDOFF	RULES	FORMAT	[UNTIL]
-Zone	Africa/Ndjamena	1:00:12 -	LMT	1912 Jan  1 # N'Djamena
+Zone	Africa/Ndjamena	1:00:12 -	LMT	1912 Jan  1 # Fort-Lamy
 			1:00	-	WAT	1979 Oct 14
 			1:00	1:00	WAST	1980 Mar  8
 			1:00	-	WAT
@@ -1462,13 +1463,10 @@ Zone	Africa/Tunis	0:40:44 -	LMT	1881 May 12
 # This file is in the public domain, so clarified as of
 # 2009-05-17 by Arthur David Olson.
 
-# From Paul Eggert (1999-11-15):
-# To keep things manageable, we list only locations occupied year-round; see
-# COMNAP - Stations and Bases
-# http://www.comnap.aq/comnap/comnap.nsf/P/Stations/
-# and
-# Summary of the Peri-Antarctic Islands (1998-07-23)
-# http://www.spri.cam.ac.uk/bob/periant.htm
+# From Paul Eggert (2025-08-16):
+# To keep things manageable, list only locations occupied year-round; see
+# Antarctic Facilities Information
+# https://www.comnap.aq/antarctic-facilities-information
 # for information.
 # Unless otherwise specified, we have no time zone information.
 
@@ -1603,6 +1601,7 @@ Zone Antarctica/Mawson	0	-	-00	1954 Feb 13
 # China - year-round bases
 # Great Wall, King George Island, -6213-05858, since 1985-02-20
 # Zhongshan, Larsemann Hills, Prydz Bay, -6922+07623, since 1989-02-26
+# Qinling, Inexpressible I, Terra Nova Bay, -7456+16343, since 2024-02-07
 
 # France - year-round bases (also see "France & Italy")
 #
@@ -1827,9 +1826,9 @@ Zone Antarctica/Rothera	0	-	-00	1976 Dec  1
 # 2009-05-17 by Arthur David Olson.
 
 # This file is by no means authoritative; if you think you know better,
-# go ahead and edit the file (and please send any changes to
-# tz@iana.org for general use in the future).  For more, please see
-# the file CONTRIBUTING in the tz distribution.
+# go ahead and edit the file, and please send any changes to
+# the public mailing list tz@iana.org for general use in the future.
+# For more, please see the file CONTRIBUTING in the tz distribution.
 
 # From Paul Eggert (2019-07-11):
 #
@@ -6998,9 +6997,9 @@ Zone	Pacific/Efate	11:13:16 -	LMT	1912 Jan 13 # Vila
 # NOTES
 
 # This file is by no means authoritative; if you think you know better,
-# go ahead and edit the file (and please send any changes to
-# tz@iana.org for general use in the future).  For more, please see
-# the file CONTRIBUTING in the tz distribution.
+# go ahead and edit the file, and please send any changes to
+# the public mailing list tz@iana.org for general use in the future.
+# For more, please see the file CONTRIBUTING in the tz distribution.
 
 # From Paul Eggert (2018-11-18):
 #
@@ -8049,6 +8048,7 @@ Zone	Pacific/Efate	11:13:16 -	LMT	1912 Jan 13 # Vila
 # From Paul Eggert (2018-11-19):
 # The 1921-01-15 introduction of standard time is in Shanks; it is also in
 # "Standard Time Throughout the World", US National Bureau of Standards (1935),
+# https://nvlpubs.nist.gov/nistpubs/Legacy/circ/nbscircular406.pdf
 # page 3, which does not give the UT offset.  In response to a comment by
 # Phake Nick I set the Nauru time of occupation by Japan to
 # 1942-08-29/1945-09-08 by using dates from:
@@ -8116,9 +8116,10 @@ Zone	Pacific/Efate	11:13:16 -	LMT	1912 Jan 13 # Vila
 # https://webspace.science.uu.nl/~gent0113/idl/idl_alaska_samoa.htm
 
 # Although Shanks & Pottenger says they both switched to UT -11:30
-# in 1911, and to -11 in 1950. many earlier sources give -11
+# in 1911, and to -11 in 1950, many earlier sources give -11
 # for American Samoa, e.g., the US National Bureau of Standards
 # circular "Standard Time Throughout the World", 1932.
+# https://nvlpubs.nist.gov/nistpubs/Legacy/circ/nbscircular399.pdf
 # Assume American Samoa switched to -11 in 1911, not 1950,
 # and that after 1950 they agreed until (western) Samoa skipped a
 # day in 2011.  Assume also that the Samoas follow the US and New
@@ -8300,9 +8301,9 @@ Zone	Pacific/Efate	11:13:16 -	LMT	1912 Jan 13 # Vila
 # 2009-05-17 by Arthur David Olson.
 
 # This file is by no means authoritative; if you think you know better,
-# go ahead and edit the file (and please send any changes to
-# tz@iana.org for general use in the future).  For more, please see
-# the file CONTRIBUTING in the tz distribution.
+# go ahead and edit the file, and please send any changes to
+# the public mailing list tz@iana.org for general use in the future.
+# For more, please see the file CONTRIBUTING in the tz distribution.
 
 # From Paul Eggert (2017-02-10):
 #
@@ -8338,7 +8339,7 @@ Zone	Pacific/Efate	11:13:16 -	LMT	1912 Jan 13 # Vila
 #	<https://www.jstor.org/stable/1774359>.  He writes:
 #	"It is requested that corrections and additions to these tables
 #	may be sent to Mr. John Milne, Royal Geographical Society,
-#	Savile Row, London."  Nowadays please email them to tz@iana.org.
+#	Savile Row, London."  Nowadays please see the file CONTRIBUTING.
 #
 #	Byalokoz EL. New Counting of Time in Russia since July 1, 1919.
 #	This Russian-language source was consulted by Vladimir Karpinsky; see
@@ -8350,7 +8351,7 @@ Zone	Pacific/Efate	11:13:16 -	LMT	1912 Jan 13 # Vila
 #	Десятая гос. тип., 1919.
 #	http://resolver.gpntb.ru/purl?docushare/dsweb/Get/Resource-2011/Byalokoz__E.L.__Novyy__schet__vremeni__v__techenie__sutok__izd__2(1).pdf
 #
-#	Brazil's Divisão Serviço da Hora (DSHO),
+#	Brazil's Divisão de Serviços da Hora (DISHO)
 #	History of Summer Time
 #	<http://pcdsh01.on.br/HISTHV.htm>
 #	(1998-09-21, in Portuguese)
@@ -9210,7 +9211,7 @@ Rule	Belgium	1922	1927	-	Oct	Sat>=1	23:00s	0	-
 Rule	Belgium	1923	only	-	Apr	21	23:00s	1:00	S
 Rule	Belgium	1924	only	-	Mar	29	23:00s	1:00	S
 Rule	Belgium	1925	only	-	Apr	 4	23:00s	1:00	S
-# DSH writes that a royal decree of 1926-02-22 specified the Sun following 3rd
+# DISHO writes that a royal decree of 1926-02-22 specified the Sun following 3rd
 # Sat in Apr (except if it's Easter, in which case it's one Sunday earlier),
 # to Sun following 1st Sat in Oct, and that a royal decree of 1928-09-15
 # changed the transition times to 02:00 GMT.
@@ -9606,6 +9607,13 @@ Zone	Europe/Helsinki	1:39:49 -	LMT	1878 May 31
 # France
 # Monaco
 
+# From Robert H. van Gent (2025-07-21):
+# The most recent issue of the Annuaire [par le Bureau des Longitudes]
+# on Gallica (2021) ... lists information for France
+# https://gallica.bnf.fr/ark:/12148/bpt6k9127672b/f52.item
+# From Paul Eggert (2025-07-21):
+# Go with the 2020 Annuaire (published 2021) except as noted below.
+
 # From Ciro Discepolo (2000-12-20):
 #
 # Henri Le Corre, Régimes horaires pour le monde entier, Éditions
@@ -9667,7 +9675,6 @@ Zone	Europe/Helsinki	1:39:49 -	LMT	1878 May 31
 # problems in Algiers, Monaco and Tunis.
 
 #
-# Shank & Pottenger seem to use '24:00' ambiguously; resolve it with Whitman.
 # Rule	NAME	FROM	TO	-	IN	ON	AT	SAVE	LETTER/S
 Rule	France	1916	only	-	Jun	14	23:00s	1:00	S
 Rule	France	1916	1919	-	Oct	Sun>=1	23:00s	0	-
@@ -9679,9 +9686,25 @@ Rule	France	1920	only	-	Oct	23	23:00s	0	-
 Rule	France	1921	only	-	Mar	14	23:00s	1:00	S
 Rule	France	1921	only	-	Oct	25	23:00s	0	-
 Rule	France	1922	only	-	Mar	25	23:00s	1:00	S
-# DSH writes that a law of 1923-05-24 specified 3rd Sat in Apr at 23:00 to 1st
-# Sat in Oct at 24:00; and that in 1930, because of Easter, the transitions
-# were Apr 12 and Oct 5.  Go with Shanks & Pottenger.
+# From Robert H. van Gent (2025-07-22):
+# There is a curious history behind the erroneous date for the start of
+# daylight saving in France in 1923 as listed in the current issues of
+# the Annuaire du Bureau des Longitudes.  [See:]
+# https://lists.iana.org/hyperkitty/list/tz@iana.org/message/MYQEJMSXO2AIEZ3UIXZKMTTAIPY7KNT2/
+# From Brian Inglis (2025-07-23):
+# Légifrance JORF No. 0073 du 15 mars 1922
+# https://www.legifrance.gouv.fr/jorf/jo/id/JORFCONT000000008324
+# Légifrance JORF No. 0139 du 25 mai 1923
+# https://www.legifrance.gouv.fr/jorf/jo/id/JORFCONT000000008416
+# From Paul Eggert (2025-07-23):
+# The latter specifies March's last Saturday at 23:00 to October's first
+# Saturday at 24:00, except that if neighboring allies agree the dates
+# can be moved to April's third Saturday and September's third Saturday.
+# Apparently spring 1923 was tricky.  DISHO writes that in 1930,
+# because of Easter, the transitions were Apr 12 and Oct 5.
+# Use the 2020 Annuaire dates, except for spring 1923 where
+# Shanks & Pottenger's May 26 matches the dates given in the 1924 and
+# 1961-2001 issues of the Annuaire.
 Rule	France	1922	1938	-	Oct	Sat>=1	23:00s	0	-
 Rule	France	1923	only	-	May	26	23:00s	1:00	S
 Rule	France	1924	only	-	Mar	29	23:00s	1:00	S
@@ -10392,12 +10415,10 @@ Zone	Europe/Warsaw	1:24:00 -	LMT	1880
 # all clocks therefore having to be advanced or set back correspondingly ...
 
 # Rule	NAME	FROM	TO	-	IN	ON	AT	SAVE	LETTER/S
-# From Tim Parenti (2024-07-01), per Paul Eggert (1999-01-30):
-# DSH writes in their history that Decreto 1469 of 1915-03-30 established
-# summer time and that, "despite" this, the change to the clocks was not done
-# every year, depending on what Spain did, because of railroad schedules.
-# In fact, that decree had nothing to do with DST; rather, it regulated the
-# sending of time signals.  But we do see linkage to Spain in the 1920s below.
+# From Tim Parenti (2024-07-01):
+# Decreto 1469 of 1915-03-30 ... had nothing to do with DST;
+# rather it regulated the sending of time signals.
+# But we do see linkage to Spain in the 1920s below.
 # https://dre.pt/dr/detalhe/decreto/1469-1915-285721
 # https://dre.pt/application/conteudo/285721
 #
@@ -12403,9 +12424,9 @@ Zone Europe/Kyiv	2:02:04 -	LMT	1880
 # also includes Central America and the Caribbean
 
 # This file is by no means authoritative; if you think you know better,
-# go ahead and edit the file (and please send any changes to
-# tz@iana.org for general use in the future).  For more, please see
-# the file CONTRIBUTING in the tz distribution.
+# go ahead and edit the file, and please send any changes to
+# the public mailing list tz@iana.org for general use in the future.
+# For more, please see the file CONTRIBUTING in the tz distribution.
 
 # From Paul Eggert (1999-03-22):
 # A reliable and entertaining source about time zones is
@@ -13614,6 +13635,16 @@ Zone America/Menominee	-5:50:27 -	LMT	1885 Sep 18 12:00
 # see Mark Fineman, "An Isle Rich in Guano and Discord",
 # _Los Angeles Times_ (1998-11-10), A1, A10; it cites
 # Jimmy Skaggs, _The Great Guano Rush_ (1994).
+
+# From Rob van Gent (2025-07-23):
+# Another useful source for historical time zone information appears to be
+# a series of circulars with the title "Standard Time Throughout the World"
+# issued between 1925 and 1950 by the U.S. Bureau of Standards.
+# I found the following issues online:
+# https://nvlpubs.nist.gov/nistpubs/Legacy/circ/nbscircular280.pdf (1925)
+# https://nvlpubs.nist.gov/nistpubs/Legacy/circ/nbscircular399.pdf (1932)
+# https://nvlpubs.nist.gov/nistpubs/Legacy/circ/nbscircular406.pdf (1935)
+# https://nvlpubs.nist.gov/nistpubs/Legacy/circ/nbscircular496.pdf (1950)
 
 ################################################################################
 
@@ -14831,11 +14862,34 @@ Zone America/Dawson	-9:17:40 -	LMT	1900 Aug 20
 # on the same dates or with a difference of one day.
 # So it may be easier to implement these changes as DST with rule CA
 # during this whole period.
+
+# From Alois Treindl (2025-07-29):
+# I did a quick newspaper archive research on https://hndm.iib.unam.mx/
+# and found that Periódico Oficial del Estado de Baja California Norte
+# (1973-04-20) states clearly that DST was observed from last Sunday
+# in April to last Sunday in October....  I have a few more data from the
+# official bulletin for DST begin or end in Baja California 1964 1967 1969
+# 1972 1973 (already sent) 1974 1975 1976 I do not know whether it is safe to
+# assume that it also applied in the years where I did not yet find proof.
+# The 1974 end of DST contains a reference to an Acuerdo of 1973-dec-20 which
+# I could not find....  One might assume that Baja California, which followed
+# US-CA in all these other yours, did the same.
 #
-# From Paul Eggert (2024-08-18):
-# For now, maintain the slightly-different history for Baja California,
+# From Paul Eggert (2025-08-04):
+# Assume that Tijuana agreed with San Diego from 1953 through 1996,
+# as this agrees with Alois Treindl's data and with Shanks.
+# For now, keep the slightly-different 1948/1952 history for Baja California,
 # as we have no information on whether 1948/1952 clocks in Tijuana followed
 # the decrees or followed San Diego.
+
+# From Mark Schapiro, writing in The Nation (2002-10-28):
+# https://www.thenation.com/article/archive/sowing-disaster/
+# When Mexican clocks were turned back for daylight saving time in the spring,
+# the Zapotecs refused to make the adjustment, insisting that they live in
+# "God's time," not in what they derisively call "Fox time," referring to
+# President Vicente Fox in far-off Mexico City.
+# From Paul Eggert (2025-08-04):
+# Unfortunately we have no data to track this informal practice.
 
 # From Alan Perry (1996-02-15):
 # A guy from our Mexico subsidiary finally found the Presidential Decree
@@ -15102,7 +15156,7 @@ Zone America/Mexico_City -6:36:36 -	LMT	1922 Jan  1  7:00u
 # Chihuahua (near US border - western side)
 # This includes the municipios of Janos, Ascensión, Juárez, Guadalupe, and
 # Práxedis G Guerrero.
-# http://gaceta.diputados.gob.mx/PDF/65/2a022/nov/20221124-VII.pdf
+# https://gaceta.diputados.gob.mx/PDF/65/2022/nov/20221124-VII.pdf
 Zone America/Ciudad_Juarez -7:05:56 -	LMT	1922 Jan  1  7:00u
 			-7:00	-	MST	1927 Jun 10
 			-6:00	-	CST	1930 Nov 15
@@ -15117,7 +15171,7 @@ Zone America/Ciudad_Juarez -7:05:56 -	LMT	1922 Jan  1  7:00u
 # Chihuahua (near US border - eastern side)
 # This includes the municipios of Coyame del Sotol, Ojinaga, and Manuel
 # Benavides.
-# http://gaceta.diputados.gob.mx/PDF/65/2a022/nov/20221124-VII.pdf
+# https://gaceta.diputados.gob.mx/PDF/65/2022/nov/20221124-VII.pdf
 Zone America/Ojinaga	-6:57:40 -	LMT	1922 Jan  1  7:00u
 			-7:00	-	MST	1927 Jun 10
 			-6:00	-	CST	1930 Nov 15
@@ -15214,9 +15268,7 @@ Zone America/Tijuana	-7:48:04 -	LMT	1922 Jan  1  7:00u
 			-8:00	1:00	PDT	1951 Sep 30  2:00
 			-8:00	-	PST	1952 Apr 27  2:00
 			-8:00	1:00	PDT	1952 Sep 28  2:00
-			-8:00	-	PST	1954
-			-8:00	CA	P%sT	1961
-			-8:00	-	PST	1976
+			-8:00	CA	P%sT	1967
 			-8:00	US	P%sT	1996
 			-8:00	Mexico	P%sT	2001
 			-8:00	US	P%sT	2002 Feb 20
@@ -16103,9 +16155,9 @@ Zone America/Grand_Turk	-4:44:32 -	LMT	1890
 # 2009-05-17 by Arthur David Olson.
 
 # This file is by no means authoritative; if you think you know better,
-# go ahead and edit the file (and please send any changes to
-# tz@iana.org for general use in the future).  For more, please see
-# the file CONTRIBUTING in the tz distribution.
+# go ahead and edit the file, and please send any changes to
+# the public mailing list tz@iana.org for general use in the future.
+# For more, please see the file CONTRIBUTING in the tz distribution.
 
 # From Paul Eggert (2016-12-05):
 #

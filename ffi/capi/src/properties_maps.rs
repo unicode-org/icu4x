@@ -9,8 +9,8 @@ pub mod ffi {
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use icu_properties::props::{
         BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak,
-        HangulSyllableType, IndicSyllabicCategory, JoiningType, LineBreak, NumericType, Script,
-        SentenceBreak, VerticalOrientation, WordBreak,
+        HangulSyllableType, IndicSyllabicCategory, JoiningGroup, JoiningType, LineBreak,
+        NumericType, Script, SentenceBreak, VerticalOrientation, WordBreak,
     };
 
     use crate::unstable::properties_enums::ffi::GeneralCategoryGroup;
@@ -330,6 +330,27 @@ pub mod ffi {
         ) -> Result<Box<CodePointMapData8>, DataError> {
             Ok(convert_8(
                 icu_properties::CodePointMapData::<SentenceBreak>::try_new_unstable(
+                    &provider.get_unstable()?,
+                )?,
+            ))
+        }
+        /// Create a map for the `Joining_Group` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup, Struct)]
+        #[diplomat::attr(auto, named_constructor = "joining_group")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_joining_group() -> Box<CodePointMapData8> {
+            convert_8(icu_properties::CodePointMapData::<JoiningGroup>::new().static_to_owned())
+        }
+
+        /// Create a map for the `Joining_Group` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "joining_group_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_joining_group_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointMapData8>, DataError> {
+            Ok(convert_8(
+                icu_properties::CodePointMapData::<JoiningGroup>::try_new_unstable(
                     &provider.get_unstable()?,
                 )?,
             ))

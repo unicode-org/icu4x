@@ -2693,6 +2693,387 @@ pub mod ffi {
         }
     }
 
+    #[diplomat::rust_link(icu::properties::props::JoiningGroup, Enum)]
+    #[diplomat::enum_convert(icu_properties::props::JoiningGroup, needs_wildcard)]
+    #[non_exhaustive]
+    pub enum JoiningGroup {
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::NoJoining_Group, EnumVariant)]
+        NoJoiningGroup = 0,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Ain, EnumVariant)]
+        Ain = 1,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Alaph, EnumVariant)]
+        Alaph = 2,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Alef, EnumVariant)]
+        Alef = 3,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Beh, EnumVariant)]
+        Beh = 4,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Beth, EnumVariant)]
+        Beth = 5,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Dal, EnumVariant)]
+        Dal = 6,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::DalathRish, EnumVariant)]
+        DalathRish = 7,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::E, EnumVariant)]
+        E = 8,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Feh, EnumVariant)]
+        Feh = 9,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::FinalSemkath, EnumVariant)]
+        FinalSemkath = 10,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Gaf, EnumVariant)]
+        Gaf = 11,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Gamal, EnumVariant)]
+        Gamal = 12,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Hah, EnumVariant)]
+        Hah = 13,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::TehMarbuta_Goal, EnumVariant)]
+        TehMarbutaGoal = 14,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::He, EnumVariant)]
+        He = 15,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Heh, EnumVariant)]
+        Heh = 16,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::HehGoal, EnumVariant)]
+        HehGoal = 17,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Heth, EnumVariant)]
+        Heth = 18,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Kaf, EnumVariant)]
+        Kaf = 19,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Kaph, EnumVariant)]
+        Kaph = 20,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::KnottedHeh, EnumVariant)]
+        KnottedHeh = 21,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Lam, EnumVariant)]
+        Lam = 22,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Lamadh, EnumVariant)]
+        Lamadh = 23,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Meem, EnumVariant)]
+        Meem = 24,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Mim, EnumVariant)]
+        Mim = 25,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Noon, EnumVariant)]
+        Noon = 26,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Nun, EnumVariant)]
+        Nun = 27,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Pe, EnumVariant)]
+        Pe = 28,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Qaf, EnumVariant)]
+        Qaf = 29,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Qaph, EnumVariant)]
+        Qaph = 30,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Reh, EnumVariant)]
+        Reh = 31,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ReversedPe, EnumVariant)]
+        ReversedPe = 32,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Sad, EnumVariant)]
+        Sad = 33,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Sadhe, EnumVariant)]
+        Sadhe = 34,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Seen, EnumVariant)]
+        Seen = 35,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Semkath, EnumVariant)]
+        Semkath = 36,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Shin, EnumVariant)]
+        Shin = 37,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::SwashKaf, EnumVariant)]
+        SwashKaf = 38,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::SyriacWaw, EnumVariant)]
+        SyriacWaw = 39,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Tah, EnumVariant)]
+        Tah = 40,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Taw, EnumVariant)]
+        Taw = 41,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::TehMarbuta, EnumVariant)]
+        TehMarbuta = 42,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Teth, EnumVariant)]
+        Teth = 43,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Waw, EnumVariant)]
+        Waw = 44,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Yeh, EnumVariant)]
+        Yeh = 45,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::YehBarree, EnumVariant)]
+        YehBarree = 46,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::YehWith_Tail, EnumVariant)]
+        YehWithTail = 47,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Yudh, EnumVariant)]
+        Yudh = 48,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::YudhHe, EnumVariant)]
+        YudhHe = 49,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Zain, EnumVariant)]
+        Zain = 50,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Fe, EnumVariant)]
+        Fe = 51,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Khaph, EnumVariant)]
+        Khaph = 52,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Zhain, EnumVariant)]
+        Zhain = 53,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::BurushaskiYeh_Barree,
+            EnumVariant
+        )]
+        BurushaskiYehBarree = 54,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::FarsiYeh, EnumVariant)]
+        FarsiYeh = 55,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::Nya, EnumVariant)]
+        Nya = 56,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::RohingyaYeh, EnumVariant)]
+        RohingyaYeh = 57,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanAleph, EnumVariant)]
+        ManichaeanAleph = 58,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanAyin, EnumVariant)]
+        ManichaeanAyin = 59,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanBeth, EnumVariant)]
+        ManichaeanBeth = 60,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanDaleth, EnumVariant)]
+        ManichaeanDaleth = 61,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanDhamedh,
+            EnumVariant
+        )]
+        ManichaeanDhamedh = 62,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanFive, EnumVariant)]
+        ManichaeanFive = 63,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanGimel, EnumVariant)]
+        ManichaeanGimel = 64,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanHeth, EnumVariant)]
+        ManichaeanHeth = 65,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanHundred,
+            EnumVariant
+        )]
+        ManichaeanHundred = 66,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanKaph, EnumVariant)]
+        ManichaeanKaph = 67,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanLamedh, EnumVariant)]
+        ManichaeanLamedh = 68,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanMem, EnumVariant)]
+        ManichaeanMem = 69,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanNun, EnumVariant)]
+        ManichaeanNun = 70,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanOne, EnumVariant)]
+        ManichaeanOne = 71,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanPe, EnumVariant)]
+        ManichaeanPe = 72,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanQoph, EnumVariant)]
+        ManichaeanQoph = 73,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanResh, EnumVariant)]
+        ManichaeanResh = 74,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanSadhe, EnumVariant)]
+        ManichaeanSadhe = 75,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanSamekh, EnumVariant)]
+        ManichaeanSamekh = 76,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanTaw, EnumVariant)]
+        ManichaeanTaw = 77,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanTen, EnumVariant)]
+        ManichaeanTen = 78,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanTeth, EnumVariant)]
+        ManichaeanTeth = 79,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::ManichaeanThamedh,
+            EnumVariant
+        )]
+        ManichaeanThamedh = 80,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanTwenty, EnumVariant)]
+        ManichaeanTwenty = 81,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanWaw, EnumVariant)]
+        ManichaeanWaw = 82,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanYodh, EnumVariant)]
+        ManichaeanYodh = 83,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ManichaeanZayin, EnumVariant)]
+        ManichaeanZayin = 84,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::StraightWaw, EnumVariant)]
+        StraightWaw = 85,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::AfricanFeh, EnumVariant)]
+        AfricanFeh = 86,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::AfricanNoon, EnumVariant)]
+        AfricanNoon = 87,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::AfricanQaf, EnumVariant)]
+        AfricanQaf = 88,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::MalayalamBha, EnumVariant)]
+        MalayalamBha = 89,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::MalayalamJa, EnumVariant)]
+        MalayalamJa = 90,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::MalayalamLla, EnumVariant)]
+        MalayalamLla = 91,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::MalayalamLlla, EnumVariant)]
+        MalayalamLlla = 92,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::MalayalamNga, EnumVariant)]
+        MalayalamNga = 93,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::MalayalamNna, EnumVariant)]
+        MalayalamNna = 94,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::MalayalamNnna, EnumVariant)]
+        MalayalamNnna = 95,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::MalayalamNya, EnumVariant)]
+        MalayalamNya = 96,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::MalayalamRa, EnumVariant)]
+        MalayalamRa = 97,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::MalayalamSsa, EnumVariant)]
+        MalayalamSsa = 98,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::MalayalamTta, EnumVariant)]
+        MalayalamTta = 99,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::HanifiRohingya_Kinna_Ya,
+            EnumVariant
+        )]
+        HanifiRohingyaKinnaYa = 100,
+        #[diplomat::rust_link(
+            icu::properties::props::JoiningGroup::HanifiRohingya_Pa,
+            EnumVariant
+        )]
+        HanifiRohingyaPa = 101,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ThinYeh, EnumVariant)]
+        ThinYeh = 102,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::VerticalTail, EnumVariant)]
+        VerticalTail = 103,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::KashmiriYeh, EnumVariant)]
+        KashmiriYeh = 104,
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::ThinNoon, EnumVariant)]
+        ThinNoon = 105,
+    }
+
+    impl JoiningGroup {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::JoiningGroup>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::JoiningGroup>::new().get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::JoiningGroup>::new()
+                .get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::to_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
+            self as u8
+        }
+        #[diplomat::rust_link(icu::properties::props::JoiningGroup::from_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
+            Some(match other {
+                0 => Self::NoJoiningGroup,
+                1 => Self::Ain,
+                2 => Self::Alaph,
+                3 => Self::Alef,
+                4 => Self::Beh,
+                5 => Self::Beth,
+                6 => Self::Dal,
+                7 => Self::DalathRish,
+                8 => Self::E,
+                9 => Self::Feh,
+                10 => Self::FinalSemkath,
+                11 => Self::Gaf,
+                12 => Self::Gamal,
+                13 => Self::Hah,
+                14 => Self::TehMarbutaGoal,
+                15 => Self::He,
+                16 => Self::Heh,
+                17 => Self::HehGoal,
+                18 => Self::Heth,
+                19 => Self::Kaf,
+                20 => Self::Kaph,
+                21 => Self::KnottedHeh,
+                22 => Self::Lam,
+                23 => Self::Lamadh,
+                24 => Self::Meem,
+                25 => Self::Mim,
+                26 => Self::Noon,
+                27 => Self::Nun,
+                28 => Self::Pe,
+                29 => Self::Qaf,
+                30 => Self::Qaph,
+                31 => Self::Reh,
+                32 => Self::ReversedPe,
+                33 => Self::Sad,
+                34 => Self::Sadhe,
+                35 => Self::Seen,
+                36 => Self::Semkath,
+                37 => Self::Shin,
+                38 => Self::SwashKaf,
+                39 => Self::SyriacWaw,
+                40 => Self::Tah,
+                41 => Self::Taw,
+                42 => Self::TehMarbuta,
+                43 => Self::Teth,
+                44 => Self::Waw,
+                45 => Self::Yeh,
+                46 => Self::YehBarree,
+                47 => Self::YehWithTail,
+                48 => Self::Yudh,
+                49 => Self::YudhHe,
+                50 => Self::Zain,
+                51 => Self::Fe,
+                52 => Self::Khaph,
+                53 => Self::Zhain,
+                54 => Self::BurushaskiYehBarree,
+                55 => Self::FarsiYeh,
+                56 => Self::Nya,
+                57 => Self::RohingyaYeh,
+                58 => Self::ManichaeanAleph,
+                59 => Self::ManichaeanAyin,
+                60 => Self::ManichaeanBeth,
+                61 => Self::ManichaeanDaleth,
+                62 => Self::ManichaeanDhamedh,
+                63 => Self::ManichaeanFive,
+                64 => Self::ManichaeanGimel,
+                65 => Self::ManichaeanHeth,
+                66 => Self::ManichaeanHundred,
+                67 => Self::ManichaeanKaph,
+                68 => Self::ManichaeanLamedh,
+                69 => Self::ManichaeanMem,
+                70 => Self::ManichaeanNun,
+                71 => Self::ManichaeanOne,
+                72 => Self::ManichaeanPe,
+                73 => Self::ManichaeanQoph,
+                74 => Self::ManichaeanResh,
+                75 => Self::ManichaeanSadhe,
+                76 => Self::ManichaeanSamekh,
+                77 => Self::ManichaeanTaw,
+                78 => Self::ManichaeanTen,
+                79 => Self::ManichaeanTeth,
+                80 => Self::ManichaeanThamedh,
+                81 => Self::ManichaeanTwenty,
+                82 => Self::ManichaeanWaw,
+                83 => Self::ManichaeanYodh,
+                84 => Self::ManichaeanZayin,
+                85 => Self::StraightWaw,
+                86 => Self::AfricanFeh,
+                87 => Self::AfricanNoon,
+                88 => Self::AfricanQaf,
+                89 => Self::MalayalamBha,
+                90 => Self::MalayalamJa,
+                91 => Self::MalayalamLla,
+                92 => Self::MalayalamLlla,
+                93 => Self::MalayalamNga,
+                94 => Self::MalayalamNna,
+                95 => Self::MalayalamNnna,
+                96 => Self::MalayalamNya,
+                97 => Self::MalayalamRa,
+                98 => Self::MalayalamSsa,
+                99 => Self::MalayalamTta,
+                100 => Self::HanifiRohingyaKinnaYa,
+                101 => Self::HanifiRohingyaPa,
+                102 => Self::ThinYeh,
+                103 => Self::VerticalTail,
+                104 => Self::KashmiriYeh,
+                105 => Self::ThinNoon,
+                _ => return None,
+            })
+        }
+    }
+
     #[diplomat::rust_link(icu::properties::props::JoiningType, Struct)]
     #[diplomat::enum_convert(icu_properties::props::JoiningType, needs_wildcard)]
     #[non_exhaustive]
@@ -3246,6 +3627,12 @@ mod test {
                 .expect("Found JoiningType value not supported in ffi");
             assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::JoiningType::from(ffi_prop));
+        }
+        for prop in props::JoiningGroup::ALL_VALUES {
+            let ffi_prop = JoiningGroup::from_integer_value(prop.to_icu4c_value())
+                .expect("Found JoiningGroup value not supported in ffi");
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
+            assert_eq!(*prop, props::JoiningGroup::from(ffi_prop));
         }
         for prop in props::GeneralCategory::ALL_VALUES {
             let ffi_prop = GeneralCategory::from_integer_value(*prop as u8)

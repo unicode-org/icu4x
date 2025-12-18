@@ -472,6 +472,13 @@ expand!(
         PropertyNameLongJoiningTypeV1[convert_linear]
     ),
     (
+        icu::properties::props::JoiningGroup,
+        PropertyEnumJoiningGroupV1,
+        PropertyNameParseJoiningGroupV1,
+        PropertyNameShortJoiningGroupV1[convert_linear],
+        PropertyNameLongJoiningGroupV1[convert_linear]
+    ),
+    (
         icu::properties::props::VerticalOrientation,
         PropertyEnumVerticalOrientationV1,
         PropertyNameParseVerticalOrientationV1,

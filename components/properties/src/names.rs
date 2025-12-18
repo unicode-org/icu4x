@@ -86,7 +86,7 @@ impl<T> PropertyParser<T> {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[expect(clippy::new_ret_no_self)]
-    pub fn new() -> PropertyParserBorrowed<'static, T>
+    pub const fn new() -> PropertyParserBorrowed<'static, T>
     where
         T: ParseableEnumeratedProperty,
     {
@@ -255,7 +255,7 @@ impl<T: TrieValue> PropertyParserBorrowed<'static, T> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn new() -> Self
+    pub const fn new() -> Self
     where
         T: ParseableEnumeratedProperty,
     {
@@ -383,7 +383,7 @@ impl<T: NamedEnumeratedProperty> PropertyNamesLong<T> {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[expect(clippy::new_ret_no_self)]
-    pub fn new() -> PropertyNamesLongBorrowed<'static, T> {
+    pub const fn new() -> PropertyNamesLongBorrowed<'static, T> {
         PropertyNamesLongBorrowed::new()
     }
 
@@ -447,7 +447,7 @@ impl<T: NamedEnumeratedProperty> PropertyNamesLongBorrowed<'static, T> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             map: T::SINGLETON_LONG,
         }
@@ -516,7 +516,7 @@ impl<T: NamedEnumeratedProperty> PropertyNamesShort<T> {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[expect(clippy::new_ret_no_self)]
-    pub fn new() -> PropertyNamesShortBorrowed<'static, T> {
+    pub const fn new() -> PropertyNamesShortBorrowed<'static, T> {
         PropertyNamesShortBorrowed::new()
     }
 
@@ -620,7 +620,7 @@ impl<T: NamedEnumeratedProperty> PropertyNamesShortBorrowed<'static, T> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             map: T::SINGLETON_SHORT,
         }
@@ -908,6 +908,14 @@ impl_value_getter! {
         PropertyNameParseIndicConjunctBreakV1 / SINGLETON_PROPERTY_NAME_PARSE_INDIC_CONJUNCT_BREAK_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameShortIndicConjunctBreakV1 / SINGLETON_PROPERTY_NAME_SHORT_INDIC_CONJUNCT_BREAK_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameLongIndicConjunctBreakV1 / SINGLETON_PROPERTY_NAME_LONG_INDIC_CONJUNCT_BREAK_V1;
+    }
+}
+
+impl_value_getter! {
+    impl JoiningGroup {
+        PropertyNameParseJoiningGroupV1 / SINGLETON_PROPERTY_NAME_PARSE_JOINING_GROUP_V1;
+        PropertyEnumToValueNameLinearMap / PropertyNameShortJoiningGroupV1 / SINGLETON_PROPERTY_NAME_SHORT_JOINING_GROUP_V1;
+        PropertyEnumToValueNameLinearMap / PropertyNameLongJoiningGroupV1 / SINGLETON_PROPERTY_NAME_LONG_JOINING_GROUP_V1;
     }
 }
 

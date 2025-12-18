@@ -438,6 +438,20 @@ macro_rules! impl_zerotrie_subtype {
                     store: s.to_bytes(),
                 })
             }
+            /// Creates a trie from a [`BTreeMap`] of string keys.
+            ///
+            /// See also the [`TryFrom`] and [`FromIterator`] impls.
+            pub fn try_from_btree_map_str<K>(items: &BTreeMap<K, usize>) -> Result<Self, ZeroTrieBuildError>
+            where
+                K: Borrow<str>
+            {
+                let tuples: Vec<(&[u8], usize)> = items
+                    .iter()
+                    .map(|(k, v)| (k.borrow().as_bytes(), *v))
+                    .collect();
+                let byte_str_slice = ByteStr::from_byte_slice_with_value(&tuples);
+                Self::try_from_tuple_slice(byte_str_slice)
+            }
         }
         #[cfg(feature = "alloc")]
         impl<'a, K> FromIterator<(K, usize)> for $name<Vec<u8>>
