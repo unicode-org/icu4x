@@ -66,9 +66,8 @@ mod ummalqura_data;
 /// are impacted by atmospheric phenomena, meaning such predictions are only an approximation
 /// of ground truth.
 ///
-/// The primary exception is Saudi Arabia, where the KACST uses sophisticated telescopes to
-/// make the observations more reliable. They publish predictions covering multiple centuries;
-/// see [`UmmAlQura`].
+/// The primary exception is Saudi Arabia, where the KACST publishes official predictions of
+/// crescent timings for multiple centires. See [`UmmAlQura`].
 ///
 /// # Calendar drift
 ///
