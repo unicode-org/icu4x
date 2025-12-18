@@ -67,7 +67,7 @@ mod ummalqura_data;
 /// of ground truth.
 ///
 /// The primary exception is Saudi Arabia, where the KACST publishes official predictions of
-/// crescent timings for multiple centires. See [`UmmAlQura`].
+/// crescent timings for multiple centuries. See [`UmmAlQura`].
 ///
 /// # Calendar drift
 ///
