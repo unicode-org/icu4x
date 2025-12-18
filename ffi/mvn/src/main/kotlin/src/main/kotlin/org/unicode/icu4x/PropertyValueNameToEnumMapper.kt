@@ -35,6 +35,8 @@ internal interface PropertyValueNameToEnumMapperLib: Library {
     fun icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_PropertyValueNameToEnumMapper_create_joining_group_mv1(): Pointer
     fun icu4x_PropertyValueNameToEnumMapper_create_joining_group_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_PropertyValueNameToEnumMapper_create_joining_type_mv1(): Pointer
+    fun icu4x_PropertyValueNameToEnumMapper_create_joining_type_with_provider_mv1(provider: Pointer): ResultPointerInt
 }
 /** A type capable of looking up a property value from a string name.
 *
@@ -492,6 +494,40 @@ class PropertyValueNameToEnumMapper internal constructor (
         fun createJoiningGroupWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
             
             val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_joining_group_with_provider_mv1(provider.handle);
+            if (returnVal.isOk == 1.toByte()) {
+                val selfEdges: List<Any> = listOf()
+                val handle = returnVal.union.ok 
+                val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
+                CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+                return returnOpaque.ok()
+            } else {
+                return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
+            }
+        }
+        @JvmStatic
+        
+        /** Create a name-to-enum mapper for the `JoiningType` property, using compiled data.
+        *
+        *See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.
+        */
+        fun createJoiningType(): PropertyValueNameToEnumMapper {
+            
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_joining_type_mv1();
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = PropertyValueNameToEnumMapper(handle, selfEdges)
+            CLEANER.register(returnOpaque, PropertyValueNameToEnumMapper.PropertyValueNameToEnumMapperCleaner(handle, PropertyValueNameToEnumMapper.lib));
+            return returnOpaque
+        }
+        @JvmStatic
+        
+        /** Create a name-to-enum mapper for the `JoiningType` property, using a particular data source.
+        *
+        *See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.
+        */
+        fun createJoiningTypeWithProvider(provider: DataProvider): Result<PropertyValueNameToEnumMapper> {
+            
+            val returnVal = lib.icu4x_PropertyValueNameToEnumMapper_create_joining_type_with_provider_mv1(provider.handle);
             if (returnVal.isOk == 1.toByte()) {
                 val selfEdges: List<Any> = listOf()
                 val handle = returnVal.union.ok 

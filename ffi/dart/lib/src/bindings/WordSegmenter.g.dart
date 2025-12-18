@@ -164,7 +164,7 @@ final class WordSegmenter implements ffi.Finalizable {
     return WordSegmenter._fromFfi(result.union.ok, []);
   }
 
-  /// Construct a [WordSegmenter] with no support for complex scripts (Chinese, Japanese,
+  /// Construct a [WordSegmenter] with no support for scripts requiring complex context dependent word breaks (Chinese, Japanese,
   /// Burmese, Khmer, Lao, and Thai), using compiled data. This does not assume any content locale.
   ///
   /// See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.new_for_non_complex_scripts) for more information.
@@ -173,7 +173,7 @@ final class WordSegmenter implements ffi.Finalizable {
     return WordSegmenter._fromFfi(result, []);
   }
 
-  /// Construct a [WordSegmenter] with no support for complex scripts (Chinese, Japanese,
+  /// Construct a [WordSegmenter] with no support for scripts requiring complex context dependent word breaks (Chinese, Japanese,
   /// Burmese, Khmer, Lao, and Thai), using compiled data.
   ///
   /// See the [Rust documentation for `try_new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_for_non_complex_scripts) for more information.
@@ -187,7 +187,7 @@ final class WordSegmenter implements ffi.Finalizable {
     return WordSegmenter._fromFfi(result.union.ok, []);
   }
 
-  /// Construct a [WordSegmenter] with no support for complex scripts (Chinese, Japanese,
+  /// Construct a [WordSegmenter] with no support for scripts requiring complex context dependent word breaks (Chinese, Japanese,
   /// Burmese, Khmer, Lao, and Thai), using a particular data source.
   ///
   /// See the [Rust documentation for `try_new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_for_non_complex_scripts) for more information.

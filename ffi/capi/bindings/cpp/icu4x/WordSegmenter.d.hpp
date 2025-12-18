@@ -143,7 +143,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_dictionary_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
   /**
-   * Construct a {@link WordSegmenter} with no support for complex scripts (Chinese, Japanese,
+   * Construct a {@link WordSegmenter} with no support for scripts requiring complex context dependent word breaks (Chinese, Japanese,
    * Burmese, Khmer, Lao, and Thai), using compiled data. This does not assume any content locale.
    *
    * See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.new_for_non_complex_scripts) for more information.
@@ -151,7 +151,7 @@ public:
   inline static std::unique_ptr<icu4x::WordSegmenter> create_for_non_complex_scripts();
 
   /**
-   * Construct a {@link WordSegmenter} with no support for complex scripts (Chinese, Japanese,
+   * Construct a {@link WordSegmenter} with no support for scripts requiring complex context dependent word breaks (Chinese, Japanese,
    * Burmese, Khmer, Lao, and Thai), using compiled data.
    *
    * See the [Rust documentation for `try_new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_for_non_complex_scripts) for more information.
@@ -159,7 +159,7 @@ public:
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_for_non_complex_scripts_with_content_locale(const icu4x::Locale& locale);
 
   /**
-   * Construct a {@link WordSegmenter} with no support for complex scripts (Chinese, Japanese,
+   * Construct a {@link WordSegmenter} with no support for scripts requiring complex context dependent word breaks (Chinese, Japanese,
    * Burmese, Khmer, Lao, and Thai), using a particular data source.
    *
    * See the [Rust documentation for `try_new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_for_non_complex_scripts) for more information.

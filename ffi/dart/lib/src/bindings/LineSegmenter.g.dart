@@ -53,7 +53,7 @@ final class LineSegmenter implements ffi.Finalizable {
     return LineSegmenter._fromFfi(result, []);
   }
 
-  /// Construct a [LineSegmenter] with default options (no locale-based tailoring) and no support for complex languages
+  /// Construct a [LineSegmenter] with default options (no locale-based tailoring) and no support for scripts requiring complex context dependent line breaks
   /// (Burmese, Khmer, Lao, and Thai), using compiled data
   ///
   /// See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
@@ -137,7 +137,7 @@ final class LineSegmenter implements ffi.Finalizable {
     return LineSegmenter._fromFfi(result.union.ok, []);
   }
 
-  /// Construct a [LineSegmenter] with custom options and no support for complex languages
+  /// Construct a [LineSegmenter] with custom options and no support for scripts requiring complex context dependent line breaks
   /// (Burmese, Khmer, Lao, and Thai), using compiled data.
   ///
   /// See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
