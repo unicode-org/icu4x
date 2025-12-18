@@ -142,9 +142,8 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 
 /// [`Hijri`] [`Rules`] based on an astronomical simulation for a particular location.
 ///
-/// These rules use the relative positions of the Earth, moon, and sun to predict the
-/// exact moment of a new moon, and then apply a criterion proposed by S. K. Shaukat in
-/// 1996 to determine crescent moon visibility.
+/// These rules are based on calculations of the Earth, moon, and sun along with the
+/// Shaukat criterion to determine crescent moon visibility.[^1]
 ///
 /// These rules can form the basis of a custom [`Rules`] implementation that includes data
 /// based on human sightings. As discussed in the [`Hijri`] documentation,  using these
@@ -164,6 +163,8 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 ///
 /// This corresponds to the `"islamic-rgsa"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier)
 /// if constructed with [`Hijri::new_simulated_mecca()`].
+///
+/// [^1]: See [calendrical_calculations::islamic::observational_islamic_from_fixed]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct AstronomicalSimulation {
     pub(crate) location: SimulatedLocation,
