@@ -28,7 +28,7 @@ LineSegmenter* icu4x_LineSegmenter_create_lstm_mv1(void);
 
 LineSegmenter* icu4x_LineSegmenter_create_dictionary_mv1(void);
 
-LineSegmenter* icu4x_LineSegmenter_create_non_complex_mv1(void);
+LineSegmenter* icu4x_LineSegmenter_create_for_non_complex_scripts_mv1(void);
 
 LineSegmenter* icu4x_LineSegmenter_create_auto_with_options_v2_mv1(const Locale* content_locale, LineBreakOptionsV2 options);
 
@@ -45,10 +45,10 @@ LineSegmenter* icu4x_LineSegmenter_create_dictionary_with_options_v2_mv1(const L
 typedef struct icu4x_LineSegmenter_create_dictionary_with_options_v2_and_provider_mv1_result {union {LineSegmenter* ok; DataError err;}; bool is_ok;} icu4x_LineSegmenter_create_dictionary_with_options_v2_and_provider_mv1_result;
 icu4x_LineSegmenter_create_dictionary_with_options_v2_and_provider_mv1_result icu4x_LineSegmenter_create_dictionary_with_options_v2_and_provider_mv1(const DataProvider* provider, const Locale* content_locale, LineBreakOptionsV2 options);
 
-LineSegmenter* icu4x_LineSegmenter_create_non_complex_with_options_v2_mv1(const Locale* content_locale, LineBreakOptionsV2 options);
+LineSegmenter* icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_mv1(const Locale* content_locale, LineBreakOptionsV2 options);
 
-typedef struct icu4x_LineSegmenter_create_non_complex_with_options_v2_and_provider_mv1_result {union {LineSegmenter* ok; DataError err;}; bool is_ok;} icu4x_LineSegmenter_create_non_complex_with_options_v2_and_provider_mv1_result;
-icu4x_LineSegmenter_create_non_complex_with_options_v2_and_provider_mv1_result icu4x_LineSegmenter_create_non_complex_with_options_v2_and_provider_mv1(const DataProvider* provider, const Locale* content_locale, LineBreakOptionsV2 options);
+typedef struct icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_and_provider_mv1_result {union {LineSegmenter* ok; DataError err;}; bool is_ok;} icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_and_provider_mv1_result;
+icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_and_provider_mv1_result icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_and_provider_mv1(const DataProvider* provider, const Locale* content_locale, LineBreakOptionsV2 options);
 
 LineBreakIteratorUtf8* icu4x_LineSegmenter_segment_utf8_mv1(const LineSegmenter* self, DiplomatStringView input);
 

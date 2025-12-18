@@ -279,11 +279,11 @@ export class WordSegmenter {
      * Construct a {@link WordSegmenter} with no support for complex scripts (Chinese, Japanese,
      * Burmese, Khmer, Lao, and Thai), using compiled data. This does not assume any content locale.
      *
-     * See the [Rust documentation for `new_non_complex`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.new_non_complex) for more information.
+     * See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.new_for_non_complex_scripts) for more information.
      */
-    static createNonComplex() {
+    static createForNonComplexScripts() {
 
-        const result = wasm.icu4x_WordSegmenter_create_non_complex_mv1();
+        const result = wasm.icu4x_WordSegmenter_create_for_non_complex_scripts_mv1();
 
         try {
             return new WordSegmenter(diplomatRuntime.internalConstructor, result, []);
@@ -297,13 +297,13 @@ export class WordSegmenter {
      * Construct a {@link WordSegmenter} with no support for complex scripts (Chinese, Japanese,
      * Burmese, Khmer, Lao, and Thai), using compiled data.
      *
-     * See the [Rust documentation for `try_new_non_complex`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_non_complex) for more information.
+     * See the [Rust documentation for `try_new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_for_non_complex_scripts) for more information.
      */
-    static createNonComplexWithContentLocale(locale) {
+    static createForNonComplexScriptsWithContentLocale(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_WordSegmenter_create_non_complex_with_content_locale_mv1(diplomatReceive.buffer, locale.ffiValue);
+        const result = wasm.icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_mv1(diplomatReceive.buffer, locale.ffiValue);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -322,13 +322,13 @@ export class WordSegmenter {
      * Construct a {@link WordSegmenter} with no support for complex scripts (Chinese, Japanese,
      * Burmese, Khmer, Lao, and Thai), using a particular data source.
      *
-     * See the [Rust documentation for `try_new_non_complex`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_non_complex) for more information.
+     * See the [Rust documentation for `try_new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_for_non_complex_scripts) for more information.
      */
-    static createNonComplexWithContentLocaleAndProvider(provider, locale) {
+    static createForNonComplexScriptsWithContentLocaleAndProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_WordSegmenter_create_non_complex_with_content_locale_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
+        const result = wasm.icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
 
         try {
             if (!diplomatReceive.resultFlag) {

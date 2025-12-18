@@ -538,7 +538,7 @@ impl WordSegmenter {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new_non_complex(
+    pub const fn new_for_non_complex_scripts(
         _options: WordBreakInvariantOptions,
     ) -> WordSegmenterBorrowed<'static> {
         WordSegmenterBorrowed {
@@ -551,15 +551,15 @@ impl WordSegmenter {
     icu_provider::gen_buffer_data_constructors!(
         (options: WordBreakOptions) -> error: DataError,
         functions: [
-            try_new_non_complex,
-            try_new_non_complex_with_buffer_provider,
-            try_new_non_complex_unstable,
+            try_new_for_non_complex_scripts,
+            try_new_for_non_complex_scripts_with_buffer_provider,
+            try_new_for_non_complex_scripts_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_non_complex)]
-    pub fn try_new_non_complex_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_for_non_complex_scripts)]
+    pub fn try_new_for_non_complex_scripts_unstable<D>(
         provider: &D,
         options: WordBreakOptions,
     ) -> Result<Self, DataError>

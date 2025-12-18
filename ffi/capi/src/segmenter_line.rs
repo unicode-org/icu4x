@@ -109,12 +109,16 @@ pub mod ffi {
 
         /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and no support for complex languages
         /// (Burmese, Khmer, Lao, and Thai), using compiled data
-        #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_non_complex, FnInStruct)]
-        #[diplomat::attr(auto, named_constructor = "non_complex")]
+        #[diplomat::rust_link(
+            icu::segmenter::LineSegmenter::new_for_non_complex_scripts,
+            FnInStruct
+        )]
+        #[diplomat::attr(auto, named_constructor = "for_non_complex_scripts")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_non_complex() -> Box<LineSegmenter> {
+        pub fn create_for_non_complex_scripts() -> Box<LineSegmenter> {
             Box::new(LineSegmenter(
-                icu_segmenter::LineSegmenter::new_non_complex(Default::default()).static_to_owned(),
+                icu_segmenter::LineSegmenter::new_for_non_complex_scripts(Default::default())
+                    .static_to_owned(),
             ))
         }
 
@@ -245,13 +249,16 @@ pub mod ffi {
         }
         /// Construct a [`LineSegmenter`] with custom options and no support for complex languages
         /// (Burmese, Khmer, Lao, and Thai), using compiled data.
-        #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_non_complex, FnInStruct)]
-        #[diplomat::attr(supports = non_exhaustive_structs, rename = "non_complex_with_options")]
-        #[diplomat::attr(all(supports = non_exhaustive_structs, supports = named_constructors), named_constructor = "non_complex_with_options")]
-        #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = named_constructors), named_constructor = "non_complex_with_options_v2")]
+        #[diplomat::rust_link(
+            icu::segmenter::LineSegmenter::new_for_non_complex_scripts,
+            FnInStruct
+        )]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "for_non_complex_scripts_with_options")]
+        #[diplomat::attr(all(supports = non_exhaustive_structs, supports = named_constructors), named_constructor = "for_non_complex_scripts_with_options")]
+        #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = named_constructors), named_constructor = "for_non_complex_scripts_with_options_v2")]
         #[cfg(feature = "compiled_data")]
         #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
-        pub fn create_non_complex_with_options_v2(
+        pub fn create_for_non_complex_scripts_with_options_v2(
             content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
         ) -> Box<LineSegmenter> {
@@ -259,18 +266,22 @@ pub mod ffi {
             options.content_locale = content_locale.map(|c| &c.0.id);
 
             Box::new(LineSegmenter(
-                icu_segmenter::LineSegmenter::new_non_complex(options).static_to_owned(),
+                icu_segmenter::LineSegmenter::new_for_non_complex_scripts(options)
+                    .static_to_owned(),
             ))
         }
         /// Construct a [`LineSegmenter`] with custom options and no support for complex languages
         /// (Burmese, Khmer, Lao, and Thai), using a particular data source.
-        #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_non_complex, FnInStruct)]
-        #[diplomat::attr(supports = non_exhaustive_structs, rename = "non_complex_with_options_and_provider")]
-        #[diplomat::attr(all(supports = non_exhaustive_structs, supports = fallible_constructors, supports = named_constructors), named_constructor = "non_complex_with_options_and_provider")]
-        #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = fallible_constructors, supports = named_constructors), named_constructor = "non_complex_with_options_v2_and_provider")]
+        #[diplomat::rust_link(
+            icu::segmenter::LineSegmenter::new_for_non_complex_scripts,
+            FnInStruct
+        )]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "for_non_complex_scripts_with_options_and_provider")]
+        #[diplomat::attr(all(supports = non_exhaustive_structs, supports = fallible_constructors, supports = named_constructors), named_constructor = "for_non_complex_scripts_with_options_and_provider")]
+        #[diplomat::attr(all(not(supports = non_exhaustive_structs), supports = fallible_constructors, supports = named_constructors), named_constructor = "for_non_complex_scripts_with_options_v2_and_provider")]
         #[cfg(feature = "buffer_provider")]
         #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
-        pub fn create_non_complex_with_options_v2_and_provider(
+        pub fn create_for_non_complex_scripts_with_options_v2_and_provider(
             provider: &DataProvider,
             content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
@@ -279,7 +290,7 @@ pub mod ffi {
             options.content_locale = content_locale.map(|c| &c.0.id);
 
             Ok(Box::new(LineSegmenter(
-                icu_segmenter::LineSegmenter::try_new_non_complex_with_buffer_provider(
+                icu_segmenter::LineSegmenter::try_new_for_non_complex_scripts_with_buffer_provider(
                     provider.get()?,
                     options,
                 )?,

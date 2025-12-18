@@ -103,11 +103,11 @@ export class LineSegmenter {
      * Construct a {@link LineSegmenter} with default options (no locale-based tailoring) and no support for complex languages
      * (Burmese, Khmer, Lao, and Thai), using compiled data
      *
-     * See the [Rust documentation for `new_non_complex`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_non_complex) for more information.
+     * See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
      */
-    static createNonComplex() {
+    static createForNonComplexScripts() {
 
-        const result = wasm.icu4x_LineSegmenter_create_non_complex_mv1();
+        const result = wasm.icu4x_LineSegmenter_create_for_non_complex_scripts_mv1();
 
         try {
             return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
@@ -274,13 +274,13 @@ export class LineSegmenter {
      * Construct a {@link LineSegmenter} with custom options and no support for complex languages
      * (Burmese, Khmer, Lao, and Thai), using compiled data.
      *
-     * See the [Rust documentation for `new_non_complex`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_non_complex) for more information.
+     * See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
      */
-    static nonComplexWithOptions(contentLocale, options) {
+    static forNonComplexScriptsWithOptions(contentLocale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_LineSegmenter_create_non_complex_with_options_v2_mv1(contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_mv1(contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
 
         try {
             return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
@@ -296,15 +296,15 @@ export class LineSegmenter {
      * Construct a {@link LineSegmenter} with custom options and no support for complex languages
      * (Burmese, Khmer, Lao, and Thai), using a particular data source.
      *
-     * See the [Rust documentation for `new_non_complex`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_non_complex) for more information.
+     * See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
      */
-    static nonComplexWithOptionsAndProvider(provider, contentLocale, options) {
+    static forNonComplexScriptsWithOptionsAndProvider(provider, contentLocale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_LineSegmenter_create_non_complex_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
 
         try {
             if (!diplomatReceive.resultFlag) {

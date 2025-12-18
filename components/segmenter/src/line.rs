@@ -545,7 +545,9 @@ impl LineSegmenter {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new_non_complex(options: LineBreakOptions) -> LineSegmenterBorrowed<'static> {
+    pub const fn new_for_non_complex_scripts(
+        options: LineBreakOptions,
+    ) -> LineSegmenterBorrowed<'static> {
         LineSegmenterBorrowed {
             options: options.resolve(),
             data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
@@ -556,15 +558,15 @@ impl LineSegmenter {
     icu_provider::gen_buffer_data_constructors!(
         (options: LineBreakOptions) -> error: DataError,
         functions: [
-            new_non_complex: skip,
-            try_new_non_complex_with_buffer_provider,
-            try_new_non_complex_unstable,
+            new_for_non_complex_scripts: skip,
+            try_new_for_non_complex_scripts_with_buffer_provider,
+            try_new_for_non_complex_scripts_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_non_complex)]
-    pub fn try_new_non_complex_unstable<D>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_for_non_complex_scripts)]
+    pub fn try_new_for_non_complex_scripts_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
     ) -> Result<Self, DataError>

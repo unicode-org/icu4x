@@ -49,9 +49,9 @@ export class LineSegmenter {
      * Construct a {@link LineSegmenter} with default options (no locale-based tailoring) and no support for complex languages
      * (Burmese, Khmer, Lao, and Thai), using compiled data
      *
-     * See the [Rust documentation for `new_non_complex`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_non_complex) for more information.
+     * See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
      */
-    static createNonComplex(): LineSegmenter;
+    static createForNonComplexScripts(): LineSegmenter;
 
     /**
      * Construct a {@link LineSegmenter} with custom options using compiled data. It automatically loads the best
@@ -105,17 +105,17 @@ export class LineSegmenter {
      * Construct a {@link LineSegmenter} with custom options and no support for complex languages
      * (Burmese, Khmer, Lao, and Thai), using compiled data.
      *
-     * See the [Rust documentation for `new_non_complex`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_non_complex) for more information.
+     * See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
      */
-    static nonComplexWithOptions(contentLocale: Locale | null, options: LineBreakOptions_obj): LineSegmenter;
+    static forNonComplexScriptsWithOptions(contentLocale: Locale | null, options: LineBreakOptions_obj): LineSegmenter;
 
     /**
      * Construct a {@link LineSegmenter} with custom options and no support for complex languages
      * (Burmese, Khmer, Lao, and Thai), using a particular data source.
      *
-     * See the [Rust documentation for `new_non_complex`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_non_complex) for more information.
+     * See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
      */
-    static nonComplexWithOptionsAndProvider(provider: DataProvider, contentLocale: Locale | null, options: LineBreakOptions_obj): LineSegmenter;
+    static forNonComplexScriptsWithOptionsAndProvider(provider: DataProvider, contentLocale: Locale | null, options: LineBreakOptions_obj): LineSegmenter;
 
     /**
      * Segments a string.

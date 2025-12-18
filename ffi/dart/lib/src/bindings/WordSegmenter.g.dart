@@ -167,20 +167,20 @@ final class WordSegmenter implements ffi.Finalizable {
   /// Construct a [WordSegmenter] with no support for complex scripts (Chinese, Japanese,
   /// Burmese, Khmer, Lao, and Thai), using compiled data. This does not assume any content locale.
   ///
-  /// See the [Rust documentation for `new_non_complex`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.new_non_complex) for more information.
-  factory WordSegmenter.nonComplex() {
-    final result = _icu4x_WordSegmenter_create_non_complex_mv1();
+  /// See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.new_for_non_complex_scripts) for more information.
+  factory WordSegmenter.forNonComplexScripts() {
+    final result = _icu4x_WordSegmenter_create_for_non_complex_scripts_mv1();
     return WordSegmenter._fromFfi(result, []);
   }
 
   /// Construct a [WordSegmenter] with no support for complex scripts (Chinese, Japanese,
   /// Burmese, Khmer, Lao, and Thai), using compiled data.
   ///
-  /// See the [Rust documentation for `try_new_non_complex`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_non_complex) for more information.
+  /// See the [Rust documentation for `try_new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_for_non_complex_scripts) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory WordSegmenter.nonComplexWithContentLocale(Locale locale) {
-    final result = _icu4x_WordSegmenter_create_non_complex_with_content_locale_mv1(locale._ffi);
+  factory WordSegmenter.forNonComplexScriptsWithContentLocale(Locale locale) {
+    final result = _icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_mv1(locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -190,11 +190,11 @@ final class WordSegmenter implements ffi.Finalizable {
   /// Construct a [WordSegmenter] with no support for complex scripts (Chinese, Japanese,
   /// Burmese, Khmer, Lao, and Thai), using a particular data source.
   ///
-  /// See the [Rust documentation for `try_new_non_complex`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_non_complex) for more information.
+  /// See the [Rust documentation for `try_new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.WordSegmenter.html#method.try_new_for_non_complex_scripts) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory WordSegmenter.nonComplexWithContentLocaleAndProvider(DataProvider provider, Locale locale) {
-    final result = _icu4x_WordSegmenter_create_non_complex_with_content_locale_and_provider_mv1(provider._ffi, locale._ffi);
+  factory WordSegmenter.forNonComplexScriptsWithContentLocaleAndProvider(DataProvider provider, Locale locale) {
+    final result = _icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_and_provider_mv1(provider._ffi, locale._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -267,20 +267,20 @@ external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_dictionary_with_content_
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_dictionary_with_content_locale_and_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
-@_DiplomatFfiUse('icu4x_WordSegmenter_create_non_complex_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_WordSegmenter_create_non_complex_mv1')
+@_DiplomatFfiUse('icu4x_WordSegmenter_create_for_non_complex_scripts_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_WordSegmenter_create_for_non_complex_scripts_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_WordSegmenter_create_non_complex_mv1();
+external ffi.Pointer<ffi.Opaque> _icu4x_WordSegmenter_create_for_non_complex_scripts_mv1();
 
-@_DiplomatFfiUse('icu4x_WordSegmenter_create_non_complex_with_content_locale_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_create_non_complex_with_content_locale_mv1')
+@_DiplomatFfiUse('icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_non_complex_with_content_locale_mv1(ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_mv1(ffi.Pointer<ffi.Opaque> locale);
 
-@_DiplomatFfiUse('icu4x_WordSegmenter_create_non_complex_with_content_locale_and_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_create_non_complex_with_content_locale_and_provider_mv1')
+@_DiplomatFfiUse('icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_and_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_and_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_non_complex_with_content_locale_and_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
+external _ResultOpaqueInt32 _icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_and_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> locale);
 
 @_DiplomatFfiUse('icu4x_WordSegmenter_segment_utf16_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_WordSegmenter_segment_utf16_mv1')

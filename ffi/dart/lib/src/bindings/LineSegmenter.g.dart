@@ -56,9 +56,9 @@ final class LineSegmenter implements ffi.Finalizable {
   /// Construct a [LineSegmenter] with default options (no locale-based tailoring) and no support for complex languages
   /// (Burmese, Khmer, Lao, and Thai), using compiled data
   ///
-  /// See the [Rust documentation for `new_non_complex`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_non_complex) for more information.
-  factory LineSegmenter.nonComplex() {
-    final result = _icu4x_LineSegmenter_create_non_complex_mv1();
+  /// See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
+  factory LineSegmenter.forNonComplexScripts() {
+    final result = _icu4x_LineSegmenter_create_for_non_complex_scripts_mv1();
     return LineSegmenter._fromFfi(result, []);
   }
 
@@ -140,22 +140,22 @@ final class LineSegmenter implements ffi.Finalizable {
   /// Construct a [LineSegmenter] with custom options and no support for complex languages
   /// (Burmese, Khmer, Lao, and Thai), using compiled data.
   ///
-  /// See the [Rust documentation for `new_non_complex`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_non_complex) for more information.
-  factory LineSegmenter.nonComplexWithOptions(LineBreakOptions options, [Locale? contentLocale]) {
+  /// See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
+  factory LineSegmenter.forNonComplexScriptsWithOptions(LineBreakOptions options, [Locale? contentLocale]) {
     final temp = _FinalizedArena();
-    final result = _icu4x_LineSegmenter_create_non_complex_with_options_v2_mv1(contentLocale?._ffi ?? ffi.Pointer.fromAddress(0), options._toFfi(temp.arena));
+    final result = _icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_mv1(contentLocale?._ffi ?? ffi.Pointer.fromAddress(0), options._toFfi(temp.arena));
     return LineSegmenter._fromFfi(result, []);
   }
 
   /// Construct a [LineSegmenter] with custom options and no support for complex languages
   /// (Burmese, Khmer, Lao, and Thai), using a particular data source.
   ///
-  /// See the [Rust documentation for `new_non_complex`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_non_complex) for more information.
+  /// See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory LineSegmenter.nonComplexWithOptionsAndProvider(DataProvider provider, LineBreakOptions options, [Locale? contentLocale]) {
+  factory LineSegmenter.forNonComplexScriptsWithOptionsAndProvider(DataProvider provider, LineBreakOptions options, [Locale? contentLocale]) {
     final temp = _FinalizedArena();
-    final result = _icu4x_LineSegmenter_create_non_complex_with_options_v2_and_provider_mv1(provider._ffi, contentLocale?._ffi ?? ffi.Pointer.fromAddress(0), options._toFfi(temp.arena));
+    final result = _icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_and_provider_mv1(provider._ffi, contentLocale?._ffi ?? ffi.Pointer.fromAddress(0), options._toFfi(temp.arena));
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -198,10 +198,10 @@ external ffi.Pointer<ffi.Opaque> _icu4x_LineSegmenter_create_lstm_mv1();
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_LineSegmenter_create_dictionary_mv1();
 
-@_DiplomatFfiUse('icu4x_LineSegmenter_create_non_complex_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_LineSegmenter_create_non_complex_mv1')
+@_DiplomatFfiUse('icu4x_LineSegmenter_create_for_non_complex_scripts_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_LineSegmenter_create_for_non_complex_scripts_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_LineSegmenter_create_non_complex_mv1();
+external ffi.Pointer<ffi.Opaque> _icu4x_LineSegmenter_create_for_non_complex_scripts_mv1();
 
 @_DiplomatFfiUse('icu4x_LineSegmenter_create_auto_with_options_v2_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _LineBreakOptionsFfi)>(isLeaf: true, symbol: 'icu4x_LineSegmenter_create_auto_with_options_v2_mv1')
@@ -233,15 +233,15 @@ external ffi.Pointer<ffi.Opaque> _icu4x_LineSegmenter_create_dictionary_with_opt
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_LineSegmenter_create_dictionary_with_options_v2_and_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> contentLocale, _LineBreakOptionsFfi options);
 
-@_DiplomatFfiUse('icu4x_LineSegmenter_create_non_complex_with_options_v2_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _LineBreakOptionsFfi)>(isLeaf: true, symbol: 'icu4x_LineSegmenter_create_non_complex_with_options_v2_mv1')
+@_DiplomatFfiUse('icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _LineBreakOptionsFfi)>(isLeaf: true, symbol: 'icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_LineSegmenter_create_non_complex_with_options_v2_mv1(ffi.Pointer<ffi.Opaque> contentLocale, _LineBreakOptionsFfi options);
+external ffi.Pointer<ffi.Opaque> _icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_mv1(ffi.Pointer<ffi.Opaque> contentLocale, _LineBreakOptionsFfi options);
 
-@_DiplomatFfiUse('icu4x_LineSegmenter_create_non_complex_with_options_v2_and_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _LineBreakOptionsFfi)>(isLeaf: true, symbol: 'icu4x_LineSegmenter_create_non_complex_with_options_v2_and_provider_mv1')
+@_DiplomatFfiUse('icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_and_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _LineBreakOptionsFfi)>(isLeaf: true, symbol: 'icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_and_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_LineSegmenter_create_non_complex_with_options_v2_and_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> contentLocale, _LineBreakOptionsFfi options);
+external _ResultOpaqueInt32 _icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_and_provider_mv1(ffi.Pointer<ffi.Opaque> provider, ffi.Pointer<ffi.Opaque> contentLocale, _LineBreakOptionsFfi options);
 
 @_DiplomatFfiUse('icu4x_LineSegmenter_segment_utf16_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_LineSegmenter_segment_utf16_mv1')
