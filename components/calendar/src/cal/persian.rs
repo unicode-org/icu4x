@@ -188,6 +188,7 @@ impl Calendar for Persian {
             era: tinystr!(16, "ap"),
             era_index: Some(0),
             year: extended_year,
+            related_gregorian: extended_year + 622,
             extended_year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
@@ -744,5 +745,25 @@ mod tests {
             assert_eq!(persian_date.is_in_leap_year(), leap);
             assert_eq!(iso_date.to_calendar(Persian), persian_date);
         }
+    }
+
+    #[test]
+    fn related_gregorian() {
+        assert_eq!(
+            Date::try_new_gregorian(2025, 3, 18)
+                .unwrap()
+                .to_calendar(Persian)
+                .era_year()
+                .related_gregorian,
+            2025
+        );
+        assert_eq!(
+            Date::try_new_gregorian(2025, 4, 18)
+                .unwrap()
+                .to_calendar(Persian)
+                .era_year()
+                .related_gregorian,
+            2026
+        );
     }
 }

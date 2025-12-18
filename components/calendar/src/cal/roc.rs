@@ -54,12 +54,19 @@ impl GregorianYears for RocEra {
         }
     }
 
-    fn era_year_from_extended(&self, extended_year: i32, _month: u8, _day: u8) -> types::EraYear {
+    fn era_year_from_extended(
+        &self,
+        extended_year: i32,
+        related_iso: i32,
+        _month: u8,
+        _day: u8,
+    ) -> types::EraYear {
         if extended_year > 0 {
             types::EraYear {
                 era: tinystr!(16, "roc"),
                 era_index: Some(1),
                 year: extended_year,
+                related_gregorian: related_iso,
                 extended_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
@@ -68,6 +75,7 @@ impl GregorianYears for RocEra {
                 era: tinystr!(16, "broc"),
                 era_index: Some(0),
                 year: 1 - extended_year,
+                related_gregorian: related_iso,
                 extended_year,
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }

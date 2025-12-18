@@ -316,10 +316,14 @@ impl Calendar for Hebrew {
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
         let extended_year = date.0.year().value;
+        let related_gregorian =
+            calendrical_calculations::gregorian::year_from_fixed(date.0.year().new_year())
+                .unwrap_or_else(|e| e.saturate());
         types::EraYear {
             era_index: Some(0),
             era: tinystr!(16, "am"),
             year: extended_year,
+            related_gregorian,
             extended_year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
@@ -523,5 +527,42 @@ mod tests {
         // Should be Saturday per:
         // https://www.hebcal.com/converter?hd=1&hm=Tishrei&hy=3760&h2g=1
         assert_eq!(dt.weekday(), Weekday::Saturday);
+    }
+
+    #[test]
+    fn related_gregorian() {
+        assert_eq!(
+            Date::try_new_gregorian(2025, 9, 18)
+                .unwrap()
+                .to_calendar(Hebrew)
+                .era_year()
+                .related_gregorian,
+            2024
+        );
+        assert_eq!(
+            Date::try_new_gregorian(2025, 10, 18)
+                .unwrap()
+                .to_calendar(Hebrew)
+                .era_year()
+                .related_gregorian,
+            2025
+        );
+
+        // By 22203 the Hebrew calendar is a full year ahead
+        // of the Gregorian calendar
+        assert_eq!(
+            Date::try_new_from_codes(None, 25962, TISHREI.code(), 1, Hebrew)
+                .unwrap()
+                .era_year()
+                .related_gregorian,
+            22201
+        );
+        assert_eq!(
+            Date::try_new_from_codes(None, 25963, TISHREI.code(), 1, Hebrew)
+                .unwrap()
+                .era_year()
+                .related_gregorian,
+            22203
+        );
     }
 }

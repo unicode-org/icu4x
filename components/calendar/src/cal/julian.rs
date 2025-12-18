@@ -211,11 +211,16 @@ impl Calendar for Julian {
     /// Julian has the same era scheme as Gregorian
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
         let extended_year = date.0.year();
+        let related_gregorian = calendrical_calculations::gregorian::year_from_fixed(
+            calendrical_calculations::julian::day_before_year(extended_year) + 1,
+        )
+        .unwrap_or_else(|e| e.saturate());
         if extended_year > 0 {
             types::EraYear {
                 era: tinystr!(16, "ce"),
                 era_index: Some(1),
                 year: extended_year,
+                related_gregorian,
                 extended_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
@@ -224,6 +229,7 @@ impl Calendar for Julian {
                 era: tinystr!(16, "bce"),
                 era_index: Some(0),
                 year: 1 - extended_year,
+                related_gregorian,
                 extended_year,
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }
@@ -499,5 +505,25 @@ mod test {
         Date::try_new_julian(0, 2, 29).unwrap();
         Date::try_new_julian(-4, 2, 29).unwrap();
         Date::try_new_julian(2020, 2, 29).unwrap();
+    }
+
+    #[test]
+    fn related_gregorian() {
+        // By 48901 the Julian calendar is a full year ahead
+        // of the Gregorian calendar
+        assert_eq!(
+            Date::try_new_julian(48900, 1, 1)
+                .unwrap()
+                .era_year()
+                .related_gregorian,
+            48900
+        );
+        assert_eq!(
+            Date::try_new_julian(48901, 1, 1)
+                .unwrap()
+                .era_year()
+                .related_gregorian,
+            48902
+        );
     }
 }

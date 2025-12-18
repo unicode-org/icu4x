@@ -438,6 +438,21 @@ export class Date {
     }
 
     /**
+     * See the [Rust documentation for `related_gregorian`](https://docs.rs/icu/2.1.1/icu/calendar/types/enum.YearInfo.html#method.related_gregorian) for more information.
+     */
+    get relatedGregorian() {
+
+        const result = wasm.icu4x_Date_related_gregorian_mv1(this.ffiValue);
+
+        try {
+            return result;
+        }
+
+        finally {
+        }
+    }
+
+    /**
      * Returns the era for this date, or an empty string
      *
      * See the [Rust documentation for `era`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.EraYear.html#structfield.era) for more information.

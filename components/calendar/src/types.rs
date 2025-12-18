@@ -268,6 +268,27 @@ impl YearInfo {
         }
     }
 
+    /// The Gregorian year in which this year started.
+    ///
+    /// For Gregorian-based calendars ([`Buddhist`](crate::cal::Buddhist), [`Gregorian`](crate::cal::Gregorian),
+    /// [`Indian`](crate::cal::Indian), [`Iso`](crate::cal::Iso), [`Japanese`](crate::cal::Japanese),
+    /// [`JapaneseExtended`](crate::cal::JapaneseExtended), as well as the simple long-term implementations of
+    /// [`ChineseTraditional`](crate::cal::ChineseTraditional) and [`KoreanTraditional`](crate::cal::KoreanTraditional)),
+    /// this is just a fixed offset.
+    ///
+    /// Other solar and lunisolar calendars ([`Coptic`](crate::cal::Coptic), [`Ethiopian`](crate::cal::Ethiopian),
+    /// [`Hebrew`](crate::cal::Hebrew), [`Julian`](crate::cal::Julian), [`Persian`](crate::cal::Persian)) drift from the
+    /// Gregorian calendar and skip/repeat a related Gregorian year eventually. The earliest this happens is 16,703 CE.
+    ///
+    /// Lunar calendars, like [`Hijri`](crate::cal::Hijri), drift quickly through the Gregorian year, so related Gregorian
+    /// years are frequently repeated.
+    pub fn related_gregorian(self) -> i32 {
+        match self {
+            YearInfo::Era(e) => e.related_gregorian,
+            YearInfo::Cyclic(c) => c.related_iso,
+        }
+    }
+
     /// Get the era year information, if available
     pub fn era(self) -> Option<EraYear> {
         match self {
@@ -310,6 +331,8 @@ pub struct EraYear {
     pub year: i32,
     /// See [`YearInfo::extended_year()`]
     pub extended_year: i32,
+    /// See [`YearInfo::related_gregorian()`]
+    pub related_gregorian: i32,
     /// The era code as defined by CLDR, expect for cases where CLDR does not define a code.
     pub era: TinyAsciiStr<16>,
     /// An era index, for calendars with a small set of eras.
@@ -329,7 +352,7 @@ pub struct EraYear {
 pub struct CyclicYear {
     /// The year in the cycle, 1-based
     pub year: u8,
-    /// The ISO year corresponding to this year
+    /// The Gregorian year corresponding to this year
     pub related_iso: i32,
 }
 
