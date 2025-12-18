@@ -59,7 +59,7 @@ mod ummalqura_data;
 ///
 /// # Crescent moon visibility
 ///
-/// Islam says that months begin when an observer first sees the crescent moon.
+/// According to Islam, months begin when an observer first sees the crescent moon.
 ///
 /// For centuries, astronomers have been developing criteria for predicting crescent moon
 /// visibility. However, in most regions, atmospheric phenomena can impact visibility, making
