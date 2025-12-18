@@ -21,7 +21,7 @@ where
 }
 
 /// Iterator over `str` by `char` and `TrieValue`.
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct CharsWithTrie<'slice, 'trie, T, V>
 where
     V: TrieValue,
@@ -54,6 +54,17 @@ where
         // advanced in a way that leaves the iterator at an UTF-8 sequence
         // boundary.
         unsafe { core::str::from_utf8_unchecked(self.delegate.as_slice()) }
+    }
+}
+
+impl<'slice, 'trie, T, V> Clone for CharsWithTrie<'slice, 'trie, T, V>
+where
+    V: TrieValue,
+    T: AbstractCodePointTrie<'trie, V>,
+{
+    #[inline]
+    fn clone(&self) -> Self {
+        Self { delegate: self.delegate.clone(), trie: self.trie, phantom: PhantomData }
     }
 }
 
@@ -238,7 +249,7 @@ where
 // --
 
 /// Iterator over `str` by `char` and `TrieValue`.
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct CharIndicesWithTrie<'slice, 'trie, T, V>
 where
     V: TrieValue,
@@ -266,6 +277,17 @@ where
     #[inline]
     pub fn as_str(&self) -> &'slice str {
         self.delegate.as_str()
+    }
+}
+
+impl<'slice, 'trie, T, V> Clone for CharIndicesWithTrie<'slice, 'trie, T, V>
+where
+    V: TrieValue,
+    T: AbstractCodePointTrie<'trie, V>,
+{
+    #[inline]
+    fn clone(&self) -> Self {
+        Self { offset: self.offset, delegate: self.delegate.clone() }
     }
 }
 
@@ -375,7 +397,7 @@ where
 // --
 
 /// Iterator over Latin1 `[u8]` by `char` and `TrieValue`.
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct Latin1CharsWithTrie<'slice, 'trie, T, V>
 where
     V: TrieValue,
@@ -407,6 +429,18 @@ where
         self.delegate.as_slice()
     }
 }
+
+impl<'slice, 'trie, T, V> Clone for Latin1CharsWithTrie<'slice, 'trie, T, V>
+where
+    V: TrieValue,
+    T: AbstractCodePointTrie<'trie, V>,
+{
+    #[inline]
+    fn clone(&self) -> Self {
+        Self { delegate: self.delegate.clone(), trie: self.trie, phantom: PhantomData }
+    }
+}
+
 
 impl<'slice, 'trie, T, V> WithTrie<'trie, T, V> for Latin1CharsWithTrie<'slice, 'trie, T, V>
 where
@@ -472,7 +506,7 @@ where
 // --
 
 /// Iterator over `str` by `char` and `TrieValue`.
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct Latin1CharIndicesWithTrie<'slice, 'trie, T, V>
 where
     V: TrieValue,
@@ -504,6 +538,17 @@ where
     #[inline]
     pub fn as_slice(&self) -> &'slice [u8] {
         self.delegate.as_slice()
+    }
+}
+
+impl<'slice, 'trie, T, V> Clone for Latin1CharIndicesWithTrie<'slice, 'trie, T, V>
+where
+    V: TrieValue,
+    T: AbstractCodePointTrie<'trie, V>,
+{
+    #[inline]
+    fn clone(&self) -> Self {
+        Self { offset: self.offset, delegate: self.delegate.clone(), trie: self.trie, phantom: PhantomData }
     }
 }
 

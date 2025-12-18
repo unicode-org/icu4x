@@ -44,18 +44,31 @@ use crate::provider::CollationSpecialPrimariesValidated;
 use crate::provider::CollationTailoringV1;
 use core::cmp::Ordering;
 use core::convert::{Infallible, TryFrom};
+use icu_collections::codepointtrie::AbstractCodePointTrie;
+use icu_collections::codepointtrie::CharsWithTrieEx;
+#[cfg(feature = "serde")]
+use icu_collections::codepointtrie::CodePointTrie;
+#[cfg(not(feature = "serde"))]
+use icu_collections::codepointtrie::FastCodePointTrie;
+#[cfg(feature = "latin1")]
+use icu_collections::codepointtrie::Latin1CharsWithTrieEx;
+use icu_collections::codepointtrie::WithTrie;
 use icu_normalizer::provider::DecompositionData;
 use icu_normalizer::provider::DecompositionTables;
 use icu_normalizer::provider::NormalizerNfdDataV1;
 use icu_normalizer::provider::NormalizerNfdTablesV1;
-use icu_normalizer::DecomposingNormalizerBorrowed;
-use icu_normalizer::Decomposition;
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
-use utf16_iter::Utf16CharsEx;
-use utf8_iter::Utf8CharsEx;
+use utf16_iter::Utf16CharsWithTrieEx;
+use utf8_iter::Utf8CharsWithTrieEx;
 use zerovec::ule::AsULE;
+
+#[cfg(feature = "serde")]
+type NormTrie<'trie> = CodePointTrie<'trie, u32>;
+
+#[cfg(not(feature = "serde"))]
+type NormTrie<'trie> = FastCodePointTrie<'trie, u32>;
 
 // Special sort key bytes for all levels.
 const LEVEL_SEPARATOR_BYTE: u8 = 1;
@@ -185,21 +198,6 @@ impl AnyQuaternaryAccumulator {
 #[inline(always)]
 fn in_inclusive_range16(i: u16, start: u16, end: u16) -> bool {
     i.wrapping_sub(start) <= (end - start)
-}
-
-/// Helper trait for getting a `char` iterator from Latin1 data.
-///
-/// ✨ *Enabled with the `latin1` Cargo feature.*
-#[cfg(feature = "latin1")]
-trait Latin1Chars {
-    fn latin1_chars(&self) -> impl DoubleEndedIterator<Item = char>;
-}
-
-#[cfg(feature = "latin1")]
-impl Latin1Chars for [u8] {
-    fn latin1_chars(&self) -> impl DoubleEndedIterator<Item = char> {
-        self.iter().map(|b| char::from(*b))
-    }
 }
 
 /// Finds the identical prefix of `left` and `right` containing
@@ -712,10 +710,11 @@ macro_rules! compare {
             if left_tail.is_empty() && right_tail.is_empty() {
                 return Ordering::Equal;
             }
-            let ret = self.compare_impl(left_tail.$left_to_iter(), right_tail.$right_to_iter(), head.$left_to_iter().rev());
+            let norm_trie = self.norm_trie();
+            let ret = self.compare_impl(left_tail.$left_to_iter(norm_trie), right_tail.$right_to_iter(norm_trie), head.$left_to_iter(norm_trie).rev());
             if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
-                return Decomposition::new(left_tail.$left_to_iter(), self.decompositions, self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }).cmp(
-                    Decomposition::new(right_tail.$right_to_iter(), self.decompositions, self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }),
+                return icu_normalizer::new_decomposition(left_tail.$left_to_iter(norm_trie), self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }).cmp(
+                    icu_normalizer::new_decomposition(right_tail.$right_to_iter(norm_trie), self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }),
                 );
             }
             ret
@@ -886,7 +885,6 @@ macro_rules! collation_elements {
             $tailoring,
             jamo,
             &$self.diacritics.secondaries,
-            $self.decompositions,
             $self.tables,
             $numeric_primary,
             $self.lithuanian_dot_above,
@@ -894,11 +892,16 @@ macro_rules! collation_elements {
     }};
 }
 
-impl CollatorBorrowed<'_> {
+impl<'data> CollatorBorrowed<'data> {
     /// The resolved options showing how the default options, the requested options,
     /// and the options from locale data were combined.
     pub fn resolved_options(&self) -> ResolvedCollatorOptions {
         self.options.into()
+    }
+
+    fn norm_trie(&self) -> &'data NormTrie<'data> {
+        <&NormTrie<'data>>::try_from(&self.decompositions.trie)
+            .unwrap_or_else(|_| unreachable!("Incompatible data"))
     }
 
     compare!(
@@ -908,8 +911,8 @@ impl CollatorBorrowed<'_> {
         str,
         str,
         split_prefix,
-        chars,
-        chars,
+        chars_with_trie,
+        chars_with_trie,
     );
 
     compare!(
@@ -921,8 +924,8 @@ impl CollatorBorrowed<'_> {
         [u8],
         [u8],
         split_prefix_u8,
-        chars,
-        chars,
+        chars_with_trie,
+        chars_with_trie,
     );
 
     compare!(
@@ -933,8 +936,8 @@ impl CollatorBorrowed<'_> {
         [u16],
         [u16],
         split_prefix_u16,
-        chars,
-        chars,
+        chars_with_trie,
+        chars_with_trie,
     );
 
     compare!(
@@ -947,8 +950,8 @@ impl CollatorBorrowed<'_> {
         [u8],
         [u8],
         split_prefix_latin1,
-        latin1_chars,
-        latin1_chars,
+        latin1_chars_with_trie,
+        latin1_chars_with_trie,
     );
 
     compare!(
@@ -966,8 +969,8 @@ impl CollatorBorrowed<'_> {
         [u8],
         [u16],
         split_prefix_latin1_utf16,
-        latin1_chars,
-        chars,
+        latin1_chars_with_trie,
+        chars_with_trie,
     );
 
     #[inline(always)]
@@ -1018,16 +1021,18 @@ impl CollatorBorrowed<'_> {
     /// `head_chars` is an iterator _backward_ over the identical
     /// prefix and `left_chars` and `right_chars` are iterators
     /// _forward_ over the parts after the identical prefix.
-    fn compare_impl<
-        L: Iterator<Item = char>,
-        R: Iterator<Item = char>,
-        H: Iterator<Item = char>,
-    >(
-        &self,
+    fn compare_impl<L, R, H, T>(
+        &'data self,
         left_chars: L,
         right_chars: R,
         mut head_chars: H,
-    ) -> Ordering {
+    ) -> Ordering
+    where
+        L: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32> + 'data,
+        R: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32> + 'data,
+        H: Iterator<Item = (char, u32)> + 'data,
+        T: AbstractCodePointTrie<'data, u32> + 'data,
+    {
         // Sadly, it looks like variable CEs and backward second level
         // require us to store the full 64-bit CEs instead of storing only
         // the NonPrimary part.
@@ -1052,6 +1057,7 @@ impl CollatorBorrowed<'_> {
 
         let tailoring = self.tailoring_or_root();
         let numeric_primary = self.numeric_primary();
+
         let mut left = collation_elements!(self, left_chars, tailoring, numeric_primary);
         let mut right = collation_elements!(self, right_chars, tailoring, numeric_primary);
 
@@ -1077,11 +1083,10 @@ impl CollatorBorrowed<'_> {
         // This loop is only broken out of as goto forward.
         #[expect(clippy::never_loop)]
         'prefix: loop {
-            if let Some(mut head_last_c) = head_chars.next() {
-                let norm_trie = &self.decompositions.trie;
+            if let Some((mut head_last_c, head_last_trie_val)) = head_chars.next() {
                 let mut head_last = CharacterAndClassAndTrieValue::new_with_trie_val(
                     head_last_c,
-                    norm_trie.get(head_last_c),
+                    head_last_trie_val,
                 );
                 let mut head_last_ce32 = CollationElement32::default();
                 let mut head_last_ok = false;
@@ -1274,14 +1279,12 @@ impl CollatorBorrowed<'_> {
                     tail_first_ce32 = head_last_ce32;
                     tail_first_ok = head_last_ok;
 
-                    head_last_c = if let Some(head_last_c) = head_chars.next() {
-                        head_last_c
-                    } else {
+                    let Some((head_last_c_new, decomposition)) = head_chars.next() else {
                         // We need to step back beyond the start of the prefix.
                         // Treat as good boundary.
                         break 'prefix;
                     };
-                    let decomposition = norm_trie.get(head_last_c);
+                    head_last_c = head_last_c_new;
                     head_last = CharacterAndClassAndTrieValue::new_with_trie_val(
                         head_last_c,
                         decomposition,
@@ -1858,7 +1861,7 @@ impl CollatorBorrowed<'_> {
         S: CollationKeySink + ?Sized,
         S::State: Default,
     {
-        self.write_sort_key_impl(s.chars(), sink)
+        self.write_sort_key_impl(s.chars_with_trie(self.norm_trie()), sink)
     }
 
     /// Given potentially invalid UTF-8, write the sort key bytes up to the collator's strength.
@@ -1869,7 +1872,7 @@ impl CollatorBorrowed<'_> {
         S: CollationKeySink + ?Sized,
         S::State: Default,
     {
-        self.write_sort_key_impl(s.chars(), sink)
+        self.write_sort_key_impl(s.chars_with_trie(self.norm_trie()), sink)
     }
 
     /// Given potentially invalid UTF-16, write the sort key bytes up to the collator's strength.
@@ -1880,12 +1883,17 @@ impl CollatorBorrowed<'_> {
         S: CollationKeySink + ?Sized,
         S::State: Default,
     {
-        self.write_sort_key_impl(s.chars(), sink)
+        self.write_sort_key_impl(s.chars_with_trie(self.norm_trie()), sink)
     }
 
-    fn write_sort_key_impl<I, S>(&self, iter: I, sink: &mut S) -> Result<S::Output, S::Error>
+    fn write_sort_key_impl<I, T, S>(
+        &'data self,
+        iter: I,
+        sink: &mut S,
+    ) -> Result<S::Output, S::Error>
     where
-        I: Iterator<Item = char> + Clone,
+        I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32> + Clone + 'data,
+        T: AbstractCodePointTrie<'data, u32> + 'data,
         S: CollationKeySink + ?Sized,
         S::State: Default,
     {
@@ -1899,11 +1907,9 @@ impl CollatorBorrowed<'_> {
         self.write_sort_key_up_to_quaternary(iter, sink, &mut state)?;
 
         if let Some(iter) = identical {
-            let nfd =
-                DecomposingNormalizerBorrowed::new_with_data(self.decompositions, self.tables);
             sink.write_byte(&mut state, LEVEL_SEPARATOR_BYTE)?;
 
-            let iter = nfd.normalize_iter(iter);
+            let iter = icu_normalizer::new_decomposition(iter, self.tables);
             write_identical_level(iter, sink, &mut state)?;
         }
 
@@ -1914,14 +1920,15 @@ impl CollatorBorrowed<'_> {
     ///
     /// Optionally write the case level.  Separate levels with the `LEVEL_SEPARATOR_BYTE`, but
     /// do not write a terminating zero as with a C string.
-    fn write_sort_key_up_to_quaternary<I, S>(
-        &self,
+    fn write_sort_key_up_to_quaternary<I, S, T>(
+        &'data self,
         iter: I,
         sink: &mut S,
         state: &mut S::State,
     ) -> Result<(), S::Error>
     where
-        I: Iterator<Item = char>,
+        I: Iterator<Item = (char, u32)> + WithTrie<'data, T, u32> + Clone + 'data,
+        T: AbstractCodePointTrie<'data, u32> + 'data,
         S: CollationKeySink + ?Sized,
     {
         // This algorithm comes from `CollationKeys::writeSortKeyUpToQuaternary` in ICU4C.
