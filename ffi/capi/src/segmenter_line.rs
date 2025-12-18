@@ -107,7 +107,7 @@ pub mod ffi {
             ))
         }
 
-        /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and no support for complex languages
+        /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and no support for scripts requiring complex context dependent line breaks
         /// (Burmese, Khmer, Lao, and Thai), using compiled data
         #[diplomat::rust_link(
             icu::segmenter::LineSegmenter::new_for_non_complex_scripts,
@@ -247,7 +247,7 @@ pub mod ffi {
                 )?,
             )))
         }
-        /// Construct a [`LineSegmenter`] with custom options and no support for complex languages
+        /// Construct a [`LineSegmenter`] with custom options and no support for scripts requiring complex context dependent line breaks
         /// (Burmese, Khmer, Lao, and Thai), using compiled data.
         #[diplomat::rust_link(
             icu::segmenter::LineSegmenter::new_for_non_complex_scripts,

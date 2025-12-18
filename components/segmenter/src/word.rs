@@ -532,7 +532,7 @@ impl WordSegmenter {
     }
 
     /// Construct a [`WordSegmenter`] with an invariant locale and no support for
-    /// complex scripts (Chinese, Japanese, Khmer, Lao, Myanmar, and Thai).
+    /// scripts requiring complex context dependent word breaks (Chinese, Japanese, Khmer, Lao, Myanmar, and Thai).
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///

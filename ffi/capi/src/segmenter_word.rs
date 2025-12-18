@@ -222,7 +222,7 @@ pub mod ffi {
             )))
         }
 
-        /// Construct a [`WordSegmenter`] with no support for complex scripts (Chinese, Japanese,
+        /// Construct a [`WordSegmenter`] with no support for scripts requiring complex context dependent word breaks (Chinese, Japanese,
         /// Burmese, Khmer, Lao, and Thai), using compiled data. This does not assume any content locale.
         #[diplomat::rust_link(
             icu::segmenter::WordSegmenter::new_for_non_complex_scripts,
@@ -237,7 +237,7 @@ pub mod ffi {
             ))
         }
 
-        /// Construct a [`WordSegmenter`] with no support for complex scripts (Chinese, Japanese,
+        /// Construct a [`WordSegmenter`] with no support for scripts requiring complex context dependent word breaks (Chinese, Japanese,
         /// Burmese, Khmer, Lao, and Thai), using compiled data.
         #[diplomat::rust_link(
             icu::segmenter::WordSegmenter::try_new_for_non_complex_scripts,
@@ -253,7 +253,7 @@ pub mod ffi {
             )))
         }
 
-        /// Construct a [`WordSegmenter`] with no support for complex scripts (Chinese, Japanese,
+        /// Construct a [`WordSegmenter`] with no support for scripts requiring complex context dependent word breaks (Chinese, Japanese,
         /// Burmese, Khmer, Lao, and Thai), using a particular data source.
         #[diplomat::rust_link(
             icu::segmenter::WordSegmenter::try_new_for_non_complex_scripts,

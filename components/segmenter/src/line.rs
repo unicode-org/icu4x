@@ -539,7 +539,7 @@ impl LineSegmenter {
     }
 
     /// Constructs a [`LineSegmenter`] with an invariant locale, custom [`LineBreakOptions`], and
-    /// no support for complex scripts (Khmer, Lao, Myanmar, Thai).
+    /// no support for scripts requiring complex context dependent line breaks (Khmer, Lao, Myanmar, Thai).
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
