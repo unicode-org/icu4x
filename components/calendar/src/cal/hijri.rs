@@ -62,9 +62,9 @@ mod ummalqura_data;
 /// According to Islam, months begin when an observer first sees the crescent moon.
 ///
 /// For centuries, astronomers have been developing criteria for predicting crescent moon
-/// visibility. However, in most regions, atmospheric phenomena can impact visibility, making
-/// such predictions only an approximation of ground truth. Hijri calendar applications should
-/// therefore include the ability to specify a crescent sighting adjustment.
+/// visibility. However, most regions that use the Hijri calendar rely on observations that
+/// are impacted by atmospheric phenomena, meaning such predictions are only an approximation
+/// of ground truth.
 ///
 /// The primary exception is Saudi Arabia, where the KACST uses sophisticated telescopes to
 /// make the observations more reliable. They publish predictions covering multiple centuries;
@@ -147,9 +147,9 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 /// These rules are based on calculations of the Earth, moon, and sun along with the
 /// Shaukat criterion to determine crescent moon visibility.[^1]
 ///
-/// These rules can form the basis of a custom [`Rules`] implementation that includes data
-/// based on human sightings. As discussed in the [`Hijri`] documentation, using these
-/// rules without allowing for adjustments will produce dates that are only approximations
+/// These rules can form the basis of a custom [`Rules`] implementation that includes
+/// crescent sighting adjustments. As discussed in the [`Hijri`] documentation, using these
+/// rules without allowing such adjustments will produce dates that are only approximations
 /// of the ground truth.
 ///
 /// The simulations are pre-computed for Gregorian years 1900 to 2140, falling back to
