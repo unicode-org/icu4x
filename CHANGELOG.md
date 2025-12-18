@@ -12,6 +12,10 @@ Several crates have had patch releases in the 2.1 stream:
         - Add `IndicConjunctBreak` (unicode-org#7280)
         - Add conversion between `icu::properties::props::Script` and `icu::locale::subtags:Script` (unicode-org#7270)
         - Add conversion between `icu::properties::props::BidiClass` and `unicode_bidi::BidiClass` (unicode-org#7272)
+    - (2.1.2) `icu_segmenter`
+        - Add non-complex line and word break constructors (unicode-org#7268)
+- Utils
+  - Retire the `icu_harfbuzz` crate. The `icu_properties` and `icu_normalizer` types now directly implement the `harfbuzz-traits`
 
 ## icu4x 2.1
 
