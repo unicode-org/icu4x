@@ -57,6 +57,19 @@ mod ummalqura_data;
 ///
 /// There are either 6 or 7 30-day months, so the length of the year is 354 or 355 days.
 ///
+/// # Crescent moon visibility
+///
+/// According to Islam, months begin when an observer first sees the crescent moon.
+///
+/// For centuries, astronomers have been developing criteria for predicting crescent moon
+/// visibility. However, most regions that use the Hijri calendar rely on observations that
+/// are impacted by atmospheric phenomena, meaning such predictions are only an approximation
+/// of ground truth.
+///
+/// The primary exception is Saudi Arabia, where the KACST uses sophisticated telescopes to
+/// make the observations more reliable. They publish predictions covering multiple centuries;
+/// see [`UmmAlQura`].
+///
 /// # Calendar drift
 ///
 /// As a lunar calendar, this calendar does not intend to follow the solar year, and drifts more
@@ -129,12 +142,18 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 
 /// [`Hijri`] [`Rules`] based on an astronomical simulation for a particular location.
 ///
-/// These simulations are unofficial and are known to not necessarily match sightings
-/// on the ground. Unless you know otherwise for sure, instead of this variant, use
-/// [`UmmAlQura`], which uses the results of KACST's Mecca-based calculations.
+/// If your goal is to match ground truth in Saudi Arabia, use [`UmmAlQura`] instead.
 ///
-/// As floating point arithmetic degenerates for far-away dates, this falls back to
-/// the tabular calendar at some point.
+/// These rules are based on calculations of the Earth, moon, and sun along with the
+/// Shaukat criterion to determine crescent moon visibility.[^1]
+///
+/// These rules can form the basis of a custom [`Rules`] implementation that includes
+/// crescent sighting adjustments. As discussed in the [`Hijri`] documentation, using these
+/// rules without allowing such adjustments will produce dates that are only approximations
+/// of the ground truth.
+///
+/// The simulations are pre-computed for Gregorian years 1900 to 2140, falling back to
+/// a tabular approximation outside that range.
 ///
 /// The precise behavior of this calendar may change in the future if:
 /// - We decide to tweak the precise astronomical simulation used
@@ -142,6 +161,8 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 ///
 /// This corresponds to the `"islamic-rgsa"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier)
 /// if constructed with [`Hijri::new_simulated_mecca()`].
+///
+/// [^1]: See [calendrical_calculations::islamic::observational_islamic_from_fixed]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct AstronomicalSimulation {
     pub(crate) location: SimulatedLocation,
