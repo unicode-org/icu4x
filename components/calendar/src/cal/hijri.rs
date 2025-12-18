@@ -142,17 +142,15 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 
 /// [`Hijri`] [`Rules`] based on an astronomical simulation for a particular location.
 ///
+/// If your goal is to match ground truth in Saudi Arabia, use [`UmmAlQura`] instead.
+///
 /// These rules are based on calculations of the Earth, moon, and sun along with the
 /// Shaukat criterion to determine crescent moon visibility.[^1]
 ///
 /// These rules can form the basis of a custom [`Rules`] implementation that includes data
-/// based on human sightings. As discussed in the [`Hijri`] documentation,  using these
+/// based on human sightings. As discussed in the [`Hijri`] documentation, using these
 /// rules without allowing for adjustments will produce dates that are only approximations
 /// of the ground truth.
-///
-/// If you don't have a way to inject human sighting adjustments, you should probably use
-/// [`UmmAlQura`], which uses the results of KACST's Mecca-based calculations and matches
-/// ground truth in Saudi Arabia.
 ///
 /// The simulations are pre-computed for Gregorian years 1900 to 2140, falling back to
 /// a tabular approximation outside that range.
