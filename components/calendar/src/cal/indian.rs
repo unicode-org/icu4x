@@ -244,7 +244,7 @@ impl Calendar for Indian {
             era: tinystr!(16, "shaka"),
             year: extended_year,
             extended_year,
-            related_gregorian: extended_year + YEAR_OFFSET + 1,
+            related_gregorian: extended_year + YEAR_OFFSET,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     }
@@ -554,7 +554,7 @@ mod tests {
                 .to_calendar(Indian)
                 .era_year()
                 .related_gregorian,
-            2025
+            2024
         );
         assert_eq!(
             Date::try_new_gregorian(2025, 4, 18)
@@ -562,7 +562,7 @@ mod tests {
                 .to_calendar(Indian)
                 .era_year()
                 .related_gregorian,
-            2026
+            2025
         );
     }
 }
