@@ -27,8 +27,12 @@ pub(crate) struct CldrCache {
     dir_suffix: OnceLock<Result<&'static str, DataError>>,
     extended_locale_expander: OnceLock<Result<LocaleExpander, DataError>>,
     #[expect(clippy::type_complexity)]
-    pub(crate) calendar_eras:
-        OnceLock<Result<BTreeMap<DatagenCalendar, Vec<(usize, EraData)>>, DataError>>,
+    pub(crate) calendar_eras: OnceLock<
+        Result<
+            BTreeMap<DatagenCalendar, (Option<DatagenCalendar>, Vec<(usize, EraData)>)>,
+            DataError,
+        >,
+    >,
     #[cfg(feature = "experimental")]
     // used by transforms/mod.rs
     pub(crate) transforms: OnceLock<
