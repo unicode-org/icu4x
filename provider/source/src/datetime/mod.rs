@@ -53,6 +53,27 @@ impl DatagenCalendar {
         }
     }
 
+    pub(crate) fn from_cldr_name(s: &str) -> Self {
+        use DatagenCalendar::*;
+        match s {
+            "buddhist" => Buddhist,
+            "chinese" => Chinese,
+            "coptic" => Coptic,
+            "dangi" => Dangi,
+            "ethiopic" | "ethiopic-amete-alem" => Ethiopic,
+            "gregorian" => Gregorian,
+            "hebrew" => Hebrew,
+            "indian" => Indian,
+            "islamic" | "islamic-civil" | "islamic-umalqura" | "islamic-rgsa" | "islamic-tbla" => {
+                Hijri
+            }
+            "japanese" => JapaneseExtended,
+            "persian" => Persian,
+            "roc" => Roc,
+            c => panic!("{c}"),
+        }
+    }
+
     pub(crate) fn canonical_any_calendar_kind(self) -> AnyCalendarKind {
         use DatagenCalendar::*;
         match self {
