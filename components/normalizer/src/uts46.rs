@@ -10,12 +10,31 @@
 
 use crate::ComposingNormalizer;
 use crate::ComposingNormalizerBorrowed;
+use crate::IgnorableBehavior;
+use crate::IteratorPolicy;
 use crate::NormalizerNfcV1;
 use crate::NormalizerNfdTablesV1;
 use crate::NormalizerNfkdTablesV1;
 use crate::NormalizerUts46DataV1;
+use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::DataError;
 use icu_provider::DataProvider;
+
+type Trie46<'trie> = CodePointTrie<'trie, u32>;
+
+#[derive(Debug)]
+struct Uts46MapNormalizePolicy;
+
+impl IteratorPolicy for Uts46MapNormalizePolicy {
+    const IGNORABLE_BEHAVIOR: IgnorableBehavior = IgnorableBehavior::Ignored;
+}
+
+#[derive(Debug)]
+struct Uts46NormalizeValidatePolicy;
+
+impl IteratorPolicy for Uts46NormalizeValidatePolicy {
+    const IGNORABLE_BEHAVIOR: IgnorableBehavior = IgnorableBehavior::ReplacementCharacter;
+}
 
 // Implementation note: Despite merely wrapping a `ComposingNormalizer`,
 // having a `Uts46Mapper` serves two purposes:
@@ -90,7 +109,7 @@ impl Uts46MapperBorrowed<'_> {
         iter: I,
     ) -> impl Iterator<Item = char> + 'delegate {
         self.normalizer
-            .normalize_iter_private(iter, crate::IgnorableBehavior::Ignored)
+            .normalize_iter_private::<I, Trie46, Uts46MapNormalizePolicy>(iter)
     }
 
     /// Returns an iterator adaptor that turns an `Iterator` over `char`
@@ -126,7 +145,7 @@ impl Uts46MapperBorrowed<'_> {
         iter: I,
     ) -> impl Iterator<Item = char> + 'delegate {
         self.normalizer
-            .normalize_iter_private(iter, crate::IgnorableBehavior::ReplacementCharacter)
+            .normalize_iter_private::<I, Trie46, Uts46NormalizeValidatePolicy>(iter)
     }
 }
 
