@@ -57,6 +57,18 @@ mod ummalqura_data;
 ///
 /// There are either 6 or 7 30-day months, so the length of the year is 354 or 355 days.
 ///
+/// # Crescent moon visibility
+///
+/// According to Islam, months begin when an observer first sees the crescent moon.
+///
+/// For centuries, astronomers have been developing criteria for predicting crescent moon
+/// visibility. However, most regions that use the Hijri calendar rely on observations that
+/// are impacted by atmospheric phenomena, meaning such predictions are only an approximation
+/// of ground truth.
+///
+/// The primary exception is Saudi Arabia, where the KACST publishes official predictions of
+/// crescent timings for multiple centuries. See [`UmmAlQura`].
+///
 /// # Calendar drift
 ///
 /// As a lunar calendar, this calendar does not intend to follow the solar year, and drifts more
