@@ -10,6 +10,13 @@
 //!
 //! There are multiple variants of [`ZeroTrie`] optimized for different use cases.
 //!
+//! # Safe Rust
+//!
+//! All runtime lookup code in this crate is 100% safe Rust.
+//!
+//! A small amount of unsafe Rust is used in the builder code as well as for implementing
+//! unsafe traits such as [`VarULE`](zerovec::ule::VarULE).
+//!
 //! # Examples
 //!
 //! ```
