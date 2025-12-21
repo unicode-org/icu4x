@@ -337,7 +337,7 @@ impl WordSegmenter {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_auto(provider)?,
             payload_locale_override: if let Some(locale) = options.content_locale {
-                let locale = DataLocale::from(locale);
+                let locale = DataLocale::from_content_language_identifier(locale);
                 let req = DataRequest {
                     id: DataIdentifierBorrowed::for_locale(&locale),
                     metadata: {
@@ -428,7 +428,7 @@ impl WordSegmenter {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_lstm(provider)?,
             payload_locale_override: if let Some(locale) = options.content_locale {
-                let locale = DataLocale::from(locale);
+                let locale = DataLocale::from_content_language_identifier(locale);
                 let req = DataRequest {
                     id: DataIdentifierBorrowed::for_locale(&locale),
                     metadata: {
@@ -512,7 +512,7 @@ impl WordSegmenter {
             payload: provider.load(Default::default())?.payload,
             complex: ComplexPayloads::try_new_dict(provider)?,
             payload_locale_override: if let Some(locale) = options.content_locale {
-                let locale = DataLocale::from(locale);
+                let locale = DataLocale::from_content_language_identifier(locale);
                 let req = DataRequest {
                     id: DataIdentifierBorrowed::for_locale(&locale),
                     metadata: {

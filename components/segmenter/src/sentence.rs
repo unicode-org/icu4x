@@ -172,7 +172,7 @@ impl SentenceSegmenter {
     {
         let payload = provider.load(Default::default())?.payload;
         let payload_locale_override = if let Some(locale) = options.content_locale {
-            let locale = DataLocale::from(locale);
+            let locale = DataLocale::from_content_language_identifier(locale);
             let req = DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&locale),
                 metadata: {
