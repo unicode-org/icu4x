@@ -73,7 +73,9 @@ pub struct Japanese {
 /// These eras are loaded from data, requiring a data provider capable of providing [`CalendarJapaneseExtendedV1`]
 /// data.
 #[derive(Clone, Debug, Default)]
-pub struct JapaneseExtended(Japanese);
+pub struct JapaneseExtended {
+    eras: DataPayload<CalendarJapaneseExtendedV1>,
+}
 
 impl Japanese {
     /// Creates a new [`Japanese`] using only modern eras (post-meiji) from compiled data.
@@ -116,11 +118,11 @@ impl JapaneseExtended {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
-        Self(Japanese {
+        Self {
             eras: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_CALENDAR_JAPANESE_EXTENDED_V1,
             ),
-        })
+        }
     }
 
     icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
@@ -135,9 +137,9 @@ impl JapaneseExtended {
     pub fn try_new_unstable<D: DataProvider<CalendarJapaneseExtendedV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
-        Ok(Self(Japanese {
-            eras: provider.load(Default::default())?.payload.cast(),
-        }))
+        Ok(Self {
+            eras: provider.load(Default::default())?.payload,
+        })
     }
 }
 
@@ -168,6 +170,103 @@ const REIWA_START: EraStartDate = EraStartDate {
 };
 
 impl GregorianYears for &'_ Japanese {
+    fn extended_from_era_year(
+        &self,
+        era: Option<&[u8]>,
+        year: i32,
+    ) -> Result<i32, UnknownEraError> {
+        if let Ok(g) = CeBce.extended_from_era_year(era, year) {
+            return Ok(g);
+        }
+        let Some(era) = era else {
+            // unreachable, handled by CeBce
+            return Err(UnknownEraError);
+        };
+
+        // Avoid linear search by trying well known eras
+        if era == b"reiwa" {
+            return Ok(year - 1 + REIWA_START.year);
+        } else if era == b"heisei" {
+            return Ok(year - 1 + HEISEI_START.year);
+        } else if era == b"showa" {
+            return Ok(year - 1 + SHOWA_START.year);
+        } else if era == b"taisho" {
+            return Ok(year - 1 + TAISHO_START.year);
+        } else if era == b"meiji" {
+            return Ok(year - 1 + MEIJI_START.year);
+        }
+
+        let era_start = self
+            .eras
+            .get()
+            .dates_to_eras
+            .iter()
+            .rev()
+            .find_map(|(s, e)| (e.as_bytes() == era).then_some(s))
+            .ok_or(UnknownEraError)?;
+        Ok(era_start.year + year - 1)
+    }
+
+    fn era_year_from_extended(&self, year: i32, month: u8, day: u8) -> types::EraYear {
+        let date: EraStartDate = EraStartDate { year, month, day };
+
+        let (start, era) = if date >= MEIJI_START
+            && self
+                .eras
+                .get()
+                .dates_to_eras
+                .last()
+                .is_some_and(|(_, e)| e == tinystr!(16, "reiwa"))
+        {
+            // We optimize for the five "modern" post-Meiji eras, which are stored in a smaller
+            // array and also hardcoded. The hardcoded version is not used if data indicates the
+            // presence of newer eras.
+            if date >= REIWA_START {
+                (REIWA_START, tinystr!(16, "reiwa"))
+            } else if date >= HEISEI_START {
+                (HEISEI_START, tinystr!(16, "heisei"))
+            } else if date >= SHOWA_START {
+                (SHOWA_START, tinystr!(16, "showa"))
+            } else if date >= TAISHO_START {
+                (TAISHO_START, tinystr!(16, "taisho"))
+            } else {
+                (MEIJI_START, tinystr!(16, "meiji"))
+            }
+        } else {
+            let data = &self.eras.get().dates_to_eras;
+            match data.iter().rfind(|&(s, _)| date >= s) {
+                None => {
+                    return types::EraYear {
+                        // TODO: return era indices?
+                        era_index: None,
+                        ..CeBce.era_year_from_extended(year, month, day)
+                    };
+                }
+                Some((s, e)) => (s, e),
+            }
+        };
+
+        types::EraYear {
+            era,
+            era_index: None,
+            year: year - start.year + 1,
+            extended_year: year,
+            ambiguity: types::YearAmbiguity::CenturyRequired,
+        }
+    }
+
+    fn debug_name(&self) -> &'static str {
+        "Japanese"
+    }
+
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+        Some(crate::preferences::CalendarAlgorithm::Japanese)
+    }
+}
+
+impl_with_abstract_gregorian!(Japanese, JapaneseDateInner, Japanese, this, this);
+
+impl GregorianYears for &'_ JapaneseExtended {
     fn extended_from_era_year(
         &self,
         era: Option<&[u8]>,
@@ -273,30 +372,20 @@ impl GregorianYears for &'_ Japanese {
     }
 
     fn debug_name(&self) -> &'static str {
-        if self.eras.get().dates_to_eras.len() > 10 {
-            "Japanese (historical era data)"
-        } else {
-            "Japanese"
-        }
+        "Japanese (historical era data)"
     }
 
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
-        if self.eras.get().dates_to_eras.len() > 10 {
-            None
-        } else {
-            Some(crate::preferences::CalendarAlgorithm::Japanese)
-        }
+        None
     }
 }
-
-impl_with_abstract_gregorian!(Japanese, JapaneseDateInner, Japanese, this, this);
 
 impl_with_abstract_gregorian!(
     JapaneseExtended,
     JapaneseExtendedDateInner,
     Japanese,
     this,
-    &this.0
+    this
 );
 
 impl Date<Japanese> {
@@ -411,7 +500,7 @@ impl Date<JapaneseExtended> {
             year,
             month,
             day,
-            &AbstractGregorian(&japanext_calendar.as_calendar().0),
+            &AbstractGregorian(japanext_calendar.as_calendar()),
         )
         .map(ArithmeticDate::cast)
         .map(JapaneseExtendedDateInner)

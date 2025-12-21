@@ -176,7 +176,9 @@ jobs:
 
     # Job-specific dependencies
     - name: Install harfbuzz
-      run: sudo apt install libharfbuzz-dev
+      run: |
+        sudo apt update
+        sudo apt install libharfbuzz-dev
 
     # Actual job
     - name: Run `cargo make ci-job-test-cargo`
@@ -341,7 +343,10 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-test-dart`
-      run: cargo make ci-job-test-dart
+      shell: bash
+      run: |
+        export PATH=$PATH:/c/Program\ Files/Git/bin # make bash available on Windows
+        cargo make ci-job-test-dart
 
     - name: Run `cargo make ci-job-test-dart` in local mode
       run: |

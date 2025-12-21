@@ -214,78 +214,42 @@ fn dayperiods_convert(
     })
 }
 
-fn eras_convert(
-    provider: &SourceDataProvider,
+fn eras_collect<'a>(
+    provider: &'a SourceDataProvider,
     locale: &DataLocale,
-    eras: &ca::Eras,
+    eras: &'a ca::Eras,
     calendar: DatagenCalendar,
     length: Length,
-) -> Result<YearNames<'static>, DataError> {
-    let eras = eras.load(length);
-    let all_eras = &provider.all_eras()?[&calendar];
-    if matches!(
-        calendar,
-        DatagenCalendar::JapaneseModern | DatagenCalendar::JapaneseExtended
-    ) {
-        let greg_eras = provider
-            .get_dates_resource(locale, Some(DatagenCalendar::Gregorian))?
-            .eras
-            .as_ref()
-            .expect("gregorian must have eras")
-            .load(length);
+) -> Result<BTreeMap<(&'a str, usize), &'a str>, DataError> {
+    let (inherit, ref all_eras) = provider.all_eras()?[&calendar];
 
-        let mut out_eras = BTreeMap::new();
+    let mut out = BTreeMap::new();
 
-        for &(cldr, ref data) in all_eras {
-            if cldr == 0 {
-                out_eras.insert(
-                    data.code.as_deref().unwrap(),
-                    greg_eras
-                        .get("0")
-                        .expect("gregorian calendar must have 0 era")
-                        .as_str(),
-                );
-            } else if cldr == 1 {
-                out_eras.insert(
-                    data.code.as_deref().unwrap(),
-                    greg_eras
-                        .get("1")
-                        .expect("gregorian calendar must have 1 era")
-                        .as_str(),
-                );
-            } else {
-                // https://unicode-org.atlassian.net/browse/CLDR-18388 for why we need to do -2
-                if let Some(name) = eras.get(&(cldr - 2).to_string()) {
-                    out_eras.insert(data.code.as_deref().unwrap(), name);
-                } else {
-                    panic!("Unknown japanese era number {cldr}");
-                }
-            }
-        }
-        let keys: Vec<&PotentialUtf8> = out_eras
-            .keys()
-            .map(|k| PotentialUtf8::from_str(k))
-            .collect();
-        let values: Vec<&str> = out_eras.values().copied().collect();
-        let kv = (keys, values);
-        let cow = VarZeroCow::from_encodeable(&kv);
-        Ok(YearNames::VariableEras(cow))
-    } else {
-        let max_era_index = all_eras.iter().flat_map(|(_, e)| e.icu4x_era_index).max();
-        let mut out_eras: Vec<&str> =
-            vec![""; max_era_index.map(|n| n + 1).unwrap_or_default() as usize];
-        for &(cldr, ref era) in all_eras.iter() {
-            if let Some(name) = eras.get(&cldr.to_string()) {
-                if let Some(icu4x_hardcoded_index) = era.icu4x_era_index {
-                    out_eras[icu4x_hardcoded_index as usize] = &**name;
-                }
-            } else {
-                panic!("Did not find era data for era index {cldr} for {calendar:?} and {locale}");
-            }
-        }
-
-        Ok(YearNames::FixedEras((&out_eras).into()))
+    for &(cldr, ref era) in all_eras {
+        out.insert(
+            (
+                era.code.as_str(),
+                era.icu4x_era_index.unwrap_or(u8::MAX) as usize,
+            ),
+            &*eras.load(length)[&cldr.to_string()],
+        );
     }
+
+    if let Some(inherit) = inherit {
+        out.extend(eras_collect(
+            provider,
+            locale,
+            provider
+                .get_dates_resource(locale, Some(inherit))?
+                .eras
+                .as_ref()
+                .unwrap(),
+            inherit,
+            length,
+        )?);
+    }
+
+    Ok(out)
 }
 fn years_convert(
     datagen: &SourceDataProvider,
@@ -302,7 +266,27 @@ fn years_convert(
     );
 
     if let Some(ref eras) = data.eras {
-        eras_convert(datagen, locale, eras, calendar, length)
+        let eras = eras_collect(datagen, locale, eras, calendar, length)?;
+
+        let max_icu4x_era_index = eras
+            .keys()
+            .map(|(_, idx)| idx + 1)
+            .max()
+            .unwrap_or_default();
+
+        if max_icu4x_era_index > 10 {
+            let kv = eras
+                .iter()
+                .map(|(&(k, _), &v)| (PotentialUtf8::from_str(k), v))
+                .unzip::<_, _, Vec<_>, Vec<_>>();
+            Ok(YearNames::VariableEras(VarZeroCow::from_encodeable(&kv)))
+        } else {
+            let mut out_eras = vec![""; max_icu4x_era_index];
+            for ((_, idx), era) in eras {
+                out_eras[idx] = era;
+            }
+            Ok(YearNames::FixedEras((&out_eras).into()))
+        }
     } else if let Some(years) = data
         .cyclic_name_sets
         .as_ref()

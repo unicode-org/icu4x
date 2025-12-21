@@ -207,6 +207,8 @@ final class CheckoutMode extends BuildMode {
     final buildStatic = input.config.buildStatic;
     final workingDirectory = Directory.fromUri(checkoutPath!);
 
+    // TODO: use build.sh
+
     final isNoStd = _isNoStdTarget(rustTarget);
 
     final nightly =
