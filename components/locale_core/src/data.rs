@@ -20,34 +20,53 @@ use core::str::FromStr;
 /// [`LanguageIdentifier`] for better size and performance while still meeting
 /// the needs of the ICU4X data pipeline.
 ///
-/// You can create a [`DataLocale`] from a borrowed [`Locale`], which is more
-/// efficient than cloning the [`Locale`], but less efficient than converting an owned
-/// [`Locale`]:
+/// In general, you should not need to construct one of these directly. If you do,
+/// use [`DataLocale::from_content_locale()`] if you have a locale label derived from
+/// text content, or [`LocalePreferences`] if the locale is a user's locale:
 ///
 /// ```
 /// use icu_locale_core::locale;
-/// use icu_provider::DataLocale;
+/// use icu_locale_core::DataLocale;
+/// use icu_locale_core::preferences::LocalePreferences;
+/// use writeable::assert_writeable_eq;
 ///
-/// let locale1 = locale!("en-u-ca-buddhist");
-/// let data_locale = DataLocale::from(&locale1);
+/// // Locale: American English with British user preferences
+/// let locale = locale!("en-US-u-rg-gbzzzz");
+///
+/// // When interpreted as a content locale, user preferences are ignored
+/// let data_locale = DataLocale::from_content_locale(&locale);
+/// assert_writeable_eq!(data_locale, "en-US");
+///
+/// // Precedence goes to the region subtag for language fallback
+/// let data_locale = LocalePreferences::from(&locale)
+///     .to_data_locale_language_priority();
+/// assert_writeable_eq!(data_locale, "en-US");
+///
+/// // Precedence goes to the region extension keyword for region fallback
+/// let data_locale = LocalePreferences::from(&locale)
+///     .to_data_locale_region_priority();
+/// assert_writeable_eq!(data_locale, "en-GB");
 /// ```
 ///
 /// [`DataLocale`] only supports `-u-sd` keywords, to reflect the current state of CLDR data
 /// lookup and fallback. This may change in the future.
 ///
 /// ```
-/// use icu_locale_core::{locale, Locale};
-/// use icu_provider::DataLocale;
+/// use icu_locale_core::locale;
+/// use icu_locale_core::Locale;
+/// use icu_locale_core::DataLocale;
 ///
 /// let locale = "hi-IN-t-en-h0-hybrid-u-attr-ca-buddhist-sd-inas"
 ///     .parse::<Locale>()
 ///     .unwrap();
 ///
 /// assert_eq!(
-///     DataLocale::from(locale),
+///     DataLocale::from_content_locale(&locale),
 ///     DataLocale::from(locale!("hi-IN-u-sd-inas"))
 /// );
 /// ```
+///
+/// [`LocalePreferences`]: crate::preferences::LocalePreferences
 #[derive(Clone, Copy, PartialEq, Hash, Eq)]
 #[non_exhaustive]
 pub struct DataLocale {
@@ -129,15 +148,7 @@ impl From<&LanguageIdentifier> for DataLocale {
 
 impl From<&Locale> for DataLocale {
     fn from(locale: &Locale) -> Self {
-        let mut r = Self::from(&locale.id);
-
-        r.subdivision = locale
-            .extensions
-            .unicode
-            .keywords
-            .get(&unicode_ext::key!("sd"))
-            .and_then(|v| v.as_single_subtag().copied());
-        r
+        Self::from_content_locale(locale)
     }
 }
 
@@ -190,6 +201,47 @@ impl DataLocale {
         }
 
         Ok(locale.into())
+    }
+
+    /// Creates a [`DataLocale`] from a [`LanguageIdentifier`].
+    ///
+    /// This constructor should not be used for loading data with a user preference locale.
+    /// It can be used in situations where Unicode extension keywords are not expected, such
+    /// as the locale of text content.
+    ///
+    /// ⚠️ This constructor ignores fallback priority and Unicode extension keywords,
+    /// and it reads only the first variant.
+    pub fn from_content_language_identifier(langid: &LanguageIdentifier) -> Self {
+        Self {
+            language: langid.language,
+            script: langid.script,
+            region: langid.region,
+            variant: langid.variants.iter().copied().next(),
+            subdivision: None,
+        }
+    }
+
+    /// Creates a [`DataLocale`] from a [`Locale`].
+    ///
+    /// This constructor should not be used for loading data with a user preference locale.
+    /// It can be used in situations where Unicode extension keywords are not expected, such
+    /// as the locale of text content.
+    ///
+    /// ⚠️ This constructor ignores fallback priority and Unicode extension keywords,
+    /// except for `-u-sd`, and it reads only the first variant.
+    pub fn from_content_locale(locale: &Locale) -> Self {
+        Self {
+            language: locale.id.language,
+            script: locale.id.script,
+            region: locale.id.region,
+            variant: locale.id.variants.iter().copied().next(),
+            subdivision: locale
+                .extensions
+                .unicode
+                .keywords
+                .get(&unicode_ext::key!("sd"))
+                .and_then(|v| v.as_single_subtag().copied()),
+        }
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
