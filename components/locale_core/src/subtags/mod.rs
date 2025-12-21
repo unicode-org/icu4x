@@ -54,7 +54,7 @@ mod variants;
 #[doc(inline)]
 pub use language::{language, Language};
 #[doc(inline)]
-pub use region::{region, Region};
+pub use region::{region, Region, RegionExtensionError};
 #[doc(inline)]
 pub use script::{script, Script};
 #[doc(inline)]
