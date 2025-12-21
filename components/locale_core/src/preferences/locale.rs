@@ -30,7 +30,7 @@ impl LocalePreferences {
             language: self.language,
             script: self.script,
             region: match (self.region, self.ue_region) {
-                (Some(_), Some(r)) if region_priority => Some(r),
+                (_, Some(r)) if region_priority => Some(r),
                 (r, _) => r,
             },
             variant: self.variant,
@@ -72,8 +72,7 @@ impl From<&crate::Locale> for LocalePreferences {
             .keywords
             .get(&crate::extensions::unicode::key!("rg"))
             .and_then(|v| {
-                v.as_single_subtag()
-                    .and_then(|s| Region::try_from_str(s.as_str()).ok())
+                Region::try_from_extension_value(v).ok()
             });
         Self {
             language: loc.id.language,
@@ -176,6 +175,78 @@ impl LocalePreferences {
         }
         if let Some(ue_region) = other.ue_region {
             self.ue_region = Some(ue_region);
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::Locale;
+
+    #[test]
+    fn test_data_locale_conversion() {
+        #[derive(Debug)]
+        struct TestCase<'a> {
+            input: &'a str,
+            language_priority: &'a str,
+            region_priority: &'a str,
+        }
+        let test_cases = [
+            TestCase {
+                input: "en",
+                language_priority: "en",
+                region_priority: "en",
+            },
+            TestCase {
+                input: "en-US",
+                language_priority: "en-US",
+                region_priority: "en-US",
+            },
+            TestCase {
+                input: "en-u-sd-ustx",
+                language_priority: "en-u-sd-ustx",
+                region_priority: "en-u-sd-ustx",
+            },
+            TestCase {
+                input: "en-US-u-sd-ustx",
+                language_priority: "en-US-u-sd-ustx",
+                region_priority: "en-US-u-sd-ustx",
+            },
+            TestCase {
+                input: "en-u-rg-gbzzzz",
+                language_priority: "en",
+                region_priority: "en-GB",
+            },
+            TestCase {
+                input: "en-US-u-rg-gbzzzz",
+                language_priority: "en-US",
+                region_priority: "en-GB",
+            },
+            TestCase {
+                input: "en-u-rg-gbzzzz-sd-ustx",
+                language_priority: "en-u-sd-ustx",
+                region_priority: "en-GB-u-sd-ustx", // does this make sense?
+            },
+            TestCase {
+                input: "en-US-u-rg-gbzzzz-sd-ustx",
+                language_priority: "en-US-u-sd-ustx",
+                region_priority: "en-GB-u-sd-ustx", // does this make sense?
+            },
+        ];
+        for test_case in test_cases.iter() {
+            let locale = Locale::try_from_str(test_case.input).unwrap();
+            let prefs = LocalePreferences::from(&locale);
+            assert_eq!(
+                prefs.to_data_locale_language_priority().to_string(),
+                test_case.language_priority,
+                "{test_case:?}"
+            );
+            assert_eq!(
+                prefs.to_data_locale_region_priority().to_string(),
+                test_case.region_priority,
+                "{test_case:?}"
+            );
         }
     }
 }
