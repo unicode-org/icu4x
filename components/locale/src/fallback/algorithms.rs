@@ -127,7 +127,6 @@ impl LocaleFallbackIteratorInner<'_> {
     }
 
     fn step_region(&mut self, locale: &mut DataLocale) {
-        // TODO(#4413): -u-rg is not yet supported
         // 2. Remove the subdivision keyword
         if let Some(value) = locale.subdivision.take() {
             self.backup_subdivision = Some(value);
