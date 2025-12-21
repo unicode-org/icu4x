@@ -72,7 +72,13 @@ impl From<&crate::Locale> for LocalePreferences {
             .keywords
             .get(&crate::extensions::unicode::key!("rg"))
             .and_then(|v| {
-                Region::try_from_extension_value(v).ok()
+                match Region::try_from_extension_value(v) {
+                    Ok(r) => Some(r),
+                    Err(_e) => {
+                        // How should we handle the error? Ignore?
+                        None
+                    }
+                }
             });
         Self {
             language: loc.id.language,
