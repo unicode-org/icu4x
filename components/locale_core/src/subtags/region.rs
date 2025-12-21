@@ -51,6 +51,7 @@ impl_tinystr_subtag!(
 );
 
 /// An error that occurs when converting a [`Value`] to a [`Region`].
+#[non_exhaustive]
 #[derive(Debug, Copy, Clone, Display)]
 pub enum RegionExtensionError {
     /// The region extension is malformed. For details, see [UTS #35].

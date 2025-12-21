@@ -72,6 +72,7 @@ impl From<&crate::Locale> for LocalePreferences {
             .keywords
             .get(&crate::extensions::unicode::key!("rg"))
             .and_then(|v| {
+                #[allow(clippy::manual_ok_err)] // documentation
                 match Region::try_from_extension_value(v) {
                     Ok(r) => Some(r),
                     Err(_e) => {
