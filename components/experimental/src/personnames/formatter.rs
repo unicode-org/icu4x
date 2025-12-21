@@ -86,7 +86,9 @@ impl PersonNamesFormatter {
 
         let data: DataResponse<PersonNamesFormatV1> = provider
             .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&DataLocale::from_content_locale(effective_locale)),
+                id: DataIdentifierBorrowed::for_locale(&DataLocale::from_content_locale(
+                    effective_locale,
+                )),
                 ..Default::default()
             })
             .map_err(PersonNamesFormatterError::Data)?;
