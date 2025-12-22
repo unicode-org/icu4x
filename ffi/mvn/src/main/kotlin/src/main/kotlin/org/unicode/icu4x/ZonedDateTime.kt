@@ -28,20 +28,66 @@ internal class ZonedDateTimeNative: Structure(), Structure.ByValue {
     }
 }
 
+
+
+
+internal class OptionZonedDateTimeNative constructor(): Structure(), Structure.ByValue {
+    @JvmField
+    internal var value: ZonedDateTimeNative = ZonedDateTimeNative()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("value", "isOk")
+    }
+
+    internal fun option(): ZonedDateTimeNative? {
+        if (isOk == 1.toByte()) {
+            return value
+        } else {
+            return null
+        }
+    }
+
+
+    constructor(value: ZonedDateTimeNative, isOk: Byte): this() {
+        this.value = value
+        this.isOk = isOk
+    }
+
+    companion object {
+        internal fun some(value: ZonedDateTimeNative): OptionZonedDateTimeNative {
+            return OptionZonedDateTimeNative(value, 1)
+        }
+
+        internal fun none(): OptionZonedDateTimeNative {
+            return OptionZonedDateTimeNative(ZonedDateTimeNative(), 0)
+        }
+    }
+
+}
+
 /** An ICU4X DateTime object capable of containing a date, time, and zone for any calendar.
 *
 *See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/2.1.1/icu/time/struct.ZonedDateTime.html) for more information.
 */
-class ZonedDateTime internal constructor (
-    internal val nativeStruct: ZonedDateTimeNative) {
-    val date: Date = Date(nativeStruct.date, listOf())
-    val time: Time = Time(nativeStruct.time, listOf())
-    val zone: TimeZoneInfo = TimeZoneInfo(nativeStruct.zone, listOf())
-
+class ZonedDateTime (var date: Date, var time: Time, var zone: TimeZoneInfo) {
     companion object {
+
         internal val libClass: Class<ZonedDateTimeLib> = ZonedDateTimeLib::class.java
         internal val lib: ZonedDateTimeLib = Native.load("icu4x", libClass)
         val NATIVESIZE: Long = Native.getNativeSize(ZonedDateTimeNative::class.java).toLong()
+
+        internal fun fromNative(nativeStruct: ZonedDateTimeNative): ZonedDateTime {
+            val date: Date = Date(nativeStruct.date, listOf())
+            val time: Time = Time(nativeStruct.time, listOf())
+            val zone: TimeZoneInfo = TimeZoneInfo(nativeStruct.zone, listOf())
+
+            return ZonedDateTime(date, time, zone)
+        }
+
         @JvmStatic
         
         /** Creates a new [ZonedIsoDateTime] from an IXDTF string.
@@ -54,7 +100,7 @@ class ZonedDateTime internal constructor (
             val returnVal = lib.icu4x_ZonedDateTime_strict_from_string_mv1(vSlice, calendar.handle, ianaParser.handle);
             if (returnVal.isOk == 1.toByte()) {
                 
-                val returnStruct = ZonedDateTime(returnVal.union.ok)
+                val returnStruct = ZonedDateTime.fromNative(returnVal.union.ok)
                 if (vMem != null) vMem.close()
                 return returnStruct.ok()
             } else {
@@ -73,7 +119,7 @@ class ZonedDateTime internal constructor (
             val returnVal = lib.icu4x_ZonedDateTime_full_from_string_mv1(vSlice, calendar.handle, ianaParser.handle, offsetCalculator.handle);
             if (returnVal.isOk == 1.toByte()) {
                 
-                val returnStruct = ZonedDateTime(returnVal.union.ok)
+                val returnStruct = ZonedDateTime.fromNative(returnVal.union.ok)
                 if (vMem != null) vMem.close()
                 return returnStruct.ok()
             } else {
@@ -92,7 +138,7 @@ class ZonedDateTime internal constructor (
             val returnVal = lib.icu4x_ZonedDateTime_location_only_from_string_mv1(vSlice, calendar.handle, ianaParser.handle);
             if (returnVal.isOk == 1.toByte()) {
                 
-                val returnStruct = ZonedDateTime(returnVal.union.ok)
+                val returnStruct = ZonedDateTime.fromNative(returnVal.union.ok)
                 if (vMem != null) vMem.close()
                 return returnStruct.ok()
             } else {
@@ -111,7 +157,7 @@ class ZonedDateTime internal constructor (
             val returnVal = lib.icu4x_ZonedDateTime_offset_only_from_string_mv1(vSlice, calendar.handle);
             if (returnVal.isOk == 1.toByte()) {
                 
-                val returnStruct = ZonedDateTime(returnVal.union.ok)
+                val returnStruct = ZonedDateTime.fromNative(returnVal.union.ok)
                 if (vMem != null) vMem.close()
                 return returnStruct.ok()
             } else {
@@ -130,7 +176,7 @@ class ZonedDateTime internal constructor (
             val returnVal = lib.icu4x_ZonedDateTime_lenient_from_string_mv1(vSlice, calendar.handle, ianaParser.handle);
             if (returnVal.isOk == 1.toByte()) {
                 
-                val returnStruct = ZonedDateTime(returnVal.union.ok)
+                val returnStruct = ZonedDateTime.fromNative(returnVal.union.ok)
                 if (vMem != null) vMem.close()
                 return returnStruct.ok()
             } else {
@@ -138,5 +184,4 @@ class ZonedDateTime internal constructor (
             }
         }
     }
-
 }

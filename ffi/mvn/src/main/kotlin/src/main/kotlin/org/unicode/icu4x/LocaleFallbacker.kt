@@ -89,7 +89,7 @@ class LocaleFallbacker internal constructor (
     */
     fun forConfig(config: LocaleFallbackConfig): LocaleFallbackerWithConfig {
         
-        val returnVal = lib.icu4x_LocaleFallbacker_for_config_mv1(handle, config.nativeStruct);
+        val returnVal = lib.icu4x_LocaleFallbacker_for_config_mv1(handle, config.toNative());
         val selfEdges: List<Any> = listOf()
         val aEdges: List<Any?> = listOf(this)
         val handle = returnVal 

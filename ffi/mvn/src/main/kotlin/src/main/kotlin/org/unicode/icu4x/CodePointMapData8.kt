@@ -598,7 +598,7 @@ class CodePointMapData8 internal constructor (
     */
     fun iterRangesForGroup(group: GeneralCategoryGroup): CodePointRangeIterator {
         
-        val returnVal = lib.icu4x_CodePointMapData8_iter_ranges_for_group_mv1(handle, group.nativeStruct);
+        val returnVal = lib.icu4x_CodePointMapData8_iter_ranges_for_group_mv1(handle, group.toNative());
         val selfEdges: List<Any> = listOf()
         val aEdges: List<Any?> = listOf(this)
         val handle = returnVal 

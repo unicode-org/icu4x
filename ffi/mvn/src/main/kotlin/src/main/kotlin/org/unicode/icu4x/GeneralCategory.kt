@@ -161,7 +161,7 @@ enum class GeneralCategory(val inner: Int) {
         
         val returnVal = lib.icu4x_GeneralCategory_to_group_mv1(this.toNative());
         
-        val returnStruct = GeneralCategoryGroup(returnVal)
+        val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
         return returnStruct
     }
 }

@@ -16,9 +16,21 @@ export class NumericType {
     /** @internal */
     get ffiValue(): number;
 
+    /**
+     * See the [Rust documentation for `None`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.None) for more information.
+     */
     static None : NumericType;
+    /**
+     * See the [Rust documentation for `Decimal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.Decimal) for more information.
+     */
     static Decimal : NumericType;
+    /**
+     * See the [Rust documentation for `Digit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.Digit) for more information.
+     */
     static Digit : NumericType;
+    /**
+     * See the [Rust documentation for `Numeric`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.Numeric) for more information.
+     */
     static Numeric : NumericType;
 
 

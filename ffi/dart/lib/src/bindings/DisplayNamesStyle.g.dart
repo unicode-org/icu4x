@@ -7,16 +7,12 @@ part of 'lib.g.dart';
 ///
 /// See the [Rust documentation for `Style`](https://docs.rs/icu/2.1.1/icu/experimental/displaynames/enum.Style.html) for more information.
 enum DisplayNamesStyle {
-
   // ignore: public_member_api_docs
   narrow,
-
   // ignore: public_member_api_docs
   short,
-
   // ignore: public_member_api_docs
   long,
-
   // ignore: public_member_api_docs
   menu;
 

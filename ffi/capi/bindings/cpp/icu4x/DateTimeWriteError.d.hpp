@@ -35,6 +35,9 @@ class DateTimeWriteError {
 public:
     enum Value {
         Unknown = 0,
+        /**
+         * Unused
+         */
         MissingTimeZoneVariant = 1,
     };
 

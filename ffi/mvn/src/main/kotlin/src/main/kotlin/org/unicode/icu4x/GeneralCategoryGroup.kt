@@ -33,18 +33,64 @@ internal class GeneralCategoryGroupNative: Structure(), Structure.ByValue {
     }
 }
 
+
+
+
+internal class OptionGeneralCategoryGroupNative constructor(): Structure(), Structure.ByValue {
+    @JvmField
+    internal var value: GeneralCategoryGroupNative = GeneralCategoryGroupNative()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("value", "isOk")
+    }
+
+    internal fun option(): GeneralCategoryGroupNative? {
+        if (isOk == 1.toByte()) {
+            return value
+        } else {
+            return null
+        }
+    }
+
+
+    constructor(value: GeneralCategoryGroupNative, isOk: Byte): this() {
+        this.value = value
+        this.isOk = isOk
+    }
+
+    companion object {
+        internal fun some(value: GeneralCategoryGroupNative): OptionGeneralCategoryGroupNative {
+            return OptionGeneralCategoryGroupNative(value, 1)
+        }
+
+        internal fun none(): OptionGeneralCategoryGroupNative {
+            return OptionGeneralCategoryGroupNative(GeneralCategoryGroupNative(), 0)
+        }
+    }
+
+}
+
 /** A mask that is capable of representing groups of `General_Category` values.
 *
 *See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
 */
-class GeneralCategoryGroup internal constructor (
-    internal val nativeStruct: GeneralCategoryGroupNative) {
-    val mask: UInt = nativeStruct.mask.toUInt()
-
+class GeneralCategoryGroup (var mask: UInt) {
     companion object {
+
         internal val libClass: Class<GeneralCategoryGroupLib> = GeneralCategoryGroupLib::class.java
         internal val lib: GeneralCategoryGroupLib = Native.load("icu4x", libClass)
         val NATIVESIZE: Long = Native.getNativeSize(GeneralCategoryGroupNative::class.java).toLong()
+
+        internal fun fromNative(nativeStruct: GeneralCategoryGroupNative): GeneralCategoryGroup {
+            val mask: UInt = nativeStruct.mask.toUInt()
+
+            return GeneralCategoryGroup(mask)
+        }
+
         @JvmStatic
         
         /** See the [Rust documentation for `all`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html#method.all) for more information.
@@ -53,7 +99,7 @@ class GeneralCategoryGroup internal constructor (
             
             val returnVal = lib.icu4x_GeneralCategoryGroup_all_mv1();
             
-            val returnStruct = GeneralCategoryGroup(returnVal)
+            val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
             return returnStruct
         }
         @JvmStatic
@@ -64,7 +110,7 @@ class GeneralCategoryGroup internal constructor (
             
             val returnVal = lib.icu4x_GeneralCategoryGroup_empty_mv1();
             
-            val returnStruct = GeneralCategoryGroup(returnVal)
+            val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
             return returnStruct
         }
         @JvmStatic
@@ -75,7 +121,7 @@ class GeneralCategoryGroup internal constructor (
             
             val returnVal = lib.icu4x_GeneralCategoryGroup_cased_letter_mv1();
             
-            val returnStruct = GeneralCategoryGroup(returnVal)
+            val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
             return returnStruct
         }
         @JvmStatic
@@ -86,7 +132,7 @@ class GeneralCategoryGroup internal constructor (
             
             val returnVal = lib.icu4x_GeneralCategoryGroup_letter_mv1();
             
-            val returnStruct = GeneralCategoryGroup(returnVal)
+            val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
             return returnStruct
         }
         @JvmStatic
@@ -97,7 +143,7 @@ class GeneralCategoryGroup internal constructor (
             
             val returnVal = lib.icu4x_GeneralCategoryGroup_mark_mv1();
             
-            val returnStruct = GeneralCategoryGroup(returnVal)
+            val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
             return returnStruct
         }
         @JvmStatic
@@ -108,7 +154,7 @@ class GeneralCategoryGroup internal constructor (
             
             val returnVal = lib.icu4x_GeneralCategoryGroup_number_mv1();
             
-            val returnStruct = GeneralCategoryGroup(returnVal)
+            val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
             return returnStruct
         }
         @JvmStatic
@@ -119,7 +165,7 @@ class GeneralCategoryGroup internal constructor (
             
             val returnVal = lib.icu4x_GeneralCategoryGroup_separator_mv1();
             
-            val returnStruct = GeneralCategoryGroup(returnVal)
+            val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
             return returnStruct
         }
         @JvmStatic
@@ -130,7 +176,7 @@ class GeneralCategoryGroup internal constructor (
             
             val returnVal = lib.icu4x_GeneralCategoryGroup_other_mv1();
             
-            val returnStruct = GeneralCategoryGroup(returnVal)
+            val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
             return returnStruct
         }
         @JvmStatic
@@ -141,7 +187,7 @@ class GeneralCategoryGroup internal constructor (
             
             val returnVal = lib.icu4x_GeneralCategoryGroup_punctuation_mv1();
             
-            val returnStruct = GeneralCategoryGroup(returnVal)
+            val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
             return returnStruct
         }
         @JvmStatic
@@ -152,16 +198,22 @@ class GeneralCategoryGroup internal constructor (
             
             val returnVal = lib.icu4x_GeneralCategoryGroup_symbol_mv1();
             
-            val returnStruct = GeneralCategoryGroup(returnVal)
+            val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
             return returnStruct
         }
     }
+    internal fun toNative(): GeneralCategoryGroupNative {
+        var native = GeneralCategoryGroupNative()
+        native.mask = FFIUint32(this.mask)
+        return native
+    }
+
     
     /** See the [Rust documentation for `contains`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html#method.contains) for more information.
     */
     fun contains(val_: GeneralCategory): Boolean {
         
-        val returnVal = lib.icu4x_GeneralCategoryGroup_contains_mv1(nativeStruct, val_.toNative());
+        val returnVal = lib.icu4x_GeneralCategoryGroup_contains_mv1(this.toNative(), val_.toNative());
         return (returnVal > 0)
     }
     
@@ -169,9 +221,9 @@ class GeneralCategoryGroup internal constructor (
     */
     fun complement(): GeneralCategoryGroup {
         
-        val returnVal = lib.icu4x_GeneralCategoryGroup_complement_mv1(nativeStruct);
+        val returnVal = lib.icu4x_GeneralCategoryGroup_complement_mv1(this.toNative());
         
-        val returnStruct = GeneralCategoryGroup(returnVal)
+        val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
         return returnStruct
     }
     
@@ -179,9 +231,9 @@ class GeneralCategoryGroup internal constructor (
     */
     fun union(other: GeneralCategoryGroup): GeneralCategoryGroup {
         
-        val returnVal = lib.icu4x_GeneralCategoryGroup_union_mv1(nativeStruct, other.nativeStruct);
+        val returnVal = lib.icu4x_GeneralCategoryGroup_union_mv1(this.toNative(), other.toNative());
         
-        val returnStruct = GeneralCategoryGroup(returnVal)
+        val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
         return returnStruct
     }
     
@@ -189,10 +241,9 @@ class GeneralCategoryGroup internal constructor (
     */
     fun intersection(other: GeneralCategoryGroup): GeneralCategoryGroup {
         
-        val returnVal = lib.icu4x_GeneralCategoryGroup_intersection_mv1(nativeStruct, other.nativeStruct);
+        val returnVal = lib.icu4x_GeneralCategoryGroup_intersection_mv1(this.toNative(), other.toNative());
         
-        val returnStruct = GeneralCategoryGroup(returnVal)
+        val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
         return returnStruct
     }
-
 }

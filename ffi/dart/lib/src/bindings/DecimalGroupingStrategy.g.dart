@@ -5,16 +5,12 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `GroupingStrategy`](https://docs.rs/icu/2.1.1/icu/decimal/options/enum.GroupingStrategy.html) for more information.
 enum DecimalGroupingStrategy {
-
   // ignore: public_member_api_docs
   auto,
-
   // ignore: public_member_api_docs
   never,
-
   // ignore: public_member_api_docs
   always,
-
   // ignore: public_member_api_docs
   min2;
 

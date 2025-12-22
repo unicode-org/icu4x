@@ -17,35 +17,125 @@ export class GeneralCategory {
     /** @internal */
     get ffiValue(): number;
 
+    /**
+     * See the [Rust documentation for `Unassigned`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.Unassigned) for more information.
+     */
     static Unassigned : GeneralCategory;
+    /**
+     * See the [Rust documentation for `UppercaseLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.UppercaseLetter) for more information.
+     */
     static UppercaseLetter : GeneralCategory;
+    /**
+     * See the [Rust documentation for `LowercaseLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.LowercaseLetter) for more information.
+     */
     static LowercaseLetter : GeneralCategory;
+    /**
+     * See the [Rust documentation for `TitlecaseLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.TitlecaseLetter) for more information.
+     */
     static TitlecaseLetter : GeneralCategory;
+    /**
+     * See the [Rust documentation for `ModifierLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.ModifierLetter) for more information.
+     */
     static ModifierLetter : GeneralCategory;
+    /**
+     * See the [Rust documentation for `OtherLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.OtherLetter) for more information.
+     */
     static OtherLetter : GeneralCategory;
+    /**
+     * See the [Rust documentation for `NonspacingMark`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.NonspacingMark) for more information.
+     */
     static NonspacingMark : GeneralCategory;
+    /**
+     * See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.SpacingMark) for more information.
+     */
     static SpacingMark : GeneralCategory;
+    /**
+     * See the [Rust documentation for `EnclosingMark`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.EnclosingMark) for more information.
+     */
     static EnclosingMark : GeneralCategory;
+    /**
+     * See the [Rust documentation for `DecimalNumber`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.DecimalNumber) for more information.
+     */
     static DecimalNumber : GeneralCategory;
+    /**
+     * See the [Rust documentation for `LetterNumber`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.LetterNumber) for more information.
+     */
     static LetterNumber : GeneralCategory;
+    /**
+     * See the [Rust documentation for `OtherNumber`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.OtherNumber) for more information.
+     */
     static OtherNumber : GeneralCategory;
+    /**
+     * See the [Rust documentation for `SpaceSeparator`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.SpaceSeparator) for more information.
+     */
     static SpaceSeparator : GeneralCategory;
+    /**
+     * See the [Rust documentation for `LineSeparator`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.LineSeparator) for more information.
+     */
     static LineSeparator : GeneralCategory;
+    /**
+     * See the [Rust documentation for `ParagraphSeparator`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.ParagraphSeparator) for more information.
+     */
     static ParagraphSeparator : GeneralCategory;
+    /**
+     * See the [Rust documentation for `Control`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.Control) for more information.
+     */
     static Control : GeneralCategory;
+    /**
+     * See the [Rust documentation for `Format`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.Format) for more information.
+     */
     static Format : GeneralCategory;
+    /**
+     * See the [Rust documentation for `PrivateUse`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.PrivateUse) for more information.
+     */
     static PrivateUse : GeneralCategory;
+    /**
+     * See the [Rust documentation for `Surrogate`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.Surrogate) for more information.
+     */
     static Surrogate : GeneralCategory;
+    /**
+     * See the [Rust documentation for `DashPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.DashPunctuation) for more information.
+     */
     static DashPunctuation : GeneralCategory;
+    /**
+     * See the [Rust documentation for `OpenPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.OpenPunctuation) for more information.
+     */
     static OpenPunctuation : GeneralCategory;
+    /**
+     * See the [Rust documentation for `ClosePunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.ClosePunctuation) for more information.
+     */
     static ClosePunctuation : GeneralCategory;
+    /**
+     * See the [Rust documentation for `ConnectorPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.ConnectorPunctuation) for more information.
+     */
     static ConnectorPunctuation : GeneralCategory;
+    /**
+     * See the [Rust documentation for `InitialPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.InitialPunctuation) for more information.
+     */
     static InitialPunctuation : GeneralCategory;
+    /**
+     * See the [Rust documentation for `FinalPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.FinalPunctuation) for more information.
+     */
     static FinalPunctuation : GeneralCategory;
+    /**
+     * See the [Rust documentation for `OtherPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.OtherPunctuation) for more information.
+     */
     static OtherPunctuation : GeneralCategory;
+    /**
+     * See the [Rust documentation for `MathSymbol`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.MathSymbol) for more information.
+     */
     static MathSymbol : GeneralCategory;
+    /**
+     * See the [Rust documentation for `CurrencySymbol`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.CurrencySymbol) for more information.
+     */
     static CurrencySymbol : GeneralCategory;
+    /**
+     * See the [Rust documentation for `ModifierSymbol`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.ModifierSymbol) for more information.
+     */
     static ModifierSymbol : GeneralCategory;
+    /**
+     * See the [Rust documentation for `OtherSymbol`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.OtherSymbol) for more information.
+     */
     static OtherSymbol : GeneralCategory;
 
 

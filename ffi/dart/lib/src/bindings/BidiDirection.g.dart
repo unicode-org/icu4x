@@ -5,13 +5,10 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `Direction`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/enum.Direction.html) for more information.
 enum BidiDirection {
-
   // ignore: public_member_api_docs
   ltr,
-
   // ignore: public_member_api_docs
   rtl,
-
   // ignore: public_member_api_docs
   mixed;
 

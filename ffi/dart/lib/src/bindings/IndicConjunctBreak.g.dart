@@ -6,16 +6,12 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
 enum IndicConjunctBreak {
   /// See the [Rust documentation for `None`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.None) for more information.
-  // ignore: public_member_api_docs
   none,
   /// See the [Rust documentation for `Consonant`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.Consonant) for more information.
-  // ignore: public_member_api_docs
   consonant,
   /// See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.Extend) for more information.
-  // ignore: public_member_api_docs
   extend,
   /// See the [Rust documentation for `Linker`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.Linker) for more information.
-  // ignore: public_member_api_docs
   linker;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.

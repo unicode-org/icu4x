@@ -47,20 +47,65 @@ namespace icu4x {
 class SentenceBreak {
 public:
     enum Value {
+        /**
+         * See the [Rust documentation for `Other`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Other) for more information.
+         */
         Other = 0,
+        /**
+         * See the [Rust documentation for `ATerm`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.ATerm) for more information.
+         */
         ATerm = 1,
+        /**
+         * See the [Rust documentation for `Close`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Close) for more information.
+         */
         Close = 2,
+        /**
+         * See the [Rust documentation for `Format`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Format) for more information.
+         */
         Format = 3,
+        /**
+         * See the [Rust documentation for `Lower`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Lower) for more information.
+         */
         Lower = 4,
+        /**
+         * See the [Rust documentation for `Numeric`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Numeric) for more information.
+         */
         Numeric = 5,
+        /**
+         * See the [Rust documentation for `OLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.OLetter) for more information.
+         */
         OLetter = 6,
+        /**
+         * See the [Rust documentation for `Sep`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Sep) for more information.
+         */
         Sep = 7,
+        /**
+         * See the [Rust documentation for `Sp`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Sp) for more information.
+         */
         Sp = 8,
+        /**
+         * See the [Rust documentation for `STerm`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.STerm) for more information.
+         */
         STerm = 9,
+        /**
+         * See the [Rust documentation for `Upper`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Upper) for more information.
+         */
         Upper = 10,
+        /**
+         * See the [Rust documentation for `CR`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.CR) for more information.
+         */
         CR = 11,
+        /**
+         * See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.Extend) for more information.
+         */
         Extend = 12,
+        /**
+         * See the [Rust documentation for `LF`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.LF) for more information.
+         */
         LF = 13,
+        /**
+         * See the [Rust documentation for `SContinue`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html#associatedconstant.SContinue) for more information.
+         */
         SContinue = 14,
     };
 

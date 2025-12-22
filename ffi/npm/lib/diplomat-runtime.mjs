@@ -690,3 +690,85 @@ export class GarbageCollectorGrip {
 }
 
 const DiplomatBufferFinalizer = new FinalizationRegistry(free => free());
+
+/**
+ * For allocating and cleaning up structs to be passed into the C Spec WASM ABI.
+ * This is primarily intended for storing structures being passed from Javascript to Rust.
+ * The maximal size any parameters we could ever need to store can be calculated by Diplomat, so we can pre-allocate a buffer
+ * and allocate structs there.
+ *
+ * Created/reserved when we load in the WebAssembly.
+ */
+export class FunctionParamAllocator {
+    #ptr = 0;
+    #capacity = 0;
+
+    /**
+     * A stack of pointers to Rust types allocated with {@link alloc}.
+     * The stack is popped with {@link get}, returning the most recently allocated pointer.
+     * Note that this does NOT clear allocated memory, this must be done with {@link clean}.
+     * Each pointer is guaranteed to be within the bounds of #ptr.
+     *
+     */
+    #allocated = [];
+    /**
+     * The size of everything currently allocated.
+     * The size is only reset with {@link clean}.
+     */
+    #currentPtr = 0;
+
+    /**
+     * Reserve {@link #ptr} with a specific capacity.
+     * @param {WebAssembly.Module} wasm Web assembly module to allocate into.
+     * @param {number} capacity How large, in bytes, the buffer should be.
+     */
+    reserve(symbol, wasm, capacity) {
+        if (symbol !== internalConstructor) {
+            throw new Error(".reserve should only be called internally.");
+        }
+        if (this.#ptr !== 0) {
+            if (this.#currentPtr > 0) {
+                throw new Error("Cannot reserve additional space if memory has already been allocated! .clear() must be called.");
+            } else {
+                wasm.diplomat_free(this.#ptr, this.#capacity, 1);
+            }
+        }
+
+        this.#capacity = capacity;
+        // FunctionParamAllocator is global, so this will be freed when the webpage closes:
+        this.#ptr = wasm.diplomat_alloc(this.#capacity, 1);
+    }
+
+    /**
+     * Reserves part of {@link #ptr} to be used for allocating function parameters on the stack to Rust memory.
+     * @param {number} size The size of the buffer to reserve
+     * @returns A pointer to what was just reserved.
+     */
+    alloc(size) {
+        if (this.#currentPtr + size > this.#capacity) {
+            throw new Error(`Could not allocate size ${this.#currentPtr} + ${size} > ${this.#capacity}. Please consider adjusting reserve()`);
+        }
+        this.#allocated.push(this.#ptr + this.#currentPtr);
+        this.#currentPtr += size;
+        return this.#ptr + (this.#currentPtr - size);
+    }
+
+    /**
+     * Pops the most recently allocated pointer on the stack.
+     * @returns The most recently allocated pointer on the stack.
+     */
+    pop() {
+        return this.#allocated.pop();
+    }
+
+    /**
+     * Free up memory on the buffer.
+     */
+    clean() {
+        this.#currentPtr = 0;
+
+        this.#allocated = [];
+    }
+}
+
+export const FUNCTION_PARAM_ALLOC = new FunctionParamAllocator();

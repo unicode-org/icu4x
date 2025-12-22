@@ -40,10 +40,20 @@ export class GeneralCategoryGroup {
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
     _intoFFI(
+        dst,
         functionCleanupArena,
         appendArrayMap
     ) {
         return this.#mask;
+    }
+
+    static get _sizeBytes() {
+        return 4;
+    }
+
+    /// Currently unused, we may want to use later on though:
+    static get _sizeAlign() {
+        return 4;
     }
 
     static _fromSuppliedValue(internalConstructor, obj) {
@@ -90,13 +100,14 @@ export class GeneralCategoryGroup {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_GeneralCategoryGroup_contains_mv1(GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(functionCleanupArena, {}, false), val.ffiValue);
+        const result = wasm.icu4x_GeneralCategoryGroup_contains_mv1(GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(GeneralCategoryGroup._sizeBytes), functionCleanupArena, {}, false), val.ffiValue);
 
         try {
             return result;
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -109,13 +120,14 @@ export class GeneralCategoryGroup {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_GeneralCategoryGroup_complement_mv1(GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_GeneralCategoryGroup_complement_mv1(GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(GeneralCategoryGroup._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -133,6 +145,7 @@ export class GeneralCategoryGroup {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -148,6 +161,7 @@ export class GeneralCategoryGroup {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -158,13 +172,14 @@ export class GeneralCategoryGroup {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_GeneralCategoryGroup_union_mv1(GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(functionCleanupArena, {}, false), GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, other)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_GeneralCategoryGroup_union_mv1(GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(GeneralCategoryGroup._sizeBytes), functionCleanupArena, {}, false), GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, other)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(GeneralCategoryGroup._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -177,13 +192,14 @@ export class GeneralCategoryGroup {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_GeneralCategoryGroup_intersection_mv1(GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(functionCleanupArena, {}, false), GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, other)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_GeneralCategoryGroup_intersection_mv1(GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(GeneralCategoryGroup._sizeBytes), functionCleanupArena, {}, false), GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, other)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(GeneralCategoryGroup._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -201,6 +217,7 @@ export class GeneralCategoryGroup {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -216,6 +233,7 @@ export class GeneralCategoryGroup {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -231,6 +249,7 @@ export class GeneralCategoryGroup {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -246,6 +265,7 @@ export class GeneralCategoryGroup {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -261,6 +281,7 @@ export class GeneralCategoryGroup {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -276,6 +297,7 @@ export class GeneralCategoryGroup {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -291,6 +313,7 @@ export class GeneralCategoryGroup {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -306,6 +329,7 @@ export class GeneralCategoryGroup {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 

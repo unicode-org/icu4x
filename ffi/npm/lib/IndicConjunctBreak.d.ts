@@ -16,9 +16,21 @@ export class IndicConjunctBreak {
     /** @internal */
     get ffiValue(): number;
 
+    /**
+     * See the [Rust documentation for `None`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.None) for more information.
+     */
     static None : IndicConjunctBreak;
+    /**
+     * See the [Rust documentation for `Consonant`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.Consonant) for more information.
+     */
     static Consonant : IndicConjunctBreak;
+    /**
+     * See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.Extend) for more information.
+     */
     static Extend : IndicConjunctBreak;
+    /**
+     * See the [Rust documentation for `Linker`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.Linker) for more information.
+     */
     static Linker : IndicConjunctBreak;
 
 

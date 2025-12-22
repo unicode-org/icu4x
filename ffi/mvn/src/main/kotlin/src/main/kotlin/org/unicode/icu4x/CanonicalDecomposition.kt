@@ -77,7 +77,7 @@ class CanonicalDecomposition internal constructor (
         
         val returnVal = lib.icu4x_CanonicalDecomposition_decompose_mv1(handle, c);
         
-        val returnStruct = Decomposed(returnVal)
+        val returnStruct = Decomposed.fromNative(returnVal)
         return returnStruct
     }
 

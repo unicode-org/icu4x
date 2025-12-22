@@ -5,16 +5,12 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `MaxVariable`](https://docs.rs/icu/2.1.1/icu/collator/options/enum.MaxVariable.html) for more information.
 enum CollatorMaxVariable {
-
   // ignore: public_member_api_docs
   space,
-
   // ignore: public_member_api_docs
   punctuation,
-
   // ignore: public_member_api_docs
   symbol,
-
   // ignore: public_member_api_docs
   currency;
 

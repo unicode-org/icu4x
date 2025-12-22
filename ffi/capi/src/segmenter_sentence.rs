@@ -112,6 +112,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenterBorrowed::segment_utf16, FnInStruct)]
         #[diplomat::attr(not(supports = utf8_strings), rename = "segment")]
         #[diplomat::attr(supports = utf8_strings, rename = "segment16")]
+        #[diplomat::attr(kotlin, disable)]
         pub fn segment_utf16<'a>(
             &'a self,
             input: &'a DiplomatStr16,

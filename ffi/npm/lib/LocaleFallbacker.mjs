@@ -58,6 +58,7 @@ export class LocaleFallbacker {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -81,6 +82,7 @@ export class LocaleFallbacker {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -99,6 +101,7 @@ export class LocaleFallbacker {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -114,13 +117,14 @@ export class LocaleFallbacker {
         let aEdges = [this];
 
 
-        const result = wasm.icu4x_LocaleFallbacker_for_config_mv1(this.ffiValue, LocaleFallbackConfig._fromSuppliedValue(diplomatRuntime.internalConstructor, config)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_LocaleFallbacker_for_config_mv1(this.ffiValue, LocaleFallbackConfig._fromSuppliedValue(diplomatRuntime.internalConstructor, config)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(LocaleFallbackConfig._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             return new LocaleFallbackerWithConfig(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
