@@ -99,7 +99,7 @@ impl SourceDataProvider {
                                 metadata: Default::default(),
                                 payload: DataPayload::from_owned(PackedEra::pack((
                                     EraStartDate {
-                                        year: 3000,
+                                        year: 2200,
                                         month: 1,
                                         day: 1,
                                     },

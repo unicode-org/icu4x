@@ -145,6 +145,7 @@ pub struct PackedEra {
 impl PackedEra {
     /// Construct a `PackedEra` from a tuple
     pub const fn pack(v: (EraStartDate, TinyAsciiStr<16>)) -> Self {
+        debug_assert!(2000 <= v.0.year && v.0.year <= 2000 + u8::MAX as i32);
         Self {
             year: (v.0.year - 2000) as u8,
             month: v.0.month,

@@ -49,7 +49,7 @@ pub struct Japanese {
 impl Default for Japanese {
     fn default() -> Self {
         Self {
-            last_era: PackedEra::pack(REIWA),
+            last_era: const { PackedEra::pack(REIWA) },
         }
     }
 }
