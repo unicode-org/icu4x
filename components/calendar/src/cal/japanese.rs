@@ -599,13 +599,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
-    fn sizes() {
-        assert_eq!(core::mem::size_of::<Japanese>(), 11);
-        assert_eq!(core::mem::size_of::<JapaneseExtended>(), 32);
-    }
-
-    #[test]
     fn test_japanese() {
         let calendar = Japanese::new();
         let calendar_ext = JapaneseExtended::new();
