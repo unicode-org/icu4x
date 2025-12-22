@@ -133,7 +133,11 @@ impl SubdivisionId {
 
     /// Convert to [`Subtag`]
     pub fn into_subtag(self) -> Subtag {
-        let result = self.region.to_tinystr().concat(self.suffix.to_tinystr());
+        let result = self
+            .region
+            .to_tinystr()
+            .to_ascii_lowercase()
+            .concat(self.suffix.to_tinystr());
         Subtag::from_tinystr_unvalidated(result)
     }
 }

@@ -2,9 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::extensions::unicode::SubdivisionId;
 #[cfg(feature = "alloc")]
 use crate::subtags::Variants;
-use crate::subtags::{Language, Region, Script, Subtag, Variant};
+use crate::subtags::{Language, Region, Script, Variant};
 use crate::DataLocale;
 
 /// The structure storing locale subtags used in preferences.
@@ -19,9 +20,9 @@ pub struct LocalePreferences {
     /// Preference of Variant
     pub(crate) variant: Option<Variant>,
     /// Preference of Regional Subdivision
-    pub(crate) subdivision: Option<Subtag>,
+    pub(crate) subdivision: Option<SubdivisionId>,
     /// Preference of Unicode Extension Region
-    pub(crate) ue_region: Option<Region>,
+    pub(crate) ue_region: Option<SubdivisionId>,
 }
 
 impl LocalePreferences {
@@ -30,11 +31,11 @@ impl LocalePreferences {
             language: self.language,
             script: self.script,
             region: match (self.region, self.ue_region) {
-                (Some(_), Some(r)) if region_priority => Some(r),
+                (_, Some(r)) if region_priority => Some(r.region),
                 (r, _) => r,
             },
             variant: self.variant,
-            subdivision: self.subdivision,
+            subdivision: self.subdivision.map(SubdivisionId::into_subtag),
         }
     }
 
@@ -65,16 +66,13 @@ impl From<&crate::Locale> for LocalePreferences {
             .unicode
             .keywords
             .get(&crate::extensions::unicode::key!("sd"))
-            .and_then(|v| v.as_single_subtag().copied());
+            .and_then(|v| SubdivisionId::try_from_str(v.as_single_subtag()?.as_str()).ok());
         let ue_region = loc
             .extensions
             .unicode
             .keywords
             .get(&crate::extensions::unicode::key!("rg"))
-            .and_then(|v| {
-                v.as_single_subtag()
-                    .and_then(|s| Region::try_from_str(s.as_str()).ok())
-            });
+            .and_then(|v| SubdivisionId::try_from_str(v.as_single_subtag()?.as_str()).ok());
         Self {
             language: loc.id.language,
             script: loc.id.script,
@@ -118,14 +116,13 @@ impl From<LocalePreferences> for crate::Locale {
                 if let Some(sd) = prefs.subdivision {
                     extensions.unicode.keywords.set(
                         crate::extensions::unicode::key!("sd"),
-                        crate::extensions::unicode::Value::from_subtag(Some(sd)),
+                        crate::extensions::unicode::Value::from_subtag(Some(sd.into_subtag())),
                     );
                 }
                 if let Some(rg) = prefs.ue_region {
-                    #[expect(clippy::unwrap_used)] // Region is a valid Subtag
                     extensions.unicode.keywords.set(
                         crate::extensions::unicode::key!("rg"),
-                        crate::extensions::unicode::Value::try_from_str(rg.as_str()).unwrap(),
+                        crate::extensions::unicode::Value::from_subtag(Some(rg.into_subtag())),
                     );
                 }
                 extensions
