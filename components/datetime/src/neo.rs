@@ -425,7 +425,7 @@ size_test!(
 pub struct DateTimeFormatter<FSet: DateTimeNamesMarker> {
     pub(crate) selection: DateTimeZonePatternSelectionData,
     pub(crate) names: RawDateTimeNames<FSet>,
-    pub(crate) calendar: UntaggedFormattableAnyCalendar,
+    pub(crate) calendar: FormattableAnyCalendar,
 }
 
 impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet>
@@ -503,8 +503,7 @@ where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
         L: DecimalFormatterLoader + FormattableAnyCalendarLoader,
     {
-        let kind = FormattableAnyCalendarKind::from_preferences(prefs);
-        let calendar = FormattableAnyCalendarLoader::load(loader, kind)?;
+        let calendar = FormattableAnyCalendarLoader::load(loader, (&prefs).into())?;
         let names = RawDateTimeNames::new_without_number_formatting();
         Self::try_new_internal_with_calendar_and_names(
             provider,
@@ -549,8 +548,7 @@ where
     {
         let selection = DateTimeZonePatternSelectionData::try_new_with_skeleton(
             &FormattableAnyCalendarNamesLoader::<<FSet::D as DateDataMarkers>::Skel, _>::new(
-                provider_p,
-                calendar.kind(),
+                provider_p, &calendar,
             ),
             &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1::bind(provider_p),
             &FSet::GluePatternV1::bind(provider_p),
@@ -568,12 +566,10 @@ where
         };
         let result = names.load_for_pattern(
             &FormattableAnyCalendarNamesLoader::<<FSet::D as DateDataMarkers>::Year, _>::new(
-                provider,
-                calendar.kind(),
+                provider, &calendar,
             ),
             &FormattableAnyCalendarNamesLoader::<<FSet::D as DateDataMarkers>::Month, _>::new(
-                provider,
-                calendar.kind(),
+                provider, &calendar,
             ),
             &<FSet::D as DateDataMarkers>::WeekdayNamesV1::bind(provider),
             &<FSet::T as TimeMarkers>::DayPeriodNamesV1::bind(provider),
@@ -605,7 +601,7 @@ where
         Ok(Self {
             selection,
             names,
-            calendar: calendar.into_untagged(),
+            calendar,
         })
     }
 }
@@ -781,7 +777,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
         DateTimeFormatter {
             selection: self.selection,
             names: self.names,
-            calendar: FormattableAnyCalendar::from_calendar(calendar).into_untagged(),
+            calendar: FormattableAnyCalendar::from_calendar(calendar),
         }
     }
 
