@@ -327,6 +327,7 @@ impl FormattableAnyCalendarKind {
             HijriTabularTypeIIThursday => Self::HijriTabularTypeIIThursday,
             HijriUmmAlQura => Self::HijriUmmAlQura,
             Iso => return None,
+            #[allow(deprecated)]
             Japanese | JapaneseExtended => Self::Japanese,
             Persian => Self::Persian,
             Roc => Self::Roc,

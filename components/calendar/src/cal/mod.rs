@@ -57,7 +57,10 @@ pub mod hijri {
 
 pub use indian::Indian;
 pub use iso::Iso;
-pub use japanese::{Japanese, Japanese as JapaneseExtended};
+pub use japanese::Japanese;
+/// Deprecated
+#[deprecated(since = "2.2.0")]
+pub type JapaneseExtended = Japanese;
 pub use julian::Julian;
 pub use persian::Persian;
 pub use roc::Roc;
