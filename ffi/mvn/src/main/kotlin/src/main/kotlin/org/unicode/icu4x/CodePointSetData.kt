@@ -257,7 +257,7 @@ class CodePointSetData internal constructor (
         */
         fun createGeneralCategoryGroup(group: GeneralCategoryGroup): CodePointSetData {
             
-            val returnVal = lib.icu4x_CodePointSetData_create_general_category_group_mv1(group.nativeStruct);
+            val returnVal = lib.icu4x_CodePointSetData_create_general_category_group_mv1(group.toNative());
             val selfEdges: List<Any> = listOf()
             val handle = returnVal 
             val returnOpaque = CodePointSetData(handle, selfEdges)

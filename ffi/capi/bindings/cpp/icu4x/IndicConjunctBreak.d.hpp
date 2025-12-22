@@ -36,9 +36,21 @@ namespace icu4x {
 class IndicConjunctBreak {
 public:
     enum Value {
+        /**
+         * See the [Rust documentation for `None`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.None) for more information.
+         */
         None = 0,
+        /**
+         * See the [Rust documentation for `Consonant`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.Consonant) for more information.
+         */
         Consonant = 1,
+        /**
+         * See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.Extend) for more information.
+         */
         Extend = 2,
+        /**
+         * See the [Rust documentation for `Linker`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.Linker) for more information.
+         */
         Linker = 3,
     };
 

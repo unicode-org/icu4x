@@ -81,7 +81,7 @@ class GeneralCategoryNameToGroupMapper internal constructor (
         
         val returnVal = lib.icu4x_GeneralCategoryNameToGroupMapper_get_strict_mv1(handle, nameSlice);
         
-        val returnStruct = GeneralCategoryGroup(returnVal)
+        val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
         if (nameMem != null) nameMem.close()
         return returnStruct
     }
@@ -97,7 +97,7 @@ class GeneralCategoryNameToGroupMapper internal constructor (
         
         val returnVal = lib.icu4x_GeneralCategoryNameToGroupMapper_get_loose_mv1(handle, nameSlice);
         
-        val returnStruct = GeneralCategoryGroup(returnVal)
+        val returnStruct = GeneralCategoryGroup.fromNative(returnVal)
         if (nameMem != null) nameMem.close()
         return returnStruct
     }

@@ -40,7 +40,7 @@ class TimeZoneAndCanonicalAndNormalizedIterator internal constructor (
         val intermediateOption = returnVal.option() ?: return null
 
         val aEdges: List<Any?> = listOf(this)
-        val returnStruct = TimeZoneAndCanonicalAndNormalized(intermediateOption, aEdges)
+        val returnStruct = TimeZoneAndCanonicalAndNormalized.fromNative(intermediateOption, aEdges)
         return returnStruct
                                 
     }

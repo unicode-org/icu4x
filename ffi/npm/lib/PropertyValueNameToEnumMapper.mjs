@@ -65,6 +65,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -89,6 +90,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -108,6 +110,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -131,6 +134,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -149,6 +153,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -172,6 +177,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -190,6 +196,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -213,6 +220,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -231,6 +239,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -254,6 +263,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -272,6 +282,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -295,6 +306,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -313,6 +325,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -336,6 +349,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -354,6 +368,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -377,6 +392,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -395,6 +411,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -418,6 +435,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -436,6 +454,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -459,6 +478,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -477,6 +497,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -500,6 +521,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -518,6 +540,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -541,6 +564,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -559,6 +583,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -582,6 +607,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -600,6 +626,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -623,6 +650,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -641,6 +669,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -664,6 +693,7 @@ export class PropertyValueNameToEnumMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }

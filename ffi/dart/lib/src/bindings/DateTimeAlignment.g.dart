@@ -5,10 +5,8 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `Alignment`](https://docs.rs/icu/2.1.1/icu/datetime/options/enum.Alignment.html) for more information.
 enum DateTimeAlignment {
-
   // ignore: public_member_api_docs
   auto,
-
   // ignore: public_member_api_docs
   column;
 

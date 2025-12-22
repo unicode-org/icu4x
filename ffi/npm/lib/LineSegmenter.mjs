@@ -60,6 +60,7 @@ export class LineSegmenter {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -78,6 +79,7 @@ export class LineSegmenter {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -96,6 +98,7 @@ export class LineSegmenter {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -114,6 +117,7 @@ export class LineSegmenter {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -127,13 +131,14 @@ export class LineSegmenter {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v2_mv1(contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v2_mv1(contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(LineBreakOptions._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -151,7 +156,7 @@ export class LineSegmenter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(LineBreakOptions._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -162,6 +167,7 @@ export class LineSegmenter {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
             diplomatReceive.free();
@@ -178,13 +184,14 @@ export class LineSegmenter {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v2_mv1(contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v2_mv1(contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(LineBreakOptions._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -202,7 +209,7 @@ export class LineSegmenter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(LineBreakOptions._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -213,6 +220,7 @@ export class LineSegmenter {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
             diplomatReceive.free();
@@ -229,13 +237,14 @@ export class LineSegmenter {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v2_mv1(contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v2_mv1(contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(LineBreakOptions._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -253,7 +262,7 @@ export class LineSegmenter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(LineBreakOptions._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -264,6 +273,7 @@ export class LineSegmenter {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
             diplomatReceive.free();
@@ -280,13 +290,14 @@ export class LineSegmenter {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_mv1(contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_mv1(contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(LineBreakOptions._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -304,7 +315,7 @@ export class LineSegmenter {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_LineSegmenter_create_for_non_complex_scripts_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(LineBreakOptions._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -315,6 +326,7 @@ export class LineSegmenter {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
             diplomatReceive.free();
@@ -343,6 +355,7 @@ export class LineSegmenter {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionGarbageCollectorGrip.releaseToGarbageCollector();
 
         }

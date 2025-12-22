@@ -120,7 +120,7 @@ class TimeZoneInfo internal constructor (
         
         val intermediateOption = returnVal.option() ?: return null
 
-        val returnStruct = IsoDateTime(intermediateOption)
+        val returnStruct = IsoDateTime.fromNative(intermediateOption)
         return returnStruct
                                 
     }

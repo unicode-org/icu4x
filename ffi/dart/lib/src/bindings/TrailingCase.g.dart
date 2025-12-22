@@ -5,10 +5,8 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `TrailingCase`](https://docs.rs/icu/2.1.1/icu/casemap/options/enum.TrailingCase.html) for more information.
 enum TrailingCase {
-
   // ignore: public_member_api_docs
   lower,
-
   // ignore: public_member_api_docs
   unchanged;
 

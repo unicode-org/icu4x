@@ -19,23 +19,77 @@ export class CalendarKind {
     /** @internal */
     get ffiValue(): number;
 
+    /**
+     * The kind of an Iso calendar
+     */
     static Iso : CalendarKind;
+    /**
+     * The kind of a Gregorian calendar
+     */
     static Gregorian : CalendarKind;
+    /**
+     * The kind of a Buddhist calendar
+     */
     static Buddhist : CalendarKind;
+    /**
+     * The kind of a Japanese calendar with modern eras
+     */
     static Japanese : CalendarKind;
+    /**
+     * The kind of a Japanese calendar with modern and historic eras
+     */
     static JapaneseExtended : CalendarKind;
+    /**
+     * The kind of an Ethiopian calendar, with Amete Mihret era
+     */
     static Ethiopian : CalendarKind;
+    /**
+     * The kind of an Ethiopian calendar, with Amete Alem era
+     */
     static EthiopianAmeteAlem : CalendarKind;
+    /**
+     * The kind of a Indian calendar
+     */
     static Indian : CalendarKind;
+    /**
+     * The kind of a Coptic calendar
+     */
     static Coptic : CalendarKind;
+    /**
+     * The kind of a Dangi calendar
+     */
     static Dangi : CalendarKind;
+    /**
+     * The kind of a Chinese calendar
+     */
     static Chinese : CalendarKind;
+    /**
+     * The kind of a Hebrew calendar
+     */
     static Hebrew : CalendarKind;
+    /**
+     * The kind of a Hijri tabular, type II leap years, Friday epoch, calendar
+     */
     static HijriTabularTypeIiFriday : CalendarKind;
+    /**
+     * The kind of a Hijri simulated, Mecca calendar
+     */
     static HijriSimulatedMecca : CalendarKind;
+    /**
+     * The kind of a Hijri tabular, type II leap years, Thursday epoch, calendar
+     */
     static HijriTabularTypeIiThursday : CalendarKind;
+    /**
+     * The kind of a Hijri Umm al-Qura calendar
+     */
     static HijriUmmAlQura : CalendarKind;
+    /**
+     * The kind of a Persian calendar
+     */
     static Persian : CalendarKind;
+    /**
+     * The kind of a Roc calendar
+     */
     static Roc : CalendarKind;
 
 

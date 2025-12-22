@@ -38,11 +38,29 @@ namespace icu4x {
 class HangulSyllableType {
 public:
     enum Value {
+        /**
+         * See the [Rust documentation for `NotApplicable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.NotApplicable) for more information.
+         */
         NotApplicable = 0,
+        /**
+         * See the [Rust documentation for `LeadingJamo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingJamo) for more information.
+         */
         LeadingJamo = 1,
+        /**
+         * See the [Rust documentation for `VowelJamo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.VowelJamo) for more information.
+         */
         VowelJamo = 2,
+        /**
+         * See the [Rust documentation for `TrailingJamo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.TrailingJamo) for more information.
+         */
         TrailingJamo = 3,
+        /**
+         * See the [Rust documentation for `LeadingVowelSyllable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelSyllable) for more information.
+         */
         LeadingVowelSyllable = 4,
+        /**
+         * See the [Rust documentation for `LeadingVowelTrailingSyllable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelTrailingSyllable) for more information.
+         */
         LeadingVowelTrailingSyllable = 5,
     };
 

@@ -80,7 +80,7 @@ class IanaParserExtended internal constructor (
         val returnVal = lib.icu4x_IanaParserExtended_parse_mv1(handle, valueSlice);
         
         val aEdges: List<Any?> = listOf(this)
-        val returnStruct = TimeZoneAndCanonicalAndNormalized(returnVal, aEdges)
+        val returnStruct = TimeZoneAndCanonicalAndNormalized.fromNative(returnVal, aEdges)
         if (valueMem != null) valueMem.close()
         return returnStruct
     }

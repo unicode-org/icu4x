@@ -8,58 +8,40 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `AnyCalendarKind`](https://docs.rs/icu/2.1.1/icu/calendar/enum.AnyCalendarKind.html) for more information.
 enum CalendarKind {
   /// The kind of an Iso calendar
-  // ignore: public_member_api_docs
   iso,
   /// The kind of a Gregorian calendar
-  // ignore: public_member_api_docs
   gregorian,
   /// The kind of a Buddhist calendar
-  // ignore: public_member_api_docs
   buddhist,
   /// The kind of a Japanese calendar with modern eras
-  // ignore: public_member_api_docs
   japanese,
   /// The kind of a Japanese calendar with modern and historic eras
-  // ignore: public_member_api_docs
   japaneseExtended,
   /// The kind of an Ethiopian calendar, with Amete Mihret era
-  // ignore: public_member_api_docs
   ethiopian,
   /// The kind of an Ethiopian calendar, with Amete Alem era
-  // ignore: public_member_api_docs
   ethiopianAmeteAlem,
   /// The kind of a Indian calendar
-  // ignore: public_member_api_docs
   indian,
   /// The kind of a Coptic calendar
-  // ignore: public_member_api_docs
   coptic,
   /// The kind of a Dangi calendar
-  // ignore: public_member_api_docs
   dangi,
   /// The kind of a Chinese calendar
-  // ignore: public_member_api_docs
   chinese,
   /// The kind of a Hebrew calendar
-  // ignore: public_member_api_docs
   hebrew,
   /// The kind of a Hijri tabular, type II leap years, Friday epoch, calendar
-  // ignore: public_member_api_docs
   hijriTabularTypeIiFriday,
   /// The kind of a Hijri simulated, Mecca calendar
-  // ignore: public_member_api_docs
   hijriSimulatedMecca,
   /// The kind of a Hijri tabular, type II leap years, Thursday epoch, calendar
-  // ignore: public_member_api_docs
   hijriTabularTypeIiThursday,
   /// The kind of a Hijri Umm al-Qura calendar
-  // ignore: public_member_api_docs
   hijriUmmAlQura,
   /// The kind of a Persian calendar
-  // ignore: public_member_api_docs
   persian,
   /// The kind of a Roc calendar
-  // ignore: public_member_api_docs
   roc;
 
   int get _ffi {

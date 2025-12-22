@@ -6,16 +6,12 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
 enum NumericType {
   /// See the [Rust documentation for `None`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.None) for more information.
-  // ignore: public_member_api_docs
   none,
   /// See the [Rust documentation for `Decimal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.Decimal) for more information.
-  // ignore: public_member_api_docs
   decimal,
   /// See the [Rust documentation for `Digit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.Digit) for more information.
-  // ignore: public_member_api_docs
   digit,
   /// See the [Rust documentation for `Numeric`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.Numeric) for more information.
-  // ignore: public_member_api_docs
   numeric;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.

@@ -16,11 +16,29 @@ export class HangulSyllableType {
     /** @internal */
     get ffiValue(): number;
 
+    /**
+     * See the [Rust documentation for `NotApplicable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.NotApplicable) for more information.
+     */
     static NotApplicable : HangulSyllableType;
+    /**
+     * See the [Rust documentation for `LeadingJamo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingJamo) for more information.
+     */
     static LeadingJamo : HangulSyllableType;
+    /**
+     * See the [Rust documentation for `VowelJamo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.VowelJamo) for more information.
+     */
     static VowelJamo : HangulSyllableType;
+    /**
+     * See the [Rust documentation for `TrailingJamo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.TrailingJamo) for more information.
+     */
     static TrailingJamo : HangulSyllableType;
+    /**
+     * See the [Rust documentation for `LeadingVowelSyllable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelSyllable) for more information.
+     */
     static LeadingVowelSyllable : HangulSyllableType;
+    /**
+     * See the [Rust documentation for `LeadingVowelTrailingSyllable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelTrailingSyllable) for more information.
+     */
     static LeadingVowelTrailingSyllable : HangulSyllableType;
 
 

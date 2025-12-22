@@ -58,6 +58,7 @@ export class WeekdaySetIterator {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }

@@ -18,8 +18,17 @@ export class DecimalSign {
     /** @internal */
     get ffiValue(): number;
 
+    /**
+     * No sign (implicitly positive, e.g., 1729).
+     */
     static None : DecimalSign;
+    /**
+     * A negative sign, e.g., -1729.
+     */
     static Negative : DecimalSign;
+    /**
+     * An explicit positive sign, e.g., +1729.
+     */
     static Positive : DecimalSign;
 
 

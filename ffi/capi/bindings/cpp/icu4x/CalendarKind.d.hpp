@@ -54,23 +54,77 @@ namespace icu4x {
 class CalendarKind {
 public:
     enum Value {
+        /**
+         * The kind of an Iso calendar
+         */
         Iso = 0,
+        /**
+         * The kind of a Gregorian calendar
+         */
         Gregorian = 1,
+        /**
+         * The kind of a Buddhist calendar
+         */
         Buddhist = 2,
+        /**
+         * The kind of a Japanese calendar with modern eras
+         */
         Japanese = 3,
+        /**
+         * The kind of a Japanese calendar with modern and historic eras
+         */
         JapaneseExtended = 4,
+        /**
+         * The kind of an Ethiopian calendar, with Amete Mihret era
+         */
         Ethiopian = 5,
+        /**
+         * The kind of an Ethiopian calendar, with Amete Alem era
+         */
         EthiopianAmeteAlem = 6,
+        /**
+         * The kind of a Indian calendar
+         */
         Indian = 7,
+        /**
+         * The kind of a Coptic calendar
+         */
         Coptic = 8,
+        /**
+         * The kind of a Dangi calendar
+         */
         Dangi = 9,
+        /**
+         * The kind of a Chinese calendar
+         */
         Chinese = 10,
+        /**
+         * The kind of a Hebrew calendar
+         */
         Hebrew = 11,
+        /**
+         * The kind of a Hijri tabular, type II leap years, Friday epoch, calendar
+         */
         HijriTabularTypeIIFriday = 12,
+        /**
+         * The kind of a Hijri simulated, Mecca calendar
+         */
         HijriSimulatedMecca = 18,
+        /**
+         * The kind of a Hijri tabular, type II leap years, Thursday epoch, calendar
+         */
         HijriTabularTypeIIThursday = 14,
+        /**
+         * The kind of a Hijri Umm al-Qura calendar
+         */
         HijriUmmAlQura = 15,
+        /**
+         * The kind of a Persian calendar
+         */
         Persian = 16,
+        /**
+         * The kind of a Roc calendar
+         */
         Roc = 17,
     };
 

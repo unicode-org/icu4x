@@ -7,10 +7,8 @@ part of 'lib.g.dart';
 ///
 /// See the [Rust documentation for `Overflow`](https://docs.rs/icu/2.1.1/icu/calendar/options/enum.Overflow.html) for more information.
 enum DateOverflow {
-
   // ignore: public_member_api_docs
   constrain,
-
   // ignore: public_member_api_docs
   reject;
 

@@ -7,31 +7,22 @@ part of 'lib.g.dart';
 ///
 /// See the [Rust documentation for `SignedRoundingMode`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.SignedRoundingMode.html) for more information.
 enum DecimalSignedRoundingMode {
-
   // ignore: public_member_api_docs
   expand,
-
   // ignore: public_member_api_docs
   trunc,
-
   // ignore: public_member_api_docs
   halfExpand,
-
   // ignore: public_member_api_docs
   halfTrunc,
-
   // ignore: public_member_api_docs
   halfEven,
-
   // ignore: public_member_api_docs
   ceil,
-
   // ignore: public_member_api_docs
   floor,
-
   // ignore: public_member_api_docs
   halfCeil,
-
   // ignore: public_member_api_docs
   halfFloor;
 

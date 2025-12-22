@@ -38,11 +38,29 @@ namespace icu4x {
 class EastAsianWidth {
 public:
     enum Value {
+        /**
+         * See the [Rust documentation for `Neutral`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Neutral) for more information.
+         */
         Neutral = 0,
+        /**
+         * See the [Rust documentation for `Ambiguous`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Ambiguous) for more information.
+         */
         Ambiguous = 1,
+        /**
+         * See the [Rust documentation for `Halfwidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Halfwidth) for more information.
+         */
         Halfwidth = 2,
+        /**
+         * See the [Rust documentation for `Fullwidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Fullwidth) for more information.
+         */
         Fullwidth = 3,
+        /**
+         * See the [Rust documentation for `Narrow`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Narrow) for more information.
+         */
         Narrow = 4,
+        /**
+         * See the [Rust documentation for `Wide`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Wide) for more information.
+         */
         Wide = 5,
     };
 
