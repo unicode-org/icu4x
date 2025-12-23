@@ -46,6 +46,12 @@ impl_tinystr_subtag!(
     ["toolooong"],
 );
 
+impl SubdivisionSuffix {
+    pub(crate) fn is_unknown(self) -> bool {
+        self == subdivision_suffix!("zzzz")
+    }
+}
+
 /// A Subivision Id as defined in [`Unicode Locale Identifier`].
 ///
 /// Subdivision Id is used in [`Unicode`] extensions:

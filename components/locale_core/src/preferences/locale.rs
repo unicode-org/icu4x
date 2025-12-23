@@ -26,31 +26,59 @@ pub struct LocalePreferences {
 }
 
 impl LocalePreferences {
-    fn to_data_locale_maybe_region_priority(self, region_priority: bool) -> DataLocale {
-        DataLocale {
-            language: self.language,
-            script: self.script,
-            region: match (self.region, self.region_override) {
-                (_, Some(r)) if region_priority => Some(r.region),
-                (r, _) => r,
-            },
-            variant: self.variant,
-            subdivision: self.subdivision.map(|r| r.into_subtag()),
-        }
-    }
-
     /// Convert to a DataLocale, with region-based fallback priority
     ///
     /// Most users should use `icu_provider::marker::make_locale()` instead.
     pub fn to_data_locale_region_priority(self) -> DataLocale {
-        self.to_data_locale_maybe_region_priority(true)
+        let (region, subdivision) = if let Some(ro) = self.region_override {
+            // Use the region override if present
+            (
+                Some(ro.region),
+                Some(*ro).filter(|sd| !sd.suffix.is_unknown()),
+            )
+        } else if let Some(sd) = self.subdivision {
+            if let Some(r) = self.region {
+                // Discard the subdivison if it doesn't match the region
+                (
+                    Some(r),
+                    Some(*sd).filter(|sd| sd.region == r && !sd.suffix.is_unknown()),
+                )
+            } else {
+                // Use the subdivision's region if there's no region
+                (
+                    Some(sd.region),
+                    Some(*sd).filter(|sd| !sd.suffix.is_unknown()),
+                )
+            }
+        } else {
+            (self.region, None)
+        };
+
+        DataLocale {
+            language: self.language,
+            script: self.script,
+            region,
+            variant: self.variant,
+            subdivision: subdivision.map(|r| r.into_subtag()),
+        }
     }
 
     /// Convert to a DataLocale, with language-based fallback priority
     ///
     /// Most users should use `icu_provider::marker::make_locale()` instead.
     pub fn to_data_locale_language_priority(self) -> DataLocale {
-        self.to_data_locale_maybe_region_priority(false)
+        let subdivision = self.subdivision.filter(|sd| {
+            // Discard the subdivision if it doesn't match the region
+            self.region
+                .is_none_or(|r| r == sd.region && !sd.suffix.is_unknown())
+        });
+        DataLocale {
+            language: self.language,
+            script: self.script,
+            region: self.region,
+            variant: self.variant,
+            subdivision: subdivision.map(|r| r.into_subtag()),
+        }
     }
 }
 impl Default for LocalePreferences {
@@ -202,7 +230,7 @@ mod tests {
             TestCase {
                 input: "en-u-sd-ustx",
                 language_priority: "en-u-sd-ustx",
-                region_priority: "en-u-sd-ustx",
+                region_priority: "en-US-u-sd-ustx",
             },
             TestCase {
                 input: "en-US-u-sd-ustx",
@@ -220,14 +248,19 @@ mod tests {
                 region_priority: "en-GB",
             },
             TestCase {
+                input: "en-US-u-sd-gbzzzz",
+                language_priority: "en-US",
+                region_priority: "en-US",
+            },
+            TestCase {
                 input: "en-u-rg-gbzzzz-sd-ustx",
                 language_priority: "en-u-sd-ustx",
-                region_priority: "en-GB-u-sd-ustx", // does this make sense?
+                region_priority: "en-GB",
             },
             TestCase {
                 input: "en-US-u-rg-gbzzzz-sd-ustx",
                 language_priority: "en-US-u-sd-ustx",
-                region_priority: "en-GB-u-sd-ustx", // does this make sense?
+                region_priority: "en-GB",
             },
         ];
         for test_case in test_cases.iter() {
