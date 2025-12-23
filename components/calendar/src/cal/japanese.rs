@@ -88,7 +88,14 @@ impl Japanese {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self {
-            post_reiwa_era: Some(*crate::provider::Baked::SINGLETON_CALENDAR_JAPANESE_MODERN_V1),
+            post_reiwa_era: if matches!(
+                crate::provider::Baked::SINGLETON_CALENDAR_JAPANESE_MODERN_V1.unpack(),
+                REIWA
+            ) {
+                None
+            } else {
+                Some(*crate::provider::Baked::SINGLETON_CALENDAR_JAPANESE_MODERN_V1)
+            },
         }
     }
 
@@ -105,7 +112,8 @@ impl Japanese {
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            post_reiwa_era: Some(*provider.load(Default::default())?.payload.get()),
+            post_reiwa_era: Some(*provider.load(Default::default())?.payload.get())
+                .filter(|&e| e.unpack() != REIWA),
         })
     }
 }
