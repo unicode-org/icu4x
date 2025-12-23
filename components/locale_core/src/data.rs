@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::extensions::unicode as unicode_ext;
+use crate::preferences::LocalePreferences;
 use crate::subtags::{Language, Region, Script, Subtag, Variant};
 #[cfg(feature = "alloc")]
 use crate::ParseError;
@@ -129,15 +130,7 @@ impl From<&LanguageIdentifier> for DataLocale {
 
 impl From<&Locale> for DataLocale {
     fn from(locale: &Locale) -> Self {
-        let mut r = Self::from(&locale.id);
-
-        r.subdivision = locale
-            .extensions
-            .unicode
-            .keywords
-            .get(&unicode_ext::key!("sd"))
-            .and_then(|v| v.as_single_subtag().copied());
-        r
+        LocalePreferences::from(locale).to_data_locale_language_priority()
     }
 }
 
