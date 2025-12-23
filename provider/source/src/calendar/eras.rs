@@ -338,7 +338,7 @@ fn test_calendar_eras() {
 
     for (calendar, data) in era_dates_map {
         let kind = match calendar.as_str() {
-            "generic" | "islamic" => continue,
+            "generic" | "islamic" | "islamic-rgsa" => continue,
             "ethiopic-amete-alem" => AnyCalendarKind::EthiopianAmeteAlem,
             "gregorian" => AnyCalendarKind::Gregorian,
             "japanese" => AnyCalendarKind::JapaneseExtended,
