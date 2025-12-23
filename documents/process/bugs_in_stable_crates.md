@@ -1,7 +1,9 @@
-ICU4X Policy on Bugs in Stable Crates
-=====================================
+Exploratory: Policy on Bugs in Stable Crates
+============================================
 
-*Status: Draft*
+*Status: Exploratory*
+
+*This doc does not represent an official position of the ICU4X TC. It is intended as a basis for discussion and future revision.*
 
 ICU4X has a thorough [Graduation Checklist](graduation.md) to help ensure that new components and features adhere to high standards. However, bugs and mistakes inevitably creep through, whether intentional or unintentional.
 
