@@ -21,7 +21,7 @@ Features with legitimate use cases should be retained even if they wouldn't meet
 
 Demonstrating how a feature of ICU4X could be used to solve a real-world problem is sufficient justification for retaining a feature, even if the problem is considered niche or rare.
 
-Crucially, although this principle calls for the feature to be retained, it need not have the same shape.
+Although this principle calls for the feature to be retained, it can be moved to a new or unstable API, subject to the constraints of Principle 2.
 
 This principle does not apply to call sites that the Technical Committee (TC) considers to be explicitly against i18n best practices, such as the attempted parsing of localized formatter output.
 
