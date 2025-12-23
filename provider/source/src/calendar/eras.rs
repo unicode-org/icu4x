@@ -65,55 +65,7 @@ impl SourceDataProvider {
                         .as_ref()
                         .map(|c| DatagenCalendar::from_cldr_name(&c.calendar));
 
-                    struct EmptyProvider;
-                    impl DataProvider<CalendarJapaneseExtendedV1> for EmptyProvider {
-                        fn load(
-                            &self,
-                            _req: DataRequest,
-                        ) -> Result<DataResponse<CalendarJapaneseExtendedV1>, DataError>
-                        {
-                            Ok(DataResponse {
-                                metadata: Default::default(),
-                                payload: DataPayload::from_owned(JapaneseEras {
-                                    dates_to_eras: [(
-                                        EraStartDate {
-                                            year: 3000,
-                                            month: 1,
-                                            day: 1,
-                                        },
-                                        tinystr::tinystr!(16, "dummy"),
-                                    )]
-                                    .into_iter()
-                                    .collect(),
-                                }),
-                            })
-                        }
-                    }
-                    impl DataProvider<CalendarJapaneseModernV1> for EmptyProvider {
-                        fn load(
-                            &self,
-                            _req: DataRequest,
-                        ) -> Result<DataResponse<CalendarJapaneseModernV1>, DataError>
-                        {
-                            Ok(DataResponse {
-                                metadata: Default::default(),
-                                payload: DataPayload::from_owned(PackedEra::pack((
-                                    EraStartDate {
-                                        year: 2200,
-                                        month: 1,
-                                        day: 1,
-                                    },
-                                    tinystr::tinystr!(16, "dummy"),
-                                ))),
-                            })
-                        }
-                    }
-
-                    let any_cal = AnyCalendar::try_new_unstable(
-                        &EmptyProvider,
-                        cal.canonical_any_calendar_kind(),
-                    )
-                    .unwrap();
+                    let any_cal = AnyCalendar::new_without_data(cal.canonical_any_calendar_kind());
 
                     let mut vec = era_dates_map[cal.cldr_name()]
                         .eras

@@ -599,6 +599,52 @@ impl AnyCalendar {
         })
     }
 
+    #[cfg(feature = "datagen")]
+    #[doc(hidden)]
+    /// Used by datagen to determine era indices in the absence of any data.
+    pub fn new_without_data(kind: AnyCalendarKind) -> Self {
+        match kind {
+            AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
+            AnyCalendarKind::Chinese => AnyCalendar::Chinese(ChineseTraditional::new()),
+            AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
+            AnyCalendarKind::Dangi => AnyCalendar::Dangi(KoreanTraditional::new()),
+            AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
+                EthiopianEraStyle::AmeteMihret,
+            )),
+            AnyCalendarKind::EthiopianAmeteAlem => {
+                AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem))
+            }
+            AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
+            AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
+            AnyCalendarKind::HijriTabularTypeIIFriday => {
+                AnyCalendar::HijriTabular(Hijri::new_tabular(
+                    hijri::TabularAlgorithmLeapYears::TypeII,
+                    hijri::TabularAlgorithmEpoch::Friday,
+                ))
+            }
+            AnyCalendarKind::HijriSimulatedMecca => {
+                AnyCalendar::HijriSimulated(Hijri::new_simulated_mecca())
+            }
+            AnyCalendarKind::HijriTabularTypeIIThursday => {
+                AnyCalendar::HijriTabular(Hijri::new_tabular(
+                    hijri::TabularAlgorithmLeapYears::TypeII,
+                    hijri::TabularAlgorithmEpoch::Thursday,
+                ))
+            }
+            AnyCalendarKind::HijriUmmAlQura => {
+                AnyCalendar::HijriUmmAlQura(Hijri::new_umm_al_qura())
+            }
+            AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
+            AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
+            AnyCalendarKind::Japanese => AnyCalendar::Japanese(Japanese::default()),
+            AnyCalendarKind::JapaneseExtended => {
+                AnyCalendar::JapaneseExtended(JapaneseExtended::default())
+            }
+            AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
+            AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
+        }
+    }
+
     /// The [`AnyCalendarKind`] corresponding to the calendar this contains
     pub fn kind(&self) -> AnyCalendarKind {
         match *self {

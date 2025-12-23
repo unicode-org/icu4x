@@ -41,17 +41,9 @@ use tinystr::{tinystr, TinyAsciiStr};
 ///
 /// These eras are loaded from data, requiring a data provider capable of providing [`CalendarJapaneseModernV1`]
 /// data.
-#[derive(Clone, Debug, Copy)]
+#[derive(Clone, Debug, Default, Copy)]
 pub struct Japanese {
-    last_era: PackedEra,
-}
-
-impl Default for Japanese {
-    fn default() -> Self {
-        Self {
-            last_era: const { PackedEra::pack(REIWA) },
-        }
-    }
+    post_reiwa_era: Option<PackedEra>,
 }
 
 /// The [Japanese Calendar] (with historical eras)
@@ -96,7 +88,7 @@ impl Japanese {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self {
-            last_era: *crate::provider::Baked::SINGLETON_CALENDAR_JAPANESE_MODERN_V1,
+            post_reiwa_era: Some(*crate::provider::Baked::SINGLETON_CALENDAR_JAPANESE_MODERN_V1),
         }
     }
 
@@ -113,7 +105,7 @@ impl Japanese {
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            last_era: *provider.load(Default::default())?.payload.get(),
+            post_reiwa_era: Some(*provider.load(Default::default())?.payload.get()),
         })
     }
 }
@@ -202,8 +194,11 @@ impl GregorianYears for &'_ Japanese {
             return Ok(g);
         }
 
-        let (start, _) = [self.last_era.unpack(), REIWA, HEISEI, SHOWA, TAISHO, MEIJI]
+        let (start, _) = self
+            .post_reiwa_era
+            .map(PackedEra::unpack)
             .into_iter()
+            .chain([REIWA, HEISEI, SHOWA, TAISHO, MEIJI])
             .find(|(_, name)| era == Some(name.as_bytes()))
             .ok_or(UnknownEraError)?;
 
@@ -213,17 +208,12 @@ impl GregorianYears for &'_ Japanese {
     fn era_year_from_extended(&self, year: i32, month: u8, day: u8) -> types::EraYear {
         let date: EraStartDate = EraStartDate { year, month, day };
 
-        if let Some((idx, (start, era))) = [
-            (7, self.last_era.unpack()),
-            (6, REIWA),
-            (5, HEISEI),
-            (4, SHOWA),
-            (3, TAISHO),
-            (2, MEIJI),
-        ]
-        .into_iter()
-        .skip((self.last_era == const { PackedEra::pack(REIWA) }) as usize)
-        .find(|&(_, (start, _))| date >= start)
+        if let Some((idx, (start, era))) = self
+            .post_reiwa_era
+            .map(|p| (7, p.unpack()))
+            .into_iter()
+            .chain([(6, REIWA), (5, HEISEI), (4, SHOWA), (3, TAISHO), (2, MEIJI)])
+            .find(|&(_, (start, _))| date >= start)
         {
             types::EraYear {
                 era,
