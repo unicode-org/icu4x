@@ -27,7 +27,7 @@ This principle does not apply to call sites that the Technical Committee (TC) co
 
 Clients using ICU4X to solve their legitimate use cases should not need to update their code, unless doing so is unavoidable to deliver significantly improved metrics or correctness to the most common user.
 
-Behavioral and semver edge cases can break so long as there is a well-lit migration path.
+In such cases, legitimate but sufficiently obscure call sites can break so long as there is a well-lit migration path. This applies to both behavior and semver.
 
 ## Principle 3: Reduce Cognitive Dissonance
 
