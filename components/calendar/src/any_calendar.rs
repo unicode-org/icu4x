@@ -670,8 +670,6 @@ pub enum AnyCalendarKind {
     /// This corresponds to the `"hebrew"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Hebrew,
     /// The kind of an [`HijriSimulated`], Mecca calendar
-    ///
-    /// This corresponds to the `"islamic-rgsa"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     HijriSimulatedMecca,
     /// The kind of an [`HijriTabular`] calendar using [`HijriTabularLeapYears::TypeII`] and [`HijriTabularEpoch::Friday`]
     ///
@@ -764,7 +762,7 @@ impl TryFrom<CalendarAlgorithm> for AnyCalendarKind {
             Hijri(Some(HijriCalendarAlgorithm::Civil)) => {
                 Ok(AnyCalendarKind::HijriTabularTypeIIFriday)
             }
-            Hijri(Some(HijriCalendarAlgorithm::Rgsa)) => Ok(AnyCalendarKind::HijriSimulatedMecca),
+            Hijri(Some(HijriCalendarAlgorithm::Rgsa)) => Err(()),
             Iso8601 => Ok(AnyCalendarKind::Iso),
             Japanese => Ok(AnyCalendarKind::Japanese),
             Persian => Ok(AnyCalendarKind::Persian),
