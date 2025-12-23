@@ -167,6 +167,7 @@ impl PackedEra {
     }
 }
 
+// Compatibility with previous data struct serialization
 #[cfg(feature = "datagen")]
 impl serde::Serialize for PackedEra {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -180,6 +181,7 @@ impl serde::Serialize for PackedEra {
     }
 }
 
+// Compatibility with previous data struct serialization
 #[cfg(feature = "serde")]
 impl<'de> serde::Deserialize<'de> for PackedEra {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
