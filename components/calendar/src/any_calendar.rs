@@ -1150,11 +1150,7 @@ impl IntoAnyCalendar for Hijri<hijri::AstronomicalSimulation> {
     }
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
-        match self.0.location {
-            crate::cal::hijri_internal::SimulatedLocation::Mecca => {
-                AnyCalendarKind::HijriSimulatedMecca
-            }
-        }
+        AnyCalendarKind::HijriSimulatedMecca
     }
     #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {

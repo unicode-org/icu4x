@@ -45,7 +45,7 @@ pub mod hijri {
 
     // TODO(#6962) Stabilize
     #[cfg(feature = "unstable")]
-    pub use super::hijri_internal::{HijriYear, Rules};
+    pub use super::hijri_internal::{HijriYear, ReingoldSimulation, Rules};
 
     #[doc(hidden)]
     /// These are unstable traits but we expose them on stable to
