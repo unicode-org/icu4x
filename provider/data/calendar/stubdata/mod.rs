@@ -30,6 +30,7 @@ pub use __make_provider as make_provider;
 /// This macro requires the following crates:
 /// * `icu`
 /// * `icu_provider`
+/// * `tinystr`
 /// * `zerovec`
 #[allow(unused_macros)]
 macro_rules! impl_data_provider {
