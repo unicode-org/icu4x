@@ -64,6 +64,8 @@ int32_t icu4x_Date_era_year_or_related_iso_mv1(const Date* self);
 
 int32_t icu4x_Date_extended_year_mv1(const Date* self);
 
+int32_t icu4x_Date_related_gregorian_mv1(const Date* self);
+
 void icu4x_Date_era_mv1(const Date* self, DiplomatWrite* write);
 
 uint8_t icu4x_Date_months_in_year_mv1(const Date* self);

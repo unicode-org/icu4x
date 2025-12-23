@@ -200,10 +200,15 @@ impl Calendar for Coptic {
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
         let year = date.0.year();
+        let related_gregorian = calendrical_calculations::gregorian::year_from_fixed(
+            calendrical_calculations::coptic::fixed_from_coptic(year, 1, 1),
+        )
+        .unwrap_or_else(|e| e.saturate());
         types::EraYear {
             era: tinystr!(16, "am"),
             era_index: Some(0),
             year,
+            related_gregorian,
             extended_year: year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
@@ -288,5 +293,42 @@ mod tests {
 
         let date = Date::try_from_fields(fields, options, Coptic).unwrap();
         assert_eq!(date.day_of_month().0, 6, "Day was successfully constrained");
+    }
+
+    #[test]
+    fn related_gregorian() {
+        assert_eq!(
+            Date::try_new_gregorian(2025, 8, 18)
+                .unwrap()
+                .to_calendar(Coptic)
+                .era_year()
+                .related_gregorian,
+            2024
+        );
+        assert_eq!(
+            Date::try_new_gregorian(2025, 9, 18)
+                .unwrap()
+                .to_calendar(Coptic)
+                .era_year()
+                .related_gregorian,
+            2025
+        );
+
+        // By 16702 the Coptic calendar is a full year ahead
+        // of the Gregorian calendar
+        assert_eq!(
+            Date::try_new_coptic(16419, 1, 1)
+                .unwrap()
+                .era_year()
+                .related_gregorian,
+            16702
+        );
+        assert_eq!(
+            Date::try_new_coptic(16420, 1, 1)
+                .unwrap()
+                .era_year()
+                .related_gregorian,
+            16704
+        );
     }
 }

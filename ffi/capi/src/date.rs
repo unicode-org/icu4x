@@ -463,7 +463,13 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::types::YearInfo::extended_year, FnInEnum, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn extended_year(&self) -> i32 {
-            self.0.extended_year()
+            self.0.year().extended_year()
+        }
+
+        #[diplomat::rust_link(icu::calendar::types::YearInfo::related_gregorian, FnInEnum)]
+        #[diplomat::attr(auto, getter)]
+        pub fn related_gregorian(&self) -> i32 {
+            self.0.year().related_gregorian()
         }
 
         /// Returns the era for this date, or an empty string

@@ -41,11 +41,18 @@ impl GregorianYears for IsoEra {
         }
     }
 
-    fn era_year_from_extended(&self, extended_year: i32, _month: u8, _day: u8) -> types::EraYear {
+    fn era_year_from_extended(
+        &self,
+        extended_year: i32,
+        related_gregorian: i32,
+        _month: u8,
+        _day: u8,
+    ) -> types::EraYear {
         types::EraYear {
             era_index: Some(0),
             era: tinystr!(16, "default"),
             year: extended_year,
+            related_gregorian,
             extended_year,
             ambiguity: types::YearAmbiguity::Unambiguous,
         }
