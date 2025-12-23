@@ -21,7 +21,7 @@ Demonstrating how a feature of ICU4X could be used to solve a real-world problem
 
 Crucially, although this principle calls for the feature to be retained, it need not have the same shape.
 
-This principle does not apply to call sites that the TC considers to be explicitly against i18n best practices, such as the attempted parsing of localized formatter output.
+This principle does not apply to call sites that the Technical Committee (TC) considers to be explicitly against i18n best practices, such as the attempted parsing of localized formatter output.
 
 ## Principle 2: Keep Client Code Working
 
