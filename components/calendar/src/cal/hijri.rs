@@ -127,6 +127,40 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
     }
 }
 
+/// [`Hijri`] [`Rules`] based on astronomical simulations published by the KACST.
+///
+/// This is identical to [`UmmAlQura`].
+///
+/// The precise behavior of this calendar may change in the future if:
+/// - We decide to tweak the precise astronomical simulation used
+/// - We decide to expand or reduce the range where we are using the astronomical simulation.
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[non_exhaustive]
+pub struct AstronomicalSimulation;
+
+impl crate::cal::scaffold::UnstableSealed for AstronomicalSimulation {}
+impl Rules for AstronomicalSimulation {
+    fn debug_name(&self) -> &'static str {
+        "Hijri (simulated, Mecca)"
+    }
+
+    fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
+        None
+    }
+
+    fn year(&self, extended_year: i32) -> HijriYear {
+        UmmAlQura.year(extended_year)
+    }
+
+    fn ecma_reference_year(&self, month: Month, day: u8) -> Result<i32, EcmaReferenceYearError> {
+        UmmAlQura.ecma_reference_year(month, day)
+    }
+
+    fn year_containing_rd(&self, rd: RataDie) -> HijriYear {
+        UmmAlQura.year_containing_rd(rd)
+    }
+}
+
 /// [`Hijri`] [`Rules`] based on an astronomical simulation for a particular location.
 ///
 /// These simulations use methods published by E. M. Reingold, S. K. Shaukat, et al.[^1]
@@ -141,36 +175,30 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 /// - We decide to tweak the precise astronomical simulation used
 /// - We decide to expand or reduce the range where we are using the astronomical simulation.
 ///
-/// This corresponds to the `"islamic-rgsa"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier)
-/// if constructed with [`Hijri::new_simulated_mecca()`].
-///
 /// [^1]: See [calendrical_calculations::islamic::observational_islamic_from_fixed]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
-pub struct AstronomicalSimulation {
-    pub(crate) location: SimulatedLocation,
-}
-
-#[derive(Clone, Debug, Copy, PartialEq, Eq)]
-pub(crate) enum SimulatedLocation {
+#[non_exhaustive]
+pub enum ReingoldSimulation {
+    /// Mecca
     Mecca,
 }
 
-impl crate::cal::scaffold::UnstableSealed for AstronomicalSimulation {}
-impl Rules for AstronomicalSimulation {
+impl crate::cal::scaffold::UnstableSealed for ReingoldSimulation {}
+impl Rules for ReingoldSimulation {
     fn debug_name(&self) -> &'static str {
-        match self.location {
-            SimulatedLocation::Mecca => "Hijri (simulated, Mecca)",
+        match self {
+            Self::Mecca => "Hijri (Reingold, Mecca)",
         }
     }
 
     fn year(&self, extended_year: i32) -> HijriYear {
         if let Some(data) = HijriYear::lookup(
             extended_year,
-            match self.location {
-                SimulatedLocation::Mecca => simulated_mecca_data::STARTING_YEAR,
+            match self {
+                Self::Mecca => simulated_mecca_data::STARTING_YEAR,
             },
-            match self.location {
-                SimulatedLocation::Mecca => simulated_mecca_data::DATA,
+            match self {
+                Self::Mecca => simulated_mecca_data::DATA,
             },
         ) {
             data
@@ -370,9 +398,7 @@ impl Hijri<AstronomicalSimulation> {
     /// on the ground. Unless you know otherwise for sure, instead of this variant, use
     /// [`Hijri::new_umm_al_qura`], which uses the results of KACST's Mecca-based calculations.
     pub const fn new_simulated_mecca() -> Self {
-        Self(AstronomicalSimulation {
-            location: SimulatedLocation::Mecca,
-        })
+        Self(AstronomicalSimulation)
     }
 
     #[cfg(feature = "serde")]
@@ -1196,7 +1222,7 @@ mod test {
         },
     ];
 
-    static SIMULATED_CASES: [DateCase; 33] = [
+    static REINGOLD_CASES: [DateCase; 33] = [
         DateCase {
             year: -1245,
             month: 12,
@@ -1701,9 +1727,9 @@ mod test {
     ];
 
     #[test]
-    fn test_simulated_hijri_from_rd() {
-        let calendar = Hijri::new_simulated_mecca();
-        for (case, f_date) in SIMULATED_CASES.iter().zip(TEST_RD.iter()) {
+    fn test_reingold_hijri_from_rd() {
+        let calendar = Hijri(ReingoldSimulation::Mecca);
+        for (case, f_date) in REINGOLD_CASES.iter().zip(TEST_RD.iter()) {
             assert_eq!(
                 Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar),
                 Ok(Date::from_rata_die(RataDie::new(*f_date), calendar)),
@@ -1713,9 +1739,9 @@ mod test {
     }
 
     #[test]
-    fn test_rd_from_simulated_hijri() {
-        let calendar = Hijri::new_simulated_mecca();
-        for (case, f_date) in SIMULATED_CASES.iter().zip(TEST_RD.iter()) {
+    fn test_rd_from_reingold_hijri() {
+        let calendar = Hijri(ReingoldSimulation::Mecca);
+        for (case, f_date) in REINGOLD_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
                 .unwrap();
             assert_eq!(date.to_rata_die(), RataDie::new(*f_date), "{case:?}");
@@ -1803,12 +1829,12 @@ mod test {
     #[ignore] // slow
     #[test]
     fn test_days_in_provided_year_simulated() {
-        let calendar = Hijri::new_simulated_mecca();
+        let calendar = Hijri(ReingoldSimulation::Mecca);
         // -1245 1 1 = -214526 (R.D Date)
         // 1518 1 1 = 764589 (R.D Date)
         let sum_days_in_year: i64 = (START_YEAR..END_YEAR)
             .map(|year| {
-                Hijri::new_simulated_mecca()
+                Hijri(ReingoldSimulation::Mecca)
                     .0
                     .year(year)
                     .packed
@@ -1893,7 +1919,7 @@ mod test {
 
     #[test]
     fn test_regression_5069_obs() {
-        let cal = Hijri::new_simulated_mecca();
+        let cal = Hijri(ReingoldSimulation::Mecca);
 
         let dt = Date::try_new_hijri_with_calendar(1390, 1, 30, cal).unwrap();
 
