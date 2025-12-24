@@ -107,9 +107,6 @@ use icu_locale_core::preferences::define_preferences;
 use icu_provider::prelude::*;
 use size_test_macro::size_test;
 
-#[cfg(test)]
-use icu_locale_core::locale;
-
 size_test!(DecimalFormatter, decimal_formatter_size, 96);
 
 define_preferences!(
@@ -306,6 +303,7 @@ impl DecimalFormatter {
 
 #[test]
 fn test_numbering_resolution_fallback() {
+    use icu_locale_core::locale;
     fn test_locale(locale: icu_locale_core::Locale, expected_format: &str) {
         let formatter =
             DecimalFormatter::try_new((&locale).into(), Default::default()).expect("Must load");
