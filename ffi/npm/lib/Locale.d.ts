@@ -7,7 +7,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 /**
  * An ICU4X Locale, capable of representing strings like `"en-US"`.
  *
- * In `icu_capi`, this type also covers the uses of `DataLocale`.
+ * This type also covers the Rust type `DataLocale`.
  *
  * See the [Rust documentation for `Locale`](https://docs.rs/icu/2.1.1/icu/locale/struct.Locale.html) for more information.
  */

@@ -14,7 +14,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X Locale, capable of representing strings like `"en-US"`.
     ///
-    /// In `icu_capi`, this type also covers the uses of `DataLocale`.
+    /// This type also covers the Rust type `DataLocale`.
     #[diplomat::rust_link(icu::locale::Locale, Struct)]
     #[diplomat::rust_link(icu::locale::DataLocale, Struct, hidden)]
     #[diplomat::rust_link(icu::locale::DataLocale::into_locale, FnInStruct, hidden)]
