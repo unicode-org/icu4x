@@ -5,9 +5,9 @@
 use icu_locale::fallback::LocaleFallbackerBorrowed;
 use icu_locale_core::subtags::Language;
 use icu_locale_core::Locale;
+use icu_provider::DataLocale;
 use writeable::Writeable;
 use zerovec::VarZeroVec;
-use icu_provider::DataLocale;
 
 use crate::personnames::api::FormattingOrder;
 
