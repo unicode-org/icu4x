@@ -136,13 +136,7 @@ impl From<Locale> for DataLocale {
 
 impl From<&LanguageIdentifier> for DataLocale {
     fn from(langid: &LanguageIdentifier) -> Self {
-        Self {
-            language: langid.language,
-            script: langid.script,
-            region: langid.region,
-            variant: langid.variants.iter().copied().next(),
-            subdivision: None,
-        }
+        Self::from_content_language_identifier(langid)
     }
 }
 
