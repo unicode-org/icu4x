@@ -127,14 +127,9 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
     }
 }
 
-/// [`Hijri`] [`Rules`] based on an astronomical simulation for a particular location.
+/// [`Hijri`] [`Rules`] based on astronomical simulations published by the KACST.
 ///
-/// These simulations are unofficial and are known to not necessarily match sightings
-/// on the ground. Unless you know otherwise for sure, instead of this variant, use
-/// [`UmmAlQura`], which uses the results of KACST's Mecca-based calculations.
-///
-/// As floating point arithmetic degenerates for far-away dates, this falls back to
-/// the tabular calendar at some point.
+/// This is identical to [`UmmAlQura`].
 ///
 /// The precise behavior of this calendar may change in the future if:
 /// - We decide to tweak the precise astronomical simulation used
