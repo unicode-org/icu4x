@@ -26,7 +26,7 @@ use core::str::FromStr;
 ///
 /// ```
 /// use icu_locale_core::locale;
-/// use icu_locale_core::DataLocale;
+/// use icu_provider::DataLocale;
 /// use icu_locale_core::preferences::LocalePreferences;
 /// use writeable::assert_writeable_eq;
 ///
