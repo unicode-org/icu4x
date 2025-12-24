@@ -56,7 +56,6 @@ impl<const D: usize> MatrixOwned<D> {
     //     let data = &self.data.get(range)?;
     //     Some(MatrixBorrowed { data, dims })
     // }
-
     pub(super) fn as_mut(&mut self) -> MatrixBorrowedMut<'_, D> {
         MatrixBorrowedMut {
             data: &mut self.data,

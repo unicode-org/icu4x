@@ -185,7 +185,7 @@ impl RawCnnData {
 
         let cnn_data_float32 = CnnDataFloat32::try_from_parts(
             model,
-            self.dic.iter().map(|(k, &v)| (k.clone(), v)).collect(),
+            self.dic.iter().map(|(k, &v)| (*k, v)).collect(),
             ndarray_to_cnn_matrix2(embedding)?,
             ndarray_to_cnn_matrix3(cnn_w1)?,
             ndarray_to_cnn_matrix1(cnn_b1)?,
