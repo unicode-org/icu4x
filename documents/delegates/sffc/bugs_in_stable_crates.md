@@ -1,5 +1,5 @@
-Exploratory: Policy on Bugs in Stable Crates
-============================================
+Exploratory: Principles on Fixing Bugs in Stable Crates
+=======================================================
 
 *Status: Exploratory*
 
@@ -7,7 +7,7 @@ Exploratory: Policy on Bugs in Stable Crates
 
 ICU4X has a thorough [Graduation Checklist](graduation.md) to help ensure that new components and features adhere to high standards. However, bugs and mistakes inevitably creep through, whether intentional or unintentional.
 
-Major semver releases, like 2.0 or 3.0, give an opportunity to make large changes that fix old bugs and mistakes. This document proposes a policy for how to handle situations when a major release is far away.
+Major semver releases, like 2.0 or 3.0, give an opportunity to make large changes that fix old bugs and mistakes. This document proposes tenets for how to handle situations when a major release is far away.
 
 This document is not comprehensive and may be revised as the team learns more.
 
