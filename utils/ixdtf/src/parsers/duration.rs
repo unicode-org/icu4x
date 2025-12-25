@@ -6,7 +6,7 @@
 
 use crate::{
     assert_syntax,
-    core::EncodingType,
+    encoding::EncodingType,
     parsers::{
         grammar::{
             is_ascii_sign, is_day_designator, is_duration_designator, is_hour_designator,
