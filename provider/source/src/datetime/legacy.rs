@@ -505,8 +505,7 @@ fn convert_dates(other: &cldr_serde::ca::Dates, calendar: DatagenCalendar) -> Da
                     | DatagenCalendar::Gregorian
                     | DatagenCalendar::Indian
                     | DatagenCalendar::Hijri
-                    | DatagenCalendar::JapaneseExtended
-                    | DatagenCalendar::JapaneseModern
+                    | DatagenCalendar::Japanese
                     | DatagenCalendar::Persian
                     | DatagenCalendar::Roc => &SOLAR_MONTH_CODES[0..12],
                     DatagenCalendar::Coptic | DatagenCalendar::Ethiopic => SOLAR_MONTH_CODES,

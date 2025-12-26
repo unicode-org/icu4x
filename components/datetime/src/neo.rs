@@ -141,14 +141,14 @@ size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fields
 /// Basic usage:
 ///
 /// ```
-/// use icu::calendar::cal::JapaneseExtended;
+/// use icu::calendar::cal::Japanese;
 /// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::input::Date;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
-/// // The JapaneseExtended generic is inferred by passing this a JapaneseExtended date later
+/// // The Japanese generic is inferred by passing this a Japanese date later
 /// let formatter = FixedCalendarDateTimeFormatter::try_new(
 ///     locale!("es-MX").into(),
 ///     YMD::long(),
@@ -156,7 +156,7 @@ size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fields
 /// .unwrap();
 ///
 /// assert_writeable_eq!(
-///     formatter.format(&Date::try_new_iso(2023, 12, 20).unwrap().to_calendar(JapaneseExtended::new())),
+///     formatter.format(&Date::try_new_iso(2023, 12, 20).unwrap().to_calendar(Japanese::new())),
 ///     "20 de diciembre de 5 Reiwa"
 /// );
 /// ```
@@ -219,7 +219,7 @@ where
     /// datetime components specified at build time.
     ///
     /// This ignores the `calendar_kind` preference and instead uses the static calendar type,
-    /// and supports calendars that are not expressible as preferences, such as [`JapaneseExtended`](icu_calendar::cal::JapaneseExtended).
+    /// and supports calendars that are not expressible as preferences.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///

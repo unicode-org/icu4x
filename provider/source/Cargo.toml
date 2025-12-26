@@ -37,7 +37,6 @@ icu = { workspace = true, features = ["datagen"] }
 icu_time = { workspace = true, features = ["ixdtf"] }
 
 # ICU infrastructure
-calendrical_calculations = { workspace = true }
 icu_codepointtrie_builder = { workspace = true }
 icu_pattern = { workspace = true, features = ["alloc", "serde"] }
 icu_provider = { workspace = true, features = ["std", "logging", "export"]}

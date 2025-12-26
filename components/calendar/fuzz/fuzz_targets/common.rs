@@ -77,7 +77,6 @@ pub enum AnyCalendarKind {
     HijriUmmAlQura,
     Iso,
     Japanese,
-    JapaneseExtended,
     Persian,
     Roc,
     // Note: This doesn't cover Julian, since it's not in AnyCalendar
@@ -100,8 +99,7 @@ impl From<AnyCalendarKind> for icu_calendar::AnyCalendarKind {
             AnyCalendarKind::HijriTabularTypeIIThursday => Self::HijriTabularTypeIIThursday,
             AnyCalendarKind::HijriUmmAlQura => Self::HijriUmmAlQura,
             AnyCalendarKind::Iso => Self::Iso,
-            AnyCalendarKind::Japanese => Self::Japanese,
-            AnyCalendarKind::JapaneseExtended => Self::JapaneseExtended,
+            AnyCalendarKind::Japanese | AnyCalendarKind::JapaneseExtended => Self::Japanese,
             AnyCalendarKind::Persian => Self::Persian,
             AnyCalendarKind::Roc => Self::Roc,
         }

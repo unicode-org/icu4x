@@ -295,11 +295,6 @@ fn test_reference_year_japanese() {
 }
 
 #[test]
-fn test_reference_year_japanese_extended() {
-    test_reference_year_impl(JapaneseExtended::new(), gregorian_md_condition)
-}
-
-#[test]
 fn test_reference_year_persian() {
     test_reference_year_impl(Persian, |month_number, is_leap, day_number| {
         if is_leap {

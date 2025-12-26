@@ -22,7 +22,6 @@ macro_rules! registry(
     ($cb:ident) => {
         cb!(
             icu::calendar::provider::CalendarJapaneseModernV1: CalendarJapaneseModernV1,
-            icu::calendar::provider::CalendarJapaneseExtendedV1: CalendarJapaneseExtendedV1,
             icu::calendar::provider::CalendarWeekV1: CalendarWeekV1,
             icu::casemap::provider::CaseMapV1: CaseMapV1,
             icu::casemap::provider::CaseMapUnfoldV1: CaseMapUnfoldV1,
@@ -231,7 +230,6 @@ macro_rules! registry(
             icu::datetime::provider::neo::DatetimeNamesYearIndianV1: DatetimeNamesYearIndianV1,
             icu::datetime::provider::neo::DatetimeNamesYearHijriV1: DatetimeNamesYearHijriV1,
             icu::datetime::provider::neo::DatetimeNamesYearJapaneseV1: DatetimeNamesYearJapaneseV1,
-            icu::datetime::provider::neo::DatetimeNamesYearJapanextV1: DatetimeNamesYearJapanextV1,
             icu::datetime::provider::neo::DatetimeNamesYearPersianV1: DatetimeNamesYearPersianV1,
             icu::datetime::provider::neo::DatetimeNamesYearRocV1: DatetimeNamesYearRocV1,
             icu::datetime::provider::neo::DatetimeNamesMonthBuddhistV1: DatetimeNamesMonthBuddhistV1,
@@ -244,7 +242,6 @@ macro_rules! registry(
             icu::datetime::provider::neo::DatetimeNamesMonthIndianV1: DatetimeNamesMonthIndianV1,
             icu::datetime::provider::neo::DatetimeNamesMonthHijriV1: DatetimeNamesMonthHijriV1,
             icu::datetime::provider::neo::DatetimeNamesMonthJapaneseV1: DatetimeNamesMonthJapaneseV1,
-            icu::datetime::provider::neo::DatetimeNamesMonthJapanextV1: DatetimeNamesMonthJapanextV1,
             icu::datetime::provider::neo::DatetimeNamesMonthPersianV1: DatetimeNamesMonthPersianV1,
             icu::datetime::provider::neo::DatetimeNamesMonthRocV1: DatetimeNamesMonthRocV1,
             icu::datetime::provider::DatetimePatternsDateBuddhistV1: DatetimePatternsDateBuddhistV1,
@@ -257,7 +254,6 @@ macro_rules! registry(
             icu::datetime::provider::DatetimePatternsDateIndianV1: DatetimePatternsDateIndianV1,
             icu::datetime::provider::DatetimePatternsDateHijriV1: DatetimePatternsDateHijriV1,
             icu::datetime::provider::DatetimePatternsDateJapaneseV1: DatetimePatternsDateJapaneseV1,
-            icu::datetime::provider::DatetimePatternsDateJapanextV1: DatetimePatternsDateJapanextV1,
             icu::datetime::provider::DatetimePatternsDatePersianV1: DatetimePatternsDatePersianV1,
             icu::datetime::provider::DatetimePatternsDateRocV1: DatetimePatternsDateRocV1,
             icu::datetime::provider::DatetimePatternsTimeV1: DatetimePatternsTimeV1,

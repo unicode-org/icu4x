@@ -77,7 +77,6 @@ const _: () = {
     impl_datetime_names_year_indian_v1!(Baked);
     impl_datetime_names_year_hijri_v1!(Baked);
     impl_datetime_names_year_japanese_v1!(Baked);
-    impl_datetime_names_year_japanext_v1!(Baked);
     impl_datetime_names_year_persian_v1!(Baked);
     impl_datetime_names_year_roc_v1!(Baked);
 
@@ -91,7 +90,6 @@ const _: () = {
     impl_datetime_names_month_indian_v1!(Baked);
     impl_datetime_names_month_hijri_v1!(Baked);
     impl_datetime_names_month_japanese_v1!(Baked);
-    impl_datetime_names_month_japanext_v1!(Baked);
     impl_datetime_names_month_persian_v1!(Baked);
     impl_datetime_names_month_roc_v1!(Baked);
 
@@ -105,7 +103,6 @@ const _: () = {
     impl_datetime_patterns_date_indian_v1!(Baked);
     impl_datetime_patterns_date_hijri_v1!(Baked);
     impl_datetime_patterns_date_japanese_v1!(Baked);
-    impl_datetime_patterns_date_japanext_v1!(Baked);
     impl_datetime_patterns_date_persian_v1!(Baked);
     impl_datetime_patterns_date_roc_v1!(Baked);
 };
@@ -154,7 +151,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     neo::DatetimeNamesYearIndianV1::INFO,
     neo::DatetimeNamesYearHijriV1::INFO,
     neo::DatetimeNamesYearJapaneseV1::INFO,
-    neo::DatetimeNamesYearJapanextV1::INFO,
     neo::DatetimeNamesYearPersianV1::INFO,
     neo::DatetimeNamesYearRocV1::INFO,
     neo::DatetimeNamesMonthBuddhistV1::INFO,
@@ -167,7 +163,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     neo::DatetimeNamesMonthIndianV1::INFO,
     neo::DatetimeNamesMonthHijriV1::INFO,
     neo::DatetimeNamesMonthJapaneseV1::INFO,
-    neo::DatetimeNamesMonthJapanextV1::INFO,
     neo::DatetimeNamesMonthPersianV1::INFO,
     neo::DatetimeNamesMonthRocV1::INFO,
     DatetimePatternsDateBuddhistV1::INFO,
@@ -180,7 +175,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     DatetimePatternsDateIndianV1::INFO,
     DatetimePatternsDateHijriV1::INFO,
     DatetimePatternsDateJapaneseV1::INFO,
-    DatetimePatternsDateJapanextV1::INFO,
     DatetimePatternsDatePersianV1::INFO,
     DatetimePatternsDateRocV1::INFO,
 ];

@@ -23,7 +23,6 @@ const CALENDARS: &[AnyCalendar] = &[
     AnyCalendar::new(AnyCalendarKind::HijriUmmAlQura),
     AnyCalendar::new(AnyCalendarKind::Indian),
     AnyCalendar::new(AnyCalendarKind::Japanese),
-    AnyCalendar::new(AnyCalendarKind::JapaneseExtended),
     AnyCalendar::new(AnyCalendarKind::Persian),
     AnyCalendar::new(AnyCalendarKind::Roc),
 ];

@@ -372,13 +372,6 @@ icu_provider::data_marker!(
     attributes_domain = "datetime_year_length"
 );
 icu_provider::data_marker!(
-    /// `DatetimeNamesYearJapanextV1`
-    DatetimeNamesYearJapanextV1,
-    YearNames<'static>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "datetime_year_length"
-);
-icu_provider::data_marker!(
     /// `DatetimeNamesYearPersianV1`
     DatetimeNamesYearPersianV1,
     YearNames<'static>,
@@ -459,13 +452,6 @@ icu_provider::data_marker!(
 icu_provider::data_marker!(
     /// `DatetimeNamesMonthJapaneseV1`
     DatetimeNamesMonthJapaneseV1,
-    MonthNames<'static>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "datetime_month_length"
-);
-icu_provider::data_marker!(
-    /// `DatetimeNamesMonthJapanextV1`
-    DatetimeNamesMonthJapanextV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_month_length"

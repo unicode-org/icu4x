@@ -13,9 +13,10 @@ enum CalendarKind {
   gregorian,
   /// The kind of a Buddhist calendar
   buddhist,
-  /// The kind of a Japanese calendar with modern eras
+  /// The kind of a Japanese calendar
   japanese,
-  /// The kind of a Japanese calendar with modern and historic eras
+  /// Deprecated, use `Japanese`
+  @core.Deprecated('use `Japanese`')
   japaneseExtended,
   /// The kind of an Ethiopian calendar, with Amete Mihret era
   ethiopian,
