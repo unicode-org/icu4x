@@ -5,6 +5,7 @@
 use icu_locale::fallback::LocaleFallbackerBorrowed;
 use icu_locale_core::subtags::Language;
 use icu_locale_core::Locale;
+use icu_provider::DataLocale;
 use writeable::Writeable;
 use zerovec::VarZeroVec;
 
@@ -22,7 +23,7 @@ pub fn name_order_derive(
     // By default, uses language priority with no additional extension keywords.
     let mut fallback_iterator = fallbacker
         .for_config(Default::default())
-        .fallback_for(person_name_locale.into());
+        .fallback_for(DataLocale::from_content_locale(person_name_locale));
 
     loop {
         let chain_locale = fallback_iterator.get();
