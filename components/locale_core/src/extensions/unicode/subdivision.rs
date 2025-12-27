@@ -4,6 +4,7 @@
 
 use core::str::FromStr;
 
+use super::Value;
 use crate::parser::ParseError;
 use crate::subtags::{Region, Subtag};
 
@@ -61,17 +62,51 @@ impl_tinystr_subtag!(
 /// # Examples
 ///
 /// ```
-/// use icu::locale::{
-///     extensions::unicode::{subdivision_suffix, SubdivisionId},
-///     subtags::region,
-/// };
+/// use icu::locale::locale;
+/// use icu::locale::extensions::unicode::key;
+/// use icu::locale::extensions::unicode::SubdivisionId;
+/// use icu::locale::subtags::Region;
+/// use writeable::assert_writeable_eq;
 ///
-/// let ss = subdivision_suffix!("zzzz");
-/// let region = region!("gb");
+/// // American English with British user preferences
+/// let locale = locale!("en-US-u-rg-gbzzzz");
 ///
-/// let si = SubdivisionId::new(region, ss);
+/// let normal_region = locale.id.region.unwrap();
+/// let rg_extension_value = locale.extensions.unicode.keywords.get(&key!("rg")).unwrap();
+/// let subdivision = SubdivisionId::try_from_value(&rg_extension_value).unwrap();
 ///
-/// assert_eq!(si.to_string(), "gbzzzz");
+/// assert_writeable_eq!(normal_region, "US");
+/// assert_writeable_eq!(subdivision.region, "GB");
+/// assert_writeable_eq!(subdivision.suffix, "zzzz");
+/// ```
+///
+/// When the value can't be parsed:
+///
+/// ```
+/// use icu::locale::extensions::unicode::SubdivisionId;
+/// use icu::locale::ParseError;
+///
+/// // Value is too short
+/// assert!(matches!(
+///     SubdivisionId::try_from_str("zz"),
+///     Err(ParseError::InvalidExtension),
+/// ));
+///
+/// // Value is too long
+/// assert!(matches!(
+///     SubdivisionId::try_from_str("abcdefg"),
+///     Err(ParseError::InvalidExtension),
+/// ));
+///
+/// // Value does not start with a valid region code
+/// assert!(matches!(
+///     SubdivisionId::try_from_str("a0zzzz"),
+///     Err(ParseError::InvalidExtension),
+/// ));
+/// assert!(matches!(
+///     SubdivisionId::try_from_str("0azzzz"),
+///     Err(ParseError::InvalidExtension),
+/// ));
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
 #[non_exhaustive]
@@ -129,6 +164,35 @@ impl SubdivisionId {
             Region::try_from_utf8(region_code_units).map_err(|_| ParseError::InvalidExtension)?;
         let suffix = SubdivisionSuffix::try_from_utf8(suffix_code_units)?;
         Ok(Self { region, suffix })
+    }
+
+    /// Converts a [`Value`] to a [`SubdivisionId`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::extensions::unicode::value;
+    /// use icu::locale::extensions::unicode::SubdivisionId;
+    /// use icu::locale::ParseError;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let subdivision = SubdivisionId::try_from_value(&value!("gbeng")).unwrap();
+    ///
+    /// assert_writeable_eq!(subdivision.region, "GB");
+    /// assert_writeable_eq!(subdivision.suffix, "eng");
+    ///
+    /// // Value is empty (special value "true")
+    /// // See also: https://unicode-org.atlassian.net/browse/CLDR-19163
+    /// assert!(matches!(
+    ///     SubdivisionId::try_from_value(&value!("true")),
+    ///     Err(ParseError::InvalidExtension),
+    /// ));
+    /// ```
+    pub fn try_from_value(value: &Value) -> Result<Self, ParseError> {
+        let subtag = value
+            .as_single_subtag()
+            .ok_or(ParseError::InvalidExtension)?;
+        Self::try_from_utf8(subtag.as_tinystr().as_bytes())
     }
 
     /// Convert to [`Subtag`]

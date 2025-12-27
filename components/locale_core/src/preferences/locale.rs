@@ -66,13 +66,15 @@ impl From<&crate::Locale> for LocalePreferences {
             .unicode
             .keywords
             .get(&crate::extensions::unicode::key!("sd"))
-            .and_then(|v| SubdivisionId::try_from_str(v.as_single_subtag()?.as_str()).ok());
+            // This silently throws away malformed subtags. Should we error?
+            .and_then(|v| SubdivisionId::try_from_value(v).ok());
         let ue_region = loc
             .extensions
             .unicode
             .keywords
             .get(&crate::extensions::unicode::key!("rg"))
-            .and_then(|v| SubdivisionId::try_from_str(v.as_single_subtag()?.as_str()).ok());
+            // This silently throws away malformed subtags. Should we error?
+            .and_then(|v| SubdivisionId::try_from_value(v).ok());
         Self {
             language: loc.id.language,
             script: loc.id.script,
