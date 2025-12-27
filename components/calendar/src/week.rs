@@ -28,7 +28,7 @@ define_preferences!(
 /// ```
 /// use icu::calendar::week::WeekInformation;
 /// use icu::calendar::types::Weekday;
-/// use icu::locale::locale;
+/// use icu::locale::{locale, Locale};
 ///
 /// // For en-US
 /// let info = WeekInformation::try_new(locale!("en-US").into()).unwrap();
@@ -38,9 +38,13 @@ define_preferences!(
 /// let info = WeekInformation::try_new(locale!("de-DE").into()).unwrap();
 /// assert_eq!(info.first_weekday, Weekday::Monday);
 ///
-/// // For en-US with a Germany preference override
+/// // For en-US with a Germany region preference override
 /// let info = WeekInformation::try_new(locale!("en-US-u-rg-dezzzz").into()).unwrap();
 /// assert_eq!(info.first_weekday, Weekday::Monday);
+///
+/// // As above but also with a First Weekday override
+/// let info = WeekInformation::try_new(Locale::try_from_str("en-US-u-rg-dezzzz-fw-wed").unwrap().into()).unwrap();
+/// assert_eq!(info.first_weekday, Weekday::Wednesday);
 /// ```
 #[derive(Clone, Copy, Debug)]
 #[non_exhaustive]
