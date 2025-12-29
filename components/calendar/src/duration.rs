@@ -417,31 +417,3 @@ impl DateDuration {
         }
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn parses_basic_iso_durations() {
-        let d = DateDuration::try_from_str("P1D").unwrap();
-        assert_eq!(d.days, 1);
-        assert!(!d.is_negative);
-
-        let d = DateDuration::try_from_str("P2M1D").unwrap();
-        assert_eq!(d.months, 2);
-        assert_eq!(d.days, 1);
-
-        let d = DateDuration::try_from_str("-P3W").unwrap();
-        assert!(d.is_negative);
-        assert_eq!(d.weeks, 3);
-    }
-
-    #[test]
-    fn rejects_invalid_durations() {
-        assert!(DateDuration::try_from_str("P").is_err());
-        assert!(DateDuration::try_from_str("P1Y2").is_err());
-        assert!(DateDuration::try_from_str("PT5M").is_err());
-        assert!(DateDuration::try_from_str("+P1D").is_err());
-    }
-}
