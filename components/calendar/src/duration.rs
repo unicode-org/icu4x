@@ -178,6 +178,8 @@ impl DateDuration {
 }
 
 impl DateDuration {
+    /// parses an ISO 8601 date only duration string into a [`DateDuration`].
+    /// this function supports year, month, week and day components and rejects time based durations and returns an error for invalid structures or duplicate units.
     pub fn try_from_str(s: &str) -> Result<Self, DateDurationParseError> {
         let mut s = s;
         let mut is_negative = false;
