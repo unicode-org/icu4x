@@ -151,45 +151,50 @@ impl JapaneseExtended {
     }
 }
 
-const MEIJI: (EraStartDate, TinyAsciiStr<16>) = (
+const MEIJI: (EraStartDate, TinyAsciiStr<16>, u8) = (
     EraStartDate {
         year: 1868,
         month: 10,
         day: 23,
     },
     tinystr!(16, "meiji"),
+    2,
 );
-const TAISHO: (EraStartDate, TinyAsciiStr<16>) = (
+const TAISHO: (EraStartDate, TinyAsciiStr<16>, u8) = (
     EraStartDate {
         year: 1912,
         month: 7,
         day: 30,
     },
     tinystr!(16, "taisho"),
+    3,
 );
-const SHOWA: (EraStartDate, TinyAsciiStr<16>) = (
+const SHOWA: (EraStartDate, TinyAsciiStr<16>, u8) = (
     EraStartDate {
         year: 1926,
         month: 12,
         day: 25,
     },
     tinystr!(16, "showa"),
+    4,
 );
-const HEISEI: (EraStartDate, TinyAsciiStr<16>) = (
+const HEISEI: (EraStartDate, TinyAsciiStr<16>, u8) = (
     EraStartDate {
         year: 1989,
         month: 1,
         day: 8,
     },
     tinystr!(16, "heisei"),
+    5,
 );
-pub(crate) const REIWA: (EraStartDate, TinyAsciiStr<16>) = (
+pub(crate) const REIWA: (EraStartDate, TinyAsciiStr<16>, u8) = (
     EraStartDate {
         year: 2019,
         month: 5,
         day: 1,
     },
     tinystr!(16, "reiwa"),
+    6,
 );
 
 impl GregorianYears for &'_ Japanese {
@@ -202,12 +207,12 @@ impl GregorianYears for &'_ Japanese {
             return Ok(g);
         }
 
-        let (start, _) = self
+        let (start, ..) = self
             .post_reiwa_era
-            .map(PackedEra::unpack)
+            .map(|p| p.unpack())
             .into_iter()
             .chain([REIWA, HEISEI, SHOWA, TAISHO, MEIJI])
-            .find(|(_, name)| era == Some(name.as_bytes()))
+            .find(|(_, name, _)| era == Some(name.as_bytes()))
             .ok_or(UnknownEraError)?;
 
         Ok(year - 1 + start.year)
@@ -216,15 +221,15 @@ impl GregorianYears for &'_ Japanese {
     fn era_year_from_extended(&self, year: i32, month: u8, day: u8) -> types::EraYear {
         let date: EraStartDate = EraStartDate { year, month, day };
 
-        if let Some((idx, (start, era))) = self
+        if let Some((start, code, idx)) = self
             .post_reiwa_era
-            .map(|p| (7, p.unpack()))
+            .map(PackedEra::unpack)
             .into_iter()
-            .chain([(6, REIWA), (5, HEISEI), (4, SHOWA), (3, TAISHO), (2, MEIJI)])
-            .find(|&(_, (start, _))| date >= start)
+            .chain([REIWA, HEISEI, SHOWA, TAISHO, MEIJI])
+            .find(|&(start, ..)| date >= start)
         {
             types::EraYear {
-                era,
+                era: code,
                 era_index: Some(idx),
                 year: year - start.year + 1,
                 extended_year: year,
@@ -310,12 +315,12 @@ impl GregorianYears for &'_ JapaneseExtended {
                 .get()
                 .dates_to_eras
                 .last()
-                .is_some_and(|(_, e)| e == tinystr!(16, "reiwa"))
+                .is_some_and(|(_, e)| e == REIWA.1)
         {
             // We optimize for the five "modern" post-Meiji eras, which are stored in a smaller
             // array and also hardcoded. The hardcoded version is not used if data indicates the
             // presence of newer eras.
-            if date >= REIWA.0 {
+            let (start, code, _) = if date >= REIWA.0 {
                 REIWA
             } else if date >= HEISEI.0 {
                 HEISEI
@@ -325,7 +330,8 @@ impl GregorianYears for &'_ JapaneseExtended {
                 TAISHO
             } else {
                 MEIJI
-            }
+            };
+            (start, code)
         } else {
             let data = &self.eras.get().dates_to_eras;
             #[allow(clippy::unwrap_used)] // binary search

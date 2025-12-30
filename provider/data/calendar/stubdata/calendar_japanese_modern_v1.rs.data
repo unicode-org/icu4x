@@ -4,7 +4,7 @@
 /// `icu`'s `_unstable` constructors.
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
-/// * 11B[^1] for the singleton data struct
+/// * 12B[^1] for the singleton data struct
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 ///
@@ -21,7 +21,7 @@ macro_rules! __impl_calendar_japanese_modern_v1 {
         #[clippy::msrv = "1.83"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_CALENDAR_JAPANESE_MODERN_V1: &'static <icu::calendar::provider::CalendarJapaneseModernV1 as icu_provider::DynamicDataMarker>::DataStruct = &icu::calendar::provider::PackedEra::pack((icu::calendar::provider::EraStartDate { year: 2019i32, month: 5u8, day: 1u8 }, tinystr::tinystr!(16usize, "reiwa")));
+            pub const SINGLETON_CALENDAR_JAPANESE_MODERN_V1: &'static <icu::calendar::provider::CalendarJapaneseModernV1 as icu_provider::DynamicDataMarker>::DataStruct = &icu::calendar::provider::PackedEra::pack(icu::calendar::provider::EraStartDate { year: 2019i32, month: 5u8, day: 1u8 }, tinystr::tinystr!(16usize, "reiwa"), 6u8);
         }
         #[clippy::msrv = "1.83"]
         impl icu_provider::DataProvider<icu::calendar::provider::CalendarJapaneseModernV1> for $provider {

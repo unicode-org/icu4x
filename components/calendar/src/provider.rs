@@ -140,22 +140,27 @@ pub struct PackedEra {
     pub day: u8,
     /// The era code
     pub name: TinyAsciiStr<8>,
+    /// This era's [`era_index`](crate::types::EraYear::era_index)
+    pub index: u8,
 }
 
 impl PackedEra {
     /// Construct a `PackedEra` from a tuple
-    pub const fn pack(v: (EraStartDate, TinyAsciiStr<16>)) -> Self {
-        debug_assert!(2000 <= v.0.year && v.0.year <= 2000 + u8::MAX as i32);
+    pub const fn pack(start: EraStartDate, code: TinyAsciiStr<16>, index: u8) -> Self {
+        debug_assert!(code.len() <= 8);
+        debug_assert!(2000 <= start.year && start.year <= 2000 + u8::MAX as i32);
+        debug_assert!(index >= 6); // only pack Reiwa and later
         Self {
-            year: (v.0.year - 2000) as u8,
-            month: v.0.month,
-            day: v.0.day,
-            name: v.1.resize(),
+            year: (start.year - 2000) as u8,
+            month: start.month,
+            day: start.day,
+            name: code.resize(),
+            index,
         }
     }
 
     /// Convert a `PackedEra` into a tuple
-    pub const fn unpack(self) -> (EraStartDate, TinyAsciiStr<16>) {
+    pub const fn unpack(self) -> (EraStartDate, TinyAsciiStr<16>, u8) {
         (
             EraStartDate {
                 year: self.year as i32 + 2000,
@@ -163,6 +168,7 @@ impl PackedEra {
                 day: self.day,
             },
             self.name.resize(),
+            self.index,
         )
     }
 }
@@ -174,8 +180,12 @@ impl serde::Serialize for PackedEra {
     where
         S: serde::Serializer,
     {
+        let (start, name, index) = self.unpack();
         JapaneseEras {
-            dates_to_eras: ZeroVec::from_iter([self.unpack()]),
+            dates_to_eras: ZeroVec::from_iter(
+                // encode the era index in the length of the list
+                core::iter::repeat_n((start, name), index as usize - 5),
+            ),
         }
         .serialize(serializer)
     }
@@ -191,10 +201,30 @@ impl<'de> serde::Deserialize<'de> for PackedEra {
         use serde::de::Error;
         JapaneseEras::deserialize(deserializer)?
             .dates_to_eras
-            .last()
+            .iter()
+            .enumerate()
+            .next_back()
             .ok_or(D::Error::custom("empty eras"))
-            .map(Self::pack)
+            .map(|(index, (start, code))| Self::pack(start, code, index as u8 + 6))
     }
+}
+
+#[test]
+fn packed_era_serde() {
+    let packed = PackedEra::pack(
+        EraStartDate {
+            year: 2040,
+            month: 2,
+            day: 8,
+        },
+        tinystr::tinystr!(16, "zen"),
+        7,
+    );
+
+    assert_eq!(
+        serde_json::from_str::<PackedEra>(&serde_json::to_string_pretty(&packed).unwrap()).unwrap(),
+        packed
+    );
 }
 
 #[cfg(feature = "datagen")]
@@ -202,7 +232,7 @@ impl databake::Bake for PackedEra {
     fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
         let e = self.unpack().bake(ctx);
         databake::quote! {
-            icu_calendar::provider::PackedEra::pack(#e)
+            icu_calendar::provider::PackedEra::pack #e
         }
     }
 }

@@ -98,7 +98,20 @@ impl SourceDataProvider {
                                     if era_year.era != data.code {
                                         println!("mismatched era code {era_year:?} - {data:?}");
                                     }
-                                    data.icu4x_era_index = era_year.era_index;
+                                    data.icu4x_era_index = era_year.era_index.or((cal
+                                        == DatagenCalendar::JapaneseModern)
+                                        .then(|| {
+                                            era_dates_map[cal.cldr_name()]
+                                                .eras
+                                                .iter()
+                                                .skip_while(|(_, data)| {
+                                                    data.start.unwrap().year < 1868
+                                                })
+                                                .position(|(_, x)| *x == data)
+                                                .unwrap()
+                                                as u8
+                                                + 2
+                                        }));
                                 }
                             }
 
@@ -153,12 +166,18 @@ impl DataProvider<CalendarJapaneseModernV1> for SourceDataProvider {
             .chain(eras)
             .filter(|(_, data)| !matches!(data.code.as_str(), "bce" | "ce"))
             .max_by_key(|(_, data)| data.start.unwrap())
-            .map(|(_, data)| (data.start.unwrap(), data.code.parse().unwrap()))
+            .map(|(_, data)| {
+                PackedEra::pack(
+                    data.start.unwrap(),
+                    data.code.parse().unwrap(),
+                    data.icu4x_era_index.unwrap(),
+                )
+            })
             .unwrap();
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(PackedEra::pack(last_era)),
+            payload: DataPayload::from_owned(last_era),
         })
     }
 }
@@ -295,7 +314,7 @@ pub fn japanese_and_japanext_are_compatible() {
         .payload;
     assert_eq!(
         japanext.get().dates_to_eras.last(),
-        Some(japanese.get().unpack()),
+        Some((japanese.get().unpack().0, japanese.get().unpack().1)),
         "{japanext:?} - {japanese:?}"
     );
 }
