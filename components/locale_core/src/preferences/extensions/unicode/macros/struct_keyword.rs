@@ -33,7 +33,7 @@ macro_rules! __struct_keyword {
         #[derive(Debug, Clone, Eq, PartialEq, Hash)]
         $(#[derive($derive_attrs)])?
         #[allow(clippy::exhaustive_structs)] // TODO
-        pub struct $name($value);
+        pub struct $name(pub(crate) $value);
 
         impl TryFrom<$crate::extensions::unicode::Value> for $name {
             type Error = $crate::preferences::extensions::unicode::errors::PreferencesParseError;

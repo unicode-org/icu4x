@@ -3,7 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::extensions::unicode as unicode_ext;
-use crate::preferences::LocalePreferences;
+use crate::preferences::{
+    extensions::unicode::keywords::RegionalSubdivision, LocalePreferences, PreferenceKey,
+};
 use crate::subtags::{Language, Region, Script, Subtag, Variant};
 #[cfg(feature = "alloc")]
 use crate::ParseError;
@@ -171,13 +173,14 @@ impl DataLocale {
 
         let unicode_extensions_count = locale.extensions.unicode.keywords.iter().count();
 
+        #[allow(clippy::unwrap_used)] // RegionalSubdivision has a unicode_extension_key
         if unicode_extensions_count != 0
             && (unicode_extensions_count != 1
                 || !locale
                     .extensions
                     .unicode
                     .keywords
-                    .contains_key(&unicode_ext::key!("sd")))
+                    .contains_key(&RegionalSubdivision::unicode_extension_key().unwrap()))
         {
             return Err(ParseError::InvalidExtension);
         }
@@ -199,10 +202,8 @@ impl DataLocale {
         if let Some(ref single_variant) = self.variant {
             f(single_variant.as_str())?;
         }
-        if let Some(ref subdivision) = self.subdivision {
-            f("u")?;
-            f("sd")?;
-            f(subdivision.as_str())?;
+        if let Some(extensions) = self.extensions() {
+            extensions.for_each_subtag_str(f)?;
         }
         Ok(())
     }
@@ -352,20 +353,26 @@ impl DataLocale {
                     .map(crate::subtags::Variants::from_variant)
                     .unwrap_or_default(),
             },
-            extensions: {
-                let mut extensions = crate::extensions::Extensions::default();
-                if let Some(sd) = self.subdivision {
-                    extensions.unicode = unicode_ext::Unicode {
-                        keywords: unicode_ext::Keywords::new_single(
-                            unicode_ext::key!("sd"),
-                            unicode_ext::Value::from_subtag(Some(sd)),
-                        ),
-                        ..Default::default()
-                    }
-                }
-                extensions
-            },
+            extensions: self.extensions().unwrap_or_default(),
         }
+    }
+
+    fn extensions(&self) -> Option<crate::extensions::Extensions> {
+        #[allow(clippy::unwrap_used)] // RegionalSubdivision has a unicode_extension_key
+        Some(crate::extensions::Extensions {
+            unicode: unicode_ext::Unicode {
+                keywords: unicode_ext::Keywords::new_single(
+                    RegionalSubdivision::unicode_extension_key().unwrap(),
+                    RegionalSubdivision(
+                        unicode_ext::SubdivisionId::try_from_str(self.subdivision?.as_str())
+                            .ok()?,
+                    )
+                    .into(),
+                ),
+                ..Default::default()
+            },
+            ..Default::default()
+        })
     }
 }
 
