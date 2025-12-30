@@ -118,6 +118,12 @@ impl EmojiSetDataBorrowed<'_> {
         self.set.contains_str(s)
     }
 
+    /// See [`Self::contains_str`].
+    #[inline]
+    pub fn contains_utf8(self, s: &[u8]) -> bool {
+        self.set.contains_utf8(s)
+    }
+
     /// Check if the set contains the code point.
     #[inline]
     pub fn contains(self, ch: char) -> bool {

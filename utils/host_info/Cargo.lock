@@ -318,6 +318,7 @@ dependencies = [
  "displaydoc",
  "potential_utf",
  "serde",
+ "utf8_iter",
  "yoke",
  "zerofrom",
  "zerovec",
