@@ -109,11 +109,13 @@ impl Uts46MapperBorrowed<'_> {
         &'delegate self,
         iter: I,
     ) -> impl Iterator<Item = char> + 'delegate {
-        self.normalizer
-            .normalize_iter_private::<_, Trie46, Uts46MapNormalizePolicy>(CharIterWithTrie::new(
-                iter,
-                self.normalizer.trie::<Trie46<'_>>(),
-            ))
+        let mut ret =
+            self.normalizer
+                .normalize_iter_private::<_, Trie46, Uts46MapNormalizePolicy>(
+                    CharIterWithTrie::new(iter, self.normalizer.trie::<Trie46<'_>>()),
+                );
+        let _ = ret.decomposition.init(); // Discard the U+0000.
+        ret
     }
 
     /// Returns an iterator adaptor that turns an `Iterator` over `char`
@@ -144,14 +146,18 @@ impl Uts46MapperBorrowed<'_> {
     ///   and status requirements. In particular, this comparison results
     ///   in _mapped_ characters resulting in error like "Validity Criteria"
     ///   requires.
+    #[inline]
     pub fn normalize_validate<'delegate, I: Iterator<Item = char> + 'delegate>(
         &'delegate self,
         iter: I,
     ) -> impl Iterator<Item = char> + 'delegate {
-        self.normalizer
+        let mut ret = self
+            .normalizer
             .normalize_iter_private::<_, Trie46, Uts46NormalizeValidatePolicy>(
                 CharIterWithTrie::new(iter, self.normalizer.trie::<Trie46<'_>>()),
-            )
+            );
+        let _ = ret.decomposition.init(); // Discard the U+0000.
+        ret
     }
 }
 

@@ -713,6 +713,7 @@ macro_rules! compare {
             let norm_trie = self.norm_trie();
             let ret = self.compare_impl(left_tail.$left_to_iter(norm_trie), right_tail.$right_to_iter(norm_trie), head.$left_to_iter(norm_trie).rev());
             if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
+                // We don't need to remove the leading U+0000, because it compares equal anyway.
                 return icu_normalizer::new_decomposition(left_tail.$left_to_iter(norm_trie), self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }).cmp(
                     icu_normalizer::new_decomposition(right_tail.$right_to_iter(norm_trie), self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }),
                 );
@@ -1909,7 +1910,8 @@ impl<'data> CollatorBorrowed<'data> {
         if let Some(iter) = identical {
             sink.write_byte(&mut state, LEVEL_SEPARATOR_BYTE)?;
 
-            let iter = icu_normalizer::new_decomposition(iter, self.tables);
+            let mut iter = icu_normalizer::new_decomposition(iter, self.tables);
+            let _ = iter.next(); // Discard the U+0000.
             write_identical_level(iter, sink, &mut state)?;
         }
 
