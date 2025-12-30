@@ -64,8 +64,7 @@ impl_tinystr_subtag!(
 /// ```
 /// use icu::locale::locale;
 /// use icu::locale::extensions::unicode::key;
-/// use icu::locale::extensions::unicode::SubdivisionId;
-/// use icu::locale::subtags::Region;
+/// use icu::locale::preferences::extensions::unicode::keywords::RegionOverride;
 /// use writeable::assert_writeable_eq;
 ///
 /// // American English with British user preferences
@@ -73,7 +72,7 @@ impl_tinystr_subtag!(
 ///
 /// let normal_region = locale.id.region.unwrap();
 /// let rg_extension_value = locale.extensions.unicode.keywords.get(&key!("rg")).unwrap();
-/// let subdivision = SubdivisionId::try_from_value(&rg_extension_value).unwrap();
+/// let subdivision = RegionOverride::try_from(rg_extension_value.clone()).unwrap();
 ///
 /// assert_writeable_eq!(normal_region, "US");
 /// assert_writeable_eq!(subdivision.region, "GB");
@@ -106,6 +105,20 @@ impl_tinystr_subtag!(
 /// assert!(matches!(
 ///     SubdivisionId::try_from_str("0azzzz"),
 ///     Err(ParseError::InvalidExtension),
+/// ));
+/// ```
+///
+/// Special value "true"; see [CLDR-19163](https://unicode-org.atlassian.net/browse/CLDR-19163):
+///
+/// ```
+/// use icu::locale::extensions::unicode::value;
+/// use icu::locale::preferences::extensions::unicode::keywords::RegionalSubdivision;
+/// use icu::locale::preferences::extensions::unicode::errors::PreferencesParseError;
+/// use writeable::assert_writeable_eq;
+///
+/// assert!(matches!(
+///     RegionalSubdivision::try_from(value!("true")),
+///     Err(PreferencesParseError::InvalidKeywordValue),
 /// ));
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
@@ -169,25 +182,6 @@ impl SubdivisionId {
     /// Converts a [`Value`] to a [`SubdivisionId`].
     ///
     /// # Examples
-    ///
-    /// ```
-    /// use icu::locale::extensions::unicode::value;
-    /// use icu::locale::extensions::unicode::SubdivisionId;
-    /// use icu::locale::ParseError;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let subdivision = SubdivisionId::try_from_value(&value!("gbeng")).unwrap();
-    ///
-    /// assert_writeable_eq!(subdivision.region, "GB");
-    /// assert_writeable_eq!(subdivision.suffix, "eng");
-    ///
-    /// // Value is empty (special value "true")
-    /// // See also: https://unicode-org.atlassian.net/browse/CLDR-19163
-    /// assert!(matches!(
-    ///     SubdivisionId::try_from_value(&value!("true")),
-    ///     Err(ParseError::InvalidExtension),
-    /// ));
-    /// ```
     pub fn try_from_value(value: &Value) -> Result<Self, ParseError> {
         let subtag = value
             .as_single_subtag()
