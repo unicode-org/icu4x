@@ -3,9 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::extensions::unicode as unicode_ext;
-use crate::preferences::{
-    extensions::unicode::keywords::RegionalSubdivision, LocalePreferences, PreferenceKey,
-};
+use crate::preferences::{extensions::unicode::keywords::RegionalSubdivision, LocalePreferences};
 use crate::subtags::{Language, Region, Script, Subtag, Variant};
 #[cfg(feature = "alloc")]
 use crate::ParseError;
@@ -173,14 +171,13 @@ impl DataLocale {
 
         let unicode_extensions_count = locale.extensions.unicode.keywords.iter().count();
 
-        #[allow(clippy::unwrap_used)] // RegionalSubdivision has a unicode_extension_key
         if unicode_extensions_count != 0
             && (unicode_extensions_count != 1
                 || !locale
                     .extensions
                     .unicode
                     .keywords
-                    .contains_key(&RegionalSubdivision::unicode_extension_key().unwrap()))
+                    .contains_key(&RegionalSubdivision::UNICODE_EXTENSION_KEY))
         {
             return Err(ParseError::InvalidExtension);
         }
@@ -358,11 +355,10 @@ impl DataLocale {
     }
 
     fn extensions(&self) -> Option<crate::extensions::Extensions> {
-        #[allow(clippy::unwrap_used)] // RegionalSubdivision has a unicode_extension_key
         Some(crate::extensions::Extensions {
             unicode: unicode_ext::Unicode {
                 keywords: unicode_ext::Keywords::new_single(
-                    RegionalSubdivision::unicode_extension_key().unwrap(),
+                    RegionalSubdivision::UNICODE_EXTENSION_KEY,
                     RegionalSubdivision(
                         unicode_ext::SubdivisionId::try_from_str(self.subdivision?.as_str())
                             .ok()?,

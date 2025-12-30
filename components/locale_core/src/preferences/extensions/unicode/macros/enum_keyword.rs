@@ -104,14 +104,14 @@ macro_rules! __enum_keyword {
 
         impl $crate::preferences::PreferenceKey for $name {
             fn unicode_extension_key() -> Option<$crate::extensions::unicode::Key> {
-                Some($crate::extensions::unicode::key!($ext_key))
+                Some(Self::UNICODE_EXTENSION_KEY)
             }
 
             fn try_from_key_value(
                 key: &$crate::extensions::unicode::Key,
                 value: &$crate::extensions::unicode::Value,
             ) -> Result<Option<Self>, $crate::preferences::extensions::unicode::errors::PreferencesParseError> {
-                if Self::unicode_extension_key() == Some(*key) {
+                if Self::UNICODE_EXTENSION_KEY == *key {
                     Self::try_from(value).map(Some)
                 } else {
                     Ok(None)
@@ -121,6 +121,10 @@ macro_rules! __enum_keyword {
             fn unicode_extension_value(&self) -> Option<$crate::extensions::unicode::Value> {
                 Some((*self).into())
             }
+        }
+
+        impl $name {
+            pub(crate) const UNICODE_EXTENSION_KEY: $crate::extensions::unicode::Key = $crate::extensions::unicode::key!($ext_key);
         }
 
         impl TryFrom<&$crate::extensions::unicode::Value> for $name {

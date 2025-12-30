@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::preferences::extensions::unicode::keywords::{RegionOverride, RegionalSubdivision};
-use crate::preferences::PreferenceKey;
 #[cfg(feature = "alloc")]
 use crate::subtags::Variants;
 use crate::subtags::{Language, Region, Script, Variant};
@@ -67,19 +66,17 @@ impl From<&crate::Locale> for LocalePreferences {
             script: loc.id.script,
             region: loc.id.region,
             variant: loc.id.variants.iter().copied().next(),
-            #[allow(clippy::unwrap_used)] // RegionalSubdivision has a unicode_extension_key
             subdivision: loc
                 .extensions
                 .unicode
                 .keywords
-                .get(&RegionalSubdivision::unicode_extension_key().unwrap())
+                .get(&RegionalSubdivision::UNICODE_EXTENSION_KEY)
                 .and_then(|v| RegionalSubdivision::try_from(v.clone()).ok()),
-            #[allow(clippy::unwrap_used)] // RegionOverride has a unicode_extension_key
             region_override: loc
                 .extensions
                 .unicode
                 .keywords
-                .get(&RegionOverride::unicode_extension_key().unwrap())
+                .get(&RegionOverride::UNICODE_EXTENSION_KEY)
                 .and_then(|v| RegionOverride::try_from(v.clone()).ok()),
         }
     }
@@ -114,19 +111,17 @@ impl From<LocalePreferences> for crate::Locale {
             },
             extensions: {
                 let mut extensions = crate::extensions::Extensions::default();
-                #[allow(clippy::unwrap_used)] // RegionalSubdivision has a unicode_extension_key
                 if let Some(sd) = prefs.subdivision {
-                    extensions.unicode.keywords.set(
-                        RegionalSubdivision::unicode_extension_key().unwrap(),
-                        sd.into(),
-                    );
+                    extensions
+                        .unicode
+                        .keywords
+                        .set(RegionalSubdivision::UNICODE_EXTENSION_KEY, sd.into());
                 }
-                #[allow(clippy::unwrap_used)] // RegionOverride has a unicode_extension_key
                 if let Some(rg) = prefs.region_override {
                     extensions
                         .unicode
                         .keywords
-                        .set(RegionOverride::unicode_extension_key().unwrap(), rg.into());
+                        .set(RegionOverride::UNICODE_EXTENSION_KEY, rg.into());
                 }
                 extensions
             },

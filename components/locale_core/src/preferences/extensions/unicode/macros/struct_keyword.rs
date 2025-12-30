@@ -53,14 +53,14 @@ macro_rules! __struct_keyword {
 
         impl $crate::preferences::PreferenceKey for $name {
             fn unicode_extension_key() -> Option<$crate::extensions::unicode::Key> {
-                Some($crate::extensions::unicode::key!($ext_key))
+                Some(Self::UNICODE_EXTENSION_KEY)
             }
 
             fn try_from_key_value(
                 key: &$crate::extensions::unicode::Key,
                 value: &$crate::extensions::unicode::Value,
             ) -> Result<Option<Self>, $crate::preferences::extensions::unicode::errors::PreferencesParseError> {
-                if Self::unicode_extension_key() == Some(*key) {
+                if Self::UNICODE_EXTENSION_KEY == *key {
                     let result = Self::try_from(value.clone())?;
                     Ok(Some(result))
                 } else {
@@ -73,6 +73,10 @@ macro_rules! __struct_keyword {
             ) -> Option<$crate::extensions::unicode::Value> {
                 Some(self.clone().into())
             }
+        }
+
+        impl $name {
+            pub(crate) const UNICODE_EXTENSION_KEY: $crate::extensions::unicode::Key = $crate::extensions::unicode::key!($ext_key);
         }
 
         impl core::ops::Deref for $name {
