@@ -121,15 +121,15 @@ mod tests {
             DummyKeyword,
             "dk",
             Subtag,
-            |input: unicode::Value| {
-                if let Some(subtag) = input.into_single_subtag() {
+            |input: &unicode::Value| {
+                if let Some(&subtag) = input.as_single_subtag() {
                     if subtag.len() == 3 {
                         return Ok(DummyKeyword(subtag));
                     }
                 }
                 Err(crate::preferences::extensions::unicode::errors::PreferencesParseError::InvalidKeywordValue)
             },
-            |input: DummyKeyword| { unicode::Value::from_subtag(Some(input.0)) }
+            |input: &DummyKeyword| { unicode::Value::from_subtag(Some(input.0)) }
         );
 
         let v = unicode::Value::from_str("foo").unwrap();
