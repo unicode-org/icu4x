@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::extensions::unicode as unicode_ext;
+use crate::preferences::{extensions::unicode::keywords::RegionalSubdivision, LocalePreferences};
 use crate::subtags::{Language, Region, Script, Subtag, Variant};
 #[cfg(feature = "alloc")]
 use crate::ParseError;
@@ -129,15 +130,7 @@ impl From<&LanguageIdentifier> for DataLocale {
 
 impl From<&Locale> for DataLocale {
     fn from(locale: &Locale) -> Self {
-        let mut r = Self::from(&locale.id);
-
-        r.subdivision = locale
-            .extensions
-            .unicode
-            .keywords
-            .get(&unicode_ext::key!("sd"))
-            .and_then(|v| v.as_single_subtag().copied());
-        r
+        LocalePreferences::from(locale).to_data_locale_language_priority()
     }
 }
 
@@ -184,7 +177,7 @@ impl DataLocale {
                     .extensions
                     .unicode
                     .keywords
-                    .contains_key(&unicode_ext::key!("sd")))
+                    .contains_key(&RegionalSubdivision::UNICODE_EXTENSION_KEY))
         {
             return Err(ParseError::InvalidExtension);
         }
@@ -206,10 +199,8 @@ impl DataLocale {
         if let Some(ref single_variant) = self.variant {
             f(single_variant.as_str())?;
         }
-        if let Some(ref subdivision) = self.subdivision {
-            f("u")?;
-            f("sd")?;
-            f(subdivision.as_str())?;
+        if let Some(extensions) = self.extensions() {
+            extensions.for_each_subtag_str(f)?;
         }
         Ok(())
     }
@@ -359,20 +350,25 @@ impl DataLocale {
                     .map(crate::subtags::Variants::from_variant)
                     .unwrap_or_default(),
             },
-            extensions: {
-                let mut extensions = crate::extensions::Extensions::default();
-                if let Some(sd) = self.subdivision {
-                    extensions.unicode = unicode_ext::Unicode {
-                        keywords: unicode_ext::Keywords::new_single(
-                            unicode_ext::key!("sd"),
-                            unicode_ext::Value::from_subtag(Some(sd)),
-                        ),
-                        ..Default::default()
-                    }
-                }
-                extensions
-            },
+            extensions: self.extensions().unwrap_or_default(),
         }
+    }
+
+    fn extensions(&self) -> Option<crate::extensions::Extensions> {
+        Some(crate::extensions::Extensions {
+            unicode: unicode_ext::Unicode {
+                keywords: unicode_ext::Keywords::new_single(
+                    RegionalSubdivision::UNICODE_EXTENSION_KEY,
+                    RegionalSubdivision(
+                        unicode_ext::SubdivisionId::try_from_str(self.subdivision?.as_str())
+                            .ok()?,
+                    )
+                    .into(),
+                ),
+                ..Default::default()
+            },
+            ..Default::default()
+        })
     }
 }
 
