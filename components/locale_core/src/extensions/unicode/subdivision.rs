@@ -47,8 +47,10 @@ impl_tinystr_subtag!(
 );
 
 impl SubdivisionSuffix {
+    pub(crate) const UNKNOWN: Self = subdivision_suffix!("zzzz");
+
     pub(crate) fn is_unknown(self) -> bool {
-        self == subdivision_suffix!("zzzz")
+        self == Self::UNKNOWN
     }
 }
 
