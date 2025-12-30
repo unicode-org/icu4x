@@ -41,12 +41,28 @@ macro_rules! __struct_keyword {
             fn try_from(
                 input: $crate::extensions::unicode::Value,
             ) -> Result<Self, Self::Error> {
+                Self::try_from(&input)
+            }
+        }
+
+        impl TryFrom<&$crate::extensions::unicode::Value> for $name {
+            type Error = $crate::preferences::extensions::unicode::errors::PreferencesParseError;
+
+            fn try_from(
+                input: &$crate::extensions::unicode::Value,
+            ) -> Result<Self, Self::Error> {
                 $try_from(input)
             }
         }
 
         impl From<$name> for $crate::extensions::unicode::Value {
             fn from(input: $name) -> $crate::extensions::unicode::Value {
+                (&input).into()
+            }
+        }
+
+        impl From<&$name> for $crate::extensions::unicode::Value {
+            fn from(input: &$name) -> $crate::extensions::unicode::Value {
                 $into(input)
             }
         }
