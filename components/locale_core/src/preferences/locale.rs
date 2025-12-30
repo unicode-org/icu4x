@@ -262,6 +262,11 @@ mod tests {
                 language_priority: "en-US-u-sd-ustx",
                 region_priority: "en-GB",
             },
+            TestCase {
+                input: "en-US-u-rg-gbeng-sd-ustx",
+                language_priority: "en-US-u-sd-ustx",
+                region_priority: "en-GB-u-sd-gbeng",
+            },
         ];
         for test_case in test_cases.iter() {
             let locale = Locale::try_from_str(test_case.input).unwrap();
