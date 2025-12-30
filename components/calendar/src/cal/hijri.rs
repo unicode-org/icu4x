@@ -59,15 +59,21 @@ mod ummalqura_data;
 ///
 /// # Crescent moon visibility
 ///
-/// According to Islam, months begin when an observer first sees the crescent moon.
+/// According to Islam, months begin when the crescent moon is visible in the sky.
 ///
-/// For centuries, astronomers have been developing criteria for predicting crescent moon
-/// visibility. However, most regions that use the Hijri calendar rely on observations that
-/// are impacted by atmospheric phenomena, meaning such predictions are only an approximation
-/// of ground truth.
+/// Currently, most groups that use the Hijri calendar rely on human observations of the
+/// crescent moon, which are impacted by atmospheric phenomena. As a result, it is not
+/// possible to predict the month start dates ahead of time.
 ///
-/// The primary exception is Saudi Arabia, where the KACST publishes official predictions of
-/// crescent timings for multiple centuries. See [`UmmAlQura`].
+/// However, some groups use criteria that are not impacted by these phenomena and are
+/// therefore suitable for future prediction.
+///
+/// ICU4X ships two of these:
+///
+/// 1. [`UmmAlQura`], used in Saudi Arabia, is based on official predictions of crescent
+///    timings published by the KACST.
+/// 2. [`TabularAlgorithm`], used by certain denominations such as Dawoodi Bohra, is
+///    based on a proleptic approximation of the length of a lunar year.
 ///
 /// # Calendar drift
 ///
