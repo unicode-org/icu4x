@@ -39,4 +39,4 @@ icu::collator::CollatorBorrowed::write_sort_key_utf16_to#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_utf8_to#FnInStruct
 icu::properties::script::HarfbuzzScriptData#Struct
 icu::properties::script::HarfbuzzScriptData::new#FnInStruct
-icu::properties::script::HarfbuzzScriptDataBorrowed#Struct
+icu::properties::script::HarfbuzzScriptDataBorrowed#Struct  

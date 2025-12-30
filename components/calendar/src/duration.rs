@@ -419,3 +419,107 @@ impl DateDuration {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parse_single_unit_durations() {
+        let d = DateDuration::try_from_str("P1D").unwrap();
+        assert_eq!(d.days, 1);
+        assert!(!d.is_negative);
+
+        let d = DateDuration::try_from_str("P3W").unwrap();
+        assert_eq!(d.weeks, 3);
+
+        let d = DateDuration::try_from_str("P5M").unwrap();
+        assert_eq!(d.months, 5);
+
+        let d = DateDuration::try_from_str("P7Y").unwrap();
+        assert_eq!(d.years, 7);
+    }
+
+    #[test]
+    fn parse_multi_unit_durations() {
+        let d = DateDuration::try_from_str("P1Y3M5W7D").unwrap();
+        assert_eq!(d.years, 1);
+        assert_eq!(d.months, 3);
+        assert_eq!(d.weeks, 5);
+        assert_eq!(d.days, 7);
+
+        let d = DateDuration::try_from_str("P3M1D").unwrap();
+        assert_eq!(d.months, 3);
+        assert_eq!(d.days, 1);
+    }
+
+    #[test]
+    fn parse_zero_values() {
+        let d = DateDuration::try_from_str("P0D").unwrap();
+        assert_eq!(d.days, 0);
+        assert!(!d.is_negative);
+
+        let d = DateDuration::try_from_str("P0Y0M0W0D").unwrap();
+        assert_eq!(d.years, 0);
+        assert_eq!(d.months, 0);
+        assert_eq!(d.weeks, 0);
+        assert_eq!(d.days, 0);
+    }
+
+    #[test]
+    fn parse_negative_durations() {
+        let d = DateDuration::try_from_str("-P9W").unwrap();
+        assert!(d.is_negative);
+        assert_eq!(d.weeks, 9);
+
+        let d = DateDuration::try_from_str("-P0D").unwrap();
+        assert!(d.is_negative);
+        assert_eq!(d.days, 0);
+    }
+
+    #[test]
+    fn reject_signs_not_at_start() {
+        assert!(DateDuration::try_from_str("P-1D").is_err());
+        assert!(DateDuration::try_from_str("P6-D").is_err());
+        assert!(DateDuration::try_from_str("P7D-").is_err());
+        assert!(DateDuration::try_from_str("P1+2D").is_err());
+    }
+    #[test]
+    fn reject_invalid_structure() {
+        assert!(DateDuration::try_from_str("P").is_err());
+        assert!(DateDuration::try_from_str("P1").is_err());
+        assert!(DateDuration::try_from_str("P1Y2").is_err());
+        assert!(DateDuration::try_from_str("P1D1").is_err());
+        assert!(DateDuration::try_from_str("PX1D").is_err());
+    }
+
+    #[test]
+    fn reject_duplicate_units() {
+        assert!(DateDuration::try_from_str("P1Y1Y").is_err());
+        assert!(DateDuration::try_from_str("P2M1M").is_err());
+        assert!(DateDuration::try_from_str("P1D1D").is_err());
+    }
+
+    #[test]
+    fn reject_time_components() {
+        assert!(DateDuration::try_from_str("PT5M").is_err());
+        assert!(DateDuration::try_from_str("P1DT").is_err());
+        assert!(DateDuration::try_from_str("P1Y2MT").is_err());
+    }
+
+    #[test]
+    fn reject_invalid_signs() {
+        assert!(DateDuration::try_from_str("+P1D").is_err());
+        assert!(DateDuration::try_from_str("P-1D").is_err());
+        assert!(DateDuration::try_from_str("--P1D").is_err());
+    }
+
+    #[test]
+    fn reject_numeric_overflow() {
+        let huge = "P999999999999999999999999999D";
+        assert!(DateDuration::try_from_str(huge).is_err());
+
+        let huge = "P999999999999999999999Y";
+        assert!(DateDuration::try_from_str(huge).is_err());
+    }
+}
