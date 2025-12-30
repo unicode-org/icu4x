@@ -4,7 +4,6 @@
 
 use core::str::FromStr;
 
-use super::Value;
 use crate::parser::ParseError;
 use crate::subtags::{Region, Subtag};
 
@@ -177,16 +176,6 @@ impl SubdivisionId {
             Region::try_from_utf8(region_code_units).map_err(|_| ParseError::InvalidExtension)?;
         let suffix = SubdivisionSuffix::try_from_utf8(suffix_code_units)?;
         Ok(Self { region, suffix })
-    }
-
-    /// Converts a [`Value`] to a [`SubdivisionId`].
-    ///
-    /// # Examples
-    pub fn try_from_value(value: &Value) -> Result<Self, ParseError> {
-        let subtag = value
-            .as_single_subtag()
-            .ok_or(ParseError::InvalidExtension)?;
-        Self::try_from_utf8(subtag.as_tinystr().as_bytes())
     }
 
     /// Convert to [`Subtag`]
