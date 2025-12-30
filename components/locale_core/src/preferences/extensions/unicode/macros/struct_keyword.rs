@@ -16,8 +16,8 @@
 ///     CurrencyType,
 ///     "cu",
 ///     String,
-///     |input: Value| { Ok(Self(input.to_string())) },
-///     |input: CurrencyType| {
+///     |input: &Value| { Ok(Self(input.to_string())) },
+///     |input: &CurrencyType| {
 ///         icu::locale::extensions::unicode::Value::try_from_str(
 ///             input.0.as_str(),
 ///         )
