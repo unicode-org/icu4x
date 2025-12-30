@@ -61,7 +61,7 @@ pub struct DataLocale {
     /// Variant subtag
     pub variant: Option<Variant>,
     /// Subivision (-u-sd-) subtag
-    // TODO(3.0): Use `SubdivisionId` type
+    // TODO(3.0): Use `SubdivisionSuffix` type
     pub subdivision: Option<Subtag>,
 }
 
