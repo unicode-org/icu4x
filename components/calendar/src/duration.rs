@@ -516,10 +516,10 @@ mod tests {
 
     #[test]
     fn reject_numeric_overflow() {
-        let huge = "P999999999999999999999999999D";
+        let huge = "P99999999999999977777777788888888888D";
         assert!(DateDuration::try_from_str(huge).is_err());
 
-        let huge = "P999999999999999999999Y";
+        let huge = "P9999999999999555555555558888888888Y";
         assert!(DateDuration::try_from_str(huge).is_err());
     }
 }
