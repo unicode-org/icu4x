@@ -49,7 +49,7 @@ use core::str::FromStr;
 ///     DataLocale::from(locale!("hi-IN-u-sd-inas"))
 /// );
 /// ```
-#[derive(Clone, Copy, PartialEq, Hash, Eq)]
+#[derive(Clone, Copy)]
 #[non_exhaustive]
 pub struct DataLocale {
     /// Language subtag
@@ -61,7 +61,22 @@ pub struct DataLocale {
     /// Variant subtag
     pub variant: Option<Variant>,
     /// Subivision (-u-sd-) subtag
+    // TODO(3.0): Use `SubdivisionSuffix` type
     pub subdivision: Option<Subtag>,
+}
+
+impl PartialEq for DataLocale {
+    fn eq(&self, other: &Self) -> bool {
+        self.as_tuple() == other.as_tuple()
+    }
+}
+
+impl Eq for DataLocale {}
+
+impl Hash for DataLocale {
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+        self.as_tuple().hash(state);
+    }
 }
 
 impl Default for DataLocale {
@@ -205,22 +220,44 @@ impl DataLocale {
         Ok(())
     }
 
+    fn region_and_subdivision(&self) -> Option<unicode_ext::SubdivisionId> {
+        self.subdivision
+            .and_then(|s| unicode_ext::SubdivisionId::try_from_str(s.as_str()).ok())
+            .or(self.region.map(|region| unicode_ext::SubdivisionId {
+                region,
+                suffix: unicode_ext::SubdivisionSuffix::UNKNOWN,
+            }))
+    }
+
     fn as_tuple(
         &self,
     ) -> (
         Language,
         Option<Script>,
-        Option<Region>,
+        Option<unicode_ext::SubdivisionId>,
         Option<Variant>,
-        Option<Subtag>,
     ) {
         (
             self.language,
             self.script,
-            self.region,
+            self.region_and_subdivision(),
             self.variant,
-            self.subdivision,
         )
+    }
+
+    pub(crate) fn from_parts(
+        language: Language,
+        script: Option<Script>,
+        region: Option<unicode_ext::SubdivisionId>,
+        variant: Option<Variant>,
+    ) -> Self {
+        Self {
+            language,
+            script,
+            region: region.map(|sd| sd.region),
+            variant,
+            subdivision: region.map(|sd| sd.into_subtag()),
+        }
     }
 
     /// Returns an ordering suitable for use in [`BTreeSet`].
@@ -360,8 +397,8 @@ impl DataLocale {
                 keywords: unicode_ext::Keywords::new_single(
                     RegionalSubdivision::UNICODE_EXTENSION_KEY,
                     RegionalSubdivision(
-                        unicode_ext::SubdivisionId::try_from_str(self.subdivision?.as_str())
-                            .ok()?,
+                        self.region_and_subdivision()
+                            .filter(|sd| !sd.suffix.is_unknown())?,
                     )
                     .into(),
                 ),
@@ -386,11 +423,15 @@ fn test_data_locale_to_string() {
         },
         TestCase {
             locale: "und-u-sd-sdd",
-            expected: "und-u-sd-sdd",
+            expected: "und-SD-u-sd-sdd",
         },
         TestCase {
             locale: "en-ZA-u-sd-zaa",
             expected: "en-ZA-u-sd-zaa",
+        },
+        TestCase {
+            locale: "en-ZA-u-sd-sdd",
+            expected: "en-ZA",
         },
     ] {
         let locale = cas.locale.parse::<DataLocale>().unwrap();
