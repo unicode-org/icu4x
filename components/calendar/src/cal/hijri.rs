@@ -178,12 +178,15 @@ impl Rules for AstronomicalSimulation {
 /// [^1]: See [calendrical_calculations::islamic::observational_islamic_from_fixed]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[non_exhaustive]
+#[cfg(feature = "unstable")] // TODO(before stabilisation): design API
 pub enum ReingoldSimulation {
     /// Mecca
     Mecca,
 }
 
+#[cfg(feature = "unstable")]
 impl crate::cal::scaffold::UnstableSealed for ReingoldSimulation {}
+#[cfg(feature = "unstable")]
 impl Rules for ReingoldSimulation {
     fn debug_name(&self) -> &'static str {
         match self {
