@@ -4,7 +4,7 @@
 
 // {{ crate::capi_properties::GENERATED_BY }}
 
-// #[rustfmt::skip]
+#[rustfmt::skip]
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
@@ -113,7 +113,9 @@ pub mod ffi {
         }
     }
 }
+
 #[cfg(test)]
+#[rustfmt::skip]
 mod test {
     use super::ffi::*;
     use icu_properties::props;
