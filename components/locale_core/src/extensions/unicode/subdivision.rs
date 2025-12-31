@@ -57,69 +57,6 @@ impl_tinystr_subtag!(
 ///
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#unicode_subdivision_id
 /// [`Unicode`]: crate::extensions::unicode::Unicode
-///
-/// # Examples
-///
-/// ```
-/// use icu::locale::locale;
-/// use icu::locale::extensions::unicode::key;
-/// use icu::locale::preferences::extensions::unicode::keywords::RegionOverride;
-/// use writeable::assert_writeable_eq;
-///
-/// // American English with British user preferences
-/// let locale = locale!("en-US-u-rg-gbzzzz");
-///
-/// let normal_region = locale.id.region.unwrap();
-/// let rg_extension_value = locale.extensions.unicode.keywords.get(&key!("rg")).unwrap();
-/// let subdivision = RegionOverride::try_from(rg_extension_value.clone()).unwrap();
-///
-/// assert_writeable_eq!(normal_region, "US");
-/// assert_writeable_eq!(subdivision.region, "GB");
-/// assert_writeable_eq!(subdivision.suffix, "zzzz");
-/// ```
-///
-/// When the value can't be parsed:
-///
-/// ```
-/// use icu::locale::extensions::unicode::SubdivisionId;
-/// use icu::locale::ParseError;
-///
-/// // Value is too short
-/// assert!(matches!(
-///     SubdivisionId::try_from_str("zz"),
-///     Err(ParseError::InvalidExtension),
-/// ));
-///
-/// // Value is too long
-/// assert!(matches!(
-///     SubdivisionId::try_from_str("abcdefg"),
-///     Err(ParseError::InvalidExtension),
-/// ));
-///
-/// // Value does not start with a valid region code
-/// assert!(matches!(
-///     SubdivisionId::try_from_str("a0zzzz"),
-///     Err(ParseError::InvalidExtension),
-/// ));
-/// assert!(matches!(
-///     SubdivisionId::try_from_str("0azzzz"),
-///     Err(ParseError::InvalidExtension),
-/// ));
-/// ```
-///
-/// Special value "true"; see [CLDR-19163](https://unicode-org.atlassian.net/browse/CLDR-19163):
-///
-/// ```
-/// use icu::locale::extensions::unicode::value;
-/// use icu::locale::preferences::extensions::unicode::keywords::RegionalSubdivision;
-/// use icu::locale::preferences::extensions::unicode::errors::PreferencesParseError;
-/// use writeable::assert_writeable_eq;
-///
-/// assert!(matches!(
-///     RegionalSubdivision::try_from(value!("true")),
-///     Err(PreferencesParseError::InvalidKeywordValue),
-/// ));
-/// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
 #[non_exhaustive]
 pub struct SubdivisionId {
@@ -153,6 +90,48 @@ impl SubdivisionId {
 
     /// A constructor which takes a str slice, parses it and
     /// produces a well-formed [`SubdivisionId`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locale::extensions::unicode::SubdivisionId;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let subdivision = SubdivisionId::try_from_str("gbeng").unwrap();
+    ///
+    /// assert_writeable_eq!(subdivision, "gbeng");
+    /// assert_writeable_eq!(subdivision.region, "GB");
+    /// assert_writeable_eq!(subdivision.suffix, "eng");
+    /// ```
+    ///
+    /// When the value can't be parsed:
+    ///
+    /// ```
+    /// use icu::locale::extensions::unicode::SubdivisionId;
+    /// use icu::locale::ParseError;
+    ///
+    /// // Value is too short
+    /// assert!(matches!(
+    ///     SubdivisionId::try_from_str("zz"),
+    ///     Err(ParseError::InvalidExtension),
+    /// ));
+    ///
+    /// // Value is too long
+    /// assert!(matches!(
+    ///     SubdivisionId::try_from_str("abcdefg"),
+    ///     Err(ParseError::InvalidExtension),
+    /// ));
+    ///
+    /// // Value does not start with a valid region code
+    /// assert!(matches!(
+    ///     SubdivisionId::try_from_str("a0zzzz"),
+    ///     Err(ParseError::InvalidExtension),
+    /// ));
+    /// assert!(matches!(
+    ///     SubdivisionId::try_from_str("0azzzz"),
+    ///     Err(ParseError::InvalidExtension),
+    /// ));
+    /// ```
     #[inline]
     pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
         Self::try_from_utf8(s.as_bytes())
