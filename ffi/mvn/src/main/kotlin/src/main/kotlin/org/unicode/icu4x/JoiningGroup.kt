@@ -13,7 +13,7 @@ internal interface JoiningGroupLib: Library {
     fun icu4x_JoiningGroup_to_integer_value_mv1(inner: Int): FFIUint8
     fun icu4x_JoiningGroup_from_integer_value_mv1(other: FFIUint8): OptionInt
 }
-/** See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html) for more information.
+/** See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
 */
 enum class JoiningGroup {
     NoJoiningGroup,

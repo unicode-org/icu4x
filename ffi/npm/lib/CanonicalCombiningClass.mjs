@@ -429,6 +429,54 @@ export class CanonicalCombiningClass {
     }
 
     /**
+     * Get the "long" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+     */
+    longName() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
+
+
+        const result = wasm.icu4x_CanonicalCombiningClass_long_name_mv1(diplomatReceive.buffer, this.ffiValue);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            diplomatReceive.free();
+        }
+    }
+
+    /**
+     * Get the "short" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+     */
+    shortName() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
+
+
+        const result = wasm.icu4x_CanonicalCombiningClass_short_name_mv1(diplomatReceive.buffer, this.ffiValue);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            diplomatReceive.free();
+        }
+    }
+
+    /**
      * Convert to an integer value usable with ICU4C and CodePointMapData
      *
      * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CanonicalCombiningClass.html#method.to_icu4c_value) for more information.

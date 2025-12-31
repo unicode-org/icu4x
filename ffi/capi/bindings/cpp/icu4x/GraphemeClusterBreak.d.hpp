@@ -51,75 +51,75 @@ class GraphemeClusterBreak {
 public:
     enum Value {
         /**
-         * See the [Rust documentation for `Other`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.Other) for more information.
+         * See the [Rust documentation for `Other`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.Other) for more information.
          */
         Other = 0,
         /**
-         * See the [Rust documentation for `Control`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.Control) for more information.
+         * See the [Rust documentation for `Control`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.Control) for more information.
          */
         Control = 1,
         /**
-         * See the [Rust documentation for `CR`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.CR) for more information.
+         * See the [Rust documentation for `CR`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.CR) for more information.
          */
         CR = 2,
         /**
-         * See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.Extend) for more information.
+         * See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.Extend) for more information.
          */
         Extend = 3,
         /**
-         * See the [Rust documentation for `L`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.L) for more information.
+         * See the [Rust documentation for `L`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.L) for more information.
          */
         L = 4,
         /**
-         * See the [Rust documentation for `LF`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.LF) for more information.
+         * See the [Rust documentation for `LF`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.LF) for more information.
          */
         LF = 5,
         /**
-         * See the [Rust documentation for `LV`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.LV) for more information.
+         * See the [Rust documentation for `LV`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.LV) for more information.
          */
         LV = 6,
         /**
-         * See the [Rust documentation for `LVT`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.LVT) for more information.
+         * See the [Rust documentation for `LVT`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.LVT) for more information.
          */
         LVT = 7,
         /**
-         * See the [Rust documentation for `T`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.T) for more information.
+         * See the [Rust documentation for `T`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.T) for more information.
          */
         T = 8,
         /**
-         * See the [Rust documentation for `V`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.V) for more information.
+         * See the [Rust documentation for `V`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.V) for more information.
          */
         V = 9,
         /**
-         * See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.SpacingMark) for more information.
+         * See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.SpacingMark) for more information.
          */
         SpacingMark = 10,
         /**
-         * See the [Rust documentation for `Prepend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.Prepend) for more information.
+         * See the [Rust documentation for `Prepend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.Prepend) for more information.
          */
         Prepend = 11,
         /**
-         * See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.RegionalIndicator) for more information.
+         * See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.RegionalIndicator) for more information.
          */
         RegionalIndicator = 12,
         /**
-         * See the [Rust documentation for `EBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.EBase) for more information.
+         * See the [Rust documentation for `EBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.EBase) for more information.
          */
         EBase = 13,
         /**
-         * See the [Rust documentation for `EBaseGAZ`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.EBaseGAZ) for more information.
+         * See the [Rust documentation for `EBaseGAZ`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.EBaseGAZ) for more information.
          */
         EBaseGAZ = 14,
         /**
-         * See the [Rust documentation for `EModifier`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.EModifier) for more information.
+         * See the [Rust documentation for `EModifier`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.EModifier) for more information.
          */
         EModifier = 15,
         /**
-         * See the [Rust documentation for `GlueAfterZwj`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.GlueAfterZwj) for more information.
+         * See the [Rust documentation for `GlueAfterZwj`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.GlueAfterZwj) for more information.
          */
         GlueAfterZwj = 16,
         /**
-         * See the [Rust documentation for `ZWJ`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.ZWJ) for more information.
+         * See the [Rust documentation for `ZWJ`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.ZWJ) for more information.
          */
         ZWJ = 17,
     };
@@ -136,6 +136,20 @@ public:
    * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
    */
   inline static icu4x::GraphemeClusterBreak for_char(char32_t ch);
+
+  /**
+   * Get the "long" name of this property value (returns empty if property value is unknown)
+   *
+   * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+   */
+  inline std::optional<std::string_view> long_name() const;
+
+  /**
+   * Get the "short" name of this property value (returns empty if property value is unknown)
+   *
+   * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+   */
+  inline std::optional<std::string_view> short_name() const;
 
   /**
    * Convert to an integer value usable with ICU4C and CodePointMapData

@@ -20,6 +20,12 @@ namespace capi {
 
     icu4x::capi::NumericType icu4x_NumericType_for_char_mv1(char32_t ch);
 
+    typedef struct icu4x_NumericType_long_name_mv1_result {union {icu4x::diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_NumericType_long_name_mv1_result;
+    icu4x_NumericType_long_name_mv1_result icu4x_NumericType_long_name_mv1(icu4x::capi::NumericType self);
+
+    typedef struct icu4x_NumericType_short_name_mv1_result {union {icu4x::diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_NumericType_short_name_mv1_result;
+    icu4x_NumericType_short_name_mv1_result icu4x_NumericType_short_name_mv1(icu4x::capi::NumericType self);
+
     uint8_t icu4x_NumericType_to_integer_value_mv1(icu4x::capi::NumericType self);
 
     typedef struct icu4x_NumericType_from_integer_value_mv1_result {union {icu4x::capi::NumericType ok; }; bool is_ok;} icu4x_NumericType_from_integer_value_mv1_result;
@@ -48,6 +54,16 @@ inline icu4x::NumericType icu4x::NumericType::FromFFI(icu4x::capi::NumericType c
 inline icu4x::NumericType icu4x::NumericType::for_char(char32_t ch) {
     auto result = icu4x::capi::icu4x_NumericType_for_char_mv1(ch);
     return icu4x::NumericType::FromFFI(result);
+}
+
+inline std::optional<std::string_view> icu4x::NumericType::long_name() const {
+    auto result = icu4x::capi::icu4x_NumericType_long_name_mv1(this->AsFFI());
+    return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
+}
+
+inline std::optional<std::string_view> icu4x::NumericType::short_name() const {
+    auto result = icu4x::capi::icu4x_NumericType_short_name_mv1(this->AsFFI());
+    return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
 inline uint8_t icu4x::NumericType::to_integer_value() const {

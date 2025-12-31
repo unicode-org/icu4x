@@ -128,6 +128,7 @@ enum class Script(val inner: Int) {
     NyiakengPuachueHmong(186),
     Ogham(29),
     OlChiki(109),
+    OlOnal(204),
     OldHungarian(76),
     OldItalic(30),
     OldNorthArabian(142),
@@ -137,7 +138,6 @@ enum class Script(val inner: Int) {
     OldSouthArabian(133),
     OldTurkic(88),
     OldUyghur(194),
-    OlOnal(204),
     Oriya(31),
     Osage(171),
     Osmanya(50),
@@ -316,6 +316,7 @@ enum class Script(val inner: Int) {
                 186 -> NyiakengPuachueHmong
                 29 -> Ogham
                 109 -> OlChiki
+                204 -> OlOnal
                 76 -> OldHungarian
                 30 -> OldItalic
                 142 -> OldNorthArabian
@@ -325,7 +326,6 @@ enum class Script(val inner: Int) {
                 133 -> OldSouthArabian
                 88 -> OldTurkic
                 194 -> OldUyghur
-                204 -> OlOnal
                 31 -> Oriya
                 171 -> Osage
                 50 -> Osmanya
