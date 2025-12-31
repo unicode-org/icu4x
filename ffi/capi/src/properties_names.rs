@@ -5,7 +5,7 @@
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
-    use crate::unstable::properties_enums::ffi::GeneralCategoryGroup;
+    use crate::unstable::properties_gcg::ffi::GeneralCategoryGroup;
     use alloc::boxed::Box;
 
     #[cfg(feature = "buffer_provider")]

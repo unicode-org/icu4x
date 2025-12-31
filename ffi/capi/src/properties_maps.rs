@@ -13,7 +13,7 @@ pub mod ffi {
         NumericType, Script, SentenceBreak, VerticalOrientation, WordBreak,
     };
 
-    use crate::unstable::properties_enums::ffi::GeneralCategoryGroup;
+    use crate::unstable::properties_gcg::ffi::GeneralCategoryGroup;
     use crate::unstable::properties_iter::ffi::CodePointRangeIterator;
     use crate::unstable::properties_sets::ffi::CodePointSetData;
     #[cfg(feature = "buffer_provider")]

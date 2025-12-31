@@ -130,6 +130,8 @@ pub mod unstable {
     #[cfg(feature = "properties")]
     pub mod properties_enums;
     #[cfg(feature = "properties")]
+    pub mod properties_gcg;
+    #[cfg(feature = "properties")]
     pub mod properties_iter;
     #[cfg(feature = "properties")]
     pub mod properties_maps;
