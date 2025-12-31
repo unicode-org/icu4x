@@ -22,6 +22,12 @@ struct PropertiesMaps<'a> {
     props: &'a [Prop],
 }
 
+#[derive(Template)]
+#[template(path = "properties_names.rs.jinja")]
+struct PropertiesNames<'a> {
+    props: &'a [Prop],
+}
+
 struct Prop {
     name: String,
     is_open: bool,
@@ -213,5 +219,13 @@ pub fn main() {
         let mut file = File::create(&path_buf).unwrap();
         use std::io::Write;
         writeln!(&mut file, "{}", PropertiesMaps { props }).unwrap();
+    }
+
+    {
+        let mut path_buf = path_buf.clone();
+        path_buf.push("properties_names.rs");
+        let mut file = File::create(&path_buf).unwrap();
+        use std::io::Write;
+        writeln!(&mut file, "{}", PropertiesNames { props }).unwrap();
     }
 }

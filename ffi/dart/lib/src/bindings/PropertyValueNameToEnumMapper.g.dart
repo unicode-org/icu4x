@@ -52,70 +52,7 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     return result;
   }
 
-  /// Create a name-to-enum mapper for the `General_Category` property, using compiled data.
-  ///
-  /// See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
-  factory PropertyValueNameToEnumMapper.generalCategory() {
-    final result = _icu4x_PropertyValueNameToEnumMapper_create_general_category_mv1();
-    return PropertyValueNameToEnumMapper._fromFfi(result, []);
-  }
-
-  /// Create a name-to-enum mapper for the `General_Category` property, using a particular data source.
-  ///
-  /// See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
-  ///
-  /// Throws [DataError] on failure.
-  factory PropertyValueNameToEnumMapper.generalCategoryWithProvider(DataProvider provider) {
-    final result = _icu4x_PropertyValueNameToEnumMapper_create_general_category_with_provider_mv1(provider._ffi);
-    if (!result.isOk) {
-      throw DataError.values[result.union.err];
-    }
-    return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
-  }
-
-  /// Create a name-to-enum mapper for the `Hangul_Syllable_Type` property, using compiled data.
-  ///
-  /// See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
-  factory PropertyValueNameToEnumMapper.hangulSyllableType() {
-    final result = _icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_mv1();
-    return PropertyValueNameToEnumMapper._fromFfi(result, []);
-  }
-
-  /// Create a name-to-enum mapper for the `Hangul_Syllable_Type` property, using a particular data source.
-  ///
-  /// See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
-  ///
-  /// Throws [DataError] on failure.
-  factory PropertyValueNameToEnumMapper.hangulSyllableTypeWithProvider(DataProvider provider) {
-    final result = _icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_with_provider_mv1(provider._ffi);
-    if (!result.isOk) {
-      throw DataError.values[result.union.err];
-    }
-    return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
-  }
-
-  /// Create a name-to-enum mapper for the `East_Asian_Width` property, using compiled data.
-  ///
-  /// See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
-  factory PropertyValueNameToEnumMapper.eastAsianWidth() {
-    final result = _icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_mv1();
-    return PropertyValueNameToEnumMapper._fromFfi(result, []);
-  }
-
-  /// Create a name-to-enum mapper for the `East_Asian_Width` property, using a particular data source.
-  ///
-  /// See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
-  ///
-  /// Throws [DataError] on failure.
-  factory PropertyValueNameToEnumMapper.eastAsianWidthWithProvider(DataProvider provider) {
-    final result = _icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_with_provider_mv1(provider._ffi);
-    if (!result.isOk) {
-      throw DataError.values[result.union.err];
-    }
-    return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
-  }
-
-  /// Create a name-to-enum mapper for the `Bidi_Class` property, using compiled data.
+  /// Create a name-to-enum mapper for the `BidiClass` property, using compiled data.
   ///
   /// See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html) for more information.
   factory PropertyValueNameToEnumMapper.bidiClass() {
@@ -123,7 +60,7 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     return PropertyValueNameToEnumMapper._fromFfi(result, []);
   }
 
-  /// Create a name-to-enum mapper for the `Bidi_Class` property, using a particular data source.
+  /// Create a name-to-enum mapper for the `BidiClass` property, using a particular data source.
   ///
   /// See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html) for more information.
   ///
@@ -136,7 +73,7 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
 
-  /// Create a name-to-enum mapper for the `Numeric_Type` property, using compiled data.
+  /// Create a name-to-enum mapper for the `NumericType` property, using compiled data.
   ///
   /// See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
   factory PropertyValueNameToEnumMapper.numericType() {
@@ -144,118 +81,13 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     return PropertyValueNameToEnumMapper._fromFfi(result, []);
   }
 
-  /// Create a name-to-enum mapper for the `Numeric_Type` property, using a particular data source.
+  /// Create a name-to-enum mapper for the `NumericType` property, using a particular data source.
   ///
   /// See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory PropertyValueNameToEnumMapper.numericTypeWithProvider(DataProvider provider) {
     final result = _icu4x_PropertyValueNameToEnumMapper_create_numeric_type_with_provider_mv1(provider._ffi);
-    if (!result.isOk) {
-      throw DataError.values[result.union.err];
-    }
-    return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
-  }
-
-  /// Create a name-to-enum mapper for the `Indic_Syllabic_Category` property, using compiled data.
-  ///
-  /// See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
-  factory PropertyValueNameToEnumMapper.indicSyllabicCategory() {
-    final result = _icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_mv1();
-    return PropertyValueNameToEnumMapper._fromFfi(result, []);
-  }
-
-  /// Create a name-to-enum mapper for the `Indic_Syllabic_Category` property, using a particular data source.
-  ///
-  /// See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
-  ///
-  /// Throws [DataError] on failure.
-  factory PropertyValueNameToEnumMapper.indicSyllabicCategoryWithProvider(DataProvider provider) {
-    final result = _icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_with_provider_mv1(provider._ffi);
-    if (!result.isOk) {
-      throw DataError.values[result.union.err];
-    }
-    return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
-  }
-
-  /// Create a name-to-enum mapper for the `Line_Break` property, using compiled data.
-  ///
-  /// See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html) for more information.
-  factory PropertyValueNameToEnumMapper.lineBreak() {
-    final result = _icu4x_PropertyValueNameToEnumMapper_create_line_break_mv1();
-    return PropertyValueNameToEnumMapper._fromFfi(result, []);
-  }
-
-  /// Create a name-to-enum mapper for the `Line_Break` property, using a particular data source.
-  ///
-  /// See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html) for more information.
-  ///
-  /// Throws [DataError] on failure.
-  factory PropertyValueNameToEnumMapper.lineBreakWithProvider(DataProvider provider) {
-    final result = _icu4x_PropertyValueNameToEnumMapper_create_line_break_with_provider_mv1(provider._ffi);
-    if (!result.isOk) {
-      throw DataError.values[result.union.err];
-    }
-    return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
-  }
-
-  /// Create a name-to-enum mapper for the `Grapheme_Cluster_Break` property, using compiled data.
-  ///
-  /// See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
-  factory PropertyValueNameToEnumMapper.graphemeClusterBreak() {
-    final result = _icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_mv1();
-    return PropertyValueNameToEnumMapper._fromFfi(result, []);
-  }
-
-  /// Create a name-to-enum mapper for the `Grapheme_Cluster_Break` property, using a particular data source.
-  ///
-  /// See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
-  ///
-  /// Throws [DataError] on failure.
-  factory PropertyValueNameToEnumMapper.graphemeClusterBreakWithProvider(DataProvider provider) {
-    final result = _icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_with_provider_mv1(provider._ffi);
-    if (!result.isOk) {
-      throw DataError.values[result.union.err];
-    }
-    return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
-  }
-
-  /// Create a name-to-enum mapper for the `Word_Break` property, using compiled data.
-  ///
-  /// See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html) for more information.
-  factory PropertyValueNameToEnumMapper.wordBreak() {
-    final result = _icu4x_PropertyValueNameToEnumMapper_create_word_break_mv1();
-    return PropertyValueNameToEnumMapper._fromFfi(result, []);
-  }
-
-  /// Create a name-to-enum mapper for the `Word_Break` property, using a particular data source.
-  ///
-  /// See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html) for more information.
-  ///
-  /// Throws [DataError] on failure.
-  factory PropertyValueNameToEnumMapper.wordBreakWithProvider(DataProvider provider) {
-    final result = _icu4x_PropertyValueNameToEnumMapper_create_word_break_with_provider_mv1(provider._ffi);
-    if (!result.isOk) {
-      throw DataError.values[result.union.err];
-    }
-    return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
-  }
-
-  /// Create a name-to-enum mapper for the `Sentence_Break` property, using compiled data.
-  ///
-  /// See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html) for more information.
-  factory PropertyValueNameToEnumMapper.sentenceBreak() {
-    final result = _icu4x_PropertyValueNameToEnumMapper_create_sentence_break_mv1();
-    return PropertyValueNameToEnumMapper._fromFfi(result, []);
-  }
-
-  /// Create a name-to-enum mapper for the `Sentence_Break` property, using a particular data source.
-  ///
-  /// See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html) for more information.
-  ///
-  /// Throws [DataError] on failure.
-  factory PropertyValueNameToEnumMapper.sentenceBreakWithProvider(DataProvider provider) {
-    final result = _icu4x_PropertyValueNameToEnumMapper_create_sentence_break_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -283,21 +115,189 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
 
-  /// Create a name-to-enum mapper for the `Vertical_Orientation` property, using compiled data.
+  /// Create a name-to-enum mapper for the `HangulSyllableType` property, using compiled data.
   ///
-  /// See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
-  factory PropertyValueNameToEnumMapper.verticalOrientation() {
-    final result = _icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_mv1();
+  /// See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
+  factory PropertyValueNameToEnumMapper.hangulSyllableType() {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_mv1();
     return PropertyValueNameToEnumMapper._fromFfi(result, []);
   }
 
-  /// Create a name-to-enum mapper for the `Vertical_Orientation` property, using a particular data source.
+  /// Create a name-to-enum mapper for the `HangulSyllableType` property, using a particular data source.
   ///
-  /// See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
+  /// See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory PropertyValueNameToEnumMapper.verticalOrientationWithProvider(DataProvider provider) {
-    final result = _icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_with_provider_mv1(provider._ffi);
+  factory PropertyValueNameToEnumMapper.hangulSyllableTypeWithProvider(DataProvider provider) {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_with_provider_mv1(provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
+  }
+
+  /// Create a name-to-enum mapper for the `EastAsianWidth` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
+  factory PropertyValueNameToEnumMapper.eastAsianWidth() {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_mv1();
+    return PropertyValueNameToEnumMapper._fromFfi(result, []);
+  }
+
+  /// Create a name-to-enum mapper for the `EastAsianWidth` property, using a particular data source.
+  ///
+  /// See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory PropertyValueNameToEnumMapper.eastAsianWidthWithProvider(DataProvider provider) {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_with_provider_mv1(provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
+  }
+
+  /// Create a name-to-enum mapper for the `LineBreak` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html) for more information.
+  factory PropertyValueNameToEnumMapper.lineBreak() {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_line_break_mv1();
+    return PropertyValueNameToEnumMapper._fromFfi(result, []);
+  }
+
+  /// Create a name-to-enum mapper for the `LineBreak` property, using a particular data source.
+  ///
+  /// See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory PropertyValueNameToEnumMapper.lineBreakWithProvider(DataProvider provider) {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_line_break_with_provider_mv1(provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
+  }
+
+  /// Create a name-to-enum mapper for the `GraphemeClusterBreak` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
+  factory PropertyValueNameToEnumMapper.graphemeClusterBreak() {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_mv1();
+    return PropertyValueNameToEnumMapper._fromFfi(result, []);
+  }
+
+  /// Create a name-to-enum mapper for the `GraphemeClusterBreak` property, using a particular data source.
+  ///
+  /// See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory PropertyValueNameToEnumMapper.graphemeClusterBreakWithProvider(DataProvider provider) {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_with_provider_mv1(provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
+  }
+
+  /// Create a name-to-enum mapper for the `WordBreak` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html) for more information.
+  factory PropertyValueNameToEnumMapper.wordBreak() {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_word_break_mv1();
+    return PropertyValueNameToEnumMapper._fromFfi(result, []);
+  }
+
+  /// Create a name-to-enum mapper for the `WordBreak` property, using a particular data source.
+  ///
+  /// See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory PropertyValueNameToEnumMapper.wordBreakWithProvider(DataProvider provider) {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_word_break_with_provider_mv1(provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
+  }
+
+  /// Create a name-to-enum mapper for the `SentenceBreak` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html) for more information.
+  factory PropertyValueNameToEnumMapper.sentenceBreak() {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_sentence_break_mv1();
+    return PropertyValueNameToEnumMapper._fromFfi(result, []);
+  }
+
+  /// Create a name-to-enum mapper for the `SentenceBreak` property, using a particular data source.
+  ///
+  /// See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory PropertyValueNameToEnumMapper.sentenceBreakWithProvider(DataProvider provider) {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_sentence_break_with_provider_mv1(provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
+  }
+
+  /// Create a name-to-enum mapper for the `CanonicalCombiningClass` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
+  factory PropertyValueNameToEnumMapper.canonicalCombiningClass() {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_canonical_combining_class_mv1();
+    return PropertyValueNameToEnumMapper._fromFfi(result, []);
+  }
+
+  /// Create a name-to-enum mapper for the `CanonicalCombiningClass` property, using a particular data source.
+  ///
+  /// See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory PropertyValueNameToEnumMapper.canonicalCombiningClassWithProvider(DataProvider provider) {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_canonical_combining_class_with_provider_mv1(provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
+  }
+
+  /// Create a name-to-enum mapper for the `IndicSyllabicCategory` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+  factory PropertyValueNameToEnumMapper.indicSyllabicCategory() {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_mv1();
+    return PropertyValueNameToEnumMapper._fromFfi(result, []);
+  }
+
+  /// Create a name-to-enum mapper for the `IndicSyllabicCategory` property, using a particular data source.
+  ///
+  /// See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory PropertyValueNameToEnumMapper.indicSyllabicCategoryWithProvider(DataProvider provider) {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_with_provider_mv1(provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
+  }
+
+  /// Create a name-to-enum mapper for the `IndicConjunctBreak` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
+  factory PropertyValueNameToEnumMapper.indicConjunctBreak() {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_indic_conjunct_break_mv1();
+    return PropertyValueNameToEnumMapper._fromFfi(result, []);
+  }
+
+  /// Create a name-to-enum mapper for the `IndicConjunctBreak` property, using a particular data source.
+  ///
+  /// See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory PropertyValueNameToEnumMapper.indicConjunctBreakWithProvider(DataProvider provider) {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_indic_conjunct_break_with_provider_mv1(provider._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -346,6 +346,48 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
 
+  /// Create a name-to-enum mapper for the `GeneralCategory` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
+  factory PropertyValueNameToEnumMapper.generalCategory() {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_general_category_mv1();
+    return PropertyValueNameToEnumMapper._fromFfi(result, []);
+  }
+
+  /// Create a name-to-enum mapper for the `GeneralCategory` property, using a particular data source.
+  ///
+  /// See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory PropertyValueNameToEnumMapper.generalCategoryWithProvider(DataProvider provider) {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_general_category_with_provider_mv1(provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
+  }
+
+  /// Create a name-to-enum mapper for the `VerticalOrientation` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
+  factory PropertyValueNameToEnumMapper.verticalOrientation() {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_mv1();
+    return PropertyValueNameToEnumMapper._fromFfi(result, []);
+  }
+
+  /// Create a name-to-enum mapper for the `VerticalOrientation` property, using a particular data source.
+  ///
+  /// See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory PropertyValueNameToEnumMapper.verticalOrientationWithProvider(DataProvider provider) {
+    final result = _icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_with_provider_mv1(provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
+  }
+
 }
 
 @_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_destroy_mv1')
@@ -362,36 +404,6 @@ external int _icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(ffi.Pointer<ffi
 @ffi.Native<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_get_loose_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 name);
-
-@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_general_category_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_general_category_mv1')
-// ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_general_category_mv1();
-
-@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_general_category_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_general_category_with_provider_mv1')
-// ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_general_category_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
-
-@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_mv1')
-// ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_mv1();
-
-@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_with_provider_mv1')
-// ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
-
-@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_mv1')
-// ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_mv1();
-
-@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_with_provider_mv1')
-// ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_bidi_class_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_bidi_class_mv1')
@@ -413,15 +425,35 @@ external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_num
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_numeric_type_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_mv1')
+@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_script_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_script_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_mv1();
+external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_script_mv1();
 
-@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_with_provider_mv1')
+@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_script_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_script_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_script_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_mv1();
+
+@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_mv1();
+
+@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_line_break_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_line_break_mv1')
@@ -463,25 +495,35 @@ external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_sen
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_sentence_break_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_script_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_script_mv1')
+@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_canonical_combining_class_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_canonical_combining_class_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_script_mv1();
+external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_canonical_combining_class_mv1();
 
-@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_script_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_script_with_provider_mv1')
+@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_canonical_combining_class_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_canonical_combining_class_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_script_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_canonical_combining_class_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_mv1')
+@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_mv1();
+external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_mv1();
 
-@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_with_provider_mv1')
+@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_with_provider_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_indic_conjunct_break_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_indic_conjunct_break_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_indic_conjunct_break_mv1();
+
+@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_indic_conjunct_break_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_indic_conjunct_break_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_indic_conjunct_break_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_joining_group_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_joining_group_mv1')
@@ -502,5 +544,25 @@ external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_joi
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_joining_type_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_joining_type_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_general_category_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_general_category_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_general_category_mv1();
+
+@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_general_category_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_general_category_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_general_category_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_mv1();
+
+@_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 // dart format on
