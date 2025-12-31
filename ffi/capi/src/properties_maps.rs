@@ -36,16 +36,6 @@ pub mod ffi {
     #[diplomat::attr(demo_gen, disable)] // TODO needs custom page
     pub struct CodePointMapData8(icu_properties::CodePointMapData<u8>);
 
-    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    fn convert_8<P: icu_collections::codepointtrie::TrieValue>(
-        data: icu_properties::CodePointMapData<P>,
-    ) -> Box<CodePointMapData8> {
-        #[expect(clippy::unwrap_used)] // infallible for the chosen properties
-        Box::new(CodePointMapData8(
-            data.try_into_converted().map_err(|_| ()).unwrap(),
-        ))
-    }
-
     impl CodePointMapData8 {
         /// Gets the value for a code point.
         #[diplomat::rust_link(icu::properties::CodePointMapDataBorrowed::get, FnInStruct)]
@@ -120,7 +110,77 @@ pub mod ffi {
                 self.0.as_borrowed().get_set_for_value(value),
             ))
         }
+    }
 
+    #[diplomat::opaque]
+    /// An ICU4X Unicode Map Property object, capable of querying whether a code point (key) to obtain the Unicode property value, for a specific Unicode property.
+    ///
+    /// For properties whose values fit into 16 bits.
+    #[diplomat::rust_link(icu::properties, Mod)]
+    #[diplomat::rust_link(icu::properties::CodePointMapData, Struct)]
+    #[diplomat::rust_link(icu::properties::CodePointMapDataBorrowed, Struct)]
+    #[diplomat::attr(demo_gen, disable)] // TODO needs custom page
+    pub struct CodePointMapData16(icu_properties::CodePointMapData<u16>);
+
+    impl CodePointMapData16 {
+        /// Gets the value for a code point.
+        #[diplomat::rust_link(icu::properties::CodePointMapDataBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::CodePointMapDataBorrowed::get32, FnInStruct, hidden)]
+        #[diplomat::attr(all(supports = indexing, not(kotlin)), indexer)] // Kotlin doesn't support non-integral indexers
+        pub fn get(&self, cp: DiplomatChar) -> u16 {
+            self.0.as_borrowed().get32(cp)
+        }
+
+        /// Produces an iterator over ranges of code points that map to `value`
+        #[diplomat::rust_link(
+            icu::properties::CodePointMapDataBorrowed::iter_ranges_for_value,
+            FnInStruct
+        )]
+        pub fn iter_ranges_for_value<'a>(&'a self, value: u16) -> Box<CodePointRangeIterator<'a>> {
+            Box::new(CodePointRangeIterator(Box::new(
+                self.0.as_borrowed().iter_ranges_for_value(value),
+            )))
+        }
+
+        /// Produces an iterator over ranges of code points that do not map to `value`
+        #[diplomat::rust_link(
+            icu::properties::CodePointMapDataBorrowed::iter_ranges_for_value_complemented,
+            FnInStruct
+        )]
+        pub fn iter_ranges_for_value_complemented<'a>(
+            &'a self,
+            value: u16,
+        ) -> Box<CodePointRangeIterator<'a>> {
+            Box::new(CodePointRangeIterator(Box::new(
+                self.0
+                    .as_borrowed()
+                    .iter_ranges_for_value_complemented(value),
+            )))
+        }
+
+        /// Gets a [`CodePointSetData`] representing all entries in this map that map to the given value
+        #[diplomat::rust_link(
+            icu::properties::CodePointMapDataBorrowed::get_set_for_value,
+            FnInStruct
+        )]
+        pub fn get_set_for_value(&self, value: u16) -> Box<CodePointSetData> {
+            Box::new(CodePointSetData(
+                self.0.as_borrowed().get_set_for_value(value),
+            ))
+        }
+    }
+
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    fn convert_8<P: icu_collections::codepointtrie::TrieValue>(
+        data: icu_properties::CodePointMapData<P>,
+    ) -> Box<CodePointMapData8> {
+        #[expect(clippy::unwrap_used)] // infallible for the chosen properties
+        Box::new(CodePointMapData8(
+            data.try_into_converted().map_err(|_| ()).unwrap(),
+        ))
+    }
+
+    impl CodePointMapData8 {
         /// Create a map for the `General_Category` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::GeneralCategory, Enum)]
         #[diplomat::attr(auto, named_constructor = "general_category")]
@@ -423,63 +483,7 @@ pub mod ffi {
         }
     }
 
-    #[diplomat::opaque]
-    /// An ICU4X Unicode Map Property object, capable of querying whether a code point (key) to obtain the Unicode property value, for a specific Unicode property.
-    ///
-    /// For properties whose values fit into 16 bits.
-    #[diplomat::rust_link(icu::properties, Mod)]
-    #[diplomat::rust_link(icu::properties::CodePointMapData, Struct)]
-    #[diplomat::rust_link(icu::properties::CodePointMapDataBorrowed, Struct)]
-    #[diplomat::attr(demo_gen, disable)] // TODO needs custom page
-    pub struct CodePointMapData16(icu_properties::CodePointMapData<u16>);
-
     impl CodePointMapData16 {
-        /// Gets the value for a code point.
-        #[diplomat::rust_link(icu::properties::CodePointMapDataBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::CodePointMapDataBorrowed::get32, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = indexing, not(kotlin)), indexer)] // Kotlin doesn't support non-integral indexers
-        pub fn get(&self, cp: DiplomatChar) -> u16 {
-            self.0.as_borrowed().get32(cp)
-        }
-
-        /// Produces an iterator over ranges of code points that map to `value`
-        #[diplomat::rust_link(
-            icu::properties::CodePointMapDataBorrowed::iter_ranges_for_value,
-            FnInStruct
-        )]
-        pub fn iter_ranges_for_value<'a>(&'a self, value: u16) -> Box<CodePointRangeIterator<'a>> {
-            Box::new(CodePointRangeIterator(Box::new(
-                self.0.as_borrowed().iter_ranges_for_value(value),
-            )))
-        }
-
-        /// Produces an iterator over ranges of code points that do not map to `value`
-        #[diplomat::rust_link(
-            icu::properties::CodePointMapDataBorrowed::iter_ranges_for_value_complemented,
-            FnInStruct
-        )]
-        pub fn iter_ranges_for_value_complemented<'a>(
-            &'a self,
-            value: u16,
-        ) -> Box<CodePointRangeIterator<'a>> {
-            Box::new(CodePointRangeIterator(Box::new(
-                self.0
-                    .as_borrowed()
-                    .iter_ranges_for_value_complemented(value),
-            )))
-        }
-
-        /// Gets a [`CodePointSetData`] representing all entries in this map that map to the given value
-        #[diplomat::rust_link(
-            icu::properties::CodePointMapDataBorrowed::get_set_for_value,
-            FnInStruct
-        )]
-        pub fn get_set_for_value(&self, value: u16) -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
-                self.0.as_borrowed().get_set_for_value(value),
-            ))
-        }
-
         /// Create a map for the `Script` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::Script, Struct)]
         #[diplomat::attr(auto, named_constructor = "script")]
