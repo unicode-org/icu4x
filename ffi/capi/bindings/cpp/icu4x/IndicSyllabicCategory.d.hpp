@@ -260,6 +260,8 @@ public:
    */
   inline static std::optional<icu4x::IndicSyllabicCategory> from_integer_value(uint8_t other);
 
+  inline static std::optional<icu4x::IndicSyllabicCategory> try_from_str(std::string_view s);
+
     inline icu4x::capi::IndicSyllabicCategory AsFFI() const;
     inline static icu4x::IndicSyllabicCategory FromFFI(icu4x::capi::IndicSyllabicCategory c_enum);
 private:

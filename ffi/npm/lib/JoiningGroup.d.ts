@@ -475,5 +475,7 @@ export class JoiningGroup {
      */
     static fromIntegerValue(other: number): JoiningGroup | null;
 
+    static tryFromStr(s: string): JoiningGroup | null;
+
     constructor(value: JoiningGroup | string );
 }

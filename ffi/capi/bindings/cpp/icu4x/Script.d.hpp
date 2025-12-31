@@ -960,6 +960,8 @@ public:
    */
   inline static std::optional<icu4x::Script> from_integer_value(uint16_t other);
 
+  inline static std::optional<icu4x::Script> try_from_str(std::string_view s);
+
     inline icu4x::capi::Script AsFFI() const;
     inline static icu4x::Script FromFFI(icu4x::capi::Script c_enum);
 private:

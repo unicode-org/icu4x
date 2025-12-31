@@ -29,6 +29,9 @@ uint8_t icu4x_GeneralCategory_to_integer_value_mv1(GeneralCategory self);
 typedef struct icu4x_GeneralCategory_from_integer_value_mv1_result {union {GeneralCategory ok; }; bool is_ok;} icu4x_GeneralCategory_from_integer_value_mv1_result;
 icu4x_GeneralCategory_from_integer_value_mv1_result icu4x_GeneralCategory_from_integer_value_mv1(uint8_t other);
 
+typedef struct icu4x_GeneralCategory_try_from_str_mv1_result {union {GeneralCategory ok; }; bool is_ok;} icu4x_GeneralCategory_try_from_str_mv1_result;
+icu4x_GeneralCategory_try_from_str_mv1_result icu4x_GeneralCategory_try_from_str_mv1(DiplomatStringView s);
+
 GeneralCategoryGroup icu4x_GeneralCategory_to_group_mv1(GeneralCategory self);
 
 

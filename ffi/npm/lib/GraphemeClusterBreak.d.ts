@@ -123,5 +123,7 @@ export class GraphemeClusterBreak {
      */
     static fromIntegerValue(other: number): GraphemeClusterBreak | null;
 
+    static tryFromStr(s: string): GraphemeClusterBreak | null;
+
     constructor(value: GraphemeClusterBreak | string );
 }

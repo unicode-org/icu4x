@@ -12,6 +12,7 @@ internal interface JoiningGroupLib: Library {
     fun icu4x_JoiningGroup_short_name_mv1(inner: Int): OptionSlice
     fun icu4x_JoiningGroup_to_integer_value_mv1(inner: Int): FFIUint8
     fun icu4x_JoiningGroup_from_integer_value_mv1(other: FFIUint8): OptionInt
+    fun icu4x_JoiningGroup_try_from_str_mv1(s: Slice): OptionInt
 }
 /** See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
 */
@@ -156,6 +157,16 @@ enum class JoiningGroup {
         fun fromIntegerValue(other: UByte): JoiningGroup? {
             
             val returnVal = lib.icu4x_JoiningGroup_from_integer_value_mv1(FFIUint8(other));
+            
+            val intermediateOption = returnVal.option() ?: return null
+            return JoiningGroup.fromNative(intermediateOption)
+        }
+        @JvmStatic
+        
+        fun tryFromStr(s: String): JoiningGroup? {
+            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            
+            val returnVal = lib.icu4x_JoiningGroup_try_from_str_mv1(sSlice);
             
             val intermediateOption = returnVal.option() ?: return null
             return JoiningGroup.fromNative(intermediateOption)

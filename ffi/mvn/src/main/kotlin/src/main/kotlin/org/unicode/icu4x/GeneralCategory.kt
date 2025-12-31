@@ -12,6 +12,7 @@ internal interface GeneralCategoryLib: Library {
     fun icu4x_GeneralCategory_short_name_mv1(inner: Int): OptionSlice
     fun icu4x_GeneralCategory_to_integer_value_mv1(inner: Int): FFIUint8
     fun icu4x_GeneralCategory_from_integer_value_mv1(other: FFIUint8): OptionInt
+    fun icu4x_GeneralCategory_try_from_str_mv1(s: Slice): OptionInt
     fun icu4x_GeneralCategory_to_group_mv1(inner: Int): GeneralCategoryGroupNative
 }
 /** See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
@@ -113,6 +114,16 @@ enum class GeneralCategory(val inner: Int) {
         fun fromIntegerValue(other: UByte): GeneralCategory? {
             
             val returnVal = lib.icu4x_GeneralCategory_from_integer_value_mv1(FFIUint8(other));
+            
+            val intermediateOption = returnVal.option() ?: return null
+            return GeneralCategory.fromNative(intermediateOption)
+        }
+        @JvmStatic
+        
+        fun tryFromStr(s: String): GeneralCategory? {
+            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            
+            val returnVal = lib.icu4x_GeneralCategory_try_from_str_mv1(sSlice);
             
             val intermediateOption = returnVal.option() ?: return null
             return GeneralCategory.fromNative(intermediateOption)

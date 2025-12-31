@@ -105,6 +105,8 @@ public:
    */
   inline static std::optional<icu4x::JoiningType> from_integer_value(uint8_t other);
 
+  inline static std::optional<icu4x::JoiningType> try_from_str(std::string_view s);
+
     inline icu4x::capi::JoiningType AsFFI() const;
     inline static icu4x::JoiningType FromFFI(icu4x::capi::JoiningType c_enum);
 private:

@@ -247,5 +247,7 @@ export class LineBreak {
      */
     static fromIntegerValue(other: number): LineBreak | null;
 
+    static tryFromStr(s: string): LineBreak | null;
+
     constructor(value: LineBreak | string );
 }

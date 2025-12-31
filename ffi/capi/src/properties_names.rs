@@ -40,13 +40,11 @@ pub mod ffi {
             hidden
         )]
         pub fn get_strict(&self, name: &DiplomatStr) -> i16 {
-            if let Ok(name) = core::str::from_utf8(name) {
-                self.0.as_borrowed().get_strict(name)
-            } else {
-                None
-            }
-            .map(|u_16| u_16 as i16)
-            .unwrap_or(-1)
+            self.0
+                .as_borrowed()
+                .get_strict_utf8(name)
+                .map(|u_16| u_16 as i16)
+                .unwrap_or(-1)
         }
 
         /// Get the property value matching the given name, using loose matching
@@ -59,13 +57,11 @@ pub mod ffi {
             hidden
         )]
         pub fn get_loose(&self, name: &DiplomatStr) -> i16 {
-            if let Ok(name) = core::str::from_utf8(name) {
-                self.0.as_borrowed().get_loose(name)
-            } else {
-                None
-            }
-            .map(|u_16| u_16 as i16)
-            .unwrap_or(-1)
+            self.0
+                .as_borrowed()
+                .get_loose_utf8(name)
+                .map(|u_16| u_16 as i16)
+                .unwrap_or(-1)
         }
     }
 
@@ -89,13 +85,11 @@ pub mod ffi {
             hidden
         )]
         pub fn get_strict(&self, name: &DiplomatStr) -> GeneralCategoryGroup {
-            if let Ok(name) = core::str::from_utf8(name) {
-                self.0.as_borrowed().get_strict(name)
-            } else {
-                None
-            }
-            .map(Into::into)
-            .unwrap_or_default()
+            self.0
+                .as_borrowed()
+                .get_strict_utf8(name)
+                .map(Into::into)
+                .unwrap_or_default()
         }
 
         /// Get the mask value matching the given name, using loose matching
@@ -108,13 +102,11 @@ pub mod ffi {
             hidden
         )]
         pub fn get_loose(&self, name: &DiplomatStr) -> GeneralCategoryGroup {
-            if let Ok(name) = core::str::from_utf8(name) {
-                self.0.as_borrowed().get_loose(name)
-            } else {
-                None
-            }
-            .map(Into::into)
-            .unwrap_or_default()
+            self.0
+                .as_borrowed()
+                .get_loose_utf8(name)
+                .map(Into::into)
+                .unwrap_or_default()
         }
         /// Create a name-to-mask mapper for the `General_Category` property, using compiled data.
         #[diplomat::rust_link(icu::properties::props::GeneralCategoryGroup, Struct)]

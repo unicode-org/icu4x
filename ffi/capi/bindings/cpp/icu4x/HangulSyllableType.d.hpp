@@ -105,6 +105,8 @@ public:
    */
   inline static std::optional<icu4x::HangulSyllableType> from_integer_value(uint8_t other);
 
+  inline static std::optional<icu4x::HangulSyllableType> try_from_str(std::string_view s);
+
     inline icu4x::capi::HangulSyllableType AsFFI() const;
     inline static icu4x::HangulSyllableType FromFFI(icu4x::capi::HangulSyllableType c_enum);
 private:

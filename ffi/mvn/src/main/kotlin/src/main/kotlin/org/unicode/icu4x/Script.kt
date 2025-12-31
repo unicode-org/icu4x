@@ -12,6 +12,7 @@ internal interface ScriptLib: Library {
     fun icu4x_Script_short_name_mv1(inner: Int): OptionSlice
     fun icu4x_Script_to_integer_value_mv1(inner: Int): FFIUint16
     fun icu4x_Script_from_integer_value_mv1(other: FFIUint16): OptionInt
+    fun icu4x_Script_try_from_str_mv1(s: Slice): OptionInt
 }
 /** See the [Rust documentation for `Script`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html) for more information.
 */
@@ -406,6 +407,16 @@ enum class Script(val inner: Int) {
         fun fromIntegerValue(other: UShort): Script? {
             
             val returnVal = lib.icu4x_Script_from_integer_value_mv1(FFIUint16(other));
+            
+            val intermediateOption = returnVal.option() ?: return null
+            return Script.fromNative(intermediateOption)
+        }
+        @JvmStatic
+        
+        fun tryFromStr(s: String): Script? {
+            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            
+            val returnVal = lib.icu4x_Script_try_from_str_mv1(sSlice);
             
             val intermediateOption = returnVal.option() ?: return null
             return Script.fromNative(intermediateOption)

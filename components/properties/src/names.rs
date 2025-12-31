@@ -151,6 +151,11 @@ impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
     /// ```
     #[inline]
     pub fn get_strict_u16(self, name: &str) -> Option<u16> {
+        self.get_strict_u16_utf8(name.as_bytes())
+    }
+
+    #[doc(hidden)]
+    pub fn get_strict_u16_utf8(self, name: &[u8]) -> Option<u16> {
         get_strict_u16(self.map, name)
     }
 
@@ -177,7 +182,12 @@ impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
     /// ```
     #[inline]
     pub fn get_strict(self, name: &str) -> Option<T> {
-        T::try_from_u32(self.get_strict_u16(name)? as u32).ok()
+        self.get_strict_utf8(name.as_bytes())
+    }
+
+    #[doc(hidden)]
+    pub fn get_strict_utf8(self, name: &[u8]) -> Option<T> {
+        T::try_from_u32(self.get_strict_u16_utf8(name)? as u32).ok()
     }
 
     /// Get the property value as a u16, doing a loose search looking for
@@ -207,6 +217,11 @@ impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
     /// ```
     #[inline]
     pub fn get_loose_u16(self, name: &str) -> Option<u16> {
+        self.get_loose_u16_utf8(name.as_bytes())
+    }
+
+    #[doc(hidden)]
+    pub fn get_loose_u16_utf8(self, name: &[u8]) -> Option<u16> {
         get_loose_u16(self.map, name)
     }
 
@@ -237,7 +252,12 @@ impl<T: TrieValue> PropertyParserBorrowed<'_, T> {
     /// ```
     #[inline]
     pub fn get_loose(self, name: &str) -> Option<T> {
-        T::try_from_u32(self.get_loose_u16(name)? as u32).ok()
+        self.get_loose_utf8(name.as_bytes())
+    }
+
+    #[doc(hidden)]
+    pub fn get_loose_utf8(self, name: &[u8]) -> Option<T> {
+        T::try_from_u32(self.get_loose_u16_utf8(name)? as u32).ok()
     }
 }
 
@@ -278,12 +298,12 @@ impl<T: TrieValue> PropertyParserBorrowed<'static, T> {
 }
 
 /// Avoid monomorphizing multiple copies of this function
-fn get_strict_u16(payload: &PropertyValueNameToEnumMap<'_>, name: &str) -> Option<u16> {
+fn get_strict_u16(payload: &PropertyValueNameToEnumMap<'_>, name: &[u8]) -> Option<u16> {
     payload.map.get(name).and_then(|i| i.try_into().ok())
 }
 
 /// Avoid monomorphizing multiple copies of this function
-fn get_loose_u16(payload: &PropertyValueNameToEnumMap<'_>, name: &str) -> Option<u16> {
+fn get_loose_u16(payload: &PropertyValueNameToEnumMap<'_>, name: &[u8]) -> Option<u16> {
     fn recurse(mut cursor: ZeroTrieSimpleAsciiCursor, mut rest: &[u8]) -> Option<usize> {
         if cursor.is_empty() {
             return None;
@@ -326,7 +346,7 @@ fn get_loose_u16(payload: &PropertyValueNameToEnumMap<'_>, name: &str) -> Option
         recurse(cursor, rest).or_else(|| recurse(other_case_cursor, rest))
     }
 
-    recurse(payload.map.cursor(), name.as_bytes()).and_then(|i| i.try_into().ok())
+    recurse(payload.map.cursor(), name).and_then(|i| i.try_into().ok())
 }
 
 /// A struct capable of looking up a property name from a value
@@ -726,7 +746,12 @@ pub trait NamedEnumeratedProperty: ParseableEnumeratedProperty {
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     #[cfg(feature = "compiled_data")]
     fn try_from_str(s: &str) -> Option<Self> {
-        PropertyParser::new().get_loose(s)
+        Self::try_from_utf8(s.as_bytes())
+    }
+    #[cfg(feature = "compiled_data")]
+    #[doc(hidden)]
+    fn try_from_utf8(s: &[u8]) -> Option<Self> {
+        PropertyParser::new().get_loose_utf8(s)
     }
     /// Convenience method for `PropertyNamesLong::new().get(*self).unwrap()`
     ///
