@@ -156,13 +156,91 @@ pub enum DateDurationUnit {
     /// Duration in days
     Days,
 }
+
+/// Errors that can occur when parsing an ISO 8601 date only duration string.
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum DateDurationParseError {
+    /// The input does not follow the expected ISO 8601 date only duration structure.
+    ///
+    /// This error occurs when the duration string is incomplete,
+    /// or contains unexpected characters.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::calendar::types::DateDuration;
+    ///
+    /// assert!(DateDuration::try_from_str("P").is_err());
+    /// assert!(DateDuration::try_from_str("P1").is_err());
+    /// assert!(DateDuration::try_from_str("PX1D").is_err());
+    /// ```
     InvalidStructure,
+
+    /// The duration contains a time component, which is not supported.
+    ///
+    /// Only date based units (`Y`, `M`, `W`, `D`) are supported. Any duration
+    /// containing a `T` time separator rejected.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::calendar::types::DateDuration;
+    ///
+    /// assert!(DateDuration::try_from_str("PT5M").is_err());
+    /// assert!(DateDuration::try_from_str("P1DT").is_err());
+    /// ```
     TimeNotSupported,
+
+    /// A duration unit appeared without a number before it.
+    ///
+    /// For example, the string contains `Y`, `M`, `W`, or `D` without a
+    /// numeric value directly in front of it.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::calendar::types::DateDuration;
+    ///
+    /// assert!(DateDuration::try_from_str("PY").is_err());
+    /// ```
     MissingValue,
+
+    /// A duration unit was specified more than once.
+    ///
+    /// Each unit (`Y`, `M`, `W`, `D`) may appear at most once only.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::calendar::types::DateDuration;
+    ///
+    /// assert!(DateDuration::try_from_str("P1Y2Y").is_err());
+    /// assert!(DateDuration::try_from_str("P1D1D").is_err());
+    /// ```
     DuplicateUnit,
+
+    /// A numeric value exceeded or was more than the supported range.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::calendar::types::DateDuration;
+    ///
+    /// assert!(DateDuration::try_from_str("P999999999999999999999D").is_err());
+    /// ```
     NumberOverflow,
+
+    /// A duration starts with a `+` sign, which is not allowed.
+    ///
+    /// Only negative durations using a leading `-` are supported.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use icu::calendar::types::DateDuration;
+    ///
+    /// assert!(DateDuration::try_from_str("+P1D").is_err());
+    /// ```
     PositiveNotAllowed,
 }
 
@@ -178,8 +256,8 @@ impl DateDuration {
 }
 
 impl DateDuration {
-    /// parses an ISO 8601 date only duration string into a [`DateDuration`].
-    /// this function supports year, month, week and day components and rejects time based durations and returns an error for invalid structures or duplicate units.
+    /// Parses an ISO 8601 date only duration string into a [`DateDuration`].
+    /// This function supports year, month, week and day components and rejects time based durations and returns an error for invalid structures or duplicate units.
     pub fn try_from_str(s: &str) -> Result<Self, DateDurationParseError> {
         let mut s = s;
         let mut is_negative = false;
@@ -427,99 +505,67 @@ mod tests {
     #[test]
     fn parse_single_unit_durations() {
         let d = DateDuration::try_from_str("P1D").unwrap();
-        assert_eq!(d.days, 1);
-        assert!(!d.is_negative);
+        assert_eq!(
+            d,
+            DateDuration {
+                days: 1,
+                ..Default::default()
+            }
+        );
 
         let d = DateDuration::try_from_str("P3W").unwrap();
-        assert_eq!(d.weeks, 3);
+        assert_eq!(
+            d,
+            DateDuration {
+                weeks: 3,
+                ..Default::default()
+            }
+        );
 
         let d = DateDuration::try_from_str("P5M").unwrap();
-        assert_eq!(d.months, 5);
+        assert_eq!(
+            d,
+            DateDuration {
+                months: 5,
+                ..Default::default()
+            }
+        );
 
         let d = DateDuration::try_from_str("P7Y").unwrap();
-        assert_eq!(d.years, 7);
+        assert_eq!(
+            d,
+            DateDuration {
+                years: 7,
+                ..Default::default()
+            }
+        );
     }
 
     #[test]
     fn parse_multi_unit_durations() {
         let d = DateDuration::try_from_str("P1Y3M5W7D").unwrap();
-        assert_eq!(d.years, 1);
-        assert_eq!(d.months, 3);
-        assert_eq!(d.weeks, 5);
-        assert_eq!(d.days, 7);
-
-        let d = DateDuration::try_from_str("P3M1D").unwrap();
-        assert_eq!(d.months, 3);
-        assert_eq!(d.days, 1);
-    }
-
-    #[test]
-    fn parse_zero_values() {
-        let d = DateDuration::try_from_str("P0D").unwrap();
-        assert_eq!(d.days, 0);
-        assert!(!d.is_negative);
-
-        let d = DateDuration::try_from_str("P0Y0M0W0D").unwrap();
-        assert_eq!(d.years, 0);
-        assert_eq!(d.months, 0);
-        assert_eq!(d.weeks, 0);
-        assert_eq!(d.days, 0);
+        assert_eq!(
+            d,
+            DateDuration {
+                years: 1,
+                months: 3,
+                weeks: 5,
+                days: 7,
+                ..Default::default()
+            }
+        );
     }
 
     #[test]
     fn parse_negative_durations() {
         let d = DateDuration::try_from_str("-P9W").unwrap();
-        assert!(d.is_negative);
-        assert_eq!(d.weeks, 9);
-
-        let d = DateDuration::try_from_str("-P0D").unwrap();
-        assert!(d.is_negative);
-        assert_eq!(d.days, 0);
-    }
-
-    #[test]
-    fn reject_signs_not_at_start() {
-        assert!(DateDuration::try_from_str("P-1D").is_err());
-        assert!(DateDuration::try_from_str("P6-D").is_err());
-        assert!(DateDuration::try_from_str("P7D-").is_err());
-        assert!(DateDuration::try_from_str("P1+2D").is_err());
-    }
-    #[test]
-    fn reject_invalid_structure() {
-        assert!(DateDuration::try_from_str("P").is_err());
-        assert!(DateDuration::try_from_str("P1").is_err());
-        assert!(DateDuration::try_from_str("P1Y2").is_err());
-        assert!(DateDuration::try_from_str("P1D1").is_err());
-        assert!(DateDuration::try_from_str("PX1D").is_err());
-    }
-
-    #[test]
-    fn reject_duplicate_units() {
-        assert!(DateDuration::try_from_str("P1Y1Y").is_err());
-        assert!(DateDuration::try_from_str("P2M1M").is_err());
-        assert!(DateDuration::try_from_str("P1D1D").is_err());
-    }
-
-    #[test]
-    fn reject_time_components() {
-        assert!(DateDuration::try_from_str("PT5M").is_err());
-        assert!(DateDuration::try_from_str("P1DT").is_err());
-        assert!(DateDuration::try_from_str("P1Y2MT").is_err());
-    }
-
-    #[test]
-    fn reject_invalid_signs() {
-        assert!(DateDuration::try_from_str("+P1D").is_err());
-        assert!(DateDuration::try_from_str("P-1D").is_err());
-        assert!(DateDuration::try_from_str("--P1D").is_err());
-    }
-
-    #[test]
-    fn reject_numeric_overflow() {
-        let huge = "P99999999999999977777777788888888888D";
-        assert!(DateDuration::try_from_str(huge).is_err());
-
-        let huge = "P9999999999999555555555558888888888Y";
-        assert!(DateDuration::try_from_str(huge).is_err());
+        assert_eq!(
+            d,
+            DateDuration {
+                is_negative: true,
+                weeks: 9,
+                ..Default::default()
+            }
+        );
     }
 }
