@@ -16,6 +16,12 @@ struct PropertiesEnums<'a> {
     props: &'a [Prop],
 }
 
+#[derive(Template)]
+#[template(path = "properties_maps.rs.jinja")]
+struct PropertiesMaps<'a> {
+    props: &'a [Prop],
+}
+
 struct Prop {
     name: String,
     is_open: bool,
@@ -49,6 +55,19 @@ impl Prop {
             discriminant == d
         } else {
             discriminant == 0
+        }
+    }
+
+    fn snake_case(&self) -> String {
+        use heck::ToSnakeCase;
+        self.name.to_snake_case()
+    }
+
+    fn map_type(&self) -> &'static str {
+        if self.int_type == "u8" {
+            "CodePointMapData8"
+        } else {
+            "CodePointMapData16"
         }
     }
 }
@@ -186,5 +205,13 @@ pub fn main() {
         let mut file = File::create(&path_buf).unwrap();
         use std::io::Write;
         writeln!(&mut file, "{}", PropertiesEnums { props }).unwrap();
+    }
+
+    {
+        let mut path_buf = path_buf.clone();
+        path_buf.push("properties_maps.rs");
+        let mut file = File::create(&path_buf).unwrap();
+        use std::io::Write;
+        writeln!(&mut file, "{}", PropertiesMaps { props }).unwrap();
     }
 }
