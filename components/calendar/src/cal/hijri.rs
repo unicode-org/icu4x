@@ -59,7 +59,8 @@ mod ummalqura_data;
 ///
 /// # Crescent moon visibility
 ///
-/// According to Islam, months begin on the day when the crescent moon is visible in the sky.
+/// According to Islam, the first day of a month begins when the crescent moon is
+/// visible at sunset.
 ///
 /// Currently, most groups that use the Hijri calendar rely on human observations of the
 /// crescent moon, which are impacted by atmospheric phenomena. As a result, it is not
