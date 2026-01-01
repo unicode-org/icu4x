@@ -28,7 +28,8 @@ pub(crate) struct DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
 }
 
 impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
-    ///Helper function: finds best row offset when value range too large for dense matrix
+    /// Helper function: finds best row offset when value range too large for dense matrix
+    #[allow(clippy::indexing_slicing)] // bot < top and top < sorted_vals.len()
     fn find_window(values: &BTreeMap<&'a str, usize>) -> usize {
         let mut sorted_vals: Vec<usize> = values.values().cloned().collect();
         let row_width = usize::from(DenseType::MAX);
@@ -38,8 +39,8 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
         let mut best_index = 0;
         for top in 0..sorted_vals.len() {
             while bot < top {
-                let top_val = sorted_vals.get(top).copied().unwrap_or(0);
-                let bot_val = sorted_vals.get(bot).copied().unwrap_or(0);
+                let top_val = sorted_vals[top];
+                let bot_val = sorted_vals[bot];
                 if top_val - bot_val >= row_width {
                     bot += 1;
                 } else {
@@ -51,7 +52,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
                 best_index = bot;
             }
         }
-        sorted_vals.get(best_index).copied().unwrap_or(0)
+        sorted_vals[best_index]
     }
     /// Add a prefix and all values associated with the prefix to the builder.
     pub(crate) fn add_prefix(

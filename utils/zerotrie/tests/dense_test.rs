@@ -144,22 +144,21 @@ fn test_dense_sparse_window_selection() {
     let row_width = usize::from(u16::MAX); // Densetype max
     let far_low = 0;
     let cluster_start = 50;
-    let cluster_vals = [cluster_start, cluster_start + 2, cluster_start + 3];
     let far_high = cluster_start + row_width + 100;
 
     let mut inner = BTreeMap::new();
     inner.insert("low", far_low);
-    inner.insert("a", cluster_vals.first().copied().unwrap_or(0));
-    inner.insert("c", cluster_vals.get(2).copied().unwrap_or(0));
+    inner.insert("a", 50); // cluster_start
+    inner.insert("c", 53); // cluster_start + 3
     inner.insert("d", cluster_start + row_width - 3);
     inner.insert("e", cluster_start + row_width - 2);
     inner.insert("f", cluster_start + row_width - 1);
-    inner.insert("c2", cluster_vals.get(2).copied().unwrap_or(0));
+    inner.insert("c2", 53); // cluster_start + 3
     inner.insert("g", cluster_start + row_width);
     inner.insert("h", cluster_start + row_width + 1);
-    inner.insert("b", cluster_vals.get(1).copied().unwrap_or(0));
+    inner.insert("b", 52); // cluster_start + 2
     inner.insert("high", far_high);
-    inner.insert("c3", cluster_vals.get(2).copied().unwrap_or(0));
+    inner.insert("c3", 53); // cluster_start + 3
     inner.insert("low2", far_low);
 
     let mut data = BTreeMap::new();
