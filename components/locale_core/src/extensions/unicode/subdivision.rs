@@ -46,6 +46,14 @@ impl_tinystr_subtag!(
     ["toolooong"],
 );
 
+impl SubdivisionSuffix {
+    pub(crate) const UNKNOWN: Self = subdivision_suffix!("zzzz");
+
+    pub(crate) fn is_unknown(self) -> bool {
+        self == Self::UNKNOWN
+    }
+}
+
 /// A Subivision Id as defined in [`Unicode Locale Identifier`].
 ///
 /// Subdivision Id is used in [`Unicode`] extensions:
