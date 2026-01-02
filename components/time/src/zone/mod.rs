@@ -52,7 +52,6 @@ mod offset;
 pub mod windows;
 mod zone_name_timestamp;
 
-use ixdtf::encoding::Utf8;
 #[doc(inline)]
 pub use offset::InvalidOffsetError;
 pub use offset::UtcOffset;
