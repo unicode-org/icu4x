@@ -52,6 +52,7 @@ mod offset;
 pub mod windows;
 mod zone_name_timestamp;
 
+use ixdtf::encoding::Utf8;
 #[doc(inline)]
 pub use offset::InvalidOffsetError;
 pub use offset::UtcOffset;
@@ -179,6 +180,51 @@ impl TimeZone {
     /// Whether this [`TimeZone`] equals [`TimeZone::UNKNOWN`].
     pub const fn is_unknown(self) -> bool {
         matches!(self, Self::UNKNOWN)
+    }
+
+    /// Creates a `TimeZone` from an IANA timezone identifier string.
+    ///
+    /// # Arguments
+    /// * `iana_str` - A string slice containing an IANA timezone identifier (e.g., "America/New_York")
+    /// * `parser` - A borrowed IANA timezone parser instance
+    ///
+    /// # Returns
+    /// A new `TimeZone` instance corresponding to the provided IANA identifier
+    ///
+    /// # Examples
+    /// ```
+    /// use icu::time::zone::IanaParser;
+    /// use icu::time::zone::TimeZone;
+    ///
+    /// let parser = IanaParser::new();
+    /// let tz = TimeZone::from_iana_str("America/New_York", parser);
+    /// ```
+    pub fn from_iana_str(iana_str: &str, parser: IanaParserBorrowed) -> Self {
+        parser.parse(iana_str)
+    }
+
+    /// Creates a `TimeZone` from a UTF-8 encoded IANA timezone identifier.
+    ///
+    /// This function is useful when working with raw byte slices that are known to be valid UTF-8.
+    /// If you have a string slice (`&str`), consider using [`from_iana_str`](Self::from_iana_str) instead.
+    ///
+    /// # Arguments
+    /// * `iana_utf` - A byte slice containing a UTF-8 encoded IANA timezone identifier
+    /// * `parser` - A borrowed IANA timezone parser instance
+    ///
+    /// # Returns
+    /// A new `TimeZone` instance corresponding to the provided IANA identifier
+    ///
+    /// # Examples
+    /// ```
+    /// use icu::time::zone::IanaParser;
+    /// use icu::time::zone::TimeZone;
+    ///
+    /// let parser = IanaParser::new();
+    /// let tz = TimeZone::from_iana_utf8(b"America/New_York", parser);
+    /// ```
+    pub fn from_iana_utf8(iana_utf: &[u8], parser: IanaParserBorrowed) -> Self {
+        parser.parse_from_utf8(iana_utf)
     }
 }
 
@@ -598,4 +644,18 @@ fn test_zone_info_equality() {
             .with_offset(Some(UtcOffset::from_seconds_unchecked(123))),
         TimeZoneInfo::unknown()
     );
+}
+
+#[test]
+fn test_from_iana_str() {
+    let parser = IanaParser::new();
+    let tz = TimeZone::from_iana_str("America/New_York", parser);
+    assert!(!tz.is_unknown());
+}
+
+#[test]
+fn test_from_iana_utf8() {
+    let parser = IanaParser::new();
+    let tz = TimeZone::from_iana_utf8(b"America/New_York", parser);
+    assert!(!tz.is_unknown());
 }
