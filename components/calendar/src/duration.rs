@@ -16,6 +16,8 @@
 /// # Example
 ///
 /// ```rust
+/// # #[cfg(feature="unstable")]
+/// # {
 /// use icu::calendar::options::DateDifferenceOptions;
 /// use icu::calendar::types::DateDuration;
 /// use icu::calendar::types::DateDurationUnit;
@@ -98,6 +100,7 @@
 /// assert_eq!(mutated_date_iso.era_year().year, 1993);
 /// assert_eq!(mutated_date_iso.month().ordinal, 11);
 /// assert_eq!(mutated_date_iso.day_of_month().0, 27);
+/// # }
 /// ```
 ///
 /// Currently unstable for ICU4X 1.0
@@ -159,6 +162,7 @@ pub enum DateDurationUnit {
 
 /// Errors that can occur when parsing an ISO 8601 date only duration string.
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
+#[non_exhaustive]
 pub enum DateDurationParseError {
     /// The input does not follow the expected ISO 8601 date only duration structure.
     ///
@@ -168,11 +172,11 @@ pub enum DateDurationParseError {
     /// # Examples
     ///
     /// ```rust
+    /// # #[cfg(feature="unstable")]
     /// use icu::calendar::types::{DateDuration, DateDurationParseError};
     ///
     /// assert_eq!(DateDuration::try_from_str("P"),  Err(DateDurationParseError::InvalidStructure));
     /// assert_eq!(DateDuration::try_from_str("P1"), Err(DateDurationParseError::InvalidStructure));
-    /// assert_eq!(DateDuration::try_from_str("PX1D"), Err(DateDurationParseError::InvalidStructure));
     /// ```
     InvalidStructure,
 
@@ -184,6 +188,7 @@ pub enum DateDurationParseError {
     /// # Examples
     ///
     /// ```rust
+    /// # #[cfg(feature="unstable")]
     /// use icu::calendar::types::{DateDuration, DateDurationParseError} ;
     ///
     /// assert_eq!(DateDuration::try_from_str("PT5M"), Err(DateDurationParseError::TimeNotSupported));
@@ -199,9 +204,11 @@ pub enum DateDurationParseError {
     /// # Examples
     ///
     /// ```rust
+    /// # #[cfg(feature="unstable")]
     /// use icu::calendar::types::{DateDuration, DateDurationParseError};
     ///
     /// assert_eq!(DateDuration::try_from_str("PY"), Err(DateDurationParseError::MissingValue));
+    /// assert_eq!(DateDuration::try_from_str("PX1D"), Err(DateDurationParseError::MissingValue));
     /// ```
     MissingValue,
 
@@ -212,6 +219,7 @@ pub enum DateDurationParseError {
     /// # Examples
     ///
     /// ```rust
+    /// # #[cfg(feature="unstable")]
     /// use icu::calendar::types::{DateDuration, DateDurationParseError};
     ///
     /// assert_eq!(DateDuration::try_from_str("P1Y2Y"), Err(DateDurationParseError::DuplicateUnit));
@@ -224,6 +232,7 @@ pub enum DateDurationParseError {
     /// # Examples
     ///
     /// ```rust
+    /// # #[cfg(feature="unstable")]
     /// use icu::calendar::types::{DateDuration, DateDurationParseError};
     ///
     /// assert_eq!(DateDuration::try_from_str("P9999999999999555555588888888"), Err(DateDurationParseError::NumberOverflow));
@@ -237,6 +246,7 @@ pub enum DateDurationParseError {
     /// # Examples
     ///
     /// ```rust
+    /// # #[cfg(feature="unstable")]
     /// use icu::calendar::types::{DateDuration, DateDurationParseError};
     ///
     /// assert_eq!(DateDuration::try_from_str("+P1D"), Err(DateDurationParseError::PositiveNotAllowed));
