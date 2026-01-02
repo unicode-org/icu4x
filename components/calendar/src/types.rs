@@ -16,6 +16,10 @@ pub use crate::duration::{DateDuration, DateDurationUnit};
 use crate::{calendar_arithmetic::ArithmeticDate, error::MonthCodeParseError};
 
 #[cfg(feature = "unstable")]
+pub use crate::duration::DateDurationParseError;
+
+
+#[cfg(feature = "unstable")]
 pub use unstable::DateFields;
 #[cfg(not(feature = "unstable"))]
 pub(crate) use unstable::DateFields;
