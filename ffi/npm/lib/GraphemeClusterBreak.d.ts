@@ -16,23 +16,77 @@ export class GraphemeClusterBreak {
     /** @internal */
     get ffiValue(): number;
 
+    /**
+     * See the [Rust documentation for `Other`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.Other) for more information.
+     */
     static Other : GraphemeClusterBreak;
+    /**
+     * See the [Rust documentation for `Control`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.Control) for more information.
+     */
     static Control : GraphemeClusterBreak;
+    /**
+     * See the [Rust documentation for `CR`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.CR) for more information.
+     */
     static Cr : GraphemeClusterBreak;
+    /**
+     * See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.Extend) for more information.
+     */
     static Extend : GraphemeClusterBreak;
+    /**
+     * See the [Rust documentation for `L`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.L) for more information.
+     */
     static L : GraphemeClusterBreak;
+    /**
+     * See the [Rust documentation for `LF`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.LF) for more information.
+     */
     static Lf : GraphemeClusterBreak;
+    /**
+     * See the [Rust documentation for `LV`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.LV) for more information.
+     */
     static Lv : GraphemeClusterBreak;
+    /**
+     * See the [Rust documentation for `LVT`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.LVT) for more information.
+     */
     static Lvt : GraphemeClusterBreak;
+    /**
+     * See the [Rust documentation for `T`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.T) for more information.
+     */
     static T : GraphemeClusterBreak;
+    /**
+     * See the [Rust documentation for `V`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.V) for more information.
+     */
     static V : GraphemeClusterBreak;
+    /**
+     * See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.SpacingMark) for more information.
+     */
     static SpacingMark : GraphemeClusterBreak;
+    /**
+     * See the [Rust documentation for `Prepend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.Prepend) for more information.
+     */
     static Prepend : GraphemeClusterBreak;
+    /**
+     * See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.RegionalIndicator) for more information.
+     */
     static RegionalIndicator : GraphemeClusterBreak;
+    /**
+     * See the [Rust documentation for `EBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.EBase) for more information.
+     */
     static EBase : GraphemeClusterBreak;
+    /**
+     * See the [Rust documentation for `EBaseGAZ`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.EBaseGAZ) for more information.
+     */
     static EBaseGaz : GraphemeClusterBreak;
+    /**
+     * See the [Rust documentation for `EModifier`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.EModifier) for more information.
+     */
     static EModifier : GraphemeClusterBreak;
+    /**
+     * See the [Rust documentation for `GlueAfterZwj`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.GlueAfterZwj) for more information.
+     */
     static GlueAfterZwj : GraphemeClusterBreak;
+    /**
+     * See the [Rust documentation for `ZWJ`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.ZWJ) for more information.
+     */
     static Zwj : GraphemeClusterBreak;
 
 

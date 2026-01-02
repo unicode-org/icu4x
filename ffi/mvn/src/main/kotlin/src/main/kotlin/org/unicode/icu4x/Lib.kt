@@ -465,13 +465,11 @@ class FFISizet(val value: ULong = 0u): com.sun.jna.IntegerType(Native.SIZE_T_SIZ
 
 class FFIIsizet(val value: Long = 0): com.sun.jna.IntegerType(Native.SIZE_T_SIZE, value, true)  {
     override fun toByte(): Byte = this.toLong().toByte()
-    override fun toChar(): Char = this.toLong().toInt().toChar()
     override fun toShort(): Short = this.toLong().toShort()
 }
 
 class FFIUint8(val value: UByte = 0u): com.sun.jna.IntegerType(1, value.toByte().toLong(), true)  {
     override fun toByte(): Byte = this.toLong().toByte()
-    override fun toChar(): Char = this.toLong().toInt().toChar()
     override fun toShort(): Short = this.toLong().toShort()
     fun toUByte(): UByte = this.toByte().toUByte()
     constructor(): this(0u)
@@ -479,7 +477,6 @@ class FFIUint8(val value: UByte = 0u): com.sun.jna.IntegerType(1, value.toByte()
 
 class FFIUint16(val value: UShort = 0u): com.sun.jna.IntegerType(2, value.toShort().toLong(), true)  {
     override fun toByte(): Byte = this.toLong().toByte()
-    override fun toChar(): Char = this.toLong().toInt().toChar()
     override fun toShort(): Short = this.toLong().toShort()
     fun toUShort(): UShort = this.toShort().toUShort()
     constructor(): this(0u)
@@ -487,7 +484,6 @@ class FFIUint16(val value: UShort = 0u): com.sun.jna.IntegerType(2, value.toShor
 
 class FFIUint32(val value: UInt = 0u): com.sun.jna.IntegerType(4, value.toInt().toLong(), true)  {
     override fun toByte(): Byte = this.toLong().toByte()
-    override fun toChar(): Char = this.toLong().toInt().toChar()
     override fun toShort(): Short = this.toLong().toShort()
     fun toUInt(): UInt = this.toInt().toUInt()
     constructor(): this(0u)
@@ -495,7 +491,6 @@ class FFIUint32(val value: UInt = 0u): com.sun.jna.IntegerType(4, value.toInt().
 
 class FFIUint64(val value: ULong = 0u): com.sun.jna.IntegerType(8, value.toLong(), true)  {
     override fun toByte(): Byte = this.toLong().toByte()
-    override fun toChar(): Char = this.toLong().toInt().toChar()
     override fun toShort(): Short = this.toLong().toShort()
     fun toULong(): ULong = this.toLong().toULong()
     constructor(): this(0u)
@@ -789,9 +784,28 @@ class ResultZonedIsoDateTimeNativeInt: Structure(), Structure.ByValue  {
 }
 
 
-internal class OptionFFIUint16: Structure(), Structure.ByValue  {
+internal class OptionUnit constructor(): Structure(), Structure.ByValue {@JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("value", "isOk")
+    }
+
+    internal fun option(): Unit? {
+        if (isOk == 1.toByte()) {
+            return Unit
+        } else {
+            return null
+        }
+    }
+
+
+}
+
+internal class OptionBoolean constructor(): Structure(), Structure.ByValue {
     @JvmField
-    internal var value: FFIUint16 = FFIUint16()
+    internal var value: Boolean = false
 
     @JvmField
     internal var isOk: Byte = 0
@@ -801,15 +815,109 @@ internal class OptionFFIUint16: Structure(), Structure.ByValue  {
         return listOf("value", "isOk")
     }
 
-    internal fun option(): FFIUint16? {
+    internal fun option(): Boolean? {
         if (isOk == 1.toByte()) {
             return value
         } else {
             return null
         }
     }
+
+
+    constructor(value: Boolean, isOk: Byte): this() {
+        this.value = value
+        this.isOk = isOk
+    }
+
+    companion object {
+        internal fun some(value: Boolean): OptionBoolean {
+            return OptionBoolean(value, 1)
+        }
+
+        internal fun none(): OptionBoolean {
+            return OptionBoolean(false, 0)
+        }
+    }
+
 }
-internal class OptionInt: Structure(), Structure.ByValue  {
+
+internal class OptionByte constructor(): Structure(), Structure.ByValue {
+    @JvmField
+    internal var value: Byte = 0
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("value", "isOk")
+    }
+
+    internal fun option(): Byte? {
+        if (isOk == 1.toByte()) {
+            return value
+        } else {
+            return null
+        }
+    }
+
+
+    constructor(value: Byte, isOk: Byte): this() {
+        this.value = value
+        this.isOk = isOk
+    }
+
+    companion object {
+        internal fun some(value: Byte): OptionByte {
+            return OptionByte(value, 1)
+        }
+
+        internal fun none(): OptionByte {
+            return OptionByte(0, 0)
+        }
+    }
+
+}
+
+internal class OptionShort constructor(): Structure(), Structure.ByValue {
+    @JvmField
+    internal var value: Short = 0
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("value", "isOk")
+    }
+
+    internal fun option(): Short? {
+        if (isOk == 1.toByte()) {
+            return value
+        } else {
+            return null
+        }
+    }
+
+
+    constructor(value: Short, isOk: Byte): this() {
+        this.value = value
+        this.isOk = isOk
+    }
+
+    companion object {
+        internal fun some(value: Short): OptionShort {
+            return OptionShort(value, 1)
+        }
+
+        internal fun none(): OptionShort {
+            return OptionShort(0, 0)
+        }
+    }
+
+}
+
+internal class OptionInt constructor(): Structure(), Structure.ByValue {
     @JvmField
     internal var value: Int = 0
 
@@ -828,10 +936,28 @@ internal class OptionInt: Structure(), Structure.ByValue  {
             return null
         }
     }
+
+
+    constructor(value: Int, isOk: Byte): this() {
+        this.value = value
+        this.isOk = isOk
+    }
+
+    companion object {
+        internal fun some(value: Int): OptionInt {
+            return OptionInt(value, 1)
+        }
+
+        internal fun none(): OptionInt {
+            return OptionInt(0, 0)
+        }
+    }
+
 }
-internal class OptionIsoDateTimeNative: Structure(), Structure.ByValue  {
+
+internal class OptionLong constructor(): Structure(), Structure.ByValue {
     @JvmField
-    internal var value: IsoDateTimeNative = IsoDateTimeNative()
+    internal var value: Long = 0
 
     @JvmField
     internal var isOk: Byte = 0
@@ -841,15 +967,337 @@ internal class OptionIsoDateTimeNative: Structure(), Structure.ByValue  {
         return listOf("value", "isOk")
     }
 
-    internal fun option(): IsoDateTimeNative? {
+    internal fun option(): Long? {
         if (isOk == 1.toByte()) {
             return value
         } else {
             return null
         }
     }
+
+
+    constructor(value: Long, isOk: Byte): this() {
+        this.value = value
+        this.isOk = isOk
+    }
+
+    companion object {
+        internal fun some(value: Long): OptionLong {
+            return OptionLong(value, 1)
+        }
+
+        internal fun none(): OptionLong {
+            return OptionLong(0, 0)
+        }
+    }
+
 }
-internal class OptionSlice: Structure(), Structure.ByValue  {
+
+internal class OptionFFIUint8 constructor(): Structure(), Structure.ByValue {
+    @JvmField
+    internal var value: FFIUint8 = FFIUint8()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("value", "isOk")
+    }
+
+    internal fun option(): FFIUint8? {
+        if (isOk == 1.toByte()) {
+            return value
+        } else {
+            return null
+        }
+    }
+
+
+    constructor(value: FFIUint8, isOk: Byte): this() {
+        this.value = value
+        this.isOk = isOk
+    }
+
+    companion object {
+        internal fun some(value: FFIUint8): OptionFFIUint8 {
+            return OptionFFIUint8(value, 1)
+        }
+
+        internal fun none(): OptionFFIUint8 {
+            return OptionFFIUint8(FFIUint8(), 0)
+        }
+    }
+
+}
+
+internal class OptionFFIUint16 constructor(): Structure(), Structure.ByValue {
+    @JvmField
+    internal var value: FFIUint16 = FFIUint16()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("value", "isOk")
+    }
+
+    internal fun option(): FFIUint16? {
+        if (isOk == 1.toByte()) {
+            return value
+        } else {
+            return null
+        }
+    }
+
+
+    constructor(value: FFIUint16, isOk: Byte): this() {
+        this.value = value
+        this.isOk = isOk
+    }
+
+    companion object {
+        internal fun some(value: FFIUint16): OptionFFIUint16 {
+            return OptionFFIUint16(value, 1)
+        }
+
+        internal fun none(): OptionFFIUint16 {
+            return OptionFFIUint16(FFIUint16(), 0)
+        }
+    }
+
+}
+
+internal class OptionFFIUint32 constructor(): Structure(), Structure.ByValue {
+    @JvmField
+    internal var value: FFIUint32 = FFIUint32()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("value", "isOk")
+    }
+
+    internal fun option(): FFIUint32? {
+        if (isOk == 1.toByte()) {
+            return value
+        } else {
+            return null
+        }
+    }
+
+
+    constructor(value: FFIUint32, isOk: Byte): this() {
+        this.value = value
+        this.isOk = isOk
+    }
+
+    companion object {
+        internal fun some(value: FFIUint32): OptionFFIUint32 {
+            return OptionFFIUint32(value, 1)
+        }
+
+        internal fun none(): OptionFFIUint32 {
+            return OptionFFIUint32(FFIUint32(), 0)
+        }
+    }
+
+}
+
+internal class OptionFFIUint64 constructor(): Structure(), Structure.ByValue {
+    @JvmField
+    internal var value: FFIUint64 = FFIUint64()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("value", "isOk")
+    }
+
+    internal fun option(): FFIUint64? {
+        if (isOk == 1.toByte()) {
+            return value
+        } else {
+            return null
+        }
+    }
+
+
+    constructor(value: FFIUint64, isOk: Byte): this() {
+        this.value = value
+        this.isOk = isOk
+    }
+
+    companion object {
+        internal fun some(value: FFIUint64): OptionFFIUint64 {
+            return OptionFFIUint64(value, 1)
+        }
+
+        internal fun none(): OptionFFIUint64 {
+            return OptionFFIUint64(FFIUint64(), 0)
+        }
+    }
+
+}
+
+internal class OptionFFISizet constructor(): Structure(), Structure.ByValue {
+    @JvmField
+    internal var value: FFISizet = FFISizet()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("value", "isOk")
+    }
+
+    internal fun option(): FFISizet? {
+        if (isOk == 1.toByte()) {
+            return value
+        } else {
+            return null
+        }
+    }
+
+
+    constructor(value: FFISizet, isOk: Byte): this() {
+        this.value = value
+        this.isOk = isOk
+    }
+
+    companion object {
+        internal fun some(value: FFISizet): OptionFFISizet {
+            return OptionFFISizet(value, 1)
+        }
+
+        internal fun none(): OptionFFISizet {
+            return OptionFFISizet(FFISizet(), 0)
+        }
+    }
+
+}
+
+internal class OptionFFIIsizet constructor(): Structure(), Structure.ByValue {
+    @JvmField
+    internal var value: FFIIsizet = FFIIsizet()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("value", "isOk")
+    }
+
+    internal fun option(): FFIIsizet? {
+        if (isOk == 1.toByte()) {
+            return value
+        } else {
+            return null
+        }
+    }
+
+
+    constructor(value: FFIIsizet, isOk: Byte): this() {
+        this.value = value
+        this.isOk = isOk
+    }
+
+    companion object {
+        internal fun some(value: FFIIsizet): OptionFFIIsizet {
+            return OptionFFIIsizet(value, 1)
+        }
+
+        internal fun none(): OptionFFIIsizet {
+            return OptionFFIIsizet(FFIIsizet(), 0)
+        }
+    }
+
+}
+
+internal class OptionFloat constructor(): Structure(), Structure.ByValue {
+    @JvmField
+    internal var value: Float = 0.0F
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("value", "isOk")
+    }
+
+    internal fun option(): Float? {
+        if (isOk == 1.toByte()) {
+            return value
+        } else {
+            return null
+        }
+    }
+
+
+    constructor(value: Float, isOk: Byte): this() {
+        this.value = value
+        this.isOk = isOk
+    }
+
+    companion object {
+        internal fun some(value: Float): OptionFloat {
+            return OptionFloat(value, 1)
+        }
+
+        internal fun none(): OptionFloat {
+            return OptionFloat(0.0F, 0)
+        }
+    }
+
+}
+
+internal class OptionDouble constructor(): Structure(), Structure.ByValue {
+    @JvmField
+    internal var value: Double = 0.0
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("value", "isOk")
+    }
+
+    internal fun option(): Double? {
+        if (isOk == 1.toByte()) {
+            return value
+        } else {
+            return null
+        }
+    }
+
+
+    constructor(value: Double, isOk: Byte): this() {
+        this.value = value
+        this.isOk = isOk
+    }
+
+    companion object {
+        internal fun some(value: Double): OptionDouble {
+            return OptionDouble(value, 1)
+        }
+
+        internal fun none(): OptionDouble {
+            return OptionDouble(0.0, 0)
+        }
+    }
+
+}
+
+internal class OptionSlice constructor(): Structure(), Structure.ByValue {
     @JvmField
     internal var value: Slice = Slice()
 
@@ -868,80 +1316,22 @@ internal class OptionSlice: Structure(), Structure.ByValue  {
             return null
         }
     }
-}
-internal class OptionTimeZoneAndCanonicalAndNormalizedNative: Structure(), Structure.ByValue  {
-    @JvmField
-    internal var value: TimeZoneAndCanonicalAndNormalizedNative = TimeZoneAndCanonicalAndNormalizedNative()
 
-    @JvmField
-    internal var isOk: Byte = 0
 
-    // Define the fields of the struct
-    override fun getFieldOrder(): List<String> {
-        return listOf("value", "isOk")
+    constructor(value: Slice, isOk: Byte): this() {
+        this.value = value
+        this.isOk = isOk
     }
 
-    internal fun option(): TimeZoneAndCanonicalAndNormalizedNative? {
-        if (isOk == 1.toByte()) {
-            return value
-        } else {
-            return null
+    companion object {
+        internal fun some(value: Slice): OptionSlice {
+            return OptionSlice(value, 1)
+        }
+
+        internal fun none(): OptionSlice {
+            return OptionSlice(Slice(), 0)
         }
     }
+
 }
-internal class OptionTimeZoneAndCanonicalNative: Structure(), Structure.ByValue  {
-    @JvmField
-    internal var value: TimeZoneAndCanonicalNative = TimeZoneAndCanonicalNative()
 
-    @JvmField
-    internal var isOk: Byte = 0
-
-    // Define the fields of the struct
-    override fun getFieldOrder(): List<String> {
-        return listOf("value", "isOk")
-    }
-
-    internal fun option(): TimeZoneAndCanonicalNative? {
-        if (isOk == 1.toByte()) {
-            return value
-        } else {
-            return null
-        }
-    }
-}
-internal class OptionUnit: Structure(), Structure.ByValue  {@JvmField
-    internal var isOk: Byte = 0
-
-    // Define the fields of the struct
-    override fun getFieldOrder(): List<String> {
-        return listOf("value", "isOk")
-    }
-
-    internal fun option(): Unit? {
-        if (isOk == 1.toByte()) {
-            return Unit
-        } else {
-            return null
-        }
-    }
-}
-internal class OptionVariantOffsetsNative: Structure(), Structure.ByValue  {
-    @JvmField
-    internal var value: VariantOffsetsNative = VariantOffsetsNative()
-
-    @JvmField
-    internal var isOk: Byte = 0
-
-    // Define the fields of the struct
-    override fun getFieldOrder(): List<String> {
-        return listOf("value", "isOk")
-    }
-
-    internal fun option(): VariantOffsetsNative? {
-        if (isOk == 1.toByte()) {
-            return value
-        } else {
-            return null
-        }
-    }
-}

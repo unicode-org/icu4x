@@ -56,6 +56,7 @@ export class CanonicalCombiningClassMap {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -79,6 +80,7 @@ export class CanonicalCombiningClassMap {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -97,6 +99,7 @@ export class CanonicalCombiningClassMap {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 

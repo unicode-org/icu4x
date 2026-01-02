@@ -36,9 +36,21 @@ namespace icu4x {
 class NumericType {
 public:
     enum Value {
+        /**
+         * See the [Rust documentation for `None`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.None) for more information.
+         */
         None = 0,
+        /**
+         * See the [Rust documentation for `Decimal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.Decimal) for more information.
+         */
         Decimal = 1,
+        /**
+         * See the [Rust documentation for `Digit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.Digit) for more information.
+         */
         Digit = 2,
+        /**
+         * See the [Rust documentation for `Numeric`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.Numeric) for more information.
+         */
         Numeric = 3,
     };
 

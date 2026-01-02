@@ -22,19 +22,65 @@ internal class DateTimeNative: Structure(), Structure.ByValue {
     }
 }
 
+
+
+
+internal class OptionDateTimeNative constructor(): Structure(), Structure.ByValue {
+    @JvmField
+    internal var value: DateTimeNative = DateTimeNative()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("value", "isOk")
+    }
+
+    internal fun option(): DateTimeNative? {
+        if (isOk == 1.toByte()) {
+            return value
+        } else {
+            return null
+        }
+    }
+
+
+    constructor(value: DateTimeNative, isOk: Byte): this() {
+        this.value = value
+        this.isOk = isOk
+    }
+
+    companion object {
+        internal fun some(value: DateTimeNative): OptionDateTimeNative {
+            return OptionDateTimeNative(value, 1)
+        }
+
+        internal fun none(): OptionDateTimeNative {
+            return OptionDateTimeNative(DateTimeNative(), 0)
+        }
+    }
+
+}
+
 /** An ICU4X DateTime object capable of containing a date and time for any calendar.
 *
 *See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.1.1/icu/time/struct.DateTime.html) for more information.
 */
-class DateTime internal constructor (
-    internal val nativeStruct: DateTimeNative) {
-    val date: Date = Date(nativeStruct.date, listOf())
-    val time: Time = Time(nativeStruct.time, listOf())
-
+class DateTime (var date: Date, var time: Time) {
     companion object {
+
         internal val libClass: Class<DateTimeLib> = DateTimeLib::class.java
         internal val lib: DateTimeLib = Native.load("icu4x", libClass)
         val NATIVESIZE: Long = Native.getNativeSize(DateTimeNative::class.java).toLong()
+
+        internal fun fromNative(nativeStruct: DateTimeNative): DateTime {
+            val date: Date = Date(nativeStruct.date, listOf())
+            val time: Time = Time(nativeStruct.time, listOf())
+
+            return DateTime(date, time)
+        }
+
         @JvmStatic
         
         /** Creates a new [DateTime] from an IXDTF string.
@@ -47,7 +93,7 @@ class DateTime internal constructor (
             val returnVal = lib.icu4x_DateTime_from_string_mv1(vSlice, calendar.handle);
             if (returnVal.isOk == 1.toByte()) {
                 
-                val returnStruct = DateTime(returnVal.union.ok)
+                val returnStruct = DateTime.fromNative(returnVal.union.ok)
                 if (vMem != null) vMem.close()
                 return returnStruct.ok()
             } else {
@@ -55,5 +101,4 @@ class DateTime internal constructor (
             }
         }
     }
-
 }

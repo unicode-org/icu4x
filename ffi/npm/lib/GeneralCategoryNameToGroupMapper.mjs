@@ -64,6 +64,7 @@ export class GeneralCategoryNameToGroupMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -88,6 +89,7 @@ export class GeneralCategoryNameToGroupMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -107,6 +109,7 @@ export class GeneralCategoryNameToGroupMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -130,6 +133,7 @@ export class GeneralCategoryNameToGroupMapper {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }

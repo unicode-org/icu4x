@@ -57,6 +57,7 @@ export class BidiParagraph {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -74,6 +75,7 @@ export class BidiParagraph {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -91,6 +93,7 @@ export class BidiParagraph {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -106,6 +109,7 @@ export class BidiParagraph {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -121,6 +125,7 @@ export class BidiParagraph {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -141,6 +146,7 @@ export class BidiParagraph {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             write.free();
         }
     }
@@ -163,6 +169,7 @@ export class BidiParagraph {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 

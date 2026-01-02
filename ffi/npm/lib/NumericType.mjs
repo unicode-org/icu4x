@@ -66,9 +66,21 @@ export class NumericType {
         new NumericType(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
     ];
 
+    /**
+     * See the [Rust documentation for `None`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.None) for more information.
+     */
     static None = NumericType.#objectValues[0];
+    /**
+     * See the [Rust documentation for `Decimal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.Decimal) for more information.
+     */
     static Decimal = NumericType.#objectValues[1];
+    /**
+     * See the [Rust documentation for `Digit`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.Digit) for more information.
+     */
     static Digit = NumericType.#objectValues[2];
+    /**
+     * See the [Rust documentation for `Numeric`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#associatedconstant.Numeric) for more information.
+     */
     static Numeric = NumericType.#objectValues[3];
 
 
@@ -84,6 +96,7 @@ export class NumericType {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -101,6 +114,7 @@ export class NumericType {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -123,6 +137,7 @@ export class NumericType {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }

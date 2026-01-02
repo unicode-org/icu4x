@@ -70,11 +70,29 @@ export class HangulSyllableType {
         new HangulSyllableType(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 5),
     ];
 
+    /**
+     * See the [Rust documentation for `NotApplicable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.NotApplicable) for more information.
+     */
     static NotApplicable = HangulSyllableType.#objectValues[0];
+    /**
+     * See the [Rust documentation for `LeadingJamo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingJamo) for more information.
+     */
     static LeadingJamo = HangulSyllableType.#objectValues[1];
+    /**
+     * See the [Rust documentation for `VowelJamo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.VowelJamo) for more information.
+     */
     static VowelJamo = HangulSyllableType.#objectValues[2];
+    /**
+     * See the [Rust documentation for `TrailingJamo`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.TrailingJamo) for more information.
+     */
     static TrailingJamo = HangulSyllableType.#objectValues[3];
+    /**
+     * See the [Rust documentation for `LeadingVowelSyllable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelSyllable) for more information.
+     */
     static LeadingVowelSyllable = HangulSyllableType.#objectValues[4];
+    /**
+     * See the [Rust documentation for `LeadingVowelTrailingSyllable`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelTrailingSyllable) for more information.
+     */
     static LeadingVowelTrailingSyllable = HangulSyllableType.#objectValues[5];
 
 
@@ -90,6 +108,7 @@ export class HangulSyllableType {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -107,6 +126,7 @@ export class HangulSyllableType {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -129,6 +149,7 @@ export class HangulSyllableType {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }

@@ -84,6 +84,7 @@ export class TimeZoneVariant {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 

@@ -55,6 +55,7 @@ export class GraphemeClusterBreakIteratorLatin1 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 

@@ -63,6 +63,7 @@ export class LocaleFallbackerWithConfig {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 

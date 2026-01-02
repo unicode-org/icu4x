@@ -7,10 +7,8 @@ part of 'lib.g.dart';
 ///
 /// See the [Rust documentation for `MissingFieldsStrategy`](https://docs.rs/icu/2.1.1/icu/calendar/options/enum.MissingFieldsStrategy.html) for more information.
 enum DateMissingFieldsStrategy {
-
   // ignore: public_member_api_docs
   reject,
-
   // ignore: public_member_api_docs
   ecma;
 

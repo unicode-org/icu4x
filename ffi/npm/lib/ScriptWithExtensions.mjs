@@ -58,6 +58,7 @@ export class ScriptWithExtensions {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -81,6 +82,7 @@ export class ScriptWithExtensions {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -99,6 +101,7 @@ export class ScriptWithExtensions {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -116,6 +119,7 @@ export class ScriptWithExtensions {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -136,6 +140,7 @@ export class ScriptWithExtensions {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -156,6 +161,7 @@ export class ScriptWithExtensions {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 

@@ -189,7 +189,7 @@ class IsoDate internal constructor (
         
         val returnVal = lib.icu4x_IsoDate_week_of_year_mv1(handle);
         
-        val returnStruct = IsoWeekOfYear(returnVal)
+        val returnStruct = IsoWeekOfYear.fromNative(returnVal)
         return returnStruct
     }
     

@@ -54,6 +54,7 @@ export class TimeZone {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -71,6 +72,7 @@ export class TimeZone {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -93,6 +95,7 @@ export class TimeZone {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -110,6 +113,7 @@ export class TimeZone {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -125,6 +129,7 @@ export class TimeZone {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 

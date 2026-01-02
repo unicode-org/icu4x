@@ -6,22 +6,16 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.
 enum JoiningType {
   /// See the [Rust documentation for `NonJoining`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.NonJoining) for more information.
-  // ignore: public_member_api_docs
   nonJoining,
   /// See the [Rust documentation for `JoinCausing`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.JoinCausing) for more information.
-  // ignore: public_member_api_docs
   joinCausing,
   /// See the [Rust documentation for `DualJoining`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.DualJoining) for more information.
-  // ignore: public_member_api_docs
   dualJoining,
   /// See the [Rust documentation for `LeftJoining`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.LeftJoining) for more information.
-  // ignore: public_member_api_docs
   leftJoining,
   /// See the [Rust documentation for `RightJoining`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.RightJoining) for more information.
-  // ignore: public_member_api_docs
   rightJoining,
   /// See the [Rust documentation for `Transparent`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.Transparent) for more information.
-  // ignore: public_member_api_docs
   transparent;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.

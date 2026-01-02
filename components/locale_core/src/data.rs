@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::extensions::unicode as unicode_ext;
+use crate::preferences::{extensions::unicode::keywords::RegionalSubdivision, LocalePreferences};
 use crate::subtags::{Language, Region, Script, Subtag, Variant};
 #[cfg(feature = "alloc")]
 use crate::ParseError;
@@ -48,7 +49,7 @@ use core::str::FromStr;
 ///     DataLocale::from(locale!("hi-IN-u-sd-inas"))
 /// );
 /// ```
-#[derive(Clone, Copy, PartialEq, Hash, Eq)]
+#[derive(Clone, Copy)]
 #[non_exhaustive]
 pub struct DataLocale {
     /// Language subtag
@@ -60,7 +61,22 @@ pub struct DataLocale {
     /// Variant subtag
     pub variant: Option<Variant>,
     /// Subivision (-u-sd-) subtag
+    // TODO(3.0): Use `SubdivisionSuffix` type
     pub subdivision: Option<Subtag>,
+}
+
+impl PartialEq for DataLocale {
+    fn eq(&self, other: &Self) -> bool {
+        self.as_tuple() == other.as_tuple()
+    }
+}
+
+impl Eq for DataLocale {}
+
+impl Hash for DataLocale {
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+        self.as_tuple().hash(state);
+    }
 }
 
 impl Default for DataLocale {
@@ -129,15 +145,7 @@ impl From<&LanguageIdentifier> for DataLocale {
 
 impl From<&Locale> for DataLocale {
     fn from(locale: &Locale) -> Self {
-        let mut r = Self::from(&locale.id);
-
-        r.subdivision = locale
-            .extensions
-            .unicode
-            .keywords
-            .get(&unicode_ext::key!("sd"))
-            .and_then(|v| v.as_single_subtag().copied());
-        r
+        LocalePreferences::from(locale).to_data_locale_language_priority()
     }
 }
 
@@ -184,7 +192,7 @@ impl DataLocale {
                     .extensions
                     .unicode
                     .keywords
-                    .contains_key(&unicode_ext::key!("sd")))
+                    .contains_key(&RegionalSubdivision::UNICODE_EXTENSION_KEY))
         {
             return Err(ParseError::InvalidExtension);
         }
@@ -206,12 +214,19 @@ impl DataLocale {
         if let Some(ref single_variant) = self.variant {
             f(single_variant.as_str())?;
         }
-        if let Some(ref subdivision) = self.subdivision {
-            f("u")?;
-            f("sd")?;
-            f(subdivision.as_str())?;
+        if let Some(extensions) = self.extensions() {
+            extensions.for_each_subtag_str(f)?;
         }
         Ok(())
+    }
+
+    fn region_and_subdivision(&self) -> Option<unicode_ext::SubdivisionId> {
+        self.subdivision
+            .and_then(|s| unicode_ext::SubdivisionId::try_from_str(s.as_str()).ok())
+            .or(self.region.map(|region| unicode_ext::SubdivisionId {
+                region,
+                suffix: unicode_ext::SubdivisionSuffix::UNKNOWN,
+            }))
     }
 
     fn as_tuple(
@@ -219,17 +234,30 @@ impl DataLocale {
     ) -> (
         Language,
         Option<Script>,
-        Option<Region>,
+        Option<unicode_ext::SubdivisionId>,
         Option<Variant>,
-        Option<Subtag>,
     ) {
         (
             self.language,
             self.script,
-            self.region,
+            self.region_and_subdivision(),
             self.variant,
-            self.subdivision,
         )
+    }
+
+    pub(crate) fn from_parts(
+        language: Language,
+        script: Option<Script>,
+        region: Option<unicode_ext::SubdivisionId>,
+        variant: Option<Variant>,
+    ) -> Self {
+        Self {
+            language,
+            script,
+            region: region.map(|sd| sd.region),
+            variant,
+            subdivision: region.map(|sd| sd.into_subtag()),
+        }
     }
 
     /// Returns an ordering suitable for use in [`BTreeSet`].
@@ -359,20 +387,25 @@ impl DataLocale {
                     .map(crate::subtags::Variants::from_variant)
                     .unwrap_or_default(),
             },
-            extensions: {
-                let mut extensions = crate::extensions::Extensions::default();
-                if let Some(sd) = self.subdivision {
-                    extensions.unicode = unicode_ext::Unicode {
-                        keywords: unicode_ext::Keywords::new_single(
-                            unicode_ext::key!("sd"),
-                            unicode_ext::Value::from_subtag(Some(sd)),
-                        ),
-                        ..Default::default()
-                    }
-                }
-                extensions
-            },
+            extensions: self.extensions().unwrap_or_default(),
         }
+    }
+
+    fn extensions(&self) -> Option<crate::extensions::Extensions> {
+        Some(crate::extensions::Extensions {
+            unicode: unicode_ext::Unicode {
+                keywords: unicode_ext::Keywords::new_single(
+                    RegionalSubdivision::UNICODE_EXTENSION_KEY,
+                    RegionalSubdivision(
+                        self.region_and_subdivision()
+                            .filter(|sd| !sd.suffix.is_unknown())?,
+                    )
+                    .into(),
+                ),
+                ..Default::default()
+            },
+            ..Default::default()
+        })
     }
 }
 
@@ -390,11 +423,15 @@ fn test_data_locale_to_string() {
         },
         TestCase {
             locale: "und-u-sd-sdd",
-            expected: "und-u-sd-sdd",
+            expected: "und-SD-u-sd-sdd",
         },
         TestCase {
             locale: "en-ZA-u-sd-zaa",
             expected: "en-ZA-u-sd-zaa",
+        },
+        TestCase {
+            locale: "en-ZA-u-sd-sdd",
+            expected: "en-ZA",
         },
     ] {
         let locale = cas.locale.parse::<DataLocale>().unwrap();

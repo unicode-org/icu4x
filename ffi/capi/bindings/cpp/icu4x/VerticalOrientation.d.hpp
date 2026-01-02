@@ -36,9 +36,21 @@ namespace icu4x {
 class VerticalOrientation {
 public:
     enum Value {
+        /**
+         * See the [Rust documentation for `Rotated`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.Rotated) for more information.
+         */
         Rotated = 0,
+        /**
+         * See the [Rust documentation for `TransformedRotated`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.TransformedRotated) for more information.
+         */
         TransformedRotated = 1,
+        /**
+         * See the [Rust documentation for `TransformedUpright`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.TransformedUpright) for more information.
+         */
         TransformedUpright = 2,
+        /**
+         * See the [Rust documentation for `Upright`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.Upright) for more information.
+         */
         Upright = 3,
     };
 

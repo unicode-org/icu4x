@@ -68,6 +68,7 @@ export class DataProvider {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
             diplomatReceive.free();
@@ -96,6 +97,7 @@ export class DataProvider {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -119,6 +121,7 @@ export class DataProvider {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -142,6 +145,7 @@ export class DataProvider {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }

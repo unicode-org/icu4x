@@ -55,6 +55,7 @@ export class SentenceBreakIteratorLatin1 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 

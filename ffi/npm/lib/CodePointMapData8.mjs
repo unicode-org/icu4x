@@ -65,6 +65,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -85,6 +86,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -105,6 +107,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -127,13 +130,14 @@ export class CodePointMapData8 {
         let aEdges = [this];
 
 
-        const result = wasm.icu4x_CodePointMapData8_iter_ranges_for_group_mv1(this.ffiValue, GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, group)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_CodePointMapData8_iter_ranges_for_group_mv1(this.ffiValue, GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, group)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(GeneralCategoryGroup._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             return new CodePointRangeIterator(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -153,6 +157,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -170,6 +175,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -193,6 +199,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -211,6 +218,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -234,6 +242,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -252,6 +261,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -275,6 +285,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -293,6 +304,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -316,6 +328,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -334,6 +347,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -357,6 +371,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -375,6 +390,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -398,6 +414,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -416,6 +433,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -439,6 +457,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -457,6 +476,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -480,6 +500,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -498,6 +519,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -521,6 +543,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -539,6 +562,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -562,6 +586,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -580,6 +605,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -603,6 +629,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -621,6 +648,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -644,6 +672,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -662,6 +691,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -685,6 +715,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -703,6 +734,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -726,6 +758,7 @@ export class CodePointMapData8 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }

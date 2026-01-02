@@ -66,9 +66,21 @@ export class IndicConjunctBreak {
         new IndicConjunctBreak(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
     ];
 
+    /**
+     * See the [Rust documentation for `None`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.None) for more information.
+     */
     static None = IndicConjunctBreak.#objectValues[0];
+    /**
+     * See the [Rust documentation for `Consonant`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.Consonant) for more information.
+     */
     static Consonant = IndicConjunctBreak.#objectValues[1];
+    /**
+     * See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.Extend) for more information.
+     */
     static Extend = IndicConjunctBreak.#objectValues[2];
+    /**
+     * See the [Rust documentation for `Linker`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#associatedconstant.Linker) for more information.
+     */
     static Linker = IndicConjunctBreak.#objectValues[3];
 
 
@@ -84,6 +96,7 @@ export class IndicConjunctBreak {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -101,6 +114,7 @@ export class IndicConjunctBreak {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -123,6 +137,7 @@ export class IndicConjunctBreak {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }

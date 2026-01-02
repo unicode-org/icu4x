@@ -6,22 +6,16 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
 enum EastAsianWidth {
   /// See the [Rust documentation for `Neutral`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Neutral) for more information.
-  // ignore: public_member_api_docs
   neutral,
   /// See the [Rust documentation for `Ambiguous`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Ambiguous) for more information.
-  // ignore: public_member_api_docs
   ambiguous,
   /// See the [Rust documentation for `Halfwidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Halfwidth) for more information.
-  // ignore: public_member_api_docs
   halfwidth,
   /// See the [Rust documentation for `Fullwidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Fullwidth) for more information.
-  // ignore: public_member_api_docs
   fullwidth,
   /// See the [Rust documentation for `Narrow`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Narrow) for more information.
-  // ignore: public_member_api_docs
   narrow,
   /// See the [Rust documentation for `Wide`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Wide) for more information.
-  // ignore: public_member_api_docs
   wide;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.

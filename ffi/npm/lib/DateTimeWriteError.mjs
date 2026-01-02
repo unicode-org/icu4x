@@ -67,6 +67,9 @@ export class DateTimeWriteError {
     ];
 
     static Unknown = DateTimeWriteError.#objectValues[0];
+    /**
+     * Unused
+     */
     static MissingTimeZoneVariant = DateTimeWriteError.#objectValues[1];
 
 

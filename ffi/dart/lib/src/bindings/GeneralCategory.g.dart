@@ -6,94 +6,64 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
 enum GeneralCategory {
   /// See the [Rust documentation for `Unassigned`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.Unassigned) for more information.
-  // ignore: public_member_api_docs
   unassigned,
   /// See the [Rust documentation for `UppercaseLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.UppercaseLetter) for more information.
-  // ignore: public_member_api_docs
   uppercaseLetter,
   /// See the [Rust documentation for `LowercaseLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.LowercaseLetter) for more information.
-  // ignore: public_member_api_docs
   lowercaseLetter,
   /// See the [Rust documentation for `TitlecaseLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.TitlecaseLetter) for more information.
-  // ignore: public_member_api_docs
   titlecaseLetter,
   /// See the [Rust documentation for `ModifierLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.ModifierLetter) for more information.
-  // ignore: public_member_api_docs
   modifierLetter,
   /// See the [Rust documentation for `OtherLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.OtherLetter) for more information.
-  // ignore: public_member_api_docs
   otherLetter,
   /// See the [Rust documentation for `NonspacingMark`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.NonspacingMark) for more information.
-  // ignore: public_member_api_docs
   nonspacingMark,
   /// See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.SpacingMark) for more information.
-  // ignore: public_member_api_docs
   spacingMark,
   /// See the [Rust documentation for `EnclosingMark`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.EnclosingMark) for more information.
-  // ignore: public_member_api_docs
   enclosingMark,
   /// See the [Rust documentation for `DecimalNumber`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.DecimalNumber) for more information.
-  // ignore: public_member_api_docs
   decimalNumber,
   /// See the [Rust documentation for `LetterNumber`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.LetterNumber) for more information.
-  // ignore: public_member_api_docs
   letterNumber,
   /// See the [Rust documentation for `OtherNumber`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.OtherNumber) for more information.
-  // ignore: public_member_api_docs
   otherNumber,
   /// See the [Rust documentation for `SpaceSeparator`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.SpaceSeparator) for more information.
-  // ignore: public_member_api_docs
   spaceSeparator,
   /// See the [Rust documentation for `LineSeparator`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.LineSeparator) for more information.
-  // ignore: public_member_api_docs
   lineSeparator,
   /// See the [Rust documentation for `ParagraphSeparator`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.ParagraphSeparator) for more information.
-  // ignore: public_member_api_docs
   paragraphSeparator,
   /// See the [Rust documentation for `Control`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.Control) for more information.
-  // ignore: public_member_api_docs
   control,
   /// See the [Rust documentation for `Format`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.Format) for more information.
-  // ignore: public_member_api_docs
   format,
   /// See the [Rust documentation for `PrivateUse`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.PrivateUse) for more information.
-  // ignore: public_member_api_docs
   privateUse,
   /// See the [Rust documentation for `Surrogate`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.Surrogate) for more information.
-  // ignore: public_member_api_docs
   surrogate,
   /// See the [Rust documentation for `DashPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.DashPunctuation) for more information.
-  // ignore: public_member_api_docs
   dashPunctuation,
   /// See the [Rust documentation for `OpenPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.OpenPunctuation) for more information.
-  // ignore: public_member_api_docs
   openPunctuation,
   /// See the [Rust documentation for `ClosePunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.ClosePunctuation) for more information.
-  // ignore: public_member_api_docs
   closePunctuation,
   /// See the [Rust documentation for `ConnectorPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.ConnectorPunctuation) for more information.
-  // ignore: public_member_api_docs
   connectorPunctuation,
   /// See the [Rust documentation for `InitialPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.InitialPunctuation) for more information.
-  // ignore: public_member_api_docs
   initialPunctuation,
   /// See the [Rust documentation for `FinalPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.FinalPunctuation) for more information.
-  // ignore: public_member_api_docs
   finalPunctuation,
   /// See the [Rust documentation for `OtherPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.OtherPunctuation) for more information.
-  // ignore: public_member_api_docs
   otherPunctuation,
   /// See the [Rust documentation for `MathSymbol`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.MathSymbol) for more information.
-  // ignore: public_member_api_docs
   mathSymbol,
   /// See the [Rust documentation for `CurrencySymbol`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.CurrencySymbol) for more information.
-  // ignore: public_member_api_docs
   currencySymbol,
   /// See the [Rust documentation for `ModifierSymbol`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.ModifierSymbol) for more information.
-  // ignore: public_member_api_docs
   modifierSymbol,
   /// See the [Rust documentation for `OtherSymbol`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.OtherSymbol) for more information.
-  // ignore: public_member_api_docs
   otherSymbol;
 
   int get _ffi {
