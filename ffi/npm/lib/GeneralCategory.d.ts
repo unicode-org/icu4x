@@ -172,6 +172,8 @@ export class GeneralCategory {
      */
     static fromIntegerValue(other: number): GeneralCategory | null;
 
+    static tryFromStr(s: string): GeneralCategory | null;
+
     /**
      * Produces a GeneralCategoryGroup mask that can represent a group of general categories
      *

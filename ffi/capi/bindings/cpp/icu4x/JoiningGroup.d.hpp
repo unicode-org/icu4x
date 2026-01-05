@@ -605,6 +605,8 @@ public:
    */
   inline static std::optional<icu4x::JoiningGroup> from_integer_value(uint8_t other);
 
+  inline static std::optional<icu4x::JoiningGroup> try_from_str(std::string_view s);
+
     inline icu4x::capi::JoiningGroup AsFFI() const;
     inline static icu4x::JoiningGroup FromFFI(icu4x::capi::JoiningGroup c_enum);
 private:

@@ -95,6 +95,8 @@ public:
    */
   inline static std::optional<icu4x::VerticalOrientation> from_integer_value(uint8_t other);
 
+  inline static std::optional<icu4x::VerticalOrientation> try_from_str(std::string_view s);
+
     inline icu4x::capi::VerticalOrientation AsFFI() const;
     inline static icu4x::VerticalOrientation FromFFI(icu4x::capi::VerticalOrientation c_enum);
 private:

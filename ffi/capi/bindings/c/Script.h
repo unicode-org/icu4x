@@ -28,6 +28,9 @@ uint16_t icu4x_Script_to_integer_value_mv1(Script self);
 typedef struct icu4x_Script_from_integer_value_mv1_result {union {Script ok; }; bool is_ok;} icu4x_Script_from_integer_value_mv1_result;
 icu4x_Script_from_integer_value_mv1_result icu4x_Script_from_integer_value_mv1(uint16_t other);
 
+typedef struct icu4x_Script_try_from_str_mv1_result {union {Script ok; }; bool is_ok;} icu4x_Script_try_from_str_mv1_result;
+icu4x_Script_try_from_str_mv1_result icu4x_Script_try_from_str_mv1(DiplomatStringView s);
+
 
 
 

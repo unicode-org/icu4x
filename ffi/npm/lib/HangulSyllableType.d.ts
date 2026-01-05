@@ -75,5 +75,7 @@ export class HangulSyllableType {
      */
     static fromIntegerValue(other: number): HangulSyllableType | null;
 
+    static tryFromStr(s: string): HangulSyllableType | null;
+
     constructor(value: HangulSyllableType | string );
 }

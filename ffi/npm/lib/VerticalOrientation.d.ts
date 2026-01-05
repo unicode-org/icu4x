@@ -67,5 +67,7 @@ export class VerticalOrientation {
      */
     static fromIntegerValue(other: number): VerticalOrientation | null;
 
+    static tryFromStr(s: string): VerticalOrientation | null;
+
     constructor(value: VerticalOrientation | string );
 }

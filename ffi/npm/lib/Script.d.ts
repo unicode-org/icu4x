@@ -759,5 +759,7 @@ export class Script {
      */
     static fromIntegerValue(other: number): Script | null;
 
+    static tryFromStr(s: string): Script | null;
+
     constructor(value: Script | string );
 }

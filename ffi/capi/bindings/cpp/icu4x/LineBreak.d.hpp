@@ -320,6 +320,8 @@ public:
    */
   inline static std::optional<icu4x::LineBreak> from_integer_value(uint8_t other);
 
+  inline static std::optional<icu4x::LineBreak> try_from_str(std::string_view s);
+
     inline icu4x::capi::LineBreak AsFFI() const;
     inline static icu4x::LineBreak FromFFI(icu4x::capi::LineBreak c_enum);
 private:

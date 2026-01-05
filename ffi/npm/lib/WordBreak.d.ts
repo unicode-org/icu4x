@@ -143,5 +143,7 @@ export class WordBreak {
      */
     static fromIntegerValue(other: number): WordBreak | null;
 
+    static tryFromStr(s: string): WordBreak | null;
+
     constructor(value: WordBreak | string );
 }

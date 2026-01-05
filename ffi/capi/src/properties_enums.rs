@@ -213,6 +213,11 @@ pub mod ffi {
                 _ => return None,
             })
         }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::BidiClass>::new().get_loose_utf8(s).map(Into::into)
+        }
     }
 
     #[diplomat::rust_link(icu::properties::props::NumericType, Struct)]
@@ -299,6 +304,11 @@ pub mod ffi {
                 3 => Self::Numeric,
                 _ => return None,
             })
+        }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::NumericType>::new().get_loose_utf8(s).map(Into::into)
         }
     }
 
@@ -1425,6 +1435,11 @@ pub mod ffi {
                 _ => return None,
             })
         }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::Script>::new().get_loose_utf8(s).map(Into::into)
+        }
     }
 
     #[diplomat::rust_link(icu::properties::props::HangulSyllableType, Struct)]
@@ -1524,6 +1539,11 @@ pub mod ffi {
                 _ => return None,
             })
         }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::HangulSyllableType>::new().get_loose_utf8(s).map(Into::into)
+        }
     }
 
     #[diplomat::rust_link(icu::properties::props::EastAsianWidth, Struct)]
@@ -1622,6 +1642,11 @@ pub mod ffi {
                 5 => Self::Wide,
                 _ => return None,
             })
+        }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::EastAsianWidth>::new().get_loose_utf8(s).map(Into::into)
         }
     }
 
@@ -1980,6 +2005,11 @@ pub mod ffi {
                 _ => return None,
             })
         }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::LineBreak>::new().get_loose_utf8(s).map(Into::into)
+        }
     }
 
     #[diplomat::rust_link(icu::properties::props::GraphemeClusterBreak, Struct)]
@@ -2150,6 +2180,11 @@ pub mod ffi {
                 17 => Self::ZWJ,
                 _ => return None,
             })
+        }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::GraphemeClusterBreak>::new().get_loose_utf8(s).map(Into::into)
         }
     }
 
@@ -2352,6 +2387,11 @@ pub mod ffi {
                 _ => return None,
             })
         }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::WordBreak>::new().get_loose_utf8(s).map(Into::into)
+        }
     }
 
     #[diplomat::rust_link(icu::properties::props::SentenceBreak, Struct)]
@@ -2504,6 +2544,11 @@ pub mod ffi {
                 14 => Self::SContinue,
                 _ => return None,
             })
+        }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::SentenceBreak>::new().get_loose_utf8(s).map(Into::into)
         }
     }
 
@@ -2916,6 +2961,11 @@ pub mod ffi {
                 _ => return None,
             })
         }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::CanonicalCombiningClass>::new().get_loose_utf8(s).map(Into::into)
+        }
     }
 
     #[diplomat::rust_link(icu::properties::props::IndicSyllabicCategory, Struct)]
@@ -3201,6 +3251,11 @@ pub mod ffi {
                 _ => return None,
             })
         }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::IndicSyllabicCategory>::new().get_loose_utf8(s).map(Into::into)
+        }
     }
 
     #[diplomat::rust_link(icu::properties::props::IndicConjunctBreak, Struct)]
@@ -3287,6 +3342,11 @@ pub mod ffi {
                 3 => Self::Linker,
                 _ => return None,
             })
+        }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::IndicConjunctBreak>::new().get_loose_utf8(s).map(Into::into)
         }
     }
 
@@ -3987,6 +4047,11 @@ pub mod ffi {
                 _ => return None,
             })
         }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::JoiningGroup>::new().get_loose_utf8(s).map(Into::into)
+        }
     }
 
     #[diplomat::rust_link(icu::properties::props::JoiningType, Struct)]
@@ -4085,6 +4150,11 @@ pub mod ffi {
                 5 => Self::Transparent,
                 _ => return None,
             })
+        }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::JoiningType>::new().get_loose_utf8(s).map(Into::into)
         }
     }
 
@@ -4329,6 +4399,11 @@ pub mod ffi {
                 _ => return None,
             })
         }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::GeneralCategory>::new().get_loose_utf8(s).map(Into::into)
+        }
     }
 
     #[diplomat::rust_link(icu::properties::props::VerticalOrientation, Struct)]
@@ -4415,6 +4490,11 @@ pub mod ffi {
                 3 => Self::Upright,
                 _ => return None,
             })
+        }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::VerticalOrientation>::new().get_loose_utf8(s).map(Into::into)
         }
     }
 

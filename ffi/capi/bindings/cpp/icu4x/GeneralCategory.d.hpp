@@ -226,6 +226,8 @@ public:
    */
   inline static std::optional<icu4x::GeneralCategory> from_integer_value(uint8_t other);
 
+  inline static std::optional<icu4x::GeneralCategory> try_from_str(std::string_view s);
+
   /**
    * Produces a GeneralCategoryGroup mask that can represent a group of general categories
    *

@@ -199,5 +199,7 @@ export class IndicSyllabicCategory {
      */
     static fromIntegerValue(other: number): IndicSyllabicCategory | null;
 
+    static tryFromStr(s: string): IndicSyllabicCategory | null;
+
     constructor(value: IndicSyllabicCategory | string );
 }

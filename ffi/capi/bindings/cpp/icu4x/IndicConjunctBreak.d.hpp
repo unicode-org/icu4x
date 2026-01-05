@@ -95,6 +95,8 @@ public:
    */
   inline static std::optional<icu4x::IndicConjunctBreak> from_integer_value(uint8_t other);
 
+  inline static std::optional<icu4x::IndicConjunctBreak> try_from_str(std::string_view s);
+
     inline icu4x::capi::IndicConjunctBreak AsFFI() const;
     inline static icu4x::IndicConjunctBreak FromFFI(icu4x::capi::IndicConjunctBreak c_enum);
 private:

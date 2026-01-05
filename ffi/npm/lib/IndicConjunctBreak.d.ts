@@ -67,5 +67,7 @@ export class IndicConjunctBreak {
      */
     static fromIntegerValue(other: number): IndicConjunctBreak | null;
 
+    static tryFromStr(s: string): IndicConjunctBreak | null;
+
     constructor(value: IndicConjunctBreak | string );
 }

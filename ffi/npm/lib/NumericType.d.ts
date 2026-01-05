@@ -67,5 +67,7 @@ export class NumericType {
      */
     static fromIntegerValue(other: number): NumericType | null;
 
+    static tryFromStr(s: string): NumericType | null;
+
     constructor(value: NumericType | string );
 }

@@ -105,6 +105,8 @@ public:
    */
   inline static std::optional<icu4x::EastAsianWidth> from_integer_value(uint8_t other);
 
+  inline static std::optional<icu4x::EastAsianWidth> try_from_str(std::string_view s);
+
     inline icu4x::capi::EastAsianWidth AsFFI() const;
     inline static icu4x::EastAsianWidth FromFFI(icu4x::capi::EastAsianWidth c_enum);
 private:

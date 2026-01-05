@@ -283,5 +283,7 @@ export class CanonicalCombiningClass {
      */
     static fromIntegerValue(other: number): CanonicalCombiningClass | null;
 
+    static tryFromStr(s: string): CanonicalCombiningClass | null;
+
     constructor(value: CanonicalCombiningClass | string );
 }

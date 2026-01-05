@@ -111,5 +111,7 @@ export class SentenceBreak {
      */
     static fromIntegerValue(other: number): SentenceBreak | null;
 
+    static tryFromStr(s: string): SentenceBreak | null;
+
     constructor(value: SentenceBreak | string );
 }

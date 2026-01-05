@@ -150,6 +150,8 @@ public:
    */
   inline static std::optional<icu4x::SentenceBreak> from_integer_value(uint8_t other);
 
+  inline static std::optional<icu4x::SentenceBreak> try_from_str(std::string_view s);
+
     inline icu4x::capi::SentenceBreak AsFFI() const;
     inline static icu4x::SentenceBreak FromFFI(icu4x::capi::SentenceBreak c_enum);
 private:

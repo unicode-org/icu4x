@@ -12,6 +12,7 @@ internal interface IndicSyllabicCategoryLib: Library {
     fun icu4x_IndicSyllabicCategory_short_name_mv1(inner: Int): OptionSlice
     fun icu4x_IndicSyllabicCategory_to_integer_value_mv1(inner: Int): FFIUint8
     fun icu4x_IndicSyllabicCategory_from_integer_value_mv1(other: FFIUint8): OptionInt
+    fun icu4x_IndicSyllabicCategory_try_from_str_mv1(s: Slice): OptionInt
 }
 /** See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
 */
@@ -87,6 +88,16 @@ enum class IndicSyllabicCategory {
         fun fromIntegerValue(other: UByte): IndicSyllabicCategory? {
             
             val returnVal = lib.icu4x_IndicSyllabicCategory_from_integer_value_mv1(FFIUint8(other));
+            
+            val intermediateOption = returnVal.option() ?: return null
+            return IndicSyllabicCategory.fromNative(intermediateOption)
+        }
+        @JvmStatic
+        
+        fun tryFromStr(s: String): IndicSyllabicCategory? {
+            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            
+            val returnVal = lib.icu4x_IndicSyllabicCategory_try_from_str_mv1(sSlice);
             
             val intermediateOption = returnVal.option() ?: return null
             return IndicSyllabicCategory.fromNative(intermediateOption)

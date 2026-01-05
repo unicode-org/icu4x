@@ -75,5 +75,7 @@ export class EastAsianWidth {
      */
     static fromIntegerValue(other: number): EastAsianWidth | null;
 
+    static tryFromStr(s: string): EastAsianWidth | null;
+
     constructor(value: EastAsianWidth | string );
 }

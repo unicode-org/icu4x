@@ -89,6 +89,11 @@ pub mod ffi {
                 _ => return None,
             })
         }
+
+        #[cfg(feature = "compiled_data")]
+        pub fn try_from_str(s: &DiplomatStr) -> Option<Self> {
+            icu_properties::PropertyParser::<props::{{prop.name}}>::new().get_loose_utf8(s).map(Into::into)
+        }
     }
     {%- endfor %}
 
