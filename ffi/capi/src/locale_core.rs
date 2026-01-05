@@ -150,7 +150,31 @@ pub mod ffi {
         }
 
         /// Normalizes a locale string.
+        ///
+        /// # Examples
+        /// ```c
+        /// DiplomatWrite write;
+        /// char buffer[32];
+        /// diplomat_write_init(&write, buffer, sizeof(buffer));
+        ///
+        /// icu4x_locale_normalize("en-us", &write);
+        ///
+        /// // buffer now contains "en-US"
+        /// ```
         #[diplomat::rust_link(icu::locale::Locale::normalize, FnInStruct)]
+
+        /// Normalizes a UTF-8 locale string.
+        ///
+        /// # Examples
+        /// ```c
+        /// DiplomatWrite write;
+        /// char buffer[32];
+        /// diplomat_write_init(&write, buffer, sizeof(buffer));
+        ///
+        /// icu4x_locale_normalize_utf8("en-us", &write);
+        ///
+        /// // buffer now contains "en-US"
+        /// ```
         #[diplomat::rust_link(icu::locale::Locale::normalize_utf8, FnInStruct, hidden)]
         pub fn normalize(
             s: &DiplomatStr,
