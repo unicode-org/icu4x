@@ -145,7 +145,6 @@ export class GeneralCategory {
     static forChar(ch: codepoint): GeneralCategory;
 
     /**
-     * Convert to an integer using the ICU4C integer mappings for `General_Category`
      * Get the "long" name of this property value (returns empty if property value is unknown)
      *
      * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
@@ -161,8 +160,17 @@ export class GeneralCategory {
 
     /**
      * Convert to an integer value usable with ICU4C and CodePointMapData
+     *
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategory.html#method.to_icu4c_value) for more information.
      */
     toIntegerValue(): number;
+
+    /**
+     * Convert from an integer value from ICU4C or CodePointMapData
+     *
+     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategory.html#method.from_icu4c_value) for more information.
+     */
+    static fromIntegerValue(other: number): GeneralCategory | null;
 
     /**
      * Produces a GeneralCategoryGroup mask that can represent a group of general categories
@@ -170,12 +178,6 @@ export class GeneralCategory {
      * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
      */
     toGroup(): GeneralCategoryGroup;
-
-    /**
-     * Convert from an integer using the ICU4C integer mappings for `General_Category`
-     * Convert from an integer value from ICU4C or CodePointMapData
-     */
-    static fromIntegerValue(other: number): GeneralCategory | null;
 
     constructor(value: GeneralCategory | string );
 }

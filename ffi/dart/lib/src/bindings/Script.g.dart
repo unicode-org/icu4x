@@ -229,6 +229,8 @@ enum Script {
   ogham,
   /// See the [Rust documentation for `OlChiki`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OlChiki) for more information.
   olChiki,
+  /// See the [Rust documentation for `OlOnal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OlOnal) for more information.
+  olOnal,
   /// See the [Rust documentation for `OldHungarian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldHungarian) for more information.
   oldHungarian,
   /// See the [Rust documentation for `OldItalic`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldItalic) for more information.
@@ -247,8 +249,6 @@ enum Script {
   oldTurkic,
   /// See the [Rust documentation for `OldUyghur`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldUyghur) for more information.
   oldUyghur,
-  /// See the [Rust documentation for `OlOnal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OlOnal) for more information.
-  olOnal,
   /// See the [Rust documentation for `Oriya`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Oriya) for more information.
   oriya,
   /// See the [Rust documentation for `Osage`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Osage) for more information.
@@ -586,6 +586,8 @@ enum Script {
         return 29;
       case olChiki:
         return 109;
+      case olOnal:
+        return 204;
       case oldHungarian:
         return 76;
       case oldItalic:
@@ -604,8 +606,6 @@ enum Script {
         return 88;
       case oldUyghur:
         return 194;
-      case olOnal:
-        return 204;
       case oriya:
         return 31;
       case osage:

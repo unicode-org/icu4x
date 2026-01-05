@@ -78,6 +78,20 @@ public:
   inline static icu4x::HangulSyllableType for_char(char32_t ch);
 
   /**
+   * Get the "long" name of this property value (returns empty if property value is unknown)
+   *
+   * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+   */
+  inline std::optional<std::string_view> long_name() const;
+
+  /**
+   * Get the "short" name of this property value (returns empty if property value is unknown)
+   *
+   * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+   */
+  inline std::optional<std::string_view> short_name() const;
+
+  /**
    * Convert to an integer value usable with ICU4C and CodePointMapData
    *
    * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html#method.to_icu4c_value) for more information.

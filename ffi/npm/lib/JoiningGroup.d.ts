@@ -4,7 +4,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /**
- * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html) for more information.
+ * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
  */
 export class JoiningGroup {
 
@@ -17,427 +17,427 @@ export class JoiningGroup {
     get ffiValue(): number;
 
     /**
-     * See the [Rust documentation for `NoJoining_Group`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.NoJoining_Group) for more information.
+     * See the [Rust documentation for `NoJoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.NoJoiningGroup) for more information.
      */
     static NoJoiningGroup : JoiningGroup;
     /**
-     * See the [Rust documentation for `Ain`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Ain) for more information.
+     * See the [Rust documentation for `Ain`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Ain) for more information.
      */
     static Ain : JoiningGroup;
     /**
-     * See the [Rust documentation for `Alaph`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Alaph) for more information.
+     * See the [Rust documentation for `Alaph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Alaph) for more information.
      */
     static Alaph : JoiningGroup;
     /**
-     * See the [Rust documentation for `Alef`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Alef) for more information.
+     * See the [Rust documentation for `Alef`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Alef) for more information.
      */
     static Alef : JoiningGroup;
     /**
-     * See the [Rust documentation for `Beh`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Beh) for more information.
+     * See the [Rust documentation for `Beh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Beh) for more information.
      */
     static Beh : JoiningGroup;
     /**
-     * See the [Rust documentation for `Beth`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Beth) for more information.
+     * See the [Rust documentation for `Beth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Beth) for more information.
      */
     static Beth : JoiningGroup;
     /**
-     * See the [Rust documentation for `Dal`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Dal) for more information.
+     * See the [Rust documentation for `Dal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Dal) for more information.
      */
     static Dal : JoiningGroup;
     /**
-     * See the [Rust documentation for `DalathRish`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.DalathRish) for more information.
+     * See the [Rust documentation for `DalathRish`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.DalathRish) for more information.
      */
     static DalathRish : JoiningGroup;
     /**
-     * See the [Rust documentation for `E`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.E) for more information.
+     * See the [Rust documentation for `E`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.E) for more information.
      */
     static E : JoiningGroup;
     /**
-     * See the [Rust documentation for `Feh`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Feh) for more information.
+     * See the [Rust documentation for `Feh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Feh) for more information.
      */
     static Feh : JoiningGroup;
     /**
-     * See the [Rust documentation for `FinalSemkath`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.FinalSemkath) for more information.
+     * See the [Rust documentation for `FinalSemkath`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.FinalSemkath) for more information.
      */
     static FinalSemkath : JoiningGroup;
     /**
-     * See the [Rust documentation for `Gaf`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Gaf) for more information.
+     * See the [Rust documentation for `Gaf`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Gaf) for more information.
      */
     static Gaf : JoiningGroup;
     /**
-     * See the [Rust documentation for `Gamal`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Gamal) for more information.
+     * See the [Rust documentation for `Gamal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Gamal) for more information.
      */
     static Gamal : JoiningGroup;
     /**
-     * See the [Rust documentation for `Hah`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Hah) for more information.
+     * See the [Rust documentation for `Hah`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Hah) for more information.
      */
     static Hah : JoiningGroup;
     /**
-     * See the [Rust documentation for `TehMarbuta_Goal`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.TehMarbuta_Goal) for more information.
+     * See the [Rust documentation for `TehMarbutaGoal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.TehMarbutaGoal) for more information.
      */
     static TehMarbutaGoal : JoiningGroup;
     /**
-     * See the [Rust documentation for `He`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.He) for more information.
+     * See the [Rust documentation for `He`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.He) for more information.
      */
     static He : JoiningGroup;
     /**
-     * See the [Rust documentation for `Heh`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Heh) for more information.
+     * See the [Rust documentation for `Heh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Heh) for more information.
      */
     static Heh : JoiningGroup;
     /**
-     * See the [Rust documentation for `HehGoal`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.HehGoal) for more information.
+     * See the [Rust documentation for `HehGoal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.HehGoal) for more information.
      */
     static HehGoal : JoiningGroup;
     /**
-     * See the [Rust documentation for `Heth`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Heth) for more information.
+     * See the [Rust documentation for `Heth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Heth) for more information.
      */
     static Heth : JoiningGroup;
     /**
-     * See the [Rust documentation for `Kaf`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Kaf) for more information.
+     * See the [Rust documentation for `Kaf`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Kaf) for more information.
      */
     static Kaf : JoiningGroup;
     /**
-     * See the [Rust documentation for `Kaph`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Kaph) for more information.
+     * See the [Rust documentation for `Kaph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Kaph) for more information.
      */
     static Kaph : JoiningGroup;
     /**
-     * See the [Rust documentation for `KnottedHeh`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.KnottedHeh) for more information.
+     * See the [Rust documentation for `KnottedHeh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.KnottedHeh) for more information.
      */
     static KnottedHeh : JoiningGroup;
     /**
-     * See the [Rust documentation for `Lam`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Lam) for more information.
+     * See the [Rust documentation for `Lam`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Lam) for more information.
      */
     static Lam : JoiningGroup;
     /**
-     * See the [Rust documentation for `Lamadh`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Lamadh) for more information.
+     * See the [Rust documentation for `Lamadh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Lamadh) for more information.
      */
     static Lamadh : JoiningGroup;
     /**
-     * See the [Rust documentation for `Meem`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Meem) for more information.
+     * See the [Rust documentation for `Meem`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Meem) for more information.
      */
     static Meem : JoiningGroup;
     /**
-     * See the [Rust documentation for `Mim`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Mim) for more information.
+     * See the [Rust documentation for `Mim`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Mim) for more information.
      */
     static Mim : JoiningGroup;
     /**
-     * See the [Rust documentation for `Noon`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Noon) for more information.
+     * See the [Rust documentation for `Noon`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Noon) for more information.
      */
     static Noon : JoiningGroup;
     /**
-     * See the [Rust documentation for `Nun`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Nun) for more information.
+     * See the [Rust documentation for `Nun`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Nun) for more information.
      */
     static Nun : JoiningGroup;
     /**
-     * See the [Rust documentation for `Pe`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Pe) for more information.
+     * See the [Rust documentation for `Pe`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Pe) for more information.
      */
     static Pe : JoiningGroup;
     /**
-     * See the [Rust documentation for `Qaf`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Qaf) for more information.
+     * See the [Rust documentation for `Qaf`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Qaf) for more information.
      */
     static Qaf : JoiningGroup;
     /**
-     * See the [Rust documentation for `Qaph`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Qaph) for more information.
+     * See the [Rust documentation for `Qaph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Qaph) for more information.
      */
     static Qaph : JoiningGroup;
     /**
-     * See the [Rust documentation for `Reh`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Reh) for more information.
+     * See the [Rust documentation for `Reh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Reh) for more information.
      */
     static Reh : JoiningGroup;
     /**
-     * See the [Rust documentation for `ReversedPe`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ReversedPe) for more information.
+     * See the [Rust documentation for `ReversedPe`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ReversedPe) for more information.
      */
     static ReversedPe : JoiningGroup;
     /**
-     * See the [Rust documentation for `Sad`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Sad) for more information.
+     * See the [Rust documentation for `Sad`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Sad) for more information.
      */
     static Sad : JoiningGroup;
     /**
-     * See the [Rust documentation for `Sadhe`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Sadhe) for more information.
+     * See the [Rust documentation for `Sadhe`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Sadhe) for more information.
      */
     static Sadhe : JoiningGroup;
     /**
-     * See the [Rust documentation for `Seen`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Seen) for more information.
+     * See the [Rust documentation for `Seen`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Seen) for more information.
      */
     static Seen : JoiningGroup;
     /**
-     * See the [Rust documentation for `Semkath`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Semkath) for more information.
+     * See the [Rust documentation for `Semkath`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Semkath) for more information.
      */
     static Semkath : JoiningGroup;
     /**
-     * See the [Rust documentation for `Shin`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Shin) for more information.
+     * See the [Rust documentation for `Shin`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Shin) for more information.
      */
     static Shin : JoiningGroup;
     /**
-     * See the [Rust documentation for `SwashKaf`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.SwashKaf) for more information.
+     * See the [Rust documentation for `SwashKaf`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.SwashKaf) for more information.
      */
     static SwashKaf : JoiningGroup;
     /**
-     * See the [Rust documentation for `SyriacWaw`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.SyriacWaw) for more information.
+     * See the [Rust documentation for `SyriacWaw`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.SyriacWaw) for more information.
      */
     static SyriacWaw : JoiningGroup;
     /**
-     * See the [Rust documentation for `Tah`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Tah) for more information.
+     * See the [Rust documentation for `Tah`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Tah) for more information.
      */
     static Tah : JoiningGroup;
     /**
-     * See the [Rust documentation for `Taw`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Taw) for more information.
+     * See the [Rust documentation for `Taw`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Taw) for more information.
      */
     static Taw : JoiningGroup;
     /**
-     * See the [Rust documentation for `TehMarbuta`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.TehMarbuta) for more information.
+     * See the [Rust documentation for `TehMarbuta`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.TehMarbuta) for more information.
      */
     static TehMarbuta : JoiningGroup;
     /**
-     * See the [Rust documentation for `Teth`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Teth) for more information.
+     * See the [Rust documentation for `Teth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Teth) for more information.
      */
     static Teth : JoiningGroup;
     /**
-     * See the [Rust documentation for `Waw`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Waw) for more information.
+     * See the [Rust documentation for `Waw`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Waw) for more information.
      */
     static Waw : JoiningGroup;
     /**
-     * See the [Rust documentation for `Yeh`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Yeh) for more information.
+     * See the [Rust documentation for `Yeh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Yeh) for more information.
      */
     static Yeh : JoiningGroup;
     /**
-     * See the [Rust documentation for `YehBarree`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.YehBarree) for more information.
+     * See the [Rust documentation for `YehBarree`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.YehBarree) for more information.
      */
     static YehBarree : JoiningGroup;
     /**
-     * See the [Rust documentation for `YehWith_Tail`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.YehWith_Tail) for more information.
+     * See the [Rust documentation for `YehWithTail`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.YehWithTail) for more information.
      */
     static YehWithTail : JoiningGroup;
     /**
-     * See the [Rust documentation for `Yudh`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Yudh) for more information.
+     * See the [Rust documentation for `Yudh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Yudh) for more information.
      */
     static Yudh : JoiningGroup;
     /**
-     * See the [Rust documentation for `YudhHe`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.YudhHe) for more information.
+     * See the [Rust documentation for `YudhHe`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.YudhHe) for more information.
      */
     static YudhHe : JoiningGroup;
     /**
-     * See the [Rust documentation for `Zain`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Zain) for more information.
+     * See the [Rust documentation for `Zain`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Zain) for more information.
      */
     static Zain : JoiningGroup;
     /**
-     * See the [Rust documentation for `Fe`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Fe) for more information.
+     * See the [Rust documentation for `Fe`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Fe) for more information.
      */
     static Fe : JoiningGroup;
     /**
-     * See the [Rust documentation for `Khaph`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Khaph) for more information.
+     * See the [Rust documentation for `Khaph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Khaph) for more information.
      */
     static Khaph : JoiningGroup;
     /**
-     * See the [Rust documentation for `Zhain`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Zhain) for more information.
+     * See the [Rust documentation for `Zhain`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Zhain) for more information.
      */
     static Zhain : JoiningGroup;
     /**
-     * See the [Rust documentation for `BurushaskiYeh_Barree`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.BurushaskiYeh_Barree) for more information.
+     * See the [Rust documentation for `BurushaskiYehBarree`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.BurushaskiYehBarree) for more information.
      */
     static BurushaskiYehBarree : JoiningGroup;
     /**
-     * See the [Rust documentation for `FarsiYeh`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.FarsiYeh) for more information.
+     * See the [Rust documentation for `FarsiYeh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.FarsiYeh) for more information.
      */
     static FarsiYeh : JoiningGroup;
     /**
-     * See the [Rust documentation for `Nya`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.Nya) for more information.
+     * See the [Rust documentation for `Nya`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.Nya) for more information.
      */
     static Nya : JoiningGroup;
     /**
-     * See the [Rust documentation for `RohingyaYeh`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.RohingyaYeh) for more information.
+     * See the [Rust documentation for `RohingyaYeh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.RohingyaYeh) for more information.
      */
     static RohingyaYeh : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanAleph`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanAleph) for more information.
+     * See the [Rust documentation for `ManichaeanAleph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanAleph) for more information.
      */
     static ManichaeanAleph : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanAyin`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanAyin) for more information.
+     * See the [Rust documentation for `ManichaeanAyin`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanAyin) for more information.
      */
     static ManichaeanAyin : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanBeth`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanBeth) for more information.
+     * See the [Rust documentation for `ManichaeanBeth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanBeth) for more information.
      */
     static ManichaeanBeth : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanDaleth`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanDaleth) for more information.
+     * See the [Rust documentation for `ManichaeanDaleth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanDaleth) for more information.
      */
     static ManichaeanDaleth : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanDhamedh`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanDhamedh) for more information.
+     * See the [Rust documentation for `ManichaeanDhamedh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanDhamedh) for more information.
      */
     static ManichaeanDhamedh : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanFive`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanFive) for more information.
+     * See the [Rust documentation for `ManichaeanFive`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanFive) for more information.
      */
     static ManichaeanFive : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanGimel`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanGimel) for more information.
+     * See the [Rust documentation for `ManichaeanGimel`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanGimel) for more information.
      */
     static ManichaeanGimel : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanHeth`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanHeth) for more information.
+     * See the [Rust documentation for `ManichaeanHeth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanHeth) for more information.
      */
     static ManichaeanHeth : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanHundred`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanHundred) for more information.
+     * See the [Rust documentation for `ManichaeanHundred`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanHundred) for more information.
      */
     static ManichaeanHundred : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanKaph`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanKaph) for more information.
+     * See the [Rust documentation for `ManichaeanKaph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanKaph) for more information.
      */
     static ManichaeanKaph : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanLamedh`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanLamedh) for more information.
+     * See the [Rust documentation for `ManichaeanLamedh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanLamedh) for more information.
      */
     static ManichaeanLamedh : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanMem`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanMem) for more information.
+     * See the [Rust documentation for `ManichaeanMem`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanMem) for more information.
      */
     static ManichaeanMem : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanNun`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanNun) for more information.
+     * See the [Rust documentation for `ManichaeanNun`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanNun) for more information.
      */
     static ManichaeanNun : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanOne`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanOne) for more information.
+     * See the [Rust documentation for `ManichaeanOne`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanOne) for more information.
      */
     static ManichaeanOne : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanPe`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanPe) for more information.
+     * See the [Rust documentation for `ManichaeanPe`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanPe) for more information.
      */
     static ManichaeanPe : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanQoph`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanQoph) for more information.
+     * See the [Rust documentation for `ManichaeanQoph`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanQoph) for more information.
      */
     static ManichaeanQoph : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanResh`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanResh) for more information.
+     * See the [Rust documentation for `ManichaeanResh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanResh) for more information.
      */
     static ManichaeanResh : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanSadhe`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanSadhe) for more information.
+     * See the [Rust documentation for `ManichaeanSadhe`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanSadhe) for more information.
      */
     static ManichaeanSadhe : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanSamekh`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanSamekh) for more information.
+     * See the [Rust documentation for `ManichaeanSamekh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanSamekh) for more information.
      */
     static ManichaeanSamekh : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanTaw`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanTaw) for more information.
+     * See the [Rust documentation for `ManichaeanTaw`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanTaw) for more information.
      */
     static ManichaeanTaw : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanTen`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanTen) for more information.
+     * See the [Rust documentation for `ManichaeanTen`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanTen) for more information.
      */
     static ManichaeanTen : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanTeth`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanTeth) for more information.
+     * See the [Rust documentation for `ManichaeanTeth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanTeth) for more information.
      */
     static ManichaeanTeth : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanThamedh`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanThamedh) for more information.
+     * See the [Rust documentation for `ManichaeanThamedh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanThamedh) for more information.
      */
     static ManichaeanThamedh : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanTwenty`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanTwenty) for more information.
+     * See the [Rust documentation for `ManichaeanTwenty`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanTwenty) for more information.
      */
     static ManichaeanTwenty : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanWaw`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanWaw) for more information.
+     * See the [Rust documentation for `ManichaeanWaw`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanWaw) for more information.
      */
     static ManichaeanWaw : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanYodh`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanYodh) for more information.
+     * See the [Rust documentation for `ManichaeanYodh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanYodh) for more information.
      */
     static ManichaeanYodh : JoiningGroup;
     /**
-     * See the [Rust documentation for `ManichaeanZayin`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ManichaeanZayin) for more information.
+     * See the [Rust documentation for `ManichaeanZayin`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ManichaeanZayin) for more information.
      */
     static ManichaeanZayin : JoiningGroup;
     /**
-     * See the [Rust documentation for `StraightWaw`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.StraightWaw) for more information.
+     * See the [Rust documentation for `StraightWaw`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.StraightWaw) for more information.
      */
     static StraightWaw : JoiningGroup;
     /**
-     * See the [Rust documentation for `AfricanFeh`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.AfricanFeh) for more information.
+     * See the [Rust documentation for `AfricanFeh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.AfricanFeh) for more information.
      */
     static AfricanFeh : JoiningGroup;
     /**
-     * See the [Rust documentation for `AfricanNoon`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.AfricanNoon) for more information.
+     * See the [Rust documentation for `AfricanNoon`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.AfricanNoon) for more information.
      */
     static AfricanNoon : JoiningGroup;
     /**
-     * See the [Rust documentation for `AfricanQaf`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.AfricanQaf) for more information.
+     * See the [Rust documentation for `AfricanQaf`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.AfricanQaf) for more information.
      */
     static AfricanQaf : JoiningGroup;
     /**
-     * See the [Rust documentation for `MalayalamBha`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.MalayalamBha) for more information.
+     * See the [Rust documentation for `MalayalamBha`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.MalayalamBha) for more information.
      */
     static MalayalamBha : JoiningGroup;
     /**
-     * See the [Rust documentation for `MalayalamJa`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.MalayalamJa) for more information.
+     * See the [Rust documentation for `MalayalamJa`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.MalayalamJa) for more information.
      */
     static MalayalamJa : JoiningGroup;
     /**
-     * See the [Rust documentation for `MalayalamLla`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.MalayalamLla) for more information.
+     * See the [Rust documentation for `MalayalamLla`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.MalayalamLla) for more information.
      */
     static MalayalamLla : JoiningGroup;
     /**
-     * See the [Rust documentation for `MalayalamLlla`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.MalayalamLlla) for more information.
+     * See the [Rust documentation for `MalayalamLlla`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.MalayalamLlla) for more information.
      */
     static MalayalamLlla : JoiningGroup;
     /**
-     * See the [Rust documentation for `MalayalamNga`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.MalayalamNga) for more information.
+     * See the [Rust documentation for `MalayalamNga`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.MalayalamNga) for more information.
      */
     static MalayalamNga : JoiningGroup;
     /**
-     * See the [Rust documentation for `MalayalamNna`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.MalayalamNna) for more information.
+     * See the [Rust documentation for `MalayalamNna`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.MalayalamNna) for more information.
      */
     static MalayalamNna : JoiningGroup;
     /**
-     * See the [Rust documentation for `MalayalamNnna`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.MalayalamNnna) for more information.
+     * See the [Rust documentation for `MalayalamNnna`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.MalayalamNnna) for more information.
      */
     static MalayalamNnna : JoiningGroup;
     /**
-     * See the [Rust documentation for `MalayalamNya`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.MalayalamNya) for more information.
+     * See the [Rust documentation for `MalayalamNya`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.MalayalamNya) for more information.
      */
     static MalayalamNya : JoiningGroup;
     /**
-     * See the [Rust documentation for `MalayalamRa`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.MalayalamRa) for more information.
+     * See the [Rust documentation for `MalayalamRa`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.MalayalamRa) for more information.
      */
     static MalayalamRa : JoiningGroup;
     /**
-     * See the [Rust documentation for `MalayalamSsa`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.MalayalamSsa) for more information.
+     * See the [Rust documentation for `MalayalamSsa`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.MalayalamSsa) for more information.
      */
     static MalayalamSsa : JoiningGroup;
     /**
-     * See the [Rust documentation for `MalayalamTta`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.MalayalamTta) for more information.
+     * See the [Rust documentation for `MalayalamTta`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.MalayalamTta) for more information.
      */
     static MalayalamTta : JoiningGroup;
     /**
-     * See the [Rust documentation for `HanifiRohingya_Kinna_Ya`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.HanifiRohingya_Kinna_Ya) for more information.
+     * See the [Rust documentation for `HanifiRohingyaKinnaYa`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.HanifiRohingyaKinnaYa) for more information.
      */
     static HanifiRohingyaKinnaYa : JoiningGroup;
     /**
-     * See the [Rust documentation for `HanifiRohingya_Pa`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.HanifiRohingya_Pa) for more information.
+     * See the [Rust documentation for `HanifiRohingyaPa`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.HanifiRohingyaPa) for more information.
      */
     static HanifiRohingyaPa : JoiningGroup;
     /**
-     * See the [Rust documentation for `ThinYeh`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ThinYeh) for more information.
+     * See the [Rust documentation for `ThinYeh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ThinYeh) for more information.
      */
     static ThinYeh : JoiningGroup;
     /**
-     * See the [Rust documentation for `VerticalTail`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.VerticalTail) for more information.
+     * See the [Rust documentation for `VerticalTail`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.VerticalTail) for more information.
      */
     static VerticalTail : JoiningGroup;
     /**
-     * See the [Rust documentation for `KashmiriYeh`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.KashmiriYeh) for more information.
+     * See the [Rust documentation for `KashmiriYeh`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.KashmiriYeh) for more information.
      */
     static KashmiriYeh : JoiningGroup;
     /**
-     * See the [Rust documentation for `ThinNoon`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.JoiningGroup.html#variant.ThinNoon) for more information.
+     * See the [Rust documentation for `ThinNoon`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html#associatedconstant.ThinNoon) for more information.
      */
     static ThinNoon : JoiningGroup;
 

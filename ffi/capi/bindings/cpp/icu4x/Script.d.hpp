@@ -131,6 +131,7 @@ namespace capi {
       Script_NyiakengPuachueHmong = 186,
       Script_Ogham = 29,
       Script_OlChiki = 109,
+      Script_OlOnal = 204,
       Script_OldHungarian = 76,
       Script_OldItalic = 30,
       Script_OldNorthArabian = 142,
@@ -140,7 +141,6 @@ namespace capi {
       Script_OldSouthArabian = 133,
       Script_OldTurkic = 88,
       Script_OldUyghur = 194,
-      Script_OlOnal = 204,
       Script_Oriya = 31,
       Script_Osage = 171,
       Script_Osmanya = 50,
@@ -658,6 +658,10 @@ public:
          */
         OlChiki = 109,
         /**
+         * See the [Rust documentation for `OlOnal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OlOnal) for more information.
+         */
+        OlOnal = 204,
+        /**
          * See the [Rust documentation for `OldHungarian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldHungarian) for more information.
          */
         OldHungarian = 76,
@@ -693,10 +697,6 @@ public:
          * See the [Rust documentation for `OldUyghur`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldUyghur) for more information.
          */
         OldUyghur = 194,
-        /**
-         * See the [Rust documentation for `OlOnal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OlOnal) for more information.
-         */
-        OlOnal = 204,
         /**
          * See the [Rust documentation for `Oriya`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Oriya) for more information.
          */

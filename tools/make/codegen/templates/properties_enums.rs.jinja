@@ -1,0 +1,140 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+// {{ crate::capi_properties::GENERATED_BY }}
+
+#[rustfmt::skip]
+
+#[diplomat::bridge]
+#[diplomat::abi_rename = "icu4x_{0}_mv1"]
+pub mod ffi {
+    use icu_properties::props;
+
+    #[cfg(feature = "compiled_data")]
+    use diplomat_runtime::DiplomatChar;
+
+    {%- for prop in props %}
+
+    #[diplomat::rust_link(icu::properties::props::{{prop.name}}, {{ prop.kind() }})]
+    #[diplomat::enum_convert(icu_properties::props::{{prop.name}}, needs_wildcard)]
+    #[non_exhaustive]
+    pub enum {{prop.name}} {
+        {%- for (variant, discriminant) in prop.variants %}
+        #[diplomat::rust_link(
+            icu::properties::props::{{prop.name}}::{{variant}},
+            {{ prop.variant_kind() }}
+        )]
+        {%- if prop.is_default(**discriminant) %}
+        #[diplomat::attr(auto, default)]
+        {%- endif %}
+        {{variant}} = {{discriminant}},
+        {%- endfor %}
+    }
+
+    impl {{prop.name}} {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::{{prop.name}}>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::long_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::{{prop.name}}>::new().get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::short_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::{{prop.name}}>::new().get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::{{prop.name}}::to_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> {{ prop.int_type }} {
+            self as {{ prop.int_type }}
+        }
+        #[diplomat::rust_link(icu::properties::props::{{prop.name}}::from_icu4c_value, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: {{ prop.int_type }}) -> Option<Self> {
+            Some(match other {
+                {%- for (variant, discriminant) in prop.variants %}
+                {{ discriminant }} => Self::{{variant}},
+                {%- endfor %}
+                _ => return None,
+            })
+        }
+    }
+    {%- endfor %}
+
+    impl GeneralCategory {
+        /// Produces a GeneralCategoryGroup mask that can represent a group of general categories
+        #[diplomat::rust_link(icu::properties::props::GeneralCategoryGroup, Struct)]
+        // hidden rust_links that need to go somewhere
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategoryOutOfBoundsError,
+            Struct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::properties::PropertyNamesShortBorrowed::get_locale_script,
+            FnInStruct,
+            hidden
+        )]
+        pub fn to_group(self) -> crate::unstable::properties_gcg::ffi::GeneralCategoryGroup {
+            crate::unstable::properties_gcg::ffi::GeneralCategoryGroup {
+                mask: props::GeneralCategoryGroup::from(props::GeneralCategory::from(self)).into(),
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+#[rustfmt::skip]
+mod test {
+    use super::ffi::*;
+    use icu_properties::props;
+
+    #[test]
+    fn test_all_cases_covered() {
+        {%- for prop in props %}
+        for prop in props::{{prop.name}}::ALL_VALUES {
+            {%- if prop.is_open %}
+            let ffi_prop = {{prop.name}}::from_integer_value(prop.to_icu4c_value())
+                .expect("Found {{prop.name}} value not supported in ffi");
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
+            {%- else %}
+            let ffi_prop = {{prop.name}}::from_integer_value(*prop as u8)
+                .expect("Found {{prop.name}} value not supported in ffi");
+            assert_eq!(*prop as u8, ffi_prop.to_integer_value());
+            {%- endif %}
+            assert_eq!(*prop, props::{{prop.name}}::from(ffi_prop));
+        }
+        {% endfor %}
+    }
+}

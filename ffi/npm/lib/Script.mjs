@@ -123,6 +123,7 @@ export class Script {
         ["NyiakengPuachueHmong", 186],
         ["Ogham", 29],
         ["OlChiki", 109],
+        ["OlOnal", 204],
         ["OldHungarian", 76],
         ["OldItalic", 30],
         ["OldNorthArabian", 142],
@@ -132,7 +133,6 @@ export class Script {
         ["OldSouthArabian", 133],
         ["OldTurkic", 88],
         ["OldUyghur", 194],
-        ["OlOnal", 204],
         ["Oriya", 31],
         ["Osage", 171],
         ["Osmanya", 50],
@@ -349,6 +349,7 @@ export class Script {
         [186]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 186),
         [29]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 29),
         [109]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 109),
+        [204]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 204),
         [76]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 76),
         [30]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 30),
         [142]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 142),
@@ -358,7 +359,6 @@ export class Script {
         [133]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 133),
         [88]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 88),
         [194]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 194),
-        [204]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 204),
         [31]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 31),
         [171]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 171),
         [50]: new Script(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 50),
@@ -865,6 +865,10 @@ export class Script {
      */
     static OlChiki = Script.#objectValues[109];
     /**
+     * See the [Rust documentation for `OlOnal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OlOnal) for more information.
+     */
+    static OlOnal = Script.#objectValues[204];
+    /**
      * See the [Rust documentation for `OldHungarian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldHungarian) for more information.
      */
     static OldHungarian = Script.#objectValues[76];
@@ -900,10 +904,6 @@ export class Script {
      * See the [Rust documentation for `OldUyghur`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldUyghur) for more information.
      */
     static OldUyghur = Script.#objectValues[194];
-    /**
-     * See the [Rust documentation for `OlOnal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OlOnal) for more information.
-     */
-    static OlOnal = Script.#objectValues[204];
     /**
      * See the [Rust documentation for `Oriya`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Oriya) for more information.
      */

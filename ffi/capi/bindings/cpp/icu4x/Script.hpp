@@ -153,6 +153,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_NyiakengPuachueHmong:
         case icu4x::capi::Script_Ogham:
         case icu4x::capi::Script_OlChiki:
+        case icu4x::capi::Script_OlOnal:
         case icu4x::capi::Script_OldHungarian:
         case icu4x::capi::Script_OldItalic:
         case icu4x::capi::Script_OldNorthArabian:
@@ -162,7 +163,6 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
         case icu4x::capi::Script_OldSouthArabian:
         case icu4x::capi::Script_OldTurkic:
         case icu4x::capi::Script_OldUyghur:
-        case icu4x::capi::Script_OlOnal:
         case icu4x::capi::Script_Oriya:
         case icu4x::capi::Script_Osage:
         case icu4x::capi::Script_Osmanya:

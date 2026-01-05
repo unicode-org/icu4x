@@ -20,6 +20,12 @@ namespace capi {
 
     icu4x::capi::IndicConjunctBreak icu4x_IndicConjunctBreak_for_char_mv1(char32_t ch);
 
+    typedef struct icu4x_IndicConjunctBreak_long_name_mv1_result {union {icu4x::diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_IndicConjunctBreak_long_name_mv1_result;
+    icu4x_IndicConjunctBreak_long_name_mv1_result icu4x_IndicConjunctBreak_long_name_mv1(icu4x::capi::IndicConjunctBreak self);
+
+    typedef struct icu4x_IndicConjunctBreak_short_name_mv1_result {union {icu4x::diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_IndicConjunctBreak_short_name_mv1_result;
+    icu4x_IndicConjunctBreak_short_name_mv1_result icu4x_IndicConjunctBreak_short_name_mv1(icu4x::capi::IndicConjunctBreak self);
+
     uint8_t icu4x_IndicConjunctBreak_to_integer_value_mv1(icu4x::capi::IndicConjunctBreak self);
 
     typedef struct icu4x_IndicConjunctBreak_from_integer_value_mv1_result {union {icu4x::capi::IndicConjunctBreak ok; }; bool is_ok;} icu4x_IndicConjunctBreak_from_integer_value_mv1_result;
@@ -48,6 +54,16 @@ inline icu4x::IndicConjunctBreak icu4x::IndicConjunctBreak::FromFFI(icu4x::capi:
 inline icu4x::IndicConjunctBreak icu4x::IndicConjunctBreak::for_char(char32_t ch) {
     auto result = icu4x::capi::icu4x_IndicConjunctBreak_for_char_mv1(ch);
     return icu4x::IndicConjunctBreak::FromFFI(result);
+}
+
+inline std::optional<std::string_view> icu4x::IndicConjunctBreak::long_name() const {
+    auto result = icu4x::capi::icu4x_IndicConjunctBreak_long_name_mv1(this->AsFFI());
+    return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
+}
+
+inline std::optional<std::string_view> icu4x::IndicConjunctBreak::short_name() const {
+    auto result = icu4x::capi::icu4x_IndicConjunctBreak_short_name_mv1(this->AsFFI());
+    return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
 inline uint8_t icu4x::IndicConjunctBreak::to_integer_value() const {

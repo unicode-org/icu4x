@@ -20,6 +20,12 @@ namespace capi {
 
     icu4x::capi::CanonicalCombiningClass icu4x_CanonicalCombiningClass_for_char_mv1(char32_t ch);
 
+    typedef struct icu4x_CanonicalCombiningClass_long_name_mv1_result {union {icu4x::diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_CanonicalCombiningClass_long_name_mv1_result;
+    icu4x_CanonicalCombiningClass_long_name_mv1_result icu4x_CanonicalCombiningClass_long_name_mv1(icu4x::capi::CanonicalCombiningClass self);
+
+    typedef struct icu4x_CanonicalCombiningClass_short_name_mv1_result {union {icu4x::diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_CanonicalCombiningClass_short_name_mv1_result;
+    icu4x_CanonicalCombiningClass_short_name_mv1_result icu4x_CanonicalCombiningClass_short_name_mv1(icu4x::capi::CanonicalCombiningClass self);
+
     uint8_t icu4x_CanonicalCombiningClass_to_integer_value_mv1(icu4x::capi::CanonicalCombiningClass self);
 
     typedef struct icu4x_CanonicalCombiningClass_from_integer_value_mv1_result {union {icu4x::capi::CanonicalCombiningClass ok; }; bool is_ok;} icu4x_CanonicalCombiningClass_from_integer_value_mv1_result;
@@ -102,6 +108,16 @@ inline icu4x::CanonicalCombiningClass icu4x::CanonicalCombiningClass::FromFFI(ic
 inline icu4x::CanonicalCombiningClass icu4x::CanonicalCombiningClass::for_char(char32_t ch) {
     auto result = icu4x::capi::icu4x_CanonicalCombiningClass_for_char_mv1(ch);
     return icu4x::CanonicalCombiningClass::FromFFI(result);
+}
+
+inline std::optional<std::string_view> icu4x::CanonicalCombiningClass::long_name() const {
+    auto result = icu4x::capi::icu4x_CanonicalCombiningClass_long_name_mv1(this->AsFFI());
+    return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
+}
+
+inline std::optional<std::string_view> icu4x::CanonicalCombiningClass::short_name() const {
+    auto result = icu4x::capi::icu4x_CanonicalCombiningClass_short_name_mv1(this->AsFFI());
+    return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
 inline uint8_t icu4x::CanonicalCombiningClass::to_integer_value() const {

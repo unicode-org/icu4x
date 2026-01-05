@@ -137,7 +137,6 @@ enum GeneralCategory {
     return GeneralCategory.values.firstWhere((v) => v._ffi == result);
   }
 
-  /// Convert to an integer using the ICU4C integer mappings for `General_Category`
   /// Get the "long" name of this property value (returns empty if property value is unknown)
   ///
   /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
@@ -161,9 +160,22 @@ enum GeneralCategory {
   }
 
   /// Convert to an integer value usable with ICU4C and CodePointMapData
+  ///
+  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategory.html#method.to_icu4c_value) for more information.
   int toIntegerValue() {
     final result = _icu4x_GeneralCategory_to_integer_value_mv1(_ffi);
     return result;
+  }
+
+  /// Convert from an integer value from ICU4C or CodePointMapData
+  ///
+  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategory.html#method.from_icu4c_value) for more information.
+  static GeneralCategory? fromIntegerValue(int other) {
+    final result = _icu4x_GeneralCategory_from_integer_value_mv1(other);
+    if (!result.isOk) {
+      return null;
+    }
+    return GeneralCategory.values.firstWhere((v) => v._ffi == result.union.ok);
   }
 
   /// Produces a GeneralCategoryGroup mask that can represent a group of general categories
@@ -172,16 +184,6 @@ enum GeneralCategory {
   GeneralCategoryGroup toGroup() {
     final result = _icu4x_GeneralCategory_to_group_mv1(_ffi);
     return GeneralCategoryGroup._fromFfi(result);
-  }
-
-  /// Convert from an integer using the ICU4C integer mappings for `General_Category`
-  /// Convert from an integer value from ICU4C or CodePointMapData
-  static GeneralCategory? fromIntegerValue(int other) {
-    final result = _icu4x_GeneralCategory_from_integer_value_mv1(other);
-    if (!result.isOk) {
-      return null;
-    }
-    return GeneralCategory.values.firstWhere((v) => v._ffi == result.union.ok);
   }
 
 }
@@ -206,14 +208,14 @@ external _ResultSliceUtf8Void _icu4x_GeneralCategory_short_name_mv1(int self);
 // ignore: non_constant_identifier_names
 external int _icu4x_GeneralCategory_to_integer_value_mv1(int self);
 
-@_DiplomatFfiUse('icu4x_GeneralCategory_to_group_mv1')
-@ffi.Native<_GeneralCategoryGroupFfi Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_GeneralCategory_to_group_mv1')
-// ignore: non_constant_identifier_names
-external _GeneralCategoryGroupFfi _icu4x_GeneralCategory_to_group_mv1(int self);
-
 @_DiplomatFfiUse('icu4x_GeneralCategory_from_integer_value_mv1')
 @ffi.Native<_ResultInt32Void Function(ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_GeneralCategory_from_integer_value_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _icu4x_GeneralCategory_from_integer_value_mv1(int other);
+
+@_DiplomatFfiUse('icu4x_GeneralCategory_to_group_mv1')
+@ffi.Native<_GeneralCategoryGroupFfi Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_GeneralCategory_to_group_mv1')
+// ignore: non_constant_identifier_names
+external _GeneralCategoryGroupFfi _icu4x_GeneralCategory_to_group_mv1(int self);
 
 // dart format on

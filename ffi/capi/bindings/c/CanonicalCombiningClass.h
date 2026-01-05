@@ -17,6 +17,12 @@
 
 CanonicalCombiningClass icu4x_CanonicalCombiningClass_for_char_mv1(char32_t ch);
 
+typedef struct icu4x_CanonicalCombiningClass_long_name_mv1_result {union {DiplomatStringView ok; }; bool is_ok;} icu4x_CanonicalCombiningClass_long_name_mv1_result;
+icu4x_CanonicalCombiningClass_long_name_mv1_result icu4x_CanonicalCombiningClass_long_name_mv1(CanonicalCombiningClass self);
+
+typedef struct icu4x_CanonicalCombiningClass_short_name_mv1_result {union {DiplomatStringView ok; }; bool is_ok;} icu4x_CanonicalCombiningClass_short_name_mv1_result;
+icu4x_CanonicalCombiningClass_short_name_mv1_result icu4x_CanonicalCombiningClass_short_name_mv1(CanonicalCombiningClass self);
+
 uint8_t icu4x_CanonicalCombiningClass_to_integer_value_mv1(CanonicalCombiningClass self);
 
 typedef struct icu4x_CanonicalCombiningClass_from_integer_value_mv1_result {union {CanonicalCombiningClass ok; }; bool is_ok;} icu4x_CanonicalCombiningClass_from_integer_value_mv1_result;
