@@ -171,8 +171,9 @@ impl Locale {
     /// ```
     /// use icu::locale::Locale;
     ///
+    /// let bytes = b"pL-latn-pl-U-HC-H12";
     /// assert_eq!(
-    ///     Locale::normalize_utf8(b"pL-latn-pl-U-HC-H12").as_deref(),
+    ///     Locale::normalize_utf8(bytes).as_deref(),
     ///     Ok("pl-Latn-PL-u-hc-h12")
     /// );
     /// ```
