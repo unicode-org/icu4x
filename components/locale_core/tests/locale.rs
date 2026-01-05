@@ -117,3 +117,17 @@ fn test_locale_strict_cmp() {
         }
     }
 }
+
+#[test]
+fn test_en_us_u_sd_tx() {
+    use icu_locale_core::extensions::unicode::{key, value};
+    let locale = Locale::try_from_str("en-US-u-sd-tx").unwrap();
+    assert_eq!(
+        locale.extensions.unicode.keywords.get(&key!("sd")).unwrap(),
+        &value!("true")
+    );
+    assert_eq!(
+        locale.extensions.unicode.keywords.get(&key!("tx")).unwrap(),
+        &value!("true")
+    );
+}
