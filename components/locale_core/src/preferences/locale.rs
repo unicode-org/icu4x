@@ -60,58 +60,7 @@ impl Default for LocalePreferences {
 
 impl From<&crate::Locale> for LocalePreferences {
     fn from(loc: &crate::Locale) -> Self {
-        let subdivision = if let Some(sd) = loc
-            .extensions
-            .unicode
-            .keywords
-            .get(&RegionalSubdivision::UNICODE_EXTENSION_KEY)
-        {
-            if let Ok(sd) = RegionalSubdivision::try_from(sd) {
-                Some(sd)
-            } else {
-                None
-            }
-        } else {
-            None
-        };
-
-        let region = if let Some(sd) = subdivision {
-            if let Some(region) = loc.id.region {
-                // Discard the subdivison if it doesn't match the region
-                Some(RegionalSubdivision(SubdivisionId {
-                    region,
-                    suffix: if sd.region == region {
-                        sd.suffix
-                    } else {
-                        SubdivisionSuffix::UNKNOWN
-                    },
-                }))
-            } else {
-                // Use the subdivision's region if there's no region
-                Some(sd)
-            }
-        } else {
-            loc.id.region.map(|region| {
-                RegionalSubdivision(SubdivisionId {
-                    region,
-                    suffix: SubdivisionSuffix::UNKNOWN,
-                })
-            })
-        };
-        let region_override = loc
-            .extensions
-            .unicode
-            .keywords
-            .get(&RegionOverride::UNICODE_EXTENSION_KEY)
-            .and_then(|v| RegionOverride::try_from(v).ok());
-
-        Self {
-            language: loc.id.language,
-            script: loc.id.script,
-            region,
-            variant: loc.id.variants.iter().copied().next(),
-            region_override,
-        }
+        Self::from_locale_strict(loc).unwrap_or_else(|e| e)
     }
 }
 
@@ -176,6 +125,72 @@ impl LocalePreferences {
             variant: None,
             region_override: None,
         }
+    }
+
+    /// Construct a `LocalePreferences` from a `Locale`
+    ///
+    /// Returns `Err` if any of of the preference values are invalid.
+    pub fn from_locale_strict(loc: &crate::Locale) -> Result<Self, Self> {
+        let mut is_err = false;
+
+        let subdivision = if let Some(sd) = loc
+            .extensions
+            .unicode
+            .keywords
+            .get(&RegionalSubdivision::UNICODE_EXTENSION_KEY)
+        {
+            if let Ok(sd) = RegionalSubdivision::try_from(sd) {
+                Some(sd)
+            } else {
+                is_err = true;
+                None
+            }
+        } else {
+            None
+        };
+
+        let region = if let Some(sd) = subdivision {
+            if let Some(region) = loc.id.region {
+                // Discard the subdivison if it doesn't match the region
+                Some(RegionalSubdivision(SubdivisionId {
+                    region,
+                    suffix: if sd.region == region {
+                        sd.suffix
+                    } else {
+                        is_err = true;
+                        SubdivisionSuffix::UNKNOWN
+                    },
+                }))
+            } else {
+                // Use the subdivision's region if there's no region
+                Some(sd)
+            }
+        } else {
+            loc.id.region.map(|region| {
+                RegionalSubdivision(SubdivisionId {
+                    region,
+                    suffix: SubdivisionSuffix::UNKNOWN,
+                })
+            })
+        };
+        let region_override = loc
+            .extensions
+            .unicode
+            .keywords
+            .get(&RegionOverride::UNICODE_EXTENSION_KEY)
+            .and_then(|v| {
+                RegionOverride::try_from(v)
+                    .inspect_err(|_| is_err = true)
+                    .ok()
+            });
+
+        (if is_err { Err } else { Ok })(Self {
+            language: loc.id.language,
+            script: loc.id.script,
+            region,
+            variant: loc.id.variants.iter().copied().next(),
+            region_override,
+        })
     }
 
     /// Preference of Language
@@ -265,7 +280,7 @@ mod tests {
                 region_priority: "en-GB",
             },
             TestCase {
-                input: "en-US-u-sd-gbzzzz",
+                input: "!en-US-u-sd-gbzzzz",
                 language_priority: "en-US",
                 region_priority: "en-US",
             },
@@ -284,10 +299,45 @@ mod tests {
                 language_priority: "en-US-u-sd-ustx",
                 region_priority: "en-GB-u-sd-gbeng",
             },
+            TestCase {
+                input: "!en-TR-u-rg-true",
+                language_priority: "en-TR",
+                region_priority: "en-TR",
+            },
+            TestCase {
+                input: "!en-US-u-sd-tx",
+                language_priority: "en-US",
+                region_priority: "en-US",
+            },
+            TestCase {
+                input: "!en-GB-u-rg-tx",
+                language_priority: "en-GB",
+                region_priority: "en-GB",
+            },
+            TestCase {
+                input: "en-US-u-rg-eng",
+                language_priority: "en-US",
+                region_priority: "en-EN-u-sd-eng",
+            },
+            TestCase {
+                // All alphabetic values of `-u-sd` are valid, as they are of length 3+, so there's
+                // always at least a one-character subdivision. Numeric regions can lead to invalid
+                // values though.
+                input: "!en-001-u-sd-001",
+                language_priority: "en-001",
+                region_priority: "en-001",
+            },
         ];
         for test_case in test_cases.iter() {
-            let locale = Locale::try_from_str(test_case.input).unwrap();
-            let prefs = LocalePreferences::from(&locale);
+            let prefs = if let Some(locale) = test_case.input.strip_prefix("!") {
+                LocalePreferences::from_locale_strict(&Locale::try_from_str(locale).unwrap())
+                    .expect_err(locale)
+            } else {
+                LocalePreferences::from_locale_strict(
+                    &Locale::try_from_str(test_case.input).unwrap(),
+                )
+                .expect(test_case.input)
+            };
             assert_eq!(
                 prefs.to_data_locale_language_priority().to_string(),
                 test_case.language_priority,
