@@ -57,6 +57,22 @@ impl_tinystr_subtag!(
 ///
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#unicode_subdivision_id
 /// [`Unicode`]: crate::extensions::unicode::Unicode
+///
+/// # Examples
+///
+/// ```
+/// use icu::locale::{
+///     extensions::unicode::{subdivision_suffix, SubdivisionId},
+///     subtags::region,
+/// };
+///
+/// let ss = subdivision_suffix!("eng");
+/// let region = region!("gb");
+///
+/// let si = SubdivisionId::new(region, ss);
+///
+/// assert_eq!(si.to_string(), "gbeng");
+/// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
 #[non_exhaustive]
 pub struct SubdivisionId {
