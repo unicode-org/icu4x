@@ -21,16 +21,31 @@ use core::str::FromStr;
 /// [`LanguageIdentifier`] for better size and performance while still meeting
 /// the needs of the ICU4X data pipeline.
 ///
-/// You can create a [`DataLocale`] from a borrowed [`Locale`], which is more
-/// efficient than cloning the [`Locale`], but less efficient than converting an owned
-/// [`Locale`]:
+/// In general, you should not need to construct one of these directly. If you do,
+/// use [`LocalePreferences`] if the locale is a user's locale:
 ///
 /// ```
 /// use icu_locale_core::locale;
 /// use icu_provider::DataLocale;
+/// use icu_locale_core::preferences::LocalePreferences;
+/// use writeable::assert_writeable_eq;
 ///
-/// let locale1 = locale!("en-u-ca-buddhist");
-/// let data_locale = DataLocale::from(&locale1);
+/// // Locale: American English with British user preferences
+/// let locale = locale!("en-US-u-rg-gbzzzz");
+///
+/// // When directly converted, -u-rg is implicitly dropped
+/// let data_locale = DataLocale::from(&locale);
+/// assert_writeable_eq!(data_locale, "en-US");
+///
+/// // Precedence goes to the region subtag for language fallback
+/// let data_locale = LocalePreferences::from(&locale)
+///     .to_data_locale_language_priority();
+/// assert_writeable_eq!(data_locale, "en-US");
+///
+/// // Precedence goes to the region extension keyword for region fallback
+/// let data_locale = LocalePreferences::from(&locale)
+///     .to_data_locale_region_priority();
+/// assert_writeable_eq!(data_locale, "en-GB");
 /// ```
 ///
 /// [`DataLocale`] only supports `-u-sd` keywords, to reflect the current state of CLDR data
@@ -49,6 +64,8 @@ use core::str::FromStr;
 ///     DataLocale::from(locale!("hi-IN-u-sd-inas"))
 /// );
 /// ```
+///
+/// [`LocalePreferences`]: crate::preferences::LocalePreferences
 #[derive(Clone, Copy)]
 #[non_exhaustive]
 pub struct DataLocale {
