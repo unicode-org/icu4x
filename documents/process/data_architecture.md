@@ -30,7 +30,7 @@ By and large, we have two kinds of data markers. "Singleton" markers, for things
 
 ICU4X ships with a set of default locales, but developers can use `icu4x-datagen` to customize it. The idea is that data markers slice based on the used functionality (your application either formats dates or does not), and locales slice based on the locales you wish to ship, which is something that you may wish to easily tweak after writing your application, or have some dynamic data loading solution for.
 
-Typically, this maps to *user* locale, since `icu4x-datagen` is a tool that is invoked by the developer. At the moment, we do not have any data that is organized by *content* locale (the locale of the content the user is seeing). Content locale is, instead, modeled as a preference passed in to segmenters and casemapping.
+Typically, this maps to *user* locale, since `icu4x-datagen` is a tool that is invoked by the developer. At the moment, we do not have any data that is organized by *content* locale (the locale of the content the user is seeing). Rather, our current situations where content locale is used (segmenters, casemapping) use non-locale-dependent data (either singleton data or data using data marker attributes), and pass content locale in as an option.
 
 ## Filtering data via data marker attributes
 
@@ -53,15 +53,15 @@ We do not have a hard and fast rule for which to pick here, but we have some gui
 
 Separate markers have the benefit of being automatically sliceable, which directly leads to less code/data size for people who do not need everything. Therefore, it is ideal to try and see if separate markers can be made to work nicely.
 
-Separate markers have some downsides: code using separate markers usually needs a separate constructor for each marker, and the number of APIs can explode in size. If there are valid use cases involving loading different properties based on runtime settings, you may need some sort of manual dynamic dispatch solution, akin to `AnyCalendar`, to make that work.
+Separate markers have some downsides: code using separate markers usually needs a separate constructor for each marker, and the number of APIs can explode in size. If there are valid use cases involving loading different pieces of data based on runtime settings, you may need some sort of manual dynamic dispatch solution, akin to `AnyCalendar`, to make that work. In such a situation, the manual dynamic dispatch solution will link in all the data.
 
 Separate markers also need the addition of a new marker whenever the property gets a new possible value. This makes them a poor choice for often-expanding things like units, and basically impossible for unbounded sets like locale display names.
 
 ## Policy around overlapping data
 
-Data can often be shared between functionality by splitting it down. For example, a lot of the properties data is used by other components, like casemapping.
+Data can often be shared between functionality by splitting it down. For example, a lot of the Unicode properties data is used by other components, like casemapping.
 
-If you are writing multiple APIs that use overlapping data, please split the data such that the overlapping data is separated and can be loaded by both. If this does not seem possible, or comes in conflict with other goals, this policy can be overridden by a TC decision (policy from [#3022]).
+If you are writing multiple APIs that use overlapping data, split the data such that the overlapping data is separated and can be loaded by both. If this does not seem possible, or comes in conflict with other goals, this policy can be overridden by a TC decision (policy from [#3022]).
 
 
 In *general* we prefer splitting data where possible. However, sometimes it happens where related pieces of data are basically only ever loaded together, and there can be scope for merging them into more data-efficient structures. [`BidiMirroringGlyph`] is an example of this: it is a type that represents three related properties, packed together instead of supporting individual data loads for all three.
