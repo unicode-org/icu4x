@@ -21,8 +21,8 @@ use icu_locale_core::preferences::extensions::unicode::keywords::{
 use icu_provider::prelude::*;
 use tinystr::tinystr;
 
-#[path = "hijri/simulated_mecca_data.rs"]
-mod simulated_mecca_data;
+#[path = "hijri/reingold_mecca_data.rs"]
+mod reingold_mecca_data;
 #[path = "hijri/ummalqura_data.rs"]
 mod ummalqura_data;
 
@@ -198,10 +198,10 @@ impl Rules for ReingoldSimulation {
         if let Some(data) = HijriYear::lookup(
             extended_year,
             match self {
-                Self::Mecca => simulated_mecca_data::STARTING_YEAR,
+                Self::Mecca => reingold_mecca_data::STARTING_YEAR,
             },
             match self {
-                Self::Mecca => simulated_mecca_data::DATA,
+                Self::Mecca => reingold_mecca_data::DATA,
             },
         ) {
             data
