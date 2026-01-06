@@ -67,5 +67,19 @@ pub mod ffi {
                 )?,
             )))
         }
+
+        /// Get the `Basic_Emoji` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::EmojiSet::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn basic_emoji_for_char(ch: DiplomatChar) -> bool {
+            icu_properties::EmojiSetData::new::<BasicEmoji>().contains32(ch)
+        }
+
+        /// Get the `Basic_Emoji` value for a given character, using compiled data
+        #[diplomat::rust_link(icu::properties::props::EmojiSet::for_str, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn basic_emoji_for_str(s: &DiplomatStr) -> bool {
+            icu_properties::EmojiSetData::new::<BasicEmoji>().contains_utf8(s)
+        }
     }
 }

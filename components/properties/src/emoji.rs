@@ -168,7 +168,7 @@ impl EmojiSetDataBorrowed<'static> {
 /// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
 /// trait, please consider using a type from the implementors listed below.
 /// </div>
-pub trait EmojiSet: crate::private::Sealed {
+pub trait EmojiSet: crate::private::Sealed + Sized {
     #[doc(hidden)]
     type DataMarker: DataMarker<DataStruct = PropertyUnicodeSet<'static>>;
     #[doc(hidden)]
@@ -178,4 +178,20 @@ pub trait EmojiSet: crate::private::Sealed {
     const NAME: &'static [u8];
     /// The abbreviated name of this property, if it exists, otherwise the name
     const SHORT_NAME: &'static [u8];
+
+    /// Convenience method for `EmojiSetData::new().contains(ch)`
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
+    fn for_char(ch: char) -> bool {
+        EmojiSetData::new::<Self>().contains(ch)
+    }
+
+    /// Convenience method for `EmojiSetData::new().contains_str(s)`
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
+    fn for_str(s: &str) -> bool {
+        EmojiSetData::new::<Self>().contains_str(s)
+    }
 }
