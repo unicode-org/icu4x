@@ -12,11 +12,8 @@ use zerovec::ule::AsULE;
 
 // Export the duration types from here
 #[cfg(feature = "unstable")]
-pub use crate::duration::{DateDuration, DateDurationUnit};
+pub use crate::duration::{DateDuration, DateDurationUnit, DateDurationParseError};
 use crate::{calendar_arithmetic::ArithmeticDate, error::MonthCodeParseError};
-
-#[cfg(feature = "unstable")]
-pub use crate::duration::DateDurationParseError;
 
 #[cfg(feature = "unstable")]
 pub use unstable::DateFields;
