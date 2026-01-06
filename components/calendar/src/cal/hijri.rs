@@ -178,7 +178,7 @@ impl Rules for AstronomicalSimulation {
 /// [^1]: See [calendrical_calculations::islamic::observational_islamic_from_fixed]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[non_exhaustive]
-#[cfg(feature = "unstable")] // TODO(before stabilisation): design API
+#[cfg(feature = "unstable")] // TODO(before stabilisation): should this be an enum? a struct with private fields?
 pub enum ReingoldSimulation {
     /// Mecca
     Mecca,
