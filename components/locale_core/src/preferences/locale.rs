@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::extensions::unicode::{SubdivisionId, SubdivisionSuffix};
 use crate::preferences::extensions::unicode::keywords::{RegionOverride, RegionalSubdivision};
 #[cfg(feature = "alloc")]
 use crate::subtags::Variants;
@@ -15,13 +16,11 @@ pub struct LocalePreferences {
     pub(crate) language: Language,
     /// Preference of Script
     pub(crate) script: Option<Script>,
-    /// Preference of Region
-    pub(crate) region: Option<Region>,
+    /// Preference of Region/Subdivision
+    pub(crate) region: Option<RegionalSubdivision>,
     /// Preference of Variant
     pub(crate) variant: Option<Variant>,
-    /// Preference of Regional Subdivision
-    pub(crate) subdivision: Option<RegionalSubdivision>,
-    /// Preference of Unicode Extension Region
+    /// Preference of Unicode region override
     pub(crate) region_override: Option<RegionOverride>,
 }
 
@@ -30,42 +29,27 @@ impl LocalePreferences {
     ///
     /// Most users should use `icu_provider::marker::make_locale()` instead.
     pub fn to_data_locale_region_priority(self) -> DataLocale {
-        if let Some(ro) = self.region_override {
-            return DataLocale::from_parts(self.language, self.script, Some(*ro), self.variant);
-        }
-
-        self.to_data_locale_language_priority()
+        DataLocale::from_parts(
+            self.language,
+            self.script,
+            self.region_override
+                .as_deref()
+                .or(self.region.as_deref())
+                .copied(),
+            self.variant,
+        )
     }
 
     /// Convert to a DataLocale, with language-based fallback priority
     ///
     /// Most users should use `icu_provider::marker::make_locale()` instead.
     pub fn to_data_locale_language_priority(self) -> DataLocale {
-        use crate::extensions::unicode::{SubdivisionId, SubdivisionSuffix};
-
-        let region = if let Some(sd) = self.subdivision {
-            if let Some(region) = self.region {
-                // Discard the subdivison if it doesn't match the region
-                Some(SubdivisionId {
-                    region,
-                    suffix: if sd.region == region {
-                        sd.suffix
-                    } else {
-                        SubdivisionSuffix::UNKNOWN
-                    },
-                })
-            } else {
-                // Use the subdivision's region if there's no region
-                Some(*sd)
-            }
-        } else {
-            self.region.map(|region| SubdivisionId {
-                region,
-                suffix: SubdivisionSuffix::UNKNOWN,
-            })
-        };
-
-        DataLocale::from_parts(self.language, self.script, region, self.variant)
+        DataLocale::from_parts(
+            self.language,
+            self.script,
+            self.region.as_deref().copied(),
+            self.variant,
+        )
     }
 }
 impl Default for LocalePreferences {
@@ -76,23 +60,57 @@ impl Default for LocalePreferences {
 
 impl From<&crate::Locale> for LocalePreferences {
     fn from(loc: &crate::Locale) -> Self {
+        let subdivision = if let Some(sd) = loc
+            .extensions
+            .unicode
+            .keywords
+            .get(&RegionalSubdivision::UNICODE_EXTENSION_KEY)
+        {
+            if let Ok(sd) = RegionalSubdivision::try_from(sd) {
+                Some(sd)
+            } else {
+                None
+            }
+        } else {
+            None
+        };
+
+        let region = if let Some(sd) = subdivision {
+            if let Some(region) = loc.id.region {
+                // Discard the subdivison if it doesn't match the region
+                Some(RegionalSubdivision(SubdivisionId {
+                    region,
+                    suffix: if sd.region == region {
+                        sd.suffix
+                    } else {
+                        SubdivisionSuffix::UNKNOWN
+                    },
+                }))
+            } else {
+                // Use the subdivision's region if there's no region
+                Some(sd)
+            }
+        } else {
+            loc.id.region.map(|region| {
+                RegionalSubdivision(SubdivisionId {
+                    region,
+                    suffix: SubdivisionSuffix::UNKNOWN,
+                })
+            })
+        };
+        let region_override = loc
+            .extensions
+            .unicode
+            .keywords
+            .get(&RegionOverride::UNICODE_EXTENSION_KEY)
+            .and_then(|v| RegionOverride::try_from(v).ok());
+
         Self {
             language: loc.id.language,
             script: loc.id.script,
-            region: loc.id.region,
+            region,
             variant: loc.id.variants.iter().copied().next(),
-            subdivision: loc
-                .extensions
-                .unicode
-                .keywords
-                .get(&RegionalSubdivision::UNICODE_EXTENSION_KEY)
-                .and_then(|v| RegionalSubdivision::try_from(v).ok()),
-            region_override: loc
-                .extensions
-                .unicode
-                .keywords
-                .get(&RegionOverride::UNICODE_EXTENSION_KEY)
-                .and_then(|v| RegionOverride::try_from(v).ok()),
+            region_override,
         }
     }
 }
@@ -102,9 +120,13 @@ impl From<&crate::LanguageIdentifier> for LocalePreferences {
         Self {
             language: lid.language,
             script: lid.script,
-            region: lid.region,
+            region: lid.region.map(|region| {
+                RegionalSubdivision(SubdivisionId {
+                    region,
+                    suffix: SubdivisionSuffix::UNKNOWN,
+                })
+            }),
             variant: lid.variants.iter().copied().next(),
-            subdivision: None,
             region_override: None,
         }
     }
@@ -118,7 +140,7 @@ impl From<LocalePreferences> for crate::Locale {
             id: crate::LanguageIdentifier {
                 language: prefs.language,
                 script: prefs.script,
-                region: prefs.region,
+                region: prefs.region.map(|sd| sd.region),
                 variants: prefs
                     .variant
                     .map(Variants::from_variant)
@@ -126,7 +148,7 @@ impl From<LocalePreferences> for crate::Locale {
             },
             extensions: {
                 let mut extensions = crate::extensions::Extensions::default();
-                if let Some(sd) = prefs.subdivision {
+                if let Some(sd) = prefs.region.filter(|sd| !sd.suffix.is_unknown()) {
                     extensions
                         .unicode
                         .keywords
@@ -152,7 +174,6 @@ impl LocalePreferences {
             script: None,
             region: None,
             variant: None,
-            subdivision: None,
             region_override: None,
         }
     }
@@ -169,8 +190,10 @@ impl LocalePreferences {
     pub const fn region(&self) -> Option<Region> {
         if let Some(rg) = self.region_override {
             Some(rg.0.region)
+        } else if let Some(sd) = self.region {
+            Some(sd.0.region)
         } else {
-            self.region
+            None
         }
     }
 
@@ -182,14 +205,14 @@ impl LocalePreferences {
         if let Some(script) = other.script {
             self.script = Some(script);
         }
-        if let Some(region) = other.region {
-            self.region = Some(region);
+        if let Some(sd) = other.region {
+            // Use the other region if it's different, or if it has a subdivision
+            if !sd.suffix.is_unknown() || Some(sd.region) != self.region.map(|sd| sd.region) {
+                self.region = Some(sd);
+            }
         }
         if let Some(variant) = other.variant {
             self.variant = Some(variant);
-        }
-        if let Some(subdivision) = other.subdivision {
-            self.subdivision = Some(subdivision);
         }
         if let Some(region_override) = other.region_override {
             self.region_override = Some(region_override);
