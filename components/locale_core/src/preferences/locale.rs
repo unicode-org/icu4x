@@ -163,8 +163,15 @@ impl LocalePreferences {
     }
 
     /// Preference of Region
+    ///
+    /// This respects the [`RegionOverride`], and should only be used
+    /// for [data that is region-specific](https://github.com/unicode-org/cldr/blob/main/common/supplemental/rgScope.xml).
     pub const fn region(&self) -> Option<Region> {
-        self.region
+        if let Some(rg) = self.region_override {
+            Some(rg.0.region)
+        } else {
+            self.region
+        }
     }
 
     /// Extends the preferences with the values from another set of preferences.
