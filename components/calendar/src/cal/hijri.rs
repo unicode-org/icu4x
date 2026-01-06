@@ -151,9 +151,12 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 /// - We decide to expand or reduce the range where we are using the astronomical simulation.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[non_exhaustive]
+#[deprecated(since = "2.2.0", note = "use `UmmAlQura`")]
 pub struct AstronomicalSimulation;
 
+#[allow(deprecated)]
 impl crate::cal::scaffold::UnstableSealed for AstronomicalSimulation {}
+#[allow(deprecated)]
 impl Rules for AstronomicalSimulation {
     fn debug_name(&self) -> &'static str {
         "Hijri (simulated, Mecca)"
@@ -352,10 +355,11 @@ impl Rules for TabularAlgorithm {
     }
 }
 
+#[allow(deprecated)]
 impl Hijri<AstronomicalSimulation> {
     /// Use [`Self::new_simulated_mecca`].
     #[cfg(feature = "compiled_data")]
-    #[deprecated(since = "2.1.0", note = "use `Hijri::new_simulated_mecca`")]
+    #[deprecated(since = "2.1.0", note = "use `Hijri::new_umm_al_qura`")]
     pub const fn new_mecca() -> Self {
         Self::new_simulated_mecca()
     }
@@ -365,13 +369,14 @@ impl Hijri<AstronomicalSimulation> {
     /// These simulations are unofficial and are known to not necessarily match sightings
     /// on the ground. Unless you know otherwise for sure, instead of this variant, use
     /// [`Hijri::new_umm_al_qura`], which uses the results of KACST's Mecca-based calculations.
+    #[deprecated(since = "2.2.0", note = "use `Hijri::new_umm_al_qura`")]
     pub const fn new_simulated_mecca() -> Self {
         Self(AstronomicalSimulation)
     }
 
     #[cfg(feature = "serde")]
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::new)]
-    #[deprecated(since = "2.1.0", note = "use `Hijri::new_simulated_mecca`")]
+    #[deprecated(since = "2.1.0", note = "use `Hijri::new_umm_al_qura`")]
     pub fn try_new_mecca_with_buffer_provider(
         _provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
@@ -379,13 +384,13 @@ impl Hijri<AstronomicalSimulation> {
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_mecca)]
-    #[deprecated(since = "2.1.0", note = "use `Hijri::new_simulated_mecca`")]
+    #[deprecated(since = "2.1.0", note = "use `Hijri::new_umm_al_qura`")]
     pub fn try_new_mecca_unstable<D: ?Sized>(_provider: &D) -> Result<Self, DataError> {
         Ok(Self::new_simulated_mecca())
     }
 
     /// Use [`Self::new_simulated_mecca`].
-    #[deprecated(since = "2.1.0", note = "use `Hijri::new_simulated_mecca`")]
+    #[deprecated(since = "2.1.0", note = "use `Hijri::new_umm_al_qura`")]
     pub const fn new_mecca_always_calculating() -> Self {
         Self::new_simulated_mecca()
     }
@@ -685,6 +690,7 @@ impl PackWithMD for HijriYear {
     }
 }
 
+#[allow(deprecated)]
 impl<A: AsCalendar<Calendar = Hijri<AstronomicalSimulation>>> Date<A> {
     /// Deprecated
     #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar`")]

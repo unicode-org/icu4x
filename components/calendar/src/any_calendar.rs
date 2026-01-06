@@ -24,7 +24,6 @@ macro_rules! make_any_calendar {
         #[$unstable_cfg:meta],
 
         $(
-            // Allow multiple variants for the same calendar
             $variant:ident($ty:ty),
         )+
 
@@ -69,6 +68,7 @@ macro_rules! make_any_calendar {
         $(#[$any_date_meta])*
         #[doc = concat!("The inner date type for [`", stringify!($any_calendar_ident), "`]")]
         #[derive(Clone, PartialEq, Eq, Debug, Copy)]
+        #[allow(deprecated)] // weird, the allow below doesn't suffice
         pub enum $any_date_ident {
             $(
                 #[doc = concat!("A date for a [`", stringify!($variant), "`] calendar")]
@@ -494,7 +494,6 @@ make_any_calendar!(
     Ethiopian(Ethiopian),
     Gregorian(Gregorian),
     Hebrew(Hebrew),
-    HijriSimulated(Hijri<hijri::AstronomicalSimulation>),
     HijriTabular(Hijri<hijri::TabularAlgorithm>),
     HijriUmmAlQura(Hijri<hijri::UmmAlQura>),
     Indian(Indian),
@@ -502,6 +501,8 @@ make_any_calendar!(
     Japanese(Japanese),
     Persian(Persian),
     Roc(Roc),
+    #[deprecated(since = "2.2.0", note = "see `HijriUmmAlQura`")]
+    HijriSimulated(Hijri<hijri::AstronomicalSimulation>),
     #[deprecated(since = "2.2.0", note = "see `Japanese`")]
     JapaneseExtended(Japanese),
 );
@@ -561,6 +562,7 @@ impl AnyCalendar {
             }
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
+            #[allow(deprecated)]
             AnyCalendarKind::HijriSimulatedMecca => {
                 AnyCalendar::HijriSimulated(Hijri::new_simulated_mecca())
             }
@@ -612,6 +614,7 @@ impl AnyCalendar {
             }
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
+            #[allow(deprecated)]
             AnyCalendarKind::HijriSimulatedMecca => {
                 AnyCalendar::HijriSimulated(Hijri::new_simulated_mecca())
             }
@@ -665,6 +668,7 @@ impl AnyCalendar {
                     hijri::TabularAlgorithmEpoch::Friday,
                 ))
             }
+            #[allow(deprecated)]
             AnyCalendarKind::HijriSimulatedMecca => {
                 AnyCalendar::HijriSimulated(Hijri::new_simulated_mecca())
             }
@@ -711,6 +715,7 @@ impl AnyCalendar {
                     hijri::TabularAlgorithmEpoch::Friday,
                 ))
             }
+            #[allow(deprecated)]
             AnyCalendarKind::HijriSimulatedMecca => {
                 AnyCalendar::HijriSimulated(Hijri::new_simulated_mecca())
             }
@@ -744,6 +749,7 @@ impl AnyCalendar {
             Self::Ethiopian(ref c) => IntoAnyCalendar::kind(c),
             Self::Gregorian(ref c) => IntoAnyCalendar::kind(c),
             Self::Hebrew(ref c) => IntoAnyCalendar::kind(c),
+            #[allow(deprecated)]
             Self::HijriSimulated(ref c) => IntoAnyCalendar::kind(c),
             Self::HijriTabular(ref c) => IntoAnyCalendar::kind(c),
             Self::HijriUmmAlQura(ref c) => IntoAnyCalendar::kind(c),
@@ -938,6 +944,7 @@ impl AnyCalendarable for Hebrew {
 
     fn identity(&self) -> Self::Identity {}
 }
+#[allow(deprecated)]
 impl AnyCalendarable for Hijri<hijri::AstronomicalSimulation> {
     type Identity = hijri::AstronomicalSimulation;
 
@@ -1253,10 +1260,11 @@ impl IntoAnyCalendar for Hijri<hijri::TabularAlgorithm> {
     }
 }
 
+#[allow(deprecated)]
 impl IntoAnyCalendar for Hijri<hijri::AstronomicalSimulation> {
     #[inline]
     fn to_any(self) -> AnyCalendar {
-        self.into()
+        AnyCalendar::HijriSimulated(Hijri::new_mecca())
     }
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
@@ -1264,11 +1272,19 @@ impl IntoAnyCalendar for Hijri<hijri::AstronomicalSimulation> {
     }
     #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        any.try_into()
+        if let AnyCalendar::HijriSimulated(c) = any {
+            Ok(c)
+        } else {
+            Err(any)
+        }
     }
     #[inline]
     fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        any.try_into().ok()
+        if let AnyCalendar::HijriSimulated(c) = any {
+            Some(c)
+        } else {
+            None
+        }
     }
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
