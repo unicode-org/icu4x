@@ -86,13 +86,13 @@ impl From<&crate::Locale> for LocalePreferences {
                 .unicode
                 .keywords
                 .get(&RegionalSubdivision::UNICODE_EXTENSION_KEY)
-                .and_then(|v| RegionalSubdivision::try_from(v.clone()).ok()),
+                .and_then(|v| RegionalSubdivision::try_from(v).ok()),
             region_override: loc
                 .extensions
                 .unicode
                 .keywords
                 .get(&RegionOverride::UNICODE_EXTENSION_KEY)
-                .and_then(|v| RegionOverride::try_from(v.clone()).ok()),
+                .and_then(|v| RegionOverride::try_from(v).ok()),
         }
     }
 }

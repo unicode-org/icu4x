@@ -2,6 +2,8 @@
 
 ## Unreleased
 - Components
+    - `icu_locale_core`
+        - The `struct_keyword!` macro was changed to operate on references for conversions (unicode-org#7361)
     - `icu_properties`
         - Fix some property constants (unicode-org#7269, unicode-org#7281, unicode-org#7284)
         - Add conversions for `unicode_bidi::BidiClass` (unicode-org#7272)

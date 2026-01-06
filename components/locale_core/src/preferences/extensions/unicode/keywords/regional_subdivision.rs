@@ -17,13 +17,13 @@ struct_keyword!(
     RegionalSubdivision,
     "sd",
     SubdivisionId,
-    |input: Value| {
+    |input: &Value| {
         input
-            .into_single_subtag()
+            .as_single_subtag()
             .and_then(|subtag| subtag.as_str().parse().ok().map(Self))
             .ok_or(PreferencesParseError::InvalidKeywordValue)
     },
-    |input: RegionalSubdivision| {
+    |input: &RegionalSubdivision| {
         Value::from_subtag(Some(input.0.into_subtag()))
     }
 );

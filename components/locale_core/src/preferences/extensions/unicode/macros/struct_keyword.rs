@@ -16,8 +16,8 @@
 ///     CurrencyType,
 ///     "cu",
 ///     String,
-///     |input: Value| { Ok(Self(input.to_string())) },
-///     |input: CurrencyType| {
+///     |input: &Value| { Ok(Self(input.to_string())) },
+///     |input: &CurrencyType| {
 ///         icu::locale::extensions::unicode::Value::try_from_str(
 ///             input.0.as_str(),
 ///         )
@@ -41,12 +41,28 @@ macro_rules! __struct_keyword {
             fn try_from(
                 input: $crate::extensions::unicode::Value,
             ) -> Result<Self, Self::Error> {
+                Self::try_from(&input)
+            }
+        }
+
+        impl TryFrom<&$crate::extensions::unicode::Value> for $name {
+            type Error = $crate::preferences::extensions::unicode::errors::PreferencesParseError;
+
+            fn try_from(
+                input: &$crate::extensions::unicode::Value,
+            ) -> Result<Self, Self::Error> {
                 $try_from(input)
             }
         }
 
         impl From<$name> for $crate::extensions::unicode::Value {
             fn from(input: $name) -> $crate::extensions::unicode::Value {
+                (&input).into()
+            }
+        }
+
+        impl From<&$name> for $crate::extensions::unicode::Value {
+            fn from(input: &$name) -> $crate::extensions::unicode::Value {
                 $into(input)
             }
         }
@@ -105,15 +121,15 @@ mod tests {
             DummyKeyword,
             "dk",
             Subtag,
-            |input: unicode::Value| {
-                if let Some(subtag) = input.into_single_subtag() {
+            |input: &unicode::Value| {
+                if let Some(&subtag) = input.as_single_subtag() {
                     if subtag.len() == 3 {
                         return Ok(DummyKeyword(subtag));
                     }
                 }
                 Err(crate::preferences::extensions::unicode::errors::PreferencesParseError::InvalidKeywordValue)
             },
-            |input: DummyKeyword| { unicode::Value::from_subtag(Some(input.0)) }
+            |input: &DummyKeyword| { unicode::Value::from_subtag(Some(input.0)) }
         );
 
         let v = unicode::Value::from_str("foo").unwrap();
