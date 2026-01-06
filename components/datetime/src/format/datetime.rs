@@ -228,7 +228,7 @@ where
 
             // Always in latin digits according to spec
             w.with_part(PART, |w| {
-                let mut num = Decimal::from(year.related_gregorian());
+                let mut num = Decimal::from(year.related_iso());
                 num.pad_start(l.to_len() as i16);
                 num.write_to(w)
             })?;

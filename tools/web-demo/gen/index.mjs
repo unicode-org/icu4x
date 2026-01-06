@@ -653,41 +653,6 @@ let termini = Object.assign({
         ]
     },
 
-    "Date.relatedGregorian": {
-        func: (selfIsoYear, selfIsoMonth, selfIsoDay, selfCalendarKind) => icu.Date.fromIsoInCalendar(selfIsoYear, selfIsoMonth, selfIsoDay, new icu.Calendar(selfCalendarKind)).relatedGregorian,
-        // For avoiding webpacking minifying issues:
-        funcName: "Date.relatedGregorian",
-        expr: (selfIsoYear, selfIsoMonth, selfIsoDay, selfCalendarKind) => "icu.Date.fromIsoInCalendar(selfIsoYear, selfIsoMonth, selfIsoDay, new icu.Calendar(selfCalendarKind)).relatedGregorian".replace(/([\( ])selfIsoYear([,\) \n])/, '$1' + selfIsoYear + '$2').replace(/([\( ])selfIsoMonth([,\) \n])/, '$1' + selfIsoMonth + '$2').replace(/([\( ])selfIsoDay([,\) \n])/, '$1' + selfIsoDay + '$2').replace(/([\( ])selfCalendarKind([,\) \n])/, '$1' + selfCalendarKind + '$2'),
-        parameters: [
-            
-            {
-                name: "self_isoYear",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "self_isoMonth",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "self_isoDay",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "self_calendar_kind",
-                type: "CalendarKind",
-                typeUse: "enumerator",
-                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
-            }
-            
-        ]
-    },
-
     "Date.era": {
         func: (selfIsoYear, selfIsoMonth, selfIsoDay, selfCalendarKind) => icu.Date.fromIsoInCalendar(selfIsoYear, selfIsoMonth, selfIsoDay, new icu.Calendar(selfCalendarKind)).era,
         // For avoiding webpacking minifying issues:

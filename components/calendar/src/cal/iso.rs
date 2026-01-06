@@ -52,7 +52,7 @@ impl GregorianYears for IsoEra {
             era_index: Some(0),
             era: tinystr!(16, "default"),
             year: extended_year,
-            related_gregorian,
+            related_iso: related_gregorian,
             extended_year,
             ambiguity: types::YearAmbiguity::Unambiguous,
         }

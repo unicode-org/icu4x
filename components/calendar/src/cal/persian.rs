@@ -188,7 +188,7 @@ impl Calendar for Persian {
             era: tinystr!(16, "ap"),
             era_index: Some(0),
             year: extended_year,
-            related_gregorian: extended_year + 622,
+            related_iso: extended_year + 622,
             extended_year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
@@ -754,7 +754,7 @@ mod tests {
                 .unwrap()
                 .to_calendar(Persian)
                 .era_year()
-                .related_gregorian,
+                .related_iso,
             2025
         );
         assert_eq!(
@@ -762,7 +762,7 @@ mod tests {
                 .unwrap()
                 .to_calendar(Persian)
                 .era_year()
-                .related_gregorian,
+                .related_iso,
             2026
         );
     }

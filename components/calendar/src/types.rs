@@ -282,9 +282,9 @@ impl YearInfo {
     ///
     /// Lunar calendars, like [`Hijri`](crate::cal::Hijri), drift quickly through the Gregorian year, so related Gregorian
     /// years are frequently repeated.
-    pub fn related_gregorian(self) -> i32 {
+    pub fn related_iso(self) -> i32 {
         match self {
-            YearInfo::Era(e) => e.related_gregorian,
+            YearInfo::Era(e) => e.related_iso,
             YearInfo::Cyclic(c) => c.related_iso,
         }
     }
@@ -331,8 +331,8 @@ pub struct EraYear {
     pub year: i32,
     /// See [`YearInfo::extended_year()`]
     pub extended_year: i32,
-    /// See [`YearInfo::related_gregorian()`]
-    pub related_gregorian: i32,
+    /// See [`YearInfo::related_iso()`]
+    pub related_iso: i32,
     /// The era code as defined by CLDR, expect for cases where CLDR does not define a code.
     pub era: TinyAsciiStr<16>,
     /// An era index, for calendars with a small set of eras.

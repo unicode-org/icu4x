@@ -66,7 +66,7 @@ impl GregorianYears for BuddhistEra {
             era: tinystr!(16, "be"),
             era_index: Some(0),
             year: extended_year,
-            related_gregorian,
+            related_iso: related_gregorian,
             extended_year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }

@@ -229,12 +229,6 @@ final class Date implements ffi.Finalizable {
     return result;
   }
 
-  /// See the [Rust documentation for `related_gregorian`](https://docs.rs/icu/2.1.1/icu/calendar/types/enum.YearInfo.html#method.related_gregorian) for more information.
-  int get relatedGregorian {
-    final result = _icu4x_Date_related_gregorian_mv1(_ffi);
-    return result;
-  }
-
   /// Returns the era for this date, or an empty string
   ///
   /// See the [Rust documentation for `era`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.EraYear.html#structfield.era) for more information.
@@ -374,11 +368,6 @@ external int _icu4x_Date_era_year_or_related_iso_mv1(ffi.Pointer<ffi.Opaque> sel
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_extended_year_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_Date_extended_year_mv1(ffi.Pointer<ffi.Opaque> self);
-
-@_DiplomatFfiUse('icu4x_Date_related_gregorian_mv1')
-@ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_related_gregorian_mv1')
-// ignore: non_constant_identifier_names
-external int _icu4x_Date_related_gregorian_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('icu4x_Date_era_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_era_mv1')

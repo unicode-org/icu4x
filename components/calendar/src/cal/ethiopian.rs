@@ -219,7 +219,7 @@ impl Calendar for Ethiopian {
                 era: tinystr!(16, "aa"),
                 era_index: Some(0),
                 year: coptic_year.year - AMETE_ALEM_OFFSET,
-                related_gregorian: coptic_year.related_gregorian,
+                related_iso: coptic_year.related_iso,
                 extended_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
@@ -228,7 +228,7 @@ impl Calendar for Ethiopian {
                 era: tinystr!(16, "am"),
                 era_index: Some(1),
                 year: coptic_year.year - AMETE_MIHRET_OFFSET,
-                related_gregorian: coptic_year.related_gregorian,
+                related_iso: coptic_year.related_iso,
                 extended_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
@@ -400,7 +400,7 @@ mod test {
                 .unwrap()
                 .to_calendar(Ethiopian::new())
                 .era_year()
-                .related_gregorian,
+                .related_iso,
             2024
         );
         assert_eq!(
@@ -408,7 +408,7 @@ mod test {
                 .unwrap()
                 .to_calendar(Ethiopian::new())
                 .era_year()
-                .related_gregorian,
+                .related_iso,
             2025
         );
 
@@ -418,14 +418,14 @@ mod test {
             Date::try_new_ethiopian(EthiopianEraStyle::AmeteMihret, 16695, 1, 1)
                 .unwrap()
                 .era_year()
-                .related_gregorian,
+                .related_iso,
             16702
         );
         assert_eq!(
             Date::try_new_ethiopian(EthiopianEraStyle::AmeteMihret, 16696, 1, 1)
                 .unwrap()
                 .era_year()
-                .related_gregorian,
+                .related_iso,
             16704
         );
     }

@@ -256,7 +256,7 @@ impl GregorianYears for &'_ Japanese {
             era,
             era_index: None,
             year: year - start.year + 1,
-            related_gregorian,
+            related_iso: related_gregorian,
             extended_year: year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
@@ -379,7 +379,7 @@ impl GregorianYears for &'_ JapaneseExtended {
             era,
             era_index: None,
             year: year - start.year + 1,
-            related_gregorian,
+            related_iso: related_gregorian,
             extended_year: year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }

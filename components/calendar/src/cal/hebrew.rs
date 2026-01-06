@@ -323,7 +323,7 @@ impl Calendar for Hebrew {
             era_index: Some(0),
             era: tinystr!(16, "am"),
             year: extended_year,
-            related_gregorian,
+            related_iso: related_gregorian,
             extended_year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
@@ -536,7 +536,7 @@ mod tests {
                 .unwrap()
                 .to_calendar(Hebrew)
                 .era_year()
-                .related_gregorian,
+                .related_iso,
             2024
         );
         assert_eq!(
@@ -544,7 +544,7 @@ mod tests {
                 .unwrap()
                 .to_calendar(Hebrew)
                 .era_year()
-                .related_gregorian,
+                .related_iso,
             2025
         );
 
@@ -554,14 +554,14 @@ mod tests {
             Date::try_new_from_codes(None, 25962, TISHREI.code(), 1, Hebrew)
                 .unwrap()
                 .era_year()
-                .related_gregorian,
+                .related_iso,
             22201
         );
         assert_eq!(
             Date::try_new_from_codes(None, 25963, TISHREI.code(), 1, Hebrew)
                 .unwrap()
                 .era_year()
-                .related_gregorian,
+                .related_iso,
             22203
         );
     }

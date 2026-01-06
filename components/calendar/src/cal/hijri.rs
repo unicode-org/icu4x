@@ -922,7 +922,7 @@ impl<R: Rules> Calendar for Hijri<R> {
                 era: tinystr!(16, "ah"),
                 era_index: Some(0),
                 year: extended_year,
-                related_gregorian,
+                related_iso: related_gregorian,
                 extended_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
@@ -932,7 +932,7 @@ impl<R: Rules> Calendar for Hijri<R> {
                 era_index: Some(1),
                 year: 1 - extended_year,
                 extended_year,
-                related_gregorian,
+                related_iso: related_gregorian,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         }
@@ -1967,7 +1967,7 @@ mod test {
                 .unwrap()
                 .to_calendar(Hijri::new_umm_al_qura())
                 .era_year()
-                .related_gregorian,
+                .related_iso,
             2024
         );
         assert_eq!(
@@ -1975,7 +1975,7 @@ mod test {
                 .unwrap()
                 .to_calendar(Hijri::new_umm_al_qura())
                 .era_year()
-                .related_gregorian,
+                .related_iso,
             2025
         );
     }

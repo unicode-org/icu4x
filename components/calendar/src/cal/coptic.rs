@@ -208,7 +208,7 @@ impl Calendar for Coptic {
             era: tinystr!(16, "am"),
             era_index: Some(0),
             year,
-            related_gregorian,
+            related_iso: related_gregorian,
             extended_year: year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
@@ -302,7 +302,7 @@ mod tests {
                 .unwrap()
                 .to_calendar(Coptic)
                 .era_year()
-                .related_gregorian,
+                .related_iso,
             2024
         );
         assert_eq!(
@@ -310,7 +310,7 @@ mod tests {
                 .unwrap()
                 .to_calendar(Coptic)
                 .era_year()
-                .related_gregorian,
+                .related_iso,
             2025
         );
 
@@ -320,14 +320,14 @@ mod tests {
             Date::try_new_coptic(16419, 1, 1)
                 .unwrap()
                 .era_year()
-                .related_gregorian,
+                .related_iso,
             16702
         );
         assert_eq!(
             Date::try_new_coptic(16420, 1, 1)
                 .unwrap()
                 .era_year()
-                .related_gregorian,
+                .related_iso,
             16704
         );
     }

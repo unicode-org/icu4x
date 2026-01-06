@@ -42,7 +42,7 @@ impl GregorianYears for CeBce {
                 era: tinystr!(16, "ce"),
                 era_index: Some(1),
                 year: extended_year,
-                related_gregorian,
+                related_iso: related_gregorian,
                 extended_year,
                 ambiguity: match extended_year {
                     ..=999 => types::YearAmbiguity::EraAndCenturyRequired,
@@ -56,7 +56,7 @@ impl GregorianYears for CeBce {
                 era: tinystr!(16, "bce"),
                 era_index: Some(0),
                 year: 1 - extended_year,
-                related_gregorian,
+                related_iso: related_gregorian,
                 extended_year,
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }

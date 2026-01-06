@@ -67,8 +67,6 @@ namespace capi {
 
     int32_t icu4x_Date_extended_year_mv1(const icu4x::capi::Date* self);
 
-    int32_t icu4x_Date_related_gregorian_mv1(const icu4x::capi::Date* self);
-
     void icu4x_Date_era_mv1(const icu4x::capi::Date* self, icu4x::diplomat::capi::DiplomatWrite* write);
 
     uint8_t icu4x_Date_months_in_year_mv1(const icu4x::capi::Date* self);
@@ -193,11 +191,6 @@ inline int32_t icu4x::Date::era_year_or_related_iso() const {
 
 inline int32_t icu4x::Date::extended_year() const {
     auto result = icu4x::capi::icu4x_Date_extended_year_mv1(this->AsFFI());
-    return result;
-}
-
-inline int32_t icu4x::Date::related_gregorian() const {
-    auto result = icu4x::capi::icu4x_Date_related_gregorian_mv1(this->AsFFI());
     return result;
 }
 

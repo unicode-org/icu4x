@@ -28,6 +28,7 @@ icu::calendar::types::DateDuration::for_years#FnInStruct
 icu::calendar::types::DateDurationUnit#Enum
 icu::calendar::types::Month::leap#FnInStruct
 icu::calendar::types::Month::new#FnInStruct
+icu::calendar::types::YearInfo::related_iso#FnInEnum
 icu::collator::CollationKeySink::finish#FnInTrait
 icu::collator::CollationKeySink::write#FnInTrait
 icu::collator::CollationKeySink::write_byte#FnInTrait

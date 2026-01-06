@@ -24,7 +24,6 @@ internal interface DateLib: Library {
     fun icu4x_Date_month_is_leap_mv1(handle: Pointer): Byte
     fun icu4x_Date_era_year_or_related_iso_mv1(handle: Pointer): Int
     fun icu4x_Date_extended_year_mv1(handle: Pointer): Int
-    fun icu4x_Date_related_gregorian_mv1(handle: Pointer): Int
     fun icu4x_Date_era_mv1(handle: Pointer, write: Pointer): Unit
     fun icu4x_Date_months_in_year_mv1(handle: Pointer): FFIUint8
     fun icu4x_Date_days_in_month_mv1(handle: Pointer): FFIUint8
@@ -299,14 +298,6 @@ class Date internal constructor (
     fun extendedYear(): Int {
         
         val returnVal = lib.icu4x_Date_extended_year_mv1(handle);
-        return (returnVal)
-    }
-    
-    /** See the [Rust documentation for `related_gregorian`](https://docs.rs/icu/2.1.1/icu/calendar/types/enum.YearInfo.html#method.related_gregorian) for more information.
-    */
-    fun relatedGregorian(): Int {
-        
-        val returnVal = lib.icu4x_Date_related_gregorian_mv1(handle);
         return (returnVal)
     }
     
