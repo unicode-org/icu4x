@@ -16,9 +16,21 @@ export class VerticalOrientation {
     /** @internal */
     get ffiValue(): number;
 
+    /**
+     * See the [Rust documentation for `Rotated`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.Rotated) for more information.
+     */
     static Rotated : VerticalOrientation;
+    /**
+     * See the [Rust documentation for `TransformedRotated`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.TransformedRotated) for more information.
+     */
     static TransformedRotated : VerticalOrientation;
+    /**
+     * See the [Rust documentation for `TransformedUpright`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.TransformedUpright) for more information.
+     */
     static TransformedUpright : VerticalOrientation;
+    /**
+     * See the [Rust documentation for `Upright`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.Upright) for more information.
+     */
     static Upright : VerticalOrientation;
 
 
@@ -54,6 +66,8 @@ export class VerticalOrientation {
      * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#method.from_icu4c_value) for more information.
      */
     static fromIntegerValue(other: number): VerticalOrientation | null;
+
+    static tryFromStr(s: string): VerticalOrientation | null;
 
     constructor(value: VerticalOrientation | string );
 }

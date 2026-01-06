@@ -60,6 +60,7 @@ export class VariantOffsetsCalculator {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -83,6 +84,7 @@ export class VariantOffsetsCalculator {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -104,6 +106,7 @@ export class VariantOffsetsCalculator {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -125,6 +128,7 @@ export class VariantOffsetsCalculator {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }

@@ -16,11 +16,29 @@ export class JoiningType {
     /** @internal */
     get ffiValue(): number;
 
+    /**
+     * See the [Rust documentation for `NonJoining`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.NonJoining) for more information.
+     */
     static NonJoining : JoiningType;
+    /**
+     * See the [Rust documentation for `JoinCausing`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.JoinCausing) for more information.
+     */
     static JoinCausing : JoiningType;
+    /**
+     * See the [Rust documentation for `DualJoining`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.DualJoining) for more information.
+     */
     static DualJoining : JoiningType;
+    /**
+     * See the [Rust documentation for `LeftJoining`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.LeftJoining) for more information.
+     */
     static LeftJoining : JoiningType;
+    /**
+     * See the [Rust documentation for `RightJoining`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.RightJoining) for more information.
+     */
     static RightJoining : JoiningType;
+    /**
+     * See the [Rust documentation for `Transparent`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.Transparent) for more information.
+     */
     static Transparent : JoiningType;
 
 
@@ -56,6 +74,8 @@ export class JoiningType {
      * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#method.from_icu4c_value) for more information.
      */
     static fromIntegerValue(other: number): JoiningType | null;
+
+    static tryFromStr(s: string): JoiningType | null;
 
     constructor(value: JoiningType | string );
 }

@@ -5,31 +5,22 @@ part of 'lib.g.dart';
 
 /// Additional information: [1](https://docs.rs/icu_provider/2.1.1/icu_provider/struct.DataError.html), [2](https://docs.rs/icu_provider/2.1.1/icu_provider/enum.DataErrorKind.html)
 enum DataError {
-
   // ignore: public_member_api_docs
   unknown,
-
   // ignore: public_member_api_docs
   markerNotFound,
-
   // ignore: public_member_api_docs
   identifierNotFound,
-
   // ignore: public_member_api_docs
   invalidRequest,
-
   // ignore: public_member_api_docs
   inconsistentData,
-
   // ignore: public_member_api_docs
   downcast,
-
   // ignore: public_member_api_docs
   deserialize,
-
   // ignore: public_member_api_docs
   custom,
-
   // ignore: public_member_api_docs
   io;
 

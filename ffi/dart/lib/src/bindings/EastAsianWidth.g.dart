@@ -6,22 +6,16 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
 enum EastAsianWidth {
   /// See the [Rust documentation for `Neutral`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Neutral) for more information.
-  // ignore: public_member_api_docs
   neutral,
   /// See the [Rust documentation for `Ambiguous`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Ambiguous) for more information.
-  // ignore: public_member_api_docs
   ambiguous,
   /// See the [Rust documentation for `Halfwidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Halfwidth) for more information.
-  // ignore: public_member_api_docs
   halfwidth,
   /// See the [Rust documentation for `Fullwidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Fullwidth) for more information.
-  // ignore: public_member_api_docs
   fullwidth,
   /// See the [Rust documentation for `Narrow`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Narrow) for more information.
-  // ignore: public_member_api_docs
   narrow,
   /// See the [Rust documentation for `Wide`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Wide) for more information.
-  // ignore: public_member_api_docs
   wide;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
@@ -71,6 +65,15 @@ enum EastAsianWidth {
     return EastAsianWidth.values[result.union.ok];
   }
 
+  static EastAsianWidth? tryFromStr(String s) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_EastAsianWidth_try_from_str_mv1(s._utf8AllocIn(temp.arena));
+    if (!result.isOk) {
+      return null;
+    }
+    return EastAsianWidth.values[result.union.ok];
+  }
+
 }
 
 @_DiplomatFfiUse('icu4x_EastAsianWidth_for_char_mv1')
@@ -97,5 +100,10 @@ external int _icu4x_EastAsianWidth_to_integer_value_mv1(int self);
 @ffi.Native<_ResultInt32Void Function(ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_EastAsianWidth_from_integer_value_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _icu4x_EastAsianWidth_from_integer_value_mv1(int other);
+
+@_DiplomatFfiUse('icu4x_EastAsianWidth_try_from_str_mv1')
+@ffi.Native<_ResultInt32Void Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_EastAsianWidth_try_from_str_mv1')
+// ignore: non_constant_identifier_names
+external _ResultInt32Void _icu4x_EastAsianWidth_try_from_str_mv1(_SliceUtf8 s);
 
 // dart format on

@@ -5,10 +5,8 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `CaseLevel`](https://docs.rs/icu/2.1.1/icu/collator/options/enum.CaseLevel.html) for more information.
 enum CollatorCaseLevel {
-
   // ignore: public_member_api_docs
   off,
-
   // ignore: public_member_api_docs
   on;
 

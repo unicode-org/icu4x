@@ -29,21 +29,66 @@ internal class CollatorResolvedOptionsV1Native: Structure(), Structure.ByValue {
     }
 }
 
-/** See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/2.1.1/icu/collator/options/struct.ResolvedCollatorOptions.html) for more information.
-*/
-class CollatorResolvedOptionsV1 internal constructor (
-    internal val nativeStruct: CollatorResolvedOptionsV1Native) {
-    val strength: CollatorStrength = CollatorStrength.fromNative(nativeStruct.strength)
-    val alternateHandling: CollatorAlternateHandling = CollatorAlternateHandling.fromNative(nativeStruct.alternateHandling)
-    val caseFirst: CollatorCaseFirst = CollatorCaseFirst.fromNative(nativeStruct.caseFirst)
-    val maxVariable: CollatorMaxVariable = CollatorMaxVariable.fromNative(nativeStruct.maxVariable)
-    val caseLevel: CollatorCaseLevel = CollatorCaseLevel.fromNative(nativeStruct.caseLevel)
-    val numeric: CollatorNumericOrdering = CollatorNumericOrdering.fromNative(nativeStruct.numeric)
+
+
+
+internal class OptionCollatorResolvedOptionsV1Native constructor(): Structure(), Structure.ByValue {
+    @JvmField
+    internal var value: CollatorResolvedOptionsV1Native = CollatorResolvedOptionsV1Native()
+
+    @JvmField
+    internal var isOk: Byte = 0
+
+    // Define the fields of the struct
+    override fun getFieldOrder(): List<String> {
+        return listOf("value", "isOk")
+    }
+
+    internal fun option(): CollatorResolvedOptionsV1Native? {
+        if (isOk == 1.toByte()) {
+            return value
+        } else {
+            return null
+        }
+    }
+
+
+    constructor(value: CollatorResolvedOptionsV1Native, isOk: Byte): this() {
+        this.value = value
+        this.isOk = isOk
+    }
 
     companion object {
+        internal fun some(value: CollatorResolvedOptionsV1Native): OptionCollatorResolvedOptionsV1Native {
+            return OptionCollatorResolvedOptionsV1Native(value, 1)
+        }
+
+        internal fun none(): OptionCollatorResolvedOptionsV1Native {
+            return OptionCollatorResolvedOptionsV1Native(CollatorResolvedOptionsV1Native(), 0)
+        }
+    }
+
+}
+
+/** See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/2.1.1/icu/collator/options/struct.ResolvedCollatorOptions.html) for more information.
+*/
+class CollatorResolvedOptionsV1 (var strength: CollatorStrength, var alternateHandling: CollatorAlternateHandling, var caseFirst: CollatorCaseFirst, var maxVariable: CollatorMaxVariable, var caseLevel: CollatorCaseLevel, var numeric: CollatorNumericOrdering) {
+    companion object {
+
         internal val libClass: Class<CollatorResolvedOptionsV1Lib> = CollatorResolvedOptionsV1Lib::class.java
         internal val lib: CollatorResolvedOptionsV1Lib = Native.load("icu4x", libClass)
         val NATIVESIZE: Long = Native.getNativeSize(CollatorResolvedOptionsV1Native::class.java).toLong()
-    }
 
+        internal fun fromNative(nativeStruct: CollatorResolvedOptionsV1Native): CollatorResolvedOptionsV1 {
+            val strength: CollatorStrength = CollatorStrength.fromNative(nativeStruct.strength)
+            val alternateHandling: CollatorAlternateHandling = CollatorAlternateHandling.fromNative(nativeStruct.alternateHandling)
+            val caseFirst: CollatorCaseFirst = CollatorCaseFirst.fromNative(nativeStruct.caseFirst)
+            val maxVariable: CollatorMaxVariable = CollatorMaxVariable.fromNative(nativeStruct.maxVariable)
+            val caseLevel: CollatorCaseLevel = CollatorCaseLevel.fromNative(nativeStruct.caseLevel)
+            val numeric: CollatorNumericOrdering = CollatorNumericOrdering.fromNative(nativeStruct.numeric)
+
+            return CollatorResolvedOptionsV1(strength, alternateHandling, caseFirst, maxVariable, caseLevel, numeric)
+        }
+
+    }
 }

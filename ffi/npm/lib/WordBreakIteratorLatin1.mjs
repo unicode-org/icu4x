@@ -56,6 +56,7 @@ export class WordBreakIteratorLatin1 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -73,6 +74,7 @@ export class WordBreakIteratorLatin1 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -90,6 +92,7 @@ export class WordBreakIteratorLatin1 {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 

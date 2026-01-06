@@ -96,6 +96,7 @@ pub mod ffi {
         )]
         #[diplomat::attr(not(supports = utf8_strings), rename = "segment")]
         #[diplomat::attr(supports = utf8_strings, rename = "segment16")]
+        #[diplomat::attr(kotlin, disable)]
         pub fn segment_utf16<'a>(
             &'a self,
             input: &'a DiplomatStr16,

@@ -38,11 +38,29 @@ namespace icu4x {
 class EastAsianWidth {
 public:
     enum Value {
+        /**
+         * See the [Rust documentation for `Neutral`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Neutral) for more information.
+         */
         Neutral = 0,
+        /**
+         * See the [Rust documentation for `Ambiguous`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Ambiguous) for more information.
+         */
         Ambiguous = 1,
+        /**
+         * See the [Rust documentation for `Halfwidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Halfwidth) for more information.
+         */
         Halfwidth = 2,
+        /**
+         * See the [Rust documentation for `Fullwidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Fullwidth) for more information.
+         */
         Fullwidth = 3,
+        /**
+         * See the [Rust documentation for `Narrow`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Narrow) for more information.
+         */
         Narrow = 4,
+        /**
+         * See the [Rust documentation for `Wide`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#associatedconstant.Wide) for more information.
+         */
         Wide = 5,
     };
 
@@ -86,6 +104,8 @@ public:
    * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html#method.from_icu4c_value) for more information.
    */
   inline static std::optional<icu4x::EastAsianWidth> from_integer_value(uint8_t other);
+
+  inline static std::optional<icu4x::EastAsianWidth> try_from_str(std::string_view s);
 
     inline icu4x::capi::EastAsianWidth AsFFI() const;
     inline static icu4x::EastAsianWidth FromFFI(icu4x::capi::EastAsianWidth c_enum);

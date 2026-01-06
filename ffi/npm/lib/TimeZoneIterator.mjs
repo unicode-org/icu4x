@@ -53,6 +53,7 @@ export class TimeZoneIterator {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 

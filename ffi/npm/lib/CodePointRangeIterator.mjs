@@ -58,6 +58,7 @@ export class CodePointRangeIterator {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }

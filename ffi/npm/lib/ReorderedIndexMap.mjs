@@ -59,6 +59,7 @@ export class ReorderedIndexMap {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -75,6 +76,7 @@ export class ReorderedIndexMap {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -90,6 +92,7 @@ export class ReorderedIndexMap {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -107,6 +110,7 @@ export class ReorderedIndexMap {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 

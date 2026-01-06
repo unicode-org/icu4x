@@ -129,12 +129,13 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 
 /// [`Hijri`] [`Rules`] based on an astronomical simulation for a particular location.
 ///
-/// These simulations are unofficial and are known to not necessarily match sightings
+/// These simulations use methods published by E. M. Reingold, S. K. Shaukat, et al.[^1]
+/// These methods are not officially recognized in any region and do not match sightings
 /// on the ground. Unless you know otherwise for sure, instead of this variant, use
 /// [`UmmAlQura`], which uses the results of KACST's Mecca-based calculations.
 ///
-/// As floating point arithmetic degenerates for far-away dates, this falls back to
-/// the tabular calendar at some point.
+/// The simulations are pre-computed for Gregorian years 1900 to 2140, falling back to
+/// a tabular approximation outside that range.
 ///
 /// The precise behavior of this calendar may change in the future if:
 /// - We decide to tweak the precise astronomical simulation used
@@ -142,6 +143,8 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 ///
 /// This corresponds to the `"islamic-rgsa"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier)
 /// if constructed with [`Hijri::new_simulated_mecca()`].
+///
+/// [^1]: See [calendrical_calculations::islamic::observational_islamic_from_fixed]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct AstronomicalSimulation {
     pub(crate) location: SimulatedLocation,

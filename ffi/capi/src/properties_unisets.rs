@@ -24,12 +24,14 @@ pub mod ffi {
     impl EmojiSetData {
         /// Checks whether the string is in the set.
         #[diplomat::rust_link(icu::properties::EmojiSetDataBorrowed::contains_str, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::properties::EmojiSetDataBorrowed::contains_utf8,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(supports = method_overloading, rename = "contains")]
         pub fn contains_str(&self, s: &DiplomatStr) -> bool {
-            let Ok(s) = core::str::from_utf8(s) else {
-                return false;
-            };
-            self.0.as_borrowed().contains_str(s)
+            self.0.as_borrowed().contains_utf8(s)
         }
         /// Checks whether the code point is in the set.
         #[diplomat::rust_link(icu::properties::EmojiSetDataBorrowed::contains, FnInStruct)]

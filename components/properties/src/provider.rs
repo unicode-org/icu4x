@@ -1114,6 +1114,13 @@ impl<'data> PropertyUnicodeSet<'data> {
     }
 
     #[inline]
+    pub(crate) fn contains_utf8(&self, s: &[u8]) -> bool {
+        match *self {
+            Self::CPInversionListStrList(ref l) => l.contains_utf8(s),
+        }
+    }
+
+    #[inline]
     pub(crate) fn contains32(&self, cp: u32) -> bool {
         match *self {
             Self::CPInversionListStrList(ref l) => l.contains32(cp),

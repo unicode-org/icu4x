@@ -211,9 +211,12 @@ impl LocaleFallbackerBorrowed<'static> {
 impl<'a> LocaleFallbackerWithConfig<'a> {
     /// Creates an iterator based on a [`DataLocale`].
     ///
-    /// If you have a [`Locale`](icu_locale_core::Locale), call `.into()` to get a [`DataLocale`].
+    /// If you have a [`Locale`], see the [`DataLocale`] docs for information
+    /// on converting it first.
     ///
     /// When first initialized, the locale is normalized according to the fallback algorithm.
+    ///
+    /// [`Locale`]: icu_locale_core::Locale
     pub fn fallback_for(&self, mut locale: DataLocale) -> LocaleFallbackIterator<'a> {
         let mut default_script = None;
         self.normalize(&mut locale, &mut default_script);

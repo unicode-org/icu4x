@@ -12,6 +12,7 @@ internal interface VerticalOrientationLib: Library {
     fun icu4x_VerticalOrientation_short_name_mv1(inner: Int): OptionSlice
     fun icu4x_VerticalOrientation_to_integer_value_mv1(inner: Int): FFIUint8
     fun icu4x_VerticalOrientation_from_integer_value_mv1(other: FFIUint8): OptionInt
+    fun icu4x_VerticalOrientation_try_from_str_mv1(s: Slice): OptionInt
 }
 /** See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
 */
@@ -54,6 +55,16 @@ enum class VerticalOrientation {
         fun fromIntegerValue(other: UByte): VerticalOrientation? {
             
             val returnVal = lib.icu4x_VerticalOrientation_from_integer_value_mv1(FFIUint8(other));
+            
+            val intermediateOption = returnVal.option() ?: return null
+            return VerticalOrientation.fromNative(intermediateOption)
+        }
+        @JvmStatic
+        
+        fun tryFromStr(s: String): VerticalOrientation? {
+            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            
+            val returnVal = lib.icu4x_VerticalOrientation_try_from_str_mv1(sSlice);
             
             val intermediateOption = returnVal.option() ?: return null
             return VerticalOrientation.fromNative(intermediateOption)

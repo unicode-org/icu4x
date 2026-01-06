@@ -48,6 +48,14 @@ namespace capi {
     typedef struct icu4x_WordSegmenter_create_dictionary_with_content_locale_and_provider_mv1_result {union {icu4x::capi::WordSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_WordSegmenter_create_dictionary_with_content_locale_and_provider_mv1_result;
     icu4x_WordSegmenter_create_dictionary_with_content_locale_and_provider_mv1_result icu4x_WordSegmenter_create_dictionary_with_content_locale_and_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
 
+    icu4x::capi::WordSegmenter* icu4x_WordSegmenter_create_for_non_complex_scripts_mv1(void);
+
+    typedef struct icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_mv1_result {union {icu4x::capi::WordSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_mv1_result;
+    icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_mv1_result icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_mv1(const icu4x::capi::Locale* locale);
+
+    typedef struct icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_and_provider_mv1_result {union {icu4x::capi::WordSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_and_provider_mv1_result;
+    icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_and_provider_mv1_result icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_and_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
+
     icu4x::capi::WordBreakIteratorUtf8* icu4x_WordSegmenter_segment_utf8_mv1(const icu4x::capi::WordSegmenter* self, icu4x::diplomat::capi::DiplomatStringView input);
 
     icu4x::capi::WordBreakIteratorUtf16* icu4x_WordSegmenter_segment_utf16_mv1(const icu4x::capi::WordSegmenter* self, icu4x::diplomat::capi::DiplomatString16View input);
@@ -104,6 +112,22 @@ inline icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::Dat
 
 inline icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> icu4x::WordSegmenter::create_dictionary_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale) {
     auto result = icu4x::capi::icu4x_WordSegmenter_create_dictionary_with_content_locale_and_provider_mv1(provider.AsFFI(),
+        locale.AsFFI());
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::WordSegmenter>>(std::unique_ptr<icu4x::WordSegmenter>(icu4x::WordSegmenter::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+}
+
+inline std::unique_ptr<icu4x::WordSegmenter> icu4x::WordSegmenter::create_for_non_complex_scripts() {
+    auto result = icu4x::capi::icu4x_WordSegmenter_create_for_non_complex_scripts_mv1();
+    return std::unique_ptr<icu4x::WordSegmenter>(icu4x::WordSegmenter::FromFFI(result));
+}
+
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> icu4x::WordSegmenter::create_for_non_complex_scripts_with_content_locale(const icu4x::Locale& locale) {
+    auto result = icu4x::capi::icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_mv1(locale.AsFFI());
+    return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::WordSegmenter>>(std::unique_ptr<icu4x::WordSegmenter>(icu4x::WordSegmenter::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
+}
+
+inline icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> icu4x::WordSegmenter::create_for_non_complex_scripts_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale) {
+    auto result = icu4x::capi::icu4x_WordSegmenter_create_for_non_complex_scripts_with_content_locale_and_provider_mv1(provider.AsFFI(),
         locale.AsFFI());
     return result.is_ok ? icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(icu4x::diplomat::Ok<std::unique_ptr<icu4x::WordSegmenter>>(std::unique_ptr<icu4x::WordSegmenter>(icu4x::WordSegmenter::FromFFI(result.ok)))) : icu4x::diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError>(icu4x::diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }

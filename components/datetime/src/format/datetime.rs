@@ -175,21 +175,35 @@ where
         (FieldSymbol::Year(Year::Cyclic), l) => {
             const PART: Part = parts::YEAR_NAME;
             input!(PART, Year, year = input.year);
-            input!(PART, YearCyclic, cyclic = year.cyclic());
+
+            let Some(cyclic) = year.cyclic() else {
+                w.with_part(PART, |w| {
+                    try_write_number(
+                        Part::ERROR,
+                        w,
+                        decimal_formatter,
+                        year.era_year_or_related_iso().into(),
+                        FieldLength::One,
+                    )
+                    .map(|_| ())
+                })?;
+                return Ok(Err(FormattedDateTimePatternError::UnsupportedField(
+                    ErrorField(field),
+                )));
+            };
 
             match datetime_names.get_name_for_cyclic(l, cyclic.year) {
                 Ok(name) => Ok(w.with_part(PART, |w| w.write_str(name))?),
                 Err(e) => {
                     w.with_part(PART, |w| {
-                        w.with_part(Part::ERROR, |w| {
-                            try_write_number_without_part(
-                                w,
-                                decimal_formatter,
-                                cyclic.related_iso.into(),
-                                FieldLength::One,
-                            )
-                            .map(|_| ())
-                        })
+                        try_write_number(
+                            Part::ERROR,
+                            w,
+                            decimal_formatter,
+                            cyclic.related_iso.into(),
+                            FieldLength::One,
+                        )
+                        .map(|_| ())
                     })?;
                     return Ok(Err(match e {
                         GetNameForCyclicYearError::InvalidYearNumber { max } => {

@@ -8,8 +8,11 @@ import com.sun.jna.Structure
 
 internal interface CanonicalCombiningClassLib: Library {
     fun icu4x_CanonicalCombiningClass_for_char_mv1(ch: Int): Int
+    fun icu4x_CanonicalCombiningClass_long_name_mv1(inner: Int): OptionSlice
+    fun icu4x_CanonicalCombiningClass_short_name_mv1(inner: Int): OptionSlice
     fun icu4x_CanonicalCombiningClass_to_integer_value_mv1(inner: Int): FFIUint8
     fun icu4x_CanonicalCombiningClass_from_integer_value_mv1(other: FFIUint8): OptionInt
+    fun icu4x_CanonicalCombiningClass_try_from_str_mv1(s: Slice): OptionInt
 }
 /** See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
 */
@@ -170,6 +173,42 @@ enum class CanonicalCombiningClass(val inner: Int) {
             val intermediateOption = returnVal.option() ?: return null
             return CanonicalCombiningClass.fromNative(intermediateOption)
         }
+        @JvmStatic
+        
+        fun tryFromStr(s: String): CanonicalCombiningClass? {
+            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            
+            val returnVal = lib.icu4x_CanonicalCombiningClass_try_from_str_mv1(sSlice);
+            
+            val intermediateOption = returnVal.option() ?: return null
+            return CanonicalCombiningClass.fromNative(intermediateOption)
+        }
+    }
+    
+    /** Get the "long" name of this property value (returns empty if property value is unknown)
+    *
+    *See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+    */
+    fun longName(): String? {
+        
+        val returnVal = lib.icu4x_CanonicalCombiningClass_long_name_mv1(this.toNative());
+        
+        val intermediateOption = returnVal.option() ?: return null
+            return PrimitiveArrayTools.getUtf8(intermediateOption)
+                                
+    }
+    
+    /** Get the "short" name of this property value (returns empty if property value is unknown)
+    *
+    *See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+    */
+    fun shortName(): String? {
+        
+        val returnVal = lib.icu4x_CanonicalCombiningClass_short_name_mv1(this.toNative());
+        
+        val intermediateOption = returnVal.option() ?: return null
+            return PrimitiveArrayTools.getUtf8(intermediateOption)
+                                
     }
     
     /** Convert to an integer value usable with ICU4C and CodePointMapData

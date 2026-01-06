@@ -10,7 +10,7 @@ internal interface LineSegmenterLib: Library {
     fun icu4x_LineSegmenter_create_auto_mv1(): Pointer
     fun icu4x_LineSegmenter_create_lstm_mv1(): Pointer
     fun icu4x_LineSegmenter_create_dictionary_mv1(): Pointer
-    fun icu4x_LineSegmenter_segment_utf16_mv1(handle: Pointer, input: Slice): Pointer
+    fun icu4x_LineSegmenter_create_for_non_complex_scripts_mv1(): Pointer
 }
 /** An ICU4X line-break segmenter, capable of finding breakpoints in strings.
 *
@@ -80,25 +80,22 @@ class LineSegmenter internal constructor (
             CLEANER.register(returnOpaque, LineSegmenter.LineSegmenterCleaner(handle, LineSegmenter.lib));
             return returnOpaque
         }
-    }
-    
-    /** Segments a string.
-    *
-    *Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
-    *to the WHATWG Encoding Standard.
-    *
-    *See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenterBorrowed.html#method.segment_utf16) for more information.
-    */
-    fun segment(input: String): LineBreakIteratorUtf16 {
-        val (inputMem, inputSlice) = PrimitiveArrayTools.borrowUtf16(input)
+        @JvmStatic
         
-        val returnVal = lib.icu4x_LineSegmenter_segment_utf16_mv1(handle, inputSlice);
-        val selfEdges: List<Any> = listOf()
-        val aEdges: List<Any?> = listOf(this) + listOf(inputMem)
-        val handle = returnVal 
-        val returnOpaque = LineBreakIteratorUtf16(handle, selfEdges, aEdges)
-        CLEANER.register(returnOpaque, LineBreakIteratorUtf16.LineBreakIteratorUtf16Cleaner(handle, LineBreakIteratorUtf16.lib));
-        return returnOpaque
+        /** Construct a [LineSegmenter] with default options (no locale-based tailoring) and no support for scripts requiring complex context dependent line breaks
+        *(Burmese, Khmer, Lao, and Thai), using compiled data
+        *
+        *See the [Rust documentation for `new_for_non_complex_scripts`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.LineSegmenter.html#method.new_for_non_complex_scripts) for more information.
+        */
+        fun createForNonComplexScripts(): LineSegmenter {
+            
+            val returnVal = lib.icu4x_LineSegmenter_create_for_non_complex_scripts_mv1();
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = LineSegmenter(handle, selfEdges)
+            CLEANER.register(returnOpaque, LineSegmenter.LineSegmenterCleaner(handle, LineSegmenter.lib));
+            return returnOpaque
+        }
     }
 
 }

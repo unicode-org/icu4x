@@ -128,7 +128,7 @@ class PluralRules internal constructor (
         
         val returnVal = lib.icu4x_PluralRules_categories_mv1(handle);
         
-        val returnStruct = PluralCategories(returnVal)
+        val returnStruct = PluralCategories.fromNative(returnVal)
         return returnStruct
     }
 

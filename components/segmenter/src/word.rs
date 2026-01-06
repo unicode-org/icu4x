@@ -57,12 +57,29 @@ pub struct WordBreakOptions<'a> {
     pub invariant_options: WordBreakInvariantOptions,
 }
 
+impl WordBreakOptions<'_> {
+    /// `const` version of [`Default::default`]
+    pub const fn default() -> Self {
+        Self {
+            content_locale: None,
+            invariant_options: WordBreakInvariantOptions::default(),
+        }
+    }
+}
+
 /// Locale-independent options to tailor word breaking behavior
 ///
 /// Currently empty but may grow in the future
 #[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
 pub struct WordBreakInvariantOptions {}
+
+impl WordBreakInvariantOptions {
+    /// `const` version of [`Default::default`]
+    pub const fn default() -> Self {
+        Self {}
+    }
+}
 
 /// Implements the [`Iterator`] trait over the word boundaries of the given string.
 ///
@@ -513,6 +530,68 @@ impl WordSegmenter {
             },
         })
     }
+
+    /// Construct a [`WordSegmenter`] with an invariant locale and no support for
+    /// scripts requiring complex context dependent word breaks (Chinese, Japanese, Khmer, Lao, Myanmar, and Thai).
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new_for_non_complex_scripts(
+        _options: WordBreakInvariantOptions,
+    ) -> WordSegmenterBorrowed<'static> {
+        WordSegmenterBorrowed {
+            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
+            complex: ComplexPayloadsBorrowed::empty(),
+            locale_override: None,
+        }
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (options: WordBreakOptions) -> error: DataError,
+        functions: [
+            try_new_for_non_complex_scripts,
+            try_new_for_non_complex_scripts_with_buffer_provider,
+            try_new_for_non_complex_scripts_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_for_non_complex_scripts)]
+    pub fn try_new_for_non_complex_scripts_unstable<D>(
+        provider: &D,
+        options: WordBreakOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: DataProvider<SegmenterBreakWordV1>
+            + DataProvider<SegmenterBreakWordOverrideV1>
+            + DataProvider<SegmenterBreakGraphemeClusterV1>
+            + ?Sized,
+    {
+        Ok(Self {
+            payload: provider.load(Default::default())?.payload,
+            complex: ComplexPayloads::try_new_empty(provider)?,
+            payload_locale_override: if let Some(locale) = options.content_locale {
+                let locale = DataLocale::from(locale);
+                let req = DataRequest {
+                    id: DataIdentifierBorrowed::for_locale(&locale),
+                    metadata: {
+                        let mut metadata = DataRequestMetadata::default();
+                        metadata.silent = true;
+                        metadata
+                    },
+                };
+                provider
+                    .load(req)
+                    .allow_identifier_not_found()?
+                    .map(|r| r.payload)
+            } else {
+                None
+            },
+        })
+    }
+
     /// Constructs a borrowed version of this type for more efficient querying.
     ///
     /// Most useful methods for segmentation are on this type.

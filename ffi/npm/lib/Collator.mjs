@@ -54,7 +54,7 @@ export class Collator {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_Collator_create_v1_mv1(diplomatReceive.buffer, locale.ffiValue, CollatorOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_Collator_create_v1_mv1(diplomatReceive.buffer, locale.ffiValue, CollatorOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(CollatorOptions._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -65,6 +65,7 @@ export class Collator {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
             diplomatReceive.free();
@@ -82,7 +83,7 @@ export class Collator {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_Collator_create_v1_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, CollatorOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
+        const result = wasm.icu4x_Collator_create_v1_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, CollatorOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(diplomatRuntime.FUNCTION_PARAM_ALLOC.alloc(CollatorOptions._sizeBytes), functionCleanupArena, {}, false));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -93,6 +94,7 @@ export class Collator {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
             diplomatReceive.free();
@@ -120,6 +122,7 @@ export class Collator {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             functionCleanupArena.free();
 
         }
@@ -143,6 +146,7 @@ export class Collator {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }

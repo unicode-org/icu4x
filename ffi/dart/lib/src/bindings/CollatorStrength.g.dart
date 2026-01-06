@@ -5,19 +5,14 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `Strength`](https://docs.rs/icu/2.1.1/icu/collator/options/enum.Strength.html) for more information.
 enum CollatorStrength {
-
   // ignore: public_member_api_docs
   primary,
-
   // ignore: public_member_api_docs
   secondary,
-
   // ignore: public_member_api_docs
   tertiary,
-
   // ignore: public_member_api_docs
   quaternary,
-
   // ignore: public_member_api_docs
   identical;
 

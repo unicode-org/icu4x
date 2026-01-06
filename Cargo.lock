@@ -494,6 +494,7 @@ name = "codegen"
 version = "0.0.0"
 dependencies = [
  "askama",
+ "heck 0.4.1",
  "icu",
 ]
 
@@ -710,7 +711,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.14.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0cb25653909d2328c758a1e51049f59a6de051a0#0cb25653909d2328c758a1e51049f59a6de051a0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=773e6e94179c8705aa27a3337e49c604da4fc013#773e6e94179c8705aa27a3337e49c604da4fc013"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -741,7 +742,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.14.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0cb25653909d2328c758a1e51049f59a6de051a0#0cb25653909d2328c758a1e51049f59a6de051a0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=773e6e94179c8705aa27a3337e49c604da4fc013#773e6e94179c8705aa27a3337e49c604da4fc013"
 dependencies = [
  "log",
 ]
@@ -749,7 +750,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.14.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0cb25653909d2328c758a1e51049f59a6de051a0#0cb25653909d2328c758a1e51049f59a6de051a0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=773e6e94179c8705aa27a3337e49c604da4fc013#773e6e94179c8705aa27a3337e49c604da4fc013"
 dependencies = [
  "askama",
  "clap",
@@ -770,7 +771,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.14.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0cb25653909d2328c758a1e51049f59a6de051a0#0cb25653909d2328c758a1e51049f59a6de051a0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=773e6e94179c8705aa27a3337e49c604da4fc013#773e6e94179c8705aa27a3337e49c604da4fc013"
 dependencies = [
  "displaydoc",
  "either",
@@ -1346,6 +1347,7 @@ dependencies = [
  "serde",
  "serde_json",
  "toml",
+ "utf8_iter",
  "yoke",
  "zerofrom",
  "zerovec",
@@ -1778,7 +1780,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter"
-version = "2.1.1"
+version = "2.1.2"
 dependencies = [
  "core_maths",
  "criterion",

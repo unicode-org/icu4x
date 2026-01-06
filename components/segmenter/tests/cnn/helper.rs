@@ -48,15 +48,14 @@ impl<const D: usize> MatrixOwned<D> {
     /// matrix is 4x3, then this function returns a linear matrix of length 3.
     ///
     /// The type parameter `M` should be `D - 1`.
-    #[inline]
-    pub(super) fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<'_, M>> {
-        // This assertion is based on const generics; it should always succeed and be elided.
-        assert_eq!(M, D - 1);
-        let (range, dims) = self.as_borrowed().submatrix_range(index);
-        let data = &self.data.get(range)?;
-        Some(MatrixBorrowed { data, dims })
-    }
-
+    // #[inline]
+    // pub(super) fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<'_, M>> {
+    //     // This assertion is based on const generics; it should always succeed and be elided.
+    //     assert_eq!(M, D - 1);
+    //     let (range, dims) = self.as_borrowed().submatrix_range(index);
+    //     let data = &self.data.get(range)?;
+    //     Some(MatrixBorrowed { data, dims })
+    // }
     pub(super) fn as_mut(&mut self) -> MatrixBorrowedMut<'_, D> {
         MatrixBorrowedMut {
             data: &mut self.data,
@@ -458,13 +457,13 @@ impl<'a> From<&'a super::CnnMatrix3<'a>> for MatrixZero<'a, 3> {
 }
 
 impl<'a, const D: usize> MatrixZero<'a, D> {
-    #[expect(clippy::wrong_self_convention)] // same convention as slice::to_vec
-    pub(super) fn to_owned(&self) -> MatrixOwned<D> {
-        MatrixOwned {
-            data: self.data.iter().collect(),
-            dims: self.dims,
-        }
-    }
+    // #[expect(clippy::wrong_self_convention)] // same convention as slice::to_vec
+    // pub(super) fn to_owned(&self) -> MatrixOwned<D> {
+    //     MatrixOwned {
+    //         data: self.data.iter().collect(),
+    //         dims: self.dims,
+    //     }
+    // }
 
     pub(super) fn as_slice(&self) -> &ZeroSlice<f32> {
         self.data

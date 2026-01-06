@@ -66,9 +66,21 @@ export class VerticalOrientation {
         new VerticalOrientation(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
     ];
 
+    /**
+     * See the [Rust documentation for `Rotated`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.Rotated) for more information.
+     */
     static Rotated = VerticalOrientation.#objectValues[0];
+    /**
+     * See the [Rust documentation for `TransformedRotated`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.TransformedRotated) for more information.
+     */
     static TransformedRotated = VerticalOrientation.#objectValues[1];
+    /**
+     * See the [Rust documentation for `TransformedUpright`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.TransformedUpright) for more information.
+     */
     static TransformedUpright = VerticalOrientation.#objectValues[2];
+    /**
+     * See the [Rust documentation for `Upright`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.Upright) for more information.
+     */
     static Upright = VerticalOrientation.#objectValues[3];
 
 
@@ -84,6 +96,7 @@ export class VerticalOrientation {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -106,6 +119,7 @@ export class VerticalOrientation {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -129,6 +143,7 @@ export class VerticalOrientation {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -147,6 +162,7 @@ export class VerticalOrientation {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -169,6 +185,31 @@ export class VerticalOrientation {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            diplomatReceive.free();
+        }
+    }
+
+    static tryFromStr(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_VerticalOrientation_try_from_str_mv1(diplomatReceive.buffer, sSlice.ptr);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return new VerticalOrientation(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            functionCleanupArena.free();
+
             diplomatReceive.free();
         }
     }

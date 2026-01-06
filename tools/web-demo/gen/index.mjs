@@ -2553,6 +2553,23 @@ let termini = Object.assign({
         ]
     },
 
+    "BidiClass.tryFromStr": {
+        func: (s) => icu.BidiClass.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "BidiClass.tryFromStr",
+        expr: (s) => "icu.BidiClass.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "CanonicalCombiningClass.forChar": {
         func: (ch) => icu.CanonicalCombiningClass.forChar(ch),
         // For avoiding webpacking minifying issues:
@@ -2565,6 +2582,23 @@ let termini = Object.assign({
                 name: "ch",
                 type: "codepoint",
                 typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "CanonicalCombiningClass.tryFromStr": {
+        func: (s) => icu.CanonicalCombiningClass.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "CanonicalCombiningClass.tryFromStr",
+        expr: (s) => "icu.CanonicalCombiningClass.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -2587,6 +2621,23 @@ let termini = Object.assign({
         ]
     },
 
+    "EastAsianWidth.tryFromStr": {
+        func: (s) => icu.EastAsianWidth.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "EastAsianWidth.tryFromStr",
+        expr: (s) => "icu.EastAsianWidth.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "GeneralCategory.forChar": {
         func: (ch) => icu.GeneralCategory.forChar(ch),
         // For avoiding webpacking minifying issues:
@@ -2599,6 +2650,23 @@ let termini = Object.assign({
                 name: "ch",
                 type: "codepoint",
                 typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "GeneralCategory.tryFromStr": {
+        func: (s) => icu.GeneralCategory.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "GeneralCategory.tryFromStr",
+        expr: (s) => "icu.GeneralCategory.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -2621,6 +2689,23 @@ let termini = Object.assign({
         ]
     },
 
+    "GraphemeClusterBreak.tryFromStr": {
+        func: (s) => icu.GraphemeClusterBreak.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "GraphemeClusterBreak.tryFromStr",
+        expr: (s) => "icu.GraphemeClusterBreak.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "HangulSyllableType.forChar": {
         func: (ch) => icu.HangulSyllableType.forChar(ch),
         // For avoiding webpacking minifying issues:
@@ -2633,6 +2718,23 @@ let termini = Object.assign({
                 name: "ch",
                 type: "codepoint",
                 typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "HangulSyllableType.tryFromStr": {
+        func: (s) => icu.HangulSyllableType.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "HangulSyllableType.tryFromStr",
+        expr: (s) => "icu.HangulSyllableType.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -2655,6 +2757,23 @@ let termini = Object.assign({
         ]
     },
 
+    "IndicConjunctBreak.tryFromStr": {
+        func: (s) => icu.IndicConjunctBreak.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "IndicConjunctBreak.tryFromStr",
+        expr: (s) => "icu.IndicConjunctBreak.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "IndicSyllabicCategory.forChar": {
         func: (ch) => icu.IndicSyllabicCategory.forChar(ch),
         // For avoiding webpacking minifying issues:
@@ -2667,6 +2786,23 @@ let termini = Object.assign({
                 name: "ch",
                 type: "codepoint",
                 typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "IndicSyllabicCategory.tryFromStr": {
+        func: (s) => icu.IndicSyllabicCategory.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "IndicSyllabicCategory.tryFromStr",
+        expr: (s) => "icu.IndicSyllabicCategory.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -2689,6 +2825,23 @@ let termini = Object.assign({
         ]
     },
 
+    "JoiningGroup.tryFromStr": {
+        func: (s) => icu.JoiningGroup.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "JoiningGroup.tryFromStr",
+        expr: (s) => "icu.JoiningGroup.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "JoiningType.forChar": {
         func: (ch) => icu.JoiningType.forChar(ch),
         // For avoiding webpacking minifying issues:
@@ -2701,6 +2854,23 @@ let termini = Object.assign({
                 name: "ch",
                 type: "codepoint",
                 typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "JoiningType.tryFromStr": {
+        func: (s) => icu.JoiningType.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "JoiningType.tryFromStr",
+        expr: (s) => "icu.JoiningType.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -2723,6 +2893,23 @@ let termini = Object.assign({
         ]
     },
 
+    "LineBreak.tryFromStr": {
+        func: (s) => icu.LineBreak.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "LineBreak.tryFromStr",
+        expr: (s) => "icu.LineBreak.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "NumericType.forChar": {
         func: (ch) => icu.NumericType.forChar(ch),
         // For avoiding webpacking minifying issues:
@@ -2735,6 +2922,23 @@ let termini = Object.assign({
                 name: "ch",
                 type: "codepoint",
                 typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "NumericType.tryFromStr": {
+        func: (s) => icu.NumericType.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "NumericType.tryFromStr",
+        expr: (s) => "icu.NumericType.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -2757,6 +2961,23 @@ let termini = Object.assign({
         ]
     },
 
+    "Script.tryFromStr": {
+        func: (s) => icu.Script.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "Script.tryFromStr",
+        expr: (s) => "icu.Script.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "SentenceBreak.forChar": {
         func: (ch) => icu.SentenceBreak.forChar(ch),
         // For avoiding webpacking minifying issues:
@@ -2769,6 +2990,23 @@ let termini = Object.assign({
                 name: "ch",
                 type: "codepoint",
                 typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "SentenceBreak.tryFromStr": {
+        func: (s) => icu.SentenceBreak.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "SentenceBreak.tryFromStr",
+        expr: (s) => "icu.SentenceBreak.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -2791,6 +3029,23 @@ let termini = Object.assign({
         ]
     },
 
+    "VerticalOrientation.tryFromStr": {
+        func: (s) => icu.VerticalOrientation.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "VerticalOrientation.tryFromStr",
+        expr: (s) => "icu.VerticalOrientation.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "WordBreak.forChar": {
         func: (ch) => icu.WordBreak.forChar(ch),
         // For avoiding webpacking minifying issues:
@@ -2803,6 +3058,23 @@ let termini = Object.assign({
                 name: "ch",
                 type: "codepoint",
                 typeUse: "codepoint"
+            }
+            
+        ]
+    },
+
+    "WordBreak.tryFromStr": {
+        func: (s) => icu.WordBreak.tryFromStr(s),
+        // For avoiding webpacking minifying issues:
+        funcName: "WordBreak.tryFromStr",
+        expr: (s) => "icu.WordBreak.tryFromStr(s)".replace(/([\( ])s([,\) \n])/, '$1' + s + '$2'),
+        display: displayOptionalEnum,
+        parameters: [
+            
+            {
+                name: "s",
+                type: "string",
+                typeUse: "string"
             }
             
         ]

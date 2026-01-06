@@ -9,12 +9,13 @@ use super::*;
 
 impl LocaleFallbackerWithConfig<'_> {
     pub(crate) fn normalize(&self, locale: &mut DataLocale, default_script: &mut Option<Script>) {
-        // 0. If there is an invalid "sd" subtag, drop it
+        // 0. If there is an invalid or trivial "sd" subtag, drop it
         if let Some(subdivision) = locale.subdivision.take() {
             if let Some(region) = locale.region {
                 if subdivision
                     .as_str()
                     .starts_with(region.to_tinystr().to_ascii_lowercase().as_str())
+                    && !subdivision.as_str().ends_with("zzzz")
                 {
                     locale.subdivision = Some(subdivision);
                 }
@@ -127,7 +128,6 @@ impl LocaleFallbackIteratorInner<'_> {
     }
 
     fn step_region(&mut self, locale: &mut DataLocale) {
-        // TODO(#4413): -u-rg is not yet supported
         // 2. Remove the subdivision keyword
         if let Some(value) = locale.subdivision.take() {
             self.backup_subdivision = Some(value);
@@ -241,6 +241,8 @@ impl LocaleFallbackIteratorInner<'_> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use icu_locale_core::preferences::LocalePreferences;
+    use icu_locale_core::Locale;
     use writeable::Writeable;
 
     struct TestCase {
@@ -473,13 +475,23 @@ mod tests {
         let fallbacker_no_data = fallbacker_no_data.as_borrowed();
         let fallbacker_with_data = LocaleFallbacker::new();
         for cas in TEST_CASES {
-            for (priority, expected_chain) in [
+            let prefs = LocalePreferences::from(&cas.input.parse::<Locale>().unwrap());
+            for (priority, data_locale, expected_chain) in [
                 (
                     LocaleFallbackPriority::Language,
+                    prefs.to_data_locale_language_priority(),
                     cas.expected_language_chain,
                 ),
-                (LocaleFallbackPriority::Script, cas.expected_script_chain),
-                (LocaleFallbackPriority::Region, cas.expected_region_chain),
+                (
+                    LocaleFallbackPriority::Script,
+                    prefs.to_data_locale_language_priority(),
+                    cas.expected_script_chain,
+                ),
+                (
+                    LocaleFallbackPriority::Region,
+                    prefs.to_data_locale_region_priority(),
+                    cas.expected_region_chain,
+                ),
             ] {
                 let mut config = LocaleFallbackConfig::default();
                 config.priority = priority;
@@ -488,9 +500,7 @@ mod tests {
                 } else {
                     fallbacker_no_data
                 };
-                let mut it = fallbacker
-                    .for_config(config)
-                    .fallback_for(cas.input.parse().unwrap());
+                let mut it = fallbacker.for_config(config).fallback_for(data_locale);
                 let mut actual_chain = Vec::new();
                 for i in 0..20 {
                     if i == 19 {
