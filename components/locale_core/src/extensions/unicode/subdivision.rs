@@ -66,12 +66,13 @@ impl_tinystr_subtag!(
 ///     subtags::region,
 /// };
 ///
-/// let ss = subdivision_suffix!("eng");
+/// // "zzzz" means "unknown subdivision"
+/// let ss = subdivision_suffix!("zzzz");
 /// let region = region!("gb");
 ///
 /// let si = SubdivisionId::new(region, ss);
 ///
-/// assert_eq!(si.to_string(), "gbeng");
+/// assert_eq!(si.to_string(), "gbzzzz");
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
 #[non_exhaustive]
