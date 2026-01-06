@@ -220,12 +220,12 @@ impl DataLocale {
         Ok(())
     }
 
-    fn region_and_subdivision(&self) -> Option<unicode_ext::SubdivisionId> {
+    fn region_and_subdivision(&self) -> Option<unicode_ext::RegionAndSubdivision> {
         self.subdivision
-            .and_then(|s| unicode_ext::SubdivisionId::try_from_str(s.as_str()).ok())
-            .or(self.region.map(|region| unicode_ext::SubdivisionId {
+            .and_then(|s| unicode_ext::RegionAndSubdivision::try_from_str(s.as_str()).ok())
+            .or(self.region.map(|region| unicode_ext::RegionAndSubdivision {
                 region,
-                suffix: unicode_ext::SubdivisionSuffix::UNKNOWN,
+                suffix: unicode_ext::Subdivision::UNKNOWN,
             }))
     }
 
@@ -234,7 +234,7 @@ impl DataLocale {
     ) -> (
         Language,
         Option<Script>,
-        Option<unicode_ext::SubdivisionId>,
+        Option<unicode_ext::RegionAndSubdivision>,
         Option<Variant>,
     ) {
         (
@@ -248,7 +248,7 @@ impl DataLocale {
     pub(crate) fn from_parts(
         language: Language,
         script: Option<Script>,
-        region: Option<unicode_ext::SubdivisionId>,
+        region: Option<unicode_ext::RegionAndSubdivision>,
         variant: Option<Variant>,
     ) -> Self {
         Self {

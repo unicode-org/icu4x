@@ -5,7 +5,7 @@
 use crate::preferences::extensions::unicode::errors::PreferencesParseError;
 use crate::preferences::extensions::unicode::struct_keyword;
 use crate::{
-    extensions::unicode::{SubdivisionId, Value},
+    extensions::unicode::{RegionAndSubdivision, Value},
     subtags::Subtag,
 };
 
@@ -16,7 +16,7 @@ struct_keyword!(
     [Copy]
     RegionalSubdivision,
     "sd",
-    SubdivisionId,
+    RegionAndSubdivision,
     |input: &Value| {
         input
             .as_single_subtag()

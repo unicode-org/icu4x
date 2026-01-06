@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::extensions::unicode::{SubdivisionId, Value};
+use crate::extensions::unicode::{RegionAndSubdivision, Value};
 use crate::preferences::extensions::unicode::errors::PreferencesParseError;
 use crate::preferences::extensions::unicode::struct_keyword;
 
@@ -13,7 +13,7 @@ struct_keyword!(
     [Copy]
     RegionOverride,
     "rg",
-    SubdivisionId,
+    RegionAndSubdivision,
     |input: &Value| {
         input
             .as_single_subtag()

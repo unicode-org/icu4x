@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::extensions::unicode::{SubdivisionId, SubdivisionSuffix};
+use crate::extensions::unicode::{RegionAndSubdivision, Subdivision};
 use crate::preferences::extensions::unicode::keywords::{RegionOverride, RegionalSubdivision};
 #[cfg(feature = "alloc")]
 use crate::subtags::Variants;
@@ -70,9 +70,9 @@ impl From<&crate::LanguageIdentifier> for LocalePreferences {
             language: lid.language,
             script: lid.script,
             region: lid.region.map(|region| {
-                RegionalSubdivision(SubdivisionId {
+                RegionalSubdivision(RegionAndSubdivision {
                     region,
-                    suffix: SubdivisionSuffix::UNKNOWN,
+                    suffix: Subdivision::UNKNOWN,
                 })
             }),
             variant: lid.variants.iter().copied().next(),
@@ -152,13 +152,13 @@ impl LocalePreferences {
         let region = if let Some(sd) = subdivision {
             if let Some(region) = loc.id.region {
                 // Discard the subdivison if it doesn't match the region
-                Some(RegionalSubdivision(SubdivisionId {
+                Some(RegionalSubdivision(RegionAndSubdivision {
                     region,
                     suffix: if sd.region == region {
                         sd.suffix
                     } else {
                         is_err = true;
-                        SubdivisionSuffix::UNKNOWN
+                        Subdivision::UNKNOWN
                     },
                 }))
             } else {
@@ -167,9 +167,9 @@ impl LocalePreferences {
             }
         } else {
             loc.id.region.map(|region| {
-                RegionalSubdivision(SubdivisionId {
+                RegionalSubdivision(RegionAndSubdivision {
                     region,
-                    suffix: SubdivisionSuffix::UNKNOWN,
+                    suffix: Subdivision::UNKNOWN,
                 })
             })
         };
