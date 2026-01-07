@@ -7,8 +7,6 @@ use crate::SourceDataProvider;
 use icu::calendar::AnyCalendarKind;
 use icu_provider::prelude::*;
 
-#[cfg(test)] // TODO(#5613)
-mod legacy;
 mod neo;
 mod neo_skeleton;
 mod skeletons;

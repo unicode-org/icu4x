@@ -747,3 +747,46 @@ impl_pattern_datagen!(
     GLUE_PATTERN_KEY_LENGTHS,
     datetimepattern_convert
 );
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use icu_locale_core::langid;
+    #[test]
+    fn test_basic_symbols() {
+        let provider = SourceDataProvider::new_testing();
+        let dl: DataLocale = langid!("cs").into();
+        let data = provider
+            .get_dates_resource(&dl, Some(DatagenCalendar::Gregorian))
+            .unwrap();
+
+        // let cs_dates = convert_dates(data, DatagenCalendar::Gregorian);
+
+        let months_wide = months_convert(
+            &provider,
+            &dl,
+            data,
+            DatagenCalendar::Gregorian,
+            Context::Format,
+            Length::Wide,
+        )
+        .unwrap();
+        let MonthNames::Linear(months) = months_wide else {
+            panic!("Must be linear for Gregorian");
+        };
+
+        assert_eq!("srpna", &months[7]);
+
+        let wd_short = weekday_convert(
+            &provider,
+            &dl,
+            data,
+            DatagenCalendar::Gregorian,
+            Context::Format,
+            Length::Short,
+        )
+        .unwrap();
+
+        assert_eq!("po", &wd_short.names[1]);
+    }
+}
