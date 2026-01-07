@@ -8,13 +8,13 @@
 /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
 #[doc = "\n"] // prevent autoformatting
 pub use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
+/// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
+#[doc = "\n"] // prevent autoformatting
+pub use icu_locale_core::preferences::extensions::unicode::keywords::FirstDay;
 #[doc(inline)]
 /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
 #[doc = "\n"] // prevent autoformatting
 pub use icu_locale_core::preferences::extensions::unicode::keywords::HijriCalendarAlgorithm;
-/// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
-#[doc = "\n"] // prevent autoformatting
-pub use icu_locale_core::preferences::extensions::unicode::keywords::FirstDay;
 
 use icu_locale_core::preferences::define_preferences;
 
@@ -53,7 +53,10 @@ impl CalendarPreferences {
     /// assert_eq!(CalendarPreferences::from(&locale!("und-US-u-rg-thxxxx")).resolved_algorithm(), CalendarAlgorithm::Buddhist);
     /// ```
     pub fn resolved_algorithm(self) -> CalendarAlgorithm {
-        let region = self.locale_preferences.region();
+        let region = self
+            .locale_preferences
+            .to_data_locale_region_priority()
+            .region;
         let region = region.as_ref().map(|r| r.as_str());
         // This is tested to be consistent with CLDR in icu_provider_source::calendar::test_calendar_resolution
         match self.calendar_algorithm {
