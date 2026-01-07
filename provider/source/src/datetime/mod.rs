@@ -7,7 +7,7 @@ use crate::SourceDataProvider;
 use icu::calendar::AnyCalendarKind;
 use icu_provider::prelude::*;
 
-mod neo;
+mod names;
 mod neo_skeleton;
 mod skeletons;
 mod week_data;
