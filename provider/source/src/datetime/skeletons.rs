@@ -151,7 +151,7 @@ fn select_pattern<'data>(
 }
 
 impl SourceDataProvider {
-    fn load_neo_skeletons_key<M>(
+    fn load_datetime_skeletons_key<M>(
         &self,
         req: DataRequest,
         calendar: Option<DatagenCalendar>,
@@ -382,7 +382,7 @@ impl SourceDataProvider {
         Ok(builder.build())
     }
 
-    fn neo_time_skeleton_supported_locales(
+    fn time_skeleton_supported_locales(
         &self,
     ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
@@ -397,7 +397,7 @@ impl SourceDataProvider {
             .collect())
     }
 
-    fn neo_date_skeleton_supported_locales(
+    fn date_skeleton_supported_locales(
         &self,
         calendar: DatagenCalendar,
     ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
@@ -591,48 +591,48 @@ fn gen_date_components(
 
 impl DataProvider<DatetimePatternsTimeV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<DatetimePatternsTimeV1>, DataError> {
-        self.load_neo_skeletons_key(req, None, gen_time_components)
+        self.load_datetime_skeletons_key(req, None, gen_time_components)
     }
 }
 
 impl IterableDataProviderCached<DatetimePatternsTimeV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        self.neo_time_skeleton_supported_locales()
+        self.time_skeleton_supported_locales()
     }
 }
 
-macro_rules! impl_neo_skeleton_datagen {
+macro_rules! impl_datetime_skeleton_datagen {
     ($marker:ident, $calendar:expr) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                self.load_neo_skeletons_key(req, Some($calendar), gen_date_components)
+                self.load_datetime_skeletons_key(req, Some($calendar), gen_date_components)
             }
         }
 
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-                self.neo_date_skeleton_supported_locales($calendar)
+                self.date_skeleton_supported_locales($calendar)
             }
         }
     };
 }
 
-impl_neo_skeleton_datagen!(DatetimePatternsDateBuddhistV1, DatagenCalendar::Buddhist);
-impl_neo_skeleton_datagen!(DatetimePatternsDateChineseV1, DatagenCalendar::Chinese);
-impl_neo_skeleton_datagen!(DatetimePatternsDateCopticV1, DatagenCalendar::Coptic);
-impl_neo_skeleton_datagen!(DatetimePatternsDateDangiV1, DatagenCalendar::Dangi);
-impl_neo_skeleton_datagen!(DatetimePatternsDateEthiopianV1, DatagenCalendar::Ethiopic);
-impl_neo_skeleton_datagen!(DatetimePatternsDateGregorianV1, DatagenCalendar::Gregorian);
-impl_neo_skeleton_datagen!(DatetimePatternsDateHebrewV1, DatagenCalendar::Hebrew);
-impl_neo_skeleton_datagen!(DatetimePatternsDateIndianV1, DatagenCalendar::Indian);
-impl_neo_skeleton_datagen!(DatetimePatternsDateHijriV1, DatagenCalendar::Hijri);
-impl_neo_skeleton_datagen!(
+impl_datetime_skeleton_datagen!(DatetimePatternsDateBuddhistV1, DatagenCalendar::Buddhist);
+impl_datetime_skeleton_datagen!(DatetimePatternsDateChineseV1, DatagenCalendar::Chinese);
+impl_datetime_skeleton_datagen!(DatetimePatternsDateCopticV1, DatagenCalendar::Coptic);
+impl_datetime_skeleton_datagen!(DatetimePatternsDateDangiV1, DatagenCalendar::Dangi);
+impl_datetime_skeleton_datagen!(DatetimePatternsDateEthiopianV1, DatagenCalendar::Ethiopic);
+impl_datetime_skeleton_datagen!(DatetimePatternsDateGregorianV1, DatagenCalendar::Gregorian);
+impl_datetime_skeleton_datagen!(DatetimePatternsDateHebrewV1, DatagenCalendar::Hebrew);
+impl_datetime_skeleton_datagen!(DatetimePatternsDateIndianV1, DatagenCalendar::Indian);
+impl_datetime_skeleton_datagen!(DatetimePatternsDateHijriV1, DatagenCalendar::Hijri);
+impl_datetime_skeleton_datagen!(
     DatetimePatternsDateJapaneseV1,
     DatagenCalendar::JapaneseModern
 );
-impl_neo_skeleton_datagen!(
+impl_datetime_skeleton_datagen!(
     DatetimePatternsDateJapanextV1,
     DatagenCalendar::JapaneseExtended
 );
-impl_neo_skeleton_datagen!(DatetimePatternsDatePersianV1, DatagenCalendar::Persian);
-impl_neo_skeleton_datagen!(DatetimePatternsDateRocV1, DatagenCalendar::Roc);
+impl_datetime_skeleton_datagen!(DatetimePatternsDatePersianV1, DatagenCalendar::Persian);
+impl_datetime_skeleton_datagen!(DatetimePatternsDateRocV1, DatagenCalendar::Roc);

@@ -74,7 +74,7 @@ const GLUE_PATTERN_KEY_LENGTHS: &[&DataMarkerAttributes] = &[
 ];
 
 impl SourceDataProvider {
-    fn load_neo_key<M: DataMarker>(
+    fn load_datetime_key<M: DataMarker>(
         &self,
         req: DataRequest,
         calendar: DatagenCalendar,
@@ -94,7 +94,7 @@ impl SourceDataProvider {
         })
     }
 
-    fn load_neo_symbols_marker<M: DataMarker>(
+    fn load_datetime_symbols_marker<M: DataMarker>(
         &self,
         req: DataRequest,
         calendar: DatagenCalendar,
@@ -110,7 +110,7 @@ impl SourceDataProvider {
     where
         Self: IterableDataProviderCached<M>,
     {
-        self.load_neo_key(req, calendar, |id, data| {
+        self.load_datetime_key(req, calendar, |id, data| {
             let Some((context, length)) = marker_attrs::name_marker_attr_info(id.marker_attributes)
             else {
                 panic!(
@@ -122,7 +122,7 @@ impl SourceDataProvider {
         })
     }
 
-    fn load_neo_patterns_marker<M: DataMarker>(
+    fn load_datetime_patterns_marker<M: DataMarker>(
         &self,
         req: DataRequest,
         calendar: DatagenCalendar,
@@ -131,7 +131,7 @@ impl SourceDataProvider {
     where
         Self: IterableDataProviderCached<M>,
     {
-        self.load_neo_key(req, calendar, |id, data| {
+        self.load_datetime_key(req, calendar, |id, data| {
             let Some((length, glue_type)) =
                 marker_attrs::pattern_marker_attr_info_for_glue(id.marker_attributes)
             else {
@@ -144,7 +144,7 @@ impl SourceDataProvider {
         })
     }
 
-    fn iter_ids_neo(
+    fn iter_datetime_ids(
         &self,
         calendar: DatagenCalendar,
         keylengths: &'static [&DataMarkerAttributes],
@@ -445,7 +445,7 @@ fn months_convert(
 }
 
 /// Given a lengthpattern, apply any numeric overrides it may have to `pattern`
-#[allow(dead_code)] // TODO: Implement numeric overrides in neo patterns
+#[allow(dead_code)] // TODO: Implement numeric overrides in datetime patterns
 fn apply_numeric_overrides(lp: &ca::LengthPattern, pattern: &mut pattern::runtime::Pattern) {
     use icu::datetime::provider::fields::{
         self, FieldLength, FieldNumericOverrides::*, FieldSymbol,
@@ -533,13 +533,13 @@ macro_rules! impl_symbols_datagen {
     ($marker:ident, $calendar:expr, $lengths:ident, $convert:expr) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                self.load_neo_symbols_marker::<$marker>(req, $calendar, $convert)
+                self.load_datetime_symbols_marker::<$marker>(req, $calendar, $convert)
             }
         }
 
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-                self.iter_ids_neo($calendar, $lengths)
+                self.iter_datetime_ids($calendar, $lengths)
             }
         }
     };
@@ -549,13 +549,13 @@ macro_rules! impl_pattern_datagen {
     ($marker:ident, $calendar:expr, $lengths:ident, $convert:expr) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                self.load_neo_patterns_marker::<$marker>(req, $calendar, $convert)
+                self.load_datetime_patterns_marker::<$marker>(req, $calendar, $convert)
             }
         }
 
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-                self.iter_ids_neo($calendar, $lengths)
+                self.iter_datetime_ids($calendar, $lengths)
             }
         }
     };
