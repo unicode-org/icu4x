@@ -1564,6 +1564,7 @@ dependencies = [
  "utf16_iter",
  "utf8_iter 1.0.4",
  "write16",
+ "zerofrom",
  "zerovec",
 ]
 

@@ -12,7 +12,7 @@ use crate::ComposingNormalizer;
 use crate::ComposingNormalizerBorrowed;
 use crate::IgnorableBehavior;
 use crate::IteratorPolicy;
-use crate::NormalizerNfcV1;
+use crate::NormalizerNfcV2;
 use crate::NormalizerNfdTablesV1;
 use crate::NormalizerNfkdTablesV1;
 use crate::NormalizerUts46DataV1;
@@ -198,7 +198,7 @@ impl Uts46Mapper {
             + DataProvider<NormalizerNfdTablesV1>
             + DataProvider<NormalizerNfkdTablesV1>
             // UTS 46 tables merged into NormalizerNfkdTablesV1
-            + DataProvider<NormalizerNfcV1>
+            + DataProvider<NormalizerNfcV2>
             + ?Sized,
     {
         let normalizer = ComposingNormalizer::try_new_uts46_unstable(provider)?;

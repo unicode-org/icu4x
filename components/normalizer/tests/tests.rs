@@ -2162,3 +2162,51 @@ fn test_latin1_normalize_nkfc_to() {
     assert_eq!(&normalized[..], &normalized16[..]);
     assert!(nfkc.is_normalized_utf16(&normalized));
 }
+
+#[test]
+fn test_hangul_enclosed_nfkc() {
+    let nfkc = ComposingNormalizerBorrowed::new_nfkc();
+    assert_eq!(
+        &nfkc.normalize_utf16(&[0x320Eu16])[..],
+        &[0x0028u16, 0xAC00, 0x0029]
+    );
+}
+
+#[test]
+fn test_hangul_enclosed_nfkc_iter() {
+    let nfkc = ComposingNormalizerBorrowed::new_nfkc();
+    assert!(nfkc
+        .normalize_iter("\u{320E}".chars())
+        .eq("(\u{AC00})".chars()));
+}
+
+#[test]
+fn test_hangul_l_v_t_nfc() {
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+    assert_eq!(
+        &nfc.normalize_utf16(&[0x1100u16, 0x1161, 0x11A8])[..],
+        &[0xAC01u16]
+    );
+}
+
+#[test]
+fn test_hangul_l_v_t_nfc_iter() {
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+    assert!(nfc
+        .normalize_iter("\u{1100}\u{1161}\u{11A8}".chars())
+        .eq("\u{AC01}".chars()));
+}
+
+#[test]
+fn test_hangul_lv_t_nfc() {
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+    assert_eq!(&nfc.normalize_utf16(&[0xAC00u16, 0x11A8])[..], &[0xAC01u16]);
+}
+
+#[test]
+fn test_hangul_lv_t_nfc_iter() {
+    let nfc = ComposingNormalizerBorrowed::new_nfc();
+    assert!(nfc
+        .normalize_iter("\u{AC00}\u{11A8}".chars())
+        .eq("\u{AC01}".chars()));
+}

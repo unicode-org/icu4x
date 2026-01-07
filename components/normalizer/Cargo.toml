@@ -29,6 +29,7 @@ utf16_iter = { path = "../../../utf16_iter", features = ["icu_collections"], opt
 utf8_iter = { path = "../../../utf8_iter", features = ["icu_collections"], optional = true }
 write16 = { workspace = true, features = ["alloc"], optional = true }
 zerovec = { workspace = true }
+zerofrom = { workspace = true, features = ["alloc"] }
 
 databake = { workspace = true, features = ["derive"], optional = true }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
