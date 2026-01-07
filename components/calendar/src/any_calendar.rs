@@ -9,21 +9,10 @@
 use crate::cal::*;
 use crate::{AsCalendar, Calendar, Date, Ref};
 
-use crate::preferences::{CalendarAlgorithm, HijriCalendarAlgorithm};
-use icu_locale_core::preferences::define_preferences;
+use crate::preferences::{CalendarAlgorithm, CalendarPreferences, HijriCalendarAlgorithm};
 use icu_provider::prelude::*;
 
 use core::fmt;
-
-define_preferences!(
-    /// The preferences for calendars formatting.
-    [Copy]
-    CalendarPreferences,
-    {
-        /// The user's preferred calendar system.
-        calendar_algorithm: CalendarAlgorithm
-    }
-);
 
 macro_rules! make_any_calendar {
     (
@@ -707,41 +696,6 @@ pub enum AnyCalendarKind {
     ///
     /// This corresponds to the `"roc"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Roc,
-}
-
-impl CalendarPreferences {
-    /// Selects the [`CalendarAlgorithm`] appropriate for the given [`CalendarPreferences`].
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu::calendar::preferences::{CalendarAlgorithm, CalendarPreferences};
-    /// use icu::locale::locale;
-    ///
-    /// assert_eq!(CalendarPreferences::from(&locale!("und")).resolved_algorithm(), CalendarAlgorithm::Gregory);
-    /// assert_eq!(CalendarPreferences::from(&locale!("und-US-u-ca-hebrew")).resolved_algorithm(), CalendarAlgorithm::Hebrew);
-    /// assert_eq!(CalendarPreferences::from(&locale!("und-AF")).resolved_algorithm(), CalendarAlgorithm::Persian);
-    /// assert_eq!(CalendarPreferences::from(&locale!("und-US-u-rg-thxxxx")).resolved_algorithm(), CalendarAlgorithm::Buddhist);
-    /// ```
-    pub fn resolved_algorithm(self) -> CalendarAlgorithm {
-        let region = self.locale_preferences.region();
-        let region = region.as_ref().map(|r| r.as_str());
-        // This is tested to be consistent with CLDR in icu_provider_source::calendar::test_calendar_resolution
-        match self.calendar_algorithm {
-            Some(CalendarAlgorithm::Hijri(None)) => match region {
-                Some("AE" | "BH" | "KW" | "QA" | "SA") => {
-                    CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Umalqura))
-                }
-                _ => CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil)),
-            },
-            Some(a) => a,
-            None => match region {
-                Some("TH") => CalendarAlgorithm::Buddhist,
-                Some("AF" | "IR") => CalendarAlgorithm::Persian,
-                _ => CalendarAlgorithm::Gregory,
-            },
-        }
-    }
 }
 
 impl AnyCalendarKind {

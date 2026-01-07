@@ -4,22 +4,12 @@
 
 //! Functions for region-specific weekday information.
 
+use crate::preferences::{FirstDay, WeekPreferences};
 use crate::{error::RangeError, provider::*, types::Weekday};
-use icu_locale_core::preferences::{define_preferences, extensions::unicode::keywords::FirstDay};
 use icu_provider::prelude::*;
 
 /// Minimum number of days in a month unit required for using this module
 const MIN_UNIT_DAYS: u16 = 14;
-
-define_preferences!(
-    /// The preferences for the week information.
-    [Copy]
-    WeekPreferences,
-    {
-        /// The first day of the week
-        first_weekday: FirstDay
-    }
-);
 
 /// Information about the first day of the week and the weekend.
 ///
