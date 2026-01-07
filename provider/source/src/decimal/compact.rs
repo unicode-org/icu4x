@@ -116,16 +116,15 @@ impl IterableDataProviderCached<LongCompactDecimalFormatDataV1> for SourceDataPr
 mod tests {
     use super::*;
     use icu::locale::langid;
-    use std::borrow::Cow;
-    use zerofrom::ZeroFrom;
-    use zerovec::ule::AsULE;
+    use icu::plurals::PluralElements;
+    use icu_pattern::SinglePlaceholderPattern;
 
     #[test]
 
     fn test_compact_long() {
         let provider = SourceDataProvider::new_testing();
 
-        let fr_compact_long: DataPayload<LongCompactDecimalFormatDataV1> = provider
+        let en_compact_long: DataPayload<LongCompactDecimalFormatDataV1> = provider
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
                 ..Default::default()
@@ -133,54 +132,50 @@ mod tests {
             .unwrap()
             .payload;
 
-        let nonzero_copy: Box<[(i8, Count, Pattern)]> = fr_compact_long
+        let nonzero_copy: Box<[_]> = en_compact_long
             .get()
             .patterns
-            .iter0()
-            .flat_map(|kkv| {
-                let key0 = *kkv.key0();
-                kkv.into_iter1()
-                    .map(move |(k, v)| (key0, Count::from_unaligned(*k), Pattern::zero_from(v)))
-            })
+            .iter()
+            .map(|t| (t.sized, t.variable.decode().map(|(a, b)| (a.get(), b))))
             .collect();
         assert_eq!(
             nonzero_copy.as_ref(),
             [
                 (
                     3,
-                    Count::Other,
-                    Pattern {
-                        index: 0,
-                        exponent: 3,
-                        literal_text: Cow::Borrowed(" thousand")
-                    }
+                    PluralElements::new((
+                        0,
+                        SinglePlaceholderPattern::try_from_str("{0} thousand", Default::default())
+                            .unwrap()
+                            .as_ref()
+                    ))
                 ),
                 (
                     6,
-                    Count::Other,
-                    Pattern {
-                        index: 0,
-                        exponent: 6,
-                        literal_text: Cow::Borrowed(" million")
-                    }
+                    PluralElements::new((
+                        0,
+                        SinglePlaceholderPattern::try_from_str("{0} million", Default::default())
+                            .unwrap()
+                            .as_ref()
+                    ))
                 ),
                 (
                     9,
-                    Count::Other,
-                    Pattern {
-                        index: 0,
-                        exponent: 9,
-                        literal_text: Cow::Borrowed(" billion")
-                    }
+                    PluralElements::new((
+                        0,
+                        SinglePlaceholderPattern::try_from_str("{0} billion", Default::default())
+                            .unwrap()
+                            .as_ref()
+                    ))
                 ),
                 (
                     12,
-                    Count::Other,
-                    Pattern {
-                        index: 0,
-                        exponent: 12,
-                        literal_text: Cow::Borrowed(" trillion")
-                    }
+                    PluralElements::new((
+                        0,
+                        SinglePlaceholderPattern::try_from_str("{0} trillion", Default::default())
+                            .unwrap()
+                            .as_ref()
+                    ))
                 ),
             ]
         );
@@ -190,62 +185,58 @@ mod tests {
     fn test_compact_short() {
         let provider = SourceDataProvider::new_testing();
 
-        let ja_compact_short: DataResponse<ShortCompactDecimalFormatDataV1> = provider
+        let ja_compact_short: DataPayload<ShortCompactDecimalFormatDataV1> = provider
             .load(DataRequest {
                 id: DataIdentifierCow::from_locale(langid!("ja").into()).as_borrowed(),
                 ..Default::default()
             })
-            .unwrap();
+            .unwrap()
+            .payload;
 
-        let nonzero_copy: Box<[(i8, Count, Pattern)]> = ja_compact_short
-            .payload
+        let nonzero_copy: Box<[_]> = ja_compact_short
             .get()
             .patterns
-            .iter0()
-            .flat_map(|kkv| {
-                let key0 = *kkv.key0();
-                kkv.into_iter1()
-                    .map(move |(k, v)| (key0, Count::from_unaligned(*k), Pattern::zero_from(v)))
-            })
+            .iter()
+            .map(|t| (t.sized, t.variable.decode().map(|(a, b)| (a.get(), b))))
             .collect();
         assert_eq!(
             nonzero_copy.as_ref(),
             [
                 (
                     4,
-                    Count::Other,
-                    Pattern {
-                        index: 0,
-                        exponent: 4,
-                        literal_text: Cow::Borrowed("万")
-                    }
+                    PluralElements::new((
+                        0,
+                        SinglePlaceholderPattern::try_from_str("{0}万", Default::default())
+                            .unwrap()
+                            .as_ref()
+                    ))
                 ),
                 (
                     8,
-                    Count::Other,
-                    Pattern {
-                        index: 0,
-                        exponent: 8,
-                        literal_text: Cow::Borrowed("億")
-                    }
+                    PluralElements::new((
+                        0,
+                        SinglePlaceholderPattern::try_from_str("{0}億", Default::default())
+                            .unwrap()
+                            .as_ref()
+                    ))
                 ),
                 (
                     12,
-                    Count::Other,
-                    Pattern {
-                        index: 0,
-                        exponent: 12,
-                        literal_text: Cow::Borrowed("兆")
-                    }
+                    PluralElements::new((
+                        0,
+                        SinglePlaceholderPattern::try_from_str("{0}兆", Default::default())
+                            .unwrap()
+                            .as_ref()
+                    ))
                 ),
                 (
                     16,
-                    Count::Other,
-                    Pattern {
-                        index: 0,
-                        exponent: 16,
-                        literal_text: Cow::Borrowed("京")
-                    }
+                    PluralElements::new((
+                        0,
+                        SinglePlaceholderPattern::try_from_str("{0}京", Default::default())
+                            .unwrap()
+                            .as_ref()
+                    ))
                 )
             ]
         );
