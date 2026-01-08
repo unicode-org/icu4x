@@ -5,7 +5,7 @@
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
 /// * 1280B for the lookup data structure (205 data identifiers)
-/// * 20147B[^1] for the actual data (117 unique structs)
+/// * 19857B[^1] for the actual data (116 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 ///
@@ -23,7 +23,7 @@ macro_rules! __impl_short_compact_decimal_format_data_v1 {
         #[clippy::msrv = "1.83"]
         impl $provider {
             const DATA_SHORT_COMPACT_DECIMAL_FORMAT_DATA_V1: icu_provider::baked::zerotrie::Data<icu::experimental::compactdecimal::provider::ShortCompactDecimalFormatDataV1> = {
-                const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1yabcdefghijklmnoprstuvwxyz\0\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x03\x03\x03\x03\x03\x03\x04\x04\x04\x04\x04\xD8\x1B4K\x82\xB5\xCC\xF0\0\x0F\x90\xA7\xE6\x03\r5J\x9B\xD7\x13\x1C\x1F*Q\xC5fmrsz\x01\x02\xC6\xCD\x80\x81\x82\xC2\x1E-\x05arab\x82\xCEBDEIJKLMOPQSTY\x07\x0E\x1E.5ELSZah\x90\x97H\x1Elatn\x82J\x1Elatn\x82\xC2GR\x06\x1Elatn\x82\x1Elatn\x82\xC2LQ\x06\x1Elatn\x82\x1Elatn\x82O\x1Elatn\x82\xC2MW\x06\x1Elatn\x82\x1Elatn\x82B\x1Elatn\x82R\x1Elatn\x82M\x1Elatn\x82S\x1Elatn\x82A\x1Elatn\x82\xC5ADOSY\x06\x0C\x12\x18\x1Elatn\x82\x1Elatn\x82\x1Elatn\x82\x1Elatn\x82\x1Elatn\x82D\x1Elatn\x82E\x1Elatn\x82\x83\x1Elatn\x83\x84\xC8aeghlnrs\x08\t\x12\x1A\x1C#,\x85l-Latn\x86\x87\x88c\x1Elatn\x90Xo\x1Elatn\x90Xo\x89\x8A\x1Elatn\x8A\x8Bx\x8C\x1Edeva\x8C\x8D-Cyrl\x8E\xC6aehsvy\x01\x04\x07\t\x0B\x8Fb\x90\0r\x90\0\x90\x01\x90\x02\x90\0\xC4aeos\x02\x04\x0C\x90\x03\x90\x04i\x1Edeva\x90Xb\x90\x05\xC7elnostu\x02\x04\x11\x12%'\x90\0\x90\x06\x90\x07-\xC2GI\x03B\x90\x08N\x90\t\x8B\x90\n-\xC34MU\x04\x0719\x90\x0BX\x90\x0CS\x90\r\x90\x0E\x90\x0F\xC6afiory\t\x17\x1C\x1E%\x90\x10\x1Elatn\x90\x10-Adlm\x90\x11\x1Elatn\x90\x11\x90\x12l\x90\0\x90\x13\x90\x14-CA\x90\x15\x90\x16\xC4adlu\x02\x04\x06\x90\x17\x90\0\x90\x0F\x90\x18\x1Egujr\x90\x18\xC7aeirsuy\x02\x04\r\x0F\x12\x14\x90\x19\x90\x1A\x90\x1B\x1Edeva\x90\x1B\x90\x1Cb\x90\x05\x90\x1D\x90\x1E\xC4adst\x02\x04\x06\x90\x1F\x90 \x90!\x90\"\xC2av\x02\x90#\x90$\x1Ejava\x90$\xCBaegkmnosuxy\x02\x05\x08\x11\x1A#8?Ai\x90%a\x90&p\x90'\x90(-Arab\x90)\x90*\x1Ekhmr\x90*\x90+\x1Eknda\x90+\x90,k\x90-\xC2\x1E-\x06deva\x90-Latn\x90.\x1Elatn\x90X\x90/v\x900-\xC3DOT\n\x14eva\x1Edeva\x90Xrya\x1Eorya\x90Xelu\x1Etelu\x90X\x901\xC4botv\x02\x0B\r\x902\x903\x1Elaoo\x90d\x904\x905\xC7aklnrsy\x08\n\x13\x1D&(i\x1Edeva\x90X\x906\x90\0\x1Emlym\x90\0\x907i\x1Elatn\x90X\x908\x1Elatn\x908\x909\x90:\x1Elatn\x90:\xC4eloq\t\x0B\r\x90;\x1Elatn\x90;\x90\x16\x90<o\x1Elatn\x90Xr\x90=\x1Eorya\x90=\xC5aclst\t\x0C\x0E\x17\x90>\x1Eguru\x90>m\x90\0\x90?\x90@\x1Elatn\x90@\x90'-PT\x90A\xC4amou\x08\n\x0Cj\x1Elatn\x90X\x90B\x90C\x87\xCBacdikloqrvw\x15\x17 \"$&(*24\xC3\x1Eht\x06\x08latn\x90X\x90D\x1Elatn\x90X\x90E\x90F\x1Elatn\x90F\x90G\x90\x01\x90H\x90\0\x90I\x90J-Latn\x8D\x90K\x90L-KE\x90M\xC9aeghikort\x0C\x15\x17 \"$&(\x90N\x1Etamldec\x90N\x90O\x1Etelu\x90O\x90P\x90\x07\x1Ethai\x90\x07\x90Q\x90R\x90S\x90T\x90U\xC5gknrz\x0C\x0E\x11)\x90V\x1Earabext\x90V\x90Wd\x90X\x90Y\xC2\x1E-\tarabext\x90YIN\x1Elatn\x90Y\x90Z-Cyrl\x90[\xC2ei\x03c\x90\\\x90]o\x90\x07nr\x90^\x1Edeva\x90^\xC2ru\x03l\x90_e\x90`\xC2\x1E-\thanidec\x90`Hans\x90a\x1Ehanidec\x90a\xC2hu>\x90b\xC2\x1E-\thanidec\x90b\xC2HM\x1E\xC2Ka\x0C\x90\x07\x1Ehanidec\x90\x07nt\x90c\x1Ehanidec\x90cO\x90\x07\x1Ehanidec\x90\x07\x90\0" };
+                const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1yabcdefghijklmnoprstuvwxyz\0\x01\x01\x01\x01\x01\x01\x01\x02\x02\x02\x02\x02\x03\x03\x03\x03\x03\x03\x04\x04\x04\x04\x04\xD8\x1B4K\x82\xB5\xCC\xF0\0\x0F\x90\xA7\xE6\x03\r5J\x9B\xD7\x13\x1C\x1F*Q\xC5fmrsz\x01\x02\xC6\xCD\x80\x81\x82\xC2\x1E-\x05arab\x82\xCEBDEIJKLMOPQSTY\x07\x0E\x1E.5ELSZah\x90\x97H\x1Elatn\x82J\x1Elatn\x82\xC2GR\x06\x1Elatn\x82\x1Elatn\x82\xC2LQ\x06\x1Elatn\x82\x1Elatn\x82O\x1Elatn\x82\xC2MW\x06\x1Elatn\x82\x1Elatn\x82B\x1Elatn\x82R\x1Elatn\x82M\x1Elatn\x82S\x1Elatn\x82A\x1Elatn\x82\xC5ADOSY\x06\x0C\x12\x18\x1Elatn\x82\x1Elatn\x82\x1Elatn\x82\x1Elatn\x82\x1Elatn\x82D\x1Elatn\x82E\x1Elatn\x82\x83\x1Elatn\x83\x84\xC8aeghlnrs\x08\t\x12\x1A\x1C#,\x85l-Latn\x86\x87\x88c\x1Elatn\x90Wo\x1Elatn\x90Wo\x89\x8A\x1Elatn\x8A\x8Bx\x8C\x1Edeva\x8C\x8D-Cyrl\x8E\xC6aehsvy\x01\x04\x07\t\x0B\x8Fb\x90\0r\x90\0\x90\x01\x90\x02\x90\0\xC4aeos\x02\x04\x0C\x90\x03\x90\x04i\x1Edeva\x90Wb\x90\x05\xC7elnostu\x02\x04\x11\x12%'\x90\0\x90\x06\x90\0-\xC2GI\x03B\x90\x07N\x90\x08\x8B\x90\t-\xC34MU\x04\x0719\x90\nX\x90\x0BS\x90\x0C\x90\r\x90\x0E\xC6afiory\t\x17\x1C\x1E%\x90\x0F\x1Elatn\x90\x0F-Adlm\x90\x10\x1Elatn\x90\x10\x90\x11l\x90\0\x90\x12\x90\x13-CA\x90\x14\x90\x15\xC4adlu\x02\x04\x06\x90\x16\x90\0\x90\x0E\x90\x17\x1Egujr\x90\x17\xC7aeirsuy\x02\x04\r\x0F\x12\x14\x90\x18\x90\x19\x90\x1A\x1Edeva\x90\x1A\x90\x1Bb\x90\x05\x90\x1C\x90\x1D\xC4adst\x02\x04\x06\x90\x1E\x90\x1F\x90 \x90!\xC2av\x02\x90\"\x90#\x1Ejava\x90#\xCBaegkmnosuxy\x02\x05\x08\x11\x1A#8?Ai\x90$a\x90%p\x90&\x90'-Arab\x90(\x90)\x1Ekhmr\x90)\x90*\x1Eknda\x90*\x90+k\x90,\xC2\x1E-\x06deva\x90,Latn\x90-\x1Elatn\x90W\x90.v\x90/-\xC3DOT\n\x14eva\x1Edeva\x90Wrya\x1Eorya\x90Welu\x1Etelu\x90W\x900\xC4botv\x02\x0B\r\x901\x902\x1Elaoo\x90c\x903\x904\xC7aklnrsy\x08\n\x13\x1D&(i\x1Edeva\x90W\x905\x90\0\x1Emlym\x90\0\x906i\x1Elatn\x90W\x907\x1Elatn\x907\x908\x909\x1Elatn\x909\xC4eloq\t\x0B\r\x90:\x1Elatn\x90:\x90\x15\x90;o\x1Elatn\x90Wr\x90<\x1Eorya\x90<\xC5aclst\t\x0C\x0E\x17\x90=\x1Eguru\x90=m\x90\0\x90>\x90?\x1Elatn\x90?\x90&-PT\x90@\xC4amou\x08\n\x0Cj\x1Elatn\x90W\x90A\x90B\x87\xCBacdikloqrvw\x15\x17 \"$&(*24\xC3\x1Eht\x06\x08latn\x90W\x90C\x1Elatn\x90W\x90D\x90E\x1Elatn\x90E\x90F\x90\x01\x90G\x90\0\x90H\x90I-Latn\x8D\x90J\x90K-KE\x90L\xC9aeghikort\x0C\x15\x17 \"$&(\x90M\x1Etamldec\x90M\x90N\x1Etelu\x90N\x90O\x90\0\x1Ethai\x90\0\x90P\x90Q\x90R\x90S\x90T\xC5gknrz\x0C\x0E\x11)\x90U\x1Earabext\x90U\x90Vd\x90W\x90X\xC2\x1E-\tarabext\x90XIN\x1Elatn\x90X\x90Y-Cyrl\x90Z\xC2ei\x03c\x90[\x90\\o\x90\0nr\x90]\x1Edeva\x90]\xC2ru\x03l\x90^e\x90_\xC2\x1E-\thanidec\x90_Hans\x90`\x1Ehanidec\x90`\xC2hu>\x90a\xC2\x1E-\thanidec\x90a\xC2HM\x1E\xC2Ka\x0C\x90\0\x1Ehanidec\x90\0nt\x90b\x1Ehanidec\x90bO\x90\0\x1Ehanidec\x90\0\x90\0" };
                 const VALUES: &'static [<icu::experimental::compactdecimal::provider::ShortCompactDecimalFormatDataV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct] = &[
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
                         patterns: unsafe {
@@ -40,7 +40,7 @@ macro_rules! __impl_short_compact_decimal_format_data_v1 {
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
                         patterns: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x04\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\0\0\0\x03\0\0\0\x08\0\0\0\r\0\0\0\x12\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x05\x05\0\x02\x03\x04\x05\0\x02\x03\x04\x05\0\x02\x03\x04\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x12\0\x0C\0\x16\0 \0\"\0$\0&\0(\x006\08\0:\0<\0>\0L\0N\0P\0R\0T\0\x03\0\xC2\xA0\xD8\xA2\xD9\x84\xD8\xA7\xD9\x81\x03\0\xC2\xA0\xD8\xA3\xD9\x84\xD9\x81\x03\0\xC2\xA0\xD8\xA3\xD9\x84\xD9\x81\0\0\0\0\0\0\0\0\x06\0\xC2\xA0\xD9\x85\xD9\x84\xD9\x8A\xD9\x88\xD9\x86\0\0\0\0\0\0\0\0\t\0\xC2\xA0\xD9\x85\xD9\x84\xD9\x8A\xD8\xA7\xD8\xB1\0\0\0\0\0\0\0\0\x0C\0\xC2\xA0\xD8\xAA\xD8\xB1\xD9\x84\xD9\x8A\xD9\x88\xD9\x86") })
+                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x04\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\0\0\0\x03\0\0\0\x04\0\0\0\x05\0\0\0\x06\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x05\x05\x05\x05\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x06\0\x0C\0\x16\0 \0.\0<\0\x03\0\xC2\xA0\xD8\xA2\xD9\x84\xD8\xA7\xD9\x81\x03\0\xC2\xA0\xD8\xA3\xD9\x84\xD9\x81\x03\0\xC2\xA0\xD8\xA3\xD9\x84\xD9\x81\x06\0\xC2\xA0\xD9\x85\xD9\x84\xD9\x8A\xD9\x88\xD9\x86\t\0\xC2\xA0\xD9\x85\xD9\x84\xD9\x8A\xD8\xA7\xD8\xB1\x0C\0\xC2\xA0\xD8\xAA\xD8\xB1\xD9\x84\xD9\x8A\xD9\x88\xD9\x86") })
                         },
                     },
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
@@ -52,7 +52,7 @@ macro_rules! __impl_short_compact_decimal_format_data_v1 {
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
                         patterns: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\0\0\0\x03\0\0\0\x04\0\0\0\x05\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x05\x05\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x02\0\x05\0\x0C\0\x14\0\0\0\x03\0K\x06\0\xC2\xA0mln\t\0\xC2\xA0mlrd\x0C\0\xC2\xA0trln") })
+                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\n\0\x12\0\x03\0K\x06\0\xC2\xA0mln\t\0\xC2\xA0mlrd\x0C\0\xC2\xA0trln") })
                         },
                     },
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
@@ -64,7 +64,7 @@ macro_rules! __impl_short_compact_decimal_format_data_v1 {
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
                         patterns: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x03\0\0\0\x04\0\0\0\x06\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x01\x05\x05\x01\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x06\0\x03\0\x05\0\x08\0\x0C\0\x0E\0\x03\0H\0\0\x06\0M\t\0Kr\0\0\x0C\0T") })
+                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x06\0\n\0\x03\0H\x06\0M\t\0Kr\x0C\0T") })
                         },
                     },
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
@@ -94,7 +94,7 @@ macro_rules! __impl_short_compact_decimal_format_data_v1 {
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
                         patterns: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x03\0\0\0\x05\0\0\0\x07\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x01\x05\x01\x05\x01\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x07\0\x03\0\x05\0\x08\0\n\0\r\0\x0F\0\x03\0k\0\0\x06\0M\0\0\t\0G\0\0\x0C\0T") })
+                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x06\0\t\0\x03\0k\x06\0M\t\0G\x0C\0T") })
                         },
                     },
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
@@ -124,7 +124,7 @@ macro_rules! __impl_short_compact_decimal_format_data_v1 {
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
                         patterns: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\0\0\0\x04\0\0\0\x05\0\0\0\x07\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x01\x05\x05\x01\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x07\0\x02\0\x05\0\x07\0\n\0\r\0\x0F\0\0\0\x03\0K\0\0\x06\0M\t\0B\0\0\x0C\0T") })
+                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x06\0\t\0\x03\0K\x06\0M\t\0B\x0C\0T") })
                         },
                     },
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
@@ -161,12 +161,6 @@ macro_rules! __impl_short_compact_decimal_format_data_v1 {
                         patterns: unsafe {
                             #[allow(unused_unsafe)]
                             zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x0B\0\x14\0\x1F\0\x03\0\xC2\xA0\xCF\x87\xCE\xB9\xCE\xBB.\x06\0\xC2\xA0\xCE\xB5\xCE\xBA.\t\0\xC2\xA0\xCE\xB4\xCE\xB9\xCF\x83.\x0C\0\xC2\xA0\xCF\x84\xCF\x81\xCE\xB9\xCF\x83.") })
-                        },
-                    },
-                    icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
-                        patterns: unsafe {
-                            #[allow(unused_unsafe)]
-                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x06\0\t\0\x03\0K\x06\0M\t\0B\x0C\0T") })
                         },
                     },
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
@@ -256,13 +250,13 @@ macro_rules! __impl_short_compact_decimal_format_data_v1 {
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
                         patterns: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\0\0\0\x03\0\0\0\x04\0\0\0\x05\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x05\x05\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x02\0\x05\0\r\0\x15\0\0\0\x03\0K\x06\0\xC2\xA0mln.\t\0\xC2\xA0mld.\x0C\0\xC2\xA0bln.") })
+                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x0B\0\x13\0\x03\0K\x06\0\xC2\xA0mln.\t\0\xC2\xA0mld.\x0C\0\xC2\xA0bln.") })
                         },
                     },
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
                         patterns: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x03\0\0\0\x04\0\0\0\x06\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x01\x05\x05\x01\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x06\0\x03\0\x05\0\x08\0\x0B\0\r\0\x03\0k\0\0\x06\0M\t\0B\0\0\x0C\0T") })
+                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x06\0\t\0\x03\0k\x06\0M\t\0B\x0C\0T") })
                         },
                     },
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
@@ -274,7 +268,7 @@ macro_rules! __impl_short_compact_decimal_format_data_v1 {
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
                         patterns: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x04\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x04\0\0\0\x05\0\0\0\x07\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x01\x05\x05\x01\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x07\0\x03\0\x06\0\x08\0\x0B\0\x0E\0\x10\0\x03\0K\x03\0D\0\0\x06\0M\t\0B\0\0\x0C\0T") })
+                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x04\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0\x05\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x03\0\x06\0\t\0\x0C\0\x03\0K\x03\0D\x06\0M\t\0B\x0C\0T") })
                         },
                     },
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
@@ -508,7 +502,7 @@ macro_rules! __impl_short_compact_decimal_format_data_v1 {
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
                         patterns: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0B\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\0\0\0\x04\0\0\0\x05\0\0\0\x07\0\0\0\t\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x01\x05\x05\x01\x05\x01\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\t\0\x02\0\x05\0\x07\0\n\0\r\0\x10\0\x13\0\x15\0\0\0\x03\0K\0\0\x06\0M\t\0B\t\0G\t\0B\0\0\x0C\0T") })
+                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0B\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x05\0\0\0\x06\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x01\x05\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x06\0\x03\0\x06\0\t\0\x0C\0\x0F\0\x03\0K\x06\0M\t\0B\t\0G\t\0B\x0C\0T") })
                         },
                     },
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
@@ -640,7 +634,7 @@ macro_rules! __impl_short_compact_decimal_format_data_v1 {
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {
                         patterns: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x05\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x01\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x08\0\x16\0&\0(\0\x03\0\xD9\x85\xD9\x89\xDA\xAD\x06\0\xD9\x85\xD9\x89\xD9\x84\xD9\x8A\xD9\x88\xD9\x86\t\0\xD9\x85\xD9\x89\xD9\x84\xD9\x8A\xD8\xA7\xD8\xB1\xD8\xAF\0\0\x0C\0T") })
+                            zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x08\0\x16\0&\0\x03\0\xD9\x85\xD9\x89\xDA\xAD\x06\0\xD9\x85\xD9\x89\xD9\x84\xD9\x8A\xD9\x88\xD9\x86\t\0\xD9\x85\xD9\x89\xD9\x84\xD9\x8A\xD8\xA7\xD8\xB1\xD8\xAF\x0C\0T") })
                         },
                     },
                     icu::experimental::compactdecimal::provider::CompactDecimalPatternData {

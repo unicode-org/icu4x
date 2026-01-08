@@ -8,7 +8,6 @@ use icu::experimental::compactdecimal::provider::*;
 use itertools::Itertools;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
-use std::collections::BTreeSet;
 use std::collections::HashMap;
 use zerovec::ule::encode_varule_to_box;
 
@@ -206,23 +205,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternData<'static> {
                     },
                 )?;
         }
-        // Figure out which plural cases are used, and make the map dense by
-        // filling out the implicit fallbacks to the 0 (noncompact) pattern.
-        let plural_cases: BTreeSet<Count> = parsed_patterns
-            .iter()
-            .flat_map(|(_, plural_map)| plural_map.keys())
-            .copied()
-            .filter(|count| count != &Count::Explicit1)
-            .collect();
-        for log10_type in 0..=parsed_patterns.iter().last().map_or(0, |(key, _)| *key) {
-            for plural_case in &plural_cases {
-                parsed_patterns
-                    .entry(log10_type)
-                    .or_default()
-                    .entry(*plural_case)
-                    .or_insert(None);
-            }
-        }
+
         let mut patterns: BTreeMap<i8, BTreeMap<Count, Pattern>> = BTreeMap::new();
         // Compute the exponents based on the numbers of 0s in the placeholders
         // and the type values: the exponent is 3 for type=1000, "0K", as well
@@ -352,9 +335,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternData<'static> {
                     }
                 },
             )
-            .filter(|(log10_type, plural_map)| {
-                **log10_type != 0 || !plural_map.iter().all(|(_, pattern)| pattern.exponent == 0)
-            });
+            .filter(|(_, plural_map)| !plural_map.iter().all(|(_, pattern)| pattern.exponent == 0));
         // Turn the BTreeMap of BTreeMaps into a ZeroMap2d.
         Ok(CompactDecimalPatternData {
             patterns: deduplicated_patterns
