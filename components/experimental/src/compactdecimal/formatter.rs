@@ -755,4 +755,13 @@ mod tests {
             assert_writeable_eq!(result10T, case.expected10T, "{:?}", case);
         }
     }
+
+    #[test]
+    fn regression_7387() {
+        let formatter =
+            CompactDecimalFormatter::try_new_short(locale!("ar").into(), Default::default())
+                .unwrap();
+
+        assert_writeable_eq!(formatter.format_i64(3_000_000), "3\u{a0}مليون");
+    }
 }
