@@ -7,6 +7,7 @@ use crate::SourceDataProvider;
 use icu::calendar::AnyCalendarKind;
 use icu_provider::prelude::*;
 
+mod available_formats;
 mod names;
 mod skeletons;
 mod week_data;
