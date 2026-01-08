@@ -470,20 +470,23 @@ impl CompactDecimalFormatter {
     ///     short_english.format_fixed_decimal(&"-1172700".parse().unwrap()),
     ///     "-1.2M"
     /// );
+    /// assert_writeable_eq!(
+    ///     short_english.format_fixed_decimal(&"0.2222".parse().unwrap()),
+    ///     "0.22"
+    /// );
     /// ```
     pub fn format_fixed_decimal(&self, value: &Decimal) -> FormattedCompactDecimal<'_> {
         let log10_type = value.absolute.nonzero_magnitude_start();
         let (mut plural_map, mut exponent) = self.plural_map_and_exponent_for_magnitude(log10_type);
         let mut significand = value.clone();
         significand.multiply_pow10(-i16::from(exponent));
-        // If we have just one digit before the decimal point…
-        if significand.absolute.nonzero_magnitude_start() == 0 {
-            // …round to one fractional digit…
-            significand.round(-1);
-        } else {
-            // …otherwise, we have at least 2 digits before the decimal point,
-            // so round to eliminate the fractional part.
+        // If we have at least 2 digits before the decimal point,
+        // round to eliminate the fractional part.
+        if significand.absolute.nonzero_magnitude_start() > 0 {
             significand.round(0);
+        } else {
+            // …otherwise, round to two significant digits
+            significand.round(significand.absolute.nonzero_magnitude_start() - 1);
         }
         let rounded_magnitude =
             significand.absolute.nonzero_magnitude_start() + i16::from(exponent);
