@@ -9,7 +9,7 @@ use icu_provider::prelude::*;
 
 mod available_formats;
 mod names;
-mod skeletons;
+mod semantic_skeletons;
 mod week_data;
 
 /// These are the calendars that datetime needs names for. They are roughly the
