@@ -21,7 +21,7 @@ use zerovec::VarZeroCow;
 /// Most keys don't have short symbols (except weekdays)
 ///
 /// We may further investigate and kick out standalone for some keys
-const NORMAL_KEY_LENGTHS: &[&DataMarkerAttributes] = &[
+const NORMAL_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::ABBR,
     marker_attrs::NARROW,
     marker_attrs::WIDE,
@@ -30,8 +30,8 @@ const NORMAL_KEY_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::WIDE_STANDALONE,
 ];
 
-/// Lengths for month data (NORMAL_KEY_LENGTHS + numeric)
-const NUMERIC_MONTHS_KEY_LENGTHS: &[&DataMarkerAttributes] = &[
+/// Lengths for month data (NORMAL_MARKER_LENGTHS + numeric)
+const NUMERIC_MONTHS_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::ABBR,
     marker_attrs::NARROW,
     marker_attrs::WIDE,
@@ -42,11 +42,11 @@ const NUMERIC_MONTHS_KEY_LENGTHS: &[&DataMarkerAttributes] = &[
 ];
 
 /// Lengths for year data (does not do standalone formatting)
-const YEARS_KEY_LENGTHS: &[&DataMarkerAttributes] =
+const YEARS_MARKER_LENGTHS: &[&DataMarkerAttributes] =
     &[marker_attrs::ABBR, marker_attrs::NARROW, marker_attrs::WIDE];
 
 /// All possible non-numeric lengths
-const FULL_KEY_LENGTHS: &[&DataMarkerAttributes] = &[
+const FULL_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::ABBR,
     marker_attrs::NARROW,
     marker_attrs::WIDE,
@@ -58,7 +58,7 @@ const FULL_KEY_LENGTHS: &[&DataMarkerAttributes] = &[
 ];
 
 /// Lengths for glue patterns
-const GLUE_PATTERN_KEY_LENGTHS: &[&DataMarkerAttributes] = &[
+const GLUE_PATTERN_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::PATTERN_LONG_DT,
     marker_attrs::PATTERN_MEDIUM_DT,
     marker_attrs::PATTERN_SHORT_DT,
@@ -74,7 +74,7 @@ const GLUE_PATTERN_KEY_LENGTHS: &[&DataMarkerAttributes] = &[
 ];
 
 impl SourceDataProvider {
-    fn load_datetime_key<M: DataMarker>(
+    fn load_datetime_marker<M: DataMarker>(
         &self,
         req: DataRequest,
         calendar: DatagenCalendar,
@@ -110,7 +110,7 @@ impl SourceDataProvider {
     where
         Self: IterableDataProviderCached<M>,
     {
-        self.load_datetime_key(req, calendar, |id, data| {
+        self.load_datetime_marker(req, calendar, |id, data| {
             let Some((context, length)) = marker_attrs::name_marker_attr_info(id.marker_attributes)
             else {
                 panic!(
@@ -131,7 +131,7 @@ impl SourceDataProvider {
     where
         Self: IterableDataProviderCached<M>,
     {
-        self.load_datetime_key(req, calendar, |id, data| {
+        self.load_datetime_marker(req, calendar, |id, data| {
             let Some((length, glue_type)) =
                 marker_attrs::pattern_marker_attr_info_for_glue(id.marker_attributes)
             else {
@@ -565,7 +565,7 @@ macro_rules! impl_pattern_datagen {
 impl_symbols_datagen!(
     WeekdayNamesV1,
     DatagenCalendar::Gregorian,
-    FULL_KEY_LENGTHS,
+    FULL_MARKER_LENGTHS,
     weekday_convert
 );
 
@@ -573,7 +573,7 @@ impl_symbols_datagen!(
 impl_symbols_datagen!(
     DayPeriodNamesV1,
     DatagenCalendar::Gregorian,
-    NORMAL_KEY_LENGTHS,
+    NORMAL_MARKER_LENGTHS,
     dayperiods_convert
 );
 
@@ -581,79 +581,79 @@ impl_symbols_datagen!(
 impl_symbols_datagen!(
     DatetimeNamesYearBuddhistV1,
     DatagenCalendar::Buddhist,
-    YEARS_KEY_LENGTHS,
+    YEARS_MARKER_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesYearChineseV1,
     DatagenCalendar::Chinese,
-    YEARS_KEY_LENGTHS,
+    YEARS_MARKER_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesYearCopticV1,
     DatagenCalendar::Coptic,
-    YEARS_KEY_LENGTHS,
+    YEARS_MARKER_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesYearDangiV1,
     DatagenCalendar::Dangi,
-    YEARS_KEY_LENGTHS,
+    YEARS_MARKER_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesYearEthiopianV1,
     DatagenCalendar::Ethiopic,
-    YEARS_KEY_LENGTHS,
+    YEARS_MARKER_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesYearGregorianV1,
     DatagenCalendar::Gregorian,
-    YEARS_KEY_LENGTHS,
+    YEARS_MARKER_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesYearHebrewV1,
     DatagenCalendar::Hebrew,
-    YEARS_KEY_LENGTHS,
+    YEARS_MARKER_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesYearIndianV1,
     DatagenCalendar::Indian,
-    YEARS_KEY_LENGTHS,
+    YEARS_MARKER_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesYearHijriV1,
     DatagenCalendar::Hijri,
-    YEARS_KEY_LENGTHS,
+    YEARS_MARKER_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesYearJapaneseV1,
     DatagenCalendar::JapaneseModern,
-    YEARS_KEY_LENGTHS,
+    YEARS_MARKER_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesYearJapanextV1,
     DatagenCalendar::JapaneseExtended,
-    YEARS_KEY_LENGTHS,
+    YEARS_MARKER_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesYearPersianV1,
     DatagenCalendar::Persian,
-    YEARS_KEY_LENGTHS,
+    YEARS_MARKER_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesYearRocV1,
     DatagenCalendar::Roc,
-    YEARS_KEY_LENGTHS,
+    YEARS_MARKER_LENGTHS,
     years_convert
 );
 
@@ -661,79 +661,79 @@ impl_symbols_datagen!(
 impl_symbols_datagen!(
     DatetimeNamesMonthBuddhistV1,
     DatagenCalendar::Buddhist,
-    NORMAL_KEY_LENGTHS,
+    NORMAL_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthChineseV1,
     DatagenCalendar::Chinese,
-    NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
+    NUMERIC_MONTHS_MARKER_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthCopticV1,
     DatagenCalendar::Coptic,
-    NORMAL_KEY_LENGTHS,
+    NORMAL_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthDangiV1,
     DatagenCalendar::Dangi,
-    NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
+    NUMERIC_MONTHS_MARKER_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthEthiopianV1,
     DatagenCalendar::Ethiopic,
-    NORMAL_KEY_LENGTHS,
+    NORMAL_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthGregorianV1,
     DatagenCalendar::Gregorian,
-    NORMAL_KEY_LENGTHS,
+    NORMAL_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthHebrewV1,
     DatagenCalendar::Hebrew,
-    NORMAL_KEY_LENGTHS,
+    NORMAL_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthIndianV1,
     DatagenCalendar::Indian,
-    NORMAL_KEY_LENGTHS,
+    NORMAL_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthHijriV1,
     DatagenCalendar::Hijri,
-    NORMAL_KEY_LENGTHS,
+    NORMAL_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthJapaneseV1,
     DatagenCalendar::JapaneseModern,
-    NORMAL_KEY_LENGTHS,
+    NORMAL_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthJapanextV1,
     DatagenCalendar::JapaneseExtended,
-    NORMAL_KEY_LENGTHS,
+    NORMAL_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthPersianV1,
     DatagenCalendar::Persian,
-    NORMAL_KEY_LENGTHS,
+    NORMAL_MARKER_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
     DatetimeNamesMonthRocV1,
     DatagenCalendar::Roc,
-    NORMAL_KEY_LENGTHS,
+    NORMAL_MARKER_LENGTHS,
     months_convert
 );
 
@@ -744,7 +744,7 @@ impl_symbols_datagen!(
 impl_pattern_datagen!(
     DatetimePatternsGlueV1,
     DatagenCalendar::Gregorian,
-    GLUE_PATTERN_KEY_LENGTHS,
+    GLUE_PATTERN_MARKER_LENGTHS,
     datetimepattern_convert
 );
 

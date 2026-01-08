@@ -257,7 +257,7 @@ impl SourceDataProvider {
                         ..
                     } => {
                         // TODO(#4478): Use CLDR data when it becomes available
-                        // TODO: Set the length to NeoSkeletonLength? Or not, because
+                        // TODO: Set the length to _markerSkeletonLength? Or not, because
                         // the era should normally be displayed as short?
                         let mut components_with_full_year = components;
                         components_with_full_year.year = Some(components::Year::Numeric);
