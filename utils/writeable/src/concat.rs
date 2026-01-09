@@ -33,7 +33,7 @@ use core::fmt;
 ///     fn try_write_to_parts<W: writeable::PartsWrite + ?Sized>(&self, _sink: &mut W) -> Result<Result<(), Self::Error>, core::fmt::Error> {
 ///         // Unreachable panic: the first Writeable errors,
 ///         // so the second Writeable is not evaluated.
-///         panic!()
+///         panic!("this is a test to demonstrate unreachable code")
 ///     }
 /// }
 ///
