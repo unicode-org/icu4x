@@ -70,8 +70,8 @@ mod ummalqura_data;
 ///
 /// 1. [`UmmAlQura`], used in Saudi Arabia, is based on official predictions of crescent
 ///    timings published by the KACST.
-/// 2. [`TabularAlgorithm`], used by certain denominations such as Dawoodi Bohra, is
-///    based on a proleptic approximation of the length of a lunar year.
+/// 2. [`TabularAlgorithm`] is based on a proleptic approximation of the length of a lunar year.
+///    See the docs for information on the branches of Islam using it.
 ///
 /// # Calendar drift
 ///
@@ -278,6 +278,10 @@ impl Rules for UmmAlQura {
 /// See [`TabularAlgorithmEpoch`] and [`TabularAlgorithmLeapYears`] for customization.
 ///
 /// The most common version of these rules uses [`TabularAlgorithmEpoch::Friday`] and [`TabularAlgorithmLeapYears::TypeII`].
+///
+/// Tabular Islamic rules are used in denominations such as Dawoodi Bohra and other branches of Ismailism.
+/// Be sure to select the correct leap year and epoch parameters according to your use case. If ICU4X does
+/// not implement the parameters you need, please file an issue.
 ///
 /// When constructed with [`TabularAlgorithmLeapYears::TypeII`], and either [`TabularAlgorithmEpoch::Friday`] or [`TabularAlgorithmEpoch::Thursday`],
 /// this corresponds to the `"islamic-civil"` and `"islamic-tbla"` [CLDR calendars](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier) respectively.
