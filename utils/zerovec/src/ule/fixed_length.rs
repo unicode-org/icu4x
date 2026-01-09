@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::ule::{EncodeAsVarULE, UleError, VarULE};
+use crate::ule::{EncodeAsVarULE, ULE, UleError, VarULE};
 use core::fmt;
 use core::marker::PhantomData;
 use core::ops::Deref;
@@ -92,4 +92,16 @@ impl<const N: usize, V: VarULE + ?Sized> Deref for FixedLengthVarULE<N, V> {
     fn deref(&self) -> &Self::Target {
         self.as_varule()
     }
+}
+
+impl FixedLengthVarULE<0, str> {
+    /// The empty string as a [`FixedLengthVarULE`].
+    // Safety: the empty slice is a valid str
+    pub const EMPTY_STR: Self = unsafe { Self::new_unchecked([]) };
+}
+
+impl<T: ULE> FixedLengthVarULE<0, [T]> {
+    /// The empty slice as a [`FixedLengthVarULE`].
+    // Safety: the empty slice is a valid str
+    pub const EMPTY_SLICE: Self = unsafe { Self::new_unchecked([]) };
 }
