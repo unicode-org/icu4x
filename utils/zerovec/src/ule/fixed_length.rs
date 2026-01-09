@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::ule::{EncodeAsVarULE, ULE, UleError, VarULE};
+use crate::ule::{EncodeAsVarULE, UleError, VarULE, ULE};
 use core::fmt;
 use core::marker::PhantomData;
 use core::ops::Deref;
@@ -14,23 +14,23 @@ use core::ops::Deref;
 /// # Examples
 ///
 /// ```
-/// use zerovec::ule::FixedLengthVarULE;
+/// use zerovec::ule::ConstStackVarULE;
 ///
-/// let container = FixedLengthVarULE::<13, str>::try_from_encodeable("hello, world!").unwrap();
+/// let container = ConstStackVarULE::<13, str>::try_from_encodeable("hello, world!").unwrap();
 ///
 /// assert_eq!(&*container, "hello, world!");
 ///
 /// // Returns an error if the container is not the correct size:
-/// FixedLengthVarULE::<20, str>::try_from_encodeable("hello, world!").unwrap_err();
+/// ConstStackVarULE::<20, str>::try_from_encodeable("hello, world!").unwrap_err();
 /// ```
 #[derive(Copy, Clone, PartialEq, Eq)]
-pub struct FixedLengthVarULE<const N: usize, V: VarULE + ?Sized> {
+pub struct ConstStackVarULE<const N: usize, V: VarULE + ?Sized> {
     /// Invariant: The bytes MUST be a valid VarULE representation of `V`.
     bytes: [u8; N],
     _marker: PhantomData<V>,
 }
 
-impl<const N: usize, V: VarULE + ?Sized> FixedLengthVarULE<N, V> {
+impl<const N: usize, V: VarULE + ?Sized> ConstStackVarULE<N, V> {
     /// Creates one of these from an [`EncodeAsVarULE`].
     ///
     /// Returns an error if the byte length in the container is not the correct length
@@ -58,7 +58,7 @@ impl<const N: usize, V: VarULE + ?Sized> FixedLengthVarULE<N, V> {
         }
     }
 
-    /// Returns the bytes backing this [`FixedLengthVarULE`], which are
+    /// Returns the bytes backing this [`ConstStackVarULE`], which are
     /// guaranteed to be a valid VarULE representation of `V`.
     pub const fn as_bytes(&self) -> &[u8; N] {
         &self.bytes
@@ -72,7 +72,7 @@ impl<const N: usize, V: VarULE + ?Sized> FixedLengthVarULE<N, V> {
     }
 }
 
-impl<const N: usize, V: VarULE + ?Sized> fmt::Debug for FixedLengthVarULE<N, V>
+impl<const N: usize, V: VarULE + ?Sized> fmt::Debug for ConstStackVarULE<N, V>
 where
     V: fmt::Debug,
 {
@@ -81,27 +81,27 @@ where
     }
 }
 
-impl<const N: usize, V: VarULE + ?Sized> AsRef<V> for FixedLengthVarULE<N, V> {
+impl<const N: usize, V: VarULE + ?Sized> AsRef<V> for ConstStackVarULE<N, V> {
     fn as_ref(&self) -> &V {
         self.as_varule()
     }
 }
 
-impl<const N: usize, V: VarULE + ?Sized> Deref for FixedLengthVarULE<N, V> {
+impl<const N: usize, V: VarULE + ?Sized> Deref for ConstStackVarULE<N, V> {
     type Target = V;
     fn deref(&self) -> &Self::Target {
         self.as_varule()
     }
 }
 
-impl FixedLengthVarULE<0, str> {
-    /// The empty string as a [`FixedLengthVarULE`].
+impl ConstStackVarULE<0, str> {
+    /// The empty string as a [`ConstStackVarULE`].
     // Safety: the empty slice is a valid str
     pub const EMPTY_STR: Self = unsafe { Self::new_unchecked([]) };
 }
 
-impl<T: ULE> FixedLengthVarULE<0, [T]> {
-    /// The empty slice as a [`FixedLengthVarULE`].
+impl<T: ULE> ConstStackVarULE<0, [T]> {
+    /// The empty slice as a [`ConstStackVarULE`].
     // Safety: the empty slice is a valid str
     pub const EMPTY_SLICE: Self = unsafe { Self::new_unchecked([]) };
 }

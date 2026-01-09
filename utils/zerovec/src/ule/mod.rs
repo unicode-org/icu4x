@@ -31,7 +31,7 @@ pub use chars::CharULE;
 #[cfg(feature = "alloc")]
 pub use encode::encode_varule_to_box;
 pub use encode::EncodeAsVarULE;
-pub use fixed_length::FixedLengthVarULE;
+pub use fixed_length::ConstStackVarULE;
 pub use multi::MultiFieldsULE;
 pub use niche::{NicheBytes, NichedOption, NichedOptionULE};
 pub use option::{OptionULE, OptionVarULE};
