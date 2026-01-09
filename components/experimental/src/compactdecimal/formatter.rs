@@ -6,20 +6,17 @@ use crate::compactdecimal::{
     format::FormattedCompactDecimal,
     options::CompactDecimalFormatterOptions,
     provider::{
-        CompactDecimalPatternData, Count, LongCompactDecimalFormatDataV1, PatternULE,
-        ShortCompactDecimalFormatDataV1,
+        CompactDecimalPatternData, LongCompactDecimalFormatDataV1, ShortCompactDecimalFormatDataV1,
     },
     ExponentError,
 };
 use alloc::borrow::Cow;
-use core::convert::TryFrom;
 use fixed_decimal::{CompactDecimal, Decimal};
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::{PluralRules, PluralRulesPreferences};
 use icu_provider::DataError;
 use icu_provider::{marker::ErasedMarker, prelude::*};
-use zerovec::maps::ZeroMap2dCursor;
 
 define_preferences!(
     /// The preferences for compact decimal formatting.
@@ -473,7 +470,10 @@ impl CompactDecimalFormatter {
     /// ```
     pub fn format_fixed_decimal(&self, value: &Decimal) -> FormattedCompactDecimal<'_> {
         let log10_type = value.absolute.nonzero_magnitude_start();
-        let (mut plural_map, mut exponent) = self.plural_map_and_exponent_for_magnitude(log10_type);
+        let (mut plural_map, mut exponent) = self
+            .compact_data
+            .get()
+            .patterns_and_exponent_for_magnitude(log10_type);
         let mut significand = value.clone();
         significand.multiply_pow10(-i16::from(exponent));
         // If we have just one digit before the decimal point…
@@ -491,11 +491,13 @@ impl CompactDecimalFormatter {
             // We got bumped up a magnitude by rounding.
             // This means that `significand` is a power of 10.
             let old_exponent = exponent;
-            // NOTE(egg): We could inline `plural_map_and_exponent_for_magnitude`
+            // NOTE(egg): We could inline `patterns_and_exponent_for_magnitude`
             // to avoid iterating twice (we only need to look at the next key),
             // but this obscures the logic and the map is tiny.
-            (plural_map, exponent) = self.plural_map_and_exponent_for_magnitude(rounded_magnitude);
-            significand = significand.clone();
+            (plural_map, exponent) = self
+                .compact_data
+                .get()
+                .patterns_and_exponent_for_magnitude(rounded_magnitude);
             significand.multiply_pow10(i16::from(old_exponent) - i16::from(exponent));
             // There is no need to perform any rounding: `significand`, being
             // a power of 10, is as round as it gets, and since `exponent` can
@@ -617,8 +619,10 @@ impl CompactDecimalFormatter {
         let log10_type =
             value.significand().absolute.nonzero_magnitude_start() + i16::from(value.exponent());
 
-        let (plural_map, expected_exponent) =
-            self.plural_map_and_exponent_for_magnitude(log10_type);
+        let (plural_map, expected_exponent) = self
+            .compact_data
+            .get()
+            .patterns_and_exponent_for_magnitude(log10_type);
         if value.exponent() != expected_exponent {
             return Err(ExponentError {
                 actual: value.exponent(),
@@ -659,29 +663,10 @@ impl CompactDecimalFormatter {
     /// assert_eq!(long_japanese.compact_exponent_for_magnitude(6), 4);
     /// ```
     pub fn compact_exponent_for_magnitude(&self, magnitude: i16) -> u8 {
-        let (_, exponent) = self.plural_map_and_exponent_for_magnitude(magnitude);
-        exponent
-    }
-
-    fn plural_map_and_exponent_for_magnitude(
-        &self,
-        magnitude: i16,
-    ) -> (Option<ZeroMap2dCursor<'_, '_, i8, Count, PatternULE>>, u8) {
-        let plural_map = self
-            .compact_data
+        self.compact_data
             .get()
-            .patterns
-            .iter0()
-            .filter(|cursor| i16::from(*cursor.key0()) <= magnitude)
-            .last();
-        let exponent = plural_map
-            .as_ref()
-            .and_then(|map| {
-                map.get1(&Count::Other)
-                    .and_then(|pattern| u8::try_from(pattern.exponent).ok())
-            })
-            .unwrap_or(0);
-        (plural_map, exponent)
+            .patterns_and_exponent_for_magnitude(magnitude)
+            .1
     }
 }
 

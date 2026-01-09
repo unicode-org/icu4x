@@ -1,32 +1,68 @@
 {
-  "patterns": {
-    "3": {
-      "Other": {
-        "exponent": 3,
-        "index": 0,
-        "literal_text": " thousand"
+  "patterns": [
+    {
+      "sized": 3,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " thousand"
+            }
+          ]
+        ]
       }
     },
-    "6": {
-      "Other": {
-        "exponent": 6,
-        "index": 0,
-        "literal_text": " million"
+    {
+      "sized": 6,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " million"
+            }
+          ]
+        ]
       }
     },
-    "9": {
-      "Other": {
-        "exponent": 9,
-        "index": 0,
-        "literal_text": " billion"
+    {
+      "sized": 9,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " billion"
+            }
+          ]
+        ]
       }
     },
-    "12": {
-      "Other": {
-        "exponent": 12,
-        "index": 0,
-        "literal_text": " trillion"
+    {
+      "sized": 12,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " trillion"
+            }
+          ]
+        ]
       }
     }
-  }
+  ]
 }

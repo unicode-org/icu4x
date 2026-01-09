@@ -1,32 +1,68 @@
 {
-  "patterns": {
-    "4": {
-      "Other": {
-        "exponent": 4,
-        "index": 0,
-        "literal_text": "万"
+  "patterns": [
+    {
+      "sized": 4,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": "万"
+            }
+          ]
+        ]
       }
     },
-    "8": {
-      "Other": {
-        "exponent": 8,
-        "index": 0,
-        "literal_text": "億"
+    {
+      "sized": 8,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": "億"
+            }
+          ]
+        ]
       }
     },
-    "12": {
-      "Other": {
-        "exponent": 12,
-        "index": 0,
-        "literal_text": "兆"
+    {
+      "sized": 12,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": "兆"
+            }
+          ]
+        ]
       }
     },
-    "16": {
-      "Other": {
-        "exponent": 16,
-        "index": 0,
-        "literal_text": "京"
+    {
+      "sized": 16,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": "京"
+            }
+          ]
+        ]
       }
     }
-  }
+  ]
 }
