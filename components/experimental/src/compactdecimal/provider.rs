@@ -14,6 +14,7 @@
 use icu_pattern::SinglePlaceholderPattern;
 use icu_plurals::provider::PluralElementsPackedULE;
 use icu_provider::prelude::*;
+use zerovec::ule::encode_varule_to_box;
 use zerovec::ule::vartuple::VarTupleULE;
 use zerovec::VarZeroVec;
 
@@ -71,6 +72,7 @@ pub struct CompactDecimalPatternData<'data> {
 
 impl CompactDecimalPatternData<'_> {
     /// The pattern `0`, which is used for low magnitudes and omitted from the data struct.
+    // Safety: the integrity of the VarULE is enforced in validate_plural_pattern_0_map
     pub const PLURAL_PATTERN_0: &'static PluralElementsPackedULE<SinglePlaceholderPattern> =
         unsafe { PluralElementsPackedULE::from_bytes_unchecked(&[0, 1]) };
 
@@ -92,13 +94,13 @@ fn validate_plural_pattern_0_map() {
     use icu_plurals::{provider::FourBitMetadata, PluralElements};
 
     assert_eq!(
-        CompactDecimalPatternData::PLURAL_PATTERN_0.decode(),
-        PluralElements::new((
+        CompactDecimalPatternData::PLURAL_PATTERN_0,
+        &*encode_varule_to_box(&PluralElements::new((
             FourBitMetadata::try_from_byte(0).unwrap(),
             SinglePlaceholderPattern::try_from_str("{0}", Default::default())
                 .unwrap()
                 .as_ref()
-        )),
+        )))
     );
 }
 
