@@ -27,11 +27,11 @@ use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 use zerovec::ule::vartuple::VarTuple;
 use zerovec::ule::vartuple::VarTupleULE;
-use zerovec::ule::AsULE;
 use zerovec::ule::EncodeAsVarULE;
 use zerovec::ule::UleError;
 use zerovec::ule::VarULE;
 use zerovec::ule::ULE;
+use zerovec::ule::{AsULE, FixedLengthVarULE};
 use zerovec::VarZeroSlice;
 
 pub mod rules;
@@ -480,6 +480,62 @@ where
     pub const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // Safety: the bytes are valid by trait invariant, and we are transparent over bytes
         core::mem::transmute(bytes)
+    }
+
+    /// Creates a singleton [`PluralElementsPackedULE`] in a const context.
+    ///
+    /// Const parameters:
+    ///
+    /// - `M`: the length of `input`
+    /// - `N`: the length of the return value which is `M + 1`
+    ///
+    /// When [generic_const_exprs] is stabilized, we will be able to add a new
+    /// function signature without both const parameters.
+    ///
+    /// # Panics
+    ///
+    /// Panics if N != M + 1.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::plurals::provider::PluralElementsPackedULE;
+    /// use icu::plurals::PluralRules;
+    /// use icu::locale::locale;
+    /// use zerovec::ule::FixedLengthVarULE;
+    ///
+    /// let value = "hello, world!"; // 13 bytes long
+    /// let inner_ule = FixedLengthVarULE::<13, str>::try_from_encodeable(value).unwrap();
+    /// let plural_ule = PluralElementsPackedULE::new_singleton_mn::<13, 14>(inner_ule);
+    /// let rules = PluralRules::try_new(locale!("en").into(), Default::default()).unwrap();
+    ///
+    /// assert_eq!(plural_ule.as_varule().get(0.into(), &rules).1, "hello, world!");
+    /// assert_eq!(plural_ule.as_varule().get(1.into(), &rules).1, "hello, world!");
+    /// assert_eq!(plural_ule.as_varule().get(2.into(), &rules).1, "hello, world!");
+    /// ```
+    ///
+    /// [generic_const_exprs]: https://doc.rust-lang.org/beta/unstable-book/language-features/generic-const-exprs.html#generic_const_exprs
+    pub const fn new_singleton_mn<const M: usize, const N: usize>(
+        input: FixedLengthVarULE<M, V>,
+    ) -> FixedLengthVarULE<N, PluralElementsPackedULE<V>> {
+        if N != M + 1 {
+            panic!(concat!(
+                "new_singleton_mn: N (",
+                stringify!(N),
+                ") != 1 + M (",
+                stringify!(M),
+                ")"
+            ));
+        }
+        let mut bytes = [0u8; N];
+        #[allow(clippy::unwrap_used)] // the bytes are nonempty because N > 0
+        let (start, remainder) = bytes.split_first_mut().unwrap();
+        remainder.copy_from_slice(input.as_bytes());
+        *start = 0;
+        // Safety: bytes are a valid representation of this type:
+        // 1. The first byte is 0 which indicates a singleton
+        // 2. The remainder is a valid V by invariant of the input parameter
+        unsafe { FixedLengthVarULE::new_unchecked(bytes) }
     }
 
     /// Returns a tuple with:
