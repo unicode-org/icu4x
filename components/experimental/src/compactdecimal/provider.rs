@@ -14,7 +14,6 @@
 use icu_pattern::SinglePlaceholderPattern;
 use icu_plurals::provider::PluralElementsPackedULE;
 use icu_provider::prelude::*;
-use zerovec::ule::encode_varule_to_box;
 use zerovec::ule::vartuple::VarTupleULE;
 use zerovec::VarZeroVec;
 
@@ -92,6 +91,7 @@ impl CompactDecimalPatternData<'_> {
 #[test]
 fn validate_plural_pattern_0_map() {
     use icu_plurals::{provider::FourBitMetadata, PluralElements};
+    use zerovec::ule::encode_varule_to_box;
 
     assert_eq!(
         CompactDecimalPatternData::PLURAL_PATTERN_0,
