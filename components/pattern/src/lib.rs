@@ -112,6 +112,30 @@ mod private {
 /// ```
 pub type SinglePlaceholderPattern = Pattern<SinglePlaceholder>;
 
+impl SinglePlaceholderPattern {
+    /// An instance of [`SinglePlaceholderPattern`] that has a single placeholder and adds no
+    /// prefix or suffix.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_pattern::SinglePlaceholderPattern;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// assert_eq!(
+    ///     SinglePlaceholderPattern::PASS_THROUGH,
+    ///     &*SinglePlaceholderPattern::try_from_str("{0}", Default::default()).unwrap()
+    /// );
+    ///
+    /// assert_writeable_eq!(
+    ///     SinglePlaceholderPattern::PASS_THROUGH.interpolate(["hello, world!"]),
+    ///     "hello, world!"
+    /// );
+    /// ```
+    pub const PASS_THROUGH: &'static SinglePlaceholderPattern =
+        SinglePlaceholderPattern::from_ref_store_unchecked("\x01");
+}
+
 /// # Examples
 ///
 /// ```
