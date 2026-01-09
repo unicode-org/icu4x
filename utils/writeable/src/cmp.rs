@@ -104,22 +104,17 @@ pub fn cmp_utf8(writeable: &impl Writeable, other: &[u8]) -> Ordering {
 /// ```
 /// use core::cmp::Ordering;
 ///
-/// let en = "en";
-/// let fr = "fr";
-/// let au = "AU";
-/// let us = "US";
-///
 /// assert_eq!(
 ///     Ordering::Less,
-///     writeable::cmp_str(&writeable::concat_writeable!(en, '-', au), "en-US")
+///     writeable::cmp_str(&writeable::concat_writeable!("loop", 1), "loop1")
 /// );
 /// assert_eq!(
 ///     Ordering::Equal,
-///     writeable::cmp_str(&writeable::concat_writeable!(en, '-', us), "en-US")
+///     writeable::cmp_str(&writeable::concat_writeable!("loop", 12), "loop12")
 /// );
 /// assert_eq!(
 ///     Ordering::Greater,
-///     writeable::cmp_str(&writeable::concat_writeable!(fr, '-', us), "en-US")
+///     writeable::cmp_str(&writeable::concat_writeable!("loop", 2), "loop2")
 /// );
 /// ```
 #[inline]
