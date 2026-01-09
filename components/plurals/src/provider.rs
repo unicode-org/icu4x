@@ -31,7 +31,7 @@ use zerovec::ule::EncodeAsVarULE;
 use zerovec::ule::UleError;
 use zerovec::ule::VarULE;
 use zerovec::ule::ULE;
-use zerovec::ule::{AsULE, ConstStackVarULE};
+use zerovec::ule::{AsULE, SizedVarULEBytes};
 use zerovec::VarZeroSlice;
 
 pub mod rules;
@@ -502,10 +502,10 @@ where
     /// use icu::plurals::provider::PluralElementsPackedULE;
     /// use icu::plurals::PluralRules;
     /// use icu::locale::locale;
-    /// use zerovec::ule::ConstStackVarULE;
+    /// use zerovec::ule::SizedVarULEBytes;
     ///
     /// let value = "hello, world!"; // 13 bytes long
-    /// let inner_ule = ConstStackVarULE::<13, str>::try_from_encodeable(value).unwrap();
+    /// let inner_ule = SizedVarULEBytes::<13, str>::try_from_encodeable(value).unwrap();
     /// let plural_ule = PluralElementsPackedULE::new_singleton_mn::<13, 14>(inner_ule);
     /// let rules = PluralRules::try_new(locale!("en").into(), Default::default()).unwrap();
     ///
@@ -520,10 +520,10 @@ where
     /// use icu::plurals::provider::PluralElementsPackedULE;
     /// use icu::plurals::PluralRules;
     /// use icu::locale::locale;
-    /// use zerovec::ule::ConstStackVarULE;
+    /// use zerovec::ule::SizedVarULEBytes;
     ///
-    /// const plural_ule: ConstStackVarULE<1, PluralElementsPackedULE<str>> =
-    ///     PluralElementsPackedULE::new_singleton_mn::<0, 1>(ConstStackVarULE::EMPTY_STR);
+    /// const plural_ule: SizedVarULEBytes<1, PluralElementsPackedULE<str>> =
+    ///     PluralElementsPackedULE::new_singleton_mn::<0, 1>(SizedVarULEBytes::EMPTY_STR);
     ///
     /// let rules = PluralRules::try_new(locale!("en").into(), Default::default()).unwrap();
     ///
@@ -534,8 +534,8 @@ where
     ///
     /// [generic_const_exprs]: https://doc.rust-lang.org/beta/unstable-book/language-features/generic-const-exprs.html#generic_const_exprs
     pub const fn new_singleton_mn<const M: usize, const N: usize>(
-        input: ConstStackVarULE<M, V>,
-    ) -> ConstStackVarULE<N, PluralElementsPackedULE<V>> {
+        input: SizedVarULEBytes<M, V>,
+    ) -> SizedVarULEBytes<N, PluralElementsPackedULE<V>> {
         #[allow(clippy::panic)] // for safety, and documented
         if N != M + 1 {
             panic!(concat!(
@@ -561,7 +561,7 @@ where
         // Safety: bytes are a valid representation of this type:
         // 1. The first byte is 0 which indicates a singleton
         // 2. The remainder is a valid V by invariant of the input parameter
-        unsafe { ConstStackVarULE::new_unchecked(bytes) }
+        unsafe { SizedVarULEBytes::new_unchecked(bytes) }
     }
 
     /// Returns a tuple with:

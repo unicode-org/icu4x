@@ -14,23 +14,23 @@ use core::ops::Deref;
 /// # Examples
 ///
 /// ```
-/// use zerovec::ule::ConstStackVarULE;
+/// use zerovec::ule::SizedVarULEBytes;
 ///
-/// let container = ConstStackVarULE::<13, str>::try_from_encodeable("hello, world!").unwrap();
+/// let container = SizedVarULEBytes::<13, str>::try_from_encodeable("hello, world!").unwrap();
 ///
 /// assert_eq!(&*container, "hello, world!");
 ///
 /// // Returns an error if the container is not the correct size:
-/// ConstStackVarULE::<20, str>::try_from_encodeable("hello, world!").unwrap_err();
+/// SizedVarULEBytes::<20, str>::try_from_encodeable("hello, world!").unwrap_err();
 /// ```
 #[derive(Copy, Clone, PartialEq, Eq)]
-pub struct ConstStackVarULE<const N: usize, V: VarULE + ?Sized> {
+pub struct SizedVarULEBytes<const N: usize, V: VarULE + ?Sized> {
     /// Invariant: The bytes MUST be a valid VarULE representation of `V`.
     bytes: [u8; N],
     _marker: PhantomData<V>,
 }
 
-impl<const N: usize, V: VarULE + ?Sized> ConstStackVarULE<N, V> {
+impl<const N: usize, V: VarULE + ?Sized> SizedVarULEBytes<N, V> {
     /// Creates one of these from an [`EncodeAsVarULE`].
     ///
     /// Returns an error if the byte length in the container is not the correct length
@@ -58,7 +58,7 @@ impl<const N: usize, V: VarULE + ?Sized> ConstStackVarULE<N, V> {
         }
     }
 
-    /// Returns the bytes backing this [`ConstStackVarULE`], which are
+    /// Returns the bytes backing this [`SizedVarULEBytes`], which are
     /// guaranteed to be a valid VarULE representation of `V`.
     pub const fn as_bytes(&self) -> &[u8; N] {
         &self.bytes
@@ -72,7 +72,7 @@ impl<const N: usize, V: VarULE + ?Sized> ConstStackVarULE<N, V> {
     }
 }
 
-impl<const N: usize, V: VarULE + ?Sized> fmt::Debug for ConstStackVarULE<N, V>
+impl<const N: usize, V: VarULE + ?Sized> fmt::Debug for SizedVarULEBytes<N, V>
 where
     V: fmt::Debug,
 {
@@ -81,27 +81,27 @@ where
     }
 }
 
-impl<const N: usize, V: VarULE + ?Sized> AsRef<V> for ConstStackVarULE<N, V> {
+impl<const N: usize, V: VarULE + ?Sized> AsRef<V> for SizedVarULEBytes<N, V> {
     fn as_ref(&self) -> &V {
         self.as_varule()
     }
 }
 
-impl<const N: usize, V: VarULE + ?Sized> Deref for ConstStackVarULE<N, V> {
+impl<const N: usize, V: VarULE + ?Sized> Deref for SizedVarULEBytes<N, V> {
     type Target = V;
     fn deref(&self) -> &Self::Target {
         self.as_varule()
     }
 }
 
-impl ConstStackVarULE<0, str> {
-    /// The empty string as a [`ConstStackVarULE`].
+impl SizedVarULEBytes<0, str> {
+    /// The empty string as a [`SizedVarULEBytes`].
     // Safety: the empty slice is a valid str
     pub const EMPTY_STR: Self = unsafe { Self::new_unchecked([]) };
 }
 
-impl<T: ULE> ConstStackVarULE<0, [T]> {
-    /// The empty slice as a [`ConstStackVarULE`].
+impl<T: ULE> SizedVarULEBytes<0, [T]> {
+    /// The empty slice as a [`SizedVarULEBytes`].
     // Safety: the empty slice is a valid str
     pub const EMPTY_SLICE: Self = unsafe { Self::new_unchecked([]) };
 }
