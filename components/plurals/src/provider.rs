@@ -556,6 +556,7 @@ where
             remainder[i] = input.as_bytes()[i];
             i += 1;
         }
+        // First byte = 0 for a singleton
         *start = 0;
         // Safety: bytes are a valid representation of this type:
         // 1. The first byte is 0 which indicates a singleton
