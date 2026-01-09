@@ -531,7 +531,13 @@ where
         let mut bytes = [0u8; N];
         #[allow(clippy::unwrap_used)] // the bytes are nonempty because N > 0
         let (start, remainder) = bytes.split_first_mut().unwrap();
-        remainder.copy_from_slice(input.as_bytes());
+        // TODO(1.87): use copy_from_slice
+        let mut i = 0;
+        #[allow(clippy::indexing_slicing)] // both remainder and input are length M
+        while i < M {
+            remainder[i] = input.as_bytes()[i];
+            i += 1;
+        }
         *start = 0;
         // Safety: bytes are a valid representation of this type:
         // 1. The first byte is 0 which indicates a singleton
