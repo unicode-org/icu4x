@@ -25,10 +25,8 @@ components/normalizer/            @hsivonen @echeran
 components/plurals/               @zbraniecki @sffc
 components/segmenter/             @aethanyc @makotokato @sffc
 components/time/              @nekevss @robertbastian @sffc
-examples/gn/                     @sffc
 ffi/capi/                         @Manishearth
 ffi/ecma402/                      @filmil
-ffi/harfbuzz/                     @hsivonen
 provider/blob/                    @sffc @Manishearth
 provider/core/                    @sffc @Manishearth
 provider/source/                  @sffc @robertbastian @Manishearth
@@ -41,7 +39,6 @@ tools/depcheck/src/allowlist.rs   @unicode-org/icu4x-owners
 tools/make/                       @Manishearth @sffc
 utils/bies/                       @sffc
 utils/databake                    @robertbastian @Manishearth
-utils/deduplicating_array         @robertbastian
 utils/fixed_decimal/              @sffc @younies
 utils/izdtf                       @nekevss @sffc
 utils/litemap/                    @Manishearth @sffc

@@ -1,2 +1,0 @@
-buildconfig = "//examples/gn/BUILDCONFIG.gn"
-root = "//examples/gn:default"

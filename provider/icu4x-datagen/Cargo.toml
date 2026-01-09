@@ -26,8 +26,10 @@ icu_provider_registry = { workspace = true }
 icu_provider_blob = { workspace = true, features = ["alloc"], optional = true }
 
 clap = { workspace = true, features = ["derive"] }
+displaydoc = { workspace = true }
 eyre = { workspace = true }
 log = { workspace = true }
+regex = { workspace = true }
 simple_logger = { workspace = true }
 
 [features]

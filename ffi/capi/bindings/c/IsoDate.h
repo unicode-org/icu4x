@@ -41,6 +41,8 @@ uint8_t icu4x_IsoDate_day_of_month_mv1(const IsoDate* self);
 
 Weekday icu4x_IsoDate_day_of_week_mv1(const IsoDate* self);
 
+Weekday icu4x_IsoDate_weekday_mv1(const IsoDate* self);
+
 IsoWeekOfYear icu4x_IsoDate_week_of_year_mv1(const IsoDate* self);
 
 uint8_t icu4x_IsoDate_month_mv1(const IsoDate* self);

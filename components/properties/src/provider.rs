@@ -17,26 +17,34 @@
 
 pub mod names;
 
+#[cfg(feature = "alloc")]
 pub use names::{
-    PropertyNameLongBidiClassV1, PropertyNameLongCanonicalCombiningClassV1,
-    PropertyNameLongEastAsianWidthV1, PropertyNameLongGeneralCategoryV1,
-    PropertyNameLongGraphemeClusterBreakV1, PropertyNameLongHangulSyllableTypeV1,
-    PropertyNameLongIndicSyllabicCategoryV1, PropertyNameLongJoiningTypeV1,
-    PropertyNameLongLineBreakV1, PropertyNameLongScriptV1, PropertyNameLongSentenceBreakV1,
+    PropertyNameLongCanonicalCombiningClassV1, PropertyNameShortCanonicalCombiningClassV1,
+};
+
+pub use names::{
+    PropertyNameLongBidiClassV1, PropertyNameLongEastAsianWidthV1,
+    PropertyNameLongGeneralCategoryV1, PropertyNameLongGraphemeClusterBreakV1,
+    PropertyNameLongHangulSyllableTypeV1, PropertyNameLongIndicConjunctBreakV1,
+    PropertyNameLongIndicSyllabicCategoryV1, PropertyNameLongJoiningGroupV1,
+    PropertyNameLongJoiningTypeV1, PropertyNameLongLineBreakV1, PropertyNameLongNumericTypeV1,
+    PropertyNameLongScriptV1, PropertyNameLongSentenceBreakV1,
     PropertyNameLongVerticalOrientationV1, PropertyNameLongWordBreakV1,
     PropertyNameParseBidiClassV1, PropertyNameParseCanonicalCombiningClassV1,
     PropertyNameParseEastAsianWidthV1, PropertyNameParseGeneralCategoryMaskV1,
     PropertyNameParseGeneralCategoryV1, PropertyNameParseGraphemeClusterBreakV1,
-    PropertyNameParseHangulSyllableTypeV1, PropertyNameParseIndicSyllabicCategoryV1,
-    PropertyNameParseJoiningTypeV1, PropertyNameParseLineBreakV1, PropertyNameParseScriptV1,
-    PropertyNameParseSentenceBreakV1, PropertyNameParseVerticalOrientationV1,
-    PropertyNameParseWordBreakV1, PropertyNameShortBidiClassV1,
-    PropertyNameShortCanonicalCombiningClassV1, PropertyNameShortEastAsianWidthV1,
+    PropertyNameParseHangulSyllableTypeV1, PropertyNameParseIndicConjunctBreakV1,
+    PropertyNameParseIndicSyllabicCategoryV1, PropertyNameParseJoiningGroupV1,
+    PropertyNameParseJoiningTypeV1, PropertyNameParseLineBreakV1, PropertyNameParseNumericTypeV1,
+    PropertyNameParseScriptV1, PropertyNameParseSentenceBreakV1,
+    PropertyNameParseVerticalOrientationV1, PropertyNameParseWordBreakV1,
+    PropertyNameShortBidiClassV1, PropertyNameShortEastAsianWidthV1,
     PropertyNameShortGeneralCategoryV1, PropertyNameShortGraphemeClusterBreakV1,
-    PropertyNameShortHangulSyllableTypeV1, PropertyNameShortIndicSyllabicCategoryV1,
-    PropertyNameShortJoiningTypeV1, PropertyNameShortLineBreakV1, PropertyNameShortScriptV1,
-    PropertyNameShortSentenceBreakV1, PropertyNameShortVerticalOrientationV1,
-    PropertyNameShortWordBreakV1,
+    PropertyNameShortHangulSyllableTypeV1, PropertyNameShortIndicConjunctBreakV1,
+    PropertyNameShortIndicSyllabicCategoryV1, PropertyNameShortJoiningGroupV1,
+    PropertyNameShortJoiningTypeV1, PropertyNameShortLineBreakV1, PropertyNameShortNumericTypeV1,
+    PropertyNameShortScriptV1, PropertyNameShortSentenceBreakV1,
+    PropertyNameShortVerticalOrientationV1, PropertyNameShortWordBreakV1,
 };
 
 pub use crate::props::gc::GeneralCategoryULE;
@@ -104,15 +112,19 @@ const _: () = {
     impl_property_binary_grapheme_link_v1!(Baked);
     impl_property_binary_hex_digit_v1!(Baked);
     impl_property_binary_hyphen_v1!(Baked);
+    impl_property_binary_id_compat_math_continue_v1!(Baked);
+    impl_property_binary_id_compat_math_start_v1!(Baked);
     impl_property_binary_id_continue_v1!(Baked);
     impl_property_binary_id_start_v1!(Baked);
     impl_property_binary_ideographic_v1!(Baked);
     impl_property_binary_ids_binary_operator_v1!(Baked);
     impl_property_binary_ids_trinary_operator_v1!(Baked);
+    impl_property_binary_ids_unary_operator_v1!(Baked);
     impl_property_binary_join_control_v1!(Baked);
     impl_property_binary_logical_order_exception_v1!(Baked);
     impl_property_binary_lowercase_v1!(Baked);
     impl_property_binary_math_v1!(Baked);
+    impl_property_binary_modifier_combining_mark_v1!(Baked);
     impl_property_binary_nfc_inert_v1!(Baked);
     impl_property_binary_nfd_inert_v1!(Baked);
     impl_property_binary_nfkc_inert_v1!(Baked);
@@ -145,21 +157,27 @@ const _: () = {
     impl_property_enum_hangul_syllable_type_v1!(Baked);
     impl_property_enum_indic_conjunct_break_v1!(Baked);
     impl_property_enum_indic_syllabic_category_v1!(Baked);
+    impl_property_enum_joining_group_v1!(Baked);
     impl_property_enum_joining_type_v1!(Baked);
     impl_property_enum_line_break_v1!(Baked);
+    impl_property_enum_numeric_type_v1!(Baked);
     impl_property_enum_script_v1!(Baked);
     impl_property_enum_sentence_break_v1!(Baked);
     impl_property_enum_vertical_orientation_v1!(Baked);
     impl_property_enum_word_break_v1!(Baked);
     impl_property_name_long_bidi_class_v1!(Baked);
+    #[cfg(feature = "alloc")]
     impl_property_name_long_canonical_combining_class_v1!(Baked);
     impl_property_name_long_east_asian_width_v1!(Baked);
     impl_property_name_long_general_category_v1!(Baked);
     impl_property_name_long_grapheme_cluster_break_v1!(Baked);
     impl_property_name_long_hangul_syllable_type_v1!(Baked);
     impl_property_name_long_indic_syllabic_category_v1!(Baked);
+    impl_property_name_long_indic_conjunct_break_v1!(Baked);
+    impl_property_name_long_joining_group_v1!(Baked);
     impl_property_name_long_joining_type_v1!(Baked);
     impl_property_name_long_line_break_v1!(Baked);
+    impl_property_name_long_numeric_type_v1!(Baked);
     impl_property_name_long_script_v1!(Baked);
     impl_property_name_long_sentence_break_v1!(Baked);
     impl_property_name_long_vertical_orientation_v1!(Baked);
@@ -172,21 +190,28 @@ const _: () = {
     impl_property_name_parse_grapheme_cluster_break_v1!(Baked);
     impl_property_name_parse_hangul_syllable_type_v1!(Baked);
     impl_property_name_parse_indic_syllabic_category_v1!(Baked);
+    impl_property_name_parse_indic_conjunct_break_v1!(Baked);
+    impl_property_name_parse_joining_group_v1!(Baked);
     impl_property_name_parse_joining_type_v1!(Baked);
     impl_property_name_parse_line_break_v1!(Baked);
+    impl_property_name_parse_numeric_type_v1!(Baked);
     impl_property_name_parse_script_v1!(Baked);
     impl_property_name_parse_sentence_break_v1!(Baked);
     impl_property_name_parse_vertical_orientation_v1!(Baked);
     impl_property_name_parse_word_break_v1!(Baked);
     impl_property_name_short_bidi_class_v1!(Baked);
+    #[cfg(feature = "alloc")]
     impl_property_name_short_canonical_combining_class_v1!(Baked);
     impl_property_name_short_east_asian_width_v1!(Baked);
     impl_property_name_short_general_category_v1!(Baked);
     impl_property_name_short_grapheme_cluster_break_v1!(Baked);
     impl_property_name_short_hangul_syllable_type_v1!(Baked);
     impl_property_name_short_indic_syllabic_category_v1!(Baked);
+    impl_property_name_short_indic_conjunct_break_v1!(Baked);
+    impl_property_name_short_joining_group_v1!(Baked);
     impl_property_name_short_joining_type_v1!(Baked);
     impl_property_name_short_line_break_v1!(Baked);
+    impl_property_name_short_numeric_type_v1!(Baked);
     impl_property_name_short_script_v1!(Baked);
     impl_property_name_short_sentence_break_v1!(Baked);
     impl_property_name_short_vertical_orientation_v1!(Baked);
@@ -393,6 +418,18 @@ icu_provider::data_marker!(
     is_singleton = true
 );
 icu_provider::data_marker!(
+    /// `PropertyBinaryIdCompatMathContinueV1`
+    PropertyBinaryIdCompatMathContinueV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryIdCompatMathStartV1`
+    PropertyBinaryIdCompatMathStartV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
     /// `PropertyBinaryIdContinueV1`
     PropertyBinaryIdContinueV1,
     PropertyCodePointSet<'static>,
@@ -423,6 +460,12 @@ icu_provider::data_marker!(
     is_singleton = true
 );
 icu_provider::data_marker!(
+    /// `PropertyBinaryIdsUnaryOperatorV1`
+    PropertyBinaryIdsUnaryOperatorV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
     /// `PropertyBinaryJoinControlV1`
     PropertyBinaryJoinControlV1,
     PropertyCodePointSet<'static>,
@@ -443,6 +486,12 @@ icu_provider::data_marker!(
 icu_provider::data_marker!(
     /// `PropertyBinaryMathV1`
     PropertyBinaryMathV1,
+    PropertyCodePointSet<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// `PropertyBinaryModifierCombiningMarkV1`
+    PropertyBinaryModifierCombiningMarkV1,
     PropertyCodePointSet<'static>,
     is_singleton = true
 );
@@ -633,6 +682,12 @@ icu_provider::data_marker!(
     is_singleton = true,
 );
 icu_provider::data_marker!(
+    /// Data marker for the 'JoiningGroup' Unicode property
+    PropertyEnumJoiningGroupV1,
+    PropertyCodePointMap<'static, crate::props::JoiningGroup>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
     /// Data marker for the 'JoiningType' Unicode property
     PropertyEnumJoiningTypeV1,
     PropertyCodePointMap<'static, crate::props::JoiningType>,
@@ -642,6 +697,12 @@ icu_provider::data_marker!(
     /// Data marker for the 'LineBreak' Unicode property
     PropertyEnumLineBreakV1,
     PropertyCodePointMap<'static, crate::props::LineBreak>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
+    /// Data marker for the 'NumericValue' Unicode property
+    PropertyEnumNumericTypeV1,
+    PropertyCodePointMap<'static, crate::props::NumericType>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
@@ -690,14 +751,18 @@ icu_provider::data_marker!(
 /// All data keys in this module.
 pub const MARKERS: &[DataMarkerInfo] = &[
     PropertyNameLongBidiClassV1::INFO,
+    #[cfg(feature = "alloc")]
     PropertyNameLongCanonicalCombiningClassV1::INFO,
     PropertyNameLongEastAsianWidthV1::INFO,
     PropertyNameLongGeneralCategoryV1::INFO,
     PropertyNameLongGraphemeClusterBreakV1::INFO,
     PropertyNameLongHangulSyllableTypeV1::INFO,
     PropertyNameLongIndicSyllabicCategoryV1::INFO,
+    PropertyNameLongIndicConjunctBreakV1::INFO,
+    PropertyNameLongJoiningGroupV1::INFO,
     PropertyNameLongJoiningTypeV1::INFO,
     PropertyNameLongLineBreakV1::INFO,
+    PropertyNameLongNumericTypeV1::INFO,
     PropertyNameLongScriptV1::INFO,
     PropertyNameLongSentenceBreakV1::INFO,
     PropertyNameLongVerticalOrientationV1::INFO,
@@ -710,21 +775,28 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     PropertyNameParseGraphemeClusterBreakV1::INFO,
     PropertyNameParseHangulSyllableTypeV1::INFO,
     PropertyNameParseIndicSyllabicCategoryV1::INFO,
+    PropertyNameParseIndicConjunctBreakV1::INFO,
+    PropertyNameParseJoiningGroupV1::INFO,
     PropertyNameParseJoiningTypeV1::INFO,
     PropertyNameParseLineBreakV1::INFO,
+    PropertyNameParseNumericTypeV1::INFO,
     PropertyNameParseScriptV1::INFO,
     PropertyNameParseSentenceBreakV1::INFO,
     PropertyNameParseVerticalOrientationV1::INFO,
     PropertyNameParseWordBreakV1::INFO,
     PropertyNameShortBidiClassV1::INFO,
+    #[cfg(feature = "alloc")]
     PropertyNameShortCanonicalCombiningClassV1::INFO,
     PropertyNameShortEastAsianWidthV1::INFO,
     PropertyNameShortGeneralCategoryV1::INFO,
     PropertyNameShortGraphemeClusterBreakV1::INFO,
     PropertyNameShortHangulSyllableTypeV1::INFO,
     PropertyNameShortIndicSyllabicCategoryV1::INFO,
+    PropertyNameShortIndicConjunctBreakV1::INFO,
+    PropertyNameShortJoiningGroupV1::INFO,
     PropertyNameShortJoiningTypeV1::INFO,
     PropertyNameShortLineBreakV1::INFO,
+    PropertyNameShortNumericTypeV1::INFO,
     PropertyNameShortScriptV1::INFO,
     PropertyNameShortSentenceBreakV1::INFO,
     PropertyNameShortVerticalOrientationV1::INFO,
@@ -762,15 +834,19 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     PropertyBinaryGraphV1::INFO,
     PropertyBinaryHexDigitV1::INFO,
     PropertyBinaryHyphenV1::INFO,
+    PropertyBinaryIdCompatMathContinueV1::INFO,
+    PropertyBinaryIdCompatMathStartV1::INFO,
     PropertyBinaryIdContinueV1::INFO,
     PropertyBinaryIdeographicV1::INFO,
     PropertyBinaryIdsBinaryOperatorV1::INFO,
     PropertyBinaryIdStartV1::INFO,
     PropertyBinaryIdsTrinaryOperatorV1::INFO,
+    PropertyBinaryIdsUnaryOperatorV1::INFO,
     PropertyBinaryJoinControlV1::INFO,
     PropertyBinaryLogicalOrderExceptionV1::INFO,
     PropertyBinaryLowercaseV1::INFO,
     PropertyBinaryMathV1::INFO,
+    PropertyBinaryModifierCombiningMarkV1::INFO,
     PropertyBinaryNfcInertV1::INFO,
     PropertyBinaryNfdInertV1::INFO,
     PropertyBinaryNfkcInertV1::INFO,
@@ -802,8 +878,10 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     PropertyEnumHangulSyllableTypeV1::INFO,
     PropertyEnumIndicConjunctBreakV1::INFO,
     PropertyEnumIndicSyllabicCategoryV1::INFO,
+    PropertyEnumJoiningGroupV1::INFO,
     PropertyEnumJoiningTypeV1::INFO,
     PropertyEnumLineBreakV1::INFO,
+    PropertyEnumNumericTypeV1::INFO,
     PropertyEnumScriptV1::INFO,
     PropertyEnumSentenceBreakV1::INFO,
     PropertyEnumVerticalOrientationV1::INFO,
@@ -1032,6 +1110,13 @@ impl<'data> PropertyUnicodeSet<'data> {
     pub(crate) fn contains_str(&self, s: &str) -> bool {
         match *self {
             Self::CPInversionListStrList(ref l) => l.contains_str(s),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn contains_utf8(&self, s: &[u8]) -> bool {
+        match *self {
+            Self::CPInversionListStrList(ref l) => l.contains_utf8(s),
         }
     }
 

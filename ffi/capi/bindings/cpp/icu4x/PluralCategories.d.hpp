@@ -1,5 +1,5 @@
-#ifndef icu4x_PluralCategories_D_HPP
-#define icu4x_PluralCategories_D_HPP
+#ifndef ICU4X_PluralCategories_D_HPP
+#define ICU4X_PluralCategories_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -29,17 +29,20 @@ namespace capi {
 
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `categories`](https://docs.rs/icu/2.1.1/icu/plurals/struct.PluralRules.html#method.categories) for more information.
+ */
 struct PluralCategories {
-  bool zero;
-  bool one;
-  bool two;
-  bool few;
-  bool many;
-  bool other;
+    bool zero;
+    bool one;
+    bool two;
+    bool few;
+    bool many;
+    bool other;
 
-  inline icu4x::capi::PluralCategories AsFFI() const;
-  inline static icu4x::PluralCategories FromFFI(icu4x::capi::PluralCategories c_struct);
+    inline icu4x::capi::PluralCategories AsFFI() const;
+    inline static icu4x::PluralCategories FromFFI(icu4x::capi::PluralCategories c_struct);
 };
 
 } // namespace
-#endif // icu4x_PluralCategories_D_HPP
+#endif // ICU4X_PluralCategories_D_HPP

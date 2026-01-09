@@ -19,9 +19,52 @@ use utf8_iter::Utf8CharIndices;
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
 pub struct WordBreakOptions<'a> {
     /// Content locale for word segmenter
+    ///
+    /// If you know the language of the text being segmented, provide it here in order to produce
+    /// higher quality breakpoints.
+    ///
+    /// # Examples
+    ///
+    /// Normally, a colon character ':' is a word separator:
+    ///
+    /// ```rust
+    /// use icu::segmenter::WordSegmenter;
+    ///
+    /// let segmenter = WordSegmenter::new_auto(Default::default());
+    ///
+    /// let breakpoints: Vec<usize> = segmenter.segment_str("EU:ssa").collect();
+    /// assert_eq!(&breakpoints, &[0, 2, 3, 6]);
+    /// ```
+    ///
+    /// But not in Finnish, where it is used for loanwords:
+    ///
+    /// ```rust
+    /// use icu::locale::langid;
+    /// use icu::segmenter::options::WordBreakOptions;
+    /// use icu::segmenter::WordSegmenter;
+    ///
+    /// let mut options = WordBreakOptions::default();
+    /// let langid = &langid!("fi");
+    /// options.content_locale = Some(langid);
+    /// let segmenter = WordSegmenter::try_new_auto(options).unwrap();
+    ///
+    /// let breakpoints: Vec<usize> =
+    ///     segmenter.as_borrowed().segment_str("EU:ssa").collect();
+    /// assert_eq!(&breakpoints, &[0, 6]);
+    /// ```
     pub content_locale: Option<&'a LanguageIdentifier>,
     /// Options independent of the locale
     pub invariant_options: WordBreakInvariantOptions,
+}
+
+impl WordBreakOptions<'_> {
+    /// `const` version of [`Default::default`]
+    pub const fn default() -> Self {
+        Self {
+            content_locale: None,
+            invariant_options: WordBreakInvariantOptions::default(),
+        }
+    }
 }
 
 /// Locale-independent options to tailor word breaking behavior
@@ -30,6 +73,13 @@ pub struct WordBreakOptions<'a> {
 #[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Default)]
 pub struct WordBreakInvariantOptions {}
+
+impl WordBreakInvariantOptions {
+    /// `const` version of [`Default::default`]
+    pub const fn default() -> Self {
+        Self {}
+    }
+}
 
 /// Implements the [`Iterator`] trait over the word boundaries of the given string.
 ///
@@ -118,29 +168,46 @@ impl<Y: RuleBreakType> Iterator for WordBreakIteratorWithWordType<'_, '_, Y> {
 /// Most segmentation methods live on [`WordSegmenterBorrowed`], which can be obtained via
 /// [`WordSegmenter::new_auto()`] (etc) or [`WordSegmenter::as_borrowed()`].
 ///
+/// # Content Locale
+///
+/// You can optionally provide a _content locale_ to the [`WordSegmenter`] constructor. If you
+/// have information on the language of the text being segmented, providing this hint can
+/// produce higher-quality results.
+///
+/// If you have a content locale, use [`WordBreakOptions`] and a constructor begining with `new`.
+/// If you do not have a content locale use [`WordBreakInvariantOptions`] and a constructor
+/// beginning with `try_new`.
+///
 /// # Examples
 ///
 /// Segment a string:
 ///
 /// ```rust
-/// use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
-/// let segmenter =
-///     WordSegmenter::new_auto(WordBreakInvariantOptions::default());
+/// use icu::segmenter::WordSegmenter;
+///
+/// let segmenter = WordSegmenter::new_auto(Default::default());
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_str("Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 5, 6, 11]);
 /// ```
 ///
-/// Segment a Latin1 byte string:
+/// Segment a Latin1 byte string with a content locale:
 ///
 /// ```rust
-/// use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
-/// let segmenter =
-///     WordSegmenter::new_auto(WordBreakInvariantOptions::default());
+/// use icu::locale::langid;
+/// use icu::segmenter::options::WordBreakOptions;
+/// use icu::segmenter::WordSegmenter;
 ///
-/// let breakpoints: Vec<usize> =
-///     segmenter.segment_latin1(b"Hello World").collect();
+/// let mut options = WordBreakOptions::default();
+/// let langid = &langid!("en");
+/// options.content_locale = Some(langid);
+/// let segmenter = WordSegmenter::try_new_auto(options).unwrap();
+///
+/// let breakpoints: Vec<usize> = segmenter
+///     .as_borrowed()
+///     .segment_latin1(b"Hello World")
+///     .collect();
 /// assert_eq!(&breakpoints, &[0, 5, 6, 11]);
 /// ```
 ///
@@ -463,6 +530,68 @@ impl WordSegmenter {
             },
         })
     }
+
+    /// Construct a [`WordSegmenter`] with an invariant locale and no support for
+    /// scripts requiring complex context dependent word breaks (Chinese, Japanese, Khmer, Lao, Myanmar, and Thai).
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new_for_non_complex_scripts(
+        _options: WordBreakInvariantOptions,
+    ) -> WordSegmenterBorrowed<'static> {
+        WordSegmenterBorrowed {
+            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
+            complex: ComplexPayloadsBorrowed::empty(),
+            locale_override: None,
+        }
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (options: WordBreakOptions) -> error: DataError,
+        functions: [
+            try_new_for_non_complex_scripts,
+            try_new_for_non_complex_scripts_with_buffer_provider,
+            try_new_for_non_complex_scripts_unstable,
+            Self
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_for_non_complex_scripts)]
+    pub fn try_new_for_non_complex_scripts_unstable<D>(
+        provider: &D,
+        options: WordBreakOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: DataProvider<SegmenterBreakWordV1>
+            + DataProvider<SegmenterBreakWordOverrideV1>
+            + DataProvider<SegmenterBreakGraphemeClusterV1>
+            + ?Sized,
+    {
+        Ok(Self {
+            payload: provider.load(Default::default())?.payload,
+            complex: ComplexPayloads::try_new_empty(provider)?,
+            payload_locale_override: if let Some(locale) = options.content_locale {
+                let locale = DataLocale::from(locale);
+                let req = DataRequest {
+                    id: DataIdentifierBorrowed::for_locale(&locale),
+                    metadata: {
+                        let mut metadata = DataRequestMetadata::default();
+                        metadata.silent = true;
+                        metadata
+                    },
+                };
+                provider
+                    .load(req)
+                    .allow_identifier_not_found()?
+                    .map(|r| r.payload)
+            } else {
+                None
+            },
+        })
+    }
+
     /// Constructs a borrowed version of this type for more efficient querying.
     ///
     /// Most useful methods for segmentation are on this type.

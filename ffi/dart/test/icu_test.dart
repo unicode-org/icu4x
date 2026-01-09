@@ -1,3 +1,7 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 import 'package:icu4x/icu4x.dart';
 import 'package:test/test.dart';
 
@@ -127,7 +131,7 @@ void main() {
       DateTimeFormatter.ymdet(
         locale,
       ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
-      'Mi., 15. Raj. 1446 AH, 14:32:12',
+      'Mi., 15.07.1446 AH, 14:32:12',
     );
 
     expect(
@@ -136,7 +140,7 @@ void main() {
         length: DateTimeLength.long,
         timePrecision: TimePrecision.minute,
       ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
-      'Mittwoch, 15. Radschab 1446 AH, 14:32',
+      'Mittwoch, 15. Radschab 1446 AH um 14:32',
     );
 
     expect(
@@ -159,7 +163,7 @@ void main() {
         ),
         zonedDateTimeBuddhist.time,
       ),
-      'Do., 26. Raj. 1447 AH, 05:32:12',
+      'Do., 26.07.1447 AH, 05:32:12',
     );
 
     expect(
@@ -167,7 +171,7 @@ void main() {
         zonedDateTimeBuddhist.date.toIso(),
         zonedDateTimeBuddhist.time,
       ),
-      'Do., 26. Raj. 1447 AH, 05:32:12',
+      'Do., 26.07.1447 AH, 05:32:12',
     );
 
     ///// DateTimeFormatterGregorian /////
@@ -185,7 +189,7 @@ void main() {
         length: DateTimeLength.long,
         timePrecision: TimePrecision.minute,
       ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
-      'Mittwoch, 15. Januar 2025, 14:32',
+      'Mittwoch, 15. Januar 2025 um 14:32',
     );
 
     ///// TimeZoneFormatter /////
@@ -240,7 +244,7 @@ void main() {
         zonedDateTimeIso.time,
         zonedDateTimeIso.zone,
       ),
-      'Mi., 15. Raj. 1446 AH, 14:32:12 Mitteleuropäische Zeit',
+      'Mi., 15.07.1446 AH, 14:32:12 Mitteleuropäische Zeit',
     );
 
     expect(
@@ -252,7 +256,7 @@ void main() {
         zonedDateTimeIso.time,
         TimeZoneInfo.utc(),
       ),
-      'Mi., 15. Raj. 1446 AH, 14:32:12 Koordinierte Weltzeit',
+      'Mi., 15.07.1446 AH, 14:32:12 Koordinierte Weltzeit',
     );
 
     expect(
@@ -264,7 +268,7 @@ void main() {
         zonedDateTimeIso.time,
         zonedDateTimeIso.zone,
       ),
-      '15. Radschab 1446 AH, 14:32:12 MEZ',
+      '15. Radschab 1446 AH um 14:32:12 MEZ',
     );
 
     expect(
@@ -286,10 +290,9 @@ void main() {
       ).formatIso(
         zonedDateTimeIso.date,
         zonedDateTimeIso.time,
-        TimeZoneInfo(
-          TimeZone.fromBcp47('uslax'),
-          offset: UtcOffset.fromSeconds(-420),
-        ),
+        IanaParser()
+            .parse('America/Los_Angeles')
+            .withOffset(UtcOffset.fromSeconds(-420)),
       ),
       '15.07., 14:32:12 GMT-00:07',
     );

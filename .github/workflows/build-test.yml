@@ -68,34 +68,20 @@ jobs:
     - name: Install cargo-all-features
       uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
       with:
-        tool: cargo-all-features@1.10.0
-
-    # No toolchain boilerplate as this runs on MSRV
-
-    # Actual job
-    - name: Check
-      run: cargo make ci-job-msrv-${{ matrix.behavior }}
-
-  msrv-utils:
-    runs-on: ubuntu-latest
-    # Set CARGO_HTTP_MULTIPLEXING=false to work around crates.io curl bug:
-    # <https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation>
-    env:
-      CARGO_HTTP_MULTIPLEXING: false
-    steps:
-    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-
-    # Cargo-make boilerplate
-    - name: Install cargo-make
-      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
-      with:
-        tool: cargo-make@0.37.13
-
-    # No toolchain boilerplate as this runs on MSRV
+        tool: cargo-all-features@1.11.0
+      
+    - name: Set MSRV toolchain
+      run: rustup override set 1.83
+      
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-ci-toolchain
+    - name: Show the selected Rust toolchain
+      run: rustup show
 
     # Actual job
     - name: Check
-      run: cargo make ci-job-msrv-utils
+      run: cargo make ci-job-${{ matrix.behavior }}
 
   # ci-job-test
   test:
@@ -190,7 +176,9 @@ jobs:
 
     # Job-specific dependencies
     - name: Install harfbuzz
-      run: sudo apt install libharfbuzz-dev
+      run: |
+        sudo apt update
+        sudo apt install libharfbuzz-dev
 
     # Actual job
     - name: Run `cargo make ci-job-test-cargo`
@@ -347,14 +335,18 @@ jobs:
     # Job-specific dependencies
     - uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
       with:
-        sdk: ${{ github.event_name != 'schedule' && '3.10.0-22.0.dev' || 'dev' }}
+        # Keep in sync with artifacts-build.yml
+        sdk: ${{ github.event_name == 'schedule' && github.event.schedule == '0 14 * * *' && 'dev' || '3.11.0-46.0.dev' }}
     - name: Install yq if Windows
       if: ${{ matrix.os == 'windows-latest' }}
       run: choco install yq
 
     # Actual job
     - name: Run `cargo make ci-job-test-dart`
-      run: cargo make ci-job-test-dart
+      shell: bash
+      run: |
+        export PATH=$PATH:/c/Program\ Files/Git/bin # make bash available on Windows
+        cargo make ci-job-test-dart
 
     - name: Run `cargo make ci-job-test-dart` in local mode
       run: |
@@ -374,6 +366,39 @@ jobs:
         yq -i ".hooks.user_defines.icu4x.buildMode = \"fetch\"" examples/dart/pubspec.yaml
         cargo make ci-job-test-dart
  
+   # ci-job-test-kotlin
+  test-kotlin:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+    # Cargo-make boilerplate
+    - name: Install cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
+
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-ci-toolchain
+
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Job-specific dependencies
+    - name: Setup Maven Action
+      uses: s4u/setup-maven-action@v1.19.0
+    - name: Maven version
+      run: mvn -version
+
+    # Actual job
+    - name: Run `cargo make ci-job-test-kotlin`
+      run: cargo make ci-job-test-kotlin
 
   # ci-job-nostd
   nostd:
@@ -421,47 +446,6 @@ jobs:
       run: cargo make ci-job-diplomat
 
 
-  # ci-job-gn
-  gn:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-
-    # Cargo-make boilerplate
-    - name: Install cargo-make
-      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
-      with:
-        tool: cargo-make@0.37.13
-
-    # Toolchain boilerplate
-    - name: Potentially override rust version with nightly
-      run: cargo make set-ci-toolchain
-    - name: Show the selected Rust toolchain
-      run: rustup show
-
-    # Job-specific dependencies
-    - name: Attempt to load cached GN Third-Party Tools
-      uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
-      id: gn-third-party-tools-cache
-      with:
-        path: |
-          examples/gn/third_party_tools
-        key: gn-third-party-${{ runner.os }}-${{ hashFiles('tools/make/gn.toml', 'examples/gn/Cargo.lock') }}
-    - name: Install GN Third-Party Tools
-      if: steps.gn-third-party-tools-cache.outputs.cache-hit != 'true'
-      run: cargo make gn-install
-
-    - name: Install cargo-rdme
-      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
-      with:
-        tool: cargo-rdme@1.4.2
-
-    # Actual job
-    - name: Run `cargo make ci-job-gn`
-      run: cargo make ci-job-gn
-
-
   # ci-job-fmt
   fmt:
     runs-on: ubuntu-latest
@@ -506,12 +490,6 @@ jobs:
       run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
-
-    # Job-specific dependencies
-    - name: Install cargo-rdme
-      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
-      with:
-        tool: cargo-rdme@1.4.2
 
     # Actual job
     - name: Tidy
@@ -573,31 +551,34 @@ jobs:
 
   semver:
     runs-on: ubuntu-latest
-    env:
-      # This is the baseline for semver-check. It can be changed
-      # if unstable APIs were changed but semver-check
-      # didn't know that they were unstable.
-      BASELINE_REF: 7d369fbb651d594322ef44f12ea56066973628e4 # a commit on main
     steps:
-
-    # Checkout baseline revision; required because actions/checkout is shallow
-    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-      with:
-        ref: ${{ env.BASELINE_REF }}
 
     # Checkout HEAD revision
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
+    - name: Fetch base_ref if needed
+      if: ${{ github.event_name == 'pull_request' }}
+      run: git fetch origin ${{ github.base_ref }}
+
     # Actual job
     - name: Check semver
       uses: obi1kenobi/cargo-semver-checks-action@5b298c9520f7096a4683c0bd981a7ac5a7e249ae
+      # On pull requests, run against the base_ref so only violations added in that PR
+      # will trigger
+      if: ${{ github.event_name == 'pull_request' }}
       with:
-        baseline-rev: ${{ env.BASELINE_REF }}
+        baseline-rev: origin/${{ github.base_ref }}
+
+    - name: Show semver violations since last release
+      uses: obi1kenobi/cargo-semver-checks-action@5b298c9520f7096a4683c0bd981a7ac5a7e249ae
+      # On main, run against the last release, but warn only
+      if: ${{ github.event_name != 'pull_request' }}
+      continue-on-error: true
 
 
   # Notify on slack  
   notify-slack:
-    needs: [msrv, test, testdata, test-docs, full-datagen, test-c, test-js, test-dart, nostd, diplomat, gn, fmt, tidy, clippy, doc]
+    needs: [msrv, test, testdata, test-docs, full-datagen, test-c, test-js, test-dart, nostd, diplomat, fmt, tidy, clippy, doc]
     if: ${{ always() && contains(needs.*.result, 'failure') && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_name == 'main')) }}
     runs-on: ubuntu-latest
     steps:
@@ -607,7 +588,7 @@ jobs:
           notify_when: failure
           status: failure # We do the filtering earlier
           notification_title: ''
-          message_format: ${{ format('{{emoji}} {0} CI failed!' , ((github.event_name == 'schedule') && 'Beta' || (github.event_name == 'push') && 'Main' || 'Manually dispatched')) }}
+          message_format: ${{ format('{{emoji}} {0} CI failed!' , (github.event_name == 'push' && 'Main' || (github.event.schedule == '1 14 * * *' && 'Beta' || 'Nightly'))) }}
           footer: '<{run_url}|View failure> | <https://github.com/unicode-org/icu4x/actions?query=event%3A${{ github.event_name }}|CI history for `${{ github.event_name }}`>'
         env:
           # Notify main slack of failure for beta runs and and main CI, nightly slack otherwise

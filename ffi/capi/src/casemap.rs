@@ -6,7 +6,6 @@ use icu_casemap::options::TitlecaseOptions;
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -40,6 +39,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::casemap::options::TitlecaseOptions, Struct)]
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "TitlecaseOptions")]
+    #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
     pub struct TitlecaseOptionsV1 {
         pub leading_adjustment: DiplomatOption<LeadingAdjustment>,
         pub trailing_case: DiplomatOption<TrailingCase>,
@@ -156,6 +156,7 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "titlecase_segment_with_only_case_data")]
+        #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
         pub fn titlecase_segment_with_only_case_data_v1(
             &self,
             s: &str,
@@ -425,6 +426,7 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "titlecase_segment")]
+        #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
         pub fn titlecase_segment_v1(
             &self,
             s: &str,
@@ -450,6 +452,7 @@ pub mod ffi {
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "titlecase_segment_with_compiled_data")]
         #[cfg(feature = "compiled_data")]
         #[diplomat::attr(demo_gen, disable)] // available through Self::create()
+        #[diplomat::attr(kotlin, disable)] // option support (https://github.com/rust-diplomat/diplomat/issues/989)
         pub fn titlecase_segment_with_compiled_data_v1(
             s: &str,
             locale: &Locale,

@@ -90,7 +90,7 @@ use core::str::FromStr;
 /// assert_eq!(loc.id.script, "Latn".parse::<Script>().ok());
 /// assert_eq!(loc.id.region, "US".parse::<Region>().ok());
 /// assert_eq!(
-///     loc.id.variants.get(0),
+///     loc.id.variants.first(),
 ///     "valencia".parse::<Variant>().ok().as_ref()
 /// );
 /// ```
@@ -137,6 +137,8 @@ impl Locale {
     /// A constructor which takes a utf8 slice, parses it and
     /// produces a well-formed [`Locale`].
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Examples
     ///
     /// ```
@@ -151,6 +153,8 @@ impl Locale {
     }
 
     /// See [`Self::try_from_str`]
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
         parse_locale(code_units)
@@ -159,6 +163,8 @@ impl Locale {
     /// Normalize the locale (operating on UTF-8 formatted byte slices)
     ///
     /// This operation will normalize casing and the separator.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -179,6 +185,8 @@ impl Locale {
     /// Normalize the locale (operating on strings)
     ///
     /// This operation will normalize casing and the separator.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -368,6 +376,8 @@ impl Locale {
     /// The return value is equivalent to what would happen if you first parsed the
     /// BCP-47 string to a `Locale` and then performed a structural comparison.
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Examples
     ///
     /// ```
@@ -461,6 +471,7 @@ impl Locale {
     }
 }
 
+/// ✨ *Enabled with the `alloc` Cargo feature.*
 #[cfg(feature = "alloc")]
 impl FromStr for Locale {
     type Err = ParseError;
@@ -492,7 +503,7 @@ impl core::fmt::Debug for Locale {
     }
 }
 
-impl_writeable_for_each_subtag_str_no_test!(Locale, selff, selff.extensions.is_empty() => selff.id.write_to_string());
+impl_writeable_for_each_subtag_str_no_test!(Locale, selff, selff.extensions.is_empty() => selff.id.writeable_borrow());
 
 #[test]
 fn test_writeable() {

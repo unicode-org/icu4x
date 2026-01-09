@@ -347,7 +347,16 @@
             "unitPattern-count-many": "{0} عنصرًا",
             "unitPattern-count-other": "{0} عنصر"
           },
-          "concentr-permillion": {
+          "concentr-part": {
+            "displayName": "جزء",
+            "unitPattern-count-zero": "{0} جزء",
+            "unitPattern-count-one": "{0} جزء",
+            "unitPattern-count-two": "جزآن",
+            "unitPattern-count-few": "{0} أجزاء",
+            "unitPattern-count-many": "{0} جزءًا",
+            "unitPattern-count-other": "{0} جزء"
+          },
+          "concentr-part-per-1e6": {
             "gender": "masculine",
             "displayName": "جزء في المليون",
             "unitPattern-count-zero": "{0} جزء في المليون",
@@ -391,6 +400,15 @@
             "unitPattern-count-few": "{0} مول",
             "unitPattern-count-many": "{0} مول",
             "unitPattern-count-other": "{0} مول"
+          },
+          "concentr-ofglucose": {
+            "displayName": "سكّري",
+            "unitPattern-count-zero": "{0} سكّري",
+            "unitPattern-count-one": "{0} سكّري",
+            "unitPattern-count-two": "{0} سكّري",
+            "unitPattern-count-few": "{0} سكّري",
+            "unitPattern-count-many": "{0} سكّري",
+            "unitPattern-count-other": "{0} سكّري"
           },
           "consumption-liter-per-kilometer": {
             "gender": "masculine",
@@ -1409,6 +1427,15 @@
             "unitPattern-count-many": "{0} مليمتر زئبقي",
             "unitPattern-count-other": "{0} مليمتر زئبقي"
           },
+          "pressure-ofhg": {
+            "displayName": "زئبقي",
+            "unitPattern-count-zero": "{0} زئبقي",
+            "unitPattern-count-one": "{0} زئبقي",
+            "unitPattern-count-two": "{0} زئبقي",
+            "unitPattern-count-few": "{0} زئبقي",
+            "unitPattern-count-many": "{0} زئبقي",
+            "unitPattern-count-other": "{0} زئبقي"
+          },
           "pressure-pound-force-per-square-inch": {
             "displayName": "رطل لكل بوصة مربعة",
             "unitPattern-count-zero": "{0} رطل لكل بوصة مربعة",
@@ -1746,6 +1773,15 @@
             "unitPattern-count-many": "{0} كوب متري",
             "unitPattern-count-other": "{0} كوب متري"
           },
+          "volume-fluid-ounce-metric": {
+            "displayName": "أونصة سائلة مترية",
+            "unitPattern-count-zero": "{0} أونصة سائلة مترية",
+            "unitPattern-count-one": "{0} أونصة سائلة مترية",
+            "unitPattern-count-two": "{0} أونصة سائلة مترية",
+            "unitPattern-count-few": "{0} أونصة سائلة مترية",
+            "unitPattern-count-many": "{0} أونصة سائلة مترية",
+            "unitPattern-count-other": "{0} أونصة سائلة مترية"
+          },
           "volume-acre-foot": {
             "displayName": "فدان قدم",
             "unitPattern-count-zero": "{0} فدان قدم",
@@ -1802,6 +1838,10 @@
             "unitPattern-count-many": "{0} باينت",
             "unitPattern-count-other": "{0} باينت"
           },
+          "volume-pint-imperial": {
+            "displayName": "pint Imp.",
+            "unitPattern-count-other": "{0} pt Imp."
+          },
           "volume-cup": {
             "displayName": "كوب",
             "unitPattern-count-zero": "{0} كوب",
@@ -1810,6 +1850,10 @@
             "unitPattern-count-few": "{0} أكواب",
             "unitPattern-count-many": "{0} كوبًا",
             "unitPattern-count-other": "{0} كوب"
+          },
+          "volume-cup-imperial": {
+            "displayName": "cup Imp.",
+            "unitPattern-count-other": "{0} cup Imp."
           },
           "volume-fluid-ounce": {
             "displayName": "أونصة سائلة",
@@ -1919,11 +1963,233 @@
             "unitPattern-count-many": "{0} ربع غالون إمبراطوري",
             "unitPattern-count-other": "{0} ربع غالون إمبراطوري"
           },
-          "speed-light-speed": {
-            "displayName": "light",
-            "unitPattern-count-other": "{0} light"
+          "angle-steradian": {
+            "displayName": "ستراديان",
+            "unitPattern-count-zero": "{0} ستراديان",
+            "unitPattern-count-one": "{0} ستراديان",
+            "unitPattern-count-two": "{0} ستراديان",
+            "unitPattern-count-few": "{0} ستراديان",
+            "unitPattern-count-many": "{0} ستراديان",
+            "unitPattern-count-other": "{0} ستراديان"
           },
-          "concentr-portion-per-1e9": {
+          "concentr-katal": {
+            "displayName": "كاتال",
+            "unitPattern-count-zero": "{0} كاتال",
+            "unitPattern-count-one": "{0} كاتال",
+            "unitPattern-count-two": "{0} كاتال",
+            "unitPattern-count-few": "{0} كاتال",
+            "unitPattern-count-many": "{0} كاتال",
+            "unitPattern-count-other": "{0} كاتال"
+          },
+          "electric-coulomb": {
+            "displayName": "كولوم",
+            "unitPattern-count-zero": "{0} كولوم",
+            "unitPattern-count-one": "{0} كولوم",
+            "unitPattern-count-two": "{0} كولوم",
+            "unitPattern-count-few": "{0} كولوم",
+            "unitPattern-count-many": "{0} كولوم",
+            "unitPattern-count-other": "{0} كولوم"
+          },
+          "electric-farad": {
+            "displayName": "فاراد",
+            "unitPattern-count-zero": "{0} فاراد",
+            "unitPattern-count-one": "{0} فاراد",
+            "unitPattern-count-two": "{0} فاراد",
+            "unitPattern-count-few": "{0} فاراد",
+            "unitPattern-count-many": "{0} فاراد",
+            "unitPattern-count-other": "{0} فاراد"
+          },
+          "electric-henry": {
+            "displayName": "هنري",
+            "unitPattern-count-zero": "{0} هنري",
+            "unitPattern-count-one": "{0} هنري",
+            "unitPattern-count-two": "{0} هنري",
+            "unitPattern-count-few": "{0} هنري",
+            "unitPattern-count-many": "{0} هنري",
+            "unitPattern-count-other": "{0} هنري"
+          },
+          "electric-siemens": {
+            "displayName": "سيمنز",
+            "unitPattern-count-zero": "{0} سيمنز",
+            "unitPattern-count-one": "{0} سيمنز",
+            "unitPattern-count-two": "{0} سيمنز",
+            "unitPattern-count-few": "{0} سيمنز",
+            "unitPattern-count-many": "{0} سيمنز",
+            "unitPattern-count-other": "{0} سيمنز"
+          },
+          "energy-calorie-it": {
+            "displayName": "سعرة-it",
+            "unitPattern-count-zero": "{0} سعرة-it",
+            "unitPattern-count-one": "{0} سعرة-it",
+            "unitPattern-count-two": "{0} سعرة-it",
+            "unitPattern-count-few": "{0} سعرة-it",
+            "unitPattern-count-many": "{0} سعرة-it",
+            "unitPattern-count-other": "{0} سعرة-it"
+          },
+          "energy-british-thermal-unit-it": {
+            "displayName": "BTU-IT",
+            "unitPattern-count-other": "{0} BTU-IT"
+          },
+          "energy-becquerel": {
+            "displayName": "بيكريل",
+            "unitPattern-count-zero": "{0} بيكريل",
+            "unitPattern-count-one": "{0} بيكريل",
+            "unitPattern-count-two": "{0} بيكريل",
+            "unitPattern-count-few": "{0} بيكريل",
+            "unitPattern-count-many": "{0} بيكريل",
+            "unitPattern-count-other": "{0} بيكريل"
+          },
+          "energy-sievert": {
+            "displayName": "زيفرت",
+            "unitPattern-count-zero": "{0} زيفرت",
+            "unitPattern-count-one": "{0} زيفرت",
+            "unitPattern-count-two": "{0} زيفرت",
+            "unitPattern-count-few": "{0} زيفرت",
+            "unitPattern-count-many": "{0} زيفرت",
+            "unitPattern-count-other": "{0} زيفرت"
+          },
+          "energy-gray": {
+            "displayName": "جراي",
+            "unitPattern-count-zero": "{0} جراي",
+            "unitPattern-count-one": "{0} جراي",
+            "unitPattern-count-two": "{0} جراي",
+            "unitPattern-count-few": "{0} جراي",
+            "unitPattern-count-many": "{0} جراي",
+            "unitPattern-count-other": "{0} جراي"
+          },
+          "force-kilogram-force": {
+            "displayName": "كيلوغرام ثقلي",
+            "unitPattern-count-zero": "{0} كيلوغرام ثقلي",
+            "unitPattern-count-one": "{0} كيلوغرام ثقلي",
+            "unitPattern-count-two": "{0} كيلوغرام ثقلي",
+            "unitPattern-count-few": "{0} كيلوغرام ثقلي",
+            "unitPattern-count-many": "{0} كيلوغرام ثقلي",
+            "unitPattern-count-other": "{0} كيلوغرام ثقلي"
+          },
+          "length-rod": {
+            "displayName": "rod",
+            "unitPattern-count-other": "{0} rod"
+          },
+          "length-chain": {
+            "displayName": "chain",
+            "unitPattern-count-other": "{0} chain"
+          },
+          "magnetic-tesla": {
+            "displayName": "تسلا",
+            "unitPattern-count-zero": "{0} تسلا",
+            "unitPattern-count-one": "{0} تسلا",
+            "unitPattern-count-two": "{0} تسلا",
+            "unitPattern-count-few": "{0} تسلا",
+            "unitPattern-count-many": "{0} تسلا",
+            "unitPattern-count-other": "{0} تسلا"
+          },
+          "magnetic-weber": {
+            "displayName": "ويبر",
+            "unitPattern-count-zero": "{0} ويبر",
+            "unitPattern-count-one": "{0} ويبر",
+            "unitPattern-count-two": "{0} ويبر",
+            "unitPattern-count-few": "{0} ويبر",
+            "unitPattern-count-many": "{0} ويبر",
+            "unitPattern-count-other": "{0} ويبر"
+          },
+          "temperature-rankine": {
+            "displayName": "°R",
+            "unitPattern-count-other": "{0} °R"
+          },
+          "duration-fortnight": {
+            "displayName": "fortnight",
+            "unitPattern-count-other": "{0} fw"
+          },
+          "mass-slug": {
+            "displayName": "slug",
+            "unitPattern-count-other": "{0} slug"
+          },
+          "pressure-gasoline-energy-density": {
+            "displayName": "gas E",
+            "unitPattern-count-other": "{0} gas E"
+          },
+          "length-rin": {
+            "displayName": "rin [JP]",
+            "unitPattern-count-other": "{0} rin [JP]"
+          },
+          "length-sun": {
+            "displayName": "sun [JP]",
+            "unitPattern-count-other": "{0} sun [JP]"
+          },
+          "length-shaku-length": {
+            "displayName": "shaku [JP]",
+            "unitPattern-count-other": "{0} shaku [JP]"
+          },
+          "length-shaku-cloth": {
+            "displayName": "shaku [cloth, JP]",
+            "unitPattern-count-other": "{0} shaku [cloth, JP]"
+          },
+          "length-ken": {
+            "displayName": "ken [JP]",
+            "unitPattern-count-other": "{0} ken [JP]"
+          },
+          "length-jo-jp": {
+            "displayName": "jo [JP]",
+            "unitPattern-count-other": "{0} jo [JP]"
+          },
+          "length-ri-jp": {
+            "displayName": "ri [JP]",
+            "unitPattern-count-other": "{0} ri [JP]"
+          },
+          "area-bu-jp": {
+            "displayName": "bu [JP]",
+            "unitPattern-count-other": "{0} bu [JP]"
+          },
+          "area-se-jp": {
+            "displayName": "se [JP]",
+            "unitPattern-count-other": "{0} se [JP]"
+          },
+          "area-cho": {
+            "displayName": "cho [JP]",
+            "unitPattern-count-other": "{0} cho [JP]"
+          },
+          "volume-kosaji": {
+            "displayName": "kosaji [JP]",
+            "unitPattern-count-other": "{0} kosaji [JP]"
+          },
+          "volume-osaji": {
+            "displayName": "osaji [JP]",
+            "unitPattern-count-other": "{0} osaji [JP]"
+          },
+          "volume-cup-jp": {
+            "displayName": "cup [JP]",
+            "unitPattern-count-other": "{0} cup [JP]"
+          },
+          "volume-shaku": {
+            "displayName": "shaku [vol, JP]",
+            "unitPattern-count-other": "{0} shaku [vol, JP]"
+          },
+          "volume-sai": {
+            "displayName": "sai [JP]",
+            "unitPattern-count-other": "{0} sai [JP]"
+          },
+          "volume-to-jp": {
+            "displayName": "to [JP]",
+            "unitPattern-count-other": "{0} to [JP]"
+          },
+          "volume-koku": {
+            "displayName": "koku [JP]",
+            "unitPattern-count-other": "{0} koku [JP]"
+          },
+          "speed-light-speed": {
+            "displayName": "ضوئي",
+            "unitPattern-count-zero": "{0} ضوئي",
+            "unitPattern-count-one": "{0} ضوئي",
+            "unitPattern-count-two": "{0} ضوئي",
+            "unitPattern-count-few": "{0} ضوئية",
+            "unitPattern-count-many": "{0} ضوئي",
+            "unitPattern-count-other": "{0} ضوئي"
+          },
+          "mass-fun": {
+            "displayName": "fun [JP]",
+            "unitPattern-count-other": "{0} fun [JP]"
+          },
+          "concentr-part-per-1e9": {
             "gender": "masculine",
             "displayName": "جزء بالمليار",
             "unitPattern-count-zero": "{0} جزء بالمليار",
@@ -2257,7 +2523,16 @@
             "unitPattern-count-many": "{0} عنصرًا",
             "unitPattern-count-other": "{0} عنصر"
           },
-          "concentr-permillion": {
+          "concentr-part": {
+            "displayName": "جزء",
+            "unitPattern-count-zero": "{0} جزء",
+            "unitPattern-count-one": "{0} جزء",
+            "unitPattern-count-two": "جزآن",
+            "unitPattern-count-few": "{0} أجزاء",
+            "unitPattern-count-many": "{0} جزءًا",
+            "unitPattern-count-other": "{0} جزء"
+          },
+          "concentr-part-per-1e6": {
             "displayName": "جزء/مليون",
             "unitPattern-count-zero": "{0} جزء/مليون",
             "unitPattern-count-one": "{0} جزء/مليون",
@@ -2296,6 +2571,15 @@
             "unitPattern-count-few": "{0} مول",
             "unitPattern-count-many": "{0} مول",
             "unitPattern-count-other": "{0} مول"
+          },
+          "concentr-ofglucose": {
+            "displayName": "سكّري",
+            "unitPattern-count-zero": "{0} سكّري",
+            "unitPattern-count-one": "{0} سكّري",
+            "unitPattern-count-two": "{0} سكّري",
+            "unitPattern-count-few": "{0} سكّري",
+            "unitPattern-count-many": "{0} سكّري",
+            "unitPattern-count-other": "{0} سكّري"
           },
           "consumption-liter-per-kilometer": {
             "displayName": "لتر/كم",
@@ -3241,6 +3525,15 @@
             "unitPattern-count-many": "{0} ملم زئبقي",
             "unitPattern-count-other": "{0} ملم زئبقي"
           },
+          "pressure-ofhg": {
+            "displayName": "زئبقي",
+            "unitPattern-count-zero": "{0} زئبقي",
+            "unitPattern-count-one": "{0} زئبقي",
+            "unitPattern-count-two": "{0} زئبقي",
+            "unitPattern-count-few": "{0} زئبقي",
+            "unitPattern-count-many": "{0} زئبقي",
+            "unitPattern-count-other": "{0} زئبقي"
+          },
           "pressure-pound-force-per-square-inch": {
             "displayName": "رطل/بوصة مربعة",
             "unitPattern-count-zero": "{0} رطل/بوصة²",
@@ -3554,6 +3847,15 @@
             "unitPattern-count-many": "{0} كوب متري",
             "unitPattern-count-other": "{0} كوب متري"
           },
+          "volume-fluid-ounce-metric": {
+            "displayName": "أونصة س مترية",
+            "unitPattern-count-zero": "{0} أونصة س مترية",
+            "unitPattern-count-one": "{0} أونصة س مترية",
+            "unitPattern-count-two": "{0} أونصة س مترية",
+            "unitPattern-count-few": "{0} أونصة س مترية",
+            "unitPattern-count-many": "{0} أونصة س مترية",
+            "unitPattern-count-other": "{0} أونصة س مترية"
+          },
           "volume-acre-foot": {
             "displayName": "فدان قدم",
             "unitPattern-count-zero": "{0} فدان قدم",
@@ -3610,6 +3912,10 @@
             "unitPattern-count-many": "{0} باينت",
             "unitPattern-count-other": "{0} باينت"
           },
+          "volume-pint-imperial": {
+            "displayName": "pint Imp.",
+            "unitPattern-count-other": "{0} pt Imp."
+          },
           "volume-cup": {
             "displayName": "كوب",
             "unitPattern-count-zero": "{0} كوب",
@@ -3618,6 +3924,10 @@
             "unitPattern-count-few": "{0} كوب",
             "unitPattern-count-many": "{0} كوب",
             "unitPattern-count-other": "{0} كوب"
+          },
+          "volume-cup-imperial": {
+            "displayName": "cup Imp.",
+            "unitPattern-count-other": "{0} cup Imp."
           },
           "volume-fluid-ounce": {
             "displayName": "أونصة سائلة",
@@ -3727,11 +4037,233 @@
             "unitPattern-count-many": "{0} ربع غالون إمبراطوري",
             "unitPattern-count-other": "{0} ربع غالون إمبراطوري"
           },
-          "speed-light-speed": {
-            "displayName": "light",
-            "unitPattern-count-other": "{0} light"
+          "angle-steradian": {
+            "displayName": "ستراديان",
+            "unitPattern-count-zero": "{0} ستراديان",
+            "unitPattern-count-one": "{0} ستراديان",
+            "unitPattern-count-two": "{0} ستراديان",
+            "unitPattern-count-few": "{0} ستراديان",
+            "unitPattern-count-many": "{0} ستراديان",
+            "unitPattern-count-other": "{0} ستراديان"
           },
-          "concentr-portion-per-1e9": {
+          "concentr-katal": {
+            "displayName": "كات",
+            "unitPattern-count-zero": "{0} كات",
+            "unitPattern-count-one": "{0} كات",
+            "unitPattern-count-two": "{0} كات",
+            "unitPattern-count-few": "{0} كات",
+            "unitPattern-count-many": "{0} كات",
+            "unitPattern-count-other": "{0} كات"
+          },
+          "electric-coulomb": {
+            "displayName": "كول",
+            "unitPattern-count-zero": "{0} كول",
+            "unitPattern-count-one": "{0} كول",
+            "unitPattern-count-two": "{0} كول",
+            "unitPattern-count-few": "{0} كول",
+            "unitPattern-count-many": "{0} كول",
+            "unitPattern-count-other": "{0} كول"
+          },
+          "electric-farad": {
+            "displayName": "ف",
+            "unitPattern-count-zero": "{0} ف",
+            "unitPattern-count-one": "{0} ف",
+            "unitPattern-count-two": "{0} ف",
+            "unitPattern-count-few": "{0} ف",
+            "unitPattern-count-many": "{0} ف",
+            "unitPattern-count-other": "{0} ف"
+          },
+          "electric-henry": {
+            "displayName": "ه",
+            "unitPattern-count-zero": "{0} ه",
+            "unitPattern-count-one": "{0} ه",
+            "unitPattern-count-two": "{0} ه",
+            "unitPattern-count-few": "{0} ه",
+            "unitPattern-count-many": "{0} ه",
+            "unitPattern-count-other": "{0} ه"
+          },
+          "electric-siemens": {
+            "displayName": "س",
+            "unitPattern-count-zero": "{0} س",
+            "unitPattern-count-one": "{0} س",
+            "unitPattern-count-two": "{0} س",
+            "unitPattern-count-few": "{0} س",
+            "unitPattern-count-many": "{0} س",
+            "unitPattern-count-other": "{0} س"
+          },
+          "energy-calorie-it": {
+            "displayName": "سع-it",
+            "unitPattern-count-zero": "{0} سع-it",
+            "unitPattern-count-one": "{0} سع-it",
+            "unitPattern-count-two": "{0} سع-it",
+            "unitPattern-count-few": "{0} سع-it",
+            "unitPattern-count-many": "{0} سع-it",
+            "unitPattern-count-other": "{0} سع-it"
+          },
+          "energy-british-thermal-unit-it": {
+            "displayName": "BTU-IT",
+            "unitPattern-count-other": "{0} BTU-IT"
+          },
+          "energy-becquerel": {
+            "displayName": "بيكريل",
+            "unitPattern-count-zero": "{0} بيكريل",
+            "unitPattern-count-one": "{0} بيكريل",
+            "unitPattern-count-two": "{0} بيكريل",
+            "unitPattern-count-few": "{0} بيكريل",
+            "unitPattern-count-many": "{0} بيكريل",
+            "unitPattern-count-other": "{0} بيكريل"
+          },
+          "energy-sievert": {
+            "displayName": "زيف",
+            "unitPattern-count-zero": "{0} زيف",
+            "unitPattern-count-one": "{0} زيف",
+            "unitPattern-count-two": "{0} زيف",
+            "unitPattern-count-few": "{0} زيف",
+            "unitPattern-count-many": "{0} زيف",
+            "unitPattern-count-other": "{0} زيف"
+          },
+          "energy-gray": {
+            "displayName": "جراي",
+            "unitPattern-count-zero": "{0} جراي",
+            "unitPattern-count-one": "{0} جراي",
+            "unitPattern-count-two": "{0} جراي",
+            "unitPattern-count-few": "{0} جراي",
+            "unitPattern-count-many": "{0} جراي",
+            "unitPattern-count-other": "{0} جراي"
+          },
+          "force-kilogram-force": {
+            "displayName": "كغ ث",
+            "unitPattern-count-zero": "{0} كغ ث",
+            "unitPattern-count-one": "{0} كغ ث",
+            "unitPattern-count-two": "{0} كغ ث",
+            "unitPattern-count-few": "{0} كغ ث",
+            "unitPattern-count-many": "{0} كغ ث",
+            "unitPattern-count-other": "{0} كغ ث"
+          },
+          "length-rod": {
+            "displayName": "rod",
+            "unitPattern-count-other": "{0} rod"
+          },
+          "length-chain": {
+            "displayName": "chain",
+            "unitPattern-count-other": "{0} chain"
+          },
+          "magnetic-tesla": {
+            "displayName": "تسلا",
+            "unitPattern-count-zero": "{0} تسلا",
+            "unitPattern-count-one": "{0} تسلا",
+            "unitPattern-count-two": "{0} تسلا",
+            "unitPattern-count-few": "{0} تسلا",
+            "unitPattern-count-many": "{0} تسلا",
+            "unitPattern-count-other": "{0} تسلا"
+          },
+          "magnetic-weber": {
+            "displayName": "ويبر",
+            "unitPattern-count-zero": "{0} ويبر",
+            "unitPattern-count-one": "{0} ويبر",
+            "unitPattern-count-two": "{0} ويبر",
+            "unitPattern-count-few": "{0} ويبر",
+            "unitPattern-count-many": "{0} ويبر",
+            "unitPattern-count-other": "{0} ويبر"
+          },
+          "temperature-rankine": {
+            "displayName": "°R",
+            "unitPattern-count-other": "{0} °R"
+          },
+          "duration-fortnight": {
+            "displayName": "fortnight",
+            "unitPattern-count-other": "{0} fw"
+          },
+          "mass-slug": {
+            "displayName": "slug",
+            "unitPattern-count-other": "{0} slug"
+          },
+          "pressure-gasoline-energy-density": {
+            "displayName": "gas E",
+            "unitPattern-count-other": "{0} gas E"
+          },
+          "length-rin": {
+            "displayName": "rin [JP]",
+            "unitPattern-count-other": "{0} rin [JP]"
+          },
+          "length-sun": {
+            "displayName": "sun [JP]",
+            "unitPattern-count-other": "{0} sun [JP]"
+          },
+          "length-shaku-length": {
+            "displayName": "shaku [JP]",
+            "unitPattern-count-other": "{0} shaku [JP]"
+          },
+          "length-shaku-cloth": {
+            "displayName": "shaku [cloth, JP]",
+            "unitPattern-count-other": "{0} shaku [cloth, JP]"
+          },
+          "length-ken": {
+            "displayName": "ken [JP]",
+            "unitPattern-count-other": "{0} ken [JP]"
+          },
+          "length-jo-jp": {
+            "displayName": "jo [JP]",
+            "unitPattern-count-other": "{0} jo [JP]"
+          },
+          "length-ri-jp": {
+            "displayName": "ri [JP]",
+            "unitPattern-count-other": "{0} ri [JP]"
+          },
+          "area-bu-jp": {
+            "displayName": "bu [JP]",
+            "unitPattern-count-other": "{0} bu [JP]"
+          },
+          "area-se-jp": {
+            "displayName": "se [JP]",
+            "unitPattern-count-other": "{0} se [JP]"
+          },
+          "area-cho": {
+            "displayName": "cho [JP]",
+            "unitPattern-count-other": "{0} cho [JP]"
+          },
+          "volume-kosaji": {
+            "displayName": "kosaji [JP]",
+            "unitPattern-count-other": "{0} kosaji [JP]"
+          },
+          "volume-osaji": {
+            "displayName": "osaji [JP]",
+            "unitPattern-count-other": "{0} osaji [JP]"
+          },
+          "volume-cup-jp": {
+            "displayName": "cup [JP]",
+            "unitPattern-count-other": "{0} cup [JP]"
+          },
+          "volume-shaku": {
+            "displayName": "shaku [vol, JP]",
+            "unitPattern-count-other": "{0} shaku [vol, JP]"
+          },
+          "volume-sai": {
+            "displayName": "sai [JP]",
+            "unitPattern-count-other": "{0} sai [JP]"
+          },
+          "volume-to-jp": {
+            "displayName": "to [JP]",
+            "unitPattern-count-other": "{0} to [JP]"
+          },
+          "volume-koku": {
+            "displayName": "koku [JP]",
+            "unitPattern-count-other": "{0} koku [JP]"
+          },
+          "speed-light-speed": {
+            "displayName": "ضوئي",
+            "unitPattern-count-zero": "{0} ضوئي",
+            "unitPattern-count-one": "{0} ضوئي",
+            "unitPattern-count-two": "{0} ضوئي",
+            "unitPattern-count-few": "{0} ضوئية",
+            "unitPattern-count-many": "{0} ضوئي",
+            "unitPattern-count-other": "{0} ضوئي"
+          },
+          "mass-fun": {
+            "displayName": "fun [JP]",
+            "unitPattern-count-other": "{0} fun [JP]"
+          },
+          "concentr-part-per-1e9": {
             "displayName": "جزء/مليار",
             "unitPattern-count-zero": "{0} جزء/مليار",
             "unitPattern-count-one": "{0} جزء/مليار",
@@ -4063,7 +4595,16 @@
             "unitPattern-count-many": "{0} عنصر",
             "unitPattern-count-other": "{0} عنصر"
           },
-          "concentr-permillion": {
+          "concentr-part": {
+            "displayName": "جزء",
+            "unitPattern-count-zero": "{0} جزء",
+            "unitPattern-count-one": "{0} جزء",
+            "unitPattern-count-two": "جزآن",
+            "unitPattern-count-few": "{0} أجزاء",
+            "unitPattern-count-many": "{0} جزءًا",
+            "unitPattern-count-other": "{0} جزء"
+          },
+          "concentr-part-per-1e6": {
             "displayName": "جزء/مليون",
             "unitPattern-count-zero": "{0} جزء/مليون",
             "unitPattern-count-one": "{0} جزء/مليون",
@@ -4107,6 +4648,15 @@
             "unitPattern-count-few": "{0} مول",
             "unitPattern-count-many": "{0} مول",
             "unitPattern-count-other": "{0} مول"
+          },
+          "concentr-ofglucose": {
+            "displayName": "سكّري",
+            "unitPattern-count-zero": "{0} سكّري",
+            "unitPattern-count-one": "{0} سكّري",
+            "unitPattern-count-two": "{0} سكّري",
+            "unitPattern-count-few": "{0} سكّري",
+            "unitPattern-count-many": "{0} سكّري",
+            "unitPattern-count-other": "{0} سكّري"
           },
           "consumption-liter-per-kilometer": {
             "displayName": "ل/كم",
@@ -5052,6 +5602,15 @@
             "unitPattern-count-many": "{0} ملم زئبقي",
             "unitPattern-count-other": "{0} ملم زئبقي"
           },
+          "pressure-ofhg": {
+            "displayName": "زئبقي",
+            "unitPattern-count-zero": "{0} زئبقي",
+            "unitPattern-count-one": "{0} زئبقي",
+            "unitPattern-count-two": "{0} زئبقي",
+            "unitPattern-count-few": "{0} زئبقي",
+            "unitPattern-count-many": "{0} زئبقي",
+            "unitPattern-count-other": "{0} زئبقي"
+          },
           "pressure-pound-force-per-square-inch": {
             "displayName": "رطل/بوصة²",
             "unitPattern-count-zero": "{0} رطل/بوصة²",
@@ -5365,6 +5924,15 @@
             "unitPattern-count-many": "{0} كوب متري",
             "unitPattern-count-other": "{0} كوب متري"
           },
+          "volume-fluid-ounce-metric": {
+            "displayName": "أونصة س م",
+            "unitPattern-count-zero": "{0} أونصة س م",
+            "unitPattern-count-one": "{0} أونصة س م",
+            "unitPattern-count-two": "{0} أونصة س م",
+            "unitPattern-count-few": "{0} أونصة س م",
+            "unitPattern-count-many": "{0} أونصة س م",
+            "unitPattern-count-other": "{0} أونصة س م"
+          },
           "volume-acre-foot": {
             "displayName": "فدان قدم",
             "unitPattern-count-zero": "{0} فدان قدم",
@@ -5421,6 +5989,10 @@
             "unitPattern-count-many": "{0} باينت",
             "unitPattern-count-other": "{0} باينت"
           },
+          "volume-pint-imperial": {
+            "displayName": "pint Imp.",
+            "unitPattern-count-other": "{0} pt Imp."
+          },
           "volume-cup": {
             "displayName": "كوب",
             "unitPattern-count-zero": "{0} كوب",
@@ -5429,6 +6001,10 @@
             "unitPattern-count-few": "{0} كوب",
             "unitPattern-count-many": "{0} كوب",
             "unitPattern-count-other": "{0} كوب"
+          },
+          "volume-cup-imperial": {
+            "displayName": "cup Imp.",
+            "unitPattern-count-other": "{0} cup Imp."
           },
           "volume-fluid-ounce": {
             "displayName": "أونصة س",
@@ -5538,11 +6114,233 @@
             "unitPattern-count-many": "{0} ربع غالون إمبراطوري",
             "unitPattern-count-other": "{0} ربع غالون إمبراطوري"
           },
-          "speed-light-speed": {
-            "displayName": "light",
-            "unitPattern-count-other": "{0} light"
+          "angle-steradian": {
+            "displayName": "ستراديان",
+            "unitPattern-count-zero": "{0} ستراديان",
+            "unitPattern-count-one": "{0} ستراديان",
+            "unitPattern-count-two": "{0} ستراديان",
+            "unitPattern-count-few": "{0} ستراديان",
+            "unitPattern-count-many": "{0} ستراديان",
+            "unitPattern-count-other": "{0} ستراديان"
           },
-          "concentr-portion-per-1e9": {
+          "concentr-katal": {
+            "displayName": "كات",
+            "unitPattern-count-zero": "{0} كات",
+            "unitPattern-count-one": "{0} كات",
+            "unitPattern-count-two": "{0} كات",
+            "unitPattern-count-few": "{0} كات",
+            "unitPattern-count-many": "{0} كات",
+            "unitPattern-count-other": "{0} كات"
+          },
+          "electric-coulomb": {
+            "displayName": "كول",
+            "unitPattern-count-zero": "{0} كول",
+            "unitPattern-count-one": "{0} كول",
+            "unitPattern-count-two": "{0} كول",
+            "unitPattern-count-few": "{0} كول",
+            "unitPattern-count-many": "{0} كول",
+            "unitPattern-count-other": "{0} كول"
+          },
+          "electric-farad": {
+            "displayName": "ف",
+            "unitPattern-count-zero": "{0} ف",
+            "unitPattern-count-one": "{0} ف",
+            "unitPattern-count-two": "{0} ف",
+            "unitPattern-count-few": "{0} ف",
+            "unitPattern-count-many": "{0} ف",
+            "unitPattern-count-other": "{0} ف"
+          },
+          "electric-henry": {
+            "displayName": "ه",
+            "unitPattern-count-zero": "{0} ه",
+            "unitPattern-count-one": "{0} ه",
+            "unitPattern-count-two": "{0} ه",
+            "unitPattern-count-few": "{0} ه",
+            "unitPattern-count-many": "{0} ه",
+            "unitPattern-count-other": "{0} ه"
+          },
+          "electric-siemens": {
+            "displayName": "س",
+            "unitPattern-count-zero": "{0} س",
+            "unitPattern-count-one": "{0} س",
+            "unitPattern-count-two": "{0} س",
+            "unitPattern-count-few": "{0} س",
+            "unitPattern-count-many": "{0} س",
+            "unitPattern-count-other": "{0} س"
+          },
+          "energy-calorie-it": {
+            "displayName": "سع-it",
+            "unitPattern-count-zero": "{0} سع-it",
+            "unitPattern-count-one": "{0} سع-it",
+            "unitPattern-count-two": "{0} سع-it",
+            "unitPattern-count-few": "{0} سع-it",
+            "unitPattern-count-many": "{0} سع-it",
+            "unitPattern-count-other": "{0} سع-it"
+          },
+          "energy-british-thermal-unit-it": {
+            "displayName": "BTU-IT",
+            "unitPattern-count-other": "{0} BTU-IT"
+          },
+          "energy-becquerel": {
+            "displayName": "بيكريل",
+            "unitPattern-count-zero": "{0} بيكريل",
+            "unitPattern-count-one": "{0} بيكريل",
+            "unitPattern-count-two": "{0} بيكريل",
+            "unitPattern-count-few": "{0} بيكريل",
+            "unitPattern-count-many": "{0} بيكريل",
+            "unitPattern-count-other": "{0} بيكريل"
+          },
+          "energy-sievert": {
+            "displayName": "زيف",
+            "unitPattern-count-zero": "{0} زيف",
+            "unitPattern-count-one": "{0} زيف",
+            "unitPattern-count-two": "{0} زيف",
+            "unitPattern-count-few": "{0} زيف",
+            "unitPattern-count-many": "{0} زيف",
+            "unitPattern-count-other": "{0} زيف"
+          },
+          "energy-gray": {
+            "displayName": "جراي",
+            "unitPattern-count-zero": "{0} جراي",
+            "unitPattern-count-one": "{0} جراي",
+            "unitPattern-count-two": "{0} جراي",
+            "unitPattern-count-few": "{0} جراي",
+            "unitPattern-count-many": "{0} جراي",
+            "unitPattern-count-other": "{0} جراي"
+          },
+          "force-kilogram-force": {
+            "displayName": "كغ ث",
+            "unitPattern-count-zero": "{0} كغ ث",
+            "unitPattern-count-one": "{0} كغ ث",
+            "unitPattern-count-two": "{0} كغ ث",
+            "unitPattern-count-few": "{0} كغ ث",
+            "unitPattern-count-many": "{0} كغ ث",
+            "unitPattern-count-other": "{0} كغ ث"
+          },
+          "length-rod": {
+            "displayName": "rod",
+            "unitPattern-count-other": "{0} rod"
+          },
+          "length-chain": {
+            "displayName": "chain",
+            "unitPattern-count-other": "{0} chain"
+          },
+          "magnetic-tesla": {
+            "displayName": "تسلا",
+            "unitPattern-count-zero": "{0} تسلا",
+            "unitPattern-count-one": "{0} تسلا",
+            "unitPattern-count-two": "{0} تسلا",
+            "unitPattern-count-few": "{0} تسلا",
+            "unitPattern-count-many": "{0} تسلا",
+            "unitPattern-count-other": "{0} تسلا"
+          },
+          "magnetic-weber": {
+            "displayName": "ويبر",
+            "unitPattern-count-zero": "{0} ويبر",
+            "unitPattern-count-one": "{0} ويبر",
+            "unitPattern-count-two": "{0} ويبر",
+            "unitPattern-count-few": "{0} ويبر",
+            "unitPattern-count-many": "{0} ويبر",
+            "unitPattern-count-other": "{0} ويبر"
+          },
+          "temperature-rankine": {
+            "displayName": "°R",
+            "unitPattern-count-other": "{0} °R"
+          },
+          "duration-fortnight": {
+            "displayName": "fortnight",
+            "unitPattern-count-other": "{0} fw"
+          },
+          "mass-slug": {
+            "displayName": "slug",
+            "unitPattern-count-other": "{0} slug"
+          },
+          "pressure-gasoline-energy-density": {
+            "displayName": "gas E",
+            "unitPattern-count-other": "{0} gas E"
+          },
+          "length-rin": {
+            "displayName": "rin [JP]",
+            "unitPattern-count-other": "{0} rin [JP]"
+          },
+          "length-sun": {
+            "displayName": "sun [JP]",
+            "unitPattern-count-other": "{0} sun [JP]"
+          },
+          "length-shaku-length": {
+            "displayName": "shaku [JP]",
+            "unitPattern-count-other": "{0} shaku [JP]"
+          },
+          "length-shaku-cloth": {
+            "displayName": "shaku [cloth, JP]",
+            "unitPattern-count-other": "{0} shaku [cloth, JP]"
+          },
+          "length-ken": {
+            "displayName": "ken [JP]",
+            "unitPattern-count-other": "{0} ken [JP]"
+          },
+          "length-jo-jp": {
+            "displayName": "jo [JP]",
+            "unitPattern-count-other": "{0} jo [JP]"
+          },
+          "length-ri-jp": {
+            "displayName": "ri [JP]",
+            "unitPattern-count-other": "{0} ri [JP]"
+          },
+          "area-bu-jp": {
+            "displayName": "bu [JP]",
+            "unitPattern-count-other": "{0} bu [JP]"
+          },
+          "area-se-jp": {
+            "displayName": "se [JP]",
+            "unitPattern-count-other": "{0} se [JP]"
+          },
+          "area-cho": {
+            "displayName": "cho [JP]",
+            "unitPattern-count-other": "{0} cho [JP]"
+          },
+          "volume-kosaji": {
+            "displayName": "kosaji [JP]",
+            "unitPattern-count-other": "{0} kosaji [JP]"
+          },
+          "volume-osaji": {
+            "displayName": "osaji [JP]",
+            "unitPattern-count-other": "{0} osaji [JP]"
+          },
+          "volume-cup-jp": {
+            "displayName": "cup [JP]",
+            "unitPattern-count-other": "{0} cup [JP]"
+          },
+          "volume-shaku": {
+            "displayName": "shaku [vol, JP]",
+            "unitPattern-count-other": "{0} shaku [vol, JP]"
+          },
+          "volume-sai": {
+            "displayName": "sai [JP]",
+            "unitPattern-count-other": "{0} sai [JP]"
+          },
+          "volume-to-jp": {
+            "displayName": "to [JP]",
+            "unitPattern-count-other": "{0} to [JP]"
+          },
+          "volume-koku": {
+            "displayName": "koku [JP]",
+            "unitPattern-count-other": "{0} koku [JP]"
+          },
+          "speed-light-speed": {
+            "displayName": "ضوئي",
+            "unitPattern-count-zero": "{0} ضوئي",
+            "unitPattern-count-one": "{0} ضوئي",
+            "unitPattern-count-two": "{0} ضوئي",
+            "unitPattern-count-few": "{0} ضوئية",
+            "unitPattern-count-many": "{0} ضوئي",
+            "unitPattern-count-other": "{0} ضوئي"
+          },
+          "mass-fun": {
+            "displayName": "fun [JP]",
+            "unitPattern-count-other": "{0} fun [JP]"
+          },
+          "concentr-part-per-1e9": {
             "displayName": "جزء/مليار",
             "unitPattern-count-zero": "{0} جزء/مليار",
             "unitPattern-count-one": "{0} جزء/مليار",

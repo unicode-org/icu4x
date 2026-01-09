@@ -1,7 +1,11 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 name: icu4x
 description: > 
-  Dart bindings for the Rust icu4x crate.
-version: 2.0.0-dev.0
+  Dart bindings for the Rust `icu` internationalization crate.
+version: 2.1.0-dev.1
 repository: https://github.com/unicode-org/icu4x/tree/main/ffi/dart
 issue_tracker: https://github.com/unicode-org/icu4x/issues?q=is%3Aissue%20is%3Aopen%20label%3AU-flutter
 
@@ -17,24 +21,22 @@ topics:
   - i18n
 
 environment:
-  sdk: '>=3.8.1 <4.0.0'
+  sdk: '>=3.10.0 <4.0.0'
 
 dependencies:
-  args: ^2.7.0
-  code_assets: ^0.19.5
-  collection: ^1.19.1
-  crypto: ^3.0.6
-  ffi: ^2.0.0
-  hooks: ^0.20.0
+  code_assets: ^1.0.0
+  crypto: ^3.0.7
+  ffi: ^2.1.4
+  # Pinned as we use unstable APIs
+  hooks: '>=1.0.0 <1.0.1'
   logging: ^1.3.0
-  meta: ^1.16.0
-  native_toolchain_c: ^0.17.1
-  path: ^1.9.1
-  record_use: ^0.4.1
+  meta: ^1.17.0
+  native_toolchain_c: ^0.17.3
+  record_use: ^0.4.2
 
 dev_dependencies:
-  dart_flutter_team_lints: ^3.5.2
-  test: ^1.21.0
+  lints: ^6.0.0
+  test: ^1.27.0
 
 hooks:
   user_defines:

@@ -20,8 +20,8 @@
 use cldr_cache::CldrCache;
 use elsa::sync::FrozenMap;
 use icu::calendar::{Date, Iso};
-use icu::time::zone::{UtcOffset, ZoneNameTimestamp};
-use icu::time::{Time, ZonedDateTime};
+use icu::time::zone::UtcOffset;
+use icu::time::Time;
 use icu_provider::prelude::*;
 use source::{AbstractFs, SerdeCache, TzdbCache};
 use std::collections::{BTreeSet, HashSet};
@@ -85,7 +85,7 @@ pub struct SourceDataProvider {
     tzdb_paths: Option<Arc<TzdbCache>>,
     trie_type: TrieType,
     collation_root_han: CollationRootHan,
-    pub(crate) timezone_horizon: ZoneNameTimestamp,
+    pub(crate) timezone_horizon: time_zones::Timestamp,
     #[expect(clippy::type_complexity)] // not as complex as it appears
     requests_cache: Arc<
         FrozenMap<
@@ -110,16 +110,16 @@ icu_provider::marker::impl_data_provider_never_marker!(SourceDataProvider);
 
 impl SourceDataProvider {
     /// The CLDR JSON tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_CLDR_TAG: &'static str = "47.0.0";
+    pub const TESTED_CLDR_TAG: &'static str = "48.0.0";
 
     /// The ICU export tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2025-05-21/77.x";
+    pub const TESTED_ICUEXPORT_TAG: &'static str = "release-78.1rc";
 
     /// The segmentation LSTM model tag that has been verified to work with this version of `SourceDataProvider`.
     pub const TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
 
     /// The TZDB tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_TZDB_TAG: &'static str = "2025b";
+    pub const TESTED_TZDB_TAG: &'static str = "2025c";
 
     /// A provider using the data that has been verified to work with this version of `SourceDataProvider`.
     ///
@@ -157,9 +157,11 @@ impl SourceDataProvider {
             segmenter_lstm_paths: None,
             tzdb_paths: None,
             trie_type: Default::default(),
-            timezone_horizon: ZoneNameTimestamp::from_zoned_date_time_iso(
-                ZonedDateTime::try_offset_only_from_str("2015-01-01T00:00:00Z", Iso).unwrap(),
-            ),
+            timezone_horizon: time_zones::Timestamp::try_offset_only_from_str(
+                "2015-01-01T00:00:00Z",
+                Default::default(),
+            )
+            .unwrap(),
             collation_root_han: Default::default(),
             requests_cache: Default::default(),
         }
@@ -232,16 +234,21 @@ impl SourceDataProvider {
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
-    pub fn with_icuexport_for_tag(self, mut tag: &str) -> Self {
-        if tag == "release-71-1" {
-            tag = "icu4x/2022-08-17/71.x";
-        }
+    pub fn with_icuexport_for_tag(self, tag: &str) -> Self {
+        let url = if tag >= "release-78.1" || tag.starts_with("icu4x-") {
+            format!(
+                "https://github.com/unicode-org/icu/releases/download/{tag}/icu4x-icuexportdata-{}.zip",
+                tag.replace("release-", "").replace("icu4x-", "")
+            )
+        } else {
+            format!(
+                "https://github.com/unicode-org/icu/releases/download/{tag}/icuexportdata_{}.zip",
+                tag.replace('/', "-")
+            )
+        };
         Self {
-                icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_from_url(format!(
-                    "https://github.com/unicode-org/icu/releases/download/{tag}/icuexportdata_{}.zip",
-                    tag.replace('/', "-")
-                ))))),
-                ..self
+            icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_from_url(url)))),
+            ..self
         }
     }
 
@@ -337,7 +344,10 @@ impl SourceDataProvider {
         self.tzdb_paths.as_deref().ok_or(Self::MISSING_TZDB_ERROR)
     }
 
-    /// Set this to use tries optimized for speed instead of data size
+    /// Set this to use tries optimized for speed instead of data size.
+    ///
+    /// The tries for the core (UAX #15 but not UAX #46) normalization
+    /// forms use the fast trie type regardless of this setting.
     pub fn with_fast_tries(self) -> Self {
         Self {
             trie_type: TrieType::Fast,
@@ -362,11 +372,11 @@ impl SourceDataProvider {
     /// time zone changes.
     pub fn with_timezone_horizon(self, date: Date<Iso>) -> Self {
         Self {
-            timezone_horizon: ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime {
+            timezone_horizon: time_zones::Timestamp {
                 date,
                 time: Time::start_of_day(),
                 zone: UtcOffset::zero(),
-            }),
+            },
             ..self
         }
     }

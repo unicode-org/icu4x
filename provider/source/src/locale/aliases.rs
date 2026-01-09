@@ -181,7 +181,7 @@ impl From<&cldr_serde::aliases::Resource> for Aliases<'_> {
         for (from, to) in other.supplemental.metadata.alias.subdivision_aliases.iter() {
             if let Some(replacement) = to.replacement.split(' ').find_map(|r| {
                 if r.len() == 2 {
-                    // Following http://unicode.org/reports/tr35/#Canonical_Unicode_Locale_Identifiers,
+                    // Following https://unicode.org/reports/tr35/#Canonical_Unicode_Locale_Identifiers,
                     // append "zzzz" to make this syntactically correct.
                     let replacement = r.to_string().to_ascii_lowercase() + "zzzz";
                     TinyAsciiStr::<7>::try_from_str(&replacement).ok()

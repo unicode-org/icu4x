@@ -4,7 +4,6 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
     use icu_segmenter::scaffold::{Latin1, PotentiallyIllFormedUtf8, Utf16};
@@ -97,6 +96,7 @@ pub mod ffi {
         )]
         #[diplomat::attr(not(supports = utf8_strings), rename = "segment")]
         #[diplomat::attr(supports = utf8_strings, rename = "segment16")]
+        #[diplomat::attr(kotlin, disable)]
         pub fn segment_utf16<'a>(
             &'a self,
             input: &'a DiplomatStr16,

@@ -29,6 +29,11 @@ impl<const D: usize> MatrixOwned<D> {
         }
     }
 
+    #[cfg(test)]
+    pub fn as_flat_slice(&self) -> &[f32] {
+        &self.data
+    }
+
     pub(super) fn new_zero(dims: [usize; D]) -> Self {
         let total_len = dims.iter().product::<usize>();
         MatrixOwned {
@@ -43,15 +48,14 @@ impl<const D: usize> MatrixOwned<D> {
     /// matrix is 4x3, then this function returns a linear matrix of length 3.
     ///
     /// The type parameter `M` should be `D - 1`.
-    #[inline]
-    pub(super) fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<'_, M>> {
-        // This assertion is based on const generics; it should always succeed and be elided.
-        assert_eq!(M, D - 1);
-        let (range, dims) = self.as_borrowed().submatrix_range(index);
-        let data = &self.data.get(range)?;
-        Some(MatrixBorrowed { data, dims })
-    }
-
+    // #[inline]
+    // pub(super) fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<'_, M>> {
+    //     // This assertion is based on const generics; it should always succeed and be elided.
+    //     assert_eq!(M, D - 1);
+    //     let (range, dims) = self.as_borrowed().submatrix_range(index);
+    //     let data = &self.data.get(range)?;
+    //     Some(MatrixBorrowed { data, dims })
+    // }
     pub(super) fn as_mut(&mut self) -> MatrixBorrowedMut<'_, D> {
         MatrixBorrowedMut {
             data: &mut self.data,
@@ -400,8 +404,8 @@ pub(super) struct MatrixZero<'a, const D: usize> {
     dims: [usize; D],
 }
 
-// impl<'a> From<&'a crate::provider::LstmMatrix1<'a>> for MatrixZero<'a, 1> {
-//     fn from(other: &'a crate::provider::LstmMatrix1<'a>) -> Self {
+// impl<'a> From<&'a super::provider::LstmMatrix1<'a>> for MatrixZero<'a, 1> {
+//     fn from(other: &'a super::provider::LstmMatrix1<'a>) -> Self {
 //         Self {
 //             data: &other.data,
 //             dims: other.dims.map(|x| x as usize),
@@ -409,8 +413,8 @@ pub(super) struct MatrixZero<'a, const D: usize> {
 //     }
 // }
 
-// impl<'a> From<&'a crate::provider::LstmMatrix2<'a>> for MatrixZero<'a, 2> {
-//     fn from(other: &'a crate::provider::LstmMatrix2<'a>) -> Self {
+// impl<'a> From<&'a super::provider::LstmMatrix2<'a>> for MatrixZero<'a, 2> {
+//     fn from(other: &'a super::provider::LstmMatrix2<'a>) -> Self {
 //         Self {
 //             data: &other.data,
 //             dims: other.dims.map(|x| x as usize),
@@ -418,8 +422,8 @@ pub(super) struct MatrixZero<'a, const D: usize> {
 //     }
 // }
 
-// impl<'a> From<&'a crate::provider::LstmMatrix3<'a>> for MatrixZero<'a, 3> {
-//     fn from(other: &'a crate::provider::LstmMatrix3<'a>) -> Self {
+// impl<'a> From<&'a super::provider::LstmMatrix3<'a>> for MatrixZero<'a, 3> {
+//     fn from(other: &'a super::provider::LstmMatrix3<'a>) -> Self {
 //         Self {
 //             data: &other.data,
 //             dims: other.dims.map(|x| x as usize),
@@ -427,24 +431,24 @@ pub(super) struct MatrixZero<'a, const D: usize> {
 //     }
 // }
 
-impl<'a> From<&'a crate::CnnMatrix1<'a>> for MatrixZero<'a, 1> {
-    fn from(m: &'a crate::CnnMatrix1<'a>) -> Self {
+impl<'a> From<&'a super::CnnMatrix1<'a>> for MatrixZero<'a, 1> {
+    fn from(m: &'a super::CnnMatrix1<'a>) -> Self {
         Self {
             data: &m.data,
             dims: m.dims.map(|x| x as usize),
         }
     }
 }
-impl<'a> From<&'a crate::CnnMatrix2<'a>> for MatrixZero<'a, 2> {
-    fn from(m: &'a crate::CnnMatrix2<'a>) -> Self {
+impl<'a> From<&'a super::CnnMatrix2<'a>> for MatrixZero<'a, 2> {
+    fn from(m: &'a super::CnnMatrix2<'a>) -> Self {
         Self {
             data: &m.data,
             dims: m.dims.map(|x| x as usize),
         }
     }
 }
-impl<'a> From<&'a crate::CnnMatrix3<'a>> for MatrixZero<'a, 3> {
-    fn from(m: &'a crate::CnnMatrix3<'a>) -> Self {
+impl<'a> From<&'a super::CnnMatrix3<'a>> for MatrixZero<'a, 3> {
+    fn from(m: &'a super::CnnMatrix3<'a>) -> Self {
         Self {
             data: &m.data,
             dims: m.dims.map(|x| x as usize),
@@ -453,13 +457,13 @@ impl<'a> From<&'a crate::CnnMatrix3<'a>> for MatrixZero<'a, 3> {
 }
 
 impl<'a, const D: usize> MatrixZero<'a, D> {
-    #[expect(clippy::wrong_self_convention)] // same convention as slice::to_vec
-    pub(super) fn to_owned(&self) -> MatrixOwned<D> {
-        MatrixOwned {
-            data: self.data.iter().collect(),
-            dims: self.dims,
-        }
-    }
+    // #[expect(clippy::wrong_self_convention)] // same convention as slice::to_vec
+    // pub(super) fn to_owned(&self) -> MatrixOwned<D> {
+    //     MatrixOwned {
+    //         data: self.data.iter().collect(),
+    //         dims: self.dims,
+    //     }
+    // }
 
     pub(super) fn as_slice(&self) -> &ZeroSlice<f32> {
         self.data

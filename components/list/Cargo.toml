@@ -19,11 +19,10 @@ version.workspace = true
 all-features = true
 
 [dependencies]
-displaydoc = { workspace = true }
 icu_provider = { workspace = true }
 regex-automata = { workspace = true, features = ["dfa-search"] }
 writeable = { workspace = true }
-zerovec = { workspace = true }
+zerovec = { workspace = true, features = ["alloc"] }
 
 databake = { workspace = true, features = ["derive"], optional = true}
 serde = { workspace = true, features = ["derive"], optional = true }

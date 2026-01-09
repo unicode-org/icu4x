@@ -437,10 +437,12 @@ macro_rules! impl_date_or_calendar_period_marker {
         $(input_month = $month_yes:ident,)?
         // Whether the input should contain the day of the month.
         $(input_day_of_month = $day_of_month_yes:ident,)?
-        // Whether the input should contain the day of the week.
-        $(input_day_of_week = $day_of_week_yes:ident,)?
+        // Whether the input should contain the weekday.
+        $(input_weekday = $weekday_yes:ident,)?
         // Whether the input should contain the day of the year.
         $(input_day_of_year = $day_of_year_yes:ident,)?
+        // Whether the input should contain the rata die.
+        $(input_rata_die = $rata_die_yes:ident,)?
         // Whether the input should declare its calendar kind.
         $(input_any_calendar_kind = $any_calendar_kind_yes:ident,)?
         // Whether the alignment option should be available.
@@ -532,7 +534,8 @@ macro_rules! impl_date_or_calendar_period_marker {
             type MonthInput = datetime_marker_helper!(@input/month, $($month_yes)?);
             type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, $($day_of_month_yes)?);
             type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, $($day_of_year_yes)?);
-            type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, $($day_of_week_yes)?);
+            type RataDieInput = datetime_marker_helper!(@input/rata_die, $($rata_die_yes)?);
+            type DayOfWeekInput = datetime_marker_helper!(@input/weekday, $($weekday_yes)?);
         }
         impl<C: CldrCalendar> TypedDateDataMarkers<C> for $type {
             type DateSkeletonPatternsV1 = datetime_marker_helper!(@dates/typed, yes);
@@ -578,8 +581,9 @@ macro_rules! impl_date_marker {
         $(input_year = $year_yes:ident,)?
         $(input_month = $month_yes:ident,)?
         $(input_day_of_month = $day_of_month_yes:ident,)?
-        $(input_day_of_week = $day_of_week_yes:ident,)?
+        $(input_weekday = $weekday_yes:ident,)?
         $(input_day_of_year = $day_of_year_yes:ident,)?
+        $(input_rata_die = $rata_die_yes:ident,)?
         $(input_any_calendar_kind = $any_calendar_kind_yes:ident,)?
         $(option_alignment = $option_alignment_yes:ident,)?
     ) => {
@@ -596,8 +600,9 @@ macro_rules! impl_date_marker {
             $(input_year = $year_yes,)?
             $(input_month = $month_yes,)?
             $(input_day_of_month = $day_of_month_yes,)?
-            $(input_day_of_week = $day_of_week_yes,)?
+            $(input_weekday = $weekday_yes,)?
             $(input_day_of_year = $day_of_year_yes,)?
+            $(input_rata_die = $rata_die_yes,)?
             $(input_any_calendar_kind = $any_calendar_kind_yes,)?
             $(option_alignment = $option_alignment_yes,)?
         );
@@ -693,7 +698,8 @@ macro_rules! impl_date_marker {
             type MonthInput = datetime_marker_helper!(@input/month, $($month_yes)?);
             type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, $($day_of_month_yes)?);
             type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, $($day_of_year_yes)?);
-            type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, $($day_of_week_yes)?);
+            type RataDieInput = datetime_marker_helper!(@input/rata_die, $($rata_die_yes)?);
+            type DayOfWeekInput = datetime_marker_helper!(@input/weekday, $($weekday_yes)?);
         }
         impl<C: CldrCalendar> TypedDateDataMarkers<C> for $type_time {
             type DateSkeletonPatternsV1 = datetime_marker_helper!(@dates/typed, yes);
@@ -1025,7 +1031,7 @@ impl_date_marker!(
     sample = "Friday",
     sample_time = "Friday 3:47:50 PM",
     weekdays = yes,
-    input_day_of_week = yes,
+    input_weekday = yes,
 );
 
 impl_date_marker!(
@@ -1036,10 +1042,10 @@ impl_date_marker!(
     description = "day of month and weekday",
     sample_length = long,
     sample = "17 Friday",
-    sample_time = "17 Friday, 3:47:50 PM",
+    sample_time = "17 Friday at 3:47:50 PM",
     weekdays = yes,
     input_day_of_month = yes,
-    input_day_of_week = yes,
+    input_weekday = yes,
     option_alignment = yes,
 );
 
@@ -1069,7 +1075,7 @@ impl_date_marker!(
     weekdays = yes,
     input_month = yes,
     input_day_of_month = yes,
-    input_day_of_week = yes,
+    input_weekday = yes,
     input_any_calendar_kind = yes,
     option_alignment = yes,
 );
@@ -1103,7 +1109,7 @@ impl_date_marker!(
     input_year = yes,
     input_month = yes,
     input_day_of_month = yes,
-    input_day_of_week = yes,
+    input_weekday = yes,
     input_any_calendar_kind = yes,
     option_alignment = yes,
 );
@@ -1746,7 +1752,7 @@ pub mod zone {
         /// For example, a raw [`UtcOffset`] cannot be used here.
         ///
         /// ```compile_fail,E0277
-        /// use icu::datetime::input::{DateTime, Iso};
+        /// use icu::datetime::input::DateTime;
         /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::Location;
         /// use icu::datetime::input::UtcOffset;
@@ -1781,7 +1787,7 @@ pub mod zone {
         /// For example, a raw [`UtcOffset`] cannot be used here.
         ///
         /// ```compile_fail,E0277
-        /// use icu::datetime::input::{DateTime, Iso};
+        /// use icu::datetime::input::DateTime;
         /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::ExemplarCity;
         /// use icu::datetime::input::UtcOffset;

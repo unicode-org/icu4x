@@ -23,9 +23,12 @@
     clippy::result_unit_err,
     clippy::should_implement_trait
 )]
+// libc is behind a negative feature
+#![allow(unused_crate_dependencies)]
 
 //! This crate contains the `extern "C"` FFI for ICU4X, as well as the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
-//! C, C++, Dart, JavaScript, and TypeScript bindings.
+//! C and C++ headers. ICU4X is also available for JavaScript/TypeScript through [`npm`](https://www.npmjs.com/package/icu), and for
+//! Dart through [`pub.dev`](https://pub.dev/packages/icu4x).
 //!
 #![allow(rustdoc::invalid_html_tags)]
 // attribute split over three lines because `cargo generate-readmes` does not evaluate `#![doc = ]` docs
@@ -44,7 +47,6 @@
 //! The <code>extern "C"</code> APIs exposed by this crate, while not directly documented, are stable within the same major
 //! semver version, as are the bindings in the <code>bindings</code> folder.
 //! </div>
-//!
 
 // Renamed so you can't accidentally use it
 #[cfg(target_arch = "wasm32")]
@@ -81,7 +83,7 @@ pub mod unstable {
 
     #[cfg(feature = "properties")]
     pub mod bidi;
-    #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+    #[cfg(feature = "calendar")]
     pub mod calendar;
     #[cfg(feature = "casemap")]
     pub mod casemap;
@@ -89,13 +91,13 @@ pub mod unstable {
     pub mod collator;
     #[cfg(feature = "properties")]
     pub mod collections_sets;
-    #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+    #[cfg(feature = "calendar")]
     pub mod date;
     #[cfg(feature = "datetime")]
     pub mod date_formatter;
     #[cfg(feature = "datetime")]
     pub mod date_time_formatter;
-    #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+    #[cfg(feature = "calendar")]
     pub mod datetime;
     #[cfg(feature = "datetime")]
     pub mod datetime_options;
@@ -109,7 +111,7 @@ pub mod unstable {
     pub mod fallbacker;
     #[cfg(feature = "decimal")]
     pub mod fixed_decimal;
-    #[cfg(any(feature = "datetime", feature = "timezone"))]
+    #[cfg(feature = "datetime")]
     pub mod iana_parser;
     #[cfg(feature = "list")]
     pub mod list;
@@ -127,6 +129,8 @@ pub mod unstable {
     pub mod properties_bidi;
     #[cfg(feature = "properties")]
     pub mod properties_enums;
+    #[cfg(feature = "properties")]
+    pub mod properties_gcg;
     #[cfg(feature = "properties")]
     pub mod properties_iter;
     #[cfg(feature = "properties")]
@@ -147,19 +151,19 @@ pub mod unstable {
     pub mod segmenter_sentence;
     #[cfg(feature = "segmenter")]
     pub mod segmenter_word;
-    #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+    #[cfg(feature = "calendar")]
     pub mod time;
     #[cfg(feature = "datetime")]
     pub mod time_formatter;
-    #[cfg(any(feature = "datetime", feature = "timezone"))]
+    #[cfg(feature = "datetime")]
     pub mod timezone;
     #[cfg(feature = "datetime")]
     pub mod timezone_formatter;
-    #[cfg(any(feature = "datetime", feature = "timezone"))]
+    #[cfg(feature = "datetime")]
     pub mod variant_offset;
     #[cfg(feature = "calendar")]
     pub mod week;
-    #[cfg(any(feature = "datetime", feature = "timezone"))]
+    #[cfg(feature = "datetime")]
     pub mod windows_parser;
     #[cfg(feature = "datetime")]
     pub mod zoned_date_formatter;

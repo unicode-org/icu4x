@@ -1,0 +1,11 @@
+{
+  "map": {
+    "De": 1,
+    "Decimal": 1,
+    "Di": 2,
+    "Digit": 2,
+    "None": 0,
+    "Nu": 3,
+    "Numeric": 3
+  }
+}

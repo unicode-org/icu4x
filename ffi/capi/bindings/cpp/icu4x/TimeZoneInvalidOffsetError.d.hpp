@@ -1,5 +1,5 @@
-#ifndef icu4x_TimeZoneInvalidOffsetError_D_HPP
-#define icu4x_TimeZoneInvalidOffsetError_D_HPP
+#ifndef ICU4X_TimeZoneInvalidOffsetError_D_HPP
+#define ICU4X_TimeZoneInvalidOffsetError_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -21,11 +21,11 @@ namespace capi {
 
 namespace icu4x {
 /**
- * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.InvalidOffsetError.html)
+ * Additional information: [1](https://docs.rs/icu/2.1.1/icu/time/zone/struct.InvalidOffsetError.html)
  */
 struct TimeZoneInvalidOffsetError {
 
 };
 
 } // namespace
-#endif // icu4x_TimeZoneInvalidOffsetError_D_HPP
+#endif // ICU4X_TimeZoneInvalidOffsetError_D_HPP

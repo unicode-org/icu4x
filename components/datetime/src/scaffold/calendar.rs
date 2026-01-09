@@ -6,14 +6,10 @@
 
 use crate::provider::{neo::*, *};
 use crate::scaffold::UnstableSealed;
-use crate::{DateTimeFormatterPreferences, MismatchedCalendarError};
+use crate::MismatchedCalendarError;
 use core::marker::PhantomData;
-use icu_calendar::cal::Roc;
-use icu_calendar::cal::{self, Chinese};
-use icu_calendar::cal::{
-    Buddhist, Coptic, Dangi, Ethiopian, Gregorian, Hebrew, HijriSimulated, HijriTabular,
-    HijriUmmAlQura, Indian, Japanese, JapaneseExtended, Persian,
-};
+use icu_calendar::cal::{self, *};
+use icu_calendar::preferences::{CalendarAlgorithm, CalendarPreferences, HijriCalendarAlgorithm};
 use icu_calendar::{AnyCalendar, AnyCalendarKind, AsCalendar, Date, IntoAnyCalendar, Ref};
 use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
@@ -54,7 +50,7 @@ impl CldrCalendar for Buddhist {
     type SkeletaV1 = DatetimePatternsDateBuddhistV1;
 }
 
-impl CldrCalendar for Chinese {
+impl CldrCalendar for ChineseTraditional {
     type YearNamesV1 = DatetimeNamesYearChineseV1;
     type MonthNamesV1 = DatetimeNamesMonthChineseV1;
     type SkeletaV1 = DatetimePatternsDateChineseV1;
@@ -66,7 +62,7 @@ impl CldrCalendar for Coptic {
     type SkeletaV1 = DatetimePatternsDateCopticV1;
 }
 
-impl CldrCalendar for Dangi {
+impl CldrCalendar for KoreanTraditional {
     type YearNamesV1 = DatetimeNamesYearDangiV1;
     type MonthNamesV1 = DatetimeNamesMonthDangiV1;
     type SkeletaV1 = DatetimePatternsDateDangiV1;
@@ -96,22 +92,74 @@ impl CldrCalendar for Indian {
     type SkeletaV1 = DatetimePatternsDateIndianV1;
 }
 
-impl CldrCalendar for HijriTabular {
+/// [`hijri::Rules`]-specific formatting options.
+///
+/// See [`CldrCalendar`].
+///
+/// The simplest implementation of this uses the same names
+/// as some provided [`hijri::Rules`]:
+///
+/// ```rust
+/// use icu::calendar::cal::hijri;
+/// use icu::datetime::scaffold::FormattableHijriRules;
+///
+/// #[derive(Clone, Debug)]
+/// struct MyRules;
+///
+/// impl icu::calendar::cal::scaffold::UnstableSealed for MyRules {}
+/// impl icu::datetime::scaffold::UnstableSealed for MyRules {}
+///
+/// impl hijri::Rules for MyRules {
+///     fn year(&self, _year: i32) -> hijri::HijriYear {
+///         todo!()
+///     }
+/// }
+///
+/// impl FormattableHijriRules for MyRules {
+///     type YearNamesV1 =
+///         <hijri::UmmAlQura as FormattableHijriRules>::YearNamesV1;
+///     type MonthNamesV1 =
+///         <hijri::UmmAlQura as FormattableHijriRules>::MonthNamesV1;
+///     type SkeletaV1 = <hijri::UmmAlQura as FormattableHijriRules>::SkeletaV1;
+/// }
+/// ```
+// TODO: default associated types would be nice (https://github.com/rust-lang/rust/issues/29661)
+pub trait FormattableHijriRules: hijri::unstable_internal::Rules + UnstableSealed {
+    /// The data marker for loading year symbols for this calendar.
+    type YearNamesV1: DataMarker<DataStruct = YearNames<'static>>;
+
+    /// The data marker for loading month symbols for this calendar.
+    type MonthNamesV1: DataMarker<DataStruct = MonthNames<'static>>;
+
+    /// The data marker for loading skeleton patterns for this calendar.
+    type SkeletaV1: DataMarker<DataStruct = PackedPatterns<'static>>;
+}
+
+impl UnstableSealed for hijri::TabularAlgorithm {}
+impl FormattableHijriRules for hijri::TabularAlgorithm {
     type YearNamesV1 = DatetimeNamesYearHijriV1;
     type MonthNamesV1 = DatetimeNamesMonthHijriV1;
     type SkeletaV1 = DatetimePatternsDateHijriV1;
 }
 
-impl CldrCalendar for HijriSimulated {
+impl UnstableSealed for hijri::UmmAlQura {}
+impl FormattableHijriRules for hijri::UmmAlQura {
     type YearNamesV1 = DatetimeNamesYearHijriV1;
     type MonthNamesV1 = DatetimeNamesMonthHijriV1;
     type SkeletaV1 = DatetimePatternsDateHijriV1;
 }
 
-impl CldrCalendar for HijriUmmAlQura {
+impl UnstableSealed for hijri::AstronomicalSimulation {}
+impl FormattableHijriRules for hijri::AstronomicalSimulation {
     type YearNamesV1 = DatetimeNamesYearHijriV1;
     type MonthNamesV1 = DatetimeNamesMonthHijriV1;
     type SkeletaV1 = DatetimePatternsDateHijriV1;
+}
+
+impl<R: FormattableHijriRules> CldrCalendar for Hijri<R> {
+    type YearNamesV1 = R::YearNamesV1;
+    type MonthNamesV1 = R::MonthNamesV1;
+    type SkeletaV1 = R::SkeletaV1;
 }
 
 impl CldrCalendar for Japanese {
@@ -140,16 +188,14 @@ impl CldrCalendar for Roc {
 
 impl UnstableSealed for () {}
 impl UnstableSealed for Buddhist {}
-impl UnstableSealed for Chinese {}
+impl UnstableSealed for ChineseTraditional {}
 impl UnstableSealed for Coptic {}
-impl UnstableSealed for Dangi {}
+impl UnstableSealed for KoreanTraditional {}
 impl UnstableSealed for Ethiopian {}
 impl UnstableSealed for Gregorian {}
 impl UnstableSealed for Hebrew {}
 impl UnstableSealed for Indian {}
-impl UnstableSealed for HijriTabular {}
-impl UnstableSealed for HijriSimulated {}
-impl UnstableSealed for HijriUmmAlQura {}
+impl<R: hijri::unstable_internal::Rules> UnstableSealed for Hijri<R> {}
 impl UnstableSealed for Japanese {}
 impl UnstableSealed for JapaneseExtended {}
 impl UnstableSealed for Persian {}
@@ -235,16 +281,17 @@ pub trait IntoFormattableAnyCalendar: CldrCalendar + IntoAnyCalendar {}
 
 // keep in sync with FormattableAnyCalendarKind
 impl IntoFormattableAnyCalendar for Buddhist {}
-impl IntoFormattableAnyCalendar for Chinese {}
+impl IntoFormattableAnyCalendar for ChineseTraditional {}
 impl IntoFormattableAnyCalendar for Coptic {}
-impl IntoFormattableAnyCalendar for Dangi {}
+impl IntoFormattableAnyCalendar for KoreanTraditional {}
 impl IntoFormattableAnyCalendar for Ethiopian {}
 impl IntoFormattableAnyCalendar for Gregorian {}
 impl IntoFormattableAnyCalendar for Hebrew {}
 impl IntoFormattableAnyCalendar for Indian {}
-impl IntoFormattableAnyCalendar for HijriTabular {}
-impl IntoFormattableAnyCalendar for HijriSimulated {}
-impl IntoFormattableAnyCalendar for HijriUmmAlQura {}
+impl IntoFormattableAnyCalendar for Hijri<hijri::TabularAlgorithm> {}
+impl IntoFormattableAnyCalendar for Hijri<hijri::AstronomicalSimulation> {}
+impl IntoFormattableAnyCalendar for Hijri<hijri::UmmAlQura> {}
+// _NOT_ Hijri<S>
 impl IntoFormattableAnyCalendar for Japanese {}
 // _NOT_ JapaneseExtended
 impl IntoFormattableAnyCalendar for Persian {}
@@ -252,7 +299,7 @@ impl IntoFormattableAnyCalendar for Roc {}
 
 // keep in sync with IntoFormattableAnyCalendar
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub(crate) enum FormattableAnyCalendarKind {
+enum FormattableAnyCalendarKind {
     Buddhist,
     Chinese,
     Coptic,
@@ -273,9 +320,9 @@ pub(crate) enum FormattableAnyCalendarKind {
 }
 
 impl FormattableAnyCalendarKind {
-    pub(crate) fn try_from_any_calendar_kind(kind: AnyCalendarKind) -> Option<Self> {
+    fn try_from_any_calendar(cal: &AnyCalendar) -> Option<Self> {
         use AnyCalendarKind::*;
-        let res = match kind {
+        let res = match cal.kind() {
             Buddhist => Self::Buddhist,
             Chinese => Self::Chinese,
             Coptic => Self::Coptic,
@@ -301,209 +348,54 @@ impl FormattableAnyCalendarKind {
         };
         Some(res)
     }
-
-    pub(crate) fn from_preferences(mut prefs: DateTimeFormatterPreferences) -> Self {
-        if let Some(res) = Self::try_from_any_calendar_kind(AnyCalendarKind::new((&prefs).into())) {
-            return res;
-        }
-
-        // Calendar not supported by DateTimeFormatter
-        // Currently this is CalendarAlgorithm::Iso8601, CalendarAlgorithm::Hijri(Rgsa)
-        // Let AnyCalendarKind constructor select an appropriate fallback
-        prefs.calendar_algorithm = None;
-        if let Some(res) = Self::try_from_any_calendar_kind(AnyCalendarKind::new((&prefs).into())) {
-            return res;
-        }
-
-        debug_assert!(false, "all locale-default calendars are supported");
-        // fall back to something non-Gregorian to make errors more obvious
-        FormattableAnyCalendarKind::Coptic
-    }
 }
 
 #[test]
 fn test_calendar_fallback() {
-    use icu_locale_core::locale;
+    use icu_locale_core::{locale, Locale};
     assert_eq!(
-        FormattableAnyCalendarKind::from_preferences(locale!("en-TH-u-ca-iso8601").into()),
-        FormattableAnyCalendarKind::Buddhist
+        FormattableAnyCalendar::try_new(locale!("en-TH-u-ca-iso8601").into()),
+        FormattableAnyCalendar::try_new(locale!("und-u-ca-buddhist").into()),
     );
     assert_eq!(
-        FormattableAnyCalendarKind::from_preferences(locale!("en-TH").into()),
-        FormattableAnyCalendarKind::Buddhist
+        FormattableAnyCalendar::try_new(locale!("en-TH").into()),
+        FormattableAnyCalendar::try_new(locale!("und-u-ca-buddhist").into()),
     );
     assert_eq!(
-        FormattableAnyCalendarKind::from_preferences(locale!("en-SA-u-ca-islamic").into()),
-        FormattableAnyCalendarKind::HijriUmmAlQura
+        FormattableAnyCalendar::try_new(locale!("en-SA-u-ca-islamic").into()),
+        FormattableAnyCalendar::try_new(
+            Locale::try_from_str("und-u-ca-islamic-umalqura")
+                .unwrap()
+                .into()
+        ),
     );
     assert_eq!(
-        FormattableAnyCalendarKind::from_preferences(locale!("en-IL-u-ca-islamic").into()),
-        FormattableAnyCalendarKind::Gregorian
+        FormattableAnyCalendar::try_new(locale!("en-IL-u-ca-islamic").into()),
+        FormattableAnyCalendar::try_new(
+            Locale::try_from_str("und-u-ca-islamic-civil")
+                .unwrap()
+                .into()
+        ),
     );
 }
 
 /// A version of [`AnyCalendar`] for the calendars supported in the any-calendar formatter.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub(crate) struct FormattableAnyCalendar {
     any_calendar: AnyCalendar,
-    kind: FormattableAnyCalendarKind,
 }
 
 impl FormattableAnyCalendar {
     pub(crate) fn from_calendar(calendar: impl IntoFormattableAnyCalendar) -> Self {
-        let any_calendar = calendar.to_any();
-        let kind = any_calendar.kind();
-        let kind = FormattableAnyCalendarKind::try_from_any_calendar_kind(any_calendar.kind())
-            .unwrap_or_else(|| {
-                debug_assert!(false, "{kind:?} is not a FormattableAnyCalendarKind");
-                FormattableAnyCalendarKind::Coptic
-            });
-        Self { any_calendar, kind }
-    }
-
-    pub(crate) fn try_from_any_calendar(any_calendar: AnyCalendar) -> Option<Self> {
-        let kind = FormattableAnyCalendarKind::try_from_any_calendar_kind(any_calendar.kind())?;
-        Some(Self { any_calendar, kind })
-    }
-
-    pub(crate) fn kind(&self) -> FormattableAnyCalendarKind {
-        self.kind
-    }
-
-    #[cfg(feature = "compiled_data")]
-    pub(crate) fn try_new(kind: FormattableAnyCalendarKind) -> Result<Self, DataError> {
-        use FormattableAnyCalendarKind::*;
-        let any_calendar = match kind {
-            Buddhist => AnyCalendar::Buddhist(cal::Buddhist),
-            Chinese => AnyCalendar::Chinese(cal::Chinese::new()),
-            Coptic => AnyCalendar::Coptic(cal::Coptic),
-            Dangi => AnyCalendar::Dangi(cal::Dangi::new()),
-            Ethiopian => AnyCalendar::Ethiopian(cal::Ethiopian::new()),
-            EthiopianAmeteAlem => AnyCalendar::Ethiopian(cal::Ethiopian::new_with_era_style(
-                cal::EthiopianEraStyle::AmeteAlem,
-            )),
-            Gregorian => AnyCalendar::Gregorian(cal::Gregorian),
-            Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
-            Indian => AnyCalendar::Indian(cal::Indian),
-            HijriTabularTypeIIFriday => AnyCalendar::HijriTabular(cal::HijriTabular::new(
-                cal::HijriTabularLeapYears::TypeII,
-                cal::HijriTabularEpoch::Friday,
-            )),
-            HijriTabularTypeIIThursday => AnyCalendar::HijriTabular(cal::HijriTabular::new(
-                cal::HijriTabularLeapYears::TypeII,
-                cal::HijriTabularEpoch::Thursday,
-            )),
-            HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(cal::HijriUmmAlQura::new()),
-            Japanese => AnyCalendar::Japanese(cal::Japanese::new()),
-            Persian => AnyCalendar::Persian(cal::Persian),
-            Roc => AnyCalendar::Roc(cal::Roc),
-        };
-        Ok(Self { any_calendar, kind })
-    }
-
-    #[cfg(feature = "serde")]
-    pub(crate) fn try_new_with_buffer_provider<P>(
-        provider: &P,
-        kind: FormattableAnyCalendarKind,
-    ) -> Result<Self, DataError>
-    where
-        P: ?Sized + BufferProvider,
-    {
-        use FormattableAnyCalendarKind::*;
-        let any_calendar = match kind {
-            Buddhist => AnyCalendar::Buddhist(cal::Buddhist),
-            Chinese => AnyCalendar::Chinese(cal::Chinese::try_new_with_buffer_provider(provider)?),
-            Coptic => AnyCalendar::Coptic(cal::Coptic),
-            Dangi => AnyCalendar::Dangi(cal::Dangi::try_new_with_buffer_provider(provider)?),
-            Ethiopian => AnyCalendar::Ethiopian(cal::Ethiopian::new()),
-            EthiopianAmeteAlem => AnyCalendar::Ethiopian(cal::Ethiopian::new_with_era_style(
-                cal::EthiopianEraStyle::AmeteAlem,
-            )),
-            Gregorian => AnyCalendar::Gregorian(cal::Gregorian),
-            Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
-            Indian => AnyCalendar::Indian(cal::Indian),
-            HijriTabularTypeIIFriday => AnyCalendar::HijriTabular(cal::HijriTabular::new(
-                cal::HijriTabularLeapYears::TypeII,
-                cal::HijriTabularEpoch::Friday,
-            )),
-            HijriTabularTypeIIThursday => AnyCalendar::HijriTabular(cal::HijriTabular::new(
-                cal::HijriTabularLeapYears::TypeII,
-                cal::HijriTabularEpoch::Thursday,
-            )),
-            HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(cal::HijriUmmAlQura::new()),
-            Japanese => {
-                AnyCalendar::Japanese(cal::Japanese::try_new_with_buffer_provider(provider)?)
-            }
-            Persian => AnyCalendar::Persian(cal::Persian),
-            Roc => AnyCalendar::Roc(cal::Roc),
-        };
-        Ok(Self { any_calendar, kind })
-    }
-
-    pub(crate) fn try_new_unstable<P>(
-        provider: &P,
-        kind: FormattableAnyCalendarKind,
-    ) -> Result<Self, DataError>
-    where
-        P: ?Sized
-            + DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>
-            + DataProvider<icu_calendar::provider::CalendarChineseV1>
-            + DataProvider<icu_calendar::provider::CalendarDangiV1>,
-    {
-        use FormattableAnyCalendarKind::*;
-        let any_calendar = match kind {
-            Buddhist => AnyCalendar::Buddhist(cal::Buddhist),
-            Chinese => AnyCalendar::Chinese(cal::Chinese::try_new_unstable(provider)?),
-            Coptic => AnyCalendar::Coptic(cal::Coptic),
-            Dangi => AnyCalendar::Dangi(cal::Dangi::try_new_unstable(provider)?),
-            Ethiopian => AnyCalendar::Ethiopian(cal::Ethiopian::new()),
-            EthiopianAmeteAlem => AnyCalendar::Ethiopian(cal::Ethiopian::new_with_era_style(
-                cal::EthiopianEraStyle::AmeteAlem,
-            )),
-            Gregorian => AnyCalendar::Gregorian(cal::Gregorian),
-            Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
-            Indian => AnyCalendar::Indian(cal::Indian),
-            HijriTabularTypeIIFriday => AnyCalendar::HijriTabular(cal::HijriTabular::new(
-                cal::HijriTabularLeapYears::TypeII,
-                cal::HijriTabularEpoch::Friday,
-            )),
-            HijriTabularTypeIIThursday => AnyCalendar::HijriTabular(cal::HijriTabular::new(
-                cal::HijriTabularLeapYears::TypeII,
-                cal::HijriTabularEpoch::Thursday,
-            )),
-            HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(cal::HijriUmmAlQura::new()),
-            Japanese => AnyCalendar::Japanese(cal::Japanese::try_new_unstable(provider)?),
-            Persian => AnyCalendar::Persian(cal::Persian),
-            Roc => AnyCalendar::Roc(cal::Roc),
-        };
-        Ok(Self { any_calendar, kind })
-    }
-
-    pub(crate) fn into_untagged(self) -> UntaggedFormattableAnyCalendar {
-        UntaggedFormattableAnyCalendar {
-            any_calendar: self.any_calendar,
+        Self {
+            any_calendar: calendar.to_any(),
         }
     }
-}
 
-#[derive(Debug, Clone)]
-pub(crate) struct UntaggedFormattableAnyCalendar {
-    // Invariant: the kind must be representable as an FormattableAnyCalendarKind
-    any_calendar: AnyCalendar,
-}
-
-/// A version of [`FormattableAnyCalendar`] that is smaller on the stack.
-impl UntaggedFormattableAnyCalendar {
-    pub(crate) fn into_tagged(self) -> FormattableAnyCalendar {
-        let kind = FormattableAnyCalendarKind::try_from_any_calendar_kind(self.any_calendar.kind())
-            .unwrap_or_else(|| {
-                debug_assert!(false, "unreachable by invariant");
-                // fall back to something non-Gregorian to make errors more obvious
-                FormattableAnyCalendarKind::Coptic
-            });
-        FormattableAnyCalendar {
-            any_calendar: self.any_calendar,
-            kind,
+    pub(crate) fn try_from_any_calendar(any_calendar: AnyCalendar) -> Result<Self, AnyCalendar> {
+        match FormattableAnyCalendarKind::try_from_any_calendar(&any_calendar) {
+            Some(_) => Ok(Self { any_calendar }),
+            None => Err(any_calendar),
         }
     }
 
@@ -511,28 +403,103 @@ impl UntaggedFormattableAnyCalendar {
         &self.any_calendar
     }
 
+    fn kind(&self) -> FormattableAnyCalendarKind {
+        FormattableAnyCalendarKind::try_from_any_calendar(&self.any_calendar).unwrap_or_else(|| {
+            debug_assert!(false, "unreachable by invariant");
+            // fall back to something non-Gregorian to make errors more obvious
+            FormattableAnyCalendarKind::Coptic
+        })
+    }
+
     pub(crate) fn take_any_calendar(self) -> AnyCalendar {
         self.any_calendar
     }
+
+    #[cfg(feature = "compiled_data")]
+    pub(crate) fn try_new(prefs: CalendarPreferences) -> Result<Self, DataError> {
+        Self::try_new_unstable(&icu_calendar::provider::Baked, prefs)
+    }
+
+    #[cfg(feature = "serde")]
+    pub(crate) fn try_new_with_buffer_provider<P>(
+        provider: &P,
+        prefs: CalendarPreferences,
+    ) -> Result<Self, DataError>
+    where
+        P: ?Sized + BufferProvider,
+    {
+        Self::try_new_unstable(&provider.as_deserializing(), prefs)
+    }
+
+    pub(crate) fn try_new_unstable<P>(
+        provider: &P,
+        mut prefs: CalendarPreferences,
+    ) -> Result<Self, DataError>
+    where
+        P: ?Sized + DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>,
+    {
+        use CalendarAlgorithm::*;
+        let any_calendar = match prefs.resolved_algorithm() {
+            Buddhist => AnyCalendar::Buddhist(cal::Buddhist),
+            Chinese => AnyCalendar::Chinese(cal::ChineseTraditional::new()),
+            Coptic => AnyCalendar::Coptic(cal::Coptic),
+            Dangi => AnyCalendar::Dangi(cal::KoreanTraditional::new()),
+            Ethiopic => AnyCalendar::Ethiopian(cal::Ethiopian::new()),
+            Ethioaa => AnyCalendar::Ethiopian(cal::Ethiopian::new_with_era_style(
+                cal::EthiopianEraStyle::AmeteAlem,
+            )),
+            Gregory => AnyCalendar::Gregorian(cal::Gregorian),
+            Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
+            Indian => AnyCalendar::Indian(cal::Indian),
+            Hijri(Some(HijriCalendarAlgorithm::Civil)) => {
+                AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
+                    hijri::TabularAlgorithmLeapYears::TypeII,
+                    hijri::TabularAlgorithmEpoch::Friday,
+                ))
+            }
+            Hijri(Some(HijriCalendarAlgorithm::Tbla)) => {
+                AnyCalendar::HijriTabular(cal::Hijri::new_tabular(
+                    hijri::TabularAlgorithmLeapYears::TypeII,
+                    hijri::TabularAlgorithmEpoch::Thursday,
+                ))
+            }
+            Hijri(Some(HijriCalendarAlgorithm::Umalqura)) => {
+                AnyCalendar::HijriUmmAlQura(cal::Hijri::new_umm_al_qura())
+            }
+            Japanese => AnyCalendar::Japanese(cal::Japanese::try_new_unstable(provider)?),
+            Persian => AnyCalendar::Persian(cal::Persian),
+            Roc => AnyCalendar::Roc(cal::Roc),
+            Iso8601 | Hijri(_) => {
+                // unsupported
+                prefs.calendar_algorithm = None;
+                return Self::try_new_unstable(provider, prefs);
+            }
+            _ => {
+                // unknown
+                AnyCalendar::Gregorian(Gregorian)
+            }
+        };
+        Ok(Self { any_calendar })
+    }
 }
 
-pub(crate) struct FormattableAnyCalendarNamesLoader<H, P> {
+pub(crate) struct FormattableAnyCalendarNamesLoader<'a, H, P> {
     provider: P,
-    kind: FormattableAnyCalendarKind,
+    calendar: &'a FormattableAnyCalendar,
     _helper: PhantomData<H>,
 }
 
-impl<H, P> FormattableAnyCalendarNamesLoader<H, P> {
-    pub(crate) fn new(provider: P, kind: FormattableAnyCalendarKind) -> Self {
+impl<'a, H, P> FormattableAnyCalendarNamesLoader<'a, H, P> {
+    pub(crate) fn new(provider: P, calendar: &'a FormattableAnyCalendar) -> Self {
         Self {
             provider,
-            kind,
+            calendar,
             _helper: PhantomData,
         }
     }
 }
 
-impl<M, H, P> BoundDataProvider<M> for FormattableAnyCalendarNamesLoader<H, P>
+impl<M, H, P> BoundDataProvider<M> for FormattableAnyCalendarNamesLoader<'_, H, P>
 where
     M: DynamicDataMarker,
     H: CalMarkers<M>,
@@ -553,7 +520,7 @@ where
     fn load_bound(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         use FormattableAnyCalendarKind::*;
         let p = &self.provider;
-        match self.kind {
+        match self.calendar.kind() {
             Buddhist => H::Buddhist::bind(p).load_bound(req),
             Chinese => H::Chinese::bind(p).load_bound(req),
             Coptic => H::Coptic::bind(p).load_bound(req),
@@ -572,7 +539,7 @@ where
     }
     fn bound_marker(&self) -> DataMarkerInfo {
         use FormattableAnyCalendarKind::*;
-        match self.kind {
+        match self.calendar.kind() {
             Buddhist => H::Buddhist::INFO,
             Chinese => H::Chinese::INFO,
             Coptic => H::Coptic::INFO,
@@ -593,14 +560,14 @@ where
 
 impl CalMarkers<YearNamesV1> for FullDataCalMarkers {
     type Buddhist = <Buddhist as CldrCalendar>::YearNamesV1;
-    type Chinese = <Chinese as CldrCalendar>::YearNamesV1;
+    type Chinese = <ChineseTraditional as CldrCalendar>::YearNamesV1;
     type Coptic = <Coptic as CldrCalendar>::YearNamesV1;
-    type Dangi = <Dangi as CldrCalendar>::YearNamesV1;
+    type Dangi = <KoreanTraditional as CldrCalendar>::YearNamesV1;
     type Ethiopian = <Ethiopian as CldrCalendar>::YearNamesV1;
     type Gregorian = <Gregorian as CldrCalendar>::YearNamesV1;
     type Hebrew = <Hebrew as CldrCalendar>::YearNamesV1;
     type Indian = <Indian as CldrCalendar>::YearNamesV1;
-    type Hijri = <HijriUmmAlQura as CldrCalendar>::YearNamesV1;
+    type Hijri = <Hijri<hijri::UmmAlQura> as CldrCalendar>::YearNamesV1;
     type Japanese = <Japanese as CldrCalendar>::YearNamesV1;
     type Persian = <Persian as CldrCalendar>::YearNamesV1;
     type Roc = <Roc as CldrCalendar>::YearNamesV1;
@@ -608,14 +575,14 @@ impl CalMarkers<YearNamesV1> for FullDataCalMarkers {
 
 impl CalMarkers<MonthNamesV1> for FullDataCalMarkers {
     type Buddhist = <Buddhist as CldrCalendar>::MonthNamesV1;
-    type Chinese = <Chinese as CldrCalendar>::MonthNamesV1;
+    type Chinese = <ChineseTraditional as CldrCalendar>::MonthNamesV1;
     type Coptic = <Coptic as CldrCalendar>::MonthNamesV1;
-    type Dangi = <Dangi as CldrCalendar>::MonthNamesV1;
+    type Dangi = <KoreanTraditional as CldrCalendar>::MonthNamesV1;
     type Ethiopian = <Ethiopian as CldrCalendar>::MonthNamesV1;
     type Gregorian = <Gregorian as CldrCalendar>::MonthNamesV1;
     type Hebrew = <Hebrew as CldrCalendar>::MonthNamesV1;
     type Indian = <Indian as CldrCalendar>::MonthNamesV1;
-    type Hijri = <HijriUmmAlQura as CldrCalendar>::MonthNamesV1;
+    type Hijri = <Hijri<hijri::UmmAlQura> as CldrCalendar>::MonthNamesV1;
     type Japanese = <Japanese as CldrCalendar>::MonthNamesV1;
     type Persian = <Persian as CldrCalendar>::MonthNamesV1;
     type Roc = <Roc as CldrCalendar>::MonthNamesV1;
@@ -623,14 +590,14 @@ impl CalMarkers<MonthNamesV1> for FullDataCalMarkers {
 
 impl CalMarkers<ErasedPackedPatterns> for FullDataCalMarkers {
     type Buddhist = <Buddhist as CldrCalendar>::SkeletaV1;
-    type Chinese = <Chinese as CldrCalendar>::SkeletaV1;
+    type Chinese = <ChineseTraditional as CldrCalendar>::SkeletaV1;
     type Coptic = <Coptic as CldrCalendar>::SkeletaV1;
-    type Dangi = <Dangi as CldrCalendar>::SkeletaV1;
+    type Dangi = <KoreanTraditional as CldrCalendar>::SkeletaV1;
     type Ethiopian = <Ethiopian as CldrCalendar>::SkeletaV1;
     type Gregorian = <Gregorian as CldrCalendar>::SkeletaV1;
     type Hebrew = <Hebrew as CldrCalendar>::SkeletaV1;
     type Indian = <Indian as CldrCalendar>::SkeletaV1;
-    type Hijri = <HijriUmmAlQura as CldrCalendar>::SkeletaV1;
+    type Hijri = <Hijri<hijri::UmmAlQura> as CldrCalendar>::SkeletaV1;
     type Japanese = <Japanese as CldrCalendar>::SkeletaV1;
     type Persian = <Persian as CldrCalendar>::SkeletaV1;
     type Roc = <Roc as CldrCalendar>::SkeletaV1;

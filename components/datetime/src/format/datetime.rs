@@ -13,7 +13,7 @@ use crate::{parts, pattern::*};
 
 use core::fmt::{self, Write};
 use fixed_decimal::Decimal;
-use icu_calendar::types::{DayOfWeekInMonth, Weekday};
+use icu_calendar::types::{DayOfWeekInMonth, RataDie, Weekday};
 use icu_decimal::DecimalFormatter;
 use writeable::{Part, PartsWrite, Writeable};
 
@@ -175,21 +175,35 @@ where
         (FieldSymbol::Year(Year::Cyclic), l) => {
             const PART: Part = parts::YEAR_NAME;
             input!(PART, Year, year = input.year);
-            input!(PART, YearCyclic, cyclic = year.cyclic());
+
+            let Some(cyclic) = year.cyclic() else {
+                w.with_part(PART, |w| {
+                    try_write_number(
+                        Part::ERROR,
+                        w,
+                        decimal_formatter,
+                        year.era_year_or_related_iso().into(),
+                        FieldLength::One,
+                    )
+                    .map(|_| ())
+                })?;
+                return Ok(Err(FormattedDateTimePatternError::UnsupportedField(
+                    ErrorField(field),
+                )));
+            };
 
             match datetime_names.get_name_for_cyclic(l, cyclic.year) {
                 Ok(name) => Ok(w.with_part(PART, |w| w.write_str(name))?),
                 Err(e) => {
                     w.with_part(PART, |w| {
-                        w.with_part(Part::ERROR, |w| {
-                            try_write_number_without_part(
-                                w,
-                                decimal_formatter,
-                                cyclic.related_iso.into(),
-                                FieldLength::One,
-                            )
-                            .map(|_| ())
-                        })
+                        try_write_number(
+                            Part::ERROR,
+                            w,
+                            decimal_formatter,
+                            cyclic.related_iso.into(),
+                            FieldLength::One,
+                        )
+                        .map(|_| ())
                     })?;
                     return Ok(Err(match e {
                         GetNameForCyclicYearError::InvalidYearNumber { max } => {
@@ -221,6 +235,12 @@ where
             })?;
             Ok(())
         }
+        (FieldSymbol::Year(Year::Extended), l) => {
+            const PART: Part = parts::EXTENDED_YEAR;
+            input!(PART, Year, year = input.year);
+            let extended = year.extended_year();
+            try_write_number(PART, w, decimal_formatter, extended.into(), l)?
+        }
         (FieldSymbol::Month(_), l @ (FieldLength::One | FieldLength::Two)) => {
             const PART: Part = parts::MONTH;
             input!(PART, Month, month = input.month);
@@ -229,7 +249,7 @@ where
         (FieldSymbol::Month(symbol), l) => {
             const PART: Part = parts::MONTH;
             input!(PART, Month, month = input.month);
-            match datetime_names.get_name_for_month(symbol, l, month.formatting_code) {
+            match datetime_names.get_name_for_month(symbol, l, month) {
                 Ok(MonthPlaceholderValue::PlainString(symbol)) => {
                     w.with_part(PART, |w| w.write_str(symbol))?;
                     Ok(())
@@ -266,11 +286,15 @@ where
                 }
                 Err(e) => {
                     w.with_part(PART, |w| {
-                        w.with_part(Part::ERROR, |w| w.write_str(&month.formatting_code.0))
+                        w.with_part(Part::ERROR, |w| {
+                            w.write_str(&month.value.formatting_code().0)
+                        })
                     })?;
                     Err(match e {
                         GetNameForMonthError::InvalidMonthCode => {
-                            FormattedDateTimePatternError::InvalidMonthCode(month.formatting_code)
+                            FormattedDateTimePatternError::InvalidMonthCode(
+                                month.value.formatting_code(),
+                            )
                         }
                         GetNameForMonthError::InvalidFieldLength => {
                             FormattedDateTimePatternError::UnsupportedLength(ErrorField(field))
@@ -285,7 +309,7 @@ where
         (FieldSymbol::Week(w), _) => match w {},
         (FieldSymbol::Weekday(weekday), l) => {
             const PART: Part = parts::WEEKDAY;
-            input!(PART, Weekday, iso_weekday = input.iso_weekday);
+            input!(PART, Weekday, iso_weekday = input.weekday);
             match datetime_names
                 .get_name_for_weekday(weekday, l, iso_weekday)
                 .map_err(|e| match e {
@@ -332,6 +356,13 @@ where
         (FieldSymbol::Day(fields::Day::DayOfYear), l) => {
             input!(_, DayOfYear, day_of_year = input.day_of_year);
             try_write_number_without_part(w, decimal_formatter, day_of_year.0.into(), l)?
+        }
+        (FieldSymbol::Day(fields::Day::ModifiedJulianDay), l) => {
+            const PART: Part = parts::JULIAN_DAY;
+            const MODIFIED_JULIAN_DAY_EPOCH: RataDie = RataDie::new(-1721425);
+            input!(_, RataDie, rata_die = input.rata_die);
+            let julian_day = rata_die - MODIFIED_JULIAN_DAY_EPOCH;
+            try_write_number(PART, w, decimal_formatter, julian_day.into(), l)?
         }
         (FieldSymbol::Hour(symbol), l) => {
             const PART: Part = parts::HOUR;
@@ -636,5 +667,42 @@ mod tests {
                 assert_eq!(s, *expected);
             }
         }
+    }
+
+    #[test]
+    fn julian_day() {
+        let locale = icu::locale::locale!("en");
+        let parsed_pattern = crate::pattern::DateTimePattern::try_from_pattern_str("g").unwrap();
+        let mut names = crate::pattern::FixedCalendarDateTimeNames::<
+            icu::calendar::cal::Gregorian,
+            crate::fieldsets::enums::DateFieldSet,
+        >::try_new(locale.into())
+        .unwrap();
+        let formatted_datetime = names
+            .include_for_pattern(&parsed_pattern)
+            .unwrap()
+            .format(&crate::input::Date::try_new_gregorian(1996, 9, 2).unwrap());
+        writeable::assert_try_writeable_eq!(formatted_datetime, "2450329", Ok(()));
+    }
+
+    #[test]
+    fn extended_year() {
+        let locale = icu::locale::locale!("en");
+        let parsed_pattern = crate::pattern::DateTimePattern::try_from_pattern_str("u").unwrap();
+        let mut names = crate::pattern::FixedCalendarDateTimeNames::<
+            icu::calendar::cal::Ethiopian,
+            crate::fieldsets::enums::DateFieldSet,
+        >::try_new(locale.into())
+        .unwrap();
+        let formatted_datetime = names.include_for_pattern(&parsed_pattern).unwrap().format(
+            &crate::input::Date::try_new_ethiopian(
+                icu::calendar::cal::EthiopianEraStyle::AmeteMihret,
+                10,
+                9,
+                2,
+            )
+            .unwrap(),
+        );
+        writeable::assert_try_writeable_eq!(formatted_datetime, "10", Ok(()));
     }
 }

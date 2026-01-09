@@ -3,7 +3,6 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 extend = [
-    { path = "./examples/gn/gn.toml"}, #
     { path = "./tools/make/data.toml"}, #
     { path = "./tools/make/valgrind.toml"}, #
     { path = "./tools/make/tidy.toml"}, #
@@ -19,7 +18,8 @@ default_to_workspace = false
 # The toolchain that CI is being run in. Allows tests to change under beta/nightly.
 CI_TOOLCHAIN = { value = "pinned-stable", condition = { env_not_set = ["CI_TOOLCHAIN"]}}
 # The pinned nightly toolchain for jobs that require a nightly compiler.
-PINNED_CI_NIGHTLY = { value = "nightly-2025-02-17", condition = { env_not_set = ["PINNED_CI_NIGHTLY"] } }
+PINNED_CI_NIGHTLY = { value = "nightly-2025-09-27", condition = { env_not_set = ["PINNED_CI_NIGHTLY"] } }
+LLVM_COMPATIBLE_NIGHTLY = { value = "nightly-2025-02-17", condition = { env_not_set = ["LLVM_COMPATIBLE_NIGHTLY"] } }
 
 [tasks.quick]
 description = "Run quick version of all lints and builds (useful before pushing to GitHub)"
@@ -55,32 +55,13 @@ env = { ICU4X_DATA_DIR = "../stubdata" }
 command = "cargo"
 args = ["check", "--no-default-features"]
 
-[tasks.ci-job-msrv-check]
+[tasks.ci-job-check]
 description = "Run all tests for the CI 'check' job"
 category = "ICU4X Development"
 env = { ICU4X_DATA_DIR = "../stubdata" }
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install 1.82 --profile minimal
-exec --fail-on-error cargo +1.82 check --all-targets --all-features
-'''
-
-[tasks.ci-job-msrv-utils]
-description = "Check utils that have different MSRVs"
-category = "ICU4X Development"
-dependencies = [
-    # This list should be kept in sync with the list in rust_versions.md
-    "msrv-zerofrom",
-]
-
-[tasks.msrv-zerofrom]
-description = "Run MSRV tests for the zerofrom MSRV job"
-category = "ICU4X Development"
-env = { ICU4X_DATA_DIR = "../stubdata" }
-script_runner = "@duckscript"
-script = '''
-exec --fail-on-error rustup install 1.71.1 --profile minimal
-exec --fail-on-error cargo +1.71.1 check -p zerofrom --all-targets --all-features
+exec --fail-on-error cargo check --all-targets --all-features --workspace --exclude diplomat-gen --exclude codegen --exclude bakeddata --exclude depcheck --exclude diplomat-coverage
 '''
 
 [tasks.ci-job-test]
@@ -149,6 +130,13 @@ dependencies = [
     "test-dart",
 ]
 
+[tasks.ci-job-test-kotlin]
+description = "Run all tests for the CI 'test-kotlin' job"
+category = "CI"
+dependencies = [
+    "test-kotlin",
+]
+
 [tasks.ci-job-nostd]
 description = "Run all tests for the CI 'test-nostd' job"
 env = { ICU4X_DATA_DIR = "../stubdata" }
@@ -168,53 +156,40 @@ dependencies = [
     "verify-diplomat-coverage",
 ]
 
-[tasks.ci-job-gn]
-description = "Run all tests for the CI 'gn' job"
+[tasks.ci-job-features-1]
+description = "Run all tests for the CI 'features-1' job"
+category = "CI"
+env = { ICU4X_DATA_DIR = "../stubdata" }
+script_runner = "@duckscript"
+script = '''
+exec --fail-on-error cargo make check-all-features-chunked 1
+'''
+
+[tasks.ci-job-features-2]
+description = "Run all tests for the CI 'features-2' job"
+category = "CI"
+env = { ICU4X_DATA_DIR = "../stubdata" }
+script_runner = "@duckscript"
+script = '''
+exec --fail-on-error cargo make check-all-features-chunked 2
+'''
+
+[tasks.ci-job-features-3]
+description = "Run all tests for the CI 'features-3' job"
+category = "CI"
+env = { ICU4X_DATA_DIR = "../stubdata" }
+script_runner = "@duckscript"
+script = '''
+exec --fail-on-error cargo make check-all-features-chunked 3
+'''
+
+[tasks.ci-job-features]
+description = "Run all tests for the CI 'features' job"
 category = "CI"
 dependencies = [
-    "verify-gn-gen",
-    "gn-run",
-    # Until https://github.com/wasmerio/wasmer/issues/5610
-    # "gn-run-wasi",
-]
-
-[tasks.ci-job-msrv-features-1]
-description = "Run all tests for the CI 'msrv-features-1' job"
-category = "CI"
-env = { ICU4X_DATA_DIR = "../stubdata" }
-script_runner = "@duckscript"
-script = '''
-exec --fail-on-error rustup install 1.82 --profile minimal
-exec --fail-on-error cargo +1.82 make check-all-features-chunked 1
-'''
-
-[tasks.ci-job-msrv-features-2]
-description = "Run all tests for the CI 'msrv-features-2' job"
-category = "CI"
-env = { ICU4X_DATA_DIR = "../stubdata" }
-script_runner = "@duckscript"
-script = '''
-exec --fail-on-error rustup install 1.82 --profile minimal
-exec --fail-on-error cargo +1.82 make check-all-features-chunked 2
-'''
-
-[tasks.ci-job-msrv-features-3]
-description = "Run all tests for the CI 'msrv-features-3' job"
-category = "CI"
-env = { ICU4X_DATA_DIR = "../stubdata" }
-script_runner = "@duckscript"
-script = '''
-exec --fail-on-error rustup install 1.82 --profile minimal
-exec --fail-on-error cargo +1.82 make check-all-features-chunked 3
-'''
-
-[tasks.ci-job-msrv-features]
-description = "Run all tests for the CI 'msrv-features-3' job"
-category = "CI"
-dependencies = [
-    "ci-job-msrv-features-1",
-    "ci-job-msrv-features-2",
-    "ci-job-msrv-features-3",
+    "ci-job-features-1",
+    "ci-job-features-2",
+    "ci-job-features-3",
 ]
 
 [tasks.ci-job-fmt]
@@ -267,7 +242,7 @@ dependencies = [
     "ci-job-diplomat",
     "ci-job-tidy",
     "ci-job-nostd",
-    "ci-job-msrv-check",
+    "ci-job-check",
     "check-tutorials-local",
 
     # Get a coffee
@@ -275,14 +250,13 @@ dependencies = [
     "ci-job-test-docs",
     "ci-job-test-cargo",
     "ci-job-testdata",
-    "ci-job-msrv-features",
+    "ci-job-features",
     "ci-job-full-datagen",
 
     # Needs tools other than Cargo to be installed
     "ci-job-test-c",
     "ci-job-test-js",
     "ci-job-test-dart",
-    "ci-job-gn",
 
     # benchmarking and coverage jobs not included
 ]

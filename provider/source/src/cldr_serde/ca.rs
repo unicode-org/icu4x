@@ -192,12 +192,18 @@ pub(crate) struct DateTimeFormats {
     pub(crate) available_formats: AvailableFormats,
 }
 
-impl DateTimeFormats {
+/// dateTimeFormats-atTime, dateTimeFormats-relative
+#[derive(PartialEq, Debug, Deserialize, Clone)]
+pub(crate) struct DateTimeFormatsVariant {
+    pub(crate) standard: LengthPatterns,
+}
+
+impl DateTimeFormatsVariant {
     pub(crate) fn get_pattern(&self, length: PatternLength) -> &LengthPattern {
         match length {
-            PatternLength::Long => &self.long,
-            PatternLength::Medium => &self.medium,
-            PatternLength::Short => &self.short,
+            PatternLength::Long => &self.standard.long,
+            PatternLength::Medium => &self.standard.medium,
+            PatternLength::Short => &self.standard.short,
         }
     }
 }
@@ -236,6 +242,8 @@ pub(crate) struct Dates {
     pub(crate) time_skeletons: LengthPatterns,
     #[serde(rename = "dateTimeFormats")]
     pub(crate) datetime_formats: DateTimeFormats,
+    #[serde(rename = "dateTimeFormats-atTime")]
+    pub(crate) datetime_formats_at_time: DateTimeFormatsVariant,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

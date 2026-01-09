@@ -104,14 +104,14 @@ macro_rules! __enum_keyword {
 
         impl $crate::preferences::PreferenceKey for $name {
             fn unicode_extension_key() -> Option<$crate::extensions::unicode::Key> {
-                Some($crate::extensions::unicode::key!($ext_key))
+                Some(Self::UNICODE_EXTENSION_KEY)
             }
 
             fn try_from_key_value(
                 key: &$crate::extensions::unicode::Key,
                 value: &$crate::extensions::unicode::Value,
             ) -> Result<Option<Self>, $crate::preferences::extensions::unicode::errors::PreferencesParseError> {
-                if Self::unicode_extension_key() == Some(*key) {
+                if Self::UNICODE_EXTENSION_KEY == *key {
                     Self::try_from(value).map(Some)
                 } else {
                     Ok(None)
@@ -121,6 +121,10 @@ macro_rules! __enum_keyword {
             fn unicode_extension_value(&self) -> Option<$crate::extensions::unicode::Value> {
                 Some((*self).into())
             }
+        }
+
+        impl $name {
+            pub(crate) const UNICODE_EXTENSION_KEY: $crate::extensions::unicode::Key = $crate::extensions::unicode::key!($ext_key);
         }
 
         impl TryFrom<&$crate::extensions::unicode::Value> for $name {
@@ -151,29 +155,24 @@ macro_rules! __enum_keyword {
 
         impl From<$name>  for $crate::extensions::unicode::Value {
             fn from(input: $name) -> $crate::extensions::unicode::Value {
-                let mut result = $crate::extensions::unicode::Value::default();
-                input.extend_value(&mut result);
-                result
-            }
-        }
-
-        impl $name {
-            pub(crate) fn extend_value(self, input: &mut $crate::extensions::unicode::Value) {
-                match self {
+                let f;
+                #[allow(unused_mut)]
+                let mut s = None;
+                match input {
                     $(
                         // This is circumventing a limitation of the macro_rules - we need to have a conditional
                         // $()? case here for when the variant has a value, and macro_rules require us to
                         // reference the $v2 inside it, but in match case it becomes a variable, so clippy
                         // complaints.
                         #[allow(non_snake_case)]
-                        Self::$variant $(($v2))? => {
-                            input.push_subtag($crate::subtags::subtag!($key));
+                        $name::$variant $(($v2))? => {
+                            f = $crate::subtags::subtag!($key);
 
                             $(
                                 if let Some(v2) = $v2 {
                                     match v2 {
                                         $(
-                                            $v2::$subv => input.push_subtag($crate::subtags::subtag!($subk)),
+                                            $v2::$subv => s = Some($crate::subtags::subtag!($subk)),
                                         )*
                                     }
                                 }
@@ -181,8 +180,15 @@ macro_rules! __enum_keyword {
                         },
                     )*
                 }
+                if let Some(s) = s {
+                    $crate::extensions::unicode::Value::from_two_subtags(f, s)
+                } else {
+                    $crate::extensions::unicode::Value::from_subtag(Some(f))
+                }
             }
+        }
 
+        impl $name {
             /// A helper function for displaying as a `&str`.
             pub const fn as_str(&self) -> &'static str {
                 match self {

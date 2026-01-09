@@ -4,7 +4,9 @@
 
 use core::str::FromStr;
 
-use crate::provider::{legacy::TimezoneVariantsOffsetsV1, TimezonePeriods, TimezonePeriodsV1};
+#[cfg(feature = "alloc")]
+use crate::provider::legacy::TimezoneVariantsOffsetsV1;
+use crate::provider::{TimezonePeriods, TimezonePeriodsV1};
 use crate::TimeZone;
 use icu_provider::prelude::*;
 
@@ -123,12 +125,12 @@ impl UtcOffset {
 
     /// Create a [`UtcOffset`] from a seconds input without checking bounds.
     #[inline]
-    pub fn from_seconds_unchecked(seconds: i32) -> Self {
+    pub const fn from_seconds_unchecked(seconds: i32) -> Self {
         Self(seconds)
     }
 
     /// Returns the raw offset value in seconds.
-    pub fn to_seconds(self) -> i32 {
+    pub const fn to_seconds(self) -> i32 {
         self.0
     }
 
@@ -169,12 +171,14 @@ impl FromStr for UtcOffset {
 
 #[derive(Debug)]
 enum OffsetData {
+    #[cfg(feature = "alloc")] // doesn't alloc, but ZeroMap are behind the alloc feature
     Old(DataPayload<TimezoneVariantsOffsetsV1>),
     New(DataPayload<TimezonePeriodsV1>),
 }
 
 #[derive(Debug)]
 enum OffsetDataBorrowed<'a> {
+    #[cfg(feature = "alloc")]
     Old(&'a zerovec::ZeroMap2d<'a, TimeZone, ZoneNameTimestamp, VariantOffsets>),
     New(&'a TimezonePeriods<'a>),
 }
@@ -183,23 +187,33 @@ enum OffsetDataBorrowed<'a> {
 ///
 /// [data provider]: icu_provider
 #[derive(Debug)]
+#[deprecated(
+    since = "2.1.0",
+    note = "this API is a bad approximation of a time zone database"
+)]
 pub struct VariantOffsetsCalculator {
     offset_period: OffsetData,
 }
 
 /// The borrowed version of a  [`VariantOffsetsCalculator`]
 #[derive(Debug)]
+#[deprecated(
+    since = "2.1.0",
+    note = "this API is a bad approximation of a time zone database"
+)]
 pub struct VariantOffsetsCalculatorBorrowed<'a> {
     offset_period: OffsetDataBorrowed<'a>,
 }
 
 #[cfg(feature = "compiled_data")]
+#[allow(deprecated)]
 impl Default for VariantOffsetsCalculatorBorrowed<'static> {
     fn default() -> Self {
         VariantOffsetsCalculator::new()
     }
 }
 
+#[allow(deprecated)]
 impl VariantOffsetsCalculator {
     /// Constructs a `VariantOffsetsCalculator` using compiled data.
     ///
@@ -221,19 +235,25 @@ impl VariantOffsetsCalculator {
         use icu_provider::buf::AsDeserializingBufferProvider;
         {
             Ok(Self {
-                offset_period: if let Ok(payload) = DataProvider::<TimezonePeriodsV1>::load(
+                offset_period: match DataProvider::<TimezonePeriodsV1>::load(
                     &provider.as_deserializing(),
                     Default::default(),
                 ) {
-                    OffsetData::New(payload.payload)
-                } else {
-                    OffsetData::Old(
-                        DataProvider::<TimezoneVariantsOffsetsV1>::load(
-                            &provider.as_deserializing(),
-                            Default::default(),
-                        )?
-                        .payload,
-                    )
+                    Ok(payload) => OffsetData::New(payload.payload),
+                    Err(_e) => {
+                        #[cfg(feature = "alloc")]
+                        {
+                            OffsetData::Old(
+                                DataProvider::<TimezoneVariantsOffsetsV1>::load(
+                                    &provider.as_deserializing(),
+                                    Default::default(),
+                                )?
+                                .payload,
+                            )
+                        }
+                        #[cfg(not(feature = "alloc"))]
+                        return Err(_e);
+                    }
                 },
             })
         }
@@ -256,12 +276,14 @@ impl VariantOffsetsCalculator {
         VariantOffsetsCalculatorBorrowed {
             offset_period: match self.offset_period {
                 OffsetData::New(ref payload) => OffsetDataBorrowed::New(payload.get()),
+                #[cfg(feature = "alloc")]
                 OffsetData::Old(ref payload) => OffsetDataBorrowed::Old(payload.get()),
             },
         }
     }
 }
 
+#[allow(deprecated)]
 impl VariantOffsetsCalculatorBorrowed<'static> {
     /// Constructs a `VariantOffsetsCalculatorBorrowed` using compiled data.
     ///
@@ -286,12 +308,14 @@ impl VariantOffsetsCalculatorBorrowed<'static> {
         VariantOffsetsCalculator {
             offset_period: match self.offset_period {
                 OffsetDataBorrowed::New(p) => OffsetData::New(DataPayload::from_static_ref(p)),
+                #[cfg(feature = "alloc")]
                 OffsetDataBorrowed::Old(p) => OffsetData::Old(DataPayload::from_static_ref(p)),
             },
         }
     }
 }
 
+#[allow(deprecated)]
 impl VariantOffsetsCalculatorBorrowed<'_> {
     /// Calculate zone offsets from timezone and local datetime.
     ///
@@ -342,11 +366,12 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
         time_zone_id: TimeZone,
         timestamp: ZoneNameTimestamp,
     ) -> Option<VariantOffsets> {
-        use zerovec::ule::AsULE;
-        let mut offsets = None;
         match self.offset_period {
             OffsetDataBorrowed::New(p) => p.get(time_zone_id, timestamp).map(|(os, _)| os),
+            #[cfg(feature = "alloc")]
             OffsetDataBorrowed::Old(p) => {
+                use zerovec::ule::AsULE;
+                let mut offsets = None;
                 for (bytes, id) in p.get0(&time_zone_id)?.iter1_copied().rev() {
                     if timestamp >= ZoneNameTimestamp::from_unaligned(*bytes) {
                         offsets = Some(id);
@@ -359,27 +384,14 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     }
 }
 
-/// Represents the different offsets in use for a time zone
-#[non_exhaustive]
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
-pub struct VariantOffsets {
-    /// The standard offset.
-    pub standard: UtcOffset,
-    /// The daylight-saving offset, if used.
-    pub daylight: Option<UtcOffset>,
-}
-
-impl VariantOffsets {
-    /// Creates a new [`VariantOffsets`] from a [`UtcOffset`] representing standard time.
-    pub fn from_standard(standard: UtcOffset) -> Self {
-        Self {
-            standard,
-            daylight: None,
-        }
-    }
-}
+#[deprecated(
+    since = "2.1.0",
+    note = "this API is a bad approximation of a time zone database"
+)]
+pub use crate::provider::VariantOffsets;
 
 #[test]
+#[allow(deprecated)]
 pub fn test_legacy_offsets_data() {
     use crate::ZonedDateTime;
     use icu_locale_core::subtags::subtag;
@@ -408,11 +420,8 @@ pub fn test_legacy_offsets_data() {
         "2019-03-16 16:00Z",
         "2019-10-03 19:00Z",
         "2020-03-07 16:00Z",
-        "2020-10-03 16:00Z",
         "2021-03-13 13:00Z",
-        "2021-10-02 16:00Z",
         "2022-03-12 13:00Z",
-        "2022-10-01 16:00Z",
         "2023-03-08 16:00Z",
     ] {
         let t = ZoneNameTimestamp::from_zoned_date_time_iso(

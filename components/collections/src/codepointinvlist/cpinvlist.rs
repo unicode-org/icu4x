@@ -255,6 +255,8 @@ impl<'data> CodePointInversionList<'data> {
     /// The inversion list must be of even length, sorted ascending non-overlapping,
     /// and within the bounds of `0x0 -> 0x10FFFF` inclusive, and end points being exclusive.
     ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
+    ///
     /// # Examples
     ///
     /// ```
@@ -290,6 +292,8 @@ impl<'data> CodePointInversionList<'data> {
     }
 
     /// Attempts to convert this list into a fully-owned one. No-op if already fully owned
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
     pub fn into_owned(self) -> CodePointInversionList<'static> {
         CodePointInversionList {
@@ -299,6 +303,8 @@ impl<'data> CodePointInversionList<'data> {
     }
 
     /// Returns an owned inversion list representing the current [`CodePointInversionList`]
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
     pub fn get_inversion_list_vec(&self) -> Vec<u32> {
         self.as_inversion_list().iter().map(u32::from).collect()

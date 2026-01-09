@@ -21,16 +21,8 @@ const REPO_VERSION: &str = "version.workspace = true";
 const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
     ("calendar", icu::calendar::provider::MARKERS, REPO_VERSION),
     ("casemap", icu::casemap::provider::MARKERS, REPO_VERSION),
-    (
-        "collator",
-        icu::collator::provider::MARKERS,
-        r#"version = "2.0.1""#,
-    ),
-    (
-        "datetime",
-        icu::datetime::provider::MARKERS,
-        r#"version = "2.0.2""#,
-    ),
+    ("collator", icu::collator::provider::MARKERS, REPO_VERSION),
+    ("datetime", icu::datetime::provider::MARKERS, REPO_VERSION),
     ("decimal", icu::decimal::provider::MARKERS, REPO_VERSION),
     ("list", icu::list::provider::MARKERS, REPO_VERSION),
     ("locale", icu::locale::provider::MARKERS, REPO_VERSION),
@@ -43,14 +35,14 @@ const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
     (
         "properties",
         icu::properties::provider::MARKERS,
-        r#"version = "2.0.1""#,
+        "version = \"2.1.2\"",
     ),
     ("segmenter", icu::segmenter::provider::MARKERS, REPO_VERSION),
-    ("time", icu::time::provider::MARKERS, r#"version = "2.0.2""#),
+    ("time", icu::time::provider::MARKERS, REPO_VERSION),
     (
         "experimental",
         icu::experimental::provider::MARKERS,
-        r#"version = "0.3.0""#,
+        r#"version = "0.4.0""#,
     ),
 ];
 
@@ -83,7 +75,9 @@ fn main() {
             .collect()
     };
 
-    let source = SourceDataProvider::new();
+    let source = SourceDataProvider::new()
+        .with_tzdb(Path::new("provider/source/tests/data/tzdb"))
+        .unwrap();
 
     let driver = ExportDriver::new(
         source

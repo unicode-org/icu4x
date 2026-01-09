@@ -34,7 +34,6 @@ pub(crate) struct DecimalSubPattern {
 impl FromStr for DecimalSubPattern {
     type Err = Error;
 
-    #[expect(clippy::many_single_char_names)]
     fn from_str(subpattern: &str) -> Result<Self, Self::Err> {
         // Split the subpattern into prefix, body, and suffix.
         // TODO(#567): Handle quoted literals in prefix and suffix.
@@ -55,23 +54,24 @@ impl FromStr for DecimalSubPattern {
 
         // For now, we expect one of a handful of pattern bodies.
         // TODO(#567): Generalize this to support all of UTS 35.
-        let (a, b, c, d) = match body {
-            "#,##0.###" => (3, 3, 0, 3),
-            "#,##,##0.###" => (3, 2, 0, 3),
-            "0.######" => (0, 0, 0, 6),
-            "#,##0.00" => (3, 3, 2, 2),
-            "#,#0.###" => (2, 2, 0, 3),
-            "#,##,##0.00" => (3, 2, 2, 2),
-            "#,#0.00" => (2, 2, 2, 2),
-            _ => return Err(Error::UnknownPatternBody(body.to_string())),
-        };
+        let (primary_grouping, secondary_grouping, min_fraction_digits, max_fraction_digits) =
+            match body {
+                "#,##0.###" => (3, 3, 0, 3),
+                "#,##,##0.###" => (3, 2, 0, 3),
+                "0.######" => (0, 0, 0, 6),
+                "#,##0.00" => (3, 3, 2, 2),
+                "#,#0.###" => (2, 2, 0, 3),
+                "#,##,##0.00" => (3, 2, 2, 2),
+                "#,#0.00" => (2, 2, 2, 2),
+                _ => return Err(Error::UnknownPatternBody(body.to_string())),
+            };
         Ok(Self {
             prefix: prefix.into(),
             suffix: suffix.into(),
-            primary_grouping: a,
-            secondary_grouping: b,
-            min_fraction_digits: c,
-            max_fraction_digits: d,
+            primary_grouping,
+            secondary_grouping,
+            min_fraction_digits,
+            max_fraction_digits,
         })
     }
 }

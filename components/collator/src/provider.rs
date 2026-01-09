@@ -21,7 +21,7 @@
 use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
-use zerovec::ule::AsULE;
+use zerovec::ule::{AsULE, RawBytesULE};
 use zerovec::ZeroVec;
 use zerovec::{zeroslice, ZeroSlice};
 
@@ -209,7 +209,7 @@ icu_provider::data_struct!(
 
 impl<'data> CollationData<'data> {
     pub(crate) fn ce32_for_char(&self, c: char) -> CollationElement32 {
-        CollationElement32::new(self.trie.get32(c as u32))
+        CollationElement32::new(self.trie.get(c))
     }
     pub(crate) fn get_ce32(&'data self, index: usize) -> CollationElement32 {
         CollationElement32::new(if let Some(u) = self.ce32s.get(index) {
@@ -577,39 +577,28 @@ pub(crate) struct CollationSpecialPrimariesValidated<'data> {
     pub numeric_primary: u8,
     /// 256 bits (packed in 16 u16s) to classify every possible
     /// byte into compressible or non-compressible.
-    pub compressible_bytes: [u16; 16],
+    pub compressible_bytes: &'data [<u16 as AsULE>::ULE; 16],
 }
 
 impl CollationSpecialPrimariesValidated<'static> {
-    pub(crate) const HARDCODED_FALLBACK: &Self = &Self {
-        last_primaries: zerovec::zerovec!(u16; <u16 as AsULE>::ULE::from_aligned; [
-          // Last primaries
-          1286,
-          3072,
-          3488,
-          3840,
-        ]),
-        numeric_primary: 16u8,
-        compressible_bytes: [
-            // Compressible bytes
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b1111_1111_1111_1110,
-            0b1111_1111_1111_1111,
-            0b0000_0000_0000_0001,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0000_0000_0000_0000,
-            0b0100_0000_0000_0000,
-        ],
-    };
+    pub(crate) const HARDCODED_COMPRESSIBLE_BYTES_FALLBACK: &'static [<u16 as AsULE>::ULE; 16] = &[
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b1111_1111_1111_1110u16.to_le_bytes()),
+        RawBytesULE(0b1111_1111_1111_1111u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0001u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
+        RawBytesULE(0b0100_0000_0000_0000u16.to_le_bytes()),
+    ];
 }
 
 icu_provider::data_struct!(
@@ -633,7 +622,7 @@ impl CollationSpecialPrimariesValidated<'_> {
         // into Compiler Explorer shows that the panic
         // is optimized away.
         #[expect(clippy::indexing_slicing)]
-        let field = self.compressible_bytes[usize::from(b >> 4)];
+        let field = u16::from_unaligned(self.compressible_bytes[usize::from(b >> 4)]);
         let mask = 1 << (b & 0b1111);
         (field & mask) != 0
     }

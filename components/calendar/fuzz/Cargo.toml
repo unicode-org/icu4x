@@ -1,0 +1,41 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_calendar-fuzz"
+publish = false
+edition = "2021"
+autobins = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+arbitrary = { version = "1.4", features = ["derive"] }
+icu_calendar = { path = "..", features = ["compiled_data", "unstable"] }
+
+# Prevent this from interfering with workspaces
+[workspace]
+
+[[bin]]
+name = "construction"
+path = "fuzz_targets/construction.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "add"
+path = "fuzz_targets/add.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "until"
+path = "fuzz_targets/until.rs"
+test = false
+doc = false
+bench = false

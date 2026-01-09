@@ -52,7 +52,23 @@ pub mod provider {
         impl_currency_displayname_v1!(Baked);
         impl_currency_patterns_data_v1!(Baked);
         impl_currency_extended_data_v1!(Baked);
-        impl_units_display_name_v1!(Baked);
+        impl_currency_fractions_v1!(Baked);
+        impl_units_display_names_v1!(Baked);
+        impl_units_names_area_core_v1!(Baked);
+        impl_units_names_area_extended_v1!(Baked);
+        impl_units_names_area_outlier_v1!(Baked);
+        impl_units_names_duration_core_v1!(Baked);
+        impl_units_names_duration_extended_v1!(Baked);
+        impl_units_names_duration_outlier_v1!(Baked);
+        impl_units_names_length_core_v1!(Baked);
+        impl_units_names_length_extended_v1!(Baked);
+        impl_units_names_length_outlier_v1!(Baked);
+        impl_units_names_mass_core_v1!(Baked);
+        impl_units_names_mass_extended_v1!(Baked);
+        impl_units_names_mass_outlier_v1!(Baked);
+        impl_units_names_volume_core_v1!(Baked);
+        impl_units_names_volume_extended_v1!(Baked);
+        impl_units_names_volume_outlier_v1!(Baked);
         impl_units_essentials_v1!(Baked);
         impl_language_display_names_v1!(Baked);
         impl_digital_duration_data_v1!(Baked);
@@ -106,9 +122,25 @@ pub mod provider {
         super::dimension::provider::currency::essentials::CurrencyEssentialsV1::INFO,
         super::dimension::provider::currency::patterns::CurrencyPatternsDataV1::INFO,
         super::dimension::provider::currency::extended::CurrencyExtendedDataV1::INFO,
+        super::dimension::provider::currency::fractions::CurrencyFractionsV1::INFO,
         super::dimension::provider::percent::PercentEssentialsV1::INFO,
         super::dimension::provider::units::essentials::UnitsEssentialsV1::INFO,
-        super::dimension::provider::units::display_name::UnitsDisplayNameV1::INFO,
+        super::dimension::provider::units::display_names::UnitsDisplayNamesV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesAreaCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesAreaExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesAreaOutlierV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesDurationCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesDurationExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesDurationOutlierV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesLengthCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesLengthExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesLengthOutlierV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesMassCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesMassExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesMassOutlierV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesVolumeCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesVolumeExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_names::UnitsNamesVolumeOutlierV1::INFO,
         super::displaynames::provider::LanguageDisplayNamesV1::INFO,
         super::duration::provider::DigitalDurationDataV1::INFO,
         super::displaynames::provider::LocaleDisplayNamesV1::INFO,

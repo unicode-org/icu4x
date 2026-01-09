@@ -1,5 +1,5 @@
-#ifndef icu4x_TimeZoneAndCanonical_D_HPP
-#define icu4x_TimeZoneAndCanonical_D_HPP
+#ifndef ICU4X_TimeZoneAndCanonical_D_HPP
+#define ICU4X_TimeZoneAndCanonical_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,19 +9,19 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct TimeZone; }
 class TimeZone;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
 namespace capi {
     struct TimeZoneAndCanonical {
       icu4x::capi::TimeZone* time_zone;
-      diplomat::capi::DiplomatStringView canonical;
+      icu4x::diplomat::capi::DiplomatStringView canonical;
     };
 
     typedef struct TimeZoneAndCanonical_option {union { TimeZoneAndCanonical ok; }; bool is_ok; } TimeZoneAndCanonical_option;
@@ -31,15 +31,15 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `TimeZoneAndCanonical`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneAndCanonical.html) for more information.
+ * See the [Rust documentation for `TimeZoneAndCanonical`](https://docs.rs/icu/2.1.1/icu/time/zone/iana/struct.TimeZoneAndCanonical.html) for more information.
  */
 struct TimeZoneAndCanonical {
-  std::unique_ptr<icu4x::TimeZone> time_zone;
-  std::string_view canonical;
+    std::unique_ptr<icu4x::TimeZone> time_zone;
+    std::string_view canonical;
 
-  inline icu4x::capi::TimeZoneAndCanonical AsFFI() const;
-  inline static icu4x::TimeZoneAndCanonical FromFFI(icu4x::capi::TimeZoneAndCanonical c_struct);
+    inline icu4x::capi::TimeZoneAndCanonical AsFFI() const;
+    inline static icu4x::TimeZoneAndCanonical FromFFI(icu4x::capi::TimeZoneAndCanonical c_struct);
 };
 
 } // namespace
-#endif // icu4x_TimeZoneAndCanonical_D_HPP
+#endif // ICU4X_TimeZoneAndCanonical_D_HPP

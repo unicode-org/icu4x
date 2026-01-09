@@ -5,7 +5,7 @@
 //! `icu` is the main meta-crate of the `ICU4X` project.
 //!
 //! It provides a comprehensive selection of functionality found in
-//! [International Components for Unicode](http://icu.unicode.org/)
+//! [International Components for Unicode](https://icu.unicode.org/)
 //! in their canonical configurations intended to enable software
 //! internationalization capabilities.
 //!
@@ -112,7 +112,7 @@
 //! are on track to be eventually stabilized into this crate.
 //!
 //!
-//! [CLDR]: http://cldr.unicode.org/
+//! [CLDR]: https://cldr.unicode.org/
 //! [`DataProvider`]: icu_provider::DataProvider
 //! [`FsDataProvider`]: https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html
 //! [`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html
@@ -138,9 +138,8 @@
 )]
 #![warn(missing_docs)]
 
-#[cfg(doc)]
 // Needed for intra-doc link to work, since icu_provider is otherwise never mentioned in this crate
-extern crate icu_provider;
+use icu_provider as _;
 
 #[doc(inline)]
 pub use icu_calendar as calendar;

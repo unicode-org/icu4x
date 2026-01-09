@@ -38,10 +38,10 @@ pub(crate) struct EraData {
     pub(crate) start: Option<EraStartDate>,
     #[serde(rename = "_end", default, deserialize_with = "parse_era_start_date")]
     pub(crate) end: Option<EraStartDate>,
-    #[serde(rename = "_code")]
-    pub(crate) code: Option<String>,
-    #[serde(rename = "_aliases")]
-    pub(crate) aliases: Option<String>,
+    #[serde(rename = "_code", default)]
+    pub(crate) code: String,
+    #[serde(rename = "_aliases", default)]
+    pub(crate) aliases: String,
     /// EraYear::era_index
     #[serde(skip)]
     pub(crate) icu4x_era_index: Option<u8>,

@@ -11,7 +11,7 @@ use ixdtf::parsers::IxdtfParser;
 use ixdtf::records::IxdtfParseRecord;
 use ixdtf::ParseError as Rfc9557Error;
 
-/// An error returned from parsing an RFC 9557 string to an `icu_calendar` type.
+/// An error returned from parsing an RFC 9557 string to an `icu::calendar` type.
 #[derive(Debug, displaydoc::Display)]
 #[non_exhaustive]
 pub enum ParseError {
@@ -69,10 +69,7 @@ impl<A: AsCalendar> Date<A> {
     ///     Date::try_from_str("2024-07-17[u-ca=hebrew]", Gregorian).unwrap_err();
     ///
     /// assert_eq!(date.era_year().year, 2024);
-    /// assert_eq!(
-    ///     date.month().standard_code,
-    ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M07"))
-    /// );
+    /// assert_eq!(date.month().number(), 7);
     /// assert_eq!(date.day_of_month().0, 17);
     /// ```
     pub fn try_from_str(rfc_9557_str: &str, calendar: A) -> Result<Self, ParseError> {

@@ -1,5 +1,5 @@
-#ifndef icu4x_RegionDisplayNames_D_HPP
-#define icu4x_RegionDisplayNames_D_HPP
+#ifndef ICU4X_RegionDisplayNames_D_HPP
+#define ICU4X_RegionDisplayNames_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,8 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
@@ -21,7 +20,8 @@ class RegionDisplayNames;
 struct DisplayNamesOptionsV1;
 class DataError;
 class LocaleParseError;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -34,7 +34,7 @@ namespace icu4x {
 /**
  * 🚧 This API is experimental and may experience breaking changes outside major releases.
  *
- * See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html) for more information.
+ * See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/2.1.1/icu/experimental/displaynames/struct.RegionDisplayNames.html) for more information.
  */
 class RegionDisplayNames {
 public:
@@ -44,18 +44,18 @@ public:
    *
    * Creates a new `RegionDisplayNames` from locale data and an options bag using compiled data.
    *
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::RegionDisplayNames>, icu4x::DataError> create_v1(const icu4x::Locale& locale, icu4x::DisplayNamesOptionsV1 options);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::RegionDisplayNames>, icu4x::DataError> create_v1(const icu4x::Locale& locale, icu4x::DisplayNamesOptionsV1 options);
 
   /**
    * 🚧 This API is experimental and may experience breaking changes outside major releases.
    *
    * Creates a new `RegionDisplayNames` from locale data and an options bag using a particular data source.
    *
-   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.1.1/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::RegionDisplayNames>, icu4x::DataError> create_v1_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DisplayNamesOptionsV1 options);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::RegionDisplayNames>, icu4x::DataError> create_v1_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DisplayNamesOptionsV1 options);
 
   /**
    * 🚧 This API is experimental and may experience breaking changes outside major releases.
@@ -64,25 +64,25 @@ public:
    * Note that the function returns an empty string in case the display name for a given
    * region code is not found.
    *
-   * See the [Rust documentation for `of`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
+   * See the [Rust documentation for `of`](https://docs.rs/icu/2.1.1/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
    */
-  inline diplomat::result<std::string, icu4x::LocaleParseError> of(std::string_view region) const;
+  inline icu4x::diplomat::result<std::string, icu4x::LocaleParseError> of(std::string_view region) const;
   template<typename W>
-  inline diplomat::result<std::monostate, icu4x::LocaleParseError> of_write(std::string_view region, W& writeable_output) const;
+  inline icu4x::diplomat::result<std::monostate, icu4x::LocaleParseError> of_write(std::string_view region, W& writeable_output) const;
 
-  inline const icu4x::capi::RegionDisplayNames* AsFFI() const;
-  inline icu4x::capi::RegionDisplayNames* AsFFI();
-  inline static const icu4x::RegionDisplayNames* FromFFI(const icu4x::capi::RegionDisplayNames* ptr);
-  inline static icu4x::RegionDisplayNames* FromFFI(icu4x::capi::RegionDisplayNames* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::RegionDisplayNames* AsFFI() const;
+    inline icu4x::capi::RegionDisplayNames* AsFFI();
+    inline static const icu4x::RegionDisplayNames* FromFFI(const icu4x::capi::RegionDisplayNames* ptr);
+    inline static icu4x::RegionDisplayNames* FromFFI(icu4x::capi::RegionDisplayNames* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  RegionDisplayNames() = delete;
-  RegionDisplayNames(const icu4x::RegionDisplayNames&) = delete;
-  RegionDisplayNames(icu4x::RegionDisplayNames&&) noexcept = delete;
-  RegionDisplayNames operator=(const icu4x::RegionDisplayNames&) = delete;
-  RegionDisplayNames operator=(icu4x::RegionDisplayNames&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    RegionDisplayNames() = delete;
+    RegionDisplayNames(const icu4x::RegionDisplayNames&) = delete;
+    RegionDisplayNames(icu4x::RegionDisplayNames&&) noexcept = delete;
+    RegionDisplayNames operator=(const icu4x::RegionDisplayNames&) = delete;
+    RegionDisplayNames operator=(icu4x::RegionDisplayNames&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_RegionDisplayNames_D_HPP
+#endif // ICU4X_RegionDisplayNames_D_HPP

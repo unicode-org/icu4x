@@ -37,7 +37,7 @@
 //!
 //! # Preferences Merging
 //!
-//! In traditional internatonalization APIs, the argument passed to constructors is a locale.
+//! In traditional internationalization APIs, the argument passed to constructors is a locale.
 //! ICU4X changes this paradigm by accepting a `Preferences`, which can be extracted from a [`Locale`] and combined with
 //! other `Preferences`s provided by the environment.
 //!
@@ -573,7 +573,7 @@ macro_rules! __define_preferences {
                 }
 
                 let r = Self {
-                    locale_preferences: loc.into(),
+                    locale_preferences: $crate::preferences::LocalePreferences::from_locale_strict(loc).unwrap_or_else(|e| { is_err = true; e }),
 
                     $(
                         $key,

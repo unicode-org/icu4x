@@ -17,3 +17,7 @@ icu_provider_source = { workspace = true, features = ["networking", "experimenta
 log = { workspace = true }
 simple_logger = { workspace = true }
 crlify = { workspace = true }
+
+[package.metadata.cargo-all-features]
+# Unpublished internal tool; skip
+skip_package = true

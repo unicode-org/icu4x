@@ -1,5 +1,5 @@
-#ifndef icu4x_Bidi_D_HPP
-#define icu4x_Bidi_D_HPP
+#ifndef ICU4X_Bidi_D_HPP
+#define ICU4X_Bidi_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,8 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 namespace capi { struct Bidi; }
 class Bidi;
@@ -21,7 +20,8 @@ class DataProvider;
 namespace capi { struct ReorderedIndexMap; }
 class ReorderedIndexMap;
 class DataError;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -34,7 +34,7 @@ namespace icu4x {
 /**
  * An ICU4X Bidi object, containing loaded bidi data
  *
- * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.BidiClass.html) for more information.
+ * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html) for more information.
  */
 class Bidi {
 public:
@@ -47,7 +47,7 @@ public:
   /**
    * Creates a new {@link Bidi} from locale data, and a particular data source.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::Bidi>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
+  inline static icu4x::diplomat::result<std::unique_ptr<icu4x::Bidi>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   /**
    * Use the data loaded in this object to process a string and calculate bidi information
@@ -72,7 +72,7 @@ public:
    *
    * See the [Rust documentation for `reorder_visual`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.BidiInfo.html#method.reorder_visual) for more information.
    */
-  inline std::unique_ptr<icu4x::ReorderedIndexMap> reorder_visual(diplomat::span<const uint8_t> levels) const;
+  inline std::unique_ptr<icu4x::ReorderedIndexMap> reorder_visual(icu4x::diplomat::span<const uint8_t> levels) const;
 
   /**
    * Check if a Level returned by level_at is an RTL level.
@@ -106,19 +106,19 @@ public:
    */
   inline static uint8_t level_ltr();
 
-  inline const icu4x::capi::Bidi* AsFFI() const;
-  inline icu4x::capi::Bidi* AsFFI();
-  inline static const icu4x::Bidi* FromFFI(const icu4x::capi::Bidi* ptr);
-  inline static icu4x::Bidi* FromFFI(icu4x::capi::Bidi* ptr);
-  inline static void operator delete(void* ptr);
+    inline const icu4x::capi::Bidi* AsFFI() const;
+    inline icu4x::capi::Bidi* AsFFI();
+    inline static const icu4x::Bidi* FromFFI(const icu4x::capi::Bidi* ptr);
+    inline static icu4x::Bidi* FromFFI(icu4x::capi::Bidi* ptr);
+    inline static void operator delete(void* ptr);
 private:
-  Bidi() = delete;
-  Bidi(const icu4x::Bidi&) = delete;
-  Bidi(icu4x::Bidi&&) noexcept = delete;
-  Bidi operator=(const icu4x::Bidi&) = delete;
-  Bidi operator=(icu4x::Bidi&&) noexcept = delete;
-  static void operator delete[](void*, size_t) = delete;
+    Bidi() = delete;
+    Bidi(const icu4x::Bidi&) = delete;
+    Bidi(icu4x::Bidi&&) noexcept = delete;
+    Bidi operator=(const icu4x::Bidi&) = delete;
+    Bidi operator=(icu4x::Bidi&&) noexcept = delete;
+    static void operator delete[](void*, size_t) = delete;
 };
 
 } // namespace
-#endif // icu4x_Bidi_D_HPP
+#endif // ICU4X_Bidi_D_HPP

@@ -37,6 +37,13 @@ impl From<Sign> for num_bigint::Sign {
     }
 }
 
+#[cfg(feature = "compiled_data")]
+impl Default for ConverterFactory {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ConverterFactory {
     icu_provider::gen_buffer_data_constructors!(
         () -> error: DataError,

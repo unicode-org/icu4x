@@ -36,7 +36,6 @@ icu_time = { path = "../components/time" }
 icu_capi = { path = "../ffi/capi" }
 icu4x_ecma402 = { path = "../ffi/ecma402" }
 icu_freertos = { path = "../ffi/freertos" }
-icu_harfbuzz = { path = "../ffi/harfbuzz" }
 
 # Provider
 icu_provider_export = { path = "../provider/export" }
@@ -67,7 +66,6 @@ bies = { path = "../utils/bies" }
 crlify = { path = "../utils/crlify" }
 databake = { path = "../utils/databake" }
 databake-derive = { path = "../utils/databake/derive" }
-deduplicating_array = { path = "../utils/deduplicating_array" }
 fixed_decimal = { path = "../utils/fixed_decimal" }
 ixdtf = { path = "../utils/ixdtf" }
 litemap = { path = "../utils/litemap" }

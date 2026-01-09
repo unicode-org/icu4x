@@ -221,7 +221,7 @@ pub struct LanguageStrStrPair<'a>(
 ///
 /// Each field defines a
 /// mapping from an old identifier to a new identifier, based upon the rules in
-/// from <http://unicode.org/reports/tr35/#LocaleId_Canonicalization>. The data
+/// from <https://unicode.org/reports/tr35/#LocaleId_Canonicalization>. The data
 /// is stored in sorted order, allowing for binary search to identify rules to
 /// apply. It is broken down into smaller vectors based upon some characteristic
 /// of the data, to help avoid unnecessary searches. For example, the `sgn_region`

@@ -46,7 +46,7 @@ where
     ///         id: de.as_borrowed(),
     ///         ..Default::default()
     ///     });
-    /// assert!(matches!(response, Ok(_)));
+    /// assert!(response.is_ok());
     ///
     /// // English requests should fail:
     /// let en = DataIdentifierCow::from_locale(langid!("en-US").into());
@@ -60,13 +60,10 @@ where
     ///         id: en.as_borrowed(),
     ///         ..Default::default()
     ///     });
-    /// assert!(matches!(
-    ///     response,
-    ///     Err(DataError {
-    ///         kind: DataErrorKind::IdentifierNotFound,
-    ///         ..
-    ///     })
-    /// ));
+    /// assert_eq!(
+    ///     response.unwrap_err().kind,
+    ///     DataErrorKind::IdentifierNotFound,
+    /// );
     ///
     /// // English should not appear in the iterator result:
     /// let available_ids = provider

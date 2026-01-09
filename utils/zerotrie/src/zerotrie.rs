@@ -107,7 +107,7 @@ pub(crate) enum ZeroTrieFlavor<Store> {
 /// // A trie with two values: "abc" and "abcdef"
 /// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
 ///
-/// assert!(matches!(trie.get(b"ab\xFF"), None));
+/// assert!(trie.get(b"ab\xFF").is_none());
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
@@ -437,6 +437,20 @@ macro_rules! impl_zerotrie_subtype {
                 .map(|s| Self {
                     store: s.to_bytes(),
                 })
+            }
+            /// Creates a trie from a [`BTreeMap`] of string keys.
+            ///
+            /// See also the [`TryFrom`] and [`FromIterator`] impls.
+            pub fn try_from_btree_map_str<K>(items: &BTreeMap<K, usize>) -> Result<Self, ZeroTrieBuildError>
+            where
+                K: Borrow<str>
+            {
+                let tuples: Vec<(&[u8], usize)> = items
+                    .iter()
+                    .map(|(k, v)| (k.borrow().as_bytes(), *v))
+                    .collect();
+                let byte_str_slice = ByteStr::from_byte_slice_with_value(&tuples);
+                Self::try_from_tuple_slice(byte_str_slice)
             }
         }
         #[cfg(feature = "alloc")]
@@ -806,6 +820,8 @@ where
     Store: AsRef<[u8]>,
 {
     /// Exports the data from this ZeroTrie into a BTreeMap.
+    ///
+    /// ✨ *Enabled with the `alloc` Cargo feature.*
     pub fn to_btreemap(&self) -> BTreeMap<Box<[u8]>, usize> {
         impl_dispatch!(&self, to_btreemap_bytes())
     }

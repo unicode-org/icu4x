@@ -22,6 +22,30 @@ define_preferences!(
 );
 
 /// Information about the first day of the week and the weekend.
+///
+/// # Examples
+///
+/// ```
+/// use icu::calendar::week::WeekInformation;
+/// use icu::calendar::types::Weekday;
+/// use icu::locale::{locale, Locale};
+///
+/// // For en-US
+/// let info = WeekInformation::try_new(locale!("en-US").into()).unwrap();
+/// assert_eq!(info.first_weekday, Weekday::Sunday);
+///
+/// // For de-DE
+/// let info = WeekInformation::try_new(locale!("de-DE").into()).unwrap();
+/// assert_eq!(info.first_weekday, Weekday::Monday);
+///
+/// // For en-US with a Germany region preference override
+/// let info = WeekInformation::try_new(locale!("en-US-u-rg-dezzzz").into()).unwrap();
+/// assert_eq!(info.first_weekday, Weekday::Monday);
+///
+/// // As above but also with a First Weekday override
+/// let info = WeekInformation::try_new(Locale::try_from_str("en-US-u-rg-dezzzz-fw-wed").unwrap().into()).unwrap();
+/// assert_eq!(info.first_weekday, Weekday::Wednesday);
+/// ```
 #[derive(Clone, Copy, Debug)]
 #[non_exhaustive]
 pub struct WeekInformation {
@@ -103,11 +127,11 @@ impl WeekCalculator {
         num_days_in_previous_unit: u16,
         num_days_in_unit: u16,
         day: u16,
-        week_day: Weekday,
+        weekday: Weekday,
     ) -> Result<WeekOf, RangeError> {
         let current = UnitInfo::new(
             // The first day of this month/year is (day - 1) days from `day`.
-            add_to_weekday(week_day, 1 - i32::from(day)),
+            add_to_weekday(weekday, 1 - i32::from(day)),
             num_days_in_unit,
         )?;
 
@@ -294,7 +318,7 @@ impl Iterator for WeekdaySetIterator {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{types::Weekday, Date, DateDuration, RangeError};
+    use crate::{types::DateDuration, types::Weekday, Date, RangeError};
 
     static ISO_CALENDAR: WeekCalculator = WeekCalculator {
         first_weekday: Weekday::Monday,
@@ -457,13 +481,15 @@ mod tests {
         let day = (yyyymmdd % 100) as u8;
 
         let date = Date::try_new_iso(year, month, day)?;
-        let previous_month = date.added(DateDuration::new(0, -1, 0, 0));
+        let previous_month = date
+            .try_added_with_options(DateDuration::for_months(-1), Default::default())
+            .unwrap();
 
         calendar.week_of(
             u16::from(previous_month.days_in_month()),
             u16::from(date.days_in_month()),
             u16::from(day),
-            date.day_of_week(),
+            date.weekday(),
         )
     }
 

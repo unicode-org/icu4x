@@ -1,5 +1,5 @@
-#ifndef icu4x_DateTimeFormatterLoadError_D_HPP
-#define icu4x_DateTimeFormatterLoadError_D_HPP
+#ifndef ICU4X_DateTimeFormatterLoadError_D_HPP
+#define ICU4X_DateTimeFormatterLoadError_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -36,39 +36,39 @@ namespace capi {
 
 namespace icu4x {
 /**
- * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/2.0.0/icu/datetime/pattern/enum.PatternLoadError.html), [3](https://docs.rs/icu_provider/2.0.0/icu_provider/struct.DataError.html), [4](https://docs.rs/icu_provider/2.0.0/icu_provider/enum.DataErrorKind.html)
+ * Additional information: [1](https://docs.rs/icu/2.1.1/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/2.1.1/icu/datetime/pattern/enum.PatternLoadError.html), [3](https://docs.rs/icu_provider/2.1.1/icu_provider/struct.DataError.html), [4](https://docs.rs/icu_provider/2.1.1/icu_provider/enum.DataErrorKind.html)
  */
 class DateTimeFormatterLoadError {
 public:
-  enum Value {
-    Unknown = 0,
-    InvalidDateFields = 2049,
-    UnsupportedLength = 2051,
-    ConflictingField = 2057,
-    FormatterTooSpecific = 2058,
-    DataMarkerNotFound = 1,
-    DataIdentifierNotFound = 2,
-    DataInvalidRequest = 3,
-    DataInconsistentData = 4,
-    DataDowncast = 5,
-    DataDeserialize = 6,
-    DataCustom = 7,
-    DataIo = 8,
-  };
+    enum Value {
+        Unknown = 0,
+        InvalidDateFields = 2049,
+        UnsupportedLength = 2051,
+        ConflictingField = 2057,
+        FormatterTooSpecific = 2058,
+        DataMarkerNotFound = 1,
+        DataIdentifierNotFound = 2,
+        DataInvalidRequest = 3,
+        DataInconsistentData = 4,
+        DataDowncast = 5,
+        DataDeserialize = 6,
+        DataCustom = 7,
+        DataIo = 8,
+    };
 
-  DateTimeFormatterLoadError(): value(Value::Unknown) {}
+    DateTimeFormatterLoadError(): value(Value::Unknown) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr DateTimeFormatterLoadError(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr DateTimeFormatterLoadError(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
-  inline icu4x::capi::DateTimeFormatterLoadError AsFFI() const;
-  inline static icu4x::DateTimeFormatterLoadError FromFFI(icu4x::capi::DateTimeFormatterLoadError c_enum);
+    inline icu4x::capi::DateTimeFormatterLoadError AsFFI() const;
+    inline static icu4x::DateTimeFormatterLoadError FromFFI(icu4x::capi::DateTimeFormatterLoadError c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_DateTimeFormatterLoadError_D_HPP
+#endif // ICU4X_DateTimeFormatterLoadError_D_HPP

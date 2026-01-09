@@ -1,0 +1,1 @@
+../../../examples/dart/bin/example.dart

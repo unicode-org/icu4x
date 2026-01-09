@@ -9,5 +9,5 @@
     }
   ],
   "offset_zero": "UTC",
-  "offset_unknown": "UTC+?"
+  "offset_unknown": "GMT+?"
 }

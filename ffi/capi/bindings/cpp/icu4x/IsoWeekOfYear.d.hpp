@@ -1,5 +1,5 @@
-#ifndef icu4x_IsoWeekOfYear_D_HPP
-#define icu4x_IsoWeekOfYear_D_HPP
+#ifndef ICU4X_IsoWeekOfYear_D_HPP
+#define ICU4X_IsoWeekOfYear_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,7 +9,7 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
+#include "diplomat_runtime.hpp"
 
 
 namespace icu4x {
@@ -25,13 +25,16 @@ namespace capi {
 
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `IsoWeekOfYear`](https://docs.rs/icu/2.1.1/icu/calendar/types/struct.IsoWeekOfYear.html) for more information.
+ */
 struct IsoWeekOfYear {
-  uint8_t week_number;
-  int32_t iso_year;
+    uint8_t week_number;
+    int32_t iso_year;
 
-  inline icu4x::capi::IsoWeekOfYear AsFFI() const;
-  inline static icu4x::IsoWeekOfYear FromFFI(icu4x::capi::IsoWeekOfYear c_struct);
+    inline icu4x::capi::IsoWeekOfYear AsFFI() const;
+    inline static icu4x::IsoWeekOfYear FromFFI(icu4x::capi::IsoWeekOfYear c_struct);
 };
 
 } // namespace
-#endif // icu4x_IsoWeekOfYear_D_HPP
+#endif // ICU4X_IsoWeekOfYear_D_HPP

@@ -4,7 +4,6 @@
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
-#[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
 
@@ -87,7 +86,7 @@ pub mod ffi {
             )))
         }
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::get, FnInStruct)]
-        #[diplomat::attr(auto, indexer)]
+        #[diplomat::attr(all(supports = indexing, not(kotlin)), indexer)] // Kotlin doesn't support non-integral indexers
         pub fn get(&self, locale: &Locale) -> LocaleDirection {
             match self.0.get(&locale.0.id) {
                 Some(icu_locale::Direction::LeftToRight) => LocaleDirection::LeftToRight,

@@ -1,5 +1,5 @@
-list/and/v1, <lookup>, 2099B, 388 identifiers
-list/and/v1, <total>, 42671B, 5191B, 138 unique payloads
+list/and/v1, <lookup>, 2172B, 400 identifiers
+list/and/v1, <total>, 43221B, 5192B, 140 unique payloads
 list/and/v1, af/N, 290B, 20B, d2846cc3cf177584
 list/and/v1, af/S, 288B, 15B, abf92122ab812de
 list/and/v1, af/W, -> af/S
@@ -19,6 +19,9 @@ list/and/v1, ast/S, -> ast/N
 list/and/v1, ast/W, -> ast/N
 list/and/v1, az/S, 289B, 16B, 9570a9ca698b963
 list/and/v1, az/W, -> az/S
+list/and/v1, ba/N, 292B, 19B, dc0828a46237eeef
+list/and/v1, ba/S, -> ba/N
+list/and/v1, ba/W, -> ba/N
 list/and/v1, be/N, 288B, 15B, 8669f23220900030
 list/and/v1, be/S, -> be/N
 list/and/v1, be/W, -> be/N
@@ -83,7 +86,9 @@ list/and/v1, en-CA/W, -> en-001/S
 list/and/v1, en-IN/N, 292B, 22B, ee71a27a0068803c
 list/and/v1, en/S, -> chr/S
 list/and/v1, en/W, 295B, 25B, 3950f21ab734a978
-list/and/v1, es/N, 1290B, 1021B, 58945fe7830785e
+list/and/v1, eo/S, 287B, 14B, 861fd1a2bf7bd6c8
+list/and/v1, eo/W, 289B, 16B, 95e232efe2396226
+list/and/v1, es/N, 1290B, 1021B, e7cb3bc031264b0c
 list/and/v1, es/S, -> es/N
 list/and/v1, es/W, -> es/N
 list/and/v1, et/S, 288B, 15B, 72326c49bce9b8aa
@@ -122,7 +127,7 @@ list/and/v1, gu/W, -> gu/S
 list/and/v1, ha/N, 293B, 23B, f9af5c2bb97e481d
 list/and/v1, ha/S, -> ha/N
 list/and/v1, ha/W, -> ha/N
-list/and/v1, he/N, 1374B, 1105B, 4e9ad2964c0b706d
+list/and/v1, he/N, 1374B, 1105B, 78f4c6ee06a40556
 list/and/v1, he/S, -> he/N
 list/and/v1, he/W, -> he/N
 list/and/v1, hi-Latn/N, 291B, 21B, 846f8de82e79c4a6
@@ -172,6 +177,9 @@ list/and/v1, kea/S, -> bs/N
 list/and/v1, kea/W, -> bs/N
 list/and/v1, kgp/S, 289B, 16B, 801bcdf9f4b5f30d
 list/and/v1, kgp/W, -> kgp/S
+list/and/v1, kk-Arab/N, 296B, 23B, 980d4026879b2b4
+list/and/v1, kk-Arab/S, -> kk-Arab/N
+list/and/v1, kk-Arab/W, -> kk-Arab/N
 list/and/v1, kk/N, 296B, 26B, 6dc9a62292a7310d
 list/and/v1, kk/S, -> kk/N
 list/and/v1, kk/W, -> kk/N
@@ -182,6 +190,9 @@ list/and/v1, kn/W, -> kn/S
 list/and/v1, ko/N, 289B, 16B, b013df42715415f3
 list/and/v1, ko/S, -> ko/N
 list/and/v1, ko/W, -> ko/N
+list/and/v1, kok-Latn/N, -> chr/S
+list/and/v1, kok-Latn/S, -> chr/S
+list/and/v1, kok-Latn/W, 295B, 25B, 2c6470d3d88a45cf
 list/and/v1, kok/S, -> chr/S
 list/and/v1, ks-Deva/N, 301B, 31B, 8fb6c1a67cd19b7a
 list/and/v1, ks-Deva/S, -> ks-Deva/N
@@ -226,9 +237,6 @@ list/and/v1, mi/S, -> chr/S
 list/and/v1, mk/N, -> bg/S
 list/and/v1, mk/S, -> bg/S
 list/and/v1, mk/W, -> bg/S
-list/and/v1, ml/N, 307B, 37B, 21dbbcaf7ffc337a
-list/and/v1, ml/S, 325B, 55B, d1d962a68c3a7197
-list/and/v1, ml/W, -> ml/S
 list/and/v1, mni/N, 301B, 28B, fb68ac1d7b05c08e
 list/and/v1, mni/S, -> mni/N
 list/and/v1, mni/W, -> mni/N
@@ -243,8 +251,7 @@ list/and/v1, mt/W, -> mt/N
 list/and/v1, my/N, 302B, 29B, f8f106567810dfe9
 list/and/v1, my/S, -> my/N
 list/and/v1, my/W, -> my/N
-list/and/v1, ne/N, 285B, 12B, 5824e00cb529485a
-list/and/v1, ne/S, 288B, 15B, ac494b1e6e2e8cb2
+list/and/v1, ne/S, 289B, 16B, f23fd51345600ec0
 list/and/v1, ne/W, -> ne/S
 list/and/v1, nl/S, -> blo/N
 list/and/v1, nl/W, -> af/S
@@ -267,7 +274,6 @@ list/and/v1, ps/S, 300B, 30B, 7ec78927997b8b52
 list/and/v1, ps/W, -> ps/S
 list/and/v1, pt/S, -> gl/N
 list/and/v1, pt/W, -> gl/N
-list/and/v1, rm/N, -> gl/N
 list/and/v1, rm/S, -> gl/N
 list/and/v1, rm/W, -> gl/N
 list/and/v1, ro/S, 289B, 16B, 7d300d9476681478
@@ -283,9 +289,15 @@ list/and/v1, sah/W, -> sah/N
 list/and/v1, sc/N, -> gl/N
 list/and/v1, sc/S, -> gl/N
 list/and/v1, sc/W, -> gl/N
+list/and/v1, scn/N, -> gl/N
+list/and/v1, scn/S, -> gl/N
+list/and/v1, scn/W, -> gl/N
 list/and/v1, sd/N, 291B, 21B, c7d301fba3e8050e
 list/and/v1, sd/S, 296B, 26B, 428742abdab01dca
 list/and/v1, sd/W, -> sd/S
+list/and/v1, shn/N, 299B, 26B, a8f8a22a0fa31f38
+list/and/v1, shn/S, -> shn/N
+list/and/v1, shn/W, -> shn/N
 list/and/v1, si/N, 301B, 31B, 400cef8fdeea80e2
 list/and/v1, si/S, -> si/N
 list/and/v1, si/W, -> si/N
@@ -338,8 +350,8 @@ list/and/v1, to/S, -> to/N
 list/and/v1, to/W, -> to/N
 list/and/v1, tr/S, 288B, 15B, fed7f09b2c35f744
 list/and/v1, tr/W, -> tr/S
-list/and/v1, tt/S, 292B, 19B, dc0828a46237eeef
-list/and/v1, tt/W, -> tt/S
+list/and/v1, tt/S, -> ba/N
+list/and/v1, tt/W, -> ba/N
 list/and/v1, ug/N, -> en/W
 list/and/v1, ug/S, -> en/W
 list/and/v1, ug/W, -> en/W
@@ -388,8 +400,8 @@ list/and/v1, zh/S, -> zh-Hant/S
 list/and/v1, zh/W, -> zh-Hant/S
 list/and/v1, zu/S, 293B, 23B, 59bfdd1b7f5c1e5a
 list/and/v1, zu/W, -> zu/S
-list/or/v1, <lookup>, 1976B, 379 identifiers
-list/or/v1, <total>, 33929B, 4017B, 110 unique payloads
+list/or/v1, <lookup>, 2066B, 395 identifiers
+list/or/v1, <total>, 35422B, 4151B, 115 unique payloads
 list/or/v1, af/N, 288B, 15B, 2ebffe2edb844a58
 list/or/v1, af/S, -> af/N
 list/or/v1, af/W, -> af/N
@@ -411,6 +423,9 @@ list/or/v1, ast/W, -> ast/N
 list/or/v1, az/N, 292B, 19B, 1caa8cce65f57cc3
 list/or/v1, az/S, -> az/N
 list/or/v1, az/W, 299B, 29B, 909a62c10f04860e
+list/or/v1, ba/N, 294B, 21B, 2b452819c156475
+list/or/v1, ba/S, -> ba/N
+list/or/v1, ba/W, -> ba/N
 list/or/v1, be/N, 290B, 17B, bf77e50c3bd9472e
 list/or/v1, be/S, -> be/N
 list/or/v1, be/W, -> be/N
@@ -468,7 +483,10 @@ list/or/v1, en-001/W, -> en-001/N
 list/or/v1, en-CA/N, -> en-001/N
 list/or/v1, en-CA/S, -> en-001/N
 list/or/v1, en-CA/W, -> en-001/N
-list/or/v1, es/N, 1583B, 1314B, f6111f97ee2cc20e
+list/or/v1, eo/N, 289B, 16B, 9d3ad3a0a097f9f2
+list/or/v1, eo/S, -> eo/N
+list/or/v1, eo/W, -> eo/N
+list/or/v1, es/N, 1583B, 1314B, aec368bf3b08c131
 list/or/v1, es/S, -> es/N
 list/or/v1, es/W, -> es/N
 list/or/v1, et/N, 290B, 17B, c579aed1ecbf264c
@@ -564,6 +582,9 @@ list/or/v1, kea/W, -> ast/N
 list/or/v1, kgp/N, 296B, 23B, 39aca1cf891874f9
 list/or/v1, kgp/S, -> kgp/N
 list/or/v1, kgp/W, -> kgp/N
+list/or/v1, kk-Arab/N, 292B, 19B, e5580402e0aa09b8
+list/or/v1, kk-Arab/S, -> kk-Arab/N
+list/or/v1, kk-Arab/W, -> kk-Arab/N
 list/or/v1, kk/N, 312B, 42B, eaf341d1ba6fb662
 list/or/v1, kk/S, -> kk/N
 list/or/v1, kk/W, -> kk/N
@@ -576,9 +597,10 @@ list/or/v1, kn/W, -> kn/N
 list/or/v1, ko/N, 292B, 19B, 4142fa7703d6f007
 list/or/v1, ko/S, -> ko/N
 list/or/v1, ko/W, -> ko/N
-list/or/v1, kok/N, 301B, 31B, ac2a4c79729d4ad1
-list/or/v1, kok/S, -> kok/N
-list/or/v1, kok/W, -> kok/N
+list/or/v1, kok-Latn/N, 293B, 23B, 5f476ee25918d1cc
+list/or/v1, kok-Latn/S, -> kok-Latn/N
+list/or/v1, kok-Latn/W, -> kok-Latn/N
+list/or/v1, kok/W, 301B, 31B, ac2a4c79729d4ad1
 list/or/v1, ku/N, 288B, 15B, b98284b01e2fb128
 list/or/v1, ku/S, -> ku/N
 list/or/v1, ku/W, -> ku/N
@@ -627,9 +649,9 @@ list/or/v1, ms/W, -> id/N
 list/or/v1, my/N, 315B, 42B, c231632f25dfb6bf
 list/or/v1, my/S, -> my/N
 list/or/v1, my/W, -> my/N
-list/or/v1, ne/N, -> kok/N
-list/or/v1, ne/S, -> kok/N
-list/or/v1, ne/W, -> kok/N
+list/or/v1, ne/N, -> kok/W
+list/or/v1, ne/S, -> kok/W
+list/or/v1, ne/W, -> kok/W
 list/or/v1, nl/N, -> af/N
 list/or/v1, nl/S, -> af/N
 list/or/v1, nl/W, -> af/N
@@ -669,9 +691,15 @@ list/or/v1, ru/W, -> bg/N
 list/or/v1, sc/N, -> ast/N
 list/or/v1, sc/S, -> ast/N
 list/or/v1, sc/W, -> ast/N
+list/or/v1, scn/N, -> ast/N
+list/or/v1, scn/S, -> ast/N
+list/or/v1, scn/W, -> ast/N
 list/or/v1, sd/N, 297B, 27B, 383f0d10485aa9b9
 list/or/v1, sd/S, -> sd/N
 list/or/v1, sd/W, -> sd/N
+list/or/v1, shn/N, 325B, 55B, d026f34ab5df81e6
+list/or/v1, shn/S, -> shn/N
+list/or/v1, shn/W, -> shn/N
 list/or/v1, si/N, 301B, 31B, 3be51aac2add8f09
 list/or/v1, si/S, -> si/N
 list/or/v1, si/W, -> si/N
@@ -769,8 +797,8 @@ list/or/v1, zh-Hant/W, -> zh-Hant/N
 list/or/v1, zh/N, -> zh-Hant/N
 list/or/v1, zh/S, -> zh-Hant/N
 list/or/v1, zh/W, -> zh-Hant/N
-list/unit/v1, <lookup>, 1670B, 317 identifiers
-list/unit/v1, <total>, 30777B, 4995B, 95 unique payloads
+list/unit/v1, <lookup>, 1746B, 330 identifiers
+list/unit/v1, <total>, 31101B, 5046B, 96 unique payloads
 list/unit/v1, af/N, 283B, 10B, 65599aa2ed9d8617
 list/unit/v1, ak/N, -> af/N
 list/unit/v1, ak/S, 293B, 23B, 665ac0fadccdd886
@@ -785,6 +813,9 @@ list/unit/v1, as/N, -> af/N
 list/unit/v1, ast/N, 287B, 14B, 79fdba0de5182d4
 list/unit/v1, ast/S, -> ast/N
 list/unit/v1, ast/W, -> ast/N
+list/unit/v1, ba/N, 292B, 19B, dc0828a46237eeef
+list/unit/v1, ba/S, -> ba/N
+list/unit/v1, ba/W, -> ba/N
 list/unit/v1, be/N, -> af/N
 list/unit/v1, be/S, -> af/N
 list/unit/v1, be/W, -> af/N
@@ -832,12 +863,13 @@ list/unit/v1, ee/S, -> ee/N
 list/unit/v1, ee/W, -> ee/N
 list/unit/v1, el/N, -> af/N
 list/unit/v1, en/N, -> af/N
-list/unit/v1, es-DO/N, 1289B, 1023B, dcd965b6b291c020
-list/unit/v1, es-DO/S, 1290B, 1021B, 58945fe7830785e
+list/unit/v1, eo/N, -> af/N
+list/unit/v1, es-DO/N, 1289B, 1023B, b26156e1782db07b
+list/unit/v1, es-DO/S, 1290B, 1021B, e7cb3bc031264b0c
 list/unit/v1, es-PY/S, -> es-DO/S
 list/unit/v1, es-US/S, -> es-DO/S
 list/unit/v1, es/N, -> af/N
-list/unit/v1, es/S, 1292B, 1026B, 2e14180a8853718f
+list/unit/v1, es/S, 1292B, 1026B, 55d759cf91a81ab
 list/unit/v1, es/W, -> es-DO/S
 list/unit/v1, et/N, -> af/N
 list/unit/v1, eu/N, 289B, 16B, 6869307ba313e5b6
@@ -904,6 +936,9 @@ list/unit/v1, kea/W, -> bs/N
 list/unit/v1, kgp/N, -> af/N
 list/unit/v1, kgp/S, 289B, 16B, 801bcdf9f4b5f30d
 list/unit/v1, kgp/W, -> kgp/S
+list/unit/v1, kk-Arab/N, -> af/N
+list/unit/v1, kk-Arab/S, 289B, 16B, 8a246beb63162e8c
+list/unit/v1, kk-Arab/W, -> kk-Arab/S
 list/unit/v1, kk/N, -> af/N
 list/unit/v1, kk/S, -> af/N
 list/unit/v1, kk/W, -> af/N
@@ -914,6 +949,9 @@ list/unit/v1, kn/N, 287B, 17B, ca3d16bfaceb50d4
 list/unit/v1, ko/N, -> af/N
 list/unit/v1, ko/S, -> af/N
 list/unit/v1, ko/W, -> af/N
+list/unit/v1, kok-Latn/N, -> af/N
+list/unit/v1, kok-Latn/S, 295B, 25B, 2c6470d3d88a45cf
+list/unit/v1, kok-Latn/W, -> kok-Latn/S
 list/unit/v1, kok/N, -> af/N
 list/unit/v1, ks-Deva/N, 301B, 31B, 8fb6c1a67cd19b7a
 list/unit/v1, ks-Deva/S, -> ks-Deva/N
@@ -965,9 +1003,8 @@ list/unit/v1, mt/W, -> mt/S
 list/unit/v1, my/N, 298B, 25B, 357d51c14429b0c0
 list/unit/v1, my/S, 302B, 29B, f8f106567810dfe9
 list/unit/v1, my/W, 300B, 27B, f7c572578fa48186
-list/unit/v1, ne/N, 282B, 9B, 2c5f201e301c66b2
-list/unit/v1, ne/S, 285B, 15B, 30a87972b0be1666
-list/unit/v1, ne/W, 284B, 11B, ef0626e9ddfbe8f9
+list/unit/v1, ne/N, -> af/N
+list/unit/v1, ne/S, -> kn/N
 list/unit/v1, nl/W, 288B, 15B, abf92122ab812de
 list/unit/v1, nn/N, -> af/N
 list/unit/v1, nn/W, -> hi-Latn/N
@@ -986,8 +1023,6 @@ list/unit/v1, pt/N, -> af/N
 list/unit/v1, pt/S, -> gl/W
 list/unit/v1, pt/W, -> gl/W
 list/unit/v1, rm/N, -> af/N
-list/unit/v1, rm/S, -> gl/W
-list/unit/v1, rm/W, -> gl/W
 list/unit/v1, ro/W, 291B, 21B, 5df60778b2282b66
 list/unit/v1, ru/N, -> af/N
 list/unit/v1, ru/S, -> af/N
@@ -1001,9 +1036,15 @@ list/unit/v1, sah/W, -> sah/N
 list/unit/v1, sc/N, -> af/N
 list/unit/v1, sc/S, -> gl/W
 list/unit/v1, sc/W, -> gl/W
+list/unit/v1, scn/N, -> gl/W
+list/unit/v1, scn/S, -> gl/W
+list/unit/v1, scn/W, -> gl/W
 list/unit/v1, sd/N, 291B, 21B, c7d301fba3e8050e
 list/unit/v1, sd/S, -> sd/N
 list/unit/v1, sd/W, -> sd/N
+list/unit/v1, shn/N, 299B, 26B, a8f8a22a0fa31f38
+list/unit/v1, shn/S, -> shn/N
+list/unit/v1, shn/W, -> shn/N
 list/unit/v1, si/N, 301B, 31B, 400cef8fdeea80e2
 list/unit/v1, si/S, -> si/N
 list/unit/v1, si/W, -> si/N

@@ -34,7 +34,6 @@ members = [
     "ffi/capi",
     "ffi/ecma402",
     "ffi/freertos",
-    "ffi/harfbuzz",
 
     # Provider
     "provider/adapters",
@@ -66,12 +65,10 @@ members = [
     "utils/crlify",
     "utils/databake",
     "utils/databake/derive",
-    "utils/deduplicating_array",
     "utils/fixed_decimal",
     "utils/ixdtf",
     "utils/litemap",
     "utils/resb",
-    "utils/env_preferences",
     "utils/tinystr",
     "utils/tzif",
     "utils/potential_utf",
@@ -101,6 +98,8 @@ members = [
 # Note: Workspaces in subdirectories, such as components/collator/fuzz, are
 # implicitly excluded from the main workspace.
 exclude = [
+    # host_info requires a custom ci job to avoid having to pull its optional dependencies
+    "utils/host_info",
     # Examples are tested outside the workspace to simulate external users
     "examples",
     # Don't publish the graveyard
@@ -108,8 +107,8 @@ exclude = [
 ]
 
 [workspace.package]
-version = "2.0.0"
-rust-version = "1.82"
+version = "2.1.1"
+rust-version = "1.83"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
@@ -133,65 +132,63 @@ include = [
 
 # ICU4X core
 # These use non-tilde deps, see https://github.com/unicode-org/icu4x/issues/4343
-icu_locale_core = { version = "2.0.0", path = "components/locale_core", default-features = false }
-icu_provider = { version = "2.0.0", path = "provider/core", default-features = false }
-icu_pattern = { version = "0.4.0", path = "components/pattern", default-features = false }
+icu_locale_core = { version = "2.1.1", path = "components/locale_core", default-features = false }
+icu_provider = { version = "2.1.1", path = "provider/core", default-features = false }
+icu_pattern = { version = "0.4.1", path = "components/pattern", default-features = false }
 
 # Components
-icu = { version = "~2.0.0", path = "components/icu", default-features = false }
-icu_calendar = { version = "~2.0.0", path = "components/calendar", default-features = false }
-icu_casemap = { version = "~2.0.0", path = "components/casemap", default-features = false }
-icu_collator = { version = "~2.0.0", path = "components/collator", default-features = false }
-icu_collections = { version = "~2.0.0", path = "components/collections", default-features = false }
+icu = { version = "~2.1.1", path = "components/icu", default-features = false }
+icu_calendar = { version = "~2.1.1", path = "components/calendar", default-features = false }
+icu_casemap = { version = "~2.1.1", path = "components/casemap", default-features = false }
+icu_collator = { version = "~2.1.1", path = "components/collator", default-features = false }
+icu_collections = { version = "~2.1.1", path = "components/collections", default-features = false }
 icu_codepointtrie_builder = { version = "~0.5.0", path = "components/collections/codepointtrie_builder", default-features = false }
-icu_datetime = { version = "~2.0.0", path = "components/datetime", default-features = false }
-icu_decimal = { version = "~2.0.0", path = "components/decimal", default-features = false }
-icu_experimental = { version = "~0.4.0-dev.1", path = "components/experimental", default-features = false }
-icu_list = { version = "~2.0.0", path = "components/list", default-features = false }
-icu_locale = { version = "~2.0.0", path = "components/locale", default-features = false }
-icu_normalizer = { version = "~2.0.0", path = "components/normalizer", default-features = false }
-icu_plurals = { version = "~2.0.0", path = "components/plurals", default-features = false }
-icu_properties = { version = "~2.0.0", path = "components/properties", default-features = false }
-icu_segmenter = { version = "~2.0.0", path = "components/segmenter", default-features = false }
-icu_time = { version = "~2.0.0", path = "components/time", default-features = false }
+icu_datetime = { version = "~2.1.1", path = "components/datetime", default-features = false }
+icu_decimal = { version = "~2.1.1", path = "components/decimal", default-features = false }
+icu_experimental = { version = "~0.4.0", path = "components/experimental", default-features = false }
+icu_list = { version = "~2.1.1", path = "components/list", default-features = false }
+icu_locale = { version = "~2.1.1", path = "components/locale", default-features = false }
+icu_normalizer = { version = "~2.1.1", path = "components/normalizer", default-features = false }
+icu_plurals = { version = "~2.1.1", path = "components/plurals", default-features = false }
+icu_properties = { version = "~2.1.1", path = "components/properties", default-features = false }
+icu_segmenter = { version = "~2.1.1", path = "components/segmenter", default-features = false }
+icu_time = { version = "~2.1.1", path = "components/time", default-features = false }
 
 # FFI
-icu_capi = { version = "~2.0.0", path = "ffi/capi", default-features = false }
+icu_capi = { version = "~2.1.1", path = "ffi/capi", default-features = false }
 # icu4x_ecma402 never used as a dep
 # icu_freertos never used as a dep
-# icu_harfbuzz never used as a dep
 
 # Provider
-icu_provider_export = { version = "~2.0.0", path = "provider/export", default-features = false }
-icu_provider_source = { version = "~2.0.0", path = "provider/source", default-features = false }
-icu_provider_adapters = { version = "~2.0.0", path = "provider/adapters", default-features = false }
-icu_provider_baked = { version = "~2.0.0", path = "provider/baked", default-features = false }
-icu_provider_blob = { version = "~2.0.0", path = "provider/blob", default-features = false }
-icu_provider_fs = { version = "~2.0.0", path = "provider/fs", default-features = false }
-icu_provider_registry = { version = "~2.0.0", path = "provider/registry", default-features = false }
+icu_provider_export = { version = "~2.1.1", path = "provider/export", default-features = false }
+icu_provider_source = { version = "~2.1.1", path = "provider/source", default-features = false }
+icu_provider_adapters = { version = "~2.1.1", path = "provider/adapters", default-features = false }
+icu_provider_baked = { version = "~2.1.1", path = "provider/baked", default-features = false }
+icu_provider_blob = { version = "~2.1.1", path = "provider/blob", default-features = false }
+icu_provider_fs = { version = "~2.1.1", path = "provider/fs", default-features = false }
+icu_provider_registry = { version = "~2.1.1", path = "provider/registry", default-features = false }
 
 # Baked data
-icu_calendar_data = { version = "~2.0.0", path = "provider/data/calendar", default-features = false }
-icu_casemap_data = { version = "~2.0.0", path = "provider/data/casemap", default-features = false }
-icu_collator_data = { version = "~2.0.1", path = "provider/data/collator", default-features = false }
-icu_datetime_data = { version = "~2.0.0", path = "provider/data/datetime", default-features = false }
-icu_decimal_data = { version = "~2.0.0", path = "provider/data/decimal", default-features = false }
-icu_list_data = { version = "~2.0.0", path = "provider/data/list", default-features = false }
-icu_locale_data = { version = "~2.0.0", path = "provider/data/locale", default-features = false }
-icu_normalizer_data = { version = "~2.0.0", path = "provider/data/normalizer", default-features = false }
-icu_plurals_data = { version = "~2.0.0", path = "provider/data/plurals", default-features = false }
-icu_properties_data = { version = "~2.0.0", path = "provider/data/properties", default-features = false }
-icu_segmenter_data = { version = "~2.0.0", path = "provider/data/segmenter", default-features = false }
-icu_time_data = { version = "~2.0.0", path = "provider/data/time", default-features = false }
-icu_experimental_data = { version = "~0.3.0", path = "provider/data/experimental", default-features = false }
+icu_calendar_data = { version = "~2.1.1", path = "provider/data/calendar", default-features = false }
+icu_casemap_data = { version = "~2.1.1", path = "provider/data/casemap", default-features = false }
+icu_collator_data = { version = "~2.1.1", path = "provider/data/collator", default-features = false }
+icu_datetime_data = { version = "~2.1.1", path = "provider/data/datetime", default-features = false }
+icu_decimal_data = { version = "~2.1.1", path = "provider/data/decimal", default-features = false }
+icu_list_data = { version = "~2.1.1", path = "provider/data/list", default-features = false }
+icu_locale_data = { version = "~2.1.1", path = "provider/data/locale", default-features = false }
+icu_normalizer_data = { version = "~2.1.1", path = "provider/data/normalizer", default-features = false }
+icu_plurals_data = { version = "~2.1.1", path = "provider/data/plurals", default-features = false }
+icu_properties_data = { version = "~2.1.2", path = "provider/data/properties", default-features = false }
+icu_segmenter_data = { version = "~2.1.1", path = "provider/data/segmenter", default-features = false }
+icu_time_data = { version = "~2.1.1", path = "provider/data/time", default-features = false }
+icu_experimental_data = { version = "~0.4.0", path = "provider/data/experimental", default-features = false }
 
 # Utils
 bies = { version = "0.2.2", path = "utils/bies", default-features = false }
-calendrical_calculations = { version = "0.2.2", path = "utils/calendrical_calculations", default-features = false }
+calendrical_calculations = { version = "0.2.3", path = "utils/calendrical_calculations", default-features = false }
 crlify = { version = "1.0.4", path = "utils/crlify", default-features = false }
 databake = { version = "0.2.0", path = "utils/databake", default-features = false }
 databake-derive = { version = "0.2.0", path = "utils/databake/derive", default-features = false }
-deduplicating_array = { version = "0.1.6", path = "utils/deduplicating_array", default-features = false }
 fixed_decimal = { version = "0.7.0", path = "utils/fixed_decimal", default-features = false }
 ixdtf = { version = "0.6.0", path = "utils/ixdtf", default-features = false }
 litemap = { version = "0.8.0", path = "utils/litemap", default-features = false }
@@ -207,7 +204,7 @@ zerofrom-derive = { version = "0.1.3", path = "utils/zerofrom/derive", default-f
 zerotrie = { version = "0.2.0", path = "utils/zerotrie", default-features = false }
 zerovec = { version = "0.11.3", path = "utils/zerovec", default-features = false }
 zerovec-derive = { version = "0.11.1", path = "utils/zerovec/derive", default-features = false }
-zoneinfo64 = { version = "0.1.0", path = "utils/zoneinfo64", default-features = false }
+zoneinfo64 = { version = "0.2.0", path = "utils/zoneinfo64", default-features = false }
 
 # Tools
 icu_benchmark_macros = { path = "tools/benchmark/macros" }
@@ -217,10 +214,10 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Diplomat must be published preceding a new ICU4X release but may use git versions in between
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "35e06283521e5630689b0900057ebe66afec3dfb", default-features = false }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "35e06283521e5630689b0900057ebe66afec3dfb", default-features = false }
-diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "35e06283521e5630689b0900057ebe66afec3dfb", default-features = false }
-diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "35e06283521e5630689b0900057ebe66afec3dfb", default-features = false }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "773e6e94179c8705aa27a3337e49c604da4fc013", default-features = false }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "773e6e94179c8705aa27a3337e49c604da4fc013", default-features = false }
+diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "773e6e94179c8705aa27a3337e49c604da4fc013", default-features = false }
+diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "773e6e94179c8705aa27a3337e49c604da4fc013" }
 
 # EXTERNAL DEPENDENCIES
 #
@@ -247,6 +244,7 @@ arrayvec = { version = "0.7.2", default-features = false }
 core_maths = { version = "0.1.0", default-features = false }
 displaydoc = { version = "0.2.3", default-features = false }
 either = { version = "1.9.0", default-features = false }
+harfbuzz-traits = { version = "0.6.0", default-features = false }
 libc_alloc = { version = "1.0.6", default-features = false }
 log = { version = "0.4.17", default-features = false }
 memchr = { version = "2.6.0", default-features = false }
@@ -256,7 +254,9 @@ num-traits = { version = "0.2.0", default-features = false }
 postcard = { version = "1.0.3", default-features = false }
 regex-automata = { version = "0.4.7", default-features = false }
 ryu = { version = "1.0.5", default-features = false }
-serde = { version = "1.0.110", default-features = false }
+schemars = { version = "1.0.4", default-features = false }
+serde = { version = "1.0.220", default-features = false }
+serde_core = { version = "1.0.220", default-features = false }
 serde-json-core = { version = "0.6.0", default-features = false }
 smallvec = { version = "1.10.0", default-features = false }
 stable_deref_trait = { version = "1.2.0", default-features = false }
@@ -275,7 +275,7 @@ toml = { version = "0.8.0", default-features = false, features = ["parse"] }
 
 ## External Deps Group 3: Dev and Datagen deps. Include default features.
 arraystring = "0.3.0"
-askama = "0.13"
+askama = "0.14"
 atoi = "2.0.0"
 bincode = "1.3.1" # Can be updated to 2.0 after MSRV 1.85
 clap = "4.2.0"
@@ -289,6 +289,7 @@ getrandom = "0.3"
 heck = "0.5"
 iai = "0.1.1"
 indexmap = "2.0.0"
+insta = "1.43.2"
 itertools = "0.14.0"
 ndarray = "0.16.0"
 parse-zoneinfo =  "0.5.0"
@@ -298,6 +299,7 @@ rand = "0.9"
 rand_distr = "0.5"
 rand_pcg = "0.9"
 rayon = "1.3.0"
+regex = "1.12.2"
 rkyv = "0.7"
 rmp-serde = "1.2.0"
 serde_json = "1.0.45"
@@ -341,4 +343,6 @@ debug = true
 type_method_marked_deprecated.level = "allow" # allow deprecation in patch releases
 trait_method_marked_deprecated.level = "allow" # allow deprecation in patch releases
 type_marked_deprecated.level = "allow" # allow deprecation in patch releases
+struct_field_marked_deprecated = "allow" # allow deprecation in patch releases
+type_associated_const_marked_deprecated = "allow" # allow deprecation in patch releases
 enum_no_repr_variant_discriminant_changed = "allow" # we don't consider this breaking https://github.com/obi1kenobi/cargo-semver-checks/issues/1376

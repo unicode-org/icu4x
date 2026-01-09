@@ -13,7 +13,7 @@ use icu_provider::DataPayload;
 
 use super::format::FormattedUnit;
 use super::options::{UnitsFormatterOptions, Width};
-use crate::dimension::provider::units::display_name::UnitsDisplayNameV1;
+use crate::dimension::provider::units::display_names::UnitsDisplayNamesV1;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
 
@@ -27,7 +27,7 @@ define_preferences!(
         /// The user's preferred numbering system.
         ///
         /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
-        numbering_system: super::super::preferences::NumberingSystem
+        numbering_system: crate::dimension::preferences::NumberingSystem
     }
 );
 prefs_convert!(UnitsFormatterPreferences, DecimalFormatterPreferences, {
@@ -35,6 +35,7 @@ prefs_convert!(UnitsFormatterPreferences, DecimalFormatterPreferences, {
 });
 prefs_convert!(UnitsFormatterPreferences, PluralRulesPreferences);
 
+// TODO(#6900): Remove the units formatter after migrating all the code to the categorized formatter.
 /// A formatter for measurement unit values.
 ///
 /// [`UnitsFormatter`] supports:
@@ -50,7 +51,7 @@ pub struct UnitsFormatter {
     // /// Essential data for the units formatter.
     // essential: DataPayload<UnitsEssentialsV1>,
     /// Display name for the units.
-    display_name: DataPayload<UnitsDisplayNameV1>,
+    display_name: DataPayload<UnitsDisplayNamesV1>,
 
     /// A [`DecimalFormatter`] to format the unit value.
     decimal_formatter: DecimalFormatter,
@@ -95,7 +96,7 @@ impl UnitsFormatter {
         unit: &str,
         options: super::options::UnitsFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale = UnitsDisplayNameV1::make_locale(prefs.locale_preferences);
+        let locale = UnitsDisplayNamesV1::make_locale(prefs.locale_preferences);
         let decimal_formatter =
             DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
 
@@ -133,12 +134,12 @@ impl UnitsFormatter {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::units::display_name::UnitsDisplayNameV1>
+            + DataProvider<super::super::provider::units::display_names::UnitsDisplayNamesV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
-        let locale = UnitsDisplayNameV1::make_locale(prefs.locale_preferences);
+        let locale = UnitsDisplayNamesV1::make_locale(prefs.locale_preferences);
         let decimal_formatter = DecimalFormatter::try_new_unstable(
             provider,
             (&prefs).into(),

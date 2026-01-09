@@ -33,7 +33,7 @@
 //! let mut date_iso = Date::try_new_iso(1992, 9, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //!
-//! assert_eq!(date_iso.day_of_week(), Weekday::Wednesday);
+//! assert_eq!(date_iso.weekday(), Weekday::Wednesday);
 //! assert_eq!(date_iso.era_year().year, 1992);
 //! assert_eq!(date_iso.month().ordinal, 9);
 //! assert_eq!(date_iso.day_of_month().0, 2);
@@ -88,6 +88,9 @@
     )
 )]
 #![warn(missing_docs)]
+// It's not worth it to try and maintain clean import lists for both
+// stable and unstable mode when the code is so entangled.
+#![cfg_attr(not(feature = "unstable"), allow(unused))]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;
@@ -98,6 +101,7 @@ mod date;
 // Public modules
 mod any_calendar;
 pub mod cal;
+pub mod options;
 pub mod provider;
 pub mod types;
 pub mod week;
@@ -105,7 +109,7 @@ pub mod week;
 mod calendar;
 mod calendar_arithmetic;
 mod duration;
-mod error;
+pub mod error;
 #[cfg(feature = "ixdtf")]
 mod ixdtf;
 
@@ -113,8 +117,6 @@ mod ixdtf;
 pub use any_calendar::IntoAnyCalendar;
 pub use calendar::Calendar;
 pub use date::{AsCalendar, Date, Ref};
-#[doc(hidden)] // unstable
-pub use duration::{DateDuration, DateDurationUnit};
 pub use error::{DateError, RangeError};
 #[cfg(feature = "ixdtf")]
 pub use ixdtf::ParseError;

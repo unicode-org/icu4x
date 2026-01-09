@@ -124,7 +124,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     ///     TinyAsciiStr::<3>::try_from_raw(*b"USD"),
     ///     Ok(tinystr!(3, "USD"))
     /// );
-    /// assert!(matches!(TinyAsciiStr::<3>::try_from_raw(*b"\0A\0"), Err(_)));
+    /// assert!(TinyAsciiStr::<3>::try_from_raw(*b"\0A\0").is_err());
     /// ```
     pub const fn try_from_raw(raw: [u8; N]) -> Result<Self, ParseError> {
         Self::try_from_utf8_inner(&raw, true)
@@ -229,8 +229,8 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tinystr::TinyAsciiStr;
     /// use tinystr::tinystr;
+    /// use tinystr::TinyAsciiStr;
     ///
     /// let s0_4 = TinyAsciiStr::<4>::new_unsigned_decimal(0).unwrap();
     /// let s456_4 = TinyAsciiStr::<4>::new_unsigned_decimal(456).unwrap();
@@ -246,11 +246,13 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// Example with saturating the value:
     ///
     /// ```
-    /// use tinystr::TinyAsciiStr;
     /// use tinystr::tinystr;
+    /// use tinystr::TinyAsciiStr;
     ///
-    /// let str_truncated = TinyAsciiStr::<2>::new_unsigned_decimal(456).unwrap_or_else(|s| s);
-    /// let str_saturated = TinyAsciiStr::<2>::new_unsigned_decimal(456).unwrap_or(tinystr!(2, "99"));
+    /// let str_truncated =
+    ///     TinyAsciiStr::<2>::new_unsigned_decimal(456).unwrap_or_else(|s| s);
+    /// let str_saturated = TinyAsciiStr::<2>::new_unsigned_decimal(456)
+    ///     .unwrap_or(tinystr!(2, "99"));
     ///
     /// assert_eq!(str_truncated, tinystr!(2, "56"));
     /// assert_eq!(str_saturated, tinystr!(2, "99"));

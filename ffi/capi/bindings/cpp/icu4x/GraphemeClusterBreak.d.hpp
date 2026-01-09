@@ -1,5 +1,5 @@
-#ifndef icu4x_GraphemeClusterBreak_D_HPP
-#define icu4x_GraphemeClusterBreak_D_HPP
+#ifndef ICU4X_GraphemeClusterBreak_D_HPP
+#define ICU4X_GraphemeClusterBreak_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -9,11 +9,11 @@
 #include <functional>
 #include <optional>
 #include <cstdlib>
-#include "../diplomat_runtime.hpp"
-
+#include "diplomat_runtime.hpp"
 namespace icu4x {
 class GraphemeClusterBreak;
-}
+} // namespace icu4x
+
 
 
 namespace icu4x {
@@ -45,63 +45,133 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
+ * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
  */
 class GraphemeClusterBreak {
 public:
-  enum Value {
-    Other = 0,
-    Control = 1,
-    CR = 2,
-    Extend = 3,
-    L = 4,
-    LF = 5,
-    LV = 6,
-    LVT = 7,
-    T = 8,
-    V = 9,
-    SpacingMark = 10,
-    Prepend = 11,
-    RegionalIndicator = 12,
-    EBase = 13,
-    EBaseGAZ = 14,
-    EModifier = 15,
-    GlueAfterZwj = 16,
-    ZWJ = 17,
-  };
+    enum Value {
+        /**
+         * See the [Rust documentation for `Other`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.Other) for more information.
+         */
+        Other = 0,
+        /**
+         * See the [Rust documentation for `Control`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.Control) for more information.
+         */
+        Control = 1,
+        /**
+         * See the [Rust documentation for `CR`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.CR) for more information.
+         */
+        CR = 2,
+        /**
+         * See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.Extend) for more information.
+         */
+        Extend = 3,
+        /**
+         * See the [Rust documentation for `L`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.L) for more information.
+         */
+        L = 4,
+        /**
+         * See the [Rust documentation for `LF`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.LF) for more information.
+         */
+        LF = 5,
+        /**
+         * See the [Rust documentation for `LV`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.LV) for more information.
+         */
+        LV = 6,
+        /**
+         * See the [Rust documentation for `LVT`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.LVT) for more information.
+         */
+        LVT = 7,
+        /**
+         * See the [Rust documentation for `T`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.T) for more information.
+         */
+        T = 8,
+        /**
+         * See the [Rust documentation for `V`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.V) for more information.
+         */
+        V = 9,
+        /**
+         * See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.SpacingMark) for more information.
+         */
+        SpacingMark = 10,
+        /**
+         * See the [Rust documentation for `Prepend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.Prepend) for more information.
+         */
+        Prepend = 11,
+        /**
+         * See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.RegionalIndicator) for more information.
+         */
+        RegionalIndicator = 12,
+        /**
+         * See the [Rust documentation for `EBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.EBase) for more information.
+         */
+        EBase = 13,
+        /**
+         * See the [Rust documentation for `EBaseGAZ`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.EBaseGAZ) for more information.
+         */
+        EBaseGAZ = 14,
+        /**
+         * See the [Rust documentation for `EModifier`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.EModifier) for more information.
+         */
+        EModifier = 15,
+        /**
+         * See the [Rust documentation for `GlueAfterZwj`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.GlueAfterZwj) for more information.
+         */
+        GlueAfterZwj = 16,
+        /**
+         * See the [Rust documentation for `ZWJ`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.ZWJ) for more information.
+         */
+        ZWJ = 17,
+    };
 
-  GraphemeClusterBreak(): value(Value::Other) {}
+    GraphemeClusterBreak(): value(Value::Other) {}
 
-  // Implicit conversions between enum and ::Value
-  constexpr GraphemeClusterBreak(Value v) : value(v) {}
-  constexpr operator Value() const { return value; }
-  // Prevent usage as boolean value
-  explicit operator bool() const = delete;
+    // Implicit conversions between enum and ::Value
+    constexpr GraphemeClusterBreak(Value v) : value(v) {}
+    constexpr operator Value() const { return value; }
+    // Prevent usage as boolean value
+    explicit operator bool() const = delete;
 
   /**
-   * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+   * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
    */
   inline static icu4x::GraphemeClusterBreak for_char(char32_t ch);
 
   /**
+   * Get the "long" name of this property value (returns empty if property value is unknown)
+   *
+   * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+   */
+  inline std::optional<std::string_view> long_name() const;
+
+  /**
+   * Get the "short" name of this property value (returns empty if property value is unknown)
+   *
+   * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+   */
+  inline std::optional<std::string_view> short_name() const;
+
+  /**
    * Convert to an integer value usable with ICU4C and CodePointMapData
    *
-   * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GraphemeClusterBreak.html#method.to_icu4c_value) for more information.
+   * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#method.to_icu4c_value) for more information.
    */
   inline uint8_t to_integer_value() const;
 
   /**
    * Convert from an integer value from ICU4C or CodePointMapData
    *
-   * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GraphemeClusterBreak.html#method.from_icu4c_value) for more information.
+   * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#method.from_icu4c_value) for more information.
    */
   inline static std::optional<icu4x::GraphemeClusterBreak> from_integer_value(uint8_t other);
 
-  inline icu4x::capi::GraphemeClusterBreak AsFFI() const;
-  inline static icu4x::GraphemeClusterBreak FromFFI(icu4x::capi::GraphemeClusterBreak c_enum);
+  inline static std::optional<icu4x::GraphemeClusterBreak> try_from_str(std::string_view s);
+
+    inline icu4x::capi::GraphemeClusterBreak AsFFI() const;
+    inline static icu4x::GraphemeClusterBreak FromFFI(icu4x::capi::GraphemeClusterBreak c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_GraphemeClusterBreak_D_HPP
+#endif // ICU4X_GraphemeClusterBreak_D_HPP

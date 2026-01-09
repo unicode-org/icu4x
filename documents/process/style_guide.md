@@ -761,7 +761,7 @@ A couple of crates by `@dtolnay` and `@yaahc` that are considered "new wave of g
 Other links on error handling:
 
 * https://blog.yoshuawuyts.com/error-handling-survey/
-* http://sled.rs/errors
+* https://sled.rs/errors
 * https://boats.gitlab.io/blog/post/failure-to-fehler/
 * https://boats.gitlab.io/blog/post/why-ok-wrapping/
 * https://vorner.github.io/2020/04/09/wrapping-mental-models.html
@@ -1066,7 +1066,7 @@ Thus we could provide one or more ICU4X traits bound to things like `str` to pro
   * This has a lot of good points and is well worth a read, but be warned that some of the details about implementation are somewhat out of date (2017). It has a video too.
 * [Good Practices for Writing Rust Libraries](https://pascalhertleif.de/artikel/good-practices-for-writing-rust-libraries/)
   * Shorter and more focused on the act of coding the libraries, and less about API design. Also potentially out of date in places.
-* [Strategies for Returning References in Rust](http://bryce.fisher-fleig.org/blog/strategies-for-returning-references-in-rust/index.html)
+* [Strategies for Returning References in Rust](https://bryce.fisher-fleig.org/strategies-for-returning-references-in-rust/)
   * Though I don't believe we should be doing this, it's still an interesting read.
 
 ## Other Useful Links

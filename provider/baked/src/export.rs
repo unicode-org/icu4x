@@ -606,8 +606,8 @@ impl DataExporter for BakedExporter {
 
             // Safety invariant upheld: the only values being added to the trie are `index`
             // values, which come from enumerating `values`
-            let trie = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii::from_iter(
-                values.clone().flat_map(|(index, (_payload, ids))| {
+            let trie = zerotrie::ZeroTrieSimpleAscii::from_iter(values.clone().flat_map(
+                |(index, (_payload, ids))| {
                     ids.iter().map(move |id| {
                         let mut encoded = id.locale.to_string().into_bytes();
                         if !id.marker_attributes.is_empty() {
@@ -616,8 +616,8 @@ impl DataExporter for BakedExporter {
                         }
                         (encoded, index)
                     })
-                }),
-            );
+                },
+            ));
 
             stats.lookup_struct_size = core::mem::size_of::<
                 icu_provider::baked::zerotrie::Data<icu_provider::hello_world::HelloWorldV1>,
@@ -640,7 +640,7 @@ impl DataExporter for BakedExporter {
                     // Safety invariant upheld: see above
                     const #data_ident: icu_provider::baked::zerotrie::DataForVarULEs<#marker_bake> = {
                         const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked:: #baked_trie;
-                        const VALUES: &'static zerovec::VarZeroSlice<<<#marker_bake as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::ule::MaybeAsVarULE>::EncodedStruct> = #vzv_tokens;
+                        const VALUES: &'static zerovec::VarZeroSlice<<<#marker_bake as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::ule::MaybeAsVarULE>::EncodedStruct, zerovec::vecs::Index32> = #vzv_tokens;
                         unsafe {
                             icu_provider::baked::zerotrie::DataForVarULEs::from_trie_and_values_unchecked(TRIE, VALUES)
                         }
