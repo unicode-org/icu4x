@@ -97,9 +97,7 @@ fn validate_plural_pattern_0_map() {
         CompactDecimalPatternData::PLURAL_PATTERN_0,
         &*encode_varule_to_box(&PluralElements::new((
             FourBitMetadata::try_from_byte(0).unwrap(),
-            SinglePlaceholderPattern::try_from_str("{0}", Default::default())
-                .unwrap()
-                .as_ref()
+            SinglePlaceholderPattern::PASS_THROUGH
         )))
     );
 }
