@@ -124,7 +124,7 @@ where
 /// ```
 /// use writeable::assert_writeable_eq;
 ///
-/// let concatenated = writeable::concatenate!(
+/// let concatenated = writeable::concat_writeable!(
 ///     "Health: ",
 ///     5,
 ///     '/',

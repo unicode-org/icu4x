@@ -98,7 +98,7 @@ pub fn cmp_utf8(writeable: &impl Writeable, other: &[u8]) -> Ordering {
 /// assert_eq!(Ordering::Less, (*message_str).cmp("Hello, Bob!"));
 /// ```
 ///
-/// This function can be combined with `writeable::concatenate!` to make an efficient
+/// This function can be combined with `writeable::concat_writeable!` to make an efficient
 /// comparison between a string and a sequence of substrings:
 ///
 /// ```
@@ -111,15 +111,15 @@ pub fn cmp_utf8(writeable: &impl Writeable, other: &[u8]) -> Ordering {
 ///
 /// assert_eq!(
 ///     Ordering::Less,
-///     writeable::cmp_str(&writeable::concatenate!(en, '-', au), "en-US")
+///     writeable::cmp_str(&writeable::concat_writeable!(en, '-', au), "en-US")
 /// );
 /// assert_eq!(
 ///     Ordering::Equal,
-///     writeable::cmp_str(&writeable::concatenate!(en, '-', us), "en-US")
+///     writeable::cmp_str(&writeable::concat_writeable!(en, '-', us), "en-US")
 /// );
 /// assert_eq!(
 ///     Ordering::Greater,
-///     writeable::cmp_str(&writeable::concatenate!(fr, '-', us), "en-US")
+///     writeable::cmp_str(&writeable::concat_writeable!(fr, '-', us), "en-US")
 /// );
 /// ```
 #[inline]
