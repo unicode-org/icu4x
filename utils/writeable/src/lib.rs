@@ -100,7 +100,7 @@ use alloc::string::String;
 use core::fmt;
 
 pub use cmp::{cmp_str, cmp_utf8};
-pub use concat::concatenate;
+pub use concat::concat_writeable;
 #[cfg(feature = "alloc")]
 pub use to_string_or_borrow::to_string_or_borrow;
 pub use try_writeable::TryWriteable;

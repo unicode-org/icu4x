@@ -106,7 +106,7 @@ pub fn cmp_utf8(writeable: &impl Writeable, other: &[u8]) -> Ordering {
 ///
 /// assert_eq!(
 ///     Ordering::Less,
-///     writeable::cmp_str(&writeable::concat_writeable!("loop", 1), "loop1")
+///     writeable::cmp_str(&writeable::concat_writeable!("loop", 1), "loop12")
 /// );
 /// assert_eq!(
 ///     Ordering::Equal,
@@ -114,7 +114,7 @@ pub fn cmp_utf8(writeable: &impl Writeable, other: &[u8]) -> Ordering {
 /// );
 /// assert_eq!(
 ///     Ordering::Greater,
-///     writeable::cmp_str(&writeable::concat_writeable!("loop", 2), "loop2")
+///     writeable::cmp_str(&writeable::concat_writeable!("loop", 2), "loop12")
 /// );
 /// ```
 #[inline]

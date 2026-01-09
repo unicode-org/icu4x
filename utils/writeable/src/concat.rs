@@ -135,14 +135,14 @@ where
 /// ```
 #[macro_export]
 #[doc(hidden)] // macro
-macro_rules! __concatenate {
+macro_rules! __concat_writeable {
     // Base case:
     ($x:expr) => ($x);
     // `$x` followed by at least one `$y,`
     ($x:expr, $($y:expr),+) => (
-        // Call `concatenate!` recursively on the tail `$y`
-        $crate::adapters::Concat($x, $crate::concatenate!($($y),+))
+        // Call `concat_writeable!` recursively on the tail `$y`
+        $crate::adapters::Concat($x, $crate::concat_writeable!($($y),+))
     )
 }
 #[doc(inline)]
-pub use __concatenate as concatenate;
+pub use __concat_writeable as concat_writeable;
