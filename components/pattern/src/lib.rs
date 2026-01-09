@@ -122,6 +122,11 @@ impl SinglePlaceholderPattern {
     /// use icu_pattern::SinglePlaceholderPattern;
     /// use writeable::assert_writeable_eq;
     ///
+    /// assert_eq!(
+    ///     SinglePlaceholderPattern::PASS_THROUGH,
+    ///     &*SinglePlaceholderPattern::try_from_str("{0}", Default::default()).unwrap()
+    /// );
+    ///
     /// assert_writeable_eq!(
     ///     SinglePlaceholderPattern::PASS_THROUGH.interpolate(["hello, world!"]),
     ///     "hello, world!"
