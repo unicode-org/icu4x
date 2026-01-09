@@ -99,7 +99,7 @@ pub fn cmp_utf8(writeable: &impl Writeable, other: &[u8]) -> Ordering {
 /// ```
 ///
 /// This function can be combined with `writeable::concatenate!` to make an efficient
-/// string-substring comparison:
+/// comparison between a string and a sequence of substrings:
 ///
 /// ```
 /// use core::cmp::Ordering;
