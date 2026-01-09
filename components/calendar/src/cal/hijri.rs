@@ -283,7 +283,7 @@ impl Rules for UmmAlQura {
 /// The most common version of these rules uses [`TabularAlgorithmEpoch::Friday`] and [`TabularAlgorithmLeapYears::TypeII`].
 ///
 /// Tabular Islamic rules are used in denominations such as Dawoodi Bohra and other branches of Ismailism.
-/// Be sure to select the correct leap year and epoch parameters according to your use case. If ICU4X does
+/// Be sure to select the correct leap year and epoch parameters according to your use case. If this type does
 /// not implement the parameters you need, please file an issue.
 ///
 /// When constructed with [`TabularAlgorithmLeapYears::TypeII`], and either [`TabularAlgorithmEpoch::Friday`] or [`TabularAlgorithmEpoch::Thursday`],
