@@ -13,16 +13,16 @@ use core::fmt;
 /// # Examples
 ///
 /// ```
-/// use writeable::adapters::Concatenate;
+/// use writeable::adapters::Concat;
 /// use writeable::assert_writeable_eq;
 ///
-/// assert_writeable_eq!(Concatenate("Number: ", 25), "Number: 25");
+/// assert_writeable_eq!(Concat("Number: ", 25), "Number: 25");
 /// ```
 ///
 /// With [`TryWriteable`]:
 ///
 /// ```
-/// use writeable::adapters::Concatenate;
+/// use writeable::adapters::Concat;
 /// use writeable::TryWriteable;
 /// use writeable::assert_try_writeable_eq;
 ///
@@ -41,16 +41,16 @@ use core::fmt;
 /// let writeable1 = AlwaysPanic;
 ///
 /// assert_try_writeable_eq!(
-///     Concatenate(writeable0, writeable1),
+///     Concat(writeable0, writeable1),
 ///     "error message",
 ///     Err("error message"),
 /// )
 /// ```
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // designed for nesting
-pub struct Concatenate<A, B>(pub A, pub B);
+pub struct Concat<A, B>(pub A, pub B);
 
-impl<A, B> Writeable for Concatenate<A, B>
+impl<A, B> Writeable for Concat<A, B>
 where
     A: Writeable,
     B: Writeable,
@@ -71,7 +71,7 @@ where
     }
 }
 
-impl<A, B, E> TryWriteable for Concatenate<A, B>
+impl<A, B, E> TryWriteable for Concat<A, B>
 where
     A: TryWriteable<Error = E>,
     B: TryWriteable<Error = E>,
@@ -103,7 +103,7 @@ where
     }
 }
 
-impl<A, B> fmt::Display for Concatenate<A, B>
+impl<A, B> fmt::Display for Concat<A, B>
 where
     A: Writeable,
     B: Writeable,
@@ -117,7 +117,7 @@ where
 
 /// Returns a [`Writeable`] concatenating any number of [`Writeable`]s.
 ///
-/// The macro resolves to a nested [`Concatenate`].
+/// The macro resolves to a nested [`Concat`].
 ///
 /// # Examples
 ///
@@ -141,7 +141,7 @@ macro_rules! __concatenate {
     // `$x` followed by at least one `$y,`
     ($x:expr, $($y:expr),+) => (
         // Call `concatenate!` recursively on the tail `$y`
-        $crate::adapters::Concatenate($x, $crate::concatenate!($($y),+))
+        $crate::adapters::Concat($x, $crate::concatenate!($($y),+))
     )
 }
 #[doc(inline)]
