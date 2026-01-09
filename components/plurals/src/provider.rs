@@ -518,6 +518,7 @@ where
     pub const fn new_singleton_mn<const M: usize, const N: usize>(
         input: FixedLengthVarULE<M, V>,
     ) -> FixedLengthVarULE<N, PluralElementsPackedULE<V>> {
+        #[allow(clippy::panic)] // for safety, and documented
         if N != M + 1 {
             panic!(concat!(
                 "new_singleton_mn: N (",
