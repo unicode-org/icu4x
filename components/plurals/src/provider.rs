@@ -514,6 +514,24 @@ where
     /// assert_eq!(plural_ule.as_varule().get(2.into(), &rules).1, "hello, world!");
     /// ```
     ///
+    /// In a const context:
+    ///
+    /// ```
+    /// use icu::plurals::provider::PluralElementsPackedULE;
+    /// use icu::plurals::PluralRules;
+    /// use icu::locale::locale;
+    /// use zerovec::ule::FixedLengthVarULE;
+    ///
+    /// const plural_ule: FixedLengthVarULE<1, PluralElementsPackedULE<str>> =
+    ///     PluralElementsPackedULE::new_singleton_mn::<0, 1>(FixedLengthVarULE::EMPTY_STR);
+    ///
+    /// let rules = PluralRules::try_new(locale!("en").into(), Default::default()).unwrap();
+    ///
+    /// assert_eq!(plural_ule.as_varule().get(0.into(), &rules).1, "");
+    /// assert_eq!(plural_ule.as_varule().get(1.into(), &rules).1, "");
+    /// assert_eq!(plural_ule.as_varule().get(2.into(), &rules).1, "");
+    /// ```
+    ///
     /// [generic_const_exprs]: https://doc.rust-lang.org/beta/unstable-book/language-features/generic-const-exprs.html#generic_const_exprs
     pub const fn new_singleton_mn<const M: usize, const N: usize>(
         input: FixedLengthVarULE<M, V>,
