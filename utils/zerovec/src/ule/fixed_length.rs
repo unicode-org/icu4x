@@ -11,17 +11,19 @@ use core::ops::Deref;
 ///
 /// This container may be useful if the length of your VarULE is known at compile-time.
 ///
+/// To construct one of these in a const context, consider [`to_sized_varule_bytes!`].
+///
 /// # Examples
 ///
 /// ```
 /// use zerovec::ule::SizedVarULEBytes;
+/// use zerovec::ule::to_sized_varule_bytes;
 ///
-/// let container = SizedVarULEBytes::<13, str>::try_from_encodeable("hello, world!").unwrap();
+/// let from_constructor = SizedVarULEBytes::<13, str>::from_varule("hello, world!").unwrap();
+/// let from_macro = to_sized_varule_bytes!("hello, world!");
 ///
-/// assert_eq!(&*container, "hello, world!");
-///
-/// // Returns an error if the container is not the correct size:
-/// SizedVarULEBytes::<20, str>::try_from_encodeable("hello, world!").unwrap_err();
+/// assert_eq!(&*from_constructor, "hello, world!");
+/// assert_eq!(&*from_macro, "hello, world!");
 /// ```
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub struct SizedVarULEBytes<const N: usize, V: VarULE + ?Sized> {
@@ -35,6 +37,19 @@ impl<const N: usize, V: VarULE + ?Sized> SizedVarULEBytes<N, V> {
     ///
     /// Returns an error if the byte length in the container is not the correct length
     /// for the encodeable object.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::ule::SizedVarULEBytes;
+    ///
+    /// let container = SizedVarULEBytes::<13, str>::try_from_encodeable("hello, world!").unwrap();
+    ///
+    /// assert_eq!(&*container, "hello, world!");
+    ///
+    /// // Returns an error if the container is not the correct size:
+    /// SizedVarULEBytes::<20, str>::try_from_encodeable("hello, world!").unwrap_err();
+    /// ```
     pub fn try_from_encodeable(input: impl EncodeAsVarULE<V>) -> Result<Self, UleError> {
         let len = input.encode_var_ule_len();
         if len != N {
@@ -43,6 +58,22 @@ impl<const N: usize, V: VarULE + ?Sized> SizedVarULEBytes<N, V> {
         let mut bytes = [0u8; N];
         input.encode_var_ule_write(&mut bytes);
         // Safety: the bytes were just written from an EncodeAsVarULE impl
+        unsafe { Ok(Self::new_unchecked(bytes)) }
+    }
+
+    /// Creates one of these from a [`VarULE`].
+    ///
+    /// Returns an error if the byte length in the container is not the correct length
+    /// for the encodeable object.
+    pub fn from_varule(input: &V) -> Result<Self, UleError> {
+        let src = input.as_bytes();
+        let len = src.len();
+        if len != N {
+            return Err(UleError::length::<V>(len));
+        }
+        let mut bytes = [0u8; N];
+        bytes.copy_from_slice(src);
+        // Safety: the bytes were just copied from V
         unsafe { Ok(Self::new_unchecked(bytes)) }
     }
 
@@ -56,6 +87,11 @@ impl<const N: usize, V: VarULE + ?Sized> SizedVarULEBytes<N, V> {
             bytes,
             _marker: PhantomData,
         }
+    }
+
+    #[doc(hidden)] // macro constructor
+    pub const unsafe fn new_unchecked_with_type_hint(bytes: [u8; N], _hint: &V) -> Self {
+        Self::new_unchecked(bytes)
     }
 
     /// Returns the bytes backing this [`SizedVarULEBytes`], which are
@@ -105,3 +141,41 @@ impl<T: ULE> SizedVarULEBytes<0, [T]> {
     // Safety: the empty slice is a valid str
     pub const EMPTY_SLICE: Self = unsafe { Self::new_unchecked([]) };
 }
+
+/// Takes a const expression resolving to a [`VarULE`] and returns one
+/// resolving to an appropriately sized [`SizedVarULEBytes`].
+///
+/// The expression is inserted twice into code, once for evaluation and once
+/// for the type hint only. If this is a problem, save the expression into a
+/// const variable first.
+///
+/// # Examples
+///
+/// ```
+/// use zerovec::ule::SizedVarULEBytes;
+/// use zerovec::ule::to_sized_varule_bytes;
+///
+/// let stack_str = const { to_sized_varule_bytes!("hello, world!") };
+/// assert_eq!(&*stack_str, "hello, world!");
+/// ```
+#[macro_export]
+#[doc(hidden)] // macro
+macro_rules! __to_sized_varule_bytes {
+    ($expr:expr) => {{
+        const SRC: &[u8] = { $expr }.as_bytes();
+        const N: usize = SRC.len();
+        let mut bytes: [u8; N] = [0; N];
+        // TODO(1.87): use copy_from_slice
+        let mut i = 0;
+        #[allow(clippy::indexing_slicing)] // both bytes and SRC are length N
+        while i < N {
+            bytes[i] = SRC[i];
+            i += 1;
+        }
+        // Safety: `bytes` is a valid representation of input by the VarULE
+        // trait bound on SizedVarULEBytes below
+        unsafe { SizedVarULEBytes::new_unchecked_with_type_hint(bytes, { $expr }) }
+    }};
+}
+#[doc(inline)]
+pub use __to_sized_varule_bytes as to_sized_varule_bytes;
