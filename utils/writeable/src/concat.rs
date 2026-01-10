@@ -8,7 +8,7 @@ use core::fmt;
 
 /// A [`Writeable`] that efficiently concatenates two other [`Writeable`]s.
 ///
-/// See the [`concatenate!`] macro for a convenient way to make one of these.
+/// See the [`concat_writeable!`] macro for a convenient way to make one of these.
 ///
 /// # Examples
 ///
