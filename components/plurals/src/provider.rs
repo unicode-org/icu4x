@@ -511,13 +511,9 @@ where
     /// let plural_ule = PluralElementsPackedULE::new_mn::<13, 14>(metadata, inner_ule);
     /// let rules = PluralRules::try_new(locale!("en").into(), Default::default()).unwrap();
     ///
-    /// assert_eq!(plural_ule.as_varule().get(0.into(), &rules).1, "hello, world!");
-    /// assert_eq!(plural_ule.as_varule().get(1.into(), &rules).1, "hello, world!");
-    /// assert_eq!(plural_ule.as_varule().get(2.into(), &rules).1, "hello, world!");
-    ///
-    /// assert_eq!(plural_ule.as_varule().get(0.into(), &rules).0, metadata);
-    /// assert_eq!(plural_ule.as_varule().get(1.into(), &rules).0, metadata);
-    /// assert_eq!(plural_ule.as_varule().get(2.into(), &rules).0, metadata);
+    /// assert_eq!(plural_ule.as_varule().get(0.into(), &rules), (metadata, "hello, world!"));
+    /// assert_eq!(plural_ule.as_varule().get(1.into(), &rules), (metadata, "hello, world!"));
+    /// assert_eq!(plural_ule.as_varule().get(2.into(), &rules), (metadata, "hello, world!"));
     /// ```
     ///
     /// In a const context:
@@ -529,14 +525,15 @@ where
     /// use icu::locale::locale;
     /// use zerovec::ule::SizedVarULEBytes;
     ///
+    /// const metadata: FourBitMetadata = FourBitMetadata::zero();
     /// const plural_ule: SizedVarULEBytes<1, PluralElementsPackedULE<str>> =
-    ///     PluralElementsPackedULE::new_mn::<0, 1>(FourBitMetadata::zero(), SizedVarULEBytes::EMPTY_STR);
+    ///     PluralElementsPackedULE::new_mn::<0, 1>(metadata, SizedVarULEBytes::EMPTY_STR);
     ///
     /// let rules = PluralRules::try_new(locale!("en").into(), Default::default()).unwrap();
     ///
-    /// assert_eq!(plural_ule.as_varule().get(0.into(), &rules).1, "");
-    /// assert_eq!(plural_ule.as_varule().get(1.into(), &rules).1, "");
-    /// assert_eq!(plural_ule.as_varule().get(2.into(), &rules).1, "");
+    /// assert_eq!(plural_ule.as_varule().get(0.into(), &rules), (metadata, ""));
+    /// assert_eq!(plural_ule.as_varule().get(1.into(), &rules), (metadata, ""));
+    /// assert_eq!(plural_ule.as_varule().get(2.into(), &rules), (metadata, ""));
     /// ```
     ///
     /// [generic_const_exprs]: https://doc.rust-lang.org/beta/unstable-book/language-features/generic-const-exprs.html#generic_const_exprs
