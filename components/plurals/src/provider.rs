@@ -526,8 +526,9 @@ where
     /// use zerovec::ule::SizedVarULEBytes;
     ///
     /// const metadata: FourBitMetadata = FourBitMetadata::zero();
-    /// const plural_ule: SizedVarULEBytes<1, PluralElementsPackedULE<str>> =
-    ///     PluralElementsPackedULE::new_mn::<0, 1>(metadata, SizedVarULEBytes::EMPTY_STR);
+    /// let plural_ule = const {
+    ///     PluralElementsPackedULE::new_mn::<0, 1>(metadata, SizedVarULEBytes::EMPTY_STR)
+    /// };
     ///
     /// let rules = PluralRules::try_new(locale!("en").into(), Default::default()).unwrap();
     ///
