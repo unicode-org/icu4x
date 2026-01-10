@@ -508,7 +508,7 @@ where
     /// let value = "hello, world!"; // 13 bytes long
     /// let metadata = FourBitMetadata::try_from_byte(11).unwrap();
     /// let inner_ule = SizedVarULEBytes::<13, str>::try_from_encodeable(value).unwrap();
-    /// let plural_ule = PluralElementsPackedULE::new_mn::<13, 14>(metadata, inner_ule);
+    /// let plural_ule = PluralElementsPackedULE::new_mn::<_, 14>(metadata, inner_ule);
     /// let rules = PluralRules::try_new(locale!("en").into(), Default::default()).unwrap();
     ///
     /// assert_eq!(plural_ule.as_varule().get(0.into(), &rules), (metadata, "hello, world!"));
@@ -527,7 +527,7 @@ where
     ///
     /// const metadata: FourBitMetadata = FourBitMetadata::zero();
     /// let plural_ule = const {
-    ///     PluralElementsPackedULE::new_mn::<0, 1>(metadata, SizedVarULEBytes::EMPTY_STR)
+    ///     PluralElementsPackedULE::new_mn::<_, 1>(metadata, SizedVarULEBytes::EMPTY_STR)
     /// };
     ///
     /// let rules = PluralRules::try_new(locale!("en").into(), Default::default()).unwrap();
