@@ -508,7 +508,7 @@ where
     /// let value = "hello, world!"; // 13 bytes long
     /// let metadata = FourBitMetadata::try_from_byte(11).unwrap();
     /// let inner_ule = SizedVarULEBytes::<13, str>::try_from_encodeable(value).unwrap();
-    /// let plural_ule = PluralElementsPackedULE::new_mn::<13, 14>(inner_ule, metadata);
+    /// let plural_ule = PluralElementsPackedULE::new_mn::<13, 14>(metadata, inner_ule);
     /// let rules = PluralRules::try_new(locale!("en").into(), Default::default()).unwrap();
     ///
     /// assert_eq!(plural_ule.as_varule().get(0.into(), &rules).1, "hello, world!");
@@ -530,7 +530,7 @@ where
     /// use zerovec::ule::SizedVarULEBytes;
     ///
     /// const plural_ule: SizedVarULEBytes<1, PluralElementsPackedULE<str>> =
-    ///     PluralElementsPackedULE::new_mn::<0, 1>(SizedVarULEBytes::EMPTY_STR, FourBitMetadata::zero());
+    ///     PluralElementsPackedULE::new_mn::<0, 1>(FourBitMetadata::zero(), SizedVarULEBytes::EMPTY_STR);
     ///
     /// let rules = PluralRules::try_new(locale!("en").into(), Default::default()).unwrap();
     ///
@@ -541,8 +541,8 @@ where
     ///
     /// [generic_const_exprs]: https://doc.rust-lang.org/beta/unstable-book/language-features/generic-const-exprs.html#generic_const_exprs
     pub const fn new_mn<const M: usize, const N: usize>(
-        input: SizedVarULEBytes<M, V>,
         metadata: FourBitMetadata,
+        input: SizedVarULEBytes<M, V>,
     ) -> SizedVarULEBytes<N, PluralElementsPackedULE<V>> {
         #[allow(clippy::panic)] // for safety, and documented
         if N != M + 1 {
