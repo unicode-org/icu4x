@@ -1,7 +1,7 @@
 Positions on Rust Version and Style
 ===================================
 
-These positions are held by sffc@ and not necesarilly the ICU4X Technical Committee.
+*These positions are held by sffc@ and not necesarilly the ICU4X Technical Committee.*
 
 ## MSRV upgrades should be a last resort
 
@@ -23,7 +23,7 @@ The TC has compromised on 4 Rust release cycles for critical fixes, 6 Rust relea
 
 The Rust programming language continues to evolve. There is a transparent system for tracking features as they proceed through the design and development process.
 
-We need to write code for today's Rust. However, we can look ahead and plan for how our code will be used when Rust evolves. We can land Rust code that today is a big "ugly" but has a path to become cleaner in a future\* Rust version.
+We need to write code for today's Rust. However, we should look ahead and plan for how our code will be used when Rust evolves. We can land Rust code that today is a bit "ugly" but has a path to become cleaner in a future\* Rust version.
 
 Some might wonder how this constraint is compatible with the previous constraint. The difference is in _userland code_ vs _ICU4X code_. We can build APIs that are ergonomic to use in modern Rust even if MSRV Rust code needs workarounds.
 
