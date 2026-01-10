@@ -27075,8 +27075,8 @@ datetime/patterns/date/roc/v1, zu/y, -> af/y
 datetime/patterns/date/roc/v1, zu/ym0, -> eo/ym0
 datetime/patterns/date/roc/v1, zu/ym0d, 110B, 80B, 40d3070c7219fa1
 datetime/patterns/date/roc/v1, zu/ym0de, -> xh/ym0de
-datetime/patterns/glue/v1, <lookup>, 3509B, 700 identifiers
-datetime/patterns/glue/v1, <total>, 9636B, 4990B, 202 unique payloads
+datetime/patterns/glue/v1, <lookup>, 3454B, 690 identifiers
+datetime/patterns/glue/v1, <total>, 9642B, 4996B, 202 unique payloads
 datetime/patterns/glue/v1, af/ldt, 42B, 19B, 3b1b8c89e615eed0
 datetime/patterns/glue/v1, af/ldtz, 48B, 25B, e4835deea5a6a0ac
 datetime/patterns/glue/v1, ak/ldt, 42B, 19B, 6e3ddd9cf3695de1
@@ -27763,20 +27763,10 @@ datetime/patterns/glue/v1, yo/mdt, -> ak/mdt
 datetime/patterns/glue/v1, yo/mdtz, -> ak/mdtz
 datetime/patterns/glue/v1, yo/sdt, -> ak/mdt
 datetime/patterns/glue/v1, yo/sdtz, -> ak/mdtz
-datetime/patterns/glue/v1, yue-Hans/ldt, 30B, 7B, 71fc91cccdba47e6
-datetime/patterns/glue/v1, yue-Hans/ldtz, 36B, 13B, 427dad29af32d33
-datetime/patterns/glue/v1, yue-Hans/mdt, -> yue-Hans/ldt
-datetime/patterns/glue/v1, yue-Hans/mdtz, -> yue-Hans/ldtz
-datetime/patterns/glue/v1, yue/ldt, -> yue-Hans/ldt
-datetime/patterns/glue/v1, yue/ldtz, -> yue-Hans/ldtz
-datetime/patterns/glue/v1, yue/mdt, -> yue-Hans/ldt
-datetime/patterns/glue/v1, yue/mdtz, -> yue-Hans/ldtz
-datetime/patterns/glue/v1, zh-Hant/ldt, -> yue-Hans/ldt
-datetime/patterns/glue/v1, zh-Hant/ldtz, -> yue-Hans/ldtz
-datetime/patterns/glue/v1, zh-Hant/mdt, -> yue-Hans/ldt
-datetime/patterns/glue/v1, zh-Hant/mdtz, -> yue-Hans/ldtz
-datetime/patterns/glue/v1, zh-Hant/sdt, -> yue-Hans/ldt
-datetime/patterns/glue/v1, zh-Hant/sdtz, -> yue-Hans/ldtz
+datetime/patterns/glue/v1, yue/sdt, 33B, 10B, cc588c94483163e5
+datetime/patterns/glue/v1, yue/sdtz, 39B, 16B, 97bf8e082d980379
+datetime/patterns/glue/v1, zh-Hant/sdt, -> yue/sdt
+datetime/patterns/glue/v1, zh-Hant/sdtz, -> yue/sdtz
 datetime/patterns/time/v1, <lookup>, 1905B, 309 identifiers
 datetime/patterns/time/v1, <total>, 4574B, 3034B, 55 unique payloads
 datetime/patterns/time/v1, af-NA/j, 86B, 58B, d356c26a1a707da8
