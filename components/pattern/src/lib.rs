@@ -134,6 +134,12 @@ impl SinglePlaceholderPattern {
     /// ```
     pub const PASS_THROUGH: &'static SinglePlaceholderPattern =
         SinglePlaceholderPattern::from_ref_store_unchecked("\x01");
+
+    #[doc(hidden)] // for macro to_sized_varule_bytes
+    pub const fn as_bytes(&self) -> &[u8] {
+        // TODO: Add safety note
+        self.store.as_bytes()
+    }
 }
 
 /// # Examples
