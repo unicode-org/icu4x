@@ -173,6 +173,7 @@ impl<U: VarULE + ?Sized + core::fmt::Debug> core::fmt::Debug for OptionVarULE<U>
 //  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
 //  6. All other methods are defaulted
 //  7. OptionVarULE<T> byte equality is semantic equality (achieved by being an aggregate)
+//  8. There are no concrete methods with the same name as VarULE trait methods.
 unsafe impl<U: VarULE + ?Sized> VarULE for OptionVarULE<U> {
     #[inline]
     fn validate_bytes(slice: &[u8]) -> Result<(), UleError> {

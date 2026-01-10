@@ -95,12 +95,14 @@ impl<const LEN: usize, Format: VarZeroVecFormat> MultiFieldsULE<LEN, Format> {
     /// - byte slice must be a valid VarZeroLengthlessSlice<[u8], Format> with length LEN
     #[inline]
     pub unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
+        // *Safety:* The behavior of this function is a VarULE safety requirement!
         // &Self is transparent over &VZS<..> with the right format
         mem::transmute(<VarZeroLengthlessSlice<[u8], Format>>::from_bytes_unchecked(bytes))
     }
 
     /// Get the bytes behind this value
     pub fn as_bytes(&self) -> &[u8] {
+        // *Safety:* The behavior of this function is a VarULE safety requirement!
         self.0.as_bytes()
     }
 }
@@ -141,6 +143,7 @@ unsafe impl EncodeAsVarULE<[u8]> for BlankSliceEncoder {
 //  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
 //  6. All other methods are defaulted
 //  7. `MultiFieldsULE` byte equality is semantic equality (achieved by being transparent over a VarULE type)
+//  8. Concrete methods with the same name as VarULE trait methods have the same behavior as the trait methods.
 unsafe impl<const LEN: usize, Format: VarZeroVecFormat> VarULE for MultiFieldsULE<LEN, Format> {
     /// Note: MultiFieldsULE is usually used in cases where one should be calling .validate_field() directly for
     /// each field, rather than using the regular VarULE impl.

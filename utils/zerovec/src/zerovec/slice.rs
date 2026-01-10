@@ -56,6 +56,7 @@ where
     /// Attempt to construct a `&ZeroSlice<T>` from a byte slice, returning an error
     /// if it's not a valid byte sequence
     pub fn parse_bytes(bytes: &[u8]) -> Result<&Self, UleError> {
+        // *Safety:* The behavior of this function is a VarULE safety requirement!
         T::ULE::parse_bytes_to_slice(bytes).map(Self::from_ule_slice)
     }
 
@@ -65,6 +66,7 @@ where
     ///
     /// `bytes` need to be an output from [`ZeroSlice::as_bytes()`].
     pub const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
+        // *Safety:* The behavior of this function is a VarULE safety requirement!
         // &[u8] and &[T::ULE] are the same slice with different length metadata.
         Self::from_ule_slice(core::slice::from_raw_parts(
             bytes.as_ptr() as *const T::ULE,
@@ -115,6 +117,7 @@ where
     /// ```
     #[inline]
     pub fn as_bytes(&self) -> &[u8] {
+        // *Safety:* The behavior of this function is a VarULE safety requirement!
         T::ULE::slice_as_bytes(self.as_ule_slice())
     }
 
@@ -498,6 +501,7 @@ where
 //  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
 //  6. `as_bytes()` and `parse_bytes()` are defaulted
 //  7. `[T::ULE]` byte equality is semantic equality (relying on the guideline of the underlying `ULE` type)
+//  8. Concrete methods with the same name as VarULE trait methods have the same behavior as the trait methods.
 unsafe impl<T: AsULE + 'static> VarULE for ZeroSlice<T> {
     #[inline]
     fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
