@@ -53,25 +53,33 @@ impl CalendarPreferences {
     /// assert_eq!(CalendarPreferences::from(&locale!("und-US-u-rg-thxxxx")).resolved_algorithm(), CalendarAlgorithm::Buddhist);
     /// ```
     pub fn resolved_algorithm(self) -> CalendarAlgorithm {
-        let region = self
-            .locale_preferences
-            .to_data_locale_region_priority()
-            .region;
-        let region = region.as_ref().map(|r| r.as_str());
+        use icu_locale_core::subtags::{region, Region};
+        const AE: Region = region!("AE");
+        const BH: Region = region!("BH");
+        const KW: Region = region!("KW");
+        const QA: Region = region!("QA");
+        const SA: Region = region!("SA");
+        const TH: Region = region!("TH");
+        const AF: Region = region!("AF");
+        const IR: Region = region!("IR");
+
         // This is tested to be consistent with CLDR in icu_provider_source::calendar::test_calendar_resolution
-        match self.calendar_algorithm {
-            Some(CalendarAlgorithm::Hijri(None)) => match region {
-                Some("AE" | "BH" | "KW" | "QA" | "SA") => {
-                    CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Umalqura))
-                }
-                _ => CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil)),
-            },
-            Some(a) => a,
-            None => match region {
-                Some("TH") => CalendarAlgorithm::Buddhist,
-                Some("AF" | "IR") => CalendarAlgorithm::Persian,
-                _ => CalendarAlgorithm::Gregory,
-            },
+        match (
+            self.calendar_algorithm,
+            self.locale_preferences
+                .to_data_locale_region_priority()
+                .region,
+        ) {
+            (Some(CalendarAlgorithm::Hijri(None)), Some(AE | BH | KW | QA | SA)) => {
+                CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Umalqura))
+            }
+            (Some(CalendarAlgorithm::Hijri(None)), _) => {
+                CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil))
+            }
+            (Some(a), _) => a,
+            (None, Some(TH)) => CalendarAlgorithm::Buddhist,
+            (None, Some(AF | IR)) => CalendarAlgorithm::Persian,
+            (None, _) => CalendarAlgorithm::Gregory,
         }
     }
 }

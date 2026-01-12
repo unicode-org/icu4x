@@ -4,7 +4,9 @@
 
 //! Functions for region-specific weekday information.
 
-use crate::preferences::{FirstDay, WeekPreferences};
+pub use crate::preferences::WeekPreferences;
+
+use crate::preferences::FirstDay;
 use crate::{error::RangeError, provider::*, types::Weekday};
 use icu_provider::prelude::*;
 
