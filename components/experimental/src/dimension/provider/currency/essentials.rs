@@ -29,8 +29,20 @@ use icu_pattern::DoublePlaceholderPattern;
 pub use crate::provider::Baked;
 
 icu_provider::data_marker!(
-    /// `CurrencyEssentialsV1`
+    /// Essential currency data needed for currency formatting. For example, currency patterns.
     CurrencyEssentialsV1,
+    CurrencyEssentials<'static>
+);
+
+icu_provider::data_marker!(
+    /// Core essential currency data (includes the most critical currencies needed for basic usage).
+    CurrencyEssentialsCoreV1,
+    CurrencyEssentials<'static>
+);
+
+icu_provider::data_marker!(
+    /// Full essential currency data (includes all the remaining currencies defined in CLDR).
+    CurrencyEssentialsFullV1,
     CurrencyEssentials<'static>
 );
 
