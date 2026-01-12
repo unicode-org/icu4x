@@ -505,12 +505,50 @@ fn datetimepattern_convert(
             .get_pattern(length)
             .get_pattern(),
         GlueType::DateZone => {
-            // TODO: Use proper appendItem here
-            "{1} {2}"
+            let formatted_date = match length {
+                PatternLength::Long => &data.date_formats.long, 
+                PatternLength::Medium => &data.date_formats.medium,
+                PatternLength::Short => &data.date_formats.short,
+            };
+
+            let pattern = pattern_anchor.insert(
+                formatted_date
+                .get_pattern()
+                .to_string()
+            );
+
+            let zone_fallback= String::from("{1} {2}"); // this was the previous fallback string.
+            let zone_pattern = data
+                .datetime_formats
+                .append_items
+                .get("Timezone")
+                .unwrap_or(&zone_fallback);
+
+            pattern.push_str(zone_pattern);
+            pattern
         }
         GlueType::TimeZone => {
-            // TODO: Use proper appendItem here
-            "{0} {2}"
+            let formatted_time = match length {
+                PatternLength::Long => &data.time_formats.long, 
+                PatternLength::Medium => &data.time_formats.medium,
+                PatternLength::Short => &data.time_formats.short,
+            };
+
+            let pattern = pattern_anchor.insert(
+                formatted_time.
+                get_pattern()
+                .to_string()
+            );
+
+            let zone_fallback = String::from("{0}, {2}"); // the previous fallback string.
+            let zone_pattern = data
+                .datetime_formats
+                .append_items
+                .get("Timezone")
+                .unwrap_or(&zone_fallback);
+
+            pattern.push_str(zone_pattern);
+            pattern
         }
         GlueType::DateTimeZone => {
             let pattern = pattern_anchor.insert(
@@ -519,8 +557,15 @@ fn datetimepattern_convert(
                     .get_pattern()
                     .to_string(),
             );
-            // TODO: Use proper appendItem here
-            pattern.push_str(" {2}");
+            
+            let zone_fallback = String::from("{2}"); // the previous fallback string.
+            let zone_pattern = data
+                .datetime_formats
+                .append_items
+                .get("Timezone")
+                .unwrap_or(&zone_fallback);
+            
+            pattern.push_str(zone_pattern);
             pattern
         }
     };

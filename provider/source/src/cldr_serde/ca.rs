@@ -190,6 +190,8 @@ pub(crate) struct DateTimeFormats {
     pub(crate) short: LengthPattern,
     #[serde(rename = "availableFormats")]
     pub(crate) available_formats: AvailableFormats,
+    #[serde(rename = "appendItems")]
+    pub(crate) append_items: HashMap<String, String>,
 }
 
 /// dateTimeFormats-atTime, dateTimeFormats-relative
