@@ -5,7 +5,7 @@
 [package]
 name = "icu_experimental"
 description = "ICU4X pre-release components under active development; all code in this crate is unstable."
-version = "0.4.0"
+version = "0.5.0-dev"
 
 authors.workspace = true
 categories.workspace = true
@@ -29,7 +29,7 @@ icu_provider = { workspace = true }
 icu_locale_core = { workspace = true }
 
 icu_casemap = { workspace = true }
-icu_decimal = { workspace = true }
+icu_decimal = { workspace = true, features = ["alloc"] }
 icu_list = { workspace = true }
 icu_locale = { workspace = true }
 icu_normalizer = { workspace = true }

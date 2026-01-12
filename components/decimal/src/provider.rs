@@ -105,6 +105,7 @@
 #![allow(clippy::exhaustive_enums)]
 
 use icu_provider::prelude::*;
+use writeable::Part;
 use zerovec::VarZeroCow;
 
 #[cfg(feature = "compiled_data")]
@@ -268,27 +269,29 @@ icu_provider::data_struct!(
 );
 
 impl DecimalSymbols<'_> {
-    /// Return (prefix, suffix) for the minus sign
-    pub fn minus_sign_affixes(&self) -> (&str, &str) {
+    /// Return (part, prefix, suffix) for the minus sign
+    pub fn minus_sign_affixes(&self) -> (Part, &str, &str) {
         (
+            crate::parts::MINUS_SIGN,
             self.strings.minus_sign_prefix(),
             self.strings.minus_sign_suffix(),
         )
     }
-    /// Return (prefix, suffix) for the minus sign
-    pub fn plus_sign_affixes(&self) -> (&str, &str) {
+    /// Return (part, prefix, suffix) for the plus sign
+    pub fn plus_sign_affixes(&self) -> (Part, &str, &str) {
         (
+            crate::parts::PLUS_SIGN,
             self.strings.plus_sign_prefix(),
             self.strings.plus_sign_suffix(),
         )
     }
-    /// Return thhe decimal separator
-    pub fn decimal_separator(&self) -> &str {
-        self.strings.decimal_separator()
+    /// Return the decimal separator
+    pub fn decimal_separator(&self) -> (Part, &str) {
+        (crate::parts::DECIMAL, self.strings.decimal_separator())
     }
-    /// Return thhe decimal separator
-    pub fn grouping_separator(&self) -> &str {
-        self.strings.grouping_separator()
+    /// Return the grouping separator
+    pub fn grouping_separator(&self) -> (Part, &str) {
+        (crate::parts::GROUP, self.strings.grouping_separator())
     }
 
     /// Return the numbering system
