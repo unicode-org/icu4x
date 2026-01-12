@@ -23,7 +23,7 @@ use icu_provider::prelude::*;
 pub use crate::provider::Baked;
 
 icu_provider::data_marker!(
-    /// `CurrencyExtendedDataV1`
+    /// Extended currency data needed for currency formatting. For example, currency display names.
     CurrencyExtendedDataV1,
     CurrencyExtendedData<'static>,
     #[cfg(feature = "datagen")]

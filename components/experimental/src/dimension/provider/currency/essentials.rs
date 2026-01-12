@@ -59,16 +59,16 @@ icu_provider::data_marker!(
 #[cfg_attr(feature = "datagen", databake(path =  icu_experimental::dimension::provider::currency::essentials))]
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyEssentials<'data> {
-    /// A mapping from each currency's ISO code to its associated formatting patterns.
-    /// This includes information on which specific pattern to apply as well as the index
-    /// of placeholders within the `placeholders` vector.
+    /// A mapping from 3-letter currency ISO codes to their [`CurrencyPatternConfig`].
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pattern_config_map: ZeroMap<'data, UnvalidatedTinyAsciiStr<3>, CurrencyPatternConfig>,
 
     // TODO(#4677): Implement the pattern to accept the signed negative and signed positive patterns.
-    /// Represents the standard pattern.
-    /// NOTE: place holder 0 is the place of the currency value.
-    ///       place holder 1 is the place of the currency sign `¤`.
+    /// The standard currency pattern used for formatting.
+    ///
+    /// This pattern uses two placeholders:
+    /// - `0`: The numeric currency value.
+    /// - `1`: The currency symbol (`¤`).
     #[cfg_attr(
         feature = "serde",
         serde(
@@ -79,9 +79,11 @@ pub struct CurrencyEssentials<'data> {
     pub standard_pattern: Option<Cow<'data, DoublePlaceholderPattern>>,
 
     // TODO(#4677): Implement the pattern to accept the signed negative and signed positive patterns.
-    /// Represents the standard alpha_next_to_number pattern.
-    /// NOTE: place holder 0 is the place of the currency value.
-    ///       place holder 1 is the place of the currency sign `¤`.
+    /// The standard_alpha_next_to_number currency pattern used for formatting.
+    ///
+    /// This pattern uses two placeholders:
+    /// - `0`: The numeric currency value.
+    /// - `1`: The currency symbol (`¤`).
     #[cfg_attr(
         feature = "serde",
         serde(
@@ -91,7 +93,9 @@ pub struct CurrencyEssentials<'data> {
     )]
     pub standard_alpha_next_to_number_pattern: Option<Cow<'data, DoublePlaceholderPattern>>,
 
-    /// Contains all the place holders.
+    /// A list of placeholders (strings), such as currency symbols, referenced by index.
+    ///
+    /// These values are retrieved using [`PlaceholderValue::Index`] stored in [`CurrencyPatternConfig`].
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub placeholders: VarZeroVec<'data, str>,
 
