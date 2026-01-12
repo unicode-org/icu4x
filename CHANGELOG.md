@@ -9,13 +9,14 @@ Several crates have had patch releases in the 2.1 stream:
         - Fix `icu_locale_core` dependency (unicode-org#7191)
     - (2.1.2)`icu_properties`
         - Fix some property constants (unicode-org#7269, unicode-org#7281, unicode-org#7284)
+        - Add conversions for `unicode_bidi::BidiClass` (unicode-org#7272)
         - Add `IndicConjunctBreak` (unicode-org#7280)
         - Add conversion between `icu::properties::props::Script` and `icu::locale::subtags:Script` (unicode-org#7270)
-        - Add conversion between `icu::properties::props::BidiClass` and `unicode_bidi::BidiClass` (unicode-org#7272)
     - (2.1.2) `icu_segmenter`
         - Add non-complex line and word break constructors (unicode-org#7268)
-- Utils
-  - Retire the `icu_harfbuzz` crate. The `icu_properties` and `icu_normalizer` types now directly implement the `harfbuzz-traits`
+- Data model and providers
+    - (2.1.2) `icu_provider_source`, `icu_locale_data`, `icu_datetime_data`, `icu_experimental_data`
+        - Update to CLDR 48.1 (unicode-org#7396)
 
 ## icu4x 2.1
 
