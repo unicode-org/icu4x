@@ -119,6 +119,12 @@ fn maybe_msrv() -> TokenStream {
         .unwrap_or_default()
 }
 
+fn maybe_msrv_string() -> String {
+    std::option_env!("CARGO_PKG_RUST_VERSION")
+        .map(|msrv| format!("#[clippy::msrv = \"{msrv}\"]"))
+        .unwrap_or_default()
+}
+
 /// Options for configuring the output of [`BakedExporter`].
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy)]
@@ -219,9 +225,7 @@ impl BakedExporter {
     }
 
     fn write_to_file(&self, relative_path: &Path, data: TokenStream) -> Result<(), DataError> {
-        let path = self.mod_directory.join(relative_path);
-
-        let mut formatted = if self.pretty {
+        let formatted = if self.pretty {
             use std::process::{Command, Stdio};
             let mut rustfmt = Command::new("rustfmt")
                 .arg("--config")
@@ -255,6 +259,16 @@ impl BakedExporter {
         } else {
             data.to_string()
         };
+
+        self.write_string_to_file(relative_path, formatted)
+    }
+
+    fn write_string_to_file(
+        &self,
+        relative_path: &Path,
+        mut formatted: String,
+    ) -> Result<(), DataError> {
+        let path = self.mod_directory.join(relative_path);
 
         if !self.use_separate_crates {
             // Don't search the whole file, there should be a macro in the first 1000 bytes
@@ -811,71 +825,84 @@ impl DataExporter for BakedExporter {
             .into_inner()
             .expect("poison");
 
-        let maybe_msrv = maybe_msrv();
-
-        let file_paths = data.values().map(|(i, _, _)| format!("{i}.rs.data"));
-
-        let macro_idents = data
-            .values()
-            .map(|(i, _, _)| format!("impl_{i}").parse::<TokenStream>().unwrap());
+        let maybe_msrv = maybe_msrv_string();
 
         let required_crates = data
             .values()
             .flat_map(|(_, deps, _)| deps.iter().copied())
             .collect::<BTreeSet<_>>();
 
-        let required_crates_list = required_crates.iter().map(|c| format!(" * `{c}`"));
+        let mut include_blocks = String::new();
+        let mut macro_calls = String::new();
+        for (lowercase_name, _, _) in data.values() {
+            writeln!(
+                &mut include_blocks,
+                "include!(\"{lowercase_name}.rs.data\");"
+            )
+            .unwrap();
+            writeln!(
+                &mut macro_calls,
+                "        impl_{lowercase_name}!($provider);"
+            )
+            .unwrap();
+        }
+
+        let mut required_crates_docs = String::new();
+
+        for required_crate in &required_crates {
+            writeln!(&mut required_crates_docs, "/// * `{required_crate}`").unwrap();
+        }
+
+        // We use string interpolation instead of token streams here
+        // since this is a relatively simple file. With token streams the user *must* use a formatter
+        // to format this macro-heavy file, but with string interpolation this gets formatted for free.
+        //
+        // It's relatively useful for people to be able to read and edit this file since you can add/remove keys
+        // through it.
+        let mod_rs = format!(
+            r#"{include_blocks}
+
+/// Marks a type as a data provider. You can then use macros like
+/// `impl_core_helloworld_v1` to add implementations.
+///
+/// ```ignore
+/// struct MyProvider;
+/// const _: () = {{
+///     include!("path/to/generated/macros.rs");
+///     make_provider!(MyProvider);
+///     impl_core_helloworld_v1!(MyProvider);
+/// }}
+/// ```
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __make_provider {{
+    ($name:ty) => {{
+        {maybe_msrv}
+        impl $name {{
+            #[allow(dead_code)]
+            pub(crate) const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
+        }}
+        icu_provider::marker::impl_data_provider_never_marker!($name);
+    }};
+}}
+
+#[doc(inline)]
+pub use __make_provider as make_provider;
+
+// Not public as it will only work locally due to needing access to the other macros.
+/// This macro requires the following crates:
+{required_crates_docs}#[allow(unused_macros)]
+macro_rules! impl_data_provider {{
+    ($provider:ty) => {{
+        make_provider!($provider);
+{macro_calls}
+    }};
+}}
+"#
+        );
 
         // mod.rs is the interface for built-in data. It exposes one macro per marker.
-        self.write_to_file(
-            Path::new("mod.rs"),
-            quote! {
-                #(
-                    include!(#file_paths);
-                )*
-
-                /// Marks a type as a data provider. You can then use macros like
-                /// `impl_core_helloworld_v1` to add implementations.
-                ///
-                /// ```ignore
-                /// struct MyProvider;
-                /// const _: () = {
-                ///     include!("path/to/generated/macros.rs");
-                ///     make_provider!(MyProvider);
-                ///     impl_core_helloworld_v1!(MyProvider);
-                /// }
-                /// ```
-                #[doc(hidden)] // macro
-                #[macro_export]
-                macro_rules! __make_provider {
-                    ($name:ty) => {
-                        #maybe_msrv
-                        impl $name {
-                            #[allow(dead_code)]
-                            pub(crate) const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
-                        }
-                        icu_provider::marker::impl_data_provider_never_marker!($name);
-                    };
-                }
-                #[doc(inline)]
-                pub use __make_provider as make_provider;
-
-                // Not public as it will only work locally due to needing access to the other macros.
-                /// This macro requires the following crates:
-                #(
-                    #[doc = #required_crates_list]
-                )*
-                #[allow(unused_macros)]
-                macro_rules! impl_data_provider {
-                    ($provider:ty) => {
-                        make_provider!($provider);
-                        #(
-                            #macro_idents ! ($provider);
-                        )*
-                    };
-                }
-            },
-        )?;
+        self.write_string_to_file(Path::new("mod.rs"), mod_rs)?;
 
         let statistics = data
             .into_iter()
