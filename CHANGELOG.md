@@ -25,7 +25,9 @@ Several crates have had patch releases in the 2.1 stream:
         - Add non-complex line and word break constructors (unicode-org#7268)
 - Data model and providers
     - (2.1.2) `icu_provider_source`, `icu_locale_data`, `icu_datetime_data`, `icu_experimental_data`
-        - Update to CLDR 48.1 (unicode-org#7396))
+        - Update to CLDR 48.1 (unicode-org#7396)
+    - (2.1.2) `icu_provider_registry`, `icu_provider_source`
+        - Add `IndicConjunctBreak` (unicode-org#7280)
 
 ## icu4x 2.1
 
