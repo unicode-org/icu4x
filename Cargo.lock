@@ -1396,7 +1396,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "2.1.1"
+version = "2.1.2"
 
 [[package]]
 name = "icu_decimal"
@@ -1465,7 +1465,7 @@ dependencies = [
 
 [[package]]
 name = "icu_experimental_data"
-version = "0.4.0"
+version = "0.4.1"
 
 [[package]]
 name = "icu_freertos"
@@ -1540,7 +1540,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locale_data"
-version = "2.1.1"
+version = "2.1.2"
 
 [[package]]
 name = "icu_normalizer"
@@ -1740,7 +1740,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_registry"
-version = "2.1.1"
+version = "2.1.2"
 dependencies = [
  "icu",
  "icu_provider",
@@ -1748,7 +1748,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_source"
-version = "2.1.1"
+version = "2.1.2"
 dependencies = [
  "calendrical_calculations",
  "displaydoc",

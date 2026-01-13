@@ -4,12 +4,6 @@
 
 use super::*;
 
-use icu::datetime::provider::fields::components;
-use icu::datetime::provider::pattern::{reference, runtime};
-use icu::datetime::provider::skeleton::reference::Skeleton;
-use std::collections::BTreeMap;
-
-use crate::datetime::DatagenCalendar;
 use crate::SourceDataProvider;
 
 #[test]
@@ -180,12 +174,13 @@ fn test_en_overlap_patterns() {
 ///
 /// See: https://unicode-org.atlassian.net/browse/CLDR-14993
 #[cfg(feature = "networking")]
-#[cfg(test)]
 mod date_skeleton_consistency_tests {
     use super::*;
+    use crate::datetime::DatagenCalendar;
     use crate::CoverageLevel;
-    use icu::datetime::provider::fields;
-    use pattern::CoarseHourCycle;
+    use icu::datetime::provider::pattern::{reference, runtime, CoarseHourCycle};
+    use icu::datetime::provider::skeleton::reference::Skeleton;
+    use std::collections::BTreeMap;
 
     /// When canonicalizing the pattern, normalize only (G=GGG) or be more aggressive
     /// (such as ignoring whitespace and certain punctuation characters)
