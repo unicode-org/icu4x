@@ -8,6 +8,8 @@ use crate::provider::fields::FieldLength;
 use core::{cmp::Ordering, convert::TryFrom};
 use displaydoc::Display;
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
+use icu_locale_core::subtags::region;
+use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, UleError, ULE};
 
@@ -590,11 +592,17 @@ field_type!(
 );
 
 impl Hour {
-    pub(crate) fn from_hour_cycle(hour_cycle: HourCycle) -> Self {
+    pub(crate) fn from_hour_cycle(hour_cycle: HourCycle, region: Option<Region>) -> Self {
+        const JP: Region = region!("JP");
         match hour_cycle {
             HourCycle::H11 => Self::H11,
             HourCycle::H12 => Self::H12,
             HourCycle::H23 => Self::H23,
+            HourCycle::Clock12 => match region {
+                Some(JP) => Self::H11,
+                _ => Self::H12,
+            },
+            HourCycle::Clock24 => Self::H23,
             _ => unreachable!(),
         }
     }

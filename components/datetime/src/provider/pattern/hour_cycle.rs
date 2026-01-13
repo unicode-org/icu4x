@@ -146,7 +146,7 @@ pub(crate) fn naively_apply_preferences(
                 length,
             }) = item
             {
-                let candidate_field = fields::Hour::from_hour_cycle(hour_cycle);
+                let candidate_field = fields::Hour::from_hour_cycle(hour_cycle, None);
                 if *current_hour != candidate_field {
                     Some(PatternItem::from((
                         fields::FieldSymbol::Hour(candidate_field),

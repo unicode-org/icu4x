@@ -1164,7 +1164,7 @@ impl_time_marker!(
     /// // but we can set overrides.
     ///
     /// let formatter = NoCalendarFormatter::try_new(
-    ///     locale!("en-US-u-hc-h12").into(),
+    ///     locale!("en-US-u-hc-c12").into(),
     ///     T::hm(),
     /// )
     /// .unwrap();
@@ -1174,7 +1174,7 @@ impl_time_marker!(
     /// );
     ///
     /// let formatter = NoCalendarFormatter::try_new(
-    ///     locale!("en-US-u-hc-h23").into(),
+    ///     locale!("en-US-u-hc-c24").into(),
     ///     T::hm(),
     /// )
     /// .unwrap();
@@ -1184,7 +1184,7 @@ impl_time_marker!(
     /// );
     ///
     /// let formatter = NoCalendarFormatter::try_new(
-    ///     locale!("fr-FR-u-hc-h12").into(),
+    ///     locale!("fr-FR-u-hc-c12").into(),
     ///     T::hm(),
     /// )
     /// .unwrap();
@@ -1194,17 +1194,29 @@ impl_time_marker!(
     /// );
     ///
     /// let formatter = NoCalendarFormatter::try_new(
-    ///     locale!("fr-FR-u-hc-h23").into(),
+    ///     locale!("fr-FR-u-hc-c24").into(),
     ///     T::hm(),
     /// )
     /// .unwrap();
     /// assert_writeable_eq!(
     ///     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
     ///     "16:12"
+    /// );
+    ///
+    /// // Japan uses 12-hour time numbered 0-11 by default.
+    ///
+    /// let formatter = NoCalendarFormatter::try_new(
+    ///     locale!("en-JP-u-hc-c12").into(),
+    ///     T::hm(),
+    /// )
+    /// .unwrap();
+    /// assert_writeable_eq!(
+    ///     formatter.format(&Time::try_new(0, 1, 2, 0).unwrap()),
+    ///     "0:01 AM"
     /// );
     /// ```
     ///
-    /// Hour cycles `h11` and `h24` are supported, too:
+    /// Hour cycles `h11`, `h12`, and `h24` are supported, too:
     ///
     /// ```
     /// use icu::datetime::input::Time;
@@ -1222,6 +1234,17 @@ impl_time_marker!(
     /// assert_writeable_eq!(
     ///     formatter.format(&Time::try_new(0, 0, 0, 0).unwrap()),
     ///     "0:00 AM"
+    /// );
+    ///
+    /// let formatter = NoCalendarFormatter::try_new(
+    ///     locale!("und-u-hc-h12").into(),
+    ///     T::hm(),
+    /// )
+    /// .unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(&Time::try_new(0, 0, 0, 0).unwrap()),
+    ///     "12:00 AM"
     /// );
     ///
     /// let formatter = NoCalendarFormatter::try_new(
