@@ -49,15 +49,7 @@ impl RawPreferences {
     #[inline]
     pub(crate) fn from_prefs(prefs: DateTimeFormatterPreferences) -> Self {
         Self {
-            hour_cycle: prefs.hour_cycle.map(|hc| {
-                fields::Hour::from_hour_cycle(
-                    hc,
-                    prefs
-                        .locale_preferences
-                        .to_data_locale_region_priority()
-                        .region,
-                )
-            }),
+            hour_cycle: fields::Hour::from_prefs(prefs),
         }
     }
 }
