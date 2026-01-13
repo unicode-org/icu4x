@@ -27075,8 +27075,8 @@ datetime/patterns/date/roc/v1, zu/y, -> af/y
 datetime/patterns/date/roc/v1, zu/ym0, -> eo/ym0
 datetime/patterns/date/roc/v1, zu/ym0d, 110B, 80B, 40d3070c7219fa1
 datetime/patterns/date/roc/v1, zu/ym0de, -> xh/ym0de
-datetime/patterns/glue/v1, <lookup>, 3454B, 690 identifiers
-datetime/patterns/glue/v1, <total>, 9642B, 4996B, 202 unique payloads
+datetime/patterns/glue/v1, <lookup>, 3879B, 758 identifiers
+datetime/patterns/glue/v1, <total>, 10299B, 5285B, 218 unique payloads
 datetime/patterns/glue/v1, af/ldt, 42B, 19B, 3b1b8c89e615eed0
 datetime/patterns/glue/v1, af/ldtz, 48B, 25B, e4835deea5a6a0ac
 datetime/patterns/glue/v1, ak/ldt, 42B, 19B, 6e3ddd9cf3695de1
@@ -27174,11 +27174,17 @@ datetime/patterns/glue/v1, chr/sdtz, -> ak/mdtz
 datetime/patterns/glue/v1, cs/ldt, 39B, 16B, e9128f30520fd397
 datetime/patterns/glue/v1, cs/ldtz, 45B, 22B, d4432f347ef3e412
 datetime/patterns/glue/v1, cv/ldt, -> ak/mdt
-datetime/patterns/glue/v1, cv/ldtz, -> ak/mdtz
+datetime/patterns/glue/v1, cv/ldtz, 48B, 25B, ec0da821dc0aed15
+datetime/patterns/glue/v1, cv/ldz, 39B, 16B, d204c5a793989ae9
+datetime/patterns/glue/v1, cv/ltz, 39B, 16B, ebfe7fa593faa362
 datetime/patterns/glue/v1, cv/mdt, -> ak/mdt
-datetime/patterns/glue/v1, cv/mdtz, -> ak/mdtz
+datetime/patterns/glue/v1, cv/mdtz, -> cv/ldtz
+datetime/patterns/glue/v1, cv/mdz, -> cv/ldz
+datetime/patterns/glue/v1, cv/mtz, -> cv/ltz
 datetime/patterns/glue/v1, cv/sdt, -> ak/mdt
-datetime/patterns/glue/v1, cv/sdtz, -> ak/mdtz
+datetime/patterns/glue/v1, cv/sdtz, -> cv/ldtz
+datetime/patterns/glue/v1, cv/sdz, -> cv/ldz
+datetime/patterns/glue/v1, cv/stz, -> cv/ltz
 datetime/patterns/glue/v1, cy/ldt, 42B, 19B, a2b9e9de4092d590
 datetime/patterns/glue/v1, cy/ldtz, 48B, 25B, 39b622141b8ad308
 datetime/patterns/glue/v1, cy/mdt, -> ak/mdt
@@ -27240,17 +27246,38 @@ datetime/patterns/glue/v1, et/mdtz, -> ak/mdtz
 datetime/patterns/glue/v1, et/sdt, -> ak/mdt
 datetime/patterns/glue/v1, et/sdtz, -> ak/mdtz
 datetime/patterns/glue/v1, eu/ldt, 39B, 16B, d7fa33d5545b29a3
-datetime/patterns/glue/v1, eu/ldtz, 45B, 22B, 1de9d903f6419f9f
+datetime/patterns/glue/v1, eu/ldtz, 51B, 28B, e4a22e3660d4f636
+datetime/patterns/glue/v1, eu/ldz, -> cv/ldz
+datetime/patterns/glue/v1, eu/ltz, -> cv/ltz
 datetime/patterns/glue/v1, eu/mdt, -> eu/ldt
 datetime/patterns/glue/v1, eu/mdtz, -> eu/ldtz
+datetime/patterns/glue/v1, eu/mdz, -> cv/ldz
+datetime/patterns/glue/v1, eu/mtz, -> cv/ltz
 datetime/patterns/glue/v1, eu/sdt, -> eu/ldt
 datetime/patterns/glue/v1, eu/sdtz, -> eu/ldtz
+datetime/patterns/glue/v1, eu/sdz, -> cv/ldz
+datetime/patterns/glue/v1, eu/stz, -> cv/ltz
+datetime/patterns/glue/v1, fa-AF/ldtz, 54B, 31B, bd292478389c619e
+datetime/patterns/glue/v1, fa-AF/ldz, 33B, 10B, 30e4d588427e0e59
+datetime/patterns/glue/v1, fa-AF/ltz, 33B, 10B, e2d3b0dade209fb8
+datetime/patterns/glue/v1, fa-AF/mdtz, -> ar/mdtz
+datetime/patterns/glue/v1, fa-AF/mdz, -> fa-AF/ldz
+datetime/patterns/glue/v1, fa-AF/mtz, -> fa-AF/ltz
+datetime/patterns/glue/v1, fa-AF/sdtz, -> ak/mdtz
+datetime/patterns/glue/v1, fa-AF/sdz, -> fa-AF/ldz
+datetime/patterns/glue/v1, fa-AF/stz, -> fa-AF/ltz
 datetime/patterns/glue/v1, fa/ldt, 48B, 25B, 809ebc57303cf637
-datetime/patterns/glue/v1, fa/ldtz, 54B, 31B, bd292478389c619e
+datetime/patterns/glue/v1, fa/ldtz, 60B, 37B, 21106bd15b8e5778
+datetime/patterns/glue/v1, fa/ldz, -> cv/ldz
+datetime/patterns/glue/v1, fa/ltz, -> cv/ltz
 datetime/patterns/glue/v1, fa/mdt, -> ar/mdt
-datetime/patterns/glue/v1, fa/mdtz, -> ar/mdtz
+datetime/patterns/glue/v1, fa/mdtz, 48B, 25B, 62a944b700eec123
+datetime/patterns/glue/v1, fa/mdz, -> cv/ldz
+datetime/patterns/glue/v1, fa/mtz, -> cv/ltz
 datetime/patterns/glue/v1, fa/sdt, -> ak/mdt
-datetime/patterns/glue/v1, fa/sdtz, -> ak/mdtz
+datetime/patterns/glue/v1, fa/sdtz, -> cv/ldtz
+datetime/patterns/glue/v1, fa/sdz, -> cv/ldz
+datetime/patterns/glue/v1, fa/stz, -> cv/ltz
 datetime/patterns/glue/v1, ff-Adlm/ldt, 39B, 16B, 4f7f92d7aa02620d
 datetime/patterns/glue/v1, ff-Adlm/ldtz, 45B, 22B, 1ffd81a84336eee3
 datetime/patterns/glue/v1, fi/ldt, 45B, 22B, d625c0f8dea1a0ff
@@ -27318,7 +27345,15 @@ datetime/patterns/glue/v1, hi/mdtz, -> ak/mdtz
 datetime/patterns/glue/v1, hi/sdt, -> ak/mdt
 datetime/patterns/glue/v1, hi/sdtz, -> ak/mdtz
 datetime/patterns/glue/v1, hr/ldt, -> bs/ldt
-datetime/patterns/glue/v1, hr/ldtz, -> bs/ldtz
+datetime/patterns/glue/v1, hr/ldtz, 51B, 28B, 4946bc1cf6992ea2
+datetime/patterns/glue/v1, hr/ldz, -> cv/ldz
+datetime/patterns/glue/v1, hr/ltz, -> cv/ltz
+datetime/patterns/glue/v1, hr/mdtz, 45B, 22B, cb1b5e4c0066f762
+datetime/patterns/glue/v1, hr/mdz, -> cv/ldz
+datetime/patterns/glue/v1, hr/mtz, -> cv/ltz
+datetime/patterns/glue/v1, hr/sdtz, -> hr/mdtz
+datetime/patterns/glue/v1, hr/sdz, -> cv/ldz
+datetime/patterns/glue/v1, hr/stz, -> cv/ltz
 datetime/patterns/glue/v1, hsb/ldt, 39B, 16B, 626a4124b250ceaa
 datetime/patterns/glue/v1, hsb/ldtz, 45B, 22B, 9a62664fc2194e42
 datetime/patterns/glue/v1, hy/ldt, -> ak/mdt
@@ -27475,6 +27510,15 @@ datetime/patterns/glue/v1, ml/mdt, -> ak/mdt
 datetime/patterns/glue/v1, ml/mdtz, -> ak/mdtz
 datetime/patterns/glue/v1, ml/sdt, -> ak/mdt
 datetime/patterns/glue/v1, ml/sdtz, -> ak/mdtz
+datetime/patterns/glue/v1, mn/ldtz, -> hr/mdtz
+datetime/patterns/glue/v1, mn/ldz, -> cv/ldz
+datetime/patterns/glue/v1, mn/ltz, -> cv/ltz
+datetime/patterns/glue/v1, mn/mdtz, -> hr/mdtz
+datetime/patterns/glue/v1, mn/mdz, -> cv/ldz
+datetime/patterns/glue/v1, mn/mtz, -> cv/ltz
+datetime/patterns/glue/v1, mn/sdtz, -> hr/mdtz
+datetime/patterns/glue/v1, mn/sdz, -> cv/ldz
+datetime/patterns/glue/v1, mn/stz, -> cv/ltz
 datetime/patterns/glue/v1, mni/ldt, 51B, 28B, 218859d57792ef83
 datetime/patterns/glue/v1, mni/ldtz, 57B, 34B, 4051a11a77de3225
 datetime/patterns/glue/v1, mni/mdt, -> ak/mdt
@@ -27493,6 +27537,15 @@ datetime/patterns/glue/v1, ms/mdt, -> ak/mdt
 datetime/patterns/glue/v1, ms/mdtz, -> ak/mdtz
 datetime/patterns/glue/v1, ms/sdt, -> ak/mdt
 datetime/patterns/glue/v1, ms/sdtz, -> ak/mdtz
+datetime/patterns/glue/v1, my/ldtz, 39B, 16B, 286f33256e782563
+datetime/patterns/glue/v1, my/ldz, 33B, 10B, 94042033547582b4
+datetime/patterns/glue/v1, my/ltz, 33B, 10B, e8bf29d7ea332fe3
+datetime/patterns/glue/v1, my/mdtz, -> my/ldtz
+datetime/patterns/glue/v1, my/mdz, -> my/ldz
+datetime/patterns/glue/v1, my/mtz, -> my/ltz
+datetime/patterns/glue/v1, my/sdtz, -> my/ldtz
+datetime/patterns/glue/v1, my/sdz, -> my/ldz
+datetime/patterns/glue/v1, my/stz, -> my/ltz
 datetime/patterns/glue/v1, ne/ldt, 36B, 13B, 9406b32371b0b4d4
 datetime/patterns/glue/v1, ne/ldtz, 42B, 19B, 59b6df312196d680
 datetime/patterns/glue/v1, ne/mdt, -> ak/mdt
@@ -27620,11 +27673,17 @@ datetime/patterns/glue/v1, so/mdtz, -> so/ldtz
 datetime/patterns/glue/v1, so/sdt, -> ak/mdt
 datetime/patterns/glue/v1, so/sdtz, -> ak/mdtz
 datetime/patterns/glue/v1, sq/ldt, 42B, 19B, 90fbc6d069be7b2c
-datetime/patterns/glue/v1, sq/ldtz, 48B, 25B, 7f0f514e44d9a111
+datetime/patterns/glue/v1, sq/ldtz, 51B, 28B, ade084b6af1e5bcd
+datetime/patterns/glue/v1, sq/ldz, 36B, 13B, ee73c8192e347852
+datetime/patterns/glue/v1, sq/ltz, 36B, 13B, 5d4f405ed7b099ed
 datetime/patterns/glue/v1, sq/mdt, -> ak/mdt
-datetime/patterns/glue/v1, sq/mdtz, -> ak/mdtz
+datetime/patterns/glue/v1, sq/mdtz, 45B, 22B, e905d65e5c9a10ca
+datetime/patterns/glue/v1, sq/mdz, -> sq/ldz
+datetime/patterns/glue/v1, sq/mtz, -> sq/ltz
 datetime/patterns/glue/v1, sq/sdt, -> ak/mdt
-datetime/patterns/glue/v1, sq/sdtz, -> ak/mdtz
+datetime/patterns/glue/v1, sq/sdtz, -> sq/mdtz
+datetime/patterns/glue/v1, sq/sdz, -> sq/ldz
+datetime/patterns/glue/v1, sq/stz, -> sq/ltz
 datetime/patterns/glue/v1, su/ldt, 45B, 22B, 705a9e9a49b9d09e
 datetime/patterns/glue/v1, su/ldtz, 51B, 28B, 31d7438a2e4b6229
 datetime/patterns/glue/v1, su/mdt, -> ak/mdt
@@ -27705,16 +27764,16 @@ datetime/patterns/glue/v1, uk/sdt, -> ak/mdt
 datetime/patterns/glue/v1, uk/sdtz, -> ak/mdtz
 datetime/patterns/glue/v1, und/ldt, 33B, 10B, bc1d6728a52412f4
 datetime/patterns/glue/v1, und/ldtz, 39B, 16B, 957e08b26cb74e6b
-datetime/patterns/glue/v1, und/ldz, 33B, 10B, 30e4d588427e0e59
-datetime/patterns/glue/v1, und/ltz, 33B, 10B, e2d3b0dade209fb8
+datetime/patterns/glue/v1, und/ldz, -> fa-AF/ldz
+datetime/patterns/glue/v1, und/ltz, -> fa-AF/ltz
 datetime/patterns/glue/v1, und/mdt, -> und/ldt
 datetime/patterns/glue/v1, und/mdtz, -> und/ldtz
-datetime/patterns/glue/v1, und/mdz, -> und/ldz
-datetime/patterns/glue/v1, und/mtz, -> und/ltz
+datetime/patterns/glue/v1, und/mdz, -> fa-AF/ldz
+datetime/patterns/glue/v1, und/mtz, -> fa-AF/ltz
 datetime/patterns/glue/v1, und/sdt, -> und/ldt
 datetime/patterns/glue/v1, und/sdtz, -> und/ldtz
-datetime/patterns/glue/v1, und/sdz, -> und/ldz
-datetime/patterns/glue/v1, und/stz, -> und/ltz
+datetime/patterns/glue/v1, und/sdz, -> fa-AF/ldz
+datetime/patterns/glue/v1, und/stz, -> fa-AF/ltz
 datetime/patterns/glue/v1, ur/ldt, 42B, 19B, 2055516e8441fcff
 datetime/patterns/glue/v1, ur/ldtz, 48B, 25B, 618db9301aa56614
 datetime/patterns/glue/v1, ur/mdt, -> ar/mdt
@@ -27767,6 +27826,15 @@ datetime/patterns/glue/v1, yue/sdt, 33B, 10B, cc588c94483163e5
 datetime/patterns/glue/v1, yue/sdtz, 39B, 16B, 97bf8e082d980379
 datetime/patterns/glue/v1, zh-Hant/sdt, -> yue/sdt
 datetime/patterns/glue/v1, zh-Hant/sdtz, -> yue/sdtz
+datetime/patterns/glue/v1, zh/ldtz, 36B, 13B, 86f8c2130e37f4dc
+datetime/patterns/glue/v1, zh/ldz, 30B, 7B, b06c5e7f8e704dfb
+datetime/patterns/glue/v1, zh/ltz, 30B, 7B, e952db014f462242
+datetime/patterns/glue/v1, zh/mdtz, -> zh/ldtz
+datetime/patterns/glue/v1, zh/mdz, -> zh/ldz
+datetime/patterns/glue/v1, zh/mtz, -> zh/ltz
+datetime/patterns/glue/v1, zh/sdtz, -> zh/ldtz
+datetime/patterns/glue/v1, zh/sdz, -> zh/ldz
+datetime/patterns/glue/v1, zh/stz, -> zh/ltz
 datetime/patterns/time/v1, <lookup>, 1905B, 309 identifiers
 datetime/patterns/time/v1, <total>, 4574B, 3034B, 55 unique payloads
 datetime/patterns/time/v1, af-NA/j, 86B, 58B, d356c26a1a707da8

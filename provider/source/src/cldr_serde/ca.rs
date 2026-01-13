@@ -191,7 +191,34 @@ pub(crate) struct DateTimeFormats {
     #[serde(rename = "availableFormats")]
     pub(crate) available_formats: AvailableFormats,
     #[serde(rename = "appendItems")]
-    pub(crate) append_items: HashMap<String, String>,
+    pub(crate) append_items: AppendItems,
+}
+
+#[derive(PartialEq, Debug, Deserialize, Clone)]
+#[allow(dead_code)]
+pub struct AppendItems {
+    #[serde(rename = "Day")]
+    pub(crate) day: String,
+    #[serde(rename = "Day-Of-Week")]
+    pub(crate) day_of_week: String,
+    #[serde(rename = "Era")]
+    pub(crate) era: String,
+    #[serde(rename = "Hour")]
+    pub(crate) hour: String,
+    #[serde(rename = "Minute")]
+    pub(crate) minute: String,
+    #[serde(rename = "Month")]
+    pub(crate) month: String,
+    #[serde(rename = "Quarter")]
+    pub(crate) quarter: String,
+    #[serde(rename = "Second")]
+    pub(crate) second: String,
+    #[serde(rename = "Timezone")]
+    pub(crate) timezone: String,
+    #[serde(rename = "Week")]
+    pub(crate) week: String,
+    #[serde(rename = "Year")]
+    pub(crate) year: String,
 }
 
 /// dateTimeFormats-atTime, dateTimeFormats-relative
