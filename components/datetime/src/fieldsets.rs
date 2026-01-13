@@ -1149,6 +1149,9 @@ impl_calendar_period_marker!(
     option_alignment = yes,
 );
 
+#[cfg(doc)]
+use crate::preferences::HourCycle;
+
 impl_time_marker!(
     /// Hours can be switched between 12-hour and 24-hour time via [`HourCycle::Clock12`]
     /// or [`HourCycle::Clock24`] on [`DateTimeFormatterPreferences`] or via the `u-hc`
