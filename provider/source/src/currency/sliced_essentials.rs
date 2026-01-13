@@ -136,6 +136,27 @@ fn extract_needed_currencies(
     }
 }
 
+impl SourceDataProvider {
+    /// Extracts the region from a locale, using the likely subtags expander if not present.
+    fn extract_region(&self, locale: &DataLocale) -> Result<Region, DataError> {
+        match locale.region {
+            Some(region) => Ok(region),
+            None => {
+                let mut lang_id = LanguageIdentifier::from(locale.language);
+                let _ = self
+                    .cldr()?
+                    .extended_locale_expander()?
+                    .maximize(&mut lang_id);
+                lang_id.region.ok_or_else(|| {
+                    DataErrorKind::InvalidRequest
+                        .into_error()
+                        .with_debug_context(&lang_id)
+                })
+            }
+        }
+    }
+}
+
 // CurrencyEssentialsRegionalV1
 
 impl DataProvider<CurrencyEssentialsRegionalV1> for SourceDataProvider {
@@ -155,21 +176,7 @@ impl DataProvider<CurrencyEssentialsRegionalV1> for SourceDataProvider {
             .numbers()
             .read_and_parse(req.id.locale, "numbers.json")?;
 
-        // req.id.locale.region() is not always present, so we need to try to fill the lang_id with all the missing data to find the region.
-        // Try to fill the lang_id with all the missing data to find the region.
-        let mut lang_id = LanguageIdentifier::from(req.id.locale);
-        let _ = self
-            .cldr()?
-            .extended_locale_expander()?
-            .maximize(&mut lang_id);
-        let region = match lang_id.region {
-            Some(region) => region,
-            None => {
-                return Err(DataErrorKind::InvalidRequest
-                    .into_error()
-                    .with_debug_context(&lang_id))
-            }
-        };
+        let region = self.extract_region(req.id.locale)?;
 
         let needed_currencies = extract_needed_currencies(
             CurrencySlicingType::Regional,
@@ -215,21 +222,7 @@ impl DataProvider<CurrencyEssentialsCoreV1> for SourceDataProvider {
             .numbers()
             .read_and_parse(req.id.locale, "numbers.json")?;
 
-        // req.id.locale.region() is not always present, so we need to try to fill the lang_id with all the missing data to find the region.
-        // Try to fill the lang_id with all the missing data to find the region.
-        let mut lang_id = LanguageIdentifier::from(req.id.locale);
-        let _ = self
-            .cldr()?
-            .extended_locale_expander()?
-            .maximize(&mut lang_id);
-        let region = match lang_id.region {
-            Some(region) => region,
-            None => {
-                return Err(DataErrorKind::InvalidRequest
-                    .into_error()
-                    .with_debug_context(&lang_id))
-            }
-        };
+        let region = self.extract_region(req.id.locale)?;
 
         let needed_currencies = extract_needed_currencies(
             CurrencySlicingType::Core,
@@ -279,21 +272,7 @@ impl DataProvider<CurrencyEssentialsCompleteV1> for SourceDataProvider {
             .numbers()
             .read_and_parse(req.id.locale, "numbers.json")?;
 
-        // req.id.locale.region() is not always present, so we need to try to fill the lang_id with all the missing data to find the region.
-        // Try to fill the lang_id with all the missing data to find the region.
-        let mut lang_id = LanguageIdentifier::from(req.id.locale);
-        let _ = self
-            .cldr()?
-            .extended_locale_expander()?
-            .maximize(&mut lang_id);
-        let region = match lang_id.region {
-            Some(region) => region,
-            None => {
-                return Err(DataErrorKind::InvalidRequest
-                    .into_error()
-                    .with_debug_context(&lang_id))
-            }
-        };
+        let region = self.extract_region(req.id.locale)?;
 
         let needed_currencies = extract_needed_currencies(
             CurrencySlicingType::Complete,

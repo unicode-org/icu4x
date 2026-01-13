@@ -1,0 +1,42 @@
+{
+  "pattern_config_map": {
+    "JPY": {
+      "short_pattern_selection": "Standard",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
+        "Index": 0
+      },
+      "narrow_placeholder_value": {
+        "Index": 0
+      }
+    }
+  },
+  "standard_pattern": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Placeholder": "Place0"
+    }
+  ],
+  "standard_alpha_next_to_number_pattern": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Literal": " "
+    },
+    {
+      "Placeholder": "Place0"
+    }
+  ],
+  "placeholders": [
+    "￥"
+  ],
+  "default_pattern_config": {
+    "short_pattern_selection": "StandardAlphaNextToNumber",
+    "narrow_pattern_selection": "StandardAlphaNextToNumber",
+    "short_placeholder_value": null,
+    "narrow_placeholder_value": null
+  }
+}

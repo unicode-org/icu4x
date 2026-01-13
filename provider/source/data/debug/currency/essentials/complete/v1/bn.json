@@ -1,0 +1,956 @@
+{
+  "pattern_config_map": {
+    "AFN": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 0
+      }
+    },
+    "AMD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 1
+      }
+    },
+    "AOA": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 2
+      }
+    },
+    "ARS": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "AUD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
+        "Index": 4
+      },
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "AZN": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 5
+      }
+    },
+    "BAM": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 6
+      }
+    },
+    "BBD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "BMD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "BND": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "BOB": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 7
+      }
+    },
+    "BRL": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": {
+        "Index": 8
+      },
+      "narrow_placeholder_value": {
+        "Index": 8
+      }
+    },
+    "BSD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "BWP": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 9
+      }
+    },
+    "BYN": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 10
+      }
+    },
+    "BZD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "CAD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
+        "Index": 11
+      },
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "CLP": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "CNY": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
+        "Index": 12
+      },
+      "narrow_placeholder_value": {
+        "Index": 13
+      }
+    },
+    "COP": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "CRC": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 14
+      }
+    },
+    "CUC": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "CUP": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "CZK": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 15
+      }
+    },
+    "DKK": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 16
+      }
+    },
+    "DOP": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "EGP": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 17
+      }
+    },
+    "ESP": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 18
+      }
+    },
+    "FJD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "FKP": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 19
+      }
+    },
+    "GEL": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 20
+      }
+    },
+    "GHS": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 21
+      }
+    },
+    "GIP": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 19
+      }
+    },
+    "GNF": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 22
+      }
+    },
+    "GTQ": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 23
+      }
+    },
+    "GYD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "HKD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
+        "Index": 24
+      },
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "HNL": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 25
+      }
+    },
+    "HRK": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 26
+      }
+    },
+    "HUF": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 27
+      }
+    },
+    "IDR": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 28
+      }
+    },
+    "ILS": {
+      "short_pattern_selection": "Standard",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
+        "Index": 29
+      },
+      "narrow_placeholder_value": {
+        "Index": 29
+      }
+    },
+    "INR": {
+      "short_pattern_selection": "Standard",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
+        "Index": 30
+      },
+      "narrow_placeholder_value": {
+        "Index": 30
+      }
+    },
+    "ISK": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 16
+      }
+    },
+    "JMD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "JPY": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
+        "Index": 31
+      },
+      "narrow_placeholder_value": {
+        "Index": 13
+      }
+    },
+    "KGS": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 32
+      }
+    },
+    "KHR": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 33
+      }
+    },
+    "KMF": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 34
+      }
+    },
+    "KPW": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 35
+      }
+    },
+    "KRW": {
+      "short_pattern_selection": "Standard",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
+        "Index": 35
+      },
+      "narrow_placeholder_value": {
+        "Index": 35
+      }
+    },
+    "KYD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "KZT": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 36
+      }
+    },
+    "LAK": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 37
+      }
+    },
+    "LBP": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 38
+      }
+    },
+    "LKR": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 39
+      }
+    },
+    "LRD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "LTL": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 40
+      }
+    },
+    "LVL": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 41
+      }
+    },
+    "MGA": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 42
+      }
+    },
+    "MMK": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 43
+      }
+    },
+    "MNT": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 44
+      }
+    },
+    "MUR": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 39
+      }
+    },
+    "MXN": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
+        "Index": 45
+      },
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "MYR": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 46
+      }
+    },
+    "NAD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "NGN": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 47
+      }
+    },
+    "NIO": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 48
+      }
+    },
+    "NOK": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 16
+      }
+    },
+    "NPR": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 39
+      }
+    },
+    "NZD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
+        "Index": 49
+      },
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "PHP": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": "ISO",
+      "narrow_placeholder_value": {
+        "Index": 50
+      }
+    },
+    "PKR": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 39
+      }
+    },
+    "PLN": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 51
+      }
+    },
+    "PYG": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 52
+      }
+    },
+    "RON": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 53
+      }
+    },
+    "RUB": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 54
+      }
+    },
+    "RWF": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 55
+      }
+    },
+    "SBD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "SEK": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 16
+      }
+    },
+    "SGD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "SHP": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 19
+      }
+    },
+    "SRD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "SSP": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 19
+      }
+    },
+    "STN": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 56
+      }
+    },
+    "SYP": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 19
+      }
+    },
+    "THB": {
+      "short_pattern_selection": "Standard",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
+        "Index": 57
+      },
+      "narrow_placeholder_value": {
+        "Index": 57
+      }
+    },
+    "TOP": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 58
+      }
+    },
+    "TRY": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 59
+      }
+    },
+    "TTD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "TWD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": {
+        "Index": 60
+      },
+      "narrow_placeholder_value": {
+        "Index": 60
+      }
+    },
+    "UAH": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 61
+      }
+    },
+    "UYU": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "VEF": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 7
+      }
+    },
+    "VND": {
+      "short_pattern_selection": "Standard",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
+        "Index": 62
+      },
+      "narrow_placeholder_value": {
+        "Index": 62
+      }
+    },
+    "XAF": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": {
+        "Index": 63
+      },
+      "narrow_placeholder_value": null
+    },
+    "XCD": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
+        "Index": 64
+      },
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    },
+    "XCG": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": {
+        "Index": 65
+      },
+      "narrow_placeholder_value": null
+    },
+    "XOF": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": {
+        "Index": 66
+      },
+      "narrow_placeholder_value": null
+    },
+    "XPF": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": {
+        "Index": 67
+      },
+      "narrow_placeholder_value": null
+    },
+    "XXX": {
+      "short_pattern_selection": "Standard",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": {
+        "Index": 68
+      },
+      "narrow_placeholder_value": null
+    },
+    "ZAR": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 69
+      }
+    },
+    "ZMW": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": null,
+      "narrow_placeholder_value": {
+        "Index": 70
+      }
+    }
+  },
+  "standard_pattern": [
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Placeholder": "Place1"
+    }
+  ],
+  "standard_alpha_next_to_number_pattern": [
+    {
+      "Placeholder": "Place0"
+    },
+    {
+      "Literal": " "
+    },
+    {
+      "Placeholder": "Place1"
+    }
+  ],
+  "placeholders": [
+    "؋",
+    "֏",
+    "Kz",
+    "$",
+    "A$",
+    "₼",
+    "KM",
+    "Bs",
+    "R$",
+    "P",
+    "р.",
+    "CA$",
+    "CN¥",
+    "¥",
+    "₡",
+    "Kč",
+    "kr",
+    "E£",
+    "₧",
+    "£",
+    "₾",
+    "GH₵",
+    "FG",
+    "Q",
+    "HK$",
+    "L",
+    "kn",
+    "Ft",
+    "Rp",
+    "₪",
+    "₹",
+    "JP¥",
+    "⃀",
+    "៛",
+    "CF",
+    "₩",
+    "₸",
+    "₭",
+    "L£",
+    "Rs",
+    "Lt",
+    "Ls",
+    "Ar",
+    "K",
+    "₮",
+    "MX$",
+    "RM",
+    "₦",
+    "C$",
+    "NZ$",
+    "₱",
+    "zł",
+    "₲",
+    "lei",
+    "₽",
+    "RF",
+    "Db",
+    "฿",
+    "T$",
+    "₺",
+    "NT$",
+    "₴",
+    "₫",
+    "FCFA",
+    "EC$",
+    "Cg.",
+    "F CFA",
+    "CFPF",
+    "¤",
+    "R",
+    "ZK"
+  ],
+  "default_pattern_config": {
+    "short_pattern_selection": "StandardAlphaNextToNumber",
+    "narrow_pattern_selection": "StandardAlphaNextToNumber",
+    "short_placeholder_value": null,
+    "narrow_placeholder_value": null
+  }
+}
