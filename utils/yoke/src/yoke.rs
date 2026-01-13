@@ -130,7 +130,8 @@ impl<Y, C> Eq for Yoke<Y, C>
 where
     Y: for<'a> Yokeable<'a>,
     for<'a> <Y as Yokeable<'a>>::Output: Eq,
-{}
+{
+}
 
 impl<Y, C> PartialOrd for Yoke<Y, C>
 where
@@ -194,22 +195,21 @@ fn test_eq_trait() {
 
     assert!(y1 == y2);
 
-    let vec = vec![y1];
+    let vec = [y1];
     assert!(vec.contains(&y2));
 }
 
 #[test]
 fn test_partialord_ord() {
-        let a = Rc::new("a".to_string());
-        let b = Rc::new("b".to_string());
+    let a = Rc::new("a".to_string());
+    let b = Rc::new("b".to_string());
 
-        let y1 = Yoke::<alloc::borrow::Cow<'static, str>, Rc<String>>::attach_to_zero_copy_cart(a);
-        let y2 = Yoke::<alloc::borrow::Cow<'static, str>, Rc<String>>::attach_to_zero_copy_cart(b);
+    let y1 = Yoke::<alloc::borrow::Cow<'static, str>, Rc<String>>::attach_to_zero_copy_cart(a);
+    let y2 = Yoke::<alloc::borrow::Cow<'static, str>, Rc<String>>::attach_to_zero_copy_cart(b);
 
-        assert!(y1 < y2);
-        assert_eq!(y1.partial_cmp(&y2), Some(core::cmp::Ordering::Less));
+    assert!(y1 < y2);
+    assert_eq!(y1.partial_cmp(&y2), Some(core::cmp::Ordering::Less));
 }
-
 
 impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C>
 where
