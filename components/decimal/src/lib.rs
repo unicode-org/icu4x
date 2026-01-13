@@ -328,8 +328,16 @@ impl DecimalFormatter {
         FormattedSign {
             sign: match sign {
                 Sign::None => None,
-                Sign::Negative => Some(self.symbols.get().minus_sign_affixes()),
-                Sign::Positive => Some(self.symbols.get().plus_sign_affixes()),
+                Sign::Negative => Some((
+                    parts::MINUS_SIGN,
+                    self.symbols.get().strings.minus_sign_prefix(),
+                    self.symbols.get().strings.minus_sign_suffix(),
+                )),
+                Sign::Positive => Some((
+                    parts::PLUS_SIGN,
+                    self.symbols.get().strings.plus_sign_prefix(),
+                    self.symbols.get().strings.plus_sign_suffix(),
+                )),
             },
             value,
         }

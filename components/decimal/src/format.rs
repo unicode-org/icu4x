@@ -70,15 +70,17 @@ impl Writeable for FormattedUnsignedDecimal<'_> {
                     self.options.grouping_strategy.unwrap_or_default(),
                     self.symbols.grouping_sizes,
                 ) {
-                    let (part, separator) = self.symbols.grouping_separator();
-                    w.with_part(part, |w| w.write_str(separator))?;
+                    w.with_part(parts::GROUP, |w| {
+                        w.write_str(self.symbols.grouping_separator())
+                    })?;
                 }
             }
             Ok(())
         })?;
         if range.peek().is_some() {
-            let (part, separator) = self.symbols.decimal_separator();
-            w.with_part(part, |w| w.write_str(separator))?;
+            w.with_part(parts::DECIMAL, |w| {
+                w.write_str(self.symbols.decimal_separator())
+            })?;
             w.with_part(parts::FRACTION, |w| {
                 for m in range.by_ref() {
                     #[expect(clippy::indexing_slicing)] // digit_at in 0..=9

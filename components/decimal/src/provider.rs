@@ -105,7 +105,6 @@
 #![allow(clippy::exhaustive_enums)]
 
 use icu_provider::prelude::*;
-use writeable::Part;
 use zerovec::VarZeroCow;
 
 #[cfg(feature = "compiled_data")]
@@ -268,35 +267,11 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
-impl DecimalSymbols<'_> {
-    /// Return (part, prefix, suffix) for the minus sign
-    pub fn minus_sign_affixes(&self) -> (Part, &str, &str) {
-        (
-            crate::parts::MINUS_SIGN,
-            self.strings.minus_sign_prefix(),
-            self.strings.minus_sign_suffix(),
-        )
-    }
-    /// Return (part, prefix, suffix) for the plus sign
-    pub fn plus_sign_affixes(&self) -> (Part, &str, &str) {
-        (
-            crate::parts::PLUS_SIGN,
-            self.strings.plus_sign_prefix(),
-            self.strings.plus_sign_suffix(),
-        )
-    }
-    /// Return the decimal separator
-    pub fn decimal_separator(&self) -> (Part, &str) {
-        (crate::parts::DECIMAL, self.strings.decimal_separator())
-    }
-    /// Return the grouping separator
-    pub fn grouping_separator(&self) -> (Part, &str) {
-        (crate::parts::GROUP, self.strings.grouping_separator())
-    }
+impl<'a> core::ops::Deref for DecimalSymbols<'a> {
+    type Target = VarZeroCow<'a, DecimalSymbolsStrs>;
 
-    /// Return the numbering system
-    pub fn numsys(&self) -> &str {
-        self.strings.numsys()
+    fn deref(&self) -> &Self::Target {
+        &self.strings
     }
 }
 

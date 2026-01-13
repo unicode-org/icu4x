@@ -115,6 +115,6 @@ fn test_basic() {
             ..Default::default()
         })
         .unwrap();
-    assert_eq!(ar_decimal.payload.get().decimal_separator().1, "٫");
+    assert_eq!(ar_decimal.payload.get().decimal_separator(), "٫");
     assert_eq!(ar_decimal.payload.get().numsys(), "arab");
 }
