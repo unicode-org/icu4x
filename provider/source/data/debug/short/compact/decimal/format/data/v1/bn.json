@@ -1,51 +1,111 @@
 {
-  "patterns": {
-    "3": {
-      "Other": {
-        "exponent": 3,
-        "index": 0,
-        "literal_text": " হা"
+  "patterns": [
+    {
+      "sized": 3,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " হা"
+            }
+          ]
+        ]
       }
     },
-    "5": {
-      "Other": {
-        "exponent": 5,
-        "index": 0,
-        "literal_text": " লা"
+    {
+      "sized": 5,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " লা"
+            }
+          ]
+        ]
       }
     },
-    "7": {
-      "Other": {
-        "exponent": 7,
-        "index": 0,
-        "literal_text": " কো"
+    {
+      "sized": 7,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " কো"
+            }
+          ]
+        ]
       }
     },
-    "10": {
-      "One": {
-        "exponent": 10,
-        "index": 0,
-        "literal_text": " শত কো"
-      },
-      "Other": {
-        "exponent": 10,
-        "index": 0,
-        "literal_text": "শত কো"
+    {
+      "sized": 10,
+      "variable": {
+        "one": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " শত কো"
+            }
+          ]
+        ],
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": "শত কো"
+            }
+          ]
+        ]
       }
     },
-    "11": {
-      "Other": {
-        "exponent": 11,
-        "index": 0,
-        "literal_text": "কো"
+    {
+      "sized": 11,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": "কো"
+            }
+          ]
+        ]
       }
     },
-    "12": {
-      "Other": {
-        "exponent": 12,
-        "index": 0,
-        "literal_text": " লা.কো."
+    {
+      "sized": 12,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " লা.কো."
+            }
+          ]
+        ]
       }
     }
-  }
+  ]
 }

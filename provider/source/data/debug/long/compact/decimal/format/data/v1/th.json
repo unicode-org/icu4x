@@ -1,60 +1,132 @@
 {
-  "patterns": {
-    "3": {
-      "Other": {
-        "exponent": 3,
-        "index": 0,
-        "literal_text": " พัน"
+  "patterns": [
+    {
+      "sized": 3,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " พัน"
+            }
+          ]
+        ]
       }
     },
-    "4": {
-      "Other": {
-        "exponent": 4,
-        "index": 0,
-        "literal_text": " หมื่น"
+    {
+      "sized": 4,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " หมื่น"
+            }
+          ]
+        ]
       }
     },
-    "5": {
-      "Other": {
-        "exponent": 5,
-        "index": 0,
-        "literal_text": " แสน"
+    {
+      "sized": 5,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " แสน"
+            }
+          ]
+        ]
       }
     },
-    "6": {
-      "Other": {
-        "exponent": 6,
-        "index": 0,
-        "literal_text": " ล้าน"
+    {
+      "sized": 6,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " ล้าน"
+            }
+          ]
+        ]
       }
     },
-    "9": {
-      "Other": {
-        "exponent": 9,
-        "index": 0,
-        "literal_text": " พันล้าน"
+    {
+      "sized": 9,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " พันล้าน"
+            }
+          ]
+        ]
       }
     },
-    "10": {
-      "Other": {
-        "exponent": 10,
-        "index": 0,
-        "literal_text": " หมื่นล้าน"
+    {
+      "sized": 10,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " หมื่นล้าน"
+            }
+          ]
+        ]
       }
     },
-    "11": {
-      "Other": {
-        "exponent": 11,
-        "index": 0,
-        "literal_text": " แสนล้าน"
+    {
+      "sized": 11,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " แสนล้าน"
+            }
+          ]
+        ]
       }
     },
-    "12": {
-      "Other": {
-        "exponent": 12,
-        "index": 0,
-        "literal_text": " ล้านล้าน"
+    {
+      "sized": 12,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " ล้านล้าน"
+            }
+          ]
+        ]
       }
     }
-  }
+  ]
 }

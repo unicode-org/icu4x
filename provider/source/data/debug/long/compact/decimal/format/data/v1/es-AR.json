@@ -1,56 +1,122 @@
 {
-  "patterns": {
-    "3": {
-      "Other": {
-        "exponent": 3,
-        "index": 0,
-        "literal_text": " mil"
+  "patterns": [
+    {
+      "sized": 3,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " mil"
+            }
+          ]
+        ]
       }
     },
-    "6": {
-      "One": {
-        "exponent": 6,
-        "index": 0,
-        "literal_text": " millón"
-      },
-      "Other": {
-        "exponent": 6,
-        "index": 0,
-        "literal_text": " millones"
+    {
+      "sized": 6,
+      "variable": {
+        "one": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " millón"
+            }
+          ]
+        ],
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " millones"
+            }
+          ]
+        ]
       }
     },
-    "7": {
-      "Other": {
-        "exponent": 6,
-        "index": 0,
-        "literal_text": " millones"
+    {
+      "sized": 7,
+      "variable": {
+        "other": [
+          1,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " millones"
+            }
+          ]
+        ]
       }
     },
-    "9": {
-      "Other": {
-        "exponent": 9,
-        "index": 0,
-        "literal_text": " mil millones"
+    {
+      "sized": 9,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " mil millones"
+            }
+          ]
+        ]
       }
     },
-    "12": {
-      "One": {
-        "exponent": 12,
-        "index": 0,
-        "literal_text": " billón"
-      },
-      "Other": {
-        "exponent": 12,
-        "index": 0,
-        "literal_text": " billones"
+    {
+      "sized": 12,
+      "variable": {
+        "one": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " billón"
+            }
+          ]
+        ],
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " billones"
+            }
+          ]
+        ]
       }
     },
-    "13": {
-      "Other": {
-        "exponent": 12,
-        "index": 0,
-        "literal_text": " billones"
+    {
+      "sized": 13,
+      "variable": {
+        "other": [
+          1,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " billones"
+            }
+          ]
+        ]
       }
     }
-  }
+  ]
 }
