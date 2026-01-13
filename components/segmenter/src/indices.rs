@@ -43,6 +43,7 @@ impl Iterator for Latin1Indices<'_> {
 #[derive(Clone, Debug)]
 pub struct Utf16Indices<'a> {
     front_offset: usize,
+    back_offset: usize,
     iter: &'a [u16],
 }
 
@@ -50,6 +51,7 @@ impl<'a> Utf16Indices<'a> {
     pub fn new(input: &'a [u16]) -> Self {
         Self {
             front_offset: 0,
+            back_offset: input.len(),
             iter: input,
         }
     }
@@ -60,6 +62,9 @@ impl Iterator for Utf16Indices<'_> {
 
     #[inline]
     fn next(&mut self) -> Option<(usize, u32)> {
+        if self.front_offset >= self.back_offset {
+            return None;
+        }
         let (index, ch) = self.iter.get(self.front_offset).map(|ch| {
             self.front_offset += 1;
             (self.front_offset - 1, *ch)
@@ -82,6 +87,30 @@ impl Iterator for Utf16Indices<'_> {
     }
 }
 
+impl DoubleEndedIterator for Utf16Indices<'_> {
+    #[inline]
+    fn next_back(&mut self) -> Option<(usize, u32)> {
+        if self.front_offset >= self.back_offset {
+            return None;
+        }
+        self.back_offset -= 1;
+        let mut ch = self.iter[self.back_offset] as u32;
+
+        // Check if current char is a Low Surrogate
+        if (ch & 0xfc00) == 0xdc00 {
+            if self.back_offset > self.front_offset {
+                let prev = self.iter[self.back_offset - 1] as u32;
+                if (prev & 0xfc00) == 0xd800 {
+                    self.back_offset -= 1;
+                    ch = ((prev & 0x3ff) << 10) + (ch & 0x3ff) + 0x10000;
+                }
+            }
+        }
+
+        Some((self.back_offset, ch))
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::indices::*;
@@ -101,6 +130,25 @@ mod tests {
         assert_eq!(n.1, 0x32);
         let n = indices.next();
         assert_eq!(n, None);
+    }
+
+    #[test]
+    fn utf16_indices_double_ended() {
+        let utf16 = [0xd83d, 0xde03, 0x0020, 0xd83c, 0xdf00, 0xd800, 0x0020];
+        let mut indices = Utf16Indices::new(&utf16);
+
+        // Check for forward
+        assert_eq!(indices.next(), Some((0, 0x1f603)));
+        assert_eq!(indices.next(), Some((2, 0x0020)));
+
+        // Check for backward
+        assert_eq!(indices.next_back(), Some((6, 0x0020)));
+        assert_eq!(indices.next_back(), Some((5, 0xd800)));
+        assert_eq!(indices.next_back(), Some((3, 0x1f300)));
+
+        // Check for empty
+        assert_eq!(indices.next(), None);
+        assert_eq!(indices.next_back(), None);
     }
 
     #[test]
