@@ -4,9 +4,10 @@
 
 #![allow(non_snake_case)]
 
-use crate::extensions::unicode::Value;
+use crate::extensions::unicode::{value, Value};
 use crate::preferences::extensions::unicode::enum_keyword;
-use crate::subtags::Subtag;
+use crate::preferences::extensions::unicode::errors::PreferencesParseError;
+use crate::subtags::{subtag, Subtag};
 
 enum_keyword!(
     /// Hijri Calendar sub-type
@@ -23,9 +24,18 @@ enum_keyword!(
         Rgsa
 });
 
-fn value_is_ethioaa(v: &Value) -> bool {
-s.as_subtags_slice() == &[subtag!("ethiopic"), subtag!("amete"), subtag!("alem")]
+/// Handles aliases present in `v`. If found, returns a CalendarAlgorithm, else returns None
+fn handle_aliases(v: &Value) -> Option<CalendarAlgorithm> {
+    if *v == value!("islamicc") {
+        return Some(CalendarAlgorithm::Hijri(Some(
+            HijriCalendarAlgorithm::Civil,
+        )));
+    } else if v.as_subtags_slice() == [subtag!("ethiopic"), subtag!("amete"), subtag!("alem")] {
+        return Some(CalendarAlgorithm::Ethioaa);
+    }
+    None
 }
+
 enum_keyword!(
     /// A Unicode Calendar Identifier defines a type of calendar.
     ///
@@ -68,7 +78,7 @@ enum_keyword!(
         ("persian" => Persian),
         /// Republic of China calendar
         ("roc" => Roc)
-}, "ca", s, if *s == value!("islamicc") { return Ok(Self::Hijri(Some(HijriCalendarAlgorithm::Civil))); } else if value_is_ethioaa(s) { return Ok(Self::Ethioaa) });
+}, "ca", s, if let Some(s) = handle_aliases(s) { return Ok(s) });
 
 #[test]
 fn test_calendar_aliases() {
