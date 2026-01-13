@@ -265,31 +265,26 @@ impl DateDuration {
         Self::try_from_utf8(s.as_bytes())
     }
 
-    /// Parses an ISO 8601 date-only duration from UTF-8 encoded bytes.
-    ///
-    /// This function operates directly on byte slices in order to support
-    /// unvalidated UTF-8 inputs.
-    ///
-    /// Supported units are years (`Y`), months (`M`), weeks (`W`), and days (`D`).
-    /// Time based components are rejected.
+    /// See [`Self::try_from_str`].
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, DateDurationParseError> {
-        let mut index = 0;
-        let length = code_units.len();
+        let mut s = code_units;
 
         let mut is_negative = false;
-        if index < length && code_units[index] == b'-' {
-            is_negative = true;
-            index += 1;
-        } else if index < length && code_units[index] == b'+' {
-            return Err(DateDurationParseError::PlusNotAllowed);
+        match s {
+            [b'-', rest @ ..] => {
+                is_negative = true;
+                s = rest;
+            }
+            [b'+', ..] => return Err(DateDurationParseError::PlusNotAllowed),
+            _ => {}
         }
 
-        if index >= length || code_units[index] != b'P' {
-            return Err(DateDurationParseError::InvalidStructure);
+        match s {
+            [b'P', rest @ ..] => s = rest,
+            _ => return Err(DateDurationParseError::InvalidStructure),
         }
-        index += 1;
 
-        if index >= length {
+        if s.is_empty() {
             return Err(DateDurationParseError::InvalidStructure);
         }
 
@@ -303,66 +298,65 @@ impl DateDuration {
         let mut seen_weeks = false;
         let mut seen_days = false;
 
-        while index < length {
-            if code_units[index] == b'T' {
+        while !s.is_empty() {
+            if matches!(s, [b'T', ..]) {
                 return Err(DateDurationParseError::TimeNotSupported);
             }
+
             let mut value: u64 = 0;
             let mut has_digits = false;
 
-            while index < length && code_units[index].is_ascii_digit() {
-                has_digits = true;
+            while let [b @ b'0'..=b'9', rest @ ..] = s {
                 value = value
                     .checked_mul(10)
-                    .and_then(|v| v.checked_add((code_units[index] - b'0') as u64))
+                    .and_then(|v| v.checked_add((b - b'0') as u64))
                     .ok_or(DateDurationParseError::NumberOverflow)?;
-                index += 1;
+                s = rest;
+                has_digits = true;
             }
 
             if !has_digits {
                 return Err(DateDurationParseError::MissingValue);
             }
 
-            if index >= length {
-                return Err(DateDurationParseError::InvalidStructure);
-            }
-
-            match code_units[index] {
-                b'Y' => {
+            match s {
+                [b'Y', rest @ ..] => {
                     if seen_years {
                         return Err(DateDurationParseError::DuplicateUnit);
                     }
                     years =
                         u32::try_from(value).map_err(|_| DateDurationParseError::NumberOverflow)?;
                     seen_years = true;
+                    s = rest;
                 }
-                b'M' => {
+                [b'M', rest @ ..] => {
                     if seen_months {
                         return Err(DateDurationParseError::DuplicateUnit);
                     }
                     months =
                         u32::try_from(value).map_err(|_| DateDurationParseError::NumberOverflow)?;
                     seen_months = true;
+                    s = rest;
                 }
-                b'W' => {
+                [b'W', rest @ ..] => {
                     if seen_weeks {
                         return Err(DateDurationParseError::DuplicateUnit);
                     }
                     weeks =
                         u32::try_from(value).map_err(|_| DateDurationParseError::NumberOverflow)?;
                     seen_weeks = true;
+                    s = rest;
                 }
-                b'D' => {
+                [b'D', rest @ ..] => {
                     if seen_days {
                         return Err(DateDurationParseError::DuplicateUnit);
                     }
                     days = value;
                     seen_days = true;
+                    s = rest;
                 }
                 _ => return Err(DateDurationParseError::InvalidStructure),
             }
-
-            index += 1;
         }
 
         Ok(Self {
