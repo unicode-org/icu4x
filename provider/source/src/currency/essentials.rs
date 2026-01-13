@@ -92,7 +92,11 @@ impl DataProvider<CurrencyEssentialsV1> for SourceDataProvider {
             .numbers()
             .read_and_parse(req.id.locale, "numbers.json")?;
 
-        let result = extract_currency_essentials(self, currencies_resource, numbers_resource);
+        let result = extract_currency_essentials(
+            self,
+            &currencies_resource.main.value.numbers.currencies,
+            numbers_resource,
+        );
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -112,13 +116,28 @@ impl IterableDataProviderCached<CurrencyEssentialsV1> for SourceDataProvider {
     }
 }
 
-fn extract_currency_essentials<'data>(
+/// Extracts currency essential data from CLDR resources.
+///
+/// This function processes currency and number formatting data to build
+/// a `CurrencyEssentials` struct containing:
+/// - Pattern configurations for each currency (short/narrow pattern selections and placeholders)
+/// - Standard currency formatting patterns
+/// - Alpha-next-to-number patterns (used when currency symbol is alphabetic)
+/// - Placeholder values for currency symbols
+///
+/// # Arguments
+/// * `provider` - The source data provider for accessing Unicode property data
+/// * `currencies` - A map of currency codes to their patterns
+/// * `numbers_resource` - CLDR number formatting data containing currency patterns
+///
+/// # Returns
+/// A `CurrencyEssentials` struct with all processed currency formatting data,
+/// or a `DataError` if processing fails.
+pub(crate) fn extract_currency_essentials<'data>(
     provider: &SourceDataProvider,
-    currencies_resource: &cldr_serde::currencies::data::Resource,
+    currencies: &BTreeMap<String, CurrencyPatterns>,
     numbers_resource: &cldr_serde::numbers::Resource,
 ) -> Result<CurrencyEssentials<'data>, DataError> {
-    let currencies = &currencies_resource.main.value.numbers.currencies;
-
     // TODO(#3838): these patterns might be numbering system dependent.
     let currency_formats = &&numbers_resource
         .main
