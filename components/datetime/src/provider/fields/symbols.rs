@@ -594,10 +594,7 @@ field_type!(
 
 impl Hour {
     pub(crate) fn from_prefs(prefs: DateTimeFormatterPreferences) -> Option<Self> {
-        let Some(hour_cycle) = prefs.hour_cycle else {
-            return None;
-        };
-        let field = match hour_cycle {
+        let field = match prefs.hour_cycle? {
             HourCycle::H11 => Self::H11,
             HourCycle::H12 => Self::H12,
             HourCycle::H23 => Self::H23,
