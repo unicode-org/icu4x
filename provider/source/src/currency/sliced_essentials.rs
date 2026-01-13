@@ -3,38 +3,17 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
-use crate::decimal::decimal_pattern::DecimalPattern;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 
-use std::borrow::Cow;
-
-
-
-use icu_pattern::DoublePlaceholderPattern;
-use tinystr::TinyAsciiStr;
-
 use std::collections::BTreeMap;
-use std::collections::HashMap;
 use std::collections::HashSet;
-use std::str::FromStr;
-use tinystr::UnvalidatedTinyAsciiStr;
-use zerovec::VarZeroVec;
-use zerovec::ZeroMap;
-
-use icu_pattern::DoublePlaceholderKey;
-use icu_pattern::PatternItemCow;
-
-use icu::experimental::dimension::provider::currency::ule::MAX_PLACEHOLDER_INDEX;
-use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
-use icu::properties::CodePointMapData;
-use icu_provider::DataProvider;
 
 use icu::experimental::dimension::currency::CurrencyCode;
 use icu::experimental::dimension::provider::currency::essentials::*;
 use icu::locale::subtags::Region;
+use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
-
 
 use crate::currency::essentials::extract_currency_essentials;
 
@@ -47,9 +26,10 @@ pub(crate) const GLOBAL_CORE_CURRENCIES: &[CurrencyCode] = &[
 ];
 
 /// Describes the slicing strategy for which currencies to include in the data.
-/// - `Regional`: Include only those currencies relevant to a given region.
-/// - `Core`: Include a set of core currencies that are commonly used worldwide.
-/// - `Complete`: Include all the remaining currencies that are not included in the other strategies.
+/// The three strategies are mutually exclusive (no overlapping currencies):
+/// - `Regional`: Only currencies currently valid in the given region.
+/// - `Core`: Global core currencies (USD, EUR, GBP, CHF) that are NOT already in Regional.
+/// - `Complete`: All remaining currencies not included in Regional or Core.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum CurrencySlicingType {
     Regional,
@@ -89,12 +69,13 @@ fn extract_current_currencies_for_region(
             entry
                 .iter()
                 .filter(|(_, data)| is_current_legal_tender(data))
-                .map(|(code, _)| *code)
+                .map(|(code, _)| CurrencyCode(*code))
         })
         .collect()
 }
 
 /// Extracts the needed map of currencies patterns based on the slicing strategy.
+/// The three strategies are mutually exclusive (no overlapping currencies).
 ///
 /// # Arguments
 /// * `currency_slicing_type` - The slicing strategy to use
@@ -105,7 +86,7 @@ fn extract_current_currencies_for_region(
 /// # Returns
 /// A filtered map of currency patterns based on the slicing strategy:
 /// - `Regional`: Only currencies currently valid in the given region
-/// - `Core`: Global core currencies (USD, EUR, GBP, CHF) plus regional currencies
+/// - `Core`: Global core currencies (USD, EUR, GBP, CHF) that are NOT in Regional
 /// - `Complete`: All remaining currencies not included in Regional or Core
 fn extract_needed_currencies(
     currency_slicing_type: CurrencySlicingType,
@@ -113,21 +94,23 @@ fn extract_needed_currencies(
     currencies: &BTreeMap<String, cldr_serde::currencies::data::CurrencyPatterns>,
     supplemental_resource: &cldr_serde::currencies::supplemental::Resource,
 ) -> BTreeMap<String, cldr_serde::currencies::data::CurrencyPatterns> {
-    // Get the regional currencies (used by Regional and Core strategies)
+    // Get the regional currencies
     let regional_currencies = extract_current_currencies_for_region(region, supplemental_resource);
-
-    // Build the set of "core + regional" currencies for filtering in Complete
-    let core_and_regional: HashSet<String> = GLOBAL_CORE_CURRENCIES
+    let regional_set: HashSet<String> = regional_currencies
         .iter()
         .map(|c| c.0.to_string())
-        .chain(regional_currencies.iter().map(|c| c.0.to_string()))
+        .collect();
+
+    // Core currencies that are NOT in the regional set
+    let core_set: HashSet<String> = GLOBAL_CORE_CURRENCIES
+        .iter()
+        .map(|c| c.0.to_string())
+        .filter(|code| !regional_set.contains(code))
         .collect();
 
     match currency_slicing_type {
         CurrencySlicingType::Regional => {
             // Include only currencies currently valid in the given region
-            let regional_set: HashSet<String> =
-                regional_currencies.iter().map(|c| c.0.to_string()).collect();
             currencies
                 .iter()
                 .filter(|(code, _)| regional_set.contains(*code))
@@ -135,10 +118,10 @@ fn extract_needed_currencies(
                 .collect()
         }
         CurrencySlicingType::Core => {
-            // Include the global core currencies plus the regional currencies
+            // Include global core currencies that are NOT already in Regional
             currencies
                 .iter()
-                .filter(|(code, _)| core_and_regional.contains(*code))
+                .filter(|(code, _)| core_set.contains(*code))
                 .map(|(k, v)| (k.clone(), v.clone()))
                 .collect()
         }
@@ -146,16 +129,21 @@ fn extract_needed_currencies(
             // Include all remaining currencies NOT in Regional or Core
             currencies
                 .iter()
-                .filter(|(code, _)| !core_and_regional.contains(*code))
+                .filter(|(code, _)| !regional_set.contains(*code) && !core_set.contains(*code))
                 .map(|(k, v)| (k.clone(), v.clone()))
                 .collect()
         }
     }
 }
 
-impl DataProvider<CurrencyEssentialsV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencyEssentialsV1>, DataError> {
-        self.check_req::<CurrencyEssentialsV1>(req)?;
+// CurrencyEssentialsRegionalV1
+
+impl DataProvider<CurrencyEssentialsRegionalV1> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<CurrencyEssentialsRegionalV1>, DataError> {
+        self.check_req::<CurrencyEssentialsRegionalV1>(req)?;
 
         let currencies_resource: &cldr_serde::currencies::data::Resource =
             self.cldr()?
@@ -167,11 +155,32 @@ impl DataProvider<CurrencyEssentialsV1> for SourceDataProvider {
             .numbers()
             .read_and_parse(req.id.locale, "numbers.json")?;
 
-        let result = extract_currency_essentials(
-            self,
+        // req.id.locale.region() is not always present, so we need to try to fill the lang_id with all the missing data to find the region.
+        // Try to fill the lang_id with all the missing data to find the region.
+        let mut lang_id = LanguageIdentifier::from(req.id.locale);
+        let _ = self
+            .cldr()?
+            .extended_locale_expander()?
+            .maximize(&mut lang_id);
+        let region = match lang_id.region {
+            Some(region) => region,
+            None => {
+                return Err(DataErrorKind::InvalidRequest
+                    .into_error()
+                    .with_debug_context(&lang_id))
+            }
+        };
+
+        let needed_currencies = extract_needed_currencies(
+            CurrencySlicingType::Regional,
+            region,
             &currencies_resource.main.value.numbers.currencies,
-            numbers_resource,
+            self.cldr()?
+                .core()
+                .read_and_parse("supplemental/currencyData.json")?,
         );
+
+        let result = extract_currency_essentials(self, &needed_currencies, numbers_resource);
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -180,7 +189,131 @@ impl DataProvider<CurrencyEssentialsV1> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<CurrencyEssentialsV1> for SourceDataProvider {
+impl IterableDataProviderCached<CurrencyEssentialsRegionalV1> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        Ok(self
+            .cldr()?
+            .numbers()
+            .list_locales()?
+            .map(DataIdentifierCow::from_locale)
+            .collect())
+    }
+}
+
+// CurrencyEssentialsCoreV1
+impl DataProvider<CurrencyEssentialsCoreV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CurrencyEssentialsCoreV1>, DataError> {
+        self.check_req::<CurrencyEssentialsCoreV1>(req)?;
+
+        let currencies_resource: &cldr_serde::currencies::data::Resource =
+            self.cldr()?
+                .numbers()
+                .read_and_parse(req.id.locale, "currencies.json")?;
+
+        let numbers_resource: &cldr_serde::numbers::Resource = self
+            .cldr()?
+            .numbers()
+            .read_and_parse(req.id.locale, "numbers.json")?;
+
+        // req.id.locale.region() is not always present, so we need to try to fill the lang_id with all the missing data to find the region.
+        // Try to fill the lang_id with all the missing data to find the region.
+        let mut lang_id = LanguageIdentifier::from(req.id.locale);
+        let _ = self
+            .cldr()?
+            .extended_locale_expander()?
+            .maximize(&mut lang_id);
+        let region = match lang_id.region {
+            Some(region) => region,
+            None => {
+                return Err(DataErrorKind::InvalidRequest
+                    .into_error()
+                    .with_debug_context(&lang_id))
+            }
+        };
+
+        let needed_currencies = extract_needed_currencies(
+            CurrencySlicingType::Core,
+            region,
+            &currencies_resource.main.value.numbers.currencies,
+            self.cldr()?
+                .core()
+                .read_and_parse("supplemental/currencyData.json")?,
+        );
+
+        let result = extract_currency_essentials(self, &needed_currencies, numbers_resource);
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(result?),
+        })
+    }
+}
+
+impl IterableDataProviderCached<CurrencyEssentialsCoreV1> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        Ok(self
+            .cldr()?
+            .numbers()
+            .list_locales()?
+            .map(DataIdentifierCow::from_locale)
+            .collect())
+    }
+}
+
+// CurrencyEssentialsCompleteV1
+
+impl DataProvider<CurrencyEssentialsCompleteV1> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<CurrencyEssentialsCompleteV1>, DataError> {
+        self.check_req::<CurrencyEssentialsRegionalV1>(req)?;
+
+        let currencies_resource: &cldr_serde::currencies::data::Resource =
+            self.cldr()?
+                .numbers()
+                .read_and_parse(req.id.locale, "currencies.json")?;
+
+        let numbers_resource: &cldr_serde::numbers::Resource = self
+            .cldr()?
+            .numbers()
+            .read_and_parse(req.id.locale, "numbers.json")?;
+
+        // req.id.locale.region() is not always present, so we need to try to fill the lang_id with all the missing data to find the region.
+        // Try to fill the lang_id with all the missing data to find the region.
+        let mut lang_id = LanguageIdentifier::from(req.id.locale);
+        let _ = self
+            .cldr()?
+            .extended_locale_expander()?
+            .maximize(&mut lang_id);
+        let region = match lang_id.region {
+            Some(region) => region,
+            None => {
+                return Err(DataErrorKind::InvalidRequest
+                    .into_error()
+                    .with_debug_context(&lang_id))
+            }
+        };
+
+        let needed_currencies = extract_needed_currencies(
+            CurrencySlicingType::Complete,
+            region,
+            &currencies_resource.main.value.numbers.currencies,
+            self.cldr()?
+                .core()
+                .read_and_parse("supplemental/currencyData.json")?,
+        );
+
+        let result = extract_currency_essentials(self, &needed_currencies, numbers_resource);
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(result?),
+        })
+    }
+}
+
+impl IterableDataProviderCached<CurrencyEssentialsCompleteV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?

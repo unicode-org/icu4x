@@ -7,10 +7,14 @@
 //! Sample file:
 //! <https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/currencyData.json>
 
-use icu::experimental::dimension::currency::CurrencyCode;
 use icu::locale::subtags::Region;
 use serde::Deserialize;
 use std::collections::BTreeMap;
+use tinystr::TinyAsciiStr;
+
+/// A 3-letter currency code used as a key in CLDR data maps.
+/// This is a simple wrapper for deserialization purposes.
+pub(crate) type CurrencyCodeStr = TinyAsciiStr<3>;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct RoundingModes {
@@ -35,7 +39,7 @@ pub(crate) struct Fractions {
     pub(crate) default: RoundingModes,
 
     #[serde(flatten)]
-    pub(crate) currencies: BTreeMap<CurrencyCode, RoundingModes>,
+    pub(crate) currencies: BTreeMap<CurrencyCodeStr, RoundingModes>,
 }
 
 /// Metadata for a currency in a region, including validity dates and tender status.
@@ -65,7 +69,7 @@ pub(crate) struct RegionCurrencyData {
 
 /// A single currency entry in the region array.
 /// The JSON structure is: { "USD": { "_from": "...", "_to": "..." } }
-pub(crate) type RegionCurrencyEntry = BTreeMap<CurrencyCode, RegionCurrencyData>;
+pub(crate) type RegionCurrencyEntry = BTreeMap<CurrencyCodeStr, RegionCurrencyData>;
 
 /// Map from region code to list of currencies used in that region.
 /// Each region can have multiple currencies (current and historical).

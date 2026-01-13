@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
+use crate::cldr_serde::currencies::data::CurrencyPatterns;
 use crate::decimal::decimal_pattern::DecimalPattern;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
