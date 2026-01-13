@@ -1,32 +1,68 @@
 {
-  "patterns": {
-    "3": {
-      "Other": {
-        "exponent": 3,
-        "index": 0,
-        "literal_text": " тыс."
+  "patterns": [
+    {
+      "sized": 3,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " тыс."
+            }
+          ]
+        ]
       }
     },
-    "6": {
-      "Other": {
-        "exponent": 6,
-        "index": 0,
-        "literal_text": " млн"
+    {
+      "sized": 6,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " млн"
+            }
+          ]
+        ]
       }
     },
-    "9": {
-      "Other": {
-        "exponent": 9,
-        "index": 0,
-        "literal_text": " млрд"
+    {
+      "sized": 9,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " млрд"
+            }
+          ]
+        ]
       }
     },
-    "12": {
-      "Other": {
-        "exponent": 12,
-        "index": 0,
-        "literal_text": " трлн"
+    {
+      "sized": 12,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " трлн"
+            }
+          ]
+        ]
       }
     }
-  }
+  ]
 }

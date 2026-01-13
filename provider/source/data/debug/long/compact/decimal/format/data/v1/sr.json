@@ -1,57 +1,123 @@
 {
-  "patterns": {
-    "3": {
-      "Few": {
-        "exponent": 3,
-        "index": 0,
-        "literal_text": " хиљаде"
-      },
-      "Other": {
-        "exponent": 3,
-        "index": 0,
-        "literal_text": " хиљада"
+  "patterns": [
+    {
+      "sized": 3,
+      "variable": {
+        "few": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " хиљаде"
+            }
+          ]
+        ],
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " хиљада"
+            }
+          ]
+        ]
       }
     },
-    "6": {
-      "One": {
-        "exponent": 6,
-        "index": 0,
-        "literal_text": " милион"
-      },
-      "Other": {
-        "exponent": 6,
-        "index": 0,
-        "literal_text": " милиона"
+    {
+      "sized": 6,
+      "variable": {
+        "one": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " милион"
+            }
+          ]
+        ],
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " милиона"
+            }
+          ]
+        ]
       }
     },
-    "9": {
-      "One": {
-        "exponent": 9,
-        "index": 0,
-        "literal_text": " милијарда"
-      },
-      "Few": {
-        "exponent": 9,
-        "index": 0,
-        "literal_text": " милијарде"
-      },
-      "Other": {
-        "exponent": 9,
-        "index": 0,
-        "literal_text": " милијарди"
+    {
+      "sized": 9,
+      "variable": {
+        "one": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " милијарда"
+            }
+          ]
+        ],
+        "few": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " милијарде"
+            }
+          ]
+        ],
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " милијарди"
+            }
+          ]
+        ]
       }
     },
-    "12": {
-      "One": {
-        "exponent": 12,
-        "index": 0,
-        "literal_text": " билион"
-      },
-      "Other": {
-        "exponent": 12,
-        "index": 0,
-        "literal_text": " билиона"
+    {
+      "sized": 12,
+      "variable": {
+        "one": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " билион"
+            }
+          ]
+        ],
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " билиона"
+            }
+          ]
+        ]
       }
     }
-  }
+  ]
 }
