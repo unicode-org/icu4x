@@ -1207,10 +1207,18 @@ where
         if self.inverted {
             // code point inversion; removes all strings
             #[cfg(feature = "log")]
-            if !self.string_set.is_empty() {
-                log::info!(
-                    "Inverting a unicode set with strings. This removes all strings entirely."
-                );
+            {
+                let single_set = self.single_set.clone().build();
+                if !self
+                    .string_set
+                    .iter()
+                    // if the string starts with a cp in the cp-set, then it'll be rejected through that
+                    .all(|s| s.chars().next().is_some_and(|c| single_set.contains(c)))
+                {
+                    log::info!(
+                        "Inverting a unicode set with strings. This removes all strings entirely."
+                    );
+                }
             }
             self.string_set.clear();
             self.single_set.complement();

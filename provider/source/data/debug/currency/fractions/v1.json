@@ -271,10 +271,10 @@
       "cash_rounding": null
     },
     "RSD": {
-      "digits": 0,
+      "digits": 2,
       "rounding": 0,
-      "cash_digits": null,
-      "cash_rounding": null
+      "cash_digits": 0,
+      "cash_rounding": 0
     },
     "RWF": {
       "digits": 0,

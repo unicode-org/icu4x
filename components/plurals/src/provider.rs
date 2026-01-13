@@ -637,7 +637,7 @@ pub struct FourBitMetadata(u8);
 impl FourBitMetadata {
     /// Creates a [`FourBitMetadata`] if the given value fits in 4 bits.
     pub fn try_from_byte(byte: u8) -> Option<Self> {
-        if byte < 0x80 {
+        if byte <= 0x0F {
             Some(Self(byte))
         } else {
             None
@@ -645,12 +645,12 @@ impl FourBitMetadata {
     }
 
     /// Creates a [`FourBitMetadata`] with a zero value.
-    pub fn zero() -> Self {
+    pub const fn zero() -> Self {
         Self(0)
     }
 
     /// Gets the value out of a [`FourBitMetadata`].
-    pub fn get(self) -> u8 {
+    pub const fn get(self) -> u8 {
         self.0
     }
 }

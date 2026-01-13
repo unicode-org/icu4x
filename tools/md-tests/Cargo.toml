@@ -25,7 +25,7 @@ zerovec = { workspace = true }
 
 displaydoc = { workspace = true }
 itertools = { workspace = true }
-lru = "0.13.0"
+lru = "0.16.3"
 serde = { workspace = true, features = ["derive", "alloc", "std"] }
 serde-aux = { workspace = true }
 time = { version = "0.3", features = ["local-offset"] }

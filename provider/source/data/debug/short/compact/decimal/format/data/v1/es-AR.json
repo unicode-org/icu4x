@@ -1,39 +1,84 @@
 {
-  "patterns": {
-    "3": {
-      "Other": {
-        "exponent": 3,
-        "index": 0,
-        "literal_text": " K"
+  "patterns": [
+    {
+      "sized": 3,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " K"
+            }
+          ]
+        ]
       }
     },
-    "4": {
-      "Other": {
-        "exponent": 3,
-        "index": 0,
-        "literal_text": " k"
+    {
+      "sized": 4,
+      "variable": {
+        "other": [
+          1,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " k"
+            }
+          ]
+        ]
       }
     },
-    "6": {
-      "Other": {
-        "exponent": 6,
-        "index": 0,
-        "literal_text": " M"
+    {
+      "sized": 6,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " M"
+            }
+          ]
+        ]
       }
     },
-    "10": {
-      "Other": {
-        "exponent": 9,
-        "index": 0,
-        "literal_text": " mil M"
+    {
+      "sized": 10,
+      "variable": {
+        "other": [
+          1,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " mil M"
+            }
+          ]
+        ]
       }
     },
-    "12": {
-      "Other": {
-        "exponent": 12,
-        "index": 0,
-        "literal_text": " B"
+    {
+      "sized": 12,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " B"
+            }
+          ]
+        ]
       }
     }
-  }
+  ]
 }
