@@ -24,23 +24,7 @@ enum_keyword!(
 });
 
 fn value_is_ethioaa(v: &Value) -> bool {
-    const ETHIOPIC: Subtag = match Subtag::try_from_str("ethiopic") {
-        Ok(s) => s,
-        _ => panic!("valid subtag"),
-    };
-    const AMETE: Subtag = match Subtag::try_from_str("amete") {
-        Ok(s) => s,
-        _ => panic!("valid subtag"),
-    };
-    const ALEM: Subtag = match Subtag::try_from_str("alem") {
-        Ok(s) => s,
-        _ => panic!("valid subtag"),
-    };
-
-    v.subtag_count() == 3
-        && v.get_subtag(0) == Some(&ETHIOPIC)
-        && v.get_subtag(1) == Some(&AMETE)
-        && v.get_subtag(2) == Some(&ALEM)
+s.as_subtags_slice() == &[subtag!("ethiopic"), subtag!("amete"), subtag!("alem")]
 }
 enum_keyword!(
     /// A Unicode Calendar Identifier defines a type of calendar.
