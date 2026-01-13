@@ -157,7 +157,7 @@ pub enum DateDurationUnit {
     Days,
 }
 
-/// Errors that can occur when parsing an ISO 8601 date only duration string.
+/// Errors that can occur when parsing an ISO 8601 date-only duration string.
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 #[non_exhaustive]
 pub enum DateDurationParseError {
@@ -227,7 +227,7 @@ pub enum DateDurationParseError {
     /// ```rust
     /// use icu::calendar::types::{DateDuration, DateDurationParseError};
     ///
-    /// assert_eq!(DateDuration::try_from_str("P9999999999999555555588888888"), Err(DateDurationParseError::NumberOverflow));
+    /// assert_eq!(DateDuration::try_from_str("P4294967296Y"), Err(DateDurationParseError::NumberOverflow));
     /// ```
     NumberOverflow,
 
@@ -240,9 +240,9 @@ pub enum DateDurationParseError {
     /// ```rust
     /// use icu::calendar::types::{DateDuration, DateDurationParseError};
     ///
-    /// assert_eq!(DateDuration::try_from_str("+P1D"), Err(DateDurationParseError::PositiveNotAllowed));
+    /// assert_eq!(DateDuration::try_from_str("+P1D"), Err(DateDurationParseError::PlusNotAllowed));
     /// ```
-    PositiveNotAllowed,
+    PlusNotAllowed,
 }
 
 impl DateDuration {
@@ -257,101 +257,113 @@ impl DateDuration {
 }
 
 impl DateDuration {
-    /// Parses an ISO 8601 date only duration string into a [`DateDuration`].
-    /// This function supports year, month, week and day components and rejects time based durations and returns an error for invalid structures or duplicate units.
+    /// Parses an ISO 8601 date-only duration string into a [`DateDuration`].
+    ///
+    /// This is a wrapper around [`Self::try_from_utf8`] for UTF-8
+    /// string inputs.
     pub fn try_from_str(s: &str) -> Result<Self, DateDurationParseError> {
-        let mut s = s;
-        let mut is_negative = false;
+        Self::try_from_utf8(s.as_bytes())
+    }
 
-        if let Some(rest) = s.strip_prefix('-') {
+    /// Parses an ISO 8601 date-only duration from UTF-8 encoded bytes.
+    ///
+    /// This function operates directly on byte slices in order to support
+    /// unvalidated UTF-8 inputs.
+    ///
+    /// Supported units are years (`Y`), months (`M`), weeks (`W`), and days (`D`).
+    /// Time based components are rejected.
+    pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, DateDurationParseError> {
+        let mut index = 0;
+        let length = code_units.len();
+
+        let mut is_negative = false;
+        if index < length && code_units[index] == b'-' {
             is_negative = true;
-            s = rest;
-        } else if s.starts_with('+') {
-            return Err(DateDurationParseError::PositiveNotAllowed);
+            index += 1;
+        } else if index < length && code_units[index] == b'+' {
+            return Err(DateDurationParseError::PlusNotAllowed);
         }
 
-        if !s.starts_with('P') || s.len() == 1 {
+        if index >= length || code_units[index] != b'P' {
+            return Err(DateDurationParseError::InvalidStructure);
+        }
+        index += 1;
+
+        if index >= length {
             return Err(DateDurationParseError::InvalidStructure);
         }
 
-        if s.contains('T') {
-            return Err(DateDurationParseError::TimeNotSupported);
-        }
-
-        let mut years: i64 = 0;
-        let mut months: i64 = 0;
-        let mut weeks: i64 = 0;
-        let mut days: i64 = 0;
+        let mut years: u32 = 0;
+        let mut months: u32 = 0;
+        let mut weeks: u32 = 0;
+        let mut days: u64 = 0;
 
         let mut seen_years = false;
         let mut seen_months = false;
         let mut seen_weeks = false;
         let mut seen_days = false;
 
-        let mut chars = s.chars();
-        chars.next();
-
-        while let Some(mut ch) = chars.next() {
-            let mut value: i64 = 0;
+        while index < length {
+            if code_units[index] == b'T' {
+                return Err(DateDurationParseError::TimeNotSupported);
+            }
+            let mut value: u64 = 0;
             let mut has_digits = false;
 
-            while ch.is_ascii_digit() {
+            while index < length && code_units[index].is_ascii_digit() {
                 has_digits = true;
-
-                let digit = ch as i64 - '0' as i64;
-
                 value = value
                     .checked_mul(10)
-                    .and_then(|v| v.checked_add(digit))
+                    .and_then(|v| v.checked_add((code_units[index] - b'0') as u64))
                     .ok_or(DateDurationParseError::NumberOverflow)?;
-
-                match chars.next() {
-                    Some(next) => ch = next,
-                    None => break,
-                }
+                index += 1;
             }
 
             if !has_digits {
                 return Err(DateDurationParseError::MissingValue);
             }
 
-            match ch {
-                'Y' => {
+            if index >= length {
+                return Err(DateDurationParseError::InvalidStructure);
+            }
+
+            match code_units[index] {
+                b'Y' => {
                     if seen_years {
                         return Err(DateDurationParseError::DuplicateUnit);
                     }
+                    years =
+                        u32::try_from(value).map_err(|_| DateDurationParseError::NumberOverflow)?;
                     seen_years = true;
-                    years = value;
                 }
-                'M' => {
+                b'M' => {
                     if seen_months {
                         return Err(DateDurationParseError::DuplicateUnit);
                     }
+                    months =
+                        u32::try_from(value).map_err(|_| DateDurationParseError::NumberOverflow)?;
                     seen_months = true;
-                    months = value;
                 }
-                'W' => {
+                b'W' => {
                     if seen_weeks {
                         return Err(DateDurationParseError::DuplicateUnit);
                     }
+                    weeks =
+                        u32::try_from(value).map_err(|_| DateDurationParseError::NumberOverflow)?;
                     seen_weeks = true;
-                    weeks = value;
                 }
-                'D' => {
+                b'D' => {
                     if seen_days {
                         return Err(DateDurationParseError::DuplicateUnit);
                     }
-                    seen_days = true;
                     days = value;
+                    seen_days = true;
                 }
                 _ => return Err(DateDurationParseError::InvalidStructure),
             }
-        }
 
-        let years = u32::try_from(years).map_err(|_| DateDurationParseError::NumberOverflow)?;
-        let months = u32::try_from(months).map_err(|_| DateDurationParseError::NumberOverflow)?;
-        let weeks = u32::try_from(weeks).map_err(|_| DateDurationParseError::NumberOverflow)?;
-        let days = u64::try_from(days).map_err(|_| DateDurationParseError::NumberOverflow)?;
+            index += 1;
+        }
 
         Ok(Self {
             is_negative,
