@@ -603,6 +603,7 @@ impl Hour {
                     .locale_preferences
                     .to_data_locale_region_priority()
                     .region;
+                // TODO(#7415): Test that this stays consistent with CLDR
                 const JP: Region = region!("JP");
                 match region {
                     Some(JP) => Self::H11,
