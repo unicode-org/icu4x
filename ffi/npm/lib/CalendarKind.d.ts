@@ -84,6 +84,10 @@ export class CalendarKind {
      */
     static HijriUmmAlQura : CalendarKind;
     /**
+     * The kind of a Julian calendar,
+     */
+    static Julian : CalendarKind;
+    /**
      * The kind of a Persian calendar
      */
     static Persian : CalendarKind;
