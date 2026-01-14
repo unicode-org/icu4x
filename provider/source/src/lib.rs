@@ -359,13 +359,13 @@ impl SourceDataProvider {
     ) -> Result<icu::locale::LanguageIdentifier, DataError> {
         let mut group = LanguageIdentifier::from((locale.language, locale.script, locale.region));
         // 1. Maximizes the input locale to get full language/script/region
-        //    (e.g. "en-US" -> "en-Latn-US")
+        //    (e.g. "es-US" -> "es-Latn-US")
         self.cldr()?
             .extended_locale_expander()?
             .maximize(&mut group);
 
         // 2. Strips language and region, keeping only script
-        //    (e.g. "en-Latn-US" -> "und-Latn")
+        //    (e.g. "es-Latn-US" -> "und-Latn")
         group.language = Language::UNKNOWN;
         group.region = Default::default();
         // 3. Maximizes again to find the most likely language for that script
