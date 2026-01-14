@@ -56,6 +56,7 @@ export class ScriptExtensionsSet {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -73,6 +74,7 @@ export class ScriptExtensionsSet {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -95,6 +97,7 @@ export class ScriptExtensionsSet {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }

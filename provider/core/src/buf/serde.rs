@@ -24,6 +24,8 @@ use yoke::Yokeable;
 pub struct DeserializingBufferProvider<'a, P: ?Sized>(&'a P);
 
 /// Blanket-implemented trait adding the [`Self::as_deserializing()`] function.
+///
+/// ✨ *Enabled with the `serde` Cargo feature.*
 pub trait AsDeserializingBufferProvider {
     /// Wrap this [`BufferProvider`] in a [`DeserializingBufferProvider`].
     ///
@@ -33,6 +35,8 @@ pub trait AsDeserializingBufferProvider {
     /// - `deserialize_json`
     /// - `deserialize_postcard_1`
     /// - `deserialize_bincode_1`
+    ///
+    /// ✨ *Enabled with the `serde` Cargo feature.*
     fn as_deserializing(&self) -> DeserializingBufferProvider<'_, Self>;
 }
 
@@ -48,6 +52,8 @@ where
     /// - `deserialize_json`
     /// - `deserialize_postcard_1`
     /// - `deserialize_bincode_1`
+    ///
+    /// ✨ *Enabled with the `serde` Cargo feature.*
     fn as_deserializing(&self) -> DeserializingBufferProvider<'_, Self> {
         DeserializingBufferProvider(self)
     }
@@ -108,6 +114,8 @@ impl DataPayload<BufferMarker> {
     /// This function takes the buffer format as an argument. When a buffer payload is returned
     /// from a data provider, the buffer format is stored in the [`DataResponseMetadata`].
     ///
+    /// ✨ *Enabled with the `serde` Cargo feature.*
+    ///
     /// # Examples
     ///
     /// Requires the `deserialize_json` Cargo feature:
@@ -152,6 +160,8 @@ where
     /// - `deserialize_json`
     /// - `deserialize_postcard_1`
     /// - `deserialize_bincode_1`
+    ///
+    /// ✨ *Enabled with the `serde` Cargo feature.*
     fn load_data(
         &self,
         marker: DataMarkerInfo,
@@ -202,6 +212,8 @@ where
     /// - `deserialize_json`
     /// - `deserialize_postcard_1`
     /// - `deserialize_bincode_1`
+    ///
+    /// ✨ *Enabled with the `serde` Cargo feature.*
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         self.load_data(M::INFO, req)
     }

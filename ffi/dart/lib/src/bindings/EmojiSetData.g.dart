@@ -70,6 +70,23 @@ final class EmojiSetData implements ffi.Finalizable {
     return EmojiSetData._fromFfi(result.union.ok, []);
   }
 
+  /// Get the `Basic_Emoji` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EmojiSet.html#tymethod.for_char) for more information.
+  static bool basicEmojiForChar(Rune ch) {
+    final result = _icu4x_EmojiSetData_basic_emoji_for_char_mv1(ch);
+    return result;
+  }
+
+  /// Get the `Basic_Emoji` value for a given character, using compiled data
+  ///
+  /// See the [Rust documentation for `for_str`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EmojiSet.html#tymethod.for_str) for more information.
+  static bool basicEmojiForStr(String s) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_EmojiSetData_basic_emoji_for_str_mv1(s._utf8AllocIn(temp.arena));
+    return result;
+  }
+
 }
 
 @_DiplomatFfiUse('icu4x_EmojiSetData_destroy_mv1')
@@ -96,5 +113,15 @@ external ffi.Pointer<ffi.Opaque> _icu4x_EmojiSetData_create_basic_mv1();
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_EmojiSetData_create_basic_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_EmojiSetData_create_basic_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_EmojiSetData_basic_emoji_for_char_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_EmojiSetData_basic_emoji_for_char_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_EmojiSetData_basic_emoji_for_char_mv1(Rune ch);
+
+@_DiplomatFfiUse('icu4x_EmojiSetData_basic_emoji_for_str_mv1')
+@ffi.Native<ffi.Bool Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_EmojiSetData_basic_emoji_for_str_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_EmojiSetData_basic_emoji_for_str_mv1(_SliceUtf8 s);
 
 // dart format on

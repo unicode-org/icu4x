@@ -38,11 +38,29 @@ namespace icu4x {
 class JoiningType {
 public:
     enum Value {
+        /**
+         * See the [Rust documentation for `NonJoining`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.NonJoining) for more information.
+         */
         NonJoining = 0,
+        /**
+         * See the [Rust documentation for `JoinCausing`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.JoinCausing) for more information.
+         */
         JoinCausing = 1,
+        /**
+         * See the [Rust documentation for `DualJoining`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.DualJoining) for more information.
+         */
         DualJoining = 2,
+        /**
+         * See the [Rust documentation for `LeftJoining`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.LeftJoining) for more information.
+         */
         LeftJoining = 3,
+        /**
+         * See the [Rust documentation for `RightJoining`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.RightJoining) for more information.
+         */
         RightJoining = 4,
+        /**
+         * See the [Rust documentation for `Transparent`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#associatedconstant.Transparent) for more information.
+         */
         Transparent = 5,
     };
 
@@ -86,6 +104,8 @@ public:
    * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html#method.from_icu4c_value) for more information.
    */
   inline static std::optional<icu4x::JoiningType> from_integer_value(uint8_t other);
+
+  inline static std::optional<icu4x::JoiningType> try_from_str(std::string_view s);
 
     inline icu4x::capi::JoiningType AsFFI() const;
     inline static icu4x::JoiningType FromFFI(icu4x::capi::JoiningType c_enum);

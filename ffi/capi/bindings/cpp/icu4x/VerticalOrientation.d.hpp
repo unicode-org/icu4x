@@ -36,9 +36,21 @@ namespace icu4x {
 class VerticalOrientation {
 public:
     enum Value {
+        /**
+         * See the [Rust documentation for `Rotated`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.Rotated) for more information.
+         */
         Rotated = 0,
+        /**
+         * See the [Rust documentation for `TransformedRotated`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.TransformedRotated) for more information.
+         */
         TransformedRotated = 1,
+        /**
+         * See the [Rust documentation for `TransformedUpright`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.TransformedUpright) for more information.
+         */
         TransformedUpright = 2,
+        /**
+         * See the [Rust documentation for `Upright`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.Upright) for more information.
+         */
         Upright = 3,
     };
 
@@ -82,6 +94,8 @@ public:
    * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html#method.from_icu4c_value) for more information.
    */
   inline static std::optional<icu4x::VerticalOrientation> from_integer_value(uint8_t other);
+
+  inline static std::optional<icu4x::VerticalOrientation> try_from_str(std::string_view s);
 
     inline icu4x::capi::VerticalOrientation AsFFI() const;
     inline static icu4x::VerticalOrientation FromFFI(icu4x::capi::VerticalOrientation c_enum);

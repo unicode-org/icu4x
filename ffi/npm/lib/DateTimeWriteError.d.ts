@@ -21,6 +21,9 @@ export class DateTimeWriteError {
     get ffiValue(): number;
 
     static Unknown : DateTimeWriteError;
+    /**
+     * Unused
+     */
     static MissingTimeZoneVariant : DateTimeWriteError;
 
 

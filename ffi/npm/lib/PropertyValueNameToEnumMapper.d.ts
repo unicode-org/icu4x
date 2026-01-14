@@ -40,144 +40,32 @@ export class PropertyValueNameToEnumMapper {
     getLoose(name: string): number;
 
     /**
-     * Create a name-to-enum mapper for the `General_Category` property, using compiled data.
-     *
-     * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
-     */
-    static createGeneralCategory(): PropertyValueNameToEnumMapper;
-
-    /**
-     * Create a name-to-enum mapper for the `General_Category` property, using a particular data source.
-     *
-     * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
-     */
-    static createGeneralCategoryWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
-
-    /**
-     * Create a name-to-enum mapper for the `Hangul_Syllable_Type` property, using compiled data.
-     *
-     * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
-     */
-    static createHangulSyllableType(): PropertyValueNameToEnumMapper;
-
-    /**
-     * Create a name-to-enum mapper for the `Hangul_Syllable_Type` property, using a particular data source.
-     *
-     * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
-     */
-    static createHangulSyllableTypeWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
-
-    /**
-     * Create a name-to-enum mapper for the `East_Asian_Width` property, using compiled data.
-     *
-     * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
-     */
-    static createEastAsianWidth(): PropertyValueNameToEnumMapper;
-
-    /**
-     * Create a name-to-enum mapper for the `East_Asian_Width` property, using a particular data source.
-     *
-     * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
-     */
-    static createEastAsianWidthWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
-
-    /**
-     * Create a name-to-enum mapper for the `Bidi_Class` property, using compiled data.
+     * Create a name-to-enum mapper for the `BidiClass` property, using compiled data.
      *
      * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html) for more information.
      */
     static createBidiClass(): PropertyValueNameToEnumMapper;
 
     /**
-     * Create a name-to-enum mapper for the `Bidi_Class` property, using a particular data source.
+     * Create a name-to-enum mapper for the `BidiClass` property, using a particular data source.
      *
      * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html) for more information.
      */
     static createBidiClassWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
 
     /**
-     * Create a name-to-enum mapper for the `Numeric_Type` property, using compiled data.
+     * Create a name-to-enum mapper for the `NumericType` property, using compiled data.
      *
      * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
      */
     static createNumericType(): PropertyValueNameToEnumMapper;
 
     /**
-     * Create a name-to-enum mapper for the `Numeric_Type` property, using a particular data source.
+     * Create a name-to-enum mapper for the `NumericType` property, using a particular data source.
      *
      * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
      */
     static createNumericTypeWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
-
-    /**
-     * Create a name-to-enum mapper for the `Indic_Syllabic_Category` property, using compiled data.
-     *
-     * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
-     */
-    static createIndicSyllabicCategory(): PropertyValueNameToEnumMapper;
-
-    /**
-     * Create a name-to-enum mapper for the `Indic_Syllabic_Category` property, using a particular data source.
-     *
-     * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
-     */
-    static createIndicSyllabicCategoryWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
-
-    /**
-     * Create a name-to-enum mapper for the `Line_Break` property, using compiled data.
-     *
-     * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html) for more information.
-     */
-    static createLineBreak(): PropertyValueNameToEnumMapper;
-
-    /**
-     * Create a name-to-enum mapper for the `Line_Break` property, using a particular data source.
-     *
-     * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html) for more information.
-     */
-    static createLineBreakWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
-
-    /**
-     * Create a name-to-enum mapper for the `Grapheme_Cluster_Break` property, using compiled data.
-     *
-     * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
-     */
-    static createGraphemeClusterBreak(): PropertyValueNameToEnumMapper;
-
-    /**
-     * Create a name-to-enum mapper for the `Grapheme_Cluster_Break` property, using a particular data source.
-     *
-     * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
-     */
-    static createGraphemeClusterBreakWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
-
-    /**
-     * Create a name-to-enum mapper for the `Word_Break` property, using compiled data.
-     *
-     * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html) for more information.
-     */
-    static createWordBreak(): PropertyValueNameToEnumMapper;
-
-    /**
-     * Create a name-to-enum mapper for the `Word_Break` property, using a particular data source.
-     *
-     * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html) for more information.
-     */
-    static createWordBreakWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
-
-    /**
-     * Create a name-to-enum mapper for the `Sentence_Break` property, using compiled data.
-     *
-     * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html) for more information.
-     */
-    static createSentenceBreak(): PropertyValueNameToEnumMapper;
-
-    /**
-     * Create a name-to-enum mapper for the `Sentence_Break` property, using a particular data source.
-     *
-     * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html) for more information.
-     */
-    static createSentenceBreakWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
 
     /**
      * Create a name-to-enum mapper for the `Script` property, using compiled data.
@@ -194,18 +82,130 @@ export class PropertyValueNameToEnumMapper {
     static createScriptWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
 
     /**
-     * Create a name-to-enum mapper for the `Vertical_Orientation` property, using compiled data.
+     * Create a name-to-enum mapper for the `HangulSyllableType` property, using compiled data.
      *
-     * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
+     * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
      */
-    static createVerticalOrientation(): PropertyValueNameToEnumMapper;
+    static createHangulSyllableType(): PropertyValueNameToEnumMapper;
 
     /**
-     * Create a name-to-enum mapper for the `Vertical_Orientation` property, using a particular data source.
+     * Create a name-to-enum mapper for the `HangulSyllableType` property, using a particular data source.
      *
-     * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
+     * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
      */
-    static createVerticalOrientationWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
+    static createHangulSyllableTypeWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `EastAsianWidth` property, using compiled data.
+     *
+     * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
+     */
+    static createEastAsianWidth(): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `EastAsianWidth` property, using a particular data source.
+     *
+     * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
+     */
+    static createEastAsianWidthWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `LineBreak` property, using compiled data.
+     *
+     * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html) for more information.
+     */
+    static createLineBreak(): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `LineBreak` property, using a particular data source.
+     *
+     * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html) for more information.
+     */
+    static createLineBreakWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `GraphemeClusterBreak` property, using compiled data.
+     *
+     * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
+     */
+    static createGraphemeClusterBreak(): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `GraphemeClusterBreak` property, using a particular data source.
+     *
+     * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
+     */
+    static createGraphemeClusterBreakWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `WordBreak` property, using compiled data.
+     *
+     * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html) for more information.
+     */
+    static createWordBreak(): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `WordBreak` property, using a particular data source.
+     *
+     * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html) for more information.
+     */
+    static createWordBreakWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `SentenceBreak` property, using compiled data.
+     *
+     * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html) for more information.
+     */
+    static createSentenceBreak(): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `SentenceBreak` property, using a particular data source.
+     *
+     * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html) for more information.
+     */
+    static createSentenceBreakWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `CanonicalCombiningClass` property, using compiled data.
+     *
+     * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
+     */
+    static createCanonicalCombiningClass(): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `CanonicalCombiningClass` property, using a particular data source.
+     *
+     * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
+     */
+    static createCanonicalCombiningClassWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `IndicSyllabicCategory` property, using compiled data.
+     *
+     * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+     */
+    static createIndicSyllabicCategory(): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `IndicSyllabicCategory` property, using a particular data source.
+     *
+     * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+     */
+    static createIndicSyllabicCategoryWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `IndicConjunctBreak` property, using compiled data.
+     *
+     * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
+     */
+    static createIndicConjunctBreak(): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `IndicConjunctBreak` property, using a particular data source.
+     *
+     * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
+     */
+    static createIndicConjunctBreakWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
 
     /**
      * Create a name-to-enum mapper for the `JoiningGroup` property, using compiled data.
@@ -234,4 +234,32 @@ export class PropertyValueNameToEnumMapper {
      * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.
      */
     static createJoiningTypeWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `GeneralCategory` property, using compiled data.
+     *
+     * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
+     */
+    static createGeneralCategory(): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `GeneralCategory` property, using a particular data source.
+     *
+     * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
+     */
+    static createGeneralCategoryWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `VerticalOrientation` property, using compiled data.
+     *
+     * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
+     */
+    static createVerticalOrientation(): PropertyValueNameToEnumMapper;
+
+    /**
+     * Create a name-to-enum mapper for the `VerticalOrientation` property, using a particular data source.
+     *
+     * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
+     */
+    static createVerticalOrientationWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
 }

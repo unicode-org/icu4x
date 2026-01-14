@@ -494,6 +494,7 @@ name = "codegen"
 version = "0.0.0"
 dependencies = [
  "askama",
+ "heck 0.4.1",
  "icu",
 ]
 
@@ -710,7 +711,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.14.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0cb25653909d2328c758a1e51049f59a6de051a0#0cb25653909d2328c758a1e51049f59a6de051a0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=773e6e94179c8705aa27a3337e49c604da4fc013#773e6e94179c8705aa27a3337e49c604da4fc013"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -741,7 +742,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.14.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0cb25653909d2328c758a1e51049f59a6de051a0#0cb25653909d2328c758a1e51049f59a6de051a0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=773e6e94179c8705aa27a3337e49c604da4fc013#773e6e94179c8705aa27a3337e49c604da4fc013"
 dependencies = [
  "log",
 ]
@@ -749,7 +750,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.14.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0cb25653909d2328c758a1e51049f59a6de051a0#0cb25653909d2328c758a1e51049f59a6de051a0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=773e6e94179c8705aa27a3337e49c604da4fc013#773e6e94179c8705aa27a3337e49c604da4fc013"
 dependencies = [
  "askama",
  "clap",
@@ -770,7 +771,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.14.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0cb25653909d2328c758a1e51049f59a6de051a0#0cb25653909d2328c758a1e51049f59a6de051a0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=773e6e94179c8705aa27a3337e49c604da4fc013#773e6e94179c8705aa27a3337e49c604da4fc013"
 dependencies = [
  "displaydoc",
  "either",
@@ -967,6 +968,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d9c4f5dac5e15c24eb999c26181a6ca40b39fe946cbe4c263c7209467bc83af2"
 
 [[package]]
+name = "foldhash"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
+
+[[package]]
 name = "freertos-rust"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1049,9 +1056,7 @@ version = "0.15.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9229cfe53dfd69f0609a49f65461bd93001ea1ef889cd5529dd176593f5338a1"
 dependencies = [
- "allocator-api2",
- "equivalent",
- "foldhash",
+ "foldhash 0.1.5",
 ]
 
 [[package]]
@@ -1059,6 +1064,11 @@ name = "hashbrown"
 version = "0.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5419bdc4f6a9207fbeba6d11b604d481addf78ecd10c11ad51e76c2f6482748d"
+dependencies = [
+ "allocator-api2",
+ "equivalent",
+ "foldhash 0.2.0",
+]
 
 [[package]]
 name = "heck"
@@ -1346,6 +1356,7 @@ dependencies = [
  "serde",
  "serde_json",
  "toml",
+ "utf8_iter",
  "yoke",
  "zerofrom",
  "zerovec",
@@ -1385,7 +1396,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "2.1.1"
+version = "2.1.2"
 
 [[package]]
 name = "icu_decimal"
@@ -1454,7 +1465,7 @@ dependencies = [
 
 [[package]]
 name = "icu_experimental_data"
-version = "0.4.0"
+version = "0.4.1"
 
 [[package]]
 name = "icu_freertos"
@@ -1529,7 +1540,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locale_data"
-version = "2.1.1"
+version = "2.1.2"
 
 [[package]]
 name = "icu_normalizer"
@@ -1729,7 +1740,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_registry"
-version = "2.1.1"
+version = "2.1.2"
 dependencies = [
  "icu",
  "icu_provider",
@@ -1737,7 +1748,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_source"
-version = "2.1.1"
+version = "2.1.2"
 dependencies = [
  "calendrical_calculations",
  "displaydoc",
@@ -2023,11 +2034,11 @@ checksum = "34080505efa8e45a4b816c349525ebe327ceaa8559756f0356cba97ef3bf7432"
 
 [[package]]
 name = "lru"
-version = "0.13.0"
+version = "0.16.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "227748d55f2f0ab4735d87fd623798cb6b664512fe979705f829c9f81c934465"
+checksum = "a1dc47f592c06f33f8e3aea9591776ec7c9f9e4124778ff8a3c3b87159f7e593"
 dependencies = [
- "hashbrown 0.15.5",
+ "hashbrown 0.16.0",
 ]
 
 [[package]]

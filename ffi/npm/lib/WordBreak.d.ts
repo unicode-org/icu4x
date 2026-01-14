@@ -16,28 +16,97 @@ export class WordBreak {
     /** @internal */
     get ffiValue(): number;
 
+    /**
+     * See the [Rust documentation for `Other`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.Other) for more information.
+     */
     static Other : WordBreak;
+    /**
+     * See the [Rust documentation for `ALetter`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.ALetter) for more information.
+     */
     static ALetter : WordBreak;
+    /**
+     * See the [Rust documentation for `Format`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.Format) for more information.
+     */
     static Format : WordBreak;
+    /**
+     * See the [Rust documentation for `Katakana`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.Katakana) for more information.
+     */
     static Katakana : WordBreak;
+    /**
+     * See the [Rust documentation for `MidLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.MidLetter) for more information.
+     */
     static MidLetter : WordBreak;
+    /**
+     * See the [Rust documentation for `MidNum`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.MidNum) for more information.
+     */
     static MidNum : WordBreak;
+    /**
+     * See the [Rust documentation for `Numeric`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.Numeric) for more information.
+     */
     static Numeric : WordBreak;
+    /**
+     * See the [Rust documentation for `ExtendNumLet`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.ExtendNumLet) for more information.
+     */
     static ExtendNumLet : WordBreak;
+    /**
+     * See the [Rust documentation for `CR`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.CR) for more information.
+     */
     static Cr : WordBreak;
+    /**
+     * See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.Extend) for more information.
+     */
     static Extend : WordBreak;
+    /**
+     * See the [Rust documentation for `LF`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.LF) for more information.
+     */
     static Lf : WordBreak;
+    /**
+     * See the [Rust documentation for `MidNumLet`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.MidNumLet) for more information.
+     */
     static MidNumLet : WordBreak;
+    /**
+     * See the [Rust documentation for `Newline`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.Newline) for more information.
+     */
     static Newline : WordBreak;
+    /**
+     * See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.RegionalIndicator) for more information.
+     */
     static RegionalIndicator : WordBreak;
+    /**
+     * See the [Rust documentation for `HebrewLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.HebrewLetter) for more information.
+     */
     static HebrewLetter : WordBreak;
+    /**
+     * See the [Rust documentation for `SingleQuote`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.SingleQuote) for more information.
+     */
     static SingleQuote : WordBreak;
+    /**
+     * See the [Rust documentation for `DoubleQuote`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.DoubleQuote) for more information.
+     */
     static DoubleQuote : WordBreak;
+    /**
+     * See the [Rust documentation for `EBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.EBase) for more information.
+     */
     static EBase : WordBreak;
+    /**
+     * See the [Rust documentation for `EBaseGAZ`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.EBaseGAZ) for more information.
+     */
     static EBaseGaz : WordBreak;
+    /**
+     * See the [Rust documentation for `EModifier`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.EModifier) for more information.
+     */
     static EModifier : WordBreak;
+    /**
+     * See the [Rust documentation for `GlueAfterZwj`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.GlueAfterZwj) for more information.
+     */
     static GlueAfterZwj : WordBreak;
+    /**
+     * See the [Rust documentation for `ZWJ`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.ZWJ) for more information.
+     */
     static Zwj : WordBreak;
+    /**
+     * See the [Rust documentation for `WSegSpace`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#associatedconstant.WSegSpace) for more information.
+     */
     static WSegSpace : WordBreak;
 
 
@@ -73,6 +142,8 @@ export class WordBreak {
      * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html#method.from_icu4c_value) for more information.
      */
     static fromIntegerValue(other: number): WordBreak | null;
+
+    static tryFromStr(s: string): WordBreak | null;
 
     constructor(value: WordBreak | string );
 }

@@ -1,104 +1,95 @@
 {
-  "patterns": {
-    "3": {
-      "Few": {
-        "exponent": 3,
-        "index": 0,
-        "literal_text": " آلاف"
-      },
-      "Other": {
-        "exponent": 3,
-        "index": 0,
-        "literal_text": " ألف"
+  "patterns": [
+    {
+      "sized": 3,
+      "variable": {
+        "few": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " آلاف"
+            }
+          ]
+        ],
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " ألف"
+            }
+          ]
+        ]
       }
     },
-    "4": {
-      "Other": {
-        "exponent": 3,
-        "index": 0,
-        "literal_text": " ألف"
+    {
+      "sized": 4,
+      "variable": {
+        "other": [
+          1,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " ألف"
+            }
+          ]
+        ]
       }
     },
-    "6": {
-      "Zero": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Two": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Few": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Many": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Other": {
-        "exponent": 6,
-        "index": 0,
-        "literal_text": " مليون"
+    {
+      "sized": 6,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " مليون"
+            }
+          ]
+        ]
       }
     },
-    "9": {
-      "Zero": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Two": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Few": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Many": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Other": {
-        "exponent": 9,
-        "index": 0,
-        "literal_text": " مليار"
+    {
+      "sized": 9,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " مليار"
+            }
+          ]
+        ]
       }
     },
-    "12": {
-      "Zero": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Two": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Few": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Many": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Other": {
-        "exponent": 12,
-        "index": 0,
-        "literal_text": " ترليون"
+    {
+      "sized": 12,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " ترليون"
+            }
+          ]
+        ]
       }
     }
-  }
+  ]
 }

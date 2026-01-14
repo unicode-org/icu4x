@@ -7,11 +7,9 @@ use crate::SourceDataProvider;
 use icu::calendar::AnyCalendarKind;
 use icu_provider::prelude::*;
 
-#[cfg(test)] // TODO(#5613)
-mod legacy;
-mod neo;
-mod neo_skeleton;
-mod skeletons;
+mod available_formats;
+mod names;
+mod semantic_skeletons;
 mod week_data;
 
 /// These are the calendars that datetime needs names for. They are roughly the

@@ -6,73 +6,50 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html) for more information.
 enum BidiClass {
   /// See the [Rust documentation for `LeftToRight`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.LeftToRight) for more information.
-  // ignore: public_member_api_docs
   leftToRight,
   /// See the [Rust documentation for `RightToLeft`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.RightToLeft) for more information.
-  // ignore: public_member_api_docs
   rightToLeft,
   /// See the [Rust documentation for `EuropeanNumber`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.EuropeanNumber) for more information.
-  // ignore: public_member_api_docs
   europeanNumber,
   /// See the [Rust documentation for `EuropeanSeparator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.EuropeanSeparator) for more information.
-  // ignore: public_member_api_docs
   europeanSeparator,
   /// See the [Rust documentation for `EuropeanTerminator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.EuropeanTerminator) for more information.
-  // ignore: public_member_api_docs
   europeanTerminator,
   /// See the [Rust documentation for `ArabicNumber`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.ArabicNumber) for more information.
-  // ignore: public_member_api_docs
   arabicNumber,
   /// See the [Rust documentation for `CommonSeparator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.CommonSeparator) for more information.
-  // ignore: public_member_api_docs
   commonSeparator,
   /// See the [Rust documentation for `ParagraphSeparator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.ParagraphSeparator) for more information.
-  // ignore: public_member_api_docs
   paragraphSeparator,
   /// See the [Rust documentation for `SegmentSeparator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.SegmentSeparator) for more information.
-  // ignore: public_member_api_docs
   segmentSeparator,
   /// See the [Rust documentation for `WhiteSpace`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.WhiteSpace) for more information.
-  // ignore: public_member_api_docs
   whiteSpace,
   /// See the [Rust documentation for `OtherNeutral`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.OtherNeutral) for more information.
-  // ignore: public_member_api_docs
   otherNeutral,
   /// See the [Rust documentation for `LeftToRightEmbedding`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.LeftToRightEmbedding) for more information.
-  // ignore: public_member_api_docs
   leftToRightEmbedding,
   /// See the [Rust documentation for `LeftToRightOverride`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.LeftToRightOverride) for more information.
-  // ignore: public_member_api_docs
   leftToRightOverride,
   /// See the [Rust documentation for `ArabicLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.ArabicLetter) for more information.
-  // ignore: public_member_api_docs
   arabicLetter,
   /// See the [Rust documentation for `RightToLeftEmbedding`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.RightToLeftEmbedding) for more information.
-  // ignore: public_member_api_docs
   rightToLeftEmbedding,
   /// See the [Rust documentation for `RightToLeftOverride`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.RightToLeftOverride) for more information.
-  // ignore: public_member_api_docs
   rightToLeftOverride,
   /// See the [Rust documentation for `PopDirectionalFormat`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.PopDirectionalFormat) for more information.
-  // ignore: public_member_api_docs
   popDirectionalFormat,
   /// See the [Rust documentation for `NonspacingMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.NonspacingMark) for more information.
-  // ignore: public_member_api_docs
   nonspacingMark,
   /// See the [Rust documentation for `BoundaryNeutral`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.BoundaryNeutral) for more information.
-  // ignore: public_member_api_docs
   boundaryNeutral,
   /// See the [Rust documentation for `FirstStrongIsolate`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.FirstStrongIsolate) for more information.
-  // ignore: public_member_api_docs
   firstStrongIsolate,
   /// See the [Rust documentation for `LeftToRightIsolate`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.LeftToRightIsolate) for more information.
-  // ignore: public_member_api_docs
   leftToRightIsolate,
   /// See the [Rust documentation for `RightToLeftIsolate`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.RightToLeftIsolate) for more information.
-  // ignore: public_member_api_docs
   rightToLeftIsolate,
   /// See the [Rust documentation for `PopDirectionalIsolate`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html#associatedconstant.PopDirectionalIsolate) for more information.
-  // ignore: public_member_api_docs
   popDirectionalIsolate;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
@@ -122,6 +99,15 @@ enum BidiClass {
     return BidiClass.values[result.union.ok];
   }
 
+  static BidiClass? tryFromStr(String s) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_BidiClass_try_from_str_mv1(s._utf8AllocIn(temp.arena));
+    if (!result.isOk) {
+      return null;
+    }
+    return BidiClass.values[result.union.ok];
+  }
+
 }
 
 @_DiplomatFfiUse('icu4x_BidiClass_for_char_mv1')
@@ -148,5 +134,10 @@ external int _icu4x_BidiClass_to_integer_value_mv1(int self);
 @ffi.Native<_ResultInt32Void Function(ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_BidiClass_from_integer_value_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _icu4x_BidiClass_from_integer_value_mv1(int other);
+
+@_DiplomatFfiUse('icu4x_BidiClass_try_from_str_mv1')
+@ffi.Native<_ResultInt32Void Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_BidiClass_try_from_str_mv1')
+// ignore: non_constant_identifier_names
+external _ResultInt32Void _icu4x_BidiClass_try_from_str_mv1(_SliceUtf8 s);
 
 // dart format on

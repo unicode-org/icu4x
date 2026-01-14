@@ -80,6 +80,7 @@
 extern crate alloc;
 
 mod cmp;
+mod concat;
 #[cfg(feature = "either")]
 mod either;
 mod impls;
@@ -99,6 +100,7 @@ use alloc::string::String;
 use core::fmt;
 
 pub use cmp::{cmp_str, cmp_utf8};
+pub use concat::concat_writeable;
 #[cfg(feature = "alloc")]
 pub use to_string_or_borrow::to_string_or_borrow;
 pub use try_writeable::TryWriteable;
@@ -107,6 +109,7 @@ pub use try_writeable::TryWriteable;
 pub mod adapters {
     use super::*;
 
+    pub use concat::Concat;
     pub use parts_write_adapter::CoreWriteAsPartsWrite;
     pub use parts_write_adapter::WithPart;
     pub use try_writeable::TryWriteableInfallibleAsWriteable;

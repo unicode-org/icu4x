@@ -123,35 +123,125 @@ export class GeneralCategory {
         [27]: new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 27),
     };
 
+    /**
+     * See the [Rust documentation for `Unassigned`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.Unassigned) for more information.
+     */
     static Unassigned = GeneralCategory.#objectValues[0];
+    /**
+     * See the [Rust documentation for `UppercaseLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.UppercaseLetter) for more information.
+     */
     static UppercaseLetter = GeneralCategory.#objectValues[1];
+    /**
+     * See the [Rust documentation for `LowercaseLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.LowercaseLetter) for more information.
+     */
     static LowercaseLetter = GeneralCategory.#objectValues[2];
+    /**
+     * See the [Rust documentation for `TitlecaseLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.TitlecaseLetter) for more information.
+     */
     static TitlecaseLetter = GeneralCategory.#objectValues[3];
+    /**
+     * See the [Rust documentation for `ModifierLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.ModifierLetter) for more information.
+     */
     static ModifierLetter = GeneralCategory.#objectValues[4];
+    /**
+     * See the [Rust documentation for `OtherLetter`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.OtherLetter) for more information.
+     */
     static OtherLetter = GeneralCategory.#objectValues[5];
+    /**
+     * See the [Rust documentation for `NonspacingMark`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.NonspacingMark) for more information.
+     */
     static NonspacingMark = GeneralCategory.#objectValues[6];
+    /**
+     * See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.SpacingMark) for more information.
+     */
     static SpacingMark = GeneralCategory.#objectValues[8];
+    /**
+     * See the [Rust documentation for `EnclosingMark`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.EnclosingMark) for more information.
+     */
     static EnclosingMark = GeneralCategory.#objectValues[7];
+    /**
+     * See the [Rust documentation for `DecimalNumber`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.DecimalNumber) for more information.
+     */
     static DecimalNumber = GeneralCategory.#objectValues[9];
+    /**
+     * See the [Rust documentation for `LetterNumber`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.LetterNumber) for more information.
+     */
     static LetterNumber = GeneralCategory.#objectValues[10];
+    /**
+     * See the [Rust documentation for `OtherNumber`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.OtherNumber) for more information.
+     */
     static OtherNumber = GeneralCategory.#objectValues[11];
+    /**
+     * See the [Rust documentation for `SpaceSeparator`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.SpaceSeparator) for more information.
+     */
     static SpaceSeparator = GeneralCategory.#objectValues[12];
+    /**
+     * See the [Rust documentation for `LineSeparator`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.LineSeparator) for more information.
+     */
     static LineSeparator = GeneralCategory.#objectValues[13];
+    /**
+     * See the [Rust documentation for `ParagraphSeparator`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.ParagraphSeparator) for more information.
+     */
     static ParagraphSeparator = GeneralCategory.#objectValues[14];
+    /**
+     * See the [Rust documentation for `Control`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.Control) for more information.
+     */
     static Control = GeneralCategory.#objectValues[15];
+    /**
+     * See the [Rust documentation for `Format`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.Format) for more information.
+     */
     static Format = GeneralCategory.#objectValues[16];
+    /**
+     * See the [Rust documentation for `PrivateUse`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.PrivateUse) for more information.
+     */
     static PrivateUse = GeneralCategory.#objectValues[17];
+    /**
+     * See the [Rust documentation for `Surrogate`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.Surrogate) for more information.
+     */
     static Surrogate = GeneralCategory.#objectValues[18];
+    /**
+     * See the [Rust documentation for `DashPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.DashPunctuation) for more information.
+     */
     static DashPunctuation = GeneralCategory.#objectValues[19];
+    /**
+     * See the [Rust documentation for `OpenPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.OpenPunctuation) for more information.
+     */
     static OpenPunctuation = GeneralCategory.#objectValues[20];
+    /**
+     * See the [Rust documentation for `ClosePunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.ClosePunctuation) for more information.
+     */
     static ClosePunctuation = GeneralCategory.#objectValues[21];
+    /**
+     * See the [Rust documentation for `ConnectorPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.ConnectorPunctuation) for more information.
+     */
     static ConnectorPunctuation = GeneralCategory.#objectValues[22];
+    /**
+     * See the [Rust documentation for `InitialPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.InitialPunctuation) for more information.
+     */
     static InitialPunctuation = GeneralCategory.#objectValues[28];
+    /**
+     * See the [Rust documentation for `FinalPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.FinalPunctuation) for more information.
+     */
     static FinalPunctuation = GeneralCategory.#objectValues[29];
+    /**
+     * See the [Rust documentation for `OtherPunctuation`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.OtherPunctuation) for more information.
+     */
     static OtherPunctuation = GeneralCategory.#objectValues[23];
+    /**
+     * See the [Rust documentation for `MathSymbol`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.MathSymbol) for more information.
+     */
     static MathSymbol = GeneralCategory.#objectValues[24];
+    /**
+     * See the [Rust documentation for `CurrencySymbol`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.CurrencySymbol) for more information.
+     */
     static CurrencySymbol = GeneralCategory.#objectValues[25];
+    /**
+     * See the [Rust documentation for `ModifierSymbol`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.ModifierSymbol) for more information.
+     */
     static ModifierSymbol = GeneralCategory.#objectValues[26];
+    /**
+     * See the [Rust documentation for `OtherSymbol`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html#variant.OtherSymbol) for more information.
+     */
     static OtherSymbol = GeneralCategory.#objectValues[27];
 
 
@@ -167,11 +257,11 @@ export class GeneralCategory {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
     /**
-     * Convert to an integer using the ICU4C integer mappings for `General_Category`
      * Get the "long" name of this property value (returns empty if property value is unknown)
      *
      * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
@@ -190,6 +280,7 @@ export class GeneralCategory {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
@@ -213,12 +304,15 @@ export class GeneralCategory {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
             diplomatReceive.free();
         }
     }
 
     /**
      * Convert to an integer value usable with ICU4C and CodePointMapData
+     *
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategory.html#method.to_icu4c_value) for more information.
      */
     toIntegerValue() {
 
@@ -229,6 +323,55 @@ export class GeneralCategory {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+        }
+    }
+
+    /**
+     * Convert from an integer value from ICU4C or CodePointMapData
+     *
+     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategory.html#method.from_icu4c_value) for more information.
+     */
+    static fromIntegerValue(other) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_GeneralCategory_from_integer_value_mv1(diplomatReceive.buffer, other);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            diplomatReceive.free();
+        }
+    }
+
+    static tryFromStr(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_GeneralCategory_try_from_str_mv1(diplomatReceive.buffer, sSlice.ptr);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            functionCleanupArena.free();
+
+            diplomatReceive.free();
         }
     }
 
@@ -246,28 +389,7 @@ export class GeneralCategory {
         }
 
         finally {
-        }
-    }
-
-    /**
-     * Convert from an integer using the ICU4C integer mappings for `General_Category`
-     * Convert from an integer value from ICU4C or CodePointMapData
-     */
-    static fromIntegerValue(other) {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-
-
-        const result = wasm.icu4x_GeneralCategory_from_integer_value_mv1(diplomatReceive.buffer, other);
-
-        try {
-            if (!diplomatReceive.resultFlag) {
-                return null;
-            }
-            return new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-        }
-
-        finally {
-            diplomatReceive.free();
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 

@@ -94,23 +94,77 @@ export class GraphemeClusterBreak {
         new GraphemeClusterBreak(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 17),
     ];
 
+    /**
+     * See the [Rust documentation for `Other`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.Other) for more information.
+     */
     static Other = GraphemeClusterBreak.#objectValues[0];
+    /**
+     * See the [Rust documentation for `Control`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.Control) for more information.
+     */
     static Control = GraphemeClusterBreak.#objectValues[1];
+    /**
+     * See the [Rust documentation for `CR`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.CR) for more information.
+     */
     static Cr = GraphemeClusterBreak.#objectValues[2];
+    /**
+     * See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.Extend) for more information.
+     */
     static Extend = GraphemeClusterBreak.#objectValues[3];
+    /**
+     * See the [Rust documentation for `L`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.L) for more information.
+     */
     static L = GraphemeClusterBreak.#objectValues[4];
+    /**
+     * See the [Rust documentation for `LF`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.LF) for more information.
+     */
     static Lf = GraphemeClusterBreak.#objectValues[5];
+    /**
+     * See the [Rust documentation for `LV`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.LV) for more information.
+     */
     static Lv = GraphemeClusterBreak.#objectValues[6];
+    /**
+     * See the [Rust documentation for `LVT`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.LVT) for more information.
+     */
     static Lvt = GraphemeClusterBreak.#objectValues[7];
+    /**
+     * See the [Rust documentation for `T`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.T) for more information.
+     */
     static T = GraphemeClusterBreak.#objectValues[8];
+    /**
+     * See the [Rust documentation for `V`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.V) for more information.
+     */
     static V = GraphemeClusterBreak.#objectValues[9];
+    /**
+     * See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.SpacingMark) for more information.
+     */
     static SpacingMark = GraphemeClusterBreak.#objectValues[10];
+    /**
+     * See the [Rust documentation for `Prepend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.Prepend) for more information.
+     */
     static Prepend = GraphemeClusterBreak.#objectValues[11];
+    /**
+     * See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.RegionalIndicator) for more information.
+     */
     static RegionalIndicator = GraphemeClusterBreak.#objectValues[12];
+    /**
+     * See the [Rust documentation for `EBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.EBase) for more information.
+     */
     static EBase = GraphemeClusterBreak.#objectValues[13];
+    /**
+     * See the [Rust documentation for `EBaseGAZ`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.EBaseGAZ) for more information.
+     */
     static EBaseGaz = GraphemeClusterBreak.#objectValues[14];
+    /**
+     * See the [Rust documentation for `EModifier`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.EModifier) for more information.
+     */
     static EModifier = GraphemeClusterBreak.#objectValues[15];
+    /**
+     * See the [Rust documentation for `GlueAfterZwj`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.GlueAfterZwj) for more information.
+     */
     static GlueAfterZwj = GraphemeClusterBreak.#objectValues[16];
+    /**
+     * See the [Rust documentation for `ZWJ`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.ZWJ) for more information.
+     */
     static Zwj = GraphemeClusterBreak.#objectValues[17];
 
 
@@ -126,6 +180,55 @@ export class GraphemeClusterBreak {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+        }
+    }
+
+    /**
+     * Get the "long" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+     */
+    longName() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
+
+
+        const result = wasm.icu4x_GraphemeClusterBreak_long_name_mv1(diplomatReceive.buffer, this.ffiValue);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            diplomatReceive.free();
+        }
+    }
+
+    /**
+     * Get the "short" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+     */
+    shortName() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
+
+
+        const result = wasm.icu4x_GraphemeClusterBreak_short_name_mv1(diplomatReceive.buffer, this.ffiValue);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            diplomatReceive.free();
         }
     }
 
@@ -143,6 +246,7 @@ export class GraphemeClusterBreak {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
         }
     }
 
@@ -165,6 +269,31 @@ export class GraphemeClusterBreak {
         }
 
         finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            diplomatReceive.free();
+        }
+    }
+
+    static tryFromStr(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_GraphemeClusterBreak_try_from_str_mv1(diplomatReceive.buffer, sSlice.ptr);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return new GraphemeClusterBreak(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            functionCleanupArena.free();
+
             diplomatReceive.free();
         }
     }

@@ -7,10 +7,8 @@ part of 'lib.g.dart';
 ///
 /// See the [Rust documentation for `Fallback`](https://docs.rs/icu/2.1.1/icu/experimental/displaynames/enum.Fallback.html) for more information.
 enum DisplayNamesFallback {
-
   // ignore: public_member_api_docs
   code,
-
   // ignore: public_member_api_docs
   none;
 

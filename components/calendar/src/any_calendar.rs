@@ -757,6 +757,18 @@ pub enum AnyCalendarKind {
 
 impl CalendarPreferences {
     /// Selects the [`CalendarAlgorithm`] appropriate for the given [`CalendarPreferences`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::calendar::preferences::{CalendarAlgorithm, CalendarPreferences};
+    /// use icu::locale::locale;
+    ///
+    /// assert_eq!(CalendarPreferences::from(&locale!("und")).resolved_algorithm(), CalendarAlgorithm::Gregory);
+    /// assert_eq!(CalendarPreferences::from(&locale!("und-US-u-ca-hebrew")).resolved_algorithm(), CalendarAlgorithm::Hebrew);
+    /// assert_eq!(CalendarPreferences::from(&locale!("und-AF")).resolved_algorithm(), CalendarAlgorithm::Persian);
+    /// assert_eq!(CalendarPreferences::from(&locale!("und-US-u-rg-thxxxx")).resolved_algorithm(), CalendarAlgorithm::Buddhist);
+    /// ```
     pub fn resolved_algorithm(self) -> CalendarAlgorithm {
         let region = self.locale_preferences.region();
         let region = region.as_ref().map(|r| r.as_str());

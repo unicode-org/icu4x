@@ -5,22 +5,16 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/2.1.1/icu/plurals/enum.PluralCategory.html) for more information.
 enum PluralCategory {
-
   // ignore: public_member_api_docs
   zero,
-
   // ignore: public_member_api_docs
   one,
-
   // ignore: public_member_api_docs
   two,
-
   // ignore: public_member_api_docs
   few,
-
   // ignore: public_member_api_docs
   many,
-
   // ignore: public_member_api_docs
   other;
 

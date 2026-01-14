@@ -9,7 +9,6 @@ internal interface GraphemeClusterSegmenterLib: Library {
     fun icu4x_GraphemeClusterSegmenter_destroy_mv1(handle: Pointer)
     fun icu4x_GraphemeClusterSegmenter_create_mv1(): Pointer
     fun icu4x_GraphemeClusterSegmenter_create_with_provider_mv1(provider: Pointer): ResultPointerInt
-    fun icu4x_GraphemeClusterSegmenter_segment_utf16_mv1(handle: Pointer, input: Slice): Pointer
 }
 /** An ICU4X grapheme-cluster-break segmenter, capable of finding grapheme cluster breakpoints
 *in strings.
@@ -66,25 +65,6 @@ class GraphemeClusterSegmenter internal constructor (
                 return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
             }
         }
-    }
-    
-    /** Segments a string.
-    *
-    *Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
-    *to the WHATWG Encoding Standard.
-    *
-    *See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.1.1/icu/segmenter/struct.GraphemeClusterSegmenterBorrowed.html#method.segment_utf16) for more information.
-    */
-    fun segment(input: String): GraphemeClusterBreakIteratorUtf16 {
-        val (inputMem, inputSlice) = PrimitiveArrayTools.borrowUtf16(input)
-        
-        val returnVal = lib.icu4x_GraphemeClusterSegmenter_segment_utf16_mv1(handle, inputSlice);
-        val selfEdges: List<Any> = listOf()
-        val aEdges: List<Any?> = listOf(this) + listOf(inputMem)
-        val handle = returnVal 
-        val returnOpaque = GraphemeClusterBreakIteratorUtf16(handle, selfEdges, aEdges)
-        CLEANER.register(returnOpaque, GraphemeClusterBreakIteratorUtf16.GraphemeClusterBreakIteratorUtf16Cleaner(handle, GraphemeClusterBreakIteratorUtf16.lib));
-        return returnOpaque
     }
 
 }

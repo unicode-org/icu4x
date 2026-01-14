@@ -573,7 +573,7 @@ macro_rules! __define_preferences {
                 }
 
                 let r = Self {
-                    locale_preferences: loc.into(),
+                    locale_preferences: $crate::preferences::LocalePreferences::from_locale_strict(loc).unwrap_or_else(|e| { is_err = true; e }),
 
                     $(
                         $key,
