@@ -8,3 +8,5 @@ pub(crate) mod essentials;
 pub(crate) mod extended;
 pub(crate) mod fractions;
 pub(crate) mod patterns;
+pub(crate) mod sliced_essentials;
+pub(crate) mod sliced_extended;

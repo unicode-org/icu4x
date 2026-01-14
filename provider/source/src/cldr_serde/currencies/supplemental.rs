@@ -7,11 +7,14 @@
 //! Sample file:
 //! <https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/currencyData.json>
 
+use icu::locale::subtags::Region;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use tinystr::TinyAsciiStr;
 
-type ISOCode = TinyAsciiStr<3>;
+/// A 3-letter currency code used as a key in CLDR data maps.
+/// This is a simple wrapper for deserialization purposes.
+pub(crate) type CurrencyCodeStr = TinyAsciiStr<3>;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct RoundingModes {
@@ -36,12 +39,47 @@ pub(crate) struct Fractions {
     pub(crate) default: RoundingModes,
 
     #[serde(flatten)]
-    pub(crate) currencies: BTreeMap<ISOCode, RoundingModes>,
+    pub(crate) currencies: BTreeMap<CurrencyCodeStr, RoundingModes>,
 }
+
+/// Metadata for a currency in a region, including validity dates and tender status.
+#[derive(PartialEq, Debug, Deserialize)]
+pub(crate) struct RegionCurrencyData {
+    /// Start date when this currency became valid in the region (e.g., "1999-01-01")
+    #[serde(rename = "_from")]
+    pub(crate) from: Option<String>,
+
+    /// End date when this currency stopped being valid in the region
+    #[serde(rename = "_to")]
+    pub(crate) to: Option<String>,
+
+    /// Whether this is legal tender (defaults to true if not specified)
+    /// "false" means it's not legal tender (e.g., special purpose currencies)
+    #[serde(rename = "_tender")]
+    pub(crate) tender: Option<String>,
+
+    /// Timezone for the `_from` date (e.g., "Europe/Zagreb")
+    #[serde(rename = "_tz")]
+    pub(crate) from_tz: Option<String>,
+
+    /// Timezone for the `_to` date
+    #[serde(rename = "_to-tz")]
+    pub(crate) to_tz: Option<String>,
+}
+
+/// A single currency entry in the region array.
+/// The JSON structure is: { "USD": { "_from": "...", "_to": "..." } }
+pub(crate) type RegionCurrencyEntry = BTreeMap<CurrencyCodeStr, RegionCurrencyData>;
+
+/// Map from region code to list of currencies used in that region.
+/// Each region can have multiple currencies (current and historical).
+pub(crate) type RegionToCurrency = BTreeMap<Region, Vec<RegionCurrencyEntry>>;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct CurrencyData {
     pub(crate) fractions: Fractions,
+    /// Map from region code (e.g., "US", "DE") to list of currencies used in that region
+    pub(crate) region: RegionToCurrency,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

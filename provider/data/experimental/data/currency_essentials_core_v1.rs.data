@@ -1,0 +1,783 @@
+// @generated
+/// Implement `DataProvider<CurrencyEssentialsCoreV1>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+///
+/// Using this implementation will embed the following data in the binary's data segment:
+/// * 1377B for the lookup data structure (305 data identifiers)
+/// * 12402B[^1] for the actual data (71 unique structs)
+///
+/// [^1]: these numbers can be smaller in practice due to linker deduplication
+///
+/// This macro requires the following crates:
+/// * `alloc`
+/// * `icu`
+/// * `icu_pattern`
+/// * `icu_provider`
+/// * `icu_provider/baked`
+/// * `zerovec`
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_currency_essentials_core_v1 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.83"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.83"]
+        impl $provider {
+            const DATA_CURRENCY_ESSENTIALS_CORE_V1: icu_provider::baked::zerotrie::Data<icu::experimental::dimension::provider::currency::essentials::CurrencyEssentialsCoreV1> = {
+                const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii { store: b"\xE1zabcdefghijklmnopqrstuvwxyz\0\0\0\0\x01\x02\x02\x02\x02\x02\x03\x03\x03\x03\x03\x03\x03\x04\x04\x04\x04\x04\x04\x04\x04\x18Kd\x82\xC7\x87\x9E\xBC\xD8\xDE+Bj\x9C\xA6\xE7\xEF\0s\xA5\xBD\xC9\xCC\xD3\xE4\xC6fkmrsz\x01\x02\x03\x08\x0B\x80\x81\x81\x82-SS\x83\x84t\x85\x86\xC9aeghlnrsu\x08\t\x0C\x0E\x10\x15\x18\x1F\x87l-Latn\x88\x87\x89c\x84o\x81o\x84\x8A-IN\x8B\x8Cx\x8D\x8E-Cyrl\x86a\x86\xC6aehsvy\x01\x04\x07\n\x0B\x8Fb\x90\0r\x90\x01\x86w\x84\x87\x90\x02\xC4aeos\x01\x12\x14\x86\x85-\xC3ACL\x03\x06T\x90\x03H\x90\x04I\x90\x05i\x8Bb\x85\xE1gelnostu\0\0\0\0\x01\x01\x01\x02\xDB\xDD-.\x81\x85\x90\x06-\xD301ABCDEFGIJLMNPSTVZ\x04\x08\x14\x1C'/7GWks{\x83\x86\x92\xA2\xA5\xA801\x90\x0750\x90\x08\xC3ETU\x02\x04\x90\t\x90\n\x90\x0B\xC2EI\x02\x90\x0C\x90\t\xC3AHY\x02\x03\x90\x07\x84\x90\r\xC2EG\x02\x90\x0C\x90\x06\xC2ES\x02\x90\x0C\x90\x0C\xC4IKMR\x02\x04\x06\x90\x0C\x90\x0E\x90\x06\x90\x0C\xC4BGIS\x02\x04\x06\x90\x0F\x90\x0F\x90\x0E\x90\x0F\xC5EMNOT\x02\x04\x06\x08\x90\r\x90\x0F\x90\t\x90\x06\x90\x0C\xC2EP\x02\x90\x0F\x90\t\xC2TV\x02\x90\x0C\x90\x0C\xC2TV\x02\x90\x10\x90\x11L\x90\n\xC3HTW\x02\x04\x90\t\x90\x0C\x90\x06\xC4HIKS\x02\x04\x06\x90\x0E\x90\x0C\x90\x0C\x90\x0EC\x90\x06G\x90\x06\xC2AW\x02\x90\x12\x90\x06\x90\x13\x90\x14-\xC94ACDEGPSU\x04\x07\x13\x16\x19\x1C0319\x90\x15R\x90\x16\xC3LOU\x02\x04\x90\x17\x90\x16\x90\x17O\x90\x17C\x90\x18Q\x90\x19\xC5AEHRY\x02\x04\x06\x08\x90\x18\x90\x1A\x90\x1B\x90\x18\x90\x1AV\x90\x18\xC2SY\x02\x90\x18\x90\x16\x85\x90\x1C\xC6afiory\x07\r\x10\x11\xB2\x90\x1D-AF\x90\x1E-Adlm\x84\x85l\x8B\x86\x90\x1F-\xCEBCDGHKMNPRSTVW\x0C(0<?BV^adp|\x7F\xC3FIJ\x02\x04\x90 \x90 \x90 \xC7ADFGHIM\x02\x04\x06\x08\n\x0C\x90!\x90 \x90 \x90 \x90 \x90 \x90 \xC2JZ\x02\x90 \x90 \xC3ANQ\x02\x04\x90 \x90 \x90 T\x90\"M\x90 \xC5AGLRU\x02\x04\x06\x08\x90 \x90 \x90 \x90 \x90 \xC2CE\x02\x90 \x90 F\x90 W\x90 \xC3CNY\x02\x04\x90 \x90 \x90 \xC3DGN\x02\x04\x90 \x90 \x90 U\x90 F\x90 \x90#\xC4adlu\x0B\r\x0E\x90$\xC2-a\x04GB\x90%\x84\x90%\x85\x81\xC7aeirsuy\x02\x04\x05\x0B\r\x0F\x90\x1E\x90&\x8B\x90'-BA\x8Eb\x85\x90(\x87\xC7adegist\x01\x02\x04\x05\x06\x08\x84\x81\x90#\x8B\x84\x90(\x8F-CH\x90)\xC2av\x01\x8B\x84\xCBaegkmnosuxy\x01\x03\x05\x0C\x0E\x0F\x18 !6\x86a\x86p\x84\x87-Arab\x84\x90*\x8B\x81k\x81-Latn\x81\x8B-Deva\x90\x1E\x87v\x81-\xC3DOT\x04\x08eva\x81rya\x81elu\x81\x8E\xC6bimotv\x01\x04\x07\x08\n\x85j\x90\x1Co\x90#\x81\x90'\x85\xC9aiklnrsty\x03\x04\x06\x07\x0C\r\x13\x15i\x90\x1E\x84\x90\x1B\x8B\x90\x1Ei\x90\x1E\x8B\x80-BN\x90)\x90+\x86\xC7delnoqs\x03\x04\x1C\x1D\x1F\"s\x90\x1C\x84\x90#-\xC4ABCS\x02\x05\x07W\x84Q\x90,W\x84\xC2RX\x01\x84\x84\x8E\x90-o\x90.o\x84\xC3cmr\x02\x03\x90/\x81\x8B\xC6aclmst\x01\x03\x04\x07\t\x81m\x81\x8Es\x90\x1C\x90\x1E\x84-\xC7ACGMPST\x02\x08\x0E\x14\x17\x19O\x86\xC2HV\x01\x86\x86\xC2QW\x01\x86\x86\xC2OZ\x01\x86\x86T\x90\x1CT\x86L\x900u\x901-EC\x90,\xC5amouw\x02\x03\x05\x06j\x84\x8B\x90(\x87\x84\xD0acdhikloqrtuvwyz\x07\x0C\x14\x16\x17\x19\x1B\x1C#:;<IOQ\x81\xC2ht\x01\x86\x84\x90\x1Cn\x90#\x84-Deva\x90\x1En\x84\x81\x90'\x902\x81\x903-XK\x904\x86-\xC3LMX\t\x0Catn\x86-XK\x90\x1CE\x90\x1CK\x90\x1C\x81\x8B\x90\x1B-\xC2AF\x03X\x90\x14I\x90\x14\x84-KE\x90\x1Er\x84l\x86\xCBaeghiknorty\x0B\x0C\r\x0E\x0F\x11\x12\x13\x19\x1A\x8B-\xC2MS\x03Y\x90\x1EG\x84\x8B\x87\x81\x81\x905\x81\x84\x8B-CY\x90$\x87v\x84\xC5gknrz\x01\x03\x06\x07\x8B\x90(d\x90,\x8B\x86-Cyrl\x86\xC3eim\x03\x04c\x906\x86w\x86o\x90\x1E\xC2hn\x01\x8Br\x81\xC3oru\x01\x03\x8Bl\x84e\x81-Hans\x81\xC3ahu\x01\x08\x84\x81-Hant\x81\x8B" };
+                const VALUES: &'static [<icu::experimental::dimension::provider::currency::essentials::CurrencyEssentialsCoreV1 as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct] = &[
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01\xB8\xFE\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x05\0\xE2\x82\xAC\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01\0\x02\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x05\0\x08\0\xE2\x82\xAC\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\xC0\x01\x01\xC0\x02\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{8}\r\u{200f}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{8}\r\u{200f}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x07\0\xE2\x82\xACUK\xC2\xA3US$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\xC0\x01\x02\xC0\x03\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{8}\r\u{200f}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{8}\r\u{200f}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x07\0\x0B\0\xE2\x82\xACGB\xC2\xA3UK\xC2\xA3US$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01\0\x02\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x05\0\x08\0\xE2\x82\xAC\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"GBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x02\0\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01\x80\x02\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x05\0\x08\0\xE2\x82\xAC\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01\0\x02\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x05\0\xE2\x82\xAC\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"CHFEURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xC7\0\xFF\0\x01\x01\x80\x02\x03\0\x04\x04") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x04\0\x07\0\x0B\0\r\0SWZF\xE2\x82\xACBRTP\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"GBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xB8\xFE\0\x80\x01\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x02\0\x08\0\xC2\xA3\xD1\x89.\xD0\xB4.$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01\x80\x02\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{3}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x05\0\x08\0\xE2\x82\xAC\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01\0\x02\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x05\0\xE2\x82\xAC\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"GBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\x01\0\x02\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x05\0\x07\0\x0B\0\xC2\xA3 RU\xC2\xA3$ SU$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"CHFEURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xC7\0\xFF\0\x01\x01\0\x02\x02\0\x03\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x1A\0\x1D\0\x1F\0\xE0\xA4\xB8\xE0\xA4\xBF.\xE0\xA4\x90\xE0\xA4\xA4\xE0\xA5\x8D\xE0\xA4\xB8.\xE0\xA4\x8F\xE0\xA4\xAB\xE2\x82\xAC\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\xB8\xFE\x01\xB8\xFE\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x05\0\xE2\x82\xAC\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"GBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\xB8\xFE\x01") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x02\0\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01\0\x02\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x05\0\t\0\xE2\x82\xAC\xC2\xA3US $$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBP") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0\xE2\x82\xAC\xC2\xA3") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x06\0\xE2\x82\xACUS$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"GBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x02\0\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\xFE\xFE\0\0\0\0\x01\x01") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x02\0\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xB8\xFE\0\0\x01\x01\0\x02\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x05\0\xE2\x82\xAC\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"CHFEURGBP") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\xFE\xFF\0\0\0\0\x01\x01") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0\xE2\x82\xAC\xC2\xA3") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"CHFEURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\xFE\xFF\0\0\0\0\x01\x01\0\x02\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x05\0\x08\0\xE2\x82\xAC\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"CHFEURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\xFE\xFF\0\0\0\0\x01\x01\x80\x02\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x05\0\x08\0\xE2\x82\xAC\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"CHFEURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\xFE\xFF\0\0\0\0\x01\x01\0\x02\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x05\0\xE2\x82\xAC\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"CHFGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\xFE\xFF\0\0\0\0\x01\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x02\0\x05\0\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"CHFEURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\xFE\xFF\xB8\xFE\0\xB8\xFE\x01\xB8\xFE\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x05\0\xE2\x82\xAC\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"CHFGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\xFE\xFF\0\0\0\x80\x01\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x02\0\x05\0\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"CHFGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\xFE\xFF\0\0\0\0\x01\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x02\0\x05\0\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"CHFEURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\xFE\xFF\0\0\0\0\x01\x02\0\x03\x04") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x03\0\x07\0\t\0\x0C\0\xE2\x82\xACGB\xC2\xA3\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"CHFEURUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\xFE\xFF\0\0\0\0\x01\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x06\0\xE2\x82\xACUS$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"CHFGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\xFE\xFF\0\0\x01\0\x02\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x04\0\x06\0\t\0GB\xC2\xA3\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"CHFEURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\xFE\xFF\0\0\0\0\x01\x01\0\x02\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x05\0\x08\0\xE2\x82\xAC\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"CHFEURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\xFE\xFF\0\0\0\0\x01\x01\0\x02\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x05\0\x08\0\xE2\x82\xAC\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\xB8\xFE\x01\xB8\xFE\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\t\u{202f}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\t\u{202f}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x05\0\xE2\x82\xAC\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"GBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xB8\xFE\0\x80\x01\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x02\0\x05\0\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xB8\xFE\0\xB8\xFE\x01\xB8\xFE\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x05\0\xE2\x82\xAC\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xB8\xFE\0\xB8\xFE\x01\0\x02\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x05\0\x08\0\xE2\x82\xAC\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xB8\xFE\0\xB8\xFE\x01\0\x02\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x05\0\x08\0\xE2\x82\xAC\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBP") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xB8\xFE\0\xB8\xFE\x01") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0\xE2\x82\xAC\xC2\xA3") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\xB8\xFE\x01\0\x02\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x05\0\x08\0\xE2\x82\xAC\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xB8\xFE\0\xB8\xFE\x01\xB8\xFE\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x05\0\xE2\x82\xAC\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\xB8\xFE\x01\x80\x02\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x05\0\x08\0\xE2\x82\xAC\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"GBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\x80\x01\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x02\0\x05\0\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01\0\x02\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\t\u{c}\u{200e}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\t\u{c}\u{200e}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x05\0\xE2\x82\xAC\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01\0\x02\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x05\0\xE2\x82\xAC\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"GBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\x01\0\x02\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x04\0\x06\0\t\0\xC2\xA3GB\xC2\xA3$US$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x02\0\x03\x04") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x03\0\x07\0\t\0\x0C\0\xE2\x82\xAC\xC2\xA3GB\xC2\xA3$US$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01\0\x02\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x05\0\n\0\xE2\x82\xAC\xC2\xA3$\xC2\xA0US$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBP") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x07\0\xE2\x82\xAC\xC2\xA3GB\xC2\xA3") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"GBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x02\0\x05\0\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"GBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x02\0\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0\xE2\x82\xAC$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01\0\x02\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{8}\u{13}\u{200f}\u{a0}\u{200f}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{8}\u{13}\u{200f}\u{a0}\u{200f}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x05\0\xE2\x82\xAC\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"GBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xB8\xFE\0\xB8\xFE\x01") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x02\0\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xB8\xFE\0\xB8\xFE\x01\xB8\xFE\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x05\0\xE2\x82\xAC\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01\xB8\xFE\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x05\0\xE2\x82\xAC\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01\0\x02\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{3}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x05\0\xE2\x82\xAC\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"GBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{2}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x02\0\x05\0\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBP") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0\xE2\x82\xAC\xC2\xA3") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01\xB8\xFE\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x05\0\xE2\x82\xAC\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"CHFEURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xC7\0\xFF\0\x01\x01\0\x02\x02\0\x03\x04") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x06\0\t\0\x0B\0\x12\0\xDF\x9B\xDF\xA5\xDF\x9D\xE2\x82\xAC\xC2\xA3\xDF\x8A\xDF\x9E\xDF\x98$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"GBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\x80\x01\x02") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{3}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x02\0\x05\0\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBP") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x03\0\xE2\x82\xAC\xC2\xA3") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\x01\x01\x80\x02\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{3}\u{6}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x05\0\x08\0\xE2\x82\xAC\xC2\xA3$US$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"GBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xB8\xFE\0\0\x01\x01") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x02\0\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0G\x01\xFE\xC7\x02\xFE") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x03\0\x05\0\xE2\x82\xAC\xC2\xA3US$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"GBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"G\0\xFE\xC7\x01\xFE") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x02\0\xC2\xA3US$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"EURGBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xB8\xFE\0\xB8\xFE\x01\x80\x02\x03") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\u{7}\u{a0}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x05\0\x08\0\xE2\x82\xAC\xC2\xA3US$$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                    icu::experimental::dimension::provider::currency::essentials::CurrencyEssentials {
+                        pattern_config_map: unsafe {
+                            #[allow(unused_unsafe)]
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"GBPUSD") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\xB8\xFE\0\xB8\xFE\x01") })
+                        },
+                        standard_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\t\u{202f}"))),
+                        standard_alpha_next_to_number_pattern: Some(alloc::borrow::Cow::Borrowed(icu_pattern::Pattern::<icu_pattern::DoublePlaceholder>::from_ref_store_unchecked("\u{2}\t\u{202f}"))),
+                        placeholders: unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x02\0\x02\0\xC2\xA3$") },
+                        default_pattern_config: icu::experimental::dimension::provider::currency::essentials::CurrencyPatternConfig { short_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, narrow_pattern_selection: icu::experimental::dimension::provider::currency::essentials::PatternSelection::StandardAlphaNextToNumber, short_placeholder_value: None, narrow_placeholder_value: None },
+                    },
+                ];
+                unsafe { icu_provider::baked::zerotrie::Data::from_trie_and_values_unchecked(TRIE, VALUES) }
+            };
+        }
+        #[clippy::msrv = "1.83"]
+        impl icu_provider::DataProvider<icu::experimental::dimension::provider::currency::essentials::CurrencyEssentialsCoreV1> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::experimental::dimension::provider::currency::essentials::CurrencyEssentialsCoreV1>, icu_provider::DataError> {
+                let mut metadata = icu_provider::DataResponseMetadata::default();
+                let payload = if let Some(payload) = icu_provider::baked::DataStore::get(&Self::DATA_CURRENCY_ESSENTIALS_CORE_V1, req.id, req.metadata.attributes_prefix_match) {
+                    payload
+                } else {
+                    const FALLBACKER: icu::locale::fallback::LocaleFallbackerWithConfig<'static> = icu::locale::fallback::LocaleFallbacker::new().for_config(<icu::experimental::dimension::provider::currency::essentials::CurrencyEssentialsCoreV1 as icu_provider::DataMarker>::INFO.fallback_config);
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.id.locale.clone());
+                    loop {
+                        if let Some(payload) = icu_provider::baked::DataStore::get(&Self::DATA_CURRENCY_ESSENTIALS_CORE_V1, icu_provider::DataIdentifierBorrowed::for_marker_attributes_and_locale(req.id.marker_attributes, fallback_iterator.get()), req.metadata.attributes_prefix_match) {
+                            metadata.locale = Some(fallback_iterator.take());
+                            break payload;
+                        }
+                        if fallback_iterator.get().is_unknown() {
+                            return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::dimension::provider::currency::essentials::CurrencyEssentialsCoreV1 as icu_provider::DataMarker>::INFO, req));
+                        }
+                        fallback_iterator.step();
+                    }
+                };
+                Ok(icu_provider::DataResponse { payload, metadata })
+            }
+        }
+    };
+    ($ provider : ty , ITER) => {
+        __impl_currency_essentials_core_v1!($provider);
+        #[clippy::msrv = "1.83"]
+        impl icu_provider::IterableDataProvider<icu::experimental::dimension::provider::currency::essentials::CurrencyEssentialsCoreV1> for $provider {
+            fn iter_ids(&self) -> Result<std::collections::BTreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
+                Ok(icu_provider::baked::DataStore::iter(&Self::DATA_CURRENCY_ESSENTIALS_CORE_V1).collect())
+            }
+        }
+    };
+    ($ provider : ty , DRY) => {};
+    ($ provider : ty , DRY , ITER) => {
+        __impl_currency_essentials_core_v1!($provider, ITER);
+    };
+}
+#[doc(inline)]
+pub use __impl_currency_essentials_core_v1 as impl_currency_essentials_core_v1;

@@ -10,7 +10,7 @@
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub(crate) struct CurrencyPatterns {
     #[serde(rename = "symbol")]
     pub(crate) short: Option<String>,

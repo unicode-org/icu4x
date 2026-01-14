@@ -1,0 +1,68 @@
+{
+  "pattern_config_map": {
+    "CHF": {
+      "short_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "short_placeholder_value": "ISO",
+      "narrow_placeholder_value": null
+    },
+    "EUR": {
+      "short_pattern_selection": "Standard",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
+        "Index": 0
+      },
+      "narrow_placeholder_value": {
+        "Index": 0
+      }
+    },
+    "GBP": {
+      "short_pattern_selection": "Standard",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
+        "Index": 1
+      },
+      "narrow_placeholder_value": {
+        "Index": 1
+      }
+    },
+    "USD": {
+      "short_pattern_selection": "Standard",
+      "narrow_pattern_selection": "Standard",
+      "short_placeholder_value": {
+        "Index": 2
+      },
+      "narrow_placeholder_value": {
+        "Index": 3
+      }
+    }
+  },
+  "standard_pattern": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Placeholder": "Place0"
+    }
+  ],
+  "standard_alpha_next_to_number_pattern": [
+    {
+      "Placeholder": "Place1"
+    },
+    {
+      "Placeholder": "Place0"
+    }
+  ],
+  "placeholders": [
+    "€",
+    "£",
+    "US$",
+    "$"
+  ],
+  "default_pattern_config": {
+    "short_pattern_selection": "StandardAlphaNextToNumber",
+    "narrow_pattern_selection": "StandardAlphaNextToNumber",
+    "short_placeholder_value": null,
+    "narrow_placeholder_value": null
+  }
+}
