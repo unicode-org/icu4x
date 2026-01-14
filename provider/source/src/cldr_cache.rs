@@ -247,11 +247,7 @@ impl CldrCache {
 
         let mut lang_id = LanguageIdentifier::from((locale.language, locale.script, locale.region));
         let _ = self.extended_locale_expander()?.maximize(&mut lang_id);
-        lang_id.region.ok_or_else(|| {
-            DataErrorKind::InvalidRequest
-                .into_error()
-                .with_debug_context(&lang_id)
-        })
+        Ok(lang_id.region.unwrap())
     }
 
     /// Computes the likely script-based locale group for a given locale.
