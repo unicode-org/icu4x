@@ -21,7 +21,7 @@ use std::collections::HashSet;
 
 impl SourceDataProvider {
     /// Extracts the region from a locale, using the likely subtags expander if not present.
-    fn extract_region(&self, locale: &DataLocale) -> Result<Region, DataError> {
+    pub(crate) fn extract_region(&self, locale: &DataLocale) -> Result<Region, DataError> {
         match locale.region {
             Some(region) => Ok(region),
             None => {
