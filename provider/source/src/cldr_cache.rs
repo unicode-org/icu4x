@@ -245,7 +245,7 @@ impl CldrCache {
             return Ok(region);
         }
 
-        let mut lang_id = LanguageIdentifier::from(locale.language);
+        let mut lang_id = LanguageIdentifier::from((locale.language, locale.script, locale.region));
         let _ = self.extended_locale_expander()?.maximize(&mut lang_id);
         lang_id.region.ok_or_else(|| {
             DataErrorKind::InvalidRequest
