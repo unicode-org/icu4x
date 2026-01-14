@@ -18,7 +18,10 @@ use utf8_iter::Utf8CharIndices;
 /// </div>
 pub trait RuleBreakType: crate::private::Sealed + Sized {
     /// The iterator over characters.
-    type IterAttr<'s>: Iterator<Item = (usize, Self::CharType)> + Clone + core::fmt::Debug;
+    type IterAttr<'s>: Iterator<Item = (usize, Self::CharType)>
+        + DoubleEndedIterator
+        + Clone
+        + core::fmt::Debug;
 
     /// The character type.
     type CharType: Copy + Into<u32> + core::fmt::Debug;
@@ -49,6 +52,7 @@ pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType> {
     pub(crate) data: &'data RuleBreakData<'data>,
     pub(crate) complex: Option<ComplexPayloadsBorrowed<'data>>,
     pub(crate) boundary_property: u8,
+    pub(crate) right_boundary_property: Option<u8>,
     pub(crate) locale_override: Option<&'data RuleBreakDataOverride<'data>>,
     // Should return None if there is no complex language handling
     pub(crate) handle_complex_language:
@@ -202,6 +206,50 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
                 }
             }
         }
+    }
+}
+
+
+impl<Y: RuleBreakType> DoubleEndedIterator for RuleBreakIterator<'_, '_, Y> {
+    fn next_back(&mut self) -> Option<Self::Item> {
+        let mut right_prop = self
+            .right_boundary_property
+            .unwrap_or(self.data.eot_property);
+
+        while let Some((pos, code_point)) = self.iter.next_back() {
+            let left_prop = self.get_break_property(code_point);
+            match self.get_break_state_from_table(left_prop, right_prop) {
+                BreakState::Keep => {
+                    right_prop = left_prop;
+                    continue;
+                }
+                BreakState::Break | BreakState::NoMatch => {
+                    self.right_boundary_property = Some(left_prop);
+                    let len = Y::char_len(code_point);
+                    return Some(pos + len);
+                }
+                BreakState::Index(_) | BreakState::Intermediate(_) => {
+                    right_prop = left_prop;
+                    continue;
+                }
+            }
+        }
+
+        if self.right_boundary_property == Some(255) {
+            return None;
+        }
+
+        let sot_prop = self.data.sot_property;
+        if matches!(
+            self.get_break_state_from_table(sot_prop, right_prop),
+            BreakState::Break | BreakState::NoMatch
+        ) {
+            self.right_boundary_property = Some(255);
+            return Some(0);
+        }
+
+        self.right_boundary_property = Some(255);
+        None
     }
 }
 
