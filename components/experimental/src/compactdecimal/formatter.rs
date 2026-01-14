@@ -550,7 +550,7 @@ impl CompactDecimalFormatter {
     pub fn format_compact_decimal<'l>(
         &'l self,
         value: &'l CompactDecimal,
-    ) -> Result<impl Writeable + 'l, ExponentError> {
+    ) -> Result<impl Writeable + Display + 'l, ExponentError> {
         let log10_type =
             value.significand().absolute.nonzero_magnitude_start() + i16::from(value.exponent());
 
