@@ -13,32 +13,9 @@ use icu::experimental::dimension::provider::units::categorized_display_names::{
     UnitsNamesVolumeCoreV1, UnitsNamesVolumeExtendedV1, UnitsNamesVolumeOutlierV1,
 };
 use icu::experimental::dimension::provider::units::display_names::UnitsDisplayNames;
-use icu::locale::subtags::Region;
-use icu::locale::LanguageIdentifier;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
 use std::collections::HashSet;
-
-impl SourceDataProvider {
-    /// Extracts the region from a locale, using the likely subtags expander if not present.
-    fn extract_region(&self, locale: &DataLocale) -> Result<Region, DataError> {
-        match locale.region {
-            Some(region) => Ok(region),
-            None => {
-                let mut lang_id = LanguageIdentifier::from(locale.language);
-                let _ = self
-                    .cldr()?
-                    .extended_locale_expander()?
-                    .maximize(&mut lang_id);
-                lang_id.region.ok_or_else(|| {
-                    DataErrorKind::InvalidRequest
-                        .into_error()
-                        .with_debug_context(&lang_id)
-                })
-            }
-        }
-    }
-}
 
 impl SourceDataProvider {
     fn get_display_name_payload<M>(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>
@@ -131,7 +108,7 @@ impl SourceDataProvider {
                     if cldr_serde::units::preferences::Supplemental::unit_type(
                         category,
                         unit,
-                        &self.extract_region(&locale)?.to_string(),
+                        &self.cldr()?.extract_or_infer_region(&locale)?.to_string(),
                         &categorized_units_list,
                     ) != unit_type
                     {
