@@ -20,10 +20,6 @@
 use cldr_cache::CldrCache;
 use elsa::sync::FrozenMap;
 use icu::calendar::{Date, Iso};
-#[cfg(feature = "experimental")]
-use icu::locale::subtags::Region;
-#[cfg(feature = "experimental")]
-use icu::locale::LanguageIdentifier;
 use icu::time::zone::UtcOffset;
 use icu::time::Time;
 use icu_provider::prelude::*;
@@ -330,28 +326,6 @@ impl SourceDataProvider {
 
     fn cldr(&self) -> Result<&CldrCache, DataError> {
         self.cldr_paths.as_deref().ok_or(Self::MISSING_CLDR_ERROR)
-    }
-
-    /// Extracts the region from a [`DataLocale`].
-    ///
-    /// If the locale already has a region, it is returned.  
-    /// Otherwise, the likely region is inferred from the language.
-    #[cfg(feature = "experimental")]
-    pub(crate) fn extract_or_infer_region(&self, locale: &DataLocale) -> Result<Region, DataError> {
-        if let Some(region) = locale.region {
-            return Ok(region);
-        }
-
-        let mut lang_id = LanguageIdentifier::from(locale.language);
-        let _ = self
-            .cldr()?
-            .extended_locale_expander()?
-            .maximize(&mut lang_id);
-        lang_id.region.ok_or_else(|| {
-            DataErrorKind::InvalidRequest
-                .into_error()
-                .with_debug_context(&lang_id)
-        })
     }
 
     fn icuexport(&self) -> Result<&SerdeCache, DataError> {

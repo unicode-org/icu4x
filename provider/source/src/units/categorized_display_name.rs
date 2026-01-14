@@ -108,7 +108,7 @@ impl SourceDataProvider {
                     if cldr_serde::units::preferences::Supplemental::unit_type(
                         category,
                         unit,
-                        &self.extract_or_infer_region(&locale)?.to_string(),
+                        &self.cldr()?.extract_or_infer_region(&locale)?.to_string(),
                         &categorized_units_list,
                     ) != unit_type
                     {

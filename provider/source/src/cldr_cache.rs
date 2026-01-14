@@ -11,6 +11,10 @@ use crate::CoverageLevel;
 use icu::locale::provider::{
     LocaleLikelySubtagsExtendedV1, LocaleLikelySubtagsLanguageV1, LocaleLikelySubtagsScriptRegionV1,
 };
+#[cfg(feature = "experimental")]
+use icu::locale::subtags::Region;
+#[cfg(feature = "experimental")]
+use icu::locale::LanguageIdentifier;
 use icu::locale::LocaleExpander;
 use icu_provider::prelude::*;
 use icu_provider::DataError;
@@ -225,6 +229,29 @@ impl CldrCache {
         // Restore the region
         langid.region = locale.region;
         Ok(Some(langid.into()))
+    }
+
+    /// Extracts the region from a [`DataLocale`].
+    ///
+    /// If the locale already has a region, it is returned.  
+    /// Otherwise, the likely region is inferred from the language.
+    ///
+    /// # Example
+    ///  - "en-US" -> "US"
+    ///  - "en" -> "US"
+    #[cfg(feature = "experimental")]
+    pub(crate) fn extract_or_infer_region(&self, locale: &DataLocale) -> Result<Region, DataError> {
+        if let Some(region) = locale.region {
+            return Ok(region);
+        }
+
+        let mut lang_id = LanguageIdentifier::from(locale.language);
+        let _ = self.extended_locale_expander()?.maximize(&mut lang_id);
+        lang_id.region.ok_or_else(|| {
+            DataErrorKind::InvalidRequest
+                .into_error()
+                .with_debug_context(&lang_id)
+        })
     }
 
     /// Computes the likely script-based locale group for a given locale.
