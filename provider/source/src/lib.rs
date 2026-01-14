@@ -358,6 +358,7 @@ impl SourceDataProvider {
         locale: &DataLocale,
     ) -> Result<icu::locale::LanguageIdentifier, DataError> {
         let mut group = LanguageIdentifier::from((locale.language, locale.script, locale.region));
+
         // 1. Maximizes the input locale to get full language/script/region
         //    (e.g. "es-US" -> "es-Latn-US")
         self.cldr()?
