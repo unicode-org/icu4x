@@ -253,7 +253,7 @@ impl CldrCache {
         //    (e.g. "und-Latn" -> "en-Latn-US")
         self.extended_locale_expander()?.maximize(&mut group);
 
-        // 4. Minimizes while favoring script retention
+        // 4. Minimizes to keep just the language
         //    (e.g. "en-Latn-US" -> "en")
         self.extended_locale_expander()?
             .minimize_favor_script(&mut group);
