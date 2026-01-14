@@ -20,8 +20,6 @@
 use cldr_cache::CldrCache;
 use elsa::sync::FrozenMap;
 use icu::calendar::{Date, Iso};
-use icu::locale::subtags::Language;
-use icu::locale::LanguageIdentifier;
 use icu::time::zone::UtcOffset;
 use icu::time::Time;
 use icu_provider::prelude::*;
@@ -344,44 +342,6 @@ impl SourceDataProvider {
 
     fn tzdb(&self) -> Result<&TzdbCache, DataError> {
         self.tzdb_paths.as_deref().ok_or(Self::MISSING_TZDB_ERROR)
-    }
-
-    /// Computes the likely script-based locale group for a given locale.
-    ///
-    /// Example:
-    /// - "en-US" -> "en-Latn-US" -> "und-Latn" -> "en-Latn-US" -> "en"
-    /// - "es-US" ->  "es-Latn-US" -> "und-Latn" -> "en-Latn-US" -> "en"
-    /// - "fr-FR" -> "fr-Latn-FR" -> "und-Latn" -> "en-Latn-US" -> "en"
-    /// - "ar-SA" -> "ar-Arab-SA" -> "und-Arab" -> "ar-Arab-EG" -> "ar"
-    pub(crate) fn script_locale_group(
-        &self,
-        locale: &DataLocale,
-    ) -> Result<icu::locale::LanguageIdentifier, DataError> {
-        let mut group = LanguageIdentifier::from((locale.language, locale.script, locale.region));
-
-        // 1. Maximizes the input locale to get full language/script/region
-        //    (e.g. "es-US" -> "es-Latn-US")
-        self.cldr()?
-            .extended_locale_expander()?
-            .maximize(&mut group);
-
-        // 2. Strips language and region, keeping only script
-        //    (e.g. "es-Latn-US" -> "und-Latn")
-        group.language = Language::UNKNOWN;
-        group.region = Default::default();
-
-        // 3. Maximizes again to find the most likely language for that script
-        //    (e.g. "und-Latn" -> "en-Latn-US")
-        self.cldr()?
-            .extended_locale_expander()?
-            .maximize(&mut group);
-
-        // 4. Minimizes while favoring script retention
-        //    (e.g. "en-Latn-US" -> "en")
-        self.cldr()?
-            .extended_locale_expander()?
-            .minimize_favor_script(&mut group);
-        Ok(group)
     }
 
     /// Set this to use tries optimized for speed instead of data size.
