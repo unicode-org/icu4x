@@ -103,7 +103,6 @@ pub(crate) mod size_test_macro;
 pub use format::FormattedDecimal;
 
 use fixed_decimal::Decimal;
-use icu_locale_core::locale;
 use icu_locale_core::preferences::define_preferences;
 use icu_provider::prelude::*;
 use size_test_macro::size_test;
@@ -233,7 +232,7 @@ impl DecimalFormatter {
                 .load(DataRequest {
                     id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                         DataMarkerAttributes::from_str_or_panic(provided_nu),
-                        &locale!("und").into(),
+                        &DataLocale::default(),
                     ),
                     ..Default::default()
                 })
@@ -241,7 +240,7 @@ impl DecimalFormatter {
                     provider.load(DataRequest {
                         id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                             DataMarkerAttributes::from_str_or_panic(resolved_nu),
-                            &locale!("und").into(),
+                            &DataLocale::default(),
                         ),
                         ..Default::default()
                     })
@@ -269,7 +268,7 @@ impl DecimalFormatter {
                 .load(DataRequest {
                     id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                         DataMarkerAttributes::from_str_or_panic(resolved_nu),
-                        &locale!("und").into(),
+                        &DataLocale::default(),
                     ),
                     ..Default::default()
                 })?
@@ -304,6 +303,7 @@ impl DecimalFormatter {
 
 #[test]
 fn test_numbering_resolution_fallback() {
+    use icu_locale_core::locale;
     fn test_locale(locale: icu_locale_core::Locale, expected_format: &str) {
         let formatter =
             DecimalFormatter::try_new((&locale).into(), Default::default()).expect("Must load");

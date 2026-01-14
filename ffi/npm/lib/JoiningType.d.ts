@@ -75,5 +75,7 @@ export class JoiningType {
      */
     static fromIntegerValue(other: number): JoiningType | null;
 
+    static tryFromStr(s: string): JoiningType | null;
+
     constructor(value: JoiningType | string );
 }

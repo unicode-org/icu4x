@@ -465,6 +465,10 @@ export class Script {
      */
     static OlChiki : Script;
     /**
+     * See the [Rust documentation for `OlOnal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OlOnal) for more information.
+     */
+    static OlOnal : Script;
+    /**
      * See the [Rust documentation for `OldHungarian`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldHungarian) for more information.
      */
     static OldHungarian : Script;
@@ -500,10 +504,6 @@ export class Script {
      * See the [Rust documentation for `OldUyghur`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OldUyghur) for more information.
      */
     static OldUyghur : Script;
-    /**
-     * See the [Rust documentation for `OlOnal`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.OlOnal) for more information.
-     */
-    static OlOnal : Script;
     /**
      * See the [Rust documentation for `Oriya`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#associatedconstant.Oriya) for more information.
      */
@@ -758,6 +758,8 @@ export class Script {
      * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html#method.from_icu4c_value) for more information.
      */
     static fromIntegerValue(other: number): Script | null;
+
+    static tryFromStr(s: string): Script | null;
 
     constructor(value: Script | string );
 }

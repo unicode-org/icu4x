@@ -83,6 +83,15 @@ enum SentenceBreak {
     return SentenceBreak.values[result.union.ok];
   }
 
+  static SentenceBreak? tryFromStr(String s) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_SentenceBreak_try_from_str_mv1(s._utf8AllocIn(temp.arena));
+    if (!result.isOk) {
+      return null;
+    }
+    return SentenceBreak.values[result.union.ok];
+  }
+
 }
 
 @_DiplomatFfiUse('icu4x_SentenceBreak_for_char_mv1')
@@ -109,5 +118,10 @@ external int _icu4x_SentenceBreak_to_integer_value_mv1(int self);
 @ffi.Native<_ResultInt32Void Function(ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_SentenceBreak_from_integer_value_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _icu4x_SentenceBreak_from_integer_value_mv1(int other);
+
+@_DiplomatFfiUse('icu4x_SentenceBreak_try_from_str_mv1')
+@ffi.Native<_ResultInt32Void Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_SentenceBreak_try_from_str_mv1')
+// ignore: non_constant_identifier_names
+external _ResultInt32Void _icu4x_SentenceBreak_try_from_str_mv1(_SliceUtf8 s);
 
 // dart format on

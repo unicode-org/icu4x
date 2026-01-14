@@ -68,6 +68,20 @@ public:
   inline static icu4x::IndicConjunctBreak for_char(char32_t ch);
 
   /**
+   * Get the "long" name of this property value (returns empty if property value is unknown)
+   *
+   * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+   */
+  inline std::optional<std::string_view> long_name() const;
+
+  /**
+   * Get the "short" name of this property value (returns empty if property value is unknown)
+   *
+   * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+   */
+  inline std::optional<std::string_view> short_name() const;
+
+  /**
    * Convert to an integer value usable with ICU4C and CodePointMapData
    *
    * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#method.to_icu4c_value) for more information.
@@ -80,6 +94,8 @@ public:
    * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html#method.from_icu4c_value) for more information.
    */
   inline static std::optional<icu4x::IndicConjunctBreak> from_integer_value(uint8_t other);
+
+  inline static std::optional<icu4x::IndicConjunctBreak> try_from_str(std::string_view s);
 
     inline icu4x::capi::IndicConjunctBreak AsFFI() const;
     inline static icu4x::IndicConjunctBreak FromFFI(icu4x::capi::IndicConjunctBreak c_enum);

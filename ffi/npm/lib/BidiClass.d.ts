@@ -143,5 +143,7 @@ export class BidiClass {
      */
     static fromIntegerValue(other: number): BidiClass | null;
 
+    static tryFromStr(s: string): BidiClass | null;
+
     constructor(value: BidiClass | string );
 }

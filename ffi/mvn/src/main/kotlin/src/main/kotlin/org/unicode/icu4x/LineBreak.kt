@@ -12,6 +12,7 @@ internal interface LineBreakLib: Library {
     fun icu4x_LineBreak_short_name_mv1(inner: Int): OptionSlice
     fun icu4x_LineBreak_to_integer_value_mv1(inner: Int): FFIUint8
     fun icu4x_LineBreak_from_integer_value_mv1(other: FFIUint8): OptionInt
+    fun icu4x_LineBreak_try_from_str_mv1(s: Slice): OptionInt
 }
 /** See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html) for more information.
 */
@@ -99,6 +100,16 @@ enum class LineBreak {
         fun fromIntegerValue(other: UByte): LineBreak? {
             
             val returnVal = lib.icu4x_LineBreak_from_integer_value_mv1(FFIUint8(other));
+            
+            val intermediateOption = returnVal.option() ?: return null
+            return LineBreak.fromNative(intermediateOption)
+        }
+        @JvmStatic
+        
+        fun tryFromStr(s: String): LineBreak? {
+            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            
+            val returnVal = lib.icu4x_LineBreak_try_from_str_mv1(sSlice);
             
             val intermediateOption = returnVal.option() ?: return null
             return LineBreak.fromNative(intermediateOption)

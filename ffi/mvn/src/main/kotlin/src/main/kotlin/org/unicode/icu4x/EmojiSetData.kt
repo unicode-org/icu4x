@@ -11,6 +11,8 @@ internal interface EmojiSetDataLib: Library {
     fun icu4x_EmojiSetData_contains_mv1(handle: Pointer, cp: Int): Byte
     fun icu4x_EmojiSetData_create_basic_mv1(): Pointer
     fun icu4x_EmojiSetData_create_basic_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_EmojiSetData_basic_emoji_for_char_mv1(ch: Int): Byte
+    fun icu4x_EmojiSetData_basic_emoji_for_str_mv1(s: Slice): Byte
 }
 /** An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
 *
@@ -71,6 +73,29 @@ class EmojiSetData internal constructor (
             } else {
                 return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
             }
+        }
+        @JvmStatic
+        
+        /** Get the `Basic_Emoji` value for a given character, using compiled data
+        *
+        *See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EmojiSet.html#tymethod.for_char) for more information.
+        */
+        fun basicEmojiForChar(ch: Int): Boolean {
+            
+            val returnVal = lib.icu4x_EmojiSetData_basic_emoji_for_char_mv1(ch);
+            return (returnVal > 0)
+        }
+        @JvmStatic
+        
+        /** Get the `Basic_Emoji` value for a given character, using compiled data
+        *
+        *See the [Rust documentation for `for_str`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EmojiSet.html#tymethod.for_str) for more information.
+        */
+        fun basicEmojiForStr(s: String): Boolean {
+            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            
+            val returnVal = lib.icu4x_EmojiSetData_basic_emoji_for_str_mv1(sSlice);
+            return (returnVal > 0)
         }
     }
     

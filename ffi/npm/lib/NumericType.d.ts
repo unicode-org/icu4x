@@ -40,6 +40,20 @@ export class NumericType {
     static forChar(ch: codepoint): NumericType;
 
     /**
+     * Get the "long" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+     */
+    longName(): string | null;
+
+    /**
+     * Get the "short" name of this property value (returns empty if property value is unknown)
+     *
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+     */
+    shortName(): string | null;
+
+    /**
      * Convert to an integer value usable with ICU4C and CodePointMapData
      *
      * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#method.to_icu4c_value) for more information.
@@ -52,6 +66,8 @@ export class NumericType {
      * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html#method.from_icu4c_value) for more information.
      */
     static fromIntegerValue(other: number): NumericType | null;
+
+    static tryFromStr(s: string): NumericType | null;
 
     constructor(value: NumericType | string );
 }

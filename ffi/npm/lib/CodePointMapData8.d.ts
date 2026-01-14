@@ -70,196 +70,210 @@ export class CodePointMapData8 {
     getSetForValue(value: number): CodePointSetData;
 
     /**
-     * Create a map for the `General_Category` property, using compiled data.
-     *
-     * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
-     */
-    static createGeneralCategory(): CodePointMapData8;
-
-    /**
-     * Create a map for the `General_Category` property, using a particular data source
-     *
-     * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
-     */
-    static createGeneralCategoryWithProvider(provider: DataProvider): CodePointMapData8;
-
-    /**
-     * Create a map for the `Bidi_Class` property, using compiled data.
+     * Create a map for the `BidiClass` property, using compiled data.
      *
      * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html) for more information.
      */
     static createBidiClass(): CodePointMapData8;
 
     /**
-     * Create a map for the `Bidi_Class` property, using a particular data source.
+     * Create a map for the `BidiClass` property, using a particular data source.
      *
      * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html) for more information.
      */
     static createBidiClassWithProvider(provider: DataProvider): CodePointMapData8;
 
     /**
-     * Create a map for the `Numeric_Type` property, using compiled data.
+     * Create a map for the `NumericType` property, using compiled data.
      *
      * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
      */
     static createNumericType(): CodePointMapData8;
 
     /**
-     * Create a map for the `Bidi_Class` property, using a particular data source.
+     * Create a map for the `NumericType` property, using a particular data source.
      *
      * See the [Rust documentation for `NumericType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.NumericType.html) for more information.
      */
     static createNumericTypeWithProvider(provider: DataProvider): CodePointMapData8;
 
     /**
-     * Create a map for the `East_Asian_Width` property, using compiled data.
-     *
-     * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
-     */
-    static createEastAsianWidth(): CodePointMapData8;
-
-    /**
-     * Create a map for the `East_Asian_Width` property, using a particular data source.
-     *
-     * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
-     */
-    static createEastAsianWidthWithProvider(provider: DataProvider): CodePointMapData8;
-
-    /**
-     * Create a map for the `Hangul_Syllable_Type` property, using compiled data.
+     * Create a map for the `HangulSyllableType` property, using compiled data.
      *
      * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
      */
     static createHangulSyllableType(): CodePointMapData8;
 
     /**
-     * Create a map for the `Hangul_Syllable_Type` property, using a particular data source.
+     * Create a map for the `HangulSyllableType` property, using a particular data source.
      *
      * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.HangulSyllableType.html) for more information.
      */
     static createHangulSyllableTypeWithProvider(provider: DataProvider): CodePointMapData8;
 
     /**
-     * Create a map for the `Indic_Syllabic_Property` property, using compiled data.
+     * Create a map for the `EastAsianWidth` property, using compiled data.
      *
-     * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+     * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
      */
-    static createIndicSyllabicCategory(): CodePointMapData8;
+    static createEastAsianWidth(): CodePointMapData8;
 
     /**
-     * Create a map for the `Indic_Syllabic_Property` property, using a particular data source.
+     * Create a map for the `EastAsianWidth` property, using a particular data source.
      *
-     * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+     * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.EastAsianWidth.html) for more information.
      */
-    static createIndicSyllabicCategoryWithProvider(provider: DataProvider): CodePointMapData8;
+    static createEastAsianWidthWithProvider(provider: DataProvider): CodePointMapData8;
 
     /**
-     * Create a map for the `Line_Break` property, using compiled data.
+     * Create a map for the `LineBreak` property, using compiled data.
      *
      * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html) for more information.
      */
     static createLineBreak(): CodePointMapData8;
 
     /**
-     * Create a map for the `Line_Break` property, using a particular data source.
+     * Create a map for the `LineBreak` property, using a particular data source.
      *
      * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html) for more information.
      */
     static createLineBreakWithProvider(provider: DataProvider): CodePointMapData8;
 
     /**
-     * Create a map for the `Grapheme_Cluster_Break` property, using compiled data.
+     * Create a map for the `GraphemeClusterBreak` property, using compiled data.
      *
      * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
      */
     static createGraphemeClusterBreak(): CodePointMapData8;
 
     /**
-     * Create a map for the `Grapheme_Cluster_Break` property, using a particular data source.
+     * Create a map for the `GraphemeClusterBreak` property, using a particular data source.
      *
      * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
      */
     static createGraphemeClusterBreakWithProvider(provider: DataProvider): CodePointMapData8;
 
     /**
-     * Create a map for the `Word_Break` property, using compiled data.
+     * Create a map for the `WordBreak` property, using compiled data.
      *
      * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html) for more information.
      */
     static createWordBreak(): CodePointMapData8;
 
     /**
-     * Create a map for the `Word_Break` property, using a particular data source.
+     * Create a map for the `WordBreak` property, using a particular data source.
      *
      * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.WordBreak.html) for more information.
      */
     static createWordBreakWithProvider(provider: DataProvider): CodePointMapData8;
 
     /**
-     * Create a map for the `Sentence_Break` property, using compiled data.
+     * Create a map for the `SentenceBreak` property, using compiled data.
      *
      * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html) for more information.
      */
     static createSentenceBreak(): CodePointMapData8;
 
     /**
-     * Create a map for the `Sentence_Break` property, using a particular data source.
+     * Create a map for the `SentenceBreak` property, using a particular data source.
      *
      * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.SentenceBreak.html) for more information.
      */
     static createSentenceBreakWithProvider(provider: DataProvider): CodePointMapData8;
 
     /**
-     * Create a map for the `Joining_Group` property, using compiled data.
-     *
-     * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
-     */
-    static createJoiningGroup(): CodePointMapData8;
-
-    /**
-     * Create a map for the `Joining_Group` property, using a particular data source.
-     *
-     * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
-     */
-    static createJoiningGroupWithProvider(provider: DataProvider): CodePointMapData8;
-
-    /**
-     * Create a map for the `Joining_Type` property, using compiled data.
-     *
-     * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.
-     */
-    static createJoiningType(): CodePointMapData8;
-
-    /**
-     * Create a map for the `Joining_Type` property, using a particular data source.
-     *
-     * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.
-     */
-    static createJoiningTypeWithProvider(provider: DataProvider): CodePointMapData8;
-
-    /**
-     * Create a map for the `Canonical_Combining_Class` property, using compiled data.
+     * Create a map for the `CanonicalCombiningClass` property, using compiled data.
      *
      * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
      */
     static createCanonicalCombiningClass(): CodePointMapData8;
 
     /**
-     * Create a map for the `Canonical_Combining_Class` property, using a particular data source.
+     * Create a map for the `CanonicalCombiningClass` property, using a particular data source.
      *
      * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
      */
     static createCanonicalCombiningClassWithProvider(provider: DataProvider): CodePointMapData8;
 
     /**
-     * Create a map for the `Vertical_Orientation` property, using compiled data.
+     * Create a map for the `IndicSyllabicCategory` property, using compiled data.
+     *
+     * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+     */
+    static createIndicSyllabicCategory(): CodePointMapData8;
+
+    /**
+     * Create a map for the `IndicSyllabicCategory` property, using a particular data source.
+     *
+     * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+     */
+    static createIndicSyllabicCategoryWithProvider(provider: DataProvider): CodePointMapData8;
+
+    /**
+     * Create a map for the `IndicConjunctBreak` property, using compiled data.
+     *
+     * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
+     */
+    static createIndicConjunctBreak(): CodePointMapData8;
+
+    /**
+     * Create a map for the `IndicConjunctBreak` property, using a particular data source.
+     *
+     * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
+     */
+    static createIndicConjunctBreakWithProvider(provider: DataProvider): CodePointMapData8;
+
+    /**
+     * Create a map for the `JoiningGroup` property, using compiled data.
+     *
+     * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
+     */
+    static createJoiningGroup(): CodePointMapData8;
+
+    /**
+     * Create a map for the `JoiningGroup` property, using a particular data source.
+     *
+     * See the [Rust documentation for `JoiningGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningGroup.html) for more information.
+     */
+    static createJoiningGroupWithProvider(provider: DataProvider): CodePointMapData8;
+
+    /**
+     * Create a map for the `JoiningType` property, using compiled data.
+     *
+     * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.
+     */
+    static createJoiningType(): CodePointMapData8;
+
+    /**
+     * Create a map for the `JoiningType` property, using a particular data source.
+     *
+     * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.JoiningType.html) for more information.
+     */
+    static createJoiningTypeWithProvider(provider: DataProvider): CodePointMapData8;
+
+    /**
+     * Create a map for the `GeneralCategory` property, using compiled data.
+     *
+     * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
+     */
+    static createGeneralCategory(): CodePointMapData8;
+
+    /**
+     * Create a map for the `GeneralCategory` property, using a particular data source.
+     *
+     * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.1.1/icu/properties/props/enum.GeneralCategory.html) for more information.
+     */
+    static createGeneralCategoryWithProvider(provider: DataProvider): CodePointMapData8;
+
+    /**
+     * Create a map for the `VerticalOrientation` property, using compiled data.
      *
      * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
      */
     static createVerticalOrientation(): CodePointMapData8;
 
     /**
-     * Create a map for the `Vertical_Orientation` property, using a particular data source.
+     * Create a map for the `VerticalOrientation` property, using a particular data source.
      *
      * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
      */

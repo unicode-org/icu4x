@@ -262,7 +262,6 @@ export class GeneralCategory {
     }
 
     /**
-     * Convert to an integer using the ICU4C integer mappings for `General_Category`
      * Get the "long" name of this property value (returns empty if property value is unknown)
      *
      * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
@@ -312,6 +311,8 @@ export class GeneralCategory {
 
     /**
      * Convert to an integer value usable with ICU4C and CodePointMapData
+     *
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategory.html#method.to_icu4c_value) for more information.
      */
     toIntegerValue() {
 
@@ -323,6 +324,54 @@ export class GeneralCategory {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+        }
+    }
+
+    /**
+     * Convert from an integer value from ICU4C or CodePointMapData
+     *
+     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategory.html#method.from_icu4c_value) for more information.
+     */
+    static fromIntegerValue(other) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_GeneralCategory_from_integer_value_mv1(diplomatReceive.buffer, other);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            diplomatReceive.free();
+        }
+    }
+
+    static tryFromStr(s) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_GeneralCategory_try_from_str_mv1(diplomatReceive.buffer, sSlice.ptr);
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+            functionCleanupArena.free();
+
+            diplomatReceive.free();
         }
     }
 
@@ -341,29 +390,6 @@ export class GeneralCategory {
 
         finally {
             diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-        }
-    }
-
-    /**
-     * Convert from an integer using the ICU4C integer mappings for `General_Category`
-     * Convert from an integer value from ICU4C or CodePointMapData
-     */
-    static fromIntegerValue(other) {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-
-
-        const result = wasm.icu4x_GeneralCategory_from_integer_value_mv1(diplomatReceive.buffer, other);
-
-        try {
-            if (!diplomatReceive.resultFlag) {
-                return null;
-            }
-            return new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-        }
-
-        finally {
-            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
-            diplomatReceive.free();
         }
     }
 
