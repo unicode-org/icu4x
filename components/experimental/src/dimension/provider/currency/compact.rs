@@ -14,7 +14,10 @@ use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
 icu_provider::data_marker!(
-    /// `ShortCurrencyCompactV1`
+    /// Provides short currency compact data for currency formatting.
+    ///
+    /// This data is used to format currency values in a compact format.
+    /// For example, "1000" becomes "1K" in English.
     ShortCurrencyCompactV1,
     ShortCurrencyCompact<'static>
 );
