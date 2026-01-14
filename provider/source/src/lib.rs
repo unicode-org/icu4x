@@ -20,7 +20,9 @@
 use cldr_cache::CldrCache;
 use elsa::sync::FrozenMap;
 use icu::calendar::{Date, Iso};
+#[cfg(feature = "experimental")]
 use icu::locale::subtags::Region;
+#[cfg(feature = "experimental")]
 use icu::locale::LanguageIdentifier;
 use icu::time::zone::UtcOffset;
 use icu::time::Time;
@@ -334,6 +336,7 @@ impl SourceDataProvider {
     ///
     /// If the locale already has a region, it is returned.  
     /// Otherwise, the likely region is inferred from the language.
+    #[cfg(feature = "experimental")]
     pub(crate) fn extract_or_infer_region(&self, locale: &DataLocale) -> Result<Region, DataError> {
         if let Some(region) = locale.region {
             return Ok(region);
