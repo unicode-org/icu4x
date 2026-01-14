@@ -368,11 +368,13 @@ impl SourceDataProvider {
         //    (e.g. "es-Latn-US" -> "und-Latn")
         group.language = Language::UNKNOWN;
         group.region = Default::default();
+
         // 3. Maximizes again to find the most likely language for that script
         //    (e.g. "und-Latn" -> "en-Latn-US")
         self.cldr()?
             .extended_locale_expander()?
             .maximize(&mut group);
+
         // 4. Minimizes while favoring script retention
         //    (e.g. "en-Latn-US" -> "en")
         self.cldr()?
