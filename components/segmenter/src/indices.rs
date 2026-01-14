@@ -10,6 +10,7 @@
 #[derive(Clone, Debug)]
 pub struct Latin1Indices<'a> {
     front_offset: usize,
+    back_offset: usize,
     iter: &'a [u8],
 }
 
@@ -17,6 +18,7 @@ impl<'a> Latin1Indices<'a> {
     pub fn new(input: &'a [u8]) -> Self {
         Self {
             front_offset: 0,
+            back_offset: input.len(),
             iter: input,
         }
     }
@@ -27,10 +29,24 @@ impl Iterator for Latin1Indices<'_> {
 
     #[inline]
     fn next(&mut self) -> Option<(usize, u8)> {
+        if self.front_offset >= self.back_offset {
+            return None;
+        }
         self.iter.get(self.front_offset).map(|ch| {
             self.front_offset += 1;
             (self.front_offset - 1, *ch)
         })
+    }
+}
+
+impl DoubleEndedIterator for Latin1Indices<'_> {
+    #[inline]
+    fn next_back(&mut self) -> Option<(usize, u8)> {
+        if self.front_offset >= self.back_offset {
+            return None;
+        }
+        self.back_offset -= 1;
+        self.iter.get(self.back_offset).map(|ch| (self.back_offset, *ch))
     }
 }
 
