@@ -46,7 +46,9 @@ impl DoubleEndedIterator for Latin1Indices<'_> {
             return None;
         }
         self.back_offset -= 1;
-        self.iter.get(self.back_offset).map(|ch| (self.back_offset, *ch))
+        self.iter
+            .get(self.back_offset)
+            .map(|ch| (self.back_offset, *ch))
     }
 }
 
@@ -110,12 +112,12 @@ impl DoubleEndedIterator for Utf16Indices<'_> {
             return None;
         }
         self.back_offset -= 1;
-        let mut ch = self.iter[self.back_offset] as u32;
+        let mut ch = *self.iter.get(self.back_offset)? as u32;
 
         // Check if current char is a Low Surrogate
-        if (ch & 0xfc00) == 0xdc00 {
-            if self.back_offset > self.front_offset {
-                let prev = self.iter[self.back_offset - 1] as u32;
+        if (ch & 0xfc00) == 0xdc00 && self.back_offset > self.front_offset {
+            if let Some(&prev) = self.iter.get(self.back_offset - 1) {
+                let prev = prev as u32;
                 if (prev & 0xfc00) == 0xd800 {
                     self.back_offset -= 1;
                     ch = ((prev & 0x3ff) << 10) + (ch & 0x3ff) + 0x10000;

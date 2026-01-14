@@ -209,7 +209,6 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
     }
 }
 
-
 impl<Y: RuleBreakType> DoubleEndedIterator for RuleBreakIterator<'_, '_, Y> {
     fn next_back(&mut self) -> Option<Self::Item> {
         let mut right_prop = self
