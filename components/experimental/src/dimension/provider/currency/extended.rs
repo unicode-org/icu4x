@@ -22,12 +22,26 @@ use icu_provider::prelude::*;
 /// </div>
 pub use crate::provider::Baked;
 
-icu_provider::data_marker!(
-    /// Extended currency data needed for currency formatting. For example, currency display names.
-    CurrencyExtendedDataV1,
-    CurrencyExtendedData<'static>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "currency",
+macro_rules! currency_extended_data_markers {
+    ($(($marker_name:ident, $doc:expr)),* $(,)?) => {
+        $(
+            icu_provider::data_marker!(
+                #[doc = $doc]
+                $marker_name,
+                CurrencyExtendedData<'static>,
+                #[cfg(feature = "datagen")]
+                attributes_domain = "currency",
+            );
+        )*
+    };
+}
+
+currency_extended_data_markers!(
+    // TODO(#7417): remove the CurrencyExtendedDataV1 marker once sliced currency and the general currency formatter are implemented
+    (CurrencyExtendedDataV1, "Extended currency data needed for currency formatting. For example, currency display names."),
+    (CurrencyExtendedDataRegionalV1, "Provides extended currency data for the regional currencies."),
+    (CurrencyExtendedDataCoreV1, "Provides extended currency data for the core currencies."),
+    (CurrencyExtendedDataCompleteV1, "Provides extended currency data for the complete currencies."),
 );
 
 /// Currency Extended  data struct.

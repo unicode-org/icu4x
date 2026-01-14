@@ -55,6 +55,9 @@ pub mod provider {
         impl_currency_displayname_v1!(Baked);
         impl_currency_patterns_data_v1!(Baked);
         impl_currency_extended_data_v1!(Baked);
+        impl_currency_extended_data_regional_v1!(Baked);
+        impl_currency_extended_data_core_v1!(Baked);
+        impl_currency_extended_data_complete_v1!(Baked);
         impl_currency_fractions_v1!(Baked);
         impl_units_display_names_v1!(Baked);
         impl_units_names_area_core_v1!(Baked);
@@ -128,6 +131,9 @@ pub mod provider {
         super::dimension::provider::currency::essentials::CurrencyEssentialsCompleteV1::INFO,
         super::dimension::provider::currency::patterns::CurrencyPatternsDataV1::INFO,
         super::dimension::provider::currency::extended::CurrencyExtendedDataV1::INFO,
+        super::dimension::provider::currency::extended::CurrencyExtendedDataRegionalV1::INFO,
+        super::dimension::provider::currency::extended::CurrencyExtendedDataCoreV1::INFO,
+        super::dimension::provider::currency::extended::CurrencyExtendedDataCompleteV1::INFO,
         super::dimension::provider::currency::fractions::CurrencyFractionsV1::INFO,
         super::dimension::provider::percent::PercentEssentialsV1::INFO,
         super::dimension::provider::units::essentials::UnitsEssentialsV1::INFO,
