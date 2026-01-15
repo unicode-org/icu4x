@@ -140,41 +140,40 @@ impl JapaneseEras<'_> {
 /// A type to represent a modern (post 2000 CE, 8-byte code) era.
 #[derive(Debug, PartialEq, Copy, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub struct PackedEra {
-    /// The year the era started in, with the epoch 2000 CE
-    pub year: u8,
-    /// The Gregorian month the era started in
-    pub month: u8,
-    /// The Gregorian day the era started in
-    pub day: u8,
+    // day: 5 bits, month: 4 bits, year: 7 bits
+    ymd: [u8; 2],
     /// The era code
-    pub name: TinyAsciiStr<8>,
-    /// This era's [`era_index`](crate::types::EraYear::era_index)
-    pub index: u8,
+    name: TinyAsciiStr<8>,
+    index: u8,
 }
 
 impl PackedEra {
     /// Construct a `PackedEra` from a tuple
     pub const fn pack(start: EraStartDate, code: TinyAsciiStr<16>, index: u8) -> Self {
         debug_assert!(code.len() <= 8);
-        debug_assert!(2000 <= start.year && start.year <= 2000 + u8::MAX as i32);
+        debug_assert!(start.day < 1 << 5);
+        debug_assert!(start.month < 1 << 4);
+        debug_assert!(2000 <= start.year && start.year < 2000 + 1 << 7);
         debug_assert!(index >= 6); // only pack Reiwa and later
+
+        let ymd = (start.day as u16) << 11 | (start.month as u16) << 7 | (start.year - 2000) as u16;
+
         Self {
-            year: (start.year - 2000) as u8,
-            month: start.month,
-            day: start.day,
+            ymd: ymd.to_le_bytes(),
             name: code.resize(),
             index,
         }
     }
 
-    /// Convert a `PackedEra` into a tuple
+    /// Convert a `PackedEra` into a tuple of start date, code, and
+    /// [`era_index`](crate::types::EraYear::era_index)
     pub const fn unpack(self) -> (EraStartDate, TinyAsciiStr<16>, u8) {
+        let ymd = u16::from_le_bytes(self.ymd);
+        let year = (ymd & 0b111_1111) as i32 + 2000;
+        let month = (ymd >> 5 & 0b1111) as u8;
+        let day = (ymd >> 11) as u8;
         (
-            EraStartDate {
-                year: self.year as i32 + 2000,
-                month: self.month,
-                day: self.day,
-            },
+            EraStartDate { year, month, day },
             self.name.resize(),
             self.index,
         )
