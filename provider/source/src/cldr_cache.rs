@@ -11,9 +11,9 @@ use crate::CoverageLevel;
 use icu::locale::provider::{
     LocaleLikelySubtagsExtendedV1, LocaleLikelySubtagsLanguageV1, LocaleLikelySubtagsScriptRegionV1,
 };
+use icu::locale::subtags::Language;
 #[cfg(feature = "experimental")]
 use icu::locale::subtags::Region;
-#[cfg(feature = "experimental")]
 use icu::locale::LanguageIdentifier;
 use icu::locale::LocaleExpander;
 use icu_provider::prelude::*;
@@ -257,10 +257,9 @@ impl CldrCache {
     /// - "es-US" ->  "es-Latn-US" -> "und-Latn" -> "en-Latn-US" -> "en"
     /// - "fr-FR" -> "fr-Latn-FR" -> "und-Latn" -> "en-Latn-US" -> "en"
     /// - "ar-SA" -> "ar-Arab-SA" -> "und-Arab" -> "ar-Arab-EG" -> "ar"
+    /// - "bm-Nkoo" -> "bm-Nkoo-ML" -> "und-Nkoo" -> "man-Nkoo-GN" -> "man"
+    /// - "nqo" -> "nqo-Nkoo-GN" -> "und-Nkoo" -> "man-Nkoo-GN" -> "man"
     pub(crate) fn script_locale_group(&self, locale: &DataLocale) -> Result<DataLocale, DataError> {
-        use icu::locale::subtags::Language;
-        use icu::locale::LanguageIdentifier;
-
         let mut group = LanguageIdentifier::from((locale.language, locale.script, locale.region));
 
         // 1. Maximizes the input locale to get full language/script/region
@@ -274,12 +273,15 @@ impl CldrCache {
 
         // 3. Maximizes again to find the most likely language for that script
         //    (e.g. "und-Latn" -> "en-Latn-US")
+        //    (e.g. "und-Nkoo" -> "man-Nkoo-GN")
         self.extended_locale_expander()?.maximize(&mut group);
 
-        // 4. Minimizes to keep just the language
-        //    (e.g. "en-Latn-US" -> "en")
-        self.extended_locale_expander()?
-            .minimize_favor_script(&mut group);
+        // 4. Strip script and region to get just the language
+        //    (e.g. "man-Nkoo-GN" -> "man")
+        // We only keep the language because the script was already used to determine
+        // the most likely language, and the region is not relevant for the group.
+        group.script = None;
+        group.region = None;
         Ok(group.into())
     }
 }
@@ -351,4 +353,40 @@ impl<'a> CldrDirLang<'a> {
             Ok(false)
         }
     }
+}
+
+#[test]
+fn test_script_locale_group() {
+    use crate::SourceDataProvider;
+
+    let provider = SourceDataProvider::new_testing();
+    let cldr = provider.cldr().unwrap();
+
+    // Test cases from the documentation
+    // "en-US" -> "en"
+    let en_us = DataLocale::from_str("en-US").unwrap();
+    assert_eq!(cldr.script_locale_group(&en_us).unwrap().to_string(), "en");
+
+    // "es-US" -> "en" (Spanish uses Latin script, English is most common Latin-script language)
+    let es_us = DataLocale::from_str("es-US").unwrap();
+    assert_eq!(cldr.script_locale_group(&es_us).unwrap().to_string(), "en");
+
+    // "fr-FR" -> "en"
+    let fr_fr = DataLocale::from_str("fr-FR").unwrap();
+    assert_eq!(cldr.script_locale_group(&fr_fr).unwrap().to_string(), "en");
+
+    // "ar-SA" -> "ar" (Arabic uses Arabic script)
+    let ar_sa = DataLocale::from_str("ar-SA").unwrap();
+    assert_eq!(cldr.script_locale_group(&ar_sa).unwrap().to_string(), "ar");
+
+    // "nqo" -> "man" (N'Ko language uses N'Ko script, most likely language for N'Ko is Mandingo)
+    let nqo = DataLocale::from_str("nqo").unwrap();
+    assert_eq!(cldr.script_locale_group(&nqo).unwrap().to_string(), "man");
+
+    // "bm-Nkoo" -> "man" (Bambara in N'Ko script -> Mandingo is most likely for N'Ko script)
+    let bm_nkoo = DataLocale::from_str("bm-Nkoo").unwrap();
+    assert_eq!(
+        cldr.script_locale_group(&bm_nkoo).unwrap().to_string(),
+        "man"
+    );
 }
