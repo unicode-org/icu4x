@@ -8,9 +8,11 @@ use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::datetime::provider::pattern;
 
-use icu::datetime::provider::neo::marker_attrs::GlueType;
-use icu::datetime::provider::neo::marker_attrs::{self, Context, Length, PatternLength};
 use icu::datetime::provider::names::*;
+use icu::datetime::provider::semantic_skeletons::marker_attrs::GlueType;
+use icu::datetime::provider::semantic_skeletons::marker_attrs::{
+    self, Context, Length, PatternLength,
+};
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::borrow::Cow;

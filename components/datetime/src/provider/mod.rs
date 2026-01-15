@@ -19,9 +19,9 @@
 pub(crate) mod compat;
 pub mod fields;
 pub mod names;
-pub mod neo;
 pub(crate) mod packed_pattern;
 pub mod pattern;
+pub mod semantic_skeletons;
 #[cfg(feature = "datagen")]
 pub mod skeleton;
 pub mod time_zones;

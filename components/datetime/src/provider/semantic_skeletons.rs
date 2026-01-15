@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data structs and markers for semantic skeletons and datetime names.
+//! Data structs and markers for semantic skeletons.
 
 /// Helpers involving the data marker attributes used for date names.
 ///
