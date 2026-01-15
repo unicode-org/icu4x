@@ -8,15 +8,14 @@ Fully filled in up to 30c187f4b7
 - Components
     - General
         - Use HTTPS links in docs (unicode-org#7212)
-        - Various internal cleanups
     - `icu_calendar`
-        - Introduce a new, type-safe `Month` type, preferred over using month codes (unicode-org#7147)
+        - Introduce a new `Month` type, preferred over using month codes (unicode-org#7147)
         - Restrict the range of valid dates constructed via certain constructors (unicode-org#7219, unicode-org#7227)
         - Fix out-of-range bug during date arithmetic (unicode-org#7257)
         - Implement ISO 8601 date duration parsing (#7355)
         - Correctly produce `ethioaa` calendars from `CalendarAlgorithm` (unicode-org#7321)
         - Respect `-u-rg` in calendar resolution (unicode-org#7376)
-        - Pack `ArithmeticDate` (unicode-org#7220)
+        - Optimize the stack size of `Date` types (unicode-org#7220)
         - `AnyCalendar` cleanups and docs fixes (unicode-org#7223, unicode-org#7225)
         - Improve Hijri docs (unicode-org#7330, unicode-org#7332, unicode-org#7333)
         - Remove `Hijri<AstronomicalSimulation>` simulation code, retaining hardcoded data, falling back to Tabular for non-modern dates (unicode-org#7301)
@@ -24,7 +23,6 @@ Fully filled in up to 30c187f4b7
         - Deprecate `Date::new_from_iso`/`Date::to_iso` (unicode-org#7287)
         - Optimize Hebrew and Julian calendars (unicode-org#7213)
         - Optimize day/week diffing to use RDs (unicode-org#7308)
-        - Untangle Japanese calendars (unicode-org#7334)
     - `icu_casemap`
         - General changes only
     - `icu_collections`
@@ -45,7 +43,6 @@ Fully filled in up to 30c187f4b7
             - Don't hallucinate patterns (unicode-org#7387)
             - Pack compact decimal data (unicode-org#7388)
             - Round fractional compact decimals to two significant digits (unicode-org#7389)
-            - Improve safety comment and test for PLURAL_PATTERN_0 (unicode-org#7391)
         - `currency`
             - Add currency fractions provider (unicode-org#7278)
             - Update comments for currency data structures to enhance clarity (unicode-org#7405)
@@ -59,15 +56,13 @@ Fully filled in up to 30c187f4b7
     - `icu_list`
         - General changes only
     - `icu_locale`
-        - Fix `-u-sd` (unicode-org#7341)
         - Add docs discouraging direct conversion from Locale to DataLocale for locale fallback (unicode-org#7348)
     - `icu_locale_core`
         - Fix regional override `-u-rg` (unicode-org#7337) and regional subdivision `-u-sd` (unicode-org#7341) to fix region-priority data loading in other components
         - (Breaking internal API) The `struct_keyword!` macro was changed to operate on references for conversions (unicode-orgunicode-org#7361)
         - Add `From<&Value>` for struct preferences (unicode-org#7361)
-        - Correctly parse ethiopic-amete-alem alias (#7413)
+        - Correctly parse `-u-ca-ethiopic-amete-alem` alias (#7413)
         - Add `LocalePreferences::from_locale_strict` (unicode-org#7377)
-        - Fix `-u-sd` (unicode-org#7341)
         - Fix `LanguageIdentifier::normalize_utf8` example (unicode-org#7372)
         - Use better types in `LocalePreferences` (unicode-org#7360)
     - `icu_normalizer`
@@ -114,7 +109,6 @@ Fully filled in up to 30c187f4b7
         - Support for generating any new data markers as needed by component crates
         - Update datagen to TZDB 2025c (unicode-org#7306)
         - Always generate fast-mode data for NFD and NFKD tries (unicode-org#7222)
-        - Various internal cleanups (unicode-org#7202, unicode-org#7383, unicode-org#7386)
 - FFI
     - `icu_capi`
         - FFI analogues for *most* new ICU4X component APIs
