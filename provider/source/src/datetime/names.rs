@@ -227,10 +227,7 @@ fn eras_collect<'a>(
 
     for &(cldr, ref era) in all_eras {
         out.insert(
-            (
-                era.code.as_str(),
-                era.icu4x_era_index.unwrap_or(u8::MAX) as usize,
-            ),
+            (era.code.as_str(), era.icu4x_era_index.unwrap() as usize),
             &*eras.load(length)[&cldr.to_string()],
         );
     }

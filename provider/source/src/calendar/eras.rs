@@ -68,18 +68,7 @@ impl SourceDataProvider {
                             if era_year.era != data.code {
                                 log::warn!("mismatched era code {era_year:?} - {data:?}");
                             }
-                            data.icu4x_era_index = era_year.era_index.or((cal
-                                == DatagenCalendar::Japanese)
-                                .then(|| {
-                                    era_dates_map[cal.cldr_name()]
-                                        .eras
-                                        .iter()
-                                        .skip_while(|(_, data)| data.start.unwrap().year < 1868)
-                                        .position(|(_, x)| *x == data)
-                                        .unwrap() as u8
-                                        + 2
-                                }));
-
+                            data.icu4x_era_index = Some(era_year.era_index.unwrap());
                             (key.parse::<usize>().unwrap(), data)
                         })
                         .collect::<Vec<_>>();
