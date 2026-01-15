@@ -311,7 +311,7 @@ enum FormattableAnyCalendarKind {
 }
 
 impl FormattableAnyCalendarKind {
-    fn try_from_any_calendar(cal: &AnyCalendar) -> Option<Self> {
+    fn try_from_any_calendar(cal: AnyCalendar) -> Option<Self> {
         use AnyCalendarKind::*;
         let res = match cal.kind() {
             Buddhist => Self::Buddhist,
@@ -371,7 +371,7 @@ fn test_calendar_fallback() {
 }
 
 /// A version of [`AnyCalendar`] for the calendars supported in the any-calendar formatter.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Copy)]
 pub(crate) struct FormattableAnyCalendar {
     any_calendar: AnyCalendar,
 }
@@ -384,7 +384,7 @@ impl FormattableAnyCalendar {
     }
 
     pub(crate) fn try_from_any_calendar(any_calendar: AnyCalendar) -> Result<Self, AnyCalendar> {
-        match FormattableAnyCalendarKind::try_from_any_calendar(&any_calendar) {
+        match FormattableAnyCalendarKind::try_from_any_calendar(any_calendar) {
             Some(_) => Ok(Self { any_calendar }),
             None => Err(any_calendar),
         }
@@ -394,8 +394,8 @@ impl FormattableAnyCalendar {
         &self.any_calendar
     }
 
-    fn kind(&self) -> FormattableAnyCalendarKind {
-        FormattableAnyCalendarKind::try_from_any_calendar(&self.any_calendar).unwrap_or_else(|| {
+    fn kind(self) -> FormattableAnyCalendarKind {
+        FormattableAnyCalendarKind::try_from_any_calendar(self.any_calendar).unwrap_or_else(|| {
             debug_assert!(false, "unreachable by invariant");
             // fall back to something non-Gregorian to make errors more obvious
             FormattableAnyCalendarKind::Coptic
