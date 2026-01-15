@@ -1750,7 +1750,6 @@ dependencies = [
 name = "icu_provider_source"
 version = "2.1.2"
 dependencies = [
- "calendrical_calculations",
  "displaydoc",
  "elsa",
  "flate2",
