@@ -110,12 +110,6 @@ macro_rules! test_all_cals {
 
             $(#[$meta])*
             #[test]
-            fn japanese_extended() {
-                test(crate::cal::JapaneseExtended::new());
-            }
-
-            $(#[$meta])*
-            #[test]
             fn persian() {
                 test(crate::cal::Persian::new());
             }

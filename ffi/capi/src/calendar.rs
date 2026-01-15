@@ -28,9 +28,10 @@ pub mod ffi {
         Gregorian = 1,
         /// The kind of a Buddhist calendar
         Buddhist = 2,
-        /// The kind of a Japanese calendar with modern eras
+        /// The kind of a Japanese calendar
         Japanese = 3,
-        /// The kind of a Japanese calendar with modern and historic eras
+        /// Deprecated, use `Japanese`
+        #[deprecated(note = "use `Japanese`")]
         JapaneseExtended = 4,
         /// The kind of an Ethiopian calendar, with Amete Mihret era
         Ethiopian = 5,
