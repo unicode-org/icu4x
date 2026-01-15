@@ -24,6 +24,8 @@ pub use crate::provider::Baked;
 
 icu_provider::data_marker!(
     /// Provides display names for the currencies.
+    ///
+    /// This data is keyed by both locale and currency, with a currency code marker attribute.
     CurrencyDisplaynameV1,
     CurrencyDisplayname<'static>,
     #[cfg(feature = "datagen")]
