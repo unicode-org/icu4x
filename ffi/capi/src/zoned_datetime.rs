@@ -104,7 +104,7 @@ pub mod ffi {
             let icu_time::ZonedDateTime { date, time, zone } =
                 icu_time::ZonedDateTime::try_strict_from_utf8(
                     v,
-                    calendar.0.clone(),
+                    calendar.0,
                     iana_parser.0.as_borrowed(),
                 )?;
             Ok(ZonedDateTime {
@@ -146,7 +146,7 @@ pub mod ffi {
             let icu_time::ZonedDateTime { date, time, zone } =
                 icu_time::ZonedDateTime::try_location_only_from_utf8(
                     v,
-                    calendar.0.clone(),
+                    calendar.0,
                     iana_parser.0.as_borrowed(),
                 )?;
             Ok(ZonedDateTime {
@@ -169,7 +169,7 @@ pub mod ffi {
             calendar: &Calendar,
         ) -> Result<ZonedDateTime, Rfc9557ParseError> {
             let icu_time::ZonedDateTime { date, time, zone } =
-                icu_time::ZonedDateTime::try_offset_only_from_utf8(v, calendar.0.clone())?;
+                icu_time::ZonedDateTime::try_offset_only_from_utf8(v, calendar.0)?;
             Ok(ZonedDateTime {
                 date: Box::new(Date(date)),
                 time: Box::new(Time(time)),
@@ -189,7 +189,7 @@ pub mod ffi {
             let icu_time::ZonedDateTime { date, time, zone } =
                 icu_time::ZonedDateTime::try_lenient_from_utf8(
                     v,
-                    calendar.0.clone(),
+                    calendar.0,
                     iana_parser.0.as_borrowed(),
                 )?;
             Ok(ZonedDateTime {
