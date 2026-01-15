@@ -299,9 +299,11 @@ impl SourceDataProvider {
     #[cfg(feature = "networking")]
     pub fn with_unihan_for_tag(self, tag: &str) -> Self {
         Self {
-            unihan_paths: Some(Arc::new(UnihanCache { root: AbstractFs::new_from_url(format!(
-                "https://www.unicode.org/Public/UCD/{tag}/ucd/Unihan.zip"
-            ))})),
+            unihan_paths: Some(Arc::new(UnihanCache {
+                root: AbstractFs::new_from_url(format!(
+                    "https://www.unicode.org/Public/UCD/{tag}/ucd/Unihan.zip"
+                )),
+            })),
             ..self
         }
     }
@@ -364,7 +366,7 @@ impl SourceDataProvider {
         e.marker = None;
         e == Self::MISSING_TZDB_ERROR
     }
-    
+
     pub fn is_missing_unihan_error(mut e: DataError) -> bool {
         e.marker = None;
         e == Self::MISSING_UNIHAN_ERROR
