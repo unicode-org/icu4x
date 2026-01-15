@@ -30,12 +30,19 @@ impl GregorianYears for CeBce {
         }
     }
 
-    fn era_year_from_extended(&self, extended_year: i32, _month: u8, _day: u8) -> types::EraYear {
+    fn era_year_from_extended(
+        &self,
+        extended_year: i32,
+        related_gregorian: i32,
+        _month: u8,
+        _day: u8,
+    ) -> types::EraYear {
         if extended_year > 0 {
             types::EraYear {
                 era: tinystr!(16, "ce"),
                 era_index: Some(1),
                 year: extended_year,
+                related_iso: related_gregorian,
                 extended_year,
                 ambiguity: match extended_year {
                     ..=999 => types::YearAmbiguity::EraAndCenturyRequired,
@@ -49,6 +56,7 @@ impl GregorianYears for CeBce {
                 era: tinystr!(16, "bce"),
                 era_index: Some(0),
                 year: 1 - extended_year,
+                related_iso: related_gregorian,
                 extended_year,
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }

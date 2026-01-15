@@ -207,7 +207,13 @@ impl GregorianYears for &'_ Japanese {
         Ok(era_start.year + year - 1)
     }
 
-    fn era_year_from_extended(&self, year: i32, month: u8, day: u8) -> types::EraYear {
+    fn era_year_from_extended(
+        &self,
+        year: i32,
+        related_gregorian: i32,
+        month: u8,
+        day: u8,
+    ) -> types::EraYear {
         let date: EraStartDate = EraStartDate { year, month, day };
 
         let (start, era) = if date >= MEIJI_START
@@ -239,7 +245,7 @@ impl GregorianYears for &'_ Japanese {
                     return types::EraYear {
                         // TODO: return era indices?
                         era_index: None,
-                        ..CeBce.era_year_from_extended(year, month, day)
+                        ..CeBce.era_year_from_extended(year, related_gregorian, month, day)
                     };
                 }
                 Some((s, e)) => (s, e),
@@ -250,6 +256,7 @@ impl GregorianYears for &'_ Japanese {
             era,
             era_index: None,
             year: year - start.year + 1,
+            related_iso: related_gregorian,
             extended_year: year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
@@ -321,7 +328,13 @@ impl GregorianYears for &'_ JapaneseExtended {
         Ok(era_start.year + year - 1)
     }
 
-    fn era_year_from_extended(&self, year: i32, month: u8, day: u8) -> types::EraYear {
+    fn era_year_from_extended(
+        &self,
+        year: i32,
+        related_gregorian: i32,
+        month: u8,
+        day: u8,
+    ) -> types::EraYear {
         let date: EraStartDate = EraStartDate { year, month, day };
 
         let (start, era) = if date >= MEIJI_START
@@ -354,7 +367,7 @@ impl GregorianYears for &'_ JapaneseExtended {
                     return types::EraYear {
                         // TODO: return era indices?
                         era_index: None,
-                        ..CeBce.era_year_from_extended(year, month, day)
+                        ..CeBce.era_year_from_extended(year, related_gregorian, month, day)
                     };
                 }
                 Ok(index) => data.get(index).unwrap(),
@@ -366,6 +379,7 @@ impl GregorianYears for &'_ JapaneseExtended {
             era,
             era_index: None,
             year: year - start.year + 1,
+            related_iso: related_gregorian,
             extended_year: year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }

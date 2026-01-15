@@ -22,7 +22,13 @@ pub(crate) trait GregorianYears: Clone + core::fmt::Debug {
     fn extended_from_era_year(&self, era: Option<&[u8]>, year: i32)
         -> Result<i32, UnknownEraError>;
 
-    fn era_year_from_extended(&self, extended_year: i32, month: u8, day: u8) -> EraYear;
+    fn era_year_from_extended(
+        &self,
+        extended_year: i32,
+        related_gregorian: i32,
+        month: u8,
+        day: u8,
+    ) -> EraYear;
 
     fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         None
@@ -164,6 +170,7 @@ impl<Y: GregorianYears> Calendar for AbstractGregorian<Y> {
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
         self.0.era_year_from_extended(
             date.year() - Y::EXTENDED_YEAR_OFFSET,
+            date.year(),
             date.month(),
             date.day(),
         )
