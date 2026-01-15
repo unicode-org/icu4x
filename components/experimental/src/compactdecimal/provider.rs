@@ -12,9 +12,10 @@
 //! Read more about data providers: [`icu_provider`]
 
 use icu_pattern::SinglePlaceholderPattern;
-use icu_plurals::provider::PluralElementsPackedULE;
+use icu_plurals::provider::{FourBitMetadata, PluralElementsPackedULE};
 use icu_provider::prelude::*;
 use zerovec::ule::vartuple::VarTupleULE;
+use zerovec::ule::{to_sized_varule_bytes, SizedVarULEBytes};
 use zerovec::VarZeroVec;
 
 #[cfg(feature = "compiled_data")]
@@ -71,9 +72,13 @@ pub struct CompactDecimalPatternData<'data> {
 
 impl CompactDecimalPatternData<'_> {
     /// The pattern `0`, which is used for low magnitudes and omitted from the data struct.
-    // Safety: the integrity of the VarULE is enforced in validate_plural_pattern_0_map
-    pub const PLURAL_PATTERN_0: &'static PluralElementsPackedULE<SinglePlaceholderPattern> =
-        unsafe { PluralElementsPackedULE::from_bytes_unchecked(&[0, 1]) };
+    pub const PLURAL_PATTERN_0: SizedVarULEBytes<
+        2,
+        PluralElementsPackedULE<SinglePlaceholderPattern>,
+    > = PluralElementsPackedULE::new_mn(
+        FourBitMetadata::zero(),
+        to_sized_varule_bytes!(SinglePlaceholderPattern::PASS_THROUGH),
+    );
 
     pub(crate) fn patterns_and_exponent_for_magnitude(
         &self,
@@ -84,22 +89,8 @@ impl CompactDecimalPatternData<'_> {
             .filter(|t| i16::from(t.sized) <= magnitude)
             .last()
             .map(|t| (&t.variable, t.sized - t.variable.get_default().0.get()))
-            .unwrap_or((Self::PLURAL_PATTERN_0, 0))
+            .unwrap_or((Self::PLURAL_PATTERN_0.as_varule(), 0))
     }
-}
-
-#[test]
-fn validate_plural_pattern_0_map() {
-    use icu_plurals::{provider::FourBitMetadata, PluralElements};
-    use zerovec::ule::encode_varule_to_box;
-
-    assert_eq!(
-        CompactDecimalPatternData::PLURAL_PATTERN_0,
-        &*encode_varule_to_box(&PluralElements::new((
-            FourBitMetadata::try_from_byte(0).unwrap(),
-            SinglePlaceholderPattern::PASS_THROUGH
-        )))
-    );
 }
 
 icu_provider::data_struct!(CompactDecimalPatternData<'_>, #[cfg(feature = "datagen")]);

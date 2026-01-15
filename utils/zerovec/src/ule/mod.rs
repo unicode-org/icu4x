@@ -14,6 +14,7 @@ mod chars;
 #[cfg(doc)]
 pub mod custom;
 mod encode;
+mod fixed_length;
 mod macros;
 mod multi;
 mod niche;
@@ -30,6 +31,7 @@ pub use chars::CharULE;
 #[cfg(feature = "alloc")]
 pub use encode::encode_varule_to_box;
 pub use encode::EncodeAsVarULE;
+pub use fixed_length::{to_sized_varule_bytes, SizedVarULEBytes};
 pub use multi::MultiFieldsULE;
 pub use niche::{NicheBytes, NichedOption, NichedOptionULE};
 pub use option::{OptionULE, OptionVarULE};
@@ -441,6 +443,8 @@ impl UleError {
     }
 
     /// Construct an "invalid length" error for the given type and length
+    ///
+    /// The length is of the input bytes, not the expected length.
     pub fn length<T: ?Sized + 'static>(len: usize) -> UleError {
         UleError::InvalidLength {
             ty: any::type_name::<T>(),
