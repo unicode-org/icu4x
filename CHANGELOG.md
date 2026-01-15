@@ -61,12 +61,12 @@ Fully filled in up to 30c187f4b7
         - General changes only
     - `icu_locale`
         - Fix `-u-sd` (unicode-org#7341)
-        - Resolve TODO around region fallback by adding docs about conversion between locale types (unicode-org#7348)
+        - Add docs discouraging direct conversion from Locale to DataLocale for locale fallback (unicode-org#7348)
     - `icu_locale_core`
         - The `struct_keyword!` macro was changed to operate on references for conversions (unicode-orgunicode-org#7361)
         - Correctly parse ethiopic-amete-alem alias (#7413)
         - Add `LocalePreferences::from_locale_strict` (unicode-org#7377)
-        - Fix locale region override (unicode-org#7337)
+        - Fix regional override `-u-rg` (unicode-org#7337) and regional subdivision `-u-sd` (unicode-org#7341) to fix region-priority data loading in other components
         - Fix `-u-sd` (unicode-org#7341)
         - Add `From<&Value>` for struct preferences (unicode-org#7361)
         - Fix `LanguageIdentifier::normalize_utf8` example (unicode-org#7372)
@@ -80,7 +80,7 @@ Fully filled in up to 30c187f4b7
         - Fix overflow in `PluralOperands` constructor (#7425)
     - `icu_properties`
         - Add enumerated property `Numeric_Type` (unicode-org#7157)
-        - Add enumerated property `Joining_Grou[p` (unicode-org#7293)
+        - Add enumerated property `Joining_Group` (unicode-org#7293)
         - Add missing convenience API for `Basic_Emoji` and `EmojiSet` (unicode-org#7358)
         - Stabilise `IndicConjuctBreak` (unicode-org#7280)
         - Constify `PropertyNamesLong`/`PropertNamesShort`/`PropertyParser` constructors (unicode-orgunicode-org#7294)
@@ -91,7 +91,7 @@ Fully filled in up to 30c187f4b7
         - Validate properties names, constants (unicode-org#7284, unicode-org#7281)
     - `icu_segmenter`
         - Add non-complex segmenter constructors (unicode-org#7268)
-        - (Experimental) Initial code for adaboost cjk word segmenter (unicode-org#7122, unicode-org#7217, unicode-org#7246, unicode-org#7344)
+        - (Experimental) Initial code for RAdaBoost word segmenter for Chinese and CNN word segmenter for Thai (unicode-org#7122, unicode-org#7217, unicode-org#7246, unicode-org#7344)
     - `icu_time`
         - Add docs for `DateTime`/`ZonedDateTime` semantics (unicode-org#7275)
         - Relax some bounds (unicode-org#7286)
@@ -103,7 +103,7 @@ Fully filled in up to 30c187f4b7
     - `icu_provider_blob`
         - General changes only
     - `icu_provider`
-        - Breaking: Export an Encodeable instead of a VarULE and use Index32 (unicode-org#7310)
+        - Breaking: Add associated type to `MaybeEncodeAsVarULE` trait and use Index32 (unicode-org#7310)
         - Add serde cargo feature comments to icu_provider buf/serde.rs (unicode-org#7408)
     - `icu_provider_export`
         - Print warning when multiple filters are applied to same marker (unicode-org#7240)
@@ -121,7 +121,7 @@ Fully filled in up to 30c187f4b7
         - FFI analogues for *most* new ICU4X component APIs
         - Add FFI property `try_from_str` (unicode-org#7367)
     - (Experimental) Basic Kotlin bindings (unicode-org#7237, unicode-org#7256, unicode-org#7265)
-    - Update to Dart 3.10 (unicode-org#7243)
+    - Use stable Dart 3.10 (unicode-org#7243)
     - `icu_harfbuzz`
         - Retire the `icu_harfbuzz` crate. The `icu_properties` and `icu_normalizer` types now directly implement the `harfbuzz-traits`
 - Utils
