@@ -21,7 +21,7 @@
 use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
-use zerovec::ule::{AsULE, RawBytesULE};
+use zerovec::ule::AsULE;
 use zerovec::ZeroVec;
 use zerovec::{zeroslice, ZeroSlice};
 
