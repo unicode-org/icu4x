@@ -60,8 +60,10 @@ impl<const N: usize> From<[u8; N]> for RawBytesULE<N> {
 }
 
 macro_rules! impl_numbers_with_raw_bytes_ule {
-    ($unsigned:ty, $signed:ty, $($float:ty,)? $size:literal) => {
-        impl RawBytesULE<$size> {
+    ($unsigned:ty, $signed:ty $(, $float:ty)?) => {
+        const _: () = assert!(core::mem::size_of::<$unsigned>() == core::mem::size_of::<$signed>() $(&& core::mem::size_of::<$unsigned>() == core::mem::size_of::<$float>())?);
+
+        impl RawBytesULE<{ core::mem::size_of::<$unsigned>() }> {
             #[doc = concat!("Gets this `RawBytesULE` as a `", stringify!($unsigned), "`. This is equivalent to calling [`AsULE::from_unaligned()`] on [`", stringify!($unsigned), "`].")]
             #[inline]
             pub const fn as_unsigned_int(&self) -> $unsigned {
@@ -90,16 +92,16 @@ macro_rules! impl_numbers_with_raw_bytes_ule {
 
             impl_ule_from_array!(
                 $unsigned,
-                RawBytesULE<$size>,
-                RawBytesULE([0; $size])
+                RawBytesULE<{ core::mem::size_of::<$unsigned>() }>,
+                RawBytesULE([0; { core::mem::size_of::<$unsigned>() }])
             );
         }
 
-        impl_byte_slice_type!(from_unsigned, $unsigned, $size);
-        impl_const_constructors!($unsigned, $size);
+        impl_byte_slice_type!(from_unsigned, $unsigned);
+        impl_const_constructors!($unsigned);
 
-        impl_byte_slice_type!(from_signed, $signed, $size);
-        impl_const_constructors!($signed, $size);
+        impl_byte_slice_type!(from_signed, $signed);
+        impl_const_constructors!($signed);
 
         $(
             // These impls are actually safe and portable due to Rust always using IEEE 754, see the documentation
@@ -110,14 +112,14 @@ macro_rules! impl_numbers_with_raw_bytes_ule {
 
             // The from_bits documentation mentions that they have identical byte representations to integers
             // and EqULE only cares about LE systems
-            impl_byte_slice_type!(from_float, $float, $size);
-            impl_const_constructors!($float, $size);
+            impl_byte_slice_type!(from_float, $float);
+            impl_const_constructors!($float);
         )?
 };
 }
 
 macro_rules! impl_const_constructors {
-    ($base:ty, $size:literal) => {
+    ($base:ty) => {
         impl ZeroSlice<$base> {
             /// This function can be used for constructing ZeroVecs in a const context, avoiding
             /// parsing checks.
@@ -129,12 +131,13 @@ macro_rules! impl_const_constructors {
             /// See [`ZeroSlice::cast()`] for an example.
             pub const fn try_from_bytes(bytes: &[u8]) -> Result<&Self, UleError> {
                 let len = bytes.len();
+                const STRIDE: usize = core::mem::size_of::<$base>();
                 #[allow(clippy::modulo_one)]
-                if (if $size <= 1 { len } else { len % $size }) == 0 {
+                if (if STRIDE <= 1 { len } else { len % STRIDE }) == 0 {
                     Ok(unsafe { Self::from_bytes_unchecked(bytes) })
                 } else {
                     Err(UleError::InvalidLength {
-                        ty: concat!("<const construct: ", $size, ">"),
+                        ty: concat!("<const construct: ", stringify!($base), ">"),
                         len,
                     })
                 }
@@ -144,15 +147,15 @@ macro_rules! impl_const_constructors {
 }
 
 macro_rules! impl_byte_slice_type {
-    ($single_fn:ident, $type:ty, $size:literal) => {
-        impl From<$type> for RawBytesULE<$size> {
+    ($single_fn:ident, $type:ty) => {
+        impl From<$type> for RawBytesULE<{ core::mem::size_of::<$type>() }> {
             #[inline]
             fn from(value: $type) -> Self {
                 Self(value.to_le_bytes())
             }
         }
         impl AsULE for $type {
-            type ULE = RawBytesULE<$size>;
+            type ULE = RawBytesULE<{ core::mem::size_of::<$type>() }>;
             #[inline]
             fn to_unaligned(self) -> Self::ULE {
                 RawBytesULE(self.to_le_bytes())
@@ -162,11 +165,11 @@ macro_rules! impl_byte_slice_type {
                 <$type>::from_le_bytes(unaligned.0)
             }
         }
-        // EqULE is true because $type and RawBytesULE<$size>
+        // EqULE is true because $type and RawBytesULE<{ core::mem::size_of::<$type> }>
         // have the same byte sequence on little-endian
         unsafe impl EqULE for $type {}
 
-        impl RawBytesULE<$size> {
+        impl RawBytesULE<{ core::mem::size_of::<$type>() }> {
             pub const fn $single_fn(v: $type) -> Self {
                 RawBytesULE(v.to_le_bytes())
             }
@@ -174,10 +177,10 @@ macro_rules! impl_byte_slice_type {
     };
 }
 
-impl_numbers_with_raw_bytes_ule!(u16, i16, 2);
-impl_numbers_with_raw_bytes_ule!(u32, i32, f32, 4);
-impl_numbers_with_raw_bytes_ule!(u64, i64, f64, 8);
-impl_numbers_with_raw_bytes_ule!(u128, i128, 16);
+impl_numbers_with_raw_bytes_ule!(u16, i16);
+impl_numbers_with_raw_bytes_ule!(u32, i32, f32);
+impl_numbers_with_raw_bytes_ule!(u64, i64, f64);
+impl_numbers_with_raw_bytes_ule!(u128, i128);
 
 // Safety (based on the safety checklist on the ULE trait):
 //  1. u8 does not include any uninitialized or padding bytes.
@@ -208,7 +211,7 @@ impl AsULE for u8 {
 // EqULE is true because u8 is its own ULE.
 unsafe impl EqULE for u8 {}
 
-impl_const_constructors!(u8, 1);
+impl_const_constructors!(u8);
 
 // Safety (based on the safety checklist on the ULE trait):
 //  1. NonZeroU8 does not include any uninitialized or padding bytes.
@@ -332,7 +335,7 @@ impl AsULE for bool {
 // EqULE is true because bool is its own ULE.
 unsafe impl EqULE for bool {}
 
-impl_const_constructors!(bool, 1);
+impl_const_constructors!(bool);
 
 // Safety (based on the safety checklist on the ULE trait):
 //  1. () does not include any uninitialized or padding bytes (it has no bytes)
@@ -367,4 +370,4 @@ impl AsULE for () {
 // EqULE is true because () is its own ULE.
 unsafe impl EqULE for () {}
 
-impl_const_constructors!((), 0);
+impl_const_constructors!(());
