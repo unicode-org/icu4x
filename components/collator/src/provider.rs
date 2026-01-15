@@ -582,22 +582,22 @@ pub(crate) struct CollationSpecialPrimariesValidated<'data> {
 
 impl CollationSpecialPrimariesValidated<'static> {
     pub(crate) const HARDCODED_COMPRESSIBLE_BYTES_FALLBACK: &'static [<u16 as AsULE>::ULE; 16] = &[
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b1111_1111_1111_1110u16.to_le_bytes()),
-        RawBytesULE(0b1111_1111_1111_1111u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0001u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0000_0000_0000_0000u16.to_le_bytes()),
-        RawBytesULE(0b0100_0000_0000_0000u16.to_le_bytes()),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b1111_1111_1111_1110),
+        <u16 as AsULE>::ULE::from_unsigned(0b1111_1111_1111_1111),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0001),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0000_0000_0000_0000),
+        <u16 as AsULE>::ULE::from_unsigned(0b0100_0000_0000_0000),
     ];
 }
 
