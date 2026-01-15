@@ -19,7 +19,7 @@ Fully filled in up to 30c187f4b7
         - Pack `ArithmeticDate` (unicode-org#7220)
         - `AnyCalendar` cleanups and docs fixes (unicode-org#7223, unicode-org#7225)
         - Improve Hijri docs (unicode-org#7330, unicode-org#7332, unicode-org#7333)
-        - Remove `Hijri<AstronomicalSimulation>` logic, retaining hardcoded data, improve docs (unicode-org#7301)
+        - Remove `Hijri<AstronomicalSimulation>` simulation code, retaining hardcoded data, falling back to Tabular for non-modern dates (unicode-org#7301)
         - Replace `Date::day_of_week` by `Date::weekday` (unicode-org#7288)
         - Deprecate `Date::new_from_iso`/`Date::to_iso` (unicode-org#7287)
         - Optimize Hebrew and Julian calendars (unicode-org#7213)
@@ -35,9 +35,8 @@ Fully filled in up to 30c187f4b7
         - General changes only
     - `icu_datetime`
         - Fix error handling for FieldSetBuilder (unicode-org#7245)
-        - Add full support for `U` (cyclic year) datetime symbol (unicode-org#7328)
+        - Add some support for `U` (cyclic year) datetime symbol (unicode-org#7328)
         - Remove old datetime data structs (unicode-org#7205)
-        - Clean up `FormattableAnyCalendar` (unicode-org#7318)
         - Assorted improvements to icu_datetime docs (unicode-org#7244)
     - `icu_datetime`
         - General changes only
@@ -63,12 +62,12 @@ Fully filled in up to 30c187f4b7
         - Fix `-u-sd` (unicode-org#7341)
         - Add docs discouraging direct conversion from Locale to DataLocale for locale fallback (unicode-org#7348)
     - `icu_locale_core`
-        - The `struct_keyword!` macro was changed to operate on references for conversions (unicode-orgunicode-org#7361)
+        - Fix regional override `-u-rg` (unicode-org#7337) and regional subdivision `-u-sd` (unicode-org#7341) to fix region-priority data loading in other components
+        - (Breaking internal API) The `struct_keyword!` macro was changed to operate on references for conversions (unicode-orgunicode-org#7361)
+        - Add `From<&Value>` for struct preferences (unicode-org#7361)
         - Correctly parse ethiopic-amete-alem alias (#7413)
         - Add `LocalePreferences::from_locale_strict` (unicode-org#7377)
-        - Fix regional override `-u-rg` (unicode-org#7337) and regional subdivision `-u-sd` (unicode-org#7341) to fix region-priority data loading in other components
         - Fix `-u-sd` (unicode-org#7341)
-        - Add `From<&Value>` for struct preferences (unicode-org#7361)
         - Fix `LanguageIdentifier::normalize_utf8` example (unicode-org#7372)
         - Use better types in `LocalePreferences` (unicode-org#7360)
     - `icu_normalizer`
