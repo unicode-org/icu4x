@@ -278,6 +278,16 @@ fn main() -> eyre::Result<()> {
         })
         .collect::<Vec<_>>()
         .join(",\n                        ");
+    let irg_path = out_root.join("tests/data/unihan/Unihan_IRGSources.txt");
+    fs::write(
+        &irg_path,
+        fs::read_to_string(&irg_path)?
+            .lines()
+            .filter(|l| l.contains("kRSUnicode") || l.starts_with('#'))
+            .collect::<Vec<_>>()
+            .join("\n"),
+    )
+    .context("Failed to filter IRG file")?;
     let tzdb_data: String = tzdb_data
         .iter()
         .map(|path| {
