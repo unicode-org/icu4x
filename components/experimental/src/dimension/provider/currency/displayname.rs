@@ -30,7 +30,7 @@ icu_provider::data_marker!(
     attributes_domain = "currency",
 );
 
-/// Contains the display name for the currencies.
+/// Contains the display name of the currencies.
 #[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

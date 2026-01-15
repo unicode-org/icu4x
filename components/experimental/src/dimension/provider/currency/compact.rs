@@ -14,15 +14,14 @@ use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
 icu_provider::data_marker!(
-    /// Provides short currency compact data for currency formatting.
+    /// Provides currency compact data for short currency formatting.
     ///
-    /// This data is used to format currency values in a compact format.
-    /// For example, "1000" becomes "1K" in English.
+    /// For example, "1000 US dollars" becomes "1k USD" in en-US.
     ShortCurrencyCompactV1,
     ShortCurrencyCompact<'static>
 );
 
-/// Currency Compact  data struct.
+/// Currency compact data struct.
 #[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

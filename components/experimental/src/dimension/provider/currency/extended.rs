@@ -23,15 +23,15 @@ use icu_provider::prelude::*;
 pub use crate::provider::Baked;
 
 icu_provider::data_marker!(
-    /// Provides extended currency data needed for currency formatting. For example, currency display names.
+    /// Provides extended currency data needed for long / full name currency formatting.
     CurrencyExtendedDataV1,
     CurrencyExtendedData<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "currency",
 );
 
-/// Contains the extended currency data needed for long / full namecurrency formatting.
-/// For example, currency display names like "US Dollar" and "US Dollars".
+/// Contains the extended currency data needed for long / full name currency formatting.
+/// For example, currency plural display names like "US Dollar" and "US Dollars".
 #[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
