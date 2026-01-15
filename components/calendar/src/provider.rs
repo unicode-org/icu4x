@@ -49,7 +49,7 @@ icu_provider::data_marker!(
     /// Modern Japanese era names
     CalendarJapaneseModernV1,
     "calendar/japanese/modern/v1",
-    PackedEra,
+    JapaneseEras<'static>,
     is_singleton = true
 );
 
@@ -118,6 +118,25 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
+impl JapaneseEras<'_> {
+    pub(crate) const fn last(&self) -> Option<PackedEra> {
+        let Some(&zerovec::ule::tuple::Tuple2ULE(start, code)) =
+            self.dates_to_eras.as_slice().as_ule_slice().last()
+        else {
+            return None;
+        };
+        Some(PackedEra::pack(
+            EraStartDate {
+                year: start.year.as_signed_int(),
+                month: start.month,
+                day: start.day,
+            },
+            code,
+            self.dates_to_eras.as_slice().len() as u8 + 1,
+        ))
+    }
+}
+
 /// A type to represent a modern (post 2000 CE, 8-byte code) era.
 #[derive(Debug, PartialEq, Copy, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 pub struct PackedEra {
@@ -161,82 +180,6 @@ impl PackedEra {
         )
     }
 }
-
-// Compatibility with previous data struct serialization
-#[cfg(feature = "datagen")]
-impl serde::Serialize for PackedEra {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        let (start, name, index) = self.unpack();
-        JapaneseEras {
-            dates_to_eras: ZeroVec::from_iter(
-                // encode the era index in the length of the list
-                core::iter::repeat_n((start, name), index as usize - 5),
-            ),
-        }
-        .serialize(serializer)
-    }
-}
-
-// Compatibility with previous data struct serialization
-#[cfg(feature = "serde")]
-impl<'de> serde::Deserialize<'de> for PackedEra {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        use serde::de::Error;
-        JapaneseEras::deserialize(deserializer)?
-            .dates_to_eras
-            .iter()
-            .enumerate()
-            .next_back()
-            .ok_or(D::Error::custom("empty eras"))
-            .map(|(index, (start, code))| Self::pack(start, code, index as u8 + 6))
-    }
-}
-
-#[test]
-fn packed_era_serde() {
-    let packed = PackedEra::pack(
-        EraStartDate {
-            year: 2040,
-            month: 2,
-            day: 8,
-        },
-        tinystr::tinystr!(16, "zen"),
-        7,
-    );
-
-    assert_eq!(
-        serde_json::from_str::<PackedEra>(&serde_json::to_string_pretty(&packed).unwrap()).unwrap(),
-        packed
-    );
-}
-
-#[cfg(feature = "datagen")]
-impl databake::Bake for PackedEra {
-    fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
-        let e = self.unpack().bake(ctx);
-        databake::quote! {
-            icu_calendar::provider::PackedEra::pack #e
-        }
-    }
-}
-
-#[cfg(feature = "datagen")]
-impl databake::BakeSize for PackedEra {
-    fn borrows_size(&self) -> usize {
-        0
-    }
-}
-
-icu_provider::data_struct!(
-    PackedEra,
-    #[cfg(feature = "datagen")]
-);
 
 /// An ICU4X mapping to a subset of CLDR weekData.
 /// See CLDR-JSON's weekData.json for more context.

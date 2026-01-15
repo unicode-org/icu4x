@@ -30,7 +30,7 @@ pub use __make_provider as make_provider;
 /// * `icu`
 /// * `icu_provider`
 /// * `icu_provider/baked`
-/// * `tinystr`
+/// * `zerovec`
 #[allow(unused_macros)]
 macro_rules! impl_data_provider {
     ($ provider : ty) => {

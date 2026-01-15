@@ -50,15 +50,20 @@ impl Japanese {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
-        Self {
-            post_reiwa_era: if matches!(
-                crate::provider::Baked::SINGLETON_CALENDAR_JAPANESE_MODERN_V1.unpack(),
-                REIWA
-            ) {
-                None
-            } else {
-                Some(*crate::provider::Baked::SINGLETON_CALENDAR_JAPANESE_MODERN_V1)
-            },
+        const {
+            Self {
+                post_reiwa_era: if let Some(last) =
+                    crate::provider::Baked::SINGLETON_CALENDAR_JAPANESE_MODERN_V1.last()
+                {
+                    if matches!(last.unpack(), REIWA) {
+                        None
+                    } else {
+                        Some(last)
+                    }
+                } else {
+                    None
+                },
+            }
         }
     }
 
@@ -75,9 +80,22 @@ impl Japanese {
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            post_reiwa_era: Some(*provider.load(Default::default())?.payload.get())
+            post_reiwa_era: provider
+                .load(Default::default())?
+                .payload
+                .get()
+                .last()
                 .filter(|&e| e.unpack() != REIWA),
         })
+    }
+}
+
+impl Japanese {
+    fn eras(&self) -> impl Iterator<Item = (EraStartDate, TinyAsciiStr<16>, u8)> {
+        self.post_reiwa_era
+            .map(|p| p.unpack())
+            .into_iter()
+            .chain([REIWA, HEISEI, SHOWA, TAISHO, MEIJI])
     }
 }
 
@@ -117,7 +135,7 @@ const HEISEI: (EraStartDate, TinyAsciiStr<16>, u8) = (
     tinystr!(16, "heisei"),
     5,
 );
-pub(crate) const REIWA: (EraStartDate, TinyAsciiStr<16>, u8) = (
+const REIWA: (EraStartDate, TinyAsciiStr<16>, u8) = (
     EraStartDate {
         year: 2019,
         month: 5,
@@ -138,10 +156,7 @@ impl GregorianYears for &'_ Japanese {
         }
 
         let (start, ..) = self
-            .post_reiwa_era
-            .map(|p| p.unpack())
-            .into_iter()
-            .chain([REIWA, HEISEI, SHOWA, TAISHO, MEIJI])
+            .eras()
             .find(|(_, name, _)| era == Some(name.as_bytes()))
             .ok_or(UnknownEraError)?;
 
@@ -151,13 +166,7 @@ impl GregorianYears for &'_ Japanese {
     fn era_year_from_extended(&self, year: i32, month: u8, day: u8) -> types::EraYear {
         let date: EraStartDate = EraStartDate { year, month, day };
 
-        if let Some((start, code, idx)) = self
-            .post_reiwa_era
-            .map(PackedEra::unpack)
-            .into_iter()
-            .chain([REIWA, HEISEI, SHOWA, TAISHO, MEIJI])
-            .find(|&(start, ..)| date >= start)
-        {
+        if let Some((start, code, idx)) = self.eras().find(|&(start, ..)| date >= start) {
             types::EraYear {
                 era: code,
                 era_index: Some(idx),

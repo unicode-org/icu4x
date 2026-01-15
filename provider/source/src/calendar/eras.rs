@@ -110,24 +110,17 @@ impl DataProvider<CalendarJapaneseModernV1> for SourceDataProvider {
 
         let (inherit, ref eras) = self.all_eras()?[&DatagenCalendar::Japanese];
 
-        let last_era = inherit
+        let dates_to_eras = inherit
             .iter()
             .flat_map(|i| self.all_eras().unwrap()[i].1.iter())
             .chain(eras)
             .filter(|(_, data)| !matches!(data.code.as_str(), "bce" | "ce"))
-            .max_by_key(|(_, data)| data.start.unwrap())
-            .map(|(_, data)| {
-                PackedEra::pack(
-                    data.start.unwrap(),
-                    data.code.parse().unwrap(),
-                    data.icu4x_era_index.unwrap(),
-                )
-            })
-            .unwrap();
+            .map(|(_, data)| (data.start.unwrap(), data.code.parse().unwrap()))
+            .collect();
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(last_era),
+            payload: DataPayload::from_owned(JapaneseEras { dates_to_eras }),
         })
     }
 }

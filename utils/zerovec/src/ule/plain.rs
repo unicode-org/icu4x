@@ -59,13 +59,19 @@ impl<const N: usize> From<[u8; N]> for RawBytesULE<N> {
     }
 }
 
-macro_rules! impl_byte_slice_size {
-    ($unsigned:ty, $size:literal) => {
+macro_rules! impl_byte_slice {
+    ($unsigned:ty, $signed:ty, $size:literal) => {
         impl RawBytesULE<$size> {
-            #[doc = concat!("Gets this `RawBytesULE` as a `", stringify!($unsigned), "`. This is equivalent to calling [`AsULE::from_unaligned()`] on the appropriately sized type.")]
+            #[doc = concat!("Gets this `RawBytesULE` as a `", stringify!($unsigned), "`. This is equivalent to calling [`AsULE::from_unaligned()`] on [`", stringify!($unsigned), "`].")]
             #[inline]
-            pub fn as_unsigned_int(&self) -> $unsigned {
-                <$unsigned as $crate::ule::AsULE>::from_unaligned(*self)
+            pub const fn as_unsigned_int(&self) -> $unsigned {
+                <$unsigned>::from_le_bytes(self.0)
+            }
+
+            #[doc = concat!("Gets this `RawBytesULE` as a `", stringify!($unsigned), "`. This is equivalent to calling [`AsULE::from_unaligned()`] on [`", stringify!($signed), "`].")]
+            #[inline]
+            pub const fn as_signed_int(&self) -> $signed {
+                <$signed>::from_le_bytes(self.0)
             }
 
             #[doc = concat!("Converts a `", stringify!($unsigned), "` to a `RawBytesULE`. This is equivalent to calling [`AsULE::to_unaligned()`] on the appropriately sized type.")]
@@ -80,7 +86,11 @@ macro_rules! impl_byte_slice_size {
                 RawBytesULE([0; $size])
             );
         }
-    };
+
+        impl_byte_slice_type!(from_unsigned, $unsigned, $size);
+
+        impl_byte_slice_type!(from_signed, $signed, $size);
+};
 }
 
 macro_rules! impl_const_constructors {
@@ -141,32 +151,10 @@ macro_rules! impl_byte_slice_type {
     };
 }
 
-macro_rules! impl_byte_slice_unsigned_type {
-    ($type:ty, $size:literal) => {
-        impl_byte_slice_type!(from_unsigned, $type, $size);
-    };
-}
-
-macro_rules! impl_byte_slice_signed_type {
-    ($type:ty, $size:literal) => {
-        impl_byte_slice_type!(from_signed, $type, $size);
-    };
-}
-
-impl_byte_slice_size!(u16, 2);
-impl_byte_slice_size!(u32, 4);
-impl_byte_slice_size!(u64, 8);
-impl_byte_slice_size!(u128, 16);
-
-impl_byte_slice_unsigned_type!(u16, 2);
-impl_byte_slice_unsigned_type!(u32, 4);
-impl_byte_slice_unsigned_type!(u64, 8);
-impl_byte_slice_unsigned_type!(u128, 16);
-
-impl_byte_slice_signed_type!(i16, 2);
-impl_byte_slice_signed_type!(i32, 4);
-impl_byte_slice_signed_type!(i64, 8);
-impl_byte_slice_signed_type!(i128, 16);
+impl_byte_slice!(u16, i16, 2);
+impl_byte_slice!(u32, i32, 4);
+impl_byte_slice!(u64, i64, 8);
+impl_byte_slice!(u128, i128, 16);
 
 impl_const_constructors!(u8, 1);
 impl_const_constructors!(u16, 2);
