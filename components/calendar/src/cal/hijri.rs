@@ -21,8 +21,6 @@ use icu_locale_core::preferences::extensions::unicode::keywords::{
 use icu_provider::prelude::*;
 use tinystr::tinystr;
 
-#[path = "hijri/reingold_mecca_data.rs"]
-mod reingold_mecca_data;
 #[path = "hijri/ummalqura_data.rs"]
 mod ummalqura_data;
 
@@ -158,60 +156,6 @@ impl Rules for AstronomicalSimulation {
 
     fn year_containing_rd(&self, rd: RataDie) -> HijriYear {
         UmmAlQura.year_containing_rd(rd)
-    }
-}
-
-/// [`Hijri`] [`Rules`] based on an astronomical simulation for a particular location.
-///
-/// These simulations use methods published by E. M. Reingold, S. K. Shaukat, et al.[^1]
-/// These methods are not officially recognized in any region and do not match sightings
-/// on the ground. Unless you know otherwise for sure, instead of this variant, use
-/// [`UmmAlQura`], which uses the results of KACST's Mecca-based calculations.
-///
-/// The simulations are pre-computed for Gregorian years 1900 to 2140, falling back to
-/// a tabular approximation outside that range.
-///
-/// The precise behavior of this calendar may change in the future if:
-/// - We decide to tweak the precise astronomical simulation used
-/// - We decide to expand or reduce the range where we are using the astronomical simulation.
-///
-/// [^1]: See [calendrical_calculations::islamic::observational_islamic_from_fixed]
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
-#[non_exhaustive]
-#[cfg(feature = "unstable")] // TODO(before stabilisation): should this be an enum? a struct with private fields?
-pub enum ReingoldSimulation {
-    /// Mecca
-    Mecca,
-}
-
-#[cfg(feature = "unstable")]
-impl crate::cal::scaffold::UnstableSealed for ReingoldSimulation {}
-#[cfg(feature = "unstable")]
-impl Rules for ReingoldSimulation {
-    fn debug_name(&self) -> &'static str {
-        match self {
-            Self::Mecca => "Hijri (Reingold, Mecca)",
-        }
-    }
-
-    fn year(&self, extended_year: i32) -> HijriYear {
-        if let Some(data) = HijriYear::lookup(
-            extended_year,
-            match self {
-                Self::Mecca => reingold_mecca_data::STARTING_YEAR,
-            },
-            match self {
-                Self::Mecca => reingold_mecca_data::DATA,
-            },
-        ) {
-            data
-        } else {
-            TabularAlgorithm {
-                leap_years: TabularAlgorithmLeapYears::TypeII,
-                epoch: TabularAlgorithmEpoch::Friday,
-            }
-            .year(extended_year)
-        }
     }
 }
 
@@ -1225,174 +1169,6 @@ mod test {
         },
     ];
 
-    static REINGOLD_CASES: [DateCase; 33] = [
-        DateCase {
-            year: -1245,
-            month: 12,
-            day: 9,
-        },
-        DateCase {
-            year: -813,
-            month: 2,
-            day: 23,
-        },
-        DateCase {
-            year: -568,
-            month: 4,
-            day: 1,
-        },
-        DateCase {
-            year: -501,
-            month: 4,
-            day: 6,
-        },
-        DateCase {
-            year: -157,
-            month: 10,
-            day: 17,
-        },
-        DateCase {
-            year: -47,
-            month: 6,
-            day: 3,
-        },
-        DateCase {
-            year: 75,
-            month: 7,
-            day: 13,
-        },
-        DateCase {
-            year: 403,
-            month: 10,
-            day: 5,
-        },
-        DateCase {
-            year: 489,
-            month: 5,
-            day: 22,
-        },
-        DateCase {
-            year: 586,
-            month: 2,
-            day: 7,
-        },
-        DateCase {
-            year: 637,
-            month: 8,
-            day: 7,
-        },
-        DateCase {
-            year: 687,
-            month: 2,
-            day: 20,
-        },
-        DateCase {
-            year: 697,
-            month: 7,
-            day: 7,
-        },
-        DateCase {
-            year: 793,
-            month: 7,
-            day: 1,
-        },
-        DateCase {
-            year: 839,
-            month: 7,
-            day: 6,
-        },
-        DateCase {
-            year: 897,
-            month: 6,
-            day: 1,
-        },
-        DateCase {
-            year: 960,
-            month: 9,
-            day: 30,
-        },
-        DateCase {
-            year: 967,
-            month: 5,
-            day: 27,
-        },
-        DateCase {
-            year: 1058,
-            month: 5,
-            day: 18,
-        },
-        DateCase {
-            year: 1091,
-            month: 6,
-            day: 2,
-        },
-        DateCase {
-            year: 1128,
-            month: 8,
-            day: 4,
-        },
-        DateCase {
-            year: 1182,
-            month: 2,
-            day: 3,
-        },
-        DateCase {
-            year: 1234,
-            month: 10,
-            day: 10,
-        },
-        DateCase {
-            year: 1255,
-            month: 1,
-            day: 11,
-        },
-        DateCase {
-            year: 1321,
-            month: 1,
-            day: 20,
-        },
-        DateCase {
-            year: 1348,
-            month: 3,
-            day: 19,
-        },
-        DateCase {
-            year: 1360,
-            month: 9,
-            day: 7,
-        },
-        DateCase {
-            year: 1362,
-            month: 4,
-            day: 13,
-        },
-        DateCase {
-            year: 1362,
-            month: 10,
-            day: 7,
-        },
-        DateCase {
-            year: 1412,
-            month: 9,
-            day: 12,
-        },
-        DateCase {
-            year: 1416,
-            month: 10,
-            day: 5,
-        },
-        DateCase {
-            year: 1460,
-            month: 10,
-            day: 12,
-        },
-        DateCase {
-            year: 1518,
-            month: 3,
-            day: 5,
-        },
-    ];
-
     static ARITHMETIC_CASES: [DateCase; 33] = [
         DateCase {
             year: -1245,
@@ -1730,28 +1506,6 @@ mod test {
     ];
 
     #[test]
-    fn test_reingold_hijri_from_rd() {
-        let calendar = Hijri(ReingoldSimulation::Mecca);
-        for (case, f_date) in REINGOLD_CASES.iter().zip(TEST_RD.iter()) {
-            assert_eq!(
-                Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar),
-                Ok(Date::from_rata_die(RataDie::new(*f_date), calendar)),
-                "{case:?}"
-            );
-        }
-    }
-
-    #[test]
-    fn test_rd_from_reingold_hijri() {
-        let calendar = Hijri(ReingoldSimulation::Mecca);
-        for (case, f_date) in REINGOLD_CASES.iter().zip(TEST_RD.iter()) {
-            let date = Date::try_new_hijri_with_calendar(case.year, case.month, case.day, calendar)
-                .unwrap();
-            assert_eq!(date.to_rata_die(), RataDie::new(*f_date), "{case:?}");
-        }
-    }
-
-    #[test]
     fn test_rd_from_hijri() {
         let calendar = Hijri::new_tabular(
             TabularAlgorithmLeapYears::TypeII,
@@ -1831,35 +1585,6 @@ mod test {
 
     #[ignore] // slow
     #[test]
-    fn test_days_in_provided_year_simulated() {
-        let calendar = Hijri(ReingoldSimulation::Mecca);
-        // -1245 1 1 = -214526 (R.D Date)
-        // 1518 1 1 = 764589 (R.D Date)
-        let sum_days_in_year: i64 = (START_YEAR..END_YEAR)
-            .map(|year| {
-                Hijri(ReingoldSimulation::Mecca)
-                    .0
-                    .year(year)
-                    .packed
-                    .days_in_year() as i64
-            })
-            .sum();
-        let expected_number_of_days = Date::try_new_hijri_with_calendar(END_YEAR, 1, 1, calendar)
-            .unwrap()
-            .to_rata_die()
-            - Date::try_new_hijri_with_calendar(START_YEAR, 1, 1, calendar)
-                .unwrap()
-                .to_rata_die(); // The number of days between Hijri years -1245 and 1518
-        let tolerance = 1; // One day tolerance (See Astronomical::month_length for more context)
-
-        assert!(
-            (sum_days_in_year - expected_number_of_days).abs() <= tolerance,
-            "Difference between sum_days_in_year and expected_number_of_days is more than the tolerance"
-        );
-    }
-
-    #[ignore] // slow
-    #[test]
     fn test_days_in_provided_year_ummalqura() {
         let calendar = Hijri::new_umm_al_qura();
         // -1245 1 1 = -214528 (R.D Date)
@@ -1921,17 +1646,7 @@ mod test {
     }
 
     #[test]
-    fn test_regression_5069_obs() {
-        let cal = Hijri(ReingoldSimulation::Mecca);
-
-        let dt = Date::try_new_hijri_with_calendar(1390, 1, 30, cal).unwrap();
-
-        assert_eq!(Date::from_rata_die(dt.to_rata_die(), cal), dt);
-
-        let dt = Date::try_new_iso(2000, 5, 5).unwrap().to_calendar(cal);
-
-        assert!(dt.day_of_month().0 > 0);
-    }
+    fn test_regression_5069_obs() {}
 
     #[test]
     fn test_regression_6197() {
