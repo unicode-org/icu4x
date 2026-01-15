@@ -4,6 +4,7 @@
 
 use elsa::sync::FrozenMap;
 use icu_provider::prelude::*;
+use litemap::LiteMap;
 use std::any::Any;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
@@ -19,7 +20,6 @@ use std::path::PathBuf;
 use std::sync::OnceLock;
 use std::sync::RwLock;
 use zip::ZipArchive;
-use litemap::LiteMap;
 
 pub(crate) struct SerdeCache {
     pub(crate) root: AbstractFs,
