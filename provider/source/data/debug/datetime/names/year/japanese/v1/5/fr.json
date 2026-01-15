@@ -1,11 +1,22 @@
 {
-  "FixedEras": [
-    "avant Jésus-Christ",
-    "après Jésus-Christ",
-    "Meiji",
-    "Taishō",
-    "Shōwa",
-    "Heisei",
-    "Reiwa"
+  "VariableEras": [
+    [
+      "bce",
+      "ce",
+      "heisei",
+      "meiji",
+      "reiwa",
+      "showa",
+      "taisho"
+    ],
+    [
+      "avant Jésus-Christ",
+      "après Jésus-Christ",
+      "Heisei",
+      "Meiji",
+      "Reiwa",
+      "Shōwa",
+      "Taishō"
+    ]
   ]
 }

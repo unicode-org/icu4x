@@ -1,11 +1,22 @@
 {
-  "FixedEras": [
-    "ق.م",
-    "م",
-    "M",
-    "T",
-    "S",
-    "H",
-    "R"
+  "VariableEras": [
+    [
+      "bce",
+      "ce",
+      "heisei",
+      "meiji",
+      "reiwa",
+      "showa",
+      "taisho"
+    ],
+    [
+      "ق.م",
+      "م",
+      "H",
+      "M",
+      "R",
+      "S",
+      "T"
+    ]
   ]
 }
