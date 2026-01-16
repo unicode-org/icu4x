@@ -7,10 +7,7 @@ use core::fmt::Display;
 use crate::compactdecimal::{
     options::CompactDecimalFormatterOptions,
     preferences::CompactDecimalFormatterPreferences,
-    provider::{
-        CompactDecimalPatternData, CompactPatterns, LongCompactDecimalFormatDataV1,
-        ShortCompactDecimalFormatDataV1,
-    },
+    provider::{CompactPatterns, LongCompactDecimalFormatDataV1, ShortCompactDecimalFormatDataV1},
     ExponentError,
 };
 use alloc::borrow::Cow;
@@ -61,7 +58,9 @@ use writeable::Writeable;
 pub struct CompactDecimalFormatter {
     pub(crate) plural_rules: PluralRules,
     pub(crate) decimal_formatter: DecimalFormatter,
-    pub(crate) compact_data: DataPayload<ErasedMarker<CompactDecimalPatternData<'static>>>,
+    pub(crate) compact_data: DataPayload<
+        ErasedMarker<<LongCompactDecimalFormatDataV1 as DynamicDataMarker>::DataStruct>,
+    >,
 }
 
 impl CompactDecimalFormatter {
@@ -405,11 +404,10 @@ impl CompactDecimalFormatter {
     /// );
     /// ```
     pub fn format_fixed_decimal(&self, value: &Decimal) -> impl Writeable + Display + '_ {
-        let (compact_pattern, significand) = get_pattern_and_significand(
-            &self.compact_data.get().patterns,
-            &value.absolute,
-            &self.plural_rules,
-        );
+        let (compact_pattern, significand) = self
+            .compact_data
+            .get()
+            .get_pattern_and_significand(&value.absolute, &self.plural_rules);
 
         self.decimal_formatter.format_sign(
             value.sign,
@@ -528,7 +526,7 @@ impl CompactDecimalFormatter {
         let (pattern, expected_exponent) = self
             .compact_data
             .get()
-            .patterns
+            .0
             .iter()
             .filter(|&t| log10_type >= i16::from(t.sized))
             .last()
@@ -585,7 +583,7 @@ impl CompactDecimalFormatter {
     pub fn compact_exponent_for_magnitude(&self, magnitude: i16) -> u8 {
         self.compact_data
             .get()
-            .patterns
+            .0
             .iter()
             .filter(|t| magnitude >= i16::from(t.sized))
             .last()
@@ -594,61 +592,67 @@ impl CompactDecimalFormatter {
     }
 }
 
-pub(crate) fn get_pattern_and_significand<'a, P: PatternBackend>(
-    patterns: &'a CompactPatterns<P>,
-    value: &UnsignedDecimal,
-    rules: &PluralRules,
-) -> (Option<&'a Pattern<P>>, UnsignedDecimal)
-where
-    <P as PatternBackend>::Store: zerovec::ule::VarULE,
-{
-    let log10_type = value.nonzero_magnitude_start();
+impl<'a, P: PatternBackend<Store = str>> CompactPatterns<'a, P> {
+    pub(crate) fn get_pattern_and_significand(
+        &'a self,
+        value: &UnsignedDecimal,
+        rules: &PluralRules,
+    ) -> (Option<&'a Pattern<P>>, UnsignedDecimal)
+    where
+        <P as PatternBackend>::Store: zerovec::ule::VarULE,
+    {
+        let log10_type = value.nonzero_magnitude_start();
 
-    let entry = patterns
-        .iter()
-        .enumerate()
-        .filter(|&(_, t)| i16::from(t.sized) <= log10_type)
-        .last();
+        let entry = self
+            .0
+            .iter()
+            .enumerate()
+            .filter(|&(_, t)| i16::from(t.sized) <= log10_type)
+            .last();
 
-    let exponent = entry
-        .map(|(_, t)| t.sized - t.variable.get_default().0.get())
-        .unwrap_or_default();
+        let exponent = entry
+            .map(|(_, t)| t.sized - t.variable.get_default().0.get())
+            .unwrap_or_default();
 
-    let rounding_magnitude = if log10_type > i16::from(exponent) {
-        // If we have at least 2 digits before the decimal point,
-        // round to eliminate the fractional part.
-        i16::from(exponent)
-    } else {
-        // …otherwise, round to two significant digits
-        log10_type - 1
-    };
+        let rounding_magnitude = if log10_type > i16::from(exponent) {
+            // If we have at least 2 digits before the decimal point,
+            // round to eliminate the fractional part.
+            i16::from(exponent)
+        } else {
+            // …otherwise, round to two significant digits
+            log10_type - 1
+        };
 
-    if let Some(t) = patterns.get(entry.map(|(idx, _)| idx + 1).unwrap_or_default()) {
-        let next_exponent = t.sized - t.variable.get_default().0.get();
+        if let Some(t) = self
+            .0
+            .get(entry.map(|(idx, _)| idx + 1).unwrap_or_default())
+        {
+            let next_exponent = t.sized - t.variable.get_default().0.get();
 
-        let rounds_to_next_exponent = log10_type + 1 == i16::from(next_exponent)
-            && value.digit_at(rounding_magnitude - 1) >= 5
-            && (rounding_magnitude..=log10_type).all(|m| value.digit_at(m) == 9);
+            let rounds_to_next_exponent = log10_type + 1 == i16::from(next_exponent)
+                && value.digit_at(rounding_magnitude - 1) >= 5
+                && (rounding_magnitude..=log10_type).all(|m| value.digit_at(m) == 9);
 
-        // We got bumped up a magnitude by rounding.
-        if rounds_to_next_exponent {
-            return (
-                Some(t.variable.get(1.into(), rules).1),
-                UnsignedDecimal::ONE,
-            );
+            // We got bumped up a magnitude by rounding.
+            if rounds_to_next_exponent {
+                return (
+                    Some(t.variable.get(1.into(), rules).1),
+                    UnsignedDecimal::ONE,
+                );
+            }
         }
+
+        let significand = value
+            .clone()
+            .rounded(rounding_magnitude)
+            .multiplied_pow10(-i16::from(exponent))
+            .trimmed_end();
+
+        (
+            entry.map(|(_, t)| t.variable.get((&significand).into(), rules).1),
+            significand,
+        )
     }
-
-    let significand = value
-        .clone()
-        .rounded(rounding_magnitude)
-        .multiplied_pow10(-i16::from(exponent))
-        .trimmed_end();
-
-    (
-        entry.map(|(_, t)| t.variable.get((&significand).into(), rules).1),
-        significand,
-    )
 }
 
 #[cfg(feature = "serde")]

@@ -30,7 +30,7 @@ impl DataProvider<ShortCompactDecimalFormatDataV1> for SourceDataProvider {
             &numbers.default_numbering_system
         };
 
-        let result = CompactDecimalPatternData::try_from(
+        let result = CompactPatterns::try_from(
             &numbers
                 .numsys_data
                 .formats
@@ -75,7 +75,7 @@ impl DataProvider<LongCompactDecimalFormatDataV1> for SourceDataProvider {
             &numbers.default_numbering_system
         };
 
-        let result = CompactDecimalPatternData::try_from(
+        let result = CompactPatterns::try_from(
             &numbers
                 .numsys_data
                 .formats
@@ -134,7 +134,7 @@ mod tests {
 
         let nonzero_copy: Box<[_]> = en_compact_long
             .get()
-            .patterns
+            .0
             .iter()
             .map(|t| (t.sized, t.variable.decode().map(|(a, b)| (a.get(), b))))
             .collect();
@@ -195,7 +195,7 @@ mod tests {
 
         let nonzero_copy: Box<[_]> = ja_compact_short
             .get()
-            .patterns
+            .0
             .iter()
             .map(|t| (t.sized, t.variable.decode().map(|(a, b)| (a.get(), b))))
             .collect();

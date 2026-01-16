@@ -11,7 +11,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use icu_pattern::{Pattern, SinglePlaceholder};
+use icu_pattern::{Pattern, PatternBackend, SinglePlaceholder};
 use icu_plurals::provider::PluralElementsPackedULE;
 use icu_provider::prelude::*;
 use zerovec::ule::vartuple::VarTupleULE;
@@ -30,15 +30,15 @@ pub use crate::provider::Baked;
 icu_provider::data_marker!(
     /// `LongCompactDecimalFormatDataV1`
     LongCompactDecimalFormatDataV1,
-    CompactDecimalPatternData<'static>,
+    CompactPatterns<'static, SinglePlaceholder>,
 );
 icu_provider::data_marker!(
     /// `ShortCompactDecimalFormatDataV1`
     ShortCompactDecimalFormatDataV1,
-    CompactDecimalPatternData<'static>,
+    CompactPatterns<'static, SinglePlaceholder>,
 );
 
-/// Compact Decimal Pattern data struct.
+/// Compact pattern data struct.
 ///
 /// As in CLDR, this is a mapping from type (a power of ten, corresponding to
 /// the magnitude of the number being formatted) to a plural pattern.
@@ -53,22 +53,152 @@ icu_provider::data_marker!(
 /// is stored.
 ///
 /// Finally, the pattern indicating noncompact notation for the first few powers
-/// of ten is omitted; that is, there is an implicit (0, other) ↦ 0.
+/// of ten might be omitted; that is, there is an implicit (0, other) ↦ 0.
 ///
 /// The plural patterns are stored with the 4-bit metadata representing the exponent
 /// shift (number of zeros in the pattern minus 1).
-pub type CompactPatterns<'a, P> =
-    VarZeroVec<'a, VarTupleULE<u8, PluralElementsPackedULE<Pattern<P>>>>;
-
 #[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::compactdecimal::provider))]
-#[yoke(prove_covariance_manually)]
-pub struct CompactDecimalPatternData<'data> {
-    /// A map keyed on log10 of the CLDR `type` attribute.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub patterns: CompactPatterns<'data, SinglePlaceholder>,
+pub struct CompactPatterns<'a, P: PatternBackend<Store = str>>(
+    pub VarZeroVec<'a, VarTupleULE<u8, PluralElementsPackedULE<Pattern<P>>>>,
+);
+
+#[cfg(feature = "datagen")]
+impl<'data, P: PatternBackend<Store = str>> serde::Serialize for CompactPatterns<'data, P>
+where
+    for<'a> P::PlaceholderKeyCow<'a>: serde::Serialize + From<P::PlaceholderKey<'a>>,
+{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        self.0.serialize(serializer)
+    }
 }
 
-icu_provider::data_struct!(CompactDecimalPatternData<'_>, #[cfg(feature = "datagen")]);
+#[cfg(feature = "datagen")]
+impl<'de, 'data, P: PatternBackend<Store = str>> serde::Deserialize<'de>
+    for CompactPatterns<'data, P>
+where
+    'de: 'data,
+    P::PlaceholderKeyCow<'data>: serde::Deserialize<'de>,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        VarZeroVec::<VarTupleULE<u8, PluralElementsPackedULE<Pattern<P>>>>::deserialize(
+            deserializer,
+        )
+        .map(Self)
+    }
+}
+
+impl<P: PatternBackend<Store = str>> icu_provider::ule::MaybeAsVarULE for CompactPatterns<'_, P> {
+    type EncodedStruct = [()];
+}
+
+#[cfg(feature = "datagen")]
+impl<P: PatternBackend<Store = str>> icu_provider::ule::MaybeEncodeAsVarULE
+    for CompactPatterns<'_, P>
+{
+    type EncodeableStruct<'b>
+        = &'b [()]
+    where
+        Self: 'b;
+    fn maybe_as_encodeable<'b>(&'b self) -> Option<Self::EncodeableStruct<'b>> {
+        None
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl<P: PatternBackend<Store = str>> CompactPatterns<'static, P> {
+    #[allow(clippy::type_complexity)]
+    pub fn new(
+        patterns: alloc::collections::BTreeMap<
+            u8,
+            (
+                u8,
+                icu_plurals::PluralElements<alloc::boxed::Box<Pattern<P>>>,
+            ),
+        >,
+        zero_magnitude: Option<&icu_plurals::PluralElements<&Pattern<P>>>,
+    ) -> Result<Self, alloc::string::String> {
+        use alloc::boxed::Box;
+        use alloc::vec::Vec;
+        use icu_plurals::provider::FourBitMetadata;
+        use icu_plurals::PluralElements;
+        use zerovec::ule::encode_varule_to_box;
+        use zerovec::ule::vartuple::VarTuple;
+        use zerovec::vecs::VarZeroVecOwned;
+
+        if !patterns
+            .values()
+            .zip(patterns.values().skip(1))
+            .all(|(low, high)| low.0 <= high.0)
+        {
+            Err(alloc::format!(
+                "Compact exponents should be nondecreasing: {:?}",
+                patterns
+                    .values()
+                    .map(|(exponent, _)| exponent)
+                    .collect::<Vec<_>>(),
+            ))?;
+        }
+
+        let mut deduplicated_patterns: Vec<(
+            u8,
+            PluralElements<(FourBitMetadata, Box<Pattern<P>>)>,
+        )> = Vec::new();
+
+        // Deduplicate sequences of types that have the same plural map, keeping the lowest type.
+        for (log10_type, (exponent, map)) in patterns
+            .into_iter()
+            // Skip leading 0 patterns
+            .skip_while(|(_, (_, pattern))| Some(&pattern.as_ref().map(|p| &**p)) == zero_magnitude)
+        {
+            if let Some(prev) = deduplicated_patterns.last() {
+                // The higher pattern can never be exactly one of the low pattern, so we can ignore that value
+                if prev.0 == exponent
+                    && prev
+                        .1
+                        .as_ref()
+                        .with_explicit_one_value(None)
+                        .map(|(_, p)| p)
+                        == map.as_ref()
+                {
+                    continue;
+                }
+            }
+
+            // Store the exponent as a difference from the log10_type, i.e. the number of zeros
+            // in the pattern, minus 1. No pattern should have more than 16 zeros.
+            let Some(metadata) = FourBitMetadata::try_from_byte(log10_type - exponent) else {
+                return Err(alloc::format!(
+                    "Pattern has too many zeros {}",
+                    log10_type - exponent
+                ));
+            };
+
+            deduplicated_patterns.push((log10_type, map.map(|p| (metadata, p))))
+        }
+
+        #[allow(clippy::unwrap_used)] // keyed by u8, so it cannot exceed usize/2
+        Ok(Self(
+            VarZeroVecOwned::try_from_elements(
+                &deduplicated_patterns
+                    .into_iter()
+                    .map(|(log10_type, plural_map)| {
+                        encode_varule_to_box(&VarTuple {
+                            sized: log10_type,
+                            variable: plural_map,
+                        })
+                    })
+                    .collect::<Vec<Box<VarTupleULE<u8, PluralElementsPackedULE<Pattern<P>>>>>>(),
+            )
+            .unwrap()
+            .into(),
+        ))
+    }
+}
