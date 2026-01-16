@@ -827,7 +827,7 @@ impl CalendarPreferences {
     /// assert_eq!(CalendarPreferences::from(&locale!("und-AF")).resolved_algorithm(), CalendarAlgorithm::Persian);
     /// assert_eq!(CalendarPreferences::from(&locale!("und-US-u-rg-thxxxx")).resolved_algorithm(), CalendarAlgorithm::Buddhist);
     /// assert_eq!(
-    ///     CalendarPreferences::from(&locale!("und-US-u-ca-islamic")).resolved_algorithm(), 
+    ///     CalendarPreferences::from(&locale!("und-US-u-ca-islamic")).resolved_algorithm(),
     ///     CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil))
     /// );
     /// ```
@@ -836,12 +836,14 @@ impl CalendarPreferences {
         let region = region.as_ref().map(|r| r.as_str());
         // This is tested to be consistent with CLDR in icu_provider_source::calendar::test_calendar_resolution
         match self.calendar_algorithm {
-            Some(CalendarAlgorithm::Hijri(None)) => match region {
-                Some("AE" | "BH" | "KW" | "QA" | "SA") => {
-                    CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Umalqura))
+            Some(CalendarAlgorithm::Hijri(None | Some(HijriCalendarAlgorithm::Rgsa))) => {
+                match region {
+                    Some("AE" | "BH" | "KW" | "QA" | "SA") => {
+                        CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Umalqura))
+                    }
+                    _ => CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil)),
                 }
-                _ => CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil)),
-            },
+            }
             Some(a) => a,
             None => match region {
                 Some("TH") => CalendarAlgorithm::Buddhist,
