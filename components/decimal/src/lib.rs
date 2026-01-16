@@ -94,12 +94,12 @@
 extern crate alloc;
 
 #[cfg(feature = "alloc")]
-#[doc(hidden)]
+#[doc(hidden)] // TODO(#3647): should be private
 pub use alloc::borrow::Cow;
 
 #[cfg(not(feature = "alloc"))]
 #[derive(Debug, PartialEq, Eq, Clone)]
-#[doc(hidden)]
+#[doc(hidden)] // TODO(#3647): should be private
 pub enum Cow<'a, T> {
     Borrowed(&'a T),
 }
@@ -310,7 +310,7 @@ impl DecimalFormatter {
         ))
     }
 
-    #[doc(hidden)]
+    #[doc(hidden)] // TODO(#3647): should be private
     pub fn format_unsigned<'l>(
         &'l self,
         value: Cow<'l, UnsignedDecimal>,
@@ -323,7 +323,7 @@ impl DecimalFormatter {
         }
     }
 
-    #[doc(hidden)]
+    #[doc(hidden)] // TODO(#3647): should be private
     pub fn format_sign<'l, T>(&'l self, sign: Sign, value: T) -> FormattedSign<'l, T> {
         FormattedSign {
             sign: match sign {

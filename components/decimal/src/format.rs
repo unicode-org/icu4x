@@ -21,7 +21,7 @@ use writeable::Writeable;
 #[derive(Debug, PartialEq, Clone)]
 pub struct FormattedDecimal<'l>(pub(crate) FormattedSign<'l, FormattedUnsignedDecimal<'l>>);
 
-#[doc(hidden)]
+#[doc(hidden)] // TODO(#3647): should be private
 /// Building block for formatted numbers
 #[derive(Debug, PartialEq, Clone)]
 pub struct FormattedUnsignedDecimal<'l> {
@@ -31,7 +31,7 @@ pub struct FormattedUnsignedDecimal<'l> {
     pub(crate) digits: &'l [char; 10],
 }
 
-#[doc(hidden)]
+#[doc(hidden)] // TODO(#3647): should be private
 /// Building block for formatted numbers
 #[derive(Debug, PartialEq, Clone)]
 pub struct FormattedSign<'l, T> {
