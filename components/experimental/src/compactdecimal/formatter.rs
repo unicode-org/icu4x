@@ -597,10 +597,7 @@ impl<'a, P: PatternBackend<Store = str>> CompactPatterns<'a, P> {
         &'a self,
         value: &UnsignedDecimal,
         rules: &PluralRules,
-    ) -> (Option<&'a Pattern<P>>, UnsignedDecimal)
-    where
-        <P as PatternBackend>::Store: zerovec::ule::VarULE,
-    {
+    ) -> (Option<&'a Pattern<P>>, UnsignedDecimal) {
         let log10_type = value.nonzero_magnitude_start();
 
         let entry = self
