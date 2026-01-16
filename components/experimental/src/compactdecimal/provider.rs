@@ -11,7 +11,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use icu_pattern::SinglePlaceholderPattern;
+use icu_pattern::{Pattern, SinglePlaceholder};
 use icu_plurals::provider::PluralElementsPackedULE;
 use icu_provider::prelude::*;
 use zerovec::ule::vartuple::VarTupleULE;
@@ -57,6 +57,9 @@ icu_provider::data_marker!(
 ///
 /// The plural patterns are stored with the 4-bit metadata representing the exponent
 /// shift (number of zeros in the pattern minus 1).
+pub type CompactPatterns<'a, P> =
+    VarZeroVec<'a, VarTupleULE<u8, PluralElementsPackedULE<Pattern<P>>>>;
+
 #[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -65,41 +68,7 @@ icu_provider::data_marker!(
 pub struct CompactDecimalPatternData<'data> {
     /// A map keyed on log10 of the CLDR `type` attribute.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub patterns:
-        VarZeroVec<'data, VarTupleULE<u8, PluralElementsPackedULE<SinglePlaceholderPattern>>>,
-}
-
-impl CompactDecimalPatternData<'_> {
-    /// The pattern `0`, which is used for low magnitudes and omitted from the data struct.
-    // Safety: the integrity of the VarULE is enforced in validate_plural_pattern_0_map
-    pub const PLURAL_PATTERN_0: &'static PluralElementsPackedULE<SinglePlaceholderPattern> =
-        unsafe { PluralElementsPackedULE::from_bytes_unchecked(&[0, 1]) };
-
-    pub(crate) fn patterns_and_exponent_for_magnitude(
-        &self,
-        magnitude: i16,
-    ) -> (&PluralElementsPackedULE<SinglePlaceholderPattern>, u8) {
-        self.patterns
-            .iter()
-            .filter(|t| i16::from(t.sized) <= magnitude)
-            .last()
-            .map(|t| (&t.variable, t.sized - t.variable.get_default().0.get()))
-            .unwrap_or((Self::PLURAL_PATTERN_0, 0))
-    }
-}
-
-#[test]
-fn validate_plural_pattern_0_map() {
-    use icu_plurals::{provider::FourBitMetadata, PluralElements};
-    use zerovec::ule::encode_varule_to_box;
-
-    assert_eq!(
-        CompactDecimalPatternData::PLURAL_PATTERN_0,
-        &*encode_varule_to_box(&PluralElements::new((
-            FourBitMetadata::try_from_byte(0).unwrap(),
-            SinglePlaceholderPattern::PASS_THROUGH
-        )))
-    );
+    pub patterns: CompactPatterns<'data, SinglePlaceholder>,
 }
 
 icu_provider::data_struct!(CompactDecimalPatternData<'_>, #[cfg(feature = "datagen")]);

@@ -251,9 +251,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternData<'static> {
             // Skip leading 0 patterns
             .skip_while(|(_, pattern)| {
                 pattern.as_ref().map(|(_, p)| p.as_ref())
-                    == CompactDecimalPatternData::PLURAL_PATTERN_0
-                        .decode()
-                        .map(|(_, p)| p)
+                    == PluralElements::new(SinglePlaceholderPattern::PASS_THROUGH)
             })
             .coalesce(|low, high| {
                 // The high pattern can never be exactly one of the low pattern, so we can ignore that value
