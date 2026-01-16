@@ -445,19 +445,8 @@ mod date_skeleton_consistency_tests {
         let mut num_problems = 0;
         use DatagenCalendar::*;
         for cal in [
-            Buddhist,
-            Chinese,
-            Coptic,
-            Dangi,
-            Ethiopic,
-            Gregorian,
-            Hebrew,
-            Indian,
-            Hijri,
-            JapaneseExtended,
-            JapaneseModern,
-            Persian,
-            Roc,
+            Buddhist, Chinese, Coptic, Dangi, Ethiopic, Gregorian, Hebrew, Indian, Hijri, Japanese,
+            Persian, Roc,
         ] {
             for locale in provider
                 .locales_for_coverage_levels([CoverageLevel::Modern])

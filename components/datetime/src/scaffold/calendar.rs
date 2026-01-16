@@ -168,12 +168,6 @@ impl CldrCalendar for Japanese {
     type SkeletaV1 = DatetimePatternsDateJapaneseV1;
 }
 
-impl CldrCalendar for JapaneseExtended {
-    type YearNamesV1 = DatetimeNamesYearJapanextV1;
-    type MonthNamesV1 = DatetimeNamesMonthJapanextV1;
-    type SkeletaV1 = DatetimePatternsDateJapanextV1;
-}
-
 impl CldrCalendar for Persian {
     type YearNamesV1 = DatetimeNamesYearPersianV1;
     type MonthNamesV1 = DatetimeNamesMonthPersianV1;
@@ -197,7 +191,6 @@ impl UnstableSealed for Hebrew {}
 impl UnstableSealed for Indian {}
 impl<R: hijri::unstable_internal::Rules> UnstableSealed for Hijri<R> {}
 impl UnstableSealed for Japanese {}
-impl UnstableSealed for JapaneseExtended {}
 impl UnstableSealed for Persian {}
 impl UnstableSealed for Roc {}
 
@@ -293,7 +286,6 @@ impl IntoFormattableAnyCalendar for Hijri<hijri::AstronomicalSimulation> {}
 impl IntoFormattableAnyCalendar for Hijri<hijri::UmmAlQura> {}
 // _NOT_ Hijri<S>
 impl IntoFormattableAnyCalendar for Japanese {}
-// _NOT_ JapaneseExtended
 impl IntoFormattableAnyCalendar for Persian {}
 impl IntoFormattableAnyCalendar for Roc {}
 
@@ -314,7 +306,6 @@ enum FormattableAnyCalendarKind {
     HijriTabularTypeIIThursday,
     HijriUmmAlQura,
     Japanese,
-    // _NOT_ JapaneseExtended
     Persian,
     Roc,
 }
@@ -337,8 +328,8 @@ impl FormattableAnyCalendarKind {
             HijriTabularTypeIIThursday => Self::HijriTabularTypeIIThursday,
             HijriUmmAlQura => Self::HijriUmmAlQura,
             Iso => return None,
-            Japanese => Self::Japanese,
-            JapaneseExtended => return None,
+            #[allow(deprecated)]
+            Japanese | JapaneseExtended => Self::Japanese,
             Persian => Self::Persian,
             Roc => Self::Roc,
             _ => {
