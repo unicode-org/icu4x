@@ -166,7 +166,7 @@ icu_provider_adapters = { version = "~2.1.1", path = "provider/adapters", defaul
 icu_provider_baked = { version = "~2.1.1", path = "provider/baked", default-features = false }
 icu_provider_blob = { version = "~2.1.1", path = "provider/blob", default-features = false }
 icu_provider_fs = { version = "~2.1.1", path = "provider/fs", default-features = false }
-icu_provider_registry = { version = "~2.1.1", path = "provider/registry", default-features = false }
+icu_provider_registry = { version = "~2.1.2", path = "provider/registry", default-features = false }
 
 # Baked data
 icu_calendar_data = { version = "~2.1.1", path = "provider/data/calendar", default-features = false }

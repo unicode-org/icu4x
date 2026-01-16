@@ -238,8 +238,8 @@ impl PluralOperands {
         let exp_i16 = i16::from(exp);
 
         let mag_range = dec.magnitude_range();
-        let mag_high = core::cmp::min(17, *mag_range.end() + exp_i16);
-        let mag_low = core::cmp::max(-18, *mag_range.start() + exp_i16);
+        let mag_high = (*mag_range.end() + exp_i16).clamp(0, 17);
+        let mag_low = (*mag_range.start() + exp_i16).clamp(-18, 0);
 
         let mut i: u64 = 0;
         for magnitude in (0..=mag_high).rev() {

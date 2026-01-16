@@ -13,7 +13,7 @@ mod semantic_skeletons;
 mod week_data;
 
 /// These are the calendars that datetime needs names for. They are roughly the
-/// CLDR calendars, with the Hijri calendars merged, and the Japanese calendar split.
+/// CLDR calendars, with the Hijri calendars merged.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
 pub(crate) enum DatagenCalendar {
     Buddhist,
@@ -25,8 +25,7 @@ pub(crate) enum DatagenCalendar {
     Hebrew,
     Indian,
     Hijri,
-    JapaneseExtended,
-    JapaneseModern,
+    Japanese,
     Persian,
     Roc,
 }
@@ -44,8 +43,7 @@ impl DatagenCalendar {
             Hebrew => "hebrew",
             Indian => "indian",
             Hijri => "islamic",
-            JapaneseExtended => "japanese",
-            JapaneseModern => "japanese",
+            Japanese => "japanese",
             Persian => "persian",
             Roc => "roc",
         }
@@ -65,7 +63,7 @@ impl DatagenCalendar {
             "islamic" | "islamic-civil" | "islamic-umalqura" | "islamic-rgsa" | "islamic-tbla" => {
                 Hijri
             }
-            "japanese" => JapaneseExtended,
+            "japanese" => Japanese,
             "persian" => Persian,
             "roc" => Roc,
             c => panic!("{c}"),
@@ -84,8 +82,7 @@ impl DatagenCalendar {
             Hebrew => AnyCalendarKind::Hebrew,
             Indian => AnyCalendarKind::Indian,
             Hijri => AnyCalendarKind::HijriUmmAlQura, // also covers HijriTabular*, HijriSimulatedMecca
-            JapaneseExtended => AnyCalendarKind::JapaneseExtended,
-            JapaneseModern => AnyCalendarKind::Japanese,
+            Japanese => AnyCalendarKind::Japanese,
             Persian => AnyCalendarKind::Persian,
             Roc => AnyCalendarKind::Roc,
         }

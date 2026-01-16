@@ -42,7 +42,6 @@ const _: () = {
     }
     make_provider!(Baked);
     impl_calendar_japanese_modern_v1!(Baked);
-    impl_calendar_japanese_extended_v1!(Baked);
     impl_calendar_week_v1!(Baked);
 };
 
@@ -53,13 +52,7 @@ icu_provider::data_marker!(
     JapaneseEras<'static>,
     is_singleton = true
 );
-icu_provider::data_marker!(
-    /// Full Japanese era names
-    CalendarJapaneseExtendedV1,
-    "calendar/japanese/extended/v1",
-    JapaneseEras<'static>,
-    is_singleton = true
-);
+
 icu_provider::data_marker!(
     /// Week information
     CalendarWeekV1,
@@ -74,11 +67,7 @@ icu_provider::data_marker!(
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
-pub const MARKERS: &[DataMarkerInfo] = &[
-    CalendarJapaneseModernV1::INFO,
-    CalendarJapaneseExtendedV1::INFO,
-    CalendarWeekV1::INFO,
-];
+pub const MARKERS: &[DataMarkerInfo] = &[CalendarJapaneseModernV1::INFO, CalendarWeekV1::INFO];
 
 /// The date at which an era started
 ///
