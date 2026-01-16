@@ -160,13 +160,12 @@ impl<P: PatternBackend<Store = str>> CompactPatterns<'static, P> {
         {
             if let Some(prev) = deduplicated_patterns.last() {
                 // The higher pattern can never be exactly one of the low pattern, so we can ignore that value
-                if prev.0 == exponent
-                    && prev
-                        .1
-                        .as_ref()
-                        .with_explicit_one_value(None)
-                        .map(|(_, p)| p)
-                        == map.as_ref()
+                if prev
+                    .1
+                    .as_ref()
+                    .with_explicit_one_value(None)
+                    .map(|(_, p)| p)
+                    == map.as_ref()
                 {
                     continue;
                 }
