@@ -77,7 +77,7 @@ where
     }
 }
 
-#[cfg(feature = "datagen")]
+#[cfg(feature = "serde")]
 impl<'de, 'data, P: PatternBackend<Store = str>> serde::Deserialize<'de>
     for CompactPatterns<'data, P>
 where
