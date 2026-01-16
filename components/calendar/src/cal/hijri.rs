@@ -141,9 +141,10 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
     }
 }
 
-/// [`Hijri`] [`Rules`] based on astronomical simulations published by the KACST.
+/// [`Hijri`] [`Rules`] based on astronomical simulations.
 ///
-/// This is identical to [`UmmAlQura`].
+/// Currently, this uses simulation results published by the KACST,
+/// making it identical to [`UmmAlQura`].
 ///
 /// The precise behavior of this calendar may change in the future if:
 /// - We decide to tweak the precise astronomical simulation used

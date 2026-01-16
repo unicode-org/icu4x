@@ -769,21 +769,23 @@ pub enum AnyCalendarKind {
     ///
     /// This corresponds to the `"hebrew"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Hebrew,
-    /// The kind of an [`HijriSimulated`], Mecca calendar
+    /// The kind of a [`HijriSimulated`] calendar
+    ///
+    /// This does not correspond to a CLDR calendar.
     HijriSimulatedMecca,
-    /// The kind of an [`HijriTabular`] calendar using [`HijriTabularLeapYears::TypeII`] and [`HijriTabularEpoch::Friday`]
+    /// The kind of a [`HijriTabular`] calendar using [`HijriTabularLeapYears::TypeII`] and [`HijriTabularEpoch::Friday`]
     ///
     /// This corresponds to the `"islamic-civil"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     HijriTabularTypeIIFriday,
-    /// The kind of an [`HijriTabular`] calendar using [`HijriTabularLeapYears::TypeII`] and [`HijriTabularEpoch::Thursday`]
+    /// The kind of a [`HijriTabular`] calendar using [`HijriTabularLeapYears::TypeII`] and [`HijriTabularEpoch::Thursday`]
     ///
     /// This corresponds to the `"islamic-tbla"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     HijriTabularTypeIIThursday,
-    /// The kind of an [`HijriUmmAlQura`] calendar
+    /// The kind of a [`HijriUmmAlQura`] calendar
     ///
     /// This corresponds to the `"islamic-umalqura"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     HijriUmmAlQura,
-    /// The kind of a [`Indian`] calendar
+    /// The kind of an [`Indian`] calendar
     ///
     /// This corresponds to the `"indian"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Indian,
@@ -811,16 +813,23 @@ pub enum AnyCalendarKind {
 impl CalendarPreferences {
     /// Selects the [`CalendarAlgorithm`] appropriate for the given [`CalendarPreferences`].
     ///
+    /// This is guaranteed to return a [`CalendarAlgorithm`] that successfully converts into an
+    /// [`AnyCalendarKind`] (i.e. not `-u-ca-islamic` or `-u-ca-islamic-rgsa`).
+    ///
     /// # Example
     ///
     /// ```
-    /// use icu::calendar::preferences::{CalendarAlgorithm, CalendarPreferences};
+    /// use icu::calendar::preferences::{CalendarAlgorithm, CalendarPreferences, HijriCalendarAlgorithm};
     /// use icu::locale::locale;
     ///
     /// assert_eq!(CalendarPreferences::from(&locale!("und")).resolved_algorithm(), CalendarAlgorithm::Gregory);
     /// assert_eq!(CalendarPreferences::from(&locale!("und-US-u-ca-hebrew")).resolved_algorithm(), CalendarAlgorithm::Hebrew);
     /// assert_eq!(CalendarPreferences::from(&locale!("und-AF")).resolved_algorithm(), CalendarAlgorithm::Persian);
     /// assert_eq!(CalendarPreferences::from(&locale!("und-US-u-rg-thxxxx")).resolved_algorithm(), CalendarAlgorithm::Buddhist);
+    /// assert_eq!(
+    ///     CalendarPreferences::from(&locale!("und-US-u-ca-islamic")).resolved_algorithm(), 
+    ///     CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil))
+    /// );
     /// ```
     pub fn resolved_algorithm(self) -> CalendarAlgorithm {
         let region = self.locale_preferences.region();
