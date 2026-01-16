@@ -86,6 +86,28 @@ enum IndicSyllabicCategory {
     return IndicSyllabicCategory.values[result];
   }
 
+  /// Get the "long" name of this property value (returns empty if property value is unknown)
+  ///
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+  String? longName() {
+    final result = _icu4x_IndicSyllabicCategory_long_name_mv1(index);
+    if (!result.isOk) {
+      return null;
+    }
+    return result.union.ok._toDart([], isStatic: true);
+  }
+
+  /// Get the "short" name of this property value (returns empty if property value is unknown)
+  ///
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+  String? shortName() {
+    final result = _icu4x_IndicSyllabicCategory_short_name_mv1(index);
+    if (!result.isOk) {
+      return null;
+    }
+    return result.union.ok._toDart([], isStatic: true);
+  }
+
   /// Convert to an integer value usable with ICU4C and CodePointMapData
   ///
   /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.IndicSyllabicCategory.html#method.to_icu4c_value) for more information.
@@ -105,12 +127,31 @@ enum IndicSyllabicCategory {
     return IndicSyllabicCategory.values[result.union.ok];
   }
 
+  static IndicSyllabicCategory? tryFromStr(String s) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_IndicSyllabicCategory_try_from_str_mv1(s._utf8AllocIn(temp.arena));
+    if (!result.isOk) {
+      return null;
+    }
+    return IndicSyllabicCategory.values[result.union.ok];
+  }
+
 }
 
 @_DiplomatFfiUse('icu4x_IndicSyllabicCategory_for_char_mv1')
 @ffi.Native<ffi.Int32 Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_IndicSyllabicCategory_for_char_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_IndicSyllabicCategory_for_char_mv1(Rune ch);
+
+@_DiplomatFfiUse('icu4x_IndicSyllabicCategory_long_name_mv1')
+@ffi.Native<_ResultSliceUtf8Void Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_IndicSyllabicCategory_long_name_mv1')
+// ignore: non_constant_identifier_names
+external _ResultSliceUtf8Void _icu4x_IndicSyllabicCategory_long_name_mv1(int self);
+
+@_DiplomatFfiUse('icu4x_IndicSyllabicCategory_short_name_mv1')
+@ffi.Native<_ResultSliceUtf8Void Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_IndicSyllabicCategory_short_name_mv1')
+// ignore: non_constant_identifier_names
+external _ResultSliceUtf8Void _icu4x_IndicSyllabicCategory_short_name_mv1(int self);
 
 @_DiplomatFfiUse('icu4x_IndicSyllabicCategory_to_integer_value_mv1')
 @ffi.Native<ffi.Uint8 Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_IndicSyllabicCategory_to_integer_value_mv1')
@@ -121,5 +162,10 @@ external int _icu4x_IndicSyllabicCategory_to_integer_value_mv1(int self);
 @ffi.Native<_ResultInt32Void Function(ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_IndicSyllabicCategory_from_integer_value_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _icu4x_IndicSyllabicCategory_from_integer_value_mv1(int other);
+
+@_DiplomatFfiUse('icu4x_IndicSyllabicCategory_try_from_str_mv1')
+@ffi.Native<_ResultInt32Void Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_IndicSyllabicCategory_try_from_str_mv1')
+// ignore: non_constant_identifier_names
+external _ResultInt32Void _icu4x_IndicSyllabicCategory_try_from_str_mv1(_SliceUtf8 s);
 
 // dart format on

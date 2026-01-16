@@ -190,6 +190,8 @@ public:
    */
   inline static std::optional<icu4x::BidiClass> from_integer_value(uint8_t other);
 
+  inline static std::optional<icu4x::BidiClass> try_from_str(std::string_view s);
+
     inline icu4x::capi::BidiClass AsFFI() const;
     inline static icu4x::BidiClass FromFFI(icu4x::capi::BidiClass c_enum);
 private:

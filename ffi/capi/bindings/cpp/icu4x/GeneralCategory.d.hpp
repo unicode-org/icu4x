@@ -199,7 +199,6 @@ public:
   inline static icu4x::GeneralCategory for_char(char32_t ch);
 
   /**
-   * Convert to an integer using the ICU4C integer mappings for `General_Category`
    * Get the "long" name of this property value (returns empty if property value is unknown)
    *
    * See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
@@ -215,8 +214,19 @@ public:
 
   /**
    * Convert to an integer value usable with ICU4C and CodePointMapData
+   *
+   * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategory.html#method.to_icu4c_value) for more information.
    */
   inline uint8_t to_integer_value() const;
+
+  /**
+   * Convert from an integer value from ICU4C or CodePointMapData
+   *
+   * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategory.html#method.from_icu4c_value) for more information.
+   */
+  inline static std::optional<icu4x::GeneralCategory> from_integer_value(uint8_t other);
+
+  inline static std::optional<icu4x::GeneralCategory> try_from_str(std::string_view s);
 
   /**
    * Produces a GeneralCategoryGroup mask that can represent a group of general categories
@@ -224,12 +234,6 @@ public:
    * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
    */
   inline icu4x::GeneralCategoryGroup to_group() const;
-
-  /**
-   * Convert from an integer using the ICU4C integer mappings for `General_Category`
-   * Convert from an integer value from ICU4C or CodePointMapData
-   */
-  inline static std::optional<icu4x::GeneralCategory> from_integer_value(uint8_t other);
 
     inline icu4x::capi::GeneralCategory AsFFI() const;
     inline static icu4x::GeneralCategory FromFFI(icu4x::capi::GeneralCategory c_enum);

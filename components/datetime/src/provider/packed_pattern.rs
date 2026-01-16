@@ -92,11 +92,6 @@ icu_provider::data_marker!(
     PackedPatterns<'static>
 );
 icu_provider::data_marker!(
-    /// `DatetimePatternsDateJapanextV1`
-    DatetimePatternsDateJapanextV1,
-    PackedPatterns<'static>
-);
-icu_provider::data_marker!(
     /// `DatetimePatternsDatePersianV1`
     DatetimePatternsDatePersianV1,
     PackedPatterns<'static>

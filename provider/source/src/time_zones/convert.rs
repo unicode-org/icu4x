@@ -8,10 +8,8 @@ use crate::SourceDataProvider;
 use cldr_serde::time_zones::time_zone_names::*;
 use core::cmp::Ordering;
 use icu::datetime::provider::time_zones::*;
-use icu::locale::LanguageIdentifier;
 use icu::time::provider::*;
 use icu::time::zone::TimeZoneVariant;
-use icu_provider::prelude::icu_locale_core::subtags::Language;
 use icu_provider::prelude::*;
 use icu_time::zone::VariantOffsets;
 use icu_time::zone::ZoneNameTimestamp;
@@ -194,19 +192,7 @@ impl SourceDataProvider {
     }
 
     fn dedupe_group(&self, locale: DataLocale) -> Result<DataLocale, DataError> {
-        let mut group = LanguageIdentifier::from((locale.language, locale.script, locale.region));
-        self.cldr()?
-            .extended_locale_expander()?
-            .maximize(&mut group);
-        group.language = Language::UNKNOWN;
-        group.region = Default::default();
-        self.cldr()?
-            .extended_locale_expander()?
-            .maximize(&mut group);
-        self.cldr()?
-            .extended_locale_expander()?
-            .minimize_favor_script(&mut group);
-        let group = DataLocale::from(group);
+        let group = self.cldr()?.script_locale_group(&locale)?;
         if self
             .cldr()
             .unwrap()

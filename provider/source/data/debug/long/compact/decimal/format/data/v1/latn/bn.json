@@ -1,32 +1,68 @@
 {
-  "patterns": {
-    "3": {
-      "Other": {
-        "exponent": 3,
-        "index": 0,
-        "literal_text": " হাজার"
+  "patterns": [
+    {
+      "sized": 3,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " হাজার"
+            }
+          ]
+        ]
       }
     },
-    "5": {
-      "Other": {
-        "exponent": 5,
-        "index": 0,
-        "literal_text": " লাখ"
+    {
+      "sized": 5,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " লাখ"
+            }
+          ]
+        ]
       }
     },
-    "7": {
-      "Other": {
-        "exponent": 7,
-        "index": 0,
-        "literal_text": " কোটি"
+    {
+      "sized": 7,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " কোটি"
+            }
+          ]
+        ]
       }
     },
-    "12": {
-      "Other": {
-        "exponent": 12,
-        "index": 0,
-        "literal_text": " লাখ কোটি"
+    {
+      "sized": 12,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Placeholder": "Singleton"
+            },
+            {
+              "Literal": " লাখ কোটি"
+            }
+          ]
+        ]
       }
     }
-  }
+  ]
 }

@@ -190,7 +190,7 @@ impl LanguageIdentifier {
     /// use icu::locale::LanguageIdentifier;
     ///
     /// assert_eq!(
-    ///     LanguageIdentifier::normalize("pL-latn-pl").as_deref(),
+    ///     LanguageIdentifier::normalize_utf8(b"pL-latn-pl").as_deref(),
     ///     Ok("pl-Latn-PL")
     /// );
     /// ```

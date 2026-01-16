@@ -11,10 +11,6 @@ use icu::calendar::{AnyCalendar, Date};
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
-use std::env;
-
-pub(crate) const JAPANEXT_FILE: &str =
-    include_str!("../../data/japanese-golden/calendar/CalendarJapaneseExtendedV1.json");
 
 /// calendarData.json
 impl SourceDataProvider {
@@ -28,15 +24,6 @@ impl SourceDataProvider {
         let cldr = self.cldr()?;
         cldr.calendar_eras
             .get_or_init(|| {
-                // The Japanese era codes depend on the Latin romanizations of the eras, found
-                // in the root locale.
-                let japanese_names = &self
-                    .get_dates_resource(Default::default(), Some(DatagenCalendar::JapaneseModern))?
-                    .eras
-                    .as_ref()
-                    .expect("japanese must have eras")
-                    .abbr;
-
                 let era_dates_map = &cldr
                     .core()
                     .read_and_parse::<cldr_serde::eras::Resource>("supplemental/calendarData.json")?
@@ -47,8 +34,7 @@ impl SourceDataProvider {
 
                 Ok([
                     DatagenCalendar::Buddhist,
-                    DatagenCalendar::JapaneseModern,
-                    DatagenCalendar::JapaneseExtended,
+                    DatagenCalendar::Japanese,
                     DatagenCalendar::Coptic,
                     DatagenCalendar::Indian,
                     DatagenCalendar::Hijri,
@@ -84,37 +70,22 @@ impl SourceDataProvider {
                     let mut vec = era_dates_map[cal.cldr_name()]
                         .eras
                         .iter()
-                        .filter_map(|(key, data)| {
+                        .map(|(key, data)| {
                             let mut data = data.clone();
-                            match cal {
-                                DatagenCalendar::JapaneseExtended => {
-                                    if data.code.is_empty() {
-                                        data.code = crate::calendar::eras::era_to_code(
-                                            japanese_names.get(&key.to_string())?,
-                                            data.start?.year,
-                                        );
-                                    }
-                                }
-                                _ => {
-                                    if cal == DatagenCalendar::JapaneseModern && data.start.unwrap().year < 1868 {
-                                        return None;
-                                    }
-                                    let date = data.start.or(data.end).unwrap();
-                                    let era_year =
-                                        Date::try_new_gregorian(date.year, date.month, date.day)
-                                            .unwrap()
-                                            .to_calendar(icu::calendar::Ref(&any_cal))
-                                            .year()
-                                            .era()
-                                            .unwrap();
-                                    if era_year.era != data.code {
-                                        println!("mismatched era code {era_year:?} - {data:?}");
-                                    }
-                                    data.icu4x_era_index = era_year.era_index;
-                                }
+                            let date = data.start.or(data.end).unwrap();
+                            let era_year =
+                                Date::try_new_gregorian(date.year, date.month, date.day)
+                                    .unwrap()
+                                    .to_calendar(icu::calendar::Ref(&any_cal))
+                                    .year()
+                                    .era()
+                                    .unwrap();
+                            if era_year.era != data.code {
+                                println!("mismatched era code {era_year:?} - {data:?}");
                             }
+                            data.icu4x_era_index = era_year.era_index;
 
-                            Some((key.parse::<usize>().unwrap(), data))
+                            (key.parse::<usize>().unwrap(), data)
                         })
                         .collect::<Vec<_>>();
                     vec.sort_by_key(|&(k, _)| k);
@@ -131,25 +102,10 @@ impl SourceDataProvider {
 fn process_era_dates_map(
     mut data: BTreeMap<String, cldr_serde::eras::CalendarData>,
 ) -> BTreeMap<String, cldr_serde::eras::CalendarData> {
-    data.get_mut("japanese").unwrap().eras =
-        core::mem::take(&mut data.get_mut("japanese").unwrap().eras)
-            .into_iter()
-            .map(|(idx, mut era)| {
-                if let Some(start) = era.start.as_mut() {
-                    // All pre-Taisho start dates are known to be wrong, this at least makes them valid.
-                    // See https://unicode-org.atlassian.net/browse/CLDR-11400
-                    if start.month == 2 && start.day > 28 {
-                        start.day = if calendrical_calculations::gregorian::is_leap_year(start.year)
-                        {
-                            29
-                        } else {
-                            28
-                        };
-                    }
-                }
-                (idx, era)
-            })
-            .collect();
+    data.get_mut(DatagenCalendar::Japanese.cldr_name())
+        .unwrap()
+        .eras
+        .retain(|_, era| !era.code.is_empty());
     data
 }
 
@@ -157,7 +113,7 @@ impl DataProvider<CalendarJapaneseModernV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CalendarJapaneseModernV1>, DataError> {
         self.check_req::<CalendarJapaneseModernV1>(req)?;
 
-        let (inherit, ref eras) = self.all_eras()?[&DatagenCalendar::JapaneseModern];
+        let (inherit, ref eras) = self.all_eras()?[&DatagenCalendar::Japanese];
 
         let dates_to_eras = inherit
             .iter()
@@ -174,93 +130,7 @@ impl DataProvider<CalendarJapaneseModernV1> for SourceDataProvider {
     }
 }
 
-impl DataProvider<CalendarJapaneseExtendedV1> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<CalendarJapaneseExtendedV1>, DataError> {
-        self.check_req::<CalendarJapaneseExtendedV1>(req)?;
-
-        let (inherit, ref eras) = self.all_eras()?[&DatagenCalendar::JapaneseExtended];
-
-        let dates_to_eras = inherit
-            .iter()
-            .flat_map(|i| self.all_eras().unwrap()[i].1.iter())
-            .chain(eras)
-            .filter(|(_, data)| !matches!(data.code.as_str(), "bce" | "ce"))
-            .map(|(_, data)| (data.start.unwrap(), data.code.parse().unwrap()))
-            .collect();
-
-        let eras = JapaneseEras { dates_to_eras };
-
-        // Integrity check
-        //
-        // Era code generation relies on the English era data which could in theory change; we have an integrity check
-        // to catch such cases. It is relatively rare for a new era to be added, and in those cases the integrity check can
-        // be disabled when generating new data.
-        if env::var("ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK").is_err() {
-            let snapshot: JapaneseEras = serde_json::from_str(JAPANEXT_FILE)
-                .expect("Failed to parse the precached golden. This is a bug.");
-
-            if snapshot != eras {
-                return Err(DataError::custom(
-                    "Era data has changed! This can be for two reasons: Either the CLDR locale data for Japanese eras has \
-                    changed in an incompatible way, or there is a new Japanese era. Run \
-                    `ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK=1 cargo run -p icu4x-datagen -- --markers CalendarJapaneseExtendedV1 --format fs --syntax json \
-                    --out provider/source/data/japanese-golden --pretty --overwrite` in the icu4x repo and inspect the diff to \
-                    check which situation it is. If a new era has been introduced, commit the diff, if not, it's likely that japanese.rs \
-                    in icu_provider_source will need to be updated to handle the data changes."
-                ));
-            }
-        }
-
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(eras),
-        })
-    }
-}
-
-/// See <https://docs.google.com/document/d/1vMVhMHgCYRyx2gmwEfKRyXWDg_lrQadd8iMVU9uPK1o/edit?usp=chrome_omnibox&ouid=111665445991279316689>
-/// for the era identifier spec
-pub(crate) fn era_to_code(original: &str, year: i32) -> String {
-    // Some examples of CLDR era names:
-    // "Shōryaku (1077–1081)", "Nin’an (1166–1169)", "Tenpyō-kampō (749–749)"
-    //
-    // We want to produce a unique readable era code that
-    // contains ascii lowercase letters, followed
-    // by a hyphen and then a year name (except for post-Meiji era codes)
-    //
-    // We also want it to fit in a TinyAsciiStr<16>. What we will do is:
-    //
-    // - only look at the actual name
-    // - normalize by removing hyphens and apostrophes, as well as converting ō/ū
-    //   to ascii o/u
-    // - truncating to fit 16 characters
-
-    let name = original
-        .split(' ')
-        .next()
-        .expect("split iterator is non-empty");
-    let name = name
-        .replace(['ō', 'Ō'], "o")
-        .replace(['ū', 'Ū'], "u")
-        .replace(['-', '\'', '’'], "")
-        .to_lowercase();
-    if !name.is_ascii() {
-        panic!("Era name {name} (parsed from {original}) contains non-ascii characters");
-    }
-
-    format!("{name}-{year}")
-}
-
 impl crate::IterableDataProviderCached<CalendarJapaneseModernV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(HashSet::from_iter([Default::default()]))
-    }
-}
-
-impl crate::IterableDataProviderCached<CalendarJapaneseExtendedV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -296,28 +166,6 @@ pub fn ethiopic_and_ethioaa_are_compatible() {
 }
 
 #[test]
-pub fn japanese_and_japanext_are_compatible() {
-    let provider = SourceDataProvider::new_testing();
-    let japanese = DataProvider::<CalendarJapaneseModernV1>::load(&provider, Default::default())
-        .unwrap()
-        .payload;
-    let japanext = DataProvider::<CalendarJapaneseExtendedV1>::load(&provider, Default::default())
-        .unwrap()
-        .payload;
-    assert_eq!(
-        japanext
-            .get()
-            .dates_to_eras
-            .iter()
-            .rev()
-            .zip(japanese.get().dates_to_eras.iter().rev())
-            .find(|(e, a)| e != a),
-        None,
-        "{japanext:?} - {japanese:?}"
-    );
-}
-
-#[test]
 fn test_calendar_eras() {
     use icu::calendar::Iso;
     use icu::calendar::{AnyCalendar, AnyCalendarKind, Date};
@@ -341,7 +189,6 @@ fn test_calendar_eras() {
             "generic" | "islamic" | "islamic-rgsa" => continue,
             "ethiopic-amete-alem" => AnyCalendarKind::EthiopianAmeteAlem,
             "gregorian" => AnyCalendarKind::Gregorian,
-            "japanese" => AnyCalendarKind::JapaneseExtended,
             c => CalendarAlgorithm::try_from(&Value::try_from_str(c).unwrap())
                 .unwrap()
                 .try_into()

@@ -35,8 +35,14 @@ macro_rules! make_any_calendar {
         #[$unstable_cfg:meta],
 
         $(
+            // Allow multiple variants for the same calendar
             $variant:ident($ty:ty),
         )+
+
+        $(
+            #[deprecated(since = $since:literal, note = $note:literal)]
+            $deprecated_variant:ident($deprecated_ty:ty),
+        )*
     ) => {
         $(#[$any_calendar_meta])*
         #[derive(Debug, Clone)]
@@ -46,6 +52,12 @@ macro_rules! make_any_calendar {
                 #[doc = concat!("A [`", stringify!($ty), "`] calendar")]
                 $variant($ty),
             )+
+            $(
+                /// Deprecated
+                #[deprecated(since = $since, note = $note)]
+                #[allow(deprecated)]
+                $deprecated_variant($deprecated_ty),
+            )*
         }
 
         impl PartialEq for $any_calendar_ident {
@@ -56,6 +68,10 @@ macro_rules! make_any_calendar {
                     $(
                         ($variant(c1), $variant(c2)) => AnyCalendarable::identity(c1) == AnyCalendarable::identity(c2),
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        ($deprecated_variant(c1), $deprecated_variant(c2)) => AnyCalendarable::identity(c1) == AnyCalendarable::identity(c2),
+                    )*
                     _ => false,
                 }
             }
@@ -66,9 +82,14 @@ macro_rules! make_any_calendar {
         #[derive(Clone, PartialEq, Eq, Debug, Copy)]
         pub enum $any_date_ident {
             $(
-                #[doc = concat!("A date for a [`", stringify!($ty), "`] calendar")]
+                #[doc = concat!("A date for a [`", stringify!($variant), "`] calendar")]
                 $variant(<$ty as $crate::Calendar>::DateInner, <$ty as AnyCalendarable>::Identity),
             )+
+            $(
+                #[doc = concat!("A date for a [`", stringify!($deprecated_variant), "`] calendar")]
+                #[allow(deprecated)]
+                $deprecated_variant(<$deprecated_ty as $crate::Calendar>::DateInner, <$deprecated_ty as AnyCalendarable>::Identity),
+            )*
         }
 
         impl PartialOrd for $any_date_ident {
@@ -79,6 +100,10 @@ macro_rules! make_any_calendar {
                     $(
                         ($variant(d1, q1), $variant(d2, q2)) if q1 == q2 => d1.partial_cmp(d2),
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        ($deprecated_variant(d1, q1), $deprecated_variant(d2, q2)) if q1 == q2 => d1.partial_cmp(d2),
+                    )*
                     _ => None,
                 }
             }
@@ -101,6 +126,10 @@ macro_rules! make_any_calendar {
                     $(
                         &Self::$variant(ref c) => $any_date_ident::$variant(c.from_codes(era, year, month_code, day)?, AnyCalendarable::identity(c)),
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        &Self::$deprecated_variant(ref c) => $any_date_ident::$deprecated_variant(c.from_codes(era, year, month_code, day)?, AnyCalendarable::identity(c)),
+                    )*
                 })
             }
 
@@ -114,6 +143,10 @@ macro_rules! make_any_calendar {
                     $(
                         &Self::$variant(ref c) => $any_date_ident::$variant(c.from_fields(fields, options)?, AnyCalendarable::identity(c)),
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        &Self::$deprecated_variant(ref c) => $any_date_ident::$deprecated_variant(c.from_fields(fields, options)?, AnyCalendarable::identity(c)),
+                    )*
                 })
             }
 
@@ -122,6 +155,10 @@ macro_rules! make_any_calendar {
                     $(
                         Self::$variant(ref c) => c.has_cheap_iso_conversion(),
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        Self::$deprecated_variant(ref c) => c.has_cheap_iso_conversion(),
+                    )*
                 }
             }
 
@@ -130,6 +167,10 @@ macro_rules! make_any_calendar {
                     $(
                         &Self::$variant(ref c) => $any_date_ident::$variant(c.from_iso(iso), AnyCalendarable::identity(c)),
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        &Self::$deprecated_variant(ref c) => $any_date_ident::$deprecated_variant(c.from_iso(iso), AnyCalendarable::identity(c)),
+                    )*
                 }
             }
 
@@ -138,6 +179,10 @@ macro_rules! make_any_calendar {
                     $(
                         (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.to_iso(&d),
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        (&Self::$deprecated_variant(ref c), &$any_date_ident::$deprecated_variant(d, q)) if AnyCalendarable::identity(c) == q => c.to_iso(&d),
+                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -148,6 +193,10 @@ macro_rules! make_any_calendar {
                     $(
                         &Self::$variant(ref c) => $any_date_ident::$variant(c.from_rata_die(rd), AnyCalendarable::identity(c)),
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        &Self::$deprecated_variant(ref c) => $any_date_ident::$deprecated_variant(c.from_rata_die(rd), AnyCalendarable::identity(c)),
+                    )*
                 }
             }
 
@@ -156,6 +205,10 @@ macro_rules! make_any_calendar {
                     $(
                         (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.to_rata_die(&d),
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        (&Self::$deprecated_variant(ref c), &$any_date_ident::$deprecated_variant(d, q)) if AnyCalendarable::identity(c) == q => c.to_rata_die(&d),
+                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -166,6 +219,10 @@ macro_rules! make_any_calendar {
                     $(
                         (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.months_in_year(&d),
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        (&Self::$deprecated_variant(ref c), &$any_date_ident::$deprecated_variant(d, q)) if AnyCalendarable::identity(c) == q => c.months_in_year(&d),
+                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -176,6 +233,10 @@ macro_rules! make_any_calendar {
                     $(
                         (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.days_in_year(&d),
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        (&Self::$deprecated_variant(ref c), &$any_date_ident::$deprecated_variant(d, q)) if AnyCalendarable::identity(c) == q => c.days_in_year(&d),
+                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -186,6 +247,10 @@ macro_rules! make_any_calendar {
                     $(
                         (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.days_in_month(&d),
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        (&Self::$deprecated_variant(ref c), &$any_date_ident::$deprecated_variant(d, q)) if AnyCalendarable::identity(c) == q => c.days_in_month(&d),
+                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -196,6 +261,10 @@ macro_rules! make_any_calendar {
                     $(
                         (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.year_info(&d).into(),
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        (&Self::$deprecated_variant(ref c), &$any_date_ident::$deprecated_variant(d, q)) if AnyCalendarable::identity(c) == q => c.year_info(&d).into(),
+                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -207,6 +276,10 @@ macro_rules! make_any_calendar {
                     $(
                         (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.is_in_leap_year(&d),
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        (&Self::$deprecated_variant(ref c), &$any_date_ident::$deprecated_variant(d, q)) if AnyCalendarable::identity(c) == q => c.is_in_leap_year(&d),
+                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -218,6 +291,10 @@ macro_rules! make_any_calendar {
                     $(
                         (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.month(&d),
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        (&Self::$deprecated_variant(ref c), &$any_date_ident::$deprecated_variant(d, q)) if AnyCalendarable::identity(c) == q => c.month(&d),
+                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -229,6 +306,10 @@ macro_rules! make_any_calendar {
                     $(
                         (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.day_of_month(&d),
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        (&Self::$deprecated_variant(ref c), &$any_date_ident::$deprecated_variant(d, q)) if AnyCalendarable::identity(c) == q => c.day_of_month(&d),
+                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -240,6 +321,10 @@ macro_rules! make_any_calendar {
                     $(
                         (&Self::$variant(ref c), &$any_date_ident::$variant(d, q)) if AnyCalendarable::identity(c) == q => c.day_of_year(&d),
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        (&Self::$deprecated_variant(ref c), &$any_date_ident::$deprecated_variant(d, q)) if AnyCalendarable::identity(c) == q => c.day_of_year(&d),
+                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -259,6 +344,12 @@ macro_rules! make_any_calendar {
                             *d = c.add(d, duration, options)?;
                         },
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        (&Self::$deprecated_variant(ref c), $any_date_ident::$deprecated_variant(ref mut d, q)) if AnyCalendarable::identity(c) == *q => {
+                            *d = c.add(d, duration, options)?;
+                        },
+                    )*
                     // This is only reached from misuse of from_raw, a semi-internal api
                     _ => panic!(concat!(stringify!($any_calendar_ident), " with mismatched date type")),
                 }
@@ -278,6 +369,12 @@ macro_rules! make_any_calendar {
                             c1.until(d1, d2, options)
                         }
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        (Self::$deprecated_variant(ref c1), $any_date_ident::$deprecated_variant(d1, q1), $any_date_ident::$deprecated_variant(d2, q2)) if AnyCalendarable::identity(c1) == *q1 && q1 == q2 => {
+                            c1.until(d1, d2, options)
+                        }
+                    )*
                     _ => {
                         return Err($crate::cal::AnyCalendarDifferenceError::MismatchedCalendars);
                     }
@@ -290,6 +387,10 @@ macro_rules! make_any_calendar {
                     $(
                         &Self::$variant(_) => concat!(stringify!($any_calendar_ident), " (", stringify!($variant), ")"),
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        &Self::$deprecated_variant(_) => concat!(stringify!($any_calendar_ident), " (", stringify!($deprecated_variant), ")"),
+                    )*
                 }
             }
 
@@ -298,6 +399,10 @@ macro_rules! make_any_calendar {
                     $(
                         Self::$variant(ref c) => c.calendar_algorithm(),
                     )+
+                    $(
+                        #[allow(deprecated)]
+                        Self::$deprecated_variant(ref c) => c.calendar_algorithm(),
+                    )*
                 }
             }
         }
@@ -406,9 +511,10 @@ make_any_calendar!(
     Indian(Indian),
     Iso(Iso),
     Japanese(Japanese),
-    JapaneseExtended(JapaneseExtended),
     Persian(Persian),
     Roc(Roc),
+    #[deprecated(since = "2.2.0", note = "see `Japanese`")]
+    JapaneseExtended(Japanese),
 );
 
 /// Error returned when comparing two [`Date`]s with [`AnyCalendar`].
@@ -486,9 +592,9 @@ impl AnyCalendar {
             }
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
-            AnyCalendarKind::Japanese => AnyCalendar::Japanese(Japanese::new()),
-            AnyCalendarKind::JapaneseExtended => {
-                AnyCalendar::JapaneseExtended(JapaneseExtended::new())
+            #[allow(deprecated)]
+            AnyCalendarKind::Japanese | AnyCalendarKind::JapaneseExtended => {
+                AnyCalendar::Japanese(Japanese::new())
             }
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
@@ -537,12 +643,10 @@ impl AnyCalendar {
             }
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
-            AnyCalendarKind::Japanese => {
+            #[allow(deprecated)]
+            AnyCalendarKind::Japanese | AnyCalendarKind::JapaneseExtended => {
                 AnyCalendar::Japanese(Japanese::try_new_with_buffer_provider(provider)?)
             }
-            AnyCalendarKind::JapaneseExtended => AnyCalendar::JapaneseExtended(
-                JapaneseExtended::try_new_with_buffer_provider(provider)?,
-            ),
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
         })
@@ -551,9 +655,7 @@ impl AnyCalendar {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P, kind: AnyCalendarKind) -> Result<Self, DataError>
     where
-        P: DataProvider<crate::provider::CalendarJapaneseModernV1>
-            + DataProvider<crate::provider::CalendarJapaneseExtendedV1>
-            + ?Sized,
+        P: DataProvider<crate::provider::CalendarJapaneseModernV1> + ?Sized,
     {
         Ok(match kind {
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
@@ -588,11 +690,9 @@ impl AnyCalendar {
             }
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
-            AnyCalendarKind::Japanese => {
+            #[allow(deprecated)]
+            AnyCalendarKind::Japanese | AnyCalendarKind::JapaneseExtended => {
                 AnyCalendar::Japanese(Japanese::try_new_unstable(provider)?)
-            }
-            AnyCalendarKind::JapaneseExtended => {
-                AnyCalendar::JapaneseExtended(JapaneseExtended::try_new_unstable(provider)?)
             }
             AnyCalendarKind::Persian => AnyCalendar::Persian(Persian),
             AnyCalendarKind::Roc => AnyCalendar::Roc(Roc),
@@ -614,8 +714,8 @@ impl AnyCalendar {
             Self::HijriUmmAlQura(ref c) => IntoAnyCalendar::kind(c),
             Self::Indian(ref c) => IntoAnyCalendar::kind(c),
             Self::Iso(ref c) => IntoAnyCalendar::kind(c),
-            Self::Japanese(ref c) => IntoAnyCalendar::kind(c),
-            Self::JapaneseExtended(ref c) => IntoAnyCalendar::kind(c),
+            #[allow(deprecated)]
+            Self::Japanese(ref c) | Self::JapaneseExtended(ref c) => IntoAnyCalendar::kind(c),
             Self::Persian(ref c) => IntoAnyCalendar::kind(c),
             Self::Roc(ref c) => IntoAnyCalendar::kind(c),
         }
@@ -695,7 +795,8 @@ pub enum AnyCalendarKind {
     ///
     /// This corresponds to the `"japanese"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Japanese,
-    /// The kind of a [`JapaneseExtended`] calendar
+    /// Deprecated, use `Japanese`.
+    #[deprecated(since = "2.2.0", note = "use `Japanese`")]
     JapaneseExtended,
     /// The kind of a [`Persian`] calendar
     ///
@@ -709,6 +810,18 @@ pub enum AnyCalendarKind {
 
 impl CalendarPreferences {
     /// Selects the [`CalendarAlgorithm`] appropriate for the given [`CalendarPreferences`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::calendar::preferences::{CalendarAlgorithm, CalendarPreferences};
+    /// use icu::locale::locale;
+    ///
+    /// assert_eq!(CalendarPreferences::from(&locale!("und")).resolved_algorithm(), CalendarAlgorithm::Gregory);
+    /// assert_eq!(CalendarPreferences::from(&locale!("und-US-u-ca-hebrew")).resolved_algorithm(), CalendarAlgorithm::Hebrew);
+    /// assert_eq!(CalendarPreferences::from(&locale!("und-AF")).resolved_algorithm(), CalendarAlgorithm::Persian);
+    /// assert_eq!(CalendarPreferences::from(&locale!("und-US-u-rg-thxxxx")).resolved_algorithm(), CalendarAlgorithm::Buddhist);
+    /// ```
     pub fn resolved_algorithm(self) -> CalendarAlgorithm {
         let region = self.locale_preferences.region();
         let region = region.as_ref().map(|r| r.as_str());
@@ -853,11 +966,6 @@ impl AnyCalendarable for Iso {
     fn identity(&self) -> Self::Identity {}
 }
 impl AnyCalendarable for Japanese {
-    type Identity = ();
-
-    fn identity(&self) -> Self::Identity {}
-}
-impl AnyCalendarable for JapaneseExtended {
     type Identity = ();
 
     fn identity(&self) -> Self::Identity {}
@@ -1232,29 +1340,6 @@ impl IntoAnyCalendar for Japanese {
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Japanese(*d, self.identity())
-    }
-}
-
-impl IntoAnyCalendar for JapaneseExtended {
-    #[inline]
-    fn to_any(self) -> AnyCalendar {
-        self.into()
-    }
-    #[inline]
-    fn kind(&self) -> AnyCalendarKind {
-        AnyCalendarKind::JapaneseExtended
-    }
-    #[inline]
-    fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        any.try_into()
-    }
-    #[inline]
-    fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        any.try_into().ok()
-    }
-    #[inline]
-    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::JapaneseExtended(*d, self.identity())
     }
 }
 
@@ -1645,79 +1730,6 @@ mod tests {
         */
         single_test_error(
             japanese,
-            Some(("reiwa", None)),
-            2,
-            Month::new(13),
-            1,
-            DateError::UnknownMonthCode(Month::new(13).code()),
-        );
-    }
-
-    #[test]
-    fn japanese_extended() {
-        let japanese_extended = AnyCalendar::new(AnyCalendarKind::JapaneseExtended);
-        let japanese_extended = Ref(&japanese_extended);
-        single_test_roundtrip(
-            japanese_extended,
-            Some(("reiwa", None)),
-            3,
-            Month::new(3),
-            1,
-        );
-        single_test_roundtrip(
-            japanese_extended,
-            Some(("heisei", None)),
-            6,
-            Month::new(12),
-            1,
-        );
-        single_test_roundtrip(
-            japanese_extended,
-            Some(("meiji", None)),
-            10,
-            Month::new(3),
-            1,
-        );
-        single_test_roundtrip(
-            japanese_extended,
-            Some(("tenpyokampo-749", None)),
-            1,
-            Month::new(4),
-            20,
-        );
-        single_test_roundtrip(japanese_extended, Some(("ce", None)), 100, Month::new(3), 1);
-        single_test_roundtrip(japanese_extended, Some(("bce", None)), 10, Month::new(3), 1);
-        // Since #6910, the era range is not enforced in try_from_codes
-        /*
-        single_test_error(
-            japanext,
-            Some(("ce", None)),
-            0,
-            Month::new(3),
-            1,
-            DateError::Range {
-                field: "year",
-                value: 0,
-                min: 1,
-                max: i32::MAX,
-            },
-        );
-        single_test_error(
-            japanext,
-            Some(("bce", Some(0))),
-            0,
-            Month::new(3),
-            1,
-            DateError::Range {
-                field: "year",
-                value: 0,
-                min: 1,
-                max: i32::MAX,
-            },
-        );
-        */
-        single_test_error(
-            japanese_extended,
             Some(("reiwa", None)),
             2,
             Month::new(13),

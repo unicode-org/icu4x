@@ -50,4 +50,18 @@ export class EmojiSetData {
      * See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BasicEmoji.html) for more information.
      */
     static createBasicWithProvider(provider: DataProvider): EmojiSetData;
+
+    /**
+     * Get the `Basic_Emoji` value for a given character, using compiled data
+     *
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EmojiSet.html#tymethod.for_char) for more information.
+     */
+    static basicEmojiForChar(ch: codepoint): boolean;
+
+    /**
+     * Get the `Basic_Emoji` value for a given character, using compiled data
+     *
+     * See the [Rust documentation for `for_str`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EmojiSet.html#tymethod.for_str) for more information.
+     */
+    static basicEmojiForStr(s: string): boolean;
 }

@@ -27,7 +27,6 @@ static EXTENDED_EPOCHS: &[(AnyCalendarKind, i32)] = &[
     (AnyCalendarKind::HijriUmmAlQura, 621),
     (AnyCalendarKind::Iso, 0),
     (AnyCalendarKind::Japanese, 0),
-    (AnyCalendarKind::JapaneseExtended, 0),
     (AnyCalendarKind::Persian, 621),
     (AnyCalendarKind::Roc, 1911),
 ];
@@ -62,10 +61,7 @@ fn test_extended_year() {
 
         // The extended year should align with the year in the modern era or related ISO.
         // There is a special case for Japanese since it has a modern era but uses ISO for the extended year.
-        if matches!(
-            kind,
-            AnyCalendarKind::Japanese | AnyCalendarKind::JapaneseExtended
-        ) {
+        if matches!(kind, AnyCalendarKind::Japanese) {
             assert_eq!(
                 date_in_2025.extended_year(),
                 2025,

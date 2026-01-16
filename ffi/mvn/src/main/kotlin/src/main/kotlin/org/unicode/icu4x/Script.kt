@@ -12,6 +12,7 @@ internal interface ScriptLib: Library {
     fun icu4x_Script_short_name_mv1(inner: Int): OptionSlice
     fun icu4x_Script_to_integer_value_mv1(inner: Int): FFIUint16
     fun icu4x_Script_from_integer_value_mv1(other: FFIUint16): OptionInt
+    fun icu4x_Script_try_from_str_mv1(s: Slice): OptionInt
 }
 /** See the [Rust documentation for `Script`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.Script.html) for more information.
 */
@@ -128,6 +129,7 @@ enum class Script(val inner: Int) {
     NyiakengPuachueHmong(186),
     Ogham(29),
     OlChiki(109),
+    OlOnal(204),
     OldHungarian(76),
     OldItalic(30),
     OldNorthArabian(142),
@@ -137,7 +139,6 @@ enum class Script(val inner: Int) {
     OldSouthArabian(133),
     OldTurkic(88),
     OldUyghur(194),
-    OlOnal(204),
     Oriya(31),
     Osage(171),
     Osmanya(50),
@@ -316,6 +317,7 @@ enum class Script(val inner: Int) {
                 186 -> NyiakengPuachueHmong
                 29 -> Ogham
                 109 -> OlChiki
+                204 -> OlOnal
                 76 -> OldHungarian
                 30 -> OldItalic
                 142 -> OldNorthArabian
@@ -325,7 +327,6 @@ enum class Script(val inner: Int) {
                 133 -> OldSouthArabian
                 88 -> OldTurkic
                 194 -> OldUyghur
-                204 -> OlOnal
                 31 -> Oriya
                 171 -> Osage
                 50 -> Osmanya
@@ -406,6 +407,16 @@ enum class Script(val inner: Int) {
         fun fromIntegerValue(other: UShort): Script? {
             
             val returnVal = lib.icu4x_Script_from_integer_value_mv1(FFIUint16(other));
+            
+            val intermediateOption = returnVal.option() ?: return null
+            return Script.fromNative(intermediateOption)
+        }
+        @JvmStatic
+        
+        fun tryFromStr(s: String): Script? {
+            val (sMem, sSlice) = PrimitiveArrayTools.borrowUtf8(s)
+            
+            val returnVal = lib.icu4x_Script_try_from_str_mv1(sSlice);
             
             val intermediateOption = returnVal.option() ?: return null
             return Script.fromNative(intermediateOption)

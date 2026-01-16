@@ -151,20 +151,9 @@ fn test_fixture(fixture_name: &str, file: &str) {
                         &description,
                     )
                 }
-                CalendarAlgorithm::Japanese if locale.extensions.private.is_empty() => {
-                    assert_fixture_element(
-                        prefs,
-                        Japanese::new(),
-                        input,
-                        &expected,
-                        field_set,
-                        &description,
-                    )
-                }
-                // -u-ca-japanese-x-extended
                 CalendarAlgorithm::Japanese => assert_fixture_element(
                     prefs,
-                    JapaneseExtended::new(),
+                    Japanese::new(),
                     input,
                     &expected,
                     field_set,
@@ -232,7 +221,7 @@ fn assert_fixture_element<C>(
 
     if matches!(
         input.date.calendar().kind(),
-        AnyCalendarKind::JapaneseExtended | AnyCalendarKind::HijriSimulatedMecca
+        AnyCalendarKind::HijriSimulatedMecca
     ) {
         // Not supported with FormattableAnyCalendar
         return;

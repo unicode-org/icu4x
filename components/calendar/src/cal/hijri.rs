@@ -55,6 +55,22 @@ mod ummalqura_data;
 ///
 /// There are either 6 or 7 30-day months, so the length of the year is 354 or 355 days.
 ///
+/// # Crescent moon visibility
+///
+/// According to Islam, a new month begins the evening when the crescent moon is visible at sunset.
+///
+/// Currently, most groups that use the Hijri calendar rely on human observations of the
+/// crescent moon, which are impacted by atmospheric phenomena. As a result, it is not
+/// possible to predict the month start dates ahead of time.
+///
+/// However, some groups use criteria that are not impacted by these phenomena and are
+/// therefore suitable for future prediction. This crate ships two:
+///
+/// 1. [`UmmAlQura`], used in Saudi Arabia, is based on official predictions of crescent
+///    timings published by the KACST.
+/// 2. [`TabularAlgorithm`] is based on a proleptic approximation of the length of a lunar year.
+///    See the docs for information on the branches of Islam using it.
+///
 /// # Calendar drift
 ///
 /// As a lunar calendar, this calendar does not intend to follow the solar year, and drifts more
@@ -240,6 +256,10 @@ impl Rules for UmmAlQura {
 /// See [`TabularAlgorithmEpoch`] and [`TabularAlgorithmLeapYears`] for customization.
 ///
 /// The most common version of these rules uses [`TabularAlgorithmEpoch::Friday`] and [`TabularAlgorithmLeapYears::TypeII`].
+///
+/// Tabular Islamic rules are used in denominations such as Dawoodi Bohra and other branches of Ismailism.
+/// Be sure to select the correct leap year and epoch parameters according to your use case. If this type does
+/// not implement the parameters you need, please file an issue.
 ///
 /// When constructed with [`TabularAlgorithmLeapYears::TypeII`], and either [`TabularAlgorithmEpoch::Friday`] or [`TabularAlgorithmEpoch::Thursday`],
 /// this corresponds to the `"islamic-civil"` and `"islamic-tbla"` [CLDR calendars](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier) respectively.

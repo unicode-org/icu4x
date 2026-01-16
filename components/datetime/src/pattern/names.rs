@@ -371,7 +371,7 @@ where
 size_test!(
     FixedCalendarDateTimeNames<icu_calendar::Gregorian>,
     typed_date_time_names_size,
-    336
+    328
 );
 
 /// A low-level type that formats datetime patterns with localized names.
@@ -1079,9 +1079,8 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
         prefs: DateTimeFormatterPreferences,
         calendar: AnyCalendar,
     ) -> Result<Self, UnsupportedCalendarError> {
-        let kind = calendar.kind();
         let calendar = FormattableAnyCalendar::try_from_any_calendar(calendar)
-            .ok_or(UnsupportedCalendarError { kind })?;
+            .map_err(|c| UnsupportedCalendarError { kind: c.kind() })?;
         Ok(Self {
             inner: FixedCalendarDateTimeNames::new_without_number_formatting(prefs),
             calendar,
@@ -1137,10 +1136,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
         formatter: DateTimeFormatter<FSet>,
     ) -> Self {
         let metadata = DateTimeNamesMetadata::new_from_previous(&formatter.names);
-        Self::from_parts(
-            prefs,
-            (formatter.calendar.into_tagged(), formatter.names, metadata),
-        )
+        Self::from_parts(prefs, (formatter.calendar, formatter.names, metadata))
     }
 
     fn from_parts(

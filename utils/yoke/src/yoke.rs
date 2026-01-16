@@ -106,6 +106,53 @@ where
     }
 }
 
+impl<Y, C> core::fmt::Display for Yoke<Y, C>
+where
+    Y: for<'a> Yokeable<'a>,
+    for<'a> <Y as Yokeable<'a>>::Output: core::fmt::Display,
+{
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        core::fmt::Display::fmt(self.get(), f)
+    }
+}
+
+impl<Y, C> PartialEq for Yoke<Y, C>
+where
+    Y: for<'a> Yokeable<'a>,
+    for<'a> <Y as Yokeable<'a>>::Output: PartialEq,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.get() == other.get()
+    }
+}
+
+impl<Y, C> Eq for Yoke<Y, C>
+where
+    Y: for<'a> Yokeable<'a>,
+    for<'a> <Y as Yokeable<'a>>::Output: Eq,
+{
+}
+
+impl<Y, C> PartialOrd for Yoke<Y, C>
+where
+    Y: for<'a> Yokeable<'a>,
+    for<'a> <Y as Yokeable<'a>>::Output: PartialOrd,
+{
+    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+        self.get().partial_cmp(other.get())
+    }
+}
+
+impl<Y, C> Ord for Yoke<Y, C>
+where
+    Y: for<'a> Yokeable<'a>,
+    for<'a> <Y as Yokeable<'a>>::Output: Ord,
+{
+    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+        self.get().cmp(other.get())
+    }
+}
+
 #[test]
 fn test_debug() {
     let local_data = "foo".to_owned();
@@ -116,6 +163,52 @@ fn test_debug() {
         format!("{y1:?}"),
         r#"Yoke { yokeable: "foo", cart: "foo" }"#,
     );
+}
+
+#[test]
+fn test_display() {
+    let local_data = "hello".to_owned();
+    let y = Yoke::<alloc::borrow::Cow<'static, str>, Rc<String>>::attach_to_zero_copy_cart(
+        Rc::new(local_data),
+    );
+    assert_eq!(format!("{}", y), "hello");
+}
+
+#[test]
+fn test_partialeq() {
+    let a = Rc::new("same".to_string());
+    let b = Rc::new("same".to_string());
+
+    let y1 = Yoke::<alloc::borrow::Cow<'static, str>, Rc<String>>::attach_to_zero_copy_cart(a);
+    let y2 = Yoke::<alloc::borrow::Cow<'static, str>, Rc<String>>::attach_to_zero_copy_cart(b);
+
+    assert_eq!(y1, y2);
+}
+
+#[test]
+fn test_eq_trait() {
+    let x = Rc::new("equal".to_string());
+    let y = Rc::new("equal".to_string());
+
+    let y1 = Yoke::<alloc::borrow::Cow<'static, str>, Rc<String>>::attach_to_zero_copy_cart(x);
+    let y2 = Yoke::<alloc::borrow::Cow<'static, str>, Rc<String>>::attach_to_zero_copy_cart(y);
+
+    assert!(y1 == y2);
+
+    let vec = [y1];
+    assert!(vec.contains(&y2));
+}
+
+#[test]
+fn test_partialord_ord() {
+    let a = Rc::new("a".to_string());
+    let b = Rc::new("b".to_string());
+
+    let y1 = Yoke::<alloc::borrow::Cow<'static, str>, Rc<String>>::attach_to_zero_copy_cart(a);
+    let y2 = Yoke::<alloc::borrow::Cow<'static, str>, Rc<String>>::attach_to_zero_copy_cart(b);
+
+    assert!(y1 < y2);
+    assert_eq!(y1.partial_cmp(&y2), Some(core::cmp::Ordering::Less));
 }
 
 impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C>

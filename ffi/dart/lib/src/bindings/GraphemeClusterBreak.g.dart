@@ -5,47 +5,69 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
 enum GraphemeClusterBreak {
-  /// See the [Rust documentation for `Other`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.Other) for more information.
+  /// See the [Rust documentation for `Other`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.Other) for more information.
   other,
-  /// See the [Rust documentation for `Control`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.Control) for more information.
+  /// See the [Rust documentation for `Control`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.Control) for more information.
   control,
-  /// See the [Rust documentation for `CR`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.CR) for more information.
+  /// See the [Rust documentation for `CR`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.CR) for more information.
   cr,
-  /// See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.Extend) for more information.
+  /// See the [Rust documentation for `Extend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.Extend) for more information.
   extend,
-  /// See the [Rust documentation for `L`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.L) for more information.
+  /// See the [Rust documentation for `L`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.L) for more information.
   l,
-  /// See the [Rust documentation for `LF`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.LF) for more information.
+  /// See the [Rust documentation for `LF`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.LF) for more information.
   lf,
-  /// See the [Rust documentation for `LV`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.LV) for more information.
+  /// See the [Rust documentation for `LV`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.LV) for more information.
   lv,
-  /// See the [Rust documentation for `LVT`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.LVT) for more information.
+  /// See the [Rust documentation for `LVT`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.LVT) for more information.
   lvt,
-  /// See the [Rust documentation for `T`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.T) for more information.
+  /// See the [Rust documentation for `T`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.T) for more information.
   t,
-  /// See the [Rust documentation for `V`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.V) for more information.
+  /// See the [Rust documentation for `V`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.V) for more information.
   v,
-  /// See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.SpacingMark) for more information.
+  /// See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.SpacingMark) for more information.
   spacingMark,
-  /// See the [Rust documentation for `Prepend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.Prepend) for more information.
+  /// See the [Rust documentation for `Prepend`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.Prepend) for more information.
   prepend,
-  /// See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.RegionalIndicator) for more information.
+  /// See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.RegionalIndicator) for more information.
   regionalIndicator,
-  /// See the [Rust documentation for `EBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.EBase) for more information.
+  /// See the [Rust documentation for `EBase`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.EBase) for more information.
   eBase,
-  /// See the [Rust documentation for `EBaseGAZ`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.EBaseGAZ) for more information.
+  /// See the [Rust documentation for `EBaseGAZ`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.EBaseGAZ) for more information.
   eBaseGaz,
-  /// See the [Rust documentation for `EModifier`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.EModifier) for more information.
+  /// See the [Rust documentation for `EModifier`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.EModifier) for more information.
   eModifier,
-  /// See the [Rust documentation for `GlueAfterZwj`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.GlueAfterZwj) for more information.
+  /// See the [Rust documentation for `GlueAfterZwj`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.GlueAfterZwj) for more information.
   glueAfterZwj,
-  /// See the [Rust documentation for `ZWJ`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.LineBreak.html#associatedconstant.ZWJ) for more information.
+  /// See the [Rust documentation for `ZWJ`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GraphemeClusterBreak.html#associatedconstant.ZWJ) for more information.
   zwj;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.1.1/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static GraphemeClusterBreak forChar(Rune ch) {
     final result = _icu4x_GraphemeClusterBreak_for_char_mv1(ch);
     return GraphemeClusterBreak.values[result];
+  }
+
+  /// Get the "long" name of this property value (returns empty if property value is unknown)
+  ///
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+  String? longName() {
+    final result = _icu4x_GraphemeClusterBreak_long_name_mv1(index);
+    if (!result.isOk) {
+      return null;
+    }
+    return result.union.ok._toDart([], isStatic: true);
+  }
+
+  /// Get the "short" name of this property value (returns empty if property value is unknown)
+  ///
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.1.1/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+  String? shortName() {
+    final result = _icu4x_GraphemeClusterBreak_short_name_mv1(index);
+    if (!result.isOk) {
+      return null;
+    }
+    return result.union.ok._toDart([], isStatic: true);
   }
 
   /// Convert to an integer value usable with ICU4C and CodePointMapData
@@ -67,12 +89,31 @@ enum GraphemeClusterBreak {
     return GraphemeClusterBreak.values[result.union.ok];
   }
 
+  static GraphemeClusterBreak? tryFromStr(String s) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_GraphemeClusterBreak_try_from_str_mv1(s._utf8AllocIn(temp.arena));
+    if (!result.isOk) {
+      return null;
+    }
+    return GraphemeClusterBreak.values[result.union.ok];
+  }
+
 }
 
 @_DiplomatFfiUse('icu4x_GraphemeClusterBreak_for_char_mv1')
 @ffi.Native<ffi.Int32 Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_GraphemeClusterBreak_for_char_mv1')
 // ignore: non_constant_identifier_names
 external int _icu4x_GraphemeClusterBreak_for_char_mv1(Rune ch);
+
+@_DiplomatFfiUse('icu4x_GraphemeClusterBreak_long_name_mv1')
+@ffi.Native<_ResultSliceUtf8Void Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_GraphemeClusterBreak_long_name_mv1')
+// ignore: non_constant_identifier_names
+external _ResultSliceUtf8Void _icu4x_GraphemeClusterBreak_long_name_mv1(int self);
+
+@_DiplomatFfiUse('icu4x_GraphemeClusterBreak_short_name_mv1')
+@ffi.Native<_ResultSliceUtf8Void Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_GraphemeClusterBreak_short_name_mv1')
+// ignore: non_constant_identifier_names
+external _ResultSliceUtf8Void _icu4x_GraphemeClusterBreak_short_name_mv1(int self);
 
 @_DiplomatFfiUse('icu4x_GraphemeClusterBreak_to_integer_value_mv1')
 @ffi.Native<ffi.Uint8 Function(ffi.Int32)>(isLeaf: true, symbol: 'icu4x_GraphemeClusterBreak_to_integer_value_mv1')
@@ -83,5 +124,10 @@ external int _icu4x_GraphemeClusterBreak_to_integer_value_mv1(int self);
 @ffi.Native<_ResultInt32Void Function(ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_GraphemeClusterBreak_from_integer_value_mv1')
 // ignore: non_constant_identifier_names
 external _ResultInt32Void _icu4x_GraphemeClusterBreak_from_integer_value_mv1(int other);
+
+@_DiplomatFfiUse('icu4x_GraphemeClusterBreak_try_from_str_mv1')
+@ffi.Native<_ResultInt32Void Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_GraphemeClusterBreak_try_from_str_mv1')
+// ignore: non_constant_identifier_names
+external _ResultInt32Void _icu4x_GraphemeClusterBreak_try_from_str_mv1(_SliceUtf8 s);
 
 // dart format on
