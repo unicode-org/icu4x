@@ -204,7 +204,6 @@ impl ZeroAsciiDenseSparse2dTrieOwned {
         }
 
         let total_prefixes = entries.len();
-        
         //ceil(a / b) = (a + b - 1) / b
         const PERCENT_DENOMINATOR: usize = 100;
         let computed_min = total_prefixes
@@ -218,7 +217,7 @@ impl ZeroAsciiDenseSparse2dTrieOwned {
             .map(|(&suffix, &count)| (suffix, count))
             .collect();
 
-        dense_candidates.sort_by(|a, b| a.0.cmp(&b.0));
+        dense_candidates.sort_by(|a, b| a.0.cmp(b.0));
 
         builder.suffixes = dense_candidates
             .into_iter()
