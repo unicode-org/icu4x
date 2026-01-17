@@ -83,7 +83,10 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
 
     /// The unsized type of the store required for this backend, usually `str` or `[u8]`.
     #[doc(hidden)] // TODO(#4467): Should be internal
+    #[cfg(not(feature = "zerovec"))]
     type Store: ?Sized + PartialEq + core::fmt::Debug;
+    #[cfg(feature = "zerovec")]
+    type Store: ?Sized + PartialEq + core::fmt::Debug + zerovec::ule::VarULE;
 
     /// The iterator type returned by [`Self::try_from_items`].
     #[doc(hidden)] // TODO(#4467): Should be internal

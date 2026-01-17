@@ -60,12 +60,12 @@ icu_provider::data_marker!(
 #[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::compactdecimal::provider))]
-pub struct CompactPatterns<'a, P: PatternBackend<Store = str>>(
+pub struct CompactPatterns<'a, P: PatternBackend>(
     pub VarZeroVec<'a, VarTupleULE<u8, PluralElementsPackedULE<Pattern<P>>>>,
 );
 
 #[cfg(feature = "datagen")]
-impl<'data, P: PatternBackend<Store = str>> serde::Serialize for CompactPatterns<'data, P>
+impl<'data, P: PatternBackend> serde::Serialize for CompactPatterns<'data, P>
 where
     for<'a> P::PlaceholderKeyCow<'a>: serde::Serialize + From<P::PlaceholderKey<'a>>,
 {
@@ -95,14 +95,12 @@ where
     }
 }
 
-impl<P: PatternBackend<Store = str>> icu_provider::ule::MaybeAsVarULE for CompactPatterns<'_, P> {
+impl<P: PatternBackend> icu_provider::ule::MaybeAsVarULE for CompactPatterns<'_, P> {
     type EncodedStruct = [()];
 }
 
 #[cfg(feature = "datagen")]
-impl<P: PatternBackend<Store = str>> icu_provider::ule::MaybeEncodeAsVarULE
-    for CompactPatterns<'_, P>
-{
+impl<P: PatternBackend> icu_provider::ule::MaybeEncodeAsVarULE for CompactPatterns<'_, P> {
     type EncodeableStruct<'b>
         = &'b [()]
     where
@@ -113,7 +111,7 @@ impl<P: PatternBackend<Store = str>> icu_provider::ule::MaybeEncodeAsVarULE
 }
 
 #[cfg(feature = "datagen")]
-impl<P: PatternBackend<Store = str>> CompactPatterns<'static, P> {
+impl<P: PatternBackend> CompactPatterns<'static, P> {
     #[allow(clippy::type_complexity)]
     pub fn new(
         patterns: alloc::collections::BTreeMap<
