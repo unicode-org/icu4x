@@ -33,14 +33,13 @@ use core::str::FromStr;
 /// // Locale: American English with British user preferences
 /// let locale = locale!("en-US-u-rg-gbzzzz");
 ///
-/// // When directly converted, -u-rg is implicitly dropped
-/// let data_locale = DataLocale::from(&locale);
-/// assert_writeable_eq!(data_locale, "en-US");
-///
 /// // For language-priority fallback, the region override is ignored
 /// let data_locale = LocalePreferences::from(&locale)
 ///     .to_data_locale_language_priority();
 /// assert_writeable_eq!(data_locale, "en-US");
+///
+/// // Language-priority fallback is used in `DataLocale::from`
+/// assert_eq!(data_locale, DataLocale::from(&locale));
 ///
 /// // For region-priority fallback, the region override is applied
 /// let data_locale = LocalePreferences::from(&locale)
