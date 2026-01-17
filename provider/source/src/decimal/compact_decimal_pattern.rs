@@ -3,17 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde::numbers::DecimalFormat;
-use icu::experimental::compactdecimal::provider::CompactDecimalPatternData;
-use icu::plurals::provider::{FourBitMetadata, PluralElementsPackedULE};
+use icu::experimental::compactdecimal::provider::CompactPatterns;
 use icu::plurals::PluralElements;
-use icu_pattern::{PatternItemCow, SinglePlaceholderKey, SinglePlaceholderPattern};
-use itertools::Itertools;
+use icu_pattern::{
+    PatternItemCow, SinglePlaceholder, SinglePlaceholderKey, SinglePlaceholderPattern,
+};
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
-use zerovec::ule::encode_varule_to_box;
-use zerovec::ule::vartuple::{VarTuple, VarTupleULE};
-use zerovec::vecs::VarZeroVecOwned;
 
 /// A [`ParsedPattern`] represents a compact decimal pattern, which consists of
 /// literal text with an optional placeholder.  The literal text is unescaped,
@@ -146,7 +143,7 @@ fn parse(pattern: &str) -> Result<ParsedPattern, Cow<'static, str>> {
     })
 }
 
-impl TryFrom<&DecimalFormat> for CompactDecimalPatternData<'static> {
+impl TryFrom<&DecimalFormat> for CompactPatterns<'static, SinglePlaceholder> {
     type Error = Cow<'static, str>;
 
     fn try_from(other: &DecimalFormat) -> Result<Self, Self::Error> {
@@ -178,7 +175,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternData<'static> {
                 )?;
         }
 
-        let mut patterns: BTreeMap<u8, PluralElements<(u8, Box<SinglePlaceholderPattern>)>> =
+        let mut patterns: BTreeMap<u8, (u8, PluralElements<Box<SinglePlaceholderPattern>>)> =
             BTreeMap::new();
         // Compute the exponents based on the numbers of 0s in the placeholders
         // and the type values: the exponent is 3 for type=1000, "0K", as well
@@ -223,74 +220,22 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternData<'static> {
                 )
                 .into());
             }
+
             let exponent = log10_type - other_number_of_0s + 1;
 
             patterns.insert(
                 log10_type,
-                parsed_plural_elements.map(|pattern| (exponent, pattern.pattern)),
+                (
+                    exponent,
+                    parsed_plural_elements.map(|pattern| pattern.pattern),
+                ),
             );
         }
 
-        if !patterns
-            .values()
-            .tuple_windows()
-            .all(|(low, high)| low.other().0 <= high.other().0)
-        {
-            Err(format!(
-                "Compact decimal exponents should be nondecreasing: {:?}",
-                patterns
-                    .values()
-                    .map(|plural_map| plural_map.other().0)
-                    .collect::<Vec<_>>(),
-            ))?;
-        }
-
-        // Deduplicate sequences of types that have the same plural map, keeping the lowest type.
-        let deduplicated_patterns = patterns
-            .into_iter()
-            // Skip leading 0 patterns
-            .skip_while(|(_, pattern)| {
-                pattern.as_ref().map(|(_, p)| p.as_ref())
-                    == CompactDecimalPatternData::PLURAL_PATTERN_0
-                        .decode()
-                        .map(|(_, p)| p)
-            })
-            .coalesce(|low, high| {
-                // The high pattern can never be exactly one of the low pattern, so we can ignore that value
-                if low.1.as_ref().with_explicit_one_value(None) == high.1.as_ref() {
-                    Ok(low)
-                } else {
-                    Err((low, high))
-                }
-            });
-
-        Ok(CompactDecimalPatternData {
-            patterns:
-                VarZeroVecOwned::try_from_elements(
-                    &deduplicated_patterns
-                        .map(|(log10_type, plural_map)| {
-                            encode_varule_to_box(&VarTuple {
-                                sized: log10_type,
-                                variable: plural_map.map(|(exponent, pattern)| {
-                                    // Store the exponent as a difference from the log10_type, i.e. the number of zeros
-                                    // in the pattern, minus 1. No pattern should have more than 16 zeros.
-                                    (
-                                        FourBitMetadata::try_from_byte(
-                                            log10_type.checked_sub(exponent).unwrap(),
-                                        )
-                                        .unwrap(),
-                                        pattern,
-                                    )
-                                }),
-                            })
-                        })
-                        .collect::<Vec<
-                            Box<VarTupleULE<u8, PluralElementsPackedULE<SinglePlaceholderPattern>>>,
-                        >>(),
-                )
-                .unwrap()
-                .into(),
-        })
+        Ok(Self::new(
+            patterns,
+            Some(&PluralElements::new(SinglePlaceholderPattern::PASS_THROUGH)),
+        )?)
     }
 }
 
@@ -300,9 +245,9 @@ mod tests {
 
     #[allow(clippy::type_complexity)]
     fn convert_for_test(
-        data: CompactDecimalPatternData,
+        data: CompactPatterns<SinglePlaceholder>,
     ) -> Box<[(u8, PluralElements<(u8, Box<SinglePlaceholderPattern>)>)]> {
-        data.patterns
+        data.0
             .iter()
             .map(|t| {
                 (
@@ -320,7 +265,7 @@ mod tests {
         // plural rules), but it is interesting because it forces a distinction
         // between 1000 and 10000 to be made in the ICU4X data.
         let cldr_42_long_french = convert_for_test(
-            CompactDecimalPatternData::try_from(
+            CompactPatterns::try_from(
                 &serde_json::from_str::<DecimalFormat>(
                     r#"
                 {
@@ -372,7 +317,7 @@ mod tests {
         // French compact-long thousands, with the anomalous « millier » removed.
         // This allows 10000 and 1000 to be collapsed.
         let compressible_long_french = convert_for_test(
-            CompactDecimalPatternData::try_from(
+            CompactPatterns::try_from(
                 &serde_json::from_str::<DecimalFormat>(
                     r#"
                 {
@@ -412,7 +357,7 @@ mod tests {
         // Spanish compact-short data as of CLDR 42, up to 10¹¹.
         // Note that the abbreviation for 10⁹ is used only starting with 10¹⁰.
         let spanish = convert_for_test(
-            CompactDecimalPatternData::try_from(
+            CompactPatterns::try_from(
                 &serde_json::from_str::<DecimalFormat>(
                     r#"
                 {
@@ -504,7 +449,7 @@ mod tests {
     #[test]
     fn test_inter_pattern_errors() {
         assert_eq!(
-            CompactDecimalPatternData::try_from(
+            CompactPatterns::try_from(
                 &serde_json::from_str::<DecimalFormat>(
                     r#"{ "1000-count-other": "0k", "1000-count-other": "0K" }"#,
                 )
@@ -516,7 +461,7 @@ mod tests {
         );
 
         assert_eq!(
-            CompactDecimalPatternData::try_from(
+            CompactPatterns::try_from(
                 &serde_json::from_str::<DecimalFormat>(r#"{ "1-count-one": "0" }"#).unwrap()
             )
             .err()
@@ -525,7 +470,7 @@ mod tests {
         );
 
         assert_eq!(
-            CompactDecimalPatternData::try_from(
+            CompactPatterns::try_from(
                 &serde_json::from_str::<DecimalFormat>(r#"{ "1000-count-other": "k" }"#).unwrap()
             )
             .err()
@@ -535,7 +480,7 @@ mod tests {
 
         // Given this data, it is ambiguous whether the 10 000 should be formatted as 10 thousand or 1 myriad.
         assert_eq!(
-            CompactDecimalPatternData::try_from(
+            CompactPatterns::try_from(
                 &serde_json::from_str::<DecimalFormat>(
                     r#"
                         {
@@ -552,7 +497,7 @@ mod tests {
         );
 
         assert_eq!(
-            CompactDecimalPatternData::try_from(
+            CompactPatterns::try_from(
                 &serde_json::from_str::<DecimalFormat>(r#"{ "1000-count-other": "00000 tenths" }"#)
                     .unwrap()
             )
@@ -564,7 +509,7 @@ mod tests {
         let long_pattern = format!("thous{}nds (0)", str::repeat("a", 244));
         let overlong_pattern = format!("thous{}nds (0)", str::repeat("a", 245));
 
-        CompactDecimalPatternData::try_from(
+        CompactPatterns::try_from(
             &serde_json::from_str::<DecimalFormat>(
                 format!(r#"{{ "1000-count-other": "{overlong_pattern}" }}"#).as_str(),
             )
@@ -572,14 +517,14 @@ mod tests {
         )
         .unwrap();
 
-        CompactDecimalPatternData::try_from(
+        CompactPatterns::try_from(
             &serde_json::from_str::<DecimalFormat>(
                 format!(r#"{{ "1000-count-other": "{long_pattern}" }}"#).as_str(),
             )
             .unwrap(),
         )
         .unwrap()
-        .patterns
+        .0
         .iter()
         .find_map(|v| (v.sized == 3).then_some(v.variable.get_default()))
         .unwrap();

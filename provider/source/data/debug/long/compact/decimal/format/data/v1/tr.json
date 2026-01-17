@@ -1,68 +1,66 @@
-{
-  "patterns": [
-    {
-      "sized": 3,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " bin"
-            }
-          ]
+[
+  {
+    "sized": 3,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " bin"
+          }
         ]
-      }
-    },
-    {
-      "sized": 6,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " milyon"
-            }
-          ]
-        ]
-      }
-    },
-    {
-      "sized": 9,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " milyar"
-            }
-          ]
-        ]
-      }
-    },
-    {
-      "sized": 12,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " trilyon"
-            }
-          ]
-        ]
-      }
+      ]
     }
-  ]
-}
+  },
+  {
+    "sized": 6,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " milyon"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 9,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " milyar"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 12,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " trilyon"
+          }
+        ]
+      ]
+    }
+  }
+]

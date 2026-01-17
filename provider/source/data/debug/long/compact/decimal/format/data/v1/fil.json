@@ -1,112 +1,110 @@
-{
-  "patterns": [
-    {
-      "sized": 3,
-      "variable": {
-        "one": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " libo"
-            }
-          ]
-        ],
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " na libo"
-            }
-          ]
+[
+  {
+    "sized": 3,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " libo"
+          }
         ]
-      }
-    },
-    {
-      "sized": 6,
-      "variable": {
-        "one": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " milyon"
-            }
-          ]
-        ],
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " na milyon"
-            }
-          ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " na libo"
+          }
         ]
-      }
-    },
-    {
-      "sized": 9,
-      "variable": {
-        "one": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " bilyon"
-            }
-          ]
-        ],
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " na bilyon"
-            }
-          ]
-        ]
-      }
-    },
-    {
-      "sized": 12,
-      "variable": {
-        "one": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " trilyon"
-            }
-          ]
-        ],
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " na trilyon"
-            }
-          ]
-        ]
-      }
+      ]
     }
-  ]
-}
+  },
+  {
+    "sized": 6,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " milyon"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " na milyon"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 9,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " bilyon"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " na bilyon"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 12,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " trilyon"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " na trilyon"
+          }
+        ]
+      ]
+    }
+  }
+]
