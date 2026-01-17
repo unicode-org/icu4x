@@ -13,7 +13,6 @@ use alloc::vec::Vec;
 use zerovec::ZeroVec;
 
 const MIN_DENSE_PERCENT: usize = 2;
-const FALLBACK_TOP_K: usize = 64;
 
 #[derive(PartialEq, Eq, PartialOrd, Ord)]
 struct Row<'a> {
@@ -205,6 +204,7 @@ impl ZeroAsciiDenseSparse2dTrieOwned {
         }
 
         let total_prefixes = entries.len();
+        
         //ceil(a / b) = (a + b - 1) / b
         const PERCENT_DENOMINATOR: usize = 100;
         let computed_min = total_prefixes
@@ -217,16 +217,6 @@ impl ZeroAsciiDenseSparse2dTrieOwned {
             .filter(|(_, &count)| count >= min_prefixes)
             .map(|(&suffix, &count)| (suffix, count))
             .collect();
-
-        // If none meet the threshold, fallback to picking top-K by frequency.
-        if dense_candidates.is_empty() {
-            let mut all_suffixes: Vec<(&str, usize)> = suffix_prefix_count.into_iter().collect();
-
-            // Sort by frequency descending 
-            all_suffixes.sort_by(|a, b| b.1.cmp(&a.1).then_with(|| a.0.cmp(&b.0)));
-
-            dense_candidates = all_suffixes.into_iter().take(FALLBACK_TOP_K).collect();
-        }
 
         dense_candidates.sort_by(|a, b| a.0.cmp(&b.0));
 
