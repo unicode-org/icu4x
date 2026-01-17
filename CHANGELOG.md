@@ -36,7 +36,7 @@ Fully filled in up to 30c187f4b7
         - Add some support for `U` (cyclic year) datetime symbol (unicode-org#7328)
         - Remove old datetime data structs (unicode-org#7205)
         - Assorted improvements to icu_datetime docs (unicode-org#7244)
-    - `icu_datetime`
+    - `icu_decimal`
         - General changes only
     - `icu_experimental`: `0.4.0 -> ???`
         - `compactdecimal`
