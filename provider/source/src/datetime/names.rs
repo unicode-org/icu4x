@@ -496,35 +496,25 @@ fn datetimepattern_convert(
     length: PatternLength,
     glue_type: GlueType,
 ) -> Result<GluePattern<'static>, DataError> {
-    let mut pattern_anchor = None;
-    let pattern = match glue_type {
-        // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
-        GlueType::DateTime => data
-            .datetime_formats_at_time
-            .get_pattern(length)
-            .get_pattern(),
-        GlueType::DateZone => {
-            // TODO: Use proper appendItem here
-            "{1} {2}"
-        }
-        GlueType::TimeZone => {
-            // TODO: Use proper appendItem here
-            "{0} {2}"
-        }
-        GlueType::DateTimeZone => {
-            let pattern = pattern_anchor.insert(
-                data.datetime_formats_at_time
-                    .get_pattern(length)
-                    .get_pattern()
-                    .to_string(),
-            );
-            // TODO: Use proper appendItem here
-            pattern.push_str(" {2}");
-            pattern
-        }
-    };
+    let append_tz = icu_pattern::DoublePlaceholderPattern::try_from_str(
+        &data.datetime_formats.append_items.timezone,
+        Default::default(),
+    )
+    .expect("failed to parse pattern");
 
-    let pattern = pattern.parse().expect("failed to parse pattern");
+    // Note: We default to atTime here (See https://github.com/unicode-org/conformance/issues/469)
+    let at_time = data
+        .datetime_formats_at_time
+        .get_pattern(length)
+        .get_pattern();
+
+    let pattern = match glue_type {
+        GlueType::DateTime => at_time.parse(),
+        GlueType::DateZone => append_tz.interpolate_to_string(["{1}", "{2}"]).parse(),
+        GlueType::TimeZone => append_tz.interpolate_to_string(["{0}", "{2}"]).parse(),
+        GlueType::DateTimeZone => append_tz.interpolate_to_string([at_time, "{2}"]).parse(),
+    }
+    .expect("failed to parse pattern");
     Ok(GluePattern { pattern })
 }
 
