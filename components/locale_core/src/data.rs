@@ -37,12 +37,12 @@ use core::str::FromStr;
 /// let data_locale = DataLocale::from(&locale);
 /// assert_writeable_eq!(data_locale, "en-US");
 ///
-/// // Precedence goes to the region subtag for language fallback
+/// // For language-priority fallback, the region override is ignored
 /// let data_locale = LocalePreferences::from(&locale)
 ///     .to_data_locale_language_priority();
 /// assert_writeable_eq!(data_locale, "en-US");
 ///
-/// // Precedence goes to the region extension keyword for region fallback
+/// // For region-priority fallback, the region override is applied
 /// let data_locale = LocalePreferences::from(&locale)
 ///     .to_data_locale_region_priority();
 /// assert_writeable_eq!(data_locale, "en-GB");
