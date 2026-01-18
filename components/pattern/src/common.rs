@@ -82,8 +82,8 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
     type Error<'a>;
 
     /// The unsized type of the store required for this backend, usually `str` or `[u8]`.
-    #[doc(hidden)] // TODO(#4467): Should be internal
     // Note: it is not good practice to feature-gate trait types, but this trait is sealed
+    #[doc(hidden)] // TODO(#4467): Should be internal
     #[cfg(not(feature = "zerovec"))]
     type Store: ?Sized + PartialEq + core::fmt::Debug;
     #[cfg(feature = "zerovec")]
@@ -98,9 +98,8 @@ pub trait PatternBackend: crate::private::Sealed + 'static + core::fmt::Debug {
     fn validate_store(store: &Self::Store) -> Result<(), Error>;
 
     /// Constructs a store from pattern items.
-    #[doc(hidden)]
-    // TODO(#4467): Should be internal
     // Note: it is not good practice to feature-gate trait methods, but this trait is sealed
+    #[doc(hidden)] // TODO(#4467): Should be internal
     #[cfg(feature = "alloc")]
     fn try_from_items<
         'cow,
