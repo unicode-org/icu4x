@@ -65,9 +65,9 @@ pub struct CompactPatterns<'a, P: PatternBackend>(
 );
 
 #[cfg(feature = "datagen")]
-impl<'data, P: PatternBackend<Store = str>> serde::Serialize for CompactPatterns<'data, P>
+impl<'data, P: PatternBackend> serde::Serialize for CompactPatterns<'data, P>
 where
-    for<'a> P::PlaceholderKeyCow<'a>: serde::Serialize + From<P::PlaceholderKey<'a>>,
+    Pattern<P>: serde::Serialize,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
