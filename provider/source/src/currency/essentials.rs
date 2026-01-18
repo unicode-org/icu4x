@@ -112,7 +112,7 @@ impl IterableDataProviderCached<CurrencyEssentialsV1> for SourceDataProvider {
     }
 }
 
-fn extract_currency_essentials<'data>(
+pub(crate) fn extract_currency_essentials<'data>(
     provider: &SourceDataProvider,
     currencies_resource: &cldr_serde::currencies::data::Resource,
     numbers_resource: &cldr_serde::numbers::Resource,
