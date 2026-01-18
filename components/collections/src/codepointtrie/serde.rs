@@ -60,6 +60,9 @@ where
                     super::CodePointTrieError::DataTooShortForFastAccess => {
                         return Err(D::Error::custom("CodePointTrie must be constructed from data vector long enough to accommodate fast-path access"));
                     }
+                    super::CodePointTrieError::DataTooShortForAsciiAccess => {
+                        return Err(D::Error::custom("CodePointTrie must be constructed from data vector long enough to accommodate direct ASCII access"));
+                    }
                 }
             }
         };
