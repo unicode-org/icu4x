@@ -6,6 +6,8 @@ use criterion::{black_box, BenchmarkId, Criterion};
 
 use icu_normalizer::{ComposingNormalizerBorrowed, DecomposingNormalizerBorrowed};
 
+const EN_TEXT: &str = include_str!("data/en.txt");
+
 struct BenchDataContent {
     pub file_name: String,
     pub nfc: String,
@@ -33,10 +35,6 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
     let nfkc_normalizer = ComposingNormalizerBorrowed::new_nfkc();
     let nfkd_normalizer = DecomposingNormalizerBorrowed::new_nfkd();
 
-    let content_latin: (&str, &str) = (
-        "TestNames_Latin",
-        &strip_headers(include_str!("./data/TestNames_Latin.txt")),
-    );
     let content_jp_h: (&str, &str) = (
         "TestNames_Japanese_h",
         &strip_headers(include_str!("./data/TestNames_Japanese_h.txt")),
@@ -89,10 +87,13 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
         "TestRandomWordsUDHR_tr",
         &strip_headers(include_str!("./data/TestRandomWordsUDHR_tr.txt")),
     );
+
+    let content_en_gutenberg: (&str, &str) = ("Gutenberg_en", EN_TEXT);
+
     let content_viet: (&str, &str) = ("wotw", &strip_headers(include_str!("./data/wotw.txt")));
 
     [
-        content_latin,
+        content_en_gutenberg,
         content_viet,
         content_jp_k,
         content_jp_h,
