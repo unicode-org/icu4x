@@ -40,6 +40,7 @@ pub mod toml;
 #[cfg(feature = "serde")]
 mod serde;
 
+pub use cptrie::AbstractCodePointTrie;
 pub use cptrie::CodePointMapRange;
 pub use cptrie::CodePointMapRangeIterator;
 pub use cptrie::CodePointTrie;
