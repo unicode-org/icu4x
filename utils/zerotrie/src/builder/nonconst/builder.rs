@@ -335,7 +335,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                                 start + a.local_length,
                                 start + a.local_length + b.local_length,
                             );
-                            branch_metas = branch_metas.swap_or_panic(l - 1, l);
+                            branch_metas.swap_or_panic(l - 1, l);
                             start += b.local_length;
                             changes += 1;
                             // FIXME: fix the `length` field
