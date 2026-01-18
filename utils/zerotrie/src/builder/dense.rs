@@ -12,6 +12,8 @@ use alloc::string::String;
 use alloc::vec::Vec;
 use zerovec::ZeroVec;
 
+const MIN_DENSE_PERCENT: usize = 2;
+
 #[derive(PartialEq, Eq, PartialOrd, Ord)]
 struct Row<'a> {
     prefix: &'a str,
@@ -185,24 +187,44 @@ impl ZeroAsciiDenseSparse2dTrieOwned {
             delimiter,
             ..Default::default()
         };
-        // TODO(#7302): Prune low-frequency suffixes.
-        // For now, build with all suffixes.
-        builder.suffixes = entries
-            .values()
-            .flat_map(|inner| inner.keys())
-            .copied()
-            .map(|s| {
-                if s.contains(delimiter as char) {
-                    Err(ZeroTrieBuildError::IllegalDelimiter)
-                } else {
-                    Ok(s)
-                }
-            })
-            .collect::<Result<_, ZeroTrieBuildError>>()?;
-        for (prefix, values) in entries.iter() {
+        // Validate prefixes for delimiter presence
+        for prefix in entries.keys() {
             if prefix.contains(delimiter as char) {
                 return Err(ZeroTrieBuildError::IllegalDelimiter);
             }
+        }
+        let mut suffix_prefix_count: BTreeMap<&str, usize> = BTreeMap::new();
+        for (_, inner_map) in entries.iter() {
+            for &suffix in inner_map.keys() {
+                if suffix.contains(delimiter as char) {
+                    return Err(ZeroTrieBuildError::IllegalDelimiter);
+                }
+                *suffix_prefix_count.entry(suffix).or_insert(0) += 1;
+            }
+        }
+
+        let total_prefixes = entries.len();
+        //ceil(a / b) = (a + b - 1) / b
+        const PERCENT_DENOMINATOR: usize = 100;
+        let computed_min = total_prefixes
+            .saturating_mul(MIN_DENSE_PERCENT)
+            .saturating_add(PERCENT_DENOMINATOR - 1)
+            .saturating_div(PERCENT_DENOMINATOR);
+        let min_prefixes = core::cmp::max(2, computed_min);
+        let mut dense_candidates: Vec<(&str, usize)> = suffix_prefix_count
+            .iter()
+            .filter(|(_, &count)| count >= min_prefixes)
+            .map(|(&suffix, &count)| (suffix, count))
+            .collect();
+
+        dense_candidates.sort_by(|a, b| a.0.cmp(b.0));
+
+        builder.suffixes = dense_candidates
+            .into_iter()
+            .map(|(suffix, _)| suffix)
+            .collect();
+
+        for (prefix, values) in entries.iter() {
             builder.add_prefix(prefix, values)?;
         }
         builder.build()
