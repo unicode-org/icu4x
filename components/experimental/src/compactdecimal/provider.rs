@@ -78,11 +78,10 @@ where
 }
 
 #[cfg(feature = "serde")]
-impl<'de, 'data, P: PatternBackend<Store = str>> serde::Deserialize<'de>
-    for CompactPatterns<'data, P>
+impl<'de, 'data, P: PatternBackend> serde::Deserialize<'de> for CompactPatterns<'data, P>
 where
     'de: 'data,
-    P::PlaceholderKeyCow<'data>: serde::Deserialize<'de>,
+    alloc::boxed::Box<Pattern<P>>: serde::Deserialize<'de>,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
