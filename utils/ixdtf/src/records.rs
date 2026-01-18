@@ -6,7 +6,7 @@
 
 use core::num::NonZeroU8;
 
-use crate::core::EncodingType;
+use crate::encoding::EncodingType;
 
 /// An `IxdtfParseRecord` is an intermediary record returned by `IxdtfParser`.
 #[non_exhaustive]
