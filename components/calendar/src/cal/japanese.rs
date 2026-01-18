@@ -8,10 +8,10 @@ use crate::cal::abstract_gregorian::{
 use crate::cal::gregorian::CeBce;
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::{DateError, UnknownEraError};
-use crate::provider::{CalendarJapaneseModernV1, EraStartDate};
+use crate::provider::{CalendarJapaneseModernV1, EraStartDate, PackedEra};
 use crate::{types, AsCalendar, Date};
 use icu_provider::prelude::*;
-use tinystr::tinystr;
+use tinystr::{tinystr, TinyAsciiStr};
 
 /// The [Japanese Calendar] (with modern eras only)
 ///
@@ -37,9 +37,9 @@ use tinystr::tinystr;
 ///
 /// These eras are loaded from data, requiring a data provider capable of providing [`CalendarJapaneseModernV1`]
 /// data.
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, Copy)]
 pub struct Japanese {
-    eras: DataPayload<CalendarJapaneseModernV1>,
+    post_reiwa_era: Option<PackedEra>,
 }
 
 impl Japanese {
@@ -50,10 +50,11 @@ impl Japanese {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
-        Self {
-            eras: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_CALENDAR_JAPANESE_MODERN_V1,
-            ),
+        const {
+            Self {
+                post_reiwa_era: crate::provider::Baked::SINGLETON_CALENDAR_JAPANESE_MODERN_V1
+                    .last_after_reiwa(),
+            }
         }
     }
 
@@ -70,36 +71,66 @@ impl Japanese {
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            eras: provider.load(Default::default())?.payload,
+            post_reiwa_era: provider
+                .load(Default::default())?
+                .payload
+                .get()
+                .last_after_reiwa(),
         })
     }
 }
 
-const MEIJI_START: EraStartDate = EraStartDate {
-    year: 1868,
-    month: 10,
-    day: 23,
-};
-const TAISHO_START: EraStartDate = EraStartDate {
-    year: 1912,
-    month: 7,
-    day: 30,
-};
-const SHOWA_START: EraStartDate = EraStartDate {
-    year: 1926,
-    month: 12,
-    day: 25,
-};
-const HEISEI_START: EraStartDate = EraStartDate {
-    year: 1989,
-    month: 1,
-    day: 8,
-};
-const REIWA_START: EraStartDate = EraStartDate {
-    year: 2019,
-    month: 5,
-    day: 1,
-};
+impl Japanese {
+    fn eras(self) -> impl Iterator<Item = (EraStartDate, TinyAsciiStr<8>, u8)> {
+        self.post_reiwa_era.map(|p| p.unpack()).into_iter().chain([
+            (
+                EraStartDate {
+                    year: 2019,
+                    month: 5,
+                    day: 1,
+                },
+                tinystr!(8, "reiwa"),
+                6,
+            ),
+            (
+                EraStartDate {
+                    year: 1989,
+                    month: 1,
+                    day: 8,
+                },
+                tinystr!(8, "heisei"),
+                5,
+            ),
+            (
+                EraStartDate {
+                    year: 1926,
+                    month: 12,
+                    day: 25,
+                },
+                tinystr!(8, "showa"),
+                4,
+            ),
+            (
+                EraStartDate {
+                    year: 1912,
+                    month: 7,
+                    day: 30,
+                },
+                tinystr!(8, "taisho"),
+                3,
+            ),
+            (
+                EraStartDate {
+                    year: 1868,
+                    month: 10,
+                    day: 23,
+                },
+                tinystr!(8, "meiji"),
+                2,
+            ),
+        ])
+    }
+}
 
 impl GregorianYears for &'_ Japanese {
     fn extended_from_era_year(
@@ -110,80 +141,28 @@ impl GregorianYears for &'_ Japanese {
         if let Ok(g) = CeBce.extended_from_era_year(era, year) {
             return Ok(g);
         }
-        let Some(era) = era else {
-            // unreachable, handled by CeBce
-            return Err(UnknownEraError);
-        };
 
-        // Avoid linear search by trying well known eras
-        if era == b"reiwa" {
-            return Ok(year - 1 + REIWA_START.year);
-        } else if era == b"heisei" {
-            return Ok(year - 1 + HEISEI_START.year);
-        } else if era == b"showa" {
-            return Ok(year - 1 + SHOWA_START.year);
-        } else if era == b"taisho" {
-            return Ok(year - 1 + TAISHO_START.year);
-        } else if era == b"meiji" {
-            return Ok(year - 1 + MEIJI_START.year);
-        }
-
-        let era_start = self
-            .eras
-            .get()
-            .dates_to_eras
-            .iter()
-            .rev()
-            .find_map(|(s, e)| (e.as_bytes() == era).then_some(s))
+        let (start, ..) = self
+            .eras()
+            .find(|(_, name, _)| era == Some(name.as_bytes()))
             .ok_or(UnknownEraError)?;
-        Ok(era_start.year + year - 1)
+
+        Ok(year - 1 + start.year)
     }
 
     fn era_year_from_extended(&self, year: i32, month: u8, day: u8) -> types::EraYear {
         let date: EraStartDate = EraStartDate { year, month, day };
 
-        let (start, era) = if date >= MEIJI_START
-            && self
-                .eras
-                .get()
-                .dates_to_eras
-                .last()
-                .is_some_and(|(_, e)| e == tinystr!(16, "reiwa"))
-        {
-            // We optimize for the five "modern" post-Meiji eras, which are stored in a smaller
-            // array and also hardcoded. The hardcoded version is not used if data indicates the
-            // presence of newer eras.
-            if date >= REIWA_START {
-                (REIWA_START, tinystr!(16, "reiwa"))
-            } else if date >= HEISEI_START {
-                (HEISEI_START, tinystr!(16, "heisei"))
-            } else if date >= SHOWA_START {
-                (SHOWA_START, tinystr!(16, "showa"))
-            } else if date >= TAISHO_START {
-                (TAISHO_START, tinystr!(16, "taisho"))
-            } else {
-                (MEIJI_START, tinystr!(16, "meiji"))
+        if let Some((start, code, idx)) = self.eras().find(|&(start, ..)| date >= start) {
+            types::EraYear {
+                era: code.resize(),
+                era_index: Some(idx),
+                year: year - start.year + 1,
+                extended_year: year,
+                ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
-            let data = &self.eras.get().dates_to_eras;
-            match data.iter().rfind(|&(s, _)| date >= s) {
-                None => {
-                    return types::EraYear {
-                        // TODO: return era indices?
-                        era_index: None,
-                        ..CeBce.era_year_from_extended(year, month, day)
-                    };
-                }
-                Some((s, e)) => (s, e),
-            }
-        };
-
-        types::EraYear {
-            era,
-            era_index: None,
-            year: year - start.year + 1,
-            extended_year: year,
-            ambiguity: types::YearAmbiguity::CenturyRequired,
+            CeBce.era_year_from_extended(year, month, day)
         }
     }
 
@@ -325,7 +304,17 @@ mod tests {
 
     #[test]
     fn test_japanese() {
-        let calendar = Japanese::new();
+        let calendar = Japanese {
+            post_reiwa_era: Some(PackedEra::pack(
+                EraStartDate {
+                    year: 2086,
+                    month: 11,
+                    day: 1,
+                },
+                tinystr!(8, "fuzu"),
+                8,
+            )),
+        };
         let calendar = Ref(&calendar);
 
         single_test_roundtrip(calendar, "heisei", 12, 3, 1);
@@ -341,6 +330,11 @@ mod tests {
         single_test_roundtrip(calendar, "ce", 1000, 3, 1);
         single_test_era_range_roundtrip(calendar, "ce", 0, 3, 1, "bce", 1);
         single_test_era_range_roundtrip(calendar, "bce", -1, 3, 1, "ce", 2);
+
+        // check post-reiwa
+        single_test_roundtrip(calendar, "reiwa", 68, 10, 31);
+        single_test_era_range_roundtrip(calendar, "fuzu", 1, 10, 31, "reiwa", 68);
+        single_test_roundtrip(calendar, "fuzu", 1, 11, 1);
 
         // handle the cases where bce/ce get adjusted to different eras
         // single_test_gregorian_roundtrip(calendar, "ce", 2021, 3, 1, "reiwa", 3);
