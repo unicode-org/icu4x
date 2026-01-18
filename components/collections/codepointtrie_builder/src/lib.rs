@@ -85,6 +85,10 @@
     )
 )]
 
+use std::collections::HashMap;
+use std::panic::RefUnwindSafe;
+use std::panic::UnwindSafe;
+
 use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
 
@@ -103,13 +107,30 @@ mod native;
 ///
 /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
 #[non_exhaustive]
-#[derive(Debug)]
 pub enum CodePointTrieBuilderData<'a, T> {
     /// A list of values for each code point, starting from code point 0.
     ///
     /// For example, the value for U+0020 (space) should be at index 32 in the slice.
     /// Index 0 sets the value for the U+0000 (NUL).
     ValuesByCodePoint(&'a [T]),
+    /// A closure that returns a value for a code point.
+    ///
+    /// This is called for every code point.
+    ByCodePoint(Box<dyn Fn(u32) -> Option<T> + Send + Sync + UnwindSafe + RefUnwindSafe + 'a>),
+    /// A map from code points to values.
+    Map(HashMap<u32, T>),
+}
+
+impl<'a, T: std::fmt::Debug> std::fmt::Debug for CodePointTrieBuilderData<'a, T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::ValuesByCodePoint(arg0) => {
+                f.debug_tuple("ValuesByCodePoint").field(arg0).finish()
+            }
+            Self::ByCodePoint(_) => f.debug_tuple("ByCodePoint").finish(),
+            Self::Map(arg0) => f.debug_tuple("Map").field(arg0).finish(),
+        }
+    }
 }
 
 /// Settings for building a [`CodePointTrie`].
