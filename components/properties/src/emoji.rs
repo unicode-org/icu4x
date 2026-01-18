@@ -27,6 +27,15 @@ impl EmojiSetData {
         EmojiSetDataBorrowed::new::<P>()
     }
 
+    #[cfg(feature = "serde")]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::new)]
+    pub fn try_new_with_buffer_provider<P: EmojiSet>(
+        provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
+    ) -> Result<EmojiSetData, DataError> {
+        use icu_provider::buf::AsDeserializingBufferProvider;
+        Self::try_new_unstable::<P>(&provider.as_deserializing())
+    }
+
     /// A version of `new()` that uses custom data provided by a [`DataProvider`].
     ///
     /// Note that this will return an owned version of the data. Functionality is available on

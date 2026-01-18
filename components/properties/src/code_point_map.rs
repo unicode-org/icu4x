@@ -40,6 +40,18 @@ impl<T: TrieValue> CodePointMapData<T> {
         CodePointMapDataBorrowed::new()
     }
 
+    #[cfg(feature = "serde")]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::new)]
+    pub fn try_new_with_buffer_provider(
+        provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
+    ) -> Result<Self, DataError>
+    where
+        T: EnumeratedProperty + for<'a> serde::Deserialize<'a>,
+    {
+        use icu_provider::buf::AsDeserializingBufferProvider;
+        Self::try_new_unstable(&provider.as_deserializing())
+    }
+
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable(
         provider: &(impl DataProvider<T::DataMarker> + ?Sized),
