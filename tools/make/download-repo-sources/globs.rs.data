@@ -211,6 +211,8 @@ const LSTM_GLOB: &[&str] = &[
     "Thai_graphclust_model4_heavy/weights.json",
 ];
 
+const UNIHAN_GLOB: &[&str] = &["Unihan_IRGSources.txt"];
+
 const TZDB_GLOB: &[&str] = &[
     "africa",
     "antarctica",
