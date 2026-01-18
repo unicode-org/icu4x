@@ -121,9 +121,21 @@ This can all be done in a separate PR to chunk out the work but there should be 
 
 ## Writing a changelog
 
-In general, the *Unreleased* section of the changelog should be updated with each changelog-worthy PR. However, as this might be forgotten, before a release you should ping all major contributors, and ask them to complete their parts of the changelog. Before the release, rename the *Unreleased* section to the appropriate version.
+In general, the *Unreleased* section of the changelog should be updated with each changelog-worthy PR. However, as this might be forgotten, before a release you should ping all major contributors, and ask them to complete their parts of the changelog. It is also productive to spend some time mid-release to compile a comprehensive "changelog so far". Before the release, rename the *Unreleased* section to the appropriate version.
 
-When making a release, it is important to include version changes for all util and other non-ICU4X-versioned crates. If a util crate is not changed, it should have an entry saying `utilname: No change`
+When making a release, it is important to include version changes for all util and other non-ICU4X-versioned crates. If a util crate is not changed, it should have an entry saying `utilname: No change`.
+
+One convenient way to generate a changelog is to go component by component and run a command like `git log --oneline icu@2.1.0 -- components/calendar/`, pulling out changes actually relevant to the changelog. Note that this will often turn up PRs that primarily changed other components but had minor fallback in this one, be sure to ensure these changes are categorized correctly.
+
+API and behavior changes (including deprecations) MUST go in the changelog. Optimizations and nontrivial docs changes SHOULD go in the changelog, but use your judgement. Internal refactors MAY go in the changelog based on changelog author's discretion.
+
+Each changelog entry may refer to multiple PRs: you are encouraged to merge related PRs into a combined entry. You are also encouraged to order the changelog according to importance: API changes first, then behavior changes, then optimizations, then the rest.
+
+Similarly, a changelog entry may show up multiple times in the changelog if multiple crates were central to it.
+
+Some changes affect most crates, like Rust version upgrades or cross-cutting docs improvements. We use a "General changes" section of the changelog to cover these. Sometimes a crate's changelog entry will just say "General changes only" to indicate that the crate did get some changes, it just didn't have any crate-specific changes.
+
+We organize the changelog in the following sections, based on toplevel ICU4X folder: "Components", "Data model and providers" (`provider/`), "FFI", and "Utils".
 
 Out-of-cycle changelogs should use a single entry for each individual crate released, e.g. something like this:
 
