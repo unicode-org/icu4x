@@ -60,6 +60,8 @@ yoke = ["dep:yoke"]
 zerofrom = ["dep:zerofrom"]
 zerovec = ["dep:zerovec"]
 
+dense-prune = []
+
 [[bench]]
 name = "overview"
 harness = false

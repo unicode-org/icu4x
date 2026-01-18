@@ -12,6 +12,10 @@ use alloc::string::String;
 use alloc::vec::Vec;
 use zerovec::ZeroVec;
 
+// === Dense suffix filtering tuning constants
+const MIN_DENSE_PERCENT: usize = 2; // Require suffix to appear in >=2% of prefixes
+const FALLBACK_TOP_K: usize = 64; // Fallback count when threshold selects none
+
 #[derive(PartialEq, Eq, PartialOrd, Ord)]
 struct Row<'a> {
     prefix: &'a str,
@@ -173,38 +177,100 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
 impl ZeroAsciiDenseSparse2dTrieOwned {
     /// Builds one of these from a two-dimensional BTreeMap and a delimiter.
     ///
-    /// Keep in mind the recommendations for optimal data size described in
-    /// the [class docs].
-    ///
-    /// [class docs]: ZeroAsciiDenseSparse2dTrieOwned
+    /// TODO(#7302): Prune low-frequency suffixes from the dense matrix.
+    /// The heuristic below selects suffixes that appear in at least
+    /// `max(2, ceil(total_prefixes * MIN_DENSE_PERCENT / 100))` distinct prefixes.
+    /// If none qualify, it falls back to top-FALLBACK_TOP_K suffixes by prefix count,
+    /// then uses lexicographic ordering for stable dense matrix columns.
+
     pub fn try_from_btree_map_str(
-        entries: &BTreeMap<&str, BTreeMap<&str, usize>>,
-        delimiter: u8,
-    ) -> Result<Self, ZeroTrieBuildError> {
-        let mut builder = DenseSparse2dAsciiWithFixedDelimiterBuilder {
-            delimiter,
-            ..Default::default()
-        };
-        // TODO(#7302): Prune low-frequency suffixes.
-        // For now, build with all suffixes.
+    entries: &BTreeMap<&str, BTreeMap<&str, usize>>,
+    delimiter: u8,
+) -> Result<Self, ZeroTrieBuildError> {
+    let mut builder = DenseSparse2dAsciiWithFixedDelimiterBuilder {
+        delimiter,
+        ..Default::default()
+    };
+
+    // Validate prefixes for delimiter presence
+    for prefix in entries.keys() {
+        if prefix.contains(delimiter as char) {
+            return Err(ZeroTrieBuildError::IllegalDelimiter);
+        }
+    }
+
+    // delimiter char for later checks
+    let delimiter_ch = delimiter as char;
+
+    // Legacy behaviour (include all suffixes) vs. opt-in pruning
+    #[cfg(feature = "dense-prune")]
+    {
+        // Build a map: suffix -> number of distinct prefixes it appears in.
+        let mut suffix_prefix_count: BTreeMap<&str, usize> = BTreeMap::new();
+        for (_prefix, inner) in entries.iter() {
+            for suffix in inner.keys() {
+                *suffix_prefix_count.entry(*suffix).or_insert(0) += 1;
+            }
+        }
+
+        let total_prefixes = entries.len();
+        // Compute ceil(total_prefixes * MIN_DENSE_PERCENT / 100) without floats:
+        // ceil(a * p / 100) = (a * p + 99) / 100
+        let computed_min = (total_prefixes.saturating_mul(MIN_DENSE_PERCENT) + 99) / 100;
+        let min_prefixes = core::cmp::max(2usize, computed_min);
+
+        // Collect suffix candidates that meet the threshold.
+        let mut dense_candidates: Vec<(&str, usize)> = suffix_prefix_count
+            .iter()
+            .map(|(&s, &cnt)| (s, cnt))
+            .filter(|&(_s, cnt)| cnt >= min_prefixes)
+            .collect();
+
+        // If none meet the threshold, fallback to picking top-K by frequency.
+        if dense_candidates.is_empty() {
+            let mut all_suffixes: Vec<(&str, usize)> =
+                suffix_prefix_count.into_iter().collect();
+            // sort by descending count, tiebreak by suffix lexicographic for determinism
+            all_suffixes.sort_by(|a, b| b.1.cmp(&a.1).then_with(|| a.0.cmp(b.0)));
+            let k = core::cmp::min(FALLBACK_TOP_K, all_suffixes.len());
+            dense_candidates = all_suffixes.into_iter().take(k).collect();
+        }
+
+        // Final dense column ordering: lexicographic order of suffix strings.
+        dense_candidates.sort_by(|a, b| a.0.cmp(b.0));
+
+        // Validate no chosen suffix contains the delimiter and populate builder.suffixes (BTreeSet)
+        for (suffix, _count) in dense_candidates.into_iter() {
+            if suffix.contains(delimiter_ch) {
+                return Err(ZeroTrieBuildError::IllegalDelimiter);
+            }
+            builder.suffixes.insert(suffix);
+        }
+    }
+
+    #[cfg(not(feature = "dense-prune"))]
+    {
+        // Original behavior: include all suffixes (preserve previous layout)
         builder.suffixes = entries
             .values()
             .flat_map(|inner| inner.keys())
             .copied()
             .map(|s| {
-                if s.contains(delimiter as char) {
+                if s.contains(delimiter_ch) {
                     Err(ZeroTrieBuildError::IllegalDelimiter)
                 } else {
                     Ok(s)
                 }
             })
             .collect::<Result<_, ZeroTrieBuildError>>()?;
-        for (prefix, values) in entries.iter() {
-            if prefix.contains(delimiter as char) {
-                return Err(ZeroTrieBuildError::IllegalDelimiter);
-            }
-            builder.add_prefix(prefix, values)?;
-        }
-        builder.build()
     }
+
+    // Add prefixes (this uses add_prefix which expects builder.suffixes already set)
+    for (prefix, values) in entries.iter() {
+        builder.add_prefix(prefix, values)?;
+    }
+
+    builder.build()
+}
+
 }
