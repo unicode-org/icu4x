@@ -592,7 +592,7 @@ impl CompactDecimalFormatter {
     }
 }
 
-impl<'a, P: PatternBackend<Store = str>> CompactPatterns<'a, P> {
+impl<'a, P: PatternBackend> CompactPatterns<'a, P> {
     pub(crate) fn get_pattern_and_significand(
         &'a self,
         value: &UnsignedDecimal,
