@@ -8,19 +8,11 @@ use icu_calendar::cal::hijri::{
 use icu_calendar::cal::Hijri;
 use icu_calendar::Date;
 
-/// [`Hijri`] [`Rules`] based on an astronomical simulation for a particular location.
+/// [`Hijri`] [`Rules`] based on an astronomical simulation for Mecca.
 ///
 /// These simulations use methods published by E. M. Reingold, S. K. Shaukat, et al.[^1]
 /// These methods are not officially recognized in any region and do not match sightings
-/// on the ground. Unless you know otherwise for sure, instead of this variant, use
-/// [`UmmAlQura`], which uses the results of KACST's Mecca-based calculations.
-///
-/// The simulations are pre-computed for Gregorian years 1900 to 2140, falling back to
-/// a tabular approximation outside that range.
-///
-/// The precise behavior of this calendar may change in the future if:
-/// - We decide to tweak the precise astronomical simulation used
-/// - We decide to expand or reduce the range where we are using the astronomical simulation.
+/// on the ground.
 ///
 /// [^1]: See [calendrical_calculations::islamic::observational_islamic_from_fixed]
 #[derive(Debug, Clone, Copy)]
