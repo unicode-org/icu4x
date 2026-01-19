@@ -58,7 +58,7 @@ pub use crate::combo::Combo;
 
 use crate::{
     options::*,
-    provider::{neo::*, time_zones::tz, *},
+    provider::{names::*, time_zones::tz, *},
     raw::neo::RawOptions,
     scaffold::*,
 };

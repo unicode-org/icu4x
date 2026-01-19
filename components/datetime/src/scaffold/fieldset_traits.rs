@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    provider::{neo::*, time_zones::tz, *},
+    provider::{names::*, time_zones::tz, *},
     scaffold::*,
 };
 use icu_calendar::{

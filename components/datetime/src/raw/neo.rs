@@ -12,7 +12,9 @@ use crate::provider::pattern::{
     runtime::{self, PatternMetadata},
     GenericPatternItem, PatternItem,
 };
-use crate::provider::{neo::*, ErasedPackedPatterns, PackedSkeletonVariant};
+use crate::provider::{
+    names::*, semantic_skeletons::*, ErasedPackedPatterns, PackedSkeletonVariant,
+};
 use crate::DateTimeFormatterPreferences;
 use icu_calendar::types::YearAmbiguity;
 use icu_provider::prelude::*;

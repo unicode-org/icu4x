@@ -74,10 +74,10 @@ fn test_markers_for_bin() {
     assert_eq!(
         markers_for_bin(include_bytes!("../tests/data/tutorial_buffer.wasm")).unwrap(),
         [
-            crate::datetime::provider::neo::DayPeriodNamesV1::INFO,
-            crate::datetime::provider::neo::DatetimeNamesMonthGregorianV1::INFO,
-            crate::datetime::provider::neo::DatetimeNamesYearGregorianV1::INFO,
-            crate::datetime::provider::neo::DatetimePatternsGlueV1::INFO,
+            crate::datetime::provider::names::DayPeriodNamesV1::INFO,
+            crate::datetime::provider::names::DatetimeNamesMonthGregorianV1::INFO,
+            crate::datetime::provider::names::DatetimeNamesYearGregorianV1::INFO,
+            crate::datetime::provider::names::DatetimePatternsGlueV1::INFO,
             crate::datetime::provider::DatetimePatternsDateGregorianV1::INFO,
             crate::datetime::provider::DatetimePatternsTimeV1::INFO,
             crate::decimal::provider::DecimalSymbolsV1::INFO,

@@ -9,7 +9,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-full/main/en/ca-gregorian.json>
 
-use icu::datetime::provider::neo::marker_attrs::{Context, Length, PatternLength};
+use icu::datetime::provider::semantic_skeletons::marker_attrs::{Context, Length, PatternLength};
 use icu_pattern::PatternString;
 use icu_pattern::SinglePlaceholder;
 use serde::Deserialize;
