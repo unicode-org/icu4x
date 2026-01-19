@@ -4,18 +4,19 @@
 
 //! Experimental.
 
+use core::fmt::Display;
+
 use fixed_decimal::Decimal;
 use icu_decimal::{options::DecimalFormatterOptions, DecimalFormatter};
 use icu_plurals::PluralRules;
 use icu_provider::prelude::*;
+use writeable::Writeable;
 
 use crate::dimension::provider::currency::{
     extended::CurrencyExtendedDataV1, patterns::CurrencyPatternsDataV1,
 };
 
-use super::{
-    formatter::CurrencyFormatterPreferences, long_format::LongFormattedCurrency, CurrencyCode,
-};
+use super::{formatter::CurrencyFormatterPreferences, CurrencyCode};
 
 extern crate alloc;
 
@@ -152,29 +153,27 @@ impl LongCurrencyFormatter {
     /// use icu::experimental::dimension::currency::CurrencyCode;
     /// use icu::locale::locale;
     /// use tinystr::*;
-    /// use writeable::Writeable;
+    /// use writeable::assert_writable_eq;
     ///
     /// let currency_preferences = locale!("en-US").into();
     /// let currency_code = CurrencyCode(tinystr!(3, "USD"));
     /// let fmt = LongCurrencyFormatter::try_new(currency_preferences, &currency_code).unwrap();
     /// let value = "12345.67".parse().unwrap();
-    /// let formatted_currency = fmt.format_fixed_decimal(&value, currency_code);
-    /// let mut sink = String::new();
-    /// formatted_currency.write_to(&mut sink).unwrap();
-    /// assert_eq!(sink.as_str(), "12,345.67 US dollars");
+    /// assert_eq!(fmt.format_fixed_decimal(&value), "12,345.67 US dollars");
     /// ```
-    pub fn format_fixed_decimal<'l>(
-        &'l self,
-        value: &'l Decimal,
-        currency_code: CurrencyCode,
-    ) -> LongFormattedCurrency<'l> {
-        LongFormattedCurrency {
-            value,
-            _currency_code: currency_code,
-            extended: self.extended.get(),
-            patterns: self.patterns.get(),
-            decimal_formatter: &self.decimal_formatter,
-            plural_rules: &self.plural_rules,
-        }
+    pub fn format_fixed_decimal<'l>(&'l self, value: &'l Decimal) -> impl Writeable + Display + 'l {
+        let operands = value.into();
+        let display_name = self
+            .extended
+            .get()
+            .display_names
+            .get(operands, &self.plural_rules);
+        let pattern = self
+            .patterns
+            .get()
+            .patterns
+            .get(operands, &self.plural_rules);
+
+        pattern.interpolate((self.decimal_formatter.format(value), display_name))
     }
 }

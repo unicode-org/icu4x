@@ -4,6 +4,8 @@
 
 //! Experimental.
 
+use core::fmt::Display;
+
 use fixed_decimal::Decimal;
 use icu_decimal::{
     options::DecimalFormatterOptions, DecimalFormatter, DecimalFormatterPreferences,
@@ -11,9 +13,9 @@ use icu_decimal::{
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::PluralRulesPreferences;
 use icu_provider::prelude::*;
+use writeable::Writeable;
 
 use super::super::provider::currency::essentials::CurrencyEssentialsV1;
-use super::format::FormattedCurrency;
 use super::options::CurrencyFormatterOptions;
 use super::CurrencyCode;
 
@@ -148,14 +150,13 @@ impl CurrencyFormatter {
     pub fn format_fixed_decimal<'l>(
         &'l self,
         value: &'l Decimal,
-        currency_code: CurrencyCode,
-    ) -> FormattedCurrency<'l> {
-        FormattedCurrency {
-            value,
-            currency_code,
-            options: &self.options,
-            essential: self.essential.get(),
-            decimal_formatter: &self.decimal_formatter,
-        }
+        currency_code: &'l CurrencyCode,
+    ) -> impl Writeable + Display + 'l {
+        let (currency_str, pattern, _pattern_selection) = self
+            .essential
+            .get()
+            .name_and_pattern(self.options.width, currency_code);
+
+        pattern.interpolate((self.decimal_formatter.format(value), currency_str))
     }
 }
