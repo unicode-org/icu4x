@@ -10,6 +10,8 @@ include!("locale_likely_subtags_extended_v1.rs.data");
 include!("locale_script_direction_v1.rs.data");
 include!("locale_likely_subtags_script_region_v1.rs.data");
 include!("locale_exemplar_characters_punctuation_v1.rs.data");
+
+
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
 ///
@@ -24,7 +26,7 @@ include!("locale_exemplar_characters_punctuation_v1.rs.data");
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __make_provider {
-    ($ name : ty) => {
+    ($name:ty) => {
         #[clippy::msrv = "1.83"]
         impl $name {
             #[allow(dead_code)]
@@ -33,8 +35,11 @@ macro_rules! __make_provider {
         icu_provider::marker::impl_data_provider_never_marker!($name);
     };
 }
+
 #[doc(inline)]
 pub use __make_provider as make_provider;
+
+// Not public as it will only work locally due to needing access to the other macros.
 /// This macro requires the following crates:
 /// * `icu`
 /// * `icu_locale_core`
@@ -43,7 +48,7 @@ pub use __make_provider as make_provider;
 /// * `zerovec`
 #[allow(unused_macros)]
 macro_rules! impl_data_provider {
-    ($ provider : ty) => {
+    ($provider:ty) => {
         make_provider!($provider);
         impl_locale_likely_subtags_language_v1!($provider);
         impl_locale_parents_v1!($provider);
@@ -56,5 +61,6 @@ macro_rules! impl_data_provider {
         impl_locale_script_direction_v1!($provider);
         impl_locale_likely_subtags_script_region_v1!($provider);
         impl_locale_exemplar_characters_punctuation_v1!($provider);
+
     };
 }
