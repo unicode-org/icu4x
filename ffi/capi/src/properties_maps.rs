@@ -667,4 +667,14 @@ pub mod ffi {
             Ok(Box::new(Self(data)))
         }
     }
+
+    impl CodePointMapData8 {
+        /// Create a map for the associated planes.
+        #[diplomat::attr(auto, named_constructor = "planes")]
+        pub fn create_planes() -> Box<Self> {
+            let trie = icu_collections::codepointtrie::planes::get_planes_trie();
+            let data = icu_properties::CodePointMapData::from_code_point_trie(trie);
+            Box::new(Self(data))
+        }
+    }
 }
