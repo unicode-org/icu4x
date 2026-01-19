@@ -41,16 +41,32 @@ define_preferences!(
 impl CalendarPreferences {
     /// Selects the [`CalendarAlgorithm`] appropriate for the given [`CalendarPreferences`].
     ///
+    /// This is guaranteed to return a [`CalendarAlgorithm`] that successfully converts into an
+    /// [`AnyCalendarKind`](crate::AnyCalendarKind) (i.e. not `-u-ca-islamic` or `-u-ca-islamic-rgsa`).
+    ///
     /// # Example
     ///
     /// ```
-    /// use icu::calendar::preferences::{CalendarAlgorithm, CalendarPreferences};
+    /// use icu::calendar::preferences::{CalendarAlgorithm, CalendarPreferences, HijriCalendarAlgorithm};
     /// use icu::locale::locale;
     ///
     /// assert_eq!(CalendarPreferences::from(&locale!("und")).resolved_algorithm(), CalendarAlgorithm::Gregory);
     /// assert_eq!(CalendarPreferences::from(&locale!("und-US-u-ca-hebrew")).resolved_algorithm(), CalendarAlgorithm::Hebrew);
     /// assert_eq!(CalendarPreferences::from(&locale!("und-AF")).resolved_algorithm(), CalendarAlgorithm::Persian);
     /// assert_eq!(CalendarPreferences::from(&locale!("und-US-u-rg-thxxxx")).resolved_algorithm(), CalendarAlgorithm::Buddhist);
+    /// assert_eq!(
+    ///     CalendarPreferences::from(&locale!("und-US-u-ca-islamic")).resolved_algorithm(),
+    ///     CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil))
+    /// );
+    /// # assert_eq!(CalendarPreferences::from(&"und-US-u-ca-islamic-rgsa".parse::<icu::locale::Locale>().unwrap()).resolved_algorithm(),
+    /// #     CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil))
+    /// # );
+    /// # assert_eq!(CalendarPreferences::from(&"und-US-u-ca-islamic-foo".parse::<icu::locale::Locale>().unwrap()).resolved_algorithm(),
+    /// #     CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil))
+    /// # );
+    /// # assert_eq!(CalendarPreferences::from(&"und-US-u-ca-hebrew-foo".parse::<icu::locale::Locale>().unwrap()).resolved_algorithm(),
+    /// #     CalendarAlgorithm::Hebrew
+    /// # );
     /// ```
     pub fn resolved_algorithm(self) -> CalendarAlgorithm {
         use icu_locale_core::subtags::{region, Region};
@@ -70,10 +86,11 @@ impl CalendarPreferences {
                 .to_data_locale_region_priority()
                 .region,
         ) {
-            (Some(CalendarAlgorithm::Hijri(None)), Some(AE | BH | KW | QA | SA)) => {
-                CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Umalqura))
-            }
-            (Some(CalendarAlgorithm::Hijri(None)), _) => {
+            (
+                Some(CalendarAlgorithm::Hijri(None | Some(HijriCalendarAlgorithm::Rgsa))),
+                Some(AE | BH | KW | QA | SA),
+            ) => CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Umalqura)),
+            (Some(CalendarAlgorithm::Hijri(None | Some(HijriCalendarAlgorithm::Rgsa))), _) => {
                 CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil))
             }
             (Some(a), _) => a,
