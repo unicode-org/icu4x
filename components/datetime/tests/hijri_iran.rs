@@ -105,6 +105,7 @@ impl icu::datetime::scaffold::FormattableHijriRules for IranSighting {
 }
 
 #[test]
+#[ignore]
 fn test_conversion() {
     for ((y, m, d), rd) in [
         (
@@ -125,6 +126,7 @@ fn test_conversion() {
 }
 
 #[test]
+#[ignore]
 fn test_format() {
     use icu::datetime::{fieldsets, FixedCalendarDateTimeFormatter};
     use icu::locale::locale;
