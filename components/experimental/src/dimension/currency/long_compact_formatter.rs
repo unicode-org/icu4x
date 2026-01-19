@@ -9,9 +9,9 @@ use icu_plurals::{PluralRules, PluralRulesPreferences};
 use icu_provider::prelude::*;
 
 use crate::{
+    compactdecimal::options::CompactDecimalFormatterOptions,
+    compactdecimal::preferences::CompactDecimalFormatterPreferences,
     compactdecimal::CompactDecimalFormatter,
-    compactdecimal::CompactDecimalFormatterOptions,
-    compactdecimal::CompactDecimalFormatterPreferences,
     dimension::provider::currency::{
         extended::CurrencyExtendedDataV1, patterns::CurrencyPatternsDataV1,
     },

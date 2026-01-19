@@ -4,7 +4,8 @@
 
 use crate::{
     compactdecimal::{
-        CompactDecimalFormatter, CompactDecimalFormatterOptions, CompactDecimalFormatterPreferences,
+        options::CompactDecimalFormatterOptions, preferences::CompactDecimalFormatterPreferences,
+        CompactDecimalFormatter,
     },
     dimension::provider::{
         currency::compact::ShortCurrencyCompactV1, currency::essentials::CurrencyEssentialsV1,
