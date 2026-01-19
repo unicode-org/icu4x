@@ -88,7 +88,7 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
         &strip_headers(include_str!("./data/TestRandomWordsUDHR_tr.txt")),
     );
 
-    let content_en_gutenberg: (&str, &str) = ("Gutenberg_en", EN_TEXT);
+    let content_en_gutenberg: (&str, &str) = ("Gutenberg_en", &strip_headers(EN_TEXT));
 
     let content_viet: (&str, &str) = ("wotw", &strip_headers(include_str!("./data/wotw.txt")));
 
