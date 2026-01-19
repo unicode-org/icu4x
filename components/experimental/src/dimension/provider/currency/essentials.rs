@@ -58,10 +58,10 @@ pub struct CurrencyEssentials<'data> {
         feature = "serde",
         serde(
             borrow,
-            deserialize_with = "icu_pattern::deserialize_option_borrowed_cow::<DoublePlaceholder, _>"
+            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<DoublePlaceholder, _>"
         )
     )]
-    pub standard_pattern: Option<Cow<'data, DoublePlaceholderPattern>>,
+    pub standard_pattern: Cow<'data, DoublePlaceholderPattern>,
 
     // TODO(#4677): Implement the pattern to accept the signed negative and signed positive patterns.
     /// The `standard_alpha_next_to_number` currency pattern used for formatting.
@@ -73,10 +73,10 @@ pub struct CurrencyEssentials<'data> {
         feature = "serde",
         serde(
             borrow,
-            deserialize_with = "icu_pattern::deserialize_option_borrowed_cow::<DoublePlaceholder, _>"
+            deserialize_with = "icu_pattern::deserialize_borrowed_cow::<DoublePlaceholder, _>"
         )
     )]
-    pub standard_alpha_next_to_number_pattern: Option<Cow<'data, DoublePlaceholderPattern>>,
+    pub standard_alpha_next_to_number_pattern: Cow<'data, DoublePlaceholderPattern>,
 
     /// A list of placeholders (strings), such as currency symbols, referenced by index.
     ///

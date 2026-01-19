@@ -256,11 +256,7 @@ fn extract_currency_essentials<'data>(
     /// Create a `DoublePlaceholderPattern` from a string pattern.
     fn create_pattern<'data>(
         pattern: &str,
-    ) -> Result<Option<Cow<'data, DoublePlaceholderPattern>>, DataError> {
-        if pattern.is_empty() {
-            return Ok(None);
-        }
-
+    ) -> Result<Cow<'data, DoublePlaceholderPattern>, DataError> {
         let decimal_pattern = DecimalPattern::from_str(pattern).map_err(|e| {
             DataError::custom("Could not parse the pattern").with_display_context(&e)
         })?;
@@ -288,7 +284,6 @@ fn extract_currency_essentials<'data>(
                 DataError::custom("Could not parse standard pattern").with_display_context(&e)
             })
             .map(Cow::Owned)
-            .map(Some)
     }
 
     Ok(CurrencyEssentials {
@@ -356,19 +351,10 @@ fn test_basic() {
 
     let en_payload = en.payload.get();
 
-    assert_writeable_eq!(
-        en_payload
-            .standard_pattern
-            .as_ref()
-            .unwrap()
-            .interpolate((3, "$")),
-        "$3"
-    );
+    assert_writeable_eq!(en_payload.standard_pattern.interpolate((3, "$")), "$3");
     assert_writeable_eq!(
         en_payload
             .standard_alpha_next_to_number_pattern
-            .as_ref()
-            .unwrap()
             .interpolate((3, "$")),
         "$\u{a0}3"
     );
@@ -399,19 +385,9 @@ fn test_basic() {
 
     let ar_eg_payload = ar_eg.payload.get();
     assert_writeable_eq!(
-        ar_eg_payload
-            .standard_pattern
-            .as_ref()
-            .unwrap()
-            .interpolate((3, "$")),
+        ar_eg_payload.standard_pattern.interpolate((3, "$")),
         "\u{200f}3\u{a0}$"
     );
-    // TODO(#6064)
-    assert!(ar_eg
-        .payload
-        .get()
-        .standard_alpha_next_to_number_pattern
-        .is_some());
 
     let (ar_eg_egp_short, ar_eg_egp_narrow) = get_placeholders_of_currency(
         tinystr!(3, "EGP").to_unvalidated(),
