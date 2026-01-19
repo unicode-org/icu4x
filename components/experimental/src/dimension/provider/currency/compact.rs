@@ -9,9 +9,10 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use icu_plurals::PluralCategory;
+use icu_pattern::DoublePlaceholder;
 use icu_provider::prelude::*;
-use zerovec::ZeroMap;
+
+use crate::compactdecimal::provider::CompactPatterns;
 
 icu_provider::data_marker!(
     /// `ShortCurrencyCompactV1`
@@ -26,27 +27,12 @@ icu_provider::data_marker!(
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::compact))]
 #[yoke(prove_covariance_manually)]
 pub struct ShortCurrencyCompact<'data> {
-    // TODO: this map should include a `DoublePattern` as a value.
-    /// Contains the compact patterns for a compact currency format based on the plural rules.
-    /// NOTE:
-    ///       A map keyed on log10 of the CLDR `type` attribute.
-    ///       For example:
-    ///         `"1000-count-one": "¤0K"`
-    ///                 -> key1 = 3, key2 = CompactCount::One, value = "¤0K"
-    ///         `"1000-count-one-alt-alphaNextToNumber": "¤ 0K"`
-    ///                 -> key1 = 3, key2 = CompactCount::OneAlt, value = "¤ 0K"
+    /// Contains the standard compact patterns.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub compact_patterns: ZeroMap<'data, (i8, CompactCount), str>,
+    pub standard: CompactPatterns<'data, DoublePlaceholder>,
+    /// Contains the alpha-next-to-number compact patterns.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub alpha_next_to_number: CompactPatterns<'data, DoublePlaceholder>,
 }
 
 icu_provider::data_struct!(ShortCurrencyCompact<'_>, #[cfg(feature = "datagen")]);
-
-#[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::cucompact))]
-#[repr(u8)]
-pub enum CompactCount {
-    Standard(PluralCategory),
-    AlphaNextToNumber(PluralCategory),
-}

@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub mod compact;
-pub mod compact_count_ule;
 pub mod displayname;
 pub mod essentials;
 pub mod extended;
