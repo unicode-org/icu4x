@@ -67,3 +67,6 @@ harness = false
 [[bench]]
 name = "iai_langid"
 harness = false
+
+[package.metadata.cargo-semver-checks.lints]
+workspace = true
