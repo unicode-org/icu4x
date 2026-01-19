@@ -322,6 +322,7 @@ pub(crate) fn get_parameterized<T: ZeroTrieWithOptions + ?Sized>(
         if let Some((c, temp)) = ascii.split_first() {
             if matches!(byte_type, NodeType::Ascii) {
                 let is_match = if matches!(T::OPTIONS.case_sensitivity, CaseSensitivity::IgnoreCase)
+                    && matches!(T::OPTIONS.lookup_strictness, LookupStrictness::Normal)
                 {
                     b.eq_ignore_ascii_case(c)
                 } else {
@@ -367,12 +368,28 @@ pub(crate) fn get_parameterized<T: ZeroTrieWithOptions + ?Sized>(
             if matches!(T::OPTIONS.phf_mode, PhfMode::BinaryOnly) || x < 16 {
                 // binary search
                 (search, trie) = trie.debug_split_at(x);
+                // TODO(#5584): Consider making all of these have the same order of elements
                 let bsearch_result =
                     if matches!(T::OPTIONS.case_sensitivity, CaseSensitivity::IgnoreCase) {
-                        search.binary_search_by_key(&c.to_ascii_lowercase(), |x| {
-                            x.to_ascii_lowercase()
-                        })
+                        if matches!(T::OPTIONS.lookup_strictness, LookupStrictness::Normal) {
+                            // Ordering: (A=a), (B=b), (C=c), ..., (Z=z)
+                            search.binary_search_by_key(&c.to_ascii_lowercase(), |x| {
+                                x.to_ascii_lowercase()
+                            })
+                        } else {
+                            // Ordering: A, a, B, b, C, c, ..., Z, z
+                            let c_lowercase = c.to_ascii_lowercase();
+                            search.binary_search_by(move |p| {
+                                let p_lowercase = p.to_ascii_lowercase();
+                                if c_lowercase == p_lowercase {
+                                    p.cmp(c)
+                                } else {
+                                    p_lowercase.cmp(&c_lowercase)
+                                }
+                            })
+                        }
                     } else {
+                        // Ordering: A, B, C, ..., Z, a, b, c, ..., z
                         search.binary_search(c)
                     };
                 i = bsearch_result.ok()?;

@@ -724,6 +724,45 @@ impl_zerotrie_subtype!(
     Vec::into_boxed_slice
 );
 
+impl<Store> ZeroAsciiIgnoreCaseTrie<Store>
+where
+    Store: AsRef<[u8]> + ?Sized,
+{
+    /// Queries the trie for a string, requiring that it matches case.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use litemap::LiteMap;
+    /// use zerotrie::ZeroAsciiIgnoreCaseTrie;
+    ///
+    /// let mut map = LiteMap::new_vec();
+    /// map.insert(&b"foo"[..], 1);
+    /// map.insert(b"Bar", 2);
+    /// map.insert(b"Bingo", 3);
+    ///
+    /// let trie = ZeroAsciiIgnoreCaseTrie::try_from(&map)?;
+    ///
+    /// assert_eq!(trie.get(b"foo"), Some(1));
+    /// assert_eq!(trie.get(b"bar"), Some(2));
+    /// assert_eq!(trie.get(b"BaR"), Some(2));
+    /// assert_eq!(trie.get_strict(b"bar"), None);
+    /// assert_eq!(trie.get_strict(b"BaR"), None);
+    /// assert_eq!(trie.get_strict(b"Bar"), Some(2));
+    ///
+    /// # Ok::<_, zerotrie::ZeroTrieBuildError>(())
+    /// ```
+    pub fn get_strict<K>(&self, key: K) -> Option<usize>
+    where
+        K: AsRef<[u8]>,
+    {
+        reader::get_parameterized::<crate::options::ZeroAsciiIgnoreCaseStrictTrie>(
+            self.store.as_ref(),
+            key.as_ref(),
+        )
+    }
+}
+
 macro_rules! impl_dispatch {
     ($self:ident, $inner_fn:ident()) => {
         match $self.0 {
