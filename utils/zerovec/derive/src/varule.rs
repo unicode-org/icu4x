@@ -117,12 +117,9 @@ pub fn derive_impl(
                 // Safety: The invariants of this function allow us to assume bytes is valid, and
                 // having at least #ule_size bytes is a validity constraint for the ULE type.
                 let unsized_bytes = bytes.get_unchecked(#ule_size..);
-                let unsized_ref = <#unsized_field as zerovec::ule::VarULE>::from_bytes_unchecked(unsized_bytes);
-                // We should use the pointer metadata APIs here when they are stable: https://github.com/rust-lang/rust/issues/81513
-                // For now we rely on all DST metadata being a usize to extract it via a fake slice pointer
-                let (_ptr, metadata): (usize, usize) = ::core::mem::transmute(unsized_ref);
-                let entire_struct_as_slice: *const [u8] = ::core::slice::from_raw_parts(bytes.as_ptr(), metadata);
-                &*(entire_struct_as_slice as *const Self)
+                let metadata = core::ptr::metadata(unsized_bytes);
+
+                &*core::ptr::from_raw_parts::<Self>(bytes as *const [u8] as *const u8, metadata)
             }
         }
     }

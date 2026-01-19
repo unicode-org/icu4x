@@ -364,13 +364,16 @@ pub unsafe trait VarULE: 'static {
         use alloc::boxed::Box;
         use core::alloc::Layout;
         let bytesvec = self.as_bytes().to_owned().into_boxed_slice();
-        let bytesvec = mem::ManuallyDrop::new(bytesvec);
+
         unsafe {
             // Get the pointer representation
-            let ptr: *mut Self = Self::from_bytes_unchecked(&bytesvec) as *const Self as *mut Self;
-            assert_eq!(Layout::for_value(&*ptr), Layout::for_value(&**bytesvec));
+            let ptr = Self::from_bytes_unchecked(&bytesvec) as *const Self;
+            let metadata = core::ptr::metadata(ptr);
             // Transmute the pointer to an owned pointer
-            Box::from_raw(ptr)
+            Box::from_raw(core::ptr::from_raw_parts_mut(
+                Box::into_raw(bytesvec) as *mut [u8] as *mut u8,
+                metadata,
+            ))
         }
     }
 }
