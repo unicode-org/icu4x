@@ -103,6 +103,7 @@ pub struct VarTupleULE<A: AsULE, V: VarULE + ?Sized> {
 // 5. `from_bytes_unchecked` returns a fat pointer to the bytes.
 // 6. All other methods are left at their default impl.
 // 7. The two ULEs have byte equality, so this composition has byte equality.
+// 8. There are no concrete methods with the same name as VarULE trait methods.
 unsafe impl<A, V> VarULE for VarTupleULE<A, V>
 where
     A: AsULE + 'static,

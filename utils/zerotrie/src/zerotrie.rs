@@ -347,6 +347,7 @@ macro_rules! impl_zerotrie_subtype {
             /// Returns the bytes contained in the underlying store.
             #[inline]
             pub fn as_bytes(&self) -> &[u8] {
+                // *Safety:* The behavior of this function is a VarULE safety requirement!
                 self.store.as_ref()
             }
             /// Returns this trie as a reference transparent over a byte slice.
@@ -657,6 +658,7 @@ macro_rules! impl_zerotrie_subtype {
         //  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
         //  6. `parse_bytes()` is left to its default impl
         //  7. byte equality is semantic equality
+        //  8. Concrete methods with the same name as VarULE trait methods have the same behavior as the trait methods.
         #[cfg(feature = "zerovec")]
         unsafe impl<Store> zerovec::ule::VarULE for $name<Store>
         where

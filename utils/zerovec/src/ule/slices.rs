@@ -41,6 +41,8 @@ unsafe impl<T: EqULE, const N: usize> EqULE for [T; N] {}
 //  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
 //  6. `parse_bytes()` is equivalent to `validate_bytes()` followed by `from_bytes_unchecked()`
 //  7. str byte equality is semantic equality
+//  8. The only function on `str` with the same name as a VarULE trait method is `as_bytes()`,
+//     and the VarULE method is implemented on top of the concrete function.
 unsafe impl VarULE for str {
     #[inline]
     fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
@@ -57,6 +59,12 @@ unsafe impl VarULE for str {
     #[inline]
     unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         core::str::from_utf8_unchecked(bytes)
+    }
+    #[inline]
+    fn as_bytes(&self) -> &[u8] {
+        // Safety: str as_bytes() casts the incoming pointer.
+        // *Safety:* The behavior of this function is a VarULE safety requirement!
+        self.as_bytes()
     }
 }
 
@@ -86,6 +94,10 @@ unsafe impl VarULE for str {
 //  5. The impl of `from_bytes_unchecked()` returns a reference to the same data.
 //  6. All other methods are defaulted
 //  7. `[T]` byte equality is semantic equality (achieved by being a slice of a ULE type)
+//  8. There are no methods generically on [T] that have the same name as the VarULE functions.
+//     However, there are some functions on specific [T] that have the same name:
+//     - [AsciiChar]::as_bytes() has the correct behavior.
+//     - [MaybeUninit<T>]::as_bytes() has the correct behavior, though the return value is different.
 unsafe impl<T> VarULE for [T]
 where
     T: ULE,
