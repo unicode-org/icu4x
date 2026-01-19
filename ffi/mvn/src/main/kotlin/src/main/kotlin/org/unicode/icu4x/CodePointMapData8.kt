@@ -42,6 +42,7 @@ internal interface CodePointMapData8Lib: Library {
     fun icu4x_CodePointMapData8_create_general_category_with_provider_mv1(provider: Pointer): ResultPointerInt
     fun icu4x_CodePointMapData8_create_vertical_orientation_mv1(): Pointer
     fun icu4x_CodePointMapData8_create_vertical_orientation_with_provider_mv1(provider: Pointer): ResultPointerInt
+    fun icu4x_CodePointMapData8_create_planes_mv1(): Pointer
 }
 /** An ICU4X Unicode Map Property object, capable of querying whether a code point (key) to obtain the Unicode property value, for a specific Unicode property.
 *
@@ -578,6 +579,19 @@ class CodePointMapData8 internal constructor (
             } else {
                 return DataErrorError(DataError.fromNative(returnVal.union.err)).err()
             }
+        }
+        @JvmStatic
+        
+        /** Create a map for the associated planes.
+        */
+        fun createPlanes(): CodePointMapData8 {
+            
+            val returnVal = lib.icu4x_CodePointMapData8_create_planes_mv1();
+            val selfEdges: List<Any> = listOf()
+            val handle = returnVal 
+            val returnOpaque = CodePointMapData8(handle, selfEdges)
+            CLEANER.register(returnOpaque, CodePointMapData8.CodePointMapData8Cleaner(handle, CodePointMapData8.lib));
+            return returnOpaque
         }
     }
     

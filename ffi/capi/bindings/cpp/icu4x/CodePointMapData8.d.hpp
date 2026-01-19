@@ -298,6 +298,11 @@ public:
    */
   inline static icu4x::diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_vertical_orientation_with_provider(const icu4x::DataProvider& provider);
 
+  /**
+   * Create a map for the associated planes.
+   */
+  inline static std::unique_ptr<icu4x::CodePointMapData8> create_planes();
+
     inline const icu4x::capi::CodePointMapData8* AsFFI() const;
     inline icu4x::capi::CodePointMapData8* AsFFI();
     inline static const icu4x::CodePointMapData8* FromFFI(const icu4x::capi::CodePointMapData8* ptr);

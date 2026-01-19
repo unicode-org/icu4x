@@ -401,6 +401,12 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
+  /// Create a map for the associated planes.
+  factory CodePointMapData8.planes() {
+    final result = _icu4x_CodePointMapData8_create_planes_mv1();
+    return CodePointMapData8._fromFfi(result, []);
+  }
+
 }
 
 @_DiplomatFfiUse('icu4x_CodePointMapData8_destroy_mv1')
@@ -582,5 +588,10 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData8_create_vertical_orient
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_create_vertical_orientation_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointMapData8_create_vertical_orientation_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointMapData8_create_planes_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_create_planes_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData8_create_planes_mv1();
 
 // dart format on

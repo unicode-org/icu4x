@@ -806,6 +806,22 @@ export class CodePointMapData8 {
         }
     }
 
+    /**
+     * Create a map for the associated planes.
+     */
+    static createPlanes() {
+
+        const result = wasm.icu4x_CodePointMapData8_create_planes_mv1();
+
+        try {
+            return new CodePointMapData8(diplomatRuntime.internalConstructor, result, []);
+        }
+
+        finally {
+            diplomatRuntime.FUNCTION_PARAM_ALLOC.clean();
+        }
+    }
+
     constructor(symbol, ptr, selfEdge) {
         return this.#internalConstructor(...arguments)
     }

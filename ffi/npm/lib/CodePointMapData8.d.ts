@@ -278,4 +278,9 @@ export class CodePointMapData8 {
      * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.VerticalOrientation.html) for more information.
      */
     static createVerticalOrientationWithProvider(provider: DataProvider): CodePointMapData8;
+
+    /**
+     * Create a map for the associated planes.
+     */
+    static createPlanes(): CodePointMapData8;
 }
