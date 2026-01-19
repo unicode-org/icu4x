@@ -58,6 +58,15 @@ impl CalendarPreferences {
     ///     CalendarPreferences::from(&locale!("und-US-u-ca-islamic")).resolved_algorithm(),
     ///     CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil))
     /// );
+    /// # assert_eq!(CalendarPreferences::from(&"und-US-u-ca-islamic-rgsa".parse::<icu::locale::Locale>().unwrap()).resolved_algorithm(),
+    /// #     CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil))
+    /// # );
+    /// # assert_eq!(CalendarPreferences::from(&"und-US-u-ca-islamic-foo".parse::<icu::locale::Locale>().unwrap()).resolved_algorithm(),
+    /// #     CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil))
+    /// # );
+    /// # assert_eq!(CalendarPreferences::from(&"und-US-u-ca-hebrew-foo".parse::<icu::locale::Locale>().unwrap()).resolved_algorithm(),
+    /// #     CalendarAlgorithm::Hebrew
+    /// # );
     /// ```
     pub fn resolved_algorithm(self) -> CalendarAlgorithm {
         use icu_locale_core::subtags::{region, Region};
