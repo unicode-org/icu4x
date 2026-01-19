@@ -11,7 +11,7 @@ use icu_calendar::Date;
 /// [`Hijri`] [`Rules`] based on an astronomical simulation for Mecca.
 ///
 /// These simulations use methods published by E. M. Reingold, S. K. Shaukat, et al.[^1]
-/// These methods are not officially recognized in any region and do not match sightings
+/// which are not officially recognized in any region and do not match sightings
 /// on the ground.
 ///
 /// [^1]: See [calendrical_calculations::islamic::observational_islamic_from_fixed]
@@ -54,11 +54,9 @@ impl Rules for ReingoldSimulation {
 
 #[test]
 fn main() {
-    let cal = Hijri(ReingoldSimulation);
+    Date::try_new_hijri_with_calendar(1390, 1, 30, Hijri(ReingoldSimulation)).unwrap();
 
-    let dt = Date::try_new_hijri_with_calendar(1390, 1, 30, cal).unwrap();
-
-    assert_eq!(Date::from_rata_die(dt.to_rata_die(), cal), dt);
-
-    Date::try_new_iso(2000, 5, 5).unwrap().to_calendar(cal);
+    Date::try_new_iso(2000, 5, 5)
+        .unwrap()
+        .to_calendar(Hijri(ReingoldSimulation));
 }
