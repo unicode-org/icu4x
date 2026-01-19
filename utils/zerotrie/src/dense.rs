@@ -197,10 +197,12 @@ impl<'a> ZeroAsciiDenseSparse2dTrieBorrowed<'a> {
             .checked_mul(suffix_count)
             .and_then(|v| v.checked_add(column_index))?;
         let Some(offset) = self.dense.get(index) else {
-            unreachable!(
+            debug_assert!(
+                false,
                 "matrix index out of bounds: row={}, col={}, suffix_count={}",
                 row_index, column_index, suffix_count
             );
+            return None;
         };
         if offset == DenseType::MAX {
             // There is an entry in the dense matrix but it is a None value
