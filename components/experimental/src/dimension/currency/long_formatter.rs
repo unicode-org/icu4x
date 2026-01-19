@@ -174,6 +174,13 @@ impl LongCurrencyFormatter {
             .patterns
             .get(operands, &self.plural_rules);
 
-        pattern.interpolate((self.decimal_formatter.format(value), display_name))
+        self.decimal_formatter.format_sign(
+            value.sign,
+            pattern.interpolate((
+                self.decimal_formatter
+                    .format_unsigned(icu_decimal::Cow::Borrowed(&value.absolute)),
+                display_name,
+            )),
+        )
     }
 }

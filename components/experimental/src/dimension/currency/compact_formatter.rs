@@ -199,9 +199,28 @@ impl CompactCurrencyFormatter {
         // TODO: The current behavior is the behavior when there is no compact currency pattern found.
         // Therefore, in the next PR, we will add the code to handle using the compact currency patterns.
 
-        pattern.interpolate((
-            self.compact_decimal_formatter.format_fixed_decimal(value),
-            currency_placeholder,
-        ))
+        let (compact_pattern, significand) = self
+            .compact_decimal_formatter
+            .compact_data
+            .get()
+            .get_pattern_and_significand(
+                &value.absolute,
+                &self.compact_decimal_formatter.plural_rules,
+            );
+
+        self.compact_decimal_formatter
+            .decimal_formatter
+            .format_sign(
+                value.sign,
+                pattern.interpolate((
+                    compact_pattern
+                        .unwrap_or(icu_pattern::SinglePlaceholderPattern::PASS_THROUGH)
+                        .interpolate([self
+                            .compact_decimal_formatter
+                            .decimal_formatter
+                            .format_unsigned(icu_decimal::Cow::Owned(significand))]),
+                    currency_placeholder,
+                )),
+            )
     }
 }

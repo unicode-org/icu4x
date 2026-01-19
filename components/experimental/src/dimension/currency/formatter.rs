@@ -157,6 +157,13 @@ impl CurrencyFormatter {
             .get()
             .name_and_pattern(self.options.width, currency_code);
 
-        pattern.interpolate((self.decimal_formatter.format(value), currency_str))
+        self.decimal_formatter.format_sign(
+            value.sign,
+            pattern.interpolate((
+                self.decimal_formatter
+                    .format_unsigned(icu_decimal::Cow::Borrowed(&value.absolute)),
+                currency_str,
+            )),
+        )
     }
 }

@@ -24,7 +24,7 @@ mod tests {
         // Negative case
         let negative_value = "-12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&negative_value, &currency_code);
-        assert_writeable_eq!(formatted_currency, "$-12K");
+        assert_writeable_eq!(formatted_currency, "-$12K");
     }
 
     #[test]
@@ -58,7 +58,7 @@ mod tests {
         // Negative case
         let negative_value = "-12345.67".parse().unwrap();
         let formatted_currency = fmt.format_fixed_decimal(&negative_value, &currency_code);
-        assert_writeable_eq!(formatted_currency, "¥-1.2万");
+        assert_writeable_eq!(formatted_currency, "-¥1.2万");
     }
 
     #[test]
@@ -79,7 +79,7 @@ mod tests {
         // TODO(#6064)
         assert_writeable_eq!(
             formatted_currency,
-            "\u{200f}\u{61c}-١٢\u{a0}ألف\u{a0}ج.م.\u{200f}"
+            "\u{61c}-\u{200f}١٢\u{a0}ألف\u{a0}ج.م.\u{200f}"
         );
     }
 }
