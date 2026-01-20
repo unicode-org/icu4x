@@ -8,7 +8,7 @@ use alloc::vec::Vec;
 
 /// Transform the request field in a list of requested field based on the available fields.
 /// a single field can be transformed into 2 fields, or just be removed.
-/// https://www.unicode.org/reports/tr35/tr35-personNames.html#handle-core-and-prefix
+/// <https://www.unicode.org/reports/tr35/tr35-personNames.html#handle-core-and-prefix>
 pub fn handle_field_modifier_core_prefix(
     available_fields: &[NameField],
     requested_field: NameField,

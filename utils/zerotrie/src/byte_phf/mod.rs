@@ -66,7 +66,7 @@ const P_FAST_MAX: u8 = 95;
 const Q_FAST_MAX: u8 = 95;
 
 /// The maximum allowable value of `p`. This could be raised if found to be necessary.
-/// Values exceeding P_FAST_MAX could use a different `p` algorithm by modifying [`f1`].
+/// Values exceeding `P_FAST_MAX` could use a different `p` algorithm by modifying [`f1`].
 #[cfg(feature = "alloc")] // used in the builder code
 const P_REAL_MAX: u8 = P_FAST_MAX;
 

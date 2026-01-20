@@ -10,7 +10,7 @@ use resb::binary::BinaryDeserializerError;
 use serde::de::*;
 use serde::Deserialize;
 
-/// Deserialize a ZoneInfo64
+/// Deserialize a [`ZoneInfo64`]
 pub(crate) fn deserialize<'a>(resb: &'a [u32]) -> Result<ZoneInfo64<'a>, BinaryDeserializerError> {
     let ZoneInfo64Raw {
         zones,

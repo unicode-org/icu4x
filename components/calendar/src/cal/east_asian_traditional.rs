@@ -936,7 +936,7 @@ impl EastAsianTraditionalYear {
     }
 }
 
-/// The struct containing compiled ChineseData
+/// A packed [`EastAsianTraditionalYear`]
 ///
 /// Bit structure (little endian: note that shifts go in the opposite direction!)
 ///

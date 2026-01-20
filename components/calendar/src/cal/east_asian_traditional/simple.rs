@@ -79,7 +79,7 @@ impl super::EastAsianTraditionalYear {
     /// Stays anchored in the Gregorian calendar, even as the Gregorian calendar drifts
     /// from the seasons in the distant future and distant past.
     pub(super) fn simple(utc_offset: Milliseconds, related_iso: i32) -> EastAsianTraditionalYear {
-        /// calculates the largest moment such that moment = base_moment + n * duration lands on rata_die (< rata_die + 1)
+        /// calculates the largest moment such that `moment = base_moment + n * duration` lands on `rata_die` (< `rata_die + 1`)
         fn periodic_duration_on_or_before(
             rata_die: RataDie,
             base_moment: LocalMoment,

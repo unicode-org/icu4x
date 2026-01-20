@@ -102,7 +102,7 @@ impl ToExtendedYear for HebrewYear {
 
 impl HebrewYear {
     /// Convenience method to compute for a given year. Don't use this if you actually need
-    /// a YearInfo that you want to call .new_year() on.
+    /// a [`YearInfo`] that you want to call `.new_year()` on.
     fn compute(value: i32) -> Self {
         Self {
             keviyah: YearInfo::compute_for(value).keviyah,
@@ -384,11 +384,10 @@ mod tests {
     pub const AV: Month = Month::new(11);
     pub const ELUL: Month = Month::new(12);
 
-    /// The leap years used in the tests below
     const LEAP_YEARS_IN_TESTS: [i32; 1] = [5782];
-    /// (iso, hebrew) pairs of testcases. If any of the years here
-    /// are leap years please add them to LEAP_YEARS_IN_TESTS (we have this manually
-    /// so we don't end up exercising potentially buggy codepaths to test this)
+    // If any of the years here are leap years, add them to
+    // [`LEAP_YEARS_IN_TESTS`] (we have this manually so we don't
+    // end up exercising potentially buggy codepaths to test this)
     #[expect(clippy::type_complexity)]
     const ISO_HEBREW_DATE_PAIRS: [((i32, u8, u8), (i32, Month, u8)); 48] = [
         ((2021, 1, 10), (5781, TEVET, 26)),

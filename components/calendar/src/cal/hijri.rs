@@ -548,7 +548,7 @@ impl HijriYear {
     }
 }
 
-/// The struct containing compiled Hijri YearInfo
+/// A packed [`HijriYear`]
 ///
 /// * `start_day` has to be within 5 days of the start of the year of the [`TabularAlgorithm`].
 /// * `month_lengths[n - 1]` has either 6 or 7 long months.

@@ -741,7 +741,6 @@ impl WordBreakType for Latin1 {
     }
 }
 
-/// handle_complex_language impl for UTF8 iterators
 fn handle_complex_language_utf8<T>(
     iter: &mut RuleBreakIterator<'_, '_, T>,
     left_codepoint: T::CharType,

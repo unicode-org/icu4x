@@ -68,7 +68,7 @@ const MERGE_SEPARATOR: char = '\u{fffe}';
 const MERGE_SEPARATOR_BYTE: u8 = 2;
 const MERGE_SEPARATOR_PRIMARY: u32 = 0x02000000;
 
-/// Primary compression low terminator, must be greater than MERGE_SEPARATOR_BYTE.
+/// Primary compression low terminator, must be greater than [`MERGE_SEPARATOR_BYTE`].
 ///
 /// Reserved value in primary second byte if the lead byte is compressible.
 /// Otherwise usable in all CE weight bytes.

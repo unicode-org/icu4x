@@ -291,15 +291,15 @@ impl RelationULE {
 pub(crate) struct AndOrPolarityOperandULE(u8);
 
 // Safety (based on the safety checklist on the ULE trait):
-//  1. AndOrPolarityOperandULE does not include any uninitialized or padding bytes
+//  1. [`AndOrPolarityOperandULE`] does not include any uninitialized or padding bytes
 //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
-/// 2. AndOrPolarityOperandULE is aligned to 1 byte
+/// 2. [`AndOrPolarityOperandULE`] is aligned to 1 byte
 //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
-//  3. The impl of validate_bytes() returns an error if any byte is not valid.
-//  4. The impl of validate_bytes() returns an error if there are extra bytes
+//  3. The impl of `validate_bytes()` returns an error if any byte is not valid.
+//  4. The impl of `validate_bytes()` returns an error if there are extra bytes
 //     (impossible since it is of size 1 byte)
 //  5 The other ULE methods use the default impl.
-//  6. AndOrPolarityOperandULE byte equality is semantic equality.
+//  6. [`AndOrPolarityOperandULE`] byte equality is semantic equality.
 unsafe impl ULE for AndOrPolarityOperandULE {
     fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         for byte in bytes {

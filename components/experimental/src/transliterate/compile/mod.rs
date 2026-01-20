@@ -592,7 +592,7 @@ enum CompileErrorKind {
     InvalidNumber,
     /// Duplicate variable definition.
     DuplicateVariable,
-    /// Invalid UnicodeSet syntax. See `crate::unicodeset_parse`'s [`ParseError`](crate::unicodeset_parse::ParseError).
+    /// Invalid `UnicodeSet` syntax. See `crate::unicodeset_parse`'s [`ParseError`](crate::unicodeset_parse::ParseError).
     UnicodeSetError(crate::unicodeset_parse::ParseError),
 
     // errors originating from compilation step
@@ -610,7 +610,7 @@ enum CompileErrorKind {
     AnchorStartNotAtStart,
     /// The end anchor `$` was not placed at the end of a source.
     AnchorEndNotAtEnd,
-    /// A variable that contains source-only matchers (e.g., UnicodeSets) was used on the target side.
+    /// A variable that contains source-only matchers (e.g., `UnicodeSets`) was used on the target side.
     SourceOnlyVariable,
     /// No matching segment for this backreference was found.
     BackReferenceOutOfRange,

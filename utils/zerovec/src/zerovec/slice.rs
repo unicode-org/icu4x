@@ -19,7 +19,7 @@ use core::ops::Range;
 ///
 /// # Examples
 ///
-/// Const-construct a ZeroSlice of u16:
+/// Const-construct a [`ZeroSlice`] of u16:
 ///
 /// ```
 /// use zerovec::ule::AsULE;
@@ -74,7 +74,7 @@ where
 
     /// Construct a `&ZeroSlice<T>` from a slice of ULEs.
     ///
-    /// This function can be used for constructing ZeroVecs in a const context, avoiding
+    /// This function can be used for constructing [`ZeroVec`]s in a const context, avoiding
     /// parsing checks.
     ///
     /// See [`ZeroSlice`] for an example.
@@ -216,7 +216,7 @@ where
     }
 
     /// Gets a subslice of elements within a certain range. Returns `None` if the range
-    /// is out of bounds of this `ZeroSlice`.
+    /// is out of bounds of this [`ZeroSlice`].
     ///
     /// # Example
     ///
@@ -403,7 +403,7 @@ where
     }
 }
 
-/// An iterator over elements in a VarZeroVec
+/// An iterator over elements in a [`ZeroSlice`]
 #[derive(Debug)]
 pub struct ZeroSliceIter<'a, T: AsULE>(core::slice::Iter<'a, T::ULE>);
 

@@ -8,7 +8,7 @@ use icu::decimal::provider::*;
 
 /// A data provider that returns _something_ for structs it knows about.
 ///
-/// Similar to EmptyProvider but returns Ok with a default value.
+/// Similar to `EmptyProvider` but returns Ok with a default value.
 pub(crate) struct DebugProvider;
 
 impl<M: DataMarker> DataProvider<M> for DebugProvider

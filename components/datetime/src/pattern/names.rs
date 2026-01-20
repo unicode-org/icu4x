@@ -624,7 +624,7 @@ pub struct FixedCalendarDateTimeNames<C, FSet: DateTimeNamesMarker = CompositeDa
     _calendar: PhantomData<C>,
 }
 
-/// Extra metadata associated with DateTimeNames but not DateTimeFormatter.
+/// Extra metadata associated with [`FixedCalendarDateTimeNames`] but not [`DateTimeFormatter`].
 #[derive(Debug, Clone)]
 pub(crate) struct DateTimeNamesMetadata {
     zone_checksum: Option<u64>,
@@ -638,7 +638,7 @@ impl DateTimeNamesMetadata {
             zone_checksum: None,
         }
     }
-    /// If mz_periods is already populated, we can't load anything else because
+    /// If `mz_periods` is already populated, we can't load anything else because
     /// we can't verify the checksum. Set a blank checksum in this case.
     #[inline]
     pub(crate) fn new_from_previous<M: DateTimeNamesMarker>(names: &RawDateTimeNames<M>) -> Self {

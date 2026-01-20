@@ -211,7 +211,7 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(auto, getter)]
-        /// Returns the DateTime for the UTC zone name reference time
+        /// Returns the `DateTime` for the UTC zone name reference time
         pub fn zone_name_date_time(&self) -> Option<IsoDateTime> {
             let datetime = self.zone_name_timestamp?.to_zoned_date_time_iso();
             Some(IsoDateTime {

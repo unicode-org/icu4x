@@ -218,11 +218,11 @@ impl PluralCategory {
         .copied()
     }
 
-    /// Returns the PluralCategory corresponding to given TR35 string.
+    /// Returns the [`PluralCategory`] corresponding to given TR35 string.
     pub fn get_for_cldr_string(category: &str) -> Option<PluralCategory> {
         Self::get_for_cldr_bytes(category.as_bytes())
     }
-    /// Returns the PluralCategory corresponding to given TR35 string as bytes
+    /// Returns the [`PluralCategory`] corresponding to given TR35 string as bytes
     pub fn get_for_cldr_bytes(category: &[u8]) -> Option<PluralCategory> {
         match category {
             b"zero" => Some(PluralCategory::Zero),

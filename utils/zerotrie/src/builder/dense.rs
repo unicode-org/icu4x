@@ -171,7 +171,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
 }
 
 impl ZeroAsciiDenseSparse2dTrieOwned {
-    /// Builds one of these from a two-dimensional BTreeMap and a delimiter.
+    /// Builds one of these from a two-dimensional [`BTreeMap`] and a delimiter.
     ///
     /// Keep in mind the recommendations for optimal data size described in
     /// the [class docs].

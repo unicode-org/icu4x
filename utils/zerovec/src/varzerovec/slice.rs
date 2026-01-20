@@ -78,7 +78,7 @@ use core::ops::Range;
 /// ## Iterate over Windows
 ///
 /// Although [`VarZeroSlice`] does not itself have a `.windows` iterator like
-/// [core::slice::Windows], this behavior can be easily modeled using an iterator:
+/// [`core::slice::Windows`], this behavior can be easily modeled using an iterator:
 ///
 /// ```
 /// use zerovec::VarZeroVec;
@@ -104,7 +104,7 @@ pub struct VarZeroSlice<T: ?Sized, F = Index16> {
 }
 
 impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
-    /// Construct a new empty VarZeroSlice
+    /// Construct a new empty [`VarZeroSlice`]
     pub const fn new_empty() -> &'static Self {
         // The empty VZV is special-cased to the empty slice
         unsafe { mem::transmute(&[] as &[u8]) }
@@ -265,7 +265,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
         VarZeroVec(VarZeroVecInner::Borrowed(self))
     }
 
-    /// Parse a VarZeroSlice from a slice of the appropriate format
+    /// Parse a [`VarZeroSlice`] from a slice of the appropriate format
     ///
     /// Slices of the right format can be obtained via [`VarZeroSlice::as_bytes()`]
     pub fn parse_bytes<'a>(slice: &'a [u8]) -> Result<&'a Self, UleError> {

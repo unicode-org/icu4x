@@ -159,7 +159,7 @@ impl From<FieldFormality> for FieldModifier {
     }
 }
 
-/// Field Modifiers Set. (must be the same as FieldModifier repr)
+/// Field Modifiers Set. (must be the same as `FieldModifier` repr)
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Copy)]
 pub struct FieldModifierSet {
     pub(crate) value: u32,

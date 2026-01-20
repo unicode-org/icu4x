@@ -149,7 +149,7 @@ impl FieldSymbol {
         })
     }
 
-    /// Returns the index associated with this FieldSymbol.
+    /// Returns the index associated with this [`FieldSymbol`].
     #[cfg(feature = "datagen")]
     fn idx_for_skeleton(self) -> u8 {
         match self {
@@ -170,7 +170,7 @@ impl FieldSymbol {
     /// Compares this enum with other solely based on the enum variant,
     /// ignoring the enum's data.
     ///
-    /// Second and DecimalSecond are considered equal.
+    /// [`Second`] and [`DecimalSecond`] are considered equal.
     #[cfg(feature = "datagen")]
     pub(crate) fn skeleton_cmp(self, other: Self) -> Ordering {
         self.idx_for_skeleton().cmp(&other.idx_for_skeleton())
@@ -273,7 +273,7 @@ impl FieldSymbol {
     /// when serializing them to present them in a consistent order.
     ///
     /// This ordering is taken by the order of the fields listed in the [UTS 35 Date Field Symbol Table]
-    /// (https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table), and are generally
+    /// (<https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table>), and are generally
     /// ordered most significant to least significant.
     fn get_canonical_order(self) -> u8 {
         match self {

@@ -14,7 +14,7 @@ use icu_calendar::Date;
 /// which are not officially recognized in any region and do not match sightings
 /// on the ground.
 ///
-/// [^1]: See [calendrical_calculations::islamic::observational_islamic_from_fixed]
+/// [^1]: See [`calendrical_calculations::islamic::observational_islamic_from_fixed`]
 #[derive(Debug, Clone, Copy)]
 struct ReingoldSimulation;
 

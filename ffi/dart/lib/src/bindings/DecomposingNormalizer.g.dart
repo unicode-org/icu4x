@@ -24,7 +24,7 @@ final class DecomposingNormalizer implements ffi.Finalizable {
   @_DiplomatFfiUse('icu4x_DecomposingNormalizer_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_DecomposingNormalizer_destroy_mv1));
 
-  /// Construct a new DecomposingNormalizer instance for NFD using compiled data.
+  /// Construct a new `DecomposingNormalizer` instance for NFD using compiled data.
   ///
   /// See the [Rust documentation for `new_nfd`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
   factory DecomposingNormalizer.nfd() {
@@ -32,7 +32,7 @@ final class DecomposingNormalizer implements ffi.Finalizable {
     return DecomposingNormalizer._fromFfi(result, []);
   }
 
-  /// Construct a new DecomposingNormalizer instance for NFD using a particular data source.
+  /// Construct a new `DecomposingNormalizer` instance for NFD using a particular data source.
   ///
   /// See the [Rust documentation for `new_nfd`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
   ///
@@ -45,7 +45,7 @@ final class DecomposingNormalizer implements ffi.Finalizable {
     return DecomposingNormalizer._fromFfi(result.union.ok, []);
   }
 
-  /// Construct a new DecomposingNormalizer instance for NFKD using compiled data.
+  /// Construct a new `DecomposingNormalizer` instance for NFKD using compiled data.
   ///
   /// See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
   factory DecomposingNormalizer.nfkd() {
@@ -53,7 +53,7 @@ final class DecomposingNormalizer implements ffi.Finalizable {
     return DecomposingNormalizer._fromFfi(result, []);
   }
 
-  /// Construct a new DecomposingNormalizer instance for NFKD using a particular data source.
+  /// Construct a new `DecomposingNormalizer` instance for NFKD using a particular data source.
   ///
   /// See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/2.1.1/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
   ///

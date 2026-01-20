@@ -11,7 +11,7 @@ use core::mem;
 use core::ops::Range;
 
 /// This trait allows switching between different possible internal
-/// representations of VarZeroVec.
+/// representations of [`VarZeroVec`](super::VarZeroVec).
 ///
 /// Currently this crate supports three formats: [`Index8`], [`Index16`] and [`Index32`],
 /// with [`Index16`] being the default for all [`VarZeroVec`](super::VarZeroVec)
@@ -165,7 +165,7 @@ unsafe impl IntegerULE for RawBytesULE<4> {
     }
 }
 
-/// A more parsed version of `VarZeroSlice`. This type is where most of the VarZeroVec
+/// A more parsed version of [`VarZeroSlice`](super::VarZeroSlice). This type is where most of the[ `VarZeroVec`](super::VarZeroVec)
 /// internal representation code lies.
 ///
 /// This is *basically* an `&'a [u8]` to a zero copy buffer, but split out into
@@ -214,7 +214,7 @@ impl<'a, T: VarULE + ?Sized, F> VarZeroVecComponents<'a, T, F> {
     }
 }
 impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F> {
-    /// Construct a new VarZeroVecComponents, checking invariants about the overall buffer size:
+    /// Construct a new [`VarZeroVecComponents`], checking invariants about the overall buffer size:
     ///
     /// - There must be either zero or at least four bytes (if four, this is the "length" parsed as a usize)
     /// - There must be at least `4*(length - 1) + 4` bytes total, to form the array `indices` of indices
@@ -254,7 +254,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         Self::parse_bytes_with_length(len_u32?, rest)
     }
 
-    /// Construct a new VarZeroVecComponents, checking invariants about the overall buffer size:
+    /// Construct a new [`VarZeroVecComponents`], checking invariants about the overall buffer size:
     ///
     /// - There must be at least `4*len` bytes total, to form the array `indices` of indices.
     /// - `indices[i]..indices[i+1]` must index into a valid section of
@@ -420,7 +420,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         self.indices.len()
     }
 
-    /// Check the internal invariants of VarZeroVecComponents:
+    /// Check the internal invariants of [`VarZeroVecComponents`]:
     ///
     /// - `indices[i]..indices[i+1]` must index into a valid section of
     ///   `things`, such that it parses to a `T::VarULE`
@@ -428,8 +428,8 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     ///   `things`, such that it parses to a `T::VarULE`
     /// - `indices` is monotonically increasing
     ///
-    /// This method is NOT allowed to call any other methods on VarZeroVecComponents since all other methods
-    /// assume that the slice has been passed through check_indices_and_things
+    /// This method is NOT allowed to call any other methods on [`VarZeroVecComponents`] since all other methods
+    /// assume that the slice has been passed through [`Self::check_indices_and_things`]
     #[inline]
     #[expect(clippy::len_zero)] // more explicit to enforce safety invariants
     fn check_indices_and_things(self) -> Result<(), VarZeroVecFormatError> {
@@ -471,7 +471,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         Ok(())
     }
 
-    /// Create an iterator over the Ts contained in VarZeroVecComponents
+    /// Create an iterator over the Ts contained in [`VarZeroVecComponents`]
     #[inline]
     pub fn iter(self) -> VarZeroSliceIter<'a, T, F> {
         VarZeroSliceIter::new(self)
@@ -501,7 +501,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     }
 }
 
-/// An iterator over VarZeroSlice
+/// An iterator over [`VarZeroSlice`](super::VarZeroSlice)
 #[derive(Debug)]
 pub struct VarZeroSliceIter<'a, T: ?Sized, F = Index16> {
     components: VarZeroVecComponents<'a, T, F>,
@@ -677,7 +677,7 @@ where
     }
 }
 
-/// Collects the bytes for a VarZeroSlice into a Vec.
+/// Collects the bytes for a [`VarZeroSlice`](super::VarZeroSlice) into a [`Vec`].
 #[cfg(feature = "alloc")]
 pub fn get_serializable_bytes_non_empty<T, A, F>(elements: &[A]) -> Option<alloc::vec::Vec<u8>>
 where
@@ -696,8 +696,8 @@ where
     Some(output)
 }
 
-/// Writes the bytes for a VarZeroLengthlessSlice into an output buffer.
-/// Usable for a VarZeroSlice if you first write the length bytes.
+/// Writes the bytes for a [`VarZeroLengthlessSlice`](super::lenghtless::VarZeroLengthlessSlice) into an output buffer.
+/// Usable for a [`VarZeroSlice`](super::VarZeroSlice) if you first write the length bytes.
 ///
 /// Every byte in the buffer will be initialized after calling this function.
 ///
@@ -752,7 +752,7 @@ where
     assert_eq!(dat_offset, output.len());
 }
 
-/// Writes the bytes for a VarZeroSlice into an output buffer.
+/// Writes the bytes for a [`VarZeroSlice`](super::VarZeroSlice) into an output buffer.
 ///
 /// Every byte in the buffer will be initialized after calling this function.
 ///

@@ -26,7 +26,7 @@ use core::str::FromStr;
 /// multiple possible orderings. Depending on your use case, two orderings are available:
 ///
 /// 1. A string ordering, suitable for stable serialization: [`Locale::strict_cmp`]
-/// 2. A struct ordering, suitable for use with a BTreeSet: [`Locale::total_cmp`]
+/// 2. A struct ordering, suitable for use with a `BTreeSet`: [`Locale::total_cmp`]
 ///
 /// See issue: <https://github.com/unicode-org/icu4x/issues/1215>
 ///

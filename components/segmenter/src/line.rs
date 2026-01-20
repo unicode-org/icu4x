@@ -258,7 +258,7 @@ impl LineBreakOptions<'_> {
 /// Unicode Standard Annex #14, _Unicode Line Breaking Algorithm_) as well as
 /// line break opportunities ([definition LD3][LD3]).
 /// It does not distinguish them.  Callers requiring that distinction can check
-/// the Line_Break property of the code point preceding the break against those
+/// the `Line_Break` property of the code point preceding the break against those
 /// listed in rules [LB4][LB4] and [LB5][LB5], special-casing the end of text
 /// according to [LB3][LB3].
 ///
@@ -779,7 +779,7 @@ fn is_break_utf32_by_loose(
     None
 }
 
-/// A trait allowing for LineBreakIterator to be generalized to multiple string iteration methods.
+/// A trait allowing for `LineBreakIterator` to be generalized to multiple string iteration methods.
 ///
 /// This is implemented by ICU4X for several common string types.
 ///
@@ -1172,7 +1172,7 @@ impl LineBreakType for PotentiallyIllFormedUtf8 {
         line_handle_complex_language_utf8(iter, left_codepoint)
     }
 }
-/// line_handle_complex_language impl for UTF8 iterators
+
 fn line_handle_complex_language_utf8<T>(
     iter: &mut LineBreakIterator<'_, '_, T>,
     left_codepoint: char,
