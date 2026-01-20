@@ -34,7 +34,7 @@ macro_rules! make_any_calendar {
         )*
     ) => {
         $(#[$any_calendar_meta])*
-        #[derive(Debug, Clone, Copy)]
+        #[derive(Debug, Clone)]
         // TODO(#3469): Decide on the best way to implement Ord.
         pub enum $any_calendar_ident {
             $(

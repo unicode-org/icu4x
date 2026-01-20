@@ -55,7 +55,7 @@ pub mod ffi {
             calendar: &Calendar,
         ) -> Result<DateTime, Rfc9557ParseError> {
             let icu_time::DateTime { date, time } =
-                icu_time::DateTime::try_from_utf8(v, calendar.0)?;
+                icu_time::DateTime::try_from_utf8(v, calendar.0.clone())?;
             Ok(DateTime {
                 date: Box::new(Date(date)),
                 time: Box::new(Time(time)),
