@@ -123,8 +123,8 @@ impl Mul<&IcuRatio> for &IcuRatio {
     }
 }
 
-impl MulAssign<IcuRatio> for IcuRatio {
-    fn mul_assign(&mut self, rhs: IcuRatio) {
+impl MulAssign<Self> for IcuRatio {
+    fn mul_assign(&mut self, rhs: Self) {
         self.0 *= rhs.0;
     }
 }
@@ -133,10 +133,10 @@ impl MulAssign<&SiPrefix> for IcuRatio {
     fn mul_assign(&mut self, rhs: &SiPrefix) {
         match rhs.base {
             Base::Decimal => {
-                *self *= IcuRatio::ten().pow(rhs.power as i32);
+                *self *= Self::ten().pow(rhs.power as i32);
             }
             Base::Binary => {
-                *self *= IcuRatio::two().pow(rhs.power as i32);
+                *self *= Self::two().pow(rhs.power as i32);
             }
         }
     }
@@ -448,7 +448,7 @@ impl FromStr for IcuRatio {
             Cow::Borrowed(number_str)
         };
         if number_str.is_empty() {
-            return Ok(IcuRatio::zero());
+            return Ok(Self::zero());
         }
 
         let mut parts = number_str.split(['e', 'E']);
@@ -460,7 +460,7 @@ impl FromStr for IcuRatio {
 
         let significand = match significand {
             Some(significand) => parse_fraction(significand)?,
-            None => IcuRatio::one(),
+            None => Self::one(),
         };
 
         let exponent = match exponent {
@@ -468,9 +468,9 @@ impl FromStr for IcuRatio {
                 let exponent = exponent
                     .parse::<i32>()
                     .map_err(|_| RatioFromStrError::ExponentPartIsNotAnInteger)?;
-                IcuRatio::ten().pow(exponent)
+                Self::ten().pow(exponent)
             }
-            None => IcuRatio::one(),
+            None => Self::one(),
         };
 
         Ok(significand * exponent)

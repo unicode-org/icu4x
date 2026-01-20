@@ -34,7 +34,7 @@ pub mod ffi {
         /// [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
         #[diplomat::rust_link(icu::plurals::PluralCategory::get_for_cldr_string, FnInEnum)]
         #[diplomat::rust_link(icu::plurals::PluralCategory::get_for_cldr_bytes, FnInEnum)]
-        pub fn get_for_cldr_string(s: &DiplomatStr) -> Option<PluralCategory> {
+        pub fn get_for_cldr_string(s: &DiplomatStr) -> Option<Self> {
             icu_plurals::PluralCategory::get_for_cldr_bytes(s).map(Into::into)
         }
     }
@@ -54,11 +54,11 @@ pub mod ffi {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "cardinal")]
         #[cfg(feature = "compiled_data")]
         #[diplomat::demo(default_constructor)]
-        pub fn create_cardinal(locale: &Locale) -> Result<Box<PluralRules>, DataError> {
+        pub fn create_cardinal(locale: &Locale) -> Result<Box<Self>, DataError> {
             let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
-            Ok(Box::new(PluralRules(
-                icu_plurals::PluralRules::try_new_cardinal(prefs)?,
-            )))
+            Ok(Box::new(Self(icu_plurals::PluralRules::try_new_cardinal(
+                prefs,
+            )?)))
         }
         /// Construct an [`PluralRules`] for the given locale, for cardinal numbers, using a particular data source.
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new_cardinal, FnInStruct)]
@@ -69,9 +69,9 @@ pub mod ffi {
         pub fn create_cardinal_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-        ) -> Result<Box<PluralRules>, DataError> {
+        ) -> Result<Box<Self>, DataError> {
             let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
-            Ok(Box::new(PluralRules(
+            Ok(Box::new(Self(
                 icu_plurals::PluralRules::try_new_cardinal_with_buffer_provider(
                     provider.get()?,
                     prefs,
@@ -84,11 +84,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ordinal")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_ordinal(locale: &Locale) -> Result<Box<PluralRules>, DataError> {
+        pub fn create_ordinal(locale: &Locale) -> Result<Box<Self>, DataError> {
             let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
-            Ok(Box::new(PluralRules(
-                icu_plurals::PluralRules::try_new_ordinal(prefs)?,
-            )))
+            Ok(Box::new(Self(icu_plurals::PluralRules::try_new_ordinal(
+                prefs,
+            )?)))
         }
         /// Construct an [`PluralRules`] for the given locale, for ordinal numbers, using a particular data source.
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new_ordinal, FnInStruct)]
@@ -99,9 +99,9 @@ pub mod ffi {
         pub fn create_ordinal_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-        ) -> Result<Box<PluralRules>, DataError> {
+        ) -> Result<Box<Self>, DataError> {
             let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
-            Ok(Box::new(PluralRules(
+            Ok(Box::new(Self(
                 icu_plurals::PluralRules::try_new_ordinal_with_buffer_provider(
                     provider.get()?,
                     prefs,
@@ -130,8 +130,8 @@ pub mod ffi {
         /// Construct for a given string representing a number
         #[diplomat::rust_link(icu::plurals::PluralOperands::from_str, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
-        pub fn from_string(s: &DiplomatStr) -> Result<Box<PluralOperands>, DecimalParseError> {
-            Ok(Box::new(PluralOperands(icu_plurals::PluralOperands::from(
+        pub fn from_string(s: &DiplomatStr) -> Result<Box<Self>, DecimalParseError> {
+            Ok(Box::new(Self(icu_plurals::PluralOperands::from(
                 &fixed_decimal::Decimal::try_from_utf8(s)?,
             ))))
         }
@@ -141,8 +141,8 @@ pub mod ffi {
         #[diplomat::attr(dart, rename = "from_int")]
         #[diplomat::attr(js, rename = "from_big_int")]
         #[diplomat::attr(supports = method_overloading, rename = "from")]
-        pub fn from_int64(i: i64) -> Box<PluralOperands> {
-            Box::new(PluralOperands(icu_plurals::PluralOperands::from(i)))
+        pub fn from_int64(i: i64) -> Box<Self> {
+            Box::new(Self(icu_plurals::PluralOperands::from(i)))
         }
 
         /// Construct from a `FixedDecimal`
@@ -170,7 +170,7 @@ pub mod ffi {
     impl PluralCategories {
         fn from_iter(i: impl Iterator<Item = icu_plurals::PluralCategory>) -> Self {
             i.fold(
-                PluralCategories {
+                Self {
                     zero: false,
                     one: false,
                     two: false,

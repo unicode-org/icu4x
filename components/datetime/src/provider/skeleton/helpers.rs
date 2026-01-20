@@ -117,12 +117,12 @@ pub struct SkeletonQuality(u32);
 
 impl SkeletonQuality {
     /// Returns the worst possible quality measure.
-    pub fn worst() -> SkeletonQuality {
-        SkeletonQuality(u32::MAX)
+    pub fn worst() -> Self {
+        Self(u32::MAX)
     }
     /// Returns the best possible quality measure.
-    pub fn best() -> SkeletonQuality {
-        SkeletonQuality(0)
+    pub fn best() -> Self {
+        Self(0)
     }
     /// Returns whether this is an "excellent" match by an arbitrary definition.
     pub fn is_excellent_match(self) -> bool {

@@ -76,7 +76,7 @@ enum FilterError {
 
 impl From<regex::Error> for FilterError {
     fn from(value: regex::Error) -> Self {
-        FilterError::Regex(value)
+        Self::Regex(value)
     }
 }
 
@@ -99,7 +99,7 @@ impl FromStr for Filter {
         let regex = format!("^(?:{})$", regex);
         let regex = Regex::new(&regex)?;
 
-        Ok(Filter {
+        Ok(Self {
             domain: domain.to_owned(),
             regex,
             inverted,

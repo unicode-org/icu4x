@@ -47,7 +47,7 @@ impl Default for Options {
 
 impl From<PathBuf> for Options {
     fn from(root: PathBuf) -> Self {
-        Options {
+        Self {
             root,
             ..Default::default()
         }
@@ -74,7 +74,7 @@ impl FilesystemExporter {
         serializer: Box<dyn AbstractSerializer + Sync>,
         options: Options,
     ) -> Result<Self, DataError> {
-        let result = FilesystemExporter {
+        let result = Self {
             root: options.root,
             manifest: Manifest::for_format(serializer.get_buffer_format())?,
             serializer,

@@ -107,8 +107,8 @@ impl DateFieldsResolver for Indian {
     fn to_rata_die_inner(year: Self::YearInfo, month: u8, day: u8) -> RataDie {
         // This is implemented in terms of other manual impls, might as well reuse them
         let date = IndianDateInner(ArithmeticDate::new_unchecked(year, month, day));
-        let day_of_year_indian = Indian.day_of_year(&date).0; // 1-indexed
-        let days_in_year = Indian.days_in_year(&date);
+        let day_of_year_indian = Self.day_of_year(&date).0; // 1-indexed
+        let days_in_year = Self.days_in_year(&date);
 
         let mut year_iso = date.0.year() + YEAR_OFFSET;
         // days_in_year is a valid day of the year, so we check > not >=
@@ -305,10 +305,10 @@ impl Date<Indian> {
     /// assert_eq!(date_indian.month().ordinal, 10);
     /// assert_eq!(date_indian.day_of_month().0, 12);
     /// ```
-    pub fn try_new_indian(year: i32, month: u8, day: u8) -> Result<Date<Indian>, RangeError> {
+    pub fn try_new_indian(year: i32, month: u8, day: u8) -> Result<Self, RangeError> {
         ArithmeticDate::from_year_month_day(year, month, day, &Indian)
             .map(IndianDateInner)
-            .map(|inner| Date::from_raw(inner, Indian))
+            .map(|inner| Self::from_raw(inner, Indian))
     }
 }
 

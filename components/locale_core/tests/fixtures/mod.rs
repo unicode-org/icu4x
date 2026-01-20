@@ -47,7 +47,7 @@ impl TryFrom<LocaleExtensions> for Extensions {
     type Error = ParseError;
 
     fn try_from(input: LocaleExtensions) -> Result<Self, Self::Error> {
-        let mut ext = Extensions::default();
+        let mut ext = Self::default();
         if let Some(unicode) = input.unicode {
             ext.unicode.keywords = unicode
                 .keywords
@@ -157,7 +157,7 @@ impl TryFrom<LocaleIdentifier> for LanguageIdentifier {
     type Error = ParseError;
 
     fn try_from(input: LocaleIdentifier) -> Result<Self, Self::Error> {
-        LanguageIdentifier::try_from_locale_bytes(input.identifier.as_bytes())
+        Self::try_from_locale_bytes(input.identifier.as_bytes())
     }
 }
 
@@ -165,7 +165,7 @@ impl TryFrom<LocaleIdentifier> for Locale {
     type Error = ParseError;
 
     fn try_from(input: LocaleIdentifier) -> Result<Self, Self::Error> {
-        Locale::try_from_str(&input.identifier)
+        Self::try_from_str(&input.identifier)
     }
 }
 
@@ -189,7 +189,7 @@ impl TryFrom<LocaleSubtags> for LanguageIdentifier {
             .iter()
             .map(|v| v.parse().expect("Failed to parse variant subtag."))
             .collect::<Vec<_>>();
-        Ok(LanguageIdentifier {
+        Ok(Self {
             language,
             script,
             region,
@@ -223,7 +223,7 @@ impl TryFrom<LocaleSubtags> for Locale {
         } else {
             Extensions::default()
         };
-        Ok(Locale {
+        Ok(Self {
             id: LanguageIdentifier {
                 language,
                 script,
@@ -238,10 +238,10 @@ impl TryFrom<LocaleSubtags> for Locale {
 impl From<LocaleError> for ParseError {
     fn from(e: LocaleError) -> Self {
         match e.error.as_str() {
-            "InvalidLanguage" => ParseError::InvalidLanguage,
-            "InvalidSubtag" => ParseError::InvalidSubtag,
-            "InvalidExtension" => ParseError::InvalidExtension,
-            "DuplicatedExtension" => ParseError::DuplicatedExtension,
+            "InvalidLanguage" => Self::InvalidLanguage,
+            "InvalidSubtag" => Self::InvalidSubtag,
+            "InvalidExtension" => Self::InvalidExtension,
+            "DuplicatedExtension" => Self::DuplicatedExtension,
             _ => unreachable!("Unknown error name"),
         }
     }

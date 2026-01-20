@@ -79,8 +79,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::AnyCalendar::new, FnInEnum)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create(kind: CalendarKind) -> Box<Calendar> {
-            Box::new(Calendar(icu_calendar::AnyCalendar::new(kind.into())))
+        pub fn create(kind: CalendarKind) -> Box<Self> {
+            Box::new(Self(icu_calendar::AnyCalendar::new(kind.into())))
         }
 
         /// Creates a new [`Calendar`] for the specified kind, using a particular data source.
@@ -90,8 +90,8 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
             kind: CalendarKind,
-        ) -> Result<Box<Calendar>, DataError> {
-            Ok(Box::new(Calendar(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_calendar::AnyCalendar::try_new_with_buffer_provider(
                     provider.get()?,
                     kind.into(),

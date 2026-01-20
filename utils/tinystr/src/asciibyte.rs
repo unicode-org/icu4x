@@ -143,27 +143,27 @@ impl AsciiByte {
     ///
     /// All bytes MUST be in the range 0 to 127 inclusive.
     #[inline]
-    pub const unsafe fn to_ascii_byte_array<const N: usize>(bytes: &[u8; N]) -> [AsciiByte; N] {
-        *(bytes as *const [u8; N] as *const [AsciiByte; N])
+    pub const unsafe fn to_ascii_byte_array<const N: usize>(bytes: &[u8; N]) -> [Self; N] {
+        *(bytes as *const [u8; N] as *const [Self; N])
     }
 
     #[inline]
-    pub(crate) fn from_decimal_digit(digit: u8) -> AsciiByte {
+    pub(crate) fn from_decimal_digit(digit: u8) -> Self {
         // Note: This code optimizes nicely with no branches.
         match digit {
-            0 => AsciiByte::B48,
-            1 => AsciiByte::B49,
-            2 => AsciiByte::B50,
-            3 => AsciiByte::B51,
-            4 => AsciiByte::B52,
-            5 => AsciiByte::B53,
-            6 => AsciiByte::B54,
-            7 => AsciiByte::B55,
-            8 => AsciiByte::B56,
-            9 => AsciiByte::B57,
+            0 => Self::B48,
+            1 => Self::B49,
+            2 => Self::B50,
+            3 => Self::B51,
+            4 => Self::B52,
+            5 => Self::B53,
+            6 => Self::B54,
+            7 => Self::B55,
+            8 => Self::B56,
+            9 => Self::B57,
             _ => {
                 debug_assert!(false, "not a single digit: {digit}");
-                AsciiByte::B32 // Space
+                Self::B32 // Space
             }
         }
     }

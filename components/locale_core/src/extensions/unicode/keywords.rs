@@ -401,7 +401,7 @@ impl Keywords {
     /// assert_eq!(kw, "ab-cd-ca-gregory-hc-h12".parse().unwrap());
     /// ```
     #[cfg(feature = "alloc")]
-    pub fn extend_from_keywords(&mut self, other: Keywords) {
+    pub fn extend_from_keywords(&mut self, other: Self) {
         for (key, value) in other.0 {
             self.0.insert(key, value);
         }

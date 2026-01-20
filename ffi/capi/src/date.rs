@@ -40,8 +40,8 @@ pub mod ffi {
         /// Creates a new [`IsoDate`] from the specified date.
         #[diplomat::rust_link(icu::calendar::Date::try_new_iso, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
-        pub fn create(year: i32, month: u8, day: u8) -> Result<Box<IsoDate>, CalendarError> {
-            Ok(Box::new(IsoDate(icu_calendar::Date::try_new_iso(
+        pub fn create(year: i32, month: u8, day: u8) -> Result<Box<Self>, CalendarError> {
+            Ok(Box::new(Self(icu_calendar::Date::try_new_iso(
                 year, month, day,
             )?)))
         }
@@ -51,8 +51,8 @@ pub mod ffi {
         #[diplomat::attr(all(supports = named_constructors), named_constructor)]
         #[diplomat::demo(default_constructor)]
         #[diplomat::attr(demo_gen, disable)] // covered by Date
-        pub fn from_rata_die(rd: i64) -> Box<IsoDate> {
-            Box::new(IsoDate(icu_calendar::Date::from_rata_die(
+        pub fn from_rata_die(rd: i64) -> Box<Self> {
+            Box::new(Self(icu_calendar::Date::from_rata_die(
                 icu_calendar::types::RataDie::new(rd),
                 Iso,
             )))
@@ -64,10 +64,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::from_str, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         #[diplomat::attr(demo_gen, disable)] // covered by Date
-        pub fn from_string(v: &DiplomatStr) -> Result<Box<IsoDate>, Rfc9557ParseError> {
-            Ok(Box::new(IsoDate(icu_calendar::Date::try_from_utf8(
-                v, Iso,
-            )?)))
+        pub fn from_string(v: &DiplomatStr) -> Result<Box<Self>, Rfc9557ParseError> {
+            Ok(Box::new(Self(icu_calendar::Date::try_from_utf8(v, Iso)?)))
         }
 
         /// Convert this date to one in a different calendar
@@ -246,9 +244,9 @@ pub mod ffi {
             iso_month: u8,
             iso_day: u8,
             calendar: &Calendar,
-        ) -> Result<Box<Date>, CalendarError> {
+        ) -> Result<Box<Self>, CalendarError> {
             let cal = calendar.0.clone();
-            Ok(Box::new(Date(
+            Ok(Box::new(Self(
                 icu_calendar::Date::try_new_iso(iso_year, iso_month, iso_day)?.to_calendar(cal),
             )))
         }
@@ -264,9 +262,9 @@ pub mod ffi {
             fields: DateFields,
             options: DateFromFieldsOptions,
             calendar: &Calendar,
-        ) -> Result<Box<Date>, CalendarDateFromFieldsError> {
+        ) -> Result<Box<Self>, CalendarDateFromFieldsError> {
             let cal = calendar.0.clone();
-            Ok(Box::new(Date(icu_calendar::Date::try_from_fields(
+            Ok(Box::new(Self(icu_calendar::Date::try_from_fields(
                 fields.into(),
                 options.into(),
                 cal,
@@ -286,7 +284,7 @@ pub mod ffi {
             month_code: &DiplomatStr,
             day: u8,
             calendar: &Calendar,
-        ) -> Result<Box<Date>, CalendarError> {
+        ) -> Result<Box<Self>, CalendarError> {
             let era = if !era_code.is_empty() {
                 Some(core::str::from_utf8(era_code).map_err(|_| CalendarError::UnknownEra)?)
             } else {
@@ -294,7 +292,7 @@ pub mod ffi {
             };
             let month = icu_calendar::types::Month::try_from_utf8(month_code)?.code();
             let cal = calendar.0.clone();
-            Ok(Box::new(Date(icu_calendar::Date::try_new_from_codes(
+            Ok(Box::new(Self(icu_calendar::Date::try_new_from_codes(
                 era, year, month, day, cal,
             )?)))
         }
@@ -303,9 +301,9 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::from_rata_die, FnInStruct)]
         #[diplomat::attr(all(supports = named_constructors), named_constructor)]
         #[diplomat::demo(default_constructor)]
-        pub fn from_rata_die(rd: i64, calendar: &Calendar) -> Result<Box<Date>, CalendarError> {
+        pub fn from_rata_die(rd: i64, calendar: &Calendar) -> Result<Box<Self>, CalendarError> {
             let cal = calendar.0.clone();
-            Ok(Box::new(Date(icu_calendar::Date::from_rata_die(
+            Ok(Box::new(Self(icu_calendar::Date::from_rata_die(
                 icu_calendar::types::RataDie::new(rd),
                 cal,
             ))))
@@ -319,8 +317,8 @@ pub mod ffi {
         pub fn from_string(
             v: &DiplomatStr,
             calendar: &Calendar,
-        ) -> Result<Box<Date>, Rfc9557ParseError> {
-            Ok(Box::new(Date(icu_calendar::Date::try_from_utf8(
+        ) -> Result<Box<Self>, Rfc9557ParseError> {
+            Ok(Box::new(Self(icu_calendar::Date::try_from_utf8(
                 v,
                 calendar.0.clone(),
             )?)))
@@ -329,8 +327,8 @@ pub mod ffi {
         /// Convert this date to one in a different calendar
         #[diplomat::rust_link(icu::calendar::Date::to_calendar, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::Date::convert_any, FnInStruct, hidden)]
-        pub fn to_calendar(&self, calendar: &Calendar) -> Box<Date> {
-            Box::new(Date(self.0.to_calendar(calendar.0.clone())))
+        pub fn to_calendar(&self, calendar: &Calendar) -> Box<Self> {
+            Box::new(Self(self.0.to_calendar(calendar.0.clone())))
         }
 
         /// Converts this date to ISO

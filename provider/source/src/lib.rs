@@ -414,7 +414,7 @@ impl SourceDataProvider {
 impl SourceDataProvider {
     fn check_req<M: DataMarker>(&self, req: DataRequest) -> Result<(), DataError>
     where
-        SourceDataProvider: IterableDataProviderCached<M>,
+        Self: IterableDataProviderCached<M>,
     {
         if <M as DataMarker>::INFO.is_singleton {
             if !req.id.locale.is_unknown() {
@@ -474,7 +474,7 @@ impl SourceDataProvider {
         &self,
     ) -> Result<&HashSet<DataIdentifierCow<'_>>, DataError>
     where
-        SourceDataProvider: IterableDataProviderCached<M>,
+        Self: IterableDataProviderCached<M>,
     {
         self.requests_cache
             .insert_with(M::INFO, || Box::new(OnceLock::new()))
@@ -487,7 +487,7 @@ impl SourceDataProvider {
 
 impl<M: DataMarker> IterableDataProvider<M> for SourceDataProvider
 where
-    SourceDataProvider: IterableDataProviderCached<M>,
+    Self: IterableDataProviderCached<M>,
 {
     fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
         Ok(if <M as DataMarker>::INFO.is_singleton {
@@ -520,8 +520,8 @@ pub enum CollationRootHan {
 impl std::fmt::Display for CollationRootHan {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
         match self {
-            CollationRootHan::Implicit => write!(f, "implicithan"),
-            CollationRootHan::Unihan => write!(f, "unihan"),
+            Self::Implicit => write!(f, "implicithan"),
+            Self::Unihan => write!(f, "unihan"),
         }
     }
 }
@@ -569,8 +569,8 @@ enum TrieType {
 impl std::fmt::Display for TrieType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
         match self {
-            TrieType::Fast => write!(f, "fast"),
-            TrieType::Small => write!(f, "small"),
+            Self::Fast => write!(f, "fast"),
+            Self::Small => write!(f, "small"),
         }
     }
 }

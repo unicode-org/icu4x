@@ -389,7 +389,7 @@ impl ZonedDateTime<Iso, UtcOffset> {
             ((time_millisecs % 1000) as u32) * 1000000,
         )
         .unwrap();
-        ZonedDateTime {
+        Self {
             date: Date::from_rata_die(rata_die, Iso),
             time,
             zone: utc_offset,
@@ -397,7 +397,7 @@ impl ZonedDateTime<Iso, UtcOffset> {
     }
 
     pub(crate) fn to_epoch_milliseconds_utc(self) -> i64 {
-        let ZonedDateTime { date, time, zone } = self;
+        let Self { date, time, zone } = self;
         let days = date.to_rata_die() - UNIX_EPOCH;
         let hours = time.hour.number() as i64;
         let minutes = time.minute.number() as i64;

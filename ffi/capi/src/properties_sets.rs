@@ -86,10 +86,10 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_general_category_group(
             group: crate::unstable::properties_gcg::ffi::GeneralCategoryGroup,
-        ) -> Box<CodePointSetData> {
+        ) -> Box<Self> {
             let data = icu_properties::CodePointMapData::<GeneralCategory>::new().static_to_owned();
 
-            Box::new(CodePointSetData(
+            Box::new(Self(
                 data.as_borrowed()
                     .get_set_for_value_group(group.into_props_group()),
             ))
@@ -107,8 +107,8 @@ pub mod ffi {
         pub fn create_general_category_group_with_provider(
             provider: &DataProvider,
             group: u32,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointMapData::<GeneralCategory>::try_new_unstable(
                     &provider.get_unstable()?,
                 )?
@@ -127,8 +127,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::AsciiHexDigit, Struct)]
         #[diplomat::attr(auto, named_constructor = "ascii_hex_digit")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_ascii_hex_digit() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_ascii_hex_digit() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<AsciiHexDigit>().static_to_owned(),
             ))
         }
@@ -139,8 +139,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_ascii_hex_digit_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<AsciiHexDigit>(
                     &provider.get_unstable()?,
                 )?,
@@ -157,8 +157,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Alnum, Struct)]
         #[diplomat::attr(auto, named_constructor = "alnum")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_alnum() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_alnum() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<Alnum>().static_to_owned(),
             ))
         }
@@ -167,10 +167,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Alnum, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "alnum_with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_alnum_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        pub fn create_alnum_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<Alnum>(
                     &provider.get_unstable()?,
                 )?,
@@ -187,8 +185,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Alphabetic, Struct)]
         #[diplomat::attr(auto, named_constructor = "alphabetic")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_alphabetic() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_alphabetic() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<Alphabetic>().static_to_owned(),
             ))
         }
@@ -199,8 +197,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_alphabetic_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<Alphabetic>(
                     &provider.get_unstable()?,
                 )?,
@@ -217,8 +215,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::BidiControl, Struct)]
         #[diplomat::attr(auto, named_constructor = "bidi_control")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_bidi_control() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_bidi_control() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<BidiControl>().static_to_owned(),
             ))
         }
@@ -229,8 +227,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_bidi_control_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<BidiControl>(
                     &provider.get_unstable()?,
                 )?,
@@ -247,8 +245,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::BidiMirrored, Struct)]
         #[diplomat::attr(auto, named_constructor = "bidi_mirrored")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_bidi_mirrored() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_bidi_mirrored() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<BidiMirrored>().static_to_owned(),
             ))
         }
@@ -259,8 +257,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_bidi_mirrored_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<BidiMirrored>(
                     &provider.get_unstable()?,
                 )?,
@@ -277,8 +275,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Blank, Struct)]
         #[diplomat::attr(auto, named_constructor = "blank")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_blank() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_blank() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<Blank>().static_to_owned(),
             ))
         }
@@ -287,10 +285,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Blank, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "blank_with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_blank_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        pub fn create_blank_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<Blank>(
                     &provider.get_unstable()?,
                 )?,
@@ -307,8 +303,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Cased, Struct)]
         #[diplomat::attr(auto, named_constructor = "cased")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_cased() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_cased() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<Cased>().static_to_owned(),
             ))
         }
@@ -317,10 +313,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Cased, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "cased_with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_cased_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        pub fn create_cased_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<Cased>(
                     &provider.get_unstable()?,
                 )?,
@@ -337,8 +331,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::CaseIgnorable, Struct)]
         #[diplomat::attr(auto, named_constructor = "case_ignorable")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_case_ignorable() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_case_ignorable() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<CaseIgnorable>().static_to_owned(),
             ))
         }
@@ -349,8 +343,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_case_ignorable_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<CaseIgnorable>(
                     &provider.get_unstable()?,
                 )?,
@@ -367,8 +361,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::FullCompositionExclusion, Struct)]
         #[diplomat::attr(auto, named_constructor = "full_composition_exclusion")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_full_composition_exclusion() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_full_composition_exclusion() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<FullCompositionExclusion>()
                     .static_to_owned(),
             ))
@@ -380,8 +374,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_full_composition_exclusion_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<FullCompositionExclusion>(
                     &provider.get_unstable()?,
                 )?,
@@ -398,8 +392,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::ChangesWhenCasefolded, Struct)]
         #[diplomat::attr(auto, named_constructor = "changes_when_casefolded")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_changes_when_casefolded() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_changes_when_casefolded() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<ChangesWhenCasefolded>().static_to_owned(),
             ))
         }
@@ -410,8 +404,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_changes_when_casefolded_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenCasefolded>(
                     &provider.get_unstable()?,
                 )?,
@@ -428,8 +422,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::ChangesWhenCasemapped, Struct)]
         #[diplomat::attr(auto, named_constructor = "changes_when_casemapped")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_changes_when_casemapped() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_changes_when_casemapped() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<ChangesWhenCasemapped>().static_to_owned(),
             ))
         }
@@ -440,8 +434,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_changes_when_casemapped_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenCasemapped>(
                     &provider.get_unstable()?,
                 )?,
@@ -458,8 +452,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::ChangesWhenNfkcCasefolded, Struct)]
         #[diplomat::attr(auto, named_constructor = "changes_when_nfkc_casefolded")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_changes_when_nfkc_casefolded() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_changes_when_nfkc_casefolded() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<ChangesWhenNfkcCasefolded>()
                     .static_to_owned(),
             ))
@@ -471,8 +465,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_changes_when_nfkc_casefolded_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenNfkcCasefolded>(
                     &provider.get_unstable()?,
                 )?,
@@ -489,8 +483,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::ChangesWhenLowercased, Struct)]
         #[diplomat::attr(auto, named_constructor = "changes_when_lowercased")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_changes_when_lowercased() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_changes_when_lowercased() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<ChangesWhenLowercased>().static_to_owned(),
             ))
         }
@@ -501,8 +495,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_changes_when_lowercased_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenLowercased>(
                     &provider.get_unstable()?,
                 )?,
@@ -519,8 +513,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::ChangesWhenTitlecased, Struct)]
         #[diplomat::attr(auto, named_constructor = "changes_when_titlecased")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_changes_when_titlecased() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_changes_when_titlecased() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<ChangesWhenTitlecased>().static_to_owned(),
             ))
         }
@@ -531,8 +525,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_changes_when_titlecased_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenTitlecased>(
                     &provider.get_unstable()?,
                 )?,
@@ -549,8 +543,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::ChangesWhenUppercased, Struct)]
         #[diplomat::attr(auto, named_constructor = "changes_when_uppercased")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_changes_when_uppercased() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_changes_when_uppercased() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<ChangesWhenUppercased>().static_to_owned(),
             ))
         }
@@ -561,8 +555,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_changes_when_uppercased_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<ChangesWhenUppercased>(
                     &provider.get_unstable()?,
                 )?,
@@ -579,8 +573,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Dash, Struct)]
         #[diplomat::attr(auto, named_constructor = "dash")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_dash() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_dash() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<Dash>().static_to_owned(),
             ))
         }
@@ -589,10 +583,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Dash, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "dash_with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_dash_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        pub fn create_dash_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<Dash>(
                     &provider.get_unstable()?,
                 )?,
@@ -609,8 +601,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Deprecated, Struct)]
         #[diplomat::attr(auto, named_constructor = "deprecated")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_deprecated() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_deprecated() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<Deprecated>().static_to_owned(),
             ))
         }
@@ -621,8 +613,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_deprecated_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<Deprecated>(
                     &provider.get_unstable()?,
                 )?,
@@ -639,8 +631,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::DefaultIgnorableCodePoint, Struct)]
         #[diplomat::attr(auto, named_constructor = "default_ignorable_code_point")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_default_ignorable_code_point() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_default_ignorable_code_point() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<DefaultIgnorableCodePoint>()
                     .static_to_owned(),
             ))
@@ -652,8 +644,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_default_ignorable_code_point_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<DefaultIgnorableCodePoint>(
                     &provider.get_unstable()?,
                 )?,
@@ -670,8 +662,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Diacritic, Struct)]
         #[diplomat::attr(auto, named_constructor = "diacritic")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_diacritic() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_diacritic() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<Diacritic>().static_to_owned(),
             ))
         }
@@ -682,8 +674,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_diacritic_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<Diacritic>(
                     &provider.get_unstable()?,
                 )?,
@@ -700,8 +692,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::EmojiModifierBase, Struct)]
         #[diplomat::attr(auto, named_constructor = "emoji_modifier_base")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_emoji_modifier_base() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_emoji_modifier_base() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<EmojiModifierBase>().static_to_owned(),
             ))
         }
@@ -712,8 +704,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_emoji_modifier_base_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<EmojiModifierBase>(
                     &provider.get_unstable()?,
                 )?,
@@ -730,8 +722,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::EmojiComponent, Struct)]
         #[diplomat::attr(auto, named_constructor = "emoji_component")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_emoji_component() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_emoji_component() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<EmojiComponent>().static_to_owned(),
             ))
         }
@@ -742,8 +734,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_emoji_component_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<EmojiComponent>(
                     &provider.get_unstable()?,
                 )?,
@@ -760,8 +752,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::EmojiModifier, Struct)]
         #[diplomat::attr(auto, named_constructor = "emoji_modifier")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_emoji_modifier() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_emoji_modifier() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<EmojiModifier>().static_to_owned(),
             ))
         }
@@ -772,8 +764,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_emoji_modifier_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<EmojiModifier>(
                     &provider.get_unstable()?,
                 )?,
@@ -790,8 +782,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Emoji, Struct)]
         #[diplomat::attr(auto, named_constructor = "emoji")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_emoji() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_emoji() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<Emoji>().static_to_owned(),
             ))
         }
@@ -800,10 +792,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Emoji, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "emoji_with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_emoji_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        pub fn create_emoji_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<Emoji>(
                     &provider.get_unstable()?,
                 )?,
@@ -820,8 +810,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::EmojiPresentation, Struct)]
         #[diplomat::attr(auto, named_constructor = "emoji_presentation")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_emoji_presentation() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_emoji_presentation() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<EmojiPresentation>().static_to_owned(),
             ))
         }
@@ -832,8 +822,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_emoji_presentation_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<EmojiPresentation>(
                     &provider.get_unstable()?,
                 )?,
@@ -850,8 +840,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Extender, Struct)]
         #[diplomat::attr(auto, named_constructor = "extender")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_extender() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_extender() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<Extender>().static_to_owned(),
             ))
         }
@@ -862,8 +852,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_extender_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<Extender>(
                     &provider.get_unstable()?,
                 )?,
@@ -880,8 +870,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::ExtendedPictographic, Struct)]
         #[diplomat::attr(auto, named_constructor = "extended_pictographic")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_extended_pictographic() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_extended_pictographic() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<ExtendedPictographic>().static_to_owned(),
             ))
         }
@@ -892,8 +882,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_extended_pictographic_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<ExtendedPictographic>(
                     &provider.get_unstable()?,
                 )?,
@@ -910,8 +900,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Graph, Struct)]
         #[diplomat::attr(auto, named_constructor = "graph")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_graph() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_graph() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<Graph>().static_to_owned(),
             ))
         }
@@ -920,10 +910,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Graph, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "graph_with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_graph_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        pub fn create_graph_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<Graph>(
                     &provider.get_unstable()?,
                 )?,
@@ -940,8 +928,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::GraphemeBase, Struct)]
         #[diplomat::attr(auto, named_constructor = "grapheme_base")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_grapheme_base() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_grapheme_base() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<GraphemeBase>().static_to_owned(),
             ))
         }
@@ -952,8 +940,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_grapheme_base_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<GraphemeBase>(
                     &provider.get_unstable()?,
                 )?,
@@ -970,8 +958,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::GraphemeExtend, Struct)]
         #[diplomat::attr(auto, named_constructor = "grapheme_extend")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_grapheme_extend() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_grapheme_extend() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<GraphemeExtend>().static_to_owned(),
             ))
         }
@@ -982,8 +970,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_grapheme_extend_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<GraphemeExtend>(
                     &provider.get_unstable()?,
                 )?,
@@ -1000,8 +988,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::GraphemeLink, Struct)]
         #[diplomat::attr(auto, named_constructor = "grapheme_link")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_grapheme_link() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_grapheme_link() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<GraphemeLink>().static_to_owned(),
             ))
         }
@@ -1012,8 +1000,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_grapheme_link_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<GraphemeLink>(
                     &provider.get_unstable()?,
                 )?,
@@ -1030,8 +1018,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::HexDigit, Struct)]
         #[diplomat::attr(auto, named_constructor = "hex_digit")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_hex_digit() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_hex_digit() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<HexDigit>().static_to_owned(),
             ))
         }
@@ -1042,8 +1030,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_hex_digit_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<HexDigit>(
                     &provider.get_unstable()?,
                 )?,
@@ -1060,8 +1048,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Hyphen, Struct)]
         #[diplomat::attr(auto, named_constructor = "hyphen")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_hyphen() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_hyphen() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<Hyphen>().static_to_owned(),
             ))
         }
@@ -1072,8 +1060,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_hyphen_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<Hyphen>(
                     &provider.get_unstable()?,
                 )?,
@@ -1090,8 +1078,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::IdCompatMathContinue, Struct)]
         #[diplomat::attr(auto, named_constructor = "id_compat_math_continue")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_id_compat_math_continue() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_id_compat_math_continue() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<IdCompatMathContinue>().static_to_owned(),
             ))
         }
@@ -1101,8 +1089,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_id_compat_math_continue_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<IdCompatMathContinue>(
                     &provider.get_unstable()?,
                 )?,
@@ -1119,8 +1107,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::IdCompatMathStart, Struct)]
         #[diplomat::attr(auto, named_constructor = "id_compat_math_start")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_id_compat_math_start() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_id_compat_math_start() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<IdCompatMathStart>().static_to_owned(),
             ))
         }
@@ -1130,8 +1118,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_id_compat_math_start_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<IdCompatMathStart>(
                     &provider.get_unstable()?,
                 )?,
@@ -1148,8 +1136,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::IdContinue, Struct)]
         #[diplomat::attr(auto, named_constructor = "id_continue")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_id_continue() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_id_continue() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<IdContinue>().static_to_owned(),
             ))
         }
@@ -1160,8 +1148,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_id_continue_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<IdContinue>(
                     &provider.get_unstable()?,
                 )?,
@@ -1178,8 +1166,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Ideographic, Struct)]
         #[diplomat::attr(auto, named_constructor = "ideographic")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_ideographic() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_ideographic() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<Ideographic>().static_to_owned(),
             ))
         }
@@ -1190,8 +1178,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_ideographic_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<Ideographic>(
                     &provider.get_unstable()?,
                 )?,
@@ -1208,8 +1196,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::IdStart, Struct)]
         #[diplomat::attr(auto, named_constructor = "id_start")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_id_start() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_id_start() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<IdStart>().static_to_owned(),
             ))
         }
@@ -1220,8 +1208,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_id_start_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<IdStart>(
                     &provider.get_unstable()?,
                 )?,
@@ -1238,8 +1226,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::IdsBinaryOperator, Struct)]
         #[diplomat::attr(auto, named_constructor = "ids_binary_operator")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_ids_binary_operator() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_ids_binary_operator() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<IdsBinaryOperator>().static_to_owned(),
             ))
         }
@@ -1250,8 +1238,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_ids_binary_operator_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<IdsBinaryOperator>(
                     &provider.get_unstable()?,
                 )?,
@@ -1268,8 +1256,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::IdsTrinaryOperator, Struct)]
         #[diplomat::attr(auto, named_constructor = "ids_trinary_operator")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_ids_trinary_operator() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_ids_trinary_operator() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<IdsTrinaryOperator>().static_to_owned(),
             ))
         }
@@ -1280,8 +1268,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_ids_trinary_operator_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<IdsTrinaryOperator>(
                     &provider.get_unstable()?,
                 )?,
@@ -1298,8 +1286,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::IdsUnaryOperator, Struct)]
         #[diplomat::attr(auto, named_constructor = "ids_unary_operator")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_ids_unary_operator() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_ids_unary_operator() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<IdsUnaryOperator>().static_to_owned(),
             ))
         }
@@ -1310,8 +1298,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_ids_unary_operator_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<IdsUnaryOperator>(
                     &provider.get_unstable()?,
                 )?,
@@ -1328,8 +1316,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::JoinControl, Struct)]
         #[diplomat::attr(auto, named_constructor = "join_control")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_join_control() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_join_control() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<JoinControl>().static_to_owned(),
             ))
         }
@@ -1340,8 +1328,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_join_control_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<JoinControl>(
                     &provider.get_unstable()?,
                 )?,
@@ -1358,8 +1346,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::LogicalOrderException, Struct)]
         #[diplomat::attr(auto, named_constructor = "logical_order_exception")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_logical_order_exception() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_logical_order_exception() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<LogicalOrderException>().static_to_owned(),
             ))
         }
@@ -1370,8 +1358,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_logical_order_exception_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<LogicalOrderException>(
                     &provider.get_unstable()?,
                 )?,
@@ -1388,8 +1376,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Lowercase, Struct)]
         #[diplomat::attr(auto, named_constructor = "lowercase")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_lowercase() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_lowercase() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<Lowercase>().static_to_owned(),
             ))
         }
@@ -1400,8 +1388,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_lowercase_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<Lowercase>(
                     &provider.get_unstable()?,
                 )?,
@@ -1418,8 +1406,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Math, Struct)]
         #[diplomat::attr(auto, named_constructor = "math")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_math() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_math() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<Math>().static_to_owned(),
             ))
         }
@@ -1428,10 +1416,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Math, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "math_with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_math_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        pub fn create_math_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<Math>(
                     &provider.get_unstable()?,
                 )?,
@@ -1448,8 +1434,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::ModifierCombiningMark, Struct)]
         #[diplomat::attr(auto, named_constructor = "modifier_combining_mark")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_modifier_combining_mark() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_modifier_combining_mark() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<ModifierCombiningMark>().static_to_owned(),
             ))
         }
@@ -1460,8 +1446,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_modifier_combining_mark_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<ModifierCombiningMark>(
                     &provider.get_unstable()?,
                 )?,
@@ -1478,8 +1464,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::NoncharacterCodePoint, Struct)]
         #[diplomat::attr(auto, named_constructor = "noncharacter_code_point")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_noncharacter_code_point() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_noncharacter_code_point() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<NoncharacterCodePoint>().static_to_owned(),
             ))
         }
@@ -1490,8 +1476,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_noncharacter_code_point_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<NoncharacterCodePoint>(
                     &provider.get_unstable()?,
                 )?,
@@ -1508,8 +1494,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::NfcInert, Struct)]
         #[diplomat::attr(auto, named_constructor = "nfc_inert")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_nfc_inert() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_nfc_inert() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<NfcInert>().static_to_owned(),
             ))
         }
@@ -1520,8 +1506,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_nfc_inert_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<NfcInert>(
                     &provider.get_unstable()?,
                 )?,
@@ -1538,8 +1524,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::NfdInert, Struct)]
         #[diplomat::attr(auto, named_constructor = "nfd_inert")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_nfd_inert() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_nfd_inert() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<NfdInert>().static_to_owned(),
             ))
         }
@@ -1550,8 +1536,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_nfd_inert_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<NfdInert>(
                     &provider.get_unstable()?,
                 )?,
@@ -1568,8 +1554,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::NfkcInert, Struct)]
         #[diplomat::attr(auto, named_constructor = "nfkc_inert")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_nfkc_inert() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_nfkc_inert() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<NfkcInert>().static_to_owned(),
             ))
         }
@@ -1580,8 +1566,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_nfkc_inert_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<NfkcInert>(
                     &provider.get_unstable()?,
                 )?,
@@ -1598,8 +1584,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::NfkdInert, Struct)]
         #[diplomat::attr(auto, named_constructor = "nfkd_inert")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_nfkd_inert() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_nfkd_inert() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<NfkdInert>().static_to_owned(),
             ))
         }
@@ -1610,8 +1596,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_nfkd_inert_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<NfkdInert>(
                     &provider.get_unstable()?,
                 )?,
@@ -1628,8 +1614,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::PatternSyntax, Struct)]
         #[diplomat::attr(auto, named_constructor = "pattern_syntax")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_pattern_syntax() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_pattern_syntax() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<PatternSyntax>().static_to_owned(),
             ))
         }
@@ -1640,8 +1626,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_pattern_syntax_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<PatternSyntax>(
                     &provider.get_unstable()?,
                 )?,
@@ -1658,8 +1644,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::PatternWhiteSpace, Struct)]
         #[diplomat::attr(auto, named_constructor = "pattern_white_space")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_pattern_white_space() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_pattern_white_space() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<PatternWhiteSpace>().static_to_owned(),
             ))
         }
@@ -1670,8 +1656,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_pattern_white_space_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<PatternWhiteSpace>(
                     &provider.get_unstable()?,
                 )?,
@@ -1688,8 +1674,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::PrependedConcatenationMark, Struct)]
         #[diplomat::attr(auto, named_constructor = "prepended_concatenation_mark")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_prepended_concatenation_mark() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_prepended_concatenation_mark() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<PrependedConcatenationMark>()
                     .static_to_owned(),
             ))
@@ -1701,8 +1687,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_prepended_concatenation_mark_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<PrependedConcatenationMark>(
                     &provider.get_unstable()?,
                 )?,
@@ -1719,8 +1705,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Print, Struct)]
         #[diplomat::attr(auto, named_constructor = "print")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_print() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_print() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<Print>().static_to_owned(),
             ))
         }
@@ -1729,10 +1715,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Print, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "print_with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_print_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        pub fn create_print_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<Print>(
                     &provider.get_unstable()?,
                 )?,
@@ -1749,8 +1733,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::QuotationMark, Struct)]
         #[diplomat::attr(auto, named_constructor = "quotation_mark")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_quotation_mark() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_quotation_mark() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<QuotationMark>().static_to_owned(),
             ))
         }
@@ -1761,8 +1745,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_quotation_mark_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<QuotationMark>(
                     &provider.get_unstable()?,
                 )?,
@@ -1779,8 +1763,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Radical, Struct)]
         #[diplomat::attr(auto, named_constructor = "radical")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_radical() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_radical() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<Radical>().static_to_owned(),
             ))
         }
@@ -1791,8 +1775,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_radical_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<Radical>(
                     &provider.get_unstable()?,
                 )?,
@@ -1809,8 +1793,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::RegionalIndicator, Struct)]
         #[diplomat::attr(auto, named_constructor = "regional_indicator")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_regional_indicator() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_regional_indicator() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<RegionalIndicator>().static_to_owned(),
             ))
         }
@@ -1821,8 +1805,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_regional_indicator_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<RegionalIndicator>(
                     &provider.get_unstable()?,
                 )?,
@@ -1839,8 +1823,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::SoftDotted, Struct)]
         #[diplomat::attr(auto, named_constructor = "soft_dotted")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_soft_dotted() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_soft_dotted() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<SoftDotted>().static_to_owned(),
             ))
         }
@@ -1851,8 +1835,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_soft_dotted_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<SoftDotted>(
                     &provider.get_unstable()?,
                 )?,
@@ -1869,8 +1853,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::SegmentStarter, Struct)]
         #[diplomat::attr(auto, named_constructor = "segment_starter")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_segment_starter() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_segment_starter() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<SegmentStarter>().static_to_owned(),
             ))
         }
@@ -1881,8 +1865,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_segment_starter_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<SegmentStarter>(
                     &provider.get_unstable()?,
                 )?,
@@ -1899,8 +1883,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::CaseSensitive, Struct)]
         #[diplomat::attr(auto, named_constructor = "case_sensitive")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_case_sensitive() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_case_sensitive() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<CaseSensitive>().static_to_owned(),
             ))
         }
@@ -1911,8 +1895,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_case_sensitive_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<CaseSensitive>(
                     &provider.get_unstable()?,
                 )?,
@@ -1929,8 +1913,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::SentenceTerminal, Struct)]
         #[diplomat::attr(auto, named_constructor = "sentence_terminal")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_sentence_terminal() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_sentence_terminal() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<SentenceTerminal>().static_to_owned(),
             ))
         }
@@ -1941,8 +1925,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_sentence_terminal_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<SentenceTerminal>(
                     &provider.get_unstable()?,
                 )?,
@@ -1959,8 +1943,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::TerminalPunctuation, Struct)]
         #[diplomat::attr(auto, named_constructor = "terminal_punctuation")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_terminal_punctuation() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_terminal_punctuation() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<TerminalPunctuation>().static_to_owned(),
             ))
         }
@@ -1971,8 +1955,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_terminal_punctuation_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<TerminalPunctuation>(
                     &provider.get_unstable()?,
                 )?,
@@ -1989,8 +1973,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::UnifiedIdeograph, Struct)]
         #[diplomat::attr(auto, named_constructor = "unified_ideograph")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_unified_ideograph() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_unified_ideograph() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<UnifiedIdeograph>().static_to_owned(),
             ))
         }
@@ -2001,8 +1985,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_unified_ideograph_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<UnifiedIdeograph>(
                     &provider.get_unstable()?,
                 )?,
@@ -2019,8 +2003,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Uppercase, Struct)]
         #[diplomat::attr(auto, named_constructor = "uppercase")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_uppercase() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_uppercase() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<Uppercase>().static_to_owned(),
             ))
         }
@@ -2031,8 +2015,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_uppercase_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<Uppercase>(
                     &provider.get_unstable()?,
                 )?,
@@ -2049,8 +2033,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::VariationSelector, Struct)]
         #[diplomat::attr(auto, named_constructor = "variation_selector")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_variation_selector() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_variation_selector() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<VariationSelector>().static_to_owned(),
             ))
         }
@@ -2061,8 +2045,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_variation_selector_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<VariationSelector>(
                     &provider.get_unstable()?,
                 )?,
@@ -2079,8 +2063,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::WhiteSpace, Struct)]
         #[diplomat::attr(auto, named_constructor = "white_space")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_white_space() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_white_space() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<WhiteSpace>().static_to_owned(),
             ))
         }
@@ -2091,8 +2075,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_white_space_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<WhiteSpace>(
                     &provider.get_unstable()?,
                 )?,
@@ -2109,8 +2093,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Xdigit, Struct)]
         #[diplomat::attr(auto, named_constructor = "xdigit")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_xdigit() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_xdigit() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<Xdigit>().static_to_owned(),
             ))
         }
@@ -2121,8 +2105,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_xdigit_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<Xdigit>(
                     &provider.get_unstable()?,
                 )?,
@@ -2139,8 +2123,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::XidContinue, Struct)]
         #[diplomat::attr(auto, named_constructor = "xid_continue")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_xid_continue() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_xid_continue() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<XidContinue>().static_to_owned(),
             ))
         }
@@ -2151,8 +2135,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_xid_continue_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<XidContinue>(
                     &provider.get_unstable()?,
                 )?,
@@ -2169,8 +2153,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::XidStart, Struct)]
         #[diplomat::attr(auto, named_constructor = "xid_start")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_xid_start() -> Box<CodePointSetData> {
-            Box::new(CodePointSetData(
+        pub fn create_xid_start() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointSetData::new::<XidStart>().static_to_owned(),
             ))
         }
@@ -2181,8 +2165,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_xid_start_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_unstable::<XidStart>(
                     &provider.get_unstable()?,
                 )?,
@@ -2193,13 +2177,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::CodePointSetData::new_for_ecma262, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "for_ecma262")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_for_ecma262(
-            property_name: &DiplomatStr,
-        ) -> Result<Box<CodePointSetData>, DataError> {
+        pub fn create_for_ecma262(property_name: &DiplomatStr) -> Result<Box<Self>, DataError> {
             let data = icu_properties::CodePointSetData::new_for_ecma262(property_name)
                 .ok_or(DataError::Custom)?
                 .static_to_owned();
-            Ok(Box::new(CodePointSetData(data)))
+            Ok(Box::new(Self(data)))
         }
 
         /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
@@ -2209,8 +2191,8 @@ pub mod ffi {
         pub fn create_for_ecma262_with_provider(
             provider: &DataProvider,
             property_name: &DiplomatStr,
-        ) -> Result<Box<CodePointSetData>, DataError> {
-            Ok(Box::new(CodePointSetData(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointSetData::try_new_for_ecma262_unstable(
                     &provider.get_unstable()?,
                     property_name,

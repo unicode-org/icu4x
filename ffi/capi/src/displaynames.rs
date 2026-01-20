@@ -91,11 +91,11 @@ pub mod ffi {
         pub fn create_v1(
             locale: &Locale,
             options: DisplayNamesOptionsV1,
-        ) -> Result<Box<LocaleDisplayNamesFormatter>, DataError> {
+        ) -> Result<Box<Self>, DataError> {
             let prefs = (&locale.0).into();
             let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
 
-            Ok(Box::new(LocaleDisplayNamesFormatter(
+            Ok(Box::new(Self(
                 icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new(
                     prefs, options,
                 )?,
@@ -117,11 +117,11 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             options: DisplayNamesOptionsV1,
-        ) -> Result<Box<LocaleDisplayNamesFormatter>, DataError> {
+        ) -> Result<Box<Self>, DataError> {
             let prefs = (&locale.0).into();
             let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
 
-            Ok(Box::new(LocaleDisplayNamesFormatter(
+            Ok(Box::new(Self(
                 icu_experimental::displaynames::LocaleDisplayNamesFormatter::try_new_with_buffer_provider(provider.get()?, prefs,
                     options,
                 )?,
@@ -159,10 +159,10 @@ pub mod ffi {
         pub fn create_v1(
             locale: &Locale,
             options: DisplayNamesOptionsV1,
-        ) -> Result<Box<RegionDisplayNames>, DataError> {
+        ) -> Result<Box<Self>, DataError> {
             let prefs = (&locale.0).into();
             let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
-            Ok(Box::new(RegionDisplayNames(
+            Ok(Box::new(Self(
                 icu_experimental::displaynames::RegionDisplayNames::try_new(prefs, options)?,
             )))
         }
@@ -182,10 +182,10 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             options: DisplayNamesOptionsV1,
-        ) -> Result<Box<RegionDisplayNames>, DataError> {
+        ) -> Result<Box<Self>, DataError> {
             let prefs = (&locale.0).into();
             let options = icu_experimental::displaynames::DisplayNamesOptions::from(options);
-            Ok(Box::new(RegionDisplayNames(
+            Ok(Box::new(Self(
                 icu_experimental::displaynames::RegionDisplayNames::try_new_with_buffer_provider(
                     provider.get()?,
                     prefs,
@@ -218,10 +218,8 @@ pub mod ffi {
 }
 
 impl From<ffi::DisplayNamesOptionsV1> for icu_experimental::displaynames::DisplayNamesOptions {
-    fn from(
-        other: ffi::DisplayNamesOptionsV1,
-    ) -> icu_experimental::displaynames::DisplayNamesOptions {
-        let mut options = icu_experimental::displaynames::DisplayNamesOptions::default();
+    fn from(other: ffi::DisplayNamesOptionsV1) -> Self {
+        let mut options = Self::default();
         options.style = other.style.into_converted_option();
         options.fallback = other
             .fallback

@@ -20,7 +20,7 @@ fn map_f_mut<K, V>(input: &mut (K, V)) -> (&K, &mut V) {
 }
 
 impl<K, V> StoreConstEmpty<K, V> for Vec<(K, V)> {
-    const EMPTY: Vec<(K, V)> = Vec::new();
+    const EMPTY: Self = Self::new();
 }
 
 impl<K, V> Store<K, V> for Vec<(K, V)> {

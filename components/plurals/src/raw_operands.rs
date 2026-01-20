@@ -50,7 +50,7 @@ pub struct RawPluralOperands {
 }
 
 impl From<RawPluralOperands> for PluralOperands {
-    fn from(rpo: RawPluralOperands) -> PluralOperands {
+    fn from(rpo: RawPluralOperands) -> Self {
         Self {
             i: rpo.i,
             v: rpo.v,
@@ -63,7 +63,7 @@ impl From<RawPluralOperands> for PluralOperands {
 }
 
 impl From<PluralOperands> for RawPluralOperands {
-    fn from(po: PluralOperands) -> RawPluralOperands {
+    fn from(po: PluralOperands) -> Self {
         Self {
             i: po.i,
             v: po.v,

@@ -109,11 +109,11 @@ impl Date<Roc> {
     /// assert_eq!(date_gregorian.era_year().year, 1912, "Gregorian from ROC year check failed!");
     /// assert_eq!(date_gregorian.month().ordinal, 2, "Gregorian from ROC month check failed!");
     /// assert_eq!(date_gregorian.day_of_month().0, 3, "Gregorian from ROC day of month check failed!");
-    pub fn try_new_roc(year: i32, month: u8, day: u8) -> Result<Date<Roc>, RangeError> {
+    pub fn try_new_roc(year: i32, month: u8, day: u8) -> Result<Self, RangeError> {
         ArithmeticDate::from_year_month_day(year, month, day, &AbstractGregorian(RocEra))
             .map(ArithmeticDate::cast)
             .map(RocDateInner)
-            .map(|i| Date::from_raw(i, Roc))
+            .map(|i| Self::from_raw(i, Roc))
     }
 }
 

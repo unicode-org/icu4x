@@ -55,7 +55,7 @@ impl AsULE for FractionInfo {
         let cash_digits = b1 & 0x0f;
         let cash_rounding = b1 >> 4;
 
-        FractionInfo {
+        Self {
             digits,
             rounding,
             cash_digits: if cash_digits == NONE_MARKER {
@@ -73,8 +73,8 @@ impl AsULE for FractionInfo {
 }
 
 impl<'a> ZeroMapKV<'a> for FractionInfo {
-    type Container = zerovec::ZeroVec<'a, FractionInfo>;
-    type Slice = zerovec::ZeroSlice<FractionInfo>;
-    type GetType = <FractionInfo as AsULE>::ULE;
-    type OwnedType = FractionInfo;
+    type Container = zerovec::ZeroVec<'a, Self>;
+    type Slice = zerovec::ZeroSlice<Self>;
+    type GetType = <Self as AsULE>::ULE;
+    type OwnedType = Self;
 }

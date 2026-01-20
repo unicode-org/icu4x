@@ -109,14 +109,14 @@ unsafe impl IntegerULE for u8 {
     const TOO_LARGE_ERROR: &'static str = "Attempted to build VarZeroVec out of elements that \
                                      cumulatively are larger than a u8 in size";
     const SIZE: usize = mem::size_of::<Self>();
-    const MAX_VALUE: u32 = u8::MAX as u32;
+    const MAX_VALUE: u32 = Self::MAX as u32;
     #[inline]
     fn iule_to_usize(self) -> usize {
         self as usize
     }
     #[inline]
     fn iule_from_usize(u: usize) -> Option<Self> {
-        u8::try_from(u).ok()
+        Self::try_from(u).ok()
     }
     #[inline]
     #[cfg(feature = "alloc")]

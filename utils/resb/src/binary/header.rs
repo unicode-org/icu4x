@@ -61,7 +61,7 @@ impl TryFrom<&[u8]> for BinHeader {
     // is sufficiently large.
     #[expect(clippy::indexing_slicing)]
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
-        if value.len() < core::mem::size_of::<BinHeader>() {
+        if value.len() < core::mem::size_of::<Self>() {
             return Err(BinaryDeserializerError::invalid_data(
                 "input is too short to contain file header",
             ));
@@ -83,13 +83,13 @@ impl TryFrom<&[u8]> for BinHeader {
 
         let repr_info = BinReprInfo::try_from(value)?;
 
-        if (size as usize) < core::mem::size_of::<BinHeader>() {
+        if (size as usize) < core::mem::size_of::<Self>() {
             return Err(BinaryDeserializerError::invalid_data(
                 "header size specified in file is smaller than expected",
             ));
         }
 
-        Ok(BinHeader {
+        Ok(Self {
             size,
             magic,
             repr_info,
@@ -104,7 +104,7 @@ impl TryFrom<&[u8]> for BinReprInfo {
     // is sufficiently large.
     #[expect(clippy::indexing_slicing)]
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
-        if value.len() < core::mem::size_of::<BinReprInfo>() {
+        if value.len() < core::mem::size_of::<Self>() {
             return Err(BinaryDeserializerError::invalid_data(
                 "input is too short to contain representation info",
             ));
@@ -139,7 +139,7 @@ impl TryFrom<&[u8]> for BinReprInfo {
         let (format_version, value) = (FormatVersion::try_from(&value[..4])?, &value[4..]);
         let (data_version, _) = ([value[0], value[1], value[2], value[3]], &value[4..]);
 
-        Ok(BinReprInfo {
+        Ok(Self {
             size,
             reserved_word,
             endianness,

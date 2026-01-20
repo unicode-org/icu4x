@@ -62,8 +62,8 @@ pub mod ffi {
         ))]
         #[diplomat::attr(any(dart, js), disable)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
-        pub fn from_fs(path: &DiplomatStr) -> Result<Box<DataProvider>, DataError> {
-            Ok(Box::new(DataProvider(Some(Box::new(
+        pub fn from_fs(path: &DiplomatStr) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(Some(Box::new(
                 icu_provider_fs::FsDataProvider::try_new(
                     // In the future we can start using OsString APIs to support non-utf8 paths
                     core::str::from_utf8(path)
@@ -80,10 +80,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         #[diplomat::attr(not(supports = static_slices), disable)]
-        pub fn from_byte_slice(
-            blob: &'static [DiplomatByte],
-        ) -> Result<Box<DataProvider>, DataError> {
-            Ok(Box::new(DataProvider(Some(Box::new(
+        pub fn from_byte_slice(blob: &'static [DiplomatByte]) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(Some(Box::new(
                 icu_provider_blob::BlobDataProvider::try_new_from_static_blob(blob)?,
             )))))
         }
@@ -92,10 +90,8 @@ pub mod ffi {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         #[diplomat::attr(supports = static_slices, disable)]
         #[diplomat::attr(*, rename = "from_byte_slice")]
-        pub fn from_owned_byte_slice(
-            blob: Box<[DiplomatByte]>,
-        ) -> Result<Box<DataProvider>, DataError> {
-            Ok(Box::new(DataProvider(Some(Box::new(
+        pub fn from_owned_byte_slice(blob: Box<[DiplomatByte]>) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(Some(Box::new(
                 icu_provider_blob::BlobDataProvider::try_new_from_blob(blob)?,
             )))))
         }
@@ -120,12 +116,12 @@ pub mod ffi {
             Struct,
             hidden
         )]
-        pub fn fork_by_marker(&mut self, other: &mut DataProvider) -> Result<(), DataError> {
+        pub fn fork_by_marker(&mut self, other: &mut Self) -> Result<(), DataError> {
             *self = match (core::mem::take(&mut self.0), core::mem::take(&mut other.0)) {
                 (None, _) | (_, None) => Err(icu_provider::DataError::custom(
                     "This provider has been destroyed",
                 ))?,
-                (Some(a), Some(b)) => DataProvider(Some(Box::new(
+                (Some(a), Some(b)) => Self(Some(Box::new(
                     icu_provider_adapters::fork::ForkByMarkerProvider::new(a, b),
                 ))),
             };
@@ -137,12 +133,12 @@ pub mod ffi {
             icu_provider_adapters::fork::predicates::IdentifierNotFoundPredicate,
             Struct
         )]
-        pub fn fork_by_locale(&mut self, other: &mut DataProvider) -> Result<(), DataError> {
+        pub fn fork_by_locale(&mut self, other: &mut Self) -> Result<(), DataError> {
             *self = match (core::mem::take(&mut self.0), core::mem::take(&mut other.0)) {
                 (None, _) | (_, None) => Err(icu_provider::DataError::custom(
                     "This provider has been destroyed",
                 ))?,
-                (Some(a), Some(b)) => DataProvider(Some(Box::new(
+                (Some(a), Some(b)) => Self(Some(Box::new(
                     icu_provider_adapters::fork::ForkByErrorProvider::new_with_predicate(
                         a,
                         b,
@@ -172,7 +168,7 @@ pub mod ffi {
                 None => Err(icu_provider::DataError::custom(
                     "This provider has been destroyed",
                 ))?,
-                Some(inner) => DataProvider(Some(Box::new(
+                Some(inner) => Self(Some(Box::new(
                     icu_provider_adapters::fallback::LocaleFallbackProvider::new(
                         inner,
                         fallbacker.0.clone(),

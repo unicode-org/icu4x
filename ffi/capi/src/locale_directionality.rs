@@ -33,10 +33,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::new_common, FnInStruct)]
         #[diplomat::attr(supports = constructors, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create_common() -> Box<LocaleDirectionality> {
-            Box::new(LocaleDirectionality(
-                icu_locale::LocaleDirectionality::new_common(),
-            ))
+        pub fn create_common() -> Box<Self> {
+            Box::new(Self(icu_locale::LocaleDirectionality::new_common()))
         }
 
         /// Construct a new `LocaleDirectionality` instance using a particular data source.
@@ -45,8 +43,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_common_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<LocaleDirectionality>, DataError> {
-            Ok(Box::new(LocaleDirectionality(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_locale::LocaleDirectionality::try_new_common_with_buffer_provider(
                     provider.get()?,
                 )?,
@@ -61,10 +59,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(auto, named_constructor = "extended")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_extended() -> Box<LocaleDirectionality> {
-            Box::new(LocaleDirectionality(
-                icu_locale::LocaleDirectionality::new_extended(),
-            ))
+        pub fn create_extended() -> Box<Self> {
+            Box::new(Self(icu_locale::LocaleDirectionality::new_extended()))
         }
 
         /// Construct a new `LocaleDirectionality` instance using a particular data source.
@@ -78,8 +74,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_extended_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<LocaleDirectionality>, DataError> {
-            Ok(Box::new(LocaleDirectionality(
+        ) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_locale::LocaleDirectionality::try_new_extended_with_buffer_provider(
                     provider.get()?,
                 )?,

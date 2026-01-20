@@ -805,7 +805,7 @@ where
     fn clone(&self) -> Self {
         // We have an &T not a T, and we can clone T
         let this = self.get().clone();
-        Yoke {
+        Self {
             yokeable: KindaSortaDangling::new(
                 // Safety: C being a CloneableCart guarantees that the data referenced by the
                 // `yokeable` is kept alive by the clone of the cart.

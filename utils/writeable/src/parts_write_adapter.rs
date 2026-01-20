@@ -22,7 +22,7 @@ impl<W: fmt::Write + ?Sized> fmt::Write for CoreWriteAsPartsWrite<W> {
 }
 
 impl<W: fmt::Write + ?Sized> PartsWrite for CoreWriteAsPartsWrite<W> {
-    type SubPartsWrite = CoreWriteAsPartsWrite<W>;
+    type SubPartsWrite = Self;
 
     #[inline]
     fn with_part(

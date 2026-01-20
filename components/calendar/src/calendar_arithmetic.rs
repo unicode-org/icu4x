@@ -109,21 +109,21 @@ impl PackWithMD for i32 {
     type Packed = [u8; 4];
 
     fn pack(self, month: u8, day: u8) -> Self::Packed {
-        (self << 9 | (month as i32) << 5 | day as i32).to_le_bytes()
+        (self << 9 | (month as Self) << 5 | day as Self).to_le_bytes()
     }
 
     fn unpack_year(packed: Self::Packed) -> Self {
-        let packed = i32::from_le_bytes(packed);
+        let packed = Self::from_le_bytes(packed);
         packed >> 9
     }
 
     fn unpack_month(packed: Self::Packed) -> u8 {
-        let packed = i32::from_le_bytes(packed);
+        let packed = Self::from_le_bytes(packed);
         (packed >> 5 & 0b1111) as u8
     }
 
     fn unpack_day(packed: Self::Packed) -> u8 {
-        let packed = i32::from_le_bytes(packed);
+        let packed = Self::from_le_bytes(packed);
         (packed & 0b11111) as u8
     }
 }
@@ -221,7 +221,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
     // Precondition: the date is in the VALID_RD_RANGE
     #[inline]
     pub(crate) fn new_unchecked(year: C::YearInfo, month: u8, day: u8) -> Self {
-        ArithmeticDate(C::YearInfo::pack(year, month, day))
+        Self(C::YearInfo::pack(year, month, day))
     }
 
     pub(crate) fn cast<C2: DateFieldsResolver<YearInfo = C::YearInfo>>(self) -> ArithmeticDate<C2> {
@@ -257,7 +257,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         let day = range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
 
         // date is in the valid year range, and therefore in the valid RD range
-        Ok(ArithmeticDate::new_unchecked(year, month, day))
+        Ok(Self::new_unchecked(year, month, day))
     }
 
     pub(crate) fn from_fields(
@@ -396,7 +396,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         range_check(month, "month", 1..=C::months_in_provided_year(year_info))?;
         range_check(day, "day", 1..=C::days_in_provided_month(year_info, month))?;
         // date is in the valid year range, and therefore in the valid RD range
-        Ok(ArithmeticDate::new_unchecked(year_info, month, day))
+        Ok(Self::new_unchecked(year_info, month, day))
     }
 
     pub(crate) fn from_era_year_month_day(
@@ -420,7 +420,7 @@ impl<C: DateFieldsResolver> ArithmeticDate<C> {
         range_check(month, "month", 1..=C::months_in_provided_year(year_info))?;
         range_check(day, "day", 1..=C::days_in_provided_month(year_info, month))?;
         // date is in the valid year range, and therefore in the valid RD range
-        Ok(ArithmeticDate::new_unchecked(year_info, month, day))
+        Ok(Self::new_unchecked(year_info, month, day))
     }
 
     /// Implements the Temporal abstract operation `BalanceNonISODate`.

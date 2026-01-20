@@ -555,27 +555,27 @@ pub enum TimeZoneName {
 impl From<TimeZoneName> for Field {
     fn from(time_zone_name: TimeZoneName) -> Self {
         match time_zone_name {
-            TimeZoneName::ShortSpecific => Field {
+            TimeZoneName::ShortSpecific => Self {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
                 length: FieldLength::One,
             },
-            TimeZoneName::LongSpecific => Field {
+            TimeZoneName::LongSpecific => Self {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
                 length: FieldLength::Four,
             },
-            TimeZoneName::LongOffset => Field {
+            TimeZoneName::LongOffset => Self {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::LocalizedOffset),
                 length: FieldLength::Four,
             },
-            TimeZoneName::ShortOffset => Field {
+            TimeZoneName::ShortOffset => Self {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::LocalizedOffset),
                 length: FieldLength::One,
             },
-            TimeZoneName::ShortGeneric => Field {
+            TimeZoneName::ShortGeneric => Self {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
                 length: FieldLength::One,
             },
-            TimeZoneName::LongGeneric => Field {
+            TimeZoneName::LongGeneric => Self {
                 symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
                 length: FieldLength::Four,
             },
@@ -603,7 +603,7 @@ impl From<&reference::Pattern> for Bag {
 
 impl Bag {
     fn from_pattern_items(pattern_items: impl Iterator<Item = PatternItem>) -> Self {
-        let mut bag: Bag = Default::default();
+        let mut bag: Self = Default::default();
 
         // Transform the fields into components per:
         // https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table

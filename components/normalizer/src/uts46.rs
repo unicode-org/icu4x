@@ -172,6 +172,6 @@ impl Uts46Mapper {
     {
         let normalizer = ComposingNormalizer::try_new_uts46_unstable(provider)?;
 
-        Ok(Uts46Mapper { normalizer })
+        Ok(Self { normalizer })
     }
 }

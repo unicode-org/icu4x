@@ -48,7 +48,7 @@ pub struct ScriptWithExt(pub u16);
 #[allow(non_upper_case_globals)]
 #[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensionsProperty` constructor
 impl ScriptWithExt {
-    pub const Unknown: ScriptWithExt = ScriptWithExt(0);
+    pub const Unknown: Self = Self(0);
 }
 
 impl AsULE for ScriptWithExt {
@@ -61,7 +61,7 @@ impl AsULE for ScriptWithExt {
 
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        ScriptWithExt(Script::from_unaligned(unaligned).0)
+        Self(Script::from_unaligned(unaligned).0)
     }
 }
 
@@ -167,13 +167,13 @@ impl ScriptWithExt {
 
 impl From<ScriptWithExt> for u32 {
     fn from(swe: ScriptWithExt) -> Self {
-        swe.0 as u32
+        swe.0 as Self
     }
 }
 
 impl From<ScriptWithExt> for Script {
     fn from(swe: ScriptWithExt) -> Self {
-        Script(swe.0)
+        Self(swe.0)
     }
 }
 
@@ -332,9 +332,7 @@ impl ScriptWithExtensions {
     pub fn try_new_unstable(
         provider: &(impl DataProvider<PropertyScriptWithExtensionsV1> + ?Sized),
     ) -> Result<Self, DataError> {
-        Ok(ScriptWithExtensions::from_data(
-            provider.load(Default::default())?.payload,
-        ))
+        Ok(Self::from_data(provider.load(Default::default())?.payload))
     }
 
     /// Construct a borrowed version of this type that can be queried.

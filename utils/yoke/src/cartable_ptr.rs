@@ -157,14 +157,14 @@ unsafe impl<T> CartablePointerLike for Box<T> {
     #[inline]
     fn into_raw(self) -> NonNull<T> {
         // Safety: `Box::into_raw` says: "The pointer will be properly aligned and non-null."
-        unsafe { NonNull::new_unchecked(Box::into_raw(self)) }
+        unsafe { NonNull::new_unchecked(Self::into_raw(self)) }
     }
     #[inline]
     unsafe fn drop_raw(pointer: NonNull<T>) {
         // Safety: per the method's precondition, `pointer` is dereferenceable and was returned by
         // `Self::into_raw`, i.e. by `Box::into_raw`. In this circumstances, calling
         // `Box::from_raw` is safe.
-        let _box = unsafe { Box::from_raw(pointer.as_ptr()) };
+        let _box = unsafe { Self::from_raw(pointer.as_ptr()) };
 
         // Boxes are always dropped
         #[cfg(test)]
@@ -186,7 +186,7 @@ unsafe impl<T> CartablePointerLike for Rc<T> {
     #[inline]
     fn into_raw(self) -> NonNull<T> {
         // Safety: Rcs must contain data (and not be null)
-        unsafe { NonNull::new_unchecked(Rc::into_raw(self) as *mut T) }
+        unsafe { NonNull::new_unchecked(Self::into_raw(self) as *mut T) }
     }
 
     #[inline]
@@ -194,11 +194,11 @@ unsafe impl<T> CartablePointerLike for Rc<T> {
         // Safety: per the method's precondition, `pointer` is dereferenceable and was returned by
         // `Self::into_raw`, i.e. by `Rc::into_raw`. In this circumstances, calling
         // `Rc::from_raw` is safe.
-        let _rc = unsafe { Rc::from_raw(pointer.as_ptr()) };
+        let _rc = unsafe { Self::from_raw(pointer.as_ptr()) };
 
         // Rc is dropped if refcount is 1
         #[cfg(test)]
-        if Rc::strong_count(&_rc) == 1 {
+        if Self::strong_count(&_rc) == 1 {
             DROP_INVOCATIONS.with(|x| x.set(x.get() + 1))
         }
     }
@@ -216,7 +216,7 @@ unsafe impl<T> CloneableCartablePointerLike for Rc<T> {
         // 2. The associated Rc instance is valid
         // Further, this impl is not defined for anything but the global allocator.
         unsafe {
-            Rc::increment_strong_count(pointer.as_ptr());
+            Self::increment_strong_count(pointer.as_ptr());
         }
     }
 }
@@ -235,18 +235,18 @@ unsafe impl<T> CartablePointerLike for Arc<T> {
     #[inline]
     fn into_raw(self) -> NonNull<T> {
         // Safety: Arcs must contain data (and not be null)
-        unsafe { NonNull::new_unchecked(Arc::into_raw(self) as *mut T) }
+        unsafe { NonNull::new_unchecked(Self::into_raw(self) as *mut T) }
     }
     #[inline]
     unsafe fn drop_raw(pointer: NonNull<T>) {
         // Safety: per the method's precondition, `pointer` is dereferenceable and was returned by
         // `Self::into_raw`, i.e. by `Rc::into_raw`. In this circumstances, calling
         // `Rc::from_raw` is safe.
-        let _arc = unsafe { Arc::from_raw(pointer.as_ptr()) };
+        let _arc = unsafe { Self::from_raw(pointer.as_ptr()) };
 
         // Arc is dropped if refcount is 1
         #[cfg(test)]
-        if Arc::strong_count(&_arc) == 1 {
+        if Self::strong_count(&_arc) == 1 {
             DROP_INVOCATIONS.with(|x| x.set(x.get() + 1))
         }
     }
@@ -264,7 +264,7 @@ unsafe impl<T> CloneableCartablePointerLike for Arc<T> {
         // 2. The associated Arc instance is valid
         // Further, this impl is not defined for anything but the global allocator.
         unsafe {
-            Arc::increment_strong_count(pointer.as_ptr());
+            Self::increment_strong_count(pointer.as_ptr());
         }
     }
 }

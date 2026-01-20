@@ -32,8 +32,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::locale::DataLocale::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         #[diplomat::demo(default_constructor)]
-        pub fn from_string(name: &DiplomatStr) -> Result<Box<Locale>, LocaleParseError> {
-            Ok(Box::new(Locale(icu_locale_core::Locale::try_from_utf8(
+        pub fn from_string(name: &DiplomatStr) -> Result<Box<Self>, LocaleParseError> {
+            Ok(Box::new(Self(icu_locale_core::Locale::try_from_utf8(
                 name,
             )?)))
         }
@@ -43,14 +43,14 @@ pub mod ffi {
         #[diplomat::rust_link(icu::locale::DataLocale::default, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::locale::DataLocale::is_unknown, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
-        pub fn unknown() -> Box<Locale> {
-            Box::new(Locale(icu_locale_core::Locale::UNKNOWN))
+        pub fn unknown() -> Box<Self> {
+            Box::new(Self(icu_locale_core::Locale::UNKNOWN))
         }
 
         /// Clones the [`Locale`].
         #[diplomat::rust_link(icu::locale::Locale, Struct)]
-        pub fn clone(&self) -> Box<Locale> {
-            Box::new(Locale(self.0.clone()))
+        pub fn clone(&self) -> Box<Self> {
+            Box::new(Self(self.0.clone()))
         }
 
         /// Returns a string representation of the `LanguageIdentifier` part of

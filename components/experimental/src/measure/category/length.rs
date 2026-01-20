@@ -15,7 +15,7 @@ use crate::measure::{
 
 impl Length {
     /// Returns a [`MeasureUnit`] representing length in meters.
-    pub fn meter() -> CategorizedMeasureUnit<Length> {
+    pub fn meter() -> CategorizedMeasureUnit<Self> {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {

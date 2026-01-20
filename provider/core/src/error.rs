@@ -241,8 +241,8 @@ impl DataError {
     }
 
     #[inline]
-    pub(crate) fn for_type<T>() -> DataError {
-        DataError {
+    pub(crate) fn for_type<T>() -> Self {
+        Self {
             kind: DataErrorKind::Downcast(core::any::type_name::<T>()),
             marker: None,
             str_context: None,

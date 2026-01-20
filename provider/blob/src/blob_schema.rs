@@ -29,9 +29,7 @@ pub(crate) const REQUEST_SEPARATOR: char = '\x1E';
 pub(crate) const CHECKSUM_KEY: &[u8] = b"\0c";
 
 impl<'data> BlobSchema<'data> {
-    pub fn deserialize_and_check<D: serde::Deserializer<'data>>(
-        de: D,
-    ) -> Result<BlobSchema<'data>, D::Error> {
+    pub fn deserialize_and_check<D: serde::Deserializer<'data>>(de: D) -> Result<Self, D::Error> {
         let blob = Self::deserialize(de)?;
         #[cfg(debug_assertions)]
         blob.check_invariants();

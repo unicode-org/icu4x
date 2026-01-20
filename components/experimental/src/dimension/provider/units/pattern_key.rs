@@ -107,13 +107,13 @@ impl AsULE for PatternKey {
 
     fn to_unaligned(self) -> Self::ULE {
         let byte = match self {
-            PatternKey::Binary(value) => value,
-            PatternKey::Decimal(value) => {
+            Self::Binary(value) => value,
+            Self::Decimal(value) => {
                 let sign = if value < 0 { 0b0010_0000 } else { 0 };
                 debug_assert!(value > -32 && value < 32);
                 (0b01 << 6) | sign | (value.unsigned_abs() & 0b0001_1111)
             }
-            PatternKey::Power { power, count } => {
+            Self::Power { power, count } => {
                 let power_bits = {
                     match power {
                         PowerValue::Two => 0b10 << 4,
@@ -135,10 +135,10 @@ impl AsULE for PatternKey {
         let value = byte & 0b0011_1111;
 
         match variant {
-            0b00 => PatternKey::Binary(value),
+            0b00 => Self::Binary(value),
             0b01 => match value & 0b0010_0000 {
-                0b0000_0000 => PatternKey::Decimal(value as i8),
-                0b0010_0000 => PatternKey::Decimal(-((value & 0b0001_1111) as i8)),
+                0b0000_0000 => Self::Decimal(value as i8),
+                0b0010_0000 => Self::Decimal(-((value & 0b0001_1111) as i8)),
                 _ => unreachable!(),
             },
             0b10 => {
@@ -148,7 +148,7 @@ impl AsULE for PatternKey {
                     _ => unreachable!(),
                 };
                 let count = value & 0b0000_1111;
-                PatternKey::Power {
+                Self::Power {
                     power,
                     count: count.into(),
                 }
@@ -159,10 +159,10 @@ impl AsULE for PatternKey {
 }
 
 impl<'a> ZeroMapKV<'a> for PatternKey {
-    type Container = zerovec::ZeroVec<'a, PatternKey>;
-    type Slice = zerovec::ZeroSlice<PatternKey>;
-    type GetType = <PatternKey as AsULE>::ULE;
-    type OwnedType = PatternKey;
+    type Container = zerovec::ZeroVec<'a, Self>;
+    type Slice = zerovec::ZeroSlice<Self>;
+    type GetType = <Self as AsULE>::ULE;
+    type OwnedType = Self;
 }
 
 #[test]

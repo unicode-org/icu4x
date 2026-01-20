@@ -129,8 +129,7 @@ impl SinglePlaceholderPattern {
     ///     "hello, world!"
     /// );
     /// ```
-    pub const PASS_THROUGH: &'static SinglePlaceholderPattern =
-        SinglePlaceholderPattern::from_ref_store_unchecked("\x01");
+    pub const PASS_THROUGH: &'static Self = Self::from_ref_store_unchecked("\x01");
 }
 
 /// # Examples

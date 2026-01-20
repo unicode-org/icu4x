@@ -254,8 +254,8 @@ impl YearInfo {
     /// Gets the era year for era calendars, and the related ISO year for cyclic calendars.
     pub fn era_year_or_related_iso(self) -> i32 {
         match self {
-            YearInfo::Era(e) => e.year,
-            YearInfo::Cyclic(c) => c.related_iso,
+            Self::Era(e) => e.year,
+            Self::Cyclic(c) => c.related_iso,
         }
     }
 
@@ -263,8 +263,8 @@ impl YearInfo {
     /// for more information
     pub fn extended_year(self) -> i32 {
         match self {
-            YearInfo::Era(e) => e.extended_year,
-            YearInfo::Cyclic(c) => c.related_iso,
+            Self::Era(e) => e.extended_year,
+            Self::Cyclic(c) => c.related_iso,
         }
     }
 
@@ -346,10 +346,10 @@ impl MonthCode {
     /// if the [`MonthCode`] this method is called upon is a leap month, and `None` otherwise.
     /// This method assumes the [`MonthCode`] is valid.
     #[deprecated(since = "2.1.0")]
-    pub fn get_normal_if_leap(self) -> Option<MonthCode> {
+    pub fn get_normal_if_leap(self) -> Option<Self> {
         let bytes = self.0.all_bytes();
         if bytes[3] == b'L' {
-            Some(MonthCode(TinyAsciiStr::try_from_utf8(&bytes[0..3]).ok()?))
+            Some(Self(TinyAsciiStr::try_from_utf8(&bytes[0..3]).ok()?))
         } else {
             None
         }
@@ -411,10 +411,10 @@ impl AsULE for MonthCode {
 
 #[cfg(feature = "alloc")]
 impl<'a> zerovec::maps::ZeroMapKV<'a> for MonthCode {
-    type Container = zerovec::ZeroVec<'a, MonthCode>;
-    type Slice = zerovec::ZeroSlice<MonthCode>;
-    type GetType = <MonthCode as AsULE>::ULE;
-    type OwnedType = MonthCode;
+    type Container = zerovec::ZeroVec<'a, Self>;
+    type Slice = zerovec::ZeroSlice<Self>;
+    type GetType = <Self as AsULE>::ULE;
+    type OwnedType = Self;
 }
 
 impl fmt::Display for MonthCode {
@@ -720,7 +720,7 @@ pub struct DayOfWeekInMonth(pub u8);
 
 impl From<DayOfMonth> for DayOfWeekInMonth {
     fn from(day_of_month: DayOfMonth) -> Self {
-        DayOfWeekInMonth(1 + ((day_of_month.0 - 1) / 7))
+        Self(1 + ((day_of_month.0 - 1) / 7))
     }
 }
 
@@ -798,7 +798,7 @@ impl Weekday {
     }
 
     /// Returns the day after the current day.
-    pub(crate) fn next_day(self) -> Weekday {
+    pub(crate) fn next_day(self) -> Self {
         use Weekday::*;
         match self {
             Monday => Tuesday,

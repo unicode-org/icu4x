@@ -77,122 +77,120 @@ impl core::error::Error for ParseError {}
 
 impl ParseError {
     pub(crate) fn abrupt_end(location: &'static str) -> Self {
-        ParseError::AbruptEnd { location }
+        Self::AbruptEnd { location }
     }
 
     /// Convert this error to a static string representation
     pub fn to_static_string(&self) -> &'static str {
         match *self {
-            ParseError::ImplAssert => "Implementation error: this error must not throw.",
+            Self::ImplAssert => "Implementation error: this error must not throw.",
 
-            ParseError::NonAsciiCodePoint => "Code point was not ASCII",
+            Self::NonAsciiCodePoint => "Code point was not ASCII",
 
-            ParseError::ParseFloat => "Invalid float while parsing fraction part.",
+            Self::ParseFloat => "Invalid float while parsing fraction part.",
 
-            ParseError::AbruptEnd { .. } => "Parsing ended abruptly.",
+            Self::AbruptEnd { .. } => "Parsing ended abruptly.",
 
-            ParseError::InvalidEnd => "Unexpected character found after parsing was completed.",
+            Self::InvalidEnd => "Unexpected character found after parsing was completed.",
             // Date related errors
-            ParseError::InvalidMonthRange => "Parsed month value not in a valid range.",
+            Self::InvalidMonthRange => "Parsed month value not in a valid range.",
 
-            ParseError::InvalidDayRange => "Parsed day value not in a valid range.",
+            Self::InvalidDayRange => "Parsed day value not in a valid range.",
 
-            ParseError::DateYear => "Invalid chracter while parsing year value.",
+            Self::DateYear => "Invalid chracter while parsing year value.",
 
-            ParseError::DateExtendedYear => "Invalid character while parsing extended year value.",
+            Self::DateExtendedYear => "Invalid character while parsing extended year value.",
 
-            ParseError::DateMonth => "Invalid character while parsing month value.",
+            Self::DateMonth => "Invalid character while parsing month value.",
 
-            ParseError::DateDay => "Invalid character while parsing day value.",
+            Self::DateDay => "Invalid character while parsing day value.",
 
-            ParseError::DateUnexpectedEnd => "Unexpected end while parsing a date value.",
+            Self::DateUnexpectedEnd => "Unexpected end while parsing a date value.",
 
-            ParseError::TimeRequired => "Time is required.",
+            Self::TimeRequired => "Time is required.",
 
-            ParseError::TimeHour => "Invalid character while parsing hour value.",
+            Self::TimeHour => "Invalid character while parsing hour value.",
 
-            ParseError::TimeMinuteSecond => {
+            Self::TimeMinuteSecond => {
                 "Invalid character while parsing minute/second value in (0, 59] range."
             }
 
-            ParseError::TimeSecond => {
-                "Invalid character while parsing second value in (0, 60] range."
-            }
+            Self::TimeSecond => "Invalid character while parsing second value in (0, 60] range.",
 
-            ParseError::FractionPart => "Invalid character while parsing fraction part value.",
+            Self::FractionPart => "Invalid character while parsing fraction part value.",
 
-            ParseError::DateSeparator => "Invalid character while parsing date separator.",
+            Self::DateSeparator => "Invalid character while parsing date separator.",
 
-            ParseError::TimeSeparator => "Invalid character while parsing time separator.",
+            Self::TimeSeparator => "Invalid character while parsing time separator.",
 
-            ParseError::DecimalSeparator => "Invalid character while parsing decimal separator.",
+            Self::DecimalSeparator => "Invalid character while parsing decimal separator.",
             // Annotation Related Errors
-            ParseError::InvalidAnnotation => "Invalid annotation.",
+            Self::InvalidAnnotation => "Invalid annotation.",
 
-            ParseError::AnnotationOpen => "Invalid annotation open character.",
+            Self::AnnotationOpen => "Invalid annotation open character.",
 
-            ParseError::AnnotationClose => "Invalid annotation close character.",
+            Self::AnnotationClose => "Invalid annotation close character.",
 
-            ParseError::AnnotationChar => "Invalid annotation character.",
+            Self::AnnotationChar => "Invalid annotation character.",
 
-            ParseError::AnnotationKeyValueSeparator => {
+            Self::AnnotationKeyValueSeparator => {
                 "Invalid annotation key-value separator character."
             }
 
-            ParseError::AnnotationKeyLeadingChar => "Invalid annotation key leading character.",
+            Self::AnnotationKeyLeadingChar => "Invalid annotation key leading character.",
 
-            ParseError::AnnotationKeyChar => "Invalid annotation key character.",
+            Self::AnnotationKeyChar => "Invalid annotation key character.",
 
-            ParseError::AnnotationValueCharPostHyphen => {
+            Self::AnnotationValueCharPostHyphen => {
                 "Expected annotation value character must exist after hyphen."
             }
 
-            ParseError::AnnotationValueChar => "Invalid annotation value character.",
+            Self::AnnotationValueChar => "Invalid annotation value character.",
 
-            ParseError::InvalidMinutePrecisionOffset => "Offset must be minute precision",
+            Self::InvalidMinutePrecisionOffset => "Offset must be minute precision",
 
-            ParseError::CriticalDuplicateCalendar => {
+            Self::CriticalDuplicateCalendar => {
                 "Duplicate calendars cannot be provided when one is critical."
             }
 
-            ParseError::UnrecognizedCritical => "Unrecognized annoation is marked as critical.",
+            Self::UnrecognizedCritical => "Unrecognized annoation is marked as critical.",
 
-            ParseError::TzLeadingChar => "Invalid time zone leading character.",
+            Self::TzLeadingChar => "Invalid time zone leading character.",
 
-            ParseError::IanaCharPostSeparator => "Expected time zone character after '/'.",
+            Self::IanaCharPostSeparator => "Expected time zone character after '/'.",
 
-            ParseError::IanaChar => "Invalid IANA time zone character after '/'.",
+            Self::IanaChar => "Invalid IANA time zone character after '/'.",
 
-            ParseError::UtcTimeSeparator => "Invalid time zone character after '/'.",
+            Self::UtcTimeSeparator => "Invalid time zone character after '/'.",
 
-            ParseError::OffsetNeedsSign => "UTC offset needs a sign",
+            Self::OffsetNeedsSign => "UTC offset needs a sign",
 
-            ParseError::MonthDayHyphen => "MonthDay must begin with a month or '--'",
+            Self::MonthDayHyphen => "MonthDay must begin with a month or '--'",
 
-            ParseError::DurationDisgnator => "Invalid duration designator.",
+            Self::DurationDisgnator => "Invalid duration designator.",
 
-            ParseError::DurationValueExceededRange => {
+            Self::DurationValueExceededRange => {
                 "Provided Duration field value exceeds supported range."
             }
 
-            ParseError::DateDurationPartOrder => "Invalid date duration part order.",
+            Self::DateDurationPartOrder => "Invalid date duration part order.",
 
-            ParseError::TimeDurationPartOrder => "Invalid time duration part order.",
+            Self::TimeDurationPartOrder => "Invalid time duration part order.",
 
-            ParseError::TimeDurationDesignator => "Invalid time duration designator.",
+            Self::TimeDurationDesignator => "Invalid time duration designator.",
 
-            ParseError::AmbiguousTimeMonthDay => "Time is ambiguous with MonthDay",
+            Self::AmbiguousTimeMonthDay => "Time is ambiguous with MonthDay",
 
-            ParseError::AmbiguousTimeYearMonth => "Time is ambiguous with YearMonth",
+            Self::AmbiguousTimeYearMonth => "Time is ambiguous with YearMonth",
 
-            ParseError::InvalidMonthDay => "MonthDay was not valid.",
+            Self::InvalidMonthDay => "MonthDay was not valid.",
         }
     }
 }
 
 impl fmt::Display for ParseError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if let ParseError::AbruptEnd { location } = *self {
+        if let Self::AbruptEnd { location } = *self {
             write!(f, "Parsing ended abruptly while parsing {location}")
         } else {
             f.write_str(self.to_static_string())

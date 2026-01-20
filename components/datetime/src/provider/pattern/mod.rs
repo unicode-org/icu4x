@@ -63,7 +63,7 @@ impl TimeGranularity {
     }
 
     #[inline]
-    pub(crate) fn from_ordinal(ordinal: u8) -> TimeGranularity {
+    pub(crate) fn from_ordinal(ordinal: u8) -> Self {
         use TimeGranularity::*;
         match ordinal {
             1 => Hours,

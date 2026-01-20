@@ -59,8 +59,8 @@ impl DefaultPersonName {
         person_data: LiteMap<NameField, String>,
         locale: Option<Locale>,
         preferred_order: Option<PreferredOrder>,
-    ) -> Result<DefaultPersonName, PersonNamesFormatterError> {
-        let result = DefaultPersonName {
+    ) -> Result<Self, PersonNamesFormatterError> {
+        let result = Self {
             person_data,
             locale,
             preferred_order,

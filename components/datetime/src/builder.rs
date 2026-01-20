@@ -158,16 +158,16 @@ impl DateFields {
     /// Returns whether this [`DateFields`] variant represents a [`CalendarPeriodFieldSet`].
     pub fn is_calendar_period(self) -> bool {
         match self {
-            DateFields::D => false,
-            DateFields::MD => false,
-            DateFields::YMD => false,
-            DateFields::DE => false,
-            DateFields::MDE => false,
-            DateFields::YMDE => false,
-            DateFields::E => false,
-            DateFields::M => true,
-            DateFields::YM => true,
-            DateFields::Y => true,
+            Self::D => false,
+            Self::MD => false,
+            Self::YMD => false,
+            Self::DE => false,
+            Self::MDE => false,
+            Self::YMDE => false,
+            Self::E => false,
+            Self::M => true,
+            Self::YM => true,
+            Self::Y => true,
         }
     }
 }
@@ -363,7 +363,7 @@ mod _serde {
         where
             S: serde::Serializer,
         {
-            let FieldSetBuilder {
+            let Self {
                 length,
                 date_fields,
                 time_precision,
@@ -415,7 +415,7 @@ mod _serde {
                 alignment,
                 year_style,
             } = FieldSetBuilderHuman::deserialize(deserializer)?;
-            Ok(FieldSetBuilder {
+            Ok(Self {
                 length,
                 date_fields,
                 time_precision,

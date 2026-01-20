@@ -43,7 +43,7 @@ impl PersonNamesFormatter {
     pub fn try_new_unstable<P>(
         provider: &P,
         options: PersonNamesFormatterOptions,
-    ) -> Result<PersonNamesFormatter, PersonNamesFormatterError>
+    ) -> Result<Self, PersonNamesFormatterError>
     where
         P: ?Sized
             + DataProvider<icu_properties::provider::PropertyScriptWithExtensionsV1>
@@ -54,7 +54,7 @@ impl PersonNamesFormatter {
         let swe = icu_properties::script::ScriptWithExtensions::try_new_unstable(provider)?;
         let scripts = PropertyNamesShort::try_new_unstable(provider)?;
         let fallbacker = LocaleFallbacker::try_new_unstable(provider)?;
-        Ok(PersonNamesFormatter {
+        Ok(Self {
             default_options: options,
             swe,
             scripts,

@@ -234,8 +234,8 @@ where
     /// assert_eq!(zerovec.get_subslice(3..5), None);
     /// ```
     #[inline]
-    pub fn get_subslice(&self, range: Range<usize>) -> Option<&ZeroSlice<T>> {
-        self.0.get(range).map(ZeroSlice::from_ule_slice)
+    pub fn get_subslice(&self, range: Range<usize>) -> Option<&Self> {
+        self.0.get(range).map(Self::from_ule_slice)
     }
 
     /// Get a borrowed reference to the underlying ULE type at a specified index.
@@ -390,7 +390,7 @@ where
     /// assert_eq!(EXPECTED_VALUE, DATA.split_first().unwrap());
     /// ```
     #[inline]
-    pub fn split_first(&self) -> Option<(T, &ZeroSlice<T>)> {
+    pub fn split_first(&self) -> Option<(T, &Self)> {
         if let Some(first) = self.first() {
             return Some((
                 first,
@@ -512,12 +512,12 @@ unsafe impl<T: AsULE + 'static> VarULE for ZeroSlice<T> {
 
 impl<T> Eq for ZeroSlice<T> where T: AsULE + Eq {}
 
-impl<T> PartialEq<ZeroSlice<T>> for ZeroSlice<T>
+impl<T> PartialEq<Self> for ZeroSlice<T>
 where
     T: AsULE + PartialEq,
 {
     #[inline]
-    fn eq(&self, other: &ZeroSlice<T>) -> bool {
+    fn eq(&self, other: &Self) -> bool {
         self.as_zerovec().eq(&other.as_zerovec())
     }
 }

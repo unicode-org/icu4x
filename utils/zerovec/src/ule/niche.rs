@@ -190,9 +190,9 @@ impl<'a, T: AsULE + 'static, const N: usize> ZeroMapKV<'a> for NichedOption<T, N
 where
     T::ULE: NicheBytes<N>,
 {
-    type Container = ZeroVec<'a, NichedOption<T, N>>;
-    type Slice = ZeroSlice<NichedOption<T, N>>;
-    type GetType = <NichedOption<T, N> as AsULE>::ULE;
+    type Container = ZeroVec<'a, Self>;
+    type Slice = ZeroSlice<Self>;
+    type GetType = <Self as AsULE>::ULE;
     type OwnedType = Self;
 }
 

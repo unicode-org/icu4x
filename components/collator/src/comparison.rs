@@ -168,7 +168,7 @@ struct AnyQuaternaryAccumulator(u32);
 impl AnyQuaternaryAccumulator {
     #[inline(always)]
     pub fn new() -> Self {
-        AnyQuaternaryAccumulator(0)
+        Self(0)
     }
     #[inline(always)]
     pub fn accumulate(&mut self, non_primary: NonPrimary) {
@@ -538,7 +538,7 @@ impl LocaleSpecificDataHolder {
         merged_options.set_numeric_from_enum(prefs.numeric_ordering);
         merged_options.set_defaults(altered_defaults);
 
-        Ok(LocaleSpecificDataHolder {
+        Ok(Self {
             tailoring,
             diacritics,
             merged_options,
@@ -684,7 +684,7 @@ impl Collator {
             }
         });
 
-        Ok(Collator {
+        Ok(Self {
             special_primaries,
             root,
             tailoring: locale_dependent.tailoring,

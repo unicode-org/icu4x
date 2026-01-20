@@ -230,7 +230,7 @@ impl Unicode {
     /// assert_eq!(ue, "u-foobar-ca-gregory-hc-h12".parse().unwrap());
     /// ```
     #[cfg(feature = "alloc")]
-    pub fn extend(&mut self, other: Unicode) {
+    pub fn extend(&mut self, other: Self) {
         self.keywords.extend_from_keywords(other.keywords);
         self.attributes.extend_from_attributes(other.attributes);
     }

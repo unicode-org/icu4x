@@ -219,18 +219,18 @@ impl PluralCategory {
     }
 
     /// Returns the [`PluralCategory`] corresponding to given TR35 string.
-    pub fn get_for_cldr_string(category: &str) -> Option<PluralCategory> {
+    pub fn get_for_cldr_string(category: &str) -> Option<Self> {
         Self::get_for_cldr_bytes(category.as_bytes())
     }
     /// Returns the [`PluralCategory`] corresponding to given TR35 string as bytes
-    pub fn get_for_cldr_bytes(category: &[u8]) -> Option<PluralCategory> {
+    pub fn get_for_cldr_bytes(category: &[u8]) -> Option<Self> {
         match category {
-            b"zero" => Some(PluralCategory::Zero),
-            b"one" => Some(PluralCategory::One),
-            b"two" => Some(PluralCategory::Two),
-            b"few" => Some(PluralCategory::Few),
-            b"many" => Some(PluralCategory::Many),
-            b"other" => Some(PluralCategory::Other),
+            b"zero" => Some(Self::Zero),
+            b"one" => Some(Self::One),
+            b"two" => Some(Self::Two),
+            b"few" => Some(Self::Few),
+            b"many" => Some(Self::Many),
+            b"other" => Some(Self::Other),
             _ => None,
         }
     }
@@ -264,8 +264,8 @@ define_preferences!(
 #[derive(Debug)]
 pub struct PluralRules(DataPayload<ErasedMarker<PluralRulesData<'static>>>);
 
-impl AsRef<PluralRules> for PluralRules {
-    fn as_ref(&self) -> &PluralRules {
+impl AsRef<Self> for PluralRules {
+    fn as_ref(&self) -> &Self {
         self
     }
 }
@@ -628,7 +628,7 @@ impl PluralRulesWithRanges<PluralRules> {
     ) -> Result<Self, DataError> {
         let rules = PluralRules::try_new_cardinal_unstable(provider, prefs)?;
 
-        PluralRulesWithRanges::try_new_with_rules_unstable(provider, prefs, rules)
+        Self::try_new_with_rules_unstable(provider, prefs, rules)
     }
 
     icu_provider::gen_buffer_data_constructors!(
@@ -666,7 +666,7 @@ impl PluralRulesWithRanges<PluralRules> {
     ) -> Result<Self, DataError> {
         let rules = PluralRules::try_new_ordinal_unstable(provider, prefs)?;
 
-        PluralRulesWithRanges::try_new_with_rules_unstable(provider, prefs, rules)
+        Self::try_new_with_rules_unstable(provider, prefs, rules)
     }
 }
 

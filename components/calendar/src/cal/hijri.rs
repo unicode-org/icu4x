@@ -450,7 +450,7 @@ impl Hijri<TabularAlgorithm> {
     /// Use [`Self::new_tabular`]
     #[deprecated(since = "2.1.0", note = "use `Hijri::new_tabular`")]
     pub const fn new(leap_years: TabularAlgorithmLeapYears, epoch: TabularAlgorithmEpoch) -> Self {
-        Hijri::new_tabular(leap_years, epoch)
+        Self::new_tabular(leap_years, epoch)
     }
 
     /// Creates a [`Hijri`] calendar with tabular rules and the given leap year rule and epoch.
@@ -707,8 +707,8 @@ impl<A: AsCalendar<Calendar = Hijri<AstronomicalSimulation>>> Date<A> {
         month: u8,
         day: u8,
         calendar: A,
-    ) -> Result<Date<A>, RangeError> {
-        Date::try_new_hijri_with_calendar(year, month, day, calendar)
+    ) -> Result<Self, RangeError> {
+        Self::try_new_hijri_with_calendar(year, month, day, calendar)
     }
 }
 
@@ -991,7 +991,7 @@ impl<A: AsCalendar<Calendar = Hijri<R>>, R: Rules> Date<A> {
     ) -> Result<Self, RangeError> {
         ArithmeticDate::from_year_month_day(year, month, day, calendar.as_calendar())
             .map(HijriDateInner)
-            .map(|inner| Date::from_raw(inner, calendar))
+            .map(|inner| Self::from_raw(inner, calendar))
     }
 }
 
@@ -999,7 +999,7 @@ impl Date<Hijri<UmmAlQura>> {
     /// Deprecated
     #[deprecated(since = "2.1.0", note = "use `Date::try_new_hijri_with_calendar")]
     pub fn try_new_ummalqura(year: i32, month: u8, day: u8) -> Result<Self, RangeError> {
-        Date::try_new_hijri_with_calendar(year, month, day, Hijri::new_umm_al_qura())
+        Self::try_new_hijri_with_calendar(year, month, day, Hijri::new_umm_al_qura())
     }
 }
 
@@ -1011,8 +1011,8 @@ impl<A: AsCalendar<Calendar = Hijri<TabularAlgorithm>>> Date<A> {
         month: u8,
         day: u8,
         calendar: A,
-    ) -> Result<Date<A>, RangeError> {
-        Date::try_new_hijri_with_calendar(year, month, day, calendar)
+    ) -> Result<Self, RangeError> {
+        Self::try_new_hijri_with_calendar(year, month, day, calendar)
     }
 }
 

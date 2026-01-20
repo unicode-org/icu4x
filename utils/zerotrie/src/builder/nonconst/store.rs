@@ -51,7 +51,7 @@ pub(crate) trait TrieBuilderStore {
 
 impl TrieBuilderStore for VecDeque<u8> {
     fn atbs_new_empty() -> Self {
-        VecDeque::new()
+        Self::new()
     }
     fn atbs_len(&self) -> usize {
         self.len()

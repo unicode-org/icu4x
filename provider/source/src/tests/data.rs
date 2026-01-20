@@ -702,7 +702,7 @@ impl SourceDataProvider {
                         ("vanguard.zi", include_bytes!("../../tests/data/tzdb/vanguard.zi").as_slice())
                     ].into_iter().collect(),
                 ), transitions: Default::default() })),
-                ..SourceDataProvider::new_custom()
+                ..Self::new_custom()
             })
             .clone()
     }

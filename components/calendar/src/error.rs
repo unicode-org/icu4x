@@ -287,7 +287,7 @@ mod unstable {
     impl From<RangeError> for DateFromFieldsError {
         #[inline]
         fn from(value: RangeError) -> Self {
-            DateFromFieldsError::Range(value)
+            Self::Range(value)
         }
     }
 }
@@ -298,14 +298,14 @@ pub(crate) struct UnknownEraError;
 impl From<UnknownEraError> for DateError {
     #[inline]
     fn from(_value: UnknownEraError) -> Self {
-        DateError::UnknownEra
+        Self::UnknownEra
     }
 }
 
 impl From<UnknownEraError> for DateFromFieldsError {
     #[inline]
     fn from(_value: UnknownEraError) -> Self {
-        DateFromFieldsError::UnknownEra
+        Self::UnknownEra
     }
 }
 
@@ -321,7 +321,7 @@ impl From<MonthCodeParseError> for DateFromFieldsError {
     #[inline]
     fn from(value: MonthCodeParseError) -> Self {
         match value {
-            MonthCodeParseError::InvalidSyntax => DateFromFieldsError::MonthCodeInvalidSyntax,
+            MonthCodeParseError::InvalidSyntax => Self::MonthCodeInvalidSyntax,
         }
     }
 }
@@ -337,8 +337,8 @@ impl From<MonthCodeError> for DateFromFieldsError {
     #[inline]
     fn from(value: MonthCodeError) -> Self {
         match value {
-            MonthCodeError::NotInCalendar => DateFromFieldsError::MonthCodeNotInCalendar,
-            MonthCodeError::NotInYear => DateFromFieldsError::MonthCodeNotInYear,
+            MonthCodeError::NotInCalendar => Self::MonthCodeNotInCalendar,
+            MonthCodeError::NotInYear => Self::MonthCodeNotInYear,
         }
     }
 }
@@ -365,10 +365,8 @@ impl From<EcmaReferenceYearError> for DateFromFieldsError {
     #[inline]
     fn from(value: EcmaReferenceYearError) -> Self {
         match value {
-            EcmaReferenceYearError::Unimplemented => DateFromFieldsError::NotEnoughFields,
-            EcmaReferenceYearError::MonthCodeNotInCalendar => {
-                DateFromFieldsError::MonthCodeNotInCalendar
-            }
+            EcmaReferenceYearError::Unimplemented => Self::NotEnoughFields,
+            EcmaReferenceYearError::MonthCodeNotInCalendar => Self::MonthCodeNotInCalendar,
         }
     }
 }
@@ -399,7 +397,7 @@ impl From<RangeError> for DateError {
             min,
             max,
         } = value;
-        DateError::Range {
+        Self::Range {
             field,
             value,
             min,

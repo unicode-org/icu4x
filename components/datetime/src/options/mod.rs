@@ -77,7 +77,7 @@ pub enum Length {
     Short,
 }
 
-impl IntoOption<Length> for Length {
+impl IntoOption<Self> for Length {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
@@ -156,7 +156,7 @@ pub enum Alignment {
     Column,
 }
 
-impl IntoOption<Alignment> for Alignment {
+impl IntoOption<Self> for Alignment {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
@@ -302,7 +302,7 @@ pub enum YearStyle {
     WithEra,
 }
 
-impl IntoOption<YearStyle> for YearStyle {
+impl IntoOption<Self> for YearStyle {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
@@ -438,7 +438,7 @@ pub enum TimePrecision {
     MinuteOptional,
 }
 
-impl IntoOption<TimePrecision> for TimePrecision {
+impl IntoOption<Self> for TimePrecision {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
@@ -468,19 +468,19 @@ enum TimePrecisionSerde {
 impl From<TimePrecision> for TimePrecisionSerde {
     fn from(value: TimePrecision) -> Self {
         match value {
-            TimePrecision::Hour => TimePrecisionSerde::Hour,
-            TimePrecision::Minute => TimePrecisionSerde::Minute,
-            TimePrecision::Second => TimePrecisionSerde::Second,
-            TimePrecision::Subsecond(SubsecondDigits::S1) => TimePrecisionSerde::Subsecond1,
-            TimePrecision::Subsecond(SubsecondDigits::S2) => TimePrecisionSerde::Subsecond2,
-            TimePrecision::Subsecond(SubsecondDigits::S3) => TimePrecisionSerde::Subsecond3,
-            TimePrecision::Subsecond(SubsecondDigits::S4) => TimePrecisionSerde::Subsecond4,
-            TimePrecision::Subsecond(SubsecondDigits::S5) => TimePrecisionSerde::Subsecond5,
-            TimePrecision::Subsecond(SubsecondDigits::S6) => TimePrecisionSerde::Subsecond6,
-            TimePrecision::Subsecond(SubsecondDigits::S7) => TimePrecisionSerde::Subsecond7,
-            TimePrecision::Subsecond(SubsecondDigits::S8) => TimePrecisionSerde::Subsecond8,
-            TimePrecision::Subsecond(SubsecondDigits::S9) => TimePrecisionSerde::Subsecond9,
-            TimePrecision::MinuteOptional => TimePrecisionSerde::MinuteOptional,
+            TimePrecision::Hour => Self::Hour,
+            TimePrecision::Minute => Self::Minute,
+            TimePrecision::Second => Self::Second,
+            TimePrecision::Subsecond(SubsecondDigits::S1) => Self::Subsecond1,
+            TimePrecision::Subsecond(SubsecondDigits::S2) => Self::Subsecond2,
+            TimePrecision::Subsecond(SubsecondDigits::S3) => Self::Subsecond3,
+            TimePrecision::Subsecond(SubsecondDigits::S4) => Self::Subsecond4,
+            TimePrecision::Subsecond(SubsecondDigits::S5) => Self::Subsecond5,
+            TimePrecision::Subsecond(SubsecondDigits::S6) => Self::Subsecond6,
+            TimePrecision::Subsecond(SubsecondDigits::S7) => Self::Subsecond7,
+            TimePrecision::Subsecond(SubsecondDigits::S8) => Self::Subsecond8,
+            TimePrecision::Subsecond(SubsecondDigits::S9) => Self::Subsecond9,
+            TimePrecision::MinuteOptional => Self::MinuteOptional,
         }
     }
 }
@@ -489,19 +489,19 @@ impl From<TimePrecision> for TimePrecisionSerde {
 impl From<TimePrecisionSerde> for TimePrecision {
     fn from(value: TimePrecisionSerde) -> Self {
         match value {
-            TimePrecisionSerde::Hour => TimePrecision::Hour,
-            TimePrecisionSerde::Minute => TimePrecision::Minute,
-            TimePrecisionSerde::Second => TimePrecision::Second,
-            TimePrecisionSerde::Subsecond1 => TimePrecision::Subsecond(SubsecondDigits::S1),
-            TimePrecisionSerde::Subsecond2 => TimePrecision::Subsecond(SubsecondDigits::S2),
-            TimePrecisionSerde::Subsecond3 => TimePrecision::Subsecond(SubsecondDigits::S3),
-            TimePrecisionSerde::Subsecond4 => TimePrecision::Subsecond(SubsecondDigits::S4),
-            TimePrecisionSerde::Subsecond5 => TimePrecision::Subsecond(SubsecondDigits::S5),
-            TimePrecisionSerde::Subsecond6 => TimePrecision::Subsecond(SubsecondDigits::S6),
-            TimePrecisionSerde::Subsecond7 => TimePrecision::Subsecond(SubsecondDigits::S7),
-            TimePrecisionSerde::Subsecond8 => TimePrecision::Subsecond(SubsecondDigits::S8),
-            TimePrecisionSerde::Subsecond9 => TimePrecision::Subsecond(SubsecondDigits::S9),
-            TimePrecisionSerde::MinuteOptional => TimePrecision::MinuteOptional,
+            TimePrecisionSerde::Hour => Self::Hour,
+            TimePrecisionSerde::Minute => Self::Minute,
+            TimePrecisionSerde::Second => Self::Second,
+            TimePrecisionSerde::Subsecond1 => Self::Subsecond(SubsecondDigits::S1),
+            TimePrecisionSerde::Subsecond2 => Self::Subsecond(SubsecondDigits::S2),
+            TimePrecisionSerde::Subsecond3 => Self::Subsecond(SubsecondDigits::S3),
+            TimePrecisionSerde::Subsecond4 => Self::Subsecond(SubsecondDigits::S4),
+            TimePrecisionSerde::Subsecond5 => Self::Subsecond(SubsecondDigits::S5),
+            TimePrecisionSerde::Subsecond6 => Self::Subsecond(SubsecondDigits::S6),
+            TimePrecisionSerde::Subsecond7 => Self::Subsecond(SubsecondDigits::S7),
+            TimePrecisionSerde::Subsecond8 => Self::Subsecond(SubsecondDigits::S8),
+            TimePrecisionSerde::Subsecond9 => Self::Subsecond(SubsecondDigits::S9),
+            TimePrecisionSerde::MinuteOptional => Self::MinuteOptional,
         }
     }
 }
@@ -582,7 +582,7 @@ impl SubsecondDigits {
 }
 
 impl From<SubsecondDigits> for u8 {
-    fn from(value: SubsecondDigits) -> u8 {
+    fn from(value: SubsecondDigits) -> Self {
         use SubsecondDigits::*;
         match value {
             S1 => 1,
