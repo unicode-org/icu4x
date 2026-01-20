@@ -121,21 +121,21 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
 
 macro_rules! impl_basic_dim {
     ($t1:path, $t2:path, $t3:path) => {
-        impl<'a> $t1 {
+        impl $t1 {
             #[allow(dead_code)]
             pub(super) fn dim(&self) -> usize {
                 let [dim] = self.dims;
                 dim
             }
         }
-        impl<'a> $t2 {
+        impl $t2 {
             #[allow(dead_code)]
             pub(super) fn dim(&self) -> (usize, usize) {
                 let [d0, d1] = self.dims;
                 (d0, d1)
             }
         }
-        impl<'a> $t3 {
+        impl $t3 {
             #[allow(dead_code)]
             pub(super) fn dim(&self) -> (usize, usize, usize) {
                 let [d0, d1, d2] = self.dims;
@@ -147,16 +147,16 @@ macro_rules! impl_basic_dim {
 
 impl_basic_dim!(MatrixOwned<1>, MatrixOwned<2>, MatrixOwned<3>);
 impl_basic_dim!(
-    MatrixBorrowed<'a, 1>,
-    MatrixBorrowed<'a, 2>,
-    MatrixBorrowed<'a, 3>
+    MatrixBorrowed<'_, 1>,
+    MatrixBorrowed<'_, 2>,
+    MatrixBorrowed<'_, 3>
 );
 impl_basic_dim!(
-    MatrixBorrowedMut<'a, 1>,
-    MatrixBorrowedMut<'a, 2>,
-    MatrixBorrowedMut<'a, 3>
+    MatrixBorrowedMut<'_, 1>,
+    MatrixBorrowedMut<'_, 2>,
+    MatrixBorrowedMut<'_, 3>
 );
-impl_basic_dim!(MatrixZero<'a, 1>, MatrixZero<'a, 2>, MatrixZero<'a, 3>);
+impl_basic_dim!(MatrixZero<'_, 1>, MatrixZero<'_, 2>, MatrixZero<'_, 3>);
 
 /// A `D`-dimensional, mutably borrowed matrix.
 pub(super) struct MatrixBorrowedMut<'a, const D: usize> {

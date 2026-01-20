@@ -181,7 +181,7 @@ impl<T: Writeable + ?Sized> Writeable for &T {
 #[cfg(feature = "alloc")]
 macro_rules! impl_write_smart_pointer {
     ($ty:path, T: $extra_bound:path) => {
-        impl<'a, T: ?Sized + Writeable + $extra_bound> Writeable for $ty {
+        impl<T: ?Sized + Writeable + $extra_bound> Writeable for $ty {
             #[inline]
             fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
                 core::borrow::Borrow::<T>::borrow(self).write_to(sink)
@@ -211,7 +211,7 @@ macro_rules! impl_write_smart_pointer {
 }
 
 #[cfg(feature = "alloc")]
-impl_write_smart_pointer!(Cow<'a, T>, T: alloc::borrow::ToOwned);
+impl_write_smart_pointer!(Cow<'_, T>, T: alloc::borrow::ToOwned);
 #[cfg(feature = "alloc")]
 impl_write_smart_pointer!(alloc::boxed::Box<T>);
 #[cfg(feature = "alloc")]

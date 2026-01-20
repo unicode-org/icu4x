@@ -454,7 +454,7 @@ macro_rules! impl_zerotrie_subtype {
             }
         }
         #[cfg(feature = "alloc")]
-        impl<'a, K> FromIterator<(K, usize)> for $name<Vec<u8>>
+        impl<K> FromIterator<(K, usize)> for $name<Vec<u8>>
         where
             K: AsRef<[u8]>
         {
