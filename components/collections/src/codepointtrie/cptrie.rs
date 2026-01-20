@@ -90,6 +90,7 @@ macro_rules! impl_primitive_trie_value {
                 Self::try_from(i)
             }
 
+            #[allow(trivial_numeric_casts)]
             fn to_u32(self) -> u32 {
                 // bitcast when the same size, zero-extend/sign-extend
                 // when not the same size

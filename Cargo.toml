@@ -345,6 +345,7 @@ clippy.exhaustive_structs = "deny"
 clippy.trivially_copy_pass_by_ref = "deny"
 rust.missing_debug_implementations = "deny"
 # rust.missing_docs = "deny" https://github.com/rust-lang/rust/issues/137561
+rust.trivial_numeric_casts = "deny"
 rust.unexpected_cfgs = { level = "warn", check-cfg = [
     'cfg(icu4c_enable_renaming)',
     'cfg(needs_alloc_error_handler)',

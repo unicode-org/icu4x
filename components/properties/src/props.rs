@@ -70,6 +70,7 @@ macro_rules! create_const_array {
 
 
         impl From<$enum_ty> for u16  {
+            #[allow(trivial_numeric_casts)]
             fn from(other: $enum_ty) -> Self {
                 other.0 as u16
             }

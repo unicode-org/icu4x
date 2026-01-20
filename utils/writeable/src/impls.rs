@@ -15,6 +15,7 @@ macro_rules! impl_write_num {
                 let mut n = *self;
                 let mut i = MAX_LEN;
                 #[expect(clippy::indexing_slicing)] // n < 10^i
+                #[allow(trivial_numeric_casts)]
                 while n != 0 {
                     i -= 1;
                     buf[i] = b'0' + (n % 10) as u8;
@@ -49,6 +50,7 @@ macro_rules! impl_write_num {
         }
 
         #[test]
+        #[allow(trivial_numeric_casts)]
         fn $test() {
             use $crate::assert_writeable_eq;
             assert_writeable_eq!(&(0 as $u), "0");
