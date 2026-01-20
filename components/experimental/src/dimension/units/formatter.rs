@@ -43,6 +43,7 @@ prefs_convert!(UnitsFormatterPreferences, PluralRulesPreferences);
 ///   2. Locale-sensitive grouping separator positions.
 ///
 /// Read more about the options in the [`super::options`] module.
+#[derive(Debug)]
 pub struct UnitsFormatter {
     /// Options bag for the units formatter to determine the behavior of the formatter.
     /// for example: width of the units.

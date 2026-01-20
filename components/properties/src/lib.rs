@@ -2,6 +2,23 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+#![cfg_attr(not(any(test, doc)), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+        clippy::exhaustive_structs,
+        clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
+        missing_debug_implementations,
+    )
+)]
+#![warn(missing_docs)]
+
 //! Definitions of [Unicode Properties] and APIs for
 //! retrieving property data in an appropriate data structure.
 //!
@@ -56,23 +73,6 @@
 //! [Unicode Properties]: https://unicode-org.github.io/icu/userguide/strings/properties.html
 //! [`CodePointSetData`]: crate::CodePointSetData
 //! [`CodePointMapData`]: crate::CodePointMapData
-
-// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, doc)), no_std)]
-#![cfg_attr(
-    not(test),
-    deny(
-        clippy::indexing_slicing,
-        clippy::unwrap_used,
-        clippy::expect_used,
-        clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        clippy::trivially_copy_pass_by_ref,
-        missing_debug_implementations,
-    )
-)]
-#![warn(missing_docs)]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;

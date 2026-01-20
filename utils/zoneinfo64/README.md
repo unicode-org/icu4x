@@ -20,22 +20,13 @@ assert_eq!(offset.offset, offset_seven);
 
 // Calculate possible offsets at 2025-11-02T01:00:00
 // This is during a DST switchover and is ambiguous
-let possible = pacific.for_date_time(2025, 11, 2, 1, 0, 0);
+let PossibleOffset::Ambiguous { before, after, transition } = pacific.for_date_time(2025, 11, 2, 1, 0, 0) else { panic!() };
 let offset_eight = UtcOffset::from_seconds(-8 * 3600);
-assert_eq!(
-    possible,
-    PossibleOffset::Ambiguous {
-        before: Offset {
-            offset: offset_seven,
-            rule_applies: true
-        },
-        after: Offset {
-            offset: offset_eight,
-            rule_applies: false
-        },
-        transition: 1762074000,
-    }
-);
+assert_eq!(before.offset, offset_seven);
+assert!(before.rule_applies);
+assert_eq!(after.offset, offset_eight);
+assert!(!after.rule_applies);
+assert_eq!(transition, 1762074000);
 ```
 
 <!-- cargo-rdme end -->

@@ -2,10 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This crate provides [`ZeroFrom`], a trait for converting types in a zero-copy way.
-//!
-//! See the documentation of [`ZeroFrom`] for more details.
-
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, doc)), no_std)]
 #![cfg_attr(
@@ -21,6 +17,12 @@
         missing_debug_implementations,
     )
 )]
+#![warn(missing_docs)]
+
+//! This crate provides [`ZeroFrom`], a trait for converting types in a zero-copy way.
+//!
+//! See the documentation of [`ZeroFrom`] for more details.
+
 // The lifetimes here are important for safety and explicitly writing
 // them out is good even when redundant
 #![allow(clippy::needless_lifetimes)]

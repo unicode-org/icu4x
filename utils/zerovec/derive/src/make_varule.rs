@@ -878,8 +878,8 @@ impl<'a> OwnULETy<'a> {
     }
 
     /// Get the tokens for the corresponding VarULE type
-    fn varule_ty(&self) -> TokenStream2 {
-        match *self {
+    fn varule_ty(self) -> TokenStream2 {
+        match self {
             OwnULETy::Slice(s) => quote!([#s]),
             OwnULETy::Str => quote!(str),
         }

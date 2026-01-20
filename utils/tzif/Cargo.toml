@@ -5,7 +5,7 @@
 [package]
 name = "tzif"
 description = "A parser for TZif files"
-version = "0.4.1"
+version = "0.5.0-dev"
 keywords = ["time-zone", "posix", "iana", "parse", "data"]
 categories = ["date-and-time", "parser-implementations"]
 

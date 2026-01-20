@@ -405,7 +405,7 @@ pub(crate) enum Unit {
 
 impl Unit {
     /// Returns the default digital style for the unit.
-    pub(crate) fn digital_default(&self) -> FieldStyle {
+    pub(crate) fn digital_default(self) -> FieldStyle {
         match self {
             Unit::Year => YearStyle::Short.into(),
             Unit::Month => MonthStyle::Short.into(),
@@ -420,7 +420,7 @@ impl Unit {
         }
     }
 
-    pub(crate) const fn as_unit_formatter_name(&self) -> &'static str {
+    pub(crate) const fn as_unit_formatter_name(self) -> &'static str {
         match self {
             Unit::Year => "year",
             Unit::Month => "month",

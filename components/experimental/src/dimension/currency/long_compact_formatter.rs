@@ -46,6 +46,7 @@ prefs_convert!(
 /// [`LongCompactCurrencyFormatter`] supports:
 ///   1. Rendering in the locale's currency system.
 ///   2. Locale-sensitive grouping separator positions.
+#[derive(Debug)]
 pub struct LongCompactCurrencyFormatter {
     /// Extended data for the currency formatter.
     extended: DataPayload<CurrencyExtendedDataV1>,

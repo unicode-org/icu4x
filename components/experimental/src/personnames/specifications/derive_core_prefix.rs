@@ -10,8 +10,8 @@ use alloc::vec::Vec;
 /// a single field can be transformed into 2 fields, or just be removed.
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#handle-core-and-prefix
 pub fn handle_field_modifier_core_prefix(
-    available_fields: &[&NameField],
-    requested_field: &NameField,
+    available_fields: &[NameField],
+    requested_field: NameField,
 ) -> Vec<NameField> {
     let is_core = requested_field.modifier.has_field(FieldModifier::Core);
     let is_prefix = requested_field.modifier.has_field(FieldModifier::Prefix);
@@ -36,7 +36,7 @@ pub fn handle_field_modifier_core_prefix(
         has_core_version_available,
         has_plain_version_available,
     ) {
-        (true, true, true) | (false, false, false) => result.push(*requested_field),
+        (true, true, true) | (false, false, false) => result.push(requested_field),
         (true, false, true) => {
             if is_core {
                 result.push(NameField {
@@ -44,7 +44,7 @@ pub fn handle_field_modifier_core_prefix(
                     modifier: requested_field.modifier.with_part(FieldPart::Auto),
                 })
             } else if is_plain {
-                result.push(*requested_field)
+                result.push(requested_field)
             }
         }
         (false, true, true) | (false, false, true) => {
@@ -54,7 +54,7 @@ pub fn handle_field_modifier_core_prefix(
                     modifier: requested_field.modifier.with_part(FieldPart::Auto),
                 })
             } else {
-                result.push(*requested_field)
+                result.push(requested_field)
             }
         }
         (true, true, false) => {
@@ -68,7 +68,7 @@ pub fn handle_field_modifier_core_prefix(
                     modifier: requested_field.modifier.with_part(FieldPart::Core),
                 })
             } else {
-                result.push(*requested_field)
+                result.push(requested_field)
             }
         }
         (false, true, false) => {
@@ -78,12 +78,12 @@ pub fn handle_field_modifier_core_prefix(
                     modifier: requested_field.modifier.with_part(FieldPart::Core),
                 })
             } else {
-                result.push(*requested_field)
+                result.push(requested_field)
             }
         }
         (true, false, false) => {
             if !&is_prefix {
-                result.push(*requested_field)
+                result.push(requested_field)
             }
         }
     }
@@ -187,8 +187,8 @@ mod tests {
             .collect::<Vec<NameField>>();
         assert_eq!(
             super::handle_field_modifier_core_prefix(
-                &available_fields.iter().collect::<Vec<&NameField>>(),
-                &NameField {
+                &available_fields,
+                NameField {
                     kind: NameFieldKind::Given,
                     modifier: FieldModifierSet::part(field_part),
                 }
