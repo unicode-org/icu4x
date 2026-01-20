@@ -24,7 +24,6 @@ If the crate has no `std` feature:
             clippy::exhaustive_structs,
             clippy::exhaustive_enums,
             clippy::trivially_copy_pass_by_ref,
-            missing_debug_implementations,
         )
     )]
     #![warn(missing_docs)]
@@ -45,7 +44,6 @@ If the crate has an `std` feature, specify this in the first line:
             clippy::exhaustive_structs,
             clippy::exhaustive_enums,
             clippy::trivially_copy_pass_by_ref,
-            missing_debug_implementations,
         )
     )]
     #![warn(missing_docs)]

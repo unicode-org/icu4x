@@ -21,6 +21,7 @@ icu_provider::data_marker!(MarkerV3, Empty);
 icu_provider::data_marker!(MarkerV4, Empty);
 
 #[derive(
+    Debug,
     serde::Serialize,
     serde::Deserialize,
     Clone,

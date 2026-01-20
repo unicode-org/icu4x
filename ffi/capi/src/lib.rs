@@ -16,10 +16,10 @@
         // Enums should be non-exhaustive, as exhaustive enums don't exist in other languages anyway
         clippy::exhaustive_enums,
         clippy::trivially_copy_pass_by_ref,
-        // Debug is not required as there is no stable Rust API
-        // missing_debug_implementations,
     )
 )]
+// Debug is not required as there is no stable Rust API
+#![allow(missing_debug_implementations)]
 // #![warn(missing_docs)] // todo
 // Diplomat limitations
 #![allow(
