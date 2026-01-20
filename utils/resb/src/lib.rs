@@ -14,6 +14,7 @@
     )
 )]
 #![warn(missing_docs)]
+#![allow(clippy::todo)]
 
 //! `resb` is a utility crate of the [`ICU4X`] project for working with ICU
 //! resource bundle files.

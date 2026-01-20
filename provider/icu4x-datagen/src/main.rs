@@ -712,7 +712,7 @@ macro_rules! cb {
             use std::sync::OnceLock;
             static LOOKUP: OnceLock<HashMap<String, Option<DataMarkerInfo>>> = OnceLock::new();
             LOOKUP.get_or_init(|| {
-                [
+                vec![
                     (stringify!(icu_provider::hello_world::HelloWorldV1).replace(' ', ""), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
                     (stringify!(HelloWorldV1).into(), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
                     $(

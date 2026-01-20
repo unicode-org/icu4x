@@ -186,11 +186,14 @@ pub struct Statistics {
 
 impl std::fmt::Debug for BakedExporter {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // skip formatting intermediate data
+        let _ = &self.data;
+        let _ = &self.impl_data;
         f.debug_struct("BakedExporter")
             .field("mod_directory", &self.mod_directory)
             .field("pretty", &self.pretty)
             .field("use_separate_crates", &self.use_separate_crates)
-            // skip formatting intermediate data
+            .field("use_internal_fallback", &self.use_internal_fallback)
             .finish()
     }
 }
