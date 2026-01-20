@@ -90,11 +90,11 @@ impl Date<Buddhist> {
     /// assert_eq!(date_buddhist.month().ordinal, 1);
     /// assert_eq!(date_buddhist.day_of_month().0, 2);
     /// ```
-    pub fn try_new_buddhist(year: i32, month: u8, day: u8) -> Result<Date<Buddhist>, RangeError> {
+    pub fn try_new_buddhist(year: i32, month: u8, day: u8) -> Result<Self, RangeError> {
         ArithmeticDate::from_year_month_day(year, month, day, &AbstractGregorian(BuddhistEra))
             .map(ArithmeticDate::cast)
             .map(BuddhistDateInner)
-            .map(|i| Date::from_raw(i, Buddhist))
+            .map(|i| Self::from_raw(i, Buddhist))
     }
 }
 

@@ -25,15 +25,14 @@ pub(crate) enum Weekday {
 
 impl From<&Weekday> for icu::calendar::types::Weekday {
     fn from(day: &Weekday) -> Self {
-        use icu::calendar::types::Weekday as CalWeekday;
         match day {
-            Weekday::Mon => CalWeekday::Monday,
-            Weekday::Tue => CalWeekday::Tuesday,
-            Weekday::Wed => CalWeekday::Wednesday,
-            Weekday::Thu => CalWeekday::Thursday,
-            Weekday::Fri => CalWeekday::Friday,
-            Weekday::Sat => CalWeekday::Saturday,
-            Weekday::Sun => CalWeekday::Sunday,
+            Weekday::Mon => Self::Monday,
+            Weekday::Tue => Self::Tuesday,
+            Weekday::Wed => Self::Wednesday,
+            Weekday::Thu => Self::Thursday,
+            Weekday::Fri => Self::Friday,
+            Weekday::Sat => Self::Saturday,
+            Weekday::Sun => Self::Sunday,
         }
     }
 }

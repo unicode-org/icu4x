@@ -13,12 +13,12 @@ use zerovec::{
 
 impl<'a, B: PatternBackend> ZeroMapKV<'a> for Pattern<B>
 where
-    Pattern<B>: VarULE,
+    Self: VarULE,
 {
-    type Container = VarZeroVec<'a, Pattern<B>>;
-    type Slice = VarZeroSlice<Pattern<B>>;
-    type GetType = Pattern<B>;
-    type OwnedType = Box<Pattern<B>>;
+    type Container = VarZeroVec<'a, Self>;
+    type Slice = VarZeroSlice<Self>;
+    type GetType = Self;
+    type OwnedType = Box<Self>;
 }
 
 /// Implement `VarULE` for `Pattern<SinglePlaceholder, str>`.

@@ -31,8 +31,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::zone::windows::WindowsParser::new, FnInStruct)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<WindowsParser> {
-            Box::new(WindowsParser(
+        pub fn create() -> Box<Self> {
+            Box::new(Self(
                 icu_time::zone::windows::WindowsParser::new().static_to_owned(),
             ))
         }
@@ -41,10 +41,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::zone::windows::WindowsParser::new, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<WindowsParser>, DataError> {
-            Ok(Box::new(WindowsParser(
+        pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_time::zone::windows::WindowsParser::try_new_with_buffer_provider(
                     provider.get()?,
                 )?,

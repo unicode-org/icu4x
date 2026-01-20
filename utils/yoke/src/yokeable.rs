@@ -312,17 +312,17 @@ unsafe impl<'a, T: 'static + ?Sized> Yokeable<'a> for &'static T {
 #[cfg(feature = "alloc")]
 // Safety: Vec<T: 'static> never borrows.
 unsafe impl<'a, T: 'static> Yokeable<'a> for alloc::vec::Vec<T> {
-    type Output = alloc::vec::Vec<T>;
+    type Output = Self;
     #[inline]
-    fn transform(&'a self) -> &'a alloc::vec::Vec<T> {
+    fn transform(&'a self) -> &'a Self {
         self
     }
     #[inline]
-    fn transform_owned(self) -> alloc::vec::Vec<T> {
+    fn transform_owned(self) -> Self {
         self
     }
     #[inline]
-    unsafe fn make(from: alloc::vec::Vec<T>) -> Self {
+    unsafe fn make(from: Self) -> Self {
         from
     }
     #[inline]
@@ -336,7 +336,7 @@ unsafe impl<'a, T: 'static> Yokeable<'a> for alloc::vec::Vec<T> {
 
 // Safety: PhantomData is a ZST.
 unsafe impl<'a, T: ?Sized + 'static> Yokeable<'a> for PhantomData<T> {
-    type Output = PhantomData<T>;
+    type Output = Self;
 
     fn transform(&'a self) -> &'a Self::Output {
         self

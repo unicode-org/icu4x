@@ -187,8 +187,8 @@ impl DryDataProvider<HelloWorldV1> for HelloWorldProvider {
 
 impl DataPayload<HelloWorldV1> {
     /// Make a [`DataPayload`]`<`[`HelloWorldV1`]`>` from a static string slice.
-    pub fn from_static_str(s: &'static str) -> DataPayload<HelloWorldV1> {
-        DataPayload::from_owned(HelloWorld {
+    pub fn from_static_str(s: &'static str) -> Self {
+        Self::from_owned(HelloWorld {
             message: Cow::Borrowed(s),
         })
     }

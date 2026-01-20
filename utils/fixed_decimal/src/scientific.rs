@@ -23,7 +23,7 @@ pub struct ScientificDecimal {
 impl ScientificDecimal {
     /// Creates a [`ScientificDecimal`] from parts.
     pub fn from(significand: Decimal, exponent: FixedInteger) -> Self {
-        ScientificDecimal {
+        Self {
             significand,
             exponent,
         }
@@ -96,7 +96,7 @@ impl ScientificDecimal {
         if parts.next().is_some() {
             return Err(ParseError::Syntax);
         }
-        Ok(ScientificDecimal::from(
+        Ok(Self::from(
             Decimal::try_from_utf8(significand)?,
             FixedInteger::try_from_utf8(exponent)?,
         ))

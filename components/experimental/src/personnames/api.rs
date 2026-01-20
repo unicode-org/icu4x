@@ -53,13 +53,13 @@ impl core::error::Error for PersonNamesFormatterError {}
 
 impl From<DataError> for PersonNamesFormatterError {
     fn from(e: DataError) -> Self {
-        PersonNamesFormatterError::Data(e)
+        Self::Data(e)
     }
 }
 
 impl From<icu_pattern::Error> for PersonNamesFormatterError {
     fn from(e: icu_pattern::Error) -> Self {
-        PersonNamesFormatterError::Pattern(e)
+        Self::Pattern(e)
     }
 }
 
@@ -81,14 +81,14 @@ pub(crate) enum FieldModifier {
 impl FieldModifier {
     pub(crate) fn bit_value(self) -> u32 {
         match &self {
-            FieldModifier::None => 0,
-            FieldModifier::Informal => 1 << 0,
-            FieldModifier::Prefix => 1 << 1,
-            FieldModifier::Core => 1 << 2,
-            FieldModifier::AllCaps => 1 << 3,
-            FieldModifier::InitialCap => 1 << 4,
-            FieldModifier::Initial => 1 << 5,
-            FieldModifier::Monogram => 1 << 6,
+            Self::None => 0,
+            Self::Informal => 1 << 0,
+            Self::Prefix => 1 << 1,
+            Self::Core => 1 << 2,
+            Self::AllCaps => 1 << 3,
+            Self::InitialCap => 1 << 4,
+            Self::Initial => 1 << 5,
+            Self::Monogram => 1 << 6,
         }
     }
 }
@@ -103,9 +103,9 @@ pub enum FieldCapsStyle {
 impl From<FieldCapsStyle> for FieldModifier {
     fn from(value: FieldCapsStyle) -> Self {
         match value {
-            FieldCapsStyle::Auto => FieldModifier::None,
-            FieldCapsStyle::AllCaps => FieldModifier::AllCaps,
-            FieldCapsStyle::InitialCap => FieldModifier::InitialCap,
+            FieldCapsStyle::Auto => Self::None,
+            FieldCapsStyle::AllCaps => Self::AllCaps,
+            FieldCapsStyle::InitialCap => Self::InitialCap,
         }
     }
 }
@@ -120,9 +120,9 @@ pub enum FieldPart {
 impl From<FieldPart> for FieldModifier {
     fn from(value: FieldPart) -> Self {
         match value {
-            FieldPart::Auto => FieldModifier::None,
-            FieldPart::Core => FieldModifier::Core,
-            FieldPart::Prefix => FieldModifier::Prefix,
+            FieldPart::Auto => Self::None,
+            FieldPart::Core => Self::Core,
+            FieldPart::Prefix => Self::Prefix,
         }
     }
 }
@@ -137,9 +137,9 @@ pub enum FieldLength {
 impl From<FieldLength> for FieldModifier {
     fn from(value: FieldLength) -> Self {
         match value {
-            FieldLength::Auto => FieldModifier::None,
-            FieldLength::Initial => FieldModifier::Initial,
-            FieldLength::Monogram => FieldModifier::Monogram,
+            FieldLength::Auto => Self::None,
+            FieldLength::Initial => Self::Initial,
+            FieldLength::Monogram => Self::Monogram,
         }
     }
 }
@@ -153,8 +153,8 @@ pub enum FieldFormality {
 impl From<FieldFormality> for FieldModifier {
     fn from(value: FieldFormality) -> Self {
         match value {
-            FieldFormality::Auto => FieldModifier::None,
-            FieldFormality::Informal => FieldModifier::Informal,
+            FieldFormality::Auto => Self::None,
+            FieldFormality::Informal => Self::Informal,
         }
     }
 }
@@ -172,8 +172,8 @@ impl FieldModifierSet {
     }
 
     /// Returns a copy of the field modifier set with the part changed.
-    pub(crate) fn with_part(self, part: FieldPart) -> FieldModifierSet {
-        FieldModifierSet {
+    pub(crate) fn with_part(self, part: FieldPart) -> Self {
+        Self {
             value: (self.value
                 & (u32::MAX
                     ^ (FieldModifier::Core.bit_value() | FieldModifier::Prefix.bit_value())))
@@ -181,8 +181,8 @@ impl FieldModifierSet {
         }
     }
     /// Returns a copy of the field modifier set with the length changed.
-    pub(crate) fn with_length(self, length: FieldLength) -> FieldModifierSet {
-        FieldModifierSet {
+    pub(crate) fn with_length(self, length: FieldLength) -> Self {
+        Self {
             value: (self.value
                 & (u32::MAX
                     ^ (FieldModifier::Monogram.bit_value() | FieldModifier::Initial.bit_value())))
@@ -229,7 +229,7 @@ impl FieldModifierSet {
         length: FieldLength,
         formality: FieldFormality,
     ) -> Self {
-        FieldModifierSet {
+        Self {
             value: FieldModifier::from(style).bit_value()
                 | FieldModifier::from(part).bit_value()
                 | FieldModifier::from(length).bit_value()

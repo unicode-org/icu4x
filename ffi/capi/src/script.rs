@@ -40,8 +40,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<ScriptWithExtensions> {
-            Box::new(ScriptWithExtensions(
+        pub fn create() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::script::ScriptWithExtensions::new().static_to_owned(),
             ))
         }
@@ -55,10 +55,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<ScriptWithExtensions>, DataError> {
-            Ok(Box::new(ScriptWithExtensions(
+        pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::script::ScriptWithExtensions::try_new_with_buffer_provider(
                     provider.get()?,
                 )?,

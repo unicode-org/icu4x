@@ -15,7 +15,7 @@ use crate::measure::{
 
 impl Volume {
     /// Returns a [`MeasureUnit`] representing volume in cubic meters.
-    pub fn cubic_meter() -> CategorizedMeasureUnit<Volume> {
+    pub fn cubic_meter() -> CategorizedMeasureUnit<Self> {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
@@ -34,7 +34,7 @@ impl Volume {
     }
 
     /// Returns a [`MeasureUnit`] representing volume in liters.
-    pub fn liter() -> CategorizedMeasureUnit<Volume> {
+    pub fn liter() -> CategorizedMeasureUnit<Self> {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {

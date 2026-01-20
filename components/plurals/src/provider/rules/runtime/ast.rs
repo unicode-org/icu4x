@@ -155,8 +155,8 @@ impl From<&Rule<'_>> for reference::ast::Rule {
 impl From<reference::ast::Operator> for Polarity {
     fn from(op: reference::ast::Operator) -> Self {
         match op {
-            reference::ast::Operator::Eq => Polarity::Positive,
-            reference::ast::Operator::NotEq => Polarity::Negative,
+            reference::ast::Operator::Eq => Self::Positive,
+            reference::ast::Operator::NotEq => Self::Negative,
         }
     }
 }
@@ -164,8 +164,8 @@ impl From<reference::ast::Operator> for Polarity {
 impl From<Polarity> for reference::ast::Operator {
     fn from(pol: Polarity) -> Self {
         match pol {
-            Polarity::Negative => reference::ast::Operator::NotEq,
-            Polarity::Positive => reference::ast::Operator::Eq,
+            Polarity::Negative => Self::NotEq,
+            Polarity::Positive => Self::Eq,
         }
     }
 }
@@ -245,9 +245,9 @@ impl TryFrom<&reference::ast::RangeListItem> for RangeOrValue {
     fn try_from(item: &reference::ast::RangeListItem) -> Result<Self, Self::Error> {
         Ok(match item {
             reference::ast::RangeListItem::Range(range) => {
-                RangeOrValue::Range(range.start().try_into()?, range.end().try_into()?)
+                Self::Range(range.start().try_into()?, range.end().try_into()?)
             }
-            reference::ast::RangeListItem::Value(value) => RangeOrValue::Value(value.try_into()?),
+            reference::ast::RangeListItem::Value(value) => Self::Value(value.try_into()?),
         })
     }
 }

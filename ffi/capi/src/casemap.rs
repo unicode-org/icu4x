@@ -49,7 +49,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::options::TitlecaseOptions::default, FnInStruct)]
         #[diplomat::attr(auto, constructor)]
         #[diplomat::attr(any(cpp, js), rename = "default_options")]
-        pub fn default() -> TitlecaseOptionsV1 {
+        pub fn default() -> Self {
             Self {
                 leading_adjustment: None.into(),
                 trailing_case: None.into(),
@@ -68,16 +68,16 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::new, FnInStruct, hidden)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<CaseMapper> {
-            Box::new(CaseMapper(icu_casemap::CaseMapper::new().static_to_owned()))
+        pub fn create() -> Box<Self> {
+            Box::new(Self(icu_casemap::CaseMapper::new().static_to_owned()))
         }
 
         /// Construct a new `CaseMapper` instance using a particular data source.
         #[diplomat::rust_link(icu::casemap::CaseMapper::new, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_with_provider(provider: &DataProvider) -> Result<Box<CaseMapper>, DataError> {
-            Ok(Box::new(CaseMapper(
+        pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_casemap::CaseMapper::try_new_with_buffer_provider(provider.get()?)?,
             )))
         }
@@ -335,8 +335,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new_with_mapper, FnInStruct, hidden)]
         #[diplomat::attr(supports = "fallible_constructors", constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Result<Box<CaseMapCloser>, DataError> {
-            Ok(Box::new(CaseMapCloser(
+        pub fn create() -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_casemap::CaseMapCloser::new().static_to_owned(),
             )))
         }
@@ -345,10 +345,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::new_with_mapper, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<CaseMapCloser>, DataError> {
-            Ok(Box::new(CaseMapCloser(
+        pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_casemap::CaseMapCloser::try_new_with_buffer_provider(provider.get()?)?,
             )))
         }
@@ -399,8 +397,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new_with_mapper, FnInStruct, hidden)]
         #[diplomat::attr(supports = "fallible_constructors", constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Result<Box<TitlecaseMapper>, DataError> {
-            Ok(Box::new(TitlecaseMapper(
+        pub fn create() -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_casemap::TitlecaseMapper::new().static_to_owned(),
             )))
         }
@@ -409,10 +407,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::TitlecaseMapper::new_with_mapper, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<TitlecaseMapper>, DataError> {
-            Ok(Box::new(TitlecaseMapper(
+        pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_casemap::TitlecaseMapper::try_new_with_buffer_provider(provider.get()?)?,
             )))
         }

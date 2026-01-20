@@ -4,11 +4,11 @@
 
 use crate::LengthHint;
 
-impl core::ops::Add<LengthHint> for LengthHint {
+impl core::ops::Add<Self> for LengthHint {
     type Output = Self;
 
-    fn add(self, other: LengthHint) -> Self {
-        LengthHint(
+    fn add(self, other: Self) -> Self {
+        Self(
             self.0.saturating_add(other.0),
             match (self.1, other.1) {
                 (Some(c), Some(d)) => c.checked_add(d),
@@ -18,18 +18,18 @@ impl core::ops::Add<LengthHint> for LengthHint {
     }
 }
 
-impl core::ops::AddAssign<LengthHint> for LengthHint {
+impl core::ops::AddAssign<Self> for LengthHint {
     fn add_assign(&mut self, other: Self) {
         *self = *self + other;
     }
 }
 
-impl core::iter::Sum<LengthHint> for LengthHint {
+impl core::iter::Sum<Self> for LengthHint {
     fn sum<I>(iter: I) -> Self
     where
-        I: Iterator<Item = LengthHint>,
+        I: Iterator<Item = Self>,
     {
-        iter.fold(LengthHint::exact(0), core::ops::Add::add)
+        iter.fold(Self::exact(0), core::ops::Add::add)
     }
 }
 
@@ -67,7 +67,7 @@ impl core::ops::MulAssign<usize> for LengthHint {
     }
 }
 
-impl core::ops::BitOr<LengthHint> for LengthHint {
+impl core::ops::BitOr<Self> for LengthHint {
     type Output = Self;
 
     /// Returns a new hint that is correct wherever `self` is correct, and wherever
@@ -96,8 +96,8 @@ impl core::ops::BitOr<LengthHint> for LengthHint {
     ///
     /// writeable::impl_display_with_writeable!(NonDeterministicWriteable);
     /// ```
-    fn bitor(self, other: LengthHint) -> Self {
-        LengthHint(
+    fn bitor(self, other: Self) -> Self {
+        Self(
             Ord::min(self.0, other.0),
             match (self.1, other.1) {
                 (Some(c), Some(d)) => Some(Ord::max(c, d)),
@@ -107,7 +107,7 @@ impl core::ops::BitOr<LengthHint> for LengthHint {
     }
 }
 
-impl core::ops::BitOrAssign<LengthHint> for LengthHint {
+impl core::ops::BitOrAssign<Self> for LengthHint {
     fn bitor_assign(&mut self, other: Self) {
         *self = *self | other;
     }
@@ -118,7 +118,7 @@ impl core::iter::Sum<usize> for LengthHint {
     where
         I: Iterator<Item = usize>,
     {
-        LengthHint::exact(iter.sum::<usize>())
+        Self::exact(iter.sum::<usize>())
     }
 }
 

@@ -288,9 +288,9 @@ where
 
 impl UnstableSealed for UtcOffset {}
 
-impl GetField<Option<UtcOffset>> for UtcOffset {
+impl GetField<Option<Self>> for UtcOffset {
     #[inline]
-    fn get_field(&self) -> Option<UtcOffset> {
+    fn get_field(&self) -> Option<Self> {
         Some(*self)
     }
 }

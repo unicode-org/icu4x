@@ -222,7 +222,7 @@ impl LocaleExpander {
     /// [CLDR coverage]: https://www.unicode.org/reports/tr35/tr35-info.html#Coverage_Levels
     #[cfg(feature = "compiled_data")]
     pub const fn new_common() -> Self {
-        LocaleExpander {
+        Self {
             likely_subtags_l: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_LOCALE_LIKELY_SUBTAGS_LANGUAGE_V1,
             ),
@@ -242,7 +242,7 @@ impl LocaleExpander {
     ]);
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_common)]
-    pub fn try_new_common_unstable<P>(provider: &P) -> Result<LocaleExpander, DataError>
+    pub fn try_new_common_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<LocaleLikelySubtagsLanguageV1>
             + DataProvider<LocaleLikelySubtagsScriptRegionV1>
@@ -251,7 +251,7 @@ impl LocaleExpander {
         let likely_subtags_l = provider.load(Default::default())?.payload;
         let likely_subtags_sr = provider.load(Default::default())?.payload;
 
-        Ok(LocaleExpander {
+        Ok(Self {
             likely_subtags_l,
             likely_subtags_sr,
             likely_subtags_ext: None,
@@ -270,7 +270,7 @@ impl LocaleExpander {
     /// [CLDR coverage]: https://www.unicode.org/reports/tr35/tr35-info.html#Coverage_Levels
     #[cfg(feature = "compiled_data")]
     pub const fn new_extended() -> Self {
-        LocaleExpander {
+        Self {
             likely_subtags_l: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_LOCALE_LIKELY_SUBTAGS_LANGUAGE_V1,
             ),
@@ -292,7 +292,7 @@ impl LocaleExpander {
     ]);
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_extended)]
-    pub fn try_new_extended_unstable<P>(provider: &P) -> Result<LocaleExpander, DataError>
+    pub fn try_new_extended_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<LocaleLikelySubtagsLanguageV1>
             + DataProvider<LocaleLikelySubtagsScriptRegionV1>
@@ -303,7 +303,7 @@ impl LocaleExpander {
         let likely_subtags_sr = provider.load(Default::default())?.payload;
         let likely_subtags_ext = Some(provider.load(Default::default())?.payload);
 
-        Ok(LocaleExpander {
+        Ok(Self {
             likely_subtags_l,
             likely_subtags_sr,
             likely_subtags_ext,
@@ -573,8 +573,8 @@ impl LocaleExpander {
     }
 }
 
-impl AsRef<LocaleExpander> for LocaleExpander {
-    fn as_ref(&self) -> &LocaleExpander {
+impl AsRef<Self> for LocaleExpander {
+    fn as_ref(&self) -> &Self {
         self
     }
 }

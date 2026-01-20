@@ -38,6 +38,6 @@ impl_tinystr_subtag!(
 
 impl From<Script> for Subtag {
     fn from(value: Script) -> Self {
-        Subtag(value.0.resize())
+        Self(value.0.resize())
     }
 }

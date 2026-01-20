@@ -65,7 +65,7 @@ pub enum Resource<'a> {
     String(Cow<'a, str>),
 
     /// A heterogeneous list of resources, ordered by insertion.
-    Array(Vec<Resource<'a>>),
+    Array(Vec<Self>),
 
     /// A set of key-resource pairs, sorted lexically by key.
     Table(Table<'a>),
@@ -128,7 +128,7 @@ pub struct Int28(u32);
 
 impl From<Int28> for i32 {
     fn from(value: Int28) -> Self {
-        ((value.0 as i32) << 4) >> 4
+        ((value.0 as Self) << 4) >> 4
     }
 }
 

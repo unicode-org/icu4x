@@ -484,7 +484,7 @@ impl<A: AsCalendar<Calendar = KoreanTraditional>> Date<A> {
         ordinal_month: u8,
         day: u8,
         calendar: A,
-    ) -> Result<Date<A>, DateError> {
+    ) -> Result<Self, DateError> {
         ArithmeticDate::from_year_month_day(
             related_iso_year,
             ordinal_month,
@@ -492,7 +492,7 @@ impl<A: AsCalendar<Calendar = KoreanTraditional>> Date<A> {
             calendar.as_calendar(),
         )
         .map(ChineseDateInner)
-        .map(|inner| Date::from_raw(inner, calendar))
+        .map(|inner| Self::from_raw(inner, calendar))
         .map_err(Into::into)
     }
 }
@@ -522,7 +522,7 @@ impl<R: Rules> Ord for ChineseDateInner<R> {
 impl ChineseTraditional {
     /// Creates a new [`ChineseTraditional`] calendar.
     pub const fn new() -> Self {
-        EastAsianTraditional(China)
+        Self(China)
     }
 
     #[cfg(feature = "serde")]
@@ -801,7 +801,7 @@ impl<A: AsCalendar<Calendar = ChineseTraditional>> Date<A> {
         ordinal_month: u8,
         day: u8,
         calendar: A,
-    ) -> Result<Date<A>, DateError> {
+    ) -> Result<Self, DateError> {
         ArithmeticDate::from_year_month_day(
             related_iso_year,
             ordinal_month,
@@ -809,7 +809,7 @@ impl<A: AsCalendar<Calendar = ChineseTraditional>> Date<A> {
             calendar.as_calendar(),
         )
         .map(ChineseDateInner)
-        .map(|inner| Date::from_raw(inner, calendar))
+        .map(|inner| Self::from_raw(inner, calendar))
         .map_err(Into::into)
     }
 }
@@ -888,9 +888,7 @@ impl EastAsianTraditionalYear {
             })
     }
 
-    fn calendrical_calculations<CB: chinese_based::ChineseBased>(
-        related_iso: i32,
-    ) -> EastAsianTraditionalYear {
+    fn calendrical_calculations<CB: chinese_based::ChineseBased>(related_iso: i32) -> Self {
         let mid_year = calendrical_calculations::gregorian::fixed_from_gregorian(related_iso, 7, 1);
         let year_bounds = chinese_based::YearBounds::compute::<CB>(mid_year);
 
@@ -902,7 +900,7 @@ impl EastAsianTraditionalYear {
         let (month_lengths, leap_month) =
             chinese_based::month_structure_for_year::<CB>(new_year, next_new_year);
 
-        EastAsianTraditionalYear {
+        Self {
             packed: PackedEastAsianTraditionalYearData::new(
                 related_iso,
                 month_lengths,

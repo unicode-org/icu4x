@@ -31,12 +31,12 @@ impl MeasureUnit {
     ///    - `Ok(MeasureUnit)` if the identifier is valid.
     ///    - `Err(InvalidUnitError)` if the identifier is invalid.
     #[inline]
-    pub fn try_from_str(s: &str) -> Result<MeasureUnit, InvalidUnitError> {
+    pub fn try_from_str(s: &str) -> Result<Self, InvalidUnitError> {
         Self::try_from_utf8(s.as_bytes())
     }
 
     /// See [`Self::try_from_str`]
-    pub fn try_from_utf8(mut code_units: &[u8]) -> Result<MeasureUnit, InvalidUnitError> {
+    pub fn try_from_utf8(mut code_units: &[u8]) -> Result<Self, InvalidUnitError> {
         if code_units.starts_with(b"-") || code_units.ends_with(b"-") {
             return Err(InvalidUnitError);
         }
@@ -127,7 +127,7 @@ impl MeasureUnit {
             return Err(InvalidUnitError);
         }
 
-        Ok(MeasureUnit {
+        Ok(Self {
             id: None,
             single_units,
             constant_denominator,

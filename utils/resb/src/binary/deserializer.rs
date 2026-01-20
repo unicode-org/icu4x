@@ -1144,7 +1144,7 @@ impl de::Error for BinaryDeserializerError {
         #[cfg(feature = "logging")]
         log::warn!("Error during resource bundle deserialization: {_msg}");
 
-        BinaryDeserializerError::unknown("error during deserialization; see logs")
+        Self::unknown("error during deserialization; see logs")
     }
 }
 
@@ -1212,12 +1212,12 @@ impl TryFrom<&[u8]> for FormatVersion {
 
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
         let value = match value {
-            [1, 0, 0, 0] => FormatVersion::V1_0,
-            [1, 1, 0, 0] => FormatVersion::V1_1,
-            [1, 2, 0, 0] => FormatVersion::V1_2,
-            [1, 3, 0, 0] => FormatVersion::V1_3,
-            [2, 0, 0, 0] => FormatVersion::V2_0,
-            [3, 0, 0, 0] => FormatVersion::V3_0,
+            [1, 0, 0, 0] => Self::V1_0,
+            [1, 1, 0, 0] => Self::V1_1,
+            [1, 2, 0, 0] => Self::V1_2,
+            [1, 3, 0, 0] => Self::V1_3,
+            [2, 0, 0, 0] => Self::V2_0,
+            [3, 0, 0, 0] => Self::V3_0,
             _ => {
                 return Err(BinaryDeserializerError::invalid_data(
                     "unrecognized format version",

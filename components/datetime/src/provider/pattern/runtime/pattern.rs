@@ -59,7 +59,7 @@ pub(crate) struct PatternBorrowed<'data> {
 pub struct PatternMetadata(u8);
 
 impl PatternMetadata {
-    pub(crate) const DEFAULT: PatternMetadata = Self::from_time_granularity(TimeGranularity::None);
+    pub(crate) const DEFAULT: Self = Self::from_time_granularity(TimeGranularity::None);
 
     #[inline]
     pub(crate) fn time_granularity(self) -> TimeGranularity {
@@ -78,10 +78,7 @@ impl PatternMetadata {
 
     /// Merges the metadata from a date pattern and a time pattern into one.
     #[inline]
-    pub(crate) fn merge_date_and_time_metadata(
-        _date: PatternMetadata,
-        time: PatternMetadata,
-    ) -> PatternMetadata {
+    pub(crate) fn merge_date_and_time_metadata(_date: Self, time: Self) -> Self {
         // Currently we only have time granularity so we ignore the date metadata.
         time
     }

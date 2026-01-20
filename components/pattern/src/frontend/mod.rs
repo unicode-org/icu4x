@@ -123,7 +123,7 @@ impl<B: PatternBackend> ToOwned for Pattern<B>
 where
     Box<B::Store>: for<'a> From<&'a B::Store>,
 {
-    type Owned = Box<Pattern<B>>;
+    type Owned = Box<Self>;
 
     fn to_owned(&self) -> Self::Owned {
         Self::from_boxed_store_unchecked(Box::from(&self.store))

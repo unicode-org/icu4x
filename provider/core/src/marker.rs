@@ -301,10 +301,10 @@ const fn fxhash_32(bytes: &[u8]) -> u32 {
 
 #[cfg(feature = "alloc")]
 impl<'a> zerovec::maps::ZeroMapKV<'a> for DataMarkerIdHash {
-    type Container = zerovec::ZeroVec<'a, DataMarkerIdHash>;
-    type Slice = zerovec::ZeroSlice<DataMarkerIdHash>;
-    type GetType = <DataMarkerIdHash as AsULE>::ULE;
-    type OwnedType = DataMarkerIdHash;
+    type Container = zerovec::ZeroVec<'a, Self>;
+    type Slice = zerovec::ZeroSlice<Self>;
+    type GetType = <Self as AsULE>::ULE;
+    type OwnedType = Self;
 }
 
 impl AsULE for DataMarkerIdHash {

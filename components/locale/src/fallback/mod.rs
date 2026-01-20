@@ -129,7 +129,7 @@ impl LocaleFallbacker {
     {
         let likely_subtags = provider.load(Default::default())?.payload;
         let parents = provider.load(Default::default())?.payload;
-        Ok(LocaleFallbacker {
+        Ok(Self {
             likely_subtags,
             parents,
         })
@@ -138,7 +138,7 @@ impl LocaleFallbacker {
     /// Creates a [`LocaleFallbacker`] without fallback data. Using this constructor may result in
     /// surprising behavior, especially in multi-script languages.
     pub fn new_without_data() -> Self {
-        LocaleFallbacker {
+        Self {
             likely_subtags: DataPayload::from_owned(LikelySubtagsForLanguage {
                 language: Default::default(),
                 language_region: Default::default(),

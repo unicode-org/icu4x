@@ -88,12 +88,12 @@ pub enum CompoundCount {
 impl From<u8> for CompoundCount {
     fn from(val: u8) -> Self {
         match val {
-            0 => CompoundCount::Zero,
-            1 => CompoundCount::One,
-            2 => CompoundCount::Two,
-            3 => CompoundCount::Few,
-            4 => CompoundCount::Many,
-            5 => CompoundCount::Other,
+            0 => Self::Zero,
+            1 => Self::One,
+            2 => Self::Two,
+            3 => Self::Few,
+            4 => Self::Many,
+            5 => Self::Other,
             _ => unreachable!(),
         }
     }

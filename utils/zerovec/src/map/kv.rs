@@ -70,22 +70,22 @@ impl_sized_kv!(core::num::NonZeroI8);
 
 impl<'a, T> ZeroMapKV<'a> for Option<T>
 where
-    Option<T>: AsULE + 'static,
+    Self: AsULE + 'static,
 {
-    type Container = ZeroVec<'a, Option<T>>;
-    type Slice = ZeroSlice<Option<T>>;
-    type GetType = <Option<T> as AsULE>::ULE;
-    type OwnedType = Option<T>;
+    type Container = ZeroVec<'a, Self>;
+    type Slice = ZeroSlice<Self>;
+    type GetType = <Self as AsULE>::ULE;
+    type OwnedType = Self;
 }
 
 impl<'a, T> ZeroMapKV<'a> for OptionVarULE<T>
 where
     T: VarULE + ?Sized,
 {
-    type Container = VarZeroVec<'a, OptionVarULE<T>>;
-    type Slice = VarZeroSlice<OptionVarULE<T>>;
-    type GetType = OptionVarULE<T>;
-    type OwnedType = Box<OptionVarULE<T>>;
+    type Container = VarZeroVec<'a, Self>;
+    type Slice = VarZeroSlice<Self>;
+    type GetType = Self;
+    type OwnedType = Box<Self>;
 }
 
 impl<'a, A, B> ZeroMapKV<'a> for VarTupleULE<A, B>
@@ -93,17 +93,17 @@ where
     A: AsULE + 'static,
     B: VarULE + ?Sized,
 {
-    type Container = VarZeroVec<'a, VarTupleULE<A, B>>;
-    type Slice = VarZeroSlice<VarTupleULE<A, B>>;
-    type GetType = VarTupleULE<A, B>;
-    type OwnedType = Box<VarTupleULE<A, B>>;
+    type Container = VarZeroVec<'a, Self>;
+    type Slice = VarZeroSlice<Self>;
+    type GetType = Self;
+    type OwnedType = Box<Self>;
 }
 
 impl<'a> ZeroMapKV<'a> for str {
-    type Container = VarZeroVec<'a, str>;
-    type Slice = VarZeroSlice<str>;
-    type GetType = str;
-    type OwnedType = Box<str>;
+    type Container = VarZeroVec<'a, Self>;
+    type Slice = VarZeroSlice<Self>;
+    type GetType = Self;
+    type OwnedType = Box<Self>;
 }
 
 impl<'a, T> ZeroMapKV<'a> for [T]
@@ -130,8 +130,8 @@ impl<'a, T> ZeroMapKV<'a> for ZeroSlice<T>
 where
     T: AsULE + 'static,
 {
-    type Container = VarZeroVec<'a, ZeroSlice<T>>;
-    type Slice = VarZeroSlice<ZeroSlice<T>>;
-    type GetType = ZeroSlice<T>;
-    type OwnedType = Box<ZeroSlice<T>>;
+    type Container = VarZeroVec<'a, Self>;
+    type Slice = VarZeroSlice<Self>;
+    type GetType = Self;
+    type OwnedType = Box<Self>;
 }

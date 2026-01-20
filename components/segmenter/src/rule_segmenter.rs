@@ -51,8 +51,7 @@ pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType> {
     pub(crate) boundary_property: u8,
     pub(crate) locale_override: Option<&'data RuleBreakDataOverride<'data>>,
     // Should return None if there is no complex language handling
-    pub(crate) handle_complex_language:
-        fn(&mut RuleBreakIterator<'data, 's, Y>, Y::CharType) -> Option<usize>,
+    pub(crate) handle_complex_language: fn(&mut Self, Y::CharType) -> Option<usize>,
 }
 
 pub(crate) fn empty_handle_complex_language<Y: RuleBreakType>(

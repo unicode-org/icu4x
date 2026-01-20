@@ -303,12 +303,12 @@ impl Date<Ethiopian> {
         year: i32,
         month: u8,
         day: u8,
-    ) -> Result<Date<Ethiopian>, RangeError> {
+    ) -> Result<Self, RangeError> {
         ArithmeticDate::from_year_month_day(year, month, day, &Ethiopian(era_style))
             .map(ArithmeticDate::cast)
             .map(CopticDateInner)
             .map(EthiopianDateInner)
-            .map(|inner| Date::from_raw(inner, Ethiopian(era_style)))
+            .map(|inner| Self::from_raw(inner, Ethiopian(era_style)))
     }
 }
 

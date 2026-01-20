@@ -109,13 +109,13 @@ impl<Y: DictionaryType + ?Sized, X: Iterator<Item = usize> + ?Sized> Iterator
 
 impl DictionaryType for u32 {
     type IterAttr<'s> = Utf16Indices<'s>;
-    type CharType = u32;
+    type CharType = Self;
 
-    fn to_char(c: u32) -> char {
+    fn to_char(c: Self) -> char {
         char::from_u32(c).unwrap_or(char::REPLACEMENT_CHARACTER)
     }
 
-    fn char_len(c: u32) -> usize {
+    fn char_len(c: Self) -> usize {
         if c >= 0x10000 {
             2
         } else {
@@ -126,13 +126,13 @@ impl DictionaryType for u32 {
 
 impl DictionaryType for char {
     type IterAttr<'s> = CharIndices<'s>;
-    type CharType = char;
+    type CharType = Self;
 
-    fn to_char(c: char) -> char {
+    fn to_char(c: Self) -> char {
         c
     }
 
-    fn char_len(c: char) -> usize {
+    fn char_len(c: Self) -> usize {
         c.len_utf8()
     }
 }

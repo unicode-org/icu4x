@@ -16,7 +16,7 @@ pub trait IntoOption<T> {
 
 impl<T> IntoOption<T> for Option<T> {
     #[inline]
-    fn into_option(self) -> Option<T> {
+    fn into_option(self) -> Self {
         self
     }
 }
@@ -28,105 +28,105 @@ impl<T> IntoOption<T> for () {
     }
 }
 
-impl IntoOption<YearInfo> for YearInfo {
+impl IntoOption<Self> for YearInfo {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
     }
 }
 
-impl IntoOption<MonthInfo> for MonthInfo {
+impl IntoOption<Self> for MonthInfo {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
     }
 }
 
-impl IntoOption<DayOfMonth> for DayOfMonth {
+impl IntoOption<Self> for DayOfMonth {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
     }
 }
 
-impl IntoOption<Weekday> for Weekday {
+impl IntoOption<Self> for Weekday {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
     }
 }
 
-impl IntoOption<DayOfYear> for DayOfYear {
+impl IntoOption<Self> for DayOfYear {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
     }
 }
 
-impl IntoOption<RataDie> for RataDie {
+impl IntoOption<Self> for RataDie {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
     }
 }
 
-impl IntoOption<AnyCalendarKind> for AnyCalendarKind {
+impl IntoOption<Self> for AnyCalendarKind {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
     }
 }
 
-impl IntoOption<Hour> for Hour {
+impl IntoOption<Self> for Hour {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
     }
 }
 
-impl IntoOption<Minute> for Minute {
+impl IntoOption<Self> for Minute {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
     }
 }
 
-impl IntoOption<Second> for Second {
+impl IntoOption<Self> for Second {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
     }
 }
 
-impl IntoOption<Nanosecond> for Nanosecond {
+impl IntoOption<Self> for Nanosecond {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
     }
 }
 
-impl IntoOption<TimeZone> for TimeZone {
+impl IntoOption<Self> for TimeZone {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
     }
 }
 
-impl IntoOption<UtcOffset> for UtcOffset {
+impl IntoOption<Self> for UtcOffset {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
     }
 }
 
-impl IntoOption<TimeZoneVariant> for TimeZoneVariant {
+impl IntoOption<Self> for TimeZoneVariant {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)
     }
 }
 
-impl IntoOption<ZoneNameTimestamp> for ZoneNameTimestamp {
+impl IntoOption<Self> for ZoneNameTimestamp {
     #[inline]
     fn into_option(self) -> Option<Self> {
         Some(self)

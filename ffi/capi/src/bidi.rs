@@ -33,8 +33,8 @@ pub mod ffi {
         /// Creates a new [`Bidi`] from locale data using compiled data.
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<Bidi> {
-            Box::new(Bidi(
+        pub fn create() -> Box<Self> {
+            Box::new(Self(
                 icu_properties::CodePointMapData::new().static_to_owned(),
             ))
         }
@@ -42,8 +42,8 @@ pub mod ffi {
         /// Creates a new [`Bidi`] from locale data, and a particular data source.
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Bidi>, DataError> {
-            Ok(Box::new(Bidi(
+        pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_properties::CodePointMapData::try_new_unstable(&provider.get_unstable()?)?,
             )))
         }

@@ -26,8 +26,8 @@ pub mod ffi {
         #[diplomat::attr(auto, named_constructor = "nfc")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create_nfc() -> Box<ComposingNormalizer> {
-            Box::new(ComposingNormalizer(
+        pub fn create_nfc() -> Box<Self> {
+            Box::new(Self(
                 icu_normalizer::ComposingNormalizer::new_nfc().static_to_owned(),
             ))
         }
@@ -40,10 +40,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "nfc_with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_nfc_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<ComposingNormalizer>, DataError> {
-            Ok(Box::new(ComposingNormalizer(
+        pub fn create_nfc_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_normalizer::ComposingNormalizer::try_new_nfc_with_buffer_provider(
                     provider.get()?,
                 )?,
@@ -58,8 +56,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(auto, named_constructor = "nfkc")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_nfkc() -> Box<ComposingNormalizer> {
-            Box::new(ComposingNormalizer(
+        pub fn create_nfkc() -> Box<Self> {
+            Box::new(Self(
                 icu_normalizer::ComposingNormalizer::new_nfkc().static_to_owned(),
             ))
         }
@@ -72,10 +70,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "nfkc_with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_nfkc_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<ComposingNormalizer>, DataError> {
-            Ok(Box::new(ComposingNormalizer(
+        pub fn create_nfkc_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_normalizer::ComposingNormalizer::try_new_nfkc_with_buffer_provider(
                     provider.get()?,
                 )?,
@@ -184,8 +180,8 @@ pub mod ffi {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "nfd")]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create_nfd() -> Box<DecomposingNormalizer> {
-            Box::new(DecomposingNormalizer(
+        pub fn create_nfd() -> Box<Self> {
+            Box::new(Self(
                 icu_normalizer::DecomposingNormalizer::new_nfd().static_to_owned(),
             ))
         }
@@ -199,10 +195,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "nfd_with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_nfd_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<DecomposingNormalizer>, DataError> {
-            Ok(Box::new(DecomposingNormalizer(
+        pub fn create_nfd_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_normalizer::DecomposingNormalizer::try_new_nfd_with_buffer_provider(
                     provider.get()?,
                 )?,
@@ -218,8 +212,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(auto, named_constructor = "nfkd")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_nfkd() -> Box<DecomposingNormalizer> {
-            Box::new(DecomposingNormalizer(
+        pub fn create_nfkd() -> Box<Self> {
+            Box::new(Self(
                 icu_normalizer::DecomposingNormalizer::new_nfkd().static_to_owned(),
             ))
         }
@@ -233,10 +227,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "nfkd_with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_nfkd_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<DecomposingNormalizer>, DataError> {
-            Ok(Box::new(DecomposingNormalizer(
+        pub fn create_nfkd_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_normalizer::DecomposingNormalizer::try_new_nfkd_with_buffer_provider(
                     provider.get()?,
                 )?,

@@ -92,7 +92,7 @@ impl TryFrom<&CodePointTrieToml> for CodePointTrieHeader {
 
     fn try_from(cpt_data: &CodePointTrieToml) -> Result<Self, Self::Error> {
         let trie_type_enum: TrieType = TrieType::try_from(cpt_data.trie_type_enum_val)?;
-        Ok(CodePointTrieHeader {
+        Ok(Self {
             high_start: cpt_data.high_start,
             shifted12_high_start: cpt_data.shifted12_high_start,
             index3_null_offset: cpt_data.index3_null_offset,
@@ -106,7 +106,7 @@ impl TryFrom<&CodePointTrieToml> for CodePointTrieHeader {
 impl<T: TrieValue> TryFrom<&CodePointTrieToml> for CodePointTrie<'static, T> {
     type Error = Error;
 
-    fn try_from(cpt_data: &CodePointTrieToml) -> Result<CodePointTrie<'static, T>, Self::Error> {
+    fn try_from(cpt_data: &CodePointTrieToml) -> Result<Self, Self::Error> {
         use CodePointDataSlice::*;
         let header = CodePointTrieHeader::try_from(cpt_data)?;
         let index: ZeroVec<u16> = ZeroVec::alloc_from_slice(&cpt_data.index);

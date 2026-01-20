@@ -21,7 +21,7 @@ pub struct ReprInfo {
 
 impl ReprInfo {
     pub fn compute(attrs: &[Attribute]) -> Self {
-        let mut info = ReprInfo::default();
+        let mut info = Self::default();
         for attr in attrs.iter().filter(|a| a.path().is_ident("repr")) {
             if let Ok(pieces) = attr.parse_args::<IdentListAttribute>() {
                 for piece in pieces.idents.iter() {
@@ -52,7 +52,7 @@ struct IdentListAttribute {
 
 impl Parse for IdentListAttribute {
     fn parse(input: ParseStream) -> Result<Self> {
-        Ok(IdentListAttribute {
+        Ok(Self {
             idents: input.parse_terminated(Ident::parse, Token![,])?,
         })
     }

@@ -246,7 +246,7 @@ impl Part {
     /// A part that should annotate error segments in [`TryWriteable`] output.
     ///
     /// For an example, see [`TryWriteable`].
-    pub const ERROR: Part = Part {
+    pub const ERROR: Self = Self {
         category: "writeable",
         value: "error",
     };

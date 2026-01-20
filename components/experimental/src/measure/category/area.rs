@@ -15,7 +15,7 @@ use crate::measure::{
 
 impl Area {
     /// Returns a [`MeasureUnit`] representing area in square meters.
-    pub fn square_meter() -> CategorizedMeasureUnit<Area> {
+    pub fn square_meter() -> CategorizedMeasureUnit<Self> {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {

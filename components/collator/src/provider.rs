@@ -470,47 +470,47 @@ impl CollationMetadata {
         // Safety: the possible numeric values for `MaxVariable` are from 0 to 3, inclusive,
         // and it is repr(u8). MAX_VARIABLE_MASK here ensures our values have most 2 bits, which produces
         // the same range.
-        unsafe { core::mem::transmute((self.bits & CollationMetadata::MAX_VARIABLE_MASK) as u8) }
+        unsafe { core::mem::transmute((self.bits & Self::MAX_VARIABLE_MASK) as u8) }
     }
 
     #[inline(always)]
     pub(crate) fn tailored(self) -> bool {
-        self.bits & CollationMetadata::TAILORED_MASK != 0
+        self.bits & Self::TAILORED_MASK != 0
     }
 
     /// Vietnamese and Ewe
     #[inline(always)]
     pub(crate) fn tailored_diacritics(self) -> bool {
-        self.bits & CollationMetadata::TAILORED_DIACRITICS_MASK != 0
+        self.bits & Self::TAILORED_DIACRITICS_MASK != 0
     }
 
     /// Lithuanian
     #[inline(always)]
     pub(crate) fn lithuanian_dot_above(self) -> bool {
-        self.bits & CollationMetadata::LITHUANIAN_DOT_ABOVE_MASK != 0
+        self.bits & Self::LITHUANIAN_DOT_ABOVE_MASK != 0
     }
 
     /// Canadian French
     #[inline(always)]
     pub(crate) fn backward_second_level(self) -> bool {
-        self.bits & CollationMetadata::BACWARD_SECOND_LEVEL_MASK != 0
+        self.bits & Self::BACWARD_SECOND_LEVEL_MASK != 0
     }
 
     #[inline(always)]
     pub(crate) fn reordering(self) -> bool {
-        self.bits & CollationMetadata::REORDERING_MASK != 0
+        self.bits & Self::REORDERING_MASK != 0
     }
 
     /// Thai
     #[inline(always)]
     pub(crate) fn alternate_shifted(self) -> bool {
-        self.bits & CollationMetadata::ALTERNATE_SHIFTED_MASK != 0
+        self.bits & Self::ALTERNATE_SHIFTED_MASK != 0
     }
 
     #[inline(always)]
     pub(crate) fn case_first(self) -> CollationCaseFirst {
-        if self.bits & CollationMetadata::CASE_FIRST_MASK != 0 {
-            if self.bits & CollationMetadata::UPPER_FIRST_MASK != 0 {
+        if self.bits & Self::CASE_FIRST_MASK != 0 {
+            if self.bits & Self::UPPER_FIRST_MASK != 0 {
                 CollationCaseFirst::Upper
             } else {
                 CollationCaseFirst::Lower

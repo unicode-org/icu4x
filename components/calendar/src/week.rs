@@ -64,7 +64,7 @@ impl WeekInformation {
                 id: DataIdentifierBorrowed::for_locale(&locale),
                 ..Default::default()
             })
-            .map(|response| WeekInformation {
+            .map(|response| Self {
                 first_weekday: match prefs.first_weekday {
                     Some(FirstDay::Mon) => Weekday::Monday,
                     Some(FirstDay::Tue) => Weekday::Tuesday,
@@ -181,7 +181,7 @@ struct UnitInfo {
 
 impl UnitInfo {
     /// Creates a [`UnitInfo`] for a given year or month.
-    fn new(first_day: Weekday, duration_days: u16) -> Result<UnitInfo, RangeError> {
+    fn new(first_day: Weekday, duration_days: u16) -> Result<Self, RangeError> {
         if duration_days < MIN_UNIT_DAYS {
             return Err(RangeError {
                 field: "num_days_in_unit",
@@ -190,7 +190,7 @@ impl UnitInfo {
                 max: i32::MAX,
             });
         }
-        Ok(UnitInfo {
+        Ok(Self {
             first_day,
             duration_days,
         })
@@ -273,7 +273,7 @@ pub struct WeekdaySetIterator {
 impl WeekdaySetIterator {
     /// Creates the Iterator. Sets `current_day` to the day after `first_weekday`.
     pub(crate) fn new(first_weekday: Weekday, weekend: WeekdaySet) -> Self {
-        WeekdaySetIterator {
+        Self {
             first_weekday,
             current_day: first_weekday,
             weekend,

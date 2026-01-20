@@ -385,12 +385,12 @@ pub(crate) struct CollationElement32(u32);
 impl CollationElement32 {
     #[inline(always)]
     pub fn new(bits: u32) -> Self {
-        CollationElement32(bits)
+        Self(bits)
     }
 
     #[inline(always)]
     pub fn new_from_ule(ule: RawBytesULE<4>) -> Self {
-        CollationElement32(u32::from_unaligned(ule))
+        Self(u32::from_unaligned(ule))
     }
 
     #[inline(always)]
@@ -521,7 +521,7 @@ impl CollationElement32 {
 
 impl Default for CollationElement32 {
     fn default() -> Self {
-        CollationElement32(1) // NO_CE32
+        Self(1) // NO_CE32
     }
 }
 
@@ -538,17 +538,17 @@ pub(crate) struct CollationElement(u64);
 impl CollationElement {
     #[inline(always)]
     pub fn new(bits: u64) -> Self {
-        CollationElement(bits)
+        Self(bits)
     }
 
     #[inline(always)]
     pub fn new_from_primary(primary: u32) -> Self {
-        CollationElement((u64::from(primary) << 32) | COMMON_SEC_AND_TER_CE)
+        Self((u64::from(primary) << 32) | COMMON_SEC_AND_TER_CE)
     }
 
     #[inline(always)]
     pub fn new_from_secondary(secondary: u16) -> Self {
-        CollationElement((u64::from(secondary) << 16) | COMMON_TERTIARY_CE)
+        Self((u64::from(secondary) << 16) | COMMON_TERTIARY_CE)
     }
 
     #[inline(always)]
@@ -566,12 +566,12 @@ impl CollationElement {
         primary |= (4 + (c_with_offset % 251)) << 16;
         // One lead byte covers all code points (c < 0x1182B4 = 1*251*254*18).
         primary |= u32::from(UNASSIGNED_IMPLICIT_BYTE) << 24;
-        CollationElement::new_from_primary(primary)
+        Self::new_from_primary(primary)
     }
 
     #[inline(always)]
     pub fn clone_with_non_primary_zeroed(self) -> Self {
-        CollationElement(self.0 & 0xFFFFFFFF00000000)
+        Self(self.0 & 0xFFFFFFFF00000000)
     }
 
     /// Get the primary weight
@@ -605,15 +605,15 @@ impl CollationElement {
     }
 
     #[inline(always)]
-    pub const fn default() -> CollationElement {
-        CollationElement(NO_CE_VALUE) // NO_CE
+    pub const fn default() -> Self {
+        Self(NO_CE_VALUE) // NO_CE
     }
 }
 
 impl Default for CollationElement {
     #[inline(always)]
     fn default() -> Self {
-        CollationElement(NO_CE_VALUE) // NO_CE
+        Self(NO_CE_VALUE) // NO_CE
     }
 }
 
@@ -635,7 +635,7 @@ pub(crate) struct NonPrimary(u32);
 impl NonPrimary {
     /// Constructor
     pub fn new(bits: u32) -> Self {
-        NonPrimary(bits)
+        Self(bits)
     }
     /// Get the bits
     pub fn bits(self) -> u32 {
@@ -692,7 +692,7 @@ impl NonPrimary {
 impl Default for NonPrimary {
     #[inline(always)]
     fn default() -> Self {
-        NonPrimary(0x01000100) // Low 32 bits of NO_CE
+        Self(0x01000100) // Low 32 bits of NO_CE
     }
 }
 
@@ -719,13 +719,13 @@ pub(crate) struct CharacterAndClassAndTrieValue {
 
 impl CharacterAndClassAndTrieValue {
     pub fn new_with_non_decomposing_starter(c: char) -> Self {
-        CharacterAndClassAndTrieValue {
+        Self {
             c_and_c: CharacterAndClass::new(c, CanonicalCombiningClass::NotReordered),
             trie_val: 0,
         }
     }
     pub fn new_with_non_zero_ccc(c: char, ccc: CanonicalCombiningClass) -> Self {
-        CharacterAndClassAndTrieValue {
+        Self {
             c_and_c: CharacterAndClass::new(c, ccc),
             trie_val: 0xD800 | u32::from(ccc.to_icu4c_value()),
         }
@@ -734,19 +734,19 @@ impl CharacterAndClassAndTrieValue {
         debug_assert!(!trie_value_indicates_special_non_starter_decomposition(
             trie_val
         ));
-        CharacterAndClassAndTrieValue {
+        Self {
             c_and_c: CharacterAndClass::new_with_trie_value(c, trie_val),
             trie_val,
         }
     }
     pub fn new_with_trie_val(c: char, trie_val: u32) -> Self {
         if !trie_value_indicates_special_non_starter_decomposition(trie_val) {
-            CharacterAndClassAndTrieValue {
+            Self {
                 c_and_c: CharacterAndClass::new_with_trie_value(c, trie_val),
                 trie_val,
             }
         } else {
-            CharacterAndClassAndTrieValue {
+            Self {
                 c_and_c: CharacterAndClass::new(c, CanonicalCombiningClass::from_icu4c_value(0xFF)),
                 trie_val,
             }
@@ -798,12 +798,12 @@ impl CharacterAndClass {
     pub fn new(c: char, ccc: CanonicalCombiningClass) -> Self {
         // Safety invariant upheld here: the first half is a valid char
         // and the second half does not affect the low 24 bits
-        CharacterAndClass(u32::from(c) | (u32::from(ccc.to_icu4c_value()) << 24))
+        Self(u32::from(c) | (u32::from(ccc.to_icu4c_value()) << 24))
     }
     pub fn new_with_placeholder(c: char) -> Self {
         // Safety invariant upheld here: the first half is a valid char
         // and the second half does not affect the low 24 bits
-        CharacterAndClass(u32::from(c) | ((0xFF) << 24))
+        Self(u32::from(c) | ((0xFF) << 24))
     }
     pub fn new_with_trie_value(c: char, trie_value: u32) -> Self {
         Self::new(c, ccc_from_trie_value(trie_value))

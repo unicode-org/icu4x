@@ -15,14 +15,14 @@ pub(crate) struct ByteStr([u8]);
 impl ByteStr {
     pub const fn from_byte_slice_with_value<'a, 'l>(
         input: &'l [(&'a [u8], usize)],
-    ) -> &'l [(&'a ByteStr, usize)] {
+    ) -> &'l [(&'a Self, usize)] {
         // Safety: [u8] and ByteStr have the same layout and invariants
         unsafe { core::mem::transmute(input) }
     }
 
     pub const fn from_str_slice_with_value<'a, 'l>(
         input: &'l [(&'a str, usize)],
-    ) -> &'l [(&'a ByteStr, usize)] {
+    ) -> &'l [(&'a Self, usize)] {
         // Safety: str and ByteStr have the same layout, and ByteStr is less restrictive
         unsafe { core::mem::transmute(input) }
     }
@@ -100,7 +100,7 @@ impl ByteStr {
     ///
     /// Panics if `prefix_len` is longer than either this string or the other string
     #[allow(clippy::indexing_slicing)] // in-range loop conditions
-    pub(crate) const fn prefix_eq(&self, other: &ByteStr, prefix_len: usize) -> bool {
+    pub(crate) const fn prefix_eq(&self, other: &Self, prefix_len: usize) -> bool {
         assert!(prefix_len <= self.len());
         assert!(prefix_len <= other.len());
         let mut i = 0;

@@ -9,7 +9,7 @@ use super::ShortBoxSliceIntoIter;
 use litemap::store::*;
 
 impl<K, V> StoreConstEmpty<K, V> for ShortBoxSlice<(K, V)> {
-    const EMPTY: ShortBoxSlice<(K, V)> = ShortBoxSlice::new();
+    const EMPTY: Self = Self::new();
 }
 
 impl<K, V> StoreSlice<K, V> for ShortBoxSlice<(K, V)> {
@@ -70,7 +70,7 @@ impl<K: Ord, V> StoreFromIterable<K, V> for ShortBoxSlice<(K, V)> {
 #[cfg(feature = "alloc")]
 impl<K, V> StoreMut<K, V> for ShortBoxSlice<(K, V)> {
     fn lm_with_capacity(_capacity: usize) -> Self {
-        ShortBoxSlice::new()
+        Self::new()
     }
 
     fn lm_reserve(&mut self, _additional: usize) {}

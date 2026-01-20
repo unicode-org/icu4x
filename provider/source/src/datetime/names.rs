@@ -101,7 +101,7 @@ impl SourceDataProvider {
         req: DataRequest,
         calendar: DatagenCalendar,
         conversion: impl FnOnce(
-            &SourceDataProvider,
+            &Self,
             &DataLocale,
             &ca::Dates,
             DatagenCalendar,

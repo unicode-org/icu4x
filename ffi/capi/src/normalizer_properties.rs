@@ -35,8 +35,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<CanonicalCombiningClassMap> {
-            Box::new(CanonicalCombiningClassMap(
+        pub fn create() -> Box<Self> {
+            Box::new(Self(
                 icu_normalizer::properties::CanonicalCombiningClassMap::new().static_to_owned(),
             ))
         }
@@ -53,10 +53,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<CanonicalCombiningClassMap>, DataError> {
-            Ok(Box::new(CanonicalCombiningClassMap(icu_normalizer::properties::CanonicalCombiningClassMap::try_new_with_buffer_provider(provider.get()?)?)))
+        pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(icu_normalizer::properties::CanonicalCombiningClassMap::try_new_with_buffer_provider(provider.get()?)?)))
         }
 
         #[diplomat::rust_link(
@@ -107,8 +105,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<CanonicalComposition> {
-            Box::new(CanonicalComposition(
+        pub fn create() -> Box<Self> {
+            Box::new(Self(
                 icu_normalizer::properties::CanonicalComposition::new().static_to_owned(),
             ))
         }
@@ -122,10 +120,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<CanonicalComposition>, DataError> {
-            Ok(Box::new(CanonicalComposition(
+        pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_normalizer::properties::CanonicalComposition::try_new_with_buffer_provider(
                     provider.get()?,
                 )?,
@@ -179,8 +175,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<CanonicalDecomposition> {
-            Box::new(CanonicalDecomposition(
+        pub fn create() -> Box<Self> {
+            Box::new(Self(
                 icu_normalizer::properties::CanonicalDecomposition::new().static_to_owned(),
             ))
         }
@@ -194,10 +190,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<CanonicalDecomposition>, DataError> {
-            Ok(Box::new(CanonicalDecomposition(
+        pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
+            Ok(Box::new(Self(
                 icu_normalizer::properties::CanonicalDecomposition::try_new_with_buffer_provider(
                     provider.get()?,
                 )?,

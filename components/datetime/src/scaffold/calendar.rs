@@ -615,7 +615,7 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> ConvertCalendar for Date<A
 }
 
 impl ConvertCalendar for Time {
-    type Converted<'a> = Time;
+    type Converted<'a> = Self;
     #[inline]
     fn to_calendar<'a>(&self, _: &'a AnyCalendar) -> Self::Converted<'a> {
         *self
@@ -648,7 +648,7 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>, Z: Copy> ConvertCalendar
 }
 
 impl<O: TimeZoneModel> ConvertCalendar for TimeZoneInfo<O> {
-    type Converted<'a> = TimeZoneInfo<O>;
+    type Converted<'a> = Self;
     #[inline]
     fn to_calendar<'a>(&self, _: &'a AnyCalendar) -> Self::Converted<'a> {
         *self

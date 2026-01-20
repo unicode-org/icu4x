@@ -36,7 +36,7 @@ pub enum CoarseHourCycle {
 /// less likely to have a day period in it.
 impl Default for CoarseHourCycle {
     fn default() -> Self {
-        CoarseHourCycle::H23
+        Self::H23
     }
 }
 
@@ -51,8 +51,8 @@ impl CoarseHourCycle {
             }) = item
             {
                 return Some(match pattern_hour {
-                    fields::Hour::H11 | fields::Hour::H12 => CoarseHourCycle::H11H12,
-                    fields::Hour::H23 => CoarseHourCycle::H23,
+                    fields::Hour::H11 | fields::Hour::H12 => Self::H11H12,
+                    fields::Hour::H23 => Self::H23,
                 });
             }
         }
@@ -75,11 +75,11 @@ impl CoarseHourCycle {
             if let PatternItem::Field(fields::Field { symbol, length: _ }) = item {
                 if let fields::FieldSymbol::Hour(pattern_hour) = symbol {
                     if match self {
-                        CoarseHourCycle::H11H12 => match pattern_hour {
+                        Self::H11H12 => match pattern_hour {
                             fields::Hour::H11 | fields::Hour::H12 => true,
                             fields::Hour::H23 => false,
                         },
-                        CoarseHourCycle::H23 => match pattern_hour {
+                        Self::H23 => match pattern_hour {
                             fields::Hour::H11 | fields::Hour::H12 => false,
                             fields::Hour::H23 => true,
                         },
@@ -90,8 +90,8 @@ impl CoarseHourCycle {
                     } else {
                         // Mutate the pattern with the new symbol, so that it can be matched against.
                         *symbol = fields::FieldSymbol::Hour(match self {
-                            CoarseHourCycle::H11H12 => fields::Hour::H12,
-                            CoarseHourCycle::H23 => fields::Hour::H23,
+                            Self::H11H12 => fields::Hour::H12,
+                            Self::H23 => fields::Hour::H23,
                         });
                         break;
                     }
@@ -124,8 +124,8 @@ impl CoarseHourCycle {
     /// Get the other coarse hour cycle (map h11/h12 to h23/h24, and vice versa)
     pub fn invert(self) -> Self {
         match self {
-            CoarseHourCycle::H11H12 => CoarseHourCycle::H23,
-            CoarseHourCycle::H23 => CoarseHourCycle::H11H12,
+            Self::H11H12 => Self::H23,
+            Self::H23 => Self::H11H12,
         }
     }
 }

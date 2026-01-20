@@ -95,7 +95,7 @@ impl BookHebrew {
             }
         }
 
-        BookHebrew {
+        Self {
             year: civil_year,
             month: biblical_month,
             day: civil_day,
@@ -228,7 +228,7 @@ impl BookHebrew {
     }
 
     /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2331>
-    pub fn fixed_from_book_hebrew(date: BookHebrew) -> RataDie {
+    pub fn fixed_from_book_hebrew(date: Self) -> RataDie {
         let book_year = date.year;
         let book_month = date.month;
         let book_day = date.day;
@@ -253,7 +253,7 @@ impl BookHebrew {
     }
 
     /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2352>
-    pub fn book_hebrew_from_fixed(date: RataDie) -> BookHebrew {
+    pub fn book_hebrew_from_fixed(date: RataDie) -> Self {
         let approx = i64_to_i32(
             1 + ((date - HEBREW_EPOCH) as f64).div_euclid(35975351.0 / 98496.0) as i64, //  The value 35975351/98496, the average length of a BookHebrew year, can be approximated by 365.25
         )
@@ -265,7 +265,7 @@ impl BookHebrew {
 
         // Starting month for search for month.
         let start = if date
-            < Self::fixed_from_book_hebrew(BookHebrew {
+            < Self::fixed_from_book_hebrew(Self {
                 year,
                 month: NISAN,
                 day: 1,
@@ -276,7 +276,7 @@ impl BookHebrew {
         };
 
         let month_condition = |m: u8| {
-            date <= Self::fixed_from_book_hebrew(BookHebrew {
+            date <= Self::fixed_from_book_hebrew(Self {
                 year,
                 month: m,
                 day: Self::last_day_of_book_hebrew_month(year, m),
@@ -287,14 +287,14 @@ impl BookHebrew {
 
         // Calculate the day by subtraction.
         let day = (date
-            - Self::fixed_from_book_hebrew(BookHebrew {
+            - Self::fixed_from_book_hebrew(Self {
                 year,
                 month,
                 day: 1,
             }))
             + 1;
 
-        BookHebrew {
+        Self {
             year,
             month,
             day: day as u8,

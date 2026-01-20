@@ -472,7 +472,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> Index<usize> for VarZeroSlice<T, F
     }
 }
 
-impl<T, F> PartialEq<VarZeroSlice<T, F>> for VarZeroSlice<T, F>
+impl<T, F> PartialEq<Self> for VarZeroSlice<T, F>
 where
     T: VarULE,
     T: ?Sized,
@@ -480,7 +480,7 @@ where
     F: VarZeroVecFormat,
 {
     #[inline]
-    fn eq(&self, other: &VarZeroSlice<T, F>) -> bool {
+    fn eq(&self, other: &Self) -> bool {
         // VarULE has an API guarantee that this is equivalent
         // to `T::VarULE::eq()`
         self.entire_slice.eq(&other.entire_slice)
@@ -519,8 +519,8 @@ where
     }
 }
 
-impl<T: ?Sized, F: VarZeroVecFormat> AsRef<VarZeroSlice<T, F>> for VarZeroSlice<T, F> {
-    fn as_ref(&self) -> &VarZeroSlice<T, F> {
+impl<T: ?Sized, F: VarZeroVecFormat> AsRef<Self> for VarZeroSlice<T, F> {
+    fn as_ref(&self) -> &Self {
         self
     }
 }

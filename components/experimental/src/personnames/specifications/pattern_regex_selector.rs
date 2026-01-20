@@ -126,13 +126,13 @@ impl FromStr for NameFieldKind {
 
     fn from_str(value: &str) -> Result<Self, Self::Err> {
         match value {
-            "title" => Ok(NameFieldKind::Title),
-            "given" => Ok(NameFieldKind::Given),
-            "given2" => Ok(NameFieldKind::Given2),
-            "surname" => Ok(NameFieldKind::Surname),
-            "surname2" => Ok(NameFieldKind::Surname2),
-            "generation" => Ok(NameFieldKind::Generation),
-            "credentials" => Ok(NameFieldKind::Credentials),
+            "title" => Ok(Self::Title),
+            "given" => Ok(Self::Given),
+            "given2" => Ok(Self::Given2),
+            "surname" => Ok(Self::Surname),
+            "surname2" => Ok(Self::Surname2),
+            "generation" => Ok(Self::Generation),
+            "credentials" => Ok(Self::Credentials),
 
             _ => {
                 icu_provider::log::warn!("Invalid NameFieldKind value matched [{value}]");
@@ -147,13 +147,13 @@ impl FromStr for FieldModifier {
 
     fn from_str(value: &str) -> Result<Self, Self::Err> {
         match value {
-            "informal" => Ok(FieldModifier::Informal),
-            "prefix" => Ok(FieldModifier::Prefix),
-            "core" => Ok(FieldModifier::Core),
-            "allCaps" => Ok(FieldModifier::AllCaps),
-            "initialCap" => Ok(FieldModifier::InitialCap),
-            "initial" => Ok(FieldModifier::Initial),
-            "monogram" => Ok(FieldModifier::Monogram),
+            "informal" => Ok(Self::Informal),
+            "prefix" => Ok(Self::Prefix),
+            "core" => Ok(Self::Core),
+            "allCaps" => Ok(Self::AllCaps),
+            "initialCap" => Ok(Self::InitialCap),
+            "initial" => Ok(Self::Initial),
+            "monogram" => Ok(Self::Monogram),
             _ => {
                 icu_provider::log::warn!("Invalid FieldModifier value matched [{value}]");
                 Err(PersonNamesFormatterError::InvalidCldrData)

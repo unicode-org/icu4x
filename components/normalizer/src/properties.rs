@@ -161,7 +161,7 @@ impl CanonicalComposition {
     {
         let canonical_compositions: DataPayload<NormalizerNfcV1> =
             provider.load(Default::default())?.payload;
-        Ok(CanonicalComposition {
+        Ok(Self {
             canonical_compositions,
         })
     }
@@ -506,7 +506,7 @@ impl CanonicalDecomposition {
         let non_recursive: DataPayload<NormalizerNfdSupplementV1> =
             provider.load(Default::default())?.payload;
 
-        Ok(CanonicalDecomposition {
+        Ok(Self {
             decompositions,
             tables,
             non_recursive,
@@ -658,6 +658,6 @@ impl CanonicalCombiningClassMap {
     {
         let decompositions: DataPayload<NormalizerNfdDataV1> =
             provider.load(Default::default())?.payload;
-        Ok(CanonicalCombiningClassMap { decompositions })
+        Ok(Self { decompositions })
     }
 }

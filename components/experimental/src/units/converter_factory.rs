@@ -32,8 +32,8 @@ pub struct ConverterFactory {
 impl From<Sign> for num_bigint::Sign {
     fn from(val: Sign) -> Self {
         match val {
-            Sign::Positive => num_bigint::Sign::Plus,
-            Sign::Negative => num_bigint::Sign::Minus,
+            Sign::Positive => Self::Plus,
+            Sign::Negative => Self::Minus,
         }
     }
 }

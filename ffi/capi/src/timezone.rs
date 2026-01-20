@@ -23,8 +23,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::TimeZoneInfo::unknown, FnInStruct)]
         #[diplomat::rust_link(icu::time::TimeZone::unknown, FnInStruct, hidden)]
         #[diplomat::attr(auto, named_constructor)]
-        pub fn unknown() -> Box<TimeZone> {
-            Box::new(TimeZone(icu_time::TimeZone::UNKNOWN))
+        pub fn unknown() -> Box<Self> {
+            Box::new(Self(icu_time::TimeZone::UNKNOWN))
         }
 
         /// Whether the time zone is the unknown zone.
@@ -99,7 +99,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::TimeZoneInfo::utc, FnInStruct)]
         #[diplomat::rust_link(icu::time::zone::UtcOffset::zero, FnInStruct, hidden)]
         #[diplomat::attr(auto, named_constructor)]
-        pub fn utc() -> Box<TimeZoneInfo> {
+        pub fn utc() -> Box<Self> {
             Box::new(icu_time::TimeZoneInfo::utc().into())
         }
 
@@ -114,7 +114,7 @@ pub mod ffi {
             id: &TimeZone,
             offset: Option<&UtcOffset>,
             _variant: Option<TimeZoneVariant>,
-        ) -> Box<TimeZoneInfo> {
+        ) -> Box<Self> {
             Box::new(Self {
                 id: id.0,
                 offset: offset.map(|o| o.0),
