@@ -16,7 +16,6 @@
         clippy::unwrap_used,
         clippy::expect_used,
         clippy::panic,
-        clippy::trivially_copy_pass_by_ref,
     )
 )]
 #![warn(missing_docs)]

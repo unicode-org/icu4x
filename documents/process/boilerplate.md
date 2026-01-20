@@ -21,7 +21,6 @@ If the crate has no `std` feature:
             clippy::unwrap_used,
             clippy::expect_used,
             clippy::panic,
-            clippy::trivially_copy_pass_by_ref,
         )
     )]
     #![warn(missing_docs)]
@@ -39,7 +38,6 @@ If the crate has an `std` feature, specify this in the first line:
             clippy::unwrap_used,
             clippy::expect_used,
             clippy::panic,
-            clippy::trivially_copy_pass_by_ref,
         )
     )]
     #![warn(missing_docs)]

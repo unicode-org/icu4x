@@ -403,7 +403,7 @@ mod tests {
     /// This alternative implementation serves as an exhaustive safety check
     /// of relative_week() (in addition to the manual test points used
     /// for testing week_of()).
-    fn classify_days_of_unit(calendar: WeekCalculator, unit: &UnitInfo) -> Vec<RelativeWeek> {
+    fn classify_days_of_unit(calendar: WeekCalculator, unit: UnitInfo) -> Vec<RelativeWeek> {
         let mut weeks: Vec<Vec<Weekday>> = Vec::new();
         for day_index in 0..unit.duration_days {
             let day = super::add_to_weekday(unit.first_day, i32::from(day_index));
@@ -447,7 +447,7 @@ mod tests {
                             unit_duration,
                         )
                         .unwrap();
-                        let expected = classify_days_of_unit(calendar, &unit);
+                        let expected = classify_days_of_unit(calendar, unit);
                         for (index, expected_week_of) in expected.iter().enumerate() {
                             let day = index + 1;
                             assert_eq!(
