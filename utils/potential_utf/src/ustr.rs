@@ -89,7 +89,7 @@ impl PotentialUtf8 {
         Self::from_boxed_bytes(other.into_boxed_bytes())
     }
 
-    /// Get the bytes from a [`PotentialUtf8].
+    /// Get the bytes from a [`PotentialUtf8`].
     #[inline]
     pub const fn as_bytes(&self) -> &[u8] {
         &self.0

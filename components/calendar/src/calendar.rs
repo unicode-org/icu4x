@@ -31,7 +31,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     ///
     /// Equality and ordering should observe normal calendar semantics.
     type DateInner: Eq + Copy + PartialOrd + fmt::Debug;
-    /// The type of YearInfo returned by the date
+    /// The type of year info returned by the date
     type Year: fmt::Debug + Into<types::YearInfo>;
     /// The type of error returned by `until`
     type DifferenceError;
@@ -88,7 +88,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
 
     /// Construct the date from a [`RataDie`]
     ///
-    /// Precondition: RataDie needs to be in the `VALID_RD_RANGE`
+    /// Precondition: `rd` needs to be in the `VALID_RD_RANGE`
     #[expect(clippy::wrong_self_convention)]
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner;
     /// Obtain a [`RataDie`] from this date

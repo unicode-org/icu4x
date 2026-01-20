@@ -32,7 +32,7 @@ class CaseMapCloser internal constructor (
         internal val lib: CaseMapCloserLib = Native.load("icu4x", libClass)
         @JvmStatic
         
-        /** Construct a new CaseMapCloser instance using compiled data.
+        /** Construct a new `CaseMapCloser` instance using compiled data.
         *
         *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
         */
@@ -51,7 +51,7 @@ class CaseMapCloser internal constructor (
         }
         @JvmStatic
         
-        /** Construct a new CaseMapCloser instance using a particular data source.
+        /** Construct a new `CaseMapCloser` instance using a particular data source.
         *
         *See the [Rust documentation for `new`](https://docs.rs/icu/2.1.1/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
         */

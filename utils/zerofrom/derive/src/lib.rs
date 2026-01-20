@@ -39,7 +39,7 @@ mod visitor;
 /// for types with a lifetime parameter.
 ///
 /// Apply the `#[zerofrom(clone)]` attribute to a field if it doesn't implement
-/// Copy or ZeroFrom; this data will be cloned when the struct is zero_from'ed.
+/// [`Copy`] or [`ZeroFrom`]; this data will be cloned when the struct is zero-from'ed.
 ///
 /// Apply the `#[zerofrom(maybe_borrow(T, U, V))]` attribute to the struct to indicate
 /// that certain type parameters may themselves contain borrows (by default

@@ -17,7 +17,7 @@ use icu_calendar::types::{DayOfWeekInMonth, RataDie, Weekday};
 use icu_decimal::DecimalFormatter;
 use writeable::{Part, PartsWrite, Writeable};
 
-/// Apply length to input number and write to result using decimal_formatter.
+/// Apply length to input number and write to result using `decimal_formatter`.
 fn try_write_number<W>(
     part: Part,
     w: &mut W,
@@ -43,7 +43,7 @@ where
     }
 }
 
-/// Apply length to input number and write to result using decimal_formatter.
+/// Apply length to input number and write to result using `decimal_formatter`.
 /// Don't annotate it with a part.
 fn try_write_number_without_part<W>(
     w: &mut W,

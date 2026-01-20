@@ -53,33 +53,33 @@ icu_provider::data_marker!(
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::personnames::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct PersonNamesFormat<'data> {
-    /// <nameOrderLocales order="surnameFirst">ko vi yue zh</nameOrderLocales>
+    /// `<nameOrderLocales order="surnameFirst">ko vi yue zh</nameOrderLocales>`
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub surname_first_locales: VarZeroVec<'data, str>,
 
-    /// <nameOrderLocales order="givenFirst">und en</nameOrderLocales>
+    /// `<nameOrderLocales order="givenFirst">und en</nameOrderLocales>`
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub given_first_locales: VarZeroVec<'data, str>,
 
-    /// foreignSpaceReplacement element.
+    /// `foreignSpaceReplacement` element.
     #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "option_of_cow"))]
     pub foreign_space_replacement: Option<Cow<'data, str>>,
 
-    /// Equivalent of initialPattern tag + initial
+    /// Equivalent of `initialPattern` tag + `initial`
     /// ```xml
     /// <initialPattern type="initial">{0}.</initialPattern>
     /// ```
     #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "option_of_cow"))]
     pub initial_pattern: Option<Cow<'data, str>>,
 
-    /// Equivalent of initialPattern tag + initialSequence
+    /// Equivalent of `initialPattern` tag + `initialSequence`
     /// ```xml
     /// <initialPattern type="initialSequence">{0} {1}</initialPattern>
     /// ```
     #[cfg_attr(feature = "serde", serde(borrow, deserialize_with = "option_of_cow"))]
     pub initial_pattern_sequence: Option<Cow<'data, str>>,
 
-    /// Equivalent of PersonNames
+    /// Equivalent of `personNames`
     /// ```xml
     /// <personName>...</personName>
     /// ```
@@ -168,8 +168,6 @@ impl From<FormattingUsage> for PersonNamesFormattingAttributes {
 
 pub type PersonNamesFormattingAttributesMask = u32;
 
-/// PersonName Formatting data.
-///
 /// <https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element>
 #[zerovec::make_varule(PersonNamesFormattingDataVarULE)]
 #[zerovec::skip_derive(ZeroMapKV, Ord)]

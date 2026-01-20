@@ -34,10 +34,10 @@ use icu_provider::prelude::*;
 /// Returns the pattern selection for a currency.
 /// For example:
 ///    if the pattern is ¤#,##0.00 and the symbol is EGP,
-///    this means the return value will be PatternSelection::StandardAlphaNextToNumber
+///    this means the return value will be `PatternSelection::StandardAlphaNextToNumber`
 ///    because the character closes to the number is a letter.
 /// NOTE:
-///   placeholder_value must not be empty.
+///   `placeholder_value` must not be empty.
 fn currency_pattern_selection(
     provider: &SourceDataProvider,
     pattern: &str,

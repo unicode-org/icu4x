@@ -61,7 +61,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> Deref for VarZeroVecOwned<T, F> {
 }
 
 impl<T: VarULE + ?Sized, F> VarZeroVecOwned<T, F> {
-    /// Construct an empty VarZeroVecOwned
+    /// Construct an empty [`VarZeroVecOwned`]
     pub fn new() -> Self {
         Self {
             marker1: PhantomData,
@@ -72,7 +72,7 @@ impl<T: VarULE + ?Sized, F> VarZeroVecOwned<T, F> {
 }
 
 impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
-    /// Construct a VarZeroVecOwned from a [`VarZeroSlice`] by cloning the internal data
+    /// Construct a [`VarZeroVecOwned`] from a [`VarZeroSlice`] by cloning the internal data
     pub fn from_slice(slice: &VarZeroSlice<T, F>) -> Self {
         Self {
             marker1: PhantomData,
@@ -81,7 +81,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
         }
     }
 
-    /// Construct a VarZeroVecOwned from a list of elements
+    /// Construct a [`VarZeroVecOwned`] from a list of elements
     pub fn try_from_elements<A>(elements: &[A]) -> Result<Self, &'static str>
     where
         A: EncodeAsVarULE<T>,
@@ -180,7 +180,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     /// Return the raw bytes representing the given `index`. Returns None when given index 0
     ///
     /// ## Safety
-    /// The index must be valid, and self.as_encoded_bytes() must be well-formed
+    /// The index must be valid, and `self.as_encoded_bytes()` must be well-formed
     unsafe fn index_data(&self, index: usize) -> Option<&F::Index> {
         let index_range = Self::index_range(index)?;
         Some(&F::Index::slice_from_bytes_unchecked(&self.entire_slice[index_range])[0])
@@ -189,7 +189,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     /// Return the mutable slice representing the given `index`. Returns None when given index 0
     ///
     /// ## Safety
-    /// The index must be valid. self.as_encoded_bytes() must have allocated space
+    /// The index must be valid. `self.as_encoded_bytes()` must have allocated space
     /// for this index, but need not have its length appropriately set.
     unsafe fn index_data_mut(&mut self, index: usize) -> Option<&mut F::Index> {
         let ptr = self.entire_slice.as_mut_ptr();

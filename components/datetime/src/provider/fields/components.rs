@@ -106,7 +106,7 @@ impl Bag {
         }
     }
 
-    /// Converts the components::Bag into a `Vec<Field>`. The fields will be ordered in from most
+    /// Converts the [`Bag`] into a [`Vec<Field>`]. The fields will be ordered in from most
     /// significant field to least significant. This is the order the fields are listed in
     /// the UTS 35 table - <https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table>
     ///

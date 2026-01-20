@@ -107,7 +107,7 @@ enum class GeneralCategory(val inner: Int) {
         }
         @JvmStatic
         
-        /** Convert from an integer value from ICU4C or CodePointMapData
+        /** Convert from an integer value from ICU4C or `CodePointMapData`
         *
         *See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategory.html#method.from_icu4c_value) for more information.
         */
@@ -156,7 +156,7 @@ enum class GeneralCategory(val inner: Int) {
                                 
     }
     
-    /** Convert to an integer value usable with ICU4C and CodePointMapData
+    /** Convert to an integer value usable with ICU4C and `CodePointMapData`
     *
     *See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategory.html#method.to_icu4c_value) for more information.
     */
@@ -166,7 +166,7 @@ enum class GeneralCategory(val inner: Int) {
         return (returnVal.toUByte())
     }
     
-    /** Produces a GeneralCategoryGroup mask that can represent a group of general categories
+    /** Produces a `GeneralCategoryGroup` mask that can represent a group of general categories
     *
     *See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
     */

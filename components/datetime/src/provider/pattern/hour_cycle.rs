@@ -26,9 +26,9 @@ use icu_provider::prelude::*;
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum CoarseHourCycle {
-    /// Can either be fields::Hour::H11 or fields::Hour::H12
+    /// Can either be [`fields::Hour::H11`] or [`fields::Hour::H12`]
     H11H12,
-    /// fields::Hour::H23
+    /// [`fields::Hour::H23`]
     H23,
 }
 

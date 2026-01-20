@@ -330,7 +330,7 @@ where
 
     /// Use [`Yoke::attach_to_cart()`].
     ///
-    /// This was needed because the pre-1.61 compiler couldn't always handle the FnOnce trait bound.
+    /// This was needed because the pre-1.61 compiler couldn't always handle the [`FnOnce`] trait bound.
     #[deprecated]
     pub fn attach_to_cart_badly(
         cart: C,
@@ -341,7 +341,7 @@ where
 
     /// Use [`Yoke::try_attach_to_cart()`].
     ///
-    /// This was needed because the pre-1.61 compiler couldn't always handle the FnOnce trait bound.
+    /// This was needed because the pre-1.61 compiler couldn't always handle the [`FnOnce`] trait bound.
     #[deprecated]
     pub fn try_attach_to_cart_badly<E>(
         cart: C,
@@ -465,7 +465,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///   Concretely, this means that if `C = Option<Rc<T>>`, `Y` may contain references to the `T` but not
     ///   anything else.
     /// - Lifetimes inside C must not be lengthened, even if they are themselves contravariant.
-    ///   I.e., if C contains an `fn(&'a u8)`, it cannot be replaced with `fn(&'static u8),
+    ///   I.e., if C contains an `fn(&'a u8)`, it cannot be replaced with `fn(&'static u8)`,
     ///   even though that is typically safe.
     ///
     /// Typically, this means implementing `f` as something which _wraps_ the inner cart type `C`.
@@ -764,7 +764,7 @@ impl<Y: for<'a> Yokeable<'a>, C: CartablePointerLike> Yoke<Y, CartableOptionPoin
 ///
 /// This trait can also be implemented on aggregates of such types like `Option<T: CloneableCart>` and `(T: CloneableCart, U: CloneableCart)`.
 ///
-/// Essentially, all data that could be referenced by a Yokeable (i.e. data that is referenced via a StableDeref) must retain the same
+/// Essentially, all data that could be referenced by a Yokeable (i.e. data that is referenced via a [`StableDeref`]) must retain the same
 /// pointer and ownership semantics once cloned.
 pub unsafe trait CloneableCart: Clone {}
 
@@ -1609,9 +1609,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     }
 }
 
-/// # Safety docs for *map_project*()
+/// # Safety docs for `*map_project*()`
 ///
-/// (Docs are on a private const to allow the use of compile_fail doctests)
+/// (Docs are on a private const to allow the use of `compile_fail` doctests)
 ///
 /// This is safe to perform because of the choice of lifetimes on `f`, that is,
 /// `for<a> fn(<Y as Yokeable<'a>>::Output, &'a ()) -> <P as Yokeable<'a>>::Output`.
@@ -1715,7 +1715,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// unification of an existential and universal lifetime, which isn't possible.
 const _: () = ();
 
-/// # Safety docs for attach_to_cart()'s signature
+/// # Safety docs for `attach_to_cart()`'s signature
 ///
 /// The `attach_to_cart()` family of methods get by by using the following bound:
 ///
@@ -1738,7 +1738,7 @@ const _: () = ();
 /// e.g. `&[u8]` is a valid cart, as is `Box<&[u8]>`. `C` is not `'static`.
 ///
 /// (I'm going to use `CT` in prose to refer to `C::Target` here, since almost everything here has to do
-/// with C::Target and not C itself.)
+/// with `C::Target` and not C itself.)
 ///
 /// Unfortunately, there's a sneaky additional bound inside `F`. The signature of `F` is *actually*
 ///
@@ -1784,8 +1784,8 @@ const _: () = ();
 /// by forcing them to be invariant. This is a bit more restrictive and affects *all* `Yoke` users, not just
 /// those using `attach_to_cart()`.
 ///
-/// See https://github.com/unicode-org/icu4x/issues/2926
-/// See also https://github.com/rust-lang/rust/issues/106431 for potentially fixing this upstream by
+/// See <https://github.com/unicode-org/icu4x/issues/2926>
+/// See also <https://github.com/rust-lang/rust/issues/106431> for potentially fixing this upstream by
 /// changing how the bound works.
 ///
 /// # Tests
@@ -1861,7 +1861,7 @@ const _: () = ();
 /// ```
 const _: () = ();
 
-/// # Safety docs for *map_with_cart*()
+/// # Safety docs for `*map_with_cart*()`
 ///
 /// [`Yoke::map_with_cart`] has both the problems of [`Yoke::map_project`] (with a
 /// potentially-pathological callback) and [`Yoke::attach_to_cart`] (with a potentially

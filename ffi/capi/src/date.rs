@@ -384,7 +384,7 @@ pub mod ffi {
         /// Returns 1-indexed number of the month of this date in its year
         ///
         /// Note that for lunar calendars this may not lead to the same month
-        /// having the same ordinal month across years; use month_code if you care
+        /// having the same ordinal month across years; use `month_code` if you care
         /// about month identity.
         #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::types::MonthInfo::ordinal, StructField)]

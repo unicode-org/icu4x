@@ -63,7 +63,7 @@ internal class OptionIsoDateTimeNative constructor(): Structure(), Structure.ByV
 
 }
 
-/** An ICU4X DateTime object capable of containing a ISO-8601 date and time.
+/** An ICU4X `DateTime` object capable of containing a ISO-8601 date and time.
 *
 *See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.1.1/icu/time/struct.DateTime.html) for more information.
 */

@@ -52,9 +52,9 @@ pub trait NicheBytes<const N: usize> {
 // Any other bit pattern is a valid.
 #[repr(C)]
 pub union NichedOptionULE<U: NicheBytes<N> + ULE, const N: usize> {
-    /// Invariant: The value is `niche` only if the bytes equal NICHE_BIT_PATTERN.
+    /// Invariant: The value is `niche` only if the bytes equal `NICHE_BIT_PATTERN`.
     niche: [u8; N],
-    /// Invariant: The value is `valid` if the `niche` field does not match NICHE_BIT_PATTERN.
+    /// Invariant: The value is `valid` if the `niche` field does not match `NICHE_BIT_PATTERN`.
     valid: U,
 }
 
@@ -120,16 +120,16 @@ impl<U: NicheBytes<N> + ULE + PartialEq, const N: usize> PartialEq for NichedOpt
 impl<U: NicheBytes<N> + ULE + Eq, const N: usize> Eq for NichedOptionULE<U, N> {}
 
 /// Safety for ULE trait
-/// 1. NichedOptionULE does not have any padding bytes due to `#[repr(C)]` on a struct
+/// 1. `NichedOptionULE` does not have any padding bytes due to `#[repr(C)]` on a struct
 ///    containing only ULE fields.
-///    NichedOptionULE either contains NICHE_BIT_PATTERN or valid U byte sequences.
+///    `NichedOptionULE` either contains `NICHE_BIT_PATTERN` or valid U byte sequences.
 ///    In both cases the data is initialized.
-/// 2. NichedOptionULE is aligned to 1 byte due to `#[repr(C, packed)]` on a struct containing only
+/// 2. `NichedOptionULE` is aligned to 1 byte due to `#[repr(C, packed)]` on a struct containing only
 ///    ULE fields.
-/// 3. validate_bytes impl returns an error if invalid bytes are encountered.
-/// 4. validate_bytes impl returns an error there are extra bytes.
+/// 3. `validate_bytes` impl returns an error if invalid bytes are encountered.
+/// 4. `validate_bytes` impl returns an error there are extra bytes.
 /// 5. The other ULE methods are left to their default impl.
-/// 6. NichedOptionULE equality is based on ULE equality of the subfield, assuming that NicheBytes
+/// 6. `NichedOptionULE` equality is based on ULE equality of the subfield, assuming that `NicheBytes`
 ///    has been implemented correctly (this is a correctness but not a safety guarantee).
 unsafe impl<U: NicheBytes<N> + ULE, const N: usize> ULE for NichedOptionULE<U, N> {
     fn validate_bytes(bytes: &[u8]) -> Result<(), crate::ule::UleError> {

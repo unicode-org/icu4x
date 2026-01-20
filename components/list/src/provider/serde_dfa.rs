@@ -6,7 +6,7 @@ use icu_provider::prelude::*;
 use regex_automata::dfa::sparse::DFA;
 use zerovec::VarZeroCow;
 
-/// A serde-compatible version of [regex_automata::dfa::sparse::DFA].
+/// A serde-compatible version of [`regex_automata::dfa::sparse::DFA`].
 ///
 /// This does not implement
 /// [`serde::Deserialize`] directly, as binary deserialization is not supported in big-endian
@@ -127,7 +127,7 @@ impl<'data> SerdeDFA<'data> {
     ///
     /// # Safety
     ///
-    /// `dfa_bytes` has to be a valid DFA (regex_automata::dfa::sparse::DFA::from_bytes(dfa_bytes).is_ok())
+    /// `dfa_bytes` has to be a valid DFA (`regex_automata::dfa::sparse::DFA::from_bytes(dfa_bytes).is_ok()`)
     pub const unsafe fn from_dfa_bytes_unchecked(dfa_bytes: &'data [u8]) -> Self {
         Self {
             // SAFETY: safe for VarZeroCow<[u8]>

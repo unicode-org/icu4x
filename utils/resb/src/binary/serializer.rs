@@ -917,9 +917,9 @@ fn get_total_string_size(string: &str) -> Result<usize, BinarySerializerError> {
 
 /// Gets the size of the length marker of a UTF-16 string in 16-bit characters.
 ///
-/// Strings of no more than 40 characters are terminated with a 16-bit U+0000
+/// Strings of no more than 40 characters are terminated with a 16-bit `U+0000`
 /// character, while longer strings are marked with one to three UTF-16 low
-/// surrogates to indicate length.`
+/// surrogates to indicate length.
 ///
 /// For more details, see [`ResourceReprType::StringV2`].
 fn get_string_length_marker_size(string: &str) -> Result<usize, BinarySerializerError> {

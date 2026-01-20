@@ -32,7 +32,7 @@ const NORMAL_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::WIDE_STANDALONE,
 ];
 
-/// Lengths for month data (NORMAL_MARKER_LENGTHS + numeric)
+/// Lengths for month data (`NORMAL_MARKER_LENGTHS` + numeric)
 const NUMERIC_MONTHS_MARKER_LENGTHS: &[&DataMarkerAttributes] = &[
     marker_attrs::ABBR,
     marker_attrs::NARROW,

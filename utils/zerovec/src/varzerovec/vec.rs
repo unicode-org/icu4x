@@ -222,7 +222,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
         Self(VarZeroVecInner::Borrowed(VarZeroSlice::new_empty()))
     }
 
-    /// Parse a VarZeroVec from a slice of the appropriate format
+    /// Parse a [`VarZeroVec`] from a slice of the appropriate format
     ///
     /// Slices of the right format can be obtained via [`VarZeroSlice::as_bytes()`].
     ///
@@ -294,7 +294,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
         }
     }
 
-    /// Converts a borrowed ZeroVec to an owned ZeroVec. No-op if already owned.
+    /// Converts a borrowed [`VarZeroVec`] to an owned [`VarZeroVec`]. No-op if already owned.
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
@@ -319,7 +319,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
         }
     }
 
-    /// Obtain this `VarZeroVec` as a [`VarZeroSlice`]
+    /// Obtain this [`VarZeroVec`] as a [`VarZeroSlice`]
     pub fn as_slice(&self) -> &VarZeroSlice<T, F> {
         match self.0 {
             #[cfg(feature = "alloc")]
@@ -328,7 +328,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
         }
     }
 
-    /// Takes the byte vector representing the encoded data of this VarZeroVec. If borrowed,
+    /// Takes the byte vector representing the encoded data of this [`VarZeroVec`]. If borrowed,
     /// this function allocates a byte vector and copies the borrowed bytes into it.
     ///
     /// The bytes can be passed back to [`Self::parse_bytes()`].

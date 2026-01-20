@@ -43,9 +43,9 @@ use writeable::Writeable;
 #[non_exhaustive]
 #[derive(Copy, Clone, Default, PartialEq, Eq, Hash, Debug)]
 pub enum TrailingCase {
-    /// Preserve the casing of the rest of the string ("spoNgEBoB" -> "SpoNgEBoB")
+    /// Preserve the casing of the rest of the string (`spoNgEBoB` -> `SpoNgEBoB`)
     Unchanged,
-    /// Lowercase the rest of the string ("spoNgEBoB" -> "Spongebob")
+    /// Lowercase the rest of the string (`spoNgEBoB` -> `Spongebob`)
     #[default]
     Lower,
 }
@@ -268,7 +268,7 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
         }
     }
 
-    /// Construct this object to wrap an existing CaseMapper (or a reference to one), loading additional data as needed.
+    /// Construct this object to wrap an existing [`CaseMapper`] (or a reference to one), loading additional data as needed.
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_with_mapper)]
     pub fn try_new_with_mapper_unstable<P>(provider: &P, casemapper: CM) -> Result<Self, DataError>
     where

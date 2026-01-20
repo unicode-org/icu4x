@@ -5,7 +5,7 @@
 use crate::personnames::api::{NameField, NameFieldKind};
 
 /// Returns a remapped field for missing surname.
-/// https://www.unicode.org/reports/tr35/tr35-personNames.html#handle-missing-surname
+/// <https://www.unicode.org/reports/tr35/tr35-personNames.html#handle-missing-surname>
 pub fn derive_missing_surname(
     available_name_field: &[NameField],
     requested_name_field: NameField,

@@ -94,7 +94,7 @@ public:
   inline std::unique_ptr<icu4x::TimeZoneInfo> at_timestamp(int64_t timestamp) const;
 
   /**
-   * Returns the DateTime for the UTC zone name reference time
+   * Returns the `DateTime` for the UTC zone name reference time
    *
    * See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/2.1.1/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
    */

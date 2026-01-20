@@ -64,7 +64,7 @@
 //!
 //! # Examples
 //!
-//! Serialize and deserialize a struct with ZeroVec and VarZeroVec with Bincode:
+//! Serialize and deserialize a struct with [`ZeroVec`] and [`VarZeroVec`] with Bincode:
 //!
 //! ```
 //! # #[cfg(feature = "serde")] {
@@ -100,7 +100,7 @@
 //! # } // feature = "serde"
 //! ```
 //!
-//! Use custom types inside of ZeroVec:
+//! Use custom types inside of [`ZeroVec`]:
 //!
 //! ```rust
 //! # #[cfg(all(feature = "serde", feature = "derive"))] {
@@ -180,7 +180,7 @@
 //! `zerovec` is designed for fast deserialization from byte buffers with zero memory allocations
 //! while minimizing performance regressions for common vector operations.
 //!
-//! Benchmark results on x86_64:
+//! Benchmark results on `x86_64`:
 //!
 //! | Operation | `Vec<T>` | `zerovec` |
 //! |---|---|---|
@@ -416,7 +416,7 @@ pub use zerovec_derive::make_ule;
 ///
 /// This can be attached to structs containing only [`AsULE`] types with the last fields being
 /// [`Cow<'a, str>`](alloc::borrow::Cow), [`ZeroSlice`], or [`VarZeroSlice`]. If there is more than one such field, it will be represented
-/// using [`MultiFieldsULE`](crate::ule::MultiFieldsULE) and getters will be generated. Other VarULE fields will be detected if they are
+/// using [`MultiFieldsULE`](crate::ule::MultiFieldsULE) and getters will be generated. Other [`VarULE`] fields will be detected if they are
 /// tagged with `#[zerovec::varule(NameOfVarULETy)]`.
 ///
 /// The type must be [`PartialEq`] and [`Eq`].

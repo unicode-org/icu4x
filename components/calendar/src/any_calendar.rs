@@ -449,7 +449,7 @@ make_any_calendar!(
     /// [`Date`] can also be converted to [`AnyCalendar`]-compatible ones
     /// via [`Date::to_any()`](crate::Date::to_any()).
     ///
-    /// There are many ways of constructing an AnyCalendar'd date:
+    /// There are many ways of constructing an [`AnyCalendar`]'d date:
     /// ```
     /// use icu::calendar::{AnyCalendar, AnyCalendarKind, Date, cal::{Japanese, Gregorian}, types::MonthCode};
     /// use icu::locale::locale;
@@ -541,7 +541,7 @@ pub enum AnyCalendarDifferenceError {
 }
 
 impl AnyCalendar {
-    /// Constructs an AnyCalendar for a given calendar kind from compiled data.
+    /// Constructs an [`AnyCalendar`] for a given calendar kind from compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -758,7 +758,7 @@ impl AnyCalendar {
 }
 
 impl<C: AsCalendar<Calendar = AnyCalendar>> Date<C> {
-    /// Convert this `Date<AnyCalendar>` to another `AnyCalendar`, if conversion is needed
+    /// Convert this `Date<AnyCalendar>` to another [`AnyCalendar`], if conversion is needed
     pub fn convert_any<'a>(&self, calendar: &'a AnyCalendar) -> Date<Ref<'a, AnyCalendar>> {
         if calendar == self.calendar() {
             Date::from_raw(*self.inner(), Ref(calendar))
@@ -768,7 +768,7 @@ impl<C: AsCalendar<Calendar = AnyCalendar>> Date<C> {
     }
 }
 
-/// Convenient type for selecting the kind of AnyCalendar to construct
+/// Convenient type for selecting the kind of [`AnyCalendar`] to construct
 #[non_exhaustive]
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
 pub enum AnyCalendarKind {
@@ -1004,7 +1004,7 @@ pub trait IntoAnyCalendar: Calendar + Sized {
     /// You should not need to call this method directly
     fn from_any_ref(any: &AnyCalendar) -> Option<&Self>;
 
-    /// Convert a date for this calendar into an `AnyDateInner`
+    /// Convert a date for this calendar into a `AnyDateInner`
     ///
     /// You should not need to call this method directly
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner;

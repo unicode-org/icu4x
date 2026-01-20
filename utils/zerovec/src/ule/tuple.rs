@@ -4,7 +4,7 @@
 
 //! ULE impls for tuples.
 //!
-//! Rust does not guarantee the layout of tuples, so ZeroVec defines its own tuple ULE types.
+//! Rust does not guarantee the layout of tuples, so [`ZeroVec`](crate::ZeroVec) defines its own tuple ULE types.
 //!
 //! Impls are defined for tuples of up to 6 elements. For longer tuples, use a custom struct
 //! with [`#[make_ule]`](crate::make_ule).

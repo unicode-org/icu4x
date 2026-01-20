@@ -303,7 +303,7 @@ impl WeekdaySet {
 }
 
 impl WeekdaySet {
-    /// Creates a new [WeekdaySet] using the provided days.
+    /// Creates a new [`WeekdaySet`] using the provided days.
     pub const fn new(days: &[Weekday]) -> Self {
         let mut i = 0;
         let mut w = 0;

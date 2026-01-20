@@ -18,7 +18,7 @@ pub(crate) struct Rule<'a> {
 
 #[derive(Debug, PartialEq)]
 pub(crate) struct TzRule {
-    /// The amount of seconds to add to standard_offset_seconds
+    /// The amount of seconds to add to `standard_offset_seconds`
     /// to get the rule offset
     additional_offset_secs: i32,
     /// The yearly start date of the rule
@@ -37,7 +37,7 @@ struct TzRuleDate {
     month: u8,
     /// The time in the day (in seconds) that the transition occurs
     transition_time: u32,
-    /// How to interpret transition_time
+    /// How to interpret `transition_time`
     time_mode: TimeMode,
     /// How to interpret day, weekday, and month
     mode: RuleMode,
@@ -45,30 +45,30 @@ struct TzRuleDate {
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 enum TimeMode {
-    /// {transition_time} is local wall clock time in the time zone
+    /// `transition_time` is local wall clock time in the time zone
     /// *before* the transition
     ///
     /// e.g. if the transition between LST and LDT is to happen at 02:00,
     /// the time that *would be* 02:00 LST would be the first time of LDT.
     ///
-    /// This means that `{local_wall_clock_time}` may never actually be the
-    /// wall clock time! The America/Los_Angeles transition occurs at Wall 02:00,
+    /// This means that `local_wall_clock_time` may never actually be the
+    /// wall clock time! The `America/Los_Angeles` transition occurs at Wall 02:00,
     /// however the transition from PST to PDT is
     /// `2025-03-09T01:59:59-08:00[America/Los_Angeles]` to
-    /// 2025-03-09T03:00:00-07:00[America/Los_Angeles],
-    /// so 2025-03-09T02:00:00 never occurs.
+    /// `2025-03-09T03:00:00-07:00[America/Los_Angeles]`,
+    /// so `2025-03-09T02:00:00` never occurs.
     ///
     /// This can be turned into Standard by subtracting the offset-from-standard
     /// of the time zone *before* this transition
     Wall = 0,
-    /// {transition_time} is local standard time
+    /// `transition_time` is local standard time
     ///
     /// Will produce different results from Wall=0 for DST-to-STD transitions
     ///
     /// This can be turned into Wall by adding the offset-from-standard of the time zone
     /// *before* this transition.
     Standard = 1,
-    /// {transition_time} is UTC time
+    /// `transition_time` is UTC time
     ///
     /// This is UTC time *on the UTC day* identified by this rule; which may
     /// end up on a different local day.
@@ -91,7 +91,7 @@ enum RuleMode {
     /// The {day}th {weekday} in {month}
     ///
     /// Current zoneinfo64 does not use this, instead
-    /// choosing to represent this as DOW_GEQ_DOM with day = 1/8/15/22
+    /// choosing to represent this as `DOW_GEQ_DOM` with `day = 1/8/15/22`
     DOW_IN_MONTH,
     /// {month} {day}
     ///
@@ -270,7 +270,7 @@ impl TzRuleDate {
         day.since(EPOCH) * SECONDS_IN_UTC_DAY + i64::from(start_seconds)
     }
 
-    /// Converts the {transition_time} into a time in the UTC day, in seconds
+    /// Converts the `transition_time` into a time in the UTC day, in seconds
     fn transition_time_to_utc(
         &self,
         standard_offset_seconds: i32,
