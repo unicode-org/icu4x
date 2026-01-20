@@ -340,6 +340,8 @@ inherits = "bench"
 debug = true
 
 [workspace.lints]
+clippy.exhaustive_enums = "deny"
+clippy.exhaustive_structs = "deny"
 rust.missing_debug_implementations = "deny"
 rust.unexpected_cfgs = { level = "warn", check-cfg = [
     'cfg(icu4c_enable_renaming)',
@@ -347,6 +349,7 @@ rust.unexpected_cfgs = { level = "warn", check-cfg = [
     'cfg(icu4x_run_size_tests)',
     'cfg(icu4x_unstable_fast_trie_only)',
 ] }
+
 
 [workspace.metadata.cargo-semver-checks.lints]
 type_method_marked_deprecated.level = "allow" # allow deprecation in patch releases

@@ -917,7 +917,7 @@ Some lints should be enabled at the crate level for primary ICU4X crates. This g
 
 ## Exhaustiveness :: required
 
-Crates should deny the `clippy::exhaustive_structs, clippy::exhaustive_enums` lints at the top-level so that our types default to being `#[non_exhaustive]`.
+Enforced by the workspace-level `clippy::exhaustive_structs, clippy::exhaustive_enums` lints so that our types default to being `#[non_exhaustive]`.
 
 These kinds of types _must_ be `#[non_exhaustive]`:
 

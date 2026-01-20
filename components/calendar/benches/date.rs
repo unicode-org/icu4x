@@ -5,16 +5,16 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct DateFixture(pub Vec<Test>);
+struct DateFixture(Vec<Test>);
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Test {
-    pub year: i32,
-    pub month: u8,
-    pub day: u8,
-    pub hour: u8,
-    pub minute: u8,
-    pub second: u8,
+struct Test {
+    year: i32,
+    month: u8,
+    day: u8,
+    hour: u8,
+    minute: u8,
+    second: u8,
 }
 
 use criterion::{

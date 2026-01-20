@@ -21,8 +21,6 @@ If the crate has no `std` feature:
             clippy::unwrap_used,
             clippy::expect_used,
             clippy::panic,
-            clippy::exhaustive_structs,
-            clippy::exhaustive_enums,
             clippy::trivially_copy_pass_by_ref,
         )
     )]
@@ -41,8 +39,6 @@ If the crate has an `std` feature, specify this in the first line:
             clippy::unwrap_used,
             clippy::expect_used,
             clippy::panic,
-            clippy::exhaustive_structs,
-            clippy::exhaustive_enums,
             clippy::trivially_copy_pass_by_ref,
         )
     )]

@@ -11,15 +11,14 @@
         clippy::unwrap_used,
         clippy::expect_used,
         clippy::panic,
-        // Structs should be exhaustive, as they are exhaustive in C/C++
-        // clippy::exhaustive_structs,
-        // Enums should be non-exhaustive, as exhaustive enums don't exist in other languages anyway
-        clippy::exhaustive_enums,
         clippy::trivially_copy_pass_by_ref,
     )
 )]
 // Debug is not required as there is no stable Rust API
 #![allow(missing_debug_implementations)]
+// Structs should be exhaustive, as they are exhaustive in C/C++
+// Enums should be non-exhaustive, as exhaustive enums don't exist in other languages anyway
+#![allow(clippy::exhaustive_structs)]
 // #![warn(missing_docs)] // todo
 // Diplomat limitations
 #![allow(
