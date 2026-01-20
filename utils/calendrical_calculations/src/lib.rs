@@ -7,17 +7,6 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
-//! Calendrical calculations
-//!
-//! This crate implements algorithms from
-//! Calendrical Calculations by Reingold & Dershowitz, Cambridge University Press, 4th edition (2018)
-//! as needed by [ICU4X](https://github.com/unicode-org/icu4x).
-//!
-//! Most of these algorithms can be found as lisp code in the book or
-//! [on GithHub](https://github.com/EdReingold/calendar-code2/blob/main/calendar.l).
-//!
-//! The primary purpose of this crate is use by ICU4X, however if non-ICU4X users need this we are happy
-//! to add more structure to this crate as needed.
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, doc)), no_std)]
 #![cfg_attr(
@@ -35,6 +24,17 @@
 )]
 #![warn(missing_docs)]
 
+//! Calendrical calculations
+//!
+//! This crate implements algorithms from
+//! Calendrical Calculations by Reingold & Dershowitz, Cambridge University Press, 4th edition (2018)
+//! as needed by [ICU4X](https://github.com/unicode-org/icu4x).
+//!
+//! Most of these algorithms can be found as lisp code in the book or
+//! [on GithHub](https://github.com/EdReingold/calendar-code2/blob/main/calendar.l).
+//!
+//! The primary purpose of this crate is use by ICU4X, however if non-ICU4X users need this we are happy
+//! to add more structure to this crate as needed.
 mod astronomy;
 /// Chinese-like lunar calendars (Chinese, Dangi)
 pub mod chinese_based;
