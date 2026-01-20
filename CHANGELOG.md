@@ -136,6 +136,7 @@ Fully filled in up to 30c187f4b7
     - `yoke`, `yoke_derive`: `0.8.1 -> ???`
         - impl common traits (Display, PartialEq/Eq, PartialOrd/Ord) (#7400)
         - derive: Allow trait bounds in `where` clauses (unicode-org#7230)
+        - Safely handle panics in the `replace_cart` callback, additionally fixing OOM safety issue in `wrap_cart_in_*` (unicode-org#7456)
     - `zerofrom`: No change (`0.1.6`)
     - `zerotrie`: `0.2.3 -> ???`
         - Add `ZeroAsciiDenseSparse2dTrie` for more efficient storage of data keys with many attributes (unicode-org#7264, unicode-org#7304, unicode-org#7305)
