@@ -64,7 +64,7 @@ pub struct CompactPatterns<'a, P: PatternBackend>(
     pub VarZeroVec<'a, VarTupleULE<u8, PluralElementsPackedULE<Pattern<P>>>>,
 );
 
-impl<P: PatternBackend<Store = str>> Default for CompactPatterns<'_, P> {
+impl<P: PatternBackend> Default for CompactPatterns<'_, P> {
     fn default() -> Self {
         Self(VarZeroVec::new())
     }
