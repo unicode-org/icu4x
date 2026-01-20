@@ -354,8 +354,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
             };
             // Write out the offset table
             current_len = total_length;
-            const USIZE_BITS: usize = core::mem::size_of::<usize>() * 8;
-            let w = (USIZE_BITS - (total_length.leading_zeros() as usize) - 1) / 8;
+            let w = (usize::BITS as usize - (total_length.leading_zeros() as usize) - 1) / 8;
             if w > 3 && matches!(self.options.capacity_mode, CapacityMode::Normal) {
                 return Err(ZeroTrieBuildError::CapacityExceeded);
             }

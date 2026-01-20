@@ -445,7 +445,7 @@ impl LineSegmenter {
     pub fn new_lstm(options: LineBreakOptions) -> LineSegmenterBorrowed<'static> {
         LineSegmenterBorrowed {
             options: options.resolve(),
-            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
+            data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
             complex: ComplexPayloadsBorrowed::new_lstm(),
         }
     }
@@ -493,7 +493,7 @@ impl LineSegmenter {
     pub fn new_dictionary(options: LineBreakOptions) -> LineSegmenterBorrowed<'static> {
         LineSegmenterBorrowed {
             options: options.resolve(),
-            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
+            data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
             // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
             // characters [1]. Southeast Asian languages however require complex context analysis
             // [2].
@@ -550,7 +550,7 @@ impl LineSegmenter {
     ) -> LineSegmenterBorrowed<'static> {
         LineSegmenterBorrowed {
             options: options.resolve(),
-            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
+            data: Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
             complex: ComplexPayloadsBorrowed::empty(),
         }
     }
@@ -1324,10 +1324,9 @@ mod tests {
 
     #[test]
     fn linebreak_property() {
-        let payload =
-            DataProvider::<SegmenterBreakLineV1>::load(&crate::provider::Baked, Default::default())
-                .expect("Loading should succeed!")
-                .payload;
+        let payload = DataProvider::<SegmenterBreakLineV1>::load(&Baked, Default::default())
+            .expect("Loading should succeed!")
+            .payload;
 
         let get_linebreak_property = |codepoint| {
             payload.get().get_linebreak_property_utf32_with_rule(
@@ -1356,10 +1355,9 @@ mod tests {
     #[test]
     #[expect(clippy::bool_assert_comparison)] // clearer when we're testing bools directly
     fn break_rule() {
-        let payload =
-            DataProvider::<SegmenterBreakLineV1>::load(&crate::provider::Baked, Default::default())
-                .expect("Loading should succeed!")
-                .payload;
+        let payload = DataProvider::<SegmenterBreakLineV1>::load(&Baked, Default::default())
+            .expect("Loading should succeed!")
+            .payload;
         let lb_data: &RuleBreakData = payload.get();
 
         let is_break = |left, right| {
@@ -1457,9 +1455,8 @@ mod tests {
 
     #[test]
     fn linebreak() {
-        let segmenter =
-            LineSegmenter::try_new_dictionary_unstable(&crate::provider::Baked, Default::default())
-                .expect("Data exists");
+        let segmenter = LineSegmenter::try_new_dictionary_unstable(&Baked, Default::default())
+            .expect("Data exists");
         let segmenter = segmenter.as_borrowed();
 
         let mut iter = segmenter.segment_str("hello world");

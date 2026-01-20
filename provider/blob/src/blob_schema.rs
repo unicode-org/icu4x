@@ -80,7 +80,7 @@ impl<'data> BlobSchema<'data> {
 #[derive(Debug, Clone, yoke::Yokeable)]
 pub enum NeverSchema {}
 
-impl<'de> serde::Deserialize<'de> for NeverSchema {
+impl<'de> Deserialize<'de> for NeverSchema {
     fn deserialize<D>(_: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,

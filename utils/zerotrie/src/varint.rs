@@ -123,7 +123,7 @@ const MAX_VARINT: usize = usize::MAX;
 
 // *Upper Bound:* Each trail byte stores 7 bits of data, plus the latent value.
 // Add an extra 1 since the lead byte holds only 5 bits of data.
-const MAX_VARINT_LENGTH: usize = 1 + core::mem::size_of::<usize>() * 8 / 7;
+const MAX_VARINT_LENGTH: usize = 1 + usize::BITS as usize / 7;
 
 /// Returns a new [`ConstArrayBuilder`] containing a varint with 2 bits of metadata.
 #[allow(clippy::indexing_slicing)] // Okay so long as MAX_VARINT_LENGTH is correct

@@ -57,7 +57,7 @@ impl SerdeCache {
                 path.to_string(),
                 Box::new(
                     parser(&self.root.read_to_buf(path)?)
-                        .map_err(|e| e.with_path_context(std::path::Path::new(path)))?,
+                        .map_err(|e| e.with_path_context(Path::new(path)))?,
                 ),
             ),
         }

@@ -123,7 +123,7 @@ impl LanguageIdentifier {
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
-        crate::parser::parse_language_identifier(code_units, parser::ParserMode::LanguageIdentifier)
+        parser::parse_language_identifier(code_units, parser::ParserMode::LanguageIdentifier)
     }
 
     #[doc(hidden)] // macro use
@@ -141,7 +141,7 @@ impl LanguageIdentifier {
         ),
         ParseError,
     > {
-        crate::parser::parse_language_identifier_with_single_variant(
+        parser::parse_language_identifier_with_single_variant(
             code_units,
             parser::ParserMode::LanguageIdentifier,
         )

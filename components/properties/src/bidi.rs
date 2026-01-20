@@ -34,7 +34,7 @@ impl EnumeratedProperty for BidiMirroringGlyph {
 impl crate::private::Sealed for BidiMirroringGlyph {}
 
 impl AsULE for BidiMirroringGlyph {
-    type ULE = zerovec::ule::RawBytesULE<3>;
+    type ULE = RawBytesULE<3>;
 
     fn to_unaligned(self) -> Self::ULE {
         let [a, b, c, _] = TrieValue::to_u32(self).to_le_bytes();

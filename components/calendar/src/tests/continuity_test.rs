@@ -65,7 +65,7 @@ fn test_buddhist_continuity() {
 
 #[test]
 fn test_chinese_continuity() {
-    let cal = crate::cal::ChineseTraditional::new();
+    let cal = cal::ChineseTraditional::new();
     let date = Date::try_new_from_codes(None, -10, Month::new(1).code(), 1, cal);
     check_continuity(date.unwrap(), 20);
     let date = Date::try_new_from_codes(None, -300, Month::new(1).code(), 1, cal);

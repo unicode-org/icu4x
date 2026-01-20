@@ -74,9 +74,9 @@ impl FsDataProvider {
             return Err(DataErrorKind::MarkerNotFound.with_req(marker, req));
         }
         let checksum = if marker.is_singleton {
-            std::fs::read_to_string(format!("{}_checksum", path.display()))
+            fs::read_to_string(format!("{}_checksum", path.display()))
         } else {
-            std::fs::read_to_string(path.join(".checksum"))
+            fs::read_to_string(path.join(".checksum"))
         }
         .ok()
         .and_then(|s| s.parse().ok());
@@ -84,7 +84,7 @@ impl FsDataProvider {
             if !req.id.marker_attributes.is_empty() {
                 if req.metadata.attributes_prefix_match {
                     path.push(
-                        std::fs::read_dir(&path)?
+                        fs::read_dir(&path)?
                             .filter_map(|e| e.ok()?.file_name().into_string().ok())
                             .filter(|c| c.starts_with(req.id.marker_attributes.as_str()))
                             .min()

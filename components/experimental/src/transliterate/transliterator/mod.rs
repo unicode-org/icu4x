@@ -493,6 +493,7 @@ impl Transliterator {
     /// assert_eq!(output, "اكاريتانايا");
     /// ```
     #[cfg(feature = "compiled_data")]
+    #[allow(unused_qualifications)]
     pub fn try_new(locale: &Locale) -> Result<Self, DataError> {
         Self::try_new_unstable(
             &crate::provider::Baked,
@@ -584,6 +585,7 @@ impl Transliterator {
     /// assert_eq!(output, "This is an overridden example");
     /// ```
     #[cfg(feature = "compiled_data")]
+    #[allow(unused_qualifications)]
     pub fn try_new_with_override<F>(locale: &Locale, lookup: F) -> Result<Self, DataError>
     where
         F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
@@ -1635,6 +1637,7 @@ impl<'a> VarTable<'a> {
 
 #[cfg(test)]
 mod tests {
+    #![allow(unused_qualifications)]
     use super::*;
     use crate::transliterate::RuleCollection;
 

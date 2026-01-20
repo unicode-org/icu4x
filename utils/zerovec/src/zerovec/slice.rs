@@ -3,6 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
+#[cfg(feature = "alloc")]
+use alloc::boxed::Box;
 use core::cmp::Ordering;
 use core::ops::Range;
 
@@ -68,7 +70,7 @@ where
         // &[u8] and &[T::ULE] are the same slice with different length metadata.
         Self::from_ule_slice(core::slice::from_raw_parts(
             bytes.as_ptr() as *const T::ULE,
-            bytes.len() / core::mem::size_of::<T::ULE>(),
+            bytes.len() / size_of::<T::ULE>(),
         ))
     }
 
@@ -90,10 +92,10 @@ where
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[inline]
     #[cfg(feature = "alloc")]
-    pub fn from_boxed_slice(slice: alloc::boxed::Box<[T::ULE]>) -> alloc::boxed::Box<Self> {
+    pub fn from_boxed_slice(slice: Box<[T::ULE]>) -> Box<Self> {
         // This is safe because ZeroSlice is transparent over [T::ULE]
         // so Box<ZeroSlice<T>> can be safely cast from Box<[T::ULE]>
-        unsafe { alloc::boxed::Box::from_raw(alloc::boxed::Box::into_raw(slice) as *mut Self) }
+        unsafe { Box::from_raw(Box::into_raw(slice) as *mut Self) }
     }
 
     /// Returns this slice as its underlying `&[u8]` byte buffer representation.
@@ -139,7 +141,7 @@ where
     /// assert_eq!(4, zerovec.len());
     /// assert_eq!(
     ///     bytes.len(),
-    ///     zerovec.len() * std::mem::size_of::<<u16 as AsULE>::ULE>()
+    ///     zerovec.len() * size_of::<<u16 as AsULE>::ULE>()
     /// );
     /// ```
     #[inline]
@@ -574,7 +576,7 @@ impl<T: AsULE + Ord> Ord for ZeroSlice<T> {
 }
 
 #[cfg(feature = "alloc")]
-impl<T: AsULE> AsRef<ZeroSlice<T>> for alloc::vec::Vec<T::ULE> {
+impl<T: AsULE> AsRef<ZeroSlice<T>> for Vec<T::ULE> {
     fn as_ref(&self) -> &ZeroSlice<T> {
         ZeroSlice::<T>::from_ule_slice(self)
     }

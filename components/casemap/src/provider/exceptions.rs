@@ -14,6 +14,7 @@ use super::data::MappingKind;
 use super::exception_helpers::{ExceptionBits, ExceptionSlot, SlotPresence};
 use crate::set::ClosureSink;
 use alloc::borrow::Cow;
+use alloc::string::String;
 use core::fmt;
 #[cfg(any(feature = "serde", feature = "datagen"))]
 use core::ops::Range;
@@ -449,7 +450,7 @@ impl DecodedException<'_> {
     pub fn encode(&self) -> Exception<'static> {
         let bits = self.bits;
         let mut slot_presence = SlotPresence(0);
-        let mut data = alloc::string::String::new();
+        let mut data = String::new();
         if let Some(lowercase) = self.lowercase {
             slot_presence.add_slot(ExceptionSlot::Lower);
             data.push(lowercase)

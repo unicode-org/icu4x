@@ -61,7 +61,7 @@ pub enum TrieType {
 /// This trait is used as a type parameter in constructing a `CodePointTrie`.
 ///
 /// This trait can be implemented on anything that can be represented as a u32s worth of data.
-pub trait TrieValue: Copy + Eq + PartialEq + zerovec::ule::AsULE + 'static {
+pub trait TrieValue: Copy + Eq + PartialEq + AsULE + 'static {
     /// Last-resort fallback value to return if we cannot read data from the trie.
     ///
     /// In most cases, the error value is read from the last element of the `data` array,
@@ -213,13 +213,13 @@ pub struct CodePointTrieHeader {
 }
 
 impl TryFrom<u8> for TrieType {
-    type Error = crate::codepointtrie::error::Error;
+    type Error = Error;
 
-    fn try_from(trie_type_int: u8) -> Result<TrieType, crate::codepointtrie::error::Error> {
+    fn try_from(trie_type_int: u8) -> Result<TrieType, Error> {
         match trie_type_int {
             0 => Ok(TrieType::Fast),
             1 => Ok(TrieType::Small),
-            _ => Err(crate::codepointtrie::error::Error::FromDeserialized {
+            _ => Err(Error::FromDeserialized {
                 reason: "Cannot parse value for trie_type",
             }),
         }
@@ -1368,7 +1368,7 @@ impl<T: TrieValue + Into<u32>> CodePointTrie<'_, T> {
 
 impl<T: TrieValue> Clone for CodePointTrie<'_, T>
 where
-    <T as zerovec::ule::AsULE>::ULE: Clone,
+    <T as AsULE>::ULE: Clone,
 {
     fn clone(&self) -> Self {
         CodePointTrie {
@@ -1687,7 +1687,7 @@ mod tests {
     #[test]
     #[cfg(feature = "serde")]
     fn test_serde_with_postcard_roundtrip() -> Result<(), postcard::Error> {
-        let trie = crate::codepointtrie::planes::get_planes_trie();
+        let trie = planes::get_planes_trie();
         let trie_serialized: Vec<u8> = postcard::to_allocvec(&trie).unwrap();
 
         // Assert an expected (golden data) version of the serialized trie.

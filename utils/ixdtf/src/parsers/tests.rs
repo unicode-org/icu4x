@@ -1103,7 +1103,7 @@ fn test_zulu_offset() {
                 second: 0,
                 fraction: None,
             }),
-            offset: Some(crate::records::UtcOffsetRecordOrZ::Z),
+            offset: Some(UtcOffsetRecordOrZ::Z),
             tz: Some(TimeZoneAnnotation {
                 critical: false,
                 tz: TimeZoneRecord::Name("America/Chicago".as_bytes())

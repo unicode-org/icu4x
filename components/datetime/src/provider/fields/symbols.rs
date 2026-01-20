@@ -706,7 +706,7 @@ fn test_hour_cycle_selection() {
     ];
     for TestCase { locale, expected } in cases {
         let locale = icu_locale_core::Locale::try_from_str(locale).unwrap();
-        let prefs = crate::DateTimeFormatterPreferences::from(&locale);
+        let prefs = DateTimeFormatterPreferences::from(&locale);
         let actual = Hour::from_prefs(prefs);
         assert_eq!(expected, actual, "{}", locale);
     }

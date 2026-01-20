@@ -9,7 +9,6 @@ use icu::datetime::fieldsets::enums::*;
 use icu::datetime::options::Length;
 use icu::datetime::pattern::{ErrorField, FixedCalendarDateTimeNames};
 use icu::datetime::provider::fields::components;
-use icu::datetime::provider::pattern::runtime::Pattern;
 use icu::datetime::provider::pattern::{reference, runtime, CoarseHourCycle};
 use icu::datetime::provider::skeleton::reference::Skeleton;
 use icu::datetime::provider::skeleton::*;
@@ -64,10 +63,10 @@ impl<T> PatternsWithDistance<T> {
 
 fn select_pattern<'data>(
     bag: components::Bag,
-    skeletons: &BTreeMap<Skeleton, PluralElements<Pattern<'data>>>,
+    skeletons: &BTreeMap<Skeleton, PluralElements<runtime::Pattern<'data>>>,
     preferred_hour_cycle: CoarseHourCycle,
     length_patterns: &GenericLengthPatterns<'data>,
-) -> PatternsWithDistance<PluralElements<Pattern<'data>>> {
+) -> PatternsWithDistance<PluralElements<runtime::Pattern<'data>>> {
     use icu::datetime::provider::pattern::{runtime, PatternItem};
     use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 
@@ -115,7 +114,7 @@ impl SourceDataProvider {
     ) -> Result<DataResponse<M>, DataError>
     where
         M: DataMarker<DataStruct = PackedPatterns<'static>>,
-        Self: crate::IterableDataProviderCached<M>,
+        Self: IterableDataProviderCached<M>,
     {
         self.check_req::<M>(req)?;
         // let neo_components = from_id_str(req.id.marker_attributes)
@@ -404,7 +403,7 @@ fn preferred_hour_cycle(other: &cldr_serde::ca::Dates, locale: &DataLocale) -> C
         &other.time_skeletons.medium,
         &other.time_skeletons.short,
     ] {
-        let Some(hour_cycle) = pattern::CoarseHourCycle::determine(
+        let Some(hour_cycle) = CoarseHourCycle::determine(
             &s.get_pattern()
                 .parse()
                 .expect("Failed to crate pattern from bytes"),

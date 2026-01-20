@@ -36,6 +36,7 @@ use crate::{
 };
 
 use crate::pattern::DateTimePattern;
+use alloc::vec::Vec;
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -117,8 +118,8 @@ impl Bag {
     ///
     /// - `default_hour_cycle` specifies the hour cycle to use for the hour field if not in the Bag.
     ///   `preferences::Bag::hour_cycle` takes precedence over this argument.
-    pub fn to_vec_fields(&self, default_hour_cycle: HourCycle) -> alloc::vec::Vec<Field> {
-        let mut fields = alloc::vec::Vec::new();
+    pub fn to_vec_fields(&self, default_hour_cycle: HourCycle) -> Vec<Field> {
+        let mut fields = Vec::new();
         if let Some(era) = self.era {
             fields.push(Field {
                 symbol: FieldSymbol::Era,

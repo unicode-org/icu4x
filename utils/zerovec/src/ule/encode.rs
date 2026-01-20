@@ -13,8 +13,6 @@ use alloc::boxed::Box;
 use alloc::string::String;
 #[cfg(feature = "alloc")]
 use alloc::{vec, vec::Vec};
-#[cfg(feature = "alloc")]
-use core::mem;
 
 /// Allows types to be encoded as [`VarULE`]s. This is highly useful for implementing [`VarULE`] on
 /// custom DSTs where the type cannot be obtained as a reference to some other type.
@@ -187,16 +185,16 @@ where
 
     #[inline]
     fn encode_var_ule_len(&self) -> usize {
-        self.len() * core::mem::size_of::<T::ULE>()
+        self.len() * size_of::<T::ULE>()
     }
 
     fn encode_var_ule_write(&self, dst: &mut [u8]) {
         #[allow(non_snake_case)]
-        let S = core::mem::size_of::<T::ULE>();
+        let S = size_of::<T::ULE>();
         debug_assert_eq!(self.len() * S, dst.len());
         for (item, ref mut chunk) in self.iter().zip(dst.chunks_mut(S)) {
             let ule = item.to_unaligned();
-            chunk.copy_from_slice(ULE::slice_as_bytes(core::slice::from_ref(&ule)));
+            chunk.copy_from_slice(ULE::slice_as_bytes(slice::from_ref(&ule)));
         }
     }
 }

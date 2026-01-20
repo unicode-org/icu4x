@@ -542,7 +542,6 @@ pub use zerovec_derive::make_varule;
 #[cfg(target_pointer_width = "64")]
 mod tests {
     use super::*;
-    use core::mem::size_of;
 
     /// Checks that the size of the type is one of the given sizes.
     /// The size might differ across Rust versions or channels.

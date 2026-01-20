@@ -699,7 +699,6 @@ impl<Y: for<'a> Yokeable<'a>, C: CartablePointerLike> Yoke<Y, Option<C>> {
     /// ```
     /// use yoke::Yoke;
     /// use yoke::cartable_ptr::CartableOptionPointer;
-    /// use std::mem::size_of;
     /// use std::rc::Rc;
     ///
     /// // The data struct is 6 words:
@@ -708,7 +707,7 @@ impl<Y: for<'a> Yokeable<'a>, C: CartablePointerLike> Yoke<Y, Option<C>> {
     /// #     _s: (usize, usize, usize, usize),
     /// #     _p: &'a str,
     /// # }
-    /// const W: usize = core::mem::size_of::<usize>();
+    /// const W: usize = size_of::<usize>();
     /// assert_eq!(W * 6, size_of::<MyDataStruct>());
     ///
     /// // An enum containing the data struct with an `Option<Rc>` cart is 8 words:

@@ -1603,7 +1603,7 @@ where
 /// ```
 #[cfg(feature = "compiled_data")]
 pub fn parse(source: &str) -> Result<(CodePointInversionListAndStringList<'static>, usize)> {
-    parse_unstable(source, &icu_properties::provider::Baked)
+    parse_unstable(source, &Baked)
 }
 
 /// Parses a `UnicodeSet` pattern with support for variables enabled.
@@ -1637,7 +1637,7 @@ pub fn parse_with_variables(
     source: &str,
     variable_map: &VariableMap<'_>,
 ) -> Result<(CodePointInversionListAndStringList<'static>, usize)> {
-    parse_unstable_with_variables(source, variable_map, &icu_properties::provider::Baked)
+    parse_unstable_with_variables(source, variable_map, &Baked)
 }
 
 #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, parse_with_variables)]

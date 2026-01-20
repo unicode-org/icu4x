@@ -628,7 +628,7 @@ impl DataExporter for BakedExporter {
                 },
             ));
 
-            stats.lookup_struct_size = core::mem::size_of::<
+            stats.lookup_struct_size = size_of::<
                 icu_provider::baked::zerotrie::Data<icu_provider::hello_world::HelloWorldV1>,
             >() + trie.as_borrowed_slice().borrows_size();
 

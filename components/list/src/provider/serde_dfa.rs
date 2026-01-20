@@ -139,7 +139,7 @@ impl<'data> SerdeDFA<'data> {
 
     /// Creates a `SerdeDFA` from a regex.
     #[cfg(any(feature = "datagen", feature = "serde_human",))]
-    pub fn new(pattern: alloc::borrow::Cow<'data, str>) -> Result<Self, icu_provider::DataError> {
+    pub fn new(pattern: alloc::borrow::Cow<'data, str>) -> Result<Self, DataError> {
         use regex_automata::dfa::dense::{Builder, Config};
 
         let Some(anchored_pattern) = pattern.strip_prefix('^') else {
@@ -158,13 +158,13 @@ impl<'data> SerdeDFA<'data> {
             )
             .build(anchored_pattern)
             .map_err(|e| {
-                icu_provider::DataError::custom("Cannot build DFA")
+                DataError::custom("Cannot build DFA")
                     .with_display_context(anchored_pattern)
                     .with_debug_context(&e)
             })?
             .to_sparse()
             .map_err(|e| {
-                icu_provider::DataError::custom("Cannot sparsify DFA")
+                DataError::custom("Cannot sparsify DFA")
                     .with_display_context(anchored_pattern)
                     .with_debug_context(&e)
             })?;

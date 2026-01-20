@@ -33,7 +33,7 @@ use tinystr::tinystr;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Roc;
 
-impl_with_abstract_gregorian!(crate::cal::Roc, RocDateInner, RocEra, _x, RocEra);
+impl_with_abstract_gregorian!(Roc, RocDateInner, RocEra, _x, RocEra);
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) struct RocEra;

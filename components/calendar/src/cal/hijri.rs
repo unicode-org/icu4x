@@ -385,7 +385,7 @@ impl Hijri<AstronomicalSimulation> {
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::new)]
     #[deprecated(since = "2.1.0", note = "use `Hijri::new_umm_al_qura`")]
     pub fn try_new_mecca_with_buffer_provider(
-        _provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
+        _provider: &(impl BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
         Ok(Self::new_simulated_mecca())
     }
@@ -828,7 +828,7 @@ impl<R: Rules> DateFieldsResolver for Hijri<R> {
     #[inline]
     fn reference_year_from_month_day(
         &self,
-        month: types::Month,
+        month: Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         self.0
@@ -959,7 +959,7 @@ impl<R: Rules> Calendar for Hijri<R> {
         )
     }
 
-    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+    fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         self.0.calendar_algorithm()
     }
 }
