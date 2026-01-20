@@ -724,6 +724,7 @@ impl_zerotrie_subtype!(
     Vec::into_boxed_slice
 );
 
+#[allow(unused_macro_rules)] // feature
 macro_rules! impl_dispatch {
     ($self:ident, $inner_fn:ident()) => {
         match $self.0 {
@@ -744,13 +745,6 @@ macro_rules! impl_dispatch {
             ZeroTrieFlavor::SimpleAscii(subtype) => subtype.$inner_fn(),
             ZeroTrieFlavor::PerfectHash(subtype) => subtype.$inner_fn(),
             ZeroTrieFlavor::ExtendedCapacity(subtype) => subtype.$inner_fn(),
-        }
-    };
-    ($self:ident, $inner_fn:ident($arg:ident)) => {
-        match $self.0 {
-            ZeroTrieFlavor::SimpleAscii(subtype) => subtype.$inner_fn($arg),
-            ZeroTrieFlavor::PerfectHash(subtype) => subtype.$inner_fn($arg),
-            ZeroTrieFlavor::ExtendedCapacity(subtype) => subtype.$inner_fn($arg),
         }
     };
     (&$self:ident, $inner_fn:ident($arg:ident)) => {

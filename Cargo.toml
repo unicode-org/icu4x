@@ -353,6 +353,7 @@ rust.unexpected_cfgs = { level = "warn", check-cfg = [
     'cfg(icu4x_unstable_fast_trie_only)',
 ] }
 rust.unused_lifetimes = "warn"
+rust.unused_macro_rules = "warn"
 
 [workspace.metadata.cargo-semver-checks.lints]
 type_method_marked_deprecated.level = "allow" # allow deprecation in patch releases
