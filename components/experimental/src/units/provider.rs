@@ -63,7 +63,7 @@ impl UnitsInfo<'_> {
                 convert_unit.unit_id.as_unsigned_int().cmp(&unit_id)
             })
             .ok()
-            .map(|index| &self.conversion_info[index])
+            .and_then(|index| self.conversion_info.get(index))
     }
 }
 

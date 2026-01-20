@@ -13,6 +13,7 @@ use crate::dimension::provider::currency::patterns::CurrencyPatternsData;
 
 use super::CurrencyCode;
 
+#[derive(Debug)]
 pub struct LongFormattedCurrency<'l> {
     pub(crate) value: &'l Decimal,
     // TODO: use this if the display name is not exist and make the extended data optional.

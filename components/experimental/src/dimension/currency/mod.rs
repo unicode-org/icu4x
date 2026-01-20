@@ -18,5 +18,6 @@ pub mod long_formatter;
 pub mod options;
 
 /// A currency code, such as "USD" or "EUR".
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
+#[allow(clippy::exhaustive_structs)] // newtype
 pub struct CurrencyCode(pub TinyAsciiStr<3>);

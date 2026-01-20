@@ -23,6 +23,7 @@ use zerovec::ZeroSlice;
 
 use super::convertible::Convertible;
 /// ConverterFactory is responsible for creating converters.
+#[derive(Debug)]
 pub struct ConverterFactory {
     /// Contains the necessary data for the conversion factory.
     payload: DataPayload<provider::UnitsInfoV1>,
@@ -258,7 +259,7 @@ impl ConverterFactory {
         }
     }
 
-    fn compute_conversion_term(&self, unit_item: &SingleUnit, sign: i8) -> Option<IcuRatio> {
+    fn compute_conversion_term(&self, unit_item: SingleUnit, sign: i8) -> Option<IcuRatio> {
         let conversion_info = self
             .payload
             .get()
@@ -296,7 +297,7 @@ impl ConverterFactory {
         let root_to_unit2_direction_sign = if is_reciprocal { 1 } else { -1 };
 
         let mut conversion_rate = IcuRatio::one();
-        for input_single_unit in input_unit.single_units.as_slice() {
+        for &input_single_unit in input_unit.single_units.as_slice() {
             conversion_rate *= Self::compute_conversion_term(self, input_single_unit, 1)?;
         }
 
@@ -304,7 +305,7 @@ impl ConverterFactory {
             conversion_rate /= IcuRatio::from_integer(input_unit.constant_denominator());
         }
 
-        for output_single_unit in output_unit.single_units.as_slice() {
+        for &output_single_unit in output_unit.single_units.as_slice() {
             conversion_rate *= Self::compute_conversion_term(
                 self,
                 output_single_unit,

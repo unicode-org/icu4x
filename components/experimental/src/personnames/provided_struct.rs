@@ -10,8 +10,8 @@ use alloc::vec::Vec;
 use icu_locale_core::Locale;
 use litemap::LiteMap;
 
-///
 /// DefaultPersonName, default implementation provided for PersonNameFormatter.
+#[derive(Debug)]
 pub struct DefaultPersonName {
     person_data: LiteMap<NameField, String>,
     locale: Option<Locale>,
@@ -27,31 +27,30 @@ impl PersonName for DefaultPersonName {
         self.preferred_order.as_ref()
     }
 
-    fn get(&self, field: &NameField) -> &str {
+    fn get(&self, field: NameField) -> &str {
         self.person_data
-            .get(field)
+            .get(&field)
             .map(String::as_ref)
             .unwrap_or("")
     }
 
-    fn available_name_fields(&self) -> Vec<&NameField> {
-        self.person_data.keys().collect()
+    fn available_name_fields(&self) -> Vec<NameField> {
+        self.person_data.keys().copied().collect()
     }
 
-    fn has_name_field_kind(&self, lookup_name_field: &NameFieldKind) -> bool {
+    fn has_name_field_kind(&self, lookup_name_field: NameFieldKind) -> bool {
         self.available_name_fields()
             .into_iter()
-            .any(|field| &field.kind == lookup_name_field)
+            .any(|field| field.kind == lookup_name_field)
     }
 
-    fn has_name_field(&self, lookup_name_field: &NameField) -> bool {
+    fn has_name_field(&self, lookup_name_field: NameField) -> bool {
         self.available_name_fields()
             .into_iter()
             .any(|field| field == lookup_name_field)
     }
 }
 
-///
 /// Default person name functions.
 impl DefaultPersonName {
     ///
