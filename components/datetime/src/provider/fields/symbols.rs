@@ -5,9 +5,12 @@
 use crate::options::SubsecondDigits;
 #[cfg(feature = "datagen")]
 use crate::provider::fields::FieldLength;
+use crate::DateTimeFormatterPreferences;
 use core::{cmp::Ordering, convert::TryFrom};
 use displaydoc::Display;
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
+use icu_locale_core::subtags::region;
+use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, UleError, ULE};
 
@@ -590,13 +593,122 @@ field_type!(
 );
 
 impl Hour {
-    pub(crate) fn from_hour_cycle(hour_cycle: HourCycle) -> Self {
-        match hour_cycle {
+    /// Picks the best [`Hour`] given the preferences.
+    ///
+    /// If `-u-hc-h**` is specified, that field is used. Otherwise, the field is selected
+    /// based on the locale, using `-u-hc-c**`, if present, as a hint.
+    pub(crate) fn from_prefs(prefs: DateTimeFormatterPreferences) -> Option<Self> {
+        let field = match prefs.hour_cycle? {
             HourCycle::H11 => Self::H11,
             HourCycle::H12 => Self::H12,
             HourCycle::H23 => Self::H23,
+            HourCycle::Clock12 => {
+                let region = prefs
+                    .locale_preferences
+                    .to_data_locale_region_priority()
+                    .region;
+                // TODO(#7415): Test that this fallback stays consistent with CLDR.
+                // This is derived from timeData. Currently the only region using
+                // something other than h12/h23 is JP.
+                const JP: Region = region!("JP");
+                match region {
+                    Some(JP) => Self::H11,
+                    _ => Self::H12,
+                }
+            }
+            // Note: ICU4X does not support H24.
+            HourCycle::Clock24 => Self::H23,
             _ => unreachable!(),
-        }
+        };
+        Some(field)
+    }
+}
+
+#[test]
+fn test_hour_cycle_selection() {
+    struct TestCase {
+        locale: &'static str,
+        expected: Option<Hour>,
+    }
+    let cases = [
+        TestCase {
+            locale: "en-US",
+            expected: None,
+        },
+        TestCase {
+            locale: "en-US-u-hc-h11",
+            expected: Some(Hour::H11),
+        },
+        TestCase {
+            locale: "en-US-u-hc-h12",
+            expected: Some(Hour::H12),
+        },
+        TestCase {
+            locale: "en-US-u-hc-h23",
+            expected: Some(Hour::H23),
+        },
+        TestCase {
+            locale: "en-US-u-hc-c12",
+            expected: Some(Hour::H12),
+        },
+        TestCase {
+            locale: "en-US-u-hc-c24",
+            expected: Some(Hour::H23),
+        },
+        TestCase {
+            locale: "fr-FR",
+            expected: None,
+        },
+        TestCase {
+            locale: "fr-FR-u-hc-h11",
+            expected: Some(Hour::H11),
+        },
+        TestCase {
+            locale: "fr-FR-u-hc-h12",
+            expected: Some(Hour::H12),
+        },
+        TestCase {
+            locale: "fr-FR-u-hc-h23",
+            expected: Some(Hour::H23),
+        },
+        TestCase {
+            locale: "fr-FR-u-hc-c12",
+            expected: Some(Hour::H12),
+        },
+        TestCase {
+            locale: "fr-FR-u-hc-c24",
+            expected: Some(Hour::H23),
+        },
+        TestCase {
+            locale: "ja-JP",
+            expected: None,
+        },
+        TestCase {
+            locale: "ja-JP-u-hc-h11",
+            expected: Some(Hour::H11),
+        },
+        TestCase {
+            locale: "ja-JP-u-hc-h12",
+            expected: Some(Hour::H12),
+        },
+        TestCase {
+            locale: "ja-JP-u-hc-h23",
+            expected: Some(Hour::H23),
+        },
+        TestCase {
+            locale: "ja-JP-u-hc-c12",
+            expected: Some(Hour::H11),
+        },
+        TestCase {
+            locale: "ja-JP-u-hc-c24",
+            expected: Some(Hour::H23),
+        },
+    ];
+    for TestCase { locale, expected } in cases {
+        let locale = icu_locale_core::Locale::try_from_str(locale).unwrap();
+        let prefs = crate::DateTimeFormatterPreferences::from(&locale);
+        let actual = Hour::from_prefs(prefs);
+        assert_eq!(expected, actual, "{}", locale);
     }
 }
 
