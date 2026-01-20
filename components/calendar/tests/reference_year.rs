@@ -116,6 +116,110 @@ where
     }
 }
 
+/// Test reference year implementation for calendars with limited precomputed data ranges
+fn test_reference_year_impl_limited<C>(
+    cal: C,
+    valid_md_condition: impl Fn(u8, bool, u8) -> bool,
+    iters: usize,
+) where
+    C: Calendar + Debug,
+{
+    // Test that all dates in a certain range behave according to Temporal
+    let mut month_days_seen = HashSet::new();
+    let mut rd = Date::try_new_iso(1972, 12, 31).unwrap().to_rata_die();
+    for _ in 1..iters {
+        let date = Date::from_rata_die(rd, Ref(&cal));
+        let month_day = (date.month().value.code(), date.day_of_month().0);
+        let mut fields = DateFields::default();
+        fields.month_code = Some(month_day.0 .0.as_bytes());
+        fields.day = Some(month_day.1);
+        let mut options = DateFromFieldsOptions::default();
+        options.missing_fields_strategy = Some(MissingFieldsStrategy::Ecma);
+        let reference_date = Date::try_from_fields(fields, options, Ref(&cal)).unwrap();
+        if month_days_seen.contains(&month_day) {
+            assert_ne!(date, reference_date, "{cal:?}");
+        } else {
+            assert_eq!(date, reference_date, "{cal:?}");
+            month_days_seen.insert(month_day);
+        }
+        rd -= 1;
+    }
+    // Test that all MonthDay values round-trip
+    for month_number in 1..=14 {
+        for is_leap in [false, true] {
+            let mut valid_day_number = 1;
+            let is_valid_month = valid_md_condition(month_number, is_leap, valid_day_number);
+            for day_number in 1..=32 {
+                if valid_md_condition(month_number, is_leap, day_number) {
+                    valid_day_number = day_number;
+                }
+                let mut fields = DateFields::default();
+                let mc = match is_leap {
+                    false => Month::new(month_number),
+                    true => Month::leap(month_number),
+                }
+                .code();
+                fields.month_code = Some(mc.0.as_bytes());
+                fields.day = Some(day_number);
+                let mut options = DateFromFieldsOptions::default();
+                options.overflow = Some(Overflow::Constrain);
+                options.missing_fields_strategy = Some(MissingFieldsStrategy::Ecma);
+                let reference_date = match Date::try_from_fields(fields, options, Ref(&cal)) {
+                    Ok(d) => {
+                        assert!(
+                            is_valid_month,
+                            "try_from_fields passed but should have failed: {fields:?} => {d:?}"
+                        );
+                        d
+                    }
+                    Err(DateFromFieldsError::MonthCodeNotInCalendar) => {
+                        assert!(
+                            !is_valid_month,
+                            "try_from_fields failed but should have passed: {fields:?}"
+                        );
+                        continue;
+                    }
+                    Err(e) => {
+                        panic!("Unexpected error in month day from fields: {e}");
+                    }
+                };
+
+                // Test round-trip (to valid day number)
+                assert_eq!(
+                    fields.month_code.unwrap(),
+                    reference_date.month().value.code().0.as_bytes(),
+                    "{fields:?} {cal:?}"
+                );
+                assert_eq!(
+                    valid_day_number,
+                    reference_date.day_of_month().0,
+                    "{fields:?} {cal:?}"
+                );
+
+                // Test Overflow::Reject
+                options.overflow = Some(Overflow::Reject);
+                let reject_result = Date::try_from_fields(fields, options, Ref(&cal));
+                if valid_day_number == day_number {
+                    assert_eq!(reject_result, Ok(reference_date));
+                } else {
+                    assert!(matches!(
+                        reject_result,
+                        Err(DateFromFieldsError::Range { .. })
+                    ))
+                }
+
+                // Test that ordinal months cause it to fail (even if the month code is still set)
+                fields.ordinal_month = Some(month_number);
+                let ordinal_result = Date::try_from_fields(fields, options, Ref(&cal));
+                assert!(matches!(
+                    ordinal_result,
+                    Err(DateFromFieldsError::NotEnoughFields)
+                ));
+            }
+        }
+    }
+}
+
 fn gregorian_md_condition(month_number: u8, is_leap: bool, day_number: u8) -> bool {
     // No leap months
     if is_leap {
@@ -283,6 +387,11 @@ fn test_reference_year_hijri_tabular_type_ii_thursday() {
 fn test_reference_year_hijri_umm_al_qura() {
     test_reference_year_impl(Hijri::new_umm_al_qura(), hijri_md_condition)
 }
+
+// Note: Hijri::new_simulated_mecca() is not tested here because it is incompatible
+// with the reference year test approach. The calendar requires a year for astronomical
+// calculations and cannot create dates from month codes alone (returns NotEnoughFields).
+// See components/datetime/tests/datetime.rs:L232-238 for similar exclusion.
 
 #[test]
 fn test_reference_year_iso() {
