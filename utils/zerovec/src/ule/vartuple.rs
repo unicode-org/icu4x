@@ -195,7 +195,7 @@ where
     B: ZeroFrom<'a, V>,
 {
     fn zero_from(other: &'a VarTupleULE<A, V>) -> Self {
-        Self {
+        VarTuple {
             sized: AsULE::from_unaligned(other.sized),
             variable: B::zero_from(&other.variable),
         }

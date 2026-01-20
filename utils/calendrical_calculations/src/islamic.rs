@@ -178,7 +178,8 @@ pub fn observational_islamic_month_days(year: i32, month: u8, location: Location
     let midmonth = ISLAMIC_EPOCH_FRIDAY.to_f64_date()
         + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
 
-    let lunar_phase = Astronomical::calculate_new_moon_at_or_before(RataDie::new(midmonth as i64));
+    let lunar_phase: f64 =
+        Astronomical::calculate_new_moon_at_or_before(RataDie::new(midmonth as i64));
     let f_date = Astronomical::phasis_on_or_before(
         RataDie::new(midmonth as i64),
         location,

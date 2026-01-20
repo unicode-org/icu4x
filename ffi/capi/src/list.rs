@@ -50,12 +50,12 @@ pub mod ffi {
         pub fn create_and_with_length(
             locale: &Locale,
             length: ListLength,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<ListFormatter>, DataError> {
             let prefs = ListFormatterPreferences::from(&locale.0);
             let options = ListFormatterOptions::default().with_length(length.into());
-            Ok(Box::new(Self(icu_list::ListFormatter::try_new_and(
-                prefs, options,
-            )?)))
+            Ok(Box::new(ListFormatter(
+                icu_list::ListFormatter::try_new_and(prefs, options)?,
+            )))
         }
 
         /// Construct a new `ListFormatter` instance for And patterns
@@ -66,10 +66,10 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: ListLength,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<ListFormatter>, DataError> {
             let prefs = ListFormatterPreferences::from(&locale.0);
             let options = ListFormatterOptions::default().with_length(length.into());
-            Ok(Box::new(Self(
+            Ok(Box::new(ListFormatter(
                 icu_list::ListFormatter::try_new_and_with_buffer_provider(
                     provider.get()?,
                     prefs,
@@ -86,12 +86,12 @@ pub mod ffi {
         pub fn create_or_with_length(
             locale: &Locale,
             length: ListLength,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<ListFormatter>, DataError> {
             let prefs = ListFormatterPreferences::from(&locale.0);
             let options = ListFormatterOptions::default().with_length(length.into());
-            Ok(Box::new(Self(icu_list::ListFormatter::try_new_or(
-                prefs, options,
-            )?)))
+            Ok(Box::new(ListFormatter(
+                icu_list::ListFormatter::try_new_or(prefs, options)?,
+            )))
         }
 
         /// Construct a new `ListFormatter` instance for And patterns
@@ -102,10 +102,10 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: ListLength,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<ListFormatter>, DataError> {
             let prefs = ListFormatterPreferences::from(&locale.0);
             let options = ListFormatterOptions::default().with_length(length.into());
-            Ok(Box::new(Self(
+            Ok(Box::new(ListFormatter(
                 icu_list::ListFormatter::try_new_or_with_buffer_provider(
                     provider.get()?,
                     prefs,
@@ -121,12 +121,12 @@ pub mod ffi {
         pub fn create_unit_with_length(
             locale: &Locale,
             length: ListLength,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<ListFormatter>, DataError> {
             let prefs = ListFormatterPreferences::from(&locale.0);
             let options = ListFormatterOptions::default().with_length(length.into());
-            Ok(Box::new(Self(icu_list::ListFormatter::try_new_unit(
-                prefs, options,
-            )?)))
+            Ok(Box::new(ListFormatter(
+                icu_list::ListFormatter::try_new_unit(prefs, options)?,
+            )))
         }
 
         /// Construct a new `ListFormatter` instance for And patterns
@@ -137,10 +137,10 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             length: ListLength,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<ListFormatter>, DataError> {
             let prefs = ListFormatterPreferences::from(&locale.0);
             let options = ListFormatterOptions::default().with_length(length.into());
-            Ok(Box::new(Self(
+            Ok(Box::new(ListFormatter(
                 icu_list::ListFormatter::try_new_unit_with_buffer_provider(
                     provider.get()?,
                     prefs,

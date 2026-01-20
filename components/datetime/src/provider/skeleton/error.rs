@@ -42,7 +42,7 @@ impl core::error::Error for SkeletonError {}
 
 impl From<fields::Error> for SkeletonError {
     fn from(e: fields::Error) -> Self {
-        Self::Fields(e)
+        SkeletonError::Fields(e)
     }
 }
 

@@ -71,13 +71,13 @@ impl FieldLength {
     #[inline]
     pub(crate) fn idx(self) -> u8 {
         match self {
-            Self::One => 1,
-            Self::Two => 2,
-            Self::Three => 3,
-            Self::Four => 4,
-            Self::Five => 5,
-            Self::Six => 6,
-            Self::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE
+            FieldLength::One => 1,
+            FieldLength::Two => 2,
+            FieldLength::Three => 3,
+            FieldLength::Four => 4,
+            FieldLength::Five => 5,
+            FieldLength::Six => 6,
+            FieldLength::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE
                 .saturating_add(o as u8)
                 .min(LAST_NUMERIC_OVERRIDE),
         }
@@ -102,13 +102,13 @@ impl FieldLength {
     #[inline]
     pub(crate) fn to_len(self) -> usize {
         match self {
-            Self::One => 1,
-            Self::Two => 2,
-            Self::Three => 3,
-            Self::Four => 4,
-            Self::Five => 5,
-            Self::Six => 6,
-            Self::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE as usize + o as usize,
+            FieldLength::One => 1,
+            FieldLength::Two => 2,
+            FieldLength::Three => 3,
+            FieldLength::Four => 4,
+            FieldLength::Five => 5,
+            FieldLength::Six => 6,
+            FieldLength::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE as usize + o as usize,
         }
     }
 
@@ -118,7 +118,7 @@ impl FieldLength {
     /// This function maps field lengths 1 and 2 to field length 3.
     pub(crate) fn numeric_to_abbr(self) -> Self {
         match self {
-            Self::One | Self::Two => Self::Three,
+            FieldLength::One | FieldLength::Two => FieldLength::Three,
             other => other,
         }
     }

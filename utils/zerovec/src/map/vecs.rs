@@ -233,29 +233,29 @@ where
     T: AsULE + Copy,
 {
     type GetType = T::ULE;
-    type SliceVariant = Self;
+    type SliceVariant = ZeroSlice<T>;
 
     fn zvl_new_borrowed() -> &'static Self::SliceVariant {
-        Self::new_empty()
+        ZeroSlice::<T>::new_empty()
     }
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
     where
         T: Ord,
     {
-        Self::binary_search(self, k)
+        ZeroSlice::binary_search(self, k)
     }
     fn zvl_binary_search_in_range(&self, k: &T, range: Range<usize>) -> Option<Result<usize, usize>>
     where
         T: Ord,
     {
         let subslice = self.get_subslice(range)?;
-        Some(Self::binary_search(subslice, k))
+        Some(ZeroSlice::binary_search(subslice, k))
     }
     fn zvl_binary_search_by(
         &self,
         mut predicate: impl FnMut(&T) -> Ordering,
     ) -> Result<usize, usize> {
-        Self::binary_search_by(self, |probe| predicate(&probe))
+        ZeroSlice::binary_search_by(self, |probe| predicate(&probe))
     }
     fn zvl_binary_search_in_range_by(
         &self,
@@ -263,15 +263,17 @@ where
         range: Range<usize>,
     ) -> Option<Result<usize, usize>> {
         let subslice = self.get_subslice(range)?;
-        Some(Self::binary_search_by(subslice, |probe| predicate(&probe)))
+        Some(ZeroSlice::binary_search_by(subslice, |probe| {
+            predicate(&probe)
+        }))
     }
     fn zvl_get(&self, index: usize) -> Option<&T::ULE> {
         self.get_ule_ref(index)
     }
     fn zvl_len(&self) -> usize {
-        Self::len(self)
+        ZeroSlice::len(self)
     }
-    fn zvl_as_borrowed(&self) -> &Self {
+    fn zvl_as_borrowed(&self) -> &ZeroSlice<T> {
         self
     }
 
@@ -408,10 +410,10 @@ where
     F: VarZeroVecFormat,
 {
     type GetType = T;
-    type SliceVariant = Self;
+    type SliceVariant = VarZeroSlice<T, F>;
 
     fn zvl_new_borrowed() -> &'static Self::SliceVariant {
-        Self::new_empty()
+        VarZeroSlice::<T, F>::new_empty()
     }
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
     where
@@ -442,7 +444,7 @@ where
         self.len()
     }
 
-    fn zvl_as_borrowed(&self) -> &Self {
+    fn zvl_as_borrowed(&self) -> &VarZeroSlice<T, F> {
         self
     }
 

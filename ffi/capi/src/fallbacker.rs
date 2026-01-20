@@ -67,8 +67,10 @@ pub mod ffi {
         )]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<Self> {
-            Box::new(Self(icu_locale::LocaleFallbacker::new().static_to_owned()))
+        pub fn create() -> Box<LocaleFallbacker> {
+            Box::new(LocaleFallbacker(
+                icu_locale::LocaleFallbacker::new().static_to_owned(),
+            ))
         }
 
         /// Creates a new `LocaleFallbacker` from a data provider.
@@ -80,8 +82,10 @@ pub mod ffi {
         )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        pub fn create_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<LocaleFallbacker>, DataError> {
+            Ok(Box::new(LocaleFallbacker(
                 icu_locale::LocaleFallbacker::try_new_with_buffer_provider(provider.get()?)?,
             )))
         }
@@ -89,8 +93,10 @@ pub mod ffi {
         /// Creates a new `LocaleFallbacker` without data for limited functionality.
         #[diplomat::rust_link(icu_locale::LocaleFallbacker::new_without_data, FnInStruct)]
         #[diplomat::attr(auto, named_constructor)]
-        pub fn without_data() -> Box<Self> {
-            Box::new(Self(icu_locale::LocaleFallbacker::new_without_data()))
+        pub fn without_data() -> Box<LocaleFallbacker> {
+            Box::new(LocaleFallbacker(
+                icu_locale::LocaleFallbacker::new_without_data(),
+            ))
         }
 
         /// Associates this `LocaleFallbacker` with configuration options.

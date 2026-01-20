@@ -137,7 +137,7 @@ impl<A: AsCalendar> Date<A> {
         let inner = calendar
             .as_calendar()
             .from_codes(era, year, month_code, day)?;
-        Ok(Self { inner, calendar })
+        Ok(Date { inner, calendar })
     }
 
     /// Construct a [`Date`] from from a bag of fields and a calendar.
@@ -186,7 +186,7 @@ impl<A: AsCalendar> Date<A> {
         calendar: A,
     ) -> Result<Self, DateFromFieldsError> {
         let inner = calendar.as_calendar().from_fields(fields, options)?;
-        Ok(Self { inner, calendar })
+        Ok(Date { inner, calendar })
     }
 
     /// Construct a date from a [`RataDie`] and a calendar.
@@ -202,7 +202,7 @@ impl<A: AsCalendar> Date<A> {
     #[inline]
     pub fn from_rata_die(rd: RataDie, calendar: A) -> Self {
         let rd = rd.clamp(*VALID_RD_RANGE.start(), *VALID_RD_RANGE.end());
-        Self {
+        Date {
             inner: calendar.as_calendar().from_rata_die(rd),
             calendar,
         }

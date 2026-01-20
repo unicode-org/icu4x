@@ -43,9 +43,9 @@ impl CaseType {
         debug_assert!(b & Self::CASE_MASK == b);
         match b {
             0 => None,
-            1 => Some(Self::Lower),
-            2 => Some(Self::Upper),
-            _ => Some(Self::Title),
+            1 => Some(CaseType::Lower),
+            2 => Some(CaseType::Upper),
+            _ => Some(CaseType::Title),
         }
     }
 }
@@ -87,10 +87,10 @@ impl DotType {
     pub(crate) fn from_masked_bits(b: u16) -> Self {
         debug_assert!(b & Self::DOT_MASK == b);
         match b {
-            0 => Self::NoDot,
-            1 => Self::SoftDotted,
-            2 => Self::Above,
-            _ => Self::OtherAccent,
+            0 => DotType::NoDot,
+            1 => DotType::SoftDotted,
+            2 => DotType::Above,
+            _ => DotType::OtherAccent,
         }
     }
 }
@@ -421,7 +421,7 @@ impl AsULE for CaseMapData {
                 CaseMapDataKind::Uncased(ned)
             }
         };
-        Self { ignoreable, kind }
+        CaseMapData { ignoreable, kind }
     }
 
     fn to_unaligned(self) -> Self::ULE {

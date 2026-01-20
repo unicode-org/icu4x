@@ -49,9 +49,9 @@ where
     /// Converts the given value from the input unit to the output unit based on the inner converter type.
     fn convert(&self, value: &N) -> N {
         match self {
-            Self::Proportional(converter) => converter.convert(value),
-            Self::Reciprocal(converter) => converter.convert(value),
-            Self::Offset(converter) => converter.convert(value),
+            UnitsConverterInner::Proportional(converter) => converter.convert(value),
+            UnitsConverterInner::Reciprocal(converter) => converter.convert(value),
+            UnitsConverterInner::Offset(converter) => converter.convert(value),
         }
     }
 }

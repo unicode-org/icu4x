@@ -115,13 +115,13 @@ impl DurationUnitFormatter {
         options: ValidatedDurationFormatterOptions,
     ) -> Result<Self, DataError> {
         let get_unit_formatter = |unit: Unit, style| {
-            let w = Self::field_style_to_unit_width(style, options.base);
+            let w = DurationUnitFormatter::field_style_to_unit_width(style, options.base);
             let options = UnitsFormatterOptions { width: w };
 
             UnitsFormatter::try_new((&prefs).into(), unit.as_unit_formatter_name(), options)
         };
 
-        Ok(Self {
+        Ok(DurationUnitFormatter {
             year: get_unit_formatter(Unit::Year, options.year)?,
             month: get_unit_formatter(Unit::Month, options.month)?,
             week: get_unit_formatter(Unit::Week, options.week)?,
@@ -147,7 +147,7 @@ impl DurationUnitFormatter {
         options: ValidatedDurationFormatterOptions,
     ) -> Result<Self, DataError> {
         let get_unit_formatter = |unit: Unit, style| {
-            let w = Self::field_style_to_unit_width(style, options.base);
+            let w = DurationUnitFormatter::field_style_to_unit_width(style, options.base);
             let options = UnitsFormatterOptions { width: w };
 
             UnitsFormatter::try_new_unstable(
@@ -158,7 +158,7 @@ impl DurationUnitFormatter {
             )
         };
 
-        Ok(Self {
+        Ok(DurationUnitFormatter {
             year: get_unit_formatter(Unit::Year, options.year)?,
             month: get_unit_formatter(Unit::Month, options.month)?,
             week: get_unit_formatter(Unit::Week, options.week)?,

@@ -137,10 +137,10 @@ impl AsULE for PatternItem {
         if PatternItemULE::determine_field_from_u8(value[0]) {
             let symbol = fields::FieldSymbol::from_idx(value[1]).unwrap();
             let length = fields::FieldLength::from_idx(value[2]).unwrap();
-            Self::Field(fields::Field { symbol, length })
+            PatternItem::Field(fields::Field { symbol, length })
         } else {
             // Safety: From field safety invariant
-            Self::Literal(unsafe {
+            PatternItem::Literal(unsafe {
                 char::from_u32_unchecked(u32::from_be_bytes([0x00, value[0], value[1], value[2]]))
             })
         }
@@ -240,7 +240,7 @@ impl GenericPatternItemULE {
             // Safety: The two types are repr(transparent) over [u8; 3].
             // When a Literal, the two ULEs have the same repr,
             // as shown in the above assertion (and the class docs).
-            Ok(unsafe { core::mem::transmute::<&Self, &PatternItemULE>(self) })
+            Ok(unsafe { core::mem::transmute::<&GenericPatternItemULE, &PatternItemULE>(self) })
         }
     }
 }

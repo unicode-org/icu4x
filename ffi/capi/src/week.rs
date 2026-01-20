@@ -23,10 +23,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::week::WeekInformation::try_new, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create(locale: &Locale) -> Result<Box<Self>, DataError> {
+        pub fn create(locale: &Locale) -> Result<Box<WeekInformation>, DataError> {
             let prefs = (&locale.0).into();
 
-            Ok(Box::new(Self(
+            Ok(Box::new(WeekInformation(
                 icu_calendar::week::WeekInformation::try_new(prefs)?,
             )))
         }
@@ -37,10 +37,10 @@ pub mod ffi {
         pub fn create_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<WeekInformation>, DataError> {
             let prefs = (&locale.0).into();
 
-            Ok(Box::new(Self(
+            Ok(Box::new(WeekInformation(
                 icu_calendar::week::WeekInformation::try_new_with_buffer_provider(
                     provider.get()?,
                     prefs,

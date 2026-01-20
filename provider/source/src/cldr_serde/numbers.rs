@@ -68,7 +68,7 @@ pub(crate) struct CompactDecimalPattern {
 }
 
 impl<'de> Deserialize<'de> for DecimalFormat {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    fn deserialize<D>(deserializer: D) -> Result<DecimalFormat, D::Error>
     where
         D: Deserializer<'de>,
     {

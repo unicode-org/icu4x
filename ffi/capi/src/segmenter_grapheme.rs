@@ -44,8 +44,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::segmenter::GraphemeClusterSegmenter::new, FnInStruct)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<Self> {
-            Box::new(Self(
+        pub fn create() -> Box<GraphemeClusterSegmenter> {
+            Box::new(GraphemeClusterSegmenter(
                 icu_segmenter::GraphemeClusterSegmenter::new().static_to_owned(),
             ))
         }
@@ -53,8 +53,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::segmenter::GraphemeClusterSegmenter::new, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        pub fn create_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<GraphemeClusterSegmenter>, DataError> {
+            Ok(Box::new(GraphemeClusterSegmenter(
                 icu_segmenter::GraphemeClusterSegmenter::try_new_with_buffer_provider(
                     provider.get()?,
                 )?,

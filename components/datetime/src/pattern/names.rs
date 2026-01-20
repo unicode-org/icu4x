@@ -59,9 +59,9 @@ impl YearNameLength {
     pub(crate) fn to_attributes(self) -> &'static DataMarkerAttributes {
         use marker_attrs::Length;
         let length = match self {
-            Self::Abbreviated => Length::Abbr,
-            Self::Wide => Length::Wide,
-            Self::Narrow => Length::Narrow,
+            YearNameLength::Abbreviated => Length::Abbr,
+            YearNameLength::Wide => Length::Wide,
+            YearNameLength::Narrow => Length::Narrow,
         };
         marker_attrs::name_attr_for(marker_attrs::Context::Format, length)
     }
@@ -70,9 +70,9 @@ impl YearNameLength {
         // UTS 35 says that "G..GGG" and "U..UUU" are all Abbreviated
         let field_length = field_length.numeric_to_abbr();
         match field_length {
-            FieldLength::Three => Some(Self::Abbreviated),
-            FieldLength::Four => Some(Self::Wide),
-            FieldLength::Five => Some(Self::Narrow),
+            FieldLength::Three => Some(YearNameLength::Abbreviated),
+            FieldLength::Four => Some(YearNameLength::Wide),
+            FieldLength::Five => Some(YearNameLength::Narrow),
             _ => None,
         }
     }
@@ -80,9 +80,9 @@ impl YearNameLength {
     /// Returns an [`ErrorField`] sufficient for error reporting.
     pub(crate) fn to_approximate_error_field(self) -> ErrorField {
         let field_length = match self {
-            Self::Abbreviated => FieldLength::Three,
-            Self::Wide => FieldLength::Four,
-            Self::Narrow => FieldLength::Five,
+            YearNameLength::Abbreviated => FieldLength::Three,
+            YearNameLength::Wide => FieldLength::Four,
+            YearNameLength::Narrow => FieldLength::Five,
         };
         ErrorField(fields::Field {
             symbol: FieldSymbol::Era,
@@ -128,12 +128,12 @@ impl MonthNameLength {
     pub(crate) fn to_attributes(self) -> &'static DataMarkerAttributes {
         use marker_attrs::{Context, Length};
         let (context, length) = match self {
-            Self::Abbreviated => (Context::Format, Length::Abbr),
-            Self::Wide => (Context::Format, Length::Wide),
-            Self::Narrow => (Context::Format, Length::Narrow),
-            Self::StandaloneAbbreviated => (Context::Standalone, Length::Abbr),
-            Self::StandaloneWide => (Context::Standalone, Length::Wide),
-            Self::StandaloneNarrow => (Context::Standalone, Length::Narrow),
+            MonthNameLength::Abbreviated => (Context::Format, Length::Abbr),
+            MonthNameLength::Wide => (Context::Format, Length::Wide),
+            MonthNameLength::Narrow => (Context::Format, Length::Narrow),
+            MonthNameLength::StandaloneAbbreviated => (Context::Standalone, Length::Abbr),
+            MonthNameLength::StandaloneWide => (Context::Standalone, Length::Wide),
+            MonthNameLength::StandaloneNarrow => (Context::Standalone, Length::Narrow),
         };
         marker_attrs::name_attr_for(context, length)
     }
@@ -144,12 +144,12 @@ impl MonthNameLength {
     ) -> Option<Self> {
         use fields::Month;
         match (field_symbol, field_length) {
-            (Month::Format, FieldLength::Three) => Some(Self::Abbreviated),
-            (Month::Format, FieldLength::Four) => Some(Self::Wide),
-            (Month::Format, FieldLength::Five) => Some(Self::Narrow),
-            (Month::StandAlone, FieldLength::Three) => Some(Self::StandaloneAbbreviated),
-            (Month::StandAlone, FieldLength::Four) => Some(Self::StandaloneWide),
-            (Month::StandAlone, FieldLength::Five) => Some(Self::StandaloneNarrow),
+            (Month::Format, FieldLength::Three) => Some(MonthNameLength::Abbreviated),
+            (Month::Format, FieldLength::Four) => Some(MonthNameLength::Wide),
+            (Month::Format, FieldLength::Five) => Some(MonthNameLength::Narrow),
+            (Month::StandAlone, FieldLength::Three) => Some(MonthNameLength::StandaloneAbbreviated),
+            (Month::StandAlone, FieldLength::Four) => Some(MonthNameLength::StandaloneWide),
+            (Month::StandAlone, FieldLength::Five) => Some(MonthNameLength::StandaloneNarrow),
             _ => None,
         }
     }
@@ -158,12 +158,12 @@ impl MonthNameLength {
     pub(crate) fn to_approximate_error_field(self) -> ErrorField {
         use fields::Month;
         let (field_symbol, field_length) = match self {
-            Self::Abbreviated => (Month::Format, FieldLength::Three),
-            Self::Wide => (Month::Format, FieldLength::Four),
-            Self::Narrow => (Month::Format, FieldLength::Five),
-            Self::StandaloneAbbreviated => (Month::StandAlone, FieldLength::Three),
-            Self::StandaloneWide => (Month::StandAlone, FieldLength::Four),
-            Self::StandaloneNarrow => (Month::StandAlone, FieldLength::Five),
+            MonthNameLength::Abbreviated => (Month::Format, FieldLength::Three),
+            MonthNameLength::Wide => (Month::Format, FieldLength::Four),
+            MonthNameLength::Narrow => (Month::Format, FieldLength::Five),
+            MonthNameLength::StandaloneAbbreviated => (Month::StandAlone, FieldLength::Three),
+            MonthNameLength::StandaloneWide => (Month::StandAlone, FieldLength::Four),
+            MonthNameLength::StandaloneNarrow => (Month::StandAlone, FieldLength::Five),
         };
         ErrorField(fields::Field {
             symbol: FieldSymbol::Month(field_symbol),
@@ -218,14 +218,14 @@ impl WeekdayNameLength {
         use marker_attrs::{Context, Length};
         // UTS 35 says that "e" and "E" have the same non-numeric names
         let (context, length) = match self {
-            Self::Abbreviated => (Context::Format, Length::Abbr),
-            Self::Wide => (Context::Format, Length::Wide),
-            Self::Narrow => (Context::Format, Length::Narrow),
-            Self::Short => (Context::Format, Length::Short),
-            Self::StandaloneAbbreviated => (Context::Standalone, Length::Abbr),
-            Self::StandaloneWide => (Context::Standalone, Length::Wide),
-            Self::StandaloneNarrow => (Context::Standalone, Length::Narrow),
-            Self::StandaloneShort => (Context::Standalone, Length::Short),
+            WeekdayNameLength::Abbreviated => (Context::Format, Length::Abbr),
+            WeekdayNameLength::Wide => (Context::Format, Length::Wide),
+            WeekdayNameLength::Narrow => (Context::Format, Length::Narrow),
+            WeekdayNameLength::Short => (Context::Format, Length::Short),
+            WeekdayNameLength::StandaloneAbbreviated => (Context::Standalone, Length::Abbr),
+            WeekdayNameLength::StandaloneWide => (Context::Standalone, Length::Wide),
+            WeekdayNameLength::StandaloneNarrow => (Context::Standalone, Length::Narrow),
+            WeekdayNameLength::StandaloneShort => (Context::Standalone, Length::Short),
         };
         marker_attrs::name_attr_for(context, length)
     }
@@ -245,14 +245,16 @@ impl WeekdayNameLength {
             field_length
         };
         match (field_symbol, field_length) {
-            (Weekday::Format, FieldLength::Three) => Some(Self::Abbreviated),
-            (Weekday::Format, FieldLength::Four) => Some(Self::Wide),
-            (Weekday::Format, FieldLength::Five) => Some(Self::Narrow),
-            (Weekday::Format, FieldLength::Six) => Some(Self::Short),
-            (Weekday::StandAlone, FieldLength::Three) => Some(Self::StandaloneAbbreviated),
-            (Weekday::StandAlone, FieldLength::Four) => Some(Self::StandaloneWide),
-            (Weekday::StandAlone, FieldLength::Five) => Some(Self::StandaloneNarrow),
-            (Weekday::StandAlone, FieldLength::Six) => Some(Self::StandaloneShort),
+            (Weekday::Format, FieldLength::Three) => Some(WeekdayNameLength::Abbreviated),
+            (Weekday::Format, FieldLength::Four) => Some(WeekdayNameLength::Wide),
+            (Weekday::Format, FieldLength::Five) => Some(WeekdayNameLength::Narrow),
+            (Weekday::Format, FieldLength::Six) => Some(WeekdayNameLength::Short),
+            (Weekday::StandAlone, FieldLength::Three) => {
+                Some(WeekdayNameLength::StandaloneAbbreviated)
+            }
+            (Weekday::StandAlone, FieldLength::Four) => Some(WeekdayNameLength::StandaloneWide),
+            (Weekday::StandAlone, FieldLength::Five) => Some(WeekdayNameLength::StandaloneNarrow),
+            (Weekday::StandAlone, FieldLength::Six) => Some(WeekdayNameLength::StandaloneShort),
             _ => None,
         }
     }
@@ -261,14 +263,14 @@ impl WeekdayNameLength {
     pub(crate) fn to_approximate_error_field(self) -> ErrorField {
         use fields::Weekday;
         let (field_symbol, field_length) = match self {
-            Self::Abbreviated => (Weekday::Format, FieldLength::Three),
-            Self::Wide => (Weekday::Format, FieldLength::Four),
-            Self::Narrow => (Weekday::Format, FieldLength::Five),
-            Self::Short => (Weekday::Format, FieldLength::Six),
-            Self::StandaloneAbbreviated => (Weekday::StandAlone, FieldLength::Three),
-            Self::StandaloneWide => (Weekday::StandAlone, FieldLength::Four),
-            Self::StandaloneNarrow => (Weekday::StandAlone, FieldLength::Five),
-            Self::StandaloneShort => (Weekday::StandAlone, FieldLength::Six),
+            WeekdayNameLength::Abbreviated => (Weekday::Format, FieldLength::Three),
+            WeekdayNameLength::Wide => (Weekday::Format, FieldLength::Four),
+            WeekdayNameLength::Narrow => (Weekday::Format, FieldLength::Five),
+            WeekdayNameLength::Short => (Weekday::Format, FieldLength::Six),
+            WeekdayNameLength::StandaloneAbbreviated => (Weekday::StandAlone, FieldLength::Three),
+            WeekdayNameLength::StandaloneWide => (Weekday::StandAlone, FieldLength::Four),
+            WeekdayNameLength::StandaloneNarrow => (Weekday::StandAlone, FieldLength::Five),
+            WeekdayNameLength::StandaloneShort => (Weekday::StandAlone, FieldLength::Six),
         };
         ErrorField(fields::Field {
             symbol: FieldSymbol::Weekday(field_symbol),
@@ -313,9 +315,9 @@ impl DayPeriodNameLength {
     pub(crate) fn to_attributes(self) -> &'static DataMarkerAttributes {
         use marker_attrs::Length;
         let length = match self {
-            Self::Abbreviated => Length::Abbr,
-            Self::Wide => Length::Wide,
-            Self::Narrow => Length::Narrow,
+            DayPeriodNameLength::Abbreviated => Length::Abbr,
+            DayPeriodNameLength::Wide => Length::Wide,
+            DayPeriodNameLength::Narrow => Length::Narrow,
         };
         marker_attrs::name_attr_for(marker_attrs::Context::Format, length)
     }
@@ -333,9 +335,9 @@ impl DayPeriodNameLength {
         // UTS 35 says that "a..aaa" and "b..bbb" are all Abbreviated
         let field_length = field_length.numeric_to_abbr();
         match (field_symbol, field_length) {
-            (DayPeriod::AmPm, FieldLength::Three) => Some(Self::Abbreviated),
-            (DayPeriod::AmPm, FieldLength::Four) => Some(Self::Wide),
-            (DayPeriod::AmPm, FieldLength::Five) => Some(Self::Narrow),
+            (DayPeriod::AmPm, FieldLength::Three) => Some(DayPeriodNameLength::Abbreviated),
+            (DayPeriod::AmPm, FieldLength::Four) => Some(DayPeriodNameLength::Wide),
+            (DayPeriod::AmPm, FieldLength::Five) => Some(DayPeriodNameLength::Narrow),
             _ => None,
         }
     }
@@ -345,9 +347,9 @@ impl DayPeriodNameLength {
         // Names for 'a' and 'b' are stored in the same data marker
         let field_symbol = fields::DayPeriod::AmPm;
         let field_length = match self {
-            Self::Abbreviated => FieldLength::Three,
-            Self::Wide => FieldLength::Four,
-            Self::Narrow => FieldLength::Five,
+            DayPeriodNameLength::Abbreviated => FieldLength::Three,
+            DayPeriodNameLength::Wide => FieldLength::Four,
+            DayPeriodNameLength::Narrow => FieldLength::Five,
         };
         ErrorField(fields::Field {
             symbol: FieldSymbol::DayPeriod(field_symbol),

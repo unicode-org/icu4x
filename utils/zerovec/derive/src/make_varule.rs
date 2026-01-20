@@ -724,7 +724,10 @@ impl<'a> UnsizedField<'a> {
 
 impl<'a> UnsizedFieldKind<'a> {
     /// Construct a `UnsizedFieldKind` for the type of a `UnsizedFieldKind` if possible
-    fn new(ty: &'a Type, custom_varule_ident: Option<Ident>) -> Result<Self, String> {
+    fn new(
+        ty: &'a Type,
+        custom_varule_ident: Option<Ident>,
+    ) -> Result<UnsizedFieldKind<'a>, String> {
         static PATH_TYPE_IDENTITY_ERROR: &str =
             "Can only automatically detect corresponding VarULE types for path types \
             that are Cow, ZeroVec, VarZeroVec, Box, String, or Vec";

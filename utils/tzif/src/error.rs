@@ -18,28 +18,28 @@ pub enum Error {
 
 impl From<std::io::Error> for Error {
     fn from(err: std::io::Error) -> Self {
-        Self::Io(err)
+        Error::Io(err)
     }
 }
 
 impl From<combine::stream::read::Error> for Error {
     fn from(err: combine::stream::read::Error) -> Self {
-        Self::Read(err)
+        Error::Read(err)
     }
 }
 
 impl From<combine::error::UnexpectedParse> for Error {
     fn from(err: combine::error::UnexpectedParse) -> Self {
-        Self::Parse(err)
+        Error::Parse(err)
     }
 }
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Io(err) => write!(f, "{err}"),
-            Self::Read(err) => write!(f, "{err}"),
-            Self::Parse(err) => write!(f, "{err}"),
+            Error::Io(err) => write!(f, "{err}"),
+            Error::Read(err) => write!(f, "{err}"),
+            Error::Parse(err) => write!(f, "{err}"),
         }
     }
 }

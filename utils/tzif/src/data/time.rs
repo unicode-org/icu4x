@@ -17,18 +17,18 @@ pub struct Minutes(pub i64);
 pub struct Hours(pub i64);
 
 impl Add for Seconds {
-    type Output = Self;
+    type Output = Seconds;
 
     fn add(self, rhs: Self) -> Self::Output {
-        Self(self.0 + rhs.0)
+        Seconds(self.0 + rhs.0)
     }
 }
 
 impl Sub for Seconds {
-    type Output = Self;
+    type Output = Seconds;
 
     fn sub(self, rhs: Self) -> Self::Output {
-        Self(self.0 - rhs.0)
+        Seconds(self.0 - rhs.0)
     }
 }
 

@@ -25,7 +25,7 @@ fn map_f_mut<K, V>(input: &mut (K, V)) -> (&K, &mut V) {
 }
 
 impl<K, V> StoreConstEmpty<K, V> for VecWithDefaults<(K, V)> {
-    const EMPTY: Self = Self(Vec::new());
+    const EMPTY: VecWithDefaults<(K, V)> = VecWithDefaults(Vec::new());
 }
 
 impl<K, V> Store<K, V> for VecWithDefaults<(K, V)> {

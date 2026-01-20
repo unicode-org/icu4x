@@ -47,7 +47,7 @@ pub(crate) struct CldrCache {
 
 impl CldrCache {
     pub(crate) fn from_serde_cache(serde_cache: SerdeCache) -> Self {
-        Self {
+        CldrCache {
             serde_cache,
             dir_suffix: Default::default(),
             extended_locale_expander: Default::default(),

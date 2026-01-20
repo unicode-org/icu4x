@@ -177,8 +177,8 @@ pub struct DecimalFormatter {
     digits: DataPayload<provider::DecimalDigitsV1>,
 }
 
-impl AsRef<Self> for DecimalFormatter {
-    fn as_ref(&self) -> &Self {
+impl AsRef<DecimalFormatter> for DecimalFormatter {
+    fn as_ref(&self) -> &DecimalFormatter {
         self
     }
 }

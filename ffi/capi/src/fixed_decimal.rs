@@ -78,8 +78,8 @@ pub mod ffi {
         #[diplomat::attr(js, rename = "from_number")]
         #[diplomat::attr(supports = method_overloading, rename = "from")]
         #[diplomat::attr(auto, named_constructor)]
-        pub fn from_int32(v: i32) -> Box<Self> {
-            Box::new(Self(fixed_decimal::Decimal::from(v)))
+        pub fn from_int32(v: i32) -> Box<Decimal> {
+            Box::new(Decimal(fixed_decimal::Decimal::from(v)))
         }
 
         /// Construct an [`Decimal`] from an integer.
@@ -88,8 +88,8 @@ pub mod ffi {
         #[diplomat::attr(js, disable)]
         #[diplomat::attr(supports = method_overloading, rename = "from")]
         #[diplomat::attr(auto, named_constructor)]
-        pub fn from_uint32(v: u32) -> Box<Self> {
-            Box::new(Self(fixed_decimal::Decimal::from(v)))
+        pub fn from_uint32(v: u32) -> Box<Decimal> {
+            Box::new(Decimal(fixed_decimal::Decimal::from(v)))
         }
 
         /// Construct an [`Decimal`] from an integer.
@@ -98,8 +98,8 @@ pub mod ffi {
         #[diplomat::attr(js, rename = "from_big_int")]
         #[diplomat::attr(supports = method_overloading, rename = "from")]
         #[diplomat::attr(auto, named_constructor)]
-        pub fn from_int64(v: i64) -> Box<Self> {
-            Box::new(Self(fixed_decimal::Decimal::from(v)))
+        pub fn from_int64(v: i64) -> Box<Decimal> {
+            Box::new(Decimal(fixed_decimal::Decimal::from(v)))
         }
 
         /// Construct an [`Decimal`] from an integer.
@@ -107,8 +107,8 @@ pub mod ffi {
         #[diplomat::attr(any(dart, js), disable)]
         #[diplomat::attr(supports = method_overloading, rename = "from")]
         #[diplomat::attr(auto, named_constructor)]
-        pub fn from_uint64(v: u64) -> Box<Self> {
-            Box::new(Self(fixed_decimal::Decimal::from(v)))
+        pub fn from_uint64(v: u64) -> Box<Decimal> {
+            Box::new(Decimal(fixed_decimal::Decimal::from(v)))
         }
 
         /// Construct an [`Decimal`] from an integer-valued float
@@ -117,9 +117,11 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
         #[diplomat::attr(any(dart, js), disable)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
-        pub fn from_double_with_integer_precision(f: f64) -> Result<Box<Self>, DecimalLimitError> {
+        pub fn from_double_with_integer_precision(
+            f: f64,
+        ) -> Result<Box<Decimal>, DecimalLimitError> {
             let precision = fixed_decimal::DoublePrecision::Integer;
-            Ok(Box::new(Self(fixed_decimal::Decimal::try_from_f64(
+            Ok(Box::new(Decimal(fixed_decimal::Decimal::try_from_f64(
                 f, precision,
             )?)))
         }
@@ -133,9 +135,9 @@ pub mod ffi {
         pub fn from_double_with_lower_magnitude(
             f: f64,
             magnitude: i16,
-        ) -> Result<Box<Self>, DecimalLimitError> {
+        ) -> Result<Box<Decimal>, DecimalLimitError> {
             let precision = fixed_decimal::DoublePrecision::Magnitude(magnitude);
-            Ok(Box::new(Self(fixed_decimal::Decimal::try_from_f64(
+            Ok(Box::new(Decimal(fixed_decimal::Decimal::try_from_f64(
                 f, precision,
             )?)))
         }
@@ -149,9 +151,9 @@ pub mod ffi {
         pub fn from_double_with_significant_digits(
             f: f64,
             digits: u8,
-        ) -> Result<Box<Self>, DecimalLimitError> {
+        ) -> Result<Box<Decimal>, DecimalLimitError> {
             let precision = fixed_decimal::DoublePrecision::SignificantDigits(digits);
-            Ok(Box::new(Self(fixed_decimal::Decimal::try_from_f64(
+            Ok(Box::new(Decimal(fixed_decimal::Decimal::try_from_f64(
                 f, precision,
             )?)))
         }
@@ -165,9 +167,9 @@ pub mod ffi {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn from_double_with_round_trip_precision(
             f: f64,
-        ) -> Result<Box<Self>, DecimalLimitError> {
+        ) -> Result<Box<Decimal>, DecimalLimitError> {
             let precision = fixed_decimal::DoublePrecision::RoundTrip;
-            Ok(Box::new(Self(fixed_decimal::Decimal::try_from_f64(
+            Ok(Box::new(Decimal(fixed_decimal::Decimal::try_from_f64(
                 f, precision,
             )?)))
         }
@@ -178,8 +180,8 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::Decimal::from_str, FnInTypedef, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         #[diplomat::demo(default_constructor)]
-        pub fn from_string(v: &DiplomatStr) -> Result<Box<Self>, DecimalParseError> {
-            Ok(Box::new(Self(fixed_decimal::Decimal::try_from_utf8(v)?)))
+        pub fn from_string(v: &DiplomatStr) -> Result<Box<Decimal>, DecimalParseError> {
+            Ok(Box::new(Decimal(fixed_decimal::Decimal::try_from_utf8(v)?)))
         }
 
         #[diplomat::rust_link(fixed_decimal::Decimal::digit_at, FnInTypedef)]
@@ -347,7 +349,7 @@ pub mod ffi {
         /// If not successful, `other` will be unchanged and an error is returned.
         #[diplomat::rust_link(fixed_decimal::Decimal::concatenate_end, FnInTypedef)]
         #[diplomat::rust_link(fixed_decimal::Decimal::concatenated_end, FnInTypedef, hidden)]
-        pub fn concatenate_end(&mut self, other: &mut Self) -> Result<(), ()> {
+        pub fn concatenate_end(&mut self, other: &mut Decimal) -> Result<(), ()> {
             let x = core::mem::take(&mut other.0);
             self.0.absolute.concatenate_end(x.absolute).map_err(|y| {
                 other.0.absolute = y;
@@ -368,25 +370,25 @@ pub mod ffi {
 impl From<DecimalSignedRoundingMode> for fixed_decimal::SignedRoundingMode {
     fn from(mode: DecimalSignedRoundingMode) -> Self {
         match mode {
-            DecimalSignedRoundingMode::Expand => {
-                Self::Unsigned(fixed_decimal::UnsignedRoundingMode::Expand)
-            }
-            DecimalSignedRoundingMode::Trunc => {
-                Self::Unsigned(fixed_decimal::UnsignedRoundingMode::Trunc)
-            }
-            DecimalSignedRoundingMode::HalfExpand => {
-                Self::Unsigned(fixed_decimal::UnsignedRoundingMode::HalfExpand)
-            }
-            DecimalSignedRoundingMode::HalfTrunc => {
-                Self::Unsigned(fixed_decimal::UnsignedRoundingMode::HalfTrunc)
-            }
-            DecimalSignedRoundingMode::HalfEven => {
-                Self::Unsigned(fixed_decimal::UnsignedRoundingMode::HalfEven)
-            }
-            DecimalSignedRoundingMode::Ceil => Self::Ceil,
-            DecimalSignedRoundingMode::Floor => Self::Floor,
-            DecimalSignedRoundingMode::HalfCeil => Self::HalfCeil,
-            DecimalSignedRoundingMode::HalfFloor => Self::HalfFloor,
+            DecimalSignedRoundingMode::Expand => fixed_decimal::SignedRoundingMode::Unsigned(
+                fixed_decimal::UnsignedRoundingMode::Expand,
+            ),
+            DecimalSignedRoundingMode::Trunc => fixed_decimal::SignedRoundingMode::Unsigned(
+                fixed_decimal::UnsignedRoundingMode::Trunc,
+            ),
+            DecimalSignedRoundingMode::HalfExpand => fixed_decimal::SignedRoundingMode::Unsigned(
+                fixed_decimal::UnsignedRoundingMode::HalfExpand,
+            ),
+            DecimalSignedRoundingMode::HalfTrunc => fixed_decimal::SignedRoundingMode::Unsigned(
+                fixed_decimal::UnsignedRoundingMode::HalfTrunc,
+            ),
+            DecimalSignedRoundingMode::HalfEven => fixed_decimal::SignedRoundingMode::Unsigned(
+                fixed_decimal::UnsignedRoundingMode::HalfEven,
+            ),
+            DecimalSignedRoundingMode::Ceil => fixed_decimal::SignedRoundingMode::Ceil,
+            DecimalSignedRoundingMode::Floor => fixed_decimal::SignedRoundingMode::Floor,
+            DecimalSignedRoundingMode::HalfCeil => fixed_decimal::SignedRoundingMode::HalfCeil,
+            DecimalSignedRoundingMode::HalfFloor => fixed_decimal::SignedRoundingMode::HalfFloor,
         }
     }
 }

@@ -110,7 +110,7 @@ where
             if Self::OPTIONS.to_u8_flags() != flags {
                 return Err(D::Error::custom("invalid ZeroTrie tag"));
             };
-            Ok(Self::from_store(Store::from(trie_bytes)))
+            Ok(ZeroTrieSimpleAscii::from_store(Store::from(trie_bytes)))
         }
     }
 }
@@ -157,7 +157,7 @@ where
             if Self::OPTIONS.to_u8_flags() != flags {
                 return Err(D::Error::custom("invalid ZeroTrie tag"));
             }
-            Ok(Self::from_store(Store::from(trie_bytes)))
+            Ok(ZeroAsciiIgnoreCaseTrie::from_store(Store::from(trie_bytes)))
         }
     }
 }
@@ -204,7 +204,7 @@ where
             if Self::OPTIONS.to_u8_flags() != flags {
                 return Err(D::Error::custom("invalid ZeroTrie tag"));
             }
-            Ok(Self::from_store(Store::from(trie_bytes)))
+            Ok(ZeroTriePerfectHash::from_store(Store::from(trie_bytes)))
         }
     }
 }
@@ -255,7 +255,9 @@ where
             if Self::OPTIONS.to_u8_flags() != flags {
                 return Err(D::Error::custom("invalid ZeroTrie tag"));
             }
-            Ok(Self::from_store(Store::from(trie_bytes)))
+            Ok(ZeroTrieExtendedCapacity::from_store(Store::from(
+                trie_bytes,
+            )))
         }
     }
 }

@@ -33,8 +33,10 @@ impl EmojiSetData {
     /// the borrowed version, accessible through [`EmojiSetData::as_borrowed`].
     pub fn try_new_unstable<P: EmojiSet>(
         provider: &(impl DataProvider<P::DataMarker> + ?Sized),
-    ) -> Result<Self, DataError> {
-        Ok(Self::from_data(provider.load(Default::default())?.payload))
+    ) -> Result<EmojiSetData, DataError> {
+        Ok(EmojiSetData::from_data(
+            provider.load(Default::default())?.payload,
+        ))
     }
 
     /// Construct a borrowed version of this type that can be queried.
@@ -63,7 +65,9 @@ impl EmojiSetData {
         set: CodePointInversionListAndStringList<'static>,
     ) -> Self {
         let set = PropertyUnicodeSet::from_code_point_inversion_list_string_list(set);
-        Self::from_data(DataPayload::<ErasedMarker<PropertyUnicodeSet<'static>>>::from_owned(set))
+        EmojiSetData::from_data(
+            DataPayload::<ErasedMarker<PropertyUnicodeSet<'static>>>::from_owned(set),
+        )
     }
 
     /// Convert this type to a [`CodePointInversionListAndStringList`] as a borrowed value.

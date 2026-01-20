@@ -129,7 +129,7 @@ impl CompactDecimal {
         let mut parts = code_units.split(|&c| c == b'c');
         let significand = Decimal::try_from_utf8(parts.next().ok_or(ParseError::Syntax)?)?;
         match parts.next() {
-            None => Ok(Self {
+            None => Ok(CompactDecimal {
                 significand,
                 exponent: 0,
             }),
@@ -146,7 +146,7 @@ impl CompactDecimal {
                     return Err(ParseError::Syntax);
                 }
                 let exponent = exponent_str.parse().map_err(|_| ParseError::Limit)?;
-                Ok(Self {
+                Ok(CompactDecimal {
                     significand,
                     exponent,
                 })

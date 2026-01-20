@@ -1757,7 +1757,10 @@ impl UnsignedDecimal {
     ///
     /// assert_eq!("123.456", result.to_string());
     /// ```
-    pub fn concatenated_end(mut self, other: Self) -> Result<Self, (Self, Self)> {
+    pub fn concatenated_end(
+        mut self,
+        other: UnsignedDecimal,
+    ) -> Result<Self, (UnsignedDecimal, UnsignedDecimal)> {
         match self.concatenate_end(other) {
             Ok(()) => Ok(self),
             Err(err) => Err((self, err)),
@@ -1784,7 +1787,7 @@ impl UnsignedDecimal {
     ///
     /// assert_eq!("123.456", integer.to_string());
     /// ```
-    pub fn concatenate_end(&mut self, other: Self) -> Result<(), Self> {
+    pub fn concatenate_end(&mut self, other: UnsignedDecimal) -> Result<(), UnsignedDecimal> {
         let self_right = self.nonzero_magnitude_end();
         let other_left = other.nonzero_magnitude_start();
         if self.is_zero() {

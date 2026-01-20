@@ -27,8 +27,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::zone::iana::IanaParser::new, FnInStruct)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<Self> {
-            Box::new(Self(
+        pub fn create() -> Box<IanaParser> {
+            Box::new(IanaParser(
                 icu_time::zone::iana::IanaParser::new().static_to_owned(),
             ))
         }
@@ -37,8 +37,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::zone::iana::IanaParser::new, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        pub fn create_with_provider(provider: &DataProvider) -> Result<Box<IanaParser>, DataError> {
+            Ok(Box::new(IanaParser(
                 icu_time::zone::iana::IanaParser::try_new_with_buffer_provider(provider.get()?)?,
             )))
         }
@@ -97,8 +97,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<Self> {
-            Box::new(Self(
+        pub fn create() -> Box<IanaParserExtended> {
+            Box::new(IanaParserExtended(
                 icu_time::zone::iana::IanaParserExtended::new().static_to_owned(),
             ))
         }
@@ -107,8 +107,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::zone::iana::IanaParserExtended::new, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        pub fn create_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<IanaParserExtended>, DataError> {
+            Ok(Box::new(IanaParserExtended(
                 icu_time::zone::iana::IanaParserExtended::try_new_with_buffer_provider(
                     provider.get()?,
                 )?,

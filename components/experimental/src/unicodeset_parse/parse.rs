@@ -76,7 +76,7 @@ impl ParseErrorKind {
 
 impl From<ParseErrorKind> for ParseError {
     fn from(kind: ParseErrorKind) -> Self {
-        Self { offset: None, kind }
+        ParseError { offset: None, kind }
     }
 }
 
@@ -128,7 +128,7 @@ impl ParseError {
     /// );
     /// ```
     pub fn fmt_with_source(&self, source: &str) -> impl Display {
-        let Self { offset, kind } = *self;
+        let ParseError { offset, kind } = *self;
 
         if kind == ParseErrorKind::Eof {
             return format!("{source}← error: unexpected end of input");
@@ -204,7 +204,7 @@ impl ParseError {
     fn or_with_offset(self, offset: usize) -> Self {
         match self.offset {
             Some(_) => self,
-            None => Self {
+            None => ParseError {
                 offset: Some(offset),
                 ..self
             },

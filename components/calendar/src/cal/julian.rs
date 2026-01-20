@@ -286,10 +286,10 @@ impl Date<Julian> {
     /// assert_eq!(date_julian.month().ordinal, 12);
     /// assert_eq!(date_julian.day_of_month().0, 20);
     /// ```
-    pub fn try_new_julian(year: i32, month: u8, day: u8) -> Result<Self, RangeError> {
+    pub fn try_new_julian(year: i32, month: u8, day: u8) -> Result<Date<Julian>, RangeError> {
         ArithmeticDate::from_year_month_day(year, month, day, &Julian)
             .map(JulianDateInner)
-            .map(|inner| Self::from_raw(inner, Julian))
+            .map(|inner| Date::from_raw(inner, Julian))
     }
 }
 

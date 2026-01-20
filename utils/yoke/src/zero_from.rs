@@ -39,6 +39,6 @@ where
     /// assert_eq!("demo", yoke.get());
     /// ```
     pub fn attach_to_zero_copy_cart(cart: C) -> Self {
-        Self::attach_to_cart(cart, |c| <Y as Yokeable>::Output::zero_from(c))
+        Yoke::<Y, C>::attach_to_cart(cart, |c| <Y as Yokeable>::Output::zero_from(c))
     }
 }

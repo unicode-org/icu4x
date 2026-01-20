@@ -50,7 +50,7 @@ struct GeneralNonScientificNumber {
 
 impl GeneralNonScientificNumber {
     fn new(num: &[String], den: &[String], exactness: Exactness) -> Self {
-        let mut constant = Self {
+        let mut constant = GeneralNonScientificNumber {
             clean_num: Vec::new(),
             clean_den: Vec::new(),
             non_scientific_num: VecDeque::new(),

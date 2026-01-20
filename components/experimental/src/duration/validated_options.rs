@@ -330,7 +330,7 @@ impl ValidatedDurationFormatterOptionsBuilder {
 
 impl From<DurationFormatterOptions> for ValidatedDurationFormatterOptionsBuilder {
     fn from(value: DurationFormatterOptions) -> Self {
-        Self {
+        ValidatedDurationFormatterOptionsBuilder {
             base: value.base,
             year: value.year.map(FieldStyle::from),
             year_visibility: value.year_visibility,
@@ -361,7 +361,7 @@ impl TryFrom<ValidatedDurationFormatterOptionsBuilder> for ValidatedDurationForm
     type Error = ();
 
     fn try_from(value: ValidatedDurationFormatterOptionsBuilder) -> Result<Self, Self::Error> {
-        Ok(Self {
+        Ok(ValidatedDurationFormatterOptions {
             base: value.base,
             year: value.year.ok_or(())?,
             year_visibility: value.year_visibility.ok_or(())?,
@@ -407,31 +407,31 @@ impl Unit {
     /// Returns the default digital style for the unit.
     pub(crate) fn digital_default(self) -> FieldStyle {
         match self {
-            Self::Year => YearStyle::Short.into(),
-            Self::Month => MonthStyle::Short.into(),
-            Self::Week => WeekStyle::Short.into(),
-            Self::Day => DayStyle::Short.into(),
-            Self::Hour => HourStyle::Numeric.into(),
-            Self::Minute => MinuteStyle::Numeric.into(),
-            Self::Second => SecondStyle::Numeric.into(),
-            Self::Millisecond => MilliSecondStyle::Numeric.into(),
-            Self::Microsecond => MicroSecondStyle::Numeric.into(),
-            Self::Nanosecond => NanoSecondStyle::Numeric.into(),
+            Unit::Year => YearStyle::Short.into(),
+            Unit::Month => MonthStyle::Short.into(),
+            Unit::Week => WeekStyle::Short.into(),
+            Unit::Day => DayStyle::Short.into(),
+            Unit::Hour => HourStyle::Numeric.into(),
+            Unit::Minute => MinuteStyle::Numeric.into(),
+            Unit::Second => SecondStyle::Numeric.into(),
+            Unit::Millisecond => MilliSecondStyle::Numeric.into(),
+            Unit::Microsecond => MicroSecondStyle::Numeric.into(),
+            Unit::Nanosecond => NanoSecondStyle::Numeric.into(),
         }
     }
 
     pub(crate) const fn as_unit_formatter_name(self) -> &'static str {
         match self {
-            Self::Year => "year",
-            Self::Month => "month",
-            Self::Week => "week",
-            Self::Day => "day",
-            Self::Hour => "hour",
-            Self::Minute => "minute",
-            Self::Second => "second",
-            Self::Millisecond => "millisecond",
-            Self::Microsecond => "microsecond",
-            Self::Nanosecond => "nanosecond",
+            Unit::Year => "year",
+            Unit::Month => "month",
+            Unit::Week => "week",
+            Unit::Day => "day",
+            Unit::Hour => "hour",
+            Unit::Minute => "minute",
+            Unit::Second => "second",
+            Unit::Millisecond => "millisecond",
+            Unit::Microsecond => "microsecond",
+            Unit::Nanosecond => "nanosecond",
         }
     }
 }

@@ -42,14 +42,14 @@ impl<M: DataMarker> FixedProvider<M> {
 
     /// Creates a `FixedProvider` with a statically borrowed payload of the given data.
     pub fn from_static(data: &'static M::DataStruct) -> Self {
-        Self {
+        FixedProvider {
             data: DataPayload::from_static_ref(data),
         }
     }
 
     /// Creates a `FixedProvider` from an existing [`DataPayload`].
     pub fn from_payload(data: DataPayload<M>) -> Self {
-        Self { data }
+        FixedProvider { data }
     }
 
     /// Creates a `FixedProvider` with the default (allocated) version of the data struct.

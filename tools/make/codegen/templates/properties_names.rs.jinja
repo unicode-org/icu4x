@@ -112,8 +112,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::GeneralCategoryGroup, Struct)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<Self> {
-            Box::new(Self(
+        pub fn create() -> Box<GeneralCategoryNameToGroupMapper> {
+            Box::new(GeneralCategoryNameToGroupMapper(
                 icu_properties::PropertyParser::<icu_properties::props::GeneralCategoryGroup>::new(
                 )
                 .static_to_owned(),
@@ -125,9 +125,9 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<GeneralCategoryNameToGroupMapper>, DataError> {
             Ok(Box::new(
-                Self(icu_properties::PropertyParser::<
+                GeneralCategoryNameToGroupMapper(icu_properties::PropertyParser::<
                     icu_properties::props::GeneralCategoryGroup,
                 >::try_new_unstable(
                     &provider.get_unstable()?
@@ -143,8 +143,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::{{ prop.name }}, {{ prop.kind() }})]
         #[diplomat::attr(auto, named_constructor = "{{ prop.snake_case() }}")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_{{ prop.snake_case() }}() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_{{ prop.snake_case() }}() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<icu_properties::props::{{ prop.name }}>::new()
                     .static_to_owned()
                     .erase(),
@@ -157,8 +157,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_{{ prop.snake_case() }}_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<
                                     icu_properties::props::{{ prop.name }},
                                 >::try_new_unstable(&provider.get_unstable()?)?

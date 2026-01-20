@@ -43,8 +43,10 @@ impl CodePointSetData {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P: BinaryProperty>(
         provider: &(impl DataProvider<P::DataMarker> + ?Sized),
-    ) -> Result<Self, DataError> {
-        Ok(Self::from_data(provider.load(Default::default())?.payload))
+    ) -> Result<CodePointSetData, DataError> {
+        Ok(CodePointSetData::from_data(
+            provider.load(Default::default())?.payload,
+        ))
     }
 
     /// Construct a borrowed version of this type that can be queried.
@@ -70,7 +72,9 @@ impl CodePointSetData {
     /// Construct a new owned [`CodePointInversionList`]
     pub fn from_code_point_inversion_list(set: CodePointInversionList<'static>) -> Self {
         let set = PropertyCodePointSet::from_code_point_inversion_list(set);
-        Self::from_data(DataPayload::<ErasedMarker<PropertyCodePointSet<'static>>>::from_owned(set))
+        CodePointSetData::from_data(
+            DataPayload::<ErasedMarker<PropertyCodePointSet<'static>>>::from_owned(set),
+        )
     }
 
     /// Convert this type to a [`CodePointInversionList`] as a borrowed value.

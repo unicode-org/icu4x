@@ -250,7 +250,7 @@ impl<T> ShortBoxSlice<T> {
             Multi(slice) => {
                 let mut vec = slice.into_vec();
                 vec.retain(f);
-                *self = Self::from(vec)
+                *self = ShortBoxSlice::from(vec)
             }
             #[cfg(not(feature = "alloc"))]
             Two([first, second]) => {

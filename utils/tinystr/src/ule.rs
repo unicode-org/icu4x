@@ -26,8 +26,8 @@ unsafe impl<const N: usize> ULE for TinyAsciiStr<N> {
         }
         // Validate the bytes
         for chunk in bytes.chunks_exact(N) {
-            let _ =
-                Self::try_from_utf8_inner(chunk, true).map_err(|_| UleError::parse::<Self>())?;
+            let _ = TinyAsciiStr::<N>::try_from_utf8_inner(chunk, true)
+                .map_err(|_| UleError::parse::<Self>())?;
         }
         Ok(())
     }
@@ -54,10 +54,10 @@ impl<const N: usize> AsULE for TinyAsciiStr<N> {
 
 #[cfg(feature = "alloc")]
 impl<'a, const N: usize> ZeroMapKV<'a> for TinyAsciiStr<N> {
-    type Container = ZeroVec<'a, Self>;
-    type Slice = ZeroSlice<Self>;
-    type GetType = Self;
-    type OwnedType = Self;
+    type Container = ZeroVec<'a, TinyAsciiStr<N>>;
+    type Slice = ZeroSlice<TinyAsciiStr<N>>;
+    type GetType = TinyAsciiStr<N>;
+    type OwnedType = TinyAsciiStr<N>;
 }
 
 // Safety (based on the safety checklist on the ULE trait):
@@ -95,10 +95,10 @@ impl<const N: usize> AsULE for UnvalidatedTinyAsciiStr<N> {
 
 #[cfg(feature = "alloc")]
 impl<'a, const N: usize> ZeroMapKV<'a> for UnvalidatedTinyAsciiStr<N> {
-    type Container = ZeroVec<'a, Self>;
-    type Slice = ZeroSlice<Self>;
-    type GetType = Self;
-    type OwnedType = Self;
+    type Container = ZeroVec<'a, UnvalidatedTinyAsciiStr<N>>;
+    type Slice = ZeroSlice<UnvalidatedTinyAsciiStr<N>>;
+    type GetType = UnvalidatedTinyAsciiStr<N>;
+    type OwnedType = UnvalidatedTinyAsciiStr<N>;
 }
 
 #[cfg(test)]

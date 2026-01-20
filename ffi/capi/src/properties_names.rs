@@ -112,8 +112,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::GeneralCategoryGroup, Struct)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<Self> {
-            Box::new(Self(
+        pub fn create() -> Box<GeneralCategoryNameToGroupMapper> {
+            Box::new(GeneralCategoryNameToGroupMapper(
                 icu_properties::PropertyParser::<icu_properties::props::GeneralCategoryGroup>::new(
                 )
                 .static_to_owned(),
@@ -125,9 +125,9 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<GeneralCategoryNameToGroupMapper>, DataError> {
             Ok(Box::new(
-                Self(icu_properties::PropertyParser::<
+                GeneralCategoryNameToGroupMapper(icu_properties::PropertyParser::<
                     icu_properties::props::GeneralCategoryGroup,
                 >::try_new_unstable(
                     &provider.get_unstable()?
@@ -142,8 +142,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::BidiClass, Struct)]
         #[diplomat::attr(auto, named_constructor = "bidi_class")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_bidi_class() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_bidi_class() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<icu_properties::props::BidiClass>::new()
                     .static_to_owned()
                     .erase(),
@@ -156,8 +156,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_bidi_class_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<
                                     icu_properties::props::BidiClass,
                                 >::try_new_unstable(&provider.get_unstable()?)?
@@ -169,8 +169,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::NumericType, Struct)]
         #[diplomat::attr(auto, named_constructor = "numeric_type")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_numeric_type() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_numeric_type() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<icu_properties::props::NumericType>::new()
                     .static_to_owned()
                     .erase(),
@@ -183,8 +183,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_numeric_type_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<
                                     icu_properties::props::NumericType,
                                 >::try_new_unstable(&provider.get_unstable()?)?
@@ -196,8 +196,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::Script, Struct)]
         #[diplomat::attr(auto, named_constructor = "script")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_script() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_script() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<icu_properties::props::Script>::new()
                     .static_to_owned()
                     .erase(),
@@ -210,8 +210,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_script_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<
                                     icu_properties::props::Script,
                                 >::try_new_unstable(&provider.get_unstable()?)?
@@ -223,8 +223,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::HangulSyllableType, Struct)]
         #[diplomat::attr(auto, named_constructor = "hangul_syllable_type")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_hangul_syllable_type() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_hangul_syllable_type() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<icu_properties::props::HangulSyllableType>::new()
                     .static_to_owned()
                     .erase(),
@@ -237,8 +237,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_hangul_syllable_type_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<
                                     icu_properties::props::HangulSyllableType,
                                 >::try_new_unstable(&provider.get_unstable()?)?
@@ -250,8 +250,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::EastAsianWidth, Struct)]
         #[diplomat::attr(auto, named_constructor = "east_asian_width")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_east_asian_width() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_east_asian_width() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<icu_properties::props::EastAsianWidth>::new()
                     .static_to_owned()
                     .erase(),
@@ -264,8 +264,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_east_asian_width_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<
                                     icu_properties::props::EastAsianWidth,
                                 >::try_new_unstable(&provider.get_unstable()?)?
@@ -277,8 +277,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::LineBreak, Struct)]
         #[diplomat::attr(auto, named_constructor = "line_break")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_line_break() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_line_break() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<icu_properties::props::LineBreak>::new()
                     .static_to_owned()
                     .erase(),
@@ -291,8 +291,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_line_break_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<
                                     icu_properties::props::LineBreak,
                                 >::try_new_unstable(&provider.get_unstable()?)?
@@ -304,8 +304,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::GraphemeClusterBreak, Struct)]
         #[diplomat::attr(auto, named_constructor = "grapheme_cluster_break")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_grapheme_cluster_break() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_grapheme_cluster_break() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<icu_properties::props::GraphemeClusterBreak>::new()
                     .static_to_owned()
                     .erase(),
@@ -318,8 +318,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_grapheme_cluster_break_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<
                                     icu_properties::props::GraphemeClusterBreak,
                                 >::try_new_unstable(&provider.get_unstable()?)?
@@ -331,8 +331,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::WordBreak, Struct)]
         #[diplomat::attr(auto, named_constructor = "word_break")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_word_break() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_word_break() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<icu_properties::props::WordBreak>::new()
                     .static_to_owned()
                     .erase(),
@@ -345,8 +345,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_word_break_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<
                                     icu_properties::props::WordBreak,
                                 >::try_new_unstable(&provider.get_unstable()?)?
@@ -358,8 +358,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::SentenceBreak, Struct)]
         #[diplomat::attr(auto, named_constructor = "sentence_break")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_sentence_break() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_sentence_break() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<icu_properties::props::SentenceBreak>::new()
                     .static_to_owned()
                     .erase(),
@@ -372,8 +372,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_sentence_break_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<
                                     icu_properties::props::SentenceBreak,
                                 >::try_new_unstable(&provider.get_unstable()?)?
@@ -385,8 +385,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::CanonicalCombiningClass, Struct)]
         #[diplomat::attr(auto, named_constructor = "canonical_combining_class")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_canonical_combining_class() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_canonical_combining_class() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<icu_properties::props::CanonicalCombiningClass>::new()
                     .static_to_owned()
                     .erase(),
@@ -399,8 +399,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_canonical_combining_class_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<
                                     icu_properties::props::CanonicalCombiningClass,
                                 >::try_new_unstable(&provider.get_unstable()?)?
@@ -412,8 +412,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::IndicSyllabicCategory, Struct)]
         #[diplomat::attr(auto, named_constructor = "indic_syllabic_category")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_indic_syllabic_category() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_indic_syllabic_category() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<icu_properties::props::IndicSyllabicCategory>::new()
                     .static_to_owned()
                     .erase(),
@@ -426,8 +426,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_indic_syllabic_category_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<
                                     icu_properties::props::IndicSyllabicCategory,
                                 >::try_new_unstable(&provider.get_unstable()?)?
@@ -439,8 +439,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::IndicConjunctBreak, Struct)]
         #[diplomat::attr(auto, named_constructor = "indic_conjunct_break")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_indic_conjunct_break() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_indic_conjunct_break() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<icu_properties::props::IndicConjunctBreak>::new()
                     .static_to_owned()
                     .erase(),
@@ -453,8 +453,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_indic_conjunct_break_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<
                                     icu_properties::props::IndicConjunctBreak,
                                 >::try_new_unstable(&provider.get_unstable()?)?
@@ -466,8 +466,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::JoiningGroup, Struct)]
         #[diplomat::attr(auto, named_constructor = "joining_group")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_joining_group() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_joining_group() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<icu_properties::props::JoiningGroup>::new()
                     .static_to_owned()
                     .erase(),
@@ -480,8 +480,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_joining_group_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<
                                     icu_properties::props::JoiningGroup,
                                 >::try_new_unstable(&provider.get_unstable()?)?
@@ -493,8 +493,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::JoiningType, Struct)]
         #[diplomat::attr(auto, named_constructor = "joining_type")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_joining_type() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_joining_type() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<icu_properties::props::JoiningType>::new()
                     .static_to_owned()
                     .erase(),
@@ -507,8 +507,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_joining_type_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<
                                     icu_properties::props::JoiningType,
                                 >::try_new_unstable(&provider.get_unstable()?)?
@@ -520,8 +520,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::GeneralCategory, Enum)]
         #[diplomat::attr(auto, named_constructor = "general_category")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_general_category() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_general_category() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<icu_properties::props::GeneralCategory>::new()
                     .static_to_owned()
                     .erase(),
@@ -534,8 +534,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_general_category_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<
                                     icu_properties::props::GeneralCategory,
                                 >::try_new_unstable(&provider.get_unstable()?)?
@@ -547,8 +547,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::VerticalOrientation, Struct)]
         #[diplomat::attr(auto, named_constructor = "vertical_orientation")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_vertical_orientation() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_vertical_orientation() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<icu_properties::props::VerticalOrientation>::new()
                     .static_to_owned()
                     .erase(),
@@ -561,8 +561,8 @@ pub mod ffi {
         #[cfg(feature = "buffer_provider")]
         pub fn create_vertical_orientation_with_provider(
             provider: &DataProvider,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
                 icu_properties::PropertyParser::<
                                     icu_properties::props::VerticalOrientation,
                                 >::try_new_unstable(&provider.get_unstable()?)?

@@ -112,17 +112,17 @@ pub enum PersonNamesFormattingAttributes {
 impl PersonNamesFormattingAttributes {
     pub fn bit_value(&self) -> PersonNamesFormattingAttributesMask {
         match self {
-            Self::GivenFirst => 1 << 0,
-            Self::SurnameFirst => 1 << 1,
-            Self::Sorting => 1 << 2,
-            Self::Short => 1 << 3,
-            Self::Medium => 1 << 4,
-            Self::Long => 1 << 5,
-            Self::Addressing => 1 << 6,
-            Self::Referring => 1 << 7,
-            Self::Monogram => 1 << 8,
-            Self::Formal => 1 << 9,
-            Self::Informal => 1 << 10,
+            PersonNamesFormattingAttributes::GivenFirst => 1 << 0,
+            PersonNamesFormattingAttributes::SurnameFirst => 1 << 1,
+            PersonNamesFormattingAttributes::Sorting => 1 << 2,
+            PersonNamesFormattingAttributes::Short => 1 << 3,
+            PersonNamesFormattingAttributes::Medium => 1 << 4,
+            PersonNamesFormattingAttributes::Long => 1 << 5,
+            PersonNamesFormattingAttributes::Addressing => 1 << 6,
+            PersonNamesFormattingAttributes::Referring => 1 << 7,
+            PersonNamesFormattingAttributes::Monogram => 1 << 8,
+            PersonNamesFormattingAttributes::Formal => 1 << 9,
+            PersonNamesFormattingAttributes::Informal => 1 << 10,
         }
     }
 }
@@ -130,9 +130,9 @@ impl PersonNamesFormattingAttributes {
 impl From<FormattingOrder> for PersonNamesFormattingAttributes {
     fn from(value: FormattingOrder) -> Self {
         match value {
-            FormattingOrder::GivenFirst => Self::GivenFirst,
-            FormattingOrder::SurnameFirst => Self::SurnameFirst,
-            FormattingOrder::Sorting => Self::Sorting,
+            FormattingOrder::GivenFirst => PersonNamesFormattingAttributes::GivenFirst,
+            FormattingOrder::SurnameFirst => PersonNamesFormattingAttributes::SurnameFirst,
+            FormattingOrder::Sorting => PersonNamesFormattingAttributes::Sorting,
         }
     }
 }
@@ -140,8 +140,8 @@ impl From<FormattingOrder> for PersonNamesFormattingAttributes {
 impl From<FormattingFormality> for PersonNamesFormattingAttributes {
     fn from(value: FormattingFormality) -> Self {
         match value {
-            FormattingFormality::Formal => Self::Formal,
-            FormattingFormality::Informal => Self::Informal,
+            FormattingFormality::Formal => PersonNamesFormattingAttributes::Formal,
+            FormattingFormality::Informal => PersonNamesFormattingAttributes::Informal,
         }
     }
 }
@@ -149,9 +149,9 @@ impl From<FormattingFormality> for PersonNamesFormattingAttributes {
 impl From<FormattingLength> for PersonNamesFormattingAttributes {
     fn from(value: FormattingLength) -> Self {
         match value {
-            FormattingLength::Short => Self::Short,
-            FormattingLength::Medium => Self::Medium,
-            FormattingLength::Long => Self::Long,
+            FormattingLength::Short => PersonNamesFormattingAttributes::Short,
+            FormattingLength::Medium => PersonNamesFormattingAttributes::Medium,
+            FormattingLength::Long => PersonNamesFormattingAttributes::Long,
         }
     }
 }
@@ -159,9 +159,9 @@ impl From<FormattingLength> for PersonNamesFormattingAttributes {
 impl From<FormattingUsage> for PersonNamesFormattingAttributes {
     fn from(value: FormattingUsage) -> Self {
         match value {
-            FormattingUsage::Addressing => Self::Addressing,
-            FormattingUsage::Referring => Self::Referring,
-            FormattingUsage::Monogram => Self::Monogram,
+            FormattingUsage::Addressing => PersonNamesFormattingAttributes::Addressing,
+            FormattingUsage::Referring => PersonNamesFormattingAttributes::Referring,
+            FormattingUsage::Monogram => PersonNamesFormattingAttributes::Monogram,
         }
     }
 }

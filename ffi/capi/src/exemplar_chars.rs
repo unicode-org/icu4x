@@ -56,9 +56,9 @@ pub mod ffi {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "main")]
         #[cfg(feature = "compiled_data")]
         #[diplomat::demo(default_constructor)]
-        pub fn create_main(locale: &Locale) -> Result<Box<Self>, DataError> {
+        pub fn create_main(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(Self(
+            Ok(Box::new(ExemplarCharacters(
                 icu_locale::exemplar_chars::ExemplarCharacters::try_new_main(&locale)?
                     .static_to_owned(),
             )))
@@ -74,9 +74,9 @@ pub mod ffi {
         pub fn create_main_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(Self(
+            Ok(Box::new(ExemplarCharacters(
                 icu_locale::exemplar_chars::ExemplarCharacters::try_new_main_unstable(
                     &provider.get_unstable()?,
                     &locale,
@@ -96,9 +96,9 @@ pub mod ffi {
         )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "auxiliary")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_auxiliary(locale: &Locale) -> Result<Box<Self>, DataError> {
+        pub fn create_auxiliary(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(Self(
+            Ok(Box::new(ExemplarCharacters(
                 icu_locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary(&locale)?
                     .static_to_owned(),
             )))
@@ -113,9 +113,9 @@ pub mod ffi {
         pub fn create_auxiliary_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(Self(
+            Ok(Box::new(ExemplarCharacters(
                 icu_locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary_unstable(
                     &provider.get_unstable()?,
                     &locale,
@@ -135,9 +135,9 @@ pub mod ffi {
         )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "punctuation")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_punctuation(locale: &Locale) -> Result<Box<Self>, DataError> {
+        pub fn create_punctuation(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(Self(
+            Ok(Box::new(ExemplarCharacters(
                 icu_locale::exemplar_chars::ExemplarCharacters::try_new_punctuation(&locale)?
                     .static_to_owned(),
             )))
@@ -152,9 +152,9 @@ pub mod ffi {
         pub fn create_punctuation_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(Self(
+            Ok(Box::new(ExemplarCharacters(
                 icu_locale::exemplar_chars::ExemplarCharacters::try_new_punctuation_unstable(
                     &provider.get_unstable()?,
                     &locale,
@@ -174,9 +174,9 @@ pub mod ffi {
         )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "numbers")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_numbers(locale: &Locale) -> Result<Box<Self>, DataError> {
+        pub fn create_numbers(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(Self(
+            Ok(Box::new(ExemplarCharacters(
                 icu_locale::exemplar_chars::ExemplarCharacters::try_new_numbers(&locale)?
                     .static_to_owned(),
             )))
@@ -192,9 +192,9 @@ pub mod ffi {
         pub fn create_numbers_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(Self(
+            Ok(Box::new(ExemplarCharacters(
                 icu_locale::exemplar_chars::ExemplarCharacters::try_new_numbers_unstable(
                     &provider.get_unstable()?,
                     &locale,
@@ -214,9 +214,9 @@ pub mod ffi {
         )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "index")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_index(locale: &Locale) -> Result<Box<Self>, DataError> {
+        pub fn create_index(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(Self(
+            Ok(Box::new(ExemplarCharacters(
                 icu_locale::exemplar_chars::ExemplarCharacters::try_new_index(&locale)?
                     .static_to_owned(),
             )))
@@ -232,9 +232,9 @@ pub mod ffi {
         pub fn create_index_with_provider(
             provider: &DataProvider,
             locale: &Locale,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(Self(
+            Ok(Box::new(ExemplarCharacters(
                 icu_locale::exemplar_chars::ExemplarCharacters::try_new_index_unstable(
                     &provider.get_unstable()?,
                     &locale,

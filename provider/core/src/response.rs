@@ -213,7 +213,7 @@ impl Cart {
 
     /// Helper function to convert `Yoke<Y, Option<Cart>>` to `Yoke<Y, Option<CartInner>>`.
     #[inline]
-    pub(crate) fn unwrap_cart<Y>(yoke: Yoke<Y, Option<Self>>) -> Yoke<Y, Option<CartInner>>
+    pub(crate) fn unwrap_cart<Y>(yoke: Yoke<Y, Option<Cart>>) -> Yoke<Y, Option<CartInner>>
     where
         for<'a> Y: Yokeable<'a>,
     {

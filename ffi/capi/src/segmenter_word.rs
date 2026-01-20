@@ -74,8 +74,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(auto, named_constructor = "auto")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_auto() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_auto() -> Box<WordSegmenter> {
+            Box::new(WordSegmenter(
                 icu_segmenter::WordSegmenter::new_auto(Default::default()).static_to_owned(),
             ))
         }
@@ -94,10 +94,12 @@ pub mod ffi {
         )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "auto_with_content_locale")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_auto_with_content_locale(locale: &Locale) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(icu_segmenter::WordSegmenter::try_new_auto(
-                locale.into(),
-            )?)))
+        pub fn create_auto_with_content_locale(
+            locale: &Locale,
+        ) -> Result<Box<WordSegmenter>, DataError> {
+            Ok(Box::new(WordSegmenter(
+                icu_segmenter::WordSegmenter::try_new_auto(locale.into())?,
+            )))
         }
 
         /// Construct a [`WordSegmenter`] with automatically selecting the best available LSTM
@@ -111,8 +113,8 @@ pub mod ffi {
         pub fn create_auto_with_content_locale_and_provider(
             provider: &DataProvider,
             locale: &Locale,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<WordSegmenter>, DataError> {
+            Ok(Box::new(WordSegmenter(
                 icu_segmenter::WordSegmenter::try_new_auto_with_buffer_provider(
                     provider.get()?,
                     locale.into(),
@@ -128,8 +130,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_lstm, FnInStruct)]
         #[diplomat::attr(auto, named_constructor = "lstm")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_lstm() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_lstm() -> Box<WordSegmenter> {
+            Box::new(WordSegmenter(
                 icu_segmenter::WordSegmenter::new_lstm(Default::default()).static_to_owned(),
             ))
         }
@@ -142,10 +144,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_lstm, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "lstm_with_content_locale")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_lstm_with_content_locale(locale: &Locale) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(icu_segmenter::WordSegmenter::try_new_lstm(
-                locale.into(),
-            )?)))
+        pub fn create_lstm_with_content_locale(
+            locale: &Locale,
+        ) -> Result<Box<WordSegmenter>, DataError> {
+            Ok(Box::new(WordSegmenter(
+                icu_segmenter::WordSegmenter::try_new_lstm(locale.into())?,
+            )))
         }
 
         /// Construct a [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
@@ -159,8 +163,8 @@ pub mod ffi {
         pub fn create_lstm_with_content_locale_and_provider(
             provider: &DataProvider,
             locale: &Locale,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<WordSegmenter>, DataError> {
+            Ok(Box::new(WordSegmenter(
                 icu_segmenter::WordSegmenter::try_new_lstm_with_buffer_provider(
                     provider.get()?,
                     locale.into(),
@@ -176,8 +180,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::new_dictionary, FnInStruct)]
         #[diplomat::attr(auto, named_constructor = "dictionary")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_dictionary() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_dictionary() -> Box<WordSegmenter> {
+            Box::new(WordSegmenter(
                 icu_segmenter::WordSegmenter::new_dictionary(Default::default()).static_to_owned(),
             ))
         }
@@ -192,8 +196,8 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_dictionary_with_content_locale(
             locale: &Locale,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<WordSegmenter>, DataError> {
+            Ok(Box::new(WordSegmenter(
                 icu_segmenter::WordSegmenter::try_new_dictionary(locale.into())?,
             )))
         }
@@ -209,8 +213,8 @@ pub mod ffi {
         pub fn create_dictionary_with_content_locale_and_provider(
             provider: &DataProvider,
             locale: &Locale,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<WordSegmenter>, DataError> {
+            Ok(Box::new(WordSegmenter(
                 icu_segmenter::WordSegmenter::try_new_dictionary_with_buffer_provider(
                     provider.get()?,
                     locale.into(),
@@ -226,8 +230,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(auto, named_constructor = "for_non_complex_scripts")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_for_non_complex_scripts() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_for_non_complex_scripts() -> Box<WordSegmenter> {
+            Box::new(WordSegmenter(
                 icu_segmenter::WordSegmenter::new_for_non_complex_scripts(Default::default())
                     .static_to_owned(),
             ))
@@ -243,8 +247,8 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create_for_non_complex_scripts_with_content_locale(
             locale: &Locale,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<WordSegmenter>, DataError> {
+            Ok(Box::new(WordSegmenter(
                 icu_segmenter::WordSegmenter::try_new_for_non_complex_scripts(locale.into())?,
             )))
         }
@@ -260,8 +264,8 @@ pub mod ffi {
         pub fn create_for_non_complex_scripts_with_content_locale_and_provider(
             provider: &DataProvider,
             locale: &Locale,
-        ) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        ) -> Result<Box<WordSegmenter>, DataError> {
+            Ok(Box::new(WordSegmenter(
                 icu_segmenter::WordSegmenter::try_new_for_non_complex_scripts_with_buffer_provider(
                     provider.get()?,
                     locale.into(),

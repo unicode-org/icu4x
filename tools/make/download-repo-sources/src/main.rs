@@ -299,7 +299,7 @@ impl SourceDataProvider {{
                         {tzdb_data}
                     ].into_iter().collect(),
                 ), transitions: Default::default() }})),
-                ..Self::new_custom()
+                ..SourceDataProvider::new_custom()
             }})
             .clone()
     }}

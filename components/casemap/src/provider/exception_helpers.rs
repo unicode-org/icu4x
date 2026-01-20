@@ -217,7 +217,7 @@ impl ExceptionBitsULE {
 impl AsULE for ExceptionBits {
     type ULE = ExceptionBitsULE;
     fn from_unaligned(u: ExceptionBitsULE) -> Self {
-        Self::from_integer(u.0)
+        ExceptionBits::from_integer(u.0)
     }
 
     fn to_unaligned(self) -> ExceptionBitsULE {
@@ -226,7 +226,7 @@ impl AsULE for ExceptionBits {
 }
 
 impl AsULE for SlotPresence {
-    type ULE = Self;
+    type ULE = SlotPresence;
     fn from_unaligned(u: Self) -> Self {
         u
     }

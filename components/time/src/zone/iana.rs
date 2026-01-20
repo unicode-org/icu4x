@@ -119,9 +119,9 @@ impl IanaParser {
     }
 }
 
-impl AsRef<Self> for IanaParser {
+impl AsRef<IanaParser> for IanaParser {
     #[inline]
-    fn as_ref(&self) -> &Self {
+    fn as_ref(&self) -> &IanaParser {
         self
     }
 }

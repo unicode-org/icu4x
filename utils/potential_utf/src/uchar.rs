@@ -198,7 +198,7 @@ impl Ord for PotentialCodePoint {
 impl From<PotentialCodePoint> for u32 {
     fn from(x: PotentialCodePoint) -> Self {
         let [a0, a1, a2] = x.0;
-        Self::from_le_bytes([a0, a1, a2, 0])
+        u32::from_le_bytes([a0, a1, a2, 0])
     }
 }
 
@@ -224,7 +224,7 @@ impl TryFrom<PotentialCodePoint> for char {
     type Error = core::char::CharTryFromError;
 
     #[inline]
-    fn try_from(value: PotentialCodePoint) -> Result<Self, Self::Error> {
+    fn try_from(value: PotentialCodePoint) -> Result<char, Self::Error> {
         value.try_to_char()
     }
 }
@@ -257,10 +257,10 @@ impl<'de> serde_core::Deserialize<'de> for PotentialCodePoint {
     {
         if deserializer.is_human_readable() {
             let c = <char>::deserialize(deserializer)?;
-            Ok(Self::from_char(c))
+            Ok(PotentialCodePoint::from_char(c))
         } else {
             let bytes = <[u8; 3]>::deserialize(deserializer)?;
-            Ok(Self(bytes))
+            Ok(PotentialCodePoint(bytes))
         }
     }
 }

@@ -31,7 +31,7 @@ impl<const D: usize> MatrixOwned<D> {
 
     pub(super) fn new_zero(dims: [usize; D]) -> Self {
         let total_len = dims.iter().product::<usize>();
-        Self {
+        MatrixOwned {
             data: vec![0.0; total_len],
             dims,
         }

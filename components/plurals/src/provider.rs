@@ -189,12 +189,12 @@ mod ranges {
     impl From<RawPluralCategory> for PluralCategory {
         fn from(value: RawPluralCategory) -> Self {
             match value {
-                RawPluralCategory::Other => Self::Other,
-                RawPluralCategory::Zero => Self::Zero,
-                RawPluralCategory::One => Self::One,
-                RawPluralCategory::Two => Self::Two,
-                RawPluralCategory::Few => Self::Few,
-                RawPluralCategory::Many => Self::Many,
+                RawPluralCategory::Other => PluralCategory::Other,
+                RawPluralCategory::Zero => PluralCategory::Zero,
+                RawPluralCategory::One => PluralCategory::One,
+                RawPluralCategory::Two => PluralCategory::Two,
+                RawPluralCategory::Few => PluralCategory::Few,
+                RawPluralCategory::Many => PluralCategory::Many,
             }
         }
     }
@@ -202,12 +202,12 @@ mod ranges {
     impl From<PluralCategory> for RawPluralCategory {
         fn from(value: PluralCategory) -> Self {
             match value {
-                PluralCategory::Zero => Self::Zero,
-                PluralCategory::One => Self::One,
-                PluralCategory::Two => Self::Two,
-                PluralCategory::Few => Self::Few,
-                PluralCategory::Many => Self::Many,
-                PluralCategory::Other => Self::Other,
+                PluralCategory::Zero => RawPluralCategory::Zero,
+                PluralCategory::One => RawPluralCategory::One,
+                PluralCategory::Two => RawPluralCategory::Two,
+                PluralCategory::Few => RawPluralCategory::Few,
+                PluralCategory::Many => RawPluralCategory::Many,
+                PluralCategory::Other => RawPluralCategory::Other,
             }
         }
     }
@@ -427,7 +427,7 @@ impl<V: VarULE + fmt::Debug + ?Sized> fmt::Debug for PluralElementsPackedULE<V> 
 }
 
 impl<V: VarULE + ?Sized> ToOwned for PluralElementsPackedULE<V> {
-    type Owned = Box<Self>;
+    type Owned = Box<PluralElementsPackedULE<V>>;
     fn to_owned(&self) -> Self::Owned {
         self.to_boxed()
     }
