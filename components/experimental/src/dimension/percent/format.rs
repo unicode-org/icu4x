@@ -25,6 +25,7 @@ impl<W1: Writeable, W2: Writeable> Writeable for Append<W1, W2> {
     }
 }
 
+#[derive(Debug)]
 pub struct FormattedPercent<'l> {
     pub(crate) value: &'l Decimal,
     pub(crate) essential: &'l PercentEssentials<'l>,

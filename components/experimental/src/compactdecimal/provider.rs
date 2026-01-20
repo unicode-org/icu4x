@@ -4,8 +4,6 @@
 
 // Provider structs must be stable.
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
-// Suppress a warning on zerovec::makevarule.
-#![allow(missing_docs)]
 
 //! Data provider struct definitions for this ICU4X component.
 //!
@@ -120,6 +118,11 @@ impl<P: PatternBackend<Store = str>> icu_provider::ule::MaybeEncodeAsVarULE
 
 #[cfg(feature = "datagen")]
 impl<P: PatternBackend<Store = str>> CompactPatterns<'static, P> {
+    /// Creates a new [`CompactPatterns`] from a map of patterns.
+    /// The values contains an additional `u8` that contains the
+    /// magnitude of the pattern, which can be different from the
+    /// magnitude key (e.g. for the maginute 5 there might be a
+    /// magnitude 3 pattern).
     #[allow(clippy::type_complexity)]
     pub fn new(
         patterns: alloc::collections::BTreeMap<

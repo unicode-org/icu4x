@@ -2,6 +2,23 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+#![cfg_attr(not(any(test, doc)), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+        clippy::exhaustive_structs,
+        clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
+        missing_debug_implementations,
+    )
+)]
+#![warn(missing_docs)]
+
 //! Determine the plural category appropriate for a given number in a given language.
 //!
 //! This module is published as its own crate ([`icu_plurals`](https://docs.rs/icu_plurals/latest/icu_plurals/))
@@ -56,23 +73,6 @@
 //! * [`Ordinal`](PluralRuleType::Ordinal): `1st place`, `10th day`, `11th floor`
 //!
 //! [Language Plural Rules]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
-
-// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, doc)), no_std)]
-#![cfg_attr(
-    not(test),
-    deny(
-        clippy::indexing_slicing,
-        clippy::unwrap_used,
-        clippy::expect_used,
-        clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        clippy::trivially_copy_pass_by_ref,
-        missing_debug_implementations,
-    )
-)]
-#![warn(missing_docs)]
 
 extern crate alloc;
 

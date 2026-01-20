@@ -281,6 +281,7 @@ impl<'a> FromIterator<&'a str> for CodePointInversionListAndStringList<'_> {
 
 /// Custom Errors for [`CodePointInversionListAndStringList`].
 #[derive(Display, Debug)]
+#[allow(clippy::exhaustive_enums)] // todo, missed in 2.0
 pub enum InvalidStringList {
     /// A string in the string list had an invalid length
     #[cfg_attr(feature = "alloc", displaydoc("Invalid string length for string: {0}"))]

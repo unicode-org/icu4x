@@ -14,7 +14,7 @@ use crate::personnames::api::{FieldLength, FieldModifier, NameField, PersonName}
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#derive-initials
 pub fn derive_missing_initials(
     person_name: &dyn PersonName,
-    requested_field: &NameField,
+    requested_field: NameField,
     initial_pattern_str: &str,
     initial_sequence_pattern_str: &str,
 ) -> String {
@@ -29,7 +29,7 @@ pub fn derive_missing_initials(
     }
     if requested_field.modifier.has_field(FieldModifier::Initial) {
         let initials = person_name
-            .get(&NameField {
+            .get(NameField {
                 kind: requested_field.kind,
                 modifier: requested_field.modifier.with_length(FieldLength::Auto),
             })
@@ -85,7 +85,7 @@ mod tests {
             modifier: FieldModifierSet::length(FieldLength::Initial),
         };
         let result =
-            super::derive_missing_initials(&person_name, &requested_field, "{0}.", "{0} {1}");
+            super::derive_missing_initials(&person_name, requested_field, "{0}.", "{0} {1}");
         assert_eq!(result, "H.");
         Ok(())
     }
@@ -106,7 +106,7 @@ mod tests {
             modifier: FieldModifierSet::length(FieldLength::Initial),
         };
         let result =
-            super::derive_missing_initials(&person_name, &requested_field, "{0}.", "{0} {1}");
+            super::derive_missing_initials(&person_name, requested_field, "{0}.", "{0} {1}");
         assert_eq!(result, "M. J.");
         Ok(())
     }
@@ -127,7 +127,7 @@ mod tests {
             modifier: FieldModifierSet::length(FieldLength::Initial),
         };
         let result =
-            super::derive_missing_initials(&person_name, &requested_field, "{0}.", "{0} {1}");
+            super::derive_missing_initials(&person_name, requested_field, "{0}.", "{0} {1}");
 
         // TODO(#3077): broken, this should be equal
         assert_ne!(result, "M. J.");

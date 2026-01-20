@@ -16,9 +16,11 @@ macro_rules! generate_test {
      [$(($ar_time: literal, $ar_expected: literal)),+ $(,)?]) => {
         #[test]
         fn $test_name(){
+            let mut options = RelativeTimeFormatterOptions::default();
+            options.numeric = $options;
             let relative_time_formatter = RelativeTimeFormatter::$constructor(
                 locale!("en").into(),
-                $options
+                options
             )
             .expect("locale should be present");
 
@@ -31,7 +33,7 @@ macro_rules! generate_test {
 
             let relative_time_formatter = RelativeTimeFormatter::$constructor(
                 locale!("ar-EG").into(),
-                $options
+                options
             )
             .expect("locale should be present");
 
@@ -47,9 +49,7 @@ macro_rules! generate_test {
 generate_test!(
     test_long_second_always,
     try_new_long_second,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10 seconds ago"),
         (-2, "2 seconds ago"),
@@ -72,9 +72,7 @@ generate_test!(
 generate_test!(
     test_long_second_auto,
     try_new_long_second,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10 seconds ago"),
         (-2, "2 seconds ago"),
@@ -97,9 +95,7 @@ generate_test!(
 generate_test!(
     test_long_minute_always,
     try_new_long_minute,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10 minutes ago"),
         (-2, "2 minutes ago"),
@@ -122,9 +118,7 @@ generate_test!(
 generate_test!(
     test_long_minute_auto,
     try_new_long_minute,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10 minutes ago"),
         (-2, "2 minutes ago"),
@@ -147,9 +141,7 @@ generate_test!(
 generate_test!(
     test_long_hour_always,
     try_new_long_hour,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10 hours ago"),
         (-2, "2 hours ago"),
@@ -172,9 +164,7 @@ generate_test!(
 generate_test!(
     test_long_hour_auto,
     try_new_long_hour,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10 hours ago"),
         (-2, "2 hours ago"),
@@ -197,9 +187,7 @@ generate_test!(
 generate_test!(
     test_long_day_always,
     try_new_long_day,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10 days ago"),
         (-2, "2 days ago"),
@@ -222,9 +210,7 @@ generate_test!(
 generate_test!(
     test_long_day_auto,
     try_new_long_day,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10 days ago"),
         (-2, "2 days ago"),
@@ -247,9 +233,7 @@ generate_test!(
 generate_test!(
     test_long_week_always,
     try_new_long_week,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10 weeks ago"),
         (-2, "2 weeks ago"),
@@ -272,9 +256,7 @@ generate_test!(
 generate_test!(
     test_long_week_auto,
     try_new_long_week,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10 weeks ago"),
         (-2, "2 weeks ago"),
@@ -297,9 +279,7 @@ generate_test!(
 generate_test!(
     test_long_month_always,
     try_new_long_month,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10 months ago"),
         (-2, "2 months ago"),
@@ -322,9 +302,7 @@ generate_test!(
 generate_test!(
     test_long_month_auto,
     try_new_long_month,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10 months ago"),
         (-2, "2 months ago"),
@@ -347,9 +325,7 @@ generate_test!(
 generate_test!(
     test_long_quarter_always,
     try_new_long_quarter,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10 quarters ago"),
         (-2, "2 quarters ago"),
@@ -372,9 +348,7 @@ generate_test!(
 generate_test!(
     test_long_quarter_auto,
     try_new_long_quarter,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10 quarters ago"),
         (-2, "2 quarters ago"),
@@ -397,9 +371,7 @@ generate_test!(
 generate_test!(
     test_long_year_always,
     try_new_long_year,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10 years ago"),
         (-2, "2 years ago"),
@@ -422,9 +394,7 @@ generate_test!(
 generate_test!(
     test_long_year_auto,
     try_new_long_year,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10 years ago"),
         (-2, "2 years ago"),
@@ -447,9 +417,7 @@ generate_test!(
 generate_test!(
     test_short_second_always,
     try_new_short_second,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10 sec. ago"),
         (-2, "2 sec. ago"),
@@ -472,9 +440,7 @@ generate_test!(
 generate_test!(
     test_short_second_auto,
     try_new_short_second,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10 sec. ago"),
         (-2, "2 sec. ago"),
@@ -497,9 +463,7 @@ generate_test!(
 generate_test!(
     test_short_minute_always,
     try_new_short_minute,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10 min. ago"),
         (-2, "2 min. ago"),
@@ -522,9 +486,7 @@ generate_test!(
 generate_test!(
     test_short_minute_auto,
     try_new_short_minute,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10 min. ago"),
         (-2, "2 min. ago"),
@@ -547,9 +509,7 @@ generate_test!(
 generate_test!(
     test_short_hour_always,
     try_new_short_hour,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10 hr. ago"),
         (-2, "2 hr. ago"),
@@ -572,9 +532,7 @@ generate_test!(
 generate_test!(
     test_short_hour_auto,
     try_new_short_hour,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10 hr. ago"),
         (-2, "2 hr. ago"),
@@ -597,9 +555,7 @@ generate_test!(
 generate_test!(
     test_short_day_always,
     try_new_short_day,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10 days ago"),
         (-2, "2 days ago"),
@@ -622,9 +578,7 @@ generate_test!(
 generate_test!(
     test_short_day_auto,
     try_new_short_day,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10 days ago"),
         (-2, "2 days ago"),
@@ -647,9 +601,7 @@ generate_test!(
 generate_test!(
     test_short_week_always,
     try_new_short_week,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10 wk. ago"),
         (-2, "2 wk. ago"),
@@ -672,9 +624,7 @@ generate_test!(
 generate_test!(
     test_short_week_auto,
     try_new_short_week,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10 wk. ago"),
         (-2, "2 wk. ago"),
@@ -697,9 +647,7 @@ generate_test!(
 generate_test!(
     test_short_month_always,
     try_new_short_month,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10 mo. ago"),
         (-2, "2 mo. ago"),
@@ -722,9 +670,7 @@ generate_test!(
 generate_test!(
     test_short_month_auto,
     try_new_short_month,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10 mo. ago"),
         (-2, "2 mo. ago"),
@@ -747,9 +693,7 @@ generate_test!(
 generate_test!(
     test_short_quarter_always,
     try_new_short_quarter,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10 qtrs. ago"),
         (-2, "2 qtrs. ago"),
@@ -772,9 +716,7 @@ generate_test!(
 generate_test!(
     test_short_quarter_auto,
     try_new_short_quarter,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10 qtrs. ago"),
         (-2, "2 qtrs. ago"),
@@ -797,9 +739,7 @@ generate_test!(
 generate_test!(
     test_short_year_always,
     try_new_short_year,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10 yr. ago"),
         (-2, "2 yr. ago"),
@@ -822,9 +762,7 @@ generate_test!(
 generate_test!(
     test_short_year_auto,
     try_new_short_year,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10 yr. ago"),
         (-2, "2 yr. ago"),
@@ -847,9 +785,7 @@ generate_test!(
 generate_test!(
     test_narrow_second_always,
     try_new_narrow_second,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10s ago"),
         (-2, "2s ago"),
@@ -872,9 +808,7 @@ generate_test!(
 generate_test!(
     test_narrow_second_auto,
     try_new_narrow_second,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10s ago"),
         (-2, "2s ago"),
@@ -897,9 +831,7 @@ generate_test!(
 generate_test!(
     test_narrow_minute_always,
     try_new_narrow_minute,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10m ago"),
         (-2, "2m ago"),
@@ -922,9 +854,7 @@ generate_test!(
 generate_test!(
     test_narrow_minute_auto,
     try_new_narrow_minute,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10m ago"),
         (-2, "2m ago"),
@@ -947,9 +877,7 @@ generate_test!(
 generate_test!(
     test_narrow_hour_always,
     try_new_narrow_hour,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10h ago"),
         (-2, "2h ago"),
@@ -972,9 +900,7 @@ generate_test!(
 generate_test!(
     test_narrow_hour_auto,
     try_new_narrow_hour,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10h ago"),
         (-2, "2h ago"),
@@ -997,9 +923,7 @@ generate_test!(
 generate_test!(
     test_narrow_day_always,
     try_new_narrow_day,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10d ago"),
         (-2, "2d ago"),
@@ -1022,9 +946,7 @@ generate_test!(
 generate_test!(
     test_narrow_day_auto,
     try_new_narrow_day,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10d ago"),
         (-2, "2d ago"),
@@ -1047,9 +969,7 @@ generate_test!(
 generate_test!(
     test_narrow_week_always,
     try_new_narrow_week,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10w ago"),
         (-2, "2w ago"),
@@ -1072,9 +992,7 @@ generate_test!(
 generate_test!(
     test_narrow_week_auto,
     try_new_narrow_week,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10w ago"),
         (-2, "2w ago"),
@@ -1097,9 +1015,7 @@ generate_test!(
 generate_test!(
     test_narrow_month_always,
     try_new_narrow_month,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10mo ago"),
         (-2, "2mo ago"),
@@ -1122,9 +1038,7 @@ generate_test!(
 generate_test!(
     test_narrow_month_auto,
     try_new_narrow_month,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10mo ago"),
         (-2, "2mo ago"),
@@ -1147,9 +1061,7 @@ generate_test!(
 generate_test!(
     test_narrow_quarter_always,
     try_new_narrow_quarter,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10q ago"),
         (-2, "2q ago"),
@@ -1172,9 +1084,7 @@ generate_test!(
 generate_test!(
     test_narrow_quarter_auto,
     try_new_narrow_quarter,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10q ago"),
         (-2, "2q ago"),
@@ -1197,9 +1107,7 @@ generate_test!(
 generate_test!(
     test_narrow_year_always,
     try_new_narrow_year,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Always
-    },
+    Numeric::Always,
     [
         (-10, "10y ago"),
         (-2, "2y ago"),
@@ -1222,9 +1130,7 @@ generate_test!(
 generate_test!(
     test_narrow_year_auto,
     try_new_narrow_year,
-    RelativeTimeFormatterOptions {
-        numeric: Numeric::Auto
-    },
+    Numeric::Auto,
     [
         (-10, "10y ago"),
         (-2, "2y ago"),

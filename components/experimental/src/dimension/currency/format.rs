@@ -13,6 +13,7 @@ use crate::dimension::currency::CurrencyCode;
 use crate::dimension::provider::currency::essentials;
 use crate::dimension::provider::currency::essentials::CurrencyEssentials;
 
+#[derive(Debug)]
 pub struct FormattedCurrency<'l> {
     pub(crate) value: &'l Decimal,
     pub(crate) currency_code: CurrencyCode,

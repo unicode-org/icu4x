@@ -21,6 +21,7 @@ use super::single_unit_vec::SingleUnitVec;
 /// The unit is not valid.
 /// This can occur if the unit ID does not adhere to the CLDR specification.
 /// For example, `meter` is a valid unit ID, but `metre` is not.
+#[non_exhaustive]
 pub struct InvalidUnitError;
 
 impl MeasureUnit {
