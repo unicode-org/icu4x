@@ -170,11 +170,17 @@ pub struct BakedExporter {
         Mutex<BTreeMap<DataMarkerInfo, (SyncTokenStream, BTreeSet<&'static str>, Statistics)>>,
 }
 
-#[derive(Default)]
+#[derive(Default, Debug, Clone)]
+#[allow(clippy::exhaustive_structs)] // forgot in 2.0
+/// Size heuristics for a data marker
 pub struct Statistics {
+    /// The sum of all deduplicated structs' sizes, in bytes
     pub structs_total_size: usize,
+    /// The number of unique structs
     pub structs_count: usize,
+    /// The size of the lookup struct, in bytes
     pub lookup_struct_size: usize,
+    /// The number of [`DataIdentifierCow`]s in the lookup struct
     pub identifiers_count: usize,
 }
 
@@ -892,6 +898,8 @@ impl DataExporter for BakedExporter {
 }
 
 /// Metadata of a bake export
+#[derive(Debug, Clone)]
+#[allow(clippy::exhaustive_structs)] // forgot in 2.0
 pub struct BakedExporterCloseMetadata {
     /// Per-marker size heuristics
     pub statistics: BTreeMap<DataMarkerInfo, Statistics>,

@@ -2,6 +2,23 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+#![cfg_attr(not(any(test, doc)), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+        clippy::exhaustive_structs,
+        clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
+        missing_debug_implementations,
+    )
+)]
+#![warn(missing_docs)]
+
 //! This crate contains utilities for working with ICU4C's zoneinfo64 format
 //!
 //! ```rust
@@ -21,27 +38,21 @@
 //!
 //! // Calculate possible offsets at 2025-11-02T01:00:00
 //! // This is during a DST switchover and is ambiguous
-//! let possible = pacific.for_date_time(2025, 11, 2, 1, 0, 0);
+//! let PossibleOffset::Ambiguous { before, after, transition } = pacific.for_date_time(2025, 11, 2, 1, 0, 0) else { panic!() };
 //! let offset_eight = UtcOffset::from_seconds(-8 * 3600);
-//! assert_eq!(
-//!     possible,
-//!     PossibleOffset::Ambiguous {
-//!         before: Offset {
-//!             offset: offset_seven,
-//!             rule_applies: true
-//!         },
-//!         after: Offset {
-//!             offset: offset_eight,
-//!             rule_applies: false
-//!         },
-//!         transition: 1762074000,
-//!     }
-//! );
+//! assert_eq!(before.offset, offset_seven);
+//! assert!(before.rule_applies);
+//! assert_eq!(after.offset, offset_eight);
+//! assert!(!after.rule_applies);
+//! assert_eq!(transition, 1762074000);
 //! ```
 
-use std::fmt::Debug;
+extern crate alloc;
 
+use alloc::boxed::Box;
+use alloc::vec::Vec;
 use calendrical_calculations::rata_die::RataDie;
+use core::fmt::Debug;
 use potential_utf::PotentialUtf16;
 use resb::binary::BinaryDeserializerError;
 
@@ -63,13 +74,16 @@ const SECONDS_IN_UTC_DAY: i64 = 24 * 60 * 60;
 
 /// An offset from UTC time (stored to seconds precision)
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[non_exhaustive] // newtype
 pub struct UtcOffset(i32);
 
 impl UtcOffset {
+    /// Construct an offset from a number of seconds
     pub fn from_seconds(x: i32) -> Self {
         Self(x)
     }
 
+    /// Return the number of seconds of this offset
     pub fn seconds(self) -> i32 {
         self.0
     }
@@ -118,11 +132,14 @@ struct TzZoneData<'a> {
 }
 
 impl Debug for TzZoneData<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        #![allow(clippy::indexing_slicing)] // by invariants
+
         write!(f, "TzZoneData {{ ")?;
 
-        fn dbg_timestamp(f: &mut std::fmt::Formatter<'_>, t: i64) -> std::fmt::Result {
+        fn dbg_timestamp(f: &mut core::fmt::Formatter<'_>, t: i64) -> core::fmt::Result {
             #[cfg(feature = "chrono")]
+            #[allow(clippy::unwrap_used)] // in range for chrono
             let t = chrono::DateTime::from_timestamp(t, 0).unwrap();
             write!(f, "{t:?}, ")
         }
@@ -248,11 +265,14 @@ impl<'a> Zone<'a> {
 }
 
 impl Debug for Zone<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("Zone")
             .field("simple", self.simple())
             .field("rule", &self.simple().final_rule(&self.info.rules))
-            .field("name", &self.name().chars().collect::<String>())
+            .field(
+                "name",
+                &self.name().chars().collect::<alloc::string::String>(),
+            )
             .field("region", &self.region())
             .finish()
     }
@@ -275,6 +295,7 @@ impl PartialEq for Zone<'_> {
 
 /// A resolved offset for a given point in time
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[non_exhaustive]
 pub struct Offset {
     /// The offset from UTC of this time zone
     pub offset: UtcOffset,
@@ -284,6 +305,7 @@ pub struct Offset {
 
 /// A transition
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[non_exhaustive]
 pub struct Transition {
     /// When the transition starts
     pub since: i64,
@@ -304,6 +326,7 @@ impl From<Transition> for Offset {
 
 /// Possible offsets for a local datetime
 #[derive(Debug, PartialEq)]
+#[non_exhaustive]
 pub enum PossibleOffset {
     /// There is a single possible offset
     Single(Offset),
@@ -684,13 +707,13 @@ impl<'a> Zone<'a> {
         })
     }
 
-    // Returns the name of the timezone
+    /// Returns the name of the timezone
     pub fn name(&self) -> &'a PotentialUtf16 {
         #[expect(clippy::indexing_slicing)] // idx is a valid index into info.names
         self.info.names[self.idx as usize]
     }
 
-    // Returns the region of the timezone
+    /// Returns the region of the timezone
     pub fn region(&self) -> Region {
         #[expect(clippy::indexing_slicing)]
         // idx is a valid index into info.names, which has the same length as info.regions

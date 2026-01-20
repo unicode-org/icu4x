@@ -128,16 +128,6 @@ fn test_fixture(fixture_name: &str, file: &str) {
                         &description,
                     )
                 }
-                CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Rgsa)) => {
-                    assert_fixture_element(
-                        prefs,
-                        Hijri::new_simulated_mecca(),
-                        input,
-                        &expected,
-                        field_set,
-                        &description,
-                    )
-                }
                 CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Tbla)) => {
                     assert_fixture_element(
                         prefs,

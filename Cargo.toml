@@ -145,7 +145,7 @@ icu_collections = { version = "~2.1.1", path = "components/collections", default
 icu_codepointtrie_builder = { version = "~0.5.0", path = "components/collections/codepointtrie_builder", default-features = false }
 icu_datetime = { version = "~2.1.1", path = "components/datetime", default-features = false }
 icu_decimal = { version = "~2.1.1", path = "components/decimal", default-features = false }
-icu_experimental = { version = "~0.4.0", path = "components/experimental", default-features = false }
+icu_experimental = { version = "~0.5.0-dev", path = "components/experimental", default-features = false }
 icu_list = { version = "~2.1.1", path = "components/list", default-features = false }
 icu_locale = { version = "~2.1.1", path = "components/locale", default-features = false }
 icu_normalizer = { version = "~2.1.1", path = "components/normalizer", default-features = false }
@@ -194,7 +194,7 @@ ixdtf = { version = "0.6.0", path = "utils/ixdtf", default-features = false }
 litemap = { version = "0.8.0", path = "utils/litemap", default-features = false }
 potential_utf = { version = "0.1.3", path = "utils/potential_utf", default-features = false }
 resb = { version = "0.1.0", path = "utils/resb", default-features = false }
-tzif = { version = "0.4.0", path = "utils/tzif", default-features = false }
+tzif = { version = "0.5.0-dev", path = "utils/tzif", default-features = false }
 tinystr = { version = "0.8.0", path = "utils/tinystr", default-features = false }
 writeable = { version = "0.6.0", path = "utils/writeable", default-features = false }
 yoke = { version = "0.8.0", path = "utils/yoke", default-features = false }

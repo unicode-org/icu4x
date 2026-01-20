@@ -10,8 +10,9 @@ use super::{
 use crate::error::ErrorField;
 use crate::fieldsets::enums::{CompositeDateTimeFieldSet, CompositeFieldSet};
 use crate::provider::fields::{self, FieldLength, FieldSymbol};
-use crate::provider::neo::{marker_attrs, *};
+use crate::provider::names::*;
 use crate::provider::pattern::PatternItem;
+use crate::provider::semantic_skeletons::marker_attrs;
 use crate::provider::time_zones::tz;
 use crate::size_test_macro::size_test;
 use crate::FixedCalendarDateTimeFormatter;
@@ -3743,7 +3744,7 @@ impl RawDateTimeNamesBorrowed<'_> {
             .ok_or(GetNameForEraError::NotLoaded)?;
 
         match year_names {
-            YearNames::VariableEras(era_names) => crate::provider::neo::get_year_name_from_map(
+            YearNames::VariableEras(era_names) => crate::provider::names::get_year_name_from_map(
                 era_names,
                 era_year.era.as_str().into(),
             )

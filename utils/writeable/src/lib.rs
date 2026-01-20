@@ -17,6 +17,7 @@
         missing_debug_implementations,
     )
 )]
+#![warn(missing_docs)]
 
 //! This crate defines [`Writeable`], a trait representing an object that can be written to a
 //! sink implementing `std::fmt::Write`. It is an alternative to `std::fmt::Display` with the
@@ -115,6 +116,8 @@ pub mod adapters {
     pub use try_writeable::TryWriteableInfallibleAsWriteable;
     pub use try_writeable::WriteableAsTryWriteableInfallible;
 
+    /// A lossy wrapper for a [`TryWriteable`] that implements [`Writeable`]
+    /// and ignores any errors.
     #[derive(Debug)]
     #[allow(clippy::exhaustive_structs)] // newtype
     pub struct LossyWrap<T>(pub T);
@@ -163,6 +166,7 @@ pub mod _internal {
 pub struct LengthHint(pub usize, pub Option<usize>);
 
 impl LengthHint {
+    /// Unknown
     pub fn undefined() -> Self {
         Self(0, None)
     }
@@ -236,6 +240,7 @@ impl LengthHint {
 /// formatters should expose the `Part`s they produces as constants.
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // stable
+#[allow(missing_docs)] // behavior not defined, explained in type docs
 pub struct Part {
     pub category: &'static str,
     pub value: &'static str,
@@ -253,6 +258,7 @@ impl Part {
 
 /// A sink that supports annotating parts of the string with [`Part`]s.
 pub trait PartsWrite: fmt::Write {
+    /// The recursive sink
     type SubPartsWrite: PartsWrite + ?Sized;
 
     /// Annotates all strings written by the closure with the given [`Part`].

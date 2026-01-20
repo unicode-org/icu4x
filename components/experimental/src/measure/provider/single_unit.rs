@@ -33,7 +33,7 @@ impl SingleUnit {
     /// 1. If the power is not 1, the power is prefixed with "P" followed by the power value.
     /// 2. If the si prefix power is not 0, the si prefix is represented by its base character ('D' for Decimal, 'B' for Binary) followed by the prefix power value.
     /// 3. The unit ID is prefixed with "I" and appended to the string.
-    pub(crate) fn append_short_representation(&self, buff: &mut String) {
+    pub(crate) fn append_short_representation(self, buff: &mut String) {
         if self.power != 1 {
             buff.push('P');
             let _infallible = write!(buff, "{}", self.power);

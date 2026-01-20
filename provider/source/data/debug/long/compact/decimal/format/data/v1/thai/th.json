@@ -1,132 +1,130 @@
-{
-  "patterns": [
-    {
-      "sized": 3,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " พัน"
-            }
-          ]
+[
+  {
+    "sized": 3,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " พัน"
+          }
         ]
-      }
-    },
-    {
-      "sized": 4,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " หมื่น"
-            }
-          ]
-        ]
-      }
-    },
-    {
-      "sized": 5,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " แสน"
-            }
-          ]
-        ]
-      }
-    },
-    {
-      "sized": 6,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " ล้าน"
-            }
-          ]
-        ]
-      }
-    },
-    {
-      "sized": 9,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " พันล้าน"
-            }
-          ]
-        ]
-      }
-    },
-    {
-      "sized": 10,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " หมื่นล้าน"
-            }
-          ]
-        ]
-      }
-    },
-    {
-      "sized": 11,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " แสนล้าน"
-            }
-          ]
-        ]
-      }
-    },
-    {
-      "sized": 12,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " ล้านล้าน"
-            }
-          ]
-        ]
-      }
+      ]
     }
-  ]
-}
+  },
+  {
+    "sized": 4,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " หมื่น"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 5,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " แสน"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 6,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " ล้าน"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 9,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " พันล้าน"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 10,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " หมื่นล้าน"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 11,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " แสนล้าน"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 12,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " ล้านล้าน"
+          }
+        ]
+      ]
+    }
+  }
+]

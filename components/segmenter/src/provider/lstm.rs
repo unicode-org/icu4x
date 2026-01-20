@@ -4,9 +4,6 @@
 
 //! Data provider struct definitions for the lstm
 
-// Provider structs must be stable
-#![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
-
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use zerovec::{ZeroMap, ZeroVec};

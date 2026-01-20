@@ -9,21 +9,10 @@
 use crate::cal::*;
 use crate::{AsCalendar, Calendar, Date, Ref};
 
-use crate::preferences::{CalendarAlgorithm, HijriCalendarAlgorithm};
-use icu_locale_core::preferences::define_preferences;
+use crate::preferences::{CalendarAlgorithm, CalendarPreferences, HijriCalendarAlgorithm};
 use icu_provider::prelude::*;
 
 use core::fmt;
-
-define_preferences!(
-    /// The preferences for calendars formatting.
-    [Copy]
-    CalendarPreferences,
-    {
-        /// The user's preferred calendar system.
-        calendar_algorithm: CalendarAlgorithm
-    }
-);
 
 macro_rules! make_any_calendar {
     (
@@ -815,23 +804,23 @@ pub enum AnyCalendarKind {
     ///
     /// This corresponds to the `"hebrew"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Hebrew,
-    /// The kind of an [`HijriSimulated`], Mecca calendar
+    /// The kind of a [`HijriSimulated`] calendar
     ///
-    /// This corresponds to the `"islamic-rgsa"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
+    /// This does not correspond to a CLDR calendar.
     HijriSimulatedMecca,
-    /// The kind of an [`HijriTabular`] calendar using [`HijriTabularLeapYears::TypeII`] and [`HijriTabularEpoch::Friday`]
+    /// The kind of a [`HijriTabular`] calendar using [`HijriTabularLeapYears::TypeII`] and [`HijriTabularEpoch::Friday`]
     ///
     /// This corresponds to the `"islamic-civil"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     HijriTabularTypeIIFriday,
-    /// The kind of an [`HijriTabular`] calendar using [`HijriTabularLeapYears::TypeII`] and [`HijriTabularEpoch::Thursday`]
+    /// The kind of a [`HijriTabular`] calendar using [`HijriTabularLeapYears::TypeII`] and [`HijriTabularEpoch::Thursday`]
     ///
     /// This corresponds to the `"islamic-tbla"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     HijriTabularTypeIIThursday,
-    /// The kind of an [`HijriUmmAlQura`] calendar
+    /// The kind of a [`HijriUmmAlQura`] calendar
     ///
     /// This corresponds to the `"islamic-umalqura"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     HijriUmmAlQura,
-    /// The kind of a [`Indian`] calendar
+    /// The kind of an [`Indian`] calendar
     ///
     /// This corresponds to the `"indian"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Indian,
@@ -854,41 +843,6 @@ pub enum AnyCalendarKind {
     ///
     /// This corresponds to the `"roc"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Roc,
-}
-
-impl CalendarPreferences {
-    /// Selects the [`CalendarAlgorithm`] appropriate for the given [`CalendarPreferences`].
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu::calendar::preferences::{CalendarAlgorithm, CalendarPreferences};
-    /// use icu::locale::locale;
-    ///
-    /// assert_eq!(CalendarPreferences::from(&locale!("und")).resolved_algorithm(), CalendarAlgorithm::Gregory);
-    /// assert_eq!(CalendarPreferences::from(&locale!("und-US-u-ca-hebrew")).resolved_algorithm(), CalendarAlgorithm::Hebrew);
-    /// assert_eq!(CalendarPreferences::from(&locale!("und-AF")).resolved_algorithm(), CalendarAlgorithm::Persian);
-    /// assert_eq!(CalendarPreferences::from(&locale!("und-US-u-rg-thxxxx")).resolved_algorithm(), CalendarAlgorithm::Buddhist);
-    /// ```
-    pub fn resolved_algorithm(self) -> CalendarAlgorithm {
-        let region = self.locale_preferences.region();
-        let region = region.as_ref().map(|r| r.as_str());
-        // This is tested to be consistent with CLDR in icu_provider_source::calendar::test_calendar_resolution
-        match self.calendar_algorithm {
-            Some(CalendarAlgorithm::Hijri(None)) => match region {
-                Some("AE" | "BH" | "KW" | "QA" | "SA") => {
-                    CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Umalqura))
-                }
-                _ => CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil)),
-            },
-            Some(a) => a,
-            None => match region {
-                Some("TH") => CalendarAlgorithm::Buddhist,
-                Some("AF" | "IR") => CalendarAlgorithm::Persian,
-                _ => CalendarAlgorithm::Gregory,
-            },
-        }
-    }
 }
 
 impl AnyCalendarKind {
@@ -923,7 +877,7 @@ impl TryFrom<CalendarAlgorithm> for AnyCalendarKind {
             Hijri(Some(HijriCalendarAlgorithm::Civil)) => {
                 Ok(AnyCalendarKind::HijriTabularTypeIIFriday)
             }
-            Hijri(Some(HijriCalendarAlgorithm::Rgsa)) => Ok(AnyCalendarKind::HijriSimulatedMecca),
+            Hijri(Some(HijriCalendarAlgorithm::Rgsa)) => Err(()),
             Iso8601 => Ok(AnyCalendarKind::Iso),
             Japanese => Ok(AnyCalendarKind::Japanese),
             Persian => Ok(AnyCalendarKind::Persian),
@@ -1306,11 +1260,7 @@ impl IntoAnyCalendar for Hijri<hijri::AstronomicalSimulation> {
     }
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
-        match self.0.location {
-            crate::cal::hijri_internal::SimulatedLocation::Mecca => {
-                AnyCalendarKind::HijriSimulatedMecca
-            }
-        }
+        AnyCalendarKind::HijriSimulatedMecca
     }
     #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {

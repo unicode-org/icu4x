@@ -4,7 +4,7 @@
 
 //! Scaffolding traits and impls for calendars.
 
-use crate::provider::{neo::*, *};
+use crate::provider::{names::*, *};
 use crate::scaffold::UnstableSealed;
 use crate::MismatchedCalendarError;
 use core::marker::PhantomData;

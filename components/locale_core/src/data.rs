@@ -245,7 +245,7 @@ impl DataLocale {
         )
     }
 
-    pub(crate) fn from_parts(
+    pub(crate) const fn from_parts(
         language: Language,
         script: Option<Script>,
         region: Option<unicode_ext::SubdivisionId>,
@@ -254,9 +254,17 @@ impl DataLocale {
         Self {
             language,
             script,
-            region: region.map(|sd| sd.region),
+            region: if let Some(r) = region {
+                Some(r.region)
+            } else {
+                None
+            },
             variant,
-            subdivision: region.map(|sd| sd.into_subtag()),
+            subdivision: if let Some(r) = region {
+                Some(r.into_subtag())
+            } else {
+                None
+            },
         }
     }
 
