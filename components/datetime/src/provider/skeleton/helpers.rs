@@ -453,7 +453,7 @@ pub fn get_best_available_format_pattern<'data>(
     prefer_matched_pattern: bool,
 ) -> BestSkeleton<PluralElements<runtime::Pattern<'data>>> {
     let mut closest_format_pattern = None;
-    let mut closest_distance: u32 = u32::MAX;
+    let mut closest_distance = u32::MAX;
     let mut closest_missing_fields = 0;
 
     for (skeleton, pattern) in skeletons.iter() {
@@ -462,7 +462,7 @@ pub fn get_best_available_format_pattern<'data>(
             "The distance mechanism assumes skeletons are less than MAX_SKELETON_FIELDS in length."
         );
         let mut missing_fields = 0;
-        let mut distance: u32 = 0;
+        let mut distance = 0;
         // The distance should fit into a u32.
 
         let mut requested_fields = fields.iter().peekable();

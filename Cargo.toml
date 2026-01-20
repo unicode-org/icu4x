@@ -357,6 +357,7 @@ clippy.todo = "warn"
 clippy.trivially_copy_pass_by_ref = "deny"
 clippy.use_self = "warn"
 clippy.wildcard_dependencies = "warn"
+clippy.redundant_type_annotations = "warn"
 rust.missing_debug_implementations = "deny"
 rust.trivial_numeric_casts = "deny"
 rust.unexpected_cfgs = { level = "warn", check-cfg = [

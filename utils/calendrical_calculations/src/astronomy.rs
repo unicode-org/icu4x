@@ -1994,7 +1994,7 @@ mod tests {
             0.0029138888888888877,
         ];
         for (rd, expected_ephemeris) in rd_vals.iter().zip(expected_ephemeris.iter()) {
-            let moment: Moment = Moment::new(*rd as f64);
+            let moment = Moment::new(*rd as f64);
             let ephemeris = Astronomical::ephemeris_correction(moment);
             let expected_ephemeris_value = expected_ephemeris;
             assert!(ephemeris > expected_ephemeris_value * TEST_LOWER_BOUND_FACTOR, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
@@ -2047,7 +2047,7 @@ mod tests {
             116.43935225951282,
         ];
         for (rd, expected_solar_long) in rd_vals.iter().zip(expected_solar_long.iter()) {
-            let moment: Moment = Moment::new(*rd as f64);
+            let moment = Moment::new(*rd as f64);
             let solar_long =
                 Astronomical::solar_longitude(Astronomical::julian_centuries(moment + 0.5));
             let expected_solar_long_value = expected_solar_long;
@@ -2104,7 +2104,7 @@ mod tests {
         ];
 
         for (rd, expected_lunar_lat) in rd_vals.iter().zip(expected_lunar_lat.iter()) {
-            let moment: Moment = Moment::new(*rd as f64);
+            let moment = Moment::new(*rd as f64);
             let lunar_lat = Astronomical::lunar_latitude(Astronomical::julian_centuries(moment));
             let expected_lunar_lat_value = *expected_lunar_lat;
 
@@ -2157,7 +2157,7 @@ mod tests {
             175.5008226195208,
         ];
         for (rd, expected_lunar_long) in rd_vals.iter().zip(expected_lunar_long.iter()) {
-            let moment: Moment = Moment::new(*rd as f64);
+            let moment = Moment::new(*rd as f64);
             let lunar_long = Astronomical::lunar_longitude(Astronomical::julian_centuries(moment));
             let expected_lunar_long_value = *expected_lunar_long;
 
@@ -2210,7 +2210,7 @@ mod tests {
         ];
 
         for (rd, expected_alt) in rd_vals.iter().zip(expected_altitude_deg.iter()) {
-            let moment: Moment = Moment::new(*rd as f64);
+            let moment = Moment::new(*rd as f64);
             let lunar_alt = Astronomical::lunar_altitude(moment, crate::islamic::MECCA);
             let expected_alt_value = *expected_alt;
 
@@ -2263,7 +2263,7 @@ mod tests {
         ];
 
         for (rd, expected_distance) in rd_vals.iter().zip(expected_distances.iter()) {
-            let moment: Moment = Moment::new(*rd as f64);
+            let moment = Moment::new(*rd as f64);
             let distance = Astronomical::lunar_distance(moment);
             let expected_distance_val = *expected_distance;
 
@@ -2316,7 +2316,7 @@ mod tests {
         ];
 
         for (rd, parallax) in rd_vals.iter().zip(expected_parallax.iter()) {
-            let moment: Moment = Moment::new(*rd as f64);
+            let moment = Moment::new(*rd as f64);
             let lunar_altitude_val = Astronomical::lunar_altitude(moment, crate::islamic::MECCA);
             let parallax_val = Astronomical::lunar_parallax(lunar_altitude_val, moment);
             let expected_parallax_val = *parallax;
@@ -2372,7 +2372,7 @@ mod tests {
         ];
 
         for (rd, expected_val) in rd_vals.iter().zip(expected_values.iter()) {
-            let moment: Moment = Moment::new(*rd);
+            let moment = Moment::new(*rd);
             let moonset_val = Astronomical::moonset(moment, crate::islamic::MECCA);
             let expected_moonset_val = *expected_val;
             if let Some(moonset_val) = moonset_val {
@@ -2489,7 +2489,7 @@ mod tests {
             764676.1912733881,
         ];
         for (rd, expected_next_new_moon) in rd_vals.iter().zip(expected_next_new_moon.iter()) {
-            let moment: Moment = Moment::new(*rd as f64);
+            let moment = Moment::new(*rd as f64);
             let next_new_moon = Astronomical::new_moon_at_or_after(moment);
             let expected_next_new_moon_moment = Moment::new(*expected_next_new_moon);
             if *expected_next_new_moon > 0.0 {
@@ -2525,7 +2525,7 @@ mod tests {
     #[test]
     fn check_new_moon_directionality() {
         // Checks that new_moon_before is less than new_moon_at_or_after for a large number of Moments
-        let mut moment: Moment = Moment::new(-15500.0);
+        let mut moment = Moment::new(-15500.0);
         let max_moment = Moment::new(15501.0);
         let mut iters: i32 = 0;
         let max_iters = 10000;

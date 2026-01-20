@@ -902,12 +902,12 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
 
         let null_value: T = T::try_from_u32(self.header.null_value).ok()?;
 
-        let mut prev_i3_block: u32 = u32::MAX; // using u32::MAX (instead of -1 as an i32 in ICU)
-        let mut prev_block: u32 = u32::MAX; // using u32::MAX (instead of -1 as an i32 in ICU)
-        let mut c: u32 = start;
-        let mut trie_value: T = self.error_value();
-        let mut value: T = self.error_value();
-        let mut have_value: bool = false;
+        let mut prev_i3_block = u32::MAX; // using u32::MAX (instead of -1 as an i32 in ICU)
+        let mut prev_block = u32::MAX; // using u32::MAX (instead of -1 as an i32 in ICU)
+        let mut c = start;
+        let mut trie_value = self.error_value();
+        let mut value = self.error_value();
+        let mut have_value = false;
 
         loop {
             let i3_block: u32;

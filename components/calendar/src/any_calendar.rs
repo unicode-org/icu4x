@@ -1236,7 +1236,7 @@ impl IntoAnyCalendar for Hijri<hijri::TabularAlgorithm> {
 impl IntoAnyCalendar for Hijri<hijri::AstronomicalSimulation> {
     #[inline]
     fn to_any(self) -> AnyCalendar {
-        AnyCalendar::HijriSimulated(Hijri::new_simulated_mecca())
+        AnyCalendar::HijriSimulated(Self::new_simulated_mecca())
     }
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
@@ -1773,7 +1773,7 @@ mod tests {
         single_test_roundtrip(roc, None, 100, Month::new(10), 30);
         single_test_roundtrip(roc, None, -100, Month::new(10), 30);
 
-        let hijri_simulated: AnyCalendar = AnyCalendar::new(AnyCalendarKind::HijriSimulatedMecca);
+        let hijri_simulated = AnyCalendar::new(AnyCalendarKind::HijriSimulatedMecca);
         let hijri_simulated = Ref(&hijri_simulated);
         single_test_roundtrip(
             hijri_simulated,
@@ -1803,8 +1803,7 @@ mod tests {
 
     #[test]
     fn hijri_tabular_friday() {
-        let hijri_tabular_friday: AnyCalendar =
-            AnyCalendar::new(AnyCalendarKind::HijriTabularTypeIIFriday);
+        let hijri_tabular_friday = AnyCalendar::new(AnyCalendarKind::HijriTabularTypeIIFriday);
         let hijri_tabular_friday = Ref(&hijri_tabular_friday);
         single_test_roundtrip(
             hijri_tabular_friday,
@@ -1834,7 +1833,7 @@ mod tests {
 
     #[test]
     fn hijri_umm_al_qura() {
-        let hijri_umm_al_qura: AnyCalendar = AnyCalendar::new(AnyCalendarKind::HijriUmmAlQura);
+        let hijri_umm_al_qura = AnyCalendar::new(AnyCalendarKind::HijriUmmAlQura);
         let hijri_umm_al_qura = Ref(&hijri_umm_al_qura);
         single_test_roundtrip(
             hijri_umm_al_qura,
@@ -1864,8 +1863,7 @@ mod tests {
 
     #[test]
     fn hijri_tabular_thursday() {
-        let hijri_tabular_thursday: AnyCalendar =
-            AnyCalendar::new(AnyCalendarKind::HijriTabularTypeIIThursday);
+        let hijri_tabular_thursday = AnyCalendar::new(AnyCalendarKind::HijriTabularTypeIIThursday);
         let hijri_tabular_thursday = Ref(&hijri_tabular_thursday);
         single_test_roundtrip(
             hijri_tabular_thursday,
