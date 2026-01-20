@@ -1667,9 +1667,6 @@ mod test {
     }
 
     #[test]
-    fn test_regression_5069_obs() {}
-
-    #[test]
     fn test_regression_6197() {
         let calendar = Hijri::new_umm_al_qura();
 
