@@ -209,6 +209,7 @@ fn date_benches(c: &mut Criterion) {
         |y, m, d, c| Date::try_new_hijri_with_calendar(y, m, d, c).unwrap(),
     );
 
+    #[allow(deprecated)]
     bench_calendar(
         &mut group,
         "calendar/islamic/observational",
