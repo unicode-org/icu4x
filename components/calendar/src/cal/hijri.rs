@@ -146,9 +146,16 @@ pub trait Rules: Clone + Debug + crate::cal::scaffold::UnstableSealed {
 /// Currently, this uses simulation results published by the KACST,
 /// making it identical to [`UmmAlQura`].
 ///
+/// In previous versions, this type used arithmetic published by E. M. Reingold, S. K. Shaukat,
+/// et al.[^1]. Since it now uses the KACST simulations, it is deprecated in favor of [`UmmAlQura`].
+/// If you wish to use the previous behavior, use the [`calendrical_calculations`] crate directly;
+/// for an example, see [`tests/reingold.rs`](https://github.com/unicode-org/icu4x/blob/main/components/calendar/tests/reingold.rs).
+///
 /// The precise behavior of this calendar may change in the future if:
 /// - We decide to tweak the precise astronomical simulation used
 /// - We decide to expand or reduce the range where we are using the astronomical simulation.
+///
+/// [^1]: See [`calendrical_calculations::islamic::observational_islamic_from_fixed`]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[non_exhaustive]
 #[deprecated(since = "2.2.0", note = "use `UmmAlQura`")]
