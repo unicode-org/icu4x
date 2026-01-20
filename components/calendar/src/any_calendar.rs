@@ -1264,7 +1264,7 @@ impl IntoAnyCalendar for Hijri<hijri::TabularAlgorithm> {
 impl IntoAnyCalendar for Hijri<hijri::AstronomicalSimulation> {
     #[inline]
     fn to_any(self) -> AnyCalendar {
-        AnyCalendar::HijriSimulated(Hijri::new_mecca())
+        AnyCalendar::HijriSimulated(Hijri::new_simulated_mecca())
     }
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
