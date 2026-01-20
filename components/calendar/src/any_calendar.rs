@@ -758,23 +758,23 @@ pub enum AnyCalendarKind {
     ///
     /// This corresponds to the `"hebrew"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Hebrew,
-    /// The kind of an [`HijriSimulated`], Mecca calendar
+    /// The kind of a [`HijriSimulated`] calendar
     ///
-    /// This corresponds to the `"islamic-rgsa"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
+    /// This does not correspond to a CLDR calendar.
     HijriSimulatedMecca,
-    /// The kind of an [`HijriTabular`] calendar using [`HijriTabularLeapYears::TypeII`] and [`HijriTabularEpoch::Friday`]
+    /// The kind of a [`HijriTabular`] calendar using [`HijriTabularLeapYears::TypeII`] and [`HijriTabularEpoch::Friday`]
     ///
     /// This corresponds to the `"islamic-civil"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     HijriTabularTypeIIFriday,
-    /// The kind of an [`HijriTabular`] calendar using [`HijriTabularLeapYears::TypeII`] and [`HijriTabularEpoch::Thursday`]
+    /// The kind of a [`HijriTabular`] calendar using [`HijriTabularLeapYears::TypeII`] and [`HijriTabularEpoch::Thursday`]
     ///
     /// This corresponds to the `"islamic-tbla"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     HijriTabularTypeIIThursday,
-    /// The kind of an [`HijriUmmAlQura`] calendar
+    /// The kind of a [`HijriUmmAlQura`] calendar
     ///
     /// This corresponds to the `"islamic-umalqura"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     HijriUmmAlQura,
-    /// The kind of a [`Indian`] calendar
+    /// The kind of an [`Indian`] calendar
     ///
     /// This corresponds to the `"indian"` [CLDR calendar](https://unicode.org/reports/tr35/#UnicodeCalendarIdentifier).
     Indian,
@@ -831,7 +831,7 @@ impl TryFrom<CalendarAlgorithm> for AnyCalendarKind {
             Hijri(Some(HijriCalendarAlgorithm::Civil)) => {
                 Ok(AnyCalendarKind::HijriTabularTypeIIFriday)
             }
-            Hijri(Some(HijriCalendarAlgorithm::Rgsa)) => Ok(AnyCalendarKind::HijriSimulatedMecca),
+            Hijri(Some(HijriCalendarAlgorithm::Rgsa)) => Err(()),
             Iso8601 => Ok(AnyCalendarKind::Iso),
             Japanese => Ok(AnyCalendarKind::Japanese),
             Persian => Ok(AnyCalendarKind::Persian),
@@ -1214,11 +1214,7 @@ impl IntoAnyCalendar for Hijri<hijri::AstronomicalSimulation> {
     }
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
-        match self.0.location {
-            crate::cal::hijri_internal::SimulatedLocation::Mecca => {
-                AnyCalendarKind::HijriSimulatedMecca
-            }
-        }
+        AnyCalendarKind::HijriSimulatedMecca
     }
     #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
