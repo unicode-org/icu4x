@@ -1,121 +1,132 @@
 {
-  "compact_patterns": [
-    [
-      [
-        3,
-        {
-          "Standard": "Few"
-        }
-      ],
-      "‏0 آلاف ¤"
-    ],
-    [
-      [
-        3,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "‏0 ألف ¤"
-    ],
-    [
-      [
-        4,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "‏00 ألف ¤"
-    ],
-    [
-      [
-        5,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "‏000 ألف ¤"
-    ],
-    [
-      [
-        6,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "‏0 مليون ¤"
-    ],
-    [
-      [
-        7,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "‏00 مليون ¤"
-    ],
-    [
-      [
-        8,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "‏000 مليون ¤"
-    ],
-    [
-      [
-        9,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "‏0 مليار ¤"
-    ],
-    [
-      [
-        10,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "‏00 مليار ¤"
-    ],
-    [
-      [
-        11,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "‏000 مليار ¤"
-    ],
-    [
-      [
-        12,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "‏0 ترليون ¤"
-    ],
-    [
-      [
-        13,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "‏00 ترليون ¤"
-    ],
-    [
-      [
-        14,
-        {
-          "Standard": "Other"
-        }
-      ],
-      "‏000 ترليون ¤"
-    ]
-  ]
+  "standard": [
+    {
+      "sized": 3,
+      "variable": {
+        "few": [
+          0,
+          [
+            {
+              "Literal": "‏"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " آلاف "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ],
+        "other": [
+          0,
+          [
+            {
+              "Literal": "‏"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " ألف "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 4,
+      "variable": {
+        "other": [
+          1,
+          [
+            {
+              "Literal": "‏"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " ألف "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 6,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Literal": "‏"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " مليون "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 9,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Literal": "‏"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " مليار "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "sized": 12,
+      "variable": {
+        "other": [
+          0,
+          [
+            {
+              "Literal": "‏"
+            },
+            {
+              "Placeholder": "Place0"
+            },
+            {
+              "Literal": " ترليون "
+            },
+            {
+              "Placeholder": "Place1"
+            }
+          ]
+        ]
+      }
+    }
+  ],
+  "alpha_next_to_number": []
 }

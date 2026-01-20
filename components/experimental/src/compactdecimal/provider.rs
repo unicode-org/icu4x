@@ -57,12 +57,18 @@ icu_provider::data_marker!(
 ///
 /// The plural patterns are stored with the 4-bit metadata representing the exponent
 /// shift (number of zeros in the pattern minus 1).
-#[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::compactdecimal::provider))]
 pub struct CompactPatterns<'a, P: PatternBackend<Store = str>>(
     pub VarZeroVec<'a, VarTupleULE<u8, PluralElementsPackedULE<Pattern<P>>>>,
 );
+
+impl<P: PatternBackend<Store = str>> Default for CompactPatterns<'_, P> {
+    fn default() -> Self {
+        Self(VarZeroVec::new())
+    }
+}
 
 #[cfg(feature = "datagen")]
 impl<'data, P: PatternBackend<Store = str>> serde::Serialize for CompactPatterns<'data, P>
