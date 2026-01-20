@@ -835,31 +835,43 @@ impl ToExtendedYear for EastAsianTraditionalYear {
 impl EastAsianTraditionalYear {
     /// Creates [`EastAsianTraditionalYear`] from the given parts.
     ///
-    /// `start_day` is the date for the first day of the year, see [`Date::to_rata_die`]
-    /// to obtain a [`RataDie`] from a [`Date`] in an arbitrary calendar.
+    /// `month_starts` contains the first day of the 13 or 14 months from the first
+    /// month of the given year to the first month of the following year (inclusive).
+    /// See [`Date::to_rata_die`] to obtain a [`RataDie`] from a [`Date`] in an
+    /// arbitrary calendar. If non-leap years, the last value is ignored.
+    ///
+    /// Months need to have either 29 or 30 days.
     ///
     /// `leap_month` is the ordinal number of the leap month, for example if a year
     /// has months 1, 2, 3, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, the `leap_month`
     /// would be `Some(4)`.
-    ///
-    /// `month_lengths[n - 1]` is true if the nth month has 30 days, and false otherwise.
-    /// The leap month does not necessarily have the same number of days as the previous
-    /// month, which is why this has length 13. In non-leap years, the last value is ignored.
-    pub fn new(
+    pub const fn try_new(
         related_iso: i32,
-        start_day: RataDie,
-        month_lengths: [bool; 13],
+        month_starts: [RataDie; 14],
         leap_month: Option<u8>,
-    ) -> Self {
-        Self {
+    ) -> Option<Self> {
+        let mut month_lengths = [false; 13];
+
+        let mut i = 0;
+        #[allow(clippy::indexing_slicing)]
+        while i < 12 + leap_month.is_some() as usize {
+            match month_starts[i + 1].to_i64_date() - month_starts[i].to_i64_date() {
+                29 => month_lengths[i] = false,
+                30 => month_lengths[i] = true,
+                _ => return None,
+            }
+            i += 1;
+        }
+
+        Some(Self {
             packed: PackedEastAsianTraditionalYearData::new(
                 related_iso,
                 month_lengths,
                 leap_month,
-                start_day,
+                month_starts[0],
             ),
             related_iso,
-        }
+        })
     }
 
     fn lookup(
