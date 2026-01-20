@@ -593,6 +593,10 @@ field_type!(
 );
 
 impl Hour {
+    /// Picks the best [`Hour`] given the preferences.
+    ///
+    /// If `-u-hc-h**` is specified, that field is used. Otherwise, the field is selected
+    /// based on the locale, using `-u-hc-c**`, if present, as a hint.
     pub(crate) fn from_prefs(prefs: DateTimeFormatterPreferences) -> Option<Self> {
         let field = match prefs.hour_cycle? {
             HourCycle::H11 => Self::H11,
@@ -603,13 +607,16 @@ impl Hour {
                     .locale_preferences
                     .to_data_locale_region_priority()
                     .region;
-                // TODO(#7415): Test that this stays consistent with CLDR
+                // TODO(#7415): Test that this fallback stays consistent with CLDR.
+                // This is derived from timeData. Currently the only region using
+                // something other than h12/h23 is JP.
                 const JP: Region = region!("JP");
                 match region {
                     Some(JP) => Self::H11,
                     _ => Self::H12,
                 }
             }
+            // Note: ICU4X does not support H24.
             HourCycle::Clock24 => Self::H23,
             _ => unreachable!(),
         };
