@@ -3743,18 +3743,21 @@ impl RawDateTimeNamesBorrowed<'_> {
             .get_with_variables(year_name_length)
             .ok_or(GetNameForEraError::NotLoaded)?;
 
-        match (year_names, era_year.era_index) {
-            (YearNames::VariableEras(era_names), None) => {
-                crate::provider::names::get_year_name_from_map(
-                    era_names,
-                    era_year.era.as_str().into(),
-                )
-                .ok_or(GetNameForEraError::InvalidEraCode)
-            }
-            (YearNames::FixedEras(era_names), Some(index)) => era_names
-                .get(index as usize)
+        match year_names {
+            YearNames::VariableEras(era_names) => crate::provider::names::get_year_name_from_map(
+                era_names,
+                era_year.era.as_str().into(),
+            )
+            .ok_or(GetNameForEraError::InvalidEraCode),
+            YearNames::FixedEras(era_names) => era_names
+                .get(if let Some(i) = era_year.era_index {
+                    i as usize
+                } else {
+                    debug_assert!(false, "missing era index");
+                    usize::MAX
+                })
                 .ok_or(GetNameForEraError::InvalidEraCode),
-            _ => Err(GetNameForEraError::InvalidEraCode),
+            YearNames::Cyclic(_) => Err(GetNameForEraError::InvalidEraCode),
         }
     }
 

@@ -229,10 +229,7 @@ fn eras_collect<'a>(
 
     for &(cldr, ref era) in all_eras {
         out.insert(
-            (
-                era.code.as_str(),
-                era.icu4x_era_index.unwrap_or(u8::MAX) as usize,
-            ),
+            (era.code.as_str(), era.icu4x_era_index.unwrap() as usize),
             &*eras.load(length)[&cldr.to_string()],
         );
     }
@@ -276,7 +273,9 @@ fn years_convert(
             .max()
             .unwrap_or_default();
 
-        if max_icu4x_era_index > 10 {
+        if calendar == DatagenCalendar::Japanese {
+            // The Japanese calendar didn't produce era indices until 2.2.0. To keep
+            // new-data-old-code working, we need to produce `YearNames::VariableEras`.
             let kv = eras
                 .iter()
                 .map(|(&(k, _), &v)| (PotentialUtf8::from_str(k), v))
