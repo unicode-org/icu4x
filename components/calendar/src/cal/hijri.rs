@@ -466,19 +466,36 @@ impl ToExtendedYear for HijriYear {
 impl HijriYear {
     /// Creates [`HijriYear`] from the given parts.
     ///
-    /// `start_day` is the date for the first day of the year, see [`Date::to_rata_die`]
-    /// to obtain a [`RataDie`] from a [`Date`] in an arbitrary calendar. `start_day` has
-    /// to be within 5 days of the start of the year of the [`TabularAlgorithm`].
+    /// `month_starts` contains the first day of the 13 months from al-Muḥarram of the
+    /// given year to al-Muḥarram of the following year (inclusive). See [`Date::to_rata_die`]
+    /// to obtain a [`RataDie`] from a [`Date`] in an arbitrary calendar.
     ///
-    /// `month_lengths[n - 1]` is true if the nth month has 30 days, and false otherwise.
-    /// Either 6 or 7 months need to have 30 days.
-    pub fn try_new(
-        extended_year: i32,
-        start_day: RataDie,
-        month_lengths: [bool; 12],
-    ) -> Option<Self> {
+    /// The start of al-Muḥarram has to be within 5 days of the start of al-Muḥarram using
+    /// the [`TabularAlgorithm`].
+    ///
+    /// Months need to have either 29 or 30 days.
+    pub const fn try_new(extended_year: i32, month_starts: [RataDie; 13]) -> Option<Self> {
+        let mut month_lengths = [false; 12];
+
+        let mut i = 0;
+        #[allow(clippy::indexing_slicing)]
+        while i < 12 {
+            match month_starts[i + 1].to_i64_date() - month_starts[i].to_i64_date() {
+                29 => month_lengths[i] = false,
+                30 => month_lengths[i] = true,
+                _ => return None,
+            }
+            i += 1;
+        }
+
+        let Some(packed) =
+            PackedHijriYearData::try_new(extended_year, month_lengths, month_starts[0])
+        else {
+            return None;
+        };
+
         Some(Self {
-            packed: PackedHijriYearData::try_new(extended_year, month_lengths, start_day)?,
+            packed,
             extended_year,
         })
     }
@@ -549,38 +566,22 @@ impl PackedHijriYearData {
         month_lengths: [bool; 12],
         start_day: RataDie,
     ) -> Option<Self> {
-        let start_offset = start_day.since(Self::mean_tabular_start_day(extended_year));
-
-        if !(-8 < start_offset && start_offset < 8
-            || calendrical_calculations::islamic::WELL_BEHAVED_ASTRONOMICAL_RANGE
-                .start
-                .to_i64_date()
-                > start_day.to_i64_date()
-            || calendrical_calculations::islamic::WELL_BEHAVED_ASTRONOMICAL_RANGE
-                .end
-                .to_i64_date()
-                < start_day.to_i64_date())
-        {
+        let start_offset @ -5..=5 = start_day.since(Self::mean_tabular_start_day(extended_year))
+        else {
             return None;
-        }
+        };
+
         let start_offset = start_offset as i8 & 0b1000_0111u8 as i8;
 
         let mut all = 0u16;
-
-        let mut num_days = 29 * 12;
 
         let mut i = 0;
         while i < 12 {
             #[expect(clippy::indexing_slicing)]
             if month_lengths[i] {
                 all |= 1 << i;
-                num_days += 1;
             }
             i += 1;
-        }
-
-        if !matches!(num_days, 354 | 355) {
-            return None;
         }
 
         if start_offset < 0 {
@@ -1687,13 +1688,13 @@ mod test {
 
     #[test]
     fn test_hijri_packed_roundtrip() {
-        fn single_roundtrip(month_lengths: [bool; 12], start_day: RataDie) -> Option<()> {
-            let packed = PackedHijriYearData::try_new(1600, month_lengths, start_day)?;
+        #[track_caller]
+        fn single_roundtrip(month_lengths: [bool; 12], start_day: RataDie) {
+            let packed = PackedHijriYearData::try_new(1600, month_lengths, start_day).unwrap();
             for i in 0..12 {
                 assert_eq!(packed.month_len(i + 1) == 30, month_lengths[i as usize]);
             }
             assert_eq!(packed.new_year(1600), start_day);
-            Some(())
         }
 
         let l = true;
@@ -1704,16 +1705,16 @@ mod test {
         let mixed2 = [s, s, l, l, l, s, l, s, s, s, l, l];
 
         let start_1600 = PackedHijriYearData::mean_tabular_start_day(1600);
-        assert_eq!(single_roundtrip(all_short, start_1600), None);
-        assert_eq!(single_roundtrip(all_long, start_1600), None);
-        single_roundtrip(mixed1, start_1600).unwrap();
-        single_roundtrip(mixed2, start_1600).unwrap();
+        single_roundtrip(all_short, start_1600);
+        single_roundtrip(all_long, start_1600);
+        single_roundtrip(mixed1, start_1600);
+        single_roundtrip(mixed2, start_1600);
 
-        single_roundtrip(mixed1, start_1600 - 7).unwrap();
-        single_roundtrip(mixed2, start_1600 + 7).unwrap();
-        single_roundtrip(mixed2, start_1600 + 4).unwrap();
-        single_roundtrip(mixed2, start_1600 + 1).unwrap();
-        single_roundtrip(mixed2, start_1600 - 1).unwrap();
-        single_roundtrip(mixed2, start_1600 - 4).unwrap();
+        single_roundtrip(mixed1, start_1600 - 5);
+        single_roundtrip(mixed2, start_1600 + 5);
+        single_roundtrip(mixed2, start_1600 + 4);
+        single_roundtrip(mixed2, start_1600 + 1);
+        single_roundtrip(mixed2, start_1600 - 1);
+        single_roundtrip(mixed2, start_1600 - 4);
     }
 }

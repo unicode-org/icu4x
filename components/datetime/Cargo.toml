@@ -50,6 +50,7 @@ icu_calendar = { path = "../calendar", features = ["ixdtf", "unstable"] }
 icu_provider_adapters = { path = "../../provider/adapters" }
 icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }
 icu_time = { path = "../time", features = ["ixdtf", "alloc"] }
+ureq = { workspace = true }
 
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }

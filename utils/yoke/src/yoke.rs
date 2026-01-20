@@ -10,6 +10,7 @@ use crate::kinda_sorta_dangling::KindaSortaDangling;
 use crate::utils;
 use crate::Yokeable;
 use core::marker::PhantomData;
+use core::mem::ManuallyDrop;
 use core::ops::Deref;
 use stable_deref_trait::StableDeref;
 
@@ -453,7 +454,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///
     /// # Safety
     ///
-    /// - `f()` must not panic
     /// - References from the yokeable `Y` should still be valid for the lifetime of the
     ///   returned cart type `C`.
     ///
@@ -468,18 +468,25 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///   I.e., if C contains an `fn(&'a u8)`, it cannot be replaced with `fn(&'static u8)`,
     ///   even though that is typically safe.
     ///
+    /// Note: `f` *is* allowed to panic.
+    ///
     /// Typically, this means implementing `f` as something which _wraps_ the inner cart type `C`.
     /// `Yoke` only really cares about destructors for its carts so it's fine to erase other
     /// information about the cart, as long as the backing data will still be destroyed at the
     /// same time.
     #[inline]
     pub unsafe fn replace_cart<C2>(self, f: impl FnOnce(C) -> C2) -> Yoke<Y, C2> {
+        let yokeable = ManuallyDrop::new(self.yokeable);
+        let cart = f(self.cart);
         Yoke {
             // Safety note: the safety invariant of this function guarantees that
             // the data that the yokeable references has its ownership (if any)
-            // transferred to the new cart before self.cart is dropped.
-            yokeable: self.yokeable,
-            cart: f(self.cart),
+            // transferred to the new cart before self.cart is dropped, unless
+            // `f` panics, in which case the above `ManuallyDrop` ensures that
+            // the yokeable is leaked (preventing any UB from dropping the
+            // yokeable after its cart).
+            yokeable: ManuallyDrop::into_inner(yokeable),
+            cart,
         }
     }
 
@@ -1560,6 +1567,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     #[inline]
     pub fn wrap_cart_in_box(self) -> Yoke<Y, Box<C>> {
         // Safety: safe because the cart is preserved, as it is just wrapped.
+        // `replace_cart()` explicitly allows panics.
         unsafe { self.replace_cart(Box::new) }
     }
     /// Helper function allowing one to wrap the cart type `C` in an `Rc<T>`.
@@ -1569,7 +1577,8 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[inline]
     pub fn wrap_cart_in_rc(self) -> Yoke<Y, Rc<C>> {
-        // Safety: safe because the cart is preserved, as it is just wrapped
+        // Safety: safe because the cart is preserved, as it is just wrapped.
+        // `replace_cart()` explicitly allows panics.
         unsafe { self.replace_cart(Rc::new) }
     }
     /// Helper function allowing one to wrap the cart type `C` in an `Arc<T>`.
@@ -1579,7 +1588,8 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[inline]
     pub fn wrap_cart_in_arc(self) -> Yoke<Y, Arc<C>> {
-        // Safety: safe because the cart is preserved, as it is just wrapped
+        // Safety: safe because the cart is preserved, as it is just wrapped.
+        // `replace_cart()` explicitly allows panics.
         unsafe { self.replace_cart(Arc::new) }
     }
 }

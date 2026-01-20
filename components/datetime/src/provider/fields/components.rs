@@ -77,6 +77,9 @@ pub struct Bag {
     pub time_zone_name: Option<TimeZoneName>,
 
     /// An override of the hour cycle.
+    //
+    // TODO: This should probably not be the preferences [HourCycle] type. It directly sets the
+    // hour cycle, without support for Clock12 and Clock24, which will panic.
     pub hour_cycle: Option<HourCycle>,
 }
 

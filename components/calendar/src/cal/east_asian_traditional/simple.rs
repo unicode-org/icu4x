@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cal::east_asian_traditional_internal::PackedEastAsianTraditionalYearData;
+
 use super::EastAsianTraditionalYear;
 use calendrical_calculations::{gregorian::DAYS_IN_400_YEAR_CYCLE, rata_die::RataDie};
 
@@ -139,7 +141,7 @@ impl super::EastAsianTraditionalYear {
 
         debug_assert_eq!(solar_term, 0);
 
-        let start_day = new_moon.rata_die;
+        let new_year = new_moon.rata_die;
         let mut month_lengths = [false; 13];
         let mut leap_month = None;
 
@@ -164,7 +166,15 @@ impl super::EastAsianTraditionalYear {
 
         debug_assert_eq!(solar_term, 12);
 
-        EastAsianTraditionalYear::new(related_iso, start_day, month_lengths, leap_month)
+        EastAsianTraditionalYear {
+            packed: PackedEastAsianTraditionalYearData::new(
+                related_iso,
+                month_lengths,
+                leap_month,
+                new_year,
+            ),
+            related_iso,
+        }
     }
 }
 

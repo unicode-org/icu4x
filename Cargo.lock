@@ -1389,6 +1389,7 @@ dependencies = [
  "serde_json",
  "smallvec",
  "tinystr",
+ "ureq",
  "writeable",
  "zerotrie",
  "zerovec",

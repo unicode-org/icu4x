@@ -6,7 +6,6 @@
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 pub mod ffi {
     use alloc::boxed::Box;
-    use alloc::sync::Arc;
 
     #[cfg(feature = "buffer_provider")]
     use crate::unstable::errors::ffi::DataError;
@@ -73,7 +72,7 @@ pub mod ffi {
     #[diplomat::opaque]
     #[diplomat::transparent_convert]
     #[diplomat::rust_link(icu::calendar::AnyCalendar, Enum)]
-    pub struct Calendar(pub Arc<icu_calendar::AnyCalendar>);
+    pub struct Calendar(pub icu_calendar::AnyCalendar);
 
     impl Calendar {
         /// Creates a new [`Calendar`] for the specified kind, using compiled data.
@@ -81,9 +80,7 @@ pub mod ffi {
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create(kind: CalendarKind) -> Box<Calendar> {
-            Box::new(Calendar(Arc::new(icu_calendar::AnyCalendar::new(
-                kind.into(),
-            ))))
+            Box::new(Calendar(icu_calendar::AnyCalendar::new(kind.into())))
         }
 
         /// Creates a new [`Calendar`] for the specified kind, using a particular data source.
@@ -94,12 +91,12 @@ pub mod ffi {
             provider: &DataProvider,
             kind: CalendarKind,
         ) -> Result<Box<Calendar>, DataError> {
-            Ok(Box::new(Calendar(Arc::new(
+            Ok(Box::new(Calendar(
                 icu_calendar::AnyCalendar::try_new_with_buffer_provider(
                     provider.get()?,
                     kind.into(),
                 )?,
-            ))))
+            )))
         }
 
         /// Returns the kind of this calendar
