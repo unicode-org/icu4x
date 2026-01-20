@@ -82,6 +82,7 @@ impl Duration {
 
 /// Describes whether a [`Duration`] is positive or negative.
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[allow(clippy::exhaustive_enums)] // bool newtype
 pub enum DurationSign {
     #[default]
     /// A positive duration.

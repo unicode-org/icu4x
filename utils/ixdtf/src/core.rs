@@ -67,7 +67,7 @@ impl private::Sealed for Utf8 {}
 impl EncodingType for Utf8 {
     type CodeUnit = u8;
 
-    fn slice<'a>(source: &[Self::CodeUnit], start: usize, end: usize) -> Option<&[Self::CodeUnit]> {
+    fn slice(source: &[Self::CodeUnit], start: usize, end: usize) -> Option<&[Self::CodeUnit]> {
         source.get(start..end)
     }
 

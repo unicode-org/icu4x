@@ -1,122 +1,120 @@
-{
-  "patterns": [
-    {
-      "sized": 3,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " mil"
-            }
-          ]
+[
+  {
+    "sized": 3,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " mil"
+          }
         ]
-      }
-    },
-    {
-      "sized": 6,
-      "variable": {
-        "one": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " millón"
-            }
-          ]
-        ],
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " millones"
-            }
-          ]
-        ]
-      }
-    },
-    {
-      "sized": 7,
-      "variable": {
-        "other": [
-          1,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " millones"
-            }
-          ]
-        ]
-      }
-    },
-    {
-      "sized": 9,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " mil millones"
-            }
-          ]
-        ]
-      }
-    },
-    {
-      "sized": 12,
-      "variable": {
-        "one": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " billón"
-            }
-          ]
-        ],
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " billones"
-            }
-          ]
-        ]
-      }
-    },
-    {
-      "sized": 13,
-      "variable": {
-        "other": [
-          1,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " billones"
-            }
-          ]
-        ]
-      }
+      ]
     }
-  ]
-}
+  },
+  {
+    "sized": 6,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " millón"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " millones"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 7,
+    "variable": {
+      "other": [
+        1,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " millones"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 9,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " mil millones"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 12,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " billón"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " billones"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 13,
+    "variable": {
+      "other": [
+        1,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " billones"
+          }
+        ]
+      ]
+    }
+  }
+]

@@ -82,16 +82,33 @@
         clippy::unwrap_used,
         clippy::expect_used,
         clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        clippy::trivially_copy_pass_by_ref,
-        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;
+
+#[cfg(feature = "alloc")]
+#[doc(hidden)] // TODO(#3647): should be private
+pub use alloc::borrow::Cow;
+
+#[cfg(not(feature = "alloc"))]
+#[derive(Debug, PartialEq, Eq, Clone)]
+#[doc(hidden)] // TODO(#3647): should be private
+pub enum Cow<'a, T> {
+    Borrowed(&'a T),
+}
+
+#[cfg(not(feature = "alloc"))]
+impl<'a, T> core::ops::Deref for Cow<'a, T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        let Self::Borrowed(r) = self;
+        r
+    }
+}
 
 mod format;
 mod grouper;
@@ -100,9 +117,9 @@ pub mod parts;
 pub mod provider;
 pub(crate) mod size_test_macro;
 
-pub use format::FormattedDecimal;
+pub use format::{FormattedDecimal, FormattedSign, FormattedUnsignedDecimal};
 
-use fixed_decimal::Decimal;
+use fixed_decimal::{Decimal, Sign, UnsignedDecimal};
 use icu_locale_core::preferences::define_preferences;
 use icu_provider::prelude::*;
 use size_test_macro::size_test;
@@ -283,11 +300,42 @@ impl DecimalFormatter {
 
     /// Formats a [`Decimal`], returning a [`FormattedDecimal`].
     pub fn format<'l>(&'l self, value: &'l Decimal) -> FormattedDecimal<'l> {
-        FormattedDecimal {
+        FormattedDecimal(self.format_sign(
+            value.sign,
+            self.format_unsigned(Cow::Borrowed(&value.absolute)),
+        ))
+    }
+
+    #[doc(hidden)] // TODO(#3647): should be private
+    pub fn format_unsigned<'l>(
+        &'l self,
+        value: Cow<'l, UnsignedDecimal>,
+    ) -> FormattedUnsignedDecimal<'l> {
+        FormattedUnsignedDecimal {
             value,
             options: &self.options,
             symbols: self.symbols.get(),
             digits: self.digits.get(),
+        }
+    }
+
+    #[doc(hidden)] // TODO(#3647): should be private
+    pub fn format_sign<'l, T>(&'l self, sign: Sign, value: T) -> FormattedSign<'l, T> {
+        FormattedSign {
+            sign: match sign {
+                Sign::None => None,
+                Sign::Negative => Some((
+                    parts::MINUS_SIGN,
+                    self.symbols.get().strings.minus_sign_prefix(),
+                    self.symbols.get().strings.minus_sign_suffix(),
+                )),
+                Sign::Positive => Some((
+                    parts::PLUS_SIGN,
+                    self.symbols.get().strings.plus_sign_prefix(),
+                    self.symbols.get().strings.plus_sign_suffix(),
+                )),
+            },
+            value,
         }
     }
 

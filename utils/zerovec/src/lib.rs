@@ -2,6 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+#![cfg_attr(not(any(test, doc)), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+    )
+)]
+// #![warn(missing_docs)]
+
 //! Zero-copy vector abstractions for arbitrary types, backed by byte slices.
 //!
 //! `zerovec` enables a far wider range of types — beyond just `&[u8]` and `&str` — to participate in
@@ -193,21 +206,6 @@
 //! `zeromap` benches are named by convention, e.g. `zeromap/deserialize/small`, `zeromap/lookup/large`. The type
 //! is appended for baseline comparisons, e.g. `zeromap/lookup/small/hashmap`.
 
-// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, doc)), no_std)]
-#![cfg_attr(
-    not(test),
-    deny(
-        clippy::indexing_slicing,
-        clippy::unwrap_used,
-        clippy::expect_used,
-        clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        clippy::trivially_copy_pass_by_ref,
-        missing_debug_implementations,
-    )
-)]
 // this crate does a lot of nuanced lifetime manipulation, being explicit
 // is better here.
 #![allow(clippy::needless_lifetimes)]

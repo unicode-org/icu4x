@@ -19,16 +19,16 @@ pub trait PersonName {
 
     /// Returns the value of the given field name, it *must* match the name field requested.
     /// The string should be in NFC.
-    fn get(&self, field: &NameField) -> &str;
+    fn get(&self, field: NameField) -> &str;
 
     /// Returns all available name field.
-    fn available_name_fields(&self) -> Vec<&NameField>;
+    fn available_name_fields(&self) -> Vec<NameField>;
 
     /// Returns true if the provided field name is available.
-    fn has_name_field_kind(&self, lookup_name_field: &NameFieldKind) -> bool;
+    fn has_name_field_kind(&self, lookup_name_field: NameFieldKind) -> bool;
 
     /// Returns true if person have the name field matching the type and modifier.
-    fn has_name_field(&self, lookup_name_field: &NameField) -> bool;
+    fn has_name_field(&self, lookup_name_field: NameField) -> bool;
 }
 
 ///
@@ -79,7 +79,7 @@ pub(crate) enum FieldModifier {
 }
 
 impl FieldModifier {
-    pub(crate) fn bit_value(&self) -> u32 {
+    pub(crate) fn bit_value(self) -> u32 {
         match &self {
             FieldModifier::None => 0,
             FieldModifier::Informal => 1 << 0,
@@ -167,12 +167,12 @@ pub struct FieldModifierSet {
 
 impl FieldModifierSet {
     /// Return true of the field modifier is set. (None will always return true.)
-    pub(crate) fn has_field(&self, modifier: FieldModifier) -> bool {
+    pub(crate) fn has_field(self, modifier: FieldModifier) -> bool {
         self.value & modifier.bit_value() == modifier.bit_value()
     }
 
     /// Returns a copy of the field modifier set with the part changed.
-    pub(crate) fn with_part(&self, part: FieldPart) -> FieldModifierSet {
+    pub(crate) fn with_part(self, part: FieldPart) -> FieldModifierSet {
         FieldModifierSet {
             value: (self.value
                 & (u32::MAX
@@ -181,7 +181,7 @@ impl FieldModifierSet {
         }
     }
     /// Returns a copy of the field modifier set with the length changed.
-    pub(crate) fn with_length(&self, length: FieldLength) -> FieldModifierSet {
+    pub(crate) fn with_length(self, length: FieldLength) -> FieldModifierSet {
         FieldModifierSet {
             value: (self.value
                 & (u32::MAX

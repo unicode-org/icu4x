@@ -23,6 +23,7 @@ pub struct IcuRatio(Ratio<BigInt>);
 
 /// The ratio string is invalid and cannot be parsed.
 #[derive(Debug, PartialEq, displaydoc::Display)]
+#[non_exhaustive]
 pub enum RatioFromStrError {
     /// The ratio string is divided by zero.
     DivisionByZero,

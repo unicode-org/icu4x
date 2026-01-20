@@ -8,7 +8,7 @@ use zerovec::*;
 
 #[repr(C, packed)]
 #[derive(ule::ULE, Copy, Clone)]
-pub struct FooULE {
+struct FooULE {
     a: u8,
     b: <u32 as AsULE>::ULE,
     c: <char as AsULE>::ULE,
@@ -42,7 +42,7 @@ impl AsULE for Foo {
 
 #[repr(C, packed)]
 #[derive(ule::VarULE)]
-pub struct RelationULE {
+struct RelationULE {
     /// This maps to (AndOr, Polarity, Operand),
     /// with the first bit mapping to AndOr (1 == And), the second bit
     /// to Polarity (1 == Positive), and the remaining bits to Operand
@@ -54,7 +54,7 @@ pub struct RelationULE {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-pub struct Relation<'a> {
+struct Relation<'a> {
     andor_polarity_operand: u8,
     modulo: u32,
     range_list: ZeroVec<'a, Foo>,
@@ -71,7 +71,7 @@ unsafe impl EncodeAsVarULE<RelationULE> for Relation<'_> {
 }
 
 impl RelationULE {
-    pub fn as_relation(&self) -> Relation<'_> {
+    fn as_relation(&self) -> Relation<'_> {
         Relation {
             andor_polarity_operand: self.andor_polarity_operand,
             modulo: u32::from_unaligned(self.modulo),

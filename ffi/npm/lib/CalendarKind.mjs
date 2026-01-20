@@ -116,11 +116,13 @@ export class CalendarKind {
      */
     static Buddhist = CalendarKind.#objectValues[2];
     /**
-     * The kind of a Japanese calendar with modern eras
+     * The kind of a Japanese calendar
      */
     static Japanese = CalendarKind.#objectValues[3];
     /**
-     * The kind of a Japanese calendar with modern and historic eras
+     * Deprecated, use `Japanese`
+     *
+     * @deprecated use `Japanese`
      */
     static JapaneseExtended = CalendarKind.#objectValues[4];
     /**

@@ -267,33 +267,11 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
-impl DecimalSymbols<'_> {
-    /// Return (prefix, suffix) for the minus sign
-    pub fn minus_sign_affixes(&self) -> (&str, &str) {
-        (
-            self.strings.minus_sign_prefix(),
-            self.strings.minus_sign_suffix(),
-        )
-    }
-    /// Return (prefix, suffix) for the minus sign
-    pub fn plus_sign_affixes(&self) -> (&str, &str) {
-        (
-            self.strings.plus_sign_prefix(),
-            self.strings.plus_sign_suffix(),
-        )
-    }
-    /// Return thhe decimal separator
-    pub fn decimal_separator(&self) -> &str {
-        self.strings.decimal_separator()
-    }
-    /// Return thhe decimal separator
-    pub fn grouping_separator(&self) -> &str {
-        self.strings.grouping_separator()
-    }
+impl<'a> core::ops::Deref for DecimalSymbols<'a> {
+    type Target = VarZeroCow<'a, DecimalSymbolsStrs>;
 
-    /// Return the numbering system
-    pub fn numsys(&self) -> &str {
-        self.strings.numsys()
+    fn deref(&self) -> &Self::Target {
+        &self.strings
     }
 }
 

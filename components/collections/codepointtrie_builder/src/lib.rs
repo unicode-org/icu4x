@@ -2,6 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+// #![cfg_attr(not(any(test, doc)), no_std)]
+// #![cfg_attr(
+//     not(test),
+//     deny(
+//         clippy::indexing_slicing,
+//         clippy::unwrap_used,
+//         clippy::expect_used,
+//         clippy::panic,
+//     )
+// )]
+#![warn(missing_docs)]
+
 //! `icu_codepointtrie_builder` is a utility crate of the [`ICU4X`] project.
 //!
 //! This crate exposes functionality to build a [`CodePointTrie`] from values provided at runtime.
@@ -70,20 +83,6 @@
 //! [`ICU4X`]: ../icu/index.html
 //! [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
 //! [`UMutableCPTrie`]: (https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/umutablecptrie_8h.html#ad8945cf34ca9d40596a66a1395baa19b)
-
-#![cfg_attr(
-    not(test),
-    deny(
-        // The crate is documented to allow panics.
-        // clippy::indexing_slicing,
-        // clippy::unwrap_used,
-        // clippy::expect_used,
-        // clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums, clippy::trivially_copy_pass_by_ref,
-        missing_debug_implementations,
-    )
-)]
 
 use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;

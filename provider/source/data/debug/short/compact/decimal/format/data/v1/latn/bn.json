@@ -1,111 +1,109 @@
-{
-  "patterns": [
-    {
-      "sized": 3,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " হা"
-            }
-          ]
+[
+  {
+    "sized": 3,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " হা"
+          }
         ]
-      }
-    },
-    {
-      "sized": 5,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " লা"
-            }
-          ]
-        ]
-      }
-    },
-    {
-      "sized": 7,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " কো"
-            }
-          ]
-        ]
-      }
-    },
-    {
-      "sized": 10,
-      "variable": {
-        "one": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " শত কো"
-            }
-          ]
-        ],
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": "শত কো"
-            }
-          ]
-        ]
-      }
-    },
-    {
-      "sized": 11,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": "কো"
-            }
-          ]
-        ]
-      }
-    },
-    {
-      "sized": 12,
-      "variable": {
-        "other": [
-          0,
-          [
-            {
-              "Placeholder": "Singleton"
-            },
-            {
-              "Literal": " লা.কো."
-            }
-          ]
-        ]
-      }
+      ]
     }
-  ]
-}
+  },
+  {
+    "sized": 5,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " লা"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 7,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " কো"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 10,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " শত কো"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": "শত কো"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 11,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": "কো"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 12,
+    "variable": {
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " লা.কো."
+          }
+        ]
+      ]
+    }
+  }
+]

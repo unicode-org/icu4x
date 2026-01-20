@@ -52,6 +52,7 @@ prefs_convert!(DurationFormatterPreferences, ListFormatterPreferences);
 /// Read more about the options in the [`options`](super::options) module.
 ///
 /// See the crate-level documentation for examples.
+#[derive(Debug)]
 pub struct DurationFormatter {
     /// Options for configuring the formatter.
     pub(crate) options: ValidatedDurationFormatterOptions,
@@ -61,6 +62,7 @@ pub struct DurationFormatter {
     pub(crate) fdf: DecimalFormatter,
 }
 
+#[derive(Debug)]
 pub(crate) struct DurationUnitFormatter {
     pub(crate) year: UnitsFormatter,
     pub(crate) month: UnitsFormatter,

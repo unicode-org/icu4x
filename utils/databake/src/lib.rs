@@ -2,6 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+// #![cfg_attr(not(any(test, doc)), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+    )
+)]
+#![warn(missing_docs)]
+
 //! This crate allows data to write itself into Rust code (bake itself in).
 //!
 //! Types that implement the `Bake` trait can be written into Rust expressions,
@@ -89,13 +102,14 @@ use std::collections::HashSet;
 use std::sync::Mutex;
 
 /// A collection of crates that are required for the evaluation of some expression.
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct CrateEnv(Mutex<HashSet<&'static str>>);
 
 impl CrateEnv {
     /// Adds a crate to this collection. This can be called concurrently
     /// and without `mut`.
     pub fn insert(&self, krate: &'static str) {
+        #[allow(clippy::expect_used)] // poison
         self.0.lock().expect("poison").insert(krate);
     }
 }
@@ -105,6 +119,7 @@ impl IntoIterator for CrateEnv {
     type IntoIter = <HashSet<&'static str> as IntoIterator>::IntoIter;
 
     fn into_iter(self) -> Self::IntoIter {
+        #[allow(clippy::expect_used)] // poison
         self.0.into_inner().expect("poison").into_iter()
     }
 }

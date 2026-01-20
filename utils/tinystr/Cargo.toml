@@ -70,3 +70,6 @@ harness = false
 name = "serde"
 harness = false
 required-features = ["serde"]
+
+[lints]
+workspace = true

@@ -116,6 +116,16 @@ pub struct UnsignedDecimal {
     lower_magnitude: i16,
 }
 
+impl UnsignedDecimal {
+    /// The number 1.
+    pub const ONE: Self = Self {
+        digits: unsafe { SmallVec::from_const_with_len_unchecked([1; 8], 1) },
+        magnitude: 0,
+        upper_magnitude: 0,
+        lower_magnitude: 0,
+    };
+}
+
 impl Default for UnsignedDecimal {
     /// Returns a [`UnsignedDecimal`] representing zero.
     fn default() -> Self {

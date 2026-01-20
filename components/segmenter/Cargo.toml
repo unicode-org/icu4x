@@ -69,3 +69,6 @@ required-features = ["auto"]
 [[test]]
 name = "cnn"
 required-features = []
+
+[lints]
+workspace = true

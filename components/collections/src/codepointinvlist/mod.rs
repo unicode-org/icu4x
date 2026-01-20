@@ -51,8 +51,6 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
-#![warn(missing_docs)]
-
 #[cfg(feature = "alloc")]
 #[macro_use]
 mod builder;
@@ -70,6 +68,7 @@ use displaydoc::Display;
 #[derive(Display, Debug)]
 /// A CodePointInversionList was constructed with an invalid inversion list
 #[cfg_attr(feature = "alloc", displaydoc("Invalid set: {0:?}"))]
+#[allow(clippy::exhaustive_structs)] // newtype
 pub struct InvalidSetError(
     #[cfg(feature = "alloc")] pub alloc::vec::Vec<potential_utf::PotentialCodePoint>,
 );
@@ -77,4 +76,5 @@ pub struct InvalidSetError(
 /// A CodePointInversionList was constructed from an invalid range
 #[derive(Display, Debug)]
 #[displaydoc("Invalid range: {0}..{1}")]
+#[allow(clippy::exhaustive_structs)] // newtype
 pub struct RangeError(pub u32, pub u32);

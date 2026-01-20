@@ -2,6 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+#![cfg_attr(not(any(test, doc)), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+    )
+)]
+#![warn(missing_docs)]
+
 //! `fixed_decimal` is a utility crate of the [`ICU4X`] project.
 //!
 //! This crate provides [`Decimal`] and [`UnsignedDecimal`], essential APIs for representing numbers in a human-readable format.
@@ -36,26 +49,11 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
-// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, doc)), no_std)]
-#![cfg_attr(
-    not(test),
-    deny(
-        clippy::indexing_slicing,
-        clippy::unwrap_used,
-        clippy::expect_used,
-        clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        clippy::trivially_copy_pass_by_ref,
-        missing_debug_implementations,
-    )
-)]
-
 mod compact;
 mod decimal;
 mod integer;
 mod ops;
+#[allow(missing_docs)] // todo
 mod rounding;
 mod scientific;
 mod signed_decimal;

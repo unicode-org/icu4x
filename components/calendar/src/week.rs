@@ -4,22 +4,14 @@
 
 //! Functions for region-specific weekday information.
 
+pub use crate::preferences::WeekPreferences;
+
+use crate::preferences::FirstDay;
 use crate::{error::RangeError, provider::*, types::Weekday};
-use icu_locale_core::preferences::{define_preferences, extensions::unicode::keywords::FirstDay};
 use icu_provider::prelude::*;
 
 /// Minimum number of days in a month unit required for using this module
 const MIN_UNIT_DAYS: u16 = 14;
-
-define_preferences!(
-    /// The preferences for the week information.
-    [Copy]
-    WeekPreferences,
-    {
-        /// The first day of the week
-        first_weekday: FirstDay
-    }
-);
 
 /// Information about the first day of the week and the weekend.
 ///
@@ -411,7 +403,7 @@ mod tests {
     /// This alternative implementation serves as an exhaustive safety check
     /// of relative_week() (in addition to the manual test points used
     /// for testing week_of()).
-    fn classify_days_of_unit(calendar: WeekCalculator, unit: &UnitInfo) -> Vec<RelativeWeek> {
+    fn classify_days_of_unit(calendar: WeekCalculator, unit: UnitInfo) -> Vec<RelativeWeek> {
         let mut weeks: Vec<Vec<Weekday>> = Vec::new();
         for day_index in 0..unit.duration_days {
             let day = super::add_to_weekday(unit.first_day, i32::from(day_index));
@@ -455,7 +447,7 @@ mod tests {
                             unit_duration,
                         )
                         .unwrap();
-                        let expected = classify_days_of_unit(calendar, &unit);
+                        let expected = classify_days_of_unit(calendar, unit);
                         for (index, expected_week_of) in expected.iter().enumerate() {
                             let day = index + 1;
                             assert_eq!(

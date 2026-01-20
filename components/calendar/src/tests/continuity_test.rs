@@ -216,16 +216,6 @@ fn test_japanese_continuity() {
 }
 
 #[test]
-fn test_japanese_extended_continuity() {
-    let cal = cal::JapaneseExtended::new();
-    let cal = Ref(&cal);
-    let date = Date::try_new_japanese_extended_with_calendar("heisei", 20, 1, 1, cal);
-    check_continuity(date.unwrap(), 20);
-    let date = Date::try_new_japanese_extended_with_calendar("bce", 500, 1, 1, cal);
-    check_every_250_days(date.unwrap(), 2000);
-}
-
-#[test]
 fn test_persian_continuity() {
     let date = Date::try_new_persian(-10, 1, 1);
     check_continuity(date.unwrap(), 20);

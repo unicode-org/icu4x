@@ -23,7 +23,7 @@ all-features = true
 
 [dependencies]
 displaydoc = { workspace = true }
-smallvec = { workspace = true }
+smallvec = { workspace = true, features = ["const_new"] }
 writeable = { workspace = true, features = ["alloc"] }
 
 ryu = { workspace = true, features = ["small"], optional = true }
@@ -48,3 +48,6 @@ bench = false  # This option is required for Benchmark CI
 [[bench]]
 name = "fixed_decimal"
 harness = false
+
+[lints]
+workspace = true

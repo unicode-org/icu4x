@@ -594,8 +594,8 @@ macro_rules! __define_preferences {
 #[doc(hidden)]
 macro_rules! __prefs_convert {
     (
-        $name1:ident,
-        $name2:ident
+        $name1:ty,
+        $name2:ty
     ) => {
         impl From<&$name1> for $name2 {
             fn from(other: &$name1) -> Self {
@@ -606,8 +606,8 @@ macro_rules! __prefs_convert {
         }
     };
     (
-        $name1:ident,
-        $name2:ident,
+        $name1:ty,
+        $name2:ty,
         {
             $(
                 $key:ident

@@ -63,6 +63,7 @@ pub mod parts {
 
 /// The [`Writeable`] implementation that is returned by [`DurationFormatter::format`]. See
 /// the [`writeable`] crate for how to consume this.
+#[derive(Debug)]
 pub struct FormattedDuration<'l> {
     pub(crate) fmt: &'l DurationFormatter,
     pub(crate) duration: &'l Duration,

@@ -4,7 +4,8 @@
 
 use crate::{
     compactdecimal::{
-        CompactDecimalFormatter, CompactDecimalFormatterOptions, CompactDecimalFormatterPreferences,
+        options::CompactDecimalFormatterOptions, preferences::CompactDecimalFormatterPreferences,
+        CompactDecimalFormatter,
     },
     dimension::provider::{
         currency::compact::ShortCurrencyCompactV1, currency::essentials::CurrencyEssentialsV1,
@@ -51,6 +52,7 @@ prefs_convert!(
 ///   2. Locale-sensitive grouping separator positions.
 ///
 /// Read more about the options in the [`super::compact_options`] module.
+#[derive(Debug)]
 pub struct CompactCurrencyFormatter {
     /// Short currency compact data for the compact currency formatter.
     short_currency_compact: DataPayload<ShortCurrencyCompactV1>,
