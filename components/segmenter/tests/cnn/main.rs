@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(dead_code)]
+
 use ndarray::{Array, Array1, Array2, Array3, ArrayBase, Dim, Dimension, OwnedRepr};
 use serde::Deserialize;
 use std::collections::HashMap;
@@ -21,13 +23,13 @@ macro_rules! f32c {
 }
 
 #[derive(PartialEq, Debug, Clone, Copy)]
-pub enum ModelType {
+pub(crate) enum ModelType {
     Codepoints,
     GraphemeClusters,
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct CnnDataFloat32<'data> {
+pub(crate) struct CnnDataFloat32<'data> {
     model: ModelType,
     dic: HashMap<char, u16>,
     embedding: CnnMatrix2<'data>,
@@ -41,7 +43,7 @@ pub struct CnnDataFloat32<'data> {
 
 impl<'data> CnnDataFloat32<'data> {
     #[allow(clippy::too_many_arguments)]
-    pub fn try_from_parts(
+    pub(crate) fn try_from_parts(
         model: ModelType,
         dic: HashMap<char, u16>,
         embedding: CnnMatrix2<'data>,
@@ -107,7 +109,7 @@ impl<'data> CnnDataFloat32<'data> {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum CnnData<'data> {
+pub(crate) enum CnnData<'data> {
     Float32(CnnDataFloat32<'data>),
 }
 
@@ -142,7 +144,7 @@ impl RawCnnMatrix {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct RawCnnData {
+pub(crate) struct RawCnnData {
     model: String,
     dic: HashMap<char, u16>,
     #[serde(rename = "mat1")]
@@ -166,7 +168,7 @@ impl RawCnnData {
         serde_json::from_str(MODEL_FOR_TEST).unwrap()
     }
 
-    pub fn try_convert(&self) -> Result<CnnData<'static>, String> {
+    pub(crate) fn try_convert(&self) -> Result<CnnData<'static>, String> {
         let embedding = self.embedding.to_ndarray2()?;
         // let mut cnn_w1 = self.cnn_w1.to_ndarray3()?;
         let cnn_w1 = self.cnn_w1.to_ndarray3()?;
@@ -202,13 +204,13 @@ impl RawCnnData {
 macro_rules! cnn_matrix {
     ($name:ident, $generic:literal) => {
         #[derive(PartialEq, Debug, Clone)]
-        pub struct $name<'data> {
-            pub dims: [u16; $generic],
-            pub data: ZeroVec<'data, f32>,
+        pub(crate) struct $name<'data> {
+            pub(crate) dims: [u16; $generic],
+            pub(crate) data: ZeroVec<'data, f32>,
         }
 
         impl<'data> $name<'data> {
-            pub fn from_parts(
+            pub(crate) fn from_parts(
                 dims: [u16; $generic],
                 data: ZeroVec<'data, f32>,
             ) -> Result<Self, &'static str> {
@@ -350,7 +352,7 @@ fn argmax(slice: &[f32]) -> usize {
     bi
 }
 
-pub struct BiesList<'l, 'data> {
+pub(crate) struct BiesList<'l, 'data> {
     _segmenter: &'l CnnSegmenter<'data>,
     _input_seq: core::iter::Enumerate<std::vec::IntoIter<u16>>,
     input_str: &'l str,
@@ -432,7 +434,7 @@ impl<'l, 'data> BiesList<'l, 'data> {
         }
     }
 
-    pub fn to_bies_tags(&self) -> String {
+    pub(crate) fn to_bies_tags(&self) -> String {
         let (l, c) = self.probs.as_borrowed().dim();
         let flat = self.probs.as_borrowed().as_slice();
 
@@ -445,7 +447,7 @@ impl<'l, 'data> BiesList<'l, 'data> {
         tags
     }
 
-    pub fn to_breakpoints(&self) -> Vec<usize> {
+    pub(crate) fn to_breakpoints(&self) -> Vec<usize> {
         let mut breakpoints = vec![0];
         let mut offset = 0;
         for (tag, ch) in self.to_bies_tags().chars().zip(self.input_str.chars()) {
@@ -458,7 +460,7 @@ impl<'l, 'data> BiesList<'l, 'data> {
     }
 }
 
-pub struct CnnSegmenter<'data> {
+pub(crate) struct CnnSegmenter<'data> {
     dic: &'data HashMap<char, u16>,
     embedding: MatrixZero<'data, 2>,
     cnn_w1: MatrixZero<'data, 3>,
@@ -470,7 +472,7 @@ pub struct CnnSegmenter<'data> {
 }
 
 impl<'data> CnnSegmenter<'data> {
-    pub fn new(lstm: &'data CnnData<'data>) -> Self {
+    pub(crate) fn new(lstm: &'data CnnData<'data>) -> Self {
         let CnnData::Float32(lstm) = lstm;
         Self {
             dic: &lstm.dic,
@@ -484,7 +486,7 @@ impl<'data> CnnSegmenter<'data> {
         }
     }
 
-    pub fn segment_str<'a>(&'a self, input: &'a str) -> BiesList<'a, 'data> {
+    pub(crate) fn segment_str<'a>(&'a self, input: &'a str) -> BiesList<'a, 'data> {
         let input_seq = input
             .chars()
             .map(|c| self.dic.get(&c).copied().unwrap_or(self.dic.len() as u16))

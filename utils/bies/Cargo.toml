@@ -31,3 +31,6 @@ writeable = { workspace = true, features = ["alloc"] }
 rand = { workspace = true }
 rand_distr = { workspace = true }
 rand_pcg = { workspace = true }
+
+[lints]
+workspace = true

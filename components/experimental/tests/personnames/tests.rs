@@ -11,7 +11,7 @@ use icu_locale_core::locale;
 use litemap::LiteMap;
 use PersonNamesFormatterError::ParseError;
 
-pub struct TestingProvider;
+struct TestingProvider;
 
 const _: () = {
     pub use icu_experimental_data::*;

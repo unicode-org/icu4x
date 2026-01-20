@@ -16,7 +16,7 @@ use icu_calendar::Date;
 ///
 /// [^1]: See [calendrical_calculations::islamic::observational_islamic_from_fixed]
 #[derive(Debug, Clone, Copy)]
-pub struct ReingoldSimulation;
+struct ReingoldSimulation;
 
 impl icu_calendar::cal::scaffold::UnstableSealed for ReingoldSimulation {}
 impl Rules for ReingoldSimulation {

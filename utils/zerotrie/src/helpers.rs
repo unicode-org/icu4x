@@ -58,15 +58,6 @@ macro_rules! debug_unwrap {
             }
         }
     };
-    ($expr:expr, break) => {
-        debug_unwrap!($expr, break, "invalid trie")
-    };
-    ($expr:expr, $($arg:tt)+) => {
-        debug_unwrap!($expr, return (), $($arg)*)
-    };
-    ($expr:expr) => {
-        debug_unwrap!($expr, return ())
-    };
 }
 
 pub(crate) use debug_unwrap;

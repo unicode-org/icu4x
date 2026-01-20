@@ -32,3 +32,6 @@ databake = ["dep:databake"]
 serde = ["dep:serde_core"]
 writeable = ["dep:writeable"]
 zerovec = ["dep:zerovec"]
+
+[lints]
+workspace = true

@@ -11,13 +11,10 @@
         clippy::unwrap_used,
         clippy::expect_used,
         clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        clippy::trivially_copy_pass_by_ref,
-        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
+#![allow(clippy::todo)]
 
 //! `resb` is a utility crate of the [`ICU4X`] project for working with ICU
 //! resource bundle files.

@@ -51,8 +51,6 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
-#![warn(missing_docs)]
-
 #[cfg(feature = "alloc")]
 #[macro_use]
 mod builder;

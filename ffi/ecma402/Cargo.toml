@@ -25,3 +25,6 @@ fixed_decimal = { workspace = true, features = ["ryu"] }
 icu = { workspace = true, features = ["compiled_data", "experimental"] }
 icu_provider = { workspace = true }
 writeable = { workspace = true }
+
+[lints]
+workspace = true

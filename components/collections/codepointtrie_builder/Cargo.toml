@@ -52,5 +52,5 @@ skip_optional_dependencies = true
 # these need env vars. They still get `cargo check'd` when doing `--all-features`
 denylist = ["icu4c"]
 
-[lints.rust]
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4c_enable_renaming)'] }
+[lints]
+workspace = true

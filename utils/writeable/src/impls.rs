@@ -15,6 +15,7 @@ macro_rules! impl_write_num {
                 let mut n = *self;
                 let mut i = MAX_LEN;
                 #[expect(clippy::indexing_slicing)] // n < 10^i
+                #[allow(trivial_numeric_casts)]
                 while n != 0 {
                     i -= 1;
                     buf[i] = b'0' + (n % 10) as u8;
@@ -49,6 +50,7 @@ macro_rules! impl_write_num {
         }
 
         #[test]
+        #[allow(trivial_numeric_casts)]
         fn $test() {
             use $crate::assert_writeable_eq;
             assert_writeable_eq!(&(0 as $u), "0");
@@ -179,7 +181,7 @@ impl<T: Writeable + ?Sized> Writeable for &T {
 #[cfg(feature = "alloc")]
 macro_rules! impl_write_smart_pointer {
     ($ty:path, T: $extra_bound:path) => {
-        impl<'a, T: ?Sized + Writeable + $extra_bound> Writeable for $ty {
+        impl<T: ?Sized + Writeable + $extra_bound> Writeable for $ty {
             #[inline]
             fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
                 core::borrow::Borrow::<T>::borrow(self).write_to(sink)
@@ -209,7 +211,7 @@ macro_rules! impl_write_smart_pointer {
 }
 
 #[cfg(feature = "alloc")]
-impl_write_smart_pointer!(Cow<'a, T>, T: alloc::borrow::ToOwned);
+impl_write_smart_pointer!(Cow<'_, T>, T: alloc::borrow::ToOwned);
 #[cfg(feature = "alloc")]
 impl_write_smart_pointer!(alloc::boxed::Box<T>);
 #[cfg(feature = "alloc")]
