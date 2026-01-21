@@ -59,7 +59,7 @@ impl LocaleDirectionality<LocaleExpander> {
         Self::try_new_with_expander_unstable(&provider.as_deserializing(), expander)
     }
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_common)]
-    pub fn try_new_common_unstable<P>(provider: &P) -> Result<Self, DataError>
+    pub fn try_new_common_unstable<P>(provider: &P) -> Result<LocaleDirectionality, DataError>
     where
         P: DataProvider<LocaleScriptDirectionV1>
             + DataProvider<LocaleLikelySubtagsLanguageV1>
@@ -89,7 +89,7 @@ impl LocaleDirectionality<LocaleExpander> {
         Self::try_new_with_expander_unstable(&provider.as_deserializing(), expander)
     }
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_extended)]
-    pub fn try_new_extended_unstable<P>(provider: &P) -> Result<Self, DataError>
+    pub fn try_new_extended_unstable<P>(provider: &P) -> Result<LocaleDirectionality, DataError>
     where
         P: DataProvider<LocaleScriptDirectionV1>
             + DataProvider<LocaleLikelySubtagsLanguageV1>
@@ -128,7 +128,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleDirectionality<Expander> {
     /// ```
     #[cfg(feature = "compiled_data")]
     pub const fn new_with_expander(expander: Expander) -> Self {
-        Self {
+        LocaleDirectionality {
             script_direction: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_LOCALE_SCRIPT_DIRECTION_V1,
             ),
@@ -146,7 +146,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleDirectionality<Expander> {
     {
         let script_direction = provider.load(Default::default())?.payload;
 
-        Ok(Self {
+        Ok(LocaleDirectionality {
             script_direction,
             expander,
         })

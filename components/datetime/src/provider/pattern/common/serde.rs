@@ -72,7 +72,7 @@ mod reference {
                 deserializer.deserialize_str(DeserializePatternUTS35String)
             } else {
                 let pattern = PatternForSerde::deserialize(deserializer)?;
-                Ok(Self::from(pattern))
+                Ok(Pattern::from(pattern))
             }
         }
     }

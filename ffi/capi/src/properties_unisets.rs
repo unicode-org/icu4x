@@ -49,8 +49,8 @@ pub mod ffi {
         #[diplomat::attr(auto, named_constructor = "basic")]
         #[cfg(feature = "compiled_data")]
         #[diplomat::demo(default_constructor)]
-        pub fn create_basic() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_basic() -> Box<EmojiSetData> {
+            Box::new(EmojiSetData(
                 icu_properties::EmojiSetData::new::<BasicEmoji>().static_to_owned(),
             ))
         }
@@ -58,8 +58,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::BasicEmoji, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "basic_with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_basic_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        pub fn create_basic_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<EmojiSetData>, DataError> {
+            Ok(Box::new(EmojiSetData(
                 icu_properties::EmojiSetData::try_new_unstable::<BasicEmoji>(
                     &provider.get_unstable()?,
                 )?,

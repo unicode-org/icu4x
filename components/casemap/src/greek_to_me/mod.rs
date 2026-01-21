@@ -53,7 +53,7 @@ pub struct PackedGreekPrecomposedLetterData(pub u8);
 
 impl TryFrom<PackedGreekPrecomposedLetterData> for GreekPrecomposedLetterData {
     type Error = ();
-    fn try_from(other: PackedGreekPrecomposedLetterData) -> Result<Self, ()> {
+    fn try_from(other: PackedGreekPrecomposedLetterData) -> Result<GreekPrecomposedLetterData, ()> {
         if other.0 == 0 {
             return Err(());
         }
@@ -67,11 +67,11 @@ impl TryFrom<PackedGreekPrecomposedLetterData> for GreekPrecomposedLetterData {
             let vowel = GreekVowel::try_from(other.0 & 0b1111);
             debug_assert!(vowel.is_ok());
             let vowel = vowel.unwrap_or(GreekVowel::Α);
-            Ok(Self::Vowel(vowel, diacritics))
+            Ok(GreekPrecomposedLetterData::Vowel(vowel, diacritics))
         } else {
             // consonant
             // 0x80 is is_rho = false, 0x81 is is_rho = true
-            Ok(Self::Consonant(other.0 == 0x81))
+            Ok(GreekPrecomposedLetterData::Consonant(other.0 == 0x81))
         }
     }
 }
@@ -91,9 +91,11 @@ impl From<GreekPrecomposedLetterData> for PackedGreekPrecomposedLetterData {
                     bits |= 0x10;
                 }
                 bits |= vowel as u8;
-                Self(bits)
+                PackedGreekPrecomposedLetterData(bits)
             }
-            GreekPrecomposedLetterData::Consonant(is_rho) => Self(0x80 + is_rho as u8),
+            GreekPrecomposedLetterData::Consonant(is_rho) => {
+                PackedGreekPrecomposedLetterData(0x80 + is_rho as u8)
+            }
         }
     }
 }
@@ -144,14 +146,14 @@ impl TryFrom<char> for GreekVowel {
     type Error = ();
     fn try_from(other: char) -> Result<Self, ()> {
         Ok(match other {
-            'Α' => Self::Α,
-            'Ε' => Self::Ε,
-            'Η' => Self::Η,
-            'Ι' => Self::Ι,
-            'Ο' => Self::Ο,
-            'Υ' => Self::Υ,
-            'Ω' => Self::Ω,
-            'ϒ' => Self::ϒ,
+            'Α' => GreekVowel::Α,
+            'Ε' => GreekVowel::Ε,
+            'Η' => GreekVowel::Η,
+            'Ι' => GreekVowel::Ι,
+            'Ο' => GreekVowel::Ο,
+            'Υ' => GreekVowel::Υ,
+            'Ω' => GreekVowel::Ω,
+            'ϒ' => GreekVowel::ϒ,
             _ => return Err(()),
         })
     }

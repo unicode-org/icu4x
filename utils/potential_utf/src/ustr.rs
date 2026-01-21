@@ -163,10 +163,10 @@ impl Deref for PotentialUtf8 {
 /// This impl requires enabling the optional `zerovec` Cargo feature
 #[cfg(all(feature = "zerovec", feature = "alloc"))]
 impl<'a> zerovec::maps::ZeroMapKV<'a> for PotentialUtf8 {
-    type Container = zerovec::VarZeroVec<'a, Self>;
-    type Slice = zerovec::VarZeroSlice<Self>;
-    type GetType = Self;
-    type OwnedType = Box<Self>;
+    type Container = zerovec::VarZeroVec<'a, PotentialUtf8>;
+    type Slice = zerovec::VarZeroSlice<PotentialUtf8>;
+    type GetType = PotentialUtf8;
+    type OwnedType = Box<PotentialUtf8>;
 }
 
 // Safety (based on the safety checklist on the VarULE trait):
@@ -186,7 +186,7 @@ unsafe impl zerovec::ule::VarULE for PotentialUtf8 {
     }
     #[inline]
     unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
-        Self::from_bytes(bytes)
+        PotentialUtf8::from_bytes(bytes)
     }
 }
 

@@ -24,7 +24,7 @@ pub mod ffi {
             minute: u8,
             second: u8,
             subsecond: u32,
-        ) -> Result<Box<Self>, CalendarError> {
+        ) -> Result<Box<Time>, CalendarError> {
             let hour = hour.try_into()?;
             let minute = minute.try_into()?;
             let second = second.try_into()?;
@@ -35,7 +35,7 @@ pub mod ffi {
                 second,
                 subsecond,
             };
-            Ok(Box::new(Self(time)))
+            Ok(Box::new(Time(time)))
         }
 
         /// Creates a new [`Time`] from an IXDTF string.
@@ -43,24 +43,24 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::Time::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::time::Time::from_str, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
-        pub fn from_string(v: &DiplomatStr) -> Result<Box<Self>, Rfc9557ParseError> {
-            Ok(Box::new(Self(icu_time::Time::try_from_utf8(v)?)))
+        pub fn from_string(v: &DiplomatStr) -> Result<Box<Time>, Rfc9557ParseError> {
+            Ok(Box::new(Time(icu_time::Time::try_from_utf8(v)?)))
         }
 
         /// Creates a new [`Time`] representing the start of the day (00:00:00.000).
         #[diplomat::rust_link(icu::time::Time::start_of_day, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
-        pub fn start_of_day() -> Result<Box<Self>, CalendarError> {
+        pub fn start_of_day() -> Result<Box<Time>, CalendarError> {
             let time = icu_time::Time::start_of_day();
-            Ok(Box::new(Self(time)))
+            Ok(Box::new(Time(time)))
         }
 
         /// Creates a new [`Time`] representing noon (12:00:00.000).
         #[diplomat::rust_link(icu::time::Time::noon, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
-        pub fn noon() -> Result<Box<Self>, CalendarError> {
+        pub fn noon() -> Result<Box<Time>, CalendarError> {
             let time = icu_time::Time::noon();
-            Ok(Box::new(Self(time)))
+            Ok(Box::new(Time(time)))
         }
 
         /// Returns the hour in this time

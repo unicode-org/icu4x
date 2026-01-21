@@ -15,7 +15,7 @@ use crate::measure::{
 
 impl Duration {
     /// Returns a [`MeasureUnit`] representing duration in milliseconds.
-    pub fn millisecond() -> CategorizedMeasureUnit<Self> {
+    pub fn millisecond() -> CategorizedMeasureUnit<Duration> {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
@@ -34,7 +34,7 @@ impl Duration {
     }
 
     /// Returns a [`MeasureUnit`] representing duration in seconds.
-    pub fn second() -> CategorizedMeasureUnit<Self> {
+    pub fn second() -> CategorizedMeasureUnit<Duration> {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
@@ -53,7 +53,7 @@ impl Duration {
     }
 
     /// Returns a [`MeasureUnit`] representing duration in minutes.
-    pub fn minute() -> CategorizedMeasureUnit<Self> {
+    pub fn minute() -> CategorizedMeasureUnit<Duration> {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
@@ -72,7 +72,7 @@ impl Duration {
     }
 
     /// Returns a [`MeasureUnit`] representing duration in hours.
-    pub fn hour() -> CategorizedMeasureUnit<Self> {
+    pub fn hour() -> CategorizedMeasureUnit<Duration> {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
@@ -91,7 +91,7 @@ impl Duration {
     }
 
     /// Returns a [`MeasureUnit`] representing duration in days.
-    pub fn day() -> CategorizedMeasureUnit<Self> {
+    pub fn day() -> CategorizedMeasureUnit<Duration> {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
@@ -110,7 +110,7 @@ impl Duration {
     }
 
     /// Returns a [`MeasureUnit`] representing duration in weeks.
-    pub fn week() -> CategorizedMeasureUnit<Self> {
+    pub fn week() -> CategorizedMeasureUnit<Duration> {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {

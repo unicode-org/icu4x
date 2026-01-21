@@ -244,10 +244,10 @@ impl Date<Persian> {
     /// assert_eq!(date_persian.month().ordinal, 4);
     /// assert_eq!(date_persian.day_of_month().0, 25);
     /// ```
-    pub fn try_new_persian(year: i32, month: u8, day: u8) -> Result<Self, RangeError> {
+    pub fn try_new_persian(year: i32, month: u8, day: u8) -> Result<Date<Persian>, RangeError> {
         ArithmeticDate::from_year_month_day(year, month, day, &Persian)
             .map(PersianDateInner)
-            .map(|inner| Self::from_raw(inner, Persian))
+            .map(|inner| Date::from_raw(inner, Persian))
     }
 }
 

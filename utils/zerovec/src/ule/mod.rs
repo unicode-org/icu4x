@@ -422,10 +422,10 @@ pub enum UleError {
 impl fmt::Display for UleError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         match *self {
-            Self::InvalidLength { ty, len } => {
+            UleError::InvalidLength { ty, len } => {
                 write!(f, "Invalid length {len} for slice of type {ty}")
             }
-            Self::ParseError { ty } => {
+            UleError::ParseError { ty } => {
                 write!(f, "Could not parse bytes to slice of type {ty}")
             }
         }
@@ -434,15 +434,15 @@ impl fmt::Display for UleError {
 
 impl UleError {
     /// Construct a parse error for the given type
-    pub fn parse<T: ?Sized + 'static>() -> Self {
-        Self::ParseError {
+    pub fn parse<T: ?Sized + 'static>() -> UleError {
+        UleError::ParseError {
             ty: any::type_name::<T>(),
         }
     }
 
     /// Construct an "invalid length" error for the given type and length
-    pub fn length<T: ?Sized + 'static>(len: usize) -> Self {
-        Self::InvalidLength {
+    pub fn length<T: ?Sized + 'static>(len: usize) -> UleError {
+        UleError::InvalidLength {
             ty: any::type_name::<T>(),
             len,
         }

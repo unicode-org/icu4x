@@ -235,7 +235,7 @@ impl_integer_type!(u8 u16 u32 u64 u128 usize);
 impl_signed_integer_type!(i8 i16 i32 i64 i128 isize);
 
 impl PluralOperands {
-    fn from_significand_and_exponent(dec: &UnsignedDecimal, exp: u8) -> Self {
+    fn from_significand_and_exponent(dec: &UnsignedDecimal, exp: u8) -> PluralOperands {
         let exp_i16 = i16::from(exp);
 
         let mag_range = dec.magnitude_range();

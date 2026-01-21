@@ -832,7 +832,7 @@ where
                 .lm_into_iter()
                 .filter_map(|(k, v)| self.insert_save_key(k, v))
                 .collect();
-            let ret = Self {
+            let ret = LiteMap {
                 values: leftover_tuples,
                 _key_type: PhantomData,
                 _value_type: PhantomData,

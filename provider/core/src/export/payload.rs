@@ -134,7 +134,7 @@ where
     for<'a> <M::DataStruct as Yokeable<'a>>::Output:
         Bake + BakeSize + serde::Serialize + MaybeEncodeAsVarULE + PartialEq,
 {
-    fn upcast(other: DataPayload<M>) -> DataPayload<Self> {
+    fn upcast(other: DataPayload<M>) -> DataPayload<ExportMarker> {
         DataPayload::from_owned(ExportBox {
             payload: Arc::new(other),
         })

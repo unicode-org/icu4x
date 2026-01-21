@@ -111,7 +111,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// Construct a new one an owned [`CodePointTrie`]
     pub fn from_code_point_trie(trie: CodePointTrie<'static, T>) -> Self {
         let set = PropertyCodePointMap::from_code_point_trie(trie);
-        Self::from_data(
+        CodePointMapData::from_data(
             DataPayload::<ErasedMarker<PropertyCodePointMap<'static, T>>>::from_owned(set),
         )
     }

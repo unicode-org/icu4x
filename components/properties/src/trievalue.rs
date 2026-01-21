@@ -59,7 +59,7 @@ impl TrieValue for GeneralCategory {
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         // If the u32 is out of range, fall back to u8::MAX, which is out of range of the GeneralCategory enum.
-        Self::new_from_u8(i.try_into().unwrap_or(u8::MAX))
+        GeneralCategory::new_from_u8(i.try_into().unwrap_or(u8::MAX))
             .ok_or("Cannot parse GeneralCategory from integer")
     }
 

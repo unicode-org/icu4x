@@ -136,11 +136,11 @@ impl Date<Gregorian> {
     /// assert_eq!(date_gregorian.month().ordinal, 1);
     /// assert_eq!(date_gregorian.day_of_month().0, 2);
     /// ```
-    pub fn try_new_gregorian(year: i32, month: u8, day: u8) -> Result<Self, RangeError> {
+    pub fn try_new_gregorian(year: i32, month: u8, day: u8) -> Result<Date<Gregorian>, RangeError> {
         ArithmeticDate::from_year_month_day(year, month, day, &AbstractGregorian(CeBce))
             .map(ArithmeticDate::cast)
             .map(GregorianDateInner)
-            .map(|i| Self::from_raw(i, Gregorian))
+            .map(|i| Date::from_raw(i, Gregorian))
     }
 }
 

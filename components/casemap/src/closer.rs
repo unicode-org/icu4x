@@ -186,7 +186,7 @@ impl CaseMapCloserBorrowed<'static> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new() -> Self {
+    pub const fn new() -> CaseMapCloserBorrowed<'static> {
         CaseMapCloserBorrowed {
             cm: CaseMapper::new(),
             unfold: crate::provider::Baked::SINGLETON_CASE_MAP_UNFOLD_V1,

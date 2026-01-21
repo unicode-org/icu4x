@@ -59,7 +59,7 @@ pub struct HebrewDateInner(ArithmeticDate<Hebrew>);
 impl Hebrew {
     /// Construct a new [`Hebrew`]
     pub fn new() -> Self {
-        Self
+        Hebrew
     }
 }
 
@@ -354,10 +354,14 @@ impl Date<Hebrew> {
     ///
     /// Use [`Date::try_new_from_codes`]
     #[deprecated(since = "2.1.0", note = "use `Date::try_new_from_codes`")]
-    pub fn try_new_hebrew(year: i32, ordinal_month: u8, day: u8) -> Result<Self, RangeError> {
+    pub fn try_new_hebrew(
+        year: i32,
+        ordinal_month: u8,
+        day: u8,
+    ) -> Result<Date<Hebrew>, RangeError> {
         ArithmeticDate::from_year_month_day(year, ordinal_month, day, &Hebrew)
             .map(HebrewDateInner)
-            .map(|inner| Self::from_raw(inner, Hebrew))
+            .map(|inner| Date::from_raw(inner, Hebrew))
     }
 }
 

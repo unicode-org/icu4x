@@ -80,7 +80,7 @@ impl TryFrom<Decimal> for FixedInteger {
         if signed_fd.absolute.magnitude_range().start() != &0 {
             Err(LimitError)
         } else {
-            Ok(Self(signed_fd))
+            Ok(FixedInteger(signed_fd))
         }
     }
 }
@@ -94,7 +94,8 @@ impl FixedInteger {
 
     /// See [`Self::try_from_utf8`]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
-        Self::try_from(Decimal::try_from_utf8(code_units)?).map_err(|LimitError| ParseError::Limit)
+        FixedInteger::try_from(Decimal::try_from_utf8(code_units)?)
+            .map_err(|LimitError| ParseError::Limit)
     }
 }
 

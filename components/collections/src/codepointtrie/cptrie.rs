@@ -215,10 +215,10 @@ pub struct CodePointTrieHeader {
 impl TryFrom<u8> for TrieType {
     type Error = crate::codepointtrie::error::Error;
 
-    fn try_from(trie_type_int: u8) -> Result<Self, crate::codepointtrie::error::Error> {
+    fn try_from(trie_type_int: u8) -> Result<TrieType, crate::codepointtrie::error::Error> {
         match trie_type_int {
-            0 => Ok(Self::Fast),
-            1 => Ok(Self::Small),
+            0 => Ok(TrieType::Fast),
+            1 => Ok(TrieType::Small),
             _ => Err(crate::codepointtrie::error::Error::FromDeserialized {
                 reason: "Cannot parse value for trie_type",
             }),
@@ -297,7 +297,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         header: CodePointTrieHeader,
         index: ZeroVec<'trie, u16>,
         data: ZeroVec<'trie, T>,
-    ) -> Result<Self, Error> {
+    ) -> Result<CodePointTrie<'trie, T>, Error> {
         let error_value = Self::validate_fields(&header, &index, &data)?;
         // Field invariants upheld: Checked by `validate_fields` above.
         let trie: CodePointTrie<'trie, T> = CodePointTrie {
@@ -902,12 +902,12 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
 
         let null_value: T = T::try_from_u32(self.header.null_value).ok()?;
 
-        let mut prev_i3_block = u32::MAX; // using u32::MAX (instead of -1 as an i32 in ICU)
-        let mut prev_block = u32::MAX; // using u32::MAX (instead of -1 as an i32 in ICU)
-        let mut c = start;
-        let mut trie_value = self.error_value();
-        let mut value = self.error_value();
-        let mut have_value = false;
+        let mut prev_i3_block: u32 = u32::MAX; // using u32::MAX (instead of -1 as an i32 in ICU)
+        let mut prev_block: u32 = u32::MAX; // using u32::MAX (instead of -1 as an i32 in ICU)
+        let mut c: u32 = start;
+        let mut trie_value: T = self.error_value();
+        let mut value: T = self.error_value();
+        let mut have_value: bool = false;
 
         loop {
             let i3_block: u32;
@@ -1597,7 +1597,9 @@ impl<'trie, T: TrieValue> TryFrom<&'trie CodePointTrie<'trie, T>>
 impl<'trie, T: TrieValue> TryFrom<CodePointTrie<'trie, T>> for FastCodePointTrie<'trie, T> {
     type Error = TypedCodePointTrieError;
 
-    fn try_from(value: CodePointTrie<'trie, T>) -> Result<Self, TypedCodePointTrieError> {
+    fn try_from(
+        value: CodePointTrie<'trie, T>,
+    ) -> Result<FastCodePointTrie<'trie, T>, TypedCodePointTrieError> {
         match value.to_typed() {
             Typed::Fast(trie) => Ok(trie),
             Typed::Small(_) => Err(TypedCodePointTrieError),
@@ -1649,7 +1651,9 @@ impl<'trie, T: TrieValue> TryFrom<&'trie CodePointTrie<'trie, T>>
 impl<'trie, T: TrieValue> TryFrom<CodePointTrie<'trie, T>> for SmallCodePointTrie<'trie, T> {
     type Error = TypedCodePointTrieError;
 
-    fn try_from(value: CodePointTrie<'trie, T>) -> Result<Self, TypedCodePointTrieError> {
+    fn try_from(
+        value: CodePointTrie<'trie, T>,
+    ) -> Result<SmallCodePointTrie<'trie, T>, TypedCodePointTrieError> {
         match value.to_typed() {
             Typed::Fast(_) => Err(TypedCodePointTrieError),
             Typed::Small(trie) => Ok(trie),

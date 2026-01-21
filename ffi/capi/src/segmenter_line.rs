@@ -79,8 +79,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_auto, FnInStruct)]
         #[diplomat::attr(auto, named_constructor = "auto")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_auto() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_auto() -> Box<LineSegmenter> {
+            Box::new(LineSegmenter(
                 icu_segmenter::LineSegmenter::new_auto(Default::default()).static_to_owned(),
             ))
         }
@@ -90,8 +90,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_lstm, FnInStruct)]
         #[diplomat::attr(auto, named_constructor = "lstm")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_lstm() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_lstm() -> Box<LineSegmenter> {
+            Box::new(LineSegmenter(
                 icu_segmenter::LineSegmenter::new_lstm(Default::default()).static_to_owned(),
             ))
         }
@@ -101,8 +101,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::new_dictionary, FnInStruct)]
         #[diplomat::attr(auto, named_constructor = "dictionary")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_dictionary() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_dictionary() -> Box<LineSegmenter> {
+            Box::new(LineSegmenter(
                 icu_segmenter::LineSegmenter::new_dictionary(Default::default()).static_to_owned(),
             ))
         }
@@ -115,8 +115,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(auto, named_constructor = "for_non_complex_scripts")]
         #[cfg(feature = "compiled_data")]
-        pub fn create_for_non_complex_scripts() -> Box<Self> {
-            Box::new(Self(
+        pub fn create_for_non_complex_scripts() -> Box<LineSegmenter> {
+            Box::new(LineSegmenter(
                 icu_segmenter::LineSegmenter::new_for_non_complex_scripts(Default::default())
                     .static_to_owned(),
             ))
@@ -133,10 +133,10 @@ pub mod ffi {
         pub fn create_auto_with_options_v2(
             content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
-        ) -> Box<Self> {
+        ) -> Box<LineSegmenter> {
             let mut options: LineBreakOptions = options.into();
             options.content_locale = content_locale.map(|c| &c.0.id);
-            Box::new(Self(
+            Box::new(LineSegmenter(
                 icu_segmenter::LineSegmenter::new_auto(options).static_to_owned(),
             ))
         }
@@ -152,11 +152,11 @@ pub mod ffi {
             provider: &DataProvider,
             content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<LineSegmenter>, DataError> {
             let mut options: LineBreakOptions = options.into();
             options.content_locale = content_locale.map(|c| &c.0.id);
 
-            Ok(Box::new(Self(
+            Ok(Box::new(LineSegmenter(
                 icu_segmenter::LineSegmenter::try_new_auto_with_buffer_provider(
                     provider.get()?,
                     options,
@@ -174,11 +174,11 @@ pub mod ffi {
         pub fn create_lstm_with_options_v2(
             content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
-        ) -> Box<Self> {
+        ) -> Box<LineSegmenter> {
             let mut options: LineBreakOptions = options.into();
             options.content_locale = content_locale.map(|c| &c.0.id);
 
-            Box::new(Self(
+            Box::new(LineSegmenter(
                 icu_segmenter::LineSegmenter::new_lstm(options).static_to_owned(),
             ))
         }
@@ -194,11 +194,11 @@ pub mod ffi {
             provider: &DataProvider,
             content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<LineSegmenter>, DataError> {
             let mut options: LineBreakOptions = options.into();
             options.content_locale = content_locale.map(|c| &c.0.id);
 
-            Ok(Box::new(Self(
+            Ok(Box::new(LineSegmenter(
                 icu_segmenter::LineSegmenter::try_new_lstm_with_buffer_provider(
                     provider.get()?,
                     options,
@@ -216,11 +216,11 @@ pub mod ffi {
         pub fn create_dictionary_with_options_v2(
             content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
-        ) -> Box<Self> {
+        ) -> Box<LineSegmenter> {
             let mut options: LineBreakOptions = options.into();
             options.content_locale = content_locale.map(|c| &c.0.id);
 
-            Box::new(Self(
+            Box::new(LineSegmenter(
                 icu_segmenter::LineSegmenter::new_dictionary(options).static_to_owned(),
             ))
         }
@@ -236,11 +236,11 @@ pub mod ffi {
             provider: &DataProvider,
             content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<LineSegmenter>, DataError> {
             let mut options: LineBreakOptions = options.into();
             options.content_locale = content_locale.map(|c| &c.0.id);
 
-            Ok(Box::new(Self(
+            Ok(Box::new(LineSegmenter(
                 icu_segmenter::LineSegmenter::try_new_dictionary_with_buffer_provider(
                     provider.get()?,
                     options,
@@ -261,11 +261,11 @@ pub mod ffi {
         pub fn create_for_non_complex_scripts_with_options_v2(
             content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
-        ) -> Box<Self> {
+        ) -> Box<LineSegmenter> {
             let mut options: LineBreakOptions = options.into();
             options.content_locale = content_locale.map(|c| &c.0.id);
 
-            Box::new(Self(
+            Box::new(LineSegmenter(
                 icu_segmenter::LineSegmenter::new_for_non_complex_scripts(options)
                     .static_to_owned(),
             ))
@@ -285,11 +285,11 @@ pub mod ffi {
             provider: &DataProvider,
             content_locale: Option<&Locale>,
             options: LineBreakOptionsV2,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<LineSegmenter>, DataError> {
             let mut options: LineBreakOptions = options.into();
             options.content_locale = content_locale.map(|c| &c.0.id);
 
-            Ok(Box::new(Self(
+            Ok(Box::new(LineSegmenter(
                 icu_segmenter::LineSegmenter::try_new_for_non_complex_scripts_with_buffer_provider(
                     provider.get()?,
                     options,

@@ -435,7 +435,7 @@ struct CharacterAndTrieValue {
 impl CharacterAndTrieValue {
     #[inline(always)]
     pub fn new(c: char, trie_value: u32) -> Self {
-        Self {
+        CharacterAndTrieValue {
             character: c,
             trie_val: trie_value,
         }
@@ -501,16 +501,16 @@ struct CharacterAndClass(u32);
 
 impl CharacterAndClass {
     pub fn new(c: char, ccc: CanonicalCombiningClass) -> Self {
-        Self(u32::from(c) | (u32::from(ccc.to_icu4c_value()) << 24))
+        CharacterAndClass(u32::from(c) | (u32::from(ccc.to_icu4c_value()) << 24))
     }
     pub fn new_with_placeholder(c: char) -> Self {
-        Self(u32::from(c) | ((0xFF) << 24))
+        CharacterAndClass(u32::from(c) | ((0xFF) << 24))
     }
     pub fn new_with_trie_value(c_tv: CharacterAndTrieValue) -> Self {
         Self::new(c_tv.character, ccc_from_trie_value(c_tv.trie_val))
     }
     pub fn new_starter(c: char) -> Self {
-        Self(u32::from(c))
+        CharacterAndClass(u32::from(c))
     }
     /// This method must exist for Pernosco to apply its special rendering.
     /// Also, this must not be dead code!
@@ -2276,7 +2276,7 @@ impl DecomposingNormalizer {
         let decomposition_capped = cap.min(0xC0);
         let composition_capped = cap.min(0x0300);
 
-        Ok(Self {
+        Ok(DecomposingNormalizer {
             decompositions,
             tables,
             supplementary_tables: None,
@@ -2343,7 +2343,7 @@ impl DecomposingNormalizer {
         let decomposition_capped = cap.min(0xC0);
         let composition_capped = cap.min(0x0300);
 
-        Ok(Self {
+        Ok(DecomposingNormalizer {
             decompositions: decompositions.cast(),
             tables,
             supplementary_tables: Some(supplementary_tables),
@@ -2407,7 +2407,7 @@ impl DecomposingNormalizer {
         let decomposition_capped = cap.min(0xC0);
         let composition_capped = cap.min(0x0300);
 
-        Ok(Self {
+        Ok(DecomposingNormalizer {
             decompositions: decompositions.cast(),
             tables,
             supplementary_tables: Some(supplementary_tables),
@@ -2905,7 +2905,7 @@ impl ComposingNormalizer {
         let canonical_compositions: DataPayload<NormalizerNfcV1> =
             provider.load(Default::default())?.payload;
 
-        Ok(Self {
+        Ok(ComposingNormalizer {
             decomposing_normalizer,
             canonical_compositions,
         })
@@ -2945,7 +2945,7 @@ impl ComposingNormalizer {
         let canonical_compositions: DataPayload<NormalizerNfcV1> =
             provider.load(Default::default())?.payload;
 
-        Ok(Self {
+        Ok(ComposingNormalizer {
             decomposing_normalizer,
             canonical_compositions,
         })
@@ -2967,7 +2967,7 @@ impl ComposingNormalizer {
         let canonical_compositions: DataPayload<NormalizerNfcV1> =
             provider.load(Default::default())?.payload;
 
-        Ok(Self {
+        Ok(ComposingNormalizer {
             decomposing_normalizer,
             canonical_compositions,
         })

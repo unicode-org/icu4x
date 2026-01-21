@@ -45,14 +45,14 @@ pub mod ffi {
         pub fn create_with_grouping_strategy(
             locale: &Locale,
             grouping_strategy: Option<DecimalGroupingStrategy>,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<DecimalFormatter>, DataError> {
             let prefs = DecimalFormatterPreferences::from(&locale.0);
 
             let mut options = DecimalFormatterOptions::default();
             options.grouping_strategy = grouping_strategy.map(Into::into);
-            Ok(Box::new(Self(icu_decimal::DecimalFormatter::try_new(
-                prefs, options,
-            )?)))
+            Ok(Box::new(DecimalFormatter(
+                icu_decimal::DecimalFormatter::try_new(prefs, options)?,
+            )))
         }
 
         /// Creates a new [`DecimalFormatter`], using a particular data source.
@@ -64,12 +64,12 @@ pub mod ffi {
             provider: &DataProvider,
             locale: &Locale,
             grouping_strategy: Option<DecimalGroupingStrategy>,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<DecimalFormatter>, DataError> {
             let prefs = DecimalFormatterPreferences::from(&locale.0);
 
             let mut options = DecimalFormatterOptions::default();
             options.grouping_strategy = grouping_strategy.map(Into::into);
-            Ok(Box::new(Self(
+            Ok(Box::new(DecimalFormatter(
                 icu_decimal::DecimalFormatter::try_new_with_buffer_provider(
                     provider.get()?,
                     prefs,
@@ -93,7 +93,7 @@ pub mod ffi {
             min_group_size: u8,
             digits: &[DiplomatChar],
             grouping_strategy: Option<DecimalGroupingStrategy>,
-        ) -> Result<Box<Self>, DataError> {
+        ) -> Result<Box<DecimalFormatter>, DataError> {
             use core::cell::RefCell;
             use icu_provider::prelude::*;
             use zerovec::VarZeroCow;
@@ -181,7 +181,7 @@ pub mod ffi {
                 })),
                 digits,
             );
-            Ok(Box::new(Self(
+            Ok(Box::new(DecimalFormatter(
                 icu_decimal::DecimalFormatter::try_new_unstable(
                     &provider,
                     Default::default(),

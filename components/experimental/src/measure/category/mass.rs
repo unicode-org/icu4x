@@ -15,7 +15,7 @@ use crate::measure::{
 
 impl Mass {
     /// Returns a [`MeasureUnit`] representing mass in grams.
-    pub fn gram() -> CategorizedMeasureUnit<Self> {
+    pub fn gram() -> CategorizedMeasureUnit<Mass> {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
@@ -34,7 +34,7 @@ impl Mass {
     }
 
     /// Returns a [`MeasureUnit`] representing mass in kilograms.
-    pub fn kilogram() -> CategorizedMeasureUnit<Self> {
+    pub fn kilogram() -> CategorizedMeasureUnit<Mass> {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {

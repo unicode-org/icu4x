@@ -108,18 +108,18 @@ impl FieldSymbol {
     #[inline]
     pub(crate) fn idx(self) -> u8 {
         let (high, low) = match self {
-            Self::Era => (0, 0),
-            Self::Year(year) => (1, year.idx()),
-            Self::Month(month) => (2, month.idx()),
-            Self::Week(w) => (3, w.idx()),
-            Self::Day(day) => (4, day.idx()),
-            Self::Weekday(wd) => (5, wd.idx()),
-            Self::DayPeriod(dp) => (6, dp.idx()),
-            Self::Hour(hour) => (7, hour.idx()),
-            Self::Minute => (8, 0),
-            Self::Second(second) => (9, second.idx()),
-            Self::TimeZone(tz) => (10, tz.idx()),
-            Self::DecimalSecond(second) => (11, second.idx()),
+            FieldSymbol::Era => (0, 0),
+            FieldSymbol::Year(year) => (1, year.idx()),
+            FieldSymbol::Month(month) => (2, month.idx()),
+            FieldSymbol::Week(w) => (3, w.idx()),
+            FieldSymbol::Day(day) => (4, day.idx()),
+            FieldSymbol::Weekday(wd) => (5, wd.idx()),
+            FieldSymbol::DayPeriod(dp) => (6, dp.idx()),
+            FieldSymbol::Hour(hour) => (7, hour.idx()),
+            FieldSymbol::Minute => (8, 0),
+            FieldSymbol::Second(second) => (9, second.idx()),
+            FieldSymbol::TimeZone(tz) => (10, tz.idx()),
+            FieldSymbol::DecimalSecond(second) => (11, second.idx()),
         };
         let result = high << 4;
         result | low
@@ -153,17 +153,17 @@ impl FieldSymbol {
     #[cfg(feature = "datagen")]
     fn idx_for_skeleton(self) -> u8 {
         match self {
-            Self::Era => 0,
-            Self::Year(_) => 1,
-            Self::Month(_) => 2,
-            Self::Week(_) => 3,
-            Self::Day(_) => 4,
-            Self::Weekday(_) => 5,
-            Self::DayPeriod(_) => 6,
-            Self::Hour(_) => 7,
-            Self::Minute => 8,
-            Self::Second(_) | Self::DecimalSecond(_) => 9,
-            Self::TimeZone(_) => 10,
+            FieldSymbol::Era => 0,
+            FieldSymbol::Year(_) => 1,
+            FieldSymbol::Month(_) => 2,
+            FieldSymbol::Week(_) => 3,
+            FieldSymbol::Day(_) => 4,
+            FieldSymbol::Weekday(_) => 5,
+            FieldSymbol::DayPeriod(_) => 6,
+            FieldSymbol::Hour(_) => 7,
+            FieldSymbol::Minute => 8,
+            FieldSymbol::Second(_) | FieldSymbol::DecimalSecond(_) => 9,
+            FieldSymbol::TimeZone(_) => 10,
         }
     }
 
@@ -179,15 +179,15 @@ impl FieldSymbol {
     pub(crate) fn from_subsecond_digits(subsecond_digits: SubsecondDigits) -> Self {
         use SubsecondDigits::*;
         match subsecond_digits {
-            S1 => Self::DecimalSecond(DecimalSecond::Subsecond1),
-            S2 => Self::DecimalSecond(DecimalSecond::Subsecond2),
-            S3 => Self::DecimalSecond(DecimalSecond::Subsecond3),
-            S4 => Self::DecimalSecond(DecimalSecond::Subsecond4),
-            S5 => Self::DecimalSecond(DecimalSecond::Subsecond5),
-            S6 => Self::DecimalSecond(DecimalSecond::Subsecond6),
-            S7 => Self::DecimalSecond(DecimalSecond::Subsecond7),
-            S8 => Self::DecimalSecond(DecimalSecond::Subsecond8),
-            S9 => Self::DecimalSecond(DecimalSecond::Subsecond9),
+            S1 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond1),
+            S2 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond2),
+            S3 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond3),
+            S4 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond4),
+            S5 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond5),
+            S6 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond6),
+            S7 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond7),
+            S8 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond8),
+            S9 => FieldSymbol::DecimalSecond(DecimalSecond::Subsecond9),
         }
     }
 
@@ -199,11 +199,11 @@ impl FieldSymbol {
     pub(crate) fn is_at_least_abbreviated(self) -> bool {
         matches!(
             self,
-            Self::Era
-                | Self::Year(Year::Cyclic)
-                | Self::Weekday(Weekday::Format)
-                | Self::DayPeriod(_)
-                | Self::TimeZone(TimeZone::SpecificNonLocation)
+            FieldSymbol::Era
+                | FieldSymbol::Year(Year::Cyclic)
+                | FieldSymbol::Weekday(Weekday::Format)
+                | FieldSymbol::DayPeriod(_)
+                | FieldSymbol::TimeZone(TimeZone::SpecificNonLocation)
         )
     }
 }
@@ -526,7 +526,7 @@ impl LengthType for Year {
     fn get_length_type(self, _length: FieldLength) -> TextOrNumeric {
         // https://unicode.org/reports/tr35/tr35-dates.html#dfst-year
         match self {
-            Self::Cyclic => TextOrNumeric::Text,
+            Year::Cyclic => TextOrNumeric::Text,
             _ => TextOrNumeric::Numeric,
         }
     }
@@ -822,7 +822,7 @@ impl Weekday {
     /// This function normalizes "e" to "E".
     pub(crate) fn to_format_symbol(self) -> Self {
         match self {
-            Self::Local => Self::Format,
+            Weekday::Local => Weekday::Format,
             other => other,
         }
     }

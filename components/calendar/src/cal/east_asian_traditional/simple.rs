@@ -72,13 +72,13 @@ impl core::ops::Add<Milliseconds> for LocalMoment {
     }
 }
 
-impl EastAsianTraditionalYear {
+impl super::EastAsianTraditionalYear {
     /// A fast approximation for the Chinese calendar, inspired by the _píngqì_ (平氣) rule
     /// used in the Ming dynasty.
     ///
     /// Stays anchored in the Gregorian calendar, even as the Gregorian calendar drifts
     /// from the seasons in the distant future and distant past.
-    pub(super) fn simple(utc_offset: Milliseconds, related_iso: i32) -> Self {
+    pub(super) fn simple(utc_offset: Milliseconds, related_iso: i32) -> EastAsianTraditionalYear {
         /// calculates the largest moment such that `moment = base_moment + n * duration` lands on `rata_die` (< `rata_die + 1`)
         fn periodic_duration_on_or_before(
             rata_die: RataDie,
@@ -166,7 +166,7 @@ impl EastAsianTraditionalYear {
 
         debug_assert_eq!(solar_term, 12);
 
-        Self {
+        EastAsianTraditionalYear {
             packed: PackedEastAsianTraditionalYearData::new(
                 related_iso,
                 month_lengths,

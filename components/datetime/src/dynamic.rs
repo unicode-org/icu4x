@@ -536,7 +536,7 @@ impl_attrs! {
 impl DateAndTimeFieldSet {
     pub(crate) const fn id_str(self) -> Option<&'static DataMarkerAttributes> {
         match self {
-            Self::ET(_) => Some(Self::ATTR_ET),
+            DateAndTimeFieldSet::ET(_) => Some(Self::ATTR_ET),
             _ => None,
         }
     }

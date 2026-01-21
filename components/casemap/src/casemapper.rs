@@ -41,8 +41,8 @@ pub struct CaseMapper {
     pub(crate) data: DataPayload<CaseMapV1>,
 }
 
-impl AsRef<Self> for CaseMapper {
-    fn as_ref(&self) -> &Self {
+impl AsRef<CaseMapper> for CaseMapper {
+    fn as_ref(&self) -> &CaseMapper {
         self
     }
 }
@@ -641,7 +641,7 @@ impl CaseMapper {
     ]);
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
+    pub fn try_new_unstable<P>(provider: &P) -> Result<CaseMapper, DataError>
     where
         P: DataProvider<CaseMapV1> + ?Sized,
     {

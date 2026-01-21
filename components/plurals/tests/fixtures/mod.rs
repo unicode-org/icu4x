@@ -42,7 +42,7 @@ pub struct FixedDecimalInput {
 
 impl From<&FixedDecimalInput> for Decimal {
     fn from(f: &FixedDecimalInput) -> Self {
-        let mut dec = Self::from(f.from);
+        let mut dec = Decimal::from(f.from);
         dec.multiply_pow10(f.pow10);
         dec
     }
@@ -70,7 +70,7 @@ impl From<PluralOperandsInput> for PluralOperands {
     fn from(input: PluralOperandsInput) -> Self {
         use icu_plurals::RawPluralOperands;
         match input {
-            PluralOperandsInput::List(operands) => Self::from(RawPluralOperands {
+            PluralOperandsInput::List(operands) => PluralOperands::from(RawPluralOperands {
                 i: operands.1,
                 v: operands.2,
                 w: operands.3,
@@ -86,7 +86,7 @@ impl From<PluralOperandsInput> for PluralOperands {
                 f,
                 t,
                 c,
-            } => Self::from(RawPluralOperands {
+            } => PluralOperands::from(RawPluralOperands {
                 i: i.unwrap_or_else(|| n.unwrap_or(0_f64) as u64),
                 v: v.unwrap_or(0),
                 w: w.unwrap_or(0),

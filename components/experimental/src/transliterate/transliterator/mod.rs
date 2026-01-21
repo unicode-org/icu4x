@@ -623,7 +623,7 @@ impl Transliterator {
         casemap_provider: &PC,
         locale: &Locale,
         lookup: F,
-    ) -> Result<Self, DataError>
+    ) -> Result<Transliterator, DataError>
     where
         PT: DataProvider<TransliteratorRulesV1> + ?Sized,
         PC: DataProvider<CaseMapV1> + ?Sized,
@@ -650,7 +650,7 @@ impl Transliterator {
         transliterator_provider: &PT,
         normalizer_provider: &PN,
         casemap_provider: &PC,
-    ) -> Result<Self, DataError>
+    ) -> Result<Transliterator, DataError>
     where
         PT: DataProvider<TransliteratorRulesV1> + ?Sized,
         PC: DataProvider<CaseMapV1> + ?Sized,
@@ -664,7 +664,7 @@ impl Transliterator {
     {
         let mut env = LiteMap::new();
 
-        let transliterator = Self::load_rbt(
+        let transliterator = Transliterator::load_rbt(
             #[expect(clippy::unwrap_used)] // infallible
             DataMarkerAttributes::try_from_str(&locale.to_string().to_ascii_lowercase()).unwrap(),
             lookup,
@@ -675,7 +675,7 @@ impl Transliterator {
             &mut env,
         )?;
 
-        Ok(Self {
+        Ok(Transliterator {
             transliterator,
             env,
         })
@@ -716,12 +716,12 @@ impl Transliterator {
                 // Load the transliterator, by checking
                 let internal_t =
                     // a) hardcoded specials
-                    Self::load_special(&dep, normalizer_provider, casemap_provider)
+                    Transliterator::load_special(&dep, normalizer_provider, casemap_provider)
                     // b) the user-provided override
                     .or_else(|| Some(lookup?(&dep.parse().ok()?)?.map(InternalTransliterator::Dyn)))
                     // c) the data
                     .unwrap_or_else(|| {
-                        Self::load_rbt(
+                        Transliterator::load_rbt(
                             #[expect(clippy::unwrap_used)] // infallible
                             DataMarkerAttributes::try_from_str(&dep.to_ascii_lowercase()).unwrap(),
                             lookup,

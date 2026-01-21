@@ -148,7 +148,7 @@ impl AsULE for CurrencyPatternConfig {
             }
         };
 
-        Self {
+        CurrencyPatternConfig {
             short_pattern_selection,
             narrow_pattern_selection,
             short_placeholder_value,
@@ -158,8 +158,8 @@ impl AsULE for CurrencyPatternConfig {
 }
 
 impl<'a> ZeroMapKV<'a> for CurrencyPatternConfig {
-    type Container = zerovec::ZeroVec<'a, Self>;
-    type Slice = zerovec::ZeroSlice<Self>;
-    type GetType = <Self as AsULE>::ULE;
-    type OwnedType = Self;
+    type Container = zerovec::ZeroVec<'a, CurrencyPatternConfig>;
+    type Slice = zerovec::ZeroSlice<CurrencyPatternConfig>;
+    type GetType = <CurrencyPatternConfig as AsULE>::ULE;
+    type OwnedType = CurrencyPatternConfig;
 }

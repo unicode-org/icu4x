@@ -54,16 +54,16 @@ impl ElementKind {
 
     pub(crate) fn debug_str(self) -> &'static str {
         match self {
-            Self::Literal => "literal",
-            Self::VariableReference => "variable reference",
-            Self::BackReference => "back reference",
-            Self::Quantifier => "quantifier",
-            Self::Segment => "segment",
-            Self::UnicodeSet => "unicodeset",
-            Self::FunctionCall => "function call",
-            Self::Cursor => "cursor",
-            Self::AnchorStart => "start anchor",
-            Self::AnchorEnd => "end anchor",
+            ElementKind::Literal => "literal",
+            ElementKind::VariableReference => "variable reference",
+            ElementKind::BackReference => "back reference",
+            ElementKind::Quantifier => "quantifier",
+            ElementKind::Segment => "segment",
+            ElementKind::UnicodeSet => "unicodeset",
+            ElementKind::FunctionCall => "function call",
+            ElementKind::Cursor => "cursor",
+            ElementKind::AnchorStart => "start anchor",
+            ElementKind::AnchorEnd => "end anchor",
         }
     }
 }
@@ -186,7 +186,7 @@ pub(crate) enum Element {
     //  - <element>+
     // note: Box<Element> instead of Section, because a quantifier only ever refers to the immediately preceding element.
     // segments or variable refs are used to group multiple elements together.
-    Quantifier(QuantifierKind, Box<Self>),
+    Quantifier(QuantifierKind, Box<Element>),
     // Example: (<element> <element> ...)
     Segment(Section),
     // Example: [:^L:]
@@ -205,16 +205,16 @@ pub(crate) enum Element {
 impl Element {
     pub(crate) fn kind(&self) -> ElementKind {
         match self {
-            Self::Literal(..) => ElementKind::Literal,
-            Self::VariableRef(..) => ElementKind::VariableReference,
-            Self::BackRef(..) => ElementKind::BackReference,
-            Self::Quantifier(..) => ElementKind::Quantifier,
-            Self::Segment(..) => ElementKind::Segment,
-            Self::UnicodeSet(..) => ElementKind::UnicodeSet,
-            Self::FunctionCall(..) => ElementKind::FunctionCall,
-            Self::Cursor(..) => ElementKind::Cursor,
-            Self::AnchorStart => ElementKind::AnchorStart,
-            Self::AnchorEnd => ElementKind::AnchorEnd,
+            Element::Literal(..) => ElementKind::Literal,
+            Element::VariableRef(..) => ElementKind::VariableReference,
+            Element::BackRef(..) => ElementKind::BackReference,
+            Element::Quantifier(..) => ElementKind::Quantifier,
+            Element::Segment(..) => ElementKind::Segment,
+            Element::UnicodeSet(..) => ElementKind::UnicodeSet,
+            Element::FunctionCall(..) => ElementKind::FunctionCall,
+            Element::Cursor(..) => ElementKind::Cursor,
+            Element::AnchorStart => ElementKind::AnchorStart,
+            Element::AnchorEnd => ElementKind::AnchorEnd,
         }
     }
 }

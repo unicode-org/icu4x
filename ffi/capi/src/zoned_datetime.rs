@@ -33,10 +33,10 @@ pub mod ffi {
         pub fn strict_from_string(
             v: &DiplomatStr,
             iana_parser: &IanaParser,
-        ) -> Result<Self, Rfc9557ParseError> {
+        ) -> Result<ZonedIsoDateTime, Rfc9557ParseError> {
             let icu_time::ZonedDateTime { date, time, zone } =
                 icu_time::ZonedDateTime::try_strict_from_utf8(v, Iso, iana_parser.0.as_borrowed())?;
-            Ok(Self {
+            Ok(ZonedIsoDateTime {
                 date: Box::new(IsoDate(date)),
                 time: Box::new(Time(time)),
                 zone: Box::new(TimeZoneInfo::from(zone)),
@@ -54,7 +54,7 @@ pub mod ffi {
             v: &DiplomatStr,
             iana_parser: &IanaParser,
             _offset_calculator: &crate::unstable::variant_offset::ffi::VariantOffsetsCalculator,
-        ) -> Result<Self, Rfc9557ParseError> {
+        ) -> Result<ZonedIsoDateTime, Rfc9557ParseError> {
             Self::strict_from_string(v, iana_parser)
         }
 
@@ -69,12 +69,12 @@ pub mod ffi {
         pub fn from_epoch_milliseconds_and_utc_offset(
             epoch_milliseconds: i64,
             utc_offset: &UtcOffset,
-        ) -> Self {
+        ) -> ZonedIsoDateTime {
             let zdt = icu_time::ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
                 epoch_milliseconds,
                 utc_offset.0,
             );
-            Self {
+            ZonedIsoDateTime {
                 date: Box::new(IsoDate(zdt.date)),
                 time: Box::new(Time(zdt.time)),
                 zone: Box::new(TimeZoneInfo::from(utc_offset.0)),
@@ -100,14 +100,14 @@ pub mod ffi {
             v: &DiplomatStr,
             calendar: &Calendar,
             iana_parser: &IanaParser,
-        ) -> Result<Self, Rfc9557ParseError> {
+        ) -> Result<ZonedDateTime, Rfc9557ParseError> {
             let icu_time::ZonedDateTime { date, time, zone } =
                 icu_time::ZonedDateTime::try_strict_from_utf8(
                     v,
                     calendar.0.clone(),
                     iana_parser.0.as_borrowed(),
                 )?;
-            Ok(Self {
+            Ok(ZonedDateTime {
                 date: Box::new(Date(date)),
                 time: Box::new(Time(time)),
                 zone: Box::new(TimeZoneInfo::from(zone)),
@@ -126,7 +126,7 @@ pub mod ffi {
             calendar: &Calendar,
             iana_parser: &IanaParser,
             _offset_calculator: &crate::unstable::variant_offset::ffi::VariantOffsetsCalculator,
-        ) -> Result<Self, Rfc9557ParseError> {
+        ) -> Result<ZonedDateTime, Rfc9557ParseError> {
             Self::strict_from_string(v, calendar, iana_parser)
         }
 
@@ -142,14 +142,14 @@ pub mod ffi {
             v: &DiplomatStr,
             calendar: &Calendar,
             iana_parser: &IanaParser,
-        ) -> Result<Self, Rfc9557ParseError> {
+        ) -> Result<ZonedDateTime, Rfc9557ParseError> {
             let icu_time::ZonedDateTime { date, time, zone } =
                 icu_time::ZonedDateTime::try_location_only_from_utf8(
                     v,
                     calendar.0.clone(),
                     iana_parser.0.as_borrowed(),
                 )?;
-            Ok(Self {
+            Ok(ZonedDateTime {
                 date: Box::new(Date(date)),
                 time: Box::new(Time(time)),
                 zone: Box::new(TimeZoneInfo::from(zone)),
@@ -167,10 +167,10 @@ pub mod ffi {
         pub fn offset_only_from_string(
             v: &DiplomatStr,
             calendar: &Calendar,
-        ) -> Result<Self, Rfc9557ParseError> {
+        ) -> Result<ZonedDateTime, Rfc9557ParseError> {
             let icu_time::ZonedDateTime { date, time, zone } =
                 icu_time::ZonedDateTime::try_offset_only_from_utf8(v, calendar.0.clone())?;
-            Ok(Self {
+            Ok(ZonedDateTime {
                 date: Box::new(Date(date)),
                 time: Box::new(Time(time)),
                 zone: Box::new(TimeZoneInfo::from(zone)),
@@ -185,14 +185,14 @@ pub mod ffi {
             v: &DiplomatStr,
             calendar: &Calendar,
             iana_parser: &IanaParser,
-        ) -> Result<Self, Rfc9557ParseError> {
+        ) -> Result<ZonedDateTime, Rfc9557ParseError> {
             let icu_time::ZonedDateTime { date, time, zone } =
                 icu_time::ZonedDateTime::try_lenient_from_utf8(
                     v,
                     calendar.0.clone(),
                     iana_parser.0.as_borrowed(),
                 )?;
-            Ok(Self {
+            Ok(ZonedDateTime {
                 date: Box::new(Date(date)),
                 time: Box::new(Time(time)),
                 zone: Box::new(TimeZoneInfo::from(zone)),

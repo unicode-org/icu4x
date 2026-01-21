@@ -206,8 +206,8 @@ impl Sub for Moment {
 
 impl Moment {
     /// Create a new moment
-    pub const fn new(value: f64) -> Self {
-        Self(value)
+    pub const fn new(value: f64) -> Moment {
+        Moment(value)
     }
 
     /// Get the inner field of a Moment

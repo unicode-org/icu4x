@@ -376,7 +376,7 @@ impl<A: AsCalendar> ZonedDateTime<A, UtcOffset> {
         let date = Date::try_from_ixdtf_record(&ixdtf_record, calendar)?;
         let time = Time::try_from_ixdtf_record(&ixdtf_record)?;
         let zone = Intermediate::try_from_ixdtf_record(&ixdtf_record)?.offset_only()?;
-        Ok(Self { date, time, zone })
+        Ok(ZonedDateTime { date, time, zone })
     }
 }
 
@@ -408,7 +408,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
         let time = Time::try_from_ixdtf_record(&ixdtf_record)?;
         let zone =
             Intermediate::try_from_ixdtf_record(&ixdtf_record)?.location_only(iana_parser)?;
-        Ok(Self { date, time, zone })
+        Ok(ZonedDateTime { date, time, zone })
     }
 
     /// Create a [`ZonedDateTime`] in any calendar from an RFC 9557 string.
@@ -438,7 +438,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
         let date = Date::try_from_ixdtf_record(&ixdtf_record, calendar)?;
         let time = Time::try_from_ixdtf_record(&ixdtf_record)?;
         let zone = Intermediate::try_from_ixdtf_record(&ixdtf_record)?.lenient(iana_parser)?;
-        Ok(Self { date, time, zone })
+        Ok(ZonedDateTime { date, time, zone })
     }
 
     /// Create a [`ZonedDateTime`] in any calendar from an RFC 9557 string.
@@ -608,7 +608,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
         let time = Time::try_from_ixdtf_record(&ixdtf_record)?;
         let zone = Intermediate::try_from_ixdtf_record(&ixdtf_record)?.all(iana_parser)?;
 
-        Ok(Self { date, time, zone })
+        Ok(ZonedDateTime { date, time, zone })
     }
 }
 
@@ -646,7 +646,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
         let zone = Intermediate::try_from_ixdtf_record(&ixdtf_record)?
             .full(iana_parser, offset_calculator)?;
 
-        Ok(Self { date, time, zone })
+        Ok(ZonedDateTime { date, time, zone })
     }
 }
 

@@ -177,7 +177,7 @@ struct TupleVecMapVisitor<K1, V> {
 
 impl<K1, V> TupleVecMapVisitor<K1, V> {
     fn new() -> Self {
-        Self {
+        TupleVecMapVisitor {
             marker: PhantomData,
         }
     }

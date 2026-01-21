@@ -177,7 +177,7 @@ impl YearBounds {
 /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
 /// Lisp reference code: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5273-L5281>
 pub(crate) fn major_solar_term_from_fixed<C: ChineseBased>(date: RataDie) -> u32 {
-    let moment = date.as_moment();
+    let moment: Moment = date.as_moment();
     let universal = moment - C::utc_offset(date);
     let solar_longitude =
         i64_to_i32(Astronomical::solar_longitude(Astronomical::julian_centuries(universal)) as i64);

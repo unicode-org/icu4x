@@ -212,8 +212,8 @@ impl UtcOffsetRecordOrZ {
     /// Resolves to a [`UtcOffsetRecord`] according to RFC9557: "Z" == "-00:00"
     pub fn resolve_rfc_9557(self) -> UtcOffsetRecord {
         match self {
-            Self::Offset(o) => o,
-            Self::Z => UtcOffsetRecord::MinutePrecision(MinutePrecisionOffset {
+            UtcOffsetRecordOrZ::Offset(o) => o,
+            UtcOffsetRecordOrZ::Z => UtcOffsetRecord::MinutePrecision(MinutePrecisionOffset {
                 sign: Sign::Negative,
                 hour: 0,
                 minute: 0,

@@ -37,7 +37,7 @@ pub struct VarZeroVecOwned<T: ?Sized, F = Index16> {
 
 impl<T: ?Sized, F> Clone for VarZeroVecOwned<T, F> {
     fn clone(&self) -> Self {
-        Self {
+        VarZeroVecOwned {
             marker1: PhantomData,
             marker2: PhantomData,
             entire_slice: self.entire_slice.clone(),

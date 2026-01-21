@@ -39,7 +39,7 @@ pub(crate) struct KindaSortaDangling<T: 'static> {
 impl<T: 'static> KindaSortaDangling<T> {
     #[inline]
     pub(crate) const fn new(dangle: T) -> Self {
-        Self {
+        KindaSortaDangling {
             dangle: MaybeUninit::new(dangle),
         }
     }

@@ -88,7 +88,7 @@ impl DateFieldsResolver for Coptic {
         month: types::Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
-        Self::reference_year_from_month_day(month, day)
+        Coptic::reference_year_from_month_day(month, day)
     }
 
     fn to_rata_die_inner(year: Self::YearInfo, month: u8, day: u8) -> RataDie {
@@ -250,10 +250,10 @@ impl Date<Coptic> {
     /// assert_eq!(date_coptic.month().ordinal, 5);
     /// assert_eq!(date_coptic.day_of_month().0, 6);
     /// ```
-    pub fn try_new_coptic(year: i32, month: u8, day: u8) -> Result<Self, RangeError> {
+    pub fn try_new_coptic(year: i32, month: u8, day: u8) -> Result<Date<Coptic>, RangeError> {
         ArithmeticDate::from_year_month_day(year, month, day, &Coptic)
             .map(CopticDateInner)
-            .map(|inner| Self::from_raw(inner, Coptic))
+            .map(|inner| Date::from_raw(inner, Coptic))
     }
 }
 

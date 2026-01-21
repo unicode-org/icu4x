@@ -290,21 +290,21 @@ impl zerovec::ule::AsULE for BreakState {
 
     fn to_unaligned(self) -> Self::ULE {
         match self {
-            Self::Break => 253,
-            Self::Keep => 255,
-            Self::NoMatch => 254,
-            Self::Intermediate(i) => i + 120,
-            Self::Index(i) => i,
+            BreakState::Break => 253,
+            BreakState::Keep => 255,
+            BreakState::NoMatch => 254,
+            BreakState::Intermediate(i) => i + 120,
+            BreakState::Index(i) => i,
         }
     }
 
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         match unaligned {
-            253 => Self::Break,
-            255 => Self::Keep,
-            254 => Self::NoMatch,
-            i if (120..253).contains(&i) => Self::Intermediate(i - 120),
-            i => Self::Index(i),
+            253 => BreakState::Break,
+            255 => BreakState::Keep,
+            254 => BreakState::NoMatch,
+            i if (120..253).contains(&i) => BreakState::Intermediate(i - 120),
+            i => BreakState::Index(i),
         }
     }
 }
@@ -339,9 +339,9 @@ impl<'de> serde::Deserialize<'de> for WordType {
         if deserializer.is_human_readable() {
             use serde::de::Error;
             match u8::deserialize(deserializer) {
-                Ok(0) => Ok(Self::None),
-                Ok(1) => Ok(Self::Number),
-                Ok(2) => Ok(Self::Letter),
+                Ok(0) => Ok(WordType::None),
+                Ok(1) => Ok(WordType::Number),
+                Ok(2) => Ok(WordType::Letter),
                 Ok(_) => Err(D::Error::custom("invalid value")),
                 Err(e) => Err(e),
             }

@@ -685,7 +685,7 @@ pub(crate) struct Insertable<'a, 'b> {
 }
 
 impl<'a, 'b> Insertable<'a, 'b> {
-    fn from_matcher(matcher: RepMatcher<'a, 'b, true>) -> Self {
+    fn from_matcher(matcher: RepMatcher<'a, 'b, true>) -> Insertable<'a, 'b> {
         let match_lens = matcher.match_lens();
         // SAFETY: RepMatcher does not modify the `Replaceable`.
         // This is the start of the range we want to replace.

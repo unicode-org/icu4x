@@ -47,7 +47,7 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "from_seconds")]
-        pub fn from_seconds(seconds: i32) -> Result<Box<Self>, TimeZoneInvalidOffsetError> {
+        pub fn from_seconds(seconds: i32) -> Result<Box<UtcOffset>, TimeZoneInvalidOffsetError> {
             Ok(Box::new(Self(icu_time::zone::UtcOffset::try_from_seconds(
                 seconds,
             )?)))
@@ -128,8 +128,8 @@ pub mod ffi {
         )]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<Self> {
-            Box::new(Self(
+        pub fn create() -> Box<VariantOffsetsCalculator> {
+            Box::new(VariantOffsetsCalculator(
                 icu_time::zone::VariantOffsetsCalculator::new().static_to_owned(),
             ))
         }
@@ -137,8 +137,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::zone::VariantOffsetsCalculator::new, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
-        pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Self>, DataError> {
-            Ok(Box::new(Self(
+        pub fn create_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<VariantOffsetsCalculator>, DataError> {
+            Ok(Box::new(VariantOffsetsCalculator(
                 icu_time::zone::VariantOffsetsCalculator::try_new_with_buffer_provider(
                     provider.get()?,
                 )?,

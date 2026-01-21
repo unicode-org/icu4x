@@ -36,7 +36,7 @@ fn test_parsing_operands() {
         let t = test.clone();
         let operands: PluralOperands = t.output.into();
         let raw_operands = RawPluralOperands::from(operands);
-        let expected = t.input.abs();
+        let expected: f64 = t.input.abs();
         let fraction = raw_operands.t as f64 / 10_f64.powi(raw_operands.v as i32);
         let n = raw_operands.i as f64 + fraction;
         let actual = (n - expected).abs();

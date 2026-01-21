@@ -73,7 +73,7 @@ impl PercentFormatter<DecimalFormatter> {
         let decimal_formatter =
             DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
 
-        Self::try_new_with_decimal_formatter(prefs, decimal_formatter, options)
+        PercentFormatter::try_new_with_decimal_formatter(prefs, decimal_formatter, options)
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
@@ -94,7 +94,12 @@ impl PercentFormatter<DecimalFormatter> {
             DecimalFormatterOptions::default(),
         )?;
 
-        Self::try_new_with_decimal_formatter_unstable(provider, prefs, decimal_formatter, options)
+        PercentFormatter::try_new_with_decimal_formatter_unstable(
+            provider,
+            prefs,
+            decimal_formatter,
+            options,
+        )
     }
 
     /// Formats a [`Decimal`] value for the given percent code.

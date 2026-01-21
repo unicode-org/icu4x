@@ -72,11 +72,11 @@ impl Date<Iso> {
     /// assert_eq!(date_iso.month().ordinal, 1);
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
-    pub fn try_new_iso(year: i32, month: u8, day: u8) -> Result<Self, RangeError> {
+    pub fn try_new_iso(year: i32, month: u8, day: u8) -> Result<Date<Iso>, RangeError> {
         ArithmeticDate::from_year_month_day(year, month, day, &AbstractGregorian(IsoEra))
             .map(ArithmeticDate::cast)
             .map(IsoDateInner)
-            .map(|i| Self::from_raw(i, Iso))
+            .map(|i| Date::from_raw(i, Iso))
     }
 }
 

@@ -510,7 +510,7 @@ mod test {
 
     impl From<DataWarehouse> for DataProvider2 {
         fn from(warehouse: DataWarehouse) -> Self {
-            Self { data: warehouse }
+            DataProvider2 { data: warehouse }
         }
     }
 

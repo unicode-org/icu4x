@@ -85,7 +85,7 @@ impl Location {
         longitude: f64,
         elevation: f64,
         utc_offset: f64,
-    ) -> Result<Self, LocationOutOfBoundsError> {
+    ) -> Result<Location, LocationOutOfBoundsError> {
         if !(-90.0..=90.0).contains(&latitude) {
             return Err(LocationOutOfBoundsError::Latitude(latitude));
         }
@@ -99,7 +99,7 @@ impl Location {
                 MAX_UTC_OFFSET,
             ));
         }
-        Ok(Self {
+        Ok(Location {
             latitude,
             longitude,
             elevation,
@@ -144,7 +144,7 @@ impl Location {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3501-L3506>
     #[allow(dead_code)]
-    pub(crate) fn standard_from_local(standard_time: Moment, location: Self) -> Moment {
+    pub(crate) fn standard_from_local(standard_time: Moment, location: Location) -> Moment {
         Self::standard_from_universal(
             Self::universal_from_local(standard_time, location),
             location,
@@ -155,7 +155,7 @@ impl Location {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3496-L3499>
-    pub(crate) fn universal_from_local(local_time: Moment, location: Self) -> Moment {
+    pub(crate) fn universal_from_local(local_time: Moment, location: Location) -> Moment {
         local_time - Self::zone_from_longitude(location.longitude)
     }
 
@@ -164,7 +164,7 @@ impl Location {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3491-L3494>
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
-    pub(crate) fn local_from_universal(universal_time: Moment, location: Self) -> Moment {
+    pub(crate) fn local_from_universal(universal_time: Moment, location: Location) -> Moment {
         universal_time + Self::zone_from_longitude(location.longitude)
     }
 
@@ -175,7 +175,7 @@ impl Location {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3479-L3483>
-    pub(crate) fn universal_from_standard(standard_moment: Moment, location: Self) -> Moment {
+    pub(crate) fn universal_from_standard(standard_moment: Moment, location: Location) -> Moment {
         debug_assert!(location.utc_offset > MIN_UTC_OFFSET && location.utc_offset < MAX_UTC_OFFSET, "UTC offset {0} was not within the possible range of offsets (see astronomy::MIN_UTC_OFFSET and astronomy::MAX_UTC_OFFSET)", location.utc_offset);
         standard_moment - location.utc_offset
     }
@@ -187,7 +187,7 @@ impl Location {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3473-L3477>
     #[allow(dead_code)]
-    pub(crate) fn standard_from_universal(standard_time: Moment, location: Self) -> Moment {
+    pub(crate) fn standard_from_universal(standard_time: Moment, location: Location) -> Moment {
         debug_assert!(location.utc_offset > MIN_UTC_OFFSET && location.utc_offset < MAX_UTC_OFFSET, "UTC offset {0} was not within the possible range of offsets (see astronomy::MIN_UTC_OFFSET and astronomy::MAX_UTC_OFFSET)", location.utc_offset);
         standard_time + location.utc_offset
     }
@@ -1994,7 +1994,7 @@ mod tests {
             0.0029138888888888877,
         ];
         for (rd, expected_ephemeris) in rd_vals.iter().zip(expected_ephemeris.iter()) {
-            let moment = Moment::new(*rd as f64);
+            let moment: Moment = Moment::new(*rd as f64);
             let ephemeris = Astronomical::ephemeris_correction(moment);
             let expected_ephemeris_value = expected_ephemeris;
             assert!(ephemeris > expected_ephemeris_value * TEST_LOWER_BOUND_FACTOR, "Ephemeris correction calculation failed for the test case:\n\n\tMoment: {moment:?} with expected: {expected_ephemeris_value} and calculated: {ephemeris}\n\n");
@@ -2047,7 +2047,7 @@ mod tests {
             116.43935225951282,
         ];
         for (rd, expected_solar_long) in rd_vals.iter().zip(expected_solar_long.iter()) {
-            let moment = Moment::new(*rd as f64);
+            let moment: Moment = Moment::new(*rd as f64);
             let solar_long =
                 Astronomical::solar_longitude(Astronomical::julian_centuries(moment + 0.5));
             let expected_solar_long_value = expected_solar_long;
@@ -2104,7 +2104,7 @@ mod tests {
         ];
 
         for (rd, expected_lunar_lat) in rd_vals.iter().zip(expected_lunar_lat.iter()) {
-            let moment = Moment::new(*rd as f64);
+            let moment: Moment = Moment::new(*rd as f64);
             let lunar_lat = Astronomical::lunar_latitude(Astronomical::julian_centuries(moment));
             let expected_lunar_lat_value = *expected_lunar_lat;
 
@@ -2157,7 +2157,7 @@ mod tests {
             175.5008226195208,
         ];
         for (rd, expected_lunar_long) in rd_vals.iter().zip(expected_lunar_long.iter()) {
-            let moment = Moment::new(*rd as f64);
+            let moment: Moment = Moment::new(*rd as f64);
             let lunar_long = Astronomical::lunar_longitude(Astronomical::julian_centuries(moment));
             let expected_lunar_long_value = *expected_lunar_long;
 
@@ -2210,7 +2210,7 @@ mod tests {
         ];
 
         for (rd, expected_alt) in rd_vals.iter().zip(expected_altitude_deg.iter()) {
-            let moment = Moment::new(*rd as f64);
+            let moment: Moment = Moment::new(*rd as f64);
             let lunar_alt = Astronomical::lunar_altitude(moment, crate::islamic::MECCA);
             let expected_alt_value = *expected_alt;
 
@@ -2263,7 +2263,7 @@ mod tests {
         ];
 
         for (rd, expected_distance) in rd_vals.iter().zip(expected_distances.iter()) {
-            let moment = Moment::new(*rd as f64);
+            let moment: Moment = Moment::new(*rd as f64);
             let distance = Astronomical::lunar_distance(moment);
             let expected_distance_val = *expected_distance;
 
@@ -2316,7 +2316,7 @@ mod tests {
         ];
 
         for (rd, parallax) in rd_vals.iter().zip(expected_parallax.iter()) {
-            let moment = Moment::new(*rd as f64);
+            let moment: Moment = Moment::new(*rd as f64);
             let lunar_altitude_val = Astronomical::lunar_altitude(moment, crate::islamic::MECCA);
             let parallax_val = Astronomical::lunar_parallax(lunar_altitude_val, moment);
             let expected_parallax_val = *parallax;
@@ -2372,7 +2372,7 @@ mod tests {
         ];
 
         for (rd, expected_val) in rd_vals.iter().zip(expected_values.iter()) {
-            let moment = Moment::new(*rd);
+            let moment: Moment = Moment::new(*rd);
             let moonset_val = Astronomical::moonset(moment, crate::islamic::MECCA);
             let expected_moonset_val = *expected_val;
             if let Some(moonset_val) = moonset_val {
@@ -2489,7 +2489,7 @@ mod tests {
             764676.1912733881,
         ];
         for (rd, expected_next_new_moon) in rd_vals.iter().zip(expected_next_new_moon.iter()) {
-            let moment = Moment::new(*rd as f64);
+            let moment: Moment = Moment::new(*rd as f64);
             let next_new_moon = Astronomical::new_moon_at_or_after(moment);
             let expected_next_new_moon_moment = Moment::new(*expected_next_new_moon);
             if *expected_next_new_moon > 0.0 {
@@ -2525,7 +2525,7 @@ mod tests {
     #[test]
     fn check_new_moon_directionality() {
         // Checks that new_moon_before is less than new_moon_at_or_after for a large number of Moments
-        let mut moment = Moment::new(-15500.0);
+        let mut moment: Moment = Moment::new(-15500.0);
         let max_moment = Moment::new(15501.0);
         let mut iters: i32 = 0;
         let max_iters = 10000;

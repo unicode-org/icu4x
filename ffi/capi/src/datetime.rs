@@ -27,9 +27,9 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::DateTime::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::time::DateTime::from_str, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
-        pub fn from_string(v: &DiplomatStr) -> Result<Self, Rfc9557ParseError> {
+        pub fn from_string(v: &DiplomatStr) -> Result<IsoDateTime, Rfc9557ParseError> {
             let icu_time::DateTime { date, time } = icu_time::DateTime::try_from_utf8(v, Iso)?;
-            Ok(Self {
+            Ok(IsoDateTime {
                 date: Box::new(IsoDate(date)),
                 time: Box::new(Time(time)),
             })
@@ -53,10 +53,10 @@ pub mod ffi {
         pub fn from_string(
             v: &DiplomatStr,
             calendar: &Calendar,
-        ) -> Result<Self, Rfc9557ParseError> {
+        ) -> Result<DateTime, Rfc9557ParseError> {
             let icu_time::DateTime { date, time } =
                 icu_time::DateTime::try_from_utf8(v, calendar.0.clone())?;
-            Ok(Self {
+            Ok(DateTime {
                 date: Box::new(Date(date)),
                 time: Box::new(Time(time)),
             })

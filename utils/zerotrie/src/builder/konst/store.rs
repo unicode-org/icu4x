@@ -72,7 +72,11 @@ impl<'a, T> ConstSlice<'a, T> {
 
     /// Gets a subslice of this slice.
     #[cfg(test)]
-    pub const fn get_subslice_or_panic(&self, new_start: usize, new_limit: usize) -> Self {
+    pub const fn get_subslice_or_panic(
+        &self,
+        new_start: usize,
+        new_limit: usize,
+    ) -> ConstSlice<'a, T> {
         assert!(new_start <= new_limit);
         assert!(new_limit <= self.len());
         ConstSlice {

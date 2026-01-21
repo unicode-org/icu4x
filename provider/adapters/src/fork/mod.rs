@@ -144,7 +144,7 @@ impl<P0, P1> ForkByMarkerProvider<P0, P1> {
     ///
     /// See [`ForkByMarkerProvider`].
     pub fn new(p0: P0, p1: P1) -> Self {
-        Self::new_with_predicate(p0, p1, MarkerNotFoundPredicate)
+        ForkByErrorProvider::new_with_predicate(p0, p1, MarkerNotFoundPredicate)
     }
 }
 
@@ -214,6 +214,6 @@ impl<P> MultiForkByMarkerProvider<P> {
     ///
     /// See [`MultiForkByMarkerProvider`].
     pub fn new(providers: Vec<P>) -> Self {
-        Self::new_with_predicate(providers, MarkerNotFoundPredicate)
+        MultiForkByErrorProvider::new_with_predicate(providers, MarkerNotFoundPredicate)
     }
 }

@@ -1082,12 +1082,12 @@ impl TryFrom<BinResBundle<'_>> for Vec<u8> {
         // is sufficiently complex as to make the header the only part where
         // an external crate would be convenient, and that's a matter of a small
         // number of bytes, so on balance it's easier to just handle those here.
-        let mut bytes = Self::new();
-        bytes.append(&mut Self::from(value.header));
+        let mut bytes = Vec::new();
+        bytes.append(&mut Vec::<u8>::from(value.header));
 
         // Write the body.
         bytes.extend_from_slice(&u32::from(value.root_descriptor).to_ne_bytes());
-        bytes.append(&mut Self::try_from(value.index)?);
+        bytes.append(&mut Vec::<u8>::try_from(value.index)?);
         bytes.extend_from_slice(value.keys);
         bytes.extend_from_slice(value.data_16_bit);
         bytes.extend_from_slice(value.resources);
@@ -1098,12 +1098,12 @@ impl TryFrom<BinResBundle<'_>> for Vec<u8> {
 
 impl From<BinHeader> for Vec<u8> {
     fn from(value: BinHeader) -> Self {
-        let mut bytes = Self::with_capacity(value.size as usize);
+        let mut bytes = Vec::with_capacity(value.size as usize);
 
         bytes.extend_from_slice(&value.size.to_ne_bytes());
         bytes.extend_from_slice(&value.magic);
 
-        let mut data_info_bytes = Self::from(value.repr_info);
+        let mut data_info_bytes = Vec::<u8>::from(value.repr_info);
         bytes.append(&mut data_info_bytes);
 
         // Pad the header such that its total size is divisible by 16.
@@ -1115,7 +1115,7 @@ impl From<BinHeader> for Vec<u8> {
 
 impl From<BinReprInfo> for Vec<u8> {
     fn from(value: BinReprInfo) -> Self {
-        let mut bytes = Self::with_capacity(value.size as usize);
+        let mut bytes = Vec::with_capacity(value.size as usize);
 
         bytes.extend_from_slice(&value.size.to_ne_bytes());
         bytes.extend_from_slice(&value.reserved_word.to_ne_bytes());
@@ -1136,7 +1136,7 @@ impl TryFrom<BinIndex> for Vec<u8> {
 
     fn try_from(value: BinIndex) -> Result<Self, Self::Error> {
         let mut bytes =
-            Self::with_capacity(value.field_count as usize * core::mem::size_of::<u32>());
+            Vec::with_capacity(value.field_count as usize * core::mem::size_of::<u32>());
 
         // Format version 1.0 did not include an index and so no bytes should be
         // written.
@@ -1199,7 +1199,7 @@ impl From<FormatVersion> for [u8; 4] {
 
 impl From<ResDescriptor> for u32 {
     fn from(value: ResDescriptor) -> Self {
-        ((value.resource_type as Self) << 28) | value.value
+        ((value.resource_type as u32) << 28) | value.value
     }
 }
 

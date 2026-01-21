@@ -34,7 +34,7 @@ struct TinyAsciiStrVisitor<const N: usize> {
 
 impl<const N: usize> TinyAsciiStrVisitor<N> {
     fn new() -> Self {
-        Self {
+        TinyAsciiStrVisitor {
             marker: PhantomData,
         }
     }

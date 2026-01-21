@@ -213,7 +213,7 @@ impl LocalePreferences {
     }
 
     /// Extends the preferences with the values from another set of preferences.
-    pub fn extend(&mut self, other: Self) {
+    pub fn extend(&mut self, other: LocalePreferences) {
         if !other.language.is_unknown() {
             self.language = other.language;
         }

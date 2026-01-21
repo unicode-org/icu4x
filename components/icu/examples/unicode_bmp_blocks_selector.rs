@@ -36,8 +36,8 @@ struct BmpBlockSelector {
 }
 
 impl BmpBlockSelector {
-    pub fn new() -> Self {
-        Self {
+    pub fn new() -> BmpBlockSelector {
+        BmpBlockSelector {
             blocks: BLOCKS.map(|(ch, range)| {
                 (ch, {
                     let mut builder = CodePointInversionListBuilder::new();

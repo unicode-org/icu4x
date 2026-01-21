@@ -83,7 +83,7 @@ pub(crate) struct LikelySubtagsResources<'a> {
 impl<'a> LikelySubtagsResources<'a> {
     pub(crate) fn try_from_cldr_cache(
         cache: &'a super::super::CldrCache,
-    ) -> Result<Self, DataError> {
+    ) -> Result<LikelySubtagsResources<'a>, DataError> {
         let likely_subtags: &cldr_serde::likely_subtags::Resource = cache
             .core()
             .read_and_parse("supplemental/likelySubtags.json")?;

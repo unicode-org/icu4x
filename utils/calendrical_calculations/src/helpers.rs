@@ -297,8 +297,8 @@ impl I32CastError {
     /// Recovers the value saturated to `i32:::MIN..=i32::MAX`.
     pub const fn saturate(self) -> i32 {
         match self {
-            Self::BelowMin => i32::MIN,
-            Self::AboveMax => i32::MAX,
+            I32CastError::BelowMin => i32::MIN,
+            I32CastError::AboveMax => i32::MAX,
         }
     }
 }

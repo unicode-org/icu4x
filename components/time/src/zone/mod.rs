@@ -206,10 +206,10 @@ impl AsULE for TimeZone {
 
 #[cfg(feature = "alloc")]
 impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
-    type Container = zerovec::ZeroVec<'a, Self>;
-    type Slice = zerovec::ZeroSlice<Self>;
-    type GetType = Self;
-    type OwnedType = Self;
+    type Container = zerovec::ZeroVec<'a, TimeZone>;
+    type Slice = zerovec::ZeroSlice<TimeZone>;
+    type GetType = TimeZone;
+    type OwnedType = TimeZone;
 }
 
 /// A utility type that can hold time zone information.
@@ -382,7 +382,7 @@ impl TimeZoneInfo<models::Base> {
 
     /// Creates a new [`TimeZoneInfo`] for the UTC time zone.
     pub const fn utc() -> Self {
-        Self {
+        TimeZoneInfo {
             id: TimeZone(subtag!("utc")),
             offset: Some(UtcOffset::zero()),
             zone_name_timestamp: (),
@@ -554,9 +554,9 @@ impl TimeZoneVariant {
     )]
     pub const fn from_rearguard_isdst(isdst: bool) -> Self {
         if isdst {
-            Self::Daylight
+            TimeZoneVariant::Daylight
         } else {
-            Self::Standard
+            TimeZoneVariant::Standard
         }
     }
 }

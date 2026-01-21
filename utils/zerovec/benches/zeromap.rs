@@ -369,10 +369,10 @@ criterion_main!(benches);
 pub(crate) struct Index32StrBorrowed<'a>(#[serde(borrow)] pub &'a str);
 
 impl<'a> ZeroMapKV<'a> for Index32Str {
-    type Container = VarZeroVec<'a, Self, Index32>;
-    type Slice = VarZeroSlice<Self, Index32>;
-    type GetType = Self;
-    type OwnedType = Box<Self>;
+    type Container = VarZeroVec<'a, Index32Str, Index32>;
+    type Slice = VarZeroSlice<Index32Str, Index32>;
+    type GetType = Index32Str;
+    type OwnedType = Box<Index32Str>;
 }
 
 #[inline]
