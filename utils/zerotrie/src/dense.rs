@@ -193,10 +193,11 @@ impl<'a> ZeroAsciiDenseSparse2dTrieBorrowed<'a> {
             return None;
         };
         let suffix_count = usize::from(self.suffix_count);
-        let index = row_index
+        let Some(offset) = row_index
             .checked_mul(suffix_count)
-            .and_then(|v| v.checked_add(column_index))?;
-        let Some(offset) = self.dense.get(index) else {
+            .and_then(|v| v.checked_add(column_index))
+            .and_then(|index| self.dense.get(index))
+        else {
             debug_assert!(
                 false,
                 "matrix index out of bounds: row={}, col={}, suffix_count={}",
