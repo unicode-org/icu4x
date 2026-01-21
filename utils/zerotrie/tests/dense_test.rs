@@ -231,6 +231,11 @@ fn test_empty_dense_when_no_suffix_meets_threshold() {
 
     let trie = ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/').unwrap();
 
+    assert_eq!(
+        format!("{:?}", trie.as_borrowed()),
+        "ZeroAsciiDenseSparse2dTrieBorrowed { primary: ZeroTrieSimpleAscii { store: [195, 97, 98, 99, 4, 8, 47, 115, 49, 129, 47, 115, 50, 130, 47, 115, 51, 131] }, suffixes: ZeroTrieSimpleAscii { store: [115, 195, 49, 50, 51, 1, 2, 128, 129, 130] }, dense: ZeroVec([]), suffix_count: 3, delimiter: 47 }"
+    );
+
     check_data(&data, trie.as_borrowed(), true);
 
     // Non-existent
