@@ -13,6 +13,7 @@ use icu::datetime::provider::semantic_skeletons::marker_attrs::GlueType;
 use icu::datetime::provider::semantic_skeletons::marker_attrs::{
     self, Context, Length, PatternLength,
 };
+use icu::datetime::provider::semantic_skeletons::{DatetimePatternsGlueV1, GluePattern};
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::borrow::Cow;
