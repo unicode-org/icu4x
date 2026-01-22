@@ -22,6 +22,7 @@ use icu_locale_core::Locale;
 use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
 
+#[derive(Debug)]
 pub struct PersonNamesFormatter {
     pub(crate) default_options: PersonNamesFormatterOptions,
     swe: ScriptWithExtensions,
@@ -209,7 +210,7 @@ impl PersonNamesFormatter {
 
 /// Validate that the provided fields are valid.
 /// If the person name is not valid, it will not be formatted.
-pub(crate) fn validate_person_name(available_name_fields: &[&NameField]) -> bool {
+pub(crate) fn validate_person_name(available_name_fields: &[NameField]) -> bool {
     available_name_fields
         .iter()
         .any(|field| field.kind == NameFieldKind::Given || field.kind == NameFieldKind::Surname)

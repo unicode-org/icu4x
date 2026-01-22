@@ -10,6 +10,7 @@ use crate::kinda_sorta_dangling::KindaSortaDangling;
 use crate::utils;
 use crate::Yokeable;
 use core::marker::PhantomData;
+use core::mem::ManuallyDrop;
 use core::ops::Deref;
 use stable_deref_trait::StableDeref;
 
@@ -330,7 +331,7 @@ where
 
     /// Use [`Yoke::attach_to_cart()`].
     ///
-    /// This was needed because the pre-1.61 compiler couldn't always handle the FnOnce trait bound.
+    /// This was needed because the pre-1.61 compiler couldn't always handle the [`FnOnce`] trait bound.
     #[deprecated]
     pub fn attach_to_cart_badly(
         cart: C,
@@ -341,7 +342,7 @@ where
 
     /// Use [`Yoke::try_attach_to_cart()`].
     ///
-    /// This was needed because the pre-1.61 compiler couldn't always handle the FnOnce trait bound.
+    /// This was needed because the pre-1.61 compiler couldn't always handle the [`FnOnce`] trait bound.
     #[deprecated]
     pub fn try_attach_to_cart_badly<E>(
         cart: C,
@@ -453,7 +454,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///
     /// # Safety
     ///
-    /// - `f()` must not panic
     /// - References from the yokeable `Y` should still be valid for the lifetime of the
     ///   returned cart type `C`.
     ///
@@ -465,8 +465,10 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///   Concretely, this means that if `C = Option<Rc<T>>`, `Y` may contain references to the `T` but not
     ///   anything else.
     /// - Lifetimes inside C must not be lengthened, even if they are themselves contravariant.
-    ///   I.e., if C contains an `fn(&'a u8)`, it cannot be replaced with `fn(&'static u8),
+    ///   I.e., if C contains an `fn(&'a u8)`, it cannot be replaced with `fn(&'static u8)`,
     ///   even though that is typically safe.
+    ///
+    /// Note: `f` *is* allowed to panic.
     ///
     /// Typically, this means implementing `f` as something which _wraps_ the inner cart type `C`.
     /// `Yoke` only really cares about destructors for its carts so it's fine to erase other
@@ -474,12 +476,17 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// same time.
     #[inline]
     pub unsafe fn replace_cart<C2>(self, f: impl FnOnce(C) -> C2) -> Yoke<Y, C2> {
+        let yokeable = ManuallyDrop::new(self.yokeable);
+        let cart = f(self.cart);
         Yoke {
             // Safety note: the safety invariant of this function guarantees that
             // the data that the yokeable references has its ownership (if any)
-            // transferred to the new cart before self.cart is dropped.
-            yokeable: self.yokeable,
-            cart: f(self.cart),
+            // transferred to the new cart before self.cart is dropped, unless
+            // `f` panics, in which case the above `ManuallyDrop` ensures that
+            // the yokeable is leaked (preventing any UB from dropping the
+            // yokeable after its cart).
+            yokeable: ManuallyDrop::into_inner(yokeable),
+            cart,
         }
     }
 
@@ -764,7 +771,7 @@ impl<Y: for<'a> Yokeable<'a>, C: CartablePointerLike> Yoke<Y, CartableOptionPoin
 ///
 /// This trait can also be implemented on aggregates of such types like `Option<T: CloneableCart>` and `(T: CloneableCart, U: CloneableCart)`.
 ///
-/// Essentially, all data that could be referenced by a Yokeable (i.e. data that is referenced via a StableDeref) must retain the same
+/// Essentially, all data that could be referenced by a Yokeable (i.e. data that is referenced via a [`StableDeref`]) must retain the same
 /// pointer and ownership semantics once cloned.
 pub unsafe trait CloneableCart: Clone {}
 
@@ -1560,6 +1567,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     #[inline]
     pub fn wrap_cart_in_box(self) -> Yoke<Y, Box<C>> {
         // Safety: safe because the cart is preserved, as it is just wrapped.
+        // `replace_cart()` explicitly allows panics.
         unsafe { self.replace_cart(Box::new) }
     }
     /// Helper function allowing one to wrap the cart type `C` in an `Rc<T>`.
@@ -1569,7 +1577,8 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[inline]
     pub fn wrap_cart_in_rc(self) -> Yoke<Y, Rc<C>> {
-        // Safety: safe because the cart is preserved, as it is just wrapped
+        // Safety: safe because the cart is preserved, as it is just wrapped.
+        // `replace_cart()` explicitly allows panics.
         unsafe { self.replace_cart(Rc::new) }
     }
     /// Helper function allowing one to wrap the cart type `C` in an `Arc<T>`.
@@ -1579,7 +1588,8 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[inline]
     pub fn wrap_cart_in_arc(self) -> Yoke<Y, Arc<C>> {
-        // Safety: safe because the cart is preserved, as it is just wrapped
+        // Safety: safe because the cart is preserved, as it is just wrapped.
+        // `replace_cart()` explicitly allows panics.
         unsafe { self.replace_cart(Arc::new) }
     }
 }
@@ -1609,9 +1619,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     }
 }
 
-/// # Safety docs for *map_project*()
+/// # Safety docs for `*map_project*()`
 ///
-/// (Docs are on a private const to allow the use of compile_fail doctests)
+/// (Docs are on a private const to allow the use of `compile_fail` doctests)
 ///
 /// This is safe to perform because of the choice of lifetimes on `f`, that is,
 /// `for<a> fn(<Y as Yokeable<'a>>::Output, &'a ()) -> <P as Yokeable<'a>>::Output`.
@@ -1715,7 +1725,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// unification of an existential and universal lifetime, which isn't possible.
 const _: () = ();
 
-/// # Safety docs for attach_to_cart()'s signature
+/// # Safety docs for `attach_to_cart()`'s signature
 ///
 /// The `attach_to_cart()` family of methods get by by using the following bound:
 ///
@@ -1738,7 +1748,7 @@ const _: () = ();
 /// e.g. `&[u8]` is a valid cart, as is `Box<&[u8]>`. `C` is not `'static`.
 ///
 /// (I'm going to use `CT` in prose to refer to `C::Target` here, since almost everything here has to do
-/// with C::Target and not C itself.)
+/// with `C::Target` and not C itself.)
 ///
 /// Unfortunately, there's a sneaky additional bound inside `F`. The signature of `F` is *actually*
 ///
@@ -1784,8 +1794,8 @@ const _: () = ();
 /// by forcing them to be invariant. This is a bit more restrictive and affects *all* `Yoke` users, not just
 /// those using `attach_to_cart()`.
 ///
-/// See https://github.com/unicode-org/icu4x/issues/2926
-/// See also https://github.com/rust-lang/rust/issues/106431 for potentially fixing this upstream by
+/// See <https://github.com/unicode-org/icu4x/issues/2926>
+/// See also <https://github.com/rust-lang/rust/issues/106431> for potentially fixing this upstream by
 /// changing how the bound works.
 ///
 /// # Tests
@@ -1861,7 +1871,7 @@ const _: () = ();
 /// ```
 const _: () = ();
 
-/// # Safety docs for *map_with_cart*()
+/// # Safety docs for `*map_with_cart*()`
 ///
 /// [`Yoke::map_with_cart`] has both the problems of [`Yoke::map_project`] (with a
 /// potentially-pathological callback) and [`Yoke::attach_to_cart`] (with a potentially

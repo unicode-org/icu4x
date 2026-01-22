@@ -15,7 +15,7 @@ use crate::varint;
 use alloc::borrow::Cow;
 use alloc::vec::Vec;
 
-/// A low-level builder for ZeroTrie. Supports all options.
+/// A low-level builder for [`ZeroTrie`](crate::ZeroTrie). Supports all options.
 pub(crate) struct ZeroTrieBuilder<S> {
     data: S,
     phf_cache: PerfectByteHashMapCacheOwned,
@@ -93,7 +93,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         s.len()
     }
 
-    /// Builds a ZeroTrie from an iterator of bytes. It first collects and sorts the iterator.
+    /// Builds a [`ZeroTrie`](crate::ZeroTrie) from an iterator of bytes. It first collects and sorts the iterator.
     pub fn from_bytes_iter<K: AsRef<[u8]>, I: IntoIterator<Item = (K, usize)>>(
         iter: I,
         options: ZeroTrieBuilderOptions,
@@ -109,7 +109,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         Self::from_sorted_tuple_slice_impl(byte_str_slice, options)
     }
 
-    /// Builds a ZeroTrie with the given items and options. Assumes that the items are sorted,
+    /// Builds a [`ZeroTrie`](crate::ZeroTrie) with the given items and options. Assumes that the items are sorted,
     /// except for a case-insensitive trie where the items are re-sorted.
     ///
     /// # Panics

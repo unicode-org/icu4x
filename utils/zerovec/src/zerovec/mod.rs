@@ -329,7 +329,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
         self.vector.as_slice().len()
     }
 
-    /// Creates a new owned `ZeroVec` using an existing
+    /// Creates a new owned [`ZeroVec`] using an existing
     /// allocated backing buffer
     ///
     /// If you have a slice of `&[T]`s, prefer using
@@ -357,7 +357,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
         }
     }
 
-    /// Creates a new borrowed `ZeroVec` using an existing
+    /// Creates a new borrowed [`ZeroVec`] using an existing
     /// backing buffer
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
@@ -390,7 +390,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// This function is infallible for built-in integer types, but fallible for other types,
     /// such as `char`. For more information, see [`ULE::parse_bytes_to_slice`].
     ///
-    /// The bytes within the byte buffer must remain constant for the life of the ZeroVec.
+    /// The bytes within the byte buffer must remain constant for the life of the [`ZeroVec`].
     ///
     /// # Endianness
     ///
@@ -429,13 +429,13 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
 
     /// Converts a `ZeroVec<T>` into a `ZeroVec<u8>`, retaining the current ownership model.
     ///
-    /// Note that the length of the ZeroVec may change.
+    /// Note that the length of the [`ZeroVec`] may change.
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///
-    /// Convert a borrowed `ZeroVec`:
+    /// Convert a borrowed [`ZeroVec`]:
     ///
     /// ```
     /// use zerovec::ZeroVec;
@@ -449,7 +449,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// assert_eq!(zv_bytes.get(0), Some(0xD3));
     /// ```
     ///
-    /// Convert an owned `ZeroVec`:
+    /// Convert an owned [`ZeroVec`]:
     ///
     /// ```
     /// use zerovec::ZeroVec;
@@ -532,7 +532,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     ///
     /// # Examples
     ///
-    /// Convert a borrowed `ZeroVec`:
+    /// Convert a borrowed [`ZeroVec`]:
     ///
     /// ```
     /// use zerovec::ZeroVec;
@@ -547,7 +547,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// assert_eq!(zv_u8_3.get(0), Some([0x7F, 0xF3, 0x01]));
     /// ```
     ///
-    /// Convert an owned `ZeroVec`:
+    /// Convert an owned [`ZeroVec`]:
     ///
     /// ```
     /// use zerovec::ZeroVec;
@@ -650,9 +650,9 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
         }
     }
 
-    /// If the ZeroVec is owned, returns the capacity of the vector.
+    /// If the [`ZeroVec`] is owned, returns the capacity of the vector.
     ///
-    /// Otherwise, if the ZeroVec is borrowed, returns `None`.
+    /// Otherwise, if the [`ZeroVec`] is borrowed, returns `None`.
     ///
     /// # Examples
     ///
@@ -685,13 +685,13 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
 impl<'a> ZeroVec<'a, u8> {
     /// Converts a `ZeroVec<u8>` into a `ZeroVec<T>`, retaining the current ownership model.
     ///
-    /// Note that the length of the ZeroVec may change.
+    /// Note that the length of the [`ZeroVec`] may change.
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///
-    /// Convert a borrowed `ZeroVec`:
+    /// Convert a borrowed [`ZeroVec`]:
     ///
     /// ```
     /// use zerovec::ZeroVec;
@@ -704,7 +704,7 @@ impl<'a> ZeroVec<'a, u8> {
     /// assert_eq!(zerovec.get(0), Some(211));
     /// ```
     ///
-    /// Convert an owned `ZeroVec`:
+    /// Convert an owned [`ZeroVec`]:
     ///
     /// ```
     /// use zerovec::ZeroVec;
@@ -846,7 +846,7 @@ where
     /// a more convenient version of calling `.iter_mut()` with
     /// [`ZeroVec::with_mut()`] which serves fewer use cases.
     ///
-    /// This will convert the ZeroVec into an owned ZeroVec if not already the case.
+    /// This will convert the [`ZeroVec`] into an owned [`ZeroVec`] if not already the case.
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
@@ -910,7 +910,7 @@ where
         })
     }
 
-    /// Converts a borrowed ZeroVec to an owned ZeroVec. No-op if already owned.
+    /// Converts a borrowed [`ZeroVec`] to an owned [`ZeroVec`]. No-op if already owned.
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
@@ -936,7 +936,7 @@ where
         }
     }
 
-    /// Allows the ZeroVec to be mutated by converting it to an owned variant, and producing
+    /// Allows the [`ZeroVec`] to be mutated by converting it to an owned variant, and producing
     /// a mutable vector of ULEs. If you only need a mutable slice, consider using [`Self::to_mut_slice()`]
     /// instead.
     ///
@@ -971,7 +971,7 @@ where
         ret
     }
 
-    /// Allows the ZeroVec to be mutated by converting it to an owned variant (if necessary)
+    /// Allows the [`ZeroVec`] to be mutated by converting it to an owned variant (if necessary)
     /// and returning a slice to its backing buffer. [`Self::with_mut()`] allows for mutation
     /// of the vector itself.
     ///
@@ -1001,12 +1001,12 @@ where
         }
         unsafe { self.vector.buf.as_mut() }
     }
-    /// Remove all elements from this ZeroVec and reset it to an empty borrowed state.
+    /// Remove all elements from this [`ZeroVec`] and reset it to an empty borrowed state.
     pub fn clear(&mut self) {
         *self = Self::new_borrowed(&[])
     }
 
-    /// Removes the first element of the ZeroVec. The ZeroVec remains in the same
+    /// Removes the first element of the [`ZeroVec`]. The [`ZeroVec`] remains in the same
     /// borrowed or owned state.
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
@@ -1053,7 +1053,7 @@ where
         }
     }
 
-    /// Removes the last element of the ZeroVec. The ZeroVec remains in the same
+    /// Removes the last element of the [`ZeroVec`]. The [`ZeroVec`] remains in the same
     /// borrowed or owned state.
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
@@ -1146,7 +1146,7 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 ///
 /// * `$aligned` - The type of an element in its canonical, aligned form, e.g., `char`.
 /// * `$convert` - A const function that converts an `$aligned` into its unaligned equivalent, e.g.,
-///   const fn from_aligned(a: CanonicalType) -> CanonicalType::ULE`.
+///   `const fn from_aligned(a: CanonicalType) -> CanonicalType::ULE`.
 /// * `$x` - The elements that the `ZeroSlice` will hold.
 ///
 /// # Examples
@@ -1186,7 +1186,7 @@ macro_rules! zeroslice {
     };
 }
 
-/// Creates a borrowed `ZeroVec`. Convenience wrapper for `zeroslice!(...).as_zerovec()`. The value
+/// Creates a borrowed [`ZeroVec`]. Convenience wrapper for `zeroslice!(...).as_zerovec()`. The value
 /// will be created at compile-time, meaning that all arguments must also be constant.
 ///
 /// See [`zeroslice!`](crate::zeroslice) for more information.

@@ -63,6 +63,7 @@ pub mod parts {
 
 /// The [`Writeable`] implementation that is returned by [`DurationFormatter::format`]. See
 /// the [`writeable`] crate for how to consume this.
+#[derive(Debug)]
 pub struct FormattedDuration<'l> {
     pub(crate) fmt: &'l DurationFormatter,
     pub(crate) duration: &'l Duration,
@@ -132,7 +133,7 @@ impl Writeable for FormattedDigitalDuration<'_> {
 
 impl FormattedDuration<'_> {
     /// Section 1.1.9
-    /// Formats numeric hours to [`DigitalDurationFormatter`]. Requires hours formatting style to be either Numeric or TwoDigit.
+    /// Formats numeric hours to [`DigitalDurationFormatter`]. Requires hours formatting style to be either `Numeric` or `TwoDigit`.
     fn format_numeric_hours(
         &self,
         formatted_digital_duration: &mut DigitalDuration,
@@ -171,7 +172,7 @@ impl FormattedDuration<'_> {
     }
 
     /// Section 1.1.10
-    /// Formats numeric minutes to sink. Requires minutes formatting style to be either Numeric or TwoDigit.
+    /// Formats numeric minutes to sink. Requires minutes formatting style to be either `Numeric` or `TwoDigit`.
     fn format_numeric_minutes(
         &self,
         formatted_digital_duration: &mut DigitalDuration,
@@ -257,7 +258,7 @@ impl FormattedDuration<'_> {
     }
 
     /// Section 1.1.11
-    /// Formats numeric seconds to sink. Requires seconds formatting style to be either Numeric or TwoDigit.
+    /// Formats numeric seconds to sink. Requires seconds formatting style to be either `Numeric` or `TwoDigit`.
     fn format_numeric_seconds(
         &self,
         mut second_fd: Decimal,
@@ -330,7 +331,7 @@ impl FormattedDuration<'_> {
     }
 
     /// Section 1.1.12
-    /// Formats the parts of duration that use Numeric or TwoDigit style to sink.
+    /// Formats the parts of duration that use `Numeric` or `TwoDigit` style to sink.
     fn format_numeric_units(
         &self,
         first_numeric_unit: Unit,
@@ -565,7 +566,7 @@ impl FormattedDuration<'_> {
         self.list_format_parts(parts_list, sink)
     }
 
-    /// 1.1.13 ListFormatParts ( durationFormat, partitionedPartsList )
+    /// 1.1.13 `ListFormatParts` ( durationFormat, partitionedPartsList )
     /// Given a partitioned part list of formatted duration parts, it creates and returns a List with all the corresponding parts according to the effective locale and the formatting options of durationFormat.
     fn list_format_parts<V: PartsWrite + ?Sized, const CAP: usize>(
         &self,

@@ -63,7 +63,7 @@
 //! The `*_with_buffer_provider` functions will succeed to compile and
 //! run if given a data provider supporting all of the markers required for the object being
 //! constructed, either the current or any previous version within the same SemVer major release.
-//! For example, if a data file is built to support FooFormatter version 1.1, then FooFormatter
+//! For example, if a data file is built to support `FooFormatter` version 1.1, then `FooFormatter`
 //! version 1.2 will be able to read the same data file. Likewise, backwards-compatible markers can
 //! always be included by `icu_provider_export` to support older library versions.
 //!

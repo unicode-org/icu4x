@@ -77,6 +77,9 @@ pub struct Bag {
     pub time_zone_name: Option<TimeZoneName>,
 
     /// An override of the hour cycle.
+    //
+    // TODO: This should probably not be the preferences [HourCycle] type. It directly sets the
+    // hour cycle, without support for Clock12 and Clock24, which will panic.
     pub hour_cycle: Option<HourCycle>,
 }
 
@@ -106,7 +109,7 @@ impl Bag {
         }
     }
 
-    /// Converts the components::Bag into a `Vec<Field>`. The fields will be ordered in from most
+    /// Converts the [`Bag`] into a [`Vec<Field>`]. The fields will be ordered in from most
     /// significant field to least significant. This is the order the fields are listed in
     /// the UTS 35 table - <https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table>
     ///

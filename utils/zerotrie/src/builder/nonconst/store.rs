@@ -9,7 +9,7 @@ use super::super::konst::ConstArrayBuilder;
 use alloc::collections::VecDeque;
 use alloc::vec::Vec;
 
-/// A trait applied to a data structure for building a ZeroTrie.
+/// A trait applied to a data structure for building a [`ZeroTrie`](crate::ZeroTrie).
 pub(crate) trait TrieBuilderStore {
     /// Create a new empty store.
     fn atbs_new_empty() -> Self;

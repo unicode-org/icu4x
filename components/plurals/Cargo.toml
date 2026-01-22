@@ -79,3 +79,6 @@ required-features = ["serde", "experimental"]
 [[test]]
 name = "rules"
 required-features = ["experimental"]
+
+[lints]
+workspace = true

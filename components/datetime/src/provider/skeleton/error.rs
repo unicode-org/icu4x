@@ -5,7 +5,7 @@
 use crate::provider::fields;
 use displaydoc::Display;
 
-/// These strings follow the recommendations for the serde::de::Unexpected::Other type.
+/// These strings follow the recommendations for the [`serde::de::Unexpected::Other`] type.
 /// <https://docs.serde.rs/serde/de/enum.Unexpected.html#variant.Other>
 ///
 /// Serde will generate an error such as:

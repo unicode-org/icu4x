@@ -37,6 +37,7 @@ prefs_convert!(PercentFormatterPreferences, DecimalFormatterPreferences, {
 ///
 /// [`PercentFormatter`] supports:
 ///   1. Rendering in the locale's percent system.
+#[derive(Debug)]
 pub struct PercentFormatter<R> {
     /// Essential data for the percent formatter.
     essential: DataPayload<PercentEssentialsV1>,

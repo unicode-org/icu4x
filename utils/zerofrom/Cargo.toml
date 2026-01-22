@@ -29,3 +29,6 @@ default = ["alloc"]
 
 [dependencies]
 zerofrom-derive = { workspace = true, optional = true}
+
+[lints]
+workspace = true

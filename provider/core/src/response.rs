@@ -96,7 +96,7 @@ pub struct DataPayload<M: DynamicDataMarker>(pub(crate) DataPayloadInner<M>);
 ///
 /// # Examples
 ///
-/// Create and use DataPayloadOr:
+/// Create and use [`DataPayloadOr`]:
 ///
 /// ```
 /// use icu_locale_core::langid;
@@ -246,7 +246,7 @@ where
     }
 }
 
-/// Cloning a DataPayload is generally a cheap operation.
+/// Cloning a [`DataPayload`] is generally a cheap operation.
 /// See notes in the `Clone` impl for [`Yoke`].
 ///
 /// # Examples
@@ -360,7 +360,7 @@ impl<M> DataPayload<M>
 where
     M: DynamicDataMarker,
 {
-    /// Convert a fully owned (`'static`) data struct into a DataPayload.
+    /// Convert a fully owned (`'static`) data struct into a [`DataPayload`].
     ///
     /// This constructor creates `'static` payloads.
     ///
@@ -394,7 +394,7 @@ where
         Self(DataPayloadInner::StaticRef(data))
     }
 
-    /// Mutate the data contained in this DataPayload.
+    /// Mutate the data contained in this [`DataPayload`].
     ///
     /// For safety, all mutation operations must take place within a helper function that cannot
     /// borrow data from the surrounding context.
@@ -446,8 +446,8 @@ where
 
     /// Borrows the underlying data.
     ///
-    /// This function should be used like `Deref` would normally be used. For more information on
-    /// why DataPayload cannot implement `Deref`, see the `yoke` crate.
+    /// This function should be used like [`Deref`] would normally be used. For more information on
+    /// why [`DataPayload`] cannot implement [`Deref`], see the `yoke` crate.
     ///
     /// # Examples
     ///
@@ -1080,7 +1080,7 @@ where
     }
 }
 
-/// Cloning a DataResponse is generally a cheap operation.
+/// Cloning a [`DataResponse`] is generally a cheap operation.
 /// See notes in the `Clone` impl for [`Yoke`].
 ///
 /// # Examples

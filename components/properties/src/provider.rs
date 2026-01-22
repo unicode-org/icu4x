@@ -1175,10 +1175,10 @@ impl<'data> PropertyUnicodeSet<'data> {
 pub struct ScriptWithExtensionsProperty<'data> {
     /// Note: The `ScriptWithExt` values in this array will assume a 12-bit layout. The 2
     /// higher order bits 11..10 will indicate how to deduce the Script value and
-    /// Script_Extensions value, nearly matching the representation
+    /// `Script_Extensions` value, nearly matching the representation
     /// [in ICU](https://github.com/unicode-org/icu/blob/main/icu4c/source/common/uprops.h):
     ///
-    /// | High order 2 bits value | Script                                                 | Script_Extensions                                              |
+    /// | High order 2 bits value | Script                                                 | `Script_Extensions`                                              |
     /// |-------------------------|--------------------------------------------------------|----------------------------------------------------------------|
     /// | 3                       | First value in sub-array, index given by lower 10 bits | Sub-array excluding first value, index given by lower 10 bits  |
     /// | 2                       | Script=Inherited                                       | Entire sub-array, index given by lower 10 bits                 |
@@ -1190,10 +1190,10 @@ pub struct ScriptWithExtensionsProperty<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie: CodePointTrie<'data, ScriptWithExt>,
 
-    /// This companion structure stores Script_Extensions values, which are
+    /// This companion structure stores `Script_Extensions` values, which are
     /// themselves arrays / vectors. This structure only stores the values for
     /// cases in which `scx(cp) != [ sc(cp) ]`. Each sub-vector is distinct. The
-    /// sub-vector represents the Script_Extensions array value for a code point,
+    /// sub-vector represents the `Script_Extensions` array value for a code point,
     /// and may also indicate Script value, as described for the `trie` field.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,

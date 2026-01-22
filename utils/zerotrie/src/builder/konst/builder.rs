@@ -11,7 +11,7 @@ use super::store::ConstSlice;
 use crate::error::ZeroTrieBuildError;
 use crate::varint;
 
-/// A low-level builder for ZeroTrieSimpleAscii. Works in const contexts.
+/// A low-level builder for [`ZeroTrieSimpleAscii`]. Works in const contexts.
 ///
 /// All methods that grow the trie will panic if the capacity N is not enough.
 pub(crate) struct ZeroTrieBuilderConst<const N: usize> {
@@ -101,7 +101,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     /// Creates a new builder containing the elements in the given slice of key/value pairs.
     ///
     /// `K` is the stack size of the lengths stack. If you get an error such as
-    /// "AsciiTrie Builder: Need more stack", try increasing `K`.
+    /// `AsciiTrie Builder: Need more stack`, try increasing `K`.
     ///
     /// # Panics
     ///
@@ -130,7 +130,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     /// Assumes that the items are sorted. If they are not, unexpected behavior may occur.
     ///
     /// `K` is the stack size of the lengths stack. If you get an error such as
-    /// "AsciiTrie Builder: Need more stack", try increasing `K`.
+    /// `AsciiTrie Builder: Need more stack`, try increasing `K`.
     pub const fn from_sorted_const_tuple_slice<const K: usize>(
         items: ConstSlice<(&ByteStr, usize)>,
     ) -> Result<Self, ZeroTrieBuildError> {

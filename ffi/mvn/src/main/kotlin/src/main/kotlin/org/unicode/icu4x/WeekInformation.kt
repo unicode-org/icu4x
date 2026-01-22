@@ -13,7 +13,7 @@ internal interface WeekInformationLib: Library {
     fun icu4x_WeekInformation_is_weekend_mv1(handle: Pointer, day: Int): Byte
     fun icu4x_WeekInformation_weekend_mv1(handle: Pointer): Pointer
 }
-/** A Week calculator, useful to be passed in to `week_of_year()` on Date and DateTime types
+/** A Week calculator, useful to be passed in to `week_of_year()` on Date and `DateTime` types
 *
 *See the [Rust documentation for `WeekInformation`](https://docs.rs/icu/2.1.1/icu/calendar/week/struct.WeekInformation.html) for more information.
 */

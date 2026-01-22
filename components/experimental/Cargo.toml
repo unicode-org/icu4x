@@ -103,3 +103,6 @@ path = "tests/transliterate/lower_ascii.rs"
 [[test]]
 name = "units_test"
 path = "tests/units/units_test.rs"
+
+[lints]
+workspace = true

@@ -2,6 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+#![cfg_attr(not(any(test, doc)), no_std)]
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+    )
+)]
+#![warn(missing_docs)]
+
 //! Exposes the list of all known `DataMarker`s.
 //!
 //! This is modeled as a macro that accepts a callback macro of the shape:
@@ -217,33 +230,33 @@ macro_rules! registry(
             icu::time::provider::iana::TimezoneIdentifiersIanaExtendedV1: TimezoneIdentifiersIanaExtendedV1,
             icu::time::provider::iana::TimezoneIdentifiersIanaCoreV1: TimezoneIdentifiersIanaCoreV1,
             icu::time::provider::windows::TimezoneIdentifiersWindowsV1: TimezoneIdentifiersWindowsV1,
-            icu::datetime::provider::neo::DatetimeNamesWeekdayV1: DatetimeNamesWeekdayV1,
-            icu::datetime::provider::neo::DatetimeNamesDayperiodV1: DatetimeNamesDayperiodV1,
-            icu::datetime::provider::neo::DatetimePatternsGlueV1: DatetimePatternsGlueV1,
-            icu::datetime::provider::neo::DatetimeNamesYearBuddhistV1: DatetimeNamesYearBuddhistV1,
-            icu::datetime::provider::neo::DatetimeNamesYearChineseV1: DatetimeNamesYearChineseV1,
-            icu::datetime::provider::neo::DatetimeNamesYearCopticV1: DatetimeNamesYearCopticV1,
-            icu::datetime::provider::neo::DatetimeNamesYearDangiV1: DatetimeNamesYearDangiV1,
-            icu::datetime::provider::neo::DatetimeNamesYearEthiopianV1: DatetimeNamesYearEthiopianV1,
-            icu::datetime::provider::neo::DatetimeNamesYearGregorianV1: DatetimeNamesYearGregorianV1,
-            icu::datetime::provider::neo::DatetimeNamesYearHebrewV1: DatetimeNamesYearHebrewV1,
-            icu::datetime::provider::neo::DatetimeNamesYearIndianV1: DatetimeNamesYearIndianV1,
-            icu::datetime::provider::neo::DatetimeNamesYearHijriV1: DatetimeNamesYearHijriV1,
-            icu::datetime::provider::neo::DatetimeNamesYearJapaneseV1: DatetimeNamesYearJapaneseV1,
-            icu::datetime::provider::neo::DatetimeNamesYearPersianV1: DatetimeNamesYearPersianV1,
-            icu::datetime::provider::neo::DatetimeNamesYearRocV1: DatetimeNamesYearRocV1,
-            icu::datetime::provider::neo::DatetimeNamesMonthBuddhistV1: DatetimeNamesMonthBuddhistV1,
-            icu::datetime::provider::neo::DatetimeNamesMonthChineseV1: DatetimeNamesMonthChineseV1,
-            icu::datetime::provider::neo::DatetimeNamesMonthCopticV1: DatetimeNamesMonthCopticV1,
-            icu::datetime::provider::neo::DatetimeNamesMonthDangiV1: DatetimeNamesMonthDangiV1,
-            icu::datetime::provider::neo::DatetimeNamesMonthEthiopianV1: DatetimeNamesMonthEthiopianV1,
-            icu::datetime::provider::neo::DatetimeNamesMonthGregorianV1: DatetimeNamesMonthGregorianV1,
-            icu::datetime::provider::neo::DatetimeNamesMonthHebrewV1: DatetimeNamesMonthHebrewV1,
-            icu::datetime::provider::neo::DatetimeNamesMonthIndianV1: DatetimeNamesMonthIndianV1,
-            icu::datetime::provider::neo::DatetimeNamesMonthHijriV1: DatetimeNamesMonthHijriV1,
-            icu::datetime::provider::neo::DatetimeNamesMonthJapaneseV1: DatetimeNamesMonthJapaneseV1,
-            icu::datetime::provider::neo::DatetimeNamesMonthPersianV1: DatetimeNamesMonthPersianV1,
-            icu::datetime::provider::neo::DatetimeNamesMonthRocV1: DatetimeNamesMonthRocV1,
+            icu::datetime::provider::names::DatetimeNamesWeekdayV1: DatetimeNamesWeekdayV1,
+            icu::datetime::provider::names::DatetimeNamesDayperiodV1: DatetimeNamesDayperiodV1,
+            icu::datetime::provider::names::DatetimePatternsGlueV1: DatetimePatternsGlueV1,
+            icu::datetime::provider::names::DatetimeNamesYearBuddhistV1: DatetimeNamesYearBuddhistV1,
+            icu::datetime::provider::names::DatetimeNamesYearChineseV1: DatetimeNamesYearChineseV1,
+            icu::datetime::provider::names::DatetimeNamesYearCopticV1: DatetimeNamesYearCopticV1,
+            icu::datetime::provider::names::DatetimeNamesYearDangiV1: DatetimeNamesYearDangiV1,
+            icu::datetime::provider::names::DatetimeNamesYearEthiopianV1: DatetimeNamesYearEthiopianV1,
+            icu::datetime::provider::names::DatetimeNamesYearGregorianV1: DatetimeNamesYearGregorianV1,
+            icu::datetime::provider::names::DatetimeNamesYearHebrewV1: DatetimeNamesYearHebrewV1,
+            icu::datetime::provider::names::DatetimeNamesYearIndianV1: DatetimeNamesYearIndianV1,
+            icu::datetime::provider::names::DatetimeNamesYearHijriV1: DatetimeNamesYearHijriV1,
+            icu::datetime::provider::names::DatetimeNamesYearJapaneseV1: DatetimeNamesYearJapaneseV1,
+            icu::datetime::provider::names::DatetimeNamesYearPersianV1: DatetimeNamesYearPersianV1,
+            icu::datetime::provider::names::DatetimeNamesYearRocV1: DatetimeNamesYearRocV1,
+            icu::datetime::provider::names::DatetimeNamesMonthBuddhistV1: DatetimeNamesMonthBuddhistV1,
+            icu::datetime::provider::names::DatetimeNamesMonthChineseV1: DatetimeNamesMonthChineseV1,
+            icu::datetime::provider::names::DatetimeNamesMonthCopticV1: DatetimeNamesMonthCopticV1,
+            icu::datetime::provider::names::DatetimeNamesMonthDangiV1: DatetimeNamesMonthDangiV1,
+            icu::datetime::provider::names::DatetimeNamesMonthEthiopianV1: DatetimeNamesMonthEthiopianV1,
+            icu::datetime::provider::names::DatetimeNamesMonthGregorianV1: DatetimeNamesMonthGregorianV1,
+            icu::datetime::provider::names::DatetimeNamesMonthHebrewV1: DatetimeNamesMonthHebrewV1,
+            icu::datetime::provider::names::DatetimeNamesMonthIndianV1: DatetimeNamesMonthIndianV1,
+            icu::datetime::provider::names::DatetimeNamesMonthHijriV1: DatetimeNamesMonthHijriV1,
+            icu::datetime::provider::names::DatetimeNamesMonthJapaneseV1: DatetimeNamesMonthJapaneseV1,
+            icu::datetime::provider::names::DatetimeNamesMonthPersianV1: DatetimeNamesMonthPersianV1,
+            icu::datetime::provider::names::DatetimeNamesMonthRocV1: DatetimeNamesMonthRocV1,
             icu::datetime::provider::DatetimePatternsDateBuddhistV1: DatetimePatternsDateBuddhistV1,
             icu::datetime::provider::DatetimePatternsDateChineseV1: DatetimePatternsDateChineseV1,
             icu::datetime::provider::DatetimePatternsDateCopticV1: DatetimePatternsDateCopticV1,

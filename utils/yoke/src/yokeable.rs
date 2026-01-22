@@ -230,7 +230,7 @@ pub unsafe trait Yokeable<'a>: 'static {
     ///    non-static lifetimes reachable from Self<'a>, so this is fine.
     ///  - one of f's captures: since F: 'static, the resulting reference must refer
     ///    to 'static data.
-    ///  - a static or thread_local variable: ditto.
+    ///  - a static or `thread_local` variable: ditto.
     fn transform_mut<F>(&'a mut self, f: F)
     where
         // be VERY CAREFUL changing this signature, it is very nuanced (see above)
