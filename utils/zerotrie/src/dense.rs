@@ -209,7 +209,15 @@ impl<'a> ZeroAsciiDenseSparse2dTrieBorrowed<'a> {
             // There is an entry in the dense matrix but it is a None value
             return None;
         }
-        usize::from(offset).checked_add(row_value_offset)
+        let Some(result) = usize::from(offset).checked_add(row_value_offset) else {
+            debug_assert!(
+                false,
+                "overflow: offset={}, row_value_offset={}",
+                offset, row_value_offset
+            );
+            return None;
+        };
+        Some(result)
     }
 
     /// Borrows the structure for encoding into [`zerovec`].
