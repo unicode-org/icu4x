@@ -202,7 +202,7 @@ impl<'a> ZeroAsciiDenseSparse2dTrieBorrowed<'a> {
             // There is an entry in the dense matrix but it is a None value
             return None;
         }
-        usize::from(offset).checked_add(row_value_offset)
+        Some(usize::from(offset) + row_value_offset)
     }
 
     /// Borrows the structure for encoding into [`zerovec`].

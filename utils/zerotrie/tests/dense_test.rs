@@ -82,6 +82,12 @@ fn test_basic() {
     let data_as_map = strings_to_2d_btreemap(BASIC_DATA, "/");
     let dense =
         ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data_as_map, b'/').unwrap();
+
+    assert_eq!(
+        format!("{:?}", dense.as_borrowed()),
+        "ZeroAsciiDenseSparse2dTrieBorrowed { primary: ZeroTrieSimpleAscii { store: [196, 97, 101, 102, 105, 4, 8, 12, 114, 128, 47, 128, 110, 129, 47, 133, 114, 130, 47, 137, 116, 47, 73, 84, 141] }, suffixes: ZeroTrieSimpleAscii { store: [197, 65, 70, 73, 83, 85, 2, 4, 10, 12, 85, 128, 82, 129, 194, 82, 84, 1, 130, 131, 65, 132, 194, 75, 83, 1, 133, 134] }, dense: ZeroVec([65535, 0, 1, 65535, 2, 3, 4, 0, 1, 65535, 65535, 65535, 2, 3, 65535, 0, 65535, 65535, 1, 2, 3]), suffix_count: 7, delimiter: 47 }"
+    );
+
     check_data(&data_as_map, dense.as_borrowed(), true);
     let non_existent_data_as_map = strings_to_2d_btreemap(NON_EXISTENT_BASIC_DATA, "/");
     check_data(&non_existent_data_as_map, dense.as_borrowed(), false);
@@ -168,6 +174,11 @@ fn test_dense_sparse_window_selection() {
     let dense = ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/').unwrap();
     let trie = dense.as_borrowed();
 
+    assert_eq!(
+        format!("{:?}", trie),
+        "ZeroAsciiDenseSparse2dTrieBorrowed { primary: ZeroTrieSimpleAscii { store: [112, 128, 47, 144, 36, 195, 97, 104, 108, 2, 8, 144, 34, 105, 103, 104, 147, 241, 5, 111, 119, 128, 50, 128] }, suffixes: ZeroTrieSimpleAscii { store: [201, 97, 98, 99, 100, 101, 102, 103, 104, 108, 1, 2, 9, 10, 11, 12, 13, 18, 128, 129, 130, 194, 50, 51, 1, 131, 132, 133, 134, 135, 136, 137, 105, 103, 104, 138, 111, 119, 139, 50, 140] }, dense: ZeroVec([65535, 0, 1, 1, 1, 65530, 65531, 65532, 65533, 65534, 65535, 65535, 65535]), suffix_count: 13, delimiter: 47 }"
+    );
+
     check_data(&data, trie, true);
 
     let byte_len = check_encoding(dense.as_borrowed());
@@ -204,6 +215,11 @@ fn test_dense_suffix_count_with_low_frequency_suffixes() {
     data.entry("es").or_default().insert("ES", 104);
 
     let trie = ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/').unwrap();
+
+    assert_eq!(
+        format!("{:?}", trie.as_borrowed()),
+        "ZeroAsciiDenseSparse2dTrieBorrowed { primary: ZeroTrieSimpleAscii { store: [195, 100, 101, 102, 22, 61, 101, 47, 196, 65, 67, 68, 114, 2, 4, 6, 84, 136, 72, 137, 69, 135, 97, 114, 101, 51, 144, 86, 194, 110, 115, 21, 47, 196, 67, 71, 85, 114, 2, 4, 6, 65, 131, 66, 130, 83, 129, 97, 114, 101, 49, 144, 84, 47, 194, 69, 114, 3, 83, 144, 88, 97, 114, 101, 52, 144, 87, 114, 47, 196, 66, 67, 70, 114, 2, 4, 6, 69, 134, 65, 133, 82, 132, 97, 114, 101, 50, 144, 85] }, suffixes: ZeroTrieSimpleAscii { store: [201, 65, 66, 67, 68, 69, 70, 71, 85, 114, 2, 4, 10, 12, 14, 16, 18, 20, 84, 128, 69, 129, 194, 65, 72, 1, 130, 131, 69, 132, 83, 133, 82, 134, 66, 135, 83, 136, 97, 114, 101, 196, 49, 50, 51, 52, 1, 2, 3, 137, 138, 139, 140] }, dense: ZeroVec([]), suffix_count: 13, delimiter: 47 }"
+    );
 
     check_data(&data, trie.as_borrowed(), true);
 
@@ -272,6 +288,11 @@ fn test_lookup_semantics_remain_correct() {
     data.entry("p0").or_default().insert("rare", 999);
 
     let trie = ZeroAsciiDenseSparse2dTrieOwned::try_from_btree_map_str(&data, b'/').unwrap();
+
+    assert_eq!(
+        format!("{:?}", trie.as_borrowed()),
+        "ZeroAsciiDenseSparse2dTrieBorrowed { primary: ZeroTrieSimpleAscii { store: [112, 202, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 4, 8, 12, 16, 20, 24, 28, 32, 36, 128, 47, 144, 84, 129, 47, 144, 85, 130, 47, 144, 86, 131, 47, 144, 87, 132, 47, 144, 88, 133, 47, 144, 89, 134, 47, 144, 90, 135, 47, 144, 91, 136, 47, 144, 92, 137, 47, 144, 93] }, suffixes: ZeroTrieSimpleAscii { store: [194, 99, 114, 6, 111, 109, 109, 111, 110, 128, 97, 114, 101, 129] }, dense: ZeroVec([0, 899, 0, 65535, 0, 65535, 0, 65535, 0, 65535, 0, 65535, 0, 65535, 0, 65535, 0, 65535, 0, 65535]), suffix_count: 2, delimiter: 47 }"
+    );
 
     check_data(&data, trie.as_borrowed(), true);
 
