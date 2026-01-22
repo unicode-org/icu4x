@@ -124,7 +124,7 @@ static COMPATIBILITY_DECOMPOSITIONS: [u16; 20] = [
     0x2044, 0x0034, 0x0031, 0x2044, 0x0032, 0x0033, 0x2044, 0x0034,
 ];
 
-/// Writes the compatibility decompostion of `c` to `sink`.
+/// Returns the compatibility decompostion given a `TABLE` value.
 fn compatibility_decomposition(val: u16) -> &'static [u16] {
     debug_assert!(val <= 0xFF);
     let len = val & 0b11;
@@ -139,62 +139,106 @@ fn compatibility_decomposition(val: u16) -> &'static [u16] {
 }
 
 /// Normalize Latin1 `text` to NFD UTF-16 written to `sink`.
-pub fn normalize_nfd_to<W: Write16 + ?Sized>(text: &[u8], sink: &mut W) -> core::fmt::Result {
+pub fn normalize_nfd_to<W: Write16 + ?Sized>(mut text: &[u8], sink: &mut W) -> core::fmt::Result {
     // Indexing is OK, because the index is statically in range.
     #[expect(clippy::indexing_slicing)]
     let table = &TABLE[0x20..];
-    for c in text {
-        if let Some(val) = table.get(c.wrapping_sub(0xC0) as usize) {
-            let v = *val;
-            if v != 0 {
+
+    'outer: loop {
+        let mut iter = text.iter();
+        loop {
+            let Some(c) = iter.next() else {
+                sink.write_latin1_slice(text)?;
+                return Ok(());
+            };
+            if let Some(val) = table.get(c.wrapping_sub(0xC0) as usize) {
+                let v = *val;
+                if v == 0 {
+                    continue;
+                }
+
+                let remaining = iter.as_slice();
+                // Indexing is OK, because the index is by construction in range.
+                #[expect(clippy::indexing_slicing)]
+                let prefix = &text[..text.len() - remaining.len() - 1];
+                sink.write_latin1_slice(prefix)?;
+
                 sink.write_slice(&[v >> 8, (v & 0xFF) + 0x0300])?;
-                continue;
+
+                text = remaining;
+                continue 'outer;
             }
         }
-        sink.write_slice(&[*c as u16])?;
     }
-    Ok(())
 }
 
 /// Normalize Latin1 `text` to NFKD UTF-16 written to `sink`.
-pub fn normalize_nfkd_to<W: Write16 + ?Sized>(text: &[u8], sink: &mut W) -> core::fmt::Result {
-    for c in text {
-        if let Some(val) = TABLE.get(c.wrapping_sub(0xA0) as usize) {
-            let v = *val;
-            if v == 0 {
-                // Fall through
-            } else {
+pub fn normalize_nfkd_to<W: Write16 + ?Sized>(mut text: &[u8], sink: &mut W) -> core::fmt::Result {
+    'outer: loop {
+        let mut iter = text.iter();
+        loop {
+            let Some(c) = iter.next() else {
+                sink.write_latin1_slice(text)?;
+                return Ok(());
+            };
+            if let Some(val) = TABLE.get(c.wrapping_sub(0xA0) as usize) {
+                let v = *val;
+                if v == 0 {
+                    continue;
+                }
+
+                let remaining = iter.as_slice();
+                // Indexing is OK, because the index is by construction in range.
+                #[expect(clippy::indexing_slicing)]
+                let prefix = &text[..text.len() - remaining.len() - 1];
+                sink.write_latin1_slice(prefix)?;
+
                 let hi = v >> 8;
                 if hi != 0 {
                     sink.write_slice(&[hi, (v & 0xFF) + 0x0300])?;
-                    continue;
                 } else {
                     sink.write_slice(compatibility_decomposition(v))?;
-                    continue;
                 }
+
+                text = remaining;
+                continue 'outer;
             }
         }
-        sink.write_slice(&[*c as u16])?;
     }
-    Ok(())
 }
 
 /// Normalize Latin1 `text` to NFKC UTF-16 written to `sink`.
-pub fn normalize_nfkc_to<W: Write16 + ?Sized>(text: &[u8], sink: &mut W) -> core::fmt::Result {
+pub fn normalize_nfkc_to<W: Write16 + ?Sized>(mut text: &[u8], sink: &mut W) -> core::fmt::Result {
     // Indexing is OK, because the index is statically in range.
     #[expect(clippy::indexing_slicing)]
     let table = &TABLE[..0x20];
-    for c in text {
-        if let Some(val) = table.get(c.wrapping_sub(0xA0) as usize) {
-            let v = *val;
-            if v != 0 {
+
+    'outer: loop {
+        let mut iter = text.iter();
+        loop {
+            let Some(c) = iter.next() else {
+                sink.write_latin1_slice(text)?;
+                return Ok(());
+            };
+            if let Some(val) = table.get(c.wrapping_sub(0xA0) as usize) {
+                let v = *val;
+                if v == 0 {
+                    continue;
+                }
+
+                let remaining = iter.as_slice();
+                // Indexing is OK, because the index is by construction in range.
+                #[expect(clippy::indexing_slicing)]
+                let prefix = &text[..text.len() - remaining.len() - 1];
+                sink.write_latin1_slice(prefix)?;
+
                 sink.write_slice(compatibility_decomposition(v))?;
-                continue;
+
+                text = remaining;
+                continue 'outer;
             }
         }
-        sink.write_slice(&[*c as u16])?;
     }
-    Ok(())
 }
 
 /// Split Latin1 `text` into `(head, tail)` such that the first
