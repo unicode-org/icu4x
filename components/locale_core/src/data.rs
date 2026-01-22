@@ -22,7 +22,8 @@ use core::str::FromStr;
 /// the needs of the ICU4X data pipeline.
 ///
 /// In general, you should not need to construct one of these directly. If you do,
-/// use [`LocalePreferences`] if the locale is a user's locale:
+/// even though there is a direct `From<Locale>` conversion, you should
+/// convert through the [`LocalePreferences`] type:
 ///
 /// ```
 /// use icu_locale_core::locale;
@@ -38,7 +39,8 @@ use core::str::FromStr;
 ///     .to_data_locale_language_priority();
 /// assert_writeable_eq!(data_locale, "en-US");
 ///
-/// // Language-priority fallback is used in `DataLocale::from`
+/// // The direct conversion implicitly uses language-priority fallback
+/// // (which is incorrect for some use cases).
 /// assert_eq!(data_locale, DataLocale::from(&locale));
 ///
 /// // For region-priority fallback, the region override is applied
