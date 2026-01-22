@@ -5,7 +5,7 @@
 [package]
 name = "icu_pattern"
 description = "ICU pattern utilities"
-version = "0.4.0"
+version = "0.4.1"
 
 authors.workspace = true
 edition.workspace = true
@@ -47,3 +47,6 @@ litemap = ["dep:litemap"]
 serde = ["alloc", "dep:serde"]
 yoke = ["dep:yoke"]
 zerovec = ["dep:zerovec", "alloc"]
+
+[lints]
+workspace = true

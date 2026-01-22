@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(clippy::exhaustive_enums, clippy::exhaustive_structs)] // stable data encoding
+
 /// Structs for holding data encoded by POSIX time-zone strings, as specified by
 /// <https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html>
 pub mod posix;

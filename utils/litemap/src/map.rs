@@ -35,7 +35,7 @@ macro_rules! litemap_impl(
 );
 // You can't `cfg()` a default generic parameter, and we don't want to write this type twice
 // and keep them in sync so we use a small macro
-litemap_impl!(feature = "alloc", S = alloc::vec::Vec<(K, V)>);
+litemap_impl!(feature = "alloc", S = Vec<(K, V)>);
 litemap_impl!(not(feature = "alloc"), S);
 
 #[cfg(feature = "alloc")]
@@ -45,7 +45,7 @@ impl<K, V> LiteMap<K, V> {
     /// ✨ *Enabled with the `alloc` Cargo feature.*  
     pub const fn new_vec() -> Self {
         Self {
-            values: alloc::vec::Vec::new(),
+            values: Vec::new(),
             _key_type: PhantomData,
             _value_type: PhantomData,
         }
@@ -1017,10 +1017,9 @@ impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// static map: LiteMap<&str, usize, &[(&str, usize)]> =
+    /// const MAP: LiteMap<&str, usize, &[(&str, usize)]> =
     ///     LiteMap::from_sorted_store_unchecked(&[("a", 11), ("b", 22)]);
-    /// static len: usize = map.const_len();
-    /// assert_eq!(len, 2);
+    /// assert_eq!(const { MAP.const_len() }, 2);
     /// ```
     #[inline]
     pub const fn const_len(&self) -> usize {
@@ -1036,10 +1035,9 @@ impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// static map: LiteMap<&str, usize, &[(&str, usize)]> =
+    /// const MAP: LiteMap<&str, usize, &[(&str, usize)]> =
     ///     LiteMap::from_sorted_store_unchecked(&[]);
-    /// static is_empty: bool = map.const_is_empty();
-    /// assert!(is_empty);
+    /// assert!(const { MAP.const_is_empty() });
     /// ```
     #[inline]
     pub const fn const_is_empty(&self) -> bool {
@@ -1059,11 +1057,9 @@ impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// static map: LiteMap<&str, usize, &[(&str, usize)]> =
+    /// const MAP: LiteMap<&str, usize, &[(&str, usize)]> =
     ///     LiteMap::from_sorted_store_unchecked(&[("a", 11), ("b", 22)]);
-    /// static t: &(&str, usize) = map.const_get_indexed_or_panic(0);
-    /// assert_eq!(t.0, "a");
-    /// assert_eq!(t.1, 11);
+    /// assert_eq!(const { *MAP.const_get_indexed_or_panic(0) }, ("a", 11));
     /// ```
     #[inline]
     #[expect(clippy::indexing_slicing)] // documented
@@ -1107,7 +1103,7 @@ impl<'a, V> LiteMap<&'a str, V, &'a [(&'a str, V)]> {
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// static map: LiteMap<&str, usize, &[(&str, usize)]> =
+    /// const MAP: LiteMap<&str, usize, &[(&str, usize)]> =
     ///     LiteMap::from_sorted_store_unchecked(&[
     ///         ("abc", 11),
     ///         ("bcd", 22),
@@ -1116,11 +1112,9 @@ impl<'a, V> LiteMap<&'a str, V, &'a [(&'a str, V)]> {
     ///         ("efg", 55),
     ///     ]);
     ///
-    /// static d: Option<(usize, &usize)> = map.const_get_with_index("def");
-    /// assert_eq!(d, Some((3, &44)));
+    /// assert_eq!(const { MAP.const_get_with_index("def") }, Some((3, &44)));
     ///
-    /// static n: Option<(usize, &usize)> = map.const_get_with_index("dng");
-    /// assert_eq!(n, None);
+    /// assert_eq!(const { MAP.const_get_with_index("dng") }, None);
     /// ```
     pub const fn const_get_with_index(&self, key: &str) -> Option<(usize, &'a V)> {
         let mut i = 0;
@@ -1151,7 +1145,7 @@ impl<'a, V> LiteMap<&'a [u8], V, &'a [(&'a [u8], V)]> {
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// static map: LiteMap<&[u8], usize, &[(&[u8], usize)]> =
+    /// const MAP: LiteMap<&[u8], usize, &[(&[u8], usize)]> =
     ///     LiteMap::from_sorted_store_unchecked(&[
     ///         (b"abc", 11),
     ///         (b"bcd", 22),
@@ -1160,11 +1154,9 @@ impl<'a, V> LiteMap<&'a [u8], V, &'a [(&'a [u8], V)]> {
     ///         (b"efg", 55),
     ///     ]);
     ///
-    /// static d: Option<(usize, &usize)> = map.const_get_with_index(b"def");
-    /// assert_eq!(d, Some((3, &44)));
+    /// assert_eq!(const { MAP.const_get_with_index(b"def") }, Some((3, &44)));
     ///
-    /// static n: Option<(usize, &usize)> = map.const_get_with_index(b"dng");
-    /// assert_eq!(n, None);
+    /// assert_eq!(const { MAP.const_get_with_index(b"dng") }, None);
     /// ```
     pub const fn const_get_with_index(&self, key: &[u8]) -> Option<(usize, &'a V)> {
         let mut i = 0;

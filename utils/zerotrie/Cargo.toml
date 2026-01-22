@@ -5,7 +5,7 @@
 [package]
 name = "zerotrie"
 description = "A data structure that efficiently maps strings to integers"
-version = "0.2.2"
+version = "0.2.3"
 
 authors.workspace = true
 categories.workspace = true
@@ -33,6 +33,7 @@ bincode = { workspace = true }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 litemap = { path = "../../utils/litemap" }
 postcard = { workspace = true, features = ["alloc"] }
+itertools = { workspace = true }
 rand = { workspace = true }
 rand_pcg = { workspace = true }
 rmp-serde = { workspace = true }
@@ -50,12 +51,14 @@ bench = false  # This option is required for Benchmark CI
 
 [features]
 default = []
-alloc = []
+alloc = ["zerovec?/alloc"]
 databake = ["dep:databake", "zerovec?/databake"]
+dense = ["dep:zerovec"]
 litemap = ["dep:litemap", "alloc"]
 serde = ["dep:serde_core", "dep:litemap", "alloc", "litemap/serde", "zerovec?/serde"]
 yoke = ["dep:yoke"]
 zerofrom = ["dep:zerofrom"]
+zerovec = ["dep:zerovec"]
 
 [[bench]]
 name = "overview"
@@ -71,5 +74,12 @@ name = "builder_test"
 required-features = ["alloc", "litemap"]
 
 [[test]]
+name = "dense_test"
+required-features = ["alloc", "dense"]
+
+[[test]]
 name = "locale_aux_test"
 required-features = ["alloc", "litemap"]
+
+[lints]
+workspace = true

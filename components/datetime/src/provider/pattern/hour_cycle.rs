@@ -7,9 +7,14 @@ use super::runtime;
 use super::{reference, PatternItem};
 use crate::provider::fields;
 #[cfg(feature = "datagen")]
-use crate::provider::{self, skeleton};
+use crate::provider::{
+    pattern::runtime::Pattern,
+    skeleton::{self, reference::Skeleton},
+};
 #[cfg(feature = "datagen")]
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
+#[cfg(feature = "datagen")]
+use icu_plurals::PluralElements;
 use icu_provider::prelude::*;
 
 /// Used to represent either H11/H12, or H23. Skeletons only store these
@@ -20,9 +25,9 @@ use icu_provider::prelude::*;
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum CoarseHourCycle {
-    /// Can either be fields::Hour::H11 or fields::Hour::H12
+    /// Can either be [`fields::Hour::H11`] or [`fields::Hour::H12`]
     H11H12,
-    /// fields::Hour::H23
+    /// [`fields::Hour::H23`]
     H23,
 }
 
@@ -60,8 +65,8 @@ impl CoarseHourCycle {
     #[cfg(feature = "datagen")]
     pub fn apply_on_pattern<'data>(
         &self,
-        date_time: &provider::skeleton::GenericLengthPatterns<'data>,
-        skeletons: &provider::skeleton::DateSkeletonPatterns<'data>,
+        date_time: &skeleton::GenericLengthPatterns<'data>,
+        skeletons: &alloc::collections::BTreeMap<Skeleton, PluralElements<Pattern<'data>>>,
         pattern_str: &str,
         mut pattern: reference::Pattern,
     ) -> Option<reference::Pattern> {
@@ -93,7 +98,7 @@ impl CoarseHourCycle {
             }
         }
 
-        let skeleton = skeleton::reference::Skeleton::from(&pattern);
+        let skeleton = Skeleton::from(&pattern);
 
         match skeleton::create_best_pattern_for_fields(
             skeletons,
@@ -106,9 +111,10 @@ impl CoarseHourCycle {
         ) {
             skeleton::BestSkeleton::AllFieldsMatch(patterns, _)
             | skeleton::BestSkeleton::MissingOrExtraFields(patterns, _) => {
-                Some(reference::Pattern::from(&patterns.expect_pattern(
-                    "Only week-of patterns have plural variants",
-                )))
+                Some(reference::Pattern::from(
+                    #[allow(clippy::unwrap_used)] // only week-of patterns have plural variants
+                    &patterns.try_into_other().unwrap(),
+                ))
             }
             skeleton::BestSkeleton::NoMatch => None,
         }
@@ -127,10 +133,7 @@ impl CoarseHourCycle {
 /// and between h23 and h24. This function is naive as it is assumed that this application of
 /// the hour cycle will not change between h1x to h2x.
 #[cfg(feature = "datagen")]
-pub(crate) fn naively_apply_preferences(
-    pattern: &mut runtime::Pattern,
-    hour_cycle: Option<HourCycle>,
-) {
+pub(crate) fn naively_apply_hour_cycle(pattern: &mut Pattern, hour_cycle: Option<HourCycle>) {
     // If there is a preference overriding the hour cycle, apply it now.
     if let Some(hour_cycle) = hour_cycle {
         runtime::helpers::maybe_replace_first(pattern, |item| {
@@ -139,7 +142,12 @@ pub(crate) fn naively_apply_preferences(
                 length,
             }) = item
             {
-                let candidate_field = fields::Hour::from_hour_cycle(hour_cycle);
+                let candidate_field = match hour_cycle {
+                    HourCycle::H11 => fields::Hour::H11,
+                    HourCycle::H12 => fields::Hour::H12,
+                    HourCycle::H23 => fields::Hour::H23,
+                    _ => unreachable!(),
+                };
                 if *current_hour != candidate_field {
                     Some(PatternItem::from((
                         fields::FieldSymbol::Hour(candidate_field),

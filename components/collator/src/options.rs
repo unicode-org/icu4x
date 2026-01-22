@@ -433,9 +433,9 @@ impl CollatorOptionsBitField {
     ///             other tertiary values)
     ///             unless case level is on (when they are *moved* into the separate case level).
     ///             By default, the case bits are removed from the tertiary weight (ignored).
-    ///             When CASE_FIRST is off, UPPER_FIRST must be off too, corresponding to
-    ///             the tri-value UCOL_CASE_FIRST attribute: UCOL_OFF vs. UCOL_LOWER_FIRST vs.
-    ///             UCOL_UPPER_FIRST.
+    ///             When `CASE_FIRST` is off, `UPPER_FIRST` must be off too, corresponding to
+    ///             the tri-value `UCOL_CASE_FIRST` attribute: `UCOL_OFF` vs. `UCOL_LOWER_FIRST` vs.
+    ///             `UCOL_UPPER_FIRST`.
     const CASE_FIRST_MASK: u32 = 1 << 9;
     /// Bit    10 : Insert the case level between the secondary and tertiary levels.
     const CASE_LEVEL_MASK: u32 = 1 << 10;

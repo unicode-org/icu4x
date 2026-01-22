@@ -5,7 +5,7 @@
 [package]
 name = "tinystr"
 description = "A small ASCII-only bounded length string representation."
-version = "0.8.1"
+version = "0.8.2"
 keywords = ["string", "str", "small", "tiny", "no_std"]
 categories = ["data-structures"]
 
@@ -70,3 +70,6 @@ harness = false
 name = "serde"
 harness = false
 required-features = ["serde"]
+
+[lints]
+workspace = true

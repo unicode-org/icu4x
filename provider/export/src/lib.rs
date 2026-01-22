@@ -2,6 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+// #![cfg_attr(not(any(test, doc)), no_std)]
+// #![cfg_attr(
+//     not(test),
+//     deny(
+//         clippy::indexing_slicing,
+//         clippy::unwrap_used,
+//         clippy::expect_used,
+//         clippy::panic,
+//     )
+// )]
+#![warn(missing_docs)]
 #![allow(clippy::needless_doctest_main)]
 //! `icu_provider_export` is a library to generate data files that can be used in ICU4X data providers.
 //!
@@ -44,21 +56,6 @@
 //!   * enables the [`fs_exporter`] module, a reexport of [`icu_provider_fs::export`]
 //! * `rayon`
 //!   * enables parallelism during export
-
-#![cfg_attr(
-    not(test),
-    deny(
-        // This is a tool, and as such we don't care about panics too much
-        // clippy::indexing_slicing,
-        // clippy::unwrap_used,
-        // clippy::expect_used,
-        // clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums, clippy::trivially_copy_pass_by_ref,
-        missing_debug_implementations,
-    )
-)]
-#![warn(missing_docs)]
 
 mod export_impl;
 mod locale_family;
@@ -186,7 +183,7 @@ impl ExportDriver {
         .with_additional_collations([])
     }
 
-    /// Adds a filter on a [`DataMarkerAttributes`].
+    /// Sets the filter on a particular `domain` of [`DataMarkerAttributes`].
     ///
     /// These are keyed by a `domain`, which is [`DataMarkerInfo::attributes_domain`] and
     /// can thus apply to multiple data markers at once.
@@ -195,8 +192,12 @@ impl ExportDriver {
         domain: &str,
         filter: impl Fn(&DataMarkerAttributes) -> bool + Send + Sync + 'static,
     ) -> Self {
-        self.attributes_filters
+        let old_value = self
+            .attributes_filters
             .insert(String::from(domain), Arc::new(Box::new(filter)));
+        if old_value.is_some() {
+            log::warn!("Filter applied to domain '{domain}' multiple times; ignoring all but the last filter");
+        }
         self
     }
 

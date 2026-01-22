@@ -250,8 +250,8 @@ mod ranges {
 
             struct PrettyPrinter(RawPluralCategory, RawPluralCategory);
 
-            impl core::fmt::Display for PrettyPrinter {
-                fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            impl fmt::Display for PrettyPrinter {
+                fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                     f.write_str(self.0.as_str())?;
                     f.write_str("--")?;
                     f.write_str(self.1.as_str())
@@ -637,7 +637,7 @@ pub struct FourBitMetadata(u8);
 impl FourBitMetadata {
     /// Creates a [`FourBitMetadata`] if the given value fits in 4 bits.
     pub fn try_from_byte(byte: u8) -> Option<Self> {
-        if byte < 0x80 {
+        if byte <= 0x0F {
             Some(Self(byte))
         } else {
             None
@@ -645,12 +645,12 @@ impl FourBitMetadata {
     }
 
     /// Creates a [`FourBitMetadata`] with a zero value.
-    pub fn zero() -> Self {
+    pub const fn zero() -> Self {
         Self(0)
     }
 
     /// Gets the value out of a [`FourBitMetadata`].
-    pub fn get(self) -> u8 {
+    pub const fn get(self) -> u8 {
         self.0
     }
 }
@@ -700,7 +700,7 @@ impl From<PluralCategoryAndMetadata> for PluralCategoryAndMetadataPackedULE {
 // 5. All other methods are be left with their default impl.
 // 6. The represented enums implement Eq by byte equality.
 unsafe impl ULE for PluralCategoryAndMetadataPackedULE {
-    fn validate_bytes(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         bytes
             .iter()
             .all(|byte| {

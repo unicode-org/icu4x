@@ -391,7 +391,7 @@ where
 ///
 /// Note that a local time record index might point in the middle of a
 /// designation. In that case the record's designation is the specified
-/// suffix. The [DataBlock::time_zone_designation] method can be used to
+/// suffix. The [`DataBlock::time_zone_designation`] method can be used to
 /// access the correct designation string given an index.
 ///
 /// The character encoding of time zone designation strings is not specified.

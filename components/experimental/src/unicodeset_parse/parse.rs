@@ -212,21 +212,21 @@ impl ParseError {
     }
 }
 
-/// The value of a variable in a UnicodeSet. Used as value type in [`VariableMap`].
+/// The value of a variable in a `UnicodeSet`. Used as value type in [`VariableMap`].
 #[derive(Debug, Clone)]
 #[non_exhaustive]
 pub enum VariableValue<'a> {
-    /// A UnicodeSet, represented as a [`CodePointInversionListAndStringList`](CodePointInversionListAndStringList).
+    /// A `UnicodeSet`, represented as a [`CodePointInversionListAndStringList`](CodePointInversionListAndStringList).
     UnicodeSet(CodePointInversionListAndStringList<'a>),
     // in theory, a one-code-point string is always the same as a char, but we might want to keep
     // this variant for efficiency?
     /// A single code point.
     Char(char),
-    /// A string. It is guaranteed that when returned from a VariableMap, this variant contains never exactly one code point.
+    /// A string. It is guaranteed that when returned from a `VariableMap`, this variant contains never exactly one code point.
     String(Cow<'a, str>),
 }
 
-/// The map used for parsing UnicodeSets with variable support. See [`parse_with_variables`].
+/// The map used for parsing `UnicodeSets` with variable support. See [`parse_with_variables`].
 #[derive(Debug, Clone, Default)]
 pub struct VariableMap<'a>(BTreeMap<String, VariableValue<'a>>);
 
@@ -1207,10 +1207,18 @@ where
         if self.inverted {
             // code point inversion; removes all strings
             #[cfg(feature = "log")]
-            if !self.string_set.is_empty() {
-                log::info!(
-                    "Inverting a unicode set with strings. This removes all strings entirely."
-                );
+            {
+                let single_set = self.single_set.clone().build();
+                if !self
+                    .string_set
+                    .iter()
+                    // if the string starts with a cp in the cp-set, then it'll be rejected through that
+                    .all(|s| s.chars().next().is_some_and(|c| single_set.contains(c)))
+                {
+                    log::info!(
+                        "Inverting a unicode set with strings. This removes all strings entirely."
+                    );
+                }
             }
             self.string_set.clear();
             self.single_set.complement();
@@ -1512,16 +1520,16 @@ where
     }
 }
 
-/// Parses a UnicodeSet pattern and returns a UnicodeSet in the form of a [`CodePointInversionListAndStringList`](CodePointInversionListAndStringList),
+/// Parses a `UnicodeSet` pattern and returns a `UnicodeSet` in the form of a [`CodePointInversionListAndStringList`](CodePointInversionListAndStringList),
 /// as well as the number of bytes consumed from the source string.
 ///
-/// Supports UnicodeSets as described in [UTS #35 - Unicode Sets](https://unicode.org/reports/tr35/#Unicode_Sets).
+/// Supports `UnicodeSets` as described in [UTS #35 - Unicode Sets](https://unicode.org/reports/tr35/#Unicode_Sets).
 ///
 /// The error type of the returned Result can be pretty-printed with [`ParseError::fmt_with_source`].
 ///
 /// # Variables
 ///
-/// If you need support for variables inside UnicodeSets (e.g., `[$start-$end]`), use [`parse_with_variables`].
+/// If you need support for variables inside `UnicodeSets` (e.g., `[$start-$end]`), use [`parse_with_variables`].
 ///
 /// # Limitations
 ///
@@ -1595,10 +1603,10 @@ where
 /// ```
 #[cfg(feature = "compiled_data")]
 pub fn parse(source: &str) -> Result<(CodePointInversionListAndStringList<'static>, usize)> {
-    parse_unstable(source, &icu_properties::provider::Baked)
+    parse_unstable(source, &Baked)
 }
 
-/// Parses a UnicodeSet pattern with support for variables enabled.
+/// Parses a `UnicodeSet` pattern with support for variables enabled.
 ///
 /// See [`parse`] for more information.
 ///
@@ -1629,7 +1637,7 @@ pub fn parse_with_variables(
     source: &str,
     variable_map: &VariableMap<'_>,
 ) -> Result<(CodePointInversionListAndStringList<'static>, usize)> {
-    parse_unstable_with_variables(source, variable_map, &icu_properties::provider::Baked)
+    parse_unstable_with_variables(source, variable_map, &Baked)
 }
 
 #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, parse_with_variables)]

@@ -6,15 +6,21 @@
 
 # Welcome to ICU4X 
 
-[![Docs](https://docs.rs/icu/badge.svg)](https://docs.rs/icu) [![Build Status](https://github.com/unicode-org/icu4x/actions/workflows/build-test.yml/badge.svg)](https://github.com/unicode-org/icu4x/actions) [![Coverage Status (Coveralls)](https://coveralls.io/repos/github/unicode-org/icu4x/badge.svg?branch=main)](https://coveralls.io/github/unicode-org/icu4x?branch=main) [![Coverage Status (Codecov)](https://codecov.io/gh/unicode-org/icu4x/branch/main/graph/badge.svg)](https://app.codecov.io/gh/unicode-org/icu4x/tree/main)
+[![crates.io](https://img.shields.io/crates/v/icu)](https://crates.io/crates/icu)
+[![npm](https://img.shields.io/npm/v/icu)](https://www.npmjs.com/package/icu)
+[![pub.dev](https://img.shields.io/pub/v/icu4x?include_prereleases)](https://pub.dev/packages/icu4x)
 
+
+[![Build Status](https://github.com/unicode-org/icu4x/actions/workflows/build-test.yml/badge.svg)](https://github.com/unicode-org/icu4x/actions)
+[![Coverage Status (Coveralls)](https://coveralls.io/repos/github/unicode-org/icu4x/badge.svg?branch=main)](https://coveralls.io/github/unicode-org/icu4x?branch=main)
+[![Coverage Status (Codecov)](https://codecov.io/gh/unicode-org/icu4x/branch/main/graph/badge.svg)](https://app.codecov.io/gh/unicode-org/icu4x/tree/main)
 
 ICU4X provides components enabling wide range of software internationalization.
-It draws deeply from the experience of [ICU4C](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/), [ICU4J](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/) and [ECMA-402](https://github.com/tc39/ecma402/) and relies on data from the [CLDR](http://cldr.unicode.org/) project.
+It draws deeply from the experience of [ICU4C/J](https://github.com/unicode-org/icu), [ECMA-402](https://github.com/tc39/ecma402/) and relies on data from the [CLDR](https://cldr.unicode.org/) project.
 
 ICU4X is fully implemented in the [Rust programming language](https://rust-lang.org).
 
-The design goals of `ICU4X` are:
+The design goals of ICU4X are:
 
 * Small and modular code
 * Pluggable locale data

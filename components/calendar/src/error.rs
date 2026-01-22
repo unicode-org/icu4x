@@ -34,7 +34,7 @@ pub enum DateError {
     ///
     /// ```
     /// use icu::calendar::cal::Hebrew;
-    /// use icu::calendar::types::MonthCode;
+    /// use icu::calendar::types::Month;
     /// use icu::calendar::Date;
     /// use icu::calendar::DateError;
     /// use tinystr::tinystr;
@@ -42,7 +42,7 @@ pub enum DateError {
     /// Date::try_new_from_codes(
     ///     None,
     ///     5784,
-    ///     MonthCode::new_leap(5).unwrap(),
+    ///     Month::leap(5).code(),
     ///     1,
     ///     Hebrew,
     /// )
@@ -51,7 +51,7 @@ pub enum DateError {
     /// let err = Date::try_new_from_codes(
     ///     None,
     ///     5785,
-    ///     MonthCode::new_leap(5).unwrap(),
+    ///     Month::leap(5).code(),
     ///     1,
     ///     Hebrew,
     /// )
@@ -309,9 +309,11 @@ impl From<UnknownEraError> for DateFromFieldsError {
     }
 }
 
-/// Internal narrow error type for functions that only fail on parsing month codes
+/// Error for [`Month`](crate::types::Month) parsing
 #[derive(Debug)]
-pub(crate) enum MonthCodeParseError {
+#[non_exhaustive]
+pub enum MonthCodeParseError {
+    /// Invalid syntax
     InvalidSyntax,
 }
 
@@ -344,7 +346,7 @@ impl From<MonthCodeError> for DateFromFieldsError {
 mod inner {
     /// Internal narrow error type for calculating the ECMA reference year
     ///
-    /// Public but unstable because it is used on hijri::Rules
+    /// Public but unstable because it is used on [`hijri::Rules`](crate::cal::hijri::Rules)
     #[derive(Debug, Copy, Clone, PartialEq, Eq)]
     #[allow(missing_docs)] // TODO: fix when graduating
     #[non_exhaustive]

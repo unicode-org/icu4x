@@ -8,7 +8,7 @@ use crate::{AbstractFs, CldrCache, SerdeCache, SourceDataProvider, TzdbCache};
 use std::sync::{Arc, OnceLock};
 impl SourceDataProvider {
     // This is equivalent to `new` for the files defined in `tools/testdata-scripts/globs.rs.data`.
-    pub fn new_testing() -> Self {
+    pub(crate) fn new_testing() -> Self {
         // Singleton so that all instantiations share the same cache.
         static SINGLETON: OnceLock<SourceDataProvider> = OnceLock::new();
         SINGLETON
@@ -574,9 +574,9 @@ impl SourceDataProvider {
                         ("collation/implicithan/zh_zhuyin_data.toml", include_bytes!("../../tests/data/icuexport/collation/implicithan/zh_zhuyin_data.toml").as_slice()),
                         ("norm/small/compositions.toml", include_bytes!("../../tests/data/icuexport/norm/small/compositions.toml").as_slice()),
                         ("norm/small/decompositionex.toml", include_bytes!("../../tests/data/icuexport/norm/small/decompositionex.toml").as_slice()),
-                        ("norm/small/nfd.toml", include_bytes!("../../tests/data/icuexport/norm/small/nfd.toml").as_slice()),
+                        ("norm/fast/nfd.toml", include_bytes!("../../tests/data/icuexport/norm/fast/nfd.toml").as_slice()),
                         ("norm/small/nfdex.toml", include_bytes!("../../tests/data/icuexport/norm/small/nfdex.toml").as_slice()),
-                        ("norm/small/nfkd.toml", include_bytes!("../../tests/data/icuexport/norm/small/nfkd.toml").as_slice()),
+                        ("norm/fast/nfkd.toml", include_bytes!("../../tests/data/icuexport/norm/fast/nfkd.toml").as_slice()),
                         ("norm/small/nfkdex.toml", include_bytes!("../../tests/data/icuexport/norm/small/nfkdex.toml").as_slice()),
                         ("norm/small/uts46d.toml", include_bytes!("../../tests/data/icuexport/norm/small/uts46d.toml").as_slice()),
                         ("segmenter/dictionary/burmesedict.toml", include_bytes!("../../tests/data/icuexport/segmenter/dictionary/burmesedict.toml").as_slice()),
@@ -637,6 +637,7 @@ impl SourceDataProvider {
                         ("uprops/small/IDSU.toml", include_bytes!("../../tests/data/icuexport/uprops/small/IDSU.toml").as_slice()),
                         ("uprops/small/InCB.toml", include_bytes!("../../tests/data/icuexport/uprops/small/InCB.toml").as_slice()),
                         ("uprops/small/InSC.toml", include_bytes!("../../tests/data/icuexport/uprops/small/InSC.toml").as_slice()),
+                        ("uprops/small/jg.toml", include_bytes!("../../tests/data/icuexport/uprops/small/jg.toml").as_slice()),
                         ("uprops/small/Join_C.toml", include_bytes!("../../tests/data/icuexport/uprops/small/Join_C.toml").as_slice()),
                         ("uprops/small/jt.toml", include_bytes!("../../tests/data/icuexport/uprops/small/jt.toml").as_slice()),
                         ("uprops/small/lb.toml", include_bytes!("../../tests/data/icuexport/uprops/small/lb.toml").as_slice()),
@@ -649,6 +650,7 @@ impl SourceDataProvider {
                         ("uprops/small/nfdinert.toml", include_bytes!("../../tests/data/icuexport/uprops/small/nfdinert.toml").as_slice()),
                         ("uprops/small/nfkcinert.toml", include_bytes!("../../tests/data/icuexport/uprops/small/nfkcinert.toml").as_slice()),
                         ("uprops/small/nfkdinert.toml", include_bytes!("../../tests/data/icuexport/uprops/small/nfkdinert.toml").as_slice()),
+                        ("uprops/small/nt.toml", include_bytes!("../../tests/data/icuexport/uprops/small/nt.toml").as_slice()),
                         ("uprops/small/Pat_Syn.toml", include_bytes!("../../tests/data/icuexport/uprops/small/Pat_Syn.toml").as_slice()),
                         ("uprops/small/Pat_WS.toml", include_bytes!("../../tests/data/icuexport/uprops/small/Pat_WS.toml").as_slice()),
                         ("uprops/small/PCM.toml", include_bytes!("../../tests/data/icuexport/uprops/small/PCM.toml").as_slice()),

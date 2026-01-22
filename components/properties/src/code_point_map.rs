@@ -291,7 +291,7 @@ impl CodePointMapDataBorrowed<'_, GeneralCategory> {
     /// assert!(!other_letter_set.contains('🎃')); // U+1F383 JACK-O-LANTERN
     /// ```
     #[cfg(feature = "alloc")]
-    pub fn get_set_for_value_group(self, value: GeneralCategoryGroup) -> crate::CodePointSetData {
+    pub fn get_set_for_value_group(self, value: GeneralCategoryGroup) -> CodePointSetData {
         let matching_gc_ranges = self
             .iter_ranges()
             .filter(|cpm_range| (1 << cpm_range.value as u32) & value.0 != 0)

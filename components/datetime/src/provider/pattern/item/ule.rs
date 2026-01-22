@@ -54,7 +54,7 @@ use zerovec::ule::{AsULE, UleError, ULE};
 /// The model leaves at most 8 `PatternItem` variants, limits the number of possible
 /// field types and symbols to 16 each and limits the number of length variants to 256.
 ///
-/// [`Unicode Code Point`]: http://www.unicode.org/versions/latest/
+/// [`Unicode Code Point`]: https://unicode.org/versions/latest/
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[repr(transparent)]
 // This field has many invariants about the data, but the primary safety invariant
@@ -194,7 +194,7 @@ impl AsULE for PatternItem {
 /// The model leaves at most 8 `PatternItem` variants, and limits the placeholder
 /// to a single u8.
 ///
-/// [`Unicode Code Point`]: http://www.unicode.org/versions/latest/
+/// [`Unicode Code Point`]: https://unicode.org/versions/latest/
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[repr(transparent)]
 pub struct GenericPatternItemULE([u8; 3]);

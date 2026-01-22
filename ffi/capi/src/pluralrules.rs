@@ -145,7 +145,7 @@ pub mod ffi {
             Box::new(PluralOperands(icu_plurals::PluralOperands::from(i)))
         }
 
-        /// Construct from a FixedDecimal
+        /// Construct from a `FixedDecimal`
         ///
         /// Retains at most 18 digits each from the integer and fraction parts.
         #[cfg(feature = "decimal")]
@@ -157,6 +157,7 @@ pub mod ffi {
     }
 
     #[diplomat::out]
+    #[diplomat::rust_link(icu::plurals::PluralRules::categories, FnInStruct)]
     pub struct PluralCategories {
         pub zero: bool,
         pub one: bool,

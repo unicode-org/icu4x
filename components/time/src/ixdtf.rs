@@ -458,9 +458,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// use icu::calendar::cal::Hebrew;
     /// use icu::locale::subtags::subtag;
     /// use icu::time::{
-    ///     zone::{
-    ///         IanaParser, TimeZoneVariant, UtcOffset, VariantOffsetsCalculator,
-    ///     },
+    ///     zone::{IanaParser, TimeZoneVariant, UtcOffset},
     ///     TimeZone, TimeZoneInfo, ZonedDateTime,
     /// };
     ///
@@ -490,15 +488,15 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// let _ = zoneddatetime.zone.zone_name_timestamp();
     /// ```
     ///
-    /// An RFC 9557 string can provide a time zone in two parts: the DateTime UTC Offset or the Time Zone
-    /// Annotation. A DateTime UTC Offset is the time offset as laid out by RFC 3339; meanwhile, the Time
+    /// An RFC 9557 string can provide a time zone in two parts: the `DateTime` UTC Offset or the Time Zone
+    /// Annotation. A `DateTime` UTC Offset is the time offset as laid out by RFC 3339; meanwhile, the Time
     /// Zone Annotation is the annotation laid out by RFC 9557 and is defined as a UTC offset or IANA Time
     /// Zone identifier.
     ///
-    /// ## DateTime UTC Offsets
+    /// ## `DateTime` UTC Offsets
     ///
-    /// Below is an example of a time zone from a DateTime UTC Offset. The syntax here is familiar to a RFC 3339
-    /// DateTime string.
+    /// Below is an example of a time zone from a `DateTime` UTC Offset. The syntax here is familiar to a RFC 3339
+    /// `DateTime` string.
     ///
     /// ```
     /// use icu::calendar::Iso;
@@ -557,7 +555,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// An RFC 9557 string may contain both a UTC Offset and time zone annotation. This is fine as long as
     /// the time zone parts can be deemed as inconsistent or unknown consistency.
     ///
-    /// ### DateTime UTC offset with UTC Offset annotation.
+    /// ### `DateTime` UTC offset with UTC Offset annotation.
     ///
     /// These annotations must always be consistent as they should be either the same value or are inconsistent.
     ///

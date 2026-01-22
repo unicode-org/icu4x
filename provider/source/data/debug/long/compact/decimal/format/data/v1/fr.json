@@ -1,64 +1,134 @@
-{
-  "patterns": {
-    "3": {
-      "One": {
-        "exponent": 3,
-        "index": 0,
-        "literal_text": " millier"
-      },
-      "Other": {
-        "exponent": 3,
-        "index": 0,
-        "literal_text": " mille"
-      },
-      "Explicit1": {
-        "exponent": 3,
-        "index": 255,
-        "literal_text": "mille"
-      }
-    },
-    "4": {
-      "Other": {
-        "exponent": 3,
-        "index": 0,
-        "literal_text": " mille"
-      }
-    },
-    "6": {
-      "One": {
-        "exponent": 6,
-        "index": 0,
-        "literal_text": " million"
-      },
-      "Other": {
-        "exponent": 6,
-        "index": 0,
-        "literal_text": " millions"
-      }
-    },
-    "9": {
-      "One": {
-        "exponent": 9,
-        "index": 0,
-        "literal_text": " milliard"
-      },
-      "Other": {
-        "exponent": 9,
-        "index": 0,
-        "literal_text": " milliards"
-      }
-    },
-    "12": {
-      "One": {
-        "exponent": 12,
-        "index": 0,
-        "literal_text": " billion"
-      },
-      "Other": {
-        "exponent": 12,
-        "index": 0,
-        "literal_text": " billions"
-      }
+[
+  {
+    "sized": 3,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " millier"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " mille"
+          }
+        ]
+      ],
+      "explicit_one": [
+        0,
+        [
+          {
+            "Literal": "mille"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 4,
+    "variable": {
+      "other": [
+        1,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " mille"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 6,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " million"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " millions"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 9,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " milliard"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " milliards"
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "sized": 12,
+    "variable": {
+      "one": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " billion"
+          }
+        ]
+      ],
+      "other": [
+        0,
+        [
+          {
+            "Placeholder": "Singleton"
+          },
+          {
+            "Literal": " billions"
+          }
+        ]
+      ]
     }
   }
-}
+]

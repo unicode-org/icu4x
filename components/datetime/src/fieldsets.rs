@@ -58,7 +58,7 @@ pub use crate::combo::Combo;
 
 use crate::{
     options::*,
-    provider::{neo::*, time_zones::tz, *},
+    provider::{names::*, time_zones::tz, *},
     raw::neo::RawOptions,
     scaffold::*,
 };
@@ -91,9 +91,6 @@ macro_rules! yes_or {
 
 macro_rules! ternary {
     ($present:expr, $missing:expr, yes) => {
-        $present
-    };
-    ($present:expr, $missing:expr, $any:literal) => {
         $present
     };
     ($present:expr, $missing:expr,) => {
@@ -437,8 +434,8 @@ macro_rules! impl_date_or_calendar_period_marker {
         $(input_month = $month_yes:ident,)?
         // Whether the input should contain the day of the month.
         $(input_day_of_month = $day_of_month_yes:ident,)?
-        // Whether the input should contain the day of the week.
-        $(input_day_of_week = $day_of_week_yes:ident,)?
+        // Whether the input should contain the weekday.
+        $(input_weekday = $weekday_yes:ident,)?
         // Whether the input should contain the day of the year.
         $(input_day_of_year = $day_of_year_yes:ident,)?
         // Whether the input should contain the rata die.
@@ -535,7 +532,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, $($day_of_month_yes)?);
             type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, $($day_of_year_yes)?);
             type RataDieInput = datetime_marker_helper!(@input/rata_die, $($rata_die_yes)?);
-            type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, $($day_of_week_yes)?);
+            type DayOfWeekInput = datetime_marker_helper!(@input/weekday, $($weekday_yes)?);
         }
         impl<C: CldrCalendar> TypedDateDataMarkers<C> for $type {
             type DateSkeletonPatternsV1 = datetime_marker_helper!(@dates/typed, yes);
@@ -581,7 +578,7 @@ macro_rules! impl_date_marker {
         $(input_year = $year_yes:ident,)?
         $(input_month = $month_yes:ident,)?
         $(input_day_of_month = $day_of_month_yes:ident,)?
-        $(input_day_of_week = $day_of_week_yes:ident,)?
+        $(input_weekday = $weekday_yes:ident,)?
         $(input_day_of_year = $day_of_year_yes:ident,)?
         $(input_rata_die = $rata_die_yes:ident,)?
         $(input_any_calendar_kind = $any_calendar_kind_yes:ident,)?
@@ -600,7 +597,7 @@ macro_rules! impl_date_marker {
             $(input_year = $year_yes,)?
             $(input_month = $month_yes,)?
             $(input_day_of_month = $day_of_month_yes,)?
-            $(input_day_of_week = $day_of_week_yes,)?
+            $(input_weekday = $weekday_yes,)?
             $(input_day_of_year = $day_of_year_yes,)?
             $(input_rata_die = $rata_die_yes,)?
             $(input_any_calendar_kind = $any_calendar_kind_yes,)?
@@ -699,7 +696,7 @@ macro_rules! impl_date_marker {
             type DayOfMonthInput = datetime_marker_helper!(@input/day_of_month, $($day_of_month_yes)?);
             type DayOfYearInput = datetime_marker_helper!(@input/day_of_year, $($day_of_year_yes)?);
             type RataDieInput = datetime_marker_helper!(@input/rata_die, $($rata_die_yes)?);
-            type DayOfWeekInput = datetime_marker_helper!(@input/day_of_week, $($day_of_week_yes)?);
+            type DayOfWeekInput = datetime_marker_helper!(@input/weekday, $($weekday_yes)?);
         }
         impl<C: CldrCalendar> TypedDateDataMarkers<C> for $type_time {
             type DateSkeletonPatternsV1 = datetime_marker_helper!(@dates/typed, yes);
@@ -1031,7 +1028,7 @@ impl_date_marker!(
     sample = "Friday",
     sample_time = "Friday 3:47:50 PM",
     weekdays = yes,
-    input_day_of_week = yes,
+    input_weekday = yes,
 );
 
 impl_date_marker!(
@@ -1045,7 +1042,7 @@ impl_date_marker!(
     sample_time = "17 Friday at 3:47:50 PM",
     weekdays = yes,
     input_day_of_month = yes,
-    input_day_of_week = yes,
+    input_weekday = yes,
     option_alignment = yes,
 );
 
@@ -1075,7 +1072,7 @@ impl_date_marker!(
     weekdays = yes,
     input_month = yes,
     input_day_of_month = yes,
-    input_day_of_week = yes,
+    input_weekday = yes,
     input_any_calendar_kind = yes,
     option_alignment = yes,
 );
@@ -1109,7 +1106,7 @@ impl_date_marker!(
     input_year = yes,
     input_month = yes,
     input_day_of_month = yes,
-    input_day_of_week = yes,
+    input_weekday = yes,
     input_any_calendar_kind = yes,
     option_alignment = yes,
 );
@@ -1149,62 +1146,85 @@ impl_calendar_period_marker!(
     option_alignment = yes,
 );
 
+#[cfg(doc)]
+use crate::preferences::HourCycle;
+
 impl_time_marker!(
-    /// Hours can be switched between 12-hour and 24-hour time via the `u-hc` locale keyword
-    /// or [`DateTimeFormatterPreferences`].
+    /// Hours can be switched between 12-hour and 24-hour time via [`HourCycle::Clock12`]
+    /// or [`HourCycle::Clock24`] on [`DateTimeFormatterPreferences`] or via the `u-hc`
+    /// locale keyword.
     ///
     /// ```
-    /// use icu::datetime::input::Time;
+    /// use icu::datetime::DateTimeFormatterPreferences;
     /// use icu::datetime::fieldsets::T;
+    /// use icu::datetime::input::Time;
     /// use icu::datetime::NoCalendarFormatter;
+    /// use icu::datetime::preferences::HourCycle;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// // By default, en-US uses 12-hour time and fr-FR uses 24-hour time,
+    /// let time_midnight = Time::try_new(0, 20, 30, 0).unwrap();
+    /// let time_afternoon = Time::try_new(16, 12, 20, 0).unwrap();
+    ///
+    /// let prefs_en_us = DateTimeFormatterPreferences::from(locale!("en-US"));
+    /// let prefs_ja_jp = DateTimeFormatterPreferences::from(locale!("ja-JP"));
+    ///
+    /// // By default, en-US uses 12-hour time and ja-JP uses 24-hour time,
     /// // but we can set overrides.
     ///
-    /// let formatter = NoCalendarFormatter::try_new(
-    ///     locale!("en-US-u-hc-h12").into(),
-    ///     T::hm(),
-    /// )
-    /// .unwrap();
+    /// let formatter = NoCalendarFormatter::try_new(prefs_en_us, T::hm()).unwrap();
     /// assert_writeable_eq!(
-    ///     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
+    ///     formatter.format(&time_midnight),
+    ///     "12:20 AM"
+    /// );
+    /// assert_writeable_eq!(
+    ///     formatter.format(&time_afternoon),
     ///     "4:12 PM"
     /// );
     ///
-    /// let formatter = NoCalendarFormatter::try_new(
-    ///     locale!("en-US-u-hc-h23").into(),
-    ///     T::hm(),
-    /// )
+    /// let formatter = NoCalendarFormatter::try_new({
+    ///     let mut prefs = prefs_en_us;
+    ///     prefs.hour_cycle = Some(HourCycle::Clock24);
+    ///     prefs
+    /// }, T::hm())
     /// .unwrap();
     /// assert_writeable_eq!(
-    ///     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
+    ///     formatter.format(&time_midnight),
+    ///     "00:20"
+    /// );
+    /// assert_writeable_eq!(
+    ///     formatter.format(&time_afternoon),
     ///     "16:12"
     /// );
     ///
-    /// let formatter = NoCalendarFormatter::try_new(
-    ///     locale!("fr-FR-u-hc-h12").into(),
-    ///     T::hm(),
-    /// )
-    /// .unwrap();
+    /// let formatter = NoCalendarFormatter::try_new(prefs_ja_jp, T::hm()).unwrap();
     /// assert_writeable_eq!(
-    ///     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
-    ///     "4:12 PM"
+    ///     formatter.format(&time_midnight),
+    ///     "0:20"
+    /// );
+    /// assert_writeable_eq!(
+    ///     formatter.format(&time_afternoon),
+    ///     "16:12"
     /// );
     ///
-    /// let formatter = NoCalendarFormatter::try_new(
-    ///     locale!("fr-FR-u-hc-h23").into(),
-    ///     T::hm(),
-    /// )
+    /// let formatter = NoCalendarFormatter::try_new({
+    ///     let mut prefs = prefs_ja_jp;
+    ///     prefs.hour_cycle = Some(HourCycle::Clock12);
+    ///     prefs
+    /// }, T::hm())
     /// .unwrap();
+    /// // Japan uses 0 instead of 12 for midnight and noon.
     /// assert_writeable_eq!(
-    ///     formatter.format(&Time::try_new(16, 12, 20, 0).unwrap()),
-    ///     "16:12"
+    ///     formatter.format(&time_midnight),
+    ///     "午前0:20"
+    /// );
+    /// assert_writeable_eq!(
+    ///     formatter.format(&time_afternoon),
+    ///     "午後4:12"
     /// );
     /// ```
     ///
-    /// Hour cycles `h11` and `h24` are supported, too:
+    /// Hour cycles `h11`, `h12`, and `h23` are supported, too:
     ///
     /// ```
     /// use icu::datetime::input::Time;
@@ -1222,6 +1242,17 @@ impl_time_marker!(
     /// assert_writeable_eq!(
     ///     formatter.format(&Time::try_new(0, 0, 0, 0).unwrap()),
     ///     "0:00 AM"
+    /// );
+    ///
+    /// let formatter = NoCalendarFormatter::try_new(
+    ///     locale!("und-u-hc-h12").into(),
+    ///     T::hm(),
+    /// )
+    /// .unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(&Time::try_new(0, 0, 0, 0).unwrap()),
+    ///     "12:00 AM"
     /// );
     ///
     /// let formatter = NoCalendarFormatter::try_new(
@@ -1752,7 +1783,7 @@ pub mod zone {
         /// For example, a raw [`UtcOffset`] cannot be used here.
         ///
         /// ```compile_fail,E0277
-        /// use icu::datetime::input::{DateTime, Iso};
+        /// use icu::datetime::input::DateTime;
         /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::Location;
         /// use icu::datetime::input::UtcOffset;
@@ -1787,7 +1818,7 @@ pub mod zone {
         /// For example, a raw [`UtcOffset`] cannot be used here.
         ///
         /// ```compile_fail,E0277
-        /// use icu::datetime::input::{DateTime, Iso};
+        /// use icu::datetime::input::DateTime;
         /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::ExemplarCity;
         /// use icu::datetime::input::UtcOffset;

@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::{CompactDecimal, Decimal};
+use fixed_decimal::{CompactDecimal, Decimal, UnsignedDecimal};
 
-/// A full plural operands representation of a number. See [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules) for complete operands description.
+/// A full plural operands representation of a number. See [CLDR Plural Rules](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules) for complete operands description.
 ///
-/// Plural operands in compliance with [CLDR Plural Rules](http://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules).
+/// Plural operands in compliance with [CLDR Plural Rules](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules).
 ///
-/// See [full operands description](http://unicode.org/reports/tr35/tr35-numbers.html#Operands).
+/// See [full operands description](https://unicode.org/reports/tr35/tr35-numbers.html#Operands).
 ///
 /// # Data Types
 ///
@@ -199,6 +199,7 @@ macro_rules! impl_integer_type {
     ($ty:ident) => {
         impl From<$ty> for PluralOperands {
             #[inline]
+            #[allow(trivial_numeric_casts)]
             fn from(input: $ty) -> Self {
                 Self {
                     i: input as u64,
@@ -234,24 +235,24 @@ impl_integer_type!(u8 u16 u32 u64 u128 usize);
 impl_signed_integer_type!(i8 i16 i32 i64 i128 isize);
 
 impl PluralOperands {
-    fn from_significand_and_exponent(dec: &Decimal, exp: u8) -> PluralOperands {
+    fn from_significand_and_exponent(dec: &UnsignedDecimal, exp: u8) -> PluralOperands {
         let exp_i16 = i16::from(exp);
 
-        let mag_range = dec.absolute.magnitude_range();
-        let mag_high = core::cmp::min(17, *mag_range.end() + exp_i16);
-        let mag_low = core::cmp::max(-18, *mag_range.start() + exp_i16);
+        let mag_range = dec.magnitude_range();
+        let mag_high = (*mag_range.end() + exp_i16).clamp(0, 17);
+        let mag_low = (*mag_range.start() + exp_i16).clamp(-18, 0);
 
         let mut i: u64 = 0;
         for magnitude in (0..=mag_high).rev() {
             i *= 10;
-            i += dec.absolute.digit_at(magnitude - exp_i16) as u64;
+            i += dec.digit_at(magnitude - exp_i16) as u64;
         }
 
         let mut f: u64 = 0;
         let mut t: u64 = 0;
         let mut w: usize = 0;
         for magnitude in (mag_low..=-1).rev() {
-            let digit = dec.absolute.digit_at(magnitude - exp_i16) as u64;
+            let digit = dec.digit_at(magnitude - exp_i16) as u64;
             f *= 10;
             f += digit;
             if digit != 0 {
@@ -299,7 +300,13 @@ impl From<&Decimal> for PluralOperands {
     /// Converts a [`fixed_decimal::Decimal`] to [`PluralOperands`]. Retains at most 18
     /// digits each from the integer and fraction parts.
     fn from(dec: &Decimal) -> Self {
-        Self::from_significand_and_exponent(dec, 0)
+        (&dec.absolute).into()
+    }
+}
+
+impl From<&UnsignedDecimal> for PluralOperands {
+    fn from(value: &UnsignedDecimal) -> Self {
+        Self::from_significand_and_exponent(value, 0)
     }
 }
 
@@ -350,6 +357,6 @@ impl From<&CompactDecimal> for PluralOperands {
     /// assert_eq!(rules.category_for(&compact_decimal), PluralCategory::Many);
     /// ```
     fn from(compact: &CompactDecimal) -> Self {
-        Self::from_significand_and_exponent(compact.significand(), compact.exponent())
+        Self::from_significand_and_exponent(&compact.significand().absolute, compact.exponent())
     }
 }

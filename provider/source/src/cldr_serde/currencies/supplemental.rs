@@ -33,7 +33,7 @@ pub(crate) struct RoundingModes {
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct Fractions {
     #[serde(rename = "DEFAULT")]
-    default: RoundingModes,
+    pub(crate) default: RoundingModes,
 
     #[serde(flatten)]
     pub(crate) currencies: BTreeMap<ISOCode, RoundingModes>,

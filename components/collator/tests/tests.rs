@@ -1451,7 +1451,7 @@ fn test_nb_nn_no() {
     assert_eq!(strs, expected);
     assert_eq!(
         DataProvider::<CollationTailoringV1>::load(
-            &icu_collator::provider::Baked,
+            &Baked,
             DataRequest {
                 id: DataIdentifierCow::from_locale(CollationTailoringV1::make_locale(
                     prefs.locale_preferences
@@ -1474,7 +1474,7 @@ fn test_nb_nn_no() {
     assert_eq!(strs, expected);
     assert_eq!(
         DataProvider::<CollationTailoringV1>::load(
-            &icu_collator::provider::Baked,
+            &Baked,
             DataRequest {
                 id: DataIdentifierCow::from_locale(CollationTailoringV1::make_locale(
                     prefs.locale_preferences
@@ -1497,7 +1497,7 @@ fn test_nb_nn_no() {
     assert_eq!(strs, expected);
     assert_eq!(
         DataProvider::<CollationTailoringV1>::load(
-            &icu_collator::provider::Baked,
+            &Baked,
             DataRequest {
                 id: DataIdentifierCow::from_locale(CollationTailoringV1::make_locale(
                     prefs.locale_preferences
@@ -1792,10 +1792,7 @@ fn test_case_level() {
     options.strength = Some(Strength::Primary);
     options.case_level = Some(CaseLevel::On);
     let collator_with_case = Collator::try_new(Default::default(), options).unwrap();
-    assert_eq!(
-        collator_with_case.compare("aA", "Aa"),
-        core::cmp::Ordering::Less
-    );
+    assert_eq!(collator_with_case.compare("aA", "Aa"), Ordering::Less);
 }
 
 #[test]
@@ -1809,8 +1806,8 @@ fn test_default_resolved_options() {
     assert_eq!(resolved.case_level, CaseLevel::Off);
     assert_eq!(resolved.numeric, CollationNumericOrdering::False);
 
-    assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
-    assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);
+    assert_eq!(collator.compare("𝕒", "A"), Ordering::Less);
+    assert_eq!(collator.compare("coté", "côte"), Ordering::Less);
 }
 
 #[test]
@@ -1826,8 +1823,8 @@ fn test_data_resolved_options_th() {
     assert_eq!(resolved.numeric, CollationNumericOrdering::False);
 
     // There's a separate more comprehensive test for the shifted behavior
-    assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
-    assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);
+    assert_eq!(collator.compare("𝕒", "A"), Ordering::Less);
+    assert_eq!(collator.compare("coté", "côte"), Ordering::Less);
 }
 
 #[test]
@@ -1842,8 +1839,8 @@ fn test_data_resolved_options_da() {
     assert_eq!(resolved.case_level, CaseLevel::Off);
     assert_eq!(resolved.numeric, CollationNumericOrdering::False);
 
-    assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Greater);
-    assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);
+    assert_eq!(collator.compare("𝕒", "A"), Ordering::Greater);
+    assert_eq!(collator.compare("coté", "côte"), Ordering::Less);
 }
 
 #[test]
@@ -1859,11 +1856,8 @@ fn test_data_resolved_options_fr_ca() {
     assert_eq!(resolved.numeric, CollationNumericOrdering::False);
     // bacward second level is hidden from the API
 
-    assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
-    assert_eq!(
-        collator.compare("coté", "côte"),
-        core::cmp::Ordering::Greater
-    );
+    assert_eq!(collator.compare("𝕒", "A"), Ordering::Less);
+    assert_eq!(collator.compare("coté", "côte"), Ordering::Greater);
 }
 
 #[test]
@@ -1881,11 +1875,8 @@ fn test_manual_and_data_resolved_options_fr_ca() {
     assert_eq!(resolved.numeric, CollationNumericOrdering::False);
     // backwards second level is hidden from the API
 
-    assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Greater);
-    assert_eq!(
-        collator.compare("coté", "côte"),
-        core::cmp::Ordering::Greater
-    );
+    assert_eq!(collator.compare("𝕒", "A"), Ordering::Greater);
+    assert_eq!(collator.compare("coté", "côte"), Ordering::Greater);
 }
 
 #[test]
@@ -1902,8 +1893,8 @@ fn test_manual_resolved_options_da() {
     assert_eq!(resolved.case_level, CaseLevel::Off);
     assert_eq!(resolved.numeric, CollationNumericOrdering::False);
 
-    assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
-    assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);
+    assert_eq!(collator.compare("𝕒", "A"), Ordering::Less);
+    assert_eq!(collator.compare("coté", "côte"), Ordering::Less);
 }
 
 #[test]
@@ -1913,16 +1904,16 @@ fn test_ecma_sensitivity() {
         let mut options = CollatorOptions::default();
         options.strength = Some(Strength::Primary);
         let collator = Collator::try_new(Default::default(), options).unwrap();
-        assert_eq!(collator.compare("a", "á"), core::cmp::Ordering::Equal);
-        assert_eq!(collator.compare("a", "A"), core::cmp::Ordering::Equal);
+        assert_eq!(collator.compare("a", "á"), Ordering::Equal);
+        assert_eq!(collator.compare("a", "A"), Ordering::Equal);
     }
     {
         // accent
         let mut options = CollatorOptions::default();
         options.strength = Some(Strength::Secondary);
         let collator = Collator::try_new(Default::default(), options).unwrap();
-        assert_ne!(collator.compare("a", "á"), core::cmp::Ordering::Equal);
-        assert_eq!(collator.compare("a", "A"), core::cmp::Ordering::Equal);
+        assert_ne!(collator.compare("a", "á"), Ordering::Equal);
+        assert_eq!(collator.compare("a", "A"), Ordering::Equal);
     }
     {
         // case
@@ -1930,16 +1921,16 @@ fn test_ecma_sensitivity() {
         options.strength = Some(Strength::Primary);
         options.case_level = Some(CaseLevel::On);
         let collator = Collator::try_new(Default::default(), options).unwrap();
-        assert_eq!(collator.compare("a", "á"), core::cmp::Ordering::Equal);
-        assert_ne!(collator.compare("a", "A"), core::cmp::Ordering::Equal);
+        assert_eq!(collator.compare("a", "á"), Ordering::Equal);
+        assert_ne!(collator.compare("a", "A"), Ordering::Equal);
     }
     {
         // variant
         let mut options = CollatorOptions::default();
         options.strength = Some(Strength::Tertiary);
         let collator = Collator::try_new(Default::default(), options).unwrap();
-        assert_ne!(collator.compare("a", "á"), core::cmp::Ordering::Equal);
-        assert_ne!(collator.compare("a", "A"), core::cmp::Ordering::Equal);
+        assert_ne!(collator.compare("a", "á"), Ordering::Equal);
+        assert_ne!(collator.compare("a", "A"), Ordering::Equal);
     }
 }
 
@@ -1955,8 +1946,8 @@ fn test_prefs_overrides() {
         assert_eq!(resolved.case_first, CollationCaseFirst::Upper);
         assert_eq!(resolved.numeric, CollationNumericOrdering::True);
 
-        assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Greater);
-        assert_eq!(collator.compare("10", "2"), core::cmp::Ordering::Greater);
+        assert_eq!(collator.compare("𝕒", "A"), Ordering::Greater);
+        assert_eq!(collator.compare("10", "2"), Ordering::Greater);
     }
 
     // preferences from locale can be overridden by explicit preferences
@@ -1972,8 +1963,8 @@ fn test_prefs_overrides() {
         assert_eq!(resolved.case_first, CollationCaseFirst::False);
         assert_eq!(resolved.numeric, CollationNumericOrdering::False);
 
-        assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
-        assert_eq!(collator.compare("10", "2"), core::cmp::Ordering::Less);
+        assert_eq!(collator.compare("𝕒", "A"), Ordering::Less);
+        assert_eq!(collator.compare("10", "2"), Ordering::Less);
     }
 }
 
@@ -1988,7 +1979,7 @@ fn test_identical_prefix_root_builder_0cc2() {
             &[0x0CC8, 0x0CC6, 0x0CC2, 0x0CD6],
             &[0x0CC8, 0x0CC6, 0x0CC2, 0x0CD5]
         ),
-        core::cmp::Ordering::Less
+        Ordering::Less
     );
 }
 
@@ -2003,7 +1994,7 @@ fn test_identical_prefix_root_builder_0dcf() {
             &[0x0DC6, 0x0DD9, 0x0DCF, 0xAAF2],
             &[0x0DC6, 0x0DD9, 0x0DCF, 0x0DCA]
         ),
-        core::cmp::Ordering::Less
+        Ordering::Less
     );
 }
 
@@ -2015,7 +2006,7 @@ fn test_middle_contraction_markers() {
     let collator = Collator::try_new(Default::default(), options).unwrap();
     assert_eq!(
         collator.compare_utf16(&[0x0CC2, 0xDC00], &[0x0DCF, 0xDC00]),
-        core::cmp::Ordering::Less
+        Ordering::Less
     );
 }
 
@@ -2029,12 +2020,12 @@ fn test_fffe_issue_6811() {
     // The merge separator must compare less than any other character.
     assert_eq!(
         collator.compare_utf16(&[0xFFFE, 0x0001], &[0x0001, 0xFFFE]),
-        core::cmp::Ordering::Less
+        Ordering::Less
     );
     // The merge separator must even compare less than U+0000.
     assert_eq!(
         collator.compare_utf16(&[0xFFFE, 0x0000], &[0x0000, 0xFFFE]),
-        core::cmp::Ordering::Less
+        Ordering::Less
     );
 }
 
@@ -2044,10 +2035,7 @@ fn test_latin1_root() {
     let mut options = CollatorOptions::default();
     options.strength = Some(Strength::Primary);
     let collator = Collator::try_new(Default::default(), options).unwrap();
-    assert_eq!(
-        collator.compare_latin1(b"ax", b"a\xE4"),
-        core::cmp::Ordering::Greater
-    );
+    assert_eq!(collator.compare_latin1(b"ax", b"a\xE4"), Ordering::Greater);
 }
 
 #[cfg(feature = "latin1")]
@@ -2058,7 +2046,7 @@ fn test_latin1_utf16_root() {
     let collator = Collator::try_new(Default::default(), options).unwrap();
     assert_eq!(
         collator.compare_latin1_utf16(b"ax", &[0x0061, 0x00E4]),
-        core::cmp::Ordering::Greater
+        Ordering::Greater
     );
 }
 
@@ -2068,10 +2056,7 @@ fn test_latin1_fi() {
     let mut options = CollatorOptions::default();
     options.strength = Some(Strength::Primary);
     let collator = Collator::try_new(locale!("fi").into(), options).unwrap();
-    assert_eq!(
-        collator.compare_latin1(b"ax", b"a\xE4"),
-        core::cmp::Ordering::Less
-    );
+    assert_eq!(collator.compare_latin1(b"ax", b"a\xE4"), Ordering::Less);
 }
 
 #[cfg(feature = "latin1")]
@@ -2082,7 +2067,7 @@ fn test_latin1_utf16_fi() {
     let collator = Collator::try_new(locale!("fi").into(), options).unwrap();
     assert_eq!(
         collator.compare_latin1_utf16(b"ax", &[0x0061, 0x00E4]),
-        core::cmp::Ordering::Less
+        Ordering::Less
     );
 }
 

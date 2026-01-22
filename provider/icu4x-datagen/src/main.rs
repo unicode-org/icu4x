@@ -2,6 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
+// #![cfg_attr(not(any(test, doc)), no_std)]
+// #![cfg_attr(
+//     not(test),
+//     deny(
+//         clippy::indexing_slicing,
+//         clippy::unwrap_used,
+//         clippy::expect_used,
+//         clippy::panic,
+//     )
+// )]
+#![warn(missing_docs)]
+
 //! The command line interface for ICU4X datagen.
 //!
 //! ```bash
@@ -27,6 +40,7 @@
 )]
 
 use clap::{Parser, ValueEnum};
+use displaydoc::Display;
 use eyre::WrapErr;
 use icu_provider::export::ExportableProvider;
 use icu_provider::hello_world::HelloWorldV1;
@@ -35,9 +49,63 @@ use icu_provider_export::prelude::*;
 use icu_provider_export::ExportMetadata;
 #[cfg(feature = "provider")]
 use icu_provider_source::SourceDataProvider;
+use regex::Regex;
 use simple_logger::SimpleLogger;
 use std::collections::HashMap;
 use std::path::PathBuf;
+use std::str::FromStr;
+
+#[derive(Clone)]
+struct Filter {
+    domain: String,
+    regex: Regex,
+    inverted: bool,
+}
+
+#[derive(Debug, Display)]
+enum FilterError {
+    #[displaydoc("no filter found. specify one after an =")]
+    NoFilter,
+    #[displaydoc("opening / delimiter for regex not found")]
+    NoOpeningSlash,
+    #[displaydoc("closing / delimiter for regex not found")]
+    NoClosingSlash,
+    #[displaydoc("{0}")]
+    Regex(regex::Error),
+}
+
+impl From<regex::Error> for FilterError {
+    fn from(value: regex::Error) -> Self {
+        FilterError::Regex(value)
+    }
+}
+
+impl std::error::Error for FilterError {}
+
+impl FromStr for Filter {
+    type Err = FilterError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let (domain, regex) = s.split_once('=').ok_or(FilterError::NoFilter)?;
+
+        let (regex, inverted) = regex
+            .strip_prefix('-')
+            .map(|regex| (regex, true))
+            .unwrap_or((regex, false));
+
+        let regex = regex.strip_prefix('/').ok_or(FilterError::NoOpeningSlash)?;
+        let regex = regex.strip_suffix('/').ok_or(FilterError::NoClosingSlash)?;
+
+        // add an implicit `^(?:)$` around the regex
+        let regex = format!("^(?:{})$", regex);
+        let regex = Regex::new(&regex)?;
+
+        Ok(Filter {
+            domain: domain.to_owned(),
+            regex,
+            inverted,
+        })
+    }
+}
 
 #[derive(Parser)]
 #[command(name = "icu4x-datagen")]
@@ -142,7 +210,8 @@ struct Cli {
     #[arg(
         help = "Whether to optimize CodePointTrie data structures for size (\"small\") or speed (\"fast\").\n\
                   Using \"fast\" mode increases performance of CJK text processing and segmentation. For more\n\
-                  information, see the TrieType enum."
+                  information, see the TrieType enum. The tries for the core (UAX #15 but not UAX #46)\n\
+                  normalization forms use the fast trie type regardless of this setting."
     )]
     #[cfg(feature = "provider")]
     trie_type: TrieType,
@@ -168,6 +237,10 @@ struct Cli {
     #[arg(long, value_name = "BINARY")]
     #[arg(help = "Analyzes the binary and only includes markers that are used by the binary.")]
     markers_for_bin: Option<PathBuf>,
+
+    #[arg(long, value_name = "FILTER")]
+    #[arg(help = "Filter attributes on markers for a domain. Accepts form `domain=/regex/`.")]
+    attribute_filter: Vec<Filter>,
 
     #[arg(long, short, num_args = 0..)]
     #[cfg_attr(feature = "provider", arg(default_value = "recommended"))]
@@ -289,6 +362,10 @@ fn main() -> eyre::Result<()> {
             .unwrap()
     }
 
+    run(cli)
+}
+
+fn run(cli: Cli) -> eyre::Result<()> {
     let markers = if !cli.markers.is_empty() {
         match cli.markers.as_slice() {
             [x] if x == "none" => Default::default(),
@@ -367,7 +444,7 @@ fn main() -> eyre::Result<()> {
         }
         #[cfg(feature = "blob_input")]
         () if cli.input_blob.is_some() => {
-            let provider = icu_provider_blob::BlobDataProvider::try_new_from_blob(
+            let provider = BlobDataProvider::try_new_from_blob(
                 std::fs::read(cli.input_blob.unwrap())?.into(),
             )?;
             let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider)?;
@@ -528,6 +605,23 @@ fn main() -> eyre::Result<()> {
         driver.with_segmenter_models(cli.segmenter_models.clone())
     };
 
+    let attribute_filters = cli.attribute_filter.into_iter().fold(
+        HashMap::<_, Vec<(Regex, bool)>>::new(),
+        |mut map, filter| {
+            map.entry(filter.domain)
+                .or_default()
+                .push((filter.regex, filter.inverted));
+            map
+        },
+    );
+    for (domain, filters) in attribute_filters {
+        driver = driver.with_marker_attributes_filter(&domain, move |attr| {
+            filters
+                .iter()
+                .all(|(regex, inverted)| regex.is_match(attr) ^ inverted)
+        })
+    }
+
     let metadata: Result<ExportMetadata, DataError> = match cli.format {
         #[cfg(not(feature = "fs_exporter"))]
         Format::Fs => {
@@ -618,7 +712,7 @@ macro_rules! cb {
             use std::sync::OnceLock;
             static LOOKUP: OnceLock<HashMap<String, Option<DataMarkerInfo>>> = OnceLock::new();
             LOOKUP.get_or_init(|| {
-                [
+                vec![
                     (stringify!(icu_provider::hello_world::HelloWorldV1).replace(' ', ""), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
                     (stringify!(HelloWorldV1).into(), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
                     $(
@@ -678,7 +772,7 @@ use icu_provider::prelude::*;
 use icu_provider_blob::BlobDataProvider;
 
 #[cfg(feature = "blob_input")]
-struct ReexportableBlobDataProvider(icu_provider_blob::BlobDataProvider);
+struct ReexportableBlobDataProvider(BlobDataProvider);
 
 #[cfg(feature = "blob_input")]
 impl<M: DataMarker> DataProvider<M> for ReexportableBlobDataProvider
@@ -700,4 +794,39 @@ where
     fn iter_ids(&self) -> Result<std::collections::BTreeSet<DataIdentifierCow<'_>>, DataError> {
         self.0.iter_ids_for_marker(M::INFO)
     }
+}
+
+#[test]
+fn test_attributes_regex() {
+    let out = std::env::temp_dir().join("icu4x-datagen_test_attributes_regex_out");
+    let _ = std::fs::remove_dir_all(&out);
+
+    let mut args = Cli::parse_from([
+        "bin",
+        "--markers",
+        "HelloWorldV1",
+        "--locales",
+        "full",
+        "--format",
+        "fs",
+        "--attribute-filter",
+        "hello=/r.*?|.*?case/",
+        "--attribute-filter",
+        "hello=-/lowercase/",
+        "--attribute-filter",
+        "hello=-/.*3/",
+    ]);
+
+    args.output = Some(out.clone());
+
+    run(args).unwrap();
+
+    assert!(std::fs::exists(out.join("hello/world/v1/reverse")).unwrap());
+
+    assert!(std::fs::exists(out.join("hello/world/v1/rotate1")).unwrap());
+    assert!(std::fs::exists(out.join("hello/world/v1/rotate2")).unwrap());
+    assert!(!std::fs::exists(out.join("hello/world/v1/rotate3")).unwrap());
+
+    assert!(std::fs::exists(out.join("hello/world/v1/uppercase")).unwrap());
+    assert!(!std::fs::exists(out.join("hello/world/v1/lowercase")).unwrap());
 }

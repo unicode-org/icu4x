@@ -34,7 +34,7 @@ namespace icu4x {
 /**
  * An ICU4X Bidi object, containing loaded bidi data
  *
- * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.BidiClass.html) for more information.
+ * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.1.1/icu/properties/props/struct.BidiClass.html) for more information.
  */
 class Bidi {
 public:
@@ -75,7 +75,7 @@ public:
   inline std::unique_ptr<icu4x::ReorderedIndexMap> reorder_visual(icu4x::diplomat::span<const uint8_t> levels) const;
 
   /**
-   * Check if a Level returned by level_at is an RTL level.
+   * Check if a Level returned by `level_at` is an RTL level.
    *
    * Invalid levels (numbers greater than 125) will be assumed LTR
    *
@@ -84,7 +84,7 @@ public:
   inline static bool level_is_rtl(uint8_t level);
 
   /**
-   * Check if a Level returned by level_at is an LTR level.
+   * Check if a Level returned by `level_at` is an LTR level.
    *
    * Invalid levels (numbers greater than 125) will be assumed LTR
    *

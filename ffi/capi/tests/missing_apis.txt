@@ -25,7 +25,12 @@ icu::calendar::types::DateDuration::for_days#FnInStruct
 icu::calendar::types::DateDuration::for_months#FnInStruct
 icu::calendar::types::DateDuration::for_weeks#FnInStruct
 icu::calendar::types::DateDuration::for_years#FnInStruct
+icu::calendar::types::DateDuration::try_from_str#FnInStruct
+icu::calendar::types::DateDuration::try_from_utf8#FnInStruct
+icu::calendar::types::DateDurationParseError#Enum
 icu::calendar::types::DateDurationUnit#Enum
+icu::calendar::types::Month::leap#FnInStruct
+icu::calendar::types::Month::new#FnInStruct
 icu::collator::CollationKeySink::finish#FnInTrait
 icu::collator::CollationKeySink::write#FnInTrait
 icu::collator::CollationKeySink::write_byte#FnInTrait
@@ -34,3 +39,6 @@ icu::collator::CollatorBorrowed::compare_latin1_utf16#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_to#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_utf16_to#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_utf8_to#FnInStruct
+icu::properties::script::HarfbuzzScriptData#Struct
+icu::properties::script::HarfbuzzScriptData::new#FnInStruct
+icu::properties::script::HarfbuzzScriptDataBorrowed#Struct

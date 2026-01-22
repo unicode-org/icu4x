@@ -20,7 +20,7 @@ use alloc::borrow::Cow;
 /// multiple possible orderings. Depending on your use case, two orderings are available:
 ///
 /// 1. A string ordering, suitable for stable serialization: [`LanguageIdentifier::strict_cmp`]
-/// 2. A struct ordering, suitable for use with a BTreeSet: [`LanguageIdentifier::total_cmp`]
+/// 2. A struct ordering, suitable for use with a `BTreeSet`: [`LanguageIdentifier::total_cmp`]
 ///
 /// See issue: <https://github.com/unicode-org/icu4x/issues/1215>
 ///
@@ -79,7 +79,7 @@ use alloc::borrow::Cow;
 /// assert_eq!(li.language, language!("en"));
 /// assert_eq!(li.script, Some(script!("Latn")));
 /// assert_eq!(li.region, Some(region!("US")));
-/// assert_eq!(li.variants.get(0), Some(&variant!("valencia")));
+/// assert_eq!(li.variants.first(), Some(&variant!("valencia")));
 /// ```
 ///
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier
@@ -123,7 +123,7 @@ impl LanguageIdentifier {
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
-        crate::parser::parse_language_identifier(code_units, parser::ParserMode::LanguageIdentifier)
+        parser::parse_language_identifier(code_units, parser::ParserMode::LanguageIdentifier)
     }
 
     #[doc(hidden)] // macro use
@@ -141,7 +141,7 @@ impl LanguageIdentifier {
         ),
         ParseError,
     > {
-        crate::parser::parse_language_identifier_with_single_variant(
+        parser::parse_language_identifier_with_single_variant(
             code_units,
             parser::ParserMode::LanguageIdentifier,
         )
@@ -190,7 +190,7 @@ impl LanguageIdentifier {
     /// use icu::locale::LanguageIdentifier;
     ///
     /// assert_eq!(
-    ///     LanguageIdentifier::normalize("pL-latn-pl").as_deref(),
+    ///     LanguageIdentifier::normalize_utf8(b"pL-latn-pl").as_deref(),
     ///     Ok("pl-Latn-PL")
     /// );
     /// ```

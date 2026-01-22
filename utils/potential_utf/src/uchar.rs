@@ -70,14 +70,14 @@ impl PotentialCodePoint {
     /// assert_eq!(a.try_to_char(), Ok('a'));
     ///
     /// let b = PotentialCodePoint::from_unaligned([0xFF, 0xFF, 0xFF].into());
-    /// assert!(matches!(b.try_to_char(), Err(_)));
+    /// assert!(b.try_to_char().is_err());
     /// ```
     #[inline]
     pub fn try_to_char(self) -> Result<char, core::char::CharTryFromError> {
         char::try_from(u32::from(self))
     }
 
-    /// Convert a [`PotentialCodePoint`] to a `char', returning [`char::REPLACEMENT_CHARACTER`]
+    /// Convert a [`PotentialCodePoint`] to a [`char`], returning [`char::REPLACEMENT_CHARACTER`]
     /// if the `PotentialCodePoint` does not represent a valid Unicode scalar value.
     ///
     /// # Examples

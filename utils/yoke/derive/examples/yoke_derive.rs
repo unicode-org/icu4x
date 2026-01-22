@@ -9,29 +9,29 @@ use yoke::{Yoke, Yokeable};
 use zerovec::{maps::ZeroMapKV, ule::AsULE, VarZeroVec, ZeroMap, ZeroVec};
 
 #[derive(Yokeable)]
-pub struct StringExample {
+struct StringExample {
     x: String,
 }
 
 #[derive(Yokeable, Copy, Clone)]
-pub struct IntExample {
+struct IntExample {
     x: u32,
 }
 
 #[derive(Yokeable, Copy, Clone)]
-pub struct GenericsExample<T> {
+struct GenericsExample<T> {
     x: u32,
     y: T,
 }
 
 #[derive(Yokeable, Copy, Clone)]
-pub struct GenericsExampleWithDefault<T, U = usize> {
+struct GenericsExampleWithDefault<T, U = usize> {
     x: T,
     y: U,
 }
 
 #[derive(Yokeable)]
-pub struct CowExample<'a> {
+struct CowExample<'a> {
     x: u8,
     y: &'a str,
     z: Cow<'a, str>,
@@ -39,13 +39,13 @@ pub struct CowExample<'a> {
 }
 
 #[derive(Yokeable)]
-pub struct ZeroVecExample<'a> {
+struct ZeroVecExample<'a> {
     var: VarZeroVec<'a, str>,
     vec: ZeroVec<'a, u16>,
 }
 
 #[derive(Yokeable)]
-pub struct ZeroVecExampleWithGenerics<'a, T: AsULE> {
+struct ZeroVecExampleWithGenerics<'a, T: AsULE> {
     gen: ZeroVec<'a, T>,
     vec: ZeroVec<'a, u16>,
     bare: T,
@@ -57,28 +57,44 @@ pub struct ZeroVecExampleWithGenerics<'a, T: AsULE> {
 // yoke(prove_covariance_manually)
 #[derive(Yokeable)]
 #[yoke(prove_covariance_manually)]
-pub struct ZeroMapExample<'a> {
+struct ZeroMapExample<'a> {
     map: ZeroMap<'a, str, u16>,
 }
 
 #[derive(Yokeable)]
 #[yoke(prove_covariance_manually)]
-pub struct ZeroMapGenericExample<'a, T: for<'b> ZeroMapKV<'b> + ?Sized> {
+struct ZeroMapGenericExample<'a, T: for<'b> ZeroMapKV<'b> + ?Sized> {
     map: ZeroMap<'a, str, T>,
 }
 
 #[derive(Yokeable)]
-pub struct MaybeSizedWrap<T, Q: ?Sized, U: ?Sized> {
+struct MaybeSizedWrap<T, Q: ?Sized, U: ?Sized> {
     x: T,
     y: Option<T>,
     ignored: PhantomData<U>,
     q: Q,
 }
 
+trait Trait {}
+impl Trait for u32 {}
+
+#[derive(Yokeable)]
+struct WithTraitBounds<T: Trait> {
+    x: T,
+}
+
+#[derive(Yokeable)]
+struct WithTraitBoundsInWhere<T>
+where
+    T: Trait,
+{
+    x: T,
+}
+
 // TODO(#4119): Make this example compile
 /*
 #[derive(Yokeable)]
-pub struct MaybeSizedWrapWithLifetime<'a, T, Q: ?Sized, U: ?Sized> {
+struct MaybeSizedWrapWithLifetime<'a, T, Q: ?Sized, U: ?Sized> {
     x: T,
     y: Option<T>,
     ignored: &'a U,
@@ -86,7 +102,7 @@ pub struct MaybeSizedWrapWithLifetime<'a, T, Q: ?Sized, U: ?Sized> {
 }
 */
 
-pub struct AssertYokeable {
+struct AssertYokeable {
     string: Yoke<StringExample, Box<[u8]>>,
     int: Yoke<IntExample, Box<[u8]>>,
     gen1: Yoke<GenericsExample<u32>, Box<[u8]>>,
@@ -101,6 +117,8 @@ pub struct AssertYokeable {
     map_gen1: Yoke<ZeroMapGenericExample<'static, u32>, Box<[u8]>>,
     map_gen2: Yoke<ZeroMapGenericExample<'static, str>, Box<[u8]>>,
     maybe_sized_wrap: Yoke<MaybeSizedWrap<usize, usize, str>, Box<[u8]>>,
+    trait_bounds: Yoke<WithTraitBounds<u32>, Box<[u8]>>,
+    trait_bounds_where: Yoke<WithTraitBoundsInWhere<u32>, Box<[u8]>>,
     // TODO(#4119): Make this example compile
     // maybe_sized_wrap_with_lt: Yoke<MaybeSizedWrapWithLifetime<'static, usize, usize, str>, Box<[u8]>>,
 }

@@ -1,3 +1,7 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 import 'package:icu4x/icu4x.dart';
 import 'package:test/test.dart';
 
@@ -286,10 +290,9 @@ void main() {
       ).formatIso(
         zonedDateTimeIso.date,
         zonedDateTimeIso.time,
-        TimeZoneInfo(
-          TimeZone.fromBcp47('uslax'),
-          offset: UtcOffset.fromSeconds(-420),
-        ),
+        IanaParser()
+            .parse('America/Los_Angeles')
+            .withOffset(UtcOffset.fromSeconds(-420)),
       ),
       '15.07., 14:32:12 GMT-00:07',
     );

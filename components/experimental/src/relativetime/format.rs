@@ -25,6 +25,7 @@ pub mod parts {
 
 /// An intermediate structure returned by [`RelativeTimeFormatter`](crate::relativetime::RelativeTimeFormatter).
 /// This structure can be consumed via [`Writeable`](Writeable) trait to a string or buffer.
+#[derive(Debug)]
 pub struct FormattedRelativeTime<'a> {
     pub(crate) formatter: &'a RelativeTimeFormatter,
     pub(crate) options: &'a RelativeTimeFormatterOptions,

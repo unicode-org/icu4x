@@ -74,7 +74,7 @@ macro_rules! unsafe_complex_yoke_impl {
         }
 
         fn transform_owned(self) -> Self::Output {
-            debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
+            debug_assert!(size_of::<Self::Output>() == size_of::<Self>());
             // Safety: equivalent to casting the lifetime. Macro caller ensures covariance.
             unsafe {
                 let ptr: *const Self::Output = (&self as *const Self).cast();
@@ -84,7 +84,7 @@ macro_rules! unsafe_complex_yoke_impl {
         }
 
         unsafe fn make(from: Self::Output) -> Self {
-            debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
+            debug_assert!(size_of::<Self::Output>() == size_of::<Self>());
             let ptr: *const Self = (&from as *const Self::Output).cast();
             let _ = ManuallyDrop::new(from);
             // Safety: `ptr` is certainly valid, aligned and points to a properly initialized value, as

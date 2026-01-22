@@ -5,7 +5,7 @@
 [package]
 name = "resb"
 description = "Utilities for reading and writing ICU resource bundle files"
-version = "0.1.0"
+version = "0.1.1"
 
 authors.workspace = true
 categories.workspace = true
@@ -41,3 +41,6 @@ name = "resb"
 [[example]]
 name = "genrb"
 required-features = ["serialize", "text"]
+
+[lints]
+workspace = true

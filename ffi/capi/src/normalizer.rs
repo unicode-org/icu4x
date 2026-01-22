@@ -16,7 +16,7 @@ pub mod ffi {
     pub struct ComposingNormalizer(pub icu_normalizer::ComposingNormalizer);
 
     impl ComposingNormalizer {
-        /// Construct a new ComposingNormalizer instance for NFC using compiled data.
+        /// Construct a new `ComposingNormalizer` instance for NFC using compiled data.
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfc, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::ComposingNormalizerBorrowed::new_nfc,
@@ -31,7 +31,7 @@ pub mod ffi {
                 icu_normalizer::ComposingNormalizer::new_nfc().static_to_owned(),
             ))
         }
-        /// Construct a new ComposingNormalizer instance for NFC using a particular data source.
+        /// Construct a new `ComposingNormalizer` instance for NFC using a particular data source.
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfc, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::ComposingNormalizerBorrowed::new_nfc,
@@ -49,7 +49,7 @@ pub mod ffi {
                 )?,
             )))
         }
-        /// Construct a new ComposingNormalizer instance for NFKC using compiled data.
+        /// Construct a new `ComposingNormalizer` instance for NFKC using compiled data.
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfkc, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::ComposingNormalizerBorrowed::new_nfkc,
@@ -63,7 +63,7 @@ pub mod ffi {
                 icu_normalizer::ComposingNormalizer::new_nfkc().static_to_owned(),
             ))
         }
-        /// Construct a new ComposingNormalizer instance for NFKC using a particular data source.
+        /// Construct a new `ComposingNormalizer` instance for NFKC using a particular data source.
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::new_nfkc, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::ComposingNormalizerBorrowed::new_nfkc,
@@ -174,7 +174,7 @@ pub mod ffi {
     pub struct DecomposingNormalizer(pub icu_normalizer::DecomposingNormalizer);
 
     impl DecomposingNormalizer {
-        /// Construct a new DecomposingNormalizer instance for NFD using compiled data.
+        /// Construct a new `DecomposingNormalizer` instance for NFD using compiled data.
         #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfd, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::DecomposingNormalizerBorrowed::new_nfd,
@@ -190,7 +190,7 @@ pub mod ffi {
             ))
         }
 
-        /// Construct a new DecomposingNormalizer instance for NFD using a particular data source.
+        /// Construct a new `DecomposingNormalizer` instance for NFD using a particular data source.
         #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfd, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::DecomposingNormalizerBorrowed::new_nfd,
@@ -209,7 +209,7 @@ pub mod ffi {
             )))
         }
 
-        /// Construct a new DecomposingNormalizer instance for NFKD using compiled data.
+        /// Construct a new `DecomposingNormalizer` instance for NFKD using compiled data.
         #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfkd, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::DecomposingNormalizerBorrowed::new_nfkd,
@@ -224,7 +224,7 @@ pub mod ffi {
             ))
         }
 
-        /// Construct a new DecomposingNormalizer instance for NFKD using a particular data source.
+        /// Construct a new `DecomposingNormalizer` instance for NFKD using a particular data source.
         #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::new_nfkd, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::DecomposingNormalizerBorrowed::new_nfkd,
