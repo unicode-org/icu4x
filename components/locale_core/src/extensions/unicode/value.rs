@@ -139,6 +139,8 @@ impl Value {
     ///
     /// let mut v = Value::default();
     /// v.push_subtag(subtag!("foo"));
+    /// // The `true` subtag is ignored
+    /// v.push_subtag(subtag!("true"));
     /// v.push_subtag(subtag!("bar"));
     /// assert_eq!(v, "foo-bar");
     /// ```
