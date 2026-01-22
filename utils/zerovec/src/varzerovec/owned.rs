@@ -149,7 +149,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     ///
     /// ## Safety
     /// `idx < self.len()` and `self.as_encoded_bytes()` is well-formed.
-    unsafe fn element_range_unchecked(&self, idx: usize) -> core::ops::Range<usize> {
+    unsafe fn element_range_unchecked(&self, idx: usize) -> Range<usize> {
         let start = self.element_position_unchecked(idx);
         let end = self.element_position_unchecked(idx + 1);
         debug_assert!(start <= end, "{start} > {end}");

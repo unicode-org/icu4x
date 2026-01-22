@@ -43,7 +43,7 @@ macro_rules! size_test {
         #[test]
         #[cfg_attr(not(icu4x_run_size_tests), ignore)] // Doesn't work on arbitrary Rust versions
         fn $id() {
-            let size = core::mem::size_of::<$ty>();
+            let size = size_of::<$ty>();
             let expected = $size;
             assert_eq!(
                 size,

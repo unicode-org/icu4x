@@ -636,103 +636,103 @@ icu_provider::data_marker!(
 icu_provider::data_marker!(
     /// Data marker for the 'BidiClass' Unicode property
     PropertyEnumBidiClassV1,
-    PropertyCodePointMap<'static, crate::props::BidiClass>,
+    PropertyCodePointMap<'static, BidiClass>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'CanonicalCombiningClass' Unicode property
     PropertyEnumCanonicalCombiningClassV1,
-    PropertyCodePointMap<'static, crate::props::CanonicalCombiningClass>,
+    PropertyCodePointMap<'static, CanonicalCombiningClass>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'EastAsianWidth' Unicode property
     PropertyEnumEastAsianWidthV1,
-    PropertyCodePointMap<'static, crate::props::EastAsianWidth>,
+    PropertyCodePointMap<'static, EastAsianWidth>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'GeneralCategory' Unicode property
     PropertyEnumGeneralCategoryV1,
-    PropertyCodePointMap<'static, crate::props::GeneralCategory>,
+    PropertyCodePointMap<'static, GeneralCategory>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'GraphemeClusterBreak' Unicode property
     PropertyEnumGraphemeClusterBreakV1,
-    PropertyCodePointMap<'static, crate::props::GraphemeClusterBreak>,
+    PropertyCodePointMap<'static, GraphemeClusterBreak>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'HangulSyllableType' Unicode property
     PropertyEnumHangulSyllableTypeV1,
-    PropertyCodePointMap<'static, crate::props::HangulSyllableType>,
+    PropertyCodePointMap<'static, HangulSyllableType>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'IndicConjunctBreak' Unicode property
     PropertyEnumIndicConjunctBreakV1,
-    PropertyCodePointMap<'static, crate::props::IndicConjunctBreak>,
+    PropertyCodePointMap<'static, IndicConjunctBreak>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'IndicSyllabicCategory' Unicode property
     PropertyEnumIndicSyllabicCategoryV1,
-    PropertyCodePointMap<'static, crate::props::IndicSyllabicCategory>,
+    PropertyCodePointMap<'static, IndicSyllabicCategory>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'JoiningGroup' Unicode property
     PropertyEnumJoiningGroupV1,
-    PropertyCodePointMap<'static, crate::props::JoiningGroup>,
+    PropertyCodePointMap<'static, JoiningGroup>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'JoiningType' Unicode property
     PropertyEnumJoiningTypeV1,
-    PropertyCodePointMap<'static, crate::props::JoiningType>,
+    PropertyCodePointMap<'static, JoiningType>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'LineBreak' Unicode property
     PropertyEnumLineBreakV1,
-    PropertyCodePointMap<'static, crate::props::LineBreak>,
+    PropertyCodePointMap<'static, LineBreak>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'NumericValue' Unicode property
     PropertyEnumNumericTypeV1,
-    PropertyCodePointMap<'static, crate::props::NumericType>,
+    PropertyCodePointMap<'static, NumericType>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'Script' Unicode property
     PropertyEnumScriptV1,
-    PropertyCodePointMap<'static, crate::props::Script>,
+    PropertyCodePointMap<'static, Script>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'SentenceBreak' Unicode property
     PropertyEnumSentenceBreakV1,
-    PropertyCodePointMap<'static, crate::props::SentenceBreak>,
+    PropertyCodePointMap<'static, SentenceBreak>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'Vertical_Orientation' Unicode property
     PropertyEnumVerticalOrientationV1,
-    PropertyCodePointMap<'static, crate::props::VerticalOrientation>,
+    PropertyCodePointMap<'static, VerticalOrientation>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'WordBreak' Unicode property
     PropertyEnumWordBreakV1,
-    PropertyCodePointMap<'static, crate::props::WordBreak>,
+    PropertyCodePointMap<'static, WordBreak>,
     is_singleton = true,
 );
 icu_provider::data_marker!(
     /// Data marker for the 'BidiMirroringGlyph' Unicode property
     PropertyEnumBidiMirroringGlyphV1,
-    PropertyCodePointMap<'static, crate::bidi::BidiMirroringGlyph>,
+    PropertyCodePointMap<'static, BidiMirroringGlyph>,
     is_singleton = true,
 );
 icu_provider::data_marker!(

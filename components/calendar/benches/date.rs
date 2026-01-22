@@ -22,7 +22,7 @@ use criterion::{
 };
 use icu_calendar::{
     options::{DateAddOptions, Overflow},
-    types, AsCalendar, Calendar, Date, Iso,
+    types, AsCalendar, Calendar, Date,
 };
 
 fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
@@ -48,7 +48,7 @@ fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
     let _ = black_box(date.day_of_month());
 
     // Conversion to ISO.
-    let _ = black_box(date.to_calendar(Iso));
+    let _ = black_box(date.to_calendar(icu::calendar::cal::Iso));
 }
 
 fn bench_calendar<C: Clone + Calendar>(

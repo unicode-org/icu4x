@@ -72,7 +72,7 @@ impl core::ops::Add<Milliseconds> for LocalMoment {
     }
 }
 
-impl super::EastAsianTraditionalYear {
+impl EastAsianTraditionalYear {
     /// A fast approximation for the Chinese calendar, inspired by the _píngqì_ (平氣) rule
     /// used in the Ming dynasty.
     ///

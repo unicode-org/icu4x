@@ -366,6 +366,7 @@ rust.unexpected_cfgs = { level = "warn", check-cfg = [
 ] }
 rust.unused_lifetimes = "warn"
 rust.unused_macro_rules = "warn"
+rust.unused_qualifications = "warn"
 
 # These lints are currently enabled in the crate roots because of https://github.com/rust-lang/rust-clippy/issues/13981 
 # clippy.unwrap_used = "warn"
@@ -385,9 +386,7 @@ rust.unused_macro_rules = "warn"
 # clippy.redundant_feature_names = "warn"
 # clippy.use_self = "warn"
 # rust.unreachable_pub = "warn"
-# rust.unused_qualifications = "warn"
 # rust.unsafe_op_in_unsafe_fn = "forbid"
-# rust.unused_qualifications = "warn"
 
 [workspace.metadata.cargo-semver-checks.lints]
 type_method_marked_deprecated.level = "allow" # allow deprecation in patch releases

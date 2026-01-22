@@ -22,7 +22,7 @@ pub struct FormattedUnit<'l> {
 }
 
 impl Writeable for FormattedUnit<'_> {
-    fn write_to_parts<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
+    fn write_to_parts<W>(&self, sink: &mut W) -> Result<(), core::fmt::Error>
     where
         W: writeable::PartsWrite + ?Sized,
     {

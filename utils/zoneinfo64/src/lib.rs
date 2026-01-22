@@ -46,6 +46,7 @@
 extern crate alloc;
 
 use alloc::boxed::Box;
+use alloc::string::String;
 use alloc::vec::Vec;
 use calendrical_calculations::rata_die::RataDie;
 use core::fmt::Debug;
@@ -171,7 +172,7 @@ impl Debug for TzZoneData<'_> {
 impl<'a> ZoneInfo64<'a> {
     /// Parse this object from 4-byte aligned data
     pub fn try_from_u32s(resb: &'a [u32]) -> Result<Self, BinaryDeserializerError> {
-        crate::deserialize::deserialize(resb)
+        deserialize::deserialize(resb)
     }
     #[cfg(test)]
     fn is_alias(&self, iana: &str) -> bool {
@@ -265,10 +266,7 @@ impl Debug for Zone<'_> {
         f.debug_struct("Zone")
             .field("simple", self.simple())
             .field("rule", &self.simple().final_rule(&self.info.rules))
-            .field(
-                "name",
-                &self.name().chars().collect::<alloc::string::String>(),
-            )
+            .field("name", &self.name().chars().collect::<String>())
             .field("region", &self.region())
             .finish()
     }

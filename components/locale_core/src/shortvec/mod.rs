@@ -19,8 +19,6 @@
 //! Additionally, [`ShortBoxSlice`] has a smaller stack size than any of these:
 //!
 //! ```ignore
-//! use core::mem::size_of;
-//!
 //! // NonZeroU64 has a niche that this module utilizes
 //! use core::num::NonZeroU64;
 //!
@@ -334,7 +332,7 @@ pub struct ShortBoxSliceIntoIter<T>(ShortBoxSliceIntoIterInner<T>);
 pub(crate) enum ShortBoxSliceIntoIterInner<T> {
     ZeroOne(Option<T>),
     #[cfg(feature = "alloc")]
-    Multi(alloc::vec::IntoIter<T>),
+    Multi(vec::IntoIter<T>),
     #[cfg(not(feature = "alloc"))]
     Two(core::array::IntoIter<T, 2>),
 }

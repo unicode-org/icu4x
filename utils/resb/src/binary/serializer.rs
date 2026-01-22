@@ -19,8 +19,8 @@ use super::{
 
 const DATA_FORMAT: &[u8; 4] = b"ResB";
 const DATA_VERSION: &[u8; 4] = &[1, 4, 0, 0];
-const PADDED_HEADER_SIZE: usize = (core::mem::size_of::<BinHeader>() + 15) & !0xf;
-const REPR_INFO_SIZE: usize = core::mem::size_of::<BinReprInfo>();
+const PADDED_HEADER_SIZE: usize = (size_of::<BinHeader>() + 15) & !0xf;
+const REPR_INFO_SIZE: usize = size_of::<BinReprInfo>();
 
 /// The value of the magic word appearing in the header.
 ///
@@ -90,8 +90,8 @@ enum BinResourceTypeData<'a> {
     _Alias,
 }
 
-impl std::fmt::Display for BinResourceTypeData<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl fmt::Display for BinResourceTypeData<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Provide a user-friendly string for the resource type in order to
         // create helpful error messages.
         write!(
@@ -243,7 +243,7 @@ impl Serializer {
 
         // The root descriptor is considered to be at offset `0`, so include it
         // in the determination of the offset of the end of the index.
-        let index_end = (1 + index_field_count) * std::mem::size_of::<u32>() as u32;
+        let index_end = (1 + index_field_count) * size_of::<u32>() as u32;
 
         // Build the key block.
         let mut key_position_map = HashMap::new();
@@ -818,7 +818,7 @@ impl Serializer {
                 // Pad before the start of the binary data such that the number
                 // of bytes in the body is divisible by 16.
                 let offset = block_start_position as usize + data.len();
-                let aligned = (offset + std::mem::size_of::<u32>()) % 16;
+                let aligned = (offset + size_of::<u32>()) % 16;
                 if aligned != 0 {
                     data.resize(data.len() + (16 - aligned), 0xaa);
                 }
@@ -859,7 +859,7 @@ impl Serializer {
 
         // Pad the resource body to end at a 32-bit boundary.
         let position = block_start_position as usize + data.len();
-        let u32_size = std::mem::size_of::<u32>();
+        let u32_size = size_of::<u32>();
         if position % u32_size != 0 {
             data.resize(data.len() + (u32_size - position % u32_size), 0xaa);
         }
@@ -1135,8 +1135,7 @@ impl TryFrom<BinIndex> for Vec<u8> {
     type Error = BinarySerializerError;
 
     fn try_from(value: BinIndex) -> Result<Self, Self::Error> {
-        let mut bytes =
-            Vec::with_capacity(value.field_count as usize * core::mem::size_of::<u32>());
+        let mut bytes = Vec::with_capacity(value.field_count as usize * size_of::<u32>());
 
         // Format version 1.0 did not include an index and so no bytes should be
         // written.

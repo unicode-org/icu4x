@@ -101,7 +101,7 @@ pub(crate) fn generate_per_field_offsets<'a>(
     fields_are_asule: bool,
     // (field, prev_offset_ident, size_ident)
     mut per_field_code: impl FnMut(&FieldInfo<'a>, &Ident, &Ident) -> TokenStream2, /* (code, remaining_offset) */
-) -> (TokenStream2, syn::Ident) {
+) -> (TokenStream2, Ident) {
     let mut prev_offset_ident = Ident::new("ZERO", Span::call_site());
     let mut code = quote!(
         const ZERO: usize = 0;

@@ -87,11 +87,10 @@ pub struct Dangi;
 
 impl ChineseBased for Chinese {
     fn utc_offset(fixed: RataDie) -> f64 {
-        use crate::gregorian::fixed_from_gregorian as gregorian;
         // Before 1929, local time was used, represented as UTC+(1397/180 h).
         // In 1929, China adopted a standard time zone based on 120 degrees of longitude, meaning
         // from 1929 onward, all new moon calculations are based on UTC+8h.
-        if fixed < const { gregorian(1929, 1, 1) } {
+        if fixed < const { fixed_from_gregorian(1929, 1, 1) } {
             1397.0 / 180.0 / 24.0
         } else {
             8.0 / 24.0
@@ -99,23 +98,22 @@ impl ChineseBased for Chinese {
     }
 
     /// The equivalent first day in the Chinese calendar (based on inception of the calendar), Feb. 15, -2636
-    const EPOCH: RataDie = crate::gregorian::fixed_from_gregorian(-2636, 2, 15);
+    const EPOCH: RataDie = fixed_from_gregorian(-2636, 2, 15);
     const DEBUG_NAME: &'static str = "chinese";
 }
 
 impl ChineseBased for Dangi {
     fn utc_offset(fixed: RataDie) -> f64 {
-        use crate::gregorian::fixed_from_gregorian as gregorian;
         // Before 1908, local time was used, represented as UTC+(3809/450 h).
         // This changed multiple times as different standard timezones were adopted in Korea.
         // Currently, UTC+9h is used.
-        if fixed < const { gregorian(1908, 4, 1) } {
+        if fixed < const { fixed_from_gregorian(1908, 4, 1) } {
             3809.0 / 450.0 / 24.0
-        } else if fixed < const { gregorian(1912, 1, 1) } {
+        } else if fixed < const { fixed_from_gregorian(1912, 1, 1) } {
             8.5 / 24.0
-        } else if fixed < const { gregorian(1954, 3, 21) } {
+        } else if fixed < const { fixed_from_gregorian(1954, 3, 21) } {
             9.0 / 24.0
-        } else if fixed < const { gregorian(1961, 8, 10) } {
+        } else if fixed < const { fixed_from_gregorian(1961, 8, 10) } {
             8.5 / 24.0
         } else {
             9.0 / 24.0
@@ -123,7 +121,7 @@ impl ChineseBased for Dangi {
     }
 
     /// The first day in the Korean Dangi calendar (based on the founding of Gojoseon), lunar new year -2332
-    const EPOCH: RataDie = crate::gregorian::fixed_from_gregorian(-2332, 2, 15);
+    const EPOCH: RataDie = fixed_from_gregorian(-2332, 2, 15);
     const DEBUG_NAME: &'static str = "dangi";
 }
 
@@ -628,10 +626,10 @@ mod test {
 
     #[test]
     fn test_chinese_new_year_on_or_before() {
-        let fixed = crate::gregorian::fixed_from_gregorian(2023, 6, 22);
+        let fixed = fixed_from_gregorian(2023, 6, 22);
         let prev_solstice = winter_solstice_on_or_before::<Chinese>(fixed);
         let result_fixed = new_year_on_or_before_fixed_date::<Chinese>(fixed, prev_solstice).0;
-        let (y, m, d) = crate::gregorian::gregorian_from_fixed(result_fixed).unwrap();
+        let (y, m, d) = gregorian_from_fixed(result_fixed).unwrap();
         assert_eq!(y, 2023);
         assert_eq!(m, 1);
         assert_eq!(d, 22);
@@ -646,7 +644,7 @@ mod test {
     fn test_month_structure() {
         // Mostly just tests that the assertions aren't hit
         for year in 1900..2050 {
-            let fixed = crate::gregorian::fixed_from_gregorian(year, 1, 1);
+            let fixed = fixed_from_gregorian(year, 1, 1);
             let chinese_year = chinese_based_date_from_fixed::<Chinese>(fixed);
             let (month_lengths, leap) = month_structure_for_year::<Chinese>(
                 chinese_year.year_bounds.new_year,
@@ -794,13 +792,13 @@ mod test {
         ];
 
         for case in cases {
-            let fixed = crate::gregorian::fixed_from_gregorian(
+            let fixed = fixed_from_gregorian(
                 case.gregorian_year,
                 case.gregorian_month,
                 case.gregorian_day,
             );
             let seollal = seollal_on_or_before(fixed);
-            let (y, m, d) = crate::gregorian::gregorian_from_fixed(seollal).unwrap();
+            let (y, m, d) = gregorian_from_fixed(seollal).unwrap();
             assert_eq!(
                 y, case.expected_year,
                 "Year check failed for case: {case:?}"

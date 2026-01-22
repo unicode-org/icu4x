@@ -500,7 +500,7 @@ impl Date<Iso> {
                 debug_assert!(false);
                 WeekOf {
                     week: 1,
-                    unit: crate::week::RelativeUnit::Current,
+                    unit: RelativeUnit::Current,
                 }
             });
 

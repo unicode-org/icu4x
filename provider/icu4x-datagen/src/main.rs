@@ -444,7 +444,7 @@ fn run(cli: Cli) -> eyre::Result<()> {
         }
         #[cfg(feature = "blob_input")]
         () if cli.input_blob.is_some() => {
-            let provider = icu_provider_blob::BlobDataProvider::try_new_from_blob(
+            let provider = BlobDataProvider::try_new_from_blob(
                 std::fs::read(cli.input_blob.unwrap())?.into(),
             )?;
             let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider)?;
@@ -772,7 +772,7 @@ use icu_provider::prelude::*;
 use icu_provider_blob::BlobDataProvider;
 
 #[cfg(feature = "blob_input")]
-struct ReexportableBlobDataProvider(icu_provider_blob::BlobDataProvider);
+struct ReexportableBlobDataProvider(BlobDataProvider);
 
 #[cfg(feature = "blob_input")]
 impl<M: DataMarker> DataProvider<M> for ReexportableBlobDataProvider

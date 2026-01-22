@@ -676,7 +676,7 @@ impl ScriptWithExtensionsBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         Self {
-            data: crate::provider::Baked::SINGLETON_PROPERTY_SCRIPT_WITH_EXTENSIONS_V1,
+            data: Baked::SINGLETON_PROPERTY_SCRIPT_WITH_EXTENSIONS_V1,
         }
     }
 

@@ -292,8 +292,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
             let original_keys = branch_metas.map_to_ascii_bytes();
             // Write out the offset table
             current_len = total_length;
-            const USIZE_BITS: usize = core::mem::size_of::<usize>() * 8;
-            let w = (USIZE_BITS - (total_length.leading_zeros() as usize) - 1) / 8;
+            let w = (usize::BITS as usize - (total_length.leading_zeros() as usize) - 1) / 8;
             if w > 3 {
                 panic!("ZeroTrie capacity exceeded");
             }

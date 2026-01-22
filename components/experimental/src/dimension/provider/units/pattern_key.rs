@@ -69,7 +69,7 @@ pub struct PatternKeyULE(u8);
 //  5. The other ULE methods use the default impl.
 //  6. PatternKeyULE byte equality is semantic equality.
 unsafe impl ULE for PatternKeyULE {
-    fn validate_bytes(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         for &byte in bytes.iter() {
             // Ensure the first two bits (b7 & b6) are not 11.
             if (byte & 0b1100_0000) == 0b1100_0000 {

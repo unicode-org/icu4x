@@ -77,7 +77,7 @@ impl<B: PatternBackend> PartialEq for Pattern<B> {
     }
 }
 
-impl<B: PatternBackend> core::fmt::Debug for Pattern<B> {
+impl<B: PatternBackend> fmt::Debug for Pattern<B> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Pattern")
             .field("_backend", &self._backend)

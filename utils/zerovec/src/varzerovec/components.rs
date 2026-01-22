@@ -2,12 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(unused_qualifications)]
+
 use super::VarZeroVecFormatError;
 use crate::ule::*;
 use core::cmp::Ordering;
 use core::convert::TryFrom;
 use core::marker::PhantomData;
-use core::mem;
 use core::ops::Range;
 
 /// This trait allows switching between different possible internal
@@ -108,7 +109,7 @@ impl VarZeroVecFormat for Index32 {
 unsafe impl IntegerULE for u8 {
     const TOO_LARGE_ERROR: &'static str = "Attempted to build VarZeroVec out of elements that \
                                      cumulatively are larger than a u8 in size";
-    const SIZE: usize = mem::size_of::<Self>();
+    const SIZE: usize = size_of::<Self>();
     const MAX_VALUE: u32 = u8::MAX as u32;
     #[inline]
     fn iule_to_usize(self) -> usize {
@@ -128,7 +129,7 @@ unsafe impl IntegerULE for u8 {
 unsafe impl IntegerULE for RawBytesULE<2> {
     const TOO_LARGE_ERROR: &'static str = "Attempted to build VarZeroVec out of elements that \
                                      cumulatively are larger than a u16 in size";
-    const SIZE: usize = mem::size_of::<Self>();
+    const SIZE: usize = size_of::<Self>();
     const MAX_VALUE: u32 = u16::MAX as u32;
     #[inline]
     fn iule_to_usize(self) -> usize {
@@ -148,7 +149,7 @@ unsafe impl IntegerULE for RawBytesULE<2> {
 unsafe impl IntegerULE for RawBytesULE<4> {
     const TOO_LARGE_ERROR: &'static str = "Attempted to build VarZeroVec out of elements that \
                                      cumulatively are larger than a u32 in size";
-    const SIZE: usize = mem::size_of::<Self>();
+    const SIZE: usize = size_of::<Self>();
     const MAX_VALUE: u32 = u32::MAX;
     #[inline]
     fn iule_to_usize(self) -> usize {

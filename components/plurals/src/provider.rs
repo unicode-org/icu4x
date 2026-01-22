@@ -250,8 +250,8 @@ mod ranges {
 
             struct PrettyPrinter(RawPluralCategory, RawPluralCategory);
 
-            impl core::fmt::Display for PrettyPrinter {
-                fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+            impl fmt::Display for PrettyPrinter {
+                fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                     f.write_str(self.0.as_str())?;
                     f.write_str("--")?;
                     f.write_str(self.1.as_str())
@@ -700,7 +700,7 @@ impl From<PluralCategoryAndMetadata> for PluralCategoryAndMetadataPackedULE {
 // 5. All other methods are be left with their default impl.
 // 6. The represented enums implement Eq by byte equality.
 unsafe impl ULE for PluralCategoryAndMetadataPackedULE {
-    fn validate_bytes(bytes: &[u8]) -> Result<(), zerovec::ule::UleError> {
+    fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
         bytes
             .iter()
             .all(|byte| {

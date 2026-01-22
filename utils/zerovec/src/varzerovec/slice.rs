@@ -14,6 +14,9 @@ use core::mem;
 use core::ops::Index;
 use core::ops::Range;
 
+#[cfg(feature = "alloc")]
+use alloc::{boxed::Box, vec::Vec};
+
 /// A zero-copy "slice", that works for unsized types, i.e. the zero-copy version of `[T]`
 /// where `T` is not `Sized`.
 ///
@@ -232,7 +235,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroSlice<T, F> {
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
     #[cfg(feature = "alloc")]
-    pub fn to_vec(&self) -> alloc::vec::Vec<alloc::boxed::Box<T>> {
+    pub fn to_vec(&self) -> Vec<Box<T>> {
         self.as_components().to_vec()
     }
 

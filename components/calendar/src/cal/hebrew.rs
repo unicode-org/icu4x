@@ -151,7 +151,7 @@ impl DateFieldsResolver for Hebrew {
 
     fn reference_year_from_month_day(
         &self,
-        month: types::Month,
+        month: Month,
         day: u8,
     ) -> Result<Self::YearInfo, EcmaReferenceYearError> {
         // December 31, 1972 occurs on 4th month, 26th day, 5733 AM
@@ -186,7 +186,7 @@ impl DateFieldsResolver for Hebrew {
     fn ordinal_from_month(
         &self,
         year: Self::YearInfo,
-        month: types::Month,
+        month: Month,
         options: DateFromFieldsOptions,
     ) -> Result<u8, MonthCodeError> {
         let is_leap_year = year.keviyah.is_leap();
@@ -207,12 +207,12 @@ impl DateFieldsResolver for Hebrew {
         Ok(ordinal_month)
     }
 
-    fn month_from_ordinal(&self, year: Self::YearInfo, ordinal_month: u8) -> types::Month {
+    fn month_from_ordinal(&self, year: Self::YearInfo, ordinal_month: u8) -> Month {
         let is_leap = year.keviyah.is_leap();
         Month::new_unchecked(
             ordinal_month - (is_leap && ordinal_month >= 6) as u8,
             if ordinal_month == 6 && is_leap {
-                types::LeapStatus::Leap
+                LeapStatus::Leap
             } else if ordinal_month == 7 && is_leap {
                 // Use the leap name for Adar in a leap year
                 LeapStatus::FormattingLeap

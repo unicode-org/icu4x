@@ -9,7 +9,6 @@ use crate::error::{
 };
 use crate::options::{DateAddOptions, DateDifferenceOptions};
 use crate::options::{DateFromFieldsOptions, Overflow};
-use crate::types::Month;
 use crate::AsCalendar;
 use crate::{types, Calendar, Date};
 use calendrical_calculations::chinese_based;
@@ -123,7 +122,11 @@ pub trait Rules: Clone + core::fmt::Debug + crate::cal::scaffold::UnstableSealed
     ///
     /// [spec]: https://tc39.es/proposal-temporal/#sec-temporal-nonisomonthdaytoisoreferencedate
     /// [`MissingFieldsStrategy::Ecma`]: crate::options::MissingFieldsStrategy::Ecma
-    fn ecma_reference_year(&self, _month: Month, _day: u8) -> Result<i32, EcmaReferenceYearError> {
+    fn ecma_reference_year(
+        &self,
+        _month: types::Month,
+        _day: u8,
+    ) -> Result<i32, EcmaReferenceYearError> {
         Err(EcmaReferenceYearError::Unimplemented)
     }
 
@@ -218,7 +221,11 @@ impl Rules for China {
         }
     }
 
-    fn ecma_reference_year(&self, month: Month, day: u8) -> Result<i32, EcmaReferenceYearError> {
+    fn ecma_reference_year(
+        &self,
+        month: types::Month,
+        day: u8,
+    ) -> Result<i32, EcmaReferenceYearError> {
         // Computed by `generate_reference_years`
         let extended_year = match (month.number(), month.is_leap(), day > 29) {
             (1, false, false) => 1972,
@@ -363,7 +370,7 @@ impl KoreanTraditional {
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::new)]
     #[deprecated(since = "2.1.0", note = "use `Self::new()")]
     pub fn try_new_with_buffer_provider(
-        _provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
+        _provider: &(impl BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
         Ok(Self::new())
     }
@@ -404,7 +411,11 @@ impl Rules for Korea {
         }
     }
 
-    fn ecma_reference_year(&self, month: Month, day: u8) -> Result<i32, EcmaReferenceYearError> {
+    fn ecma_reference_year(
+        &self,
+        month: types::Month,
+        day: u8,
+    ) -> Result<i32, EcmaReferenceYearError> {
         // Computed by `generate_reference_years`
         let extended_year = match (month.number(), month.is_leap(), day > 29) {
             (1, false, false) => 1972,
@@ -529,7 +540,7 @@ impl ChineseTraditional {
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER,Self::new)]
     #[deprecated(since = "2.1.0", note = "use `Self::new()")]
     pub fn try_new_with_buffer_provider(
-        _provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
+        _provider: &(impl BufferProvider + ?Sized),
     ) -> Result<Self, DataError> {
         Ok(Self::new())
     }
@@ -626,7 +637,7 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
 
         // leap_month identifies the ordinal month number of the leap month,
         // so its month number will be leap_month - 1
-        if month == Month::leap(leap_month - 1) {
+        if month == types::Month::leap(leap_month - 1) {
             return Ok(leap_month);
         }
 
@@ -643,11 +654,11 @@ impl<R: Rules> DateFieldsResolver for EastAsianTraditional<R> {
         Ok(number + (number >= leap_month) as u8)
     }
 
-    fn month_from_ordinal(&self, year: Self::YearInfo, ordinal_month: u8) -> Month {
+    fn month_from_ordinal(&self, year: Self::YearInfo, ordinal_month: u8) -> types::Month {
         // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
         // it is impossible to actually have 14 months in a year.
         let leap_month = year.packed.leap_month().unwrap_or(14);
-        Month::new_unchecked(
+        types::Month::new_unchecked(
             // subtract one if there was a leap month before
             ordinal_month - (ordinal_month >= leap_month) as u8,
             if ordinal_month == leap_month {
@@ -1089,9 +1100,10 @@ mod test {
     use super::*;
     use crate::cal::Iso;
     use crate::options::{DateFromFieldsOptions, Overflow};
-    use crate::types::DateFields;
     use calendrical_calculations::{gregorian::fixed_from_gregorian, rata_die::RataDie};
     use std::collections::BTreeMap;
+    use types::DateFields;
+    use types::Month;
 
     #[test]
     fn test_chinese_from_rd() {
@@ -1944,8 +1956,7 @@ mod test {
             leap_month_idx: Option<u8>,
             ny_offset: i64,
         ) {
-            let ny =
-                calendrical_calculations::gregorian::fixed_from_gregorian(1000, 1, 1) + ny_offset;
+            let ny = fixed_from_gregorian(1000, 1, 1) + ny_offset;
             let packed =
                 PackedEastAsianTraditionalYearData::new(1000, month_lengths, leap_month_idx, ny);
 

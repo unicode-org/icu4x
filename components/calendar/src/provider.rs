@@ -227,10 +227,10 @@ impl PackedEra {
 
 #[test]
 fn packed_era_size() {
-    assert_eq!(core::mem::size_of::<PackedEra>(), 7);
-    assert_eq!(core::mem::size_of::<Option<PackedEra>>(), 7);
-    assert_eq!(core::mem::size_of::<crate::cal::Japanese>(), 7);
-    assert_eq!(core::mem::size_of::<crate::cal::AnyCalendar>(), 8);
+    assert_eq!(size_of::<PackedEra>(), 7);
+    assert_eq!(size_of::<Option<PackedEra>>(), 7);
+    assert_eq!(size_of::<crate::cal::Japanese>(), 7);
+    assert_eq!(size_of::<crate::cal::AnyCalendar>(), 8);
 }
 
 #[test]

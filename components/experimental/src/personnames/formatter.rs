@@ -51,7 +51,7 @@ impl PersonNamesFormatter {
             + DataProvider<icu_locale::provider::LocaleLikelySubtagsLanguageV1>
             + DataProvider<icu_locale::provider::LocaleParentsV1>,
     {
-        let swe = icu_properties::script::ScriptWithExtensions::try_new_unstable(provider)?;
+        let swe = ScriptWithExtensions::try_new_unstable(provider)?;
         let scripts = PropertyNamesShort::try_new_unstable(provider)?;
         let fallbacker = LocaleFallbacker::try_new_unstable(provider)?;
         Ok(PersonNamesFormatter {

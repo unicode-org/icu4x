@@ -239,7 +239,7 @@ impl WeekdayNameLength {
         let field_symbol = field_symbol.to_format_symbol();
         // UTS 35 says that "E..EEE" are all Abbreviated
         // However, this doesn't apply to "e" and "c".
-        let field_length = if matches!(field_symbol, fields::Weekday::Format) {
+        let field_length = if matches!(field_symbol, Weekday::Format) {
             field_length.numeric_to_abbr()
         } else {
             field_length
@@ -1356,7 +1356,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
         length: YearNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::YearNamesV1>,
+        crate::provider::Baked: DataProvider<<C as CldrCalendar>::YearNamesV1>,
     {
         self.load_year_names(&crate::provider::Baked, length)
     }
@@ -1422,7 +1422,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
         length: MonthNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::MonthNamesV1>,
+        crate::provider::Baked: DataProvider<<C as CldrCalendar>::MonthNamesV1>,
     {
         self.load_month_names(&crate::provider::Baked, length)
     }
@@ -3744,11 +3744,10 @@ impl RawDateTimeNamesBorrowed<'_> {
             .ok_or(GetNameForEraError::NotLoaded)?;
 
         match year_names {
-            YearNames::VariableEras(era_names) => crate::provider::names::get_year_name_from_map(
-                era_names,
-                era_year.era.as_str().into(),
-            )
-            .ok_or(GetNameForEraError::InvalidEraCode),
+            YearNames::VariableEras(era_names) => {
+                get_year_name_from_map(era_names, era_year.era.as_str().into())
+                    .ok_or(GetNameForEraError::InvalidEraCode)
+            }
             YearNames::FixedEras(era_names) => era_names
                 .get(if let Some(i) = era_year.era_index {
                     i as usize

@@ -462,36 +462,34 @@ impl LocaleSpecificDataHolder {
             ..Default::default()
         };
 
-        let metadata_payload: DataPayload<crate::provider::CollationMetadataV1> = provider
+        let metadata_payload: DataPayload<CollationMetadataV1> = provider
             .load(req)
             .or_else(|_| provider.load(fallback_req))?
             .payload;
 
         let metadata = metadata_payload.get();
 
-        let tailoring: Option<DataPayload<crate::provider::CollationTailoringV1>> =
-            if metadata.tailored() {
-                Some(
-                    provider
-                        .load(req)
-                        .or_else(|_| provider.load(fallback_req))?
-                        .payload,
-                )
-            } else {
-                None
-            };
+        let tailoring: Option<DataPayload<CollationTailoringV1>> = if metadata.tailored() {
+            Some(
+                provider
+                    .load(req)
+                    .or_else(|_| provider.load(fallback_req))?
+                    .payload,
+            )
+        } else {
+            None
+        };
 
-        let reordering: Option<DataPayload<crate::provider::CollationReorderingV1>> =
-            if metadata.reordering() {
-                Some(
-                    provider
-                        .load(req)
-                        .or_else(|_| provider.load(fallback_req))?
-                        .payload,
-                )
-            } else {
-                None
-            };
+        let reordering: Option<DataPayload<CollationReorderingV1>> = if metadata.reordering() {
+            Some(
+                provider
+                    .load(req)
+                    .or_else(|_| provider.load(fallback_req))?
+                    .payload,
+            )
+        } else {
+            None
+        };
 
         if let Some(reordering) = &reordering {
             if reordering.get().reorder_table.len() != 256 {

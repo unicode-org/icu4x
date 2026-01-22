@@ -87,7 +87,7 @@ impl<'a> DenseSparse2dAsciiWithFixedDelimiterBuilder<'a> {
             .iter()
             .map(|(suffix, value)| (*suffix, *value))
             .collect::<ZeroTrieSimpleAscii<Vec<u8>>>();
-        if sub_trie.byte_len() > self.suffixes.len() * core::mem::size_of::<DenseType>() {
+        if sub_trie.byte_len() > self.suffixes.len() * size_of::<DenseType>() {
             // Create a dense prefix
             let offsets = self
                 .suffixes

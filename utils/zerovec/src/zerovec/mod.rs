@@ -423,7 +423,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
         // &[u8] and &[T::ULE] are the same slice with different length metadata.
         Self::new_borrowed(core::slice::from_raw_parts(
             bytes.as_ptr() as *const T::ULE,
-            bytes.len() / core::mem::size_of::<T::ULE>(),
+            bytes.len() / size_of::<T::ULE>(),
         ))
     }
 
@@ -570,7 +570,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// let zv_char: ZeroVec<char> =
     ///     ZeroVec::parse_bytes(bytes).expect("valid code points");
     ///
-    /// // Panics! core::mem::size_of::<char::ULE> != core::mem::size_of::<u16::ULE>
+    /// // Panics! size_of::<char::ULE> != size_of::<u16::ULE>
     /// zv_char.try_into_converted::<u16>();
     /// ```
     ///
@@ -591,8 +591,8 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     #[cfg(feature = "alloc")]
     pub fn try_into_converted<P: AsULE>(self) -> Result<ZeroVec<'a, P>, UleError> {
         assert_eq!(
-            core::mem::size_of::<<T as AsULE>::ULE>(),
-            core::mem::size_of::<<P as AsULE>::ULE>()
+            size_of::<<T as AsULE>::ULE>(),
+            size_of::<<P as AsULE>::ULE>()
         );
         match self.into_cow() {
             Cow::Borrowed(old_slice) => {
@@ -957,7 +957,7 @@ where
     /// assert!(zerovec.is_owned());
     /// ```
     #[cfg(feature = "alloc")]
-    pub fn with_mut<R>(&mut self, f: impl FnOnce(&mut alloc::vec::Vec<T::ULE>) -> R) -> R {
+    pub fn with_mut<R>(&mut self, f: impl FnOnce(&mut Vec<T::ULE>) -> R) -> R {
         use alloc::borrow::Cow;
         // We're in danger if f() panics whilst we've moved a vector out of self;
         // replace it with an empty dummy vector for now

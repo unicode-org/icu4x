@@ -126,7 +126,7 @@ fn btree_map() {
     );
 }
 
-impl<T> Bake for std::collections::HashSet<T>
+impl<T> Bake for HashSet<T>
 where
     T: Bake,
 {
@@ -143,7 +143,7 @@ where
 #[test]
 fn hash_set() {
     test_bake!(
-        std::collections::HashSet<u8>,
+        HashSet<u8>,
         std::collections::HashSet::from([1u8, 2u8]),
         std
     );
@@ -210,7 +210,7 @@ macro_rules! smart_pointer {
     };
 }
 
-smart_pointer!(alloc::boxed::Box<T>, alloc::boxed::Box::new);
+smart_pointer!(Box<T>, Box::new);
 smart_pointer!(alloc::rc::Rc<T>, alloc::rc::Rc::new);
 smart_pointer!(alloc::sync::Arc<T>, alloc::arc::Arc::new);
 

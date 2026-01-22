@@ -163,16 +163,16 @@ impl ComplexPayloadsBorrowed<'static> {
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
             grapheme: GraphemeClusterSegmenter::new(),
-            my: try_load_static::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, MY_LSTM)
+            my: try_load_static::<SegmenterLstmAutoV1, _>(&Baked, MY_LSTM)
                 .unwrap()
                 .map(DictOrLstmBorrowed::Lstm),
-            km: try_load_static::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, KM_LSTM)
+            km: try_load_static::<SegmenterLstmAutoV1, _>(&Baked, KM_LSTM)
                 .unwrap()
                 .map(DictOrLstmBorrowed::Lstm),
-            lo: try_load_static::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, LO_LSTM)
+            lo: try_load_static::<SegmenterLstmAutoV1, _>(&Baked, LO_LSTM)
                 .unwrap()
                 .map(DictOrLstmBorrowed::Lstm),
-            th: try_load_static::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, TH_LSTM)
+            th: try_load_static::<SegmenterLstmAutoV1, _>(&Baked, TH_LSTM)
                 .unwrap()
                 .map(DictOrLstmBorrowed::Lstm),
             ja: None,
@@ -183,8 +183,7 @@ impl ComplexPayloadsBorrowed<'static> {
     #[expect(clippy::unwrap_used)]
     pub(crate) fn new_auto() -> Self {
         let mut this = Self::new_lstm();
-        this.ja = try_load_static::<SegmenterDictionaryAutoV1, _>(&crate::provider::Baked, CJ_DICT)
-            .unwrap();
+        this.ja = try_load_static::<SegmenterDictionaryAutoV1, _>(&Baked, CJ_DICT).unwrap();
         this
     }
     #[cfg(feature = "compiled_data")]
@@ -193,32 +192,19 @@ impl ComplexPayloadsBorrowed<'static> {
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
             grapheme: GraphemeClusterSegmenter::new(),
-            my: try_load_static::<SegmenterDictionaryExtendedV1, _>(
-                &crate::provider::Baked,
-                MY_DICT,
-            )
-            .unwrap()
-            .map(DictOrLstmBorrowed::Dict),
-            km: try_load_static::<SegmenterDictionaryExtendedV1, _>(
-                &crate::provider::Baked,
-                KM_DICT,
-            )
-            .unwrap()
-            .map(DictOrLstmBorrowed::Dict),
-            lo: try_load_static::<SegmenterDictionaryExtendedV1, _>(
-                &crate::provider::Baked,
-                LO_DICT,
-            )
-            .unwrap()
-            .map(DictOrLstmBorrowed::Dict),
-            th: try_load_static::<SegmenterDictionaryExtendedV1, _>(
-                &crate::provider::Baked,
-                TH_DICT,
-            )
-            .unwrap()
-            .map(DictOrLstmBorrowed::Dict),
-            ja: try_load_static::<SegmenterDictionaryAutoV1, _>(&crate::provider::Baked, CJ_DICT)
-                .unwrap(),
+            my: try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, MY_DICT)
+                .unwrap()
+                .map(DictOrLstmBorrowed::Dict),
+            km: try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, KM_DICT)
+                .unwrap()
+                .map(DictOrLstmBorrowed::Dict),
+            lo: try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, LO_DICT)
+                .unwrap()
+                .map(DictOrLstmBorrowed::Dict),
+            th: try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, TH_DICT)
+                .unwrap()
+                .map(DictOrLstmBorrowed::Dict),
+            ja: try_load_static::<SegmenterDictionaryAutoV1, _>(&Baked, CJ_DICT).unwrap(),
         }
     }
 
@@ -228,30 +214,18 @@ impl ComplexPayloadsBorrowed<'static> {
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
             grapheme: GraphemeClusterSegmenter::new(),
-            my: try_load_static::<SegmenterDictionaryExtendedV1, _>(
-                &crate::provider::Baked,
-                MY_DICT,
-            )
-            .unwrap()
-            .map(DictOrLstmBorrowed::Dict),
-            km: try_load_static::<SegmenterDictionaryExtendedV1, _>(
-                &crate::provider::Baked,
-                KM_DICT,
-            )
-            .unwrap()
-            .map(DictOrLstmBorrowed::Dict),
-            lo: try_load_static::<SegmenterDictionaryExtendedV1, _>(
-                &crate::provider::Baked,
-                LO_DICT,
-            )
-            .unwrap()
-            .map(DictOrLstmBorrowed::Dict),
-            th: try_load_static::<SegmenterDictionaryExtendedV1, _>(
-                &crate::provider::Baked,
-                TH_DICT,
-            )
-            .unwrap()
-            .map(DictOrLstmBorrowed::Dict),
+            my: try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, MY_DICT)
+                .unwrap()
+                .map(DictOrLstmBorrowed::Dict),
+            km: try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, KM_DICT)
+                .unwrap()
+                .map(DictOrLstmBorrowed::Dict),
+            lo: try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, LO_DICT)
+                .unwrap()
+                .map(DictOrLstmBorrowed::Dict),
+            th: try_load_static::<SegmenterDictionaryExtendedV1, _>(&Baked, TH_DICT)
+                .unwrap()
+                .map(DictOrLstmBorrowed::Dict),
             ja: None,
         }
     }
